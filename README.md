@@ -1,2 +1,2 @@
-# joqdc
-Java Object Query Distributed Connector
+# jdqc
+Java Distributed Query Connector
