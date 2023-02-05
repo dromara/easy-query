@@ -1,0 +1,58 @@
+# Created by .ignore support plugin (hsz.mobi)
+### Java template
+# Compiled class file
+*.class
+
+# Log file
+*.log
+/log
+/log/
+
+# BlueJ files
+*.ctxt
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Package Files #
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
+# Java class files
+
+# Eclipse project files
+.classpath
+.project
+.settings/
+
+# Intellij project files
+.idea
+*.iml
+*.ipr
+*.iws
+.idea/
+
+
+
+### NetBeans ###
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+
+.DS_Store/
+/target
+/target/
+**/target/
+
+.DS_Store
+
