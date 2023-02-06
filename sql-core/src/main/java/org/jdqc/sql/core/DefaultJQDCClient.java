@@ -11,11 +11,11 @@ package org.jdqc.sql.core;
 public class DefaultJQDCClient implements JQDCClient{
     @Override
     public <T1> Select<T1,T1> query(Class<T1> clazz) {
-        return new SelectImpl<T1,T1>(clazz,clazz);
+        return new SelectImpl<T1,T1>(new SelectContext<>(clazz,clazz));
     }
 
     @Override
     public <T1, TR> Select<T1, TR> query(Class<T1> clazz, Class<TR> trClass) {
-        return new SelectImpl<T1,TR>(clazz,trClass);
+        return new SelectImpl<T1,TR>(new SelectContext<>(clazz,trClass));
     }
 }

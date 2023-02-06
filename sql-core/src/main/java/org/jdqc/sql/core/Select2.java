@@ -2,12 +2,15 @@ package org.jdqc.sql.core;
 
 /**
  * Copyright (c) 2021.biaodian.All Rights Reserved
- *
- * @FileName: Select2.java
+ * 数据库查询
+ * @FileName: Select.java
  * @Description: 文件说明
- * @Date: 2023/2/4 22:25
+ * @Date: 2023/2/4 23:32
  * @Created by xuejiaming
  */
-public interface Select2<T1, T2>extends Select0{
-    <T3> Select3<T1, T2,T3> leftJoin(Class<T3> t3Class, Property<OnCondition2, OnCondition2> on);
+public interface Select2<T1, TR> extends SqlPredicate2<T1, Select2<T1, TR>>
+        , SqlFetch<TR>
+        , SqlFilter<Select2<T1, TR>>
+        , SqlSelector2<Select2<T1, TR>,T1, TR>
+        , SqlJoin<T1, TR> {
 }

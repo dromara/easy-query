@@ -10,7 +10,7 @@ import java.util.List;
  * @Date: 2023/2/5 22:29
  * @Created by xuejiaming
  */
-public interface SqlResult<TR> {
+public interface SqlFetch<TR> {
     int count();
     boolean any();
     TR firstOrNull();

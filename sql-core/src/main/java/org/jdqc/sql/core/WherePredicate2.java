@@ -10,7 +10,7 @@ import java.io.Serializable;
  * @Date: 2023/2/5 09:09
  * @Created by xuejiaming
  */
-public interface Predicate<Children> extends Serializable {
+public interface WherePredicate2<Children> extends Serializable {
     default <R> Children eq(Property<R, ?> column, Object val) {
         return eq(true, column, val);
     }

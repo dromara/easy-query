@@ -8,5 +8,5 @@ package org.jdqc.sql.core;
  * @Date: 2023/2/5 15:38
  * @Created by xuejiaming
  */
-public interface SqlPredicate<T1,Children extends SqlPredicate<T1,Children>> extends WherePredicate<Children,T1> {
+public interface SqlPredicate2<T1,Children extends SqlPredicate2<T1,Children>> extends WherePredicate2<Children>,OnPredicate<Children> {
 }
