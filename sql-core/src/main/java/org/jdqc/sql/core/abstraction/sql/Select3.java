@@ -1,5 +1,6 @@
 package org.jdqc.sql.core.abstraction.sql;
 
+import org.jdqc.sql.core.abstraction.lambda.SqlExpression3;
 import org.jdqc.sql.core.abstraction.sql.base.*;
 
 /**

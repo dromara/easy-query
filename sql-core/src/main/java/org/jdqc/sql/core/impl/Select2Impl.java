@@ -1,8 +1,6 @@
 package org.jdqc.sql.core.impl;
 
-import org.jdqc.sql.core.abstraction.sql.base.OnFunction;
-import org.jdqc.sql.core.abstraction.sql.base.Property;
-import org.jdqc.sql.core.abstraction.sql.base.SqlPredicate2;
+import org.jdqc.sql.core.abstraction.lambda.Property;
 
 /**
  * Copyright (c) 2021.biaodian.All Rights Reserved

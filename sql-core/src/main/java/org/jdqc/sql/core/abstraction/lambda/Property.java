@@ -1,4 +1,4 @@
-package org.jdqc.sql.core.abstraction.sql.base;
+package org.jdqc.sql.core.abstraction.lambda;
 
 import java.io.Serializable;
 
@@ -11,7 +11,7 @@ import java.io.Serializable;
  * @Created by xuejiaming
  */
 @FunctionalInterface
-public interface OnProperty<T, R> extends Serializable {
+public interface Property<T, R> extends Serializable {
     R apply(T t);
 }
 

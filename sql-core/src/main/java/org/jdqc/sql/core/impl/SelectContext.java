@@ -1,7 +1,5 @@
 package org.jdqc.sql.core.impl;
 
-import org.jdqc.sql.core.abstraction.sql.base.OnFunction;
-import org.jdqc.sql.core.abstraction.sql.base.SqlPredicate2;
 import org.jdqc.sql.core.common.TableInfo;
 
 import java.util.ArrayList;
@@ -21,17 +19,16 @@ public class SelectContext<T1,TR> {
 
     private final List<TableInfo> tableInfos;
     private final Class<TR> resultClass;
-
-
     private final List<Class<?>> joinTables;
-    private final List<OnFunction<SqlPredicate2<T1, ?>>> joinInvokes;
+
+    private final StringBuilder where;
 
     public SelectContext(Class<T1> mainClass,Class<TR> resultClass){
         tableInfos=new ArrayList<>();
         joinTables=new ArrayList<>();
-        joinInvokes=new ArrayList<>();
         tableInfos.add(new TableInfo(mainClass));
         this.resultClass=resultClass;
+        this.where= new StringBuilder();
     }
 
     public List<TableInfo> getTableInfos() {
@@ -42,10 +39,6 @@ public class SelectContext<T1,TR> {
     }
     public List<Class<?>> getJoinTables() {
         return joinTables;
-    }
-
-    public List<OnFunction<SqlPredicate2<T1, ?>>> getJoinInvokes() {
-        return joinInvokes;
     }
 
     public int getSkip() {
@@ -62,5 +55,9 @@ public class SelectContext<T1,TR> {
 
     public void setTake(int take) {
         this.take = take;
+    }
+
+    public StringBuilder getWhere() {
+        return where;
     }
 }

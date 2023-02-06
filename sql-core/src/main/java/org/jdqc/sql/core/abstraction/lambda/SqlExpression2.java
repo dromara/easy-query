@@ -1,4 +1,4 @@
-package org.jdqc.sql.core.abstraction.sql.base;
+package org.jdqc.sql.core.abstraction.lambda;
 
 /**
  * Copyright (c) 2021.biaodian.All Rights Reserved
@@ -9,7 +9,7 @@ package org.jdqc.sql.core.abstraction.sql.base;
  * @Created by xuejiaming
  */
 @FunctionalInterface
-public interface SqlExpression3<T1,T2,T3> {
+public interface SqlExpression2<T1,T2> {
 
-    void apply(T1 p1,T2 p2,T3 p3);
+    void apply(T1 p1,T2 p2);
 }

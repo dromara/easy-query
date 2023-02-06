@@ -1,4 +1,4 @@
-package org.jdqc.sql.core.abstraction.sql.base;
+package org.jdqc.sql.core.abstraction.lambda;
 
 /**
  * Copyright (c) 2021.biaodian.All Rights Reserved
@@ -9,7 +9,7 @@ package org.jdqc.sql.core.abstraction.sql.base;
  * @Created by xuejiaming
  */
 @FunctionalInterface
-public interface OnFunction<T> {
+public interface SqlExpression<T1> {
 
-    T apply(T wrapper);
+    void apply(T1 p1);
 }

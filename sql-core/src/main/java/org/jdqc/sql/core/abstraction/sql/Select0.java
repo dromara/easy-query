@@ -1,5 +1,6 @@
 package org.jdqc.sql.core.abstraction.sql;
 
+import org.jdqc.sql.core.abstraction.lambda.SqlExpression;
 import org.jdqc.sql.core.abstraction.sql.base.*;
 
 import java.util.List;
@@ -12,24 +13,33 @@ import java.util.List;
  * @Date: 2023/2/6 21:28
  * @Created by xuejiaming
  */
-public interface Select0<T1,TR,Chain> {
+public interface Select0<T1,TR, TChain> {
     int count();
     boolean any();
     TR firstOrNull();
     List<TR> toList();
     String toSql();
-    Chain where(SqlExpression<WherePredicate<T1>> whereExpression);
-    Chain select(SqlExpression<SqlSelector<T1,TR>> selectExpression);
-   default Chain groupBy(SqlExpression<SqlColumnSelector<T1>> selectExpression){
+    TChain where(SqlExpression<WherePredicate<T1>> whereExpression);
+    TChain select(SqlExpression<SqlSelector<T1,TR>> selectExpression);
+   default TChain groupBy(SqlExpression<SqlColumnSelector<T1>> selectExpression){
        return groupBy(true,selectExpression);
    }
-    Chain groupBy(boolean condition, SqlExpression<SqlColumnSelector<T1>> selectExpression);
-    default Chain orderByAsc(SqlExpression<SqlColumnSelector<T1>> selectExpression){
+    TChain groupBy(boolean condition, SqlExpression<SqlColumnSelector<T1>> selectExpression);
+    default TChain orderByAsc(SqlExpression<SqlColumnSelector<T1>> selectExpression){
         return orderByAsc(true,selectExpression);
     }
-    Chain orderByAsc(boolean condition, SqlExpression<SqlColumnSelector<T1>> selectExpression);
-    default Chain orderByDesc(SqlExpression<SqlColumnSelector<T1>> selectExpression){
+    TChain orderByAsc(boolean condition, SqlExpression<SqlColumnSelector<T1>> selectExpression);
+    default TChain orderByDesc(SqlExpression<SqlColumnSelector<T1>> selectExpression){
         return orderByDesc(true,selectExpression);
     }
-    Chain orderByDesc(boolean condition, SqlExpression<SqlColumnSelector<T1>> selectExpression);
+    TChain orderByDesc(boolean condition, SqlExpression<SqlColumnSelector<T1>> selectExpression);
+    default TChain skip(int skip){
+        return skip(true,skip);
+    }
+    TChain skip(boolean condition, int skip);
+
+    default TChain take(int take){
+        return take(true,take);
+    }
+    TChain take(boolean condition, int take);
 }

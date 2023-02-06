@@ -1,5 +1,7 @@
 package org.jdqc.sql.core.abstraction.sql.base;
 
+import org.jdqc.sql.core.abstraction.lambda.Property;
+
 import java.io.Serializable;
 
 /**
