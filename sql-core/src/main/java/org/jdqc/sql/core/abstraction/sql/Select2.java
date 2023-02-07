@@ -5,7 +5,6 @@ import org.jdqc.sql.core.abstraction.lambda.SqlExpression3;
 import org.jdqc.sql.core.abstraction.sql.base.*;
 
 /**
- * Copyright (c) 2021.biaodian.All Rights Reserved
  *
  * @FileName: Select2.java
  * @Description: 文件说明
@@ -13,11 +12,23 @@ import org.jdqc.sql.core.abstraction.sql.base.*;
  * @Created by xuejiaming
  */
 public interface Select2<T1,T2,TR>extends Select0<T1,TR, Select2<T1,T2,TR>> {
-    <T3> Select3<T1,T2,T3,TR> leftJoin(Class<T3> joinClass, SqlExpression3<WherePredicate<T1>,WherePredicate<T2>,WherePredicate<T3>> on);
-    <T3> Select3<T1,T2,T3,TR> innerJoin(Class<T3> joinClass, SqlExpression3<WherePredicate<T1>,WherePredicate<T2>,WherePredicate<T3>> on);
-    Select2<T1,T2,TR> where(SqlExpression2<WherePredicate<T1>,WherePredicate<T2>> whereExpression);
-    Select2<T1,T2,TR> select(SqlExpression2<SqlSelector<T1,TR>,SqlSelector<T2,TR>> selectExpression);
+    <T3> Select3<T1,T2,T3,TR> leftJoin(Class<T3> joinClass, SqlExpression3<SqlPredicate<T1>,SqlPredicate<T2>,SqlPredicate<T3>> on);
+    <T3> Select3<T1,T2,T3,TR> innerJoin(Class<T3> joinClass, SqlExpression3<SqlPredicate<T1>,SqlPredicate<T2>,SqlPredicate<T3>> on);
+   default Select2<T1,T2,TR> where(SqlExpression2<SqlPredicate<T1>,SqlPredicate<T2>> whereExpression){
+       return where(true,whereExpression);
+   }
+    Select2<T1,T2,TR> where(boolean condition,SqlExpression2<SqlPredicate<T1>,SqlPredicate<T2>> whereExpression);
+    default Select2<T1,T2,TR> select(SqlExpression2<SqlSelector<T1,TR>,SqlSelector<T2,TR>> selectExpression){
+        return select(true,selectExpression);
+    }
+    Select2<T1,T2,TR> select(boolean condition,SqlExpression2<SqlSelector<T1,TR>,SqlSelector<T2,TR>> selectExpression);
     Select2<T1,T2,TR> groupBy(SqlExpression2<SqlColumnSelector<T1>,SqlColumnSelector<T2>> selectExpression);
-    Select2<T1,T2,TR> orderByAsc(SqlExpression2<SqlColumnSelector<T1>,SqlColumnSelector<T2>> selectExpression);
-    Select2<T1,T2,TR> orderByDesc(SqlExpression2<SqlColumnSelector<T1>,SqlColumnSelector<T2>> selectExpression);
+    default Select2<T1,T2,TR> orderByAsc(SqlExpression2<SqlColumnSelector<T1>,SqlColumnSelector<T2>> selectExpression){
+        return orderByAsc(true,selectExpression);
+    }
+    Select2<T1,T2,TR> orderByAsc(boolean condition,SqlExpression2<SqlColumnSelector<T1>,SqlColumnSelector<T2>> selectExpression);
+    default Select2<T1,T2,TR> orderByDesc(SqlExpression2<SqlColumnSelector<T1>,SqlColumnSelector<T2>> selectExpression){
+        return orderByDesc(true,selectExpression);
+    }
+    Select2<T1,T2,TR>  orderByDesc(boolean condition,SqlExpression2<SqlColumnSelector<T1>,SqlColumnSelector<T2>> selectExpression);
 }

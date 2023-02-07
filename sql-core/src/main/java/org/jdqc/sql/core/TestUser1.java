@@ -1,11 +1,12 @@
+package org.jdqc.sql.core;
+
 /**
- *
- * @FileName: SysUser.java
+ * @FileName: TestUser1.java
  * @Description: 文件说明
- * @Date: 2023/2/4 23:07
+ * @Date: 2023/2/7 13:43
  * @Created by xuejiaming
  */
-public class SysUser {
+public class TestUser1 {
     public String getId() {
         return id;
     }
@@ -24,4 +25,13 @@ public class SysUser {
 
     private String id;
     private String name;
+    private String uid;
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
 }

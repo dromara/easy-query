@@ -1,7 +1,6 @@
 package org.jdqc.sql.core.config;
 
 /**
- * Copyright (c) 2021.biaodian.All Rights Reserved
  *
  * @FileName: NameConversion.java
  * @Description: 文件说明

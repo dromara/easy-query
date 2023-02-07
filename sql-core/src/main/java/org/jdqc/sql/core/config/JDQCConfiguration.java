@@ -1,12 +1,40 @@
 package org.jdqc.sql.core.config;
 
+import org.jdqc.sql.core.exception.JDQCException;
+import org.jdqc.sql.core.schema.TableInfo;
+
+import java.util.concurrent.ConcurrentHashMap;
+
 /**
- * Copyright (c) 2021.biaodian.All Rights Reserved
- *
  * @FileName: JDQCConfiguration.java
  * @Description: 文件说明
  * @Date: 2023/2/7 09:06
  * @Created by xuejiaming
  */
 public class JDQCConfiguration {
+    private  final ConcurrentHashMap<Class<?>, TableInfo> cacheTableInfos;
+    public JDQCConfiguration(){
+        cacheTableInfos= new ConcurrentHashMap<>();
+    }
+
+    /**
+     * 根据字节返回对应的表信息
+     * @param clazz
+     * @return
+     */
+    public TableInfo getTableByEntity(Class<?> clazz) {
+        TableInfo tableInfo = cacheTableInfos.get(clazz);
+        if (tableInfo == null) {
+            throw new JDQCException(JDQCException.CLASS_TABLE_MISS, "not found table " + clazz.getSimpleName());
+        }
+        return tableInfo;
+    }
+
+    /**
+     * 添加表信息
+     * @param tableInfo
+     */
+    public void addTableInfo(TableInfo tableInfo){
+        cacheTableInfos.putIfAbsent(tableInfo.getTableType(),tableInfo);
+    }
 }

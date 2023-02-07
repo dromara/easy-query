@@ -3,7 +3,6 @@ package org.jdqc.sql.core.abstraction.lambda;
 import java.io.Serializable;
 
 /**
- * Copyright (c) 2021.biaodian.All Rights Reserved
  *
  * @FileName: SFunction.java
  * @Description: 文件说明

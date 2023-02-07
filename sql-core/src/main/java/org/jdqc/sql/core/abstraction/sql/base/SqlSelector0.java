@@ -3,7 +3,6 @@ package org.jdqc.sql.core.abstraction.sql.base;
 import org.jdqc.sql.core.abstraction.lambda.Property;
 
 /**
- * Copyright (c) 2021.biaodian.All Rights Reserved
  *
  * @FileName: SqlSelector.java
  * @Description: 文件说明

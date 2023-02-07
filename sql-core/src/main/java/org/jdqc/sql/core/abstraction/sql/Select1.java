@@ -4,7 +4,6 @@ import org.jdqc.sql.core.abstraction.lambda.SqlExpression2;
 import org.jdqc.sql.core.abstraction.sql.base.*;
 
 /**
- * Copyright (c) 2021.biaodian.All Rights Reserved
  *
  * @FileName: Select11.java
  * @Description: 文件说明
@@ -12,6 +11,6 @@ import org.jdqc.sql.core.abstraction.sql.base.*;
  * @Created by xuejiaming
  */
 public interface Select1<T1,TR> extends Select0<T1,TR, Select1<T1,TR>> {
-    <T2> Select2<T1,T2,TR> leftJoin(Class<T2> joinClass, SqlExpression2<WherePredicate<T1>,WherePredicate<T2>> on);
-    <T2> Select2<T1,T2,TR> innerJoin(Class<T2> joinClass, SqlExpression2<WherePredicate<T1>,WherePredicate<T2>> on);
+    <T2> Select2<T1,T2,TR> leftJoin(Class<T2> joinClass, SqlExpression2<SqlPredicate<T1>,SqlPredicate<T2>> on);
+    <T2> Select2<T1,T2,TR> innerJoin(Class<T2> joinClass, SqlExpression2<SqlPredicate<T1>,SqlPredicate<T2>> on);
 }

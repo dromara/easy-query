@@ -1,54 +1,51 @@
 package org.jdqc.sql.core.impl;
 
-import org.jdqc.sql.core.abstraction.lambda.Property;
-import org.jdqc.sql.core.abstraction.lambda.SqlExpression;
-import org.jdqc.sql.core.abstraction.sql.base.WherePredicate;
-import org.jdqc.sql.core.common.TableInfo;
-import org.jdqc.sql.core.impl.lambda.DefaultSqlPredicate;
-import org.jdqc.sql.core.util.StringKit;
+import org.jdqc.sql.core.abstraction.sql.base.SqlPredicate;
+import org.jdqc.sql.core.config.JDQCConfiguration;
+import org.jdqc.sql.core.exception.JDQCException;
+import org.jdqc.sql.core.query.builder.SelectTableInfo;
 
-import java.lang.invoke.SerializedLambda;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Copyright (c) 2021.biaodian.All Rights Reserved
  *
  * @FileName: SelectContext.java
  * @Description: 文件说明
  * @Date: 2023/2/6 12:39
  * @Created by xuejiaming
  */
-public class SelectContext {
+public class SelectContext extends BaseSelectContext {
+    private final JDQCConfiguration jdqcConfiguration;
+    private final String alias;
     private int skip;
     private int take;
 
-    private final List<TableInfo> tableInfos;
+    private final List<SelectTableInfo> tables;
     private final Class<?> resultClass;
-    private final List<Class<?>> joinTables;
 
     private final StringBuilder where;
 
-    public SelectContext(Class<?> mainClass,Class<?> resultClass){
-        tableInfos=new ArrayList<>();
-        joinTables=new ArrayList<>();
-        tableInfos.add(new TableInfo(mainClass));
+    public SelectContext(Class<?> resultClass, JDQCConfiguration jdqcConfiguration){
+        this(resultClass,jdqcConfiguration,"t");
+    }
+    public SelectContext(Class<?> resultClass, JDQCConfiguration jdqcConfiguration,String alias){
+        super(jdqcConfiguration);
+        this.jdqcConfiguration = jdqcConfiguration;
+        this.alias = alias;
+        this.tables =new ArrayList<>();
         this.resultClass=resultClass;
         this.where= new StringBuilder();
     }
 
-    public List<TableInfo> getTableInfos() {
-        return tableInfos;
+    public List<SelectTableInfo> getTables() {
+        return tables;
     }
-    public TableInfo getTableInfo(int index) {
-        return tableInfos.get(index);
+    public SelectTableInfo getTable(int index) {
+        return tables.get(index);
     }
     public Class<?> getResultClass() {
         return resultClass;
-    }
-    public List<Class<?>> getJoinTables() {
-        return joinTables;
     }
 
     public int getSkip() {
@@ -70,10 +67,41 @@ public class SelectContext {
     public StringBuilder getWhere() {
         return where;
     }
-    public <T1> void where(SqlExpression<WherePredicate<T1>> whereExpression){
-        DefaultSqlPredicate<T1> predicate = new DefaultSqlPredicate<>(1, this);
-        whereExpression.apply(predicate);
 
+    public Class<?> getMainClass() {
+        return tables.get(0).getTable().getTableType();
+    }
+    public void addSelectTable(SelectTableInfo selectTableInfo){
+        this.tables.add(selectTableInfo);
     }
 
+    /**
+     * 数据库别名 默认t
+     * @return
+     */
+
+    public String getAlias() {
+        return alias;
+    }
+
+    /**
+     * 获取下次表索引
+     * @return
+     */
+    public int getNextTableIndex(){
+        return this.tables.size();
+    }
+    public SelectTableInfo getCurrentPredicateTable(){
+        return this.getPredicateTableByOffset(0);
+    }
+    public SelectTableInfo getPreviewPredicateTable(){
+        return this.getPredicateTableByOffset(1);
+    }
+    public SelectTableInfo getPredicateTableByOffset(int offsetForward){
+        if(this.tables.isEmpty()){
+            throw new JDQCException("cant get current join table");
+        }
+        int i = getNextTableIndex() -1 - offsetForward;
+        return this.tables.get(i);
+    }
 }

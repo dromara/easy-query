@@ -1,5 +1,4 @@
 /**
- * Copyright (c) 2021.biaodian.All Rights Reserved
  *
  * @FileName: SysUserExt.java
  * @Description: 文件说明

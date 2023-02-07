@@ -3,7 +3,6 @@ package org.jdqc.sql.core.abstraction.client;
 import org.jdqc.sql.core.abstraction.sql.Select1;
 
 /**
- * Copyright (c) 2021.biaodian.All Rights Reserved
  *
  * @FileName: JQDCClient.java
  * @Description: 文件说明

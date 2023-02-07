@@ -6,7 +6,6 @@ import org.jdqc.sql.core.abstraction.sql.base.*;
 import java.util.List;
 
 /**
- * Copyright (c) 2021.biaodian.All Rights Reserved
  *
  * @FileName: Select0.java
  * @Description: 文件说明
@@ -19,7 +18,10 @@ public interface Select0<T1,TR, TChain> {
     TR firstOrNull();
     List<TR> toList();
     String toSql();
-    TChain where(SqlExpression<WherePredicate<T1>> whereExpression);
+   default TChain where(SqlExpression<SqlPredicate<T1>> whereExpression){
+       return where(true,whereExpression);
+   }
+    TChain where(boolean condition, SqlExpression<SqlPredicate<T1>> whereExpression);
     TChain select(SqlExpression<SqlSelector<T1,TR>> selectExpression);
    default TChain groupBy(SqlExpression<SqlColumnSelector<T1>> selectExpression){
        return groupBy(true,selectExpression);

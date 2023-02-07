@@ -1,7 +1,6 @@
-package org.jdqc.sql.core.common;
+package org.jdqc.sql.core.schema;
 
 /**
- * Copyright (c) 2021.biaodian.All Rights Reserved
  *
  * @FileName: ColumnInfo.java
  * @Description: 文件说明
@@ -9,13 +8,19 @@ package org.jdqc.sql.core.common;
  * @Created by xuejiaming
  */
 public class ColumnInfo {
+    private final TableInfo tableInfo;
     private final String columnName;
 
-    public ColumnInfo(String columnName) {
+    public ColumnInfo(TableInfo tableInfo,String columnName) {
+        this.tableInfo = tableInfo;
         this.columnName = columnName;
     }
 
     public String getColumnName() {
         return columnName;
+    }
+
+    public TableInfo getTableInfo() {
+        return tableInfo;
     }
 }

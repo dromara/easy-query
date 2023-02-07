@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Copyright (c) 2021.biaodian.All Rights Reserved
  *
  * @FileName: StringKit.java
  * @Description: 文件说明

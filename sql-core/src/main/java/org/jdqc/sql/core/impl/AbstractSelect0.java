@@ -3,13 +3,13 @@ package org.jdqc.sql.core.impl;
 import org.jdqc.sql.core.abstraction.lambda.SqlExpression;
 import org.jdqc.sql.core.abstraction.sql.Select0;
 import org.jdqc.sql.core.abstraction.sql.base.SqlColumnSelector;
+import org.jdqc.sql.core.abstraction.sql.base.SqlPredicate;
 import org.jdqc.sql.core.abstraction.sql.base.SqlSelector;
-import org.jdqc.sql.core.abstraction.sql.base.WherePredicate;
+import org.jdqc.sql.core.abstraction.sql.enums.PredicateModeEnum;
 
 import java.util.List;
 
 /**
- * Copyright (c) 2021.biaodian.All Rights Reserved
  *
  * @FileName: AbstractSelect0.java
  * @Description: 文件说明
@@ -23,6 +23,8 @@ public abstract class AbstractSelect0<T1, TR,TChain> implements Select0<T1, TR, 
 
         this.selectContext = selectContext;
     }
+
+
     @Override
     public abstract int count();
 
@@ -47,8 +49,11 @@ public abstract class AbstractSelect0<T1, TR,TChain> implements Select0<T1, TR, 
     protected abstract TChain getChain();
 
     @Override
-    public TChain where(SqlExpression<WherePredicate<T1>> whereExpression) {
-        selectContext.where(whereExpression);
+    public TChain where(boolean condition,SqlExpression<SqlPredicate<T1>> whereExpression) {
+        if(condition){
+            SqlPredicate<T1> sqlPredicate = getSelect1SqlPredicateProvider().getSqlPredicate1(PredicateModeEnum.WHERE_PREDICATE);
+            whereExpression.apply(sqlPredicate);
+        }
         return getChain();
     }
 
@@ -74,7 +79,9 @@ public abstract class AbstractSelect0<T1, TR,TChain> implements Select0<T1, TR, 
 
     @Override
     public TChain skip(boolean condition, int skip) {
-        this.getSelectContext()
+        if(condition){
+            this.getSelectContext().setSkip(skip);
+        }
         return getChain();
     }
 
@@ -84,7 +91,9 @@ public abstract class AbstractSelect0<T1, TR,TChain> implements Select0<T1, TR, 
     }
 
 
-    public SelectContext<T1, TR> getSelectContext() {
+    public SelectContext getSelectContext() {
         return selectContext;
     }
+
+    protected abstract Select1SqlPredicateProvider<T1> getSelect1SqlPredicateProvider();
 }

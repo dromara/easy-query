@@ -3,7 +3,6 @@ package org.jdqc.sql.core.abstraction.sql.enums;
 import org.jdqc.sql.core.abstraction.sql.base.SqlFuncEnum;
 
 /**
- * Copyright (c) 2021.biaodian.All Rights Reserved
  *
  * @FileName: DefaultSqlFuncEnum.java
  * @Description: 文件说明
