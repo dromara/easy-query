@@ -3,10 +3,11 @@ package org.jdqc.sql.core.abstraction.sql.base;
 /**
  * Copyright (c) 2021.biaodian.All Rights Reserved
  *
- * @FileName: SqlPredicate.java
+ * @FileName: IndexMark.java
  * @Description: 文件说明
- * @Date: 2023/2/5 15:38
+ * @Date: 2023/2/7 07:05
  * @Created by xuejiaming
  */
-public interface SqlPredicate<T1> extends WherePredicate<T1>,IndexMark {
+public interface IndexMark {
+    int index();
 }

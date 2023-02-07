@@ -17,9 +17,9 @@ import java.util.List;
  * @Created by xuejiaming
  */
 public abstract class AbstractSelect0<T1, TR,TChain> implements Select0<T1, TR, TChain> {
-    private final SelectContext<T1, TR> selectContext;
+    private final SelectContext selectContext;
 
-    public AbstractSelect0(SelectContext<T1,TR> selectContext){
+    public AbstractSelect0(SelectContext selectContext){
 
         this.selectContext = selectContext;
     }
@@ -40,48 +40,47 @@ public abstract class AbstractSelect0<T1, TR,TChain> implements Select0<T1, TR, 
     }
 
     @Override
-    public List<TR> toList() {
-        return null;
-    }
+    public abstract List<TR> toList();
 
     @Override
-    public String toSql() {
-        return null;
-    }
+    public abstract String toSql();
+    protected abstract TChain getChain();
 
     @Override
     public TChain where(SqlExpression<WherePredicate<T1>> whereExpression) {
-        return null;
+        selectContext.where(whereExpression);
+        return getChain();
     }
 
     @Override
     public TChain select(SqlExpression<SqlSelector<T1, TR>> selectExpression) {
-        return null;
+        return getChain();
     }
 
     @Override
     public TChain groupBy(boolean condition, SqlExpression<SqlColumnSelector<T1>> selectExpression) {
-        return null;
+        return getChain();
     }
 
     @Override
     public TChain orderByAsc(boolean condition, SqlExpression<SqlColumnSelector<T1>> selectExpression) {
-        return null;
+        return getChain();
     }
 
     @Override
     public TChain orderByDesc(boolean condition, SqlExpression<SqlColumnSelector<T1>> selectExpression) {
-        return null;
+        return getChain();
     }
 
     @Override
     public TChain skip(boolean condition, int skip) {
-        return null;
+        this.getSelectContext()
+        return getChain();
     }
 
     @Override
     public TChain take(boolean condition, int take) {
-        return null;
+        return getChain();
     }
 
 

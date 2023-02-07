@@ -2,7 +2,6 @@ package org.jdqc.sql.core.impl;
 
 import org.jdqc.sql.core.abstraction.lambda.SqlExpression2;
 import org.jdqc.sql.core.abstraction.lambda.SqlExpression3;
-import org.jdqc.sql.core.abstraction.sql.Select1;
 import org.jdqc.sql.core.abstraction.sql.Select2;
 import org.jdqc.sql.core.abstraction.sql.Select3;
 import org.jdqc.sql.core.abstraction.sql.base.SqlColumnSelector;
@@ -17,9 +16,9 @@ import org.jdqc.sql.core.abstraction.sql.base.WherePredicate;
  * @Date: 2023/2/6 23:43
  * @Created by xuejiaming
  */
-public abstract   class AbstractSelect2<T1,T2,TR> extends AbstractSelect0<T1,TR, Select2<T1,T2,TR>> implements Select2<T1,T2,TR> {
+public abstract  class AbstractSelect2<T1,T2,TR> extends AbstractSelect0<T1,TR, Select2<T1,T2,TR>> implements Select2<T1,T2,TR> {
 
-    public AbstractSelect2(SelectContext<T1, TR> selectContext) {
+    public AbstractSelect2(SelectContext selectContext) {
         super(selectContext);
     }
 

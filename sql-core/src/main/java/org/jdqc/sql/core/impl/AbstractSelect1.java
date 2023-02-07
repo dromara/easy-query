@@ -12,7 +12,7 @@ import org.jdqc.sql.core.abstraction.sql.Select1;
  */
 public abstract class AbstractSelect1<T1,TR> extends AbstractSelect0<T1,TR,Select1<T1,TR>> implements Select1<T1,TR> {
 
-    public AbstractSelect1(SelectContext<T1, TR> selectContext) {
+    public AbstractSelect1(SelectContext selectContext) {
         super(selectContext);
     }
 }
