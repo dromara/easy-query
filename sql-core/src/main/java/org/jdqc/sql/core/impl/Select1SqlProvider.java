@@ -1,7 +1,9 @@
 package org.jdqc.sql.core.impl;
 
 import org.jdqc.sql.core.abstraction.sql.base.SqlPredicate;
+import org.jdqc.sql.core.abstraction.sql.base.SqlSelector;
 import org.jdqc.sql.core.abstraction.sql.enums.PredicateModeEnum;
+import org.jdqc.sql.core.impl.lambda.DefaultSqSelector;
 import org.jdqc.sql.core.impl.lambda.DefaultSqlPredicate;
 
 /**
@@ -10,11 +12,16 @@ import org.jdqc.sql.core.impl.lambda.DefaultSqlPredicate;
  * @Date: 2023/2/7 23:45
  * @Created by xuejiaming
  */
-public class Select1SqlPredicateProvider<T1> {
+public class Select1SqlProvider<T1,TR> {
     private final DefaultSqlPredicate<T1> sqlPredicate1;
+    private final DefaultSqSelector<T1,TR> sqlSelector1;
 
-    public Select1SqlPredicateProvider(SelectContext selectContext) {
+    public Select1SqlProvider(SelectContext selectContext) {
         this.sqlPredicate1 = new DefaultSqlPredicate<>(0,selectContext, PredicateModeEnum.WHERE_PREDICATE);
+        this.sqlSelector1 = new DefaultSqSelector<>(0,selectContext);
+    }
+    public SqlSelector<T1,TR> getSqlSelector1(){
+        return sqlSelector1;
     }
 
     public SqlPredicate<T1> getSqlPredicate1(PredicateModeEnum predicateMode) {

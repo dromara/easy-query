@@ -58,7 +58,11 @@ public abstract class AbstractSelect0<T1, TR,TChain> implements Select0<T1, TR, 
     }
 
     @Override
-    public TChain select(SqlExpression<SqlSelector<T1, TR>> selectExpression) {
+    public TChain select(boolean condition,SqlExpression<SqlSelector<T1, TR>> selectExpression) {
+        if(condition){
+            SqlSelector<T1, TR> sqlSelector = getSelect1SqlPredicateProvider().getSqlSelector1();
+            selectExpression.apply(sqlSelector);
+        }
         return getChain();
     }
 
@@ -95,5 +99,5 @@ public abstract class AbstractSelect0<T1, TR,TChain> implements Select0<T1, TR, 
         return selectContext;
     }
 
-    protected abstract Select1SqlPredicateProvider<T1> getSelect1SqlPredicateProvider();
+    protected abstract Select1SqlProvider<T1,TR> getSelect1SqlPredicateProvider();
 }

@@ -20,13 +20,13 @@ import org.jdqc.sql.core.schema.TableInfo;
  */
 public abstract  class AbstractSelect2<T1,T2,TR> extends AbstractSelect0<T1,TR, Select2<T1,T2,TR>> implements Select2<T1,T2,TR> {
 
-    private final Select2SqlPredicateProvider<T1,T2> sqlPredicateProvider;
+    private final Select2SqlProvider<T1,T2,TR> sqlPredicateProvider;
 
     public AbstractSelect2(Class<T2> t2Class,SelectContext selectContext,SelectTableInfoTypeEnum selectTableInfoType) {
         super(selectContext);
         TableInfo tableInfo = selectContext.getJdqcConfiguration().getTableByEntity(t2Class);
         selectContext.addSelectTable(new SelectTableInfo(tableInfo,selectContext.getAlias(),selectContext.getNextTableIndex(), selectTableInfoType));
-        this.sqlPredicateProvider =new Select2SqlPredicateProvider<>(selectContext);
+        this.sqlPredicateProvider =new Select2SqlProvider<>(selectContext);
     }
 
     @Override
@@ -52,7 +52,7 @@ public abstract  class AbstractSelect2<T1,T2,TR> extends AbstractSelect0<T1,TR, 
 
     @Override
     public Select2<T1, T2, TR> select(boolean condition, SqlExpression2<SqlSelector<T1, TR>, SqlSelector<T2, TR>> selectExpression) {
-        return null;
+        return this;
     }
 
     @Override
@@ -72,12 +72,12 @@ public abstract  class AbstractSelect2<T1,T2,TR> extends AbstractSelect0<T1,TR, 
     protected Select2<T1, T2, TR> getChain() {
         return this;
     }
-    protected Select2SqlPredicateProvider<T1,T2> getSelect2SqlPredicateProvider(){
+    protected Select2SqlProvider<T1,T2,TR> getSelect2SqlPredicateProvider(){
         return this.sqlPredicateProvider;
     }
 
     @Override
-    protected Select1SqlPredicateProvider<T1> getSelect1SqlPredicateProvider() {
+    protected Select1SqlProvider<T1,TR> getSelect1SqlPredicateProvider() {
         return sqlPredicateProvider;
     }
 }

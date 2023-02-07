@@ -10,10 +10,10 @@ import org.jdqc.sql.core.impl.lambda.DefaultSqlPredicate;
  * @Date: 2023/2/7 23:45
  * @Created by xuejiaming
  */
-public class Select2SqlPredicateProvider<T1,T2> extends Select1SqlPredicateProvider<T1> {
+public class Select2SqlProvider<T1,T2,TR> extends Select1SqlProvider<T1,TR> {
     private final DefaultSqlPredicate<T2> sqlPredicate2;
 
-    public Select2SqlPredicateProvider(SelectContext selectContext) {
+    public Select2SqlProvider(SelectContext selectContext) {
         super(selectContext);
         this.sqlPredicate2 = new DefaultSqlPredicate<>(1,selectContext, PredicateModeEnum.WHERE_PREDICATE);
     }

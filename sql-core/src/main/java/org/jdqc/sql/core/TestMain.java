@@ -35,6 +35,7 @@ public class TestMain {
                 .leftJoin(TestUser1.class, (a, b) -> a.eq(b, TestUser::getId, TestUser1::getUid).and(b).like(TestUser1::getName, "小明").like(TestUser1::getName, "小明"))
                 .where(a -> a.eq(TestUser::getId, "1").like(TestUser::getName, "1223"))
                 .where((a, b) -> b.eq(TestUser1::getId, "x"))
+                .select(a->a.select(TestUser::getStudentName))
                 .toList();
 
     }
