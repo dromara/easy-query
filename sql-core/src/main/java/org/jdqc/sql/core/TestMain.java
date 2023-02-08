@@ -52,7 +52,7 @@ public class TestMain {
                 .where(a -> a.eq(TestUser::getStudentName, "1").like(TestUser::getName, "xxx"))
                 .toSql();
         System.out.println(s1);
-        List<TestUser> xxx = client.select(TestUser.class).where(a -> a.eq(TestUser::getId, "1").like(TestUser::getName, "1223"))
+        List<TestUser> xxx = client.select(TestUser.class).where(a -> a.eq(TestUser::getId, 43).like(TestUser::getName, "1223"))
                 .select(o -> o.column(TestUser::getStudentName).column(TestUser::getId).column(TestUser::getName))
                 .where(a -> a.eq(TestUser::getStudentName, "1").like(TestUser::getName, "xxx"))
                 .toList();
