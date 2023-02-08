@@ -30,15 +30,29 @@ public class TestMain {
         jdqcConfiguration.addTableInfo(tableInfo1);
         client=new DefaultJQDCClient(jdqcConfiguration);
 
+        String s = client.select(TestUser.class)
+                .leftJoin(TestUser1.class, (a, b) -> a.eq(b, TestUser::getId, TestUser1::getUid).use(b).like(TestUser1::getName, "小明").like(TestUser1::getName, "小明"))
+                .where(a -> a.eq(TestUser::getId, "1").like(TestUser::getName, "1223"))
+                .where((a, b) -> b.eq(TestUser1::getId, "x"))
+                .select((a,b) -> a.column(TestUser::getStudentName).column(TestUser::getId).use(b).column(TestUser1::getUid))
+                .groupBy(o -> o.column(TestUser::getStudentName).column(TestUser::getId))
+                .groupBy((a, b) -> b.column(TestUser1::getUid))
+                .toSql();
+        System.out.println(s);
         List<TestUser> testUsers = client.select(TestUser.class,"aa")
-                .leftJoin(TestUser1.class, (a, b) -> a.eq(b, TestUser::getId, TestUser1::getUid).and(b).like(TestUser1::getName, "小明").like(TestUser1::getName, "小明"))
+                .leftJoin(TestUser1.class, (a, b) -> a.eq(b, TestUser::getId, TestUser1::getUid).use(b).like(TestUser1::getName, "小明").like(TestUser1::getName, "小明"))
                 .where(a -> a.eq(TestUser::getId, "1").like(TestUser::getName, "1223"))
                 .where((a, b) -> b.eq(TestUser1::getId, "x"))
                 .select(a->a.column(TestUser::getStudentName).column(TestUser::getId))
                 .groupBy(o->o.column(TestUser::getStudentName).column(TestUser::getId))
                 .groupBy((a,b)->b.column(TestUser1::getUid))
                 .toList();
-        client.select(TestUser.class).where(a -> a.eq(TestUser::getId, "1").like(TestUser::getName, "1223"))
+        String s1 = client.select(TestUser.class).where(a -> a.eq(TestUser::getId, "1").like(TestUser::getName, "1223"))
+                .select(o -> o.column(TestUser::getStudentName).column(TestUser::getId).column(TestUser::getName))
+                .where(a -> a.eq(TestUser::getStudentName, "1").like(TestUser::getName, "xxx"))
+                .toSql();
+        System.out.println(s1);
+        List<TestUser> xxx = client.select(TestUser.class).where(a -> a.eq(TestUser::getId, "1").like(TestUser::getName, "1223"))
                 .select(o -> o.column(TestUser::getStudentName).column(TestUser::getId).column(TestUser::getName))
                 .where(a -> a.eq(TestUser::getStudentName, "1").like(TestUser::getName, "xxx"))
                 .toList();

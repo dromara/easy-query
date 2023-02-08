@@ -9,6 +9,6 @@ import org.jdqc.sql.core.abstraction.lambda.Property;
  * @Date: 2023/2/6 23:20
  * @Created by xuejiaming
  */
-public interface SqlColumnSelector0<T1,TChain> extends IndexAware {
+public interface ColumnSelector<T1,TChain> extends IndexAware {
     TChain column(Property<T1,?> column);
 }

@@ -1,6 +1,8 @@
 package org.jdqc.sql.core.impl.lambda;
 
 
+import org.jdqc.sql.core.impl.SelectContext;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,8 +20,12 @@ public abstract class PredicateBuilder {
     public static final String NOT_IN = "NOT IN";
     public static final String BETWEEN = "BETWEEN";
     public static final String NOT_BETWEEN = "NOT BETWEEN";
-    protected List<Object> params = new ArrayList<>();
+    private final SelectContext selectContext;
 
+    public PredicateBuilder(SelectContext selectContext){
+
+        this.selectContext = selectContext;
+    }
 
     public abstract StringBuilder getSql() ;
     /**
@@ -40,7 +46,7 @@ public abstract class PredicateBuilder {
      * @return
      */
     public PredicateBuilder addParam(Object object) {
-        params.add(object);
+        selectContext.getParams().add(object);
         return this;
     }
     public void appendAndSql(String columnOwner,String column, Object value, String compare){
@@ -92,8 +98,4 @@ public abstract class PredicateBuilder {
         return " " + columnOwner+"."+colName + " ";
     }
 
-
-    public void clear(){
-        this.params.clear();
-    }
 }

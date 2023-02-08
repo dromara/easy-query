@@ -37,10 +37,6 @@ public abstract class AbstractSelect1<T1,TR> extends AbstractSelect0<T1,TR,Selec
 
 
     @Override
-    protected Select1SqlProvider<T1,TR> getSelect1SqlPredicateProvider(){
-        return this.sqlPredicateProvider;
-    }
-    @Override
     public <T2> Select2<T1, T2, TR> innerJoin(Class<T2> joinClass, SqlExpression2<SqlPredicate<T1>, SqlPredicate<T2>> on) {
         SelectContext selectContext = getSelectContext();
         AbstractSelect2<T1, T2, TR> select2 = createSelect2(joinClass, selectContext, SelectTableInfoTypeEnum.INNER_JOIN);
@@ -50,8 +46,13 @@ public abstract class AbstractSelect1<T1,TR> extends AbstractSelect0<T1,TR,Selec
         return select2;
     }
     @Override
-    protected Select1<T1, TR> getChain() {
+    protected Select1<T1, TR> getSelf() {
         return this;
     }
     protected abstract <T2> AbstractSelect2<T1, T2, TR> createSelect2(Class<T2> joinClass,SelectContext selectContext,SelectTableInfoTypeEnum selectTableInfoType);
+
+    @Override
+    protected Select1SqlProvider<T1,TR> getSelect1SqlPredicateProvider(){
+        return this.sqlPredicateProvider;
+    }
 }

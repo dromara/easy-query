@@ -46,4 +46,16 @@ public class SelectTableInfo {
     public SelectTableInfoTypeEnum getSelectTableInfoType() {
         return selectTableInfoType;
     }
+    public String getSelectTableSource(){
+        if(SelectTableInfoTypeEnum.LEFT_JOIN.equals(getSelectTableInfoType())){
+            return  " LEFT JOIN ";
+        }
+        else if(SelectTableInfoTypeEnum.INNER_JOIN.equals(getSelectTableInfoType())){
+            return  " INNER JOIN ";
+        }
+        else if(SelectTableInfoTypeEnum.RIGHT_JOIN.equals(getSelectTableInfoType())){
+            return  " RIGHT JOIN ";
+        }
+        return " FROM ";
+    }
 }

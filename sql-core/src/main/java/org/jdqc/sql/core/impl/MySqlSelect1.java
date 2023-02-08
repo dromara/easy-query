@@ -1,7 +1,7 @@
 package org.jdqc.sql.core.impl;
 
-import org.jdqc.sql.core.abstraction.sql.Select2;
 import org.jdqc.sql.core.enums.SelectTableInfoTypeEnum;
+import org.jdqc.sql.core.exception.JDQCException;
 import org.jdqc.sql.core.query.builder.SelectTableInfo;
 
 import java.util.List;
@@ -36,21 +36,35 @@ public class MySqlSelect1<T1,TR> extends AbstractSelect1<T1,TR> {
 
     @Override
     public List<TR> toList() {
-        System.out.println("select的表达式:"+getSelectContext().getSelect());
-        System.out.println("where的表达式:"+getSelectContext().getWhere());
-        System.out.println("group的表达式:"+getSelectContext().getGroup());
-        System.out.println("order的表达式:"+getSelectContext().getOrder());
-        for (SelectTableInfo table : getSelectContext().getTables()) {
-
-            System.out.println("from的表达式:"+table.getTable().getTableType().getSimpleName()+" as "+table.getAlias());
-            System.out.println("on的表达式:"+table.getOn());
-        }
+        System.out.println(toSql());
+        System.out.println(getSelectContext().getParams());
         return null;
     }
 
     @Override
     public String toSql() {
-        return null;
+        StringBuilder sql = new StringBuilder("SELECT " + getSelectContext().getSelect());
+        int tableCount = getSelectContext().getTables().size();
+        if(tableCount==0){
+            throw new JDQCException("未找到查询表信息");
+        }
+        for (int i = 0; i < tableCount-1; i++) {
+            SelectTableInfo table = getSelectContext().getTable(i);
+
+            sql.append(table.getSelectTableSource()).append(table.getTable().getTableType().getSimpleName()).append(" ").append(table.getAlias());
+            if(table.getOn().length()==0){
+                break;
+            }
+            SelectTableInfo table1 = getSelectContext().getTable(i+1);
+            sql.append(table1.getSelectTableSource()).append(" ").append(table.getTable().getTableType().getSimpleName()).append(" ").append(table1.getAlias()).append(" ON ").append(table.getOn());
+        }
+        if(getSelectContext().getWhere().length()>0){
+            sql.append(" WHERE").append(getSelectContext().getWhere());
+        }
+        if(getSelectContext().getGroup().length()>0){
+            sql.append(" GROUP BY ").append(getSelectContext().getGroup());
+        }
+        return sql.toString();
     }
 
 }

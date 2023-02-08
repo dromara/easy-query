@@ -6,7 +6,7 @@ import org.jdqc.sql.core.abstraction.sql.Select2;
 import org.jdqc.sql.core.abstraction.sql.Select3;
 import org.jdqc.sql.core.abstraction.sql.base.SqlColumnSelector;
 import org.jdqc.sql.core.abstraction.sql.base.SqlPredicate;
-import org.jdqc.sql.core.abstraction.sql.base.SqlSelector;
+import org.jdqc.sql.core.abstraction.sql.base.SqlSelectColumnSelector;
 import org.jdqc.sql.core.enums.SelectTableInfoTypeEnum;
 import org.jdqc.sql.core.query.builder.SelectTableInfo;
 import org.jdqc.sql.core.schema.TableInfo;
@@ -51,7 +51,12 @@ public abstract  class AbstractSelect2<T1,T2,TR> extends AbstractSelect0<T1,TR, 
 
 
     @Override
-    public Select2<T1, T2, TR> select(boolean condition, SqlExpression2<SqlSelector<T1, TR>, SqlSelector<T2, TR>> selectExpression) {
+    public Select2<T1, T2, TR> select(boolean condition, SqlExpression2<SqlSelectColumnSelector<T1, TR>, SqlSelectColumnSelector<T2, TR>> selectExpression) {
+        if(condition){
+            SqlSelectColumnSelector<T1, TR> sqlSelector1 = getSelect2SqlPredicateProvider().getSqlSelector1();
+            SqlSelectColumnSelector<T2, TR> sqlSelector2 = getSelect2SqlPredicateProvider().getSqlSelector2();
+            selectExpression.apply(sqlSelector1,sqlSelector2);
+        }
         return this;
     }
 
@@ -74,7 +79,7 @@ public abstract  class AbstractSelect2<T1,T2,TR> extends AbstractSelect0<T1,TR, 
         return this;
     }
     @Override
-    protected Select2<T1, T2, TR> getChain() {
+    protected Select2<T1, T2, TR> getSelf() {
         return this;
     }
     protected Select2SqlProvider<T1,T2,TR> getSelect2SqlPredicateProvider(){

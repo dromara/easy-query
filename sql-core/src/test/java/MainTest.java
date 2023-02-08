@@ -28,7 +28,7 @@ public class MainTest {
         SysUserExt sysUserExt = client.select(SysUser.class,SysUserExt.class)
                 .leftJoin(SysUserExt.class, (a, b) -> a.eq(b, SysUser::getName, SysUserExt::getId))
                 .where((a, b) -> a.eq(SysUser::getId, "123"))
-                .select((a,b)->a.columnAll().columnAs(SysUser::getId,SysUserExt::getId).and(b).columnAvg(SysUserExt::getId,SysUserExt::getId))
+                .select((a,b)->a.columnAll().columnAs(SysUser::getId,SysUserExt::getId).use(b).columnAvg(SysUserExt::getId,SysUserExt::getId))
                 .skip(1).take(2)
                 .groupBy(a->a.column(SysUser::getId).column(SysUser::getName))
                 .firstOrNull();

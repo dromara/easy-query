@@ -18,10 +18,10 @@ public interface Select2<T1,T2,TR>extends Select0<T1,TR, Select2<T1,T2,TR>> {
        return where(true,whereExpression);
    }
     Select2<T1,T2,TR> where(boolean condition,SqlExpression2<SqlPredicate<T1>,SqlPredicate<T2>> whereExpression);
-    default Select2<T1,T2,TR> select(SqlExpression2<SqlSelector<T1,TR>,SqlSelector<T2,TR>> selectExpression){
+    default Select2<T1,T2,TR> select(SqlExpression2<SqlSelectColumnSelector<T1,TR>, SqlSelectColumnSelector<T2,TR>> selectExpression){
         return select(true,selectExpression);
     }
-    Select2<T1,T2,TR> select(boolean condition,SqlExpression2<SqlSelector<T1,TR>,SqlSelector<T2,TR>> selectExpression);
+    Select2<T1,T2,TR> select(boolean condition,SqlExpression2<SqlSelectColumnSelector<T1,TR>, SqlSelectColumnSelector<T2,TR>> selectExpression);
    default Select2<T1,T2,TR> groupBy(SqlExpression2<SqlColumnSelector<T1>,SqlColumnSelector<T2>> selectExpression){
        return groupBy(true,selectExpression);
    }

@@ -7,5 +7,5 @@ package org.jdqc.sql.core.abstraction.sql.base;
  * @Date: 2023/2/6 23:21
  * @Created by xuejiaming
  */
-public interface SqlColumnSelector<T1> extends SqlColumnSelector0<T1,SqlColumnSelector<T1>> {
+public interface SqlColumnSelector<T1> extends ColumnSelector<T1,SqlColumnSelector<T1>> {
 }

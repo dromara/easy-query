@@ -22,11 +22,12 @@ public class SelectContext {
 
     private final List<SelectTableInfo> tables;
     private final Class<?> resultClass;
+    private final List<Object> params;
 
-    private final StringBuilder where;
-    private final StringBuilder select;
-    private final StringBuilder group;
-    private final StringBuilder order;
+    private  StringBuilder where;
+    private  StringBuilder select;
+    private  StringBuilder group;
+    private  StringBuilder order;
 
     public SelectContext(Class<?> resultClass, JDQCConfiguration jdqcConfiguration){
         this(resultClass,jdqcConfiguration,"t");
@@ -35,11 +36,8 @@ public class SelectContext {
         this.jdqcConfiguration = jdqcConfiguration;
         this.alias = alias;
         this.tables =new ArrayList<>();
+        this.params =new ArrayList<>();
         this.resultClass=resultClass;
-        this.where= new StringBuilder();
-        this.select= new StringBuilder();
-        this.group= new StringBuilder();
-        this.order= new StringBuilder();
     }
 
     public List<SelectTableInfo> getTables() {
@@ -69,6 +67,9 @@ public class SelectContext {
     }
 
     public StringBuilder getWhere() {
+        if(where==null){
+            where=new StringBuilder();
+        }
         return where;
     }
 
@@ -110,6 +111,9 @@ public class SelectContext {
     }
 
     public StringBuilder getSelect() {
+        if(select==null){
+            select=new StringBuilder();
+        }
         return select;
     }
 
@@ -118,10 +122,20 @@ public class SelectContext {
     }
 
     public StringBuilder getGroup() {
+        if(group==null){
+            group=new StringBuilder();
+        }
         return group;
     }
 
     public StringBuilder getOrder() {
+        if(order==null){
+            order=new StringBuilder();
+        }
         return order;
+    }
+
+    public List<Object> getParams() {
+        return params;
     }
 }

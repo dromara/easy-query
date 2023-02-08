@@ -22,10 +22,10 @@ public interface Select0<T1,TR, TChain> {
        return where(true,whereExpression);
    }
     TChain where(boolean condition, SqlExpression<SqlPredicate<T1>> whereExpression);
-    default TChain select(SqlExpression<SqlSelector<T1,TR>> selectExpression){
+    default TChain select(SqlExpression<SqlSelectColumnSelector<T1,TR>> selectExpression){
         return select(true,selectExpression);
     }
-    TChain select(boolean condition,SqlExpression<SqlSelector<T1,TR>> selectExpression);
+    TChain select(boolean condition,SqlExpression<SqlSelectColumnSelector<T1,TR>> selectExpression);
    default TChain groupBy(SqlExpression<SqlColumnSelector<T1>> selectExpression){
        return groupBy(true,selectExpression);
    }

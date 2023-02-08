@@ -22,6 +22,7 @@ public class DefaultSqlPredicate<T1> extends PredicateBuilder implements SqlPred
     private PredicateModeEnum predicateMode;
 
     public DefaultSqlPredicate(int index, SelectContext selectContext, PredicateModeEnum predicateMode) {
+        super(selectContext);
         this.index = index;
         this.selectContext = selectContext;
         this.predicateMode = predicateMode;
@@ -62,12 +63,12 @@ public class DefaultSqlPredicate<T1> extends PredicateBuilder implements SqlPred
     }
 
     @Override
-    public <T2, TChain2> WherePredicate<T2, TChain2> and(WherePredicate<T2, TChain2> sub) {
+    public <T2, TChain2> WherePredicate<T2, TChain2> use(WherePredicate<T2, TChain2> sub) {
         return sub;
     }
 
     @Override
-    public DefaultSqlPredicate<T1> and() {
+    public DefaultSqlPredicate<T1> use() {
         return null;
     }
 

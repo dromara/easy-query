@@ -1,7 +1,7 @@
 package org.jdqc.sql.core.impl.lambda;
 
 import org.jdqc.sql.core.abstraction.lambda.Property;
-import org.jdqc.sql.core.abstraction.sql.base.SqlColumnSelector0;
+import org.jdqc.sql.core.abstraction.sql.base.ColumnSelector;
 import org.jdqc.sql.core.impl.SelectContext;
 import org.jdqc.sql.core.query.builder.SelectTableInfo;
 
@@ -11,7 +11,7 @@ import org.jdqc.sql.core.query.builder.SelectTableInfo;
  * @Date: 2023/2/8 12:26
  * @Created by xuejiaming
  */
-public abstract class AbstractSqlColumnSelector<T1,TChain> extends SelectorBuilder implements SqlColumnSelector0<T1,TChain> {
+public abstract class AbstractSqlColumnSelector<T1,TChain> extends SelectorBuilder implements ColumnSelector<T1,TChain> {
     private final int index;
     private final SelectContext selectContext;
 
