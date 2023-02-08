@@ -1,4 +1,4 @@
-package org.jdqc.sql.core.abstraction.sql.base;
+package org.jdqc.sql.core.impl.lambda;
 
 
 import java.util.ArrayList;

@@ -68,6 +68,10 @@ public abstract class AbstractSelect0<T1, TR,TChain> implements Select0<T1, TR, 
 
     @Override
     public TChain groupBy(boolean condition, SqlExpression<SqlColumnSelector<T1>> selectExpression) {
+        if(condition){
+            SqlColumnSelector<T1> sqlGroupSelector1 = getSelect1SqlPredicateProvider().getSqlGroupSelector1();
+            selectExpression.apply(sqlGroupSelector1);
+        }
         return getChain();
     }
 

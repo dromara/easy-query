@@ -23,8 +23,18 @@ public class DefaultJQDCClient implements JQDCClient {
     }
 
     @Override
+    public <T1> Select1<T1, T1> select(Class<T1> clazz, String alias) {
+        return new MySqlSelect1<>(clazz,new SelectContext(clazz,configuration,alias));
+    }
+
+    @Override
     public <T1, TR> Select1<T1, TR> select(Class<T1> clazz, Class<TR> trClass) {
         return new MySqlSelect1<>(clazz,new SelectContext(trClass,configuration));
+    }
+
+    @Override
+    public <T1, TR> Select1<T1, TR> select(Class<T1> clazz, Class<TR> trClass, String alias) {
+        return new MySqlSelect1<>(clazz,new SelectContext(trClass,configuration,alias));
     }
 
 }

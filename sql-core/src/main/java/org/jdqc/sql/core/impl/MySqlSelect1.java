@@ -36,10 +36,13 @@ public class MySqlSelect1<T1,TR> extends AbstractSelect1<T1,TR> {
 
     @Override
     public List<TR> toList() {
-        System.out.println(getSelectContext().getSql());
+        System.out.println("select的表达式:"+getSelectContext().getSelect());
         System.out.println("where的表达式:"+getSelectContext().getWhere());
+        System.out.println("group的表达式:"+getSelectContext().getGroup());
+        System.out.println("order的表达式:"+getSelectContext().getOrder());
         for (SelectTableInfo table : getSelectContext().getTables()) {
 
+            System.out.println("from的表达式:"+table.getTable().getTableType().getSimpleName()+" as "+table.getAlias());
             System.out.println("on的表达式:"+table.getOn());
         }
         return null;

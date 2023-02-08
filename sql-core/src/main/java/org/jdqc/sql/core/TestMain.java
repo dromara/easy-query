@@ -1,7 +1,6 @@
 package org.jdqc.sql.core;
 
 import org.jdqc.sql.core.abstraction.client.JQDCClient;
-import org.jdqc.sql.core.abstraction.sql.Select2;
 import org.jdqc.sql.core.config.JDQCConfiguration;
 import org.jdqc.sql.core.impl.DefaultJQDCClient;
 import org.jdqc.sql.core.schema.ColumnInfo;
@@ -31,11 +30,17 @@ public class TestMain {
         jdqcConfiguration.addTableInfo(tableInfo1);
         client=new DefaultJQDCClient(jdqcConfiguration);
 
-        List<TestUser> testUsers = client.select(TestUser.class)
+        List<TestUser> testUsers = client.select(TestUser.class,"aa")
                 .leftJoin(TestUser1.class, (a, b) -> a.eq(b, TestUser::getId, TestUser1::getUid).and(b).like(TestUser1::getName, "小明").like(TestUser1::getName, "小明"))
                 .where(a -> a.eq(TestUser::getId, "1").like(TestUser::getName, "1223"))
                 .where((a, b) -> b.eq(TestUser1::getId, "x"))
-                .select(a->a.select(TestUser::getStudentName))
+                .select(a->a.column(TestUser::getStudentName).column(TestUser::getId))
+                .groupBy(o->o.column(TestUser::getStudentName).column(TestUser::getId))
+                .groupBy((a,b)->b.column(TestUser1::getUid))
+                .toList();
+        client.select(TestUser.class).where(a -> a.eq(TestUser::getId, "1").like(TestUser::getName, "1223"))
+                .select(o -> o.column(TestUser::getStudentName).column(TestUser::getId).column(TestUser::getName))
+                .where(a -> a.eq(TestUser::getStudentName, "1").like(TestUser::getName, "xxx"))
                 .toList();
 
     }

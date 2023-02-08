@@ -65,8 +65,13 @@ public abstract  class AbstractSelect2<T1,T2,TR> extends AbstractSelect0<T1,TR, 
         return null;
     }
     @Override
-    public Select2<T1, T2, TR> groupBy(SqlExpression2<SqlColumnSelector<T1>, SqlColumnSelector<T2>> selectExpression) {
-        return null;
+    public Select2<T1, T2, TR> groupBy(boolean condition,SqlExpression2<SqlColumnSelector<T1>, SqlColumnSelector<T2>> selectExpression) {
+        if(condition){
+            SqlColumnSelector<T1> sqlGroupSelector1 = getSelect2SqlPredicateProvider().getSqlGroupSelector1();
+            SqlColumnSelector<T2> sqlGroupSelector2 = getSelect2SqlPredicateProvider().getSqlGroupSelector2();
+            selectExpression.apply(sqlGroupSelector1,sqlGroupSelector2);
+        }
+        return this;
     }
     @Override
     protected Select2<T1, T2, TR> getChain() {

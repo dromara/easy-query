@@ -1,6 +1,5 @@
 package org.jdqc.sql.core.impl;
 
-import org.jdqc.sql.core.abstraction.sql.base.SqlPredicate;
 import org.jdqc.sql.core.config.JDQCConfiguration;
 import org.jdqc.sql.core.exception.JDQCException;
 import org.jdqc.sql.core.query.builder.SelectTableInfo;
@@ -15,7 +14,7 @@ import java.util.List;
  * @Date: 2023/2/6 12:39
  * @Created by xuejiaming
  */
-public class SelectContext extends BaseSelectContext {
+public class SelectContext {
     private final JDQCConfiguration jdqcConfiguration;
     private final String alias;
     private int skip;
@@ -25,17 +24,22 @@ public class SelectContext extends BaseSelectContext {
     private final Class<?> resultClass;
 
     private final StringBuilder where;
+    private final StringBuilder select;
+    private final StringBuilder group;
+    private final StringBuilder order;
 
     public SelectContext(Class<?> resultClass, JDQCConfiguration jdqcConfiguration){
         this(resultClass,jdqcConfiguration,"t");
     }
     public SelectContext(Class<?> resultClass, JDQCConfiguration jdqcConfiguration,String alias){
-        super(jdqcConfiguration);
         this.jdqcConfiguration = jdqcConfiguration;
         this.alias = alias;
         this.tables =new ArrayList<>();
         this.resultClass=resultClass;
         this.where= new StringBuilder();
+        this.select= new StringBuilder();
+        this.group= new StringBuilder();
+        this.order= new StringBuilder();
     }
 
     public List<SelectTableInfo> getTables() {
@@ -103,5 +107,21 @@ public class SelectContext extends BaseSelectContext {
         }
         int i = getNextTableIndex() -1 - offsetForward;
         return this.tables.get(i);
+    }
+
+    public StringBuilder getSelect() {
+        return select;
+    }
+
+    public JDQCConfiguration getJdqcConfiguration() {
+        return jdqcConfiguration;
+    }
+
+    public StringBuilder getGroup() {
+        return group;
+    }
+
+    public StringBuilder getOrder() {
+        return order;
     }
 }

@@ -22,7 +22,10 @@ public interface Select2<T1,T2,TR>extends Select0<T1,TR, Select2<T1,T2,TR>> {
         return select(true,selectExpression);
     }
     Select2<T1,T2,TR> select(boolean condition,SqlExpression2<SqlSelector<T1,TR>,SqlSelector<T2,TR>> selectExpression);
-    Select2<T1,T2,TR> groupBy(SqlExpression2<SqlColumnSelector<T1>,SqlColumnSelector<T2>> selectExpression);
+   default Select2<T1,T2,TR> groupBy(SqlExpression2<SqlColumnSelector<T1>,SqlColumnSelector<T2>> selectExpression){
+       return groupBy(true,selectExpression);
+   }
+    Select2<T1,T2,TR> groupBy(boolean condition,SqlExpression2<SqlColumnSelector<T1>,SqlColumnSelector<T2>> selectExpression);
     default Select2<T1,T2,TR> orderByAsc(SqlExpression2<SqlColumnSelector<T1>,SqlColumnSelector<T2>> selectExpression){
         return orderByAsc(true,selectExpression);
     }

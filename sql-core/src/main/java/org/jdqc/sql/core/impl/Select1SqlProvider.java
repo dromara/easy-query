@@ -1,9 +1,11 @@
 package org.jdqc.sql.core.impl;
 
+import org.jdqc.sql.core.abstraction.sql.base.SqlColumnSelector;
 import org.jdqc.sql.core.abstraction.sql.base.SqlPredicate;
 import org.jdqc.sql.core.abstraction.sql.base.SqlSelector;
 import org.jdqc.sql.core.abstraction.sql.enums.PredicateModeEnum;
-import org.jdqc.sql.core.impl.lambda.DefaultSqSelector;
+import org.jdqc.sql.core.impl.lambda.DefaultSqlGroupSelector;
+import org.jdqc.sql.core.impl.lambda.DefaultSqlSelector;
 import org.jdqc.sql.core.impl.lambda.DefaultSqlPredicate;
 
 /**
@@ -14,11 +16,16 @@ import org.jdqc.sql.core.impl.lambda.DefaultSqlPredicate;
  */
 public class Select1SqlProvider<T1,TR> {
     private final DefaultSqlPredicate<T1> sqlPredicate1;
-    private final DefaultSqSelector<T1,TR> sqlSelector1;
+    private final DefaultSqlSelector<T1,TR> sqlSelector1;
+    private final DefaultSqlGroupSelector<T1> sqlGroupSelector1;
 
     public Select1SqlProvider(SelectContext selectContext) {
         this.sqlPredicate1 = new DefaultSqlPredicate<>(0,selectContext, PredicateModeEnum.WHERE_PREDICATE);
-        this.sqlSelector1 = new DefaultSqSelector<>(0,selectContext);
+        this.sqlSelector1 = new DefaultSqlSelector<>(0,selectContext);
+        this.sqlGroupSelector1 = new DefaultSqlGroupSelector<>(0,selectContext);
+    }
+    public SqlColumnSelector<T1> getSqlGroupSelector1(){
+        return sqlGroupSelector1;
     }
     public SqlSelector<T1,TR> getSqlSelector1(){
         return sqlSelector1;

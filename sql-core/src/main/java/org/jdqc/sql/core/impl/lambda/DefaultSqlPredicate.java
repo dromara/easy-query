@@ -1,7 +1,6 @@
 package org.jdqc.sql.core.impl.lambda;
 
 import org.jdqc.sql.core.abstraction.lambda.Property;
-import org.jdqc.sql.core.abstraction.sql.base.PredicateBuilder;
 import org.jdqc.sql.core.abstraction.sql.base.SqlPredicate;
 import org.jdqc.sql.core.abstraction.sql.base.WherePredicate;
 import org.jdqc.sql.core.abstraction.sql.enums.PredicateModeEnum;
