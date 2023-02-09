@@ -64,7 +64,7 @@ public class TestMain {
                 .where((a, b) -> b.eq(TestUser1::getId, "x"))
 //                .select((a,b) -> a.column(TestUser::getStudentName).column(TestUser::getId).use(b).column(TestUser1::getUid))
 //                .groupBy(o -> o.column(TestUser::getStudentName).column(TestUser::getId))
-                .groupBy((a, b) -> b.column(TestUser1::getUid).and(a).column(TestUser::getStudentName))
+                .groupBy((a, b) -> b.column(TestUser1::getUid).and(a).columnAll())
                 .firstOrNull((a) -> a.column(TestUser::getStudentName));
 
     }

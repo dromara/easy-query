@@ -41,22 +41,14 @@ public abstract class AbstractSelect0<T1,TChain> implements Select0<T1, TChain> 
 
     @Override
     public  T1 firstOrNull(){
-        this.take(1);
-        List<T1> list = toList();
-        if(list.isEmpty()){
-            return null;
-        }
-        return list.get(0);
+        SqlExpression<SqlColumnAsSelector<T1, T1>> selectExpression= ColumnSelector::columnAll;
+        return firstOrNull(t1Class,selectExpression);
     }
 
     @Override
     public T1 firstOrNull(SqlExpression<SqlColumnSelector<T1>> selectExpression) {
-        this.take(1);
-        List<T1> list = toList(selectExpression);
-        if(list.isEmpty()){
-            return null;
-        }
-        return list.get(0);
+        SqlExpression<SqlColumnAsSelector<T1, T1>> selectAsExpression= o->selectExpression.apply((SqlColumnSelector<T1>)o);
+        return firstOrNull(t1Class,selectAsExpression);
     }
 
     @Override
@@ -66,7 +58,12 @@ public abstract class AbstractSelect0<T1,TChain> implements Select0<T1, TChain> 
 
     @Override
     public <TR> TR firstOrNull(Class<TR> resultClass, SqlExpression<SqlColumnAsSelector<T1, TR>> selectExpression) {
-        return null;
+        this.take(1);
+        List<TR> list = toList(resultClass,selectExpression);
+        if(list.isEmpty()){
+            return null;
+        }
+        return list.get(0);
     }
 
     @Override
@@ -148,7 +145,12 @@ public abstract class AbstractSelect0<T1,TChain> implements Select0<T1, TChain> 
 
     @Override
     public <TR> List<TR> toList(Class<TR> resultClass, SqlExpression<SqlColumnAsSelector<T1, TR>> selectExpression) {
-        return null;
+
+        DefaultSqlColumnAsSelector<T1, TR> selector = new DefaultSqlColumnAsSelector<>(0, getSelectContext());
+        selectExpression.apply(selector);
+        String s = toSql();
+        System.out.println(s);
+        return new ArrayList<>();
     }
     //
 //    @Override
