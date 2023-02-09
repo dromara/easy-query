@@ -20,7 +20,7 @@ public abstract class AbstractSelect1<T1> extends AbstractSelect0<T1,Select1<T1>
 
     private final Select1SqlProvider<T1> sqlPredicateProvider;
     public AbstractSelect1(Class<T1> t1Class,SelectContext selectContext) {
-        super(selectContext);
+        super(t1Class,selectContext);
         TableInfo tableInfo = selectContext.getJdqcConfiguration().getTableByEntity(t1Class);
         selectContext.addSelectTable(new SelectTableInfo(tableInfo,selectContext.getAlias(),selectContext.getNextTableIndex(), SelectTableInfoTypeEnum.FROM));
         sqlPredicateProvider= new Select1SqlProvider<>(selectContext);

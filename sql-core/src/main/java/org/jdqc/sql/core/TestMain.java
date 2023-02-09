@@ -57,5 +57,15 @@ public class TestMain {
                 .where(a -> a.eq(TestUser::getStudentName, "1").like(TestUser::getName, "xxx"))
                 .toList();
 
+
+        TestUser testUser = client.select(TestUser.class)
+                .leftJoin(TestUser1.class, (a, b) -> a.eq(b, TestUser::getId, TestUser1::getUid).and(b).like(TestUser1::getName, "小明").like(TestUser1::getName, "小明"))
+                .where(a -> a.eq(TestUser::getId, "1").like(TestUser::getName, "1223"))
+                .where((a, b) -> b.eq(TestUser1::getId, "x"))
+//                .select((a,b) -> a.column(TestUser::getStudentName).column(TestUser::getId).use(b).column(TestUser1::getUid))
+//                .groupBy(o -> o.column(TestUser::getStudentName).column(TestUser::getId))
+                .groupBy((a, b) -> b.column(TestUser1::getUid).and(a).column(TestUser::getStudentName))
+                .firstOrNull((a) -> a.column(TestUser::getStudentName));
+
     }
 }

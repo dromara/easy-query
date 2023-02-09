@@ -13,4 +13,7 @@ public interface ColumnSelector<T1,TChain> extends IndexAware {
     TChain column(Property<T1,?> column);
     TChain columnAll();
     TChain columnIgnore(Property<T1,?> column);
+   default  <T2,TChain2> ColumnSelector<T2,TChain2> and(ColumnSelector<T2,TChain2> sub){
+        return sub;
+    }
 }
