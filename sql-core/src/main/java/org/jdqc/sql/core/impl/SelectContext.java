@@ -14,7 +14,7 @@ import java.util.List;
  * @Date: 2023/2/6 12:39
  * @Created by xuejiaming
  */
-public class SelectContext {
+public abstract class SelectContext {
     private final JDQCConfiguration jdqcConfiguration;
     private final String alias;
     private int skip;
@@ -37,6 +37,7 @@ public class SelectContext {
         this.tables =new ArrayList<>();
         this.params =new ArrayList<>();
     }
+    public abstract SelectContext copy();
 
     public List<SelectTableInfo> getTables() {
         return tables;
@@ -133,4 +134,6 @@ public class SelectContext {
     public List<Object> getParams() {
         return params;
     }
+    public abstract String toSql();
+
 }

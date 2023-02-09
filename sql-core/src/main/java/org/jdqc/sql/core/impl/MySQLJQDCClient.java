@@ -11,20 +11,20 @@ import org.jdqc.sql.core.config.JDQCConfiguration;
  * @Date: 2023/2/5 21:28
  * @Created by xuejiaming
  */
-public class DefaultJQDCClient implements JQDCClient {
+public class MySQLJQDCClient implements JQDCClient {
     private final JDQCConfiguration configuration;
-    public DefaultJQDCClient(JDQCConfiguration configuration){
+    public MySQLJQDCClient(JDQCConfiguration configuration){
 
         this.configuration = configuration;
     }
     @Override
     public <T1> Select1<T1> select(Class<T1> clazz) {
-        return new MySqlSelect1<>(clazz,new SelectContext(configuration));
+        return new MySqlSelect1<>(clazz,new MySQLSelectContext(configuration));
     }
 
     @Override
     public <T1> Select1<T1> select(Class<T1> clazz, String alias) {
-        return new MySqlSelect1<>(clazz,new SelectContext(configuration,alias));
+        return new MySqlSelect1<>(clazz,new MySQLSelectContext(configuration,alias));
     }
 
 }

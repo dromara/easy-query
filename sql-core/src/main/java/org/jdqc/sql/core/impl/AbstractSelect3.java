@@ -12,8 +12,11 @@ import org.jdqc.sql.core.abstraction.sql.base.SqlPredicate;
  * @Created by xuejiaming
  */
 public abstract class AbstractSelect3<T1,T2,T3> extends AbstractSelect0<T1, Select3<T1,T2,T3>> implements Select3<T1,T2,T3> {
-    public AbstractSelect3(Class<T1> t1Class,SelectContext selectContext) {
+    private final MySQLSelectContext selectContext;
+
+    public AbstractSelect3(Class<T1> t1Class, MySQLSelectContext selectContext) {
         super(t1Class,selectContext);
+        this.selectContext = selectContext;
     }
 
 
