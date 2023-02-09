@@ -63,12 +63,12 @@ public class DefaultSqlPredicate<T1> extends PredicateBuilder implements SqlPred
     }
 
     @Override
-    public <T2, TChain2> WherePredicate<T2, TChain2> use(WherePredicate<T2, TChain2> sub) {
+    public <T2, TChain2> WherePredicate<T2, TChain2> and(WherePredicate<T2, TChain2> sub) {
         return sub;
     }
 
     @Override
-    public DefaultSqlPredicate<T1> use() {
+    public DefaultSqlPredicate<T1> and() {
         return null;
     }
 

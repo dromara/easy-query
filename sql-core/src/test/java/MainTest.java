@@ -12,7 +12,7 @@ import org.jdqc.sql.core.abstraction.client.JQDCClient;
  */
 public class MainTest {
     private JQDCClient client=new DefaultJQDCClient(new JDQCConfiguration());
-    private Select1<SysUser,SysUserExt> x;
+//    private Select1<SysUser> x;
     public void Test1(){
 //        SysUser sysUser = client.select(SysUser.class).eq(SysUser::getId, 1).firstOrNull();
 //
@@ -25,13 +25,13 @@ public class MainTest {
 //                .eq(SysUser::getId, SysUserExt::getUid)
 //                .toList();
 
-        SysUserExt sysUserExt = client.select(SysUser.class,SysUserExt.class)
-                .leftJoin(SysUserExt.class, (a, b) -> a.eq(b, SysUser::getName, SysUserExt::getId))
-                .where((a, b) -> a.eq(SysUser::getId, "123"))
-                .select((a,b)->a.columnAll().columnAs(SysUser::getId,SysUserExt::getId).use(b).columnAvg(SysUserExt::getId,SysUserExt::getId))
-                .skip(1).take(2)
-                .groupBy(a->a.column(SysUser::getId).column(SysUser::getName))
-                .firstOrNull();
+//        SysUserExt sysUserExt = client.select(SysUser.class)
+//                .leftJoin(SysUserExt.class, (a, b) -> a.eq(b, SysUser::getName, SysUserExt::getId))
+//                .where((a, b) -> a.eq(SysUser::getId, "123"))
+////                .select((a,b)->a.columnAll().columnAs(SysUser::getId,SysUserExt::getId).use(b).columnAvg(SysUserExt::getId,SysUserExt::getId))
+//                .skip(1).take(2)
+//                .groupBy(a->a.column(SysUser::getId).column(SysUser::getName))
+//                .firstOrNull();
 
     }
 }

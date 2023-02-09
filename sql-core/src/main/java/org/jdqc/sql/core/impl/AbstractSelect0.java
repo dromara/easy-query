@@ -4,7 +4,6 @@ import org.jdqc.sql.core.abstraction.lambda.SqlExpression;
 import org.jdqc.sql.core.abstraction.sql.Select0;
 import org.jdqc.sql.core.abstraction.sql.base.SqlColumnSelector;
 import org.jdqc.sql.core.abstraction.sql.base.SqlPredicate;
-import org.jdqc.sql.core.abstraction.sql.base.SqlSelectColumnSelector;
 import org.jdqc.sql.core.abstraction.sql.enums.PredicateModeEnum;
 
 import java.util.List;
@@ -16,7 +15,7 @@ import java.util.List;
  * @Date: 2023/2/6 23:44
  * @Created by xuejiaming
  */
-public abstract class AbstractSelect0<T1, TR,TChain> implements Select0<T1, TR, TChain> {
+public abstract class AbstractSelect0<T1,TChain> implements Select0<T1, TChain> {
     private final SelectContext selectContext;
 
     public AbstractSelect0(SelectContext selectContext){
@@ -32,17 +31,10 @@ public abstract class AbstractSelect0<T1, TR,TChain> implements Select0<T1, TR, 
     public abstract boolean any();
 
     @Override
-    public TR firstOrNull() {
-        this.take(1);
-        List<TR> list = toList();
-        if(list.isEmpty()){
-            return null;
-        }
-        return list.get(0);
-    }
+    public abstract T1 firstOrNull();
 
     @Override
-    public abstract List<TR> toList();
+    public abstract List<T1> toList();
 
     @Override
     public abstract String toSql();
@@ -56,15 +48,15 @@ public abstract class AbstractSelect0<T1, TR,TChain> implements Select0<T1, TR, 
         }
         return getSelf();
     }
-
-    @Override
-    public TChain select(boolean condition,SqlExpression<SqlSelectColumnSelector<T1, TR>> selectExpression) {
-        if(condition){
-            SqlSelectColumnSelector<T1, TR> sqlSelector = getSelect1SqlPredicateProvider().getSqlSelector1();
-            selectExpression.apply(sqlSelector);
-        }
-        return getSelf();
-    }
+//
+//    @Override
+//    public TChain select(boolean condition,SqlExpression<SqlColumnAsSelector<T1, TR>> selectExpression) {
+//        if(condition){
+//            SqlColumnAsSelector<T1, TR> sqlSelector = getSelect1SqlPredicateProvider().getSqlSelector1();
+//            selectExpression.apply(sqlSelector);
+//        }
+//        return getSelf();
+//    }
 
     @Override
     public TChain groupBy(boolean condition, SqlExpression<SqlColumnSelector<T1>> selectExpression) {
@@ -103,5 +95,5 @@ public abstract class AbstractSelect0<T1, TR,TChain> implements Select0<T1, TR, 
         return selectContext;
     }
 
-    protected abstract Select1SqlProvider<T1,TR> getSelect1SqlPredicateProvider();
+    protected abstract Select1SqlProvider<T1> getSelect1SqlPredicateProvider();
 }

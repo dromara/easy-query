@@ -21,7 +21,6 @@ public class SelectContext {
     private int take;
 
     private final List<SelectTableInfo> tables;
-    private final Class<?> resultClass;
     private final List<Object> params;
 
     private  StringBuilder where;
@@ -29,15 +28,14 @@ public class SelectContext {
     private  StringBuilder group;
     private  StringBuilder order;
 
-    public SelectContext(Class<?> resultClass, JDQCConfiguration jdqcConfiguration){
-        this(resultClass,jdqcConfiguration,"t");
+    public SelectContext(JDQCConfiguration jdqcConfiguration){
+        this(jdqcConfiguration,"t");
     }
-    public SelectContext(Class<?> resultClass, JDQCConfiguration jdqcConfiguration,String alias){
+    public SelectContext(JDQCConfiguration jdqcConfiguration,String alias){
         this.jdqcConfiguration = jdqcConfiguration;
         this.alias = alias;
         this.tables =new ArrayList<>();
         this.params =new ArrayList<>();
-        this.resultClass=resultClass;
     }
 
     public List<SelectTableInfo> getTables() {
@@ -45,9 +43,6 @@ public class SelectContext {
     }
     public SelectTableInfo getTable(int index) {
         return tables.get(index);
-    }
-    public Class<?> getResultClass() {
-        return resultClass;
     }
 
     public int getSkip() {

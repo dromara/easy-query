@@ -9,9 +9,7 @@ import org.jdqc.sql.core.abstraction.lambda.Property;
  * @Date: 2023/2/6 22:58
  * @Created by xuejiaming
  */
-public interface SelectColumnSelector<T1,TR, TChain> extends ColumnSelector<T1,TChain> {
-    TChain columnAll();
-    TChain columnIgnore(Property<T1,?> column);
+public interface ColumnAsSelector<T1,TR, TChain> extends ColumnSelector<T1,TChain> {
     TChain columnAs(Property<T1,?> column, Property<TR, ?> alias);
     TChain columnCount(Property<T1,?> column, Property<TR,?> alias);
     TChain columnSum(Property<T1,?> column, Property<TR,?> alias);
@@ -19,5 +17,5 @@ public interface SelectColumnSelector<T1,TR, TChain> extends ColumnSelector<T1,T
     TChain columnMin(Property<T1,?> column, Property<TR,?> alias);
     TChain columnAvg(Property<T1,?> column, Property<TR,?> alias);
     TChain columnLen(Property<T1,?> column, Property<TR,?> alias);
-    <T2,TChain2> SelectColumnSelector<T2,TR, TChain2> use(SelectColumnSelector<T2,TR, TChain2> sub);
+    <T2,TChain2> ColumnAsSelector<T2,TR, TChain2> and(ColumnAsSelector<T2,TR, TChain2> sub);
 }

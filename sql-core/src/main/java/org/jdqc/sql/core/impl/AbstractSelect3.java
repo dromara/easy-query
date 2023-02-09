@@ -4,9 +4,6 @@ import org.jdqc.sql.core.abstraction.lambda.SqlExpression3;
 import org.jdqc.sql.core.abstraction.sql.Select3;
 import org.jdqc.sql.core.abstraction.sql.base.SqlColumnSelector;
 import org.jdqc.sql.core.abstraction.sql.base.SqlPredicate;
-import org.jdqc.sql.core.abstraction.sql.base.SqlSelectColumnSelector;
-
-import java.util.List;
 
 /**
  * @FileName: AbstractSelect3.java
@@ -14,44 +11,39 @@ import java.util.List;
  * @Date: 2023/2/8 23:13
  * @Created by xuejiaming
  */
-public abstract class AbstractSelect3<T1,T2,T3,TR> extends AbstractSelect0<T1,TR, Select3<T1,T2,T3,TR>> implements Select3<T1,T2,T3,TR> {
+public abstract class AbstractSelect3<T1,T2,T3> extends AbstractSelect0<T1, Select3<T1,T2,T3>> implements Select3<T1,T2,T3> {
     public AbstractSelect3(SelectContext selectContext) {
         super(selectContext);
     }
 
 
     @Override
-    protected Select3<T1, T2, T3, TR> getSelf() {
+    protected Select3<T1, T2, T3> getSelf() {
         return this;
     }
 
     @Override
-    protected Select1SqlProvider<T1, TR> getSelect1SqlPredicateProvider() {
+    protected Select1SqlProvider<T1> getSelect1SqlPredicateProvider() {
         return null;
     }
 
     @Override
-    public Select3<T1, T2, T3, TR> where(boolean condition, SqlExpression3<SqlPredicate<T1>, SqlPredicate<T2>, SqlPredicate<T3>> whereExpression) {
+    public Select3<T1, T2, T3> where(boolean condition, SqlExpression3<SqlPredicate<T1>, SqlPredicate<T2>, SqlPredicate<T3>> whereExpression) {
         return null;
     }
 
     @Override
-    public Select3<T1, T2, T3, TR> select(boolean condition, SqlExpression3<SqlSelectColumnSelector<T1, TR>, SqlSelectColumnSelector<T2, TR>, SqlSelectColumnSelector<T3, TR>> selectExpression) {
+    public Select3<T1, T2, T3> groupBy(boolean condition, SqlExpression3<SqlColumnSelector<T1>, SqlColumnSelector<T2>, SqlColumnSelector<T3>> selectExpression) {
         return null;
     }
 
     @Override
-    public Select3<T1, T2, T3, TR> groupBy(boolean condition, SqlExpression3<SqlColumnSelector<T1>, SqlColumnSelector<T2>, SqlColumnSelector<T3>> selectExpression) {
+    public Select3<T1, T2, T3> orderByAsc(boolean condition, SqlExpression3<SqlColumnSelector<T1>, SqlColumnSelector<T2>, SqlColumnSelector<T3>> selectExpression) {
         return null;
     }
 
     @Override
-    public Select3<T1, T2, T3, TR> orderByAsc(boolean condition, SqlExpression3<SqlColumnSelector<T1>, SqlColumnSelector<T2>, SqlColumnSelector<T3>> selectExpression) {
-        return null;
-    }
-
-    @Override
-    public Select3<T1, T2, T3, TR> orderByDesc(boolean condition, SqlExpression3<SqlColumnSelector<T1>, SqlColumnSelector<T2>, SqlColumnSelector<T3>> selectExpression) {
+    public Select3<T1, T2, T3> orderByDesc(boolean condition, SqlExpression3<SqlColumnSelector<T1>, SqlColumnSelector<T2>, SqlColumnSelector<T3>> selectExpression) {
         return null;
     }
 }

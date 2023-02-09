@@ -2,11 +2,9 @@ package org.jdqc.sql.core.impl;
 
 import org.jdqc.sql.core.abstraction.sql.base.SqlColumnSelector;
 import org.jdqc.sql.core.abstraction.sql.base.SqlPredicate;
-import org.jdqc.sql.core.abstraction.sql.base.SqlSelectColumnSelector;
 import org.jdqc.sql.core.abstraction.sql.enums.PredicateModeEnum;
 import org.jdqc.sql.core.impl.lambda.DefaultSqlGroupSelector;
 import org.jdqc.sql.core.impl.lambda.DefaultSqlOrderBySelector;
-import org.jdqc.sql.core.impl.lambda.DefaultSqlSelector;
 import org.jdqc.sql.core.impl.lambda.DefaultSqlPredicate;
 
 /**
@@ -15,9 +13,9 @@ import org.jdqc.sql.core.impl.lambda.DefaultSqlPredicate;
  * @Date: 2023/2/7 23:45
  * @Created by xuejiaming
  */
-public class Select1SqlProvider<T1,TR> {
+public class Select1SqlProvider<T1> {
     private  DefaultSqlPredicate<T1> sqlPredicate1;
-    private  DefaultSqlSelector<T1,TR> sqlSelector1;
+//    private  DefaultSqlSelector<T1,TR> sqlSelector1;
     private  DefaultSqlGroupSelector<T1> sqlGroupSelector1;
     private  DefaultSqlOrderBySelector<T1> sqlOrderBySelector1;
     private final SelectContext selectContext;
@@ -37,12 +35,12 @@ public class Select1SqlProvider<T1,TR> {
         }
         return sqlGroupSelector1;
     }
-    public SqlSelectColumnSelector<T1,TR> getSqlSelector1(){
-        if(sqlSelector1==null){
-            sqlSelector1=new DefaultSqlSelector<>(0,selectContext);
-        }
-        return sqlSelector1;
-    }
+//    public SqlColumnAsSelector<T1,TR> getSqlSelector1(){
+//        if(sqlSelector1==null){
+//            sqlSelector1=new DefaultSqlSelector<>(0,selectContext);
+//        }
+//        return sqlSelector1;
+//    }
 
     public SqlPredicate<T1> getSqlPredicate1(PredicateModeEnum predicateMode) {
         if(sqlPredicate1==null){
