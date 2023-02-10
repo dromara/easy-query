@@ -70,8 +70,7 @@ public abstract class AbstractSelect0<T1, TChain> implements Select0<T1, TChain>
 
     @Override
     public List<T1> toList() {
-        SqlExpression<SqlColumnSelector<T1>> selectorExpression = o -> {
-        };
+        SqlExpression<SqlColumnSelector<T1>> selectorExpression = ColumnSelector::columnAll;
         return toList(selectorExpression);
     }
 
