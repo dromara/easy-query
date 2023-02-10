@@ -11,7 +11,6 @@ import java.util.List;
  * @Created by xuejiaming
  */
 public abstract class SelectorBuilder {
-    public static final String SELECT = "SELECT ";
     public static final String LINK = ", ";
 
 

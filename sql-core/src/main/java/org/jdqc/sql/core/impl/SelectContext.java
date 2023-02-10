@@ -1,11 +1,17 @@
 package org.jdqc.sql.core.impl;
 
+import com.alibaba.druid.pool.DruidDataSourceFactory;
 import org.jdqc.sql.core.config.JDQCConfiguration;
 import org.jdqc.sql.core.exception.JDQCException;
 import org.jdqc.sql.core.query.builder.SelectTableInfo;
 
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 /**
  *
@@ -28,6 +34,15 @@ public abstract class SelectContext {
     private  StringBuilder group;
     private  StringBuilder order;
 
+    String dbName = "dbdbd0";
+    String ip = "127.0.0.1";
+    String port = "3306";
+    String username = "root";
+    String password = "root";
+    String driverClassName = "com.mysql.cj.jdbc.Driver";
+    private final  DataSource dataSource;
+
+
     public SelectContext(JDQCConfiguration jdqcConfiguration){
         this(jdqcConfiguration,"t");
     }
@@ -36,6 +51,24 @@ public abstract class SelectContext {
         this.alias = alias;
         this.tables =new ArrayList<>();
         this.params =new ArrayList<>();
+
+        // 设置properties
+        Properties properties = new Properties();
+        properties.setProperty("name", dbName);
+        properties.setProperty(
+                "url",
+                "jdbc:mysql://" + ip + ":" + port + "/" + dbName + "?serverTimezone=GMT%2B8&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true");
+        properties.setProperty("username", username);
+        properties.setProperty("password", password);
+        int i = Runtime.getRuntime().availableProcessors();
+        properties.setProperty("initialSize", String.valueOf(i));
+        properties.setProperty("maxActive", String.valueOf(2 * i + 1));
+        properties.setProperty("minIdle", String.valueOf(i));
+        try {
+            this.dataSource = DruidDataSourceFactory.createDataSource(properties);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
     public abstract SelectContext copy();
 
@@ -133,5 +166,18 @@ public abstract class SelectContext {
 
     public List<Object> getParams() {
         return params;
+    }
+
+
+
+    public Connection getConn(){
+
+        Connection conn =null;
+        try {
+            conn=dataSource.getConnection();
+        }  catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return conn;
     }
 }

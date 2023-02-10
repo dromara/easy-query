@@ -2,6 +2,10 @@ package org.jdqc.sql.core.impl;
 
 import org.jdqc.sql.core.enums.SelectTableInfoTypeEnum;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,6 +44,31 @@ public class MySqlSelect1<T1> extends AbstractSelect1<T1> {
     protected List<T1> toInternalList(String columns) {
         String s = toSql(columns);
         System.out.println(s);
+
+        Connection conn = selectContext.getConn();
+        try {
+            try(PreparedStatement preparedStatement = conn.prepareStatement(s)){
+
+                int paramSize = selectContext.getParams().size();
+                for (int i = 0; i < paramSize; i++) {
+                    preparedStatement.setObject(i+1,selectContext.getParams().get(i));
+                }
+                try(ResultSet rs = preparedStatement.executeQuery()){
+                    while(rs.next()){
+                        System.out.println(rs.getObject(1)+"---"+rs.getObject(2)+"---"+rs.getObject(3));
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        finally {
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
         return new ArrayList<>();
     }
 

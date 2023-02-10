@@ -10,7 +10,7 @@ import org.jdqc.sql.core.abstraction.client.JQDCClient;
  * @Created by xuejiaming
  */
 public class MainTest {
-    private JQDCClient client=new MySQLJQDCClient(new JDQCConfiguration());
+//    private JQDCClient client=new MySQLJQDCClient(new JDQCConfiguration());
 //    private Select1<SysUser> x;
     public void Test1(){
 //        SysUser sysUser = client.select(SysUser.class).eq(SysUser::getId, 1).firstOrNull();

@@ -13,7 +13,10 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class JDQCConfiguration {
     private  final ConcurrentHashMap<Class<?>, TableInfo> cacheTableInfos;
-    public JDQCConfiguration(){
+    private final String driver;
+
+    public JDQCConfiguration(String driver){
+        this.driver = driver;
         cacheTableInfos= new ConcurrentHashMap<>();
     }
 
@@ -36,5 +39,9 @@ public class JDQCConfiguration {
      */
     public void addTableInfo(TableInfo tableInfo){
         cacheTableInfos.putIfAbsent(tableInfo.getTableType(),tableInfo);
+    }
+
+    public String getDriver(){
+        return driver;
     }
 }
