@@ -77,7 +77,7 @@ public class DefaultSqlPredicate<T1> extends PredicateBuilder implements SqlPred
        if(PredicateModeEnum.WHERE_PREDICATE.equals(predicateMode)){
            return this.selectContext.getWhere();
        }else if(PredicateModeEnum.ON_PREDICATE.equals(predicateMode)){
-           return this.selectContext.getPreviewPredicateTable().getOn();
+           return this.selectContext.getCurrentPredicateTable().getOn();
        }
        throw new JDQCException("cant get predicate sql");
     }

@@ -58,6 +58,7 @@ public interface Select0<T1, TChain> {
     String toSql(SqlExpression<SqlColumnSelector<T1>> selectExpression);
 
     <TR> String toSql(Class<TR> resultClass, SqlExpression<SqlColumnAsSelector<T1, TR>> selectExpression);
+    String toSql(String columns);
 
 
     default TChain where(SqlExpression<SqlPredicate<T1>> whereExpression) {

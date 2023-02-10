@@ -12,7 +12,7 @@ import java.util.List;
  */
 public abstract class SelectorBuilder {
     public static final String SELECT = "SELECT ";
-    public static final String LINK = ",";
+    public static final String LINK = ", ";
 
 
     public abstract StringBuilder getSql() ;
@@ -44,7 +44,7 @@ public abstract class SelectorBuilder {
      * @return
      */
     protected String getCol(String columnOwner,String colName) {
-        return " " + columnOwner+"."+colName;
+        return columnOwner+"."+colName;
     }
 
 }

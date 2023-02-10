@@ -1,12 +1,6 @@
 package org.jdqc.sql.core.impl;
 
-import org.jdqc.sql.core.abstraction.lambda.SqlExpression;
-import org.jdqc.sql.core.abstraction.sql.base.ColumnSelector;
-import org.jdqc.sql.core.abstraction.sql.base.SqlColumnSelector;
 import org.jdqc.sql.core.enums.SelectTableInfoTypeEnum;
-import org.jdqc.sql.core.exception.JDQCException;
-import org.jdqc.sql.core.impl.lambda.DefaultSqlColumnSelector;
-import org.jdqc.sql.core.query.builder.SelectTableInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,12 +37,16 @@ public class MySqlSelect1<T1> extends AbstractSelect1<T1> {
     }
 
     @Override
-    protected List<T1> toInternalList() {
-        String s = toSql();
+    protected List<T1> toInternalList(String columns) {
+        String s = toSql(columns);
         System.out.println(s);
         return new ArrayList<>();
     }
 
+    @Override
+    public String toSql(String columns) {
+        return MySQLUtil.toSql(selectContext,columns);
+    }
 
 
 }

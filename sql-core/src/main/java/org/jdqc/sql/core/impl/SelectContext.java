@@ -24,7 +24,7 @@ public abstract class SelectContext {
     private final List<Object> params;
 
     private  StringBuilder where;
-    private  StringBuilder select;
+//    private  StringBuilder select;
     private  StringBuilder group;
     private  StringBuilder order;
 
@@ -106,12 +106,12 @@ public abstract class SelectContext {
         return this.tables.get(i);
     }
 
-    public StringBuilder getSelect() {
-        if(select==null){
-            select=new StringBuilder();
-        }
-        return select;
-    }
+//    public StringBuilder getSelect() {
+//        if(select==null){
+//            select=new StringBuilder();
+//        }
+//        return select;
+//    }
 
     public JDQCConfiguration getJdqcConfiguration() {
         return jdqcConfiguration;
@@ -134,6 +134,4 @@ public abstract class SelectContext {
     public List<Object> getParams() {
         return params;
     }
-    public abstract String toSql();
-
 }

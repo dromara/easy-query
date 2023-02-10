@@ -14,17 +14,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
  * @FileName: AbstractSelect0.java
  * @Description: 文件说明
  * @Date: 2023/2/6 23:44
  * @Created by xuejiaming
  */
-public abstract class AbstractSelect0<T1,TChain> implements Select0<T1, TChain> {
+public abstract class AbstractSelect0<T1, TChain> implements Select0<T1, TChain> {
     protected final Class<T1> t1Class;
     private final SelectContext selectContext;
 
-    public AbstractSelect0(Class<T1> t1Class,SelectContext selectContext){
+    public AbstractSelect0(Class<T1> t1Class, SelectContext selectContext) {
         this.t1Class = t1Class;
 
         this.selectContext = selectContext;
@@ -38,8 +37,8 @@ public abstract class AbstractSelect0<T1,TChain> implements Select0<T1, TChain> 
     public abstract boolean any();
 
     @Override
-    public  T1 firstOrNull(){
-        SqlExpression<SqlColumnSelector<T1>> selectExpression= ColumnSelector::columnAll;
+    public T1 firstOrNull() {
+        SqlExpression<SqlColumnSelector<T1>> selectExpression = ColumnSelector::columnAll;
         return firstOrNull(selectExpression);
     }
 
@@ -47,7 +46,7 @@ public abstract class AbstractSelect0<T1,TChain> implements Select0<T1, TChain> 
     public T1 firstOrNull(SqlExpression<SqlColumnSelector<T1>> selectExpression) {
         this.take(1);
         List<T1> list = toList(selectExpression);
-        if(list.isEmpty()){
+        if (list.isEmpty()) {
             return null;
         }
         return list.get(0);
@@ -55,86 +54,93 @@ public abstract class AbstractSelect0<T1,TChain> implements Select0<T1, TChain> 
 
     @Override
     public <TR> TR firstOrNull(Class<TR> resultClass) {
-        SqlExpression<SqlColumnAsSelector<T1, TR>> selectExpression= ColumnSelector::columnAll;
-        return firstOrNull(resultClass,selectExpression);
+        SqlExpression<SqlColumnAsSelector<T1, TR>> selectExpression = ColumnSelector::columnAll;
+        return firstOrNull(resultClass, selectExpression);
     }
 
     @Override
     public <TR> TR firstOrNull(Class<TR> resultClass, SqlExpression<SqlColumnAsSelector<T1, TR>> selectExpression) {
         this.take(1);
-        List<TR> list = toList(resultClass,selectExpression);
-        if(list.isEmpty()){
+        List<TR> list = toList(resultClass, selectExpression);
+        if (list.isEmpty()) {
             return null;
         }
         return list.get(0);
     }
 
     @Override
-    public   List<T1> toList(){
-        SqlExpression<SqlColumnSelector<T1>> selectorExpression= o->{};
+    public List<T1> toList() {
+        SqlExpression<SqlColumnSelector<T1>> selectorExpression = o -> {
+        };
         return toList(selectorExpression);
     }
 
     @Override
     public <TR> List<TR> toList(Class<TR> resultClass) {
-        List<T1> list = toList();
-        //todo t1 2 tr
-        return new ArrayList<>();
+        SqlExpression<SqlColumnAsSelector<T1, TR>> selectExpression=ColumnSelector::columnAll;
+        return toList(resultClass,selectExpression);
     }
 
     @Override
     public <TR> List<TR> toList(Class<TR> resultClass, SqlExpression<SqlColumnAsSelector<T1, TR>> selectExpression) {
-
-        DefaultSqlColumnAsSelector<T1, TR> selector = new DefaultSqlColumnAsSelector<>(0, getSelectContext());
+        StringBuilder select = new StringBuilder();
+        DefaultSqlColumnAsSelector<T1, TR> selector = new DefaultSqlColumnAsSelector<>(0, getSelectContext(),select);
         selectExpression.apply(selector);
-        List<T1> list = toInternalList();
+        List<T1> list = toInternalList(select.toString());
         //todo t1 2 tr
         return new ArrayList<>();
     }
 
     @Override
     public List<T1> toList(SqlExpression<SqlColumnSelector<T1>> selectExpression) {
-        SqlColumnSelector<T1> selector = getSelect1SqlPredicateProvider().getSqlColumnSelector1();
+        StringBuilder select = new StringBuilder();
+        SqlColumnSelector<T1> selector = new DefaultSqlColumnSelector<>(0,getSelectContext(),select);
         selectExpression.apply(selector);
-        return toInternalList();
+        return toInternalList(select.toString());
     }
 
     /**
      * 子类实现方法
+     *
      * @return
      */
-    protected abstract List<T1> toInternalList();
+    protected abstract List<T1> toInternalList(String columns);
 
     @Override
-    public  String toSql(){
+    public String toSql() {
 
-        if(getSelectContext().getSelect().length()==0)
-        {
-            SqlExpression<SqlColumnSelector<T1>> selectExpression= ColumnSelector::columnAll;
-            DefaultSqlColumnSelector<T1> selector = new DefaultSqlColumnSelector<>(0, getSelectContext());
-            selectExpression.apply(selector);
-        }
-        return getSelectContext().toSql();
+        StringBuilder select = new StringBuilder();
+
+        SqlExpression<SqlColumnSelector<T1>> selectExpression = ColumnSelector::columnAll;
+        DefaultSqlColumnSelector<T1> selector = new DefaultSqlColumnSelector<>(0, getSelectContext(), select);
+        selectExpression.apply(selector);
+        return toSql(select.toString());
     }
 
     @Override
     public String toSql(SqlExpression<SqlColumnSelector<T1>> selectExpression) {
-        DefaultSqlColumnSelector<T1> selector = new DefaultSqlColumnSelector<>(0, getSelectContext());
+        StringBuilder select = new StringBuilder();
+        DefaultSqlColumnSelector<T1> selector = new DefaultSqlColumnSelector<>(0, getSelectContext(), select);
         selectExpression.apply(selector);
-        return toSql();
+        return toSql(select.toString());
     }
 
     @Override
     public <TR> String toSql(Class<TR> resultClass, SqlExpression<SqlColumnAsSelector<T1, TR>> selectExpression) {
-        DefaultSqlColumnAsSelector<T1, TR> selector = new DefaultSqlColumnAsSelector<>(0, getSelectContext());
+        StringBuilder select = new StringBuilder();
+        DefaultSqlColumnAsSelector<T1, TR> selector = new DefaultSqlColumnAsSelector<>(0, getSelectContext(), select);
         selectExpression.apply(selector);
-        return toSql();
+        return toSql(select.toString());
     }
+
+    @Override
+    public abstract String toSql(String columns);
+
     protected abstract TChain getSelf();
 
     @Override
-    public TChain where(boolean condition,SqlExpression<SqlPredicate<T1>> whereExpression) {
-        if(condition){
+    public TChain where(boolean condition, SqlExpression<SqlPredicate<T1>> whereExpression) {
+        if (condition) {
             SqlPredicate<T1> sqlPredicate = getSelect1SqlPredicateProvider().getSqlPredicate1(PredicateModeEnum.WHERE_PREDICATE);
             whereExpression.apply(sqlPredicate);
         }
@@ -152,7 +158,7 @@ public abstract class AbstractSelect0<T1,TChain> implements Select0<T1, TChain> 
 
     @Override
     public TChain groupBy(boolean condition, SqlExpression<SqlColumnSelector<T1>> selectExpression) {
-        if(condition){
+        if (condition) {
             SqlColumnSelector<T1> sqlGroupSelector1 = getSelect1SqlPredicateProvider().getSqlGroupSelector1();
             selectExpression.apply(sqlGroupSelector1);
         }
@@ -171,7 +177,7 @@ public abstract class AbstractSelect0<T1,TChain> implements Select0<T1, TChain> 
 
     @Override
     public TChain skip(boolean condition, int skip) {
-        if(condition){
+        if (condition) {
             this.getSelectContext().setSkip(skip);
         }
         return getSelf();

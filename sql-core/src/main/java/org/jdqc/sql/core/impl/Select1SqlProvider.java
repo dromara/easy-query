@@ -17,7 +17,6 @@ import org.jdqc.sql.core.impl.lambda.DefaultSqlPredicate;
 public class Select1SqlProvider<T1> {
     private  DefaultSqlPredicate<T1> sqlPredicate1;
 //    private  DefaultSqlSelector<T1,TR> sqlSelector1;
-    private DefaultSqlColumnSelector<T1> sqlColumnSelector1;
     private  DefaultSqlGroupSelector<T1> sqlGroupSelector1;
     private  DefaultSqlOrderBySelector<T1> sqlOrderBySelector1;
     private final SelectContext selectContext;
@@ -30,12 +29,6 @@ public class Select1SqlProvider<T1> {
             sqlOrderBySelector1=new DefaultSqlOrderBySelector<>(0,selectContext);
         }
         return sqlOrderBySelector1;
-    }
-    public SqlColumnSelector<T1> getSqlColumnSelector1(){
-        if(sqlColumnSelector1==null){
-            sqlColumnSelector1=new DefaultSqlColumnSelector<>(0,selectContext);
-        }
-        return sqlColumnSelector1;
     }
     public SqlColumnSelector<T1> getSqlGroupSelector1(){
         if(sqlGroupSelector1==null){

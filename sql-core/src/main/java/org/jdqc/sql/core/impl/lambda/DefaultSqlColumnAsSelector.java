@@ -13,9 +13,13 @@ import org.jdqc.sql.core.impl.SelectContext;
  */
 public class DefaultSqlColumnAsSelector<T1,TR> extends AbstractSqlColumnSelector<T1, SqlColumnAsSelector<T1, TR>> implements SqlColumnAsSelector<T1,TR> {
 
-    public DefaultSqlColumnAsSelector(int index, SelectContext selectContext){
+    private final StringBuilder sqlBuilder;
+
+
+    public DefaultSqlColumnAsSelector(int index, SelectContext selectContext, StringBuilder sqlBuilder){
         super(index,selectContext);
 
+        this.sqlBuilder = sqlBuilder;
     }
 
     @Override
@@ -60,6 +64,6 @@ public class DefaultSqlColumnAsSelector<T1,TR> extends AbstractSqlColumnSelector
 
     @Override
     public StringBuilder getSql() {
-        return this.getSelectContext().getSelect();
+        return sqlBuilder;
     }
 }
