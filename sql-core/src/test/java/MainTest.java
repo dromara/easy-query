@@ -1,6 +1,3 @@
-import org.jdqc.sql.core.config.JDQCConfiguration;
-import org.jdqc.sql.core.impl.MySQLJQDCClient;
-import org.jdqc.sql.core.abstraction.client.JQDCClient;
 
 /**
  *
