@@ -15,10 +15,10 @@ public class TestUserMysql {
     @PrimaryKey
     @Column("Id")
     private String id;
-    @Column("Name")
-    private String name;
     @Column("Age")
     private String age;
+    @Column("Name")
+    private String name;
 
     public String getId() {
         return id;

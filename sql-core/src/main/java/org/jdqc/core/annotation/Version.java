@@ -1,5 +1,7 @@
 package org.jdqc.core.annotation;
 
+import java.lang.annotation.*;
+
 /**
  * 乐观锁
  * @FileName: Version.java
@@ -7,5 +9,8 @@ package org.jdqc.core.annotation;
  * @Date: 2023/2/11 11:17
  * @Created by xuejiaming
  */
+@Documented
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.FIELD, ElementType.ANNOTATION_TYPE})
 public @interface Version {
 }

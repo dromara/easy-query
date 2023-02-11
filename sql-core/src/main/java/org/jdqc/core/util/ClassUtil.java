@@ -11,6 +11,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
 
@@ -26,9 +27,18 @@ public class ClassUtil {
     public static PropertyDescriptor[] propertyDescriptors(Class<?> c) throws IntrospectionException {
 
         BeanInfo beanInfo = null;
-        beanInfo = Introspector.getBeanInfo(c);
+        beanInfo = Introspector.getBeanInfo(c,Object.class);
         return beanInfo.getPropertyDescriptors();
 
+    }
+    public static List<Field> getAllFields(Class clazz){
+        ArrayList<Field> fields = new ArrayList<>();
+        Class currentClazz = clazz;
+        while(currentClazz!=null){
+            fields.addAll(Arrays.asList(currentClazz.getDeclaredFields()));
+            currentClazz=currentClazz.getSuperclass();
+        }
+        return fields;
     }
 
     /**
