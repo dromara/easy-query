@@ -12,7 +12,7 @@ import java.util.Map;
  * @Date: 2023/2/7 08:39
  * @Created by xuejiaming
  */
-public class StringKit {
+public class StringUtil {
     public static final String EMPTY = "";
 
     public static final int INDEX_NOT_FOUND = -1;
@@ -115,10 +115,10 @@ public class StringKit {
     }
 
     public static boolean isBlank(String str) {
-        int strLen;
-        if (str == null || (strLen = str.length()) == 0) {
+        if (isEmpty(str)) {
             return true;
         }
+       int strLen= str.length();
         for (int i = 0; i < strLen; i++) {
             if ((Character.isWhitespace(str.charAt(i)) == false)) {
                 return false;

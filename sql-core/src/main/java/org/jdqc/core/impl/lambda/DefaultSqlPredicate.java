@@ -7,6 +7,7 @@ import org.jdqc.core.abstraction.sql.base.SqlPredicate;
 import org.jdqc.core.abstraction.sql.base.WherePredicate;
 import org.jdqc.core.exception.JDQCException;
 import org.jdqc.core.query.builder.SelectTableInfo;
+import org.jdqc.core.util.LambdaUtil;
 
 /**
  * @FileName: SqlWherePredicate.java
@@ -37,7 +38,8 @@ public class DefaultSqlPredicate<T1> extends PredicateBuilder implements SqlPred
     @Override
     public DefaultSqlPredicate<T1> eq(boolean condition, Property<T1, ?> column, Object val) {
         SelectTableInfo table = selectContext.getTable(index());
-        String columnName = table.getTable().getColumnName(column);
+        String attrName = LambdaUtil.getAttrName(column);
+        String columnName = table.getColumnName(attrName);
         this.appendAndSql(table.getAlias(),columnName,val,"=");
         return this;
     }
@@ -45,7 +47,8 @@ public class DefaultSqlPredicate<T1> extends PredicateBuilder implements SqlPred
     @Override
     public SqlPredicate<T1> like(boolean condition, Property<T1, ?> column, Object val) {
         SelectTableInfo table = selectContext.getTable(index());
-        String columnName = table.getTable().getColumnName(column);
+        String attrName = LambdaUtil.getAttrName(column);
+        String columnName = table.getColumnName(attrName);
         this.appendAndSql(table.getAlias(),columnName,val,"like");
         return this;
     }
@@ -54,10 +57,12 @@ public class DefaultSqlPredicate<T1> extends PredicateBuilder implements SqlPred
     public <T2, TChain2> DefaultSqlPredicate<T1> eq(boolean condition, WherePredicate<T2, TChain2> sub, Property<T1, ?> column1, Property<T2, ?> column2) {
 
         SelectTableInfo table = selectContext.getTable(index());
-        String columnName = table.getTable().getColumnName(column1);
+        String attrName1 = LambdaUtil.getAttrName(column1);
+        String columnName = table.getColumnName(attrName1);
 
         SelectTableInfo table2 = selectContext.getTable(sub.index());
-        String columnName2 = table2.getTable().getColumnName(column2);
+        String attrName2 = LambdaUtil.getAttrName(column2);
+        String columnName2 = table2.getColumnName(attrName2);
         this.appendAndOnSql(table.getAlias(),columnName,table2.getAlias(),columnName2,"=");
         return this;
     }

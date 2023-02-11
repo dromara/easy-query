@@ -1,6 +1,7 @@
 package org.jdqc.core.impl;
 
 import org.jdqc.core.abstraction.lambda.SqlExpression2;
+import org.jdqc.core.abstraction.metadata.EntityMetadata;
 import org.jdqc.core.abstraction.sql.Select1;
 import org.jdqc.core.abstraction.sql.Select2;
 import org.jdqc.core.abstraction.sql.base.SqlPredicate;
@@ -21,8 +22,8 @@ public abstract class AbstractSelect1<T1> extends AbstractSelect0<T1, Select1<T1
     private final Select1SqlProvider<T1> sqlPredicateProvider;
     public AbstractSelect1(Class<T1> t1Class,SelectContext selectContext) {
         super(t1Class,selectContext);
-        TableInfo tableInfo = selectContext.getJdqcConfiguration().getTableByEntity(t1Class);
-        selectContext.addSelectTable(new SelectTableInfo(tableInfo,selectContext.getAlias(),selectContext.getNextTableIndex(), SelectTableInfoTypeEnum.FROM));
+        EntityMetadata entityMetadata = selectContext.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(t1Class);
+        selectContext.addSelectTable(new SelectTableInfo(entityMetadata,selectContext.getAlias(),selectContext.getNextTableIndex(), SelectTableInfoTypeEnum.FROM));
         sqlPredicateProvider= new Select1SqlProvider<>(selectContext);
     }
     @Override

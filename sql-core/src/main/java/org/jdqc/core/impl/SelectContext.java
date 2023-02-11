@@ -1,6 +1,7 @@
 package org.jdqc.core.impl;
 
 import com.alibaba.druid.pool.DruidDataSourceFactory;
+import org.jdqc.core.abstraction.JDQCRuntimeContext;
 import org.jdqc.core.config.JDQCConfiguration;
 import org.jdqc.core.exception.JDQCException;
 import org.jdqc.core.query.builder.SelectTableInfo;
@@ -20,8 +21,13 @@ import java.util.Properties;
  * @Created by xuejiaming
  */
 public abstract class SelectContext {
-    private final JDQCConfiguration jdqcConfiguration;
+    private final JDQCRuntimeContext runtimeContext;
+
+    public JDQCRuntimeContext getRuntimeContext() {
+        return runtimeContext;
+    }
     private final String alias;
+
     private int skip;
     private int take;
 
@@ -42,11 +48,11 @@ public abstract class SelectContext {
     private final  DataSource dataSource;
 
 
-    public SelectContext(JDQCConfiguration jdqcConfiguration){
-        this(jdqcConfiguration,"t");
+    public SelectContext(JDQCRuntimeContext runtimeContext){
+        this(runtimeContext,"t");
     }
-    public SelectContext(JDQCConfiguration jdqcConfiguration,String alias){
-        this.jdqcConfiguration = jdqcConfiguration;
+    public SelectContext(JDQCRuntimeContext runtimeContext, String alias){
+        this.runtimeContext = runtimeContext;
         this.alias = alias;
         this.tables =new ArrayList<>();
         this.params =new ArrayList<>();
@@ -100,10 +106,6 @@ public abstract class SelectContext {
         }
         return where;
     }
-
-    public Class<?> getMainClass() {
-        return tables.get(0).getTable().getTableType();
-    }
     public void addSelectTable(SelectTableInfo selectTableInfo){
         this.tables.add(selectTableInfo);
     }
@@ -146,7 +148,7 @@ public abstract class SelectContext {
 //    }
 
     public JDQCConfiguration getJdqcConfiguration() {
-        return jdqcConfiguration;
+        return runtimeContext.getJDQCConfiguration();
     }
 
     public StringBuilder getGroup() {

@@ -2,6 +2,7 @@ package org.jdqc.core.impl;
 
 import org.jdqc.core.abstraction.lambda.SqlExpression2;
 import org.jdqc.core.abstraction.lambda.SqlExpression3;
+import org.jdqc.core.abstraction.metadata.EntityMetadata;
 import org.jdqc.core.abstraction.sql.Select2;
 import org.jdqc.core.abstraction.sql.Select3;
 import org.jdqc.core.abstraction.sql.base.SqlColumnSelector;
@@ -23,8 +24,8 @@ public abstract  class AbstractSelect2<T1,T2> extends AbstractSelect0<T1, Select
 
     public AbstractSelect2(Class<T1> t1Class, Class<T2> t2Class, SelectContext selectContext, SelectTableInfoTypeEnum selectTableInfoType) {
         super(t1Class,selectContext);
-        TableInfo tableInfo = selectContext.getJdqcConfiguration().getTableByEntity(t2Class);
-        selectContext.addSelectTable(new SelectTableInfo(tableInfo,selectContext.getAlias(),selectContext.getNextTableIndex(), selectTableInfoType));
+        EntityMetadata entityMetadata = selectContext.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(t2Class);
+        selectContext.addSelectTable(new SelectTableInfo(entityMetadata,selectContext.getAlias(),selectContext.getNextTableIndex(), selectTableInfoType));
         this.sqlPredicateProvider =new Select2SqlProvider<>(selectContext);
     }
 

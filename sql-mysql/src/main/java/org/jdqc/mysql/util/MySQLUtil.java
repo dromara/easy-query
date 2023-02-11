@@ -3,7 +3,7 @@ package org.jdqc.mysql.util;
 import org.jdqc.mysql.base.MySQLSelectContext;
 import org.jdqc.core.exception.JDQCException;
 import org.jdqc.core.query.builder.SelectTableInfo;
-import org.jdqc.core.util.StringKit;
+import org.jdqc.core.util.StringUtil;
 
 /**
  * @FileName: MySQLUtil.java
@@ -30,10 +30,10 @@ public class MySQLUtil {
         for (int i = 0; i < tableCount; i++) {
             SelectTableInfo table = mySQLSelectContext.getTable(i);
             if(i==0){
-                sql.append(StringKit.isEmpty(select)?table.getAlias()+".*":select);
+                sql.append(StringUtil.isEmpty(select)?table.getAlias()+".*":select);
             }
 
-            sql.append(table.getSelectTableSource()).append(table.getTable().getName()).append(" ").append(table.getAlias());
+            sql.append(table.getSelectTableSource()).append(table.getEntityMetadata().getTableName()).append(" ").append(table.getAlias());
             if (table.getOn().length() == 0) {
                 continue;
             }

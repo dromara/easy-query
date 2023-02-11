@@ -14,9 +14,14 @@ import java.util.concurrent.ConcurrentHashMap;
 public class JDQCConfiguration {
     private  final ConcurrentHashMap<Class<?>, TableInfo> cacheTableInfos;
     private final String driver;
+    private final NameConversion nameConversion;
 
     public JDQCConfiguration(String driver){
+        this(driver,new DefaultNameConversion());
+    }
+    public JDQCConfiguration(String driver,NameConversion nameConversion){
         this.driver = driver;
+        this.nameConversion = nameConversion;
         cacheTableInfos= new ConcurrentHashMap<>();
     }
 
@@ -43,5 +48,9 @@ public class JDQCConfiguration {
 
     public String getDriver(){
         return driver;
+    }
+
+    public NameConversion getNameConversion() {
+        return nameConversion;
     }
 }

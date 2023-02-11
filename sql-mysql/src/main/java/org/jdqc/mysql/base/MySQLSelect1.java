@@ -58,7 +58,7 @@ public class MySQLSelect1<T1> extends AbstractSelect1<T1> {
                 }
                 try(ResultSet rs = preparedStatement.executeQuery()){
                     while(rs.next()){
-                        System.out.println(rs.getObject(1)+"---"+rs.getObject(2)+"---"+rs.getObject(3));
+                        System.out.println(rs.getObject(1)+"---"+rs.getObject(2));
                     }
                 }
             }

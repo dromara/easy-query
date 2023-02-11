@@ -2,7 +2,7 @@ package org.jdqc.core.metadata;
 
 import org.jdqc.core.abstraction.lambda.Property;
 import org.jdqc.core.exception.JDQCException;
-import org.jdqc.core.util.StringKit;
+import org.jdqc.core.util.StringUtil;
 
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Field;
@@ -70,7 +70,7 @@ public class TableInfo {
             } else {
                 attr = method.substring(2);
             }
-            String propertyName = StringKit.toLowerCaseFirstOne(attr);
+            String propertyName = StringUtil.toLowerCaseFirstOne(attr);
             ColumnInfo columnInfo = columns.get(propertyName);
             if (columnInfo == null) {
                 throw new JDQCException("not found column info,property name:"+propertyName);

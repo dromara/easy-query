@@ -2,14 +2,17 @@ package org.jdqc.core;
 
 import org.jdqc.core.annotation.Table;
 
+import java.io.Serializable;
+
 /**
  * @FileName: TestUser.java
  * @Description: 文件说明
  * @Date: 2023/2/7 13:43
  * @Created by xuejiaming
  */
-@Table("11")
-public class TestUser {
+@Table
+public class TestUser implements Serializable {
+
     public String getId() {
         return id;
     }

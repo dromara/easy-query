@@ -1,5 +1,8 @@
 package org.jdqc.core.config;
 
+import org.jdqc.core.annotation.Column;
+import org.jdqc.core.annotation.Table;
+
 /**
  *
  * @FileName: NameConversion.java
@@ -8,4 +11,17 @@ package org.jdqc.core.config;
  * @Created by xuejiaming
  */
 public abstract class NameConversion {
+    /****
+     * 根据实体class获取表名
+     * @return String 对应表名
+     */
+    public abstract String getTableName(Class clazz);
+
+
+    /**
+     * Java实体类字段名称转数据表列名
+     * @param attrName 属性名称
+     * @return String 列名
+     */
+    public abstract String getColName(String attrName);
 }

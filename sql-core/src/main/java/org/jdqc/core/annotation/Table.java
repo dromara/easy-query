@@ -22,7 +22,7 @@ public @interface Table {
     /**
      * 对应的表名称
      */
-    String value();
+    String value() default "";
 
     /**
      * 数据库schema

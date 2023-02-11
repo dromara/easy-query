@@ -1,12 +1,13 @@
 package org.jdqc.core.impl.lambda;
 
 import org.jdqc.core.abstraction.lambda.Property;
+import org.jdqc.core.abstraction.metadata.ColumnMetadata;
 import org.jdqc.core.impl.SelectContext;
 import org.jdqc.core.abstraction.sql.base.ColumnSelector;
-import org.jdqc.core.metadata.ColumnInfo;
 import org.jdqc.core.query.builder.SelectTableInfo;
+import org.jdqc.core.util.LambdaUtil;
 
-import java.util.Map;
+import java.util.Collection;
 
 /**
  * @FileName: DefaultSqlColumnSelector.java
@@ -33,7 +34,8 @@ public abstract class AbstractSqlColumnSelector<T1,TChain> extends SelectorBuild
     @Override
     public TChain column(Property<T1, ?> column) {
         SelectTableInfo table = selectContext.getTable(index());
-        String columnName = table.getTable().getColumnName(column);
+        String attrName = LambdaUtil.getAttrName(column);
+        String columnName = table.getColumnName(attrName);
         appendSelectSql(table.getAlias(),columnName);
         return (TChain) this;
     }
@@ -41,9 +43,9 @@ public abstract class AbstractSqlColumnSelector<T1,TChain> extends SelectorBuild
     @Override
     public TChain columnAll() {
         SelectTableInfo table = selectContext.getTable(index());
-        Map<String, ColumnInfo> columns = table.getTable().getColumns();
-        for (Map.Entry<String, ColumnInfo> columnInfo : columns.entrySet()) {
-            appendSelectSql(table.getAlias(),columnInfo.getValue().getName());
+        Collection<ColumnMetadata> columns = table.getEntityMetadata().getColumns();
+        for (ColumnMetadata column : columns) {
+            appendSelectSql(table.getAlias(),column.getName());
         }
         return (TChain) this;
     }

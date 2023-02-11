@@ -14,25 +14,26 @@ public @interface Column {
     /**
      * 指定实体对象映射到数据库的名称
      */
-    String value();
+    String value() default "";
 
     /**
-     * 是否忽略字段与数据库的映射关系
+     * 该字段在数据库中是否为null，如果为null那么在update整个对象的时候如果属性为null就会更新为null
+     * 如果不为null那么属性为null将不会个呢更新
      */
-    boolean ignore() default false;
+    boolean nullable() default false;
 
-    /**
-     * 是否是主键
-     */
-    boolean primary() default false;
-
-    /**
-     * 是否是自增键
-     */
-    boolean increment() default false;
-
-    /**
-     * 乐观锁
-     */
-    boolean version() default false;
+//    /**
+//     * 是否是主键
+//     */
+//    boolean primary() default false;
+//
+//    /**
+//     * 是否是自增键
+//     */
+//    boolean increment() default false;
+//
+//    /**
+//     * 乐观锁
+//     */
+//    boolean version() default false;
 }

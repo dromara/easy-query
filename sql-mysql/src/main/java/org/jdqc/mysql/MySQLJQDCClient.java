@@ -1,10 +1,10 @@
 package org.jdqc.mysql;
 
+import org.jdqc.core.abstraction.JDQCRuntimeContext;
 import org.jdqc.mysql.base.MySQLSelect1;
 import org.jdqc.mysql.base.MySQLSelectContext;
 import org.jdqc.core.abstraction.client.JQDCClient;
 import org.jdqc.core.abstraction.sql.Select1;
-import org.jdqc.core.config.JDQCConfiguration;
 
 /**
  *
@@ -14,19 +14,19 @@ import org.jdqc.core.config.JDQCConfiguration;
  * @Created by xuejiaming
  */
 public class MySQLJQDCClient implements JQDCClient {
-    private final JDQCConfiguration configuration;
-    public MySQLJQDCClient(JDQCConfiguration configuration){
+    private final JDQCRuntimeContext runtimeContext;
+    public MySQLJQDCClient(JDQCRuntimeContext runtimeContext){
 
-        this.configuration = configuration;
+        this.runtimeContext = runtimeContext;
     }
     @Override
     public <T1> Select1<T1> select(Class<T1> clazz) {
-        return new MySQLSelect1<>(clazz,new MySQLSelectContext(configuration));
+        return new MySQLSelect1<>(clazz,new MySQLSelectContext(runtimeContext));
     }
 
     @Override
     public <T1> Select1<T1> select(Class<T1> clazz, String alias) {
-        return new MySQLSelect1<>(clazz,new MySQLSelectContext(configuration,alias));
+        return new MySQLSelect1<>(clazz,new MySQLSelectContext(runtimeContext,alias));
     }
 
 }

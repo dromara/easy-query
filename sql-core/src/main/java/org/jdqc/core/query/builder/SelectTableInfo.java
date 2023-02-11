@@ -1,5 +1,6 @@
 package org.jdqc.core.query.builder;
 
+import org.jdqc.core.abstraction.metadata.EntityMetadata;
 import org.jdqc.core.enums.SelectTableInfoTypeEnum;
 import org.jdqc.core.metadata.TableInfo;
 
@@ -10,24 +11,26 @@ import org.jdqc.core.metadata.TableInfo;
  * @Created by xuejiaming
  */
 public class SelectTableInfo {
-    private final TableInfo table;
     private final String alias;
     private final StringBuilder on;
     private final int index;
 
     private final SelectTableInfoTypeEnum selectTableInfoType;
 
-    public SelectTableInfo(TableInfo table, String alias, int index,SelectTableInfoTypeEnum selectTableInfoType) {
-        this.table = table;
+    public EntityMetadata getEntityMetadata() {
+        return entityMetadata;
+    }
+
+    private final EntityMetadata entityMetadata;
+
+    public SelectTableInfo(EntityMetadata entityMetadata, String alias, int index, SelectTableInfoTypeEnum selectTableInfoType) {
+        this.entityMetadata = entityMetadata;
         this.alias = index == 0 ? alias : alias + index;
         this.index = index;
         this.selectTableInfoType = selectTableInfoType;
         this.on=new StringBuilder();
     }
 
-    public TableInfo getTable() {
-        return table;
-    }
 
     public String getAlias() {
         return alias;
@@ -39,6 +42,11 @@ public class SelectTableInfo {
 
     public StringBuilder getOn() {
         return on;
+    }
+
+    public String getColumnName(String attrName){
+        return this.entityMetadata.getColumnName(attrName);
+
     }
 
 

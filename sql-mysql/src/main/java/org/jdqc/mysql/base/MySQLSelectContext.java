@@ -1,6 +1,6 @@
 package org.jdqc.mysql.base;
 
-import org.jdqc.core.config.JDQCConfiguration;
+import org.jdqc.core.abstraction.JDQCRuntimeContext;
 import org.jdqc.core.impl.SelectContext;
 
 /**
@@ -10,17 +10,17 @@ import org.jdqc.core.impl.SelectContext;
  * @Created by xuejiaming
  */
 public class MySQLSelectContext extends SelectContext{
-    public MySQLSelectContext(JDQCConfiguration jdqcConfiguration) {
-        super(jdqcConfiguration);
+    public MySQLSelectContext(JDQCRuntimeContext runtimeContext) {
+        super(runtimeContext);
     }
-    public MySQLSelectContext(JDQCConfiguration jdqcConfiguration,String alias){
-        super(jdqcConfiguration,alias);
+    public MySQLSelectContext(JDQCRuntimeContext runtimeContext, String alias){
+        super(runtimeContext,alias);
     }
 
     @Override
     public SelectContext copy() {
 
-        MySQLSelectContext mySQLSelectContext = new MySQLSelectContext(getJdqcConfiguration(), getAlias());
+        MySQLSelectContext mySQLSelectContext = new MySQLSelectContext(getRuntimeContext(), getAlias());
         mySQLSelectContext.setSkip(getSkip());
         mySQLSelectContext.setTake(getTake());
         mySQLSelectContext.getTables().addAll(getTables());
