@@ -8,5 +8,5 @@ package org.easy.query.core.abstraction.sql.base;
  * @Created by xuejiaming
  */
 public interface IndexAware {
-    int index();
+    int getIndex();
 }

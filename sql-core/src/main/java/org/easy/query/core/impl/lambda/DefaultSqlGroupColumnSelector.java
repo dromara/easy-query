@@ -10,8 +10,8 @@ import org.easy.query.core.impl.SelectContext;
  * @Date: 2023/2/12 21:36
  * @Created by xuejiaming
  */
-public class DefaultSqlColumnSelector<T1> extends AbstractSqlColumnSelector<T1, SqlColumnSelector<T1>> implements SqlColumnSelector<T1>{
-    public DefaultSqlColumnSelector(int index, SelectContext selectContext, SqlSegment0Builder sqlSegmentBuilder) {
-        super(index, selectContext,sqlSegmentBuilder);
+public class DefaultSqlGroupColumnSelector<T1> extends DefaultSqlColumnSelector<T1>{
+    public DefaultSqlGroupColumnSelector(int index, SelectContext selectContext) {
+        super(index, selectContext,selectContext.getGroup());
     }
 }

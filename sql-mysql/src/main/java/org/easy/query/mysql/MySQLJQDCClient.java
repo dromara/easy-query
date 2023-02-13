@@ -1,8 +1,8 @@
 package org.easy.query.mysql;
 
 import org.easy.query.core.abstraction.EasyQueryRuntimeContext;
+import org.easy.query.core.impl.SelectContext;
 import org.easy.query.mysql.base.MySQLSelect1;
-import org.easy.query.mysql.base.MySQLSelectContext;
 import org.easy.query.core.abstraction.client.JQDCClient;
 import org.easy.query.core.abstraction.sql.Select1;
 
@@ -21,12 +21,12 @@ public class MySQLJQDCClient implements JQDCClient {
     }
     @Override
     public <T1> Select1<T1> select(Class<T1> clazz) {
-        return new MySQLSelect1<>(clazz,new MySQLSelectContext(runtimeContext));
+        return new MySQLSelect1<>(clazz,new SelectContext(runtimeContext));
     }
 
     @Override
     public <T1> Select1<T1> select(Class<T1> clazz, String alias) {
-        return new MySQLSelect1<>(clazz,new MySQLSelectContext(runtimeContext,alias));
+        return new MySQLSelect1<>(clazz,new SelectContext(runtimeContext,alias));
     }
 
 }

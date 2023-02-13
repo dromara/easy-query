@@ -8,8 +8,6 @@ package org.easy.query.core.enums;
  */
 public enum SqlSegmentTypeEnum {
     SELECT,
-    LEFT_JOIN,
-    RIGHT_JOIN,
     WHERE,
     ORDER,
     GROUP

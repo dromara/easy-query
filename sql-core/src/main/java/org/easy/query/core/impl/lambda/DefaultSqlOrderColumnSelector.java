@@ -3,10 +3,12 @@ package org.easy.query.core.impl.lambda;
 import org.easy.query.core.abstraction.SqlSegment0Builder;
 import org.easy.query.core.abstraction.lambda.Property;
 import org.easy.query.core.abstraction.metadata.ColumnMetadata;
+import org.easy.query.core.abstraction.sql.base.ColumnSelector;
+import org.easy.query.core.abstraction.sql.base.SqlColumnSelector;
 import org.easy.query.core.impl.SelectContext;
 import org.easy.query.core.query.builder.SelectTableInfo;
-import org.easy.query.core.abstraction.sql.base.ColumnSelector;
 import org.easy.query.core.segments.ColumnSegment;
+import org.easy.query.core.segments.OrderColumnSegment;
 
 import java.util.Collection;
 
@@ -16,16 +18,14 @@ import java.util.Collection;
  * @Date: 2023/2/8 12:26
  * @Created by xuejiaming
  */
-public abstract class AbstractSqlColumnSelector<T1,TChain> implements ColumnSelector<T1,TChain> {
+public  class DefaultSqlOrderColumnSelector<T1> implements SqlColumnSelector<T1> {
     private final int index;
     private final SelectContext selectContext;
-    private final SqlSegment0Builder sqlSegmentBuilder;
+    private boolean asc;
 
-    public AbstractSqlColumnSelector(int index, SelectContext selectContext, SqlSegment0Builder sqlSegmentBuilder){
+    public DefaultSqlOrderColumnSelector(int index, SelectContext selectContext){
         this.index = index;
-
         this.selectContext = selectContext;
-        this.sqlSegmentBuilder = sqlSegmentBuilder;
     }
     @Override
     public  int getIndex(){
@@ -33,24 +33,25 @@ public abstract class AbstractSqlColumnSelector<T1,TChain> implements ColumnSele
     }
 
     @Override
-    public TChain column(Property<T1, ?> column) {
+    public SqlColumnSelector<T1> column(Property<T1, ?> column) {
         String columnName = selectContext.getTable(index).getColumnName(column);
-        sqlSegmentBuilder.append(new ColumnSegment(index,columnName,selectContext));
-        return (TChain) this;
+        selectContext.getOrder().append(new OrderColumnSegment(index,columnName,selectContext,asc));
+        return this;
     }
 
     @Override
-    public TChain columnAll() {
+    public SqlColumnSelector<T1> columnAll() {
         SelectTableInfo table = selectContext.getTable(index);
         Collection<ColumnMetadata> columns = table.getEntityMetadata().getColumns();
         for (ColumnMetadata column : columns) {
-            sqlSegmentBuilder.append(new ColumnSegment(index, column.getName(),selectContext));
+            selectContext.getOrder().append(new OrderColumnSegment(index, column.getName(),selectContext,asc));
         }
-        return (TChain) this;
+        return this;
     }
 
 
-    public SelectContext getSelectContext() {
-        return selectContext;
+    public void setAsc(boolean asc) {
+        this.asc = asc;
     }
+
 }

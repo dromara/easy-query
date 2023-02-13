@@ -1,9 +1,12 @@
 package org.easy.query.core.impl;
 
-import org.easy.query.core.abstraction.sql.enums.PredicateModeEnum;
+import org.easy.query.core.abstraction.EasyQuerySqlBuilderProvider;
+import org.easy.query.core.abstraction.EasyQuerySqlBuilderProvider2;
+import org.easy.query.core.abstraction.SqlSegment0Builder;
+import org.easy.query.core.abstraction.sql.base.SqlColumnAsSelector;
 import org.easy.query.core.abstraction.sql.base.SqlColumnSelector;
 import org.easy.query.core.abstraction.sql.base.SqlPredicate;
-import org.easy.query.core.impl.lambda.DefaultSqlPredicate;
+import org.easy.query.core.impl.lambda.*;
 
 /**
  * @FileName: Select1SqlPredicateProvider.java
@@ -11,52 +14,59 @@ import org.easy.query.core.impl.lambda.DefaultSqlPredicate;
  * @Date: 2023/2/7 23:45
  * @Created by xuejiaming
  */
-public class Select2SqlProvider<T1, T2> extends Select1SqlProvider<T1> {
-    private final SelectContext selectContext;
-    private DefaultSqlPredicate<T2> sqlPredicate2;
-//    private DefaultSqlSelector<T2, TR> sqlSelector2;
-    private DefaultSqlGroupSelector<T2> sqlGroupSelector2;
-    private DefaultSqlOrderBySelector<T2> sqlOrderBySelector2;
+public class Select2SqlProvider<T1,T2> extends Select1SqlProvider<T1> implements EasyQuerySqlBuilderProvider2<T1,T2> {
 
-    public Select2SqlProvider(SelectContext selectContext) {
+    private final SelectContext selectContext;
+    private  DefaultSqlGroupColumnSelector<T2> group;
+    private  DefaultSqlOrderColumnSelector<T2> order;
+    private DefaultSqlPredicate<T2> where;
+    private DefaultSqlPredicate<T2> on;
+
+    public Select2SqlProvider(SelectContext selectContext){
         super(selectContext);
+
         this.selectContext = selectContext;
     }
 
-    public SqlColumnSelector<T2> getSqlOrderBySelector2() {
-        if(sqlOrderBySelector2==null){
-            sqlOrderBySelector2=new DefaultSqlOrderBySelector<>(1, selectContext);
+    @Override
+    public SqlColumnSelector<T2> getSqlGroupColumnSelector2() {
+        if(group==null){
+            group= new DefaultSqlGroupColumnSelector<>(0,selectContext);
         }
-        return sqlOrderBySelector2;
+        return group;
     }
 
-    public SqlColumnSelector<T2> getSqlGroupSelector2() {
-        if(sqlGroupSelector2==null){
-            sqlGroupSelector2=new DefaultSqlGroupSelector<>(1, selectContext);
+    @Override
+    public DefaultSqlOrderColumnSelector<T2> getSqlOrderColumnSelector2(boolean asc) {
+        if(order==null){
+            order= new DefaultSqlOrderColumnSelector<>(0,selectContext);
         }
-        return sqlGroupSelector2;
+        order.setAsc(asc);
+        return order;
     }
 
-//    public SqlColumnAsSelector<T2, TR> getSqlSelector2() {
-//        if(sqlSelector2==null){
-//            sqlSelector2=new DefaultSqlSelector<>(1, selectContext);
-//        }
-//        return sqlSelector2;
-//    }
-
-    public SqlPredicate<T2> getSqlPredicate2(PredicateModeEnum predicateMode) {
-        if(sqlPredicate2==null){
-            sqlPredicate2=new DefaultSqlPredicate<>(1, selectContext, PredicateModeEnum.WHERE_PREDICATE);
-        }
-        sqlPredicate2.setPredicateMode(predicateMode);
-        return sqlPredicate2;
-    }
-
+    @Override
     public SqlPredicate<T2> getSqlWherePredicate2() {
-        return getSqlPredicate2(PredicateModeEnum.WHERE_PREDICATE);
+        if(where==null){
+            where=new DefaultSqlPredicate<>(0,selectContext,selectContext.getWhere());
+        }
+        return where;
+    }
+    @Override
+    public SqlPredicate<T2> getSqlOnPredicate2() {
+        if(on==null){
+            on=new DefaultSqlPredicate<>(0,selectContext,selectContext.getCurrentPredicateTable().getOn());
+        }
+        return on;
     }
 
-    public SqlPredicate<T2> getSqlOnPredicate2() {
-        return getSqlPredicate2(PredicateModeEnum.ON_PREDICATE);
+    @Override
+    public SqlColumnSelector<T2> getSqlColumnSelector2(SqlSegment0Builder sqlSegment0Builder) {
+        return new DefaultSqlColumnSelector<>(0,selectContext,sqlSegment0Builder);
+    }
+
+    @Override
+    public <TR> SqlColumnAsSelector<T2, TR> getSqlColumnAsSelector2(SqlSegment0Builder sqlSegment0Builder) {
+        return new DefaultSqlColumnAsSelector<>(0,selectContext,sqlSegment0Builder);
     }
 }

@@ -1,7 +1,12 @@
 package org.easy.query.core.query.builder;
 
+import org.easy.query.core.abstraction.SqlPredicateSegmentBuilder;
+import org.easy.query.core.abstraction.SqlSegment0;
+import org.easy.query.core.abstraction.SqlSegment0Builder;
+import org.easy.query.core.abstraction.lambda.Property;
 import org.easy.query.core.enums.SelectTableInfoTypeEnum;
 import org.easy.query.core.abstraction.metadata.EntityMetadata;
+import org.easy.query.core.util.LambdaUtil;
 
 /**
  * @FileName: SelectTableInfo.java
@@ -11,8 +16,10 @@ import org.easy.query.core.abstraction.metadata.EntityMetadata;
  */
 public class SelectTableInfo {
     private final String alias;
-    private final StringBuilder on;
+    private final SqlSegment0Builder on;
     private final int index;
+
+
 
     private final SelectTableInfoTypeEnum selectTableInfoType;
 
@@ -27,7 +34,7 @@ public class SelectTableInfo {
         this.alias = index == 0 ? alias : alias + index;
         this.index = index;
         this.selectTableInfoType = selectTableInfoType;
-        this.on=new StringBuilder();
+        this.on=new SqlPredicateSegmentBuilder();
     }
 
 
@@ -39,13 +46,20 @@ public class SelectTableInfo {
         return index;
     }
 
-    public StringBuilder getOn() {
+    public SqlSegment0Builder getOn() {
         return on;
     }
 
     public String getColumnName(String attrName){
         return this.entityMetadata.getColumnName(attrName);
 
+    }
+    public <T1> String getColumnName(Property<T1, ?> column){
+        String attrName = LambdaUtil.getAttrName(column);
+        return this.getColumnName(attrName);
+    }
+    public void appendPredicate(SqlSegment0 sqlSegment){
+        this.on.append(sqlSegment);
     }
 
 

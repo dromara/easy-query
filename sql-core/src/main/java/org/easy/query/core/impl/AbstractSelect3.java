@@ -25,10 +25,6 @@ public abstract class AbstractSelect3<T1,T2,T3> extends AbstractSelect0<T1, Sele
         return this;
     }
 
-    @Override
-    protected Select1SqlProvider<T1> getSelect1SqlPredicateProvider() {
-        return null;
-    }
 
     @Override
     public Select3<T1, T2, T3> where(boolean condition, SqlExpression3<SqlPredicate<T1>, SqlPredicate<T2>, SqlPredicate<T3>> whereExpression) {

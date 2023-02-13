@@ -1,18 +1,14 @@
 package org.easy.query.core.impl;
 
 import com.alibaba.druid.pool.DruidDataSourceFactory;
-import org.easy.query.core.abstraction.EasyQueryRuntimeContext;
-import org.easy.query.core.abstraction.SqlSegment;
-import org.easy.query.core.config.EasyQueryConfiguration;
+import org.easy.query.core.abstraction.*;
 import org.easy.query.core.exception.JDQCException;
 import org.easy.query.core.query.builder.SelectTableInfo;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 /**
  *
@@ -21,7 +17,7 @@ import java.util.Properties;
  * @Date: 2023/2/6 12:39
  * @Created by xuejiaming
  */
-public abstract class SelectContext {
+public  class SelectContext {
     private final EasyQueryRuntimeContext runtimeContext;
 
     public EasyQueryRuntimeContext getRuntimeContext() {
@@ -32,13 +28,14 @@ public abstract class SelectContext {
     private int skip;
     private int take;
 
+
     private final List<SelectTableInfo> tables;
     private final List<Object> params;
 
-    private SqlSegment where;
+    private SqlSegment0Builder where;
 //    private  StringBuilder select;
-    private SqlSegment group;
-    private SqlSegment order;
+    private SqlSegment0Builder group;
+    private SqlSegment0Builder order;
 
     String dbName = "dbdbd0";
     String ip = "127.0.0.1";
@@ -57,7 +54,6 @@ public abstract class SelectContext {
         this.alias = alias;
         this.tables =new ArrayList<>();
         this.params =new ArrayList<>();
-
         // 设置properties
         Properties properties = new Properties();
         properties.setProperty("name", dbName);
@@ -77,16 +73,16 @@ public abstract class SelectContext {
             throw new RuntimeException(e);
         }
     }
-    public abstract SelectContext copy();
-    protected SqlSegment createSqlSegment(){
-        return runtimeContext.getEasyQuerySqlSegmentFactory().createSqlSegment();
-    }
 
     public List<SelectTableInfo> getTables() {
         return tables;
     }
     public SelectTableInfo getTable(int index) {
         return tables.get(index);
+    }
+    public String getQuoteName(String value){
+        return runtimeContext.getEasyQueryConfiguration().getDialect().getQuoteName(value);
+
     }
 
     public int getSkip() {
@@ -105,9 +101,9 @@ public abstract class SelectContext {
         this.take = take;
     }
 
-    public SqlSegment getWhere() {
+    public SqlSegment0Builder getWhere() {
         if(where==null){
-            where=createSqlSegment();
+            where=new SqlPredicateSegmentBuilder();
         }
         return where;
     }
@@ -152,26 +148,26 @@ public abstract class SelectContext {
 //        return select;
 //    }
 
-    public EasyQueryConfiguration getJdqcConfiguration() {
-        return runtimeContext.getEasyQueryConfiguration();
-    }
 
-    public SqlSegment getGroup() {
+    public SqlSegment0Builder getGroup() {
         if(group==null){
-            group=createSqlSegment();
+            group=new SqlGroupSegmentBuilder();
         }
         return group;
     }
 
-    public SqlSegment getOrder() {
+    public SqlSegment0Builder getOrder() {
         if(order==null){
-            order=createSqlSegment();
+            order=new SqlOrderSegmentBuilder();
         }
         return order;
     }
 
     public List<Object> getParams() {
         return params;
+    }
+    public void addParams(Object parameter) {
+       params.add(parameter);
     }
 
 

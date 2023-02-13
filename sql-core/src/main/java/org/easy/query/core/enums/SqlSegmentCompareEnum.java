@@ -7,6 +7,14 @@ package org.easy.query.core.enums;
  * @Created by xuejiaming
  */
 public enum SqlSegmentCompareEnum {
+    NONE,
     GT,
-    GE;
+    GE,
+    EQ,
+    NE,
+    LT,
+    LE,
+    LIKE,
+    NULL,
+    NOT_NULL;
 }

@@ -1,14 +1,13 @@
 package org.easy.query.core.impl;
 
-import org.easy.query.core.abstraction.EasyQueryLambdaFactory;
-import org.easy.query.core.abstraction.SqlSegment;
+import org.easy.query.core.abstraction.EasyQuerySqlBuilderProvider;
+import org.easy.query.core.abstraction.SelectSqlSegmentBuilder;
 import org.easy.query.core.abstraction.lambda.SqlExpression;
 import org.easy.query.core.abstraction.sql.Select0;
 import org.easy.query.core.abstraction.sql.base.ColumnSelector;
 import org.easy.query.core.abstraction.sql.base.SqlColumnAsSelector;
 import org.easy.query.core.abstraction.sql.base.SqlColumnSelector;
 import org.easy.query.core.abstraction.sql.base.SqlPredicate;
-import org.easy.query.core.impl.lambda.DefaultSqlColumnAsSelector;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,12 +25,6 @@ public abstract class AbstractSelect0<T1, TChain> implements Select0<T1, TChain>
     public AbstractSelect0(Class<T1> t1Class, SelectContext selectContext) {
         this.t1Class = t1Class;
         this.selectContext = selectContext;
-    }
-    protected EasyQueryLambdaFactory getEasyQueryLambdaFactory(){
-        return selectContext.getRuntimeContext().getEasyQueryLambdaFactory();
-    }
-    protected SqlSegment createSqlSegment(){
-        return selectContext.getRuntimeContext().getEasyQuerySqlSegmentFactory().createSqlSegment();
     }
 
 
@@ -87,20 +80,20 @@ public abstract class AbstractSelect0<T1, TChain> implements Select0<T1, TChain>
 
     @Override
     public <TR> List<TR> toList(Class<TR> resultClass, SqlExpression<SqlColumnAsSelector<T1, TR>> selectExpression) {
-        SqlSegment sqlSegment = createSqlSegment();
-        SqlColumnAsSelector<T1,TR> sqlColumnSelector = getEasyQueryLambdaFactory().createSqlColumnAsSelector(selectContext,sqlSegment);
+        SelectSqlSegmentBuilder sqlSegmentBuilder = new SelectSqlSegmentBuilder();
+        SqlColumnAsSelector<T1,TR> sqlColumnSelector = getSqlBuilderProvider1().getSqlColumnAsSelector1(sqlSegmentBuilder);
         selectExpression.apply(sqlColumnSelector);
-        List<T1> list = toInternalList(sqlSegment.toSql());
+        List<T1> list = toInternalList(sqlSegmentBuilder.toSql());
         //todo t1 2 tr
         return new ArrayList<>();
     }
 
     @Override
     public List<T1> toList(SqlExpression<SqlColumnSelector<T1>> selectExpression) {
-        SqlSegment sqlSegment = createSqlSegment();
-        SqlColumnSelector<T1> sqlColumnSelector = getEasyQueryLambdaFactory().createSqlColumnSelector(selectContext,sqlSegment);
+        SelectSqlSegmentBuilder sqlSegmentBuilder = new SelectSqlSegmentBuilder();
+        SqlColumnSelector<T1> sqlColumnSelector = getSqlBuilderProvider1().getSqlColumnSelector1(sqlSegmentBuilder);
         selectExpression.apply(sqlColumnSelector);
-        return toInternalList(sqlSegment.toSql());
+        return toInternalList(sqlSegmentBuilder.toSql());
     }
 
     /**
@@ -118,18 +111,18 @@ public abstract class AbstractSelect0<T1, TChain> implements Select0<T1, TChain>
 
     @Override
     public String toSql(SqlExpression<SqlColumnSelector<T1>> selectExpression) {
-        SqlSegment sqlSegment = createSqlSegment();
-        SqlColumnSelector<T1> sqlColumnSelector = getEasyQueryLambdaFactory().createSqlColumnSelector(selectContext,sqlSegment);
+        SelectSqlSegmentBuilder sqlSegmentBuilder = new SelectSqlSegmentBuilder();
+        SqlColumnSelector<T1> sqlColumnSelector = getSqlBuilderProvider1().getSqlColumnSelector1(sqlSegmentBuilder);
         selectExpression.apply(sqlColumnSelector);
-        return toSql(sqlSegment.toSql());
+        return toSql(sqlSegmentBuilder.toSql());
     }
 
     @Override
     public <TR> String toSql(Class<TR> resultClass, SqlExpression<SqlColumnAsSelector<T1, TR>> selectExpression) {
-        SqlSegment sqlSegment = createSqlSegment();
-        SqlColumnAsSelector<T1,TR> sqlColumnSelector = getEasyQueryLambdaFactory().createSqlColumnAsSelector(selectContext,sqlSegment);
+        SelectSqlSegmentBuilder sqlSegmentBuilder = new SelectSqlSegmentBuilder();
+        SqlColumnAsSelector<T1,TR> sqlColumnSelector = getSqlBuilderProvider1().getSqlColumnAsSelector1(sqlSegmentBuilder);
         selectExpression.apply(sqlColumnSelector);
-        return toSql(sqlSegment.toSql());
+        return toSql(sqlSegmentBuilder.toSql());
     }
 
     @Override
@@ -140,7 +133,7 @@ public abstract class AbstractSelect0<T1, TChain> implements Select0<T1, TChain>
     @Override
     public TChain where(boolean condition, SqlExpression<SqlPredicate<T1>> whereExpression) {
         if (condition) {
-            SqlPredicate<T1> sqlPredicate = getEasyQueryLambdaFactory().createSqlPredicate(selectContext, selectContext.getWhere());
+            SqlPredicate<T1> sqlPredicate = getSqlBuilderProvider1().getSqlWherePredicate1();
             whereExpression.apply(sqlPredicate);
         }
         return castSelf();
@@ -149,7 +142,7 @@ public abstract class AbstractSelect0<T1, TChain> implements Select0<T1, TChain>
     @Override
     public TChain groupBy(boolean condition, SqlExpression<SqlColumnSelector<T1>> selectExpression) {
         if (condition) {
-            SqlColumnSelector<T1> sqlPredicate = getEasyQueryLambdaFactory().createSqlColumnSelector(selectContext, selectContext.getGroup());
+            SqlColumnSelector<T1> sqlPredicate = getSqlBuilderProvider1().getSqlGroupColumnSelector1();
             selectExpression.apply(sqlPredicate);
         }
         return castSelf();
@@ -158,7 +151,7 @@ public abstract class AbstractSelect0<T1, TChain> implements Select0<T1, TChain>
     @Override
     public TChain orderByAsc(boolean condition, SqlExpression<SqlColumnSelector<T1>> selectExpression) {
         if (condition) {
-            SqlColumnSelector<T1> sqlPredicate = getEasyQueryLambdaFactory().createSqlColumnSelector(selectContext, selectContext.getOrder());
+            SqlColumnSelector<T1> sqlPredicate = getSqlBuilderProvider1().getSqlOrderColumnSelector1(true);
             selectExpression.apply(sqlPredicate);
         }
         return castSelf();
@@ -166,6 +159,10 @@ public abstract class AbstractSelect0<T1, TChain> implements Select0<T1, TChain>
 
     @Override
     public TChain orderByDesc(boolean condition, SqlExpression<SqlColumnSelector<T1>> selectExpression) {
+        if (condition) {
+            SqlColumnSelector<T1> sqlPredicate = getSqlBuilderProvider1().getSqlOrderColumnSelector1(false);
+            selectExpression.apply(sqlPredicate);
+        }
         return castSelf();
     }
 
@@ -187,5 +184,5 @@ public abstract class AbstractSelect0<T1, TChain> implements Select0<T1, TChain>
         return selectContext;
     }
 
-    protected abstract Select1SqlProvider<T1> getSelect1SqlPredicateProvider();
+    protected abstract EasyQuerySqlBuilderProvider<T1> getSqlBuilderProvider1();
 }

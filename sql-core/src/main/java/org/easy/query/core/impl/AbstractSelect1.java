@@ -1,5 +1,6 @@
 package org.easy.query.core.impl;
 
+import org.easy.query.core.abstraction.EasyQuerySqlBuilderProvider;
 import org.easy.query.core.abstraction.lambda.SqlExpression2;
 import org.easy.query.core.abstraction.metadata.EntityMetadata;
 import org.easy.query.core.abstraction.sql.Select1;
@@ -28,8 +29,8 @@ public abstract class AbstractSelect1<T1> extends AbstractSelect0<T1, Select1<T1
     @Override
     public <T2> Select2<T1, T2> leftJoin(Class<T2> joinClass, SqlExpression2<SqlPredicate<T1>, SqlPredicate<T2>> on) {
         AbstractSelect2<T1, T2> select2 = createSelect2(joinClass, SelectTableInfoTypeEnum.LEFT_JOIN);
-        SqlPredicate<T1> on1 = select2.getSelect2SqlPredicateProvider().getSqlPredicate1(PredicateModeEnum.ON_PREDICATE);
-        SqlPredicate<T2> on2 = select2.getSelect2SqlPredicateProvider().getSqlPredicate2(PredicateModeEnum.ON_PREDICATE);
+        SqlPredicate<T1> on1 = select2.getSqlBuilderProvider2().getSqlOnPredicate1();
+        SqlPredicate<T2> on2 = select2.getSqlBuilderProvider2().getSqlOnPredicate2();
         on.apply(on1,on2);
         return select2;
     }
@@ -38,8 +39,8 @@ public abstract class AbstractSelect1<T1> extends AbstractSelect0<T1, Select1<T1
     @Override
     public <T2> Select2<T1, T2> innerJoin(Class<T2> joinClass, SqlExpression2<SqlPredicate<T1>, SqlPredicate<T2>> on) {
         AbstractSelect2<T1, T2> select2 = createSelect2(joinClass, SelectTableInfoTypeEnum.INNER_JOIN);
-        SqlPredicate<T1> sqlOnPredicate1 = select2.getSelect2SqlPredicateProvider().getSqlOnPredicate1();
-        SqlPredicate<T2> sqlOnPredicate2 = select2.getSelect2SqlPredicateProvider().getSqlOnPredicate2();
+        SqlPredicate<T1> sqlOnPredicate1 = select2.getSqlBuilderProvider2().getSqlOnPredicate1();
+        SqlPredicate<T2> sqlOnPredicate2 = select2.getSqlBuilderProvider2().getSqlOnPredicate2();
         on.apply(sqlOnPredicate1,sqlOnPredicate2);
         return select2;
     }
@@ -50,7 +51,7 @@ public abstract class AbstractSelect1<T1> extends AbstractSelect0<T1, Select1<T1
     protected abstract <T2> AbstractSelect2<T1, T2> createSelect2(Class<T2> joinClass,SelectTableInfoTypeEnum selectTableInfoType);
 
     @Override
-    protected Select1SqlProvider<T1> getSelect1SqlPredicateProvider(){
-        return this.sqlPredicateProvider;
+    protected EasyQuerySqlBuilderProvider<T1> getSqlBuilderProvider1() {
+        return sqlPredicateProvider;
     }
 }

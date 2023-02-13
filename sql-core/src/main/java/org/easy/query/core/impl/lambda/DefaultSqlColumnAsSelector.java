@@ -1,6 +1,7 @@
 package org.easy.query.core.impl.lambda;
 
 import org.easy.query.core.abstraction.SqlSegment;
+import org.easy.query.core.abstraction.SqlSegment0Builder;
 import org.easy.query.core.abstraction.lambda.Property;
 import org.easy.query.core.impl.SelectContext;
 import org.easy.query.core.abstraction.sql.base.SqlColumnAsSelector;
@@ -15,9 +16,12 @@ import org.easy.query.core.abstraction.sql.base.ColumnAsSelector;
 public class DefaultSqlColumnAsSelector<T1,TR> extends AbstractSqlColumnSelector<T1, SqlColumnAsSelector<T1, TR>> implements SqlColumnAsSelector<T1,TR> {
 
 
-    public DefaultSqlColumnAsSelector(int index, SelectContext selectContext, SqlSegment sqlSegment){
-        super(index,selectContext,sqlSegment);
+    private final SqlSegment0Builder sqlSegment0Builder;
 
+    public DefaultSqlColumnAsSelector(int index, SelectContext selectContext, SqlSegment0Builder sqlSegment0Builder){
+        super(index,selectContext,sqlSegment0Builder);
+
+        this.sqlSegment0Builder = sqlSegment0Builder;
     }
 
     @Override

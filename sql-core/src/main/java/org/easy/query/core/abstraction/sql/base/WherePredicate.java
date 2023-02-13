@@ -1,6 +1,7 @@
 package org.easy.query.core.abstraction.sql.base;
 
 import org.easy.query.core.abstraction.lambda.Property;
+import org.easy.query.core.abstraction.lambda.SqlExpression;
 
 import java.io.Serializable;
 
@@ -53,5 +54,8 @@ public interface WherePredicate<T1, TChain> extends Serializable, IndexAware {
 
 
     <T2, TChain2> WherePredicate<T2, TChain2> and(WherePredicate<T2, TChain2> sub);
-    TChain and();
+    default TChain and(SqlExpression<WherePredicate<T1, TChain>> predicateSqlExpression){
+        return and(true,predicateSqlExpression);
+    }
+    TChain and(boolean condition,SqlExpression<WherePredicate<T1, TChain>> predicateSqlExpression);
 }

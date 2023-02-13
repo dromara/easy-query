@@ -1,5 +1,6 @@
 package org.easy.query.core.impl;
 
+import org.easy.query.core.abstraction.EasyQuerySqlBuilderProvider2;
 import org.easy.query.core.abstraction.lambda.SqlExpression2;
 import org.easy.query.core.abstraction.lambda.SqlExpression3;
 import org.easy.query.core.abstraction.metadata.EntityMetadata;
@@ -19,7 +20,7 @@ import org.easy.query.core.query.builder.SelectTableInfo;
  */
 public abstract  class AbstractSelect2<T1,T2> extends AbstractSelect0<T1, Select2<T1,T2>> implements Select2<T1,T2> {
 
-    private final Select2SqlProvider<T1,T2> sqlPredicateProvider;
+    private final EasyQuerySqlBuilderProvider2<T1,T2> sqlPredicateProvider;
 
     public AbstractSelect2(Class<T1> t1Class, Class<T2> t2Class, SelectContext selectContext, SelectTableInfoTypeEnum selectTableInfoType) {
         super(t1Class,selectContext);
@@ -41,8 +42,8 @@ public abstract  class AbstractSelect2<T1,T2> extends AbstractSelect0<T1, Select
     @Override
     public Select2<T1, T2> where(boolean condition, SqlExpression2<SqlPredicate<T1>, SqlPredicate<T2>> whereExpression) {
         if(condition){
-            SqlPredicate<T1> sqlWherePredicate1 = getSelect2SqlPredicateProvider().getSqlWherePredicate1();
-            SqlPredicate<T2> sqlWherePredicate2 = getSelect2SqlPredicateProvider().getSqlWherePredicate2();
+            SqlPredicate<T1> sqlWherePredicate1 = getSqlBuilderProvider2().getSqlWherePredicate1();
+            SqlPredicate<T2> sqlWherePredicate2 = getSqlBuilderProvider2().getSqlWherePredicate2();
             whereExpression.apply(sqlWherePredicate1,sqlWherePredicate2);
         }
         return this;
@@ -52,18 +53,28 @@ public abstract  class AbstractSelect2<T1,T2> extends AbstractSelect0<T1, Select
 
     @Override
     public Select2<T1, T2> orderByAsc(boolean condition, SqlExpression2<SqlColumnSelector<T1>, SqlColumnSelector<T2>> selectExpression) {
-        return null;
+        if(condition){
+            SqlColumnSelector<T1> sqlOrderColumnSelector1 = getSqlBuilderProvider2().getSqlOrderColumnSelector1(true);
+            SqlColumnSelector<T2> sqlOrderColumnSelector2 = getSqlBuilderProvider2().getSqlOrderColumnSelector2(true);
+            selectExpression.apply(sqlOrderColumnSelector1,sqlOrderColumnSelector2);
+        }
+        return this;
     }
 
     @Override
     public Select2<T1, T2> orderByDesc(boolean condition, SqlExpression2<SqlColumnSelector<T1>, SqlColumnSelector<T2>> selectExpression) {
-        return null;
+        if(condition){
+            SqlColumnSelector<T1> sqlOrderColumnSelector1 = getSqlBuilderProvider2().getSqlOrderColumnSelector1(false);
+            SqlColumnSelector<T2> sqlOrderColumnSelector2 = getSqlBuilderProvider2().getSqlOrderColumnSelector2(false);
+            selectExpression.apply(sqlOrderColumnSelector1,sqlOrderColumnSelector2);
+        }
+        return this;
     }
     @Override
     public Select2<T1, T2> groupBy(boolean condition,SqlExpression2<SqlColumnSelector<T1>, SqlColumnSelector<T2>> selectExpression) {
         if(condition){
-            SqlColumnSelector<T1> sqlGroupSelector1 = getSelect2SqlPredicateProvider().getSqlGroupSelector1();
-            SqlColumnSelector<T2> sqlGroupSelector2 = getSelect2SqlPredicateProvider().getSqlGroupSelector2();
+            SqlColumnSelector<T1> sqlGroupSelector1 = getSqlBuilderProvider2().getSqlGroupColumnSelector1();
+            SqlColumnSelector<T2> sqlGroupSelector2 = getSqlBuilderProvider2().getSqlGroupColumnSelector2();
             selectExpression.apply(sqlGroupSelector1,sqlGroupSelector2);
         }
         return this;
@@ -72,12 +83,12 @@ public abstract  class AbstractSelect2<T1,T2> extends AbstractSelect0<T1, Select
     protected Select2<T1, T2> castSelf() {
         return this;
     }
-    protected Select2SqlProvider<T1,T2> getSelect2SqlPredicateProvider(){
-        return this.sqlPredicateProvider;
-    }
 
     @Override
-    protected Select1SqlProvider<T1> getSelect1SqlPredicateProvider() {
+    protected EasyQuerySqlBuilderProvider2<T1,T2> getSqlBuilderProvider1() {
+        return sqlPredicateProvider;
+    }
+    protected EasyQuerySqlBuilderProvider2<T1,T2> getSqlBuilderProvider2() {
         return sqlPredicateProvider;
     }
 }

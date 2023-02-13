@@ -3,6 +3,7 @@ package org.easy.query.mysql.base;
 import org.easy.query.core.enums.SelectTableInfoTypeEnum;
 import org.easy.query.core.impl.AbstractSelect1;
 import org.easy.query.core.impl.AbstractSelect2;
+import org.easy.query.core.impl.SelectContext;
 import org.easy.query.mysql.util.MySQLUtil;
 
 import java.sql.Connection;
@@ -20,9 +21,9 @@ import java.util.List;
  */
 public class MySQLSelect1<T1> extends AbstractSelect1<T1> {
 
-    private final MySQLSelectContext selectContext;
+    private final SelectContext selectContext;
 
-    public MySQLSelect1(Class<T1> t1Class, MySQLSelectContext selectContext) {
+    public MySQLSelect1(Class<T1> t1Class, SelectContext selectContext) {
         super(t1Class, selectContext);
         this.selectContext = selectContext;
     }
