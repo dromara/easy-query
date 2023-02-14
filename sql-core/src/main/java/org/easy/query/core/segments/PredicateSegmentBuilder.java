@@ -13,13 +13,13 @@ import java.util.List;
  */
 public class PredicateSegmentBuilder {
     private List<PredicateSegmentBuilder> children =new ArrayList<>();
-    private PredicateSegment predicate;
+    private PredicateSegment00 predicate;
 
-    public PredicateSegment getPredicate() {
+    public PredicateSegment00 getPredicate() {
         return predicate;
     }
 
-    public void setPredicate(PredicateSegment predicate) {
+    public void setPredicate(PredicateSegment00 predicate) {
         this.predicate = predicate;
     }
 

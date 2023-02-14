@@ -7,6 +7,7 @@ import org.easy.query.core.impl.SelectContext;
 import org.easy.query.core.impl.lambda.DefaultSqlColumnAsSelector;
 import org.easy.query.core.impl.lambda.DefaultSqlColumnSelector;
 import org.easy.query.core.impl.lambda.DefaultSqlPredicate;
+import org.easy.query.core.segments.PredicateSegment;
 
 /**
  * @FileName: DefaultEasyQueryLambdaFactory.java
@@ -16,8 +17,8 @@ import org.easy.query.core.impl.lambda.DefaultSqlPredicate;
  */
 public class DefaultEasyQueryLambdaFactory implements EasyQueryLambdaFactory{
     @Override
-    public <T1> SqlPredicate<T1> createSqlPredicate(int index, SelectContext selectContext, SqlSegment0Builder sqlSegmentBuilder) {
-        return new DefaultSqlPredicate<>(index,selectContext,sqlSegmentBuilder);
+    public <T1> SqlPredicate<T1> createSqlPredicate(int index, SelectContext selectContext, PredicateSegment predicateSegment) {
+        return new DefaultSqlPredicate<>(index,selectContext,predicateSegment);
     }
 
     @Override

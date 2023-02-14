@@ -1,55 +1,96 @@
 package org.easy.query.core.segments;
 
+import org.easy.query.core.abstraction.SqlSegment;
+import org.easy.query.core.enums.SqlKeywordEnum;
+import org.easy.query.core.exception.JDQCException;
+import org.easy.query.core.util.StringUtil;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @FileName: PredicateSegment.java
  * @Description: 文件说明
- * @Date: 2023/2/14 12:24
+ * @Date: 2023/2/14 23:05
  * @Created by xuejiaming
  */
-public class PredicateSegment {
-    private int index;
-    private String column;
-    private String operate ="=";
-    private int valueIndex=-1;
-    private Object value;
+public class PredicateSegment implements SqlSegment {
+    private List<PredicateSegment> children;
+    private Predicate predicate;
+    private final boolean root;
 
-    public int getIndex() {
-        return index;
+    public boolean isEmpty() {
+        return this.predicate == null && this.children == null;
     }
 
-    public void setIndex(int index) {
-        this.index = index;
+    public PredicateSegment() {
+        this(false);
     }
 
-    public String getColumn() {
-        return column;
+    public PredicateSegment(boolean root) {
+        this.root = root;
     }
 
-    public void setColumn(String column) {
-        this.column = column;
+    public PredicateSegment(Predicate predicate) {
+        setPredicate(predicate);
+        this.root = false;
     }
 
-    public String getOperate() {
-        return operate;
+    private boolean isPredicate() {
+        return predicate != null && children == null;
     }
 
-    public void setOperate(String operate) {
-        this.operate = operate;
+    public void setPredicate(Predicate predicate) {
+        if (!isEmpty()) {
+            throw new JDQCException("sql segment cant set predicate.");
+        }
+        this.predicate = predicate;
     }
 
-    public int getValueIndex() {
-        return valueIndex;
+    public void addPredicateSegment(PredicateSegment predicateSegment) {
+        if (isPredicate()) {
+            throw new JDQCException("sql segment is predicate can't add predicate segment");
+        }
+        if (children == null) {
+            children = new ArrayList<>();
+        }
+        children.add(predicateSegment);
     }
 
-    public void setValueIndex(int valueIndex) {
-        this.valueIndex = valueIndex;
+    @Override
+    public String getSql() {
+        if (isPredicate()) {
+            return predicate.getSql();
+        } else {
+            StringBuilder sql = new StringBuilder();
+            boolean allAnd = true;
+            boolean allOr = true;
+            for (PredicateSegment child : children) {
+                if (child instanceof AndPredicateSegment) {
+                    allOr = false;
+                    if (sql.length() == 0) {
+                        sql.append(child.getSql());
+                    } else {
+                        sql.append(AndPredicateSegment.AND).append(child.getSql());
+                    }
+                } else if (child instanceof OrPredicateSegment) {
+                    allAnd = false;
+                    if (sql.length() == 0) {
+                        sql.append(child.getSql());
+                    } else {
+                        sql.append(OrPredicateSegment.OR).append(child.getSql());
+                    }
+                }
+            }
+            if (sql.length() != 0) {
+                if (root && (allAnd || allOr)) {
+                    return sql.toString();
+                } else {
+                    return "(" + sql + ")";
+                }
+            }
+            return StringUtil.EMPTY;
+        }
     }
 
-    public Object getValue() {
-        return value;
-    }
-
-    public void setValue(Object value) {
-        this.value = value;
-    }
 }

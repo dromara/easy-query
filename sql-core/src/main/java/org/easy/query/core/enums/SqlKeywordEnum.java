@@ -1,13 +1,15 @@
 package org.easy.query.core.enums;
 
 
+import org.easy.query.core.abstraction.SqlSegment;
+
 /**
  * @FileName: SqlKeywordEnum.java
  * @Description: 文件说明
  * @Date: 2023/2/13 21:40
  * @Created by xuejiaming
  */
-public enum SqlKeywordEnum {
+public enum SqlKeywordEnum implements SqlSegment {
 
     AND("AND"),
     OR("OR"),
@@ -41,5 +43,10 @@ public enum SqlKeywordEnum {
     }
     public String getKeyword() {
         return keyword;
+    }
+
+    @Override
+    public String getSql() {
+        return " "+keyword+" ";
     }
 }

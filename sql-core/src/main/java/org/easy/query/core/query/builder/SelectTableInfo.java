@@ -6,6 +6,8 @@ import org.easy.query.core.abstraction.SqlSegment0Builder;
 import org.easy.query.core.abstraction.lambda.Property;
 import org.easy.query.core.enums.SelectTableInfoTypeEnum;
 import org.easy.query.core.abstraction.metadata.EntityMetadata;
+import org.easy.query.core.segments.AndPredicateSegment;
+import org.easy.query.core.segments.PredicateSegment;
 import org.easy.query.core.util.LambdaUtil;
 
 /**
@@ -16,7 +18,7 @@ import org.easy.query.core.util.LambdaUtil;
  */
 public class SelectTableInfo {
     private final String alias;
-    private final SqlSegment0Builder on;
+    private final PredicateSegment on;
     private final int index;
 
 
@@ -34,7 +36,7 @@ public class SelectTableInfo {
         this.alias = index == 0 ? alias : alias + index;
         this.index = index;
         this.selectTableInfoType = selectTableInfoType;
-        this.on=new SqlPredicateSegmentBuilder();
+        this.on=new AndPredicateSegment(true);
     }
 
 
@@ -46,7 +48,7 @@ public class SelectTableInfo {
         return index;
     }
 
-    public SqlSegment0Builder getOn() {
+    public PredicateSegment getOn() {
         return on;
     }
 
@@ -57,9 +59,6 @@ public class SelectTableInfo {
     public <T1> String getColumnName(Property<T1, ?> column){
         String attrName = LambdaUtil.getAttrName(column);
         return this.getColumnName(attrName);
-    }
-    public void appendPredicate(SqlSegment0 sqlSegment){
-        this.on.append(sqlSegment);
     }
 
 

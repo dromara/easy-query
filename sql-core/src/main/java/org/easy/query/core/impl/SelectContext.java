@@ -4,6 +4,8 @@ import com.alibaba.druid.pool.DruidDataSourceFactory;
 import org.easy.query.core.abstraction.*;
 import org.easy.query.core.exception.JDQCException;
 import org.easy.query.core.query.builder.SelectTableInfo;
+import org.easy.query.core.segments.AndPredicateSegment;
+import org.easy.query.core.segments.PredicateSegment;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -32,7 +34,7 @@ public  class SelectContext {
     private final List<SelectTableInfo> tables;
     private final List<Object> params;
 
-    private SqlSegment0Builder where;
+    private PredicateSegment where;
 //    private  StringBuilder select;
     private SqlSegment0Builder group;
     private SqlSegment0Builder order;
@@ -101,9 +103,9 @@ public  class SelectContext {
         this.take = take;
     }
 
-    public SqlSegment0Builder getWhere() {
+    public PredicateSegment getWhere() {
         if(where==null){
-            where=new SqlPredicateSegmentBuilder();
+            where=new AndPredicateSegment(true);
         }
         return where;
     }

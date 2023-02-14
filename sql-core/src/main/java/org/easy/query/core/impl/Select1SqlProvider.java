@@ -1,7 +1,6 @@
 package org.easy.query.core.impl;
 
 import org.easy.query.core.abstraction.EasyQuerySqlBuilderProvider;
-import org.easy.query.core.abstraction.SqlSegment;
 import org.easy.query.core.abstraction.SqlSegment0Builder;
 import org.easy.query.core.abstraction.sql.base.SqlColumnAsSelector;
 import org.easy.query.core.abstraction.sql.base.SqlColumnSelector;

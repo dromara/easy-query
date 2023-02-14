@@ -1,6 +1,5 @@
 package org.easy.query.core.impl.lambda;
 
-import org.easy.query.core.abstraction.SqlSegment;
 import org.easy.query.core.abstraction.SqlSegment0Builder;
 import org.easy.query.core.abstraction.lambda.Property;
 import org.easy.query.core.impl.SelectContext;
