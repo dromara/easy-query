@@ -4,11 +4,10 @@ import org.easy.query.core.abstraction.*;
 import org.easy.query.core.abstraction.lambda.Property;
 import org.easy.query.core.abstraction.lambda.SqlExpression;
 import org.easy.query.core.enums.SqlKeywordEnum;
-import org.easy.query.core.enums.SqlSegmentCompareEnum;
 import org.easy.query.core.impl.SelectContext;
 import org.easy.query.core.abstraction.sql.base.SqlPredicate;
 import org.easy.query.core.abstraction.sql.base.WherePredicate;
-import org.easy.query.core.segments.PredicateSegment;
+import org.easy.query.core.segments.PredicateSegment0;
 
 /**
  * @FileName: SqlWherePredicate.java
@@ -37,7 +36,9 @@ public class DefaultSqlPredicate<T1> implements SqlPredicate<T1> {
     public DefaultSqlPredicate<T1> eq(boolean condition, Property<T1, ?> column, Object val) {
         if(condition){
             String columnName = selectContext.getTable(getIndex()).getColumnName(column);
-            sqlSegment0Builder.append(new PredicateSegment(index,columnName,selectContext, SqlKeywordEnum.EQ));
+            PredicateSegment0 predicateSegment = PredicateSegment0.createColumn2Value(index, columnName, selectContext, SqlKeywordEnum.EQ,val);
+            predicateSegment.setCompareValue(val);
+            sqlSegment0Builder.append(predicateSegment);
         }
         return this;
     }
@@ -46,7 +47,8 @@ public class DefaultSqlPredicate<T1> implements SqlPredicate<T1> {
     public SqlPredicate<T1> like(boolean condition, Property<T1, ?> column, Object val) {
         if(condition){
             String columnName = selectContext.getTable(getIndex()).getColumnName(column);
-            sqlSegment0Builder.append(new PredicateSegment(index,columnName,selectContext, SqlKeywordEnum.LIKE));
+            PredicateSegment0 predicateSegment = PredicateSegment0.createColumn2Value(index, columnName, selectContext, SqlKeywordEnum.LIKE,val);
+            sqlSegment0Builder.append(predicateSegment);
         }
         return this;
     }
@@ -56,9 +58,7 @@ public class DefaultSqlPredicate<T1> implements SqlPredicate<T1> {
         if(condition){
             String columnName = selectContext.getTable(getIndex()).getColumnName(column1);
             String columnName2 = selectContext.getTable(sub.getIndex()).getColumnName(column2);
-            PredicateSegment predicateSegment = new PredicateSegment(index, columnName, selectContext, SqlKeywordEnum.EQ);
-            predicateSegment.setCompareIndex(sub.getIndex());
-            predicateSegment.setCompareValue(columnName2);
+            PredicateSegment0 predicateSegment =  PredicateSegment0.createColumn2Column(index, columnName, selectContext, SqlKeywordEnum.EQ,sub.getIndex(),columnName2);
             sqlSegment0Builder.append(predicateSegment);
         }
         return this;
@@ -70,8 +70,9 @@ public class DefaultSqlPredicate<T1> implements SqlPredicate<T1> {
     }
 
     @Override
-    public SqlPredicate<T1> and(boolean condition,SqlExpression<WherePredicate<T1, SqlPredicate<T1>>> wherePredicateSqlExpression) {
+    public SqlPredicate<T1> and(boolean condition,SqlExpression<SqlPredicate<T1>> wherePredicateSqlExpression) {
         if(condition){
+            wherePredicateSqlExpression.apply(this);
 //            new DefaultSqlSegment0()
 //            DefaultSqlPredicate<T1> x=null;
 //            wherePredicateSqlExpression.apply(x);

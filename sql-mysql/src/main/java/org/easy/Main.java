@@ -1,12 +1,17 @@
 package org.easy;
 
+import org.easy.query.core.abstraction.DefaultEasyQueryLambdaFactory;
 import org.easy.query.core.abstraction.DefaultEasyQueryRuntimeContext;
+import org.easy.query.core.abstraction.EasyQueryLambdaFactory;
 import org.easy.query.core.abstraction.client.JQDCClient;
 import org.easy.query.core.abstraction.metadata.EntityMetadataManager;
 import org.easy.query.core.config.NameConversion;
 import org.easy.query.core.config.UnderlinedNameConversion;
 import org.easy.query.core.metadata.DefaultEntityMetadataManager;
 import org.easy.query.core.config.EasyQueryConfiguration;
+import org.easy.query.core.segments.AndPredicateSegmentBuilder;
+import org.easy.query.core.segments.OrPredicateSegmentBuilder;
+import org.easy.query.core.segments.PredicateSegment;
 import org.easy.query.mysql.MySQLJQDCClient;
 import org.easy.query.mysql.config.MySQLDialect;
 import org.easy.test.SysUserLogbyMonth;
@@ -17,12 +22,40 @@ public class Main {
     private static final String[] scanPackages=new String[]{"org.jdqc.core"};
     private static JQDCClient client;
     public static void main(String[] args) {
+
+        AndPredicateSegmentBuilder and = new AndPredicateSegmentBuilder();
+        PredicateSegment a = new PredicateSegment();
+        a.setColumn("a");
+        a.setValue("?");
+        AndPredicateSegmentBuilder a1 = new AndPredicateSegmentBuilder();
+        a1.setPredicate(a);
+        and.getChildren().add(a1);
+
+
+        AndPredicateSegmentBuilder b = new AndPredicateSegmentBuilder();
+        OrPredicateSegmentBuilder b11 = new OrPredicateSegmentBuilder();
+        OrPredicateSegmentBuilder b22 = new OrPredicateSegmentBuilder();
+
+        PredicateSegment b1 = new PredicateSegment();
+        b1.setColumn("b1");
+        b1.setValue("?");
+        b11.setPredicate(b1);
+        PredicateSegment b2 = new PredicateSegment();
+        b2.setColumn("b2");
+        b2.setValue("?");
+        b22.setPredicate(b2);
+        b.getChildren().add(b11);
+        b.getChildren().add(b22);
+        and.getChildren().add(b);
+        String sql = and.getSql();
+
         NameConversion nameConversion = new UnderlinedNameConversion();
         EasyQueryConfiguration configuration = new EasyQueryConfiguration(driver);
         configuration.setNameConversion(nameConversion);
         configuration.setDialect(new MySQLDialect());
         EntityMetadataManager entityMetadataManager = new DefaultEntityMetadataManager(configuration);
-        DefaultEasyQueryRuntimeContext jqdcRuntimeContext = new DefaultEasyQueryRuntimeContext(configuration, entityMetadataManager);
+        EasyQueryLambdaFactory easyQueryLambdaFactory = new DefaultEasyQueryLambdaFactory();
+        DefaultEasyQueryRuntimeContext jqdcRuntimeContext = new DefaultEasyQueryRuntimeContext(configuration, entityMetadataManager,easyQueryLambdaFactory);
 //        String[] packages = scanPackages;
 //        for (String packageName : packages) {
 //            List<EntityMetadata> entityMetadataList = JDQCUtil.loadPackage(packageName, configuration);
@@ -47,7 +80,9 @@ public class Main {
         client=new MySQLJQDCClient(jqdcRuntimeContext);
 
         TestUserMysql testUserMysql = client.select(TestUserMysql.class,"y")
-                .where(o -> o.eq(TestUserMysql::getId, "102")).firstOrNull();
+                .where(o -> o.eq(TestUserMysql::getId, "102").like(TestUserMysql::getName,"1%").and(x->
+                    x.like(TestUserMysql::getName,"123")
+             )).firstOrNull();
 
         SysUserLogbyMonth sysUserLogbyMonth = client.select(SysUserLogbyMonth.class)
                 .where(o -> o.eq(SysUserLogbyMonth::getId, "119")).firstOrNull();

@@ -37,13 +37,13 @@ public class MySQLUtil {
             if (table.getOn().isEmpty()) {
                 continue;
             }
-            sql.append(" ON ").append(table.getOn());
+            sql.append(" ON ").append(table.getOn().toSql());
         }
         if (!selectContext.getWhere().isEmpty()) {
-            sql.append(" WHERE").append(selectContext.getWhere());
+            sql.append(" WHERE ").append(selectContext.getWhere().toSql());
         }
         if (!selectContext.getGroup().isEmpty()) {
-            sql.append(" GROUP BY ").append(selectContext.getGroup());
+            sql.append(" GROUP BY ").append(selectContext.getGroup().toSql());
         }
         return sql.toString();
     }

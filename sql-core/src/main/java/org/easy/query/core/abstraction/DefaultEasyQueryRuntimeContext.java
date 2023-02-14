@@ -12,10 +12,12 @@ import org.easy.query.core.config.EasyQueryConfiguration;
 public class DefaultEasyQueryRuntimeContext implements EasyQueryRuntimeContext {
     private final EasyQueryConfiguration easyQueryConfiguration;
     private final EntityMetadataManager entityMetadataManager;
+    private final EasyQueryLambdaFactory easyQueryLambdaFactory;
 
-    public DefaultEasyQueryRuntimeContext(EasyQueryConfiguration easyQueryConfiguration, EntityMetadataManager entityMetadataManager){
+    public DefaultEasyQueryRuntimeContext(EasyQueryConfiguration easyQueryConfiguration, EntityMetadataManager entityMetadataManager,EasyQueryLambdaFactory easyQueryLambdaFactory){
         this.easyQueryConfiguration = easyQueryConfiguration;
         this.entityMetadataManager = entityMetadataManager;
+        this.easyQueryLambdaFactory = easyQueryLambdaFactory;
     }
     @Override
     public EasyQueryConfiguration getEasyQueryConfiguration() {
@@ -25,5 +27,10 @@ public class DefaultEasyQueryRuntimeContext implements EasyQueryRuntimeContext {
     @Override
     public EntityMetadataManager getEntityMetadataManager() {
         return entityMetadataManager;
+    }
+
+    @Override
+    public EasyQueryLambdaFactory getEasyQueryLambdaFactory() {
+        return easyQueryLambdaFactory;
     }
 }

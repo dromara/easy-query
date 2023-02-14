@@ -18,7 +18,7 @@ public abstract class AbstractSqlSegmentBuilder implements SqlSegment0Builder{
 
     @Override
     public abstract String toSql();
-
+    @Override
     public List<SqlSegment0> getSqlSegments() {
         return sqlSegments;
     }

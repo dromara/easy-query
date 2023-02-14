@@ -49,30 +49,30 @@ public class MySQLSelect1<T1> extends AbstractSelect1<T1> {
         String s = toSql(columns);
         System.out.println(s);
 
-        Connection conn = selectContext.getConn();
-        try {
-            try(PreparedStatement preparedStatement = conn.prepareStatement(s)){
-
-                int paramSize = selectContext.getParams().size();
-                for (int i = 0; i < paramSize; i++) {
-                    preparedStatement.setObject(i+1,selectContext.getParams().get(i));
-                }
-                try(ResultSet rs = preparedStatement.executeQuery()){
-                    while(rs.next()){
-                        System.out.println(rs.getObject(1)+"---"+rs.getObject(2));
-                    }
-                }
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        finally {
-            try {
-                conn.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
+//        Connection conn = selectContext.getConn();
+//        try {
+//            try(PreparedStatement preparedStatement = conn.prepareStatement(s)){
+//
+//                int paramSize = selectContext.getParams().size();
+//                for (int i = 0; i < paramSize; i++) {
+//                    preparedStatement.setObject(i+1,selectContext.getParams().get(i));
+//                }
+//                try(ResultSet rs = preparedStatement.executeQuery()){
+//                    while(rs.next()){
+//                        System.out.println(rs.getObject(1)+"---"+rs.getObject(2));
+//                    }
+//                }
+//            }
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        }
+//        finally {
+//            try {
+//                conn.close();
+//            } catch (SQLException e) {
+//                e.printStackTrace();
+//            }
+//        }
         return new ArrayList<>();
     }
 

@@ -12,4 +12,5 @@ import org.easy.query.core.config.EasyQueryConfiguration;
 public interface EasyQueryRuntimeContext {
     EasyQueryConfiguration getEasyQueryConfiguration();
     EntityMetadataManager getEntityMetadataManager();
+    EasyQueryLambdaFactory getEasyQueryLambdaFactory();
 }
