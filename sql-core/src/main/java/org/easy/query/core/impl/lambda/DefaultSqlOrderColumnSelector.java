@@ -1,13 +1,10 @@
 package org.easy.query.core.impl.lambda;
 
-import org.easy.query.core.abstraction.SqlSegment0Builder;
 import org.easy.query.core.abstraction.lambda.Property;
 import org.easy.query.core.abstraction.metadata.ColumnMetadata;
-import org.easy.query.core.abstraction.sql.base.ColumnSelector;
 import org.easy.query.core.abstraction.sql.base.SqlColumnSelector;
 import org.easy.query.core.impl.SelectContext;
 import org.easy.query.core.query.builder.SelectTableInfo;
-import org.easy.query.core.segments.ColumnSegment;
 import org.easy.query.core.segments.OrderColumnSegment;
 
 import java.util.Collection;

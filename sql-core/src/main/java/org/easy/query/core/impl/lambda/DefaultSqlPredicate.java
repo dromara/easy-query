@@ -7,6 +7,8 @@ import org.easy.query.core.impl.SelectContext;
 import org.easy.query.core.abstraction.sql.base.SqlPredicate;
 import org.easy.query.core.abstraction.sql.base.WherePredicate;
 import org.easy.query.core.segments.*;
+import org.easy.query.core.segments.predicate.ColumnColumnPredicate;
+import org.easy.query.core.segments.predicate.ColumnValuePredicate;
 
 /**
  * @FileName: SqlWherePredicate.java
@@ -31,6 +33,14 @@ public class DefaultSqlPredicate<T1> implements SqlPredicate<T1> {
     public int getIndex() {
         return index;
     }
+    private  void nextAnd(){
+        this.rootPredicateSegment.addPredicateSegment(nextPredicateSegment);
+        this.nextPredicateSegment = new AndPredicateSegment();
+    }
+    private  void nextOr(){
+        this.rootPredicateSegment.addPredicateSegment(nextPredicateSegment);
+        this.nextPredicateSegment = new OrPredicateSegment();
+    }
 
 
     @Override
@@ -38,8 +48,7 @@ public class DefaultSqlPredicate<T1> implements SqlPredicate<T1> {
         if (condition) {
             String columnName = selectContext.getTable(getIndex()).getColumnName(column);
             nextPredicateSegment.setPredicate(new ColumnValuePredicate(index, columnName, val, SqlKeywordEnum.EQ, selectContext));
-            this.rootPredicateSegment.addPredicateSegment(nextPredicateSegment);
-            this.nextPredicateSegment = new AndPredicateSegment();
+            nextAnd();
         }
         return this;
     }
@@ -49,8 +58,7 @@ public class DefaultSqlPredicate<T1> implements SqlPredicate<T1> {
         if (condition) {
             String columnName = selectContext.getTable(getIndex()).getColumnName(column);
             nextPredicateSegment.setPredicate(new ColumnValuePredicate(index, columnName, val, SqlKeywordEnum.LIKE, selectContext));
-            this.rootPredicateSegment.addPredicateSegment(nextPredicateSegment);
-            this.nextPredicateSegment = new AndPredicateSegment();
+            nextAnd();
         }
         return this;
     }
@@ -58,12 +66,26 @@ public class DefaultSqlPredicate<T1> implements SqlPredicate<T1> {
     @Override
     public <T2, TChain2> DefaultSqlPredicate<T1> eq(boolean condition, WherePredicate<T2, TChain2> sub, Property<T1, ?> column1, Property<T2, ?> column2) {
         if (condition) {
-//            String columnName = selectContext.getTable(getIndex()).getColumnName(column1);
-//            String columnName2 = selectContext.getTable(sub.getIndex()).getColumnName(column2);
+            String columnName = selectContext.getTable(getIndex()).getColumnName(column1);
+            String columnName2 = selectContext.getTable(sub.getIndex()).getColumnName(column2);
+            nextPredicateSegment.setPredicate(new ColumnColumnPredicate(index, columnName, sub.getIndex(),columnName2, SqlKeywordEnum.EQ, selectContext));
+            nextAnd();
+
 //            PredicateSegment0 predicateSegment =  PredicateSegment0.createColumn2Column(index, columnName, selectContext, SqlCompareEnum.EQ,sub.getIndex(),columnName2);
 //            sqlSegment0Builder.append(predicateSegment);
         }
         return this;
+    }
+
+    @Override
+    public <T2, TChain2> WherePredicate<T2, TChain2> then(WherePredicate<T2, TChain2> sub) {
+        if(this.nextPredicateSegment instanceof  AndPredicateSegment){
+            sub.and();
+        } else if(this.nextPredicateSegment instanceof  OrPredicateSegment){
+            sub.or();
+            this.nextPredicateSegment = new AndPredicateSegment();
+        }
+        return sub;
     }
 
     @Override

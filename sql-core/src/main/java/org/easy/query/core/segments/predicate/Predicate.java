@@ -1,4 +1,4 @@
-package org.easy.query.core.segments;
+package org.easy.query.core.segments.predicate;
 
 import org.easy.query.core.abstraction.SqlSegment;
 

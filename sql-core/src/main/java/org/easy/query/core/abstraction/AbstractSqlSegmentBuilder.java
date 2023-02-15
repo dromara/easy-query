@@ -10,16 +10,16 @@ import java.util.List;
  * @Created by xuejiaming
  */
 public abstract class AbstractSqlSegmentBuilder implements SqlSegment0Builder{
-    private final List<SqlSegment0> sqlSegments=new ArrayList<>();
+    private final List<SqlSegment> sqlSegments=new ArrayList<>();
     @Override
-    public void append(SqlSegment0 sqlSegment) {
+    public void append(SqlSegment sqlSegment) {
         sqlSegments.add(sqlSegment);
     }
 
     @Override
     public abstract String toSql();
     @Override
-    public List<SqlSegment0> getSqlSegments() {
+    public List<SqlSegment> getSqlSegments() {
         return sqlSegments;
     }
 

@@ -9,13 +9,13 @@ import org.easy.query.core.config.NameConversion;
 import org.easy.query.core.config.UnderlinedNameConversion;
 import org.easy.query.core.metadata.DefaultEntityMetadataManager;
 import org.easy.query.core.config.EasyQueryConfiguration;
-import org.easy.query.core.segments.AndPredicateSegmentBuilder;
-import org.easy.query.core.segments.OrPredicateSegmentBuilder;
-import org.easy.query.core.segments.PredicateSegment00;
 import org.easy.query.mysql.MySQLJQDCClient;
 import org.easy.query.mysql.config.MySQLDialect;
 import org.easy.test.SysUserLogbyMonth;
 import org.easy.test.TestUserMysql;
+import org.easy.test.TestUserMysqlx;
+
+import java.time.LocalDateTime;
 
 public class Main {
     private static final String driver="com.mysql.cj.jdbc.Driver";
@@ -56,7 +56,8 @@ public class Main {
         TestUserMysql testUserMysql = client.select(TestUserMysql.class,"y")
                 .where(o -> o.eq(TestUserMysql::getId, "102").like(TestUserMysql::getName,"1%").and(x->
                     x.like(TestUserMysql::getName,"123").or().eq(TestUserMysql::getAge,1)
-             )).firstOrNull();
+             )).orderByAsc(o->o.column(TestUserMysql::getName).column(TestUserMysql::getAge))
+                .orderByDesc(o->o.column(TestUserMysql::getName)).firstOrNull();
         TestUserMysql testUserMysql1 = client.select(TestUserMysql.class,"y")
                 .where(o -> o.eq(TestUserMysql::getId, "102").like(TestUserMysql::getName,"1%").and(x->
                     x.like(TestUserMysql::getName,"123").or().eq(TestUserMysql::getAge,1)
@@ -65,6 +66,11 @@ public class Main {
         SysUserLogbyMonth sysUserLogbyMonth = client.select(SysUserLogbyMonth.class)
                 .where(o -> o.eq(SysUserLogbyMonth::getId, "119")).firstOrNull();
 
+        TestUserMysqlx testUserMysql2 = client.select(TestUserMysql.class)
+                .leftJoin(SysUserLogbyMonth.class,(a,b)->a.eq(b,TestUserMysql::getName,SysUserLogbyMonth::getId).then(b).eq(SysUserLogbyMonth::getTime, LocalDateTime.now()))
+                .where(o -> o.eq(TestUserMysql::getId, "102").like(TestUserMysql::getName,"1%").and(x->
+                        x.like(TestUserMysql::getName,"123").or().eq(TestUserMysql::getAge,1)
+                )).firstOrNull(TestUserMysqlx.class,x->x.columnAll().columnAs(TestUserMysql::getName,TestUserMysqlx::getName1));
 
         System.out.println("Hello world!");
     }

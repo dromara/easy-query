@@ -1,8 +1,5 @@
 package org.easy.query.core.query.builder;
 
-import org.easy.query.core.abstraction.SqlPredicateSegmentBuilder;
-import org.easy.query.core.abstraction.SqlSegment0;
-import org.easy.query.core.abstraction.SqlSegment0Builder;
 import org.easy.query.core.abstraction.lambda.Property;
 import org.easy.query.core.enums.SelectTableInfoTypeEnum;
 import org.easy.query.core.abstraction.metadata.EntityMetadata;

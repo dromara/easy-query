@@ -34,19 +34,17 @@ public enum SqlKeywordEnum implements SqlSegment {
     BETWEEN("BETWEEN"),
     NOT_BETWEEN("NOT BETWEEN"),
     ASC("ASC"),
-    DESC("DESC");
+    DESC("DESC"),
+    DOT(",");
     private final String keyword;
 
     SqlKeywordEnum(String keyword){
 
         this.keyword = keyword;
     }
-    public String getKeyword() {
-        return keyword;
-    }
 
     @Override
     public String getSql() {
-        return " "+keyword+" ";
+        return keyword;
     }
 }

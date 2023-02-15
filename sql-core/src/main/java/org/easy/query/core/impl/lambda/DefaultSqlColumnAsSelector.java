@@ -5,6 +5,8 @@ import org.easy.query.core.abstraction.lambda.Property;
 import org.easy.query.core.impl.SelectContext;
 import org.easy.query.core.abstraction.sql.base.SqlColumnAsSelector;
 import org.easy.query.core.abstraction.sql.base.ColumnAsSelector;
+import org.easy.query.core.segments.ColumnSegment;
+import org.easy.query.core.util.LambdaUtil;
 
 /**
  * @FileName: DefaultSqSelector.java
@@ -15,17 +17,20 @@ import org.easy.query.core.abstraction.sql.base.ColumnAsSelector;
 public class DefaultSqlColumnAsSelector<T1,TR> extends AbstractSqlColumnSelector<T1, SqlColumnAsSelector<T1, TR>> implements SqlColumnAsSelector<T1,TR> {
 
 
-    private final SqlSegment0Builder sqlSegment0Builder;
+    private final SqlSegment0Builder sqlSegmentBuilder;
 
     public DefaultSqlColumnAsSelector(int index, SelectContext selectContext, SqlSegment0Builder sqlSegment0Builder){
         super(index,selectContext,sqlSegment0Builder);
 
-        this.sqlSegment0Builder = sqlSegment0Builder;
+        this.sqlSegmentBuilder = sqlSegment0Builder;
     }
 
     @Override
     public SqlColumnAsSelector<T1, TR> columnAs(Property<T1, ?> column, Property<TR, ?> alias) {
-        return null;
+        String columnName = getSelectContext().getTable(getIndex()).getColumnName(column);
+        String columnAsName = LambdaUtil.getAttrName(alias);
+        sqlSegmentBuilder.append(new ColumnSegment(getIndex(),columnName,getSelectContext(),columnAsName));
+        return this;
     }
 
     @Override

@@ -31,7 +31,7 @@ public class Select2SqlProvider<T1,T2> extends Select1SqlProvider<T1> implements
     @Override
     public SqlColumnSelector<T2> getSqlGroupColumnSelector2() {
         if(group==null){
-            group= new DefaultSqlGroupColumnSelector<>(0,selectContext);
+            group= new DefaultSqlGroupColumnSelector<>(1,selectContext);
         }
         return group;
     }
@@ -39,7 +39,7 @@ public class Select2SqlProvider<T1,T2> extends Select1SqlProvider<T1> implements
     @Override
     public DefaultSqlOrderColumnSelector<T2> getSqlOrderColumnSelector2(boolean asc) {
         if(order==null){
-            order= new DefaultSqlOrderColumnSelector<>(0,selectContext);
+            order= new DefaultSqlOrderColumnSelector<>(1,selectContext);
         }
         order.setAsc(asc);
         return order;
@@ -48,25 +48,25 @@ public class Select2SqlProvider<T1,T2> extends Select1SqlProvider<T1> implements
     @Override
     public SqlPredicate<T2> getSqlWherePredicate2() {
         if(where==null){
-            where=new DefaultSqlPredicate<>(0,selectContext,selectContext.getWhere());
+            where=new DefaultSqlPredicate<>(1,selectContext,selectContext.getWhere());
         }
         return where;
     }
     @Override
     public SqlPredicate<T2> getSqlOnPredicate2() {
         if(on==null){
-            on=new DefaultSqlPredicate<>(0,selectContext,selectContext.getCurrentPredicateTable().getOn());
+            on=new DefaultSqlPredicate<>(1,selectContext,selectContext.getCurrentPredicateTable().getOn());
         }
         return on;
     }
 
     @Override
     public SqlColumnSelector<T2> getSqlColumnSelector2(SqlSegment0Builder sqlSegment0Builder) {
-        return new DefaultSqlColumnSelector<>(0,selectContext,sqlSegment0Builder);
+        return new DefaultSqlColumnSelector<>(1,selectContext,sqlSegment0Builder);
     }
 
     @Override
     public <TR> SqlColumnAsSelector<T2, TR> getSqlColumnAsSelector2(SqlSegment0Builder sqlSegment0Builder) {
-        return new DefaultSqlColumnAsSelector<>(0,selectContext,sqlSegment0Builder);
+        return new DefaultSqlColumnAsSelector<>(1,selectContext,sqlSegment0Builder);
     }
 }

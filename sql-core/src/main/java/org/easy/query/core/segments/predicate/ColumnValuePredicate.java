@@ -1,4 +1,4 @@
-package org.easy.query.core.segments;
+package org.easy.query.core.segments.predicate;
 
 import org.easy.query.core.abstraction.SqlSegment;
 import org.easy.query.core.impl.SelectContext;
@@ -30,7 +30,7 @@ public class ColumnValuePredicate implements Predicate {
     public String getSql() {
         SelectTableInfo table = selectContext.getTable(index);
         String quoteName = selectContext.getQuoteName(column);
-
-        return table.getAlias() + "." + quoteName + compare.getSql() + "?";
+        selectContext.addParams(val);
+        return table.getAlias() + "." + quoteName +" "+ compare.getSql() + " ?";
     }
 }

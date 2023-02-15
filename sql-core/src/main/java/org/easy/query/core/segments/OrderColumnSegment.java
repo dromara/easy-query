@@ -1,6 +1,8 @@
 package org.easy.query.core.segments;
 
+import org.easy.query.core.enums.SqlKeywordEnum;
 import org.easy.query.core.impl.SelectContext;
+import org.easy.query.core.query.builder.SelectTableInfo;
 
 /**
  * @FileName: OrderColumnSegment.java
@@ -20,4 +22,17 @@ public class OrderColumnSegment extends ColumnSegment{
         this.asc = asc;
     }
 
+    @Override
+    public String getSql() {
+
+        SelectTableInfo table = getSelectContext().getTable(getIndex());
+        String quoteName = getSelectContext().getQuoteName(getColumnName());
+        StringBuilder sql = new StringBuilder().append(table.getAlias()).append(".").append(quoteName);
+        if(asc){
+            sql.append(" ").append(SqlKeywordEnum.ASC.getSql());
+        }else {
+            sql.append(" ").append(SqlKeywordEnum.DESC.getSql());
+        }
+        return sql.toString();
+    }
 }

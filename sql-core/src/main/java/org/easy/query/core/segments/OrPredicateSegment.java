@@ -1,6 +1,7 @@
 package org.easy.query.core.segments;
 
 import org.easy.query.core.enums.SqlKeywordEnum;
+import org.easy.query.core.segments.predicate.Predicate;
 
 /**
  * @FileName: OrPredicateSegment.java
@@ -9,7 +10,7 @@ import org.easy.query.core.enums.SqlKeywordEnum;
  * @Created by xuejiaming
  */
 public class OrPredicateSegment extends PredicateSegment{
-    public static final String OR= SqlKeywordEnum.OR.getSql();
+    public static final String OR= " "+SqlKeywordEnum.OR.getSql()+" ";
     public OrPredicateSegment() {
     }
 

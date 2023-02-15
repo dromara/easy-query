@@ -45,6 +45,9 @@ public class MySQLUtil {
         if (!selectContext.getGroup().isEmpty()) {
             sql.append(" GROUP BY ").append(selectContext.getGroup().toSql());
         }
+        if (!selectContext.getOrder().isEmpty()) {
+            sql.append(" ORDER BY ").append(selectContext.getOrder().toSql());
+        }
         return sql.toString();
     }
 }

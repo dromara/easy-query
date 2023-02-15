@@ -1,8 +1,8 @@
 package org.easy.query.core.segments;
 
 import org.easy.query.core.abstraction.SqlSegment;
-import org.easy.query.core.enums.SqlKeywordEnum;
 import org.easy.query.core.exception.JDQCException;
+import org.easy.query.core.segments.predicate.Predicate;
 import org.easy.query.core.util.StringUtil;
 
 import java.util.ArrayList;

@@ -9,8 +9,8 @@ import java.util.List;
  * @Created by xuejiaming
  */
 public interface SqlSegment0Builder {
-    List<SqlSegment0> getSqlSegments();
-    void append(SqlSegment0 sqlSegment);
+    List<SqlSegment> getSqlSegments();
+    void append(SqlSegment sqlSegment);
     boolean isEmpty();
     String toSql();
 }

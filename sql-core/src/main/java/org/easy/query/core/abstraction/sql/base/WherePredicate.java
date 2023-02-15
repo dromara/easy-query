@@ -53,9 +53,7 @@ public interface WherePredicate<T1, TChain> extends Serializable, IndexAware {
     <T2, TChain2> TChain eq(boolean condition, WherePredicate<T2, TChain2> sub, Property<T1, ?> column1, Property<T2, ?> column2);
 
 
-    default <T2, TChain2> WherePredicate<T2, TChain2> then(WherePredicate<T2, TChain2> sub){
-        return sub;
-    }
+    <T2, TChain2> WherePredicate<T2, TChain2> then(WherePredicate<T2, TChain2> sub);
     default TChain and(){
         return and(true);
     }

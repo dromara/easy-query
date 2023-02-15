@@ -2,6 +2,7 @@ package org.easy.query.core.segments;
 
 
 import org.easy.query.core.enums.SqlKeywordEnum;
+import org.easy.query.core.segments.predicate.Predicate;
 
 /**
  * @FileName: AndPredicateSegment.java
@@ -10,7 +11,7 @@ import org.easy.query.core.enums.SqlKeywordEnum;
  * @Created by xuejiaming
  */
 public class AndPredicateSegment extends PredicateSegment{
-    public static final String AND= SqlKeywordEnum.AND.getSql();
+    public static final String AND= " "+SqlKeywordEnum.AND.getSql()+" ";
     public AndPredicateSegment() {
     }
 
