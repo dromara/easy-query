@@ -33,12 +33,6 @@ public class MySQLSelect2<T1,T2> extends AbstractSelect2<T1,T2> {
         return false;
     }
 
-    @Override
-    protected List<T1> toInternalList(String columns) {
-        String s = toSql(columns);
-        System.out.println(s);
-        return new ArrayList<>();
-    }
 
     @Override
     public String toSql(String columns) {

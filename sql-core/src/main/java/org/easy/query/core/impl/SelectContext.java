@@ -45,8 +45,6 @@ public  class SelectContext {
     String username = "root";
     String password = "root";
     String driverClassName = "com.mysql.cj.jdbc.Driver";
-    private final  DataSource dataSource;
-
 
     public SelectContext(EasyQueryRuntimeContext runtimeContext){
         this(runtimeContext,"t");
@@ -56,24 +54,6 @@ public  class SelectContext {
         this.alias = alias;
         this.tables =new ArrayList<>();
         this.params =new ArrayList<>();
-        // 设置properties
-        Properties properties = new Properties();
-        properties.setProperty("name", dbName);
-        properties.setProperty("driverClassName", driverClassName);
-        properties.setProperty(
-                "url",
-                "jdbc:mysql://" + ip + ":" + port + "/" + dbName + "?serverTimezone=GMT%2B8&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true");
-        properties.setProperty("username", username);
-        properties.setProperty("password", password);
-        int i = Runtime.getRuntime().availableProcessors();
-        properties.setProperty("initialSize", String.valueOf(i));
-        properties.setProperty("maxActive", String.valueOf(2 * i + 1));
-        properties.setProperty("minIdle", String.valueOf(i));
-        try {
-            this.dataSource = DruidDataSourceFactory.createDataSource(properties);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 
     public List<SelectTableInfo> getTables() {
@@ -172,16 +152,4 @@ public  class SelectContext {
        params.add(parameter);
     }
 
-
-
-    public Connection getConn(){
-
-        Connection conn =null;
-        try {
-            conn=dataSource.getConnection();
-        }  catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        return conn;
-    }
 }

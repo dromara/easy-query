@@ -1,15 +1,16 @@
 package org.easy.query.mysql.base;
 
+import org.easy.query.core.abstraction.EasyExecutor;
+import org.easy.query.core.abstraction.ExecutorContext;
+import org.easy.query.core.config.EasyConnector;
 import org.easy.query.core.enums.SelectTableInfoTypeEnum;
+import org.easy.query.core.exception.JDQCException;
 import org.easy.query.core.impl.AbstractSelect1;
 import org.easy.query.core.impl.AbstractSelect2;
 import org.easy.query.core.impl.SelectContext;
 import org.easy.query.mysql.util.MySQLUtil;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,37 +45,6 @@ public class MySQLSelect1<T1> extends AbstractSelect1<T1> {
         return false;
     }
 
-    @Override
-    protected List<T1> toInternalList(String columns) {
-        String s = toSql(columns);
-        System.out.println(s);
-
-//        Connection conn = selectContext.getConn();
-//        try {
-//            try(PreparedStatement preparedStatement = conn.prepareStatement(s)){
-//
-//                int paramSize = selectContext.getParams().size();
-//                for (int i = 0; i < paramSize; i++) {
-//                    preparedStatement.setObject(i+1,selectContext.getParams().get(i));
-//                }
-//                try(ResultSet rs = preparedStatement.executeQuery()){
-//                    while(rs.next()){
-//                        System.out.println(rs.getObject(1)+"---"+rs.getObject(2));
-//                    }
-//                }
-//            }
-//        } catch (SQLException e) {
-//            throw new RuntimeException(e);
-//        }
-//        finally {
-//            try {
-//                conn.close();
-//            } catch (SQLException e) {
-//                e.printStackTrace();
-//            }
-//        }
-        return new ArrayList<>();
-    }
 
     @Override
     public String toSql(String columns) {

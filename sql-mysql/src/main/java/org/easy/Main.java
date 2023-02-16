@@ -2,15 +2,15 @@ package org.easy;
 
 import org.easy.query.core.abstraction.DefaultEasyQueryLambdaFactory;
 import org.easy.query.core.abstraction.DefaultEasyQueryRuntimeContext;
+import org.easy.query.core.abstraction.DefaultExecutor;
 import org.easy.query.core.abstraction.EasyQueryLambdaFactory;
 import org.easy.query.core.abstraction.client.JQDCClient;
 import org.easy.query.core.abstraction.metadata.EntityMetadataManager;
-import org.easy.query.core.config.NameConversion;
-import org.easy.query.core.config.UnderlinedNameConversion;
+import org.easy.query.core.config.*;
 import org.easy.query.core.metadata.DefaultEntityMetadataManager;
-import org.easy.query.core.config.EasyQueryConfiguration;
 import org.easy.query.mysql.MySQLJQDCClient;
 import org.easy.query.mysql.config.MySQLDialect;
+import org.easy.test.DefaultDataSourceFactory;
 import org.easy.test.SysUserLogbyMonth;
 import org.easy.test.TestUserMysql;
 import org.easy.test.TestUserMysqlx;
@@ -19,17 +19,23 @@ import java.time.LocalDateTime;
 
 public class Main {
     private static final String driver="com.mysql.cj.jdbc.Driver";
-    private static final String[] scanPackages=new String[]{"org.jdqc.core"};
+    private static final String username="root";
+    private static final String password="root";
+    private static final String url="jdbc:mysql://127.0.0.1:3306/dbdbd0?serverTimezone=GMT%2B8&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true";
     private static JQDCClient client;
     public static void main(String[] args) {
 
+        DefaultConfig defaultConfig = new DefaultConfig("easy-query",driver, username, password, url);
+        DefaultDataSourceFactory defaultDataSourceFactory = new DefaultDataSourceFactory(defaultConfig);
+        EasyConnector easyConnector= new DataSourceConnector(defaultDataSourceFactory);
+        DefaultExecutor defaultExecutor = new DefaultExecutor();
         NameConversion nameConversion = new UnderlinedNameConversion();
-        EasyQueryConfiguration configuration = new EasyQueryConfiguration(driver);
+        EasyQueryConfiguration configuration = new EasyQueryConfiguration();
         configuration.setNameConversion(nameConversion);
         configuration.setDialect(new MySQLDialect());
         EntityMetadataManager entityMetadataManager = new DefaultEntityMetadataManager(configuration);
         EasyQueryLambdaFactory easyQueryLambdaFactory = new DefaultEasyQueryLambdaFactory();
-        DefaultEasyQueryRuntimeContext jqdcRuntimeContext = new DefaultEasyQueryRuntimeContext(configuration, entityMetadataManager,easyQueryLambdaFactory);
+        DefaultEasyQueryRuntimeContext jqdcRuntimeContext = new DefaultEasyQueryRuntimeContext(configuration, entityMetadataManager,easyQueryLambdaFactory,easyConnector,defaultExecutor);
 //        String[] packages = scanPackages;
 //        for (String packageName : packages) {
 //            List<EntityMetadata> entityMetadataList = JDQCUtil.loadPackage(packageName, configuration);
@@ -58,6 +64,8 @@ public class Main {
                     x.like(TestUserMysql::getName,"123").or().eq(TestUserMysql::getAge,1)
              )).orderByAsc(o->o.column(TestUserMysql::getName).column(TestUserMysql::getAge))
                 .orderByDesc(o->o.column(TestUserMysql::getName)).firstOrNull();
+
+
         TestUserMysql testUserMysql1 = client.select(TestUserMysql.class,"y")
                 .where(o -> o.eq(TestUserMysql::getId, "102").like(TestUserMysql::getName,"1%").and(x->
                     x.like(TestUserMysql::getName,"123").or().eq(TestUserMysql::getAge,1)
@@ -68,8 +76,9 @@ public class Main {
 
         TestUserMysqlx testUserMysql2 = client.select(TestUserMysql.class)
                 .leftJoin(SysUserLogbyMonth.class,(a,b)->a.eq(b,TestUserMysql::getName,SysUserLogbyMonth::getId).then(b).eq(SysUserLogbyMonth::getTime, LocalDateTime.now()))
-                .where(o -> o.eq(TestUserMysql::getId, "102").like(TestUserMysql::getName,"1%").and(x->
-                        x.like(TestUserMysql::getName,"123").or().eq(TestUserMysql::getAge,1)
+                .where(o -> o.eq(TestUserMysql::getId, "102")
+                        .like(TestUserMysql::getName,"1%")
+                        .and(x->x.like(TestUserMysql::getName,"123").or().eq(TestUserMysql::getAge,1)
                 )).firstOrNull(TestUserMysqlx.class,x->x.columnAll().columnAs(TestUserMysql::getName,TestUserMysqlx::getName1));
 
         System.out.println("Hello world!");

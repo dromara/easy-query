@@ -12,17 +12,12 @@ import java.util.concurrent.ConcurrentHashMap;
  * @Created by xuejiaming
  */
 public class EasyQueryConfiguration {
-    private final String driver;
+
 
     private NameConversion nameConversion = new DefaultNameConversion();
     private EasyQueryDialect dialect = new DefaultEasyQueryDialect();
 
-    public EasyQueryConfiguration(String driver) {
-        this.driver = driver;
-    }
-
-    public String getDriver() {
-        return driver;
+    public EasyQueryConfiguration() {
     }
 
     public NameConversion getNameConversion() {

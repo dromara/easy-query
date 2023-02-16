@@ -1,5 +1,7 @@
 package org.easy.query.core.util;
 
+import org.easy.query.core.exception.JDQCException;
+
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
@@ -24,6 +26,15 @@ import java.util.List;
 public class ClassUtil {
     private ClassUtil(){}
 
+    public static  <T> T newInstance(Class<T> clazz){
+        try {
+            return clazz.newInstance();
+        } catch (InstantiationException e) {
+            throw new JDQCException(e);
+        } catch (IllegalAccessException e) {
+            throw new JDQCException(e);
+        }
+    }
     public static PropertyDescriptor[] propertyDescriptors(Class<?> c) throws IntrospectionException {
 
         BeanInfo beanInfo = null;

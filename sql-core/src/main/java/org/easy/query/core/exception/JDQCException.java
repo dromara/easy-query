@@ -41,6 +41,10 @@ public class JDQCException  extends RuntimeException{
         super(msg);
         this.code = GENERIC_ERROR;
     }
+    public JDQCException(Throwable e){
+        super(e);
+        this.code = GENERIC_ERROR;
+    }
 
     public int getCode() {
         return code;

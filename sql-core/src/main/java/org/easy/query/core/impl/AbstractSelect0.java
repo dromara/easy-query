@@ -1,6 +1,8 @@
 package org.easy.query.core.impl;
 
+import org.easy.query.core.abstraction.EasyExecutor;
 import org.easy.query.core.abstraction.EasyQuerySqlBuilderProvider;
+import org.easy.query.core.abstraction.ExecutorContext;
 import org.easy.query.core.abstraction.SelectSqlSegmentBuilder;
 import org.easy.query.core.abstraction.lambda.SqlExpression;
 import org.easy.query.core.abstraction.sql.Select0;
@@ -83,9 +85,7 @@ public abstract class AbstractSelect0<T1, TChain> implements Select0<T1, TChain>
         SelectSqlSegmentBuilder sqlSegmentBuilder = new SelectSqlSegmentBuilder();
         SqlColumnAsSelector<T1,TR> sqlColumnSelector = getSqlBuilderProvider1().getSqlColumnAsSelector1(sqlSegmentBuilder);
         selectExpression.apply(sqlColumnSelector);
-        List<T1> list = toInternalList(sqlSegmentBuilder.toSql());
-        //todo t1 2 tr
-        return new ArrayList<>();
+        return toInternalList(resultClass,sqlSegmentBuilder.toSql());
     }
 
     @Override
@@ -93,7 +93,7 @@ public abstract class AbstractSelect0<T1, TChain> implements Select0<T1, TChain>
         SelectSqlSegmentBuilder sqlSegmentBuilder = new SelectSqlSegmentBuilder();
         SqlColumnSelector<T1> sqlColumnSelector = getSqlBuilderProvider1().getSqlColumnSelector1(sqlSegmentBuilder);
         selectExpression.apply(sqlColumnSelector);
-        return toInternalList(sqlSegmentBuilder.toSql());
+        return toInternalList(t1Class,sqlSegmentBuilder.toSql());
     }
 
     /**
@@ -101,7 +101,11 @@ public abstract class AbstractSelect0<T1, TChain> implements Select0<T1, TChain>
      *
      * @return
      */
-    protected abstract List<T1> toInternalList(String columns);
+    protected <TR> List<TR> toInternalList(Class<TR> resultClass,String columns) {
+        String s = toSql(columns);
+        EasyExecutor easyExecutor = selectContext.getRuntimeContext().getEasyExecutor();
+        return easyExecutor.execute(ExecutorContext.create(selectContext.getRuntimeContext()),resultClass,s,selectContext.getParams());
+    }
 
     @Override
     public String toSql() {
