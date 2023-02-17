@@ -1,9 +1,6 @@
 package org.easy;
 
-import org.easy.query.core.abstraction.DefaultEasyQueryLambdaFactory;
-import org.easy.query.core.abstraction.DefaultEasyQueryRuntimeContext;
-import org.easy.query.core.abstraction.DefaultExecutor;
-import org.easy.query.core.abstraction.EasyQueryLambdaFactory;
+import org.easy.query.core.abstraction.*;
 import org.easy.query.core.abstraction.client.JQDCClient;
 import org.easy.query.core.abstraction.metadata.EntityMetadataManager;
 import org.easy.query.core.config.*;
@@ -29,13 +26,14 @@ public class Main {
         DefaultDataSourceFactory defaultDataSourceFactory = new DefaultDataSourceFactory(defaultConfig);
         EasyConnector easyConnector= new DataSourceConnector(defaultDataSourceFactory);
         DefaultExecutor defaultExecutor = new DefaultExecutor();
+        EasyJdbcTypeHandler jdbcTypeHandler = new DefaultJdbcTypeHandler();
         NameConversion nameConversion = new UnderlinedNameConversion();
         EasyQueryConfiguration configuration = new EasyQueryConfiguration();
         configuration.setNameConversion(nameConversion);
         configuration.setDialect(new MySQLDialect());
         EntityMetadataManager entityMetadataManager = new DefaultEntityMetadataManager(configuration);
         EasyQueryLambdaFactory easyQueryLambdaFactory = new DefaultEasyQueryLambdaFactory();
-        DefaultEasyQueryRuntimeContext jqdcRuntimeContext = new DefaultEasyQueryRuntimeContext(configuration, entityMetadataManager,easyQueryLambdaFactory,easyConnector,defaultExecutor);
+        DefaultEasyQueryRuntimeContext jqdcRuntimeContext = new DefaultEasyQueryRuntimeContext(configuration, entityMetadataManager,easyQueryLambdaFactory,easyConnector,defaultExecutor,jdbcTypeHandler);
 //        String[] packages = scanPackages;
 //        for (String packageName : packages) {
 //            List<EntityMetadata> entityMetadataList = JDQCUtil.loadPackage(packageName, configuration);
