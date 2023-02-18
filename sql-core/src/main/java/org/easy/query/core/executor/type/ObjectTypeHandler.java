@@ -1,6 +1,10 @@
 package org.easy.query.core.executor.type;
 
+import org.easy.query.core.executor.EasyParameter;
+import org.easy.query.core.executor.EasyResultSet;
+
 import java.sql.SQLException;
+import java.sql.Types;
 
 /**
  * @FileName: DefaultJdbcTypeHandler.java
@@ -17,5 +21,10 @@ public class ObjectTypeHandler implements JdbcTypeHandler{
     @Override
     public void setParameter(EasyParameter parameter) throws SQLException {
         parameter.setDefaultParameter();
+    }
+
+    @Override
+    public int getJdbcType() {
+        return Types.OTHER;
     }
 }

@@ -1,5 +1,8 @@
 package org.easy.query.core.executor.type;
 
+import org.easy.query.core.executor.EasyParameter;
+import org.easy.query.core.executor.EasyResultSet;
+
 import java.sql.SQLException;
 
 /**
@@ -11,4 +14,5 @@ import java.sql.SQLException;
 public interface JdbcTypeHandler {
     Object getValue(EasyResultSet resultSet) throws SQLException;
     void setParameter(EasyParameter parameter) throws SQLException;
+    int getJdbcType();
 }

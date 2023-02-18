@@ -12,7 +12,9 @@ import org.easy.test.SysUserLogbyMonth;
 import org.easy.test.TestUserMysql;
 import org.easy.test.TestUserMysqlx;
 
+import java.text.DateFormat;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class Main {
     private static final String driver="com.mysql.cj.jdbc.Driver";
@@ -71,7 +73,9 @@ public class Main {
 
         SysUserLogbyMonth sysUserLogbyMonth = client.select(SysUserLogbyMonth.class)
                 .where(o -> o.eq(SysUserLogbyMonth::getId, "119")).firstOrNull();
-
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String format = dateTimeFormatter.format(sysUserLogbyMonth.getTime());
+        System.out.println(sysUserLogbyMonth);
         TestUserMysqlx testUserMysql2 = client.select(TestUserMysql.class)
                 .leftJoin(SysUserLogbyMonth.class,(a,b)->a.eq(b,TestUserMysql::getName,SysUserLogbyMonth::getId).then(b).eq(SysUserLogbyMonth::getTime, LocalDateTime.now()))
                 .where(o -> o.eq(TestUserMysql::getId, "102")

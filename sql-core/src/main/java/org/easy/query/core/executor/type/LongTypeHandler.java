@@ -8,21 +8,26 @@ import java.sql.SQLException;
 import java.sql.Types;
 
 /**
- * @FileName: BigDecimalTypeHandler.java
+ * @FileName: DoubleTypeHandler.java
  * @Description: 文件说明
- * @Date: 2023/2/17 21:21
+ * @Date: 2023/2/17 22:02
  * @Created by xuejiaming
  */
-public class ByteTypeHandler implements JdbcTypeHandler{
-    private static final byte DEFAULT=0;
+public class LongTypeHandler implements JdbcTypeHandler {
+    private static final long DEFAULT = 0L;
+
     @Override
     public Object getValue(EasyResultSet resultSet) throws SQLException {
+
         ResultSet rs = resultSet.getRs();
-        byte r = rs.getByte(resultSet.getIndex());
-        if(rs.wasNull()){//判断当前读取的列是否可以为null，因为基本类型存在默认值而包装类型存在null值
-            if(resultSet.isPrimitive()){
+        long r = rs.getLong(resultSet.getIndex());
+        if (r != DEFAULT) {
+            return r;
+        }
+        if (rs.wasNull()) {//判断当前读取的列是否可以为null，因为基本类型存在默认值而包装类型存在null值
+            if (resultSet.isPrimitive()) {
                 return DEFAULT;
-            }else{
+            } else {
                 return null;
             }
         }
@@ -31,12 +36,11 @@ public class ByteTypeHandler implements JdbcTypeHandler{
 
     @Override
     public void setParameter(EasyParameter parameter) throws SQLException {
-        parameter.getPs().setByte(parameter.getIndex(),(byte)parameter.getValue());
+        parameter.getPs().setLong(parameter.getIndex(), (Long) parameter.getValue());
     }
 
     @Override
     public int getJdbcType() {
-        return Types.BIT;
+        return Types.BIGINT;
     }
-
 }

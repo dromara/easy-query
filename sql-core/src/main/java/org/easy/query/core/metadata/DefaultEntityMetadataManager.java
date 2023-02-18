@@ -32,12 +32,10 @@ public class DefaultEntityMetadataManager implements EntityMetadataManager {
         if(cacheItem!=null){
             return cacheItem;
         }
-        NameConversion nameConversion = jdqcConfiguration.getNameConversion();
-        String tableName = nameConversion.getTableName(entityClass);
-        if(tableName==null){
-            throw new JDQCException(String.format("当前对象不是数据库对象:[%s]",entityClass.getSimpleName()));
-        }
-        EntityMetadata entityMetadata = new EntityMetadata(entityClass, tableName);
+//        if(tableName==null){
+//            throw new JDQCException(String.format("当前对象不是数据库对象:[%s]",entityClass.getSimpleName()));
+//        }
+        EntityMetadata entityMetadata = new EntityMetadata(entityClass);
         return entityMetadataCache.computeIfAbsent(entityClass,key->{
             entityMetadata.init(jdqcConfiguration);
             return entityMetadata;

@@ -28,4 +28,9 @@ public class UnderlinedNameConversion extends NameConversion {
     public String getColName(String attrName) {
         return StringUtil.enCodeUnderlined(attrName);
     }
+
+    @Override
+    public String getPropertyName(String colName) {
+        return colName;
+    }
 }

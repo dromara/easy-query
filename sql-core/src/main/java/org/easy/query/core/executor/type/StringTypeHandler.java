@@ -1,7 +1,10 @@
 package org.easy.query.core.executor.type;
 
-import java.math.BigDecimal;
+import org.easy.query.core.executor.EasyParameter;
+import org.easy.query.core.executor.EasyResultSet;
+
 import java.sql.SQLException;
+import java.sql.Types;
 
 /**
  * @FileName: BigDecimalTypeHandler.java
@@ -18,5 +21,10 @@ public class StringTypeHandler implements JdbcTypeHandler{
     @Override
     public void setParameter(EasyParameter parameter) throws SQLException {
         parameter.getPs().setString(parameter.getIndex(),(String) parameter.getValue());
+    }
+
+    @Override
+    public int getJdbcType() {
+        return Types.VARCHAR;
     }
 }

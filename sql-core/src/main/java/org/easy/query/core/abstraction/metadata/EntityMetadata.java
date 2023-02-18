@@ -8,6 +8,8 @@ import org.easy.query.core.annotation.*;
 import org.easy.query.core.common.LinkedCaseInsensitiveMap;
 import org.easy.query.core.util.ClassUtil;
 
+import java.beans.IntrospectionException;
+import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.util.*;
 
@@ -19,25 +21,31 @@ import java.util.*;
  */
 public class EntityMetadata {
     private final Class entityClass;
-    private final String tableName;
+    private  String tableName;
 
     private final LinkedHashMap<String,ColumnMetadata> property2ColumnMap=new LinkedHashMap<>();
     private final LinkedCaseInsensitiveMap<String> column2PropertyMap=new LinkedCaseInsensitiveMap<>(Locale.ENGLISH);
 
-    public EntityMetadata(Class entityClass, String tableName) {
+    public EntityMetadata(Class entityClass) {
         this.entityClass = entityClass;
-        this.tableName = tableName;
     }
 
     public void init(EasyQueryConfiguration jdqcConfiguration){
+        classInit(jdqcConfiguration);
         propertyInit(jdqcConfiguration);
+    }
+    protected void classInit(EasyQueryConfiguration jdqcConfiguration){
+
+        NameConversion nameConversion = jdqcConfiguration.getNameConversion();
+        this.tableName = nameConversion.getTableName(entityClass);
     }
     protected void propertyInit(EasyQueryConfiguration jdqcConfiguration){
         NameConversion nameConversion = jdqcConfiguration.getNameConversion();
         List<Field> allFields = ClassUtil.getAllFields(this.entityClass);
-//        PropertyDescriptor[] ps = getPropertyDescriptor();
+        PropertyDescriptor[] ps = getPropertyDescriptor();
         for (Field field : allFields) {
             String attr = field.getName();
+            PropertyDescriptor propertyDescriptor = Arrays.stream(ps).filter(o -> Objects.equals(o.getName(), attr)).findFirst().orElse(null);
             ColumnIgnore columnIgnore = field.getAnnotation(ColumnIgnore.class);
             if(columnIgnore!=null){
                 continue;
@@ -50,6 +58,7 @@ public class EntityMetadata {
             if(column!=null){
                 columnMetadata.setNullable(column.nullable());
             }
+            columnMetadata.setProperty(propertyDescriptor);
             property2ColumnMap.put(attr,columnMetadata);
             column2PropertyMap.put(columnName,attr);
 
@@ -66,7 +75,7 @@ public class EntityMetadata {
 
             UpdateIgnore updateIgnore = field.getAnnotation(UpdateIgnore.class);
             if(updateIgnore!=null){
-                columnMetadata.setUdpateIgnore(true);
+                columnMetadata.setUpdateIgnore(true);
             }
             Version version = field.getAnnotation(Version.class);
             if(version!=null){
@@ -75,13 +84,13 @@ public class EntityMetadata {
         }
     }
 
-//    private PropertyDescriptor[] getPropertyDescriptor() {
-//        try {
-//            return ClassUtil.propertyDescriptors(entityClass);
-//        } catch (IntrospectionException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
+    private PropertyDescriptor[] getPropertyDescriptor() {
+        try {
+            return ClassUtil.propertyDescriptors(entityClass);
+        } catch (IntrospectionException e) {
+            throw new JDQCException(e);
+        }
+    }
 
 
     public Class getEntityClass() {
@@ -100,7 +109,21 @@ public class EntityMetadata {
         return columnMetadata.getName();
     }
 
+    public String getPropertyName(String columnName){
+        return getPropertyName(columnName,columnName);
+    }
+    public String getPropertyName(String columnName,String def){
+        String propertyName = column2PropertyMap.get(columnName);
+        if(propertyName==null){
+            return def;
+        }
+        return propertyName;
+    }
+
     public Collection<ColumnMetadata> getColumns() {
         return property2ColumnMap.values();
+    }
+    public ColumnMetadata getColumn(String propertyName) {
+        return property2ColumnMap.get(propertyName);
     }
 }

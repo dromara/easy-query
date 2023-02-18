@@ -1,5 +1,7 @@
 package org.easy.query.core.abstraction.metadata;
 
+import java.beans.PropertyDescriptor;
+
 /**
  * @FileName: ColumnMetadata.java
  * @Description: 文件说明
@@ -11,6 +13,9 @@ public class ColumnMetadata {
     private final EntityMetadata entityMetadata;
     private final String name;
 
+
+    private PropertyDescriptor property;
+
     private  boolean primary=false;
     private  boolean increment=false;
 
@@ -18,7 +23,7 @@ public class ColumnMetadata {
     private  boolean nullable=false;
     private  boolean version=false;
     private  boolean insertIgnore=false;
-    private  boolean udpateIgnore=false;
+    private  boolean updateIgnore =false;
 
     public ColumnMetadata(EntityMetadata entityMetadata, String name) {
         this.entityMetadata = entityMetadata;
@@ -73,11 +78,18 @@ public class ColumnMetadata {
         this.insertIgnore = insertIgnore;
     }
 
-    public boolean isUdpateIgnore() {
-        return udpateIgnore;
+    public boolean isUpdateIgnore() {
+        return updateIgnore;
     }
 
-    public void setUdpateIgnore(boolean udpateIgnore) {
-        this.udpateIgnore = udpateIgnore;
+    public void setUpdateIgnore(boolean updateIgnore) {
+        this.updateIgnore = updateIgnore;
+    }
+    public PropertyDescriptor getProperty() {
+        return property;
+    }
+
+    public void setProperty(PropertyDescriptor property) {
+        this.property = property;
     }
 }

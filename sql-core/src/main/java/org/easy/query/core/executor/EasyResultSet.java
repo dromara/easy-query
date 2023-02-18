@@ -1,6 +1,8 @@
-package org.easy.query.core.executor.type;
+package org.easy.query.core.executor;
 
+import java.beans.PropertyDescriptor;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 
 /**
  * @FileName: EasyResultSet.java
@@ -19,7 +21,7 @@ public class EasyResultSet {
     }
 
     public int getIndex() {
-        return index;
+        return index+1;
     }
     public void setIndex(int index) {
         this.index = index;

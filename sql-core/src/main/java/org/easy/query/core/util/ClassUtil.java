@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,6 +28,43 @@ import java.util.List;
 public class ClassUtil {
     private ClassUtil(){}
 
+    public static Method getWriteMethod(PropertyDescriptor prop, Class<?> type) {
+        Method writeMethod = prop.getWriteMethod();
+        //当使用lombok等链式编程方式时 有返回值的setter不被认为是writeMethod，需要自己去获取
+        if (writeMethod == null && !"class".equals(prop.getName())) {
+            String propName = prop.getName();
+            //符合JavaBean规范的set方法名称（userName=>setUserName,uName=>setuName）
+            String setMethodName =
+                    "set" + (propName.length() > 1 && propName.charAt(1) >= 'A' && propName.charAt(1) <= 'Z' ?
+                            propName :
+                            StringUtil.toUpperCaseFirstOne(propName));
+            try {
+                writeMethod = type.getMethod(setMethodName, prop.getPropertyType());
+            } catch (Exception e) {
+                //不存在set方法
+                return null;
+            }
+        }
+        return writeMethod;
+    }
+
+    public static boolean isBasicType(Class<?> clazz) {
+        if (clazz.isPrimitive()) {
+            return true;
+        }
+
+        if (clazz.getName().startsWith("java.")) {
+            return ((clazz == String.class) || clazz == Integer.class || clazz == Byte.class || clazz == Long.class
+                    || clazz == Double.class || clazz == Float.class || clazz == Character.class || clazz == Short.class
+                    || clazz == BigDecimal.class || clazz == BigInteger.class || clazz == Boolean.class
+                    || clazz == java.util.Date.class || clazz == java.sql.Date.class
+                    || clazz == java.sql.Timestamp.class || clazz == java.time.LocalDateTime.class
+                    || clazz == java.time.LocalDate.class);
+        } else {
+            return false;
+        }
+
+    }
     public static  <T> T newInstance(Class<T> clazz){
         try {
             return clazz.newInstance();

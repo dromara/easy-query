@@ -27,4 +27,9 @@ public class DefaultNameConversion extends NameConversion {
     public String getColName(String attrName) {
         return attrName;
     }
+
+    @Override
+    public String getPropertyName(String colName) {
+        return colName;
+    }
 }

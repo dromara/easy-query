@@ -35,4 +35,12 @@ public class SysUserLogbyMonth {
     public void setTime(LocalDateTime time) {
         this.time = time;
     }
+
+    @Override
+    public String toString() {
+        return "SysUserLogbyMonth{" +
+                "id='" + id + '\'' +
+                ", time=" + time +
+                '}';
+    }
 }

@@ -1,4 +1,4 @@
-package org.easy.query.core.executor.type;
+package org.easy.query.core.executor;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;

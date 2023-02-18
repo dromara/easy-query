@@ -21,4 +21,6 @@ public abstract class NameConversion {
      * @return String 列名
      */
     public abstract String getColName(String attrName);
+
+    public abstract String getPropertyName( String colName);
 }

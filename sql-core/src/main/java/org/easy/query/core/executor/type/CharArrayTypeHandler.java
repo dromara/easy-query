@@ -1,6 +1,10 @@
 package org.easy.query.core.executor.type;
 
+import org.easy.query.core.executor.EasyParameter;
+import org.easy.query.core.executor.EasyResultSet;
+
 import java.sql.SQLException;
+import java.sql.Types;
 
 /**
  * @FileName: CharArrayTypeHandler.java
@@ -18,5 +22,10 @@ public class CharArrayTypeHandler implements JdbcTypeHandler{
     public void setParameter(EasyParameter parameter) throws SQLException {
         String str = new String((char[]) parameter.getValue());
         parameter.getPs().setString(parameter.getIndex(),str);
+    }
+
+    @Override
+    public int getJdbcType() {
+        return Types.CLOB;
     }
 }

@@ -6,6 +6,7 @@ import org.easy.query.core.executor.EasyResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.sql.Types;
+import java.util.Date;
 
 /**
  * @FileName: DateTypeHandler.java
@@ -13,19 +14,21 @@ import java.sql.Types;
  * @Date: 2023/2/17 21:56
  * @Created by xuejiaming
  */
-public class DateTypeHandler implements JdbcTypeHandler{
+public class UtilDateTypeHandler implements JdbcTypeHandler {
     @Override
     public Object getValue(EasyResultSet resultSet) throws SQLException {
-        Timestamp r = resultSet.getRs().getTimestamp(resultSet.getIndex());
-        if(r!=null){
-            return new java.util.Date(r.getTime());
+        Timestamp timestamp = resultSet.getRs().getTimestamp(resultSet.getIndex());
+        if(timestamp!=null){
+            return new java.util.Date(timestamp.getTime());
         }
         return null;
     }
 
     @Override
     public void setParameter(EasyParameter parameter) throws SQLException {
-parameter.setDefaultParameter();
+        java.util.Date date = (java.util.Date) parameter.getValue();
+        Timestamp timestamp =  date==null?null:new Timestamp(date.getTime());
+        parameter.getPs().setTimestamp(parameter.getIndex(),timestamp);
     }
 
     @Override

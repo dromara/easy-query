@@ -1,7 +1,11 @@
 package org.easy.query.core.executor.type;
 
+import org.easy.query.core.executor.EasyParameter;
+import org.easy.query.core.executor.EasyResultSet;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 
 /**
  * @FileName: DoubleTypeHandler.java
@@ -32,5 +36,10 @@ public class DoubleTypeHandler implements JdbcTypeHandler{
     @Override
     public void setParameter(EasyParameter parameter) throws SQLException {
 parameter.getPs().setDouble(parameter.getIndex(),(Double)parameter.getValue());
+    }
+
+    @Override
+    public int getJdbcType() {
+        return Types.DOUBLE;
     }
 }
