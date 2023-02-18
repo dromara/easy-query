@@ -27,8 +27,8 @@ public  class SelectContext {
     }
     private final String alias;
 
-    private int skip;
-    private int take;
+    private long offset;
+    private long rows;
 
 
     private final List<SelectTableInfo> tables;
@@ -37,6 +37,7 @@ public  class SelectContext {
     private PredicateSegment where;
 //    private  StringBuilder select;
     private SqlSegment0Builder group;
+    private PredicateSegment having;
     private SqlSegment0Builder order;
 
     String dbName = "dbdbd0";
@@ -67,20 +68,20 @@ public  class SelectContext {
 
     }
 
-    public int getSkip() {
-        return skip;
+    public long getOffset() {
+        return offset;
     }
 
-    public void setSkip(int skip) {
-        this.skip = skip;
+    public void setOffset(long offset) {
+        this.offset = offset;
     }
 
-    public int getTake() {
-        return take;
+    public long getRows() {
+        return rows;
     }
 
-    public void setTake(int take) {
-        this.take = take;
+    public void setRows(long rows) {
+        this.rows = rows;
     }
 
     public PredicateSegment getWhere() {
@@ -88,6 +89,12 @@ public  class SelectContext {
             where=new AndPredicateSegment(true);
         }
         return where;
+    }
+    public PredicateSegment getHaving() {
+        if(having==null){
+            having=new AndPredicateSegment(true);
+        }
+        return having;
     }
     public void addSelectTable(SelectTableInfo selectTableInfo){
         this.tables.add(selectTableInfo);

@@ -3,6 +3,7 @@ package org.easy;
 import org.easy.query.core.abstraction.*;
 import org.easy.query.core.abstraction.client.JQDCClient;
 import org.easy.query.core.abstraction.metadata.EntityMetadataManager;
+import org.easy.query.core.abstraction.sql.enums.EasyPredicate;
 import org.easy.query.core.config.*;
 import org.easy.query.core.metadata.DefaultEntityMetadataManager;
 import org.easy.query.mysql.MySQLJQDCClient;
@@ -15,6 +16,7 @@ import org.easy.test.TestUserMysqlx;
 import java.text.DateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 public class Main {
     private static final String driver="com.mysql.cj.jdbc.Driver";
@@ -68,7 +70,16 @@ public class Main {
 //        }
 //        long end = System.currentTimeMillis();
 //        System.out.println("耗时："+(end-start)+"ms");
-
+        List<TestUserMysql> testUserMysqls = client.select(TestUserMysql.class)
+                .where(o -> o.eq(TestUserMysql::getName, "123"))
+                .groupBy(o -> o.column(TestUserMysql::getAge))
+                .having(o -> o.countDistinct(TestUserMysql::getId, EasyPredicate.GT, 5))
+                .toList();
+        List<TestUserMysql> testUserMysqls1 = client.select(TestUserMysql.class)
+                .where(o -> o.eq(TestUserMysql::getName, "123"))
+                .groupBy(o -> o.column(TestUserMysql::getAge))
+                .having(o -> o.countDistinct(TestUserMysql::getId, EasyPredicate.GT, 5).and(x->x.countDistinct(TestUserMysql::getId, EasyPredicate.GT, 5).or().countDistinct(TestUserMysql::getId, EasyPredicate.GT, 5)))
+                .toList();
         TestUserMysql testUserMysql = client.select(TestUserMysql.class,"y")
                 .where(o -> o.eq(TestUserMysql::getId, "102").like(TestUserMysql::getName,"1%").and(x->
                     x.like(TestUserMysql::getName,"123").or().eq(TestUserMysql::getAge,1)

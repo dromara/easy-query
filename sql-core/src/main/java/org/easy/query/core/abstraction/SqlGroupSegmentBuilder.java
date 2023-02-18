@@ -18,9 +18,7 @@ public class SqlGroupSegmentBuilder extends AbstractSqlSegmentBuilder {
         StringBuilder sb=new StringBuilder();
         List<SqlSegment> sqlSegments = getSqlSegments();
         for (SqlSegment sqlSegment : sqlSegments) {
-            if(sb.length()==0){
-                sb.append(SqlKeywordEnum.GROUP_BY.getSql()).append(" ");
-            }else{
+            if(sb.length()!=0){
                 sb.append(SqlKeywordEnum.DOT.getSql());
             }
             sb.append(sqlSegment.getSql());

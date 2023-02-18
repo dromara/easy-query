@@ -2,6 +2,7 @@ package org.easy.query.core.impl;
 
 import org.easy.query.core.abstraction.EasyQuerySqlBuilderProvider;
 import org.easy.query.core.abstraction.SqlSegment0Builder;
+import org.easy.query.core.abstraction.sql.base.SqlAggregatePredicate;
 import org.easy.query.core.abstraction.sql.base.SqlColumnAsSelector;
 import org.easy.query.core.abstraction.sql.base.SqlColumnSelector;
 import org.easy.query.core.abstraction.sql.base.SqlPredicate;
@@ -19,6 +20,7 @@ public class Select1SqlProvider<T1> implements EasyQuerySqlBuilderProvider<T1> {
     private  DefaultSqlGroupColumnSelector<T1> group;
     private  DefaultSqlOrderColumnSelector<T1> order;
     private DefaultSqlPredicate<T1> where;
+    private DefaultSqlAggregatePredicate<T1> having;
     private DefaultSqlPredicate<T1> on;
 
     public Select1SqlProvider(SelectContext selectContext){
@@ -49,6 +51,15 @@ public class Select1SqlProvider<T1> implements EasyQuerySqlBuilderProvider<T1> {
         }
         return where;
     }
+
+    @Override
+    public SqlAggregatePredicate<T1> getSqlAggregatePredicate1() {
+        if(having ==null){
+            having =new DefaultSqlAggregatePredicate<>(0,selectContext,selectContext.getHaving());
+        }
+        return having;
+    }
+
     @Override
     public SqlPredicate<T1> getSqlOnPredicate1() {
         if(on==null){

@@ -39,6 +39,11 @@ public class DefaultSqlColumnAsSelector<T1,TR> extends AbstractSqlColumnSelector
     }
 
     @Override
+    public SqlColumnAsSelector<T1, TR> columnDistinctCount(Property<T1, ?> column, Property<TR, ?> alias) {
+        return null;
+    }
+
+    @Override
     public SqlColumnAsSelector<T1, TR> columnSum(Property<T1, ?> column, Property<TR, ?> alias) {
         return null;
     }
@@ -64,7 +69,7 @@ public class DefaultSqlColumnAsSelector<T1,TR> extends AbstractSqlColumnSelector
     }
 
     @Override
-    public <T2, TChain2> ColumnAsSelector<T2, TR, TChain2> and(ColumnAsSelector<T2, TR, TChain2> sub) {
+    public <T2, TChain2> ColumnAsSelector<T2, TR, TChain2> then(ColumnAsSelector<T2, TR, TChain2> sub) {
         return sub;
     }
 

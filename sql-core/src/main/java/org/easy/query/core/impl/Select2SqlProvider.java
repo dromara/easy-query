@@ -1,8 +1,8 @@
 package org.easy.query.core.impl;
 
-import org.easy.query.core.abstraction.EasyQuerySqlBuilderProvider;
 import org.easy.query.core.abstraction.EasyQuerySqlBuilderProvider2;
 import org.easy.query.core.abstraction.SqlSegment0Builder;
+import org.easy.query.core.abstraction.sql.base.SqlAggregatePredicate;
 import org.easy.query.core.abstraction.sql.base.SqlColumnAsSelector;
 import org.easy.query.core.abstraction.sql.base.SqlColumnSelector;
 import org.easy.query.core.abstraction.sql.base.SqlPredicate;
@@ -20,6 +20,7 @@ public class Select2SqlProvider<T1,T2> extends Select1SqlProvider<T1> implements
     private  DefaultSqlGroupColumnSelector<T2> group;
     private  DefaultSqlOrderColumnSelector<T2> order;
     private DefaultSqlPredicate<T2> where;
+    private DefaultSqlAggregatePredicate<T2> having;
     private DefaultSqlPredicate<T2> on;
 
     public Select2SqlProvider(SelectContext selectContext){
@@ -52,6 +53,15 @@ public class Select2SqlProvider<T1,T2> extends Select1SqlProvider<T1> implements
         }
         return where;
     }
+
+    @Override
+    public SqlAggregatePredicate<T2> getSqlAggregatePredicate2() {
+        if(having ==null){
+            having =new DefaultSqlAggregatePredicate<>(1,selectContext,selectContext.getHaving());
+        }
+        return having;
+    }
+
     @Override
     public SqlPredicate<T2> getSqlOnPredicate2() {
         if(on==null){

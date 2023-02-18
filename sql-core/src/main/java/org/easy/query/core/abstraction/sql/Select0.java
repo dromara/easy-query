@@ -1,6 +1,7 @@
 package org.easy.query.core.abstraction.sql;
 
 import org.easy.query.core.abstraction.lambda.SqlExpression;
+import org.easy.query.core.abstraction.sql.base.SqlAggregatePredicate;
 import org.easy.query.core.abstraction.sql.base.SqlColumnAsSelector;
 import org.easy.query.core.abstraction.sql.base.SqlColumnSelector;
 import org.easy.query.core.abstraction.sql.base.SqlPredicate;
@@ -57,9 +58,11 @@ public interface Select0<T1, TChain> {
 
     //    <TR> List<TR> toList(Class<TR> resultClass);
     String toSql();
+
     String toSql(SqlExpression<SqlColumnSelector<T1>> selectExpression);
 
     <TR> String toSql(Class<TR> resultClass, SqlExpression<SqlColumnAsSelector<T1, TR>> selectExpression);
+
     String toSql(String columns);
 
 
@@ -78,7 +81,11 @@ public interface Select0<T1, TChain> {
     }
 
     TChain groupBy(boolean condition, SqlExpression<SqlColumnSelector<T1>> selectExpression);
+    default TChain having(SqlExpression<SqlAggregatePredicate<T1>> predicateExpression){
+        return having(true,predicateExpression);
+    }
 
+    TChain having(boolean condition,SqlExpression<SqlAggregatePredicate<T1>> predicateExpression);
     default TChain orderByAsc(SqlExpression<SqlColumnSelector<T1>> selectExpression) {
         return orderByAsc(true, selectExpression);
     }
@@ -91,15 +98,18 @@ public interface Select0<T1, TChain> {
 
     TChain orderByDesc(boolean condition, SqlExpression<SqlColumnSelector<T1>> selectExpression);
 
-    default TChain skip(int skip) {
-        return skip(true, skip);
+
+    default TChain limit(long rows) {
+        return limit(true, rows);
     }
 
-    TChain skip(boolean condition, int skip);
-
-    default TChain take(int take) {
-        return take(true, take);
+    default TChain limit(boolean condition, long rows) {
+        return limit(true, 0, rows);
     }
 
-    TChain take(boolean condition, int take);
+    default TChain limit(long offset, long rows) {
+        return limit(true, offset, rows);
+    }
+
+    TChain limit(boolean condition, long offset, long rows);
 }

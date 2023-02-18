@@ -30,7 +30,15 @@ public class MySQLUtil {
         for (int i = 0; i < tableCount; i++) {
             SelectTableInfo table = selectContext.getTable(i);
             if(i==0){
-                sql.append(StringUtil.isEmpty(select)?table.getAlias()+".*":select);
+                if(StringUtil.isEmpty(select)){
+                    if(selectContext.getGroup().isEmpty()){
+                        sql.append(table.getAlias()+".*");
+                    }else{
+                        sql.append(selectContext.getGroup().toSql());
+                    }
+                }else{
+                    sql.append(select);
+                }
             }
 
             sql.append(table.getSelectTableSource()).append(table.getEntityMetadata().getTableName()).append(" ").append(table.getAlias());
@@ -45,8 +53,19 @@ public class MySQLUtil {
         if (!selectContext.getGroup().isEmpty()) {
             sql.append(" GROUP BY ").append(selectContext.getGroup().toSql());
         }
+        if (!selectContext.getHaving().isEmpty()) {
+            sql.append(" HAVING ").append(selectContext.getHaving().getSql());
+        }
         if (!selectContext.getOrder().isEmpty()) {
             sql.append(" ORDER BY ").append(selectContext.getOrder().toSql());
+        }
+        if(selectContext.getRows()>0){
+            sql.append(" LIMIT ");
+            if(selectContext.getOffset()>0){
+                sql.append(selectContext.getOffset()).append(" OFFSET ").append(selectContext.getRows());
+            }else{
+                sql.append(selectContext.getRows());
+            }
         }
         return sql.toString();
     }

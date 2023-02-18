@@ -36,7 +36,7 @@ public class DefaultExecutor implements EasyExecutor {
         EasyConnector easyConnector = runtimeContext.getEasyConnector();
         EasyJdbcTypeHandler easyJdbcTypeHandler = runtimeContext.getEasyJdbcTypeHandler();
         List<TR> result = null;
-//        System.out.println("开始执行：" + sql);
+        System.out.println("开始执行：" + sql);
         try (Connection connection = easyConnector.getConnection();
              PreparedStatement ps = createPreparedStatement(connection, sql, parameters, easyJdbcTypeHandler);
              ResultSet rs = ps.executeQuery()) {

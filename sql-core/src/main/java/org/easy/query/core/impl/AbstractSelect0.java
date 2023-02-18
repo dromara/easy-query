@@ -1,15 +1,11 @@
 package org.easy.query.core.impl;
 
-import org.easy.query.core.abstraction.EasyExecutor;
-import org.easy.query.core.abstraction.EasyQuerySqlBuilderProvider;
-import org.easy.query.core.abstraction.ExecutorContext;
-import org.easy.query.core.abstraction.SelectSqlSegmentBuilder;
+import org.easy.query.core.abstraction.*;
+import org.easy.query.core.abstraction.lambda.Property;
 import org.easy.query.core.abstraction.lambda.SqlExpression;
 import org.easy.query.core.abstraction.sql.Select0;
-import org.easy.query.core.abstraction.sql.base.ColumnSelector;
-import org.easy.query.core.abstraction.sql.base.SqlColumnAsSelector;
-import org.easy.query.core.abstraction.sql.base.SqlColumnSelector;
-import org.easy.query.core.abstraction.sql.base.SqlPredicate;
+import org.easy.query.core.abstraction.sql.base.*;
+import org.easy.query.core.segments.ColumnSegment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,13 +34,13 @@ public abstract class AbstractSelect0<T1, TChain> implements Select0<T1, TChain>
 
     @Override
     public T1 firstOrNull() {
-        SqlExpression<SqlColumnSelector<T1>> selectExpression = ColumnSelector::columnAll;
+        SqlExpression<SqlColumnSelector<T1>> selectExpression = getDefaultColumnAll();
         return firstOrNull(selectExpression);
     }
 
     @Override
     public T1 firstOrNull(SqlExpression<SqlColumnSelector<T1>> selectExpression) {
-        this.take(1);
+        this.limit(1);
         List<T1> list = toList(selectExpression);
         if (list.isEmpty()) {
             return null;
@@ -54,29 +50,43 @@ public abstract class AbstractSelect0<T1, TChain> implements Select0<T1, TChain>
 
     @Override
     public <TR> TR firstOrNull(Class<TR> resultClass) {
-        SqlExpression<SqlColumnAsSelector<T1, TR>> selectExpression = ColumnSelector::columnAll;
+        SqlExpression<SqlColumnAsSelector<T1, TR>> selectExpression = getDefaultColumnAsAll();
         return firstOrNull(resultClass, selectExpression);
     }
 
     @Override
     public <TR> TR firstOrNull(Class<TR> resultClass, SqlExpression<SqlColumnAsSelector<T1, TR>> selectExpression) {
-        this.take(1);
+        this.limit(1);
         List<TR> list = toList(resultClass, selectExpression);
         if (list.isEmpty()) {
             return null;
         }
         return list.get(0);
     }
+    protected SqlExpression<SqlColumnSelector<T1>> getDefaultColumnAll(){
+        if(selectContext.getGroup().isEmpty()){
+            return  ColumnSelector::columnAll;
+        }else{
+            return o->{};
+        }
+    }
+    protected <TR> SqlExpression<SqlColumnAsSelector<T1,TR>> getDefaultColumnAsAll(){
+        if(selectContext.getGroup().isEmpty()){
+            return  ColumnSelector::columnAll;
+        }else{
+            return o->{};
+        }
+    }
 
     @Override
     public List<T1> toList() {
-        SqlExpression<SqlColumnSelector<T1>> selectorExpression = ColumnSelector::columnAll;
+        SqlExpression<SqlColumnSelector<T1>> selectorExpression = getDefaultColumnAll();
         return toList(selectorExpression);
     }
 
     @Override
     public <TR> List<TR> toList(Class<TR> resultClass) {
-        SqlExpression<SqlColumnAsSelector<T1, TR>> selectExpression=ColumnSelector::columnAll;
+        SqlExpression<SqlColumnAsSelector<T1, TR>> selectExpression=getDefaultColumnAsAll();
         return toList(resultClass,selectExpression);
     }
 
@@ -153,6 +163,16 @@ public abstract class AbstractSelect0<T1, TChain> implements Select0<T1, TChain>
     }
 
     @Override
+    public TChain having(boolean condition, SqlExpression<SqlAggregatePredicate<T1>> predicateExpression) {
+
+        if (condition) {
+            SqlAggregatePredicate<T1> sqlAggregatePredicate = getSqlBuilderProvider1().getSqlAggregatePredicate1();
+            predicateExpression.apply(sqlAggregatePredicate);
+        }
+        return castSelf();
+    }
+
+    @Override
     public TChain orderByAsc(boolean condition, SqlExpression<SqlColumnSelector<T1>> selectExpression) {
         if (condition) {
             SqlColumnSelector<T1> sqlPredicate = getSqlBuilderProvider1().getSqlOrderColumnSelector1(true);
@@ -171,18 +191,13 @@ public abstract class AbstractSelect0<T1, TChain> implements Select0<T1, TChain>
     }
 
     @Override
-    public TChain skip(boolean condition, int skip) {
-        if (condition) {
-            this.getSelectContext().setSkip(skip);
+    public TChain limit(boolean condition, long offset, long rows) {
+        if(condition){
+            selectContext.setOffset(offset);
+            selectContext.setRows(rows);
         }
         return castSelf();
     }
-
-    @Override
-    public TChain take(boolean condition, int take) {
-        return castSelf();
-    }
-
 
     public SelectContext getSelectContext() {
         return selectContext;

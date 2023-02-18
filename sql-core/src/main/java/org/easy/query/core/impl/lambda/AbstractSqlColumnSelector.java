@@ -7,6 +7,7 @@ import org.easy.query.core.impl.SelectContext;
 import org.easy.query.core.query.builder.SelectTableInfo;
 import org.easy.query.core.abstraction.sql.base.ColumnSelector;
 import org.easy.query.core.segments.ColumnSegment;
+import org.easy.query.core.util.LambdaUtil;
 
 import java.util.Collection;
 
@@ -16,7 +17,7 @@ import java.util.Collection;
  * @Date: 2023/2/8 12:26
  * @Created by xuejiaming
  */
-public abstract class AbstractSqlColumnSelector<T1,TChain> implements ColumnSelector<T1,TChain> {
+public class AbstractSqlColumnSelector<T1,TChain> implements ColumnSelector<T1, TChain> {
     private final int index;
     private final SelectContext selectContext;
     private final SqlSegment0Builder sqlSegmentBuilder;
@@ -36,7 +37,7 @@ public abstract class AbstractSqlColumnSelector<T1,TChain> implements ColumnSele
     public TChain column(Property<T1, ?> column) {
         String columnName = selectContext.getTable(index).getColumnName(column);
         sqlSegmentBuilder.append(new ColumnSegment(index,columnName,selectContext));
-        return (TChain) this;
+        return (TChain)this;
     }
 
     @Override
@@ -46,7 +47,7 @@ public abstract class AbstractSqlColumnSelector<T1,TChain> implements ColumnSele
         for (ColumnMetadata column : columns) {
             sqlSegmentBuilder.append(new ColumnSegment(index, column.getName(),selectContext));
         }
-        return (TChain) this;
+        return (TChain)this;
     }
 
 
