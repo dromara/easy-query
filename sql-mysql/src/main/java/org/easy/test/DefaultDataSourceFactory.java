@@ -3,6 +3,7 @@ package org.easy.test;
 import com.alibaba.druid.pool.DruidDataSourceFactory;
 import org.easy.query.core.config.EasyConfig;
 import org.easy.query.core.config.EasyDataSourceFactory;
+import org.easy.query.core.exception.JDQCException;
 
 import javax.sql.DataSource;
 import java.util.Properties;
@@ -32,7 +33,7 @@ public class DefaultDataSourceFactory implements EasyDataSourceFactory {
         try {
             this.dataSource = DruidDataSourceFactory.createDataSource(properties);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new JDQCException(e);
         }
 
     }

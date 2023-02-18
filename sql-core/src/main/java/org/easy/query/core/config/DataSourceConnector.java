@@ -26,13 +26,4 @@ public class DataSourceConnector implements EasyConnector{
             throw new JDQCException(e);
         }
     }
-
-    @Override
-    public void closeConnection(Connection connection) {
-        try {
-            connection.close();
-        } catch (SQLException e) {
-            throw new JDQCException(e);
-        }
-    }
 }

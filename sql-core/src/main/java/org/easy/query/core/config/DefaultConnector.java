@@ -16,6 +16,11 @@ public class DefaultConnector implements EasyConnector{
     public DefaultConnector(DefaultConfig defaultConfig){
 
         this.defaultConfig = defaultConfig;
+        try {
+            Class.forName(defaultConfig.getDriver());
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException("驱动未发现:"+defaultConfig.getDriver(),e);
+        }
     }
 
     @Override
@@ -23,19 +28,11 @@ public class DefaultConnector implements EasyConnector{
 
         Connection conn = null;
         try {
-            Class.forName(defaultConfig.getDriver());
             conn = DriverManager.getConnection(defaultConfig.getUrl(), defaultConfig.getUsername(),
                     defaultConfig.getPassword());
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException("驱动未发现:"+defaultConfig.getDriver(),e);
-        } catch (SQLException e) {
+        }catch (SQLException e) {
             throw new RuntimeException(e);
         }
         return conn;
-    }
-
-    @Override
-    public void closeConnection(Connection connection) {
-
     }
 }

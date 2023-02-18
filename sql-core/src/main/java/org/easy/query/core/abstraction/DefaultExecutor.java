@@ -36,7 +36,7 @@ public class DefaultExecutor implements EasyExecutor {
         EasyConnector easyConnector = runtimeContext.getEasyConnector();
         EasyJdbcTypeHandler easyJdbcTypeHandler = runtimeContext.getEasyJdbcTypeHandler();
         List<TR> result = null;
-        System.out.println("开始执行：" + sql);
+//        System.out.println("开始执行：" + sql);
         try (Connection connection = easyConnector.getConnection();
              PreparedStatement ps = createPreparedStatement(connection, sql, parameters, easyJdbcTypeHandler);
              ResultSet rs = ps.executeQuery()) {
@@ -103,6 +103,7 @@ public class DefaultExecutor implements EasyExecutor {
         }
         List<T> resultList = new ArrayList<>();
         ResultSetMetaData rsmd = rs.getMetaData();
+        long start = System.currentTimeMillis();
         PropertyDescriptor[] propertyDescriptors = columnsToProperties(context, rs, rsmd, clazz);
         do {
             T bean = mapToBean(context, rs, clazz,propertyDescriptors);

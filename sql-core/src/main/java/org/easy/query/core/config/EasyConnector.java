@@ -10,5 +10,4 @@ import java.sql.Connection;
  */
 public interface EasyConnector {
     Connection getConnection();
-    void closeConnection(Connection connection);
 }

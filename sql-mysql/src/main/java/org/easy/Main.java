@@ -59,6 +59,16 @@ public class Main {
 //        configuration.addTableInfo(tableInfo1);
         client=new MySQLJQDCClient(jqdcRuntimeContext);
 
+        SysUserLogbyMonth sysUserLogbyMonth1 = client.select(SysUserLogbyMonth.class)
+                .where(o -> o.eq(SysUserLogbyMonth::getId, "119")).firstOrNull();
+//        long start = System.currentTimeMillis();
+//        for (int i = 0; i < 10000; i++) {
+//            SysUserLogbyMonth sysUserLogbyMonth = client.select(SysUserLogbyMonth.class)
+//                    .where(o -> o.eq(SysUserLogbyMonth::getId, "119")).firstOrNull();
+//        }
+//        long end = System.currentTimeMillis();
+//        System.out.println("耗时："+(end-start)+"ms");
+
         TestUserMysql testUserMysql = client.select(TestUserMysql.class,"y")
                 .where(o -> o.eq(TestUserMysql::getId, "102").like(TestUserMysql::getName,"1%").and(x->
                     x.like(TestUserMysql::getName,"123").or().eq(TestUserMysql::getAge,1)
