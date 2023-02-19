@@ -24,13 +24,13 @@ public class ColumnValuePredicate implements Predicate {
         this.val = val;
         this.compare = compare;
         this.selectContext = selectContext;
+        selectContext.addParams(val);
     }
 
     @Override
     public String getSql() {
         SelectTableInfo table = selectContext.getTable(index);
         String quoteName = selectContext.getQuoteName(column);
-        selectContext.addParams(val);
         return table.getAlias() + "." + quoteName +" "+ compare.getSql() + " ?";
     }
 }

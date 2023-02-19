@@ -40,13 +40,6 @@ public  class SelectContext {
     private PredicateSegment having;
     private SqlSegment0Builder order;
 
-    String dbName = "dbdbd0";
-    String ip = "127.0.0.1";
-    String port = "3306";
-    String username = "root";
-    String password = "root";
-    String driverClassName = "com.mysql.cj.jdbc.Driver";
-
     public SelectContext(EasyQueryRuntimeContext runtimeContext){
         this(runtimeContext,"t");
     }

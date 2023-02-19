@@ -3,10 +3,16 @@ package org.easy.query.core.impl;
 import org.easy.query.core.abstraction.*;
 import org.easy.query.core.abstraction.lambda.Property;
 import org.easy.query.core.abstraction.lambda.SqlExpression;
+import org.easy.query.core.abstraction.metadata.ColumnMetadata;
 import org.easy.query.core.abstraction.sql.Select0;
 import org.easy.query.core.abstraction.sql.base.*;
+import org.easy.query.core.abstraction.sql.enums.EasyAggregate;
+import org.easy.query.core.exception.JDQCException;
+import org.easy.query.core.query.builder.SelectTableInfo;
 import org.easy.query.core.segments.ColumnSegment;
+import org.easy.query.core.segments.predicate.ColumnColumnPredicate;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,10 +33,137 @@ public abstract class AbstractSelect0<T1, TChain> implements Select0<T1, TChain>
 
 
     @Override
-    public abstract int count();
+    public  long count(){
+        List<Long> result = toInternalList(Long.class, "COUNT(1)");
+        if(result.isEmpty()){
+            return 0L;
+        }
+        Long r = result.get(0);
+        if(r==null){
+            return 0L;
+        }
+        return r;
+    }
 
     @Override
-    public abstract boolean any();
+    public long countDistinct(SqlExpression<SqlColumnSelector<T1>> selectExpression) {
+        SelectSqlSegmentBuilder sqlSegmentBuilder = new SelectSqlSegmentBuilder();
+        SqlColumnSelector<T1> sqlColumnSelector = getSqlBuilderProvider1().getSqlColumnSelector1(sqlSegmentBuilder);
+        selectExpression.apply(sqlColumnSelector);
+        List<Long> result = toInternalList(Long.class, EasyAggregate.COUNT_DISTINCT.getFuncColumn(sqlSegmentBuilder.toSql()));
+
+        if(result.isEmpty()){
+            return 0L;
+        }
+        Long r = result.get(0);
+        if(r==null){
+            return 0L;
+        }
+        return r;
+    }
+
+    @Override
+    public  boolean any(){
+        limit(1);
+        List<Integer> result = toInternalList(Integer.class, "1");
+        return !result.isEmpty();
+    }
+
+    @Override
+    public <TMember extends Number> BigDecimal sumBigDecimalOrDefault(Property<T1, TMember> column, BigDecimal def) {
+
+        SelectTableInfo table = selectContext.getTable(0);
+        ColumnMetadata columnMetadata = table.getColumn(column);
+        String columnName = columnMetadata.getName();
+        String quoteName = selectContext.getQuoteName(columnName);
+        Class<?> memberClass = columnMetadata.getProperty().getPropertyType();
+        List<TMember> result = toInternalList((Class<TMember>)memberClass, EasyAggregate.SUM.getFuncColumn(table.getAlias()+"."+quoteName));
+        if(result.isEmpty()){
+            return def;
+        }
+        TMember resultMember = result.get(0);
+        if(resultMember==null){
+            return def;
+        }
+        return new BigDecimal(resultMember.toString());
+    }
+
+    @Override
+    public <TMember extends Number> TMember sumOrDefault(Property<T1, TMember> column,TMember def) {
+
+        SelectTableInfo table = selectContext.getTable(0);
+        ColumnMetadata columnMetadata = table.getColumn(column);
+        String columnName = columnMetadata.getName();
+        String quoteName = selectContext.getQuoteName(columnName);
+        Class<?> memberClass = columnMetadata.getProperty().getPropertyType();
+        List<TMember> result = toInternalList((Class<TMember>)memberClass, EasyAggregate.SUM.getFuncColumn(table.getAlias()+"."+quoteName));
+        if(result.isEmpty()){
+            return def;
+        }
+        TMember resultMember = result.get(0);
+        if(resultMember==null){
+            return def;
+        }
+        return resultMember;
+    }
+    //    @Override
+//    public BigDecimal sum(SqlExpression<SqlSingleColumnSelector<T1>> selectExpression) {
+//
+//        SelectSqlSegmentBuilder sqlSegmentBuilder = new SelectSqlSegmentBuilder();
+//        SqlSingleColumnSelector<T1> sqlColumnSelector = getSqlBuilderProvider1().getSqlSingleColumnSelector1(sqlSegmentBuilder);
+//        selectExpression.apply(sqlColumnSelector);
+//        if(sqlSegmentBuilder.isEmpty()){
+//            throw new JDQCException("sum must set column select expression");
+//        }
+//        List<BigDecimal> result = toInternalList(BigDecimal.class, EasyAggregate.SUM.getFuncColumn(sqlSegmentBuilder.toSql()));
+//        if(result.isEmpty()){
+//            return BigDecimal.ZERO;
+//        }
+//        return result.get(0);
+//    }
+
+    @Override
+    public <TMember> TMember maxOrDefault(Property<T1, TMember> column,TMember def) {
+
+        SelectTableInfo table = selectContext.getTable(0);
+        ColumnMetadata columnMetadata = table.getColumn(column);
+        String columnName = columnMetadata.getName();
+        String quoteName = selectContext.getQuoteName(columnName);
+        Class<?> memberClass = columnMetadata.getProperty().getPropertyType();
+        List<TMember> result = toInternalList((Class<TMember>)memberClass, EasyAggregate.MAX.getFuncColumn(table.getAlias()+"."+quoteName));
+        if(result.isEmpty()){
+            return null;
+        }
+        return result.get(0);
+    }
+
+    @Override
+    public <TMember> TMember minOrDefault(Property<T1, TMember> column, TMember def) {
+        SelectTableInfo table = selectContext.getTable(0);
+        ColumnMetadata columnMetadata = table.getColumn(column);
+        String columnName = columnMetadata.getName();
+        String quoteName = selectContext.getQuoteName(columnName);
+        Class<?> memberClass = columnMetadata.getProperty().getPropertyType();
+        List<TMember> result = toInternalList((Class<TMember>)memberClass, EasyAggregate.MIN.getFuncColumn(table.getAlias()+"."+quoteName));
+        if(result.isEmpty()){
+            return null;
+        }
+        return result.get(0);
+    }
+
+    @Override
+    public <TMember> TMember avgOrDefault(Property<T1, TMember> column, TMember def) {
+        SelectTableInfo table = selectContext.getTable(0);
+        ColumnMetadata columnMetadata = table.getColumn(column);
+        String columnName = columnMetadata.getName();
+        String quoteName = selectContext.getQuoteName(columnName);
+        Class<?> memberClass = columnMetadata.getProperty().getPropertyType();
+        List<TMember> result = toInternalList((Class<TMember>)memberClass, EasyAggregate.AVG.getFuncColumn(table.getAlias()+"."+quoteName));
+        if(result.isEmpty()){
+            return null;
+        }
+        return result.get(0);
+    }
 
     @Override
     public T1 firstOrNull() {

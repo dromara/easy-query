@@ -30,8 +30,6 @@ public class LambdaUtil {
                 attr = method.substring(2);
             }
             return StringUtil.toLowerCaseFirstOne(attr);
-//            return sqlManager.getNc().getColName(clazz, StringKit.toLowerCaseFirstOne(attr));
-//            return nc.getColName(clazz, attr);
         } catch (ReflectiveOperationException e) {
             throw new RuntimeException(e);
         }

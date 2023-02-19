@@ -1,11 +1,10 @@
 package org.easy.query.core.abstraction.sql;
 
+import org.easy.query.core.abstraction.lambda.Property;
 import org.easy.query.core.abstraction.lambda.SqlExpression;
-import org.easy.query.core.abstraction.sql.base.SqlAggregatePredicate;
-import org.easy.query.core.abstraction.sql.base.SqlColumnAsSelector;
-import org.easy.query.core.abstraction.sql.base.SqlColumnSelector;
-import org.easy.query.core.abstraction.sql.base.SqlPredicate;
+import org.easy.query.core.abstraction.sql.base.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -15,9 +14,54 @@ import java.util.List;
  * @Created by xuejiaming
  */
 public interface Select0<T1, TChain> {
-    int count();
+    long count();
+    long countDistinct(SqlExpression<SqlColumnSelector<T1>> selectExpression);
 
     boolean any();
+
+    /**
+     * 防止溢出
+     * @param column
+     * @return
+     * @param <TMember>
+     */
+    default  <TMember extends Number> BigDecimal sumBigDecimalOrNull(Property<T1, TMember> column){
+        return sumBigDecimalOrDefault(column,null);
+    }
+
+    /**
+     * 防止溢出
+     * @param column
+     * @return
+     * @param <TMember>
+     */
+    default  <TMember extends Number> BigDecimal sumBigDecimalNotNull(Property<T1, TMember> column){
+        return sumBigDecimalOrDefault(column,BigDecimal.ZERO);
+    }
+    <TMember extends Number> BigDecimal sumBigDecimalOrDefault(Property<T1, TMember> column,BigDecimal def);
+
+   default  <TMember extends Number> TMember sumOrNull(Property<T1, TMember> column){
+       return sumOrDefault(column,null);
+   }
+    <TMember extends Number> TMember sumOrDefault(Property<T1, TMember> column,TMember def);
+
+    default <TMember> TMember maxOrNull(Property<T1, TMember> column) {
+        return maxOrDefault(column, null);
+    }
+
+    <TMember> TMember maxOrDefault(Property<T1, TMember> column, TMember def);
+    default <TMember> TMember minOrNull(Property<T1, TMember> column) {
+        return minOrDefault(column, null);
+    }
+
+    <TMember> TMember minOrDefault(Property<T1, TMember> column, TMember def);
+
+    default <TMember> TMember avgOrNull(Property<T1, TMember> column) {
+        return avgOrDefault(column, null);
+    }
+
+    <TMember> TMember avgOrDefault(Property<T1, TMember> column, TMember def);
+
 
     T1 firstOrNull();
 
@@ -81,11 +125,13 @@ public interface Select0<T1, TChain> {
     }
 
     TChain groupBy(boolean condition, SqlExpression<SqlColumnSelector<T1>> selectExpression);
-    default TChain having(SqlExpression<SqlAggregatePredicate<T1>> predicateExpression){
-        return having(true,predicateExpression);
+
+    default TChain having(SqlExpression<SqlAggregatePredicate<T1>> predicateExpression) {
+        return having(true, predicateExpression);
     }
 
-    TChain having(boolean condition,SqlExpression<SqlAggregatePredicate<T1>> predicateExpression);
+    TChain having(boolean condition, SqlExpression<SqlAggregatePredicate<T1>> predicateExpression);
+
     default TChain orderByAsc(SqlExpression<SqlColumnSelector<T1>> selectExpression) {
         return orderByAsc(true, selectExpression);
     }
@@ -104,7 +150,7 @@ public interface Select0<T1, TChain> {
     }
 
     default TChain limit(boolean condition, long rows) {
-        return limit(true, 0, rows);
+        return limit(condition, 0, rows);
     }
 
     default TChain limit(long offset, long rows) {

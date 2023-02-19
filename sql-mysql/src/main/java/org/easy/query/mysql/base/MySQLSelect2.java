@@ -22,18 +22,6 @@ public class MySQLSelect2<T1,T2> extends AbstractSelect2<T1,T2> {
         this.selectContext = selectContext;
     }
 
-
-    @Override
-    public int count() {
-        return 0;
-    }
-
-    @Override
-    public boolean any() {
-        return false;
-    }
-
-
     @Override
     public String toSql(String columns) {
         return MySQLUtil.toSql(selectContext,columns);

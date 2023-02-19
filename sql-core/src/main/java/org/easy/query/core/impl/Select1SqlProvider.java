@@ -2,10 +2,7 @@ package org.easy.query.core.impl;
 
 import org.easy.query.core.abstraction.EasyQuerySqlBuilderProvider;
 import org.easy.query.core.abstraction.SqlSegment0Builder;
-import org.easy.query.core.abstraction.sql.base.SqlAggregatePredicate;
-import org.easy.query.core.abstraction.sql.base.SqlColumnAsSelector;
-import org.easy.query.core.abstraction.sql.base.SqlColumnSelector;
-import org.easy.query.core.abstraction.sql.base.SqlPredicate;
+import org.easy.query.core.abstraction.sql.base.*;
 import org.easy.query.core.impl.lambda.*;
 
 /**

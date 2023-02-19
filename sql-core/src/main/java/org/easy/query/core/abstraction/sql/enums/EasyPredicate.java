@@ -9,6 +9,9 @@ package org.easy.query.core.abstraction.sql.enums;
 public enum EasyPredicate implements IEasyPredicate {
     EQ("="),
     NE("<>"),
+    /**
+     * 大于 >
+     */
     GT(">"),
     GE(">="),
     LT("<"),

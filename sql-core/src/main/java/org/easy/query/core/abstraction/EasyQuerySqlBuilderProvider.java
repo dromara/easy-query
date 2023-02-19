@@ -1,9 +1,6 @@
 package org.easy.query.core.abstraction;
 
-import org.easy.query.core.abstraction.sql.base.SqlAggregatePredicate;
-import org.easy.query.core.abstraction.sql.base.SqlColumnAsSelector;
-import org.easy.query.core.abstraction.sql.base.SqlColumnSelector;
-import org.easy.query.core.abstraction.sql.base.SqlPredicate;
+import org.easy.query.core.abstraction.sql.base.*;
 
 /**
  * @FileName: EasyQueryLambdaBuilder.java

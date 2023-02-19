@@ -3,6 +3,7 @@ package org.easy;
 import org.easy.query.core.abstraction.*;
 import org.easy.query.core.abstraction.client.JQDCClient;
 import org.easy.query.core.abstraction.metadata.EntityMetadataManager;
+import org.easy.query.core.abstraction.sql.Select1;
 import org.easy.query.core.abstraction.sql.enums.EasyPredicate;
 import org.easy.query.core.config.*;
 import org.easy.query.core.metadata.DefaultEntityMetadataManager;
@@ -13,7 +14,7 @@ import org.easy.test.SysUserLogbyMonth;
 import org.easy.test.TestUserMysql;
 import org.easy.test.TestUserMysqlx;
 
-import java.text.DateFormat;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -63,6 +64,22 @@ public class Main {
 
         SysUserLogbyMonth sysUserLogbyMonth1 = client.select(SysUserLogbyMonth.class)
                 .where(o -> o.eq(SysUserLogbyMonth::getId, "119")).firstOrNull();
+        Select1<SysUserLogbyMonth> queryable = client.select(SysUserLogbyMonth.class)
+                .where(o -> o.eq(SysUserLogbyMonth::getId, "119"));
+        long count2 = queryable.count();
+        List<SysUserLogbyMonth> sysUserLogbyMonths = queryable.limit(1, 10).toList();
+
+        long count = client.select(SysUserLogbyMonth.class)
+                .where(o -> o.eq(SysUserLogbyMonth::getId, "119")).count();
+        long count1 = client.select(SysUserLogbyMonth.class)
+                .where(o -> o.eq(SysUserLogbyMonth::getId, "119")).countDistinct(o->o.column(SysUserLogbyMonth::getId).column(SysUserLogbyMonth::getTime));
+
+        boolean any = client.select(SysUserLogbyMonth.class)
+                .where(o -> o.eq(SysUserLogbyMonth::getId, "119")).any();
+        LocalDateTime localDateTime = client.select(SysUserLogbyMonth.class).maxOrNull(SysUserLogbyMonth::getTime);
+        Integer totalAge = client.select(TestUserMysql.class).sumOrDefault(TestUserMysql::getAge, 0);
+        Integer max = client.select(TestUserMysql.class).maxOrNull(TestUserMysql::getAge);
+
 //        long start = System.currentTimeMillis();
 //        for (int i = 0; i < 10000; i++) {
 //            SysUserLogbyMonth sysUserLogbyMonth = client.select(SysUserLogbyMonth.class)

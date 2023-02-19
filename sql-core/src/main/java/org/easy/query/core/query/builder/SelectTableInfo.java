@@ -1,6 +1,7 @@
 package org.easy.query.core.query.builder;
 
 import org.easy.query.core.abstraction.lambda.Property;
+import org.easy.query.core.abstraction.metadata.ColumnMetadata;
 import org.easy.query.core.enums.SelectTableInfoTypeEnum;
 import org.easy.query.core.abstraction.metadata.EntityMetadata;
 import org.easy.query.core.segments.AndPredicateSegment;
@@ -51,6 +52,11 @@ public class SelectTableInfo {
 
     public String getColumnName(String attrName){
         return this.entityMetadata.getColumnName(attrName);
+
+    }
+    public <T1> ColumnMetadata getColumn(Property<T1, ?> column){
+        String attrName = LambdaUtil.getAttrName(column);
+        return this.entityMetadata.getColumn(attrName);
 
     }
     public <T1> String getColumnName(Property<T1, ?> column){

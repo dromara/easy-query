@@ -124,6 +124,10 @@ public class EntityMetadata {
         return property2ColumnMap.values();
     }
     public ColumnMetadata getColumn(String propertyName) {
-        return property2ColumnMap.get(propertyName);
+        ColumnMetadata columnMetadata = property2ColumnMap.get(propertyName);
+        if(columnMetadata==null){
+            throw new JDQCException(String.format("未找到属性:[%s]对应的列名",propertyName));
+        }
+        return columnMetadata;
     }
 }

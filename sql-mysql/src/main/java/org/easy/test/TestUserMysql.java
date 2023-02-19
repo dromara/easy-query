@@ -16,7 +16,7 @@ public class TestUserMysql {
     @Column("Id")
     private String id;
     @Column("Age")
-    private String age;
+    private Integer age;
     @Column("Name")
     private String name;
 
@@ -36,11 +36,11 @@ public class TestUserMysql {
         this.name = name;
     }
 
-    public String getAge() {
+    public Integer getAge() {
         return age;
     }
 
-    public void setAge(String age) {
+    public void setAge(Integer age) {
         this.age = age;
     }
 }

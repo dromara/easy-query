@@ -34,6 +34,11 @@ public class DefaultSqlColumnAsSelector<T1,TR> extends AbstractSqlColumnSelector
     }
 
     @Override
+    public SqlColumnAsSelector<T1, TR> columnCount(Property<TR, ?> alias) {
+        return null;
+    }
+
+    @Override
     public SqlColumnAsSelector<T1, TR> columnCount(Property<T1, ?> column, Property<TR, ?> alias) {
         return null;
     }
