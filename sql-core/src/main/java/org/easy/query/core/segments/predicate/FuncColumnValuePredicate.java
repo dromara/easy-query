@@ -28,11 +28,11 @@ public class FuncColumnValuePredicate implements Predicate {
         this.val = val;
         this.compare = compare;
         this.selectContext = selectContext;
-        selectContext.addParams(val);
     }
 
     @Override
     public String getSql() {
+        selectContext.addParams(val);
         SelectTableInfo table = selectContext.getTable(index);
         String quoteName = selectContext.getQuoteName(column);
         return func.getFuncColumn(table.getAlias() + "." + quoteName) +" "+ compare.getPredicate() + " ?";

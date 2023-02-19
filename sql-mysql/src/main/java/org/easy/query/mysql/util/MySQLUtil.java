@@ -26,13 +26,17 @@ public class MySQLUtil {
         if (tableCount == 0) {
             throw new JDQCException("未找到查询表信息");
         }
+        //将条件参数清空
+        if(!selectContext.getParams().isEmpty()){
+            selectContext.getParams().clear();
+        }
         StringBuilder sql = new StringBuilder("SELECT ");
         for (int i = 0; i < tableCount; i++) {
             SelectTableInfo table = selectContext.getTable(i);
             if(i==0){
                 if(StringUtil.isEmpty(select)){
                     if(selectContext.getGroup().isEmpty()){
-                        sql.append(table.getAlias()+".*");
+                        sql.append(table.getAlias()).append(".*");
                     }else{
                         sql.append(selectContext.getGroup().toSql());
                     }

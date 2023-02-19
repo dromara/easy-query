@@ -18,19 +18,18 @@ public class ColumnValuePredicate implements Predicate {
     private final SelectContext selectContext;
 
     public ColumnValuePredicate(int index, String column, Object val, SqlSegment compare, SelectContext selectContext) {
-
         this.index = index;
         this.column = column;
         this.val = val;
         this.compare = compare;
         this.selectContext = selectContext;
-        selectContext.addParams(val);
     }
 
     @Override
     public String getSql() {
+        selectContext.addParams(val);
         SelectTableInfo table = selectContext.getTable(index);
         String quoteName = selectContext.getQuoteName(column);
-        return table.getAlias() + "." + quoteName +" "+ compare.getSql() + " ?";
+        return table.getAlias() + "." + quoteName + " " + compare.getSql() + " ?";
     }
 }

@@ -9,10 +9,7 @@ import org.easy.query.core.config.*;
 import org.easy.query.core.metadata.DefaultEntityMetadataManager;
 import org.easy.query.mysql.MySQLJQDCClient;
 import org.easy.query.mysql.config.MySQLDialect;
-import org.easy.test.DefaultDataSourceFactory;
-import org.easy.test.SysUserLogbyMonth;
-import org.easy.test.TestUserMysql;
-import org.easy.test.TestUserMysqlx;
+import org.easy.test.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -87,11 +84,11 @@ public class Main {
 //        }
 //        long end = System.currentTimeMillis();
 //        System.out.println("耗时："+(end-start)+"ms");
-        List<TestUserMysql> testUserMysqls = client.select(TestUserMysql.class)
-                .where(o -> o.eq(TestUserMysql::getName, "123"))
+        List<TestUserMysqlGroup> testUserMysqls = client.select(TestUserMysql.class)
+                .where(o -> o.eq(TestUserMysql::getName, "ds0"))
                 .groupBy(o -> o.column(TestUserMysql::getAge))
-                .having(o -> o.countDistinct(TestUserMysql::getId, EasyPredicate.GT, 5))
-                .toList();
+                .having(o -> o.count(TestUserMysql::getId, EasyPredicate.GE, 0))
+                .toList(TestUserMysqlGroup.class, o->o.column(TestUserMysql::getAge).columnCount(TestUserMysql::getId,TestUserMysqlGroup::getAcount));
         List<TestUserMysql> testUserMysqls1 = client.select(TestUserMysql.class)
                 .where(o -> o.eq(TestUserMysql::getName, "123"))
                 .groupBy(o -> o.column(TestUserMysql::getAge))
