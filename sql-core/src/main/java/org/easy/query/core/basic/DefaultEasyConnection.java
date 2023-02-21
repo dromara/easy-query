@@ -75,7 +75,7 @@ public class DefaultEasyConnection implements EasyConnection {
             try {
                 if (!connection.isClosed()) {
                     try {
-                        if (autoCommit) {
+                        if (!autoCommit) {
                             connection.setAutoCommit(true);
                         }
                     } finally {
