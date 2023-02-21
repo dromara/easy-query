@@ -1,20 +1,28 @@
 package org.easy;
 
+import com.alibaba.druid.pool.DruidDataSourceFactory;
 import org.easy.query.core.abstraction.*;
 import org.easy.query.core.abstraction.client.JQDCClient;
 import org.easy.query.core.abstraction.metadata.EntityMetadataManager;
 import org.easy.query.core.abstraction.sql.Select1;
 import org.easy.query.core.abstraction.sql.enums.EasyPredicate;
+import org.easy.query.core.basic.DefaultConnectionManager;
+import org.easy.query.core.basic.EasyConnectionManager;
+import org.easy.query.core.basic.jdbc.Transaction;
 import org.easy.query.core.config.*;
+import org.easy.query.core.exception.JDQCException;
 import org.easy.query.core.metadata.DefaultEntityMetadataManager;
 import org.easy.query.mysql.MySQLJQDCClient;
 import org.easy.query.mysql.config.MySQLDialect;
 import org.easy.test.*;
 
+import javax.sql.DataSource;
 import java.math.BigDecimal;
+import java.sql.Connection;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Properties;
 
 public class Main {
     private static final String driver="com.mysql.cj.jdbc.Driver";
@@ -24,9 +32,26 @@ public class Main {
     private static JQDCClient client;
     public static void main(String[] args) {
 
-        DefaultConfig defaultConfig = new DefaultConfig("easy-query",driver, username, password, url);
-        DefaultDataSourceFactory defaultDataSourceFactory = new DefaultDataSourceFactory(defaultConfig);
-        EasyConnector easyConnector= new DataSourceConnector(defaultDataSourceFactory);
+        DefaultConfig easyConfig = new DefaultConfig("easy-query",driver, username, password, url);
+
+        // 设置properties
+        Properties properties = new Properties();
+        properties.setProperty("name", easyConfig.getName());
+        properties.setProperty("driverClassName", easyConfig.getDriver());
+        properties.setProperty("url",easyConfig.getUrl());
+        properties.setProperty("username", easyConfig.getUsername());
+        properties.setProperty("password", easyConfig.getPassword());
+        int i = Runtime.getRuntime().availableProcessors();
+        properties.setProperty("initialSize", String.valueOf(i));
+        properties.setProperty("maxActive", String.valueOf(2 * i + 1));
+        properties.setProperty("minIdle", String.valueOf(i));
+        DataSource dataSource=null;
+        try {
+            dataSource = DruidDataSourceFactory.createDataSource(properties);
+        } catch (Exception e) {
+            throw new JDQCException(e);
+        }
+        EasyConnectionManager connectionManager= new DefaultConnectionManager(dataSource);
         DefaultExecutor defaultExecutor = new DefaultExecutor();
         EasyJdbcTypeHandler jdbcTypeHandler = new DefaultJdbcTypeHandler();
         NameConversion nameConversion = new UnderlinedNameConversion();
@@ -35,7 +60,7 @@ public class Main {
         configuration.setDialect(new MySQLDialect());
         EntityMetadataManager entityMetadataManager = new DefaultEntityMetadataManager(configuration);
         EasyQueryLambdaFactory easyQueryLambdaFactory = new DefaultEasyQueryLambdaFactory();
-        DefaultEasyQueryRuntimeContext jqdcRuntimeContext = new DefaultEasyQueryRuntimeContext(configuration, entityMetadataManager,easyQueryLambdaFactory,easyConnector,defaultExecutor,jdbcTypeHandler);
+        DefaultEasyQueryRuntimeContext jqdcRuntimeContext = new DefaultEasyQueryRuntimeContext(configuration, entityMetadataManager,easyQueryLambdaFactory,connectionManager,defaultExecutor,jdbcTypeHandler);
 //        String[] packages = scanPackages;
 //        for (String packageName : packages) {
 //            List<EntityMetadata> entityMetadataList = JDQCUtil.loadPackage(packageName, configuration);
@@ -58,9 +83,21 @@ public class Main {
 //        tableInfo1.getColumns().putIfAbsent("uid",new ColumnInfo(tableInfo1,"uid"));
 //        configuration.addTableInfo(tableInfo1);
         client=new MySQLJQDCClient(jqdcRuntimeContext);
+        try(Transaction transaction = client.beginTransaction()){
 
+            transaction.commit();
+        }
         SysUserLogbyMonth sysUserLogbyMonth1 = client.select(SysUserLogbyMonth.class)
                 .where(o -> o.eq(SysUserLogbyMonth::getId, "119")).firstOrNull();
+        long start = System.currentTimeMillis();
+        for (int j = 0; j < 1000; j++) {
+
+            SysUserLogbyMonth sysUserLogbyMonth2 = client.select(SysUserLogbyMonth.class)
+                    .where(o -> o.eq(SysUserLogbyMonth::getId, "119")).firstOrNull();
+        }
+        long end = System.currentTimeMillis();
+        System.out.println("耗时："+(end-start)+"ms");
+
         Select1<SysUserLogbyMonth> queryable = client.select(SysUserLogbyMonth.class)
                 .where(o -> o.eq(SysUserLogbyMonth::getId, "119"));
         long count2 = queryable.count();

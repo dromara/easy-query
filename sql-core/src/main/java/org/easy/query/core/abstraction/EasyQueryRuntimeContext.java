@@ -1,7 +1,7 @@
 package org.easy.query.core.abstraction;
 
 import org.easy.query.core.abstraction.metadata.EntityMetadataManager;
-import org.easy.query.core.config.EasyConnector;
+import org.easy.query.core.basic.EasyConnectionManager;
 import org.easy.query.core.config.EasyQueryConfiguration;
 
 /**
@@ -14,7 +14,7 @@ public interface EasyQueryRuntimeContext {
     EasyQueryConfiguration getEasyQueryConfiguration();
     EntityMetadataManager getEntityMetadataManager();
     EasyQueryLambdaFactory getEasyQueryLambdaFactory();
-    EasyConnector getEasyConnector();
+    EasyConnectionManager getConnectionManager();
     EasyExecutor getEasyExecutor();
     EasyJdbcTypeHandler getEasyJdbcTypeHandler();
 }

@@ -3,8 +3,8 @@ package org.easy.query.core.abstraction;
 import org.easy.query.core.abstraction.metadata.ColumnMetadata;
 import org.easy.query.core.abstraction.metadata.EntityMetadata;
 import org.easy.query.core.abstraction.metadata.EntityMetadataManager;
-import org.easy.query.core.config.EasyConnector;
-import org.easy.query.core.config.NameConversion;
+import org.easy.query.core.basic.EasyConnection;
+import org.easy.query.core.basic.EasyConnectionManager;
 import org.easy.query.core.exception.JDQCException;
 import org.easy.query.core.executor.EasyParameter;
 import org.easy.query.core.executor.EasyResultSet;
@@ -12,7 +12,6 @@ import org.easy.query.core.executor.type.JdbcTypeHandler;
 import org.easy.query.core.util.ClassUtil;
 import org.easy.query.core.util.StringUtil;
 
-import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -34,19 +33,38 @@ public class DefaultExecutor implements EasyExecutor {
     @Override
     public <TR> List<TR> execute(ExecutorContext executorContext, Class<TR> clazz, String sql, List<Object> parameters) {
         EasyQueryRuntimeContext runtimeContext = executorContext.getRuntimeContext();
-        EasyConnector easyConnector = runtimeContext.getEasyConnector();
+        EasyConnectionManager connectionManager = runtimeContext.getConnectionManager();
         EasyJdbcTypeHandler easyJdbcTypeHandler = runtimeContext.getEasyJdbcTypeHandler();
         List<TR> result = null;
         System.out.println("开始执行：" + sql);
-        try (Connection connection = easyConnector.getConnection();
-             PreparedStatement ps = createPreparedStatement(connection, sql, parameters, easyJdbcTypeHandler);
-             ResultSet rs = ps.executeQuery()) {
+        EasyConnection easyConnection = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            easyConnection = connectionManager.getEasyConnection();
+            ps = createPreparedStatement(easyConnection.getConnection(), sql, parameters, easyJdbcTypeHandler);
+            rs = ps.executeQuery();
             result = mapTo(executorContext, rs, clazz);
-
         } catch (SQLException e) {
             throw new JDQCException(e);
+        } finally {
+            clean(executorContext,easyConnection,rs,ps);
         }
         return result;
+    }
+
+    protected void clean(ExecutorContext executorContext, EasyConnection easyConnection, ResultSet rs, PreparedStatement ps) {
+        EasyConnectionManager connectionManager = executorContext.getRuntimeContext().getConnectionManager();
+        try {
+            if (rs != null) {
+                rs.close();
+            }
+            if (ps != null) {
+                ps.close();
+            }
+            connectionManager.closeEasyCConnection(easyConnection);
+        } catch (SQLException ignored) {
+        }
     }
 
     private PreparedStatement createPreparedStatement(Connection connection, String sql, List<Object> parameters, EasyJdbcTypeHandler easyJdbcTypeHandler) throws SQLException {

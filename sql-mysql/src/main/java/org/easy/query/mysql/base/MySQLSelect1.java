@@ -1,8 +1,5 @@
 package org.easy.query.mysql.base;
 
-import org.easy.query.core.abstraction.EasyExecutor;
-import org.easy.query.core.abstraction.ExecutorContext;
-import org.easy.query.core.config.EasyConnector;
 import org.easy.query.core.enums.SelectTableInfoTypeEnum;
 import org.easy.query.core.exception.JDQCException;
 import org.easy.query.core.impl.AbstractSelect1;
