@@ -16,10 +16,10 @@ import java.sql.SQLException;
 public class DefaultEasyConnection implements EasyConnection {
     private final Connection connection;
     private final Integer isolationLevel;
-    private  boolean closed = false;
+    private boolean closed = false;
     private boolean autoCommit;
 
-    public DefaultEasyConnection(Connection connection,Integer isolationLevel) {
+    public DefaultEasyConnection(Connection connection, Integer isolationLevel) {
 
         this.connection = connection;
         this.isolationLevel = isolationLevel;
@@ -32,7 +32,7 @@ public class DefaultEasyConnection implements EasyConnection {
 
     public void setAutoCommit(boolean autoCommit) {
         try {
-            this.autoCommit=autoCommit;
+            this.autoCommit = autoCommit;
             connection.setAutoCommit(autoCommit);
         } catch (SQLException e) {
             throw new JDQCException(e);
@@ -67,25 +67,24 @@ public class DefaultEasyConnection implements EasyConnection {
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() {
         if (closed) {
             return;
         }
         if (connection != null) {
             try {
                 if (!connection.isClosed()) {
-                    try {
-                        if (!autoCommit) {
-                            connection.setAutoCommit(true);
-                        }
-                    } finally {
-                        if(this.isolationLevel!=null){
-                            connection.setTransactionIsolation(this.isolationLevel);
-                        }
+                    if (!autoCommit) {
+                        connection.setAutoCommit(true);
                     }
+                    if (this.isolationLevel != null) {
+                        connection.setTransactionIsolation(this.isolationLevel);
+                    }
+                    connection.close();
                 }
-            } finally {
-                connection.close();
+            } catch (SQLException ex) {
+                System.err.println("close connection error: "+ ex.getMessage());
+
             }
         }
         closed = true;

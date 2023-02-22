@@ -19,7 +19,6 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * @FileName: DefaultExecutor.java
@@ -36,7 +35,7 @@ public class DefaultExecutor implements EasyExecutor {
         EasyConnectionManager connectionManager = runtimeContext.getConnectionManager();
         EasyJdbcTypeHandler easyJdbcTypeHandler = runtimeContext.getEasyJdbcTypeHandler();
         List<TR> result = null;
-        System.out.println("开始执行：" + sql);
+//        System.out.println("开始执行：" + sql);
         EasyConnection easyConnection = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -48,12 +47,12 @@ public class DefaultExecutor implements EasyExecutor {
         } catch (SQLException e) {
             throw new JDQCException(e);
         } finally {
-            clean(executorContext,easyConnection,rs,ps);
+            clear(executorContext,easyConnection,rs,ps);
         }
         return result;
     }
 
-    protected void clean(ExecutorContext executorContext, EasyConnection easyConnection, ResultSet rs, PreparedStatement ps) {
+    protected void clear(ExecutorContext executorContext, EasyConnection easyConnection, ResultSet rs, PreparedStatement ps) {
         EasyConnectionManager connectionManager = executorContext.getRuntimeContext().getConnectionManager();
         try {
             if (rs != null) {
@@ -62,7 +61,7 @@ public class DefaultExecutor implements EasyExecutor {
             if (ps != null) {
                 ps.close();
             }
-            connectionManager.closeEasyCConnection(easyConnection);
+            connectionManager.closeEasyConnection(easyConnection);
         } catch (SQLException ignored) {
         }
     }

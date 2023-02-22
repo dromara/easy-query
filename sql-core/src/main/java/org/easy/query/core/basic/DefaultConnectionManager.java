@@ -2,7 +2,6 @@ package org.easy.query.core.basic;
 
 import org.easy.query.core.basic.jdbc.DefaultTransaction;
 import org.easy.query.core.basic.jdbc.Transaction;
-import org.easy.query.core.basic.jdbc.TxStatus;
 import org.easy.query.core.exception.JDQCException;
 
 import javax.sql.DataSource;
@@ -66,7 +65,7 @@ public class DefaultConnectionManager implements EasyConnectionManager {
     }
 
     @Override
-    public void closeEasyCConnection(EasyConnection easyConnection) {
+    public void closeEasyConnection(EasyConnection easyConnection) {
         if(!currentThreadInTransaction()){
             try {
                 easyConnection.close();
@@ -79,12 +78,15 @@ public class DefaultConnectionManager implements EasyConnectionManager {
     @Override
     public void commit() {
         EasyConnection easyConnection = threadConnection.get();
-        try {
+        try{
             if(easyConnection==null){
                 return;
             }
-            easyConnection.commit();
-
+            try{
+                easyConnection.commit();
+            }finally {
+                easyConnection.close();
+            }
         }finally {
             clear();
         }
@@ -94,13 +96,18 @@ public class DefaultConnectionManager implements EasyConnectionManager {
     @Override
     public void rollback() {
         EasyConnection easyConnection = threadConnection.get();
-        try {
+        try{
             if(easyConnection==null){
                 return;
             }
-            easyConnection.rollback();
+            try{
+                easyConnection.rollback();
+            }finally {
+                easyConnection.close();
+            }
         }finally {
             clear();
         }
+
     }
 }

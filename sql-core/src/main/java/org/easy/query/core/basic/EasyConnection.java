@@ -19,4 +19,5 @@ public interface EasyConnection extends AutoCloseable{
     void commit();
     void rollback();
     boolean isClosed();
+    void close();
 }

@@ -2,8 +2,6 @@ package org.easy.query.core.basic;
 
 import org.easy.query.core.basic.jdbc.Transaction;
 
-import java.sql.SQLException;
-
 /**
  * @FileName: ConnectionManager.java
  * @Description: 文件说明
@@ -18,7 +16,7 @@ public interface EasyConnectionManager {
     EasyConnection getEasyConnection();
     boolean currentThreadInTransaction();
     void clear();
-    void closeEasyCConnection(EasyConnection easyConnection);
+    void closeEasyConnection(EasyConnection easyConnection);
     void commit();
     void rollback();
 }

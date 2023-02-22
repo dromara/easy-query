@@ -1,9 +1,7 @@
 package org.easy.query.core.basic.jdbc;
 
-import org.easy.query.core.basic.EasyConnection;
 import org.easy.query.core.basic.EasyConnectionManager;
 
-import java.sql.SQLException;
 
 
 /**
