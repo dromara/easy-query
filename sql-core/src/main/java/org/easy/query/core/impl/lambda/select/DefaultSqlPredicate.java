@@ -1,4 +1,4 @@
-package org.easy.query.core.impl.lambda;
+package org.easy.query.core.impl.lambda.select;
 
 import org.easy.query.core.abstraction.lambda.Property;
 import org.easy.query.core.abstraction.lambda.SqlExpression;
@@ -7,9 +7,12 @@ import org.easy.query.core.impl.SelectContext;
 import org.easy.query.core.abstraction.sql.base.SqlPredicate;
 import org.easy.query.core.abstraction.sql.base.WherePredicate;
 import org.easy.query.core.segments.*;
+import org.easy.query.core.segments.predicate.ColumnCollectionPredicate;
 import org.easy.query.core.segments.predicate.ColumnColumnPredicate;
 import org.easy.query.core.segments.predicate.ColumnPredicate;
 import org.easy.query.core.segments.predicate.ColumnValuePredicate;
+
+import java.util.Collection;
 
 /**
  * @FileName: SqlWherePredicate.java
@@ -138,6 +141,26 @@ public class DefaultSqlPredicate<T1> implements SqlPredicate<T1> {
         if (condition) {
             String columnName = selectContext.getTable(getIndex()).getColumnName(column);
             nextPredicateSegment.setPredicate(new ColumnPredicate(index, columnName, SqlKeywordEnum.IS_NOT_NULL, selectContext));
+            nextAnd();
+        }
+        return this;
+    }
+
+    @Override
+    public SqlPredicate<T1> in(boolean condition, Property<T1, ?> column, Collection<?> collection) {
+        if (condition) {
+            String columnName = selectContext.getTable(getIndex()).getColumnName(column);
+            nextPredicateSegment.setPredicate(new ColumnCollectionPredicate(index, columnName,collection, SqlKeywordEnum.IN, selectContext));
+            nextAnd();
+        }
+        return this;
+    }
+
+    @Override
+    public SqlPredicate<T1> notIn(boolean condition, Property<T1, ?> column, Collection<?> collection) {
+        if (condition) {
+            String columnName = selectContext.getTable(getIndex()).getColumnName(column);
+            nextPredicateSegment.setPredicate(new ColumnCollectionPredicate(index, columnName,collection, SqlKeywordEnum.NOT_IN, selectContext));
             nextAnd();
         }
         return this;

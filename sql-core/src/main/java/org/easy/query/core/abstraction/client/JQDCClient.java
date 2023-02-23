@@ -1,8 +1,11 @@
 package org.easy.query.core.abstraction.client;
 
 import org.easy.query.core.abstraction.EasyQueryRuntimeContext;
-import org.easy.query.core.abstraction.sql.Select1;
+import org.easy.query.core.basic.api.Insert;
+import org.easy.query.core.basic.api.Select1;
 import org.easy.query.core.basic.jdbc.Transaction;
+
+import java.util.List;
 
 /**
  *
@@ -19,4 +22,7 @@ public interface JQDCClient {
         return beginTransaction(null);
     }
     Transaction beginTransaction(Integer isolationLevel);
+
+    <T1> Insert<T1> insert(T1 entity);
+    <T1> Insert<T1> insert(List<T1> entities);
 }

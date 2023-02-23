@@ -4,6 +4,7 @@ import org.easy.query.core.abstraction.lambda.Property;
 import org.easy.query.core.abstraction.lambda.SqlExpression;
 
 import java.io.Serializable;
+import java.util.Collection;
 
 /**
  *
@@ -171,6 +172,28 @@ public interface WherePredicate<T1, TChain> extends Serializable, IndexAware {
      * @return children
      */
     TChain isNotNull(boolean condition, Property<T1, ?> column);
+    /**
+     *  column in collection
+     */
+    default TChain in(Property<T1, ?> column, Collection<?> collection) {
+        return in(true, column,collection);
+    }
+
+    /**
+     * column in collection
+     */
+    TChain in(boolean condition, Property<T1, ?> column, Collection<?> collection);
+    /**
+     *  column in collection
+     */
+    default TChain notIn(Property<T1, ?> column, Collection<?> collection) {
+        return notIn(true, column,collection);
+    }
+
+    /**
+     * column in collection
+     */
+    TChain notIn(boolean condition, Property<T1, ?> column, Collection<?> collection);
 
     default <T2, TChain2> TChain eq(WherePredicate<T2, TChain2> sub, Property<T1, ?> column1, Property<T2, ?> column2) {
         return eq(true, sub, column1, column2);

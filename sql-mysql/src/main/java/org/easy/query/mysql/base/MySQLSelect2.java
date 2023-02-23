@@ -1,12 +1,9 @@
 package org.easy.query.mysql.base;
 
-import org.easy.query.core.enums.SelectTableInfoTypeEnum;
+import org.easy.query.core.enums.MultiTableTypeEnum;
 import org.easy.query.core.impl.AbstractSelect2;
 import org.easy.query.core.impl.SelectContext;
 import org.easy.query.mysql.util.MySQLUtil;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @FileName: MySqlSelects.java
@@ -17,14 +14,14 @@ import java.util.List;
 public class MySQLSelect2<T1,T2> extends AbstractSelect2<T1,T2> {
     private final SelectContext selectContext;
 
-    public MySQLSelect2(Class<T1> t1Class, Class<T2> t2Class, SelectContext selectContext, SelectTableInfoTypeEnum selectTableInfoType) {
+    public MySQLSelect2(Class<T1> t1Class, Class<T2> t2Class, SelectContext selectContext, MultiTableTypeEnum selectTableInfoType) {
         super(t1Class,t2Class, selectContext, selectTableInfoType);
         this.selectContext = selectContext;
     }
 
     @Override
     public String toSql(String columns) {
-        return MySQLUtil.toSql(selectContext,columns);
+        return MySQLUtil.toSelectSql(selectContext,columns);
     }
 
 }

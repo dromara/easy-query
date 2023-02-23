@@ -1,4 +1,4 @@
-package org.easy.query.core.impl.lambda;
+package org.easy.query.core.impl.lambda.select;
 
 import org.easy.query.core.impl.SelectContext;
 

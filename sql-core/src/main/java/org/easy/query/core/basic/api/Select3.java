@@ -1,4 +1,4 @@
-package org.easy.query.core.abstraction.sql;
+package org.easy.query.core.basic.api;
 
 import org.easy.query.core.abstraction.lambda.SqlExpression3;
 import org.easy.query.core.abstraction.sql.base.SqlColumnSelector;

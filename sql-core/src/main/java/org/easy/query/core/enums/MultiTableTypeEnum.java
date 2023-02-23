@@ -7,7 +7,7 @@ package org.easy.query.core.enums;
  * @Date: 2023/2/7 11:40
  * @Created by xuejiaming
  */
-public enum SelectTableInfoTypeEnum {
+public enum MultiTableTypeEnum {
     FROM(1),
     LEFT_JOIN(2),
     INNER_JOIN(3),
@@ -15,7 +15,7 @@ public enum SelectTableInfoTypeEnum {
 
     private final Integer code;
 
-    SelectTableInfoTypeEnum(Integer code) {
+    MultiTableTypeEnum(Integer code) {
         this.code = code;
     }
 

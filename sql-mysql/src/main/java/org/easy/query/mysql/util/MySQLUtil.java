@@ -1,8 +1,9 @@
 package org.easy.query.mysql.util;
 
 import org.easy.query.core.exception.JDQCException;
+import org.easy.query.core.impl.InsertContext;
 import org.easy.query.core.impl.SelectContext;
-import org.easy.query.core.query.builder.SelectTableInfo;
+import org.easy.query.core.query.builder.SqlTableInfo;
 import org.easy.query.core.util.StringUtil;
 
 /**
@@ -12,35 +13,38 @@ import org.easy.query.core.util.StringUtil;
  * @Created by xuejiaming
  */
 public class MySQLUtil {
-    private MySQLUtil(){throw new UnsupportedOperationException();}
+    private MySQLUtil() {
+        throw new UnsupportedOperationException();
+    }
 
     /**
      * 生成mysql语句
+     *
      * @param selectContext
      * @param select
      * @return
      */
-    public static String toSql(SelectContext selectContext, String select){
+    public static String toSelectSql(SelectContext selectContext, String select) {
 
         int tableCount = selectContext.getTables().size();
         if (tableCount == 0) {
             throw new JDQCException("未找到查询表信息");
         }
         //将条件参数清空
-        if(!selectContext.getParams().isEmpty()){
+        if (!selectContext.getParams().isEmpty()) {
             selectContext.getParams().clear();
         }
         StringBuilder sql = new StringBuilder("SELECT ");
         for (int i = 0; i < tableCount; i++) {
-            SelectTableInfo table = selectContext.getTable(i);
-            if(i==0){
-                if(StringUtil.isEmpty(select)){
-                    if(selectContext.getGroup().isEmpty()){
+            SqlTableInfo table = selectContext.getTable(i);
+            if (i == 0) {
+                if (StringUtil.isEmpty(select)) {
+                    if (selectContext.getGroup().isEmpty()) {
                         sql.append(table.getAlias()).append(".*");
-                    }else{
+                    } else {
                         sql.append(selectContext.getGroup().toSql());
                     }
-                }else{
+                } else {
                     sql.append(select);
                 }
             }
@@ -63,14 +67,39 @@ public class MySQLUtil {
         if (!selectContext.getOrder().isEmpty()) {
             sql.append(" ORDER BY ").append(selectContext.getOrder().toSql());
         }
-        if(selectContext.getRows()>0){
+        if (selectContext.getRows() > 0) {
             sql.append(" LIMIT ");
-            if(selectContext.getOffset()>0){
+            if (selectContext.getOffset() > 0) {
                 sql.append(selectContext.getOffset()).append(" OFFSET ").append(selectContext.getRows());
-            }else{
+            } else {
                 sql.append(selectContext.getRows());
             }
         }
+        return sql.toString();
+    }
+
+    public static String toInsertSql(InsertContext insertContext) {
+
+        int tableCount = insertContext.getTables().size();
+        if (tableCount == 0) {
+            throw new JDQCException("未找到查询表信息");
+        }
+        if (tableCount > 1) {
+            throw new JDQCException("找到多张表信息");
+        }
+        StringBuilder sql = new StringBuilder("INSERT INTO ");
+        SqlTableInfo table = insertContext.getTable(0);
+        String tableName = table.getEntityMetadata().getTableName();
+        sql.append(tableName).append(" (").append(insertContext.getColumns().toSql()).append(") VALUES (");
+        int size = insertContext.getColumns().getSqlSegments().size();
+        for (int i = 0; i < size; i++) {
+            if (i == 0) {
+                sql.append("?");
+            } else {
+                sql.append(",?");
+            }
+        }
+        sql.append(") ");
         return sql.toString();
     }
 }

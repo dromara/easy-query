@@ -2,8 +2,8 @@ package org.easy.query.core.segments;
 
 import org.easy.query.core.abstraction.SqlSegment;
 import org.easy.query.core.abstraction.sql.enums.IEasyFunc;
-import org.easy.query.core.impl.SelectContext;
-import org.easy.query.core.query.builder.SelectTableInfo;
+import org.easy.query.core.impl.SqlContext;
+import org.easy.query.core.query.builder.SqlTableInfo;
 
 /**
  * @FileName: FuncColumnSegment.java
@@ -18,35 +18,35 @@ public class FuncColumnSegment  implements SqlSegment {
         return columnName;
     }
 
-    public SelectContext getSelectContext() {
-        return selectContext;
+    public SqlContext getSqlContext() {
+        return sqlContext;
     }
 
     private final String columnName;
-    private final SelectContext selectContext;
+    private final SqlContext sqlContext;
     private final IEasyFunc easyFunc;
     private String alias;
 
-    public FuncColumnSegment(int index, String columnName, SelectContext selectContext, IEasyFunc easyFunc){
-        this(index,columnName,selectContext,easyFunc,null);
+    public FuncColumnSegment(int index, String columnName, SqlContext sqlContext, IEasyFunc easyFunc){
+        this(index,columnName,sqlContext,easyFunc,null);
     }
-    public FuncColumnSegment(int index, String columnName, SelectContext selectContext, IEasyFunc easyFunc,String alias){
+    public FuncColumnSegment(int index, String columnName, SqlContext sqlContext, IEasyFunc easyFunc,String alias){
         this.index = index;
 
         this.columnName = columnName;
-        this.selectContext = selectContext;
+        this.sqlContext = sqlContext;
         this.easyFunc = easyFunc;
         this.alias = alias;
     }
 
     @Override
     public String getSql() {
-        SelectTableInfo table = selectContext.getTable(index);
-        String quoteName = selectContext.getQuoteName(columnName);
+        SqlTableInfo table = sqlContext.getTable(index);
+        String quoteName = sqlContext.getQuoteName(columnName);
         String funcColumn = easyFunc.getFuncColumn(table.getAlias() + "." + quoteName);
         StringBuilder sql = new StringBuilder().append(funcColumn);
         if(getAlias()!=null){
-            sql.append(" AS ").append(selectContext.getQuoteName(getAlias()));
+            sql.append(" AS ").append(sqlContext.getQuoteName(getAlias()));
         }
         return sql.toString();
     }

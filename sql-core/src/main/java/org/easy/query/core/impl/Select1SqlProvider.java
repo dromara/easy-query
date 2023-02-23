@@ -3,7 +3,7 @@ package org.easy.query.core.impl;
 import org.easy.query.core.abstraction.EasyQuerySqlBuilderProvider;
 import org.easy.query.core.abstraction.SqlSegment0Builder;
 import org.easy.query.core.abstraction.sql.base.*;
-import org.easy.query.core.impl.lambda.*;
+import org.easy.query.core.impl.lambda.select.*;
 
 /**
  * @FileName: Select1SqlPredicateProvider.java
@@ -14,7 +14,7 @@ import org.easy.query.core.impl.lambda.*;
 public class Select1SqlProvider<T1> implements EasyQuerySqlBuilderProvider<T1> {
 
     private final SelectContext selectContext;
-    private  DefaultSqlGroupColumnSelector<T1> group;
+    private DefaultSqlGroupColumnSelector<T1> group;
     private  DefaultSqlOrderColumnSelector<T1> order;
     private DefaultSqlPredicate<T1> where;
     private DefaultSqlAggregatePredicate<T1> having;

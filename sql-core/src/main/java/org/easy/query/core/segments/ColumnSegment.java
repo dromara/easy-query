@@ -1,9 +1,8 @@
 package org.easy.query.core.segments;
 
 import org.easy.query.core.abstraction.SqlSegment;
-import org.easy.query.core.abstraction.SqlSegment0;
-import org.easy.query.core.impl.SelectContext;
-import org.easy.query.core.query.builder.SelectTableInfo;
+import org.easy.query.core.impl.SqlContext;
+import org.easy.query.core.query.builder.SqlTableInfo;
 
 /**
  * @FileName: ColumnSegment.java
@@ -18,32 +17,43 @@ public class ColumnSegment implements SqlSegment {
         return columnName;
     }
 
-    public SelectContext getSelectContext() {
-        return selectContext;
+    public String getPropertyName() {
+        return propertyName;
+    }
+
+    public SqlContext getSqlContext() {
+        return sqlContext;
     }
 
     private final String columnName;
-    private final SelectContext selectContext;
+
+    private final String propertyName;
+    private final SqlContext sqlContext;
     private String alias;
 
-    public ColumnSegment(int index, String columnName, SelectContext selectContext){
-        this(index,columnName,selectContext,null);
+    public ColumnSegment(int index, String columnName,String propertyName, SqlContext sqlContext){
+        this(index,columnName,propertyName,sqlContext,null);
     }
-    public ColumnSegment(int index, String columnName, SelectContext selectContext,String alias){
+    public ColumnSegment(int index, String columnName,String propertyName, SqlContext sqlContext,String alias){
         this.index = index;
 
         this.columnName = columnName;
-        this.selectContext = selectContext;
+        this.propertyName = propertyName;
+        this.sqlContext = sqlContext;
         this.alias = alias;
     }
 
     @Override
     public String getSql() {
-        SelectTableInfo table = selectContext.getTable(index);
-        String quoteName = selectContext.getQuoteName(columnName);
-        StringBuilder sql = new StringBuilder().append(table.getAlias()).append(".").append(quoteName);
-        if(getAlias()!=null){
-            sql.append(" AS ").append(selectContext.getQuoteName(getAlias()));
+        SqlTableInfo table = sqlContext.getTable(index);
+        String quoteName = sqlContext.getQuoteName(columnName);
+        StringBuilder sql = new StringBuilder();
+        if (table.getAlias() != null) {
+            sql.append(table.getAlias()).append(".");
+        }
+        sql.append(quoteName);
+        if(alias!=null){
+            sql.append(" AS ").append(sqlContext.getQuoteName(alias));
         }
         return sql.toString();
     }

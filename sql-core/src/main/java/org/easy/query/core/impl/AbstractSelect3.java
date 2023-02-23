@@ -1,7 +1,7 @@
 package org.easy.query.core.impl;
 
 import org.easy.query.core.abstraction.lambda.SqlExpression3;
-import org.easy.query.core.abstraction.sql.Select3;
+import org.easy.query.core.basic.api.Select3;
 import org.easy.query.core.abstraction.sql.base.SqlColumnSelector;
 import org.easy.query.core.abstraction.sql.base.SqlPredicate;
 

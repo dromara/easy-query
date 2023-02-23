@@ -1,5 +1,7 @@
 package org.easy.query.core.util;
 
+import org.easy.query.core.basic.bean.BeanMethodInvoker;
+import org.easy.query.core.basic.bean.MethodInvoker;
 import org.easy.query.core.exception.JDQCException;
 
 import java.beans.BeanInfo;
@@ -14,10 +16,8 @@ import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @FileName: ClassUtil.java
@@ -26,8 +26,93 @@ import java.util.List;
  * @Created by xuejiaming
  */
 public class ClassUtil {
+    public final static Map<Class, Map<String, MethodInvoker>> methodInvokerCache = new ConcurrentHashMap<>();
     private ClassUtil(){}
 
+
+    public static Object getPropertyValue(Object o, String attrName) {
+
+        try {
+            MethodInvoker inv = getInvoker(o.getClass(), attrName);
+            return inv.get(o);
+        } catch (Exception ex) {
+            throw new RuntimeException("POJO属性访问出错:" + attrName, ex);
+        }
+    }
+    public static MethodInvoker getInvoker(Class<?> clazz, String name){
+
+        MethodInvoker invoker = null;
+        Map<String, MethodInvoker> map = methodInvokerCache.get(clazz);
+        if (map != null) {
+            invoker = map.get(name);
+            if (invoker != null) {
+                return invoker;
+            }
+        }
+
+        PropertyDescriptor property = null;
+        PropertyDescriptor[] pd = null;
+        try {
+            pd = propertyDescriptors(clazz);
+            property = find(pd, name);
+        } catch (IntrospectionException e) {
+            throw new JDQCException( "获取类属性错", e);
+        }
+
+        if (property != null) {
+            invoker = new BeanMethodInvoker(property);
+            return invoker;
+        }
+
+//        /**
+//         * 检测2.0兼容，就是isXXX对应的PropertyDescriptor，本来应该只能按照xxx访问，但2.0错误支持了
+//         * isXxx来访问此属性，3.0继续支持
+//         *
+//         */
+//
+//        if (name.startsWith("is")) {
+//            property = findIsMethod(pd, name);
+//        }
+//        if (property != null) {
+//            invoker = new PojoMethodInvoker(property);
+//            return invoker;
+//        }
+//
+//        // General Get
+//        Method method = getGetMethod(c, "get", Object.class);
+//        if (method != null) {
+//            invoker = new GeneralGetMethodInvoker(method, name);
+//        } else {
+//            method = getGetMethod(c, "get", String.class);
+//            if (method != null) {
+//                invoker = new GeneralGetMethodInvoker(method, name);
+//            }
+//        }
+//
+        if (invoker == null) {
+
+            return null;
+        }
+//
+        if (map == null) {
+            map = new ConcurrentHashMap<>();
+            map.putIfAbsent(name, invoker);
+            methodInvokerCache.putIfAbsent(clazz, map);
+        } else {
+            map.putIfAbsent(name, invoker);
+        }
+
+        return invoker;
+    }
+
+    private static PropertyDescriptor find(PropertyDescriptor[] pd, String name) {
+        for (PropertyDescriptor p : pd) {
+            if (p.getName().equals(name)) {
+                return p;
+            }
+        }
+        return null;
+    }
     public static Method getWriteMethod(PropertyDescriptor prop, Class<?> type) {
         Method writeMethod = prop.getWriteMethod();
         //当使用lombok等链式编程方式时 有返回值的setter不被认为是writeMethod，需要自己去获取

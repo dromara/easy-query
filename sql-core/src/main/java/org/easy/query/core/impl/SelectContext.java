@@ -1,15 +1,11 @@
 package org.easy.query.core.impl;
 
-import com.alibaba.druid.pool.DruidDataSourceFactory;
 import org.easy.query.core.abstraction.*;
 import org.easy.query.core.exception.JDQCException;
-import org.easy.query.core.query.builder.SelectTableInfo;
+import org.easy.query.core.query.builder.SqlTableInfo;
 import org.easy.query.core.segments.AndPredicateSegment;
 import org.easy.query.core.segments.PredicateSegment;
 
-import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.*;
 
 /**
@@ -19,19 +15,12 @@ import java.util.*;
  * @Date: 2023/2/6 12:39
  * @Created by xuejiaming
  */
-public  class SelectContext {
-    private final EasyQueryRuntimeContext runtimeContext;
+public  class SelectContext extends AbstractSqlContext {
 
-    public EasyQueryRuntimeContext getRuntimeContext() {
-        return runtimeContext;
-    }
     private final String alias;
 
     private long offset;
     private long rows;
-
-
-    private final List<SelectTableInfo> tables;
     private final List<Object> params;
 
     private PredicateSegment where;
@@ -44,23 +33,10 @@ public  class SelectContext {
         this(runtimeContext,"t");
     }
     public SelectContext(EasyQueryRuntimeContext runtimeContext, String alias){
-        this.runtimeContext = runtimeContext;
+        super(runtimeContext);
         this.alias = alias;
-        this.tables =new ArrayList<>();
         this.params =new ArrayList<>();
     }
-
-    public List<SelectTableInfo> getTables() {
-        return tables;
-    }
-    public SelectTableInfo getTable(int index) {
-        return tables.get(index);
-    }
-    public String getQuoteName(String value){
-        return runtimeContext.getEasyQueryConfiguration().getDialect().getQuoteName(value);
-
-    }
-
     public long getOffset() {
         return offset;
     }
@@ -89,8 +65,8 @@ public  class SelectContext {
         }
         return having;
     }
-    public void addSelectTable(SelectTableInfo selectTableInfo){
-        this.tables.add(selectTableInfo);
+    public void addSqlTable(SqlTableInfo sqlTableInfo){
+        this.tables.add(sqlTableInfo);
     }
 
     /**
@@ -109,13 +85,13 @@ public  class SelectContext {
     public int getNextTableIndex(){
         return this.tables.size();
     }
-    public SelectTableInfo getCurrentPredicateTable(){
+    public SqlTableInfo getCurrentPredicateTable(){
         return this.getPredicateTableByOffset(0);
     }
-    public SelectTableInfo getPreviewPredicateTable(){
+    public SqlTableInfo getPreviewPredicateTable(){
         return this.getPredicateTableByOffset(1);
     }
-    public SelectTableInfo getPredicateTableByOffset(int offsetForward){
+    public SqlTableInfo getPredicateTableByOffset(int offsetForward){
         if(this.tables.isEmpty()){
             throw new JDQCException("cant get current join table");
         }

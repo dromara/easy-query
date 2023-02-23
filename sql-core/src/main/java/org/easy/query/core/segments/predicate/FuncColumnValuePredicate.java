@@ -1,10 +1,9 @@
 package org.easy.query.core.segments.predicate;
 
-import org.easy.query.core.abstraction.SqlSegment;
 import org.easy.query.core.abstraction.sql.enums.IEasyFunc;
 import org.easy.query.core.abstraction.sql.enums.IEasyPredicate;
 import org.easy.query.core.impl.SelectContext;
-import org.easy.query.core.query.builder.SelectTableInfo;
+import org.easy.query.core.query.builder.SqlTableInfo;
 
 /**
  * @FileName: ColumnValuePredicate.java
@@ -33,7 +32,7 @@ public class FuncColumnValuePredicate implements Predicate {
     @Override
     public String getSql() {
         selectContext.addParams(val);
-        SelectTableInfo table = selectContext.getTable(index);
+        SqlTableInfo table = selectContext.getTable(index);
         String quoteName = selectContext.getQuoteName(column);
         return func.getFuncColumn(table.getAlias() + "." + quoteName) +" "+ compare.getPredicate() + " ?";
     }

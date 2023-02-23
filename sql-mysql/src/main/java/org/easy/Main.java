@@ -4,7 +4,8 @@ import com.alibaba.druid.pool.DruidDataSourceFactory;
 import org.easy.query.core.abstraction.*;
 import org.easy.query.core.abstraction.client.JQDCClient;
 import org.easy.query.core.abstraction.metadata.EntityMetadataManager;
-import org.easy.query.core.abstraction.sql.Select1;
+import org.easy.query.core.abstraction.sql.PageResult;
+import org.easy.query.core.basic.api.Select1;
 import org.easy.query.core.abstraction.sql.enums.EasyPredicate;
 import org.easy.query.core.basic.DefaultConnectionManager;
 import org.easy.query.core.basic.EasyConnectionManager;
@@ -17,12 +18,9 @@ import org.easy.query.mysql.config.MySQLDialect;
 import org.easy.test.*;
 
 import javax.sql.DataSource;
-import java.math.BigDecimal;
-import java.sql.Connection;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 public class Main {
     private static final String driver="com.mysql.cj.jdbc.Driver";
@@ -87,16 +85,31 @@ public class Main {
 
             transaction.commit();
         }
+        ArrayList<SysUserLogbyMonth> sysUserLogbyMonths1 = new ArrayList<>();
+//        long execute = client.insert(LocalDateTime.now()).execute();
+        SysUserLogbyMonth sysUserLogbyMonth2 = new SysUserLogbyMonth();
+        sysUserLogbyMonth2.setId(UUID.randomUUID().toString());
+        sysUserLogbyMonth2.setTime(LocalDateTime.now());
+        sysUserLogbyMonths1.add(sysUserLogbyMonth2);
+        long execute1 = client.insert(sysUserLogbyMonths1).execute();
         SysUserLogbyMonth sysUserLogbyMonth1 = client.select(SysUserLogbyMonth.class)
                 .where(o -> o.eq(SysUserLogbyMonth::getId, "119")).firstOrNull();
-        long start = System.currentTimeMillis();
-        for (int j = 0; j < 1000; j++) {
-
-            SysUserLogbyMonth sysUserLogbyMonth2 = client.select(SysUserLogbyMonth.class)
-                    .where(o -> o.eq(SysUserLogbyMonth::getId, "119")).firstOrNull();
-        }
-        long end = System.currentTimeMillis();
-        System.out.println("耗时："+(end-start)+"ms");
+        SysUserLogbyMonth sysUserLogbyMonth1x = client.select(SysUserLogbyMonth.class)
+                .where(o -> o.in(SysUserLogbyMonth::getId, Arrays.asList("119","111")).notIn(SysUserLogbyMonth::getId, Arrays.asList("1","2"))).firstOrNull();
+        SysUserLogbyMonth sysUserLogbyMonth2x = client.select(SysUserLogbyMonth.class)
+                .where(o -> o.in(SysUserLogbyMonth::getId, Collections.emptyList())).firstOrNull();
+        SysUserLogbyMonth sysUserLogbyMonth2xx = client.select(SysUserLogbyMonth.class)
+                .where(o -> o.notIn(SysUserLogbyMonth::getId, Collections.emptyList())).firstOrNull();
+        PageResult<SysUserLogbyMonth> page = client.select(SysUserLogbyMonth.class)
+                .where(o -> o.notIn(SysUserLogbyMonth::getId, Collections.emptyList())).toPageResult(2, 20, SysUserLogbyMonth.class);
+//        long start = System.currentTimeMillis();
+//        for (int j = 0; j < 1000; j++) {
+//
+//            SysUserLogbyMonth sysUserLogbyMonth2 = client.select(SysUserLogbyMonth.class)
+//                    .where(o -> o.eq(SysUserLogbyMonth::getId, "119")).firstOrNull();
+//        }
+//        long end = System.currentTimeMillis();
+//        System.out.println("耗时："+(end-start)+"ms");
 
         Select1<SysUserLogbyMonth> queryable = client.select(SysUserLogbyMonth.class)
                 .where(o -> o.eq(SysUserLogbyMonth::getId, "119"));

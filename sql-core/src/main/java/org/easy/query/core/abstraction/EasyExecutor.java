@@ -9,5 +9,6 @@ import java.util.List;
  * @Created by xuejiaming
  */
 public interface EasyExecutor {
-    <TR> List<TR> execute(ExecutorContext executorContext,Class<TR> clazz,String sql,List<Object> parameters);
+    <T> long insert(ExecutorContext executorContext, Class<T> clazz, String sql, List<T> entities,List<String> properties);
+    <TR> List<TR> query(ExecutorContext executorContext, Class<TR> clazz, String sql, List<Object> parameters);
 }

@@ -1,12 +1,13 @@
-package org.easy.query.core.impl.lambda;
+package org.easy.query.core.impl.lambda.select;
 
 import org.easy.query.core.abstraction.SqlSegment0Builder;
 import org.easy.query.core.abstraction.lambda.Property;
 import org.easy.query.core.abstraction.sql.enums.EasyAggregate;
-import org.easy.query.core.abstraction.sql.enums.IEasyFunc;
 import org.easy.query.core.impl.SelectContext;
 import org.easy.query.core.abstraction.sql.base.SqlColumnAsSelector;
 import org.easy.query.core.abstraction.sql.base.ColumnAsSelector;
+import org.easy.query.core.impl.SqlContext;
+import org.easy.query.core.query.builder.SqlTableInfo;
 import org.easy.query.core.segments.ColumnSegment;
 import org.easy.query.core.segments.FuncColumnSegment;
 import org.easy.query.core.util.LambdaUtil;
@@ -22,17 +23,19 @@ public class DefaultSqlColumnAsSelector<T1,TR> extends AbstractSqlColumnSelector
 
     private final SqlSegment0Builder sqlSegmentBuilder;
 
-    public DefaultSqlColumnAsSelector(int index, SelectContext selectContext, SqlSegment0Builder sqlSegment0Builder){
-        super(index,selectContext,sqlSegment0Builder);
+    public DefaultSqlColumnAsSelector(int index, SqlContext sqlContext, SqlSegment0Builder sqlSegment0Builder){
+        super(index,sqlContext,sqlSegment0Builder);
 
         this.sqlSegmentBuilder = sqlSegment0Builder;
     }
 
     @Override
     public SqlColumnAsSelector<T1, TR> columnAs(Property<T1, ?> column, Property<TR, ?> alias) {
-        String columnName = getSelectContext().getTable(getIndex()).getColumnName(column);
+        SqlTableInfo table = getSqlContext().getTable(getIndex());
+        String propertyName = table.getPropertyName(column);
+        String columnName = table.getColumnName(propertyName);
         String columnAsName = LambdaUtil.getAttrName(alias);
-        sqlSegmentBuilder.append(new ColumnSegment(getIndex(),columnName,getSelectContext(),columnAsName));
+        sqlSegmentBuilder.append(new ColumnSegment(getIndex(),columnName,propertyName, getSqlContext(),columnAsName));
         return this;
     }
 
@@ -43,9 +46,9 @@ public class DefaultSqlColumnAsSelector<T1,TR> extends AbstractSqlColumnSelector
 
     @Override
     public SqlColumnAsSelector<T1, TR> columnCount(Property<T1, ?> column, Property<TR, ?> alias) {
-        String columnName = getSelectContext().getTable(getIndex()).getColumnName(column);
+        String columnName = getSqlContext().getTable(getIndex()).getColumnName(column);
         String columnAsName = LambdaUtil.getAttrName(alias);
-        sqlSegmentBuilder.append(new FuncColumnSegment(getIndex(),columnName,getSelectContext(), EasyAggregate.COUNT,columnAsName));
+        sqlSegmentBuilder.append(new FuncColumnSegment(getIndex(),columnName, getSqlContext(), EasyAggregate.COUNT,columnAsName));
         return this;
     }
 

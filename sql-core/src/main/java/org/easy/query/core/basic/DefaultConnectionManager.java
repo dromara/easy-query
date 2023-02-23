@@ -66,6 +66,9 @@ public class DefaultConnectionManager implements EasyConnectionManager {
 
     @Override
     public void closeEasyConnection(EasyConnection easyConnection) {
+        if(easyConnection==null){
+            return;
+        }
         if(!currentThreadInTransaction()){
             try {
                 easyConnection.close();

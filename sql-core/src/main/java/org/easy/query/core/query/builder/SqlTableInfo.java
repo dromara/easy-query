@@ -2,7 +2,7 @@ package org.easy.query.core.query.builder;
 
 import org.easy.query.core.abstraction.lambda.Property;
 import org.easy.query.core.abstraction.metadata.ColumnMetadata;
-import org.easy.query.core.enums.SelectTableInfoTypeEnum;
+import org.easy.query.core.enums.MultiTableTypeEnum;
 import org.easy.query.core.abstraction.metadata.EntityMetadata;
 import org.easy.query.core.segments.AndPredicateSegment;
 import org.easy.query.core.segments.PredicateSegment;
@@ -14,14 +14,12 @@ import org.easy.query.core.util.LambdaUtil;
  * @Date: 2023/2/7 11:36
  * @Created by xuejiaming
  */
-public class SelectTableInfo {
+public class SqlTableInfo {
     private final String alias;
-    private final PredicateSegment on;
     private final int index;
+    private  PredicateSegment on;
 
-
-
-    private final SelectTableInfoTypeEnum selectTableInfoType;
+    private final MultiTableTypeEnum multiTableType;
 
     public EntityMetadata getEntityMetadata() {
         return entityMetadata;
@@ -29,12 +27,11 @@ public class SelectTableInfo {
 
     private final EntityMetadata entityMetadata;
 
-    public SelectTableInfo(EntityMetadata entityMetadata, String alias, int index, SelectTableInfoTypeEnum selectTableInfoType) {
+    public SqlTableInfo(EntityMetadata entityMetadata, String alias, int index, MultiTableTypeEnum multiTableType) {
         this.entityMetadata = entityMetadata;
-        this.alias = index == 0 ? alias : alias + index;
+        this.alias = alias;
         this.index = index;
-        this.selectTableInfoType = selectTableInfoType;
-        this.on=new AndPredicateSegment(true);
+        this.multiTableType = multiTableType;
     }
 
 
@@ -47,11 +44,14 @@ public class SelectTableInfo {
     }
 
     public PredicateSegment getOn() {
+        if(on==null){
+            on=new AndPredicateSegment(true);
+        }
         return on;
     }
 
-    public String getColumnName(String attrName){
-        return this.entityMetadata.getColumnName(attrName);
+    public String getColumnName(String propertyName){
+        return this.entityMetadata.getColumnName(propertyName);
 
     }
     public <T1> ColumnMetadata getColumn(Property<T1, ?> column){
@@ -63,19 +63,21 @@ public class SelectTableInfo {
         String attrName = LambdaUtil.getAttrName(column);
         return this.getColumnName(attrName);
     }
+    public <T1> String getPropertyName(Property<T1, ?> column){
+        return LambdaUtil.getAttrName(column);
+    }
 
-
-    public SelectTableInfoTypeEnum getSelectTableInfoType() {
-        return selectTableInfoType;
+    public MultiTableTypeEnum getSelectTableInfoType() {
+        return multiTableType;
     }
     public String getSelectTableSource(){
-        if(SelectTableInfoTypeEnum.LEFT_JOIN.equals(getSelectTableInfoType())){
+        if(MultiTableTypeEnum.LEFT_JOIN.equals(getSelectTableInfoType())){
             return  " LEFT JOIN ";
         }
-        else if(SelectTableInfoTypeEnum.INNER_JOIN.equals(getSelectTableInfoType())){
+        else if(MultiTableTypeEnum.INNER_JOIN.equals(getSelectTableInfoType())){
             return  " INNER JOIN ";
         }
-        else if(SelectTableInfoTypeEnum.RIGHT_JOIN.equals(getSelectTableInfoType())){
+        else if(MultiTableTypeEnum.RIGHT_JOIN.equals(getSelectTableInfoType())){
             return  " RIGHT JOIN ";
         }
         return " FROM ";

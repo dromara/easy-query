@@ -4,12 +4,12 @@ import org.easy.query.core.abstraction.EasyQuerySqlBuilderProvider2;
 import org.easy.query.core.abstraction.lambda.SqlExpression2;
 import org.easy.query.core.abstraction.lambda.SqlExpression3;
 import org.easy.query.core.abstraction.metadata.EntityMetadata;
-import org.easy.query.core.abstraction.sql.Select2;
-import org.easy.query.core.abstraction.sql.Select3;
+import org.easy.query.core.basic.api.Select2;
+import org.easy.query.core.basic.api.Select3;
 import org.easy.query.core.abstraction.sql.base.SqlColumnSelector;
 import org.easy.query.core.abstraction.sql.base.SqlPredicate;
-import org.easy.query.core.enums.SelectTableInfoTypeEnum;
-import org.easy.query.core.query.builder.SelectTableInfo;
+import org.easy.query.core.enums.MultiTableTypeEnum;
+import org.easy.query.core.query.builder.SqlTableInfo;
 
 /**
  *
@@ -22,10 +22,12 @@ public abstract  class AbstractSelect2<T1,T2> extends AbstractSelect0<T1, Select
 
     private final EasyQuerySqlBuilderProvider2<T1,T2> sqlPredicateProvider;
 
-    public AbstractSelect2(Class<T1> t1Class, Class<T2> t2Class, SelectContext selectContext, SelectTableInfoTypeEnum selectTableInfoType) {
+    public AbstractSelect2(Class<T1> t1Class, Class<T2> t2Class, SelectContext selectContext, MultiTableTypeEnum selectTableInfoType) {
         super(t1Class,selectContext);
         EntityMetadata entityMetadata = selectContext.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(t2Class);
-        selectContext.addSelectTable(new SelectTableInfo(entityMetadata,selectContext.getAlias(),selectContext.getNextTableIndex(), selectTableInfoType));
+        entityMetadata.checkTable();
+        int tableIndex = selectContext.getNextTableIndex();
+        selectContext.addSqlTable(new SqlTableInfo(entityMetadata,selectContext.getAlias()+tableIndex,tableIndex, selectTableInfoType));
         this.sqlPredicateProvider =new Select2SqlProvider<>(selectContext);
     }
 

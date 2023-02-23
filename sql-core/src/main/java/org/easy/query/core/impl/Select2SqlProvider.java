@@ -6,7 +6,7 @@ import org.easy.query.core.abstraction.sql.base.SqlAggregatePredicate;
 import org.easy.query.core.abstraction.sql.base.SqlColumnAsSelector;
 import org.easy.query.core.abstraction.sql.base.SqlColumnSelector;
 import org.easy.query.core.abstraction.sql.base.SqlPredicate;
-import org.easy.query.core.impl.lambda.*;
+import org.easy.query.core.impl.lambda.select.*;
 
 /**
  * @FileName: Select1SqlPredicateProvider.java
@@ -17,7 +17,7 @@ import org.easy.query.core.impl.lambda.*;
 public class Select2SqlProvider<T1,T2> extends Select1SqlProvider<T1> implements EasyQuerySqlBuilderProvider2<T1,T2> {
 
     private final SelectContext selectContext;
-    private  DefaultSqlGroupColumnSelector<T2> group;
+    private DefaultSqlGroupColumnSelector<T2> group;
     private  DefaultSqlOrderColumnSelector<T2> order;
     private DefaultSqlPredicate<T2> where;
     private DefaultSqlAggregatePredicate<T2> having;

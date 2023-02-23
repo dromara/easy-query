@@ -1,8 +1,9 @@
-package org.easy.query.core.impl.lambda;
+package org.easy.query.core.impl.lambda.select;
 
 import org.easy.query.core.abstraction.SqlSegment0Builder;
 import org.easy.query.core.abstraction.sql.base.SqlColumnSelector;
 import org.easy.query.core.impl.SelectContext;
+import org.easy.query.core.impl.SqlContext;
 
 /**
  * @FileName: DefaultSqlColumnSelector.java
@@ -11,7 +12,7 @@ import org.easy.query.core.impl.SelectContext;
  * @Created by xuejiaming
  */
 public class DefaultSqlColumnSelector<T1> extends AbstractSqlColumnSelector<T1, SqlColumnSelector<T1>> implements SqlColumnSelector<T1>{
-    public DefaultSqlColumnSelector(int index, SelectContext selectContext, SqlSegment0Builder sqlSegmentBuilder) {
-        super(index, selectContext,sqlSegmentBuilder);
+    public DefaultSqlColumnSelector(int index, SqlContext sqlContext, SqlSegment0Builder sqlSegmentBuilder) {
+        super(index, sqlContext,sqlSegmentBuilder);
     }
 }

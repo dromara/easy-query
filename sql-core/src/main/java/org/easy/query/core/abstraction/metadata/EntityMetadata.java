@@ -123,11 +123,19 @@ public class EntityMetadata {
     public Collection<ColumnMetadata> getColumns() {
         return property2ColumnMap.values();
     }
+    public LinkedHashMap<String,ColumnMetadata> getProperty2ColumnMap() {
+        return property2ColumnMap;
+    }
     public ColumnMetadata getColumn(String propertyName) {
         ColumnMetadata columnMetadata = property2ColumnMap.get(propertyName);
         if(columnMetadata==null){
             throw new JDQCException(String.format("未找到属性:[%s]对应的列名",propertyName));
         }
         return columnMetadata;
+    }
+    public void checkTable(){
+        if(StringUtil.isEmpty(tableName)){
+            throw new JDQCException("当前对象不是数据库对象,"+entityClass.getSimpleName());
+        }
     }
 }

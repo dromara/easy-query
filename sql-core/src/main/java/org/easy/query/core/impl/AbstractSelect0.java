@@ -4,13 +4,12 @@ import org.easy.query.core.abstraction.*;
 import org.easy.query.core.abstraction.lambda.Property;
 import org.easy.query.core.abstraction.lambda.SqlExpression;
 import org.easy.query.core.abstraction.metadata.ColumnMetadata;
-import org.easy.query.core.abstraction.sql.Select0;
+import org.easy.query.core.abstraction.sql.DefaultPageResult;
+import org.easy.query.core.abstraction.sql.PageResult;
+import org.easy.query.core.basic.api.Select0;
 import org.easy.query.core.abstraction.sql.base.*;
 import org.easy.query.core.abstraction.sql.enums.EasyAggregate;
-import org.easy.query.core.exception.JDQCException;
-import org.easy.query.core.query.builder.SelectTableInfo;
-import org.easy.query.core.segments.ColumnSegment;
-import org.easy.query.core.segments.predicate.ColumnColumnPredicate;
+import org.easy.query.core.query.builder.SqlTableInfo;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -72,7 +71,7 @@ public abstract class AbstractSelect0<T1, TChain> implements Select0<T1, TChain>
     @Override
     public <TMember extends Number> BigDecimal sumBigDecimalOrDefault(Property<T1, TMember> column, BigDecimal def) {
 
-        SelectTableInfo table = selectContext.getTable(0);
+        SqlTableInfo table = selectContext.getTable(0);
         ColumnMetadata columnMetadata = table.getColumn(column);
         String columnName = columnMetadata.getName();
         String quoteName = selectContext.getQuoteName(columnName);
@@ -91,7 +90,7 @@ public abstract class AbstractSelect0<T1, TChain> implements Select0<T1, TChain>
     @Override
     public <TMember extends Number> TMember sumOrDefault(Property<T1, TMember> column,TMember def) {
 
-        SelectTableInfo table = selectContext.getTable(0);
+        SqlTableInfo table = selectContext.getTable(0);
         ColumnMetadata columnMetadata = table.getColumn(column);
         String columnName = columnMetadata.getName();
         String quoteName = selectContext.getQuoteName(columnName);
@@ -125,7 +124,7 @@ public abstract class AbstractSelect0<T1, TChain> implements Select0<T1, TChain>
     @Override
     public <TMember> TMember maxOrDefault(Property<T1, TMember> column,TMember def) {
 
-        SelectTableInfo table = selectContext.getTable(0);
+        SqlTableInfo table = selectContext.getTable(0);
         ColumnMetadata columnMetadata = table.getColumn(column);
         String columnName = columnMetadata.getName();
         String quoteName = selectContext.getQuoteName(columnName);
@@ -139,7 +138,7 @@ public abstract class AbstractSelect0<T1, TChain> implements Select0<T1, TChain>
 
     @Override
     public <TMember> TMember minOrDefault(Property<T1, TMember> column, TMember def) {
-        SelectTableInfo table = selectContext.getTable(0);
+        SqlTableInfo table = selectContext.getTable(0);
         ColumnMetadata columnMetadata = table.getColumn(column);
         String columnName = columnMetadata.getName();
         String quoteName = selectContext.getQuoteName(columnName);
@@ -153,7 +152,7 @@ public abstract class AbstractSelect0<T1, TChain> implements Select0<T1, TChain>
 
     @Override
     public <TMember> TMember avgOrDefault(Property<T1, TMember> column, TMember def) {
-        SelectTableInfo table = selectContext.getTable(0);
+        SqlTableInfo table = selectContext.getTable(0);
         ColumnMetadata columnMetadata = table.getColumn(column);
         String columnName = columnMetadata.getName();
         String quoteName = selectContext.getQuoteName(columnName);
@@ -245,9 +244,9 @@ public abstract class AbstractSelect0<T1, TChain> implements Select0<T1, TChain>
      * @return
      */
     protected <TR> List<TR> toInternalList(Class<TR> resultClass,String columns) {
-        String s = toSql(columns);
+        String sql = toSql(columns);
         EasyExecutor easyExecutor = selectContext.getRuntimeContext().getEasyExecutor();
-        return easyExecutor.execute(ExecutorContext.create(selectContext.getRuntimeContext()),resultClass,s,selectContext.getParams());
+        return easyExecutor.query(ExecutorContext.create(selectContext.getRuntimeContext()),resultClass,sql,selectContext.getParams());
     }
 
     @Override
@@ -330,6 +329,56 @@ public abstract class AbstractSelect0<T1, TChain> implements Select0<T1, TChain>
             selectContext.setRows(rows);
         }
         return castSelf();
+    }
+
+    @Override
+    public PageResult<T1> toPageResult(long pageIndex, long pageSize) {
+        return toPageResult(pageIndex,pageSize,t1Class);
+    }
+
+    @Override
+    public <TR> PageResult<TR> toPageResult(long pageIndex, long pageSize, Class<TR> clazz) {
+
+        SelectSqlSegmentBuilder sqlSegmentBuilder = new SelectSqlSegmentBuilder();
+        SqlColumnSelector<T1> sqlColumnSelector = getSqlBuilderProvider1().getSqlColumnSelector1(sqlSegmentBuilder);
+        SqlExpression<SqlColumnSelector<T1>> selectExpression=ColumnSelector::columnAll;
+        selectExpression.apply(sqlColumnSelector);
+        return toPageResult(pageIndex,pageSize,clazz, sqlSegmentBuilder.toSql());
+    }
+
+    @Override
+    public PageResult<T1> toPageResult(long pageIndex, long pageSize, SqlExpression<SqlColumnSelector<T1>> selectExpression) {
+        SelectSqlSegmentBuilder sqlSegmentBuilder = new SelectSqlSegmentBuilder();
+        SqlColumnSelector<T1> sqlColumnSelector = getSqlBuilderProvider1().getSqlColumnSelector1(sqlSegmentBuilder);
+        selectExpression.apply(sqlColumnSelector);
+        return toPageResult(pageIndex,pageSize,t1Class, sqlSegmentBuilder.toSql());
+    }
+    protected <TR> PageResult<TR> toPageResult(long pageIndex, long pageSize, Class<TR> clazz,String columns){
+        //设置每次获取多少条
+        long take = pageSize <= 0 ? 1 : pageSize;
+        //设置当前页码最小1
+        long index = pageIndex <= 0 ? 1 : pageIndex;
+        //需要跳过多少条
+        long offset = (index - 1) * take;
+        long total = this.count();
+        if (total <= offset){
+            return new DefaultPageResult<TR>(total, new ArrayList<>(0));
+        }//获取剩余条数
+        long remainingCount = total - offset;
+        //当剩余条数小于take数就取remainingCount
+        long realTake = Math.min(remainingCount, take);
+        this.limit(offset,realTake);
+        List<TR> data = this.toInternalList(clazz,columns);
+        return new DefaultPageResult<TR>(total,data);
+    }
+
+    @Override
+    public <TR> PageResult<TR> toPageResult(long pageIndex, long pageSize, SqlExpression<SqlColumnAsSelector<T1, TR>> selectExpression, Class<TR> clazz) {
+
+        SelectSqlSegmentBuilder sqlSegmentBuilder = new SelectSqlSegmentBuilder();
+        SqlColumnAsSelector<T1,TR> sqlColumnSelector = getSqlBuilderProvider1().getSqlColumnAsSelector1(sqlSegmentBuilder);
+        selectExpression.apply(sqlColumnSelector);
+        return toPageResult(pageIndex,pageSize,clazz, sqlSegmentBuilder.toSql());
     }
 
     public SelectContext getSelectContext() {

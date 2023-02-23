@@ -1,7 +1,8 @@
-package org.easy.query.core.abstraction.sql;
+package org.easy.query.core.basic.api;
 
 import org.easy.query.core.abstraction.lambda.Property;
 import org.easy.query.core.abstraction.lambda.SqlExpression;
+import org.easy.query.core.abstraction.sql.PageResult;
 import org.easy.query.core.abstraction.sql.base.*;
 
 import java.math.BigDecimal;
@@ -15,41 +16,47 @@ import java.util.List;
  */
 public interface Select0<T1, TChain> {
     long count();
+
     long countDistinct(SqlExpression<SqlColumnSelector<T1>> selectExpression);
 
     boolean any();
 
     /**
      * 防止溢出
+     *
      * @param column
-     * @return
      * @param <TMember>
+     * @return
      */
-    default  <TMember extends Number> BigDecimal sumBigDecimalOrNull(Property<T1, TMember> column){
-        return sumBigDecimalOrDefault(column,null);
+    default <TMember extends Number> BigDecimal sumBigDecimalOrNull(Property<T1, TMember> column) {
+        return sumBigDecimalOrDefault(column, null);
     }
 
     /**
      * 防止溢出
+     *
      * @param column
-     * @return
      * @param <TMember>
+     * @return
      */
-    default  <TMember extends Number> BigDecimal sumBigDecimalNotNull(Property<T1, TMember> column){
-        return sumBigDecimalOrDefault(column,BigDecimal.ZERO);
+    default <TMember extends Number> BigDecimal sumBigDecimalNotNull(Property<T1, TMember> column) {
+        return sumBigDecimalOrDefault(column, BigDecimal.ZERO);
     }
-    <TMember extends Number> BigDecimal sumBigDecimalOrDefault(Property<T1, TMember> column,BigDecimal def);
 
-   default  <TMember extends Number> TMember sumOrNull(Property<T1, TMember> column){
-       return sumOrDefault(column,null);
-   }
-    <TMember extends Number> TMember sumOrDefault(Property<T1, TMember> column,TMember def);
+    <TMember extends Number> BigDecimal sumBigDecimalOrDefault(Property<T1, TMember> column, BigDecimal def);
+
+    default <TMember extends Number> TMember sumOrNull(Property<T1, TMember> column) {
+        return sumOrDefault(column, null);
+    }
+
+    <TMember extends Number> TMember sumOrDefault(Property<T1, TMember> column, TMember def);
 
     default <TMember> TMember maxOrNull(Property<T1, TMember> column) {
         return maxOrDefault(column, null);
     }
 
     <TMember> TMember maxOrDefault(Property<T1, TMember> column, TMember def);
+
     default <TMember> TMember minOrNull(Property<T1, TMember> column) {
         return minOrDefault(column, null);
     }
@@ -158,4 +165,9 @@ public interface Select0<T1, TChain> {
     }
 
     TChain limit(boolean condition, long offset, long rows);
+
+    PageResult<T1> toPageResult(long pageIndex, long pageSize);
+    PageResult<T1> toPageResult(long pageIndex, long pageSize, SqlExpression<SqlColumnSelector<T1>> selectExpression);
+    <TR> PageResult<TR> toPageResult(long pageIndex, long pageSize, Class<TR> clazz);
+    <TR> PageResult<TR> toPageResult(long pageIndex, long pageSize, SqlExpression<SqlColumnAsSelector<T1,TR>> selectExpression, Class<TR> clazz);
 }

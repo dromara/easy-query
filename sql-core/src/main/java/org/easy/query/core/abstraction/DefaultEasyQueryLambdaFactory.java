@@ -5,10 +5,10 @@ import org.easy.query.core.abstraction.sql.base.SqlColumnAsSelector;
 import org.easy.query.core.abstraction.sql.base.SqlColumnSelector;
 import org.easy.query.core.abstraction.sql.base.SqlPredicate;
 import org.easy.query.core.impl.SelectContext;
-import org.easy.query.core.impl.lambda.DefaultSqlAggregatePredicate;
-import org.easy.query.core.impl.lambda.DefaultSqlColumnAsSelector;
-import org.easy.query.core.impl.lambda.DefaultSqlColumnSelector;
-import org.easy.query.core.impl.lambda.DefaultSqlPredicate;
+import org.easy.query.core.impl.lambda.select.DefaultSqlAggregatePredicate;
+import org.easy.query.core.impl.lambda.select.DefaultSqlColumnAsSelector;
+import org.easy.query.core.impl.lambda.select.DefaultSqlColumnSelector;
+import org.easy.query.core.impl.lambda.select.DefaultSqlPredicate;
 import org.easy.query.core.segments.PredicateSegment;
 
 /**
