@@ -41,10 +41,12 @@ public class DefaultExecutor implements EasyExecutor {
         PreparedStatement ps = null;
         int[] rs = null;
         try {
-
             for (T entity : entities) {
+
                 List<Object> parameters = getParameters(entity, entityMetadata, properties);
-                easyConnection = connectionManager.getEasyConnection();
+                if(easyConnection==null){
+                    easyConnection = connectionManager.getEasyConnection();
+                }
                 if(ps==null){
                     ps = createPreparedStatement(easyConnection.getConnection(), sql, parameters, easyJdbcTypeHandler);
                 }else{
@@ -58,7 +60,7 @@ public class DefaultExecutor implements EasyExecutor {
         } finally {
             clear(executorContext,easyConnection,null,ps);
         }
-        return Arrays.stream(rs).sum();
+        return rs.length;
     }
     private <T> List<Object> getParameters(T entity, EntityMetadata entityMetadata, List<String> properties){
 

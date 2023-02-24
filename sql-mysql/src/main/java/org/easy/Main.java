@@ -26,7 +26,7 @@ public class Main {
     private static final String driver="com.mysql.cj.jdbc.Driver";
     private static final String username="root";
     private static final String password="root";
-    private static final String url="jdbc:mysql://127.0.0.1:3306/dbdbd0?serverTimezone=GMT%2B8&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true";
+    private static final String url="jdbc:mysql://127.0.0.1:3306/dbdbd0?serverTimezone=GMT%2B8&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&rewriteBatchedStatements=true";
     private static JQDCClient client;
     public static void main(String[] args) {
 
@@ -92,6 +92,20 @@ public class Main {
         sysUserLogbyMonth2.setTime(LocalDateTime.now());
         sysUserLogbyMonths1.add(sysUserLogbyMonth2);
         long execute1 = client.insert(sysUserLogbyMonths1).execute();
+//
+//        ArrayList<SysUserLogbyMonth> sysUserLogbyMonthsxx = new ArrayList<>();
+//        for (int j = 0; j < 10000; j++) {
+//
+//            SysUserLogbyMonth sysUserLogbyMonth2x = new SysUserLogbyMonth();
+//            sysUserLogbyMonth2x.setId(UUID.randomUUID().toString());
+//            sysUserLogbyMonth2x.setTime(LocalDateTime.now());
+//            sysUserLogbyMonthsxx.add(sysUserLogbyMonth2x);
+//        }
+//                long start = System.currentTimeMillis();
+//        long execute2 = client.insert(sysUserLogbyMonthsxx).execute();
+//        System.out.println("返回行数:"+execute2);
+//        long end = System.currentTimeMillis();
+//        System.out.println("耗时："+(end-start)+"ms");
         SysUserLogbyMonth sysUserLogbyMonth1 = client.select(SysUserLogbyMonth.class)
                 .where(o -> o.eq(SysUserLogbyMonth::getId, "119")).firstOrNull();
         SysUserLogbyMonth sysUserLogbyMonth1x = client.select(SysUserLogbyMonth.class)
