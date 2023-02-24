@@ -91,7 +91,7 @@ public class Main {
         sysUserLogbyMonth2.setId(UUID.randomUUID().toString());
         sysUserLogbyMonth2.setTime(LocalDateTime.now());
         sysUserLogbyMonths1.add(sysUserLogbyMonth2);
-        long execute1 = client.insert(sysUserLogbyMonths1).execute();
+        long execute1 = client.insert(sysUserLogbyMonths1).executeRows();
 //
 //        ArrayList<SysUserLogbyMonth> sysUserLogbyMonthsxx = new ArrayList<>();
 //        for (int j = 0; j < 10000; j++) {

@@ -43,10 +43,9 @@ public abstract class AbstractInsert<T> implements Insert<T> {
 
     @Override
     public Insert<T> insert(T entity) {
-        if (entity == null) {
-            throw new NullPointerException("entity is null");
+        if (entity != null) {
+            entities.add(entity);
         }
-        entities.add(entity);
         return this;
     }
 
@@ -57,7 +56,7 @@ public abstract class AbstractInsert<T> implements Insert<T> {
 //    }
 
     @Override
-    public long execute() {
+    public long executeRows() {
         if (!entities.isEmpty()) {
             SqlExpression<SqlColumnSelector<T>> selectExpression= ColumnSelector::columnAll;
             DefaultSqlColumnSelector<T> columnSelector = new DefaultSqlColumnSelector<>(0, insertContext, insertContext.getColumns());

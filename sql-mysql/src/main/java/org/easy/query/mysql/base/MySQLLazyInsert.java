@@ -27,7 +27,7 @@ public class MySQLLazyInsert<T> implements Insert<T> {
     }
 
     @Override
-    public long execute() {
+    public long executeRows() {
         return 0;
     }
 
