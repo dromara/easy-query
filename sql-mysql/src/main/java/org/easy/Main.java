@@ -92,6 +92,11 @@ public class Main {
         sysUserLogbyMonth2.setTime(LocalDateTime.now());
         sysUserLogbyMonths1.add(sysUserLogbyMonth2);
         long execute1 = client.insert(sysUserLogbyMonths1).executeRows();
+        long l = client.update(sysUserLogbyMonth2).executeRows();
+
+        TestUserMysql testUserMysql3 = new TestUserMysql();
+        long l1 = client.update(testUserMysql3).setColumns(o->o.column(TestUserMysql::getName)).executeRows();
+        long l12 = client.update(testUserMysql3).setColumns(o->o.column(TestUserMysql::getName)).whereColumns(o->o.column(TestUserMysql::getAge)).executeRows();
 //
 //        ArrayList<SysUserLogbyMonth> sysUserLogbyMonthsxx = new ArrayList<>();
 //        for (int j = 0; j < 10000; j++) {

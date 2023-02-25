@@ -1,10 +1,15 @@
 package org.easy.query.mysql.util;
 
+import org.easy.query.core.abstraction.SqlSegment;
+import org.easy.query.core.enums.SqlKeywordEnum;
 import org.easy.query.core.exception.JDQCException;
 import org.easy.query.core.impl.InsertContext;
 import org.easy.query.core.impl.SelectContext;
+import org.easy.query.core.impl.UpdateContext;
 import org.easy.query.core.query.builder.SqlTableInfo;
 import org.easy.query.core.util.StringUtil;
+
+import java.util.List;
 
 /**
  * @FileName: MySQLUtil.java
@@ -16,6 +21,7 @@ public class MySQLUtil {
     private MySQLUtil() {
         throw new UnsupportedOperationException();
     }
+
 
     /**
      * 生成mysql语句
@@ -100,6 +106,35 @@ public class MySQLUtil {
             }
         }
         sql.append(") ");
+        return sql.toString();
+    }
+    public static String toUpdateEntitySql(UpdateContext updateContext){
+
+        int tableCount = updateContext.getTables().size();
+        if (tableCount == 0) {
+            throw new JDQCException("未找到查询表信息");
+        }
+        if (tableCount > 1) {
+            throw new JDQCException("找到多张表信息");
+        }
+        if(updateContext.getWhereColumns().isEmpty()){
+            throw new JDQCException("更新需要指定条件列");
+        }
+
+        StringBuilder sql = new StringBuilder("UPDATE ");
+        SqlTableInfo table = updateContext.getTable(0);
+        String tableName = table.getEntityMetadata().getTableName();
+        sql.append(tableName).append(" SET ").append(updateContext.getSetColumns().toSql());
+        sql.append(" WHERE ");
+        List<SqlSegment> whereColumnSegments = updateContext.getWhereColumns().getSqlSegments();
+        int i =0;
+        for (SqlSegment whereColumnSegment : whereColumnSegments) {
+            if(i!=0){
+                sql.append(" ").append(SqlKeywordEnum.AND.getSql()).append(" ");
+            }
+            sql.append(whereColumnSegment.getSql()).append(" = ?");
+            i++;
+        }
         return sql.toString();
     }
 }

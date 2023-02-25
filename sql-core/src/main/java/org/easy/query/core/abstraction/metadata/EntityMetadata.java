@@ -24,6 +24,7 @@ public class EntityMetadata {
     private  String tableName;
 
     private final LinkedHashMap<String,ColumnMetadata> property2ColumnMap=new LinkedHashMap<>();
+    private final Map<String/*property name*/,String/*column name*/> keyPropertiesMap=new HashMap<>();
     private final LinkedCaseInsensitiveMap<String> column2PropertyMap=new LinkedCaseInsensitiveMap<>(Locale.ENGLISH);
 
     public EntityMetadata(Class entityClass) {
@@ -66,6 +67,7 @@ public class EntityMetadata {
             if(primaryKey!=null){
                 columnMetadata.setPrimary(true);
                 columnMetadata.setIncrement(primaryKey.increment());
+                keyPropertiesMap.put(attr,columnName);
             }
 
             InsertIgnore insertIgnore = field.getAnnotation(InsertIgnore.class);
@@ -125,6 +127,14 @@ public class EntityMetadata {
     }
     public LinkedHashMap<String,ColumnMetadata> getProperty2ColumnMap() {
         return property2ColumnMap;
+    }
+
+    /**
+     * 获取所有的key
+     * @return
+     */
+    public Collection<String> getKeyProperties() {
+        return keyPropertiesMap.keySet();
     }
     public ColumnMetadata getColumn(String propertyName) {
         ColumnMetadata columnMetadata = property2ColumnMap.get(propertyName);

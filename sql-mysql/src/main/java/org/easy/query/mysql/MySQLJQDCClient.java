@@ -2,18 +2,19 @@ package org.easy.query.mysql;
 
 import org.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import org.easy.query.core.basic.EasyConnectionManager;
+import org.easy.query.core.basic.api.EntityUpdate;
+import org.easy.query.core.basic.api.ExpressionUpdate;
 import org.easy.query.core.basic.api.Insert;
 import org.easy.query.core.basic.jdbc.Transaction;
-import org.easy.query.core.exception.JDQCException;
 import org.easy.query.core.impl.InsertContext;
 import org.easy.query.core.impl.SelectContext;
-import org.easy.query.mysql.base.MySQLInsert;
-import org.easy.query.mysql.base.MySQLLazyInsert;
-import org.easy.query.mysql.base.MySQLSelect1;
+import org.easy.query.core.impl.UpdateContext;
+import org.easy.query.mysql.base.*;
 import org.easy.query.core.abstraction.client.JQDCClient;
 import org.easy.query.core.basic.api.Select1;
 
-import java.util.List;
+import java.util.Arrays;
+import java.util.Collection;
 
 /**
  *
@@ -63,12 +64,33 @@ public class MySQLJQDCClient implements JQDCClient {
     }
 
     @Override
-    public <T1> Insert<T1> insert(List<T1> entities) {
+    public <T1> Insert<T1> insert(Collection<T1> entities) {
         if(entities==null||entities.isEmpty()){
             return new MySQLLazyInsert<T1>(new InsertContext(runtimeContext));
         }
-        MySQLInsert<T1> t1MySQLInsert = new MySQLInsert<>((Class<T1>) entities.get(0).getClass(), new InsertContext(runtimeContext));
+        MySQLInsert<T1> t1MySQLInsert = new MySQLInsert<>((Class<T1>) entities.stream().findFirst().orElse(null).getClass(), new InsertContext(runtimeContext));
         t1MySQLInsert.insert(entities);
         return t1MySQLInsert;
+    }
+
+    @Override
+    public <T1> ExpressionUpdate<T1> update(Class<T1> entityClass) {
+        return null;
+    }
+
+    @Override
+    public <T1> EntityUpdate<T1> update(T1 entity) {
+        if(entity==null){
+            return new MySQLLazyUpdate<>();
+        }
+        return new MySQLEntityUpdate<>(Arrays.asList(entity), new UpdateContext(runtimeContext));
+    }
+
+    @Override
+    public <T1> EntityUpdate<T1> update(Collection<T1> entities) {
+        if(entities==null||entities.isEmpty()){
+            return new MySQLLazyUpdate<>();
+        }
+        return new MySQLEntityUpdate<>(entities, new UpdateContext(runtimeContext));
     }
 }

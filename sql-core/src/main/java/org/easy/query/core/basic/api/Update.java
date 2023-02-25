@@ -1,12 +1,5 @@
 package org.easy.query.core.basic.api;
 
-import org.easy.query.core.abstraction.lambda.SqlExpression;
-import org.easy.query.core.abstraction.sql.base.SqlColumnSelector;
-import org.easy.query.core.abstraction.sql.base.SqlColumnSetter;
-import org.easy.query.core.abstraction.sql.base.SqlPredicate;
-
-import java.util.Collection;
-
 /**
  * @FileName: Update.java
  * @Description: 文件说明
@@ -22,5 +15,6 @@ public interface Update<T> {
      * @return
      */
     long executeRows();
+    void executeRows(Long expectRow,String error);
     String toSql();
 }

@@ -20,7 +20,7 @@ public class ColumnMetadata {
     private  boolean increment=false;
 
 
-    private  boolean nullable=false;
+    private  boolean nullable=true;
     private  boolean version=false;
     private  boolean insertIgnore=false;
     private  boolean updateIgnore =false;

@@ -20,7 +20,7 @@ public class UpdateSetSqlSegmentBuilder extends AbstractSqlSegmentBuilder {
             if(sb.length()!=0){
                 sb.append(SqlKeywordEnum.DOT.getSql());
             }
-            sb.append(sqlSegment.getSql());
+            sb.append(sqlSegment.getSql()).append(" = ?");
 
         }
         return sb.toString();
