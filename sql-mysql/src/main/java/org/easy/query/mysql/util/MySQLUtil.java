@@ -1,8 +1,8 @@
 package org.easy.query.mysql.util;
 
-import org.easy.query.core.abstraction.SqlSegment;
+import org.easy.query.core.basic.sql.segment.segment.SqlSegment;
 import org.easy.query.core.enums.SqlKeywordEnum;
-import org.easy.query.core.exception.JDQCException;
+import org.easy.query.core.exception.EasyQueryException;
 import org.easy.query.core.impl.InsertContext;
 import org.easy.query.core.impl.SelectContext;
 import org.easy.query.core.impl.UpdateContext;
@@ -34,7 +34,7 @@ public class MySQLUtil {
 
         int tableCount = selectContext.getTables().size();
         if (tableCount == 0) {
-            throw new JDQCException("未找到查询表信息");
+            throw new EasyQueryException("未找到查询表信息");
         }
         //将条件参数清空
         if (!selectContext.getParameters().isEmpty()) {
@@ -88,10 +88,10 @@ public class MySQLUtil {
 
         int tableCount = insertContext.getTables().size();
         if (tableCount == 0) {
-            throw new JDQCException("未找到查询表信息");
+            throw new EasyQueryException("未找到查询表信息");
         }
         if (tableCount > 1) {
-            throw new JDQCException("找到多张表信息");
+            throw new EasyQueryException("找到多张表信息");
         }
         StringBuilder sql = new StringBuilder("INSERT INTO ");
         SqlTableInfo table = insertContext.getTable(0);
@@ -112,13 +112,13 @@ public class MySQLUtil {
 
         int tableCount = updateContext.getTables().size();
         if (tableCount == 0) {
-            throw new JDQCException("未找到查询表信息");
+            throw new EasyQueryException("未找到查询表信息");
         }
         if (tableCount > 1) {
-            throw new JDQCException("找到多张表信息");
+            throw new EasyQueryException("找到多张表信息");
         }
         if(updateContext.getWhereColumns().isEmpty()){
-            throw new JDQCException("更新需要指定条件列");
+            throw new EasyQueryException("更新需要指定条件列");
         }
 
         StringBuilder sql = new StringBuilder("UPDATE ");
@@ -141,10 +141,13 @@ public class MySQLUtil {
 
         int tableCount = updateContext.getTables().size();
         if (tableCount == 0) {
-            throw new JDQCException("未找到查询表信息");
+            throw new EasyQueryException("未找到查询表信息");
         }
         if (tableCount > 1) {
-            throw new JDQCException("找到多张表信息");
+            throw new EasyQueryException("找到多张表信息");
+        }
+        if(updateContext.getWhereColumns().isEmpty()){
+            throw new EasyQueryException("更新需要设置条件");
         }
 
         StringBuilder sql = new StringBuilder("UPDATE ");

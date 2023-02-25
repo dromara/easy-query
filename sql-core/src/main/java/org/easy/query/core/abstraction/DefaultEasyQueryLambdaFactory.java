@@ -1,16 +1,17 @@
 package org.easy.query.core.abstraction;
 
-import org.easy.query.core.abstraction.sql.base.SqlAggregatePredicate;
-import org.easy.query.core.abstraction.sql.base.SqlColumnAsSelector;
-import org.easy.query.core.abstraction.sql.base.SqlColumnSelector;
-import org.easy.query.core.abstraction.sql.base.SqlPredicate;
+import org.easy.query.core.basic.expression.parser.abstraction.SqlAggregatePredicate;
+import org.easy.query.core.basic.expression.parser.abstraction.SqlColumnAsSelector;
+import org.easy.query.core.basic.expression.parser.abstraction.SqlColumnSelector;
+import org.easy.query.core.basic.expression.parser.abstraction.SqlPredicate;
+import org.easy.query.core.basic.sql.segment.builder.SqlSegmentBuilder;
 import org.easy.query.core.impl.SelectContext;
 import org.easy.query.core.impl.SqlPredicateContext;
-import org.easy.query.core.impl.lambda.select.DefaultSqlAggregatePredicate;
-import org.easy.query.core.impl.lambda.select.DefaultSqlColumnAsSelector;
-import org.easy.query.core.impl.lambda.select.DefaultSqlColumnSelector;
-import org.easy.query.core.impl.lambda.select.DefaultSqlPredicate;
-import org.easy.query.core.segments.PredicateSegment;
+import org.easy.query.core.basic.expression.parser.impl.DefaultSqlAggregatePredicate;
+import org.easy.query.core.basic.expression.parser.impl.DefaultSqlColumnAsSelector;
+import org.easy.query.core.basic.expression.parser.impl.DefaultSqlColumnSelector;
+import org.easy.query.core.basic.expression.parser.impl.DefaultSqlPredicate;
+import org.easy.query.core.basic.sql.segment.segment.PredicateSegment;
 
 /**
  * @FileName: DefaultEasyQueryLambdaFactory.java
@@ -30,17 +31,17 @@ public class DefaultEasyQueryLambdaFactory implements EasyQueryLambdaFactory{
     }
 
     @Override
-    public <T1> SqlColumnSelector<T1> createSqlColumnSelector(int index, SelectContext selectContext, SqlSegment0Builder sqlSegmentBuilder) {
+    public <T1> SqlColumnSelector<T1> createSqlColumnSelector(int index, SelectContext selectContext, SqlSegmentBuilder sqlSegmentBuilder) {
         return new DefaultSqlColumnSelector<>(index,selectContext,sqlSegmentBuilder);
     }
 
     @Override
-    public <T1> SqlColumnSelector<T1> createSqlColumnOrderSelector(int index, SelectContext selectContext, SqlSegment0Builder sqlSegmentBuilder, boolean asc) {
+    public <T1> SqlColumnSelector<T1> createSqlColumnOrderSelector(int index, SelectContext selectContext, SqlSegmentBuilder sqlSegmentBuilder, boolean asc) {
         return new DefaultSqlColumnSelector<>(index,selectContext,sqlSegmentBuilder);
     }
 
     @Override
-    public <T1, TR> SqlColumnAsSelector<T1, TR> createSqlColumnAsSelector(int index, SelectContext selectContext, SqlSegment0Builder sqlSegmentBuilder) {
+    public <T1, TR> SqlColumnAsSelector<T1, TR> createSqlColumnAsSelector(int index, SelectContext selectContext, SqlSegmentBuilder sqlSegmentBuilder) {
         return new DefaultSqlColumnAsSelector<T1,TR>(index,selectContext,sqlSegmentBuilder);
     }
 }

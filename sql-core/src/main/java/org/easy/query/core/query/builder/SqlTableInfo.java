@@ -1,11 +1,11 @@
 package org.easy.query.core.query.builder;
 
-import org.easy.query.core.abstraction.lambda.Property;
+import org.easy.query.core.basic.expression.lambda.Property;
 import org.easy.query.core.abstraction.metadata.ColumnMetadata;
 import org.easy.query.core.enums.MultiTableTypeEnum;
 import org.easy.query.core.abstraction.metadata.EntityMetadata;
-import org.easy.query.core.segments.AndPredicateSegment;
-import org.easy.query.core.segments.PredicateSegment;
+import org.easy.query.core.basic.sql.segment.segment.AndPredicateSegment;
+import org.easy.query.core.basic.sql.segment.segment.PredicateSegment;
 import org.easy.query.core.util.LambdaUtil;
 
 /**

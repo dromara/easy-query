@@ -1,7 +1,7 @@
 package org.easy.query.core.metadata;
 
-import org.easy.query.core.abstraction.lambda.Property;
-import org.easy.query.core.exception.JDQCException;
+import org.easy.query.core.basic.expression.lambda.Property;
+import org.easy.query.core.exception.EasyQueryException;
 import org.easy.query.core.util.StringUtil;
 
 import java.lang.invoke.SerializedLambda;
@@ -73,7 +73,7 @@ public class TableInfo {
             String propertyName = StringUtil.toLowerCaseFirstOne(attr);
             ColumnInfo columnInfo = columns.get(propertyName);
             if (columnInfo == null) {
-                throw new JDQCException("not found column info,property name:"+propertyName);
+                throw new EasyQueryException("not found column info,property name:"+propertyName);
             }
             return columnInfo;
 //            return sqlManager.getNc().getColName(clazz, StringKit.toLowerCaseFirstOne(attr));

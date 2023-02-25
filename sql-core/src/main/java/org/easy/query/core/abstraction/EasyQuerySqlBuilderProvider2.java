@@ -1,9 +1,10 @@
 package org.easy.query.core.abstraction;
 
-import org.easy.query.core.abstraction.sql.base.SqlAggregatePredicate;
-import org.easy.query.core.abstraction.sql.base.SqlColumnAsSelector;
-import org.easy.query.core.abstraction.sql.base.SqlColumnSelector;
-import org.easy.query.core.abstraction.sql.base.SqlPredicate;
+import org.easy.query.core.basic.expression.parser.abstraction.SqlAggregatePredicate;
+import org.easy.query.core.basic.expression.parser.abstraction.SqlColumnAsSelector;
+import org.easy.query.core.basic.expression.parser.abstraction.SqlColumnSelector;
+import org.easy.query.core.basic.expression.parser.abstraction.SqlPredicate;
+import org.easy.query.core.basic.sql.segment.builder.SqlSegmentBuilder;
 
 /**
  * @FileName: EasyQueryLambdaBuilder.java
@@ -18,6 +19,6 @@ public interface EasyQuerySqlBuilderProvider2<T1,T2> extends EasyQuerySqlBuilder
     SqlAggregatePredicate<T2> getSqlAggregatePredicate2();
     SqlPredicate<T2> getSqlOnPredicate2();
 
-    SqlColumnSelector<T2> getSqlColumnSelector2(SqlSegment0Builder sqlSegment0Builder);
-    <TR> SqlColumnAsSelector<T2,TR> getSqlColumnAsSelector2(SqlSegment0Builder sqlSegment0Builder);
+    SqlColumnSelector<T2> getSqlColumnSelector2(SqlSegmentBuilder sqlSegment0Builder);
+    <TR> SqlColumnAsSelector<T2,TR> getSqlColumnAsSelector2(SqlSegmentBuilder sqlSegment0Builder);
 }

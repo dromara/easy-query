@@ -24,6 +24,5 @@ public interface Insert<T> {
      * @return
      */
     long executeRows();
-    long executeLastInsertId();
     String toSql();
 }

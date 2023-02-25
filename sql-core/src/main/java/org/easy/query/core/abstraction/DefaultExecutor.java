@@ -3,9 +3,9 @@ package org.easy.query.core.abstraction;
 import org.easy.query.core.abstraction.metadata.ColumnMetadata;
 import org.easy.query.core.abstraction.metadata.EntityMetadata;
 import org.easy.query.core.abstraction.metadata.EntityMetadataManager;
-import org.easy.query.core.basic.EasyConnection;
-import org.easy.query.core.basic.EasyConnectionManager;
-import org.easy.query.core.exception.JDQCException;
+import org.easy.query.core.basic.jdbc.con.EasyConnection;
+import org.easy.query.core.basic.jdbc.con.EasyConnectionManager;
+import org.easy.query.core.exception.EasyQueryException;
 import org.easy.query.core.executor.EasyParameter;
 import org.easy.query.core.executor.EasyResultSet;
 import org.easy.query.core.executor.type.JdbcTypeHandler;
@@ -17,7 +17,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -92,7 +91,7 @@ public class DefaultExecutor implements EasyExecutor {
             rs = ps.executeBatch();
             ps.clearBatch();
         } catch (SQLException e) {
-            throw new JDQCException(e);
+            throw new EasyQueryException(e);
         } finally {
             clear(executorContext,easyConnection,null,ps);
         }
@@ -108,7 +107,7 @@ public class DefaultExecutor implements EasyExecutor {
                 Object value = readMethod.invoke(entity);
                 params.add(value);
             } catch (IllegalAccessException | InvocationTargetException e) {
-                throw new JDQCException(e);
+                throw new EasyQueryException(e);
             }
         }
         return params;
@@ -130,7 +129,7 @@ public class DefaultExecutor implements EasyExecutor {
             rs = ps.executeQuery();
             result = mapTo(executorContext, rs, clazz);
         } catch (SQLException e) {
-            throw new JDQCException(e);
+            throw new EasyQueryException(e);
         } finally {
             clear(executorContext,easyConnection,rs,ps);
         }
@@ -170,7 +169,7 @@ public class DefaultExecutor implements EasyExecutor {
     private <T> List<T> mapTo(ExecutorContext context, ResultSet rs, Class<T> clazz) throws SQLException {
         List<T> resultList = null;
         if (Map.class.isAssignableFrom(clazz)) {
-            throw new JDQCException("不支持：" + clazz.getSimpleName() + "的转换");
+            throw new EasyQueryException("不支持：" + clazz.getSimpleName() + "的转换");
         } else if (ClassUtil.isBasicType(clazz)) {//如果返回的是基本类型
             resultList = new ArrayList<>(1);
             while (rs.next()) {

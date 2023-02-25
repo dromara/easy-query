@@ -1,6 +1,6 @@
 package org.easy.query.core.abstraction.sql.enums;
 
-import org.easy.query.core.abstraction.sql.base.SqlFuncEnum;
+import org.easy.query.core.basic.enums.SqlFuncEnum;
 
 /**
  *

@@ -7,11 +7,11 @@ import org.easy.query.core.abstraction.metadata.EntityMetadataManager;
 import org.easy.query.core.abstraction.sql.PageResult;
 import org.easy.query.core.basic.api.Select1;
 import org.easy.query.core.abstraction.sql.enums.EasyPredicate;
-import org.easy.query.core.basic.DefaultConnectionManager;
-import org.easy.query.core.basic.EasyConnectionManager;
-import org.easy.query.core.basic.jdbc.Transaction;
+import org.easy.query.core.basic.jdbc.tx.DefaultConnectionManager;
+import org.easy.query.core.basic.jdbc.con.EasyConnectionManager;
+import org.easy.query.core.basic.jdbc.tx.Transaction;
 import org.easy.query.core.config.*;
-import org.easy.query.core.exception.JDQCException;
+import org.easy.query.core.exception.EasyQueryException;
 import org.easy.query.core.metadata.DefaultEntityMetadataManager;
 import org.easy.query.mysql.MySQLJQDCClient;
 import org.easy.query.mysql.config.MySQLDialect;
@@ -47,7 +47,7 @@ public class Main {
         try {
             dataSource = DruidDataSourceFactory.createDataSource(properties);
         } catch (Exception e) {
-            throw new JDQCException(e);
+            throw new EasyQueryException(e);
         }
         EasyConnectionManager connectionManager= new DefaultConnectionManager(dataSource);
         DefaultExecutor defaultExecutor = new DefaultExecutor();

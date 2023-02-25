@@ -1,12 +1,12 @@
 package org.easy.query.core.impl;
 
 import org.easy.query.core.abstraction.EasyQuerySqlBuilderProvider2;
-import org.easy.query.core.abstraction.SqlSegment0Builder;
-import org.easy.query.core.abstraction.sql.base.SqlAggregatePredicate;
-import org.easy.query.core.abstraction.sql.base.SqlColumnAsSelector;
-import org.easy.query.core.abstraction.sql.base.SqlColumnSelector;
-import org.easy.query.core.abstraction.sql.base.SqlPredicate;
-import org.easy.query.core.impl.lambda.select.*;
+import org.easy.query.core.basic.expression.parser.impl.*;
+import org.easy.query.core.basic.sql.segment.builder.SqlSegmentBuilder;
+import org.easy.query.core.basic.expression.parser.abstraction.SqlAggregatePredicate;
+import org.easy.query.core.basic.expression.parser.abstraction.SqlColumnAsSelector;
+import org.easy.query.core.basic.expression.parser.abstraction.SqlColumnSelector;
+import org.easy.query.core.basic.expression.parser.abstraction.SqlPredicate;
 
 /**
  * @FileName: Select1SqlPredicateProvider.java
@@ -18,7 +18,7 @@ public class Select2SqlProvider<T1,T2> extends Select1SqlProvider<T1> implements
 
     private final SelectContext selectContext;
     private DefaultSqlGroupColumnSelector<T2> group;
-    private  DefaultSqlOrderColumnSelector<T2> order;
+    private DefaultSqlOrderColumnSelector<T2> order;
     private DefaultSqlPredicate<T2> where;
     private DefaultSqlAggregatePredicate<T2> having;
     private DefaultSqlPredicate<T2> on;
@@ -71,12 +71,12 @@ public class Select2SqlProvider<T1,T2> extends Select1SqlProvider<T1> implements
     }
 
     @Override
-    public SqlColumnSelector<T2> getSqlColumnSelector2(SqlSegment0Builder sqlSegment0Builder) {
+    public SqlColumnSelector<T2> getSqlColumnSelector2(SqlSegmentBuilder sqlSegment0Builder) {
         return new DefaultSqlColumnSelector<>(1,selectContext,sqlSegment0Builder);
     }
 
     @Override
-    public <TR> SqlColumnAsSelector<T2, TR> getSqlColumnAsSelector2(SqlSegment0Builder sqlSegment0Builder) {
+    public <TR> SqlColumnAsSelector<T2, TR> getSqlColumnAsSelector2(SqlSegmentBuilder sqlSegment0Builder) {
         return new DefaultSqlColumnAsSelector<>(1,selectContext,sqlSegment0Builder);
     }
 }

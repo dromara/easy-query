@@ -1,6 +1,6 @@
 package org.easy.query.core.util;
 
-import org.easy.query.core.abstraction.lambda.Property;
+import org.easy.query.core.basic.expression.lambda.Property;
 
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Method;

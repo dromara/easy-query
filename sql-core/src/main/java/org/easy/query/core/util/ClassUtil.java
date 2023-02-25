@@ -2,7 +2,7 @@ package org.easy.query.core.util;
 
 import org.easy.query.core.basic.bean.BeanMethodInvoker;
 import org.easy.query.core.basic.bean.MethodInvoker;
-import org.easy.query.core.exception.JDQCException;
+import org.easy.query.core.exception.EasyQueryException;
 
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
@@ -56,7 +56,7 @@ public class ClassUtil {
             pd = propertyDescriptors(clazz);
             property = find(pd, name);
         } catch (IntrospectionException e) {
-            throw new JDQCException( "获取类属性错", e);
+            throw new EasyQueryException( "获取类属性错", e);
         }
 
         if (property != null) {
@@ -154,9 +154,9 @@ public class ClassUtil {
         try {
             return clazz.newInstance();
         } catch (InstantiationException e) {
-            throw new JDQCException(e);
+            throw new EasyQueryException(e);
         } catch (IllegalAccessException e) {
-            throw new JDQCException(e);
+            throw new EasyQueryException(e);
         }
     }
     public static PropertyDescriptor[] propertyDescriptors(Class<?> c) throws IntrospectionException {

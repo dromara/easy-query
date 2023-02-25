@@ -1,7 +1,7 @@
 package org.easy.query.core.basic.api;
 
-import org.easy.query.core.abstraction.lambda.SqlExpression2;
-import org.easy.query.core.abstraction.sql.base.SqlPredicate;
+import org.easy.query.core.basic.expression.lambda.SqlExpression2;
+import org.easy.query.core.basic.expression.parser.abstraction.SqlPredicate;
 
 /**
  * @FileName: Select11.java

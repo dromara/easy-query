@@ -1,7 +1,7 @@
 package org.easy.query.core.config;
 
 /**
- * @FileName: DefaultConnector.java
+ * @FileName: DefaultConfig.java
  * @Description: 文件说明
  * @Date: 2023/2/16 21:47
  * @Created by xuejiaming

@@ -1,10 +1,13 @@
 package org.easy.query.core.impl;
 
 import org.easy.query.core.abstraction.*;
-import org.easy.query.core.exception.JDQCException;
+import org.easy.query.core.basic.sql.segment.builder.GroupBySqlSegmentBuilder;
+import org.easy.query.core.basic.sql.segment.builder.OrderBySqlSegmentBuilder;
+import org.easy.query.core.basic.sql.segment.builder.SqlSegmentBuilder;
+import org.easy.query.core.exception.EasyQueryException;
 import org.easy.query.core.query.builder.SqlTableInfo;
-import org.easy.query.core.segments.AndPredicateSegment;
-import org.easy.query.core.segments.PredicateSegment;
+import org.easy.query.core.basic.sql.segment.segment.AndPredicateSegment;
+import org.easy.query.core.basic.sql.segment.segment.PredicateSegment;
 
 import java.util.*;
 
@@ -25,9 +28,9 @@ public  class SelectContext extends AbstractSqlPredicateContext {
 
     private PredicateSegment where;
 //    private  StringBuilder select;
-    private SqlSegment0Builder group;
+    private SqlSegmentBuilder group;
     private PredicateSegment having;
-    private SqlSegment0Builder order;
+    private SqlSegmentBuilder order;
 
     public SelectContext(EasyQueryRuntimeContext runtimeContext){
         this(runtimeContext,"t");
@@ -93,7 +96,7 @@ public  class SelectContext extends AbstractSqlPredicateContext {
     }
     public SqlTableInfo getPredicateTableByOffset(int offsetForward){
         if(this.tables.isEmpty()){
-            throw new JDQCException("cant get current join table");
+            throw new EasyQueryException("cant get current join table");
         }
         int i = getNextTableIndex() -1 - offsetForward;
         return this.tables.get(i);
@@ -107,16 +110,16 @@ public  class SelectContext extends AbstractSqlPredicateContext {
 //    }
 
 
-    public SqlSegment0Builder getGroup() {
+    public SqlSegmentBuilder getGroup() {
         if(group==null){
-            group=new SqlGroupSegmentBuilder();
+            group=new GroupBySqlSegmentBuilder();
         }
         return group;
     }
 
-    public SqlSegment0Builder getOrder() {
+    public SqlSegmentBuilder getOrder() {
         if(order==null){
-            order=new SqlOrderSegmentBuilder();
+            order=new OrderBySqlSegmentBuilder();
         }
         return order;
     }

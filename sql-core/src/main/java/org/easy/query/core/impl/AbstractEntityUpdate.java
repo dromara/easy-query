@@ -1,18 +1,20 @@
 package org.easy.query.core.impl;
 
-import org.easy.query.core.abstraction.*;
-import org.easy.query.core.abstraction.lambda.SqlExpression;
+import org.easy.query.core.basic.expression.lambda.SqlExpression;
 import org.easy.query.core.abstraction.metadata.ColumnMetadata;
 import org.easy.query.core.abstraction.metadata.EntityMetadata;
-import org.easy.query.core.abstraction.metadata.EntityMetadataManager;
-import org.easy.query.core.abstraction.sql.base.ColumnSelector;
-import org.easy.query.core.abstraction.sql.base.SqlColumnSelector;
+import org.easy.query.core.basic.expression.parser.abstraction.internal.ColumnSelector;
+import org.easy.query.core.basic.expression.parser.abstraction.SqlColumnSelector;
 import org.easy.query.core.basic.api.EntityUpdate;
+import org.easy.query.core.basic.sql.segment.builder.SqlSegmentBuilder;
+import org.easy.query.core.basic.sql.segment.segment.SqlSegment;
 import org.easy.query.core.enums.MultiTableTypeEnum;
-import org.easy.query.core.exception.JDQCException;
-import org.easy.query.core.impl.lambda.select.DefaultSqlColumnSelector;
+import org.easy.query.core.exception.EasyQueryException;
+import org.easy.query.core.basic.expression.parser.impl.DefaultSqlColumnSelector;
+import org.easy.query.core.basic.expression.parser.impl.DefaultSqlColumnSetSelector;
 import org.easy.query.core.query.builder.SqlTableInfo;
-import org.easy.query.core.segments.ColumnSegment;
+import org.easy.query.core.basic.sql.segment.segment.ColumnSegment;
+import org.easy.query.core.basic.sql.segment.segment.UpdateColumnSegment;
 import org.easy.query.core.util.StringUtil;
 
 import java.util.ArrayList;
@@ -35,7 +37,7 @@ public abstract class AbstractEntityUpdate<T> implements EntityUpdate<T> {
 
     public AbstractEntityUpdate(Collection<T> entities, UpdateContext updateContext) {
         if(entities==null||entities.isEmpty()){
-            throw new JDQCException("不支持空对象的update");
+            throw new EasyQueryException("不支持空对象的update");
         }
         this.entities.addAll(entities);
 
@@ -53,11 +55,11 @@ public abstract class AbstractEntityUpdate<T> implements EntityUpdate<T> {
 //            EntityMetadataManager entityMetadataManager = runtimeContext.getEntityMetadataManager();
 
             //如果没有指定where那么就使用主键作为更新条件
-            SqlSegment0Builder whereColumns = updateContext.getWhereColumns();
+            SqlSegmentBuilder whereColumns = updateContext.getWhereColumns();
             if (whereColumns.isEmpty()) {
                 Collection<String> keyProperties = entityMetadata.getKeyProperties();
                 if(keyProperties.isEmpty()){
-                    throw new JDQCException("对象:"+clazz.getSimpleName()+" 未找到主键信息");
+                    throw new EasyQueryException("对象:"+clazz.getSimpleName()+" 未找到主键信息");
                 }
                 for (String keyProperty : keyProperties) {
                     ColumnMetadata column = entityMetadata.getColumn(keyProperty);
@@ -68,14 +70,14 @@ public abstract class AbstractEntityUpdate<T> implements EntityUpdate<T> {
             //如果用户没有指定set的列,那么就是set所有列,并且要去掉主键部分
             if (updateContext.getSetColumns().isEmpty()) {
                 SqlExpression<SqlColumnSelector<T>> selectExpression = ColumnSelector::columnAll;
-                DefaultSqlColumnSelector<T> columnSelector = new DefaultSqlColumnSelector<>(0, updateContext, updateContext.getSetColumns());
+                DefaultSqlColumnSetSelector<T> columnSelector = new DefaultSqlColumnSetSelector<>(0, updateContext, updateContext.getSetColumns());
                 selectExpression.apply(columnSelector);//获取set的值
                 //非手动指定的那么需要移除where的那一部分
                 List<SqlSegment> sqlSegments = updateContext.getSetColumns().getSqlSegments();
                 Set<String> whereProperties = whereColumns.getSqlSegments().stream().filter(o -> o instanceof ColumnSegment).map(o -> ((ColumnSegment) o).getPropertyName()).collect(Collectors.toSet());
                 sqlSegments.removeIf(o->{
-                    if(o instanceof ColumnSegment){
-                        String propertyName = ((ColumnSegment) o).getPropertyName();
+                    if(o instanceof UpdateColumnSegment){
+                        String propertyName = ((UpdateColumnSegment) o).getPropertyName();
                         return whereProperties.contains(propertyName);
                     }
                     return false;
@@ -101,7 +103,7 @@ public abstract class AbstractEntityUpdate<T> implements EntityUpdate<T> {
     @Override
     public EntityUpdate<T> setColumns(boolean condition,SqlExpression<SqlColumnSelector<T>> columnSelectorExpression) {
         if(condition){
-            DefaultSqlColumnSelector<T> columnSelector = new DefaultSqlColumnSelector<>(0, updateContext, updateContext.getSetColumns());
+            DefaultSqlColumnSetSelector<T> columnSelector = new DefaultSqlColumnSetSelector<>(0, updateContext, updateContext.getSetColumns());
             columnSelectorExpression.apply(columnSelector);
         }
         return this;
@@ -110,7 +112,7 @@ public abstract class AbstractEntityUpdate<T> implements EntityUpdate<T> {
     @Override
     public EntityUpdate<T> setIgnoreColumns(boolean condition,SqlExpression<SqlColumnSelector<T>> columnSelectorExpression) {
         if(condition){
-            DefaultSqlColumnSelector<T> columnSelector = new DefaultSqlColumnSelector<>(0, updateContext, updateContext.getSetIgnoreColumns());
+            DefaultSqlColumnSetSelector<T> columnSelector = new DefaultSqlColumnSetSelector<>(0, updateContext, updateContext.getSetIgnoreColumns());
             columnSelectorExpression.apply(columnSelector);
         }
         return this;

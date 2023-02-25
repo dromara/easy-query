@@ -1,9 +1,12 @@
 package org.easy.query.core.impl;
 
 import org.easy.query.core.abstraction.*;
+import org.easy.query.core.basic.sql.segment.builder.SelectSqlSegmentBuilder;
+import org.easy.query.core.basic.sql.segment.builder.SqlSegmentBuilder;
+import org.easy.query.core.basic.sql.segment.builder.UpdateSetSqlSegmentBuilder;
 import org.easy.query.core.query.builder.SqlTableInfo;
-import org.easy.query.core.segments.AndPredicateSegment;
-import org.easy.query.core.segments.PredicateSegment;
+import org.easy.query.core.basic.sql.segment.segment.AndPredicateSegment;
+import org.easy.query.core.basic.sql.segment.segment.PredicateSegment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,15 +19,15 @@ import java.util.List;
  */
 public class UpdateContext extends AbstractSqlPredicateContext{
 
-    private final SqlSegment0Builder setColumns;
+    private final SqlSegmentBuilder setColumns;
     private final PredicateSegment where;
-    private  SqlSegment0Builder setIgnoreColumns;
-    private  SqlSegment0Builder whereColumns;
+    private SqlSegmentBuilder setIgnoreColumns;
+    private SqlSegmentBuilder whereColumns;
     private final List<Object> parameters;
 
     public UpdateContext(EasyQueryRuntimeContext runtimeContext,boolean expressionUpdate) {
         super(runtimeContext);
-        setColumns =expressionUpdate?new UpdateSetSqlSegmentBuilder():new UpdateSetSelectorSqlSegmentBuilder();
+        setColumns =new UpdateSetSqlSegmentBuilder();
         where=new AndPredicateSegment(true);
         parameters=expressionUpdate?new ArrayList<>():null;
     }
@@ -32,20 +35,20 @@ public class UpdateContext extends AbstractSqlPredicateContext{
         this.tables.add(sqlTableInfo);
     }
 
-    public SqlSegment0Builder getSetColumns() {
+    public SqlSegmentBuilder getSetColumns() {
         return setColumns;
     }
 
     public PredicateSegment getWhere() {
         return where;
     }
-    public SqlSegment0Builder getSetIgnoreColumns(){
+    public SqlSegmentBuilder getSetIgnoreColumns(){
         if(setIgnoreColumns==null){
             setIgnoreColumns=new UpdateSetSqlSegmentBuilder();
         }
         return setIgnoreColumns;
     }
-    public SqlSegment0Builder getWhereColumns(){
+    public SqlSegmentBuilder getWhereColumns(){
         if(whereColumns==null){
             whereColumns=new SelectSqlSegmentBuilder();
         }

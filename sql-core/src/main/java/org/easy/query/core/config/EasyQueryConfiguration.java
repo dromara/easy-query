@@ -1,10 +1,5 @@
 package org.easy.query.core.config;
 
-import org.easy.query.core.exception.JDQCException;
-import org.easy.query.core.metadata.TableInfo;
-
-import java.util.concurrent.ConcurrentHashMap;
-
 /**
  * @FileName: JDQCConfiguration.java
  * @Description: 文件说明

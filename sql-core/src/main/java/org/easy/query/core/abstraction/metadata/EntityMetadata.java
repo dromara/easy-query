@@ -2,7 +2,7 @@ package org.easy.query.core.abstraction.metadata;
 
 import org.easy.query.core.config.EasyQueryConfiguration;
 import org.easy.query.core.config.NameConversion;
-import org.easy.query.core.exception.JDQCException;
+import org.easy.query.core.exception.EasyQueryException;
 import org.easy.query.core.util.StringUtil;
 import org.easy.query.core.annotation.*;
 import org.easy.query.core.common.LinkedCaseInsensitiveMap;
@@ -90,7 +90,7 @@ public class EntityMetadata {
         try {
             return ClassUtil.propertyDescriptors(entityClass);
         } catch (IntrospectionException e) {
-            throw new JDQCException(e);
+            throw new EasyQueryException(e);
         }
     }
 
@@ -106,7 +106,7 @@ public class EntityMetadata {
     public String getColumnName(String attrName){
         ColumnMetadata columnMetadata = property2ColumnMap.get(attrName);
         if(columnMetadata==null){
-            throw new JDQCException(String.format("未找到属性:[%s]对应的列名",attrName));
+            throw new EasyQueryException(String.format("未找到属性:[%s]对应的列名",attrName));
         }
         return columnMetadata.getName();
     }
@@ -139,13 +139,13 @@ public class EntityMetadata {
     public ColumnMetadata getColumn(String propertyName) {
         ColumnMetadata columnMetadata = property2ColumnMap.get(propertyName);
         if(columnMetadata==null){
-            throw new JDQCException(String.format("未找到属性:[%s]对应的列名",propertyName));
+            throw new EasyQueryException(String.format("未找到属性:[%s]对应的列名",propertyName));
         }
         return columnMetadata;
     }
     public void checkTable(){
         if(StringUtil.isEmpty(tableName)){
-            throw new JDQCException("当前对象不是数据库对象,"+entityClass.getSimpleName());
+            throw new EasyQueryException("当前对象不是数据库对象,"+entityClass.getSimpleName());
         }
     }
 }

@@ -1,8 +1,6 @@
 package org.easy.query.core.metadata;
 
 import org.easy.query.core.config.EasyQueryConfiguration;
-import org.easy.query.core.config.NameConversion;
-import org.easy.query.core.exception.JDQCException;
 import org.easy.query.core.abstraction.metadata.EntityMetadata;
 import org.easy.query.core.common.cache.Cache;
 import org.easy.query.core.abstraction.metadata.EntityMetadataManager;

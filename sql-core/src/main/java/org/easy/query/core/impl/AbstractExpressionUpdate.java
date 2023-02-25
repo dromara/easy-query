@@ -1,14 +1,13 @@
 package org.easy.query.core.impl;
 
-import org.easy.query.core.abstraction.lambda.SqlExpression;
+import org.easy.query.core.basic.expression.lambda.SqlExpression;
 import org.easy.query.core.abstraction.metadata.EntityMetadata;
-import org.easy.query.core.abstraction.sql.base.SqlColumnSetter;
-import org.easy.query.core.abstraction.sql.base.SqlPredicate;
+import org.easy.query.core.basic.expression.parser.abstraction.SqlColumnSetter;
+import org.easy.query.core.basic.expression.parser.abstraction.SqlPredicate;
 import org.easy.query.core.basic.api.ExpressionUpdate;
-import org.easy.query.core.basic.api.Update;
 import org.easy.query.core.enums.MultiTableTypeEnum;
-import org.easy.query.core.impl.lambda.select.DefaultSqlColumnSetter;
-import org.easy.query.core.impl.lambda.select.DefaultSqlPredicate;
+import org.easy.query.core.basic.expression.parser.impl.DefaultSqlColumnSetter;
+import org.easy.query.core.basic.expression.parser.impl.DefaultSqlPredicate;
 import org.easy.query.core.query.builder.SqlTableInfo;
 import org.easy.query.core.util.StringUtil;
 

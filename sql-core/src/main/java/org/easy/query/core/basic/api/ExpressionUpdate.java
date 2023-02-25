@@ -1,8 +1,8 @@
 package org.easy.query.core.basic.api;
 
-import org.easy.query.core.abstraction.lambda.SqlExpression;
-import org.easy.query.core.abstraction.sql.base.SqlColumnSetter;
-import org.easy.query.core.abstraction.sql.base.SqlPredicate;
+import org.easy.query.core.basic.expression.lambda.SqlExpression;
+import org.easy.query.core.basic.expression.parser.abstraction.SqlColumnSetter;
+import org.easy.query.core.basic.expression.parser.abstraction.SqlPredicate;
 
 /**
  * @FileName: ExpressionUpdate.java

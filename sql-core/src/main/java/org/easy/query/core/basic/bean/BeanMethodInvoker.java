@@ -1,6 +1,6 @@
 package org.easy.query.core.basic.bean;
 
-import org.easy.query.core.exception.JDQCException;
+import org.easy.query.core.exception.EasyQueryException;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
@@ -28,17 +28,17 @@ public class BeanMethodInvoker implements MethodInvoker{
 
             return readMethod.invoke(obj, null);
         } catch (IllegalArgumentException e) {
-            throw new JDQCException( "错误参数", e);
+            throw new EasyQueryException( "错误参数", e);
 
         } catch (IllegalAccessException e) {
-            throw new JDQCException("无法访问", e);
+            throw new EasyQueryException("无法访问", e);
 
         } catch (InvocationTargetException e) {
             Throwable target = e.getTargetException();
-            if (target instanceof JDQCException) {
-                throw (JDQCException) target;
+            if (target instanceof EasyQueryException) {
+                throw (EasyQueryException) target;
             }
-            throw new JDQCException("属性访问异常", e.getTargetException());
+            throw new EasyQueryException("属性访问异常", e.getTargetException());
         }
     }
 
@@ -57,19 +57,19 @@ public class BeanMethodInvoker implements MethodInvoker{
         try {
             Method method = pd.getWriteMethod();
             if(method==null){
-                throw new JDQCException("找不到相应的set方法，确保方法符合JavaBean规范 " + pd);
+                throw new EasyQueryException("找不到相应的set方法，确保方法符合JavaBean规范 " + pd);
             }
             method.invoke(ins, value);
         } catch (IllegalAccessException e) {
-            throw new JDQCException("无法访问 " + pd, e);
+            throw new EasyQueryException("无法访问 " + pd, e);
         } catch (IllegalArgumentException e) {
-            throw new JDQCException( "错误参数 " + pd, e);
+            throw new EasyQueryException( "错误参数 " + pd, e);
         } catch (InvocationTargetException e) {
             Throwable target = e.getTargetException();
-            if (target instanceof JDQCException) {
-                throw (JDQCException) target;
+            if (target instanceof EasyQueryException) {
+                throw (EasyQueryException) target;
             }
-            throw new JDQCException("属性访问异常 " + pd, e.getTargetException());
+            throw new EasyQueryException("属性访问异常 " + pd, e.getTargetException());
         }
     }
 }

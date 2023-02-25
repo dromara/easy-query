@@ -1,9 +1,12 @@
 package org.easy.query.core.basic.api;
 
-import org.easy.query.core.abstraction.lambda.Property;
-import org.easy.query.core.abstraction.lambda.SqlExpression;
+import org.easy.query.core.basic.expression.lambda.Property;
+import org.easy.query.core.basic.expression.lambda.SqlExpression;
 import org.easy.query.core.abstraction.sql.PageResult;
-import org.easy.query.core.abstraction.sql.base.*;
+import org.easy.query.core.basic.expression.parser.abstraction.SqlAggregatePredicate;
+import org.easy.query.core.basic.expression.parser.abstraction.SqlColumnAsSelector;
+import org.easy.query.core.basic.expression.parser.abstraction.SqlColumnSelector;
+import org.easy.query.core.basic.expression.parser.abstraction.SqlPredicate;
 
 import java.math.BigDecimal;
 import java.util.List;

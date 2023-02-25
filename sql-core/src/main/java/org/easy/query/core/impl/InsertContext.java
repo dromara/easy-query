@@ -1,8 +1,8 @@
 package org.easy.query.core.impl;
 
 import org.easy.query.core.abstraction.EasyQueryRuntimeContext;
-import org.easy.query.core.abstraction.SelectSqlSegmentBuilder;
-import org.easy.query.core.abstraction.SqlSegment0Builder;
+import org.easy.query.core.basic.sql.segment.builder.SelectSqlSegmentBuilder;
+import org.easy.query.core.basic.sql.segment.builder.SqlSegmentBuilder;
 import org.easy.query.core.query.builder.SqlTableInfo;
 
 
@@ -13,7 +13,7 @@ import org.easy.query.core.query.builder.SqlTableInfo;
  * @Created by xuejiaming
  */
 public class InsertContext extends AbstractSqlContext {
-    private final SqlSegment0Builder columns;
+    private final SqlSegmentBuilder columns;
 
     public InsertContext(EasyQueryRuntimeContext runtimeContext){
         super(runtimeContext);
@@ -22,7 +22,7 @@ public class InsertContext extends AbstractSqlContext {
     public void addSqlTable(SqlTableInfo sqlTableInfo){
         this.tables.add(sqlTableInfo);
     }
-    public SqlSegment0Builder getColumns() {
+    public SqlSegmentBuilder getColumns() {
         return columns;
     }
 

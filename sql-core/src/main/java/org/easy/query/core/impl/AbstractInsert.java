@@ -2,22 +2,18 @@ package org.easy.query.core.impl;
 
 import org.easy.query.core.abstraction.EasyExecutor;
 import org.easy.query.core.abstraction.ExecutorContext;
-import org.easy.query.core.abstraction.lambda.SqlExpression;
-import org.easy.query.core.abstraction.metadata.ColumnMetadata;
+import org.easy.query.core.basic.expression.lambda.SqlExpression;
 import org.easy.query.core.abstraction.metadata.EntityMetadata;
-import org.easy.query.core.abstraction.metadata.EntityMetadataManager;
-import org.easy.query.core.abstraction.sql.base.ColumnSelector;
-import org.easy.query.core.abstraction.sql.base.SqlColumnAsSelector;
+import org.easy.query.core.basic.expression.parser.abstraction.internal.ColumnSelector;
 import org.easy.query.core.basic.api.Insert;
-import org.easy.query.core.abstraction.sql.base.SqlColumnSelector;
+import org.easy.query.core.basic.expression.parser.abstraction.SqlColumnSelector;
 import org.easy.query.core.enums.MultiTableTypeEnum;
-import org.easy.query.core.impl.lambda.select.DefaultSqlColumnSelector;
+import org.easy.query.core.basic.expression.parser.impl.DefaultSqlColumnSelector;
 import org.easy.query.core.query.builder.SqlTableInfo;
-import org.easy.query.core.segments.ColumnSegment;
+import org.easy.query.core.basic.sql.segment.segment.ColumnSegment;
 import org.easy.query.core.util.StringUtil;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -62,6 +58,7 @@ public abstract class AbstractInsert<T> implements Insert<T> {
             DefaultSqlColumnSelector<T> columnSelector = new DefaultSqlColumnSelector<>(0, insertContext, insertContext.getColumns());
             selectExpression.apply(columnSelector);
             String insertSql = toSql();
+            System.out.println("插入sql："+insertSql);
             if (!StringUtil.isBlank(insertSql)) {
                 List<String> properties = insertContext.getColumns().getSqlSegments().stream().map(o -> ((ColumnSegment) o).getPropertyName()).collect(Collectors.toList());
                 EasyExecutor easyExecutor = insertContext.getRuntimeContext().getEasyExecutor();
@@ -72,8 +69,6 @@ public abstract class AbstractInsert<T> implements Insert<T> {
         return 0;
     }
 
-    @Override
-    public abstract long executeLastInsertId();
 
     @Override
     public abstract String toSql();

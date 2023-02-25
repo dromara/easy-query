@@ -1,7 +1,7 @@
 package org.easy.query.core.basic.api;
 
-import org.easy.query.core.abstraction.lambda.SqlExpression;
-import org.easy.query.core.abstraction.sql.base.SqlColumnSelector;
+import org.easy.query.core.basic.expression.lambda.SqlExpression;
+import org.easy.query.core.basic.expression.parser.abstraction.SqlColumnSelector;
 
 /**
  * @FileName: EntityUpdate.java

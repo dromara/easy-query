@@ -5,7 +5,7 @@ import org.easy.query.core.basic.api.EntityUpdate;
 import org.easy.query.core.basic.api.ExpressionUpdate;
 import org.easy.query.core.basic.api.Insert;
 import org.easy.query.core.basic.api.Select1;
-import org.easy.query.core.basic.jdbc.Transaction;
+import org.easy.query.core.basic.jdbc.tx.Transaction;
 
 import java.util.Collection;
 
