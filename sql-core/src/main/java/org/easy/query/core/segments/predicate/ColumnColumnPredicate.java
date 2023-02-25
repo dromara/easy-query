@@ -2,6 +2,7 @@ package org.easy.query.core.segments.predicate;
 
 import org.easy.query.core.abstraction.SqlSegment;
 import org.easy.query.core.impl.SelectContext;
+import org.easy.query.core.impl.SqlContext;
 import org.easy.query.core.query.builder.SqlTableInfo;
 
 /**
@@ -16,24 +17,22 @@ public class ColumnColumnPredicate implements Predicate {
     private final int compareIndex;
     private final String compareColumn;
     private final SqlSegment compare;
-    private final SelectContext selectContext;
+    private final SqlContext sqlContext;
 
-    public ColumnColumnPredicate(int index, String column,int compareIndex, String compareColumn, SqlSegment compare, SelectContext selectContext) {
+    public ColumnColumnPredicate(int index, String column,int compareIndex, String compareColumn, SqlSegment compare, SqlContext sqlContext) {
 
         this.index = index;
         this.column = column;
         this.compareIndex = compareIndex;
         this.compareColumn = compareColumn;
         this.compare = compare;
-        this.selectContext = selectContext;
+        this.sqlContext = sqlContext;
     }
 
     @Override
     public String getSql() {
-        SqlTableInfo table = selectContext.getTable(index);
-        String quoteName = selectContext.getQuoteName(column);
-        SqlTableInfo compareTable = selectContext.getTable(compareIndex);
-        String compareQuoteName = selectContext.getQuoteName(compareColumn);
-        return table.getAlias() + "." + quoteName +" "+ compare.getSql() + " "+compareTable.getAlias() + "." + compareQuoteName;
+        String sqlColumnSegment1 = sqlContext.getSqlColumnSegment(index,column);
+        String sqlColumnSegment2 = sqlContext.getSqlColumnSegment(compareIndex,compareColumn);
+        return sqlColumnSegment1 +" "+ compare.getSql() + " "+sqlColumnSegment2;
     }
 }

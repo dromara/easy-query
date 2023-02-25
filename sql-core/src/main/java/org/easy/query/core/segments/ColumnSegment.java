@@ -45,13 +45,9 @@ public class ColumnSegment implements SqlSegment {
 
     @Override
     public String getSql() {
-        SqlTableInfo table = sqlContext.getTable(index);
-        String quoteName = sqlContext.getQuoteName(columnName);
+        String sqlColumnSegment = sqlContext.getSqlColumnSegment(index,columnName);
         StringBuilder sql = new StringBuilder();
-        if (table.getAlias() != null) {
-            sql.append(table.getAlias()).append(".");
-        }
-        sql.append(quoteName);
+        sql.append(sqlColumnSegment);
         if(alias!=null){
             sql.append(" AS ").append(sqlContext.getQuoteName(alias));
         }

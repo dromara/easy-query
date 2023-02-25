@@ -2,7 +2,7 @@ package org.easy.query.core.segments.predicate;
 
 import org.easy.query.core.abstraction.SqlSegment;
 import org.easy.query.core.impl.SelectContext;
-import org.easy.query.core.query.builder.SqlTableInfo;
+import org.easy.query.core.impl.SqlPredicateContext;
 
 /**
  * @FileName: ColumnValuePredicate.java
@@ -15,21 +15,20 @@ public class ColumnValuePredicate implements Predicate {
     private final String column;
     private final Object val;
     private final SqlSegment compare;
-    private final SelectContext selectContext;
+    private final SqlPredicateContext sqlPredicateContext;
 
-    public ColumnValuePredicate(int index, String column, Object val, SqlSegment compare, SelectContext selectContext) {
+    public ColumnValuePredicate(int index, String column, Object val, SqlSegment compare, SqlPredicateContext sqlPredicateContext) {
         this.index = index;
         this.column = column;
         this.val = val;
         this.compare = compare;
-        this.selectContext = selectContext;
+        this.sqlPredicateContext = sqlPredicateContext;
     }
 
     @Override
     public String getSql() {
-        selectContext.addParams(val);
-        SqlTableInfo table = selectContext.getTable(index);
-        String quoteName = selectContext.getQuoteName(column);
-        return table.getAlias() + "." + quoteName + " " + compare.getSql() + " ?";
+        sqlPredicateContext.addParameter(val);
+        String sqlColumnSegment = sqlPredicateContext.getSqlColumnSegment(index,column);
+        return sqlColumnSegment + " " + compare.getSql() + " ?";
     }
 }

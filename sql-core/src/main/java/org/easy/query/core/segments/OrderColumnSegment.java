@@ -25,9 +25,8 @@ public class OrderColumnSegment extends ColumnSegment{
     @Override
     public String getSql() {
 
-        SqlTableInfo table = getSqlContext().getTable(getIndex());
-        String quoteName = getSqlContext().getQuoteName(getColumnName());
-        StringBuilder sql = new StringBuilder().append(table.getAlias()).append(".").append(quoteName);
+        String sqlColumnSegment = getSqlContext().getSqlColumnSegment(getIndex(),getColumnName());
+        StringBuilder sql = new StringBuilder().append(sqlColumnSegment);
         if(asc){
             sql.append(" ").append(SqlKeywordEnum.ASC.getSql());
         }else {

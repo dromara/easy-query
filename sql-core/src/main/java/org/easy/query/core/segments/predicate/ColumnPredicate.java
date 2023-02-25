@@ -2,6 +2,7 @@ package org.easy.query.core.segments.predicate;
 
 import org.easy.query.core.abstraction.SqlSegment;
 import org.easy.query.core.impl.SelectContext;
+import org.easy.query.core.impl.SqlContext;
 import org.easy.query.core.query.builder.SqlTableInfo;
 
 /**
@@ -14,20 +15,19 @@ public class ColumnPredicate implements Predicate {
     private final int index;
     private final String column;
     private final SqlSegment compare;
-    private final SelectContext selectContext;
+    private final SqlContext sqlContext;
 
-    public ColumnPredicate(int index, String column, SqlSegment compare, SelectContext selectContext) {
+    public ColumnPredicate(int index, String column, SqlSegment compare, SqlContext sqlContext) {
 
         this.index = index;
         this.column = column;
         this.compare = compare;
-        this.selectContext = selectContext;
+        this.sqlContext = sqlContext;
     }
 
     @Override
     public String getSql() {
-        SqlTableInfo table = selectContext.getTable(index);
-        String quoteName = selectContext.getQuoteName(column);
-        return table.getAlias() + "." + quoteName +" "+ compare.getSql();
+        String sqlColumnSegment = sqlContext.getSqlColumnSegment(index,column);
+        return sqlColumnSegment +" "+ compare.getSql();
     }
 }

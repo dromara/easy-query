@@ -1,5 +1,6 @@
 package org.easy.query.core.impl;
 
+import org.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import org.easy.query.core.query.builder.SqlTableInfo;
 
 import java.util.List;
@@ -11,7 +12,9 @@ import java.util.List;
  * @Created by xuejiaming
  */
 public interface SqlContext {
+     EasyQueryRuntimeContext getRuntimeContext();
      List<SqlTableInfo> getTables();
      SqlTableInfo getTable(int index);
      String getQuoteName(String value);
+     String getSqlColumnSegment(int tableIndex,String columnName);
 }

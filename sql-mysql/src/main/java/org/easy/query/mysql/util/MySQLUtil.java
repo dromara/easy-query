@@ -37,8 +37,8 @@ public class MySQLUtil {
             throw new JDQCException("未找到查询表信息");
         }
         //将条件参数清空
-        if (!selectContext.getParams().isEmpty()) {
-            selectContext.getParams().clear();
+        if (!selectContext.getParameters().isEmpty()) {
+            selectContext.getParameters().clear();
         }
         StringBuilder sql = new StringBuilder("SELECT ");
         for (int i = 0; i < tableCount; i++) {
@@ -135,6 +135,23 @@ public class MySQLUtil {
             sql.append(whereColumnSegment.getSql()).append(" = ?");
             i++;
         }
+        return sql.toString();
+    }
+    public static String toUpdateExpressionSql(UpdateContext updateContext){
+
+        int tableCount = updateContext.getTables().size();
+        if (tableCount == 0) {
+            throw new JDQCException("未找到查询表信息");
+        }
+        if (tableCount > 1) {
+            throw new JDQCException("找到多张表信息");
+        }
+
+        StringBuilder sql = new StringBuilder("UPDATE ");
+        SqlTableInfo table = updateContext.getTable(0);
+        String tableName = table.getEntityMetadata().getTableName();
+        sql.append(tableName).append(" SET ").append(updateContext.getSetColumns().toSql());
+        sql.append(" WHERE ").append(updateContext.getWhere().getSql());
         return sql.toString();
     }
 }

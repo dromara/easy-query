@@ -5,6 +5,7 @@ import org.easy.query.core.abstraction.sql.base.SqlColumnAsSelector;
 import org.easy.query.core.abstraction.sql.base.SqlColumnSelector;
 import org.easy.query.core.abstraction.sql.base.SqlPredicate;
 import org.easy.query.core.impl.SelectContext;
+import org.easy.query.core.impl.SqlPredicateContext;
 import org.easy.query.core.impl.lambda.select.DefaultSqlAggregatePredicate;
 import org.easy.query.core.impl.lambda.select.DefaultSqlColumnAsSelector;
 import org.easy.query.core.impl.lambda.select.DefaultSqlColumnSelector;
@@ -19,13 +20,13 @@ import org.easy.query.core.segments.PredicateSegment;
  */
 public class DefaultEasyQueryLambdaFactory implements EasyQueryLambdaFactory{
     @Override
-    public <T1> SqlPredicate<T1> createSqlPredicate(int index, SelectContext selectContext, PredicateSegment predicateSegment) {
-        return new DefaultSqlPredicate<>(index,selectContext,predicateSegment);
+    public <T1> SqlPredicate<T1> createSqlPredicate(int index, SqlPredicateContext sqlPredicateContext, PredicateSegment predicateSegment) {
+        return new DefaultSqlPredicate<>(index,sqlPredicateContext,predicateSegment);
     }
 
     @Override
-    public <T1> SqlAggregatePredicate<T1> createSqlAggregatePredicate(int index, SelectContext selectContext, PredicateSegment predicateSegment) {
-        return new DefaultSqlAggregatePredicate<>(index,selectContext,predicateSegment);
+    public <T1> SqlAggregatePredicate<T1> createSqlAggregatePredicate(int index, SqlPredicateContext sqlPredicateContext, PredicateSegment predicateSegment) {
+        return new DefaultSqlAggregatePredicate<>(index,sqlPredicateContext,predicateSegment);
     }
 
     @Override

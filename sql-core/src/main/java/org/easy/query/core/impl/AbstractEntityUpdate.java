@@ -38,7 +38,8 @@ public abstract class AbstractEntityUpdate<T> implements EntityUpdate<T> {
             throw new JDQCException("不支持空对象的update");
         }
         this.entities.addAll(entities);
-        this.clazz = (Class<T>)entities.stream().findFirst().orElse(null).getClass();
+
+        this.clazz = (Class<T>)entities.iterator().next().getClass();
         this.updateContext = updateContext;
         this.entityMetadata = updateContext.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(clazz);
         entityMetadata.checkTable();
@@ -64,6 +65,7 @@ public abstract class AbstractEntityUpdate<T> implements EntityUpdate<T> {
                     whereColumns.append(new ColumnSegment(0, column.getName(),propertyName,updateContext));
                 }
             }
+            //如果用户没有指定set的列,那么就是set所有列,并且要去掉主键部分
             if (updateContext.getSetColumns().isEmpty()) {
                 SqlExpression<SqlColumnSelector<T>> selectExpression = ColumnSelector::columnAll;
                 DefaultSqlColumnSelector<T> columnSelector = new DefaultSqlColumnSelector<>(0, updateContext, updateContext.getSetColumns());

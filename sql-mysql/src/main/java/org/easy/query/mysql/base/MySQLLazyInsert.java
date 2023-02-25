@@ -18,13 +18,13 @@ public class MySQLLazyInsert<T> implements Insert<T> {
     }
     @Override
     public Insert<T> insert(T entity) {
-        if(entity==null){
-            return  this;
-        }
-        MySQLInsert<T> tMySQLInsert = new MySQLInsert<>((Class<T>) entity.getClass(), insertContext);
-        tMySQLInsert.insert(entity);
-        return tMySQLInsert;
+    if(entity==null){
+        return  this;
     }
+    MySQLInsert<T> tMySQLInsert = new MySQLInsert<>((Class<T>) entity.getClass(), insertContext);
+    tMySQLInsert.insert(entity);
+    return tMySQLInsert;
+}
 
     @Override
     public long executeRows() {

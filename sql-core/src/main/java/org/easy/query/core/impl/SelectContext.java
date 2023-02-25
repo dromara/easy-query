@@ -15,7 +15,7 @@ import java.util.*;
  * @Date: 2023/2/6 12:39
  * @Created by xuejiaming
  */
-public  class SelectContext extends AbstractSqlContext {
+public  class SelectContext extends AbstractSqlPredicateContext {
 
     private final String alias;
 
@@ -121,11 +121,12 @@ public  class SelectContext extends AbstractSqlContext {
         return order;
     }
 
-    public List<Object> getParams() {
+    @Override
+    public List<Object> getParameters() {
         return params;
     }
-    public void addParams(Object parameter) {
+    @Override
+    public void addParameter(Object parameter) {
        params.add(parameter);
     }
-
 }

@@ -7,6 +7,7 @@ import org.easy.query.core.abstraction.sql.base.SqlAggregatePredicate;
 import org.easy.query.core.abstraction.sql.enums.IEasyFunc;
 import org.easy.query.core.abstraction.sql.enums.IEasyPredicate;
 import org.easy.query.core.impl.SelectContext;
+import org.easy.query.core.impl.SqlPredicateContext;
 import org.easy.query.core.segments.AndPredicateSegment;
 import org.easy.query.core.segments.OrPredicateSegment;
 import org.easy.query.core.segments.PredicateSegment;
@@ -20,13 +21,13 @@ import org.easy.query.core.segments.predicate.FuncColumnValuePredicate;
  */
 public class DefaultSqlAggregatePredicate<T1> implements SqlAggregatePredicate<T1> {
     private final int index;
-    private final SelectContext selectContext;
+    private final SqlPredicateContext sqlPredicateContext;
     private final PredicateSegment rootPredicateSegment;
     private PredicateSegment nextPredicateSegment;
 
-    public DefaultSqlAggregatePredicate(int index, SelectContext selectContext, PredicateSegment predicateSegment) {
+    public DefaultSqlAggregatePredicate(int index, SqlPredicateContext sqlPredicateContext, PredicateSegment predicateSegment) {
         this.index = index;
-        this.selectContext = selectContext;
+        this.sqlPredicateContext = sqlPredicateContext;
         this.rootPredicateSegment = predicateSegment;
         this.nextPredicateSegment = new AndPredicateSegment();
     }
@@ -37,8 +38,8 @@ public class DefaultSqlAggregatePredicate<T1> implements SqlAggregatePredicate<T
     @Override
     public SqlAggregatePredicate<T1> func(boolean condition, IEasyFunc easyAggregate, Property<T1, ?> column, IEasyPredicate predicate, Object val) {
         if (condition) {
-            String columnName = selectContext.getTable(getIndex()).getColumnName(column);
-            nextPredicateSegment.setPredicate(new FuncColumnValuePredicate(index,easyAggregate, columnName, val, predicate, selectContext));
+            String columnName = sqlPredicateContext.getTable(getIndex()).getColumnName(column);
+            nextPredicateSegment.setPredicate(new FuncColumnValuePredicate(index,easyAggregate, columnName, val, predicate, sqlPredicateContext));
             nextAnd();
         }
         return this;
@@ -67,7 +68,7 @@ public class DefaultSqlAggregatePredicate<T1> implements SqlAggregatePredicate<T
     public SqlAggregatePredicate<T1> and(boolean condition, SqlExpression<SqlAggregatePredicate<T1>> predicateSqlExpression) {
         if (condition) {
             this.rootPredicateSegment.addPredicateSegment(this.nextPredicateSegment);
-            SqlAggregatePredicate<T1> sqlPredicate = selectContext.getRuntimeContext().getEasyQueryLambdaFactory().createSqlAggregatePredicate(index, selectContext, this.nextPredicateSegment);
+            SqlAggregatePredicate<T1> sqlPredicate = sqlPredicateContext.getRuntimeContext().getEasyQueryLambdaFactory().createSqlAggregatePredicate(index, sqlPredicateContext, this.nextPredicateSegment);
             predicateSqlExpression.apply(sqlPredicate);
         }
         return this;
@@ -86,7 +87,7 @@ public class DefaultSqlAggregatePredicate<T1> implements SqlAggregatePredicate<T
         if (condition) {
             this.nextPredicateSegment = new OrPredicateSegment();
             this.rootPredicateSegment.addPredicateSegment(this.nextPredicateSegment);
-            SqlAggregatePredicate<T1> sqlPredicate = selectContext.getRuntimeContext().getEasyQueryLambdaFactory().createSqlAggregatePredicate(index, selectContext, this.nextPredicateSegment);
+            SqlAggregatePredicate<T1> sqlPredicate = sqlPredicateContext.getRuntimeContext().getEasyQueryLambdaFactory().createSqlAggregatePredicate(index, sqlPredicateContext, this.nextPredicateSegment);
             predicateSqlExpression.apply(sqlPredicate);
         }
         return this;

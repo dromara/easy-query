@@ -41,9 +41,8 @@ public class FuncColumnSegment  implements SqlSegment {
 
     @Override
     public String getSql() {
-        SqlTableInfo table = sqlContext.getTable(index);
-        String quoteName = sqlContext.getQuoteName(columnName);
-        String funcColumn = easyFunc.getFuncColumn(table.getAlias() + "." + quoteName);
+        String sqlColumnSegment = sqlContext.getSqlColumnSegment(index,columnName);
+        String funcColumn = easyFunc.getFuncColumn(sqlColumnSegment);
         StringBuilder sql = new StringBuilder().append(funcColumn);
         if(getAlias()!=null){
             sql.append(" AS ").append(sqlContext.getQuoteName(getAlias()));

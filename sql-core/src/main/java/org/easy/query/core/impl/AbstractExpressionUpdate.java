@@ -1,10 +1,16 @@
 package org.easy.query.core.impl;
 
 import org.easy.query.core.abstraction.lambda.SqlExpression;
+import org.easy.query.core.abstraction.metadata.EntityMetadata;
 import org.easy.query.core.abstraction.sql.base.SqlColumnSetter;
 import org.easy.query.core.abstraction.sql.base.SqlPredicate;
 import org.easy.query.core.basic.api.ExpressionUpdate;
 import org.easy.query.core.basic.api.Update;
+import org.easy.query.core.enums.MultiTableTypeEnum;
+import org.easy.query.core.impl.lambda.select.DefaultSqlColumnSetter;
+import org.easy.query.core.impl.lambda.select.DefaultSqlPredicate;
+import org.easy.query.core.query.builder.SqlTableInfo;
+import org.easy.query.core.util.StringUtil;
 
 /**
  * @FileName: AbstractExpressionUpdate.java
@@ -12,27 +18,30 @@ import org.easy.query.core.basic.api.Update;
  * @Date: 2023/2/25 08:24
  * @Created by xuejiaming
  */
-public class AbstractExpressionUpdate<T> implements ExpressionUpdate<T> {
-    private final Class<T> clazz;
-    private final UpdateContext updateContext;
+public abstract class AbstractExpressionUpdate<T> implements ExpressionUpdate<T> {
+    protected final Class<T> clazz;
+    protected final UpdateContext updateContext;
 
     public AbstractExpressionUpdate(Class<T> clazz, UpdateContext updateContext){
 
         this.clazz = clazz;
         this.updateContext = updateContext;
-    }
-    @Override
-    public Update<T> set(SqlExpression<SqlColumnSetter<T>> setExpression) {
-        return null;
-    }
-
-    @Override
-    public Update<T> where(SqlExpression<SqlPredicate<T>> whereExpression) {
-        return null;
+        EntityMetadata entityMetadata = updateContext.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(clazz);
+        entityMetadata.checkTable();
+        updateContext.addSqlTable(new SqlTableInfo(entityMetadata, null, 0, MultiTableTypeEnum.FROM));
     }
 
     @Override
     public long executeRows() {
+        if(!updateContext.getSetColumns().isEmpty()&&!updateContext.getWhere().isEmpty()){
+
+            String updateSql = toSql();
+            System.out.println("表达式更新："+updateSql);
+            if(StringUtil.isNotBlank(updateSql)){
+
+            }
+        }
+
         return 0;
     }
 
@@ -42,7 +51,20 @@ public class AbstractExpressionUpdate<T> implements ExpressionUpdate<T> {
     }
 
     @Override
-    public String toSql() {
-        return null;
+    public ExpressionUpdate<T> set(boolean condition, SqlExpression<SqlColumnSetter<T>> setExpression) {
+        if(condition){
+            DefaultSqlColumnSetter<T> columnSetter = new DefaultSqlColumnSetter<>(0, updateContext, updateContext.getSetColumns());
+            setExpression.apply(columnSetter);
+        }
+        return this;
+    }
+
+    @Override
+    public ExpressionUpdate<T> where(boolean condition, SqlExpression<SqlPredicate<T>> whereExpression) {
+        if(condition){
+            DefaultSqlPredicate<T> sqlPredicate = new DefaultSqlPredicate<>(0, updateContext, updateContext.getWhere());
+            whereExpression.apply(sqlPredicate);
+        }
+        return this;
     }
 }

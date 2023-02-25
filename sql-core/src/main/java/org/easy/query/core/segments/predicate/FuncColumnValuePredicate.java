@@ -3,7 +3,7 @@ package org.easy.query.core.segments.predicate;
 import org.easy.query.core.abstraction.sql.enums.IEasyFunc;
 import org.easy.query.core.abstraction.sql.enums.IEasyPredicate;
 import org.easy.query.core.impl.SelectContext;
-import org.easy.query.core.query.builder.SqlTableInfo;
+import org.easy.query.core.impl.SqlPredicateContext;
 
 /**
  * @FileName: ColumnValuePredicate.java
@@ -17,23 +17,22 @@ public class FuncColumnValuePredicate implements Predicate {
     private final String column;
     private final Object val;
     private final IEasyPredicate compare;
-    private final SelectContext selectContext;
+    private final SqlPredicateContext sqlPredicateContext;
 
-    public FuncColumnValuePredicate(int index, IEasyFunc func, String column, Object val, IEasyPredicate compare, SelectContext selectContext) {
+    public FuncColumnValuePredicate(int index, IEasyFunc func, String column, Object val, IEasyPredicate compare, SqlPredicateContext sqlPredicateContext) {
 
         this.index = index;
         this.func = func;
         this.column = column;
         this.val = val;
         this.compare = compare;
-        this.selectContext = selectContext;
+        this.sqlPredicateContext = sqlPredicateContext;
     }
 
     @Override
     public String getSql() {
-        selectContext.addParams(val);
-        SqlTableInfo table = selectContext.getTable(index);
-        String quoteName = selectContext.getQuoteName(column);
-        return func.getFuncColumn(table.getAlias() + "." + quoteName) +" "+ compare.getPredicate() + " ?";
+        sqlPredicateContext.addParameter(val);
+        String sqlColumnSegment = sqlPredicateContext.getSqlColumnSegment(index,column);
+        return func.getFuncColumn(sqlColumnSegment) +" "+ compare.getPredicate() + " ?";
     }
 }

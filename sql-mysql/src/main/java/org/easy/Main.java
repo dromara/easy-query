@@ -97,6 +97,7 @@ public class Main {
         TestUserMysql testUserMysql3 = new TestUserMysql();
         long l1 = client.update(testUserMysql3).setColumns(o->o.column(TestUserMysql::getName)).executeRows();
         long l12 = client.update(testUserMysql3).setColumns(o->o.column(TestUserMysql::getName)).whereColumns(o->o.column(TestUserMysql::getAge)).executeRows();
+        long xhn = client.update(TestUserMysql.class).set(o -> o.set(TestUserMysql::getAge, 12).set(TestUserMysql::getName, "xhn")).where(o -> o.eq(TestUserMysql::getId, "123")).executeRows();
 //
 //        ArrayList<SysUserLogbyMonth> sysUserLogbyMonthsxx = new ArrayList<>();
 //        for (int j = 0; j < 10000; j++) {

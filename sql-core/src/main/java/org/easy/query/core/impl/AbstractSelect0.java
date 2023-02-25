@@ -246,7 +246,7 @@ public abstract class AbstractSelect0<T1, TChain> implements Select0<T1, TChain>
     protected <TR> List<TR> toInternalList(Class<TR> resultClass,String columns) {
         String sql = toSql(columns);
         EasyExecutor easyExecutor = selectContext.getRuntimeContext().getEasyExecutor();
-        return easyExecutor.query(ExecutorContext.create(selectContext.getRuntimeContext()),resultClass,sql,selectContext.getParams());
+        return easyExecutor.query(ExecutorContext.create(selectContext.getRuntimeContext()),resultClass,sql,selectContext.getParameters());
     }
 
     @Override

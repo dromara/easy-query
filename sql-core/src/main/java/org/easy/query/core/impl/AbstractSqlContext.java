@@ -20,6 +20,7 @@ public abstract class AbstractSqlContext implements SqlContext{
         this.runtimeContext = runtimeContext;
         this.tables=new ArrayList<>();
     }
+
     @Override
     public List<SqlTableInfo> getTables() {
         return tables;
@@ -34,6 +35,19 @@ public abstract class AbstractSqlContext implements SqlContext{
     public String getQuoteName(String value) {
         return runtimeContext.getEasyQueryConfiguration().getDialect().getQuoteName(value);
     }
+
+    @Override
+    public String getSqlColumnSegment(int tableIndex,String columnName){
+        SqlTableInfo table = getTable(tableIndex);
+        String alias = table.getAlias();
+        String quoteName = getQuoteName(columnName);
+        if(alias==null){
+            return quoteName;
+        }else{
+            return alias+"."+quoteName;
+        }
+    }
+    @Override
     public EasyQueryRuntimeContext getRuntimeContext() {
         return runtimeContext;
     }

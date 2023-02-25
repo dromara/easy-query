@@ -68,14 +68,14 @@ public class MySQLJQDCClient implements JQDCClient {
         if(entities==null||entities.isEmpty()){
             return new MySQLLazyInsert<T1>(new InsertContext(runtimeContext));
         }
-        MySQLInsert<T1> t1MySQLInsert = new MySQLInsert<>((Class<T1>) entities.stream().findFirst().orElse(null).getClass(), new InsertContext(runtimeContext));
+        MySQLInsert<T1> t1MySQLInsert = new MySQLInsert<>((Class<T1>) entities.iterator().next().getClass(), new InsertContext(runtimeContext));
         t1MySQLInsert.insert(entities);
         return t1MySQLInsert;
     }
 
     @Override
     public <T1> ExpressionUpdate<T1> update(Class<T1> entityClass) {
-        return null;
+        return new MySQLExpressionUpdate<T1>(entityClass, new UpdateContext(runtimeContext,true));
     }
 
     @Override
@@ -83,7 +83,7 @@ public class MySQLJQDCClient implements JQDCClient {
         if(entity==null){
             return new MySQLLazyUpdate<>();
         }
-        return new MySQLEntityUpdate<>(Arrays.asList(entity), new UpdateContext(runtimeContext));
+        return new MySQLEntityUpdate<>(Arrays.asList(entity), new UpdateContext(runtimeContext,false));
     }
 
     @Override
@@ -91,6 +91,6 @@ public class MySQLJQDCClient implements JQDCClient {
         if(entities==null||entities.isEmpty()){
             return new MySQLLazyUpdate<>();
         }
-        return new MySQLEntityUpdate<>(entities, new UpdateContext(runtimeContext));
+        return new MySQLEntityUpdate<>(entities, new UpdateContext(runtimeContext,false));
     }
 }

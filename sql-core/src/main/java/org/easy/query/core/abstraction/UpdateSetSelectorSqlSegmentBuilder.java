@@ -10,7 +10,7 @@ import java.util.List;
  * @Date: 2023/2/24 22:15
  * @Created by xuejiaming
  */
-public class UpdateSetSqlSegmentBuilder extends AbstractSqlSegmentBuilder {
+public class UpdateSetSelectorSqlSegmentBuilder extends AbstractSqlSegmentBuilder {
     @Override
     public String toSql() {
 
@@ -20,7 +20,7 @@ public class UpdateSetSqlSegmentBuilder extends AbstractSqlSegmentBuilder {
             if(sb.length()!=0){
                 sb.append(SqlKeywordEnum.DOT.getSql());
             }
-            sb.append(sqlSegment.getSql());
+            sb.append(sqlSegment.getSql()).append(" = ?");
 
         }
         return sb.toString();
