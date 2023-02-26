@@ -146,7 +146,7 @@ public class MySQLUtil {
         if (tableCount > 1) {
             throw new EasyQueryException("找到多张表信息");
         }
-        if(updateContext.getWhereColumns().isEmpty()){
+        if(updateContext.getWhere().isEmpty()){
             throw new EasyQueryException("更新需要设置条件");
         }
 

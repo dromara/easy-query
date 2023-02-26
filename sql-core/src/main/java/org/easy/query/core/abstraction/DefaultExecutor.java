@@ -160,7 +160,7 @@ public class DefaultExecutor implements EasyExecutor {
         int paramSize = parameters.size();
         for (int i = 0; i < paramSize; i++) {
             easyParameter.setIndex(i);
-            JdbcTypeHandler handler = easyJdbcTypeHandler.getHandler(easyParameter.getValue().getClass());
+            JdbcTypeHandler handler = easyJdbcTypeHandler.getHandler(easyParameter.getValueType());
             handler.setParameter(easyParameter);
         }
         return preparedStatement;

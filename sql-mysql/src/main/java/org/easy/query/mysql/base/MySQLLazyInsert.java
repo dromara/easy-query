@@ -32,11 +32,6 @@ public class MySQLLazyInsert<T> implements Insert<T> {
     }
 
     @Override
-    public long executeLastInsertId() {
-        return 0;
-    }
-
-    @Override
     public String toSql() {
         return null;
     }

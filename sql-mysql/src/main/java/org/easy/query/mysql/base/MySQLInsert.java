@@ -15,10 +15,6 @@ public class MySQLInsert<T> extends AbstractInsert<T> {
         super(clazz, insertContext);
     }
 
-    @Override
-    public long executeLastInsertId() {
-        return 0;
-    }
 
     @Override
     public String toSql() {

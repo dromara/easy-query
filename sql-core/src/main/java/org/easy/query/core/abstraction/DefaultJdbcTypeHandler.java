@@ -81,6 +81,9 @@ public class DefaultJdbcTypeHandler implements EasyJdbcTypeHandler{
 
     @Override
     public JdbcTypeHandler getHandler(Class type) {
+        if(type==null){
+            return DEFAULT_HANDLER;
+        }
         return handlers.getOrDefault(type,DEFAULT_HANDLER);
     }
 }

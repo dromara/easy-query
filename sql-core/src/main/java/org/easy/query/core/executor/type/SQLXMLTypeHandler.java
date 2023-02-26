@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import java.sql.Types;
 
 /**
- * @FileName: DateTypeHandler.java
+ * @FileName: SQLXMLTypeHandler.java
  * @Description: 文件说明
  * @Date: 2023/2/17 21:56
  * @Created by xuejiaming

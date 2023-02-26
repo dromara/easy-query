@@ -30,6 +30,18 @@ public class EasyParameter {
         return values.get(index);
     }
 
+    /**
+     * value type
+     * @return
+     */
+    public Class<?> getValueType(){
+        Object value = getValue();
+        if(value==null){
+            return null;
+        }
+        return value.getClass();
+    }
+
     public PreparedStatement getPs() {
         return ps;
     }
