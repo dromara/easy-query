@@ -1,6 +1,6 @@
 package org.easy.query.core.query.builder;
 
-import org.easy.query.core.basic.expression.lambda.Property;
+import org.easy.query.core.expression.lambda.Property;
 import org.easy.query.core.abstraction.metadata.ColumnMetadata;
 import org.easy.query.core.enums.MultiTableTypeEnum;
 import org.easy.query.core.abstraction.metadata.EntityMetadata;

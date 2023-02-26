@@ -26,6 +26,7 @@ public class ColumnSetValuePredicate implements Predicate {
 
     @Override
     public String getSql() {
+        updateContext.addParameter(val);
         String sqlColumnSegment = updateContext.getSqlColumnSegment(index,column);
         return  sqlColumnSegment + " = ?";
     }

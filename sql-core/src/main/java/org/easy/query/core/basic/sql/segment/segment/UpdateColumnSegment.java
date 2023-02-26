@@ -1,6 +1,7 @@
 package org.easy.query.core.basic.sql.segment.segment;
 
 import org.easy.query.core.impl.SqlContext;
+import org.easy.query.core.impl.UpdateContext;
 
 /**
  * @FileName: ColumnSegment.java
@@ -11,6 +12,29 @@ import org.easy.query.core.impl.SqlContext;
 public class UpdateColumnSegment implements SqlSegment {
     private final int index;
 
+    private final String columnName;
+
+    private final String propertyName;
+    private final UpdateContext updateContext;
+
+    public UpdateColumnSegment(int index, String columnName, String propertyName, UpdateContext updateContext){
+        this.index = index;
+        this.columnName = columnName;
+        this.propertyName = propertyName;
+        this.updateContext = updateContext;
+    }
+
+    @Override
+    public String getSql() {
+        updateContext.addColumnProperty(propertyName);
+        String sqlColumnSegment = updateContext.getSqlColumnSegment(index,columnName);
+        return sqlColumnSegment + " = ?";
+    }
+
+    public int getIndex() {
+        return index;
+    }
+
     public String getColumnName() {
         return columnName;
     }
@@ -19,30 +43,4 @@ public class UpdateColumnSegment implements SqlSegment {
         return propertyName;
     }
 
-    public SqlContext getSqlContext() {
-        return sqlContext;
-    }
-
-    private final String columnName;
-
-    private final String propertyName;
-    private final SqlContext sqlContext;
-
-    public UpdateColumnSegment(int index, String columnName, String propertyName, SqlContext sqlContext){
-        this.index = index;
-
-        this.columnName = columnName;
-        this.propertyName = propertyName;
-        this.sqlContext = sqlContext;
-    }
-
-    @Override
-    public String getSql() {
-        String sqlColumnSegment = sqlContext.getSqlColumnSegment(index,columnName);
-        return sqlColumnSegment + " = ?";
-    }
-
-    public int getIndex() {
-        return index;
-    }
 }

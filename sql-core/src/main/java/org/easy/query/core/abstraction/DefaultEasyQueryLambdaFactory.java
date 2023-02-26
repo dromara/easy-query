@@ -1,16 +1,16 @@
 package org.easy.query.core.abstraction;
 
-import org.easy.query.core.basic.expression.parser.abstraction.SqlAggregatePredicate;
-import org.easy.query.core.basic.expression.parser.abstraction.SqlColumnAsSelector;
-import org.easy.query.core.basic.expression.parser.abstraction.SqlColumnSelector;
-import org.easy.query.core.basic.expression.parser.abstraction.SqlPredicate;
+import org.easy.query.core.expression.parser.abstraction.SqlAggregatePredicate;
+import org.easy.query.core.expression.parser.abstraction.SqlColumnAsSelector;
+import org.easy.query.core.expression.parser.abstraction.SqlColumnSelector;
+import org.easy.query.core.expression.parser.abstraction.SqlPredicate;
 import org.easy.query.core.basic.sql.segment.builder.SqlSegmentBuilder;
 import org.easy.query.core.impl.SelectContext;
 import org.easy.query.core.impl.SqlPredicateContext;
-import org.easy.query.core.basic.expression.parser.impl.DefaultSqlAggregatePredicate;
-import org.easy.query.core.basic.expression.parser.impl.DefaultSqlColumnAsSelector;
-import org.easy.query.core.basic.expression.parser.impl.DefaultSqlColumnSelector;
-import org.easy.query.core.basic.expression.parser.impl.DefaultSqlPredicate;
+import org.easy.query.core.expression.parser.impl.DefaultSqlAggregatePredicate;
+import org.easy.query.core.expression.parser.impl.DefaultSqlColumnAsSelector;
+import org.easy.query.core.expression.parser.impl.DefaultSqlColumnSelector;
+import org.easy.query.core.expression.parser.impl.DefaultSqlPredicate;
 import org.easy.query.core.basic.sql.segment.segment.PredicateSegment;
 
 /**

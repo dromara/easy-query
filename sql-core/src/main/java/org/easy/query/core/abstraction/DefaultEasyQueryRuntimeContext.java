@@ -2,6 +2,7 @@ package org.easy.query.core.abstraction;
 
 import org.easy.query.core.abstraction.metadata.EntityMetadataManager;
 import org.easy.query.core.basic.jdbc.con.EasyConnectionManager;
+import org.easy.query.core.basic.jdbc.types.EasyJdbcTypeHandlerManager;
 import org.easy.query.core.config.EasyQueryConfiguration;
 
 /**
@@ -16,14 +17,14 @@ public class DefaultEasyQueryRuntimeContext implements EasyQueryRuntimeContext {
     private final EasyQueryLambdaFactory easyQueryLambdaFactory;
     private final EasyConnectionManager easyConnectionManager;
     private final EasyExecutor easyExecutor;
-    private final EasyJdbcTypeHandler easyJdbcTypeHandler;
+    private final EasyJdbcTypeHandlerManager easyJdbcTypeHandler;
 
     public DefaultEasyQueryRuntimeContext(EasyQueryConfiguration easyQueryConfiguration,
                                           EntityMetadataManager entityMetadataManager,
                                           EasyQueryLambdaFactory easyQueryLambdaFactory,
                                           EasyConnectionManager easyConnectionManager,
                                           EasyExecutor easyExecutor,
-                                          EasyJdbcTypeHandler easyJdbcTypeHandler){
+                                          EasyJdbcTypeHandlerManager easyJdbcTypeHandler){
         this.easyQueryConfiguration = easyQueryConfiguration;
         this.entityMetadataManager = entityMetadataManager;
         this.easyQueryLambdaFactory = easyQueryLambdaFactory;
@@ -58,7 +59,7 @@ public class DefaultEasyQueryRuntimeContext implements EasyQueryRuntimeContext {
     }
 
     @Override
-    public EasyJdbcTypeHandler getEasyJdbcTypeHandler() {
+    public EasyJdbcTypeHandlerManager getEasyJdbcTypeHandlerManager() {
         return easyJdbcTypeHandler;
     }
 }

@@ -1,7 +1,7 @@
 package org.easy.query.mysql.base;
 
-import org.easy.query.core.basic.expression.lambda.SqlExpression;
-import org.easy.query.core.basic.expression.parser.abstraction.SqlColumnSelector;
+import org.easy.query.core.expression.lambda.SqlExpression;
+import org.easy.query.core.expression.parser.abstraction.SqlColumnSelector;
 import org.easy.query.core.basic.api.EntityUpdate;
 
 /**

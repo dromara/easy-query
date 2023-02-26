@@ -9,6 +9,7 @@ import org.easy.query.core.impl.UpdateContext;
 import org.easy.query.core.query.builder.SqlTableInfo;
 import org.easy.query.core.util.StringUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -32,13 +33,13 @@ public class MySQLUtil {
      */
     public static String toSelectSql(SelectContext selectContext, String select) {
 
-        int tableCount = selectContext.getTables().size();
-        if (tableCount == 0) {
-            throw new EasyQueryException("未找到查询表信息");
-        }
         //将条件参数清空
         if (!selectContext.getParameters().isEmpty()) {
             selectContext.getParameters().clear();
+        }
+        int tableCount = selectContext.getTables().size();
+        if (tableCount == 0) {
+            throw new EasyQueryException("未找到查询表信息");
         }
         StringBuilder sql = new StringBuilder("SELECT ");
         for (int i = 0; i < tableCount; i++) {
@@ -110,6 +111,10 @@ public class MySQLUtil {
     }
     public static String toUpdateEntitySql(UpdateContext updateContext){
 
+        //将条件参数清空
+        if (!updateContext.getProperties().isEmpty()) {
+            updateContext.getProperties().clear();
+        }
         int tableCount = updateContext.getTables().size();
         if (tableCount == 0) {
             throw new EasyQueryException("未找到查询表信息");
@@ -126,19 +131,15 @@ public class MySQLUtil {
         String tableName = table.getEntityMetadata().getTableName();
         sql.append(tableName).append(" SET ").append(updateContext.getSetColumns().toSql());
         sql.append(" WHERE ");
-        List<SqlSegment> whereColumnSegments = updateContext.getWhereColumns().getSqlSegments();
-        int i =0;
-        for (SqlSegment whereColumnSegment : whereColumnSegments) {
-            if(i!=0){
-                sql.append(" ").append(SqlKeywordEnum.AND.getSql()).append(" ");
-            }
-            sql.append(whereColumnSegment.getSql()).append(" = ?");
-            i++;
-        }
+        sql.append( updateContext.getWhereColumns().toSql());
         return sql.toString();
     }
     public static String toUpdateExpressionSql(UpdateContext updateContext){
 
+        //将条件参数清空
+        if (!updateContext.getParameters().isEmpty()) {
+            updateContext.getParameters().clear();
+        }
         int tableCount = updateContext.getTables().size();
         if (tableCount == 0) {
             throw new EasyQueryException("未找到查询表信息");

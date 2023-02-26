@@ -24,12 +24,14 @@ public class UpdateContext extends AbstractSqlPredicateContext{
     private SqlSegmentBuilder setIgnoreColumns;
     private SqlSegmentBuilder whereColumns;
     private final List<Object> parameters;
+    private final List<String> properties;
 
     public UpdateContext(EasyQueryRuntimeContext runtimeContext,boolean expressionUpdate) {
         super(runtimeContext);
         setColumns =new UpdateSetSqlSegmentBuilder();
         where=new AndPredicateSegment(true);
         parameters=expressionUpdate?new ArrayList<>():null;
+        properties=expressionUpdate?null:new ArrayList<>();
     }
     public void addSqlTable(SqlTableInfo sqlTableInfo){
         this.tables.add(sqlTableInfo);
@@ -63,5 +65,12 @@ public class UpdateContext extends AbstractSqlPredicateContext{
     @Override
     public void addParameter(Object parameter) {
         parameters.add(parameter);
+    }
+
+    public List<String> getProperties() {
+        return properties;
+    }
+    public void addColumnProperty(String propertyName) {
+         properties.add(propertyName);
     }
 }

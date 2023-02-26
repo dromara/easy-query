@@ -1,6 +1,6 @@
 package org.easy.query.core.metadata;
 
-import org.easy.query.core.basic.expression.lambda.Property;
+import org.easy.query.core.expression.lambda.Property;
 import org.easy.query.core.exception.EasyQueryException;
 import org.easy.query.core.util.StringUtil;
 

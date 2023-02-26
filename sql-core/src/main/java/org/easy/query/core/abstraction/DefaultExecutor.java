@@ -5,10 +5,12 @@ import org.easy.query.core.abstraction.metadata.EntityMetadata;
 import org.easy.query.core.abstraction.metadata.EntityMetadataManager;
 import org.easy.query.core.basic.jdbc.con.EasyConnection;
 import org.easy.query.core.basic.jdbc.con.EasyConnectionManager;
+import org.easy.query.core.basic.jdbc.types.EasyJdbcTypeHandlerManager;
 import org.easy.query.core.exception.EasyQueryException;
-import org.easy.query.core.executor.EasyParameter;
-import org.easy.query.core.executor.EasyResultSet;
-import org.easy.query.core.executor.type.JdbcTypeHandler;
+import org.easy.query.core.basic.jdbc.types.EasyParameter;
+import org.easy.query.core.basic.jdbc.types.EasyResultSet;
+import org.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
+import org.easy.query.core.util.ArrayUtil;
 import org.easy.query.core.util.ClassUtil;
 import org.easy.query.core.util.StringUtil;
 
@@ -17,6 +19,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -30,45 +33,64 @@ public class DefaultExecutor implements EasyExecutor {
     private static final int PROPERTY_NOT_FOUND = -1;
 
     @Override
-    public <T> long update(ExecutorContext executorContext, Class<T> clazz, String sql,List<List<Object>> parametersList) {
-        return 0;
-//        EasyQueryRuntimeContext runtimeContext = executorContext.getRuntimeContext();
-//        EasyConnectionManager connectionManager = runtimeContext.getConnectionManager();
-//        EasyJdbcTypeHandler easyJdbcTypeHandler = runtimeContext.getEasyJdbcTypeHandler();
-//        EntityMetadataManager entityMetadataManager = runtimeContext.getEntityMetadataManager();
-//        EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(clazz);
-//        EasyConnection easyConnection = null;
-//        PreparedStatement ps = null;
-//        int[] rs = null;
-//        try {
-//            for (T entity : entities) {
-//
-//                List<Object> parameters = getParameters(entity, entityMetadata, properties);
-//                if(easyConnection==null){
-//                    easyConnection = connectionManager.getEasyConnection();
-//                }
-//                if(ps==null){
-//                    ps = createPreparedStatement(easyConnection.getConnection(), sql, parameters, easyJdbcTypeHandler);
-//                }else{
-//                    setPreparedStatement(ps, parameters, easyJdbcTypeHandler);
-//                }
-//                ps.addBatch();
-//            }
-//            rs = ps.executeBatch();
-//            ps.clearBatch();
-//        } catch (SQLException e) {
-//            throw new JDQCException(e);
-//        } finally {
-//            clear(executorContext,easyConnection,null,ps);
-//        }
-//        return rs.length;
+    public <T> long update(ExecutorContext executorContext, String sql, List<Object> parameters) {
+        EasyQueryRuntimeContext runtimeContext = executorContext.getRuntimeContext();
+        EasyConnectionManager connectionManager = runtimeContext.getConnectionManager();
+        EasyJdbcTypeHandlerManager easyJdbcTypeHandlerManager = runtimeContext.getEasyJdbcTypeHandlerManager();
+        EasyConnection easyConnection = null;
+        PreparedStatement ps = null;
+        int r = 0;
+        try {
+            easyConnection = connectionManager.getEasyConnection();
+            ps = createPreparedStatement(easyConnection.getConnection(), sql, parameters, easyJdbcTypeHandlerManager);
+            r = ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new EasyQueryException(e);
+        } finally {
+            clear(executorContext,easyConnection,null,ps);
+        }
+        return r;
+    }
+
+    @Override
+    public <T> long update(ExecutorContext executorContext, Class<T> clazz, String sql,List<T> entities,List<String> properties) {
+        EasyQueryRuntimeContext runtimeContext = executorContext.getRuntimeContext();
+        EasyConnectionManager connectionManager = runtimeContext.getConnectionManager();
+        EasyJdbcTypeHandlerManager easyJdbcTypeHandlerManager = runtimeContext.getEasyJdbcTypeHandlerManager();
+        EntityMetadataManager entityMetadataManager = runtimeContext.getEntityMetadataManager();
+        EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(clazz);
+        EasyConnection easyConnection = null;
+        PreparedStatement ps = null;
+        int[] rs = null;
+        try {
+            for (T entity : entities) {
+
+                List<Object> parameters = getParameters(entity, entityMetadata, properties);
+                if(easyConnection==null){
+                    easyConnection = connectionManager.getEasyConnection();
+                }
+                if(ps==null){
+                    ps = createPreparedStatement(easyConnection.getConnection(), sql, parameters, easyJdbcTypeHandlerManager);
+                }else{
+                    setPreparedStatement(ps, parameters, easyJdbcTypeHandlerManager);
+                }
+                ps.addBatch();
+            }
+            rs = ps.executeBatch();
+            ps.clearBatch();
+        } catch (SQLException e) {
+            throw new EasyQueryException(e);
+        } finally {
+            clear(executorContext,easyConnection,null,ps);
+        }
+        return ArrayUtil.sum(rs);
     }
 
     @Override
     public <T> long insert(ExecutorContext executorContext, Class<T> clazz, String sql, List<T> entities,List<String> properties) {
         EasyQueryRuntimeContext runtimeContext = executorContext.getRuntimeContext();
         EasyConnectionManager connectionManager = runtimeContext.getConnectionManager();
-        EasyJdbcTypeHandler easyJdbcTypeHandler = runtimeContext.getEasyJdbcTypeHandler();
+        EasyJdbcTypeHandlerManager easyJdbcTypeHandler = runtimeContext.getEasyJdbcTypeHandlerManager();
         EntityMetadataManager entityMetadataManager = runtimeContext.getEntityMetadataManager();
         EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(clazz);
         EasyConnection easyConnection = null;
@@ -117,7 +139,7 @@ public class DefaultExecutor implements EasyExecutor {
     public <TR> List<TR> query(ExecutorContext executorContext, Class<TR> clazz, String sql, List<Object> parameters) {
         EasyQueryRuntimeContext runtimeContext = executorContext.getRuntimeContext();
         EasyConnectionManager connectionManager = runtimeContext.getConnectionManager();
-        EasyJdbcTypeHandler easyJdbcTypeHandler = runtimeContext.getEasyJdbcTypeHandler();
+        EasyJdbcTypeHandlerManager easyJdbcTypeHandler = runtimeContext.getEasyJdbcTypeHandlerManager();
         List<TR> result = null;
         System.out.println("开始执行：" + sql);
         EasyConnection easyConnection = null;
@@ -150,17 +172,17 @@ public class DefaultExecutor implements EasyExecutor {
         }
     }
 
-    private PreparedStatement createPreparedStatement(Connection connection, String sql, List<Object> parameters, EasyJdbcTypeHandler easyJdbcTypeHandler) throws SQLException {
+    private PreparedStatement createPreparedStatement(Connection connection, String sql, List<Object> parameters, EasyJdbcTypeHandlerManager easyJdbcTypeHandlerManager) throws SQLException {
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
-        return setPreparedStatement(preparedStatement,parameters,easyJdbcTypeHandler);
+        return setPreparedStatement(preparedStatement,parameters,easyJdbcTypeHandlerManager);
     }
-    private PreparedStatement setPreparedStatement(PreparedStatement preparedStatement, List<Object> parameters, EasyJdbcTypeHandler easyJdbcTypeHandler) throws SQLException {
+    private PreparedStatement setPreparedStatement(PreparedStatement preparedStatement, List<Object> parameters, EasyJdbcTypeHandlerManager easyJdbcTypeHandlerManager) throws SQLException {
 
         EasyParameter easyParameter = new EasyParameter(preparedStatement, parameters);
         int paramSize = parameters.size();
         for (int i = 0; i < paramSize; i++) {
             easyParameter.setIndex(i);
-            JdbcTypeHandler handler = easyJdbcTypeHandler.getHandler(easyParameter.getValueType());
+            JdbcTypeHandler handler = easyJdbcTypeHandlerManager.getHandler(easyParameter.getValueType());
             handler.setParameter(easyParameter);
         }
         return preparedStatement;
@@ -213,7 +235,7 @@ public class DefaultExecutor implements EasyExecutor {
         }
         EasyResultSet easyResultSet = new EasyResultSet(rs);
         easyResultSet.setIndex(0);
-        EasyJdbcTypeHandler easyJdbcTypeHandler = context.getRuntimeContext().getEasyJdbcTypeHandler();
+        EasyJdbcTypeHandlerManager easyJdbcTypeHandler = context.getRuntimeContext().getEasyJdbcTypeHandlerManager();
         JdbcTypeHandler handler = easyJdbcTypeHandler.getHandler(clazz);
         return handler.getValue(easyResultSet);
 
@@ -234,7 +256,7 @@ public class DefaultExecutor implements EasyExecutor {
     }
 
     private <T> T mapToBean(ExecutorContext context, ResultSet rs, Class<T> clazz, PropertyDescriptor[] propertyDescriptors) throws SQLException {
-        EasyJdbcTypeHandler easyJdbcTypeHandler = context.getRuntimeContext().getEasyJdbcTypeHandler();
+        EasyJdbcTypeHandlerManager easyJdbcTypeHandler = context.getRuntimeContext().getEasyJdbcTypeHandlerManager();
         EasyResultSet easyResultSet = new EasyResultSet(rs);
         T bean = ClassUtil.newInstance(clazz);
         for (int i = 0; i < propertyDescriptors.length; i++) {

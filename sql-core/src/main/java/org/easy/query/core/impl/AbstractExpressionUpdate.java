@@ -1,13 +1,15 @@
 package org.easy.query.core.impl;
 
-import org.easy.query.core.basic.expression.lambda.SqlExpression;
+import org.easy.query.core.abstraction.EasyExecutor;
+import org.easy.query.core.abstraction.ExecutorContext;
+import org.easy.query.core.expression.lambda.SqlExpression;
 import org.easy.query.core.abstraction.metadata.EntityMetadata;
-import org.easy.query.core.basic.expression.parser.abstraction.SqlColumnSetter;
-import org.easy.query.core.basic.expression.parser.abstraction.SqlPredicate;
+import org.easy.query.core.expression.parser.abstraction.SqlColumnSetter;
+import org.easy.query.core.expression.parser.abstraction.SqlPredicate;
 import org.easy.query.core.basic.api.ExpressionUpdate;
 import org.easy.query.core.enums.MultiTableTypeEnum;
-import org.easy.query.core.basic.expression.parser.impl.DefaultSqlColumnSetter;
-import org.easy.query.core.basic.expression.parser.impl.DefaultSqlPredicate;
+import org.easy.query.core.expression.parser.impl.DefaultSqlColumnSetter;
+import org.easy.query.core.expression.parser.impl.DefaultSqlPredicate;
 import org.easy.query.core.query.builder.SqlTableInfo;
 import org.easy.query.core.util.StringUtil;
 
@@ -37,7 +39,8 @@ public abstract class AbstractExpressionUpdate<T> implements ExpressionUpdate<T>
             String updateSql = toSql();
             System.out.println("表达式更新："+updateSql);
             if(StringUtil.isNotBlank(updateSql)){
-
+                EasyExecutor easyExecutor = updateContext.getRuntimeContext().getEasyExecutor();
+                return easyExecutor.update(ExecutorContext.create(updateContext.getRuntimeContext()), updateSql, updateContext.getParameters());
             }
         }
 
