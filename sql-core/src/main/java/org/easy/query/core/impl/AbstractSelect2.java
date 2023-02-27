@@ -93,4 +93,5 @@ public abstract  class AbstractSelect2<T1,T2> extends AbstractSelect0<T1, Select
     protected EasyQuerySqlBuilderProvider2<T1,T2> getSqlBuilderProvider2() {
         return sqlPredicateProvider;
     }
+
 }

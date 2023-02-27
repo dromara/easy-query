@@ -14,5 +14,8 @@ public interface SqlSegmentBuilder {
     List<SqlSegment> getSqlSegments();
     void append(SqlSegment sqlSegment);
     boolean isEmpty();
+   default boolean isNotEmpty(){
+       return !isEmpty();
+   }
     String toSql();
 }

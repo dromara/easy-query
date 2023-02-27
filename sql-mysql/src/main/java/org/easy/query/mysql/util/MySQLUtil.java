@@ -1,8 +1,13 @@
 package org.easy.query.mysql.util;
 
+import org.easy.query.core.abstraction.EasyQueryLambdaFactory;
+import org.easy.query.core.basic.sql.segment.segment.AndPredicateSegment;
+import org.easy.query.core.basic.sql.segment.segment.PredicateSegment;
 import org.easy.query.core.basic.sql.segment.segment.SqlSegment;
 import org.easy.query.core.enums.SqlKeywordEnum;
 import org.easy.query.core.exception.EasyQueryException;
+import org.easy.query.core.expression.lambda.SqlExpression;
+import org.easy.query.core.expression.parser.abstraction.SqlPredicate;
 import org.easy.query.core.impl.InsertContext;
 import org.easy.query.core.impl.SelectContext;
 import org.easy.query.core.impl.UpdateContext;
@@ -41,12 +46,30 @@ public class MySQLUtil {
         if (tableCount == 0) {
             throw new EasyQueryException("未找到查询表信息");
         }
+
+//
+//        SqlTableInfo table = selectContext.getTable(getIndex());
+//        SqlExpression<? extends SqlPredicate<?>> queryFilterExpression = table.getQueryFilterExpression();
+//        PredicateSegment where=null;
+//        if(queryFilterExpression!=null){
+//            where=new AndPredicateSegment(true);
+//            EasyQueryLambdaFactory easyQueryLambdaFactory = selectContext.getRuntimeContext().getEasyQueryLambdaFactory();
+//            SqlPredicate<T1> sqlPredicate = easyQueryLambdaFactory.createSqlPredicate(getIndex(), selectContext, where);
+//            ((SqlExpression<SqlPredicate<T1>>)queryFilterExpression).apply(sqlPredicate);
+//            if(!selectContext.hasWhere()){
+//                where
+//            }
+//        }else{
+//            where=selectContext.getWhere();
+//        }
+
+
         StringBuilder sql = new StringBuilder("SELECT ");
         for (int i = 0; i < tableCount; i++) {
             SqlTableInfo table = selectContext.getTable(i);
             if (i == 0) {
                 if (StringUtil.isEmpty(select)) {
-                    if (selectContext.getGroup().isEmpty()) {
+                    if (!selectContext.hasGroup()) {
                         sql.append(table.getAlias()).append(".*");
                     } else {
                         sql.append(selectContext.getGroup().toSql());
@@ -57,21 +80,57 @@ public class MySQLUtil {
             }
 
             sql.append(table.getSelectTableSource()).append(table.getEntityMetadata().getTableName()).append(" ").append(table.getAlias());
-            if (table.getOn().isEmpty()) {
+            if (!table.hasOn()) {
                 continue;
             }
-            sql.append(" ON ").append(table.getOn().getSql());
+            PredicateSegment on = null;
+            if (i > 0) {
+                SqlExpression<SqlPredicate<?>> queryFilterExpression = table.getQueryFilterExpression();
+                if (queryFilterExpression != null) {
+                    on = new AndPredicateSegment(true);
+                    EasyQueryLambdaFactory easyQueryLambdaFactory = selectContext.getRuntimeContext().getEasyQueryLambdaFactory();
+                    SqlPredicate<?> sqlPredicate = easyQueryLambdaFactory.createSqlPredicate(i, selectContext, on);
+                    queryFilterExpression.apply(sqlPredicate);
+                    if (table.hasOn()) {
+                        on.addPredicateSegment(table.getOn());
+                    }
+                } else {
+                    on = table.getOn();
+                }
+            } else {
+                on = table.getOn();
+            }
+
+            sql.append(" ON ").append(on.getSql());
         }
-        if (!selectContext.getWhere().isEmpty()) {
-            sql.append(" WHERE ").append(selectContext.getWhere().getSql());
+        PredicateSegment where=null;
+
+        boolean hasWhere = selectContext.hasWhere();
+        SqlTableInfo table = selectContext.getTable(0);
+        SqlExpression<SqlPredicate<?>> queryFilterExpression = table.getQueryFilterExpression();
+        if(queryFilterExpression!=null){
+            where = new AndPredicateSegment(true);
+            EasyQueryLambdaFactory easyQueryLambdaFactory = selectContext.getRuntimeContext().getEasyQueryLambdaFactory();
+            SqlPredicate<?> sqlPredicate = easyQueryLambdaFactory.createSqlPredicate(0, selectContext, where);
+            queryFilterExpression.apply(sqlPredicate);
+            if (hasWhere) {
+                where.addPredicateSegment(selectContext.getWhere());
+            }
+        }else{
+            if (hasWhere) {
+                where=selectContext.getWhere();
+            }
         }
-        if (!selectContext.getGroup().isEmpty()) {
+        if(where!=null){
+            sql.append(" WHERE ").append(where.getSql());
+        }
+        if (selectContext.hasGroup()) {
             sql.append(" GROUP BY ").append(selectContext.getGroup().toSql());
         }
-        if (!selectContext.getHaving().isEmpty()) {
+        if (selectContext.hasHaving()) {
             sql.append(" HAVING ").append(selectContext.getHaving().getSql());
         }
-        if (!selectContext.getOrder().isEmpty()) {
+        if (selectContext.hasOrder()) {
             sql.append(" ORDER BY ").append(selectContext.getOrder().toSql());
         }
         if (selectContext.getRows() > 0) {
@@ -109,7 +168,8 @@ public class MySQLUtil {
         sql.append(") ");
         return sql.toString();
     }
-    public static String toUpdateEntitySql(UpdateContext updateContext){
+
+    public static String toUpdateEntitySql(UpdateContext updateContext) {
 
         //将条件参数清空
         if (!updateContext.getProperties().isEmpty()) {
@@ -122,7 +182,7 @@ public class MySQLUtil {
         if (tableCount > 1) {
             throw new EasyQueryException("找到多张表信息");
         }
-        if(updateContext.getWhereColumns().isEmpty()){
+        if (updateContext.getWhereColumns().isEmpty()) {
             throw new EasyQueryException("更新需要指定条件列");
         }
 
@@ -131,10 +191,11 @@ public class MySQLUtil {
         String tableName = table.getEntityMetadata().getTableName();
         sql.append(tableName).append(" SET ").append(updateContext.getSetColumns().toSql());
         sql.append(" WHERE ");
-        sql.append( updateContext.getWhereColumns().toSql());
+        sql.append(updateContext.getWhereColumns().toSql());
         return sql.toString();
     }
-    public static String toUpdateExpressionSql(UpdateContext updateContext){
+
+    public static String toUpdateExpressionSql(UpdateContext updateContext) {
 
         //将条件参数清空
         if (!updateContext.getParameters().isEmpty()) {
@@ -147,7 +208,7 @@ public class MySQLUtil {
         if (tableCount > 1) {
             throw new EasyQueryException("找到多张表信息");
         }
-        if(updateContext.getWhere().isEmpty()){
+        if (updateContext.getWhere().isEmpty()) {
             throw new EasyQueryException("更新需要设置条件");
         }
 

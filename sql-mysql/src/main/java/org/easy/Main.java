@@ -258,7 +258,12 @@ jqdcRuntimeContext.getEasyQueryConfiguration().applyEntityTypeConfiguration(new 
                         .like(TestUserMysql::getName, "1%")
                         .and(x -> x.like(TestUserMysql::getName, "123").or().eq(TestUserMysql::getAge, 1)
                         )).firstOrNull(TestUserMysqlx.class, x -> x.columnAll().columnAs(TestUserMysql::getName, TestUserMysqlx::getName1));
-
+        TestUserMysqlx testUserMysqlx = client.select(SysUserLogbyMonth.class)
+                .leftJoin(TestUserMysql.class, (a, b) -> a.eq(b, SysUserLogbyMonth::getId, TestUserMysql::getName).eq(SysUserLogbyMonth::getTime, LocalDateTime.now()))
+                .where(o -> o.eq(SysUserLogbyMonth::getId, "102")
+                        .like(SysUserLogbyMonth::getTime, LocalDateTime.now())
+                        .and(x -> x.like(SysUserLogbyMonth::getId, "123").or().eq(SysUserLogbyMonth::getTime, LocalDateTime.now())
+                        )).firstOrNull(TestUserMysqlx.class, x -> x.columnAll().columnAs(SysUserLogbyMonth::getId, TestUserMysqlx::getName1));
         System.out.println("Hello world!");
     }
 }

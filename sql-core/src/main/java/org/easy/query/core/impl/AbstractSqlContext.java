@@ -51,4 +51,5 @@ public abstract class AbstractSqlContext implements SqlContext{
     public EasyQueryRuntimeContext getRuntimeContext() {
         return runtimeContext;
     }
+
 }

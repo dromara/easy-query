@@ -25,12 +25,12 @@ public  class SelectContext extends AbstractSqlPredicateContext {
     private long offset;
     private long rows;
     private final List<Object> params;
-
     private PredicateSegment where;
 //    private  StringBuilder select;
     private SqlSegmentBuilder group;
     private PredicateSegment having;
     private SqlSegmentBuilder order;
+
 
     public SelectContext(EasyQueryRuntimeContext runtimeContext){
         this(runtimeContext,"t");
@@ -62,11 +62,17 @@ public  class SelectContext extends AbstractSqlPredicateContext {
         }
         return where;
     }
+    public boolean hasWhere(){
+        return where!=null&&where.isNotEmpty();
+    }
     public PredicateSegment getHaving() {
         if(having==null){
             having=new AndPredicateSegment(true);
         }
         return having;
+    }
+    public boolean hasHaving(){
+        return having!=null&&having.isNotEmpty();
     }
     public void addSqlTable(SqlTableInfo sqlTableInfo){
         this.tables.add(sqlTableInfo);
@@ -116,12 +122,18 @@ public  class SelectContext extends AbstractSqlPredicateContext {
         }
         return group;
     }
+    public boolean hasGroup(){
+        return group!=null&&group.isNotEmpty();
+    }
 
     public SqlSegmentBuilder getOrder() {
         if(order==null){
             order=new OrderBySqlSegmentBuilder();
         }
         return order;
+    }
+    public boolean hasOrder(){
+        return order!=null&&order.isNotEmpty();
     }
 
     @Override
@@ -132,4 +144,5 @@ public  class SelectContext extends AbstractSqlPredicateContext {
     public void addParameter(Object parameter) {
        params.add(parameter);
     }
+
 }

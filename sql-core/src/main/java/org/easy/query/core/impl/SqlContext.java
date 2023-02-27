@@ -17,4 +17,5 @@ public interface SqlContext {
      SqlTableInfo getTable(int index);
      String getQuoteName(String value);
      String getSqlColumnSegment(int tableIndex,String columnName);
+
 }

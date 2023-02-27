@@ -21,6 +21,9 @@ public class PredicateSegment implements SqlSegment {
     public boolean isEmpty() {
         return this.predicate == null && this.children == null;
     }
+    public boolean isNotEmpty() {
+        return !isEmpty();
+    }
 
     public PredicateSegment() {
         this(false);

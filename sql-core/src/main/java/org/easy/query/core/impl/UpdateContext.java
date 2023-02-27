@@ -25,6 +25,7 @@ public class UpdateContext extends AbstractSqlPredicateContext{
     private SqlSegmentBuilder whereColumns;
     private final List<Object> parameters;
     private final List<String> properties;
+    private boolean logicDelete=true;
 
     public UpdateContext(EasyQueryRuntimeContext runtimeContext,boolean expressionUpdate) {
         super(runtimeContext);
@@ -72,5 +73,13 @@ public class UpdateContext extends AbstractSqlPredicateContext{
     }
     public void addColumnProperty(String propertyName) {
          properties.add(propertyName);
+    }
+
+
+    public void setLogicDelete(boolean logicDelete) {
+        this.logicDelete = logicDelete;
+    }
+    public boolean isLogicDelete() {
+        return logicDelete;
     }
 }

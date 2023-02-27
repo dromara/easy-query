@@ -1,6 +1,7 @@
 package org.easy.query.core.abstraction.metadata;
 
 import org.easy.query.core.expression.lambda.SqlExpression;
+import org.easy.query.core.expression.parser.abstraction.SqlColumnSetter;
 import org.easy.query.core.expression.parser.abstraction.SqlPredicate;
 
 /**
@@ -11,19 +12,19 @@ import org.easy.query.core.expression.parser.abstraction.SqlPredicate;
  */
 public final class LogicDeleteMetadata {
 
-    public LogicDeleteMetadata(SqlExpression<? extends SqlPredicate<?>> defaultSqlExpression, SqlExpression<? extends SqlPredicate<?>> deletedSqlExpression) {
-        this.defaultSqlExpression = defaultSqlExpression;
+    public LogicDeleteMetadata(SqlExpression<SqlPredicate<?>> queryFilterExpression, SqlExpression<SqlColumnSetter<?>> deletedSqlExpression) {
+        this.queryFilterExpression = queryFilterExpression;
         this.deletedSqlExpression = deletedSqlExpression;
     }
 
-    private final SqlExpression<? extends SqlPredicate<?>> defaultSqlExpression;
-    private final SqlExpression<? extends SqlPredicate<?>> deletedSqlExpression;
+    private final SqlExpression<SqlPredicate<?>> queryFilterExpression;
+    private final SqlExpression<SqlColumnSetter<?>> deletedSqlExpression;
 
-    public SqlExpression<? extends SqlPredicate<?>> getDefaultSqlExpression() {
-        return defaultSqlExpression;
+    public SqlExpression<SqlPredicate<?>> getQueryFilterExpression() {
+        return queryFilterExpression;
     }
 
-    public SqlExpression<? extends SqlPredicate<?>> getDeletedSqlExpression() {
+    public SqlExpression<SqlColumnSetter<?>> getDeletedSqlExpression() {
         return deletedSqlExpression;
     }
 }

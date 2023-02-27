@@ -16,6 +16,7 @@ import org.easy.query.core.expression.parser.abstraction.SqlColumnSelector;
 import org.easy.query.core.expression.parser.abstraction.SqlPredicate;
 import org.easy.query.core.expression.parser.abstraction.internal.ColumnSelector;
 import org.easy.query.core.basic.sql.segment.builder.SelectSqlSegmentBuilder;
+import org.easy.query.core.expression.parser.abstraction.internal.IndexAware;
 import org.easy.query.core.expression.parser.impl.DefaultSqlPredicate;
 import org.easy.query.core.query.builder.SqlTableInfo;
 
@@ -259,17 +260,6 @@ public abstract class AbstractSelect0<T1, TChain> implements Select0<T1, TChain>
      */
     protected <TR> List<TR> toInternalList(Class<TR> resultClass,String columns) {
         //添加query filter logic delete
-                EntityMetadata entityMetadata = selectContext.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(t1Class);
-        if(entityMetadata.enableLogicDelete()){
-            AndPredicateSegment andPredicateSegment = new AndPredicateSegment(true);
-            DefaultSqlPredicate<T1> objectDefaultSqlPredicate = new DefaultSqlPredicate<>(0, selectContext, andPredicateSegment);
-            ((SqlExpression<SqlPredicate<T1>>)entityMetadata.getLogicDeleteMetadata().getDefaultSqlExpression()).apply(objectDefaultSqlPredicate);
-            if(!selectContext.getWhere().isEmpty()){
-                andPredicateSegment.addPredicateSegment(selectContext.getWhere());
-            }
-            String sql = andPredicateSegment.getSql();
-            System.out.println("软删除后："+sql);
-        }
 
         String sql = toSql(columns);
         EasyExecutor easyExecutor = selectContext.getRuntimeContext().getEasyExecutor();

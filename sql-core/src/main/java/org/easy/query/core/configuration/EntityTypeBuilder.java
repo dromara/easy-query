@@ -3,6 +3,7 @@ package org.easy.query.core.configuration;
 import org.easy.query.core.abstraction.metadata.EntityMetadata;
 import org.easy.query.core.abstraction.metadata.LogicDeleteMetadata;
 import org.easy.query.core.expression.lambda.SqlExpression;
+import org.easy.query.core.expression.parser.abstraction.SqlColumnSetter;
 import org.easy.query.core.expression.parser.abstraction.SqlPredicate;
 
 /**
@@ -18,8 +19,8 @@ public class EntityTypeBuilder<T> {
 
         this.entityMetadata = entityMetadata;
     }
-    public void configLogicDelete(SqlExpression<SqlPredicate<T>> defSqlExpression, SqlExpression<SqlPredicate<T>> deletedSqlExpression){
-        LogicDeleteMetadata logicDeleteMetadata = new LogicDeleteMetadata(defSqlExpression, deletedSqlExpression);
+    public void configLogicDelete(SqlExpression<SqlPredicate<T>> queryFilterExpression, SqlExpression<SqlColumnSetter<T>> deletedSqlExpression){
+        LogicDeleteMetadata logicDeleteMetadata = new LogicDeleteMetadata((SqlExpression)queryFilterExpression, (SqlExpression)deletedSqlExpression);
         entityMetadata.setLogicDeleteMetadata(logicDeleteMetadata);
     }
 }

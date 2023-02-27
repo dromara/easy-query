@@ -3,6 +3,8 @@ package org.easy.test;
 import org.easy.query.core.configuration.AbstractEntityTypeConfiguration;
 import org.easy.query.core.configuration.EntityTypeBuilder;
 
+import java.time.LocalDateTime;
+
 /**
  * @FileName: TestUserMySqlConfiguration.java
  * @Description: 文件说明
@@ -12,6 +14,6 @@ import org.easy.query.core.configuration.EntityTypeBuilder;
 public class TestUserMySqlConfiguration extends AbstractEntityTypeConfiguration<TestUserMysql> {
     @Override
     public void configure(EntityTypeBuilder<TestUserMysql> builder) {
-        builder.configLogicDelete(o->o.isNull(TestUserMysql::getDeleteAt),x->x.isNotNull(TestUserMysql::getDeleteAt));
+        builder.configLogicDelete(o->o.isNull(TestUserMysql::getDeleteAt),x->x.set(TestUserMysql::getDeleteAt, LocalDateTime.now()));
     }
 }

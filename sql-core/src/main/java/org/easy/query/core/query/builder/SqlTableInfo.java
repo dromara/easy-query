@@ -6,6 +6,8 @@ import org.easy.query.core.enums.MultiTableTypeEnum;
 import org.easy.query.core.abstraction.metadata.EntityMetadata;
 import org.easy.query.core.basic.sql.segment.segment.AndPredicateSegment;
 import org.easy.query.core.basic.sql.segment.segment.PredicateSegment;
+import org.easy.query.core.expression.lambda.SqlExpression;
+import org.easy.query.core.expression.parser.abstraction.SqlPredicate;
 import org.easy.query.core.util.LambdaUtil;
 
 /**
@@ -49,6 +51,9 @@ public class SqlTableInfo {
         }
         return on;
     }
+    public boolean hasOn(){
+        return on!=null&&on.isNotEmpty();
+    }
 
     public String getColumnName(String propertyName){
         return this.entityMetadata.getColumnName(propertyName);
@@ -70,6 +75,20 @@ public class SqlTableInfo {
     public MultiTableTypeEnum getSelectTableInfoType() {
         return multiTableType;
     }
+    public boolean enableLogicDelete(){
+        return entityMetadata.enableLogicDelete();
+    }
+    public SqlExpression<SqlPredicate<?>> getQueryFilterExpression(){
+        if(enableLogicDelete()){
+            return entityMetadata.getLogicDeleteMetadata().getQueryFilterExpression();
+        }
+        return null;
+    }
+
+    /**
+     * 获取查询表的链接方式
+     * @return
+     */
     public String getSelectTableSource(){
         if(MultiTableTypeEnum.LEFT_JOIN.equals(getSelectTableInfoType())){
             return  " LEFT JOIN ";
