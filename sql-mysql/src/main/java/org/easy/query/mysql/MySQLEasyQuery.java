@@ -10,7 +10,7 @@ import org.easy.query.core.impl.InsertContext;
 import org.easy.query.core.impl.SelectContext;
 import org.easy.query.core.impl.UpdateContext;
 import org.easy.query.mysql.base.*;
-import org.easy.query.core.abstraction.client.JQDCClient;
+import org.easy.query.core.abstraction.client.EasyQuery;
 import org.easy.query.core.basic.api.Select1;
 
 import java.util.Arrays;
@@ -23,9 +23,9 @@ import java.util.Collection;
  * @Date: 2023/2/5 21:28
  * @Created by xuejiaming
  */
-public class MySQLJQDCClient implements JQDCClient {
+public class MySQLEasyQuery implements EasyQuery {
     private final EasyQueryRuntimeContext runtimeContext;
-    public MySQLJQDCClient(EasyQueryRuntimeContext runtimeContext){
+    public MySQLEasyQuery(EasyQueryRuntimeContext runtimeContext){
 
         this.runtimeContext = runtimeContext;
     }

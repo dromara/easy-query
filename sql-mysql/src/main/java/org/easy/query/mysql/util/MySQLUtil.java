@@ -3,8 +3,6 @@ package org.easy.query.mysql.util;
 import org.easy.query.core.abstraction.EasyQueryLambdaFactory;
 import org.easy.query.core.basic.sql.segment.segment.AndPredicateSegment;
 import org.easy.query.core.basic.sql.segment.segment.PredicateSegment;
-import org.easy.query.core.basic.sql.segment.segment.SqlSegment;
-import org.easy.query.core.enums.SqlKeywordEnum;
 import org.easy.query.core.exception.EasyQueryException;
 import org.easy.query.core.expression.lambda.SqlExpression;
 import org.easy.query.core.expression.parser.abstraction.SqlPredicate;
@@ -13,9 +11,6 @@ import org.easy.query.core.impl.SelectContext;
 import org.easy.query.core.impl.UpdateContext;
 import org.easy.query.core.query.builder.SqlTableInfo;
 import org.easy.query.core.util.StringUtil;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @FileName: MySQLUtil.java
@@ -46,24 +41,6 @@ public class MySQLUtil {
         if (tableCount == 0) {
             throw new EasyQueryException("未找到查询表信息");
         }
-
-//
-//        SqlTableInfo table = selectContext.getTable(getIndex());
-//        SqlExpression<? extends SqlPredicate<?>> queryFilterExpression = table.getQueryFilterExpression();
-//        PredicateSegment where=null;
-//        if(queryFilterExpression!=null){
-//            where=new AndPredicateSegment(true);
-//            EasyQueryLambdaFactory easyQueryLambdaFactory = selectContext.getRuntimeContext().getEasyQueryLambdaFactory();
-//            SqlPredicate<T1> sqlPredicate = easyQueryLambdaFactory.createSqlPredicate(getIndex(), selectContext, where);
-//            ((SqlExpression<SqlPredicate<T1>>)queryFilterExpression).apply(sqlPredicate);
-//            if(!selectContext.hasWhere()){
-//                where
-//            }
-//        }else{
-//            where=selectContext.getWhere();
-//        }
-
-
         StringBuilder sql = new StringBuilder("SELECT ");
         for (int i = 0; i < tableCount; i++) {
             SqlTableInfo table = selectContext.getTable(i);
@@ -80,48 +57,16 @@ public class MySQLUtil {
             }
 
             sql.append(table.getSelectTableSource()).append(table.getEntityMetadata().getTableName()).append(" ").append(table.getAlias());
-            if (!table.hasOn()) {
-                continue;
-            }
-            PredicateSegment on = null;
+
             if (i > 0) {
-                SqlExpression<SqlPredicate<?>> queryFilterExpression = table.getQueryFilterExpression();
-                if (queryFilterExpression != null) {
-                    on = new AndPredicateSegment(true);
-                    EasyQueryLambdaFactory easyQueryLambdaFactory = selectContext.getRuntimeContext().getEasyQueryLambdaFactory();
-                    SqlPredicate<?> sqlPredicate = easyQueryLambdaFactory.createSqlPredicate(i, selectContext, on);
-                    queryFilterExpression.apply(sqlPredicate);
-                    if (table.hasOn()) {
-                        on.addPredicateSegment(table.getOn());
-                    }
-                } else {
-                    on = table.getOn();
+                PredicateSegment on = getTableOnWithQueryFilter(selectContext, table);
+                if (on != null&&on.isNotEmpty()) {
+                    sql.append(" ON ").append(on.getSql());
                 }
-            } else {
-                on = table.getOn();
-            }
-
-            sql.append(" ON ").append(on.getSql());
-        }
-        PredicateSegment where=null;
-
-        boolean hasWhere = selectContext.hasWhere();
-        SqlTableInfo table = selectContext.getTable(0);
-        SqlExpression<SqlPredicate<?>> queryFilterExpression = table.getQueryFilterExpression();
-        if(queryFilterExpression!=null){
-            where = new AndPredicateSegment(true);
-            EasyQueryLambdaFactory easyQueryLambdaFactory = selectContext.getRuntimeContext().getEasyQueryLambdaFactory();
-            SqlPredicate<?> sqlPredicate = easyQueryLambdaFactory.createSqlPredicate(0, selectContext, where);
-            queryFilterExpression.apply(sqlPredicate);
-            if (hasWhere) {
-                where.addPredicateSegment(selectContext.getWhere());
-            }
-        }else{
-            if (hasWhere) {
-                where=selectContext.getWhere();
             }
         }
-        if(where!=null){
+        PredicateSegment where = getSqlWhereWithQueryFilter(selectContext);
+        if (where != null&&where.isNotEmpty()) {
             sql.append(" WHERE ").append(where.getSql());
         }
         if (selectContext.hasGroup()) {
@@ -142,6 +87,32 @@ public class MySQLUtil {
             }
         }
         return sql.toString();
+    }
+
+    private static PredicateSegment getTableOnWithQueryFilter(SelectContext selectContext, SqlTableInfo table) {
+        return getSqlPredicateSegment(selectContext, table,table.hasOn()?table.getOn():null);
+    }
+
+    private static PredicateSegment getSqlWhereWithQueryFilter(SelectContext selectContext) {
+        SqlTableInfo table = selectContext.getTable(0);
+        return getSqlPredicateSegment(selectContext, table,selectContext.hasWhere()?selectContext.getWhere():null);
+    }
+
+    private static PredicateSegment getSqlPredicateSegment(SelectContext selectContext, SqlTableInfo table,PredicateSegment originalPredicate) {
+        PredicateSegment predicateSegment=null;
+        SqlExpression<SqlPredicate<?>> queryFilterExpression = table.getQueryFilterExpression();
+        if (queryFilterExpression != null) {
+            predicateSegment  = new AndPredicateSegment(true);
+            EasyQueryLambdaFactory easyQueryLambdaFactory = selectContext.getRuntimeContext().getEasyQueryLambdaFactory();
+            SqlPredicate<?> sqlPredicate = easyQueryLambdaFactory.createSqlPredicate(table.getIndex(), selectContext, predicateSegment);
+            queryFilterExpression.apply(sqlPredicate);
+            if(originalPredicate!=null&&originalPredicate.isNotEmpty()){
+                predicateSegment.addPredicateSegment(originalPredicate);
+            }
+        }else{
+            predicateSegment=originalPredicate;
+        }
+        return predicateSegment;
     }
 
     public static String toInsertSql(InsertContext insertContext) {

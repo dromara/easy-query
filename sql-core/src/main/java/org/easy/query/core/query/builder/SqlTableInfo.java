@@ -75,11 +75,8 @@ public class SqlTableInfo {
     public MultiTableTypeEnum getSelectTableInfoType() {
         return multiTableType;
     }
-    public boolean enableLogicDelete(){
-        return entityMetadata.enableLogicDelete();
-    }
     public SqlExpression<SqlPredicate<?>> getQueryFilterExpression(){
-        if(enableLogicDelete()){
+        if(entityMetadata.enableLogicDelete()){
             return entityMetadata.getLogicDeleteMetadata().getQueryFilterExpression();
         }
         return null;

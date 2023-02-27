@@ -2,7 +2,7 @@ package org.easy;
 
 import com.alibaba.druid.pool.DruidDataSourceFactory;
 import org.easy.query.core.abstraction.*;
-import org.easy.query.core.abstraction.client.JQDCClient;
+import org.easy.query.core.abstraction.client.EasyQuery;
 import org.easy.query.core.abstraction.metadata.EntityMetadataManager;
 import org.easy.query.core.abstraction.sql.PageResult;
 import org.easy.query.core.basic.api.Select1;
@@ -15,7 +15,7 @@ import org.easy.query.core.basic.jdbc.types.EasyJdbcTypeHandlerManager;
 import org.easy.query.core.config.*;
 import org.easy.query.core.exception.EasyQueryException;
 import org.easy.query.core.metadata.DefaultEntityMetadataManager;
-import org.easy.query.mysql.MySQLJQDCClient;
+import org.easy.query.mysql.MySQLEasyQuery;
 import org.easy.query.mysql.config.MySQLDialect;
 import org.easy.test.*;
 
@@ -29,7 +29,7 @@ public class Main {
     private static final String username = "root";
     private static final String password = "root";
     private static final String url = "jdbc:mysql://127.0.0.1:3306/dbdbd0?serverTimezone=GMT%2B8&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&rewriteBatchedStatements=true";
-    private static JQDCClient client;
+    private static EasyQuery client;
 
     public static void main(String[] args) {
 
@@ -126,7 +126,7 @@ jqdcRuntimeContext.getEasyQueryConfiguration().applyEntityTypeConfiguration(new 
 //        tableInfo1.getColumns().putIfAbsent("name",new ColumnInfo(tableInfo1,"name"));
 //        tableInfo1.getColumns().putIfAbsent("uid",new ColumnInfo(tableInfo1,"uid"));
 //        configuration.addTableInfo(tableInfo1);
-        client = new MySQLJQDCClient(jqdcRuntimeContext);
+        client = new MySQLEasyQuery(jqdcRuntimeContext);
         try (Transaction transaction = client.beginTransaction()) {
 
             transaction.commit();
@@ -262,8 +262,8 @@ jqdcRuntimeContext.getEasyQueryConfiguration().applyEntityTypeConfiguration(new 
                 .leftJoin(TestUserMysql.class, (a, b) -> a.eq(b, SysUserLogbyMonth::getId, TestUserMysql::getName).eq(SysUserLogbyMonth::getTime, LocalDateTime.now()))
                 .where(o -> o.eq(SysUserLogbyMonth::getId, "102")
                         .like(SysUserLogbyMonth::getTime, LocalDateTime.now())
-                        .and(x -> x.like(SysUserLogbyMonth::getId, "123").or().eq(SysUserLogbyMonth::getTime, LocalDateTime.now())
-                        )).firstOrNull(TestUserMysqlx.class, x -> x.columnAll().columnAs(SysUserLogbyMonth::getId, TestUserMysqlx::getName1));
+                        .and(x -> x.like(SysUserLogbyMonth::getId, "123").or().eq(SysUserLogbyMonth::getTime, LocalDateTime.now()))
+                ).firstOrNull(TestUserMysqlx.class, x -> x.columnAll().columnAs(SysUserLogbyMonth::getId, TestUserMysqlx::getName1));
         System.out.println("Hello world!");
     }
 }

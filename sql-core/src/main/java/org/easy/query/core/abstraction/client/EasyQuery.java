@@ -16,7 +16,7 @@ import java.util.Collection;
  * @Date: 2023/2/5 21:27
  * @Created by xuejiaming
  */
-public interface JQDCClient {
+public interface EasyQuery {
     EasyQueryRuntimeContext getRuntimeContext();
     <T1> Select1<T1> select(Class<T1> clazz);
     <T1> Select1<T1> select(Class<T1> clazz,String alias);
