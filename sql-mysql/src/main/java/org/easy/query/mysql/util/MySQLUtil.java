@@ -124,17 +124,17 @@ public class MySQLUtil {
         if (tableCount > 1) {
             throw new EasyQueryException("找到多张表信息");
         }
+        int insertColumns = insertContext.getColumns().getSqlSegments().size();
+        if(insertColumns==0){
+            throw new EasyQueryException("插入至少确定一个列");
+        }
         StringBuilder sql = new StringBuilder("INSERT INTO ");
         SqlTableInfo table = insertContext.getTable(0);
         String tableName = table.getEntityMetadata().getTableName();
         sql.append(tableName).append(" (").append(insertContext.getColumns().toSql()).append(") VALUES (");
-        int size = insertContext.getColumns().getSqlSegments().size();
-        for (int i = 0; i < size; i++) {
-            if (i == 0) {
-                sql.append("?");
-            } else {
-                sql.append(",?");
-            }
+        sql.append("?");
+        for (int i = 0; i < insertColumns-1; i++) {
+            sql.append(",?");
         }
         sql.append(") ");
         return sql.toString();

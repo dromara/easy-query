@@ -1,7 +1,7 @@
 package org.easy.query.core.util;
 
-import org.easy.query.core.basic.bean.BeanMethodInvoker;
-import org.easy.query.core.basic.bean.MethodInvoker;
+import org.easy.query.core.bean.BeanMethodInvoker;
+import org.easy.query.core.bean.MethodInvoker;
 import org.easy.query.core.exception.EasyQueryException;
 
 import java.beans.BeanInfo;

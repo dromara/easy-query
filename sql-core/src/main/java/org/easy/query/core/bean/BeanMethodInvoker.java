@@ -1,4 +1,4 @@
-package org.easy.query.core.basic.bean;
+package org.easy.query.core.bean;
 
 import org.easy.query.core.exception.EasyQueryException;
 
