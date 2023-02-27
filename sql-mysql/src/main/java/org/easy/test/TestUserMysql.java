@@ -4,6 +4,8 @@ import org.easy.query.core.annotation.Column;
 import org.easy.query.core.annotation.PrimaryKey;
 import org.easy.query.core.annotation.Table;
 
+import java.time.LocalDateTime;
+
 /**
  * @FileName: TestUser.java
  * @Description: 文件说明
@@ -19,6 +21,16 @@ public class TestUserMysql {
     private Integer age;
     @Column("Name")
     private String name;
+
+    private LocalDateTime deleteAt;
+
+    public LocalDateTime getDeleteAt() {
+        return deleteAt;
+    }
+
+    public void setDeleteAt(LocalDateTime deleteAt) {
+        this.deleteAt = deleteAt;
+    }
 
     public String getId() {
         return id;

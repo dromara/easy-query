@@ -2,6 +2,8 @@ package org.easy.query.core.abstraction.metadata;
 
 import org.easy.query.core.config.EasyQueryConfiguration;
 import org.easy.query.core.config.NameConversion;
+import org.easy.query.core.configuration.EntityTypeBuilder;
+import org.easy.query.core.configuration.EntityTypeConfiguration;
 import org.easy.query.core.exception.EasyQueryException;
 import org.easy.query.core.util.StringUtil;
 import org.easy.query.core.annotation.*;
@@ -23,6 +25,9 @@ public class EntityMetadata {
     private final Class entityClass;
     private  String tableName;
 
+
+    private  LogicDeleteMetadata logicDeleteMetadata;
+
     private final LinkedHashMap<String,ColumnMetadata> property2ColumnMap=new LinkedHashMap<>();
     private final Map<String/*property name*/,String/*column name*/> keyPropertiesMap=new HashMap<>();
     private final LinkedCaseInsensitiveMap<String> column2PropertyMap=new LinkedCaseInsensitiveMap<>(Locale.ENGLISH);
@@ -34,6 +39,7 @@ public class EntityMetadata {
     public void init(EasyQueryConfiguration jdqcConfiguration){
         classInit(jdqcConfiguration);
         propertyInit(jdqcConfiguration);
+        entityTypeConfigurationInit(jdqcConfiguration);
     }
     protected void classInit(EasyQueryConfiguration jdqcConfiguration){
 
@@ -67,6 +73,7 @@ public class EntityMetadata {
             if(primaryKey!=null){
                 columnMetadata.setPrimary(true);
                 columnMetadata.setIncrement(primaryKey.increment());
+                columnMetadata.setNullable(false);//如果为主键那么之前设置的nullable将无效
                 keyPropertiesMap.put(attr,columnName);
             }
 
@@ -83,6 +90,12 @@ public class EntityMetadata {
             if(version!=null){
                 columnMetadata.setVersion(true);
             }
+        }
+    }
+    protected void entityTypeConfigurationInit(EasyQueryConfiguration configuration){
+        EntityTypeConfiguration<?> entityTypeConfiguration = configuration.getEntityTypeConfiguration(entityClass);
+        if(entityTypeConfiguration!=null){
+            entityTypeConfiguration.configure(new EntityTypeBuilder<>(this));
         }
     }
 
@@ -147,5 +160,21 @@ public class EntityMetadata {
         if(StringUtil.isEmpty(tableName)){
             throw new EasyQueryException("当前对象不是数据库对象,"+entityClass.getSimpleName());
         }
+    }
+
+    public void setLogicDeleteMetadata(LogicDeleteMetadata logicDeleteMetadata) {
+        this.logicDeleteMetadata = logicDeleteMetadata;
+    }
+
+    public LogicDeleteMetadata getLogicDeleteMetadata() {
+        return logicDeleteMetadata;
+    }
+
+    /**
+     * 是否启用逻辑删除
+     * @return
+     */
+    public boolean enableLogicDelete(){
+        return logicDeleteMetadata!=null;
     }
 }

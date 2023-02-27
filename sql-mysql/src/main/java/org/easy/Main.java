@@ -15,7 +15,6 @@ import org.easy.query.core.basic.jdbc.types.EasyJdbcTypeHandlerManager;
 import org.easy.query.core.config.*;
 import org.easy.query.core.exception.EasyQueryException;
 import org.easy.query.core.metadata.DefaultEntityMetadataManager;
-import org.easy.query.core.util.ArrayUtil;
 import org.easy.query.mysql.MySQLJQDCClient;
 import org.easy.query.mysql.config.MySQLDialect;
 import org.easy.test.*;
@@ -115,7 +114,7 @@ public class Main {
 //                }
 //            }
 //        }
-
+jqdcRuntimeContext.getEasyQueryConfiguration().applyEntityTypeConfiguration(new TestUserMySqlConfiguration());
 
 //        TableInfo tableInfo = new TableInfo(TestUser.class,"TestUser");
 //        tableInfo.getColumns().putIfAbsent("id",new ColumnInfo(tableInfo,"id"));
@@ -132,6 +131,20 @@ public class Main {
 
             transaction.commit();
         }
+        List<TestUserMysql> updates=new ArrayList<>();
+        TestUserMysql test1 = new TestUserMysql();
+        test1.setId("102");
+        test1.setAge(102);
+        test1.setName("ds01");
+        updates.add(test1);
+        TestUserMysql test2 = new TestUserMysql();
+        test2.setId("105");
+        test2.setAge(102);
+        test2.setName("ds01");
+        updates.add(test2);
+        long l12xx = client.update(updates).setColumns(o -> o.column(TestUserMysql::getName)).whereColumns(o -> o.column(TestUserMysql::getAge)).executeRows();
+
+
         ArrayList<SysUserLogbyMonth> sysUserLogbyMonths1 = new ArrayList<>();
 //        long execute = client.insert(LocalDateTime.now()).execute();
         SysUserLogbyMonth sysUserLogbyMonth2 = new SysUserLogbyMonth();
@@ -151,19 +164,19 @@ public class Main {
         long l12 = client.update(testUserMysql3).setColumns(o -> o.column(TestUserMysql::getName)).whereColumns(o -> o.column(TestUserMysql::getAge)).executeRows();
         long xhn = client.update(TestUserMysql.class).set(o -> o.set(TestUserMysql::getAge, 12).set(TestUserMysql::getName, "xhn")).where(o -> o.like(TestUserMysql::getId, "123")).executeRows();
 //
-        ArrayList<SysUserLogbyMonth> sysUserLogbyMonthsxx = new ArrayList<>();
-        for (int j = 0; j < 10000; j++) {
-
-            SysUserLogbyMonth sysUserLogbyMonth2x = new SysUserLogbyMonth();
-            sysUserLogbyMonth2x.setId(UUID.randomUUID().toString());
-            sysUserLogbyMonth2x.setTime(LocalDateTime.now());
-            sysUserLogbyMonthsxx.add(sysUserLogbyMonth2x);
-        }
-        long start = System.currentTimeMillis();
-        long execute2 = client.insert(sysUserLogbyMonthsxx).executeRows();
-        System.out.println("返回行数:" + execute2);
-        long end = System.currentTimeMillis();
-        System.out.println("耗时：" + (end - start) + "ms");
+//        ArrayList<SysUserLogbyMonth> sysUserLogbyMonthsxx = new ArrayList<>();
+//        for (int j = 0; j < 10000; j++) {
+//
+//            SysUserLogbyMonth sysUserLogbyMonth2x = new SysUserLogbyMonth();
+//            sysUserLogbyMonth2x.setId(UUID.randomUUID().toString());
+//            sysUserLogbyMonth2x.setTime(LocalDateTime.now());
+//            sysUserLogbyMonthsxx.add(sysUserLogbyMonth2x);
+//        }
+//        long start = System.currentTimeMillis();
+//        long execute2 = client.insert(sysUserLogbyMonthsxx).executeRows();
+//        System.out.println("返回行数:" + execute2);
+//        long end = System.currentTimeMillis();
+//        System.out.println("耗时：" + (end - start) + "ms");
         SysUserLogbyMonth sysUserLogbyMonth1 = client.select(SysUserLogbyMonth.class)
                 .where(o -> o.eq(SysUserLogbyMonth::getId, "119")).firstOrNull();
         SysUserLogbyMonth sysUserLogbyMonth1x = client.select(SysUserLogbyMonth.class)
@@ -198,7 +211,7 @@ public class Main {
         LocalDateTime localDateTime = client.select(SysUserLogbyMonth.class).maxOrNull(SysUserLogbyMonth::getTime);
         Integer totalAge = client.select(TestUserMysql.class).sumOrDefault(TestUserMysql::getAge, 0);
         Integer max = client.select(TestUserMysql.class).maxOrNull(TestUserMysql::getAge);
-
+//
 //        long start = System.currentTimeMillis();
 //        for (int i = 0; i < 10000; i++) {
 //            SysUserLogbyMonth sysUserLogbyMonth = client.select(SysUserLogbyMonth.class)
@@ -206,6 +219,12 @@ public class Main {
 //        }
 //        long end = System.currentTimeMillis();
 //        System.out.println("耗时："+(end-start)+"ms");
+
+
+//        EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(TestUserMysql.class);
+//        SqlExpression<SqlPredicate<TestUserMysql>> xx=xxx->xxx.and(x->x.eq(TestUserMysql::getId,12));
+//        entityMetadata.addLogicDeleteExpression(xx);
+
         List<TestUserMysqlGroup> testUserMysqls = client.select(TestUserMysql.class)
                 .where(o -> o.eq(TestUserMysql::getName, "ds0"))
                 .groupBy(o -> o.column(TestUserMysql::getAge))

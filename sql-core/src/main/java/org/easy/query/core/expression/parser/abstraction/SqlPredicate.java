@@ -5,7 +5,7 @@ import org.easy.query.core.expression.parser.abstraction.internal.WherePredicate
 /**
  *
  * @FileName: SqlPredicate.java
- * @Description: 文件说明
+ * @Description: sql条件
  * @Date: 2023/2/5 15:38
  * @Created by xuejiaming
  */
