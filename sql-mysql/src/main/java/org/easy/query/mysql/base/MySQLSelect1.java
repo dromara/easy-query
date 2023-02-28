@@ -1,17 +1,9 @@
 package org.easy.query.mysql.base;
 
-import org.easy.query.core.abstraction.EasyQueryLambdaFactory;
-import org.easy.query.core.abstraction.metadata.EntityMetadata;
-import org.easy.query.core.basic.sql.segment.segment.AndPredicateSegment;
-import org.easy.query.core.basic.sql.segment.segment.PredicateSegment;
 import org.easy.query.core.enums.MultiTableTypeEnum;
-import org.easy.query.core.expression.lambda.SqlExpression;
-import org.easy.query.core.expression.parser.abstraction.SqlPredicate;
-import org.easy.query.core.expression.parser.impl.DefaultSqlPredicate;
-import org.easy.query.core.impl.AbstractSelect1;
-import org.easy.query.core.impl.AbstractSelect2;
-import org.easy.query.core.impl.SelectContext;
-import org.easy.query.core.query.builder.SqlTableInfo;
+import org.easy.query.core.basic.api.select.AbstractSelect1;
+import org.easy.query.core.basic.api.select.AbstractSelect2;
+import org.easy.query.core.basic.api.context.SelectContext;
 import org.easy.query.mysql.util.MySQLUtil;
 
 /**

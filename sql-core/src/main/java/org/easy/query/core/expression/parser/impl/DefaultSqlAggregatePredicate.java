@@ -6,7 +6,7 @@ import org.easy.query.core.expression.parser.abstraction.internal.AggregatePredi
 import org.easy.query.core.expression.parser.abstraction.SqlAggregatePredicate;
 import org.easy.query.core.abstraction.sql.enums.IEasyFunc;
 import org.easy.query.core.abstraction.sql.enums.IEasyPredicate;
-import org.easy.query.core.impl.SqlPredicateContext;
+import org.easy.query.core.basic.api.context.SqlPredicateContext;
 import org.easy.query.core.basic.sql.segment.segment.AndPredicateSegment;
 import org.easy.query.core.basic.sql.segment.segment.OrPredicateSegment;
 import org.easy.query.core.basic.sql.segment.segment.PredicateSegment;

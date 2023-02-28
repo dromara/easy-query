@@ -1,10 +1,11 @@
 package org.easy.query.core.expression.parser.impl;
 
+import org.easy.query.core.basic.api.context.SqlPredicateContext;
 import org.easy.query.core.basic.sql.segment.builder.SqlSegmentBuilder;
 import org.easy.query.core.expression.lambda.Property;
 import org.easy.query.core.expression.parser.abstraction.SqlColumnSetter;
 import org.easy.query.core.expression.parser.abstraction.internal.WherePredicate;
-import org.easy.query.core.impl.UpdateContext;
+import org.easy.query.core.basic.api.context.UpdateContext;
 import org.easy.query.core.query.builder.SqlTableInfo;
 import org.easy.query.core.basic.sql.segment.segment.predicate.ColumnSetValuePredicate;
 
@@ -16,23 +17,23 @@ import org.easy.query.core.basic.sql.segment.segment.predicate.ColumnSetValuePre
  */
 public class DefaultSqlColumnSetter<T>  implements SqlColumnSetter<T> {
     private final int index;
-    private final UpdateContext updateContext;
+    private final SqlPredicateContext sqlPredicateContext;
     private final SqlSegmentBuilder sqlSegment0Builder;
 
-    public DefaultSqlColumnSetter(int index, UpdateContext updateContext, SqlSegmentBuilder sqlSegment0Builder){
+    public DefaultSqlColumnSetter(int index, SqlPredicateContext sqlPredicateContext, SqlSegmentBuilder sqlSegment0Builder){
 
         this.index = index;
-        this.updateContext = updateContext;
+        this.sqlPredicateContext = sqlPredicateContext;
         this.sqlSegment0Builder = sqlSegment0Builder;
     }
     @Override
     public SqlColumnSetter<T> set(boolean condition, Property<T, ?> column, Object val) {
         if(condition)
         {
-            SqlTableInfo table = updateContext.getTable(index);
+            SqlTableInfo table = sqlPredicateContext.getTable(index);
             String propertyName = table.getPropertyName(column);
             String columnName = table.getColumnName(propertyName);
-            sqlSegment0Builder.append(new ColumnSetValuePredicate(index,columnName,propertyName,val, updateContext));
+            sqlSegment0Builder.append(new ColumnSetValuePredicate(index,columnName,propertyName,val, sqlPredicateContext));
         }
         return this;
     }

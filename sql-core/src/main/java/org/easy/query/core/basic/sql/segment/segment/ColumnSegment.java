@@ -1,6 +1,6 @@
 package org.easy.query.core.basic.sql.segment.segment;
 
-import org.easy.query.core.impl.SqlContext;
+import org.easy.query.core.basic.api.context.SqlContext;
 
 /**
  * @FileName: ColumnSegment.java

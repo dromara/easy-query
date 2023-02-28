@@ -2,9 +2,10 @@ package org.easy.query.core.basic.sql.segment.segment.predicate;
 
 import org.easy.query.core.basic.sql.segment.segment.SqlSegment;
 import org.easy.query.core.enums.SqlKeywordEnum;
-import org.easy.query.core.impl.SqlPredicateContext;
+import org.easy.query.core.basic.api.context.SqlPredicateContext;
 
 import java.util.Collection;
+import java.util.Iterator;
 
 /**
  * @FileName: ColumnValuePredicate.java
@@ -41,11 +42,14 @@ public class ColumnCollectionPredicate implements Predicate {
             String sqlColumnSegment = sqlPredicateContext.getSqlColumnSegment(index,column);
             StringBuilder sql = new StringBuilder();
             sql.append(sqlColumnSegment).append(" ").append(compare.getSql()).append(" (");
-            int i = 0;
-            for (Object val : collection) {
+            Iterator<?> iterator = collection.iterator();
+            Object firstVal = iterator.next();
+            sqlPredicateContext.addParameter(firstVal);
+            sql.append("?");
+            while (iterator.hasNext()){
+                Object val = iterator.next();
                 sqlPredicateContext.addParameter(val);
-                sql.append(i == 0 ? "?" : ",?");
-                i++;
+                sql.append(",?");
             }
             sql.append(")");
             return sql.toString();

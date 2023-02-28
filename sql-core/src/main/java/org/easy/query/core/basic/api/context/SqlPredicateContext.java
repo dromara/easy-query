@@ -1,6 +1,4 @@
-package org.easy.query.core.impl;
-
-import org.easy.query.core.query.builder.SqlTableInfo;
+package org.easy.query.core.basic.api.context;
 
 import java.util.List;
 

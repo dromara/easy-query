@@ -5,7 +5,7 @@ import org.easy.query.core.expression.lambda.Property;
 import org.easy.query.core.abstraction.sql.enums.EasyAggregate;
 import org.easy.query.core.expression.parser.abstraction.SqlColumnAsSelector;
 import org.easy.query.core.expression.parser.abstraction.internal.ColumnAsSelector;
-import org.easy.query.core.impl.SqlContext;
+import org.easy.query.core.basic.api.context.SqlContext;
 import org.easy.query.core.query.builder.SqlTableInfo;
 import org.easy.query.core.basic.sql.segment.segment.ColumnSegment;
 import org.easy.query.core.basic.sql.segment.segment.FuncColumnSegment;

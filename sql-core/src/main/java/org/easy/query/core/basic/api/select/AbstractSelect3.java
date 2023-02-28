@@ -1,9 +1,9 @@
-package org.easy.query.core.impl;
+package org.easy.query.core.basic.api.select;
 
 import org.easy.query.core.expression.lambda.SqlExpression3;
-import org.easy.query.core.basic.api.Select3;
 import org.easy.query.core.expression.parser.abstraction.SqlColumnSelector;
 import org.easy.query.core.expression.parser.abstraction.SqlPredicate;
+import org.easy.query.core.basic.api.context.SelectContext;
 
 /**
  * @FileName: AbstractSelect3.java

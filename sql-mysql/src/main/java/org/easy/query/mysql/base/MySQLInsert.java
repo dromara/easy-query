@@ -1,7 +1,7 @@
 package org.easy.query.mysql.base;
 
-import org.easy.query.core.impl.AbstractInsert;
-import org.easy.query.core.impl.InsertContext;
+import org.easy.query.core.basic.api.insert.AbstractInsert;
+import org.easy.query.core.basic.api.context.InsertContext;
 import org.easy.query.mysql.util.MySQLUtil;
 
 /**

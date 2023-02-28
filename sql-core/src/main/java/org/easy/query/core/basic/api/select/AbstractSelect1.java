@@ -1,12 +1,12 @@
-package org.easy.query.core.impl;
+package org.easy.query.core.basic.api.select;
 
 import org.easy.query.core.abstraction.EasyQuerySqlBuilderProvider;
 import org.easy.query.core.expression.lambda.SqlExpression2;
 import org.easy.query.core.abstraction.metadata.EntityMetadata;
-import org.easy.query.core.basic.api.Select1;
-import org.easy.query.core.basic.api.Select2;
 import org.easy.query.core.expression.parser.abstraction.SqlPredicate;
 import org.easy.query.core.enums.MultiTableTypeEnum;
+import org.easy.query.core.impl.Select1SqlProvider;
+import org.easy.query.core.basic.api.context.SelectContext;
 import org.easy.query.core.query.builder.SqlTableInfo;
 
 /**
@@ -19,7 +19,7 @@ import org.easy.query.core.query.builder.SqlTableInfo;
 public abstract class AbstractSelect1<T1> extends AbstractSelect0<T1, Select1<T1>> implements Select1<T1> {
 
     private final Select1SqlProvider<T1> sqlPredicateProvider;
-    public AbstractSelect1(Class<T1> t1Class,SelectContext selectContext) {
+    public AbstractSelect1(Class<T1> t1Class, SelectContext selectContext) {
         super(t1Class,selectContext);
         EntityMetadata entityMetadata = selectContext.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(t1Class);
         entityMetadata.checkTable();

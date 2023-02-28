@@ -1,4 +1,4 @@
-package org.easy.query.core.impl;
+package org.easy.query.core.basic.api.context;
 
 import org.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import org.easy.query.core.query.builder.SqlTableInfo;

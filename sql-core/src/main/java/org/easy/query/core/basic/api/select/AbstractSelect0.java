@@ -1,14 +1,11 @@
-package org.easy.query.core.impl;
+package org.easy.query.core.basic.api.select;
 
 import org.easy.query.core.abstraction.*;
-import org.easy.query.core.abstraction.metadata.EntityMetadata;
-import org.easy.query.core.basic.sql.segment.segment.AndPredicateSegment;
 import org.easy.query.core.expression.lambda.Property;
 import org.easy.query.core.expression.lambda.SqlExpression;
 import org.easy.query.core.abstraction.metadata.ColumnMetadata;
 import org.easy.query.core.abstraction.sql.DefaultPageResult;
 import org.easy.query.core.abstraction.sql.PageResult;
-import org.easy.query.core.basic.api.Select0;
 import org.easy.query.core.abstraction.sql.enums.EasyAggregate;
 import org.easy.query.core.expression.parser.abstraction.SqlAggregatePredicate;
 import org.easy.query.core.expression.parser.abstraction.SqlColumnAsSelector;
@@ -16,8 +13,7 @@ import org.easy.query.core.expression.parser.abstraction.SqlColumnSelector;
 import org.easy.query.core.expression.parser.abstraction.SqlPredicate;
 import org.easy.query.core.expression.parser.abstraction.internal.ColumnSelector;
 import org.easy.query.core.basic.sql.segment.builder.SelectSqlSegmentBuilder;
-import org.easy.query.core.expression.parser.abstraction.internal.IndexAware;
-import org.easy.query.core.expression.parser.impl.DefaultSqlPredicate;
+import org.easy.query.core.basic.api.context.SelectContext;
 import org.easy.query.core.query.builder.SqlTableInfo;
 
 import java.math.BigDecimal;

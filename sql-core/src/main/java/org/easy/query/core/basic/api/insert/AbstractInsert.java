@@ -1,14 +1,14 @@
-package org.easy.query.core.impl;
+package org.easy.query.core.basic.api.insert;
 
 import org.easy.query.core.abstraction.EasyExecutor;
 import org.easy.query.core.abstraction.ExecutorContext;
 import org.easy.query.core.expression.lambda.SqlExpression;
 import org.easy.query.core.abstraction.metadata.EntityMetadata;
 import org.easy.query.core.expression.parser.abstraction.internal.ColumnSelector;
-import org.easy.query.core.basic.api.Insert;
 import org.easy.query.core.expression.parser.abstraction.SqlColumnSelector;
 import org.easy.query.core.enums.MultiTableTypeEnum;
 import org.easy.query.core.expression.parser.impl.DefaultSqlColumnSelector;
+import org.easy.query.core.basic.api.context.InsertContext;
 import org.easy.query.core.query.builder.SqlTableInfo;
 import org.easy.query.core.basic.sql.segment.segment.ColumnSegment;
 import org.easy.query.core.util.StringUtil;

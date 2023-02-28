@@ -2,7 +2,7 @@ package org.easy.query.core.basic.sql.segment.segment.predicate;
 
 import org.easy.query.core.abstraction.sql.enums.IEasyFunc;
 import org.easy.query.core.abstraction.sql.enums.IEasyPredicate;
-import org.easy.query.core.impl.SqlPredicateContext;
+import org.easy.query.core.basic.api.context.SqlPredicateContext;
 
 /**
  * @FileName: ColumnValuePredicate.java

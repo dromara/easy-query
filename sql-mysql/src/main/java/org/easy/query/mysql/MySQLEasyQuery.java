@@ -2,16 +2,16 @@ package org.easy.query.mysql;
 
 import org.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import org.easy.query.core.basic.jdbc.con.EasyConnectionManager;
-import org.easy.query.core.basic.api.EntityUpdate;
-import org.easy.query.core.basic.api.ExpressionUpdate;
-import org.easy.query.core.basic.api.Insert;
+import org.easy.query.core.basic.api.update.EntityUpdate;
+import org.easy.query.core.basic.api.update.ExpressionUpdate;
+import org.easy.query.core.basic.api.insert.Insert;
 import org.easy.query.core.basic.jdbc.tx.Transaction;
-import org.easy.query.core.impl.InsertContext;
-import org.easy.query.core.impl.SelectContext;
-import org.easy.query.core.impl.UpdateContext;
+import org.easy.query.core.basic.api.context.InsertContext;
+import org.easy.query.core.basic.api.context.SelectContext;
+import org.easy.query.core.basic.api.context.UpdateContext;
 import org.easy.query.mysql.base.*;
 import org.easy.query.core.abstraction.client.EasyQuery;
-import org.easy.query.core.basic.api.Select1;
+import org.easy.query.core.basic.api.select.Select1;
 
 import java.util.Arrays;
 import java.util.Collection;

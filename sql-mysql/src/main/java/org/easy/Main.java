@@ -5,7 +5,7 @@ import org.easy.query.core.abstraction.*;
 import org.easy.query.core.abstraction.client.EasyQuery;
 import org.easy.query.core.abstraction.metadata.EntityMetadataManager;
 import org.easy.query.core.abstraction.sql.PageResult;
-import org.easy.query.core.basic.api.Select1;
+import org.easy.query.core.basic.api.select.Select1;
 import org.easy.query.core.abstraction.sql.enums.EasyPredicate;
 import org.easy.query.core.basic.jdbc.tx.DefaultConnectionManager;
 import org.easy.query.core.basic.jdbc.con.EasyConnectionManager;
@@ -13,6 +13,7 @@ import org.easy.query.core.basic.jdbc.tx.Transaction;
 import org.easy.query.core.basic.jdbc.types.DefaultJdbcTypeHandlerManager;
 import org.easy.query.core.basic.jdbc.types.EasyJdbcTypeHandlerManager;
 import org.easy.query.core.config.*;
+import org.easy.query.core.configuration.EasyQueryConfiguration;
 import org.easy.query.core.exception.EasyQueryException;
 import org.easy.query.core.metadata.DefaultEntityMetadataManager;
 import org.easy.query.mysql.MySQLEasyQuery;
@@ -211,14 +212,19 @@ jqdcRuntimeContext.getEasyQueryConfiguration().applyEntityTypeConfiguration(new 
         LocalDateTime localDateTime = client.select(SysUserLogbyMonth.class).maxOrNull(SysUserLogbyMonth::getTime);
         Integer totalAge = client.select(TestUserMysql.class).sumOrDefault(TestUserMysql::getAge, 0);
         Integer max = client.select(TestUserMysql.class).maxOrNull(TestUserMysql::getAge);
-//
-//        long start = System.currentTimeMillis();
-//        for (int i = 0; i < 10000; i++) {
+
+        long start = System.currentTimeMillis();
+        for (int ii = 0; ii < 10000; ii++) {
 //            SysUserLogbyMonth sysUserLogbyMonth = client.select(SysUserLogbyMonth.class)
 //                    .where(o -> o.eq(SysUserLogbyMonth::getId, "119")).firstOrNull();
-//        }
-//        long end = System.currentTimeMillis();
-//        System.out.println("耗时："+(end-start)+"ms");
+            String ds0 = client.select(TestUserMysql.class)
+                    .where(o -> o.eq(TestUserMysql::getName, "ds0"))
+                    .groupBy(o -> o.column(TestUserMysql::getAge))
+                    .having(o -> o.count(TestUserMysql::getId, EasyPredicate.GE, 0))
+                    .toSql(TestUserMysqlGroup.class, o -> o.column(TestUserMysql::getAge).columnCount(TestUserMysql::getId, TestUserMysqlGroup::getAcount));
+        }
+        long end = System.currentTimeMillis();
+        System.out.println("耗时："+(end-start)+"ms");
 
 
 //        EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(TestUserMysql.class);
@@ -258,6 +264,7 @@ jqdcRuntimeContext.getEasyQueryConfiguration().applyEntityTypeConfiguration(new 
                         .like(TestUserMysql::getName, "1%")
                         .and(x -> x.like(TestUserMysql::getName, "123").or().eq(TestUserMysql::getAge, 1)
                         )).firstOrNull(TestUserMysqlx.class, x -> x.columnAll().columnAs(TestUserMysql::getName, TestUserMysqlx::getName1));
+
         TestUserMysqlx testUserMysqlx = client.select(SysUserLogbyMonth.class)
                 .leftJoin(TestUserMysql.class, (a, b) -> a.eq(b, SysUserLogbyMonth::getId, TestUserMysql::getName).eq(SysUserLogbyMonth::getTime, LocalDateTime.now()))
                 .where(o -> o.eq(SysUserLogbyMonth::getId, "102")

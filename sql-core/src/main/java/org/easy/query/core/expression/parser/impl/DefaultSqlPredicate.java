@@ -8,7 +8,7 @@ import org.easy.query.core.basic.sql.segment.segment.PredicateSegment;
 import org.easy.query.core.enums.SqlKeywordEnum;
 import org.easy.query.core.expression.parser.abstraction.SqlPredicate;
 import org.easy.query.core.expression.parser.abstraction.internal.WherePredicate;
-import org.easy.query.core.impl.SqlPredicateContext;
+import org.easy.query.core.basic.api.context.SqlPredicateContext;
 import org.easy.query.core.basic.sql.segment.segment.predicate.ColumnCollectionPredicate;
 import org.easy.query.core.basic.sql.segment.segment.predicate.ColumnColumnPredicate;
 import org.easy.query.core.basic.sql.segment.segment.predicate.ColumnPredicate;

@@ -1,5 +1,9 @@
-package org.easy.query.core.config;
+package org.easy.query.core.configuration;
 
+import org.easy.query.core.config.DefaultEasyQueryDialect;
+import org.easy.query.core.config.DefaultNameConversion;
+import org.easy.query.core.config.EasyQueryDialect;
+import org.easy.query.core.config.NameConversion;
 import org.easy.query.core.configuration.EntityTypeConfiguration;
 
 import java.util.HashMap;

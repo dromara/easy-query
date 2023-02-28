@@ -1,7 +1,6 @@
 package org.easy.query.core.basic.sql.segment.segment;
 
-import org.easy.query.core.impl.SqlContext;
-import org.easy.query.core.impl.UpdateContext;
+import org.easy.query.core.basic.api.context.SqlColumnPredicateContext;
 
 /**
  * @FileName: ColumnSegment.java
@@ -9,25 +8,25 @@ import org.easy.query.core.impl.UpdateContext;
  * @Date: 2023/2/13 15:18
  * @Created by xuejiaming
  */
-public class UpdateColumnSegment implements SqlSegment {
+public class ColumnPredicateSegment implements SqlSegment {
     private final int index;
 
     private final String columnName;
 
     private final String propertyName;
-    private final UpdateContext updateContext;
+    private final SqlColumnPredicateContext sqlColumnPredicateContext;
 
-    public UpdateColumnSegment(int index, String columnName, String propertyName, UpdateContext updateContext){
+    public ColumnPredicateSegment(int index, String columnName, String propertyName, SqlColumnPredicateContext sqlColumnPredicateContext){
         this.index = index;
         this.columnName = columnName;
         this.propertyName = propertyName;
-        this.updateContext = updateContext;
+        this.sqlColumnPredicateContext = sqlColumnPredicateContext;
     }
 
     @Override
     public String getSql() {
-        updateContext.addColumnProperty(propertyName);
-        String sqlColumnSegment = updateContext.getSqlColumnSegment(index,columnName);
+        sqlColumnPredicateContext.addColumnProperty(propertyName);
+        String sqlColumnSegment = sqlColumnPredicateContext.getSqlColumnSegment(index,columnName);
         return sqlColumnSegment + " = ?";
     }
 

@@ -1,7 +1,7 @@
 package org.easy.query.core.basic.sql.segment.segment;
 
 import org.easy.query.core.enums.SqlKeywordEnum;
-import org.easy.query.core.impl.SelectContext;
+import org.easy.query.core.basic.api.context.SelectContext;
 
 /**
  * @FileName: OrderColumnSegment.java

@@ -1,10 +1,10 @@
 package org.easy.query.core.abstraction.client;
 
 import org.easy.query.core.abstraction.EasyQueryRuntimeContext;
-import org.easy.query.core.basic.api.EntityUpdate;
-import org.easy.query.core.basic.api.ExpressionUpdate;
-import org.easy.query.core.basic.api.Insert;
-import org.easy.query.core.basic.api.Select1;
+import org.easy.query.core.basic.api.update.EntityUpdate;
+import org.easy.query.core.basic.api.update.ExpressionUpdate;
+import org.easy.query.core.basic.api.insert.Insert;
+import org.easy.query.core.basic.api.select.Select1;
 import org.easy.query.core.basic.jdbc.tx.Transaction;
 
 import java.util.Collection;

@@ -1,21 +1,12 @@
-package org.easy.query.core.basic.api;
-
-import java.util.Collection;
+package org.easy.query.core.basic.api.update;
 
 /**
- * @FileName: Insert.java
+ * @FileName: Update.java
  * @Description: 文件说明
- * @Date: 2023/2/20 08:48
+ * @Date: 2023/2/24 22:04
  * @Created by xuejiaming
  */
-public interface Insert<T> {
-    Insert<T> insert(T entity);
-   default Insert<T> insert(Collection<T> entities){
-       for (T entity : entities) {
-           insert(entity);
-       }
-       return this;
-   }
+public interface Update<T> {
 //    Insert<T> insertColumns(SqlExpression<SqlPredicate<T>> columnExpression);
 //    Insert<T> ignoreColumns(SqlExpression<SqlColumnSelector<T>> columnExpression);
 
@@ -24,5 +15,6 @@ public interface Insert<T> {
      * @return
      */
     long executeRows();
+    void executeRows(Long expectRow,String error);
     String toSql();
 }

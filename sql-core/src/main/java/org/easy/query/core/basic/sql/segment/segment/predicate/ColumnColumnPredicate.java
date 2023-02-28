@@ -1,7 +1,7 @@
 package org.easy.query.core.basic.sql.segment.segment.predicate;
 
 import org.easy.query.core.basic.sql.segment.segment.SqlSegment;
-import org.easy.query.core.impl.SqlContext;
+import org.easy.query.core.basic.api.context.SqlContext;
 
 /**
  * @FileName: ColumnValuePredicate.java

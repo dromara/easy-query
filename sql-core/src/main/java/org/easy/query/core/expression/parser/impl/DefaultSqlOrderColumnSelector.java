@@ -3,7 +3,7 @@ package org.easy.query.core.expression.parser.impl;
 import org.easy.query.core.expression.lambda.Property;
 import org.easy.query.core.abstraction.metadata.ColumnMetadata;
 import org.easy.query.core.expression.parser.abstraction.SqlColumnSelector;
-import org.easy.query.core.impl.SelectContext;
+import org.easy.query.core.basic.api.context.SelectContext;
 import org.easy.query.core.query.builder.SqlTableInfo;
 import org.easy.query.core.basic.sql.segment.segment.OrderColumnSegment;
 

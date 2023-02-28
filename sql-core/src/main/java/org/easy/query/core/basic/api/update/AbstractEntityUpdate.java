@@ -1,4 +1,4 @@
-package org.easy.query.core.impl;
+package org.easy.query.core.basic.api.update;
 
 import org.easy.query.core.abstraction.EasyExecutor;
 import org.easy.query.core.abstraction.ExecutorContext;
@@ -7,20 +7,17 @@ import org.easy.query.core.abstraction.metadata.ColumnMetadata;
 import org.easy.query.core.abstraction.metadata.EntityMetadata;
 import org.easy.query.core.expression.parser.abstraction.internal.ColumnSelector;
 import org.easy.query.core.expression.parser.abstraction.SqlColumnSelector;
-import org.easy.query.core.basic.api.EntityUpdate;
 import org.easy.query.core.basic.sql.segment.builder.SqlSegmentBuilder;
 import org.easy.query.core.basic.sql.segment.segment.SqlSegment;
 import org.easy.query.core.enums.MultiTableTypeEnum;
 import org.easy.query.core.exception.EasyQueryException;
-import org.easy.query.core.expression.parser.impl.DefaultSqlColumnSelector;
 import org.easy.query.core.expression.parser.impl.DefaultSqlColumnSetSelector;
+import org.easy.query.core.basic.api.context.UpdateContext;
 import org.easy.query.core.query.builder.SqlTableInfo;
-import org.easy.query.core.basic.sql.segment.segment.ColumnSegment;
-import org.easy.query.core.basic.sql.segment.segment.UpdateColumnSegment;
+import org.easy.query.core.basic.sql.segment.segment.ColumnPredicateSegment;
 import org.easy.query.core.util.StringUtil;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @FileName: AbstractUpdate.java
@@ -63,7 +60,7 @@ public abstract class AbstractEntityUpdate<T> implements EntityUpdate<T> {
                 for (String keyProperty : keyProperties) {
                     ColumnMetadata column = entityMetadata.getColumn(keyProperty);
                     String propertyName = column.getProperty().getName();
-                    whereColumns.append(new UpdateColumnSegment(0, column.getName(),propertyName,updateContext));
+                    whereColumns.append(new ColumnPredicateSegment(0, column.getName(),propertyName,updateContext));
                 }
             }
             //如果用户没有指定set的列,那么就是set所有列,并且要去掉主键部分
@@ -75,13 +72,13 @@ public abstract class AbstractEntityUpdate<T> implements EntityUpdate<T> {
                 List<SqlSegment> sqlSegments = updateContext.getSetColumns().getSqlSegments();
                 HashSet<String> whereProperties = new HashSet<>(whereColumns.getSqlSegments().size());
                 for (SqlSegment sqlSegment : whereColumns.getSqlSegments()) {
-                    if(sqlSegment instanceof  UpdateColumnSegment){
-                        whereProperties.add(((UpdateColumnSegment)sqlSegment).getPropertyName());
+                    if(sqlSegment instanceof ColumnPredicateSegment){
+                        whereProperties.add(((ColumnPredicateSegment)sqlSegment).getPropertyName());
                     }
                 }
                 sqlSegments.removeIf(o->{
-                    if(o instanceof UpdateColumnSegment){
-                        String propertyName = ((UpdateColumnSegment) o).getPropertyName();
+                    if(o instanceof ColumnPredicateSegment){
+                        String propertyName = ((ColumnPredicateSegment) o).getPropertyName();
                         return whereProperties.contains(propertyName);
                     }
                     return false;

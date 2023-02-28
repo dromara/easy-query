@@ -1,16 +1,11 @@
 package org.easy.query.core.abstraction;
 
-import org.easy.query.core.expression.parser.abstraction.SqlAggregatePredicate;
-import org.easy.query.core.expression.parser.abstraction.SqlColumnAsSelector;
-import org.easy.query.core.expression.parser.abstraction.SqlColumnSelector;
-import org.easy.query.core.expression.parser.abstraction.SqlPredicate;
+import org.easy.query.core.basic.api.context.SqlColumnPredicateContext;
+import org.easy.query.core.expression.parser.abstraction.*;
 import org.easy.query.core.basic.sql.segment.builder.SqlSegmentBuilder;
-import org.easy.query.core.impl.SelectContext;
-import org.easy.query.core.impl.SqlPredicateContext;
-import org.easy.query.core.expression.parser.impl.DefaultSqlAggregatePredicate;
-import org.easy.query.core.expression.parser.impl.DefaultSqlColumnAsSelector;
-import org.easy.query.core.expression.parser.impl.DefaultSqlColumnSelector;
-import org.easy.query.core.expression.parser.impl.DefaultSqlPredicate;
+import org.easy.query.core.basic.api.context.SelectContext;
+import org.easy.query.core.basic.api.context.SqlPredicateContext;
+import org.easy.query.core.expression.parser.impl.*;
 import org.easy.query.core.basic.sql.segment.segment.PredicateSegment;
 
 /**
@@ -43,5 +38,10 @@ public class DefaultEasyQueryLambdaFactory implements EasyQueryLambdaFactory{
     @Override
     public <T1, TR> SqlColumnAsSelector<T1, TR> createSqlColumnAsSelector(int index, SelectContext selectContext, SqlSegmentBuilder sqlSegmentBuilder) {
         return new DefaultSqlColumnAsSelector<T1,TR>(index,selectContext,sqlSegmentBuilder);
+    }
+
+    @Override
+    public <T1> SqlColumnSetter<T1> createSqlColumnSetter(int index, SqlPredicateContext sqlPredicateContext, SqlSegmentBuilder sqlSegmentBuilder) {
+        return new DefaultSqlColumnSetter<T1>(index,sqlPredicateContext,sqlSegmentBuilder);
     }
 }

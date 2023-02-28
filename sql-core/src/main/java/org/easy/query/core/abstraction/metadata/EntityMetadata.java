@@ -1,6 +1,6 @@
 package org.easy.query.core.abstraction.metadata;
 
-import org.easy.query.core.config.EasyQueryConfiguration;
+import org.easy.query.core.configuration.EasyQueryConfiguration;
 import org.easy.query.core.config.NameConversion;
 import org.easy.query.core.configuration.EntityTypeBuilder;
 import org.easy.query.core.configuration.EntityTypeConfiguration;

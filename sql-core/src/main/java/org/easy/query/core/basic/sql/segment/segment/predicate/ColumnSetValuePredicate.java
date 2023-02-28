@@ -1,6 +1,8 @@
 package org.easy.query.core.basic.sql.segment.segment.predicate;
 
-import org.easy.query.core.impl.UpdateContext;
+import org.easy.query.core.basic.api.context.SqlColumnPredicateContext;
+import org.easy.query.core.basic.api.context.SqlPredicateContext;
+import org.easy.query.core.basic.api.context.UpdateContext;
 
 /**
  * @FileName: ColumnValuePredicate.java
@@ -14,20 +16,20 @@ public class ColumnSetValuePredicate implements Predicate {
 
     private final String propertyName;
     private final Object val;
-    private final UpdateContext updateContext;
+    private final SqlPredicateContext sqlContext;
 
-    public ColumnSetValuePredicate(int index, String column, String propertyName, Object val, UpdateContext updateContext) {
+    public ColumnSetValuePredicate(int index, String column, String propertyName, Object val, SqlPredicateContext sqlContext) {
         this.index = index;
         this.column = column;
         this.propertyName = propertyName;
         this.val = val;
-        this.updateContext = updateContext;
+        this.sqlContext = sqlContext;
     }
 
     @Override
     public String getSql() {
-        updateContext.addParameter(val);
-        String sqlColumnSegment = updateContext.getSqlColumnSegment(index,column);
+        sqlContext.addParameter(val);
+        String sqlColumnSegment = sqlContext.getSqlColumnSegment(index,column);
         return  sqlColumnSegment + " = ?";
     }
 

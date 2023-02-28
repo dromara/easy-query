@@ -2,7 +2,7 @@ package org.easy.query.mysql.base;
 
 import org.easy.query.core.expression.lambda.SqlExpression;
 import org.easy.query.core.expression.parser.abstraction.SqlColumnSelector;
-import org.easy.query.core.basic.api.EntityUpdate;
+import org.easy.query.core.basic.api.update.EntityUpdate;
 
 /**
  * @FileName: MySQLLazyUpdate.java

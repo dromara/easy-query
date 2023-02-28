@@ -7,6 +7,7 @@ import org.easy.query.core.abstraction.metadata.EntityMetadata;
 import org.easy.query.core.basic.sql.segment.segment.AndPredicateSegment;
 import org.easy.query.core.basic.sql.segment.segment.PredicateSegment;
 import org.easy.query.core.expression.lambda.SqlExpression;
+import org.easy.query.core.expression.parser.abstraction.SqlColumnSetter;
 import org.easy.query.core.expression.parser.abstraction.SqlPredicate;
 import org.easy.query.core.util.LambdaUtil;
 
@@ -78,6 +79,12 @@ public class SqlTableInfo {
     public SqlExpression<SqlPredicate<?>> getQueryFilterExpression(){
         if(entityMetadata.enableLogicDelete()){
             return entityMetadata.getLogicDeleteMetadata().getQueryFilterExpression();
+        }
+        return null;
+    }
+    public SqlExpression<SqlColumnSetter<?>> getDeletedSqlExpression(){
+        if(entityMetadata.enableLogicDelete()){
+            return entityMetadata.getLogicDeleteMetadata().getDeletedSqlExpression();
         }
         return null;
     }

@@ -1,4 +1,4 @@
-package org.easy.query.core.impl;
+package org.easy.query.core.basic.api.context;
 
 import org.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import org.easy.query.core.query.builder.SqlTableInfo;
@@ -12,7 +12,7 @@ import java.util.List;
  * @Date: 2023/2/23 21:57
  * @Created by xuejiaming
  */
-public abstract class AbstractSqlContext implements SqlContext{
+public abstract class AbstractSqlContext implements SqlContext {
     protected final EasyQueryRuntimeContext runtimeContext;
     protected final List<SqlTableInfo> tables;
 

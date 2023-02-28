@@ -1,12 +1,10 @@
 package org.easy.query.core.abstraction;
 
-import org.easy.query.core.expression.parser.abstraction.SqlAggregatePredicate;
-import org.easy.query.core.expression.parser.abstraction.SqlColumnAsSelector;
-import org.easy.query.core.expression.parser.abstraction.SqlColumnSelector;
-import org.easy.query.core.expression.parser.abstraction.SqlPredicate;
+import org.easy.query.core.basic.api.context.SqlColumnPredicateContext;
+import org.easy.query.core.expression.parser.abstraction.*;
 import org.easy.query.core.basic.sql.segment.builder.SqlSegmentBuilder;
-import org.easy.query.core.impl.SelectContext;
-import org.easy.query.core.impl.SqlPredicateContext;
+import org.easy.query.core.basic.api.context.SelectContext;
+import org.easy.query.core.basic.api.context.SqlPredicateContext;
 import org.easy.query.core.basic.sql.segment.segment.PredicateSegment;
 
 /**
@@ -33,4 +31,5 @@ public interface EasyQueryLambdaFactory {
     <T1> SqlColumnSelector<T1> createSqlColumnSelector(int index,SelectContext selectContext, SqlSegmentBuilder sqlSegmentBuilder);
     <T1> SqlColumnSelector<T1> createSqlColumnOrderSelector(int index, SelectContext selectContext, SqlSegmentBuilder sqlSegmentBuilder, boolean asc);
     <T1,TR> SqlColumnAsSelector<T1,TR> createSqlColumnAsSelector(int index,SelectContext selectContext, SqlSegmentBuilder sqlSegmentBuilder);
+    <T1> SqlColumnSetter<T1> createSqlColumnSetter(int index, SqlPredicateContext sqlPredicateContext,SqlSegmentBuilder sqlSegmentBuilder);
 }
