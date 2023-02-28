@@ -1,13 +1,14 @@
 package org.easy.query.core.basic.api.context;
 
 import org.easy.query.core.abstraction.*;
-import org.easy.query.core.basic.sql.segment.builder.GroupBySqlSegmentBuilder;
-import org.easy.query.core.basic.sql.segment.builder.OrderBySqlSegmentBuilder;
-import org.easy.query.core.basic.sql.segment.builder.SqlSegmentBuilder;
+import org.easy.query.core.basic.jdbc.parameter.SQLParameter;
+import org.easy.query.core.expression.builder.GroupBySqlSegmentBuilder;
+import org.easy.query.core.expression.builder.OrderBySqlSegmentBuilder;
+import org.easy.query.core.expression.builder.SqlSegmentBuilder;
 import org.easy.query.core.exception.EasyQueryException;
 import org.easy.query.core.query.builder.SqlTableInfo;
-import org.easy.query.core.basic.sql.segment.segment.AndPredicateSegment;
-import org.easy.query.core.basic.sql.segment.segment.PredicateSegment;
+import org.easy.query.core.expression.segment.AndPredicateSegment;
+import org.easy.query.core.expression.segment.PredicateSegment;
 
 import java.util.*;
 
@@ -18,13 +19,12 @@ import java.util.*;
  * @Date: 2023/2/6 12:39
  * @Created by xuejiaming
  */
-public  class SelectContext extends AbstractSqlPredicateContext {
+public  class SelectContext extends AbstractSqlContext {
 
     private final String alias;
 
     private long offset;
     private long rows;
-    private final List<Object> params;
     private PredicateSegment where;
 //    private  StringBuilder select;
     private SqlSegmentBuilder group;
@@ -38,7 +38,6 @@ public  class SelectContext extends AbstractSqlPredicateContext {
     public SelectContext(EasyQueryRuntimeContext runtimeContext, String alias){
         super(runtimeContext);
         this.alias = alias;
-        this.params =new ArrayList<>();
     }
     public long getOffset() {
         return offset;
@@ -134,15 +133,6 @@ public  class SelectContext extends AbstractSqlPredicateContext {
     }
     public boolean hasOrder(){
         return order!=null&&order.isNotEmpty();
-    }
-
-    @Override
-    public List<Object> getParameters() {
-        return params;
-    }
-    @Override
-    public void addParameter(Object parameter) {
-       params.add(parameter);
     }
 
 }

@@ -1,6 +1,7 @@
 package org.easy.query.core.basic.api.context;
 
 import org.easy.query.core.abstraction.EasyQueryRuntimeContext;
+import org.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import org.easy.query.core.query.builder.SqlTableInfo;
 
 import java.util.ArrayList;
@@ -15,10 +16,12 @@ import java.util.List;
 public abstract class AbstractSqlContext implements SqlContext {
     protected final EasyQueryRuntimeContext runtimeContext;
     protected final List<SqlTableInfo> tables;
+    protected final List<SQLParameter> params;
 
     public AbstractSqlContext(EasyQueryRuntimeContext runtimeContext){
         this.runtimeContext = runtimeContext;
         this.tables=new ArrayList<>();
+        this.params=new ArrayList<>();
     }
 
     @Override
@@ -37,9 +40,9 @@ public abstract class AbstractSqlContext implements SqlContext {
     }
 
     @Override
-    public String getSqlColumnSegment(int tableIndex,String columnName){
-        SqlTableInfo table = getTable(tableIndex);
+    public String getSqlColumnSegment(SqlTableInfo table,String propertyName){
         String alias = table.getAlias();
+        String columnName = table.getColumnName(propertyName);
         String quoteName = getQuoteName(columnName);
         if(alias==null){
             return quoteName;
@@ -50,6 +53,15 @@ public abstract class AbstractSqlContext implements SqlContext {
     @Override
     public EasyQueryRuntimeContext getRuntimeContext() {
         return runtimeContext;
+    }
+
+    @Override
+    public List<SQLParameter> getParameters() {
+        return params;
+    }
+    @Override
+    public void addParameter(SQLParameter parameter) {
+        params.add(parameter);
     }
 
 }

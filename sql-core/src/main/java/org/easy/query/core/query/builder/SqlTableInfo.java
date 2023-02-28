@@ -4,8 +4,8 @@ import org.easy.query.core.expression.lambda.Property;
 import org.easy.query.core.abstraction.metadata.ColumnMetadata;
 import org.easy.query.core.enums.MultiTableTypeEnum;
 import org.easy.query.core.abstraction.metadata.EntityMetadata;
-import org.easy.query.core.basic.sql.segment.segment.AndPredicateSegment;
-import org.easy.query.core.basic.sql.segment.segment.PredicateSegment;
+import org.easy.query.core.expression.segment.AndPredicateSegment;
+import org.easy.query.core.expression.segment.PredicateSegment;
 import org.easy.query.core.expression.lambda.SqlExpression;
 import org.easy.query.core.expression.parser.abstraction.SqlColumnSetter;
 import org.easy.query.core.expression.parser.abstraction.SqlPredicate;
@@ -61,13 +61,13 @@ public class SqlTableInfo {
 
     }
     public <T1> ColumnMetadata getColumn(Property<T1, ?> column){
-        String attrName = LambdaUtil.getAttrName(column);
-        return this.entityMetadata.getColumn(attrName);
+        String propertyName = LambdaUtil.getAttrName(column);
+        return this.entityMetadata.getColumn(propertyName);
 
     }
     public <T1> String getColumnName(Property<T1, ?> column){
-        String attrName = LambdaUtil.getAttrName(column);
-        return this.getColumnName(attrName);
+        String propertyName = LambdaUtil.getAttrName(column);
+        return this.getColumnName(propertyName);
     }
     public <T1> String getPropertyName(Property<T1, ?> column){
         return LambdaUtil.getAttrName(column);

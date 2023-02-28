@@ -1,19 +1,29 @@
 package org.easy.query.mysql.util;
 
 import org.easy.query.core.abstraction.EasyQueryLambdaFactory;
+import org.easy.query.core.abstraction.EasyQueryRuntimeContext;
+import org.easy.query.core.abstraction.metadata.EntityMetadata;
 import org.easy.query.core.basic.api.context.*;
-import org.easy.query.core.basic.sql.segment.builder.UpdateSetSqlSegmentBuilder;
-import org.easy.query.core.basic.sql.segment.segment.AndPredicateSegment;
-import org.easy.query.core.basic.sql.segment.segment.PredicateSegment;
-import org.easy.query.core.exception.EasyQueryException;
-import org.easy.query.core.expression.lambda.SqlExpression;
+import org.easy.query.core.expression.builder.SqlSegmentBuilder;
+import org.easy.query.core.expression.builder.UpdateSetSqlSegmentBuilder;
 import org.easy.query.core.expression.parser.abstraction.SqlColumnSelector;
-import org.easy.query.core.expression.parser.abstraction.SqlColumnSetter;
-import org.easy.query.core.expression.parser.abstraction.SqlPredicate;
 import org.easy.query.core.expression.parser.abstraction.internal.ColumnSelector;
 import org.easy.query.core.expression.parser.impl.DefaultSqlColumnSetSelector;
+import org.easy.query.core.expression.segment.AndPredicateSegment;
+import org.easy.query.core.expression.segment.PredicateSegment;
+import org.easy.query.core.exception.EasyQueryException;
+import org.easy.query.core.expression.lambda.SqlExpression;
+import org.easy.query.core.expression.parser.abstraction.SqlColumnSetter;
+import org.easy.query.core.expression.parser.abstraction.SqlPredicate;
+import org.easy.query.core.expression.segment.SqlSegment;
+import org.easy.query.core.expression.segment.predicate.node.ColumnPropertyPredicate;
 import org.easy.query.core.query.builder.SqlTableInfo;
+import org.easy.query.core.util.ClassUtil;
 import org.easy.query.core.util.StringUtil;
+
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
 
 /**
  * @FileName: MySQLUtil.java
@@ -150,11 +160,11 @@ public class MySQLUtil {
         return sql.toString();
     }
 
-    public static String toUpdateEntitySql(UpdateContext updateContext) {
+    public static String toUpdateEntitySql(UpdateContext updateContext,SqlTableInfo table) {
 
         //将条件参数清空
-        if (!updateContext.getProperties().isEmpty()) {
-            updateContext.getProperties().clear();
+        if (!updateContext.getParameters().isEmpty()) {
+            updateContext.getParameters().clear();
         }
         int tableCount = updateContext.getTables().size();
         if (tableCount == 0) {
@@ -163,11 +173,44 @@ public class MySQLUtil {
         if (tableCount > 1) {
             throw new EasyQueryException("找到多张表信息");
         }
+        //如果没有指定where那么就使用主键作为更新条件
+        SqlSegmentBuilder whereColumns = updateContext.getWhereColumns();
+        if (whereColumns.isEmpty()) {
+            EntityMetadata entityMetadata = table.getEntityMetadata();
+            Collection<String> keyProperties = entityMetadata.getKeyProperties();
+            if(keyProperties.isEmpty()){
+                throw new EasyQueryException("对象:"+ ClassUtil.getSimpleName(entityMetadata.getEntityClass())+" 未找到主键信息");
+            }
+            for (String keyProperty : keyProperties) {
+                whereColumns.append(new ColumnPropertyPredicate(table,keyProperty,updateContext));
+            }
+        }
+        //如果用户没有指定set的列,那么就是set所有列,并且要去掉主键部分
+        if (updateContext.getSetColumns().isEmpty()) {
+            EasyQueryRuntimeContext runtimeContext = updateContext.getRuntimeContext();
+            EasyQueryLambdaFactory easyQueryLambdaFactory = runtimeContext.getEasyQueryLambdaFactory();
+            SqlExpression<SqlColumnSelector<?>> selectExpression = ColumnSelector::columnAll;
+            SqlColumnSelector<?> sqlColumnSetter = easyQueryLambdaFactory.createSqlColumnSetSelector(table.getIndex(), updateContext, updateContext.getSetColumns());
+            selectExpression.apply(sqlColumnSetter);//获取set的值
+            //非手动指定的那么需要移除where的那一部分
+            List<SqlSegment> sqlSegments = updateContext.getSetColumns().getSqlSegments();
+            HashSet<String> whereProperties = new HashSet<>(whereColumns.getSqlSegments().size());
+            for (SqlSegment sqlSegment : whereColumns.getSqlSegments()) {
+                if(sqlSegment instanceof ColumnPropertyPredicate){
+                    whereProperties.add(((ColumnPropertyPredicate)sqlSegment).getPropertyName());
+                }
+            }
+            sqlSegments.removeIf(o->{
+                if(o instanceof ColumnPropertyPredicate){
+                    String propertyName = ((ColumnPropertyPredicate) o).getPropertyName();
+                    return whereProperties.contains(propertyName);
+                }
+                return false;
+            });
+        }
         if (updateContext.getWhereColumns().isEmpty()) {
             throw new EasyQueryException("更新需要指定条件列");
         }
-
-        SqlTableInfo table = updateContext.getTable(0);
         String tableName = table.getEntityMetadata().getTableName();
         return "UPDATE " + tableName + " SET " + updateContext.getSetColumns().toSql() + " WHERE " +
                 updateContext.getWhereColumns().toSql();
@@ -202,8 +245,8 @@ public class MySQLUtil {
     public static String toEntityDeleteSql(DeleteContext deleteContext) {
 
         //将条件参数清空
-        if (!deleteContext.getProperties().isEmpty()) {
-            deleteContext.getProperties().clear();
+        if (!deleteContext.getParameters().isEmpty()) {
+            deleteContext.getParameters().clear();
         }
         if (!deleteContext.getParameters().isEmpty()) {
             deleteContext.getParameters().clear();
@@ -227,7 +270,7 @@ public class MySQLUtil {
         if (deletedSqlExpression != null) {
             EasyQueryLambdaFactory easyQueryLambdaFactory = deleteContext.getRuntimeContext().getEasyQueryLambdaFactory();
             UpdateSetSqlSegmentBuilder setSqlSegmentBuilder = new UpdateSetSqlSegmentBuilder();
-            SqlColumnSetter<Object> sqlColumnSetter = easyQueryLambdaFactory.createSqlColumnSetter(table.getIndex(), deleteContext, setSqlSegmentBuilder);
+            SqlColumnSetter<?> sqlColumnSetter = easyQueryLambdaFactory.createSqlColumnSetter(table.getIndex(), deleteContext, setSqlSegmentBuilder);
             deletedSqlExpression.apply(sqlColumnSetter);//获取set的值
 
             sql = new StringBuilder("UPDATE ").append(tableName);

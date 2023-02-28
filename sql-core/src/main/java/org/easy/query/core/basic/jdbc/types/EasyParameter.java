@@ -1,5 +1,7 @@
 package org.easy.query.core.basic.jdbc.types;
 
+import org.easy.query.core.basic.jdbc.parameter.SQLParameter;
+
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
@@ -12,13 +14,13 @@ import java.util.List;
  */
 public class EasyParameter {
     private final PreparedStatement ps;
-    private final List<Object> values;
+    private final List<SQLParameter> sqlParameters;
     private int index;
 
-    public EasyParameter(PreparedStatement ps, List<Object> values){
+    public EasyParameter(PreparedStatement ps, List<SQLParameter> sqlParameters){
 
         this.ps = ps;
-        this.values = values;
+        this.sqlParameters = sqlParameters;
     }
     public void setIndex(int i){
         index=i;
@@ -27,7 +29,7 @@ public class EasyParameter {
         return index+1;
     }
     public Object getValue(){
-        return values.get(index);
+        return sqlParameters.get(index).getValue();
     }
 
     /**

@@ -17,10 +17,10 @@ public class DefaultNameConversion extends NameConversion {
 
         Table table = ClassUtil.getAnnotation(clazz, Table.class);
         if(table==null){
-            return clazz.getSimpleName();
+            return ClassUtil.getSimpleName(clazz);
         }
         String tableName = table.value();
-        return StringUtil.isBlank(tableName)?clazz.getSimpleName():tableName;
+        return StringUtil.isBlank(tableName)?ClassUtil.getSimpleName(clazz):tableName;
     }
 
     @Override

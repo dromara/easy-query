@@ -75,7 +75,7 @@ public class MySQLEasyQuery implements EasyQuery {
 
     @Override
     public <T1> ExpressionUpdate<T1> update(Class<T1> entityClass) {
-        return new MySQLExpressionUpdate<T1>(entityClass, new UpdateContext(runtimeContext,true));
+        return new MySQLExpressionUpdate<T1>(entityClass, new UpdateContext(runtimeContext));
     }
 
     @Override
@@ -83,7 +83,7 @@ public class MySQLEasyQuery implements EasyQuery {
         if(entity==null){
             return new MySQLLazyUpdate<>();
         }
-        return new MySQLEntityUpdate<>(Arrays.asList(entity), new UpdateContext(runtimeContext,false));
+        return new MySQLEntityUpdate<>(Arrays.asList(entity), new UpdateContext(runtimeContext));
     }
 
     @Override
@@ -91,6 +91,6 @@ public class MySQLEasyQuery implements EasyQuery {
         if(entities==null||entities.isEmpty()){
             return new MySQLLazyUpdate<>();
         }
-        return new MySQLEntityUpdate<>(entities, new UpdateContext(runtimeContext,false));
+        return new MySQLEntityUpdate<>(entities, new UpdateContext(runtimeContext));
     }
 }

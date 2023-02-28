@@ -19,7 +19,7 @@ public class UnderlinedNameConversion extends NameConversion {
         }
         String tableName = table.value();
         if(StringUtil.isBlank(tableName)){
-            return StringUtil.enCodeUnderlined(clazz.getSimpleName());
+            return StringUtil.enCodeUnderlined(ClassUtil.getSimpleName(clazz));
         }
         return tableName;
     }

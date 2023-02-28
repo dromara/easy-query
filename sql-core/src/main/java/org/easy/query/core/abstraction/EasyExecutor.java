@@ -1,5 +1,7 @@
 package org.easy.query.core.abstraction;
 
+import org.easy.query.core.basic.jdbc.parameter.SQLParameter;
+
 import java.util.List;
 
 /**
@@ -9,8 +11,8 @@ import java.util.List;
  * @Created by xuejiaming
  */
 public interface EasyExecutor {
-    <T> long update(ExecutorContext executorContext, String sql, List<Object> parameters);
-    <T> long update(ExecutorContext executorContext, Class<T> clazz, String sql,List<T> entities, List<String> properties);
-    <T> long insert(ExecutorContext executorContext, Class<T> clazz, String sql, List<T> entities,List<String> properties);
-    <TR> List<TR> query(ExecutorContext executorContext, Class<TR> clazz, String sql, List<Object> parameters);
+    <T> long update(ExecutorContext executorContext, String sql, List<SQLParameter> sqlParameters);
+    <T> long update(ExecutorContext executorContext,String sql,List<T> entities, List<SQLParameter> sqlParameters);
+    <T> long insert(ExecutorContext executorContext,String sql, List<T> entities,List<SQLParameter> sqlParameters);
+    <TR> List<TR> query(ExecutorContext executorContext, Class<TR> clazz, String sql, List<SQLParameter> sqlParameters);
 }

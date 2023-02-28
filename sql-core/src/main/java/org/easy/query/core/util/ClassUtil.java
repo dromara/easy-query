@@ -26,9 +26,17 @@ import java.util.concurrent.ConcurrentHashMap;
  * @Created by xuejiaming
  */
 public class ClassUtil {
-    public final static Map<Class, Map<String, MethodInvoker>> methodInvokerCache = new ConcurrentHashMap<>();
-    private ClassUtil(){}
+    public final static Map<Class<?>, Map<String, MethodInvoker>> methodInvokerCache = new ConcurrentHashMap<>();
 
+    private ClassUtil() {
+    }
+
+    public static String getSimpleName(Class<?> clazz) {
+        if (clazz == null) {
+            return StringUtil.EMPTY;
+        }
+        return clazz.getSimpleName();
+    }
 
     public static Object getPropertyValue(Object o, String attrName) {
 
@@ -39,7 +47,8 @@ public class ClassUtil {
             throw new RuntimeException("POJO属性访问出错:" + attrName, ex);
         }
     }
-    public static MethodInvoker getInvoker(Class<?> clazz, String name){
+
+    public static MethodInvoker getInvoker(Class<?> clazz, String name) {
 
         MethodInvoker invoker = null;
         Map<String, MethodInvoker> map = methodInvokerCache.get(clazz);
@@ -56,7 +65,7 @@ public class ClassUtil {
             pd = propertyDescriptors(clazz);
             property = find(pd, name);
         } catch (IntrospectionException e) {
-            throw new EasyQueryException( "获取类属性错", e);
+            throw new EasyQueryException("获取类属性错", e);
         }
 
         if (property != null) {
@@ -113,6 +122,7 @@ public class ClassUtil {
         }
         return null;
     }
+
     public static Method getWriteMethod(PropertyDescriptor prop, Class<?> type) {
         Method writeMethod = prop.getWriteMethod();
         //当使用lombok等链式编程方式时 有返回值的setter不被认为是writeMethod，需要自己去获取
@@ -150,7 +160,8 @@ public class ClassUtil {
         }
 
     }
-    public static  <T> T newInstance(Class<T> clazz){
+
+    public static <T> T newInstance(Class<T> clazz) {
         try {
             return clazz.newInstance();
         } catch (InstantiationException e) {
@@ -159,19 +170,21 @@ public class ClassUtil {
             throw new EasyQueryException(e);
         }
     }
+
     public static PropertyDescriptor[] propertyDescriptors(Class<?> c) throws IntrospectionException {
 
         BeanInfo beanInfo = null;
-        beanInfo = Introspector.getBeanInfo(c,Object.class);
+        beanInfo = Introspector.getBeanInfo(c, Object.class);
         return beanInfo.getPropertyDescriptors();
 
     }
-    public static List<Field> getAllFields(Class clazz){
+
+    public static List<Field> getAllFields(Class clazz) {
         ArrayList<Field> fields = new ArrayList<>();
         Class currentClazz = clazz;
-        while(currentClazz!=null){
+        while (currentClazz != null) {
             fields.addAll(Arrays.asList(currentClazz.getDeclaredFields()));
-            currentClazz=currentClazz.getSuperclass();
+            currentClazz = currentClazz.getSuperclass();
         }
         return fields;
     }
@@ -229,6 +242,7 @@ public class ClassUtil {
 
     /**
      * 得到某个类的类注解，如果没有，则寻找父类
+     *
      * @param c
      * @param expect
      * @return
@@ -244,6 +258,7 @@ public class ClassUtil {
         return null;
 
     }
+
     public static <T extends Annotation> T getAnnotation(Class c, String property, Method getter,
                                                          Class<T> annotationClass) {
         if (getter == null) {

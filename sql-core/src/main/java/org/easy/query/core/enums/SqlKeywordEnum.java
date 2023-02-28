@@ -1,7 +1,7 @@
 package org.easy.query.core.enums;
 
 
-import org.easy.query.core.basic.sql.segment.segment.SqlSegment;
+import org.easy.query.core.expression.segment.SqlSegment;
 
 /**
  * @FileName: SqlKeywordEnum.java

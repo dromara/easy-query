@@ -2,12 +2,13 @@ package org.easy.query.core.impl;
 
 import org.easy.query.core.abstraction.EasyQuerySqlBuilderProvider2;
 import org.easy.query.core.basic.api.context.SelectContext;
-import org.easy.query.core.basic.sql.segment.builder.SqlSegmentBuilder;
+import org.easy.query.core.expression.builder.SqlSegmentBuilder;
 import org.easy.query.core.expression.parser.abstraction.SqlAggregatePredicate;
 import org.easy.query.core.expression.parser.abstraction.SqlColumnAsSelector;
 import org.easy.query.core.expression.parser.abstraction.SqlColumnSelector;
 import org.easy.query.core.expression.parser.abstraction.SqlPredicate;
 import org.easy.query.core.expression.parser.impl.*;
+import org.easy.query.core.expression.segment.predicate.DefaultSqlPredicate;
 
 /**
  * @FileName: Select1SqlPredicateProvider.java

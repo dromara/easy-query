@@ -13,7 +13,7 @@ import java.util.Collection;
  * @Date: 2023/2/5 09:09
  * @Created by xuejiaming
  */
-public interface WherePredicate<T1, TChain> extends Serializable, IndexAware {
+public interface WherePredicate<T1, TChain> extends IndexAware {
     /**
      * 大于 column > val
      */

@@ -12,7 +12,7 @@ import org.easy.query.core.expression.parser.abstraction.SqlColumnAsSelector;
 import org.easy.query.core.expression.parser.abstraction.SqlColumnSelector;
 import org.easy.query.core.expression.parser.abstraction.SqlPredicate;
 import org.easy.query.core.expression.parser.abstraction.internal.ColumnSelector;
-import org.easy.query.core.basic.sql.segment.builder.SelectSqlSegmentBuilder;
+import org.easy.query.core.expression.builder.SelectSqlSegmentBuilder;
 import org.easy.query.core.basic.api.context.SelectContext;
 import org.easy.query.core.query.builder.SqlTableInfo;
 

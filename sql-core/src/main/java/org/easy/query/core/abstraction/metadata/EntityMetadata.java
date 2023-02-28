@@ -51,8 +51,8 @@ public class EntityMetadata {
         List<Field> allFields = ClassUtil.getAllFields(this.entityClass);
         PropertyDescriptor[] ps = getPropertyDescriptor();
         for (Field field : allFields) {
-            String attr = field.getName();
-            PropertyDescriptor propertyDescriptor = Arrays.stream(ps).filter(o -> Objects.equals(o.getName(), attr)).findFirst().orElse(null);
+            String property = field.getName();
+            PropertyDescriptor propertyDescriptor = Arrays.stream(ps).filter(o -> Objects.equals(o.getName(), property)).findFirst().orElse(null);
             ColumnIgnore columnIgnore = field.getAnnotation(ColumnIgnore.class);
             if(columnIgnore!=null){
                 continue;
@@ -60,21 +60,21 @@ public class EntityMetadata {
 
             Column column = field.getAnnotation(Column.class);
             boolean hasColumnName = column != null && !StringUtil.isBlank(column.value());
-            String columnName=hasColumnName?column.value():nameConversion.getColName(attr);
+            String columnName=hasColumnName?column.value():nameConversion.getColName(property);
             ColumnMetadata columnMetadata = new ColumnMetadata(this, columnName);
             if(column!=null){
                 columnMetadata.setNullable(column.nullable());
             }
             columnMetadata.setProperty(propertyDescriptor);
-            property2ColumnMap.put(attr,columnMetadata);
-            column2PropertyMap.put(columnName,attr);
+            property2ColumnMap.put(property,columnMetadata);
+            column2PropertyMap.put(columnName,property);
 
             PrimaryKey primaryKey =  field.getAnnotation(PrimaryKey.class);
             if(primaryKey!=null){
                 columnMetadata.setPrimary(true);
                 columnMetadata.setIncrement(primaryKey.increment());
                 columnMetadata.setNullable(false);//如果为主键那么之前设置的nullable将无效
-                keyPropertiesMap.put(attr,columnName);
+                keyPropertiesMap.put(property,columnName);
             }
 
             InsertIgnore insertIgnore = field.getAnnotation(InsertIgnore.class);
@@ -138,6 +138,9 @@ public class EntityMetadata {
     public Collection<ColumnMetadata> getColumns() {
         return property2ColumnMap.values();
     }
+    public Collection<String> getProperties() {
+        return property2ColumnMap.keySet();
+    }
     public LinkedHashMap<String,ColumnMetadata> getProperty2ColumnMap() {
         return property2ColumnMap;
     }
@@ -158,7 +161,7 @@ public class EntityMetadata {
     }
     public void checkTable(){
         if(StringUtil.isEmpty(tableName)){
-            throw new EasyQueryException("当前对象不是数据库对象,"+entityClass.getSimpleName());
+            throw new EasyQueryException("当前对象不是数据库对象,"+ClassUtil.getSimpleName(entityClass));
         }
     }
 

@@ -5,7 +5,7 @@ import org.easy.query.core.abstraction.metadata.ColumnMetadata;
 import org.easy.query.core.expression.parser.abstraction.SqlColumnSelector;
 import org.easy.query.core.basic.api.context.SelectContext;
 import org.easy.query.core.query.builder.SqlTableInfo;
-import org.easy.query.core.basic.sql.segment.segment.OrderColumnSegment;
+import org.easy.query.core.expression.segment.OrderColumnSegment;
 
 import java.util.Collection;
 
@@ -33,17 +33,16 @@ public  class DefaultSqlOrderColumnSelector<T1> implements SqlColumnSelector<T1>
     public SqlColumnSelector<T1> column(Property<T1, ?> column) {
         SqlTableInfo table = selectContext.getTable(index);
         String propertyName = table.getPropertyName(column);
-        String columnName = table.getColumnName(propertyName);
-        selectContext.getOrder().append(new OrderColumnSegment(index,columnName,propertyName,selectContext,asc));
+        selectContext.getOrder().append(new OrderColumnSegment(table,propertyName,selectContext,asc));
         return this;
     }
 
     @Override
     public SqlColumnSelector<T1> columnAll() {
         SqlTableInfo table = selectContext.getTable(index);
-        Collection<ColumnMetadata> columns = table.getEntityMetadata().getColumns();
-        for (ColumnMetadata column : columns) {
-            selectContext.getOrder().append(new OrderColumnSegment(index, column.getName(),column.getProperty().getName(),selectContext,asc));
+        Collection<String> properties = table.getEntityMetadata().getProperties();
+        for (String property : properties) {
+            selectContext.getOrder().append(new OrderColumnSegment(table, property,selectContext,asc));
         }
         return this;
     }

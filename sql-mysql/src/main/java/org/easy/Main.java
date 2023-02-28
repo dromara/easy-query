@@ -6,7 +6,7 @@ import org.easy.query.core.abstraction.client.EasyQuery;
 import org.easy.query.core.abstraction.metadata.EntityMetadataManager;
 import org.easy.query.core.abstraction.sql.PageResult;
 import org.easy.query.core.basic.api.select.Select1;
-import org.easy.query.core.abstraction.sql.enums.EasyPredicate;
+import org.easy.query.core.enums.AggregatePredicateCompare;
 import org.easy.query.core.basic.jdbc.tx.DefaultConnectionManager;
 import org.easy.query.core.basic.jdbc.con.EasyConnectionManager;
 import org.easy.query.core.basic.jdbc.tx.Transaction;
@@ -220,7 +220,7 @@ jqdcRuntimeContext.getEasyQueryConfiguration().applyEntityTypeConfiguration(new 
             String ds0 = client.select(TestUserMysql.class)
                     .where(o -> o.eq(TestUserMysql::getName, "ds0"))
                     .groupBy(o -> o.column(TestUserMysql::getAge))
-                    .having(o -> o.count(TestUserMysql::getId, EasyPredicate.GE, 0))
+                    .having(o -> o.count(TestUserMysql::getId, AggregatePredicateCompare.GE, 0))
                     .toSql(TestUserMysqlGroup.class, o -> o.column(TestUserMysql::getAge).columnCount(TestUserMysql::getId, TestUserMysqlGroup::getAcount));
         }
         long end = System.currentTimeMillis();
@@ -234,12 +234,12 @@ jqdcRuntimeContext.getEasyQueryConfiguration().applyEntityTypeConfiguration(new 
         List<TestUserMysqlGroup> testUserMysqls = client.select(TestUserMysql.class)
                 .where(o -> o.eq(TestUserMysql::getName, "ds0"))
                 .groupBy(o -> o.column(TestUserMysql::getAge))
-                .having(o -> o.count(TestUserMysql::getId, EasyPredicate.GE, 0))
+                .having(o -> o.count(TestUserMysql::getId, AggregatePredicateCompare.GE, 0))
                 .toList(TestUserMysqlGroup.class, o -> o.column(TestUserMysql::getAge).columnCount(TestUserMysql::getId, TestUserMysqlGroup::getAcount));
         List<TestUserMysql> testUserMysqls1 = client.select(TestUserMysql.class)
                 .where(o -> o.eq(TestUserMysql::getName, "123"))
                 .groupBy(o -> o.column(TestUserMysql::getAge))
-                .having(o -> o.countDistinct(TestUserMysql::getId, EasyPredicate.GT, 5).and(x -> x.countDistinct(TestUserMysql::getId, EasyPredicate.GT, 5).or().countDistinct(TestUserMysql::getId, EasyPredicate.GT, 5)))
+                .having(o -> o.countDistinct(TestUserMysql::getId, AggregatePredicateCompare.GT, 5).and(x -> x.countDistinct(TestUserMysql::getId, AggregatePredicateCompare.GT, 5).or().countDistinct(TestUserMysql::getId, AggregatePredicateCompare.GT, 5)))
                 .toList();
         TestUserMysql testUserMysql = client.select(TestUserMysql.class, "y")
                 .where(o -> o.eq(TestUserMysql::getId, "102").like(TestUserMysql::getName, "1%").and(x ->

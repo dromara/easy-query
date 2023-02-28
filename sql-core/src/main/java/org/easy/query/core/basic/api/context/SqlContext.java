@@ -1,6 +1,7 @@
 package org.easy.query.core.basic.api.context;
 
 import org.easy.query.core.abstraction.EasyQueryRuntimeContext;
+import org.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import org.easy.query.core.query.builder.SqlTableInfo;
 
 import java.util.List;
@@ -16,6 +17,8 @@ public interface SqlContext {
      List<SqlTableInfo> getTables();
      SqlTableInfo getTable(int index);
      String getQuoteName(String value);
-     String getSqlColumnSegment(int tableIndex,String columnName);
+     String getSqlColumnSegment(SqlTableInfo table,String propertyName);
+     List<SQLParameter> getParameters();
+     void addParameter(SQLParameter parameter);
 
 }

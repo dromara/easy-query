@@ -1,14 +1,14 @@
 package org.easy.query.core.expression.parser.impl;
 
-import org.easy.query.core.basic.sql.segment.builder.SqlSegmentBuilder;
+import org.easy.query.core.expression.builder.SqlSegmentBuilder;
 import org.easy.query.core.expression.lambda.Property;
 import org.easy.query.core.abstraction.sql.enums.EasyAggregate;
 import org.easy.query.core.expression.parser.abstraction.SqlColumnAsSelector;
 import org.easy.query.core.expression.parser.abstraction.internal.ColumnAsSelector;
 import org.easy.query.core.basic.api.context.SqlContext;
 import org.easy.query.core.query.builder.SqlTableInfo;
-import org.easy.query.core.basic.sql.segment.segment.ColumnSegment;
-import org.easy.query.core.basic.sql.segment.segment.FuncColumnSegment;
+import org.easy.query.core.expression.segment.ColumnSegment;
+import org.easy.query.core.expression.segment.FuncColumnSegment;
 import org.easy.query.core.util.LambdaUtil;
 
 /**
@@ -32,9 +32,8 @@ public class DefaultSqlColumnAsSelector<T1,TR> extends AbstractSqlColumnSelector
     public SqlColumnAsSelector<T1, TR> columnAs(Property<T1, ?> column, Property<TR, ?> alias) {
         SqlTableInfo table = getSqlContext().getTable(getIndex());
         String propertyName = table.getPropertyName(column);
-        String columnName = table.getColumnName(propertyName);
         String columnAsName = LambdaUtil.getAttrName(alias);
-        sqlSegmentBuilder.append(new ColumnSegment(getIndex(),columnName,propertyName, getSqlContext(),columnAsName));
+        sqlSegmentBuilder.append(new ColumnSegment(table,propertyName, getSqlContext(),columnAsName));
         return this;
     }
 
@@ -45,9 +44,10 @@ public class DefaultSqlColumnAsSelector<T1,TR> extends AbstractSqlColumnSelector
 
     @Override
     public SqlColumnAsSelector<T1, TR> columnCount(Property<T1, ?> column, Property<TR, ?> alias) {
-        String columnName = getSqlContext().getTable(getIndex()).getColumnName(column);
+        SqlTableInfo table = getSqlContext().getTable(getIndex());
+        String propertyName = table.getPropertyName(column);
         String columnAsName = LambdaUtil.getAttrName(alias);
-        sqlSegmentBuilder.append(new FuncColumnSegment(getIndex(),columnName, getSqlContext(), EasyAggregate.COUNT,columnAsName));
+        sqlSegmentBuilder.append(new FuncColumnSegment(table,propertyName, getSqlContext(), EasyAggregate.COUNT,columnAsName));
         return this;
     }
 

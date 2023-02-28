@@ -1,12 +1,12 @@
 package org.easy.query.core.expression.parser.impl;
 
-import org.easy.query.core.basic.sql.segment.builder.SqlSegmentBuilder;
+import org.easy.query.core.expression.builder.SqlSegmentBuilder;
 import org.easy.query.core.expression.lambda.Property;
 import org.easy.query.core.abstraction.metadata.ColumnMetadata;
 import org.easy.query.core.expression.parser.abstraction.internal.ColumnSelector;
 import org.easy.query.core.basic.api.context.SqlContext;
 import org.easy.query.core.query.builder.SqlTableInfo;
-import org.easy.query.core.basic.sql.segment.segment.ColumnSegment;
+import org.easy.query.core.expression.segment.ColumnSegment;
 
 import java.util.Collection;
 
@@ -36,18 +36,16 @@ public class AbstractSqlColumnSelector<T1,TChain> implements ColumnSelector<T1, 
     public TChain column(Property<T1, ?> column) {
         SqlTableInfo table = sqlContext.getTable(index);
         String propertyName = table.getPropertyName(column);
-        String columnName = table.getColumnName(propertyName);
-        sqlSegmentBuilder.append(new ColumnSegment(index,columnName,propertyName,sqlContext));
+        sqlSegmentBuilder.append(new ColumnSegment(table,propertyName,sqlContext));
         return (TChain)this;
     }
 
     @Override
     public TChain columnAll() {
         SqlTableInfo table = sqlContext.getTable(index);
-        Collection<ColumnMetadata> columns = table.getEntityMetadata().getColumns();
-        for (ColumnMetadata column : columns) {
-            String propertyName = column.getProperty().getName();
-            sqlSegmentBuilder.append(new ColumnSegment(index, column.getName(),propertyName,sqlContext));
+        Collection<String> properties = table.getEntityMetadata().getProperties();
+        for (String property : properties) {
+            sqlSegmentBuilder.append(new ColumnSegment(table, property,sqlContext));
         }
         return (TChain)this;
     }

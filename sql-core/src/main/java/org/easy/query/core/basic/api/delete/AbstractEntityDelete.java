@@ -1,16 +1,14 @@
 package org.easy.query.core.basic.api.delete;
 
-import org.easy.query.core.abstraction.EasyExecutor;
-import org.easy.query.core.abstraction.ExecutorContext;
 import org.easy.query.core.abstraction.metadata.ColumnMetadata;
 import org.easy.query.core.abstraction.metadata.EntityMetadata;
 import org.easy.query.core.basic.api.context.DeleteContext;
-import org.easy.query.core.basic.sql.segment.builder.SqlSegmentBuilder;
-import org.easy.query.core.basic.sql.segment.segment.ColumnPredicateSegment;
+import org.easy.query.core.expression.builder.SqlSegmentBuilder;
+import org.easy.query.core.expression.segment.predicate.node.ColumnPropertyPredicate;
 import org.easy.query.core.enums.MultiTableTypeEnum;
 import org.easy.query.core.exception.EasyQueryException;
 import org.easy.query.core.query.builder.SqlTableInfo;
-import org.easy.query.core.util.StringUtil;
+import org.easy.query.core.util.ClassUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,7 +22,7 @@ import java.util.List;
  */
 public abstract class AbstractEntityDelete<T> implements EasyDelete<T> {
     protected final List<T> entities= new ArrayList<>();
-    protected final Class<T> clazz;
+    protected final SqlTableInfo table;
     protected final EntityMetadata entityMetadata;
     protected final DeleteContext deleteContext;
 
@@ -35,10 +33,11 @@ public abstract class AbstractEntityDelete<T> implements EasyDelete<T> {
         this.entities.addAll(entities);
         this.deleteContext = deleteContext;
 
-        this.clazz = (Class<T>)entities.iterator().next().getClass();
+        Class<?> clazz = entities.iterator().next().getClass();
         this.entityMetadata = deleteContext.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(clazz);
         entityMetadata.checkTable();
-        deleteContext.addSqlTable(new SqlTableInfo(entityMetadata, null, 0, MultiTableTypeEnum.FROM));
+        table=new SqlTableInfo(entityMetadata, null, 0, MultiTableTypeEnum.FROM);
+        deleteContext.addSqlTable(table);
     }
     @Override
     public long executeRows() {
@@ -52,21 +51,11 @@ public abstract class AbstractEntityDelete<T> implements EasyDelete<T> {
 
             Collection<String> keyProperties = entityMetadata.getKeyProperties();
             if(keyProperties.isEmpty()){
-                throw new EasyQueryException("对象:"+clazz.getSimpleName()+" 未找到主键信息");
+                throw new EasyQueryException("对象:"+ ClassUtil.getSimpleName(entityMetadata.getEntityClass())+" 未找到主键信息");
             }
             for (String keyProperty : keyProperties) {
-                ColumnMetadata column = entityMetadata.getColumn(keyProperty);
-                String propertyName = column.getProperty().getName();
-                whereColumns.append(new ColumnPredicateSegment(0, column.getName(),propertyName,deleteContext));
+                whereColumns.append(new ColumnPropertyPredicate(table, keyProperty,deleteContext));
             }
-
-
-//            String updateSql = toSql();
-//            System.out.println("更新sql："+updateSql);
-//            if (!StringUtil.isBlank(updateSql)) {
-//                EasyExecutor easyExecutor = updateContext.getRuntimeContext().getEasyExecutor();
-//                return easyExecutor.update(ExecutorContext.create(updateContext.getRuntimeContext()), clazz, updateSql, entities, updateContext.getProperties());
-//            }
         }
         return 0;
     }

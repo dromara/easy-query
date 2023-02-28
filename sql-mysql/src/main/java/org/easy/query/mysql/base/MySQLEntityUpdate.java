@@ -20,6 +20,6 @@ public class MySQLEntityUpdate<T> extends AbstractEntityUpdate<T> {
 
     @Override
     public String toSql() {
-        return MySQLUtil.toUpdateEntitySql(updateContext);
+        return MySQLUtil.toUpdateEntitySql(updateContext,table);
     }
 }

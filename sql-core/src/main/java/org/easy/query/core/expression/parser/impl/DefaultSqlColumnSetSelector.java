@@ -1,13 +1,12 @@
 package org.easy.query.core.expression.parser.impl;
 
-import org.easy.query.core.basic.api.context.SqlColumnPredicateContext;
-import org.easy.query.core.basic.sql.segment.builder.SqlSegmentBuilder;
+import org.easy.query.core.basic.api.context.SqlContext;
+import org.easy.query.core.expression.builder.SqlSegmentBuilder;
 import org.easy.query.core.expression.lambda.Property;
 import org.easy.query.core.abstraction.metadata.ColumnMetadata;
 import org.easy.query.core.expression.parser.abstraction.SqlColumnSelector;
-import org.easy.query.core.basic.api.context.UpdateContext;
 import org.easy.query.core.query.builder.SqlTableInfo;
-import org.easy.query.core.basic.sql.segment.segment.ColumnPredicateSegment;
+import org.easy.query.core.expression.segment.predicate.node.ColumnPropertyPredicate;
 
 import java.util.Collection;
 
@@ -19,31 +18,29 @@ import java.util.Collection;
  */
 public class DefaultSqlColumnSetSelector<T> implements SqlColumnSelector<T> {
     private final int index;
-    private final SqlColumnPredicateContext sqlColumnPredicateContext;
+    private final SqlContext sqlContext;
     private final SqlSegmentBuilder sqlSegmentBuilder;
 
-    public DefaultSqlColumnSetSelector(int index, SqlColumnPredicateContext sqlColumnPredicateContext, SqlSegmentBuilder sqlSegmentBuilder){
+    public DefaultSqlColumnSetSelector(int index, SqlContext sqlContext, SqlSegmentBuilder sqlSegmentBuilder){
 
         this.index = index;
-        this.sqlColumnPredicateContext = sqlColumnPredicateContext;
+        this.sqlContext = sqlContext;
         this.sqlSegmentBuilder = sqlSegmentBuilder;
     }
     @Override
     public SqlColumnSelector<T> column(Property<T, ?> column) {
-        SqlTableInfo table = sqlColumnPredicateContext.getTable(index);
+        SqlTableInfo table = sqlContext.getTable(index);
         String propertyName = table.getPropertyName(column);
-        String columnName = table.getColumnName(propertyName);
-        sqlSegmentBuilder.append(new ColumnPredicateSegment(index,columnName,propertyName,sqlColumnPredicateContext));
+        sqlSegmentBuilder.append(new ColumnPropertyPredicate(table,propertyName,sqlContext));
         return this;
     }
 
     @Override
     public SqlColumnSelector<T> columnAll() {
-        SqlTableInfo table = sqlColumnPredicateContext.getTable(index);
-        Collection<ColumnMetadata> columns = table.getEntityMetadata().getColumns();
-        for (ColumnMetadata column : columns) {
-            String propertyName = column.getProperty().getName();
-            sqlSegmentBuilder.append(new ColumnPredicateSegment(index, column.getName(),propertyName,sqlColumnPredicateContext));
+        SqlTableInfo table = sqlContext.getTable(index);
+        Collection<String> properties = table.getEntityMetadata().getProperties();
+        for (String property : properties) {
+            sqlSegmentBuilder.append(new ColumnPropertyPredicate(table, property,sqlContext));
         }
         return this;
     }

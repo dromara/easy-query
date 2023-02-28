@@ -1,9 +1,12 @@
 package org.easy.query.core.basic.api.context;
 
 import org.easy.query.core.abstraction.EasyQueryRuntimeContext;
-import org.easy.query.core.basic.sql.segment.builder.SelectSqlSegmentBuilder;
-import org.easy.query.core.basic.sql.segment.builder.SqlSegmentBuilder;
+import org.easy.query.core.basic.jdbc.parameter.SQLParameter;
+import org.easy.query.core.expression.builder.SelectSqlSegmentBuilder;
+import org.easy.query.core.expression.builder.SqlSegmentBuilder;
 import org.easy.query.core.query.builder.SqlTableInfo;
+
+import java.util.List;
 
 
 /**
@@ -25,5 +28,4 @@ public class InsertContext extends AbstractSqlContext {
     public SqlSegmentBuilder getColumns() {
         return columns;
     }
-
 }
