@@ -229,6 +229,9 @@ public class MySQLUtil {
         if (tableCount > 1) {
             throw new EasyQueryException("找到多张表信息");
         }
+        if (updateContext.getSetColumns().isEmpty()) {
+            throw new EasyQueryException("更新需要设置更新列");
+        }
         if (updateContext.getWhere().isEmpty()) {
             throw new EasyQueryException("更新需要设置条件");
         }
@@ -242,12 +245,9 @@ public class MySQLUtil {
     }
 
 
-    public static String toEntityDeleteSql(DeleteContext deleteContext) {
+    public static String toEntityDeleteSql(DeleteContext deleteContext,SqlTableInfo table) {
 
         //将条件参数清空
-        if (!deleteContext.getParameters().isEmpty()) {
-            deleteContext.getParameters().clear();
-        }
         if (!deleteContext.getParameters().isEmpty()) {
             deleteContext.getParameters().clear();
         }
@@ -258,12 +258,22 @@ public class MySQLUtil {
         if (tableCount > 1) {
             throw new EasyQueryException("找到多张表信息");
         }
+
+        //如果没有指定where那么就使用主键作为更新条件
+        SqlSegmentBuilder whereColumns = deleteContext.getWhereColumns();
+
+        Collection<String> keyProperties = table.getEntityMetadata().getKeyProperties();
+        if(keyProperties.isEmpty()){
+            throw new EasyQueryException("对象:"+ ClassUtil.getSimpleName(table.getEntityMetadata().getEntityClass())+" 未找到主键信息");
+        }
+        for (String keyProperty : keyProperties) {
+            whereColumns.append(new ColumnPropertyPredicate(table, keyProperty,deleteContext));
+        }
         if (deleteContext.getWhereColumns().isEmpty()) {
-            throw new EasyQueryException("删除需要指定条件列");
+            throw new EasyQueryException("'Delete' statement without 'where' clears all data in the table");
         }
 
         StringBuilder sql = null;
-        SqlTableInfo table = deleteContext.getTable(0);
         String tableName = table.getEntityMetadata().getTableName();
         SqlExpression<SqlColumnSetter<?>> deletedSqlExpression = table.getDeletedSqlExpression();
         //逻辑删除
@@ -281,6 +291,37 @@ public class MySQLUtil {
         }
         sql.append(" WHERE ");
         sql.append(deleteContext.getWhereColumns().toSql());
+        return sql.toString();
+    }
+    public static String toExpressionDeleteSql(DeleteContext deleteContext,SqlTableInfo table) {
+
+        //将条件参数清空
+        if (!deleteContext.getParameters().isEmpty()) {
+            deleteContext.getParameters().clear();
+        }
+
+        if (deleteContext.getWhere().isEmpty()) {
+            throw new EasyQueryException("'Delete' statement without 'where' clears all data in the table");
+        }
+
+        StringBuilder sql;
+        String tableName = table.getEntityMetadata().getTableName();
+        SqlExpression<SqlColumnSetter<?>> deletedSqlExpression = table.getDeletedSqlExpression();
+        //逻辑删除
+        if (deletedSqlExpression != null) {
+            EasyQueryLambdaFactory easyQueryLambdaFactory = deleteContext.getRuntimeContext().getEasyQueryLambdaFactory();
+            UpdateSetSqlSegmentBuilder setSqlSegmentBuilder = new UpdateSetSqlSegmentBuilder();
+            SqlColumnSetter<?> sqlColumnSetter = easyQueryLambdaFactory.createSqlColumnSetter(table.getIndex(), deleteContext, setSqlSegmentBuilder);
+            deletedSqlExpression.apply(sqlColumnSetter);//获取set的值
+
+            sql = new StringBuilder("UPDATE ").append(tableName);
+            sql.append(" SET ").append(setSqlSegmentBuilder.toSql());//生成的表达式带有参数会传入到上下文
+        } else {
+            sql = new StringBuilder("DELETE FROM ");
+            sql.append(tableName);
+        }
+        sql.append(" WHERE ");
+        sql.append(deleteContext.getWhere().getSql());
         return sql.toString();
     }
 }

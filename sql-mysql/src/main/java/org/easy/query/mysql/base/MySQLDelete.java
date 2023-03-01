@@ -7,13 +7,13 @@ import org.easy.query.mysql.util.MySQLUtil;
 import java.util.Collection;
 
 /**
- * @FileName: MySQLEntityDelete.java
+ * @FileName: MySQLDelete.java
  * @Description: 文件说明
- * @Date: 2023/2/28 12:57
+ * @Date: 2023/3/1 12:56
  * @Created by xuejiaming
  */
-public class MySQLEntityDelete<T> extends AbstractEntityDelete<T> {
-    public MySQLEntityDelete(Collection<T> entities, DeleteContext deleteContext) {
+public class MySQLDelete<T1> extends AbstractEntityDelete<T1> {
+    public MySQLDelete(Collection<T1> entities, DeleteContext deleteContext) {
         super(entities, deleteContext);
     }
 

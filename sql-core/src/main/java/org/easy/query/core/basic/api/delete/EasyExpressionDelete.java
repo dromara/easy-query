@@ -11,8 +11,9 @@ import org.easy.query.core.expression.parser.abstraction.SqlPredicate;
  * @Created by xuejiaming
  */
 public interface EasyExpressionDelete<T> extends EasyDelete<T> {
-    default ExpressionUpdate<T> where(SqlExpression<SqlPredicate<T>> whereExpression){
+    default EasyExpressionDelete<T> where(SqlExpression<SqlPredicate<T>> whereExpression){
         return where(true,whereExpression);
     }
-    ExpressionUpdate<T> where(boolean condition,SqlExpression<SqlPredicate<T>> whereExpression);
+    EasyExpressionDelete<T> where(boolean condition,SqlExpression<SqlPredicate<T>> whereExpression);
+    EasyDelete<T> deleteById(Object id);
 }

@@ -23,7 +23,6 @@ import java.util.List;
 public abstract class AbstractEntityDelete<T> implements EasyDelete<T> {
     protected final List<T> entities= new ArrayList<>();
     protected final SqlTableInfo table;
-    protected final EntityMetadata entityMetadata;
     protected final DeleteContext deleteContext;
 
     public AbstractEntityDelete(Collection<T> entities, DeleteContext deleteContext){
@@ -34,7 +33,7 @@ public abstract class AbstractEntityDelete<T> implements EasyDelete<T> {
         this.deleteContext = deleteContext;
 
         Class<?> clazz = entities.iterator().next().getClass();
-        this.entityMetadata = deleteContext.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(clazz);
+        EntityMetadata entityMetadata = deleteContext.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(clazz);
         entityMetadata.checkTable();
         table=new SqlTableInfo(entityMetadata, null, 0, MultiTableTypeEnum.FROM);
         deleteContext.addSqlTable(table);
@@ -46,16 +45,8 @@ public abstract class AbstractEntityDelete<T> implements EasyDelete<T> {
 //            EasyQueryRuntimeContext runtimeContext = updateContext.getRuntimeContext();
 //            EntityMetadataManager entityMetadataManager = runtimeContext.getEntityMetadataManager();
 
-            //如果没有指定where那么就使用主键作为更新条件
-            SqlSegmentBuilder whereColumns = deleteContext.getWhereColumns();
-
-            Collection<String> keyProperties = entityMetadata.getKeyProperties();
-            if(keyProperties.isEmpty()){
-                throw new EasyQueryException("对象:"+ ClassUtil.getSimpleName(entityMetadata.getEntityClass())+" 未找到主键信息");
-            }
-            for (String keyProperty : keyProperties) {
-                whereColumns.append(new ColumnPropertyPredicate(table, keyProperty,deleteContext));
-            }
+            String s = toSql();
+            System.out.println("删除sql："+s);
         }
         return 0;
     }

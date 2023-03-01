@@ -34,14 +34,11 @@ public abstract class AbstractExpressionUpdate<T> implements ExpressionUpdate<T>
 
     @Override
     public long executeRows() {
-        if(!updateContext.getSetColumns().isEmpty()&&!updateContext.getWhere().isEmpty()){
-
-            String updateSql = toSql();
-            System.out.println("表达式更新："+updateSql);
-            if(StringUtil.isNotBlank(updateSql)){
-                EasyExecutor easyExecutor = updateContext.getRuntimeContext().getEasyExecutor();
-                return easyExecutor.update(ExecutorContext.create(updateContext.getRuntimeContext()), updateSql, updateContext.getParameters());
-            }
+        String updateSql = toSql();
+        System.out.println("表达式更新："+updateSql);
+        if(StringUtil.isNotBlank(updateSql)){
+            EasyExecutor easyExecutor = updateContext.getRuntimeContext().getEasyExecutor();
+            return easyExecutor.update(ExecutorContext.create(updateContext.getRuntimeContext()), updateSql, updateContext.getParameters());
         }
 
         return 0;

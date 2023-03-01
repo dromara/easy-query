@@ -1,6 +1,9 @@
 package org.easy.query.mysql;
 
 import org.easy.query.core.abstraction.EasyQueryRuntimeContext;
+import org.easy.query.core.basic.api.context.DeleteContext;
+import org.easy.query.core.basic.api.delete.EasyDelete;
+import org.easy.query.core.basic.api.delete.EasyExpressionDelete;
 import org.easy.query.core.basic.jdbc.con.EasyConnectionManager;
 import org.easy.query.core.basic.api.update.EntityUpdate;
 import org.easy.query.core.basic.api.update.ExpressionUpdate;
@@ -92,5 +95,18 @@ public class MySQLEasyQuery implements EasyQuery {
             return new MySQLLazyUpdate<>();
         }
         return new MySQLEntityUpdate<>(entities, new UpdateContext(runtimeContext));
+    }
+
+    @Override
+    public <T1> EasyDelete<T1> delete(Collection<T1> entities) {
+        if(entities==null||entities.isEmpty()){
+            return new MySQLEmptyDelete<>();
+        }
+        return new MySQLDelete<>(entities,new DeleteContext(runtimeContext));
+    }
+
+    @Override
+    public <T1> EasyExpressionDelete<T1> delete(Class<T1> entityClass) {
+        return new MySQLExpressionDelete<T1>(entityClass,new DeleteContext(runtimeContext));
     }
 }

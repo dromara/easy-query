@@ -1,6 +1,9 @@
 package org.easy.query.core.abstraction.client;
 
 import org.easy.query.core.abstraction.EasyQueryRuntimeContext;
+import org.easy.query.core.basic.api.delete.AbstractEntityDelete;
+import org.easy.query.core.basic.api.delete.EasyDelete;
+import org.easy.query.core.basic.api.delete.EasyExpressionDelete;
 import org.easy.query.core.basic.api.update.EntityUpdate;
 import org.easy.query.core.basic.api.update.ExpressionUpdate;
 import org.easy.query.core.basic.api.insert.Insert;
@@ -30,4 +33,6 @@ public interface EasyQuery {
     <T1> ExpressionUpdate<T1> update(Class<T1> entityClass);
     <T1> EntityUpdate<T1> update(T1 entity);
     <T1> EntityUpdate<T1> update(Collection<T1> entities);
+    <T1> EasyDelete<T1> delete(Collection<T1> entities);
+    <T1> EasyExpressionDelete<T1> delete(Class<T1> entityClass);
 }

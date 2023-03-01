@@ -144,7 +144,7 @@ jqdcRuntimeContext.getEasyQueryConfiguration().applyEntityTypeConfiguration(new 
         test2.setName("ds01");
         updates.add(test2);
         long l12xx = client.update(updates).setColumns(o -> o.column(TestUserMysql::getName)).whereColumns(o -> o.column(TestUserMysql::getAge)).executeRows();
-
+        long l2 = client.delete(updates).executeRows();
 
         ArrayList<SysUserLogbyMonth> sysUserLogbyMonths1 = new ArrayList<>();
 //        long execute = client.insert(LocalDateTime.now()).execute();
@@ -155,7 +155,11 @@ jqdcRuntimeContext.getEasyQueryConfiguration().applyEntityTypeConfiguration(new 
         long execute1 = client.insert(sysUserLogbyMonths1).executeRows();
         long l = client.update(sysUserLogbyMonth2).executeRows();
         System.out.println(l);
-
+        long l23 = client.delete(sysUserLogbyMonths1).executeRows();
+        long l3 = client.delete(TestUserMysql.class).deleteById("123").executeRows();
+        long l31 = client.delete(SysUserLogbyMonth.class).deleteById("123").executeRows();
+        long l34 = client.delete(TestUserMysql.class).where(o->o.like(TestUserMysql::getName,"1233")).executeRows();
+        long l345 = client.delete(TestUserMysql.class).where(o->o.like(TestUserMysql::getName,"1233")).deleteById("123").executeRows();
         SysUserLogbyMonth sysUserLogbyMonth23 = new SysUserLogbyMonth();
         sysUserLogbyMonth23.setId(UUID.randomUUID().toString());
         sysUserLogbyMonth23.setTime(LocalDateTime.now());
