@@ -1,14 +1,14 @@
 package org.easy.query.core.impl;
 
 import org.easy.query.core.abstraction.EasyQuerySqlBuilderProvider2;
-import org.easy.query.core.basic.api.context.SelectContext;
-import org.easy.query.core.expression.builder.SqlSegmentBuilder;
+import org.easy.query.core.expression.context.SelectContext;
+import org.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import org.easy.query.core.expression.parser.abstraction.SqlAggregatePredicate;
 import org.easy.query.core.expression.parser.abstraction.SqlColumnAsSelector;
 import org.easy.query.core.expression.parser.abstraction.SqlColumnSelector;
 import org.easy.query.core.expression.parser.abstraction.SqlPredicate;
 import org.easy.query.core.expression.parser.impl.*;
-import org.easy.query.core.expression.segment.predicate.DefaultSqlPredicate;
+import org.easy.query.core.expression.segment.condition.DefaultSqlPredicate;
 
 /**
  * @FileName: Select1SqlPredicateProvider.java
@@ -73,12 +73,12 @@ public class Select2SqlProvider<T1,T2> extends Select1SqlProvider<T1> implements
     }
 
     @Override
-    public SqlColumnSelector<T2> getSqlColumnSelector2(SqlSegmentBuilder sqlSegment0Builder) {
+    public SqlColumnSelector<T2> getSqlColumnSelector2(SqlBuilderSegment sqlSegment0Builder) {
         return new DefaultSqlColumnSelector<>(1,selectContext,sqlSegment0Builder);
     }
 
     @Override
-    public <TR> SqlColumnAsSelector<T2, TR> getSqlColumnAsSelector2(SqlSegmentBuilder sqlSegment0Builder) {
+    public <TR> SqlColumnAsSelector<T2, TR> getSqlColumnAsSelector2(SqlBuilderSegment sqlSegment0Builder) {
         return new DefaultSqlColumnAsSelector<>(1,selectContext,sqlSegment0Builder);
     }
 }

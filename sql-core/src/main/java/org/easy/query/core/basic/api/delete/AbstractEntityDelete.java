@@ -1,14 +1,10 @@
 package org.easy.query.core.basic.api.delete;
 
-import org.easy.query.core.abstraction.metadata.ColumnMetadata;
 import org.easy.query.core.abstraction.metadata.EntityMetadata;
-import org.easy.query.core.basic.api.context.DeleteContext;
-import org.easy.query.core.expression.builder.SqlSegmentBuilder;
-import org.easy.query.core.expression.segment.predicate.node.ColumnPropertyPredicate;
+import org.easy.query.core.expression.context.DeleteContext;
 import org.easy.query.core.enums.MultiTableTypeEnum;
 import org.easy.query.core.exception.EasyQueryException;
 import org.easy.query.core.query.builder.SqlTableInfo;
-import org.easy.query.core.util.ClassUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;

@@ -44,7 +44,7 @@ public enum SqlKeywordEnum implements SqlSegment {
     }
 
     @Override
-    public String getSql() {
+    public String toSql() {
         return keyword;
     }
 }

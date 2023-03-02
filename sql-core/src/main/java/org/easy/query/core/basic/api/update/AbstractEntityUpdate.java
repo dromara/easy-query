@@ -1,23 +1,15 @@
 package org.easy.query.core.basic.api.update;
 
 import org.easy.query.core.abstraction.EasyExecutor;
-import org.easy.query.core.abstraction.EasyQueryLambdaFactory;
-import org.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import org.easy.query.core.abstraction.ExecutorContext;
 import org.easy.query.core.expression.lambda.SqlExpression;
-import org.easy.query.core.abstraction.metadata.ColumnMetadata;
 import org.easy.query.core.abstraction.metadata.EntityMetadata;
-import org.easy.query.core.expression.parser.abstraction.internal.ColumnSelector;
 import org.easy.query.core.expression.parser.abstraction.SqlColumnSelector;
-import org.easy.query.core.expression.builder.SqlSegmentBuilder;
-import org.easy.query.core.expression.segment.SqlSegment;
 import org.easy.query.core.enums.MultiTableTypeEnum;
 import org.easy.query.core.exception.EasyQueryException;
 import org.easy.query.core.expression.parser.impl.DefaultSqlColumnSetSelector;
-import org.easy.query.core.basic.api.context.UpdateContext;
+import org.easy.query.core.expression.context.UpdateContext;
 import org.easy.query.core.query.builder.SqlTableInfo;
-import org.easy.query.core.expression.segment.predicate.node.ColumnPropertyPredicate;
-import org.easy.query.core.util.ClassUtil;
 import org.easy.query.core.util.StringUtil;
 
 import java.util.*;

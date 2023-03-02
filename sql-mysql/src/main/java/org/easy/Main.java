@@ -5,7 +5,7 @@ import org.easy.query.core.abstraction.*;
 import org.easy.query.core.abstraction.client.EasyQuery;
 import org.easy.query.core.abstraction.metadata.EntityMetadataManager;
 import org.easy.query.core.abstraction.sql.PageResult;
-import org.easy.query.core.basic.api.select.Select1;
+import org.easy.query.core.basic.api.select.Queryable1;
 import org.easy.query.core.enums.AggregatePredicateCompare;
 import org.easy.query.core.basic.jdbc.tx.DefaultConnectionManager;
 import org.easy.query.core.basic.jdbc.con.EasyConnectionManager;
@@ -201,7 +201,7 @@ jqdcRuntimeContext.getEasyQueryConfiguration().applyEntityTypeConfiguration(new 
 //        long end = System.currentTimeMillis();
 //        System.out.println("耗时："+(end-start)+"ms");
 
-        Select1<SysUserLogbyMonth> queryable = client.select(SysUserLogbyMonth.class)
+        Queryable1<SysUserLogbyMonth> queryable = client.select(SysUserLogbyMonth.class)
                 .where(o -> o.eq(SysUserLogbyMonth::getId, "119"));
         long count2 = queryable.count();
         List<SysUserLogbyMonth> sysUserLogbyMonths = queryable.limit(1, 10).toList();

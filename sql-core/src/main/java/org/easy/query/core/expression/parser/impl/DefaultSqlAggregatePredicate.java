@@ -1,17 +1,16 @@
 package org.easy.query.core.expression.parser.impl;
 
-import org.easy.query.core.basic.api.context.SqlContext;
+import org.easy.query.core.expression.context.SqlContext;
 import org.easy.query.core.enums.SqlPredicateCompare;
 import org.easy.query.core.expression.lambda.Property;
 import org.easy.query.core.expression.lambda.SqlExpression;
 import org.easy.query.core.expression.parser.abstraction.internal.AggregatePredicate;
 import org.easy.query.core.expression.parser.abstraction.SqlAggregatePredicate;
 import org.easy.query.core.abstraction.sql.enums.IEasyFunc;
-import org.easy.query.core.abstraction.sql.enums.IEasyPredicate;
-import org.easy.query.core.expression.segment.AndPredicateSegment;
-import org.easy.query.core.expression.segment.OrPredicateSegment;
-import org.easy.query.core.expression.segment.PredicateSegment;
-import org.easy.query.core.expression.segment.predicate.node.FuncColumnValuePredicate;
+import org.easy.query.core.expression.segment.condition.AndPredicateSegment;
+import org.easy.query.core.expression.segment.condition.OrPredicateSegment;
+import org.easy.query.core.expression.segment.condition.PredicateSegment;
+import org.easy.query.core.expression.segment.condition.predicate.FuncColumnValuePredicate;
 import org.easy.query.core.query.builder.SqlTableInfo;
 
 /**

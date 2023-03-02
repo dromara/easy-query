@@ -1,21 +1,16 @@
 package org.easy.query.core.basic.api.delete;
 
-import org.easy.query.core.abstraction.EasyExecutor;
-import org.easy.query.core.abstraction.ExecutorContext;
 import org.easy.query.core.abstraction.metadata.EntityMetadata;
-import org.easy.query.core.basic.api.context.DeleteContext;
-import org.easy.query.core.basic.api.update.ExpressionUpdate;
+import org.easy.query.core.expression.context.DeleteContext;
 import org.easy.query.core.enums.MultiTableTypeEnum;
 import org.easy.query.core.enums.SqlPredicateCompareEnum;
 import org.easy.query.core.exception.EasyQueryException;
-import org.easy.query.core.expression.builder.SqlSegmentBuilder;
 import org.easy.query.core.expression.lambda.SqlExpression;
 import org.easy.query.core.expression.parser.abstraction.SqlPredicate;
-import org.easy.query.core.expression.segment.AndPredicateSegment;
-import org.easy.query.core.expression.segment.PredicateSegment;
-import org.easy.query.core.expression.segment.predicate.DefaultSqlPredicate;
-import org.easy.query.core.expression.segment.predicate.node.ColumnPropertyPredicate;
-import org.easy.query.core.expression.segment.predicate.node.ColumnValuePredicate;
+import org.easy.query.core.expression.segment.condition.AndPredicateSegment;
+import org.easy.query.core.expression.segment.condition.DefaultSqlPredicate;
+import org.easy.query.core.expression.segment.condition.PredicateSegment;
+import org.easy.query.core.expression.segment.condition.predicate.ColumnValuePredicate;
 import org.easy.query.core.query.builder.SqlTableInfo;
 import org.easy.query.core.util.ClassUtil;
 import org.easy.query.core.util.StringUtil;

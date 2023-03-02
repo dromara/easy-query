@@ -8,8 +8,8 @@ import org.easy.query.core.expression.parser.abstraction.SqlColumnSetter;
 import org.easy.query.core.expression.parser.abstraction.SqlPredicate;
 import org.easy.query.core.enums.MultiTableTypeEnum;
 import org.easy.query.core.expression.parser.impl.DefaultSqlColumnSetter;
-import org.easy.query.core.expression.segment.predicate.DefaultSqlPredicate;
-import org.easy.query.core.basic.api.context.UpdateContext;
+import org.easy.query.core.expression.segment.condition.DefaultSqlPredicate;
+import org.easy.query.core.expression.context.UpdateContext;
 import org.easy.query.core.query.builder.SqlTableInfo;
 import org.easy.query.core.util.StringUtil;
 

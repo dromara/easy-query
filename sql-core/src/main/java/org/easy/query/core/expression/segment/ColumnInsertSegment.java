@@ -1,6 +1,6 @@
 package org.easy.query.core.expression.segment;
 
-import org.easy.query.core.basic.api.context.SqlContext;
+import org.easy.query.core.expression.context.SqlContext;
 import org.easy.query.core.basic.jdbc.parameter.PropertySQLParameter;
 import org.easy.query.core.query.builder.SqlTableInfo;
 
@@ -30,7 +30,7 @@ public class ColumnInsertSegment implements SqlSegment {
     }
 
     @Override
-    public String getSql() {
+    public String toSql() {
         sqlContext.addParameter(new PropertySQLParameter(table,propertyName));
         String sqlColumnSegment = sqlContext.getSqlColumnSegment(table,propertyName);
         StringBuilder sql = new StringBuilder();

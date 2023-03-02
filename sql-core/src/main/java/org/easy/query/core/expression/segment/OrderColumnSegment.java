@@ -1,7 +1,7 @@
 package org.easy.query.core.expression.segment;
 
 import org.easy.query.core.enums.SqlKeywordEnum;
-import org.easy.query.core.basic.api.context.SelectContext;
+import org.easy.query.core.expression.context.SelectContext;
 import org.easy.query.core.query.builder.SqlTableInfo;
 
 /**
@@ -23,14 +23,14 @@ public class OrderColumnSegment extends ColumnSegment{
     }
 
     @Override
-    public String getSql() {
+    public String toSql() {
 
         String sqlColumnSegment = sqlContext.getSqlColumnSegment(table,propertyName);
         StringBuilder sql = new StringBuilder().append(sqlColumnSegment);
         if(asc){
-            sql.append(" ").append(SqlKeywordEnum.ASC.getSql());
+            sql.append(" ").append(SqlKeywordEnum.ASC.toSql());
         }else {
-            sql.append(" ").append(SqlKeywordEnum.DESC.getSql());
+            sql.append(" ").append(SqlKeywordEnum.DESC.toSql());
         }
         return sql.toString();
     }

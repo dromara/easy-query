@@ -7,5 +7,5 @@ package org.easy.query.core.expression.segment;
  * @Created by xuejiaming
  */
 public interface SqlSegment {
-    String getSql();
+    String toSql();
 }

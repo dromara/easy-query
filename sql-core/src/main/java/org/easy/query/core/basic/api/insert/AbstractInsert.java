@@ -8,15 +8,12 @@ import org.easy.query.core.expression.parser.abstraction.internal.ColumnSelector
 import org.easy.query.core.expression.parser.abstraction.SqlColumnSelector;
 import org.easy.query.core.enums.MultiTableTypeEnum;
 import org.easy.query.core.expression.parser.impl.DefaultInsertSqlColumnSelector;
-import org.easy.query.core.expression.parser.impl.DefaultSqlColumnSelector;
-import org.easy.query.core.basic.api.context.InsertContext;
+import org.easy.query.core.expression.context.InsertContext;
 import org.easy.query.core.query.builder.SqlTableInfo;
-import org.easy.query.core.expression.segment.ColumnSegment;
 import org.easy.query.core.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @FileName: AbstractInsert.java

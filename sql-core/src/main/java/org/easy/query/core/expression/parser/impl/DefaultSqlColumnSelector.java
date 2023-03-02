@@ -1,8 +1,8 @@
 package org.easy.query.core.expression.parser.impl;
 
-import org.easy.query.core.expression.builder.SqlSegmentBuilder;
+import org.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import org.easy.query.core.expression.parser.abstraction.SqlColumnSelector;
-import org.easy.query.core.basic.api.context.SqlContext;
+import org.easy.query.core.expression.context.SqlContext;
 
 /**
  * @FileName: DefaultSqlColumnSelector.java
@@ -11,7 +11,7 @@ import org.easy.query.core.basic.api.context.SqlContext;
  * @Created by xuejiaming
  */
 public class DefaultSqlColumnSelector<T1> extends AbstractSqlColumnSelector<T1, SqlColumnSelector<T1>> implements SqlColumnSelector<T1>{
-    public DefaultSqlColumnSelector(int index, SqlContext sqlContext, SqlSegmentBuilder sqlSegmentBuilder) {
+    public DefaultSqlColumnSelector(int index, SqlContext sqlContext, SqlBuilderSegment sqlSegmentBuilder) {
         super(index, sqlContext,sqlSegmentBuilder);
     }
 }

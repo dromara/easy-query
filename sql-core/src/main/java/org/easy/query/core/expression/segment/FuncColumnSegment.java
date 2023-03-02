@@ -1,7 +1,7 @@
 package org.easy.query.core.expression.segment;
 
 import org.easy.query.core.abstraction.sql.enums.IEasyFunc;
-import org.easy.query.core.basic.api.context.SqlContext;
+import org.easy.query.core.expression.context.SqlContext;
 import org.easy.query.core.query.builder.SqlTableInfo;
 
 /**
@@ -31,7 +31,7 @@ public class FuncColumnSegment  implements SqlSegment {
     }
 
     @Override
-    public String getSql() {
+    public String toSql() {
         String sqlColumnSegment = sqlContext.getSqlColumnSegment(table,propertyName);
         String funcColumn = easyFunc.getFuncColumn(sqlColumnSegment);
         StringBuilder sql = new StringBuilder().append(funcColumn);

@@ -1,7 +1,7 @@
 package org.easy.query.mysql.base;
 
 import org.easy.query.core.basic.api.update.AbstractExpressionUpdate;
-import org.easy.query.core.basic.api.context.UpdateContext;
+import org.easy.query.core.expression.context.UpdateContext;
 import org.easy.query.mysql.util.MySQLUtil;
 
 /**

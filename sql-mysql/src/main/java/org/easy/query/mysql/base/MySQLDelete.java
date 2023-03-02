@@ -1,6 +1,6 @@
 package org.easy.query.mysql.base;
 
-import org.easy.query.core.basic.api.context.DeleteContext;
+import org.easy.query.core.expression.context.DeleteContext;
 import org.easy.query.core.basic.api.delete.AbstractEntityDelete;
 import org.easy.query.mysql.util.MySQLUtil;
 

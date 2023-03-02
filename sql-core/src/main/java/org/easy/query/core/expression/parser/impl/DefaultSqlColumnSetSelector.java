@@ -1,12 +1,11 @@
 package org.easy.query.core.expression.parser.impl;
 
-import org.easy.query.core.basic.api.context.SqlContext;
-import org.easy.query.core.expression.builder.SqlSegmentBuilder;
+import org.easy.query.core.expression.context.SqlContext;
+import org.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import org.easy.query.core.expression.lambda.Property;
-import org.easy.query.core.abstraction.metadata.ColumnMetadata;
 import org.easy.query.core.expression.parser.abstraction.SqlColumnSelector;
 import org.easy.query.core.query.builder.SqlTableInfo;
-import org.easy.query.core.expression.segment.predicate.node.ColumnPropertyPredicate;
+import org.easy.query.core.expression.segment.condition.ColumnPropertyPredicate;
 
 import java.util.Collection;
 
@@ -19,9 +18,9 @@ import java.util.Collection;
 public class DefaultSqlColumnSetSelector<T> implements SqlColumnSelector<T> {
     private final int index;
     private final SqlContext sqlContext;
-    private final SqlSegmentBuilder sqlSegmentBuilder;
+    private final SqlBuilderSegment sqlSegmentBuilder;
 
-    public DefaultSqlColumnSetSelector(int index, SqlContext sqlContext, SqlSegmentBuilder sqlSegmentBuilder){
+    public DefaultSqlColumnSetSelector(int index, SqlContext sqlContext, SqlBuilderSegment sqlSegmentBuilder){
 
         this.index = index;
         this.sqlContext = sqlContext;

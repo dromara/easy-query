@@ -8,7 +8,7 @@ import org.easy.query.core.expression.parser.abstraction.SqlColumnSelector;
 import org.easy.query.core.expression.parser.abstraction.SqlPredicate;
 import org.easy.query.core.enums.MultiTableTypeEnum;
 import org.easy.query.core.impl.Select2SqlProvider;
-import org.easy.query.core.basic.api.context.SelectContext;
+import org.easy.query.core.expression.context.SelectContext;
 import org.easy.query.core.query.builder.SqlTableInfo;
 
 /**
@@ -18,7 +18,7 @@ import org.easy.query.core.query.builder.SqlTableInfo;
  * @Date: 2023/2/6 23:43
  * @Created by xuejiaming
  */
-public abstract  class AbstractSelect2<T1,T2> extends AbstractSelect0<T1, Select2<T1,T2>> implements Select2<T1,T2> {
+public abstract  class AbstractSelect2<T1,T2> extends AbstractSelect0<T1, Queryable2<T1,T2>> implements Queryable2<T1,T2> {
 
     private final EasyQuerySqlBuilderProvider2<T1,T2> sqlPredicateProvider;
 
@@ -32,17 +32,17 @@ public abstract  class AbstractSelect2<T1,T2> extends AbstractSelect0<T1, Select
     }
 
     @Override
-    public <T3> Select3<T1, T2, T3> leftJoin(Class<T3> joinClass, SqlExpression3<SqlPredicate<T1>, SqlPredicate<T2>, SqlPredicate<T3>> on) {
+    public <T3> Queryable3<T1, T2, T3> leftJoin(Class<T3> joinClass, SqlExpression3<SqlPredicate<T1>, SqlPredicate<T2>, SqlPredicate<T3>> on) {
         return null;
     }
 
     @Override
-    public <T3> Select3<T1, T2, T3> innerJoin(Class<T3> joinClass, SqlExpression3<SqlPredicate<T1>, SqlPredicate<T2>, SqlPredicate<T3>> on) {
+    public <T3> Queryable3<T1, T2, T3> innerJoin(Class<T3> joinClass, SqlExpression3<SqlPredicate<T1>, SqlPredicate<T2>, SqlPredicate<T3>> on) {
         return null;
     }
 
     @Override
-    public Select2<T1, T2> where(boolean condition, SqlExpression2<SqlPredicate<T1>, SqlPredicate<T2>> whereExpression) {
+    public Queryable2<T1, T2> where(boolean condition, SqlExpression2<SqlPredicate<T1>, SqlPredicate<T2>> whereExpression) {
         if(condition){
             SqlPredicate<T1> sqlWherePredicate1 = getSqlBuilderProvider2().getSqlWherePredicate1();
             SqlPredicate<T2> sqlWherePredicate2 = getSqlBuilderProvider2().getSqlWherePredicate2();
@@ -54,7 +54,7 @@ public abstract  class AbstractSelect2<T1,T2> extends AbstractSelect0<T1, Select
 
 
     @Override
-    public Select2<T1, T2> orderByAsc(boolean condition, SqlExpression2<SqlColumnSelector<T1>, SqlColumnSelector<T2>> selectExpression) {
+    public Queryable2<T1, T2> orderByAsc(boolean condition, SqlExpression2<SqlColumnSelector<T1>, SqlColumnSelector<T2>> selectExpression) {
         if(condition){
             SqlColumnSelector<T1> sqlOrderColumnSelector1 = getSqlBuilderProvider2().getSqlOrderColumnSelector1(true);
             SqlColumnSelector<T2> sqlOrderColumnSelector2 = getSqlBuilderProvider2().getSqlOrderColumnSelector2(true);
@@ -64,7 +64,7 @@ public abstract  class AbstractSelect2<T1,T2> extends AbstractSelect0<T1, Select
     }
 
     @Override
-    public Select2<T1, T2> orderByDesc(boolean condition, SqlExpression2<SqlColumnSelector<T1>, SqlColumnSelector<T2>> selectExpression) {
+    public Queryable2<T1, T2> orderByDesc(boolean condition, SqlExpression2<SqlColumnSelector<T1>, SqlColumnSelector<T2>> selectExpression) {
         if(condition){
             SqlColumnSelector<T1> sqlOrderColumnSelector1 = getSqlBuilderProvider2().getSqlOrderColumnSelector1(false);
             SqlColumnSelector<T2> sqlOrderColumnSelector2 = getSqlBuilderProvider2().getSqlOrderColumnSelector2(false);
@@ -73,7 +73,7 @@ public abstract  class AbstractSelect2<T1,T2> extends AbstractSelect0<T1, Select
         return this;
     }
     @Override
-    public Select2<T1, T2> groupBy(boolean condition,SqlExpression2<SqlColumnSelector<T1>, SqlColumnSelector<T2>> selectExpression) {
+    public Queryable2<T1, T2> groupBy(boolean condition, SqlExpression2<SqlColumnSelector<T1>, SqlColumnSelector<T2>> selectExpression) {
         if(condition){
             SqlColumnSelector<T1> sqlGroupSelector1 = getSqlBuilderProvider2().getSqlGroupColumnSelector1();
             SqlColumnSelector<T2> sqlGroupSelector2 = getSqlBuilderProvider2().getSqlGroupColumnSelector2();
@@ -82,7 +82,7 @@ public abstract  class AbstractSelect2<T1,T2> extends AbstractSelect0<T1, Select
         return this;
     }
     @Override
-    protected Select2<T1, T2> castSelf() {
+    protected Queryable2<T1, T2> castSelf() {
         return this;
     }
 

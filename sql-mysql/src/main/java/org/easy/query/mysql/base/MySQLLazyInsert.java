@@ -1,7 +1,7 @@
 package org.easy.query.mysql.base;
 
 import org.easy.query.core.basic.api.insert.Insert;
-import org.easy.query.core.basic.api.context.InsertContext;
+import org.easy.query.core.expression.context.InsertContext;
 
 /**
  * @FileName: MySQLazyInsert.java

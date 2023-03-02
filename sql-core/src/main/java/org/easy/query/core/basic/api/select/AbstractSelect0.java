@@ -12,8 +12,8 @@ import org.easy.query.core.expression.parser.abstraction.SqlColumnAsSelector;
 import org.easy.query.core.expression.parser.abstraction.SqlColumnSelector;
 import org.easy.query.core.expression.parser.abstraction.SqlPredicate;
 import org.easy.query.core.expression.parser.abstraction.internal.ColumnSelector;
-import org.easy.query.core.expression.builder.SelectSqlSegmentBuilder;
-import org.easy.query.core.basic.api.context.SelectContext;
+import org.easy.query.core.expression.segment.builder.ProjectSqlBuilderSegment;
+import org.easy.query.core.expression.context.SelectContext;
 import org.easy.query.core.query.builder.SqlTableInfo;
 
 import java.math.BigDecimal;
@@ -26,7 +26,7 @@ import java.util.List;
  * @Date: 2023/2/6 23:44
  * @Created by xuejiaming
  */
-public abstract class AbstractSelect0<T1, TChain> implements Select0<T1, TChain> {
+public abstract class AbstractSelect0<T1, TChain> implements Queryable<T1, TChain> {
     protected final Class<T1> t1Class;
     private final SelectContext selectContext;
 
@@ -51,7 +51,7 @@ public abstract class AbstractSelect0<T1, TChain> implements Select0<T1, TChain>
 
     @Override
     public long countDistinct(SqlExpression<SqlColumnSelector<T1>> selectExpression) {
-        SelectSqlSegmentBuilder sqlSegmentBuilder = new SelectSqlSegmentBuilder();
+        ProjectSqlBuilderSegment sqlSegmentBuilder = new ProjectSqlBuilderSegment();
         SqlColumnSelector<T1> sqlColumnSelector = getSqlBuilderProvider1().getSqlColumnSelector1(sqlSegmentBuilder);
         selectExpression.apply(sqlColumnSelector);
         List<Long> result = toInternalList(Long.class, EasyAggregate.COUNT_DISTINCT.getFuncColumn(sqlSegmentBuilder.toSql()));
@@ -235,7 +235,7 @@ public abstract class AbstractSelect0<T1, TChain> implements Select0<T1, TChain>
 //            DefaultSqlPredicate<T1> objectDefaultSqlPredicate = new DefaultSqlPredicate<>(0, selectContext, selectContext.getWhere());
 //            ((SqlExpression<SqlPredicate<T1>>)entityMetadata.logicDelete()).apply(objectDefaultSqlPredicate);
 //        }
-        SelectSqlSegmentBuilder sqlSegmentBuilder = new SelectSqlSegmentBuilder();
+        ProjectSqlBuilderSegment sqlSegmentBuilder = new ProjectSqlBuilderSegment();
         SqlColumnAsSelector<T1,TR> sqlColumnSelector = getSqlBuilderProvider1().getSqlColumnAsSelector1(sqlSegmentBuilder);
         selectExpression.apply(sqlColumnSelector);
         return toInternalList(resultClass,sqlSegmentBuilder.toSql());
@@ -243,7 +243,7 @@ public abstract class AbstractSelect0<T1, TChain> implements Select0<T1, TChain>
 
     @Override
     public List<T1> toList(SqlExpression<SqlColumnSelector<T1>> selectExpression) {
-        SelectSqlSegmentBuilder sqlSegmentBuilder = new SelectSqlSegmentBuilder();
+        ProjectSqlBuilderSegment sqlSegmentBuilder = new ProjectSqlBuilderSegment();
         SqlColumnSelector<T1> sqlColumnSelector = getSqlBuilderProvider1().getSqlColumnSelector1(sqlSegmentBuilder);
         selectExpression.apply(sqlColumnSelector);
         return toInternalList(t1Class,sqlSegmentBuilder.toSql());
@@ -270,7 +270,7 @@ public abstract class AbstractSelect0<T1, TChain> implements Select0<T1, TChain>
 
     @Override
     public String toSql(SqlExpression<SqlColumnSelector<T1>> selectExpression) {
-        SelectSqlSegmentBuilder sqlSegmentBuilder = new SelectSqlSegmentBuilder();
+        ProjectSqlBuilderSegment sqlSegmentBuilder = new ProjectSqlBuilderSegment();
         SqlColumnSelector<T1> sqlColumnSelector = getSqlBuilderProvider1().getSqlColumnSelector1(sqlSegmentBuilder);
         selectExpression.apply(sqlColumnSelector);
         return toSql(sqlSegmentBuilder.toSql());
@@ -278,7 +278,7 @@ public abstract class AbstractSelect0<T1, TChain> implements Select0<T1, TChain>
 
     @Override
     public <TR> String toSql(Class<TR> resultClass, SqlExpression<SqlColumnAsSelector<T1, TR>> selectExpression) {
-        SelectSqlSegmentBuilder sqlSegmentBuilder = new SelectSqlSegmentBuilder();
+        ProjectSqlBuilderSegment sqlSegmentBuilder = new ProjectSqlBuilderSegment();
         SqlColumnAsSelector<T1,TR> sqlColumnSelector = getSqlBuilderProvider1().getSqlColumnAsSelector1(sqlSegmentBuilder);
         selectExpression.apply(sqlColumnSelector);
         return toSql(sqlSegmentBuilder.toSql());
@@ -352,7 +352,7 @@ public abstract class AbstractSelect0<T1, TChain> implements Select0<T1, TChain>
     @Override
     public <TR> PageResult<TR> toPageResult(long pageIndex, long pageSize, Class<TR> clazz) {
 
-        SelectSqlSegmentBuilder sqlSegmentBuilder = new SelectSqlSegmentBuilder();
+        ProjectSqlBuilderSegment sqlSegmentBuilder = new ProjectSqlBuilderSegment();
         SqlColumnSelector<T1> sqlColumnSelector = getSqlBuilderProvider1().getSqlColumnSelector1(sqlSegmentBuilder);
         SqlExpression<SqlColumnSelector<T1>> selectExpression=ColumnSelector::columnAll;
         selectExpression.apply(sqlColumnSelector);
@@ -361,7 +361,7 @@ public abstract class AbstractSelect0<T1, TChain> implements Select0<T1, TChain>
 
     @Override
     public PageResult<T1> toPageResult(long pageIndex, long pageSize, SqlExpression<SqlColumnSelector<T1>> selectExpression) {
-        SelectSqlSegmentBuilder sqlSegmentBuilder = new SelectSqlSegmentBuilder();
+        ProjectSqlBuilderSegment sqlSegmentBuilder = new ProjectSqlBuilderSegment();
         SqlColumnSelector<T1> sqlColumnSelector = getSqlBuilderProvider1().getSqlColumnSelector1(sqlSegmentBuilder);
         selectExpression.apply(sqlColumnSelector);
         return toPageResult(pageIndex,pageSize,t1Class, sqlSegmentBuilder.toSql());
@@ -388,7 +388,7 @@ public abstract class AbstractSelect0<T1, TChain> implements Select0<T1, TChain>
     @Override
     public <TR> PageResult<TR> toPageResult(long pageIndex, long pageSize, SqlExpression<SqlColumnAsSelector<T1, TR>> selectExpression, Class<TR> clazz) {
 
-        SelectSqlSegmentBuilder sqlSegmentBuilder = new SelectSqlSegmentBuilder();
+        ProjectSqlBuilderSegment sqlSegmentBuilder = new ProjectSqlBuilderSegment();
         SqlColumnAsSelector<T1,TR> sqlColumnSelector = getSqlBuilderProvider1().getSqlColumnAsSelector1(sqlSegmentBuilder);
         selectExpression.apply(sqlColumnSelector);
         return toPageResult(pageIndex,pageSize,clazz, sqlSegmentBuilder.toSql());

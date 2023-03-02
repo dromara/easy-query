@@ -1,6 +1,6 @@
 package org.easy.query.core.expression.parser.impl;
 
-import org.easy.query.core.basic.api.context.SelectContext;
+import org.easy.query.core.expression.context.SelectContext;
 
 /**
  * @FileName: DefaultSqlColumnSelector.java

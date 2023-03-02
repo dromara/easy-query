@@ -6,7 +6,7 @@ import org.easy.query.core.abstraction.metadata.EntityMetadata;
 import org.easy.query.core.expression.parser.abstraction.SqlPredicate;
 import org.easy.query.core.enums.MultiTableTypeEnum;
 import org.easy.query.core.impl.Select1SqlProvider;
-import org.easy.query.core.basic.api.context.SelectContext;
+import org.easy.query.core.expression.context.SelectContext;
 import org.easy.query.core.query.builder.SqlTableInfo;
 
 /**
@@ -16,7 +16,7 @@ import org.easy.query.core.query.builder.SqlTableInfo;
  * @Date: 2023/2/6 23:43
  * @Created by xuejiaming
  */
-public abstract class AbstractSelect1<T1> extends AbstractSelect0<T1, Select1<T1>> implements Select1<T1> {
+public abstract class AbstractSelect1<T1> extends AbstractSelect0<T1, Queryable1<T1>> implements Queryable1<T1> {
 
     private final Select1SqlProvider<T1> sqlPredicateProvider;
     public AbstractSelect1(Class<T1> t1Class, SelectContext selectContext) {
@@ -27,7 +27,7 @@ public abstract class AbstractSelect1<T1> extends AbstractSelect0<T1, Select1<T1
         sqlPredicateProvider= new Select1SqlProvider<>(selectContext);
     }
     @Override
-    public <T2> Select2<T1, T2> leftJoin(Class<T2> joinClass, SqlExpression2<SqlPredicate<T1>, SqlPredicate<T2>> on) {
+    public <T2> Queryable2<T1, T2> leftJoin(Class<T2> joinClass, SqlExpression2<SqlPredicate<T1>, SqlPredicate<T2>> on) {
         AbstractSelect2<T1, T2> select2 = createSelect2(joinClass, MultiTableTypeEnum.LEFT_JOIN);
         SqlPredicate<T1> on1 = select2.getSqlBuilderProvider2().getSqlOnPredicate1();
         SqlPredicate<T2> on2 = select2.getSqlBuilderProvider2().getSqlOnPredicate2();
@@ -37,7 +37,7 @@ public abstract class AbstractSelect1<T1> extends AbstractSelect0<T1, Select1<T1
 
 
     @Override
-    public <T2> Select2<T1, T2> innerJoin(Class<T2> joinClass, SqlExpression2<SqlPredicate<T1>, SqlPredicate<T2>> on) {
+    public <T2> Queryable2<T1, T2> innerJoin(Class<T2> joinClass, SqlExpression2<SqlPredicate<T1>, SqlPredicate<T2>> on) {
         AbstractSelect2<T1, T2> select2 = createSelect2(joinClass, MultiTableTypeEnum.INNER_JOIN);
         SqlPredicate<T1> sqlOnPredicate1 = select2.getSqlBuilderProvider2().getSqlOnPredicate1();
         SqlPredicate<T2> sqlOnPredicate2 = select2.getSqlBuilderProvider2().getSqlOnPredicate2();
@@ -45,7 +45,7 @@ public abstract class AbstractSelect1<T1> extends AbstractSelect0<T1, Select1<T1
         return select2;
     }
     @Override
-    protected Select1<T1> castSelf() {
+    protected Queryable1<T1> castSelf() {
         return this;
     }
     protected abstract <T2> AbstractSelect2<T1, T2> createSelect2(Class<T2> joinClass, MultiTableTypeEnum selectTableInfoType);

@@ -1,11 +1,11 @@
 package org.easy.query.core.expression.parser.impl;
 
-import org.easy.query.core.expression.builder.SqlSegmentBuilder;
+import org.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import org.easy.query.core.expression.lambda.Property;
 import org.easy.query.core.abstraction.sql.enums.EasyAggregate;
 import org.easy.query.core.expression.parser.abstraction.SqlColumnAsSelector;
 import org.easy.query.core.expression.parser.abstraction.internal.ColumnAsSelector;
-import org.easy.query.core.basic.api.context.SqlContext;
+import org.easy.query.core.expression.context.SqlContext;
 import org.easy.query.core.query.builder.SqlTableInfo;
 import org.easy.query.core.expression.segment.ColumnSegment;
 import org.easy.query.core.expression.segment.FuncColumnSegment;
@@ -20,9 +20,9 @@ import org.easy.query.core.util.LambdaUtil;
 public class DefaultSqlColumnAsSelector<T1,TR> extends AbstractSqlColumnSelector<T1, SqlColumnAsSelector<T1, TR>> implements SqlColumnAsSelector<T1,TR> {
 
 
-    private final SqlSegmentBuilder sqlSegmentBuilder;
+    private final SqlBuilderSegment sqlSegmentBuilder;
 
-    public DefaultSqlColumnAsSelector(int index, SqlContext sqlContext, SqlSegmentBuilder sqlSegment0Builder){
+    public DefaultSqlColumnAsSelector(int index, SqlContext sqlContext, SqlBuilderSegment sqlSegment0Builder){
         super(index,sqlContext,sqlSegment0Builder);
 
         this.sqlSegmentBuilder = sqlSegment0Builder;

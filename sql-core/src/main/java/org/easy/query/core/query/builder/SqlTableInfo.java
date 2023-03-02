@@ -4,11 +4,11 @@ import org.easy.query.core.expression.lambda.Property;
 import org.easy.query.core.abstraction.metadata.ColumnMetadata;
 import org.easy.query.core.enums.MultiTableTypeEnum;
 import org.easy.query.core.abstraction.metadata.EntityMetadata;
-import org.easy.query.core.expression.segment.AndPredicateSegment;
-import org.easy.query.core.expression.segment.PredicateSegment;
+import org.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import org.easy.query.core.expression.lambda.SqlExpression;
 import org.easy.query.core.expression.parser.abstraction.SqlColumnSetter;
 import org.easy.query.core.expression.parser.abstraction.SqlPredicate;
+import org.easy.query.core.expression.segment.condition.PredicateSegment;
 import org.easy.query.core.util.LambdaUtil;
 
 /**
@@ -20,7 +20,7 @@ import org.easy.query.core.util.LambdaUtil;
 public class SqlTableInfo {
     private final String alias;
     private final int index;
-    private  PredicateSegment on;
+    private PredicateSegment on;
 
     private final MultiTableTypeEnum multiTableType;
 

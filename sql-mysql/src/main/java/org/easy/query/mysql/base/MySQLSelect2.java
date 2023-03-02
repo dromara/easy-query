@@ -2,7 +2,7 @@ package org.easy.query.mysql.base;
 
 import org.easy.query.core.enums.MultiTableTypeEnum;
 import org.easy.query.core.basic.api.select.AbstractSelect2;
-import org.easy.query.core.basic.api.context.SelectContext;
+import org.easy.query.core.expression.context.SelectContext;
 import org.easy.query.mysql.util.MySQLUtil;
 
 /**

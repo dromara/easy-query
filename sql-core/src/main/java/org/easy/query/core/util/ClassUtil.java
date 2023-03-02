@@ -31,6 +31,12 @@ public class ClassUtil {
     private ClassUtil() {
     }
 
+    public static String getInstanceSimpleName(Object obj) {
+        if(obj==null) {
+            return StringUtil.EMPTY;
+        }
+        return getSimpleName(obj.getClass());
+    }
     public static String getSimpleName(Class<?> clazz) {
         if (clazz == null) {
             return StringUtil.EMPTY;

@@ -1,7 +1,7 @@
 package org.easy.query.mysql;
 
 import org.easy.query.core.abstraction.EasyQueryRuntimeContext;
-import org.easy.query.core.basic.api.context.DeleteContext;
+import org.easy.query.core.expression.context.DeleteContext;
 import org.easy.query.core.basic.api.delete.EasyDelete;
 import org.easy.query.core.basic.api.delete.EasyExpressionDelete;
 import org.easy.query.core.basic.jdbc.con.EasyConnectionManager;
@@ -9,12 +9,12 @@ import org.easy.query.core.basic.api.update.EntityUpdate;
 import org.easy.query.core.basic.api.update.ExpressionUpdate;
 import org.easy.query.core.basic.api.insert.Insert;
 import org.easy.query.core.basic.jdbc.tx.Transaction;
-import org.easy.query.core.basic.api.context.InsertContext;
-import org.easy.query.core.basic.api.context.SelectContext;
-import org.easy.query.core.basic.api.context.UpdateContext;
+import org.easy.query.core.expression.context.InsertContext;
+import org.easy.query.core.expression.context.SelectContext;
+import org.easy.query.core.expression.context.UpdateContext;
 import org.easy.query.mysql.base.*;
 import org.easy.query.core.abstraction.client.EasyQuery;
-import org.easy.query.core.basic.api.select.Select1;
+import org.easy.query.core.basic.api.select.Queryable1;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -39,12 +39,12 @@ public class MySQLEasyQuery implements EasyQuery {
     }
 
     @Override
-    public <T1> Select1<T1> select(Class<T1> clazz) {
+    public <T1> Queryable1<T1> select(Class<T1> clazz) {
         return new MySQLSelect1<>(clazz,new SelectContext(runtimeContext));
     }
 
     @Override
-    public <T1> Select1<T1> select(Class<T1> clazz, String alias) {
+    public <T1> Queryable1<T1> select(Class<T1> clazz, String alias) {
         return new MySQLSelect1<>(clazz,new SelectContext(runtimeContext,alias));
     }
     @Override
