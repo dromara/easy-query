@@ -43,10 +43,9 @@ public class MySQLUtil {
      * 生成mysql语句
      *
      * @param selectContext
-     * @param select
      * @return
      */
-    public static String toSelectSql(SelectContext selectContext, String select) {
+    public static String toSelectSql(SelectContext selectContext) {
 
         //将条件参数清空
         if (!selectContext.getParameters().isEmpty()) {
@@ -56,6 +55,7 @@ public class MySQLUtil {
         if (tableCount == 0) {
             throw new EasyQueryException("未找到查询表信息");
         }
+        String select=selectContext.getProjects().toSql();
         StringBuilder sql = new StringBuilder("SELECT ");
         for (int i = 0; i < tableCount; i++) {
             SqlTableInfo table = selectContext.getTable(i);
@@ -71,7 +71,10 @@ public class MySQLUtil {
                 }
             }
 
-            sql.append(table.getSelectTableSource()).append(table.getEntityMetadata().getTableName()).append(" ").append(table.getAlias());
+            sql.append(table.getSelectTableSource()).append(table.getEntityMetadata().getTableName());
+            if(table.getAlias()!=null){
+                sql.append(" ").append(table.getAlias());
+            }
 
             if (i > 0) {
                 PredicateSegment on = getTableOnWithQueryFilter(selectContext, table);

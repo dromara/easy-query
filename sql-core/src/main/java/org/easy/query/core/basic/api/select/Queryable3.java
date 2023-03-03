@@ -12,7 +12,7 @@ import org.easy.query.core.expression.parser.abstraction.SqlPredicate;
  * @Date: 2023/2/6 22:44
  * @Created by xuejiaming
  */
-public interface Queryable3<T1,T2,T3> extends Queryable<T1, Queryable3<T1,T2,T3>> {
+public interface Queryable3<T1,T2,T3> extends Queryable<T1> {
    default Queryable3<T1,T2,T3> where(SqlExpression3<SqlPredicate<T1>,SqlPredicate<T2>,SqlPredicate<T3>> whereExpression)
    {
        return where(true,whereExpression);

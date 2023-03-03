@@ -1,6 +1,8 @@
 package org.easy.query.mysql;
 
 import org.easy.query.core.abstraction.EasyQueryRuntimeContext;
+import org.easy.query.core.abstraction.EasyQueryableFactory;
+import org.easy.query.core.basic.api.select.Queryable;
 import org.easy.query.core.expression.context.DeleteContext;
 import org.easy.query.core.basic.api.delete.EasyDelete;
 import org.easy.query.core.basic.api.delete.EasyExpressionDelete;
@@ -10,11 +12,9 @@ import org.easy.query.core.basic.api.update.ExpressionUpdate;
 import org.easy.query.core.basic.api.insert.Insert;
 import org.easy.query.core.basic.jdbc.tx.Transaction;
 import org.easy.query.core.expression.context.InsertContext;
-import org.easy.query.core.expression.context.SelectContext;
 import org.easy.query.core.expression.context.UpdateContext;
 import org.easy.query.mysql.base.*;
 import org.easy.query.core.abstraction.client.EasyQuery;
-import org.easy.query.core.basic.api.select.Queryable1;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -28,9 +28,11 @@ import java.util.Collection;
  */
 public class MySQLEasyQuery implements EasyQuery {
     private final EasyQueryRuntimeContext runtimeContext;
+    private final EasyQueryableFactory easyQueryableFactory;
     public MySQLEasyQuery(EasyQueryRuntimeContext runtimeContext){
 
         this.runtimeContext = runtimeContext;
+        easyQueryableFactory=runtimeContext.getQueryableFactory();
     }
 
     @Override
@@ -39,13 +41,13 @@ public class MySQLEasyQuery implements EasyQuery {
     }
 
     @Override
-    public <T1> Queryable1<T1> select(Class<T1> clazz) {
-        return new MySQLSelect1<>(clazz,new SelectContext(runtimeContext));
+    public <T1> Queryable<T1> select(Class<T1> clazz) {
+        return easyQueryableFactory.createQueryable(clazz,runtimeContext);
     }
 
     @Override
-    public <T1> Queryable1<T1> select(Class<T1> clazz, String alias) {
-        return new MySQLSelect1<>(clazz,new SelectContext(runtimeContext,alias));
+    public <T1> Queryable<T1> select(Class<T1> clazz, String alias) {
+        return easyQueryableFactory.createQueryable(clazz,runtimeContext,alias);
     }
     @Override
     public Transaction beginTransaction(Integer isolationLevel) {

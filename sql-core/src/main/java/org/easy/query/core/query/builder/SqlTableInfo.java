@@ -62,6 +62,10 @@ public class SqlTableInfo {
     }
     public <T1> ColumnMetadata getColumn(Property<T1, ?> column){
         String propertyName = LambdaUtil.getAttrName(column);
+        return this.getColumnMetadata(propertyName);
+
+    }
+    public <T1> ColumnMetadata getColumnMetadata(String propertyName){
         return this.entityMetadata.getColumn(propertyName);
 
     }
@@ -73,9 +77,6 @@ public class SqlTableInfo {
         return LambdaUtil.getAttrName(column);
     }
 
-    public MultiTableTypeEnum getSelectTableInfoType() {
-        return multiTableType;
-    }
     public SqlExpression<SqlPredicate<?>> getQueryFilterExpression(){
         if(entityMetadata.enableLogicDelete()){
             return entityMetadata.getLogicDeleteMetadata().getQueryFilterExpression();
@@ -94,13 +95,13 @@ public class SqlTableInfo {
      * @return
      */
     public String getSelectTableSource(){
-        if(MultiTableTypeEnum.LEFT_JOIN.equals(getSelectTableInfoType())){
+        if(MultiTableTypeEnum.LEFT_JOIN.equals(multiTableType)){
             return  " LEFT JOIN ";
         }
-        else if(MultiTableTypeEnum.INNER_JOIN.equals(getSelectTableInfoType())){
+        else if(MultiTableTypeEnum.INNER_JOIN.equals(multiTableType)){
             return  " INNER JOIN ";
         }
-        else if(MultiTableTypeEnum.RIGHT_JOIN.equals(getSelectTableInfoType())){
+        else if(MultiTableTypeEnum.RIGHT_JOIN.equals(multiTableType)){
             return  " RIGHT JOIN ";
         }
         return " FROM ";

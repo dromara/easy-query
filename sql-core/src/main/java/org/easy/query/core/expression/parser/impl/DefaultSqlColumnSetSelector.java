@@ -4,8 +4,8 @@ import org.easy.query.core.expression.context.SqlContext;
 import org.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import org.easy.query.core.expression.lambda.Property;
 import org.easy.query.core.expression.parser.abstraction.SqlColumnSelector;
+import org.easy.query.core.expression.segment.condition.predicate.ColumnPropertyPredicate;
 import org.easy.query.core.query.builder.SqlTableInfo;
-import org.easy.query.core.expression.segment.condition.ColumnPropertyPredicate;
 
 import java.util.Collection;
 

@@ -18,4 +18,5 @@ public interface EasyQueryRuntimeContext {
     EasyConnectionManager getConnectionManager();
     EasyExecutor getEasyExecutor();
     EasyJdbcTypeHandlerManager getEasyJdbcTypeHandlerManager();
+    EasyQueryableFactory getQueryableFactory();
 }

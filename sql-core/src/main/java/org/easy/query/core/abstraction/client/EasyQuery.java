@@ -3,10 +3,10 @@ package org.easy.query.core.abstraction.client;
 import org.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import org.easy.query.core.basic.api.delete.EasyDelete;
 import org.easy.query.core.basic.api.delete.EasyExpressionDelete;
+import org.easy.query.core.basic.api.select.Queryable;
 import org.easy.query.core.basic.api.update.EntityUpdate;
 import org.easy.query.core.basic.api.update.ExpressionUpdate;
 import org.easy.query.core.basic.api.insert.Insert;
-import org.easy.query.core.basic.api.select.Queryable1;
 import org.easy.query.core.basic.jdbc.tx.Transaction;
 
 import java.util.Collection;
@@ -20,8 +20,8 @@ import java.util.Collection;
  */
 public interface EasyQuery {
     EasyQueryRuntimeContext getRuntimeContext();
-    <T1> Queryable1<T1> select(Class<T1> clazz);
-    <T1> Queryable1<T1> select(Class<T1> clazz, String alias);
+    <T1> Queryable<T1> select(Class<T1> clazz);
+    <T1> Queryable<T1> select(Class<T1> clazz, String alias);
     default Transaction beginTransaction(){
         return beginTransaction(null);
     }

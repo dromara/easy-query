@@ -1,8 +1,10 @@
 package org.easy.query.core.basic.api.select;
 
+import org.easy.query.core.abstraction.EasyQuerySqlBuilderProvider;
 import org.easy.query.core.expression.lambda.Property;
 import org.easy.query.core.expression.lambda.SqlExpression;
 import org.easy.query.core.abstraction.sql.PageResult;
+import org.easy.query.core.expression.lambda.SqlExpression2;
 import org.easy.query.core.expression.parser.abstraction.SqlAggregatePredicate;
 import org.easy.query.core.expression.parser.abstraction.SqlColumnAsSelector;
 import org.easy.query.core.expression.parser.abstraction.SqlColumnSelector;
@@ -17,7 +19,7 @@ import java.util.List;
  * @Date: 2023/2/6 21:28
  * @Created by xuejiaming
  */
-public interface Queryable<T1, TChain> {
+public interface Queryable<T1> extends Query<T1> {
     long count();
 
     long countDistinct(SqlExpression<SqlColumnSelector<T1>> selectExpression);
@@ -75,102 +77,113 @@ public interface Queryable<T1, TChain> {
 
     T1 firstOrNull();
 
-    /**
-     * 查询某些字段
-     *
-     * @param selectExpression
-     * @return
-     */
-    T1 firstOrNull(SqlExpression<SqlColumnSelector<T1>> selectExpression);
-
-    /**
-     * 结果转换成某个对象
-     *
-     * @param resultClass
-     * @param <TR>
-     * @return
-     */
-    <TR> TR firstOrNull(Class<TR> resultClass);
-
-    /**
-     * 转换成某个对象并且映射字段
-     *
-     * @param resultClass
-     * @param selectExpression
-     * @param <TR>
-     * @return
-     */
-    <TR> TR firstOrNull(Class<TR> resultClass, SqlExpression<SqlColumnAsSelector<T1, TR>> selectExpression);
+//    /**
+//     * 查询某些字段
+//     *
+//     * @param selectExpression
+//     * @return
+//     */
+//    T1 firstOrNull(SqlExpression<SqlColumnSelector<T1>> selectExpression);
+//
+//    /**
+//     * 结果转换成某个对象
+//     *
+//     * @param resultClass
+//     * @param <TR>
+//     * @return
+//     */
+//    <TR> TR firstOrNull(Class<TR> resultClass);
+//
+//    /**
+//     * 转换成某个对象并且映射字段
+//     *
+//     * @param resultClass
+//     * @param selectExpression
+//     * @param <TR>
+//     * @return
+//     */
+//    <TR> TR firstOrNull(Class<TR> resultClass, SqlExpression<SqlColumnAsSelector<T1, TR>> selectExpression);
 
     List<T1> toList();
 
-    List<T1> toList(SqlExpression<SqlColumnSelector<T1>> selectExpression);
-
-    <TR> List<TR> toList(Class<TR> resultClass);
-
-    <TR> List<TR> toList(Class<TR> resultClass, SqlExpression<SqlColumnAsSelector<T1, TR>> selectExpression);
+//    List<T1> toList(SqlExpression<SqlColumnSelector<T1>> selectExpression);
+//
+//    <TR> List<TR> toList(Class<TR> resultClass);
+//
+//    <TR> List<TR> toList(Class<TR> resultClass, SqlExpression<SqlColumnAsSelector<T1, TR>> selectExpression);
 
     //    <TR> List<TR> toList(Class<TR> resultClass);
     String toSql();
+//
+//    String toSql(SqlExpression<SqlColumnSelector<T1>> selectExpression);
+//
+//    <TR> String toSql(Class<TR> resultClass, SqlExpression<SqlColumnAsSelector<T1, TR>> selectExpression);
+//
+//    String toSql(String columns);
 
-    String toSql(SqlExpression<SqlColumnSelector<T1>> selectExpression);
+    Queryable<T1> select(SqlExpression<SqlColumnSelector<T1>> selectExpression);
+    <TR> Queryable<TR> select(Class<TR> resultClass);
+//    <TR> Queryable<TR> select(Class<TR> resultClass,String columns);
+    <TR> Queryable<TR> select(Class<TR> resultClass, SqlExpression<SqlColumnAsSelector<T1, TR>> selectExpression);
+//    Queryable<T1> select(String columns);
 
-    <TR> String toSql(Class<TR> resultClass, SqlExpression<SqlColumnAsSelector<T1, TR>> selectExpression);
-
-    String toSql(String columns);
-
-
-    default TChain where(SqlExpression<SqlPredicate<T1>> whereExpression) {
+    default Queryable<T1> where(SqlExpression<SqlPredicate<T1>> whereExpression) {
         return where(true, whereExpression);
     }
 
-    TChain where(boolean condition, SqlExpression<SqlPredicate<T1>> whereExpression);
+    Queryable<T1> where(boolean condition, SqlExpression<SqlPredicate<T1>> whereExpression);
 
     //    default TChain select(SqlExpression<SqlSelectColumnSelector<T1,TR>> selectExpression){
 //        return select(true,selectExpression);
 //    }
 //    TChain select(boolean condition,SqlExpression<SqlSelectColumnSelector<T1,TR>> selectExpression);
-    default TChain groupBy(SqlExpression<SqlColumnSelector<T1>> selectExpression) {
+    default Queryable<T1> groupBy(SqlExpression<SqlColumnSelector<T1>> selectExpression) {
         return groupBy(true, selectExpression);
     }
 
-    TChain groupBy(boolean condition, SqlExpression<SqlColumnSelector<T1>> selectExpression);
+    Queryable<T1> groupBy(boolean condition, SqlExpression<SqlColumnSelector<T1>> selectExpression);
 
-    default TChain having(SqlExpression<SqlAggregatePredicate<T1>> predicateExpression) {
+    default Queryable<T1> having(SqlExpression<SqlAggregatePredicate<T1>> predicateExpression) {
         return having(true, predicateExpression);
     }
 
-    TChain having(boolean condition, SqlExpression<SqlAggregatePredicate<T1>> predicateExpression);
+    Queryable<T1> having(boolean condition, SqlExpression<SqlAggregatePredicate<T1>> predicateExpression);
 
-    default TChain orderByAsc(SqlExpression<SqlColumnSelector<T1>> selectExpression) {
+    default Queryable<T1> orderByAsc(SqlExpression<SqlColumnSelector<T1>> selectExpression) {
         return orderByAsc(true, selectExpression);
     }
 
-    TChain orderByAsc(boolean condition, SqlExpression<SqlColumnSelector<T1>> selectExpression);
+    Queryable<T1> orderByAsc(boolean condition, SqlExpression<SqlColumnSelector<T1>> selectExpression);
 
-    default TChain orderByDesc(SqlExpression<SqlColumnSelector<T1>> selectExpression) {
+    default Queryable<T1> orderByDesc(SqlExpression<SqlColumnSelector<T1>> selectExpression) {
         return orderByDesc(true, selectExpression);
     }
 
-    TChain orderByDesc(boolean condition, SqlExpression<SqlColumnSelector<T1>> selectExpression);
+    Queryable<T1> orderByDesc(boolean condition, SqlExpression<SqlColumnSelector<T1>> selectExpression);
 
 
-    default TChain limit(long rows) {
+    default Queryable<T1> limit(long rows) {
         return limit(true, rows);
     }
 
-    default TChain limit(boolean condition, long rows) {
+    default Queryable<T1> limit(boolean condition, long rows) {
         return limit(condition, 0, rows);
     }
 
-    default TChain limit(long offset, long rows) {
+    default Queryable<T1> limit(long offset, long rows) {
         return limit(true, offset, rows);
     }
 
-    TChain limit(boolean condition, long offset, long rows);
+    Queryable<T1> limit(boolean condition, long offset, long rows);
 
     PageResult<T1> toPageResult(long pageIndex, long pageSize);
     PageResult<T1> toPageResult(long pageIndex, long pageSize, SqlExpression<SqlColumnSelector<T1>> selectExpression);
     <TR> PageResult<TR> toPageResult(long pageIndex, long pageSize, Class<TR> clazz);
-    <TR> PageResult<TR> toPageResult(long pageIndex, long pageSize, SqlExpression<SqlColumnAsSelector<T1,TR>> selectExpression, Class<TR> clazz);
+    <TR> PageResult<TR> toPageResult(long pageIndex, long pageSize, Class<TR> clazz, SqlExpression<SqlColumnAsSelector<T1,TR>> selectExpression);
+    <T2> Queryable2<T1, T2> leftJoin(Class<T2> joinClass, SqlExpression2<SqlPredicate<T1>, SqlPredicate<T2>> on);
+
+    <T2> Queryable2<T1, T2> innerJoin(Class<T2> joinClass, SqlExpression2<SqlPredicate<T1>, SqlPredicate<T2>> on);
+
+    EasyQuerySqlBuilderProvider<T1> getSqlBuilderProvider1();
+
 }
