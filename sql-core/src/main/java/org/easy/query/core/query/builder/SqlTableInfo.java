@@ -58,7 +58,6 @@ public class SqlTableInfo {
 
     public String getColumnName(String propertyName){
         return this.entityMetadata.getColumnName(propertyName);
-
     }
     public <T1> ColumnMetadata getColumn(Property<T1, ?> column){
         String propertyName = LambdaUtil.getAttrName(column);
@@ -67,7 +66,6 @@ public class SqlTableInfo {
     }
     public <T1> ColumnMetadata getColumnMetadata(String propertyName){
         return this.entityMetadata.getColumn(propertyName);
-
     }
     public <T1> String getColumnName(Property<T1, ?> column){
         String propertyName = LambdaUtil.getAttrName(column);

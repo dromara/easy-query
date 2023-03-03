@@ -6,7 +6,7 @@ import org.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import org.easy.query.core.expression.lambda.Property;
 import org.easy.query.core.expression.parser.abstraction.SqlColumnSetter;
 import org.easy.query.core.expression.parser.abstraction.internal.WherePredicate;
-import org.easy.query.core.expression.segment.condition.predicate.ColumnValuePredicate;
+import org.easy.query.core.expression.segment.condition.predicate.ColumnValuePredicate0;
 import org.easy.query.core.query.builder.SqlTableInfo;
 
 /**
@@ -32,7 +32,7 @@ public class DefaultSqlColumnSetter<T>  implements SqlColumnSetter<T> {
         {
             SqlTableInfo table = sqlContext.getTable(index);
             String propertyName = table.getPropertyName(column);
-            sqlSegment0Builder.append(new ColumnValuePredicate(table,propertyName,val, SqlPredicateCompareEnum.EQ, sqlContext));
+            sqlSegment0Builder.append(new ColumnValuePredicate0(table,propertyName,val, SqlPredicateCompareEnum.EQ, sqlContext));
         }
         return this;
     }

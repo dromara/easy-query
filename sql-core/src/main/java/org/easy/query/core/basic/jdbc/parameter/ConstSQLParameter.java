@@ -1,5 +1,6 @@
 package org.easy.query.core.basic.jdbc.parameter;
 
+import org.easy.query.core.query.SqlTableExpressionSegment;
 import org.easy.query.core.query.builder.SqlTableInfo;
 
 /**
@@ -9,18 +10,18 @@ import org.easy.query.core.query.builder.SqlTableInfo;
  * @Created by xuejiaming
  */
 public final class ConstSQLParameter implements SQLParameter {
-    private final SqlTableInfo table;
+    private final SqlTableExpressionSegment table;
     private final String propertyName;
     private final Object val;
 
-    public ConstSQLParameter(SqlTableInfo table, String propertyName,Object val){
+    public ConstSQLParameter(SqlTableExpressionSegment table, String propertyName,Object val){
         this.table = table;
         this.propertyName = propertyName;
         this.val = val;
     }
 
     @Override
-    public SqlTableInfo getTable() {
+    public SqlTableExpressionSegment getTable() {
         return table;
     }
 

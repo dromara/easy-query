@@ -4,6 +4,7 @@ import org.easy.query.core.expression.context.SqlContext;
 import org.easy.query.core.expression.parser.abstraction.*;
 import org.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import org.easy.query.core.expression.segment.condition.PredicateSegment;
+import org.easy.query.core.query.SqlEntityExpressionSegment;
 
 /**
  * @FileName: EasyQueryLambdaFactory.java
@@ -24,7 +25,7 @@ public interface EasyQueryLambdaFactory {
     default <T1,TR> SqlColumnAsSelector<T1,TR> createSqlColumnAsSelector(SqlContext sqlContext, SqlBuilderSegment sqlSegmentBuilder){
         return createSqlColumnAsSelector(0,sqlContext,sqlSegmentBuilder);
     }
-    <T1> SqlPredicate<T1> createSqlPredicate(int index, SqlContext sqlContext, PredicateSegment predicateSegment);
+    <T1> SqlPredicate<T1> createSqlPredicate(int index, SqlEntityExpressionSegment sqlEntityExpressionSegment, PredicateSegment predicateSegment);
     <T1> SqlAggregatePredicate<T1> createSqlAggregatePredicate(int index, SqlContext sqlContext, PredicateSegment predicateSegment);
     <T1> SqlColumnSelector<T1> createSqlColumnSelector(int index,SqlContext sqlContext, SqlBuilderSegment sqlSegmentBuilder);
     <T1> SqlColumnSelector<T1> createSqlColumnOrderSelector(int index, SqlContext sqlContext, SqlBuilderSegment sqlSegmentBuilder, boolean asc);

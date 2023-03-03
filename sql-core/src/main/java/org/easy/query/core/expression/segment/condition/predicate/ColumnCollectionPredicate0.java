@@ -4,6 +4,8 @@ import org.easy.query.core.expression.context.SqlContext;
 import org.easy.query.core.basic.jdbc.parameter.ConstSQLParameter;
 import org.easy.query.core.enums.SqlPredicateCompare;
 import org.easy.query.core.enums.SqlPredicateCompareEnum;
+import org.easy.query.core.query.SqlEntityExpressionSegment;
+import org.easy.query.core.query.SqlEntityTableExpressionSegment;
 import org.easy.query.core.query.builder.SqlTableInfo;
 
 import java.util.Collection;
@@ -15,14 +17,14 @@ import java.util.Iterator;
  * @Date: 2023/2/14 23:34
  * @Created by xuejiaming
  */
-public class ColumnCollectionPredicate implements Predicate {
+public class ColumnCollectionPredicate0 implements Predicate {
     private final Collection<?> collection;
     private final SqlPredicateCompare compare;
-    private final SqlContext sqlContext;
-    private final SqlTableInfo table;
+    private final SqlEntityExpressionSegment sqlContext;
+    private final SqlEntityTableExpressionSegment table;
     private final String propertyName;
 
-    public ColumnCollectionPredicate(SqlTableInfo table, String propertyName, Collection<?> collection, SqlPredicateCompare compare, SqlContext sqlContext) {
+    public ColumnCollectionPredicate0(SqlEntityTableExpressionSegment table, String propertyName, Collection<?> collection, SqlPredicateCompare compare, SqlEntityExpressionSegment sqlContext) {
         this.table = table;
         this.propertyName = propertyName;
         this.collection = collection;

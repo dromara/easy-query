@@ -13,11 +13,11 @@ import java.util.List;
  * @Date: 2023/3/3 17:17
  * @Created by xuejiaming
  */
-public class DefaultTableSegment implements TableSegment {
+public class DefaultTableSegment implements SqlTableExpressionSegment {
     private final int index;
     private final String alias;
     private final MultiTableTypeEnum multiTableType;
-    private List<TableSegment> tables;
+    private List<SqlExpressionSegment> tables;
     private PredicateSegment on;
 
     public DefaultTableSegment(int index, String alias, MultiTableTypeEnum multiTableType){
@@ -33,7 +33,7 @@ public class DefaultTableSegment implements TableSegment {
     }
 
     @Override
-    public void addTableSegment(TableSegment tableSegment) {
+    public void addSqlTableExpressionSegment(SqlExpressionSegment tableSegment) {
         if (tables == null) {
             tables = new ArrayList<>();
         }
@@ -47,6 +47,7 @@ public class DefaultTableSegment implements TableSegment {
         }
         return on;
     }
+
 
     @Override
     public String getAlias() {

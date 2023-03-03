@@ -1,5 +1,6 @@
 package org.easy.query.core.basic.jdbc.parameter;
 
+import org.easy.query.core.query.SqlTableExpressionSegment;
 import org.easy.query.core.query.builder.SqlTableInfo;
 
 /**
@@ -9,7 +10,7 @@ import org.easy.query.core.query.builder.SqlTableInfo;
  * @Created by xuejiaming
  */
 public interface SQLParameter {
-    SqlTableInfo getTable();
+    SqlTableExpressionSegment getTable();
     String getPropertyName();
     Object getValue();
 }

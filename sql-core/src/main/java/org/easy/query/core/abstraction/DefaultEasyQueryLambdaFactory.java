@@ -6,6 +6,7 @@ import org.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import org.easy.query.core.expression.parser.impl.*;
 import org.easy.query.core.expression.segment.condition.DefaultSqlPredicate;
 import org.easy.query.core.expression.segment.condition.PredicateSegment;
+import org.easy.query.core.query.SqlEntityExpressionSegment;
 
 /**
  * @FileName: DefaultEasyQueryLambdaFactory.java
@@ -15,8 +16,8 @@ import org.easy.query.core.expression.segment.condition.PredicateSegment;
  */
 public class DefaultEasyQueryLambdaFactory implements EasyQueryLambdaFactory{
     @Override
-    public <T1> SqlPredicate<T1> createSqlPredicate(int index, SqlContext sqlPredicateContext, PredicateSegment predicateSegment) {
-        return new DefaultSqlPredicate<>(index,sqlPredicateContext,predicateSegment);
+    public <T1> SqlPredicate<T1> createSqlPredicate(int index, SqlEntityExpressionSegment sqlEntityExpressionSegment, PredicateSegment predicateSegment) {
+        return new DefaultSqlPredicate<>(index,sqlEntityExpressionSegment,predicateSegment);
     }
 
     @Override
