@@ -1,11 +1,9 @@
 package org.easy.query.core.expression.segment.condition.predicate;
 
-import org.easy.query.core.expression.context.SqlContext;
 import org.easy.query.core.basic.jdbc.parameter.ConstSQLParameter;
 import org.easy.query.core.enums.SqlPredicateCompare;
-import org.easy.query.core.query.SqlEntityExpressionSegment;
-import org.easy.query.core.query.SqlEntityTableExpressionSegment;
-import org.easy.query.core.query.builder.SqlTableInfo;
+import org.easy.query.core.query.SqlEntityExpression;
+import org.easy.query.core.query.SqlEntityTableExpression;
 
 /**
  * @FileName: ColumnValuePredicate.java
@@ -14,24 +12,24 @@ import org.easy.query.core.query.builder.SqlTableInfo;
  * @Created by xuejiaming
  */
 public class ColumnValuePredicate0 implements Predicate {
-    private final SqlEntityTableExpressionSegment table;
+    private final SqlEntityTableExpression table;
     private final String propertyName;
     private final Object val;
     private final SqlPredicateCompare compare;
-    private final SqlEntityExpressionSegment sqlContext;
+    private final SqlEntityExpression sqlEntityExpression;
 
-    public ColumnValuePredicate0(SqlEntityTableExpressionSegment table, String propertyName, Object val, SqlPredicateCompare compare, SqlEntityExpressionSegment sqlContext) {
+    public ColumnValuePredicate0(SqlEntityTableExpression table, String propertyName, Object val, SqlPredicateCompare compare, SqlEntityExpression sqlEntityExpression) {
         this.table = table;
         this.propertyName = propertyName;
         this.val = val;
         this.compare = compare;
-        this.sqlContext = sqlContext;
+        this.sqlEntityExpression = sqlEntityExpression;
     }
 
     @Override
     public String toSql() {
-        sqlContext.addParameter(new ConstSQLParameter(table,propertyName,val));
-        String sqlColumnSegment = sqlContext.getSqlColumnSegment(table,propertyName);
+        sqlEntityExpression.addParameter(new ConstSQLParameter(table,propertyName,val));
+        String sqlColumnSegment = sqlEntityExpression.getSqlColumnSegment(table,propertyName);
         return sqlColumnSegment + " " + compare.getSql() + " ?";
     }
 }

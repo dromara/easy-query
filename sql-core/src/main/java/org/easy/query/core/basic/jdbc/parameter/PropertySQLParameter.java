@@ -3,6 +3,8 @@ package org.easy.query.core.basic.jdbc.parameter;
 import org.easy.query.core.abstraction.metadata.ColumnMetadata;
 import org.easy.query.core.abstraction.metadata.EntityMetadata;
 import org.easy.query.core.exception.EasyQueryException;
+import org.easy.query.core.query.SqlEntityTableExpression;
+import org.easy.query.core.query.SqlTableExpressionSegment;
 import org.easy.query.core.query.builder.SqlTableInfo;
 
 import java.lang.reflect.InvocationTargetException;
@@ -15,17 +17,17 @@ import java.lang.reflect.Method;
  * @Created by xuejiaming
  */
 public final class PropertySQLParameter implements BeanSqlParameter {
-    private final SqlTableInfo table;
+    private final SqlEntityTableExpression table;
     private final String propertyName;
     private  Object bean;
 
-    public PropertySQLParameter(SqlTableInfo table, String propertyName){
+    public PropertySQLParameter(SqlEntityTableExpression table, String propertyName){
         this.table = table;
         this.propertyName = propertyName;
     }
 
     @Override
-    public SqlTableInfo getTable() {
+    public SqlTableExpressionSegment getTable() {
         return table;
     }
 

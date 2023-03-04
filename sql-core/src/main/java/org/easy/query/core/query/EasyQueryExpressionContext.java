@@ -16,12 +16,14 @@ public class EasyQueryExpressionContext implements QueryExpressionContext{
     private final EasyQueryRuntimeContext runtimeContext;
     private final String alias;
     protected final List<SQLParameter> params;
+    protected final List<SqlExpressionSegment> sqlExpressions;
 
     public EasyQueryExpressionContext(EasyQueryRuntimeContext runtimeContext, String alias){
 
         this.runtimeContext = runtimeContext;
         this.alias = alias;
         params=new ArrayList<>();
+        sqlExpressions=new ArrayList<>();
     }
     @Override
     public EasyQueryRuntimeContext getRuntimeContext() {
@@ -46,6 +48,10 @@ public class EasyQueryExpressionContext implements QueryExpressionContext{
     @Override
     public String getQuoteName(String value) {
         return runtimeContext.getEasyQueryConfiguration().getDialect().getQuoteName(value);
+    }
+
+    public void addSqlExpression(SqlExpressionSegment sqlExpressionSegment){
+        sqlExpressions.add(sqlExpressionSegment);
     }
 
 //    @Override

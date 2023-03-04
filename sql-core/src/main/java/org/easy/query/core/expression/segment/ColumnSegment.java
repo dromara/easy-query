@@ -1,6 +1,8 @@
 package org.easy.query.core.expression.segment;
 
 import org.easy.query.core.expression.context.SqlContext;
+import org.easy.query.core.query.SqlEntityExpression;
+import org.easy.query.core.query.SqlEntityTableExpression;
 import org.easy.query.core.query.builder.SqlTableInfo;
 
 /**
@@ -12,29 +14,29 @@ import org.easy.query.core.query.builder.SqlTableInfo;
 public class ColumnSegment implements SqlSegment {
 
 
-    protected final SqlTableInfo table;
+    protected final SqlEntityTableExpression table;
     protected final String propertyName;
-    protected final SqlContext sqlContext;
+    protected final SqlEntityExpression sqlEntityExpression;
     protected String alias;
 
-    public ColumnSegment(SqlTableInfo table, String propertyName, SqlContext sqlContext){
-        this(table,propertyName,sqlContext,null);
+    public ColumnSegment(SqlEntityTableExpression table, String propertyName, SqlEntityExpression sqlEntityExpression){
+        this(table,propertyName,sqlEntityExpression,null);
     }
-    public ColumnSegment(SqlTableInfo table, String propertyName, SqlContext sqlContext,String alias){
+    public ColumnSegment(SqlEntityTableExpression table, String propertyName, SqlEntityExpression sqlEntityExpression, String alias){
         this.table = table;
 
         this.propertyName = propertyName;
-        this.sqlContext = sqlContext;
+        this.sqlEntityExpression = sqlEntityExpression;
         this.alias = alias;
     }
 
     @Override
     public String toSql() {
-        String sqlColumnSegment = sqlContext.getSqlColumnSegment(table,propertyName);
+        String sqlColumnSegment = sqlEntityExpression.getSqlColumnSegment(table,propertyName);
         StringBuilder sql = new StringBuilder();
         sql.append(sqlColumnSegment);
         if(alias!=null){
-            sql.append(" AS ").append(sqlContext.getQuoteName(alias));
+            sql.append(" AS ").append(sqlEntityExpression.getQuoteName(alias));
         }
         return sql.toString();
     }

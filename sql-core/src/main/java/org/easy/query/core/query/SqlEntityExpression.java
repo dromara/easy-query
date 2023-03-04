@@ -2,12 +2,8 @@ package org.easy.query.core.query;
 
 import org.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import org.easy.query.core.basic.jdbc.parameter.SQLParameter;
-import org.easy.query.core.expression.segment.builder.GroupBySqlBuilderSegment;
-import org.easy.query.core.expression.segment.builder.OrderBySqlBuilderSegment;
 import org.easy.query.core.expression.segment.builder.SqlBuilderSegment;
-import org.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import org.easy.query.core.expression.segment.condition.PredicateSegment;
-import org.easy.query.core.util.ClassUtil;
 
 import java.util.List;
 
@@ -17,17 +13,17 @@ import java.util.List;
  * @Date: 2023/3/3 22:17
  * @Created by xuejiaming
  */
-public interface SqlEntityExpressionSegment extends SqlExpressionSegment{
+public interface SqlEntityExpression extends SqlExpressionSegment{
     boolean isEmpty();
     default boolean isNotEmpty() {
         return !isEmpty();
     }
-    void addSqlEntityTableExpressionSegment(SqlEntityTableExpressionSegment tableSegment);
+    void addSqlEntityTableExpression(SqlEntityTableExpression tableSegment);
 
-    SqlEntityTableExpressionSegment getTable(int index);
+    SqlEntityTableExpression getTable(int index);
     EasyQueryRuntimeContext getRuntimeContext();
     String getQuoteName(String value);
-    String getSqlColumnSegment(SqlEntityTableExpressionSegment table,String propertyName);
+    String getSqlColumnSegment(SqlEntityTableExpression table, String propertyName);
     List<SQLParameter> getParameters();
     void addParameter(SQLParameter parameter);
 

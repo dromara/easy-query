@@ -2,6 +2,8 @@ package org.easy.query.core.expression.segment;
 
 import org.easy.query.core.abstraction.sql.enums.IEasyFunc;
 import org.easy.query.core.expression.context.SqlContext;
+import org.easy.query.core.query.SqlEntityExpression;
+import org.easy.query.core.query.SqlEntityTableExpression;
 import org.easy.query.core.query.builder.SqlTableInfo;
 
 /**
@@ -13,30 +15,30 @@ import org.easy.query.core.query.builder.SqlTableInfo;
 public class FuncColumnSegment  implements SqlSegment {
 
 
-    protected final SqlTableInfo table;
+    protected final SqlEntityTableExpression table;
     protected final String propertyName;
-    protected final SqlContext sqlContext;
+    protected final SqlEntityExpression sqlEntityExpression;
     protected final IEasyFunc easyFunc;
     protected String alias;
 
-    public FuncColumnSegment(SqlTableInfo table, String propertyName, SqlContext sqlContext, IEasyFunc easyFunc){
-        this(table,propertyName,sqlContext,easyFunc,null);
+    public FuncColumnSegment(SqlEntityTableExpression table, String propertyName, SqlEntityExpression sqlEntityExpression, IEasyFunc easyFunc){
+        this(table,propertyName,sqlEntityExpression,easyFunc,null);
     }
-    public FuncColumnSegment(SqlTableInfo table, String propertyName, SqlContext sqlContext, IEasyFunc easyFunc,String alias){
+    public FuncColumnSegment(SqlEntityTableExpression table, String propertyName, SqlEntityExpression sqlEntityExpression, IEasyFunc easyFunc, String alias){
         this.table = table;
         this.propertyName = propertyName;
-        this.sqlContext = sqlContext;
+        this.sqlEntityExpression = sqlEntityExpression;
         this.easyFunc = easyFunc;
         this.alias = alias;
     }
 
     @Override
     public String toSql() {
-        String sqlColumnSegment = sqlContext.getSqlColumnSegment(table,propertyName);
+        String sqlColumnSegment = sqlEntityExpression.getSqlColumnSegment(table,propertyName);
         String funcColumn = easyFunc.getFuncColumn(sqlColumnSegment);
         StringBuilder sql = new StringBuilder().append(funcColumn);
         if(alias!=null){
-            sql.append(" AS ").append(sqlContext.getQuoteName(alias));
+            sql.append(" AS ").append(sqlEntityExpression.getQuoteName(alias));
         }
         return sql.toString();
     }

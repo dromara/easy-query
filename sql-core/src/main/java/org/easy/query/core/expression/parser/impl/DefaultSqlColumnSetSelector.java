@@ -5,6 +5,8 @@ import org.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import org.easy.query.core.expression.lambda.Property;
 import org.easy.query.core.expression.parser.abstraction.SqlColumnSelector;
 import org.easy.query.core.expression.segment.condition.predicate.ColumnPropertyPredicate;
+import org.easy.query.core.query.SqlEntityExpression;
+import org.easy.query.core.query.SqlEntityTableExpression;
 import org.easy.query.core.query.builder.SqlTableInfo;
 
 import java.util.Collection;
@@ -17,29 +19,29 @@ import java.util.Collection;
  */
 public class DefaultSqlColumnSetSelector<T> implements SqlColumnSelector<T> {
     private final int index;
-    private final SqlContext sqlContext;
+    private final SqlEntityExpression sqlEntityExpression;
     private final SqlBuilderSegment sqlSegmentBuilder;
 
-    public DefaultSqlColumnSetSelector(int index, SqlContext sqlContext, SqlBuilderSegment sqlSegmentBuilder){
+    public DefaultSqlColumnSetSelector(int index, SqlEntityExpression sqlEntityExpression, SqlBuilderSegment sqlSegmentBuilder){
 
         this.index = index;
-        this.sqlContext = sqlContext;
+        this.sqlEntityExpression = sqlEntityExpression;
         this.sqlSegmentBuilder = sqlSegmentBuilder;
     }
     @Override
     public SqlColumnSelector<T> column(Property<T, ?> column) {
-        SqlTableInfo table = sqlContext.getTable(index);
+        SqlEntityTableExpression table = sqlEntityExpression.getTable(index);
         String propertyName = table.getPropertyName(column);
-        sqlSegmentBuilder.append(new ColumnPropertyPredicate(table,propertyName,sqlContext));
+        sqlSegmentBuilder.append(new ColumnPropertyPredicate(table,propertyName,sqlEntityExpression));
         return this;
     }
 
     @Override
     public SqlColumnSelector<T> columnAll() {
-        SqlTableInfo table = sqlContext.getTable(index);
+        SqlEntityTableExpression table = sqlEntityExpression.getTable(index);
         Collection<String> properties = table.getEntityMetadata().getProperties();
         for (String property : properties) {
-            sqlSegmentBuilder.append(new ColumnPropertyPredicate(table, property,sqlContext));
+            sqlSegmentBuilder.append(new ColumnPropertyPredicate(table, property,sqlEntityExpression));
         }
         return this;
     }

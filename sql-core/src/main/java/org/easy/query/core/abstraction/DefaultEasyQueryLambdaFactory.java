@@ -6,7 +6,7 @@ import org.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import org.easy.query.core.expression.parser.impl.*;
 import org.easy.query.core.expression.segment.condition.DefaultSqlPredicate;
 import org.easy.query.core.expression.segment.condition.PredicateSegment;
-import org.easy.query.core.query.SqlEntityExpressionSegment;
+import org.easy.query.core.query.SqlEntityExpression;
 
 /**
  * @FileName: DefaultEasyQueryLambdaFactory.java
@@ -16,37 +16,37 @@ import org.easy.query.core.query.SqlEntityExpressionSegment;
  */
 public class DefaultEasyQueryLambdaFactory implements EasyQueryLambdaFactory{
     @Override
-    public <T1> SqlPredicate<T1> createSqlPredicate(int index, SqlEntityExpressionSegment sqlEntityExpressionSegment, PredicateSegment predicateSegment) {
-        return new DefaultSqlPredicate<>(index,sqlEntityExpressionSegment,predicateSegment);
+    public <T1> SqlPredicate<T1> createSqlPredicate(int index, SqlEntityExpression sqlEntityExpression, PredicateSegment predicateSegment) {
+        return new DefaultSqlPredicate<>(index,sqlEntityExpression,predicateSegment);
     }
 
     @Override
-    public <T1> SqlAggregatePredicate<T1> createSqlAggregatePredicate(int index, SqlContext sqlContext, PredicateSegment predicateSegment) {
-        return new DefaultSqlAggregatePredicate<>(index,sqlContext,predicateSegment);
+    public <T1> SqlAggregatePredicate<T1> createSqlAggregatePredicate(int index, SqlEntityExpression sqlEntityExpression, PredicateSegment predicateSegment) {
+        return new DefaultSqlAggregatePredicate<>(index,sqlEntityExpression,predicateSegment);
     }
 
     @Override
-    public <T1> SqlColumnSelector<T1> createSqlColumnSelector(int index, SqlContext sqlContext, SqlBuilderSegment sqlSegmentBuilder) {
-        return new DefaultSqlColumnSelector<>(index,sqlContext,sqlSegmentBuilder);
+    public <T1> SqlColumnSelector<T1> createSqlColumnSelector(int index, SqlEntityExpression sqlEntityExpression, SqlBuilderSegment sqlSegmentBuilder) {
+        return new DefaultSqlColumnSelector<>(index,sqlEntityExpression,sqlSegmentBuilder);
     }
 
     @Override
-    public <T1> SqlColumnSelector<T1> createSqlColumnOrderSelector(int index, SqlContext sqlContext, SqlBuilderSegment sqlSegmentBuilder, boolean asc) {
-        return new DefaultSqlColumnSelector<>(index,sqlContext,sqlSegmentBuilder);
+    public <T1> SqlColumnSelector<T1> createSqlColumnOrderSelector(int index, SqlEntityExpression sqlEntityExpression, SqlBuilderSegment sqlSegmentBuilder, boolean asc) {
+        return new DefaultSqlColumnSelector<>(index,sqlEntityExpression,sqlSegmentBuilder);
     }
 
     @Override
-    public <T1, TR> SqlColumnAsSelector<T1, TR> createSqlColumnAsSelector(int index, SqlContext sqlContext, SqlBuilderSegment sqlSegmentBuilder) {
-        return new DefaultSqlColumnAsSelector<T1,TR>(index,sqlContext,sqlSegmentBuilder);
+    public <T1, TR> SqlColumnAsSelector<T1, TR> createSqlColumnAsSelector(int index, SqlEntityExpression sqlEntityExpression, SqlBuilderSegment sqlSegmentBuilder) {
+        return new DefaultSqlColumnAsSelector<T1,TR>(index,sqlEntityExpression,sqlSegmentBuilder);
     }
 
     @Override
-    public <T1> SqlColumnSetter<T1> createSqlColumnSetter(int index, SqlContext sqlContext, SqlBuilderSegment sqlSegmentBuilder) {
-        return new DefaultSqlColumnSetter<T1>(index,sqlContext,sqlSegmentBuilder);
+    public <T1> SqlColumnSetter<T1> createSqlColumnSetter(int index, SqlEntityExpression sqlEntityExpression, SqlBuilderSegment sqlSegmentBuilder) {
+        return new DefaultSqlColumnSetter<T1>(index,sqlEntityExpression,sqlSegmentBuilder);
     }
 
     @Override
-    public <T1> SqlColumnSelector<T1> createSqlColumnSetSelector(int index, SqlContext sqlContext, SqlBuilderSegment sqlSegmentBuilder) {
-        return new DefaultSqlColumnSetSelector<T1>(index,sqlContext,sqlSegmentBuilder);
+    public <T1> SqlColumnSelector<T1> createSqlColumnSetSelector(int index, SqlEntityExpression sqlEntityExpression, SqlBuilderSegment sqlSegmentBuilder) {
+        return new DefaultSqlColumnSetSelector<T1>(index,sqlEntityExpression,sqlSegmentBuilder);
     }
 }

@@ -6,6 +6,8 @@ import org.easy.query.core.abstraction.sql.enums.EasyAggregate;
 import org.easy.query.core.expression.parser.abstraction.SqlColumnAsSelector;
 import org.easy.query.core.expression.parser.abstraction.internal.ColumnAsSelector;
 import org.easy.query.core.expression.context.SqlContext;
+import org.easy.query.core.query.SqlEntityExpression;
+import org.easy.query.core.query.SqlEntityTableExpression;
 import org.easy.query.core.query.builder.SqlTableInfo;
 import org.easy.query.core.expression.segment.ColumnSegment;
 import org.easy.query.core.expression.segment.FuncColumnSegment;
@@ -22,18 +24,18 @@ public class DefaultSqlColumnAsSelector<T1,TR> extends AbstractSqlColumnSelector
 
     private final SqlBuilderSegment sqlSegmentBuilder;
 
-    public DefaultSqlColumnAsSelector(int index, SqlContext sqlContext, SqlBuilderSegment sqlSegment0Builder){
-        super(index,sqlContext,sqlSegment0Builder);
+    public DefaultSqlColumnAsSelector(int index, SqlEntityExpression sqlEntityExpression, SqlBuilderSegment sqlSegment0Builder){
+        super(index,sqlEntityExpression,sqlSegment0Builder);
 
         this.sqlSegmentBuilder = sqlSegment0Builder;
     }
 
     @Override
     public SqlColumnAsSelector<T1, TR> columnAs(Property<T1, ?> column, Property<TR, ?> alias) {
-        SqlTableInfo table = getSqlContext().getTable(getIndex());
+        SqlEntityTableExpression table = getSqlEntityExpression().getTable(getIndex());
         String propertyName = table.getPropertyName(column);
         String columnAsName = LambdaUtil.getAttrName(alias);
-        sqlSegmentBuilder.append(new ColumnSegment(table,propertyName, getSqlContext(),columnAsName));
+        sqlSegmentBuilder.append(new ColumnSegment(table,propertyName, getSqlEntityExpression(),columnAsName));
         return this;
     }
 
@@ -44,10 +46,10 @@ public class DefaultSqlColumnAsSelector<T1,TR> extends AbstractSqlColumnSelector
 
     @Override
     public SqlColumnAsSelector<T1, TR> columnCount(Property<T1, ?> column, Property<TR, ?> alias) {
-        SqlTableInfo table = getSqlContext().getTable(getIndex());
+        SqlEntityTableExpression table = getSqlEntityExpression().getTable(getIndex());
         String propertyName = table.getPropertyName(column);
         String columnAsName = LambdaUtil.getAttrName(alias);
-        sqlSegmentBuilder.append(new FuncColumnSegment(table,propertyName, getSqlContext(), EasyAggregate.COUNT,columnAsName));
+        sqlSegmentBuilder.append(new FuncColumnSegment(table,propertyName, getSqlEntityExpression(), EasyAggregate.COUNT,columnAsName));
         return this;
     }
 

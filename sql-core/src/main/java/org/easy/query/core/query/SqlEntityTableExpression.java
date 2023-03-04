@@ -12,7 +12,7 @@ import org.easy.query.core.expression.parser.abstraction.SqlPredicate;
  * @Date: 2023/3/3 21:50
  * @Created by xuejiaming
  */
-public interface SqlEntityTableExpressionSegment extends SqlTableExpressionSegment {
+public interface SqlEntityTableExpression extends SqlTableExpressionSegment {
     EntityMetadata getEntityMetadata();
     <T1> String getPropertyName(Property<T1, ?> column);
     String getColumnName(String propertyName);

@@ -4,6 +4,8 @@ import org.easy.query.core.abstraction.sql.enums.IEasyFunc;
 import org.easy.query.core.expression.context.SqlContext;
 import org.easy.query.core.basic.jdbc.parameter.ConstSQLParameter;
 import org.easy.query.core.enums.SqlPredicateCompare;
+import org.easy.query.core.query.SqlEntityExpression;
+import org.easy.query.core.query.SqlEntityTableExpression;
 import org.easy.query.core.query.builder.SqlTableInfo;
 
 /**
@@ -12,28 +14,28 @@ import org.easy.query.core.query.builder.SqlTableInfo;
  * @Date: 2023/2/14 23:34
  * @Created by xuejiaming
  */
-public class FuncColumnValuePredicate implements Predicate {
-    private final SqlTableInfo table;
+public class FuncColumnValuePredicate0 implements Predicate {
+    private final SqlEntityTableExpression table;
     private final IEasyFunc func;
     private final String propertyName;
     private final Object val;
     private final SqlPredicateCompare compare;
-    private final SqlContext sqlContext;
+    private final SqlEntityExpression sqlEntityExpression;
 
-    public FuncColumnValuePredicate(SqlTableInfo table, IEasyFunc func, String propertyName, Object val, SqlPredicateCompare compare, SqlContext sqlContext) {
+    public FuncColumnValuePredicate0(SqlEntityTableExpression table, IEasyFunc func, String propertyName, Object val, SqlPredicateCompare compare, SqlEntityExpression sqlEntityExpression) {
         this.table = table;
         this.propertyName = propertyName;
 
         this.func = func;
         this.val = val;
         this.compare = compare;
-        this.sqlContext = sqlContext;
+        this.sqlEntityExpression = sqlEntityExpression;
     }
 
     @Override
     public String toSql() {
-        sqlContext.addParameter(new ConstSQLParameter(table,propertyName,val));
-        String sqlColumnSegment = sqlContext.getSqlColumnSegment(table,propertyName);
+        sqlEntityExpression.addParameter(new ConstSQLParameter(table,propertyName,val));
+        String sqlColumnSegment = sqlEntityExpression.getSqlColumnSegment(table,propertyName);
         return func.getFuncColumn(sqlColumnSegment) +" "+ compare.getSql() + " ?";
     }
 }

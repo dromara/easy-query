@@ -2,7 +2,7 @@ package org.easy.query.core.expression.context;
 
 import org.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import org.easy.query.core.basic.jdbc.parameter.SQLParameter;
-import org.easy.query.core.query.SqlEntityTableExpressionSegment;
+import org.easy.query.core.query.SqlEntityTableExpression;
 import org.easy.query.core.query.builder.SqlTableInfo;
 
 import java.util.List;
@@ -15,8 +15,8 @@ import java.util.List;
  */
 public interface SqlContext0 {
      EasyQueryRuntimeContext getRuntimeContext();
-     List<SqlEntityTableExpressionSegment> getTables();
-     SqlEntityTableExpressionSegment getTable(int index);
+     List<SqlEntityTableExpression> getTables();
+     SqlEntityTableExpression getTable(int index);
      String getQuoteName(String value);
      String getSqlColumnSegment(SqlTableInfo table,String propertyName);
      List<SQLParameter> getParameters();

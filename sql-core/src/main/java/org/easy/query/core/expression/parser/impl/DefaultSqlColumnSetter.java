@@ -7,6 +7,8 @@ import org.easy.query.core.expression.lambda.Property;
 import org.easy.query.core.expression.parser.abstraction.SqlColumnSetter;
 import org.easy.query.core.expression.parser.abstraction.internal.WherePredicate;
 import org.easy.query.core.expression.segment.condition.predicate.ColumnValuePredicate0;
+import org.easy.query.core.query.SqlEntityExpression;
+import org.easy.query.core.query.SqlEntityTableExpression;
 import org.easy.query.core.query.builder.SqlTableInfo;
 
 /**
@@ -17,22 +19,22 @@ import org.easy.query.core.query.builder.SqlTableInfo;
  */
 public class DefaultSqlColumnSetter<T>  implements SqlColumnSetter<T> {
     private final int index;
-    private final SqlContext sqlContext;
+    private final SqlEntityExpression sqlEntityExpression;
     private final SqlBuilderSegment sqlSegment0Builder;
 
-    public DefaultSqlColumnSetter(int index, SqlContext sqlContext, SqlBuilderSegment sqlSegment0Builder){
+    public DefaultSqlColumnSetter(int index, SqlEntityExpression sqlEntityExpression, SqlBuilderSegment sqlSegment0Builder){
 
         this.index = index;
-        this.sqlContext = sqlContext;
+        this.sqlEntityExpression = sqlEntityExpression;
         this.sqlSegment0Builder = sqlSegment0Builder;
     }
     @Override
     public SqlColumnSetter<T> set(boolean condition, Property<T, ?> column, Object val) {
         if(condition)
         {
-            SqlTableInfo table = sqlContext.getTable(index);
+            SqlEntityTableExpression table = sqlEntityExpression.getTable(index);
             String propertyName = table.getPropertyName(column);
-            sqlSegment0Builder.append(new ColumnValuePredicate0(table,propertyName,val, SqlPredicateCompareEnum.EQ, sqlContext));
+            sqlSegment0Builder.append(new ColumnValuePredicate0(table,propertyName,val, SqlPredicateCompareEnum.EQ, sqlEntityExpression));
         }
         return this;
     }

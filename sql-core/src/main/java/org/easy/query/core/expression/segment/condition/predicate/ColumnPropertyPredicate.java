@@ -3,6 +3,8 @@ package org.easy.query.core.expression.segment.condition.predicate;
 import org.easy.query.core.expression.context.SqlContext;
 import org.easy.query.core.basic.jdbc.parameter.PropertySQLParameter;
 import org.easy.query.core.expression.segment.SqlSegment;
+import org.easy.query.core.query.SqlEntityExpression;
+import org.easy.query.core.query.SqlEntityTableExpression;
 import org.easy.query.core.query.builder.SqlTableInfo;
 
 /**
@@ -12,20 +14,20 @@ import org.easy.query.core.query.builder.SqlTableInfo;
  * @Created by xuejiaming
  */
 public class ColumnPropertyPredicate implements SqlSegment {
-    private final SqlTableInfo table;
+    private final SqlEntityTableExpression table;
     private final String propertyName;
-    private final SqlContext sqlContext;
+    private final SqlEntityExpression sqlEntityExpression;
 
-    public ColumnPropertyPredicate(SqlTableInfo table, String propertyName, SqlContext sqlContext){
+    public ColumnPropertyPredicate(SqlEntityTableExpression table, String propertyName, SqlEntityExpression sqlEntityExpression){
         this.table = table;
         this.propertyName = propertyName;
-        this.sqlContext = sqlContext;
+        this.sqlEntityExpression = sqlEntityExpression;
     }
 
     @Override
     public String toSql() {
-        sqlContext.addParameter(new PropertySQLParameter(table,propertyName));
-        String sqlColumnSegment = sqlContext.getSqlColumnSegment(table,propertyName);
+        sqlEntityExpression.addParameter(new PropertySQLParameter(table,propertyName));
+        String sqlColumnSegment = sqlEntityExpression.getSqlColumnSegment(table,propertyName);
         return sqlColumnSegment + " = ?";
     }
 

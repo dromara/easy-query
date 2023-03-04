@@ -1,12 +1,10 @@
 package org.easy.query.core.expression.segment.condition.predicate;
 
-import org.easy.query.core.expression.context.SqlContext;
 import org.easy.query.core.basic.jdbc.parameter.ConstSQLParameter;
 import org.easy.query.core.enums.SqlPredicateCompare;
 import org.easy.query.core.enums.SqlPredicateCompareEnum;
-import org.easy.query.core.query.SqlEntityExpressionSegment;
-import org.easy.query.core.query.SqlEntityTableExpressionSegment;
-import org.easy.query.core.query.builder.SqlTableInfo;
+import org.easy.query.core.query.SqlEntityExpression;
+import org.easy.query.core.query.SqlEntityTableExpression;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -20,16 +18,16 @@ import java.util.Iterator;
 public class ColumnCollectionPredicate0 implements Predicate {
     private final Collection<?> collection;
     private final SqlPredicateCompare compare;
-    private final SqlEntityExpressionSegment sqlContext;
-    private final SqlEntityTableExpressionSegment table;
+    private final SqlEntityExpression sqlEntityExpression;
+    private final SqlEntityTableExpression table;
     private final String propertyName;
 
-    public ColumnCollectionPredicate0(SqlEntityTableExpressionSegment table, String propertyName, Collection<?> collection, SqlPredicateCompare compare, SqlEntityExpressionSegment sqlContext) {
+    public ColumnCollectionPredicate0(SqlEntityTableExpression table, String propertyName, Collection<?> collection, SqlPredicateCompare compare, SqlEntityExpression sqlEntityExpression) {
         this.table = table;
         this.propertyName = propertyName;
         this.collection = collection;
         this.compare = compare;
-        this.sqlContext = sqlContext;
+        this.sqlEntityExpression = sqlEntityExpression;
     }
 
     @Override
@@ -43,16 +41,16 @@ public class ColumnCollectionPredicate0 implements Predicate {
                 throw new UnsupportedOperationException();
             }
         } else {
-            String sqlColumnSegment = sqlContext.getSqlColumnSegment(table,propertyName);
+            String sqlColumnSegment = sqlEntityExpression.getSqlColumnSegment(table,propertyName);
             StringBuilder sql = new StringBuilder();
             sql.append(sqlColumnSegment).append(" ").append(compare.getSql()).append(" (");
             Iterator<?> iterator = collection.iterator();
             Object firstVal = iterator.next();
-            sqlContext.addParameter(new ConstSQLParameter(table,propertyName,firstVal));
+            sqlEntityExpression.addParameter(new ConstSQLParameter(table,propertyName,firstVal));
             sql.append("?");
             while (iterator.hasNext()){
                 Object val = iterator.next();
-                sqlContext.addParameter(new ConstSQLParameter(table,propertyName,val));
+                sqlEntityExpression.addParameter(new ConstSQLParameter(table,propertyName,val));
                 sql.append(",?");
             }
             sql.append(")");

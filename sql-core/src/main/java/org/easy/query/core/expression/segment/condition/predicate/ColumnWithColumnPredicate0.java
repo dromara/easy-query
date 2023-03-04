@@ -1,10 +1,8 @@
 package org.easy.query.core.expression.segment.condition.predicate;
 
-import org.easy.query.core.expression.context.SqlContext;
 import org.easy.query.core.enums.SqlPredicateCompare;
-import org.easy.query.core.query.SqlEntityExpressionSegment;
-import org.easy.query.core.query.SqlEntityTableExpressionSegment;
-import org.easy.query.core.query.builder.SqlTableInfo;
+import org.easy.query.core.query.SqlEntityExpression;
+import org.easy.query.core.query.SqlEntityTableExpression;
 
 /**
  * @FileName: ColumnValuePredicate.java
@@ -13,14 +11,14 @@ import org.easy.query.core.query.builder.SqlTableInfo;
  * @Created by xuejiaming
  */
 public class ColumnWithColumnPredicate0 implements Predicate {
-    private final SqlEntityTableExpressionSegment leftTable;
+    private final SqlEntityTableExpression leftTable;
     private final String leftPropertyName;
-    private final SqlEntityTableExpressionSegment rightTable;
+    private final SqlEntityTableExpression rightTable;
     private final String rightPropertyName;
     private final SqlPredicateCompare compare;
-    private final SqlEntityExpressionSegment sqlEntityExpressionSegment;
+    private final SqlEntityExpression sqlEntityExpressionSegment;
 
-    public ColumnWithColumnPredicate0(SqlEntityTableExpressionSegment leftTable, String leftPropertyName, SqlEntityTableExpressionSegment rightTable, String rightPropertyName, SqlPredicateCompare compare,SqlEntityExpressionSegment sqlEntityExpressionSegment) {
+    public ColumnWithColumnPredicate0(SqlEntityTableExpression leftTable, String leftPropertyName, SqlEntityTableExpression rightTable, String rightPropertyName, SqlPredicateCompare compare, SqlEntityExpression sqlEntityExpressionSegment) {
         this.leftTable = leftTable;
         this.leftPropertyName = leftPropertyName;
         this.rightTable = rightTable;

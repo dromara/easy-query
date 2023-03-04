@@ -4,7 +4,6 @@ import org.easy.query.core.abstraction.EasyQueryLambdaFactory;
 import org.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import org.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import org.easy.query.core.exception.EasyQueryException;
-import org.easy.query.core.expression.context.SelectContext;
 import org.easy.query.core.expression.lambda.SqlExpression;
 import org.easy.query.core.expression.parser.abstraction.SqlPredicate;
 import org.easy.query.core.expression.segment.builder.GroupBySqlBuilderSegment;
@@ -13,7 +12,6 @@ import org.easy.query.core.expression.segment.builder.ProjectSqlBuilderSegment;
 import org.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import org.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import org.easy.query.core.expression.segment.condition.PredicateSegment;
-import org.easy.query.core.query.builder.SqlTableInfo;
 import org.easy.query.core.util.StringUtil;
 
 import java.util.ArrayList;
@@ -25,7 +23,7 @@ import java.util.List;
  * @Date: 2023/3/3 22:10
  * @Created by xuejiaming
  */
-public class EasySqlExpressionSegment implements SqlEntityExpressionSegment {
+public class EasySqlExpressionSegment implements SqlEntityExpression {
 
     private final QueryExpressionContext queryExpressionContext;
     private PredicateSegment where;
@@ -36,7 +34,7 @@ public class EasySqlExpressionSegment implements SqlEntityExpressionSegment {
     private long rows;
 
     private final SqlBuilderSegment projects;
-    private final List<SqlEntityTableExpressionSegment> tables;
+    private final List<SqlEntityTableExpression> tables;
 
     public EasySqlExpressionSegment(QueryExpressionContext queryExpressionContext) {
         this.queryExpressionContext = queryExpressionContext;
@@ -56,7 +54,7 @@ public class EasySqlExpressionSegment implements SqlEntityExpressionSegment {
     }
 
     @Override
-    public SqlEntityTableExpressionSegment getTable(int index) {
+    public SqlEntityTableExpression getTable(int index) {
         return tables.get(index);
     }
 
@@ -64,15 +62,16 @@ public class EasySqlExpressionSegment implements SqlEntityExpressionSegment {
     public String getQuoteName(String value) {
         return queryExpressionContext.getQuoteName(value);
     }
- @Override
-    public String getSqlColumnSegment(SqlEntityTableExpressionSegment table, String propertyName) {
+
+    @Override
+    public String getSqlColumnSegment(SqlEntityTableExpression table, String propertyName) {
         String alias = table.getAlias();
         String columnName = table.getColumnName(propertyName);
         String quoteName = getQuoteName(columnName);
-        if(alias==null){
+        if (alias == null) {
             return quoteName;
-        }else{
-            return alias+"."+quoteName;
+        } else {
+            return alias + "." + quoteName;
         }
     }
 
@@ -87,7 +86,7 @@ public class EasySqlExpressionSegment implements SqlEntityExpressionSegment {
     }
 
     @Override
-    public void addSqlEntityTableExpressionSegment(SqlEntityTableExpressionSegment tableSegment) {
+    public void addSqlEntityTableExpression(SqlEntityTableExpression tableSegment) {
         tables.add(tableSegment);
     }
 
@@ -170,11 +169,11 @@ public class EasySqlExpressionSegment implements SqlEntityExpressionSegment {
 
     @Override
     public String toSql() {
-
-        //将条件参数清空
-        if (!getParameters().isEmpty()) {
-            getParameters().clear();
-        }
+//
+//        //将条件参数清空
+//        if (!getParameters().isEmpty()) {
+//            getParameters().clear();
+//        }
         int tableCount = tables.size();
         if (tableCount == 0) {
             throw new EasyQueryException("未找到查询表信息");
@@ -183,7 +182,7 @@ public class EasySqlExpressionSegment implements SqlEntityExpressionSegment {
         StringBuilder sql = new StringBuilder("SELECT ");
         for (int i = 0; i < tableCount; i++) {
             //采用table.toSql()
-            SqlEntityTableExpressionSegment table = getTable(i);
+            SqlEntityTableExpression table = getTable(i);
             if (i == 0) {
                 if (StringUtil.isEmpty(select)) {
                     if (!hasGroup()) {
@@ -196,11 +195,7 @@ public class EasySqlExpressionSegment implements SqlEntityExpressionSegment {
                 }
             }
 
-            sql.append(table.getSelectTableSource()).append(table.getEntityMetadata().getTableName());
-            if (table.getAlias() != null) {
-                sql.append(" ").append(table.getAlias());
-            }
-
+            sql.append(table.toSql());// [from table alias] | [left join table alias] 匿名表 应该使用  [left join (table) alias]
             if (i > 0) {
                 PredicateSegment on = getTableOnWithQueryFilter(table);
                 if (on != null && on.isNotEmpty()) {
@@ -231,16 +226,17 @@ public class EasySqlExpressionSegment implements SqlEntityExpressionSegment {
         }
         return sql.toString();
     }
-    private  PredicateSegment getTableOnWithQueryFilter( SqlEntityTableExpressionSegment table) {
+
+    private PredicateSegment getTableOnWithQueryFilter(SqlEntityTableExpression table) {
         return getSqlPredicateSegment(table, table.hasOn() ? table.getOn() : null);
     }
 
-    private  PredicateSegment getSqlWhereWithQueryFilter() {
-        SqlEntityTableExpressionSegment table = getTable(0);
-        return getSqlPredicateSegment( table, hasWhere() ? getWhere() : null);
+    private PredicateSegment getSqlWhereWithQueryFilter() {
+        SqlEntityTableExpression table = getTable(0);
+        return getSqlPredicateSegment(table, hasWhere() ? getWhere() : null);
     }
 
-    private  PredicateSegment getSqlPredicateSegment(SqlEntityTableExpressionSegment table, PredicateSegment originalPredicate) {
+    private PredicateSegment getSqlPredicateSegment(SqlEntityTableExpression table, PredicateSegment originalPredicate) {
         PredicateSegment predicateSegment = null;
         SqlExpression<SqlPredicate<?>> queryFilterExpression = table.getQueryFilterExpression();
         if (queryFilterExpression != null) {
