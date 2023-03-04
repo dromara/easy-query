@@ -8,6 +8,6 @@ package org.easy.query.core.expression.segment;
  */
 public class SelectCountSegment extends SelectConstSegment{
     public SelectCountSegment() {
-        super("COUNT(*) AS C");
+        super("COUNT(1)");
     }
 }

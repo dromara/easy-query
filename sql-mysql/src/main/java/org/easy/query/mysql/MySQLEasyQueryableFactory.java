@@ -2,10 +2,13 @@ package org.easy.query.mysql;
 
 import org.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import org.easy.query.core.abstraction.EasyQueryableFactory;
+import org.easy.query.core.abstraction.metadata.EntityMetadata;
 import org.easy.query.core.basic.api.select.Queryable;
 import org.easy.query.core.basic.api.select.Queryable2;
 import org.easy.query.core.enums.MultiTableTypeEnum;
-import org.easy.query.core.expression.context.SelectContext;
+import org.easy.query.core.query.*;
+import org.easy.query.core.util.EasyUtil;
+import org.easy.query.mysql.base.MySQLQueryExpression;
 import org.easy.query.mysql.base.MySQLQueryable;
 import org.easy.query.mysql.base.MySQLQueryable2;
 
@@ -18,12 +21,30 @@ import org.easy.query.mysql.base.MySQLQueryable2;
 public class MySQLEasyQueryableFactory implements EasyQueryableFactory {
     @Override
     public <T> Queryable<T> createQueryable(Class<T> clazz, EasyQueryRuntimeContext runtimeContext,String alias) {
-        return new MySQLQueryable<>(clazz,new SelectContext(runtimeContext,alias));
+        EasySqExpressionContext easySqExpressionContext = new EasySqExpressionContext(runtimeContext, alias);
+        MySQLQueryExpression mySQLQueryExpression = new MySQLQueryExpression(easySqExpressionContext);
+        EntityMetadata entityMetadata =runtimeContext.getEntityMetadataManager().getEntityMetadata(clazz);
+        int tableIndex = EasyUtil.getNextTableIndex(mySQLQueryExpression);;
+        EasyEntityTableExpression sqlTable = new EasyEntityTableExpression(entityMetadata,  tableIndex,easySqExpressionContext.createTableAlias(), MultiTableTypeEnum.FROM);
+        mySQLQueryExpression.addSqlEntityTableExpression(sqlTable);
+        return new MySQLQueryable<>(clazz,mySQLQueryExpression);
     }
 
     @Override
-    public <T> Queryable<T> createQueryable(Class<T> clazz, SelectContext selectContext) {
-        return new MySQLQueryable<>(clazz,new SelectContext(selectContext));
+    public <T> Queryable<T> cloneQueryable(Queryable<T> source) {
+        SqlEntityQueryExpression sqlEntityExpression = source.getSqlEntityExpression();
+        SqlEntityQueryExpression sqlEntityQueryExpression = sqlEntityExpression.cloneSqlQueryExpression();
+        return new MySQLQueryable<>(source.queryClass(),sqlEntityQueryExpression);
+    }
+
+    @Override
+    public <T> Queryable<T> createQueryable(Class<T> clazz, SqlEntityQueryExpression sqlEntityExpression) {
+        SqlExpressionContext queryExpressionContext = sqlEntityExpression.getSqlExpressionContext();
+        MySQLQueryExpression mySQLEntityExpression = new MySQLQueryExpression(queryExpressionContext);
+        EntityMetadata entityMetadata = queryExpressionContext.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(clazz);
+        EasyAnonymousEntityTableExpression anonymousTable = new EasyAnonymousEntityTableExpression(entityMetadata, 0, queryExpressionContext.createTableAlias(), MultiTableTypeEnum.FROM, sqlEntityExpression);
+        mySQLEntityExpression.addSqlEntityTableExpression(anonymousTable);
+        return new MySQLQueryable<>(clazz,mySQLEntityExpression);
     }
 //
 //    @Override
@@ -32,7 +53,15 @@ public class MySQLEasyQueryableFactory implements EasyQueryableFactory {
 //    }
 
     @Override
-    public <T1, T2> Queryable2<T1, T2> createQueryable2(Class<T1> t1Class, Class<T2> t2Class, MultiTableTypeEnum selectTableInfoType, SelectContext selectContext) {
-        return new MySQLQueryable2<>(t1Class,t2Class,new SelectContext(selectContext),selectTableInfoType);
+    public <T1, T2> Queryable2<T1, T2> createQueryable2(Class<T1> t1Class, Class<T2> t2Class, MultiTableTypeEnum selectTableInfoType, SqlEntityQueryExpression sqlEntityExpression) {
+
+        EntityMetadata entityMetadata = sqlEntityExpression.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(t2Class);
+
+        int tableIndex =  EasyUtil.getNextTableIndex(sqlEntityExpression);
+        SqlExpressionContext queryExpressionContext = sqlEntityExpression.getSqlExpressionContext();
+        EasyEntityTableExpression sqlTable =new EasyEntityTableExpression(entityMetadata,  tableIndex,queryExpressionContext.createTableAlias(), selectTableInfoType);
+        sqlEntityExpression.addSqlEntityTableExpression(sqlTable);
+
+        return new MySQLQueryable2<>(t1Class,t2Class,sqlEntityExpression,selectTableInfoType);
     }
 }

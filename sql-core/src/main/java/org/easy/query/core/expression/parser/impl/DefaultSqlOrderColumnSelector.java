@@ -2,8 +2,8 @@ package org.easy.query.core.expression.parser.impl;
 
 import org.easy.query.core.expression.lambda.Property;
 import org.easy.query.core.expression.parser.abstraction.SqlColumnSelector;
-import org.easy.query.core.expression.context.SelectContext;
-import org.easy.query.core.query.builder.SqlTableInfo;
+import org.easy.query.core.query.SqlEntityQueryExpression;
+import org.easy.query.core.query.SqlEntityTableExpression;
 import org.easy.query.core.expression.segment.OrderColumnSegment;
 
 import java.util.Collection;
@@ -16,12 +16,12 @@ import java.util.Collection;
  */
 public  class DefaultSqlOrderColumnSelector<T1> implements SqlColumnSelector<T1> {
     private final int index;
-    private final SelectContext selectContext;
+    private final SqlEntityQueryExpression sqlEntityExpression;
     private boolean asc;
 
-    public DefaultSqlOrderColumnSelector(int index, SelectContext selectContext){
+    public DefaultSqlOrderColumnSelector(int index, SqlEntityQueryExpression sqlEntityExpression){
         this.index = index;
-        this.selectContext = selectContext;
+        this.sqlEntityExpression = sqlEntityExpression;
     }
     @Override
     public  int getIndex(){
@@ -30,18 +30,18 @@ public  class DefaultSqlOrderColumnSelector<T1> implements SqlColumnSelector<T1>
 
     @Override
     public SqlColumnSelector<T1> column(Property<T1, ?> column) {
-        SqlTableInfo table = selectContext.getTable(index);
+        SqlEntityTableExpression table = sqlEntityExpression.getTable(index);
         String propertyName = table.getPropertyName(column);
-        selectContext.getOrder().append(new OrderColumnSegment(table,propertyName,selectContext,asc));
+        sqlEntityExpression.getOrder().append(new OrderColumnSegment(table,propertyName, sqlEntityExpression,asc));
         return this;
     }
 
     @Override
     public SqlColumnSelector<T1> columnAll() {
-        SqlTableInfo table = selectContext.getTable(index);
+        SqlEntityTableExpression table = sqlEntityExpression.getTable(index);
         Collection<String> properties = table.getEntityMetadata().getProperties();
         for (String property : properties) {
-            selectContext.getOrder().append(new OrderColumnSegment(table, property,selectContext,asc));
+            sqlEntityExpression.getOrder().append(new OrderColumnSegment(table, property, sqlEntityExpression,asc));
         }
         return this;
     }

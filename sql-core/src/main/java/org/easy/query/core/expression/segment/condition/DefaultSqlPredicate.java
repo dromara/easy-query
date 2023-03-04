@@ -10,6 +10,7 @@ import org.easy.query.core.expression.segment.condition.predicate.ColumnPredicat
 import org.easy.query.core.expression.segment.condition.predicate.ColumnValuePredicate0;
 import org.easy.query.core.expression.segment.condition.predicate.ColumnWithColumnPredicate0;
 import org.easy.query.core.query.SqlEntityExpression;
+import org.easy.query.core.query.SqlEntityQueryExpression;
 import org.easy.query.core.query.SqlEntityTableExpression;
 
 import java.util.Collection;

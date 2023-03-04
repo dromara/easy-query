@@ -10,6 +10,9 @@ import org.easy.query.core.enums.MultiTableTypeEnum;
 import org.easy.query.core.expression.parser.impl.DefaultSqlColumnSetter;
 import org.easy.query.core.expression.segment.condition.DefaultSqlPredicate;
 import org.easy.query.core.expression.context.UpdateContext;
+import org.easy.query.core.query.EasyEntityTableExpression;
+import org.easy.query.core.query.SqlEntityTableExpression;
+import org.easy.query.core.query.SqlEntityUpdateExpression;
 import org.easy.query.core.query.builder.SqlTableInfo;
 import org.easy.query.core.util.StringUtil;
 
@@ -21,15 +24,17 @@ import org.easy.query.core.util.StringUtil;
  */
 public abstract class AbstractExpressionUpdate<T> implements ExpressionUpdate<T> {
     protected final Class<T> clazz;
-    protected final UpdateContext updateContext;
+    protected final SqlEntityUpdateExpression sqlEntityUpdateExpression;
 
-    public AbstractExpressionUpdate(Class<T> clazz, UpdateContext updateContext){
+    public AbstractExpressionUpdate(Class<T> clazz, SqlEntityUpdateExpression sqlEntityUpdateExpression){
 
         this.clazz = clazz;
-        this.updateContext = updateContext;
-        EntityMetadata entityMetadata = updateContext.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(clazz);
+        this.sqlEntityUpdateExpression = sqlEntityUpdateExpression;
+
+        EntityMetadata entityMetadata = this.sqlEntityUpdateExpression.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(clazz);
         entityMetadata.checkTable();
-        updateContext.addSqlTable(new SqlTableInfo(entityMetadata, null, 0, MultiTableTypeEnum.FROM));
+       SqlEntityTableExpression table = new EasyEntityTableExpression(entityMetadata,  0,null, MultiTableTypeEnum.FROM);
+        this.sqlEntityUpdateExpression.addSqlEntityTableExpression(table);
     }
 
     @Override
@@ -37,8 +42,8 @@ public abstract class AbstractExpressionUpdate<T> implements ExpressionUpdate<T>
         String updateSql = toSql();
         System.out.println("表达式更新："+updateSql);
         if(StringUtil.isNotBlank(updateSql)){
-            EasyExecutor easyExecutor = updateContext.getRuntimeContext().getEasyExecutor();
-            return easyExecutor.update(ExecutorContext.create(updateContext.getRuntimeContext()), updateSql, updateContext.getParameters());
+            EasyExecutor easyExecutor = sqlEntityUpdateExpression.getRuntimeContext().getEasyExecutor();
+            return easyExecutor.update(ExecutorContext.create(sqlEntityUpdateExpression.getRuntimeContext()), updateSql, sqlEntityUpdateExpression.getParameters());
         }
 
         return 0;
@@ -52,7 +57,7 @@ public abstract class AbstractExpressionUpdate<T> implements ExpressionUpdate<T>
     @Override
     public ExpressionUpdate<T> set(boolean condition, SqlExpression<SqlColumnSetter<T>> setExpression) {
         if(condition){
-            DefaultSqlColumnSetter<T> columnSetter = new DefaultSqlColumnSetter<>(0, updateContext, updateContext.getSetColumns());
+            DefaultSqlColumnSetter<T> columnSetter = new DefaultSqlColumnSetter<>(0, sqlEntityUpdateExpression, sqlEntityUpdateExpression.getSetColumns());
             setExpression.apply(columnSetter);
         }
         return this;
@@ -61,7 +66,7 @@ public abstract class AbstractExpressionUpdate<T> implements ExpressionUpdate<T>
     @Override
     public ExpressionUpdate<T> where(boolean condition, SqlExpression<SqlPredicate<T>> whereExpression) {
         if(condition){
-            DefaultSqlPredicate<T> sqlPredicate = new DefaultSqlPredicate<>(0, updateContext, updateContext.getWhere());
+            DefaultSqlPredicate<T> sqlPredicate = new DefaultSqlPredicate<>(0, sqlEntityUpdateExpression, sqlEntityUpdateExpression.getWhere());
             whereExpression.apply(sqlPredicate);
         }
         return this;

@@ -1,15 +1,21 @@
 package org.easy.query.core.expression.parser.impl;
 
+import org.easy.query.core.exception.EasyQueryException;
+import org.easy.query.core.expression.segment.SqlEntityProjectSegment;
+import org.easy.query.core.expression.segment.SqlSegment;
 import org.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import org.easy.query.core.expression.lambda.Property;
 import org.easy.query.core.expression.parser.abstraction.internal.ColumnSelector;
-import org.easy.query.core.expression.context.SqlContext;
+import org.easy.query.core.query.AnonymousEntityTableExpression;
 import org.easy.query.core.query.SqlEntityExpression;
+import org.easy.query.core.query.SqlEntityQueryExpression;
 import org.easy.query.core.query.SqlEntityTableExpression;
-import org.easy.query.core.query.builder.SqlTableInfo;
 import org.easy.query.core.expression.segment.ColumnSegment;
+import org.easy.query.core.util.ClassUtil;
+import org.easy.query.core.util.EasyUtil;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * @FileName: DefaultSqlColumnSelector.java
@@ -44,9 +50,25 @@ public class AbstractSqlColumnSelector<T1,TChain> implements ColumnSelector<T1, 
     @Override
     public TChain columnAll() {
         SqlEntityTableExpression table = sqlEntityExpression.getTable(index);
-        Collection<String> properties = table.getEntityMetadata().getProperties();
-        for (String property : properties) {
-            sqlSegmentBuilder.append(new ColumnSegment(table, property, sqlEntityExpression));
+        if (table instanceof AnonymousEntityTableExpression) {
+            SqlEntityQueryExpression sqlEntityQueryExpression = ((AnonymousEntityTableExpression) table).getSqlEntityQueryExpression();
+            List<SqlSegment> sqlSegments = sqlEntityQueryExpression.getProjects().getSqlSegments();
+            for (SqlSegment sqlSegment : sqlSegments) {
+                if(sqlSegment instanceof SqlEntityProjectSegment){
+
+                    String propertyName =EasyUtil.getAnonymousPropertyName((SqlEntityProjectSegment) sqlSegment);
+                    sqlSegmentBuilder.append(new ColumnSegment(table, propertyName, sqlEntityExpression));
+                }
+                else {
+                    throw new EasyQueryException("columnAll函数无法获取指定列"+ ClassUtil.getInstanceSimpleName(sqlSegment));
+                }
+            }
+        }else{
+
+            Collection<String> properties = table.getEntityMetadata().getProperties();
+            for (String property : properties) {
+                sqlSegmentBuilder.append(new ColumnSegment(table, property, sqlEntityExpression));
+            }
         }
         return (TChain)this;
     }

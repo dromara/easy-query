@@ -19,4 +19,5 @@ public interface EasyQueryRuntimeContext {
     EasyExecutor getEasyExecutor();
     EasyJdbcTypeHandlerManager getEasyJdbcTypeHandlerManager();
     EasyQueryableFactory getQueryableFactory();
+    EasySqlExpressionFactory getSqlExpressionFactory();
 }

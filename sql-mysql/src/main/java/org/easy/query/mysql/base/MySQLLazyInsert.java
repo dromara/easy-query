@@ -1,7 +1,7 @@
 package org.easy.query.mysql.base;
 
 import org.easy.query.core.basic.api.insert.Insert;
-import org.easy.query.core.expression.context.InsertContext;
+import org.easy.query.core.query.SqlEntityInsertExpression;
 
 /**
  * @FileName: MySQLazyInsert.java
@@ -10,18 +10,18 @@ import org.easy.query.core.expression.context.InsertContext;
  * @Created by xuejiaming
  */
 public class MySQLLazyInsert<T> implements Insert<T> {
-    private final InsertContext insertContext;
+    private final SqlEntityInsertExpression sqlEntityInsertExpression;
 
-    public MySQLLazyInsert(InsertContext insertContext){
+    public MySQLLazyInsert(SqlEntityInsertExpression sqlEntityInsertExpression){
 
-        this.insertContext = insertContext;
+        this.sqlEntityInsertExpression = sqlEntityInsertExpression;
     }
     @Override
     public Insert<T> insert(T entity) {
     if(entity==null){
         return  this;
     }
-    MySQLInsert<T> tMySQLInsert = new MySQLInsert<>((Class<T>) entity.getClass(), insertContext);
+    MySQLInsert<T> tMySQLInsert = new MySQLInsert<>((Class<T>) entity.getClass(), sqlEntityInsertExpression);
     tMySQLInsert.insert(entity);
     return tMySQLInsert;
 }

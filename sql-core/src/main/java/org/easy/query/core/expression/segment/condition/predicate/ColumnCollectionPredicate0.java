@@ -4,6 +4,7 @@ import org.easy.query.core.basic.jdbc.parameter.ConstSQLParameter;
 import org.easy.query.core.enums.SqlPredicateCompare;
 import org.easy.query.core.enums.SqlPredicateCompareEnum;
 import org.easy.query.core.query.SqlEntityExpression;
+import org.easy.query.core.query.SqlEntityQueryExpression;
 import org.easy.query.core.query.SqlEntityTableExpression;
 
 import java.util.Collection;
@@ -28,6 +29,15 @@ public class ColumnCollectionPredicate0 implements Predicate {
         this.collection = collection;
         this.compare = compare;
         this.sqlEntityExpression = sqlEntityExpression;
+        if (!collection.isEmpty()) {
+            Iterator<?> iterator = collection.iterator();
+            Object firstVal = iterator.next();
+            sqlEntityExpression.addParameter(new ConstSQLParameter(table,propertyName,firstVal));
+            while (iterator.hasNext()){
+                Object val = iterator.next();
+                sqlEntityExpression.addParameter(new ConstSQLParameter(table,propertyName,val));
+            }
+        }
     }
 
     @Override
@@ -41,16 +51,14 @@ public class ColumnCollectionPredicate0 implements Predicate {
                 throw new UnsupportedOperationException();
             }
         } else {
-            String sqlColumnSegment = sqlEntityExpression.getSqlColumnSegment(table,propertyName);
+            String sqlColumnSegment = sqlEntityExpression.getSqlOwnerColumn(table,propertyName);
             StringBuilder sql = new StringBuilder();
             sql.append(sqlColumnSegment).append(" ").append(compare.getSql()).append(" (");
             Iterator<?> iterator = collection.iterator();
-            Object firstVal = iterator.next();
-            sqlEntityExpression.addParameter(new ConstSQLParameter(table,propertyName,firstVal));
+            iterator.next();
             sql.append("?");
             while (iterator.hasNext()){
-                Object val = iterator.next();
-                sqlEntityExpression.addParameter(new ConstSQLParameter(table,propertyName,val));
+                iterator.next();
                 sql.append(",?");
             }
             sql.append(")");

@@ -3,6 +3,7 @@ package org.easy.query.core.expression.segment.condition.predicate;
 import org.easy.query.core.basic.jdbc.parameter.ConstSQLParameter;
 import org.easy.query.core.enums.SqlPredicateCompare;
 import org.easy.query.core.query.SqlEntityExpression;
+import org.easy.query.core.query.SqlEntityQueryExpression;
 import org.easy.query.core.query.SqlEntityTableExpression;
 
 /**
@@ -14,22 +15,20 @@ import org.easy.query.core.query.SqlEntityTableExpression;
 public class ColumnValuePredicate0 implements Predicate {
     private final SqlEntityTableExpression table;
     private final String propertyName;
-    private final Object val;
     private final SqlPredicateCompare compare;
     private final SqlEntityExpression sqlEntityExpression;
 
     public ColumnValuePredicate0(SqlEntityTableExpression table, String propertyName, Object val, SqlPredicateCompare compare, SqlEntityExpression sqlEntityExpression) {
         this.table = table;
         this.propertyName = propertyName;
-        this.val = val;
         this.compare = compare;
         this.sqlEntityExpression = sqlEntityExpression;
+        sqlEntityExpression.addParameter(new ConstSQLParameter(table,propertyName,val));
     }
 
     @Override
     public String toSql() {
-        sqlEntityExpression.addParameter(new ConstSQLParameter(table,propertyName,val));
-        String sqlColumnSegment = sqlEntityExpression.getSqlColumnSegment(table,propertyName);
+        String sqlColumnSegment = sqlEntityExpression.getSqlOwnerColumn(table,propertyName);
         return sqlColumnSegment + " " + compare.getSql() + " ?";
     }
 }

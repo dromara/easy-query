@@ -20,6 +20,7 @@ import java.util.List;
  * @Created by xuejiaming
  */
 public interface Queryable<T1> extends Query<T1> {
+    Queryable<T1> cloneQueryable();
     long count();
 
     long countDistinct(SqlExpression<SqlColumnSelector<T1>> selectExpression);
@@ -112,7 +113,7 @@ public interface Queryable<T1> extends Query<T1> {
 //
 //    <TR> List<TR> toList(Class<TR> resultClass, SqlExpression<SqlColumnAsSelector<T1, TR>> selectExpression);
 
-    //    <TR> List<TR> toList(Class<TR> resultClass);
+    <TR> List<TR> toList(Class<TR> resultClass);
     String toSql();
 //
 //    String toSql(SqlExpression<SqlColumnSelector<T1>> selectExpression);
@@ -125,7 +126,7 @@ public interface Queryable<T1> extends Query<T1> {
     <TR> Queryable<TR> select(Class<TR> resultClass);
 //    <TR> Queryable<TR> select(Class<TR> resultClass,String columns);
     <TR> Queryable<TR> select(Class<TR> resultClass, SqlExpression<SqlColumnAsSelector<T1, TR>> selectExpression);
-//    Queryable<T1> select(String columns);
+    Queryable<T1> select(String columns);
 
     default Queryable<T1> where(SqlExpression<SqlPredicate<T1>> whereExpression) {
         return where(true, whereExpression);

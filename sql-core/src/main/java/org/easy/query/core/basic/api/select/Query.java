@@ -1,6 +1,6 @@
 package org.easy.query.core.basic.api.select;
 
-import org.easy.query.core.expression.context.SelectContext;
+import org.easy.query.core.query.SqlEntityQueryExpression;
 
 /**
  * @FileName: Query.java
@@ -16,8 +16,8 @@ public interface Query<T> {
     Class<T> queryClass();
 
     /**
-     * 当前的查询上下文
+     * 当前的查询表达式
      * @return
      */
-    SelectContext getSelectContext();
+    SqlEntityQueryExpression getSqlEntityExpression();
 }

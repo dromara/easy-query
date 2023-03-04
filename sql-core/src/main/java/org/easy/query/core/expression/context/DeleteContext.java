@@ -15,32 +15,20 @@ import org.easy.query.core.query.builder.SqlTableInfo;
  * @Created by xuejiaming
  */
 public class DeleteContext extends AbstractSqlContext {
-    private final SqlBuilderSegment setColumns;
     private final PredicateSegment where;
-    private SqlBuilderSegment setIgnoreColumns;
     private SqlBuilderSegment whereColumns;
     private boolean logicDelete=true;
     public DeleteContext(EasyQueryRuntimeContext runtimeContext) {
         super(runtimeContext);
-        setColumns =new UpdateSetSqlBuilderSegment();
         where=new AndPredicateSegment(true);
     }
     public void addSqlTable(SqlTableInfo sqlTableInfo){
         this.tables.add(sqlTableInfo);
     }
 
-    public SqlBuilderSegment getSetColumns() {
-        return setColumns;
-    }
 
     public PredicateSegment getWhere() {
         return where;
-    }
-    public SqlBuilderSegment getSetIgnoreColumns(){
-        if(setIgnoreColumns==null){
-            setIgnoreColumns=new UpdateSetSqlBuilderSegment();
-        }
-        return setIgnoreColumns;
     }
     public SqlBuilderSegment getWhereColumns(){
         if(whereColumns==null){

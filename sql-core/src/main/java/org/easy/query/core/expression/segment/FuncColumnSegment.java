@@ -1,10 +1,9 @@
 package org.easy.query.core.expression.segment;
 
 import org.easy.query.core.abstraction.sql.enums.IEasyFunc;
-import org.easy.query.core.expression.context.SqlContext;
 import org.easy.query.core.query.SqlEntityExpression;
+import org.easy.query.core.query.SqlEntityQueryExpression;
 import org.easy.query.core.query.SqlEntityTableExpression;
-import org.easy.query.core.query.builder.SqlTableInfo;
 
 /**
  * @FileName: FuncColumnSegment.java
@@ -12,7 +11,7 @@ import org.easy.query.core.query.builder.SqlTableInfo;
  * @Date: 2023/2/19 22:17
  * @Created by xuejiaming
  */
-public class FuncColumnSegment  implements SqlSegment {
+public class FuncColumnSegment  implements SqlEntityProjectSegment {
 
 
     protected final SqlEntityTableExpression table;
@@ -34,12 +33,27 @@ public class FuncColumnSegment  implements SqlSegment {
 
     @Override
     public String toSql() {
-        String sqlColumnSegment = sqlEntityExpression.getSqlColumnSegment(table,propertyName);
+        String sqlColumnSegment = sqlEntityExpression.getSqlOwnerColumn(table,propertyName);
         String funcColumn = easyFunc.getFuncColumn(sqlColumnSegment);
         StringBuilder sql = new StringBuilder().append(funcColumn);
         if(alias!=null){
             sql.append(" AS ").append(sqlEntityExpression.getQuoteName(alias));
         }
         return sql.toString();
+    }
+
+    @Override
+    public SqlEntityTableExpression getTable() {
+        return table;
+    }
+
+    @Override
+    public String getPropertyName() {
+        return propertyName;
+    }
+
+    @Override
+    public String getAlias() {
+        return alias;
     }
 }

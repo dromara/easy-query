@@ -1,10 +1,10 @@
 package org.easy.query.core.abstraction;
 
-import org.easy.query.core.expression.context.SqlContext;
 import org.easy.query.core.expression.parser.abstraction.*;
 import org.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import org.easy.query.core.expression.segment.condition.PredicateSegment;
 import org.easy.query.core.query.SqlEntityExpression;
+import org.easy.query.core.query.SqlEntityQueryExpression;
 
 /**
  * @FileName: EasyQueryLambdaFactory.java
@@ -27,9 +27,9 @@ public interface EasyQueryLambdaFactory {
     }
     <T1> SqlPredicate<T1> createSqlPredicate(int index, SqlEntityExpression sqlEntityExpression, PredicateSegment predicateSegment);
     <T1> SqlAggregatePredicate<T1> createSqlAggregatePredicate(int index, SqlEntityExpression sqlEntityExpression, PredicateSegment predicateSegment);
-    <T1> SqlColumnSelector<T1> createSqlColumnSelector(int index,SqlEntityExpression sqlEntityExpression, SqlBuilderSegment sqlSegmentBuilder);
+    <T1> SqlColumnSelector<T1> createSqlColumnSelector(int index, SqlEntityExpression sqlEntityExpression, SqlBuilderSegment sqlSegmentBuilder);
     <T1> SqlColumnSelector<T1> createSqlColumnOrderSelector(int index, SqlEntityExpression sqlEntityExpression, SqlBuilderSegment sqlSegmentBuilder, boolean asc);
-    <T1,TR> SqlColumnAsSelector<T1,TR> createSqlColumnAsSelector(int index,SqlEntityExpression sqlEntityExpression, SqlBuilderSegment sqlSegmentBuilder);
+    <T1,TR> SqlColumnAsSelector<T1,TR> createSqlColumnAsSelector(int index, SqlEntityExpression sqlEntityExpression, SqlBuilderSegment sqlSegmentBuilder);
     <T1> SqlColumnSetter<T1> createSqlColumnSetter(int index, SqlEntityExpression sqlEntityExpression, SqlBuilderSegment sqlSegmentBuilder);
     <T1> SqlColumnSelector<T1> createSqlColumnSetSelector(int index, SqlEntityExpression sqlEntityExpression, SqlBuilderSegment sqlSegmentBuilder);
 }

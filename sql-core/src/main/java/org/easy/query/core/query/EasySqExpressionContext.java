@@ -12,18 +12,17 @@ import java.util.List;
  * @Date: 2023/3/3 23:06
  * @Created by xuejiaming
  */
-public class EasyQueryExpressionContext implements QueryExpressionContext{
+public class EasySqExpressionContext implements SqlExpressionContext {
     private final EasyQueryRuntimeContext runtimeContext;
     private final String alias;
     protected final List<SQLParameter> params;
-    protected final List<SqlExpressionSegment> sqlExpressions;
+    private int aliasSeq=-1;
 
-    public EasyQueryExpressionContext(EasyQueryRuntimeContext runtimeContext, String alias){
+    public EasySqExpressionContext(EasyQueryRuntimeContext runtimeContext, String alias){
 
         this.runtimeContext = runtimeContext;
         this.alias = alias;
         params=new ArrayList<>();
-        sqlExpressions=new ArrayList<>();
     }
     @Override
     public EasyQueryRuntimeContext getRuntimeContext() {
@@ -46,15 +45,25 @@ public class EasyQueryExpressionContext implements QueryExpressionContext{
     }
 
     @Override
+    public String createTableAlias() {
+        aliasSeq++;
+        return aliasSeq==0?alias:(alias+1);
+    }
+
+    @Override
     public String getQuoteName(String value) {
         return runtimeContext.getEasyQueryConfiguration().getDialect().getQuoteName(value);
     }
 
-    public void addSqlExpression(SqlExpressionSegment sqlExpressionSegment){
-        sqlExpressions.add(sqlExpressionSegment);
+    @Override
+    public SqlExpressionContext cloneSqlExpressionContext() {
+        EasySqExpressionContext easySqExpressionContext = new EasySqExpressionContext(runtimeContext,alias);
+        easySqExpressionContext.aliasSeq=this.aliasSeq;
+        easySqExpressionContext.params.addAll(this.params);
+        return easySqExpressionContext;
     }
 
-//    @Override
+    //    @Override
 //    public String getSqlColumnSegment(SqlEntityTableExpressionSegment table, String propertyName) {
 //        String alias = table.getAlias();
 //        String columnName = table.getColumnName(propertyName);

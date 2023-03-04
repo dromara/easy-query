@@ -4,6 +4,9 @@ import org.easy.query.core.abstraction.metadata.EntityMetadata;
 import org.easy.query.core.expression.context.DeleteContext;
 import org.easy.query.core.enums.MultiTableTypeEnum;
 import org.easy.query.core.exception.EasyQueryException;
+import org.easy.query.core.query.EasyEntityTableExpression;
+import org.easy.query.core.query.SqlEntityDeleteExpression;
+import org.easy.query.core.query.SqlEntityTableExpression;
 import org.easy.query.core.query.builder.SqlTableInfo;
 
 import java.util.ArrayList;
@@ -18,21 +21,21 @@ import java.util.List;
  */
 public abstract class AbstractEntityDelete<T> implements EasyDelete<T> {
     protected final List<T> entities= new ArrayList<>();
-    protected final SqlTableInfo table;
-    protected final DeleteContext deleteContext;
+    protected final SqlEntityTableExpression table;
+    protected final SqlEntityDeleteExpression sqlEntityDeleteExpression;
 
-    public AbstractEntityDelete(Collection<T> entities, DeleteContext deleteContext){
+    public AbstractEntityDelete(Collection<T> entities, SqlEntityDeleteExpression sqlEntityDeleteExpression){
         if(entities==null||entities.isEmpty()){
             throw new EasyQueryException("不支持空对象的delete");
         }
         this.entities.addAll(entities);
-        this.deleteContext = deleteContext;
+        this.sqlEntityDeleteExpression = sqlEntityDeleteExpression;
 
         Class<?> clazz = entities.iterator().next().getClass();
-        EntityMetadata entityMetadata = deleteContext.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(clazz);
+        EntityMetadata entityMetadata = sqlEntityDeleteExpression.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(clazz);
         entityMetadata.checkTable();
-        table=new SqlTableInfo(entityMetadata, null, 0, MultiTableTypeEnum.FROM);
-        deleteContext.addSqlTable(table);
+        table = new EasyEntityTableExpression(entityMetadata,  0,null, MultiTableTypeEnum.FROM);
+        this.sqlEntityDeleteExpression.addSqlEntityTableExpression(table);
     }
     @Override
     public long executeRows() {

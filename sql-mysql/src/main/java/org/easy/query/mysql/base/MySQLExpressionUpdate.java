@@ -1,8 +1,7 @@
 package org.easy.query.mysql.base;
 
 import org.easy.query.core.basic.api.update.AbstractExpressionUpdate;
-import org.easy.query.core.expression.context.UpdateContext;
-import org.easy.query.mysql.util.MySQLUtil;
+import org.easy.query.core.query.SqlEntityUpdateExpression;
 
 /**
  * @FileName: MySQLExpressionUpdate.java
@@ -11,12 +10,12 @@ import org.easy.query.mysql.util.MySQLUtil;
  * @Created by xuejiaming
  */
 public class MySQLExpressionUpdate<T> extends AbstractExpressionUpdate<T> {
-    public MySQLExpressionUpdate(Class<T> clazz, UpdateContext updateContext) {
-        super(clazz, updateContext);
+    public MySQLExpressionUpdate(Class<T> clazz, SqlEntityUpdateExpression sqlEntityUpdateExpression) {
+        super(clazz, sqlEntityUpdateExpression);
     }
 
     @Override
     public String toSql() {
-        return MySQLUtil.toUpdateExpressionSql(updateContext);
+        return sqlEntityUpdateExpression.toSql();
     }
 }

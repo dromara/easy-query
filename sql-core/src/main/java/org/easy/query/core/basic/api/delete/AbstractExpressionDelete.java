@@ -1,7 +1,6 @@
 package org.easy.query.core.basic.api.delete;
 
 import org.easy.query.core.abstraction.metadata.EntityMetadata;
-import org.easy.query.core.expression.context.DeleteContext;
 import org.easy.query.core.enums.MultiTableTypeEnum;
 import org.easy.query.core.enums.SqlPredicateCompareEnum;
 import org.easy.query.core.exception.EasyQueryException;
@@ -11,7 +10,8 @@ import org.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import org.easy.query.core.expression.segment.condition.DefaultSqlPredicate;
 import org.easy.query.core.expression.segment.condition.PredicateSegment;
 import org.easy.query.core.expression.segment.condition.predicate.ColumnValuePredicate0;
-import org.easy.query.core.query.builder.SqlTableInfo;
+import org.easy.query.core.query.EasyEntityTableExpression;
+import org.easy.query.core.query.SqlEntityDeleteExpression;
 import org.easy.query.core.util.ClassUtil;
 import org.easy.query.core.util.StringUtil;
 
@@ -25,17 +25,17 @@ import java.util.Collection;
  */
 public abstract   class AbstractExpressionDelete<T> implements EasyExpressionDelete<T> {
     protected final Class<T> clazz;
-    protected final SqlTableInfo table;
-    protected final DeleteContext deleteContext;
+    protected final EasyEntityTableExpression table;
+    protected final SqlEntityDeleteExpression sqlEntityDeleteExpression;
 
-    public AbstractExpressionDelete(Class<T> clazz, DeleteContext deleteContext){
-        this.deleteContext = deleteContext;
+    public AbstractExpressionDelete(Class<T> clazz, SqlEntityDeleteExpression sqlEntityDeleteExpression){
+        this.sqlEntityDeleteExpression = sqlEntityDeleteExpression;
 
         this.clazz = clazz;
-        EntityMetadata entityMetadata = deleteContext.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(clazz);
+        EntityMetadata entityMetadata = this.sqlEntityDeleteExpression.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(clazz);
         entityMetadata.checkTable();
-        table=new SqlTableInfo(entityMetadata, null, 0, MultiTableTypeEnum.FROM);
-        deleteContext.addSqlTable(table);
+        table = new EasyEntityTableExpression(entityMetadata,  0,null, MultiTableTypeEnum.FROM);
+        this.sqlEntityDeleteExpression.addSqlEntityTableExpression(table);
     }
 
     @Override
@@ -58,7 +58,7 @@ public abstract   class AbstractExpressionDelete<T> implements EasyExpressionDel
     @Override
     public EasyExpressionDelete<T> where(boolean condition, SqlExpression<SqlPredicate<T>> whereExpression) {
         if(condition){
-            DefaultSqlPredicate<T> sqlPredicate = new DefaultSqlPredicate<>(0, deleteContext, deleteContext.getWhere());
+            DefaultSqlPredicate<T> sqlPredicate = new DefaultSqlPredicate<>(0, sqlEntityDeleteExpression, sqlEntityDeleteExpression.getWhere());
             whereExpression.apply(sqlPredicate);
         }
         return this;
@@ -67,7 +67,7 @@ public abstract   class AbstractExpressionDelete<T> implements EasyExpressionDel
     @Override
     public EasyDelete<T> deleteById(Object id) {
 
-        PredicateSegment where = deleteContext.getWhere();
+        PredicateSegment where = sqlEntityDeleteExpression.getWhere();
         Collection<String> keyProperties = table.getEntityMetadata().getKeyProperties();
         if(keyProperties.isEmpty()){
             throw new EasyQueryException("对象:"+ ClassUtil.getSimpleName(clazz)+"未找到主键信息");
@@ -78,7 +78,7 @@ public abstract   class AbstractExpressionDelete<T> implements EasyExpressionDel
         String keyProperty = keyProperties.iterator().next();
         AndPredicateSegment andPredicateSegment = new AndPredicateSegment();
         andPredicateSegment
-                .setPredicate(new ColumnValuePredicate0(table, keyProperty, id, SqlPredicateCompareEnum.EQ, deleteContext));
+                .setPredicate(new ColumnValuePredicate0(table, keyProperty, id, SqlPredicateCompareEnum.EQ, sqlEntityDeleteExpression));
         where.addPredicateSegment(andPredicateSegment);
         return this;
     }

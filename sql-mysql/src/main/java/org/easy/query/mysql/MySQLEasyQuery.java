@@ -13,6 +13,7 @@ import org.easy.query.core.basic.api.insert.Insert;
 import org.easy.query.core.basic.jdbc.tx.Transaction;
 import org.easy.query.core.expression.context.InsertContext;
 import org.easy.query.core.expression.context.UpdateContext;
+import org.easy.query.core.query.EasySqExpressionContext;
 import org.easy.query.mysql.base.*;
 import org.easy.query.core.abstraction.client.EasyQuery;
 
@@ -63,24 +64,24 @@ public class MySQLEasyQuery implements EasyQuery {
     @Override
     public <T1> Insert<T1> insert(T1 entity) {
         if(entity==null){
-            return new MySQLLazyInsert<T1>(new InsertContext(runtimeContext));
+            return new MySQLLazyInsert<T1>(new MySQLInsertExpression(new EasySqExpressionContext(runtimeContext,null)));
         }
-        return new MySQLInsert<>((Class<T1>) entity.getClass(),new InsertContext(runtimeContext)).insert(entity);
+        return new MySQLInsert<>((Class<T1>) entity.getClass(),new MySQLInsertExpression(new EasySqExpressionContext(runtimeContext,null))).insert(entity);
     }
 
     @Override
     public <T1> Insert<T1> insert(Collection<T1> entities) {
         if(entities==null||entities.isEmpty()){
-            return new MySQLLazyInsert<T1>(new InsertContext(runtimeContext));
+            return new MySQLLazyInsert<T1>(new MySQLInsertExpression(new EasySqExpressionContext(runtimeContext,null)));
         }
-        MySQLInsert<T1> t1MySQLInsert = new MySQLInsert<>((Class<T1>) entities.iterator().next().getClass(), new InsertContext(runtimeContext));
+        MySQLInsert<T1> t1MySQLInsert = new MySQLInsert<>((Class<T1>) entities.iterator().next().getClass(), new MySQLInsertExpression(new EasySqExpressionContext(runtimeContext,null)));
         t1MySQLInsert.insert(entities);
         return t1MySQLInsert;
     }
 
     @Override
     public <T1> ExpressionUpdate<T1> update(Class<T1> entityClass) {
-        return new MySQLExpressionUpdate<T1>(entityClass, new UpdateContext(runtimeContext));
+        return new MySQLExpressionUpdate<T1>(entityClass, new MySQLUpdateExpression(new EasySqExpressionContext(runtimeContext,null),true));
     }
 
     @Override
@@ -88,7 +89,7 @@ public class MySQLEasyQuery implements EasyQuery {
         if(entity==null){
             return new MySQLLazyUpdate<>();
         }
-        return new MySQLEntityUpdate<>(Arrays.asList(entity), new UpdateContext(runtimeContext));
+        return new MySQLEntityUpdate<>(Arrays.asList(entity), new MySQLUpdateExpression(new EasySqExpressionContext(runtimeContext,null),false));
     }
 
     @Override
@@ -96,7 +97,7 @@ public class MySQLEasyQuery implements EasyQuery {
         if(entities==null||entities.isEmpty()){
             return new MySQLLazyUpdate<>();
         }
-        return new MySQLEntityUpdate<>(entities, new UpdateContext(runtimeContext));
+        return new MySQLEntityUpdate<>(entities, new MySQLUpdateExpression(new EasySqExpressionContext(runtimeContext,null),false));
     }
 
     @Override
@@ -104,11 +105,11 @@ public class MySQLEasyQuery implements EasyQuery {
         if(entities==null||entities.isEmpty()){
             return new MySQLEmptyDelete<>();
         }
-        return new MySQLDelete<>(entities,new DeleteContext(runtimeContext));
+        return new MySQLDelete<>(entities,new MySQLDeleteExpression(new EasySqExpressionContext(runtimeContext,null),false));
     }
 
     @Override
     public <T1> EasyExpressionDelete<T1> delete(Class<T1> entityClass) {
-        return new MySQLExpressionDelete<T1>(entityClass,new DeleteContext(runtimeContext));
+        return new MySQLExpressionDelete<T1>(entityClass,new MySQLDeleteExpression(new EasySqExpressionContext(runtimeContext,null),true));
     }
 }

@@ -1,7 +1,7 @@
 package org.easy.query.core.basic.api.select;
 
 import org.easy.query.core.abstraction.*;
-import org.easy.query.core.abstraction.metadata.EntityMetadata;
+import org.easy.query.core.abstraction.sql.enums.IEasyFunc;
 import org.easy.query.core.enums.MultiTableTypeEnum;
 import org.easy.query.core.expression.lambda.Property;
 import org.easy.query.core.expression.lambda.SqlExpression;
@@ -17,10 +17,12 @@ import org.easy.query.core.expression.parser.abstraction.SqlPredicate;
 import org.easy.query.core.expression.parser.abstraction.internal.ColumnSelector;
 import org.easy.query.core.expression.segment.SelectConstSegment;
 import org.easy.query.core.expression.segment.SelectCountSegment;
+import org.easy.query.core.expression.segment.SqlSegment;
 import org.easy.query.core.expression.segment.builder.ProjectSqlBuilderSegment;
-import org.easy.query.core.expression.context.SelectContext;
-import org.easy.query.core.impl.Select1SqlProvider;
-import org.easy.query.core.query.builder.SqlTableInfo;
+import org.easy.query.core.query.SqlEntityQueryExpression;
+import org.easy.query.core.query.SqlEntityTableExpression;
+import org.easy.query.core.query.SqlExpressionContext;
+import org.easy.query.core.util.EasyUtil;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -34,30 +36,28 @@ import java.util.List;
  */
 public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     protected final Class<T1> t1Class;
-    protected final SqlTableInfo sqlTable;
-    protected final SelectContext selectContext;
-    protected final Select1SqlProvider<T1> sqlPredicateProvider;
+//    protected final SqlEntityTableExpression sqlTable;
+    protected final SqlEntityQueryExpression sqlEntityExpression;
+//    protected final Select1SqlProvider<T1> sqlPredicateProvider;
 
     @Override
     public Class<T1> queryClass() {
         return t1Class;
     }
 
-    public AbstractQueryable(Class<T1> t1Class, SelectContext selectContext) {
+    public AbstractQueryable(Class<T1> t1Class, SqlEntityQueryExpression sqlEntityExpression) {
         this.t1Class = t1Class;
-        this.selectContext = selectContext;
-        EntityMetadata entityMetadata = selectContext.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(t1Class);
-        entityMetadata.checkTable();
-        sqlTable = new SqlTableInfo(entityMetadata, selectContext.getAlias(), selectContext.getNextTableIndex(), MultiTableTypeEnum.FROM);
-        selectContext.addSqlTable(sqlTable);
-        sqlPredicateProvider = new Select1SqlProvider<>(selectContext);
+        this.sqlEntityExpression = sqlEntityExpression;
     }
 
+    @Override
+    public Queryable<T1> cloneQueryable() {
+        return sqlEntityExpression.getRuntimeContext().getQueryableFactory().cloneQueryable(this);
+    }
 
     @Override
     public long count() {
-        selectContext.getProjects().append(new SelectCountSegment());
-        List<Long> result = toInternalList(Long.class);
+        List<Long> result = cloneQueryable().select(" COUNT(1) ").toList(Long.class);
         if (result.isEmpty()) {
             return 0L;
         }
@@ -73,7 +73,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
         ProjectSqlBuilderSegment sqlSegmentBuilder = new ProjectSqlBuilderSegment();
         SqlColumnSelector<T1> sqlColumnSelector = getSqlBuilderProvider1().getSqlColumnSelector1(sqlSegmentBuilder);
         selectExpression.apply(sqlColumnSelector);
-        selectContext.getProjects().append(new SelectConstSegment(EasyAggregate.COUNT_DISTINCT.getFuncColumn(sqlSegmentBuilder.toSql())));
+        sqlEntityExpression.getProjects().append(new SelectConstSegment(EasyAggregate.COUNT_DISTINCT.getFuncColumn(sqlSegmentBuilder.toSql())));
         List<Long> result = toInternalList(Long.class);
 
         if (result.isEmpty()) {
@@ -89,7 +89,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     @Override
     public boolean any() {
         limit(1);
-        selectContext.getProjects().append(new SelectCountSegment());
+        sqlEntityExpression.getProjects().append(new SelectConstSegment("1"));
         List<Integer> result = toInternalList(Integer.class);
         return !result.isEmpty();
     }
@@ -97,12 +97,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     @Override
     public <TMember extends Number> BigDecimal sumBigDecimalOrDefault(Property<T1, TMember> column, BigDecimal def) {
 
-        SqlTableInfo table = selectContext.getTable(0);
-        ColumnMetadata columnMetadata = table.getColumn(column);
-        String columnName = columnMetadata.getName();
-        String quoteName = selectContext.getQuoteName(columnName);
-        Class<?> memberClass = columnMetadata.getProperty().getPropertyType();
-        selectContext.getProjects().append(new SelectConstSegment(EasyAggregate.SUM.getFuncColumn(table.getAlias() + "." + quoteName)));
+        Class<?> memberClass = selectAggregateFunc(column,EasyAggregate.SUM);
         List<TMember> result = toInternalList((Class<TMember>) memberClass);
         if (result.isEmpty()) {
             return def;
@@ -117,12 +112,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     @Override
     public <TMember extends Number> TMember sumOrDefault(Property<T1, TMember> column, TMember def) {
 
-        SqlTableInfo table = selectContext.getTable(0);
-        String propertyName = table.getPropertyName(column);
-        String sqlColumnSegment = selectContext.getSqlColumnSegment(table, propertyName);
-        ColumnMetadata columnMetadata = table.getColumnMetadata(propertyName);
-        Class<?> memberClass = columnMetadata.getProperty().getPropertyType();
-        selectContext.getProjects().append(new SelectConstSegment(EasyAggregate.SUM.getFuncColumn(sqlColumnSegment)));
+        Class<?> memberClass = selectAggregateFunc(column,EasyAggregate.SUM);
         List<TMember> result = toInternalList((Class<TMember>) memberClass);
         if (result.isEmpty()) {
             return def;
@@ -152,12 +142,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     @Override
     public <TMember> TMember maxOrDefault(Property<T1, TMember> column, TMember def) {
 
-        SqlTableInfo table = selectContext.getTable(0);
-        String propertyName = table.getPropertyName(column);
-        String sqlColumnSegment = selectContext.getSqlColumnSegment(table, propertyName);
-        ColumnMetadata columnMetadata = table.getColumnMetadata(propertyName);
-        Class<?> memberClass = columnMetadata.getProperty().getPropertyType();
-        selectContext.getProjects().append(new SelectConstSegment(EasyAggregate.MAX.getFuncColumn(sqlColumnSegment)));
+        Class<?> memberClass = selectAggregateFunc(column,EasyAggregate.MAX);
         List<TMember> result = toInternalList((Class<TMember>) memberClass);
         if (result.isEmpty()) {
             return null;
@@ -167,12 +152,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
 
     @Override
     public <TMember> TMember minOrDefault(Property<T1, TMember> column, TMember def) {
-        SqlTableInfo table = selectContext.getTable(0);
-        String propertyName = table.getPropertyName(column);
-        String sqlColumnSegment = selectContext.getSqlColumnSegment(table, propertyName);
-        ColumnMetadata columnMetadata = table.getColumnMetadata(propertyName);
-        Class<?> memberClass = columnMetadata.getProperty().getPropertyType();
-        selectContext.getProjects().append(new SelectConstSegment(EasyAggregate.MIN.getFuncColumn(sqlColumnSegment)));
+        Class<?> memberClass = selectAggregateFunc(column,EasyAggregate.MIN);
         List<TMember> result = toInternalList((Class<TMember>) memberClass);
         if (result.isEmpty()) {
             return null;
@@ -182,17 +162,22 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
 
     @Override
     public <TMember> TMember avgOrDefault(Property<T1, TMember> column, TMember def) {
-        SqlTableInfo table = selectContext.getTable(0);
-        String propertyName = table.getPropertyName(column);
-        String sqlColumnSegment = selectContext.getSqlColumnSegment(table, propertyName);
-        ColumnMetadata columnMetadata = table.getColumnMetadata(propertyName);
-        Class<?> memberClass = columnMetadata.getProperty().getPropertyType();
-        selectContext.getProjects().append(new SelectConstSegment(EasyAggregate.AVG.getFuncColumn(sqlColumnSegment)));
+        Class<?> memberClass = selectAggregateFunc(column,EasyAggregate.AVG);
         List<TMember> result = toInternalList((Class<TMember>) memberClass);
         if (result.isEmpty()) {
             return null;
         }
         return result.get(0);
+    }
+
+    private <TMember> Class<?> selectAggregateFunc(Property<T1, TMember> column, IEasyFunc easyFunc){
+        SqlEntityTableExpression table = sqlEntityExpression.getTable(0);
+        String propertyName = table.getPropertyName(column);
+        ColumnMetadata columnMetadata = EasyUtil.getColumnMetadata(table, propertyName);
+        String ownerColumn = sqlEntityExpression.getSqlOwnerColumn(table, propertyName);
+        sqlEntityExpression.getProjects().append(new SelectConstSegment(easyFunc.getFuncColumn(ownerColumn)));
+        return columnMetadata.getProperty().getPropertyType();
+
     }
 
     @Override
@@ -232,7 +217,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
 //        return list.get(0);
 //    }
     protected SqlExpression<SqlColumnSelector<T1>> getDefaultColumnAll() {
-        if (selectContext.getGroup().isEmpty()) {
+        if (sqlEntityExpression.getGroup().isEmpty()&&sqlEntityExpression.getProjects().isEmpty()) {
             return ColumnSelector::columnAll;
         } else {
             return null;
@@ -240,7 +225,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     }
 
     protected <TR> SqlExpression<SqlColumnAsSelector<T1, TR>> getDefaultColumnAsAll() {
-        if (selectContext.getGroup().isEmpty()) {
+        if (sqlEntityExpression.getGroup().isEmpty()&&sqlEntityExpression.getProjects().isEmpty()) {
             return ColumnSelector::columnAll;
         } else {
             return null;
@@ -251,39 +236,26 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     public List<T1> toList() {
         SqlExpression<SqlColumnSelector<T1>> selectorExpression = getDefaultColumnAll();
         if (selectorExpression != null) {
-            SqlColumnSelector<T1> sqlColumnSelector = getSqlBuilderProvider1().getSqlColumnSelector1(selectContext.getProjects());
+            SqlColumnSelector<T1> sqlColumnSelector = getSqlBuilderProvider1().getSqlColumnSelector1(sqlEntityExpression.getProjects());
             selectorExpression.apply(sqlColumnSelector);
         }
         return toInternalList(queryClass());
     }
-//
-//    @Override
-//    public <TR> List<TR> toList(Class<TR> resultClass) {
-//        SqlExpression<SqlColumnAsSelector<T1, TR>> selectExpression=getDefaultColumnAsAll();
-//        return toList(resultClass,selectExpression);
-//    }
-//
-//    @Override
-//    public <TR> List<TR> toList(Class<TR> resultClass, SqlExpression<SqlColumnAsSelector<T1, TR>> selectExpression) {
-//
-////        EntityMetadata entityMetadata = selectContext.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(t1Class);
-////        if(entityMetadata.logicDelete()!=null){
-////            DefaultSqlPredicate<T1> objectDefaultSqlPredicate = new DefaultSqlPredicate<>(0, selectContext, selectContext.getWhere());
-////            ((SqlExpression<SqlPredicate<T1>>)entityMetadata.logicDelete()).apply(objectDefaultSqlPredicate);
-////        }
-//        ProjectSqlBuilderSegment sqlSegmentBuilder = new ProjectSqlBuilderSegment();
-//        SqlColumnAsSelector<T1,TR> sqlColumnSelector = getSqlBuilderProvider1().getSqlColumnAsSelector1(sqlSegmentBuilder);
-//        selectExpression.apply(sqlColumnSelector);
-//        return toInternalList(resultClass,sqlSegmentBuilder.toSql());
-//    }
-//
-//    @Override
-//    public List<T1> toList(SqlExpression<SqlColumnSelector<T1>> selectExpression) {
-//        ProjectSqlBuilderSegment sqlSegmentBuilder = new ProjectSqlBuilderSegment();
-//        SqlColumnSelector<T1> sqlColumnSelector = getSqlBuilderProvider1().getSqlColumnSelector1(sqlSegmentBuilder);
-//        selectExpression.apply(sqlColumnSelector);
-//        return toInternalList(t1Class);
-//    }
+
+    @Override
+    public <TR> List<TR> toList(Class<TR> resultClass) {
+        SqlExpression<SqlColumnAsSelector<T1, TR>> selectorExpression = getDefaultColumnAsAll();
+        if (selectorExpression != null) {
+            SqlColumnAsSelector<T1, TR> sqlColumnSelector = getSqlBuilderProvider1().getSqlColumnAsSelector1(sqlEntityExpression.getProjects());
+            selectorExpression.apply(sqlColumnSelector);
+        }
+        return toInternalList(resultClass);
+    }
+
+    @Override
+    public String toSql() {
+        return null;
+    }
 
     /**
      * 子类实现方法
@@ -293,35 +265,37 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     protected <TR> List<TR> toInternalList(Class<TR> resultClass) {
         //添加query filter logic delete
         String sql = toSql();
-        EasyExecutor easyExecutor = selectContext.getRuntimeContext().getEasyExecutor();
-        return easyExecutor.query(ExecutorContext.create(selectContext.getRuntimeContext()), resultClass, sql, selectContext.getParameters());
+        EasyExecutor easyExecutor = sqlEntityExpression.getRuntimeContext().getEasyExecutor();
+        return easyExecutor.query(ExecutorContext.create(sqlEntityExpression.getRuntimeContext()), resultClass, sql, sqlEntityExpression.getParameters());
     }
 
     @Override
     public Queryable<T1> select(SqlExpression<SqlColumnSelector<T1>> selectExpression) {
-        SqlColumnSelector<T1> sqlColumnSelector = getSqlBuilderProvider1().getSqlColumnSelector1(selectContext.getProjects());
+        SqlColumnSelector<T1> sqlColumnSelector = getSqlBuilderProvider1().getSqlColumnSelector1(sqlEntityExpression.getProjects());
         selectExpression.apply(sqlColumnSelector);
-        return this;
+        return sqlEntityExpression.getRuntimeContext().getQueryableFactory().createQueryable(queryClass(), sqlEntityExpression);
     }
 
     @Override
     public <TR> Queryable<TR> select(Class<TR> resultClass, SqlExpression<SqlColumnAsSelector<T1, TR>> selectExpression) {
-        SqlColumnAsSelector<T1, TR> sqlColumnSelector = getSqlBuilderProvider1().getSqlColumnAsSelector1(selectContext.getProjects());
+        SqlColumnAsSelector<T1, TR> sqlColumnSelector = getSqlBuilderProvider1().getSqlColumnAsSelector1(sqlEntityExpression.getProjects());
         selectExpression.apply(sqlColumnSelector);
-        return selectContext.getRuntimeContext().getQueryableFactory().createQueryable(resultClass, selectContext);
+        return sqlEntityExpression.getRuntimeContext().getQueryableFactory().createQueryable(resultClass, sqlEntityExpression);
     }
 
-//    @Override
-//    public Queryable<T1> select(String columns) {
-//        return this;
-//    }
+    @Override
+    public Queryable<T1> select(String columns) {
+        sqlEntityExpression.getProjects().getSqlSegments().clear();
+        sqlEntityExpression.getProjects().append(new SelectConstSegment(columns));
+        return this;
+    }
 
     @Override
     public <TR> Queryable<TR> select(Class<TR> resultClass) {
-        SqlColumnAsSelector<T1, TR> sqlColumnSelector = getSqlBuilderProvider1().getSqlColumnAsSelector1(selectContext.getProjects());
+        SqlColumnAsSelector<T1, TR> sqlColumnSelector = getSqlBuilderProvider1().getSqlColumnAsSelector1(sqlEntityExpression.getProjects());
         SqlExpression<SqlColumnAsSelector<T1, TR>> selectExpression = getDefaultColumnAsAll();
         selectExpression.apply(sqlColumnSelector);
-        return selectContext.getRuntimeContext().getQueryableFactory().createQueryable(resultClass, selectContext);
+        return sqlEntityExpression.getRuntimeContext().getQueryableFactory().createQueryable(resultClass, sqlEntityExpression);
     }
 
 //    @Override
@@ -402,8 +376,8 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     @Override
     public Queryable<T1> limit(boolean condition, long offset, long rows) {
         if (condition) {
-            selectContext.setOffset(offset);
-            selectContext.setRows(rows);
+            sqlEntityExpression.setOffset(offset);
+            sqlEntityExpression.setRows(rows);
         }
         return this;
     }
@@ -441,8 +415,8 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
         //当剩余条数小于take数就取remainingCount
         long realTake = Math.min(remainingCount, take);
         this.limit(offset, realTake);
-selectContext.getProjects().getSqlSegments().clear();
-        SqlColumnSelector<T1> sqlColumnSelector = getSqlBuilderProvider1().getSqlColumnSelector1(selectContext.getProjects());
+sqlEntityExpression.getProjects().getSqlSegments().clear();
+        SqlColumnSelector<T1> sqlColumnSelector = getSqlBuilderProvider1().getSqlColumnSelector1(sqlEntityExpression.getProjects());
         selectExpression.apply(sqlColumnSelector);
         List<TR> data = this.toInternalList(clazz);
         return new DefaultPageResult<TR>(total, data);
@@ -458,14 +432,14 @@ selectContext.getProjects().getSqlSegments().clear();
     }
 
     @Override
-    public SelectContext getSelectContext() {
-        return selectContext;
+    public SqlEntityQueryExpression getSqlEntityExpression() {
+        return sqlEntityExpression;
     }
 
 
     @Override
     public <T2> Queryable2<T1, T2> leftJoin(Class<T2> joinClass, SqlExpression2<SqlPredicate<T1>, SqlPredicate<T2>> on) {
-        Queryable2<T1, T2> queryable2 = selectContext.getRuntimeContext().getQueryableFactory().createQueryable2(t1Class, joinClass, MultiTableTypeEnum.LEFT_JOIN, selectContext);
+        Queryable2<T1, T2> queryable2 = sqlEntityExpression.getRuntimeContext().getQueryableFactory().createQueryable2(t1Class, joinClass, MultiTableTypeEnum.LEFT_JOIN, sqlEntityExpression);
         SqlPredicate<T1> on1 = queryable2.getSqlBuilderProvider2().getSqlOnPredicate1();
         SqlPredicate<T2> on2 = queryable2.getSqlBuilderProvider2().getSqlOnPredicate2();
         on.apply(on1, on2);
@@ -475,7 +449,7 @@ selectContext.getProjects().getSqlSegments().clear();
 
     @Override
     public <T2> Queryable2<T1, T2> innerJoin(Class<T2> joinClass, SqlExpression2<SqlPredicate<T1>, SqlPredicate<T2>> on) {
-        Queryable2<T1, T2> queryable2 = selectContext.getRuntimeContext().getQueryableFactory().createQueryable2(t1Class, joinClass, MultiTableTypeEnum.INNER_JOIN, selectContext);
+        Queryable2<T1, T2> queryable2 = sqlEntityExpression.getRuntimeContext().getQueryableFactory().createQueryable2(t1Class, joinClass, MultiTableTypeEnum.INNER_JOIN, sqlEntityExpression);
         SqlPredicate<T1> sqlOnPredicate1 = queryable2.getSqlBuilderProvider2().getSqlOnPredicate1();
         SqlPredicate<T2> sqlOnPredicate2 = queryable2.getSqlBuilderProvider2().getSqlOnPredicate2();
         on.apply(sqlOnPredicate1, sqlOnPredicate2);
@@ -483,7 +457,5 @@ selectContext.getProjects().getSqlSegments().clear();
     }
 
     @Override
-    public EasyQuerySqlBuilderProvider<T1> getSqlBuilderProvider1() {
-        return sqlPredicateProvider;
-    }
+    public abstract EasyQuerySqlBuilderProvider<T1> getSqlBuilderProvider1();
 }

@@ -1,8 +1,7 @@
 package org.easy.query.mysql.base;
 
-import org.easy.query.core.expression.context.DeleteContext;
 import org.easy.query.core.basic.api.delete.AbstractExpressionDelete;
-import org.easy.query.mysql.util.MySQLUtil;
+import org.easy.query.core.query.SqlEntityDeleteExpression;
 
 /**
  * @FileName: MySQLExpressionDelete.java
@@ -11,12 +10,12 @@ import org.easy.query.mysql.util.MySQLUtil;
  * @Created by xuejiaming
  */
 public class MySQLExpressionDelete<T> extends AbstractExpressionDelete<T> {
-    public MySQLExpressionDelete(Class<T> clazz, DeleteContext deleteContext) {
-        super(clazz, deleteContext);
+    public MySQLExpressionDelete(Class<T> clazz, SqlEntityDeleteExpression sqlEntityDeleteExpression) {
+        super(clazz, sqlEntityDeleteExpression);
     }
 
     @Override
     public String toSql() {
-        return MySQLUtil.toExpressionDeleteSql(deleteContext,table);
+        return sqlEntityDeleteExpression.toSql();
     }
 }

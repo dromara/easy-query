@@ -1,9 +1,7 @@
 package org.easy.query.core.expression.segment;
 
-import org.easy.query.core.expression.context.SqlContext;
 import org.easy.query.core.query.SqlEntityExpression;
 import org.easy.query.core.query.SqlEntityTableExpression;
-import org.easy.query.core.query.builder.SqlTableInfo;
 
 /**
  * @FileName: ColumnSegment.java
@@ -11,10 +9,12 @@ import org.easy.query.core.query.builder.SqlTableInfo;
  * @Date: 2023/2/13 15:18
  * @Created by xuejiaming
  */
-public class ColumnSegment implements SqlSegment {
+public class ColumnSegment implements SqlEntityProjectSegment {
 
 
     protected final SqlEntityTableExpression table;
+
+
     protected final String propertyName;
     protected final SqlEntityExpression sqlEntityExpression;
     protected String alias;
@@ -31,8 +31,23 @@ public class ColumnSegment implements SqlSegment {
     }
 
     @Override
+    public SqlEntityTableExpression getTable() {
+        return table;
+    }
+
+    @Override
+    public String getPropertyName() {
+        return propertyName;
+    }
+
+    @Override
+    public String getAlias() {
+        return alias;
+    }
+
+    @Override
     public String toSql() {
-        String sqlColumnSegment = sqlEntityExpression.getSqlColumnSegment(table,propertyName);
+        String sqlColumnSegment = sqlEntityExpression.getSqlOwnerColumn(table,propertyName);
         StringBuilder sql = new StringBuilder();
         sql.append(sqlColumnSegment);
         if(alias!=null){

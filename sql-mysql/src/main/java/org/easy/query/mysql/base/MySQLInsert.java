@@ -1,8 +1,7 @@
 package org.easy.query.mysql.base;
 
 import org.easy.query.core.basic.api.insert.AbstractInsert;
-import org.easy.query.core.expression.context.InsertContext;
-import org.easy.query.mysql.util.MySQLUtil;
+import org.easy.query.core.query.SqlEntityInsertExpression;
 
 /**
  * @FileName: MySQLInsert.java
@@ -11,13 +10,13 @@ import org.easy.query.mysql.util.MySQLUtil;
  * @Created by xuejiaming
  */
 public class MySQLInsert<T> extends AbstractInsert<T> {
-    public MySQLInsert(Class<T> clazz, InsertContext insertContext) {
-        super(clazz, insertContext);
+    public MySQLInsert(Class<T> clazz, SqlEntityInsertExpression sqlEntityExpression) {
+        super(clazz, sqlEntityExpression);
     }
 
 
     @Override
     public String toSql() {
-        return MySQLUtil.toInsertSql(insertContext);
+        return sqlEntityInsertExpression.toSql();
     }
 }

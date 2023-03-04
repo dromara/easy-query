@@ -1,8 +1,8 @@
 package org.easy.query.core.expression.segment;
 
 import org.easy.query.core.enums.SqlKeywordEnum;
-import org.easy.query.core.expression.context.SelectContext;
-import org.easy.query.core.query.builder.SqlTableInfo;
+import org.easy.query.core.query.SqlEntityQueryExpression;
+import org.easy.query.core.query.SqlEntityTableExpression;
 
 /**
  * @FileName: OrderColumnSegment.java
@@ -17,15 +17,15 @@ public class OrderColumnSegment extends ColumnSegment{
 
     private final boolean asc;
 
-    public OrderColumnSegment(SqlTableInfo table, String propertyName, SelectContext selectContext, boolean asc) {
-        super(table,propertyName, selectContext);
+    public OrderColumnSegment(SqlEntityTableExpression table, String propertyName, SqlEntityQueryExpression sqlEntityExpression, boolean asc) {
+        super(table,propertyName, sqlEntityExpression);
         this.asc = asc;
     }
 
     @Override
     public String toSql() {
 
-        String sqlColumnSegment = sqlContext.getSqlColumnSegment(table,propertyName);
+        String sqlColumnSegment = sqlEntityExpression.getSqlOwnerColumn(table,propertyName);
         StringBuilder sql = new StringBuilder().append(sqlColumnSegment);
         if(asc){
             sql.append(" ").append(SqlKeywordEnum.ASC.toSql());

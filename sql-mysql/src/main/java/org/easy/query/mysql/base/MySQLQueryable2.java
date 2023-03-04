@@ -1,15 +1,8 @@
 package org.easy.query.mysql.base;
 
-import org.easy.query.core.basic.api.select.Queryable;
 import org.easy.query.core.enums.MultiTableTypeEnum;
 import org.easy.query.core.basic.api.select.AbstractQueryable2;
-import org.easy.query.core.expression.context.SelectContext;
-import org.easy.query.core.expression.lambda.SqlExpression2;
-import org.easy.query.core.expression.parser.abstraction.SqlColumnAsSelector;
-import org.easy.query.core.expression.parser.abstraction.internal.ColumnResultSelector;
-import org.easy.query.mysql.util.MySQLUtil;
-
-import java.math.BigDecimal;
+import org.easy.query.core.query.SqlEntityQueryExpression;
 
 /**
  * @FileName: MySqlSelects.java
@@ -18,16 +11,14 @@ import java.math.BigDecimal;
  * @Created by xuejiaming
  */
 public class MySQLQueryable2<T1,T2> extends AbstractQueryable2<T1,T2> {
-    private final SelectContext selectContext;
 
-    public MySQLQueryable2(Class<T1> t1Class, Class<T2> t2Class, SelectContext selectContext, MultiTableTypeEnum selectTableInfoType) {
-        super(t1Class,t2Class, selectContext, selectTableInfoType);
-        this.selectContext = selectContext;
+    public MySQLQueryable2(Class<T1> t1Class, Class<T2> t2Class, SqlEntityQueryExpression sqlEntityExpression, MultiTableTypeEnum selectTableInfoType) {
+        super(t1Class,t2Class, sqlEntityExpression, selectTableInfoType);
     }
 
     @Override
     public String toSql() {
-         return MySQLUtil.toSelectSql(selectContext);
+         return sqlEntityExpression.toSql();
     }
 
 }

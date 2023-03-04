@@ -18,6 +18,7 @@ import org.easy.query.core.exception.EasyQueryException;
 import org.easy.query.core.metadata.DefaultEntityMetadataManager;
 import org.easy.query.mysql.MySQLEasyQuery;
 import org.easy.query.mysql.MySQLEasyQueryableFactory;
+import org.easy.query.mysql.MySQLSqlExpressionFactory;
 import org.easy.query.mysql.config.MySQLDialect;
 import org.easy.test.*;
 
@@ -107,7 +108,8 @@ public class Main {
         EntityMetadataManager entityMetadataManager = new DefaultEntityMetadataManager(configuration);
         EasyQueryLambdaFactory easyQueryLambdaFactory = new DefaultEasyQueryLambdaFactory();
         EasyQueryableFactory easyQueryableFactory = new MySQLEasyQueryableFactory();
-        DefaultEasyQueryRuntimeContext jqdcRuntimeContext = new DefaultEasyQueryRuntimeContext(configuration, entityMetadataManager, easyQueryLambdaFactory, connectionManager, defaultExecutor, jdbcTypeHandler,easyQueryableFactory);
+        MySQLSqlExpressionFactory mySQLSqlExpressionFactory = new MySQLSqlExpressionFactory();
+        DefaultEasyQueryRuntimeContext jqdcRuntimeContext = new DefaultEasyQueryRuntimeContext(configuration, entityMetadataManager, easyQueryLambdaFactory, connectionManager, defaultExecutor, jdbcTypeHandler,easyQueryableFactory,mySQLSqlExpressionFactory);
 //        String[] packages = scanPackages;
 //        for (String packageName : packages) {
 //            List<EntityMetadata> entityMetadataList = JDQCUtil.loadPackage(packageName, configuration);
@@ -131,7 +133,15 @@ jqdcRuntimeContext.getEasyQueryConfiguration().applyEntityTypeConfiguration(new 
 //        configuration.addTableInfo(tableInfo1);
         client = new MySQLEasyQuery(jqdcRuntimeContext);
 
+        long count3 = client.select(SysUserLogbyMonth.class)
+                .where(o -> o.eq(SysUserLogbyMonth::getId, "119")).select(o -> o.column(SysUserLogbyMonth::getId)).count();
 
+        client.select(TestUserMysql.class)
+                .where(o -> o.eq(TestUserMysql::getName, "ds0"))
+                .groupBy(o -> o.column(TestUserMysql::getAge))
+                .having(o -> o.count(TestUserMysql::getId, AggregatePredicateCompare.GE, 0))
+                .select(TestUserMysqlGroup.class, o -> o.column(TestUserMysql::getAge).columnCount(TestUserMysql::getId, TestUserMysqlGroup::getAcount))
+                .firstOrNull();
 
         String ds0z = client.select(TestUserMysql.class)
                 .where(o -> o.eq(TestUserMysql::getName, "ds0"))
@@ -139,9 +149,8 @@ jqdcRuntimeContext.getEasyQueryConfiguration().applyEntityTypeConfiguration(new 
                 .having(o -> o.count(TestUserMysql::getId, AggregatePredicateCompare.GE, 0))
                 .select(TestUserMysqlGroup.class, o -> o.column(TestUserMysql::getAge).columnCount(TestUserMysql::getId, TestUserMysqlGroup::getAcount))
                 .toSql();
-        if(true){
-            return;
-        }
+        System.out.println(ds0z);
+
         try (Transaction transaction = client.beginTransaction()) {
 
             transaction.commit();

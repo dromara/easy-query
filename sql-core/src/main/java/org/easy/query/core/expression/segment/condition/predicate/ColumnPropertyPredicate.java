@@ -1,11 +1,10 @@
 package org.easy.query.core.expression.segment.condition.predicate;
 
-import org.easy.query.core.expression.context.SqlContext;
 import org.easy.query.core.basic.jdbc.parameter.PropertySQLParameter;
 import org.easy.query.core.expression.segment.SqlSegment;
 import org.easy.query.core.query.SqlEntityExpression;
+import org.easy.query.core.query.SqlEntityQueryExpression;
 import org.easy.query.core.query.SqlEntityTableExpression;
-import org.easy.query.core.query.builder.SqlTableInfo;
 
 /**
  * @FileName: ColumnPropertyPredicate.java
@@ -22,12 +21,12 @@ public class ColumnPropertyPredicate implements SqlSegment {
         this.table = table;
         this.propertyName = propertyName;
         this.sqlEntityExpression = sqlEntityExpression;
+        sqlEntityExpression.addParameter(new PropertySQLParameter(table,propertyName));
     }
 
     @Override
     public String toSql() {
-        sqlEntityExpression.addParameter(new PropertySQLParameter(table,propertyName));
-        String sqlColumnSegment = sqlEntityExpression.getSqlColumnSegment(table,propertyName);
+        String sqlColumnSegment = sqlEntityExpression.getSqlOwnerColumn(table,propertyName);
         return sqlColumnSegment + " = ?";
     }
 

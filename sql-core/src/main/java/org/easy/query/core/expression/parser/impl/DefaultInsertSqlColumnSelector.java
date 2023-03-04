@@ -5,6 +5,8 @@ import org.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import org.easy.query.core.expression.lambda.Property;
 import org.easy.query.core.expression.parser.abstraction.SqlColumnSelector;
 import org.easy.query.core.expression.segment.ColumnInsertSegment;
+import org.easy.query.core.query.SqlEntityExpression;
+import org.easy.query.core.query.SqlEntityTableExpression;
 import org.easy.query.core.query.builder.SqlTableInfo;
 
 import java.util.Collection;
@@ -17,13 +19,13 @@ import java.util.Collection;
  */
 public class DefaultInsertSqlColumnSelector<T1> implements SqlColumnSelector<T1> {
     private final int index;
-    private final SqlContext sqlContext;
+    private final SqlEntityExpression sqlEntityExpression;
     private final SqlBuilderSegment sqlSegmentBuilder;
 
-    public DefaultInsertSqlColumnSelector(int index, SqlContext sqlContext, SqlBuilderSegment sqlSegmentBuilder) {
+    public DefaultInsertSqlColumnSelector(int index, SqlEntityExpression sqlEntityExpression, SqlBuilderSegment sqlSegmentBuilder) {
         this.index = index;
 
-        this.sqlContext = sqlContext;
+        this.sqlEntityExpression = sqlEntityExpression;
         this.sqlSegmentBuilder = sqlSegmentBuilder;
     }
 
@@ -34,18 +36,18 @@ public class DefaultInsertSqlColumnSelector<T1> implements SqlColumnSelector<T1>
 
     @Override
     public SqlColumnSelector<T1> column(Property<T1, ?> column) {
-        SqlTableInfo table = sqlContext.getTable(index);
+        SqlEntityTableExpression table = sqlEntityExpression.getTable(index);
         String propertyName = table.getPropertyName(column);
-        sqlSegmentBuilder.append(new ColumnInsertSegment(table, propertyName, sqlContext));
+        sqlSegmentBuilder.append(new ColumnInsertSegment(table, propertyName, sqlEntityExpression));
         return this;
     }
 
     @Override
     public SqlColumnSelector<T1> columnAll() {
-        SqlTableInfo table = sqlContext.getTable(index);
+        SqlEntityTableExpression table = sqlEntityExpression.getTable(index);
         Collection<String> properties = table.getEntityMetadata().getProperties();
         for (String property : properties) {
-            sqlSegmentBuilder.append(new ColumnInsertSegment(table, property, sqlContext));
+            sqlSegmentBuilder.append(new ColumnInsertSegment(table, property, sqlEntityExpression));
         }
         return this;
     }

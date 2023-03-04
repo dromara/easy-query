@@ -19,6 +19,7 @@ public class DefaultEasyQueryRuntimeContext implements EasyQueryRuntimeContext {
     private final EasyExecutor easyExecutor;
     private final EasyJdbcTypeHandlerManager easyJdbcTypeHandler;
     private final EasyQueryableFactory easyQueryableFactory;
+    private final EasySqlExpressionFactory easySqlExpressionFactory;
 
     public DefaultEasyQueryRuntimeContext(EasyQueryConfiguration easyQueryConfiguration,
                                           EntityMetadataManager entityMetadataManager,
@@ -26,7 +27,8 @@ public class DefaultEasyQueryRuntimeContext implements EasyQueryRuntimeContext {
                                           EasyConnectionManager easyConnectionManager,
                                           EasyExecutor easyExecutor,
                                           EasyJdbcTypeHandlerManager easyJdbcTypeHandler,
-                                          EasyQueryableFactory easyQueryableFactory){
+                                          EasyQueryableFactory easyQueryableFactory,
+                                          EasySqlExpressionFactory easySqlExpressionFactory){
         this.easyQueryConfiguration = easyQueryConfiguration;
         this.entityMetadataManager = entityMetadataManager;
         this.easyQueryLambdaFactory = easyQueryLambdaFactory;
@@ -34,6 +36,7 @@ public class DefaultEasyQueryRuntimeContext implements EasyQueryRuntimeContext {
         this.easyExecutor = easyExecutor;
         this.easyJdbcTypeHandler = easyJdbcTypeHandler;
         this.easyQueryableFactory = easyQueryableFactory;
+        this.easySqlExpressionFactory = easySqlExpressionFactory;
     }
     @Override
     public EasyQueryConfiguration getEasyQueryConfiguration() {
@@ -69,5 +72,10 @@ public class DefaultEasyQueryRuntimeContext implements EasyQueryRuntimeContext {
     @Override
     public EasyQueryableFactory getQueryableFactory() {
         return easyQueryableFactory;
+    }
+
+    @Override
+    public EasySqlExpressionFactory getSqlExpressionFactory() {
+        return easySqlExpressionFactory;
     }
 }

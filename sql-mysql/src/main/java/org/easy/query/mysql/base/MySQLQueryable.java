@@ -1,8 +1,7 @@
 package org.easy.query.mysql.base;
 
-import org.easy.query.core.basic.api.select.AbstractQueryable;
-import org.easy.query.core.expression.context.SelectContext;
-import org.easy.query.mysql.util.MySQLUtil;
+import org.easy.query.core.basic.api.select.AbstractQueryable1;
+import org.easy.query.core.query.SqlEntityQueryExpression;
 
 /**
  * @FileName: MySqlSelect1.java
@@ -10,18 +9,16 @@ import org.easy.query.mysql.util.MySQLUtil;
  * @Date: 2023/2/7 13:04
  * @Created by xuejiaming
  */
-public class MySQLQueryable<T1> extends AbstractQueryable<T1> {
+public class MySQLQueryable<T1> extends AbstractQueryable1<T1> {
 
-    private final SelectContext selectContext;
 
-    public MySQLQueryable(Class<T1> t1Class, SelectContext selectContext) {
-        super(t1Class, selectContext);
-        this.selectContext = selectContext;
+    public MySQLQueryable(Class<T1> t1Class, SqlEntityQueryExpression sqlEntityExpression) {
+        super(t1Class, sqlEntityExpression);
     }
 
     @Override
     public String toSql() {
-        return MySQLUtil.toSelectSql(selectContext);
+        return sqlEntityExpression.toSql();
     }
 
 }

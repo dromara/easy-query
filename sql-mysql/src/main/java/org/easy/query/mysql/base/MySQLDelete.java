@@ -1,8 +1,7 @@
 package org.easy.query.mysql.base;
 
-import org.easy.query.core.expression.context.DeleteContext;
 import org.easy.query.core.basic.api.delete.AbstractEntityDelete;
-import org.easy.query.mysql.util.MySQLUtil;
+import org.easy.query.core.query.SqlEntityDeleteExpression;
 
 import java.util.Collection;
 
@@ -13,12 +12,12 @@ import java.util.Collection;
  * @Created by xuejiaming
  */
 public class MySQLDelete<T1> extends AbstractEntityDelete<T1> {
-    public MySQLDelete(Collection<T1> entities, DeleteContext deleteContext) {
-        super(entities, deleteContext);
+    public MySQLDelete(Collection<T1> entities, SqlEntityDeleteExpression sqlEntityDeleteExpression) {
+        super(entities, sqlEntityDeleteExpression);
     }
 
     @Override
     public String toSql() {
-        return MySQLUtil.toEntityDeleteSql(deleteContext,table);
+        return sqlEntityDeleteExpression.toSql();
     }
 }

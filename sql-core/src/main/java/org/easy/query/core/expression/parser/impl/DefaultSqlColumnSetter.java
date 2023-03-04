@@ -1,6 +1,5 @@
 package org.easy.query.core.expression.parser.impl;
 
-import org.easy.query.core.expression.context.SqlContext;
 import org.easy.query.core.enums.SqlPredicateCompareEnum;
 import org.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import org.easy.query.core.expression.lambda.Property;
@@ -8,8 +7,8 @@ import org.easy.query.core.expression.parser.abstraction.SqlColumnSetter;
 import org.easy.query.core.expression.parser.abstraction.internal.WherePredicate;
 import org.easy.query.core.expression.segment.condition.predicate.ColumnValuePredicate0;
 import org.easy.query.core.query.SqlEntityExpression;
+import org.easy.query.core.query.SqlEntityQueryExpression;
 import org.easy.query.core.query.SqlEntityTableExpression;
-import org.easy.query.core.query.builder.SqlTableInfo;
 
 /**
  * @FileName: DefaultSqlColumnSetter.java

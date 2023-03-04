@@ -1,8 +1,7 @@
 package org.easy.query.mysql.base;
 
 import org.easy.query.core.basic.api.update.AbstractEntityUpdate;
-import org.easy.query.core.expression.context.UpdateContext;
-import org.easy.query.mysql.util.MySQLUtil;
+import org.easy.query.core.query.SqlEntityUpdateExpression;
 
 import java.util.Collection;
 
@@ -14,12 +13,12 @@ import java.util.Collection;
  */
 public class MySQLEntityUpdate<T> extends AbstractEntityUpdate<T> {
 
-    public MySQLEntityUpdate(Collection<T> entities, UpdateContext updateContext) {
-        super(entities, updateContext);
+    public MySQLEntityUpdate(Collection<T> entities, SqlEntityUpdateExpression sqlEntityUpdateExpression) {
+        super(entities, sqlEntityUpdateExpression);
     }
 
     @Override
     public String toSql() {
-        return MySQLUtil.toUpdateEntitySql(updateContext,table);
+        return sqlEntityUpdateExpression.toSql();
     }
 }

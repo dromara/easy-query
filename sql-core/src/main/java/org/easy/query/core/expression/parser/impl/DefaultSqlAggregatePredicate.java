@@ -11,6 +11,7 @@ import org.easy.query.core.expression.segment.condition.OrPredicateSegment;
 import org.easy.query.core.expression.segment.condition.PredicateSegment;
 import org.easy.query.core.expression.segment.condition.predicate.FuncColumnValuePredicate0;
 import org.easy.query.core.query.SqlEntityExpression;
+import org.easy.query.core.query.SqlEntityQueryExpression;
 import org.easy.query.core.query.SqlEntityTableExpression;
 
 /**

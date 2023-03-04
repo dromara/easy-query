@@ -11,12 +11,14 @@ import java.util.List;
  * @Date: 2023/3/3 23:05
  * @Created by xuejiaming
  */
-public interface QueryExpressionContext {
+public interface SqlExpressionContext {
     EasyQueryRuntimeContext getRuntimeContext();
 
      List<SQLParameter> getParameters();
      void addParameter(SQLParameter parameter);
 
      String getAlias();
+     String createTableAlias();
     String getQuoteName(String value);
+    SqlExpressionContext cloneSqlExpressionContext();
 }

@@ -9,6 +9,9 @@ import org.easy.query.core.enums.MultiTableTypeEnum;
 import org.easy.query.core.exception.EasyQueryException;
 import org.easy.query.core.expression.parser.impl.DefaultSqlColumnSetSelector;
 import org.easy.query.core.expression.context.UpdateContext;
+import org.easy.query.core.query.EasyEntityTableExpression;
+import org.easy.query.core.query.SqlEntityTableExpression;
+import org.easy.query.core.query.SqlEntityUpdateExpression;
 import org.easy.query.core.query.builder.SqlTableInfo;
 import org.easy.query.core.util.StringUtil;
 
@@ -22,21 +25,22 @@ import java.util.*;
  */
 public abstract class AbstractEntityUpdate<T> implements EntityUpdate<T> {
     protected final List<T> entities= new ArrayList<>();
-    protected final SqlTableInfo table;
-    protected final UpdateContext updateContext;
+    protected final SqlEntityTableExpression table;
+    protected final SqlEntityUpdateExpression sqlEntityUpdateExpression;
 
-    public AbstractEntityUpdate(Collection<T> entities, UpdateContext updateContext) {
+    public AbstractEntityUpdate(Collection<T> entities, SqlEntityUpdateExpression sqlEntityUpdateExpression) {
         if(entities==null||entities.isEmpty()){
             throw new EasyQueryException("不支持空对象的update");
         }
         this.entities.addAll(entities);
 
         Class<?> clazz = entities.iterator().next().getClass();
-        this.updateContext = updateContext;
-        EntityMetadata entityMetadata = updateContext.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(clazz);
+        this.sqlEntityUpdateExpression = sqlEntityUpdateExpression;
+
+        EntityMetadata entityMetadata = this.sqlEntityUpdateExpression.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(clazz);
         entityMetadata.checkTable();
-        table=new SqlTableInfo(entityMetadata, null, 0, MultiTableTypeEnum.FROM);
-        updateContext.addSqlTable(table);
+        table = new EasyEntityTableExpression(entityMetadata,  0,null, MultiTableTypeEnum.FROM);
+        this.sqlEntityUpdateExpression.addSqlEntityTableExpression(table);
     }
 
     @Override
@@ -46,8 +50,8 @@ public abstract class AbstractEntityUpdate<T> implements EntityUpdate<T> {
             String updateSql = toSql();
             System.out.println("更新sql："+updateSql);
             if (!StringUtil.isBlank(updateSql)) {
-                EasyExecutor easyExecutor = updateContext.getRuntimeContext().getEasyExecutor();
-                return easyExecutor.update(ExecutorContext.create(updateContext.getRuntimeContext()), updateSql, entities, updateContext.getParameters());
+                EasyExecutor easyExecutor = sqlEntityUpdateExpression.getRuntimeContext().getEasyExecutor();
+                return easyExecutor.update(ExecutorContext.create(sqlEntityUpdateExpression.getRuntimeContext()), updateSql, entities, sqlEntityUpdateExpression.getParameters());
             }
         }
         return 0;
@@ -61,7 +65,7 @@ public abstract class AbstractEntityUpdate<T> implements EntityUpdate<T> {
     @Override
     public EntityUpdate<T> setColumns(boolean condition,SqlExpression<SqlColumnSelector<T>> columnSelectorExpression) {
         if(condition){
-            DefaultSqlColumnSetSelector<T> columnSelector = new DefaultSqlColumnSetSelector<>(0, updateContext, updateContext.getSetColumns());
+            DefaultSqlColumnSetSelector<T> columnSelector = new DefaultSqlColumnSetSelector<>(0, sqlEntityUpdateExpression, sqlEntityUpdateExpression.getSetColumns());
             columnSelectorExpression.apply(columnSelector);
         }
         return this;
@@ -70,7 +74,7 @@ public abstract class AbstractEntityUpdate<T> implements EntityUpdate<T> {
     @Override
     public EntityUpdate<T> setIgnoreColumns(boolean condition,SqlExpression<SqlColumnSelector<T>> columnSelectorExpression) {
         if(condition){
-            DefaultSqlColumnSetSelector<T> columnSelector = new DefaultSqlColumnSetSelector<>(0, updateContext, updateContext.getSetIgnoreColumns());
+            DefaultSqlColumnSetSelector<T> columnSelector = new DefaultSqlColumnSetSelector<>(0, sqlEntityUpdateExpression, sqlEntityUpdateExpression.getSetIgnoreColumns());
             columnSelectorExpression.apply(columnSelector);
         }
         return this;
@@ -79,7 +83,7 @@ public abstract class AbstractEntityUpdate<T> implements EntityUpdate<T> {
     @Override
     public EntityUpdate<T> whereColumns(boolean condition,SqlExpression<SqlColumnSelector<T>> columnSelectorExpression) {
         if(condition){
-            DefaultSqlColumnSetSelector<T> columnSelector = new DefaultSqlColumnSetSelector<>(0, updateContext, updateContext.getWhereColumns());
+            DefaultSqlColumnSetSelector<T> columnSelector = new DefaultSqlColumnSetSelector<>(0, sqlEntityUpdateExpression, sqlEntityUpdateExpression.getWhereColumns());
             columnSelectorExpression.apply(columnSelector);
         }
         return this;

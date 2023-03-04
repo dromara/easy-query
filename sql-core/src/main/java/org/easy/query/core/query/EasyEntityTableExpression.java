@@ -9,6 +9,7 @@ import org.easy.query.core.expression.parser.abstraction.SqlPredicate;
 import org.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import org.easy.query.core.expression.segment.condition.PredicateSegment;
 import org.easy.query.core.util.LambdaUtil;
+import org.easy.query.core.util.StringUtil;
 
 /**
  * @FileName: EasyEntityTableExpressionSegment.java
@@ -16,7 +17,7 @@ import org.easy.query.core.util.LambdaUtil;
  * @Date: 2023/3/3 23:31
  * @Created by xuejiaming
  */
-public class EasyEntityTableExpressionSegment implements SqlEntityTableExpression {
+public class EasyEntityTableExpression implements SqlEntityTableExpression {
 
     protected final EntityMetadata entityMetadata;
     protected final int index;
@@ -24,7 +25,7 @@ public class EasyEntityTableExpressionSegment implements SqlEntityTableExpressio
     protected final MultiTableTypeEnum multiTableType;
     protected PredicateSegment on;
 
-    public EasyEntityTableExpressionSegment(EntityMetadata entityMetadata, int index, String alias, MultiTableTypeEnum multiTableType) {
+    public EasyEntityTableExpression(EntityMetadata entityMetadata, int index, String alias, MultiTableTypeEnum multiTableType) {
         this.entityMetadata = entityMetadata;
 
         this.index = index;
@@ -106,6 +107,9 @@ public class EasyEntityTableExpressionSegment implements SqlEntityTableExpressio
 
     @Override
     public String toSql() {
+        if(entityMetadata.getTableName()==null){
+            return StringUtil.EMPTY;
+        }
         StringBuilder sql = new StringBuilder();
 
         sql.append(getSelectTableSource()).append(entityMetadata.getTableName());
