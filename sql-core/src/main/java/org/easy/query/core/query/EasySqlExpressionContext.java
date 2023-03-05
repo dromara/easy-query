@@ -12,13 +12,13 @@ import java.util.List;
  * @Date: 2023/3/3 23:06
  * @Created by xuejiaming
  */
-public class EasySqExpressionContext implements SqlExpressionContext {
+public class EasySqlExpressionContext implements SqlExpressionContext {
     private final EasyQueryRuntimeContext runtimeContext;
     private final String alias;
     protected final List<SQLParameter> params;
     private int aliasSeq=-1;
 
-    public EasySqExpressionContext(EasyQueryRuntimeContext runtimeContext, String alias){
+    public EasySqlExpressionContext(EasyQueryRuntimeContext runtimeContext, String alias){
 
         this.runtimeContext = runtimeContext;
         this.alias = alias;
@@ -57,7 +57,7 @@ public class EasySqExpressionContext implements SqlExpressionContext {
 
     @Override
     public SqlExpressionContext cloneSqlExpressionContext() {
-        EasySqExpressionContext easySqExpressionContext = new EasySqExpressionContext(runtimeContext,alias);
+        EasySqlExpressionContext easySqExpressionContext = new EasySqlExpressionContext(runtimeContext,alias);
         easySqExpressionContext.aliasSeq=this.aliasSeq;
         easySqExpressionContext.params.addAll(this.params);
         return easySqExpressionContext;

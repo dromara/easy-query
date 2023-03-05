@@ -20,8 +20,8 @@ import java.util.Collection;
  */
 public interface EasyQuery {
     EasyQueryRuntimeContext getRuntimeContext();
-    <T1> Queryable<T1> select(Class<T1> clazz);
-    <T1> Queryable<T1> select(Class<T1> clazz, String alias);
+    <T1> Queryable<T1> query(Class<T1> clazz);
+    <T1> Queryable<T1> query(Class<T1> clazz, String alias);
     default Transaction beginTransaction(){
         return beginTransaction(null);
     }

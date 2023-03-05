@@ -107,8 +107,8 @@ public class Main {
         configuration.setDialect(new MySQLDialect());
         EntityMetadataManager entityMetadataManager = new DefaultEntityMetadataManager(configuration);
         EasyQueryLambdaFactory easyQueryLambdaFactory = new DefaultEasyQueryLambdaFactory();
-        EasyQueryableFactory easyQueryableFactory = new MySQLEasyQueryableFactory();
         MySQLSqlExpressionFactory mySQLSqlExpressionFactory = new MySQLSqlExpressionFactory();
+        EasyQueryableFactory easyQueryableFactory = new MySQLEasyQueryableFactory(mySQLSqlExpressionFactory);
         DefaultEasyQueryRuntimeContext jqdcRuntimeContext = new DefaultEasyQueryRuntimeContext(configuration, entityMetadataManager, easyQueryLambdaFactory, connectionManager, defaultExecutor, jdbcTypeHandler,easyQueryableFactory,mySQLSqlExpressionFactory);
 //        String[] packages = scanPackages;
 //        for (String packageName : packages) {
@@ -134,7 +134,7 @@ jqdcRuntimeContext.getEasyQueryConfiguration().applyEntityTypeConfiguration(new 
         client = new MySQLEasyQuery(jqdcRuntimeContext);
 
 
-        TestUserMysqlx testUserMysql23 = client.select(TestUserMysql.class)
+        TestUserMysqlx testUserMysql23 = client.query(TestUserMysql.class)
                 .leftJoin(SysUserLogbyMonth.class, (a, b) -> a.eq(b, TestUserMysql::getName, SysUserLogbyMonth::getId).then(b).eq(SysUserLogbyMonth::getTime, LocalDateTime.now()))
                 .where(o -> o.eq(TestUserMysql::getId, "102")
                         .like(TestUserMysql::getName, "1%")
@@ -142,17 +142,17 @@ jqdcRuntimeContext.getEasyQueryConfiguration().applyEntityTypeConfiguration(new 
                         ))
                 .select(TestUserMysqlx.class, x -> x.columnAll().columnAs(TestUserMysql::getName, TestUserMysqlx::getName1)).firstOrNull();
 
-        long count3 = client.select(SysUserLogbyMonth.class)
+        long count3 = client.query(SysUserLogbyMonth.class)
                 .where(o -> o.eq(SysUserLogbyMonth::getId, "119")).select(o -> o.column(SysUserLogbyMonth::getId)).count();
 
-        client.select(TestUserMysql.class)
+        client.query(TestUserMysql.class)
                 .where(o -> o.eq(TestUserMysql::getName, "ds0"))
                 .groupBy(o -> o.column(TestUserMysql::getAge))
                 .having(o -> o.count(TestUserMysql::getId, AggregatePredicateCompare.GE, 0))
                 .select(TestUserMysqlGroup.class, o -> o.column(TestUserMysql::getAge).columnCount(TestUserMysql::getId, TestUserMysqlGroup::getAcount))
                 .firstOrNull();
 
-        String ds0z = client.select(TestUserMysql.class)
+        String ds0z = client.query(TestUserMysql.class)
                 .where(o -> o.eq(TestUserMysql::getName, "ds0"))
                 .groupBy(o -> o.column(TestUserMysql::getAge))
                 .having(o -> o.count(TestUserMysql::getId, AggregatePredicateCompare.GE, 0))
@@ -214,15 +214,15 @@ jqdcRuntimeContext.getEasyQueryConfiguration().applyEntityTypeConfiguration(new 
 //        System.out.println("返回行数:" + execute2);
 //        long end = System.currentTimeMillis();
 //        System.out.println("耗时：" + (end - start) + "ms");
-        SysUserLogbyMonth sysUserLogbyMonth1 = client.select(SysUserLogbyMonth.class)
+        SysUserLogbyMonth sysUserLogbyMonth1 = client.query(SysUserLogbyMonth.class)
                 .where(o -> o.eq(SysUserLogbyMonth::getId, "119")).firstOrNull();
-        SysUserLogbyMonth sysUserLogbyMonth1x = client.select(SysUserLogbyMonth.class)
+        SysUserLogbyMonth sysUserLogbyMonth1x = client.query(SysUserLogbyMonth.class)
                 .where(o -> o.in(SysUserLogbyMonth::getId, Arrays.asList("119", "111")).notIn(SysUserLogbyMonth::getId, Arrays.asList("1", "2"))).firstOrNull();
-        SysUserLogbyMonth sysUserLogbyMonth2x = client.select(SysUserLogbyMonth.class)
+        SysUserLogbyMonth sysUserLogbyMonth2x = client.query(SysUserLogbyMonth.class)
                 .where(o -> o.in(SysUserLogbyMonth::getId, Collections.emptyList())).firstOrNull();
-        SysUserLogbyMonth sysUserLogbyMonth2xx = client.select(SysUserLogbyMonth.class)
+        SysUserLogbyMonth sysUserLogbyMonth2xx = client.query(SysUserLogbyMonth.class)
                 .where(o -> o.notIn(SysUserLogbyMonth::getId, Collections.emptyList())).firstOrNull();
-        PageResult<SysUserLogbyMonth> page = client.select(SysUserLogbyMonth.class)
+        PageResult<SysUserLogbyMonth> page = client.query(SysUserLogbyMonth.class)
                 .where(o -> o.notIn(SysUserLogbyMonth::getId, Collections.emptyList())).toPageResult(2, 20, SysUserLogbyMonth.class);
 //        long start = System.currentTimeMillis();
 //        for (int j = 0; j < 1000; j++) {
@@ -233,29 +233,29 @@ jqdcRuntimeContext.getEasyQueryConfiguration().applyEntityTypeConfiguration(new 
 //        long end = System.currentTimeMillis();
 //        System.out.println("耗时："+(end-start)+"ms");
 
-        Queryable<SysUserLogbyMonth> queryable = client.select(SysUserLogbyMonth.class)
+        Queryable<SysUserLogbyMonth> queryable = client.query(SysUserLogbyMonth.class)
                 .where(o -> o.eq(SysUserLogbyMonth::getId, "119"));
         long count2 = queryable.count();
         List<SysUserLogbyMonth> sysUserLogbyMonths = queryable.limit(1, 10).toList();
 
-        long count = client.select(SysUserLogbyMonth.class)
+        long count = client.query(SysUserLogbyMonth.class)
                 .where(o -> o.eq(SysUserLogbyMonth::getId, "119")).count();
-        long count1 = client.select(SysUserLogbyMonth.class)
+        long count1 = client.query(SysUserLogbyMonth.class)
                 .where(o -> o.eq(SysUserLogbyMonth::getId, "119")).countDistinct(o -> o.column(SysUserLogbyMonth::getId).column(SysUserLogbyMonth::getTime));
 
-        boolean any = client.select(SysUserLogbyMonth.class)
+        boolean any = client.query(SysUserLogbyMonth.class)
                 .where(o -> o.eq(SysUserLogbyMonth::getId, "119")).any();
-        LocalDateTime localDateTime = client.select(SysUserLogbyMonth.class).maxOrNull(SysUserLogbyMonth::getTime);
-        Integer totalAge = client.select(TestUserMysql.class).sumOrDefault(TestUserMysql::getAge, 0);
-        Integer max = client.select(TestUserMysql.class).maxOrNull(TestUserMysql::getAge);
+        LocalDateTime localDateTime = client.query(SysUserLogbyMonth.class).maxOrNull(SysUserLogbyMonth::getTime);
+        Integer totalAge = client.query(TestUserMysql.class).sumOrDefault(TestUserMysql::getAge, 0);
+        Integer max = client.query(TestUserMysql.class).maxOrNull(TestUserMysql::getAge);
 
-        String ds01 = client.select(TestUserMysql.class)
+        String ds01 = client.query(TestUserMysql.class)
                 .where(o -> o.eq(TestUserMysql::getName, "ds0"))
                 .groupBy(o -> o.column(TestUserMysql::getAge))
                 .having(o -> o.count(TestUserMysql::getId, AggregatePredicateCompare.GE, 0))
                 .select(TestUserMysqlGroup.class, o -> o.column(TestUserMysql::getAge).columnCount(TestUserMysql::getId, TestUserMysqlGroup::getAcount))
                 .toSql();
-        String ds02 = client.select(TestUserMysql.class)
+        String ds02 = client.query(TestUserMysql.class)
                 .where(o -> o.eq(TestUserMysql::getName, "ds0"))
                 .groupBy(o -> o.column(TestUserMysql::getAge))
                 .having(o -> o.count(TestUserMysql::getId, AggregatePredicateCompare.GE, 0))
@@ -266,7 +266,7 @@ jqdcRuntimeContext.getEasyQueryConfiguration().applyEntityTypeConfiguration(new 
         for (int ii = 0; ii < 10000; ii++) {
 //            SysUserLogbyMonth sysUserLogbyMonth = client.select(SysUserLogbyMonth.class)
 //                    .where(o -> o.eq(SysUserLogbyMonth::getId, "119")).firstOrNull();
-            String ds0 = client.select(TestUserMysql.class)
+            String ds0 = client.query(TestUserMysql.class)
                     .where(o -> o.eq(TestUserMysql::getName, "ds0"))
                     .groupBy(o -> o.column(TestUserMysql::getAge))
                     .having(o -> o.count(TestUserMysql::getId, AggregatePredicateCompare.GE, 0))
@@ -281,35 +281,35 @@ jqdcRuntimeContext.getEasyQueryConfiguration().applyEntityTypeConfiguration(new 
 //        SqlExpression<SqlPredicate<TestUserMysql>> xx=xxx->xxx.and(x->x.eq(TestUserMysql::getId,12));
 //        entityMetadata.addLogicDeleteExpression(xx);
 
-        List<TestUserMysqlGroup> testUserMysqls = client.select(TestUserMysql.class)
+        List<TestUserMysqlGroup> testUserMysqls = client.query(TestUserMysql.class)
                 .where(o -> o.eq(TestUserMysql::getName, "ds0"))
                 .groupBy(o -> o.column(TestUserMysql::getAge))
                 .having(o -> o.count(TestUserMysql::getId, AggregatePredicateCompare.GE, 0))
                 .select(TestUserMysqlGroup.class, o -> o.column(TestUserMysql::getAge).columnCount(TestUserMysql::getId, TestUserMysqlGroup::getAcount))
                 .toList();
-        List<TestUserMysql> testUserMysqls1 = client.select(TestUserMysql.class)
+        List<TestUserMysql> testUserMysqls1 = client.query(TestUserMysql.class)
                 .where(o -> o.eq(TestUserMysql::getName, "123"))
                 .groupBy(o -> o.column(TestUserMysql::getAge))
                 .having(o -> o.countDistinct(TestUserMysql::getId, AggregatePredicateCompare.GT, 5).and(x -> x.countDistinct(TestUserMysql::getId, AggregatePredicateCompare.GT, 5).or().countDistinct(TestUserMysql::getId, AggregatePredicateCompare.GT, 5)))
                 .toList();
-        TestUserMysql testUserMysql = client.select(TestUserMysql.class, "y")
+        TestUserMysql testUserMysql = client.query(TestUserMysql.class, "y")
                 .where(o -> o.eq(TestUserMysql::getId, "102").like(TestUserMysql::getName, "1%").and(x ->
                         x.like(TestUserMysql::getName, "123").or().eq(TestUserMysql::getAge, 1)
                 )).orderByAsc(o -> o.column(TestUserMysql::getName).column(TestUserMysql::getAge))
                 .orderByDesc(o -> o.column(TestUserMysql::getName)).firstOrNull();
 
 
-        TestUserMysql testUserMysql1 = client.select(TestUserMysql.class, "y")
+        TestUserMysql testUserMysql1 = client.query(TestUserMysql.class, "y")
                 .where(o -> o.eq(TestUserMysql::getId, "102").like(TestUserMysql::getName, "1%").and(x ->
                         x.like(TestUserMysql::getName, "123").or().eq(TestUserMysql::getAge, 1)
                 ).or(x -> x.eq(TestUserMysql::getName, 456).eq(TestUserMysql::getId, 8989))).firstOrNull();
 
-        SysUserLogbyMonth sysUserLogbyMonth = client.select(SysUserLogbyMonth.class)
+        SysUserLogbyMonth sysUserLogbyMonth = client.query(SysUserLogbyMonth.class)
                 .where(o -> o.eq(SysUserLogbyMonth::getId, "119")).firstOrNull();
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String format = dateTimeFormatter.format(sysUserLogbyMonth.getTime());
         System.out.println(sysUserLogbyMonth);
-        TestUserMysqlx testUserMysql2 = client.select(TestUserMysql.class)
+        TestUserMysqlx testUserMysql2 = client.query(TestUserMysql.class)
                 .leftJoin(SysUserLogbyMonth.class, (a, b) -> a.eq(b, TestUserMysql::getName, SysUserLogbyMonth::getId).then(b).eq(SysUserLogbyMonth::getTime, LocalDateTime.now()))
                 .where(o -> o.eq(TestUserMysql::getId, "102")
                         .like(TestUserMysql::getName, "1%")
@@ -317,7 +317,7 @@ jqdcRuntimeContext.getEasyQueryConfiguration().applyEntityTypeConfiguration(new 
                         ))
                 .select(TestUserMysqlx.class, x -> x.columnAll().columnAs(TestUserMysql::getName, TestUserMysqlx::getName1)).firstOrNull();
 
-        TestUserMysqlx testUserMysqlx = client.select(SysUserLogbyMonth.class)
+        TestUserMysqlx testUserMysqlx = client.query(SysUserLogbyMonth.class)
                 .leftJoin(TestUserMysql.class, (a, b) -> a.eq(b, SysUserLogbyMonth::getId, TestUserMysql::getName).eq(SysUserLogbyMonth::getTime, LocalDateTime.now()))
                 .where(o -> o.eq(SysUserLogbyMonth::getId, "102")
                         .like(SysUserLogbyMonth::getTime, LocalDateTime.now())

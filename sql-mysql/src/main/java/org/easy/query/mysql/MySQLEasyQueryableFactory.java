@@ -2,6 +2,7 @@ package org.easy.query.mysql;
 
 import org.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import org.easy.query.core.abstraction.EasyQueryableFactory;
+import org.easy.query.core.abstraction.EasySqlExpressionFactory;
 import org.easy.query.core.abstraction.metadata.EntityMetadata;
 import org.easy.query.core.basic.api.select.Queryable;
 import org.easy.query.core.basic.api.select.Queryable2;
@@ -19,15 +20,20 @@ import org.easy.query.mysql.base.MySQLQueryable2;
  * @Created by xuejiaming
  */
 public class MySQLEasyQueryableFactory implements EasyQueryableFactory {
+    private final EasySqlExpressionFactory easySqlExpressionFactory;
+
+    public MySQLEasyQueryableFactory(EasySqlExpressionFactory easySqlExpressionFactory){
+        this.easySqlExpressionFactory = easySqlExpressionFactory;
+    }
     @Override
     public <T> Queryable<T> createQueryable(Class<T> clazz, EasyQueryRuntimeContext runtimeContext,String alias) {
-        EasySqExpressionContext easySqExpressionContext = new EasySqExpressionContext(runtimeContext, alias);
-        MySQLQueryExpression mySQLQueryExpression = new MySQLQueryExpression(easySqExpressionContext);
+        SqlExpressionContext easySqExpressionContext =easySqlExpressionFactory.createSqlExpressionContext(runtimeContext,alias);
+        SqlEntityQueryExpression sqlEntityQueryExpression = easySqlExpressionFactory.createSqlEntityQueryExpression(easySqExpressionContext);
         EntityMetadata entityMetadata =runtimeContext.getEntityMetadataManager().getEntityMetadata(clazz);
-        int tableIndex = EasyUtil.getNextTableIndex(mySQLQueryExpression);;
-        EasyEntityTableExpression sqlTable = new EasyEntityTableExpression(entityMetadata,  tableIndex,easySqExpressionContext.createTableAlias(), MultiTableTypeEnum.FROM);
-        mySQLQueryExpression.addSqlEntityTableExpression(sqlTable);
-        return new MySQLQueryable<>(clazz,mySQLQueryExpression);
+        int tableIndex = EasyUtil.getNextTableIndex(sqlEntityQueryExpression);;
+        SqlEntityTableExpression sqlTable =easySqlExpressionFactory.createSqlEntityTableExpression(entityMetadata,  tableIndex,easySqExpressionContext.createTableAlias(), MultiTableTypeEnum.FROM);
+        sqlEntityQueryExpression.addSqlEntityTableExpression(sqlTable);
+        return new MySQLQueryable<>(clazz,sqlEntityQueryExpression);
     }
 
     @Override

@@ -1,5 +1,7 @@
 package org.easy.query.core.abstraction;
 
+import org.easy.query.core.abstraction.metadata.EntityMetadata;
+import org.easy.query.core.enums.MultiTableTypeEnum;
 import org.easy.query.core.query.*;
 
 /**
@@ -9,6 +11,8 @@ import org.easy.query.core.query.*;
  * @Created by xuejiaming
  */
 public interface EasySqlExpressionFactory {
+    SqlExpressionContext createSqlExpressionContext(EasyQueryRuntimeContext runtimeContext,String alias);
+    SqlEntityTableExpression createSqlEntityTableExpression(EntityMetadata entityMetadata, int index, String alias, MultiTableTypeEnum multiTableType);
     SqlEntityQueryExpression createSqlEntityQueryExpression(SqlExpressionContext sqlExpressionContext);
     SqlEntityInsertExpression createSqlEntityInsertExpression(SqlExpressionContext sqlExpressionContext);
     SqlEntityUpdateExpression createSqlEntityUpdateExpression(SqlExpressionContext sqlExpressionContext,boolean expression);
