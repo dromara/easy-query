@@ -52,6 +52,7 @@ public class FuncColumnSegment  implements SqlEntityProjectSegment {
         return propertyName;
     }
 
+
     @Override
     public String getAlias() {
         return alias;

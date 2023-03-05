@@ -55,8 +55,7 @@ public class AbstractSqlColumnSelector<T1,TChain> implements ColumnSelector<T1, 
             List<SqlSegment> sqlSegments = sqlEntityQueryExpression.getProjects().getSqlSegments();
             for (SqlSegment sqlSegment : sqlSegments) {
                 if(sqlSegment instanceof SqlEntityProjectSegment){
-
-                    String propertyName =EasyUtil.getAnonymousPropertyName((SqlEntityProjectSegment) sqlSegment);
+                    String propertyName =EasyUtil.getAnonymousColumnName((SqlEntityProjectSegment) sqlSegment);
                     sqlSegmentBuilder.append(new ColumnSegment(table, propertyName, sqlEntityExpression));
                 }
                 else {

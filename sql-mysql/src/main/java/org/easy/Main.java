@@ -133,6 +133,15 @@ jqdcRuntimeContext.getEasyQueryConfiguration().applyEntityTypeConfiguration(new 
 //        configuration.addTableInfo(tableInfo1);
         client = new MySQLEasyQuery(jqdcRuntimeContext);
 
+
+        TestUserMysqlx testUserMysql23 = client.select(TestUserMysql.class)
+                .leftJoin(SysUserLogbyMonth.class, (a, b) -> a.eq(b, TestUserMysql::getName, SysUserLogbyMonth::getId).then(b).eq(SysUserLogbyMonth::getTime, LocalDateTime.now()))
+                .where(o -> o.eq(TestUserMysql::getId, "102")
+                        .like(TestUserMysql::getName, "1%")
+                        .and(x -> x.like(TestUserMysql::getName, "123").or().eq(TestUserMysql::getAge, 1)
+                        ))
+                .select(TestUserMysqlx.class, x -> x.columnAll().columnAs(TestUserMysql::getName, TestUserMysqlx::getName1)).firstOrNull();
+
         long count3 = client.select(SysUserLogbyMonth.class)
                 .where(o -> o.eq(SysUserLogbyMonth::getId, "119")).select(o -> o.column(SysUserLogbyMonth::getId)).count();
 
