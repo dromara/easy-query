@@ -2,7 +2,6 @@ package org.easy.query.core.expression.segment;
 
 import org.easy.query.core.basic.jdbc.parameter.PropertySQLParameter;
 import org.easy.query.core.query.SqlEntityExpression;
-import org.easy.query.core.query.SqlEntityQueryExpression;
 import org.easy.query.core.query.SqlEntityTableExpression;
 
 /**
@@ -11,7 +10,7 @@ import org.easy.query.core.query.SqlEntityTableExpression;
  * @Date: 2023/2/13 15:18
  * @Created by xuejiaming
  */
-public class ColumnInsertSegment implements SqlEntityProjectSegment {
+public class ColumnInsertSegment implements SqlEntitySegment {
 
 
     protected final SqlEntityTableExpression table;

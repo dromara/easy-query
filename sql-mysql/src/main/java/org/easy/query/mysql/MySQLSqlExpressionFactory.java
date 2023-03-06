@@ -28,6 +28,11 @@ public class MySQLSqlExpressionFactory implements EasySqlExpressionFactory {
     }
 
     @Override
+    public SqlEntityTableExpression createEasyAnonymousEntityTableExpression(EntityMetadata entityMetadata, int index, String alias, MultiTableTypeEnum multiTableType,SqlEntityQueryExpression sqlEntityQueryExpression) {
+        return new EasyAnonymousEntityTableExpression(entityMetadata,index,alias,multiTableType,sqlEntityQueryExpression);
+    }
+
+    @Override
     public SqlEntityQueryExpression createSqlEntityQueryExpression(SqlExpressionContext sqlExpressionContext) {
         return new MySQLQueryExpression(sqlExpressionContext);
     }

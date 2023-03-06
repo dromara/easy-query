@@ -4,17 +4,13 @@ import org.easy.query.core.abstraction.EasyQuerySqlBuilderProvider;
 import org.easy.query.core.abstraction.EasyQuerySqlBuilderProvider2;
 import org.easy.query.core.expression.lambda.SqlExpression2;
 import org.easy.query.core.expression.lambda.SqlExpression3;
-import org.easy.query.core.abstraction.metadata.EntityMetadata;
 import org.easy.query.core.expression.parser.abstraction.SqlColumnAsSelector;
 import org.easy.query.core.expression.parser.abstraction.SqlColumnSelector;
 import org.easy.query.core.expression.parser.abstraction.SqlPredicate;
 import org.easy.query.core.enums.MultiTableTypeEnum;
 import org.easy.query.core.expression.parser.abstraction.internal.ColumnResultSelector;
 import org.easy.query.core.impl.Select2SqlProvider;
-import org.easy.query.core.query.EasyEntityTableExpression;
-import org.easy.query.core.query.SqlExpressionContext;
 import org.easy.query.core.query.SqlEntityQueryExpression;
-import org.easy.query.core.util.EasyUtil;
 
 import java.math.BigDecimal;
 
@@ -104,7 +100,7 @@ public abstract class AbstractQueryable2<T1, T2> extends AbstractQueryable<T1> i
     public <TR> Queryable<TR> select(Class<TR> resultClass, SqlExpression2<SqlColumnAsSelector<T1, TR>, SqlColumnAsSelector<T2, TR>> selectExpression) {
         //todo
 //        getSqlBuilderProvider2().getSqlColumnAsSelector2()
-        return sqlEntityExpression.getRuntimeContext().getQueryableFactory().createQueryable(resultClass, sqlEntityExpression);
+        return sqlEntityExpression.getRuntimeContext().getSqlApiFactory().createQueryable(resultClass, sqlEntityExpression);
     }
     @Override
     public <TMember extends Number> BigDecimal sumBigDecimalOrDefault(SqlExpression2<ColumnResultSelector<T1, TMember>, ColumnResultSelector<T2, TMember>> columnSelectorExpression, BigDecimal def) {

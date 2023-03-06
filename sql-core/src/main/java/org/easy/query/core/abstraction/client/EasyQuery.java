@@ -6,7 +6,7 @@ import org.easy.query.core.basic.api.delete.EasyExpressionDelete;
 import org.easy.query.core.basic.api.select.Queryable;
 import org.easy.query.core.basic.api.update.EntityUpdate;
 import org.easy.query.core.basic.api.update.ExpressionUpdate;
-import org.easy.query.core.basic.api.insert.Insert;
+import org.easy.query.core.basic.api.insert.Insertable;
 import org.easy.query.core.basic.jdbc.tx.Transaction;
 
 import java.util.Collection;
@@ -27,8 +27,8 @@ public interface EasyQuery {
     }
     Transaction beginTransaction(Integer isolationLevel);
 
-    <T1> Insert<T1> insert(T1 entity);
-    <T1> Insert<T1> insert(Collection<T1> entities);
+    <T1> Insertable<T1> insert(T1 entity);
+    <T1> Insertable<T1> insert(Collection<T1> entities);
     <T1> ExpressionUpdate<T1> update(Class<T1> entityClass);
     <T1> EntityUpdate<T1> update(T1 entity);
     <T1> EntityUpdate<T1> update(Collection<T1> entities);

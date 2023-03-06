@@ -1,7 +1,7 @@
 package org.easy.query.core.expression.parser.impl;
 
 import org.easy.query.core.exception.EasyQueryException;
-import org.easy.query.core.expression.segment.SqlEntityProjectSegment;
+import org.easy.query.core.expression.segment.SqlEntitySegment;
 import org.easy.query.core.expression.segment.SqlSegment;
 import org.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import org.easy.query.core.expression.lambda.Property;
@@ -54,8 +54,8 @@ public class AbstractSqlColumnSelector<T1,TChain> implements ColumnSelector<T1, 
             SqlEntityQueryExpression sqlEntityQueryExpression = ((AnonymousEntityTableExpression) table).getSqlEntityQueryExpression();
             List<SqlSegment> sqlSegments = sqlEntityQueryExpression.getProjects().getSqlSegments();
             for (SqlSegment sqlSegment : sqlSegments) {
-                if(sqlSegment instanceof SqlEntityProjectSegment){
-                    String propertyName =EasyUtil.getAnonymousColumnName((SqlEntityProjectSegment) sqlSegment);
+                if(sqlSegment instanceof SqlEntitySegment){
+                    String propertyName =EasyUtil.getAnonymousColumnName((SqlEntitySegment) sqlSegment);
                     sqlSegmentBuilder.append(new ColumnSegment(table, propertyName, sqlEntityExpression));
                 }
                 else {

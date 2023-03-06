@@ -14,7 +14,7 @@ import java.util.List;
 public interface SqlEntityExpression extends SqlExpressionSegment {
     SqlExpressionContext getSqlExpressionContext();
     EasyQueryRuntimeContext getRuntimeContext();
-    void addSqlEntityTableExpression(SqlEntityTableExpression tableSegment);
+    void addSqlEntityTableExpression(SqlEntityTableExpression tableExpression);
     List<SqlEntityTableExpression> getTables();
     SqlEntityTableExpression getTable(int index);
     String getQuoteName(String value);

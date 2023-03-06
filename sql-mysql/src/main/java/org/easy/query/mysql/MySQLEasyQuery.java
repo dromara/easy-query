@@ -1,14 +1,14 @@
 package org.easy.query.mysql;
 
 import org.easy.query.core.abstraction.EasyQueryRuntimeContext;
-import org.easy.query.core.abstraction.EasyQueryableFactory;
+import org.easy.query.core.abstraction.EasySqlApiFactory;
 import org.easy.query.core.basic.api.select.Queryable;
 import org.easy.query.core.basic.api.delete.EasyDelete;
 import org.easy.query.core.basic.api.delete.EasyExpressionDelete;
 import org.easy.query.core.basic.jdbc.con.EasyConnectionManager;
 import org.easy.query.core.basic.api.update.EntityUpdate;
 import org.easy.query.core.basic.api.update.ExpressionUpdate;
-import org.easy.query.core.basic.api.insert.Insert;
+import org.easy.query.core.basic.api.insert.Insertable;
 import org.easy.query.core.basic.jdbc.tx.Transaction;
 import org.easy.query.core.query.EasySqlExpressionContext;
 import org.easy.query.mysql.base.*;
@@ -26,11 +26,11 @@ import java.util.Collection;
  */
 public class MySQLEasyQuery implements EasyQuery {
     private final EasyQueryRuntimeContext runtimeContext;
-    private final EasyQueryableFactory easyQueryableFactory;
+    private final EasySqlApiFactory easySqlApiFactory;
     public MySQLEasyQuery(EasyQueryRuntimeContext runtimeContext){
 
         this.runtimeContext = runtimeContext;
-        easyQueryableFactory=runtimeContext.getQueryableFactory();
+        easySqlApiFactory=runtimeContext.getSqlApiFactory();
     }
 
     @Override
@@ -40,12 +40,12 @@ public class MySQLEasyQuery implements EasyQuery {
 
     @Override
     public <T1> Queryable<T1> query(Class<T1> clazz) {
-        return easyQueryableFactory.createQueryable(clazz,runtimeContext);
+        return easySqlApiFactory.createQueryable(clazz,runtimeContext);
     }
 
     @Override
     public <T1> Queryable<T1> query(Class<T1> clazz, String alias) {
-        return easyQueryableFactory.createQueryable(clazz,runtimeContext,alias);
+        return easySqlApiFactory.createQueryable(clazz,runtimeContext,alias);
     }
     @Override
     public Transaction beginTransaction(Integer isolationLevel) {
@@ -59,21 +59,19 @@ public class MySQLEasyQuery implements EasyQuery {
 //    }
 
     @Override
-    public <T1> Insert<T1> insert(T1 entity) {
+    public <T1> Insertable<T1> insert(T1 entity) {
         if(entity==null){
-            return new MySQLLazyInsert<T1>(new MySQLInsertExpression(new EasySqlExpressionContext(runtimeContext,null)));
+            return easySqlApiFactory.createEmptyInsertable(runtimeContext,null);
         }
-        return new MySQLInsert<>((Class<T1>) entity.getClass(),new MySQLInsertExpression(new EasySqlExpressionContext(runtimeContext,null))).insert(entity);
+        return easySqlApiFactory.createInsertable((Class<T1>) entity.getClass(),runtimeContext,null).insert(entity);
     }
 
     @Override
-    public <T1> Insert<T1> insert(Collection<T1> entities) {
+    public <T1> Insertable<T1> insert(Collection<T1> entities) {
         if(entities==null||entities.isEmpty()){
-            return new MySQLLazyInsert<T1>(new MySQLInsertExpression(new EasySqlExpressionContext(runtimeContext,null)));
+            return easySqlApiFactory.createEmptyInsertable(runtimeContext,null);
         }
-        MySQLInsert<T1> t1MySQLInsert = new MySQLInsert<>((Class<T1>) entities.iterator().next().getClass(), new MySQLInsertExpression(new EasySqlExpressionContext(runtimeContext,null)));
-        t1MySQLInsert.insert(entities);
-        return t1MySQLInsert;
+        return easySqlApiFactory.createInsertable((Class<T1>) entities.iterator().next().getClass(),runtimeContext,null).insert(entities);
     }
 
     @Override

@@ -5,6 +5,7 @@ import org.easy.query.core.abstraction.*;
 import org.easy.query.core.abstraction.client.EasyQuery;
 import org.easy.query.core.abstraction.metadata.EntityMetadataManager;
 import org.easy.query.core.abstraction.sql.PageResult;
+import org.easy.query.core.basic.api.def.DefaultEasySqlApiFactory;
 import org.easy.query.core.basic.api.select.Queryable;
 import org.easy.query.core.enums.AggregatePredicateCompare;
 import org.easy.query.core.basic.jdbc.tx.DefaultConnectionManager;
@@ -17,7 +18,6 @@ import org.easy.query.core.configuration.EasyQueryConfiguration;
 import org.easy.query.core.exception.EasyQueryException;
 import org.easy.query.core.metadata.DefaultEntityMetadataManager;
 import org.easy.query.mysql.MySQLEasyQuery;
-import org.easy.query.mysql.MySQLEasyQueryableFactory;
 import org.easy.query.mysql.MySQLSqlExpressionFactory;
 import org.easy.query.mysql.config.MySQLDialect;
 import org.easy.test.*;
@@ -31,7 +31,8 @@ public class Main {
     private static final String driver = "com.mysql.cj.jdbc.Driver";
     private static final String username = "root";
     private static final String password = "root";
-    private static final String url = "jdbc:mysql://127.0.0.1:3306/dbdbd0?serverTimezone=GMT%2B8&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&rewriteBatchedStatements=true";
+    private static final String url = "jdbc:mysql://127.0.0.1:3306/dbdbd0?serverTimezone=GMT%2B8&characterEncoding=utf-8&useSSL=false";
+//    private static final String url = "jdbc:mysql://127.0.0.1:3306/dbdbd0?serverTimezone=GMT%2B8&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&rewriteBatchedStatements=true";
     private static EasyQuery client;
 
     public static void main(String[] args) {
@@ -108,7 +109,7 @@ public class Main {
         EntityMetadataManager entityMetadataManager = new DefaultEntityMetadataManager(configuration);
         EasyQueryLambdaFactory easyQueryLambdaFactory = new DefaultEasyQueryLambdaFactory();
         MySQLSqlExpressionFactory mySQLSqlExpressionFactory = new MySQLSqlExpressionFactory();
-        EasyQueryableFactory easyQueryableFactory = new MySQLEasyQueryableFactory(mySQLSqlExpressionFactory);
+        EasySqlApiFactory easyQueryableFactory = new DefaultEasySqlApiFactory(mySQLSqlExpressionFactory);
         DefaultEasyQueryRuntimeContext jqdcRuntimeContext = new DefaultEasyQueryRuntimeContext(configuration, entityMetadataManager, easyQueryLambdaFactory, connectionManager, defaultExecutor, jdbcTypeHandler,easyQueryableFactory,mySQLSqlExpressionFactory);
 //        String[] packages = scanPackages;
 //        for (String packageName : packages) {

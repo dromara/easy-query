@@ -8,9 +8,9 @@ import java.util.Collection;
  * @Date: 2023/2/20 08:48
  * @Created by xuejiaming
  */
-public interface Insert<T> {
-    Insert<T> insert(T entity);
-   default Insert<T> insert(Collection<T> entities){
+public interface Insertable<T> {
+    Insertable<T> insert(T entity);
+   default Insertable<T> insert(Collection<T> entities){
        for (T entity : entities) {
            insert(entity);
        }

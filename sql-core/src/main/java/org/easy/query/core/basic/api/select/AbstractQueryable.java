@@ -16,12 +16,9 @@ import org.easy.query.core.expression.parser.abstraction.SqlColumnSelector;
 import org.easy.query.core.expression.parser.abstraction.SqlPredicate;
 import org.easy.query.core.expression.parser.abstraction.internal.ColumnSelector;
 import org.easy.query.core.expression.segment.SelectConstSegment;
-import org.easy.query.core.expression.segment.SelectCountSegment;
-import org.easy.query.core.expression.segment.SqlSegment;
 import org.easy.query.core.expression.segment.builder.ProjectSqlBuilderSegment;
 import org.easy.query.core.query.SqlEntityQueryExpression;
 import org.easy.query.core.query.SqlEntityTableExpression;
-import org.easy.query.core.query.SqlExpressionContext;
 import org.easy.query.core.util.EasyUtil;
 
 import java.math.BigDecimal;
@@ -52,7 +49,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
 
     @Override
     public Queryable<T1> cloneQueryable() {
-        return sqlEntityExpression.getRuntimeContext().getQueryableFactory().cloneQueryable(this);
+        return sqlEntityExpression.getRuntimeContext().getSqlApiFactory().cloneQueryable(this);
     }
 
     @Override
@@ -252,11 +249,6 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
         return toInternalList(resultClass);
     }
 
-    @Override
-    public String toSql() {
-        return null;
-    }
-
     /**
      * 子类实现方法
      *
@@ -273,14 +265,14 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     public Queryable<T1> select(SqlExpression<SqlColumnSelector<T1>> selectExpression) {
         SqlColumnSelector<T1> sqlColumnSelector = getSqlBuilderProvider1().getSqlColumnSelector1(sqlEntityExpression.getProjects());
         selectExpression.apply(sqlColumnSelector);
-        return sqlEntityExpression.getRuntimeContext().getQueryableFactory().createQueryable(queryClass(), sqlEntityExpression);
+        return sqlEntityExpression.getRuntimeContext().getSqlApiFactory().createQueryable(queryClass(), sqlEntityExpression);
     }
 
     @Override
     public <TR> Queryable<TR> select(Class<TR> resultClass, SqlExpression<SqlColumnAsSelector<T1, TR>> selectExpression) {
         SqlColumnAsSelector<T1, TR> sqlColumnSelector = getSqlBuilderProvider1().getSqlColumnAsSelector1(sqlEntityExpression.getProjects());
         selectExpression.apply(sqlColumnSelector);
-        return sqlEntityExpression.getRuntimeContext().getQueryableFactory().createQueryable(resultClass, sqlEntityExpression);
+        return sqlEntityExpression.getRuntimeContext().getSqlApiFactory().createQueryable(resultClass, sqlEntityExpression);
     }
 
     @Override
@@ -295,7 +287,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
         SqlColumnAsSelector<T1, TR> sqlColumnSelector = getSqlBuilderProvider1().getSqlColumnAsSelector1(sqlEntityExpression.getProjects());
         SqlExpression<SqlColumnAsSelector<T1, TR>> selectExpression = getDefaultColumnAsAll();
         selectExpression.apply(sqlColumnSelector);
-        return sqlEntityExpression.getRuntimeContext().getQueryableFactory().createQueryable(resultClass, sqlEntityExpression);
+        return sqlEntityExpression.getRuntimeContext().getSqlApiFactory().createQueryable(resultClass, sqlEntityExpression);
     }
 
 //    @Override
@@ -439,7 +431,7 @@ sqlEntityExpression.getProjects().getSqlSegments().clear();
 
     @Override
     public <T2> Queryable2<T1, T2> leftJoin(Class<T2> joinClass, SqlExpression2<SqlPredicate<T1>, SqlPredicate<T2>> on) {
-        Queryable2<T1, T2> queryable2 = sqlEntityExpression.getRuntimeContext().getQueryableFactory().createQueryable2(t1Class, joinClass, MultiTableTypeEnum.LEFT_JOIN, sqlEntityExpression);
+        Queryable2<T1, T2> queryable2 = sqlEntityExpression.getRuntimeContext().getSqlApiFactory().createQueryable2(t1Class, joinClass, MultiTableTypeEnum.LEFT_JOIN, sqlEntityExpression);
         SqlPredicate<T1> on1 = queryable2.getSqlBuilderProvider2().getSqlOnPredicate1();
         SqlPredicate<T2> on2 = queryable2.getSqlBuilderProvider2().getSqlOnPredicate2();
         on.apply(on1, on2);
@@ -449,7 +441,7 @@ sqlEntityExpression.getProjects().getSqlSegments().clear();
 
     @Override
     public <T2> Queryable2<T1, T2> innerJoin(Class<T2> joinClass, SqlExpression2<SqlPredicate<T1>, SqlPredicate<T2>> on) {
-        Queryable2<T1, T2> queryable2 = sqlEntityExpression.getRuntimeContext().getQueryableFactory().createQueryable2(t1Class, joinClass, MultiTableTypeEnum.INNER_JOIN, sqlEntityExpression);
+        Queryable2<T1, T2> queryable2 = sqlEntityExpression.getRuntimeContext().getSqlApiFactory().createQueryable2(t1Class, joinClass, MultiTableTypeEnum.INNER_JOIN, sqlEntityExpression);
         SqlPredicate<T1> sqlOnPredicate1 = queryable2.getSqlBuilderProvider2().getSqlOnPredicate1();
         SqlPredicate<T2> sqlOnPredicate2 = queryable2.getSqlBuilderProvider2().getSqlOnPredicate2();
         on.apply(sqlOnPredicate1, sqlOnPredicate2);

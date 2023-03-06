@@ -8,7 +8,7 @@ import org.easy.query.core.query.SqlEntityTableExpression;
  * @Date: 2023/3/4 23:48
  * @Created by xuejiaming
  */
-public interface SqlEntityProjectSegment extends SqlSegment {
+public interface SqlEntitySegment extends SqlSegment {
     SqlEntityTableExpression getTable();
     String getPropertyName();
     String getAlias();

@@ -18,7 +18,7 @@ public class DefaultEasyQueryRuntimeContext implements EasyQueryRuntimeContext {
     private final EasyConnectionManager easyConnectionManager;
     private final EasyExecutor easyExecutor;
     private final EasyJdbcTypeHandlerManager easyJdbcTypeHandler;
-    private final EasyQueryableFactory easyQueryableFactory;
+    private final EasySqlApiFactory easyQueryableFactory;
     private final EasySqlExpressionFactory easySqlExpressionFactory;
 
     public DefaultEasyQueryRuntimeContext(EasyQueryConfiguration easyQueryConfiguration,
@@ -27,7 +27,7 @@ public class DefaultEasyQueryRuntimeContext implements EasyQueryRuntimeContext {
                                           EasyConnectionManager easyConnectionManager,
                                           EasyExecutor easyExecutor,
                                           EasyJdbcTypeHandlerManager easyJdbcTypeHandler,
-                                          EasyQueryableFactory easyQueryableFactory,
+                                          EasySqlApiFactory easyQueryableFactory,
                                           EasySqlExpressionFactory easySqlExpressionFactory){
         this.easyQueryConfiguration = easyQueryConfiguration;
         this.entityMetadataManager = entityMetadataManager;
@@ -70,7 +70,7 @@ public class DefaultEasyQueryRuntimeContext implements EasyQueryRuntimeContext {
     }
 
     @Override
-    public EasyQueryableFactory getQueryableFactory() {
+    public EasySqlApiFactory getSqlApiFactory() {
         return easyQueryableFactory;
     }
 

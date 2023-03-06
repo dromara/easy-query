@@ -22,11 +22,11 @@ import java.util.List;
  * @Date: 2023/2/20 12:30
  * @Created by xuejiaming
  */
-public abstract class AbstractInsert<T> implements Insert<T> {
+public abstract class AbstractInsertable<T> implements Insertable<T> {
     protected final List<T> entities;
     protected final SqlEntityInsertExpression sqlEntityInsertExpression;
 
-    public AbstractInsert(Class<T> clazz,  SqlEntityInsertExpression sqlEntityInsertExpression) {
+    public AbstractInsertable(Class<T> clazz, SqlEntityInsertExpression sqlEntityInsertExpression) {
         this.sqlEntityInsertExpression = sqlEntityInsertExpression;
         this.entities = new ArrayList<>();
         EntityMetadata entityMetadata = this.sqlEntityInsertExpression.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(clazz);
@@ -37,7 +37,7 @@ public abstract class AbstractInsert<T> implements Insert<T> {
     }
 
     @Override
-    public Insert<T> insert(T entity) {
+    public Insertable<T> insert(T entity) {
         if (entity != null) {
             entities.add(entity);
         }

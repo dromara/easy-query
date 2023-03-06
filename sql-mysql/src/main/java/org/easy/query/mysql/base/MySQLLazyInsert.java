@@ -1,6 +1,6 @@
 package org.easy.query.mysql.base;
 
-import org.easy.query.core.basic.api.insert.Insert;
+import org.easy.query.core.basic.api.insert.Insertable;
 import org.easy.query.core.query.SqlEntityInsertExpression;
 
 /**
@@ -9,7 +9,7 @@ import org.easy.query.core.query.SqlEntityInsertExpression;
  * @Date: 2023/2/23 22:49
  * @Created by xuejiaming
  */
-public class MySQLLazyInsert<T> implements Insert<T> {
+public class MySQLLazyInsert<T> implements Insertable<T> {
     private final SqlEntityInsertExpression sqlEntityInsertExpression;
 
     public MySQLLazyInsert(SqlEntityInsertExpression sqlEntityInsertExpression){
@@ -17,7 +17,7 @@ public class MySQLLazyInsert<T> implements Insert<T> {
         this.sqlEntityInsertExpression = sqlEntityInsertExpression;
     }
     @Override
-    public Insert<T> insert(T entity) {
+    public Insertable<T> insert(T entity) {
     if(entity==null){
         return  this;
     }

@@ -9,7 +9,7 @@ import org.easy.query.core.query.SqlEntityTableExpression;
  * @Date: 2023/2/13 15:18
  * @Created by xuejiaming
  */
-public class ColumnSegment implements SqlEntityProjectSegment {
+public class ColumnSegment implements SqlEntitySegment {
 
 
     protected final SqlEntityTableExpression table;

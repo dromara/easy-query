@@ -2,7 +2,6 @@ package org.easy.query.core.expression.segment;
 
 import org.easy.query.core.abstraction.sql.enums.IEasyFunc;
 import org.easy.query.core.query.SqlEntityExpression;
-import org.easy.query.core.query.SqlEntityQueryExpression;
 import org.easy.query.core.query.SqlEntityTableExpression;
 
 /**
@@ -11,7 +10,7 @@ import org.easy.query.core.query.SqlEntityTableExpression;
  * @Date: 2023/2/19 22:17
  * @Created by xuejiaming
  */
-public class FuncColumnSegment  implements SqlEntityProjectSegment {
+public class FuncColumnSegment  implements SqlEntitySegment {
 
 
     protected final SqlEntityTableExpression table;

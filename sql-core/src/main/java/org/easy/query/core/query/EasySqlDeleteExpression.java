@@ -17,65 +17,12 @@ import java.util.List;
  * @Date: 2023/3/4 16:32
  * @Created by xuejiaming
  */
-public abstract class EasySqlDeleteExpression implements SqlEntityDeleteExpression{
-    private final SqlExpressionContext queryExpressionContext;
-    private final List<SqlEntityTableExpression> tables;
+public abstract class EasySqlDeleteExpression extends AbstractSqlEntityExpression implements SqlEntityDeleteExpression{
     protected final PredicateSegment where;
     protected SqlBuilderSegment whereColumns;
     public EasySqlDeleteExpression(SqlExpressionContext queryExpressionContext) {
-        this.queryExpressionContext = queryExpressionContext;
-        this.tables = new ArrayList<>();
+        super(queryExpressionContext);
         this.where=new AndPredicateSegment(true);
-    }
-    @Override
-    public SqlExpressionContext getSqlExpressionContext() {
-        return queryExpressionContext;
-    }
-
-    @Override
-    public EasyQueryRuntimeContext getRuntimeContext() {
-        return queryExpressionContext.getRuntimeContext();
-    }
-
-    @Override
-    public void addSqlEntityTableExpression(SqlEntityTableExpression tableSegment) {
-        tables.add(tableSegment);
-    }
-
-    @Override
-    public List<SqlEntityTableExpression> getTables() {
-        return tables;
-    }
-
-    @Override
-    public SqlEntityTableExpression getTable(int index) {
-        return tables.get(index);
-    }
-    @Override
-    public String getQuoteName(String value) {
-        return queryExpressionContext.getQuoteName(value);
-    }
-
-    @Override
-    public String getSqlOwnerColumn(SqlEntityTableExpression table, String propertyName) {
-        String alias = table.getAlias();
-        String columnName = table.getColumnName(propertyName);
-        String quoteName = getQuoteName(columnName);
-        if (alias == null) {
-            return quoteName;
-        } else {
-            return alias + "." + quoteName;
-        }
-    }
-
-    @Override
-    public List<SQLParameter> getParameters() {
-        return queryExpressionContext.getParameters();
-    }
-
-    @Override
-    public void addParameter(SQLParameter parameter) {
-        queryExpressionContext.addParameter(parameter);
     }
 
     @Override

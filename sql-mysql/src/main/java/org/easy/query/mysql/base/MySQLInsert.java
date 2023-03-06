@@ -1,6 +1,6 @@
 package org.easy.query.mysql.base;
 
-import org.easy.query.core.basic.api.insert.AbstractInsert;
+import org.easy.query.core.basic.api.insert.AbstractInsertable;
 import org.easy.query.core.query.SqlEntityInsertExpression;
 
 /**
@@ -9,7 +9,7 @@ import org.easy.query.core.query.SqlEntityInsertExpression;
  * @Date: 2023/2/23 22:28
  * @Created by xuejiaming
  */
-public class MySQLInsert<T> extends AbstractInsert<T> {
+public class MySQLInsert<T> extends AbstractInsertable<T> {
     public MySQLInsert(Class<T> clazz, SqlEntityInsertExpression sqlEntityExpression) {
         super(clazz, sqlEntityExpression);
     }
