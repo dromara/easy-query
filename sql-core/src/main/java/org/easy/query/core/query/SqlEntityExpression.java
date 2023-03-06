@@ -21,4 +21,5 @@ public interface SqlEntityExpression extends SqlExpressionSegment {
     String getSqlOwnerColumn(SqlEntityTableExpression table, String propertyName);
     List<SQLParameter> getParameters();
     void addParameter(SQLParameter parameter);
+    void setLogicDelete(boolean logicDelete);
 }

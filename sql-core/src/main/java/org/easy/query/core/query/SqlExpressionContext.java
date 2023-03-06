@@ -20,5 +20,6 @@ public interface SqlExpressionContext {
      String getAlias();
      String createTableAlias();
     String getQuoteName(String value);
-    SqlExpressionContext cloneSqlExpressionContext();
+    void extractParameters(SqlExpressionContext sqlExpressionContext);
+    void clearParameters();
 }

@@ -1,6 +1,5 @@
 package org.easy.query.core.basic.api.delete;
 
-import org.easy.query.core.basic.api.update.ExpressionUpdate;
 import org.easy.query.core.expression.lambda.SqlExpression;
 import org.easy.query.core.expression.parser.abstraction.SqlPredicate;
 
@@ -10,10 +9,10 @@ import org.easy.query.core.expression.parser.abstraction.SqlPredicate;
  * @Date: 2023/2/28 12:24
  * @Created by xuejiaming
  */
-public interface EasyExpressionDelete<T> extends EasyDelete<T> {
-    default EasyExpressionDelete<T> where(SqlExpression<SqlPredicate<T>> whereExpression){
+public interface ExpressionDeletable<T> extends Deletable<T, ExpressionDeletable<T>> {
+    default ExpressionDeletable<T> where(SqlExpression<SqlPredicate<T>> whereExpression){
         return where(true,whereExpression);
     }
-    EasyExpressionDelete<T> where(boolean condition,SqlExpression<SqlPredicate<T>> whereExpression);
-    EasyDelete<T> deleteById(Object id);
+    ExpressionDeletable<T> where(boolean condition, SqlExpression<SqlPredicate<T>> whereExpression);
+    Deletable<T, ExpressionDeletable<T>> deleteById(Object id);
 }

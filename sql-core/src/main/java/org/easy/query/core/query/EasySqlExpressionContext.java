@@ -5,6 +5,7 @@ import org.easy.query.core.basic.jdbc.parameter.SQLParameter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @FileName: EasyQueryExpressionContext.java
@@ -56,13 +57,20 @@ public class EasySqlExpressionContext implements SqlExpressionContext {
     }
 
     @Override
-    public SqlExpressionContext cloneSqlExpressionContext() {
-        EasySqlExpressionContext easySqExpressionContext = new EasySqlExpressionContext(runtimeContext,alias);
-        easySqExpressionContext.aliasSeq=this.aliasSeq;
-        easySqExpressionContext.params.addAll(this.params);
-        return easySqExpressionContext;
+    public void extractParameters(SqlExpressionContext sqlExpressionContext) {
+        if(!Objects.equals(this,sqlExpressionContext) &&!sqlExpressionContext.getParameters().isEmpty())
+        {
+            params.addAll(sqlExpressionContext.getParameters());
+        }
+
     }
 
+    @Override
+    public void clearParameters() {
+        if(!params.isEmpty()){
+            params.clear();
+        }
+    }
     //    @Override
 //    public String getSqlColumnSegment(SqlEntityTableExpressionSegment table, String propertyName) {
 //        String alias = table.getAlias();

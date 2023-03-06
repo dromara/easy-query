@@ -6,7 +6,7 @@ package org.easy.query.core.basic.api.update;
  * @Date: 2023/2/24 22:04
  * @Created by xuejiaming
  */
-public interface Update<T> {
+public interface Updatable<T> {
 //    Insert<T> insertColumns(SqlExpression<SqlPredicate<T>> columnExpression);
 //    Insert<T> ignoreColumns(SqlExpression<SqlColumnSelector<T>> columnExpression);
 

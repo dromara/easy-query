@@ -17,12 +17,13 @@ import java.util.List;
  * @Date: 2023/3/4 16:32
  * @Created by xuejiaming
  */
-public abstract class EasySqlDeleteExpression extends AbstractSqlEntityExpression implements SqlEntityDeleteExpression{
+public abstract class EasySqlDeleteExpression extends AbstractSqlEntityExpression implements SqlEntityDeleteExpression {
     protected final PredicateSegment where;
     protected SqlBuilderSegment whereColumns;
+
     public EasySqlDeleteExpression(SqlExpressionContext queryExpressionContext) {
         super(queryExpressionContext);
-        this.where=new AndPredicateSegment(true);
+        this.where = new AndPredicateSegment(true);
     }
 
     @Override
@@ -37,14 +38,15 @@ public abstract class EasySqlDeleteExpression extends AbstractSqlEntityExpressio
 
     @Override
     public SqlBuilderSegment getWhereColumns() {
-        if(whereColumns==null){
-            whereColumns=new ProjectSqlBuilderSegment();
+        if (whereColumns == null) {
+            whereColumns = new ProjectSqlBuilderSegment();
         }
         return whereColumns;
     }
 
     @Override
     public boolean hasWhereColumns() {
-        return whereColumns!=null&&whereColumns.isNotEmpty();
+        return whereColumns != null && whereColumns.isNotEmpty();
     }
+
 }

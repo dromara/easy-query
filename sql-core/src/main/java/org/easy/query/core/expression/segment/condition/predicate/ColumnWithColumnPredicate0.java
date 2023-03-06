@@ -2,7 +2,6 @@ package org.easy.query.core.expression.segment.condition.predicate;
 
 import org.easy.query.core.enums.SqlPredicateCompare;
 import org.easy.query.core.query.SqlEntityExpression;
-import org.easy.query.core.query.SqlEntityQueryExpression;
 import org.easy.query.core.query.SqlEntityTableExpression;
 
 /**

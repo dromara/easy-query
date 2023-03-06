@@ -15,10 +15,12 @@ import java.util.List;
 public abstract class AbstractSqlEntityExpression implements SqlEntityExpression {
     protected final SqlExpressionContext queryExpressionContext;
     protected final List<SqlEntityTableExpression> tables;
+    protected boolean logicDelete;
 
     public AbstractSqlEntityExpression(SqlExpressionContext queryExpressionContext){
         this.queryExpressionContext = queryExpressionContext;
         this.tables = new ArrayList<>();
+        logicDelete=true;
     }
 
     @Override
@@ -69,5 +71,9 @@ public abstract class AbstractSqlEntityExpression implements SqlEntityExpression
     @Override
     public void addParameter(SQLParameter parameter) {
         queryExpressionContext.addParameter(parameter);
+    }
+    @Override
+    public void setLogicDelete(boolean logicDelete) {
+        this.logicDelete = logicDelete;
     }
 }

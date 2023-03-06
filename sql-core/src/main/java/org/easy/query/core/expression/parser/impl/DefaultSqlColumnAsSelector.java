@@ -39,7 +39,7 @@ public class DefaultSqlColumnAsSelector<T1,TR> extends AbstractSqlColumnSelector
     }
 
     @Override
-    public SqlColumnAsSelector<T1, TR> columnCount(Property<TR, ?> alias) {
+    public SqlColumnAsSelector<T1, TR> columnCount(Property<T1, ?> column) {
         return this;
     }
 
@@ -53,7 +53,17 @@ public class DefaultSqlColumnAsSelector<T1,TR> extends AbstractSqlColumnSelector
     }
 
     @Override
+    public SqlColumnAsSelector<T1, TR> columnDistinctCount(Property<T1, ?> column) {
+        return null;
+    }
+
+    @Override
     public SqlColumnAsSelector<T1, TR> columnDistinctCount(Property<T1, ?> column, Property<TR, ?> alias) {
+        return null;
+    }
+
+    @Override
+    public SqlColumnAsSelector<T1, TR> columnSum(Property<T1, ?> column) {
         return null;
     }
 
@@ -63,7 +73,17 @@ public class DefaultSqlColumnAsSelector<T1,TR> extends AbstractSqlColumnSelector
     }
 
     @Override
+    public SqlColumnAsSelector<T1, TR> columnMax(Property<T1, ?> column) {
+        return null;
+    }
+
+    @Override
     public SqlColumnAsSelector<T1, TR> columnMax(Property<T1, ?> column, Property<TR, ?> alias) {
+        return null;
+    }
+
+    @Override
+    public SqlColumnAsSelector<T1, TR> columnMin(Property<T1, ?> column) {
         return null;
     }
 
@@ -73,7 +93,17 @@ public class DefaultSqlColumnAsSelector<T1,TR> extends AbstractSqlColumnSelector
     }
 
     @Override
+    public SqlColumnAsSelector<T1, TR> columnAvg(Property<T1, ?> column) {
+        return null;
+    }
+
+    @Override
     public SqlColumnAsSelector<T1, TR> columnAvg(Property<T1, ?> column, Property<TR, ?> alias) {
+        return null;
+    }
+
+    @Override
+    public SqlColumnAsSelector<T1, TR> columnLen(Property<T1, ?> column) {
         return null;
     }
 

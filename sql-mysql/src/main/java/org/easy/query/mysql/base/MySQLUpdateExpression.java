@@ -102,7 +102,7 @@ public class MySQLUpdateExpression extends EasySqlUpdateExpression {
                 if(sqlSegment instanceof ColumnPropertyPredicate){
                     String propertyName = ((ColumnPropertyPredicate) sqlSegment).getPropertyName();
                     if(whereProperties.contains(propertyName)){
-                        getParameters().remove(realIndex);
+//                        getParameters().remove(realIndex);
                         sqlSegments.remove(realIndex);
                         offsetIndex++;
                     }

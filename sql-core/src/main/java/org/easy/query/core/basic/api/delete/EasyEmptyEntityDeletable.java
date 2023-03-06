@@ -1,14 +1,12 @@
-package org.easy.query.mysql.base;
-
-import org.easy.query.core.basic.api.delete.EasyDelete;
+package org.easy.query.core.basic.api.delete;
 
 /**
- * @FileName: MySQLEmptyDelete.java
+ * @FileName: EasyEmptyEntityDeletable.java
  * @Description: 文件说明
- * @Date: 2023/3/1 12:57
+ * @Date: 2023/3/6 13:22
  * @Created by xuejiaming
  */
-public class MySQLEmptyDelete<T1> implements EasyDelete<T1> {
+public class EasyEmptyEntityDeletable<T> implements EntityDeletable<T> {
     @Override
     public long executeRows() {
         return 0;
@@ -22,5 +20,10 @@ public class MySQLEmptyDelete<T1> implements EasyDelete<T1> {
     @Override
     public String toSql() {
         return null;
+    }
+
+    @Override
+    public EntityDeletable<T> disableLogicDelete() {
+        return this;
     }
 }

@@ -27,6 +27,7 @@ public class MySQLQueryExpression extends EasySqlQueryExpression {
 
     @Override
     public String toSql() {
+        queryExpressionContext.clearParameters();
         int tableCount = getTables().size();
         if (tableCount == 0) {
             throw new EasyQueryException("未找到查询表信息");
@@ -34,8 +35,11 @@ public class MySQLQueryExpression extends EasySqlQueryExpression {
         String select = getProjects().toSql();
         Iterator<SqlEntityTableExpression> iterator = getTables().iterator();
         SqlEntityTableExpression firstTable = iterator.next();
-        if(tableCount==1&&firstTable instanceof  AnonymousEntityTableExpression&&StringUtil.isEmpty(select)){
-            return ((AnonymousEntityTableExpression)firstTable).getSqlEntityQueryExpression().toSql();
+        if (tableCount == 1 && firstTable instanceof AnonymousEntityTableExpression && StringUtil.isEmpty(select)) {
+            SqlEntityQueryExpression sqlEntityQueryExpression = ((AnonymousEntityTableExpression) firstTable).getSqlEntityQueryExpression();
+            String s = sqlEntityQueryExpression.toSql();
+            queryExpressionContext.extractParameters(sqlEntityQueryExpression.getSqlExpressionContext());
+            return s;
         }
         StringBuilder sql = new StringBuilder("SELECT ");
 
@@ -48,10 +52,10 @@ public class MySQLQueryExpression extends EasySqlQueryExpression {
         } else {
             sql.append(select);
         }
-        sql.append(firstTable.toSql());
-        while(iterator.hasNext()){
+        sql.append(toTableExpressionSql(firstTable));
+        while (iterator.hasNext()) {
             SqlEntityTableExpression table = iterator.next();
-            sql.append(table.toSql());// [from table alias] | [left join table alias] 匿名表 应该使用  [left join (table) alias]
+            sql.append(toTableExpressionSql(table));// [from table alias] | [left join table alias] 匿名表 应该使用  [left join (table) alias]
 
             PredicateSegment on = getTableOnWithQueryFilter(table);
             if (on != null && on.isNotEmpty()) {
@@ -62,7 +66,7 @@ public class MySQLQueryExpression extends EasySqlQueryExpression {
         if (where != null && where.isNotEmpty()) {
             sql.append(" WHERE ").append(where.toSql());
         }
-        if (hasGroup()) {
+           if (hasGroup()) {
             sql.append(" GROUP BY ").append(getGroup().toSql());
         }
         if (hasHaving()) {
@@ -108,18 +112,29 @@ public class MySQLQueryExpression extends EasySqlQueryExpression {
         return predicateSegment;
     }
 
+    private String toTableExpressionSql(SqlEntityTableExpression sqlEntityTableExpression) {
+        if (sqlEntityTableExpression instanceof AnonymousEntityTableExpression) {
+            SqlEntityQueryExpression sqlEntityQueryExpression = ((AnonymousEntityTableExpression) sqlEntityTableExpression).getSqlEntityQueryExpression();
+            String s = sqlEntityTableExpression.toSql();
+            queryExpressionContext.extractParameters(sqlEntityQueryExpression.getSqlExpressionContext());
+            return s;
+        }
+        return sqlEntityTableExpression.toSql();
+    }
+
+
     @Override
     public SqlEntityQueryExpression cloneSqlQueryExpression() {
 
-        SqlExpressionContext sqlExpressionContext = getSqlExpressionContext().cloneSqlExpressionContext();
+        SqlExpressionContext sqlExpressionContext = getSqlExpressionContext();
         EasySqlExpressionFactory sqlExpressionFactory = getRuntimeContext().getSqlExpressionFactory();
-        MySQLQueryExpression sqlEntityQueryExpression = (MySQLQueryExpression)sqlExpressionFactory.createSqlEntityQueryExpression(sqlExpressionContext);
-        sqlEntityQueryExpression.where=super.where;
-        sqlEntityQueryExpression.group=super.group;
-        sqlEntityQueryExpression.having=super.having;
-        sqlEntityQueryExpression.order=super.order;
-        sqlEntityQueryExpression.offset=super.offset;
-        sqlEntityQueryExpression.rows=super.rows;
+        MySQLQueryExpression sqlEntityQueryExpression = (MySQLQueryExpression) sqlExpressionFactory.createSqlEntityQueryExpression(sqlExpressionContext);
+        sqlEntityQueryExpression.where = super.where;
+        sqlEntityQueryExpression.group = super.group;
+        sqlEntityQueryExpression.having = super.having;
+        sqlEntityQueryExpression.order = super.order;
+        sqlEntityQueryExpression.offset = super.offset;
+        sqlEntityQueryExpression.rows = super.rows;
         List<SqlSegment> sqlSegments = super.projects.getSqlSegments();
         sqlEntityQueryExpression.projects.getSqlSegments().addAll(sqlSegments);
         sqlEntityQueryExpression.tables.addAll(super.tables);

@@ -21,11 +21,11 @@ public class ColumnPropertyPredicate implements SqlSegment {
         this.table = table;
         this.propertyName = propertyName;
         this.sqlEntityExpression = sqlEntityExpression;
-        sqlEntityExpression.addParameter(new PropertySQLParameter(table,propertyName));
     }
 
     @Override
     public String toSql() {
+        sqlEntityExpression.addParameter(new PropertySQLParameter(table,propertyName));
         String sqlColumnSegment = sqlEntityExpression.getSqlOwnerColumn(table,propertyName);
         return sqlColumnSegment + " = ?";
     }

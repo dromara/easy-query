@@ -6,7 +6,7 @@ package org.easy.query.core.basic.api.delete;
  * @Date: 2023/2/28 12:19
  * @Created by xuejiaming
  */
-public interface EasyDelete<T> {
+public interface Deletable<T,TChain> {
     /**
      * 返回受影响行数
      * @return
@@ -14,4 +14,5 @@ public interface EasyDelete<T> {
     long executeRows();
     void executeRows(Long expectRow,String error);
     String toSql();
+    TChain disableLogicDelete();
 }

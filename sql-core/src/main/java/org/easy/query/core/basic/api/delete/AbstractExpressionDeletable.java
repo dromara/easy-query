@@ -23,12 +23,12 @@ import java.util.Collection;
  * @Date: 2023/3/1 22:30
  * @Created by xuejiaming
  */
-public abstract   class AbstractExpressionDelete<T> implements EasyExpressionDelete<T> {
+public abstract   class AbstractExpressionDeletable<T> implements ExpressionDeletable<T> {
     protected final Class<T> clazz;
     protected final EasyEntityTableExpression table;
     protected final SqlEntityDeleteExpression sqlEntityDeleteExpression;
 
-    public AbstractExpressionDelete(Class<T> clazz, SqlEntityDeleteExpression sqlEntityDeleteExpression){
+    public AbstractExpressionDeletable(Class<T> clazz, SqlEntityDeleteExpression sqlEntityDeleteExpression){
         this.sqlEntityDeleteExpression = sqlEntityDeleteExpression;
 
         this.clazz = clazz;
@@ -56,7 +56,7 @@ public abstract   class AbstractExpressionDelete<T> implements EasyExpressionDel
     }
 
     @Override
-    public EasyExpressionDelete<T> where(boolean condition, SqlExpression<SqlPredicate<T>> whereExpression) {
+    public ExpressionDeletable<T> where(boolean condition, SqlExpression<SqlPredicate<T>> whereExpression) {
         if(condition){
             DefaultSqlPredicate<T> sqlPredicate = new DefaultSqlPredicate<>(0, sqlEntityDeleteExpression, sqlEntityDeleteExpression.getWhere());
             whereExpression.apply(sqlPredicate);
@@ -65,7 +65,7 @@ public abstract   class AbstractExpressionDelete<T> implements EasyExpressionDel
     }
 
     @Override
-    public EasyDelete<T> deleteById(Object id) {
+    public Deletable<T, ExpressionDeletable<T>> deleteById(Object id) {
 
         PredicateSegment where = sqlEntityDeleteExpression.getWhere();
         Collection<String> keyProperties = table.getEntityMetadata().getKeyProperties();
@@ -80,6 +80,12 @@ public abstract   class AbstractExpressionDelete<T> implements EasyExpressionDel
         andPredicateSegment
                 .setPredicate(new ColumnValuePredicate0(table, keyProperty, id, SqlPredicateCompareEnum.EQ, sqlEntityDeleteExpression));
         where.addPredicateSegment(andPredicateSegment);
+        return this;
+    }
+
+    @Override
+    public ExpressionDeletable<T> disableLogicDelete() {
+        sqlEntityDeleteExpression.setLogicDelete(false);
         return this;
     }
 }

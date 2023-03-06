@@ -17,8 +17,7 @@ import org.easy.query.core.expression.parser.abstraction.SqlPredicate;
 import org.easy.query.core.expression.parser.abstraction.internal.ColumnSelector;
 import org.easy.query.core.expression.segment.SelectConstSegment;
 import org.easy.query.core.expression.segment.builder.ProjectSqlBuilderSegment;
-import org.easy.query.core.query.SqlEntityQueryExpression;
-import org.easy.query.core.query.SqlEntityTableExpression;
+import org.easy.query.core.query.*;
 import org.easy.query.core.util.EasyUtil;
 
 import java.math.BigDecimal;
@@ -33,7 +32,7 @@ import java.util.List;
  */
 public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     protected final Class<T1> t1Class;
-//    protected final SqlEntityTableExpression sqlTable;
+    //    protected final SqlEntityTableExpression sqlTable;
     protected final SqlEntityQueryExpression sqlEntityExpression;
 //    protected final Select1SqlProvider<T1> sqlPredicateProvider;
 
@@ -94,7 +93,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     @Override
     public <TMember extends Number> BigDecimal sumBigDecimalOrDefault(Property<T1, TMember> column, BigDecimal def) {
 
-        Class<?> memberClass = selectAggregateFunc(column,EasyAggregate.SUM);
+        Class<?> memberClass = selectAggregateFunc(column, EasyAggregate.SUM);
         List<TMember> result = toInternalList((Class<TMember>) memberClass);
         if (result.isEmpty()) {
             return def;
@@ -109,7 +108,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     @Override
     public <TMember extends Number> TMember sumOrDefault(Property<T1, TMember> column, TMember def) {
 
-        Class<?> memberClass = selectAggregateFunc(column,EasyAggregate.SUM);
+        Class<?> memberClass = selectAggregateFunc(column, EasyAggregate.SUM);
         List<TMember> result = toInternalList((Class<TMember>) memberClass);
         if (result.isEmpty()) {
             return def;
@@ -139,7 +138,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     @Override
     public <TMember> TMember maxOrDefault(Property<T1, TMember> column, TMember def) {
 
-        Class<?> memberClass = selectAggregateFunc(column,EasyAggregate.MAX);
+        Class<?> memberClass = selectAggregateFunc(column, EasyAggregate.MAX);
         List<TMember> result = toInternalList((Class<TMember>) memberClass);
         if (result.isEmpty()) {
             return null;
@@ -149,7 +148,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
 
     @Override
     public <TMember> TMember minOrDefault(Property<T1, TMember> column, TMember def) {
-        Class<?> memberClass = selectAggregateFunc(column,EasyAggregate.MIN);
+        Class<?> memberClass = selectAggregateFunc(column, EasyAggregate.MIN);
         List<TMember> result = toInternalList((Class<TMember>) memberClass);
         if (result.isEmpty()) {
             return null;
@@ -159,7 +158,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
 
     @Override
     public <TMember> TMember avgOrDefault(Property<T1, TMember> column, TMember def) {
-        Class<?> memberClass = selectAggregateFunc(column,EasyAggregate.AVG);
+        Class<?> memberClass = selectAggregateFunc(column, EasyAggregate.AVG);
         List<TMember> result = toInternalList((Class<TMember>) memberClass);
         if (result.isEmpty()) {
             return null;
@@ -167,7 +166,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
         return result.get(0);
     }
 
-    private <TMember> Class<?> selectAggregateFunc(Property<T1, TMember> column, IEasyFunc easyFunc){
+    private <TMember> Class<?> selectAggregateFunc(Property<T1, TMember> column, IEasyFunc easyFunc) {
         SqlEntityTableExpression table = sqlEntityExpression.getTable(0);
         String propertyName = table.getPropertyName(column);
         ColumnMetadata columnMetadata = EasyUtil.getColumnMetadata(table, propertyName);
@@ -214,15 +213,22 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
 //        return list.get(0);
 //    }
     protected SqlExpression<SqlColumnSelector<T1>> getDefaultColumnAll() {
-        if (sqlEntityExpression.getGroup().isEmpty()&&sqlEntityExpression.getProjects().isEmpty()) {
+        if (sqlEntityExpression.getGroup().isEmpty() && sqlEntityExpression.getProjects().isEmpty() && moreTableExpressionOrNoAnonymous()) {
             return ColumnSelector::columnAll;
-        } else {
-            return null;
         }
+        return null;
+    }
+
+    /**
+     * 存在多张表或者不存在匿名表
+     * @return
+     */
+    private boolean moreTableExpressionOrNoAnonymous() {
+        return sqlEntityExpression.getTables().size() != 1 || !(sqlEntityExpression.getTables().get(0) instanceof AnonymousEntityTableExpression);
     }
 
     protected <TR> SqlExpression<SqlColumnAsSelector<T1, TR>> getDefaultColumnAsAll() {
-        if (sqlEntityExpression.getGroup().isEmpty()&&sqlEntityExpression.getProjects().isEmpty()) {
+        if (sqlEntityExpression.getGroup().isEmpty() && sqlEntityExpression.getProjects().isEmpty() && moreTableExpressionOrNoAnonymous()) {
             return ColumnSelector::columnAll;
         } else {
             return null;
@@ -231,6 +237,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
 
     @Override
     public List<T1> toList() {
+
         SqlExpression<SqlColumnSelector<T1>> selectorExpression = getDefaultColumnAll();
         if (selectorExpression != null) {
             SqlColumnSelector<T1> sqlColumnSelector = getSqlBuilderProvider1().getSqlColumnSelector1(sqlEntityExpression.getProjects());
@@ -384,12 +391,12 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
 //        SqlColumnSelector<T1> sqlColumnSelector = getSqlBuilderProvider1().getSqlColumnSelector1(selectContext.getProjects());
         SqlExpression<SqlColumnSelector<T1>> selectExpression = ColumnSelector::columnAll;
 //        selectExpression.apply(sqlColumnSelector);
-        return doPageResult(pageIndex, pageSize, clazz,selectExpression);
+        return doPageResult(pageIndex, pageSize, clazz, selectExpression);
     }
 
     @Override
     public PageResult<T1> toPageResult(long pageIndex, long pageSize, SqlExpression<SqlColumnSelector<T1>> selectExpression) {
-        return doPageResult(pageIndex, pageSize, t1Class,selectExpression);
+        return doPageResult(pageIndex, pageSize, t1Class, selectExpression);
     }
 
     protected <TR> PageResult<TR> doPageResult(long pageIndex, long pageSize, Class<TR> clazz, SqlExpression<SqlColumnSelector<T1>> selectExpression) {
@@ -407,7 +414,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
         //当剩余条数小于take数就取remainingCount
         long realTake = Math.min(remainingCount, take);
         this.limit(offset, realTake);
-sqlEntityExpression.getProjects().getSqlSegments().clear();
+        sqlEntityExpression.getProjects().getSqlSegments().clear();
         SqlColumnSelector<T1> sqlColumnSelector = getSqlBuilderProvider1().getSqlColumnSelector1(sqlEntityExpression.getProjects());
         selectExpression.apply(sqlColumnSelector);
         List<TR> data = this.toInternalList(clazz);
@@ -438,6 +445,14 @@ sqlEntityExpression.getProjects().getSqlSegments().clear();
         return queryable2;
     }
 
+    @Override
+    public <T2> Queryable2<T1, T2> leftJoin(Queryable<T2> t2Queryable, SqlExpression2<SqlPredicate<T1>, SqlPredicate<T2>> on) {
+        Queryable2<T1, T2> queryable2 = sqlEntityExpression.getRuntimeContext().getSqlApiFactory().createQueryable2(t1Class, t2Queryable, MultiTableTypeEnum.LEFT_JOIN, sqlEntityExpression);
+        SqlPredicate<T1> on1 = queryable2.getSqlBuilderProvider2().getSqlOnPredicate1();
+        SqlPredicate<T2> on2 = queryable2.getSqlBuilderProvider2().getSqlOnPredicate2();
+        on.apply(on1, on2);
+        return queryable2;
+    }
 
     @Override
     public <T2> Queryable2<T1, T2> innerJoin(Class<T2> joinClass, SqlExpression2<SqlPredicate<T1>, SqlPredicate<T2>> on) {

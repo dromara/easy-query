@@ -182,9 +182,12 @@ public interface Queryable<T1> extends Query<T1> {
     <TR> PageResult<TR> toPageResult(long pageIndex, long pageSize, Class<TR> clazz);
     <TR> PageResult<TR> toPageResult(long pageIndex, long pageSize, Class<TR> clazz, SqlExpression<SqlColumnAsSelector<T1,TR>> selectExpression);
     <T2> Queryable2<T1, T2> leftJoin(Class<T2> joinClass, SqlExpression2<SqlPredicate<T1>, SqlPredicate<T2>> on);
+    <T2> Queryable2<T1, T2> leftJoin(Queryable<T2> t2Queryable, SqlExpression2<SqlPredicate<T1>, SqlPredicate<T2>> on);
 
     <T2> Queryable2<T1, T2> innerJoin(Class<T2> joinClass, SqlExpression2<SqlPredicate<T1>, SqlPredicate<T2>> on);
 
     EasyQuerySqlBuilderProvider<T1> getSqlBuilderProvider1();
+
+//    Queryable<T1> disableLogicDelete();
 
 }

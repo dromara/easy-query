@@ -4,6 +4,7 @@ import org.easy.query.core.exception.EasyQueryException;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Objects;
 
 /**
  * @FileName: DefaultEasyConnection.java
@@ -14,6 +15,7 @@ import java.sql.SQLException;
 public class DefaultEasyConnection implements EasyConnection {
     private final Connection connection;
     private final Integer isolationLevel;
+    private  Integer originalIsolationLevel;
     private boolean closed = false;
     private boolean autoCommit;
 
@@ -21,11 +23,26 @@ public class DefaultEasyConnection implements EasyConnection {
 
         this.connection = connection;
         this.isolationLevel = isolationLevel;
+        setIsolationLevel();
     }
 
     @Override
     public Connection getConnection() {
         return connection;
+    }
+    private void setIsolationLevel(){
+        if(!closed){
+            if(isolationLevel!=null&&this.originalIsolationLevel==null){
+                try {
+                    this.originalIsolationLevel = connection.getTransactionIsolation();
+                    if(!this.isolationLevel.equals(originalIsolationLevel)){
+                        connection.setTransactionIsolation(isolationLevel);
+                    }
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
     }
 
     public void setAutoCommit(boolean autoCommit) {
@@ -75,7 +92,7 @@ public class DefaultEasyConnection implements EasyConnection {
                     if (!autoCommit) {
                         connection.setAutoCommit(true);
                     }
-                    if (this.isolationLevel != null) {
+                    if (this.originalIsolationLevel!=null&&!Objects.equals(this.isolationLevel,this.originalIsolationLevel)) {
                         connection.setTransactionIsolation(this.isolationLevel);
                     }
                     connection.close();

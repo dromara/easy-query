@@ -4,7 +4,6 @@ import org.easy.query.core.basic.jdbc.parameter.ConstSQLParameter;
 import org.easy.query.core.enums.SqlPredicateCompare;
 import org.easy.query.core.enums.SqlPredicateCompareEnum;
 import org.easy.query.core.query.SqlEntityExpression;
-import org.easy.query.core.query.SqlEntityQueryExpression;
 import org.easy.query.core.query.SqlEntityTableExpression;
 
 import java.util.Collection;
@@ -29,15 +28,6 @@ public class ColumnCollectionPredicate0 implements Predicate {
         this.collection = collection;
         this.compare = compare;
         this.sqlEntityExpression = sqlEntityExpression;
-        if (!collection.isEmpty()) {
-            Iterator<?> iterator = collection.iterator();
-            Object firstVal = iterator.next();
-            sqlEntityExpression.addParameter(new ConstSQLParameter(table,propertyName,firstVal));
-            while (iterator.hasNext()){
-                Object val = iterator.next();
-                sqlEntityExpression.addParameter(new ConstSQLParameter(table,propertyName,val));
-            }
-        }
     }
 
     @Override
@@ -55,10 +45,12 @@ public class ColumnCollectionPredicate0 implements Predicate {
             StringBuilder sql = new StringBuilder();
             sql.append(sqlColumnSegment).append(" ").append(compare.getSql()).append(" (");
             Iterator<?> iterator = collection.iterator();
-            iterator.next();
+            Object firstVal = iterator.next();
+            sqlEntityExpression.addParameter(new ConstSQLParameter(table,propertyName,firstVal));
             sql.append("?");
             while (iterator.hasNext()){
-                iterator.next();
+                Object val = iterator.next();
+                sqlEntityExpression.addParameter(new ConstSQLParameter(table,propertyName,val));
                 sql.append(",?");
             }
             sql.append(")");
