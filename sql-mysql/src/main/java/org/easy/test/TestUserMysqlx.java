@@ -5,7 +5,7 @@ import org.easy.query.core.annotation.PrimaryKey;
 import org.easy.query.core.annotation.Table;
 
 /**
- * @FileName: TestUser.java
+ * @FileName: TestUserMysqlx.java
  * @Description: 文件说明
  * @Date: 2023/2/11 21:42
  * @Created by xuejiaming

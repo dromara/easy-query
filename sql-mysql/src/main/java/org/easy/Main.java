@@ -15,7 +15,7 @@ import org.easy.query.core.basic.jdbc.tx.Transaction;
 import org.easy.query.core.basic.jdbc.types.DefaultJdbcTypeHandlerManager;
 import org.easy.query.core.basic.jdbc.types.EasyJdbcTypeHandlerManager;
 import org.easy.query.core.config.*;
-import org.easy.query.core.configuration.EasyQueryConfiguration;
+import org.easy.query.core.configuration.types.EasyQueryConfiguration;
 import org.easy.query.core.exception.EasyQueryException;
 import org.easy.query.core.metadata.DefaultEntityMetadataManager;
 import org.easy.query.mysql.MySQLSqlExpressionFactory;
@@ -111,27 +111,10 @@ public class Main {
         MySQLSqlExpressionFactory mySQLSqlExpressionFactory = new MySQLSqlExpressionFactory();
         EasySqlApiFactory easyQueryableFactory = new DefaultEasySqlApiFactory(mySQLSqlExpressionFactory);
         DefaultEasyQueryRuntimeContext jqdcRuntimeContext = new DefaultEasyQueryRuntimeContext(configuration, entityMetadataManager, easyQueryLambdaFactory, connectionManager, defaultExecutor, jdbcTypeHandler, easyQueryableFactory, mySQLSqlExpressionFactory);
-//        String[] packages = scanPackages;
-//        for (String packageName : packages) {
-//            List<EntityMetadata> entityMetadataList = JDQCUtil.loadPackage(packageName, configuration);
-//            if(!entityMetadataList.isEmpty()){
-//                for (EntityMetadata entityMetadata : entityMetadataList) {
-//                    entityMetadataManager.addEntityMetadata(entityMetadata);
-//                }
-//            }
-//        }
+
         jqdcRuntimeContext.getEasyQueryConfiguration().applyEntityTypeConfiguration(new TestUserMySqlConfiguration());
 
-//        TableInfo tableInfo = new TableInfo(TestUser.class,"TestUser");
-//        tableInfo.getColumns().putIfAbsent("id",new ColumnInfo(tableInfo,"id"));
-//        tableInfo.getColumns().putIfAbsent("name",new ColumnInfo(tableInfo,"name"));
-//        tableInfo.getColumns().putIfAbsent("studentName",new ColumnInfo(tableInfo,"age"));
-//        configuration.addTableInfo(tableInfo);
-//        TableInfo tableInfo1 = new TableInfo(TestUser1.class,"TestUser1");
-//        tableInfo1.getColumns().putIfAbsent("id",new ColumnInfo(tableInfo1,"id"));
-//        tableInfo1.getColumns().putIfAbsent("name",new ColumnInfo(tableInfo1,"name"));
-//        tableInfo1.getColumns().putIfAbsent("uid",new ColumnInfo(tableInfo1,"uid"));
-//        configuration.addTableInfo(tableInfo1);
+
         client = new EasySqlQuery(jqdcRuntimeContext);
         Queryable<TestUserMysqlx> select = client.query(TestUserMysql.class)
                 .leftJoin(SysUserLogbyMonth.class, (a, b) -> a.eq(b, TestUserMysql::getName, SysUserLogbyMonth::getId).then(b).eq(SysUserLogbyMonth::getTime, LocalDateTime.now()))
@@ -194,6 +177,8 @@ public class Main {
         updates.add(test2);
         long l12xx = client.update(updates).setColumns(o -> o.column(TestUserMysql::getName)).whereColumns(o -> o.column(TestUserMysql::getAge)).executeRows();
         long l2 = client.delete(updates).executeRows();
+
+        long l4 = client.delete(SysUserLogbyMonth.class).deleteById("00010728-2b86-426a-a81c-001a67ff409a").executeRows();
 
         ArrayList<SysUserLogbyMonth> sysUserLogbyMonths1 = new ArrayList<>();
 //        long execute = client.insert(LocalDateTime.now()).execute();

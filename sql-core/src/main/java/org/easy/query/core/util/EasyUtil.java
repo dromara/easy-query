@@ -2,10 +2,15 @@ package org.easy.query.core.util;
 
 import org.easy.query.core.abstraction.metadata.ColumnMetadata;
 import org.easy.query.core.exception.EasyQueryException;
+import org.easy.query.core.expression.lambda.Property;
 import org.easy.query.core.expression.segment.SqlEntitySegment;
 import org.easy.query.core.query.SqlEntityQueryExpression;
 import org.easy.query.core.query.SqlEntityTableExpression;
 
+import java.lang.invoke.CallSite;
+import java.lang.invoke.LambdaMetafactory;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.util.List;
 
 /**
@@ -15,6 +20,7 @@ import java.util.List;
  * @Created by xuejiaming
  */
 public class EasyUtil {
+    private static final int FLAG_SERIALIZABLE=1;
     private EasyUtil(){}
     public static SqlEntityTableExpression getPredicateTableByOffset(SqlEntityQueryExpression sqlEntityExpression, int offsetForward) {
         List<SqlEntityTableExpression> tables = sqlEntityExpression.getTables();
@@ -44,6 +50,26 @@ public class EasyUtil {
             return sqlEntityProject.getTable().getColumnName(sqlEntityProject.getPropertyName());
         }
         return alias;
+    }
+
+
+    public static Property getFunctionField(Class<?> entityClass, String fieldName, Class<?> fieldType){
+        final MethodHandles.Lookup lookup = MethodHandles.lookup();
+        MethodType methodType = MethodType.methodType(fieldType, entityClass);
+        final CallSite site;
+
+        String getFunName="get"+StringUtil.toUpperCaseFirstOne(fieldName);
+        try {
+            site = LambdaMetafactory.altMetafactory(lookup,
+                    "invoke",
+                    MethodType.methodType(Property.class),
+                    methodType,
+                    lookup.findVirtual(entityClass, getFunName, MethodType.methodType(fieldType)),
+                    methodType, FLAG_SERIALIZABLE);
+            return (Property) site.getTarget().invokeExact();
+        }catch (Throwable e){
+            throw new EasyQueryException(e);
+        }
     }
 }
 

@@ -1,7 +1,7 @@
 package org.easy.test;
 
-import org.easy.query.core.configuration.AbstractEntityTypeConfiguration;
-import org.easy.query.core.configuration.EntityTypeBuilder;
+import org.easy.query.core.configuration.types.AbstractEntityTypeConfiguration;
+import org.easy.query.core.configuration.types.EntityTypeBuilder;
 
 import java.time.LocalDateTime;
 

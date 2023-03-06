@@ -12,7 +12,8 @@ public enum EasyAggregate implements IEasyFunc {
     COUNT_DISTINCT("COUNT(DISTINCT %s)"),
     MAX("MAX(%s)"),
     MIN("MIN(%s)"),
-    AVG("AVG(%s)");
+    AVG("AVG(%s)"),
+    LEN("LEN(%s)");
     private final String aggregate;
 
     EasyAggregate(String aggregate){

@@ -1,6 +1,11 @@
-package org.easy.query.core.basic.api.delete;
+package org.easy.query.core.basic.api.delete.abstraction;
 
+import org.easy.query.core.abstraction.EasyExecutor;
+import org.easy.query.core.abstraction.EasyQueryRuntimeContext;
+import org.easy.query.core.abstraction.ExecutorContext;
 import org.easy.query.core.abstraction.metadata.EntityMetadata;
+import org.easy.query.core.basic.api.delete.Deletable;
+import org.easy.query.core.basic.api.delete.ExpressionDeletable;
 import org.easy.query.core.enums.MultiTableTypeEnum;
 import org.easy.query.core.enums.SqlPredicateCompareEnum;
 import org.easy.query.core.exception.EasyQueryException;
@@ -40,12 +45,11 @@ public abstract   class AbstractExpressionDeletable<T> implements ExpressionDele
 
     @Override
     public long executeRows() {
-
         String deleteSql = toSql();
-        System.out.println("表达式删除："+deleteSql);
         if(StringUtil.isBlank(deleteSql)){
-//            EasyExecutor easyExecutor = updateContext.getRuntimeContext().getEasyExecutor();
-//            return easyExecutor.update(ExecutorContext.create(updateContext.getRuntimeContext()), updateSql, updateContext.getParameters());
+            EasyQueryRuntimeContext runtimeContext = sqlEntityDeleteExpression.getRuntimeContext();
+            EasyExecutor easyExecutor = runtimeContext.getEasyExecutor();
+            return easyExecutor.executeRows(ExecutorContext.create(runtimeContext), deleteSql, sqlEntityDeleteExpression.getParameters());
         }
         return 0;
     }

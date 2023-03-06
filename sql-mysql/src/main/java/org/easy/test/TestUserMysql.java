@@ -7,7 +7,7 @@ import org.easy.query.core.annotation.Table;
 import java.time.LocalDateTime;
 
 /**
- * @FileName: TestUser.java
+ * @FileName: TestUserMysql.java
  * @Description: 文件说明
  * @Date: 2023/2/11 21:42
  * @Created by xuejiaming

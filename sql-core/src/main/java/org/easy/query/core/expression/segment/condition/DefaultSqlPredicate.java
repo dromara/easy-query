@@ -182,8 +182,6 @@ public class DefaultSqlPredicate<T1> implements SqlPredicate<T1> {
             nextPredicateSegment.setPredicate(new ColumnWithColumnPredicate0(leftTable, leftPropertyName, rightTable, rightPropertyName, SqlPredicateCompareEnum.EQ, sqlEntityExpression));
             nextAnd();
 
-//            PredicateSegment0 predicateSegment =  PredicateSegment0.createColumn2Column(index, columnName, selectContext, SqlCompareEnum.EQ,sub.getIndex(),columnName2);
-//            sqlSegment0Builder.append(predicateSegment);
         }
         return this;
     }

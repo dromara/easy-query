@@ -1,5 +1,6 @@
-package org.easy.query.core.basic.api.delete;
+package org.easy.query.core.basic.api.delete.impl;
 
+import org.easy.query.core.basic.api.delete.abstraction.AbstractExpressionDeletable;
 import org.easy.query.core.query.SqlEntityDeleteExpression;
 
 /**

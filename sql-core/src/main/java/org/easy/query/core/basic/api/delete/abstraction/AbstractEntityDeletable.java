@@ -1,9 +1,14 @@
-package org.easy.query.core.basic.api.delete;
+package org.easy.query.core.basic.api.delete.abstraction;
 
+import org.easy.query.core.abstraction.EasyExecutor;
+import org.easy.query.core.abstraction.EasyQueryRuntimeContext;
+import org.easy.query.core.abstraction.ExecutorContext;
 import org.easy.query.core.abstraction.metadata.EntityMetadata;
+import org.easy.query.core.basic.api.delete.EntityDeletable;
 import org.easy.query.core.enums.MultiTableTypeEnum;
 import org.easy.query.core.exception.EasyQueryException;
 import org.easy.query.core.query.*;
+import org.easy.query.core.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -37,11 +42,12 @@ public abstract class AbstractEntityDeletable<T> implements EntityDeletable<T> {
     public long executeRows() {
 
         if (!entities.isEmpty()) {
-//            EasyQueryRuntimeContext runtimeContext = updateContext.getRuntimeContext();
-//            EntityMetadataManager entityMetadataManager = runtimeContext.getEntityMetadataManager();
-
-            String s = toSql();
-            System.out.println("删除sql："+s);
+            String deleteSql = toSql();
+            if(StringUtil.isNotBlank(deleteSql)){
+                EasyQueryRuntimeContext runtimeContext = sqlEntityDeleteExpression.getRuntimeContext();
+                EasyExecutor easyExecutor = runtimeContext.getEasyExecutor();
+                return easyExecutor.executeRows(ExecutorContext.create(runtimeContext), deleteSql,entities, sqlEntityDeleteExpression.getParameters());
+            }
         }
         return 0;
     }

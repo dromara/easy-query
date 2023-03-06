@@ -5,11 +5,14 @@ import org.easy.query.core.abstraction.EasySqlApiFactory;
 import org.easy.query.core.abstraction.EasySqlExpressionFactory;
 import org.easy.query.core.abstraction.metadata.EntityMetadata;
 import org.easy.query.core.basic.api.delete.*;
+import org.easy.query.core.basic.api.delete.impl.EasyEmptyEntityDeletable;
+import org.easy.query.core.basic.api.delete.impl.EasyEntityDeletable;
+import org.easy.query.core.basic.api.delete.impl.EasyExpressionDeletable;
 import org.easy.query.core.basic.api.insert.EasyEmptyInsertable;
 import org.easy.query.core.basic.api.insert.EasyInsertable;
 import org.easy.query.core.basic.api.insert.Insertable;
-import org.easy.query.core.basic.api.select.EasyQueryable;
-import org.easy.query.core.basic.api.select.EasyQueryable2;
+import org.easy.query.core.basic.api.select.impl.EasyQueryable;
+import org.easy.query.core.basic.api.select.impl.EasyQueryable2;
 import org.easy.query.core.basic.api.select.Queryable;
 import org.easy.query.core.basic.api.select.Queryable2;
 import org.easy.query.core.basic.api.update.*;
@@ -73,7 +76,7 @@ public class DefaultEasySqlApiFactory implements EasySqlApiFactory {
         SqlEntityTableExpression sqlTable =easySqlExpressionFactory.createSqlEntityTableExpression(entityMetadata,  tableIndex,queryExpressionContext.createTableAlias(), selectTableInfoType);
         sqlEntityExpression.addSqlEntityTableExpression(sqlTable);
 
-        return new EasyQueryable2<>(t1Class,t2Class,sqlEntityExpression,selectTableInfoType);
+        return new EasyQueryable2<>(t1Class,t2Class,sqlEntityExpression);
     }
 
     @Override
@@ -89,7 +92,7 @@ public class DefaultEasySqlApiFactory implements EasySqlApiFactory {
         SqlEntityTableExpression sqlTable =easySqlExpressionFactory.createSqlAnonymousEntityTableExpression(entityMetadata,  tableIndex,queryExpressionContext.createTableAlias(), selectTableInfoType,joinQueryableSqlEntityExpression);
         sqlEntityExpression.addSqlEntityTableExpression(sqlTable);
 
-        return new EasyQueryable2<>(t1Class,t2Class,sqlEntityExpression,selectTableInfoType);
+        return new EasyQueryable2<>(t1Class,t2Class,sqlEntityExpression);
     }
 
     @Override

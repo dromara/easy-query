@@ -1,5 +1,6 @@
-package org.easy.query.core.basic.api.select;
+package org.easy.query.core.basic.api.select.impl;
 
+import org.easy.query.core.basic.api.select.abstraction.AbstractQueryable1;
 import org.easy.query.core.query.SqlEntityQueryExpression;
 
 /**

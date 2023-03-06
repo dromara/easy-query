@@ -45,7 +45,7 @@ public interface ColumnSetter<T1,TChain> extends IndexAware {
     }
 
     default TChain setIncrement(boolean condition,Property<T1, Integer> column,int val){
-        return setIncrement(condition,column,String.valueOf(val));
+        return setIncrement(condition,column,val);
     }
 
     default  TChain setIncrement(Property<T1, Long> column,long val) {
@@ -53,15 +53,15 @@ public interface ColumnSetter<T1,TChain> extends IndexAware {
     }
 
     default TChain setIncrement(boolean condition,Property<T1, Long> column,long val){
-        return setIncrement(condition,column,String.valueOf(val));
+        return setIncrement(condition,column,val);
     }
 
 
-    default  TChain setIncrement(Property<T1, ? extends Number> column,String val) {
+    default  TChain setIncrement(Property<T1, ? extends Number> column,Number val) {
         return setIncrement(true, column,val);
     }
 
-    TChain setIncrement(boolean condition,Property<T1, ? extends Number> column,String val);
+    TChain setIncrement(boolean condition,Property<T1, ? extends Number> column,Number val);
 
     default  TChain setDecrement(Property<T1, Integer> column) {
         return setDecrement(true, column);
@@ -76,7 +76,7 @@ public interface ColumnSetter<T1,TChain> extends IndexAware {
     }
 
     default TChain setDecrement(boolean condition,Property<T1, Integer> column,int val){
-        return setDecrement(condition,column,String.valueOf(val));
+        return setDecrement(condition,column,val);
     }
 
     default  TChain setDecrement(Property<T1, Long> column,long val) {
@@ -84,13 +84,13 @@ public interface ColumnSetter<T1,TChain> extends IndexAware {
     }
 
     default TChain setDecrement(boolean condition,Property<T1, Long> column,long val){
-        return setDecrement(condition,column,String.valueOf(val));
+        return setDecrement(condition,column,val);
     }
 
 
-    default  TChain setDecrement(Property<T1, ? extends Number> column,String val) {
+    default  TChain setDecrement(Property<T1, ? extends Number> column,Number val) {
         return setDecrement(true, column,val);
     }
 
-    TChain setDecrement(boolean condition,Property<T1, ? extends Number> column,String val);
+    TChain setDecrement(boolean condition,Property<T1, ? extends Number> column,Number val);
 }

@@ -25,8 +25,8 @@ import java.util.List;
  */
 public class AbstractSqlColumnSelector<T1,TChain> implements ColumnSelector<T1, TChain> {
     private final int index;
-    private final SqlEntityExpression sqlEntityExpression;
-    private final SqlBuilderSegment sqlSegmentBuilder;
+    protected final SqlEntityExpression sqlEntityExpression;
+    protected final SqlBuilderSegment sqlSegmentBuilder;
 
     public AbstractSqlColumnSelector(int index, SqlEntityExpression sqlEntityExpression, SqlBuilderSegment sqlSegmentBuilder){
         this.index = index;

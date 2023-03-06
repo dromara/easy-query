@@ -1,4 +1,4 @@
-package org.easy.query.core.configuration;
+package org.easy.query.core.configuration.types;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;

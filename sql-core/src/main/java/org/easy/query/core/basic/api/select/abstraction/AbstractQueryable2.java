@@ -1,7 +1,10 @@
-package org.easy.query.core.basic.api.select;
+package org.easy.query.core.basic.api.select.abstraction;
 
 import org.easy.query.core.abstraction.EasyQuerySqlBuilderProvider;
 import org.easy.query.core.abstraction.EasyQuerySqlBuilderProvider2;
+import org.easy.query.core.basic.api.select.Queryable;
+import org.easy.query.core.basic.api.select.Queryable2;
+import org.easy.query.core.basic.api.select.Queryable3;
 import org.easy.query.core.expression.lambda.SqlExpression2;
 import org.easy.query.core.expression.lambda.SqlExpression3;
 import org.easy.query.core.expression.parser.abstraction.SqlColumnAsSelector;
@@ -15,17 +18,19 @@ import org.easy.query.core.query.SqlEntityQueryExpression;
 import java.math.BigDecimal;
 
 /**
- * @FileName: AbstractSelect1.java
+ * @FileName: AbstractQueryable2.java
  * @Description: 文件说明
  * @Date: 2023/2/6 23:43
  * @Created by xuejiaming
  */
 public abstract class AbstractQueryable2<T1, T2> extends AbstractQueryable<T1> implements Queryable2<T1, T2> {
 
+    private final Class<T2> t2Class;
     private final EasyQuerySqlBuilderProvider2<T1, T2> sqlPredicateProvider;
 
-    public AbstractQueryable2(Class<T1> t1Class, Class<T2> t2Class, SqlEntityQueryExpression sqlEntityExpression, MultiTableTypeEnum selectTableInfoType) {
+    public AbstractQueryable2(Class<T1> t1Class, Class<T2> t2Class, SqlEntityQueryExpression sqlEntityExpression) {
         super(t1Class, sqlEntityExpression);
+        this.t2Class = t2Class;
 
         this.sqlPredicateProvider = new Select2SqlProvider<>(sqlEntityExpression);
     }

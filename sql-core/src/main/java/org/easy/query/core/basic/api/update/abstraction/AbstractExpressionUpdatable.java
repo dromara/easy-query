@@ -37,10 +37,9 @@ public abstract class AbstractExpressionUpdatable<T> implements ExpressionUpdata
     @Override
     public long executeRows() {
         String updateSql = toSql();
-        System.out.println("表达式更新：" + updateSql);
         if (StringUtil.isNotBlank(updateSql)) {
             EasyExecutor easyExecutor = sqlEntityUpdateExpression.getRuntimeContext().getEasyExecutor();
-            return easyExecutor.update(ExecutorContext.create(sqlEntityUpdateExpression.getRuntimeContext()), updateSql, sqlEntityUpdateExpression.getParameters());
+            return easyExecutor.executeRows(ExecutorContext.create(sqlEntityUpdateExpression.getRuntimeContext()), updateSql, sqlEntityUpdateExpression.getParameters());
         }
 
         return 0;

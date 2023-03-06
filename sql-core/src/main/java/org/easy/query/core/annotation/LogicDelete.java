@@ -1,5 +1,7 @@
 package org.easy.query.core.annotation;
 
+import org.easy.query.core.basic.enums.LogicDeleteStrategyEnum;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -14,4 +16,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(value = {ElementType.METHOD, ElementType.FIELD})
 public @interface LogicDelete {
+    LogicDeleteStrategyEnum strategy() default LogicDeleteStrategyEnum.BOOLEAN;
 }

@@ -1,7 +1,9 @@
-package org.easy.query.core.basic.api.select;
+package org.easy.query.core.basic.api.select.abstraction;
 
 import org.easy.query.core.abstraction.*;
 import org.easy.query.core.abstraction.sql.enums.IEasyFunc;
+import org.easy.query.core.basic.api.select.Queryable;
+import org.easy.query.core.basic.api.select.Queryable2;
 import org.easy.query.core.enums.MultiTableTypeEnum;
 import org.easy.query.core.expression.lambda.Property;
 import org.easy.query.core.expression.lambda.SqlExpression;

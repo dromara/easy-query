@@ -35,7 +35,7 @@ public class DefaultExecutor implements EasyExecutor {
     private static final int PROPERTY_NOT_FOUND = -1;
 
     @Override
-    public <T> long update(ExecutorContext executorContext, String sql, List<SQLParameter> sqlParameters) {
+    public <T> long executeRows(ExecutorContext executorContext, String sql, List<SQLParameter> sqlParameters) {
         EasyQueryRuntimeContext runtimeContext = executorContext.getRuntimeContext();
         EasyConnectionManager connectionManager = runtimeContext.getConnectionManager();
         EasyJdbcTypeHandlerManager easyJdbcTypeHandlerManager = runtimeContext.getEasyJdbcTypeHandlerManager();
@@ -55,13 +55,14 @@ public class DefaultExecutor implements EasyExecutor {
     }
 
     @Override
-    public <T> long update(ExecutorContext executorContext, String sql,List<T> entities,List<SQLParameter> sqlParameters) {
+    public <T> long executeRows(ExecutorContext executorContext, String sql, List<T> entities, List<SQLParameter> sqlParameters) {
         EasyQueryRuntimeContext runtimeContext = executorContext.getRuntimeContext();
         EasyConnectionManager connectionManager = runtimeContext.getConnectionManager();
         EasyJdbcTypeHandlerManager easyJdbcTypeHandlerManager = runtimeContext.getEasyJdbcTypeHandlerManager();
         EasyConnection easyConnection = null;
         PreparedStatement ps = null;
         int[] rs = null;
+        System.out.println("开始执行：" + sql);
         try {
             for (T entity : entities) {
 
@@ -94,6 +95,7 @@ public class DefaultExecutor implements EasyExecutor {
         EasyConnection easyConnection = null;
         PreparedStatement ps = null;
         int[] rs = null;
+        System.out.println("开始执行：" + sql);
         try {
             for (T entity : entities) {
 

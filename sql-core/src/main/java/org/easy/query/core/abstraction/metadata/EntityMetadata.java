@@ -1,9 +1,10 @@
 package org.easy.query.core.abstraction.metadata;
 
-import org.easy.query.core.configuration.EasyQueryConfiguration;
+import org.easy.query.core.basic.enums.LogicDeleteStrategyEnum;
+import org.easy.query.core.configuration.types.EasyQueryConfiguration;
 import org.easy.query.core.config.NameConversion;
-import org.easy.query.core.configuration.EntityTypeBuilder;
-import org.easy.query.core.configuration.EntityTypeConfiguration;
+import org.easy.query.core.configuration.types.EntityTypeBuilder;
+import org.easy.query.core.configuration.types.EntityTypeConfiguration;
 import org.easy.query.core.exception.EasyQueryException;
 import org.easy.query.core.util.StringUtil;
 import org.easy.query.core.annotation.*;
@@ -89,6 +90,10 @@ public class EntityMetadata {
             Version version = field.getAnnotation(Version.class);
             if(version!=null){
                 columnMetadata.setVersion(true);
+            }
+            LogicDelete logicDelete = field.getAnnotation(LogicDelete.class);
+            if(logicDelete!=null){
+                LogicDeleteStrategyEnum strategy = logicDelete.strategy();
             }
         }
     }

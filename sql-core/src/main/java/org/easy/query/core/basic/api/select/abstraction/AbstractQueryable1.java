@@ -1,13 +1,8 @@
-package org.easy.query.core.basic.api.select;
+package org.easy.query.core.basic.api.select.abstraction;
 
 import org.easy.query.core.abstraction.EasyQuerySqlBuilderProvider;
-import org.easy.query.core.abstraction.metadata.EntityMetadata;
-import org.easy.query.core.enums.MultiTableTypeEnum;
 import org.easy.query.core.impl.Select1SqlProvider;
-import org.easy.query.core.query.EasyEntityTableExpression;
-import org.easy.query.core.query.SqlExpressionContext;
 import org.easy.query.core.query.SqlEntityQueryExpression;
-import org.easy.query.core.util.EasyUtil;
 
 /**
  * @FileName: AbstractQueryable1.java

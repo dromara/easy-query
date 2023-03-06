@@ -11,8 +11,8 @@ import java.util.List;
  * @Created by xuejiaming
  */
 public interface EasyExecutor {
-    <T> long update(ExecutorContext executorContext, String sql, List<SQLParameter> sqlParameters);
-    <T> long update(ExecutorContext executorContext,String sql,List<T> entities, List<SQLParameter> sqlParameters);
+    <T> long executeRows(ExecutorContext executorContext, String sql, List<SQLParameter> sqlParameters);
+    <T> long executeRows(ExecutorContext executorContext, String sql, List<T> entities, List<SQLParameter> sqlParameters);
     <T> long insert(ExecutorContext executorContext,String sql, List<T> entities,List<SQLParameter> sqlParameters);
     <TR> List<TR> query(ExecutorContext executorContext, Class<TR> clazz, String sql, List<SQLParameter> sqlParameters);
 }

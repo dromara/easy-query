@@ -1,4 +1,4 @@
-package org.easy.query.core.configuration;
+package org.easy.query.core.configuration.types;
 
 import org.easy.query.core.abstraction.EasyQueryRuntimeContext;
 

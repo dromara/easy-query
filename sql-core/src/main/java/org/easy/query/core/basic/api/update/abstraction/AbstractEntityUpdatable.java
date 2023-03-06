@@ -43,12 +43,10 @@ public abstract class AbstractEntityUpdatable<T> implements EntityUpdatable<T> {
     @Override
     public long executeRows() {
         if (!entities.isEmpty()) {
-
             String updateSql = toSql();
-            System.out.println("更新sql："+updateSql);
             if (!StringUtil.isBlank(updateSql)) {
                 EasyExecutor easyExecutor = sqlEntityUpdateExpression.getRuntimeContext().getEasyExecutor();
-                return easyExecutor.update(ExecutorContext.create(sqlEntityUpdateExpression.getRuntimeContext()), updateSql, entities, sqlEntityUpdateExpression.getParameters());
+                return easyExecutor.executeRows(ExecutorContext.create(sqlEntityUpdateExpression.getRuntimeContext()), updateSql, entities, sqlEntityUpdateExpression.getParameters());
             }
         }
         return 0;
