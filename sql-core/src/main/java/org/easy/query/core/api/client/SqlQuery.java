@@ -1,4 +1,4 @@
-package org.easy.query.core.abstraction.client;
+package org.easy.query.core.api.client;
 
 import org.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import org.easy.query.core.basic.api.delete.EntityDeletable;

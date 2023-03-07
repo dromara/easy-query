@@ -6,6 +6,8 @@ import org.easy.query.core.expression.lambda.SqlExpression;
 import org.easy.query.core.expression.parser.abstraction.SqlColumnSetter;
 import org.easy.query.core.expression.parser.abstraction.SqlPredicate;
 
+import java.util.List;
+
 /**
  * @FileName: EntityTableSegment.java
  * @Description: 文件说明
@@ -17,6 +19,7 @@ public interface SqlEntityTableExpression extends SqlTableExpressionSegment {
     <T1> String getPropertyName(Property<T1, ?> column);
     String getColumnName(String propertyName);
 
-     SqlExpression<SqlPredicate<?>> getQueryFilterExpression();
-     SqlExpression<SqlColumnSetter<?>> getDeletedSqlExpression();
+     SqlExpression<SqlPredicate<?>> getLogicDeleteQueryFilterExpression();
+     List<String> getQueryFilterNames();
+     SqlExpression<SqlColumnSetter<?>> getLogicDeletedSqlExpression();
 }

@@ -22,4 +22,27 @@ public interface SqlExpressionContext {
     String getQuoteName(String value);
     void extractParameters(SqlExpressionContext sqlExpressionContext);
     void clearParameters();
+    void deleteThrow(boolean ifDeleteThrowException);
+    boolean isDeleteThrow();
+
+    /**
+     * 禁用逻辑删除
+     */
+    void disableLogicDelete();
+
+    /**
+     * 启用逻辑删除
+     */
+    void enableLogicDelete();
+
+    /**
+     * 是否使用逻辑删除
+     * @return
+     */
+    boolean isUseLogicDelete();
+
+
+    void useQueryFilter();
+    void noQueryFilter();
+    boolean isUserQueryFilter();
 }

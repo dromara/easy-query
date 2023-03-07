@@ -7,8 +7,19 @@ package org.easy.query.core.basic.enums;
  * @Created by xuejiaming
  */
 public enum LogicDeleteStrategyEnum {
-    BOOLEAN,//TRUE FALSE
-    LONG_TIMESTAMP,//O OR NOT O
-    LOCAL_DATE_TIME,//NULL OR NOT NULL
-    LOCAL_DATE;//NULL OR NOT NULL
+    CUSTOM("CUSTOM"),
+    BOOLEAN("BOOLEAN"),//TRUE FALSE
+    LONG_TIMESTAMP("LONG_TIMESTAMP"),//O OR NOT O
+    LOCAL_DATE_TIME("LOCAL_DATE_TIME"),//NULL OR NOT NULL
+    LOCAL_DATE("LOCAL_DATE");//NULL OR NOT NULL
+    private final String strategy;
+
+    LogicDeleteStrategyEnum(String strategy){
+
+        this.strategy = strategy;
+    }
+
+    public String getStrategy() {
+        return strategy;
+    }
 }

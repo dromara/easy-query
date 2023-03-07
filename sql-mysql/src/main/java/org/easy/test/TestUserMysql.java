@@ -1,8 +1,10 @@
 package org.easy.test;
 
 import org.easy.query.core.annotation.Column;
+import org.easy.query.core.annotation.LogicDelete;
 import org.easy.query.core.annotation.PrimaryKey;
 import org.easy.query.core.annotation.Table;
+import org.easy.query.core.basic.enums.LogicDeleteStrategyEnum;
 
 import java.time.LocalDateTime;
 
@@ -22,6 +24,7 @@ public class TestUserMysql {
     @Column("Name")
     private String name;
 
+    @LogicDelete(strategy = LogicDeleteStrategyEnum.LOCAL_DATE_TIME)
     private LocalDateTime deleteAt;
 
     public LocalDateTime getDeleteAt() {

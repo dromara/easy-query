@@ -17,14 +17,19 @@ public class EasySqlExpressionContext implements SqlExpressionContext {
     private final EasyQueryRuntimeContext runtimeContext;
     private final String alias;
     protected final List<SQLParameter> params;
-    private int aliasSeq=-1;
+    private int aliasSeq = -1;
+    private boolean deleteThrowException;
+    private boolean useLogicDelete = true;
+    private boolean useQueryFilter = true;
 
-    public EasySqlExpressionContext(EasyQueryRuntimeContext runtimeContext, String alias){
+    public EasySqlExpressionContext(EasyQueryRuntimeContext runtimeContext, String alias) {
 
         this.runtimeContext = runtimeContext;
+        this.deleteThrowException = runtimeContext.getEasyQueryConfiguration().cantDelete();
         this.alias = alias;
-        params=new ArrayList<>();
+        params = new ArrayList<>();
     }
+
     @Override
     public EasyQueryRuntimeContext getRuntimeContext() {
         return runtimeContext;
@@ -48,7 +53,7 @@ public class EasySqlExpressionContext implements SqlExpressionContext {
     @Override
     public String createTableAlias() {
         aliasSeq++;
-        return aliasSeq==0?alias:(alias+1);
+        return aliasSeq == 0 ? alias : (alias + 1);
     }
 
     @Override
@@ -58,8 +63,7 @@ public class EasySqlExpressionContext implements SqlExpressionContext {
 
     @Override
     public void extractParameters(SqlExpressionContext sqlExpressionContext) {
-        if(!Objects.equals(this,sqlExpressionContext) &&!sqlExpressionContext.getParameters().isEmpty())
-        {
+        if (!Objects.equals(this, sqlExpressionContext) && !sqlExpressionContext.getParameters().isEmpty()) {
             params.addAll(sqlExpressionContext.getParameters());
         }
 
@@ -67,10 +71,52 @@ public class EasySqlExpressionContext implements SqlExpressionContext {
 
     @Override
     public void clearParameters() {
-        if(!params.isEmpty()){
+        if (!params.isEmpty()) {
             params.clear();
         }
     }
+
+    @Override
+    public void deleteThrow(boolean ifDeleteThrowException) {
+        this.deleteThrowException = ifDeleteThrowException;
+    }
+
+    @Override
+    public boolean isDeleteThrow() {
+        return deleteThrowException;
+    }
+
+    @Override
+    public void disableLogicDelete() {
+        this.useLogicDelete = false;
+    }
+
+    @Override
+    public void enableLogicDelete() {
+        this.useLogicDelete = true;
+    }
+
+    @Override
+    public boolean isUseLogicDelete() {
+        return useLogicDelete;
+    }
+
+    @Override
+    public void useQueryFilter() {
+        this.useQueryFilter = true;
+    }
+
+    @Override
+    public void noQueryFilter() {
+        this.useQueryFilter = false;
+    }
+
+    @Override
+    public boolean isUserQueryFilter() {
+        return useQueryFilter;
+    }
+
+
     //    @Override
 //    public String getSqlColumnSegment(SqlEntityTableExpressionSegment table, String propertyName) {
 //        String alias = table.getAlias();

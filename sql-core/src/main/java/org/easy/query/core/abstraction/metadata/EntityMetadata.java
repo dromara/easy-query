@@ -1,10 +1,10 @@
 package org.easy.query.core.abstraction.metadata;
 
 import org.easy.query.core.basic.enums.LogicDeleteStrategyEnum;
+import org.easy.query.core.configuration.global.GlobalLogicDeleteStrategy;
 import org.easy.query.core.configuration.types.EasyQueryConfiguration;
 import org.easy.query.core.config.NameConversion;
-import org.easy.query.core.configuration.types.EntityTypeBuilder;
-import org.easy.query.core.configuration.types.EntityTypeConfiguration;
+import org.easy.query.core.configuration.types.GlobalQueryFilterConfiguration;
 import org.easy.query.core.exception.EasyQueryException;
 import org.easy.query.core.util.StringUtil;
 import org.easy.query.core.annotation.*;
@@ -15,45 +15,57 @@ import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.util.*;
+import java.util.function.Predicate;
 
 /**
- * @FileName: ClassMetadata.java
+ * @FileName: EntityMetadata.java
  * @Description: 文件说明
  * @Date: 2023/2/11 10:17
  * @Created by xuejiaming
  */
 public class EntityMetadata {
-    private final Class entityClass;
+    private final Class<?> entityClass;
     private  String tableName;
 
 
     private  LogicDeleteMetadata logicDeleteMetadata;
-
+    /**
+     * 查询过滤器
+     */
+    private final List<String> queryFilters =new ArrayList<>();
     private final LinkedHashMap<String,ColumnMetadata> property2ColumnMap=new LinkedHashMap<>();
     private final Map<String/*property name*/,String/*column name*/> keyPropertiesMap=new HashMap<>();
     private final LinkedCaseInsensitiveMap<String> column2PropertyMap=new LinkedCaseInsensitiveMap<>(Locale.ENGLISH);
 
-    public EntityMetadata(Class entityClass) {
+    public EntityMetadata(Class<?> entityClass) {
         this.entityClass = entityClass;
     }
 
     public void init(EasyQueryConfiguration jdqcConfiguration){
         classInit(jdqcConfiguration);
         propertyInit(jdqcConfiguration);
-        entityTypeConfigurationInit(jdqcConfiguration);
+//        entityTypeConfigurationInit(jdqcConfiguration);
     }
-    protected void classInit(EasyQueryConfiguration jdqcConfiguration){
+    protected void classInit(EasyQueryConfiguration configuration){
 
-        NameConversion nameConversion = jdqcConfiguration.getNameConversion();
+        NameConversion nameConversion = configuration.getNameConversion();
         this.tableName = nameConversion.getTableName(entityClass);
     }
-    protected void propertyInit(EasyQueryConfiguration jdqcConfiguration){
-        NameConversion nameConversion = jdqcConfiguration.getNameConversion();
+    private PropertyDescriptor firstOrNull(PropertyDescriptor[] ps, Predicate<PropertyDescriptor> predicate){
+        for (PropertyDescriptor p : ps) {
+            if(predicate.test(p)){
+                return p;
+            }
+        }
+        return null;
+    }
+    protected void propertyInit(EasyQueryConfiguration configuration){
+        NameConversion nameConversion = configuration.getNameConversion();
         List<Field> allFields = ClassUtil.getAllFields(this.entityClass);
         PropertyDescriptor[] ps = getPropertyDescriptor();
         for (Field field : allFields) {
             String property = field.getName();
-            PropertyDescriptor propertyDescriptor = Arrays.stream(ps).filter(o -> Objects.equals(o.getName(), property)).findFirst().orElse(null);
+            PropertyDescriptor propertyDescriptor = firstOrNull(ps,o -> Objects.equals(o.getName(), property));
             ColumnIgnore columnIgnore = field.getAnnotation(ColumnIgnore.class);
             if(columnIgnore!=null){
                 continue;
@@ -70,39 +82,65 @@ public class EntityMetadata {
             property2ColumnMap.put(property,columnMetadata);
             column2PropertyMap.put(columnName,property);
 
-            PrimaryKey primaryKey =  field.getAnnotation(PrimaryKey.class);
-            if(primaryKey!=null){
-                columnMetadata.setPrimary(true);
-                columnMetadata.setIncrement(primaryKey.increment());
-                columnMetadata.setNullable(false);//如果为主键那么之前设置的nullable将无效
-                keyPropertiesMap.put(property,columnName);
-            }
+            if(StringUtil.isNotBlank(tableName)){
 
-            InsertIgnore insertIgnore = field.getAnnotation(InsertIgnore.class);
-            if(insertIgnore!=null){
-                columnMetadata.setInsertIgnore(true);
-            }
+                PrimaryKey primaryKey =  field.getAnnotation(PrimaryKey.class);
+                if(primaryKey!=null){
+                    columnMetadata.setPrimary(true);
+                    columnMetadata.setIncrement(primaryKey.increment());
+                    columnMetadata.setNullable(false);//如果为主键那么之前设置的nullable将无效
+                    keyPropertiesMap.put(property,columnName);
+                }
+                InsertIgnore insertIgnore = field.getAnnotation(InsertIgnore.class);
+                if(insertIgnore!=null){
+                    columnMetadata.setInsertIgnore(true);
+                }
 
-            UpdateIgnore updateIgnore = field.getAnnotation(UpdateIgnore.class);
-            if(updateIgnore!=null){
-                columnMetadata.setUpdateIgnore(true);
-            }
-            Version version = field.getAnnotation(Version.class);
-            if(version!=null){
-                columnMetadata.setVersion(true);
-            }
-            LogicDelete logicDelete = field.getAnnotation(LogicDelete.class);
-            if(logicDelete!=null){
-                LogicDeleteStrategyEnum strategy = logicDelete.strategy();
+                UpdateIgnore updateIgnore = field.getAnnotation(UpdateIgnore.class);
+                if(updateIgnore!=null){
+                    columnMetadata.setUpdateIgnore(true);
+                }
+                Version version = field.getAnnotation(Version.class);
+                if(version!=null){
+                    columnMetadata.setVersion(true);
+                }
+                LogicDelete logicDelete = field.getAnnotation(LogicDelete.class);
+                if(logicDelete!=null){
+                    LogicDeleteStrategyEnum strategy = logicDelete.strategy();
+                    if(Objects.equals(LogicDeleteStrategyEnum.CUSTOM,strategy)){//使用自定义
+                        String strategyName = logicDelete.strategyName();
+                        if(StringUtil.isNotBlank(strategyName)){
+                            GlobalLogicDeleteStrategy globalLogicDeleteStrategy = configuration.getGlobalLogicDeleteStrategy(strategyName);
+                            if(globalLogicDeleteStrategy!=null){
+                                globalLogicDeleteStrategy.configure(this, property, field.getType());
+                            }
+                        }
+                    }else{//使用系统默认的
+                        GlobalLogicDeleteStrategy sysGlobalLogicDeleteStrategy = configuration.getSysGlobalLogicDeleteStrategy(strategy);
+                        if(sysGlobalLogicDeleteStrategy!=null){
+                            sysGlobalLogicDeleteStrategy.configure(this, property, field.getType());
+                        }
+                    }
+                }
+                //全局过滤器
+                Collection<GlobalQueryFilterConfiguration> globalQueryFilterConfigurations = configuration.getGlobalQueryFilterConfigurations();
+                for (GlobalQueryFilterConfiguration globalQueryFilterConfiguration : globalQueryFilterConfigurations) {
+                    if(globalQueryFilterConfiguration.apply(entityClass)){
+                        queryFilters.add(globalQueryFilterConfiguration.queryFilterName());
+                    }
+                }
             }
         }
     }
-    protected void entityTypeConfigurationInit(EasyQueryConfiguration configuration){
-        EntityTypeConfiguration<?> entityTypeConfiguration = configuration.getEntityTypeConfiguration(entityClass);
-        if(entityTypeConfiguration!=null){
-            entityTypeConfiguration.configure(new EntityTypeBuilder<>(this));
-        }
-    }
+//    protected void entityTypeConfigurationInit(EasyQueryConfiguration configuration){
+//
+//        if(StringUtil.isNotBlank(tableName)){
+//            EntityTypeConfiguration<?> entityTypeConfiguration = configuration.getEntityTypeConfiguration(entityClass);
+//            if(entityTypeConfiguration!=null){
+//                entityTypeConfiguration.configure(new EntityTypeBuilder<>(this));
+//            }
+//        }
+//    }
 
     private PropertyDescriptor[] getPropertyDescriptor() {
         try {
@@ -113,7 +151,7 @@ public class EntityMetadata {
     }
 
 
-    public Class getEntityClass() {
+    public Class<?> getEntityClass() {
         return entityClass;
     }
 
@@ -184,5 +222,16 @@ public class EntityMetadata {
      */
     public boolean enableLogicDelete(){
         return logicDeleteMetadata!=null;
+    }
+
+    /**
+     * 是否存在查询过滤
+     * @return
+     */
+    public boolean hasAnyQueryFilter(){
+        return !queryFilters.isEmpty();
+    }
+    public List<String> getQueryFilters(){
+        return queryFilters;
     }
 }

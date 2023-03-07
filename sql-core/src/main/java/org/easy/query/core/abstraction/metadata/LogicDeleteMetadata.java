@@ -12,19 +12,19 @@ import org.easy.query.core.expression.parser.abstraction.SqlPredicate;
  */
 public final class LogicDeleteMetadata {
 
-    public LogicDeleteMetadata(SqlExpression<SqlPredicate<?>> queryFilterExpression, SqlExpression<SqlColumnSetter<?>> deletedSqlExpression) {
-        this.queryFilterExpression = queryFilterExpression;
-        this.deletedSqlExpression = deletedSqlExpression;
+    public LogicDeleteMetadata(SqlExpression<SqlPredicate<?>> logicDeleteQueryFilterExpression, SqlExpression<SqlColumnSetter<?>> logicDeletedSqlExpression) {
+        this.logicDeleteQueryFilterExpression = logicDeleteQueryFilterExpression;
+        this.logicDeletedSqlExpression = logicDeletedSqlExpression;
     }
 
-    private final SqlExpression<SqlPredicate<?>> queryFilterExpression;
-    private final SqlExpression<SqlColumnSetter<?>> deletedSqlExpression;
+    private final SqlExpression<SqlPredicate<?>> logicDeleteQueryFilterExpression;
+    private final SqlExpression<SqlColumnSetter<?>> logicDeletedSqlExpression;
 
-    public SqlExpression<SqlPredicate<?>> getQueryFilterExpression() {
-        return queryFilterExpression;
+    public SqlExpression<SqlPredicate<?>> getLogicDeleteQueryFilterExpression() {
+        return logicDeleteQueryFilterExpression;
     }
 
-    public SqlExpression<SqlColumnSetter<?>> getDeletedSqlExpression() {
-        return deletedSqlExpression;
+    public SqlExpression<SqlColumnSetter<?>> getLogicDeletedSqlExpression() {
+        return logicDeletedSqlExpression;
     }
 }

@@ -12,6 +12,7 @@ import java.lang.invoke.LambdaMetafactory;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @FileName: EasyUtil.java
@@ -53,7 +54,7 @@ public class EasyUtil {
     }
 
 
-    public static Property getFunctionField(Class<?> entityClass, String fieldName, Class<?> fieldType){
+    public static Property<Object,?> getLambdaProperty(Class<?> entityClass, String fieldName, Class<?> fieldType){
         final MethodHandles.Lookup lookup = MethodHandles.lookup();
         MethodType methodType = MethodType.methodType(fieldType, entityClass);
         final CallSite site;
@@ -66,7 +67,7 @@ public class EasyUtil {
                     methodType,
                     lookup.findVirtual(entityClass, getFunName, MethodType.methodType(fieldType)),
                     methodType, FLAG_SERIALIZABLE);
-            return (Property) site.getTarget().invokeExact();
+            return (Property<Object,?>) site.getTarget().invokeExact();
         }catch (Throwable e){
             throw new EasyQueryException(e);
         }

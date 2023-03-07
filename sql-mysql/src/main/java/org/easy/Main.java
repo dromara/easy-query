@@ -2,11 +2,11 @@ package org.easy;
 
 import com.alibaba.druid.pool.DruidDataSourceFactory;
 import org.easy.query.core.abstraction.*;
-import org.easy.query.core.abstraction.client.EasySqlQuery;
-import org.easy.query.core.abstraction.client.SqlQuery;
+import org.easy.query.core.api.client.EasySqlQuery;
+import org.easy.query.core.api.client.SqlQuery;
 import org.easy.query.core.abstraction.metadata.EntityMetadataManager;
 import org.easy.query.core.abstraction.sql.PageResult;
-import org.easy.query.core.basic.api.def.DefaultEasySqlApiFactory;
+import org.easy.query.core.api.def.DefaultEasySqlApiFactory;
 import org.easy.query.core.basic.api.select.Queryable;
 import org.easy.query.core.enums.AggregatePredicateCompare;
 import org.easy.query.core.basic.jdbc.tx.DefaultConnectionManager;
@@ -112,10 +112,24 @@ public class Main {
         EasySqlApiFactory easyQueryableFactory = new DefaultEasySqlApiFactory(mySQLSqlExpressionFactory);
         DefaultEasyQueryRuntimeContext jqdcRuntimeContext = new DefaultEasyQueryRuntimeContext(configuration, entityMetadataManager, easyQueryLambdaFactory, connectionManager, defaultExecutor, jdbcTypeHandler, easyQueryableFactory, mySQLSqlExpressionFactory);
 
-        jqdcRuntimeContext.getEasyQueryConfiguration().applyEntityTypeConfiguration(new TestUserMySqlConfiguration());
+//        jqdcRuntimeContext.getEasyQueryConfiguration().applyEntityTypeConfiguration(new TestUserMySqlConfiguration());
 
 
         client = new EasySqlQuery(jqdcRuntimeContext);
+
+        {
+            Queryable<TestUserMysql> sql = client.query(TestUserMysql.class)
+                    .leftJoin(SysUserLogbyMonth.class, (a, b) -> a.eq(b, TestUserMysql::getName, SysUserLogbyMonth::getId).then(b).eq(SysUserLogbyMonth::getTime, LocalDateTime.now()))
+                    .where(o -> o.eq(TestUserMysql::getId, "102")
+                            .like(TestUserMysql::getName, "1%")
+                            .and(x -> x.like(TestUserMysql::getName, "123").or().eq(TestUserMysql::getAge, 1)
+                            ));
+            long count31 = client.query(SysUserLogbyMonth.class)
+                    .innerJoin(sql,(a,b)->a.eq(b,SysUserLogbyMonth::getId,TestUserMysql::getId))
+                    .where(o -> o.eq(SysUserLogbyMonth::getId, "119")).select(o -> o.column(SysUserLogbyMonth::getId)).count();
+
+        }
+
         Queryable<TestUserMysqlx> select = client.query(TestUserMysql.class)
                 .leftJoin(SysUserLogbyMonth.class, (a, b) -> a.eq(b, TestUserMysql::getName, SysUserLogbyMonth::getId).then(b).eq(SysUserLogbyMonth::getTime, LocalDateTime.now()))
                 .where(o -> o.eq(TestUserMysql::getId, "102")
@@ -127,6 +141,8 @@ public class Main {
         long count3 = client.query(SysUserLogbyMonth.class)
                 .leftJoin(select,(a,b)->a.eq(b,SysUserLogbyMonth::getId,TestUserMysqlx::getId))
                 .where(o -> o.eq(SysUserLogbyMonth::getId, "119")).select(o -> o.column(SysUserLogbyMonth::getId)).count();
+
+
         {
 
             Queryable<SysUserLogbyMonth> queryable = client.query(SysUserLogbyMonth.class)

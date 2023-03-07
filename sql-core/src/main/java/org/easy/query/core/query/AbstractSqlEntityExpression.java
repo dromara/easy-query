@@ -13,24 +13,24 @@ import java.util.List;
  * @Created by xuejiaming
  */
 public abstract class AbstractSqlEntityExpression implements SqlEntityExpression {
-    protected final SqlExpressionContext queryExpressionContext;
+    protected final SqlExpressionContext sqlExpressionContext;
     protected final List<SqlEntityTableExpression> tables;
     protected boolean logicDelete;
 
-    public AbstractSqlEntityExpression(SqlExpressionContext queryExpressionContext){
-        this.queryExpressionContext = queryExpressionContext;
+    public AbstractSqlEntityExpression(SqlExpressionContext sqlExpressionContext){
+        this.sqlExpressionContext = sqlExpressionContext;
         this.tables = new ArrayList<>();
         logicDelete=true;
     }
 
     @Override
     public SqlExpressionContext getSqlExpressionContext() {
-        return queryExpressionContext;
+        return sqlExpressionContext;
     }
 
     @Override
     public EasyQueryRuntimeContext getRuntimeContext() {
-        return queryExpressionContext.getRuntimeContext();
+        return sqlExpressionContext.getRuntimeContext();
     }
 
     @Override
@@ -49,7 +49,7 @@ public abstract class AbstractSqlEntityExpression implements SqlEntityExpression
     }
 
     public String getQuoteName(String value) {
-        return queryExpressionContext.getQuoteName(value);
+        return sqlExpressionContext.getQuoteName(value);
     }
 
     @Override
@@ -65,12 +65,12 @@ public abstract class AbstractSqlEntityExpression implements SqlEntityExpression
     }
     @Override
     public List<SQLParameter> getParameters() {
-        return queryExpressionContext.getParameters();
+        return sqlExpressionContext.getParameters();
     }
 
     @Override
     public void addParameter(SQLParameter parameter) {
-        queryExpressionContext.addParameter(parameter);
+        sqlExpressionContext.addParameter(parameter);
     }
     @Override
     public void setLogicDelete(boolean logicDelete) {

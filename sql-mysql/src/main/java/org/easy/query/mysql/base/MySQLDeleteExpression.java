@@ -1,6 +1,7 @@
 package org.easy.query.mysql.base;
 
 import org.easy.query.core.abstraction.EasyQueryLambdaFactory;
+import org.easy.query.core.abstraction.metadata.EntityMetadata;
 import org.easy.query.core.exception.EasyQueryException;
 import org.easy.query.core.expression.lambda.SqlExpression;
 import org.easy.query.core.expression.parser.abstraction.SqlColumnSetter;
@@ -24,10 +25,11 @@ public class MySQLDeleteExpression extends EasySqlDeleteExpression {
 
     private final boolean expressionDelete;
 
-    public MySQLDeleteExpression(SqlExpressionContext queryExpressionContext, boolean expressionDelete) {
-        super(queryExpressionContext);
+    public MySQLDeleteExpression(SqlExpressionContext sqlExpressionContext, boolean expressionDelete) {
+        super(sqlExpressionContext);
         this.expressionDelete = expressionDelete;
     }
+
     @Override
     public String toSql() {
         int tableCount = getTables().size();
@@ -37,37 +39,36 @@ public class MySQLDeleteExpression extends EasySqlDeleteExpression {
         if (tableCount > 1) {
             throw new EasyQueryException("找到多张表信息");
         }
-        if(expressionDelete){
+        if (expressionDelete) {
             return expressionDeleteSql();
-        }
-        else {
+        } else {
             return entityDeleteSql();
         }
     }
-    private String expressionDeleteSql(){
+
+    private String expressionDeleteSql() {
 
 
         if (!hasWhere()) {
-            throw new EasyQueryException("'Delete' statement without 'where' clears all data in the table");
+            throw new EasyQueryException("'DELETE' statement without 'WHERE' clears all data in the table");
         }
-        if(getTables().isEmpty()){
-            throw new EasyQueryException("删除请先添加表信息");
+        if (getTables().isEmpty()) {
+            throw new EasyQueryException("not table found for delete");
         }
 
         StringBuilder sql;
         SqlEntityTableExpression table = getTables().get(0);
         String tableName = table.getEntityMetadata().getTableName();
-        SqlExpression<SqlColumnSetter<?>> deletedSqlExpression = table.getDeletedSqlExpression();
+        UpdateSetSqlBuilderSegment updateSetSqlBuilderSegment = getUpdateSetSqlBuilderSegment(table);
         //逻辑删除
-        if (deletedSqlExpression != null) {
-            EasyQueryLambdaFactory easyQueryLambdaFactory = getRuntimeContext().getEasyQueryLambdaFactory();
-            UpdateSetSqlBuilderSegment setSqlSegmentBuilder = new UpdateSetSqlBuilderSegment();
-            SqlColumnSetter<?> sqlColumnSetter = easyQueryLambdaFactory.createSqlColumnSetter(table.getIndex(), this, setSqlSegmentBuilder);
-            deletedSqlExpression.apply(sqlColumnSetter);//获取set的值
+        if (updateSetSqlBuilderSegment != null) {
 
             sql = new StringBuilder("UPDATE ").append(tableName);
-            sql.append(" SET ").append(setSqlSegmentBuilder.toSql());//生成的表达式带有参数会传入到上下文
+            sql.append(" SET ").append(updateSetSqlBuilderSegment.toSql());//生成的表达式带有参数会传入到上下文
         } else {
+            if (sqlExpressionContext.isDeleteThrow()) {
+                throw new EasyQueryException("can't execute delete statement");
+            }
             sql = new StringBuilder("DELETE FROM ");
             sql.append(tableName);
         }
@@ -75,36 +76,56 @@ public class MySQLDeleteExpression extends EasySqlDeleteExpression {
         sql.append(getWhere().toSql());
         return sql.toString();
     }
-    private String entityDeleteSql(){
+
+    private UpdateSetSqlBuilderSegment getUpdateSetSqlBuilderSegment(SqlEntityTableExpression table) {
+        EntityMetadata entityMetadata = table.getEntityMetadata();
+        if (entityMetadata.enableLogicDelete() && sqlExpressionContext.isUseLogicDelete()) {
+            SqlExpression<SqlColumnSetter<?>> logicDeletedSqlExpression = table.getLogicDeletedSqlExpression();
+            if (logicDeletedSqlExpression != null) {
+                EasyQueryLambdaFactory easyQueryLambdaFactory = getRuntimeContext().getEasyQueryLambdaFactory();
+                UpdateSetSqlBuilderSegment setSqlSegmentBuilder = new UpdateSetSqlBuilderSegment();
+                SqlColumnSetter<?> sqlColumnSetter = easyQueryLambdaFactory.createSqlColumnSetter(table.getIndex(), this, setSqlSegmentBuilder);
+                logicDeletedSqlExpression.apply(sqlColumnSetter);//获取set的值
+                return setSqlSegmentBuilder;
+            }
+        }
+        return null;
+
+    }
+
+    /**
+     * 后续代码合并抽离优化
+     *
+     * @return
+     */
+    private String entityDeleteSql() {
 
         //如果没有指定where那么就使用主键作为更新条件
         SqlBuilderSegment whereColumns = getWhereColumns();
 
         SqlEntityTableExpression table = getTables().get(0);
         Collection<String> keyProperties = table.getEntityMetadata().getKeyProperties();
-        if(keyProperties.isEmpty()){
-            throw new EasyQueryException("对象:"+ ClassUtil.getSimpleName(table.getEntityMetadata().getEntityClass())+" 未找到主键信息");
+        if (keyProperties.isEmpty()) {
+            throw new EasyQueryException("entity:" + ClassUtil.getSimpleName(table.getEntityMetadata().getEntityClass()) + "  not found primary key properties");
         }
         for (String keyProperty : keyProperties) {
-            whereColumns.append(new ColumnPropertyPredicate(table, keyProperty,this));
+            whereColumns.append(new ColumnPropertyPredicate(table, keyProperty, this));
         }
         if (!hasWhereColumns()) {
-            throw new EasyQueryException("'Delete' statement without 'where' clears all data in the table");
+            throw new EasyQueryException("'DELETE' statement without 'WHERE' clears all data in the table");
         }
 
         StringBuilder sql = null;
         String tableName = table.getEntityMetadata().getTableName();
-        SqlExpression<SqlColumnSetter<?>> deletedSqlExpression = table.getDeletedSqlExpression();
+        UpdateSetSqlBuilderSegment updateSetSqlBuilderSegment = getUpdateSetSqlBuilderSegment(table);
         //逻辑删除
-        if (deletedSqlExpression != null) {
-            EasyQueryLambdaFactory easyQueryLambdaFactory = getRuntimeContext().getEasyQueryLambdaFactory();
-            UpdateSetSqlBuilderSegment setSqlSegmentBuilder = new UpdateSetSqlBuilderSegment();
-            SqlColumnSetter<?> sqlColumnSetter = easyQueryLambdaFactory.createSqlColumnSetter(table.getIndex(), this, setSqlSegmentBuilder);
-            deletedSqlExpression.apply(sqlColumnSetter);//获取set的值
-
+        if (updateSetSqlBuilderSegment != null) {
             sql = new StringBuilder("UPDATE ").append(tableName);
-            sql.append(" SET ").append(setSqlSegmentBuilder.toSql());//生成的表达式带有参数会传入到上下文
+            sql.append(" SET ").append(updateSetSqlBuilderSegment.toSql());//生成的表达式带有参数会传入到上下文
         } else {
+            if (sqlExpressionContext.isDeleteThrow()) {
+                throw new EasyQueryException("can't execute delete statement");
+            }
             sql = new StringBuilder("DELETE FROM ");
             sql.append(tableName);
         }

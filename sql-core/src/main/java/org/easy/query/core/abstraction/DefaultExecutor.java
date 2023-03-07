@@ -66,7 +66,7 @@ public class DefaultExecutor implements EasyExecutor {
         try {
             for (T entity : entities) {
 
-                List<SQLParameter> parameters = getPropertyParameters(entity, sqlParameters);
+                List<SQLParameter> parameters = extractParameters(entity, sqlParameters);
                 if(easyConnection==null){
                     easyConnection = connectionManager.getEasyConnection();
                 }
@@ -99,7 +99,7 @@ public class DefaultExecutor implements EasyExecutor {
         try {
             for (T entity : entities) {
 
-                List<SQLParameter> parameters = getPropertyParameters(entity, sqlParameters);
+                List<SQLParameter> parameters = extractParameters(entity, sqlParameters);
                 if(easyConnection==null){
                     easyConnection = connectionManager.getEasyConnection();
                 }
@@ -119,18 +119,27 @@ public class DefaultExecutor implements EasyExecutor {
         }
         return rs.length;
     }
-    private <T> List<SQLParameter> getPropertyParameters(T entity, List<SQLParameter> sqlParameters){
 
+    /**
+     * 提取参数
+     * @param entity
+     * @param sqlParameters
+     * @return ConstSQLParameter 集合
+     * @param <T>
+     */
+    private <T> List<SQLParameter> extractParameters(T entity, List<SQLParameter> sqlParameters){
         List<SQLParameter> params = new ArrayList<>(sqlParameters.size());
         for (SQLParameter sqlParameter : sqlParameters) {
-            boolean isBeanSqlParameter = sqlParameter instanceof BeanSqlParameter;
-            if(!isBeanSqlParameter){
-                throw new EasyQueryException("current sql parameter:["+ClassUtil.getSimpleName(sqlParameter.getClass())+"] is not implements BeanSqlParameter");
+            if(sqlParameter instanceof ConstSQLParameter){
+                params.add(sqlParameter);
+            }else if(sqlParameter instanceof BeanSqlParameter){
+                BeanSqlParameter beanSqlParameter = (BeanSqlParameter) sqlParameter;
+                beanSqlParameter.setBean(entity);
+                Object value = beanSqlParameter.getValue();
+                params.add(new ConstSQLParameter(beanSqlParameter.getTable(),beanSqlParameter.getPropertyName(),value));
+            }else{
+                throw new EasyQueryException("current sql parameter:["+ClassUtil.getSimpleName(sqlParameter.getClass())+"],property name:["+sqlParameter.getPropertyName()+"] is not implements BeanSqlParameter or ConstSQLParameter");
             }
-            BeanSqlParameter beanSqlParameter = (BeanSqlParameter) sqlParameter;
-            beanSqlParameter.setBean(entity);
-            Object value = beanSqlParameter.getValue();
-            params.add(new ConstSQLParameter(beanSqlParameter.getTable(),beanSqlParameter.getPropertyName(),value));
         }
         return params;
     }

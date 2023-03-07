@@ -6,6 +6,8 @@ import org.easy.query.core.expression.lambda.SqlExpression;
 import org.easy.query.core.expression.parser.abstraction.SqlColumnSetter;
 import org.easy.query.core.expression.parser.abstraction.SqlPredicate;
 
+import java.util.List;
+
 /**
  * @FileName: EasyAnonymousEntityTableExpressionSegment.java
  * @Description: 匿名实体表表达式
@@ -21,12 +23,17 @@ public class EasyAnonymousEntityTableExpression extends EasyEntityTableExpressio
     }
 
     @Override
-    public SqlExpression<SqlPredicate<?>> getQueryFilterExpression() {
+    public SqlExpression<SqlPredicate<?>> getLogicDeleteQueryFilterExpression() {
         return null;
     }
 
     @Override
-    public SqlExpression<SqlColumnSetter<?>> getDeletedSqlExpression() {
+    public List<String> getQueryFilterNames() {
+        return null;
+    }
+
+    @Override
+    public SqlExpression<SqlColumnSetter<?>> getLogicDeletedSqlExpression() {
         return null;
     }
 

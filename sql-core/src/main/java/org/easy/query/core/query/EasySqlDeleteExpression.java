@@ -1,15 +1,9 @@
 package org.easy.query.core.query;
 
-import jdk.nashorn.internal.objects.annotations.Where;
-import org.easy.query.core.abstraction.EasyQueryRuntimeContext;
-import org.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import org.easy.query.core.expression.segment.builder.ProjectSqlBuilderSegment;
 import org.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import org.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import org.easy.query.core.expression.segment.condition.PredicateSegment;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @FileName: EasySqlDeleteExpression.java
@@ -21,8 +15,8 @@ public abstract class EasySqlDeleteExpression extends AbstractSqlEntityExpressio
     protected final PredicateSegment where;
     protected SqlBuilderSegment whereColumns;
 
-    public EasySqlDeleteExpression(SqlExpressionContext queryExpressionContext) {
-        super(queryExpressionContext);
+    public EasySqlDeleteExpression(SqlExpressionContext sqlExpressionContext) {
+        super(sqlExpressionContext);
         this.where = new AndPredicateSegment(true);
     }
 

@@ -18,4 +18,6 @@ public interface SqlEntityDeleteExpression extends SqlEntityExpression {
     SqlBuilderSegment getWhereColumns();
 
     boolean hasWhereColumns();
+
+
 }

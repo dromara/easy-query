@@ -17,4 +17,10 @@ import java.lang.annotation.Target;
 @Target(value = {ElementType.METHOD, ElementType.FIELD})
 public @interface LogicDelete {
     LogicDeleteStrategyEnum strategy() default LogicDeleteStrategyEnum.BOOLEAN;
+
+    /**
+     * 当strategy为LogicDeleteStrategyEnum.CUSTOM,时通过strategyName匹配逻辑删除策略
+     * @return
+     */
+    String strategyName() default "";
 }

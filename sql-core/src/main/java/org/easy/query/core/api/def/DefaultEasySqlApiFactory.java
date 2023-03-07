@@ -1,4 +1,4 @@
-package org.easy.query.core.basic.api.def;
+package org.easy.query.core.api.def;
 
 import org.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import org.easy.query.core.abstraction.EasySqlApiFactory;
@@ -79,10 +79,22 @@ public class DefaultEasySqlApiFactory implements EasySqlApiFactory {
         return new EasyQueryable2<>(t1Class,t2Class,sqlEntityExpression);
     }
 
+    /**
+     * 只有当join外部的queryable的时候外部的queryable是独立的sql expression context
+     * @param t1Class
+     * @param joinQueryable
+     * @param selectTableInfoType
+     * @param sqlEntityExpression
+     * @return
+     * @param <T1> 左表对象
+     * @param <T2> 右表对象
+     */
     @Override
     public <T1, T2> Queryable2<T1, T2> createQueryable2(Class<T1> t1Class, Queryable<T2> joinQueryable, MultiTableTypeEnum selectTableInfoType, SqlEntityQueryExpression sqlEntityExpression) {
 
         Class<T2> t2Class = joinQueryable.queryClass();
+
+
 
         EntityMetadata entityMetadata = sqlEntityExpression.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(t2Class);
         SqlEntityQueryExpression joinQueryableSqlEntityExpression = joinQueryable.getSqlEntityExpression();

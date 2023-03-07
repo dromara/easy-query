@@ -21,6 +21,7 @@ import org.easy.query.core.expression.segment.SelectConstSegment;
 import org.easy.query.core.expression.segment.builder.ProjectSqlBuilderSegment;
 import org.easy.query.core.query.*;
 import org.easy.query.core.util.EasyUtil;
+import org.easy.query.core.util.SqlExpressionUtil;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -438,31 +439,62 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     }
 
 
+    protected <TSource> Queryable<TSource> selectAllQueryable(Queryable<TSource> queryable){
+        SqlEntityQueryExpression t2QueryableSqlEntityExpression = queryable.getSqlEntityExpression();
+        if(t2QueryableSqlEntityExpression.getProjects().isEmpty()){
+            return queryable.select(ColumnSelector::columnAll);
+        }
+        return queryable;
+    }
     @Override
     public <T2> Queryable2<T1, T2> leftJoin(Class<T2> joinClass, SqlExpression2<SqlPredicate<T1>, SqlPredicate<T2>> on) {
         Queryable2<T1, T2> queryable2 = sqlEntityExpression.getRuntimeContext().getSqlApiFactory().createQueryable2(t1Class, joinClass, MultiTableTypeEnum.LEFT_JOIN, sqlEntityExpression);
-        SqlPredicate<T1> on1 = queryable2.getSqlBuilderProvider2().getSqlOnPredicate1();
-        SqlPredicate<T2> on2 = queryable2.getSqlBuilderProvider2().getSqlOnPredicate2();
-        on.apply(on1, on2);
-        return queryable2;
+        return SqlExpressionUtil.executeJoinOn(queryable2,on);
     }
 
     @Override
     public <T2> Queryable2<T1, T2> leftJoin(Queryable<T2> t2Queryable, SqlExpression2<SqlPredicate<T1>, SqlPredicate<T2>> on) {
-        Queryable2<T1, T2> queryable2 = sqlEntityExpression.getRuntimeContext().getSqlApiFactory().createQueryable2(t1Class, t2Queryable, MultiTableTypeEnum.LEFT_JOIN, sqlEntityExpression);
-        SqlPredicate<T1> on1 = queryable2.getSqlBuilderProvider2().getSqlOnPredicate1();
-        SqlPredicate<T2> on2 = queryable2.getSqlBuilderProvider2().getSqlOnPredicate2();
-        on.apply(on1, on2);
-        return queryable2;
+        Queryable<T2> selectAllT2Queryable = selectAllQueryable(t2Queryable);
+
+        Queryable2<T1, T2> queryable2 = sqlEntityExpression.getRuntimeContext().getSqlApiFactory().createQueryable2(t1Class, selectAllT2Queryable, MultiTableTypeEnum.LEFT_JOIN, sqlEntityExpression);
+        return SqlExpressionUtil.executeJoinOn(queryable2,on);
     }
 
     @Override
     public <T2> Queryable2<T1, T2> innerJoin(Class<T2> joinClass, SqlExpression2<SqlPredicate<T1>, SqlPredicate<T2>> on) {
         Queryable2<T1, T2> queryable2 = sqlEntityExpression.getRuntimeContext().getSqlApiFactory().createQueryable2(t1Class, joinClass, MultiTableTypeEnum.INNER_JOIN, sqlEntityExpression);
-        SqlPredicate<T1> sqlOnPredicate1 = queryable2.getSqlBuilderProvider2().getSqlOnPredicate1();
-        SqlPredicate<T2> sqlOnPredicate2 = queryable2.getSqlBuilderProvider2().getSqlOnPredicate2();
-        on.apply(sqlOnPredicate1, sqlOnPredicate2);
-        return queryable2;
+        return SqlExpressionUtil.executeJoinOn(queryable2,on);
+    }
+
+    @Override
+    public <T2> Queryable2<T1, T2> innerJoin(Queryable<T2> t2Queryable, SqlExpression2<SqlPredicate<T1>, SqlPredicate<T2>> on) {
+        Queryable<T2> selectAllT2Queryable = selectAllQueryable(t2Queryable);
+        Queryable2<T1, T2> queryable2 = sqlEntityExpression.getRuntimeContext().getSqlApiFactory().createQueryable2(t1Class, selectAllT2Queryable, MultiTableTypeEnum.INNER_JOIN, sqlEntityExpression);
+        return SqlExpressionUtil.executeJoinOn(queryable2,on);
+    }
+
+    @Override
+    public Queryable<T1> disableLogicDelete() {
+        sqlEntityExpression.getSqlExpressionContext().disableLogicDelete();
+        return this;
+    }
+
+    @Override
+    public Queryable<T1> enableLogicDelete() {
+        sqlEntityExpression.getSqlExpressionContext().enableLogicDelete();
+        return this;
+    }
+
+    @Override
+    public Queryable<T1> noQueryFilter() {
+        sqlEntityExpression.getSqlExpressionContext().noQueryFilter();
+        return this;
+    }
+
+    @Override
+    public Queryable<T1> useQueryFilter() {
+        sqlEntityExpression.getSqlExpressionContext().useQueryFilter();
+        return this;
     }
 
     @Override

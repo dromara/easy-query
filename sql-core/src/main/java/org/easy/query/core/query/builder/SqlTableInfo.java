@@ -77,13 +77,13 @@ public class SqlTableInfo {
 
     public SqlExpression<SqlPredicate<?>> getQueryFilterExpression(){
         if(entityMetadata.enableLogicDelete()){
-            return entityMetadata.getLogicDeleteMetadata().getQueryFilterExpression();
+            return entityMetadata.getLogicDeleteMetadata().getLogicDeleteQueryFilterExpression();
         }
         return null;
     }
     public SqlExpression<SqlColumnSetter<?>> getDeletedSqlExpression(){
         if(entityMetadata.enableLogicDelete()){
-            return entityMetadata.getLogicDeleteMetadata().getDeletedSqlExpression();
+            return entityMetadata.getLogicDeleteMetadata().getLogicDeletedSqlExpression();
         }
         return null;
     }

@@ -2,6 +2,9 @@ package org.easy.query.mysql.base;
 
 import org.easy.query.core.abstraction.EasyQueryLambdaFactory;
 import org.easy.query.core.abstraction.EasySqlExpressionFactory;
+import org.easy.query.core.abstraction.metadata.EntityMetadata;
+import org.easy.query.core.configuration.types.EasyQueryConfiguration;
+import org.easy.query.core.configuration.types.GlobalQueryFilterConfiguration;
 import org.easy.query.core.exception.EasyQueryException;
 import org.easy.query.core.expression.lambda.SqlExpression;
 import org.easy.query.core.expression.parser.abstraction.SqlPredicate;
@@ -9,6 +12,7 @@ import org.easy.query.core.expression.segment.SqlSegment;
 import org.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import org.easy.query.core.expression.segment.condition.PredicateSegment;
 import org.easy.query.core.query.*;
+import org.easy.query.core.util.ArrayUtil;
 import org.easy.query.core.util.StringUtil;
 
 import java.util.Iterator;
@@ -27,7 +31,7 @@ public class MySQLQueryExpression extends EasySqlQueryExpression {
 
     @Override
     public String toSql() {
-        queryExpressionContext.clearParameters();
+        sqlExpressionContext.clearParameters();
         int tableCount = getTables().size();
         if (tableCount == 0) {
             throw new EasyQueryException("未找到查询表信息");
@@ -38,7 +42,7 @@ public class MySQLQueryExpression extends EasySqlQueryExpression {
         if (tableCount == 1 && firstTable instanceof AnonymousEntityTableExpression && StringUtil.isEmpty(select)) {
             SqlEntityQueryExpression sqlEntityQueryExpression = ((AnonymousEntityTableExpression) firstTable).getSqlEntityQueryExpression();
             String s = sqlEntityQueryExpression.toSql();
-            queryExpressionContext.extractParameters(sqlEntityQueryExpression.getSqlExpressionContext());
+            sqlExpressionContext.extractParameters(sqlEntityQueryExpression.getSqlExpressionContext());
             return s;
         }
         StringBuilder sql = new StringBuilder("SELECT ");
@@ -96,27 +100,44 @@ public class MySQLQueryExpression extends EasySqlQueryExpression {
     }
 
     private PredicateSegment getSqlPredicateSegment(SqlEntityTableExpression table, PredicateSegment originalPredicate) {
-        PredicateSegment predicateSegment = null;
-        SqlExpression<SqlPredicate<?>> queryFilterExpression = table.getQueryFilterExpression();
-        if (queryFilterExpression != null) {
-            predicateSegment = new AndPredicateSegment(true);
+
+        EntityMetadata entityMetadata = table.getEntityMetadata();
+        boolean useLogicDelete = entityMetadata.enableLogicDelete() && sqlExpressionContext.isUseLogicDelete();
+        boolean useQueryFilter = entityMetadata.hasAnyQueryFilter() && sqlExpressionContext.isUserQueryFilter();
+        if(useLogicDelete||useQueryFilter){
+            PredicateSegment predicateSegment = new AndPredicateSegment(true);
             EasyQueryLambdaFactory easyQueryLambdaFactory = getRuntimeContext().getEasyQueryLambdaFactory();
             SqlPredicate<?> sqlPredicate = easyQueryLambdaFactory.createSqlPredicate(table.getIndex(), this, predicateSegment);
-            queryFilterExpression.apply(sqlPredicate);
-            if (originalPredicate != null && originalPredicate.isNotEmpty()) {
-                predicateSegment.addPredicateSegment(originalPredicate);
+            SqlExpression<SqlPredicate<?>> logicDeleteQueryFilterExpression = table.getLogicDeleteQueryFilterExpression();
+            if (logicDeleteQueryFilterExpression != null) {
+                logicDeleteQueryFilterExpression.apply(sqlPredicate);
             }
-        } else {
-            predicateSegment = originalPredicate;
+            List<String> queryFilterNames = table.getQueryFilterNames();
+            if(ArrayUtil.isNotEmpty(queryFilterNames)){
+                EasyQueryConfiguration easyQueryConfiguration = getRuntimeContext().getEasyQueryConfiguration();
+                for (String queryFilterName : queryFilterNames) {
+                    GlobalQueryFilterConfiguration globalQueryFilterConfiguration = easyQueryConfiguration.getGlobalQueryFilterConfiguration(queryFilterName);
+                    if(globalQueryFilterConfiguration!=null){
+                        globalQueryFilterConfiguration.configure(table.entityClass(),sqlPredicate);
+                    }
+                }
+            }
+
+            if(predicateSegment.isNotEmpty()){
+                if (originalPredicate != null && originalPredicate.isNotEmpty()) {
+                    predicateSegment.addPredicateSegment(originalPredicate);
+                }
+                return predicateSegment;
+            }
         }
-        return predicateSegment;
+        return originalPredicate;
     }
 
     private String toTableExpressionSql(SqlEntityTableExpression sqlEntityTableExpression) {
         if (sqlEntityTableExpression instanceof AnonymousEntityTableExpression) {
             SqlEntityQueryExpression sqlEntityQueryExpression = ((AnonymousEntityTableExpression) sqlEntityTableExpression).getSqlEntityQueryExpression();
             String s = sqlEntityTableExpression.toSql();
-            queryExpressionContext.extractParameters(sqlEntityQueryExpression.getSqlExpressionContext());
+            sqlExpressionContext.extractParameters(sqlEntityQueryExpression.getSqlExpressionContext());
             return s;
         }
         return sqlEntityTableExpression.toSql();
