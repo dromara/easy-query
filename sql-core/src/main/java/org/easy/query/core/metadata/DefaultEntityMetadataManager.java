@@ -33,8 +33,8 @@ public class DefaultEntityMetadataManager implements EntityMetadataManager {
 //        if(tableName==null){
 //            throw new JDQCException(String.format("当前对象不是数据库对象:[%s]",entityClass.getSimpleName()));
 //        }
-        EntityMetadata entityMetadata = new EntityMetadata(entityClass);
         return entityMetadataCache.computeIfAbsent(entityClass,key->{
+            EntityMetadata entityMetadata = new EntityMetadata(entityClass);
             entityMetadata.init(jdqcConfiguration);
             return entityMetadata;
         });

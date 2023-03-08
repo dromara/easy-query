@@ -6,7 +6,6 @@ import org.easy.query.core.abstraction.sql.enums.EasyAggregate;
 import org.easy.query.core.expression.parser.abstraction.SqlColumnAsSelector;
 import org.easy.query.core.expression.parser.abstraction.internal.ColumnAsSelector;
 import org.easy.query.core.query.SqlEntityExpression;
-import org.easy.query.core.query.SqlEntityQueryExpression;
 import org.easy.query.core.query.SqlEntityTableExpression;
 import org.easy.query.core.expression.segment.ColumnSegment;
 import org.easy.query.core.expression.segment.FuncColumnSegment;
@@ -28,14 +27,14 @@ public class DefaultSqlColumnAsSelector<T1,TR> extends AbstractSqlColumnSelector
     public SqlColumnAsSelector<T1, TR> columnAs(Property<T1, ?> column, Property<TR, ?> alias) {
         SqlEntityTableExpression table = sqlEntityExpression.getTable(getIndex());
         String propertyName = table.getPropertyName(column);
-        String columnAsName = LambdaUtil.getAttrName(alias);
+        String columnAsName = LambdaUtil.getPropertyName(alias);
         sqlSegmentBuilder.append(new ColumnSegment(table,propertyName, sqlEntityExpression,columnAsName));
         return this;
     }
     private void doColumnFunc(Property<T1, ?> column, Property<TR, ?> alias,EasyAggregate aggregate){
         SqlEntityTableExpression table = sqlEntityExpression.getTable(getIndex());
         String propertyName = table.getPropertyName(column);
-        String columnAsName = alias==null?table.getColumnName(propertyName):LambdaUtil.getAttrName(alias);
+        String columnAsName = alias==null?table.getColumnName(propertyName):LambdaUtil.getPropertyName(alias);
         sqlSegmentBuilder.append(new FuncColumnSegment(table,propertyName,sqlEntityExpression, aggregate,columnAsName));
     }
 

@@ -1,6 +1,7 @@
 package org.easy.query.core.util;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * @FileName: ArrayUtil.java
@@ -25,5 +26,22 @@ public class ArrayUtil {
     }
     public static  <T> boolean isNotEmpty(Collection<T> collection){
         return !isEmpty(collection);
+    }
+
+    public static <TSource> TSource firstOrDefault(List<TSource> source, TSource def){
+        TSource result = firstOrNull(source);
+        if (result == null) {
+            return def;
+        }
+        return result;
+    }
+    public static <TSource> TSource firstOrNull(List<TSource> source){
+        if(source==null){
+            return null;
+        }
+        if (source.isEmpty()) {
+            return null;
+        }
+        return source.get(0);
     }
 }

@@ -106,6 +106,7 @@ public class Main {
         EasyQueryConfiguration configuration = new EasyQueryConfiguration();
         configuration.setNameConversion(nameConversion);
         configuration.setDialect(new MySQLDialect());
+
         EntityMetadataManager entityMetadataManager = new DefaultEntityMetadataManager(configuration);
         EasyQueryLambdaFactory easyQueryLambdaFactory = new DefaultEasyQueryLambdaFactory();
         MySQLSqlExpressionFactory mySQLSqlExpressionFactory = new MySQLSqlExpressionFactory();
@@ -113,11 +114,38 @@ public class Main {
         DefaultEasyQueryRuntimeContext jqdcRuntimeContext = new DefaultEasyQueryRuntimeContext(configuration, entityMetadataManager, easyQueryLambdaFactory, connectionManager, defaultExecutor, jdbcTypeHandler, easyQueryableFactory, mySQLSqlExpressionFactory);
 
 //        jqdcRuntimeContext.getEasyQueryConfiguration().applyEntityTypeConfiguration(new TestUserMySqlConfiguration());
-
+configuration.applyGlobalQueryFilterConfiguration(new NameQueryFilter());
 
         client = new EasySqlQuery(jqdcRuntimeContext);
 
         {
+            TestUserMysql testUserMysqlxa = client.query(TestUserMysql.class)
+                    .leftJoin(SysUserLogbyMonth.class, (a, b) -> a.eq(b, TestUserMysql::getName, SysUserLogbyMonth::getId).then(b).eq(SysUserLogbyMonth::getTime, LocalDateTime.now()))
+                    .where(o -> o.eq(TestUserMysql::getId, "102")
+                            .like(TestUserMysql::getName, "1%")
+                            .and(x -> x.like(TestUserMysql::getName, "123").or().eq(TestUserMysql::getAge, 1)
+                            )).firstOrNull();
+            long testUserMysqlxac= client.query(TestUserMysql.class)
+                    .leftJoin(SysUserLogbyMonth.class, (a, b) -> a.eq(b, TestUserMysql::getName, SysUserLogbyMonth::getId).then(b).eq(SysUserLogbyMonth::getTime, LocalDateTime.now()))
+                    .where(o -> o.eq(TestUserMysql::getId, "102")
+                            .like(TestUserMysql::getName, "1%")
+                            .and(x -> x.like(TestUserMysql::getName, "123").or().eq(TestUserMysql::getAge, 1)
+                            )).count();
+            long testUserMysqlxasc= client.query(TestUserMysql.class)
+                    .leftJoin(SysUserLogbyMonth.class, (a, b) -> a.eq(b, TestUserMysql::getName, SysUserLogbyMonth::getId).then(b).eq(SysUserLogbyMonth::getTime, LocalDateTime.now()))
+                    .where(o -> o.eq(TestUserMysql::getId, "102")
+                            .like(TestUserMysql::getName, "1%")
+                            .and(x -> x.like(TestUserMysql::getName, "123").or().eq(TestUserMysql::getAge, 1)
+                            )).select(o->o.column(TestUserMysql::getName)).count();
+            TestUserMysql testUserMysql = client.query(TestUserMysql.class)
+                    .leftJoin(SysUserLogbyMonth.class, (a, b) -> a.eq(b, TestUserMysql::getName, SysUserLogbyMonth::getId).then(b).eq(SysUserLogbyMonth::getTime, LocalDateTime.now()))
+                    .where(o -> o.eq(TestUserMysql::getId, "102")
+                            .like(TestUserMysql::getName, "1%")
+                            .and(x -> x.like(TestUserMysql::getName, "123").or().eq(TestUserMysql::getAge, 1)
+                            )).select(o->o.column(TestUserMysql::getName)).firstOrNull();
+
+
+
             Queryable<TestUserMysql> sql = client.query(TestUserMysql.class)
                     .leftJoin(SysUserLogbyMonth.class, (a, b) -> a.eq(b, TestUserMysql::getName, SysUserLogbyMonth::getId).then(b).eq(SysUserLogbyMonth::getTime, LocalDateTime.now()))
                     .where(o -> o.eq(TestUserMysql::getId, "102")

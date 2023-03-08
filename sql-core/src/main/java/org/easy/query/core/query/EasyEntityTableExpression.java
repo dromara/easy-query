@@ -42,7 +42,7 @@ public class EasyEntityTableExpression implements SqlEntityTableExpression {
 
     @Override
     public <T1> String getPropertyName(Property<T1, ?> column) {
-        return LambdaUtil.getAttrName(column);
+        return LambdaUtil.getPropertyName(column);
     }
 
     @Override

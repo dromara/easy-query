@@ -150,6 +150,7 @@ public class DefaultSqlPredicate<T1> implements SqlPredicate<T1> {
         return this;
     }
 
+
     @Override
     public SqlPredicate<T1> in(boolean condition, Property<T1, ?> column, Collection<?> collection) {
         if (condition) {

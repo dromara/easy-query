@@ -49,7 +49,7 @@ public interface WherePredicate<T1, TChain> extends IndexAware {
     /**
      * 等于 column = val
      */
-    default TChain eq(Property<T1, ?> column, Object val) {
+    default  TChain eq(Property<T1, ?> column, Object val) {
         return eq(true, column, val);
     }
 

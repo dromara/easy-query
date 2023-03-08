@@ -11,8 +11,8 @@ import java.lang.invoke.CallSite;
 import java.lang.invoke.LambdaMetafactory;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @FileName: EasyUtil.java
@@ -21,6 +21,8 @@ import java.util.Objects;
  * @Created by xuejiaming
  */
 public class EasyUtil {
+
+
     private static final int FLAG_SERIALIZABLE=1;
     private EasyUtil(){}
     public static SqlEntityTableExpression getPredicateTableByOffset(SqlEntityQueryExpression sqlEntityExpression, int offsetForward) {
@@ -53,13 +55,18 @@ public class EasyUtil {
         return alias;
     }
 
+    private static Map<Class<?>, Map<String,Property<?,?>>> CLASS_PROPERTY_LAMBDA_CACHE = new ConcurrentHashMap<>();
+    public static Property<?,?> getLambdaProperty(Class<?> entityClass, String propertyName, Class<?> fieldType){
+        Map<String, Property<?, ?>> propertyLambdaMap = CLASS_PROPERTY_LAMBDA_CACHE.computeIfAbsent(entityClass,key-> new ConcurrentHashMap<>());
+       return propertyLambdaMap.computeIfAbsent(propertyName,key-> getLambdaProperty0(entityClass,propertyName,fieldType));
+    }
+    private static Property<?,?> getLambdaProperty0(Class<?> entityClass, String propertyName, Class<?> fieldType){
 
-    public static Property<Object,?> getLambdaProperty(Class<?> entityClass, String fieldName, Class<?> fieldType){
         final MethodHandles.Lookup lookup = MethodHandles.lookup();
         MethodType methodType = MethodType.methodType(fieldType, entityClass);
         final CallSite site;
 
-        String getFunName="get"+StringUtil.toUpperCaseFirstOne(fieldName);
+        String getFunName="get"+StringUtil.toUpperCaseFirstOne(propertyName);
         try {
             site = LambdaMetafactory.altMetafactory(lookup,
                     "invoke",
@@ -67,10 +74,12 @@ public class EasyUtil {
                     methodType,
                     lookup.findVirtual(entityClass, getFunName, MethodType.methodType(fieldType)),
                     methodType, FLAG_SERIALIZABLE);
-            return (Property<Object,?>) site.getTarget().invokeExact();
+            return (Property<?,?>) site.getTarget().invokeExact();
         }catch (Throwable e){
             throw new EasyQueryException(e);
         }
     }
+
+
 }
 

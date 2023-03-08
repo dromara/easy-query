@@ -60,7 +60,7 @@ public class SqlTableInfo {
         return this.entityMetadata.getColumnName(propertyName);
     }
     public <T1> ColumnMetadata getColumn(Property<T1, ?> column){
-        String propertyName = LambdaUtil.getAttrName(column);
+        String propertyName = LambdaUtil.getPropertyName(column);
         return this.getColumnMetadata(propertyName);
 
     }
@@ -68,11 +68,11 @@ public class SqlTableInfo {
         return this.entityMetadata.getColumn(propertyName);
     }
     public <T1> String getColumnName(Property<T1, ?> column){
-        String propertyName = LambdaUtil.getAttrName(column);
+        String propertyName = LambdaUtil.getPropertyName(column);
         return this.getColumnName(propertyName);
     }
     public <T1> String getPropertyName(Property<T1, ?> column){
-        return LambdaUtil.getAttrName(column);
+        return LambdaUtil.getPropertyName(column);
     }
 
     public SqlExpression<SqlPredicate<?>> getQueryFilterExpression(){

@@ -40,10 +40,7 @@ public class MySQLQueryExpression extends EasySqlQueryExpression {
         Iterator<SqlEntityTableExpression> iterator = getTables().iterator();
         SqlEntityTableExpression firstTable = iterator.next();
         if (tableCount == 1 && firstTable instanceof AnonymousEntityTableExpression && StringUtil.isEmpty(select)) {
-            SqlEntityQueryExpression sqlEntityQueryExpression = ((AnonymousEntityTableExpression) firstTable).getSqlEntityQueryExpression();
-            String s = sqlEntityQueryExpression.toSql();
-            sqlExpressionContext.extractParameters(sqlEntityQueryExpression.getSqlExpressionContext());
-            return s;
+            return toTableExpressionSql(firstTable,true);
         }
         StringBuilder sql = new StringBuilder("SELECT ");
 
@@ -56,10 +53,10 @@ public class MySQLQueryExpression extends EasySqlQueryExpression {
         } else {
             sql.append(select);
         }
-        sql.append(toTableExpressionSql(firstTable));
+        sql.append(toTableExpressionSql(firstTable,false));
         while (iterator.hasNext()) {
             SqlEntityTableExpression table = iterator.next();
-            sql.append(toTableExpressionSql(table));// [from table alias] | [left join table alias] 匿名表 应该使用  [left join (table) alias]
+            sql.append(toTableExpressionSql(table,false));// [from table alias] | [left join table alias] 匿名表 应该使用  [left join (table) alias]
 
             PredicateSegment on = getTableOnWithQueryFilter(table);
             if (on != null && on.isNotEmpty()) {
@@ -88,6 +85,19 @@ public class MySQLQueryExpression extends EasySqlQueryExpression {
             }
         }
         return sql.toString();
+    }
+
+    private String toTableExpressionSql(SqlEntityTableExpression sqlEntityTableExpression,boolean onlySingleAnonymousTable) {
+        if (sqlEntityTableExpression instanceof AnonymousEntityTableExpression) {
+
+            SqlEntityQueryExpression sqlEntityQueryExpression = ((AnonymousEntityTableExpression) sqlEntityTableExpression).getSqlEntityQueryExpression();
+            //如果只有单匿名表且未对齐select那么嵌套表需要被展开
+            //todo 如果对其进行order 或者 where了呢怎么办
+            String s =onlySingleAnonymousTable?sqlEntityQueryExpression.toSql():sqlEntityTableExpression.toSql();
+            sqlExpressionContext.extractParameters(sqlEntityQueryExpression.getSqlExpressionContext());
+            return s;
+        }
+        return sqlEntityTableExpression.toSql();
     }
 
     private PredicateSegment getTableOnWithQueryFilter(SqlEntityTableExpression table) {
@@ -131,16 +141,6 @@ public class MySQLQueryExpression extends EasySqlQueryExpression {
             }
         }
         return originalPredicate;
-    }
-
-    private String toTableExpressionSql(SqlEntityTableExpression sqlEntityTableExpression) {
-        if (sqlEntityTableExpression instanceof AnonymousEntityTableExpression) {
-            SqlEntityQueryExpression sqlEntityQueryExpression = ((AnonymousEntityTableExpression) sqlEntityTableExpression).getSqlEntityQueryExpression();
-            String s = sqlEntityTableExpression.toSql();
-            sqlExpressionContext.extractParameters(sqlEntityQueryExpression.getSqlExpressionContext());
-            return s;
-        }
-        return sqlEntityTableExpression.toSql();
     }
 
 

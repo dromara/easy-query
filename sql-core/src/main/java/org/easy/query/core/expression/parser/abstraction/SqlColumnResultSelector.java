@@ -1,6 +1,7 @@
-package org.easy.query.core.expression.parser.abstraction.internal;
+package org.easy.query.core.expression.parser.abstraction;
 
 import org.easy.query.core.expression.lambda.Property;
+import org.easy.query.core.expression.parser.abstraction.internal.IndexAware;
 
 /**
  *
@@ -9,6 +10,6 @@ import org.easy.query.core.expression.lambda.Property;
  * @Date: 2023/2/6 23:20
  * @Created by xuejiaming
  */
-public interface ColumnResultSelector<T1,TMember> extends IndexAware {
+public interface SqlColumnResultSelector<T1,TMember> extends IndexAware {
      void column(Property<T1,TMember> column);
 }

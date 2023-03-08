@@ -1,14 +1,12 @@
 package org.easy.query.core.basic.api.select;
 
-import org.easy.query.core.abstraction.EasyQuerySqlBuilderProvider2;
-import org.easy.query.core.expression.lambda.Property;
-import org.easy.query.core.expression.lambda.SqlExpression;
+import org.easy.query.core.basic.api.select.provider.EasyQuerySqlBuilderProvider2;
 import org.easy.query.core.expression.parser.abstraction.SqlColumnAsSelector;
 import org.easy.query.core.expression.parser.abstraction.SqlColumnSelector;
 import org.easy.query.core.expression.lambda.SqlExpression2;
 import org.easy.query.core.expression.lambda.SqlExpression3;
 import org.easy.query.core.expression.parser.abstraction.SqlPredicate;
-import org.easy.query.core.expression.parser.abstraction.internal.ColumnResultSelector;
+import org.easy.query.core.expression.parser.abstraction.SqlColumnResultSelector;
 
 import java.math.BigDecimal;
 
@@ -21,8 +19,12 @@ import java.math.BigDecimal;
  */
 public interface Queryable2<T1, T2> extends Queryable<T1> {
     <T3> Queryable3<T1, T2, T3> leftJoin(Class<T3> joinClass, SqlExpression3<SqlPredicate<T1>, SqlPredicate<T2>, SqlPredicate<T3>> on);
+    <T3> Queryable3<T1, T2, T3> leftJoin(Queryable<T3> joinQueryable, SqlExpression3<SqlPredicate<T1>, SqlPredicate<T2>, SqlPredicate<T3>> on);
+    <T3> Queryable3<T1, T2, T3> rightJoin(Class<T3> joinClass, SqlExpression3<SqlPredicate<T1>, SqlPredicate<T2>, SqlPredicate<T3>> on);
+    <T3> Queryable3<T1, T2, T3> rightJoin(Queryable<T3> joinQueryable, SqlExpression3<SqlPredicate<T1>, SqlPredicate<T2>, SqlPredicate<T3>> on);
 
     <T3> Queryable3<T1, T2, T3> innerJoin(Class<T3> joinClass, SqlExpression3<SqlPredicate<T1>, SqlPredicate<T2>, SqlPredicate<T3>> on);
+    <T3> Queryable3<T1, T2, T3> innerJoin(Queryable<T3> joinQueryable, SqlExpression3<SqlPredicate<T1>, SqlPredicate<T2>, SqlPredicate<T3>> on);
 
     //region where
     default Queryable2<T1, T2> where(SqlExpression2<SqlPredicate<T1>, SqlPredicate<T2>> whereExpression) {
@@ -45,7 +47,7 @@ public interface Queryable2<T1, T2> extends Queryable<T1> {
      * @param <TMember>
      * @return
      */
-    default <TMember extends Number> BigDecimal sumBigDecimalOrNull(SqlExpression2<ColumnResultSelector<T1,TMember>, ColumnResultSelector<T2,TMember>>  columnSelectorExpression) {
+    default <TMember extends Number> BigDecimal sumBigDecimalOrNull(SqlExpression2<SqlColumnResultSelector<T1, TMember>, SqlColumnResultSelector<T2, TMember>> columnSelectorExpression) {
         return sumBigDecimalOrDefault(columnSelectorExpression, null);
     }
 
@@ -56,35 +58,40 @@ public interface Queryable2<T1, T2> extends Queryable<T1> {
      * @param <TMember>
      * @return
      */
-    default <TMember extends Number> BigDecimal sumBigDecimalNotNull(SqlExpression2<ColumnResultSelector<T1,TMember>, ColumnResultSelector<T2,TMember>>  columnSelectorExpression) {
+    default <TMember extends Number> BigDecimal sumBigDecimalNotNull(SqlExpression2<SqlColumnResultSelector<T1, TMember>, SqlColumnResultSelector<T2, TMember>> columnSelectorExpression) {
         return sumBigDecimalOrDefault(columnSelectorExpression, BigDecimal.ZERO);
     }
 
-    <TMember extends Number> BigDecimal sumBigDecimalOrDefault(SqlExpression2<ColumnResultSelector<T1,TMember>, ColumnResultSelector<T2,TMember>>  columnSelectorExpression, BigDecimal def);
+    <TMember extends Number> BigDecimal sumBigDecimalOrDefault(SqlExpression2<SqlColumnResultSelector<T1, TMember>, SqlColumnResultSelector<T2, TMember>> columnSelectorExpression, BigDecimal def);
 
-    default <TMember extends Number> TMember sumOrNull(SqlExpression2<ColumnResultSelector<T1,TMember>, ColumnResultSelector<T2,TMember>>  columnSelectorExpression) {
+    default <TMember extends Number> TMember sumOrNull(SqlExpression2<SqlColumnResultSelector<T1, TMember>, SqlColumnResultSelector<T2, TMember>> columnSelectorExpression) {
         return sumOrDefault(columnSelectorExpression, null);
     }
 
-    <TMember extends Number> TMember sumOrDefault(SqlExpression2<ColumnResultSelector<T1,TMember>, ColumnResultSelector<T2,TMember>>  columnSelectorExpression, TMember def);
+    <TMember extends Number> TMember sumOrDefault(SqlExpression2<SqlColumnResultSelector<T1, TMember>, SqlColumnResultSelector<T2, TMember>> columnSelectorExpression, TMember def);
 
-    default <TMember> TMember maxOrNull(SqlExpression2<ColumnResultSelector<T1,TMember>, ColumnResultSelector<T2,TMember>>  columnSelectorExpression) {
+    default <TMember> TMember maxOrNull(SqlExpression2<SqlColumnResultSelector<T1, TMember>, SqlColumnResultSelector<T2, TMember>> columnSelectorExpression) {
         return maxOrDefault(columnSelectorExpression, null);
     }
 
-    <TMember> TMember maxOrDefault(SqlExpression2<ColumnResultSelector<T1,TMember>, ColumnResultSelector<T2,TMember>>  columnSelectorExpression, TMember def);
+    <TMember> TMember maxOrDefault(SqlExpression2<SqlColumnResultSelector<T1, TMember>, SqlColumnResultSelector<T2, TMember>> columnSelectorExpression, TMember def);
 
-    default <TMember> TMember minOrNull(SqlExpression2<ColumnResultSelector<T1,TMember>, ColumnResultSelector<T2,TMember>>  columnSelectorExpression) {
+    default <TMember> TMember minOrNull(SqlExpression2<SqlColumnResultSelector<T1, TMember>, SqlColumnResultSelector<T2, TMember>> columnSelectorExpression) {
         return minOrDefault(columnSelectorExpression, null);
     }
 
-    <TMember> TMember minOrDefault(SqlExpression2<ColumnResultSelector<T1,TMember>, ColumnResultSelector<T2,TMember>>  columnSelectorExpression, TMember def);
+    <TMember> TMember minOrDefault(SqlExpression2<SqlColumnResultSelector<T1, TMember>, SqlColumnResultSelector<T2, TMember>> columnSelectorExpression, TMember def);
 
-    default <TMember> TMember avgOrNull(SqlExpression2<ColumnResultSelector<T1,TMember>, ColumnResultSelector<T2,TMember>>  columnSelectorExpression) {
+    default <TMember extends Number> TMember avgOrNull(SqlExpression2<SqlColumnResultSelector<T1, TMember>, SqlColumnResultSelector<T2, TMember>> columnSelectorExpression) {
         return avgOrDefault(columnSelectorExpression, null);
     }
 
-    <TMember> TMember avgOrDefault(SqlExpression2<ColumnResultSelector<T1,TMember>, ColumnResultSelector<T2,TMember>>  columnSelectorExpression, TMember def);
+    <TMember extends Number> TMember avgOrDefault(SqlExpression2<SqlColumnResultSelector<T1, TMember>, SqlColumnResultSelector<T2, TMember>> columnSelectorExpression, TMember def);
+    default Integer lenOrNull(SqlExpression2<SqlColumnResultSelector<T1, ?>, SqlColumnResultSelector<T2, ?>> columnSelectorExpression) {
+        return lenOrDefault(columnSelectorExpression, null);
+    }
+
+    Integer lenOrDefault(SqlExpression2<SqlColumnResultSelector<T1, ?>, SqlColumnResultSelector<T2, ?>> columnSelectorExpression, Integer def);
     //endregion
 
     //region group
@@ -127,6 +134,19 @@ public interface Queryable2<T1, T2> extends Queryable<T1> {
 
     @Override
     Queryable2<T1, T2> limit(boolean condition, long offset, long rows);
-//endregion
-    EasyQuerySqlBuilderProvider2<T1,T2> getSqlBuilderProvider2();
+
+    //endregion
+    @Override
+    Queryable2<T1, T2> disableLogicDelete();
+
+    @Override
+    Queryable2<T1, T2> enableLogicDelete();
+
+    @Override
+    Queryable2<T1, T2> noQueryFilter();
+
+    @Override
+    Queryable2<T1, T2> useQueryFilter();
+
+    EasyQuerySqlBuilderProvider2<T1, T2> getSqlBuilderProvider2();
 }

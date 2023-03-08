@@ -1,6 +1,6 @@
 package org.easy.query.core.basic.api.select;
 
-import org.easy.query.core.abstraction.EasyQuerySqlBuilderProvider;
+import org.easy.query.core.basic.api.select.provider.EasyQuerySqlBuilderProvider;
 import org.easy.query.core.expression.lambda.Property;
 import org.easy.query.core.expression.lambda.SqlExpression;
 import org.easy.query.core.abstraction.sql.PageResult;
@@ -20,6 +20,10 @@ import java.util.List;
  * @Created by xuejiaming
  */
 public interface Queryable<T1> extends Query<T1> {
+    /**
+     * 只clone表达式共享上下文
+     * @return
+     */
     Queryable<T1> cloneQueryable();
     long count();
 
@@ -69,62 +73,28 @@ public interface Queryable<T1> extends Query<T1> {
 
     <TMember> TMember minOrDefault(Property<T1, TMember> column, TMember def);
 
-    default <TMember> TMember avgOrNull(Property<T1, TMember> column) {
+    default <TMember extends Number> TMember avgOrNull(Property<T1, TMember> column) {
         return avgOrDefault(column, null);
     }
 
-    <TMember> TMember avgOrDefault(Property<T1, TMember> column, TMember def);
+    <TMember extends Number> TMember avgOrDefault(Property<T1, TMember> column, TMember def);
+    default Integer lenOrNull(Property<T1, ?> column) {
+        return lenOrDefault(column, null);
+    }
+
+    Integer lenOrDefault(Property<T1, ?> column, Integer def);
 
 
     T1 firstOrNull();
 
-//    /**
-//     * 查询某些字段
-//     *
-//     * @param selectExpression
-//     * @return
-//     */
-//    T1 firstOrNull(SqlExpression<SqlColumnSelector<T1>> selectExpression);
-//
-//    /**
-//     * 结果转换成某个对象
-//     *
-//     * @param resultClass
-//     * @param <TR>
-//     * @return
-//     */
-//    <TR> TR firstOrNull(Class<TR> resultClass);
-//
-//    /**
-//     * 转换成某个对象并且映射字段
-//     *
-//     * @param resultClass
-//     * @param selectExpression
-//     * @param <TR>
-//     * @return
-//     */
-//    <TR> TR firstOrNull(Class<TR> resultClass, SqlExpression<SqlColumnAsSelector<T1, TR>> selectExpression);
-
     List<T1> toList();
 
-//    List<T1> toList(SqlExpression<SqlColumnSelector<T1>> selectExpression);
-//
-//    <TR> List<TR> toList(Class<TR> resultClass);
-//
-//    <TR> List<TR> toList(Class<TR> resultClass, SqlExpression<SqlColumnAsSelector<T1, TR>> selectExpression);
 
     <TR> List<TR> toList(Class<TR> resultClass);
     String toSql();
 //
-//    String toSql(SqlExpression<SqlColumnSelector<T1>> selectExpression);
-//
-//    <TR> String toSql(Class<TR> resultClass, SqlExpression<SqlColumnAsSelector<T1, TR>> selectExpression);
-//
-//    String toSql(String columns);
-
     Queryable<T1> select(SqlExpression<SqlColumnSelector<T1>> selectExpression);
     <TR> Queryable<TR> select(Class<TR> resultClass);
-//    <TR> Queryable<TR> select(Class<TR> resultClass,String columns);
     <TR> Queryable<TR> select(Class<TR> resultClass, SqlExpression<SqlColumnAsSelector<T1, TR>> selectExpression);
     Queryable<T1> select(String columns);
 
@@ -133,11 +103,6 @@ public interface Queryable<T1> extends Query<T1> {
     }
 
     Queryable<T1> where(boolean condition, SqlExpression<SqlPredicate<T1>> whereExpression);
-
-    //    default TChain select(SqlExpression<SqlSelectColumnSelector<T1,TR>> selectExpression){
-//        return select(true,selectExpression);
-//    }
-//    TChain select(boolean condition,SqlExpression<SqlSelectColumnSelector<T1,TR>> selectExpression);
     default Queryable<T1> groupBy(SqlExpression<SqlColumnSelector<T1>> selectExpression) {
         return groupBy(true, selectExpression);
     }
@@ -182,10 +147,12 @@ public interface Queryable<T1> extends Query<T1> {
     <TR> PageResult<TR> toPageResult(long pageIndex, long pageSize, Class<TR> clazz);
     <TR> PageResult<TR> toPageResult(long pageIndex, long pageSize, Class<TR> clazz, SqlExpression<SqlColumnAsSelector<T1,TR>> selectExpression);
     <T2> Queryable2<T1, T2> leftJoin(Class<T2> joinClass, SqlExpression2<SqlPredicate<T1>, SqlPredicate<T2>> on);
-    <T2> Queryable2<T1, T2> leftJoin(Queryable<T2> t2Queryable, SqlExpression2<SqlPredicate<T1>, SqlPredicate<T2>> on);
+    <T2> Queryable2<T1, T2> leftJoin(Queryable<T2> joinQueryable, SqlExpression2<SqlPredicate<T1>, SqlPredicate<T2>> on);
+    <T2> Queryable2<T1, T2> rightJoin(Class<T2> joinClass, SqlExpression2<SqlPredicate<T1>, SqlPredicate<T2>> on);
+    <T2> Queryable2<T1, T2> rightJoin(Queryable<T2> joinQueryable, SqlExpression2<SqlPredicate<T1>, SqlPredicate<T2>> on);
 
     <T2> Queryable2<T1, T2> innerJoin(Class<T2> joinClass, SqlExpression2<SqlPredicate<T1>, SqlPredicate<T2>> on);
-    <T2> Queryable2<T1, T2> innerJoin(Queryable<T2> t2Queryable, SqlExpression2<SqlPredicate<T1>, SqlPredicate<T2>> on);
+    <T2> Queryable2<T1, T2> innerJoin(Queryable<T2> joinQueryable, SqlExpression2<SqlPredicate<T1>, SqlPredicate<T2>> on);
 
     EasyQuerySqlBuilderProvider<T1> getSqlBuilderProvider1();
 

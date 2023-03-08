@@ -1,7 +1,7 @@
 package org.easy.query.core.basic.api.select.abstraction;
 
-import org.easy.query.core.abstraction.EasyQuerySqlBuilderProvider;
-import org.easy.query.core.impl.Select1SqlProvider;
+import org.easy.query.core.basic.api.select.provider.EasyQuerySqlBuilderProvider;
+import org.easy.query.core.basic.api.select.provider.Select1SqlProvider;
 import org.easy.query.core.query.SqlEntityQueryExpression;
 
 /**
