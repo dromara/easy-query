@@ -12,9 +12,16 @@ public interface Updatable<T> {
 
     /**
      * 返回受影响行数
+     *
      * @return
      */
     long executeRows();
-    void executeRows(Long expectRow,String error);
+
+    default void executeRows(long expectRows, String msg) {
+        executeRows(expectRows, msg, null);
+    }
+
+    void executeRows(long expectRows, String msg, String code);
+
     String toSql();
 }

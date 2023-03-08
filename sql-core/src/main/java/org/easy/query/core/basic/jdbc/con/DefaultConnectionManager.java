@@ -1,8 +1,10 @@
-package org.easy.query.core.basic.jdbc.tx;
+package org.easy.query.core.basic.jdbc.con;
 
 import org.easy.query.core.basic.jdbc.con.DefaultEasyConnection;
 import org.easy.query.core.basic.jdbc.con.EasyConnection;
 import org.easy.query.core.basic.jdbc.con.EasyConnectionManager;
+import org.easy.query.core.basic.jdbc.tx.DefaultTransaction;
+import org.easy.query.core.basic.jdbc.tx.Transaction;
 import org.easy.query.core.exception.EasyQueryException;
 
 import javax.sql.DataSource;

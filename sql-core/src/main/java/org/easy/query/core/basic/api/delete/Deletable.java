@@ -12,7 +12,11 @@ public interface Deletable<T,TChain> {
      * @return
      */
     long executeRows();
-    void executeRows(Long expectRow,String error);
+    default void executeRows(long expectRows, String msg) {
+        executeRows(expectRows, msg, null);
+    }
+
+    void executeRows(long expectRows, String msg, String code);
     String toSql();
     TChain disableLogicDelete();
 }

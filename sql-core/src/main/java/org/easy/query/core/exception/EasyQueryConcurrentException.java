@@ -7,31 +7,26 @@ package org.easy.query.core.exception;
  * @Created by xuejiaming
  */
 public class EasyQueryConcurrentException extends EasyQueryException{
-    public EasyQueryConcurrentException(int code) {
-        super(code);
-    }
-
-    public EasyQueryConcurrentException(int code, Throwable e) {
-        super(code, e);
-    }
-
-    public EasyQueryConcurrentException(int code, String msg, Throwable e) {
-        super(code, msg, e);
-    }
-
-    public EasyQueryConcurrentException(String msg, Throwable e) {
-        super(msg, e);
-    }
-
-    public EasyQueryConcurrentException(int code, String msg) {
-        super(code, msg);
-    }
+    private final String code;
 
     public EasyQueryConcurrentException(String msg) {
-        super(msg);
+        this(msg, null, null);
+    }
+
+    public EasyQueryConcurrentException(String msg, String code) {
+        this(msg, code, null);
     }
 
     public EasyQueryConcurrentException(Throwable e) {
-        super(e);
+        this(null, null, e);
+    }
+
+    public EasyQueryConcurrentException(String msg, String code, Throwable e) {
+        super(msg, e);
+        this.code = code;
+    }
+
+    public String getCode() {
+        return code;
     }
 }

@@ -1,6 +1,7 @@
 package org.easy.query.core.basic.api.update.impl;
 
 import org.easy.query.core.basic.api.update.EntityUpdatable;
+import org.easy.query.core.exception.EasyQueryConcurrentException;
 import org.easy.query.core.expression.lambda.SqlExpression;
 import org.easy.query.core.expression.parser.abstraction.SqlColumnSelector;
 
@@ -32,8 +33,11 @@ public class EasyEmptyEntityUpdatable<T> implements EntityUpdatable<T> {
     }
 
     @Override
-    public void executeRows(Long expectRow, String error) {
-
+    public void executeRows(long expectRows, String msg,String code) {
+        long rows = executeRows();
+        if(rows!=expectRows){
+            throw new EasyQueryConcurrentException(msg,code);
+        }
     }
 
     @Override

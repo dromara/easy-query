@@ -6,6 +6,7 @@ import org.easy.query.core.abstraction.ExecutorContext;
 import org.easy.query.core.abstraction.metadata.EntityMetadata;
 import org.easy.query.core.basic.api.delete.EntityDeletable;
 import org.easy.query.core.enums.MultiTableTypeEnum;
+import org.easy.query.core.exception.EasyQueryConcurrentException;
 import org.easy.query.core.exception.EasyQueryException;
 import org.easy.query.core.query.*;
 import org.easy.query.core.util.StringUtil;
@@ -53,8 +54,11 @@ public abstract class AbstractEntityDeletable<T> implements EntityDeletable<T> {
     }
 
     @Override
-    public void executeRows(Long expectRow, String error) {
-
+    public void executeRows(long expectRows, String msg, String code) {
+        long rows = executeRows();
+        if(rows!=expectRows){
+            throw new EasyQueryConcurrentException(msg,code);
+        }
     }
 
     @Override

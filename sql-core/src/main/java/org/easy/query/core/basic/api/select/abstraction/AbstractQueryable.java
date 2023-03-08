@@ -6,6 +6,7 @@ import org.easy.query.core.basic.api.select.Queryable;
 import org.easy.query.core.basic.api.select.Queryable2;
 import org.easy.query.core.basic.api.select.provider.EasyQuerySqlBuilderProvider;
 import org.easy.query.core.enums.MultiTableTypeEnum;
+import org.easy.query.core.exception.EasyQueryNotFoundException;
 import org.easy.query.core.expression.lambda.Property;
 import org.easy.query.core.expression.lambda.SqlExpression;
 import org.easy.query.core.abstraction.metadata.ColumnMetadata;
@@ -151,6 +152,14 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
         return ArrayUtil.firstOrNull(list);
     }
 
+    @Override
+    public T1 firstNotNull(String msg, String code) {
+        T1 result = firstOrNull();
+        if(result==null){
+            throw new EasyQueryNotFoundException(msg,code);
+        }
+        return result;
+    }
     //
 //    @Override
 //    public T1 firstOrNull(SqlExpression<SqlColumnSelector<T1>> selectExpression) {

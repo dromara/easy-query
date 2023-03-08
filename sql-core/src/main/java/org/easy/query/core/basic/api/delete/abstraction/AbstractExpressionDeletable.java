@@ -8,6 +8,7 @@ import org.easy.query.core.basic.api.delete.Deletable;
 import org.easy.query.core.basic.api.delete.ExpressionDeletable;
 import org.easy.query.core.enums.MultiTableTypeEnum;
 import org.easy.query.core.enums.SqlPredicateCompareEnum;
+import org.easy.query.core.exception.EasyQueryConcurrentException;
 import org.easy.query.core.exception.EasyQueryException;
 import org.easy.query.core.expression.lambda.SqlExpression;
 import org.easy.query.core.expression.parser.abstraction.SqlPredicate;
@@ -55,8 +56,11 @@ public abstract   class AbstractExpressionDeletable<T> implements ExpressionDele
     }
 
     @Override
-    public void executeRows(Long expectRow, String error) {
-
+    public void executeRows(long expectRows, String msg, String code) {
+        long rows = executeRows();
+        if(rows!=expectRows){
+            throw new EasyQueryConcurrentException(msg,code);
+        }
     }
 
     @Override

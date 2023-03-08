@@ -9,7 +9,7 @@ import org.easy.query.core.abstraction.sql.PageResult;
 import org.easy.query.core.api.def.DefaultEasySqlApiFactory;
 import org.easy.query.core.basic.api.select.Queryable;
 import org.easy.query.core.enums.AggregatePredicateCompare;
-import org.easy.query.core.basic.jdbc.tx.DefaultConnectionManager;
+import org.easy.query.core.basic.jdbc.con.DefaultConnectionManager;
 import org.easy.query.core.basic.jdbc.con.EasyConnectionManager;
 import org.easy.query.core.basic.jdbc.tx.Transaction;
 import org.easy.query.core.basic.jdbc.types.DefaultJdbcTypeHandlerManager;

@@ -5,7 +5,6 @@ import org.easy.query.core.abstraction.metadata.EntityMetadata;
 import org.easy.query.core.exception.EasyQueryException;
 import org.easy.query.core.query.SqlEntityTableExpression;
 import org.easy.query.core.query.SqlTableExpressionSegment;
-import org.easy.query.core.query.builder.SqlTableInfo;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

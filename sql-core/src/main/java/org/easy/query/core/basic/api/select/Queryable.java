@@ -86,6 +86,10 @@ public interface Queryable<T1> extends Query<T1> {
 
 
     T1 firstOrNull();
+   default T1 firstNotNull(String msg){
+       return firstNotNull(msg,null);
+   }
+    T1 firstNotNull(String msg,String code);
 
     List<T1> toList();
 

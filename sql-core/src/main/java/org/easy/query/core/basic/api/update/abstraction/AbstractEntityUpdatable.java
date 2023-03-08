@@ -5,6 +5,7 @@ import org.easy.query.core.abstraction.EasyQueryLambdaFactory;
 import org.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import org.easy.query.core.abstraction.ExecutorContext;
 import org.easy.query.core.basic.api.update.EntityUpdatable;
+import org.easy.query.core.exception.EasyQueryConcurrentException;
 import org.easy.query.core.expression.lambda.SqlExpression;
 import org.easy.query.core.abstraction.metadata.EntityMetadata;
 import org.easy.query.core.expression.parser.abstraction.SqlColumnSelector;
@@ -98,8 +99,11 @@ public abstract class AbstractEntityUpdatable<T> implements EntityUpdatable<T> {
     }
 
     @Override
-    public void executeRows(Long expectRow, String error) {
-
+    public void executeRows(long expectRows, String msg,String code) {
+        long rows = executeRows();
+        if(rows!=expectRows){
+            throw new EasyQueryConcurrentException(msg,code);
+        }
     }
 
     @Override

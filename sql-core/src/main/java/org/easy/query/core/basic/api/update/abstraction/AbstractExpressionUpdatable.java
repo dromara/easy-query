@@ -3,6 +3,7 @@ package org.easy.query.core.basic.api.update.abstraction;
 import org.easy.query.core.abstraction.EasyExecutor;
 import org.easy.query.core.abstraction.ExecutorContext;
 import org.easy.query.core.basic.api.update.ExpressionUpdatable;
+import org.easy.query.core.exception.EasyQueryConcurrentException;
 import org.easy.query.core.expression.lambda.SqlExpression;
 import org.easy.query.core.abstraction.metadata.EntityMetadata;
 import org.easy.query.core.expression.parser.abstraction.SqlColumnSetter;
@@ -46,8 +47,11 @@ public abstract class AbstractExpressionUpdatable<T> implements ExpressionUpdata
     }
 
     @Override
-    public void executeRows(Long expectRow, String error) {
-
+    public void executeRows(long expectRows, String msg,String code) {
+        long rows = executeRows();
+        if(rows!=expectRows){
+            throw new EasyQueryConcurrentException(msg,code);
+        }
     }
 
     @Override
