@@ -12,6 +12,12 @@ public interface EasyConnectionManager {
     default Transaction beginTransaction(){
        return beginTransaction(null);
     }
+
+    /**
+     * TRANSACTION_READ_UNCOMMITTED ......
+     * @param isolationLevel
+     * @return
+     */
     Transaction beginTransaction(Integer isolationLevel);
     EasyConnection getEasyConnection();
     boolean currentThreadInTransaction();

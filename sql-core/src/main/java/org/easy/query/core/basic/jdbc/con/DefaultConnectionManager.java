@@ -8,6 +8,7 @@ import org.easy.query.core.basic.jdbc.tx.Transaction;
 import org.easy.query.core.exception.EasyQueryException;
 
 import javax.sql.DataSource;
+import java.sql.Connection;
 import java.sql.SQLException;
 
 /**
