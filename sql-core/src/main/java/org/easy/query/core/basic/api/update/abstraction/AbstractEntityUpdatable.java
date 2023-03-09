@@ -6,6 +6,9 @@ import org.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import org.easy.query.core.abstraction.ExecutorContext;
 import org.easy.query.core.abstraction.metadata.ColumnMetadata;
 import org.easy.query.core.basic.api.update.EntityUpdatable;
+import org.easy.query.core.configuration.global.insert.GlobalInsertInterceptorStrategy;
+import org.easy.query.core.configuration.global.interceptor.GlobalInterceptorStrategy;
+import org.easy.query.core.configuration.global.update.GlobalUpdateInterceptorStrategy;
 import org.easy.query.core.exception.EasyQueryConcurrentException;
 import org.easy.query.core.expression.lambda.SqlExpression;
 import org.easy.query.core.abstraction.metadata.EntityMetadata;
@@ -33,6 +36,7 @@ import java.util.*;
 public abstract class AbstractEntityUpdatable<T> implements EntityUpdatable<T> {
     protected final List<T> entities = new ArrayList<>();
     protected final SqlEntityTableExpression table;
+    protected final  EntityMetadata entityMetadata;
     protected final SqlEntityUpdateExpression sqlEntityUpdateExpression;
 
     public AbstractEntityUpdatable(Collection<T> entities, SqlEntityUpdateExpression sqlEntityUpdateExpression) {
@@ -44,7 +48,7 @@ public abstract class AbstractEntityUpdatable<T> implements EntityUpdatable<T> {
         Class<?> clazz = entities.iterator().next().getClass();
         this.sqlEntityUpdateExpression = sqlEntityUpdateExpression;
 
-        EntityMetadata entityMetadata = this.sqlEntityUpdateExpression.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(clazz);
+         entityMetadata = this.sqlEntityUpdateExpression.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(clazz);
         entityMetadata.checkTable();
         table = new EasyEntityTableExpression(entityMetadata, 0, null, MultiTableTypeEnum.FROM);
         this.sqlEntityUpdateExpression.addSqlEntityTableExpression(table);
@@ -53,6 +57,7 @@ public abstract class AbstractEntityUpdatable<T> implements EntityUpdatable<T> {
     @Override
     public long executeRows() {
         if (!entities.isEmpty()) {
+            updateBefore();
             String updateSql = toSql();
             if (!StringUtil.isBlank(updateSql)) {
                 EasyExecutor easyExecutor = sqlEntityUpdateExpression.getRuntimeContext().getEasyExecutor();
@@ -62,6 +67,23 @@ public abstract class AbstractEntityUpdatable<T> implements EntityUpdatable<T> {
         return 0;
     }
 
+    protected void updateBefore() {
+
+        List<String> interceptors = entityMetadata.getUpdateInterceptors();
+        boolean hasInterceptor = !interceptors.isEmpty();
+        ArrayList<GlobalUpdateInterceptorStrategy> globalUpdateInterceptorStrategies = new ArrayList<>(interceptors.size());
+        if (hasInterceptor) {
+            for (String interceptor : interceptors) {
+                GlobalInterceptorStrategy globalInterceptorStrategy = sqlEntityUpdateExpression.getRuntimeContext().getEasyQueryConfiguration().getGlobalInterceptorStrategy(interceptor);
+                globalUpdateInterceptorStrategies.add((GlobalUpdateInterceptorStrategy) globalInterceptorStrategy);
+            }
+            for (T entity : entities) {
+                for (GlobalUpdateInterceptorStrategy globalUpdateInterceptorStrategy : globalUpdateInterceptorStrategies) {
+                    globalUpdateInterceptorStrategy.configure(entityMetadata.getEntityClass(), entity);
+                }
+            }
+        }
+    }
     @Override
     public String toSql() {
 //如果没有指定where那么就使用主键作为更新条件

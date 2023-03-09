@@ -15,7 +15,7 @@ import org.easy.query.core.basic.jdbc.tx.Transaction;
 import org.easy.query.core.basic.jdbc.types.DefaultJdbcTypeHandlerManager;
 import org.easy.query.core.basic.jdbc.types.EasyJdbcTypeHandlerManager;
 import org.easy.query.core.config.*;
-import org.easy.query.core.configuration.types.EasyQueryConfiguration;
+import org.easy.query.core.configuration.EasyQueryConfiguration;
 import org.easy.query.core.exception.EasyQueryException;
 import org.easy.query.core.metadata.DefaultEntityMetadataManager;
 import org.easy.query.mysql.MySQLSqlExpressionFactory;
@@ -114,7 +114,7 @@ public class Main {
         DefaultEasyQueryRuntimeContext jqdcRuntimeContext = new DefaultEasyQueryRuntimeContext(configuration, entityMetadataManager, easyQueryLambdaFactory, connectionManager, defaultExecutor, jdbcTypeHandler, easyQueryableFactory, mySQLSqlExpressionFactory);
 
 //        jqdcRuntimeContext.getEasyQueryConfiguration().applyEntityTypeConfiguration(new TestUserMySqlConfiguration());
-configuration.applyGlobalQueryFilterConfiguration(new NameQueryFilter());
+configuration.applyGlobalQueryFilterStrategy(new NameQueryFilter());
 
         easyQuery = new DefaultEasyQuery(jqdcRuntimeContext);
 

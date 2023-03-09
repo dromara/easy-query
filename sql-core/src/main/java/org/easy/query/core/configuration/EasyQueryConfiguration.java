@@ -1,11 +1,13 @@
-package org.easy.query.core.configuration.types;
+package org.easy.query.core.configuration;
 
 import org.easy.query.core.basic.enums.LogicDeleteStrategyEnum;
 import org.easy.query.core.config.DefaultEasyQueryDialect;
 import org.easy.query.core.config.DefaultNameConversion;
 import org.easy.query.core.config.EasyQueryDialect;
 import org.easy.query.core.config.NameConversion;
-import org.easy.query.core.configuration.global.*;
+import org.easy.query.core.configuration.global.del.*;
+import org.easy.query.core.configuration.global.interceptor.GlobalInterceptorStrategy;
+import org.easy.query.core.configuration.global.select.GlobalQueryFilterStrategy;
 import org.easy.query.core.exception.EasyQueryException;
 import org.easy.query.core.util.ClassUtil;
 import org.easy.query.core.util.StringUtil;
@@ -30,7 +32,8 @@ public class EasyQueryConfiguration {
     private EasyQueryDialect dialect = new DefaultEasyQueryDialect();
 //    private Map<Class<?>, EntityTypeConfiguration<?>> entityTypeConfigurationMap = new HashMap<>();
 
-    private Map<String,GlobalQueryFilterConfiguration> globalQueryFilterConfigurationMap=new ConcurrentHashMap<>();
+    private Map<String, GlobalQueryFilterStrategy> globalQueryFilterStrategyMap=new ConcurrentHashMap<>();
+    private Map<String, GlobalInterceptorStrategy> globalInterceptorStrategyMap=new ConcurrentHashMap<>();
     private Map<String, GlobalLogicDeleteStrategy> globalLogicDeleteStrategyMap = new ConcurrentHashMap<>();
     private final boolean deleteThrowError;
 
@@ -61,25 +64,46 @@ public class EasyQueryConfiguration {
         this.dialect = dialect;
     }
 
-
-    public void applyGlobalQueryFilterConfiguration(GlobalQueryFilterConfiguration globalQueryFilterConfiguration){
-        String name = globalQueryFilterConfiguration.queryFilterName();
-        if(StringUtil.isBlank(name)){
-            throw new EasyQueryException(ClassUtil.getInstanceSimpleName(globalQueryFilterConfiguration)+"cant get query filter name");
+    public void applyGlobalInterceptorStrategy(GlobalInterceptorStrategy globalInterceptorStrategy){
+        String interceptorName = globalInterceptorStrategy.interceptorName();
+        if(StringUtil.isBlank(interceptorName)){
+            throw new EasyQueryException(ClassUtil.getInstanceSimpleName(globalInterceptorStrategy)+"cant get interceptor name");
         }
-        if(globalQueryFilterConfigurationMap.containsKey(name)){
+        if(globalInterceptorStrategyMap.containsKey(interceptorName)){
+            throw new EasyQueryException("global interceptor:" + interceptorName + ",repeat");
+        }
+        globalInterceptorStrategyMap.put(interceptorName,globalInterceptorStrategy);
+    }
+
+
+    public GlobalInterceptorStrategy getGlobalInterceptorStrategy(String name){
+        if(name==null){
+            throw new IllegalArgumentException("cant get global interceptor,name is null");
+        }
+        return globalInterceptorStrategyMap.get(name);
+    }
+    public Collection<GlobalInterceptorStrategy> getGlobalInterceptorStrategies(){
+        return globalInterceptorStrategyMap.values();
+    }
+
+    public void applyGlobalQueryFilterStrategy(GlobalQueryFilterStrategy globalQueryFilterStrategy){
+        String name = globalQueryFilterStrategy.queryFilterName();
+        if(StringUtil.isBlank(name)){
+            throw new EasyQueryException(ClassUtil.getInstanceSimpleName(globalQueryFilterStrategy)+"cant get query filter name");
+        }
+        if(globalQueryFilterStrategyMap.containsKey(name)){
             throw new EasyQueryException("global query filter:" + name + ",repeat");
         }
-        globalQueryFilterConfigurationMap.put(name,globalQueryFilterConfiguration);
+        globalQueryFilterStrategyMap.put(name,globalQueryFilterStrategy);
     }
-    public GlobalQueryFilterConfiguration getGlobalQueryFilterConfiguration(String name){
+    public GlobalQueryFilterStrategy getGlobalQueryFilterStrategy(String name){
         if(name==null){
             throw new IllegalArgumentException("cant get global query filter,name is null");
         }
-        return globalQueryFilterConfigurationMap.get(name);
+        return globalQueryFilterStrategyMap.get(name);
     }
-    public Collection<GlobalQueryFilterConfiguration> getGlobalQueryFilterConfigurations(){
-        return globalQueryFilterConfigurationMap.values();
+    public Collection<GlobalQueryFilterStrategy> getGlobalQueryFilterStrategies(){
+        return globalQueryFilterStrategyMap.values();
     }
 //    public void applyEntityTypeConfiguration(EntityTypeConfiguration<?> entityTypeConfiguration) {
 //        entityTypeConfigurationMap.put(entityTypeConfiguration.entityType(), entityTypeConfiguration);

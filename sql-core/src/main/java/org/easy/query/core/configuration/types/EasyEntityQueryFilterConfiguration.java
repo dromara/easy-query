@@ -1,7 +1,9 @@
 package org.easy.query.core.configuration.types;
 
+import org.easy.query.core.configuration.global.select.GlobalQueryFilterStrategy;
 import org.easy.query.core.expression.lambda.Property;
 import org.easy.query.core.expression.parser.abstraction.SqlPredicate;
+import org.easy.query.core.query.SqlEntityQueryExpression;
 import org.easy.query.core.util.EasyUtil;
 
 /**
@@ -10,7 +12,7 @@ import org.easy.query.core.util.EasyUtil;
  * @Date: 2023/3/7 22:29
  * @Created by xuejiaming
  */
-public class EasyEntityQueryFilterConfiguration extends AbstractGlobalQueryFilterConfiguration {
+public class EasyEntityQueryFilterConfiguration implements GlobalQueryFilterStrategy {
     @Override
     public String queryFilterName() {
         return null;
@@ -18,11 +20,11 @@ public class EasyEntityQueryFilterConfiguration extends AbstractGlobalQueryFilte
 
     @Override
     public boolean apply(Class<?> entityClass) {
-        return GlobalQueryFilterConfiguration.class.isAssignableFrom(entityClass);
+        return GlobalQueryFilterStrategy.class.isAssignableFrom(entityClass);
     }
 
     @Override
-    protected void configure0(Class<?> entityClass, SqlPredicate<?> sqlPredicate) {
+    public void configure(Class<?> entityClass, SqlEntityQueryExpression sqlEntityQueryExpression, SqlPredicate<?> sqlPredicate) {
 
         Property tenantProperty = EasyUtil.getLambdaProperty(entityClass, "tenantId", String.class);
 

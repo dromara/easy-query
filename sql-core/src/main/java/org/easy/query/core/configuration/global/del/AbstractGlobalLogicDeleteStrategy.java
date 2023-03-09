@@ -1,4 +1,4 @@
-package org.easy.query.core.configuration.global;
+package org.easy.query.core.configuration.global.del;
 
 import org.easy.query.core.abstraction.metadata.EntityMetadata;
 import org.easy.query.core.abstraction.metadata.LogicDeleteMetadata;
@@ -18,7 +18,7 @@ import java.util.Set;
  * @Date: 2023/3/7 08:04
  * @Created by xuejiaming
  */
-public abstract class AbstractGlobalLogicDeleteStrategy implements GlobalLogicDeleteStrategy{
+public abstract class AbstractGlobalLogicDeleteStrategy implements GlobalLogicDeleteStrategy {
 
     @Override
     public void configure(EntityMetadata entityMetadata, String propertyName, Class<?> propertyType) {

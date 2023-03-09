@@ -3,6 +3,10 @@ package org.easy.query.core.query;
 import org.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import org.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import org.easy.query.core.exception.EasyQueryException;
+import org.easy.query.core.expression.lambda.SqlExpression;
+import org.easy.query.core.expression.parser.abstraction.SqlColumnSelector;
+import org.easy.query.core.expression.parser.abstraction.internal.ColumnSelector;
+import org.easy.query.core.expression.parser.impl.DefaultInsertSqlColumnSelector;
 import org.easy.query.core.expression.segment.builder.ProjectSqlBuilderSegment;
 import org.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 
@@ -39,7 +43,9 @@ public abstract class EasySqlInsertExpression extends AbstractSqlEntityExpressio
         }
         int insertColumns = getColumns().getSqlSegments().size();
         if (insertColumns == 0) {
-            throw new EasyQueryException("插入至少确定一个列");
+            SqlExpression<SqlColumnSelector<?>> selectExpression = ColumnSelector::columnAll;
+            DefaultInsertSqlColumnSelector<?> columnSelector = new DefaultInsertSqlColumnSelector<>(0, this, this.getColumns());
+            selectExpression.apply(columnSelector);
         }
         StringBuilder sql = new StringBuilder("INSERT INTO ");
         SqlEntityTableExpression table = getTable(0);

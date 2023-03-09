@@ -1,13 +1,11 @@
-package org.easy.query.core.configuration.global;
+package org.easy.query.core.configuration.global.del;
 
 import org.easy.query.core.abstraction.metadata.EntityMetadata;
-import org.easy.query.core.abstraction.metadata.LogicDeleteMetadata;
 import org.easy.query.core.basic.enums.LogicDeleteStrategyEnum;
 import org.easy.query.core.expression.lambda.Property;
 import org.easy.query.core.expression.lambda.SqlExpression;
 import org.easy.query.core.expression.parser.abstraction.SqlColumnSetter;
 import org.easy.query.core.expression.parser.abstraction.SqlPredicate;
-import org.easy.query.core.util.EasyUtil;
 
 import java.time.LocalDate;
 import java.util.Collections;

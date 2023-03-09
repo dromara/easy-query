@@ -1,4 +1,4 @@
-package org.easy.query.core.configuration.global;
+package org.easy.query.core.configuration.global.del;
 
 
 import org.easy.query.core.abstraction.metadata.EntityMetadata;

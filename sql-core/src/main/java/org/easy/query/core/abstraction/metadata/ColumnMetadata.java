@@ -20,7 +20,7 @@ public class ColumnMetadata {
     private  boolean increment=false;
 
 
-    private  boolean nullable=true;
+//    private  boolean nullable=true;
     private  boolean version=false;
     private  boolean insertIgnore=false;
     private  boolean updateIgnore =false;
@@ -54,13 +54,13 @@ public class ColumnMetadata {
         this.increment = increment;
     }
 
-    public boolean isNullable() {
-        return nullable;
-    }
-
-    public void setNullable(boolean nullable) {
-        this.nullable = nullable;
-    }
+//    public boolean isNullable() {
+//        return nullable;
+//    }
+//
+//    public void setNullable(boolean nullable) {
+//        this.nullable = nullable;
+//    }
 
     public boolean isVersion() {
         return version;

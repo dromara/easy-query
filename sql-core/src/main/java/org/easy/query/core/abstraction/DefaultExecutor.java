@@ -98,7 +98,6 @@ public class DefaultExecutor implements EasyExecutor {
         System.out.println("开始执行：" + sql);
         try {
             for (T entity : entities) {
-
                 List<SQLParameter> parameters = extractParameters(entity, sqlParameters);
                 if(easyConnection==null){
                     easyConnection = connectionManager.getEasyConnection();

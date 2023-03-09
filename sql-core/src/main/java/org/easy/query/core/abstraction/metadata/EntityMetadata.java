@@ -1,10 +1,14 @@
 package org.easy.query.core.abstraction.metadata;
 
 import org.easy.query.core.basic.enums.LogicDeleteStrategyEnum;
-import org.easy.query.core.configuration.global.GlobalLogicDeleteStrategy;
-import org.easy.query.core.configuration.types.EasyQueryConfiguration;
+import org.easy.query.core.configuration.global.del.GlobalLogicDeleteStrategy;
+import org.easy.query.core.configuration.EasyQueryConfiguration;
 import org.easy.query.core.config.NameConversion;
-import org.easy.query.core.configuration.types.GlobalQueryFilterConfiguration;
+import org.easy.query.core.configuration.global.insert.GlobalInsertInterceptorStrategy;
+import org.easy.query.core.configuration.global.interceptor.GlobalInterceptorStrategy;
+import org.easy.query.core.configuration.global.select.GlobalQueryFilterStrategy;
+import org.easy.query.core.configuration.global.update.GlobalUpdateInterceptorStrategy;
+import org.easy.query.core.configuration.global.update.GlobalUpdateSetInterceptorStrategy;
 import org.easy.query.core.exception.EasyQueryException;
 import org.easy.query.core.util.StringUtil;
 import org.easy.query.core.annotation.*;
@@ -33,6 +37,9 @@ public class EntityMetadata {
      * 查询过滤器
      */
     private final List<String> queryFilters = new ArrayList<>();
+    private final List<String> insertInterceptors = new ArrayList<>();
+    private final List<String> updateInterceptors = new ArrayList<>();
+    private final List<String> updateSetInterceptors = new ArrayList<>();
     private final LinkedHashMap<String, ColumnMetadata> property2ColumnMap = new LinkedHashMap<>();
     private final Map<String/*property name*/, String/*column name*/> keyPropertiesMap = new HashMap<>();
     private final LinkedCaseInsensitiveMap<String> column2PropertyMap = new LinkedCaseInsensitiveMap<>(Locale.ENGLISH);
@@ -78,9 +85,9 @@ public class EntityMetadata {
             boolean hasColumnName = column != null && !StringUtil.isBlank(column.value());
             String columnName = hasColumnName ? column.value() : nameConversion.getColName(property);
             ColumnMetadata columnMetadata = new ColumnMetadata(this, columnName);
-            if (column != null) {
-                columnMetadata.setNullable(column.nullable());
-            }
+//            if (column != null) {
+//                columnMetadata.setNullable(column.nullable());
+//            }
             columnMetadata.setProperty(propertyDescriptor);
             property2ColumnMap.put(property, columnMetadata);
             column2PropertyMap.put(columnName, property);
@@ -91,7 +98,7 @@ public class EntityMetadata {
                 if (primaryKey != null) {
                     columnMetadata.setPrimary(true);
                     columnMetadata.setIncrement(primaryKey.increment());
-                    columnMetadata.setNullable(false);//如果为主键那么之前设置的nullable将无效
+//                    columnMetadata.setNullable(false);//如果为主键那么之前设置的nullable将无效
                     keyPropertiesMap.put(property, columnName);
                 }
                 InsertIgnore insertIgnore = field.getAnnotation(InsertIgnore.class);
@@ -133,10 +140,23 @@ public class EntityMetadata {
 
         if (StringUtil.isNotBlank(tableName)) {
             //全局过滤器
-            Collection<GlobalQueryFilterConfiguration> globalQueryFilterConfigurations = configuration.getGlobalQueryFilterConfigurations();
-            for (GlobalQueryFilterConfiguration globalQueryFilterConfiguration : globalQueryFilterConfigurations) {
+            Collection<GlobalQueryFilterStrategy> globalQueryFilterConfigurations = configuration.getGlobalQueryFilterStrategies();
+            for (GlobalQueryFilterStrategy globalQueryFilterConfiguration : globalQueryFilterConfigurations) {
                 if (globalQueryFilterConfiguration.apply(entityClass)) {
                     queryFilters.add(globalQueryFilterConfiguration.queryFilterName());
+                }
+            }
+
+            Collection<GlobalInterceptorStrategy> globalInterceptorStrategies = configuration.getGlobalInterceptorStrategies();
+            for (GlobalInterceptorStrategy globalInterceptorStrategy : globalInterceptorStrategies) {
+                if (globalInterceptorStrategy.apply(entityClass)) {
+                    if (globalInterceptorStrategy instanceof GlobalInsertInterceptorStrategy) {
+                        insertInterceptors.add(globalInterceptorStrategy.interceptorName());
+                    } else if (globalInterceptorStrategy instanceof GlobalUpdateInterceptorStrategy) {
+                        updateInterceptors.add(globalInterceptorStrategy.interceptorName());
+                    } else if (globalInterceptorStrategy instanceof GlobalUpdateSetInterceptorStrategy) {
+                        updateSetInterceptors.add(globalInterceptorStrategy.interceptorName());
+                    }
                 }
             }
         }
@@ -207,6 +227,7 @@ public class EntityMetadata {
         }
         return columnMetadata;
     }
+
     public ColumnMetadata getColumnOrNull(String propertyName) {
         return property2ColumnMap.get(propertyName);
     }
@@ -245,5 +266,17 @@ public class EntityMetadata {
 
     public List<String> getQueryFilters() {
         return queryFilters;
+    }
+
+    public List<String> getInsertInterceptors() {
+        return insertInterceptors;
+    }
+
+    public List<String> getUpdateInterceptors() {
+        return updateInterceptors;
+    }
+
+    public List<String> getUpdateSetInterceptors() {
+        return updateSetInterceptors;
     }
 }

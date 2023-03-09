@@ -1,6 +1,7 @@
-package org.easy.query.core.configuration.types;
+package org.easy.query.core.configuration.global.select;
 
 import org.easy.query.core.expression.parser.abstraction.SqlPredicate;
+import org.easy.query.core.query.SqlEntityQueryExpression;
 
 /**
  * @FileName: EntityQueryFilterConfiguration.java
@@ -8,7 +9,7 @@ import org.easy.query.core.expression.parser.abstraction.SqlPredicate;
  * @Date: 2023/3/7 22:25
  * @Created by xuejiaming
  */
-public interface GlobalQueryFilterConfiguration {
+public interface GlobalQueryFilterStrategy {
     /**
      * query filter名称
      * @return
@@ -25,7 +26,8 @@ public interface GlobalQueryFilterConfiguration {
     /**
      * 配置
      * @param entityClass
+     * @param sqlEntityQueryExpression
      * @param sqlPredicate
      */
-    void configure(Class<?> entityClass, SqlPredicate<?> sqlPredicate);
+    void configure(Class<?> entityClass, SqlEntityQueryExpression sqlEntityQueryExpression, SqlPredicate<?> sqlPredicate);
 }

@@ -1,12 +1,9 @@
 package org.easy.query.core.query;
 
 import org.easy.query.core.abstraction.EasyQueryLambdaFactory;
-import org.easy.query.core.abstraction.EasyQueryRuntimeContext;
-import org.easy.query.core.abstraction.EasySqlExpressionFactory;
 import org.easy.query.core.abstraction.metadata.EntityMetadata;
-import org.easy.query.core.basic.jdbc.parameter.SQLParameter;
-import org.easy.query.core.configuration.types.EasyQueryConfiguration;
-import org.easy.query.core.configuration.types.GlobalQueryFilterConfiguration;
+import org.easy.query.core.configuration.EasyQueryConfiguration;
+import org.easy.query.core.configuration.global.select.GlobalQueryFilterStrategy;
 import org.easy.query.core.exception.EasyQueryException;
 import org.easy.query.core.expression.lambda.SqlExpression;
 import org.easy.query.core.expression.parser.abstraction.SqlPredicate;
@@ -19,7 +16,6 @@ import org.easy.query.core.expression.segment.condition.PredicateSegment;
 import org.easy.query.core.util.ArrayUtil;
 import org.easy.query.core.util.StringUtil;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -232,9 +228,9 @@ public abstract class EasySqlQueryExpression extends AbstractSqlEntityExpression
             if(ArrayUtil.isNotEmpty(queryFilterNames)){
                 EasyQueryConfiguration easyQueryConfiguration = getRuntimeContext().getEasyQueryConfiguration();
                 for (String queryFilterName : queryFilterNames) {
-                    GlobalQueryFilterConfiguration globalQueryFilterConfiguration = easyQueryConfiguration.getGlobalQueryFilterConfiguration(queryFilterName);
+                    GlobalQueryFilterStrategy globalQueryFilterConfiguration = easyQueryConfiguration.getGlobalQueryFilterStrategy(queryFilterName);
                     if(globalQueryFilterConfiguration!=null){
-                        globalQueryFilterConfiguration.configure(table.entityClass(),sqlPredicate);
+                        globalQueryFilterConfiguration.configure(table.entityClass(),this,sqlPredicate);
                     }
                 }
             }
