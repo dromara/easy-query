@@ -200,12 +200,15 @@ public class EntityMetadata {
         return keyPropertiesMap.keySet();
     }
 
-    public ColumnMetadata getColumn(String propertyName) {
-        ColumnMetadata columnMetadata = property2ColumnMap.get(propertyName);
+    public ColumnMetadata getColumnNotNull(String propertyName) {
+        ColumnMetadata columnMetadata = getColumnOrNull(propertyName);
         if (columnMetadata == null) {
             throw new EasyQueryException(String.format("未找到属性:[%s]对应的列名", propertyName));
         }
         return columnMetadata;
+    }
+    public ColumnMetadata getColumnOrNull(String propertyName) {
+        return property2ColumnMap.get(propertyName);
     }
 
     public void checkTable() {

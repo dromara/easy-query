@@ -12,11 +12,13 @@ import org.easy.query.core.basic.api.insert.EasyEmptyInsertable;
 import org.easy.query.core.basic.api.insert.EasyInsertable;
 import org.easy.query.core.basic.api.insert.Insertable;
 import org.easy.query.core.basic.api.select.Queryable3;
+import org.easy.query.core.basic.api.select.Queryable4;
 import org.easy.query.core.basic.api.select.impl.EasyQueryable;
 import org.easy.query.core.basic.api.select.impl.EasyQueryable2;
 import org.easy.query.core.basic.api.select.Queryable;
 import org.easy.query.core.basic.api.select.Queryable2;
 import org.easy.query.core.basic.api.select.impl.EasyQueryable3;
+import org.easy.query.core.basic.api.select.impl.EasyQueryable4;
 import org.easy.query.core.basic.api.update.*;
 import org.easy.query.core.basic.api.update.impl.EasyEmptyEntityUpdatable;
 import org.easy.query.core.basic.api.update.impl.EasyEntityUpdatable;
@@ -133,6 +135,34 @@ public class DefaultEasySqlApiFactory implements EasySqlApiFactory {
         sqlEntityExpression.addSqlEntityTableExpression(sqlTable);
 
         return new EasyQueryable3<>(t1Class,t2Class,t3Class,sqlEntityExpression);
+    }
+
+    @Override
+    public <T1, T2, T3, T4> Queryable4<T1, T2, T3, T4> createQueryable4(Class<T1> t1Class, Class<T2> t2Class, Class<T3> t3Class, Class<T4> t4Class, MultiTableTypeEnum selectTableInfoType, SqlEntityQueryExpression sqlEntityExpression) {
+
+        EntityMetadata entityMetadata = sqlEntityExpression.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(t4Class);
+        int tableIndex =  EasyUtil.getNextTableIndex(sqlEntityExpression);
+        SqlExpressionContext queryExpressionContext = sqlEntityExpression.getSqlExpressionContext();
+        SqlEntityTableExpression sqlTable =easySqlExpressionFactory.createSqlEntityTableExpression(entityMetadata,  tableIndex,queryExpressionContext.createTableAlias(), selectTableInfoType);
+        sqlEntityExpression.addSqlEntityTableExpression(sqlTable);
+
+        return new EasyQueryable4<>(t1Class,t2Class,t3Class,t4Class,sqlEntityExpression);
+    }
+
+    @Override
+    public <T1, T2, T3, T4> Queryable4<T1, T2, T3, T4> createQueryable4(Class<T1> t1Class, Class<T2> t2Class, Class<T3> t3Class, Queryable<T4> joinQueryable, MultiTableTypeEnum selectTableInfoType, SqlEntityQueryExpression sqlEntityExpression) {
+
+        Class<T4> t4Class = joinQueryable.queryClass();
+
+        EntityMetadata entityMetadata = sqlEntityExpression.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(t4Class);
+        SqlEntityQueryExpression joinQueryableSqlEntityExpression = joinQueryable.getSqlEntityExpression();
+
+        int tableIndex =  EasyUtil.getNextTableIndex(sqlEntityExpression);
+        SqlExpressionContext queryExpressionContext = sqlEntityExpression.getSqlExpressionContext();
+        SqlEntityTableExpression sqlTable =easySqlExpressionFactory.createSqlAnonymousEntityTableExpression(entityMetadata,  tableIndex,queryExpressionContext.createTableAlias(), selectTableInfoType,joinQueryableSqlEntityExpression);
+        sqlEntityExpression.addSqlEntityTableExpression(sqlTable);
+
+        return new EasyQueryable4<>(t1Class,t2Class,t3Class,t4Class,sqlEntityExpression);
     }
 
     @Override

@@ -145,21 +145,23 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
         return cloneQueryable().select(easyFunc.getFuncColumn(ownerColumn)).toList((Class<TMember>)columnMetadata.getProperty().getPropertyType());
     }
 
+
     @Override
-    public T1 firstOrNull() {
-        List<T1> list =cloneQueryable().limit(1).toList();
+    public <TR> TR firstOrNull(Class<TR> resultClass) {
+        List<TR> list =cloneQueryable().limit(1).toList(resultClass);
 
         return ArrayUtil.firstOrNull(list);
     }
 
     @Override
-    public T1 firstNotNull(String msg, String code) {
-        T1 result = firstOrNull();
+    public <TR> TR firstNotNull(Class<TR> resultClass, String msg, String code) {
+        TR result = firstOrNull(resultClass);
         if(result==null){
             throw new EasyQueryNotFoundException(msg,code);
         }
         return result;
     }
+
     //
 //    @Override
 //    public T1 firstOrNull(SqlExpression<SqlColumnSelector<T1>> selectExpression) {
@@ -202,11 +204,18 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
 
     @Override
     public <TR> List<TR> toList(Class<TR> resultClass) {
-        if (SqlExpressionUtil.shouldCloneSqlEntityQueryExpression(sqlEntityExpression)) {
-            return select(resultClass).toList();
-        }
         return toInternalList(resultClass);
     }
+
+    @Override
+    public <TR> String toSql(Class<TR> resultClass) {
+
+        if (SqlExpressionUtil.shouldCloneSqlEntityQueryExpression(sqlEntityExpression)) {
+            return select(resultClass).toSql();
+        }
+        return toInternalSql();
+    }
+    protected abstract String toInternalSql();
 
     /**
      * 子类实现方法
@@ -214,8 +223,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
      * @return
      */
     protected <TR> List<TR> toInternalList(Class<TR> resultClass) {
-        //添加query filter logic delete
-        String sql = toSql();
+        String sql = toSql(resultClass);
         EasyExecutor easyExecutor = sqlEntityExpression.getRuntimeContext().getEasyExecutor();
         return easyExecutor.query(ExecutorContext.create(sqlEntityExpression.getRuntimeContext()), resultClass, sql, sqlEntityExpression.getParameters());
     }
@@ -248,11 +256,6 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
 
     @Override
     public <TR> Queryable<TR> select(Class<TR> resultClass) {
-//        if(shouldSelectAll()){
-//            SqlExpression<SqlColumnAsSelector<T1, TR>> selectExpression = ColumnSelector::columnAll;
-//            SqlColumnAsSelector<T1, TR> sqlColumnSelector = getSqlBuilderProvider1().getSqlColumnAsSelector1(sqlEntityExpression.getProjects());
-//            selectExpression.apply(sqlColumnSelector);
-//        }
         SqlExpression<SqlColumnAsSelector<T1, TR>> selectExpression = ColumnSelector::columnAll;
         SqlColumnAsSelector<T1, TR> sqlColumnSelector = getSqlBuilderProvider1().getSqlColumnAsSelector1(sqlEntityExpression.getProjects());
         selectExpression.apply(sqlColumnSelector);
@@ -398,34 +401,34 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     }
     @Override
     public <T2> Queryable2<T1, T2> leftJoin(Class<T2> joinClass, SqlExpression2<SqlPredicate<T1>, SqlPredicate<T2>> on) {
-        Queryable2<T1, T2> queryable2 = sqlEntityExpression.getRuntimeContext().getSqlApiFactory().createQueryable2(t1Class, joinClass, MultiTableTypeEnum.LEFT_JOIN, sqlEntityExpression);
-        return SqlExpressionUtil.executeJoinOn(queryable2,on);
+        Queryable2<T1, T2> queryable = sqlEntityExpression.getRuntimeContext().getSqlApiFactory().createQueryable2(t1Class, joinClass, MultiTableTypeEnum.LEFT_JOIN, sqlEntityExpression);
+        return SqlExpressionUtil.executeJoinOn(queryable,on);
     }
 
     @Override
     public <T2> Queryable2<T1, T2> leftJoin(Queryable<T2> joinQueryable, SqlExpression2<SqlPredicate<T1>, SqlPredicate<T2>> on) {
-        Queryable<T2> selectAllT2Queryable = SqlExpressionUtil.cloneAndSelectAllQueryable(joinQueryable);
-        Queryable2<T1, T2> queryable2 = sqlEntityExpression.getRuntimeContext().getSqlApiFactory().createQueryable2(t1Class, selectAllT2Queryable, MultiTableTypeEnum.LEFT_JOIN, sqlEntityExpression);
-        return SqlExpressionUtil.executeJoinOn(queryable2,on);
+        Queryable<T2> selectAllTQueryable = SqlExpressionUtil.cloneAndSelectAllQueryable(joinQueryable);
+        Queryable2<T1, T2> queryable = sqlEntityExpression.getRuntimeContext().getSqlApiFactory().createQueryable2(t1Class, selectAllTQueryable, MultiTableTypeEnum.LEFT_JOIN, sqlEntityExpression);
+        return SqlExpressionUtil.executeJoinOn(queryable,on);
     }
 
     @Override
     public <T2> Queryable2<T1, T2> rightJoin(Class<T2> joinClass, SqlExpression2<SqlPredicate<T1>, SqlPredicate<T2>> on) {
-        Queryable2<T1, T2> queryable2 = sqlEntityExpression.getRuntimeContext().getSqlApiFactory().createQueryable2(t1Class, joinClass, MultiTableTypeEnum.RIGHT_JOIN, sqlEntityExpression);
-        return SqlExpressionUtil.executeJoinOn(queryable2,on);
+        Queryable2<T1, T2> queryable = sqlEntityExpression.getRuntimeContext().getSqlApiFactory().createQueryable2(t1Class, joinClass, MultiTableTypeEnum.RIGHT_JOIN, sqlEntityExpression);
+        return SqlExpressionUtil.executeJoinOn(queryable,on);
     }
 
     @Override
     public <T2> Queryable2<T1, T2> rightJoin(Queryable<T2> joinQueryable, SqlExpression2<SqlPredicate<T1>, SqlPredicate<T2>> on) {
-        Queryable<T2> selectAllT2Queryable = SqlExpressionUtil.cloneAndSelectAllQueryable(joinQueryable);
-        Queryable2<T1, T2> queryable2 = sqlEntityExpression.getRuntimeContext().getSqlApiFactory().createQueryable2(t1Class, selectAllT2Queryable, MultiTableTypeEnum.RIGHT_JOIN, sqlEntityExpression);
-        return SqlExpressionUtil.executeJoinOn(queryable2,on);
+        Queryable<T2> selectAllTQueryable = SqlExpressionUtil.cloneAndSelectAllQueryable(joinQueryable);
+        Queryable2<T1, T2> queryable = sqlEntityExpression.getRuntimeContext().getSqlApiFactory().createQueryable2(t1Class, selectAllTQueryable, MultiTableTypeEnum.RIGHT_JOIN, sqlEntityExpression);
+        return SqlExpressionUtil.executeJoinOn(queryable,on);
     }
 
     @Override
     public <T2> Queryable2<T1, T2> innerJoin(Class<T2> joinClass, SqlExpression2<SqlPredicate<T1>, SqlPredicate<T2>> on) {
-        Queryable2<T1, T2> queryable2 = sqlEntityExpression.getRuntimeContext().getSqlApiFactory().createQueryable2(t1Class, joinClass, MultiTableTypeEnum.INNER_JOIN, sqlEntityExpression);
-        return SqlExpressionUtil.executeJoinOn(queryable2,on);
+        Queryable2<T1, T2> queryable = sqlEntityExpression.getRuntimeContext().getSqlApiFactory().createQueryable2(t1Class, joinClass, MultiTableTypeEnum.INNER_JOIN, sqlEntityExpression);
+        return SqlExpressionUtil.executeJoinOn(queryable,on);
     }
 
     @Override
@@ -433,9 +436,9 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
         //todo 需要判断当前的表达式是否存在where group order之类的操作,是否是一个clear expression如果不是那么就需要先select all如果没有select过然后创建一个anonymous的table去join
         //简单理解就是queryable需要支持join操作 还有queryable 和queryable之间如何join
 
-        Queryable<T2> selectAllT2Queryable = SqlExpressionUtil.cloneAndSelectAllQueryable(joinQueryable);
-        Queryable2<T1, T2> queryable2 = sqlEntityExpression.getRuntimeContext().getSqlApiFactory().createQueryable2(t1Class, selectAllT2Queryable, MultiTableTypeEnum.INNER_JOIN, sqlEntityExpression);
-        return SqlExpressionUtil.executeJoinOn(queryable2,on);
+        Queryable<T2> selectAllTQueryable = SqlExpressionUtil.cloneAndSelectAllQueryable(joinQueryable);
+        Queryable2<T1, T2> queryable = sqlEntityExpression.getRuntimeContext().getSqlApiFactory().createQueryable2(t1Class, selectAllTQueryable, MultiTableTypeEnum.INNER_JOIN, sqlEntityExpression);
+        return SqlExpressionUtil.executeJoinOn(queryable,on);
     }
 
     @Override

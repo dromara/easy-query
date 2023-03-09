@@ -14,6 +14,7 @@ public interface EasyConnectionManager {
     }
 
     /**
+     * todo 枚举
      * TRANSACTION_READ_UNCOMMITTED ......
      * @param isolationLevel
      * @return
@@ -23,6 +24,14 @@ public interface EasyConnectionManager {
     boolean currentThreadInTransaction();
     void clear();
     void closeEasyConnection(EasyConnection easyConnection);
+
+    /**
+     * 提交
+     */
     void commit();
+
+    /**
+     * 回滚,异常后会自动执行
+     */
     void rollback();
 }

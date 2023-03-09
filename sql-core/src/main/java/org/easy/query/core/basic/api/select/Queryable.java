@@ -1,6 +1,7 @@
 package org.easy.query.core.basic.api.select;
 
 import org.easy.query.core.basic.api.select.provider.EasyQuerySqlBuilderProvider;
+import org.easy.query.core.exception.EasyQueryConcurrentException;
 import org.easy.query.core.expression.lambda.Property;
 import org.easy.query.core.expression.lambda.SqlExpression;
 import org.easy.query.core.abstraction.sql.PageResult;
@@ -85,17 +86,47 @@ public interface Queryable<T1> extends Query<T1> {
     Integer lenOrDefault(Property<T1, ?> column, Integer def);
 
 
-    T1 firstOrNull();
+   default T1 firstOrNull(){
+       return firstOrNull(queryClass());
+   }
+    <TR> TR firstOrNull(Class<TR> resultClass);
+
+    /**
+     * 当未查询到结果 将会抛出 {@link EasyQueryConcurrentException}
+     * @param msg
+     * @return
+     */
    default T1 firstNotNull(String msg){
        return firstNotNull(msg,null);
    }
-    T1 firstNotNull(String msg,String code);
+
+    /**
+     *  当未查询到结果 将会抛出 {@link EasyQueryConcurrentException}
+     * @param msg
+     * @param code
+     * @return
+     */
+   default T1 firstNotNull(String msg,String code){
+       return firstNotNull(queryClass(),msg,code);
+   }
+    default <TR> TR firstNotNull(Class<TR> resultClass,String msg){
+        return firstNotNull(resultClass,msg,null);
+    }
+    <TR> TR firstNotNull(Class<TR> resultClass,String msg,String code);
 
     List<T1> toList();
 
 
     <TR> List<TR> toList(Class<TR> resultClass);
-    String toSql();
+
+    /**
+     * 返回执行sql
+     * @return
+     */
+   default String toSql(){
+       return toSql(queryClass());
+   }
+    <TR> String toSql(Class<TR> resultClass);
 //
     Queryable<T1> select(SqlExpression<SqlColumnSelector<T1>> selectExpression);
     <TR> Queryable<TR> select(Class<TR> resultClass);

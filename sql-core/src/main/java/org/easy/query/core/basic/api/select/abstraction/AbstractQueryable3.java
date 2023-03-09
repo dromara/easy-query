@@ -5,10 +5,13 @@ import org.easy.query.core.abstraction.sql.enums.EasyAggregate;
 import org.easy.query.core.abstraction.sql.enums.IEasyFunc;
 import org.easy.query.core.basic.api.select.Queryable;
 import org.easy.query.core.basic.api.select.Queryable3;
+import org.easy.query.core.basic.api.select.Queryable4;
 import org.easy.query.core.basic.api.select.provider.*;
+import org.easy.query.core.enums.MultiTableTypeEnum;
 import org.easy.query.core.exception.EasyQueryException;
 import org.easy.query.core.expression.lambda.SqlExpression2;
 import org.easy.query.core.expression.lambda.SqlExpression3;
+import org.easy.query.core.expression.lambda.SqlExpression4;
 import org.easy.query.core.expression.parser.abstraction.SqlColumnAsSelector;
 import org.easy.query.core.expression.parser.abstraction.SqlColumnSelector;
 import org.easy.query.core.expression.parser.abstraction.SqlPredicate;
@@ -20,12 +23,13 @@ import org.easy.query.core.query.SqlEntityQueryExpression;
 import org.easy.query.core.query.SqlEntityTableExpression;
 import org.easy.query.core.util.ArrayUtil;
 import org.easy.query.core.util.EasyUtil;
+import org.easy.query.core.util.SqlExpressionUtil;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 /**
- * @FileName: AbstractQueryable2.java
+ * @FileName: AbstractQueryable3.java
  * @Description: 文件说明
  * @Date: 2023/2/6 23:43
  * @Created by xuejiaming
@@ -44,6 +48,44 @@ public abstract class AbstractQueryable3<T1, T2, T3> extends AbstractQueryable<T
         this.sqlPredicateProvider = new Select3SqlProvider<>(sqlEntityExpression);
     }
 
+    @Override
+    public <T4> Queryable4<T1, T2, T3, T4> leftJoin(Class<T4> joinClass, SqlExpression4<SqlPredicate<T1>, SqlPredicate<T2>, SqlPredicate<T3>, SqlPredicate<T4>> on) {
+        Queryable4<T1, T2, T3, T4> queryable = sqlEntityExpression.getRuntimeContext().getSqlApiFactory().createQueryable4(t1Class, t2Class,t3Class, joinClass, MultiTableTypeEnum.LEFT_JOIN, sqlEntityExpression);
+        return SqlExpressionUtil.executeJoinOn(queryable,on);
+    }
+
+    @Override
+    public <T4> Queryable4<T1, T2, T3, T4> leftJoin(Queryable<T4> joinQueryable, SqlExpression4<SqlPredicate<T1>, SqlPredicate<T2>, SqlPredicate<T3>, SqlPredicate<T4>> on) {
+        Queryable<T4> selectAllTQueryable = SqlExpressionUtil.cloneAndSelectAllQueryable(joinQueryable);
+        Queryable4<T1, T2, T3,T4> queryable = sqlEntityExpression.getRuntimeContext().getSqlApiFactory().createQueryable4(t1Class,t2Class,t3Class, selectAllTQueryable, MultiTableTypeEnum.LEFT_JOIN, sqlEntityExpression);
+        return SqlExpressionUtil.executeJoinOn(queryable,on);
+    }
+
+    @Override
+    public <T4> Queryable4<T1, T2, T3, T4> rightJoin(Class<T4> joinClass, SqlExpression4<SqlPredicate<T1>, SqlPredicate<T2>, SqlPredicate<T3>, SqlPredicate<T4>> on) {
+        Queryable4<T1, T2, T3, T4> queryable = sqlEntityExpression.getRuntimeContext().getSqlApiFactory().createQueryable4(t1Class, t2Class,t3Class, joinClass, MultiTableTypeEnum.RIGHT_JOIN, sqlEntityExpression);
+        return SqlExpressionUtil.executeJoinOn(queryable,on);
+    }
+
+    @Override
+    public <T4> Queryable4<T1, T2, T3, T4> rightJoin(Queryable<T4> joinQueryable, SqlExpression4<SqlPredicate<T1>, SqlPredicate<T2>, SqlPredicate<T3>, SqlPredicate<T4>> on) {
+        Queryable<T4> selectAllTQueryable = SqlExpressionUtil.cloneAndSelectAllQueryable(joinQueryable);
+        Queryable4<T1, T2, T3,T4> queryable = sqlEntityExpression.getRuntimeContext().getSqlApiFactory().createQueryable4(t1Class,t2Class,t3Class, selectAllTQueryable, MultiTableTypeEnum.RIGHT_JOIN, sqlEntityExpression);
+        return SqlExpressionUtil.executeJoinOn(queryable,on);
+    }
+
+    @Override
+    public <T4> Queryable4<T1, T2, T3, T4> innerJoin(Class<T4> joinClass, SqlExpression4<SqlPredicate<T1>, SqlPredicate<T2>, SqlPredicate<T3>, SqlPredicate<T4>> on) {
+        Queryable4<T1, T2, T3, T4> queryable = sqlEntityExpression.getRuntimeContext().getSqlApiFactory().createQueryable4(t1Class, t2Class,t3Class, joinClass, MultiTableTypeEnum.INNER_JOIN, sqlEntityExpression);
+        return SqlExpressionUtil.executeJoinOn(queryable,on);
+    }
+
+    @Override
+    public <T4> Queryable4<T1, T2, T3, T4> innerJoin(Queryable<T4> joinQueryable, SqlExpression4<SqlPredicate<T1>, SqlPredicate<T2>, SqlPredicate<T3>, SqlPredicate<T4>> on) {
+        Queryable<T4> selectAllTQueryable = SqlExpressionUtil.cloneAndSelectAllQueryable(joinQueryable);
+        Queryable4<T1, T2, T3,T4> queryable = sqlEntityExpression.getRuntimeContext().getSqlApiFactory().createQueryable4(t1Class,t2Class,t3Class, selectAllTQueryable, MultiTableTypeEnum.INNER_JOIN, sqlEntityExpression);
+        return SqlExpressionUtil.executeJoinOn(queryable,on);
+    }
 
     @Override
     public Queryable3<T1, T2, T3> where(boolean condition, SqlExpression3<SqlPredicate<T1>, SqlPredicate<T2>, SqlPredicate<T3>> whereExpression) {

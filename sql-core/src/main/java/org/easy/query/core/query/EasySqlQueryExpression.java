@@ -73,6 +73,11 @@ public abstract class EasySqlQueryExpression extends AbstractSqlEntityExpression
     }
 
     @Override
+    public boolean hasLimit() {
+        return this.rows>0;
+    }
+
+    @Override
     public boolean hasWhere() {
         return where != null && where.isNotEmpty();
     }

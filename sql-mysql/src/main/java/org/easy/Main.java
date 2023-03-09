@@ -119,6 +119,18 @@ configuration.applyGlobalQueryFilterConfiguration(new NameQueryFilter());
         client = new EasySqlQuery(jqdcRuntimeContext);
 
         {
+            List<TestUserMysqlx> testUserMysqls = client.query(SysUserLogbyMonth.class).toList(TestUserMysqlx.class);
+            List<TestUserMysqlx> testUserMysqls1 = client.query(SysUserLogbyMonth.class).select(o->o.column(SysUserLogbyMonth::getId)).select(TestUserMysqlx.class).toList();
+            List<TestUserMysqlx> testUserMysqls2 = client.query(SysUserLogbyMonth.class).select(TestUserMysqlx.class,o->o.column(SysUserLogbyMonth::getId)).toList();
+
+            String s = client.query(TestUserMysql.class)
+                    .leftJoin(SysUserLogbyMonth.class, (a, b) -> a.eq(b, TestUserMysql::getName, SysUserLogbyMonth::getId).then(b).eq(SysUserLogbyMonth::getTime, LocalDateTime.now()))
+                    .where(o -> o.eq(TestUserMysql::getId, "102")
+                            .like(TestUserMysql::getName, "1%")
+                            .and(x -> x.like(TestUserMysql::getName, "123").or().eq(TestUserMysql::getAge, 1)
+                            )).toSql();
+            System.out.println("---------:"+s);
+
             TestUserMysql testUserMysqlxa = client.query(TestUserMysql.class)
                     .leftJoin(SysUserLogbyMonth.class, (a, b) -> a.eq(b, TestUserMysql::getName, SysUserLogbyMonth::getId).then(b).eq(SysUserLogbyMonth::getTime, LocalDateTime.now()))
                     .where(o -> o.eq(TestUserMysql::getId, "102")

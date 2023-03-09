@@ -2,6 +2,7 @@ package org.easy.query.core.basic.api.select;
 
 import org.easy.query.core.basic.api.select.provider.EasyQuerySqlBuilderProvider3;
 import org.easy.query.core.expression.lambda.SqlExpression3;
+import org.easy.query.core.expression.lambda.SqlExpression4;
 import org.easy.query.core.expression.parser.abstraction.SqlColumnAsSelector;
 import org.easy.query.core.expression.parser.abstraction.SqlColumnSelector;
 import org.easy.query.core.expression.parser.abstraction.SqlPredicate;
@@ -11,19 +12,27 @@ import java.math.BigDecimal;
 
 
 /**
- *
  * @FileName: Select3.java
  * @Description: 文件说明
  * @Date: 2023/2/6 22:44
  * @Created by xuejiaming
  */
-public interface Queryable3<T1,T2,T3> extends Queryable<T1> {
+public interface Queryable3<T1, T2, T3> extends Queryable<T1> {
+
+    <T4> Queryable4<T1, T2, T3,T4> leftJoin(Class<T4> joinClass, SqlExpression4<SqlPredicate<T1>, SqlPredicate<T2>, SqlPredicate<T3>, SqlPredicate<T4>> on);
+    <T4> Queryable4<T1, T2, T3,T4> leftJoin(Queryable<T4> joinQueryable, SqlExpression4<SqlPredicate<T1>, SqlPredicate<T2>, SqlPredicate<T3>, SqlPredicate<T4>> on);
+    <T4> Queryable4<T1, T2, T3,T4> rightJoin(Class<T4> joinClass, SqlExpression4<SqlPredicate<T1>, SqlPredicate<T2>, SqlPredicate<T3>, SqlPredicate<T4>> on);
+    <T4> Queryable4<T1, T2, T3,T4> rightJoin(Queryable<T4> joinQueryable, SqlExpression4<SqlPredicate<T1>, SqlPredicate<T2>, SqlPredicate<T3>, SqlPredicate<T4>> on);
+
+    <T4> Queryable4<T1, T2, T3,T4> innerJoin(Class<T4> joinClass, SqlExpression4<SqlPredicate<T1>, SqlPredicate<T2>, SqlPredicate<T3>, SqlPredicate<T4>> on);
+    <T4> Queryable4<T1, T2, T3,T4> innerJoin(Queryable<T4> joinQueryable, SqlExpression4<SqlPredicate<T1>, SqlPredicate<T2>, SqlPredicate<T3>, SqlPredicate<T4>> on);
+
     //region where
-   default Queryable3<T1,T2,T3> where(SqlExpression3<SqlPredicate<T1>,SqlPredicate<T2>,SqlPredicate<T3>> whereExpression)
-   {
-       return where(true,whereExpression);
-   }
-    Queryable3<T1,T2,T3> where(boolean condition, SqlExpression3<SqlPredicate<T1>,SqlPredicate<T2>,SqlPredicate<T3>> whereExpression);
+    default Queryable3<T1, T2, T3> where(SqlExpression3<SqlPredicate<T1>, SqlPredicate<T2>, SqlPredicate<T3>> whereExpression) {
+        return where(true, whereExpression);
+    }
+
+    Queryable3<T1, T2, T3> where(boolean condition, SqlExpression3<SqlPredicate<T1>, SqlPredicate<T2>, SqlPredicate<T3>> whereExpression);
 
     //endregion
 
@@ -80,6 +89,7 @@ public interface Queryable3<T1,T2,T3> extends Queryable<T1> {
     }
 
     <TMember> TMember avgOrDefault(SqlExpression3<SqlColumnResultSelector<T1, TMember>, SqlColumnResultSelector<T2, TMember>, SqlColumnResultSelector<T3, TMember>> columnSelectorExpression, TMember def);
+
     default Integer lenOrNull(SqlExpression3<SqlColumnResultSelector<T1, ?>, SqlColumnResultSelector<T2, ?>, SqlColumnResultSelector<T3, ?>> columnSelectorExpression) {
         return lenOrDefault(columnSelectorExpression, null);
     }
@@ -88,56 +98,59 @@ public interface Queryable3<T1,T2,T3> extends Queryable<T1> {
     //endregion
 
     //region group
-    default Queryable3<T1,T2,T3> groupBy(SqlExpression3<SqlColumnSelector<T1>,SqlColumnSelector<T2>,SqlColumnSelector<T3>> selectExpression)
-    {
-        return groupBy(true,selectExpression);
+    default Queryable3<T1, T2, T3> groupBy(SqlExpression3<SqlColumnSelector<T1>, SqlColumnSelector<T2>, SqlColumnSelector<T3>> selectExpression) {
+        return groupBy(true, selectExpression);
     }
-    Queryable3<T1,T2,T3> groupBy(boolean condition, SqlExpression3<SqlColumnSelector<T1>,SqlColumnSelector<T2>,SqlColumnSelector<T3>> selectExpression);
+
+    Queryable3<T1, T2, T3> groupBy(boolean condition, SqlExpression3<SqlColumnSelector<T1>, SqlColumnSelector<T2>, SqlColumnSelector<T3>> selectExpression);
+
     //endregion
     //region order
-    default Queryable3<T1,T2,T3> orderByAsc(SqlExpression3<SqlColumnSelector<T1>,SqlColumnSelector<T2>,SqlColumnSelector<T3>> selectExpression)
-    {
-        return orderByAsc(true,selectExpression);
+    default Queryable3<T1, T2, T3> orderByAsc(SqlExpression3<SqlColumnSelector<T1>, SqlColumnSelector<T2>, SqlColumnSelector<T3>> selectExpression) {
+        return orderByAsc(true, selectExpression);
     }
-     Queryable3<T1,T2,T3> orderByAsc(boolean condition, SqlExpression3<SqlColumnSelector<T1>,SqlColumnSelector<T2>,SqlColumnSelector<T3>> selectExpression);
-    default Queryable3<T1,T2,T3> orderByDesc(SqlExpression3<SqlColumnSelector<T1>,SqlColumnSelector<T2>,SqlColumnSelector<T3>> selectExpression)
-    {
-        return orderByDesc(true,selectExpression);
+
+    Queryable3<T1, T2, T3> orderByAsc(boolean condition, SqlExpression3<SqlColumnSelector<T1>, SqlColumnSelector<T2>, SqlColumnSelector<T3>> selectExpression);
+
+    default Queryable3<T1, T2, T3> orderByDesc(SqlExpression3<SqlColumnSelector<T1>, SqlColumnSelector<T2>, SqlColumnSelector<T3>> selectExpression) {
+        return orderByDesc(true, selectExpression);
     }
-     Queryable3<T1,T2,T3> orderByDesc(boolean condition, SqlExpression3<SqlColumnSelector<T1>,SqlColumnSelector<T2>,SqlColumnSelector<T3>> selectExpression);
+
+    Queryable3<T1, T2, T3> orderByDesc(boolean condition, SqlExpression3<SqlColumnSelector<T1>, SqlColumnSelector<T2>, SqlColumnSelector<T3>> selectExpression);
     //endregion
     //region limit
 
     @Override
-    default Queryable3<T1,T2,T3> limit(long rows) {
+    default Queryable3<T1, T2, T3> limit(long rows) {
         return limit(true, rows);
     }
 
     @Override
-    default Queryable3<T1,T2,T3> limit(boolean condition, long rows) {
+    default Queryable3<T1, T2, T3> limit(boolean condition, long rows) {
         return limit(condition, 0, rows);
     }
 
     @Override
-    default Queryable3<T1,T2,T3> limit(long offset, long rows) {
+    default Queryable3<T1, T2, T3> limit(long offset, long rows) {
         return limit(true, offset, rows);
     }
 
     @Override
-    Queryable3<T1,T2,T3> limit(boolean condition, long offset, long rows);
+    Queryable3<T1, T2, T3> limit(boolean condition, long offset, long rows);
 
     //endregion
 
     @Override
-    Queryable3<T1,T2,T3> disableLogicDelete();
+    Queryable3<T1, T2, T3> disableLogicDelete();
 
     @Override
-    Queryable3<T1,T2,T3> enableLogicDelete();
+    Queryable3<T1, T2, T3> enableLogicDelete();
 
     @Override
-    Queryable3<T1,T2,T3> noQueryFilter();
+    Queryable3<T1, T2, T3> noQueryFilter();
 
     @Override
-    Queryable3<T1,T2,T3> useQueryFilter();
+    Queryable3<T1, T2, T3> useQueryFilter();
+
     EasyQuerySqlBuilderProvider3<T1, T2, T3> getSqlBuilderProvider3();
 }

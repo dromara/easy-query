@@ -36,7 +36,7 @@ public final class PropertySQLParameter implements BeanSqlParameter {
             throw new EasyQueryException("cant get sql parameter value,"+table.getEntityMetadata().getEntityClass()+"."+propertyName+",bean is null");
         }
         EntityMetadata entityMetadata = table.getEntityMetadata();
-        ColumnMetadata column = entityMetadata.getColumn(propertyName);
+        ColumnMetadata column = entityMetadata.getColumnNotNull(propertyName);
         Method readMethod = column.getProperty().getReadMethod();
         try {
             return readMethod.invoke(bean);

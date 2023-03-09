@@ -41,7 +41,7 @@ public class EasyUtil {
     }
 
     public static ColumnMetadata getColumnMetadata(SqlEntityTableExpression tableExpression,String propertyName){
-        return tableExpression.getEntityMetadata().getColumn(propertyName);
+        return tableExpression.getEntityMetadata().getColumnNotNull(propertyName);
     }
 
     public static int getNextTableIndex(SqlEntityQueryExpression sqlEntityExpression){

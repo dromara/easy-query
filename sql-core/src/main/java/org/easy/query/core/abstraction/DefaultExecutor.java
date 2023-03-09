@@ -226,7 +226,7 @@ public class DefaultExecutor implements EasyExecutor {
             String colName = getColName(rsmd, i + 1);//数据库查询出来的列名
 
             String propertyName = entityMetadata.getPropertyName(colName);
-            ColumnMetadata column = entityMetadata.getColumn(propertyName);
+            ColumnMetadata column = entityMetadata.getColumnOrNull(propertyName);
             if (column != null) {
                 columnToProperty[i] = column.getProperty();
             } else {

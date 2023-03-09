@@ -29,6 +29,8 @@ public interface SqlEntityQueryExpression extends SqlEntityExpression{
 
      void setRows(long rows);
 
+     boolean hasLimit();
+
 
      boolean hasWhere();
 
@@ -42,5 +44,10 @@ public interface SqlEntityQueryExpression extends SqlEntityExpression{
      SqlBuilderSegment getOrder() ;
 
      boolean hasOrder();
+
+    /**
+     * 创建一个新的EntityQueryExpression但是会共享同一个上下文
+     * @return
+     */
     SqlEntityQueryExpression cloneSqlQueryExpression();
 }

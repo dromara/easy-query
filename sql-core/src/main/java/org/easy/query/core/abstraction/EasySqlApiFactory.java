@@ -6,6 +6,7 @@ import org.easy.query.core.basic.api.insert.Insertable;
 import org.easy.query.core.basic.api.select.Queryable;
 import org.easy.query.core.basic.api.select.Queryable2;
 import org.easy.query.core.basic.api.select.Queryable3;
+import org.easy.query.core.basic.api.select.Queryable4;
 import org.easy.query.core.basic.api.update.EntityUpdatable;
 import org.easy.query.core.basic.api.update.ExpressionUpdatable;
 import org.easy.query.core.enums.MultiTableTypeEnum;
@@ -36,6 +37,8 @@ public interface EasySqlApiFactory {
     <T1, T2> Queryable2<T1, T2> createQueryable2(Class<T1> t1Class, Queryable<T2> joinQueryable, MultiTableTypeEnum selectTableInfoType, SqlEntityQueryExpression sqlEntityExpression);
     <T1, T2,T3> Queryable3<T1, T2,T3> createQueryable3(Class<T1> t1Class, Class<T2> t2Class,Class<T3> t3Class, MultiTableTypeEnum selectTableInfoType, SqlEntityQueryExpression sqlEntityExpression);
     <T1, T2,T3> Queryable3<T1, T2,T3> createQueryable3(Class<T1> t1Class,Class<T2> t2Class, Queryable<T3> joinQueryable, MultiTableTypeEnum selectTableInfoType, SqlEntityQueryExpression sqlEntityExpression);
+    <T1, T2,T3,T4> Queryable4<T1, T2,T3,T4> createQueryable4(Class<T1> t1Class, Class<T2> t2Class, Class<T3> t3Class, Class<T4> t4Class, MultiTableTypeEnum selectTableInfoType, SqlEntityQueryExpression sqlEntityExpression);
+    <T1, T2,T3,T4> Queryable4<T1, T2,T3,T4> createQueryable4(Class<T1> t1Class,Class<T2> t2Class,Class<T3> t3Class, Queryable<T4> joinQueryable, MultiTableTypeEnum selectTableInfoType, SqlEntityQueryExpression sqlEntityExpression);
 
     <T> Insertable<T> createInsertable(Class<T> clazz, EasyQueryRuntimeContext runtimeContext, String alias);
 
