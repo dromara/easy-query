@@ -1,32 +1,34 @@
-package org.easy;
+package org.easy.query;
+
 
 import com.alibaba.druid.pool.DruidDataSourceFactory;
 import org.easy.query.core.abstraction.*;
-import org.easy.query.core.api.client.DefaultEasyQuery;
-import org.easy.query.core.api.client.EasyQuery;
 import org.easy.query.core.abstraction.metadata.EntityMetadataManager;
 import org.easy.query.core.abstraction.sql.PageResult;
+import org.easy.query.core.api.client.DefaultEasyQuery;
+import org.easy.query.core.api.client.EasyQuery;
 import org.easy.query.core.api.def.DefaultEasySqlApiFactory;
 import org.easy.query.core.basic.api.select.Queryable;
-import org.easy.query.core.enums.AggregatePredicateCompare;
 import org.easy.query.core.basic.jdbc.con.DefaultConnectionManager;
 import org.easy.query.core.basic.jdbc.con.EasyConnectionManager;
 import org.easy.query.core.basic.jdbc.tx.Transaction;
 import org.easy.query.core.basic.jdbc.types.DefaultJdbcTypeHandlerManager;
 import org.easy.query.core.basic.jdbc.types.EasyJdbcTypeHandlerManager;
-import org.easy.query.core.config.*;
+import org.easy.query.core.config.DefaultConfig;
+import org.easy.query.core.config.NameConversion;
+import org.easy.query.core.config.UnderlinedNameConversion;
 import org.easy.query.core.configuration.EasyQueryConfiguration;
+import org.easy.query.core.enums.AggregatePredicateCompare;
 import org.easy.query.core.exception.EasyQueryException;
 import org.easy.query.core.metadata.DefaultEntityMetadataManager;
 import org.easy.query.mysql.MySQLSqlExpressionFactory;
 import org.easy.query.mysql.config.MySQLDialect;
-import org.easy.test.*;
+import org.easy.query.test.*;
 
 import javax.sql.DataSource;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-
 public class Main {
     private static final String driver = "com.mysql.cj.jdbc.Driver";
     private static final String username = "root";

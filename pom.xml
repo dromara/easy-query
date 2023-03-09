@@ -11,6 +11,7 @@
     <modules>
         <module>sql-core</module>
         <module>sql-mysql</module>
+        <module>sql-test</module>
     </modules>
 
     <properties>

@@ -1,4 +1,4 @@
-package org.easy.test;
+package org.easy.query.test;
 
 import org.easy.query.core.annotation.Column;
 import org.easy.query.core.annotation.LogicDelete;

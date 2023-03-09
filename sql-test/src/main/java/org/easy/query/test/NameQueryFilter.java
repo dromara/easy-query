@@ -1,4 +1,4 @@
-package org.easy.test;
+package org.easy.query.test;
 
 import org.easy.query.core.configuration.global.select.GlobalQueryFilterStrategy;
 import org.easy.query.core.expression.lambda.Property;
