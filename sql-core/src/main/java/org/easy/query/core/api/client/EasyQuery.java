@@ -18,7 +18,7 @@ import java.util.Collection;
  * @Date: 2023/2/5 21:27
  * @Created by xuejiaming
  */
-public interface SqlQuery {
+public interface EasyQuery {
     EasyQueryRuntimeContext getRuntimeContext();
     <T> Queryable<T> query(Class<T> clazz);
     <T> Queryable<T> query(Class<T> clazz, String alias);

@@ -291,12 +291,8 @@ public class DefaultExecutor implements EasyExecutor {
         }
         try {
             setter.invoke(target, value);
-        } catch (IllegalArgumentException e) {
-            throw new SQLException("Cannot set " + prop.getName() + ": " + e.getMessage());
-        } catch (IllegalAccessException e) {
-            throw new SQLException("Cannot set " + prop.getName() + ": " + e.getMessage());
-        } catch (InvocationTargetException e) {
-            throw new SQLException("Cannot set " + prop.getName() + ": " + e.getMessage());
+        } catch (IllegalArgumentException | IllegalAccessException | InvocationTargetException e) {
+            throw new SQLException("Cannot set " + prop.getName() + ",value: "+value+".: " + e.getMessage(),e);
         }
 
     }

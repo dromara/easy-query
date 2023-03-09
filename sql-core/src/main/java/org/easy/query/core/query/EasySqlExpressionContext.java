@@ -53,7 +53,7 @@ public class EasySqlExpressionContext implements SqlExpressionContext {
     @Override
     public String createTableAlias() {
         aliasSeq++;
-        return aliasSeq == 0 ? alias : (alias + 1);
+        return aliasSeq == 0 ? alias : (alias + aliasSeq);
     }
 
     @Override

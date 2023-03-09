@@ -129,6 +129,13 @@ public class ClassUtil {
         return null;
     }
 
+    /**
+     * 代码参考beetlsql
+     * <a href="https://gitee.com/xiandafu/beetlsql/blob/master/sql-util/src/main/java/org/beetl/sql/clazz/kit/BeanKit.java">beetlsql</a>
+     * @param prop
+     * @param type
+     * @return
+     */
     public static Method getWriteMethod(PropertyDescriptor prop, Class<?> type) {
         Method writeMethod = prop.getWriteMethod();
         //当使用lombok等链式编程方式时 有返回值的setter不被认为是writeMethod，需要自己去获取
@@ -142,6 +149,7 @@ public class ClassUtil {
             try {
                 writeMethod = type.getMethod(setMethodName, prop.getPropertyType());
             } catch (Exception e) {
+                e.printStackTrace();
                 //不存在set方法
                 return null;
             }

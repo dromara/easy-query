@@ -2,8 +2,8 @@ package org.easy;
 
 import com.alibaba.druid.pool.DruidDataSourceFactory;
 import org.easy.query.core.abstraction.*;
-import org.easy.query.core.api.client.EasySqlQuery;
-import org.easy.query.core.api.client.SqlQuery;
+import org.easy.query.core.api.client.DefaultEasyQuery;
+import org.easy.query.core.api.client.EasyQuery;
 import org.easy.query.core.abstraction.metadata.EntityMetadataManager;
 import org.easy.query.core.abstraction.sql.PageResult;
 import org.easy.query.core.api.def.DefaultEasySqlApiFactory;
@@ -31,9 +31,9 @@ public class Main {
     private static final String driver = "com.mysql.cj.jdbc.Driver";
     private static final String username = "root";
     private static final String password = "root";
-    private static final String url = "jdbc:mysql://127.0.0.1:3306/dbdbd0?serverTimezone=GMT%2B8&characterEncoding=utf-8&useSSL=false";
-//    private static final String url = "jdbc:mysql://127.0.0.1:3306/dbdbd0?serverTimezone=GMT%2B8&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&rewriteBatchedStatements=true";
-    private static SqlQuery client;
+//    private static final String url = "jdbc:mysql://127.0.0.1:3306/dbdbd0?serverTimezone=GMT%2B8&characterEncoding=utf-8&useSSL=false";
+    private static final String url = "jdbc:mysql://127.0.0.1:3306/dbdbd0?serverTimezone=GMT%2B8&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&rewriteBatchedStatements=true";
+    private static EasyQuery easyQuery;
 
     public static void main(String[] args) {
 
@@ -116,14 +116,20 @@ public class Main {
 //        jqdcRuntimeContext.getEasyQueryConfiguration().applyEntityTypeConfiguration(new TestUserMySqlConfiguration());
 configuration.applyGlobalQueryFilterConfiguration(new NameQueryFilter());
 
-        client = new EasySqlQuery(jqdcRuntimeContext);
+        easyQuery = new DefaultEasyQuery(jqdcRuntimeContext);
 
         {
-            List<TestUserMysqlx> testUserMysqls = client.query(SysUserLogbyMonth.class).toList(TestUserMysqlx.class);
-            List<TestUserMysqlx> testUserMysqls1 = client.query(SysUserLogbyMonth.class).select(o->o.column(SysUserLogbyMonth::getId)).select(TestUserMysqlx.class).toList();
-            List<TestUserMysqlx> testUserMysqls2 = client.query(SysUserLogbyMonth.class).select(TestUserMysqlx.class,o->o.column(SysUserLogbyMonth::getId)).toList();
+            TestUserMysqlx testUserMysqlx = easyQuery.query(SysUserLogbyMonth.class).select(TestUserMysqlx.class).leftJoin(TestUserMysql.class, (a, b) -> a.eq(b, TestUserMysqlx::getId, TestUserMysql::getId))
+                    .where(o -> o.eq(TestUserMysqlx::getId, "123")).firstOrNull();
 
-            String s = client.query(TestUserMysql.class)
+            List<TestUserMysqlx> testUserMysqls = easyQuery.query(SysUserLogbyMonth.class).toList(TestUserMysqlx.class);
+            List<TestUserMysqlx> testUserMysqlsa = easyQuery.query(TestUserMysql.class).toList(TestUserMysqlx.class);
+            List<TestUserMysqlx> testUserMysqls0 = easyQuery.query(SysUserLogbyMonth.class).select(TestUserMysqlx.class).toList();
+            List<TestUserMysqlx> testUserMysqls1 = easyQuery.query(SysUserLogbyMonth.class).select(o->o.column(SysUserLogbyMonth::getId)).select(TestUserMysqlx.class).toList();
+            List<TestUserMysqlx> testUserMysqls2 = easyQuery.query(SysUserLogbyMonth.class).select(TestUserMysqlx.class, o->o.column(SysUserLogbyMonth::getId)).toList();
+
+
+            String s = easyQuery.query(TestUserMysql.class)
                     .leftJoin(SysUserLogbyMonth.class, (a, b) -> a.eq(b, TestUserMysql::getName, SysUserLogbyMonth::getId).then(b).eq(SysUserLogbyMonth::getTime, LocalDateTime.now()))
                     .where(o -> o.eq(TestUserMysql::getId, "102")
                             .like(TestUserMysql::getName, "1%")
@@ -131,25 +137,25 @@ configuration.applyGlobalQueryFilterConfiguration(new NameQueryFilter());
                             )).toSql();
             System.out.println("---------:"+s);
 
-            TestUserMysql testUserMysqlxa = client.query(TestUserMysql.class)
+            TestUserMysql testUserMysqlxa = easyQuery.query(TestUserMysql.class)
                     .leftJoin(SysUserLogbyMonth.class, (a, b) -> a.eq(b, TestUserMysql::getName, SysUserLogbyMonth::getId).then(b).eq(SysUserLogbyMonth::getTime, LocalDateTime.now()))
                     .where(o -> o.eq(TestUserMysql::getId, "102")
                             .like(TestUserMysql::getName, "1%")
                             .and(x -> x.like(TestUserMysql::getName, "123").or().eq(TestUserMysql::getAge, 1)
                             )).firstOrNull();
-            long testUserMysqlxac= client.query(TestUserMysql.class)
+            long testUserMysqlxac= easyQuery.query(TestUserMysql.class)
                     .leftJoin(SysUserLogbyMonth.class, (a, b) -> a.eq(b, TestUserMysql::getName, SysUserLogbyMonth::getId).then(b).eq(SysUserLogbyMonth::getTime, LocalDateTime.now()))
                     .where(o -> o.eq(TestUserMysql::getId, "102")
                             .like(TestUserMysql::getName, "1%")
                             .and(x -> x.like(TestUserMysql::getName, "123").or().eq(TestUserMysql::getAge, 1)
                             )).count();
-            long testUserMysqlxasc= client.query(TestUserMysql.class)
+            long testUserMysqlxasc= easyQuery.query(TestUserMysql.class)
                     .leftJoin(SysUserLogbyMonth.class, (a, b) -> a.eq(b, TestUserMysql::getName, SysUserLogbyMonth::getId).then(b).eq(SysUserLogbyMonth::getTime, LocalDateTime.now()))
                     .where(o -> o.eq(TestUserMysql::getId, "102")
                             .like(TestUserMysql::getName, "1%")
                             .and(x -> x.like(TestUserMysql::getName, "123").or().eq(TestUserMysql::getAge, 1)
                             )).select(o->o.column(TestUserMysql::getName)).count();
-            TestUserMysql testUserMysql = client.query(TestUserMysql.class)
+            TestUserMysql testUserMysql = easyQuery.query(TestUserMysql.class)
                     .leftJoin(SysUserLogbyMonth.class, (a, b) -> a.eq(b, TestUserMysql::getName, SysUserLogbyMonth::getId).then(b).eq(SysUserLogbyMonth::getTime, LocalDateTime.now()))
                     .where(o -> o.eq(TestUserMysql::getId, "102")
                             .like(TestUserMysql::getName, "1%")
@@ -158,19 +164,19 @@ configuration.applyGlobalQueryFilterConfiguration(new NameQueryFilter());
 
 
 
-            Queryable<TestUserMysql> sql = client.query(TestUserMysql.class)
+            Queryable<TestUserMysql> sql = easyQuery.query(TestUserMysql.class)
                     .leftJoin(SysUserLogbyMonth.class, (a, b) -> a.eq(b, TestUserMysql::getName, SysUserLogbyMonth::getId).then(b).eq(SysUserLogbyMonth::getTime, LocalDateTime.now()))
                     .where(o -> o.eq(TestUserMysql::getId, "102")
                             .like(TestUserMysql::getName, "1%")
                             .and(x -> x.like(TestUserMysql::getName, "123").or().eq(TestUserMysql::getAge, 1)
                             ));
-            long count31 = client.query(SysUserLogbyMonth.class)
+            long count31 = easyQuery.query(SysUserLogbyMonth.class)
                     .innerJoin(sql,(a,b)->a.eq(b,SysUserLogbyMonth::getId,TestUserMysql::getId))
                     .where(o -> o.eq(SysUserLogbyMonth::getId, "119")).select(o -> o.column(SysUserLogbyMonth::getId)).count();
 
         }
 
-        Queryable<TestUserMysqlx> select = client.query(TestUserMysql.class)
+        Queryable<TestUserMysqlx> select = easyQuery.query(TestUserMysql.class)
                 .leftJoin(SysUserLogbyMonth.class, (a, b) -> a.eq(b, TestUserMysql::getName, SysUserLogbyMonth::getId).then(b).eq(SysUserLogbyMonth::getTime, LocalDateTime.now()))
                 .where(o -> o.eq(TestUserMysql::getId, "102")
                         .like(TestUserMysql::getName, "1%")
@@ -178,20 +184,20 @@ configuration.applyGlobalQueryFilterConfiguration(new NameQueryFilter());
                         ))
                 .select(TestUserMysqlx.class, x -> x.columnAll().columnAs(TestUserMysql::getName, TestUserMysqlx::getName1));
 
-        long count3 = client.query(SysUserLogbyMonth.class)
+        long count3 = easyQuery.query(SysUserLogbyMonth.class)
                 .leftJoin(select,(a,b)->a.eq(b,SysUserLogbyMonth::getId,TestUserMysqlx::getId))
                 .where(o -> o.eq(SysUserLogbyMonth::getId, "119")).select(o -> o.column(SysUserLogbyMonth::getId)).count();
 
 
         {
 
-            Queryable<SysUserLogbyMonth> queryable = client.query(SysUserLogbyMonth.class)
+            Queryable<SysUserLogbyMonth> queryable = easyQuery.query(SysUserLogbyMonth.class)
                     .where(o -> o.eq(SysUserLogbyMonth::getId, "119"));
             long count2 = queryable.count();
             List<SysUserLogbyMonth> sysUserLogbyMonths = queryable.limit(1, 10).toList();
 
         }
-        TestUserMysqlx testUserMysql23 = client.query(TestUserMysql.class)
+        TestUserMysqlx testUserMysql23 = easyQuery.query(TestUserMysql.class)
                 .leftJoin(SysUserLogbyMonth.class, (a, b) -> a.eq(b, TestUserMysql::getName, SysUserLogbyMonth::getId).then(b).eq(SysUserLogbyMonth::getTime, LocalDateTime.now()))
                 .where(o -> o.eq(TestUserMysql::getId, "102")
                         .like(TestUserMysql::getName, "1%")
@@ -201,14 +207,14 @@ configuration.applyGlobalQueryFilterConfiguration(new NameQueryFilter());
 
 
 
-        client.query(TestUserMysql.class)
+        easyQuery.query(TestUserMysql.class)
                 .where(o -> o.eq(TestUserMysql::getName, "ds0"))
                 .groupBy(o -> o.column(TestUserMysql::getAge))
                 .having(o -> o.count(TestUserMysql::getId, AggregatePredicateCompare.GE, 0))
                 .select(TestUserMysqlGroup.class, o -> o.column(TestUserMysql::getAge).columnCount(TestUserMysql::getId, TestUserMysqlGroup::getAcount))
                 .firstOrNull();
 
-        String ds0z = client.query(TestUserMysql.class)
+        String ds0z = easyQuery.query(TestUserMysql.class)
                 .where(o -> o.eq(TestUserMysql::getName, "ds0"))
                 .groupBy(o -> o.column(TestUserMysql::getAge))
                 .having(o -> o.count(TestUserMysql::getId, AggregatePredicateCompare.GE, 0))
@@ -216,7 +222,7 @@ configuration.applyGlobalQueryFilterConfiguration(new NameQueryFilter());
                 .toSql();
         System.out.println(ds0z);
 
-        try (Transaction transaction = client.beginTransaction()) {
+        try (Transaction transaction = easyQuery.beginTransaction()) {
 
             transaction.commit();
         }
@@ -231,10 +237,10 @@ configuration.applyGlobalQueryFilterConfiguration(new NameQueryFilter());
         test2.setAge(102);
         test2.setName("ds01");
         updates.add(test2);
-        long l12xx = client.update(updates).setColumns(o -> o.column(TestUserMysql::getName)).whereColumns(o -> o.column(TestUserMysql::getAge)).executeRows();
-        long l2 = client.delete(updates).executeRows();
+        long l12xx = easyQuery.update(updates).setColumns(o -> o.column(TestUserMysql::getName)).whereColumns(o -> o.column(TestUserMysql::getAge)).executeRows();
+        long l2 = easyQuery.delete(updates).executeRows();
 
-        long l4 = client.delete(SysUserLogbyMonth.class).deleteById("00010728-2b86-426a-a81c-001a67ff409a").executeRows();
+        long l4 = easyQuery.delete(SysUserLogbyMonth.class).deleteById("00010728-2b86-426a-a81c-001a67ff409a").executeRows();
 
         ArrayList<SysUserLogbyMonth> sysUserLogbyMonths1 = new ArrayList<>();
 //        long execute = client.insert(LocalDateTime.now()).execute();
@@ -242,22 +248,22 @@ configuration.applyGlobalQueryFilterConfiguration(new NameQueryFilter());
         sysUserLogbyMonth2.setId(UUID.randomUUID().toString());
         sysUserLogbyMonth2.setTime(LocalDateTime.now());
         sysUserLogbyMonths1.add(sysUserLogbyMonth2);
-        long execute1 = client.insert(sysUserLogbyMonths1).executeRows();
-        long l = client.update(sysUserLogbyMonth2).executeRows();
+        long execute1 = easyQuery.insert(sysUserLogbyMonths1).executeRows();
+        long l = easyQuery.update(sysUserLogbyMonth2).executeRows();
         System.out.println(l);
-        long l23 = client.delete(sysUserLogbyMonths1).executeRows();
-        long l3 = client.delete(TestUserMysql.class).deleteById("123").executeRows();
-        long l31 = client.delete(SysUserLogbyMonth.class).deleteById("123").executeRows();
-        long l34 = client.delete(TestUserMysql.class).where(o->o.like(TestUserMysql::getName,"1233")).executeRows();
-        long l345 = client.delete(TestUserMysql.class).where(o->o.like(TestUserMysql::getName,"1233")).deleteById("123").executeRows();
+        long l23 = easyQuery.delete(sysUserLogbyMonths1).executeRows();
+        long l3 = easyQuery.delete(TestUserMysql.class).deleteById("123").executeRows();
+        long l31 = easyQuery.delete(SysUserLogbyMonth.class).deleteById("123").executeRows();
+        long l34 = easyQuery.delete(TestUserMysql.class).where(o->o.like(TestUserMysql::getName,"1233")).executeRows();
+        long l345 = easyQuery.delete(TestUserMysql.class).where(o->o.like(TestUserMysql::getName,"1233")).deleteById("123").executeRows();
         SysUserLogbyMonth sysUserLogbyMonth23 = new SysUserLogbyMonth();
         sysUserLogbyMonth23.setId(UUID.randomUUID().toString());
         sysUserLogbyMonth23.setTime(LocalDateTime.now());
-        long l13 = client.update(sysUserLogbyMonth23).executeRows();
+        long l13 = easyQuery.update(sysUserLogbyMonth23).executeRows();
         TestUserMysql testUserMysql3 = new TestUserMysql();
-        long l1 = client.update(testUserMysql3).setColumns(o -> o.column(TestUserMysql::getName)).executeRows();
-        long l12 = client.update(testUserMysql3).setColumns(o -> o.column(TestUserMysql::getName)).whereColumns(o -> o.column(TestUserMysql::getAge)).executeRows();
-        long xhn = client.update(TestUserMysql.class).set(o -> o.set(TestUserMysql::getAge, 12).set(TestUserMysql::getName, "xhn")).where(o -> o.like(TestUserMysql::getId, "123")).executeRows();
+        long l1 = easyQuery.update(testUserMysql3).setColumns(o -> o.column(TestUserMysql::getName)).executeRows();
+        long l12 = easyQuery.update(testUserMysql3).setColumns(o -> o.column(TestUserMysql::getName)).whereColumns(o -> o.column(TestUserMysql::getAge)).executeRows();
+        long xhn = easyQuery.update(TestUserMysql.class).set(o -> o.set(TestUserMysql::getAge, 12).set(TestUserMysql::getName, "xhn")).where(o -> o.like(TestUserMysql::getId, "123")).executeRows();
 //
 //        ArrayList<SysUserLogbyMonth> sysUserLogbyMonthsxx = new ArrayList<>();
 //        for (int j = 0; j < 10000; j++) {
@@ -272,15 +278,15 @@ configuration.applyGlobalQueryFilterConfiguration(new NameQueryFilter());
 //        System.out.println("返回行数:" + execute2);
 //        long end = System.currentTimeMillis();
 //        System.out.println("耗时：" + (end - start) + "ms");
-        SysUserLogbyMonth sysUserLogbyMonth1 = client.query(SysUserLogbyMonth.class)
+        SysUserLogbyMonth sysUserLogbyMonth1 = easyQuery.query(SysUserLogbyMonth.class)
                 .where(o -> o.eq(SysUserLogbyMonth::getId, "119")).firstOrNull();
-        SysUserLogbyMonth sysUserLogbyMonth1x = client.query(SysUserLogbyMonth.class)
+        SysUserLogbyMonth sysUserLogbyMonth1x = easyQuery.query(SysUserLogbyMonth.class)
                 .where(o -> o.in(SysUserLogbyMonth::getId, Arrays.asList("119", "111")).notIn(SysUserLogbyMonth::getId, Arrays.asList("1", "2"))).firstOrNull();
-        SysUserLogbyMonth sysUserLogbyMonth2x = client.query(SysUserLogbyMonth.class)
+        SysUserLogbyMonth sysUserLogbyMonth2x = easyQuery.query(SysUserLogbyMonth.class)
                 .where(o -> o.in(SysUserLogbyMonth::getId, Collections.emptyList())).firstOrNull();
-        SysUserLogbyMonth sysUserLogbyMonth2xx = client.query(SysUserLogbyMonth.class)
+        SysUserLogbyMonth sysUserLogbyMonth2xx = easyQuery.query(SysUserLogbyMonth.class)
                 .where(o -> o.notIn(SysUserLogbyMonth::getId, Collections.emptyList())).firstOrNull();
-        PageResult<SysUserLogbyMonth> page = client.query(SysUserLogbyMonth.class)
+        PageResult<SysUserLogbyMonth> page = easyQuery.query(SysUserLogbyMonth.class)
                 .where(o -> o.notIn(SysUserLogbyMonth::getId, Collections.emptyList())).toPageResult(2, 20, SysUserLogbyMonth.class);
 //        long start = System.currentTimeMillis();
 //        for (int j = 0; j < 1000; j++) {
@@ -291,29 +297,29 @@ configuration.applyGlobalQueryFilterConfiguration(new NameQueryFilter());
 //        long end = System.currentTimeMillis();
 //        System.out.println("耗时："+(end-start)+"ms");
 
-        Queryable<SysUserLogbyMonth> queryable = client.query(SysUserLogbyMonth.class)
+        Queryable<SysUserLogbyMonth> queryable = easyQuery.query(SysUserLogbyMonth.class)
                 .where(o -> o.eq(SysUserLogbyMonth::getId, "119"));
         long count2 = queryable.count();
         List<SysUserLogbyMonth> sysUserLogbyMonths = queryable.limit(1, 10).toList();
 
-        long count = client.query(SysUserLogbyMonth.class)
+        long count = easyQuery.query(SysUserLogbyMonth.class)
                 .where(o -> o.eq(SysUserLogbyMonth::getId, "119")).count();
-        long count1 = client.query(SysUserLogbyMonth.class)
+        long count1 = easyQuery.query(SysUserLogbyMonth.class)
                 .where(o -> o.eq(SysUserLogbyMonth::getId, "119")).countDistinct(o -> o.column(SysUserLogbyMonth::getId).column(SysUserLogbyMonth::getTime));
 
-        boolean any = client.query(SysUserLogbyMonth.class)
+        boolean any = easyQuery.query(SysUserLogbyMonth.class)
                 .where(o -> o.eq(SysUserLogbyMonth::getId, "119")).any();
-        LocalDateTime localDateTime = client.query(SysUserLogbyMonth.class).maxOrNull(SysUserLogbyMonth::getTime);
-        Integer totalAge = client.query(TestUserMysql.class).sumOrDefault(TestUserMysql::getAge, 0);
-        Integer max = client.query(TestUserMysql.class).maxOrNull(TestUserMysql::getAge);
+        LocalDateTime localDateTime = easyQuery.query(SysUserLogbyMonth.class).maxOrNull(SysUserLogbyMonth::getTime);
+        Integer totalAge = easyQuery.query(TestUserMysql.class).sumOrDefault(TestUserMysql::getAge, 0);
+        Integer max = easyQuery.query(TestUserMysql.class).maxOrNull(TestUserMysql::getAge);
 
-        String ds01 = client.query(TestUserMysql.class)
+        String ds01 = easyQuery.query(TestUserMysql.class)
                 .where(o -> o.eq(TestUserMysql::getName, "ds0"))
                 .groupBy(o -> o.column(TestUserMysql::getAge))
                 .having(o -> o.count(TestUserMysql::getId, AggregatePredicateCompare.GE, 0))
                 .select(TestUserMysqlGroup.class, o -> o.column(TestUserMysql::getAge).columnCount(TestUserMysql::getId, TestUserMysqlGroup::getAcount))
                 .toSql();
-        String ds02 = client.query(TestUserMysql.class)
+        String ds02 = easyQuery.query(TestUserMysql.class)
                 .where(o -> o.eq(TestUserMysql::getName, "ds0"))
                 .groupBy(o -> o.column(TestUserMysql::getAge))
                 .having(o -> o.count(TestUserMysql::getId, AggregatePredicateCompare.GE, 0))
@@ -324,7 +330,7 @@ configuration.applyGlobalQueryFilterConfiguration(new NameQueryFilter());
         for (int ii = 0; ii < 10000; ii++) {
 //            SysUserLogbyMonth sysUserLogbyMonth = client.select(SysUserLogbyMonth.class)
 //                    .where(o -> o.eq(SysUserLogbyMonth::getId, "119")).firstOrNull();
-            String ds0 = client.query(TestUserMysql.class)
+            String ds0 = easyQuery.query(TestUserMysql.class)
                     .where(o -> o.eq(TestUserMysql::getName, "ds0"))
                     .groupBy(o -> o.column(TestUserMysql::getAge))
                     .having(o -> o.count(TestUserMysql::getId, AggregatePredicateCompare.GE, 0))
@@ -339,35 +345,35 @@ configuration.applyGlobalQueryFilterConfiguration(new NameQueryFilter());
 //        SqlExpression<SqlPredicate<TestUserMysql>> xx=xxx->xxx.and(x->x.eq(TestUserMysql::getId,12));
 //        entityMetadata.addLogicDeleteExpression(xx);
 
-        List<TestUserMysqlGroup> testUserMysqlsy = client.query(TestUserMysql.class)
+        List<TestUserMysqlGroup> testUserMysqlsy = easyQuery.query(TestUserMysql.class)
                 .where(o -> o.eq(TestUserMysql::getName, "ds0"))
                 .groupBy(o -> o.column(TestUserMysql::getAge))
                 .having(o -> o.count(TestUserMysql::getId, AggregatePredicateCompare.GE, 0))
                 .select(TestUserMysqlGroup.class, o -> o.column(TestUserMysql::getAge).columnCount(TestUserMysql::getId, TestUserMysqlGroup::getAcount))
                 .toList();
-        List<TestUserMysql> testUserMysqls1 = client.query(TestUserMysql.class)
+        List<TestUserMysql> testUserMysqls1 = easyQuery.query(TestUserMysql.class)
                 .where(o -> o.eq(TestUserMysql::getName, "123"))
                 .groupBy(o -> o.column(TestUserMysql::getAge))
                 .having(o -> o.countDistinct(TestUserMysql::getId, AggregatePredicateCompare.GT, 5).and(x -> x.countDistinct(TestUserMysql::getId, AggregatePredicateCompare.GT, 5).or().countDistinct(TestUserMysql::getId, AggregatePredicateCompare.GT, 5)))
                 .toList();
-        TestUserMysql testUserMysql = client.query(TestUserMysql.class, "y")
+        TestUserMysql testUserMysql = easyQuery.query(TestUserMysql.class, "y")
                 .where(o -> o.eq(TestUserMysql::getId, "102").like(TestUserMysql::getName, "1%").and(x ->
                         x.like(TestUserMysql::getName, "123").or().eq(TestUserMysql::getAge, 1)
                 )).orderByAsc(o -> o.column(TestUserMysql::getName).column(TestUserMysql::getAge))
                 .orderByDesc(o -> o.column(TestUserMysql::getName)).firstOrNull();
 
 
-        TestUserMysql testUserMysql1 = client.query(TestUserMysql.class, "y")
+        TestUserMysql testUserMysql1 = easyQuery.query(TestUserMysql.class, "y")
                 .where(o -> o.eq(TestUserMysql::getId, "102").like(TestUserMysql::getName, "1%").and(x ->
                         x.like(TestUserMysql::getName, "123").or().eq(TestUserMysql::getAge, 1)
                 ).or(x -> x.eq(TestUserMysql::getName, 456).eq(TestUserMysql::getId, 8989))).firstOrNull();
 
-        SysUserLogbyMonth sysUserLogbyMonth = client.query(SysUserLogbyMonth.class)
+        SysUserLogbyMonth sysUserLogbyMonth = easyQuery.query(SysUserLogbyMonth.class)
                 .where(o -> o.eq(SysUserLogbyMonth::getId, "119")).firstOrNull();
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String format = dateTimeFormatter.format(sysUserLogbyMonth.getTime());
         System.out.println(sysUserLogbyMonth);
-        TestUserMysqlx testUserMysql2 = client.query(TestUserMysql.class)
+        TestUserMysqlx testUserMysql2 = easyQuery.query(TestUserMysql.class)
                 .leftJoin(SysUserLogbyMonth.class, (a, b) -> a.eq(b, TestUserMysql::getName, SysUserLogbyMonth::getId).then(b).eq(SysUserLogbyMonth::getTime, LocalDateTime.now()))
                 .where(o -> o.eq(TestUserMysql::getId, "102")
                         .like(TestUserMysql::getName, "1%")
@@ -375,7 +381,7 @@ configuration.applyGlobalQueryFilterConfiguration(new NameQueryFilter());
                         ))
                 .select(TestUserMysqlx.class, x -> x.columnAll().columnAs(TestUserMysql::getName, TestUserMysqlx::getName1)).firstOrNull();
 
-        TestUserMysqlx testUserMysqlx = client.query(SysUserLogbyMonth.class)
+        TestUserMysqlx testUserMysqlx = easyQuery.query(SysUserLogbyMonth.class)
                 .leftJoin(TestUserMysql.class, (a, b) -> a.eq(b, SysUserLogbyMonth::getId, TestUserMysql::getName).eq(SysUserLogbyMonth::getTime, LocalDateTime.now()))
                 .where(o -> o.eq(SysUserLogbyMonth::getId, "102")
                         .like(SysUserLogbyMonth::getTime, LocalDateTime.now())

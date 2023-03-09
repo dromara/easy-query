@@ -1,5 +1,6 @@
 package org.easy.query.core.expression.parser.impl;
 
+import org.easy.query.core.expression.segment.SqlEntitySegment;
 import org.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import org.easy.query.core.expression.lambda.Property;
 import org.easy.query.core.expression.parser.abstraction.SqlColumnSelector;
@@ -9,6 +10,7 @@ import org.easy.query.core.query.SqlEntityQueryExpression;
 import org.easy.query.core.query.SqlEntityTableExpression;
 
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * @FileName: DefaultSqlColumnSetSelector.java
@@ -32,6 +34,21 @@ public class DefaultSqlColumnSetSelector<T> implements SqlColumnSelector<T> {
         SqlEntityTableExpression table = sqlEntityExpression.getTable(index);
         String propertyName = table.getPropertyName(column);
         sqlSegmentBuilder.append(new ColumnPropertyPredicate(table,propertyName,sqlEntityExpression));
+        return this;
+    }
+
+    @Override
+    public SqlColumnSelector<T> columnIgnore(Property<T, ?> column) {
+
+        SqlEntityTableExpression table = sqlEntityExpression.getTable(index);
+        String propertyName = table.getPropertyName(column);
+        sqlSegmentBuilder.getSqlSegments().removeIf(sqlSegment -> {
+            if (sqlSegment instanceof SqlEntitySegment) {
+                SqlEntitySegment sqlEntitySegment = (SqlEntitySegment) sqlSegment;
+                return Objects.equals(sqlEntitySegment.getTable(), table) && Objects.equals(sqlEntitySegment.getPropertyName(), propertyName);
+            }
+            return false;
+        });
         return this;
     }
 

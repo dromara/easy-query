@@ -19,10 +19,10 @@ import java.util.Collection;
  * @Date: 2023/3/6 13:30
  * @Created by xuejiaming
  */
-public class EasySqlQuery implements SqlQuery{
+public class DefaultEasyQuery implements EasyQuery {
     private final EasyQueryRuntimeContext runtimeContext;
     private final EasySqlApiFactory easySqlApiFactory;
-    public EasySqlQuery(EasyQueryRuntimeContext runtimeContext){
+    public DefaultEasyQuery(EasyQueryRuntimeContext runtimeContext){
 
         this.runtimeContext = runtimeContext;
         easySqlApiFactory=runtimeContext.getSqlApiFactory();
