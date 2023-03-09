@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @FileName: AbstractInsert.java
+ * @FileName: AbstractInsertable.java
  * @Description: 文件说明
  * @Date: 2023/2/20 12:30
  * @Created by xuejiaming

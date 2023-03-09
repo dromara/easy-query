@@ -3,7 +3,7 @@ package org.easy.query.core.basic.api.insert;
 import java.util.Collection;
 
 /**
- * @FileName: Insert.java
+ * @FileName: Insertable.java
  * @Description: 文件说明
  * @Date: 2023/2/20 08:48
  * @Created by xuejiaming

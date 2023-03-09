@@ -41,12 +41,13 @@ public abstract class EasySqlInsertExpression extends AbstractSqlEntityExpressio
         if (tableCount > 1) {
             throw new EasyQueryException("找到多张表信息");
         }
-        int insertColumns = getColumns().getSqlSegments().size();
-        if (insertColumns == 0) {
+        if (getColumns().isEmpty()) {
             SqlExpression<SqlColumnSelector<?>> selectExpression = ColumnSelector::columnAll;
             DefaultInsertSqlColumnSelector<?> columnSelector = new DefaultInsertSqlColumnSelector<>(0, this, this.getColumns());
             selectExpression.apply(columnSelector);
         }
+
+        int insertColumns = getColumns().getSqlSegments().size();
         StringBuilder sql = new StringBuilder("INSERT INTO ");
         SqlEntityTableExpression table = getTable(0);
         String tableName = table.getEntityMetadata().getTableName();
