@@ -1,8 +1,8 @@
 package org.easy.query.core.basic.api.select.abstraction;
 
 import org.easy.query.core.abstraction.metadata.ColumnMetadata;
-import org.easy.query.core.abstraction.sql.enums.EasyAggregate;
-import org.easy.query.core.abstraction.sql.enums.IEasyFunc;
+import org.easy.query.core.enums.EasyAggregate;
+import org.easy.query.core.enums.IEasyFunc;
 import org.easy.query.core.basic.api.select.Queryable;
 import org.easy.query.core.basic.api.select.Queryable4;
 import org.easy.query.core.basic.api.select.provider.EasyQuerySqlBuilderProvider;

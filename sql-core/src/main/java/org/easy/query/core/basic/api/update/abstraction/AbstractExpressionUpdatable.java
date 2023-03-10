@@ -1,10 +1,9 @@
 package org.easy.query.core.basic.api.update.abstraction;
 
-import org.easy.query.core.abstraction.EasyExecutor;
-import org.easy.query.core.abstraction.ExecutorContext;
+import org.easy.query.core.basic.jdbc.executor.EasyExecutor;
+import org.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import org.easy.query.core.basic.api.update.ExpressionUpdatable;
 import org.easy.query.core.configuration.global.interceptor.GlobalInterceptorStrategy;
-import org.easy.query.core.configuration.global.update.GlobalUpdateInterceptorStrategy;
 import org.easy.query.core.configuration.global.update.GlobalUpdateSetInterceptorStrategy;
 import org.easy.query.core.exception.EasyQueryConcurrentException;
 import org.easy.query.core.expression.lambda.SqlExpression;
@@ -17,7 +16,6 @@ import org.easy.query.core.expression.segment.condition.DefaultSqlPredicate;
 import org.easy.query.core.query.*;
 import org.easy.query.core.util.StringUtil;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**

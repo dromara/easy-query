@@ -1,15 +1,11 @@
 package org.easy.query.core.basic.api.insert;
 
-import org.easy.query.core.abstraction.EasyExecutor;
-import org.easy.query.core.abstraction.ExecutorContext;
+import org.easy.query.core.basic.jdbc.executor.EasyExecutor;
+import org.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import org.easy.query.core.configuration.global.insert.GlobalInsertInterceptorStrategy;
 import org.easy.query.core.configuration.global.interceptor.GlobalInterceptorStrategy;
-import org.easy.query.core.expression.lambda.SqlExpression;
 import org.easy.query.core.abstraction.metadata.EntityMetadata;
-import org.easy.query.core.expression.parser.abstraction.internal.ColumnSelector;
-import org.easy.query.core.expression.parser.abstraction.SqlColumnSelector;
 import org.easy.query.core.enums.MultiTableTypeEnum;
-import org.easy.query.core.expression.parser.impl.DefaultInsertSqlColumnSelector;
 import org.easy.query.core.query.EasyEntityTableExpression;
 import org.easy.query.core.query.SqlEntityInsertExpression;
 import org.easy.query.core.query.SqlEntityTableExpression;

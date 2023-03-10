@@ -2,6 +2,7 @@ package org.easy.query.core.abstraction;
 
 import org.easy.query.core.abstraction.metadata.EntityMetadataManager;
 import org.easy.query.core.basic.jdbc.con.EasyConnectionManager;
+import org.easy.query.core.basic.jdbc.executor.EasyExecutor;
 import org.easy.query.core.basic.jdbc.types.EasyJdbcTypeHandlerManager;
 import org.easy.query.core.configuration.EasyQueryConfiguration;
 

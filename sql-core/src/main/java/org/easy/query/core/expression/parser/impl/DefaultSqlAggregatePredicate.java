@@ -5,13 +5,12 @@ import org.easy.query.core.expression.lambda.Property;
 import org.easy.query.core.expression.lambda.SqlExpression;
 import org.easy.query.core.expression.parser.abstraction.internal.AggregatePredicate;
 import org.easy.query.core.expression.parser.abstraction.SqlAggregatePredicate;
-import org.easy.query.core.abstraction.sql.enums.IEasyFunc;
+import org.easy.query.core.enums.IEasyFunc;
 import org.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import org.easy.query.core.expression.segment.condition.OrPredicateSegment;
 import org.easy.query.core.expression.segment.condition.PredicateSegment;
 import org.easy.query.core.expression.segment.condition.predicate.FuncColumnValuePredicate0;
 import org.easy.query.core.query.SqlEntityExpression;
-import org.easy.query.core.query.SqlEntityQueryExpression;
 import org.easy.query.core.query.SqlEntityTableExpression;
 
 /**

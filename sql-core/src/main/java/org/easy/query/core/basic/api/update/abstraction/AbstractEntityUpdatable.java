@@ -1,12 +1,10 @@
 package org.easy.query.core.basic.api.update.abstraction;
 
-import org.easy.query.core.abstraction.EasyExecutor;
+import org.easy.query.core.basic.jdbc.executor.EasyExecutor;
 import org.easy.query.core.abstraction.EasyQueryLambdaFactory;
 import org.easy.query.core.abstraction.EasyQueryRuntimeContext;
-import org.easy.query.core.abstraction.ExecutorContext;
-import org.easy.query.core.abstraction.metadata.ColumnMetadata;
+import org.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import org.easy.query.core.basic.api.update.EntityUpdatable;
-import org.easy.query.core.configuration.global.insert.GlobalInsertInterceptorStrategy;
 import org.easy.query.core.configuration.global.interceptor.GlobalInterceptorStrategy;
 import org.easy.query.core.configuration.global.update.GlobalUpdateInterceptorStrategy;
 import org.easy.query.core.exception.EasyQueryConcurrentException;

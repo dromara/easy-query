@@ -3,9 +3,9 @@ package org.easy.query.core.expression.parser.abstraction.internal;
 import org.easy.query.core.enums.SqlPredicateCompare;
 import org.easy.query.core.expression.lambda.Property;
 import org.easy.query.core.expression.lambda.SqlExpression;
-import org.easy.query.core.abstraction.sql.enums.EasyAggregate;
+import org.easy.query.core.enums.EasyAggregate;
 import org.easy.query.core.enums.AggregatePredicateCompare;
-import org.easy.query.core.abstraction.sql.enums.IEasyFunc;
+import org.easy.query.core.enums.IEasyFunc;
 
 /**
  * @FileName: AggregatePredicate.java

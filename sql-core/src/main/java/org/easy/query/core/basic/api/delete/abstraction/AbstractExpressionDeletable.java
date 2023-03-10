@@ -1,8 +1,8 @@
 package org.easy.query.core.basic.api.delete.abstraction;
 
-import org.easy.query.core.abstraction.EasyExecutor;
+import org.easy.query.core.basic.jdbc.executor.EasyExecutor;
 import org.easy.query.core.abstraction.EasyQueryRuntimeContext;
-import org.easy.query.core.abstraction.ExecutorContext;
+import org.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import org.easy.query.core.abstraction.metadata.EntityMetadata;
 import org.easy.query.core.basic.api.delete.Deletable;
 import org.easy.query.core.basic.api.delete.ExpressionDeletable;

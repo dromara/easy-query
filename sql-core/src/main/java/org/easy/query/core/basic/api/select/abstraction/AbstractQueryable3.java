@@ -1,22 +1,20 @@
 package org.easy.query.core.basic.api.select.abstraction;
 
 import org.easy.query.core.abstraction.metadata.ColumnMetadata;
-import org.easy.query.core.abstraction.sql.enums.EasyAggregate;
-import org.easy.query.core.abstraction.sql.enums.IEasyFunc;
+import org.easy.query.core.enums.EasyAggregate;
+import org.easy.query.core.enums.IEasyFunc;
 import org.easy.query.core.basic.api.select.Queryable;
 import org.easy.query.core.basic.api.select.Queryable3;
 import org.easy.query.core.basic.api.select.Queryable4;
 import org.easy.query.core.basic.api.select.provider.*;
 import org.easy.query.core.enums.MultiTableTypeEnum;
 import org.easy.query.core.exception.EasyQueryException;
-import org.easy.query.core.expression.lambda.SqlExpression2;
 import org.easy.query.core.expression.lambda.SqlExpression3;
 import org.easy.query.core.expression.lambda.SqlExpression4;
 import org.easy.query.core.expression.parser.abstraction.SqlColumnAsSelector;
 import org.easy.query.core.expression.parser.abstraction.SqlColumnSelector;
 import org.easy.query.core.expression.parser.abstraction.SqlPredicate;
 import org.easy.query.core.expression.parser.abstraction.SqlColumnResultSelector;
-import org.easy.query.core.expression.segment.FuncColumnSegment;
 import org.easy.query.core.expression.segment.SqlEntitySegment;
 import org.easy.query.core.expression.segment.builder.ProjectSqlBuilderSegment;
 import org.easy.query.core.query.SqlEntityQueryExpression;

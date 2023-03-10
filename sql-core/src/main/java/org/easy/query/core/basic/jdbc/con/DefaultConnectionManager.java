@@ -20,7 +20,7 @@ import java.sql.SQLException;
 public class DefaultConnectionManager implements EasyConnectionManager {
     private final ThreadLocal<Transaction> threadTx = ThreadLocal.withInitial(() -> null);
     private final ThreadLocal<EasyConnection> threadConnection = new ThreadLocal<>();
-    private final DataSource dataSource;
+    protected final DataSource dataSource;
 
     public DefaultConnectionManager(DataSource dataSource){
 

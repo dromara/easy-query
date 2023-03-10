@@ -83,6 +83,9 @@ public class DefaultEasyConnection implements EasyConnection {
 
     @Override
     public void close() {
+        close(true);
+    }
+    public void close(boolean closeConnection){
         if (closed) {
             return;
         }
@@ -95,7 +98,9 @@ public class DefaultEasyConnection implements EasyConnection {
                     if (this.originalIsolationLevel!=null&&!Objects.equals(this.isolationLevel,this.originalIsolationLevel)) {
                         connection.setTransactionIsolation(this.isolationLevel);
                     }
-                    connection.close();
+                    if(closeConnection){
+                        connection.close();
+                    }
                 }
             } catch (SQLException ex) {
                 System.err.println("close connection error: "+ ex.getMessage());

@@ -1,4 +1,6 @@
-package org.easy.query.core.abstraction;
+package org.easy.query.core.basic.jdbc.executor;
+
+import org.easy.query.core.abstraction.EasyQueryRuntimeContext;
 
 /**
  * @FileName: ExecutorContext.java

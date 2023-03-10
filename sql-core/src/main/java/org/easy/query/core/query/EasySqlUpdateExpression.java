@@ -103,10 +103,10 @@ public abstract class EasySqlUpdateExpression extends AbstractSqlEntityExpressio
     private String expressionUpdate(){
 
         if (!hasSetColumns()) {
-            throw new EasyQueryException("更新需要设置更新列");
+            throw new EasyQueryException("'UPDATE' statement without 'SET' execute wrong");
         }
         if (!hasWhere()) {
-            throw new EasyQueryException("更新需要设置条件");
+            throw new EasyQueryException("'UPDATE' statement without 'WHERE' updates all table rows at once");
         }
 
         StringBuilder sql = new StringBuilder("UPDATE ");
@@ -120,7 +120,7 @@ public abstract class EasySqlUpdateExpression extends AbstractSqlEntityExpressio
         SqlEntityTableExpression table = getTable(0);
 
         if (!hasWhereColumns()) {
-            throw new EasyQueryException("更新需要指定条件列");
+            throw new EasyQueryException("'UPDATE' statement without 'WHERE' updates all table rows at once");
         }
         String tableName = table.getEntityMetadata().getTableName();
         return "UPDATE " + tableName + " SET " + getSetColumns().toSql() + " WHERE " +

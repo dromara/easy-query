@@ -1,6 +1,6 @@
 package org.easy.query.core.expression.segment;
 
-import org.easy.query.core.abstraction.sql.enums.IEasyFunc;
+import org.easy.query.core.enums.IEasyFunc;
 import org.easy.query.core.query.SqlEntityExpression;
 import org.easy.query.core.query.SqlEntityTableExpression;
 

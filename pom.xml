@@ -12,12 +12,23 @@
         <module>sql-core</module>
         <module>sql-mysql</module>
         <module>sql-test</module>
+        <module>sql-spring</module>
     </modules>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <spring.version>4.2.3.RELEASE</spring.version>
     </properties>
 
+    <dependencies>
+        <!-- mysql驱动 -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.17</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
 </project>

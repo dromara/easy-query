@@ -29,7 +29,7 @@ public class SQLUtil {
                 }
                 builder.append(param);
                 builder.append("(");
-                builder.append(param == null ? "null" : param.getClass().getSimpleName());
+                builder.append(param == null ? "null" : ClassUtil.getInstanceSimpleName(param));
                 builder.append(")");
             }else if(sqlParameter instanceof PropertySQLParameter){
                 String alias = sqlParameter.getTable().getAlias();

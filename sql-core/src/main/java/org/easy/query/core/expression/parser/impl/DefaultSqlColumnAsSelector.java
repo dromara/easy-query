@@ -2,7 +2,7 @@ package org.easy.query.core.expression.parser.impl;
 
 import org.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import org.easy.query.core.expression.lambda.Property;
-import org.easy.query.core.abstraction.sql.enums.EasyAggregate;
+import org.easy.query.core.enums.EasyAggregate;
 import org.easy.query.core.expression.parser.abstraction.SqlColumnAsSelector;
 import org.easy.query.core.expression.parser.abstraction.internal.ColumnAsSelector;
 import org.easy.query.core.query.SqlEntityExpression;

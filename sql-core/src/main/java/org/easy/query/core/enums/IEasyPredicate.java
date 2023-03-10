@@ -1,4 +1,4 @@
-package org.easy.query.core.abstraction.sql.enums;
+package org.easy.query.core.enums;
 
 /**
  * @FileName: IEasyPredicate.java

@@ -1,6 +1,6 @@
 package org.easy.query.core.expression.segment.condition.predicate;
 
-import org.easy.query.core.abstraction.sql.enums.IEasyFunc;
+import org.easy.query.core.enums.IEasyFunc;
 import org.easy.query.core.basic.jdbc.parameter.ConstSQLParameter;
 import org.easy.query.core.enums.SqlPredicateCompare;
 import org.easy.query.core.query.*;

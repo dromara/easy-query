@@ -4,13 +4,14 @@ package org.easy.query;
 import com.alibaba.druid.pool.DruidDataSourceFactory;
 import org.easy.query.core.abstraction.*;
 import org.easy.query.core.abstraction.metadata.EntityMetadataManager;
-import org.easy.query.core.abstraction.sql.PageResult;
+import org.easy.query.core.api.pagination.PageResult;
 import org.easy.query.core.api.client.DefaultEasyQuery;
 import org.easy.query.core.api.client.EasyQuery;
 import org.easy.query.core.api.def.DefaultEasySqlApiFactory;
 import org.easy.query.core.basic.api.select.Queryable;
 import org.easy.query.core.basic.jdbc.con.DefaultConnectionManager;
 import org.easy.query.core.basic.jdbc.con.EasyConnectionManager;
+import org.easy.query.core.basic.jdbc.executor.DefaultExecutor;
 import org.easy.query.core.basic.jdbc.tx.Transaction;
 import org.easy.query.core.basic.jdbc.types.DefaultJdbcTypeHandlerManager;
 import org.easy.query.core.basic.jdbc.types.EasyJdbcTypeHandlerManager;
@@ -20,6 +21,7 @@ import org.easy.query.core.config.UnderlinedNameConversion;
 import org.easy.query.core.configuration.EasyQueryConfiguration;
 import org.easy.query.core.enums.AggregatePredicateCompare;
 import org.easy.query.core.exception.EasyQueryException;
+import org.easy.query.core.logging.LogFactory;
 import org.easy.query.core.metadata.DefaultEntityMetadataManager;
 import org.easy.query.mysql.MySQLSqlExpressionFactory;
 import org.easy.query.mysql.config.MySQLDialect;
@@ -81,6 +83,7 @@ public class Main {
 //
 //        }
 
+        LogFactory.useStdOutLogging();
 
         DefaultConfig easyConfig = new DefaultConfig("easy-query", driver, username, password, url);
 

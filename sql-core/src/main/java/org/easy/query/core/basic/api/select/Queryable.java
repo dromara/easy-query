@@ -4,7 +4,7 @@ import org.easy.query.core.basic.api.select.provider.EasyQuerySqlBuilderProvider
 import org.easy.query.core.exception.EasyQueryConcurrentException;
 import org.easy.query.core.expression.lambda.Property;
 import org.easy.query.core.expression.lambda.SqlExpression;
-import org.easy.query.core.abstraction.sql.PageResult;
+import org.easy.query.core.api.pagination.PageResult;
 import org.easy.query.core.expression.lambda.SqlExpression2;
 import org.easy.query.core.expression.parser.abstraction.SqlAggregatePredicate;
 import org.easy.query.core.expression.parser.abstraction.SqlColumnAsSelector;

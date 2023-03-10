@@ -1,4 +1,4 @@
-package org.easy.query.core.abstraction.sql;
+package org.easy.query.core.api.pagination;
 
 import java.util.List;
 
