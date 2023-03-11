@@ -69,7 +69,7 @@ public class DefaultJdbcTypeHandlerManager implements EasyJdbcTypeHandlerManager
         handlers.put(LocalDate.class,localDateHandler);
     }
     @Override
-    public void appendHandler(Class type,JdbcTypeHandler typeHandler, boolean replace) {
+    public void appendHandler(Class<?> type,JdbcTypeHandler typeHandler, boolean replace) {
         if(handlers.containsKey(type)){
              if(replace){
                  handlers.put(type,typeHandler);
@@ -80,7 +80,7 @@ public class DefaultJdbcTypeHandlerManager implements EasyJdbcTypeHandlerManager
     }
 
     @Override
-    public JdbcTypeHandler getHandler(Class type) {
+    public JdbcTypeHandler getHandler(Class<?> type) {
         if(type==null){
             return DEFAULT_HANDLER;
         }
