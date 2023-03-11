@@ -20,6 +20,6 @@ public interface SqlEntityTableExpression extends SqlTableExpressionSegment {
     String getColumnName(String propertyName);
 
      SqlExpression<SqlPredicate<?>> getLogicDeleteQueryFilterExpression();
-     List<String> getQueryFilterNames();
+     List<String> getSelectInterceptorNames();
      SqlExpression<SqlColumnSetter<?>> getLogicDeletedSqlExpression();
 }

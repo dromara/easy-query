@@ -60,11 +60,8 @@ public class EasyEntityTableExpression implements SqlEntityTableExpression {
     }
 
     @Override
-    public List<String> getQueryFilterNames() {
-        if (entityMetadata.hasAnyQueryFilter()) {
-            return entityMetadata.getQueryFilters();
-        }
-        return null;
+    public List<String> getSelectInterceptorNames() {
+        return entityMetadata.getSelectInterceptors();
     }
 
     @Override
@@ -117,7 +114,7 @@ public class EasyEntityTableExpression implements SqlEntityTableExpression {
 
     @Override
     public String toSql() {
-        if(entityMetadata.getTableName()==null){
+        if (entityMetadata.getTableName() == null) {
             return StringUtil.EMPTY;
         }
         StringBuilder sql = new StringBuilder();

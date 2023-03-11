@@ -42,7 +42,7 @@ public interface SqlExpressionContext {
     boolean isUseLogicDelete();
 
 
-    void useQueryFilter();
-    void noQueryFilter();
-    boolean isUserQueryFilter();
+    void useInterceptor();
+    void noInterceptor();
+    boolean isUseInterceptor();
 }

@@ -2,18 +2,22 @@ package org.easy.query.core.query;
 
 import org.easy.query.core.abstraction.EasyQueryLambdaFactory;
 import org.easy.query.core.abstraction.metadata.EntityMetadata;
+import org.easy.query.core.configuration.EasyQueryConfiguration;
 import org.easy.query.core.exception.EasyQueryException;
 import org.easy.query.core.expression.lambda.SqlExpression;
 import org.easy.query.core.expression.parser.abstraction.SqlColumnSetter;
+import org.easy.query.core.expression.parser.abstraction.SqlPredicate;
 import org.easy.query.core.expression.segment.builder.ProjectSqlBuilderSegment;
 import org.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import org.easy.query.core.expression.segment.builder.UpdateSetSqlBuilderSegment;
 import org.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import org.easy.query.core.expression.segment.condition.PredicateSegment;
 import org.easy.query.core.expression.segment.condition.predicate.ColumnPropertyPredicate;
+import org.easy.query.core.interceptor.delete.GlobalDeleteInterceptorStrategy;
 import org.easy.query.core.util.ClassUtil;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * @FileName: EasySqlDeleteExpression.java
@@ -102,13 +106,42 @@ public abstract class EasySqlDeleteExpression extends AbstractSqlEntityExpressio
             sql.append(tableName);
         }
         sql.append(" WHERE ");
-        sql.append(getWhere().toSql());
+        PredicateSegment where = getSqlPredicateSegment(table, getWhere());
+        sql.append(where.toSql());
         return sql.toString();
+    }
+    private PredicateSegment getSqlPredicateSegment(SqlEntityTableExpression table, PredicateSegment originalPredicate) {
+
+        EntityMetadata entityMetadata = table.getEntityMetadata();
+        List<String> deleteInterceptors = entityMetadata.getDeleteInterceptors();
+        boolean useInterceptor = !deleteInterceptors.isEmpty() && sqlExpressionContext.isUseInterceptor();
+        if(useInterceptor){
+            PredicateSegment predicateSegment = new AndPredicateSegment(true);
+            EasyQueryLambdaFactory easyQueryLambdaFactory = getRuntimeContext().getEasyQueryLambdaFactory();
+            SqlPredicate<?> sqlPredicate = easyQueryLambdaFactory.createSqlPredicate(table.getIndex(), this, predicateSegment);
+                EasyQueryConfiguration easyQueryConfiguration = getRuntimeContext().getEasyQueryConfiguration();
+                for (String deleteInterceptor : deleteInterceptors) {
+                    GlobalDeleteInterceptorStrategy globalDeleteInterceptorStrategy = (GlobalDeleteInterceptorStrategy)easyQueryConfiguration.getGlobalInterceptorStrategy(deleteInterceptor);
+                    if(globalDeleteInterceptorStrategy!=null){
+                        globalDeleteInterceptorStrategy.configure(table.entityClass(),this,sqlPredicate);
+                    }
+                }
+
+            if(predicateSegment.isNotEmpty()){
+                if (originalPredicate != null && originalPredicate.isNotEmpty()) {
+                    predicateSegment.addPredicateSegment(originalPredicate);
+                }
+                return predicateSegment;
+            }
+        }
+        return originalPredicate;
     }
 
     private UpdateSetSqlBuilderSegment getUpdateSetSqlBuilderSegment(SqlEntityTableExpression table) {
         EntityMetadata entityMetadata = table.getEntityMetadata();
-        if (entityMetadata.enableLogicDelete() && sqlExpressionContext.isUseLogicDelete()) {
+        boolean useLogicDelete = entityMetadata.enableLogicDelete() && sqlExpressionContext.isUseLogicDelete();
+        boolean useInterceptor = !entityMetadata.getDeleteInterceptors().isEmpty() && sqlExpressionContext.isUseInterceptor();
+        if (useLogicDelete||useInterceptor) {
             SqlExpression<SqlColumnSetter<?>> logicDeletedSqlExpression = table.getLogicDeletedSqlExpression();
             if (logicDeletedSqlExpression != null) {
                 EasyQueryLambdaFactory easyQueryLambdaFactory = getRuntimeContext().getEasyQueryLambdaFactory();

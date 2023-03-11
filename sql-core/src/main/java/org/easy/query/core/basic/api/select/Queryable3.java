@@ -147,10 +147,10 @@ public interface Queryable3<T1, T2, T3> extends Queryable<T1> {
     Queryable3<T1, T2, T3> enableLogicDelete();
 
     @Override
-    Queryable3<T1, T2, T3> noQueryFilter();
+    Queryable3<T1, T2, T3> noInterceptor();
 
     @Override
-    Queryable3<T1, T2, T3> useQueryFilter();
+    Queryable3<T1, T2, T3> useInterceptor();
 
     EasyQuerySqlBuilderProvider3<T1, T2, T3> getSqlBuilderProvider3();
 }

@@ -221,14 +221,14 @@ public abstract class AbstractQueryable2<T1, T2> extends AbstractQueryable<T1> i
     }
 
     @Override
-    public Queryable2<T1, T2> noQueryFilter() {
-        super.noQueryFilter();
+    public Queryable2<T1, T2> noInterceptor() {
+        super.noInterceptor();
         return this;
     }
 
     @Override
-    public Queryable2<T1, T2> useQueryFilter() {
-        super.useQueryFilter();
+    public Queryable2<T1, T2> useInterceptor() {
+        super.useInterceptor();
         return this;
     }
 

@@ -1,4 +1,4 @@
-package org.easy.query.core.configuration.global.interceptor;
+package org.easy.query.core.interceptor;
 
 /**
  * @FileName: GlobalInterceptorStrategy.java

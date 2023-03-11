@@ -5,8 +5,8 @@ import org.easy.query.core.abstraction.EasyQueryLambdaFactory;
 import org.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import org.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import org.easy.query.core.basic.api.update.EntityUpdatable;
-import org.easy.query.core.configuration.global.interceptor.GlobalInterceptorStrategy;
-import org.easy.query.core.configuration.global.update.GlobalUpdateInterceptorStrategy;
+import org.easy.query.core.interceptor.GlobalInterceptorStrategy;
+import org.easy.query.core.interceptor.update.GlobalUpdateInterceptorStrategy;
 import org.easy.query.core.exception.EasyQueryConcurrentException;
 import org.easy.query.core.expression.lambda.SqlExpression;
 import org.easy.query.core.abstraction.metadata.EntityMetadata;
@@ -77,7 +77,7 @@ public abstract class AbstractEntityUpdatable<T> implements EntityUpdatable<T> {
             }
             for (T entity : entities) {
                 for (GlobalUpdateInterceptorStrategy globalUpdateInterceptorStrategy : globalUpdateInterceptorStrategies) {
-                    globalUpdateInterceptorStrategy.configure(entityMetadata.getEntityClass(), entity);
+                    globalUpdateInterceptorStrategy.configure(entityMetadata.getEntityClass(), sqlEntityUpdateExpression,entity);
                 }
             }
         }

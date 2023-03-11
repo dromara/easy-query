@@ -5,10 +5,9 @@ import org.easy.query.core.config.DefaultEasyQueryDialect;
 import org.easy.query.core.config.DefaultNameConversion;
 import org.easy.query.core.config.EasyQueryDialect;
 import org.easy.query.core.config.NameConversion;
-import org.easy.query.core.configuration.global.del.*;
-import org.easy.query.core.configuration.global.interceptor.GlobalInterceptorStrategy;
-import org.easy.query.core.configuration.global.select.GlobalQueryFilterStrategy;
+import org.easy.query.core.interceptor.GlobalInterceptorStrategy;
 import org.easy.query.core.exception.EasyQueryException;
+import org.easy.query.core.logicdel.*;
 import org.easy.query.core.util.ClassUtil;
 import org.easy.query.core.util.StringUtil;
 
@@ -31,8 +30,6 @@ public class EasyQueryConfiguration {
     private NameConversion nameConversion = new DefaultNameConversion();
     private EasyQueryDialect dialect = new DefaultEasyQueryDialect();
 //    private Map<Class<?>, EntityTypeConfiguration<?>> entityTypeConfigurationMap = new HashMap<>();
-
-    private Map<String, GlobalQueryFilterStrategy> globalQueryFilterStrategyMap=new ConcurrentHashMap<>();
     private Map<String, GlobalInterceptorStrategy> globalInterceptorStrategyMap=new ConcurrentHashMap<>();
     private Map<String, GlobalLogicDeleteStrategy> globalLogicDeleteStrategyMap = new ConcurrentHashMap<>();
     private final boolean deleteThrowError;
@@ -85,26 +82,6 @@ public class EasyQueryConfiguration {
     public Collection<GlobalInterceptorStrategy> getGlobalInterceptorStrategies(){
         return globalInterceptorStrategyMap.values();
     }
-
-    public void applyGlobalQueryFilterStrategy(GlobalQueryFilterStrategy globalQueryFilterStrategy){
-        String name = globalQueryFilterStrategy.queryFilterName();
-        if(StringUtil.isBlank(name)){
-            throw new EasyQueryException(ClassUtil.getInstanceSimpleName(globalQueryFilterStrategy)+"cant get query filter name");
-        }
-        if(globalQueryFilterStrategyMap.containsKey(name)){
-            throw new EasyQueryException("global query filter:" + name + ",repeat");
-        }
-        globalQueryFilterStrategyMap.put(name,globalQueryFilterStrategy);
-    }
-    public GlobalQueryFilterStrategy getGlobalQueryFilterStrategy(String name){
-        if(name==null){
-            throw new IllegalArgumentException("cant get global query filter,name is null");
-        }
-        return globalQueryFilterStrategyMap.get(name);
-    }
-    public Collection<GlobalQueryFilterStrategy> getGlobalQueryFilterStrategies(){
-        return globalQueryFilterStrategyMap.values();
-    }
 //    public void applyEntityTypeConfiguration(EntityTypeConfiguration<?> entityTypeConfiguration) {
 //        entityTypeConfigurationMap.put(entityTypeConfiguration.entityType(), entityTypeConfiguration);
 //    }
@@ -116,7 +93,7 @@ public class EasyQueryConfiguration {
     public void applyGlobalLogicDeleteStrategy(GlobalLogicDeleteStrategy globalLogicDeleteStrategy) {
         String strategy = globalLogicDeleteStrategy.getStrategy();
         if (globalLogicDeleteStrategyMap.containsKey(strategy)) {
-            throw new EasyQueryException("global strategy:" + strategy + ",repeat");
+            throw new EasyQueryException("global logic delete strategy:" + strategy + ",repeat");
         }
         globalLogicDeleteStrategyMap.put(strategy, globalLogicDeleteStrategy);
     }

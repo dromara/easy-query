@@ -21,4 +21,7 @@ public class EasyQueryProperties {
     public void setEnable(Boolean enable) {
         this.enable = enable;
     }
+
+    public EasyQueryProperties() {
+    }
 }

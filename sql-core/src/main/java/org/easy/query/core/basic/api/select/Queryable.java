@@ -138,6 +138,10 @@ public interface Queryable<T1> extends Query<T1> {
     }
 
     Queryable<T1> where(boolean condition, SqlExpression<SqlPredicate<T1>> whereExpression);
+    default Queryable<T1> whereId(Object id){
+        return whereId(true,id);
+    }
+    Queryable<T1> whereId(boolean condition, Object id);
     default Queryable<T1> groupBy(SqlExpression<SqlColumnSelector<T1>> selectExpression) {
         return groupBy(true, selectExpression);
     }
@@ -193,7 +197,7 @@ public interface Queryable<T1> extends Query<T1> {
 
     Queryable<T1> disableLogicDelete();
     Queryable<T1> enableLogicDelete();
-    Queryable<T1> noQueryFilter();
-    Queryable<T1> useQueryFilter();
+    Queryable<T1> noInterceptor();
+    Queryable<T1> useInterceptor();
 
 }

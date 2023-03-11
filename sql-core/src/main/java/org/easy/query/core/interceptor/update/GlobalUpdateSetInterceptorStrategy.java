@@ -1,6 +1,6 @@
-package org.easy.query.core.configuration.global.update;
+package org.easy.query.core.interceptor.update;
 
-import org.easy.query.core.configuration.global.interceptor.GlobalInterceptorStrategy;
+import org.easy.query.core.interceptor.GlobalInterceptorStrategy;
 import org.easy.query.core.expression.parser.abstraction.SqlColumnSetter;
 import org.easy.query.core.query.SqlEntityUpdateExpression;
 

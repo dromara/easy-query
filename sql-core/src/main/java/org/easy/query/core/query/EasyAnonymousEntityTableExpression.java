@@ -28,7 +28,7 @@ public class EasyAnonymousEntityTableExpression extends EasyEntityTableExpressio
     }
 
     @Override
-    public List<String> getQueryFilterNames() {
+    public List<String> getSelectInterceptorNames() {
         return null;
     }
 

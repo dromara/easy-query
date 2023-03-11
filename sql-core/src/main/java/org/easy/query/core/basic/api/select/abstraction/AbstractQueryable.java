@@ -7,6 +7,8 @@ import org.easy.query.core.basic.api.select.provider.EasyQuerySqlBuilderProvider
 import org.easy.query.core.basic.jdbc.executor.EasyExecutor;
 import org.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import org.easy.query.core.enums.MultiTableTypeEnum;
+import org.easy.query.core.enums.SqlPredicateCompareEnum;
+import org.easy.query.core.exception.EasyQueryException;
 import org.easy.query.core.exception.EasyQueryNotFoundException;
 import org.easy.query.core.expression.lambda.Property;
 import org.easy.query.core.expression.lambda.SqlExpression;
@@ -22,13 +24,18 @@ import org.easy.query.core.expression.parser.abstraction.SqlPredicate;
 import org.easy.query.core.expression.parser.abstraction.internal.ColumnSelector;
 import org.easy.query.core.expression.segment.SelectConstSegment;
 import org.easy.query.core.expression.segment.builder.ProjectSqlBuilderSegment;
+import org.easy.query.core.expression.segment.condition.AndPredicateSegment;
+import org.easy.query.core.expression.segment.condition.PredicateSegment;
+import org.easy.query.core.expression.segment.condition.predicate.ColumnValuePredicate0;
 import org.easy.query.core.query.*;
 import org.easy.query.core.util.ArrayUtil;
+import org.easy.query.core.util.ClassUtil;
 import org.easy.query.core.util.EasyUtil;
 import org.easy.query.core.util.SqlExpressionUtil;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -302,6 +309,28 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     }
 
     @Override
+    public Queryable<T1> whereId(boolean condition, Object id) {
+        if (condition) {
+
+            PredicateSegment where = sqlEntityExpression.getWhere();
+            SqlEntityTableExpression table = sqlEntityExpression.getTable(0);
+            Collection<String> keyProperties = table.getEntityMetadata().getKeyProperties();
+            if(keyProperties.isEmpty()){
+                throw new EasyQueryException("对象:"+ ClassUtil.getSimpleName(t1Class)+"未找到主键信息");
+            }
+            if(keyProperties.size()>1){
+                throw new EasyQueryException("对象:"+ ClassUtil.getSimpleName(t1Class)+"存在多个主键");
+            }
+            String keyProperty = keyProperties.iterator().next();
+            AndPredicateSegment andPredicateSegment = new AndPredicateSegment();
+            andPredicateSegment
+                    .setPredicate(new ColumnValuePredicate0(table, keyProperty, id, SqlPredicateCompareEnum.EQ, sqlEntityExpression));
+            where.addPredicateSegment(andPredicateSegment);
+        }
+        return this;
+    }
+
+    @Override
     public Queryable<T1> groupBy(boolean condition, SqlExpression<SqlColumnSelector<T1>> selectExpression) {
         if (condition) {
             SqlColumnSelector<T1> sqlPredicate = getSqlBuilderProvider1().getSqlGroupColumnSelector1();
@@ -455,14 +484,14 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     }
 
     @Override
-    public Queryable<T1> noQueryFilter() {
-        sqlEntityExpression.getSqlExpressionContext().noQueryFilter();
+    public Queryable<T1> noInterceptor() {
+        sqlEntityExpression.getSqlExpressionContext().noInterceptor();
         return this;
     }
 
     @Override
-    public Queryable<T1> useQueryFilter() {
-        sqlEntityExpression.getSqlExpressionContext().useQueryFilter();
+    public Queryable<T1> useInterceptor() {
+        sqlEntityExpression.getSqlExpressionContext().useInterceptor();
         return this;
     }
 

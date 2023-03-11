@@ -20,7 +20,7 @@ public class EasySqlExpressionContext implements SqlExpressionContext {
     private int aliasSeq = -1;
     private boolean deleteThrowException;
     private boolean useLogicDelete = true;
-    private boolean useQueryFilter = true;
+    private boolean useInterceptor = true;
 
     public EasySqlExpressionContext(EasyQueryRuntimeContext runtimeContext, String alias) {
 
@@ -102,18 +102,18 @@ public class EasySqlExpressionContext implements SqlExpressionContext {
     }
 
     @Override
-    public void useQueryFilter() {
-        this.useQueryFilter = true;
+    public void useInterceptor() {
+        this.useInterceptor = true;
     }
 
     @Override
-    public void noQueryFilter() {
-        this.useQueryFilter = false;
+    public void noInterceptor() {
+        this.useInterceptor = false;
     }
 
     @Override
-    public boolean isUserQueryFilter() {
-        return useQueryFilter;
+    public boolean isUseInterceptor() {
+        return useInterceptor;
     }
 
 

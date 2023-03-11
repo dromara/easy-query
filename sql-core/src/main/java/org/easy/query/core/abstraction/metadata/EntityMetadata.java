@@ -1,14 +1,15 @@
 package org.easy.query.core.abstraction.metadata;
 
 import org.easy.query.core.basic.enums.LogicDeleteStrategyEnum;
-import org.easy.query.core.configuration.global.del.GlobalLogicDeleteStrategy;
+import org.easy.query.core.interceptor.delete.GlobalDeleteInterceptorStrategy;
+import org.easy.query.core.logicdel.GlobalLogicDeleteStrategy;
 import org.easy.query.core.configuration.EasyQueryConfiguration;
 import org.easy.query.core.config.NameConversion;
-import org.easy.query.core.configuration.global.insert.GlobalInsertInterceptorStrategy;
-import org.easy.query.core.configuration.global.interceptor.GlobalInterceptorStrategy;
-import org.easy.query.core.configuration.global.select.GlobalQueryFilterStrategy;
-import org.easy.query.core.configuration.global.update.GlobalUpdateInterceptorStrategy;
-import org.easy.query.core.configuration.global.update.GlobalUpdateSetInterceptorStrategy;
+import org.easy.query.core.interceptor.insert.GlobalInsertInterceptorStrategy;
+import org.easy.query.core.interceptor.GlobalInterceptorStrategy;
+import org.easy.query.core.interceptor.select.GlobalSelectInterceptorStrategy;
+import org.easy.query.core.interceptor.update.GlobalUpdateInterceptorStrategy;
+import org.easy.query.core.interceptor.update.GlobalUpdateSetInterceptorStrategy;
 import org.easy.query.core.exception.EasyQueryException;
 import org.easy.query.core.util.StringUtil;
 import org.easy.query.core.annotation.*;
@@ -36,10 +37,11 @@ public class EntityMetadata {
     /**
      * 查询过滤器
      */
-    private final List<String> queryFilters = new ArrayList<>();
+    private final List<String> selectInterceptors = new ArrayList<>();
     private final List<String> insertInterceptors = new ArrayList<>();
     private final List<String> updateInterceptors = new ArrayList<>();
     private final List<String> updateSetInterceptors = new ArrayList<>();
+    private final List<String> deleteInterceptors = new ArrayList<>();
     private final LinkedHashMap<String, ColumnMetadata> property2ColumnMap = new LinkedHashMap<>();
     private final Map<String/*property name*/, String/*column name*/> keyPropertiesMap = new HashMap<>();
     private final LinkedCaseInsensitiveMap<String> column2PropertyMap = new LinkedCaseInsensitiveMap<>(Locale.ENGLISH);
@@ -139,23 +141,24 @@ public class EntityMetadata {
     protected void entityGlobalQueryFilterConfigurationInit(EasyQueryConfiguration configuration) {
 
         if (StringUtil.isNotBlank(tableName)) {
-            //全局过滤器
-            Collection<GlobalQueryFilterStrategy> globalQueryFilterConfigurations = configuration.getGlobalQueryFilterStrategies();
-            for (GlobalQueryFilterStrategy globalQueryFilterConfiguration : globalQueryFilterConfigurations) {
-                if (globalQueryFilterConfiguration.apply(entityClass)) {
-                    queryFilters.add(globalQueryFilterConfiguration.queryFilterName());
-                }
-            }
 
             Collection<GlobalInterceptorStrategy> globalInterceptorStrategies = configuration.getGlobalInterceptorStrategies();
             for (GlobalInterceptorStrategy globalInterceptorStrategy : globalInterceptorStrategies) {
                 if (globalInterceptorStrategy.apply(entityClass)) {
+                    if (globalInterceptorStrategy instanceof GlobalSelectInterceptorStrategy) {
+                        selectInterceptors.add(globalInterceptorStrategy.interceptorName());
+                    }
                     if (globalInterceptorStrategy instanceof GlobalInsertInterceptorStrategy) {
                         insertInterceptors.add(globalInterceptorStrategy.interceptorName());
-                    } else if (globalInterceptorStrategy instanceof GlobalUpdateInterceptorStrategy) {
+                    }
+                    if (globalInterceptorStrategy instanceof GlobalUpdateInterceptorStrategy) {
                         updateInterceptors.add(globalInterceptorStrategy.interceptorName());
-                    } else if (globalInterceptorStrategy instanceof GlobalUpdateSetInterceptorStrategy) {
+                    }
+                    if (globalInterceptorStrategy instanceof GlobalUpdateSetInterceptorStrategy) {
                         updateSetInterceptors.add(globalInterceptorStrategy.interceptorName());
+                    }
+                    if (globalInterceptorStrategy instanceof GlobalDeleteInterceptorStrategy) {
+                        deleteInterceptors.add(globalInterceptorStrategy.interceptorName());
                     }
                 }
             }
@@ -260,12 +263,12 @@ public class EntityMetadata {
      *
      * @return
      */
-    public boolean hasAnyQueryFilter() {
-        return !queryFilters.isEmpty();
+    public boolean hasAnySelectInterceptor() {
+        return !selectInterceptors.isEmpty();
     }
 
-    public List<String> getQueryFilters() {
-        return queryFilters;
+    public List<String> getSelectInterceptors() {
+        return selectInterceptors;
     }
 
     public List<String> getInsertInterceptors() {
@@ -278,5 +281,10 @@ public class EntityMetadata {
 
     public List<String> getUpdateSetInterceptors() {
         return updateSetInterceptors;
+    }
+
+
+    public List<String> getDeleteInterceptors() {
+        return deleteInterceptors;
     }
 }

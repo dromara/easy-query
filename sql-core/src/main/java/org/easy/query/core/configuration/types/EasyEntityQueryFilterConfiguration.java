@@ -1,6 +1,6 @@
 package org.easy.query.core.configuration.types;
 
-import org.easy.query.core.configuration.global.select.GlobalQueryFilterStrategy;
+import org.easy.query.core.interceptor.select.GlobalSelectInterceptorStrategy;
 import org.easy.query.core.expression.lambda.Property;
 import org.easy.query.core.expression.parser.abstraction.SqlPredicate;
 import org.easy.query.core.query.SqlEntityQueryExpression;
@@ -12,15 +12,16 @@ import org.easy.query.core.util.EasyUtil;
  * @Date: 2023/3/7 22:29
  * @Created by xuejiaming
  */
-public class EasyEntityQueryFilterConfiguration implements GlobalQueryFilterStrategy {
+public class EasyEntityQueryFilterConfiguration implements GlobalSelectInterceptorStrategy {
+
     @Override
-    public String queryFilterName() {
+    public String interceptorName() {
         return null;
     }
 
     @Override
     public boolean apply(Class<?> entityClass) {
-        return GlobalQueryFilterStrategy.class.isAssignableFrom(entityClass);
+        return GlobalSelectInterceptorStrategy.class.isAssignableFrom(entityClass);
     }
 
     @Override

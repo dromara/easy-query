@@ -197,14 +197,14 @@ public abstract class AbstractQueryable4<T1, T2, T3,T4> extends AbstractQueryabl
     }
 
     @Override
-    public Queryable4<T1, T2, T3,T4> noQueryFilter() {
-        super.noQueryFilter();
+    public Queryable4<T1, T2, T3,T4> noInterceptor() {
+        super.noInterceptor();
         return this;
     }
 
     @Override
-    public Queryable4<T1, T2, T3,T4> useQueryFilter() {
-        super.useQueryFilter();
+    public Queryable4<T1, T2, T3,T4> useInterceptor() {
+        super.useInterceptor();
         return this;
     }
 

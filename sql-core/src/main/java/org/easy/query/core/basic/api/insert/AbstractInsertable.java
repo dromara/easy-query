@@ -2,8 +2,8 @@ package org.easy.query.core.basic.api.insert;
 
 import org.easy.query.core.basic.jdbc.executor.EasyExecutor;
 import org.easy.query.core.basic.jdbc.executor.ExecutorContext;
-import org.easy.query.core.configuration.global.insert.GlobalInsertInterceptorStrategy;
-import org.easy.query.core.configuration.global.interceptor.GlobalInterceptorStrategy;
+import org.easy.query.core.interceptor.insert.GlobalInsertInterceptorStrategy;
+import org.easy.query.core.interceptor.GlobalInterceptorStrategy;
 import org.easy.query.core.abstraction.metadata.EntityMetadata;
 import org.easy.query.core.enums.MultiTableTypeEnum;
 import org.easy.query.core.query.EasyEntityTableExpression;
@@ -61,7 +61,7 @@ public abstract class AbstractInsertable<T> implements Insertable<T> {
             }
             for (T entity : entities) {
                 for (GlobalInsertInterceptorStrategy globalInsertInterceptorStrategy : globalInsertInterceptorStrategies) {
-                    globalInsertInterceptorStrategy.configure(entityMetadata.getEntityClass(), entity);
+                    globalInsertInterceptorStrategy.configure(entityMetadata.getEntityClass(), sqlEntityInsertExpression,entity);
                 }
             }
         }

@@ -1,6 +1,7 @@
-package org.easy.query.core.configuration.global.select;
+package org.easy.query.core.interceptor.select;
 
 import org.easy.query.core.expression.parser.abstraction.SqlPredicate;
+import org.easy.query.core.interceptor.GlobalInterceptorStrategy;
 import org.easy.query.core.query.SqlEntityQueryExpression;
 
 /**
@@ -9,19 +10,7 @@ import org.easy.query.core.query.SqlEntityQueryExpression;
  * @Date: 2023/3/7 22:25
  * @Created by xuejiaming
  */
-public interface GlobalQueryFilterStrategy {
-    /**
-     * query filter名称
-     * @return
-     */
-    String queryFilterName();
-
-    /**
-     * 是否接受对应对象字节
-     * @param entityClass
-     * @return
-     */
-    boolean apply(Class<?> entityClass);
+public interface GlobalSelectInterceptorStrategy extends GlobalInterceptorStrategy {
 
     /**
      * 配置
