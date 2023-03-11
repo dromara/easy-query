@@ -14,6 +14,7 @@ import org.easy.query.core.exception.EasyQueryException;
 import org.easy.query.core.basic.jdbc.types.EasyParameter;
 import org.easy.query.core.basic.jdbc.types.EasyResultSet;
 import org.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
+import org.easy.query.core.exception.EasyQuerySQLException;
 import org.easy.query.core.logging.Log;
 import org.easy.query.core.logging.LogFactory;
 import org.easy.query.core.util.*;
@@ -32,10 +33,10 @@ import java.util.Map;
  * @Date: 2023/2/16 22:49
  * @Created by xuejiaming
  */
-public class DefaultExecutor implements EasyExecutor {
-    private static final Log log = LogFactory.getLog(DefaultExecutor.class);
+public class DefaultEasyExecutor implements EasyExecutor {
+    private static final Log log = LogFactory.getLog(DefaultEasyExecutor.class);
     private final boolean logDebug;
-    public DefaultExecutor(){
+    public DefaultEasyExecutor(){
         logDebug=log.isDebugEnabled();
     }
     @Override
@@ -61,7 +62,8 @@ public class DefaultExecutor implements EasyExecutor {
                 log.debug("<== Total: " + r);
             }
         } catch (SQLException e) {
-            throw new EasyQueryException(e);
+            log.error(sql,e);
+            throw new EasyQuerySQLException(sql,e);
         } finally {
             clear(executorContext, easyConnection, null, ps);
         }
@@ -106,7 +108,8 @@ if(logDebug){
 }
             ps.clearBatch();
         } catch (SQLException e) {
-            throw new EasyQueryException(e);
+            log.error(sql,e);
+            throw new EasyQuerySQLException(sql,e);
         } finally {
             clear(executorContext, easyConnection, null, ps);
         }
@@ -149,7 +152,8 @@ if(logDebug){
                 log.debug("<== Total: " + r);
             }
         } catch (SQLException e) {
-            throw new EasyQueryException(e);
+            log.error(sql,e);
+            throw new EasyQuerySQLException(sql,e);
         } finally {
             clear(executorContext, easyConnection, null, ps);
         }
@@ -207,7 +211,8 @@ if(logDebug){
                 log.debug("<== Total: " + result.size());
             }
         } catch (SQLException e) {
-            throw new EasyQueryException(e);
+            log.error(sql,e);
+            throw new EasyQuerySQLException(sql,e);
         } finally {
             clear(executorContext, easyConnection, rs, ps);
         }

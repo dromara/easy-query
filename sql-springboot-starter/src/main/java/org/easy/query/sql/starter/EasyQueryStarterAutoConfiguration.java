@@ -6,7 +6,7 @@ import org.easy.query.core.api.client.DefaultEasyQuery;
 import org.easy.query.core.api.client.EasyQuery;
 import org.easy.query.core.api.def.DefaultEasySqlApiFactory;
 import org.easy.query.core.basic.jdbc.con.EasyConnectionManager;
-import org.easy.query.core.basic.jdbc.executor.DefaultExecutor;
+import org.easy.query.core.basic.jdbc.executor.DefaultEasyExecutor;
 import org.easy.query.core.basic.jdbc.executor.EasyExecutor;
 import org.easy.query.core.basic.jdbc.types.DefaultJdbcTypeHandlerManager;
 import org.easy.query.core.basic.jdbc.types.EasyJdbcTypeHandlerManager;
@@ -57,7 +57,7 @@ public class EasyQueryStarterAutoConfiguration {
 
     @Bean
     public EasyExecutor easyExecutor() {
-        return new DefaultExecutor();
+        return new DefaultEasyExecutor();
     }
 
     @Bean

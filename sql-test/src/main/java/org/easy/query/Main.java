@@ -11,7 +11,7 @@ import org.easy.query.core.api.def.DefaultEasySqlApiFactory;
 import org.easy.query.core.basic.api.select.Queryable;
 import org.easy.query.core.basic.jdbc.con.DefaultConnectionManager;
 import org.easy.query.core.basic.jdbc.con.EasyConnectionManager;
-import org.easy.query.core.basic.jdbc.executor.DefaultExecutor;
+import org.easy.query.core.basic.jdbc.executor.DefaultEasyExecutor;
 import org.easy.query.core.basic.jdbc.tx.Transaction;
 import org.easy.query.core.basic.jdbc.types.DefaultJdbcTypeHandlerManager;
 import org.easy.query.core.basic.jdbc.types.EasyJdbcTypeHandlerManager;
@@ -105,7 +105,7 @@ public class Main {
             throw new EasyQueryException(e);
         }
         EasyConnectionManager connectionManager = new DefaultConnectionManager(dataSource);
-        DefaultExecutor defaultExecutor = new DefaultExecutor();
+        DefaultEasyExecutor defaultExecutor = new DefaultEasyExecutor();
         EasyJdbcTypeHandlerManager jdbcTypeHandler = new DefaultJdbcTypeHandlerManager();
         NameConversion nameConversion = new UnderlinedNameConversion();
         EasyQueryConfiguration configuration = new EasyQueryConfiguration();
