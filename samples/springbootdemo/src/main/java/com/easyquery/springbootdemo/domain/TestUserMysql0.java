@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
  * @Created by xuejiaming
  */
 @Table("testuser")
-public class TestUserMysql {
+public class TestUserMysql0 {
     @PrimaryKey
     @Column("Id")
     private String id;

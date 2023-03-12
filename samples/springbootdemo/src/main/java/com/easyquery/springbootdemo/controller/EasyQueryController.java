@@ -1,7 +1,7 @@
 package com.easyquery.springbootdemo.controller;
 
 import com.easy.query.core.api.client.EasyQuery;
-import com.easyquery.springbootdemo.domain.TestUserMysql;
+import com.easyquery.springbootdemo.domain.TestUserMysql0;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,14 +26,14 @@ public class EasyQueryController {
     public Object sayHello() {
         Logger logger = LoggerFactory.getLogger(EasyQueryController.class);
         logger.debug("123");
-        TestUserMysql testUserMysql = easyQuery.query(TestUserMysql.class)
+        TestUserMysql0 testUserMysql = easyQuery.query(TestUserMysql0.class)
                 .firstOrNull();
         return testUserMysql;
     }
 
     @GetMapping("/sayHello1")
     public Object sayHello1() {
-        TestUserMysql testUserMysql1 = new TestUserMysql();
+        TestUserMysql0 testUserMysql1 = new TestUserMysql0();
         testUserMysql1.setId("123321123321");
         testUserMysql1.setAge(1);
         testUserMysql1.setName("xxx");
@@ -44,7 +44,7 @@ public class EasyQueryController {
     @GetMapping("/sayHello2")
     @Transactional(rollbackFor = Exception.class)
     public Object sayHello2() {
-        TestUserMysql testUserMysql1 = new TestUserMysql();
+        TestUserMysql0 testUserMysql1 = new TestUserMysql0();
         testUserMysql1.setId("123321123321xxx");
         testUserMysql1.setAge(1);
         testUserMysql1.setName("xxx");
@@ -54,12 +54,12 @@ public class EasyQueryController {
 
     @GetMapping("/sayHello3")
     public Object sayHello3() {
-        TestUserMysql testUserMysql = easyQuery.query(TestUserMysql.class).whereId("123321123321xxx").firstOrNull();
+        TestUserMysql0 testUserMysql = easyQuery.query(TestUserMysql0.class).whereId("123321123321xxx").firstOrNull();
         return testUserMysql;
     }
     @GetMapping("/sayHello4")
     public Object sayHello4() {
-        TestUserMysql testUserMysql = easyQuery.query(TestUserMysql.class).whereId("123321123321").firstOrNull();
+        TestUserMysql0 testUserMysql = easyQuery.query(TestUserMysql0.class).whereId("123321123321").firstOrNull();
         return testUserMysql;
     }
 }
