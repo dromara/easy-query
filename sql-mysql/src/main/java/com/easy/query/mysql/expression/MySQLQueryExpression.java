@@ -1,4 +1,4 @@
-package com.easy.query.mysql.base;
+package com.easy.query.mysql.expression;
 
 import com.easy.query.core.abstraction.EasySqlExpressionFactory;
 import com.easy.query.core.expression.segment.SqlSegment;

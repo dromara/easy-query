@@ -68,11 +68,11 @@ public class DefaultEasySqlApiFactory implements EasySqlApiFactory {
     @Override
     public <T> Queryable<T> createQueryable(Class<T> clazz, SqlEntityQueryExpression sqlEntityExpression) {
         SqlExpressionContext queryExpressionContext = sqlEntityExpression.getSqlExpressionContext();
-        SqlEntityQueryExpression mySQLEntityExpression = easySqlExpressionFactory.createSqlEntityQueryExpression(queryExpressionContext);
+        SqlEntityQueryExpression sqlEntityQueryExpression = easySqlExpressionFactory.createSqlEntityQueryExpression(queryExpressionContext);
         EntityMetadata entityMetadata = queryExpressionContext.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(clazz);
         SqlEntityTableExpression anonymousTable = easySqlExpressionFactory.createSqlAnonymousEntityTableExpression(entityMetadata, 0, queryExpressionContext.createTableAlias(), MultiTableTypeEnum.FROM, sqlEntityExpression);
-        mySQLEntityExpression.addSqlEntityTableExpression(anonymousTable);
-        return new EasyQueryable<>(clazz,mySQLEntityExpression);
+        sqlEntityQueryExpression.addSqlEntityTableExpression(anonymousTable);
+        return new EasyQueryable<>(clazz,sqlEntityQueryExpression);
     }
 
     @Override

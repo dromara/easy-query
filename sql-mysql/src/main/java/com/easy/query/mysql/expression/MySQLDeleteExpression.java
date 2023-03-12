@@ -1,4 +1,4 @@
-package com.easy.query.mysql.base;
+package com.easy.query.mysql.expression;
 
 import com.easy.query.core.abstraction.EasyQueryLambdaFactory;
 import com.easy.query.core.abstraction.metadata.EntityMetadata;

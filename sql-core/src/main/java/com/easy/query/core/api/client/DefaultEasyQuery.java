@@ -34,14 +34,10 @@ public class DefaultEasyQuery implements EasyQuery {
     }
 
     @Override
-    public <T> Queryable<T> queryable(Class<T> clazz) {
-        return easySqlApiFactory.createQueryable(clazz,runtimeContext);
-    }
-
-    @Override
     public <T> Queryable<T> queryable(Class<T> clazz, String alias) {
         return easySqlApiFactory.createQueryable(clazz,runtimeContext,alias);
     }
+
     @Override
     public Transaction beginTransaction(Integer isolationLevel) {
         EasyConnectionManager connectionManager = runtimeContext.getConnectionManager();

@@ -1,4 +1,4 @@
-package com.easy.query.mysql.base;
+package com.easy.query.mysql.expression;
 
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.query.EasySqlUpdateExpression;

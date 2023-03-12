@@ -1,6 +1,7 @@
 package com.easy.query.core.query;
 
 import com.easy.query.core.enums.MultiTableTypeEnum;
+import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.abstraction.metadata.EntityMetadata;
 import com.easy.query.core.expression.lambda.SqlExpression;
@@ -8,6 +9,7 @@ import com.easy.query.core.expression.parser.abstraction.SqlColumnSetter;
 import com.easy.query.core.expression.parser.abstraction.SqlPredicate;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
+import com.easy.query.core.util.ClassUtil;
 import com.easy.query.core.util.LambdaUtil;
 import com.easy.query.core.util.StringUtil;
 
@@ -114,8 +116,9 @@ public class EasyEntityTableExpression implements SqlEntityTableExpression {
 
     @Override
     public String toSql() {
+        //如果当前对象没有映射到表那么直接抛错
         if (entityMetadata.getTableName() == null) {
-            return StringUtil.EMPTY;
+            throw new EasyQueryException("table "+ ClassUtil.getSimpleName(entityMetadata.getEntityClass()) +" cant found mapping table name");
         }
         StringBuilder sql = new StringBuilder();
 

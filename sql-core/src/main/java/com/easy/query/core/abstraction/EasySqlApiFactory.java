@@ -22,10 +22,6 @@ import java.util.Collection;
  * @Created by xuejiaming
  */
 public interface EasySqlApiFactory {
-    default <T> Queryable<T> createQueryable(Class<T> clazz, EasyQueryRuntimeContext runtimeContext) {
-        return createQueryable(clazz, runtimeContext, "t");
-    }
-
     <T> Queryable<T> createQueryable(Class<T> clazz, EasyQueryRuntimeContext runtimeContext, String alias);
 
     <T> Queryable<T> cloneQueryable(Queryable<T> source);

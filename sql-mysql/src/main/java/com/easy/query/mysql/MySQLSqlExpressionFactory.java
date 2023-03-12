@@ -1,14 +1,14 @@
 package com.easy.query.mysql;
 
 import com.easy.query.core.query.*;
-import com.easy.query.mysql.base.MySQLInsertExpression;
+import com.easy.query.mysql.expression.MySQLInsertExpression;
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.abstraction.EasySqlExpressionFactory;
 import com.easy.query.core.abstraction.metadata.EntityMetadata;
 import com.easy.query.core.enums.MultiTableTypeEnum;
-import com.easy.query.mysql.base.MySQLDeleteExpression;
-import com.easy.query.mysql.base.MySQLQueryExpression;
-import com.easy.query.mysql.base.MySQLUpdateExpression;
+import com.easy.query.mysql.expression.MySQLDeleteExpression;
+import com.easy.query.mysql.expression.MySQLQueryExpression;
+import com.easy.query.mysql.expression.MySQLUpdateExpression;
 
 /**
  * @FileName: MySQLSqlExpressionFactory.java

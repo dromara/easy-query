@@ -127,6 +127,10 @@ public class Main {
         easyQuery = new DefaultEasyQuery(jqdcRuntimeContext);
 
         {
+//            SysUserLogbyMonth sysUserLogbyMonth = easyQuery.queryable("select * from sys_user_logby_month_202103", SysUserLogbyMonth.class)
+//                    .firstOrNull();
+//            TestUserMysqlx sysUserLogbyMonth1 = easyQuery.queryable("select * from sys_user_logby_month_202103", SysUserLogbyMonth.class).select(TestUserMysqlx.class).leftJoin(TestUserMysql.class, (a, b) -> a.eq(b, TestUserMysqlx::getId, TestUserMysql::getId))
+//                    .where(o -> o.eq(TestUserMysqlx::getId, "123")).firstOrNull();
             TestUserMysqlx testUserMysqlx = easyQuery.queryable(SysUserLogbyMonth.class).select(TestUserMysqlx.class).leftJoin(TestUserMysql.class, (a, b) -> a.eq(b, TestUserMysqlx::getId, TestUserMysql::getId))
                     .where(o -> o.eq(TestUserMysqlx::getId, "123")).firstOrNull();
 
