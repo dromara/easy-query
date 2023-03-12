@@ -20,7 +20,7 @@ public class NameQueryFilter implements GlobalSelectInterceptorStrategy {
     }
 
     @Override
-    public String queryFilterName() {
+    public String interceptorName() {
         return "nameQueryFilter";
     }
 
