@@ -13,7 +13,6 @@
         <module>sql-core</module>
         <module>sql-mysql</module>
         <module>sql-test</module>
-        <module>sql-spring</module>
         <module>sql-springboot-starter</module>
         <module>samples</module>
     </modules>
