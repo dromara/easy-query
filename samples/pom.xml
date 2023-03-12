@@ -5,16 +5,22 @@
     <parent>
         <artifactId>easy-query-all</artifactId>
         <groupId>com.easy-query</groupId>
-        <version>0.0.1</version>
+        <version>0.0.8</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>samples</artifactId>
+    <packaging>pom</packaging>
+    <modules>
+        <module>springbootdemo</module>
+    </modules>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.install.skip>true</maven.install.skip>
+        <maven.deploy.skip>true</maven.deploy.skip>
     </properties>
     <dependencies>
 
@@ -33,6 +39,7 @@
     </dependencies>
     <build>
         <plugins>
+            <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-deploy-plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-deploy-plugin</artifactId>
@@ -43,5 +50,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>
