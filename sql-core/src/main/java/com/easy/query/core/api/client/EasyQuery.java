@@ -10,6 +10,8 @@ import com.easy.query.core.basic.jdbc.tx.Transaction;
 import com.easy.query.core.basic.api.insert.Insertable;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 /**
  *
@@ -20,6 +22,14 @@ import java.util.Collection;
  */
 public interface EasyQuery {
     EasyQueryRuntimeContext getRuntimeContext();
+    default  <T> List<T> sqlQuery(String sql,Class<T> clazz){
+        return sqlQuery(sql,clazz, Collections.emptyList());
+    }
+    <T> List<T> sqlQuery(String sql,Class<T> clazz,List<Object> parameters);
+    default long sqlExecute(String sql){
+        return sqlExecute(sql,Collections.emptyList());
+    }
+    long sqlExecute(String sql,List<Object> parameters);
    default  <T> Queryable<T> queryable(Class<T> clazz){
        return queryable(clazz,"t");
    }

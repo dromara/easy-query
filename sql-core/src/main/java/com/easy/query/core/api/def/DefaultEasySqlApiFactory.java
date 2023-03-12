@@ -3,6 +3,8 @@ package com.easy.query.core.api.def;
 import com.easy.query.core.abstraction.EasySqlApiFactory;
 import com.easy.query.core.basic.api.delete.EntityDeletable;
 import com.easy.query.core.basic.api.delete.ExpressionDeletable;
+import com.easy.query.core.basic.api.jdbc.DefaultEasyJDBCExecutor;
+import com.easy.query.core.basic.api.jdbc.EasyJDBCExecutor;
 import com.easy.query.core.basic.api.select.impl.EasyQueryable;
 import com.easy.query.core.basic.api.select.impl.EasyQueryable3;
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
@@ -47,6 +49,12 @@ public class DefaultEasySqlApiFactory implements EasySqlApiFactory {
     public DefaultEasySqlApiFactory(EasySqlExpressionFactory easySqlExpressionFactory){
         this.easySqlExpressionFactory = easySqlExpressionFactory;
     }
+
+    @Override
+    public EasyJDBCExecutor createJDBCExecutor(EasyQueryRuntimeContext runtimeContext) {
+        return new DefaultEasyJDBCExecutor(runtimeContext);
+    }
+
     @Override
     public <T> Queryable<T> createQueryable(Class<T> clazz, EasyQueryRuntimeContext runtimeContext,String alias) {
         SqlExpressionContext queryExpressionContext =easySqlExpressionFactory.createSqlExpressionContext(runtimeContext,alias);

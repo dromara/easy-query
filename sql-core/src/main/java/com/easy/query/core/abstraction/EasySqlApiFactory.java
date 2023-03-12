@@ -3,6 +3,7 @@ package com.easy.query.core.abstraction;
 import com.easy.query.core.basic.api.delete.EntityDeletable;
 import com.easy.query.core.basic.api.delete.ExpressionDeletable;
 import com.easy.query.core.basic.api.insert.Insertable;
+import com.easy.query.core.basic.api.jdbc.EasyJDBCExecutor;
 import com.easy.query.core.basic.api.select.Queryable;
 import com.easy.query.core.basic.api.select.Queryable2;
 import com.easy.query.core.basic.api.select.Queryable3;
@@ -22,6 +23,9 @@ import java.util.Collection;
  * @Created by xuejiaming
  */
 public interface EasySqlApiFactory {
+
+    EasyJDBCExecutor createJDBCExecutor(EasyQueryRuntimeContext runtimeContext);
+
     <T> Queryable<T> createQueryable(Class<T> clazz, EasyQueryRuntimeContext runtimeContext, String alias);
 
     <T> Queryable<T> cloneQueryable(Queryable<T> source);

@@ -12,6 +12,7 @@ import com.easy.query.core.basic.api.update.EntityUpdatable;
 import com.easy.query.core.basic.api.update.ExpressionUpdatable;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * @FileName: EasySqlQuery.java
@@ -31,6 +32,16 @@ public class DefaultEasyQuery implements EasyQuery {
     @Override
     public EasyQueryRuntimeContext getRuntimeContext() {
         return runtimeContext;
+    }
+
+    @Override
+    public <T> List<T> sqlQuery(String sql, Class<T> clazz, List<Object> parameters) {
+        return easySqlApiFactory.createJDBCExecutor(runtimeContext).sqlQuery(sql,clazz,parameters);
+    }
+
+    @Override
+    public long sqlExecute(String sql, List<Object> parameters) {
+        return easySqlApiFactory.createJDBCExecutor(runtimeContext).sqlExecute(sql,parameters);
     }
 
     @Override
