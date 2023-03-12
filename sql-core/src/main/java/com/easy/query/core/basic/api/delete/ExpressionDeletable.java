@@ -14,5 +14,5 @@ public interface ExpressionDeletable<T> extends Deletable<T, ExpressionDeletable
         return where(true,whereExpression);
     }
     ExpressionDeletable<T> where(boolean condition, SqlExpression<SqlPredicate<T>> whereExpression);
-    Deletable<T, ExpressionDeletable<T>> deleteById(Object id);
+    Deletable<T, ExpressionDeletable<T>> whereById(Object id);
 }

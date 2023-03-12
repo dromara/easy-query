@@ -73,7 +73,7 @@ public abstract   class AbstractExpressionDeletable<T> implements ExpressionDele
     }
 
     @Override
-    public Deletable<T, ExpressionDeletable<T>> deleteById(Object id) {
+    public Deletable<T, ExpressionDeletable<T>> whereById(Object id) {
 
         PredicateSegment where = sqlEntityDeleteExpression.getWhere();
         Collection<String> keyProperties = table.getEntityMetadata().getKeyProperties();

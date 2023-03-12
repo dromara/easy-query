@@ -78,7 +78,11 @@ public class EntityMetadata {
         PropertyDescriptor[] ps = getPropertyDescriptor();
         for (Field field : allFields) {
             String property = field.getName();
+            //未找到bean属性就直接忽略
             PropertyDescriptor propertyDescriptor = firstOrNull(ps, o -> Objects.equals(o.getName(), property));
+            if(propertyDescriptor==null){
+                continue;
+            }
             ColumnIgnore columnIgnore = field.getAnnotation(ColumnIgnore.class);
             if (columnIgnore != null) {
                 continue;

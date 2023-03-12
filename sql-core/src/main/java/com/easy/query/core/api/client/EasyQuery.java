@@ -20,19 +20,19 @@ import java.util.Collection;
  */
 public interface EasyQuery {
     EasyQueryRuntimeContext getRuntimeContext();
-    <T> Queryable<T> query(Class<T> clazz);
-    <T> Queryable<T> query(Class<T> clazz, String alias);
+    <T> Queryable<T> queryable(Class<T> clazz);
+    <T> Queryable<T> queryable(Class<T> clazz, String alias);
     default Transaction beginTransaction(){
         return beginTransaction(null);
     }
     Transaction beginTransaction(Integer isolationLevel);
 
-    <T> Insertable<T> insert(T entity);
-    <T> Insertable<T> insert(Collection<T> entities);
-    <T> ExpressionUpdatable<T> update(Class<T> entityClass);
-    <T> EntityUpdatable<T> update(T entity);
-    <T> EntityUpdatable<T> update(Collection<T> entities);
-    <T> EntityDeletable<T> delete(T entity);
-    <T> EntityDeletable<T> delete(Collection<T> entities);
-    <T> ExpressionDeletable<T> delete(Class<T> entityClass);
+    <T> Insertable<T> insertable(T entity);
+    <T> Insertable<T> insertable(Collection<T> entities);
+    <T> ExpressionUpdatable<T> updatable(Class<T> entityClass);
+    <T> EntityUpdatable<T> updatable(T entity);
+    <T> EntityUpdatable<T> updatable(Collection<T> entities);
+    <T> EntityDeletable<T> deletable(T entity);
+    <T> EntityDeletable<T> deletable(Collection<T> entities);
+    <T> ExpressionDeletable<T> deletable(Class<T> entityClass);
 }

@@ -34,12 +34,12 @@ public class DefaultEasyQuery implements EasyQuery {
     }
 
     @Override
-    public <T> Queryable<T> query(Class<T> clazz) {
+    public <T> Queryable<T> queryable(Class<T> clazz) {
         return easySqlApiFactory.createQueryable(clazz,runtimeContext);
     }
 
     @Override
-    public <T> Queryable<T> query(Class<T> clazz, String alias) {
+    public <T> Queryable<T> queryable(Class<T> clazz, String alias) {
         return easySqlApiFactory.createQueryable(clazz,runtimeContext,alias);
     }
     @Override
@@ -54,7 +54,7 @@ public class DefaultEasyQuery implements EasyQuery {
 //    }
 
     @Override
-    public <T> Insertable<T> insert(T entity) {
+    public <T> Insertable<T> insertable(T entity) {
         if(entity==null){
             return easySqlApiFactory.createEmptyInsertable(runtimeContext,null);
         }
@@ -62,7 +62,7 @@ public class DefaultEasyQuery implements EasyQuery {
     }
 
     @Override
-    public <T> Insertable<T> insert(Collection<T> entities) {
+    public <T> Insertable<T> insertable(Collection<T> entities) {
         if(entities==null||entities.isEmpty()){
             return easySqlApiFactory.createEmptyInsertable(runtimeContext,null);
         }
@@ -70,12 +70,12 @@ public class DefaultEasyQuery implements EasyQuery {
     }
 
     @Override
-    public <T> ExpressionUpdatable<T> update(Class<T> entityClass) {
+    public <T> ExpressionUpdatable<T> updatable(Class<T> entityClass) {
         return easySqlApiFactory.createExpressionUpdatable(entityClass,runtimeContext,null);
     }
 
     @Override
-    public <T> EntityUpdatable<T> update(T entity) {
+    public <T> EntityUpdatable<T> updatable(T entity) {
         if(entity==null){
             return easySqlApiFactory.createEmptyEntityUpdatable();
         }
@@ -83,7 +83,7 @@ public class DefaultEasyQuery implements EasyQuery {
     }
 
     @Override
-    public <T> EntityUpdatable<T> update(Collection<T> entities) {
+    public <T> EntityUpdatable<T> updatable(Collection<T> entities) {
         if(entities==null||entities.isEmpty()){
             return easySqlApiFactory.createEmptyEntityUpdatable();
         }
@@ -91,14 +91,14 @@ public class DefaultEasyQuery implements EasyQuery {
     }
 
     @Override
-    public <T> EntityDeletable<T> delete(T entity) {
+    public <T> EntityDeletable<T> deletable(T entity) {
         if(entity==null){
             return easySqlApiFactory.createEmptyEntityDeletable();
         }
         return easySqlApiFactory.createEntityDeletable(entity,runtimeContext,null);
     }
     @Override
-    public <T> EntityDeletable<T> delete(Collection<T> entities) {
+    public <T> EntityDeletable<T> deletable(Collection<T> entities) {
         if(entities==null||entities.isEmpty()){
             return easySqlApiFactory.createEmptyEntityDeletable();
         }
@@ -107,7 +107,7 @@ public class DefaultEasyQuery implements EasyQuery {
 
 
     @Override
-    public <T> ExpressionDeletable<T> delete(Class<T> entityClass) {
+    public <T> ExpressionDeletable<T> deletable(Class<T> entityClass) {
         return easySqlApiFactory.createExpressionDeletable(entityClass,runtimeContext,null);
     }
 }

@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
  */
 @Table("testuser")
 public class TestUserMysql {
+    private static final long serialVersionUID = 1L;
     @PrimaryKey
     @Column("Id")
     private String id;

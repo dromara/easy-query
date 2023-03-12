@@ -14,7 +14,7 @@ spring:
 
 logging:
   level:
-    org.easy.query.core: debug
+    com.easy.query.core: debug
 
 easy-query:
   enable: true
