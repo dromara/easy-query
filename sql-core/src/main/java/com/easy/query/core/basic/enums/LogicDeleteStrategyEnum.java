@@ -7,14 +7,35 @@ package com.easy.query.core.basic.enums;
  * @Created by xuejiaming
  */
 public enum LogicDeleteStrategyEnum {
+    /**
+     * 用户自定义
+     */
     CUSTOM("CUSTOM"),
-    BOOLEAN("BOOLEAN"),//TRUE FALSE
-    LONG_TIMESTAMP("LONG_TIMESTAMP"),//O OR NOT O
-    LOCAL_DATE_TIME("LOCAL_DATE_TIME"),//NULL OR NOT NULL
-    LOCAL_DATE("LOCAL_DATE");//NULL OR NOT NULL
+    /**
+     * TRUE:表示被删除 deleted
+     * FALSE:表示未被删除 not delete
+     */
+    BOOLEAN("BOOLEAN"),
+    /**
+     * 0:表示未被删除
+     * !=0:不等于0表示被删除
+     */
+    DELETE_LONG_TIMESTAMP("DELETE_LONG_TIMESTAMP"),
+    /**
+     * 删除时间
+     * null 表示未被删除
+     * not null 表示被删除
+     */
+    LOCAL_DATE_TIME("LOCAL_DATE_TIME"),
+    /**
+     * 删除日期
+     * null 表示未被删除
+     * not null 表示被删除
+     */
+    LOCAL_DATE("LOCAL_DATE");
     private final String strategy;
 
-    LogicDeleteStrategyEnum(String strategy){
+    LogicDeleteStrategyEnum(String strategy) {
 
         this.strategy = strategy;
     }

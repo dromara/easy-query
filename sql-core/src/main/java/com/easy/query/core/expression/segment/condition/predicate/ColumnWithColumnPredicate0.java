@@ -1,6 +1,7 @@
 package com.easy.query.core.expression.segment.condition.predicate;
 
 import com.easy.query.core.enums.SqlPredicateCompare;
+import com.easy.query.core.expression.segment.SqlEntitySegment;
 import com.easy.query.core.query.SqlEntityExpression;
 import com.easy.query.core.query.SqlEntityTableExpression;
 
@@ -10,7 +11,7 @@ import com.easy.query.core.query.SqlEntityTableExpression;
  * @Date: 2023/2/14 23:34
  * @Created by xuejiaming
  */
-public class ColumnWithColumnPredicate0 implements Predicate {
+public class ColumnWithColumnPredicate0 implements Predicate, SqlEntitySegment {
     private final SqlEntityTableExpression leftTable;
     private final String leftPropertyName;
     private final SqlEntityTableExpression rightTable;
@@ -32,5 +33,20 @@ public class ColumnWithColumnPredicate0 implements Predicate {
         String sqlColumnSegment1 = sqlEntityExpression.getSqlOwnerColumn(leftTable,leftPropertyName);
         String sqlColumnSegment2 = sqlEntityExpression.getSqlOwnerColumn(rightTable,rightPropertyName);
         return sqlColumnSegment1 +" "+ compare.getSql() + " "+sqlColumnSegment2;
+    }
+
+    @Override
+    public SqlEntityTableExpression getTable() {
+        return leftTable;
+    }
+
+    @Override
+    public String getPropertyName() {
+        return leftPropertyName;
+    }
+
+    @Override
+    public String getAlias() {
+        return null;
     }
 }

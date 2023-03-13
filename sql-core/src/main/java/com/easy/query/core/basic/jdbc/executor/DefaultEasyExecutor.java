@@ -21,7 +21,6 @@ import com.easy.query.core.util.ArrayUtil;
 import com.easy.query.core.util.ClassUtil;
 import com.easy.query.core.util.SQLUtil;
 import com.easy.query.core.util.StringUtil;
-import com.easy.query.core.util.*;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
@@ -40,13 +39,15 @@ import java.util.Map;
 public class DefaultEasyExecutor implements EasyExecutor {
     private static final Log log = LogFactory.getLog(DefaultEasyExecutor.class);
     private final boolean logDebug;
-    public DefaultEasyExecutor(){
-        logDebug=log.isDebugEnabled();
+
+    public DefaultEasyExecutor() {
+        logDebug = log.isDebugEnabled();
     }
+
     @Override
     public <T> long executeRows(ExecutorContext executorContext, String sql, List<SQLParameter> sqlParameters) {
 
-        if(logDebug){
+        if (logDebug) {
             log.debug("==> Preparing: " + sql);
             if (!sqlParameters.isEmpty()) {
                 log.debug("==> Parameters: " + SQLUtil.sqlParameterToString(sqlParameters));
@@ -62,12 +63,12 @@ public class DefaultEasyExecutor implements EasyExecutor {
             easyConnection = connectionManager.getEasyConnection();
             ps = createPreparedStatement(easyConnection.getConnection(), sql, sqlParameters, easyJdbcTypeHandlerManager);
             r = ps.executeUpdate();
-            if(logDebug){
+            if (logDebug) {
                 log.debug("<== Total: " + r);
             }
         } catch (SQLException e) {
-            log.error(sql,e);
-            throw new EasyQuerySQLException(sql,e);
+            log.error(sql, e);
+            throw new EasyQuerySQLException(sql, e);
         } finally {
             clear(executorContext, easyConnection, null, ps);
         }
@@ -76,10 +77,9 @@ public class DefaultEasyExecutor implements EasyExecutor {
 
     @Override
     public <T> long executeRows(ExecutorContext executorContext, String sql, List<T> entities, List<SQLParameter> sqlParameters) {
-        if(logDebug){
+        if (logDebug) {
             log.debug("==> Preparing: " + sql);
         }
-        boolean loggerDebugEnabled = log.isDebugEnabled();
         EasyQueryRuntimeContext runtimeContext = executorContext.getRuntimeContext();
         EasyConnectionManager connectionManager = runtimeContext.getConnectionManager();
         EasyJdbcTypeHandlerManager easyJdbcTypeHandlerManager = runtimeContext.getEasyJdbcTypeHandlerManager();
@@ -107,13 +107,13 @@ public class DefaultEasyExecutor implements EasyExecutor {
             }
             int[] rs = ps.executeBatch();
             r = ArrayUtil.sum(rs);
-if(logDebug){
-    log.debug("<== Total: " + r);
-}
+            if (logDebug) {
+                log.debug("<== Total: " + r);
+            }
             ps.clearBatch();
         } catch (SQLException e) {
-            log.error(sql,e);
-            throw new EasyQuerySQLException(sql,e);
+            log.error(sql, e);
+            throw new EasyQuerySQLException(sql, e);
         } finally {
             clear(executorContext, easyConnection, null, ps);
         }
@@ -122,7 +122,7 @@ if(logDebug){
 
     @Override
     public <T> long insert(ExecutorContext executorContext, String sql, List<T> entities, List<SQLParameter> sqlParameters) {
-        if(logDebug){
+        if (logDebug) {
             log.debug("==> Preparing: " + sql);
         }
         EasyQueryRuntimeContext runtimeContext = executorContext.getRuntimeContext();
@@ -152,12 +152,12 @@ if(logDebug){
             r = rs.length;
             ps.clearBatch();
 
-            if(logDebug){
+            if (logDebug) {
                 log.debug("<== Total: " + r);
             }
         } catch (SQLException e) {
-            log.error(sql,e);
-            throw new EasyQuerySQLException(sql,e);
+            log.error(sql, e);
+            throw new EasyQuerySQLException(sql, e);
         } finally {
             clear(executorContext, easyConnection, null, ps);
         }
@@ -192,7 +192,7 @@ if(logDebug){
     @Override
     public <TR> List<TR> query(ExecutorContext executorContext, Class<TR> clazz, String sql, List<SQLParameter> sqlParameters) {
 
-        if(logDebug){
+        if (logDebug) {
             log.debug("==> Preparing: " + sql);
             if (!sqlParameters.isEmpty()) {
                 log.debug("==> Parameters: " + SQLUtil.sqlParameterToString(sqlParameters));
@@ -211,12 +211,12 @@ if(logDebug){
             rs = ps.executeQuery();
             result = mapTo(executorContext, rs, clazz);
 
-            if(logDebug){
+            if (logDebug) {
                 log.debug("<== Total: " + result.size());
             }
         } catch (SQLException e) {
-            log.error(sql,e);
-            throw new EasyQuerySQLException(sql,e);
+            log.error(sql, e);
+            throw new EasyQuerySQLException(sql, e);
         } finally {
             clear(executorContext, easyConnection, rs, ps);
         }

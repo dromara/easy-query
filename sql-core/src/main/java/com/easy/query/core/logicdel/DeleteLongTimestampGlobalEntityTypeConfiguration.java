@@ -17,10 +17,10 @@ import java.util.Set;
  * @Date: 2023/3/6 22:45
  * @Created by xuejiaming
  */
-public class TimestampGlobalEntityTypeConfiguration extends AbstractGlobalLogicDeleteStrategy {
+public class DeleteLongTimestampGlobalEntityTypeConfiguration extends AbstractGlobalLogicDeleteStrategy {
     @Override
     public String getStrategy() {
-        return LogicDeleteStrategyEnum.LONG_TIMESTAMP.getStrategy();
+        return LogicDeleteStrategyEnum.DELETE_LONG_TIMESTAMP.getStrategy();
     }
 
     @Override

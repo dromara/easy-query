@@ -140,8 +140,7 @@ public abstract class EasySqlDeleteExpression extends AbstractSqlEntityExpressio
     private UpdateSetSqlBuilderSegment getUpdateSetSqlBuilderSegment(SqlEntityTableExpression table) {
         EntityMetadata entityMetadata = table.getEntityMetadata();
         boolean useLogicDelete = entityMetadata.enableLogicDelete() && sqlExpressionContext.isUseLogicDelete();
-        boolean useInterceptor = !entityMetadata.getDeleteInterceptors().isEmpty() && sqlExpressionContext.isUseInterceptor();
-        if (useLogicDelete||useInterceptor) {
+        if (useLogicDelete) {
             SqlExpression<SqlColumnSetter<?>> logicDeletedSqlExpression = table.getLogicDeletedSqlExpression();
             if (logicDeletedSqlExpression != null) {
                 EasyQueryLambdaFactory easyQueryLambdaFactory = getRuntimeContext().getEasyQueryLambdaFactory();

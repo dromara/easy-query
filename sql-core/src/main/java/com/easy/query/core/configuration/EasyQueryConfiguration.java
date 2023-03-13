@@ -8,7 +8,6 @@ import com.easy.query.core.basic.enums.LogicDeleteStrategyEnum;
 import com.easy.query.core.config.DefaultNameConversion;
 import com.easy.query.core.interceptor.GlobalInterceptorStrategy;
 import com.easy.query.core.logicdel.*;
-import com.easy.query.core.logicdel.*;
 import com.easy.query.core.util.ClassUtil;
 import com.easy.query.core.util.StringUtil;
 
@@ -23,7 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class EasyQueryConfiguration {
     private static final GlobalLogicDeleteStrategy BOOL_LOGIC_DELETE = new BoolGlobalEntityTypeConfiguration();
-    private static final GlobalLogicDeleteStrategy TIMESTAMP_LOGIC_DELETE = new TimestampGlobalEntityTypeConfiguration();
+    private static final GlobalLogicDeleteStrategy TIMESTAMP_LOGIC_DELETE = new DeleteLongTimestampGlobalEntityTypeConfiguration();
     private static final GlobalLogicDeleteStrategy LOCAL_DATE_TIME_LOGIC_DELETE = new LocalDateTimeGlobalEntityTypeConfiguration();
     private static final GlobalLogicDeleteStrategy LOCAL_DATE_LOGIC_DELETE = new LocalDateGlobalLogicDeleteStrategy();
 
@@ -112,7 +111,7 @@ public class EasyQueryConfiguration {
     public GlobalLogicDeleteStrategy getSysGlobalLogicDeleteStrategy(LogicDeleteStrategyEnum strategy) {
         if (Objects.equals(LogicDeleteStrategyEnum.BOOLEAN, strategy)) {
             return BOOL_LOGIC_DELETE;
-        } else if (Objects.equals(LogicDeleteStrategyEnum.LONG_TIMESTAMP, strategy)) {
+        } else if (Objects.equals(LogicDeleteStrategyEnum.DELETE_LONG_TIMESTAMP, strategy)) {
             return TIMESTAMP_LOGIC_DELETE;
         } else if (Objects.equals(LogicDeleteStrategyEnum.LOCAL_DATE_TIME, strategy)) {
             return LOCAL_DATE_TIME_LOGIC_DELETE;
