@@ -24,4 +24,10 @@ public class EasyQuerySQLException  extends RuntimeException{
     public String getSql() {
         return sql;
     }
+
+    @Override
+    public String getMessage() {
+        String message = super.getMessage();
+        return message==null?sql:(sql+":"+message);
+    }
 }
