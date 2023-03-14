@@ -1,6 +1,6 @@
 package com.easy.query.mysql.expression;
 
-import com.easy.query.core.abstraction.EasySqlExpressionFactory;
+import com.easy.query.core.abstraction.EasySQLExpressionFactory;
 import com.easy.query.core.expression.segment.SqlSegment;
 import com.easy.query.core.query.EasySqlQueryExpression;
 import com.easy.query.core.query.SqlEntityQueryExpression;
@@ -25,16 +25,23 @@ public class MySQLQueryExpression extends EasySqlQueryExpression {
     public SqlEntityQueryExpression cloneSqlQueryExpression() {
 
         SqlExpressionContext sqlExpressionContext = getSqlExpressionContext();
-        EasySqlExpressionFactory sqlExpressionFactory = getRuntimeContext().getSqlExpressionFactory();
+        EasySQLExpressionFactory sqlExpressionFactory = getRuntimeContext().getSqlExpressionFactory();
         MySQLQueryExpression sqlEntityQueryExpression = (MySQLQueryExpression) sqlExpressionFactory.createSqlEntityQueryExpression(sqlExpressionContext);
-        sqlEntityQueryExpression.where = super.where;
-        sqlEntityQueryExpression.group = super.group;
-        sqlEntityQueryExpression.having = super.having;
-        sqlEntityQueryExpression.order = super.order;
+        if(hasWhere()){
+            getWhere().copyTo(sqlEntityQueryExpression.getWhere());
+        }
+        if(hasGroup()){
+            getGroup().copyTo(sqlEntityQueryExpression.getGroup());
+        }
+        if(hasHaving()){
+            getHaving().copyTo(sqlEntityQueryExpression.getHaving());
+        }
+        if(hasOrder()){
+            getOrder().copyTo(sqlEntityQueryExpression.getOrder());
+        }
+        getProjects().copyTo(sqlEntityQueryExpression.getProjects());
         sqlEntityQueryExpression.offset = super.offset;
         sqlEntityQueryExpression.rows = super.rows;
-        List<SqlSegment> sqlSegments = super.projects.getSqlSegments();
-        sqlEntityQueryExpression.projects.getSqlSegments().addAll(sqlSegments);
         sqlEntityQueryExpression.tables.addAll(super.tables);
         return sqlEntityQueryExpression;
     }

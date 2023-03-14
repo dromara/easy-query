@@ -3,7 +3,7 @@ package com.easy.query.mysql;
 import com.easy.query.core.query.*;
 import com.easy.query.mysql.expression.MySQLInsertExpression;
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
-import com.easy.query.core.abstraction.EasySqlExpressionFactory;
+import com.easy.query.core.abstraction.EasySQLExpressionFactory;
 import com.easy.query.core.abstraction.metadata.EntityMetadata;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.mysql.expression.MySQLDeleteExpression;
@@ -16,7 +16,7 @@ import com.easy.query.mysql.expression.MySQLUpdateExpression;
  * @Date: 2023/3/4 22:55
  * @Created by xuejiaming
  */
-public class MySQLSqlExpressionFactory implements EasySqlExpressionFactory {
+public class MySQLSQLExpressionFactory implements EasySQLExpressionFactory {
     @Override
     public SqlExpressionContext createSqlExpressionContext(EasyQueryRuntimeContext runtimeContext, String alias) {
         return new EasySqlExpressionContext(runtimeContext,alias);

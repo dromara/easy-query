@@ -1,6 +1,7 @@
 package com.easy.query.core.expression.segment.builder;
 
 import com.easy.query.core.expression.segment.SqlSegment;
+import com.easy.query.core.expression.segment.condition.PredicateSegment;
 
 import java.util.List;
 
@@ -17,4 +18,5 @@ public interface SqlBuilderSegment extends SqlSegment {
    default boolean isNotEmpty(){
        return !isEmpty();
    }
+    void copyTo(SqlBuilderSegment predicateSegment);
 }

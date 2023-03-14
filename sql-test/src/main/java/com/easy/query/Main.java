@@ -6,6 +6,7 @@ import com.easy.query.core.abstraction.DefaultEasyQueryLambdaFactory;
 import com.easy.query.core.abstraction.DefaultEasyQueryRuntimeContext;
 import com.easy.query.core.abstraction.EasyQueryLambdaFactory;
 import com.easy.query.core.abstraction.EasySqlApiFactory;
+import com.easy.query.core.expression.parser.abstraction.internal.ColumnSelector;
 import com.easy.query.test.*;
 import com.easy.query.core.abstraction.metadata.EntityMetadataManager;
 import com.easy.query.core.api.pagination.PageResult;
@@ -27,7 +28,7 @@ import com.easy.query.core.enums.AggregatePredicateCompare;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.metadata.DefaultEntityMetadataManager;
-import com.easy.query.mysql.MySQLSqlExpressionFactory;
+import com.easy.query.mysql.MySQLSQLExpressionFactory;
 import com.easy.query.mysql.config.MySQLDialect;
 
 import javax.sql.DataSource;
@@ -117,7 +118,7 @@ public class Main {
 
         EntityMetadataManager entityMetadataManager = new DefaultEntityMetadataManager(configuration);
         EasyQueryLambdaFactory easyQueryLambdaFactory = new DefaultEasyQueryLambdaFactory();
-        MySQLSqlExpressionFactory mySQLSqlExpressionFactory = new MySQLSqlExpressionFactory();
+        MySQLSQLExpressionFactory mySQLSqlExpressionFactory = new MySQLSQLExpressionFactory();
         EasySqlApiFactory easyQueryableFactory = new DefaultEasySqlApiFactory(mySQLSqlExpressionFactory);
         DefaultEasyQueryRuntimeContext jqdcRuntimeContext = new DefaultEasyQueryRuntimeContext(configuration, entityMetadataManager, easyQueryLambdaFactory, connectionManager, defaultExecutor, jdbcTypeHandler, easyQueryableFactory, mySQLSqlExpressionFactory);
 
@@ -184,6 +185,7 @@ public class Main {
                             .like(TestUserMysql::getName, "1%")
                             .and(x -> x.like(TestUserMysql::getName, "123").or().eq(TestUserMysql::getAge, 1)
                             ));
+//            sql.where(o->o.isNotNull(TestUserMysql::getId));
             long count31 = easyQuery.queryable(SysUserLogbyMonth.class)
                     .innerJoin(sql,(a,b)->a.eq(b,SysUserLogbyMonth::getId,TestUserMysql::getId))
                     .where(o -> o.eq(SysUserLogbyMonth::getId, "119")).select(o -> o.column(SysUserLogbyMonth::getId)).count();

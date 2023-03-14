@@ -29,4 +29,9 @@ public abstract class AbstractSqlBuilderSegment implements SqlBuilderSegment {
     public boolean isEmpty() {
         return sqlSegments.isEmpty();
     }
+
+    @Override
+    public void copyTo(SqlBuilderSegment predicateSegment) {
+        predicateSegment.getSqlSegments().addAll(sqlSegments);
+    }
 }

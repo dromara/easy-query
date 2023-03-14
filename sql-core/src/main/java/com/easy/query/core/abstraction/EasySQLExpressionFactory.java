@@ -3,7 +3,6 @@ package com.easy.query.core.abstraction;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.query.*;
 import com.easy.query.core.abstraction.metadata.EntityMetadata;
-import com.easy.query.core.query.*;
 
 /**
  * @FileName: EasySqlExpressionFactory.java
@@ -11,7 +10,7 @@ import com.easy.query.core.query.*;
  * @Date: 2023/3/4 22:43
  * @Created by xuejiaming
  */
-public interface EasySqlExpressionFactory {
+public interface EasySQLExpressionFactory {
     SqlExpressionContext createSqlExpressionContext(EasyQueryRuntimeContext runtimeContext, String alias);
     SqlEntityTableExpression createSqlEntityTableExpression(EntityMetadata entityMetadata, int index, String alias, MultiTableTypeEnum multiTableType);
     SqlEntityTableExpression createSqlAnonymousEntityTableExpression(EntityMetadata entityMetadata, int index, String alias, MultiTableTypeEnum multiTableType, SqlEntityQueryExpression sqlEntityQueryExpression);

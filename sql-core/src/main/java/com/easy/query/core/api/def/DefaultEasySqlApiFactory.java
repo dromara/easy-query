@@ -8,12 +8,11 @@ import com.easy.query.core.basic.api.jdbc.EasyJDBCExecutor;
 import com.easy.query.core.basic.api.select.impl.EasyQueryable;
 import com.easy.query.core.basic.api.select.impl.EasyQueryable3;
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
-import com.easy.query.core.abstraction.EasySqlExpressionFactory;
+import com.easy.query.core.abstraction.EasySQLExpressionFactory;
 import com.easy.query.core.abstraction.metadata.EntityMetadata;
 import com.easy.query.core.basic.api.update.EntityUpdatable;
 import com.easy.query.core.basic.api.update.ExpressionUpdatable;
 import com.easy.query.core.query.*;
-import com.easy.query.core.basic.api.delete.*;
 import com.easy.query.core.basic.api.delete.impl.EasyEmptyEntityDeletable;
 import com.easy.query.core.basic.api.delete.impl.EasyEntityDeletable;
 import com.easy.query.core.basic.api.delete.impl.EasyExpressionDeletable;
@@ -26,12 +25,10 @@ import com.easy.query.core.basic.api.select.impl.EasyQueryable2;
 import com.easy.query.core.basic.api.select.Queryable;
 import com.easy.query.core.basic.api.select.Queryable2;
 import com.easy.query.core.basic.api.select.impl.EasyQueryable4;
-import com.easy.query.core.basic.api.update.*;
 import com.easy.query.core.basic.api.update.impl.EasyEmptyEntityUpdatable;
 import com.easy.query.core.basic.api.update.impl.EasyEntityUpdatable;
 import com.easy.query.core.basic.api.update.impl.EasyExpressionUpdatable;
 import com.easy.query.core.enums.MultiTableTypeEnum;
-import com.easy.query.core.query.*;
 import com.easy.query.core.util.EasyUtil;
 
 import java.util.Collection;
@@ -44,9 +41,9 @@ import java.util.Collections;
  * @Created by xuejiaming
  */
 public class DefaultEasySqlApiFactory implements EasySqlApiFactory {
-    private final EasySqlExpressionFactory easySqlExpressionFactory;
+    private final EasySQLExpressionFactory easySqlExpressionFactory;
 
-    public DefaultEasySqlApiFactory(EasySqlExpressionFactory easySqlExpressionFactory){
+    public DefaultEasySqlApiFactory(EasySQLExpressionFactory easySqlExpressionFactory){
         this.easySqlExpressionFactory = easySqlExpressionFactory;
     }
 

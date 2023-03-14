@@ -17,7 +17,7 @@ import com.easy.query.core.interceptor.GlobalInterceptorStrategy;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.logicdel.GlobalLogicDeleteStrategy;
 import com.easy.query.core.metadata.DefaultEntityMetadataManager;
-import com.easy.query.mysql.MySQLSqlExpressionFactory;
+import com.easy.query.mysql.MySQLSQLExpressionFactory;
 import com.easy.query.mysql.config.MySQLDialect;
 import com.easy.query.sql.starter.config.EasyQueryProperties;
 import com.easy.query.sql.starter.logging.Slf4jImpl;
@@ -96,12 +96,12 @@ public class EasyQueryStarterAutoConfiguration {
     }
 
     @Bean
-    public EasySqlExpressionFactory easySqlExpressionFactory() {
-        return new MySQLSqlExpressionFactory();
+    public EasySQLExpressionFactory easySqlExpressionFactory() {
+        return new MySQLSQLExpressionFactory();
     }
 
     @Bean
-    public EasySqlApiFactory easySqlApiFactory(EasySqlExpressionFactory easySqlExpressionFactory) {
+    public EasySqlApiFactory easySqlApiFactory(EasySQLExpressionFactory easySqlExpressionFactory) {
         return new DefaultEasySqlApiFactory(easySqlExpressionFactory);
     }
 
@@ -113,7 +113,7 @@ public class EasyQueryStarterAutoConfiguration {
                                                            EasyExecutor easyExecutor,
                                                            EasyJdbcTypeHandlerManager easyJdbcTypeHandler,
                                                            EasySqlApiFactory easyQueryableFactory,
-                                                           EasySqlExpressionFactory easySqlExpressionFactory) {
+                                                           EasySQLExpressionFactory easySqlExpressionFactory) {
         return new DefaultEasyQueryRuntimeContext(
                 easyQueryConfiguration,
                 entityMetadataManager,

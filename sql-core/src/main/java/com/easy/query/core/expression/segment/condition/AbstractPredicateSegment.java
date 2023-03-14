@@ -4,9 +4,7 @@ import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.segment.condition.predicate.Predicate;
 import com.easy.query.core.util.StringUtil;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * @FileName: PredicateSegment.java
@@ -17,6 +15,7 @@ import java.util.Objects;
 public class AbstractPredicateSegment implements PredicateSegment {
     private List<PredicateSegment> children;
     private Predicate predicate;
+    private Map<Class<?>, Set<String>> entityProperties;
     private final boolean root;
 
     public boolean isEmpty() {
@@ -60,18 +59,41 @@ public class AbstractPredicateSegment implements PredicateSegment {
         children.add(predicateSegment);
     }
 
+//    @Override
+//    public boolean contains(Class<?> entityClass,String propertyName) {
+//        if (isPredicate()) {
+//            return Objects.equals(predicate.getPropertyName(), propertyName);
+//        } else {
+//            for (PredicateSegment child : children) {
+//                if(child.contains(propertyName)){
+//                    return true;
+//                }
+//            }
+//        }
+//        return false;
+//    }
+
     @Override
-    public boolean contains(String propertyName) {
+    public Map<Class<?>, Set<String>> getEntityProperties() {
+        if(entityProperties==null){
+            entityProperties= new HashMap<>();
+            extractEntitySegment(entityProperties);
+        }
+
+        return entityProperties;
+    }
+
+    protected void extractEntitySegment(Map<Class<?>,Set<String>> entityProperties){
         if (isPredicate()) {
-            return Objects.equals(predicate.getPropertyName(), propertyName);
+            Set<String> propertySet = entityProperties.computeIfAbsent(predicate.getTable().entityClass(), key -> new HashSet<>());
+            propertySet.add(predicate.getPropertyName());
         } else {
-            for (PredicateSegment child : children) {
-                if(child.contains(propertyName)){
-                    return true;
+            if(children!=null){
+                for (PredicateSegment child : children) {
+                    ((AbstractPredicateSegment)child).extractEntitySegment(entityProperties);
                 }
             }
         }
-        return false;
     }
 
     @Override
@@ -79,15 +101,18 @@ public class AbstractPredicateSegment implements PredicateSegment {
         if (isPredicate()) {
             predicateSegment.setPredicate(predicate);
         } else {
-            for (PredicateSegment child : children) {
-                if (child instanceof AndPredicateSegment) {
-                    AndPredicateSegment andPredicateSegment = new AndPredicateSegment();
-                    predicateSegment.addPredicateSegment(andPredicateSegment);
-                    child.copyTo(andPredicateSegment);
-                } else if (child instanceof OrPredicateSegment) {
-                    OrPredicateSegment orPredicateSegment = new OrPredicateSegment();
-                    predicateSegment.addPredicateSegment(orPredicateSegment);
-                    child.copyTo(orPredicateSegment);
+            if(children!=null){
+
+                for (PredicateSegment child : children) {
+                    if (child instanceof AndPredicateSegment) {
+                        AndPredicateSegment andPredicateSegment = new AndPredicateSegment();
+                        predicateSegment.addPredicateSegment(andPredicateSegment);
+                        child.copyTo(andPredicateSegment);
+                    } else if (child instanceof OrPredicateSegment) {
+                        OrPredicateSegment orPredicateSegment = new OrPredicateSegment();
+                        predicateSegment.addPredicateSegment(orPredicateSegment);
+                        child.copyTo(orPredicateSegment);
+                    }
                 }
             }
         }
@@ -99,30 +124,33 @@ public class AbstractPredicateSegment implements PredicateSegment {
             return predicate.toSql();
         } else {
             StringBuilder sql = new StringBuilder();
-            boolean allAnd = true;
-            boolean allOr = true;
-            for (PredicateSegment child : children) {
-                if (child instanceof AndPredicateSegment) {
-                    allOr = false;
-                    if (sql.length() == 0) {
-                        sql.append(child.toSql());
-                    } else {
-                        sql.append(AndPredicateSegment.AND).append(child.toSql());
-                    }
-                } else if (child instanceof OrPredicateSegment) {
-                    allAnd = false;
-                    if (sql.length() == 0) {
-                        sql.append(child.toSql());
-                    } else {
-                        sql.append(OrPredicateSegment.OR).append(child.toSql());
+            if(children!=null){
+                boolean allAnd = true;
+                boolean allOr = true;
+
+                for (PredicateSegment child : children) {
+                    if (child instanceof AndPredicateSegment) {
+                        allOr = false;
+                        if (sql.length() == 0) {
+                            sql.append(child.toSql());
+                        } else {
+                            sql.append(AndPredicateSegment.AND).append(child.toSql());
+                        }
+                    } else if (child instanceof OrPredicateSegment) {
+                        allAnd = false;
+                        if (sql.length() == 0) {
+                            sql.append(child.toSql());
+                        } else {
+                            sql.append(OrPredicateSegment.OR).append(child.toSql());
+                        }
                     }
                 }
-            }
-            if (sql.length() != 0) {
-                if (root && (allAnd || allOr)) {
-                    return sql.toString();
-                } else {
-                    return "(" + sql + ")";
+                if (sql.length() != 0) {
+                    if (root && (allAnd || allOr)) {
+                        return sql.toString();
+                    } else {
+                        return "(" + sql + ")";
+                    }
                 }
             }
             return StringUtil.EMPTY;

@@ -99,6 +99,7 @@ public class DefaultSqlPredicate<T1> implements SqlPredicate<T1> {
         }
         return this;
     }
+
     @Override
     public SqlPredicate<T1> notLike(boolean condition, Property<T1, ?> column, Object val) {
         if (condition) {
@@ -155,7 +156,7 @@ public class DefaultSqlPredicate<T1> implements SqlPredicate<T1> {
         if (condition) {
             SqlEntityTableExpression table = sqlEntityExpression.getTable(getIndex());
             String propertyName = table.getPropertyName(column);
-            nextPredicateSegment.setPredicate(new ColumnCollectionPredicate0(table, propertyName,collection, SqlPredicateCompareEnum.IN, sqlEntityExpression));
+            nextPredicateSegment.setPredicate(new ColumnCollectionPredicate0(table, propertyName, collection, SqlPredicateCompareEnum.IN, sqlEntityExpression));
             nextAnd();
         }
         return this;
@@ -166,7 +167,7 @@ public class DefaultSqlPredicate<T1> implements SqlPredicate<T1> {
         if (condition) {
             SqlEntityTableExpression table = sqlEntityExpression.getTable(getIndex());
             String propertyName = table.getPropertyName(column);
-            nextPredicateSegment.setPredicate(new ColumnCollectionPredicate0(table, propertyName,collection, SqlPredicateCompareEnum.NOT_IN, sqlEntityExpression));
+            nextPredicateSegment.setPredicate(new ColumnCollectionPredicate0(table, propertyName, collection, SqlPredicateCompareEnum.NOT_IN, sqlEntityExpression));
             nextAnd();
         }
         return this;
@@ -208,9 +209,10 @@ public class DefaultSqlPredicate<T1> implements SqlPredicate<T1> {
     @Override
     public SqlPredicate<T1> and(boolean condition, SqlExpression<SqlPredicate<T1>> predicateSqlExpression) {
         if (condition) {
-            this.rootPredicateSegment.addPredicateSegment(this.nextPredicateSegment);
+            this.nextPredicateSegment = new AndPredicateSegment();
             SqlPredicate<T1> sqlPredicate = sqlEntityExpression.getRuntimeContext().getEasyQueryLambdaFactory().createSqlPredicate(index, sqlEntityExpression, this.nextPredicateSegment);
             predicateSqlExpression.apply(sqlPredicate);
+            nextAnd();
         }
         return this;
     }
@@ -227,9 +229,9 @@ public class DefaultSqlPredicate<T1> implements SqlPredicate<T1> {
     public SqlPredicate<T1> or(boolean condition, SqlExpression<SqlPredicate<T1>> predicateSqlExpression) {
         if (condition) {
             this.nextPredicateSegment = new OrPredicateSegment();
-            this.rootPredicateSegment.addPredicateSegment(this.nextPredicateSegment);
             SqlPredicate<T1> sqlPredicate = sqlEntityExpression.getRuntimeContext().getEasyQueryLambdaFactory().createSqlPredicate(index, sqlEntityExpression, this.nextPredicateSegment);
             predicateSqlExpression.apply(sqlPredicate);
+            nextAnd();
         }
         return this;
     }

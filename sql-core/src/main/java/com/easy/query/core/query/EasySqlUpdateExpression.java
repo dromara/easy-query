@@ -132,26 +132,28 @@ public abstract class EasySqlUpdateExpression extends AbstractSqlEntityExpressio
         SqlEntityTableExpression table = getTable(0);
         EntityMetadata entityMetadata = table.getEntityMetadata();
 
-        PredicateSegment wherePredicate = getWhere();
-//如果没有指定where那么就使用主键作为更新条件
-        if (!hasWhereColumns()) {
-            Collection<String> keyProperties = entityMetadata.getKeyProperties();
-            if (keyProperties.isEmpty()) {
-                throw new EasyQueryException("对象:" + ClassUtil.getSimpleName(entityMetadata.getEntityClass()) + " 未找到主键信息");
-            }
-            for (String keyProperty : keyProperties) {
-                AndPredicateSegment andPredicateSegment = new AndPredicateSegment(new ColumnPropertyPredicate(table, keyProperty, this));
-                wherePredicate.addPredicateSegment(andPredicateSegment);
-            }
-        }
-        else {
-            for (SqlSegment sqlSegment : whereColumns.getSqlSegments()) {
-                if (!(sqlSegment instanceof SqlEntitySegment)) {
-                    throw new EasyQueryException("where 表达式片段不是SqlEntitySegment");
+        PredicateSegment wherePredicate =  getWhere();
+//如果没有指定where那么就使用主键作为更新条件只构建一次where
+        if(!hasWhere()){
+            if (!hasWhereColumns()) {
+                Collection<String> keyProperties = entityMetadata.getKeyProperties();
+                if (keyProperties.isEmpty()) {
+                    throw new EasyQueryException("entity:" + ClassUtil.getSimpleName(entityMetadata.getEntityClass()) + " not found primary key properties");
                 }
-                SqlEntitySegment sqlEntitySegment = (SqlEntitySegment) sqlSegment;
-                AndPredicateSegment andPredicateSegment = new AndPredicateSegment(new ColumnPropertyPredicate(table, sqlEntitySegment.getPropertyName(), this));
-                wherePredicate.addPredicateSegment(andPredicateSegment);
+                for (String keyProperty : keyProperties) {
+                    AndPredicateSegment andPredicateSegment = new AndPredicateSegment(new ColumnPropertyPredicate(table, keyProperty, this));
+                    wherePredicate.addPredicateSegment(andPredicateSegment);
+                }
+            }
+            else {
+                for (SqlSegment sqlSegment : whereColumns.getSqlSegments()) {
+                    if (!(sqlSegment instanceof SqlEntitySegment)) {
+                        throw new EasyQueryException("where 表达式片段不是SqlEntitySegment");
+                    }
+                    SqlEntitySegment sqlEntitySegment = (SqlEntitySegment) sqlSegment;
+                    AndPredicateSegment andPredicateSegment = new AndPredicateSegment(new ColumnPropertyPredicate(table, sqlEntitySegment.getPropertyName(), this));
+                    wherePredicate.addPredicateSegment(andPredicateSegment);
+                }
             }
         }
         if (wherePredicate.isEmpty()) {
@@ -163,6 +165,7 @@ public abstract class EasySqlUpdateExpression extends AbstractSqlEntityExpressio
         //如果用户没有指定set的列,那么就是set所有列,并且要去掉主键部分
 
         if (!hasSetColumns()) {
+            Class<?> entityClass = table.entityClass();
             EasyQueryRuntimeContext runtimeContext = getRuntimeContext();
             EasyQueryLambdaFactory easyQueryLambdaFactory = runtimeContext.getEasyQueryLambdaFactory();
             SqlExpression<SqlColumnSelector<?>> selectExpression = ColumnSelector::columnAll;
@@ -172,7 +175,7 @@ public abstract class EasySqlUpdateExpression extends AbstractSqlEntityExpressio
             List<SqlSegment> sqlSegments = getSetColumns().getSqlSegments();
             sqlSegments.removeIf(o -> {
                 String propertyName = ((SqlEntitySegment) o).getPropertyName();
-                return sqlWhere.contains(propertyName);
+                return sqlWhere.contains(entityClass,propertyName);
             });
         }
 
