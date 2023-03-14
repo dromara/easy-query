@@ -17,7 +17,7 @@ import java.util.Set;
  * @Date: 2023/3/6 22:45
  * @Created by xuejiaming
  */
-public class BoolGlobalEntityTypeConfiguration extends AbstractGlobalLogicDeleteStrategy {
+public class BooleanGlobalEntityTypeConfiguration extends AbstractGlobalLogicDeleteStrategy {
     @Override
     public String getStrategy() {
         return LogicDeleteStrategyEnum.BOOLEAN.getStrategy();

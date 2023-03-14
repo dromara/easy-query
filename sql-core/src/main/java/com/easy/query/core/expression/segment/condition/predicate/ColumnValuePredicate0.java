@@ -12,7 +12,7 @@ import com.easy.query.core.query.SqlEntityTableExpression;
  * @Date: 2023/2/14 23:34
  * @Created by xuejiaming
  */
-public class ColumnValuePredicate0 implements Predicate, SqlEntitySegment {
+public class ColumnValuePredicate0 implements Predicate {
     private final SqlEntityTableExpression table;
     private final String propertyName;
     private final Object val;
@@ -44,8 +44,4 @@ public class ColumnValuePredicate0 implements Predicate, SqlEntitySegment {
         return propertyName;
     }
 
-    @Override
-    public String getAlias() {
-        return null;
-    }
 }

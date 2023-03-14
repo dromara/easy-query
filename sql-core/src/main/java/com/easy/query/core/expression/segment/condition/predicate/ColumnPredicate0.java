@@ -28,4 +28,14 @@ public class ColumnPredicate0 implements Predicate {
         String sqlColumnSegment = sqlEntityExpression.getSqlOwnerColumn(table,propertyName);
         return sqlColumnSegment +" "+ compare.getSql();
     }
+
+    @Override
+    public SqlEntityTableExpression getTable() {
+        return table;
+    }
+
+    @Override
+    public String getPropertyName() {
+        return propertyName;
+    }
 }

@@ -124,19 +124,10 @@ public class EntityMetadata {
                 LogicDelete logicDelete = field.getAnnotation(LogicDelete.class);
                 if (logicDelete != null) {
                     LogicDeleteStrategyEnum strategy = logicDelete.strategy();
-                    if (Objects.equals(LogicDeleteStrategyEnum.CUSTOM, strategy)) {//使用自定义
-                        String strategyName = logicDelete.strategyName();
-                        if (StringUtil.isNotBlank(strategyName)) {
-                            GlobalLogicDeleteStrategy globalLogicDeleteStrategy = configuration.getGlobalLogicDeleteStrategy(strategyName);
-                            if (globalLogicDeleteStrategy != null) {
-                                globalLogicDeleteStrategy.configure(this, property, field.getType());
-                            }
-                        }
-                    } else {//使用系统默认的
-                        GlobalLogicDeleteStrategy sysGlobalLogicDeleteStrategy = configuration.getSysGlobalLogicDeleteStrategy(strategy);
-                        if (sysGlobalLogicDeleteStrategy != null) {
-                            sysGlobalLogicDeleteStrategy.configure(this, property, field.getType());
-                        }
+                    //获取系统逻辑删除
+                    GlobalLogicDeleteStrategy sysGlobalLogicDeleteStrategy = configuration.getSysGlobalLogicDeleteStrategy(strategy);
+                    if (sysGlobalLogicDeleteStrategy != null) {
+                        sysGlobalLogicDeleteStrategy.configure(this, property, field.getType());
                     }
                 }
             }

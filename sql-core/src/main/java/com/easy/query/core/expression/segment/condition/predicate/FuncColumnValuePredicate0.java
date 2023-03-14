@@ -37,4 +37,14 @@ public class FuncColumnValuePredicate0 implements Predicate {
         String sqlColumnSegment = sqlEntityExpression.getSqlOwnerColumn(table,propertyName);
         return func.getFuncColumn(sqlColumnSegment) +" "+ compare.getSql() + " ?";
     }
+
+    @Override
+    public SqlEntityTableExpression getTable() {
+        return table;
+    }
+
+    @Override
+    public String getPropertyName() {
+        return propertyName;
+    }
 }

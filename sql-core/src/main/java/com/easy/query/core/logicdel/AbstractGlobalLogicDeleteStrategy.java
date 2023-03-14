@@ -32,7 +32,7 @@ public abstract class AbstractGlobalLogicDeleteStrategy implements GlobalLogicDe
         Property<?, ?> lambdaProperty = EasyUtil.getLambdaProperty(entityMetadata.getEntityClass(), propertyName, propertyType);
         SqlExpression<SqlPredicate<?>> queryFilterExpression = getQueryFilterExpression(entityMetadata,lambdaProperty);
         SqlExpression<SqlColumnSetter<?>> deletedSqlExpression = getDeletedSqlExpression(entityMetadata,lambdaProperty);
-        entityMetadata.setLogicDeleteMetadata(new LogicDeleteMetadata(queryFilterExpression, deletedSqlExpression));
+        entityMetadata.setLogicDeleteMetadata(new LogicDeleteMetadata(propertyName,queryFilterExpression, deletedSqlExpression));
     }
     protected abstract SqlExpression<SqlPredicate<?>> getQueryFilterExpression(EntityMetadata entityMetadata,Property lambdaProperty);
     protected abstract SqlExpression<SqlColumnSetter<?>> getDeletedSqlExpression(EntityMetadata entityMetadata,Property lambdaProperty);

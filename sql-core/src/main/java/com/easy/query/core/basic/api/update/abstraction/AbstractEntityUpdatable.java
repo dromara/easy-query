@@ -87,39 +87,6 @@ public abstract class AbstractEntityUpdatable<T> implements EntityUpdatable<T> {
     }
     @Override
     public String toSql() {
-//如果没有指定where那么就使用主键作为更新条件
-        if (!sqlEntityUpdateExpression.hasWhereColumns()) {
-            SqlBuilderSegment whereColumns = sqlEntityUpdateExpression.getWhereColumns();
-            EntityMetadata entityMetadata = table.getEntityMetadata();
-            Collection<String> keyProperties = entityMetadata.getKeyProperties();
-            if (keyProperties.isEmpty()) {
-                throw new EasyQueryException("对象:" + ClassUtil.getSimpleName(entityMetadata.getEntityClass()) + " 未找到主键信息");
-            }
-            for (String keyProperty : keyProperties) {
-                whereColumns.append(new ColumnPropertyPredicate(table, keyProperty, sqlEntityUpdateExpression));
-            }
-        }
-        //如果用户没有指定set的列,那么就是set所有列,并且要去掉主键部分
-        if (sqlEntityUpdateExpression.getSetColumns().isEmpty()) {
-            EasyQueryRuntimeContext runtimeContext = sqlEntityUpdateExpression.getRuntimeContext();
-            EasyQueryLambdaFactory easyQueryLambdaFactory = runtimeContext.getEasyQueryLambdaFactory();
-            SqlExpression<SqlColumnSelector<?>> selectExpression = ColumnSelector::columnAll;
-            SqlColumnSelector<?> sqlColumnSetter = easyQueryLambdaFactory.createSqlColumnSetSelector(table.getIndex(), sqlEntityUpdateExpression, sqlEntityUpdateExpression.getSetColumns());
-            selectExpression.apply(sqlColumnSetter);//获取set的值
-            //非手动指定的那么需要移除where的那一部分
-            List<SqlSegment> sqlSegments = sqlEntityUpdateExpression.getSetColumns().getSqlSegments();
-            List<SqlSegment> whereSqlSegments = sqlEntityUpdateExpression.getWhereColumns().getSqlSegments();
-            HashSet<String> whereProperties = new HashSet<>(whereSqlSegments.size());
-            for (SqlSegment sqlSegment : whereSqlSegments) {
-                whereProperties.add(((SqlEntitySegment) sqlSegment).getPropertyName());
-            }
-
-//                EntityMetadata entityMetadata = table.getEntityMetadata();
-            sqlSegments.removeIf(o -> {
-                String propertyName = ((SqlEntitySegment) o).getPropertyName();
-                return whereProperties.contains(propertyName);
-            });
-        }
         return toInternalSql();
     }
     protected abstract String toInternalSql();

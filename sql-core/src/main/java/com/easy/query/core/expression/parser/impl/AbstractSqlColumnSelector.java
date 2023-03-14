@@ -4,6 +4,7 @@ import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.parser.abstraction.internal.ColumnSelector;
 import com.easy.query.core.expression.segment.ColumnSegment;
+import com.easy.query.core.expression.segment.SqlEntityAliasSegment;
 import com.easy.query.core.expression.segment.SqlEntitySegment;
 import com.easy.query.core.expression.segment.SqlSegment;
 import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
@@ -70,8 +71,8 @@ public class AbstractSqlColumnSelector<T1, TChain> implements ColumnSelector<T1,
             SqlEntityQueryExpression sqlEntityQueryExpression = ((AnonymousEntityTableExpression) table).getSqlEntityQueryExpression();
             List<SqlSegment> sqlSegments = sqlEntityQueryExpression.getProjects().getSqlSegments();
             for (SqlSegment sqlSegment : sqlSegments) {
-                if (sqlSegment instanceof SqlEntitySegment) {
-                    String propertyName = EasyUtil.getAnonymousColumnName((SqlEntitySegment) sqlSegment);
+                if (sqlSegment instanceof SqlEntityAliasSegment) {
+                    String propertyName = EasyUtil.getAnonymousColumnName((SqlEntityAliasSegment) sqlSegment);
                     sqlSegmentBuilder.append(new ColumnSegment(table, propertyName, sqlEntityExpression));
                 } else {
                     throw new EasyQueryException("columnAll函数无法获取指定列" + ClassUtil.getInstanceSimpleName(sqlSegment));

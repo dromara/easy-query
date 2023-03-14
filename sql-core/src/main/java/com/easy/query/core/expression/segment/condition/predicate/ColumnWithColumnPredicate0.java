@@ -11,7 +11,7 @@ import com.easy.query.core.query.SqlEntityTableExpression;
  * @Date: 2023/2/14 23:34
  * @Created by xuejiaming
  */
-public class ColumnWithColumnPredicate0 implements Predicate, SqlEntitySegment {
+public class ColumnWithColumnPredicate0 implements Predicate {
     private final SqlEntityTableExpression leftTable;
     private final String leftPropertyName;
     private final SqlEntityTableExpression rightTable;
@@ -45,8 +45,4 @@ public class ColumnWithColumnPredicate0 implements Predicate, SqlEntitySegment {
         return leftPropertyName;
     }
 
-    @Override
-    public String getAlias() {
-        return null;
-    }
 }

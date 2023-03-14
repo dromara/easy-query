@@ -2,6 +2,7 @@ package com.easy.query.core.util;
 
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.lambda.Property;
+import com.easy.query.core.expression.segment.SqlEntityAliasSegment;
 import com.easy.query.core.expression.segment.SqlEntitySegment;
 import com.easy.query.core.query.SqlEntityQueryExpression;
 import com.easy.query.core.query.SqlEntityTableExpression;
@@ -47,7 +48,7 @@ public class EasyUtil {
     public static int getNextTableIndex(SqlEntityQueryExpression sqlEntityExpression){
         return sqlEntityExpression.getTables().size();
     }
-    public static String getAnonymousColumnName(SqlEntitySegment sqlEntityProject){
+    public static String getAnonymousColumnName(SqlEntityAliasSegment sqlEntityProject){
         String alias = sqlEntityProject.getAlias();
         if(StringUtil.isBlank(alias)){
             return sqlEntityProject.getTable().getColumnName(sqlEntityProject.getPropertyName());

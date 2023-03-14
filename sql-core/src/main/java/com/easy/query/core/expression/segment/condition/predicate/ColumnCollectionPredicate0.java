@@ -57,4 +57,14 @@ public class ColumnCollectionPredicate0 implements Predicate {
             return sql.toString();
         }
     }
+
+    @Override
+    public SqlEntityTableExpression getTable() {
+        return table;
+    }
+
+    @Override
+    public String getPropertyName() {
+        return propertyName;
+    }
 }

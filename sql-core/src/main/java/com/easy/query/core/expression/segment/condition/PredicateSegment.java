@@ -18,4 +18,7 @@ public interface PredicateSegment extends SqlSegment {
      void setPredicate(Predicate predicate);
 
      void addPredicateSegment(PredicateSegment predicateSegment);
+     boolean contains(String propertyName);
+     void copyTo(PredicateSegment predicateSegment);
+
 }

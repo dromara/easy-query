@@ -12,7 +12,7 @@ import com.easy.query.core.query.SqlEntityTableExpression;
  * @Date: 2023/2/14 23:34
  * @Created by xuejiaming
  */
-public class ColumnWithSelfPredicate implements Predicate, SqlEntitySegment {
+public class ColumnWithSelfPredicate implements Predicate {
     private static final String INCREMENT="+?";
     private static final String DECREMENT="-?";
     private final SqlEntityTableExpression table;
@@ -46,10 +46,5 @@ public class ColumnWithSelfPredicate implements Predicate, SqlEntitySegment {
     @Override
     public String getPropertyName() {
         return propertyName;
-    }
-
-    @Override
-    public String getAlias() {
-        return null;
     }
 }

@@ -127,6 +127,7 @@ public class Main {
         easyQuery = new DefaultEasyQuery(jqdcRuntimeContext);
 
         {
+            long xhn = easyQuery.updatable(TestUserMysql.class).set(o -> o.set(TestUserMysql::getAge, 12).set(TestUserMysql::getName, "xhn")).where(o -> o.like(TestUserMysql::getId, "123")).executeRows();
             List<SysUserLogbyMonth> sysUserLogbyMonths = easyQuery.sqlQuery("select * from sys_user_logby_month_202103 limit 1", SysUserLogbyMonth.class);
 //            SysUserLogbyMonth sysUserLogbyMonth = easyQuery.queryable("select * from sys_user_logby_month_202103", SysUserLogbyMonth.class)
 //                    .firstOrNull();
@@ -267,6 +268,7 @@ public class Main {
         long l23 = easyQuery.deletable(sysUserLogbyMonths1).executeRows();
         long l3 = easyQuery.deletable(TestUserMysql.class).whereById("123").executeRows();
         long l31 = easyQuery.deletable(SysUserLogbyMonth.class).whereById("123").executeRows();
+        System.out.println("-------------------1");
         long l34 = easyQuery.deletable(TestUserMysql.class).where(o->o.like(TestUserMysql::getName,"1233")).executeRows();
         long l345 = easyQuery.deletable(TestUserMysql.class).where(o->o.like(TestUserMysql::getName,"1233")).whereById("123").executeRows();
         SysUserLogbyMonth sysUserLogbyMonth23 = new SysUserLogbyMonth();
@@ -274,6 +276,7 @@ public class Main {
         sysUserLogbyMonth23.setTime(LocalDateTime.now());
         long l13 = easyQuery.updatable(sysUserLogbyMonth23).executeRows();
         TestUserMysql testUserMysql3 = new TestUserMysql();
+        System.out.println("-------------------2");
         long l1 = easyQuery.updatable(testUserMysql3).setColumns(o -> o.column(TestUserMysql::getName)).executeRows();
         long l12 = easyQuery.updatable(testUserMysql3).setColumns(o -> o.column(TestUserMysql::getName)).whereColumns(o -> o.column(TestUserMysql::getAge)).executeRows();
         long xhn = easyQuery.updatable(TestUserMysql.class).set(o -> o.set(TestUserMysql::getAge, 12).set(TestUserMysql::getName, "xhn")).where(o -> o.like(TestUserMysql::getId, "123")).executeRows();

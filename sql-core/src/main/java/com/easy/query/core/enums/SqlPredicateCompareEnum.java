@@ -20,7 +20,7 @@ public enum SqlPredicateCompareEnum implements SqlPredicateCompare {
     LT("<"),
     LE("<="),
     IS_NULL("IS NULL"),
-    IS_NOT_NULL("IS NOT NULL"),;
+    IS_NOT_NULL("IS NOT NULL");
     private final String sql;
 
     SqlPredicateCompareEnum(String sql){

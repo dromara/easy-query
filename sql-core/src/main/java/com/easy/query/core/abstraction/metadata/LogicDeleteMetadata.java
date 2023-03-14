@@ -12,11 +12,13 @@ import com.easy.query.core.expression.parser.abstraction.SqlPredicate;
  */
 public final class LogicDeleteMetadata {
 
-    public LogicDeleteMetadata(SqlExpression<SqlPredicate<?>> logicDeleteQueryFilterExpression, SqlExpression<SqlColumnSetter<?>> logicDeletedSqlExpression) {
+    public LogicDeleteMetadata(String propertyName,SqlExpression<SqlPredicate<?>> logicDeleteQueryFilterExpression, SqlExpression<SqlColumnSetter<?>> logicDeletedSqlExpression) {
+        this.propertyName = propertyName;
         this.logicDeleteQueryFilterExpression = logicDeleteQueryFilterExpression;
         this.logicDeletedSqlExpression = logicDeletedSqlExpression;
     }
 
+    private final String propertyName;
     private final SqlExpression<SqlPredicate<?>> logicDeleteQueryFilterExpression;
     private final SqlExpression<SqlColumnSetter<?>> logicDeletedSqlExpression;
 
@@ -26,5 +28,9 @@ public final class LogicDeleteMetadata {
 
     public SqlExpression<SqlColumnSetter<?>> getLogicDeletedSqlExpression() {
         return logicDeletedSqlExpression;
+    }
+
+    public String getPropertyName() {
+        return propertyName;
     }
 }

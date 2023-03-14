@@ -1,6 +1,7 @@
 package com.easy.query.core.query;
 
 import com.easy.query.core.abstraction.EasyQueryLambdaFactory;
+import com.easy.query.core.abstraction.metadata.LogicDeleteMetadata;
 import com.easy.query.core.configuration.EasyQueryConfiguration;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.lambda.SqlExpression;
@@ -91,7 +92,8 @@ public abstract class EasySqlDeleteExpression extends AbstractSqlEntityExpressio
 
         StringBuilder sql;
         SqlEntityTableExpression table = getTables().get(0);
-        String tableName = table.getEntityMetadata().getTableName();
+        EntityMetadata entityMetadata = table.getEntityMetadata();
+        String tableName = entityMetadata.getTableName();
         UpdateSetSqlBuilderSegment updateSetSqlBuilderSegment = getUpdateSetSqlBuilderSegment(table);
         //逻辑删除
         if (updateSetSqlBuilderSegment != null) {
@@ -107,6 +109,15 @@ public abstract class EasySqlDeleteExpression extends AbstractSqlEntityExpressio
         }
         sql.append(" WHERE ");
         PredicateSegment where = getSqlPredicateSegment(table, getWhere());
+
+        //逻辑删除
+        if (entityMetadata.enableLogicDelete()) {
+            LogicDeleteMetadata logicDeleteMetadata = entityMetadata.getLogicDeleteMetadata();
+            SqlExpression<SqlPredicate<?>> logicDeleteQueryFilterExpression = logicDeleteMetadata.getLogicDeleteQueryFilterExpression();
+            EasyQueryLambdaFactory easyQueryLambdaFactory = getRuntimeContext().getEasyQueryLambdaFactory();
+            SqlPredicate<Object> sqlPredicate = easyQueryLambdaFactory.createSqlPredicate(this, where);
+            logicDeleteQueryFilterExpression.apply(sqlPredicate);
+        }
         sql.append(where.toSql());
         return sql.toString();
     }

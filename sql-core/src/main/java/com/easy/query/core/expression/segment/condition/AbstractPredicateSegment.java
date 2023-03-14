@@ -6,6 +6,7 @@ import com.easy.query.core.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @FileName: PredicateSegment.java
@@ -57,6 +58,39 @@ public class AbstractPredicateSegment implements PredicateSegment {
             children = new ArrayList<>();
         }
         children.add(predicateSegment);
+    }
+
+    @Override
+    public boolean contains(String propertyName) {
+        if (isPredicate()) {
+            return Objects.equals(predicate.getPropertyName(), propertyName);
+        } else {
+            for (PredicateSegment child : children) {
+                if(child.contains(propertyName)){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public void copyTo(PredicateSegment predicateSegment) {
+        if (isPredicate()) {
+            predicateSegment.setPredicate(predicate);
+        } else {
+            for (PredicateSegment child : children) {
+                if (child instanceof AndPredicateSegment) {
+                    AndPredicateSegment andPredicateSegment = new AndPredicateSegment();
+                    predicateSegment.addPredicateSegment(andPredicateSegment);
+                    child.copyTo(andPredicateSegment);
+                } else if (child instanceof OrPredicateSegment) {
+                    OrPredicateSegment orPredicateSegment = new OrPredicateSegment();
+                    predicateSegment.addPredicateSegment(orPredicateSegment);
+                    child.copyTo(orPredicateSegment);
+                }
+            }
+        }
     }
 
     @Override

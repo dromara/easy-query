@@ -10,7 +10,7 @@ import com.easy.query.core.query.SqlEntityTableExpression;
  * @Date: 2023/2/19 22:17
  * @Created by xuejiaming
  */
-public class FuncColumnSegment  implements SqlEntitySegment {
+public class FuncColumnSegment  implements SqlEntityAliasSegment {
 
 
     protected final SqlEntityTableExpression table;
