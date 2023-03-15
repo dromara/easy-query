@@ -1,9 +1,9 @@
 package com.easy.query.core.expression.segment.builder;
 
+import com.easy.query.core.expression.segment.SqlEntitySegment;
 import com.easy.query.core.expression.segment.SqlSegment;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * @FileName: DefaultSqlSegmentBuilder.java
@@ -33,5 +33,18 @@ public abstract class AbstractSqlBuilderSegment implements SqlBuilderSegment {
     @Override
     public void copyTo(SqlBuilderSegment predicateSegment) {
         predicateSegment.getSqlSegments().addAll(sqlSegments);
+    }
+
+    @Override
+    public boolean containsOnce(Class<?> entityClass, String propertyName) {
+        for (SqlSegment sqlSegment : sqlSegments) {
+            if(sqlSegment instanceof SqlEntitySegment){
+                SqlEntitySegment sqlEntitySegment = (SqlEntitySegment) sqlSegment;
+                if(Objects.equals(sqlEntitySegment.getTable().entityClass(),entityClass)&&Objects.equals(sqlEntitySegment.getPropertyName(), propertyName)){
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

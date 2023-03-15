@@ -30,12 +30,12 @@ public class BooleanGlobalEntityTypeConfiguration extends AbstractGlobalLogicDel
 
 
     @Override
-    protected SqlExpression<SqlPredicate<?>> getQueryFilterExpression(EntityMetadata entityMetadata, Property lambdaProperty) {
+    protected SqlExpression<SqlPredicate<Object>> getQueryFilterExpression(EntityMetadata entityMetadata, Property<Object,?> lambdaProperty) {
         return o->o.eq(lambdaProperty,false);
     }
 
     @Override
-    protected SqlExpression<SqlColumnSetter<?>> getDeletedSqlExpression(EntityMetadata entityMetadata, Property lambdaProperty) {
+    protected SqlExpression<SqlColumnSetter<Object>> getDeletedSqlExpression(EntityMetadata entityMetadata, Property<Object,?> lambdaProperty) {
         return o->o.set(lambdaProperty, true);
     }
 }

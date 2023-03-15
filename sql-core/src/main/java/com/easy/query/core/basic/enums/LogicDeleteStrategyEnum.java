@@ -8,6 +8,10 @@ package com.easy.query.core.basic.enums;
  */
 public enum LogicDeleteStrategyEnum {
     /**
+     * 用户自定义
+     */
+    CUSTOM("CUSTOM"),
+    /**
      * TRUE:表示被删除 deleted
      * FALSE:表示未被删除 not delete
      */

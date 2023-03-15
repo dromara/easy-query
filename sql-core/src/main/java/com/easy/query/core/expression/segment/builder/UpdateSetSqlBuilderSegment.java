@@ -13,23 +13,6 @@ import java.util.*;
  * @Created by xuejiaming
  */
 public class UpdateSetSqlBuilderSegment extends AbstractSqlBuilderSegment {
-    /**
-     * 获取set 属性集合
-     * @return
-     */
-    public Set<String> getSetProperties() {
-        return setProperties;
-    }
-
-    private final Set<String> setProperties =new LinkedHashSet<>();
-    @Override
-    public void append(SqlSegment sqlSegment) {
-        if(sqlSegment instanceof SqlEntitySegment){
-            SqlEntitySegment sqlEntitySegment = (SqlEntitySegment) sqlSegment;
-            setProperties.add(sqlEntitySegment.getPropertyName());
-        }
-        super.append(sqlSegment);
-    }
 
     @Override
     public String toSql() {
@@ -46,5 +29,12 @@ public class UpdateSetSqlBuilderSegment extends AbstractSqlBuilderSegment {
             }
         }
         return sb.toString();
+    }
+
+    @Override
+    public SqlBuilderSegment cloneSqlBuilder() {
+        UpdateSetSqlBuilderSegment updateSetSqlBuilderSegment = new UpdateSetSqlBuilderSegment();
+        copyTo(updateSetSqlBuilderSegment);
+        return updateSetSqlBuilderSegment;
     }
 }

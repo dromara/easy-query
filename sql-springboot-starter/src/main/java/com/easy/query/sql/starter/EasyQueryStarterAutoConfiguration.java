@@ -13,7 +13,7 @@ import com.easy.query.core.basic.jdbc.types.EasyJdbcTypeHandlerManager;
 import com.easy.query.core.config.NameConversion;
 import com.easy.query.core.config.UnderlinedNameConversion;
 import com.easy.query.core.configuration.EasyQueryConfiguration;
-import com.easy.query.core.interceptor.GlobalInterceptorStrategy;
+import com.easy.query.core.interceptor.GlobalInterceptor;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.logicdel.GlobalLogicDeleteStrategy;
 import com.easy.query.core.metadata.DefaultEntityMetadataManager;
@@ -69,15 +69,15 @@ public class EasyQueryStarterAutoConfiguration {
     }
 
     @Bean
-    public EasyQueryConfiguration easyQueryConfiguration(Map<String, GlobalInterceptorStrategy> globalInterceptorStrategyMap, Map<String,GlobalLogicDeleteStrategy> globalLogicDeleteStrategyMap) {
+    public EasyQueryConfiguration easyQueryConfiguration(Map<String, GlobalInterceptor> globalInterceptorStrategyMap, Map<String,GlobalLogicDeleteStrategy> globalLogicDeleteStrategyMap) {
         EasyQueryConfiguration configuration = new EasyQueryConfiguration();
 
         NameConversion nameConversion = new UnderlinedNameConversion();
         MySQLDialect sqlDialect = new MySQLDialect();
         configuration.setNameConversion(nameConversion);
         configuration.setDialect(sqlDialect);
-        for (GlobalInterceptorStrategy globalInterceptorStrategy : globalInterceptorStrategyMap.values()) {
-            configuration.applyGlobalInterceptorStrategy(globalInterceptorStrategy);
+        for (GlobalInterceptor globalInterceptorStrategy : globalInterceptorStrategyMap.values()) {
+            configuration.applyGlobalInterceptor(globalInterceptorStrategy);
         }
         for (GlobalLogicDeleteStrategy globalLogicDeleteStrategy : globalLogicDeleteStrategyMap.values()) {
             configuration.applyGlobalLogicDeleteStrategy(globalLogicDeleteStrategy);

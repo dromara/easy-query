@@ -19,7 +19,6 @@ public interface SqlEntityTableExpression extends SqlTableExpressionSegment {
     <T1> String getPropertyName(Property<T1, ?> column);
     String getColumnName(String propertyName);
 
-     SqlExpression<SqlPredicate<?>> getLogicDeleteQueryFilterExpression();
-     List<String> getSelectInterceptorNames();
-     SqlExpression<SqlColumnSetter<?>> getLogicDeletedSqlExpression();
+     SqlExpression<SqlPredicate<Object>> getLogicDeleteQueryFilterExpression();
+     SqlExpression<SqlColumnSetter<Object>> getLogicDeletedSqlExpression();
 }

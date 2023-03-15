@@ -253,7 +253,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
 
     @Override
     public <TR> Queryable<TR> select(Class<TR> resultClass, SqlExpression<SqlColumnAsSelector<T1, TR>> selectExpression) {
-        SqlColumnAsSelector<T1, TR> sqlColumnSelector = getSqlBuilderProvider1().getSqlColumnAsSelector1(sqlEntityExpression.getProjects());
+        SqlColumnAsSelector<T1, TR> sqlColumnSelector = getSqlBuilderProvider1().getSqlColumnAsSelector1(sqlEntityExpression.getProjects(),resultClass);
         selectExpression.apply(sqlColumnSelector);
         return sqlEntityExpression.getRuntimeContext().getSqlApiFactory().createQueryable(resultClass, sqlEntityExpression);
     }
@@ -268,7 +268,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     @Override
     public <TR> Queryable<TR> select(Class<TR> resultClass) {
         SqlExpression<SqlColumnAsSelector<T1, TR>> selectExpression = ColumnSelector::columnAll;
-        SqlColumnAsSelector<T1, TR> sqlColumnSelector = getSqlBuilderProvider1().getSqlColumnAsSelector1(sqlEntityExpression.getProjects());
+        SqlColumnAsSelector<T1, TR> sqlColumnSelector = getSqlBuilderProvider1().getSqlColumnAsSelector1(sqlEntityExpression.getProjects(),resultClass);
         selectExpression.apply(sqlColumnSelector);
         return sqlEntityExpression.getRuntimeContext().getSqlApiFactory().createQueryable(resultClass, sqlEntityExpression);
     }
@@ -423,7 +423,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     public <TR> PageResult<TR> toPageResult(long pageIndex, long pageSize, Class<TR> clazz, SqlExpression<SqlColumnAsSelector<T1, TR>> selectExpression) {
 
         ProjectSqlBuilderSegment sqlSegmentBuilder = new ProjectSqlBuilderSegment();
-        SqlColumnAsSelector<T1, TR> sqlColumnSelector = getSqlBuilderProvider1().getSqlColumnAsSelector1(sqlSegmentBuilder);
+        SqlColumnAsSelector<T1, TR> sqlColumnSelector = getSqlBuilderProvider1().getSqlColumnAsSelector1(sqlSegmentBuilder,clazz);
         selectExpression.apply(sqlColumnSelector);
         return toPageResult(pageIndex, pageSize, clazz);
     }

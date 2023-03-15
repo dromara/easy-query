@@ -37,8 +37,8 @@ public class DefaultEasyQueryLambdaFactory implements EasyQueryLambdaFactory{
     }
 
     @Override
-    public <T1, TR> SqlColumnAsSelector<T1, TR> createSqlColumnAsSelector(int index, SqlEntityExpression sqlEntityExpression, SqlBuilderSegment sqlSegmentBuilder) {
-        return new DefaultSqlColumnAsSelector<T1,TR>(index,sqlEntityExpression,sqlSegmentBuilder);
+    public <T1, TR> SqlColumnAsSelector<T1, TR> createSqlColumnAsSelector(int index, SqlEntityExpression sqlEntityExpression, SqlBuilderSegment sqlSegmentBuilder,Class<TR> resultClass) {
+        return new DefaultSqlColumnAsSelector<T1,TR>(index,sqlEntityExpression,sqlSegmentBuilder,resultClass);
     }
 
     @Override

@@ -11,7 +11,6 @@ import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.util.ClassUtil;
 import com.easy.query.core.util.LambdaUtil;
-import com.easy.query.core.util.StringUtil;
 
 import java.util.List;
 
@@ -54,7 +53,7 @@ public class EasyEntityTableExpression implements SqlEntityTableExpression {
 
 
     @Override
-    public SqlExpression<SqlPredicate<?>> getLogicDeleteQueryFilterExpression() {
+    public SqlExpression<SqlPredicate<Object>> getLogicDeleteQueryFilterExpression() {
         if (entityMetadata.enableLogicDelete()) {
             return entityMetadata.getLogicDeleteMetadata().getLogicDeleteQueryFilterExpression();
         }
@@ -62,12 +61,7 @@ public class EasyEntityTableExpression implements SqlEntityTableExpression {
     }
 
     @Override
-    public List<String> getSelectInterceptorNames() {
-        return entityMetadata.getSelectInterceptors();
-    }
-
-    @Override
-    public SqlExpression<SqlColumnSetter<?>> getLogicDeletedSqlExpression() {
+    public SqlExpression<SqlColumnSetter<Object>> getLogicDeletedSqlExpression() {
         if (entityMetadata.enableLogicDelete()) {
             return entityMetadata.getLogicDeleteMetadata().getLogicDeletedSqlExpression();
         }

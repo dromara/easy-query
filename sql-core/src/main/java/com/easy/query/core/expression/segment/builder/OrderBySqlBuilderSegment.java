@@ -43,4 +43,11 @@ public class OrderBySqlBuilderSegment extends AbstractSqlBuilderSegment {
         }
         return sb.toString();
     }
+
+    @Override
+    public SqlBuilderSegment cloneSqlBuilder() {
+        OrderBySqlBuilderSegment orderBySqlBuilderSegment = new OrderBySqlBuilderSegment();
+        copyTo(orderBySqlBuilderSegment);
+        return orderBySqlBuilderSegment;
+    }
 }

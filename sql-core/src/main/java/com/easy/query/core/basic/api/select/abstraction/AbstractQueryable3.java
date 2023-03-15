@@ -102,9 +102,9 @@ public abstract class AbstractQueryable3<T1, T2, T3> extends AbstractQueryable<T
     @Override
     public <TR> Queryable<TR> select(Class<TR> resultClass, SqlExpression3<SqlColumnAsSelector<T1, TR>, SqlColumnAsSelector<T2, TR>, SqlColumnAsSelector<T3, TR>> selectExpression) {
 
-        SqlColumnAsSelector<T1, TR> sqlColumnAsSelector1 = getSqlBuilderProvider3().getSqlColumnAsSelector1(sqlEntityExpression.getProjects());
-        SqlColumnAsSelector<T2, TR> sqlColumnAsSelector2 = getSqlBuilderProvider3().getSqlColumnAsSelector2(sqlEntityExpression.getProjects());
-        SqlColumnAsSelector<T3, TR> sqlColumnAsSelector3 = getSqlBuilderProvider3().getSqlColumnAsSelector3(sqlEntityExpression.getProjects());
+        SqlColumnAsSelector<T1, TR> sqlColumnAsSelector1 = getSqlBuilderProvider3().getSqlColumnAsSelector1(sqlEntityExpression.getProjects(),resultClass);
+        SqlColumnAsSelector<T2, TR> sqlColumnAsSelector2 = getSqlBuilderProvider3().getSqlColumnAsSelector2(sqlEntityExpression.getProjects(),resultClass);
+        SqlColumnAsSelector<T3, TR> sqlColumnAsSelector3 = getSqlBuilderProvider3().getSqlColumnAsSelector3(sqlEntityExpression.getProjects(),resultClass);
         selectExpression.apply(sqlColumnAsSelector1,sqlColumnAsSelector2,sqlColumnAsSelector3);
         return sqlEntityExpression.getRuntimeContext().getSqlApiFactory().createQueryable(resultClass, sqlEntityExpression);
     }

@@ -1,5 +1,7 @@
 package com.easy.query.core.expression.parser.impl;
 
+import com.easy.query.core.abstraction.metadata.ColumnMetadata;
+import com.easy.query.core.abstraction.metadata.EntityMetadata;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;

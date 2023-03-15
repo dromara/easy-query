@@ -6,7 +6,6 @@ import com.easy.query.core.abstraction.DefaultEasyQueryLambdaFactory;
 import com.easy.query.core.abstraction.DefaultEasyQueryRuntimeContext;
 import com.easy.query.core.abstraction.EasyQueryLambdaFactory;
 import com.easy.query.core.abstraction.EasySqlApiFactory;
-import com.easy.query.core.expression.parser.abstraction.internal.ColumnSelector;
 import com.easy.query.test.*;
 import com.easy.query.core.abstraction.metadata.EntityMetadataManager;
 import com.easy.query.core.api.pagination.PageResult;
@@ -123,19 +122,25 @@ public class Main {
         DefaultEasyQueryRuntimeContext jqdcRuntimeContext = new DefaultEasyQueryRuntimeContext(configuration, entityMetadataManager, easyQueryLambdaFactory, connectionManager, defaultExecutor, jdbcTypeHandler, easyQueryableFactory, mySQLSqlExpressionFactory);
 
 //        jqdcRuntimeContext.getEasyQueryConfiguration().applyEntityTypeConfiguration(new TestUserMySqlConfiguration());
-        configuration.applyGlobalInterceptorStrategy(new NameQueryFilter());
+        configuration.applyGlobalInterceptor(new NameQueryFilter());
 
         easyQuery = new DefaultEasyQuery(jqdcRuntimeContext);
 
         {
+            TestUserMysqlx testUserMysqlx = easyQuery.queryable(SysUserLogbyMonth.class).select(TestUserMysqlx.class).leftJoin(TestUserMysql.class, (a, b) -> a.eq(b, TestUserMysqlx::getId, TestUserMysql::getId))
+                    .where(o -> o.eq(TestUserMysqlx::getId, "123")).firstOrNull();
+            long testUserMysqlxascaa= easyQuery.queryable(TestUserMysql.class)
+                .leftJoin(SysUserLogbyMonth.class, (a, b) -> a.eq(b, TestUserMysql::getName, SysUserLogbyMonth::getId).then(b).eq(SysUserLogbyMonth::getTime, LocalDateTime.now()))
+                .where(o -> o.eq(TestUserMysql::getId, "102")
+                        .like(TestUserMysql::getName, "1%")
+                        .and(x -> x.like(TestUserMysql::getName, "123").or().eq(TestUserMysql::getAge, 1)
+                        )).select(o->o.column(TestUserMysql::getName)).count();
             long xhn = easyQuery.updatable(TestUserMysql.class).set(o -> o.set(TestUserMysql::getAge, 12).set(TestUserMysql::getName, "xhn")).where(o -> o.like(TestUserMysql::getId, "123")).executeRows();
             List<SysUserLogbyMonth> sysUserLogbyMonths = easyQuery.sqlQuery("select * from sys_user_logby_month_202103 limit 1", SysUserLogbyMonth.class);
 //            SysUserLogbyMonth sysUserLogbyMonth = easyQuery.queryable("select * from sys_user_logby_month_202103", SysUserLogbyMonth.class)
 //                    .firstOrNull();
 //            TestUserMysqlx sysUserLogbyMonth1 = easyQuery.queryable("select * from sys_user_logby_month_202103", SysUserLogbyMonth.class).select(TestUserMysqlx.class).leftJoin(TestUserMysql.class, (a, b) -> a.eq(b, TestUserMysqlx::getId, TestUserMysql::getId))
 //                    .where(o -> o.eq(TestUserMysqlx::getId, "123")).firstOrNull();
-            TestUserMysqlx testUserMysqlx = easyQuery.queryable(SysUserLogbyMonth.class).select(TestUserMysqlx.class).leftJoin(TestUserMysql.class, (a, b) -> a.eq(b, TestUserMysqlx::getId, TestUserMysql::getId))
-                    .where(o -> o.eq(TestUserMysqlx::getId, "123")).firstOrNull();
 
             List<TestUserMysqlx> testUserMysqls = easyQuery.queryable(SysUserLogbyMonth.class).toList(TestUserMysqlx.class);
             List<TestUserMysqlx> testUserMysqlsa = easyQuery.queryable(TestUserMysql.class).toList(TestUserMysqlx.class);

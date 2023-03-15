@@ -6,7 +6,7 @@ import com.easy.query.core.config.NameConversion;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.basic.enums.LogicDeleteStrategyEnum;
 import com.easy.query.core.config.DefaultNameConversion;
-import com.easy.query.core.interceptor.GlobalInterceptorStrategy;
+import com.easy.query.core.interceptor.GlobalInterceptor;
 import com.easy.query.core.logicdel.*;
 import com.easy.query.core.util.ClassUtil;
 import com.easy.query.core.util.StringUtil;
@@ -30,7 +30,8 @@ public class EasyQueryConfiguration {
     private NameConversion nameConversion = new DefaultNameConversion();
     private EasyQueryDialect dialect = new DefaultEasyQueryDialect();
 //    private Map<Class<?>, EntityTypeConfiguration<?>> entityTypeConfigurationMap = new HashMap<>();
-    private Map<String, GlobalInterceptorStrategy> globalInterceptorStrategyMap=new ConcurrentHashMap<>();
+    private Map<String, GlobalInterceptor> globalInterceptorMap =new ConcurrentHashMap<>();
+    private Map<String, GlobalLogicDeleteStrategy> globalLogicDeleteStrategyMap = new ConcurrentHashMap<>();
     private final boolean deleteThrowError;
 
     public EasyQueryConfiguration() {
@@ -60,26 +61,51 @@ public class EasyQueryConfiguration {
         this.dialect = dialect;
     }
 
-    public void applyGlobalInterceptorStrategy(GlobalInterceptorStrategy globalInterceptorStrategy){
-        String interceptorName = globalInterceptorStrategy.interceptorName();
+    public void applyGlobalInterceptor(GlobalInterceptor globalInterceptor){
+        String interceptorName = globalInterceptor.name();
         if(StringUtil.isBlank(interceptorName)){
-            throw new EasyQueryException(ClassUtil.getInstanceSimpleName(globalInterceptorStrategy)+"cant get interceptor name");
+            throw new EasyQueryException(ClassUtil.getInstanceSimpleName(globalInterceptor)+"cant get interceptor name");
         }
-        if(globalInterceptorStrategyMap.containsKey(interceptorName)){
+        if(globalInterceptorMap.containsKey(interceptorName)){
             throw new EasyQueryException("global interceptor:" + interceptorName + ",repeat");
         }
-        globalInterceptorStrategyMap.put(interceptorName,globalInterceptorStrategy);
+        globalInterceptorMap.put(interceptorName,globalInterceptor);
     }
 
 
-    public GlobalInterceptorStrategy getGlobalInterceptorStrategy(String name){
+    public GlobalInterceptor getGlobalInterceptor(String name){
         if(name==null){
             throw new IllegalArgumentException("cant get global interceptor,name is null");
         }
-        return globalInterceptorStrategyMap.get(name);
+        return globalInterceptorMap.get(name);
     }
-    public Collection<GlobalInterceptorStrategy> getGlobalInterceptorStrategies(){
-        return globalInterceptorStrategyMap.values();
+    public Collection<GlobalInterceptor> getGlobalInterceptors(){
+        return globalInterceptorMap.values();
+    }
+//    public void applyEntityTypeConfiguration(EntityTypeConfiguration<?> entityTypeConfiguration) {
+//        entityTypeConfigurationMap.put(entityTypeConfiguration.entityType(), entityTypeConfiguration);
+//    }
+//
+//    public EntityTypeConfiguration<?> getEntityTypeConfiguration(Class<?> entityType) {
+//        return entityTypeConfigurationMap.get(entityType);
+//    }
+
+    public void applyGlobalLogicDeleteStrategy(GlobalLogicDeleteStrategy globalLogicDeleteStrategy) {
+        String strategy = globalLogicDeleteStrategy.getStrategy();
+        if (globalLogicDeleteStrategyMap.containsKey(strategy)) {
+            throw new EasyQueryException("global logic delete strategy:" + strategy + ",repeat");
+        }
+        globalLogicDeleteStrategyMap.put(strategy, globalLogicDeleteStrategy);
+    }
+
+    /**
+     * 获取
+     *
+     * @param strategy
+     * @return
+     */
+    public GlobalLogicDeleteStrategy getGlobalLogicDeleteStrategy(String strategy) {
+        return globalLogicDeleteStrategyMap.get(strategy);
     }
 
     public GlobalLogicDeleteStrategy getSysGlobalLogicDeleteStrategy(LogicDeleteStrategyEnum strategy) {

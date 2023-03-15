@@ -23,17 +23,11 @@ public class EasyAnonymousEntityTableExpression extends EasyEntityTableExpressio
     }
 
     @Override
-    public SqlExpression<SqlPredicate<?>> getLogicDeleteQueryFilterExpression() {
+    public SqlExpression<SqlPredicate<Object>> getLogicDeleteQueryFilterExpression() {
         return null;
     }
-
     @Override
-    public List<String> getSelectInterceptorNames() {
-        return null;
-    }
-
-    @Override
-    public SqlExpression<SqlColumnSetter<?>> getLogicDeletedSqlExpression() {
+    public SqlExpression<SqlColumnSetter<Object>> getLogicDeletedSqlExpression() {
         return null;
     }
 

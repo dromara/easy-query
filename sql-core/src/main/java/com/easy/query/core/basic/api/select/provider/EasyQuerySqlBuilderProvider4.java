@@ -18,6 +18,6 @@ public interface EasyQuerySqlBuilderProvider4<T1,T2,T3,T4> extends EasyQuerySqlB
     SqlPredicate<T4> getSqlOnPredicate4();
 
     SqlColumnSelector<T4> getSqlColumnSelector4(SqlBuilderSegment sqlSegment0Builder);
-    <TR> SqlColumnAsSelector<T4,TR> getSqlColumnAsSelector4(SqlBuilderSegment sqlSegment0Builder);
+    <TR> SqlColumnAsSelector<T4,TR> getSqlColumnAsSelector4(SqlBuilderSegment sqlSegment0Builder,Class<TR> resultClass);
     <TR> SqlColumnResultSelector<T4,TR> getSqlColumnResultSelector4(SqlBuilderSegment sqlSegment0Builder);
 }

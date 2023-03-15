@@ -79,8 +79,8 @@ public class Select1SqlProvider<T1> implements EasyQuerySqlBuilderProvider<T1> {
     }
 
     @Override
-    public <TR> SqlColumnAsSelector<T1, TR> getSqlColumnAsSelector1(SqlBuilderSegment sqlSegment0Builder) {
-        return new DefaultSqlColumnAsSelector<>(index, sqlEntityExpression,sqlSegment0Builder);
+    public <TR> SqlColumnAsSelector<T1, TR> getSqlColumnAsSelector1(SqlBuilderSegment sqlSegment0Builder,Class<TR> resultClass) {
+        return new DefaultSqlColumnAsSelector<>(index, sqlEntityExpression,sqlSegment0Builder,resultClass);
     }
 
     @Override

@@ -22,6 +22,7 @@ public class StringUtil {
 
     static  String lineSeparator = System.getProperty("line.separator", "\n");
 
+
     // 首字母转小写
     public static String toLowerCaseFirstOne(String s) {
         if (Character.isLowerCase(s.charAt(0))) {

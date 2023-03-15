@@ -15,12 +15,12 @@ import java.util.*;
 public class AbstractPredicateSegment implements PredicateSegment {
     private List<PredicateSegment> children;
     private Predicate predicate;
-    private Map<Class<?>, Set<String>> entityProperties;
     private final boolean root;
 
     public boolean isEmpty() {
         return this.predicate == null && this.children == null;
     }
+
     public boolean isNotEmpty() {
         return !isEmpty();
     }
@@ -59,38 +59,38 @@ public class AbstractPredicateSegment implements PredicateSegment {
         children.add(predicateSegment);
     }
 
-//    @Override
-//    public boolean contains(Class<?> entityClass,String propertyName) {
-//        if (isPredicate()) {
-//            return Objects.equals(predicate.getPropertyName(), propertyName);
-//        } else {
-//            for (PredicateSegment child : children) {
-//                if(child.contains(propertyName)){
-//                    return true;
-//                }
-//            }
-//        }
-//        return false;
-//    }
 
     @Override
-    public Map<Class<?>, Set<String>> getEntityProperties() {
-        if(entityProperties==null){
-            entityProperties= new HashMap<>();
-            extractEntitySegment(entityProperties);
-        }
-
-        return entityProperties;
-    }
-
-    protected void extractEntitySegment(Map<Class<?>,Set<String>> entityProperties){
+    public boolean containsOnce(Class<?> entityClass, String propertyName) {
         if (isPredicate()) {
-            Set<String> propertySet = entityProperties.computeIfAbsent(predicate.getTable().entityClass(), key -> new HashSet<>());
-            propertySet.add(predicate.getPropertyName());
+            return Objects.equals(predicate.getTable().entityClass(),entityClass)&&Objects.equals(predicate.getPropertyName(), propertyName);
         } else {
             if(children!=null){
                 for (PredicateSegment child : children) {
-                    ((AbstractPredicateSegment)child).extractEntitySegment(entityProperties);
+                    if (child.containsOnce(entityClass,propertyName)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public PredicateIndex buildPredicateIndex() {
+        EasyPredicateContext easyPredicateContext = new EasyPredicateContext();
+        buildPredicateIndex(easyPredicateContext);
+        return easyPredicateContext;
+    }
+
+
+    protected void buildPredicateIndex(EasyPredicateContext easyPredicateContext) {
+        if (isPredicate()) {
+            easyPredicateContext.add(predicate);
+        } else {
+            if (children != null) {
+                for (PredicateSegment child : children) {
+                    ((AbstractPredicateSegment) child).buildPredicateIndex(easyPredicateContext);
                 }
             }
         }
@@ -101,15 +101,17 @@ public class AbstractPredicateSegment implements PredicateSegment {
         if (isPredicate()) {
             predicateSegment.setPredicate(predicate);
         } else {
-            if(children!=null){
+            if (children != null) {
 
                 for (PredicateSegment child : children) {
+
+                    boolean isRoot = ((AbstractPredicateSegment) child).root;
                     if (child instanceof AndPredicateSegment) {
-                        AndPredicateSegment andPredicateSegment = new AndPredicateSegment();
+                        AndPredicateSegment andPredicateSegment = new AndPredicateSegment(isRoot);
                         predicateSegment.addPredicateSegment(andPredicateSegment);
                         child.copyTo(andPredicateSegment);
                     } else if (child instanceof OrPredicateSegment) {
-                        OrPredicateSegment orPredicateSegment = new OrPredicateSegment();
+                        OrPredicateSegment orPredicateSegment = new OrPredicateSegment(isRoot);
                         predicateSegment.addPredicateSegment(orPredicateSegment);
                         child.copyTo(orPredicateSegment);
                     }
@@ -123,26 +125,24 @@ public class AbstractPredicateSegment implements PredicateSegment {
         if (isPredicate()) {
             return predicate.toSql();
         } else {
-            StringBuilder sql = new StringBuilder();
-            if(children!=null){
+            if (children != null) {
+                StringBuilder sql = new StringBuilder();
                 boolean allAnd = true;
                 boolean allOr = true;
 
                 for (PredicateSegment child : children) {
                     if (child instanceof AndPredicateSegment) {
                         allOr = false;
-                        if (sql.length() == 0) {
-                            sql.append(child.toSql());
-                        } else {
-                            sql.append(AndPredicateSegment.AND).append(child.toSql());
+                        if (sql.length() != 0) {
+                            sql.append(AndPredicateSegment.AND);
                         }
+                        sql.append(child.toSql());
                     } else if (child instanceof OrPredicateSegment) {
                         allAnd = false;
-                        if (sql.length() == 0) {
-                            sql.append(child.toSql());
-                        } else {
-                            sql.append(OrPredicateSegment.OR).append(child.toSql());
+                        if (sql.length() != 0) {
+                            sql.append(OrPredicateSegment.OR);
                         }
+                        sql.append(child.toSql());
                     }
                 }
                 if (sql.length() != 0) {

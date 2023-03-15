@@ -2,8 +2,8 @@ package com.easy.query.core.basic.api.insert;
 
 import com.easy.query.core.abstraction.metadata.EntityMetadata;
 import com.easy.query.core.enums.MultiTableTypeEnum;
-import com.easy.query.core.interceptor.GlobalInterceptorStrategy;
-import com.easy.query.core.interceptor.insert.GlobalInsertInterceptorStrategy;
+import com.easy.query.core.interceptor.GlobalEntityInterceptor;
+import com.easy.query.core.interceptor.GlobalInterceptor;
 import com.easy.query.core.query.EasyEntityTableExpression;
 import com.easy.query.core.query.SqlEntityInsertExpression;
 import com.easy.query.core.query.SqlEntityTableExpression;
@@ -51,17 +51,17 @@ public abstract class AbstractInsertable<T> implements Insertable<T> {
 
     protected void insertBefore() {
 
-        List<String> insertInterceptors = entityMetadata.getInsertInterceptors();
+        List<String> insertInterceptors = entityMetadata.getEntityInterceptors();
         boolean hasInsertInterceptors = !insertInterceptors.isEmpty();
-        ArrayList<GlobalInsertInterceptorStrategy> globalInsertInterceptorStrategies = new ArrayList<>(insertInterceptors.size());
+        ArrayList<GlobalEntityInterceptor> globalEntityInterceptors = new ArrayList<>(insertInterceptors.size());
         if (hasInsertInterceptors) {
             for (String insertInterceptor : insertInterceptors) {
-                GlobalInterceptorStrategy globalInterceptorStrategy = sqlEntityInsertExpression.getRuntimeContext().getEasyQueryConfiguration().getGlobalInterceptorStrategy(insertInterceptor);
-                globalInsertInterceptorStrategies.add((GlobalInsertInterceptorStrategy) globalInterceptorStrategy);
+                GlobalInterceptor globalInterceptorStrategy = sqlEntityInsertExpression.getRuntimeContext().getEasyQueryConfiguration().getGlobalInterceptor(insertInterceptor);
+                globalEntityInterceptors.add((GlobalEntityInterceptor) globalInterceptorStrategy);
             }
             for (T entity : entities) {
-                for (GlobalInsertInterceptorStrategy globalInsertInterceptorStrategy : globalInsertInterceptorStrategies) {
-                    globalInsertInterceptorStrategy.configure(entityMetadata.getEntityClass(), sqlEntityInsertExpression,entity);
+                for (GlobalEntityInterceptor globalEntityInterceptor : globalEntityInterceptors) {
+                    globalEntityInterceptor.configureInsert(entityMetadata.getEntityClass(), sqlEntityInsertExpression,entity);
                 }
             }
         }

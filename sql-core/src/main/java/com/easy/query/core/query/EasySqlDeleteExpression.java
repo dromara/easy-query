@@ -1,7 +1,6 @@
 package com.easy.query.core.query;
 
 import com.easy.query.core.abstraction.EasyQueryLambdaFactory;
-import com.easy.query.core.abstraction.metadata.LogicDeleteMetadata;
 import com.easy.query.core.configuration.EasyQueryConfiguration;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.lambda.SqlExpression;
@@ -16,7 +15,8 @@ import com.easy.query.core.expression.segment.condition.predicate.ColumnProperty
 import com.easy.query.core.abstraction.metadata.EntityMetadata;
 import com.easy.query.core.expression.parser.abstraction.SqlPredicate;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
-import com.easy.query.core.interceptor.delete.GlobalDeleteInterceptorStrategy;
+import com.easy.query.core.interceptor.GlobalPredicateFilterInterceptor;
+import com.easy.query.core.util.ArrayUtil;
 import com.easy.query.core.util.ClassUtil;
 
 import java.util.Collection;
@@ -28,7 +28,7 @@ import java.util.List;
  * @Date: 2023/3/4 16:32
  * @Created by xuejiaming
  */
-public abstract class EasySqlDeleteExpression extends AbstractSqlEntityExpression implements SqlEntityDeleteExpression {
+public abstract class EasySqlDeleteExpression extends AbstractSqlPredicateEntityExpression implements SqlEntityDeleteExpression {
     protected final PredicateSegment where;
     protected final boolean expressionDelete;
     protected SqlBuilderSegment whereColumns;
@@ -83,8 +83,6 @@ public abstract class EasySqlDeleteExpression extends AbstractSqlEntityExpressio
     }
 
     protected String expressionDeleteSql() {
-
-
         if (!hasWhere()) {
             throw new EasyQueryException("'DELETE' statement without 'WHERE' clears all data in the table");
         }
@@ -110,28 +108,41 @@ public abstract class EasySqlDeleteExpression extends AbstractSqlEntityExpressio
             sql.append(tableName);
         }
         sql.append(" WHERE ");
-        PredicateSegment where = getSqlWhereLogicDelete(entityMetadata, getWhere());
+        PredicateSegment where = buildWherePredicateSegment(table);
         sql.append(where.toSql());
         return sql.toString();
     }
-    protected PredicateSegment getSqlWhereLogicDelete(EntityMetadata entityMetadata, PredicateSegment originalWhere){
-        if(entityMetadata.enableLogicDelete()){
-            AndPredicateSegment where = new AndPredicateSegment(true);
-            LogicDeleteMetadata logicDeleteMetadata = entityMetadata.getLogicDeleteMetadata();
-            SqlExpression<SqlPredicate<?>> logicDeleteQueryFilterExpression = logicDeleteMetadata.getLogicDeleteQueryFilterExpression();
-            EasyQueryLambdaFactory easyQueryLambdaFactory = getRuntimeContext().getEasyQueryLambdaFactory();
-            SqlPredicate<Object> sqlPredicate = easyQueryLambdaFactory.createSqlPredicate(this, where);
-            logicDeleteQueryFilterExpression.apply(sqlPredicate);
-
-            if(where.isNotEmpty()){
-                if (originalWhere != null && originalWhere.isNotEmpty()) {
-                    where.addPredicateSegment(originalWhere);
-                }
-                return where;
-            }
-        }
-        return originalWhere;
-    }
+//    protected PredicateSegment getSqlWhereLogicDeleteFilter(EntityMetadata entityMetadata, PredicateSegment originalWhere){
+//        boolean logicDelete = entityMetadata.enableLogicDelete() && sqlExpressionContext.isUseLogicDelete();
+//        boolean useInterceptor = ArrayUtil.isNotEmpty(entityMetadata.getPredicateFilterInterceptors()) && sqlExpressionContext.isUseInterceptor();
+//        if(logicDelete||useInterceptor){
+//            AndPredicateSegment where = new AndPredicateSegment(true);
+//            EasyQueryLambdaFactory easyQueryLambdaFactory = getRuntimeContext().getEasyQueryLambdaFactory();
+//            SqlPredicate<Object> sqlPredicate = easyQueryLambdaFactory.createSqlPredicate(this, where);
+//            if(logicDelete){
+//                SqlExpression<SqlPredicate<Object>> logicDeleteQueryFilterExpression = entityMetadata.getLogicDeleteMetadata().getLogicDeleteQueryFilterExpression();
+//                logicDeleteQueryFilterExpression.apply(sqlPredicate);
+//            }
+//
+//            if(useInterceptor){
+//                List<String> predicateFilterInterceptors = entityMetadata.getPredicateFilterInterceptors();
+//                EasyQueryConfiguration easyQueryConfiguration = getRuntimeContext().getEasyQueryConfiguration();
+//                for (String predicateFilterInterceptor : predicateFilterInterceptors) {
+//                    GlobalPredicateFilterInterceptor globalSelectInterceptorStrategy = (GlobalPredicateFilterInterceptor)easyQueryConfiguration.getGlobalInterceptor(predicateFilterInterceptor);
+//                    if(globalSelectInterceptorStrategy!=null){
+//                        globalSelectInterceptorStrategy.configure(entityMetadata.getEntityClass(),this,sqlPredicate);
+//                    }
+//                }
+//            }
+//            if(where.isNotEmpty()){
+//                if (originalWhere != null && originalWhere.isNotEmpty()) {
+//                    where.addPredicateSegment(originalWhere);
+//                }
+//                return where;
+//            }
+//        }
+//        return originalWhere;
+//    }
 //    private PredicateSegment getSqlPredicateSegment(SqlEntityTableExpression table, PredicateSegment originalPredicate) {
 //
 //        EntityMetadata entityMetadata = table.getEntityMetadata();
@@ -163,16 +174,54 @@ public abstract class EasySqlDeleteExpression extends AbstractSqlEntityExpressio
         EntityMetadata entityMetadata = table.getEntityMetadata();
         boolean useLogicDelete = entityMetadata.enableLogicDelete() && sqlExpressionContext.isUseLogicDelete();
         if (useLogicDelete) {
-            SqlExpression<SqlColumnSetter<?>> logicDeletedSqlExpression = table.getLogicDeletedSqlExpression();
+            SqlExpression<SqlColumnSetter<Object>> logicDeletedSqlExpression = table.getLogicDeletedSqlExpression();
             if (logicDeletedSqlExpression != null) {
                 EasyQueryLambdaFactory easyQueryLambdaFactory = getRuntimeContext().getEasyQueryLambdaFactory();
                 UpdateSetSqlBuilderSegment setSqlSegmentBuilder = new UpdateSetSqlBuilderSegment();
-                SqlColumnSetter<?> sqlColumnSetter = easyQueryLambdaFactory.createSqlColumnSetter(table.getIndex(), this, setSqlSegmentBuilder);
+                SqlColumnSetter<Object> sqlColumnSetter = easyQueryLambdaFactory.createSqlColumnSetter(table.getIndex(), this, setSqlSegmentBuilder);
                 logicDeletedSqlExpression.apply(sqlColumnSetter);//获取set的值
                 return setSqlSegmentBuilder;
             }
         }
         return null;
+
+    }
+
+    protected PredicateSegment buildWherePredicateSegment(SqlEntityTableExpression table){
+        EntityMetadata entityMetadata = table.getEntityMetadata();
+
+        PredicateSegment wherePredicate =  getWhere();
+        if(!expressionDelete){
+
+            //如果没有指定where那么就使用主键作为更新条件只构建一次where
+            if(!hasWhere()){
+                if (hasWhereColumns()) {
+                    for (SqlSegment sqlSegment : whereColumns.getSqlSegments()) {
+                        if (!(sqlSegment instanceof SqlEntitySegment)) {
+                            throw new EasyQueryException("where 表达式片段不是SqlEntitySegment");
+                        }
+                        SqlEntitySegment sqlEntitySegment = (SqlEntitySegment) sqlSegment;
+                        AndPredicateSegment andPredicateSegment = new AndPredicateSegment(new ColumnPropertyPredicate(table, sqlEntitySegment.getPropertyName(), this));
+                        wherePredicate.addPredicateSegment(andPredicateSegment);
+                    }
+                }
+                else {
+                    //如果没有指定where那么就使用主键作为更新条件
+                    Collection<String> keyProperties = entityMetadata.getKeyProperties();
+                    if (keyProperties.isEmpty()) {
+                        throw new EasyQueryException("entity:" + ClassUtil.getSimpleName(entityMetadata.getEntityClass()) + "  not found primary key properties");
+                    }
+                    for (String keyProperty : keyProperties) {
+                        AndPredicateSegment andPredicateSegment = new AndPredicateSegment(new ColumnPropertyPredicate(table, keyProperty, this));
+                        wherePredicate.addPredicateSegment(andPredicateSegment);
+                    }
+                }
+            }
+        }
+        if (wherePredicate.isEmpty()) {
+            throw new EasyQueryException("'DELETE' statement without 'WHERE'");
+        }
+        return sqlPredicateFilter(table, wherePredicate);
 
     }
 
@@ -183,40 +232,10 @@ public abstract class EasySqlDeleteExpression extends AbstractSqlEntityExpressio
      */
     protected String entityDeleteSql() {
 
-        //如果没有指定where那么就使用主键作为更新条件
-        SqlBuilderSegment whereColumns = getWhereColumns();
 
         SqlEntityTableExpression table = getTables().get(0);
         EntityMetadata entityMetadata = table.getEntityMetadata();
-
-        PredicateSegment wherePredicate =  getWhere();
-//如果没有指定where那么就使用主键作为更新条件只构建一次where
-        if(!hasWhere()){
-            if (hasWhereColumns()) {
-                for (SqlSegment sqlSegment : whereColumns.getSqlSegments()) {
-                    if (!(sqlSegment instanceof SqlEntitySegment)) {
-                        throw new EasyQueryException("where 表达式片段不是SqlEntitySegment");
-                    }
-                    SqlEntitySegment sqlEntitySegment = (SqlEntitySegment) sqlSegment;
-                    AndPredicateSegment andPredicateSegment = new AndPredicateSegment(new ColumnPropertyPredicate(table, sqlEntitySegment.getPropertyName(), this));
-                    wherePredicate.addPredicateSegment(andPredicateSegment);
-                }
-            }
-            else {
-                Collection<String> keyProperties = entityMetadata.getKeyProperties();
-                if (keyProperties.isEmpty()) {
-                    throw new EasyQueryException("entity:" + ClassUtil.getSimpleName(entityMetadata.getEntityClass()) + "  not found primary key properties");
-                }
-                for (String keyProperty : keyProperties) {
-                    AndPredicateSegment andPredicateSegment = new AndPredicateSegment(new ColumnPropertyPredicate(table, keyProperty, this));
-                    wherePredicate.addPredicateSegment(andPredicateSegment);
-                }
-            }
-        }
-        if (wherePredicate.isEmpty()) {
-            throw new EasyQueryException("'DELETE' statement without 'WHERE'");
-        }
-        PredicateSegment sqlWhere = getSqlWhereLogicDelete(entityMetadata, wherePredicate);
+        PredicateSegment sqlWhere = buildWherePredicateSegment(table);
 
         StringBuilder sql = null;
         String tableName = entityMetadata.getTableName();

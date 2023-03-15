@@ -29,4 +29,11 @@ public class ProjectSqlBuilderSegment extends AbstractSqlBuilderSegment {
         }
         return sb.toString();
     }
+
+    @Override
+    public SqlBuilderSegment cloneSqlBuilder() {
+        ProjectSqlBuilderSegment projectSqlBuilderSegment = new ProjectSqlBuilderSegment();
+        copyTo(projectSqlBuilderSegment);
+        return projectSqlBuilderSegment;
+    }
 }

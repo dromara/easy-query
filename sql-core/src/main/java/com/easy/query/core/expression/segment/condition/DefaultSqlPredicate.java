@@ -1,5 +1,6 @@
 package com.easy.query.core.expression.segment.condition;
 
+import com.easy.query.core.enums.SqlLikeEnum;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.parser.abstraction.internal.WherePredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnCollectionPredicate0;
@@ -11,6 +12,8 @@ import com.easy.query.core.expression.lambda.SqlExpression;
 import com.easy.query.core.expression.parser.abstraction.SqlPredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnPredicate0;
 import com.easy.query.core.query.SqlEntityExpression;
+import com.easy.query.core.util.SQLUtil;
+import com.easy.query.core.util.StringUtil;
 
 import java.util.Collection;
 
@@ -51,6 +54,7 @@ public class DefaultSqlPredicate<T1> implements SqlPredicate<T1> {
     protected void appendThisPredicate(Property<T1, ?> column, Object val, SqlPredicateCompareEnum condition) {
         SqlEntityTableExpression table = sqlEntityExpression.getTable(getIndex());
         String propertyName = table.getPropertyName(column);
+
         nextPredicateSegment.setPredicate(new ColumnValuePredicate0(table, propertyName, val, condition, sqlEntityExpression));
     }
 
@@ -92,16 +96,16 @@ public class DefaultSqlPredicate<T1> implements SqlPredicate<T1> {
     }
 
     @Override
-    public SqlPredicate<T1> like(boolean condition, Property<T1, ?> column, Object val) {
+    public SqlPredicate<T1> like(boolean condition, Property<T1, ?> column, Object val, SqlLikeEnum sqlLike) {
         if (condition) {
-            appendThisPredicate(column, val, SqlPredicateCompareEnum.LIKE);
+            appendThisPredicate(column, SQLUtil.getLikeParameter(val,sqlLike), SqlPredicateCompareEnum.LIKE);
             nextAnd();
         }
         return this;
     }
 
     @Override
-    public SqlPredicate<T1> notLike(boolean condition, Property<T1, ?> column, Object val) {
+    public SqlPredicate<T1> notLike(boolean condition, Property<T1, ?> column, Object val, SqlLikeEnum sqlLike) {
         if (condition) {
             appendThisPredicate(column, val, SqlPredicateCompareEnum.NOT_LIKE);
             nextAnd();

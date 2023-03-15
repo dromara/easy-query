@@ -4,7 +4,6 @@ import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.expression.parser.abstraction.SqlColumnSetter;
 import com.easy.query.core.expression.parser.impl.DefaultSqlColumnSetter;
 import com.easy.query.core.expression.segment.condition.DefaultSqlPredicate;
-import com.easy.query.core.interceptor.update.GlobalUpdateSetInterceptorStrategy;
 import com.easy.query.core.query.EasyEntityTableExpression;
 import com.easy.query.core.query.SqlEntityTableExpression;
 import com.easy.query.core.query.SqlEntityUpdateExpression;
@@ -12,12 +11,11 @@ import com.easy.query.core.util.StringUtil;
 import com.easy.query.core.basic.jdbc.executor.EasyExecutor;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.api.update.ExpressionUpdatable;
-import com.easy.query.core.interceptor.GlobalInterceptorStrategy;
+import com.easy.query.core.interceptor.GlobalInterceptor;
 import com.easy.query.core.exception.EasyQueryConcurrentException;
 import com.easy.query.core.expression.lambda.SqlExpression;
 import com.easy.query.core.abstraction.metadata.EntityMetadata;
 import com.easy.query.core.expression.parser.abstraction.SqlPredicate;
-import com.easy.query.core.query.*;
 
 import java.util.List;
 
@@ -43,20 +41,8 @@ public abstract class AbstractExpressionUpdatable<T> implements ExpressionUpdata
         this.sqlEntityUpdateExpression.addSqlEntityTableExpression(table);
     }
 
-    protected void updateBefore() {
-
-        List<String> interceptors = entityMetadata.getUpdateSetInterceptors();
-        boolean hasInterceptor = !interceptors.isEmpty();
-        if (hasInterceptor) {
-            for (String interceptor : interceptors) {
-                GlobalInterceptorStrategy globalInterceptorStrategy = sqlEntityUpdateExpression.getRuntimeContext().getEasyQueryConfiguration().getGlobalInterceptorStrategy(interceptor);
-                ((GlobalUpdateSetInterceptorStrategy) globalInterceptorStrategy).configure(entityMetadata.getEntityClass(),sqlEntityUpdateExpression,new DefaultSqlColumnSetter<>(0, sqlEntityUpdateExpression, sqlEntityUpdateExpression.getSetColumns()));
-            }
-        }
-    }
     @Override
     public long executeRows() {
-        updateBefore();
         String updateSql = toSql();
         if (StringUtil.isNotBlank(updateSql)) {
             EasyExecutor easyExecutor = sqlEntityUpdateExpression.getRuntimeContext().getEasyExecutor();

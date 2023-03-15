@@ -42,6 +42,7 @@ public class AbstractSqlColumnSelector<T1, TChain> implements ColumnSelector<T1,
         return this.index;
     }
 
+
     @Override
     public TChain column(Property<T1, ?> column) {
         SqlEntityTableExpression table = sqlEntityExpression.getTable(index);
@@ -49,6 +50,7 @@ public class AbstractSqlColumnSelector<T1, TChain> implements ColumnSelector<T1,
         sqlSegmentBuilder.append(new ColumnSegment(table, propertyName, sqlEntityExpression));
         return (TChain) this;
     }
+
 
     @Override
     public TChain columnIgnore(Property<T1, ?> column) {
@@ -72,8 +74,8 @@ public class AbstractSqlColumnSelector<T1, TChain> implements ColumnSelector<T1,
             List<SqlSegment> sqlSegments = sqlEntityQueryExpression.getProjects().getSqlSegments();
             for (SqlSegment sqlSegment : sqlSegments) {
                 if (sqlSegment instanceof SqlEntityAliasSegment) {
-                    String propertyName = EasyUtil.getAnonymousColumnName((SqlEntityAliasSegment) sqlSegment);
-                    sqlSegmentBuilder.append(new ColumnSegment(table, propertyName, sqlEntityExpression));
+                    String columnName = EasyUtil.getAnonymousColumnName((SqlEntityAliasSegment) sqlSegment);
+                    sqlSegmentBuilder.append(new ColumnSegment(table,columnName , sqlEntityExpression));
                 } else {
                     throw new EasyQueryException("columnAll函数无法获取指定列" + ClassUtil.getInstanceSimpleName(sqlSegment));
                 }

@@ -31,4 +31,11 @@ public class GroupBySqlBuilderSegment extends AbstractSqlBuilderSegment {
 
         return sb.toString();
     }
+
+    @Override
+    public SqlBuilderSegment cloneSqlBuilder() {
+        GroupBySqlBuilderSegment groupBySqlBuilderSegment = new GroupBySqlBuilderSegment();
+        copyTo(groupBySqlBuilderSegment);
+        return groupBySqlBuilderSegment;
+    }
 }

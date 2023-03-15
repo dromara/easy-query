@@ -31,12 +31,12 @@ public  class LocalDateGlobalLogicDeleteStrategy extends AbstractGlobalLogicDele
 
 
     @Override
-    protected SqlExpression<SqlPredicate<?>> getQueryFilterExpression(EntityMetadata entityMetadata, Property lambdaProperty) {
+    protected SqlExpression<SqlPredicate<Object>> getQueryFilterExpression(EntityMetadata entityMetadata, Property<Object,?> lambdaProperty) {
         return o->o.isNull(lambdaProperty);
     }
 
     @Override
-    protected SqlExpression<SqlColumnSetter<?>> getDeletedSqlExpression(EntityMetadata entityMetadata, Property lambdaProperty) {
+    protected SqlExpression<SqlColumnSetter<Object>> getDeletedSqlExpression(EntityMetadata entityMetadata, Property<Object,?> lambdaProperty) {
         return o->o.set(lambdaProperty,LocalDate.now());
     }
 }

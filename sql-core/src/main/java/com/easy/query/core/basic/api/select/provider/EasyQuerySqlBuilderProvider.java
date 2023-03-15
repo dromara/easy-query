@@ -21,6 +21,6 @@ public interface EasyQuerySqlBuilderProvider<T1> {
     SqlPredicate<T1> getSqlOnPredicate1();
 
     SqlColumnSelector<T1> getSqlColumnSelector1(SqlBuilderSegment sqlSegment0Builder);
-    <TR> SqlColumnAsSelector<T1,TR> getSqlColumnAsSelector1(SqlBuilderSegment sqlSegment0Builder);
+    <TR> SqlColumnAsSelector<T1,TR> getSqlColumnAsSelector1(SqlBuilderSegment sqlSegment0Builder,Class<TR> resultClass);
     <TR> SqlColumnResultSelector<T1,TR> getSqlColumnResultSelector1(SqlBuilderSegment sqlSegment0Builder);
 }

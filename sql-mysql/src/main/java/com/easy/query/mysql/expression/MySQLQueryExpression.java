@@ -42,6 +42,7 @@ public class MySQLQueryExpression extends EasySqlQueryExpression {
         getProjects().copyTo(sqlEntityQueryExpression.getProjects());
         sqlEntityQueryExpression.offset = super.offset;
         sqlEntityQueryExpression.rows = super.rows;
+        sqlEntityQueryExpression.logicDelete=super.logicDelete;
         sqlEntityQueryExpression.tables.addAll(super.tables);
         return sqlEntityQueryExpression;
     }

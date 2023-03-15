@@ -1,8 +1,9 @@
 package com.easy.query.test;
 
-import com.easy.query.core.interceptor.select.GlobalSelectInterceptorStrategy;
+import com.easy.query.core.interceptor.GlobalPredicateFilterInterceptor;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.parser.abstraction.SqlPredicate;
+import com.easy.query.core.query.SqlEntityExpression;
 import com.easy.query.core.query.SqlEntityQueryExpression;
 import com.easy.query.core.util.EasyUtil;
 
@@ -12,15 +13,15 @@ import com.easy.query.core.util.EasyUtil;
  * @Date: 2023/3/8 10:24
  * @Created by xuejiaming
  */
-public class NameQueryFilter implements GlobalSelectInterceptorStrategy {
+public class NameQueryFilter implements GlobalPredicateFilterInterceptor {
     @Override
-    public void configure(Class<?> entityClass, SqlEntityQueryExpression sqlEntityQueryExpression, SqlPredicate<?> sqlPredicate) {
-        Property property = EasyUtil.getLambdaProperty(entityClass, "name", String.class);
+    public void configure(Class<?> entityClass, SqlEntityExpression sqlEntityExpression, SqlPredicate<Object> sqlPredicate) {
+        Property<Object,?> property = EasyUtil.getLambdaProperty(entityClass, "name", String.class);
         sqlPredicate.isNull(property);
     }
 
     @Override
-    public String interceptorName() {
+    public String name() {
         return "nameQueryFilter";
     }
 

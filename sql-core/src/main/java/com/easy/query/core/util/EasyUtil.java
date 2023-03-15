@@ -56,12 +56,12 @@ public class EasyUtil {
         return alias;
     }
 
-    private static Map<Class<?>, Map<String, Property<?,?>>> CLASS_PROPERTY_LAMBDA_CACHE = new ConcurrentHashMap<>();
-    public static Property<?,?> getLambdaProperty(Class<?> entityClass, String propertyName, Class<?> fieldType){
-        Map<String, Property<?, ?>> propertyLambdaMap = CLASS_PROPERTY_LAMBDA_CACHE.computeIfAbsent(entityClass,key-> new ConcurrentHashMap<>());
+    private static Map<Class<?>, Map<String, Property<Object,?>>> CLASS_PROPERTY_LAMBDA_CACHE = new ConcurrentHashMap<>();
+    public static Property<Object,?> getLambdaProperty(Class<?> entityClass, String propertyName, Class<?> fieldType){
+        Map<String, Property<Object, ?>> propertyLambdaMap = CLASS_PROPERTY_LAMBDA_CACHE.computeIfAbsent(entityClass,key-> new ConcurrentHashMap<>());
        return propertyLambdaMap.computeIfAbsent(propertyName,key-> getLambdaProperty0(entityClass,propertyName,fieldType));
     }
-    private static Property<?,?> getLambdaProperty0(Class<?> entityClass, String propertyName, Class<?> fieldType){
+    private static Property<Object,?> getLambdaProperty0(Class<?> entityClass, String propertyName, Class<?> fieldType){
 
         final MethodHandles.Lookup lookup = MethodHandles.lookup();
         MethodType methodType = MethodType.methodType(fieldType, entityClass);
@@ -75,7 +75,7 @@ public class EasyUtil {
                     methodType,
                     lookup.findVirtual(entityClass, getFunName, MethodType.methodType(fieldType)),
                     methodType, FLAG_SERIALIZABLE);
-            return (Property<?,?>) site.getTarget().invokeExact();
+            return (Property<Object,?>) site.getTarget().invokeExact();
         }catch (Throwable e){
             throw new EasyQueryException(e);
         }

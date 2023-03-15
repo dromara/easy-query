@@ -98,8 +98,8 @@ public abstract class AbstractQueryable2<T1, T2> extends AbstractQueryable<T1> i
 
     @Override
     public <TR> Queryable<TR> select(Class<TR> resultClass, SqlExpression2<SqlColumnAsSelector<T1, TR>, SqlColumnAsSelector<T2, TR>> selectExpression) {
-        SqlColumnAsSelector<T1, TR> sqlColumnAsSelector1 = getSqlBuilderProvider2().getSqlColumnAsSelector1(sqlEntityExpression.getProjects());
-        SqlColumnAsSelector<T2, TR> sqlColumnAsSelector2 = getSqlBuilderProvider2().getSqlColumnAsSelector2(sqlEntityExpression.getProjects());
+        SqlColumnAsSelector<T1, TR> sqlColumnAsSelector1 = getSqlBuilderProvider2().getSqlColumnAsSelector1(sqlEntityExpression.getProjects(),resultClass);
+        SqlColumnAsSelector<T2, TR> sqlColumnAsSelector2 = getSqlBuilderProvider2().getSqlColumnAsSelector2(sqlEntityExpression.getProjects(),resultClass);
         selectExpression.apply(sqlColumnAsSelector1,sqlColumnAsSelector2);
         return sqlEntityExpression.getRuntimeContext().getSqlApiFactory().createQueryable(resultClass, sqlEntityExpression);
     }

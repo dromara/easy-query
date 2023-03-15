@@ -5,15 +5,12 @@ import com.easy.query.core.basic.enums.LogicDeleteStrategyEnum;
 import com.easy.query.core.config.NameConversion;
 import com.easy.query.core.configuration.EasyQueryConfiguration;
 import com.easy.query.core.exception.EasyQueryException;
-import com.easy.query.core.interceptor.GlobalInterceptorStrategy;
-import com.easy.query.core.interceptor.insert.GlobalInsertInterceptorStrategy;
-import com.easy.query.core.interceptor.select.GlobalSelectInterceptorStrategy;
-import com.easy.query.core.interceptor.update.GlobalUpdateInterceptorStrategy;
-import com.easy.query.core.interceptor.update.GlobalUpdateSetInterceptorStrategy;
+import com.easy.query.core.interceptor.GlobalEntityInterceptor;
+import com.easy.query.core.interceptor.GlobalInterceptor;
+import com.easy.query.core.interceptor.GlobalPredicateFilterInterceptor;
+import com.easy.query.core.interceptor.GlobalUpdateSetInterceptor;
 import com.easy.query.core.logicdel.GlobalLogicDeleteStrategy;
 import com.easy.query.core.util.StringUtil;
-import com.easy.query.core.interceptor.delete.GlobalDeleteInterceptorStrategy;
-import com.easy.query.core.annotation.*;
 import com.easy.query.core.common.LinkedCaseInsensitiveMap;
 import com.easy.query.core.util.ClassUtil;
 
@@ -38,11 +35,9 @@ public class EntityMetadata {
     /**
      * 查询过滤器
      */
-    private final List<String> selectInterceptors = new ArrayList<>();
-    private final List<String> insertInterceptors = new ArrayList<>();
-    private final List<String> updateInterceptors = new ArrayList<>();
+    private final List<String> predicateFilterInterceptors = new ArrayList<>();
+    private final List<String> entityInterceptors = new ArrayList<>();
     private final List<String> updateSetInterceptors = new ArrayList<>();
-    private final List<String> deleteInterceptors = new ArrayList<>();
     private final LinkedHashMap<String, ColumnMetadata> property2ColumnMap = new LinkedHashMap<>();
     private final Map<String/*property name*/, String/*column name*/> keyPropertiesMap = new HashMap<>();
     private final LinkedCaseInsensitiveMap<String> column2PropertyMap = new LinkedCaseInsensitiveMap<>(Locale.ENGLISH);
@@ -124,10 +119,19 @@ public class EntityMetadata {
                 LogicDelete logicDelete = field.getAnnotation(LogicDelete.class);
                 if (logicDelete != null) {
                     LogicDeleteStrategyEnum strategy = logicDelete.strategy();
-                    //获取系统逻辑删除
-                    GlobalLogicDeleteStrategy sysGlobalLogicDeleteStrategy = configuration.getSysGlobalLogicDeleteStrategy(strategy);
-                    if (sysGlobalLogicDeleteStrategy != null) {
-                        sysGlobalLogicDeleteStrategy.configure(this, property, field.getType());
+                    if (Objects.equals(LogicDeleteStrategyEnum.CUSTOM, strategy)) {//使用自定义
+                        String strategyName = logicDelete.strategyName();
+                        if (StringUtil.isNotBlank(strategyName)) {
+                            GlobalLogicDeleteStrategy globalLogicDeleteStrategy = configuration.getGlobalLogicDeleteStrategy(strategyName);
+                            if (globalLogicDeleteStrategy != null) {
+                                globalLogicDeleteStrategy.configure(this, property, field.getType());
+                            }
+                        }
+                    } else {//使用系统默认的
+                        GlobalLogicDeleteStrategy sysGlobalLogicDeleteStrategy = configuration.getSysGlobalLogicDeleteStrategy(strategy);
+                        if (sysGlobalLogicDeleteStrategy != null) {
+                            sysGlobalLogicDeleteStrategy.configure(this, property, field.getType());
+                        }
                     }
                 }
             }
@@ -138,23 +142,17 @@ public class EntityMetadata {
 
         if (StringUtil.isNotBlank(tableName)) {
 
-            Collection<GlobalInterceptorStrategy> globalInterceptorStrategies = configuration.getGlobalInterceptorStrategies();
-            for (GlobalInterceptorStrategy globalInterceptorStrategy : globalInterceptorStrategies) {
-                if (globalInterceptorStrategy.apply(entityClass)) {
-                    if (globalInterceptorStrategy instanceof GlobalSelectInterceptorStrategy) {
-                        selectInterceptors.add(globalInterceptorStrategy.interceptorName());
+            Collection<GlobalInterceptor> globalInterceptors = configuration.getGlobalInterceptors();
+            for (GlobalInterceptor globalInterceptor : globalInterceptors) {
+                if (globalInterceptor.apply(entityClass)) {
+                    if (globalInterceptor instanceof GlobalPredicateFilterInterceptor) {
+                        predicateFilterInterceptors.add(globalInterceptor.name());
                     }
-                    if (globalInterceptorStrategy instanceof GlobalInsertInterceptorStrategy) {
-                        insertInterceptors.add(globalInterceptorStrategy.interceptorName());
+                    if (globalInterceptor instanceof GlobalEntityInterceptor) {
+                        entityInterceptors.add(globalInterceptor.name());
                     }
-                    if (globalInterceptorStrategy instanceof GlobalUpdateInterceptorStrategy) {
-                        updateInterceptors.add(globalInterceptorStrategy.interceptorName());
-                    }
-                    if (globalInterceptorStrategy instanceof GlobalUpdateSetInterceptorStrategy) {
-                        updateSetInterceptors.add(globalInterceptorStrategy.interceptorName());
-                    }
-                    if (globalInterceptorStrategy instanceof GlobalDeleteInterceptorStrategy) {
-                        deleteInterceptors.add(globalInterceptorStrategy.interceptorName());
+                    if (globalInterceptor instanceof GlobalUpdateSetInterceptor) {
+                        updateSetInterceptors.add(globalInterceptor.name());
                     }
                 }
             }
@@ -254,33 +252,17 @@ public class EntityMetadata {
         return logicDeleteMetadata != null;
     }
 
-    /**
-     * 是否存在查询过滤
-     *
-     * @return
-     */
-    public boolean hasAnySelectInterceptor() {
-        return !selectInterceptors.isEmpty();
+
+    public List<String> getPredicateFilterInterceptors() {
+        return predicateFilterInterceptors;
     }
 
-    public List<String> getSelectInterceptors() {
-        return selectInterceptors;
-    }
-
-    public List<String> getInsertInterceptors() {
-        return insertInterceptors;
-    }
-
-    public List<String> getUpdateInterceptors() {
-        return updateInterceptors;
+    public List<String> getEntityInterceptors() {
+        return entityInterceptors;
     }
 
     public List<String> getUpdateSetInterceptors() {
         return updateSetInterceptors;
     }
 
-
-    public List<String> getDeleteInterceptors() {
-        return deleteInterceptors;
-    }
 }

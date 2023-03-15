@@ -6,7 +6,7 @@ import com.easy.query.core.expression.segment.builder.GroupBySqlBuilderSegment;
 import com.easy.query.core.expression.segment.builder.OrderBySqlBuilderSegment;
 import com.easy.query.core.expression.segment.builder.ProjectSqlBuilderSegment;
 import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
-import com.easy.query.core.interceptor.select.GlobalSelectInterceptorStrategy;
+import com.easy.query.core.interceptor.GlobalPredicateFilterInterceptor;
 import com.easy.query.core.util.ArrayUtil;
 import com.easy.query.core.abstraction.metadata.EntityMetadata;
 import com.easy.query.core.configuration.EasyQueryConfiguration;
@@ -25,7 +25,7 @@ import java.util.List;
  * @Date: 2023/3/3 22:10
  * @Created by xuejiaming
  */
-public abstract class EasySqlQueryExpression extends AbstractSqlEntityExpression implements SqlEntityQueryExpression {
+public abstract class EasySqlQueryExpression extends AbstractSqlPredicateEntityExpression implements SqlEntityQueryExpression {
 
     protected PredicateSegment where;
     protected SqlBuilderSegment group;
@@ -189,7 +189,7 @@ public abstract class EasySqlQueryExpression extends AbstractSqlEntityExpression
         return sql.toString();
     }
 
-    private String toTableExpressionSql(SqlEntityTableExpression sqlEntityTableExpression,boolean onlySingleAnonymousTable) {
+    protected String toTableExpressionSql(SqlEntityTableExpression sqlEntityTableExpression,boolean onlySingleAnonymousTable) {
         if (sqlEntityTableExpression instanceof AnonymousEntityTableExpression) {
 
             SqlEntityQueryExpression sqlEntityQueryExpression = ((AnonymousEntityTableExpression) sqlEntityTableExpression).getSqlEntityQueryExpression();
@@ -202,47 +202,14 @@ public abstract class EasySqlQueryExpression extends AbstractSqlEntityExpression
         return sqlEntityTableExpression.toSql();
     }
 
-    private PredicateSegment getTableOnWithQueryFilter(SqlEntityTableExpression table) {
-        return getSqlPredicateSegment(table, table.hasOn() ? table.getOn() : null);
+    protected PredicateSegment getTableOnWithQueryFilter(SqlEntityTableExpression table) {
+        return sqlPredicateFilter(table, table.hasOn() ? table.getOn() : null);
     }
 
-    private PredicateSegment getSqlWhereWithQueryFilter() {
+    protected PredicateSegment getSqlWhereWithQueryFilter() {
         SqlEntityTableExpression table = getTable(0);
-        return getSqlPredicateSegment(table, hasWhere() ? getWhere() : null);
+        return sqlPredicateFilter(table, hasWhere() ? getWhere() : null);
     }
 
-    private PredicateSegment getSqlPredicateSegment(SqlEntityTableExpression table, PredicateSegment originalPredicate) {
-
-        EntityMetadata entityMetadata = table.getEntityMetadata();
-        boolean useLogicDelete = entityMetadata.enableLogicDelete() && sqlExpressionContext.isUseLogicDelete();
-        boolean useInterceptor = entityMetadata.hasAnySelectInterceptor() && sqlExpressionContext.isUseInterceptor();
-        if(useLogicDelete||useInterceptor){
-            PredicateSegment predicateSegment = new AndPredicateSegment(true);
-            EasyQueryLambdaFactory easyQueryLambdaFactory = getRuntimeContext().getEasyQueryLambdaFactory();
-            SqlPredicate<?> sqlPredicate = easyQueryLambdaFactory.createSqlPredicate(table.getIndex(), this, predicateSegment);
-            SqlExpression<SqlPredicate<?>> logicDeleteQueryFilterExpression = table.getLogicDeleteQueryFilterExpression();
-            if (logicDeleteQueryFilterExpression != null) {
-                logicDeleteQueryFilterExpression.apply(sqlPredicate);
-            }
-            List<String> selectInterceptorNames = table.getSelectInterceptorNames();
-            if(ArrayUtil.isNotEmpty(selectInterceptorNames)){
-                EasyQueryConfiguration easyQueryConfiguration = getRuntimeContext().getEasyQueryConfiguration();
-                for (String selectInterceptorName : selectInterceptorNames) {
-                    GlobalSelectInterceptorStrategy globalSelectInterceptorStrategy = (GlobalSelectInterceptorStrategy)easyQueryConfiguration.getGlobalInterceptorStrategy(selectInterceptorName);
-                    if(globalSelectInterceptorStrategy!=null){
-                        globalSelectInterceptorStrategy.configure(table.entityClass(),this,sqlPredicate);
-                    }
-                }
-            }
-
-            if(predicateSegment.isNotEmpty()){
-                if (originalPredicate != null && originalPredicate.isNotEmpty()) {
-                    predicateSegment.addPredicateSegment(originalPredicate);
-                }
-                return predicateSegment;
-            }
-        }
-        return originalPredicate;
-    }
 
 }

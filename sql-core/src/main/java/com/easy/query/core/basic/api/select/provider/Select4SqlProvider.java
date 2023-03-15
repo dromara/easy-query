@@ -79,8 +79,8 @@ public class Select4SqlProvider<T1,T2,T3,T4> extends Select3SqlProvider<T1,T2,T3
     }
 
     @Override
-    public <TR> SqlColumnAsSelector<T4, TR> getSqlColumnAsSelector4(SqlBuilderSegment sqlSegment0Builder) {
-        return new DefaultSqlColumnAsSelector<>(index, sqlEntityExpression,sqlSegment0Builder);
+    public <TR> SqlColumnAsSelector<T4, TR> getSqlColumnAsSelector4(SqlBuilderSegment sqlSegment0Builder,Class<TR> resultClass) {
+        return new DefaultSqlColumnAsSelector<>(index, sqlEntityExpression,sqlSegment0Builder,resultClass);
     }
 
     @Override
