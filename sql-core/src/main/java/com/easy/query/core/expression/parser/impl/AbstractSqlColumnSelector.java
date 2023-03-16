@@ -70,21 +70,25 @@ public class AbstractSqlColumnSelector<T1, TChain> implements ColumnSelector<T1,
     public TChain columnAll() {
         SqlEntityTableExpression table = sqlEntityExpression.getTable(index);
         if (table instanceof AnonymousEntityTableExpression) {
-            SqlEntityQueryExpression sqlEntityQueryExpression = ((AnonymousEntityTableExpression) table).getSqlEntityQueryExpression();
-            List<SqlSegment> sqlSegments = sqlEntityQueryExpression.getProjects().getSqlSegments();
-            for (SqlSegment sqlSegment : sqlSegments) {
-                if (sqlSegment instanceof SqlEntityAliasSegment) {
-                    String columnName = EasyUtil.getAnonymousColumnName((SqlEntityAliasSegment) sqlSegment);
-                    sqlSegmentBuilder.append(new ColumnSegment(table,columnName , sqlEntityExpression));
-                } else {
-                    throw new EasyQueryException("columnAll函数无法获取指定列" + ClassUtil.getInstanceSimpleName(sqlSegment));
-                }
-            }
+            columnAnonymousAll((AnonymousEntityTableExpression) table);
         } else {
-
             Collection<String> properties = table.getEntityMetadata().getProperties();
             for (String property : properties) {
                 sqlSegmentBuilder.append(new ColumnSegment(table, property, sqlEntityExpression));
+            }
+        }
+        return (TChain) this;
+    }
+
+    protected TChain columnAnonymousAll(AnonymousEntityTableExpression table){
+        SqlEntityQueryExpression sqlEntityQueryExpression = table.getSqlEntityQueryExpression();
+        List<SqlSegment> sqlSegments = sqlEntityQueryExpression.getProjects().getSqlSegments();
+        for (SqlSegment sqlSegment : sqlSegments) {
+            if (sqlSegment instanceof SqlEntityAliasSegment) {
+                String columnName = EasyUtil.getAnonymousColumnName((SqlEntityAliasSegment) sqlSegment);
+                sqlSegmentBuilder.append(new ColumnSegment(table,columnName , sqlEntityExpression));
+            } else {
+                throw new EasyQueryException("columnAll函数无法获取指定列" + ClassUtil.getInstanceSimpleName(sqlSegment));
             }
         }
         return (TChain) this;

@@ -208,7 +208,7 @@ public class DefaultEasyExecutor implements EasyExecutor {
         try {
             easyConnection = connectionManager.getEasyConnection();
             ps = createPreparedStatement(easyConnection.getConnection(), sql, sqlParameters, easyJdbcTypeHandler);
-            rs = ps.executeQuery();
+             rs = ps.executeQuery();
             result = mapTo(executorContext, rs, clazz);
 
             if (logDebug) {

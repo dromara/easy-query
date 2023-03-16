@@ -51,17 +51,15 @@ public class DefaultSqlColumnAsSelector<T1, TR> extends AbstractSqlColumnSelecto
     public SqlColumnAsSelector<T1, TR> columnAll() {
 
         SqlEntityTableExpression table = sqlEntityExpression.getTable(getIndex());
+        if(table.entityClass().equals(resultClass)){
+            return  super.columnAll();
+        }else{
+            return  columnAll(table);
+        }
+    }
+    private SqlColumnAsSelector<T1, TR> columnAll(SqlEntityTableExpression table){
         if (table instanceof AnonymousEntityTableExpression) {
-            SqlEntityQueryExpression sqlEntityQueryExpression = ((AnonymousEntityTableExpression) table).getSqlEntityQueryExpression();
-            List<SqlSegment> sqlSegments = sqlEntityQueryExpression.getProjects().getSqlSegments();
-            for (SqlSegment sqlSegment : sqlSegments) {
-                if (sqlSegment instanceof SqlEntityAliasSegment) {
-                    String columnName = EasyUtil.getAnonymousColumnName((SqlEntityAliasSegment) sqlSegment);
-                    sqlSegmentBuilder.append(new ColumnSegment(table, columnName, sqlEntityExpression));
-                } else {
-                    throw new EasyQueryException("columnAll函数无法获取指定列" + ClassUtil.getInstanceSimpleName(sqlSegment));
-                }
-            }
+            columnAnonymousAll((AnonymousEntityTableExpression) table);
         } else {
             EntityMetadata entityMetadata = sqlEntityExpression.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(resultClass);
             Collection<String> properties = table.getEntityMetadata().getProperties();

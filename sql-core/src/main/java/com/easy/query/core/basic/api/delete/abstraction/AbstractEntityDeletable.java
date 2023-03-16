@@ -42,6 +42,12 @@ public abstract class AbstractEntityDeletable<T> implements EntityDeletable<T> {
         table = new EasyEntityTableExpression(entityMetadata,  0,null, MultiTableTypeEnum.FROM);
         this.sqlEntityDeleteExpression.addSqlEntityTableExpression(table);
     }
+
+    @Override
+    public SqlEntityDeleteExpression getSqlEntityDeleteExpression() {
+        return sqlEntityDeleteExpression;
+    }
+
     @Override
     public long executeRows() {
 
@@ -56,13 +62,6 @@ public abstract class AbstractEntityDeletable<T> implements EntityDeletable<T> {
         return 0;
     }
 
-    @Override
-    public void executeRows(long expectRows, String msg, String code) {
-        long rows = executeRows();
-        if(rows!=expectRows){
-            throw new EasyQueryConcurrentException(msg,code);
-        }
-    }
 
     @Override
     public EntityDeletable<T> disableLogicDelete() {

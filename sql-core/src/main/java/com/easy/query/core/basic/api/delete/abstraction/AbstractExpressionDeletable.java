@@ -45,6 +45,11 @@ public abstract   class AbstractExpressionDeletable<T> implements ExpressionDele
     }
 
     @Override
+    public SqlEntityDeleteExpression getSqlEntityDeleteExpression() {
+        return sqlEntityDeleteExpression;
+    }
+
+    @Override
     public long executeRows() {
         String deleteSql = toSql();
         if(StringUtil.isBlank(deleteSql)){

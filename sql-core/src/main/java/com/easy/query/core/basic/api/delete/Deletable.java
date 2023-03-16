@@ -1,6 +1,9 @@
 package com.easy.query.core.basic.api.delete;
 
+import com.easy.query.core.basic.jdbc.con.EasyConnectionManager;
+import com.easy.query.core.basic.jdbc.tx.Transaction;
 import com.easy.query.core.exception.EasyQueryConcurrentException;
+import com.easy.query.core.query.SqlEntityDeleteExpression;
 
 /**
  * @FileName: Deletable.java
@@ -9,6 +12,7 @@ import com.easy.query.core.exception.EasyQueryConcurrentException;
  * @Created by xuejiaming
  */
 public interface Deletable<T,TChain> {
+    SqlEntityDeleteExpression getSqlEntityDeleteExpression();
     /**
      * 返回受影响行数
      * @return
@@ -31,7 +35,28 @@ public interface Deletable<T,TChain> {
      * @param code
      */
 
-    void executeRows(long expectRows, String msg, String code);
+   default void executeRows(long expectRows, String msg, String code){
+
+       EasyConnectionManager connectionManager = getSqlEntityDeleteExpression().getRuntimeContext().getConnectionManager();
+       Transaction transaction=null;
+       try {
+           boolean inTransaction = connectionManager.currentThreadInTransaction();
+           if(!inTransaction){
+               transaction = connectionManager.beginTransaction();
+           }
+           long rows = executeRows();
+           if(rows!=expectRows){
+               throw new EasyQueryConcurrentException(msg,code);
+           }
+           if(!inTransaction){
+               transaction.commit();
+           }
+       }finally {
+           if(transaction!=null){
+               transaction.close();
+           }
+       }
+   }
     String toSql();
     TChain disableLogicDelete();
 }

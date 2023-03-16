@@ -26,71 +26,71 @@ public interface ColumnSetter<T1,TChain> extends IndexAware {
      */
     TChain set(boolean condition, Property<T1, ?> column, Object val);
 
-    default <T2, TChain2> TChain set(WherePredicate<T2, TChain2> sub, Property<T1, ?> column1, Property<T2, ?> column2) {
-        return set(true, sub, column1, column2);
+    default TChain set(Property<T1, ?> column1, Property<T1, ?> column2) {
+        return set(true, column1, column2);
     }
 
-    <T2, TChain2> TChain set(boolean condition, WherePredicate<T2, TChain2> sub, Property<T1, ?> column1, Property<T2, ?> column2);
+     TChain set(boolean condition, Property<T1, ?> column1, Property<T1, ?> column2);
 
     default  TChain setIncrement(Property<T1, Integer> column) {
         return setIncrement(true, column);
     }
 
     default TChain setIncrement(boolean condition,Property<T1, Integer> column){
-        return setIncrement(condition,column,1);
+        return setIncrementNumber(condition,column,1);
     }
 
     default  TChain setIncrement(Property<T1, Integer> column,int val) {
-        return setIncrement(true, column,val);
+        return setIncrementNumber(true, column,val);
     }
 
     default TChain setIncrement(boolean condition,Property<T1, Integer> column,int val){
-        return setIncrement(condition,column,val);
+        return setIncrementNumber(condition,column,val);
     }
 
     default  TChain setIncrement(Property<T1, Long> column,long val) {
-        return setIncrement(true, column,val);
+        return setIncrementNumber(true, column,val);
     }
 
     default TChain setIncrement(boolean condition,Property<T1, Long> column,long val){
-        return setIncrement(condition,column,val);
+        return setIncrementNumber(condition,column,val);
     }
 
 
     default  TChain setIncrement(Property<T1, ? extends Number> column,Number val) {
-        return setIncrement(true, column,val);
+        return setIncrementNumber(true, column,val);
     }
 
-    TChain setIncrement(boolean condition,Property<T1, ? extends Number> column,Number val);
+    TChain setIncrementNumber(boolean condition,Property<T1, ? extends Number> column,Number val);
 
     default  TChain setDecrement(Property<T1, Integer> column) {
         return setDecrement(true, column);
     }
 
     default TChain setDecrement(boolean condition,Property<T1, Integer> column){
-        return setDecrement(condition,column,1);
+        return setDecrementNumber(condition,column,1);
     }
 
     default  TChain setDecrement(Property<T1, Integer> column,int val) {
-        return setDecrement(true, column,val);
+        return setDecrementNumber(true, column,val);
     }
 
     default TChain setDecrement(boolean condition,Property<T1, Integer> column,int val){
-        return setDecrement(condition,column,val);
+        return setDecrementNumber(condition,column,val);
     }
 
     default  TChain setDecrement(Property<T1, Long> column,long val) {
-        return setDecrement(true, column,val);
+        return setDecrementNumber(true, column,val);
     }
 
     default TChain setDecrement(boolean condition,Property<T1, Long> column,long val){
-        return setDecrement(condition,column,val);
+        return setDecrementNumber(condition,column,val);
     }
 
 
     default  TChain setDecrement(Property<T1, ? extends Number> column,Number val) {
-        return setDecrement(true, column,val);
+        return setDecrementNumber(true, column,val);
     }
 
-    TChain setDecrement(boolean condition,Property<T1, ? extends Number> column,Number val);
+    TChain setDecrementNumber(boolean condition,Property<T1, ? extends Number> column,Number val);
 }

@@ -4,6 +4,7 @@ import com.easy.query.core.basic.api.update.EntityUpdatable;
 import com.easy.query.core.exception.EasyQueryConcurrentException;
 import com.easy.query.core.expression.lambda.SqlExpression;
 import com.easy.query.core.expression.parser.abstraction.SqlColumnSelector;
+import com.easy.query.core.query.SqlEntityUpdateExpression;
 
 /**
  * @FileName: EasyEmptyEntityUpdate.java
@@ -12,6 +13,10 @@ import com.easy.query.core.expression.parser.abstraction.SqlColumnSelector;
  * @Created by xuejiaming
  */
 public class EasyEmptyEntityUpdatable<T> implements EntityUpdatable<T> {
+    @Override
+    public SqlEntityUpdateExpression getSqlEntityUpdateExpression() {
+        return null;
+    }
     @Override
     public EntityUpdatable<T> setColumns(boolean condition, SqlExpression<SqlColumnSelector<T>> columnSelectorExpression) {
         return this;

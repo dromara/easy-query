@@ -72,7 +72,6 @@ public abstract class AbstractInsertable<T> implements Insertable<T> {
         if (!entities.isEmpty()) {
             insertBefore();
             String insertSql = toSql();
-            System.out.println("插入sql：" + insertSql);
             if (!StringUtil.isBlank(insertSql)) {
                 EasyExecutor easyExecutor = sqlEntityInsertExpression.getRuntimeContext().getEasyExecutor();
                 return easyExecutor.insert(ExecutorContext.create(sqlEntityInsertExpression.getRuntimeContext()), insertSql, entities, sqlEntityInsertExpression.getParameters());

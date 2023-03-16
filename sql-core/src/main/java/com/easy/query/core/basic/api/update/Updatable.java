@@ -1,6 +1,9 @@
 package com.easy.query.core.basic.api.update;
 
+import com.easy.query.core.basic.jdbc.con.EasyConnectionManager;
+import com.easy.query.core.basic.jdbc.tx.Transaction;
 import com.easy.query.core.exception.EasyQueryConcurrentException;
+import com.easy.query.core.query.SqlEntityUpdateExpression;
 
 /**
  * @FileName: Update.java
@@ -12,6 +15,7 @@ public interface Updatable<T> {
 //    Insert<T> insertColumns(SqlExpression<SqlPredicate<T>> columnExpression);
 //    Insert<T> ignoreColumns(SqlExpression<SqlColumnSelector<T>> columnExpression);
 
+    SqlEntityUpdateExpression getSqlEntityUpdateExpression();
     /**
      * 返回受影响行数
      *
@@ -34,7 +38,28 @@ public interface Updatable<T> {
      * @param msg
      * @param code
      */
-    void executeRows(long expectRows, String msg, String code);
+    default void executeRows(long expectRows, String msg, String code){
+
+        EasyConnectionManager connectionManager = getSqlEntityUpdateExpression().getRuntimeContext().getConnectionManager();
+        Transaction transaction=null;
+        try {
+            boolean inTransaction = connectionManager.currentThreadInTransaction();
+            if(!inTransaction){
+                transaction = connectionManager.beginTransaction();
+            }
+            long rows = executeRows();
+            if(rows!=expectRows){
+                throw new EasyQueryConcurrentException(msg,code);
+            }
+            if(!inTransaction){
+                transaction.commit();
+            }
+        }finally {
+            if(transaction!=null){
+                transaction.close();
+            }
+        }
+    }
 
     String toSql();
 }

@@ -47,6 +47,11 @@ public abstract class AbstractEntityUpdatable<T> implements EntityUpdatable<T> {
     }
 
     @Override
+    public SqlEntityUpdateExpression getSqlEntityUpdateExpression() {
+        return sqlEntityUpdateExpression;
+    }
+
+    @Override
     public long executeRows() {
         if (!entities.isEmpty()) {
             updateBefore();
@@ -82,13 +87,6 @@ public abstract class AbstractEntityUpdatable<T> implements EntityUpdatable<T> {
     }
     protected abstract String toInternalSql();
 
-    @Override
-    public void executeRows(long expectRows, String msg, String code) {
-        long rows = executeRows();
-        if (rows != expectRows) {
-            throw new EasyQueryConcurrentException(msg, code);
-        }
-    }
 
     @Override
     public EntityUpdatable<T> setColumns(boolean condition, SqlExpression<SqlColumnSelector<T>> columnSelectorExpression) {

@@ -2,6 +2,7 @@ package com.easy.query.core.basic.api.delete.impl;
 
 import com.easy.query.core.basic.api.delete.EntityDeletable;
 import com.easy.query.core.exception.EasyQueryConcurrentException;
+import com.easy.query.core.query.SqlEntityDeleteExpression;
 
 /**
  * @FileName: EasyEmptyEntityDeletable.java
@@ -10,6 +11,11 @@ import com.easy.query.core.exception.EasyQueryConcurrentException;
  * @Created by xuejiaming
  */
 public class EasyEmptyEntityDeletable<T> implements EntityDeletable<T> {
+    @Override
+    public SqlEntityDeleteExpression getSqlEntityDeleteExpression() {
+        return null;
+    }
+
     @Override
     public long executeRows() {
         return 0;
