@@ -10,7 +10,7 @@ import com.easy.query.core.abstraction.metadata.EntityMetadata;
  * @Date: 2023/3/4 22:43
  * @Created by xuejiaming
  */
-public interface EasySQLExpressionFactory {
+public interface EasyExpressionFactory {
     SqlExpressionContext createSqlExpressionContext(EasyQueryRuntimeContext runtimeContext, String alias);
     SqlEntityTableExpression createSqlEntityTableExpression(EntityMetadata entityMetadata, int index, String alias, MultiTableTypeEnum multiTableType);
     SqlEntityTableExpression createSqlAnonymousEntityTableExpression(EntityMetadata entityMetadata, int index, String alias, MultiTableTypeEnum multiTableType, SqlEntityQueryExpression sqlEntityQueryExpression);

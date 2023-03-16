@@ -8,7 +8,7 @@ import com.easy.query.core.basic.api.jdbc.EasyJDBCExecutor;
 import com.easy.query.core.basic.api.select.impl.EasyQueryable;
 import com.easy.query.core.basic.api.select.impl.EasyQueryable3;
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
-import com.easy.query.core.abstraction.EasySQLExpressionFactory;
+import com.easy.query.core.abstraction.EasyExpressionFactory;
 import com.easy.query.core.abstraction.metadata.EntityMetadata;
 import com.easy.query.core.basic.api.update.EntityUpdatable;
 import com.easy.query.core.basic.api.update.ExpressionUpdatable;
@@ -41,9 +41,9 @@ import java.util.Collections;
  * @Created by xuejiaming
  */
 public class DefaultEasySqlApiFactory implements EasySqlApiFactory {
-    private final EasySQLExpressionFactory easySqlExpressionFactory;
+    private final EasyExpressionFactory easySqlExpressionFactory;
 
-    public DefaultEasySqlApiFactory(EasySQLExpressionFactory easySqlExpressionFactory){
+    public DefaultEasySqlApiFactory(EasyExpressionFactory easySqlExpressionFactory){
         this.easySqlExpressionFactory = easySqlExpressionFactory;
     }
 

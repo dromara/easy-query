@@ -6,7 +6,10 @@ package com.easy.query.core.interceptor;
  * @Date: 2023/3/9 21:35
  * @Created by xuejiaming
  */
-public interface GlobalInterceptor {
+public interface GlobalInterceptor  {
+    default int order(){
+        return 0;
+    }
     /**
      * 拦截器名称
      * @return

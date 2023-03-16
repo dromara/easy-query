@@ -8,7 +8,7 @@ import com.easy.query.core.config.AbstractEasyQueryDialect;
  * @Date: 2023/2/12 09:08
  * @Created by xuejiaming
  */
-public class MySQLDialect extends AbstractEasyQueryDialect {
+public class MySqlDialect extends AbstractEasyQueryDialect {
     @Override
     public String getQuoteStart() {
         return "`";

@@ -1,14 +1,14 @@
 package com.easy.query.mysql;
 
 import com.easy.query.core.query.*;
-import com.easy.query.mysql.expression.MySQLInsertExpression;
+import com.easy.query.mysql.expression.MySqlInsertExpression;
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
-import com.easy.query.core.abstraction.EasySQLExpressionFactory;
+import com.easy.query.core.abstraction.EasyExpressionFactory;
 import com.easy.query.core.abstraction.metadata.EntityMetadata;
 import com.easy.query.core.enums.MultiTableTypeEnum;
-import com.easy.query.mysql.expression.MySQLDeleteExpression;
-import com.easy.query.mysql.expression.MySQLQueryExpression;
-import com.easy.query.mysql.expression.MySQLUpdateExpression;
+import com.easy.query.mysql.expression.MySqlDeleteExpression;
+import com.easy.query.mysql.expression.MySqlQueryExpression;
+import com.easy.query.mysql.expression.MySqlUpdateExpression;
 
 /**
  * @FileName: MySQLSqlExpressionFactory.java
@@ -16,7 +16,7 @@ import com.easy.query.mysql.expression.MySQLUpdateExpression;
  * @Date: 2023/3/4 22:55
  * @Created by xuejiaming
  */
-public class MySQLSQLExpressionFactory implements EasySQLExpressionFactory {
+public class MySqlExpressionFactory implements EasyExpressionFactory {
     @Override
     public SqlExpressionContext createSqlExpressionContext(EasyQueryRuntimeContext runtimeContext, String alias) {
         return new EasySqlExpressionContext(runtimeContext,alias);
@@ -34,21 +34,21 @@ public class MySQLSQLExpressionFactory implements EasySQLExpressionFactory {
 
     @Override
     public SqlEntityQueryExpression createSqlEntityQueryExpression(SqlExpressionContext sqlExpressionContext) {
-        return new MySQLQueryExpression(sqlExpressionContext);
+        return new MySqlQueryExpression(sqlExpressionContext);
     }
 
     @Override
     public SqlEntityInsertExpression createSqlEntityInsertExpression(SqlExpressionContext sqlExpressionContext) {
-        return new MySQLInsertExpression(sqlExpressionContext);
+        return new MySqlInsertExpression(sqlExpressionContext);
     }
 
     @Override
     public SqlEntityUpdateExpression createSqlEntityUpdateExpression(SqlExpressionContext sqlExpressionContext,boolean expression) {
-        return new MySQLUpdateExpression(sqlExpressionContext,expression);
+        return new MySqlUpdateExpression(sqlExpressionContext,expression);
     }
 
     @Override
     public SqlEntityDeleteExpression createSqlEntityDeleteExpression(SqlExpressionContext sqlExpressionContext,boolean expression) {
-        return new MySQLDeleteExpression(sqlExpressionContext,expression);
+        return new MySqlDeleteExpression(sqlExpressionContext,expression);
     }
 }

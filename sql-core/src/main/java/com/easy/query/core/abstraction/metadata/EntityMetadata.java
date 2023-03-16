@@ -19,6 +19,7 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * @FileName: EntityMetadata.java
@@ -49,7 +50,7 @@ public class EntityMetadata {
     public void init(EasyQueryConfiguration jdqcConfiguration) {
         classInit(jdqcConfiguration);
         propertyInit(jdqcConfiguration);
-        entityGlobalQueryFilterConfigurationInit(jdqcConfiguration);
+        entityGlobalInterceptorConfigurationInit(jdqcConfiguration);
     }
 
     protected void classInit(EasyQueryConfiguration configuration) {
@@ -138,11 +139,11 @@ public class EntityMetadata {
         }
     }
 
-    protected void entityGlobalQueryFilterConfigurationInit(EasyQueryConfiguration configuration) {
+    protected void entityGlobalInterceptorConfigurationInit(EasyQueryConfiguration configuration) {
 
         if (StringUtil.isNotBlank(tableName)) {
 
-            Collection<GlobalInterceptor> globalInterceptors = configuration.getGlobalInterceptors();
+            List<GlobalInterceptor> globalInterceptors = configuration.getGlobalInterceptors().stream().sorted(Comparator.comparingInt(GlobalInterceptor::order)).collect(Collectors.toList());
             for (GlobalInterceptor globalInterceptor : globalInterceptors) {
                 if (globalInterceptor.apply(entityClass)) {
                     if (globalInterceptor instanceof GlobalPredicateFilterInterceptor) {

@@ -17,8 +17,8 @@ import com.easy.query.core.interceptor.GlobalInterceptor;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.logicdel.GlobalLogicDeleteStrategy;
 import com.easy.query.core.metadata.DefaultEntityMetadataManager;
-import com.easy.query.mysql.MySQLSQLExpressionFactory;
-import com.easy.query.mysql.config.MySQLDialect;
+import com.easy.query.mysql.MySqlExpressionFactory;
+import com.easy.query.mysql.config.MySqlDialect;
 import com.easy.query.sql.starter.config.EasyQueryProperties;
 import com.easy.query.sql.starter.logging.Slf4jImpl;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -73,7 +73,7 @@ public class EasyQueryStarterAutoConfiguration {
         EasyQueryConfiguration configuration = new EasyQueryConfiguration();
 
         NameConversion nameConversion = new UnderlinedNameConversion();
-        MySQLDialect sqlDialect = new MySQLDialect();
+        MySqlDialect sqlDialect = new MySqlDialect();
         configuration.setNameConversion(nameConversion);
         configuration.setDialect(sqlDialect);
         for (GlobalInterceptor globalInterceptorStrategy : globalInterceptorStrategyMap.values()) {
@@ -96,12 +96,12 @@ public class EasyQueryStarterAutoConfiguration {
     }
 
     @Bean
-    public EasySQLExpressionFactory easySqlExpressionFactory() {
-        return new MySQLSQLExpressionFactory();
+    public EasyExpressionFactory easySqlExpressionFactory() {
+        return new MySqlExpressionFactory();
     }
 
     @Bean
-    public EasySqlApiFactory easySqlApiFactory(EasySQLExpressionFactory easySqlExpressionFactory) {
+    public EasySqlApiFactory easySqlApiFactory(EasyExpressionFactory easySqlExpressionFactory) {
         return new DefaultEasySqlApiFactory(easySqlExpressionFactory);
     }
 
@@ -113,7 +113,7 @@ public class EasyQueryStarterAutoConfiguration {
                                                            EasyExecutor easyExecutor,
                                                            EasyJdbcTypeHandlerManager easyJdbcTypeHandler,
                                                            EasySqlApiFactory easyQueryableFactory,
-                                                           EasySQLExpressionFactory easySqlExpressionFactory) {
+                                                           EasyExpressionFactory easySqlExpressionFactory) {
         return new DefaultEasyQueryRuntimeContext(
                 easyQueryConfiguration,
                 entityMetadataManager,

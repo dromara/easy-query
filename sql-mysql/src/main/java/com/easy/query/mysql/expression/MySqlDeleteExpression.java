@@ -10,10 +10,10 @@ import com.easy.query.core.query.SqlExpressionContext;
  * @Date: 2023/3/4 16:36
  * @Created by xuejiaming
  */
-public class MySQLDeleteExpression extends EasySqlDeleteExpression {
+public class MySqlDeleteExpression extends EasySqlDeleteExpression {
 
 
-    public MySQLDeleteExpression(SqlExpressionContext sqlExpressionContext, boolean expressionDelete) {
+    public MySqlDeleteExpression(SqlExpressionContext sqlExpressionContext, boolean expressionDelete) {
         super(sqlExpressionContext,expressionDelete);
     }
 

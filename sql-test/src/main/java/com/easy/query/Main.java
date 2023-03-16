@@ -27,8 +27,8 @@ import com.easy.query.core.enums.AggregatePredicateCompare;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.metadata.DefaultEntityMetadataManager;
-import com.easy.query.mysql.MySQLSQLExpressionFactory;
-import com.easy.query.mysql.config.MySQLDialect;
+import com.easy.query.mysql.MySqlExpressionFactory;
+import com.easy.query.mysql.config.MySqlDialect;
 
 import javax.sql.DataSource;
 import java.time.LocalDateTime;
@@ -113,11 +113,11 @@ public class Main {
         NameConversion nameConversion = new UnderlinedNameConversion();
         EasyQueryConfiguration configuration = new EasyQueryConfiguration();
         configuration.setNameConversion(nameConversion);
-        configuration.setDialect(new MySQLDialect());
+        configuration.setDialect(new MySqlDialect());
 
         EntityMetadataManager entityMetadataManager = new DefaultEntityMetadataManager(configuration);
         EasyQueryLambdaFactory easyQueryLambdaFactory = new DefaultEasyQueryLambdaFactory();
-        MySQLSQLExpressionFactory mySQLSqlExpressionFactory = new MySQLSQLExpressionFactory();
+        MySqlExpressionFactory mySQLSqlExpressionFactory = new MySqlExpressionFactory();
         EasySqlApiFactory easyQueryableFactory = new DefaultEasySqlApiFactory(mySQLSqlExpressionFactory);
         DefaultEasyQueryRuntimeContext jqdcRuntimeContext = new DefaultEasyQueryRuntimeContext(configuration, entityMetadataManager, easyQueryLambdaFactory, connectionManager, defaultExecutor, jdbcTypeHandler, easyQueryableFactory, mySQLSqlExpressionFactory);
 
