@@ -1,5 +1,6 @@
 package com.easy.query.core.basic.api.update.abstraction;
 
+import com.easy.query.core.basic.api.abstraction.AbstractSqlExecuteRows;
 import com.easy.query.core.basic.api.update.EntityUpdatable;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.exception.EasyQueryException;
@@ -25,13 +26,14 @@ import java.util.*;
  * @Date: 2023/2/24 22:06
  * @Created by xuejiaming
  */
-public abstract class AbstractEntityUpdatable<T> implements EntityUpdatable<T> {
+public abstract class AbstractEntityUpdatable<T> extends AbstractSqlExecuteRows implements EntityUpdatable<T> {
     protected final List<T> entities = new ArrayList<>();
     protected final SqlEntityTableExpression table;
     protected final  EntityMetadata entityMetadata;
     protected final SqlEntityUpdateExpression sqlEntityUpdateExpression;
 
     public AbstractEntityUpdatable(Collection<T> entities, SqlEntityUpdateExpression sqlEntityUpdateExpression) {
+        super(sqlEntityUpdateExpression);
         if (entities == null || entities.isEmpty()) {
             throw new EasyQueryException("不支持空对象的update");
         }
@@ -44,11 +46,6 @@ public abstract class AbstractEntityUpdatable<T> implements EntityUpdatable<T> {
         entityMetadata.checkTable();
         table = new EasyEntityTableExpression(entityMetadata, 0, null, MultiTableTypeEnum.FROM);
         this.sqlEntityUpdateExpression.addSqlEntityTableExpression(table);
-    }
-
-    @Override
-    public SqlEntityUpdateExpression getSqlEntityUpdateExpression() {
-        return sqlEntityUpdateExpression;
     }
 
     @Override

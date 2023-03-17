@@ -1,6 +1,7 @@
 package com.easy.query.core.basic.api.delete.abstraction;
 
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
+import com.easy.query.core.basic.api.abstraction.AbstractSqlExecuteRows;
 import com.easy.query.core.basic.api.delete.EntityDeletable;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.exception.EasyQueryException;
@@ -24,12 +25,13 @@ import java.util.List;
  * @Date: 2023/2/28 12:33
  * @Created by xuejiaming
  */
-public abstract class AbstractEntityDeletable<T> implements EntityDeletable<T> {
+public abstract class AbstractEntityDeletable<T> extends AbstractSqlExecuteRows implements EntityDeletable<T> {
     protected final List<T> entities= new ArrayList<>();
     protected final SqlEntityTableExpression table;
     protected final SqlEntityDeleteExpression sqlEntityDeleteExpression;
 
     public AbstractEntityDeletable(Collection<T> entities, SqlEntityDeleteExpression sqlEntityDeleteExpression){
+        super(sqlEntityDeleteExpression);
         if(entities==null||entities.isEmpty()){
             throw new EasyQueryException("不支持空对象的delete");
         }
@@ -41,11 +43,6 @@ public abstract class AbstractEntityDeletable<T> implements EntityDeletable<T> {
         entityMetadata.checkTable();
         table = new EasyEntityTableExpression(entityMetadata,  0,null, MultiTableTypeEnum.FROM);
         this.sqlEntityDeleteExpression.addSqlEntityTableExpression(table);
-    }
-
-    @Override
-    public SqlEntityDeleteExpression getSqlEntityDeleteExpression() {
-        return sqlEntityDeleteExpression;
     }
 
     @Override

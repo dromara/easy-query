@@ -1,5 +1,6 @@
 package com.easy.query.core.basic.api.update.abstraction;
 
+import com.easy.query.core.basic.api.abstraction.AbstractSqlExecuteRows;
 import com.easy.query.core.basic.jdbc.con.EasyConnectionManager;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
 import com.easy.query.core.enums.MultiTableTypeEnum;
@@ -28,13 +29,14 @@ import java.util.List;
  * @Date: 2023/2/25 08:24
  * @Created by xuejiaming
  */
-public abstract class AbstractExpressionUpdatable<T> implements ExpressionUpdatable<T> {
+public abstract class AbstractExpressionUpdatable<T> extends AbstractSqlExecuteRows implements ExpressionUpdatable<T> {
     protected final Class<T> clazz;
     protected final  EntityMetadata entityMetadata;
     protected final SqlEntityUpdateExpression sqlEntityUpdateExpression;
     protected final SqlColumnSetter<T> sqlColumnSetter;
 
     public AbstractExpressionUpdatable(Class<T> clazz, SqlEntityUpdateExpression sqlEntityUpdateExpression) {
+        super(sqlEntityUpdateExpression);
 
         this.clazz = clazz;
         this.sqlEntityUpdateExpression = sqlEntityUpdateExpression;
@@ -44,10 +46,6 @@ public abstract class AbstractExpressionUpdatable<T> implements ExpressionUpdata
         SqlEntityTableExpression table = new EasyEntityTableExpression(entityMetadata, 0, null, MultiTableTypeEnum.FROM);
         this.sqlEntityUpdateExpression.addSqlEntityTableExpression(table);
         sqlColumnSetter = new DefaultSqlColumnSetter<>(0, sqlEntityUpdateExpression, sqlEntityUpdateExpression.getSetColumns());
-    }
-    @Override
-    public SqlEntityUpdateExpression getSqlEntityUpdateExpression() {
-        return sqlEntityUpdateExpression;
     }
 
     @Override

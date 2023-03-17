@@ -1,5 +1,6 @@
 package com.easy.query.core.basic.api.delete.abstraction;
 
+import com.easy.query.core.basic.api.abstraction.AbstractSqlExecuteRows;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnValuePredicate0;
 import com.easy.query.core.basic.jdbc.executor.EasyExecutor;
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
@@ -29,12 +30,13 @@ import java.util.Collection;
  * @Date: 2023/3/1 22:30
  * @Created by xuejiaming
  */
-public abstract   class AbstractExpressionDeletable<T> implements ExpressionDeletable<T> {
+public abstract   class AbstractExpressionDeletable<T> extends AbstractSqlExecuteRows implements ExpressionDeletable<T> {
     protected final Class<T> clazz;
     protected final EasyEntityTableExpression table;
     protected final SqlEntityDeleteExpression sqlEntityDeleteExpression;
 
     public AbstractExpressionDeletable(Class<T> clazz, SqlEntityDeleteExpression sqlEntityDeleteExpression){
+        super(sqlEntityDeleteExpression);
         this.sqlEntityDeleteExpression = sqlEntityDeleteExpression;
 
         this.clazz = clazz;
@@ -42,11 +44,6 @@ public abstract   class AbstractExpressionDeletable<T> implements ExpressionDele
         entityMetadata.checkTable();
         table = new EasyEntityTableExpression(entityMetadata,  0,null, MultiTableTypeEnum.FROM);
         this.sqlEntityDeleteExpression.addSqlEntityTableExpression(table);
-    }
-
-    @Override
-    public SqlEntityDeleteExpression getSqlEntityDeleteExpression() {
-        return sqlEntityDeleteExpression;
     }
 
     @Override

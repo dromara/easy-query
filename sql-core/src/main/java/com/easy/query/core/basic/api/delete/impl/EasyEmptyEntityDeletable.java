@@ -12,11 +12,6 @@ import com.easy.query.core.query.SqlEntityDeleteExpression;
  */
 public class EasyEmptyEntityDeletable<T> implements EntityDeletable<T> {
     @Override
-    public SqlEntityDeleteExpression getSqlEntityDeleteExpression() {
-        return null;
-    }
-
-    @Override
     public long executeRows() {
         return 0;
     }
