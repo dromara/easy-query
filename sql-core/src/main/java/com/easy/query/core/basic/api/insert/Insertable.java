@@ -1,5 +1,7 @@
 package com.easy.query.core.basic.api.insert;
 
+import com.easy.query.core.basic.api.abstraction.SqlExecuteRows;
+
 import java.util.Collection;
 
 /**
@@ -8,21 +10,15 @@ import java.util.Collection;
  * @Date: 2023/2/20 08:48
  * @Created by xuejiaming
  */
-public interface Insertable<T> {
+public interface Insertable<T> extends SqlExecuteRows {
     Insertable<T> insert(T entity);
-   default Insertable<T> insert(Collection<T> entities){
-       for (T entity : entities) {
-           insert(entity);
-       }
-       return this;
-   }
-//    Insert<T> insertColumns(SqlExpression<SqlPredicate<T>> columnExpression);
-//    Insert<T> ignoreColumns(SqlExpression<SqlColumnSelector<T>> columnExpression);
 
-    /**
-     * 返回受影响行数
-     * @return
-     */
-    long executeRows();
+    default Insertable<T> insert(Collection<T> entities) {
+        for (T entity : entities) {
+            insert(entity);
+        }
+        return this;
+    }
+
     String toSql();
 }

@@ -1,6 +1,6 @@
 package com.easy.query.core.basic.api.update;
 
-import com.easy.query.core.basic.api.abstraction.SqlExecuteRows;
+import com.easy.query.core.basic.api.abstraction.SqlExecuteExpectRows;
 
 /**
  * @FileName: Update.java
@@ -8,7 +8,7 @@ import com.easy.query.core.basic.api.abstraction.SqlExecuteRows;
  * @Date: 2023/2/24 22:04
  * @Created by xuejiaming
  */
-public interface Updatable<T> extends SqlExecuteRows {
+public interface Updatable<T> extends SqlExecuteExpectRows {
 //    Insert<T> insertColumns(SqlExpression<SqlPredicate<T>> columnExpression);
 //    Insert<T> ignoreColumns(SqlExpression<SqlColumnSelector<T>> columnExpression);
 

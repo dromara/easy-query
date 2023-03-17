@@ -11,13 +11,14 @@ import com.easy.query.core.query.SqlEntityExpression;
  * @Date: 2023/3/17 17:14
  * @Created by xuejiaming
  */
-public abstract class AbstractSqlExecuteRows implements SqlExecuteRows{
+public abstract class AbstractSqlExecuteRows implements SqlExecuteExpectRows {
     private final SqlEntityExpression sqlEntityExpression;
 
     public AbstractSqlExecuteRows(SqlEntityExpression sqlEntityExpression){
 
         this.sqlEntityExpression = sqlEntityExpression;
     }
+
     @Override
     public void executeRows(long expectRows, String msg, String code) {
 

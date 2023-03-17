@@ -1,6 +1,6 @@
 package com.easy.query.core.basic.api.delete;
 
-import com.easy.query.core.basic.api.abstraction.SqlExecuteRows;
+import com.easy.query.core.basic.api.abstraction.SqlExecuteExpectRows;
 
 /**
  * @FileName: Deletable.java
@@ -8,7 +8,7 @@ import com.easy.query.core.basic.api.abstraction.SqlExecuteRows;
  * @Date: 2023/2/28 12:19
  * @Created by xuejiaming
  */
-public interface Deletable<T,TChain> extends SqlExecuteRows {
+public interface Deletable<T,TChain> extends SqlExecuteExpectRows {
     String toSql();
     TChain disableLogicDelete();
 }
