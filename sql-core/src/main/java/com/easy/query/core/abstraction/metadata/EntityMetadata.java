@@ -189,12 +189,21 @@ public class EntityMetadata {
         return getPropertyName(columnName, columnName);
     }
 
+    /**
+     * 忽略大小写
+     * @param columnName
+     * @param def
+     * @return
+     */
     public String getPropertyName(String columnName, String def) {
         String propertyName = column2PropertyMap.get(columnName);
         if (propertyName == null) {
             return def;
         }
         return propertyName;
+    }
+    public boolean containsColumnName(String columnName){
+        return column2PropertyMap.containsKey(columnName);
     }
 
     public Collection<ColumnMetadata> getColumns() {

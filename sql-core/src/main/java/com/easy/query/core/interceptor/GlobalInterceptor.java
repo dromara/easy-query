@@ -7,8 +7,12 @@ package com.easy.query.core.interceptor;
  * @Created by xuejiaming
  */
 public interface GlobalInterceptor  {
+    /**
+     * 越小越先执行
+     * @return
+     */
     default int order(){
-        return 0;
+        return 100;
     }
     /**
      * 拦截器名称

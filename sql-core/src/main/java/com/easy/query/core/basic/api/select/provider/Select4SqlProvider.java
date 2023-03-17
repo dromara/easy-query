@@ -83,6 +83,11 @@ public class Select4SqlProvider<T1,T2,T3,T4> extends Select3SqlProvider<T1,T2,T3
         return new DefaultSqlColumnAsSelector<>(index, sqlEntityExpression,sqlSegment0Builder,resultClass);
     }
 
+//    @Override
+//    public <TR> SqlColumnAsSelector<T4, TR> getAutoSqlColumnAsSelector4(SqlBuilderSegment sqlSegment0Builder, Class<TR> resultClass) {
+//        return new DefaultAutoSqlColumnAsSelector<>(index, sqlEntityExpression,sqlSegment0Builder,resultClass);
+//    }
+
     @Override
     public <TR> SqlColumnResultSelector<T4, TR> getSqlColumnResultSelector4(SqlBuilderSegment sqlSegment0Builder) {
         return new DefaultSqlColumnResultSelector<T4,TR>(index,sqlEntityExpression,sqlSegment0Builder);

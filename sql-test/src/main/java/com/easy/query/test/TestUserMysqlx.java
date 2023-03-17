@@ -4,6 +4,8 @@ import com.easy.query.core.annotation.Column;
 import com.easy.query.core.annotation.PrimaryKey;
 import com.easy.query.core.annotation.Table;
 
+import java.time.LocalDateTime;
+
 /**
  * @FileName: TestUserMysqlx.java
  * @Description: 文件说明
@@ -14,6 +16,15 @@ public class TestUserMysqlx {
     private String id;
     private String age;
     private String name1;
+    private LocalDateTime time;
+
+    public LocalDateTime getTime() {
+        return time;
+    }
+
+    public void setTime(LocalDateTime time) {
+        this.time = time;
+    }
 
     public String getId() {
         return id;

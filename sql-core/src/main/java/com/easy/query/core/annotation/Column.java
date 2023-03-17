@@ -1,4 +1,6 @@
 package com.easy.query.core.annotation;
+import com.easy.query.core.util.StringUtil;
+
 import java.lang.annotation.*;
 
 /**
@@ -14,7 +16,19 @@ public @interface Column {
     /**
      * 指定实体对象映射到数据库的名称
      */
-    String value() default "";
+    String value() default StringUtil.EMPTY;
+
+//    /**
+//     * 仅decimal有效
+//     * @return
+//     */
+//    int precision() default 0;
+
+    /**
+     * 仅decimal有效小数位用于db获取后补0
+     * @return
+     */
+    int scale() default 0;
 //
 //    /**
 //     * 该字段在数据库中是否为null，如果为null那么在update整个对象的时候

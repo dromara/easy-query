@@ -30,6 +30,11 @@ public interface Queryable<T1> extends Query<T1> {
 
     long countDistinct(SqlExpression<SqlColumnSelector<T1>> selectExpression);
 
+    /**
+     * 判断是否存在
+     * eg. SELECT  1  FROM table t [WHERE t.`columns` = ?] LIMIT 1
+     * @return 如果有行数那么就就是返回true表示存在，否则返回false表示不存在
+     */
     boolean any();
 
     /**
@@ -129,6 +134,15 @@ public interface Queryable<T1> extends Query<T1> {
     <TR> String toSql(Class<TR> resultClass);
 //
     Queryable<T1> select(SqlExpression<SqlColumnSelector<T1>> selectExpression);
+
+    /**
+     * 将当前T1对象转成TR对象，select会将T1属性所对应的列名映射到TR对象的列名上(忽略大小写)
+     * T1.property1列名叫做column1,T1.property2列名叫做column2，TR.property3的列名也叫column1
+     * 那么生成的sql为:select column1 from t1
+     * @param resultClass
+     * @return
+     * @param <TR>
+     */
     <TR> Queryable<TR> select(Class<TR> resultClass);
     <TR> Queryable<TR> select(Class<TR> resultClass, SqlExpression<SqlColumnAsSelector<T1, TR>> selectExpression);
     Queryable<T1> select(String columns);

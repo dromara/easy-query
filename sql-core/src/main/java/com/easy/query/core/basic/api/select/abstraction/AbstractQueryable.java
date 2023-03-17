@@ -268,7 +268,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     @Override
     public <TR> Queryable<TR> select(Class<TR> resultClass) {
         SqlExpression<SqlColumnAsSelector<T1, TR>> selectExpression = ColumnSelector::columnAll;
-        SqlColumnAsSelector<T1, TR> sqlColumnSelector = getSqlBuilderProvider1().getSqlColumnAsSelector1(sqlEntityExpression.getProjects(),resultClass);
+        SqlColumnAsSelector<T1, TR> sqlColumnSelector = getSqlBuilderProvider1().getSqlAutoColumnAsSelector1(sqlEntityExpression.getProjects(),resultClass);
         selectExpression.apply(sqlColumnSelector);
         return sqlEntityExpression.getRuntimeContext().getSqlApiFactory().createQueryable(resultClass, sqlEntityExpression);
     }
