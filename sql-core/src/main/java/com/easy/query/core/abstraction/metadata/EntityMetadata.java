@@ -85,7 +85,7 @@ public class EntityMetadata {
             }
 
             Column column = field.getAnnotation(Column.class);
-            boolean hasColumnName = column != null && !StringUtil.isBlank(column.value());
+            boolean hasColumnName = column != null && StringUtil.isNotBlank(column.value());
             String columnName = hasColumnName ? column.value() : nameConversion.getColName(property);
             ColumnMetadata columnMetadata = new ColumnMetadata(this, columnName);
 //            if (column != null) {

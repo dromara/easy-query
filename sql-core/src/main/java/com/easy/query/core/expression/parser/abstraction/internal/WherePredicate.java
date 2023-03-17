@@ -116,24 +116,55 @@ public interface WherePredicate<T1, TChain> extends IndexAware {
      */
     TChain lt(boolean condition, Property<T1, ?> column, Object val);
 
+    /**
+     * column like val%
+     * 列匹配前半部分
+     * @param column
+     * @param val
+     * @return
+     */
     default TChain likeStart(Property<T1, ?> column, Object val) {
         return likeStart(true, column, val);
     }
 
+    /**
+     * column like val%
+     * 列匹配前半部分
+     * @param condition
+     * @param column
+     * @param val
+     * @return
+     */
     default TChain likeStart(boolean condition, Property<T1, ?> column, Object val) {
         return like(condition, column, val, SqlLikeEnum.LIKE_START);
     }
 
+    /**
+     * column like %val
+     * 列匹配后半部分
+     * @param column
+     * @param val
+     * @return
+     */
     default TChain likeEnd(Property<T1, ?> column, Object val) {
         return likeEnd(true, column, val);
     }
 
+    /**
+     * column like %val
+     * 列匹配后半部分
+     * @param condition
+     * @param column
+     * @param val
+     * @return
+     */
     default TChain likeEnd(boolean condition, Property<T1, ?> column, Object val) {
         return like(condition, column, val, SqlLikeEnum.LIKE_END);
     }
 
     /**
      * column like %val%
+     * 列全匹配
      */
     default TChain like(Property<T1, ?> column, Object val) {
         return like(true, column, val);
@@ -141,6 +172,7 @@ public interface WherePredicate<T1, TChain> extends IndexAware {
 
     /**
      * column like %val%
+     * 列全匹配
      *
      * @param condition 执行条件
      * @param column    字段
@@ -151,20 +183,55 @@ public interface WherePredicate<T1, TChain> extends IndexAware {
         return like(condition, column, val, SqlLikeEnum.LIKE_ALL);
     }
 
+    /**
+     * column like ?val?
+     * 列自定义匹配
+     * @param condition
+     * @param column
+     * @param val
+     * @param sqlLike
+     * @return
+     */
     TChain like(boolean condition, Property<T1, ?> column, Object val, SqlLikeEnum sqlLike);
 
+    /**
+     * column not like val%
+     * @param column
+     * @param val
+     * @return
+     */
     default TChain notLikeStart(Property<T1, ?> column, Object val) {
         return notLikeStart(true, column, val);
     }
 
+    /**
+     * column not like val%
+     * @param condition
+     * @param column
+     * @param val
+     * @return
+     */
     default TChain notLikeStart(boolean condition, Property<T1, ?> column, Object val) {
         return notLike(condition, column, val, SqlLikeEnum.LIKE_ALL);
     }
 
+    /**
+     * column not like %val
+     * @param column
+     * @param val
+     * @return
+     */
     default TChain notLikeEnd(Property<T1, ?> column, Object val) {
         return notLikeEnd(true, column, val);
     }
 
+    /**
+     * column not like %val
+     * @param condition
+     * @param column
+     * @param val
+     * @return
+     */
     default TChain notLikeEnd(boolean condition, Property<T1, ?> column, Object val) {
         return notLike(condition, column, val, SqlLikeEnum.LIKE_END);
     }
@@ -235,14 +302,14 @@ public interface WherePredicate<T1, TChain> extends IndexAware {
     TChain in(boolean condition, Property<T1, ?> column, Collection<?> collection);
 
     /**
-     * column in collection
+     * column not in collection
      */
     default TChain notIn(Property<T1, ?> column, Collection<?> collection) {
         return notIn(true, column, collection);
     }
 
     /**
-     * column in collection
+     * column not in collection
      */
     TChain notIn(boolean condition, Property<T1, ?> column, Collection<?> collection);
 
