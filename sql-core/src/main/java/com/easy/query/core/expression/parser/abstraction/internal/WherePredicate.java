@@ -272,7 +272,7 @@ public interface WherePredicate<T1, TChain> extends IndexAware {
      * @return
      */
     default TChain rangeOpen(boolean condition, Property<T1, ?> column, boolean conditionLeft, Object valLeft, boolean conditionRight, Object valRight) {
-        return range(true, column, conditionLeft, valLeft, conditionRight, valRight, SqlRangeEnum.Open);
+        return range(condition, column, conditionLeft, valLeft, conditionRight, valRight, SqlRangeEnum.Open);
     }
 
     /**
@@ -301,7 +301,7 @@ public interface WherePredicate<T1, TChain> extends IndexAware {
      * @return
      */
     default TChain rangeClosed(boolean condition, Property<T1, ?> column, boolean conditionLeft, Object valLeft, boolean conditionRight, Object valRight) {
-        return range(true, column, conditionLeft, valLeft, conditionRight, valRight, SqlRangeEnum.Closed);
+        return range(condition, column, conditionLeft, valLeft, conditionRight, valRight, SqlRangeEnum.Closed);
     }
 
     /**
