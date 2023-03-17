@@ -1,13 +1,13 @@
 package com.easy.query.core.expression.parser.abstraction.internal;
 
 import com.easy.query.core.enums.SqlLikeEnum;
+import com.easy.query.core.enums.SqlRangeEnum;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.SqlExpression;
 
 import java.util.Collection;
 
 /**
- *
  * @FileName: WherePredicate.java
  * @Description: 文件说明
  * @Date: 2023/2/5 09:09
@@ -30,6 +30,7 @@ public interface WherePredicate<T1, TChain> extends IndexAware {
      * @return children
      */
     TChain gt(boolean condition, Property<T1, ?> column, Object val);
+
     /**
      * 等于 column >= val
      */
@@ -46,10 +47,11 @@ public interface WherePredicate<T1, TChain> extends IndexAware {
      * @return children
      */
     TChain ge(boolean condition, Property<T1, ?> column, Object val);
+
     /**
      * 等于 column = val
      */
-    default  TChain eq(Property<T1, ?> column, Object val) {
+    default TChain eq(Property<T1, ?> column, Object val) {
         return eq(true, column, val);
     }
 
@@ -62,6 +64,7 @@ public interface WherePredicate<T1, TChain> extends IndexAware {
      * @return children
      */
     TChain eq(boolean condition, Property<T1, ?> column, Object val);
+
     /**
      * 不等于 column <> val
      */
@@ -78,6 +81,7 @@ public interface WherePredicate<T1, TChain> extends IndexAware {
      * @return children
      */
     TChain ne(boolean condition, Property<T1, ?> column, Object val);
+
     /**
      * 小于等于 column <= val
      */
@@ -94,6 +98,7 @@ public interface WherePredicate<T1, TChain> extends IndexAware {
      * @return children
      */
     TChain le(boolean condition, Property<T1, ?> column, Object val);
+
     /**
      * 小于 column < val
      */
@@ -111,17 +116,20 @@ public interface WherePredicate<T1, TChain> extends IndexAware {
      */
     TChain lt(boolean condition, Property<T1, ?> column, Object val);
 
-    default TChain likeStart(Property<T1, ?> column, Object val){
-        return likeStart(true,column,val);
+    default TChain likeStart(Property<T1, ?> column, Object val) {
+        return likeStart(true, column, val);
     }
-    default TChain likeStart(boolean condition,Property<T1, ?> column, Object val){
-        return like(condition,column,val,SqlLikeEnum.LIKE_START);
+
+    default TChain likeStart(boolean condition, Property<T1, ?> column, Object val) {
+        return like(condition, column, val, SqlLikeEnum.LIKE_START);
     }
-    default TChain likeEnd(Property<T1, ?> column, Object val){
-        return likeEnd(true,column,val);
+
+    default TChain likeEnd(Property<T1, ?> column, Object val) {
+        return likeEnd(true, column, val);
     }
-    default TChain likeEnd(boolean condition,Property<T1, ?> column, Object val){
-        return like(condition,column,val,SqlLikeEnum.LIKE_END);
+
+    default TChain likeEnd(boolean condition, Property<T1, ?> column, Object val) {
+        return like(condition, column, val, SqlLikeEnum.LIKE_END);
     }
 
     /**
@@ -139,45 +147,51 @@ public interface WherePredicate<T1, TChain> extends IndexAware {
      * @param val       值
      * @return children
      */
-    default TChain like(boolean condition, Property<T1, ?> column, Object val){
-        return like(condition,column,val,SqlLikeEnum.LIKE_ALL);
+    default TChain like(boolean condition, Property<T1, ?> column, Object val) {
+        return like(condition, column, val, SqlLikeEnum.LIKE_ALL);
     }
+
     TChain like(boolean condition, Property<T1, ?> column, Object val, SqlLikeEnum sqlLike);
 
     default TChain notLikeStart(Property<T1, ?> column, Object val) {
         return notLikeStart(true, column, val);
     }
-   default TChain notLikeStart(boolean condition, Property<T1, ?> column, Object val){
-       return notLike(condition,column,val,SqlLikeEnum.LIKE_ALL);
-   }
+
+    default TChain notLikeStart(boolean condition, Property<T1, ?> column, Object val) {
+        return notLike(condition, column, val, SqlLikeEnum.LIKE_ALL);
+    }
+
     default TChain notLikeEnd(Property<T1, ?> column, Object val) {
         return notLikeEnd(true, column, val);
     }
-   default TChain notLikeEnd(boolean condition, Property<T1, ?> column, Object val){
-       return notLike(condition,column,val,SqlLikeEnum.LIKE_END);
-   }
+
+    default TChain notLikeEnd(boolean condition, Property<T1, ?> column, Object val) {
+        return notLike(condition, column, val, SqlLikeEnum.LIKE_END);
+    }
 
     /**
-     *  column not like %val%
+     * column not like %val%
      */
     default TChain notLike(Property<T1, ?> column, Object val) {
         return notLike(true, column, val);
     }
 
     /**
-     *  column not like %val%
+     * column not like %val%
      *
      * @param condition 执行条件
      * @param column    字段
      * @param val       值
      * @return children
      */
-   default TChain notLike(boolean condition, Property<T1, ?> column, Object val){
-       return notLike(condition,column,val,SqlLikeEnum.LIKE_ALL);
-   }
-    TChain notLike(boolean condition, Property<T1, ?> column, Object val,SqlLikeEnum sqlLike);
+    default TChain notLike(boolean condition, Property<T1, ?> column, Object val) {
+        return notLike(condition, column, val, SqlLikeEnum.LIKE_ALL);
+    }
+
+    TChain notLike(boolean condition, Property<T1, ?> column, Object val, SqlLikeEnum sqlLike);
+
     /**
-     *  column is null
+     * column is null
      */
     default TChain isNull(Property<T1, ?> column) {
         return isNull(true, column);
@@ -191,8 +205,9 @@ public interface WherePredicate<T1, TChain> extends IndexAware {
      * @return children
      */
     TChain isNull(boolean condition, Property<T1, ?> column);
+
     /**
-     *  column is not null
+     * column is not null
      */
     default TChain isNotNull(Property<T1, ?> column) {
         return isNotNull(true, column);
@@ -206,22 +221,24 @@ public interface WherePredicate<T1, TChain> extends IndexAware {
      * @return children
      */
     TChain isNotNull(boolean condition, Property<T1, ?> column);
+
     /**
-     *  column in collection
+     * column in collection
      */
     default TChain in(Property<T1, ?> column, Collection<?> collection) {
-        return in(true, column,collection);
+        return in(true, column, collection);
     }
 
     /**
      * column in collection
      */
     TChain in(boolean condition, Property<T1, ?> column, Collection<?> collection);
+
     /**
-     *  column in collection
+     * column in collection
      */
     default TChain notIn(Property<T1, ?> column, Collection<?> collection) {
-        return notIn(true, column,collection);
+        return notIn(true, column, collection);
     }
 
     /**
@@ -229,29 +246,108 @@ public interface WherePredicate<T1, TChain> extends IndexAware {
      */
     TChain notIn(boolean condition, Property<T1, ?> column, Collection<?> collection);
 
+    /**
+     * 区间 (left..right) = {x | left < x < right}
+     * 一般用于范围比如时间,小的时间在前大的时间在后
+     * @param column
+     * @param conditionLeft
+     * @param valLeft
+     * @param conditionRight
+     * @param valRight
+     * @return
+     */
+    default TChain rangeOpen(Property<T1, ?> column, boolean conditionLeft, Object valLeft, boolean conditionRight, Object valRight) {
+        return rangeOpen(true, column, conditionLeft, valLeft, conditionRight, valRight);
+    }
+
+    /**
+     * 区间 (left..right) = {x | left < x < right}
+     * 一般用于范围比如时间,小的时间在前大的时间在后
+     * @param condition
+     * @param column
+     * @param conditionLeft
+     * @param valLeft
+     * @param conditionRight
+     * @param valRight
+     * @return
+     */
+    default TChain rangeOpen(boolean condition, Property<T1, ?> column, boolean conditionLeft, Object valLeft, boolean conditionRight, Object valRight) {
+        return range(true, column, conditionLeft, valLeft, conditionRight, valRight, SqlRangeEnum.Open);
+    }
+
+    /**
+     * [left..right] = {x | left <= x <= right}
+     * 一般用于范围比如时间,小的时间在前大的时间在后
+     * @param column
+     * @param conditionLeft
+     * @param valLeft
+     * @param conditionRight
+     * @param valRight
+     * @return
+     */
+    default TChain rangeClosed(Property<T1, ?> column, boolean conditionLeft, Object valLeft, boolean conditionRight, Object valRight) {
+        return rangeClosed(true, column, conditionLeft, valLeft, conditionRight, valRight);
+    }
+
+    /**
+     * [left..right] = {x | left <= x <= right}
+     * 一般用于范围比如时间,小的时间在前大的时间在后
+     * @param condition
+     * @param column
+     * @param conditionLeft
+     * @param valLeft
+     * @param conditionRight
+     * @param valRight
+     * @return
+     */
+    default TChain rangeClosed(boolean condition, Property<T1, ?> column, boolean conditionLeft, Object valLeft, boolean conditionRight, Object valRight) {
+        return range(true, column, conditionLeft, valLeft, conditionRight, valRight, SqlRangeEnum.Closed);
+    }
+
+    /**
+     * 自定义范围
+     * 一般用于范围比如时间,小的时间在前大的时间在后
+     * @param condition
+     * @param column
+     * @param conditionLeft
+     * @param valLeft
+     * @param conditionRight
+     * @param valRight
+     * @param sqlRange
+     * @return
+     */
+    TChain range(boolean condition, Property<T1, ?> column, boolean conditionLeft, Object valLeft, boolean conditionRight, Object valRight, SqlRangeEnum sqlRange);
+
+
     default <T2, TChain2> TChain eq(WherePredicate<T2, TChain2> sub, Property<T1, ?> column1, Property<T2, ?> column2) {
         return eq(true, sub, column1, column2);
     }
 
     <T2, TChain2> TChain eq(boolean condition, WherePredicate<T2, TChain2> sub, Property<T1, ?> column1, Property<T2, ?> column2);
 
-
     <T2, TChain2> WherePredicate<T2, TChain2> then(WherePredicate<T2, TChain2> sub);
-    default TChain and(){
+
+    default TChain and() {
         return and(true);
     }
+
     TChain and(boolean condition);
-    default TChain and(SqlExpression<TChain> predicateSqlExpression){
-        return and(true,predicateSqlExpression);
+
+    default TChain and(SqlExpression<TChain> predicateSqlExpression) {
+        return and(true, predicateSqlExpression);
     }
-    TChain and(boolean condition,SqlExpression<TChain> predicateSqlExpression);
-    default TChain or(){
+
+    TChain and(boolean condition, SqlExpression<TChain> predicateSqlExpression);
+
+    default TChain or() {
         return or(true);
     }
+
     TChain or(boolean condition);
 
-    default TChain or(SqlExpression<TChain> predicateSqlExpression){
-        return or(true,predicateSqlExpression);
+    default TChain or(SqlExpression<TChain> predicateSqlExpression) {
+        return or(true, predicateSqlExpression);
     }
-    TChain or(boolean condition,SqlExpression<TChain> predicateSqlExpression);
+
+    TChain or(boolean condition, SqlExpression<TChain> predicateSqlExpression);
 }

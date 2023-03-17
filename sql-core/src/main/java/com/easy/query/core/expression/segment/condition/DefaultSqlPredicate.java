@@ -1,6 +1,7 @@
 package com.easy.query.core.expression.segment.condition;
 
 import com.easy.query.core.enums.SqlLikeEnum;
+import com.easy.query.core.enums.SqlRangeEnum;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.parser.abstraction.internal.WherePredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnCollectionPredicate0;
@@ -98,7 +99,7 @@ public class DefaultSqlPredicate<T1> implements SqlPredicate<T1> {
     @Override
     public SqlPredicate<T1> like(boolean condition, Property<T1, ?> column, Object val, SqlLikeEnum sqlLike) {
         if (condition) {
-            appendThisPredicate(column, SQLUtil.getLikeParameter(val,sqlLike), SqlPredicateCompareEnum.LIKE);
+            appendThisPredicate(column, SQLUtil.getLikeParameter(val, sqlLike), SqlPredicateCompareEnum.LIKE);
             nextAnd();
         }
         return this;
@@ -173,6 +174,23 @@ public class DefaultSqlPredicate<T1> implements SqlPredicate<T1> {
             String propertyName = table.getPropertyName(column);
             nextPredicateSegment.setPredicate(new ColumnCollectionPredicate0(table, propertyName, collection, SqlPredicateCompareEnum.NOT_IN, sqlEntityExpression));
             nextAnd();
+        }
+        return this;
+    }
+
+    @Override
+    public SqlPredicate<T1> range(boolean condition, Property<T1, ?> column, boolean conditionLeft, Object valLeft, boolean conditionRight, Object valRight, SqlRangeEnum sqlRange) {
+        if (condition) {
+            if (conditionLeft) {
+                boolean openFirst = SqlRangeEnum.openFirst(sqlRange);
+                appendThisPredicate(column, valLeft, openFirst ? SqlPredicateCompareEnum.GT : SqlPredicateCompareEnum.GE);
+                nextAnd();
+            }
+            if (conditionRight) {
+                boolean openEnd = SqlRangeEnum.openEnd(sqlRange);
+                appendThisPredicate(column, valLeft, openEnd ? SqlPredicateCompareEnum.LT : SqlPredicateCompareEnum.LE);
+                nextAnd();
+            }
         }
         return this;
     }

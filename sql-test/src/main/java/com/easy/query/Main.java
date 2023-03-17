@@ -6,6 +6,7 @@ import com.easy.query.core.abstraction.DefaultEasyQueryLambdaFactory;
 import com.easy.query.core.abstraction.DefaultEasyQueryRuntimeContext;
 import com.easy.query.core.abstraction.EasyQueryLambdaFactory;
 import com.easy.query.core.abstraction.EasySqlApiFactory;
+import com.easy.query.core.enums.SqlRangeEnum;
 import com.easy.query.entity.Topic;
 import com.easy.query.test.*;
 import com.easy.query.core.abstraction.metadata.EntityMetadataManager;
@@ -86,6 +87,16 @@ public class Main {
 //            System.out.println("耗时：" + (end - start) + "ms");
 //
 //        }
+
+
+        boolean openFirst1 = SqlRangeEnum.openFirst(SqlRangeEnum.Open);
+        boolean openFirst2 = SqlRangeEnum.openFirst(SqlRangeEnum.Closed);
+        boolean openFirst3 = SqlRangeEnum.openFirst(SqlRangeEnum.closedOpen);
+        boolean openFirst4 = SqlRangeEnum.openFirst(SqlRangeEnum.openClosed);
+        boolean openEnd1 = SqlRangeEnum.openEnd(SqlRangeEnum.Open);
+        boolean openEnd2 = SqlRangeEnum.openEnd(SqlRangeEnum.Closed);
+        boolean openEnd3 = SqlRangeEnum.openEnd(SqlRangeEnum.closedOpen);
+        boolean openEnd4 = SqlRangeEnum.openEnd(SqlRangeEnum.openClosed);
 
         LogFactory.useStdOutLogging();
 
