@@ -3,6 +3,8 @@ package com.easy.query.core.util;
 import com.easy.query.core.bean.BeanMethodInvoker;
 import com.easy.query.core.bean.MethodInvoker;
 import com.easy.query.core.exception.EasyQueryException;
+import com.easy.query.core.logging.Log;
+import com.easy.query.core.logging.LogFactory;
 
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
@@ -27,6 +29,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ClassUtil {
     public final static Map<Class<?>, Map<String, MethodInvoker>> methodInvokerCache = new ConcurrentHashMap<>();
+    private final static Log log= LogFactory.getLog(ClassUtil.class);
 
     private ClassUtil() {
     }
@@ -149,7 +152,7 @@ public class ClassUtil {
             try {
                 writeMethod = type.getMethod(setMethodName, prop.getPropertyType());
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error("get write method error:"+prop.getName(),e);
                 //不存在set方法
                 return null;
             }
