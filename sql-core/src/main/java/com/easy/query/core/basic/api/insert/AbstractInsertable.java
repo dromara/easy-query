@@ -68,13 +68,13 @@ public abstract class AbstractInsertable<T> implements Insertable<T> {
     }
 
     @Override
-    public long executeRows() {
+    public long executeRows(boolean fillAutoIncrement) {
         if (!entities.isEmpty()) {
             insertBefore();
             String insertSql = toSql();
             if (!StringUtil.isBlank(insertSql)) {
                 EasyExecutor easyExecutor = sqlEntityInsertExpression.getRuntimeContext().getEasyExecutor();
-                return easyExecutor.insert(ExecutorContext.create(sqlEntityInsertExpression.getRuntimeContext()), insertSql, entities, sqlEntityInsertExpression.getParameters());
+                return easyExecutor.insert(ExecutorContext.create(sqlEntityInsertExpression.getRuntimeContext()), insertSql, entities, sqlEntityInsertExpression.getParameters(),fillAutoIncrement);
             }
         }
 

@@ -2,7 +2,6 @@ package com.easy.query.test;
 
 import com.easy.query.core.annotation.Column;
 import com.easy.query.core.annotation.LogicDelete;
-import com.easy.query.core.annotation.PrimaryKey;
 import com.easy.query.core.annotation.Table;
 import com.easy.query.core.basic.enums.LogicDeleteStrategyEnum;
 
@@ -17,8 +16,7 @@ import java.time.LocalDateTime;
 @Table("testuser")
 public class TestUserMysql {
     private static final long serialVersionUID = 1L;
-    @PrimaryKey
-    @Column("Id")
+    @Column(value = "Id",primaryKey = true)
     private String id;
     @Column("Age")
     private Integer age;

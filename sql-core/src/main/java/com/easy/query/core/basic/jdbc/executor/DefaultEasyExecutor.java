@@ -121,13 +121,15 @@ public class DefaultEasyExecutor implements EasyExecutor {
     }
 
     @Override
-    public <T> long insert(ExecutorContext executorContext, String sql, List<T> entities, List<SQLParameter> sqlParameters) {
+    public <T> long insert(ExecutorContext executorContext, String sql, List<T> entities, List<SQLParameter> sqlParameters, boolean fillAutoIncrement) {
         if (logDebug) {
             log.debug("==> Preparing: " + sql);
         }
         EasyQueryRuntimeContext runtimeContext = executorContext.getRuntimeContext();
         EasyConnectionManager connectionManager = runtimeContext.getConnectionManager();
         EasyJdbcTypeHandlerManager easyJdbcTypeHandler = runtimeContext.getEasyJdbcTypeHandlerManager();
+        EntityMetadata entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(entities.get(0).getClass());
+        List<String> incrementColumns = fillAutoIncrement ? entityMetadata.getIncrementColumns() : null;
         EasyConnection easyConnection = null;
         PreparedStatement ps = null;
         int r = 0;
@@ -142,7 +144,7 @@ public class DefaultEasyExecutor implements EasyExecutor {
                     easyConnection = connectionManager.getEasyConnection();
                 }
                 if (ps == null) {
-                    ps = createPreparedStatement(easyConnection.getConnection(), sql, parameters, easyJdbcTypeHandler);
+                    ps = createPreparedStatement(easyConnection.getConnection(), sql, parameters, easyJdbcTypeHandler, incrementColumns);
                 } else {
                     setPreparedStatement(ps, parameters, easyJdbcTypeHandler);
                 }
@@ -150,11 +152,34 @@ public class DefaultEasyExecutor implements EasyExecutor {
             }
             int[] rs = ps.executeBatch();
             r = rs.length;
-            ps.clearBatch();
 
             if (logDebug) {
                 log.debug("<== Total: " + r);
             }
+            //如果需要自动填充并且存在自动填充列
+            if (fillAutoIncrement&&ArrayUtil.isNotEmpty(incrementColumns)) {
+                ResultSet keysSet = ps.getGeneratedKeys();
+                int index = 0;
+                PropertyDescriptor[] incrementProperty = new PropertyDescriptor[incrementColumns.size()];
+                while (keysSet.next()) {
+                    T entity = entities.get(index);
+                    for (int i = 0; i < incrementColumns.size(); i++) {
+                        PropertyDescriptor property = incrementProperty[i];
+                        if (property == null) {
+                            String columnName = incrementColumns.get(i);
+                            String propertyName = entityMetadata.getPropertyName(columnName);
+                            property = entityMetadata.getColumnNotNull(propertyName).getProperty();
+                            incrementProperty[i] = property;
+                        }
+
+                        Object value = keysSet.getObject(i + 1);
+                        Object newValue = ClassUtil.convertValueToRequiredType(value, property.getPropertyType());
+                        callSetter(entity, property, newValue);
+                    }
+                    index++;
+                }
+            }
+            ps.clearBatch();
         } catch (SQLException e) {
             log.error(sql, e);
             throw new EasyQuerySQLException(sql, e);
@@ -208,7 +233,7 @@ public class DefaultEasyExecutor implements EasyExecutor {
         try {
             easyConnection = connectionManager.getEasyConnection();
             ps = createPreparedStatement(easyConnection.getConnection(), sql, sqlParameters, easyJdbcTypeHandler);
-             rs = ps.executeQuery();
+            rs = ps.executeQuery();
             result = mapTo(executorContext, rs, clazz);
 
             if (logDebug) {
@@ -238,7 +263,11 @@ public class DefaultEasyExecutor implements EasyExecutor {
     }
 
     private PreparedStatement createPreparedStatement(Connection connection, String sql, List<SQLParameter> sqlParameters, EasyJdbcTypeHandlerManager easyJdbcTypeHandlerManager) throws SQLException {
-        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        return createPreparedStatement(connection, sql, sqlParameters, easyJdbcTypeHandlerManager, null);
+    }
+
+    private PreparedStatement createPreparedStatement(Connection connection, String sql, List<SQLParameter> sqlParameters, EasyJdbcTypeHandlerManager easyJdbcTypeHandlerManager, List<String> incrementColumns) throws SQLException {
+        PreparedStatement preparedStatement = ArrayUtil.isEmpty(incrementColumns) ? connection.prepareStatement(sql) : connection.prepareStatement(sql, incrementColumns.toArray(new String[0]));
         return setPreparedStatement(preparedStatement, sqlParameters, easyJdbcTypeHandlerManager);
     }
 

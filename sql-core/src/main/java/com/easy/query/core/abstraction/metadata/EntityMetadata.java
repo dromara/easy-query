@@ -40,7 +40,8 @@ public class EntityMetadata {
     private final List<String> entityInterceptors = new ArrayList<>();
     private final List<String> updateSetInterceptors = new ArrayList<>();
     private final LinkedHashMap<String, ColumnMetadata> property2ColumnMap = new LinkedHashMap<>();
-    private final Map<String/*property name*/, String/*column name*/> keyPropertiesMap = new HashMap<>();
+    private final Map<String/*property name*/, String/*column name*/> keyPropertiesMap = new LinkedHashMap<>();
+    private final List<String/*column name*/> incrementColumns = new ArrayList<>(4);
     private final LinkedCaseInsensitiveMap<String> column2PropertyMap = new LinkedCaseInsensitiveMap<>(Locale.ENGLISH);
 
     public EntityMetadata(Class<?> entityClass) {
@@ -97,12 +98,17 @@ public class EntityMetadata {
 
             if (StringUtil.isNotBlank(tableName)) {
 
-                PrimaryKey primaryKey = field.getAnnotation(PrimaryKey.class);
-                if (primaryKey != null) {
-                    columnMetadata.setPrimary(true);
-                    columnMetadata.setIncrement(primaryKey.increment());
+                if(column!=null){
+                    if(column.primaryKey()){
+                        keyPropertiesMap.put(property, columnName);
+                    }
+                    columnMetadata.setPrimary(column.primaryKey());
+                    if(column.increment()){
+                        incrementColumns.add(columnName);
+                    }
+                    columnMetadata.setIncrement(column.increment());
+
 //                    columnMetadata.setNullable(false);//如果为主键那么之前设置的nullable将无效
-                    keyPropertiesMap.put(property, columnName);
                 }
                 InsertIgnore insertIgnore = field.getAnnotation(InsertIgnore.class);
                 if (insertIgnore != null) {
@@ -273,6 +279,11 @@ public class EntityMetadata {
 
     public List<String> getUpdateSetInterceptors() {
         return updateSetInterceptors;
+    }
+
+
+    public List<String> getIncrementColumns() {
+        return incrementColumns;
     }
 
 }

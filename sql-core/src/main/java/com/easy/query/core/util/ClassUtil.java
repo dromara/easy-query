@@ -305,4 +305,43 @@ public class ClassUtil {
 
         }
     }
+
+
+    /**
+     * 代码参考beetlsql
+     * @param result
+     * @param requiredType
+     * @return
+     */
+    public static Object convertValueToRequiredType(Object result, Class<?> requiredType) {
+        if (result == null) {
+            return null;
+        }
+        Class type = result.getClass();
+        if (type == result) {
+            //大多数情况，都是这样
+            return result;
+        }
+        if (String.class == requiredType) {
+            return result.toString();
+        }
+        //判断Number对象所表示的类或接口是否与requiredType所表示的类或接口是否相同，或者是否是其超类或者超接口
+        else if (Number.class.isAssignableFrom(requiredType)) {
+            if (result instanceof Number) {
+                return NumberUtil.convertNumberToTargetClass((Number) result, requiredType);
+            } else {
+                return NumberUtil.parseNumber(result.toString(), (Class<Number>) requiredType);
+            }
+        } else if (requiredType.isPrimitive()) {
+            if (result instanceof Number) {
+                return NumberUtil.convertNumberToTargetClass((Number) result, requiredType);
+            }
+        }
+
+
+        //TODO,增加一个扩展点，支持其他类型，比如JDK时间，Blob，Clob等
+
+
+        throw new IllegalArgumentException("无法转化成期望类型:" + requiredType);
+    }
 }

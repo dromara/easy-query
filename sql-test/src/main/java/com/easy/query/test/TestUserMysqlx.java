@@ -1,8 +1,5 @@
 package com.easy.query.test;
 
-import com.easy.query.core.annotation.Column;
-import com.easy.query.core.annotation.PrimaryKey;
-import com.easy.query.core.annotation.Table;
 
 import java.time.LocalDateTime;
 

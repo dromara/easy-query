@@ -7,7 +7,6 @@ import com.easy.query.core.abstraction.DefaultEasyQueryRuntimeContext;
 import com.easy.query.core.abstraction.EasyQueryLambdaFactory;
 import com.easy.query.core.abstraction.EasySqlApiFactory;
 import com.easy.query.core.enums.SqlRangeEnum;
-import com.easy.query.entity.Topic;
 import com.easy.query.test.*;
 import com.easy.query.core.abstraction.metadata.EntityMetadataManager;
 import com.easy.query.core.api.pagination.PageResult;
@@ -314,7 +313,7 @@ public class Main {
             test2.setAge(102);
             test2.setName("ds01");
             updates.add(test2);
-            long l12xx = easyQuery.updatable(updates).setColumns(o -> o.column(TestUserMysql::getName)).whereColumns(o -> o.column(TestUserMysql::getAge)).executeRows();
+            long l12xx = easyQuery.updatable(updates).setOnlyColumns(o -> o.column(TestUserMysql::getName)).whereColumns(o -> o.column(TestUserMysql::getAge)).executeRows();
             long l2 = easyQuery.deletable(updates).executeRows();
 
             long l4 = easyQuery.deletable(SysUserLogbyMonth.class).whereById("00010728-2b86-426a-a81c-001a67ff409a").executeRows();
@@ -340,8 +339,8 @@ public class Main {
             long l13 = easyQuery.updatable(sysUserLogbyMonth23).executeRows();
             TestUserMysql testUserMysql3 = new TestUserMysql();
             System.out.println("-------------------2");
-            long l1 = easyQuery.updatable(testUserMysql3).setColumns(o -> o.column(TestUserMysql::getName)).executeRows();
-            long l12 = easyQuery.updatable(testUserMysql3).setColumns(o -> o.column(TestUserMysql::getName)).whereColumns(o -> o.column(TestUserMysql::getAge)).executeRows();
+            long l1 = easyQuery.updatable(testUserMysql3).setOnlyColumns(o -> o.column(TestUserMysql::getName)).executeRows();
+            long l12 = easyQuery.updatable(testUserMysql3).setOnlyColumns(o -> o.column(TestUserMysql::getName)).whereColumns(o -> o.column(TestUserMysql::getAge)).executeRows();
             long xhn = easyQuery.updatable(TestUserMysql.class).set(TestUserMysql::getAge, 12).set(TestUserMysql::getName, "xhn").where(o -> o.like(TestUserMysql::getId, "123")).executeRows();
 //
 //        ArrayList<SysUserLogbyMonth> sysUserLogbyMonthsxx = new ArrayList<>();

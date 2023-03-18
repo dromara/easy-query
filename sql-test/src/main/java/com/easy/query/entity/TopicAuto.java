@@ -13,11 +13,11 @@ import java.time.LocalDateTime;
  * @Created by xuejiaming
  */
 @Data
-@Table("t_topic")
-public class Topic {
+@Table("t_topic_auto")
+public class TopicAuto {
 
-    @Column(primaryKey = true)
-    private String id;
+    @Column(primaryKey = true,increment = true)
+    private Integer id;
     private Integer stars;
     private String title;
     private LocalDateTime createTime;

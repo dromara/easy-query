@@ -28,7 +28,7 @@ public class EasyEmptyInsertable<T>implements Insertable<T> {
     }
 
     @Override
-    public long executeRows() {
+    public long executeRows(boolean fillAutoIncrement) {
         return 0;
     }
 

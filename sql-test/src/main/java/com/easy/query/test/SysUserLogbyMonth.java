@@ -1,7 +1,6 @@
 package com.easy.query.test;
 
 import com.easy.query.core.annotation.Column;
-import com.easy.query.core.annotation.PrimaryKey;
 import com.easy.query.core.annotation.Table;
 
 import java.time.LocalDateTime;
@@ -14,8 +13,7 @@ import java.time.LocalDateTime;
  */
 @Table("sys_user_logby_month_202103")
 public class SysUserLogbyMonth {
-    @PrimaryKey
-    @Column("Id")
+    @Column(value = "Id",primaryKey = true)
     private String id;
     @Column("Time")
     private LocalDateTime time;

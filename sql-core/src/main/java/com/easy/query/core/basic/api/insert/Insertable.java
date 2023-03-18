@@ -20,5 +20,17 @@ public interface Insertable<T> extends SqlExecuteRows {
         return this;
     }
 
+    /**
+     *
+     * @param fillAutoIncrement
+     * @return
+     */
+    long executeRows(boolean fillAutoIncrement);
+
+    @Override
+    default long executeRows(){
+        return executeRows(false);
+    }
+
     String toSql();
 }

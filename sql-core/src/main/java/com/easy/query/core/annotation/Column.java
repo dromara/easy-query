@@ -14,6 +14,15 @@ import java.lang.annotation.*;
 @Target({ElementType.FIELD, ElementType.ANNOTATION_TYPE})
 public @interface Column {
     /**
+     * 是否是主键
+     */
+    boolean primaryKey() default false;
+    /**
+     * 是否是自增键
+     * 自增列不会出现在insert语句中,并且会自动回填返回值
+     */
+    boolean increment() default false;
+    /**
      * 指定实体对象映射到数据库的名称
      */
     String value() default StringUtil.EMPTY;
