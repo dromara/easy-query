@@ -73,7 +73,7 @@ public class TrackUtil {
         Collection<String> properties = entityMetadata.getProperties();
         for (String propertyName : properties) {
             ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(propertyName);
-            Property<Object, ?> propertyGetter = EasyUtil.getPropertyLambdaGetter(entityClass, propertyName, columnMetadata.getProperty().getPropertyType());
+            Property<Object, ?> propertyGetter = EasyUtil.getPropertyLambda(entityClass, propertyName, columnMetadata.getProperty().getPropertyType());
 
             Object originalPropertyValue = propertyGetter.apply(entityState.getOriginalValue());
             Object currentPropertyValue = propertyGetter.apply(entityState.getCurrentValue());

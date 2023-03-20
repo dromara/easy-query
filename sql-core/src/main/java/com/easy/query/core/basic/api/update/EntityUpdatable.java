@@ -11,10 +11,10 @@ import com.easy.query.core.expression.lambda.SqlExpression;
  * @Created by xuejiaming
  */
 public interface EntityUpdatable<T> extends Updatable<T> {
-    default EntityUpdatable<T> setOnlyColumns(SqlExpression<SqlColumnSelector<T>> columnSelectorExpression){
-        return setOnlyColumns(true,columnSelectorExpression);
+    default EntityUpdatable<T> setColumns(SqlExpression<SqlColumnSelector<T>> columnSelectorExpression){
+        return setColumns(true,columnSelectorExpression);
     }
-    EntityUpdatable<T> setOnlyColumns(boolean condition, SqlExpression<SqlColumnSelector<T>> columnSelectorExpression);
+    EntityUpdatable<T> setColumns(boolean condition, SqlExpression<SqlColumnSelector<T>> columnSelectorExpression);
     default EntityUpdatable<T> setIgnoreColumns(SqlExpression<SqlColumnSelector<T>> columnSelectorExpression){
         return setIgnoreColumns(true,columnSelectorExpression);
     }

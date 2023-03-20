@@ -97,7 +97,7 @@ public abstract class AbstractEntityUpdatable<T> extends AbstractSqlExecuteRows 
 
 
     @Override
-    public EntityUpdatable<T> setOnlyColumns(boolean condition, SqlExpression<SqlColumnSelector<T>> columnSelectorExpression) {
+    public EntityUpdatable<T> setColumns(boolean condition, SqlExpression<SqlColumnSelector<T>> columnSelectorExpression) {
         if (condition) {
             DefaultSqlColumnSetSelector<T> columnSelector = new DefaultSqlColumnSetSelector<>(0, sqlEntityUpdateExpression, sqlEntityUpdateExpression.getSetColumns());
             columnSelectorExpression.apply(columnSelector);

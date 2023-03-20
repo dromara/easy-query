@@ -15,7 +15,7 @@ import com.easy.query.core.query.SqlEntityUpdateExpression;
  */
 public class EasyEmptyEntityUpdatable<T> implements EntityUpdatable<T> {
     @Override
-    public EntityUpdatable<T> setOnlyColumns(boolean condition, SqlExpression<SqlColumnSelector<T>> columnSelectorExpression) {
+    public EntityUpdatable<T> setColumns(boolean condition, SqlExpression<SqlColumnSelector<T>> columnSelectorExpression) {
         return this;
     }
 

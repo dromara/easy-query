@@ -145,7 +145,7 @@ public class BeanUtil {
         LinkedHashSet<String> matchProperties = new LinkedHashSet<>(properties.size());
         for (String propertyName : properties) {
             ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(propertyName);
-            Property<Object, ?> propertyGetter = EasyUtil.getPropertyLambdaGetter(entityClass, propertyName, columnMetadata.getProperty().getPropertyType());
+            Property<Object, ?> propertyGetter = EasyUtil.getPropertyLambda(entityClass, propertyName, columnMetadata.getProperty().getPropertyType());
 
 //            String propertyName1 = LambdaUtil.getPropertyName(propertyGetter);
 

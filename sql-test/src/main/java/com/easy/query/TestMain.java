@@ -1,5 +1,10 @@
 package com.easy.query;
 
+import com.easy.query.core.expression.lambda.Property;
+import com.easy.query.core.util.EasyUtil;
+import com.easy.query.core.util.LambdaUtil;
+import com.easy.query.test.TestUserMysql;
+
 import java.lang.invoke.*;
 import java.util.function.Function;
 
@@ -11,6 +16,12 @@ import java.util.function.Function;
  */
 public class TestMain {
     public static void main(String[] args) throws Throwable {
+        Property<Object, ?> id = EasyUtil.getLambda1(TestUserMysql.class, "id", String.class);
+        Property<Object, ?> myMethod = EasyUtil.getPropertyLambda(TestUserMysql.class, "id", String.class);
+        TestUserMysql testUserMysql = new TestUserMysql();
+        testUserMysql.setId("234");
+        Object apply = id.apply(testUserMysql);
+        String propertyName = LambdaUtil.getPropertyName(id);
         MethodHandles.Lookup lookup = MethodHandles.lookup();
         MethodType methodType = MethodType.methodType(String.class, String.class);
         MethodHandle methodHandle = lookup.findVirtual(MyInterfaceImpl.class, "myMethod", methodType);
@@ -27,16 +38,18 @@ public class TestMain {
         String result = function.apply(myInterface);
         System.out.println(result); // Output: Test
     }
-}
-interface MyInterface {
-    String myMethod(String str);
-}
-class MyInterfaceImpl implements MyInterface {
-    @Override
-    public String myMethod(String str) {
-        return "Test";
+
+    interface MyInterface {
+        String myMethod();
+    }
+   public static  class MyInterfaceImpl implements MyInterface {
+        @Override
+        public String myMethod() {
+            return "Test";
+        }
     }
 }
+
 
 //    public static void main(String[] args) throws Throwable {
 //        MethodHandles.Lookup lookup = MethodHandles.lookup();
