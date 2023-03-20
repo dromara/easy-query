@@ -18,7 +18,7 @@ public class EasyEntityUpdatable<T> extends AbstractEntityUpdatable<T> {
     }
 
     @Override
-    protected String toSql(Object entity) {
+    public String toSql(Object entity) {
         return sqlEntityUpdateExpression.toSql(entity);
     }
 }

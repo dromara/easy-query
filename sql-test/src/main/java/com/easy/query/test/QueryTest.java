@@ -111,34 +111,4 @@ public class QueryTest extends BaseTest {
         }
     }
 
-    @Override
-    public void customInit() {
-        boolean any = easyQuery.queryable(BlogEntity.class).any();
-        if(!any){
-
-            LocalDateTime begin = LocalDateTime.of(2020, 1, 1, 1, 1, 1);
-            List<BlogEntity> blogs=new ArrayList<>();
-            for (int i = 0; i < 100; i++) {
-                String indexStr = String.valueOf(i);
-                BlogEntity blog = new BlogEntity();
-                blog.setId(indexStr);
-                blog.setCreateBy(indexStr);
-                blog.setCreateTime(begin.plusDays(i));
-                blog.setUpdateBy(indexStr);
-                blog.setUpdateTime(begin.plusDays(i));
-                blog.setTitle("title"+indexStr);
-                blog.setContent("content"+indexStr);
-                blog.setUrl("http://blog.easy-query.com/"+indexStr);
-                blog.setStar(i);
-                blog.setScore(new BigDecimal("1.2"));
-                blog.setStatus(i%3==0?0:1);
-                blog.setOrder(new BigDecimal("1.2").multiply(BigDecimal.valueOf(i)));
-                blog.setIsTop(i % 2 == 0);
-                blog.setTop(i % 2 == 0);
-                blog.setDeleted(false);
-                blogs.add(blog);
-            }
-            easyQuery.insertable(blogs).executeRows();
-        }
-    }
 }

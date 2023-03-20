@@ -12,10 +12,6 @@ import org.junit.Test;
  * @Created by xuejiaming
  */
 public class GenericTest extends BaseTest {
-    @Override
-    public void customInit() {
-
-    }
 
     @Test
     public void SqlRangeTest1(){

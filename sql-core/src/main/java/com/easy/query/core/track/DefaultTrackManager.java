@@ -60,6 +60,7 @@ public class DefaultTrackManager implements TrackManager{
             throw new EasyQueryException("current thread not begin track");
         }
         trackContext.release();
+        threadTC.remove();
     }
 
 }

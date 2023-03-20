@@ -109,7 +109,7 @@ public abstract class AbstractEntityUpdatable<T> extends AbstractSqlExecuteRows 
             }
         }
     }
-    protected abstract  String toSql(Object entity);
+    public abstract  String toSql(Object entity);
 
 
     @Override

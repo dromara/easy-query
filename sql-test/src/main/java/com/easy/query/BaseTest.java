@@ -24,6 +24,8 @@ import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.metadata.DefaultEntityMetadataManager;
 import com.easy.query.core.track.DefaultTrackManager;
 import com.easy.query.entity.BlogEntity;
+import com.easy.query.entity.Topic;
+import com.easy.query.entity.TopicAuto;
 import com.easy.query.mysql.MySqlExpressionFactory;
 import com.easy.query.mysql.config.MySqlDialect;
 import com.easy.query.test.NameQueryFilter;
@@ -33,6 +35,10 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import javax.sql.DataSource;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -49,14 +55,12 @@ public abstract class BaseTest {
         LogFactory.useStdOutLogging();
     }
 
-    public BaseTest() {
-        customInit();
-    }
 
     @BeforeClass
     public static void init() {
         initDatasource();
         initEasyQuery();
+        initData();
     }
 
     public static void initDatasource() {
@@ -82,13 +86,73 @@ public abstract class BaseTest {
         MySqlExpressionFactory mySQLSqlExpressionFactory = new MySqlExpressionFactory();
         EasySqlApiFactory easyQueryableFactory = new DefaultEasySqlApiFactory(mySQLSqlExpressionFactory);
         DefaultTrackManager defaultTrackManager = new DefaultTrackManager(entityMetadataManager);
-        DefaultEasyQueryRuntimeContext jqdcRuntimeContext = new DefaultEasyQueryRuntimeContext(configuration, entityMetadataManager, easyQueryLambdaFactory, connectionManager, defaultExecutor, jdbcTypeHandler, easyQueryableFactory, mySQLSqlExpressionFactory,defaultTrackManager);
+        DefaultEasyQueryRuntimeContext jqdcRuntimeContext = new DefaultEasyQueryRuntimeContext(configuration, entityMetadataManager, easyQueryLambdaFactory, connectionManager, defaultExecutor, jdbcTypeHandler, easyQueryableFactory, mySQLSqlExpressionFactory, defaultTrackManager);
 ////        jqdcRuntimeContext.getEasyQueryConfiguration().applyEntityTypeConfiguration(new TestUserMySqlConfiguration());
 //        configuration.applyGlobalInterceptor(new NameQueryFilter());
 
         easyQuery = new DefaultEasyQuery(jqdcRuntimeContext);
     }
 
-    public abstract void customInit();
+    public static void initData() {
+
+        boolean any = easyQuery.queryable(BlogEntity.class).any();
+        if (!any) {
+
+            LocalDateTime begin = LocalDateTime.of(2020, 1, 1, 1, 1, 1);
+            List<BlogEntity> blogs = new ArrayList<>();
+            for (int i = 0; i < 100; i++) {
+                String indexStr = String.valueOf(i);
+                BlogEntity blog = new BlogEntity();
+                blog.setId(indexStr);
+                blog.setCreateBy(indexStr);
+                blog.setCreateTime(begin.plusDays(i));
+                blog.setUpdateBy(indexStr);
+                blog.setUpdateTime(begin.plusDays(i));
+                blog.setTitle("title" + indexStr);
+                blog.setContent("content" + indexStr);
+                blog.setUrl("http://blog.easy-query.com/" + indexStr);
+                blog.setStar(i);
+                blog.setScore(new BigDecimal("1.2"));
+                blog.setStatus(i % 3 == 0 ? 0 : 1);
+                blog.setOrder(new BigDecimal("1.2").multiply(BigDecimal.valueOf(i)));
+                blog.setIsTop(i % 2 == 0);
+                blog.setTop(i % 2 == 0);
+                blog.setDeleted(false);
+                blogs.add(blog);
+            }
+            easyQuery.insertable(blogs).executeRows();
+        }
+
+
+        boolean topicAutoAny = easyQuery.queryable(TopicAuto.class).any();
+        if (!topicAutoAny) {
+            List<TopicAuto> topicAutos = new ArrayList<>();
+            for (int i = 0; i < 10; i++) {
+                TopicAuto topicAuto = new TopicAuto();
+                topicAuto.setStars(i);
+                topicAuto.setTitle("title" + i);
+                topicAuto.setCreateTime(LocalDateTime.now().plusDays(i));
+                topicAutos.add(topicAuto);
+            }
+            long l = easyQuery.insertable(topicAutos).executeRows(true);
+        }
+
+
+        boolean topicAny = easyQuery.queryable(Topic.class).any();
+        if(!topicAny){
+            List<Topic> topics = new ArrayList<>();
+            for (int i = 0; i < 100; i++) {
+                Topic topic = new Topic();
+                topic.setId(String.valueOf(i));
+                topic.setStars(i + 100);
+                topic.setTitle("标题" + i);
+                topic.setCreateTime(LocalDateTime.now().plusDays(i));
+                topics.add(topic);
+            }
+            long l = easyQuery.insertable(topics).executeRows();
+        }
+
+    }
+
 
 }

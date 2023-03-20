@@ -1,5 +1,6 @@
 package com.easyquery.springbootdemo.controller;
 
+import com.easy.query.core.annotation.EasyQueryTrack;
 import com.easy.query.core.api.client.EasyQuery;
 import com.easyquery.springbootdemo.domain.TestUserMysql0;
 import org.slf4j.Logger;
@@ -23,10 +24,9 @@ public class EasyQueryController {
     private EasyQuery easyQuery;
 
     @GetMapping("/sayHello")
+    @EasyQueryTrack
     public Object sayHello() {
-        Logger logger = LoggerFactory.getLogger(EasyQueryController.class);
-        logger.debug("123");
-        TestUserMysql0 testUserMysql = easyQuery.query(TestUserMysql0.class)
+        TestUserMysql0 testUserMysql = easyQuery.queryable(TestUserMysql0.class)
                 .firstOrNull();
         return testUserMysql;
     }
@@ -37,7 +37,7 @@ public class EasyQueryController {
         testUserMysql1.setId("123321123321");
         testUserMysql1.setAge(1);
         testUserMysql1.setName("xxx");
-        easyQuery.insert(testUserMysql1).executeRows();
+        easyQuery.insertable(testUserMysql1).executeRows();
         return testUserMysql1;
     }
 
@@ -48,18 +48,18 @@ public class EasyQueryController {
         testUserMysql1.setId("123321123321xxx");
         testUserMysql1.setAge(1);
         testUserMysql1.setName("xxx");
-        easyQuery.insert(testUserMysql1).executeRows();
+        easyQuery.insertable(testUserMysql1).executeRows();
         throw new RuntimeException("错误了");
     }
 
     @GetMapping("/sayHello3")
     public Object sayHello3() {
-        TestUserMysql0 testUserMysql = easyQuery.query(TestUserMysql0.class).whereId("123321123321xxx").firstOrNull();
+        TestUserMysql0 testUserMysql = easyQuery.queryable(TestUserMysql0.class).whereId("123321123321xxx").firstOrNull();
         return testUserMysql;
     }
     @GetMapping("/sayHello4")
     public Object sayHello4() {
-        TestUserMysql0 testUserMysql = easyQuery.query(TestUserMysql0.class).whereId("123321123321").firstOrNull();
+        TestUserMysql0 testUserMysql = easyQuery.queryable(TestUserMysql0.class).whereId("123321123321").firstOrNull();
         return testUserMysql;
     }
 }

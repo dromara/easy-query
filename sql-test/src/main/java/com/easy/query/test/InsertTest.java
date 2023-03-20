@@ -17,23 +17,6 @@ import java.util.List;
  * @Created by xuejiaming
  */
 public class InsertTest extends BaseTest {
-    @Override
-    public void customInit() {
-        boolean any = easyQuery.queryable(TopicAuto.class).any();
-        if(!any){
-            List<TopicAuto> topicAutos=new ArrayList<>();
-            for (int i = 0; i < 10; i++) {
-                TopicAuto topicAuto = new TopicAuto();
-                topicAuto.setStars(i);
-                topicAuto.setTitle("title"+i);
-                topicAuto.setCreateTime(LocalDateTime.now().plusDays(i));
-                topicAutos.add(topicAuto);
-            }
-            long l = easyQuery.insertable(topicAutos).executeRows(true);
-            System.out.println(l);
-        }
-
-    }
 
     @Test
     public void insertTest(){

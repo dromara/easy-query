@@ -4,13 +4,19 @@ import com.easy.query.core.basic.api.abstraction.AbstractSqlExecuteRows;
 import com.easy.query.core.basic.jdbc.con.EasyConnectionManager;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
 import com.easy.query.core.enums.MultiTableTypeEnum;
+import com.easy.query.core.enums.SqlPredicateCompareEnum;
+import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.parser.abstraction.SqlColumnSetter;
 import com.easy.query.core.expression.parser.impl.DefaultSqlColumnSetter;
+import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.DefaultSqlPredicate;
+import com.easy.query.core.expression.segment.condition.PredicateSegment;
+import com.easy.query.core.expression.segment.condition.predicate.ColumnValuePredicate0;
 import com.easy.query.core.query.EasyEntityTableExpression;
 import com.easy.query.core.query.SqlEntityTableExpression;
 import com.easy.query.core.query.SqlEntityUpdateExpression;
+import com.easy.query.core.util.ClassUtil;
 import com.easy.query.core.util.StringUtil;
 import com.easy.query.core.basic.jdbc.executor.EasyExecutor;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
@@ -21,6 +27,7 @@ import com.easy.query.core.expression.lambda.SqlExpression;
 import com.easy.query.core.abstraction.metadata.EntityMetadata;
 import com.easy.query.core.expression.parser.abstraction.SqlPredicate;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -66,7 +73,7 @@ public abstract class AbstractExpressionUpdatable<T> extends AbstractSqlExecuteR
     }
 
     @Override
-    public  ExpressionUpdatable<T> set(boolean condition, Property<T, ?> column1, Property<T, ?> column2) {
+    public  ExpressionUpdatable<T> setSelfColumn(boolean condition, Property<T, ?> column1, Property<T, ?> column2) {
         sqlColumnSetter.set(true,column1,column2);
         return this;
     }
@@ -91,5 +98,33 @@ public abstract class AbstractExpressionUpdatable<T> extends AbstractSqlExecuteR
             whereExpression.apply(sqlPredicate);
         }
         return this;
+    }
+
+    @Override
+    public ExpressionUpdatable<T> whereId(boolean condition, Object id) {
+
+        if(condition){
+
+            PredicateSegment where = sqlEntityUpdateExpression.getWhere();
+            SqlEntityTableExpression table = sqlEntityUpdateExpression.getTable(0);
+            Collection<String> keyProperties = table.getEntityMetadata().getKeyProperties();
+            if(keyProperties.isEmpty()){
+                throw new EasyQueryException("对象:"+ ClassUtil.getSimpleName(clazz)+"未找到主键信息");
+            }
+            if(keyProperties.size()>1){
+                throw new EasyQueryException("对象:"+ ClassUtil.getSimpleName(clazz)+"存在多个主键");
+            }
+            String keyProperty = keyProperties.iterator().next();
+            AndPredicateSegment andPredicateSegment = new AndPredicateSegment();
+            andPredicateSegment
+                    .setPredicate(new ColumnValuePredicate0(table, keyProperty, id, SqlPredicateCompareEnum.EQ, sqlEntityUpdateExpression));
+            where.addPredicateSegment(andPredicateSegment);
+        }
+        return this;
+    }
+
+    @Override
+    public String toSql() {
+        return null;
     }
 }

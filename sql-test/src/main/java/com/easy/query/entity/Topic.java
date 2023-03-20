@@ -3,6 +3,7 @@ package com.easy.query.entity;
 import com.easy.query.core.annotation.Column;
 import com.easy.query.core.annotation.Table;
 import lombok.Data;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 
@@ -14,6 +15,7 @@ import java.time.LocalDateTime;
  */
 @Data
 @Table("t_topic")
+@ToString
 public class Topic {
 
     @Column(primaryKey = true)
