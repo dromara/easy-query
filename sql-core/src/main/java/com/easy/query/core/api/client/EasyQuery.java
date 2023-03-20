@@ -47,4 +47,11 @@ public interface EasyQuery {
     <T> EntityDeletable<T> deletable(T entity);
     <T> EntityDeletable<T> deletable(Collection<T> entities);
     <T> ExpressionDeletable<T> deletable(Class<T> entityClass);
+
+    /**
+     * 添加到当前环境的追踪里面
+     * 如果当前线程未开启追踪那么添加直接忽略无效
+     * @param entity
+     */
+    void addTracking(Object entity);
 }

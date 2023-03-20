@@ -4,6 +4,7 @@ import com.easy.query.core.abstraction.metadata.ColumnMetadata;
 import com.easy.query.core.abstraction.metadata.EntityMetadata;
 import com.easy.query.core.abstraction.metadata.EntityMetadataManager;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
+import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.SqlExpression;
 import com.easy.query.core.expression.lambda.TrackKeyFunc;
@@ -24,13 +25,21 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class DefaultTrackManager implements TrackManager{
     private final ThreadLocal<TrackContext> threadTC = ThreadLocal.withInitial(() -> null);
+    private final EntityMetadataManager entityMetadataManager;
+
+    public DefaultTrackManager(EntityMetadataManager entityMetadataManager){
+
+        this.entityMetadataManager = entityMetadataManager;
+    }
 
     @Override
     public void begin() {
         TrackContext trackContext = threadTC.get();
         if(trackContext==null){
-
+            trackContext = new DefaultTrackContext(entityMetadataManager);
+            threadTC.set(trackContext);
         }
+        trackContext.begin();
 
     }
 
@@ -41,12 +50,16 @@ public class DefaultTrackManager implements TrackManager{
 
     @Override
     public TrackContext getCurrentTrackContext() {
-        return null;
+        return threadTC.get();
     }
 
     @Override
-    public void release(TrackContext trackContext) {
-
+    public void release() {
+        TrackContext trackContext = getCurrentTrackContext();
+        if(trackContext==null){
+            throw new EasyQueryException("current thread not begin track");
+        }
+        trackContext.release();
     }
 
 }

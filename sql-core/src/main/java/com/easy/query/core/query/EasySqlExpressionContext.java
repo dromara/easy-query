@@ -22,6 +22,7 @@ public class EasySqlExpressionContext implements SqlExpressionContext {
     private boolean deleteThrowException;
     private boolean useLogicDelete = true;
     private boolean useInterceptor = true;
+    private boolean queryTracking = false;
     private UpdateStrategyEnum updateStrategy = UpdateStrategyEnum.DEFAULT;
 
     public EasySqlExpressionContext(EasyQueryRuntimeContext runtimeContext, String alias) {
@@ -126,6 +127,16 @@ public class EasySqlExpressionContext implements SqlExpressionContext {
     @Override
     public UpdateStrategyEnum getUpdateStrategy() {
         return this.updateStrategy;
+    }
+
+    @Override
+    public void queryTracking(boolean tracking) {
+        this.queryTracking=tracking;
+    }
+
+    @Override
+    public boolean isTracking() {
+        return this.queryTracking;
     }
     //    @Override
 //    public String getSqlColumnSegment(SqlEntityTableExpressionSegment table, String propertyName) {

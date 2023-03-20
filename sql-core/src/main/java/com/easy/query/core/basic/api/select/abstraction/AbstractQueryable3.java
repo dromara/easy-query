@@ -242,6 +242,17 @@ public abstract class AbstractQueryable3<T1, T2, T3> extends AbstractQueryable<T
         super.useInterceptor();
         return this;
     }
+    @Override
+    public Queryable3<T1, T2, T3> asTracking() {
+        super.asTracking();
+        return this;
+    }
+
+    @Override
+    public Queryable3<T1, T2, T3> asNoTracking() {
+        super.asNoTracking();
+        return this;
+    }
 
     public EasyQuerySqlBuilderProvider3<T1, T2, T3> getSqlBuilderProvider3() {
         return sqlPredicateProvider;

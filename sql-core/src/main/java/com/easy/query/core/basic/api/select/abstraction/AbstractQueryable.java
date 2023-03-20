@@ -236,7 +236,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     protected <TR> List<TR> toInternalList(Class<TR> resultClass) {
         String sql = toSql(resultClass);
         EasyExecutor easyExecutor = sqlEntityExpression.getRuntimeContext().getEasyExecutor();
-        return easyExecutor.query(ExecutorContext.create(sqlEntityExpression.getRuntimeContext()), resultClass, sql, sqlEntityExpression.getParameters());
+        return easyExecutor.query(ExecutorContext.create(sqlEntityExpression.getRuntimeContext(),sqlEntityExpression.getSqlExpressionContext().isTracking()), resultClass, sql, sqlEntityExpression.getParameters());
     }
 
     /**
@@ -495,6 +495,16 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     @Override
     public Queryable<T1> useInterceptor() {
         sqlEntityExpression.getSqlExpressionContext().useInterceptor();
+        return this;
+    }
+    @Override
+    public Queryable<T1> asTracking() {
+        sqlEntityExpression.getSqlExpressionContext().queryTracking(true);
+        return this;
+    }
+    @Override
+    public Queryable<T1> asNoTracking() {
+        sqlEntityExpression.getSqlExpressionContext().queryTracking(false);
         return this;
     }
 

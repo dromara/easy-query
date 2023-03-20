@@ -152,6 +152,9 @@ public abstract class EasySqlUpdateExpression extends AbstractSqlPredicateEntity
 
     protected String internalToSql(SqlEntityTableExpression table, SqlBuilderSegment updateSet, PredicateSegment sqlWhere) {
 
+        if(updateSet.isEmpty()){
+            return null;
+        }
         EntityMetadata entityMetadata = table.getEntityMetadata();
         String tableName = entityMetadata.getTableName();
         return "UPDATE " + tableName + " SET " + updateSet.toSql() + " WHERE " +
@@ -206,9 +209,6 @@ public abstract class EasySqlUpdateExpression extends AbstractSqlPredicateEntity
             updateSet = new UpdateSetSqlBuilderSegment();
             buildAutoEntitySetColumns(table, updateSet, sqlWhere,entity);
         }
-        if (updateSet.isEmpty()) {
-            throw new EasyQueryException("'UPDATE' statement without 'SET' execute wrong");
-        }
         return internalToSql(table, updateSet, sqlWhere);
     }
 
@@ -226,6 +226,7 @@ public abstract class EasySqlUpdateExpression extends AbstractSqlPredicateEntity
             PredicateIndex predicateIndex = sqlWhere.buildPredicateIndex();
             TrackManager trackManager = runtimeContext.getTrackManager();
             Set<String> ignorePropertySet=new HashSet<>(entityMetadata.getProperties().size());
+            Set<String> trackPropertySet=new HashSet<>(entityMetadata.getProperties().size());
 
             if(entity!=null){
                 //以下应该二选一
@@ -244,7 +245,7 @@ public abstract class EasySqlUpdateExpression extends AbstractSqlPredicateEntity
                         EntityState trackEntityState = trackContext.getTrackEntityState(entity);
                         if (trackEntityState != null) {
                             Map<String, TrackDiffEntry> trackDiffProperty = TrackUtil.getTrackDiffProperty(runtimeContext.getEntityMetadataManager(), trackEntityState);
-                            ignorePropertySet.addAll(trackDiffProperty.keySet());
+                            trackPropertySet.addAll(trackDiffProperty.keySet());
                         }
                     }
                 }
@@ -254,7 +255,7 @@ public abstract class EasySqlUpdateExpression extends AbstractSqlPredicateEntity
 
                 String propertyName = ((SqlEntitySegment) o).getPropertyName();
 
-                return predicateIndex.contains(entityClass, propertyName)||ignorePropertySet.contains(propertyName);
+                return predicateIndex.contains(entityClass, propertyName)||ignorePropertySet.contains(propertyName)||!trackPropertySet.contains(propertyName);
             });
         }
     }

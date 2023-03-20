@@ -17,6 +17,7 @@ import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.exception.EasyQuerySQLException;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
+import com.easy.query.core.track.TrackManager;
 import com.easy.query.core.util.ArrayUtil;
 import com.easy.query.core.util.ClassUtil;
 import com.easy.query.core.util.SQLUtil;
@@ -353,11 +354,30 @@ public class DefaultEasyExecutor implements EasyExecutor {
         return resultList;
     }
 
+    private boolean trackBean(ExecutorContext context, Class<?> clazz){
+        if(context.isTracking()){
+            EasyQueryRuntimeContext runtimeContext = context.getRuntimeContext();
+            TrackManager trackManager = runtimeContext.getTrackManager();
+            //当前是否开启追踪
+            if(!trackManager.currentThreadTracking()){
+                return false;
+            }
+            //如果当前返回结果不是数据库实体就直接选择不追踪
+            EntityMetadata entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(clazz);
+            if(StringUtil.isBlank(entityMetadata.getTableName())){
+                return false;
+            }
+            return true;
+        }
+        return false;
+    }
     private <T> T mapToBean(ExecutorContext context, ResultSet rs, Class<T> clazz, PropertyDescriptor[] propertyDescriptors) throws SQLException {
         EasyJdbcTypeHandlerManager easyJdbcTypeHandler = context.getRuntimeContext().getEasyJdbcTypeHandlerManager();
+        TrackManager trackManager = context.getRuntimeContext().getTrackManager();
+        boolean trackBean = trackBean(context, clazz);
         EasyResultSet easyResultSet = new EasyResultSet(rs);
         T bean = ClassUtil.newInstance(clazz);
-//        T originalBean = ClassUtil.newInstance(clazz);
+
         for (int i = 0; i < propertyDescriptors.length; i++) {
             PropertyDescriptor propertyDescriptor = propertyDescriptors[i];
             if (propertyDescriptor == null) {
@@ -370,7 +390,9 @@ public class DefaultEasyExecutor implements EasyExecutor {
             Object value = handler.getValue(easyResultSet);
             Method setter = getSetter(propertyDescriptor, clazz);
             callSetter(bean,setter, propertyDescriptor, value);
-//            callSetter(originalBean,setter, propertyDescriptor, value);
+        }
+        if(trackBean){
+            trackManager.getCurrentTrackContext().addTracking(bean,true);
         }
         return bean;
     }

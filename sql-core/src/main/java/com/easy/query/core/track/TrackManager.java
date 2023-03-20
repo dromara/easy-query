@@ -15,6 +15,6 @@ public interface TrackManager {
      */
     boolean currentThreadTracking();
     TrackContext getCurrentTrackContext();
-    void release(TrackContext trackContext);
+    void release();
 
 }

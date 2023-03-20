@@ -213,5 +213,7 @@ public interface Queryable<T1> extends Query<T1> {
     Queryable<T1> enableLogicDelete();
     Queryable<T1> noInterceptor();
     Queryable<T1> useInterceptor();
+    Queryable<T1> asTracking();
+    Queryable<T1> asNoTracking();
 
 }

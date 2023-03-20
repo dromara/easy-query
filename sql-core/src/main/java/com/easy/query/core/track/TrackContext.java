@@ -17,6 +17,9 @@ public interface TrackContext {
      */
     EntityState getTrackEntityState(Object entity);
 
-    void addTracking(Object entity);
+   default void addTracking(Object entity){
+       addTracking(entity,false);
+   }
+    void addTracking(Object entity,boolean isQuery);
     void release();
 }

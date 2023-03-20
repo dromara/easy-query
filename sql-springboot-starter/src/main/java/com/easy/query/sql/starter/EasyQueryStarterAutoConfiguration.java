@@ -65,8 +65,8 @@ public class EasyQueryStarterAutoConfiguration {
         return new DefaultEasyExecutor();
     }
     @Bean
-    public TrackManager trackManager(){
-        return new DefaultTrackManager();
+    public TrackManager trackManager(EntityMetadataManager entityMetadataManager){
+        return new DefaultTrackManager(entityMetadataManager);
     }
 
     @Bean

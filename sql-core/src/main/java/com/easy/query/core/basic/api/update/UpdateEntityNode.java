@@ -12,17 +12,24 @@ import java.util.List;
  * @Created by xuejiaming
  */
 public class UpdateEntityNode {
+
     private final String sql;
     private final List<SQLParameter> sqlParameters;
     private final List<Object> entities;
 
     public UpdateEntityNode(String sql,List<SQLParameter> sqlParameters){
-        this.sql = sql;
-
-        this.sqlParameters = sqlParameters;
-        this.entities=new ArrayList<>();
+        this(sql,sqlParameters,10);
     }
 
+    public UpdateEntityNode(String sql,List<SQLParameter> sqlParameters,int entityCapacity){
+        this.sql = sql;
+        this.sqlParameters = sqlParameters;
+        this.entities=new ArrayList<>(entityCapacity);
+    }
+
+    public String getSql() {
+        return sql;
+    }
     public List<SQLParameter> getSqlParameters() {
         return sqlParameters;
     }

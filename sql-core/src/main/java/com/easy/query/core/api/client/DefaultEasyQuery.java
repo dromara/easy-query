@@ -10,6 +10,8 @@ import com.easy.query.core.basic.api.insert.Insertable;
 import com.easy.query.core.basic.api.select.Queryable;
 import com.easy.query.core.basic.api.update.EntityUpdatable;
 import com.easy.query.core.basic.api.update.ExpressionUpdatable;
+import com.easy.query.core.track.TrackContext;
+import com.easy.query.core.track.TrackManager;
 
 import java.util.Collection;
 import java.util.List;
@@ -116,5 +118,14 @@ public class DefaultEasyQuery implements EasyQuery {
     @Override
     public <T> ExpressionDeletable<T> deletable(Class<T> entityClass) {
         return easySqlApiFactory.createExpressionDeletable(entityClass,runtimeContext,null);
+    }
+
+    @Override
+    public void addTracking(Object entity) {
+        TrackManager trackManager = runtimeContext.getTrackManager();
+        TrackContext currentTrackContext = trackManager.getCurrentTrackContext();
+        if(currentTrackContext!=null){
+            currentTrackContext.addTracking(entity);
+        }
     }
 }

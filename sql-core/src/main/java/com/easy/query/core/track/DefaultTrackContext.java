@@ -54,7 +54,7 @@ public class DefaultTrackContext implements TrackContext {
     }
 
     @Override
-    public void addTracking(Object entity) {
+    public void addTracking(Object entity,boolean isQuery) {
         if(entity==null){
             throw new EasyQueryException("cant track null entity");
         }
@@ -68,7 +68,8 @@ public class DefaultTrackContext implements TrackContext {
         ConcurrentHashMap<String, EntityState> entityStateMap = trackEntityMap.computeIfAbsent(entityClass, o -> new ConcurrentHashMap<>());
         EntityState originalEntityState = entityStateMap.get(trackKey);
         if (originalEntityState!=null) {
-            if(!originalEntityState.getCurrentValue().equals(entity)){
+            //查询的情况下直接使用追踪后的数据
+            if(!isQuery&&!originalEntityState.getCurrentValue().equals(entity)){
                 throw new EasyQueryException(ClassUtil.getSimpleName(entityClass) + ": current entity already tracked key,primary key:" + trackKey);
             }
         }else{

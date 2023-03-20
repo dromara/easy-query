@@ -48,4 +48,7 @@ public interface SqlExpressionContext {
     boolean isUseInterceptor();
     void useUpdateStrategy(UpdateStrategyEnum updateStrategy);
     UpdateStrategyEnum getUpdateStrategy();
+
+    void queryTracking(boolean tracking);
+    boolean isTracking();
 }

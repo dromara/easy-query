@@ -152,5 +152,10 @@ public interface Queryable3<T1, T2, T3> extends Queryable<T1> {
     @Override
     Queryable3<T1, T2, T3> useInterceptor();
 
+    @Override
+    Queryable3<T1, T2, T3> asTracking();
+    @Override
+    Queryable3<T1, T2, T3> asNoTracking();
+
     EasyQuerySqlBuilderProvider3<T1, T2, T3> getSqlBuilderProvider3();
 }

@@ -142,7 +142,7 @@ public class Main {
         EasyQueryLambdaFactory easyQueryLambdaFactory = new DefaultEasyQueryLambdaFactory();
         MySqlExpressionFactory mySQLSqlExpressionFactory = new MySqlExpressionFactory();
         EasySqlApiFactory easyQueryableFactory = new DefaultEasySqlApiFactory(mySQLSqlExpressionFactory);
-        DefaultTrackManager defaultTrackManager = new DefaultTrackManager();
+        DefaultTrackManager defaultTrackManager = new DefaultTrackManager(entityMetadataManager);
         DefaultEasyQueryRuntimeContext jqdcRuntimeContext = new DefaultEasyQueryRuntimeContext(configuration, entityMetadataManager, easyQueryLambdaFactory, connectionManager, defaultExecutor, jdbcTypeHandler, easyQueryableFactory, mySQLSqlExpressionFactory,defaultTrackManager);
 
 //        jqdcRuntimeContext.getEasyQueryConfiguration().applyEntityTypeConfiguration(new TestUserMySqlConfiguration());
@@ -190,6 +190,13 @@ public class Main {
         }
 
         {
+            defaultTrackManager.begin();
+            TestUserMysql testUserMysql = easyQuery.queryable(TestUserMysql.class).asTracking().firstOrNull();
+            testUserMysql.setName("444444"+new Random().nextInt(100));
+            long l = easyQuery.updatable(testUserMysql).executeRows();
+            defaultTrackManager.release();
+
+
             List<TestUserMysql> updates = new ArrayList<>();
             TestUserMysql test1 = new TestUserMysql();
             test1.setId("102");

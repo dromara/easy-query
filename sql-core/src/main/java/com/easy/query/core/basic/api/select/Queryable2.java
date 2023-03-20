@@ -147,6 +147,10 @@ public interface Queryable2<T1, T2> extends Queryable<T1> {
 
     @Override
     Queryable2<T1, T2> useInterceptor();
+    @Override
+    Queryable2<T1, T2> asTracking();
+    @Override
+    Queryable2<T1, T2> asNoTracking();
 
     EasyQuerySqlBuilderProvider2<T1, T2> getSqlBuilderProvider2();
 }

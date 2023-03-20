@@ -140,6 +140,10 @@ public interface Queryable4<T1,T2,T3,T4> extends Queryable<T1> {
 
     @Override
     Queryable4<T1, T2, T3,T4> useInterceptor();
+    @Override
+    Queryable4<T1, T2, T3,T4> asTracking();
+    @Override
+    Queryable4<T1, T2, T3,T4> asNoTracking();
 
     EasyQuerySqlBuilderProvider4<T1, T2, T3, T4> getSqlBuilderProvider4();
 }
