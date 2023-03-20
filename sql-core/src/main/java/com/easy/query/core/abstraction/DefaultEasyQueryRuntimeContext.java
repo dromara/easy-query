@@ -5,6 +5,7 @@ import com.easy.query.core.basic.jdbc.con.EasyConnectionManager;
 import com.easy.query.core.basic.jdbc.types.EasyJdbcTypeHandlerManager;
 import com.easy.query.core.configuration.EasyQueryConfiguration;
 import com.easy.query.core.basic.jdbc.executor.EasyExecutor;
+import com.easy.query.core.track.TrackManager;
 
 /**
  * @FileName: DefaultJQDCRuntimeContext.java
@@ -21,6 +22,7 @@ public class DefaultEasyQueryRuntimeContext implements EasyQueryRuntimeContext {
     private final EasyJdbcTypeHandlerManager easyJdbcTypeHandler;
     private final EasySqlApiFactory easyQueryableFactory;
     private final EasyExpressionFactory easySqlExpressionFactory;
+    private final TrackManager trackManager;
 
     public DefaultEasyQueryRuntimeContext(EasyQueryConfiguration easyQueryConfiguration,
                                           EntityMetadataManager entityMetadataManager,
@@ -29,7 +31,8 @@ public class DefaultEasyQueryRuntimeContext implements EasyQueryRuntimeContext {
                                           EasyExecutor easyExecutor,
                                           EasyJdbcTypeHandlerManager easyJdbcTypeHandler,
                                           EasySqlApiFactory easyQueryableFactory,
-                                          EasyExpressionFactory easySqlExpressionFactory){
+                                          EasyExpressionFactory easySqlExpressionFactory,
+                                          TrackManager trackManager){
         this.easyQueryConfiguration = easyQueryConfiguration;
         this.entityMetadataManager = entityMetadataManager;
         this.easyQueryLambdaFactory = easyQueryLambdaFactory;
@@ -38,6 +41,7 @@ public class DefaultEasyQueryRuntimeContext implements EasyQueryRuntimeContext {
         this.easyJdbcTypeHandler = easyJdbcTypeHandler;
         this.easyQueryableFactory = easyQueryableFactory;
         this.easySqlExpressionFactory = easySqlExpressionFactory;
+        this.trackManager = trackManager;
     }
     @Override
     public EasyQueryConfiguration getEasyQueryConfiguration() {
@@ -78,5 +82,10 @@ public class DefaultEasyQueryRuntimeContext implements EasyQueryRuntimeContext {
     @Override
     public EasyExpressionFactory getSqlExpressionFactory() {
         return easySqlExpressionFactory;
+    }
+
+    @Override
+    public TrackManager getTrackManager() {
+        return trackManager;
     }
 }

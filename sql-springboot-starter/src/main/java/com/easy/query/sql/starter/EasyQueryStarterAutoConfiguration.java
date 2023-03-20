@@ -17,6 +17,8 @@ import com.easy.query.core.interceptor.GlobalInterceptor;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.logicdel.GlobalLogicDeleteStrategy;
 import com.easy.query.core.metadata.DefaultEntityMetadataManager;
+import com.easy.query.core.track.DefaultTrackManager;
+import com.easy.query.core.track.TrackManager;
 import com.easy.query.mysql.MySqlExpressionFactory;
 import com.easy.query.mysql.config.MySqlDialect;
 import com.easy.query.sql.starter.config.EasyQueryProperties;
@@ -61,6 +63,10 @@ public class EasyQueryStarterAutoConfiguration {
     @Bean
     public EasyExecutor easyExecutor() {
         return new DefaultEasyExecutor();
+    }
+    @Bean
+    public TrackManager trackManager(){
+        return new DefaultTrackManager();
     }
 
     @Bean
@@ -113,7 +119,8 @@ public class EasyQueryStarterAutoConfiguration {
                                                            EasyExecutor easyExecutor,
                                                            EasyJdbcTypeHandlerManager easyJdbcTypeHandler,
                                                            EasySqlApiFactory easyQueryableFactory,
-                                                           EasyExpressionFactory easySqlExpressionFactory) {
+                                                           EasyExpressionFactory easySqlExpressionFactory,
+                                                           TrackManager trackManager) {
         return new DefaultEasyQueryRuntimeContext(
                 easyQueryConfiguration,
                 entityMetadataManager,
@@ -122,7 +129,8 @@ public class EasyQueryStarterAutoConfiguration {
                 easyExecutor,
                 easyJdbcTypeHandler,
                 easyQueryableFactory,
-                easySqlExpressionFactory
+                easySqlExpressionFactory,
+                trackManager
         );
     }
 

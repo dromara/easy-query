@@ -2,6 +2,7 @@ package com.easy.query.core.query;
 
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
+import com.easy.query.core.enums.UpdateStrategyEnum;
 
 import java.util.List;
 
@@ -45,4 +46,6 @@ public interface SqlExpressionContext {
     void useInterceptor();
     void noInterceptor();
     boolean isUseInterceptor();
+    void useUpdateStrategy(UpdateStrategyEnum updateStrategy);
+    UpdateStrategyEnum getUpdateStrategy();
 }

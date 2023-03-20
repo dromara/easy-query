@@ -12,5 +12,4 @@ public interface Updatable<T> extends SqlExecuteExpectRows {
 //    Insert<T> insertColumns(SqlExpression<SqlPredicate<T>> columnExpression);
 //    Insert<T> ignoreColumns(SqlExpression<SqlColumnSelector<T>> columnExpression);
 
-    String toSql();
 }

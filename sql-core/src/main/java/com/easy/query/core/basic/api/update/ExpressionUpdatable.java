@@ -95,5 +95,7 @@ public interface ExpressionUpdatable<T> extends Updatable<T> {
        return where(true,whereExpression);
    }
     ExpressionUpdatable<T> where(boolean condition,SqlExpression<SqlPredicate<T>> whereExpression);
+
+    String toSql();
 }
 

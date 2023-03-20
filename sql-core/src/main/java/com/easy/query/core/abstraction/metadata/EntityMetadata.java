@@ -233,6 +233,13 @@ public class EntityMetadata {
         return keyPropertiesMap.keySet();
     }
 
+    public boolean isKeyProperty(String propertyName){
+        if(propertyName==null){
+            return false;
+        }
+        return keyPropertiesMap.containsKey(propertyName);
+    }
+
     public ColumnMetadata getColumnNotNull(String propertyName) {
         ColumnMetadata columnMetadata = getColumnOrNull(propertyName);
         if (columnMetadata == null) {

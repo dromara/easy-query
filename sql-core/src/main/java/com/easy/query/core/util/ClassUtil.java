@@ -189,11 +189,17 @@ public class ClassUtil {
     }
 
     public static PropertyDescriptor[] propertyDescriptors(Class<?> c) throws IntrospectionException {
-
         BeanInfo beanInfo = null;
         beanInfo = Introspector.getBeanInfo(c, Object.class);
         return beanInfo.getPropertyDescriptors();
-
+    }
+    public static PropertyDescriptor[] propertyDescriptorsRuntime(Class<?> c){
+        try {
+            BeanInfo beanInfo = Introspector.getBeanInfo(c, Object.class);
+            return beanInfo.getPropertyDescriptors();
+        } catch (IntrospectionException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static List<Field> getAllFields(Class clazz) {

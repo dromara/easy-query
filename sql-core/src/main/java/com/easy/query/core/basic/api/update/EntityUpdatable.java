@@ -1,5 +1,6 @@
 package com.easy.query.core.basic.api.update;
 
+import com.easy.query.core.enums.UpdateStrategyEnum;
 import com.easy.query.core.expression.parser.abstraction.SqlColumnSelector;
 import com.easy.query.core.expression.lambda.SqlExpression;
 
@@ -22,4 +23,9 @@ public interface EntityUpdatable<T> extends Updatable<T> {
        return whereColumns(true,columnSelectorExpression);
    }
     EntityUpdatable<T> whereColumns(boolean condition, SqlExpression<SqlColumnSelector<T>> columnSelectorExpression);
+
+   default EntityUpdatable<T> setUpdateStrategy(UpdateStrategyEnum updateStrategy){
+        return setUpdateStrategy(true,updateStrategy);
+    }
+    EntityUpdatable<T> setUpdateStrategy(boolean condition, UpdateStrategyEnum updateStrategy);
 }

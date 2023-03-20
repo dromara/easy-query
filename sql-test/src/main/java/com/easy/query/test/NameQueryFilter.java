@@ -4,7 +4,6 @@ import com.easy.query.core.interceptor.GlobalPredicateFilterInterceptor;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.parser.abstraction.SqlPredicate;
 import com.easy.query.core.query.SqlEntityExpression;
-import com.easy.query.core.query.SqlEntityQueryExpression;
 import com.easy.query.core.util.EasyUtil;
 
 /**
@@ -16,7 +15,7 @@ import com.easy.query.core.util.EasyUtil;
 public class NameQueryFilter implements GlobalPredicateFilterInterceptor {
     @Override
     public void configure(Class<?> entityClass, SqlEntityExpression sqlEntityExpression, SqlPredicate<Object> sqlPredicate) {
-        Property<Object,?> property = EasyUtil.getLambdaProperty(entityClass, "name", String.class);
+        Property<Object,?> property = EasyUtil.getPropertyLambda(entityClass, "name", String.class);
         sqlPredicate.isNull(property);
     }
 

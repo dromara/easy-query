@@ -2,6 +2,7 @@ package com.easy.query.core.query;
 
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
+import com.easy.query.core.enums.UpdateStrategyEnum;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +22,7 @@ public class EasySqlExpressionContext implements SqlExpressionContext {
     private boolean deleteThrowException;
     private boolean useLogicDelete = true;
     private boolean useInterceptor = true;
+    private UpdateStrategyEnum updateStrategy = UpdateStrategyEnum.DEFAULT;
 
     public EasySqlExpressionContext(EasyQueryRuntimeContext runtimeContext, String alias) {
 
@@ -116,7 +118,15 @@ public class EasySqlExpressionContext implements SqlExpressionContext {
         return useInterceptor;
     }
 
+    @Override
+    public void useUpdateStrategy(UpdateStrategyEnum updateStrategy) {
+        this.updateStrategy=updateStrategy;
+    }
 
+    @Override
+    public UpdateStrategyEnum getUpdateStrategy() {
+        return this.updateStrategy;
+    }
     //    @Override
 //    public String getSqlColumnSegment(SqlEntityTableExpressionSegment table, String propertyName) {
 //        String alias = table.getAlias();

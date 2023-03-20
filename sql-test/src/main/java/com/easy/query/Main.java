@@ -7,6 +7,11 @@ import com.easy.query.core.abstraction.DefaultEasyQueryRuntimeContext;
 import com.easy.query.core.abstraction.EasyQueryLambdaFactory;
 import com.easy.query.core.abstraction.EasySqlApiFactory;
 import com.easy.query.core.enums.SqlRangeEnum;
+import com.easy.query.core.enums.UpdateStrategyEnum;
+import com.easy.query.core.track.DefaultTrackManager;
+import com.easy.query.core.util.ArrayUtil;
+import com.easy.query.core.util.BeanUtil;
+import com.easy.query.entity.BlogEntity;
 import com.easy.query.test.*;
 import com.easy.query.core.abstraction.metadata.EntityMetadataManager;
 import com.easy.query.core.api.pagination.PageResult;
@@ -46,11 +51,19 @@ public class Main {
     public static void main(String[] args) {
 
 //        int[] ints = {1, 2, 3, 4, 5, 6, 7, 8, 9, 0};
+//        HashSet<String> strings = new HashSet<>(Arrays.asList("id","title","createTime","isTop","top"));
+//        BlogEntity xaa=   new BlogEntity();
+//        xaa.setId("123");
+//        xaa.setTitle("456");
+//        xaa.setCreateTime(LocalDateTime.now());
+//        xaa.setIsTop(false);
+//        xaa.setTop(true);
 //        {
 //            long start = System.currentTimeMillis();
 //
 //            for (int i = 0; i < 100000; i++) {
-//                ArrayUtil.sum(ints);
+//                BlogEntity y=   new BlogEntity();
+//                BeanUtil.copyProperties(xaa,y,strings);
 //            }
 //            long end = System.currentTimeMillis();
 //            System.out.println("耗时：" + (end - start) + "ms");
@@ -60,7 +73,7 @@ public class Main {
 //            long start = System.currentTimeMillis();
 //
 //            for (int i = 0; i < 100000; i++) {
-//                Arrays.stream(ints).sum();
+//                BlogEntity y= (BlogEntity)BeanUtil.copyProperties1(xaa);
 //            }
 //            long end = System.currentTimeMillis();
 //            System.out.println("耗时：" + (end - start) + "ms");
@@ -70,7 +83,8 @@ public class Main {
 //            long start = System.currentTimeMillis();
 //
 //            for (int i = 0; i < 100000; i++) {
-//                ArrayUtil.sum(ints);
+//                BlogEntity y=   new BlogEntity();
+//                BeanUtil.copyProperties(xaa,y,strings);
 //            }
 //            long end = System.currentTimeMillis();
 //            System.out.println("耗时：" + (end - start) + "ms");
@@ -80,7 +94,8 @@ public class Main {
 //            long start = System.currentTimeMillis();
 //
 //            for (int i = 0; i < 100000; i++) {
-//                Arrays.stream(ints).sum();
+//
+//                BlogEntity y= (BlogEntity)BeanUtil.copyProperties1(xaa);
 //            }
 //            long end = System.currentTimeMillis();
 //            System.out.println("耗时：" + (end - start) + "ms");
@@ -130,10 +145,11 @@ public class Main {
         EasyQueryLambdaFactory easyQueryLambdaFactory = new DefaultEasyQueryLambdaFactory();
         MySqlExpressionFactory mySQLSqlExpressionFactory = new MySqlExpressionFactory();
         EasySqlApiFactory easyQueryableFactory = new DefaultEasySqlApiFactory(mySQLSqlExpressionFactory);
-        DefaultEasyQueryRuntimeContext jqdcRuntimeContext = new DefaultEasyQueryRuntimeContext(configuration, entityMetadataManager, easyQueryLambdaFactory, connectionManager, defaultExecutor, jdbcTypeHandler, easyQueryableFactory, mySQLSqlExpressionFactory);
+        DefaultTrackManager defaultTrackManager = new DefaultTrackManager();
+        DefaultEasyQueryRuntimeContext jqdcRuntimeContext = new DefaultEasyQueryRuntimeContext(configuration, entityMetadataManager, easyQueryLambdaFactory, connectionManager, defaultExecutor, jdbcTypeHandler, easyQueryableFactory, mySQLSqlExpressionFactory,defaultTrackManager);
 
 //        jqdcRuntimeContext.getEasyQueryConfiguration().applyEntityTypeConfiguration(new TestUserMySqlConfiguration());
-        configuration.applyGlobalInterceptor(new NameQueryFilter());
+//        configuration.applyGlobalInterceptor(new NameQueryFilter());
 
         easyQuery = new DefaultEasyQuery(jqdcRuntimeContext);
 
@@ -176,6 +192,19 @@ public class Main {
             System.out.println(1);
         }
 
+        {
+            List<TestUserMysql> updates = new ArrayList<>();
+            TestUserMysql test1 = new TestUserMysql();
+            test1.setId("102");
+            test1.setName("ds01");
+            updates.add(test1);
+            TestUserMysql test2 = new TestUserMysql();
+            test2.setId("105");
+            test2.setAge(102);
+            test2.setName("111");
+            updates.add(test2);
+            long l12xx = easyQuery.updatable(updates).setUpdateStrategy(UpdateStrategyEnum.ONLY_NOT_NULL_COLUMNS).executeRows();
+        }
         {
             TestUserMysql testUserMysqlx11 = easyQuery.queryable(TestUserMysql.class, "y")
                     .where(o -> o.eq(TestUserMysql::getId, "102").like(TestUserMysql::getName, "1").and(x ->
@@ -302,19 +331,21 @@ public class Main {
 
                 transaction.commit();
             }
-            List<TestUserMysql> updates = new ArrayList<>();
-            TestUserMysql test1 = new TestUserMysql();
-            test1.setId("102");
-            test1.setAge(102);
-            test1.setName("ds01");
-            updates.add(test1);
-            TestUserMysql test2 = new TestUserMysql();
-            test2.setId("105");
-            test2.setAge(102);
-            test2.setName("ds01");
-            updates.add(test2);
-            long l12xx = easyQuery.updatable(updates).setOnlyColumns(o -> o.column(TestUserMysql::getName)).whereColumns(o -> o.column(TestUserMysql::getAge)).executeRows();
-            long l2 = easyQuery.deletable(updates).executeRows();
+            {
+                List<TestUserMysql> updates = new ArrayList<>();
+                TestUserMysql test1 = new TestUserMysql();
+                test1.setId("102");
+                test1.setAge(102);
+                test1.setName("ds01");
+                updates.add(test1);
+                TestUserMysql test2 = new TestUserMysql();
+                test2.setId("105");
+                test2.setAge(102);
+                test2.setName("ds01");
+                updates.add(test2);
+                long l12xx = easyQuery.updatable(updates).setOnlyColumns(o -> o.column(TestUserMysql::getName)).whereColumns(o -> o.column(TestUserMysql::getAge)).executeRows();
+                long l2 = easyQuery.deletable(updates).executeRows();
+            }
 
             long l4 = easyQuery.deletable(SysUserLogbyMonth.class).whereById("00010728-2b86-426a-a81c-001a67ff409a").executeRows();
 

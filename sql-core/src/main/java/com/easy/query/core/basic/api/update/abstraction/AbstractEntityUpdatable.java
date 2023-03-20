@@ -2,7 +2,10 @@ package com.easy.query.core.basic.api.update.abstraction;
 
 import com.easy.query.core.basic.api.abstraction.AbstractSqlExecuteRows;
 import com.easy.query.core.basic.api.update.EntityUpdatable;
+import com.easy.query.core.basic.api.update.UpdateEntityNode;
+import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.enums.MultiTableTypeEnum;
+import com.easy.query.core.enums.UpdateStrategyEnum;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.lambda.SqlExpression;
 import com.easy.query.core.expression.parser.abstraction.SqlColumnSelector;
@@ -52,11 +55,20 @@ public abstract class AbstractEntityUpdatable<T> extends AbstractSqlExecuteRows 
     public long executeRows() {
         if (!entities.isEmpty()) {
             updateBefore();
-            String updateSql = toSql();
-            if (!StringUtil.isBlank(updateSql)) {
-                EasyExecutor easyExecutor = sqlEntityUpdateExpression.getRuntimeContext().getEasyExecutor();
-                return easyExecutor.executeRows(ExecutorContext.create(sqlEntityUpdateExpression.getRuntimeContext()), updateSql, entities, sqlEntityUpdateExpression.getParameters());
+            Map<String, UpdateEntityNode> updateEntityNodeMap = new LinkedHashMap<>();
+            for (T entity : entities) {
+                String updateSql = toSql(entity);
+                List<SQLParameter> parameters = new ArrayList<>(sqlEntityUpdateExpression.getParameters());
+                UpdateEntityNode updateEntityNode = updateEntityNodeMap.computeIfAbsent(updateSql, k -> new UpdateEntityNode(updateSql, parameters));
+                updateEntityNode.getEntities().add(entity);
             }
+            EasyExecutor easyExecutor = sqlEntityUpdateExpression.getRuntimeContext().getEasyExecutor();
+            int i=0;
+            for (String updateSql : updateEntityNodeMap.keySet()) {
+                UpdateEntityNode updateEntityNode = updateEntityNodeMap.get(updateSql);
+                i+= easyExecutor.executeRows(ExecutorContext.create(sqlEntityUpdateExpression.getRuntimeContext()), updateSql, updateEntityNode.getEntities(), updateEntityNode.getSqlParameters());
+            }
+            return i;
         }
         return 0;
     }
@@ -78,11 +90,10 @@ public abstract class AbstractEntityUpdatable<T> extends AbstractSqlExecuteRows 
             }
         }
     }
-    @Override
-    public String toSql() {
-        return toInternalSql();
+    protected  String toSql(Object entity) {
+        return toInternalSql(entity);
     }
-    protected abstract String toInternalSql();
+    protected abstract String toInternalSql(Object entity);
 
 
     @Override
@@ -108,6 +119,14 @@ public abstract class AbstractEntityUpdatable<T> extends AbstractSqlExecuteRows 
         if (condition) {
             DefaultSqlColumnSetSelector<T> columnSelector = new DefaultSqlColumnSetSelector<>(0, sqlEntityUpdateExpression, sqlEntityUpdateExpression.getWhereColumns());
             columnSelectorExpression.apply(columnSelector);
+        }
+        return this;
+    }
+
+    @Override
+    public EntityUpdatable<T> setUpdateStrategy(boolean condition, UpdateStrategyEnum updateStrategy) {
+        if(condition){
+            sqlEntityUpdateExpression.getSqlExpressionContext().useUpdateStrategy(updateStrategy);
         }
         return this;
     }

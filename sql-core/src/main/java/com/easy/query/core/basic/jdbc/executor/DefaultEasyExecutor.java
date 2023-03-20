@@ -29,6 +29,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @FileName: DefaultExecutor.java
@@ -128,7 +129,8 @@ public class DefaultEasyExecutor implements EasyExecutor {
         EasyQueryRuntimeContext runtimeContext = executorContext.getRuntimeContext();
         EasyConnectionManager connectionManager = runtimeContext.getConnectionManager();
         EasyJdbcTypeHandlerManager easyJdbcTypeHandler = runtimeContext.getEasyJdbcTypeHandlerManager();
-        EntityMetadata entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(entities.get(0).getClass());
+        Class<?> entityClass = entities.get(0).getClass();
+        EntityMetadata entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(entityClass);
         List<String> incrementColumns = fillAutoIncrement ? entityMetadata.getIncrementColumns() : null;
         EasyConnection easyConnection = null;
         PreparedStatement ps = null;
@@ -174,7 +176,8 @@ public class DefaultEasyExecutor implements EasyExecutor {
 
                         Object value = keysSet.getObject(i + 1);
                         Object newValue = ClassUtil.convertValueToRequiredType(value, property.getPropertyType());
-                        callSetter(entity, property, newValue);
+                        Method setter = getSetter(property, entityClass);
+                        callSetter(entity,setter, property, newValue);
                     }
                     index++;
                 }
@@ -354,6 +357,7 @@ public class DefaultEasyExecutor implements EasyExecutor {
         EasyJdbcTypeHandlerManager easyJdbcTypeHandler = context.getRuntimeContext().getEasyJdbcTypeHandlerManager();
         EasyResultSet easyResultSet = new EasyResultSet(rs);
         T bean = ClassUtil.newInstance(clazz);
+//        T originalBean = ClassUtil.newInstance(clazz);
         for (int i = 0; i < propertyDescriptors.length; i++) {
             PropertyDescriptor propertyDescriptor = propertyDescriptors[i];
             if (propertyDescriptor == null) {
@@ -364,17 +368,17 @@ public class DefaultEasyExecutor implements EasyExecutor {
             easyResultSet.setPropertyType(propertyType);
             JdbcTypeHandler handler = easyJdbcTypeHandler.getHandler(propertyType);
             Object value = handler.getValue(easyResultSet);
-            callSetter(bean, propertyDescriptor, value);
+            Method setter = getSetter(propertyDescriptor, clazz);
+            callSetter(bean,setter, propertyDescriptor, value);
+//            callSetter(originalBean,setter, propertyDescriptor, value);
         }
         return bean;
     }
 
-    public void callSetter(Object target, PropertyDescriptor prop, Object value) throws SQLException {
-
-        Method setter = ClassUtil.getWriteMethod(prop, target.getClass());
-        if (setter == null) {
-            return;
-        }
+    public Method getSetter(PropertyDescriptor prop, Class<?> targetClass){
+        return ClassUtil.getWriteMethod(prop, targetClass);
+    }
+    public void callSetter(Object target,Method setter, PropertyDescriptor prop, Object value) throws SQLException {
         try {
             setter.invoke(target, value);
         } catch (IllegalArgumentException | IllegalAccessException | InvocationTargetException e) {

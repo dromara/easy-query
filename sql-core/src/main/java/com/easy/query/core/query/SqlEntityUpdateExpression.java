@@ -20,4 +20,6 @@ public interface SqlEntityUpdateExpression extends SqlEntityExpression {
      boolean hasSetIgnoreColumns();
      SqlBuilderSegment getWhereColumns();
      boolean hasWhereColumns();
+
+     String toSql(Object entity);
 }

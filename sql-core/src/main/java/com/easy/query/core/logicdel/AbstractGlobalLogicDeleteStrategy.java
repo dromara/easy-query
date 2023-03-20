@@ -29,7 +29,7 @@ public abstract class AbstractGlobalLogicDeleteStrategy implements GlobalLogicDe
         if(!allowTypes.contains(propertyType)){
             throw new EasyQueryException(ClassUtil.getSimpleName(entityMetadata.getEntityClass())+"."+propertyName+" logic delete not support, property type not allowed");
         }
-        Property<Object, ?> lambdaProperty = EasyUtil.getLambdaProperty(entityMetadata.getEntityClass(), propertyName, propertyType);
+        Property<Object, ?> lambdaProperty = EasyUtil.getPropertyLambda(entityMetadata.getEntityClass(), propertyName, propertyType);
         SqlExpression<SqlPredicate<Object>> queryFilterExpression = getQueryFilterExpression(entityMetadata,lambdaProperty);
         SqlExpression<SqlColumnSetter<Object>> deletedSqlExpression = getDeletedSqlExpression(entityMetadata,lambdaProperty);
         entityMetadata.setLogicDeleteMetadata(new LogicDeleteMetadata(propertyName,queryFilterExpression, deletedSqlExpression));

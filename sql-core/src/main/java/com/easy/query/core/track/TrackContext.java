@@ -1,0 +1,22 @@
+package com.easy.query.core.track;
+
+/**
+ * @FileName: TrackContext.java
+ * @Description: 文件说明
+ * @Date: 2023/3/18 21:21
+ * @Created by xuejiaming
+ */
+public interface TrackContext {
+    void begin();
+    boolean isTrack(Object entity);
+
+    /**
+     * 没有或者不符合返回null
+     * @param entity
+     * @return
+     */
+    EntityState getTrackEntityState(Object entity);
+
+    void addTracking(Object entity);
+    void release();
+}

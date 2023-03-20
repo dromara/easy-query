@@ -5,6 +5,7 @@ import com.easy.query.core.annotation.LogicDelete;
 import com.easy.query.core.annotation.Table;
 import com.easy.query.core.basic.enums.LogicDeleteStrategyEnum;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
@@ -14,7 +15,7 @@ import java.time.LocalDateTime;
  * @Created by xuejiaming
  */
 @Table("testuser")
-public class TestUserMysql {
+public class TestUserMysql implements Serializable {
     private static final long serialVersionUID = 1L;
     @Column(value = "Id",primaryKey = true)
     private String id;

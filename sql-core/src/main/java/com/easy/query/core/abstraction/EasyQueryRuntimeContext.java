@@ -5,6 +5,7 @@ import com.easy.query.core.abstraction.metadata.EntityMetadataManager;
 import com.easy.query.core.basic.jdbc.executor.EasyExecutor;
 import com.easy.query.core.basic.jdbc.types.EasyJdbcTypeHandlerManager;
 import com.easy.query.core.configuration.EasyQueryConfiguration;
+import com.easy.query.core.track.TrackManager;
 
 /**
  * @FileName: JQDCRuntimeContext.java
@@ -21,4 +22,5 @@ public interface EasyQueryRuntimeContext {
     EasyJdbcTypeHandlerManager getEasyJdbcTypeHandlerManager();
     EasySqlApiFactory getSqlApiFactory();
     EasyExpressionFactory getSqlExpressionFactory();
+    TrackManager getTrackManager();
 }
