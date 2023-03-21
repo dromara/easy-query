@@ -28,7 +28,7 @@ public class EasySqlExpressionContext implements SqlExpressionContext {
     public EasySqlExpressionContext(EasyQueryRuntimeContext runtimeContext, String alias) {
 
         this.runtimeContext = runtimeContext;
-        this.deleteThrowException = runtimeContext.getEasyQueryConfiguration().cantDelete();
+        this.deleteThrowException = runtimeContext.getEasyQueryConfiguration().deleteThrow();
         this.alias = alias;
         params = new ArrayList<>();
     }

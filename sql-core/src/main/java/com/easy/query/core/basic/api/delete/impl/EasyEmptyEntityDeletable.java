@@ -30,7 +30,12 @@ public class EasyEmptyEntityDeletable<T> implements EntityDeletable<T> {
     }
 
     @Override
-    public EntityDeletable<T> disableLogicDelete() {
+    public EntityDeletable<T> useLogicDelete(boolean enable) {
+        return this;
+    }
+
+    @Override
+    public EntityDeletable<T> allowDeleteCommand(boolean allow) {
         return this;
     }
 }

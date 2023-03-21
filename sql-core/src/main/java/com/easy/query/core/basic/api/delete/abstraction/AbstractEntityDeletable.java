@@ -61,8 +61,14 @@ public abstract class AbstractEntityDeletable<T> extends AbstractSqlExecuteRows 
 
 
     @Override
-    public EntityDeletable<T> disableLogicDelete() {
-        sqlEntityDeleteExpression.setLogicDelete(false);
+    public EntityDeletable<T> useLogicDelete(boolean enable) {
+        sqlEntityDeleteExpression.setLogicDelete(enable);
+        return this;
+    }
+
+    @Override
+    public EntityDeletable<T> allowDeleteCommand(boolean allow) {
+        sqlEntityDeleteExpression.getSqlExpressionContext().deleteThrow(!allow);
         return this;
     }
 }

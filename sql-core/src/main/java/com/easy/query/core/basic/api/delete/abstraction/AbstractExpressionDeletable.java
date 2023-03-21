@@ -49,7 +49,7 @@ public abstract   class AbstractExpressionDeletable<T> extends AbstractSqlExecut
     @Override
     public long executeRows() {
         String deleteSql = toSql();
-        if(StringUtil.isBlank(deleteSql)){
+        if(StringUtil.isNotBlank(deleteSql)){
             EasyQueryRuntimeContext runtimeContext = sqlEntityDeleteExpression.getRuntimeContext();
             EasyExecutor easyExecutor = runtimeContext.getEasyExecutor();
             return easyExecutor.executeRows(ExecutorContext.create(runtimeContext), deleteSql, sqlEntityDeleteExpression.getParameters());
@@ -94,8 +94,14 @@ public abstract   class AbstractExpressionDeletable<T> extends AbstractSqlExecut
     }
 
     @Override
-    public ExpressionDeletable<T> disableLogicDelete() {
-        sqlEntityDeleteExpression.setLogicDelete(false);
+    public ExpressionDeletable<T> useLogicDelete(boolean enable) {
+        sqlEntityDeleteExpression.setLogicDelete(enable);
+        return this;
+    }
+
+    @Override
+    public ExpressionDeletable<T> allowDeleteCommand(boolean allow) {
+        sqlEntityDeleteExpression.getSqlExpressionContext().deleteThrow(!allow);
         return this;
     }
 }

@@ -3,6 +3,7 @@ package com.easy.query.core.query;
 import com.easy.query.core.abstraction.EasyQueryLambdaFactory;
 import com.easy.query.core.configuration.EasyQueryConfiguration;
 import com.easy.query.core.exception.EasyQueryException;
+import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.lambda.SqlExpression;
 import com.easy.query.core.expression.parser.abstraction.SqlColumnSetter;
 import com.easy.query.core.expression.segment.SqlEntitySegment;
@@ -102,7 +103,7 @@ public abstract class EasySqlDeleteExpression extends AbstractSqlPredicateEntity
             sql.append(" SET ").append(updateSetSqlBuilderSegment.toSql());//生成的表达式带有参数会传入到上下文
         } else {
             if (sqlExpressionContext.isDeleteThrow()) {
-                throw new EasyQueryException("can't execute delete statement");
+                throw new EasyQueryInvalidOperationException("can't execute delete statement");
             }
             sql = new StringBuilder("DELETE FROM ");
             sql.append(tableName);
@@ -246,7 +247,7 @@ public abstract class EasySqlDeleteExpression extends AbstractSqlPredicateEntity
             sql.append(" SET ").append(updateSetSqlBuilderSegment.toSql());//生成的表达式带有参数会传入到上下文
         } else {
             if (sqlExpressionContext.isDeleteThrow()) {
-                throw new EasyQueryException("can't execute delete statement");
+                throw new EasyQueryInvalidOperationException("can't execute delete statement");
             }
             sql = new StringBuilder("DELETE FROM ");
             sql.append(tableName);

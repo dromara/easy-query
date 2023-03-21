@@ -77,7 +77,7 @@ public abstract class BaseTest {
         EasyConnectionManager connectionManager = new DefaultConnectionManager(dataSource);
         DefaultEasyExecutor defaultExecutor = new DefaultEasyExecutor();
         EasyJdbcTypeHandlerManager jdbcTypeHandler = new DefaultJdbcTypeHandlerManager();
-        EasyQueryConfiguration configuration = new EasyQueryConfiguration();
+        EasyQueryConfiguration configuration = new EasyQueryConfiguration(false);
         configuration.setNameConversion(new UnderlinedNameConversion());
         configuration.setDialect(new MySqlDialect());
 

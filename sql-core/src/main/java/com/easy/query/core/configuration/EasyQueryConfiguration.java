@@ -35,13 +35,13 @@ public class EasyQueryConfiguration {
     private final boolean deleteThrowError;
 
     public EasyQueryConfiguration() {
-       this(false);
+       this(true);
     }
     public EasyQueryConfiguration(boolean deleteThrowError) {
         this.deleteThrowError=deleteThrowError;
     }
 
-    public boolean cantDelete(){
+    public boolean deleteThrow(){
         return deleteThrowError;
     }
 
