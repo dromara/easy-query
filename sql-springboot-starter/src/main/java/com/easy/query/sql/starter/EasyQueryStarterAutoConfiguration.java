@@ -14,11 +14,13 @@ import com.easy.query.core.config.NameConversion;
 import com.easy.query.core.config.UnderlinedNameConversion;
 import com.easy.query.core.configuration.EasyQueryConfiguration;
 import com.easy.query.core.interceptor.GlobalInterceptor;
+import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.logicdel.GlobalLogicDeleteStrategy;
 import com.easy.query.core.metadata.DefaultEntityMetadataManager;
 import com.easy.query.core.track.DefaultTrackManager;
 import com.easy.query.core.track.TrackManager;
+import com.easy.query.core.util.StringUtil;
 import com.easy.query.mysql.MySqlExpressionFactory;
 import com.easy.query.mysql.config.MySqlDialect;
 import com.easy.query.sql.starter.config.EasyQueryProperties;
@@ -50,9 +52,20 @@ import java.util.Map;
         matchIfMissing = true
 )
 public class EasyQueryStarterAutoConfiguration {
-    public EasyQueryStarterAutoConfiguration() {
-        LogFactory.useCustomLogging(Slf4jImpl.class);
-//        LogFactory.useStdOutLogging();
+    private final EasyQueryProperties easyQueryProperties;
+
+    public EasyQueryStarterAutoConfiguration(EasyQueryProperties easyQueryProperties) {
+        this.easyQueryProperties = easyQueryProperties;
+        if(StringUtil.isBlank(easyQueryProperties.getLogClass())){
+            LogFactory.useCustomLogging(Slf4jImpl.class);
+        }else {
+            try {
+                LogFactory.useCustomLogging((Class<? extends Log>) Class.forName(easyQueryProperties.getLogClass()));
+            } catch (ClassNotFoundException e) {
+                System.out.println("cant found log:["+easyQueryProperties.getLogClass()+"]");
+                e.printStackTrace();
+            }
+        }
     }
 
     @Bean

@@ -108,6 +108,7 @@ public class EntityMetadata {
                     }
                     columnMetadata.setIncrement(column.increment());
 
+//                    columnMetadata.setSelect(column.select());
 //                    columnMetadata.setNullable(false);//如果为主键那么之前设置的nullable将无效
                 }
                 InsertIgnore insertIgnore = field.getAnnotation(InsertIgnore.class);
