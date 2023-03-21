@@ -202,13 +202,15 @@ public class ClassUtil {
         }
     }
 
-    public static List<Field> getAllFields(Class clazz) {
+    public static List<Field> getAllFields(Class<?> clazz) {
         ArrayList<Field> fields = new ArrayList<>();
-        Class currentClazz = clazz;
-        while (currentClazz != null) {
-            fields.addAll(Arrays.asList(currentClazz.getDeclaredFields()));
-            currentClazz = currentClazz.getSuperclass();
+        // 递归获取父类的所有Field
+        Class<?> superClass = clazz.getSuperclass();
+        if (superClass != null) {
+            fields.addAll(getAllFields(superClass));
         }
+        // 获取当前类的所有Field
+        fields.addAll(Arrays.asList(clazz.getDeclaredFields()));
         return fields;
     }
 
