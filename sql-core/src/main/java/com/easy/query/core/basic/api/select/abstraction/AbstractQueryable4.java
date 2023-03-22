@@ -2,11 +2,13 @@ package com.easy.query.core.basic.api.select.abstraction;
 
 import com.easy.query.core.abstraction.metadata.ColumnMetadata;
 import com.easy.query.core.basic.api.select.Queryable;
+import com.easy.query.core.basic.api.select.Queryable3;
 import com.easy.query.core.basic.api.select.provider.EasyQuerySqlBuilderProvider;
 import com.easy.query.core.basic.api.select.provider.Select4SqlProvider;
 import com.easy.query.core.enums.EasyAggregate;
 import com.easy.query.core.enums.IEasyFunc;
 import com.easy.query.core.exception.EasyQueryException;
+import com.easy.query.core.expression.lambda.SqlExpression;
 import com.easy.query.core.expression.lambda.SqlExpression4;
 import com.easy.query.core.expression.parser.abstraction.SqlColumnAsSelector;
 import com.easy.query.core.expression.parser.abstraction.SqlColumnResultSelector;
@@ -46,6 +48,11 @@ public abstract class AbstractQueryable4<T1, T2, T3,T4> extends AbstractQueryabl
     }
 
 
+    @Override
+    public Queryable4<T1, T2, T3,T4> where(boolean condition, SqlExpression<SqlPredicate<T1>> whereExpression) {
+        super.where(condition,whereExpression);
+        return this;
+    }
     @Override
     public Queryable4<T1, T2, T3,T4> where(boolean condition, SqlExpression4<SqlPredicate<T1>, SqlPredicate<T2>, SqlPredicate<T3>, SqlPredicate<T4>> whereExpression) {
         if (condition) {

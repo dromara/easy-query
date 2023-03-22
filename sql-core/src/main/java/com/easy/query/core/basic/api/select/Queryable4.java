@@ -1,6 +1,7 @@
 package com.easy.query.core.basic.api.select;
 
 import com.easy.query.core.basic.api.select.provider.EasyQuerySqlBuilderProvider4;
+import com.easy.query.core.expression.lambda.SqlExpression;
 import com.easy.query.core.expression.lambda.SqlExpression4;
 import com.easy.query.core.expression.parser.abstraction.SqlColumnAsSelector;
 import com.easy.query.core.expression.parser.abstraction.SqlColumnResultSelector;
@@ -17,6 +18,13 @@ import java.math.BigDecimal;
  */
 public interface Queryable4<T1,T2,T3,T4> extends Queryable<T1> {
     //region where
+    @Override
+    default Queryable4<T1, T2, T3,T4> where(SqlExpression<SqlPredicate<T1>> whereExpression) {
+        return where(true, whereExpression);
+    }
+
+    @Override
+    Queryable4<T1, T2, T3,T4> where(boolean condition, SqlExpression<SqlPredicate<T1>> whereExpression);
     default Queryable4<T1,T2,T3,T4> where(SqlExpression4<SqlPredicate<T1>, SqlPredicate<T2>, SqlPredicate<T3>, SqlPredicate<T4>> whereExpression) {
         return where(true, whereExpression);
     }

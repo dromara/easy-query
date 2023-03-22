@@ -7,6 +7,7 @@ import com.easy.query.core.basic.api.select.provider.EasyQuerySqlBuilderProvider
 import com.easy.query.core.basic.api.select.provider.Select2SqlProvider;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.exception.EasyQueryException;
+import com.easy.query.core.expression.lambda.SqlExpression;
 import com.easy.query.core.expression.lambda.SqlExpression2;
 import com.easy.query.core.expression.lambda.SqlExpression3;
 import com.easy.query.core.expression.parser.abstraction.SqlColumnAsSelector;
@@ -83,6 +84,13 @@ public abstract class AbstractQueryable2<T1, T2> extends AbstractQueryable<T1> i
         Queryable<T3> selectAllT2Queryable = SqlExpressionUtil.cloneAndSelectAllQueryable(joinQueryable);
         Queryable3<T1, T2, T3> queryable3 = sqlEntityExpression.getRuntimeContext().getSqlApiFactory().createQueryable3(t1Class,t2Class, selectAllT2Queryable, MultiTableTypeEnum.INNER_JOIN, sqlEntityExpression);
         return SqlExpressionUtil.executeJoinOn(queryable3,on);
+    }
+
+
+    @Override
+    public Queryable2<T1, T2> where(boolean condition, SqlExpression<SqlPredicate<T1>> whereExpression) {
+        super.where(condition,whereExpression);
+        return this;
     }
 
     @Override

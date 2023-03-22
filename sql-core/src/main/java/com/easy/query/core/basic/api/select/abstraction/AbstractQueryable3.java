@@ -1,5 +1,6 @@
 package com.easy.query.core.basic.api.select.abstraction;
 
+import com.easy.query.core.basic.api.select.Queryable2;
 import com.easy.query.core.basic.api.select.provider.EasyQuerySqlBuilderProvider;
 import com.easy.query.core.basic.api.select.provider.EasyQuerySqlBuilderProvider3;
 import com.easy.query.core.basic.api.select.provider.Select3SqlProvider;
@@ -12,6 +13,7 @@ import com.easy.query.core.basic.api.select.Queryable4;
 import com.easy.query.core.basic.api.select.provider.*;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.exception.EasyQueryException;
+import com.easy.query.core.expression.lambda.SqlExpression;
 import com.easy.query.core.expression.lambda.SqlExpression3;
 import com.easy.query.core.expression.lambda.SqlExpression4;
 import com.easy.query.core.expression.parser.abstraction.SqlColumnAsSelector;
@@ -88,6 +90,11 @@ public abstract class AbstractQueryable3<T1, T2, T3> extends AbstractQueryable<T
         return SqlExpressionUtil.executeJoinOn(queryable,on);
     }
 
+    @Override
+    public Queryable3<T1, T2, T3> where(boolean condition, SqlExpression<SqlPredicate<T1>> whereExpression) {
+        super.where(condition,whereExpression);
+        return this;
+    }
     @Override
     public Queryable3<T1, T2, T3> where(boolean condition, SqlExpression3<SqlPredicate<T1>, SqlPredicate<T2>, SqlPredicate<T3>> whereExpression) {
         if (condition) {

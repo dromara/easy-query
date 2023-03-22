@@ -131,20 +131,47 @@ public interface Queryable<T1> extends Query<T1> {
    default String toSql(){
        return toSql(queryClass());
    }
+
+    /**
+     * 返回执行sql
+     * @param resultClass
+     * @return
+     * @param <TR>
+     */
     <TR> String toSql(Class<TR> resultClass);
-//
+
+    /**
+     * 对当前表达式返回自定义select列
+     * @param selectExpression
+     * @return
+     */
     Queryable<T1> select(SqlExpression<SqlColumnSelector<T1>> selectExpression);
 
     /**
      * 将当前T1对象转成TR对象，select会将T1属性所对应的列名映射到TR对象的列名上(忽略大小写)
      * T1.property1列名叫做column1,T1.property2列名叫做column2，TR.property3的列名也叫column1
      * 那么生成的sql为:select column1 from t1
+     * 如果当前存在join，那么join的子表一律不会映射到resultClass上,如果需要那么请手动调用双参数select
      * @param resultClass
      * @return
      * @param <TR>
      */
     <TR> Queryable<TR> select(Class<TR> resultClass);
+
+    /**
+     * 设置返回对象，返回对象会根据selectExpression映射相同列名
+     * @param resultClass
+     * @param selectExpression
+     * @return
+     * @param <TR>
+     */
     <TR> Queryable<TR> select(Class<TR> resultClass, SqlExpression<SqlColumnAsSelector<T1, TR>> selectExpression);
+
+    /**
+     * 设置column所有join表都会生效
+     * @param columns
+     * @return
+     */
     Queryable<T1> select(String columns);
 
     default Queryable<T1> where(SqlExpression<SqlPredicate<T1>> whereExpression) {
