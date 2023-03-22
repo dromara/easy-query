@@ -98,13 +98,13 @@ public class DefaultSqlColumnAsSelector<T1, TR> extends AbstractSqlColumnSelecto
     }
 
     @Override
-    public SqlColumnAsSelector<T1, TR> columnSum(Property<T1, ?> column) {
+    public SqlColumnAsSelector<T1, TR> columnSum(Property<T1, Number> column) {
         doColumnFunc(column, null, EasyAggregate.SUM);
         return this;
     }
 
     @Override
-    public SqlColumnAsSelector<T1, TR> columnSum(Property<T1, ?> column, Property<TR, ?> alias) {
+    public SqlColumnAsSelector<T1, TR> columnSum(Property<T1, Number> column, Property<TR, Number> alias) {
         doColumnFunc(column, alias, EasyAggregate.SUM);
         return this;
     }
@@ -134,13 +134,13 @@ public class DefaultSqlColumnAsSelector<T1, TR> extends AbstractSqlColumnSelecto
     }
 
     @Override
-    public SqlColumnAsSelector<T1, TR> columnAvg(Property<T1, ?> column) {
+    public SqlColumnAsSelector<T1, TR> columnAvg(Property<T1, Number> column) {
         doColumnFunc(column, null, EasyAggregate.AVG);
         return this;
     }
 
     @Override
-    public SqlColumnAsSelector<T1, TR> columnAvg(Property<T1, ?> column, Property<TR, ?> alias) {
+    public SqlColumnAsSelector<T1, TR> columnAvg(Property<T1, Number> column, Property<TR, Number> alias) {
         doColumnFunc(column, alias, EasyAggregate.AVG);
         return this;
     }

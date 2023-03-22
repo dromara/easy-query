@@ -400,7 +400,7 @@ public class Main {
             SysUserLogbyMonth sysUserLogbyMonth2xx = easyQuery.queryable(SysUserLogbyMonth.class)
                     .where(o -> o.notIn(SysUserLogbyMonth::getId, Collections.emptyList())).firstOrNull();
             PageResult<SysUserLogbyMonth> page = easyQuery.queryable(SysUserLogbyMonth.class)
-                    .where(o -> o.notIn(SysUserLogbyMonth::getId, Collections.emptyList())).toPageResult(2, 20, SysUserLogbyMonth.class);
+                    .where(o -> o.notIn(SysUserLogbyMonth::getId, Collections.emptyList())).select( SysUserLogbyMonth.class).toPageResult(2, 20);
 //        long start = System.currentTimeMillis();
 //        for (int j = 0; j < 1000; j++) {
 //

@@ -49,16 +49,15 @@ public class EntityMetadata {
     }
 
     public void init(EasyQueryConfiguration jdqcConfiguration) {
-        classInit(jdqcConfiguration);
+//        classInit(jdqcConfiguration);
         propertyInit(jdqcConfiguration);
         entityGlobalInterceptorConfigurationInit(jdqcConfiguration);
     }
 
-    protected void classInit(EasyQueryConfiguration configuration) {
-
-        NameConversion nameConversion = configuration.getNameConversion();
-        this.tableName = nameConversion.getTableName(entityClass);
-    }
+//    protected void classInit(EasyQueryConfiguration configuration) {
+//        NameConversion nameConversion = configuration.getNameConversion();
+//        this.tableName = nameConversion.getTableName(entityClass);
+//    }
 
     private PropertyDescriptor firstOrNull(PropertyDescriptor[] ps, Predicate<PropertyDescriptor> predicate) {
         for (PropertyDescriptor p : ps) {
@@ -71,10 +70,19 @@ public class EntityMetadata {
 
     protected void propertyInit(EasyQueryConfiguration configuration) {
         NameConversion nameConversion = configuration.getNameConversion();
+
+        Table table = ClassUtil.getAnnotation(entityClass, Table.class);
+        this.tableName = (table == null || StringUtil.isBlank(table.value())) ? nameConversion.convert(ClassUtil.getSimpleName(entityClass)) : table.value();
+
+        HashSet<String> ignoreProperties =table!=null?new HashSet<>(Arrays.asList(table.ignoreProperties())) :new HashSet<>();
+
         List<Field> allFields = ClassUtil.getAllFields(this.entityClass);
         PropertyDescriptor[] ps = getPropertyDescriptor();
         for (Field field : allFields) {
             String property = field.getName();
+            if(ignoreProperties.contains(property)){
+                continue;
+            }
             //未找到bean属性就直接忽略
             PropertyDescriptor propertyDescriptor = firstOrNull(ps, o -> Objects.equals(o.getName(), property));
             if(propertyDescriptor==null){
@@ -87,7 +95,7 @@ public class EntityMetadata {
 
             Column column = field.getAnnotation(Column.class);
             boolean hasColumnName = column != null && StringUtil.isNotBlank(column.value());
-            String columnName = hasColumnName ? column.value() : nameConversion.getColName(property);
+            String columnName = hasColumnName ? column.value() : nameConversion.convert(property);
             ColumnMetadata columnMetadata = new ColumnMetadata(this, columnName);
 //            if (column != null) {
 //                columnMetadata.setNullable(column.nullable());

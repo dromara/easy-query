@@ -1,6 +1,5 @@
 package com.easy.query.core.basic.api.select.abstraction;
 
-import com.easy.query.core.api.pagination.DefaultPageResult;
 import com.easy.query.core.api.pagination.PageResult;
 import com.easy.query.core.basic.api.select.Queryable2;
 import com.easy.query.core.basic.api.select.provider.EasyQuerySqlBuilderProvider;
@@ -31,7 +30,6 @@ import com.easy.query.core.expression.parser.abstraction.SqlAggregatePredicate;
 import com.easy.query.core.expression.parser.abstraction.SqlPredicate;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
-import com.easy.query.core.query.*;
 import com.easy.query.core.util.ClassUtil;
 import com.easy.query.core.util.EasyUtil;
 import com.easy.query.core.util.SqlExpressionUtil;
@@ -381,23 +379,31 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
 
     @Override
     public PageResult<T1> toPageResult(long pageIndex, long pageSize) {
-        return toPageResult(pageIndex, pageSize, t1Class);
+        return doPageResult(pageIndex, pageSize, t1Class);
     }
-
-    @Override
-    public <TR> PageResult<TR> toPageResult(long pageIndex, long pageSize, Class<TR> clazz) {
-//        SqlColumnSelector<T1> sqlColumnSelector = getSqlBuilderProvider1().getSqlColumnSelector1(selectContext.getProjects());
-        SqlExpression<SqlColumnSelector<T1>> selectExpression = ColumnSelector::columnAll;
+//
+//    @Override
+//    public <TR> PageResult<TR> toPageResult(long pageIndex, long pageSize, Class<TR> clazz) {
+////        SqlColumnSelector<T1> sqlColumnSelector = getSqlBuilderProvider1().getSqlColumnSelector1(selectContext.getProjects());
+////        SqlExpression<SqlColumnSelector<T1>> selectExpression = ColumnSelector::columnAll;
+////        selectExpression.apply(sqlColumnSelector);
+//        return doPageResult(pageIndex, pageSize, clazz, null);
+//    }
+//
+//    @Override
+//    public PageResult<T1> toPageResult(long pageIndex, long pageSize, SqlExpression<SqlColumnSelector<T1>> selectExpression) {
+//        return doPageResult(pageIndex, pageSize, t1Class, selectExpression);
+//    }
+//    @Override
+//    public <TR> PageResult<TR> toPageResult(long pageIndex, long pageSize, Class<TR> clazz, SqlExpression<SqlColumnAsSelector<T1, TR>> selectExpression) {
+//
+//        ProjectSqlBuilderSegment sqlSegmentBuilder = new ProjectSqlBuilderSegment();
+//        SqlColumnAsSelector<T1, TR> sqlColumnSelector = getSqlBuilderProvider1().getSqlColumnAsSelector1(sqlSegmentBuilder,clazz);
 //        selectExpression.apply(sqlColumnSelector);
-        return doPageResult(pageIndex, pageSize, clazz, selectExpression);
-    }
+//        return toPageResult(pageIndex, pageSize, clazz);
+//    }
 
-    @Override
-    public PageResult<T1> toPageResult(long pageIndex, long pageSize, SqlExpression<SqlColumnSelector<T1>> selectExpression) {
-        return doPageResult(pageIndex, pageSize, t1Class, selectExpression);
-    }
-
-    protected <TR> PageResult<TR> doPageResult(long pageIndex, long pageSize, Class<TR> clazz, SqlExpression<SqlColumnSelector<T1>> selectExpression) {
+    protected <TR> PageResult<TR> doPageResult(long pageIndex, long pageSize, Class<TR> clazz) {
         //设置每次获取多少条
         long take = pageSize <= 0 ? 1 : pageSize;
         //设置当前页码最小1
@@ -406,27 +412,16 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
         long offset = (index - 1) * take;
         long total = this.count();
         if (total <= offset) {
-            return new DefaultPageResult<TR>(total, new ArrayList<>(0));
+            return new PageResult<TR>(total, new ArrayList<>(0));
         }//获取剩余条数
         long remainingCount = total - offset;
         //当剩余条数小于take数就取remainingCount
         long realTake = Math.min(remainingCount, take);
         this.limit(offset, realTake);
-        sqlEntityExpression.getProjects().getSqlSegments().clear();
-        SqlColumnSelector<T1> sqlColumnSelector = getSqlBuilderProvider1().getSqlColumnSelector1(sqlEntityExpression.getProjects());
-        selectExpression.apply(sqlColumnSelector);
         List<TR> data = this.toInternalList(clazz);
-        return new DefaultPageResult<TR>(total, data);
+        return new PageResult<TR>(total, data);
     }
 
-    @Override
-    public <TR> PageResult<TR> toPageResult(long pageIndex, long pageSize, Class<TR> clazz, SqlExpression<SqlColumnAsSelector<T1, TR>> selectExpression) {
-
-        ProjectSqlBuilderSegment sqlSegmentBuilder = new ProjectSqlBuilderSegment();
-        SqlColumnAsSelector<T1, TR> sqlColumnSelector = getSqlBuilderProvider1().getSqlColumnAsSelector1(sqlSegmentBuilder,clazz);
-        selectExpression.apply(sqlColumnSelector);
-        return toPageResult(pageIndex, pageSize, clazz);
-    }
 
     @Override
     public SqlEntityQueryExpression getSqlEntityExpression() {

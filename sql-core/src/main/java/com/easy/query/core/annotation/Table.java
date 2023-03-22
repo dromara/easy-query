@@ -1,5 +1,7 @@
 package com.easy.query.core.annotation;
 
+import com.easy.query.core.util.StringUtil;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -22,10 +24,16 @@ public @interface Table {
     /**
      * 对应的表名称
      */
-    String value() default "";
+    String value() default StringUtil.EMPTY;
 
     /**
      * 数据库schema
      */
     String schema() default "";
+
+    /**
+     * 需要忽略的属性
+     * @return
+     */
+    String[] ignoreProperties() default {};
 }

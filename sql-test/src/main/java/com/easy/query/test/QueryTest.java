@@ -1,6 +1,7 @@
 package com.easy.query.test;
 
 import com.easy.query.BaseTest;
+import com.easy.query.core.api.pagination.PageResult;
 import com.easy.query.core.basic.api.select.Queryable;
 import com.easy.query.entity.BlogEntity;
 import com.easy.query.entity.Topic;
@@ -201,6 +202,41 @@ public class QueryTest extends BaseTest {
                 .toList();
         Assert.assertNotNull(topics);
         Assert.assertEquals(1, topics.size());
+    }
+    @Test
+    public void query12() {
+
+        PageResult<Topic> topicPageResult = easyQuery
+                .queryable(Topic.class)
+                .where(o -> o.isNotNull(Topic::getId))
+                .toPageResult(2, 20);
+        List<Topic> data = topicPageResult.getData();
+        Assert.assertEquals(20,data.size());
+    }
+    @Test
+    public void query13() {
+
+        PageResult<BlogEntity> page = easyQuery
+                .queryable(Topic.class)
+                .innerJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                .where((t, t1) -> t1.isNotNull(BlogEntity::getTitle).then(t).eq(Topic::getId, "3"))
+                .select(BlogEntity.class, (t, t1) -> t1.columnAll().columnIgnore(BlogEntity::getId))
+                .toPageResult(1, 20);
+        Assert.assertEquals(1,page.getTotal());
+        Assert.assertEquals(1,page.getData().size());
+    }
+    @Test
+    public void query14() {
+
+        PageResult<BlogEntity> page = easyQuery
+                .queryable(Topic.class)
+                .innerJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                .where((t, t1) -> t1.isNotNull(BlogEntity::getTitle))
+                .groupBy((t, t1)->t1.column(BlogEntity::getId))
+                .select(BlogEntity.class, (t, t1) -> t1.column(BlogEntity::getId).columnSum(BlogEntity::getScore))
+                .toPageResult(1, 20);
+        Assert.assertEquals(100,page.getTotal());
+        Assert.assertEquals(20,page.getData().size());
     }
 
 }

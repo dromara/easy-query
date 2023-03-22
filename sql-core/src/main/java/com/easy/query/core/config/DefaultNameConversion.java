@@ -10,26 +10,11 @@ import com.easy.query.core.annotation.Table;
  * @Date: 2023/2/11 13:22
  * @Created by xuejiaming
  */
-public class DefaultNameConversion extends NameConversion {
+public class DefaultNameConversion implements NameConversion {
+
 
     @Override
-    public String getTableName(Class clazz) {
-
-        Table table = ClassUtil.getAnnotation(clazz, Table.class);
-        if(table==null){
-            return ClassUtil.getSimpleName(clazz);
-        }
-        String tableName = table.value();
-        return StringUtil.isBlank(tableName)?ClassUtil.getSimpleName(clazz):tableName;
-    }
-
-    @Override
-    public String getColName(String attrName) {
-        return attrName;
-    }
-
-    @Override
-    public String getPropertyName(String colName) {
-        return colName;
+    public String convert(String name) {
+        return name;
     }
 }

@@ -97,12 +97,12 @@ public class DefaultAutoSqlColumnAsSelector<T1, TR> extends AbstractSqlColumnSel
     }
 
     @Override
-    public SqlColumnAsSelector<T1, TR> columnSum(Property<T1, ?> column) {
+    public SqlColumnAsSelector<T1, TR> columnSum(Property<T1, Number> column) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public SqlColumnAsSelector<T1, TR> columnSum(Property<T1, ?> column, Property<TR, ?> alias) {
+    public SqlColumnAsSelector<T1, TR> columnSum(Property<T1, Number> column, Property<TR, Number> alias) {
         throw new UnsupportedOperationException();
     }
 
@@ -127,12 +127,12 @@ public class DefaultAutoSqlColumnAsSelector<T1, TR> extends AbstractSqlColumnSel
     }
 
     @Override
-    public SqlColumnAsSelector<T1, TR> columnAvg(Property<T1, ?> column) {
+    public SqlColumnAsSelector<T1, TR> columnAvg(Property<T1, Number> column) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public SqlColumnAsSelector<T1, TR> columnAvg(Property<T1, ?> column, Property<TR, ?> alias) {
+    public SqlColumnAsSelector<T1, TR> columnAvg(Property<T1, Number> column, Property<TR, Number> alias) {
         throw new UnsupportedOperationException();
     }
 
