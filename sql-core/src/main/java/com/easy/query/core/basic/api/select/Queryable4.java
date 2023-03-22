@@ -18,6 +18,10 @@ import java.math.BigDecimal;
  */
 public interface Queryable4<T1,T2,T3,T4> extends Queryable<T1> {
     //region where
+    default Queryable4<T1, T2, T3,T4> whereObject(Object object){
+        return whereObject(true,object);
+    }
+    Queryable4<T1, T2, T3,T4> whereObject(boolean condition, Object object);
     @Override
     default Queryable4<T1, T2, T3,T4> where(SqlExpression<SqlPredicate<T1>> whereExpression) {
         return where(true, whereExpression);

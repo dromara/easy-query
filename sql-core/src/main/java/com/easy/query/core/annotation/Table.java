@@ -2,10 +2,7 @@ package com.easy.query.core.annotation;
 
 import com.easy.query.core.util.StringUtil;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 /**
  *
@@ -18,6 +15,7 @@ import java.lang.annotation.Target;
  * @Date: 2023/2/10 22:59
  * @Created by xuejiaming
  */
+@Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.ANNOTATION_TYPE})
 public @interface Table {

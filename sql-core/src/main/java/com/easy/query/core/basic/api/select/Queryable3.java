@@ -29,6 +29,10 @@ public interface Queryable3<T1, T2, T3> extends Queryable<T1> {
     <T4> Queryable4<T1, T2, T3,T4> innerJoin(Queryable<T4> joinQueryable, SqlExpression4<SqlPredicate<T1>, SqlPredicate<T2>, SqlPredicate<T3>, SqlPredicate<T4>> on);
 
     //region where
+    default Queryable3<T1, T2, T3> whereObject(Object object){
+        return whereObject(true,object);
+    }
+    Queryable3<T1, T2, T3> whereObject(boolean condition, Object object);
     @Override
     default Queryable3<T1, T2, T3> where(SqlExpression<SqlPredicate<T1>> whereExpression) {
         return where(true, whereExpression);

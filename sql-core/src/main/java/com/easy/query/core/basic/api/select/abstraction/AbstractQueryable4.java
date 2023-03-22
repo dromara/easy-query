@@ -25,6 +25,7 @@ import com.easy.query.core.basic.api.select.provider.EasyQuerySqlBuilderProvider
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @FileName: AbstractQueryable4.java
@@ -47,7 +48,46 @@ public abstract class AbstractQueryable4<T1, T2, T3,T4> extends AbstractQueryabl
         this.sqlPredicateProvider=new Select4SqlProvider<>(sqlEntityExpression);
     }
 
+    @Override
+    protected Class<?> matchWhereObjectEntityClass(Class<?> propertyQueryEntityClass) {
 
+        if(Objects.equals(Object.class,propertyQueryEntityClass)|| Objects.equals(t1Class,propertyQueryEntityClass)){
+            return t1Class;
+        }
+        if(Objects.equals(t2Class,propertyQueryEntityClass)){
+            return t2Class;
+        }
+        if(Objects.equals(t3Class,propertyQueryEntityClass)){
+            return t3Class;
+        }
+        if(Objects.equals(t4Class,propertyQueryEntityClass)){
+            return t4Class;
+        }
+        return null;
+    }
+
+    @Override
+    protected SqlPredicate<?> matchWhereObjectSqlPredicate(Class<?> entityClass) {
+        if(entityClass==t1Class){
+            return getSqlBuilderProvider4().getSqlWherePredicate1();
+        }
+        if(entityClass==t2Class){
+            return getSqlBuilderProvider4().getSqlWherePredicate2();
+        }
+        if(entityClass==t3Class){
+            return getSqlBuilderProvider4().getSqlWherePredicate3();
+        }
+        if(entityClass==t4Class){
+            return getSqlBuilderProvider4().getSqlWherePredicate4();
+        }
+        return null;
+    }
+
+    @Override
+    public Queryable4<T1, T2, T3,T4> whereObject(boolean condition, Object object) {
+        super.whereObject(condition,object);
+        return this;
+    }
     @Override
     public Queryable4<T1, T2, T3,T4> where(boolean condition, SqlExpression<SqlPredicate<T1>> whereExpression) {
         super.where(condition,whereExpression);

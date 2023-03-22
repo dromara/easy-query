@@ -13,7 +13,7 @@ import com.easy.query.core.common.cache.DefaultMemoryCache;
  * @Created by xuejiaming
  */
 public class DefaultEntityMetadataManager implements EntityMetadataManager {
-    private final Cache<Class,EntityMetadata> entityMetadataCache=new DefaultMemoryCache<>();
+    private final Cache<Class<?>,EntityMetadata> entityMetadataCache=new DefaultMemoryCache<>();
     private final EasyQueryConfiguration jdqcConfiguration;
 
     public DefaultEntityMetadataManager(EasyQueryConfiguration jdqcConfiguration){
@@ -22,7 +22,7 @@ public class DefaultEntityMetadataManager implements EntityMetadataManager {
     }
 
     @Override
-    public EntityMetadata getEntityMetadata(Class entityClass) {
+    public EntityMetadata getEntityMetadata(Class<?> entityClass) {
         if(entityClass==null){
             throw new IllegalArgumentException("entityClass");
         }

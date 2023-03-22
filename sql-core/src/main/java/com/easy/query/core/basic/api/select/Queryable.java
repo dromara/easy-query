@@ -183,6 +183,10 @@ public interface Queryable<T1> extends Query<T1> {
         return whereId(true,id);
     }
     Queryable<T1> whereId(boolean condition, Object id);
+    default Queryable<T1> whereObject(Object object){
+        return whereObject(true,object);
+    }
+    Queryable<T1> whereObject(boolean condition, Object object);
     default Queryable<T1> groupBy(SqlExpression<SqlColumnSelector<T1>> selectExpression) {
         return groupBy(true, selectExpression);
     }

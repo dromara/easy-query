@@ -15,6 +15,6 @@ public interface EntityMetadataManager {
      * @param entityClass
      * @return 如果对象不包含Table注解那么返回为为null
      */
-    EntityMetadata getEntityMetadata(Class entityClass);
+    EntityMetadata getEntityMetadata(Class<?> entityClass);
 
 }

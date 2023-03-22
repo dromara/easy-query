@@ -28,6 +28,7 @@ import com.easy.query.core.util.SqlExpressionUtil;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @FileName: AbstractQueryable2.java
@@ -87,6 +88,34 @@ public abstract class AbstractQueryable2<T1, T2> extends AbstractQueryable<T1> i
     }
 
 
+    @Override
+    protected Class<?> matchWhereObjectEntityClass(Class<?> propertyQueryEntityClass) {
+
+        if(Objects.equals(Object.class,propertyQueryEntityClass)|| Objects.equals(t1Class,propertyQueryEntityClass)){
+            return t1Class;
+        }
+        if(Objects.equals(t2Class,propertyQueryEntityClass)){
+            return t2Class;
+        }
+        return null;
+    }
+
+    @Override
+    protected SqlPredicate<?> matchWhereObjectSqlPredicate(Class<?> entityClass) {
+        if(entityClass==t1Class){
+            return getSqlBuilderProvider2().getSqlWherePredicate1();
+        }
+        if(entityClass==t2Class){
+            return getSqlBuilderProvider2().getSqlWherePredicate2();
+        }
+        return null;
+    }
+
+    @Override
+    public Queryable2<T1, T2> whereObject(boolean condition, Object object) {
+        super.whereObject(condition,object);
+        return this;
+    }
     @Override
     public Queryable2<T1, T2> where(boolean condition, SqlExpression<SqlPredicate<T1>> whereExpression) {
         super.where(condition,whereExpression);

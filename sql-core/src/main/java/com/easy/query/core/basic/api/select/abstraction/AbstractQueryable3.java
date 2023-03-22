@@ -30,6 +30,7 @@ import com.easy.query.core.util.SqlExpressionUtil;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @FileName: AbstractQueryable3.java
@@ -90,6 +91,41 @@ public abstract class AbstractQueryable3<T1, T2, T3> extends AbstractQueryable<T
         return SqlExpressionUtil.executeJoinOn(queryable,on);
     }
 
+
+    @Override
+    protected Class<?> matchWhereObjectEntityClass(Class<?> propertyQueryEntityClass) {
+
+        if(Objects.equals(Object.class,propertyQueryEntityClass)|| Objects.equals(t1Class,propertyQueryEntityClass)){
+            return t1Class;
+        }
+        if(Objects.equals(t2Class,propertyQueryEntityClass)){
+            return t2Class;
+        }
+        if(Objects.equals(t3Class,propertyQueryEntityClass)){
+            return t3Class;
+        }
+        return null;
+    }
+
+    @Override
+    protected SqlPredicate<?> matchWhereObjectSqlPredicate(Class<?> entityClass) {
+        if(entityClass==t1Class){
+            return getSqlBuilderProvider3().getSqlWherePredicate1();
+        }
+        if(entityClass==t2Class){
+            return getSqlBuilderProvider3().getSqlWherePredicate2();
+        }
+        if(entityClass==t3Class){
+            return getSqlBuilderProvider3().getSqlWherePredicate3();
+        }
+        return null;
+    }
+
+    @Override
+    public Queryable3<T1, T2, T3> whereObject(boolean condition, Object object) {
+        super.whereObject(condition,object);
+        return this;
+    }
     @Override
     public Queryable3<T1, T2, T3> where(boolean condition, SqlExpression<SqlPredicate<T1>> whereExpression) {
         super.where(condition,whereExpression);

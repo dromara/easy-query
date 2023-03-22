@@ -9,6 +9,8 @@ import com.easy.query.core.abstraction.EasySqlApiFactory;
 import com.easy.query.core.enums.SqlRangeEnum;
 import com.easy.query.core.enums.UpdateStrategyEnum;
 import com.easy.query.core.track.DefaultTrackManager;
+import com.easy.query.dto.TopicRequest;
+import com.easy.query.entity.Topic;
 import com.easy.query.test.*;
 import com.easy.query.core.abstraction.metadata.EntityMetadataManager;
 import com.easy.query.core.api.pagination.PageResult;
@@ -76,28 +78,7 @@ public class Main {
 //            System.out.println("耗时：" + (end - start) + "ms");
 //
 //        }
-//        {
-//            long start = System.currentTimeMillis();
-//
-//            for (int i = 0; i < 100000; i++) {
-//                BlogEntity y=   new BlogEntity();
-//                BeanUtil.copyProperties(xaa,y,strings);
-//            }
-//            long end = System.currentTimeMillis();
-//            System.out.println("耗时：" + (end - start) + "ms");
-//
-//        }
-//        {
-//            long start = System.currentTimeMillis();
-//
-//            for (int i = 0; i < 100000; i++) {
-//
-//                BlogEntity y= (BlogEntity)BeanUtil.copyProperties1(xaa);
-//            }
-//            long end = System.currentTimeMillis();
-//            System.out.println("耗时：" + (end - start) + "ms");
-//
-//        }
+
 
 
         boolean openFirst1 = SqlRangeEnum.openFirst(SqlRangeEnum.Open);
@@ -150,6 +131,37 @@ public class Main {
 
         easyQuery = new DefaultEasyQuery(jqdcRuntimeContext);
 
+        TopicRequest topicRequest = new TopicRequest();
+        LocalDateTime now = LocalDateTime.now();
+        topicRequest.setCreateTimeBegin(now);
+
+        {
+            long start = System.currentTimeMillis();
+            String s1 = easyQuery
+                    .queryable(Topic.class).where(o->o.gt(Topic::getCreateTime,now)).toSql();
+
+            for (int i = 0; i < 100000; i++) {
+
+                String s = easyQuery
+                        .queryable(Topic.class).where(o->o.gt(Topic::getCreateTime,now)).toSql();
+            }
+            long end = System.currentTimeMillis();
+            System.out.println("耗时：" + (end - start) + "ms");
+
+        }
+        {
+            long start = System.currentTimeMillis();
+            String s1 = easyQuery
+                    .queryable(Topic.class).whereObject(topicRequest).toSql();
+
+            for (int i = 0; i < 100000; i++) {
+                String s = easyQuery
+                        .queryable(Topic.class).whereObject(topicRequest).toSql();
+            }
+            long end = System.currentTimeMillis();
+            System.out.println("耗时：" + (end - start) + "ms");
+
+        }
         {
 //            easyQuery.updatable(Topic.class)
 //                    .set(Topic::getStars, 14)

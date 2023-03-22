@@ -61,8 +61,14 @@ public class EasyUtil {
     private static Map<Class<?>, Map<String, Property<Object, ?>>> CLASS_PROPERTY_LAMBDA_CACHE = new ConcurrentHashMap<>();
 
     public static Property<Object, ?> getPropertyLambda(Class<?> entityClass, String propertyName, Class<?> fieldType) {
-        Map<String, Property<Object, ?>> propertyLambdaMap = CLASS_PROPERTY_LAMBDA_CACHE.computeIfAbsent(entityClass, key -> new ConcurrentHashMap<>());
-        return propertyLambdaMap.computeIfAbsent(propertyName, key -> getLambdaProperty(entityClass, propertyName, fieldType));
+        return getPropertyLambda(entityClass,propertyName,fieldType,true);
+    }
+    public static Property<Object, ?> getPropertyLambda(Class<?> entityClass, String propertyName, Class<?> fieldType,boolean cache) {
+        if(cache){
+            Map<String, Property<Object, ?>> propertyLambdaMap = CLASS_PROPERTY_LAMBDA_CACHE.computeIfAbsent(entityClass, key -> new ConcurrentHashMap<>());
+            return propertyLambdaMap.computeIfAbsent(propertyName, key -> getLambdaProperty(entityClass, propertyName, fieldType));
+        }
+        return getLambdaProperty(entityClass, propertyName, fieldType);
     }
 
     private static Property<Object, ?> getLambdaProperty(Class<?> entityClass, String propertyName, Class<?> fieldType) {

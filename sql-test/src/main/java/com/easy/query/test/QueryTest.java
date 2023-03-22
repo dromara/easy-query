@@ -3,6 +3,7 @@ package com.easy.query.test;
 import com.easy.query.BaseTest;
 import com.easy.query.core.api.pagination.PageResult;
 import com.easy.query.core.basic.api.select.Queryable;
+import com.easy.query.dto.TopicRequest;
 import com.easy.query.entity.BlogEntity;
 import com.easy.query.entity.Topic;
 import org.junit.Assert;
@@ -237,6 +238,15 @@ public class QueryTest extends BaseTest {
                 .toPageResult(1, 20);
         Assert.assertEquals(100,page.getTotal());
         Assert.assertEquals(20,page.getData().size());
+    }
+    @Test
+    public void query15() {
+
+        TopicRequest topicRequest = new TopicRequest();
+        topicRequest.setCreateTimeBegin(LocalDateTime.now());
+        Topic topic = easyQuery
+                .queryable(Topic.class).whereObject(topicRequest).firstOrNull();
+        Assert.assertNotNull(topic);
     }
 
 }

@@ -29,10 +29,7 @@ public abstract class AbstractSqlExecuteRows implements SqlExecuteExpectRows {
             if(!inTransaction){
                 transaction = connectionManager.beginTransaction();
             }
-            long rows = executeRows();
-            if(rows!=expectRows){
-                throw new EasyQueryConcurrentException(msg,code);
-            }
+            doExecuteRows(expectRows,msg,code);
             if(!inTransaction){
                 transaction.commit();
             }
@@ -40,6 +37,12 @@ public abstract class AbstractSqlExecuteRows implements SqlExecuteExpectRows {
             if(transaction!=null){
                 transaction.close();
             }
+        }
+    }
+    private void doExecuteRows(long expectRows, String msg, String code){
+        long rows = executeRows();
+        if(rows!=expectRows){
+            throw new EasyQueryConcurrentException(msg,code);
         }
     }
 }
