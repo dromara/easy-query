@@ -6,6 +6,10 @@ Java 简易的查询工具
 mvn versions:set '-DnewVersion=0.0.12'
 ```
 
+# road map
+- 分表分库
+- 字段加密
+
 
 # 捐赠
 <img src="./imgs/zfb.jpg" title="JetBrains" width=200 />
