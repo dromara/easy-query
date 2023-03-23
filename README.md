@@ -6,6 +6,9 @@ Java 简易的查询工具
 mvn versions:set '-DnewVersion=0.0.12'
 ```
 
+# 文档（完善中）
+[文档](https://xuejmnet.github.io/easy-query-doc/)
+
 # road map
 - 分表分库
 - 字段加密
