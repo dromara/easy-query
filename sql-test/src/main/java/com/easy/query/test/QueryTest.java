@@ -3,6 +3,7 @@ package com.easy.query.test;
 import com.easy.query.BaseTest;
 import com.easy.query.core.api.pagination.PageResult;
 import com.easy.query.core.basic.api.select.Queryable;
+import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
 import com.easy.query.dto.TopicRequest;
 import com.easy.query.entity.BlogEntity;
 import com.easy.query.entity.Topic;
@@ -246,6 +247,52 @@ public class QueryTest extends BaseTest {
         topicRequest.setCreateTimeBegin(LocalDateTime.now());
         Topic topic = easyQuery
                 .queryable(Topic.class).whereObject(topicRequest).firstOrNull();
+        Assert.assertNotNull(topic);
+    }
+    @Test
+    public void query16() {
+        Queryable<BlogEntity> sql = easyQuery
+                .queryable(Topic.class)
+                .innerJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                .where((t, t1) -> t1.isNotNull(BlogEntity::getTitle))
+                .groupBy((t, t1) -> t1.column(BlogEntity::getId))
+                .select(BlogEntity.class, (t, t1) -> t1.column(BlogEntity::getId).columnSum(BlogEntity::getScore));
+        String countSql = sql.cloneQueryable().select(" COUNT(1) ").toSql();
+        Assert.assertEquals("SELECT  COUNT(1)  FROM (SELECT t1.`id`,SUM(t1.`score`) AS `score` FROM t_topic t INNER JOIN t_blog t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t1.`title` IS NOT NULL GROUP BY t1.`id`) t2",countSql);
+        String limitSql= sql.limit(2, 2).toSql();
+        Assert.assertEquals("SELECT t1.`id`,SUM(t1.`score`) AS `score` FROM t_topic t INNER JOIN t_blog t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t1.`title` IS NOT NULL GROUP BY t1.`id` LIMIT 2 OFFSET 2",limitSql);
+    }
+    @Test
+    public void query17() {
+        Queryable<BlogEntity> sql = easyQuery
+                .queryable(Topic.class)
+                .innerJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                .where((t, t1) -> t1.isNotNull(BlogEntity::getTitle).then(t).eq(Topic::getId, "3"))
+                .select(BlogEntity.class, (t, t1) -> t1.columnAll().columnIgnore(BlogEntity::getId));
+        String countSql = sql.cloneQueryable().select(" COUNT(1) ").toSql();
+        Assert.assertEquals("SELECT  COUNT(1)  FROM (SELECT t1.`create_time`,t1.`update_time`,t1.`create_by`,t1.`update_by`,t1.`deleted`,t1.`title`,t1.`content`,t1.`url`,t1.`star`,t1.`publish_time`,t1.`score`,t1.`status`,t1.`order`,t1.`is_top`,t1.`top` FROM t_topic t INNER JOIN t_blog t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t1.`title` IS NOT NULL AND t.`id` = ?) t2",countSql);
+        String limitSql = sql.limit(2, 2).toSql();
+        Assert.assertEquals("SELECT t1.`create_time`,t1.`update_time`,t1.`create_by`,t1.`update_by`,t1.`deleted`,t1.`title`,t1.`content`,t1.`url`,t1.`star`,t1.`publish_time`,t1.`score`,t1.`status`,t1.`order`,t1.`is_top`,t1.`top` FROM t_topic t INNER JOIN t_blog t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t1.`title` IS NOT NULL AND t.`id` = ? LIMIT 2 OFFSET 2",limitSql);
+    }
+    @Test
+    public void query18() {
+
+        TopicRequest topicRequest = new TopicRequest();
+        topicRequest.setCreateTimeBegin(LocalDateTime.now());
+        topicRequest.getOrders().add("id");
+        try {
+            Topic topic = easyQuery
+                    .queryable(Topic.class).whereObject(topicRequest).orderByConfiguration(topicRequest).firstOrNull();
+        }catch (Exception e){
+            Assert.assertTrue(e instanceof EasyQueryOrderByInvalidOperationException);
+        }
+        topicRequest.getOrders().clear();
+        topicRequest.getOrders().add("createTime");
+        String orderSql = easyQuery
+                .queryable(Topic.class).whereObject(topicRequest).orderByConfiguration(topicRequest).limit(1).toSql();
+        Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM t_topic t WHERE t.`create_time` > ? ORDER BY t.`create_time` ASC LIMIT 1",orderSql);
+        Topic topic = easyQuery
+                .queryable(Topic.class).whereObject(topicRequest).orderByConfiguration(topicRequest).firstOrNull();
         Assert.assertNotNull(topic);
     }
 

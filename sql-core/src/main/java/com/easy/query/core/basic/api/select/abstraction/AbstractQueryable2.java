@@ -89,10 +89,10 @@ public abstract class AbstractQueryable2<T1, T2> extends AbstractQueryable<T1> i
 
 
     @Override
-    protected Class<?> matchWhereObjectEntityClass(Class<?> propertyQueryEntityClass) {
-
-        if(Objects.equals(Object.class,propertyQueryEntityClass)|| Objects.equals(t1Class,propertyQueryEntityClass)){
-            return t1Class;
+    protected Class<?> matchQueryEntityClass(Class<?> propertyQueryEntityClass) {
+        Class<?> queryEntityClass = super.matchQueryEntityClass(propertyQueryEntityClass);
+        if(queryEntityClass!=null){
+            return queryEntityClass;
         }
         if(Objects.equals(t2Class,propertyQueryEntityClass)){
             return t2Class;
@@ -107,6 +107,18 @@ public abstract class AbstractQueryable2<T1, T2> extends AbstractQueryable<T1> i
         }
         if(entityClass==t2Class){
             return getSqlBuilderProvider2().getSqlWherePredicate2();
+        }
+        return null;
+    }
+
+    @Override
+    protected SqlColumnSelector<?> matchOrderBySqlColumnSelector(Class<?> entityClass, boolean asc) {
+        SqlColumnSelector<?> sqlColumnSelector = super.matchOrderBySqlColumnSelector(entityClass, asc);
+        if(sqlColumnSelector!=null){
+            return sqlColumnSelector;
+        }
+        if(entityClass==t2Class){
+            return getSqlBuilderProvider2().getSqlOrderColumnSelector2(asc);
         }
         return null;
     }

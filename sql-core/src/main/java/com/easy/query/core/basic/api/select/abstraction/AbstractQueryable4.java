@@ -49,10 +49,11 @@ public abstract class AbstractQueryable4<T1, T2, T3,T4> extends AbstractQueryabl
     }
 
     @Override
-    protected Class<?> matchWhereObjectEntityClass(Class<?> propertyQueryEntityClass) {
+    protected Class<?> matchQueryEntityClass(Class<?> propertyQueryEntityClass) {
 
-        if(Objects.equals(Object.class,propertyQueryEntityClass)|| Objects.equals(t1Class,propertyQueryEntityClass)){
-            return t1Class;
+        Class<?> queryEntityClass = super.matchQueryEntityClass(propertyQueryEntityClass);
+        if(queryEntityClass!=null){
+            return queryEntityClass;
         }
         if(Objects.equals(t2Class,propertyQueryEntityClass)){
             return t2Class;
@@ -83,6 +84,24 @@ public abstract class AbstractQueryable4<T1, T2, T3,T4> extends AbstractQueryabl
         return null;
     }
 
+    @Override
+    protected SqlColumnSelector<?> matchOrderBySqlColumnSelector(Class<?> entityClass, boolean asc) {
+
+        SqlColumnSelector<?> sqlColumnSelector = super.matchOrderBySqlColumnSelector(entityClass, asc);
+        if(sqlColumnSelector!=null){
+            return sqlColumnSelector;
+        }
+        if(entityClass==t2Class){
+            return getSqlBuilderProvider4().getSqlOrderColumnSelector2(asc);
+        }
+        if(entityClass==t3Class){
+            return getSqlBuilderProvider4().getSqlOrderColumnSelector3(asc);
+        }
+        if(entityClass==t4Class){
+            return getSqlBuilderProvider4().getSqlOrderColumnSelector3(asc);
+        }
+        return null;
+    }
     @Override
     public Queryable4<T1, T2, T3,T4> whereObject(boolean condition, Object object) {
         super.whereObject(condition,object);

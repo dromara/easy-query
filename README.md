@@ -1,5 +1,9 @@
+<p align="center">
+  <img height="340" src="./imgs/logo.png">
+</p>
+
 # easy-query
-Java 简易的查询工具
+🚀 一款高性能、轻量级、强类型的Java对象查询ORM框架支持分库分表读写分离
 
 ### 批量更新版本号
 ```shell

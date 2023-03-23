@@ -16,6 +16,6 @@ public abstract class AbstractEasyQueryDialect implements EasyQueryDialect {
         if (keyword.startsWith(getQuoteStart()) && keyword.endsWith(getQuoteEnd())) {
             return keyword;
         }
-        return getQuoteStart() + keyword + (getQuoteEnd());
+        return getQuoteStart() + keyword + getQuoteEnd();
     }
 }

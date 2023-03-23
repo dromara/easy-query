@@ -1,7 +1,10 @@
 package com.easy.query.core.basic.api.select;
 
 import com.easy.query.core.api.pagination.PageResult;
+import com.easy.query.core.api.query.order.EasyOrderByConfiguration;
 import com.easy.query.core.basic.api.select.provider.EasyQuerySqlBuilderProvider;
+import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
+import com.easy.query.core.exception.EasyQueryWhereInvalidOperationException;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.SqlExpression;
 import com.easy.query.core.expression.lambda.SqlExpression2;
@@ -201,10 +204,21 @@ public interface Queryable<T1> extends Query<T1> {
 
     Queryable<T1> whereId(boolean condition, Object id);
 
+    /**
+     * @exception EasyQueryWhereInvalidOperationException 当object的where属性和查询对象不匹配或者查询对象属性不匹配
+     * @param object
+     * @return
+     */
     default Queryable<T1> whereObject(Object object) {
         return whereObject(true, object);
     }
 
+    /**
+     * @exception EasyQueryWhereInvalidOperationException 当object的where属性和查询对象不匹配或者查询对象属性不匹配,无法获取 {@link SqlPredicate}
+     * @param condition
+     * @param object
+     * @return
+     */
     Queryable<T1> whereObject(boolean condition, Object object);
 
     default Queryable<T1> groupBy(SqlExpression<SqlColumnSelector<T1>> selectExpression) {
@@ -223,13 +237,39 @@ public interface Queryable<T1> extends Query<T1> {
         return orderByAsc(true, selectExpression);
     }
 
-    Queryable<T1> orderByAsc(boolean condition, SqlExpression<SqlColumnSelector<T1>> selectExpression);
+  default   Queryable<T1> orderByAsc(boolean condition, SqlExpression<SqlColumnSelector<T1>> selectExpression){
+        return orderBy(condition,selectExpression,true);
+  }
 
     default Queryable<T1> orderByDesc(SqlExpression<SqlColumnSelector<T1>> selectExpression) {
         return orderByDesc(true, selectExpression);
     }
 
-    Queryable<T1> orderByDesc(boolean condition, SqlExpression<SqlColumnSelector<T1>> selectExpression);
+   default Queryable<T1> orderByDesc(boolean condition, SqlExpression<SqlColumnSelector<T1>> selectExpression){
+        return orderBy(condition,selectExpression,false);
+   }
+
+   default Queryable<T1> orderBy(SqlExpression<SqlColumnSelector<T1>> selectExpression,boolean asc){
+       return orderBy(true,selectExpression,asc);
+   }
+    Queryable<T1> orderBy(boolean condition,SqlExpression<SqlColumnSelector<T1>> selectExpression,boolean asc);
+
+    /**
+     * @exception EasyQueryOrderByInvalidOperationException 当排序设置的属性不存在当前排序对象里面或者当前查询对象无法获取 {@link SqlColumnSelector}
+     * @param configuration
+     * @return
+     */
+   default Queryable<T1> orderByConfiguration(EasyOrderByConfiguration configuration){
+       return orderByConfiguration(true,configuration);
+   }
+
+    /**
+     * @exception EasyQueryOrderByInvalidOperationException 当排序设置的属性不存在当前排序对象里面或者当前查询对象无法获取 {@link SqlColumnSelector}
+     * @param condition
+     * @param configuration
+     * @return
+     */
+    Queryable<T1> orderByConfiguration(boolean condition, EasyOrderByConfiguration configuration);
 
     default Queryable<T1> distinct() {
         return distinct(true);

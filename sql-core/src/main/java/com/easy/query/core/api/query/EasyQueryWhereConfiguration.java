@@ -6,6 +6,6 @@ package com.easy.query.core.api.query;
  * @Date: 2023/3/13 12:13
  * @Created by xuejiaming
  */
-public interface ObjectQueryMapping<TObject> {
+public interface EasyQueryWhereConfiguration<TObject> {
     void configure(ObjectQueryBuilder<TObject> objectQueryBuilder);
 }
