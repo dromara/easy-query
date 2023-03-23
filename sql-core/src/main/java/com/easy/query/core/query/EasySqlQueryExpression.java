@@ -33,6 +33,7 @@ public abstract class EasySqlQueryExpression extends AbstractSqlPredicateEntityE
     protected SqlBuilderSegment order;
     protected long offset;
     protected long rows;
+    protected boolean distinct;
 
     protected final SqlBuilderSegment projects;
 
@@ -40,6 +41,7 @@ public abstract class EasySqlQueryExpression extends AbstractSqlPredicateEntityE
         super(queryExpressionContext);
         this.projects = new ProjectSqlBuilderSegment();
     }
+
     @Override
     public boolean isEmpty() {
         return tables.isEmpty();
@@ -80,7 +82,7 @@ public abstract class EasySqlQueryExpression extends AbstractSqlPredicateEntityE
 
     @Override
     public boolean hasLimit() {
-        return this.rows>0;
+        return this.rows > 0;
     }
 
     @Override
@@ -128,8 +130,15 @@ public abstract class EasySqlQueryExpression extends AbstractSqlPredicateEntityE
     }
 
 
+    @Override
+    public boolean isDistinct() {
+        return distinct;
+    }
 
-
+    @Override
+    public void setDistinct(boolean distinct) {
+        this.distinct = distinct;
+    }
 
     @Override
     public String toSql() {
@@ -142,7 +151,7 @@ public abstract class EasySqlQueryExpression extends AbstractSqlPredicateEntityE
         Iterator<SqlEntityTableExpression> iterator = getTables().iterator();
         SqlEntityTableExpression firstTable = iterator.next();
         if (tableCount == 1 && firstTable instanceof AnonymousEntityTableExpression && StringUtil.isEmpty(select)) {
-            return toTableExpressionSql(firstTable,true);
+            return toTableExpressionSql(firstTable, true);
         }
         StringBuilder sql = new StringBuilder("SELECT ");
 
@@ -155,10 +164,10 @@ public abstract class EasySqlQueryExpression extends AbstractSqlPredicateEntityE
         } else {
             sql.append(select);
         }
-        sql.append(toTableExpressionSql(firstTable,false));
+        sql.append(toTableExpressionSql(firstTable, false));
         while (iterator.hasNext()) {
             SqlEntityTableExpression table = iterator.next();
-            sql.append(toTableExpressionSql(table,false));// [from table alias] | [left join table alias] 匿名表 应该使用  [left join (table) alias]
+            sql.append(toTableExpressionSql(table, false));// [from table alias] | [left join table alias] 匿名表 应该使用  [left join (table) alias]
 
             PredicateSegment on = getTableOnWithQueryFilter(table);
             if (on != null && on.isNotEmpty()) {
@@ -189,13 +198,13 @@ public abstract class EasySqlQueryExpression extends AbstractSqlPredicateEntityE
         return sql.toString();
     }
 
-    protected String toTableExpressionSql(SqlEntityTableExpression sqlEntityTableExpression,boolean onlySingleAnonymousTable) {
+    protected String toTableExpressionSql(SqlEntityTableExpression sqlEntityTableExpression, boolean onlySingleAnonymousTable) {
         if (sqlEntityTableExpression instanceof AnonymousEntityTableExpression) {
 
             SqlEntityQueryExpression sqlEntityQueryExpression = ((AnonymousEntityTableExpression) sqlEntityTableExpression).getSqlEntityQueryExpression();
             //如果只有单匿名表且未对齐select那么嵌套表需要被展开
             //todo 如果对其进行order 或者 where了呢怎么办
-            String s =onlySingleAnonymousTable?sqlEntityQueryExpression.toSql():sqlEntityTableExpression.toSql();
+            String s = onlySingleAnonymousTable ? sqlEntityQueryExpression.toSql() : sqlEntityTableExpression.toSql();
             sqlExpressionContext.extractParameters(sqlEntityQueryExpression.getSqlExpressionContext());
             return s;
         }

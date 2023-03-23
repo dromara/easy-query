@@ -38,11 +38,20 @@ public class SqlExpressionUtil {
      * @return
      */
     public static boolean shouldCloneSqlEntityQueryExpression(SqlEntityQueryExpression sqlEntityExpression) {
-        return sqlEntityExpression.getProjects().isEmpty() && !sqlEntityExpression.hasGroup() && moreTableExpressionOrNoAnonymous(sqlEntityExpression);
+        return noSelectAndGroup(sqlEntityExpression) && (moreTableExpressionOrNoAnonymous(sqlEntityExpression)||hasAnyOperate(sqlEntityExpression));
+    }
+    public static boolean limitNotSetCurrent(SqlEntityQueryExpression sqlEntityExpression){
+        return noSelectAndGroup(sqlEntityExpression)&&!moreTableExpressionOrNoAnonymous(sqlEntityExpression)&&!hasAnyOperate(sqlEntityExpression);
+    }
+    public static boolean noSelectAndGroup(SqlEntityQueryExpression sqlEntityExpression){
+        return sqlEntityExpression.getProjects().isEmpty() && !sqlEntityExpression.hasGroup();
     }
 
-    private static boolean moreTableExpressionOrNoAnonymous(SqlEntityQueryExpression sqlEntityExpression) {
-        return sqlEntityExpression.getTables().size() != 1 || !(sqlEntityExpression.getTables().get(0) instanceof AnonymousEntityTableExpression) || sqlEntityExpression.hasLimit() || sqlEntityExpression.hasWhere() || sqlEntityExpression.hasOrder() || sqlEntityExpression.hasHaving();
+    public static boolean moreTableExpressionOrNoAnonymous(SqlEntityQueryExpression sqlEntityExpression) {
+        return sqlEntityExpression.getTables().size() != 1 || !(sqlEntityExpression.getTables().get(0) instanceof AnonymousEntityTableExpression);
+    }
+    public static boolean hasAnyOperate(SqlEntityQueryExpression sqlEntityExpression){
+        return sqlEntityExpression.hasLimit() || sqlEntityExpression.hasWhere() || sqlEntityExpression.hasOrder() || sqlEntityExpression.hasHaving()|| sqlEntityExpression.isDistinct();
     }
 
     public static <T1, T2> Queryable2<T1, T2> executeJoinOn(Queryable2<T1, T2> queryable, SqlExpression2<SqlPredicate<T1>, SqlPredicate<T2>> on) {

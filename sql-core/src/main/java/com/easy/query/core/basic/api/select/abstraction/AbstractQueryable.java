@@ -514,10 +514,19 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     @Override
     public Queryable<T1> limit(boolean condition, long offset, long rows) {
         if (condition) {
+            doLimit(sqlEntityExpression,offset,rows);
+        }
+        return this;
+    }
+    private void doLimit(SqlEntityQueryExpression sqlEntityExpression,long offset, long rows){
+        //如果当前只有一张表并且是匿名表,那么limit直接处理当前的匿名表的表达式
+        if(SqlExpressionUtil.limitNotSetCurrent(sqlEntityExpression)){
+            AnonymousEntityTableExpression anonymousEntityTableExpression = (AnonymousEntityTableExpression) sqlEntityExpression.getTable(0);
+            doLimit(anonymousEntityTableExpression.getSqlEntityQueryExpression(),offset,rows);
+        }else{
             sqlEntityExpression.setOffset(offset);
             sqlEntityExpression.setRows(rows);
         }
-        return this;
     }
 
     @Override

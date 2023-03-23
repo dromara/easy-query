@@ -34,6 +34,8 @@ public interface SqlEntityQueryExpression extends SqlEntityExpression{
 
      boolean hasHaving();
      SqlBuilderSegment getGroup();
+     boolean isDistinct();
+     void setDistinct(boolean distinct);
 
      boolean hasGroup();
 
