@@ -246,6 +246,12 @@ public abstract class AbstractQueryable2<T1, T2> extends AbstractQueryable<T1> i
     }
 
     @Override
+    public Queryable2<T1, T2> distinct(boolean condition) {
+        super.distinct(condition);
+        return this;
+    }
+
+    @Override
     public Queryable2<T1, T2> disableLogicDelete() {
         super.disableLogicDelete();
         return this;

@@ -154,6 +154,9 @@ public abstract class EasySqlQueryExpression extends AbstractSqlPredicateEntityE
             return toTableExpressionSql(firstTable, true);
         }
         StringBuilder sql = new StringBuilder("SELECT ");
+        if(isDistinct()){
+            sql.append("DISTINCT ");
+        }
 
         if (StringUtil.isEmpty(select)) {
             if (!hasGroup()) {

@@ -139,6 +139,11 @@ public interface Queryable4<T1,T2,T3,T4> extends Queryable<T1> {
     @Override
     Queryable4<T1, T2, T3,T4> limit(boolean condition, long offset, long rows);
 
+    default Queryable4<T1, T2, T3,T4> distinct() {
+        return distinct(true);
+    }
+
+    Queryable4<T1, T2, T3,T4> distinct(boolean condition);
     //endregion
 
     @Override

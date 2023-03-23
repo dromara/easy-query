@@ -230,6 +230,11 @@ public abstract class AbstractQueryable4<T1, T2, T3,T4> extends AbstractQueryabl
         super.limit(condition, offset, rows);
         return this;
     }
+    @Override
+    public Queryable4<T1, T2, T3,T4> distinct(boolean condition) {
+        super.distinct(condition);
+        return this;
+    }
 
     @Override
     public Queryable4<T1, T2, T3,T4> disableLogicDelete() {

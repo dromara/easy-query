@@ -40,6 +40,7 @@ import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.function.Consumer;
 
 /**
  * @FileName: AbstractSelect0.java
@@ -514,19 +515,32 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     @Override
     public Queryable<T1> limit(boolean condition, long offset, long rows) {
         if (condition) {
-            doLimit(sqlEntityExpression,offset,rows);
+            doWithOutAnonymousAndClearExpression(sqlEntityExpression,exp->{
+                exp.setOffset(offset);
+                exp.setRows(rows);
+            });
         }
         return this;
     }
-    private void doLimit(SqlEntityQueryExpression sqlEntityExpression,long offset, long rows){
+    private void doWithOutAnonymousAndClearExpression(SqlEntityQueryExpression sqlEntityExpression, Consumer<SqlEntityQueryExpression> consumer){
+
         //如果当前只有一张表并且是匿名表,那么limit直接处理当前的匿名表的表达式
-        if(SqlExpressionUtil.limitNotSetCurrent(sqlEntityExpression)){
+        if(SqlExpressionUtil.limitAndOrderNotSetCurrent(sqlEntityExpression)){
             AnonymousEntityTableExpression anonymousEntityTableExpression = (AnonymousEntityTableExpression) sqlEntityExpression.getTable(0);
-            doLimit(anonymousEntityTableExpression.getSqlEntityQueryExpression(),offset,rows);
+            doWithOutAnonymousAndClearExpression(anonymousEntityTableExpression.getSqlEntityQueryExpression(),consumer);
         }else{
-            sqlEntityExpression.setOffset(offset);
-            sqlEntityExpression.setRows(rows);
+            consumer.accept(sqlEntityExpression);
         }
+    }
+
+    @Override
+    public Queryable<T1> distinct(boolean condition) {
+        if(condition){
+            doWithOutAnonymousAndClearExpression(sqlEntityExpression,exp->{
+                exp.setDistinct(true);
+            });
+        }
+        return this;
     }
 
     @Override

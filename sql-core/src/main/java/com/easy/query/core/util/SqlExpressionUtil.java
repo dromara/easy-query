@@ -40,7 +40,7 @@ public class SqlExpressionUtil {
     public static boolean shouldCloneSqlEntityQueryExpression(SqlEntityQueryExpression sqlEntityExpression) {
         return noSelectAndGroup(sqlEntityExpression) && (moreTableExpressionOrNoAnonymous(sqlEntityExpression)||hasAnyOperate(sqlEntityExpression));
     }
-    public static boolean limitNotSetCurrent(SqlEntityQueryExpression sqlEntityExpression){
+    public static boolean limitAndOrderNotSetCurrent(SqlEntityQueryExpression sqlEntityExpression){
         return noSelectAndGroup(sqlEntityExpression)&&!moreTableExpressionOrNoAnonymous(sqlEntityExpression)&&!hasAnyOperate(sqlEntityExpression);
     }
     public static boolean noSelectAndGroup(SqlEntityQueryExpression sqlEntityExpression){
