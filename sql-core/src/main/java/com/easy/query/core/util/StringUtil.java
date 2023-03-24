@@ -1,15 +1,11 @@
 package com.easy.query.core.util;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import com.easy.query.core.exception.EasyQueryException;
+
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 
 /**
- *
- * @FileName: StringKit.java
- * @Description: 文件说明
- * @Date: 2023/2/7 08:39
  * @author xuejiaming
  */
 public class StringUtil {
@@ -20,7 +16,7 @@ public class StringUtil {
     public static final String[] EMPTY_STRING_ARRAY = new String[0];
 
 
-    static  String lineSeparator = System.getProperty("line.separator", "\n");
+    static String lineSeparator = System.getProperty("line.separator", "\n");
 
 
     // 首字母转小写
@@ -49,7 +45,7 @@ public class StringUtil {
         char[] chars = toLowerCaseFirstOne(s).toCharArray();
         StringBuilder temp = new StringBuilder();
         for (int i = 0; i < chars.length; i++) {
-            if(Character.isUpperCase(chars[i])){
+            if (Character.isUpperCase(chars[i])) {
                 temp.append("_");
             }
             temp.append(Character.toLowerCase(chars[i]));
@@ -65,8 +61,8 @@ public class StringUtil {
         String[] splitArr = str.split("_");
         StringBuilder sb = new StringBuilder();
 
-        for(int i=0 ;i<splitArr.length ;i++){
-            if(i == 0){
+        for (int i = 0; i < splitArr.length; i++) {
+            if (i == 0) {
                 sb.append(splitArr[0].toLowerCase());
                 continue;
             }
@@ -80,6 +76,7 @@ public class StringUtil {
 
     /**
      * 去空格
+     *
      * @param str
      * @return
      */
@@ -92,8 +89,7 @@ public class StringUtil {
         while (sb.length() > index) {
             if (Character.isWhitespace(sb.charAt(index))) {
                 sb.deleteCharAt(index);
-            }
-            else {
+            } else {
                 index++;
             }
         }
@@ -119,7 +115,7 @@ public class StringUtil {
         if (isEmpty(str)) {
             return true;
         }
-       int strLen= str.length();
+        int strLen = str.length();
         for (int i = 0; i < strLen; i++) {
             if ((Character.isWhitespace(str.charAt(i)) == false)) {
                 return false;
@@ -179,13 +175,12 @@ public class StringUtil {
     }
 
 
-
     /**
      * 判断一个 Object 是否为空，不包含集合对象的判断
      *
      * @param obj need to determine the object
-     * @author larrykoo
      * @return
+     * @author larrykoo
      */
     public static boolean isNullOrEmpty(Object obj) {
         if (obj == null) {
@@ -201,8 +196,8 @@ public class StringUtil {
      * 严格判断一个 Object 是否为空，包括对象为 null，字符串长度为0，集合类，Map 为 empty 的情况
      *
      * @param obj
-     * @author larrykoo
      * @return
+     * @author larrykoo
      */
     public static boolean isNullOrEmptyObject(Object obj) {
         if (obj == null) {
@@ -230,6 +225,7 @@ public class StringUtil {
     public static boolean isEmpty(String str) {
         return str == null || str.length() == 0;
     }
+
     public static String trim(String str) {
         return str == null ? null : str.trim();
     }
@@ -243,12 +239,12 @@ public class StringUtil {
         return pos == -1 ? "" : str.substring(0, pos);
     }
 
-    public static String join(String[] strs,int start,int end){
+    public static String join(String[] strs, int start, int end) {
         StringBuilder sb = new StringBuilder();
-        for(int i=start;i<=end;i++){
+        for (int i = start; i <= end; i++) {
             sb.append(strs[i]).append(".");
         }
-        sb.setLength(sb.length()-1);
+        sb.setLength(sb.length() - 1);
         return sb.toString();
     }
 
@@ -286,27 +282,228 @@ public class StringUtil {
         return (String[]) list.toArray(new String[list.size()]);
     }
 
-    public static String addEscape(String name,char escape){
-        return addEscape(name,escape,escape);
+    public static String addEscape(String name, char escape) {
+        return addEscape(name, escape, escape);
     }
 
-    public static String addEscape(String name,char leftEscape,char rightEscape){
+    public static String addEscape(String name, char leftEscape, char rightEscape) {
         int index = name.indexOf('.');
-        if(index==-1){
-            return new StringBuilder(name.length()+2).append(leftEscape).append(name).append(rightEscape).toString();
-        }else{
-            String schema = name.substring(0,index);
-            String table = name.substring(index+1);
-            StringBuilder sb = new StringBuilder(name.length()+4);
+        if (index == -1) {
+            return new StringBuilder(name.length() + 2).append(leftEscape).append(name).append(rightEscape).toString();
+        } else {
+            String schema = name.substring(0, index);
+            String table = name.substring(index + 1);
+            StringBuilder sb = new StringBuilder(name.length() + 4);
             sb.append(leftEscape).append(schema).append(rightEscape).append('.').append(leftEscape).append(table).append(rightEscape);
             return sb.toString();
 
         }
     }
 
+    /**
+     * @param str
+     * @param maxLen 英文字符最大长度
+     * @return
+     */
+    public static List<String> getStringSegments(String str, int maxLen) {
+        List<String> segments = new ArrayList<>();
+        if (str == null || str.isEmpty()) {
+            return segments;
+        }
+        int len = 0;
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < str.length(); i++) {
+            char c = str.charAt(i);
+            if (c >= 0x4e00 && c <= 0x9fa5) { // 中文字符
+                len += 2;
+                if (len > maxLen) {
+                    segments.add(sb.toString());
+                    sb = new StringBuilder();
+                    len = 2;
+                }
+                sb.append(c);
+            } else { // 英文字符
+                len += 1;
+                if (len > maxLen) {
+                    segments.add(sb.toString());
+                    sb = new StringBuilder();
+                    len = 1;
+                }
+                sb.append(c);
+            }
+        }
+        segments.add(sb.toString());
+        return segments;
+    }
+
+    public static String getCharString(String str, int maxLen) {
+        if (str == null || str.isEmpty()) {
+            return "";
+        }
+        int len = 0;
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < str.length(); i++) {
+            char c = str.charAt(i);
+            if (c >= 0x4e00 && c <= 0x9fa5) { // 中文字符
+                len += 2;
+                if (len > maxLen) {
+                    break;
+                }
+                sb.append(c);
+            } else { // 英文字符
+                len += 1;
+                if (len > maxLen) {
+                    break;
+                }
+                sb.append(c);
+            }
+        }
+        return sb.toString();
+    }
+
+    public static List<String> getStringCharSegments1(String str, int maxLen) {
+        if (str == null || str.length() == 0 || maxLen <= 0) {
+            return Collections.emptyList();
+        }
+        int len = str.length();
+        int groupCount = (len + maxLen - 1) / maxLen;
+        List<String> groups = new ArrayList<>(groupCount);
+        for (int i = 0; i < groupCount; i++) {
+            int start = i * maxLen;
+            int end = Math.min(start + maxLen, len);
+            groups.add(getCharString(str, maxLen));
+        }
+        return groups;
+    }
+
+    public static List<String> splitString(String str, int groupSize) {
+        if (str == null || str.length() == 0 || groupSize <= 0) {
+            return Collections.emptyList();
+        }
+        List<String> groups = new ArrayList<>();
+        int i = 0;
+        while (i < str.length()) {
+            int len = 0;
+            int j = i;
+            while (j < str.length() && len < groupSize) {
+                char c = str.charAt(j);
+                len += c < 256 ? 1 : 2;
+                j++;
+            }
+            groups.add(str.substring(i, j));
+            i = j;
+        }
+        return groups;
+    }
+
+    public static List<String> splitString1(String str, int groupSize) {
+        if (str == null || str.length() == 0 || groupSize <= 0) {
+            return Collections.emptyList();
+        }
+        List<String> groups = new ArrayList<>();
+        int i = 0;
+        while (i < str.length()) {
+            int len = 0;
+            int j = i;
+            while (j < str.length() && len < groupSize) {
+                char c = str.charAt(j);
+                len += (c < 256 && c != 183) || (c >= 0x4E00 && c <= 0x9FFF) ? 2 : 4;
+                j++;
+            }
+            groups.add(str.substring(i, j));
+            i = j;
+        }
+        return groups;
+    }
+
+    public static List<String> splitString2(String str, int groupSize) {
+        if (str == null || str.length() == 0 || groupSize <= 0) {
+            return Collections.emptyList();
+        }
+        List<String> groups = new ArrayList<>();
+        int i = 0;
+        while (i < str.length()) {
+            int len = 0;
+            int j = i;
+            while (j < str.length() && len < groupSize) {
+                char c = str.charAt(j);
+                len += (c < 256 && c != 183) || (c >= 0x4E00 && c <= 0x9FFF) ? 2 : 4;
+                j++;
+            }
+            groups.add(str.substring(i, j));
+            i = j;
+        }
+        return groups;
+    }
+
+    public static List<String> splitString5(String str, int groupSize) {
+        if (str == null || str.length() == 0 || groupSize <= 0) {
+            return Collections.emptyList();
+        }
+        int len = str.length();
+        int groupCount = (len + groupSize - 1) / groupSize;
+        List<String> groups = new ArrayList<>(groupCount);
+        for (int i = 0; i < groupCount; i++) {
+            int start = i * groupSize;
+            int end = Math.min(start + groupSize, len);
+            groups.add(str.substring(start, end));
+        }
+        return groups;
+    }
+
+    public static boolean isChineseChar(char c) {
+        return c >= 0x4e00 && c <= 0x9fa5;
+    }
+
+    public static List<String> getStringCharSegments(String str, int maxCharLen) {
+        ArrayList<String> segments = new ArrayList<>(str.length());
+        for (int i = 0; i < str.length(); i++) {
+            int len = 0;
+            StringBuilder segmentBuilder = new StringBuilder();
+            for (int j = i; j < str.length() && len < maxCharLen; j++) {
+                char c = str.charAt(j);
+                len += isChineseChar(c) ? 2 : 1;
+                segmentBuilder.append(c);
+            }
+            if (segmentBuilder.length() == 0||len<maxCharLen) {
+                break;
+            }
+            segments.add(segmentBuilder.toString());
+        }
+        if(segments.isEmpty()){
+            throw new EasyQueryException("需要满足最小英文"+maxCharLen+"字符中文双字符");
+        }
+        return segments;
+    }
 
     public static void main(String[] args) {
-        System.out.println(addEscape("abc",'[',']'));
-        System.out.println(addEscape("abc.eft",'[',']'));
+        List<String> stringSegments = getStringSegments("❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️垚垚垚垚垚垚", 4);
+
+        String xx = "❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️垚垚垚垚垚垚";
+        List<String> stringCharSegments = getStringCharSegments(xx, 100);
+        System.out.println(stringCharSegments);
+        StringBuilder stringBuilder1 = new StringBuilder();
+        for (int i = 0; i < stringCharSegments.size()-1; i++) {
+            stringBuilder1.append(stringCharSegments.get(i).charAt(0));
+        }
+        stringBuilder1.append(stringCharSegments.get(stringCharSegments.size()-1));
+        System.out.println(stringBuilder1.toString());
+        System.out.println(stringBuilder1.toString().equals(xx));
+        StringBuilder stringBuilder = new StringBuilder();
+        for (String stringSegment : stringSegments) {
+            byte[] bytes = stringSegment.getBytes(StandardCharsets.UTF_8);
+            stringBuilder.append(stringSegment);
+        }
+        String s = stringBuilder.toString();
+        System.out.println(s);
+        String substring1 = s.substring(0, 1);
+        String substring2 = s.substring(1, 2);
+        System.out.println(substring1);
+        System.out.println(substring2);
+        System.out.println(substring1 + substring2);
+        System.out.println(substring1 + "");
+        System.out.println(stringSegments);
+        System.out.println(addEscape("abc", '[', ']'));
+        System.out.println(addEscape("abc.eft", '[', ']'));
     }
 }
