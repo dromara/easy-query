@@ -1,8 +1,9 @@
 package com.easy.query.core.basic.api.select;
 
 import com.easy.query.core.api.pagination.PageResult;
-import com.easy.query.core.api.query.order.EasyOrderByConfiguration;
+import com.easy.query.core.api.dynamic.order.EasyDynamicOrderByConfiguration;
 import com.easy.query.core.basic.api.select.provider.EasyQuerySqlBuilderProvider;
+import com.easy.query.core.enums.dynamic.DynamicModeEnum;
 import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
 import com.easy.query.core.exception.EasyQueryWhereInvalidOperationException;
 import com.easy.query.core.expression.lambda.Property;
@@ -255,21 +256,21 @@ public interface Queryable<T1> extends Query<T1> {
     Queryable<T1> orderBy(boolean condition,SqlExpression<SqlColumnSelector<T1>> selectExpression,boolean asc);
 
     /**
-     * @exception EasyQueryOrderByInvalidOperationException 当排序设置的属性不存在当前排序对象里面或者当前查询对象无法获取 {@link SqlColumnSelector}
+     * @exception EasyQueryOrderByInvalidOperationException 当配置{@link EasyDynamicOrderByConfiguration} 为{@code  DynamicModeEnum.STRICT}排序设置的属性不存在当前排序对象里面或者当前查询对象无法获取 {@link SqlColumnSelector}
      * @param configuration
      * @return
      */
-   default Queryable<T1> orderByConfiguration(EasyOrderByConfiguration configuration){
+   default Queryable<T1> orderByConfiguration(EasyDynamicOrderByConfiguration configuration){
        return orderByConfiguration(true,configuration);
    }
 
     /**
-     * @exception EasyQueryOrderByInvalidOperationException 当排序设置的属性不存在当前排序对象里面或者当前查询对象无法获取 {@link SqlColumnSelector}
+     * @exception EasyQueryOrderByInvalidOperationException 当配置{@link EasyDynamicOrderByConfiguration} 为{@code  DynamicModeEnum.STRICT}排序设置的属性不存在当前排序对象里面或者当前查询对象无法获取 {@link SqlColumnSelector}
      * @param condition
      * @param configuration
      * @return
      */
-    Queryable<T1> orderByConfiguration(boolean condition, EasyOrderByConfiguration configuration);
+    Queryable<T1> orderByConfiguration(boolean condition, EasyDynamicOrderByConfiguration configuration);
 
     default Queryable<T1> distinct() {
         return distinct(true);

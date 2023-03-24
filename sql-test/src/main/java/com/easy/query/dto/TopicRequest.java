@@ -1,10 +1,10 @@
 package com.easy.query.dto;
 
 import com.easy.query.core.annotation.EasyWhereCondition;
-import com.easy.query.core.api.query.ObjectQueryBuilder;
-import com.easy.query.core.api.query.EasyQueryWhereConfiguration;
-import com.easy.query.core.api.query.order.EasyOrderByBuilder;
-import com.easy.query.core.api.query.order.EasyOrderByConfiguration;
+import com.easy.query.core.api.dynamic.where.EasyDynamicWhereBuilder;
+import com.easy.query.core.api.dynamic.where.EasyDynamicWhereConfiguration;
+import com.easy.query.core.api.dynamic.order.EasyDynamicOrderByBuilder;
+import com.easy.query.core.api.dynamic.order.EasyDynamicOrderByConfiguration;
 import com.easy.query.entity.Topic;
 import lombok.Data;
 
@@ -19,25 +19,25 @@ import java.util.List;
  * @Created by xuejiaming
  */
 @Data
-public class TopicRequest implements EasyQueryWhereConfiguration<TopicRequest>, EasyOrderByConfiguration {
+public class TopicRequest implements EasyDynamicWhereConfiguration<TopicRequest>, EasyDynamicOrderByConfiguration {
 
     @EasyWhereCondition(type = EasyWhereCondition.Condition.RANGE_LEFT_OPEN)
     private LocalDateTime createTimeBegin;
     private List<String> orders=new ArrayList<>();
 
     @Override
-    public void configure(ObjectQueryBuilder<TopicRequest> objectQueryBuilder) {
+    public void configure(EasyDynamicWhereBuilder<TopicRequest> builder) {
 
-        objectQueryBuilder.entity(Topic.class)
+        builder.entity(Topic.class)
                 .property(Topic::getCreateTime,TopicRequest::getCreateTimeBegin);
     }
 
     @Override
-    public void configure(EasyOrderByBuilder easyOrderByBuilder) {
-        easyOrderByBuilder.entity(Topic.class)
+    public void configure(EasyDynamicOrderByBuilder builder) {
+        builder.entity(Topic.class)
                 .orderProperty(Topic::getCreateTime);
         for (String order : orders) {
-            easyOrderByBuilder.orderBy(order,true);
+            builder.orderBy(order,true);
         }
     }
 }

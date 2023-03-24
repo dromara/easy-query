@@ -1,4 +1,4 @@
-package com.easy.query.core.api.query;
+package com.easy.query.core.api.dynamic.where.internal;
 
 /**
  * @FileName: EntityPropertyNode.java
@@ -6,11 +6,11 @@ package com.easy.query.core.api.query;
  * @Date: 2023/3/22 22:57
  * @Created by xuejiaming
  */
-public class EntityPropertyNode {
+public class DynamicWherePropertyNode {
     private final Class<?> entityClass;
     private final String property;
 
-    public EntityPropertyNode(Class<?> entityClass, String property){
+    public DynamicWherePropertyNode(Class<?> entityClass, String property){
 
         this.entityClass = entityClass;
         this.property = property;

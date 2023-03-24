@@ -1,4 +1,4 @@
-package com.easy.query.core.api.query.order.internal;
+package com.easy.query.core.api.dynamic.order.internal;
 
 /**
  * @FileName: OrderByPropertyNode.java
@@ -6,12 +6,12 @@ package com.easy.query.core.api.query.order.internal;
  * @Date: 2023/3/23 21:50
  * @Created by xuejiaming
  */
-public class OrderByPropertyNode {
+public class DynamicOrderByPropertyNode {
 
     private final Class<?> entityClass;
     private final boolean asc;
 
-    public OrderByPropertyNode(Class<?> entityClass, boolean asc){
+    public DynamicOrderByPropertyNode(Class<?> entityClass, boolean asc){
 
         this.entityClass = entityClass;
         this.asc = asc;

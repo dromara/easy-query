@@ -7,7 +7,7 @@
 
 ### 批量更新版本号
 ```shell
-mvn versions:set '-DnewVersion=0.0.12'
+mvn versions:set '-DnewVersion=0.0.22'
 ```
 
 # 文档（完善中）
@@ -22,6 +22,8 @@ mvn versions:set '-DnewVersion=0.0.12'
 <img src="./imgs/zfb.jpg" title="JetBrains" width=200 />
 <img src="./imgs/wx.jpg" title="JetBrains" width=222 />
 [博客](https://www.cnblogs.com/xuejiaming)
+
+QQ群:170029046
 
 个人QQ:326308290(欢迎技术支持提供您宝贵的意见)
 
