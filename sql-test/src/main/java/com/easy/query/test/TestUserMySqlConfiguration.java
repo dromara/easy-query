@@ -9,7 +9,7 @@
 // * @FileName: TestUserMySqlConfiguration.java
 // * @Description: 文件说明
 // * @Date: 2023/2/27 08:29
-// * @Created by xuejiaming
+// * @author xuejiaming
 // */
 //public class TestUserMySqlConfiguration extends AbstractEntityTypeConfiguration<TestUserMysql> {
 //    @Override

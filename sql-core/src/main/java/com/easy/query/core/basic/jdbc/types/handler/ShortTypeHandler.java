@@ -11,7 +11,7 @@ import java.sql.Types;
  * @FileName: DoubleTypeHandler.java
  * @Description: 文件说明
  * @Date: 2023/2/17 22:02
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class ShortTypeHandler implements JdbcTypeHandler {
     private static final short DEFAULT = 0;

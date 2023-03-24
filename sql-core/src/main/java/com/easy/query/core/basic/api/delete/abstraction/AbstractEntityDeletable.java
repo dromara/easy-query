@@ -23,7 +23,7 @@ import java.util.List;
  * @FileName: AbstractEntityDelete.java
  * @Description: 文件说明
  * @Date: 2023/2/28 12:33
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public abstract class AbstractEntityDeletable<T> extends AbstractSqlExecuteRows implements EntityDeletable<T> {
     protected final List<T> entities= new ArrayList<>();

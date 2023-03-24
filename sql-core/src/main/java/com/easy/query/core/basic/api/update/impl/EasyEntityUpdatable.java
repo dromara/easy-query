@@ -9,7 +9,7 @@ import java.util.Collection;
  * @FileName: EasyEntityUpdate.java
  * @Description: 文件说明
  * @Date: 2023/3/6 12:20
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class EasyEntityUpdatable<T> extends AbstractEntityUpdatable<T> {
 

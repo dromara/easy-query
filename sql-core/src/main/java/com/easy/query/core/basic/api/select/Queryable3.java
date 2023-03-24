@@ -16,7 +16,7 @@ import java.math.BigDecimal;
  * @FileName: Select3.java
  * @Description: 文件说明
  * @Date: 2023/2/6 22:44
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public interface Queryable3<T1, T2, T3> extends Queryable<T1> {
 

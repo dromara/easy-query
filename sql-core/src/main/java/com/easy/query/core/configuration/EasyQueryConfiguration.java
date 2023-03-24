@@ -18,7 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @FileName: JDQCConfiguration.java
  * @Description: 文件说明
  * @Date: 2023/2/7 09:06
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class EasyQueryConfiguration {
     private static final GlobalLogicDeleteStrategy BOOL_LOGIC_DELETE = new BooleanGlobalEntityTypeConfiguration();

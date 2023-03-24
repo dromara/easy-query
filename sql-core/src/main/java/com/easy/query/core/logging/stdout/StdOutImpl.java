@@ -6,7 +6,7 @@ import com.easy.query.core.logging.Log;
  * @FileName: StdOutImpl.java
  * @Description: 文件说明
  * @Date: 2023/3/10 13:46
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class StdOutImpl implements Log {
     public StdOutImpl(String clazz) {

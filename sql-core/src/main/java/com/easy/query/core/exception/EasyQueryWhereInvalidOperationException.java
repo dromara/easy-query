@@ -4,7 +4,7 @@ package com.easy.query.core.exception;
  * @FileName: EasyQueryWhereInvalidOperationException.java
  * @Description: 文件说明
  * @Date: 2023/3/23 21:28
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class EasyQueryWhereInvalidOperationException extends EasyQueryException {
     public EasyQueryWhereInvalidOperationException(String msg) {

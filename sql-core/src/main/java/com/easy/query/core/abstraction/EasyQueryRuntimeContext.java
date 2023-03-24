@@ -11,7 +11,7 @@ import com.easy.query.core.track.TrackManager;
  * @FileName: JQDCRuntimeContext.java
  * @Description: 文件说明
  * @Date: 2023/2/11 13:46
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public interface EasyQueryRuntimeContext {
     EasyQueryConfiguration getEasyQueryConfiguration();

@@ -6,7 +6,7 @@ import com.easy.query.core.query.SqlTableExpressionSegment;
  * @FileName: ConstSqlParameter.java
  * @Description: 文件说明
  * @Date: 2023/2/28 20:47
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public final class ConstSQLParameter implements SQLParameter {
     private final SqlTableExpressionSegment table;

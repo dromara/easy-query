@@ -22,7 +22,7 @@ import java.util.List;
  * @FileName: Select0.java
  * @Description: 文件说明
  * @Date: 2023/2/6 21:28
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public interface Queryable<T1> extends Query<T1> {
     /**

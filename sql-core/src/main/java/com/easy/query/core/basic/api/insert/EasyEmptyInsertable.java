@@ -7,7 +7,7 @@ import com.easy.query.core.query.SqlEntityInsertExpression;
  * @FileName: EasyEmptyInsertable.java
  * @Description: 文件说明
  * @Date: 2023/3/6 08:49
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class EasyEmptyInsertable<T>implements Insertable<T> {
     private final SqlEntityInsertExpression sqlEntityInsertExpression;

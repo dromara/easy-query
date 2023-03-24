@@ -14,7 +14,7 @@ import java.util.Objects;
  * @FileName: ObjectOrderBuilder.java
  * @Description: 文件说明
  * @Date: 2023/3/23 17:24
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class DefaultEasyDynamicOrderByBuilder implements EasyDynamicOrderByBuilder, EasyDynamicOrderByPropertyGetter {
     private final Map<String,Class<?>> orderEntityMap=new HashMap<>();

@@ -25,7 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @FileName: ClassUtil.java
  * @Description: 文件说明
  * @Date: 2023/2/11 13:03
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class ClassUtil {
     public final static Map<Class<?>, Map<String, MethodInvoker>> methodInvokerCache = new ConcurrentHashMap<>();

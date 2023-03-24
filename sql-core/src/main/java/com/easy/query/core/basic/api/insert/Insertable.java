@@ -8,7 +8,7 @@ import java.util.Collection;
  * @FileName: Insertable.java
  * @Description: 文件说明
  * @Date: 2023/2/20 08:48
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public interface Insertable<T> extends SqlExecuteRows {
     Insertable<T> insert(T entity);

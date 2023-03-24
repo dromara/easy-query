@@ -10,7 +10,7 @@ import org.slf4j.spi.LocationAwareLogger;
  * @FileName: Slf4jLocationAwareLoggerImpl.java
  * @Description: 文件说明
  * @Date: 2023/3/11 14:02
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class Slf4jLocationAwareLoggerImpl implements Log {
 

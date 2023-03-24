@@ -9,7 +9,7 @@ import java.util.*;
  * @FileName: DefaultSqlSegmentBuilder.java
  * @Description: 文件说明
  * @Date: 2023/2/13 21:30
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public abstract class AbstractSqlBuilderSegment implements SqlBuilderSegment {
     private final List<SqlSegment> sqlSegments=new ArrayList<>();

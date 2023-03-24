@@ -7,7 +7,7 @@ import com.easy.query.core.expression.segment.condition.PredicateSegment;
  * @FileName: TableSegment.java
  * @Description:  [table | (table expression)]  [alias] | [on predicate] [where]
  * @Date: 2023/3/3 22:06
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public interface SqlTableExpressionSegment extends SqlExpressionSegment, IndexAware {
     Class<?> entityClass();

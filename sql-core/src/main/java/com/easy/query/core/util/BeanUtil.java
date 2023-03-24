@@ -20,7 +20,7 @@ import java.util.function.Predicate;
  * @FileName: BeanUtil.java
  * @Description: 文件说明
  * @Date: 2023/3/18 22:09
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class BeanUtil {
 

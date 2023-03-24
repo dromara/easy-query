@@ -10,7 +10,7 @@
 // * @FileName: EntityTypeBuilder.java
 // * @Description: 文件说明
 // * @Date: 2023/2/26 23:02
-// * @Created by xuejiaming
+// * @author xuejiaming
 // */
 //public class EntityTypeBuilder<T> {
 //    private final EntityMetadata entityMetadata;

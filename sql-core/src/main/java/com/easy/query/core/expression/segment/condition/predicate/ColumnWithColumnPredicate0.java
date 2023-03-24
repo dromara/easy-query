@@ -9,7 +9,7 @@ import com.easy.query.core.query.SqlEntityTableExpression;
  * @FileName: ColumnValuePredicate.java
  * @Description: 文件说明
  * @Date: 2023/2/14 23:34
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class ColumnWithColumnPredicate0 implements Predicate {
     private final SqlEntityTableExpression leftTable;

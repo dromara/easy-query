@@ -23,7 +23,7 @@ import java.util.List;
  * @FileName: EasySqlExpressionSegment.java
  * @Description: 文件说明
  * @Date: 2023/3/3 22:10
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public abstract class EasySqlQueryExpression extends AbstractSqlPredicateEntityExpression implements SqlEntityQueryExpression {
 

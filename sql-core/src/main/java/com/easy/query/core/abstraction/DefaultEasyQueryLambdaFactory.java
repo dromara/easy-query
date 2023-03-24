@@ -13,7 +13,7 @@ import com.easy.query.core.query.SqlEntityExpression;
  * @FileName: DefaultEasyQueryLambdaFactory.java
  * @Description: 文件说明
  * @Date: 2023/2/14 08:33
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class DefaultEasyQueryLambdaFactory implements EasyQueryLambdaFactory{
     @Override

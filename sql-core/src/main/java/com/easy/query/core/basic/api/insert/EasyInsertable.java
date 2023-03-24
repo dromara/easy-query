@@ -6,7 +6,7 @@ import com.easy.query.core.query.SqlEntityInsertExpression;
  * @FileName: EasyInsertable.java
  * @Description: 文件说明
  * @Date: 2023/3/6 08:45
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class EasyInsertable<T> extends AbstractInsertable<T> {
     public EasyInsertable(Class<T> clazz, SqlEntityInsertExpression sqlEntityInsertExpression) {

@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @FileName: EasyUtil.java
  * @Description: 文件说明
  * @Date: 2023/3/4 13:12
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class EasyUtil {
 

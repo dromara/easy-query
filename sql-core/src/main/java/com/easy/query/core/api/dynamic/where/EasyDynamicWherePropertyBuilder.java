@@ -6,7 +6,7 @@ import com.easy.query.core.expression.lambda.Property;
  * @FileName: DynamicWherePropertyBuilder.java
  * @Description: 文件说明
  * @Date: 2023/3/24 07:49
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public interface EasyDynamicWherePropertyBuilder<TEntity,TObject> {
 

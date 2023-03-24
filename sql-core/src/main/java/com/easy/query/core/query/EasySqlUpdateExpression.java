@@ -33,7 +33,7 @@ import java.util.*;
  * @FileName: EasySqlUpdateExpression.java
  * @Description: 文件说明
  * @Date: 2023/3/4 17:05
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public abstract class EasySqlUpdateExpression extends AbstractSqlPredicateEntityExpression implements SqlEntityUpdateExpression {
 

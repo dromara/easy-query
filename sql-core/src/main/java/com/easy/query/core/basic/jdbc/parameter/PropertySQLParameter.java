@@ -13,7 +13,7 @@ import java.lang.reflect.Method;
  * @FileName: EntitySqlParameter.java
  * @Description: 文件说明
  * @Date: 2023/2/28 20:47
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public final class PropertySQLParameter implements BeanSqlParameter {
     private final SqlEntityTableExpression table;

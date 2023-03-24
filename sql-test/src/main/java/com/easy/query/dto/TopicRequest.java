@@ -16,7 +16,7 @@ import java.util.List;
  * @FileName: TopicRequest.java
  * @Description: 文件说明
  * @Date: 2023/3/22 22:50
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 @Data
 public class TopicRequest implements EasyDynamicWhereConfiguration<TopicRequest>, EasyDynamicOrderByConfiguration {

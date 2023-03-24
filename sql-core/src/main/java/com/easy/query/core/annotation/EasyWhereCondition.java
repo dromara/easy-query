@@ -7,7 +7,7 @@ import java.lang.annotation.*;
  * @FileName: EasyWhereCondition.java
  * @Description: 默认严格模式
  * @Date: 2023/3/22 21:27
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

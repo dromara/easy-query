@@ -4,7 +4,7 @@ package com.easy.query.core.api.dynamic.where.internal;
  * @FileName: EntityPropertyNode.java
  * @Description: 文件说明
  * @Date: 2023/3/22 22:57
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class DynamicWherePropertyNode {
     private final Class<?> entityClass;

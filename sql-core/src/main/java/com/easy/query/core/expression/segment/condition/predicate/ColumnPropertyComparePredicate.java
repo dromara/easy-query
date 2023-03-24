@@ -10,7 +10,7 @@
 // * @FileName: ColumnPropertyPredicate.java
 // * @Description: column和某个bean的值的断言节点
 // * @Date: 2023/2/13 15:18
-// * @Created by xuejiaming
+// * @author xuejiaming
 // */
 //public class ColumnPropertyComparePredicate implements SqlEntitySegment {
 //    private final SqlEntityTableExpression table;

@@ -6,7 +6,7 @@ import com.easy.query.core.annotation.Column;
  * @FileName: TestUserMysqlGroup.java
  * @Description: 文件说明
  * @Date: 2023/2/19 22:15
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class TestUserMysqlGroup {
     private Integer age;

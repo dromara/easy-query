@@ -17,7 +17,7 @@ import com.easy.query.core.util.ClassUtil;
  * @FileName: EasySqlInsertExpression.java
  * @Description: 文件说明
  * @Date: 2023/3/4 16:49
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public abstract class EasySqlInsertExpression extends AbstractSqlEntityExpression implements SqlEntityInsertExpression {
     private final SqlBuilderSegment columns;

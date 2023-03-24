@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
  * @FileName: AgeSelectInterceptorStrategy.java
  * @Description: 文件说明
  * @Date: 2023/3/13 08:22
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 @Component
 public class AgeSelectInterceptorStrategy implements GlobalPredicateFilterInterceptor {

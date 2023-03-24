@@ -6,7 +6,7 @@ import com.easy.query.core.expression.lambda.Property;
  * @FileName: ColumnSetter.java
  * @Description: 文件说明
  * @Date: 2023/2/24 22:35
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public interface ColumnSetter<T1,TChain> extends IndexAware {
     /**

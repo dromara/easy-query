@@ -15,7 +15,7 @@ import java.util.Objects;
  * @FileName: DefaultSqlColumnSetSelector.java
  * @Description: 文件说明
  * @Date: 2023/2/25 21:31
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class DefaultSqlColumnSetSelector<T> implements SqlColumnSelector<T> {
     private final int index;

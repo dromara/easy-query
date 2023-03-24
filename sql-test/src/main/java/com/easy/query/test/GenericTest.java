@@ -9,7 +9,7 @@ import org.junit.Test;
  * @FileName: GenericTest.java
  * @Description: 文件说明
  * @Date: 2023/3/17 22:22
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class GenericTest extends BaseTest {
 

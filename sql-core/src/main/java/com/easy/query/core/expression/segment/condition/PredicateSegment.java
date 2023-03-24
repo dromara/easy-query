@@ -7,7 +7,7 @@ import com.easy.query.core.expression.segment.condition.predicate.Predicate;
  * @FileName: PredicateSegment.java
  * @Description: 文件说明
  * @Date: 2023/3/2 22:04
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public interface PredicateSegment extends SqlSegment {
     boolean isEmpty();

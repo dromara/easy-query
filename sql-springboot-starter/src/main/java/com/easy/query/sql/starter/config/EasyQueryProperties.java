@@ -7,7 +7,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @FileName: EasyQueryProperties.java
  * @Description: 文件说明
  * @Date: 2023/3/11 14:25
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 @ConfigurationProperties(prefix = "easy-query")
 public class EasyQueryProperties {

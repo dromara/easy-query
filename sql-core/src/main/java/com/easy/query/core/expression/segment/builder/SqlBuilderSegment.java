@@ -8,7 +8,7 @@ import java.util.List;
  * @FileName: SqlSegment0Builder.java
  * @Description: 文件说明
  * @Date: 2023/2/13 12:49
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public interface SqlBuilderSegment extends SqlSegment {
     List<SqlSegment> getSqlSegments();

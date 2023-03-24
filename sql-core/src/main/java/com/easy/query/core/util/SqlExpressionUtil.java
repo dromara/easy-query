@@ -17,7 +17,7 @@ import com.easy.query.core.expression.lambda.SqlExpression4;
  * @FileName: SqlExpressionUtil.java
  * @Description: 文件说明
  * @Date: 2023/3/7 12:32
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class SqlExpressionUtil {
     private SqlExpressionUtil() {

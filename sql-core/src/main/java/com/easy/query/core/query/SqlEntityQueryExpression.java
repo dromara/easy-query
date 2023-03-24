@@ -7,7 +7,7 @@ import com.easy.query.core.expression.segment.condition.PredicateSegment;
  * @FileName: SqlEntityExpressionSegment.java
  * @Description: 文件说明
  * @Date: 2023/3/3 22:17
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public interface SqlEntityQueryExpression extends SqlEntityExpression{
     boolean isEmpty();

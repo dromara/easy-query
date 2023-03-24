@@ -10,7 +10,7 @@ import java.util.*;
  * @FileName: PredicateSegment.java
  * @Description: 文件说明
  * @Date: 2023/2/14 23:05
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class AbstractPredicateSegment implements PredicateSegment {
     private List<PredicateSegment> children;

@@ -11,7 +11,7 @@ import java.util.Collection;
  * @FileName: WherePredicate.java
  * @Description: 文件说明
  * @Date: 2023/2/5 09:09
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public interface WherePredicate<T1, TChain> extends IndexAware {
     /**

@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
  * @FileName: DeleteTest.java
  * @Description: 文件说明
  * @Date: 2023/3/21 12:54
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class DeleteTest  extends BaseTest {
     @Test

@@ -7,7 +7,7 @@ import com.easy.query.core.query.SqlExpressionContext;
  * @FileName: MySQLUpdateExpression.java
  * @Description: mysql数据库更新表达式
  * @Date: 2023/3/4 17:11
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class MySqlUpdateExpression extends EasySqlUpdateExpression {
 

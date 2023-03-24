@@ -11,7 +11,7 @@ import java.sql.Types;
  * @FileName: DoubleTypeHandler.java
  * @Description: 文件说明
  * @Date: 2023/2/17 22:02
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class LongTypeHandler implements JdbcTypeHandler {
     private static final long DEFAULT = 0L;

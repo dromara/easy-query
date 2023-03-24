@@ -9,7 +9,7 @@ import java.util.Set;
  * @FileName: GlobalLogicDeleteStrategy.java
  * @Description: 文件说明
  * @Date: 2023/3/7 07:59
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public interface GlobalLogicDeleteStrategy {
     String getStrategy();

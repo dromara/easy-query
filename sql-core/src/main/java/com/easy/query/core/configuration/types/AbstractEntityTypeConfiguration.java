@@ -7,7 +7,7 @@
 // * @FileName: AbstractEntityTypeConfiguration.java
 // * @Description: 文件说明
 // * @Date: 2023/2/27 08:36
-// * @Created by xuejiaming
+// * @author xuejiaming
 // */
 //public abstract class AbstractEntityTypeConfiguration<T> implements EntityTypeConfiguration<T> {
 //    @Override

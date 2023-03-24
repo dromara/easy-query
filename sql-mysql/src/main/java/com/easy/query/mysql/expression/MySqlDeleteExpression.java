@@ -8,7 +8,7 @@ import com.easy.query.core.query.SqlExpressionContext;
  * @FileName: MySQLDeleteExpression.java
  * @Description: 文件说明
  * @Date: 2023/3/4 16:36
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class MySqlDeleteExpression extends EasySqlDeleteExpression {
 

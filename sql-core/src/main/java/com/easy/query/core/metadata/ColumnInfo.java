@@ -5,7 +5,7 @@ package com.easy.query.core.metadata;
  * @FileName: ColumnInfo.java
  * @Description: 文件说明
  * @Date: 2023/2/10 23:35
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class ColumnInfo {
     private final TableInfo tableInfo;

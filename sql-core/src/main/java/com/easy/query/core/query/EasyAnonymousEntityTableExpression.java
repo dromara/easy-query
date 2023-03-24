@@ -12,7 +12,7 @@ import java.util.List;
  * @FileName: EasyAnonymousEntityTableExpressionSegment.java
  * @Description: 匿名实体表表达式
  * @Date: 2023/3/3 23:31
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class EasyAnonymousEntityTableExpression extends EasyEntityTableExpression implements AnonymousEntityTableExpression {
     private final SqlEntityQueryExpression sqlEntityExpression;

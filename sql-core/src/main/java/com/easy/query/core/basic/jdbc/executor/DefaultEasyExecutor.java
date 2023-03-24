@@ -36,7 +36,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @FileName: DefaultExecutor.java
  * @Description: 文件说明
  * @Date: 2023/2/16 22:49
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class DefaultEasyExecutor implements EasyExecutor {
     private static final Log log = LogFactory.getLog(DefaultEasyExecutor.class);

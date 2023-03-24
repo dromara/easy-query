@@ -7,7 +7,7 @@ import java.math.BigInteger;
  * @FileName: NumberUtil.java
  * @Description: 文件说明
  * @Date: 2023/3/18 13:53
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class NumberUtil {
 

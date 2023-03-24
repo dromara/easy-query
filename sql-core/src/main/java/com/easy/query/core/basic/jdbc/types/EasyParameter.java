@@ -10,7 +10,7 @@ import java.util.List;
  * @FileName: EasyParameter.java
  * @Description: 文件说明
  * @Date: 2023/2/17 21:09
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class EasyParameter {
     private final PreparedStatement ps;

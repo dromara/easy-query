@@ -13,7 +13,7 @@ import java.util.Iterator;
  * @FileName: ColumnCollectionPredicate.java
  * @Description: 表达式集合判断
  * @Date: 2023/2/14 23:34
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class ColumnCollectionPredicate0 implements Predicate {
     private final Collection<?> collection;

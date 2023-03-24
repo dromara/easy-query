@@ -22,7 +22,7 @@ import java.util.Collection;
  * @FileName: DefaultSqlPredicate.java
  * @Description: 默认的数据库条件比较
  * @Date: 2023/2/7 06:58
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class DefaultSqlPredicate<T1> implements SqlPredicate<T1> {
     private final int index;

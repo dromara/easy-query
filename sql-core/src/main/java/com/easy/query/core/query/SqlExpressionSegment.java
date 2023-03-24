@@ -6,7 +6,7 @@ import com.easy.query.core.expression.segment.SqlSegment;
  * @FileName: TableSegment.java
  * @Description:
  * @Date: 2023/3/3 17:15
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public interface SqlExpressionSegment extends SqlSegment {
 

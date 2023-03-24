@@ -27,7 +27,7 @@ import java.util.List;
  * @FileName: EasySqlDeleteExpression.java
  * @Description: 文件说明
  * @Date: 2023/3/4 16:32
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public abstract class EasySqlDeleteExpression extends AbstractSqlPredicateEntityExpression implements SqlEntityDeleteExpression {
     protected final PredicateSegment where;

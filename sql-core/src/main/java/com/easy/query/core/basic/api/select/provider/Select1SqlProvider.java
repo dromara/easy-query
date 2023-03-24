@@ -16,7 +16,7 @@ import com.easy.query.core.expression.parser.impl.*;
  * @FileName: Select1SqlPredicateProvider.java
  * @Description: 文件说明
  * @Date: 2023/2/7 23:45
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class Select1SqlProvider<T1> implements EasyQuerySqlBuilderProvider<T1> {
 

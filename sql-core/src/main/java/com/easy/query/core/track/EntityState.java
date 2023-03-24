@@ -6,7 +6,7 @@ import java.util.List;
  * @FileName: EntryState.java
  * @Description: 文件说明
  * @Date: 2023/3/18 21:22
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class EntityState {
     private final Class<?> entityClass;

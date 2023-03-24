@@ -21,7 +21,7 @@ import java.util.LinkedHashMap;
  * @FileName: DefaultSqSelector.java
  * @Description: 文件说明
  * @Date: 2023/2/8 00:10
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class DefaultAutoSqlColumnAsSelector<T1, TR> extends AbstractSqlColumnSelector<T1, SqlColumnAsSelector<T1, TR>> implements SqlColumnAsSelector<T1, TR> {
 

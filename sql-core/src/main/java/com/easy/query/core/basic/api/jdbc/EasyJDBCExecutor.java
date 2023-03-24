@@ -7,7 +7,7 @@ import java.util.List;
  * @FileName: EasyJDBC.java
  * @Description: 文件说明
  * @Date: 2023/3/12 22:41
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public interface EasyJDBCExecutor {
    default  <T> List<T> sqlQuery(String sql,Class<T> clazz){

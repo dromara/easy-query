@@ -8,7 +8,7 @@ import java.util.Map;
  * @FileName: TransactionManager.java
  * @Description: 文件说明
  * @Date: 2023/2/20 22:32
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public interface TransactionManager {
     void begin();

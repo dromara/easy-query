@@ -16,7 +16,7 @@ import java.util.List;
  * @FileName: AbstractSqlPredicateEntityExpression.java
  * @Description: 文件说明
  * @Date: 2023/3/15 21:58
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public abstract class AbstractSqlPredicateEntityExpression extends AbstractSqlEntityExpression {
     public AbstractSqlPredicateEntityExpression(SqlExpressionContext sqlExpressionContext) {

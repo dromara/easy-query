@@ -23,7 +23,7 @@ import java.util.Objects;
  * @FileName: DefaultSqlColumnSelector.java
  * @Description: 文件说明
  * @Date: 2023/2/8 12:26
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class AbstractSqlColumnSelector<T1, TChain> implements ColumnSelector<T1, TChain> {
     private final int index;

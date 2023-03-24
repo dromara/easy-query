@@ -8,7 +8,7 @@ import com.easy.query.core.annotation.Table;
  * @FileName: DeefaultNameConversion.java
  * @Description: 文件说明
  * @Date: 2023/2/11 13:22
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class DefaultNameConversion implements NameConversion {
 

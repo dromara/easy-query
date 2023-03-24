@@ -28,7 +28,7 @@ import java.util.*;
  * @FileName: AbstractUpdate.java
  * @Description: 文件说明
  * @Date: 2023/2/24 22:06
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public abstract class AbstractEntityUpdatable<T> extends AbstractSqlExecuteRows implements EntityUpdatable<T> {
     protected final List<T> entities = new ArrayList<>();

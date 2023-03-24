@@ -4,7 +4,7 @@ package com.easy.query.core.enums;
  * @FileName: UpdateStrategy.java
  * @Description: 文件说明
  * @Date: 2023/3/20 10:33
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public enum UpdateStrategyEnum {
     /**

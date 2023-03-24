@@ -8,7 +8,7 @@ import com.easy.query.core.abstraction.metadata.EntityMetadata;
  * @FileName: EasySqlExpressionFactory.java
  * @Description: 文件说明
  * @Date: 2023/3/4 22:43
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public interface EasyExpressionFactory {
     SqlExpressionContext createSqlExpressionContext(EasyQueryRuntimeContext runtimeContext, String alias);

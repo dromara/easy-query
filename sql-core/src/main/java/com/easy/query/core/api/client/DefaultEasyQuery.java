@@ -20,7 +20,7 @@ import java.util.List;
  * @FileName: EasySqlQuery.java
  * @Description: 文件说明
  * @Date: 2023/3/6 13:30
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class DefaultEasyQuery implements EasyQuery {
     private final EasyQueryRuntimeContext runtimeContext;

@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
  * @FileName: EntityMetadata.java
  * @Description: 文件说明
  * @Date: 2023/2/11 10:17
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class EntityMetadata {
     private final Class<?> entityClass;

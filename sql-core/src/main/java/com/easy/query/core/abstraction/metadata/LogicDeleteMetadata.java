@@ -8,7 +8,7 @@ import com.easy.query.core.expression.parser.abstraction.SqlPredicate;
  * @FileName: LogicDeleteMetadata.java
  * @Description: 文件说明
  * @Date: 2023/2/26 23:19
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public final class LogicDeleteMetadata {
 

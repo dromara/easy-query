@@ -34,7 +34,7 @@ import java.util.Objects;
  * @FileName: AbstractQueryable2.java
  * @Description: 文件说明
  * @Date: 2023/2/6 23:43
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public abstract class AbstractQueryable2<T1, T2> extends AbstractQueryable<T1> implements Queryable2<T1, T2> {
 

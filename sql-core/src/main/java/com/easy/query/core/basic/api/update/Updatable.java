@@ -6,7 +6,7 @@ import com.easy.query.core.basic.api.abstraction.SqlExecuteExpectRows;
  * @FileName: Update.java
  * @Description: 文件说明
  * @Date: 2023/2/24 22:04
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public interface Updatable<T> extends SqlExecuteExpectRows {
 //    Insert<T> insertColumns(SqlExpression<SqlPredicate<T>> columnExpression);

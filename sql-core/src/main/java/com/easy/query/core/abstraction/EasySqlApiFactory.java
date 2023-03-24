@@ -20,7 +20,7 @@ import java.util.Collection;
  * @FileName: EasyQueryableFactory.java
  * @Description: 文件说明
  * @Date: 2023/3/3 13:28
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public interface EasySqlApiFactory {
 

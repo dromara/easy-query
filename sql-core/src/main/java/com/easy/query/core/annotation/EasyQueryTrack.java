@@ -6,7 +6,7 @@ import java.lang.annotation.*;
  * @FileName: EasyQueryTrack.java
  * @Description: 文件说明
  * @Date: 2023/3/20 21:00
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)

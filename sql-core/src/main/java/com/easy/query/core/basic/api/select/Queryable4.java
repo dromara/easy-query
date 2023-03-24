@@ -14,7 +14,7 @@ import java.math.BigDecimal;
  * @FileName: Queryable4.java
  * @Description: 文件说明
  * @Date: 2023/3/9 12:10
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public interface Queryable4<T1,T2,T3,T4> extends Queryable<T1> {
     //region where

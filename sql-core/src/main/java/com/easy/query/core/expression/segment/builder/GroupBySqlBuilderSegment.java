@@ -10,7 +10,7 @@ import java.util.List;
  * @FileName: PredicateSqlSegmentBuilder.java
  * @Description: 文件说明
  * @Date: 2023/2/13 22:39
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class GroupBySqlBuilderSegment extends AbstractSqlBuilderSegment {
 

@@ -6,7 +6,7 @@ import java.beans.PropertyDescriptor;
  * @FileName: ColumnMetadata.java
  * @Description: 文件说明
  * @Date: 2023/2/11 15:13
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class ColumnMetadata {
 

@@ -11,7 +11,7 @@ import java.sql.Types;
  * @FileName: CLobTypeHandler.java
  * @Description: 文件说明
  * @Date: 2023/2/17 21:54
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class CLobTypeHandler implements JdbcTypeHandler{
     @Override

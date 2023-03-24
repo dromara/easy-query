@@ -10,7 +10,7 @@ import java.lang.reflect.Method;
  * @FileName: BeanMethodInvoker.java
  * @Description: 文件说明
  * @Date: 2023/2/23 21:25
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class BeanMethodInvoker implements MethodInvoker{
     private final PropertyDescriptor pd;

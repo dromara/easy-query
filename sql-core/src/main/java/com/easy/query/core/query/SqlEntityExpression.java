@@ -9,7 +9,7 @@ import java.util.List;
  * @FileName: SqlEntityExpression.java
  * @Description: 文件说明
  * @Date: 2023/3/4 16:29
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public interface SqlEntityExpression extends SqlExpressionSegment {
     SqlExpressionContext getSqlExpressionContext();

@@ -12,7 +12,7 @@ import java.util.List;
  * @FileName: EntityTableSegment.java
  * @Description: 文件说明
  * @Date: 2023/3/3 21:50
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public interface SqlEntityTableExpression extends SqlTableExpressionSegment {
     EntityMetadata getEntityMetadata();

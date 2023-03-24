@@ -5,7 +5,7 @@ package com.easy.query.core.enums;
  * @FileName: SqlKeywordEnum.java
  * @Description: 文件说明
  * @Date: 2023/2/13 21:40
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public enum SqlPredicateCompareEnum implements SqlPredicateCompare {
 

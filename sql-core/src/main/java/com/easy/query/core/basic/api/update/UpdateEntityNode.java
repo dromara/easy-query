@@ -9,7 +9,7 @@ import java.util.List;
  * @FileName: UpdateEntityNode.java
  * @Description: 文件说明
  * @Date: 2023/3/20 11:21
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class UpdateEntityNode {
 

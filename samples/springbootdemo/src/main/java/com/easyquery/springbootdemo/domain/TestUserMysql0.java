@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
  * @FileName: TestUserMysql.java
  * @Description: 文件说明
  * @Date: 2023/2/11 21:42
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 @Table("testuser")
 public class TestUserMysql0 {

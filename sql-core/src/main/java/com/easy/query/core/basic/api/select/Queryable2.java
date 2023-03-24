@@ -16,7 +16,7 @@ import java.math.BigDecimal;
  * @FileName: Select2.java
  * @Description: 文件说明
  * @Date: 2023/2/6 22:42
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public interface Queryable2<T1, T2> extends Queryable<T1> {
     <T3> Queryable3<T1, T2, T3> leftJoin(Class<T3> joinClass, SqlExpression3<SqlPredicate<T1>, SqlPredicate<T2>, SqlPredicate<T3>> on);

@@ -4,7 +4,7 @@
 // * @FileName: EntityTypeConfiguration.java
 // * @Description: 文件说明
 // * @Date: 2023/2/26 22:54
-// * @Created by xuejiaming
+// * @author xuejiaming
 // */
 //public interface EntityTypeConfiguration<T> {
 //    Class<T> entityType();

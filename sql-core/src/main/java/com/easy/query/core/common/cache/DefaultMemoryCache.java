@@ -7,7 +7,7 @@ import java.util.function.Function;
  * @FileName: DefaultMemoryCache.java
  * @Description: 文件说明
  * @Date: 2023/2/11 10:14
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class DefaultMemoryCache<K,V> implements Cache<K,V> {
     private final ConcurrentHashMap<K, V> map = new ConcurrentHashMap<K, V>();

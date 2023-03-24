@@ -12,7 +12,7 @@ import java.util.function.Function;
  * @FileName: CaseInsensitiveLinkedHashMap.java
  * @Description: 文件说明
  * @Date: 2023/2/11 10:20
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class LinkedCaseInsensitiveMap<V> extends LinkedHashMap<String, V> {
 

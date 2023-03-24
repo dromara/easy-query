@@ -8,7 +8,7 @@ import java.sql.ResultSetMetaData;
  * @FileName: EasyResultSet.java
  * @Description: 文件说明
  * @Date: 2023/2/17 13:11
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class EasyResultSet {
     private int index;

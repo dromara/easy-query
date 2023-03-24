@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
  * @FileName: BigDecimalTypeHandler.java
  * @Description: 文件说明
  * @Date: 2023/2/17 21:21
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class LocalDateTimeTypeHandler implements JdbcTypeHandler{
     @Override

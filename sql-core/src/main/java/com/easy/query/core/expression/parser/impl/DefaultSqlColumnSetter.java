@@ -16,7 +16,7 @@ import com.easy.query.core.query.SqlEntityTableExpression;
  * @FileName: DefaultSqlColumnSetter.java
  * @Description: 文件说明
  * @Date: 2023/2/25 17:39
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class DefaultSqlColumnSetter<T>  implements SqlColumnSetter<T> {
     private final int index;

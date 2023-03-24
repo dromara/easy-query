@@ -38,7 +38,7 @@ import java.util.Collections;
  * @FileName: DefaultEasySqlApiFactory.java
  * @Description: 文件说明
  * @Date: 2023/3/6 08:27
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class DefaultEasySqlApiFactory implements EasySqlApiFactory {
     private final EasyExpressionFactory easySqlExpressionFactory;

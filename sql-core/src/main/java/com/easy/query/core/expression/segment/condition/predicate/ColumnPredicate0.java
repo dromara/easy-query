@@ -8,7 +8,7 @@ import com.easy.query.core.enums.SqlPredicateCompare;
  * @FileName: ColumnValuePredicate.java
  * @Description: 文件说明
  * @Date: 2023/2/14 23:34
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class ColumnPredicate0 implements Predicate {
     private final SqlEntityTableExpression table;

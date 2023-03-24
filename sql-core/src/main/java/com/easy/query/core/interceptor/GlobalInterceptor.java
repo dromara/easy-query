@@ -4,7 +4,7 @@ package com.easy.query.core.interceptor;
  * @FileName: GlobalInterceptor.java
  * @Description: 文件说明
  * @Date: 2023/3/9 21:35
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public interface GlobalInterceptor  {
     /**

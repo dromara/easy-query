@@ -10,7 +10,7 @@ import java.util.Map;
  * @FileName: EntityPropertyBuilder.java
  * @Description: 文件说明
  * @Date: 2023/3/22 22:18
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class DefaultEasyDynamicWherePropertyBuilder<TEntity,TObject> implements EasyDynamicWherePropertyBuilder<TEntity,TObject> {
     private final Class<?> entityClass;

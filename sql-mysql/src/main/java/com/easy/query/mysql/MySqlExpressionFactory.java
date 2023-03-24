@@ -14,7 +14,7 @@ import com.easy.query.mysql.expression.MySqlUpdateExpression;
  * @FileName: MySQLSqlExpressionFactory.java
  * @Description: 文件说明
  * @Date: 2023/3/4 22:55
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class MySqlExpressionFactory implements EasyExpressionFactory {
     @Override

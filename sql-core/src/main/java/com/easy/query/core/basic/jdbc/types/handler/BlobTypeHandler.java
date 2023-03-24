@@ -11,7 +11,7 @@ import java.sql.Types;
  * @FileName: BlobTypeHandler.java
  * @Description: 文件说明
  * @Date: 2023/2/17 21:38
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class BlobTypeHandler implements JdbcTypeHandler {
     @Override

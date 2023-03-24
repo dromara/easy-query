@@ -17,7 +17,7 @@ import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
  * @FileName: DefaultSqlAggregatePredicate.java
  * @Description: 文件说明
  * @Date: 2023/2/18 22:41
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class DefaultSqlAggregatePredicate<T1> implements SqlAggregatePredicate<T1> {
     private final int index;

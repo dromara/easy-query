@@ -11,7 +11,7 @@ import java.sql.Types;
  * @FileName: BooleanTypeHandler.java
  * @Description: 文件说明
  * @Date: 2023/2/17 21:39
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class BooleanTypeHandler implements JdbcTypeHandler{
     private static final boolean DEFAULT=false;

@@ -4,7 +4,7 @@ package com.easy.query.core.config;
  * @FileName: DefaultConfig.java
  * @Description: 文件说明
  * @Date: 2023/2/16 21:47
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class DefaultConfig implements EasyConfig {
     private final String name;

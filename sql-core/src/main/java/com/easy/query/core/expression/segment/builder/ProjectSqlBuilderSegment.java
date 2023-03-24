@@ -10,7 +10,7 @@ import java.util.List;
  * @FileName: SelectSqlSegmentBuilder.java
  * @Description: 查询projects
  * @Date: 2023/2/13 22:39
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class ProjectSqlBuilderSegment extends AbstractSqlBuilderSegment {
 

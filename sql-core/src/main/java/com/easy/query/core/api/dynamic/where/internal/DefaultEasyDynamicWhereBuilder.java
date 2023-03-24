@@ -10,7 +10,7 @@ import java.util.Map;
  * @FileName: EntityQueryBuilder.java
  * @Description: 文件说明
  * @Date: 2023/3/22 22:15
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class DefaultEasyDynamicWhereBuilder<TObject> implements EasyDynamicWhereBuilder<TObject> {
     private final Map<String, DynamicWherePropertyNode> propertyMap=new HashMap<>();

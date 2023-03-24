@@ -13,7 +13,7 @@ import com.easy.query.core.expression.parser.impl.*;
  * @FileName: Select1SqlPredicateProvider.java
  * @Description: 文件说明
  * @Date: 2023/2/7 23:45
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class Select4SqlProvider<T1,T2,T3,T4> extends Select3SqlProvider<T1,T2,T3> implements EasyQuerySqlBuilderProvider4<T1,T2,T3,T4> {
 

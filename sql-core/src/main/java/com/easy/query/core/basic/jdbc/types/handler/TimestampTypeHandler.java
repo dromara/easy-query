@@ -11,7 +11,7 @@ import java.sql.Types;
  * @FileName: TimestampTypeHandler.java
  * @Description: 文件说明
  * @Date: 2023/2/18 08:35
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class TimestampTypeHandler implements JdbcTypeHandler {
     @Override

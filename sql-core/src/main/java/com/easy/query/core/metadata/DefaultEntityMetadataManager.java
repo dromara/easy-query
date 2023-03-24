@@ -10,7 +10,7 @@ import com.easy.query.core.common.cache.DefaultMemoryCache;
  * @FileName: DefaultMetadataManager.java
  * @Description: 文件说明
  * @Date: 2023/2/11 10:16
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class DefaultEntityMetadataManager implements EntityMetadataManager {
     private final Cache<Class<?>,EntityMetadata> entityMetadataCache=new DefaultMemoryCache<>();

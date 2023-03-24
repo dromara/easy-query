@@ -13,7 +13,7 @@ import java.util.List;
  * @FileName: DefaultEasyJDBC.java
  * @Description: 文件说明
  * @Date: 2023/3/12 22:42
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class DefaultEasyJDBCExecutor implements EasyJDBCExecutor {
     private final EasyQueryRuntimeContext runtimeContext;

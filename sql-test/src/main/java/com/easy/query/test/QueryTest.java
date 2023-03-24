@@ -20,7 +20,7 @@ import java.util.List;
  * @FileName: QueryTest.java
  * @Description: 文件说明
  * @Date: 2023/3/16 17:31
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class QueryTest extends BaseTest {
     @Test

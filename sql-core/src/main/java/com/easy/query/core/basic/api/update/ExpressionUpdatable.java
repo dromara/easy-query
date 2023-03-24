@@ -10,7 +10,7 @@ import com.easy.query.core.expression.parser.abstraction.internal.ColumnSetter;
  * @FileName: ExpressionUpdatable.java
  * @Description: 文件说明
  * @Date: 2023/2/24 23:21
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public interface ExpressionUpdatable<T> extends Updatable<T> {
     default ExpressionUpdatable<T> set(Property<T, ?> column, Object val) {

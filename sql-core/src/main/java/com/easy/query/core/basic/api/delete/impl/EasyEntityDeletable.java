@@ -9,7 +9,7 @@ import java.util.Collection;
  * @FileName: EasyEntityDeletable.java
  * @Description: 文件说明
  * @Date: 2023/3/6 13:20
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class EasyEntityDeletable<T> extends AbstractEntityDeletable<T> {
     public EasyEntityDeletable(Collection<T> entities, SqlEntityDeleteExpression sqlEntityDeleteExpression) {

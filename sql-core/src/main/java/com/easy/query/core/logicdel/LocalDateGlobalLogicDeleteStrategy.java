@@ -16,7 +16,7 @@ import java.util.Set;
  * @FileName: LocalDateGlobalEntityTypeConfiguration.java
  * @Description: 文件说明
  * @Date: 2023/3/6 22:45
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public  class LocalDateGlobalLogicDeleteStrategy extends AbstractGlobalLogicDeleteStrategy {
     @Override

@@ -4,7 +4,7 @@ package com.easy.query.core.enums;
  * @FileName: EasyAggregate.java
  * @Description: 文件说明
  * @Date: 2023/2/18 22:18
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public enum AggregatePredicateCompare implements SqlPredicateCompare {
     EQ("="),

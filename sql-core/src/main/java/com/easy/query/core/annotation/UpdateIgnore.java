@@ -6,7 +6,7 @@ import java.lang.annotation.*;
  * @FileName: UpdateIgnore.java
  * @Description: 文件说明
  * @Date: 2023/2/11 21:38
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

@@ -6,7 +6,7 @@ import com.easy.query.core.exception.EasyQueryConcurrentException;
  * @FileName: SqlExecuteRows.java
  * @Description: update delete执行抽象
  * @Date: 2023/3/17 17:15
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public interface SqlExecuteExpectRows extends SqlExecuteRows{
 

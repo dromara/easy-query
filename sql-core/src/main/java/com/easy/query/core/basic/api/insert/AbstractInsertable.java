@@ -18,7 +18,7 @@ import java.util.List;
  * @FileName: AbstractInsertable.java
  * @Description: 文件说明
  * @Date: 2023/2/20 12:30
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public abstract class AbstractInsertable<T> implements Insertable<T> {
     protected final List<T> entities;

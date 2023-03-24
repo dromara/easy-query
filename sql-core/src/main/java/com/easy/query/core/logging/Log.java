@@ -4,7 +4,7 @@ package com.easy.query.core.logging;
  * @FileName: Log.java
  * @Description: 文件说明
  * @Date: 2023/3/10 13:45
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public interface Log {
 

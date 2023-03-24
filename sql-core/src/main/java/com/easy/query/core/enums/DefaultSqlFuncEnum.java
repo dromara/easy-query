@@ -7,7 +7,7 @@ import com.easy.query.core.basic.enums.SqlFuncEnum;
  * @FileName: DefaultSqlFuncEnum.java
  * @Description: 文件说明
  * @Date: 2023/2/6 17:33
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public enum DefaultSqlFuncEnum implements SqlFuncEnum {
 

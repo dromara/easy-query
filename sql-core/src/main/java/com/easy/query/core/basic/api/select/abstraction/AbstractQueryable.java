@@ -51,7 +51,7 @@ import java.util.function.Consumer;
  * @FileName: AbstractSelect0.java
  * @Description: 文件说明
  * @Date: 2023/2/6 23:44
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     protected final Class<T1> t1Class;

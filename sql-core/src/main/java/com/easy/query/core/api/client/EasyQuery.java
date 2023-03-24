@@ -18,7 +18,7 @@ import java.util.List;
  * @FileName: JQDCClient.java
  * @Description: 文件说明
  * @Date: 2023/2/5 21:27
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public interface EasyQuery {
     EasyQueryRuntimeContext getRuntimeContext();

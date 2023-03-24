@@ -9,7 +9,7 @@ import java.lang.annotation.*;
  * @FileName: LogicDelete.java
  * @Description: 逻辑删除标识
  * @Date: 2023/2/26 22:47
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

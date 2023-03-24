@@ -7,7 +7,7 @@ import com.easy.query.core.query.SqlEntityQueryExpression;
  * @FileName: EasyQueryable.java
  * @Description: 文件说明
  * @Date: 2023/3/6 08:28
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class EasyQueryable<T> extends AbstractQueryable1<T> {
     public EasyQueryable(Class<T> tClass, SqlEntityQueryExpression sqlEntityExpression) {

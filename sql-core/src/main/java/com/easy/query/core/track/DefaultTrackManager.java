@@ -21,7 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @FileName: DeffaultTrackManager.java
  * @Description: 文件说明
  * @Date: 2023/3/19 17:07
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class DefaultTrackManager implements TrackManager{
     private final ThreadLocal<TrackContext> threadTC = ThreadLocal.withInitial(() -> null);

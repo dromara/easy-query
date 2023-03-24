@@ -10,7 +10,7 @@ import java.sql.Types;
  * @FileName: CharArrayTypeHandler.java
  * @Description: 文件说明
  * @Date: 2023/2/17 21:53
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class CharArrayTypeHandler implements JdbcTypeHandler{
     @Override

@@ -11,7 +11,7 @@ import com.easy.query.core.query.SqlEntityUpdateExpression;
  * @FileName: EasyEmptyEntityUpdate.java
  * @Description: 文件说明
  * @Date: 2023/3/6 12:21
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class EasyEmptyEntityUpdatable<T> implements EntityUpdatable<T> {
     @Override

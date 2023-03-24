@@ -8,7 +8,7 @@ import com.easy.query.core.query.SqlEntityDeleteExpression;
  * @FileName: EasyEmptyEntityDeletable.java
  * @Description: 文件说明
  * @Date: 2023/3/6 13:22
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class EasyEmptyEntityDeletable<T> implements EntityDeletable<T> {
     @Override

@@ -10,7 +10,7 @@ import java.util.Objects;
  * @FileName: DefaultEasyConnection.java
  * @Description: 文件说明
  * @Date: 2023/2/21 09:26
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class DefaultEasyConnection implements EasyConnection {
     private final Connection connection;

@@ -10,7 +10,7 @@ import java.util.*;
  * @FileName: UpdateSetSqlSegmentBuilder.java
  * @Description: 文件说明
  * @Date: 2023/2/24 22:15
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class UpdateSetSqlBuilderSegment extends AbstractSqlBuilderSegment {
 

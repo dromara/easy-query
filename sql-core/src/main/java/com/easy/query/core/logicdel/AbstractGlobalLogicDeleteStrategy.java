@@ -16,7 +16,7 @@ import java.util.Set;
  * @FileName: AbstractGlobalLogicDeleteStrategy.java
  * @Description: 文件说明
  * @Date: 2023/3/7 08:04
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public abstract class AbstractGlobalLogicDeleteStrategy implements GlobalLogicDeleteStrategy {
 

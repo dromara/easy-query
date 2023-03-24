@@ -9,7 +9,7 @@ import com.easy.query.core.query.SqlEntityTableExpression;
  * @FileName: ColumnPropertyPredicate.java
  * @Description: column和某个bean的值的断言节点
  * @Date: 2023/2/13 15:18
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class ColumnPropertyPredicate implements Predicate {
     private final SqlEntityTableExpression table;

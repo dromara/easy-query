@@ -45,7 +45,7 @@ import java.util.Properties;
  * @FileName: BaseTest.java
  * @Description: 基础单元测试类用于构建easy-query
  * @Date: 2023/3/16 16:47
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public abstract class BaseTest {
     public static HikariDataSource dataSource;

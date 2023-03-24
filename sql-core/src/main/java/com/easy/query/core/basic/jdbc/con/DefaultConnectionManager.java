@@ -11,7 +11,7 @@ import java.sql.SQLException;
  * @FileName: DefaultConnectionManager.java
  * @Description: 文件说明
  * @Date: 2023/2/21 08:57
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class DefaultConnectionManager implements EasyConnectionManager {
     private final ThreadLocal<Transaction> threadTx = ThreadLocal.withInitial(() -> null);

@@ -10,7 +10,7 @@ import java.util.Map;
  * @FileName: OrderByPropertyBuilder.java
  * @Description: 文件说明
  * @Date: 2023/3/23 17:24
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class DefaultEasyDynamicOrderByPropertyBuilder<TEntity> implements EasyDynamicOrderByPropertyBuilder<TEntity> {
     private final Map<String, Class<?>> orderEntityMap;

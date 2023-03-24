@@ -8,7 +8,7 @@ import com.easy.query.core.query.SqlEntityTableExpression;
  * @FileName: OrderColumnSegment.java
  * @Description: 文件说明
  * @Date: 2023/2/13 22:18
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class OrderColumnSegment extends ColumnSegment{
     public boolean isAsc() {

@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
  * @FileName: BaseEntity.java
  * @Description: 文件说明
  * @Date: 2023/3/16 17:23
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 @Data
 public class BaseEntity implements Serializable {

@@ -11,7 +11,7 @@ import java.util.List;
  * @FileName: SQLUtil.java
  * @Description: 文件说明
  * @Date: 2023/3/9 22:40
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class SQLUtil {
     private SQLUtil() {

@@ -8,7 +8,7 @@ import com.easy.query.core.query.SqlEntityTableExpression;
  * @FileName: FuncColumnSegment.java
  * @Description: 文件说明
  * @Date: 2023/2/19 22:17
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class FuncColumnSegment  implements SqlEntityAliasSegment {
 

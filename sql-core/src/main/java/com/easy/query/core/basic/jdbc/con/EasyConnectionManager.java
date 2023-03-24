@@ -6,7 +6,7 @@ import com.easy.query.core.basic.jdbc.tx.Transaction;
  * @FileName: ConnectionManager.java
  * @Description: 文件说明
  * @Date: 2023/2/21 08:56
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public interface EasyConnectionManager {
     default Transaction beginTransaction(){

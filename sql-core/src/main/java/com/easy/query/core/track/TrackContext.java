@@ -4,7 +4,7 @@ package com.easy.query.core.track;
  * @FileName: TrackContext.java
  * @Description: 文件说明
  * @Date: 2023/3/18 21:21
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public interface TrackContext {
     void begin();

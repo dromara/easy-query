@@ -14,7 +14,7 @@ import java.util.Map;
  * @FileName: TableInfo.java
  * @Description: 文件说明
  * @Date: 2023/2/10 23:34
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class TableInfo {
 

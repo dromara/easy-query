@@ -10,7 +10,7 @@ import com.easy.query.core.query.SqlEntityTableExpression;
  * @FileName: ColumnValuePredicate.java
  * @Description: colum和具体值的断言
  * @Date: 2023/2/14 23:34
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class ColumnValuePredicate0 implements Predicate {
     private final SqlEntityTableExpression table;

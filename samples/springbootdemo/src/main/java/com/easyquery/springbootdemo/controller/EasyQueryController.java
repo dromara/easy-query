@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @FileName: EasyQueryController.java
  * @Description: 文件说明
  * @Date: 2023/3/11 14:37
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 @RestController
 @RequestMapping("/easy-query")

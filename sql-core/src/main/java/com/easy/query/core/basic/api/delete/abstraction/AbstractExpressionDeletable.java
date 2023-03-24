@@ -28,7 +28,7 @@ import java.util.Collection;
  * @FileName: AbstractExpressionDelete.java
  * @Description: 文件说明
  * @Date: 2023/3/1 22:30
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public abstract   class AbstractExpressionDeletable<T> extends AbstractSqlExecuteRows implements ExpressionDeletable<T> {
     protected final Class<T> clazz;

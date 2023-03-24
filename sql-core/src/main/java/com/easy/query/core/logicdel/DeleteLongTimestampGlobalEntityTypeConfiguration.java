@@ -15,7 +15,7 @@ import java.util.Set;
  * @FileName: TimestampGlobalEntityTypeConfiguration.java
  * @Description: 文件说明
  * @Date: 2023/3/6 22:45
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class DeleteLongTimestampGlobalEntityTypeConfiguration extends AbstractGlobalLogicDeleteStrategy {
     @Override

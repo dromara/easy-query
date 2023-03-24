@@ -6,7 +6,7 @@ import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
  * @FileName: EasyOrderBuilder.java
  * @Description: 文件说明
  * @Date: 2023/3/23 21:16
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public interface EasyDynamicOrderByBuilder {
     <TEntity> EasyDynamicOrderByPropertyBuilder<TEntity> entity(Class<TEntity> entityClass);

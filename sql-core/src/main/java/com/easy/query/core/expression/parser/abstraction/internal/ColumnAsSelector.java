@@ -7,7 +7,7 @@ import com.easy.query.core.expression.lambda.Property;
  * @FileName: SqlSelector.java
  * @Description: 文件说明
  * @Date: 2023/2/6 22:58
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public interface ColumnAsSelector<T1,TR, TChain> extends ColumnSelector<T1,TChain> {
     TChain columnAs(Property<T1,?> column, Property<TR, ?> alias);

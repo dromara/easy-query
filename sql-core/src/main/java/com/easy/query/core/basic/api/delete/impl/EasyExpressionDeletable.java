@@ -7,7 +7,7 @@ import com.easy.query.core.query.SqlEntityDeleteExpression;
  * @FileName: EasyExpressionDeletable.java
  * @Description: 文件说明
  * @Date: 2023/3/6 13:21
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class EasyExpressionDeletable<T> extends AbstractExpressionDeletable<T> {
     public EasyExpressionDeletable(Class<T> clazz, SqlEntityDeleteExpression sqlEntityDeleteExpression) {

@@ -6,7 +6,7 @@ import java.lang.reflect.Method;
  * @FileName: MethodInvoker.java
  * @Description: 文件说明
  * @Date: 2023/2/23 21:25
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public interface MethodInvoker {
     /**

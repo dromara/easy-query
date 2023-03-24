@@ -10,7 +10,7 @@ import java.util.List;
  * @FileName: AbstractSqlEntityExpression.java
  * @Description: 文件说明
  * @Date: 2023/3/6 08:58
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public abstract class AbstractSqlEntityExpression implements SqlEntityExpression {
     protected final SqlExpressionContext sqlExpressionContext;

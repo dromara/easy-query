@@ -4,7 +4,7 @@ package com.easy.query.core.expression.segment;
  * @FileName: SelectCountSegment.java
  * @Description: 文件说明
  * @Date: 2023/3/3 12:52
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class SelectConstSegment implements SqlSegment{
     private final String projects;

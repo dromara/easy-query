@@ -8,7 +8,7 @@ import com.easy.query.core.basic.api.select.provider.Select1SqlProvider;
  * @FileName: AbstractQueryable1.java
  * @Description: 文件说明
  * @Date: 2023/3/4 14:12
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public abstract class AbstractQueryable1<T> extends AbstractQueryable<T> {
     protected final Select1SqlProvider<T> sqlPredicateProvider;

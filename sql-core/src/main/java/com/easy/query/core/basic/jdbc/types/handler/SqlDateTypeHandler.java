@@ -10,7 +10,7 @@ import java.sql.Types;
  * @FileName: SqlDateTypeHandler.java
  * @Description: 文件说明
  * @Date: 2023/2/17 21:56
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class SqlDateTypeHandler implements JdbcTypeHandler {
     @Override

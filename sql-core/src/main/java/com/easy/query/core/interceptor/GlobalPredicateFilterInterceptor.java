@@ -10,7 +10,7 @@ import com.easy.query.core.query.SqlEntityUpdateExpression;
  * @FileName: GlobalQueryFilterInterceptor.java
  * @Description: 文件说明
  * @Date: 2023/3/7 22:25
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public interface GlobalPredicateFilterInterceptor extends GlobalInterceptor {
 

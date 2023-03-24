@@ -10,7 +10,7 @@ import java.sql.Types;
  * @FileName: DefaultJdbcTypeHandler.java
  * @Description: 文件说明
  * @Date: 2023/2/17 21:17
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class ObjectTypeHandler implements JdbcTypeHandler{
     @Override

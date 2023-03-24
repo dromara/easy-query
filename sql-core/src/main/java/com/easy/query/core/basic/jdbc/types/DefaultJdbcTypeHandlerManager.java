@@ -13,7 +13,7 @@ import java.util.HashMap;
  * @FileName: DefaultJdbcTypeHandler.java
  * @Description: 文件说明
  * @Date: 2023/2/17 22:09
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class DefaultJdbcTypeHandlerManager implements EasyJdbcTypeHandlerManager {
     private static final BigDecimalTypeHandler bigDecimalHandler = new BigDecimalTypeHandler();

@@ -9,7 +9,7 @@ import com.easy.query.core.query.SqlEntityExpression;
  * @FileName: AbstractSqlExecuteRows.java
  * @Description: 文件说明
  * @Date: 2023/3/17 17:14
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public abstract class AbstractSqlExecuteRows implements SqlExecuteExpectRows {
     private final SqlEntityExpression sqlEntityExpression;

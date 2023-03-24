@@ -10,7 +10,7 @@ import java.util.List;
  * @FileName: QueryExpressionContext.java
  * @Description: 文件说明
  * @Date: 2023/3/3 23:05
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public interface SqlExpressionContext {
     EasyQueryRuntimeContext getRuntimeContext();

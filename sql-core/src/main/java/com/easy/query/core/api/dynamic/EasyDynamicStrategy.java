@@ -8,7 +8,7 @@ import java.util.Objects;
  * @FileName: EasyDynamicStrategy.java
  * @Description: 文件说明
  * @Date: 2023/3/24 08:12
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public interface EasyDynamicStrategy {
     /**

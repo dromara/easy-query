@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
  * @FileName: TestUserMysqlx.java
  * @Description: 文件说明
  * @Date: 2023/2/11 21:42
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class TestUserMysqlx {
     private String id;

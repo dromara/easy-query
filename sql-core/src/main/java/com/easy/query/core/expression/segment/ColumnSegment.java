@@ -7,7 +7,7 @@ import com.easy.query.core.query.SqlEntityTableExpression;
  * @FileName: ColumnSegment.java
  * @Description: 文件说明
  * @Date: 2023/2/13 15:18
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class ColumnSegment implements SqlEntityAliasSegment {
 

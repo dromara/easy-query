@@ -34,7 +34,7 @@ import java.util.List;
  * @FileName: AbstractExpressionUpdate.java
  * @Description: 文件说明
  * @Date: 2023/2/25 08:24
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public abstract class AbstractExpressionUpdatable<T> extends AbstractSqlExecuteRows implements ExpressionUpdatable<T> {
     protected final Class<T> clazz;

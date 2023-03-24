@@ -9,7 +9,7 @@ import com.easy.query.core.query.SqlExpressionContext;
  * @FileName: MySQLEntityExpression.java
  * @Description: 文件说明
  * @Date: 2023/3/4 13:04
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class MySqlQueryExpression extends EasySqlQueryExpression {
     public MySqlQueryExpression(SqlExpressionContext queryExpressionContext) {

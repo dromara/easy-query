@@ -8,7 +8,7 @@ import com.easy.query.core.basic.jdbc.con.EasyConnectionManager;
  * @FileName: DefaultTransaction.java
  * @Description: 文件说明
  * @Date: 2023/2/20 22:11
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class DefaultTransaction implements Transaction {
 

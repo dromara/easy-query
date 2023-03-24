@@ -3,7 +3,7 @@
  * @FileName: SysUser.java
  * @Description: 文件说明
  * @Date: 2023/2/4 23:07
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class SysUser {
     public String getId() {

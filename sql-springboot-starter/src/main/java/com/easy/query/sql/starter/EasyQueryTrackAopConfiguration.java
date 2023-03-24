@@ -14,7 +14,7 @@ import java.lang.reflect.Method;
  * @FileName: EasyQueryTrackAopConfiguration.java
  * @Description: 文件说明
  * @Date: 2023/3/20 20:58
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 @Aspect
 @Configuration

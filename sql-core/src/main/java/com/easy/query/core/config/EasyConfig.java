@@ -4,7 +4,7 @@ package com.easy.query.core.config;
  * @FileName: EasyConfig.java
  * @Description: 文件说明
  * @Date: 2023/2/16 21:46
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public interface EasyConfig {
     String getName();

@@ -10,7 +10,7 @@ import com.easy.query.core.util.EasyUtil;
  * @FileName: NameQueryFilter.java
  * @Description: 文件说明
  * @Date: 2023/3/8 10:24
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class NameQueryFilter implements GlobalPredicateFilterInterceptor {
     @Override

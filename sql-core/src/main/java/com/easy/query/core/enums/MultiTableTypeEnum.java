@@ -5,7 +5,7 @@ package com.easy.query.core.enums;
  * @FileName: SelectTableInfoTypeEnum.java
  * @Description: 文件说明
  * @Date: 2023/2/7 11:40
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public enum MultiTableTypeEnum {
     FROM(1),

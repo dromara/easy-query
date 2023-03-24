@@ -11,7 +11,7 @@ import com.easy.query.core.query.*;
  * @FileName: FuncColumnValuePredicate.java
  * @Description: column加方法函数和对应的值比较
  * @Date: 2023/2/14 23:34
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class FuncColumnValuePredicate0 implements Predicate {
     private final SqlEntityTableExpression table;

@@ -8,7 +8,7 @@ import com.easy.query.core.expression.parser.abstraction.*;
  * @FileName: EasyQueryLambdaBuilder.java
  * @Description: 文件说明
  * @Date: 2023/2/12 10:02
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public interface EasyQuerySqlBuilderProvider3<T1,T2,T3> extends EasyQuerySqlBuilderProvider2<T1,T2> {
     SqlColumnSelector<T3> getSqlGroupColumnSelector3();

@@ -6,7 +6,7 @@ import com.easy.query.core.query.SqlEntityQueryExpression;
  * @FileName: Query.java
  * @Description: 文件说明
  * @Date: 2023/3/3 16:30
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public interface Query<T> {
     /**

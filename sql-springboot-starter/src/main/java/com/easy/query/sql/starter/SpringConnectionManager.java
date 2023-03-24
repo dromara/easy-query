@@ -12,7 +12,7 @@ import javax.sql.DataSource;
  * @FileName: SpringConnectionManager.java
  * @Description: 文件说明
  * @Date: 2023/3/10 22:01
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class SpringConnectionManager extends DefaultConnectionManager {
     public SpringConnectionManager(DataSource dataSource) {

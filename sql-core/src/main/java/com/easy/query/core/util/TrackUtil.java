@@ -16,7 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @FileName: TrackUtil.java
  * @Description: 文件说明
  * @Date: 2023/3/19 21:36
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class TrackUtil {
     private static final ConcurrentHashMap<Class<?>, TrackKeyFunc<Object>> trackKeyFuncMap = new ConcurrentHashMap<>();

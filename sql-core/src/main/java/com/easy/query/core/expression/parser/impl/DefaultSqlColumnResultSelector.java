@@ -13,7 +13,7 @@ import com.easy.query.core.query.SqlEntityExpression;
  * @FileName: DefaultColumnResultSelector.java
  * @Description: 文件说明
  * @Date: 2023/3/8 21:35
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class DefaultSqlColumnResultSelector<T1,TR> implements SqlColumnResultSelector<T1, TR> {
     private final int index;

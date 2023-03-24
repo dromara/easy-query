@@ -4,7 +4,7 @@ package com.easy.query.core.basic.enums;
  * @FileName: LogicDeleteStrategyEnum.java
  * @Description: 逻辑删除策略
  * @Date: 2023/3/6 22:36
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public enum LogicDeleteStrategyEnum {
     /**

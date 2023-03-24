@@ -14,7 +14,7 @@ import java.util.Random;
  * @FileName: UpdateTest.java
  * @Description: 文件说明
  * @Date: 2023/3/20 21:58
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class UpdateTest extends BaseTest {
 

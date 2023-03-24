@@ -31,7 +31,7 @@ import java.util.Objects;
  * @FileName: AbstractQueryable4.java
  * @Description: 文件说明
  * @Date: 2023/3/9 12:38
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public abstract class AbstractQueryable4<T1, T2, T3,T4> extends AbstractQueryable<T1> implements Queryable4<T1, T2, T3,T4> {
     private final Class<T2> t2Class;

@@ -18,7 +18,7 @@ import java.util.List;
  * @FileName: EasyEntityTableExpressionSegment.java
  * @Description: 文件说明
  * @Date: 2023/3/3 23:31
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class EasyEntityTableExpression implements SqlEntityTableExpression {
 

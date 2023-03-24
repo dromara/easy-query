@@ -7,7 +7,7 @@ import com.easy.query.core.expression.segment.condition.PredicateSegment;
  * @FileName: SqlEntityUpdateExpression.java
  * @Description: 文件说明
  * @Date: 2023/3/4 17:04
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public interface SqlEntityUpdateExpression extends SqlEntityExpression {
 

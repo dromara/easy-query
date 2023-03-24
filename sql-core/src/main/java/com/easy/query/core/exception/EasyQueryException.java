@@ -5,7 +5,7 @@ package com.easy.query.core.exception;
  * @FileName: JDQCException.java
  * @Description: 文件说明
  * @Date: 2023/2/7 12:36
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 public class EasyQueryException extends RuntimeException{
     public EasyQueryException(String msg){

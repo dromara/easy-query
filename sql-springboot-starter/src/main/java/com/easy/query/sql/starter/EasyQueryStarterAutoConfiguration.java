@@ -40,7 +40,7 @@ import java.util.Map;
  * @FileName: EasyQueryStarter.java
  * @Description: 文件说明
  * @Date: 2023/3/11 12:47
- * @Created by xuejiaming
+ * @author xuejiaming
  */
 @Configuration
 @EnableConfigurationProperties(EasyQueryProperties.class)
