@@ -2,7 +2,7 @@ package com.easy.query.core.expression.parser.abstraction.internal;
 
 import com.easy.query.core.enums.AggregatePredicateCompare;
 import com.easy.query.core.enums.EasyAggregate;
-import com.easy.query.core.enums.IEasyFunc;
+import com.easy.query.core.enums.EasyFunc;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.SqlExpression;
 import com.easy.query.core.enums.SqlPredicateCompare;
@@ -50,7 +50,7 @@ public interface AggregatePredicate<T1, TChain> extends  IndexAware {
     default TChain count(boolean condition, Property<T1, ?> column, SqlPredicateCompare compare, Object val){
         return func(condition, EasyAggregate.COUNT,column,compare,val);
     }
-    TChain func(boolean condition, IEasyFunc easyAggregate, Property<T1, ?> column, SqlPredicateCompare compare, Object val);
+    TChain func(boolean condition, EasyFunc easyAggregate, Property<T1, ?> column, SqlPredicateCompare compare, Object val);
 
 
     <T2, TChain2> AggregatePredicate<T2, TChain2> then(AggregatePredicate<T2, TChain2> sub);

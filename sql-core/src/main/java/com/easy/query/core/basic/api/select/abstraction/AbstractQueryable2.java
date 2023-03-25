@@ -18,7 +18,7 @@ import com.easy.query.core.query.SqlEntityTableExpression;
 import com.easy.query.core.util.ArrayUtil;
 import com.easy.query.core.abstraction.metadata.ColumnMetadata;
 import com.easy.query.core.enums.EasyAggregate;
-import com.easy.query.core.enums.IEasyFunc;
+import com.easy.query.core.enums.EasyFunc;
 import com.easy.query.core.basic.api.select.Queryable;
 import com.easy.query.core.expression.parser.abstraction.SqlPredicate;
 import com.easy.query.core.expression.parser.abstraction.SqlColumnResultSelector;
@@ -153,7 +153,7 @@ public abstract class AbstractQueryable2<T1, T2> extends AbstractQueryable<T1> i
         return sqlEntityExpression.getRuntimeContext().getSqlApiFactory().createQueryable(resultClass, sqlEntityExpression);
     }
 
-    private <TMember> List<TMember> selectAggregateList(SqlExpression2<SqlColumnResultSelector<T1, TMember>, SqlColumnResultSelector<T2, TMember>> columnSelectorExpression, IEasyFunc easyFunc) {
+    private <TMember> List<TMember> selectAggregateList(SqlExpression2<SqlColumnResultSelector<T1, TMember>, SqlColumnResultSelector<T2, TMember>> columnSelectorExpression, EasyFunc easyFunc) {
 
         ProjectSqlBuilderSegment projectSqlBuilderSegment = new ProjectSqlBuilderSegment();
 

@@ -1,6 +1,6 @@
 package com.easy.query.core.expression.segment;
 
-import com.easy.query.core.enums.IEasyFunc;
+import com.easy.query.core.enums.EasyFunc;
 import com.easy.query.core.query.SqlEntityExpression;
 import com.easy.query.core.query.SqlEntityTableExpression;
 
@@ -16,13 +16,13 @@ public class FuncColumnSegment  implements SqlEntityAliasSegment {
     protected final SqlEntityTableExpression table;
     protected final String propertyName;
     protected final SqlEntityExpression sqlEntityExpression;
-    protected final IEasyFunc easyFunc;
+    protected final EasyFunc easyFunc;
     protected String alias;
 
-    public FuncColumnSegment(SqlEntityTableExpression table, String propertyName, SqlEntityExpression sqlEntityExpression, IEasyFunc easyFunc){
+    public FuncColumnSegment(SqlEntityTableExpression table, String propertyName, SqlEntityExpression sqlEntityExpression, EasyFunc easyFunc){
         this(table,propertyName,sqlEntityExpression,easyFunc,null);
     }
-    public FuncColumnSegment(SqlEntityTableExpression table, String propertyName, SqlEntityExpression sqlEntityExpression, IEasyFunc easyFunc, String alias){
+    public FuncColumnSegment(SqlEntityTableExpression table, String propertyName, SqlEntityExpression sqlEntityExpression, EasyFunc easyFunc, String alias){
         this.table = table;
         this.propertyName = propertyName;
         this.sqlEntityExpression = sqlEntityExpression;

@@ -31,6 +31,30 @@ public abstract class AbstractAesEasyEncryptionStrategy implements EasyEncryptio
 
     public abstract String getKey();
 
+    /**
+     * 加密最小长度
+     * @return
+     */
+    public int encryptWordMinLength(){
+        return 4;
+    }
+
+    /**
+     * 一个中文占用2 如果用中文来查询那么需要两个中文或者一个中文2个非中文才可以查询到数据
+     * @return
+     */
+    public int chineseCharOccupancyLength(){
+        return 2;
+    }
+
+    /**
+     * 非中文占用1 如果用非中文来查询需要4个字符才可以查询
+     * @return
+     */
+    public int otherCharOccupancyLength(){
+        return 1;
+    }
+
     public boolean throwIfDecryptFail() {
         return true;
     }
@@ -41,7 +65,7 @@ public abstract class AbstractAesEasyEncryptionStrategy implements EasyEncryptio
             return null;
         }
         String plaintextString = plaintext.toString();
-        List<String> stringCharSegments = StringUtil.getStringCharSegments(plaintextString, minWordLength);
+        List<String> stringCharSegments = StringUtil.getStringCharSegments(plaintextString, encryptWordMinLength(),otherCharOccupancyLength(),chineseCharOccupancyLength());
         if (ArrayUtil.isEmpty(stringCharSegments)) {
             stringCharSegments.add(plaintextString);
 //            throw new EasyQueryException("输入字符不符合要求,中文一个字符2位长度,英文数字字母等一个字符一位长度，最小输入数据必须满足4位长度:" + plaintextString);

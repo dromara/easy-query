@@ -29,7 +29,7 @@ import com.easy.query.core.query.AnonymousEntityTableExpression;
 import com.easy.query.core.query.SqlEntityQueryExpression;
 import com.easy.query.core.query.SqlEntityTableExpression;
 import com.easy.query.core.util.*;
-import com.easy.query.core.enums.IEasyFunc;
+import com.easy.query.core.enums.EasyFunc;
 import com.easy.query.core.basic.api.select.Queryable;
 import com.easy.query.core.basic.jdbc.executor.EasyExecutor;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
@@ -154,7 +154,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
         return ArrayUtil.firstOrDefault(result, def);
     }
 
-    private <TMember> List<TMember> selectAggregateList(Property<T1, ?> column, IEasyFunc easyFunc) {
+    private <TMember> List<TMember> selectAggregateList(Property<T1, ?> column, EasyFunc easyFunc) {
         SqlEntityTableExpression table = sqlEntityExpression.getTable(0);
         String propertyName = table.getPropertyName(column);
         ColumnMetadata columnMetadata = EasyUtil.getColumnMetadata(table, propertyName);
@@ -624,6 +624,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
         sqlEntityExpression.getSqlExpressionContext().enableLogicDelete();
         return this;
     }
+
 
     @Override
     public Queryable<T1> noInterceptor() {

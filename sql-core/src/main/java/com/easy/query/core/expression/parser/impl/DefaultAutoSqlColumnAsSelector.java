@@ -3,6 +3,7 @@ package com.easy.query.core.expression.parser.impl;
 import com.easy.query.core.abstraction.metadata.ColumnMetadata;
 import com.easy.query.core.abstraction.metadata.EntityMetadata;
 import com.easy.query.core.enums.EasyAggregate;
+import com.easy.query.core.enums.EasyFunc;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.parser.abstraction.SqlColumnAsSelector;
 import com.easy.query.core.expression.parser.abstraction.internal.ColumnAsSelector;
@@ -75,79 +76,12 @@ public class DefaultAutoSqlColumnAsSelector<T1, TR> extends AbstractSqlColumnSel
         }
         return this;
     }
-
-    @Override
-    public SqlColumnAsSelector<T1, TR> columnCount(Property<T1, ?> column) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public SqlColumnAsSelector<T1, TR> columnCount(Property<T1, ?> column, Property<TR, ?> alias) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public SqlColumnAsSelector<T1, TR> columnDistinctCount(Property<T1, ?> column) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public SqlColumnAsSelector<T1, TR> columnDistinctCount(Property<T1, ?> column, Property<TR, ?> alias) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public SqlColumnAsSelector<T1, TR> columnSum(Property<T1, Number> column) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public SqlColumnAsSelector<T1, TR> columnSum(Property<T1, Number> column, Property<TR, Number> alias) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public SqlColumnAsSelector<T1, TR> columnMax(Property<T1, ?> column) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public SqlColumnAsSelector<T1, TR> columnMax(Property<T1, ?> column, Property<TR, ?> alias) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public SqlColumnAsSelector<T1, TR> columnMin(Property<T1, ?> column) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public SqlColumnAsSelector<T1, TR> columnMin(Property<T1, ?> column, Property<TR, ?> alias) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public SqlColumnAsSelector<T1, TR> columnAvg(Property<T1, Number> column) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public SqlColumnAsSelector<T1, TR> columnAvg(Property<T1, Number> column, Property<TR, Number> alias) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public SqlColumnAsSelector<T1, TR> columnLen(Property<T1, ?> column) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public SqlColumnAsSelector<T1, TR> columnLen(Property<T1, ?> column, Property<TR, ?> alias) {
-        throw new UnsupportedOperationException();
-    }
-
     @Override
     public <T2, TChain2> ColumnAsSelector<T2, TR, TChain2> then(ColumnAsSelector<T2, TR, TChain2> sub) {
+        throw new UnsupportedOperationException();
+    }
+    @Override
+    public SqlColumnAsSelector<T1, TR> columnFunc(Property<T1, ?> column, Property<TR, ?> alias, EasyFunc easyFunc) {
         throw new UnsupportedOperationException();
     }
 

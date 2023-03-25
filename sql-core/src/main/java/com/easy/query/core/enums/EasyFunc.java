@@ -6,6 +6,6 @@ package com.easy.query.core.enums;
  * @Date: 2023/2/18 22:24
  * @author xuejiaming
  */
-public interface IEasyFunc {
+public interface EasyFunc {
     String getFuncColumn(String column);
 }

@@ -6,7 +6,7 @@ package com.easy.query.core.enums;
  * @Date: 2023/2/18 22:24
  * @author xuejiaming
  */
-public enum EasyAggregate implements IEasyFunc {
+public enum EasyAggregate implements EasyFunc {
     SUM("SUM(%s)"),
     COUNT("COUNT(%s)"),
     COUNT_DISTINCT("COUNT(DISTINCT %s)"),

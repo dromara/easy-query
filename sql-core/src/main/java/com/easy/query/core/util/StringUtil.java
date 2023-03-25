@@ -402,14 +402,14 @@ public class StringUtil {
         return c >= 0x4e00 && c <= 0x9fa5;
     }
 
-    public static List<String> getStringCharSegments(String str, int maxCharLen) {
+    public static List<String> getStringCharSegments(String str, int maxCharLen,int otherCharLength,int chineseCharLength) {
         ArrayList<String> segments = new ArrayList<>(str.length());
         for (int i = 0; i < str.length(); i++) {
             int len = 0;
             StringBuilder segmentBuilder = new StringBuilder();
             for (int j = i; j < str.length() && len < maxCharLen; j++) {
                 char c = str.charAt(j);
-                len += isChineseChar(c) ? 2 : 1;
+                len += isChineseChar(c) ? chineseCharLength : otherCharLength;
                 segmentBuilder.append(c);
             }
             if (segmentBuilder.length() == 0||len<maxCharLen) {

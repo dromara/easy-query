@@ -1,6 +1,6 @@
 package com.easy.query.core.expression.segment.condition.predicate;
 
-import com.easy.query.core.enums.IEasyFunc;
+import com.easy.query.core.enums.EasyFunc;
 import com.easy.query.core.query.SqlEntityExpression;
 import com.easy.query.core.query.SqlEntityTableExpression;
 import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
@@ -14,13 +14,13 @@ import com.easy.query.core.enums.SqlPredicateCompare;
  */
 public class FuncColumnValuePredicate0 implements Predicate {
     private final SqlEntityTableExpression table;
-    private final IEasyFunc func;
+    private final EasyFunc func;
     private final String propertyName;
     private final Object val;
     private final SqlPredicateCompare compare;
     private final SqlEntityExpression sqlEntityExpression;
 
-    public FuncColumnValuePredicate0(SqlEntityTableExpression table, IEasyFunc func, String propertyName, Object val, SqlPredicateCompare compare, SqlEntityExpression sqlEntityExpression) {
+    public FuncColumnValuePredicate0(SqlEntityTableExpression table, EasyFunc func, String propertyName, Object val, SqlPredicateCompare compare, SqlEntityExpression sqlEntityExpression) {
         this.table = table;
         this.propertyName = propertyName;
 

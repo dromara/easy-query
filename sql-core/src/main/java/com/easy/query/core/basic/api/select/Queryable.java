@@ -313,6 +313,7 @@ public interface Queryable<T1> extends Query<T1> {
     Queryable<T1> disableLogicDelete();
 
     Queryable<T1> enableLogicDelete();
+//    Queryable<T1> logicDelete(boolean use);
 
     Queryable<T1> noInterceptor();
 
