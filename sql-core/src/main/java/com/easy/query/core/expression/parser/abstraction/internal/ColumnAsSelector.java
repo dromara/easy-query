@@ -12,7 +12,7 @@ import com.easy.query.core.expression.lambda.Property;
  * @author xuejiaming
  */
 public interface ColumnAsSelector<T1,TR, TChain> extends ColumnSelector<T1,TChain> {
-    TChain columnAs(Property<T1,?> column, Property<TR, ?> alias);
+   TChain columnAs(Property<T1,?> column, Property<TR, ?> alias);
    default TChain columnCount(Property<T1,?> column){
        return columnCount(column,null);
    }

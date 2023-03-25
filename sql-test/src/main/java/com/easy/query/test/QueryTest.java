@@ -4,6 +4,7 @@ import com.easy.query.BaseTest;
 import com.easy.query.core.api.pagination.PageResult;
 import com.easy.query.core.basic.api.select.Queryable;
 import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
+import com.easy.query.dto.TopicGroupTestDTO;
 import com.easy.query.dto.TopicRequest;
 import com.easy.query.entity.BlogEntity;
 import com.easy.query.entity.Topic;
@@ -293,6 +294,58 @@ public class QueryTest extends BaseTest {
         Topic topic = easyQuery
                 .queryable(Topic.class).whereObject(topicRequest).orderByDynamic(topicRequest).firstOrNull();
         Assert.assertNotNull(topic);
+    }
+    @Test
+    public void query19() {
+
+        Queryable<TopicGroupTestDTO> sql = easyQuery
+                .queryable(Topic.class)
+                .where(o -> o.eq(Topic::getId, "3"))
+                .groupBy(o->o.column(Topic::getId))
+                .select(TopicGroupTestDTO.class, o->o.columnAs(Topic::getId,TopicGroupTestDTO::getId).columnCount(Topic::getId,TopicGroupTestDTO::getIdCount));
+        List<BlogEntity> topics = easyQuery
+                .queryable(BlogEntity.class)
+                .leftJoin(sql,(a,b)->a.eq(b,BlogEntity::getId,TopicGroupTestDTO::getId))
+                .where(o -> o.isNotNull(BlogEntity::getId).eq(BlogEntity::getId,"3"))
+                .toList();
+        Assert.assertNotNull(topics);
+        Assert.assertEquals(1, topics.size());
+
+
+    }
+    @Test
+    public void query20() {
+
+        Queryable<TopicGroupTestDTO> sql = easyQuery
+                .queryable(Topic.class)
+                .where(o -> o.eq(Topic::getId, "3"))
+                .groupBy(o->o.column(Topic::getId))
+                .select(TopicGroupTestDTO.class, o->o.columnAs(Topic::getId,TopicGroupTestDTO::getId).columnCount(Topic::getId,TopicGroupTestDTO::getIdCount));
+        String s = sql.toSql();
+        Assert.assertEquals("SELECT t.`id` AS `id`,COUNT(t.`id`) AS `idCount` FROM t_topic t WHERE t.`id` = ? GROUP BY t.`id`",s);
+        List<TopicGroupTestDTO> topicGroupTestDTOS = sql.toList();
+        Assert.assertNotNull(topicGroupTestDTOS);
+        Assert.assertEquals(1,topicGroupTestDTOS.size());
+        TopicGroupTestDTO topicGroupTestDTO = topicGroupTestDTOS.get(0);
+        Assert.assertEquals(1,(int)topicGroupTestDTO.getIdCount());
+        Assert.assertEquals("3",topicGroupTestDTO.getId());
+    }
+    @Test
+    public void query21() {
+
+        Queryable<TopicGroupTestDTO> sql = easyQuery
+                .queryable(Topic.class)
+                .where(o -> o.eq(Topic::getId, "3"))
+                .groupBy(o->o.column(Topic::getId))
+                .select(TopicGroupTestDTO.class, o->o.column(Topic::getId).columnCount(Topic::getId,TopicGroupTestDTO::getIdCount));
+        String s = sql.toSql();
+        Assert.assertEquals("SELECT t.`id`,COUNT(t.`id`) AS `idCount` FROM t_topic t WHERE t.`id` = ? GROUP BY t.`id`",s);
+        List<TopicGroupTestDTO> topicGroupTestDTOS = sql.toList();
+        Assert.assertNotNull(topicGroupTestDTOS);
+        Assert.assertEquals(1,topicGroupTestDTOS.size());
+        TopicGroupTestDTO topicGroupTestDTO = topicGroupTestDTOS.get(0);
+        Assert.assertEquals(1,(int)topicGroupTestDTO.getIdCount());
+        Assert.assertEquals("3",topicGroupTestDTO.getId());
     }
 
 }
