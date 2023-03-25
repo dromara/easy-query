@@ -23,7 +23,10 @@ import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.metadata.DefaultEntityMetadataManager;
 import com.easy.query.core.track.DefaultTrackManager;
+import com.easy.query.core.util.StringUtil;
+import com.easy.query.encryption.DefaultAesEasyEncryptionStrategy;
 import com.easy.query.entity.BlogEntity;
+import com.easy.query.entity.SysUser;
 import com.easy.query.entity.Topic;
 import com.easy.query.entity.TopicAuto;
 import com.easy.query.mysql.MySqlExpressionFactory;
@@ -37,9 +40,7 @@ import org.junit.Test;
 import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * @FileName: BaseTest.java
@@ -80,7 +81,7 @@ public abstract class BaseTest {
         EasyQueryConfiguration configuration = new EasyQueryConfiguration(false);
         configuration.setNameConversion(new UnderlinedNameConversion());
         configuration.setDialect(new MySqlDialect());
-
+        configuration.applyEasyEncryptionStrategy(new DefaultAesEasyEncryptionStrategy());
         EntityMetadataManager entityMetadataManager = new DefaultEntityMetadataManager(configuration);
         EasyQueryLambdaFactory easyQueryLambdaFactory = new DefaultEasyQueryLambdaFactory();
         MySqlExpressionFactory mySQLSqlExpressionFactory = new MySqlExpressionFactory();
@@ -152,6 +153,21 @@ public abstract class BaseTest {
             long l = easyQuery.insertable(topics).executeRows();
         }
 
+        boolean sysUserAny = easyQuery.queryable(SysUser.class).any();
+        if(!sysUserAny){
+            List<SysUser> sysUsers = new ArrayList<>();
+            for (int i = 0; i < 100; i++) {
+                SysUser sysUser = new SysUser();
+                sysUser.setId(String.valueOf(i));
+                sysUser.setUsername("username"+String.valueOf(i));
+                sysUser.setCreateTime(LocalDateTime.now().plusDays(i));
+                sysUser.setPhone("18888888"+String.valueOf(i)+String.valueOf(i));
+                sysUser.setIdCard("333333333333333"+String.valueOf(i)+String.valueOf(i));
+                sysUser.setAddress(sysUser.getPhone()+sysUser.getIdCard());
+                sysUsers.add(sysUser);
+            }
+            long l = easyQuery.insertable(sysUsers).executeRows();
+        }
     }
 
 

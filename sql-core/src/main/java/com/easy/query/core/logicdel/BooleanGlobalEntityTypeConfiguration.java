@@ -18,14 +18,15 @@ import java.util.Set;
  * @author xuejiaming
  */
 public class BooleanGlobalEntityTypeConfiguration extends AbstractGlobalLogicDeleteStrategy {
+    private static final Set<Class<?>> allowedPropertyTypes =new HashSet<>(Collections.singletonList(Boolean.class));
     @Override
     public String getStrategy() {
         return LogicDeleteStrategyEnum.BOOLEAN.getStrategy();
     }
 
     @Override
-    public Set<Class<?>> expectPropertyTypes() {
-        return new HashSet<>(Collections.singletonList(Boolean.class));
+    public Set<Class<?>> allowedPropertyTypes() {
+        return allowedPropertyTypes;
     }
 
 

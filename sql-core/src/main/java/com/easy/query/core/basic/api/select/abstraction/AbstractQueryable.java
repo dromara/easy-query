@@ -401,10 +401,10 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
                                 sqlPredicate.like(propertyLambda, val);
                                 break;
                             case LIKE_START:
-                                sqlPredicate.likeStart(propertyLambda, val);
+                                sqlPredicate.likeMatchLeft(propertyLambda, val);
                                 break;
                             case LIKE_END:
-                                sqlPredicate.likeEnd(propertyLambda, val);
+                                sqlPredicate.likeMatchRight(propertyLambda, val);
                                 break;
                             case GREATER_THAN_EQUAL:
                             case RANGE_LEFT_CLOSED:
@@ -472,7 +472,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     }
 
     @Override
-    public Queryable<T1> orderByConfiguration(boolean condition, EasyDynamicOrderByConfiguration configuration) {
+    public Queryable<T1> orderByDynamic(boolean condition, EasyDynamicOrderByConfiguration configuration) {
 
         if (condition) {
             if (configuration != null) {

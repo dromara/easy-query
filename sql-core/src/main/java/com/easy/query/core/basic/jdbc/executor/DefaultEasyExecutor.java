@@ -8,6 +8,7 @@ import com.easy.query.core.basic.jdbc.con.EasyConnection;
 import com.easy.query.core.basic.jdbc.con.EasyConnectionManager;
 import com.easy.query.core.basic.jdbc.parameter.BeanSqlParameter;
 import com.easy.query.core.basic.jdbc.parameter.ConstSQLParameter;
+import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.types.EasyJdbcTypeHandlerManager;
 import com.easy.query.core.basic.jdbc.types.EasyParameter;
@@ -30,7 +31,6 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @FileName: DefaultExecutor.java
@@ -51,9 +51,6 @@ public class DefaultEasyExecutor implements EasyExecutor {
 
         if (logDebug) {
             log.debug("==> Preparing: " + sql);
-            if (!sqlParameters.isEmpty()) {
-                log.debug("==> Parameters: " + SQLUtil.sqlParameterToString(sqlParameters));
-            }
         }
         EasyQueryRuntimeContext runtimeContext = executorContext.getRuntimeContext();
         EasyConnectionManager connectionManager = runtimeContext.getConnectionManager();
@@ -61,9 +58,14 @@ public class DefaultEasyExecutor implements EasyExecutor {
         EasyConnection easyConnection = null;
         PreparedStatement ps = null;
         int r = 0;
+
+        List<SQLParameter> parameters = extractParameters(executorContext, null, sqlParameters);
+        if (logDebug&&!parameters.isEmpty()) {
+            log.debug("==> Parameters: " + SQLUtil.sqlParameterToString(parameters));
+        }
         try {
             easyConnection = connectionManager.getEasyConnection();
-            ps = createPreparedStatement(easyConnection.getConnection(), sql, sqlParameters, easyJdbcTypeHandlerManager);
+            ps = createPreparedStatement(easyConnection.getConnection(), sql, parameters, easyJdbcTypeHandlerManager);
             r = ps.executeUpdate();
             if (logDebug) {
                 log.debug("<== Total: " + r);
@@ -92,7 +94,7 @@ public class DefaultEasyExecutor implements EasyExecutor {
         try {
             for (T entity : entities) {
 
-                List<SQLParameter> parameters = extractParameters(entity, sqlParameters);
+                List<SQLParameter> parameters = extractParameters(executorContext,entity, sqlParameters);
 
                 if (logDebug && hasParameter) {
                     log.debug("==> Parameters: " + SQLUtil.sqlParameterToString(parameters));
@@ -139,7 +141,7 @@ public class DefaultEasyExecutor implements EasyExecutor {
         boolean hasParameter = !sqlParameters.isEmpty();
         try {
             for (T entity : entities) {
-                List<SQLParameter> parameters = extractParameters(entity, sqlParameters);
+                List<SQLParameter> parameters = extractParameters(executorContext,entity, sqlParameters);
                 if (logDebug && hasParameter) {
                     log.debug("==> Parameters: " + SQLUtil.sqlParameterToString(parameters));
                 }
@@ -201,16 +203,17 @@ public class DefaultEasyExecutor implements EasyExecutor {
      * @param <T>
      * @return ConstSQLParameter 集合
      */
-    private <T> List<SQLParameter> extractParameters(T entity, List<SQLParameter> sqlParameters) {
+    private <T> List<SQLParameter> extractParameters(ExecutorContext executorContext,T entity, List<SQLParameter> sqlParameters) {
         List<SQLParameter> params = new ArrayList<>(sqlParameters.size());
         for (SQLParameter sqlParameter : sqlParameters) {
             if (sqlParameter instanceof ConstSQLParameter) {
-                params.add(sqlParameter);
+                Object value =executorContext.getEncryptValue(sqlParameter,sqlParameter.getValue()) ;
+                params.add(new EasyConstSQLParameter(sqlParameter.getTable(), sqlParameter.getPropertyName(), value));
             } else if (sqlParameter instanceof BeanSqlParameter) {
                 BeanSqlParameter beanSqlParameter = (BeanSqlParameter) sqlParameter;
                 beanSqlParameter.setBean(entity);
-                Object value = beanSqlParameter.getValue();
-                params.add(new ConstSQLParameter(beanSqlParameter.getTable(), beanSqlParameter.getPropertyName(), value));
+                Object value =executorContext.getEncryptValue(beanSqlParameter,beanSqlParameter.getValue()) ;
+                params.add(new EasyConstSQLParameter(beanSqlParameter.getTable(), beanSqlParameter.getPropertyName(), value));
             } else {
                 throw new EasyQueryException("current sql parameter:[" + ClassUtil.getSimpleName(sqlParameter.getClass()) + "],property name:[" + sqlParameter.getPropertyName() + "] is not implements BeanSqlParameter or ConstSQLParameter");
             }
@@ -223,9 +226,6 @@ public class DefaultEasyExecutor implements EasyExecutor {
 
         if (logDebug) {
             log.debug("==> Preparing: " + sql);
-            if (!sqlParameters.isEmpty()) {
-                log.debug("==> Parameters: " + SQLUtil.sqlParameterToString(sqlParameters));
-            }
         }
         EasyQueryRuntimeContext runtimeContext = executorContext.getRuntimeContext();
         EasyConnectionManager connectionManager = runtimeContext.getConnectionManager();
@@ -234,9 +234,13 @@ public class DefaultEasyExecutor implements EasyExecutor {
         EasyConnection easyConnection = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
+        List<SQLParameter> parameters = extractParameters(executorContext, null, sqlParameters);
+        if (logDebug&&ArrayUtil.isNotEmpty(parameters)) {
+            log.debug("==> Parameters: " + SQLUtil.sqlParameterToString(parameters));
+        }
         try {
             easyConnection = connectionManager.getEasyConnection();
-            ps = createPreparedStatement(easyConnection.getConnection(), sql, sqlParameters, easyJdbcTypeHandler);
+            ps = createPreparedStatement(easyConnection.getConnection(), sql, parameters, easyJdbcTypeHandler);
             rs = ps.executeQuery();
             result = mapTo(executorContext, rs, clazz);
 
@@ -303,14 +307,14 @@ public class DefaultEasyExecutor implements EasyExecutor {
         return resultList;
     }
 
-    private <T> PropertyDescriptor[] columnsToProperties(ExecutorContext context, ResultSet rs, ResultSetMetaData rsmd, Class<T> clazz) throws SQLException {
+    private <T> ColumnMetadata[] columnsToProperties(ExecutorContext context, ResultSet rs, ResultSetMetaData rsmd, Class<T> clazz) throws SQLException {
 
         EntityMetadataManager entityMetadataManager = context.getRuntimeContext().getEntityMetadataManager();
         EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(clazz);
         //需要返回的结果集映射到bean实体上
         //int[] 索引代表数据库返回的索引，数组索引所在的值代表属性数组的对应属性
         int columnCount = rsmd.getColumnCount();//有多少列
-        PropertyDescriptor[] columnToProperty = new PropertyDescriptor[columnCount];
+        ColumnMetadata[] columnMetadatas = new ColumnMetadata[columnCount];
         for (int i = 0; i < columnCount; i++) {
 
             String colName = getColName(rsmd, i + 1);//数据库查询出来的列名
@@ -318,12 +322,12 @@ public class DefaultEasyExecutor implements EasyExecutor {
             String propertyName = entityMetadata.getPropertyName(colName);
             ColumnMetadata column = entityMetadata.getColumnOrNull(propertyName);
             if (column != null) {
-                columnToProperty[i] = column.getProperty();
+                columnMetadatas[i] = column;
             } else {
-                columnToProperty[i] = null;
+                columnMetadatas[i] = null;
             }
         }
-        return columnToProperty;
+        return columnMetadatas;
     }
 
     private <T> Object mapToBasic(ExecutorContext context, ResultSet rs, Class<T> clazz) throws SQLException {
@@ -346,7 +350,7 @@ public class DefaultEasyExecutor implements EasyExecutor {
         }
         List<T> resultList = new ArrayList<>();
         ResultSetMetaData rsmd = rs.getMetaData();
-        PropertyDescriptor[] propertyDescriptors = columnsToProperties(context, rs, rsmd, clazz);
+        ColumnMetadata[] propertyDescriptors = columnsToProperties(context, rs, rsmd, clazz);
         do {
             T bean = mapToBean(context, rs, clazz, propertyDescriptors);
             resultList.add(bean);
@@ -371,25 +375,26 @@ public class DefaultEasyExecutor implements EasyExecutor {
         }
         return false;
     }
-    private <T> T mapToBean(ExecutorContext context, ResultSet rs, Class<T> clazz, PropertyDescriptor[] propertyDescriptors) throws SQLException {
+    private <T> T mapToBean(ExecutorContext context, ResultSet rs, Class<T> clazz, ColumnMetadata[] columnMetadatas) throws SQLException {
         EasyJdbcTypeHandlerManager easyJdbcTypeHandler = context.getRuntimeContext().getEasyJdbcTypeHandlerManager();
         TrackManager trackManager = context.getRuntimeContext().getTrackManager();
         boolean trackBean = trackBean(context, clazz);
         EasyResultSet easyResultSet = new EasyResultSet(rs);
         T bean = ClassUtil.newInstance(clazz);
 
-        for (int i = 0; i < propertyDescriptors.length; i++) {
-            PropertyDescriptor propertyDescriptor = propertyDescriptors[i];
-            if (propertyDescriptor == null) {
+        for (int i = 0; i < columnMetadatas.length; i++) {
+            ColumnMetadata columnMetadata = columnMetadatas[i];
+            if (columnMetadata == null) {
                 continue;
             }
             easyResultSet.setIndex(i);
-            Class<?> propertyType = propertyDescriptor.getPropertyType();
+            PropertyDescriptor property = columnMetadata.getProperty();
+            Class<?> propertyType = property.getPropertyType();
             easyResultSet.setPropertyType(propertyType);
             JdbcTypeHandler handler = easyJdbcTypeHandler.getHandler(propertyType);
-            Object value = handler.getValue(easyResultSet);
-            Method setter = getSetter(propertyDescriptor, clazz);
-            callSetter(bean,setter, propertyDescriptor, value);
+            Object value =context.getDecryptValue(columnMetadata,handler.getValue(easyResultSet)) ;
+            Method setter = getSetter(property, clazz);
+            callSetter(bean,setter, property, value);
         }
         if(trackBean){
             trackManager.getCurrentTrackContext().addTracking(bean,true);

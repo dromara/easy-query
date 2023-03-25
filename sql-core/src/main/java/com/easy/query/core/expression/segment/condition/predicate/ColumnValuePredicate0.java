@@ -1,10 +1,13 @@
 package com.easy.query.core.expression.segment.condition.predicate;
 
-import com.easy.query.core.basic.jdbc.parameter.ConstSQLParameter;
+import com.easy.query.core.basic.jdbc.parameter.ConstLikeSQLParameter;
+import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
 import com.easy.query.core.enums.SqlPredicateCompare;
-import com.easy.query.core.expression.segment.SqlEntitySegment;
+import com.easy.query.core.enums.SqlPredicateCompareEnum;
 import com.easy.query.core.query.SqlEntityExpression;
 import com.easy.query.core.query.SqlEntityTableExpression;
+
+import java.util.Objects;
 
 /**
  * @FileName: ColumnValuePredicate.java
@@ -29,9 +32,15 @@ public class ColumnValuePredicate0 implements Predicate {
 
     @Override
     public String toSql() {
-        sqlEntityExpression.addParameter(new ConstSQLParameter(table,propertyName,val));
+        EasyConstSQLParameter constSQLParameter = new EasyConstSQLParameter(table, propertyName, val);
+        String compareSql = compare.getSql();
+        if(Objects.equals(SqlPredicateCompareEnum.LIKE.getSql(),compareSql)){
+            sqlEntityExpression.addParameter(new ConstLikeSQLParameter(constSQLParameter));
+        }else{
+            sqlEntityExpression.addParameter(constSQLParameter);
+        }
         String sqlColumnSegment = sqlEntityExpression.getSqlOwnerColumn(table,propertyName);
-        return sqlColumnSegment + " " + compare.getSql() + " ?";
+        return sqlColumnSegment + " " + compareSql + " ?";
     }
 
     @Override

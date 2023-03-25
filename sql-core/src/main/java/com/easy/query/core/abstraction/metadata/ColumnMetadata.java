@@ -1,5 +1,7 @@
 package com.easy.query.core.abstraction.metadata;
 
+import com.easy.query.core.encryption.EasyEncryptionStrategy;
+
 import java.beans.PropertyDescriptor;
 
 /**
@@ -24,6 +26,10 @@ public class ColumnMetadata {
     private  boolean version=false;
     private  boolean insertIgnore=false;
     private  boolean updateIgnore =false;
+
+    private  boolean encryption =false;
+
+    private  Class<? extends EasyEncryptionStrategy> encryptionStrategy;
 
     public ColumnMetadata(EntityMetadata entityMetadata, String name) {
         this.entityMetadata = entityMetadata;
@@ -91,5 +97,21 @@ public class ColumnMetadata {
 
     public void setProperty(PropertyDescriptor property) {
         this.property = property;
+    }
+
+    public boolean isEncryption() {
+        return encryption;
+    }
+
+    public void setEncryption(boolean encryption) {
+        this.encryption = encryption;
+    }
+
+    public Class<? extends EasyEncryptionStrategy> getEncryptionStrategy() {
+        return encryptionStrategy;
+    }
+
+    public void setEncryptionStrategy(Class<? extends EasyEncryptionStrategy> encryptionStrategy) {
+        this.encryptionStrategy = encryptionStrategy;
     }
 }

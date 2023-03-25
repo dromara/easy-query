@@ -1,5 +1,7 @@
 package com.easy.query.core.annotation;
 
+import com.easy.query.core.encryption.EasyEncryptionStrategy;
+
 import java.lang.annotation.*;
 
 /**
@@ -11,5 +13,5 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.ANNOTATION_TYPE})
 public @interface Encryption {
-    int minWord() default 4;
+    Class<? extends EasyEncryptionStrategy> strategy();
 }

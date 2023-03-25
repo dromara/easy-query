@@ -3,7 +3,6 @@ package com.easy.query.core.basic.api.select;
 import com.easy.query.core.api.pagination.PageResult;
 import com.easy.query.core.api.dynamic.order.EasyDynamicOrderByConfiguration;
 import com.easy.query.core.basic.api.select.provider.EasyQuerySqlBuilderProvider;
-import com.easy.query.core.enums.dynamic.DynamicModeEnum;
 import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
 import com.easy.query.core.exception.EasyQueryWhereInvalidOperationException;
 import com.easy.query.core.expression.lambda.Property;
@@ -260,8 +259,8 @@ public interface Queryable<T1> extends Query<T1> {
      * @param configuration
      * @return
      */
-   default Queryable<T1> orderByConfiguration(EasyDynamicOrderByConfiguration configuration){
-       return orderByConfiguration(true,configuration);
+   default Queryable<T1> orderByDynamic(EasyDynamicOrderByConfiguration configuration){
+       return orderByDynamic(true,configuration);
    }
 
     /**
@@ -270,7 +269,7 @@ public interface Queryable<T1> extends Query<T1> {
      * @param configuration
      * @return
      */
-    Queryable<T1> orderByConfiguration(boolean condition, EasyDynamicOrderByConfiguration configuration);
+    Queryable<T1> orderByDynamic(boolean condition, EasyDynamicOrderByConfiguration configuration);
 
     default Queryable<T1> distinct() {
         return distinct(true);

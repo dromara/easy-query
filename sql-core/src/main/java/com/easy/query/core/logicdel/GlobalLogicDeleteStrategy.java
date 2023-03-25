@@ -13,6 +13,6 @@ import java.util.Set;
  */
 public interface GlobalLogicDeleteStrategy {
     String getStrategy();
-    Set<Class<?>> expectPropertyTypes();
+    Set<Class<?>> allowedPropertyTypes();
     void configure(EntityMetadata entityMetadata, String propertyName, Class<?> propertyType);
 }

@@ -1,6 +1,6 @@
 package com.easy.query.core.util;
 
-import com.easy.query.core.basic.jdbc.parameter.ConstSQLParameter;
+import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.PropertySQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.enums.SqlLikeEnum;
@@ -32,7 +32,7 @@ public class SQLUtil {
         StringBuilder builder = new StringBuilder();
         int i = 0;
         for (SQLParameter sqlParameter : sqlParameters) {
-            if (sqlParameter instanceof ConstSQLParameter) {
+            if (sqlParameter instanceof EasyConstSQLParameter) {
                 Object param = sqlParameter.getValue();
                 if (i++ != 0) {
                     builder.append(",");

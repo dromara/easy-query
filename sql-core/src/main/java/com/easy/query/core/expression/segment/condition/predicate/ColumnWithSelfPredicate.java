@@ -1,8 +1,7 @@
 package com.easy.query.core.expression.segment.condition.predicate;
 
-import com.easy.query.core.basic.jdbc.parameter.ConstSQLParameter;
+import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
 import com.easy.query.core.enums.SqlPredicateCompare;
-import com.easy.query.core.expression.segment.SqlEntitySegment;
 import com.easy.query.core.query.SqlEntityExpression;
 import com.easy.query.core.query.SqlEntityTableExpression;
 
@@ -33,7 +32,7 @@ public class ColumnWithSelfPredicate implements Predicate {
 
     @Override
     public String toSql() {
-        sqlEntityExpression.addParameter(new ConstSQLParameter(table,propertyName,val));
+        sqlEntityExpression.addParameter(new EasyConstSQLParameter(table,propertyName,val));
         String sqlColumnSegment1 = sqlEntityExpression.getSqlOwnerColumn(table,propertyName);
         return sqlColumnSegment1 +" "+ compare.getSql() + " "+sqlColumnSegment1+selfLink;
     }

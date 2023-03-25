@@ -1,16 +1,13 @@
 package com.easy.query.core.util;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.function.Function;
 
 /**
+ * @author xuejiaming
  * @FileName: ArrayUtil.java
  * @Description: 文件说明
  * @Date: 2023/2/26 14:07
- * @author xuejiaming
  */
 public class ArrayUtil {
     public static int sum(int[] arrays) {
@@ -60,5 +57,33 @@ public class ArrayUtil {
             r.add(mapper.apply(tSource));
         }
         return r;
+    }
+
+    public static byte[] mergeByteArrays(byte[]... arrays) {
+        int length = 0;
+        for (byte[] array : arrays) {
+            length += array.length;
+        }
+        byte[] mergedArray = new byte[length];
+        int destPos = 0;
+        for (byte[] array : arrays) {
+            System.arraycopy(array, 0, mergedArray, destPos, array.length);
+            destPos += array.length;
+        }
+        return mergedArray;
+    }
+
+    public static byte[][] splitByteArray(byte[] array, int chunkSize) {
+        if (array == null || array.length == 0 || chunkSize <= 0) {
+            return new byte[0][];
+        }
+        int size = (array.length + chunkSize - 1) / chunkSize;
+        byte[][] chunks = new byte[size][];
+        for (int i = 0; i < size; i++) {
+            int start = i * chunkSize;
+            int end = Math.min(array.length, start + chunkSize);
+            chunks[i] = Arrays.copyOfRange(array, start, end);
+        }
+        return chunks;
     }
 }

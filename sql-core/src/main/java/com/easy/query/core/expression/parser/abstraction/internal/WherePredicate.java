@@ -123,8 +123,8 @@ public interface WherePredicate<T1, TChain> extends IndexAware {
      * @param val
      * @return
      */
-    default TChain likeStart(Property<T1, ?> column, Object val) {
-        return likeStart(true, column, val);
+    default TChain likeMatchLeft(Property<T1, ?> column, Object val) {
+        return likeMatchLeft(true, column, val);
     }
 
     /**
@@ -135,7 +135,7 @@ public interface WherePredicate<T1, TChain> extends IndexAware {
      * @param val
      * @return
      */
-    default TChain likeStart(boolean condition, Property<T1, ?> column, Object val) {
+    default TChain likeMatchLeft(boolean condition, Property<T1, ?> column, Object val) {
         return like(condition, column, val, SqlLikeEnum.LIKE_START);
     }
 
@@ -146,8 +146,8 @@ public interface WherePredicate<T1, TChain> extends IndexAware {
      * @param val
      * @return
      */
-    default TChain likeEnd(Property<T1, ?> column, Object val) {
-        return likeEnd(true, column, val);
+    default TChain likeMatchRight(Property<T1, ?> column, Object val) {
+        return likeMatchRight(true, column, val);
     }
 
     /**
@@ -158,7 +158,7 @@ public interface WherePredicate<T1, TChain> extends IndexAware {
      * @param val
      * @return
      */
-    default TChain likeEnd(boolean condition, Property<T1, ?> column, Object val) {
+    default TChain likeMatchRight(boolean condition, Property<T1, ?> column, Object val) {
         return like(condition, column, val, SqlLikeEnum.LIKE_END);
     }
 

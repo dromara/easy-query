@@ -22,7 +22,7 @@ public abstract class AbstractGlobalLogicDeleteStrategy implements GlobalLogicDe
 
     @Override
     public void configure(EntityMetadata entityMetadata, String propertyName, Class<?> propertyType) {
-        Set<Class<?>> allowTypes = expectPropertyTypes();
+        Set<Class<?>> allowTypes = allowedPropertyTypes();
         if(allowTypes==null||allowTypes.isEmpty()){
             throw new EasyQueryException("plz set expectPropertyTypes values");
         }

@@ -4,6 +4,7 @@ import com.easy.query.core.annotation.*;
 import com.easy.query.core.basic.enums.LogicDeleteStrategyEnum;
 import com.easy.query.core.config.NameConversion;
 import com.easy.query.core.configuration.EasyQueryConfiguration;
+import com.easy.query.core.encryption.EasyEncryptionStrategy;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.interceptor.GlobalEntityInterceptor;
 import com.easy.query.core.interceptor.GlobalInterceptor;
@@ -104,6 +105,15 @@ public class EntityMetadata {
             property2ColumnMap.put(property, columnMetadata);
             column2PropertyMap.put(columnName, property);
 
+            Encryption encryption = field.getAnnotation(Encryption.class);
+            if (encryption != null) {
+                Class<? extends EasyEncryptionStrategy> strategy = encryption.strategy();
+                if(!configuration.containEasyEncryptionStrategy(strategy)){
+                    throw new EasyQueryException(ClassUtil.getSimpleName(entityClass)+"."+property+" Encryption strategy unknown");
+                }
+                columnMetadata.setEncryption(true);
+                columnMetadata.setEncryptionStrategy(encryption.strategy());
+            }
             if (StringUtil.isNotBlank(tableName)) {
 
                 if(column!=null){
@@ -137,17 +147,14 @@ public class EntityMetadata {
                     LogicDeleteStrategyEnum strategy = logicDelete.strategy();
                     if (Objects.equals(LogicDeleteStrategyEnum.CUSTOM, strategy)) {//使用自定义
                         String strategyName = logicDelete.strategyName();
-                        if (StringUtil.isNotBlank(strategyName)) {
-                            GlobalLogicDeleteStrategy globalLogicDeleteStrategy = configuration.getGlobalLogicDeleteStrategy(strategyName);
-                            if (globalLogicDeleteStrategy != null) {
-                                globalLogicDeleteStrategy.configure(this, property, field.getType());
-                            }
+                        if (StringUtil.isBlank(strategyName)) {
+                            throw new EasyQueryException(ClassUtil.getSimpleName(entityClass)+"."+property+" logic delete strategy is empty");
                         }
+                        GlobalLogicDeleteStrategy globalLogicDeleteStrategy = configuration.getGlobalLogicDeleteStrategyNotNull(strategyName);
+                        globalLogicDeleteStrategy.configure(this, property, field.getType());
                     } else {//使用系统默认的
-                        GlobalLogicDeleteStrategy sysGlobalLogicDeleteStrategy = configuration.getSysGlobalLogicDeleteStrategy(strategy);
-                        if (sysGlobalLogicDeleteStrategy != null) {
-                            sysGlobalLogicDeleteStrategy.configure(this, property, field.getType());
-                        }
+                        GlobalLogicDeleteStrategy sysGlobalLogicDeleteStrategy = configuration.getSysGlobalLogicDeleteStrategyNotNull(strategy);
+                        sysGlobalLogicDeleteStrategy.configure(this, property, field.getType());
                     }
                 }
             }

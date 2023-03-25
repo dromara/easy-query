@@ -15,7 +15,7 @@ mvn versions:set '-DnewVersion=0.0.22'
 
 # road map
 - 分表分库
-- 字段加密
+
 
 
 # 捐赠

@@ -3,6 +3,7 @@ package com.easy.query.core.configuration;
 import com.easy.query.core.config.DefaultEasyQueryDialect;
 import com.easy.query.core.config.EasyQueryDialect;
 import com.easy.query.core.config.NameConversion;
+import com.easy.query.core.encryption.EasyEncryptionStrategy;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.basic.enums.LogicDeleteStrategyEnum;
 import com.easy.query.core.config.DefaultNameConversion;
@@ -32,6 +33,7 @@ public class EasyQueryConfiguration {
 //    private Map<Class<?>, EntityTypeConfiguration<?>> entityTypeConfigurationMap = new HashMap<>();
     private Map<String, GlobalInterceptor> globalInterceptorMap =new ConcurrentHashMap<>();
     private Map<String, GlobalLogicDeleteStrategy> globalLogicDeleteStrategyMap = new ConcurrentHashMap<>();
+    private Map<Class<? extends EasyEncryptionStrategy>, EasyEncryptionStrategy> easyEncryptionStrategyMap = new ConcurrentHashMap<>();
     private final boolean deleteThrowError;
 
     public EasyQueryConfiguration() {
@@ -107,8 +109,15 @@ public class EasyQueryConfiguration {
     public GlobalLogicDeleteStrategy getGlobalLogicDeleteStrategy(String strategy) {
         return globalLogicDeleteStrategyMap.get(strategy);
     }
+    public GlobalLogicDeleteStrategy getGlobalLogicDeleteStrategyNotNull(String strategy) {
+        GlobalLogicDeleteStrategy globalLogicDeleteStrategy = getGlobalLogicDeleteStrategy(strategy);
+        if(globalLogicDeleteStrategy==null){
+            throw new EasyQueryException("easy logic delete strategy not found. strategy:"+strategy);
+        }
+        return globalLogicDeleteStrategy;
+    }
 
-    public GlobalLogicDeleteStrategy getSysGlobalLogicDeleteStrategy(LogicDeleteStrategyEnum strategy) {
+    public GlobalLogicDeleteStrategy getSysGlobalLogicDeleteStrategyNotNull(LogicDeleteStrategyEnum strategy) {
         if (Objects.equals(LogicDeleteStrategyEnum.BOOLEAN, strategy)) {
             return BOOL_LOGIC_DELETE;
         } else if (Objects.equals(LogicDeleteStrategyEnum.DELETE_LONG_TIMESTAMP, strategy)) {
@@ -118,6 +127,31 @@ public class EasyQueryConfiguration {
         } else if (Objects.equals(LogicDeleteStrategyEnum.LOCAL_DATE, strategy)) {
             return LOCAL_DATE_LOGIC_DELETE;
         }
-        return null;
+        throw new EasyQueryException("easy logic delete strategy not found. strategy:"+strategy);
+    }
+
+    public Collection<EasyEncryptionStrategy> getEasyEncryptionStrategyMap(){
+        return easyEncryptionStrategyMap.values();
+    }
+    public void applyEasyEncryptionStrategy(EasyEncryptionStrategy encryptionStrategy) {
+        Class<? extends EasyEncryptionStrategy> strategyClass = encryptionStrategy.getClass();
+        if (easyEncryptionStrategyMap.containsKey(strategyClass)) {
+            throw new EasyQueryException("easy encryption strategy:" + ClassUtil.getSimpleName(strategyClass) + ",repeat");
+        }
+        easyEncryptionStrategyMap.put(strategyClass, encryptionStrategy);
+    }
+
+    public EasyEncryptionStrategy getEasyEncryptionStrategy(Class<? extends EasyEncryptionStrategy> strategy){
+        return easyEncryptionStrategyMap.get(strategy);
+    }
+    public boolean containEasyEncryptionStrategy(Class<? extends EasyEncryptionStrategy> strategy){
+        return getEasyEncryptionStrategy(strategy)!=null;
+    }
+    public EasyEncryptionStrategy getEasyEncryptionStrategyNotNull(Class<? extends EasyEncryptionStrategy> strategy){
+        EasyEncryptionStrategy easyEncryptionStrategy = getEasyEncryptionStrategy(strategy);
+        if(easyEncryptionStrategy==null){
+            throw new EasyQueryException("easy encryption strategy not found. strategy:"+ClassUtil.getSimpleName(strategy));
+        }
+        return easyEncryptionStrategy;
     }
 }

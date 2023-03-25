@@ -8,6 +8,7 @@ import com.easy.query.core.abstraction.metadata.EntityMetadata;
 import com.easy.query.core.expression.parser.abstraction.SqlPredicate;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -18,14 +19,15 @@ import java.util.Set;
  * @author xuejiaming
  */
 public class DeleteLongTimestampGlobalEntityTypeConfiguration extends AbstractGlobalLogicDeleteStrategy {
+    private static final Set<Class<?>> allowedPropertyTypes =new HashSet<>(Arrays.asList(Long.class,long.class));
     @Override
     public String getStrategy() {
         return LogicDeleteStrategyEnum.DELETE_LONG_TIMESTAMP.getStrategy();
     }
 
     @Override
-    public Set<Class<?>> expectPropertyTypes() {
-        return new HashSet<>(Arrays.asList(Long.class,long.class));
+    public Set<Class<?>> allowedPropertyTypes() {
+        return allowedPropertyTypes;
     }
 
 

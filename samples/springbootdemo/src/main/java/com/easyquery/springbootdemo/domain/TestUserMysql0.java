@@ -2,7 +2,6 @@ package com.easyquery.springbootdemo.domain;
 
 import com.easy.query.core.annotation.Column;
 import com.easy.query.core.annotation.LogicDelete;
-import com.easy.query.core.annotation.PrimaryKey;
 import com.easy.query.core.annotation.Table;
 import com.easy.query.core.basic.enums.LogicDeleteStrategyEnum;
 
@@ -16,8 +15,7 @@ import java.time.LocalDateTime;
  */
 @Table("testuser")
 public class TestUserMysql0 {
-    @PrimaryKey
-    @Column("Id")
+    @Column(value = "Id",primaryKey = true)
     private String id;
     @Column("Age")
     private Integer age;

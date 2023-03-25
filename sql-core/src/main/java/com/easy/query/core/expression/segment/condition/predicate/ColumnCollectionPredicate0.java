@@ -1,6 +1,6 @@
 package com.easy.query.core.expression.segment.condition.predicate;
 
-import com.easy.query.core.basic.jdbc.parameter.ConstSQLParameter;
+import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
 import com.easy.query.core.enums.SqlPredicateCompare;
 import com.easy.query.core.enums.SqlPredicateCompareEnum;
 import com.easy.query.core.query.SqlEntityExpression;
@@ -46,11 +46,11 @@ public class ColumnCollectionPredicate0 implements Predicate {
             sql.append(sqlColumnSegment).append(" ").append(compare.getSql()).append(" (");
             Iterator<?> iterator = collection.iterator();
             Object firstVal = iterator.next();
-            sqlEntityExpression.addParameter(new ConstSQLParameter(table,propertyName,firstVal));
+            sqlEntityExpression.addParameter(new EasyConstSQLParameter(table,propertyName,firstVal));
             sql.append("?");
             while (iterator.hasNext()){
                 Object val = iterator.next();
-                sqlEntityExpression.addParameter(new ConstSQLParameter(table,propertyName,val));
+                sqlEntityExpression.addParameter(new EasyConstSQLParameter(table,propertyName,val));
                 sql.append(",?");
             }
             sql.append(")");

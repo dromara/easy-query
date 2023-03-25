@@ -12,7 +12,6 @@ import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -282,17 +281,17 @@ public class QueryTest extends BaseTest {
         topicRequest.getOrders().add("id");
         try {
             Topic topic = easyQuery
-                    .queryable(Topic.class).whereObject(topicRequest).orderByConfiguration(topicRequest).firstOrNull();
+                    .queryable(Topic.class).whereObject(topicRequest).orderByDynamic(topicRequest).firstOrNull();
         }catch (Exception e){
             Assert.assertTrue(e instanceof EasyQueryOrderByInvalidOperationException);
         }
         topicRequest.getOrders().clear();
         topicRequest.getOrders().add("createTime");
         String orderSql = easyQuery
-                .queryable(Topic.class).whereObject(topicRequest).orderByConfiguration(topicRequest).limit(1).toSql();
+                .queryable(Topic.class).whereObject(topicRequest).orderByDynamic(topicRequest).limit(1).toSql();
         Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM t_topic t WHERE t.`create_time` > ? ORDER BY t.`create_time` ASC LIMIT 1",orderSql);
         Topic topic = easyQuery
-                .queryable(Topic.class).whereObject(topicRequest).orderByConfiguration(topicRequest).firstOrNull();
+                .queryable(Topic.class).whereObject(topicRequest).orderByDynamic(topicRequest).firstOrNull();
         Assert.assertNotNull(topic);
     }
 

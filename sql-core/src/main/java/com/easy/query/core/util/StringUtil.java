@@ -1,9 +1,10 @@
 package com.easy.query.core.util;
 
-import com.easy.query.core.exception.EasyQueryException;
+import com.easy.query.core.encryption.AbstractAesEasyEncryptionStrategy;
 
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.function.Function;
 
 /**
  * @author xuejiaming
@@ -145,6 +146,42 @@ public class StringUtil {
         return str.regionMatches(ignoreCase, 0, prefix, 0, prefix.length());
     }
 
+    public static boolean startWith(String str, String prefix) {
+        if (str == null || prefix == null || !str.startsWith(prefix)) {
+            return false;
+        }
+        return true;
+    }
+    public static boolean endWith(String str, String suffix) {
+        if (str == null || suffix == null || !str.endsWith(suffix)) {
+            return false;
+        }
+        return true;
+    }
+    public static String startWithRemove(String str, String prefix) {
+        if (!startWith(str,prefix)) {
+            return str;
+        }
+        return str.substring(prefix.length());
+    }
+    public static String endWithRemove(String str, String suffix) {
+        if (!endWith(str,suffix)) {
+            return str;
+        }
+        return str.substring(0, str.length() - suffix.length());
+    }
+    public static String startWithDefault(String str, String prefix,String def) {
+        if (startWith(str,prefix)) {
+            return prefix;
+        }
+        return def;
+    }
+    public static String endWithDefault(String str, String suffix,String def) {
+        if (endWith(str,suffix)) {
+            return suffix;
+        }
+        return def;
+    }
 
     public static String substringAfter(String str, String separator) {
         if (isEmpty(str)) {
@@ -361,19 +398,26 @@ public class StringUtil {
         return sb.toString();
     }
 
-    public static List<String> getStringCharSegments1(String str, int maxLen) {
-        if (str == null || str.length() == 0 || maxLen <= 0) {
-            return Collections.emptyList();
+    public static boolean isChineseChar(char c) {
+        return c >= 0x4e00 && c <= 0x9fa5;
+    }
+
+    public static List<String> getStringCharSegments(String str, int maxCharLen) {
+        ArrayList<String> segments = new ArrayList<>(str.length());
+        for (int i = 0; i < str.length(); i++) {
+            int len = 0;
+            StringBuilder segmentBuilder = new StringBuilder();
+            for (int j = i; j < str.length() && len < maxCharLen; j++) {
+                char c = str.charAt(j);
+                len += isChineseChar(c) ? 2 : 1;
+                segmentBuilder.append(c);
+            }
+            if (segmentBuilder.length() == 0||len<maxCharLen) {
+                break;
+            }
+            segments.add(segmentBuilder.toString());
         }
-        int len = str.length();
-        int groupCount = (len + maxLen - 1) / maxLen;
-        List<String> groups = new ArrayList<>(groupCount);
-        for (int i = 0; i < groupCount; i++) {
-            int start = i * maxLen;
-            int end = Math.min(start + maxLen, len);
-            groups.add(getCharString(str, maxLen));
-        }
-        return groups;
+        return segments;
     }
 
     public static List<String> splitString(String str, int groupSize) {
@@ -395,115 +439,9 @@ public class StringUtil {
         }
         return groups;
     }
-
-    public static List<String> splitString1(String str, int groupSize) {
-        if (str == null || str.length() == 0 || groupSize <= 0) {
-            return Collections.emptyList();
-        }
-        List<String> groups = new ArrayList<>();
-        int i = 0;
-        while (i < str.length()) {
-            int len = 0;
-            int j = i;
-            while (j < str.length() && len < groupSize) {
-                char c = str.charAt(j);
-                len += (c < 256 && c != 183) || (c >= 0x4E00 && c <= 0x9FFF) ? 2 : 4;
-                j++;
-            }
-            groups.add(str.substring(i, j));
-            i = j;
-        }
-        return groups;
-    }
-
-    public static List<String> splitString2(String str, int groupSize) {
-        if (str == null || str.length() == 0 || groupSize <= 0) {
-            return Collections.emptyList();
-        }
-        List<String> groups = new ArrayList<>();
-        int i = 0;
-        while (i < str.length()) {
-            int len = 0;
-            int j = i;
-            while (j < str.length() && len < groupSize) {
-                char c = str.charAt(j);
-                len += (c < 256 && c != 183) || (c >= 0x4E00 && c <= 0x9FFF) ? 2 : 4;
-                j++;
-            }
-            groups.add(str.substring(i, j));
-            i = j;
-        }
-        return groups;
-    }
-
-    public static List<String> splitString5(String str, int groupSize) {
-        if (str == null || str.length() == 0 || groupSize <= 0) {
-            return Collections.emptyList();
-        }
-        int len = str.length();
-        int groupCount = (len + groupSize - 1) / groupSize;
-        List<String> groups = new ArrayList<>(groupCount);
-        for (int i = 0; i < groupCount; i++) {
-            int start = i * groupSize;
-            int end = Math.min(start + groupSize, len);
-            groups.add(str.substring(start, end));
-        }
-        return groups;
-    }
-
-    public static boolean isChineseChar(char c) {
-        return c >= 0x4e00 && c <= 0x9fa5;
-    }
-
-    public static List<String> getStringCharSegments(String str, int maxCharLen) {
-        ArrayList<String> segments = new ArrayList<>(str.length());
-        for (int i = 0; i < str.length(); i++) {
-            int len = 0;
-            StringBuilder segmentBuilder = new StringBuilder();
-            for (int j = i; j < str.length() && len < maxCharLen; j++) {
-                char c = str.charAt(j);
-                len += isChineseChar(c) ? 2 : 1;
-                segmentBuilder.append(c);
-            }
-            if (segmentBuilder.length() == 0||len<maxCharLen) {
-                break;
-            }
-            segments.add(segmentBuilder.toString());
-        }
-        if(segments.isEmpty()){
-            throw new EasyQueryException("需要满足最小英文"+maxCharLen+"字符中文双字符");
-        }
-        return segments;
-    }
-
-    public static void main(String[] args) {
-        List<String> stringSegments = getStringSegments("❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️垚垚垚垚垚垚", 4);
-
-        String xx = "❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️垚垚垚垚垚垚";
-        List<String> stringCharSegments = getStringCharSegments(xx, 100);
-        System.out.println(stringCharSegments);
-        StringBuilder stringBuilder1 = new StringBuilder();
-        for (int i = 0; i < stringCharSegments.size()-1; i++) {
-            stringBuilder1.append(stringCharSegments.get(i).charAt(0));
-        }
-        stringBuilder1.append(stringCharSegments.get(stringCharSegments.size()-1));
-        System.out.println(stringBuilder1.toString());
-        System.out.println(stringBuilder1.toString().equals(xx));
-        StringBuilder stringBuilder = new StringBuilder();
-        for (String stringSegment : stringSegments) {
-            byte[] bytes = stringSegment.getBytes(StandardCharsets.UTF_8);
-            stringBuilder.append(stringSegment);
-        }
-        String s = stringBuilder.toString();
-        System.out.println(s);
-        String substring1 = s.substring(0, 1);
-        String substring2 = s.substring(1, 2);
-        System.out.println(substring1);
-        System.out.println(substring2);
-        System.out.println(substring1 + substring2);
-        System.out.println(substring1 + "");
-        System.out.println(stringSegments);
-        System.out.println(addEscape("abc", '[', ']'));
-        System.out.println(addEscape("abc.eft", '[', ']'));
-    }
+//
+//    public static void main(String[] args) {
+//        System.out.println(addEscape("abc", '[', ']'));
+//        System.out.println(addEscape("abc.eft", '[', ']'));
+//    }
 }

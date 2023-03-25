@@ -7,6 +7,7 @@ import com.easy.query.core.expression.parser.abstraction.SqlColumnSetter;
 import com.easy.query.core.abstraction.metadata.EntityMetadata;
 import com.easy.query.core.expression.parser.abstraction.SqlPredicate;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.HashSet;
@@ -19,14 +20,15 @@ import java.util.Set;
  * @author xuejiaming
  */
 public class LocalDateTimeGlobalEntityTypeConfiguration extends AbstractGlobalLogicDeleteStrategy {
+    private static final Set<Class<?>> allowedPropertyTypes =new HashSet<>(Collections.singletonList(LocalDateTime.class));
     @Override
     public String getStrategy() {
         return LogicDeleteStrategyEnum.LOCAL_DATE_TIME.getStrategy();
     }
 
     @Override
-    public Set<Class<?>> expectPropertyTypes() {
-        return new HashSet<>(Collections.singletonList(LocalDateTime.class));
+    public Set<Class<?>> allowedPropertyTypes() {
+        return allowedPropertyTypes;
     }
 
     @Override
