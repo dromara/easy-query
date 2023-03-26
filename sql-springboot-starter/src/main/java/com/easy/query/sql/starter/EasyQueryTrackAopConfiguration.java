@@ -1,7 +1,7 @@
 package com.easy.query.sql.starter;
 
 import com.easy.query.core.annotation.EasyQueryTrack;
-import com.easy.query.core.track.TrackManager;
+import com.easy.query.core.basic.plugin.track.TrackManager;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;

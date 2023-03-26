@@ -1,9 +1,9 @@
 package com.easy.query.core.basic.jdbc.executor;
 
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
-import com.easy.query.core.abstraction.metadata.ColumnMetadata;
-import com.easy.query.core.abstraction.metadata.EntityMetadata;
-import com.easy.query.core.abstraction.metadata.EntityMetadataManager;
+import com.easy.query.core.metadata.ColumnMetadata;
+import com.easy.query.core.metadata.EntityMetadata;
+import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.basic.jdbc.con.EasyConnection;
 import com.easy.query.core.basic.jdbc.con.EasyConnectionManager;
 import com.easy.query.core.basic.jdbc.parameter.BeanSqlParameter;
@@ -18,7 +18,7 @@ import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.exception.EasyQuerySQLException;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
-import com.easy.query.core.track.TrackManager;
+import com.easy.query.core.basic.plugin.track.TrackManager;
 import com.easy.query.core.util.ArrayUtil;
 import com.easy.query.core.util.ClassUtil;
 import com.easy.query.core.util.SQLUtil;

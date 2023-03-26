@@ -1,10 +1,10 @@
 package com.easy.query.core.basic.jdbc.parameter;
 
-import com.easy.query.core.abstraction.metadata.ColumnMetadata;
-import com.easy.query.core.abstraction.metadata.EntityMetadata;
+import com.easy.query.core.metadata.ColumnMetadata;
+import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.exception.EasyQueryException;
-import com.easy.query.core.query.SqlEntityTableExpression;
-import com.easy.query.core.query.SqlTableExpressionSegment;
+import com.easy.query.core.expression.sql.SqlEntityTableExpression;
+import com.easy.query.core.expression.sql.SqlTableExpressionSegment;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

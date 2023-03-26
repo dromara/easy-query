@@ -4,8 +4,8 @@ import com.easy.query.core.expression.segment.OrderColumnSegment;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.parser.abstraction.SqlColumnSelector;
 import com.easy.query.core.expression.segment.SqlEntitySegment;
-import com.easy.query.core.query.SqlEntityQueryExpression;
-import com.easy.query.core.query.SqlEntityTableExpression;
+import com.easy.query.core.expression.sql.SqlEntityQueryExpression;
+import com.easy.query.core.expression.sql.SqlEntityTableExpression;
 
 import java.util.Collection;
 import java.util.Objects;

@@ -8,10 +8,10 @@ import com.easy.query.core.expression.segment.SqlEntityAliasSegment;
 import com.easy.query.core.expression.segment.SqlEntitySegment;
 import com.easy.query.core.expression.segment.SqlSegment;
 import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
-import com.easy.query.core.query.AnonymousEntityTableExpression;
-import com.easy.query.core.query.SqlEntityExpression;
-import com.easy.query.core.query.SqlEntityQueryExpression;
-import com.easy.query.core.query.SqlEntityTableExpression;
+import com.easy.query.core.expression.sql.AnonymousEntityTableExpression;
+import com.easy.query.core.expression.sql.SqlEntityExpression;
+import com.easy.query.core.expression.sql.SqlEntityQueryExpression;
+import com.easy.query.core.expression.sql.SqlEntityTableExpression;
 import com.easy.query.core.util.ClassUtil;
 import com.easy.query.core.util.EasyUtil;
 

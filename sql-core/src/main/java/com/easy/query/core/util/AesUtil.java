@@ -5,6 +5,7 @@ import com.easy.query.core.exception.EasyQueryException;
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.Charset;
 import java.util.Base64;
 
 /**
@@ -13,66 +14,37 @@ import java.util.Base64;
  * @author xuejiaming
  */
 public class AesUtil {
-    private static final String IV_STRING = "A-16-Byte-String";
-    private static final String charset = "UTF-8";
-    private static final int SEGMENT_LENGTH = 10;
 
-    public static String encryptToString(String content, String key, String iv) {
-        try {
-            byte[] encrypted= doEncrypt(content, key, iv);
-            return new String(Base64Util.encode(encrypted), charset);
-        } catch (Exception e) {
-            throw new EasyQueryException(e);
-        }
+    public static String encrypt(String plaintext, String key, String iv,Charset charset) {
+        byte[] encrypt = encrypt(plaintext.getBytes(charset), key.getBytes(charset), iv.getBytes(charset));
+        return new String(Base64Util.encode(encrypt),charset);
     }
-    public static byte[] encrypt(String content, String key, String iv) {
+    public static byte[] encrypt(byte[] plaintext, byte[] key, byte[] iv) {
         try {
-            return doEncrypt(content, key, iv);
-        } catch (Exception e) {
-            throw new EasyQueryException(e);
-        }
-    }
-
-    public static byte[] doEncrypt(String content, String key, String iv) throws Exception {
-        byte[] keyBytes = key.getBytes(charset);
-        SecretKeySpec secretKeySpec = new SecretKeySpec(keyBytes, "AES");
-        byte[] ivBytes = iv.getBytes(charset);
-        IvParameterSpec ivParameterSpec = new IvParameterSpec(ivBytes);
-        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-        cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec, ivParameterSpec);
-        return cipher.doFinal(content.getBytes(charset));
-//        return new String(encoder.encode(encrypted), charset);
-    }
-
-    public static String decryptToString(String content, String key, String iv) {
-        try {
-            byte[] original= doDecryptFromString(content, key, iv);
-            return new String(original, charset);
-        } catch (Exception e) {
-            throw new EasyQueryException(e);
-        }
-    }
-    public static byte[] decrypt(byte[] encrypted, String key, String iv) {
-        try {
-            return doDecrypt(encrypted, key, iv);
+            SecretKeySpec secretKeySpec = new SecretKeySpec(key, "AES");
+            IvParameterSpec ivParameterSpec = new IvParameterSpec(iv);
+            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+            cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec, ivParameterSpec);
+            return cipher.doFinal(plaintext);
         } catch (Exception e) {
             throw new EasyQueryException(e);
         }
     }
 
-    public static byte[] doDecryptFromString(String content, String key, String iv) throws Exception {
-        byte[] encrypted = Base64Util.decode(content.getBytes(charset));
-        return doDecrypt(encrypted,key,iv);
+    public static String decrypt(String content, String key, String iv, Charset charset) {
+        byte[] decrypt = decrypt(Base64Util.decode(content.getBytes(charset)), key.getBytes(charset), iv.getBytes(charset));
+        return new String(decrypt,charset);
     }
+    public static byte[] decrypt(byte[] encrypted, byte[] key, byte[] iv) {
+        try {
+            SecretKeySpec secretKeySpec = new SecretKeySpec(key, "AES");
+            IvParameterSpec ivParameterSpec = new IvParameterSpec(iv);
+            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+            cipher.init(Cipher.DECRYPT_MODE, secretKeySpec, ivParameterSpec);
 
-    public static byte[] doDecrypt(byte[] encrypted, String key, String iv) throws Exception {
-        byte[] keyBytes = key.getBytes(charset);
-        SecretKeySpec secretKeySpec = new SecretKeySpec(keyBytes, "AES");
-        byte[] ivBytes = iv.getBytes(charset);
-        IvParameterSpec ivParameterSpec = new IvParameterSpec(ivBytes);
-        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-        cipher.init(Cipher.DECRYPT_MODE, secretKeySpec, ivParameterSpec);
-
-        return cipher.doFinal(encrypted);
+            return cipher.doFinal(encrypted);
+        } catch (Exception e) {
+            throw new EasyQueryException(e);
+        }
     }
 }

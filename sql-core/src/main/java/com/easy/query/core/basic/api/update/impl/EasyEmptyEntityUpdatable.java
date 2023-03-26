@@ -5,7 +5,6 @@ import com.easy.query.core.enums.UpdateStrategyEnum;
 import com.easy.query.core.exception.EasyQueryConcurrentException;
 import com.easy.query.core.expression.lambda.SqlExpression;
 import com.easy.query.core.expression.parser.abstraction.SqlColumnSelector;
-import com.easy.query.core.query.SqlEntityUpdateExpression;
 
 /**
  * @FileName: EasyEmptyEntityUpdate.java

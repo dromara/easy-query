@@ -3,11 +3,9 @@ package com.easy.query.core.abstraction;
 import com.easy.query.core.expression.parser.abstraction.*;
 import com.easy.query.core.expression.parser.impl.*;
 import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
-import com.easy.query.core.expression.parser.abstraction.*;
-import com.easy.query.core.expression.parser.impl.*;
 import com.easy.query.core.expression.segment.condition.DefaultSqlPredicate;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
-import com.easy.query.core.query.SqlEntityExpression;
+import com.easy.query.core.expression.sql.SqlEntityExpression;
 
 /**
  * @FileName: DefaultEasyQueryLambdaFactory.java

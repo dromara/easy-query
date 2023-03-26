@@ -7,8 +7,8 @@ import com.easy.query.core.expression.parser.abstraction.internal.AggregatePredi
 import com.easy.query.core.expression.segment.condition.OrPredicateSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.segment.condition.predicate.FuncColumnValuePredicate0;
-import com.easy.query.core.query.SqlEntityExpression;
-import com.easy.query.core.query.SqlEntityTableExpression;
+import com.easy.query.core.expression.sql.SqlEntityExpression;
+import com.easy.query.core.expression.sql.SqlEntityTableExpression;
 import com.easy.query.core.enums.SqlPredicateCompare;
 import com.easy.query.core.expression.parser.abstraction.SqlAggregatePredicate;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;

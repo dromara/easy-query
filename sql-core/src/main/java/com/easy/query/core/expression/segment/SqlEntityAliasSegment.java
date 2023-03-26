@@ -1,7 +1,5 @@
 package com.easy.query.core.expression.segment;
 
-import com.easy.query.core.query.SqlEntityTableExpression;
-
 /**
  * @FileName: SqlEntitySegment.java
  * @Description: 文件说明

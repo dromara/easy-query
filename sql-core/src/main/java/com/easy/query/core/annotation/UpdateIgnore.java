@@ -1,11 +1,14 @@
 package com.easy.query.core.annotation;
 
-import java.lang.annotation.*;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+import java.lang.annotation.RetentionPolicy;
 
 /**
- * @FileName: UpdateIgnore.java
- * @Description: 文件说明
- * @Date: 2023/2/11 21:38
+ * 更新对象时会自动忽略该列,任何时候都不会更新set这个
+ * 除非你手动指定更新使用expression update
  * @author xuejiaming
  */
 @Documented

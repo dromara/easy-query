@@ -4,10 +4,8 @@ import com.easy.query.core.expression.parser.abstraction.*;
 import com.easy.query.core.expression.parser.impl.*;
 import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import com.easy.query.core.expression.segment.condition.DefaultSqlPredicate;
-import com.easy.query.core.query.SqlEntityQueryExpression;
+import com.easy.query.core.expression.sql.SqlEntityQueryExpression;
 import com.easy.query.core.util.EasyUtil;
-import com.easy.query.core.expression.parser.abstraction.*;
-import com.easy.query.core.expression.parser.impl.*;
 
 /**
  * @FileName: Select1SqlPredicateProvider.java

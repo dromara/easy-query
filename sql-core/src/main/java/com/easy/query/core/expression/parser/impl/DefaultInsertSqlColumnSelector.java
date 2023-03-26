@@ -5,8 +5,8 @@ import com.easy.query.core.expression.parser.abstraction.SqlColumnSelector;
 import com.easy.query.core.expression.segment.ColumnInsertSegment;
 import com.easy.query.core.expression.segment.SqlEntitySegment;
 import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
-import com.easy.query.core.query.SqlEntityExpression;
-import com.easy.query.core.query.SqlEntityTableExpression;
+import com.easy.query.core.expression.sql.SqlEntityExpression;
+import com.easy.query.core.expression.sql.SqlEntityTableExpression;
 
 import java.util.Collection;
 import java.util.Objects;

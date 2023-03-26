@@ -1,8 +1,13 @@
 package com.easy.query.core.abstraction;
 
 import com.easy.query.core.enums.MultiTableTypeEnum;
-import com.easy.query.core.query.*;
-import com.easy.query.core.abstraction.metadata.EntityMetadata;
+import com.easy.query.core.expression.sql.SqlEntityDeleteExpression;
+import com.easy.query.core.expression.sql.SqlEntityInsertExpression;
+import com.easy.query.core.expression.sql.SqlEntityQueryExpression;
+import com.easy.query.core.expression.sql.SqlEntityTableExpression;
+import com.easy.query.core.expression.sql.SqlEntityUpdateExpression;
+import com.easy.query.core.expression.sql.SqlExpressionContext;
+import com.easy.query.core.metadata.EntityMetadata;
 
 /**
  * @FileName: EasySqlExpressionFactory.java
@@ -17,5 +22,5 @@ public interface EasyExpressionFactory {
     SqlEntityQueryExpression createSqlEntityQueryExpression(SqlExpressionContext sqlExpressionContext);
     SqlEntityInsertExpression createSqlEntityInsertExpression(SqlExpressionContext sqlExpressionContext);
     SqlEntityUpdateExpression createSqlEntityUpdateExpression(SqlExpressionContext sqlExpressionContext, boolean expression);
-    SqlEntityDeleteExpression createSqlEntityDeleteExpression(SqlExpressionContext sqlExpressionContext,boolean expression);
+    SqlEntityDeleteExpression createSqlEntityDeleteExpression(SqlExpressionContext sqlExpressionContext, boolean expression);
 }

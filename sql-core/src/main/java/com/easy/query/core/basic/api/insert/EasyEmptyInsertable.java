@@ -1,7 +1,7 @@
 package com.easy.query.core.basic.api.insert;
 
 import com.easy.query.core.abstraction.EasySqlApiFactory;
-import com.easy.query.core.query.SqlEntityInsertExpression;
+import com.easy.query.core.expression.sql.SqlEntityInsertExpression;
 
 /**
  * @FileName: EasyEmptyInsertable.java

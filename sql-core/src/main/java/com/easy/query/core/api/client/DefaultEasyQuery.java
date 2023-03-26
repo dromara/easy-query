@@ -10,8 +10,8 @@ import com.easy.query.core.basic.api.insert.Insertable;
 import com.easy.query.core.basic.api.select.Queryable;
 import com.easy.query.core.basic.api.update.EntityUpdatable;
 import com.easy.query.core.basic.api.update.ExpressionUpdatable;
-import com.easy.query.core.track.TrackContext;
-import com.easy.query.core.track.TrackManager;
+import com.easy.query.core.basic.plugin.track.TrackContext;
+import com.easy.query.core.basic.plugin.track.TrackManager;
 
 import java.util.Collection;
 import java.util.List;

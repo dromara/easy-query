@@ -1,16 +1,14 @@
 package com.easy.query.core.expression.parser.impl;
 
-import com.easy.query.core.expression.parser.abstraction.internal.ColumnSetter;
 import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import com.easy.query.core.enums.SqlPredicateCompareEnum;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.parser.abstraction.SqlColumnSetter;
-import com.easy.query.core.expression.parser.abstraction.internal.WherePredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnValuePredicate0;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnWithColumnPredicate0;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnWithSelfPredicate;
-import com.easy.query.core.query.SqlEntityExpression;
-import com.easy.query.core.query.SqlEntityTableExpression;
+import com.easy.query.core.expression.sql.SqlEntityExpression;
+import com.easy.query.core.expression.sql.SqlEntityTableExpression;
 
 /**
  * @FileName: DefaultSqlColumnSetter.java

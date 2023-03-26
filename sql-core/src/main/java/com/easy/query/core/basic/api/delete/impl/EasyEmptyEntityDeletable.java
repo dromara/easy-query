@@ -2,7 +2,6 @@ package com.easy.query.core.basic.api.delete.impl;
 
 import com.easy.query.core.basic.api.delete.EntityDeletable;
 import com.easy.query.core.exception.EasyQueryConcurrentException;
-import com.easy.query.core.query.SqlEntityDeleteExpression;
 
 /**
  * @FileName: EasyEmptyEntityDeletable.java

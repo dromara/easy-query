@@ -1,12 +1,12 @@
 package com.easy.query.core.basic.api.insert;
 
-import com.easy.query.core.abstraction.metadata.EntityMetadata;
+import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.enums.MultiTableTypeEnum;
-import com.easy.query.core.interceptor.GlobalEntityInterceptor;
-import com.easy.query.core.interceptor.GlobalInterceptor;
-import com.easy.query.core.query.EasyEntityTableExpression;
-import com.easy.query.core.query.SqlEntityInsertExpression;
-import com.easy.query.core.query.SqlEntityTableExpression;
+import com.easy.query.core.basic.plugin.interceptor.EasyEntityInterceptor;
+import com.easy.query.core.basic.plugin.interceptor.EasyInterceptor;
+import com.easy.query.core.expression.sql.def.EasyEntityTableExpression;
+import com.easy.query.core.expression.sql.SqlEntityInsertExpression;
+import com.easy.query.core.expression.sql.SqlEntityTableExpression;
 import com.easy.query.core.util.StringUtil;
 import com.easy.query.core.basic.jdbc.executor.EasyExecutor;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
@@ -53,14 +53,14 @@ public abstract class AbstractInsertable<T> implements Insertable<T> {
 
         List<String> insertInterceptors = entityMetadata.getEntityInterceptors();
         boolean hasInsertInterceptors = !insertInterceptors.isEmpty();
-        ArrayList<GlobalEntityInterceptor> globalEntityInterceptors = new ArrayList<>(insertInterceptors.size());
+        ArrayList<EasyEntityInterceptor> globalEntityInterceptors = new ArrayList<>(insertInterceptors.size());
         if (hasInsertInterceptors) {
             for (String insertInterceptor : insertInterceptors) {
-                GlobalInterceptor globalInterceptorStrategy = sqlEntityInsertExpression.getRuntimeContext().getEasyQueryConfiguration().getGlobalInterceptor(insertInterceptor);
-                globalEntityInterceptors.add((GlobalEntityInterceptor) globalInterceptorStrategy);
+                EasyInterceptor globalInterceptorStrategy = sqlEntityInsertExpression.getRuntimeContext().getEasyQueryConfiguration().getGlobalInterceptor(insertInterceptor);
+                globalEntityInterceptors.add((EasyEntityInterceptor) globalInterceptorStrategy);
             }
             for (T entity : entities) {
-                for (GlobalEntityInterceptor globalEntityInterceptor : globalEntityInterceptors) {
+                for (EasyEntityInterceptor globalEntityInterceptor : globalEntityInterceptors) {
                     globalEntityInterceptor.configureInsert(entityMetadata.getEntityClass(), sqlEntityInsertExpression,entity);
                 }
             }

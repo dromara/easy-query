@@ -1,19 +1,17 @@
 package com.easy.query.core.basic.api.delete.abstraction;
 
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
-import com.easy.query.core.basic.api.abstraction.AbstractSqlExecuteRows;
+import com.easy.query.core.basic.api.internal.AbstractSqlExecuteRows;
 import com.easy.query.core.basic.api.delete.EntityDeletable;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.exception.EasyQueryException;
-import com.easy.query.core.query.EasyEntityTableExpression;
-import com.easy.query.core.query.SqlEntityDeleteExpression;
-import com.easy.query.core.query.SqlEntityTableExpression;
+import com.easy.query.core.expression.sql.def.EasyEntityTableExpression;
+import com.easy.query.core.expression.sql.SqlEntityDeleteExpression;
+import com.easy.query.core.expression.sql.SqlEntityTableExpression;
 import com.easy.query.core.util.StringUtil;
 import com.easy.query.core.basic.jdbc.executor.EasyExecutor;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
-import com.easy.query.core.abstraction.metadata.EntityMetadata;
-import com.easy.query.core.exception.EasyQueryConcurrentException;
-import com.easy.query.core.query.*;
+import com.easy.query.core.metadata.EntityMetadata;
 
 import java.util.ArrayList;
 import java.util.Collection;

@@ -1,9 +1,9 @@
 package com.easy.query.mysql.expression;
 
 import com.easy.query.core.abstraction.EasyExpressionFactory;
-import com.easy.query.core.query.EasySqlQueryExpression;
-import com.easy.query.core.query.SqlEntityQueryExpression;
-import com.easy.query.core.query.SqlExpressionContext;
+import com.easy.query.core.expression.sql.def.EasySqlQueryExpression;
+import com.easy.query.core.expression.sql.SqlEntityQueryExpression;
+import com.easy.query.core.expression.sql.SqlExpressionContext;
 
 /**
  * @FileName: MySQLEntityExpression.java

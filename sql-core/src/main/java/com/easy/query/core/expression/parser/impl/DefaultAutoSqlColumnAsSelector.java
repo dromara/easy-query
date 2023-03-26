@@ -1,22 +1,18 @@
 package com.easy.query.core.expression.parser.impl;
 
-import com.easy.query.core.abstraction.metadata.ColumnMetadata;
-import com.easy.query.core.abstraction.metadata.EntityMetadata;
-import com.easy.query.core.enums.EasyAggregate;
+import com.easy.query.core.metadata.ColumnMetadata;
+import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.enums.EasyFunc;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.parser.abstraction.SqlColumnAsSelector;
 import com.easy.query.core.expression.parser.abstraction.internal.ColumnAsSelector;
 import com.easy.query.core.expression.segment.ColumnSegment;
-import com.easy.query.core.expression.segment.FuncColumnSegment;
 import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
-import com.easy.query.core.query.AnonymousEntityTableExpression;
-import com.easy.query.core.query.SqlEntityExpression;
-import com.easy.query.core.query.SqlEntityTableExpression;
-import com.easy.query.core.util.LambdaUtil;
+import com.easy.query.core.expression.sql.AnonymousEntityTableExpression;
+import com.easy.query.core.expression.sql.SqlEntityExpression;
+import com.easy.query.core.expression.sql.SqlEntityTableExpression;
 
 import java.util.Collection;
-import java.util.LinkedHashMap;
 
 /**
  * @FileName: DefaultSqSelector.java

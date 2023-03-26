@@ -1,8 +1,8 @@
 package com.easy.query.core.expression.segment;
 
 import com.easy.query.core.enums.SqlKeywordEnum;
-import com.easy.query.core.query.SqlEntityQueryExpression;
-import com.easy.query.core.query.SqlEntityTableExpression;
+import com.easy.query.core.expression.sql.SqlEntityQueryExpression;
+import com.easy.query.core.expression.sql.SqlEntityTableExpression;
 
 /**
  * @FileName: OrderColumnSegment.java

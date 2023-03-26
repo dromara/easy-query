@@ -1,7 +1,7 @@
 package com.easy.query.sql.starter;
 
 import com.easy.query.core.abstraction.*;
-import com.easy.query.core.abstraction.metadata.EntityMetadataManager;
+import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.api.client.DefaultEasyQuery;
 import com.easy.query.core.api.client.EasyQuery;
 import com.easy.query.core.api.def.DefaultEasySqlApiFactory;
@@ -13,13 +13,13 @@ import com.easy.query.core.basic.jdbc.types.EasyJdbcTypeHandlerManager;
 import com.easy.query.core.config.NameConversion;
 import com.easy.query.core.config.UnderlinedNameConversion;
 import com.easy.query.core.configuration.EasyQueryConfiguration;
-import com.easy.query.core.interceptor.GlobalInterceptor;
+import com.easy.query.core.basic.plugin.interceptor.EasyInterceptor;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
-import com.easy.query.core.logicdel.GlobalLogicDeleteStrategy;
+import com.easy.query.core.basic.plugin.logicdel.EasyLogicDeleteStrategy;
 import com.easy.query.core.metadata.DefaultEntityMetadataManager;
-import com.easy.query.core.track.DefaultTrackManager;
-import com.easy.query.core.track.TrackManager;
+import com.easy.query.core.basic.plugin.track.DefaultTrackManager;
+import com.easy.query.core.basic.plugin.track.TrackManager;
 import com.easy.query.core.util.StringUtil;
 import com.easy.query.mysql.MySqlExpressionFactory;
 import com.easy.query.mysql.config.MySqlDialect;
@@ -88,17 +88,17 @@ public class EasyQueryStarterAutoConfiguration {
     }
 
     @Bean
-    public EasyQueryConfiguration easyQueryConfiguration(Map<String, GlobalInterceptor> globalInterceptorStrategyMap, Map<String,GlobalLogicDeleteStrategy> globalLogicDeleteStrategyMap) {
+    public EasyQueryConfiguration easyQueryConfiguration(Map<String, EasyInterceptor> globalInterceptorStrategyMap, Map<String, EasyLogicDeleteStrategy> globalLogicDeleteStrategyMap) {
         EasyQueryConfiguration configuration = new EasyQueryConfiguration();
 
         NameConversion nameConversion = new UnderlinedNameConversion();
         MySqlDialect sqlDialect = new MySqlDialect();
         configuration.setNameConversion(nameConversion);
         configuration.setDialect(sqlDialect);
-        for (GlobalInterceptor globalInterceptorStrategy : globalInterceptorStrategyMap.values()) {
+        for (EasyInterceptor globalInterceptorStrategy : globalInterceptorStrategyMap.values()) {
             configuration.applyGlobalInterceptor(globalInterceptorStrategy);
         }
-        for (GlobalLogicDeleteStrategy globalLogicDeleteStrategy : globalLogicDeleteStrategyMap.values()) {
+        for (EasyLogicDeleteStrategy globalLogicDeleteStrategy : globalLogicDeleteStrategyMap.values()) {
             configuration.applyGlobalLogicDeleteStrategy(globalLogicDeleteStrategy);
         }
         return configuration;

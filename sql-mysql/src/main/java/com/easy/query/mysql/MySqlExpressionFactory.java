@@ -1,10 +1,18 @@
 package com.easy.query.mysql;
 
-import com.easy.query.core.query.*;
+import com.easy.query.core.expression.sql.SqlEntityDeleteExpression;
+import com.easy.query.core.expression.sql.SqlEntityInsertExpression;
+import com.easy.query.core.expression.sql.SqlEntityQueryExpression;
+import com.easy.query.core.expression.sql.SqlEntityTableExpression;
+import com.easy.query.core.expression.sql.SqlEntityUpdateExpression;
+import com.easy.query.core.expression.sql.SqlExpressionContext;
+import com.easy.query.core.expression.sql.def.EasyAnonymousEntityTableExpression;
+import com.easy.query.core.expression.sql.def.EasyEntityTableExpression;
+import com.easy.query.core.expression.sql.def.EasySqlExpressionContext;
 import com.easy.query.mysql.expression.MySqlInsertExpression;
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.abstraction.EasyExpressionFactory;
-import com.easy.query.core.abstraction.metadata.EntityMetadata;
+import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.mysql.expression.MySqlDeleteExpression;
 import com.easy.query.mysql.expression.MySqlQueryExpression;
@@ -43,12 +51,12 @@ public class MySqlExpressionFactory implements EasyExpressionFactory {
     }
 
     @Override
-    public SqlEntityUpdateExpression createSqlEntityUpdateExpression(SqlExpressionContext sqlExpressionContext,boolean expression) {
+    public SqlEntityUpdateExpression createSqlEntityUpdateExpression(SqlExpressionContext sqlExpressionContext, boolean expression) {
         return new MySqlUpdateExpression(sqlExpressionContext,expression);
     }
 
     @Override
-    public SqlEntityDeleteExpression createSqlEntityDeleteExpression(SqlExpressionContext sqlExpressionContext,boolean expression) {
+    public SqlEntityDeleteExpression createSqlEntityDeleteExpression(SqlExpressionContext sqlExpressionContext, boolean expression) {
         return new MySqlDeleteExpression(sqlExpressionContext,expression);
     }
 }

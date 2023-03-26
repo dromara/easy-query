@@ -1,11 +1,11 @@
 package com.easy.query.core.abstraction;
 
-import com.easy.query.core.abstraction.metadata.EntityMetadataManager;
+import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.basic.jdbc.con.EasyConnectionManager;
 import com.easy.query.core.basic.jdbc.types.EasyJdbcTypeHandlerManager;
 import com.easy.query.core.configuration.EasyQueryConfiguration;
 import com.easy.query.core.basic.jdbc.executor.EasyExecutor;
-import com.easy.query.core.track.TrackManager;
+import com.easy.query.core.basic.plugin.track.TrackManager;
 
 /**
  * @FileName: DefaultJQDCRuntimeContext.java

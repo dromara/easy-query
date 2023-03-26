@@ -1,8 +1,8 @@
 package com.easy.query.core.util;
 
-import com.easy.query.core.abstraction.metadata.ColumnMetadata;
-import com.easy.query.core.abstraction.metadata.EntityMetadata;
-import com.easy.query.core.abstraction.metadata.EntityMetadataManager;
+import com.easy.query.core.metadata.ColumnMetadata;
+import com.easy.query.core.metadata.EntityMetadata;
+import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;

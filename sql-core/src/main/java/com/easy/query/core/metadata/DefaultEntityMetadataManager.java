@@ -1,9 +1,7 @@
 package com.easy.query.core.metadata;
 
 import com.easy.query.core.configuration.EasyQueryConfiguration;
-import com.easy.query.core.abstraction.metadata.EntityMetadata;
 import com.easy.query.core.common.cache.Cache;
-import com.easy.query.core.abstraction.metadata.EntityMetadataManager;
 import com.easy.query.core.common.cache.DefaultMemoryCache;
 
 /**

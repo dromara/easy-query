@@ -1,8 +1,6 @@
 package com.easy.query.core.basic.api.update.abstraction;
 
-import com.easy.query.core.basic.api.abstraction.AbstractSqlExecuteRows;
-import com.easy.query.core.basic.jdbc.con.EasyConnectionManager;
-import com.easy.query.core.basic.jdbc.tx.Transaction;
+import com.easy.query.core.basic.api.internal.AbstractSqlExecuteRows;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.enums.SqlPredicateCompareEnum;
 import com.easy.query.core.exception.EasyQueryException;
@@ -13,22 +11,19 @@ import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.DefaultSqlPredicate;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnValuePredicate0;
-import com.easy.query.core.query.EasyEntityTableExpression;
-import com.easy.query.core.query.SqlEntityTableExpression;
-import com.easy.query.core.query.SqlEntityUpdateExpression;
+import com.easy.query.core.expression.sql.def.EasyEntityTableExpression;
+import com.easy.query.core.expression.sql.SqlEntityTableExpression;
+import com.easy.query.core.expression.sql.SqlEntityUpdateExpression;
 import com.easy.query.core.util.ClassUtil;
 import com.easy.query.core.util.StringUtil;
 import com.easy.query.core.basic.jdbc.executor.EasyExecutor;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.api.update.ExpressionUpdatable;
-import com.easy.query.core.interceptor.GlobalInterceptor;
-import com.easy.query.core.exception.EasyQueryConcurrentException;
 import com.easy.query.core.expression.lambda.SqlExpression;
-import com.easy.query.core.abstraction.metadata.EntityMetadata;
+import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.expression.parser.abstraction.SqlPredicate;
 
 import java.util.Collection;
-import java.util.List;
 
 /**
  * @FileName: AbstractExpressionUpdate.java

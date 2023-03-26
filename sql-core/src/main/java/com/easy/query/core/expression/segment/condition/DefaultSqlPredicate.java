@@ -7,14 +7,13 @@ import com.easy.query.core.expression.parser.abstraction.internal.WherePredicate
 import com.easy.query.core.expression.segment.condition.predicate.ColumnCollectionPredicate0;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnValuePredicate0;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnWithColumnPredicate0;
-import com.easy.query.core.query.SqlEntityTableExpression;
+import com.easy.query.core.expression.sql.SqlEntityTableExpression;
 import com.easy.query.core.enums.SqlPredicateCompareEnum;
 import com.easy.query.core.expression.lambda.SqlExpression;
 import com.easy.query.core.expression.parser.abstraction.SqlPredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnPredicate0;
-import com.easy.query.core.query.SqlEntityExpression;
+import com.easy.query.core.expression.sql.SqlEntityExpression;
 import com.easy.query.core.util.SQLUtil;
-import com.easy.query.core.util.StringUtil;
 
 import java.util.Collection;
 

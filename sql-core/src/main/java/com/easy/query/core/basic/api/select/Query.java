@@ -1,6 +1,6 @@
 package com.easy.query.core.basic.api.select;
 
-import com.easy.query.core.query.SqlEntityQueryExpression;
+import com.easy.query.core.expression.sql.SqlEntityQueryExpression;
 
 /**
  * @FileName: Query.java

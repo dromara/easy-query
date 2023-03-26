@@ -1,6 +1,6 @@
 package com.easy.query.core.basic.api.insert;
 
-import com.easy.query.core.basic.api.abstraction.SqlExecuteRows;
+import com.easy.query.core.basic.api.internal.SqlExecuteRows;
 
 import java.util.Collection;
 

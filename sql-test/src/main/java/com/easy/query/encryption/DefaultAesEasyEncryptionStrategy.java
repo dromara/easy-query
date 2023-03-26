@@ -1,6 +1,6 @@
 package com.easy.query.encryption;
 
-import com.easy.query.core.encryption.AbstractAesEasyEncryptionStrategy;
+import com.easy.query.core.basic.plugin.encryption.AbstractAesEasyEncryptionStrategy;
 
 /**
  * create time 2023/3/25 09:40

@@ -1,7 +1,7 @@
 package com.easy.query.mysql.expression;
 
-import com.easy.query.core.query.EasySqlDeleteExpression;
-import com.easy.query.core.query.SqlExpressionContext;
+import com.easy.query.core.expression.sql.def.EasySqlDeleteExpression;
+import com.easy.query.core.expression.sql.SqlExpressionContext;
 
 
 /**

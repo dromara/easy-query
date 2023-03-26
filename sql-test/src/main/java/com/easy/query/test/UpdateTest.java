@@ -3,7 +3,7 @@ package com.easy.query.test;
 import com.easy.query.BaseTest;
 import com.easy.query.core.basic.api.update.impl.EasyEntityUpdatable;
 import com.easy.query.core.enums.UpdateStrategyEnum;
-import com.easy.query.core.track.TrackManager;
+import com.easy.query.core.basic.plugin.track.TrackManager;
 import com.easy.query.entity.Topic;
 import org.junit.Assert;
 import org.junit.Test;

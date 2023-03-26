@@ -1,6 +1,6 @@
 package com.easy.query.core.basic.jdbc.parameter;
 
-import com.easy.query.core.query.SqlTableExpressionSegment;
+import com.easy.query.core.expression.sql.SqlTableExpressionSegment;
 
 /**
  * @FileName: ConstSqlParameter.java

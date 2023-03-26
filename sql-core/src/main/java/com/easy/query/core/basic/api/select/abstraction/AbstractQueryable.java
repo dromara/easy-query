@@ -1,7 +1,7 @@
 package com.easy.query.core.basic.api.select.abstraction;
 
-import com.easy.query.core.abstraction.metadata.EntityMetadata;
-import com.easy.query.core.abstraction.metadata.EntityMetadataManager;
+import com.easy.query.core.metadata.EntityMetadata;
+import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.annotation.EasyWhereCondition;
 import com.easy.query.core.api.pagination.PageResult;
 import com.easy.query.core.api.dynamic.where.internal.DynamicWherePropertyNode;
@@ -25,9 +25,9 @@ import com.easy.query.core.expression.parser.abstraction.internal.ColumnSelector
 import com.easy.query.core.expression.segment.SelectConstSegment;
 import com.easy.query.core.expression.segment.builder.ProjectSqlBuilderSegment;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnValuePredicate0;
-import com.easy.query.core.query.AnonymousEntityTableExpression;
-import com.easy.query.core.query.SqlEntityQueryExpression;
-import com.easy.query.core.query.SqlEntityTableExpression;
+import com.easy.query.core.expression.sql.AnonymousEntityTableExpression;
+import com.easy.query.core.expression.sql.SqlEntityQueryExpression;
+import com.easy.query.core.expression.sql.SqlEntityTableExpression;
 import com.easy.query.core.util.*;
 import com.easy.query.core.enums.EasyFunc;
 import com.easy.query.core.basic.api.select.Queryable;
@@ -35,7 +35,7 @@ import com.easy.query.core.basic.jdbc.executor.EasyExecutor;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.enums.SqlPredicateCompareEnum;
 import com.easy.query.core.exception.EasyQueryNotFoundException;
-import com.easy.query.core.abstraction.metadata.ColumnMetadata;
+import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.enums.EasyAggregate;
 import com.easy.query.core.expression.parser.abstraction.SqlAggregatePredicate;
 import com.easy.query.core.expression.parser.abstraction.SqlPredicate;

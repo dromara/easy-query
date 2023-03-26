@@ -1,13 +1,13 @@
 package com.easy.query.core.util;
 
-import com.easy.query.core.abstraction.metadata.ColumnMetadata;
-import com.easy.query.core.abstraction.metadata.EntityMetadata;
-import com.easy.query.core.abstraction.metadata.EntityMetadataManager;
+import com.easy.query.core.metadata.ColumnMetadata;
+import com.easy.query.core.metadata.EntityMetadata;
+import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.TrackKeyFunc;
-import com.easy.query.core.track.EntityState;
-import com.easy.query.core.track.TrackDiffEntry;
+import com.easy.query.core.basic.plugin.track.EntityState;
+import com.easy.query.core.basic.plugin.track.TrackDiffEntry;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;

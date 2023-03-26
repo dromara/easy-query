@@ -7,8 +7,8 @@ import com.easy.query.core.expression.lambda.SqlExpression2;
 import com.easy.query.core.expression.lambda.SqlExpression3;
 import com.easy.query.core.expression.parser.abstraction.SqlPredicate;
 import com.easy.query.core.expression.parser.abstraction.internal.ColumnSelector;
-import com.easy.query.core.query.AnonymousEntityTableExpression;
-import com.easy.query.core.query.SqlEntityQueryExpression;
+import com.easy.query.core.expression.sql.AnonymousEntityTableExpression;
+import com.easy.query.core.expression.sql.SqlEntityQueryExpression;
 import com.easy.query.core.basic.api.select.Queryable4;
 import com.easy.query.core.expression.lambda.SqlExpression4;
 

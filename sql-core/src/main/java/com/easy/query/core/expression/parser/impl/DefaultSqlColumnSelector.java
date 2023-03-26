@@ -2,7 +2,7 @@ package com.easy.query.core.expression.parser.impl;
 
 import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import com.easy.query.core.expression.parser.abstraction.SqlColumnSelector;
-import com.easy.query.core.query.SqlEntityExpression;
+import com.easy.query.core.expression.sql.SqlEntityExpression;
 
 /**
  * @FileName: DefaultSqlColumnSelector.java

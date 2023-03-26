@@ -1,7 +1,7 @@
 package com.easy.query.core.basic.api.update.impl;
 
 import com.easy.query.core.basic.api.update.abstraction.AbstractEntityUpdatable;
-import com.easy.query.core.query.SqlEntityUpdateExpression;
+import com.easy.query.core.expression.sql.SqlEntityUpdateExpression;
 
 import java.util.Collection;
 

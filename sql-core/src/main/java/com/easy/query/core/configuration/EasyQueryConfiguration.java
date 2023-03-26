@@ -1,14 +1,14 @@
 package com.easy.query.core.configuration;
 
+import com.easy.query.core.basic.plugin.logicdel.*;
 import com.easy.query.core.config.DefaultEasyQueryDialect;
 import com.easy.query.core.config.EasyQueryDialect;
 import com.easy.query.core.config.NameConversion;
-import com.easy.query.core.encryption.EasyEncryptionStrategy;
+import com.easy.query.core.basic.plugin.encryption.EasyEncryptionStrategy;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.basic.enums.LogicDeleteStrategyEnum;
 import com.easy.query.core.config.DefaultNameConversion;
-import com.easy.query.core.interceptor.GlobalInterceptor;
-import com.easy.query.core.logicdel.*;
+import com.easy.query.core.basic.plugin.interceptor.EasyInterceptor;
 import com.easy.query.core.util.ClassUtil;
 import com.easy.query.core.util.StringUtil;
 
@@ -22,17 +22,17 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author xuejiaming
  */
 public class EasyQueryConfiguration {
-    private static final GlobalLogicDeleteStrategy BOOL_LOGIC_DELETE = new BooleanGlobalEntityTypeConfiguration();
-    private static final GlobalLogicDeleteStrategy TIMESTAMP_LOGIC_DELETE = new DeleteLongTimestampGlobalEntityTypeConfiguration();
-    private static final GlobalLogicDeleteStrategy LOCAL_DATE_TIME_LOGIC_DELETE = new LocalDateTimeGlobalEntityTypeConfiguration();
-    private static final GlobalLogicDeleteStrategy LOCAL_DATE_LOGIC_DELETE = new LocalDateGlobalLogicDeleteStrategy();
+    private static final EasyLogicDeleteStrategy BOOL_LOGIC_DELETE = new BooleanEasyEntityTypeConfiguration();
+    private static final EasyLogicDeleteStrategy TIMESTAMP_LOGIC_DELETE = new DeleteLongTimestampEasyEntityTypeConfiguration();
+    private static final EasyLogicDeleteStrategy LOCAL_DATE_TIME_LOGIC_DELETE = new LocalDateTimeEasyEntityTypeConfiguration();
+    private static final EasyLogicDeleteStrategy LOCAL_DATE_LOGIC_DELETE = new LocalDateEasyLogicDeleteStrategy();
 
 
     private NameConversion nameConversion = new DefaultNameConversion();
     private EasyQueryDialect dialect = new DefaultEasyQueryDialect();
 //    private Map<Class<?>, EntityTypeConfiguration<?>> entityTypeConfigurationMap = new HashMap<>();
-    private Map<String, GlobalInterceptor> globalInterceptorMap =new ConcurrentHashMap<>();
-    private Map<String, GlobalLogicDeleteStrategy> globalLogicDeleteStrategyMap = new ConcurrentHashMap<>();
+    private Map<String, EasyInterceptor> globalInterceptorMap =new ConcurrentHashMap<>();
+    private Map<String, EasyLogicDeleteStrategy> globalLogicDeleteStrategyMap = new ConcurrentHashMap<>();
     private Map<Class<? extends EasyEncryptionStrategy>, EasyEncryptionStrategy> easyEncryptionStrategyMap = new ConcurrentHashMap<>();
     private final boolean deleteThrowError;
 
@@ -63,7 +63,7 @@ public class EasyQueryConfiguration {
         this.dialect = dialect;
     }
 
-    public void applyGlobalInterceptor(GlobalInterceptor globalInterceptor){
+    public void applyGlobalInterceptor(EasyInterceptor globalInterceptor){
         String interceptorName = globalInterceptor.name();
         if(StringUtil.isBlank(interceptorName)){
             throw new EasyQueryException(ClassUtil.getInstanceSimpleName(globalInterceptor)+"cant get interceptor name");
@@ -75,13 +75,13 @@ public class EasyQueryConfiguration {
     }
 
 
-    public GlobalInterceptor getGlobalInterceptor(String name){
+    public EasyInterceptor getGlobalInterceptor(String name){
         if(name==null){
             throw new IllegalArgumentException("cant get global interceptor,name is null");
         }
         return globalInterceptorMap.get(name);
     }
-    public Collection<GlobalInterceptor> getGlobalInterceptors(){
+    public Collection<EasyInterceptor> getGlobalInterceptors(){
         return globalInterceptorMap.values();
     }
 //    public void applyEntityTypeConfiguration(EntityTypeConfiguration<?> entityTypeConfiguration) {
@@ -92,7 +92,7 @@ public class EasyQueryConfiguration {
 //        return entityTypeConfigurationMap.get(entityType);
 //    }
 
-    public void applyGlobalLogicDeleteStrategy(GlobalLogicDeleteStrategy globalLogicDeleteStrategy) {
+    public void applyGlobalLogicDeleteStrategy(EasyLogicDeleteStrategy globalLogicDeleteStrategy) {
         String strategy = globalLogicDeleteStrategy.getStrategy();
         if (globalLogicDeleteStrategyMap.containsKey(strategy)) {
             throw new EasyQueryException("global logic delete strategy:" + strategy + ",repeat");
@@ -106,18 +106,18 @@ public class EasyQueryConfiguration {
      * @param strategy
      * @return
      */
-    public GlobalLogicDeleteStrategy getGlobalLogicDeleteStrategy(String strategy) {
+    public EasyLogicDeleteStrategy getGlobalLogicDeleteStrategy(String strategy) {
         return globalLogicDeleteStrategyMap.get(strategy);
     }
-    public GlobalLogicDeleteStrategy getGlobalLogicDeleteStrategyNotNull(String strategy) {
-        GlobalLogicDeleteStrategy globalLogicDeleteStrategy = getGlobalLogicDeleteStrategy(strategy);
+    public EasyLogicDeleteStrategy getGlobalLogicDeleteStrategyNotNull(String strategy) {
+        EasyLogicDeleteStrategy globalLogicDeleteStrategy = getGlobalLogicDeleteStrategy(strategy);
         if(globalLogicDeleteStrategy==null){
             throw new EasyQueryException("easy logic delete strategy not found. strategy:"+strategy);
         }
         return globalLogicDeleteStrategy;
     }
 
-    public GlobalLogicDeleteStrategy getSysGlobalLogicDeleteStrategyNotNull(LogicDeleteStrategyEnum strategy) {
+    public EasyLogicDeleteStrategy getSysGlobalLogicDeleteStrategyNotNull(LogicDeleteStrategyEnum strategy) {
         if (Objects.equals(LogicDeleteStrategyEnum.BOOLEAN, strategy)) {
             return BOOL_LOGIC_DELETE;
         } else if (Objects.equals(LogicDeleteStrategyEnum.DELETE_LONG_TIMESTAMP, strategy)) {

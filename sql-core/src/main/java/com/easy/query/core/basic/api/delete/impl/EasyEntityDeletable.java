@@ -1,7 +1,7 @@
 package com.easy.query.core.basic.api.delete.impl;
 
 import com.easy.query.core.basic.api.delete.abstraction.AbstractEntityDeletable;
-import com.easy.query.core.query.SqlEntityDeleteExpression;
+import com.easy.query.core.expression.sql.SqlEntityDeleteExpression;
 
 import java.util.Collection;
 

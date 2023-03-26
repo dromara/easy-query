@@ -1,7 +1,7 @@
 package com.easy.query.mysql.expression;
 
-import com.easy.query.core.query.EasySqlInsertExpression;
-import com.easy.query.core.query.SqlExpressionContext;
+import com.easy.query.core.expression.sql.def.EasySqlInsertExpression;
+import com.easy.query.core.expression.sql.SqlExpressionContext;
 
 /**
  * @FileName: MySQLInsertExpression.java

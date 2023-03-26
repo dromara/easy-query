@@ -1,6 +1,6 @@
 package com.easy.query.core.basic.api.update;
 
-import com.easy.query.core.basic.api.abstraction.SqlExecuteExpectRows;
+import com.easy.query.core.basic.api.internal.SqlExecuteExpectRows;
 
 /**
  * @FileName: Update.java

@@ -3,9 +3,9 @@ package com.easy.query.core.util;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.segment.SqlEntityAliasSegment;
-import com.easy.query.core.query.SqlEntityQueryExpression;
-import com.easy.query.core.query.SqlEntityTableExpression;
-import com.easy.query.core.abstraction.metadata.ColumnMetadata;
+import com.easy.query.core.expression.sql.SqlEntityQueryExpression;
+import com.easy.query.core.expression.sql.SqlEntityTableExpression;
+import com.easy.query.core.metadata.ColumnMetadata;
 
 import java.lang.invoke.*;
 import java.util.*;

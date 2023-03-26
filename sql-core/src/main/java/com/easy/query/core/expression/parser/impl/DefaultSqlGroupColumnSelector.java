@@ -1,6 +1,6 @@
 package com.easy.query.core.expression.parser.impl;
 
-import com.easy.query.core.query.SqlEntityQueryExpression;
+import com.easy.query.core.expression.sql.SqlEntityQueryExpression;
 
 /**
  * @FileName: DefaultSqlColumnSelector.java

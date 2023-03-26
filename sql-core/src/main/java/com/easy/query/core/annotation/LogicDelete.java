@@ -2,7 +2,11 @@ package com.easy.query.core.annotation;
 
 import com.easy.query.core.basic.enums.LogicDeleteStrategyEnum;
 
-import java.lang.annotation.*;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+import java.lang.annotation.RetentionPolicy;
 
 /**
  * 默认该属性不会出现在对应的update set column处，除非手动指定，并且同一个对象如果有多个属性标识LogicDelete只会最后一个生效

@@ -1,14 +1,12 @@
 package com.easy.query.core.basic.jdbc.executor;
 
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
-import com.easy.query.core.abstraction.metadata.ColumnMetadata;
-import com.easy.query.core.abstraction.metadata.EntityMetadata;
-import com.easy.query.core.basic.jdbc.parameter.BeanSqlParameter;
+import com.easy.query.core.metadata.ColumnMetadata;
+import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.basic.jdbc.parameter.SQLLikeParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.configuration.EasyQueryConfiguration;
-import com.easy.query.core.encryption.EasyEncryptionStrategy;
-import com.easy.query.core.query.SqlTableExpressionSegment;
+import com.easy.query.core.basic.plugin.encryption.EasyEncryptionStrategy;
 import com.easy.query.core.util.StringUtil;
 
 /**

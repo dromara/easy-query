@@ -1,8 +1,8 @@
 package com.easy.query.core.expression.segment;
 
 import com.easy.query.core.enums.EasyFunc;
-import com.easy.query.core.query.SqlEntityExpression;
-import com.easy.query.core.query.SqlEntityTableExpression;
+import com.easy.query.core.expression.sql.SqlEntityExpression;
+import com.easy.query.core.expression.sql.SqlEntityTableExpression;
 
 /**
  * @FileName: FuncColumnSegment.java

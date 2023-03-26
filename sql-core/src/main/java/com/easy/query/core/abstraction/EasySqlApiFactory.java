@@ -11,8 +11,8 @@ import com.easy.query.core.basic.api.select.Queryable4;
 import com.easy.query.core.basic.api.update.EntityUpdatable;
 import com.easy.query.core.basic.api.update.ExpressionUpdatable;
 import com.easy.query.core.enums.MultiTableTypeEnum;
-import com.easy.query.core.query.SqlEntityInsertExpression;
-import com.easy.query.core.query.SqlEntityQueryExpression;
+import com.easy.query.core.expression.sql.SqlEntityInsertExpression;
+import com.easy.query.core.expression.sql.SqlEntityQueryExpression;
 
 import java.util.Collection;
 

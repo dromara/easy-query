@@ -1,13 +1,11 @@
 package com.easy.query.core.expression.parser.impl;
 
-import com.easy.query.core.abstraction.metadata.ColumnMetadata;
-import com.easy.query.core.abstraction.metadata.EntityMetadata;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
-import com.easy.query.core.query.SqlEntityTableExpression;
+import com.easy.query.core.expression.sql.SqlEntityTableExpression;
 import com.easy.query.core.expression.parser.abstraction.SqlColumnResultSelector;
-import com.easy.query.core.query.SqlEntityExpression;
+import com.easy.query.core.expression.sql.SqlEntityExpression;
 
 /**
  * @FileName: DefaultColumnResultSelector.java

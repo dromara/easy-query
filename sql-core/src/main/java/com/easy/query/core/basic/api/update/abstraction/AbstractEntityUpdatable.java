@@ -1,6 +1,6 @@
 package com.easy.query.core.basic.api.update.abstraction;
 
-import com.easy.query.core.basic.api.abstraction.AbstractSqlExecuteRows;
+import com.easy.query.core.basic.api.internal.AbstractSqlExecuteRows;
 import com.easy.query.core.basic.api.update.EntityUpdatable;
 import com.easy.query.core.basic.api.update.UpdateEntityNode;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
@@ -10,17 +10,15 @@ import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.lambda.SqlExpression;
 import com.easy.query.core.expression.parser.abstraction.SqlColumnSelector;
 import com.easy.query.core.expression.parser.impl.DefaultSqlColumnSetSelector;
-import com.easy.query.core.interceptor.GlobalEntityInterceptor;
-import com.easy.query.core.interceptor.GlobalInterceptor;
-import com.easy.query.core.query.EasyEntityTableExpression;
-import com.easy.query.core.query.SqlEntityTableExpression;
-import com.easy.query.core.query.SqlEntityUpdateExpression;
-import com.easy.query.core.track.TrackManager;
-import com.easy.query.core.util.StringUtil;
+import com.easy.query.core.basic.plugin.interceptor.EasyEntityInterceptor;
+import com.easy.query.core.basic.plugin.interceptor.EasyInterceptor;
+import com.easy.query.core.expression.sql.def.EasyEntityTableExpression;
+import com.easy.query.core.expression.sql.SqlEntityTableExpression;
+import com.easy.query.core.expression.sql.SqlEntityUpdateExpression;
+import com.easy.query.core.basic.plugin.track.TrackManager;
 import com.easy.query.core.basic.jdbc.executor.EasyExecutor;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
-import com.easy.query.core.exception.EasyQueryConcurrentException;
-import com.easy.query.core.abstraction.metadata.EntityMetadata;
+import com.easy.query.core.metadata.EntityMetadata;
 
 import java.util.*;
 
@@ -96,14 +94,14 @@ public abstract class AbstractEntityUpdatable<T> extends AbstractSqlExecuteRows 
 
         List<String> interceptors = entityMetadata.getEntityInterceptors();
         boolean hasInterceptor = !interceptors.isEmpty();
-        ArrayList<GlobalEntityInterceptor> globalEntityInterceptors = new ArrayList<>(interceptors.size());
+        ArrayList<EasyEntityInterceptor> globalEntityInterceptors = new ArrayList<>(interceptors.size());
         if (hasInterceptor) {
             for (String interceptor : interceptors) {
-                GlobalInterceptor globalInterceptor = sqlEntityUpdateExpression.getRuntimeContext().getEasyQueryConfiguration().getGlobalInterceptor(interceptor);
-                globalEntityInterceptors.add((GlobalEntityInterceptor) globalInterceptor);
+                EasyInterceptor globalInterceptor = sqlEntityUpdateExpression.getRuntimeContext().getEasyQueryConfiguration().getGlobalInterceptor(interceptor);
+                globalEntityInterceptors.add((EasyEntityInterceptor) globalInterceptor);
             }
             for (T entity : entities) {
-                for (GlobalEntityInterceptor globalEntityInterceptor : globalEntityInterceptors) {
+                for (EasyEntityInterceptor globalEntityInterceptor : globalEntityInterceptors) {
                     globalEntityInterceptor.configureUpdate(entityMetadata.getEntityClass(), sqlEntityUpdateExpression,entity);
                 }
             }

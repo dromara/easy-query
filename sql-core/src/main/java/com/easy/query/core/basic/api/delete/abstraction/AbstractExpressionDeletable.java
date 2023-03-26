@@ -1,11 +1,11 @@
 package com.easy.query.core.basic.api.delete.abstraction;
 
-import com.easy.query.core.basic.api.abstraction.AbstractSqlExecuteRows;
+import com.easy.query.core.basic.api.internal.AbstractSqlExecuteRows;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnValuePredicate0;
 import com.easy.query.core.basic.jdbc.executor.EasyExecutor;
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
-import com.easy.query.core.abstraction.metadata.EntityMetadata;
+import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.basic.api.delete.Deletable;
 import com.easy.query.core.basic.api.delete.ExpressionDeletable;
 import com.easy.query.core.enums.MultiTableTypeEnum;
@@ -17,8 +17,8 @@ import com.easy.query.core.expression.parser.abstraction.SqlPredicate;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.DefaultSqlPredicate;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
-import com.easy.query.core.query.EasyEntityTableExpression;
-import com.easy.query.core.query.SqlEntityDeleteExpression;
+import com.easy.query.core.expression.sql.def.EasyEntityTableExpression;
+import com.easy.query.core.expression.sql.SqlEntityDeleteExpression;
 import com.easy.query.core.util.ClassUtil;
 import com.easy.query.core.util.StringUtil;
 

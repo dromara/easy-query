@@ -3,10 +3,8 @@ package com.easy.query.core.basic.api.select.provider;
 import com.easy.query.core.expression.parser.abstraction.*;
 import com.easy.query.core.expression.parser.impl.*;
 import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
-import com.easy.query.core.expression.parser.abstraction.*;
-import com.easy.query.core.expression.parser.impl.*;
 import com.easy.query.core.expression.segment.condition.DefaultSqlPredicate;
-import com.easy.query.core.query.SqlEntityQueryExpression;
+import com.easy.query.core.expression.sql.SqlEntityQueryExpression;
 import com.easy.query.core.util.EasyUtil;
 
 /**

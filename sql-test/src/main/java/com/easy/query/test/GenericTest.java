@@ -1,13 +1,11 @@
 package com.easy.query.test;
 
 import com.easy.query.BaseTest;
-import com.easy.query.core.encryption.AbstractAesEasyEncryptionStrategy;
 import com.easy.query.core.enums.SqlRangeEnum;
 import com.easy.query.core.util.AesUtil;
 import com.easy.query.core.util.Base64Util;
 import com.easy.query.core.util.StringUtil;
 import com.easy.query.encryption.DefaultAesEasyEncryptionStrategy;
-import com.easy.query.entity.SysUser;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -56,8 +54,8 @@ public class GenericTest extends BaseTest {
     @Test
     public void aesTest2(){
         String uuid = UUID.randomUUID().toString();
-        String encryptToString = AesUtil.encryptToString(uuid,key , iv);
-        String decryptToString = AesUtil.decryptToString(encryptToString, key, iv);
+        String encryptToString = AesUtil.encrypt(uuid,key , iv,StandardCharsets.UTF_8);
+        String decryptToString =AesUtil.decrypt(encryptToString, key, iv,StandardCharsets.UTF_8);
 
         Assert.assertEquals(uuid,decryptToString);
 
