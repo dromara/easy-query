@@ -25,7 +25,10 @@ public interface ExpressionUpdatable<T> extends Updatable<T> {
 
     ExpressionUpdatable<T> setSelfColumn(boolean condition, Property<T, ?> column1, Property<T, ?> column2);
 
-
+    default ExpressionUpdatable<T> withVersion(Object versionValue){
+        return withVersion(true,versionValue);
+    }
+    ExpressionUpdatable<T> withVersion(boolean condition,Object versionValue);
     // region 列++ --
 
 

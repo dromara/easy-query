@@ -1,6 +1,7 @@
 package com.easy.query.core.expression.sql.def;
 
 import com.easy.query.core.abstraction.EasyQueryLambdaFactory;
+import com.easy.query.core.basic.plugin.version.EasyVersionStrategy;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.lambda.SqlExpression;
@@ -12,12 +13,14 @@ import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import com.easy.query.core.expression.segment.builder.UpdateSetSqlBuilderSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnPropertyPredicate;
+import com.easy.query.core.expression.segment.condition.predicate.ColumnVersionPropertyPredicate;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.sql.internal.AbstractSqlPredicateEntityExpression;
 import com.easy.query.core.expression.sql.SqlEntityDeleteExpression;
 import com.easy.query.core.expression.sql.SqlEntityTableExpression;
 import com.easy.query.core.expression.sql.SqlExpressionContext;
+import com.easy.query.core.metadata.VersionMetadata;
 import com.easy.query.core.util.ClassUtil;
 
 import java.util.Collection;
@@ -95,6 +98,7 @@ public abstract class EasySqlDeleteExpression extends AbstractSqlPredicateEntity
         EntityMetadata entityMetadata = table.getEntityMetadata();
         String tableName = entityMetadata.getTableName();
         UpdateSetSqlBuilderSegment updateSetSqlBuilderSegment = getUpdateSetSqlBuilderSegment(table);
+
         //逻辑删除
         if (updateSetSqlBuilderSegment != null) {
 
@@ -176,15 +180,23 @@ public abstract class EasySqlDeleteExpression extends AbstractSqlPredicateEntity
         if (useLogicDelete) {
             SqlExpression<SqlColumnSetter<Object>> logicDeletedSqlExpression = table.getLogicDeletedSqlExpression();
             if (logicDeletedSqlExpression != null) {
-                EasyQueryLambdaFactory easyQueryLambdaFactory = getRuntimeContext().getEasyQueryLambdaFactory();
                 UpdateSetSqlBuilderSegment setSqlSegmentBuilder = new UpdateSetSqlBuilderSegment();
+                EasyQueryLambdaFactory easyQueryLambdaFactory = getRuntimeContext().getEasyQueryLambdaFactory();
                 SqlColumnSetter<Object> sqlColumnSetter = easyQueryLambdaFactory.createSqlColumnSetter(table.getIndex(), this, setSqlSegmentBuilder);
                 logicDeletedSqlExpression.apply(sqlColumnSetter);//获取set的值
+                //todo 非表达式添加行版本信息
+                if(!isExpression()){
+                    if(entityMetadata.hasVersionColumn()){
+                        VersionMetadata versionMetadata = entityMetadata.getVersionMetadata();
+                        Class<? extends EasyVersionStrategy> versionStrategy = versionMetadata.getVersionStrategy();
+                        EasyVersionStrategy easyVersionStrategy = getRuntimeContext().getEasyQueryConfiguration().getEasyVersionStrategyNotNull(versionStrategy);
+                        setSqlSegmentBuilder.append(new ColumnVersionPropertyPredicate(table, versionMetadata.getPropertyName(),easyVersionStrategy,this));
+                    }
+                }
                 return setSqlSegmentBuilder;
             }
         }
         return null;
-
     }
 
     protected PredicateSegment buildWherePredicateSegment(SqlEntityTableExpression table){
@@ -225,6 +237,16 @@ public abstract class EasySqlDeleteExpression extends AbstractSqlPredicateEntity
 
     }
 
+    @Override
+    public boolean isExpression() {
+        return expressionDelete;
+    }
+
+    @Override
+    protected boolean hasVersionColumn(EntityMetadata entityMetadata) {
+        return entityMetadata.hasVersionColumn()&&!hasWhereColumns();
+    }
+
     /**
      * 后续代码合并抽离优化
      *
@@ -242,6 +264,7 @@ public abstract class EasySqlDeleteExpression extends AbstractSqlPredicateEntity
         UpdateSetSqlBuilderSegment updateSetSqlBuilderSegment = getUpdateSetSqlBuilderSegment(table);
         //逻辑删除
         if (updateSetSqlBuilderSegment != null) {
+
             sql = new StringBuilder("UPDATE ").append(tableName);
             sql.append(" SET ").append(updateSetSqlBuilderSegment.toSql());//生成的表达式带有参数会传入到上下文
         } else {

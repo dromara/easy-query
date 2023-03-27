@@ -2,6 +2,9 @@ package com.easy.query.core.expression.sql.def;
 
 import com.easy.query.core.abstraction.EasyQueryLambdaFactory;
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
+import com.easy.query.core.basic.plugin.version.EasyVersionStrategy;
+import com.easy.query.core.expression.parser.abstraction.SqlPredicate;
+import com.easy.query.core.expression.segment.condition.predicate.ColumnVersionPropertyPredicate;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.configuration.EasyQueryConfiguration;
@@ -27,9 +30,11 @@ import com.easy.query.core.expression.sql.internal.AbstractSqlPredicateEntityExp
 import com.easy.query.core.expression.sql.SqlEntityTableExpression;
 import com.easy.query.core.expression.sql.SqlEntityUpdateExpression;
 import com.easy.query.core.expression.sql.SqlExpressionContext;
+import com.easy.query.core.metadata.VersionMetadata;
 import com.easy.query.core.util.ArrayUtil;
 import com.easy.query.core.util.BeanUtil;
 import com.easy.query.core.util.ClassUtil;
+import com.easy.query.core.util.EasyUtil;
 import com.easy.query.core.util.TrackUtil;
 
 import java.util.*;
@@ -51,6 +56,11 @@ public abstract class EasySqlUpdateExpression extends AbstractSqlPredicateEntity
     public EasySqlUpdateExpression(SqlExpressionContext queryExpressionContext, boolean isExpressionUpdate) {
         super(queryExpressionContext);
         this.isExpressionUpdate = isExpressionUpdate;
+    }
+
+    @Override
+    public boolean isExpression() {
+        return isExpressionUpdate;
     }
 
     @Override
@@ -133,6 +143,7 @@ public abstract class EasySqlUpdateExpression extends AbstractSqlPredicateEntity
             throw new EasyQueryException("'UPDATE' statement without 'WHERE'");
         }
         SqlEntityTableExpression table = getTable(0);
+
         //逻辑删除
         PredicateSegment sqlWhere = buildWherePredicateSegment(getWhere(), table);
 
@@ -216,6 +227,15 @@ public abstract class EasySqlUpdateExpression extends AbstractSqlPredicateEntity
         }
         return internalToSql(table, updateSet, sqlWhere);
     }
+//    protected void buildVersionSetColumn(SqlEntityTableExpression table, SqlBuilderSegment updateSet){
+//        EntityMetadata entityMetadata = table.getEntityMetadata();
+//        if(entityMetadata.hasVersionColumn()){
+//            VersionMetadata versionMetadata = entityMetadata.getVersionMetadata();
+//            Class<? extends EasyVersionStrategy> versionStrategy = versionMetadata.getVersionStrategy();
+//            EasyVersionStrategy easyVersionStrategy = getRuntimeContext().getEasyQueryConfiguration().getEasyVersionStrategyNotNull(versionStrategy);
+//            updateSet.append(new ColumnVersionPropertyPredicate(table, versionMetadata.getPropertyName(),easyVersionStrategy,this));
+//        }
+//    }
 
     protected void buildAutoEntitySetColumns(SqlEntityTableExpression table, SqlBuilderSegment updateSet, PredicateSegment sqlWhere, Object entity) {
 
@@ -262,7 +282,7 @@ public abstract class EasySqlUpdateExpression extends AbstractSqlPredicateEntity
 
                 String propertyName = ((SqlEntitySegment) o).getPropertyName();
                 ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(propertyName);
-                if(columnMetadata.isUpdateIgnore()){
+                if(columnMetadata.isUpdateIgnore()||columnMetadata.isVersion()){
                     return true;
                 }
 
@@ -274,6 +294,13 @@ public abstract class EasySqlUpdateExpression extends AbstractSqlPredicateEntity
                 }
                 return false;
             });
+            if(entityMetadata.hasVersionColumn()){
+                VersionMetadata versionMetadata = entityMetadata.getVersionMetadata();
+                Class<? extends EasyVersionStrategy> versionStrategy = versionMetadata.getVersionStrategy();
+                EasyVersionStrategy easyVersionStrategy = getRuntimeContext().getEasyQueryConfiguration().getEasyVersionStrategyNotNull(versionStrategy);
+                updateSet.append(new ColumnVersionPropertyPredicate(table, versionMetadata.getPropertyName(),easyVersionStrategy,this));
+            }
+
         }
     }
 
@@ -298,15 +325,22 @@ public abstract class EasySqlUpdateExpression extends AbstractSqlPredicateEntity
      * @param table
      */
     private void buildPredicateWithWhereColumns(PredicateSegment where, SqlBuilderSegment whereColumns, SqlEntityTableExpression table) {
-        for (SqlSegment sqlSegment : whereColumns.getSqlSegments()) {
-            if (!(sqlSegment instanceof SqlEntitySegment)) {
-                throw new EasyQueryException("where 表达式片段不是SqlEntitySegment");
-            }
-            SqlEntitySegment sqlEntitySegment = (SqlEntitySegment) sqlSegment;
-            AndPredicateSegment andPredicateSegment = new AndPredicateSegment(new ColumnPropertyPredicate(table, sqlEntitySegment.getPropertyName(), this));
-            where.addPredicateSegment(andPredicateSegment);
-        }
 
+        if(whereColumns.isNotEmpty()){
+            for (SqlSegment sqlSegment : whereColumns.getSqlSegments()) {
+                if (!(sqlSegment instanceof SqlEntitySegment)) {
+                    throw new EasyQueryException("where 表达式片段不是SqlEntitySegment");
+                }
+                SqlEntitySegment sqlEntitySegment = (SqlEntitySegment) sqlSegment;
+                AndPredicateSegment andPredicateSegment = new AndPredicateSegment(new ColumnPropertyPredicate(table, sqlEntitySegment.getPropertyName(), this));
+                where.addPredicateSegment(andPredicateSegment);
+            }
+        }
+    }
+
+    @Override
+    protected boolean hasVersionColumn(EntityMetadata entityMetadata) {
+        return entityMetadata.hasVersionColumn()&&!hasWhereColumns();//如果是手动输入where column那么不会追加
     }
 
     private void buildPredicateWithKeyColumns(PredicateSegment where, SqlEntityTableExpression table) {
@@ -319,5 +353,10 @@ public abstract class EasySqlUpdateExpression extends AbstractSqlPredicateEntity
             AndPredicateSegment andPredicateSegment = new AndPredicateSegment(new ColumnPropertyPredicate(table, keyProperty, this));
             where.addPredicateSegment(andPredicateSegment);
         }
+//        if(entityMetadata.hasVersionColumn()){
+//            VersionMetadata versionMetadata = entityMetadata.getVersionMetadata();
+//            AndPredicateSegment andPredicateSegment = new AndPredicateSegment(new ColumnPropertyPredicate(table, versionMetadata.getPropertyName(), this));
+//            where.addPredicateSegment(andPredicateSegment);
+//        }
     }
 }

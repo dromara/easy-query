@@ -24,6 +24,7 @@ public class EasySqlExpressionContext implements SqlExpressionContext {
     private boolean useLogicDelete = true;
     private boolean useInterceptor = true;
     private boolean queryTracking = false;
+    private Object version;
     private UpdateStrategyEnum updateStrategy = UpdateStrategyEnum.DEFAULT;
 
     public EasySqlExpressionContext(EasyQueryRuntimeContext runtimeContext, String alias) {
@@ -138,6 +139,16 @@ public class EasySqlExpressionContext implements SqlExpressionContext {
     @Override
     public boolean isTracking() {
         return this.queryTracking;
+    }
+
+    public Object getVersion() {
+        return version;
+    }
+
+
+    @Override
+    public void setVersion(Object version) {
+        this.version = version;
     }
     //    @Override
 //    public String getSqlColumnSegment(SqlEntityTableExpressionSegment table, String propertyName) {

@@ -1,6 +1,7 @@
 package com.easy.query.core.metadata;
 
 import com.easy.query.core.basic.plugin.encryption.EasyEncryptionStrategy;
+import com.easy.query.core.basic.plugin.version.EasyVersionStrategy;
 
 import java.beans.PropertyDescriptor;
 
@@ -26,8 +27,6 @@ public class ColumnMetadata {
     private  boolean version=false;
     private  boolean insertIgnore=false;
     private  boolean updateIgnore =false;
-
-    private  boolean encryption =false;
 
     private  Class<? extends EasyEncryptionStrategy> encryptionStrategy;
 
@@ -100,11 +99,7 @@ public class ColumnMetadata {
     }
 
     public boolean isEncryption() {
-        return encryption;
-    }
-
-    public void setEncryption(boolean encryption) {
-        this.encryption = encryption;
+        return encryptionStrategy!=null;
     }
 
     public Class<? extends EasyEncryptionStrategy> getEncryptionStrategy() {

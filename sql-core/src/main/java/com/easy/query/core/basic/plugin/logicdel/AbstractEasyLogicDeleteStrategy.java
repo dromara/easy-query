@@ -30,10 +30,10 @@ public abstract class AbstractEasyLogicDeleteStrategy implements EasyLogicDelete
             throw new EasyQueryException(ClassUtil.getSimpleName(entityMetadata.getEntityClass())+"."+propertyName+" logic delete not support, property type not allowed");
         }
         Property<Object, ?> lambdaProperty = EasyUtil.getPropertyLambda(entityMetadata.getEntityClass(), propertyName, propertyType);
-        SqlExpression<SqlPredicate<Object>> queryFilterExpression = getQueryFilterExpression(entityMetadata,lambdaProperty);
-        SqlExpression<SqlColumnSetter<Object>> deletedSqlExpression = getDeletedSqlExpression(entityMetadata,lambdaProperty);
+        SqlExpression<SqlPredicate<Object>> queryFilterExpression = getQueryFilterExpression(entityMetadata, propertyName, propertyType,lambdaProperty);
+        SqlExpression<SqlColumnSetter<Object>> deletedSqlExpression = getDeletedSqlExpression(entityMetadata, propertyName, propertyType,lambdaProperty);
         entityMetadata.setLogicDeleteMetadata(new LogicDeleteMetadata(propertyName,queryFilterExpression, deletedSqlExpression));
     }
-    protected abstract SqlExpression<SqlPredicate<Object>> getQueryFilterExpression(EntityMetadata entityMetadata,Property<Object,?> lambdaProperty);
-    protected abstract SqlExpression<SqlColumnSetter<Object>> getDeletedSqlExpression(EntityMetadata entityMetadata,Property<Object,?> lambdaProperty);
+    protected abstract SqlExpression<SqlPredicate<Object>> getQueryFilterExpression(EntityMetadata entityMetadata,String propertyName, Class<?> propertyType,Property<Object,?> lambdaProperty);
+    protected abstract SqlExpression<SqlColumnSetter<Object>> getDeletedSqlExpression(EntityMetadata entityMetadata,String propertyName, Class<?> propertyType,Property<Object,?> lambdaProperty);
 }

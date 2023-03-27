@@ -1,10 +1,12 @@
 package com.easy.query.core.basic.jdbc.parameter;
 
+import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.sql.SqlEntityTableExpression;
 import com.easy.query.core.expression.sql.SqlTableExpressionSegment;
+import com.easy.query.core.util.EasyUtil;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -26,7 +28,7 @@ public final class PropertySQLParameter implements BeanSqlParameter {
     }
 
     @Override
-    public SqlTableExpressionSegment getTable() {
+    public SqlEntityTableExpression getTable() {
         return table;
     }
 
@@ -37,12 +39,8 @@ public final class PropertySQLParameter implements BeanSqlParameter {
         }
         EntityMetadata entityMetadata = table.getEntityMetadata();
         ColumnMetadata column = entityMetadata.getColumnNotNull(propertyName);
-        Method readMethod = column.getProperty().getReadMethod();
-        try {
-            return readMethod.invoke(bean);
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            throw new EasyQueryException(e);
-        }
+        Property<Object, ?> propertyLambda = EasyUtil.getPropertyLambda(table.entityClass(), propertyName, column.getProperty().getPropertyType());
+        return propertyLambda.apply(bean);
     }
 
     @Override

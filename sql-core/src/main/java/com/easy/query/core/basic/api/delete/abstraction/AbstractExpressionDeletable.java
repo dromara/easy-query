@@ -75,6 +75,14 @@ public abstract   class AbstractExpressionDeletable<T> extends AbstractSqlExecut
     }
 
     @Override
+    public ExpressionDeletable<T> withVersion(boolean condition, Object versionValue) {
+        if(condition){
+            sqlEntityDeleteExpression.getSqlExpressionContext().setVersion(versionValue);
+        }
+        return this;
+    }
+
+    @Override
     public Deletable<T, ExpressionDeletable<T>> whereById(Object id) {
 
         PredicateSegment where = sqlEntityDeleteExpression.getWhere();

@@ -51,4 +51,6 @@ public interface SqlExpressionContext {
 
     void queryTracking(boolean tracking);
     boolean isTracking();
+    void setVersion(Object version);
+    Object getVersion();
 }

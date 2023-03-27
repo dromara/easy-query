@@ -19,7 +19,13 @@ public final class LogicDeleteMetadata {
     }
 
     private final String propertyName;
+    /**
+     * where
+     */
     private final SqlExpression<SqlPredicate<Object>> logicDeleteQueryFilterExpression;
+    /**
+     * update set
+     */
     private final SqlExpression<SqlColumnSetter<Object>> logicDeletedSqlExpression;
 
     public SqlExpression<SqlPredicate<Object>> getLogicDeleteQueryFilterExpression() {

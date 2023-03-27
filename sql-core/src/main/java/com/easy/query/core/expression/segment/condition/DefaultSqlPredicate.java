@@ -2,9 +2,11 @@ package com.easy.query.core.expression.segment.condition;
 
 import com.easy.query.core.enums.SqlLikeEnum;
 import com.easy.query.core.enums.SqlRangeEnum;
+import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.parser.abstraction.internal.WherePredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnCollectionPredicate0;
+import com.easy.query.core.expression.segment.condition.predicate.ColumnPropertyPredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnValuePredicate0;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnWithColumnPredicate0;
 import com.easy.query.core.expression.sql.SqlEntityTableExpression;

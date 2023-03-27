@@ -1,6 +1,9 @@
 package com.easy.query.core.expression.sql.internal;
 
 import com.easy.query.core.abstraction.EasyQueryLambdaFactory;
+import com.easy.query.core.expression.segment.condition.predicate.ColumnPropertyPredicate;
+import com.easy.query.core.expression.sql.SqlLambdaEntityExpression;
+import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.configuration.EasyQueryConfiguration;
 import com.easy.query.core.expression.lambda.SqlExpression;
@@ -11,51 +14,87 @@ import com.easy.query.core.basic.plugin.interceptor.EasyPredicateFilterIntercept
 import com.easy.query.core.expression.sql.AnonymousEntityTableExpression;
 import com.easy.query.core.expression.sql.SqlEntityTableExpression;
 import com.easy.query.core.expression.sql.SqlExpressionContext;
+import com.easy.query.core.metadata.VersionMetadata;
 import com.easy.query.core.util.ArrayUtil;
+import com.easy.query.core.util.EasyUtil;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
+ * @author xuejiaming
  * @FileName: AbstractSqlPredicateEntityExpression.java
  * @Description: 文件说明
  * @Date: 2023/3/15 21:58
- * @author xuejiaming
  */
-public abstract class AbstractSqlPredicateEntityExpression extends AbstractSqlEntityExpression {
+public abstract class AbstractSqlPredicateEntityExpression extends AbstractSqlEntityExpression implements SqlLambdaEntityExpression {
     public AbstractSqlPredicateEntityExpression(SqlExpressionContext sqlExpressionContext) {
         super(sqlExpressionContext);
     }
 
+    protected boolean useLogicDelete(EntityMetadata entityMetadata){
+        return sqlExpressionContext.isUseLogicDelete() && entityMetadata.enableLogicDelete();
+    }
+
+    /**
+     * entityMetadata.hasVersionColumn() && (this instanceof SqlEntityUpdateExpression || this instanceof SqlEntityDeleteExpression);
+     * @param entityMetadata
+     * @return
+     */
+    protected abstract boolean hasVersionColumn(EntityMetadata entityMetadata);
+    protected boolean useInterceptor(EntityMetadata entityMetadata){
+        return sqlExpressionContext.isUseInterceptor() && ArrayUtil.isNotEmpty(entityMetadata.getPredicateFilterInterceptors());
+    }
+
+    /**
+     * 存在问题 update必须要总的predicate但是如果在这边导致我手动指定where也会有这个version
+     *
+     * @param table
+     * @param originalPredicate
+     * @return
+     */
     protected PredicateSegment sqlPredicateFilter(SqlEntityTableExpression table, PredicateSegment originalPredicate) {
         if (!(table instanceof AnonymousEntityTableExpression)) {
 
             EntityMetadata entityMetadata = table.getEntityMetadata();
-            boolean useLogicDelete = sqlExpressionContext.isUseLogicDelete() && entityMetadata.enableLogicDelete();
-            boolean useInterceptor = getSqlExpressionContext().isUseInterceptor() && ArrayUtil.isNotEmpty(entityMetadata.getPredicateFilterInterceptors());
-            if (useLogicDelete || useInterceptor) {
-                PredicateSegment predicateSegment = new AndPredicateSegment(true);
-                EasyQueryLambdaFactory easyQueryLambdaFactory = getRuntimeContext().getEasyQueryLambdaFactory();
-                SqlPredicate<Object> sqlPredicate = easyQueryLambdaFactory.createSqlPredicate(table.getIndex(), this, predicateSegment);
+            PredicateSegment predicateSegment = new AndPredicateSegment(true);
+            EasyQueryLambdaFactory easyQueryLambdaFactory = getRuntimeContext().getEasyQueryLambdaFactory();
+            SqlPredicate<Object> sqlPredicate = easyQueryLambdaFactory.createSqlPredicate(table.getIndex(), this, predicateSegment);
 
+            if (useLogicDelete(entityMetadata)) {
                 SqlExpression<SqlPredicate<Object>> logicDeleteQueryFilterExpression = table.getLogicDeleteQueryFilterExpression();
                 logicDeleteQueryFilterExpression.apply(sqlPredicate);
-                if (useInterceptor) {
-                    List<String> predicateFilterInterceptors = entityMetadata.getPredicateFilterInterceptors();
-                    EasyQueryConfiguration easyQueryConfiguration = getRuntimeContext().getEasyQueryConfiguration();
-                    for (String predicateFilterInterceptor : predicateFilterInterceptors) {
-                        EasyPredicateFilterInterceptor globalSelectInterceptorStrategy = (EasyPredicateFilterInterceptor) easyQueryConfiguration.getGlobalInterceptor(predicateFilterInterceptor);
-                        if (globalSelectInterceptorStrategy != null) {
-                            globalSelectInterceptorStrategy.configure(table.entityClass(), this, sqlPredicate);
-                        }
-                    }
-                }
+            }
 
-                if (predicateSegment.isNotEmpty()) {
-                    if (originalPredicate != null && originalPredicate.isNotEmpty()) {
-                        predicateSegment.addPredicateSegment(originalPredicate);
+            if (hasVersionColumn(entityMetadata)) {
+                VersionMetadata versionMetadata = entityMetadata.getVersionMetadata();
+                ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(versionMetadata.getPropertyName());
+                if (isExpression()) {
+                    Object version = sqlExpressionContext.getVersion();
+                    if (Objects.nonNull(version)) {
+                        sqlPredicate.eq(EasyUtil.getPropertyLambda(table.entityClass(), versionMetadata.getPropertyName(), columnMetadata.getProperty().getPropertyType()), version);
                     }
-                    return predicateSegment;
+                } else {
+                    AndPredicateSegment versionPredicateSegment = new AndPredicateSegment(new ColumnPropertyPredicate(table, versionMetadata.getPropertyName(), this));
+                    predicateSegment.addPredicateSegment(versionPredicateSegment);
                 }
+            }
+            if (useInterceptor(entityMetadata)) {
+                List<String> predicateFilterInterceptors = entityMetadata.getPredicateFilterInterceptors();
+                EasyQueryConfiguration easyQueryConfiguration = getRuntimeContext().getEasyQueryConfiguration();
+                for (String predicateFilterInterceptor : predicateFilterInterceptors) {
+                    EasyPredicateFilterInterceptor globalSelectInterceptorStrategy = (EasyPredicateFilterInterceptor) easyQueryConfiguration.getGlobalInterceptor(predicateFilterInterceptor);
+                    if (globalSelectInterceptorStrategy != null) {
+                        globalSelectInterceptorStrategy.configure(table.entityClass(), this, sqlPredicate);
+                    }
+                }
+            }
+
+            if (predicateSegment.isNotEmpty()) {
+                if (originalPredicate != null && originalPredicate.isNotEmpty()) {
+                    predicateSegment.addPredicateSegment(originalPredicate);
+                }
+                return predicateSegment;
             }
         }
         return originalPredicate;

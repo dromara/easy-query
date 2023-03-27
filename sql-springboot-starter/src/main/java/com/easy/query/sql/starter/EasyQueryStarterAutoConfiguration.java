@@ -1,6 +1,11 @@
 package com.easy.query.sql.starter;
 
-import com.easy.query.core.abstraction.*;
+import com.easy.query.core.abstraction.DefaultEasyQueryLambdaFactory;
+import com.easy.query.core.abstraction.DefaultEasyQueryRuntimeContext;
+import com.easy.query.core.abstraction.EasyExpressionFactory;
+import com.easy.query.core.abstraction.EasyQueryLambdaFactory;
+import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
+import com.easy.query.core.abstraction.EasySqlApiFactory;
 import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.api.client.DefaultEasyQuery;
 import com.easy.query.core.api.client.EasyQuery;
@@ -60,7 +65,13 @@ public class EasyQueryStarterAutoConfiguration {
             LogFactory.useCustomLogging(Slf4jImpl.class);
         }else {
             try {
-                LogFactory.useCustomLogging((Class<? extends Log>) Class.forName(easyQueryProperties.getLogClass()));
+                Class<?> aClass = Class.forName(easyQueryProperties.getLogClass());
+                if(Log.class.isAssignableFrom(aClass)){
+                    LogFactory.useCustomLogging((Class<? extends Log>)aClass);
+                }else{
+                    LogFactory.useStdOutLogging();
+                    System.out.println("cant found log:["+easyQueryProperties.getLogClass()+"]");
+                }
             } catch (ClassNotFoundException e) {
                 System.out.println("cant found log:["+easyQueryProperties.getLogClass()+"]");
                 e.printStackTrace();

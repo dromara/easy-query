@@ -2,6 +2,7 @@ package com.easy.query.core.metadata;
 
 import com.easy.query.core.annotation.*;
 import com.easy.query.core.basic.enums.LogicDeleteStrategyEnum;
+import com.easy.query.core.basic.plugin.version.EasyVersionStrategy;
 import com.easy.query.core.config.NameConversion;
 import com.easy.query.core.configuration.EasyQueryConfiguration;
 import com.easy.query.core.basic.plugin.encryption.EasyEncryptionStrategy;
@@ -34,6 +35,7 @@ public class EntityMetadata {
 
 
     private LogicDeleteMetadata logicDeleteMetadata;
+    private VersionMetadata versionMetadata;
     /**
      * 查询过滤器
      */
@@ -79,6 +81,8 @@ public class EntityMetadata {
 
         List<Field> allFields = ClassUtil.getAllFields(this.entityClass);
         PropertyDescriptor[] ps = getPropertyDescriptor();
+        int versionCount=0;
+        int logicDelCount=0;
         for (Field field : allFields) {
             String property = field.getName();
             if(ignoreProperties.contains(property)){
@@ -111,7 +115,6 @@ public class EntityMetadata {
                 if(!configuration.containEasyEncryptionStrategy(strategy)){
                     throw new EasyQueryException(ClassUtil.getSimpleName(entityClass)+"."+property+" Encryption strategy unknown");
                 }
-                columnMetadata.setEncryption(true);
                 columnMetadata.setEncryptionStrategy(encryption.strategy());
             }
             if (StringUtil.isNotBlank(tableName)) {
@@ -140,7 +143,16 @@ public class EntityMetadata {
                 }
                 Version version = field.getAnnotation(Version.class);
                 if (version != null) {
+
+                    Class<? extends EasyVersionStrategy> strategy = version.strategy();
+                    if(!configuration.containEasyVersionStrategy(strategy)){
+                        throw new EasyQueryException(ClassUtil.getSimpleName(entityClass)+"."+property+" Version strategy unknown");
+                    }
                     columnMetadata.setVersion(true);
+
+                    versionMetadata=new VersionMetadata(property,strategy);
+
+                    versionCount++;
                 }
                 LogicDelete logicDelete = field.getAnnotation(LogicDelete.class);
                 if (logicDelete != null) {
@@ -156,8 +168,16 @@ public class EntityMetadata {
                         EasyLogicDeleteStrategy sysGlobalLogicDeleteStrategy = configuration.getSysGlobalLogicDeleteStrategyNotNull(strategy);
                         sysGlobalLogicDeleteStrategy.configure(this, property, field.getType());
                     }
+                    logicDelCount++;
                 }
             }
+        }
+
+        if(versionCount>1){
+            throw new EasyQueryException("multi version not support");
+        }
+        if(logicDelCount>1){
+            throw new EasyQueryException("multi logic delete not support");
         }
     }
 
@@ -307,6 +327,14 @@ public class EntityMetadata {
 
     public List<String> getIncrementColumns() {
         return incrementColumns;
+    }
+
+
+    public boolean hasVersionColumn(){
+        return versionMetadata!=null;
+    }
+    public VersionMetadata getVersionMetadata(){
+        return versionMetadata;
     }
 
 }

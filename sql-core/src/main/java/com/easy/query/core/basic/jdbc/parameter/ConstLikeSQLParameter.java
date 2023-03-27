@@ -1,5 +1,6 @@
 package com.easy.query.core.basic.jdbc.parameter;
 
+import com.easy.query.core.expression.sql.SqlEntityTableExpression;
 import com.easy.query.core.expression.sql.SqlTableExpressionSegment;
 
 /**
@@ -16,7 +17,7 @@ public final class ConstLikeSQLParameter implements ConstSQLParameter, SQLLikePa
     }
 
     @Override
-    public SqlTableExpressionSegment getTable() {
+    public SqlEntityTableExpression getTable() {
         return constSQLParameter.getTable();
     }
 

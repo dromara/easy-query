@@ -12,6 +12,7 @@ import com.easy.query.core.expression.sql.AnonymousEntityTableExpression;
 import com.easy.query.core.expression.sql.SqlEntityQueryExpression;
 import com.easy.query.core.expression.sql.SqlEntityTableExpression;
 import com.easy.query.core.expression.sql.SqlExpressionContext;
+import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.util.StringUtil;
 
 import java.util.Iterator;
@@ -38,6 +39,7 @@ public abstract class EasySqlQueryExpression extends AbstractSqlPredicateEntityE
         super(queryExpressionContext);
         this.projects = new ProjectSqlBuilderSegment();
     }
+
 
     @Override
     public boolean isEmpty() {
@@ -135,6 +137,17 @@ public abstract class EasySqlQueryExpression extends AbstractSqlPredicateEntityE
     @Override
     public void setDistinct(boolean distinct) {
         this.distinct = distinct;
+    }
+
+
+    @Override
+    public boolean isExpression() {
+        return true;
+    }
+
+    @Override
+    protected boolean hasVersionColumn(EntityMetadata entityMetadata) {
+        return false;
     }
 
     @Override

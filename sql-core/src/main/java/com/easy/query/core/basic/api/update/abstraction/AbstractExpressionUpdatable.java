@@ -74,6 +74,14 @@ public abstract class AbstractExpressionUpdatable<T> extends AbstractSqlExecuteR
     }
 
     @Override
+    public ExpressionUpdatable<T> withVersion(boolean condition, Object versionValue) {
+        if(condition){
+            sqlEntityUpdateExpression.getSqlExpressionContext().setVersion(versionValue);
+        }
+        return this;
+    }
+
+    @Override
     public ExpressionUpdatable<T> setIncrementNumber(boolean condition, Property<T, ? extends Number> column, Number val) {
         sqlColumnSetter.setIncrementNumber(true,column,val);
         return this;

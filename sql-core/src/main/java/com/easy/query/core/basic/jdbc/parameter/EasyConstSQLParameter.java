@@ -1,5 +1,6 @@
 package com.easy.query.core.basic.jdbc.parameter;
 
+import com.easy.query.core.expression.sql.SqlEntityTableExpression;
 import com.easy.query.core.expression.sql.SqlTableExpressionSegment;
 
 /**
@@ -9,18 +10,18 @@ import com.easy.query.core.expression.sql.SqlTableExpressionSegment;
  * @Date: 2023/2/28 20:47
  */
 public final class EasyConstSQLParameter implements ConstSQLParameter {
-    private final SqlTableExpressionSegment table;
+    private final SqlEntityTableExpression table;
     private final String propertyName;
     private final Object val;
 
-    public EasyConstSQLParameter(SqlTableExpressionSegment table, String propertyName, Object val) {
+    public EasyConstSQLParameter(SqlEntityTableExpression table, String propertyName, Object val) {
         this.table = table;
         this.propertyName = propertyName;
         this.val = val;
     }
 
     @Override
-    public SqlTableExpressionSegment getTable() {
+    public SqlEntityTableExpression getTable() {
         return table;
     }
 

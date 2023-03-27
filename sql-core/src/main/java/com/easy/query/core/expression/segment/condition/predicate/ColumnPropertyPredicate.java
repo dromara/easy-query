@@ -11,9 +11,9 @@ import com.easy.query.core.expression.sql.SqlEntityTableExpression;
  * @author xuejiaming
  */
 public class ColumnPropertyPredicate implements Predicate {
-    private final SqlEntityTableExpression table;
-    private final String propertyName;
-    private final SqlEntityExpression sqlEntityExpression;
+    protected final SqlEntityTableExpression table;
+    protected final String propertyName;
+    protected final SqlEntityExpression sqlEntityExpression;
 
     public ColumnPropertyPredicate(SqlEntityTableExpression table, String propertyName, SqlEntityExpression sqlEntityExpression){
         this.table = table;

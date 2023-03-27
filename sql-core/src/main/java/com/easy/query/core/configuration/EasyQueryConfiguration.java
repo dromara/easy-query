@@ -1,6 +1,7 @@
 package com.easy.query.core.configuration;
 
 import com.easy.query.core.basic.plugin.logicdel.*;
+import com.easy.query.core.basic.plugin.version.EasyVersionStrategy;
 import com.easy.query.core.config.DefaultEasyQueryDialect;
 import com.easy.query.core.config.EasyQueryDialect;
 import com.easy.query.core.config.NameConversion;
@@ -34,6 +35,7 @@ public class EasyQueryConfiguration {
     private Map<String, EasyInterceptor> globalInterceptorMap =new ConcurrentHashMap<>();
     private Map<String, EasyLogicDeleteStrategy> globalLogicDeleteStrategyMap = new ConcurrentHashMap<>();
     private Map<Class<? extends EasyEncryptionStrategy>, EasyEncryptionStrategy> easyEncryptionStrategyMap = new ConcurrentHashMap<>();
+    private Map<Class<? extends EasyVersionStrategy>, EasyVersionStrategy> easyVersionStrategyMap = new ConcurrentHashMap<>();
     private final boolean deleteThrowError;
 
     public EasyQueryConfiguration() {
@@ -129,10 +131,6 @@ public class EasyQueryConfiguration {
         }
         throw new EasyQueryException("easy logic delete strategy not found. strategy:"+strategy);
     }
-
-    public Collection<EasyEncryptionStrategy> getEasyEncryptionStrategyMap(){
-        return easyEncryptionStrategyMap.values();
-    }
     public void applyEasyEncryptionStrategy(EasyEncryptionStrategy encryptionStrategy) {
         Class<? extends EasyEncryptionStrategy> strategyClass = encryptionStrategy.getClass();
         if (easyEncryptionStrategyMap.containsKey(strategyClass)) {
@@ -153,5 +151,28 @@ public class EasyQueryConfiguration {
             throw new EasyQueryException("easy encryption strategy not found. strategy:"+ClassUtil.getSimpleName(strategy));
         }
         return easyEncryptionStrategy;
+    }
+    //easyVersionStrategyMap
+
+    public void applyEasyVersionStrategy(EasyVersionStrategy versionStrategy) {
+        Class<? extends EasyVersionStrategy> strategyClass = versionStrategy.getClass();
+        if (easyVersionStrategyMap.containsKey(strategyClass)) {
+            throw new EasyQueryException("easy version strategy:" + ClassUtil.getSimpleName(strategyClass) + ",repeat");
+        }
+        easyVersionStrategyMap.put(strategyClass, versionStrategy);
+    }
+
+    public EasyVersionStrategy getEasyVersionStrategy(Class<? extends EasyVersionStrategy> strategy){
+        return easyVersionStrategyMap.get(strategy);
+    }
+    public boolean containEasyVersionStrategy(Class<? extends EasyVersionStrategy> strategy){
+        return getEasyVersionStrategy(strategy)!=null;
+    }
+    public EasyVersionStrategy getEasyVersionStrategyNotNull(Class<? extends EasyVersionStrategy> strategy){
+        EasyVersionStrategy easyVersionStrategy = getEasyVersionStrategy(strategy);
+        if(easyVersionStrategy==null){
+            throw new EasyQueryException("easy version strategy not found. strategy:"+ClassUtil.getSimpleName(strategy));
+        }
+        return easyVersionStrategy;
     }
 }
