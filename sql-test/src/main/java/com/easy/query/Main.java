@@ -83,10 +83,6 @@ public class Main {
 //            System.out.println("耗时：" + (end - start) + "ms");
 //
 //        }
-        BlogEntity xaa=   new BlogEntity();
-        PropertySetter<Object> propertySetter = EasyUtil.getPropertyLambdaSetter(BlogEntity.class, "id", String.class);
-        propertySetter.apply(xaa,"123");
-        System.out.println(xaa);
 
         boolean openFirst1 = SqlRangeEnum.openFirst(SqlRangeEnum.Open);
         boolean openFirst2 = SqlRangeEnum.openFirst(SqlRangeEnum.Closed);

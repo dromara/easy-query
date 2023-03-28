@@ -52,6 +52,14 @@ public class ClassUtil {
         return null;
     }
 
+    public static Method getWriteMethodNotNull(PropertyDescriptor prop, Class<?> type){
+        Method writeMethod = getWriteMethodOrNull(prop, type);
+        if(writeMethod==null){
+            throw new EasyQueryException(ClassUtil.getSimpleName(type)+"."+prop.getName()+" cant get write method.");
+        }
+        return writeMethod;
+    }
+
     /**
      * 代码参考beetlsql
      * <a href="https://gitee.com/xiandafu/beetlsql/blob/master/sql-util/src/main/java/org/beetl/sql/clazz/kit/BeanKit.java">beetlsql</a>
@@ -59,9 +67,10 @@ public class ClassUtil {
      * @param type
      * @return
      */
-    public static Method getWriteMethod(PropertyDescriptor prop, Class<?> type) {
+    public static Method getWriteMethodOrNull(PropertyDescriptor prop, Class<?> type) {
         Method writeMethod = prop.getWriteMethod();
         //当使用lombok等链式编程方式时 有返回值的setter不被认为是writeMethod，需要自己去获取
+        //lombok.experimental.Accessors (chain = true)注解影响
         if (writeMethod == null && !"class".equals(prop.getName())) {
             String propName = prop.getName();
             //符合JavaBean规范的set方法名称（userName=>setUserName,uName=>setuName）

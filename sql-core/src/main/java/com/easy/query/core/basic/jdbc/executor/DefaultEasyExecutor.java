@@ -393,7 +393,7 @@ public class DefaultEasyExecutor implements EasyExecutor {
             Object value =context.getDecryptValue(columnMetadata,handler.getValue(easyResultSet)) ;
 
 
-            PropertySetter<Object> propertyLambdaSetter = EasyUtil.getPropertyLambdaSetter(clazz, property.getName(), propertyType);
+            PropertySetter<Object> propertyLambdaSetter = EasyUtil.getPropertyLambdaSetter(clazz, property);
             propertyLambdaSetter.apply(bean,value);
 //            Method setter = getSetter(property, clazz);
 //            callSetter(bean,setter, property, value);
@@ -405,7 +405,7 @@ public class DefaultEasyExecutor implements EasyExecutor {
     }
 
     public Method getSetter(PropertyDescriptor prop, Class<?> targetClass){
-        return ClassUtil.getWriteMethod(prop, targetClass);
+        return ClassUtil.getWriteMethodOrNull(prop, targetClass);
     }
     public void callSetter(Object target,Method setter, PropertyDescriptor prop, Object value) throws SQLException {
         try {

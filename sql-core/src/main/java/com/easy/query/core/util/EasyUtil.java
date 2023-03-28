@@ -8,7 +8,9 @@ import com.easy.query.core.expression.sql.SqlEntityQueryExpression;
 import com.easy.query.core.expression.sql.SqlEntityTableExpression;
 import com.easy.query.core.metadata.ColumnMetadata;
 
+import java.beans.PropertyDescriptor;
 import java.lang.invoke.*;
+import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -95,20 +97,23 @@ public class EasyUtil {
 
     private static Map<Class<?>, Map<String, PropertySetter<Object>>> CLASS_PROPERTY_SETTER_LAMBDA_CACHE = new ConcurrentHashMap<>();
 
-    public static PropertySetter<Object> getPropertyLambdaSetter(Class<?> entityClass, String propertyName, Class<?> fieldType){
-        return getPropertyLambdaSetter(entityClass,propertyName,fieldType,true);
+    public static PropertySetter<Object> getPropertyLambdaSetter(Class<?> entityClass, PropertyDescriptor prop){
+        return getPropertyLambdaSetter(entityClass,prop,true);
     }
-    public static PropertySetter<Object> getPropertyLambdaSetter(Class<?> entityClass, String propertyName, Class<?> fieldType,boolean cache) {
+    public static PropertySetter<Object> getPropertyLambdaSetter(Class<?> entityClass, PropertyDescriptor prop,boolean cache) {
         if(cache){
             Map<String, PropertySetter<Object>> propertyLambdaMap = CLASS_PROPERTY_SETTER_LAMBDA_CACHE.computeIfAbsent(entityClass, key -> new ConcurrentHashMap<>());
-            return propertyLambdaMap.computeIfAbsent(propertyName, key -> getLambdaPropertySetter(entityClass, propertyName, fieldType));
+            return propertyLambdaMap.computeIfAbsent(prop.getName(), key -> getLambdaPropertySetter(entityClass, prop));
         }
-        return getLambdaPropertySetter(entityClass, propertyName, fieldType);
+        return getLambdaPropertySetter(entityClass, prop);
     }
-    private static PropertySetter<Object> getLambdaPropertySetter(Class<?> entityClass, String propertyName, Class<?> fieldType) {
+    private static PropertySetter<Object> getLambdaPropertySetter(Class<?> entityClass, PropertyDescriptor prop) {
 //        final MethodHandles.Lookup caller = MethodHandles.lookup();
 //        MethodType methodType = MethodType.methodType(Void.class,entityClass);
 //        final CallSite site;
+
+        String propertyName = prop.getName();
+        Class<?> propertyType = prop.getPropertyType();
 
         String getFunName = "set" + StringUtil.toUpperCaseFirstOne(propertyName);
         try {
@@ -120,9 +125,10 @@ public class EasyUtil {
 //                    methodType, FLAG_SERIALIZABLE);
 //            return (PropertySetter<Object>) site.getTarget().invokeExact();
 
-
             MethodHandles.Lookup caller = MethodHandles.lookup();
-            MethodType setter = MethodType.methodType(void.class, fieldType);
+            Method writeMethod = ClassUtil.getWriteMethodNotNull(prop, entityClass);
+
+            MethodType setter = MethodType.methodType(writeMethod.getReturnType(), propertyType);
             MethodHandle target = caller.findVirtual(entityClass, getFunName, setter);
             MethodType func = target.type();
 

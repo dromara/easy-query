@@ -11,13 +11,13 @@
 <dependency>
     <groupId>com.easy-query</groupId>
     <artifactId>sql-springboot-starter</artifactId>
-    <version>0.0.26</version>
+    <version>0.0.29</version>
 </dependency>
 ```
 
 ### 批量更新版本号
 ```shell
-mvn versions:set '-DnewVersion=0.0.26'
+mvn versions:set '-DnewVersion=0.0.xx'
 ```
 
 ## 文档（完善中）
