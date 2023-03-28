@@ -17,7 +17,7 @@
 
 ### 批量更新版本号
 ```shell
-mvn versions:set '-DnewVersion=0.0.22'
+mvn versions:set '-DnewVersion=0.0.25'
 ```
 
 ## 文档（完善中）
