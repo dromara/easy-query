@@ -13,9 +13,11 @@ import com.easy.query.core.expression.parser.abstraction.SqlColumnSelector;
 import com.easy.query.core.exception.EasyQueryConcurrentException;
 import com.easy.query.core.expression.parser.abstraction.SqlAggregatePredicate;
 import com.easy.query.core.expression.parser.abstraction.SqlPredicate;
+import com.easy.query.core.util.ArrayUtil;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @FileName: Select0.java
@@ -132,6 +134,12 @@ public interface Queryable<T1> extends Query<T1> {
     <TR> TR firstNotNull(Class<TR> resultClass, String msg, String code);
 
     List<T1> toList();
+   default Map<String,Object> toMap(){
+       limit(1);
+       List<Map<String, Object>> maps = toMaps();
+       return ArrayUtil.firstOrNull(maps);
+   }
+    List<Map<String,Object>> toMaps();
 
 
     <TR> List<TR> toList(Class<TR> resultClass);

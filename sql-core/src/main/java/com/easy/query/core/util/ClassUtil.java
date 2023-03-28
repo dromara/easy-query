@@ -1,5 +1,6 @@
 package com.easy.query.core.util;
 
+import com.easy.query.core.common.LinkedCaseInsensitiveMap;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
@@ -114,6 +115,17 @@ public class ClassUtil {
             throw new EasyQueryException(e);
         } catch (IllegalAccessException e) {
             throw new EasyQueryException(e);
+        }
+    }
+
+    public static Map newMapInstanceOrNull(Class<?> clazz) {
+        if(Map.class.equals(clazz)){
+            return new LinkedCaseInsensitiveMap();
+        }
+        try {
+            return (Map) clazz.newInstance();
+        } catch (Exception e) {
+            return null;
         }
     }
 

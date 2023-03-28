@@ -21,7 +21,7 @@ public class LinkedCaseInsensitiveMap<V> extends LinkedHashMap<String, V> {
     private final Locale locale;
 
     public LinkedCaseInsensitiveMap() {
-        this(12, null);
+        this(12, Locale.ENGLISH);
     }
     public LinkedCaseInsensitiveMap(Locale locale) {
         this(12, locale);

@@ -15,6 +15,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @FileName: QueryTest.java
@@ -346,6 +347,20 @@ public class QueryTest extends BaseTest {
         TopicGroupTestDTO topicGroupTestDTO = topicGroupTestDTOS.get(0);
         Assert.assertEquals(1,(int)topicGroupTestDTO.getIdCount());
         Assert.assertEquals("3",topicGroupTestDTO.getId());
+    }
+    @Test
+    public void query22() {
+        Queryable<BlogEntity> queryable = easyQuery.queryable(BlogEntity.class);
+        List<Map<String,Object>> maps = queryable.toMaps();
+        Assert.assertNull(maps);
+        Assert.assertEquals(100,maps.size());
+    }
+    @Test
+    public void query23() {
+        Queryable<BlogEntity> queryable = easyQuery.queryable(BlogEntity.class);
+        Map<String,Object> map = queryable.toMap();
+        Assert.assertNotNull(map);
+        Assert.assertTrue(map.containsKey("create_Time"));
     }
 
 }

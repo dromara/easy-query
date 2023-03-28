@@ -47,6 +47,7 @@ import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 /**
  * @FileName: AbstractSelect0.java
@@ -195,6 +196,18 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     }
 
     @Override
+    public List<Map<String, Object>> toMaps() {
+        List maps =toQueryMaps();
+        return (List<Map<String, Object>>)maps;
+    }
+    private List<Map> toQueryMaps() {
+        if (SqlExpressionUtil.shouldCloneSqlEntityQueryExpression(sqlEntityExpression)) {
+            return select(queryClass()).toList(Map.class);
+        }
+        return toList(Map.class);
+    }
+
+    @Override
     public <TR> List<TR> toList(Class<TR> resultClass) {
         return toInternalList(resultClass);
     }
@@ -207,6 +220,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
         }
         return toInternalSql();
     }
+
 
     protected abstract String toInternalSql();
 

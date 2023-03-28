@@ -1,6 +1,7 @@
 package com.easy.query.core.basic.jdbc.executor;
 
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
+import com.easy.query.core.basic.jdbc.types.JDBCTypes;
 import com.easy.query.core.common.bean.FastBean;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
 import com.easy.query.core.metadata.ColumnMetadata;
@@ -300,7 +301,7 @@ public class DefaultEasyExecutor implements EasyExecutor {
     private <T> List<T> mapTo(ExecutorContext context, ResultSet rs, Class<T> clazz) throws SQLException {
         List<T> resultList = null;
         if (Map.class.isAssignableFrom(clazz)) {
-            throw new EasyQueryException("不支持：" + ClassUtil.getSimpleName(clazz) + "的转换");
+            resultList=mapToMaps(context,rs,clazz);
         } else if (ClassUtil.isBasicType(clazz)) {//如果返回的是基本类型
             resultList = new ArrayList<>(1);
             while (rs.next()) {
@@ -344,6 +345,42 @@ public class DefaultEasyExecutor implements EasyExecutor {
         JdbcTypeHandler handler = easyJdbcTypeHandler.getHandler(clazz);
         return handler.getValue(easyResultSet);
 
+    }
+
+    private <T> List<T> mapToMaps(ExecutorContext context, ResultSet rs, Class<T> clazz) throws SQLException{
+
+        if (!rs.next()) {
+            return new ArrayList<>(0);
+        }
+        List<T> resultList = new ArrayList<>();
+        ResultSetMetaData rsmd = rs.getMetaData();
+        do {
+            Map bean = mapToMap(context, rs, clazz, rsmd);
+            resultList.add((T) bean);
+        } while (rs.next());
+        return resultList;
+    }
+    private Map<String,Object> mapToMap(ExecutorContext context, ResultSet rs, Class<?> clazz,ResultSetMetaData rsmd) throws SQLException{
+        Map<String,Object> map = ClassUtil.newMapInstanceOrNull(clazz);
+        if(map==null){
+            throw new SQLException("cant create map:"+ClassUtil.getSimpleName(clazz));
+        }
+        EasyJdbcTypeHandlerManager easyJdbcTypeHandler = context.getRuntimeContext().getEasyJdbcTypeHandlerManager();
+        int columnCount = rsmd.getColumnCount();//有多少列
+        EasyResultSet easyResultSet = new EasyResultSet(rs);
+        for (int i = 0; i < columnCount; i++) {
+
+            String colName = getColName(rsmd, i + 1);//数据库查询出来的列名
+            easyResultSet.setIndex(i);
+            int columnType = rsmd.getColumnType(i + 1);
+            Class<?> propertyType = JDBCTypes.jdbcJavaTypes.get(columnType);
+            easyResultSet.setPropertyType(propertyType);
+            JdbcTypeHandler handler = easyJdbcTypeHandler.getHandler(propertyType);
+            Object value =handler.getValue(easyResultSet);
+
+           map.put(colName,value);
+        }
+        return map;
     }
 
     private <T> List<T> mapToBeans(ExecutorContext context, ResultSet rs, Class<T> clazz) throws SQLException {

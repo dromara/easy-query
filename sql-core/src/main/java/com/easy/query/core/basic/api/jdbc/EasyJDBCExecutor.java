@@ -2,6 +2,8 @@ package com.easy.query.core.basic.api.jdbc;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @FileName: EasyJDBC.java
@@ -12,6 +14,10 @@ import java.util.List;
 public interface EasyJDBCExecutor {
    default  <T> List<T> sqlQuery(String sql,Class<T> clazz){
        return sqlQuery(sql,clazz, Collections.emptyList());
+   }
+   default List<Map<String,Object>> sqlQueryMap(String sql,List<Object> parameters){
+       List<Map> maps = sqlQuery(sql, Map.class, parameters);
+       return maps.stream().map(o->(Map<String,Object>)o).collect(Collectors.toList());
    }
     <T> List<T> sqlQuery(String sql,Class<T> clazz,List<Object> parameters);
     default long sqlExecute(String sql){
