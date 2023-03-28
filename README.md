@@ -8,10 +8,13 @@
 ## spring-boot
 
 ```xml
+<properties>
+    <easy-query.version>last-version</easy-query.version>
+</properties>
 <dependency>
     <groupId>com.easy-query</groupId>
     <artifactId>sql-springboot-starter</artifactId>
-    <version>0.0.31</version>
+    <version>${asy-query.version}</version>
 </dependency>
 ```
 

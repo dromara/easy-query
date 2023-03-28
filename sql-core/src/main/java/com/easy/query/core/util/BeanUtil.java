@@ -1,5 +1,6 @@
 package com.easy.query.core.util;
 
+import com.easy.query.core.common.bean.FastBean;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
@@ -143,11 +144,10 @@ public class BeanUtil {
 
         Collection<String> properties = entityMetadata.getProperties();
         LinkedHashSet<String> matchProperties = new LinkedHashSet<>(properties.size());
+        FastBean fastBean = EasyUtil.getFastBean(entityClass);
         for (String propertyName : properties) {
             ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(propertyName);
-            Property<Object, ?> propertyGetter = EasyUtil.getPropertyLambda(entityClass, propertyName, columnMetadata.getProperty().getPropertyType());
-
-//            String propertyName1 = LambdaUtil.getPropertyName(propertyGetter);
+            Property<Object, ?> propertyGetter = fastBean.getBeanGetter(columnMetadata.getProperty());
 
             Object value = propertyGetter.apply(entity);
             if(propertyPredicate.test(value)){

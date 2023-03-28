@@ -1,8 +1,7 @@
 package com.easy.query.core.basic.jdbc.executor;
 
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
-import com.easy.query.core.common.bean.BeanFastSetter;
-import com.easy.query.core.expression.lambda.PropertySetter;
+import com.easy.query.core.common.bean.FastBean;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
@@ -170,7 +169,7 @@ public class DefaultEasyExecutor implements EasyExecutor {
                 ResultSet keysSet = ps.getGeneratedKeys();
                 int index = 0;
                 PropertyDescriptor[] incrementProperty = new PropertyDescriptor[incrementColumns.size()];
-                BeanFastSetter beanFastSetter = EasyUtil.getBeanFastSetter(entityClass);
+                FastBean beanFastSetter = EasyUtil.getFastBean(entityClass);
                 while (keysSet.next()) {
                     T entity = entities.get(index);
                     for (int i = 0; i < incrementColumns.size(); i++) {
@@ -385,7 +384,7 @@ public class DefaultEasyExecutor implements EasyExecutor {
         EasyResultSet easyResultSet = new EasyResultSet(rs);
         T bean = ClassUtil.newInstance(clazz);
 
-        BeanFastSetter beanFastSetter = EasyUtil.getBeanFastSetter(clazz);
+        FastBean beanFastSetter = EasyUtil.getFastBean(clazz);
         for (int i = 0; i < columnMetadatas.length; i++) {
             ColumnMetadata columnMetadata = columnMetadatas[i];
             if (columnMetadata == null) {

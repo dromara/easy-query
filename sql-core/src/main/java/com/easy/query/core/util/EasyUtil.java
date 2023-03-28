@@ -1,19 +1,14 @@
 package com.easy.query.core.util;
 
-import com.easy.query.core.common.bean.BeanFastSetter;
+import com.easy.query.core.common.bean.FastBean;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.lambda.Property;
-import com.easy.query.core.expression.lambda.PropertySetter;
-import com.easy.query.core.expression.lambda.PropertySetterCaller;
-import com.easy.query.core.expression.lambda.PropertyVoidSetter;
 import com.easy.query.core.expression.segment.SqlEntityAliasSegment;
 import com.easy.query.core.expression.sql.SqlEntityQueryExpression;
 import com.easy.query.core.expression.sql.SqlEntityTableExpression;
 import com.easy.query.core.metadata.ColumnMetadata;
 
-import java.beans.PropertyDescriptor;
 import java.lang.invoke.*;
-import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -64,43 +59,10 @@ public class EasyUtil {
         return alias;
     }
 
-    private static Map<Class<?>, Map<String, Property<Object, ?>>> CLASS_PROPERTY_LAMBDA_CACHE = new ConcurrentHashMap<>();
+    private static Map<Class<?>, FastBean> CLASS_PROPERTY_FAST_BEAN_CACHE = new ConcurrentHashMap<>();
 
-    public static Property<Object, ?> getPropertyLambda(Class<?> entityClass, String propertyName, Class<?> fieldType) {
-        return getPropertyLambda(entityClass, propertyName, fieldType, true);
-    }
-
-    public static Property<Object, ?> getPropertyLambda(Class<?> entityClass, String propertyName, Class<?> fieldType, boolean cache) {
-        if (cache) {
-            Map<String, Property<Object, ?>> propertyLambdaMap = CLASS_PROPERTY_LAMBDA_CACHE.computeIfAbsent(entityClass, key -> new ConcurrentHashMap<>());
-            return propertyLambdaMap.computeIfAbsent(propertyName, key -> getLambdaProperty(entityClass, propertyName, fieldType));
-        }
-        return getLambdaProperty(entityClass, propertyName, fieldType);
-    }
-
-    private static Property<Object, ?> getLambdaProperty(Class<?> entityClass, String propertyName, Class<?> fieldType) {
-        final MethodHandles.Lookup caller = MethodHandles.lookup();
-        MethodType methodType = MethodType.methodType(fieldType, entityClass);
-        final CallSite site;
-
-        String getFunName = "get" + StringUtil.toUpperCaseFirstOne(propertyName);
-        try {
-            site = LambdaMetafactory.altMetafactory(caller,
-                    "apply",
-                    MethodType.methodType(Property.class),
-                    methodType.erase(),
-                    caller.findVirtual(entityClass, getFunName, MethodType.methodType(fieldType)),
-                    methodType, FLAG_SERIALIZABLE);
-            return (Property<Object, ?>) site.getTarget().invokeExact();
-        } catch (Throwable e) {
-            throw new EasyQueryException(e);
-        }
-    }
-
-    private static Map<Class<?>, BeanFastSetter> CLASS_PROPERTY_SETTER_LAMBDA_CACHE = new ConcurrentHashMap<>();
-
-    public static BeanFastSetter getBeanFastSetter(Class<?> entityClass) {
-        return CLASS_PROPERTY_SETTER_LAMBDA_CACHE.computeIfAbsent(entityClass, key -> new BeanFastSetter(entityClass));
+    public static FastBean getFastBean(Class<?> entityClass) {
+        return CLASS_PROPERTY_FAST_BEAN_CACHE.computeIfAbsent(entityClass, key -> new FastBean(entityClass));
     }
 }
 

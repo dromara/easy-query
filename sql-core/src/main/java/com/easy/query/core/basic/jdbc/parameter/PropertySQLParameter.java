@@ -1,5 +1,6 @@
 package com.easy.query.core.basic.jdbc.parameter;
 
+import com.easy.query.core.common.bean.FastBean;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
@@ -39,7 +40,8 @@ public final class PropertySQLParameter implements BeanSqlParameter {
         }
         EntityMetadata entityMetadata = table.getEntityMetadata();
         ColumnMetadata column = entityMetadata.getColumnNotNull(propertyName);
-        Property<Object, ?> propertyLambda = EasyUtil.getPropertyLambda(table.entityClass(), propertyName, column.getProperty().getPropertyType());
+        FastBean fastBean = EasyUtil.getFastBean(table.entityClass());
+        Property<Object, ?> propertyLambda = fastBean.getBeanGetter(column.getProperty());
         return propertyLambda.apply(bean);
     }
 

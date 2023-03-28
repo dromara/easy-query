@@ -1,6 +1,7 @@
 package com.easy.query.core.expression.sql.internal;
 
 import com.easy.query.core.abstraction.EasyQueryLambdaFactory;
+import com.easy.query.core.common.bean.FastBean;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnPropertyPredicate;
 import com.easy.query.core.expression.sql.SqlLambdaEntityExpression;
 import com.easy.query.core.metadata.ColumnMetadata;
@@ -72,7 +73,8 @@ public abstract class AbstractSqlPredicateEntityExpression extends AbstractSqlEn
                 if (isExpression()) {
                     Object version = sqlExpressionContext.getVersion();
                     if (Objects.nonNull(version)) {
-                        sqlPredicate.eq(EasyUtil.getPropertyLambda(table.entityClass(), versionMetadata.getPropertyName(), columnMetadata.getProperty().getPropertyType()), version);
+                        FastBean fastBean = EasyUtil.getFastBean(table.entityClass());
+                        sqlPredicate.eq(fastBean.getBeanGetter(columnMetadata.getProperty()), version);
                     }
                 } else {
                     AndPredicateSegment versionPredicateSegment = new AndPredicateSegment(new ColumnPropertyPredicate(table, versionMetadata.getPropertyName(), this));

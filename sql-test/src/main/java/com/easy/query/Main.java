@@ -6,12 +6,10 @@ import com.easy.query.core.abstraction.DefaultEasyQueryLambdaFactory;
 import com.easy.query.core.abstraction.DefaultEasyQueryRuntimeContext;
 import com.easy.query.core.abstraction.EasyQueryLambdaFactory;
 import com.easy.query.core.abstraction.EasySqlApiFactory;
-import com.easy.query.core.common.bean.BeanFastSetter;
+import com.easy.query.core.common.bean.FastBean;
 import com.easy.query.core.enums.SqlRangeEnum;
 import com.easy.query.core.enums.UpdateStrategyEnum;
 import com.easy.query.core.basic.plugin.track.DefaultTrackManager;
-import com.easy.query.core.expression.lambda.Property;
-import com.easy.query.core.expression.lambda.PropertySetter;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
@@ -144,7 +142,7 @@ public class Main {
         EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(BlogEntity.class);
         ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull("title");
         BlogEntity blog = new BlogEntity();
-        BeanFastSetter beanFastSetter = EasyUtil.getBeanFastSetter(BlogEntity.class);
+        FastBean beanFastSetter = EasyUtil.getFastBean(BlogEntity.class);
         PropertySetterCaller<Object> beanSetter = beanFastSetter.getBeanSetter(columnMetadata.getProperty());
         beanSetter.call(blog,"123");
         {

@@ -1,5 +1,6 @@
 package com.easyquery.springbootdemo.interceptor;
 
+import com.easy.query.core.common.bean.FastBean;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.parser.abstraction.SqlPredicate;
 import com.easy.query.core.basic.plugin.interceptor.EasyPredicateFilterInterceptor;
@@ -29,7 +30,8 @@ public class AgeSelectInterceptorStrategy implements EasyPredicateFilterIntercep
 
     @Override
     public void configure(Class<?> entityClass, SqlLambdaEntityExpression sqlLambdaEntityExpression, SqlPredicate<Object> sqlPredicate) {
-        Property<Object,?> name = EasyUtil.getPropertyLambda(entityClass, "name", String.class);
+        FastBean fastBean = EasyUtil.getFastBean(entityClass);
+        Property<Object,?> name = fastBean.getBeanGetter("name", String.class);
         sqlPredicate.isNotNull(name);
     }
 }

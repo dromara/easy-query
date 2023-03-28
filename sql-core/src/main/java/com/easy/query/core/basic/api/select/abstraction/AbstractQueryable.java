@@ -1,5 +1,6 @@
 package com.easy.query.core.basic.api.select.abstraction;
 
+import com.easy.query.core.common.bean.FastBean;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.annotation.EasyWhereCondition;
@@ -383,7 +384,8 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
                         String objectPropertyName = getObjectPropertyMappingPropertyName(entityPropertyNode, q, field.getName());
                         EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(propertyQueryEntityClass);
                         ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(objectPropertyName);
-                        Property propertyLambda = EasyUtil.getPropertyLambda(propertyQueryEntityClass, objectPropertyName, columnMetadata.getProperty().getPropertyType());
+                        FastBean fastBean = EasyUtil.getFastBean(propertyQueryEntityClass);
+                        Property propertyLambda = fastBean.getBeanGetter(objectPropertyName, columnMetadata.getProperty().getPropertyType());
 
                         switch (q.type()) {
                             case EQUAL:
@@ -494,7 +496,8 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
                     }
                     EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(orderByEntityClass);
                     ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(property);
-                    Property propertyLambda = EasyUtil.getPropertyLambda(orderByEntityClass, property, columnMetadata.getProperty().getPropertyType());
+                    FastBean fastBean = EasyUtil.getFastBean(orderByEntityClass);
+                    Property propertyLambda = fastBean.getBeanGetter(columnMetadata.getProperty());
                     SqlColumnSelector<?> sqlColumnSelector = matchOrderBySqlColumnSelector(orderByEntityClass, orderByPropertyNode.isAsc());
                     if (sqlColumnSelector == null) {
                         if (!strictMode) {

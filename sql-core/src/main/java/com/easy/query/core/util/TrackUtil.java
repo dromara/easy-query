@@ -1,5 +1,6 @@
 package com.easy.query.core.util;
 
+import com.easy.query.core.common.bean.FastBean;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
@@ -35,9 +36,10 @@ public class TrackUtil {
             Collection<String> keyProperties = entityMetadata.getKeyProperties();
 
             ArrayList<Property<Object, ?>> properties = new ArrayList<>(keyProperties.size());
+            FastBean fastBean = EasyUtil.getFastBean(entity.getClass());
             for (String keyProperty : keyProperties) {
                 ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(keyProperty);
-                Property<Object, ?> lambdaProperty = EasyUtil.getPropertyLambda(entity.getClass(), keyProperty, columnMetadata.getProperty().getPropertyType());
+                Property<Object, ?> lambdaProperty = fastBean.getBeanGetter(columnMetadata.getProperty());
                 properties.add(lambdaProperty);
             }
             return o -> {
@@ -71,9 +73,10 @@ public class TrackUtil {
 
         Map<String, TrackDiffEntry> diffProperties =new LinkedHashMap<>();
         Collection<String> properties = entityMetadata.getProperties();
+        FastBean fastBean = EasyUtil.getFastBean(entityClass);
         for (String propertyName : properties) {
             ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(propertyName);
-            Property<Object, ?> propertyGetter = EasyUtil.getPropertyLambda(entityClass, propertyName, columnMetadata.getProperty().getPropertyType());
+            Property<Object, ?> propertyGetter = fastBean.getBeanGetter(propertyName, columnMetadata.getProperty().getPropertyType());
 
             Object originalPropertyValue = propertyGetter.apply(entityState.getOriginalValue());
             Object currentPropertyValue = propertyGetter.apply(entityState.getCurrentValue());
