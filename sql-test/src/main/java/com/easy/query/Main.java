@@ -10,6 +10,7 @@ import com.easy.query.core.enums.SqlRangeEnum;
 import com.easy.query.core.enums.UpdateStrategyEnum;
 import com.easy.query.core.basic.plugin.track.DefaultTrackManager;
 import com.easy.query.dto.TopicRequest;
+import com.easy.query.entity.BlogEntity;
 import com.easy.query.entity.Topic;
 import com.easy.query.test.*;
 import com.easy.query.core.metadata.EntityMetadataManager;
@@ -36,6 +37,7 @@ import com.easy.query.mysql.MySqlExpressionFactory;
 import com.easy.query.mysql.config.MySqlDialect;
 
 import javax.sql.DataSource;
+import java.beans.PropertyDescriptor;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;

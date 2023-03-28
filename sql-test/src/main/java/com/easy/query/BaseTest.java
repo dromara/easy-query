@@ -20,6 +20,7 @@ import com.easy.query.core.metadata.DefaultEntityMetadataManager;
 import com.easy.query.core.basic.plugin.track.DefaultTrackManager;
 import com.easy.query.encryption.DefaultAesEasyEncryptionStrategy;
 import com.easy.query.entity.BlogEntity;
+import com.easy.query.entity.LogicDelTopic;
 import com.easy.query.entity.SysUser;
 import com.easy.query.entity.Topic;
 import com.easy.query.entity.TopicAuto;
@@ -157,6 +158,20 @@ public abstract class BaseTest {
                 sysUsers.add(sysUser);
             }
             long l = easyQuery.insertable(sysUsers).executeRows();
+        }
+        boolean logicDeleteAny = easyQuery.queryable(LogicDelTopic.class).any();
+        if(!logicDeleteAny){
+            List<LogicDelTopic> logicDelTopics = new ArrayList<>();
+            for (int i = 0; i < 100; i++) {
+                LogicDelTopic logicDelTopic = new LogicDelTopic();
+                logicDelTopic.setId(String.valueOf(i));
+                logicDelTopic.setStars(i + 100);
+                logicDelTopic.setTitle("标题" + i);
+                logicDelTopic.setCreateTime(LocalDateTime.now().plusDays(i));
+                logicDelTopic.setDeleted(false);
+                logicDelTopics.add(logicDelTopic);
+            }
+            long l = easyQuery.insertable(logicDelTopics).executeRows();
         }
     }
 

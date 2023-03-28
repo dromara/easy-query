@@ -14,5 +14,5 @@ import java.util.Set;
 public interface EasyLogicDeleteStrategy {
     String getStrategy();
     Set<Class<?>> allowedPropertyTypes();
-    void configure(EntityMetadata entityMetadata, String propertyName, Class<?> propertyType);
+    void configure(LogicDeleteBuilder builder);
 }

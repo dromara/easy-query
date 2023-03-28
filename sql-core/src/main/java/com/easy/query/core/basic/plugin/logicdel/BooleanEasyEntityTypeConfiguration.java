@@ -7,6 +7,7 @@ import com.easy.query.core.expression.parser.abstraction.SqlColumnSetter;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.expression.parser.abstraction.SqlPredicate;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -18,7 +19,7 @@ import java.util.Set;
  * @author xuejiaming
  */
 public class BooleanEasyEntityTypeConfiguration extends AbstractEasyLogicDeleteStrategy {
-    private static final Set<Class<?>> allowedPropertyTypes =new HashSet<>(Collections.singletonList(Boolean.class));
+    private static final Set<Class<?>> allowedPropertyTypes =new HashSet<>(Arrays.asList(Boolean.class,boolean.class));
     @Override
     public String getStrategy() {
         return LogicDeleteStrategyEnum.BOOLEAN.getStrategy();
@@ -31,12 +32,12 @@ public class BooleanEasyEntityTypeConfiguration extends AbstractEasyLogicDeleteS
 
 
     @Override
-    protected SqlExpression<SqlPredicate<Object>> getQueryFilterExpression(EntityMetadata entityMetadata,String propertyName, Class<?> propertyType, Property<Object,?> lambdaProperty) {
+    protected SqlExpression<SqlPredicate<Object>> getQueryFilterExpression(LogicDeleteBuilder builder, Property<Object,?> lambdaProperty) {
         return o->o.eq(lambdaProperty,false);
     }
 
     @Override
-    protected SqlExpression<SqlColumnSetter<Object>> getDeletedSqlExpression(EntityMetadata entityMetadata,String propertyName, Class<?> propertyType, Property<Object,?> lambdaProperty) {
+    protected SqlExpression<SqlColumnSetter<Object>> getDeletedSqlExpression(LogicDeleteBuilder builder, Property<Object,?> lambdaProperty) {
         return o->o.set(lambdaProperty, true);
     }
 }

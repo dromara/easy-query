@@ -46,3 +46,14 @@ create table t_sys_user
     address text null comment '地址',
     create_time datetime not null comment '创建时间'
 )comment '用户表';
+
+
+
+create table t_logic_del_topic
+(
+    id varchar(32) not null comment '主键ID'primary key,
+    stars int not null comment '点赞数',
+    title varchar(50) null comment '标题',
+    deleted tinyint(1)  not null comment '是否删除',
+    create_time datetime not null comment '创建时间'
+)comment '逻辑删除主题表';

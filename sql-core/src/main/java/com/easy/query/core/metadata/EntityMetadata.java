@@ -2,6 +2,7 @@ package com.easy.query.core.metadata;
 
 import com.easy.query.core.annotation.*;
 import com.easy.query.core.basic.enums.LogicDeleteStrategyEnum;
+import com.easy.query.core.basic.plugin.logicdel.LogicDeleteBuilder;
 import com.easy.query.core.basic.plugin.version.EasyVersionStrategy;
 import com.easy.query.core.config.NameConversion;
 import com.easy.query.core.configuration.EasyQueryConfiguration;
@@ -163,10 +164,12 @@ public class EntityMetadata {
                             throw new EasyQueryException(ClassUtil.getSimpleName(entityClass)+"."+property+" logic delete strategy is empty");
                         }
                         EasyLogicDeleteStrategy globalLogicDeleteStrategy = configuration.getGlobalLogicDeleteStrategyNotNull(strategyName);
-                        globalLogicDeleteStrategy.configure(this, property, field.getType());
+                        LogicDeleteBuilder logicDeleteBuilder = new LogicDeleteBuilder(this, property, field.getType());
+                        globalLogicDeleteStrategy.configure(logicDeleteBuilder);
                     } else {//使用系统默认的
                         EasyLogicDeleteStrategy sysGlobalLogicDeleteStrategy = configuration.getSysGlobalLogicDeleteStrategyNotNull(strategy);
-                        sysGlobalLogicDeleteStrategy.configure(this, property, field.getType());
+                        LogicDeleteBuilder logicDeleteBuilder = new LogicDeleteBuilder(this, property, field.getType());
+                        sysGlobalLogicDeleteStrategy.configure(logicDeleteBuilder);
                     }
                     logicDelCount++;
                 }

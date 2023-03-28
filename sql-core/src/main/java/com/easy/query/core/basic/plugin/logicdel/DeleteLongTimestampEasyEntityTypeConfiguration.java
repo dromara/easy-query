@@ -31,12 +31,12 @@ public class DeleteLongTimestampEasyEntityTypeConfiguration extends AbstractEasy
 
 
     @Override
-    protected SqlExpression<SqlPredicate<Object>> getQueryFilterExpression(EntityMetadata entityMetadata,String propertyName, Class<?> propertyType, Property<Object,?> lambdaProperty) {
+    protected SqlExpression<SqlPredicate<Object>> getQueryFilterExpression(LogicDeleteBuilder builder, Property<Object,?> lambdaProperty) {
         return o->o.eq(lambdaProperty,0);
     }
 
     @Override
-    protected SqlExpression<SqlColumnSetter<Object>> getDeletedSqlExpression(EntityMetadata entityMetadata,String propertyName, Class<?> propertyType, Property<Object,?> lambdaProperty) {
+    protected SqlExpression<SqlColumnSetter<Object>> getDeletedSqlExpression(LogicDeleteBuilder builder, Property<Object,?> lambdaProperty) {
         return o->o.set(lambdaProperty, System.currentTimeMillis());
     }
 }

@@ -21,19 +21,22 @@ import java.util.Set;
 public abstract class AbstractEasyLogicDeleteStrategy implements EasyLogicDeleteStrategy {
 
     @Override
-    public void configure(EntityMetadata entityMetadata, String propertyName, Class<?> propertyType) {
+    public void configure(LogicDeleteBuilder builder) {
         Set<Class<?>> allowTypes = allowedPropertyTypes();
         if(allowTypes==null||allowTypes.isEmpty()){
             throw new EasyQueryException("plz set expectPropertyTypes values");
         }
+        EntityMetadata entityMetadata = builder.getEntityMetadata();
+        String propertyName = builder.getPropertyName();
+        Class<?> propertyType = builder.getPropertyType();
         if(!allowTypes.contains(propertyType)){
             throw new EasyQueryException(ClassUtil.getSimpleName(entityMetadata.getEntityClass())+"."+propertyName+" logic delete not support, property type not allowed");
         }
-        Property<Object, ?> lambdaProperty = EasyUtil.getPropertyLambda(entityMetadata.getEntityClass(), propertyName, propertyType);
-        SqlExpression<SqlPredicate<Object>> queryFilterExpression = getQueryFilterExpression(entityMetadata, propertyName, propertyType,lambdaProperty);
-        SqlExpression<SqlColumnSetter<Object>> deletedSqlExpression = getDeletedSqlExpression(entityMetadata, propertyName, propertyType,lambdaProperty);
-        entityMetadata.setLogicDeleteMetadata(new LogicDeleteMetadata(propertyName,queryFilterExpression, deletedSqlExpression));
+        Property<Object, ?> lambdaProperty = builder.getPropertyLambda();
+        SqlExpression<SqlPredicate<Object>> queryFilterExpression = getQueryFilterExpression(builder,lambdaProperty);
+        SqlExpression<SqlColumnSetter<Object>> deletedSqlExpression = getDeletedSqlExpression(builder,lambdaProperty);
+        builder.configure(queryFilterExpression,deletedSqlExpression);
     }
-    protected abstract SqlExpression<SqlPredicate<Object>> getQueryFilterExpression(EntityMetadata entityMetadata,String propertyName, Class<?> propertyType,Property<Object,?> lambdaProperty);
-    protected abstract SqlExpression<SqlColumnSetter<Object>> getDeletedSqlExpression(EntityMetadata entityMetadata,String propertyName, Class<?> propertyType,Property<Object,?> lambdaProperty);
+    protected abstract SqlExpression<SqlPredicate<Object>> getQueryFilterExpression(LogicDeleteBuilder builder,Property<Object,?> lambdaProperty);
+    protected abstract SqlExpression<SqlColumnSetter<Object>> getDeletedSqlExpression(LogicDeleteBuilder builder,Property<Object,?> lambdaProperty);
 }
