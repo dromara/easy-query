@@ -10,13 +10,13 @@ import com.easy.query.core.enums.SqlPredicateCompare;
  * @Date: 2023/2/14 23:34
  * @author xuejiaming
  */
-public class ColumnPredicate0 implements Predicate {
+public class ColumnPredicate implements Predicate {
     private final SqlEntityTableExpression table;
     private final String propertyName;
     private final SqlPredicateCompare compare;
     private final SqlEntityExpression sqlEntityExpression;
 
-    public ColumnPredicate0(SqlEntityTableExpression table, String propertyName, SqlPredicateCompare compare, SqlEntityExpression sqlEntityExpression) {
+    public ColumnPredicate(SqlEntityTableExpression table, String propertyName, SqlPredicateCompare compare, SqlEntityExpression sqlEntityExpression) {
         this.table = table;
         this.propertyName = propertyName;
         this.compare = compare;

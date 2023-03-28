@@ -99,18 +99,18 @@ public class EasyQueryStarterAutoConfiguration {
     }
 
     @Bean
-    public EasyQueryConfiguration easyQueryConfiguration(Map<String, EasyInterceptor> globalInterceptorStrategyMap, Map<String, EasyLogicDeleteStrategy> globalLogicDeleteStrategyMap) {
+    public EasyQueryConfiguration easyQueryConfiguration(Map<String, EasyInterceptor> easyInterceptorMap, Map<String, EasyLogicDeleteStrategy> easyLogicDeleteStrategyMap) {
         EasyQueryConfiguration configuration = new EasyQueryConfiguration();
 
         NameConversion nameConversion = new UnderlinedNameConversion();
         MySqlDialect sqlDialect = new MySqlDialect();
         configuration.setNameConversion(nameConversion);
         configuration.setDialect(sqlDialect);
-        for (EasyInterceptor globalInterceptorStrategy : globalInterceptorStrategyMap.values()) {
-            configuration.applyGlobalInterceptor(globalInterceptorStrategy);
+        for (EasyInterceptor easyInterceptor : easyInterceptorMap.values()) {
+            configuration.applyGlobalInterceptor(easyInterceptor);
         }
-        for (EasyLogicDeleteStrategy globalLogicDeleteStrategy : globalLogicDeleteStrategyMap.values()) {
-            configuration.applyGlobalLogicDeleteStrategy(globalLogicDeleteStrategy);
+        for (EasyLogicDeleteStrategy easyLogicDeleteStrategy : easyLogicDeleteStrategyMap.values()) {
+            configuration.applyGlobalLogicDeleteStrategy(easyLogicDeleteStrategy);
         }
         return configuration;
     }

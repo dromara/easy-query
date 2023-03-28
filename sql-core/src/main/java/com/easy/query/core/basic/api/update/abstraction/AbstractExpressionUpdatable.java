@@ -10,7 +10,7 @@ import com.easy.query.core.expression.parser.impl.DefaultSqlColumnSetter;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.DefaultSqlPredicate;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
-import com.easy.query.core.expression.segment.condition.predicate.ColumnValuePredicate0;
+import com.easy.query.core.expression.segment.condition.predicate.ColumnValuePredicate;
 import com.easy.query.core.expression.sql.def.EasyEntityTableExpression;
 import com.easy.query.core.expression.sql.SqlEntityTableExpression;
 import com.easy.query.core.expression.sql.SqlEntityUpdateExpression;
@@ -120,7 +120,7 @@ public abstract class AbstractExpressionUpdatable<T> extends AbstractSqlExecuteR
             String keyProperty = keyProperties.iterator().next();
             AndPredicateSegment andPredicateSegment = new AndPredicateSegment();
             andPredicateSegment
-                    .setPredicate(new ColumnValuePredicate0(table, keyProperty, id, SqlPredicateCompareEnum.EQ, sqlEntityUpdateExpression));
+                    .setPredicate(new ColumnValuePredicate(table, keyProperty, id, SqlPredicateCompareEnum.EQ, sqlEntityUpdateExpression));
             where.addPredicateSegment(andPredicateSegment);
         }
         return this;

@@ -2,6 +2,7 @@ package com.easy.query.core.expression.sql.internal;
 
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
+import com.easy.query.core.expression.sql.AnonymousEntityTableExpression;
 import com.easy.query.core.expression.sql.SqlEntityExpression;
 import com.easy.query.core.expression.sql.SqlEntityTableExpression;
 import com.easy.query.core.expression.sql.SqlExpressionContext;
@@ -62,9 +63,8 @@ public abstract class AbstractSqlEntityExpression implements SqlEntityExpression
         String quoteName = getQuoteName(columnName);
         if (alias == null) {
             return quoteName;
-        } else {
-            return alias + "." + quoteName;
         }
+        return alias + "." + quoteName;
     }
     @Override
     public List<SQLParameter> getParameters() {

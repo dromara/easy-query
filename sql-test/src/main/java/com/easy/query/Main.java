@@ -9,6 +9,9 @@ import com.easy.query.core.abstraction.EasySqlApiFactory;
 import com.easy.query.core.enums.SqlRangeEnum;
 import com.easy.query.core.enums.UpdateStrategyEnum;
 import com.easy.query.core.basic.plugin.track.DefaultTrackManager;
+import com.easy.query.core.expression.lambda.Property;
+import com.easy.query.core.expression.lambda.PropertySetter;
+import com.easy.query.core.util.EasyUtil;
 import com.easy.query.dto.TopicRequest;
 import com.easy.query.entity.BlogEntity;
 import com.easy.query.entity.Topic;
@@ -80,8 +83,10 @@ public class Main {
 //            System.out.println("耗时：" + (end - start) + "ms");
 //
 //        }
-
-
+        BlogEntity xaa=   new BlogEntity();
+        PropertySetter<Object> propertySetter = EasyUtil.getPropertyLambdaSetter(BlogEntity.class, "id", String.class);
+        propertySetter.apply(xaa,"123");
+        System.out.println(xaa);
 
         boolean openFirst1 = SqlRangeEnum.openFirst(SqlRangeEnum.Open);
         boolean openFirst2 = SqlRangeEnum.openFirst(SqlRangeEnum.Closed);

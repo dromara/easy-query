@@ -7,5 +7,9 @@ package com.easy.query.core.expression.sql;
  * @author xuejiaming
  */
 public interface SqlLambdaEntityExpression extends SqlEntityExpression{
+    /**
+     * 是否是表达式sql以下几个方法为true:select、update expression、delete expression
+     * @return
+     */
     boolean isExpression();
 }

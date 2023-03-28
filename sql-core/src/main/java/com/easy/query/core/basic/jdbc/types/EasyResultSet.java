@@ -12,7 +12,7 @@ import java.sql.ResultSetMetaData;
  */
 public class EasyResultSet {
     private int index;
-    private  Class propertyType;
+    private  Class<?> propertyType;
     private final ResultSet rs;
 
     public EasyResultSet(ResultSet rs){
@@ -27,11 +27,11 @@ public class EasyResultSet {
         this.index = index;
     }
 
-    public Class getPropertyType() {
+    public Class<?> getPropertyType() {
         return propertyType;
     }
 
-    public void setPropertyType(Class propertyType) {
+    public void setPropertyType(Class<?> propertyType) {
         this.propertyType = propertyType;
     }
 

@@ -2,6 +2,7 @@ package com.easy.query.core.util;
 
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.lambda.Property;
+import com.easy.query.core.expression.lambda.PropertySetter;
 import com.easy.query.core.expression.segment.SqlEntityAliasSegment;
 import com.easy.query.core.expression.sql.SqlEntityQueryExpression;
 import com.easy.query.core.expression.sql.SqlEntityTableExpression;
@@ -85,6 +86,57 @@ public class EasyUtil {
                     caller.findVirtual(entityClass, getFunName, MethodType.methodType(fieldType)),
                     methodType, FLAG_SERIALIZABLE);
             return (Property<Object, ?>) site.getTarget().invokeExact();
+        } catch (Throwable e) {
+            throw new EasyQueryException(e);
+        }
+    }
+
+
+
+    private static Map<Class<?>, Map<String, PropertySetter<Object>>> CLASS_PROPERTY_SETTER_LAMBDA_CACHE = new ConcurrentHashMap<>();
+
+    public static PropertySetter<Object> getPropertyLambdaSetter(Class<?> entityClass, String propertyName, Class<?> fieldType){
+        return getPropertyLambdaSetter(entityClass,propertyName,fieldType,true);
+    }
+    public static PropertySetter<Object> getPropertyLambdaSetter(Class<?> entityClass, String propertyName, Class<?> fieldType,boolean cache) {
+        if(cache){
+            Map<String, PropertySetter<Object>> propertyLambdaMap = CLASS_PROPERTY_SETTER_LAMBDA_CACHE.computeIfAbsent(entityClass, key -> new ConcurrentHashMap<>());
+            return propertyLambdaMap.computeIfAbsent(propertyName, key -> getLambdaPropertySetter(entityClass, propertyName, fieldType));
+        }
+        return getLambdaPropertySetter(entityClass, propertyName, fieldType);
+    }
+    private static PropertySetter<Object> getLambdaPropertySetter(Class<?> entityClass, String propertyName, Class<?> fieldType) {
+//        final MethodHandles.Lookup caller = MethodHandles.lookup();
+//        MethodType methodType = MethodType.methodType(Void.class,entityClass);
+//        final CallSite site;
+
+        String getFunName = "set" + StringUtil.toUpperCaseFirstOne(propertyName);
+        try {
+//            site = LambdaMetafactory.altMetafactory(caller,
+//                    "apply",
+//                    MethodType.methodType(PropertySetter.class),
+//                    methodType.erase(),
+//                    caller.findVirtual(entityClass, getFunName, MethodType.methodType(Void.class,fieldType)),
+//                    methodType, FLAG_SERIALIZABLE);
+//            return (PropertySetter<Object>) site.getTarget().invokeExact();
+
+
+            MethodHandles.Lookup caller = MethodHandles.lookup();
+            MethodType setter = MethodType.methodType(void.class, fieldType);
+            MethodHandle target = caller.findVirtual(entityClass, getFunName, setter);
+            MethodType func = target.type();
+
+            CallSite site = LambdaMetafactory.metafactory(
+                    caller,
+                    "apply",
+                    MethodType.methodType(PropertySetter.class),
+                    func.erase(),
+                    target,
+                    func
+            );
+
+            MethodHandle factory = site.getTarget();
+           return (PropertySetter<Object>) factory.invoke();
         } catch (Throwable e) {
             throw new EasyQueryException(e);
         }

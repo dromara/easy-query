@@ -15,14 +15,14 @@ import java.util.Objects;
  * @Date: 2023/2/14 23:34
  * @author xuejiaming
  */
-public class ColumnValuePredicate0 implements Predicate {
+public class ColumnValuePredicate implements Predicate {
     private final SqlEntityTableExpression table;
     private final String propertyName;
     private final Object val;
     private final SqlPredicateCompare compare;
     private final SqlEntityExpression sqlEntityExpression;
 
-    public ColumnValuePredicate0(SqlEntityTableExpression table, String propertyName, Object val, SqlPredicateCompare compare, SqlEntityExpression sqlEntityExpression) {
+    public ColumnValuePredicate(SqlEntityTableExpression table, String propertyName, Object val, SqlPredicateCompare compare, SqlEntityExpression sqlEntityExpression) {
         this.table = table;
         this.propertyName = propertyName;
         this.val = val;

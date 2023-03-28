@@ -1,7 +1,7 @@
 package com.easy.query.core.basic.api.delete.abstraction;
 
 import com.easy.query.core.basic.api.internal.AbstractSqlExecuteRows;
-import com.easy.query.core.expression.segment.condition.predicate.ColumnValuePredicate0;
+import com.easy.query.core.expression.segment.condition.predicate.ColumnValuePredicate;
 import com.easy.query.core.basic.jdbc.executor.EasyExecutor;
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
@@ -96,7 +96,7 @@ public abstract   class AbstractExpressionDeletable<T> extends AbstractSqlExecut
         String keyProperty = keyProperties.iterator().next();
         AndPredicateSegment andPredicateSegment = new AndPredicateSegment();
         andPredicateSegment
-                .setPredicate(new ColumnValuePredicate0(table, keyProperty, id, SqlPredicateCompareEnum.EQ, sqlEntityDeleteExpression));
+                .setPredicate(new ColumnValuePredicate(table, keyProperty, id, SqlPredicateCompareEnum.EQ, sqlEntityDeleteExpression));
         where.addPredicateSegment(andPredicateSegment);
         return this;
     }

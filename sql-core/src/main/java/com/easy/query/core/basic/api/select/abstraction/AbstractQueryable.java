@@ -24,7 +24,7 @@ import com.easy.query.core.expression.parser.abstraction.SqlColumnSelector;
 import com.easy.query.core.expression.parser.abstraction.internal.ColumnSelector;
 import com.easy.query.core.expression.segment.SelectConstSegment;
 import com.easy.query.core.expression.segment.builder.ProjectSqlBuilderSegment;
-import com.easy.query.core.expression.segment.condition.predicate.ColumnValuePredicate0;
+import com.easy.query.core.expression.segment.condition.predicate.ColumnValuePredicate;
 import com.easy.query.core.expression.sql.AnonymousEntityTableExpression;
 import com.easy.query.core.expression.sql.SqlEntityQueryExpression;
 import com.easy.query.core.expression.sql.SqlEntityTableExpression;
@@ -280,7 +280,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
             String keyProperty = keyProperties.iterator().next();
             AndPredicateSegment andPredicateSegment = new AndPredicateSegment();
             andPredicateSegment
-                    .setPredicate(new ColumnValuePredicate0(table, keyProperty, id, SqlPredicateCompareEnum.EQ, sqlEntityExpression));
+                    .setPredicate(new ColumnValuePredicate(table, keyProperty, id, SqlPredicateCompareEnum.EQ, sqlEntityExpression));
             where.addPredicateSegment(andPredicateSegment);
         }
         return this;

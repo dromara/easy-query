@@ -6,7 +6,7 @@ import com.easy.query.core.expression.lambda.SqlExpression;
 import com.easy.query.core.expression.parser.abstraction.internal.AggregatePredicate;
 import com.easy.query.core.expression.segment.condition.OrPredicateSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
-import com.easy.query.core.expression.segment.condition.predicate.FuncColumnValuePredicate0;
+import com.easy.query.core.expression.segment.condition.predicate.FuncColumnValuePredicate;
 import com.easy.query.core.expression.sql.SqlEntityExpression;
 import com.easy.query.core.expression.sql.SqlEntityTableExpression;
 import com.easy.query.core.enums.SqlPredicateCompare;
@@ -40,7 +40,7 @@ public class DefaultSqlAggregatePredicate<T1> implements SqlAggregatePredicate<T
         if (condition) {
             SqlEntityTableExpression table = sqlEntityExpression.getTable(getIndex());
             String propertyName = table.getPropertyName(column);
-            nextPredicateSegment.setPredicate(new FuncColumnValuePredicate0(table,easyAggregate, propertyName, val, compare, sqlEntityExpression));
+            nextPredicateSegment.setPredicate(new FuncColumnValuePredicate(table,easyAggregate, propertyName, val, compare, sqlEntityExpression));
             nextAnd();
         }
         return this;

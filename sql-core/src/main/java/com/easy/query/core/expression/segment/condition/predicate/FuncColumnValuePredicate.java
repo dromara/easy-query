@@ -12,7 +12,7 @@ import com.easy.query.core.enums.SqlPredicateCompare;
  * @Date: 2023/2/14 23:34
  * @author xuejiaming
  */
-public class FuncColumnValuePredicate0 implements Predicate {
+public class FuncColumnValuePredicate implements Predicate {
     private final SqlEntityTableExpression table;
     private final EasyFunc func;
     private final String propertyName;
@@ -20,7 +20,7 @@ public class FuncColumnValuePredicate0 implements Predicate {
     private final SqlPredicateCompare compare;
     private final SqlEntityExpression sqlEntityExpression;
 
-    public FuncColumnValuePredicate0(SqlEntityTableExpression table, EasyFunc func, String propertyName, Object val, SqlPredicateCompare compare, SqlEntityExpression sqlEntityExpression) {
+    public FuncColumnValuePredicate(SqlEntityTableExpression table, EasyFunc func, String propertyName, Object val, SqlPredicateCompare compare, SqlEntityExpression sqlEntityExpression) {
         this.table = table;
         this.propertyName = propertyName;
 

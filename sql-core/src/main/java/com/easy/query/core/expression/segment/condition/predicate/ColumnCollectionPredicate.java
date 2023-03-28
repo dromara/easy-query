@@ -15,14 +15,14 @@ import java.util.Iterator;
  * @Date: 2023/2/14 23:34
  * @author xuejiaming
  */
-public class ColumnCollectionPredicate0 implements Predicate {
+public class ColumnCollectionPredicate implements Predicate {
     private final Collection<?> collection;
     private final SqlPredicateCompare compare;
     private final SqlEntityExpression sqlEntityExpression;
     private final SqlEntityTableExpression table;
     private final String propertyName;
 
-    public ColumnCollectionPredicate0(SqlEntityTableExpression table, String propertyName, Collection<?> collection, SqlPredicateCompare compare, SqlEntityExpression sqlEntityExpression) {
+    public ColumnCollectionPredicate(SqlEntityTableExpression table, String propertyName, Collection<?> collection, SqlPredicateCompare compare, SqlEntityExpression sqlEntityExpression) {
         this.table = table;
         this.propertyName = propertyName;
         this.collection = collection;

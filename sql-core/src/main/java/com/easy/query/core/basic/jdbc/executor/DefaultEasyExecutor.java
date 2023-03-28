@@ -1,6 +1,7 @@
 package com.easy.query.core.basic.jdbc.executor;
 
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
+import com.easy.query.core.expression.lambda.PropertySetter;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
@@ -21,6 +22,7 @@ import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.basic.plugin.track.TrackManager;
 import com.easy.query.core.util.ArrayUtil;
 import com.easy.query.core.util.ClassUtil;
+import com.easy.query.core.util.EasyUtil;
 import com.easy.query.core.util.SQLUtil;
 import com.easy.query.core.util.StringUtil;
 
@@ -321,11 +323,7 @@ public class DefaultEasyExecutor implements EasyExecutor {
 
             String propertyName = entityMetadata.getPropertyName(colName);
             ColumnMetadata column = entityMetadata.getColumnOrNull(propertyName);
-            if (column != null) {
-                columnMetadatas[i] = column;
-            } else {
-                columnMetadatas[i] = null;
-            }
+            columnMetadatas[i] = column;
         }
         return columnMetadatas;
     }
@@ -393,8 +391,12 @@ public class DefaultEasyExecutor implements EasyExecutor {
             easyResultSet.setPropertyType(propertyType);
             JdbcTypeHandler handler = easyJdbcTypeHandler.getHandler(propertyType);
             Object value =context.getDecryptValue(columnMetadata,handler.getValue(easyResultSet)) ;
-            Method setter = getSetter(property, clazz);
-            callSetter(bean,setter, property, value);
+
+
+            PropertySetter<Object> propertyLambdaSetter = EasyUtil.getPropertyLambdaSetter(clazz, property.getName(), propertyType);
+            propertyLambdaSetter.apply(bean,value);
+//            Method setter = getSetter(property, clazz);
+//            callSetter(bean,setter, property, value);
         }
         if(trackBean){
             trackManager.getCurrentTrackContext().addTracking(bean,true);

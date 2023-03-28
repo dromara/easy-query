@@ -10,7 +10,7 @@ import com.easy.query.core.expression.sql.SqlEntityTableExpression;
  * @Date: 2023/2/14 23:34
  * @author xuejiaming
  */
-public class ColumnWithColumnPredicate0 implements Predicate {
+public class ColumnWithColumnPredicate implements Predicate {
     private final SqlEntityTableExpression leftTable;
     private final String leftPropertyName;
     private final SqlEntityTableExpression rightTable;
@@ -18,7 +18,7 @@ public class ColumnWithColumnPredicate0 implements Predicate {
     private final SqlPredicateCompare compare;
     private final SqlEntityExpression sqlEntityExpression;
 
-    public ColumnWithColumnPredicate0(SqlEntityTableExpression leftTable, String leftPropertyName, SqlEntityTableExpression rightTable, String rightPropertyName, SqlPredicateCompare compare, SqlEntityExpression sqlEntityExpression) {
+    public ColumnWithColumnPredicate(SqlEntityTableExpression leftTable, String leftPropertyName, SqlEntityTableExpression rightTable, String rightPropertyName, SqlPredicateCompare compare, SqlEntityExpression sqlEntityExpression) {
         this.leftTable = leftTable;
         this.leftPropertyName = leftPropertyName;
         this.rightTable = rightTable;

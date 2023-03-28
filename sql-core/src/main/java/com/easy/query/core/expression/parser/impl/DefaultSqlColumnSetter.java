@@ -4,8 +4,8 @@ import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import com.easy.query.core.enums.SqlPredicateCompareEnum;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.parser.abstraction.SqlColumnSetter;
-import com.easy.query.core.expression.segment.condition.predicate.ColumnValuePredicate0;
-import com.easy.query.core.expression.segment.condition.predicate.ColumnWithColumnPredicate0;
+import com.easy.query.core.expression.segment.condition.predicate.ColumnValuePredicate;
+import com.easy.query.core.expression.segment.condition.predicate.ColumnWithColumnPredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnWithSelfPredicate;
 import com.easy.query.core.expression.sql.SqlEntityExpression;
 import com.easy.query.core.expression.sql.SqlEntityTableExpression;
@@ -33,7 +33,7 @@ public class DefaultSqlColumnSetter<T>  implements SqlColumnSetter<T> {
         {
             SqlEntityTableExpression table = sqlEntityExpression.getTable(index);
             String propertyName = table.getPropertyName(column);
-            sqlSegment0Builder.append(new ColumnValuePredicate0(table,propertyName,val, SqlPredicateCompareEnum.EQ, sqlEntityExpression));
+            sqlSegment0Builder.append(new ColumnValuePredicate(table,propertyName,val, SqlPredicateCompareEnum.EQ, sqlEntityExpression));
         }
         return this;
     }
@@ -46,7 +46,7 @@ public class DefaultSqlColumnSetter<T>  implements SqlColumnSetter<T> {
             String propertyName1 = table1.getPropertyName(column1);
             SqlEntityTableExpression table2 = sqlEntityExpression.getTable(index);
             String propertyName2 = table2.getPropertyName(column2);
-            sqlSegment0Builder.append(new ColumnWithColumnPredicate0(table1,propertyName1,table2,propertyName2, SqlPredicateCompareEnum.EQ, sqlEntityExpression));
+            sqlSegment0Builder.append(new ColumnWithColumnPredicate(table1,propertyName1,table2,propertyName2, SqlPredicateCompareEnum.EQ, sqlEntityExpression));
         }
         return this;
     }
