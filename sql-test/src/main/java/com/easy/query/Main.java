@@ -11,6 +11,9 @@ import com.easy.query.core.enums.UpdateStrategyEnum;
 import com.easy.query.core.basic.plugin.track.DefaultTrackManager;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.PropertySetter;
+import com.easy.query.core.expression.lambda.PropertySetterCaller;
+import com.easy.query.core.metadata.ColumnMetadata;
+import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.util.EasyUtil;
 import com.easy.query.dto.TopicRequest;
 import com.easy.query.entity.BlogEntity;
@@ -81,7 +84,6 @@ public class Main {
 //            }
 //            long end = System.currentTimeMillis();
 //            System.out.println("耗时：" + (end - start) + "ms");
-//
 //        }
 
         boolean openFirst1 = SqlRangeEnum.openFirst(SqlRangeEnum.Open);
@@ -133,6 +135,13 @@ public class Main {
 //        configuration.applyGlobalInterceptor(new NameQueryFilter());
 
         easyQuery = new DefaultEasyQuery(jqdcRuntimeContext);
+
+        EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(BlogEntity.class);
+        ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull("title");
+        PropertySetterCaller<Object> propertyLambdaSetter = EasyUtil.getPropertyLambdaSetter(BlogEntity.class, columnMetadata.getProperty());
+        BlogEntity blog = new BlogEntity();
+        propertyLambdaSetter.call(blog,"123");
+
 
         TopicRequest topicRequest = new TopicRequest();
         LocalDateTime now = LocalDateTime.now();

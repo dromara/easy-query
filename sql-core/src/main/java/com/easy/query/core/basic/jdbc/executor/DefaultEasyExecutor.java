@@ -2,6 +2,7 @@ package com.easy.query.core.basic.jdbc.executor;
 
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.expression.lambda.PropertySetter;
+import com.easy.query.core.expression.lambda.PropertySetterCaller;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
@@ -393,8 +394,8 @@ public class DefaultEasyExecutor implements EasyExecutor {
             Object value =context.getDecryptValue(columnMetadata,handler.getValue(easyResultSet)) ;
 
 
-            PropertySetter<Object> propertyLambdaSetter = EasyUtil.getPropertyLambdaSetter(clazz, property);
-            propertyLambdaSetter.apply(bean,value);
+            PropertySetterCaller<Object> propertyLambdaSetter = EasyUtil.getPropertyLambdaSetter(clazz, property);
+            propertyLambdaSetter.call(bean,value);
 //            Method setter = getSetter(property, clazz);
 //            callSetter(bean,setter, property, value);
         }

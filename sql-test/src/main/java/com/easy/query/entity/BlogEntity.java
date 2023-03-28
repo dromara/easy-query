@@ -2,6 +2,7 @@ package com.easy.query.entity;
 
 import com.easy.query.core.annotation.Table;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -15,6 +16,7 @@ import java.time.LocalDateTime;
 
 @Data
 @Table("t_blog")
+@Accessors(chain = true)
 public class BlogEntity extends BaseEntity{
 
     /**
