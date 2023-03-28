@@ -11,7 +11,7 @@
 <dependency>
     <groupId>com.easy-query</groupId>
     <artifactId>sql-springboot-starter</artifactId>
-    <version>0.0.29</version>
+    <version>0.0.31</version>
 </dependency>
 ```
 

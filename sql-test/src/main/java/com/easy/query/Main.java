@@ -6,6 +6,7 @@ import com.easy.query.core.abstraction.DefaultEasyQueryLambdaFactory;
 import com.easy.query.core.abstraction.DefaultEasyQueryRuntimeContext;
 import com.easy.query.core.abstraction.EasyQueryLambdaFactory;
 import com.easy.query.core.abstraction.EasySqlApiFactory;
+import com.easy.query.core.common.bean.BeanFastSetter;
 import com.easy.query.core.enums.SqlRangeEnum;
 import com.easy.query.core.enums.UpdateStrategyEnum;
 import com.easy.query.core.basic.plugin.track.DefaultTrackManager;
@@ -14,6 +15,7 @@ import com.easy.query.core.expression.lambda.PropertySetter;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
+import com.easy.query.core.util.ClassUtil;
 import com.easy.query.core.util.EasyUtil;
 import com.easy.query.dto.TopicRequest;
 import com.easy.query.entity.BlogEntity;
@@ -44,6 +46,9 @@ import com.easy.query.mysql.config.MySqlDialect;
 
 import javax.sql.DataSource;
 import java.beans.PropertyDescriptor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -55,7 +60,7 @@ public class Main {
     private static final String url = "jdbc:mysql://127.0.0.1:3306/dbdbd0?serverTimezone=GMT%2B8&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&rewriteBatchedStatements=true";
     private static EasyQuery easyQuery;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
 
 //        int[] ints = {1, 2, 3, 4, 5, 6, 7, 8, 9, 0};
 //        HashSet<String> strings = new HashSet<>(Arrays.asList("id","title","createTime","isTop","top"));
@@ -138,9 +143,39 @@ public class Main {
 
         EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(BlogEntity.class);
         ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull("title");
-        PropertySetterCaller<Object> propertyLambdaSetter = EasyUtil.getPropertyLambdaSetter(BlogEntity.class, columnMetadata.getProperty());
         BlogEntity blog = new BlogEntity();
-        propertyLambdaSetter.call(blog,"123");
+        BeanFastSetter beanFastSetter = EasyUtil.getBeanFastSetter(BlogEntity.class);
+        PropertySetterCaller<Object> beanSetter = beanFastSetter.getBeanSetter(columnMetadata.getProperty());
+        beanSetter.call(blog,"123");
+        {
+            long start = System.currentTimeMillis();
+
+            for (int i = 0; i < 100000; i++) {
+                PropertySetterCaller<Object> beanSetter1 = beanFastSetter.getBeanSetter(columnMetadata.getProperty());
+                beanSetter1.call(blog,"123");
+            }
+            long end = System.currentTimeMillis();
+            System.out.println("耗时：" + (end - start) + "ms");
+
+        }
+        {
+
+            PropertyDescriptor property = columnMetadata.getProperty();
+            Method writeMethodOrNull = ClassUtil.getWriteMethodOrNull(property, BlogEntity.class);
+            callSetter(blog,writeMethodOrNull,property,"123");
+        }
+        {
+            long start = System.currentTimeMillis();
+
+            for (int i = 0; i < 100000; i++) {
+                PropertyDescriptor property = columnMetadata.getProperty();
+                Method writeMethodOrNull = ClassUtil.getWriteMethodOrNull(property, BlogEntity.class);
+                callSetter(blog,writeMethodOrNull,property,"123");
+            }
+            long end = System.currentTimeMillis();
+            System.out.println("耗时：" + (end - start) + "ms");
+
+        }
 
 
         TopicRequest topicRequest = new TopicRequest();
@@ -526,5 +561,13 @@ public class Main {
                     ).select(TestUserMysqlx.class, x -> x.columnAll().columnAs(SysUserLogbyMonth::getId, TestUserMysqlx::getName1)).firstOrNull();
             System.out.println("Hello world!");
         }
+    }
+    public static void callSetter(Object target,Method setter, PropertyDescriptor prop, Object value) throws SQLException {
+        try {
+            setter.invoke(target, value);
+        } catch (IllegalArgumentException | IllegalAccessException | InvocationTargetException e) {
+            throw new SQLException("Cannot set " + prop.getName() + ",value: " + value + ".: " + e.getMessage(), e);
+        }
+
     }
 }

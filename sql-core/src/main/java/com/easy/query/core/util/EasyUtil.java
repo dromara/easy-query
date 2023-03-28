@@ -1,5 +1,6 @@
 package com.easy.query.core.util;
 
+import com.easy.query.core.common.bean.BeanFastSetter;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.PropertySetter;
@@ -96,63 +97,10 @@ public class EasyUtil {
         }
     }
 
-    private static Map<Class<?>, Map<String, PropertySetterCaller<Object>>> CLASS_PROPERTY_SETTER_LAMBDA_CACHE = new ConcurrentHashMap<>();
+    private static Map<Class<?>, BeanFastSetter> CLASS_PROPERTY_SETTER_LAMBDA_CACHE = new ConcurrentHashMap<>();
 
-    public static PropertySetterCaller<Object> getPropertyLambdaSetter(Class<?> entityClass, PropertyDescriptor prop) {
-        return getPropertyLambdaSetter(entityClass, prop, true);
-    }
-
-    public static PropertySetterCaller<Object> getPropertyLambdaSetter(Class<?> entityClass, PropertyDescriptor prop, boolean cache) {
-        if (cache) {
-            Map<String, PropertySetterCaller<Object>> propertyLambdaMap = CLASS_PROPERTY_SETTER_LAMBDA_CACHE.computeIfAbsent(entityClass, key -> new ConcurrentHashMap<>());
-            return propertyLambdaMap.computeIfAbsent(prop.getName(), key -> getLambdaPropertySetter(entityClass, prop));
-        }
-        return getLambdaPropertySetter(entityClass, prop);
-    }
-
-    private static PropertySetterCaller<Object> getLambdaPropertySetter(Class<?> entityClass, PropertyDescriptor prop) {
-        String propertyName = prop.getName();
-        Class<?> propertyType = prop.getPropertyType();
-
-        String getFunName = "set" + StringUtil.toUpperCaseFirstOne(propertyName);
-        try {
-
-            MethodHandles.Lookup caller = MethodHandles.lookup();
-            Method writeMethod = ClassUtil.getWriteMethodNotNull(prop, entityClass);
-
-            MethodType setter = MethodType.methodType(writeMethod.getReturnType(), propertyType);
-            MethodHandle target = caller.findVirtual(entityClass, getFunName, setter);
-            MethodType func = target.type();
-            if (void.class.equals(writeMethod.getReturnType())) {
-                CallSite site = LambdaMetafactory.metafactory(
-                        caller,
-                        "apply",
-                        MethodType.methodType(PropertyVoidSetter.class),
-                        func.erase(),
-                        target,
-                        func
-                );
-
-                PropertyVoidSetter<Object> objectPropertyVoidSetter = (PropertyVoidSetter<Object>) site.getTarget().invokeExact();
-                return objectPropertyVoidSetter::apply;
-
-            } else {
-                CallSite site = LambdaMetafactory.metafactory(
-                        caller,
-                        "apply",
-                        MethodType.methodType(PropertySetter.class),
-                        func.erase(),
-                        target,
-                        func
-                );
-
-                PropertySetter<Object, ?> objectPropertySetter = (PropertySetter<Object, ?>) site.getTarget().invokeExact();
-                return objectPropertySetter::apply;
-            }
-
-        } catch (Throwable e) {
-            throw new EasyQueryException(e);
-        }
+    public static BeanFastSetter getBeanFastSetter(Class<?> entityClass) {
+        return CLASS_PROPERTY_SETTER_LAMBDA_CACHE.computeIfAbsent(entityClass, key -> new BeanFastSetter(entityClass));
     }
 }
 

@@ -1,6 +1,7 @@
 package com.easy.query.core.basic.jdbc.executor;
 
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
+import com.easy.query.core.common.bean.BeanFastSetter;
 import com.easy.query.core.expression.lambda.PropertySetter;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
 import com.easy.query.core.metadata.ColumnMetadata;
@@ -169,6 +170,7 @@ public class DefaultEasyExecutor implements EasyExecutor {
                 ResultSet keysSet = ps.getGeneratedKeys();
                 int index = 0;
                 PropertyDescriptor[] incrementProperty = new PropertyDescriptor[incrementColumns.size()];
+                BeanFastSetter beanFastSetter = EasyUtil.getBeanFastSetter(entityClass);
                 while (keysSet.next()) {
                     T entity = entities.get(index);
                     for (int i = 0; i < incrementColumns.size(); i++) {
@@ -182,8 +184,10 @@ public class DefaultEasyExecutor implements EasyExecutor {
 
                         Object value = keysSet.getObject(i + 1);
                         Object newValue = ClassUtil.convertValueToRequiredType(value, property.getPropertyType());
-                        Method setter = getSetter(property, entityClass);
-                        callSetter(entity,setter, property, newValue);
+                        PropertySetterCaller<Object> beanSetter = beanFastSetter.getBeanSetter(property);
+                        beanSetter.call(entity,newValue);
+//                        Method setter = getSetter(property, entityClass);
+//                        callSetter(entity,setter, property, newValue);
                     }
                     index++;
                 }
@@ -381,6 +385,7 @@ public class DefaultEasyExecutor implements EasyExecutor {
         EasyResultSet easyResultSet = new EasyResultSet(rs);
         T bean = ClassUtil.newInstance(clazz);
 
+        BeanFastSetter beanFastSetter = EasyUtil.getBeanFastSetter(clazz);
         for (int i = 0; i < columnMetadatas.length; i++) {
             ColumnMetadata columnMetadata = columnMetadatas[i];
             if (columnMetadata == null) {
@@ -394,8 +399,8 @@ public class DefaultEasyExecutor implements EasyExecutor {
             Object value =context.getDecryptValue(columnMetadata,handler.getValue(easyResultSet)) ;
 
 
-            PropertySetterCaller<Object> propertyLambdaSetter = EasyUtil.getPropertyLambdaSetter(clazz, property);
-            propertyLambdaSetter.call(bean,value);
+            PropertySetterCaller<Object> beanSetter = beanFastSetter.getBeanSetter(property);
+            beanSetter.call(bean,value);
 //            Method setter = getSetter(property, clazz);
 //            callSetter(bean,setter, property, value);
         }
