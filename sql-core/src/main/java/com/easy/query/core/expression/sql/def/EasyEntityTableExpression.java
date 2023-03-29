@@ -13,11 +13,13 @@ import com.easy.query.core.expression.sql.SqlEntityTableExpression;
 import com.easy.query.core.util.ClassUtil;
 import com.easy.query.core.util.LambdaUtil;
 
+import java.util.function.Function;
+
 /**
+ * @author xuejiaming
  * @FileName: EasyEntityTableExpressionSegment.java
  * @Description: 文件说明
  * @Date: 2023/3/3 23:31
- * @author xuejiaming
  */
 public class EasyEntityTableExpression implements SqlEntityTableExpression {
 
@@ -26,6 +28,7 @@ public class EasyEntityTableExpression implements SqlEntityTableExpression {
     protected final String alias;
     protected final MultiTableTypeEnum multiTableType;
     protected PredicateSegment on;
+    protected Function<String, String> tableNameAs;
 
     public EasyEntityTableExpression(EntityMetadata entityMetadata, int index, String alias, MultiTableTypeEnum multiTableType) {
         this.entityMetadata = entityMetadata;
@@ -50,6 +53,22 @@ public class EasyEntityTableExpression implements SqlEntityTableExpression {
         return this.entityMetadata.getColumnName(propertyName);
     }
 
+    @Override
+    public String getTableName() {
+        String tableName = entityMetadata.getTableName();
+        if (tableName == null) {
+            throw new EasyQueryException("table " + ClassUtil.getSimpleName(entityMetadata.getEntityClass()) + " cant found mapping table name");
+        }
+        if(tableNameAs!=null){
+            return tableNameAs.apply(tableName);
+        }
+        return tableName;
+    }
+
+    @Override
+    public void setTableNameAs(Function<String, String> tableNameAs) {
+        this.tableNameAs = tableNameAs;
+    }
 
     @Override
     public SqlExpression<SqlPredicate<Object>> getLogicDeleteQueryFilterExpression() {
@@ -110,12 +129,9 @@ public class EasyEntityTableExpression implements SqlEntityTableExpression {
     @Override
     public String toSql() {
         //如果当前对象没有映射到表那么直接抛错
-        if (entityMetadata.getTableName() == null) {
-            throw new EasyQueryException("table "+ ClassUtil.getSimpleName(entityMetadata.getEntityClass()) +" cant found mapping table name");
-        }
         StringBuilder sql = new StringBuilder();
 
-        sql.append(getSelectTableSource()).append(entityMetadata.getTableName());
+        sql.append(getSelectTableSource()).append(getTableName());
         if (alias != null) {
             sql.append(" ").append(alias);
         }

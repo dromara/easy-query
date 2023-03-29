@@ -10,6 +10,7 @@ import com.easy.query.core.expression.parser.abstraction.SqlPredicate;
 import com.easy.query.core.expression.parser.abstraction.SqlColumnResultSelector;
 
 import java.math.BigDecimal;
+import java.util.function.Function;
 
 
 /**
@@ -169,6 +170,12 @@ public interface Queryable2<T1, T2> extends Queryable<T1> {
     Queryable2<T1, T2> asTracking();
     @Override
     Queryable2<T1, T2> asNoTracking();
+    @Override
+    default Queryable2<T1, T2> asTable(String tableName){
+        return asTable(old->tableName);
+    }
+    @Override
+    Queryable2<T1, T2> asTable(Function<String,String> tableNameFunc);
 
     EasyQuerySqlBuilderProvider2<T1, T2> getSqlBuilderProvider2();
 }

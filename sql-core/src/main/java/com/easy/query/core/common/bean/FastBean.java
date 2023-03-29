@@ -20,8 +20,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * create time 2023/3/28 17:20
- * 文件说明
- *
+ * 用来快速实现bean对象的get和set方法，
+ * 直接获取get方法的lambda基本是零开销调用
+ * set也是零开销调用，除了第一次需要构建lambda和缓存
  * @author xuejiaming
  */
 public class FastBean {

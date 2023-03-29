@@ -48,6 +48,7 @@ import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * @FileName: AbstractSelect0.java
@@ -665,6 +666,13 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     @Override
     public Queryable<T1> asNoTracking() {
         sqlEntityExpression.getSqlExpressionContext().queryTracking(false);
+        return this;
+    }
+
+    @Override
+    public Queryable<T1> asTable(Function<String, String> tableNameFunc) {
+        SqlEntityTableExpression recentlyTable = sqlEntityExpression.getRecentlyTable();
+        recentlyTable.
         return this;
     }
 

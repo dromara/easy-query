@@ -36,8 +36,9 @@ public class EasyAnonymousEntityTableExpression extends EasyEntityTableExpressio
         StringBuilder sql = new StringBuilder();
 
         sql.append(getSelectTableSource()).append("(").append(sqlEntityExpression.toSql()).append(")");
-        if (alias != null) {
-            sql.append(" ").append(alias);
+        String tableName = getTableName();
+        if (tableName != null) {
+            sql.append(" ").append(tableName);
         }
         return sql.toString();
     }
@@ -50,5 +51,13 @@ public class EasyAnonymousEntityTableExpression extends EasyEntityTableExpressio
     @Override
     public String getColumnName(String propertyName) {
         return propertyName;
+    }
+
+    @Override
+    public String getTableName() {
+        if(tableNameAs!=null){
+            return tableNameAs.apply(alias);
+        }
+        return alias;
     }
 }

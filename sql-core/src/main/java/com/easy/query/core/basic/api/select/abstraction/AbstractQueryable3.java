@@ -29,6 +29,7 @@ import com.easy.query.core.util.SqlExpressionUtil;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
 
 /**
  * @FileName: AbstractQueryable3.java
@@ -314,6 +315,11 @@ public abstract class AbstractQueryable3<T1, T2, T3> extends AbstractQueryable<T
     @Override
     public Queryable3<T1, T2, T3> asNoTracking() {
         super.asNoTracking();
+        return this;
+    }
+    @Override
+    public Queryable3<T1, T2, T3> asTable(Function<String,String> tableNameFunc) {
+        super.asTable(tableNameFunc);
         return this;
     }
 

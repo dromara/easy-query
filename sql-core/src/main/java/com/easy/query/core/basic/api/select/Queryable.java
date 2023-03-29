@@ -18,6 +18,7 @@ import com.easy.query.core.util.ArrayUtil;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 /**
  * @FileName: Select0.java
@@ -330,5 +331,9 @@ public interface Queryable<T1> extends Query<T1> {
     Queryable<T1> asTracking();
 
     Queryable<T1> asNoTracking();
+    default Queryable<T1> asTable(String tableName){
+        return asTable(old->tableName);
+    }
+    Queryable<T1> asTable(Function<String,String> tableNameFunc);
 
 }
