@@ -45,13 +45,13 @@
         <dependency>
             <groupId>com.easy-query</groupId>
             <artifactId>sql-mysql</artifactId>
-            <version>0.0.31</version>
+            <version>0.0.32</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.easy-query</groupId>
             <artifactId>sql-springboot-starter</artifactId>
-            <version>0.0.31</version>
+            <version>0.0.32</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
