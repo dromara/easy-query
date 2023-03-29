@@ -6,6 +6,7 @@ import com.easy.query.core.abstraction.DefaultEasyQueryLambdaFactory;
 import com.easy.query.core.abstraction.DefaultEasyQueryRuntimeContext;
 import com.easy.query.core.abstraction.EasyQueryLambdaFactory;
 import com.easy.query.core.abstraction.EasySqlApiFactory;
+import com.easy.query.core.basic.pagination.DefaultEasyPageResultProvider;
 import com.easy.query.core.common.bean.FastBean;
 import com.easy.query.core.enums.SqlRangeEnum;
 import com.easy.query.core.enums.UpdateStrategyEnum;
@@ -20,7 +21,7 @@ import com.easy.query.entity.BlogEntity;
 import com.easy.query.entity.Topic;
 import com.easy.query.test.*;
 import com.easy.query.core.metadata.EntityMetadataManager;
-import com.easy.query.core.api.pagination.PageResult;
+import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.api.client.DefaultEasyQuery;
 import com.easy.query.core.api.client.EasyQuery;
 import com.easy.query.core.api.def.DefaultEasySqlApiFactory;
@@ -132,7 +133,8 @@ public class Main {
         MySqlExpressionFactory mySQLSqlExpressionFactory = new MySqlExpressionFactory();
         EasySqlApiFactory easyQueryableFactory = new DefaultEasySqlApiFactory(mySQLSqlExpressionFactory);
         DefaultTrackManager defaultTrackManager = new DefaultTrackManager(entityMetadataManager);
-        DefaultEasyQueryRuntimeContext jqdcRuntimeContext = new DefaultEasyQueryRuntimeContext(configuration, entityMetadataManager, easyQueryLambdaFactory, connectionManager, defaultExecutor, jdbcTypeHandler, easyQueryableFactory, mySQLSqlExpressionFactory,defaultTrackManager);
+        DefaultEasyPageResultProvider defaultEasyPageResultProvider = new DefaultEasyPageResultProvider();
+        DefaultEasyQueryRuntimeContext jqdcRuntimeContext = new DefaultEasyQueryRuntimeContext(configuration, entityMetadataManager, easyQueryLambdaFactory, connectionManager, defaultExecutor, jdbcTypeHandler, easyQueryableFactory, mySQLSqlExpressionFactory,defaultTrackManager,defaultEasyPageResultProvider);
 
 //        jqdcRuntimeContext.getEasyQueryConfiguration().applyEntityTypeConfiguration(new TestUserMySqlConfiguration());
 //        configuration.applyGlobalInterceptor(new NameQueryFilter());
@@ -456,7 +458,7 @@ public class Main {
                     .where(o -> o.in(SysUserLogbyMonth::getId, Collections.emptyList())).firstOrNull();
             SysUserLogbyMonth sysUserLogbyMonth2xx = easyQuery.queryable(SysUserLogbyMonth.class)
                     .where(o -> o.notIn(SysUserLogbyMonth::getId, Collections.emptyList())).firstOrNull();
-            PageResult<SysUserLogbyMonth> page = easyQuery.queryable(SysUserLogbyMonth.class)
+            EasyPageResult<SysUserLogbyMonth> page = easyQuery.queryable(SysUserLogbyMonth.class)
                     .where(o -> o.notIn(SysUserLogbyMonth::getId, Collections.emptyList())).select( SysUserLogbyMonth.class).toPageResult(2, 20);
 //        long start = System.currentTimeMillis();
 //        for (int j = 0; j < 1000; j++) {

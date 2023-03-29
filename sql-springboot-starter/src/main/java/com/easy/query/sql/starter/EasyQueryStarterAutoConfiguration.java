@@ -6,6 +6,8 @@ import com.easy.query.core.abstraction.EasyExpressionFactory;
 import com.easy.query.core.abstraction.EasyQueryLambdaFactory;
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.abstraction.EasySqlApiFactory;
+import com.easy.query.core.basic.pagination.DefaultEasyPageResultProvider;
+import com.easy.query.core.basic.pagination.EasyPageResultProvider;
 import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.api.client.DefaultEasyQuery;
 import com.easy.query.core.api.client.EasyQuery;
@@ -134,6 +136,10 @@ public class EasyQueryStarterAutoConfiguration {
     public EasySqlApiFactory easySqlApiFactory(EasyExpressionFactory easySqlExpressionFactory) {
         return new DefaultEasySqlApiFactory(easySqlExpressionFactory);
     }
+    @Bean
+    public EasyPageResultProvider easyPageResultProvider(){
+        return new DefaultEasyPageResultProvider();
+    }
 
     @Bean
     public EasyQueryRuntimeContext easyQueryRuntimeContext(EasyQueryConfiguration easyQueryConfiguration,
@@ -144,7 +150,8 @@ public class EasyQueryStarterAutoConfiguration {
                                                            EasyJdbcTypeHandlerManager easyJdbcTypeHandler,
                                                            EasySqlApiFactory easyQueryableFactory,
                                                            EasyExpressionFactory easySqlExpressionFactory,
-                                                           TrackManager trackManager) {
+                                                           TrackManager trackManager,
+                                                           EasyPageResultProvider easyPageResultProvider) {
         return new DefaultEasyQueryRuntimeContext(
                 easyQueryConfiguration,
                 entityMetadataManager,
@@ -154,7 +161,8 @@ public class EasyQueryStarterAutoConfiguration {
                 easyJdbcTypeHandler,
                 easyQueryableFactory,
                 easySqlExpressionFactory,
-                trackManager
+                trackManager,
+                easyPageResultProvider
         );
     }
 

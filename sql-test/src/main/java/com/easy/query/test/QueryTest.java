@@ -1,7 +1,7 @@
 package com.easy.query.test;
 
 import com.easy.query.BaseTest;
-import com.easy.query.core.api.pagination.PageResult;
+import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.api.select.Queryable;
 import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
 import com.easy.query.dto.TopicGroupTestDTO;
@@ -209,7 +209,7 @@ public class QueryTest extends BaseTest {
     @Test
     public void query12() {
 
-        PageResult<Topic> topicPageResult = easyQuery
+        EasyPageResult<Topic> topicPageResult = easyQuery
                 .queryable(Topic.class)
                 .where(o -> o.isNotNull(Topic::getId))
                 .toPageResult(2, 20);
@@ -219,7 +219,7 @@ public class QueryTest extends BaseTest {
     @Test
     public void query13() {
 
-        PageResult<BlogEntity> page = easyQuery
+        EasyPageResult<BlogEntity> page = easyQuery
                 .queryable(Topic.class)
                 .innerJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
                 .where((t, t1) -> t1.isNotNull(BlogEntity::getTitle).then(t).eq(Topic::getId, "3"))
@@ -231,7 +231,7 @@ public class QueryTest extends BaseTest {
     @Test
     public void query14() {
 
-        PageResult<BlogEntity> page = easyQuery
+        EasyPageResult<BlogEntity> page = easyQuery
                 .queryable(Topic.class)
                 .innerJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
                 .where((t, t1) -> t1.isNotNull(BlogEntity::getTitle))
@@ -352,7 +352,7 @@ public class QueryTest extends BaseTest {
     public void query22() {
         Queryable<BlogEntity> queryable = easyQuery.queryable(BlogEntity.class);
         List<Map<String,Object>> maps = queryable.toMaps();
-        Assert.assertNull(maps);
+        Assert.assertNotNull(maps);
         Assert.assertEquals(100,maps.size());
     }
     @Test

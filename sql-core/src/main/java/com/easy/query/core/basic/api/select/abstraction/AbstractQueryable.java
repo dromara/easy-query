@@ -1,10 +1,11 @@
 package com.easy.query.core.basic.api.select.abstraction;
 
+import com.easy.query.core.basic.pagination.EasyPageResultProvider;
 import com.easy.query.core.common.bean.FastBean;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.annotation.EasyWhereCondition;
-import com.easy.query.core.api.pagination.PageResult;
+import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.api.dynamic.where.internal.DynamicWherePropertyNode;
 import com.easy.query.core.api.dynamic.where.internal.DefaultEasyDynamicWhereBuilder;
 import com.easy.query.core.api.dynamic.where.EasyDynamicWhereConfiguration;
@@ -47,7 +48,6 @@ import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 /**
  * @FileName: AbstractSelect0.java
@@ -559,11 +559,11 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     }
 
     @Override
-    public PageResult<T1> toPageResult(long pageIndex, long pageSize) {
+    public EasyPageResult<T1> toPageResult(long pageIndex, long pageSize) {
         return doPageResult(pageIndex, pageSize, t1Class);
     }
 
-    protected <TR> PageResult<TR> doPageResult(long pageIndex, long pageSize, Class<TR> clazz) {
+    protected <TR> EasyPageResult<TR> doPageResult(long pageIndex, long pageSize, Class<TR> clazz) {
         //设置每次获取多少条
         long take = pageSize <= 0 ? 1 : pageSize;
         //设置当前页码最小1
@@ -571,15 +571,16 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
         //需要跳过多少条
         long offset = (index - 1) * take;
         long total = this.count();
+        EasyPageResultProvider easyPageResultProvider = sqlEntityExpression.getRuntimeContext().getEasyPageResultProvider();
         if (total <= offset) {
-            return new PageResult<TR>(total, new ArrayList<>(0));
+            return easyPageResultProvider.createPageResult(total, new ArrayList<>(0));
         }//获取剩余条数
         long remainingCount = total - offset;
         //当剩余条数小于take数就取remainingCount
         long realTake = Math.min(remainingCount, take);
         this.limit(offset, realTake);
         List<TR> data = this.toInternalList(clazz);
-        return new PageResult<TR>(total, data);
+        return easyPageResultProvider.createPageResult(total,data);
     }
 
 

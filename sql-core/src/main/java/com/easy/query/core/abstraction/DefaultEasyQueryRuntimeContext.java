@@ -1,5 +1,6 @@
 package com.easy.query.core.abstraction;
 
+import com.easy.query.core.basic.pagination.EasyPageResultProvider;
 import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.basic.jdbc.con.EasyConnectionManager;
 import com.easy.query.core.basic.jdbc.types.EasyJdbcTypeHandlerManager;
@@ -23,6 +24,7 @@ public class DefaultEasyQueryRuntimeContext implements EasyQueryRuntimeContext {
     private final EasySqlApiFactory easyQueryableFactory;
     private final EasyExpressionFactory easySqlExpressionFactory;
     private final TrackManager trackManager;
+    private final EasyPageResultProvider easyPageResultProvider;
 
     public DefaultEasyQueryRuntimeContext(EasyQueryConfiguration easyQueryConfiguration,
                                           EntityMetadataManager entityMetadataManager,
@@ -32,7 +34,8 @@ public class DefaultEasyQueryRuntimeContext implements EasyQueryRuntimeContext {
                                           EasyJdbcTypeHandlerManager easyJdbcTypeHandler,
                                           EasySqlApiFactory easyQueryableFactory,
                                           EasyExpressionFactory easySqlExpressionFactory,
-                                          TrackManager trackManager){
+                                          TrackManager trackManager,
+                                          EasyPageResultProvider easyPageResultProvider){
         this.easyQueryConfiguration = easyQueryConfiguration;
         this.entityMetadataManager = entityMetadataManager;
         this.easyQueryLambdaFactory = easyQueryLambdaFactory;
@@ -42,6 +45,7 @@ public class DefaultEasyQueryRuntimeContext implements EasyQueryRuntimeContext {
         this.easyQueryableFactory = easyQueryableFactory;
         this.easySqlExpressionFactory = easySqlExpressionFactory;
         this.trackManager = trackManager;
+        this.easyPageResultProvider = easyPageResultProvider;
     }
     @Override
     public EasyQueryConfiguration getEasyQueryConfiguration() {
@@ -87,5 +91,10 @@ public class DefaultEasyQueryRuntimeContext implements EasyQueryRuntimeContext {
     @Override
     public TrackManager getTrackManager() {
         return trackManager;
+    }
+
+    @Override
+    public EasyPageResultProvider getEasyPageResultProvider() {
+        return easyPageResultProvider;
     }
 }

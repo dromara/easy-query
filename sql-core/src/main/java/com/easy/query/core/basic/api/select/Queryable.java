@@ -1,6 +1,6 @@
 package com.easy.query.core.basic.api.select;
 
-import com.easy.query.core.api.pagination.PageResult;
+import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.api.dynamic.order.EasyDynamicOrderByConfiguration;
 import com.easy.query.core.basic.api.select.provider.EasyQuerySqlBuilderProvider;
 import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
@@ -299,7 +299,7 @@ public interface Queryable<T1> extends Query<T1> {
 
     Queryable<T1> limit(boolean condition, long offset, long rows);
 
-    PageResult<T1> toPageResult(long pageIndex, long pageSize);
+    EasyPageResult<T1> toPageResult(long pageIndex, long pageSize);
 
     //    PageResult<T1> toPageResult(long pageIndex, long pageSize, SqlExpression<SqlColumnSelector<T1>> selectExpression);
 //    <TR> PageResult<TR> toPageResult(long pageIndex, long pageSize, Class<TR> clazz);
