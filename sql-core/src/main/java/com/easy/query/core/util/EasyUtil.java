@@ -3,11 +3,13 @@ package com.easy.query.core.util;
 import com.easy.query.core.common.bean.FastBean;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.lambda.Property;
+import com.easy.query.core.expression.lambda.PropertySetterCaller;
 import com.easy.query.core.expression.segment.SqlEntityAliasSegment;
 import com.easy.query.core.expression.sql.SqlEntityQueryExpression;
 import com.easy.query.core.expression.sql.SqlEntityTableExpression;
 import com.easy.query.core.metadata.ColumnMetadata;
 
+import java.beans.PropertyDescriptor;
 import java.lang.invoke.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -63,6 +65,12 @@ public class EasyUtil {
 
     public static FastBean getFastBean(Class<?> entityClass) {
         return CLASS_PROPERTY_FAST_BEAN_CACHE.computeIfAbsent(entityClass, key -> new FastBean(entityClass));
+    }
+    public static Property<Object, ?> getPropertyGetterLambda(Class<?> entityClass, String propertyName, Class<?> fieldType) {
+        return getFastBean(entityClass).getBeanGetter(propertyName, fieldType);
+    }
+    public static PropertySetterCaller<Object> getPropertySetterLambda(Class<?> entityClass, PropertyDescriptor prop) {
+        return getFastBean(entityClass).getBeanSetter(prop);
     }
 }
 
