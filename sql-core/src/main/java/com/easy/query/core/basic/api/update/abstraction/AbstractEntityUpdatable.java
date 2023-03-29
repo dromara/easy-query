@@ -21,6 +21,7 @@ import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.metadata.EntityMetadata;
 
 import java.util.*;
+import java.util.function.Function;
 
 /**
  * @FileName: AbstractUpdate.java
@@ -134,6 +135,12 @@ public abstract class AbstractEntityUpdatable<T> extends AbstractSqlExecuteRows 
             DefaultSqlColumnSetSelector<T> columnSelector = new DefaultSqlColumnSetSelector<>(0, sqlEntityUpdateExpression, sqlEntityUpdateExpression.getWhereColumns());
             columnSelectorExpression.apply(columnSelector);
         }
+        return this;
+    }
+
+    @Override
+    public EntityUpdatable<T> asTable(Function<String, String> tableNameAs) {
+        sqlEntityUpdateExpression.getRecentlyTable().setTableNameAs(tableNameAs);
         return this;
     }
 

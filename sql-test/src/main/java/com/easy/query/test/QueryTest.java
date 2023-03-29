@@ -362,5 +362,26 @@ public class QueryTest extends BaseTest {
         Assert.assertNotNull(map);
         Assert.assertTrue(map.containsKey("create_Time"));
     }
+    @Test
+    public void query24() {
+        Queryable<BlogEntity> queryable = easyQuery.queryable(BlogEntity.class)
+                .asTable(a->"aa_bb_cc")
+                .where(o -> o.eq(BlogEntity::getId, "123"));
+        String sql = queryable.toSql();
+        Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`title`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top` FROM aa_bb_cc t WHERE t.`deleted` = ? AND t.`id` = ?", sql);
+    }
+    @Test
+    public void query25() {
+
+        String toSql1 = easyQuery
+                .queryable(Topic.class)
+                .asTable(o->"t_topic_123")
+                .innerJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                .asTable("x_t_blog")
+                .where((t, t1) -> t1.isNotNull(BlogEntity::getTitle).then(t).eq(Topic::getId, "3"))
+                .select(BlogEntity.class, (t, t1) -> t1.columnAll()).toSql();
+        Assert.assertEquals("SELECT t1.`id`,t1.`create_time`,t1.`update_time`,t1.`create_by`,t1.`update_by`,t1.`deleted`,t1.`title`,t1.`content`,t1.`url`,t1.`star`,t1.`publish_time`,t1.`score`,t1.`status`,t1.`order`,t1.`is_top`,t1.`top` FROM t_topic_123 t INNER JOIN x_t_blog t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t1.`title` IS NOT NULL AND t.`id` = ?",
+                toSql1);
+    }
 
 }

@@ -3,6 +3,8 @@ package com.easy.query.core.basic.api.insert;
 import com.easy.query.core.abstraction.EasySqlApiFactory;
 import com.easy.query.core.expression.sql.SqlEntityInsertExpression;
 
+import java.util.function.Function;
+
 /**
  * @FileName: EasyEmptyInsertable.java
  * @Description: 文件说明
@@ -25,6 +27,11 @@ public class EasyEmptyInsertable<T>implements Insertable<T> {
         Insertable<T> insertable = (Insertable<T>) sqlApiFactory.createInsertable((Class<T>) entity.getClass(), sqlEntityInsertExpression);
         insertable.insert(entity);
         return insertable;
+    }
+
+    @Override
+    public Insertable<T> asTable(Function<String, String> tableNameAs) {
+        return this;
     }
 
     @Override

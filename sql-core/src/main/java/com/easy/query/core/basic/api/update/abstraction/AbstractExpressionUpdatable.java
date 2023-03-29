@@ -1,5 +1,6 @@
 package com.easy.query.core.basic.api.update.abstraction;
 
+import com.easy.query.core.basic.api.insert.Insertable;
 import com.easy.query.core.basic.api.internal.AbstractSqlExecuteRows;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.enums.SqlPredicateCompareEnum;
@@ -24,6 +25,7 @@ import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.expression.parser.abstraction.SqlPredicate;
 
 import java.util.Collection;
+import java.util.function.Function;
 
 /**
  * @FileName: AbstractExpressionUpdate.java
@@ -123,6 +125,12 @@ public abstract class AbstractExpressionUpdatable<T> extends AbstractSqlExecuteR
                     .setPredicate(new ColumnValuePredicate(table, keyProperty, id, SqlPredicateCompareEnum.EQ, sqlEntityUpdateExpression));
             where.addPredicateSegment(andPredicateSegment);
         }
+        return this;
+    }
+
+    @Override
+    public ExpressionUpdatable<T> asTable(Function<String, String> tableNameAs) {
+        sqlEntityUpdateExpression.getRecentlyTable().setTableNameAs(tableNameAs);
         return this;
     }
 

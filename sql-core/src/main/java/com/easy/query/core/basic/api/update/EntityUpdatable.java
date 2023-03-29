@@ -10,7 +10,7 @@ import com.easy.query.core.expression.lambda.SqlExpression;
  * @Date: 2023/2/24 23:22
  * @author xuejiaming
  */
-public interface EntityUpdatable<T> extends Updatable<T> {
+public interface EntityUpdatable<T> extends Updatable<T,EntityUpdatable<T>> {
     default EntityUpdatable<T> setColumns(SqlExpression<SqlColumnSelector<T>> columnSelectorExpression){
         return setColumns(true,columnSelectorExpression);
     }

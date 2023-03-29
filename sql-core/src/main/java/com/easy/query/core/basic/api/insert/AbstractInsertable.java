@@ -13,12 +13,13 @@ import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 /**
+ * @author xuejiaming
  * @FileName: AbstractInsertable.java
  * @Description: 文件说明
  * @Date: 2023/2/20 12:30
- * @author xuejiaming
  */
 public abstract class AbstractInsertable<T> implements Insertable<T> {
     protected final List<T> entities;
@@ -61,7 +62,7 @@ public abstract class AbstractInsertable<T> implements Insertable<T> {
             }
             for (T entity : entities) {
                 for (EasyEntityInterceptor globalEntityInterceptor : globalEntityInterceptors) {
-                    globalEntityInterceptor.configureInsert(entityMetadata.getEntityClass(), sqlEntityInsertExpression,entity);
+                    globalEntityInterceptor.configureInsert(entityMetadata.getEntityClass(), sqlEntityInsertExpression, entity);
                 }
             }
         }
@@ -74,13 +75,18 @@ public abstract class AbstractInsertable<T> implements Insertable<T> {
             String insertSql = toSql();
             if (!StringUtil.isBlank(insertSql)) {
                 EasyExecutor easyExecutor = sqlEntityInsertExpression.getRuntimeContext().getEasyExecutor();
-                return easyExecutor.insert(ExecutorContext.create(sqlEntityInsertExpression.getRuntimeContext()), insertSql, entities, sqlEntityInsertExpression.getParameters(),fillAutoIncrement);
+                return easyExecutor.insert(ExecutorContext.create(sqlEntityInsertExpression.getRuntimeContext()), insertSql, entities, sqlEntityInsertExpression.getParameters(), fillAutoIncrement);
             }
         }
 
         return 0;
     }
 
+    @Override
+    public Insertable<T> asTable(Function<String, String> tableNameAs) {
+        sqlEntityInsertExpression.getRecentlyTable().setTableNameAs(tableNameAs);
+        return this;
+    }
 
     @Override
     public abstract String toSql();

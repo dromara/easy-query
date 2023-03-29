@@ -23,6 +23,7 @@ import com.easy.query.core.util.ClassUtil;
 import com.easy.query.core.util.StringUtil;
 
 import java.util.Collection;
+import java.util.function.Function;
 
 /**
  * @FileName: AbstractExpressionDelete.java
@@ -110,6 +111,12 @@ public abstract   class AbstractExpressionDeletable<T> extends AbstractSqlExecut
     @Override
     public ExpressionDeletable<T> allowDeleteCommand(boolean allow) {
         sqlEntityDeleteExpression.getSqlExpressionContext().deleteThrow(!allow);
+        return this;
+    }
+
+    @Override
+    public ExpressionDeletable<T> asTable(Function<String, String> tableNameAs) {
+        sqlEntityDeleteExpression.getRecentlyTable().setTableNameAs(tableNameAs);
         return this;
     }
 }

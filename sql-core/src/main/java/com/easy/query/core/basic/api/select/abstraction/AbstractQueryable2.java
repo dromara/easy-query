@@ -300,8 +300,8 @@ public abstract class AbstractQueryable2<T1, T2> extends AbstractQueryable<T1> i
     }
 
     @Override
-    public Queryable2<T1, T2> asTable(Function<String,String> tableNameFunc) {
-        super.asTable(tableNameFunc);
+    public Queryable2<T1, T2> asTable(Function<String,String> tableNameAs) {
+        super.asTable(tableNameAs);
         return this;
     }
 

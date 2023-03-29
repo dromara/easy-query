@@ -16,6 +16,7 @@ import com.easy.query.core.metadata.EntityMetadata;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * @FileName: AbstractEntityDelete.java
@@ -67,6 +68,12 @@ public abstract class AbstractEntityDeletable<T> extends AbstractSqlExecuteRows 
     @Override
     public EntityDeletable<T> allowDeleteCommand(boolean allow) {
         sqlEntityDeleteExpression.getSqlExpressionContext().deleteThrow(!allow);
+        return this;
+    }
+
+    @Override
+    public EntityDeletable<T> asTable(Function<String, String> tableNameAs) {
+        sqlEntityDeleteExpression.getRecentlyTable().setTableNameAs(tableNameAs);
         return this;
     }
 }

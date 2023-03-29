@@ -6,6 +6,8 @@ import com.easy.query.core.exception.EasyQueryConcurrentException;
 import com.easy.query.core.expression.lambda.SqlExpression;
 import com.easy.query.core.expression.parser.abstraction.SqlColumnSelector;
 
+import java.util.function.Function;
+
 /**
  * @FileName: EasyEmptyEntityUpdate.java
  * @Description: 文件说明
@@ -44,5 +46,10 @@ public class EasyEmptyEntityUpdatable<T> implements EntityUpdatable<T> {
         if(rows!=expectRows){
             throw new EasyQueryConcurrentException(msg,code);
         }
+    }
+
+    @Override
+    public EntityUpdatable<T> asTable(Function<String, String> tableNameAs) {
+        return this;
     }
 }

@@ -670,9 +670,8 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     }
 
     @Override
-    public Queryable<T1> asTable(Function<String, String> tableNameFunc) {
-        SqlEntityTableExpression recentlyTable = sqlEntityExpression.getRecentlyTable();
-        recentlyTable.
+    public Queryable<T1> asTable(Function<String, String> tableNameAs) {
+        sqlEntityExpression.getRecentlyTable().setTableNameAs(tableNameAs);
         return this;
     }
 
