@@ -365,7 +365,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
                 if (EasyDynamicWhereConfiguration.class.isAssignableFrom(object.getClass())) {
                     EasyDynamicWhereConfiguration<Object> configuration = (EasyDynamicWhereConfiguration<Object>) object;
                     configuration.configure(objectObjectQueryBuilder);
-                    strictMode = configuration.isStrictMode();
+                    strictMode = configuration.useStrictMode();
                 }
                 for (Field field : allFields) {
                     boolean accessible = field.isAccessible();
@@ -499,7 +499,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
 
         if (condition) {
             if (configuration != null) {
-                boolean strictMode = configuration.isStrictMode();
+                boolean strictMode = configuration.useStrictMode();
                 EntityMetadataManager entityMetadataManager = sqlEntityExpression.getRuntimeContext().getEntityMetadataManager();
 
                 DefaultEasyDynamicOrderByBuilder orderByBuilder = new DefaultEasyDynamicOrderByBuilder(configuration.dynamicMode());

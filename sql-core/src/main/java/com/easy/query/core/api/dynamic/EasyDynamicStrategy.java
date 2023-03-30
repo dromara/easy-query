@@ -15,7 +15,7 @@ public interface EasyDynamicStrategy {
      * 是否是严格模式
      * @return
      */
-    default boolean isStrictMode(){
+    default boolean useStrictMode(){
         return Objects.equals(DynamicModeEnum.STRICT,dynamicMode());
     }
     /**
