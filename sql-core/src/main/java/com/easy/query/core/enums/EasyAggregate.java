@@ -13,7 +13,7 @@ public enum EasyAggregate implements EasyFunc {
     MAX("MAX(%s)"),
     MIN("MIN(%s)"),
     AVG("AVG(%s)"),
-    LEN("LEN(%s)");
+    LEN("LENGTH(%s)");
     private final String aggregate;
 
     EasyAggregate(String aggregate){

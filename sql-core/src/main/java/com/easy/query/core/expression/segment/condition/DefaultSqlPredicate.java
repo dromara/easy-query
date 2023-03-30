@@ -1,5 +1,6 @@
 package com.easy.query.core.expression.segment.condition;
 
+import com.easy.query.core.enums.EasyFunc;
 import com.easy.query.core.enums.SqlLikeEnum;
 import com.easy.query.core.enums.SqlRangeEnum;
 import com.easy.query.core.expression.lambda.Property;
@@ -7,6 +8,7 @@ import com.easy.query.core.expression.parser.abstraction.internal.WherePredicate
 import com.easy.query.core.expression.segment.condition.predicate.ColumnCollectionPredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnValuePredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnWithColumnPredicate;
+import com.easy.query.core.expression.segment.condition.predicate.FuncColumnValuePredicate;
 import com.easy.query.core.expression.sql.SqlEntityTableExpression;
 import com.easy.query.core.enums.SqlPredicateCompareEnum;
 import com.easy.query.core.expression.lambda.SqlExpression;
@@ -56,6 +58,12 @@ public class DefaultSqlPredicate<T1> implements SqlPredicate<T1> {
         String propertyName = table.getPropertyName(column);
 
         nextPredicateSegment.setPredicate(new ColumnValuePredicate(table, propertyName, val, condition, sqlEntityExpression));
+    }
+    protected void appendThisFuncPredicate(Property<T1, ?> column,EasyFunc func, SqlPredicateCompareEnum compare, Object val) {
+        SqlEntityTableExpression table = sqlEntityExpression.getTable(getIndex());
+        String propertyName = table.getPropertyName(column);
+
+        nextPredicateSegment.setPredicate(new FuncColumnValuePredicate(table,func, propertyName, val, compare, sqlEntityExpression));
     }
 
 
@@ -190,6 +198,16 @@ public class DefaultSqlPredicate<T1> implements SqlPredicate<T1> {
                 appendThisPredicate(column, valLeft, openEnd ? SqlPredicateCompareEnum.LT : SqlPredicateCompareEnum.LE);
                 nextAnd();
             }
+        }
+        return this;
+    }
+
+    @Override
+    public SqlPredicate<T1> columnFunc(boolean condition, Property<T1, ?> column, EasyFunc easyFunc, SqlPredicateCompareEnum sqlPredicateCompare, Object val) {
+
+        if (condition) {
+            appendThisFuncPredicate(column,easyFunc, sqlPredicateCompare, val);
+            nextAnd();
         }
         return this;
     }

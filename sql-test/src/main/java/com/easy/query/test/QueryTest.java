@@ -3,7 +3,10 @@ package com.easy.query.test;
 import com.easy.query.BaseTest;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.api.select.Queryable;
+import com.easy.query.core.enums.EasyAggregate;
+import com.easy.query.core.enums.SqlPredicateCompareEnum;
 import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
+import com.easy.query.dto.BlogEntityTest;
 import com.easy.query.dto.TopicGroupTestDTO;
 import com.easy.query.dto.TopicRequest;
 import com.easy.query.entity.BlogEntity;
@@ -397,5 +400,46 @@ public class QueryTest extends BaseTest {
         Assert.assertEquals("SELECT t1.`id`,t1.`create_time`,t1.`update_time`,t1.`create_by`,t1.`update_by`,t1.`deleted`,t1.`title`,t1.`content`,t1.`url`,t1.`star`,t1.`publish_time`,t1.`score`,t1.`status`,t1.`order`,t1.`is_top`,t1.`top` FROM t_topic_123 t INNER JOIN x_t_blog t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t1.`title` IS NOT NULL AND t.`id` = ?",
                 toSql1);
     }
+    @Test
+    public void query27() {
+        Queryable<BlogEntityTest> queryable = easyQuery.queryable(BlogEntity.class)
+                .select(BlogEntityTest.class);
+        String sql = queryable.toSql();
+        Assert.assertEquals("SELECT t.`title`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top` FROM t_blog t WHERE t.`deleted` = ?", sql);
+    }
+    @Test
+    public void query28() {
+        {
+
+            Queryable<BlogEntityTest> queryable = easyQuery.queryable(BlogEntity.class)
+                    .select(BlogEntityTest.class,o->o.columnIgnore(BlogEntity::getUrl).columnFunc(BlogEntity::getUrl,BlogEntityTest::getUrl,IfNullEasyFunc.IfNull));
+            String sql = queryable.toSql();
+            Assert.assertEquals("SELECT IfNull(t.`url`,'') AS `url` FROM t_blog t WHERE t.`deleted` = ?", sql);
+        }
+        {
+
+            Queryable<BlogEntityTest> queryable = easyQuery.queryable(BlogEntity.class)
+                    .select(BlogEntityTest.class,o->o.columnAll().columnIgnore(BlogEntity::getUrl).columnFunc(BlogEntity::getUrl,BlogEntityTest::getUrl,IfNullEasyFunc.IfNull));
+            String sql = queryable.toSql();
+            Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`title` AS `title`,t.`content` AS `content`,t.`star` AS `star`,t.`publish_time` AS `publish_time`,t.`score` AS `score`,t.`status` AS `status`,t.`order` AS `order`,t.`is_top` AS `is_top`,t.`top` AS `top`,IfNull(t.`url`,'') AS `url` FROM t_blog t WHERE t.`deleted` = ?", sql);
+        }
+        {
+
+            Queryable<BlogEntityTest> queryable = easyQuery.queryable(BlogEntity.class)
+                    .select(BlogEntityTest.class,o->o.columnAll().columnFunc(BlogEntity::getUrl,BlogEntityTest::getUrl,IfNullEasyFunc.IfNull));
+            String sql = queryable.toSql();
+            Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`title` AS `title`,t.`content` AS `content`,t.`url` AS `url`,t.`star` AS `star`,t.`publish_time` AS `publish_time`,t.`score` AS `score`,t.`status` AS `status`,t.`order` AS `order`,t.`is_top` AS `is_top`,t.`top` AS `top`,IfNull(t.`url`,'') AS `url` FROM t_blog t WHERE t.`deleted` = ?", sql);
+        }
+    }
+    @Test
+    public void query29() {
+        Queryable<BlogEntity> queryable = easyQuery.queryable(BlogEntity.class)
+                .where(o -> o.columnFunc(BlogEntity::getId,EasyAggregate.LEN, SqlPredicateCompareEnum.EQ, "123"));
+        String sql = queryable.toSql();
+        Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`title`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top` FROM t_blog t WHERE t.`deleted` = ? AND LENGTH(t.`id`) = ?", sql);
+        BlogEntity blogEntity = queryable.firstOrNull();
+        Assert.assertNull(blogEntity);
+    }
+
 
 }

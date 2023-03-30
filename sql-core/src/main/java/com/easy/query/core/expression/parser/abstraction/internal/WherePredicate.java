@@ -1,6 +1,8 @@
 package com.easy.query.core.expression.parser.abstraction.internal;
 
+import com.easy.query.core.enums.EasyFunc;
 import com.easy.query.core.enums.SqlLikeEnum;
+import com.easy.query.core.enums.SqlPredicateCompareEnum;
 import com.easy.query.core.enums.SqlRangeEnum;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.SqlExpression;
@@ -386,6 +388,10 @@ public interface WherePredicate<T1, TChain> extends IndexAware {
     TChain range(boolean condition, Property<T1, ?> column, boolean conditionLeft, Object valLeft, boolean conditionRight, Object valRight, SqlRangeEnum sqlRange);
 
 
+  default TChain columnFunc(Property<T1, ?> column, EasyFunc easyFunc, SqlPredicateCompareEnum sqlPredicateCompare, Object val){
+      return columnFunc(true,column,easyFunc,sqlPredicateCompare,val);
+  }
+    TChain columnFunc(boolean condition, Property<T1, ?> column, EasyFunc easyFunc, SqlPredicateCompareEnum sqlPredicateCompare,Object val);
     default <T2, TChain2> TChain eq(WherePredicate<T2, TChain2> sub, Property<T1, ?> column1, Property<T2, ?> column2) {
         return eq(true, sub, column1, column2);
     }

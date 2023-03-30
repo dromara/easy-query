@@ -7,5 +7,10 @@ package com.easy.query.core.enums;
  * @author xuejiaming
  */
 public interface EasyFunc {
+    /**
+     * 传入列名:name，返回substring(name,1,1)
+     * @param column
+     * @return
+     */
     String getFuncColumn(String column);
 }

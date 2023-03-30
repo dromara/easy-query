@@ -13,6 +13,7 @@ import com.easy.query.core.expression.sql.SqlEntityExpression;
 import com.easy.query.core.expression.sql.SqlEntityTableExpression;
 
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * @FileName: DefaultSqSelector.java
@@ -63,8 +64,9 @@ public class DefaultAutoSqlColumnAsSelector<T1, TR> extends AbstractSqlColumnSel
 
                     ColumnMetadata targetColumnMetadata = targetEntityMetadata.getColumnNotNull(targetPropertyName);
                     if (targetColumnMetadata != null) {
-                        String alias = targetColumnMetadata.getName();
-                        sqlSegmentBuilder.append(new ColumnSegment(table, property, sqlEntityExpression, alias));
+                        String targetColumnName = targetColumnMetadata.getName();
+                        //如果当前属性和查询对象属性一致那么就返回对应的列名，对应的列名如果不一样就返回对应返回结果对象的属性上的列名
+                        sqlSegmentBuilder.append(new ColumnSegment(table, property, sqlEntityExpression, Objects.equals(sourceColumnName,targetColumnName)?null: targetColumnName));
                     }
                 }
 
