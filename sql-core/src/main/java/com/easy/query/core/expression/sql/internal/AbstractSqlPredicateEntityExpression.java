@@ -2,6 +2,7 @@ package com.easy.query.core.expression.sql.internal;
 
 import com.easy.query.core.abstraction.EasyQueryLambdaFactory;
 import com.easy.query.core.common.bean.FastBean;
+import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnPropertyPredicate;
 import com.easy.query.core.expression.sql.SqlLambdaEntityExpression;
 import com.easy.query.core.metadata.ColumnMetadata;
@@ -34,7 +35,7 @@ public abstract class AbstractSqlPredicateEntityExpression extends AbstractSqlEn
     }
 
     protected boolean useLogicDelete(EntityMetadata entityMetadata){
-        return sqlExpressionContext.isUseLogicDelete() && entityMetadata.enableLogicDelete();
+        return sqlExpressionContext.getBehavior().hasBehavior(EasyBehaviorEnum.LOGIC_DELETE) && entityMetadata.enableLogicDelete();
     }
 
     /**
@@ -44,7 +45,7 @@ public abstract class AbstractSqlPredicateEntityExpression extends AbstractSqlEn
      */
     protected abstract boolean hasVersionColumn(EntityMetadata entityMetadata);
     protected boolean useInterceptor(EntityMetadata entityMetadata){
-        return sqlExpressionContext.isUseInterceptor() && ArrayUtil.isNotEmpty(entityMetadata.getPredicateFilterInterceptors());
+        return sqlExpressionContext.getBehavior().hasBehavior(EasyBehaviorEnum.USE_INTERCEPTOR)  && ArrayUtil.isNotEmpty(entityMetadata.getPredicateFilterInterceptors());
     }
 
     /**

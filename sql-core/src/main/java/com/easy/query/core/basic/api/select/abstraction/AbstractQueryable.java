@@ -2,6 +2,7 @@ package com.easy.query.core.basic.api.select.abstraction;
 
 import com.easy.query.core.basic.pagination.EasyPageResultProvider;
 import com.easy.query.core.common.bean.FastBean;
+import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.annotation.EasyWhereCondition;
@@ -30,7 +31,6 @@ import com.easy.query.core.expression.segment.condition.predicate.ColumnValuePre
 import com.easy.query.core.expression.sql.AnonymousEntityTableExpression;
 import com.easy.query.core.expression.sql.SqlEntityQueryExpression;
 import com.easy.query.core.expression.sql.SqlEntityTableExpression;
-import com.easy.query.core.util.*;
 import com.easy.query.core.enums.EasyFunc;
 import com.easy.query.core.basic.api.select.Queryable;
 import com.easy.query.core.basic.jdbc.executor.EasyExecutor;
@@ -43,6 +43,11 @@ import com.easy.query.core.expression.parser.abstraction.SqlAggregatePredicate;
 import com.easy.query.core.expression.parser.abstraction.SqlPredicate;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
+import com.easy.query.core.util.ArrayUtil;
+import com.easy.query.core.util.ClassUtil;
+import com.easy.query.core.util.EasyUtil;
+import com.easy.query.core.util.SqlExpressionUtil;
+import com.easy.query.core.util.StringUtil;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
@@ -233,7 +238,8 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     protected <TR> List<TR> toInternalList(Class<TR> resultClass) {
         String sql = toSql(resultClass);
         EasyExecutor easyExecutor = sqlEntityExpression.getRuntimeContext().getEasyExecutor();
-        return easyExecutor.query(ExecutorContext.create(sqlEntityExpression.getRuntimeContext(), sqlEntityExpression.getSqlExpressionContext().isTracking()), resultClass, sql, sqlEntityExpression.getParameters());
+        boolean tracking = sqlEntityExpression.getSqlExpressionContext().getBehavior().hasBehavior(EasyBehaviorEnum.USE_TRACKING);
+        return easyExecutor.query(ExecutorContext.create(sqlEntityExpression.getRuntimeContext(),tracking ), resultClass, sql, sqlEntityExpression.getParameters());
     }
 
     /**
@@ -634,38 +640,38 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
 
     @Override
     public Queryable<T1> disableLogicDelete() {
-        sqlEntityExpression.getSqlExpressionContext().disableLogicDelete();
+        sqlEntityExpression.getSqlExpressionContext().getBehavior().removeBehavior(EasyBehaviorEnum.LOGIC_DELETE);
         return this;
     }
 
     @Override
     public Queryable<T1> enableLogicDelete() {
-        sqlEntityExpression.getSqlExpressionContext().enableLogicDelete();
+        sqlEntityExpression.getSqlExpressionContext().getBehavior().addBehavior(EasyBehaviorEnum.LOGIC_DELETE);
         return this;
     }
 
 
     @Override
     public Queryable<T1> noInterceptor() {
-        sqlEntityExpression.getSqlExpressionContext().noInterceptor();
+        sqlEntityExpression.getSqlExpressionContext().getBehavior().removeBehavior(EasyBehaviorEnum.USE_INTERCEPTOR);
         return this;
     }
 
     @Override
     public Queryable<T1> useInterceptor() {
-        sqlEntityExpression.getSqlExpressionContext().useInterceptor();
+        sqlEntityExpression.getSqlExpressionContext().getBehavior().addBehavior(EasyBehaviorEnum.USE_INTERCEPTOR);
         return this;
     }
 
     @Override
     public Queryable<T1> asTracking() {
-        sqlEntityExpression.getSqlExpressionContext().queryTracking(true);
+        sqlEntityExpression.getSqlExpressionContext().getBehavior().addBehavior(EasyBehaviorEnum.USE_TRACKING);
         return this;
     }
 
     @Override
     public Queryable<T1> asNoTracking() {
-        sqlEntityExpression.getSqlExpressionContext().queryTracking(false);
+        sqlEntityExpression.getSqlExpressionContext().getBehavior().removeBehavior(EasyBehaviorEnum.USE_TRACKING);
         return this;
     }
 

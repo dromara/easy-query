@@ -6,14 +6,14 @@ package com.easy.query.core.enums;
  *
  * @author xuejiaming
  */
-public enum EasyBehavior {
+public enum EasyBehaviorEnum {
     LOGIC_DELETE(1),
     USE_INTERCEPTOR(1<<1),
     USE_TRACKING(1<<2);
 
     private final int code;
 
-    EasyBehavior(int code){
+    EasyBehaviorEnum(int code){
 
         this.code = code;
     }

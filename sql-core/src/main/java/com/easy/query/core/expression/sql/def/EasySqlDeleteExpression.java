@@ -2,6 +2,7 @@ package com.easy.query.core.expression.sql.def;
 
 import com.easy.query.core.abstraction.EasyQueryLambdaFactory;
 import com.easy.query.core.basic.plugin.version.EasyVersionStrategy;
+import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.lambda.SqlExpression;
@@ -176,7 +177,7 @@ public abstract class EasySqlDeleteExpression extends AbstractSqlPredicateEntity
 
     private UpdateSetSqlBuilderSegment getUpdateSetSqlBuilderSegment(SqlEntityTableExpression table) {
         EntityMetadata entityMetadata = table.getEntityMetadata();
-        boolean useLogicDelete = entityMetadata.enableLogicDelete() && sqlExpressionContext.isUseLogicDelete();
+        boolean useLogicDelete = entityMetadata.enableLogicDelete() && sqlExpressionContext.getBehavior().hasBehavior(EasyBehaviorEnum.LOGIC_DELETE);
         if (useLogicDelete) {
             SqlExpression<SqlColumnSetter<Object>> logicDeletedSqlExpression = table.getLogicDeletedSqlExpression();
             if (logicDeletedSqlExpression != null) {

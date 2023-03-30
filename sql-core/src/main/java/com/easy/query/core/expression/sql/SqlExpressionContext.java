@@ -2,7 +2,9 @@ package com.easy.query.core.expression.sql;
 
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
+import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.UpdateStrategyEnum;
+import com.easy.query.core.expression.sql.internal.EasyBehavior;
 
 import java.util.List;
 
@@ -25,32 +27,9 @@ public interface SqlExpressionContext {
     void clearParameters();
     void deleteThrow(boolean ifDeleteThrowException);
     boolean isDeleteThrow();
-
-    /**
-     * 禁用逻辑删除
-     */
-    void disableLogicDelete();
-
-    /**
-     * 启用逻辑删除
-     */
-    void enableLogicDelete();
-
-    /**
-     * 是否使用逻辑删除
-     * @return
-     */
-    boolean isUseLogicDelete();
-
-
-    void useInterceptor();
-    void noInterceptor();
-    boolean isUseInterceptor();
+    EasyBehavior getBehavior();
     void useUpdateStrategy(UpdateStrategyEnum updateStrategy);
     UpdateStrategyEnum getUpdateStrategy();
-
-    void queryTracking(boolean tracking);
-    boolean isTracking();
     void setVersion(Object version);
     Object getVersion();
 }

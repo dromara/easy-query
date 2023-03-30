@@ -4,6 +4,7 @@ import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.enums.UpdateStrategyEnum;
 import com.easy.query.core.expression.sql.SqlExpressionContext;
+import com.easy.query.core.expression.sql.internal.EasyBehavior;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,11 +20,9 @@ public class EasySqlExpressionContext implements SqlExpressionContext {
     private final EasyQueryRuntimeContext runtimeContext;
     private final String alias;
     protected final List<SQLParameter> params;
+    protected final EasyBehavior easyBehavior;
     private int aliasSeq = -1;
     private boolean deleteThrowException;
-    private boolean useLogicDelete = true;
-    private boolean useInterceptor = true;
-    private boolean queryTracking = false;
     private Object version;
     private UpdateStrategyEnum updateStrategy = UpdateStrategyEnum.DEFAULT;
 
@@ -33,6 +32,7 @@ public class EasySqlExpressionContext implements SqlExpressionContext {
         this.deleteThrowException = runtimeContext.getEasyQueryConfiguration().deleteThrow();
         this.alias = alias;
         params = new ArrayList<>();
+        this.easyBehavior=new EasyBehavior();
     }
 
     @Override
@@ -92,33 +92,8 @@ public class EasySqlExpressionContext implements SqlExpressionContext {
     }
 
     @Override
-    public void disableLogicDelete() {
-        this.useLogicDelete = false;
-    }
-
-    @Override
-    public void enableLogicDelete() {
-        this.useLogicDelete = true;
-    }
-
-    @Override
-    public boolean isUseLogicDelete() {
-        return useLogicDelete;
-    }
-
-    @Override
-    public void useInterceptor() {
-        this.useInterceptor = true;
-    }
-
-    @Override
-    public void noInterceptor() {
-        this.useInterceptor = false;
-    }
-
-    @Override
-    public boolean isUseInterceptor() {
-        return useInterceptor;
+    public EasyBehavior getBehavior() {
+        return easyBehavior;
     }
 
     @Override
@@ -128,17 +103,7 @@ public class EasySqlExpressionContext implements SqlExpressionContext {
 
     @Override
     public UpdateStrategyEnum getUpdateStrategy() {
-        return this.updateStrategy;
-    }
-
-    @Override
-    public void queryTracking(boolean tracking) {
-        this.queryTracking=tracking;
-    }
-
-    @Override
-    public boolean isTracking() {
-        return this.queryTracking;
+        return updateStrategy;
     }
 
     public Object getVersion() {

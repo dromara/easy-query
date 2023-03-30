@@ -364,6 +364,7 @@ public class QueryTest extends BaseTest {
     }
     @Test
     public void query24() {
+
         Queryable<BlogEntity> queryable = easyQuery.queryable(BlogEntity.class)
                 .asTable(a->"aa_bb_cc")
                 .where(o -> o.eq(BlogEntity::getId, "123"));
@@ -373,6 +374,19 @@ public class QueryTest extends BaseTest {
     @Test
     public void query25() {
 
+        Queryable<BlogEntity> queryable = easyQuery.queryable(BlogEntity.class)
+                .asTable(a->{
+                    if("t_blog".equals(a)){
+                        return "aa_bb_cc1";
+                    }
+                    return "xxx";
+                })
+                .where(o -> o.eq(BlogEntity::getId, "123"));
+        String sql = queryable.toSql();
+        Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`title`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top` FROM aa_bb_cc1 t WHERE t.`deleted` = ? AND t.`id` = ?", sql);
+    }
+    @Test
+    public void query26() {
         String toSql1 = easyQuery
                 .queryable(Topic.class)
                 .asTable(o->"t_topic_123")

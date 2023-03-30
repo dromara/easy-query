@@ -1,7 +1,9 @@
 package com.easy.query.test;
 
 import com.easy.query.BaseTest;
+import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.SqlRangeEnum;
+import com.easy.query.core.expression.sql.internal.EasyBehavior;
 import com.easy.query.core.util.AesUtil;
 import com.easy.query.core.util.Base64Util;
 import com.easy.query.core.util.StringUtil;
@@ -85,5 +87,28 @@ public class GenericTest extends BaseTest {
         Assert.assertEquals(xx,decryptValue);
         Object encryptValue1 = aesEasyEncryptionStrategy.encrypt("1888888812");
         Assert.assertTrue(StringUtil.startWith(encryptValue.toString(),encryptValue1.toString()));
+    }
+    @Test
+    public void behavior(){
+        EasyBehavior easyBehavior = new EasyBehavior();
+        Assert.assertFalse(easyBehavior.isDefaultBehavior());
+        Assert.assertTrue(easyBehavior.hasBehavior(EasyBehaviorEnum.LOGIC_DELETE));
+        easyBehavior.addBehavior(EasyBehaviorEnum.LOGIC_DELETE);
+        Assert.assertTrue(easyBehavior.hasBehavior(EasyBehaviorEnum.LOGIC_DELETE));
+        easyBehavior.addBehavior(EasyBehaviorEnum.LOGIC_DELETE);
+        Assert.assertTrue(easyBehavior.hasBehavior(EasyBehaviorEnum.LOGIC_DELETE));
+
+        Assert.assertTrue(easyBehavior.hasBehavior(EasyBehaviorEnum.USE_INTERCEPTOR));
+        easyBehavior.addBehavior(EasyBehaviorEnum.USE_INTERCEPTOR);
+        Assert.assertTrue(easyBehavior.hasBehavior(EasyBehaviorEnum.USE_INTERCEPTOR));
+        Assert.assertTrue(easyBehavior.hasBehavior(EasyBehaviorEnum.LOGIC_DELETE));
+        Assert.assertFalse(easyBehavior.hasBehavior(EasyBehaviorEnum.USE_TRACKING));
+        Assert.assertFalse(easyBehavior.removeBehavior(EasyBehaviorEnum.USE_TRACKING));
+
+
+        easyBehavior.removeBehavior(EasyBehaviorEnum.LOGIC_DELETE);
+        Assert.assertFalse(easyBehavior.hasBehavior(EasyBehaviorEnum.LOGIC_DELETE));
+        easyBehavior.removeBehavior(EasyBehaviorEnum.USE_INTERCEPTOR);
+        Assert.assertTrue(easyBehavior.isDefaultBehavior());
     }
 }

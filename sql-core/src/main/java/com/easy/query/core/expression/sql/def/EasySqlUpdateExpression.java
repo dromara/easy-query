@@ -3,6 +3,7 @@ package com.easy.query.core.expression.sql.def;
 import com.easy.query.core.abstraction.EasyQueryLambdaFactory;
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.plugin.version.EasyVersionStrategy;
+import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.expression.parser.abstraction.SqlPredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnVersionPropertyPredicate;
 import com.easy.query.core.metadata.ColumnMetadata;
@@ -181,7 +182,7 @@ public abstract class EasySqlUpdateExpression extends AbstractSqlPredicateEntity
         EntityMetadata entityMetadata = table.getEntityMetadata();
         SqlBuilderSegment updateSet = getSetColumns().cloneSqlBuilder();
         //如果更新拦截器不为空
-        if (getSqlExpressionContext().isUseInterceptor() && ArrayUtil.isNotEmpty(entityMetadata.getUpdateSetInterceptors())) {
+        if (getSqlExpressionContext().getBehavior().hasBehavior(EasyBehaviorEnum.USE_INTERCEPTOR) && ArrayUtil.isNotEmpty(entityMetadata.getUpdateSetInterceptors())) {
             EasyQueryConfiguration easyQueryConfiguration = getRuntimeContext().getEasyQueryConfiguration();
             SqlColumnSetter<Object> sqlColumnSetter = getRuntimeContext().getEasyQueryLambdaFactory().createSqlColumnSetter(0, this, updateSet);
             for (String updateSetInterceptor : entityMetadata.getUpdateSetInterceptors()) {
