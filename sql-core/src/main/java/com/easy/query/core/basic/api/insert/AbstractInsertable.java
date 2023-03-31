@@ -4,7 +4,6 @@ import com.easy.query.core.configuration.EasyQueryConfiguration;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.basic.plugin.interceptor.EasyEntityInterceptor;
-import com.easy.query.core.basic.plugin.interceptor.EasyInterceptor;
 import com.easy.query.core.expression.sql.def.EasyEntityTableExpression;
 import com.easy.query.core.expression.sql.EntityInsertExpression;
 import com.easy.query.core.expression.sql.EntityTableExpression;
@@ -59,7 +58,7 @@ public abstract class AbstractInsertable<T> implements Insertable<T> {
         if (ArrayUtil.isNotEmpty(insertInterceptors)) {
             EasyQueryConfiguration easyQueryConfiguration = entityInsertExpression.getRuntimeContext().getEasyQueryConfiguration();
             List<EasyEntityInterceptor> entityInterceptors = entityInsertExpression.getExpressionContext().getInterceptorFilter(insertInterceptors)
-                    .map(name -> (EasyEntityInterceptor) easyQueryConfiguration.getGlobalInterceptor(name)).collect(Collectors.toList());
+                    .map(name -> (EasyEntityInterceptor) easyQueryConfiguration.getEasyInterceptor(name)).collect(Collectors.toList());
             if (ArrayUtil.isNotEmpty(entityInterceptors)) {
                 Class<?> entityClass = entityMetadata.getEntityClass();
                 for (T entity : entities) {

@@ -8,6 +8,7 @@ import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.abstraction.EasySqlApiFactory;
 import com.easy.query.core.basic.pagination.DefaultEasyPageResultProvider;
 import com.easy.query.core.basic.pagination.EasyPageResultProvider;
+import com.easy.query.core.config.EasyQueryDialect;
 import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.api.client.DefaultEasyQuery;
 import com.easy.query.core.api.client.EasyQuery;
@@ -72,10 +73,10 @@ public class EasyQueryStarterAutoConfiguration {
                     LogFactory.useCustomLogging((Class<? extends Log>)aClass);
                 }else{
                     LogFactory.useStdOutLogging();
-                    System.out.println("cant found log:["+easyQueryProperties.getLogClass()+"]");
+                    System.out.println("cant found log:["+easyQueryProperties.getLogClass()+"]!!!!!!");
                 }
             } catch (ClassNotFoundException e) {
-                System.out.println("cant found log:["+easyQueryProperties.getLogClass()+"]");
+                System.err.println("cant found log:["+easyQueryProperties.getLogClass()+"]!!!!!!");
                 e.printStackTrace();
             }
         }
@@ -101,18 +102,27 @@ public class EasyQueryStarterAutoConfiguration {
     }
 
     @Bean
-    public EasyQueryConfiguration easyQueryConfiguration(Map<String, EasyInterceptor> easyInterceptorMap, Map<String, EasyLogicDeleteStrategy> easyLogicDeleteStrategyMap) {
-        EasyQueryConfiguration configuration = new EasyQueryConfiguration();
+     public NameConversion nameConversion(){
+        return new UnderlinedNameConversion();
+     }
+     @Bean
+     public EasyQueryDialect easyQueryDialect(){
+        return new MySqlDialect();
+     }
 
-        NameConversion nameConversion = new UnderlinedNameConversion();
-        MySqlDialect sqlDialect = new MySqlDialect();
+    @Bean
+    public EasyQueryConfiguration easyQueryConfiguration(Map<String, EasyInterceptor> easyInterceptorMap, Map<String, EasyLogicDeleteStrategy> easyLogicDeleteStrategyMap,
+                                                         NameConversion nameConversion,EasyQueryDialect sqlDialect) {
+        //只有当不是false的时候才不是false,比如null那么也是true,说明也是不允许删除命令
+        EasyQueryConfiguration configuration = new EasyQueryConfiguration(!Boolean.FALSE.equals(easyQueryProperties.getDeleteThrow()));
+
         configuration.setNameConversion(nameConversion);
         configuration.setDialect(sqlDialect);
         for (EasyInterceptor easyInterceptor : easyInterceptorMap.values()) {
-            configuration.applyGlobalInterceptor(easyInterceptor);
+            configuration.applyEasyInterceptor(easyInterceptor);
         }
         for (EasyLogicDeleteStrategy easyLogicDeleteStrategy : easyLogicDeleteStrategyMap.values()) {
-            configuration.applyGlobalLogicDeleteStrategy(easyLogicDeleteStrategy);
+            configuration.applyEasyLogicDeleteStrategy(easyLogicDeleteStrategy);
         }
         return configuration;
     }

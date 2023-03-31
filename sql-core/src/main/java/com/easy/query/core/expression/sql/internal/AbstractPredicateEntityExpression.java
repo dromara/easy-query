@@ -20,7 +20,6 @@ import com.easy.query.core.metadata.VersionMetadata;
 import com.easy.query.core.util.ArrayUtil;
 import com.easy.query.core.util.EasyUtil;
 
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -85,7 +84,7 @@ public abstract class AbstractPredicateEntityExpression extends AbstractEntityEx
                 EasyQueryConfiguration easyQueryConfiguration = getRuntimeContext().getEasyQueryConfiguration();
                 sqlExpressionContext.getInterceptorFilter(entityMetadata.getPredicateFilterInterceptors())
                         .forEach(name -> {
-                            EasyPredicateFilterInterceptor globalSelectInterceptorStrategy = (EasyPredicateFilterInterceptor) easyQueryConfiguration.getGlobalInterceptor(name);
+                            EasyPredicateFilterInterceptor globalSelectInterceptorStrategy = (EasyPredicateFilterInterceptor) easyQueryConfiguration.getEasyInterceptor(name);
                             if (globalSelectInterceptorStrategy != null) {
                                 globalSelectInterceptorStrategy.configure(table.entityClass(), this, sqlPredicate);
                             }

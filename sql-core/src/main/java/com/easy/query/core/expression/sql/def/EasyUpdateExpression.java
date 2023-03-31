@@ -3,7 +3,6 @@ package com.easy.query.core.expression.sql.def;
 import com.easy.query.core.abstraction.EasyQueryLambdaFactory;
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.plugin.version.EasyVersionStrategy;
-import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnVersionPropertyPredicate;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
@@ -186,7 +185,7 @@ public abstract class EasyUpdateExpression extends AbstractPredicateEntityExpres
 
             getExpressionContext().getInterceptorFilter(entityMetadata.getUpdateSetInterceptors())
                     .forEach(name->{
-                        EasyUpdateSetInterceptor globalInterceptor = (EasyUpdateSetInterceptor) easyQueryConfiguration.getGlobalInterceptor(name);
+                        EasyUpdateSetInterceptor globalInterceptor = (EasyUpdateSetInterceptor) easyQueryConfiguration.getEasyInterceptor(name);
                         globalInterceptor.configure(table.getClass(), this, sqlColumnSetter);
                     });
         }

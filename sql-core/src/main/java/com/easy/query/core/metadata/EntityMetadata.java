@@ -163,11 +163,11 @@ public class EntityMetadata {
                         if (StringUtil.isBlank(strategyName)) {
                             throw new EasyQueryException(ClassUtil.getSimpleName(entityClass)+"."+property+" logic delete strategy is empty");
                         }
-                        EasyLogicDeleteStrategy globalLogicDeleteStrategy = configuration.getGlobalLogicDeleteStrategyNotNull(strategyName);
+                        EasyLogicDeleteStrategy globalLogicDeleteStrategy = configuration.getEasyLogicDeleteStrategyNotNull(strategyName);
                         LogicDeleteBuilder logicDeleteBuilder = new LogicDeleteBuilder(this, property, field.getType());
                         globalLogicDeleteStrategy.configure(logicDeleteBuilder);
                     } else {//使用系统默认的
-                        EasyLogicDeleteStrategy sysGlobalLogicDeleteStrategy = configuration.getSysGlobalLogicDeleteStrategyNotNull(strategy);
+                        EasyLogicDeleteStrategy sysGlobalLogicDeleteStrategy = configuration.getSysEasyLogicDeleteStrategyNotNull(strategy);
                         LogicDeleteBuilder logicDeleteBuilder = new LogicDeleteBuilder(this, property, field.getType());
                         sysGlobalLogicDeleteStrategy.configure(logicDeleteBuilder);
                     }
@@ -188,7 +188,7 @@ public class EntityMetadata {
 
         if (StringUtil.isNotBlank(tableName)) {
 
-            List<EasyInterceptor> globalInterceptors = configuration.getGlobalInterceptors().stream().sorted(Comparator.comparingInt(EasyInterceptor::order)).collect(Collectors.toList());
+            List<EasyInterceptor> globalInterceptors = configuration.getEasyInterceptors().stream().sorted(Comparator.comparingInt(EasyInterceptor::order)).collect(Collectors.toList());
             for (EasyInterceptor globalInterceptor : globalInterceptors) {
                 if (globalInterceptor.apply(entityClass)) {
                     if (globalInterceptor instanceof EasyPredicateFilterInterceptor) {

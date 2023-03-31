@@ -12,7 +12,6 @@ import com.easy.query.core.expression.lambda.SqlExpression;
 import com.easy.query.core.expression.parser.abstraction.SqlColumnSelector;
 import com.easy.query.core.expression.parser.impl.DefaultSqlColumnSetSelector;
 import com.easy.query.core.basic.plugin.interceptor.EasyEntityInterceptor;
-import com.easy.query.core.basic.plugin.interceptor.EasyInterceptor;
 import com.easy.query.core.expression.sql.def.EasyEntityTableExpression;
 import com.easy.query.core.expression.sql.EntityTableExpression;
 import com.easy.query.core.expression.sql.EntityUpdateExpression;
@@ -58,7 +57,8 @@ public abstract class AbstractEntityUpdatable<T> extends AbstractSqlExecuteRows<
         TrackManager trackManager = entityUpdateExpression.getRuntimeContext().getTrackManager();
         //当前更新是存在策略或者追踪的那么每个更新的entity需要更新的数据可能都是不一样的
         //为了提高性能默认采用聚合乱序而不是顺序,因为默认顺序性能会低没办法把相同的sql聚合到一起
-        if(!UpdateStrategyEnum.DEFAULT.equals(entityUpdateExpression.getExpressionContext().getUpdateStrategy())||trackManager.currentThreadTracking()){
+        boolean updateStrategyNotDefault = !UpdateStrategyEnum.DEFAULT.equals(entityUpdateExpression.getExpressionContext().getUpdateStrategy());
+        if(updateStrategyNotDefault||trackManager.currentThreadTracking()){
             Map<String, UpdateEntityNode> updateEntityNodeMap = new LinkedHashMap<>();
             for (T entity : entities) {
                 String updateSql = toSql(entity);
@@ -101,7 +101,7 @@ public abstract class AbstractEntityUpdatable<T> extends AbstractSqlExecuteRows<
         if(ArrayUtil.isNotEmpty(updateInterceptors)){
             EasyQueryConfiguration easyQueryConfiguration = entityUpdateExpression.getRuntimeContext().getEasyQueryConfiguration();
             List<EasyEntityInterceptor> entityInterceptors = entityUpdateExpression.getExpressionContext().getInterceptorFilter(updateInterceptors)
-                   .map(name -> (EasyEntityInterceptor) easyQueryConfiguration.getGlobalInterceptor(name)).collect(Collectors.toList());
+                   .map(name -> (EasyEntityInterceptor) easyQueryConfiguration.getEasyInterceptor(name)).collect(Collectors.toList());
             if (ArrayUtil.isNotEmpty(entityInterceptors)) {
                 Class<?> entityClass = entityMetadata.getEntityClass();
                 for (T entity : entities) {

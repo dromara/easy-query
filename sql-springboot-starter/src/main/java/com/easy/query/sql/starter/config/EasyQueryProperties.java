@@ -13,6 +13,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class EasyQueryProperties {
 
     private Boolean enable =false;
+    private Boolean deleteThrow =true;
 
     private String logClass="com.easy.query.sql.starter.logging.Slf4jImpl";
 
@@ -31,6 +32,15 @@ public class EasyQueryProperties {
 
     public void setLogClass(String logClass) {
         this.logClass = logClass;
+    }
+
+
+    public Boolean getDeleteThrow() {
+        return deleteThrow;
+    }
+
+    public void setDeleteThrow(Boolean deleteThrow) {
+        this.deleteThrow = deleteThrow;
     }
 
     public EasyQueryProperties() {
