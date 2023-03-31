@@ -31,7 +31,7 @@ import java.util.function.Function;
  * @Date: 2023/3/1 22:30
  * @author xuejiaming
  */
-public abstract   class AbstractExpressionDeletable<T> extends AbstractSqlExecuteRows implements ExpressionDeletable<T> {
+public abstract   class AbstractExpressionDeletable<T> extends AbstractSqlExecuteRows<ExpressionDeletable<T>> implements ExpressionDeletable<T> {
     protected final Class<T> clazz;
     protected final EasyEntityTableExpression table;
     protected final EntityDeleteExpression entityDeleteExpression;

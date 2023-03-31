@@ -300,6 +300,11 @@ public abstract class AbstractQueryable3<T1, T2, T3> extends AbstractQueryable<T
         super.noInterceptor();
         return this;
     }
+    @Override
+    public Queryable3<T1, T2, T3> interceptor(String name) {
+        super.interceptor(name);
+        return this;
+    }
 
     @Override
     public Queryable3<T1, T2, T3> useInterceptor() {

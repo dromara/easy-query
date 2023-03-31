@@ -180,14 +180,15 @@ public abstract class EasyUpdateExpression extends AbstractPredicateEntityExpres
         EntityMetadata entityMetadata = table.getEntityMetadata();
         SqlBuilderSegment updateSet = getSetColumns().cloneSqlBuilder();
         //如果更新拦截器不为空
-        if (getExpressionContext().getBehavior().hasBehavior(EasyBehaviorEnum.USE_INTERCEPTOR) && ArrayUtil.isNotEmpty(entityMetadata.getUpdateSetInterceptors())) {
+        if(ArrayUtil.isNotEmpty(entityMetadata.getUpdateSetInterceptors())){
             EasyQueryConfiguration easyQueryConfiguration = getRuntimeContext().getEasyQueryConfiguration();
             SqlColumnSetter<Object> sqlColumnSetter = getRuntimeContext().getEasyQueryLambdaFactory().createSqlColumnSetter(0, this, updateSet);
-            for (String updateSetInterceptor : entityMetadata.getUpdateSetInterceptors()) {
-                EasyUpdateSetInterceptor globalInterceptor = (EasyUpdateSetInterceptor) easyQueryConfiguration.getGlobalInterceptor(updateSetInterceptor);
-                globalInterceptor.configure(table.getClass(), this, sqlColumnSetter);
 
-            }
+            getExpressionContext().getInterceptorFilter(entityMetadata.getUpdateSetInterceptors())
+                    .forEach(name->{
+                        EasyUpdateSetInterceptor globalInterceptor = (EasyUpdateSetInterceptor) easyQueryConfiguration.getGlobalInterceptor(name);
+                        globalInterceptor.configure(table.getClass(), this, sqlColumnSetter);
+                    });
         }
         return updateSet;
     }

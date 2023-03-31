@@ -2,6 +2,7 @@ package com.easy.query.core.basic.api.update;
 
 import com.easy.query.core.basic.api.insert.Insertable;
 import com.easy.query.core.basic.api.internal.SqlExecuteExpectRows;
+import com.easy.query.core.basic.api.select.Queryable;
 
 import java.util.function.Function;
 
@@ -33,4 +34,5 @@ public interface Updatable<T,TChain> extends SqlExecuteExpectRows {
      * @return
      */
     TChain asTable(Function<String,String> tableNameAs);
+
 }

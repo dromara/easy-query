@@ -24,7 +24,7 @@ import java.util.function.Function;
  * @Date: 2023/2/28 12:33
  * @author xuejiaming
  */
-public abstract class AbstractEntityDeletable<T> extends AbstractSqlExecuteRows implements EntityDeletable<T> {
+public abstract class AbstractEntityDeletable<T> extends AbstractSqlExecuteRows<EntityDeletable<T>> implements EntityDeletable<T> {
     protected final List<T> entities= new ArrayList<>();
     protected final EntityTableExpression table;
     protected final EntityDeleteExpression entityDeleteExpression;

@@ -453,6 +453,7 @@ public class QueryTest extends BaseTest {
     @Test
     public void query31() {
         Queryable<BlogEntity> queryable = easyQuery.queryable("SELECT * FROM t_blog t", BlogEntity.class)
+                .noInterceptor()
                 .where(o -> o.eq(BlogEntity::getId, "123"))
                 .select(BlogEntity.class,o->o.column(BlogEntity::getId).column(BlogEntity::getContent));
         String sql = queryable.toSql();

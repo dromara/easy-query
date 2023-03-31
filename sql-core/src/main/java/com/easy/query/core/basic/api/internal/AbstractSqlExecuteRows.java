@@ -11,7 +11,7 @@ import com.easy.query.core.expression.sql.EntityExpression;
  * @Date: 2023/3/17 17:14
  * @author xuejiaming
  */
-public abstract class AbstractSqlExecuteRows implements SqlExecuteExpectRows {
+public abstract class AbstractSqlExecuteRows<TChain>  implements SqlExecuteExpectRows,Interceptable<TChain> {
     private final EntityExpression sqlEntityExpression;
 
     public AbstractSqlExecuteRows(EntityExpression sqlEntityExpression){
@@ -44,5 +44,23 @@ public abstract class AbstractSqlExecuteRows implements SqlExecuteExpectRows {
         if(rows!=expectRows){
             throw new EasyQueryConcurrentException(msg,code);
         }
+    }
+
+    @Override
+    public TChain noInterceptor() {
+        sqlEntityExpression.getExpressionContext().noInterceptor();
+        return (TChain) this;
+    }
+
+    @Override
+    public TChain interceptor(String name) {
+        sqlEntityExpression.getExpressionContext().interceptor(name);
+        return (TChain) this;
+    }
+
+    @Override
+    public TChain useInterceptor() {
+        sqlEntityExpression.getExpressionContext().useInterceptor();
+        return (TChain) this;
     }
 }

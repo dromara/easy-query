@@ -6,6 +6,7 @@ import com.easy.query.core.enums.UpdateStrategyEnum;
 import com.easy.query.core.expression.sql.internal.EasyBehavior;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * @FileName: QueryExpressionContext.java
@@ -31,4 +32,8 @@ public interface ExpressionContext {
     UpdateStrategyEnum getUpdateStrategy();
     void setVersion(Object version);
     Object getVersion();
+    void interceptor(String name);
+    void useInterceptor();
+    void noInterceptor();
+    Stream<String> getInterceptorFilter(List<String> queryInterceptors);
 }

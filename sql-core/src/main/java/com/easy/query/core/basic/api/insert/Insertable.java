@@ -1,5 +1,6 @@
 package com.easy.query.core.basic.api.insert;
 
+import com.easy.query.core.basic.api.internal.Interceptable;
 import com.easy.query.core.basic.api.internal.SqlExecuteRows;
 import com.easy.query.core.basic.api.select.Queryable;
 
@@ -12,7 +13,7 @@ import java.util.function.Function;
  * @Date: 2023/2/20 08:48
  * @author xuejiaming
  */
-public interface Insertable<T> extends SqlExecuteRows {
+public interface Insertable<T> extends SqlExecuteRows, Interceptable<Insertable<T>> {
     Insertable<T> insert(T entity);
 
     default Insertable<T> insert(Collection<T> entities) {

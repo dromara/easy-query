@@ -653,13 +653,19 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
 
     @Override
     public Queryable<T1> noInterceptor() {
-        sqlEntityExpression.getExpressionContext().getBehavior().removeBehavior(EasyBehaviorEnum.USE_INTERCEPTOR);
+        sqlEntityExpression.getExpressionContext().noInterceptor();
+        return this;
+    }
+
+    @Override
+    public Queryable<T1> interceptor(String name) {
+        sqlEntityExpression.getExpressionContext().interceptor(name);
         return this;
     }
 
     @Override
     public Queryable<T1> useInterceptor() {
-        sqlEntityExpression.getExpressionContext().getBehavior().addBehavior(EasyBehaviorEnum.USE_INTERCEPTOR);
+        sqlEntityExpression.getExpressionContext().useInterceptor();
         return this;
     }
 

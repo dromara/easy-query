@@ -32,7 +32,7 @@ import java.util.function.Function;
  * @Date: 2023/2/25 08:24
  * @author xuejiaming
  */
-public abstract class AbstractExpressionUpdatable<T> extends AbstractSqlExecuteRows implements ExpressionUpdatable<T> {
+public abstract class AbstractExpressionUpdatable<T> extends AbstractSqlExecuteRows<ExpressionUpdatable<T>> implements ExpressionUpdatable<T> {
     protected final Class<T> clazz;
     protected final  EntityMetadata entityMetadata;
     protected final EntityUpdateExpression entityUpdateExpression;

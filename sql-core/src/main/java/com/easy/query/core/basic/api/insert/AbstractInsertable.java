@@ -1,5 +1,6 @@
 package com.easy.query.core.basic.api.insert;
 
+import com.easy.query.core.configuration.EasyQueryConfiguration;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.basic.plugin.interceptor.EasyEntityInterceptor;
@@ -7,6 +8,7 @@ import com.easy.query.core.basic.plugin.interceptor.EasyInterceptor;
 import com.easy.query.core.expression.sql.def.EasyEntityTableExpression;
 import com.easy.query.core.expression.sql.EntityInsertExpression;
 import com.easy.query.core.expression.sql.EntityTableExpression;
+import com.easy.query.core.util.ArrayUtil;
 import com.easy.query.core.util.StringUtil;
 import com.easy.query.core.basic.jdbc.executor.EasyExecutor;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
@@ -14,6 +16,7 @@ import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * @author xuejiaming
@@ -53,16 +56,16 @@ public abstract class AbstractInsertable<T> implements Insertable<T> {
     protected void insertBefore() {
 
         List<String> insertInterceptors = entityMetadata.getEntityInterceptors();
-        boolean hasInsertInterceptors = !insertInterceptors.isEmpty();
-        ArrayList<EasyEntityInterceptor> globalEntityInterceptors = new ArrayList<>(insertInterceptors.size());
-        if (hasInsertInterceptors) {
-            for (String insertInterceptor : insertInterceptors) {
-                EasyInterceptor globalInterceptorStrategy = entityInsertExpression.getRuntimeContext().getEasyQueryConfiguration().getGlobalInterceptor(insertInterceptor);
-                globalEntityInterceptors.add((EasyEntityInterceptor) globalInterceptorStrategy);
-            }
-            for (T entity : entities) {
-                for (EasyEntityInterceptor globalEntityInterceptor : globalEntityInterceptors) {
-                    globalEntityInterceptor.configureInsert(entityMetadata.getEntityClass(), entityInsertExpression, entity);
+        if (ArrayUtil.isNotEmpty(insertInterceptors)) {
+            EasyQueryConfiguration easyQueryConfiguration = entityInsertExpression.getRuntimeContext().getEasyQueryConfiguration();
+            List<EasyEntityInterceptor> entityInterceptors = entityInsertExpression.getExpressionContext().getInterceptorFilter(insertInterceptors)
+                    .map(name -> (EasyEntityInterceptor) easyQueryConfiguration.getGlobalInterceptor(name)).collect(Collectors.toList());
+            if (ArrayUtil.isNotEmpty(entityInterceptors)) {
+                Class<?> entityClass = entityMetadata.getEntityClass();
+                for (T entity : entities) {
+                    for (EasyEntityInterceptor entityInterceptor : entityInterceptors) {
+                        entityInterceptor.configureInsert(entityClass, entityInsertExpression, entity);
+                    }
                 }
             }
         }
@@ -85,6 +88,24 @@ public abstract class AbstractInsertable<T> implements Insertable<T> {
     @Override
     public Insertable<T> asTable(Function<String, String> tableNameAs) {
         entityInsertExpression.getRecentlyTable().setTableNameAs(tableNameAs);
+        return this;
+    }
+
+    @Override
+    public Insertable<T> noInterceptor() {
+        entityInsertExpression.getExpressionContext().noInterceptor();
+        return this;
+    }
+
+    @Override
+    public Insertable<T> interceptor(String name) {
+        entityInsertExpression.getExpressionContext().interceptor(name);
+        return this;
+    }
+
+    @Override
+    public Insertable<T> useInterceptor() {
+        entityInsertExpression.getExpressionContext().useInterceptor();
         return this;
     }
 

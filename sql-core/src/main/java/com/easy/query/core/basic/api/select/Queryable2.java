@@ -165,6 +165,8 @@ public interface Queryable2<T1, T2> extends Queryable<T1> {
     Queryable2<T1, T2> noInterceptor();
 
     @Override
+    Queryable2<T1, T2> interceptor(String name);
+    @Override
     Queryable2<T1, T2> useInterceptor();
     @Override
     Queryable2<T1, T2> asTracking();

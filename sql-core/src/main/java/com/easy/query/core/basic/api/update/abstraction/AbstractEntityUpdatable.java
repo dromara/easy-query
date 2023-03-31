@@ -4,6 +4,7 @@ import com.easy.query.core.basic.api.internal.AbstractSqlExecuteRows;
 import com.easy.query.core.basic.api.update.EntityUpdatable;
 import com.easy.query.core.basic.api.update.UpdateEntityNode;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
+import com.easy.query.core.configuration.EasyQueryConfiguration;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.enums.UpdateStrategyEnum;
 import com.easy.query.core.exception.EasyQueryException;
@@ -19,9 +20,11 @@ import com.easy.query.core.basic.plugin.track.TrackManager;
 import com.easy.query.core.basic.jdbc.executor.EasyExecutor;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.metadata.EntityMetadata;
+import com.easy.query.core.util.ArrayUtil;
 
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * @FileName: AbstractUpdate.java
@@ -29,7 +32,7 @@ import java.util.function.Function;
  * @Date: 2023/2/24 22:06
  * @author xuejiaming
  */
-public abstract class AbstractEntityUpdatable<T> extends AbstractSqlExecuteRows implements EntityUpdatable<T> {
+public abstract class AbstractEntityUpdatable<T> extends AbstractSqlExecuteRows<EntityUpdatable<T> > implements EntityUpdatable<T> {
     protected final List<T> entities = new ArrayList<>();
     protected final EntityTableExpression table;
     protected final  EntityMetadata entityMetadata;
@@ -53,6 +56,8 @@ public abstract class AbstractEntityUpdatable<T> extends AbstractSqlExecuteRows 
 
     private List<UpdateEntityNode> createUpdateEntityNode(){
         TrackManager trackManager = entityUpdateExpression.getRuntimeContext().getTrackManager();
+        //当前更新是存在策略或者追踪的那么每个更新的entity需要更新的数据可能都是不一样的
+        //为了提高性能默认采用聚合乱序而不是顺序,因为默认顺序性能会低没办法把相同的sql聚合到一起
         if(!UpdateStrategyEnum.DEFAULT.equals(entityUpdateExpression.getExpressionContext().getUpdateStrategy())||trackManager.currentThreadTracking()){
             Map<String, UpdateEntityNode> updateEntityNodeMap = new LinkedHashMap<>();
             for (T entity : entities) {
@@ -92,18 +97,17 @@ public abstract class AbstractEntityUpdatable<T> extends AbstractSqlExecuteRows 
     }
 
     protected void updateBefore() {
-
-        List<String> interceptors = entityMetadata.getEntityInterceptors();
-        boolean hasInterceptor = !interceptors.isEmpty();
-        ArrayList<EasyEntityInterceptor> globalEntityInterceptors = new ArrayList<>(interceptors.size());
-        if (hasInterceptor) {
-            for (String interceptor : interceptors) {
-                EasyInterceptor globalInterceptor = entityUpdateExpression.getRuntimeContext().getEasyQueryConfiguration().getGlobalInterceptor(interceptor);
-                globalEntityInterceptors.add((EasyEntityInterceptor) globalInterceptor);
-            }
-            for (T entity : entities) {
-                for (EasyEntityInterceptor globalEntityInterceptor : globalEntityInterceptors) {
-                    globalEntityInterceptor.configureUpdate(entityMetadata.getEntityClass(), entityUpdateExpression,entity);
+        List<String> updateInterceptors = entityMetadata.getEntityInterceptors();
+        if(ArrayUtil.isNotEmpty(updateInterceptors)){
+            EasyQueryConfiguration easyQueryConfiguration = entityUpdateExpression.getRuntimeContext().getEasyQueryConfiguration();
+            List<EasyEntityInterceptor> entityInterceptors = entityUpdateExpression.getExpressionContext().getInterceptorFilter(updateInterceptors)
+                   .map(name -> (EasyEntityInterceptor) easyQueryConfiguration.getGlobalInterceptor(name)).collect(Collectors.toList());
+            if (ArrayUtil.isNotEmpty(entityInterceptors)) {
+                Class<?> entityClass = entityMetadata.getEntityClass();
+                for (T entity : entities) {
+                    for (EasyEntityInterceptor entityInterceptor : entityInterceptors) {
+                        entityInterceptor.configureUpdate(entityClass, entityUpdateExpression, entity);
+                    }
                 }
             }
         }
