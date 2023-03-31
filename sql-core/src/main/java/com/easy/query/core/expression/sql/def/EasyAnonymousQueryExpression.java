@@ -128,8 +128,8 @@ public class EasyAnonymousQueryExpression extends EasyQueryExpression implements
     public EntityQueryExpression cloneSqlQueryExpression() {
         ExpressionContext sqlExpressionContext = getExpressionContext();
         EasyExpressionFactory sqlExpressionFactory = getRuntimeContext().getSqlExpressionFactory();
-        EasyAnonymousQueryExpression sqlEntityQueryExpression = (EasyAnonymousQueryExpression) sqlExpressionFactory.createAnonymousQueryExpression(sql,sqlExpressionContext);
-        sqlEntityQueryExpression.tables.addAll(super.tables);
-        return sqlEntityQueryExpression;
+        EasyAnonymousQueryExpression anonymousQueryExpression = (EasyAnonymousQueryExpression) sqlExpressionFactory.createAnonymousQueryExpression(sql,sqlExpressionContext);
+        anonymousQueryExpression.tables.addAll(super.tables);
+        return anonymousQueryExpression;
     }
 }

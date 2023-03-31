@@ -13,12 +13,12 @@ import java.util.Collection;
  */
 public class EasyEntityUpdatable<T> extends AbstractEntityUpdatable<T> {
 
-    public EasyEntityUpdatable(Collection<T> entities, EntityUpdateExpression sqlEntityUpdateExpression) {
-        super(entities, sqlEntityUpdateExpression);
+    public EasyEntityUpdatable(Collection<T> entities, EntityUpdateExpression entityUpdateExpression) {
+        super(entities, entityUpdateExpression);
     }
 
     @Override
     public String toSql(Object entity) {
-        return sqlEntityUpdateExpression.toSql(entity);
+        return entityUpdateExpression.toSql(entity);
     }
 }

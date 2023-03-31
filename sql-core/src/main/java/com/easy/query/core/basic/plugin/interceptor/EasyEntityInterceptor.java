@@ -10,6 +10,6 @@ import com.easy.query.core.expression.sql.EntityUpdateExpression;
  * @author xuejiaming
  */
 public interface EasyEntityInterceptor extends EasyInterceptor {
-    void configureInsert(Class<?> entityClass, EntityInsertExpression sqlEntityUpdateExpression, Object entity);
-    void configureUpdate(Class<?> entityClass, EntityUpdateExpression sqlEntityUpdateExpression, Object entity);
+    void configureInsert(Class<?> entityClass, EntityInsertExpression entityInsertExpression, Object entity);
+    void configureUpdate(Class<?> entityClass, EntityUpdateExpression entityUpdateExpression, Object entity);
 }

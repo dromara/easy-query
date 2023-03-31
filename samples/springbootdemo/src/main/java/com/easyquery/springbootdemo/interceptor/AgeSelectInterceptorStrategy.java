@@ -28,7 +28,7 @@ public class AgeSelectInterceptorStrategy implements EasyPredicateFilterIntercep
     }
 
     @Override
-    public void configure(Class<?> entityClass, LambdaEntityExpression sqlLambdaEntityExpression, SqlPredicate<Object> sqlPredicate) {
+    public void configure(Class<?> entityClass, LambdaEntityExpression lambdaEntityExpression, SqlPredicate<Object> sqlPredicate) {
         FastBean fastBean = EasyUtil.getFastBean(entityClass);
         Property<Object,?> name = fastBean.getBeanGetter("name", String.class);
         sqlPredicate.isNotNull(name);

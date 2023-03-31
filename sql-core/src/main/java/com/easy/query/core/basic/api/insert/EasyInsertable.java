@@ -9,12 +9,12 @@ import com.easy.query.core.expression.sql.EntityInsertExpression;
  * @author xuejiaming
  */
 public class EasyInsertable<T> extends AbstractInsertable<T> {
-    public EasyInsertable(Class<T> clazz, EntityInsertExpression sqlEntityInsertExpression) {
-        super(clazz, sqlEntityInsertExpression);
+    public EasyInsertable(Class<T> clazz, EntityInsertExpression entityInsertExpression) {
+        super(clazz, entityInsertExpression);
     }
 
     @Override
     public String toSql() {
-        return sqlEntityInsertExpression.toSql();
+        return entityInsertExpression.toSql();
     }
 }

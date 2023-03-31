@@ -24,16 +24,16 @@ import java.util.function.Function;
 public abstract class AbstractInsertable<T> implements Insertable<T> {
     protected final List<T> entities;
     protected final EntityMetadata entityMetadata;
-    protected final EntityInsertExpression sqlEntityInsertExpression;
+    protected final EntityInsertExpression entityInsertExpression;
 
-    public AbstractInsertable(Class<T> clazz, EntityInsertExpression sqlEntityInsertExpression) {
-        this.sqlEntityInsertExpression = sqlEntityInsertExpression;
+    public AbstractInsertable(Class<T> clazz, EntityInsertExpression entityInsertExpression) {
+        this.entityInsertExpression = entityInsertExpression;
         this.entities = new ArrayList<>();
-        entityMetadata = this.sqlEntityInsertExpression.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(clazz);
+        entityMetadata = this.entityInsertExpression.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(clazz);
         entityMetadata.checkTable();
 
         EntityTableExpression table = new EasyEntityTableExpression(entityMetadata, 0, null, MultiTableTypeEnum.FROM);
-        this.sqlEntityInsertExpression.addSqlEntityTableExpression(table);
+        this.entityInsertExpression.addSqlEntityTableExpression(table);
     }
 
     @Override
@@ -57,12 +57,12 @@ public abstract class AbstractInsertable<T> implements Insertable<T> {
         ArrayList<EasyEntityInterceptor> globalEntityInterceptors = new ArrayList<>(insertInterceptors.size());
         if (hasInsertInterceptors) {
             for (String insertInterceptor : insertInterceptors) {
-                EasyInterceptor globalInterceptorStrategy = sqlEntityInsertExpression.getRuntimeContext().getEasyQueryConfiguration().getGlobalInterceptor(insertInterceptor);
+                EasyInterceptor globalInterceptorStrategy = entityInsertExpression.getRuntimeContext().getEasyQueryConfiguration().getGlobalInterceptor(insertInterceptor);
                 globalEntityInterceptors.add((EasyEntityInterceptor) globalInterceptorStrategy);
             }
             for (T entity : entities) {
                 for (EasyEntityInterceptor globalEntityInterceptor : globalEntityInterceptors) {
-                    globalEntityInterceptor.configureInsert(entityMetadata.getEntityClass(), sqlEntityInsertExpression, entity);
+                    globalEntityInterceptor.configureInsert(entityMetadata.getEntityClass(), entityInsertExpression, entity);
                 }
             }
         }
@@ -74,8 +74,8 @@ public abstract class AbstractInsertable<T> implements Insertable<T> {
             insertBefore();
             String insertSql = toSql();
             if (!StringUtil.isBlank(insertSql)) {
-                EasyExecutor easyExecutor = sqlEntityInsertExpression.getRuntimeContext().getEasyExecutor();
-                return easyExecutor.insert(ExecutorContext.create(sqlEntityInsertExpression.getRuntimeContext()), insertSql, entities, sqlEntityInsertExpression.getParameters(), fillAutoIncrement);
+                EasyExecutor easyExecutor = entityInsertExpression.getRuntimeContext().getEasyExecutor();
+                return easyExecutor.insert(ExecutorContext.create(entityInsertExpression.getRuntimeContext()), insertSql, entities, entityInsertExpression.getParameters(), fillAutoIncrement);
             }
         }
 
@@ -84,7 +84,7 @@ public abstract class AbstractInsertable<T> implements Insertable<T> {
 
     @Override
     public Insertable<T> asTable(Function<String, String> tableNameAs) {
-        sqlEntityInsertExpression.getRecentlyTable().setTableNameAs(tableNameAs);
+        entityInsertExpression.getRecentlyTable().setTableNameAs(tableNameAs);
         return this;
     }
 

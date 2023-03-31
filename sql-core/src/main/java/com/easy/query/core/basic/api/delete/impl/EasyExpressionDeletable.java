@@ -10,12 +10,12 @@ import com.easy.query.core.expression.sql.EntityDeleteExpression;
  * @author xuejiaming
  */
 public class EasyExpressionDeletable<T> extends AbstractExpressionDeletable<T> {
-    public EasyExpressionDeletable(Class<T> clazz, EntityDeleteExpression sqlEntityDeleteExpression) {
-        super(clazz, sqlEntityDeleteExpression);
+    public EasyExpressionDeletable(Class<T> clazz, EntityDeleteExpression entityDeleteExpression) {
+        super(clazz, entityDeleteExpression);
     }
 
     @Override
     public String toSql() {
-        return sqlEntityDeleteExpression.toSql();
+        return entityDeleteExpression.toSql();
     }
 }

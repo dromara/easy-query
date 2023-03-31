@@ -10,12 +10,12 @@ import com.easy.query.core.expression.sql.EntityUpdateExpression;
  * @author xuejiaming
  */
 public class EasyExpressionUpdatable<T> extends AbstractExpressionUpdatable<T> {
-    public EasyExpressionUpdatable(Class<T> clazz, EntityUpdateExpression sqlEntityUpdateExpression) {
-        super(clazz, sqlEntityUpdateExpression);
+    public EasyExpressionUpdatable(Class<T> clazz, EntityUpdateExpression entityUpdateExpression) {
+        super(clazz, entityUpdateExpression);
     }
 
     @Override
     public String toSql() {
-        return sqlEntityUpdateExpression.toSql();
+        return entityUpdateExpression.toSql();
     }
 }

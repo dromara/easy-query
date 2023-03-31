@@ -11,10 +11,12 @@ import com.easy.query.core.expression.sql.LambdaEntityExpression;
  */
 public interface EasyPredicateFilterInterceptor extends EasyInterceptor {
 
+
     /**
      * 配置
      * @param entityClass
+     * @param lambdaEntityExpression
      * @param sqlPredicate
      */
-    void configure(Class<?> entityClass, LambdaEntityExpression sqlLambdaEntityExpression, SqlPredicate<Object> sqlPredicate);
+    void configure(Class<?> entityClass, LambdaEntityExpression lambdaEntityExpression, SqlPredicate<Object> sqlPredicate);
 }

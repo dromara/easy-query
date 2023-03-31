@@ -12,12 +12,12 @@ import java.util.Collection;
  * @author xuejiaming
  */
 public class EasyEntityDeletable<T> extends AbstractEntityDeletable<T> {
-    public EasyEntityDeletable(Collection<T> entities, EntityDeleteExpression sqlEntityDeleteExpression) {
-        super(entities, sqlEntityDeleteExpression);
+    public EasyEntityDeletable(Collection<T> entities, EntityDeleteExpression entityDeleteExpression) {
+        super(entities, entityDeleteExpression);
     }
 
     @Override
     public String toSql() {
-        return sqlEntityDeleteExpression.toSql();
+        return entityDeleteExpression.toSql();
     }
 }

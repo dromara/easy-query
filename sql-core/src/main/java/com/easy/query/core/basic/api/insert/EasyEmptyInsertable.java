@@ -12,19 +12,19 @@ import java.util.function.Function;
  * @author xuejiaming
  */
 public class EasyEmptyInsertable<T>implements Insertable<T> {
-    private final EntityInsertExpression sqlEntityInsertExpression;
+    private final EntityInsertExpression entityInsertExpression;
 
-    public EasyEmptyInsertable(EntityInsertExpression sqlEntityInsertExpression){
+    public EasyEmptyInsertable(EntityInsertExpression entityInsertExpression){
 
-        this.sqlEntityInsertExpression = sqlEntityInsertExpression;
+        this.entityInsertExpression = entityInsertExpression;
     }
     @Override
     public Insertable<T> insert(T entity) {
         if(entity==null){
             return  this;
         }
-        EasySqlApiFactory sqlApiFactory = sqlEntityInsertExpression.getRuntimeContext().getSqlApiFactory();
-        Insertable<T> insertable = (Insertable<T>) sqlApiFactory.createInsertable((Class<T>) entity.getClass(), sqlEntityInsertExpression);
+        EasySqlApiFactory sqlApiFactory = entityInsertExpression.getRuntimeContext().getSqlApiFactory();
+        Insertable<T> insertable = (Insertable<T>) sqlApiFactory.createInsertable((Class<T>) entity.getClass(), entityInsertExpression);
         insertable.insert(entity);
         return insertable;
     }

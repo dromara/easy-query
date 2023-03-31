@@ -27,21 +27,21 @@ import java.util.function.Function;
 public abstract class AbstractEntityDeletable<T> extends AbstractSqlExecuteRows implements EntityDeletable<T> {
     protected final List<T> entities= new ArrayList<>();
     protected final EntityTableExpression table;
-    protected final EntityDeleteExpression sqlEntityDeleteExpression;
+    protected final EntityDeleteExpression entityDeleteExpression;
 
-    public AbstractEntityDeletable(Collection<T> entities, EntityDeleteExpression sqlEntityDeleteExpression){
-        super(sqlEntityDeleteExpression);
+    public AbstractEntityDeletable(Collection<T> entities, EntityDeleteExpression entityDeleteExpression){
+        super(entityDeleteExpression);
         if(entities==null||entities.isEmpty()){
             throw new EasyQueryException("不支持空对象的delete");
         }
         this.entities.addAll(entities);
-        this.sqlEntityDeleteExpression = sqlEntityDeleteExpression;
+        this.entityDeleteExpression = entityDeleteExpression;
 
         Class<?> clazz = entities.iterator().next().getClass();
-        EntityMetadata entityMetadata = sqlEntityDeleteExpression.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(clazz);
+        EntityMetadata entityMetadata = entityDeleteExpression.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(clazz);
         entityMetadata.checkTable();
         table = new EasyEntityTableExpression(entityMetadata,  0,null, MultiTableTypeEnum.FROM);
-        this.sqlEntityDeleteExpression.addSqlEntityTableExpression(table);
+        this.entityDeleteExpression.addSqlEntityTableExpression(table);
     }
 
     @Override
@@ -50,9 +50,9 @@ public abstract class AbstractEntityDeletable<T> extends AbstractSqlExecuteRows 
         if (!entities.isEmpty()) {
             String deleteSql = toSql();
             if(StringUtil.isNotBlank(deleteSql)){
-                EasyQueryRuntimeContext runtimeContext = sqlEntityDeleteExpression.getRuntimeContext();
+                EasyQueryRuntimeContext runtimeContext = entityDeleteExpression.getRuntimeContext();
                 EasyExecutor easyExecutor = runtimeContext.getEasyExecutor();
-                return easyExecutor.executeRows(ExecutorContext.create(runtimeContext), deleteSql,entities, sqlEntityDeleteExpression.getParameters());
+                return easyExecutor.executeRows(ExecutorContext.create(runtimeContext), deleteSql,entities, entityDeleteExpression.getParameters());
             }
         }
         return 0;
@@ -61,19 +61,19 @@ public abstract class AbstractEntityDeletable<T> extends AbstractSqlExecuteRows 
 
     @Override
     public EntityDeletable<T> useLogicDelete(boolean enable) {
-        sqlEntityDeleteExpression.setLogicDelete(enable);
+        entityDeleteExpression.setLogicDelete(enable);
         return this;
     }
 
     @Override
     public EntityDeletable<T> allowDeleteCommand(boolean allow) {
-        sqlEntityDeleteExpression.getExpressionContext().deleteThrow(!allow);
+        entityDeleteExpression.getExpressionContext().deleteThrow(!allow);
         return this;
     }
 
     @Override
     public EntityDeletable<T> asTable(Function<String, String> tableNameAs) {
-        sqlEntityDeleteExpression.getRecentlyTable().setTableNameAs(tableNameAs);
+        entityDeleteExpression.getRecentlyTable().setTableNameAs(tableNameAs);
         return this;
     }
 }

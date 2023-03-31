@@ -23,24 +23,24 @@ public class MySqlQueryExpression extends EasyQueryExpression {
 
         ExpressionContext sqlExpressionContext = getExpressionContext();
         EasyExpressionFactory sqlExpressionFactory = getRuntimeContext().getSqlExpressionFactory();
-        MySqlQueryExpression sqlEntityQueryExpression = (MySqlQueryExpression) sqlExpressionFactory.createEntityQueryExpression(sqlExpressionContext);
+        MySqlQueryExpression entityQueryExpression = (MySqlQueryExpression) sqlExpressionFactory.createEntityQueryExpression(sqlExpressionContext);
         if(hasWhere()){
-            getWhere().copyTo(sqlEntityQueryExpression.getWhere());
+            getWhere().copyTo(entityQueryExpression.getWhere());
         }
         if(hasGroup()){
-            getGroup().copyTo(sqlEntityQueryExpression.getGroup());
+            getGroup().copyTo(entityQueryExpression.getGroup());
         }
         if(hasHaving()){
-            getHaving().copyTo(sqlEntityQueryExpression.getHaving());
+            getHaving().copyTo(entityQueryExpression.getHaving());
         }
         if(hasOrder()){
-            getOrder().copyTo(sqlEntityQueryExpression.getOrder());
+            getOrder().copyTo(entityQueryExpression.getOrder());
         }
-        getProjects().copyTo(sqlEntityQueryExpression.getProjects());
-        sqlEntityQueryExpression.offset = super.offset;
-        sqlEntityQueryExpression.rows = super.rows;
-        sqlEntityQueryExpression.logicDelete=super.logicDelete;
-        sqlEntityQueryExpression.tables.addAll(super.tables);
-        return sqlEntityQueryExpression;
+        getProjects().copyTo(entityQueryExpression.getProjects());
+        entityQueryExpression.offset = super.offset;
+        entityQueryExpression.rows = super.rows;
+        entityQueryExpression.logicDelete=super.logicDelete;
+        entityQueryExpression.tables.addAll(super.tables);
+        return entityQueryExpression;
     }
 }

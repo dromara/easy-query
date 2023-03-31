@@ -53,7 +53,7 @@ public interface EasySqlApiFactory {
      */
     <T> Insertable<T> createEmptyInsertable(EasyQueryRuntimeContext runtimeContext, String alias);
 
-    <T> Insertable<T> createInsertable(Class<T> clazz, EntityInsertExpression sqlEntityInsertExpression);
+    <T> Insertable<T> createInsertable(Class<T> clazz, EntityInsertExpression entityInsertExpression);
 
     <T> EntityUpdatable<T> createEmptyEntityUpdatable();
 

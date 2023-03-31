@@ -34,26 +34,26 @@ import java.util.function.Function;
 public abstract   class AbstractExpressionDeletable<T> extends AbstractSqlExecuteRows implements ExpressionDeletable<T> {
     protected final Class<T> clazz;
     protected final EasyEntityTableExpression table;
-    protected final EntityDeleteExpression sqlEntityDeleteExpression;
+    protected final EntityDeleteExpression entityDeleteExpression;
 
-    public AbstractExpressionDeletable(Class<T> clazz, EntityDeleteExpression sqlEntityDeleteExpression){
-        super(sqlEntityDeleteExpression);
-        this.sqlEntityDeleteExpression = sqlEntityDeleteExpression;
+    public AbstractExpressionDeletable(Class<T> clazz, EntityDeleteExpression entityDeleteExpression){
+        super(entityDeleteExpression);
+        this.entityDeleteExpression = entityDeleteExpression;
 
         this.clazz = clazz;
-        EntityMetadata entityMetadata = this.sqlEntityDeleteExpression.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(clazz);
+        EntityMetadata entityMetadata = this.entityDeleteExpression.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(clazz);
         entityMetadata.checkTable();
         table = new EasyEntityTableExpression(entityMetadata,  0,null, MultiTableTypeEnum.FROM);
-        this.sqlEntityDeleteExpression.addSqlEntityTableExpression(table);
+        this.entityDeleteExpression.addSqlEntityTableExpression(table);
     }
 
     @Override
     public long executeRows() {
         String deleteSql = toSql();
         if(StringUtil.isNotBlank(deleteSql)){
-            EasyQueryRuntimeContext runtimeContext = sqlEntityDeleteExpression.getRuntimeContext();
+            EasyQueryRuntimeContext runtimeContext = entityDeleteExpression.getRuntimeContext();
             EasyExecutor easyExecutor = runtimeContext.getEasyExecutor();
-            return easyExecutor.executeRows(ExecutorContext.create(runtimeContext), deleteSql, sqlEntityDeleteExpression.getParameters());
+            return easyExecutor.executeRows(ExecutorContext.create(runtimeContext), deleteSql, entityDeleteExpression.getParameters());
         }
         return 0;
     }
@@ -69,7 +69,7 @@ public abstract   class AbstractExpressionDeletable<T> extends AbstractSqlExecut
     @Override
     public ExpressionDeletable<T> where(boolean condition, SqlExpression<SqlPredicate<T>> whereExpression) {
         if(condition){
-            DefaultSqlPredicate<T> sqlPredicate = new DefaultSqlPredicate<>(0, sqlEntityDeleteExpression, sqlEntityDeleteExpression.getWhere());
+            DefaultSqlPredicate<T> sqlPredicate = new DefaultSqlPredicate<>(0, entityDeleteExpression, entityDeleteExpression.getWhere());
             whereExpression.apply(sqlPredicate);
         }
         return this;
@@ -78,7 +78,7 @@ public abstract   class AbstractExpressionDeletable<T> extends AbstractSqlExecut
     @Override
     public ExpressionDeletable<T> withVersion(boolean condition, Object versionValue) {
         if(condition){
-            sqlEntityDeleteExpression.getExpressionContext().setVersion(versionValue);
+            entityDeleteExpression.getExpressionContext().setVersion(versionValue);
         }
         return this;
     }
@@ -86,7 +86,7 @@ public abstract   class AbstractExpressionDeletable<T> extends AbstractSqlExecut
     @Override
     public Deletable<T, ExpressionDeletable<T>> whereById(Object id) {
 
-        PredicateSegment where = sqlEntityDeleteExpression.getWhere();
+        PredicateSegment where = entityDeleteExpression.getWhere();
         Collection<String> keyProperties = table.getEntityMetadata().getKeyProperties();
         if(keyProperties.isEmpty()){
             throw new EasyQueryException("对象:"+ ClassUtil.getSimpleName(clazz)+"未找到主键信息");
@@ -97,26 +97,26 @@ public abstract   class AbstractExpressionDeletable<T> extends AbstractSqlExecut
         String keyProperty = keyProperties.iterator().next();
         AndPredicateSegment andPredicateSegment = new AndPredicateSegment();
         andPredicateSegment
-                .setPredicate(new ColumnValuePredicate(table, keyProperty, id, SqlPredicateCompareEnum.EQ, sqlEntityDeleteExpression));
+                .setPredicate(new ColumnValuePredicate(table, keyProperty, id, SqlPredicateCompareEnum.EQ, entityDeleteExpression));
         where.addPredicateSegment(andPredicateSegment);
         return this;
     }
 
     @Override
     public ExpressionDeletable<T> useLogicDelete(boolean enable) {
-        sqlEntityDeleteExpression.setLogicDelete(enable);
+        entityDeleteExpression.setLogicDelete(enable);
         return this;
     }
 
     @Override
     public ExpressionDeletable<T> allowDeleteCommand(boolean allow) {
-        sqlEntityDeleteExpression.getExpressionContext().deleteThrow(!allow);
+        entityDeleteExpression.getExpressionContext().deleteThrow(!allow);
         return this;
     }
 
     @Override
     public ExpressionDeletable<T> asTable(Function<String, String> tableNameAs) {
-        sqlEntityDeleteExpression.getRecentlyTable().setTableNameAs(tableNameAs);
+        entityDeleteExpression.getRecentlyTable().setTableNameAs(tableNameAs);
         return this;
     }
 }
