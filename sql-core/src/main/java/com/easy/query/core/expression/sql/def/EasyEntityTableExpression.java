@@ -9,7 +9,7 @@ import com.easy.query.core.expression.parser.abstraction.SqlColumnSetter;
 import com.easy.query.core.expression.parser.abstraction.SqlPredicate;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
-import com.easy.query.core.expression.sql.SqlEntityTableExpression;
+import com.easy.query.core.expression.sql.EntityTableExpression;
 import com.easy.query.core.util.ClassUtil;
 import com.easy.query.core.util.LambdaUtil;
 
@@ -21,7 +21,7 @@ import java.util.function.Function;
  * @Description: 文件说明
  * @Date: 2023/3/3 23:31
  */
-public class EasyEntityTableExpression implements SqlEntityTableExpression {
+public class EasyEntityTableExpression implements EntityTableExpression {
 
     protected final EntityMetadata entityMetadata;
     protected final int index;

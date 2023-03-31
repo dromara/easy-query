@@ -5,12 +5,11 @@ import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
 import com.easy.query.core.expression.segment.SqlEntityAliasSegment;
-import com.easy.query.core.expression.sql.SqlEntityQueryExpression;
-import com.easy.query.core.expression.sql.SqlEntityTableExpression;
+import com.easy.query.core.expression.sql.EntityQueryExpression;
+import com.easy.query.core.expression.sql.EntityTableExpression;
 import com.easy.query.core.metadata.ColumnMetadata;
 
 import java.beans.PropertyDescriptor;
-import java.lang.invoke.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -28,8 +27,8 @@ public class EasyUtil {
     private EasyUtil() {
     }
 
-    public static SqlEntityTableExpression getPredicateTableByOffset(SqlEntityQueryExpression sqlEntityExpression, int offsetForward) {
-        List<SqlEntityTableExpression> tables = sqlEntityExpression.getTables();
+    public static EntityTableExpression getPredicateTableByOffset(EntityQueryExpression sqlEntityExpression, int offsetForward) {
+        List<EntityTableExpression> tables = sqlEntityExpression.getTables();
         if (tables.isEmpty()) {
             throw new EasyQueryException("cant get current join table");
         }
@@ -37,19 +36,19 @@ public class EasyUtil {
         return tables.get(i);
     }
 
-    public static SqlEntityTableExpression getCurrentPredicateTable(SqlEntityQueryExpression sqlEntityExpression) {
+    public static EntityTableExpression getCurrentPredicateTable(EntityQueryExpression sqlEntityExpression) {
         return getPredicateTableByOffset(sqlEntityExpression, 0);
     }
 
-    public static SqlEntityTableExpression getPreviewPredicateTable(SqlEntityQueryExpression sqlEntityExpression) {
+    public static EntityTableExpression getPreviewPredicateTable(EntityQueryExpression sqlEntityExpression) {
         return getPredicateTableByOffset(sqlEntityExpression, 1);
     }
 
-    public static ColumnMetadata getColumnMetadata(SqlEntityTableExpression tableExpression, String propertyName) {
+    public static ColumnMetadata getColumnMetadata(EntityTableExpression tableExpression, String propertyName) {
         return tableExpression.getEntityMetadata().getColumnNotNull(propertyName);
     }
 
-    public static int getNextTableIndex(SqlEntityQueryExpression sqlEntityExpression) {
+    public static int getNextTableIndex(EntityQueryExpression sqlEntityExpression) {
         return sqlEntityExpression.getTables().size();
     }
 

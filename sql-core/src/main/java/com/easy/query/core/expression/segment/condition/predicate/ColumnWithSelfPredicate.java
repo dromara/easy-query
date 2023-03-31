@@ -2,8 +2,8 @@ package com.easy.query.core.expression.segment.condition.predicate;
 
 import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
 import com.easy.query.core.enums.SqlPredicateCompare;
-import com.easy.query.core.expression.sql.SqlEntityExpression;
-import com.easy.query.core.expression.sql.SqlEntityTableExpression;
+import com.easy.query.core.expression.sql.EntityExpression;
+import com.easy.query.core.expression.sql.EntityTableExpression;
 
 /**
  * @FileName: ColumnValuePredicate.java
@@ -14,14 +14,14 @@ import com.easy.query.core.expression.sql.SqlEntityTableExpression;
 public class ColumnWithSelfPredicate implements Predicate {
     private static final String INCREMENT="+?";
     private static final String DECREMENT="-?";
-    private final SqlEntityTableExpression table;
+    private final EntityTableExpression table;
     private final String propertyName;
     private final Object val;
     private final SqlPredicateCompare compare;
-    private final SqlEntityExpression sqlEntityExpression;
+    private final EntityExpression sqlEntityExpression;
     private final String selfLink;
 
-    public ColumnWithSelfPredicate(boolean increment, SqlEntityTableExpression table, String propertyName,Object val, SqlPredicateCompare compare, SqlEntityExpression sqlEntityExpression) {
+    public ColumnWithSelfPredicate(boolean increment, EntityTableExpression table, String propertyName, Object val, SqlPredicateCompare compare, EntityExpression sqlEntityExpression) {
         this.selfLink=increment?INCREMENT:DECREMENT;
         this.table = table;
         this.propertyName = propertyName;
@@ -38,7 +38,7 @@ public class ColumnWithSelfPredicate implements Predicate {
     }
 
     @Override
-    public SqlEntityTableExpression getTable() {
+    public EntityTableExpression getTable() {
         return table;
     }
 

@@ -1,9 +1,9 @@
 package com.easy.query.mysql.expression;
 
 import com.easy.query.core.abstraction.EasyExpressionFactory;
-import com.easy.query.core.expression.sql.def.EasySqlQueryExpression;
-import com.easy.query.core.expression.sql.SqlEntityQueryExpression;
-import com.easy.query.core.expression.sql.SqlExpressionContext;
+import com.easy.query.core.expression.sql.def.EasyQueryExpression;
+import com.easy.query.core.expression.sql.EntityQueryExpression;
+import com.easy.query.core.expression.sql.ExpressionContext;
 
 /**
  * @FileName: MySQLEntityExpression.java
@@ -11,19 +11,19 @@ import com.easy.query.core.expression.sql.SqlExpressionContext;
  * @Date: 2023/3/4 13:04
  * @author xuejiaming
  */
-public class MySqlQueryExpression extends EasySqlQueryExpression {
-    public MySqlQueryExpression(SqlExpressionContext queryExpressionContext) {
+public class MySqlQueryExpression extends EasyQueryExpression {
+    public MySqlQueryExpression(ExpressionContext queryExpressionContext) {
         super(queryExpressionContext);
     }
 
 
 
     @Override
-    public SqlEntityQueryExpression cloneSqlQueryExpression() {
+    public EntityQueryExpression cloneSqlQueryExpression() {
 
-        SqlExpressionContext sqlExpressionContext = getSqlExpressionContext();
+        ExpressionContext sqlExpressionContext = getExpressionContext();
         EasyExpressionFactory sqlExpressionFactory = getRuntimeContext().getSqlExpressionFactory();
-        MySqlQueryExpression sqlEntityQueryExpression = (MySqlQueryExpression) sqlExpressionFactory.createSqlEntityQueryExpression(sqlExpressionContext);
+        MySqlQueryExpression sqlEntityQueryExpression = (MySqlQueryExpression) sqlExpressionFactory.createEntityQueryExpression(sqlExpressionContext);
         if(hasWhere()){
             getWhere().copyTo(sqlEntityQueryExpression.getWhere());
         }

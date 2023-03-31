@@ -1,6 +1,5 @@
 package com.easy.query.core.basic.api.update.abstraction;
 
-import com.easy.query.core.basic.api.insert.Insertable;
 import com.easy.query.core.basic.api.internal.AbstractSqlExecuteRows;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.enums.SqlPredicateCompareEnum;
@@ -13,8 +12,8 @@ import com.easy.query.core.expression.segment.condition.DefaultSqlPredicate;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnValuePredicate;
 import com.easy.query.core.expression.sql.def.EasyEntityTableExpression;
-import com.easy.query.core.expression.sql.SqlEntityTableExpression;
-import com.easy.query.core.expression.sql.SqlEntityUpdateExpression;
+import com.easy.query.core.expression.sql.EntityTableExpression;
+import com.easy.query.core.expression.sql.EntityUpdateExpression;
 import com.easy.query.core.util.ClassUtil;
 import com.easy.query.core.util.StringUtil;
 import com.easy.query.core.basic.jdbc.executor.EasyExecutor;
@@ -36,10 +35,10 @@ import java.util.function.Function;
 public abstract class AbstractExpressionUpdatable<T> extends AbstractSqlExecuteRows implements ExpressionUpdatable<T> {
     protected final Class<T> clazz;
     protected final  EntityMetadata entityMetadata;
-    protected final SqlEntityUpdateExpression sqlEntityUpdateExpression;
+    protected final EntityUpdateExpression sqlEntityUpdateExpression;
     protected final SqlColumnSetter<T> sqlColumnSetter;
 
-    public AbstractExpressionUpdatable(Class<T> clazz, SqlEntityUpdateExpression sqlEntityUpdateExpression) {
+    public AbstractExpressionUpdatable(Class<T> clazz, EntityUpdateExpression sqlEntityUpdateExpression) {
         super(sqlEntityUpdateExpression);
 
         this.clazz = clazz;
@@ -47,7 +46,7 @@ public abstract class AbstractExpressionUpdatable<T> extends AbstractSqlExecuteR
 
          entityMetadata = this.sqlEntityUpdateExpression.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(clazz);
         entityMetadata.checkTable();
-        SqlEntityTableExpression table = new EasyEntityTableExpression(entityMetadata, 0, null, MultiTableTypeEnum.FROM);
+        EntityTableExpression table = new EasyEntityTableExpression(entityMetadata, 0, null, MultiTableTypeEnum.FROM);
         this.sqlEntityUpdateExpression.addSqlEntityTableExpression(table);
         sqlColumnSetter = new DefaultSqlColumnSetter<>(0, sqlEntityUpdateExpression, sqlEntityUpdateExpression.getSetColumns());
     }
@@ -78,7 +77,7 @@ public abstract class AbstractExpressionUpdatable<T> extends AbstractSqlExecuteR
     @Override
     public ExpressionUpdatable<T> withVersion(boolean condition, Object versionValue) {
         if(condition){
-            sqlEntityUpdateExpression.getSqlExpressionContext().setVersion(versionValue);
+            sqlEntityUpdateExpression.getExpressionContext().setVersion(versionValue);
         }
         return this;
     }
@@ -111,7 +110,7 @@ public abstract class AbstractExpressionUpdatable<T> extends AbstractSqlExecuteR
         if(condition){
 
             PredicateSegment where = sqlEntityUpdateExpression.getWhere();
-            SqlEntityTableExpression table = sqlEntityUpdateExpression.getTable(0);
+            EntityTableExpression table = sqlEntityUpdateExpression.getTable(0);
             Collection<String> keyProperties = table.getEntityMetadata().getKeyProperties();
             if(keyProperties.isEmpty()){
                 throw new EasyQueryException("对象:"+ ClassUtil.getSimpleName(clazz)+"未找到主键信息");

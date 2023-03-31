@@ -34,6 +34,10 @@ public interface EasyQuery {
        return queryable(clazz,"t");
    }
     <T> Queryable<T> queryable(Class<T> clazz, String alias);
+   default  <T> Queryable<T> queryable(String sql,Class<T> clazz){
+       return queryable(sql,clazz,"t");
+   }
+    <T> Queryable<T> queryable(String sql,Class<T> clazz, String alias);
     default Transaction beginTransaction(){
         return beginTransaction(null);
     }

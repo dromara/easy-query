@@ -1,7 +1,7 @@
 package com.easy.query.core.expression.segment.condition.predicate;
 
-import com.easy.query.core.expression.sql.SqlEntityExpression;
-import com.easy.query.core.expression.sql.SqlEntityTableExpression;
+import com.easy.query.core.expression.sql.EntityExpression;
+import com.easy.query.core.expression.sql.EntityTableExpression;
 import com.easy.query.core.enums.SqlPredicateCompare;
 
 /**
@@ -11,12 +11,12 @@ import com.easy.query.core.enums.SqlPredicateCompare;
  * @author xuejiaming
  */
 public class ColumnPredicate implements Predicate {
-    private final SqlEntityTableExpression table;
+    private final EntityTableExpression table;
     private final String propertyName;
     private final SqlPredicateCompare compare;
-    private final SqlEntityExpression sqlEntityExpression;
+    private final EntityExpression sqlEntityExpression;
 
-    public ColumnPredicate(SqlEntityTableExpression table, String propertyName, SqlPredicateCompare compare, SqlEntityExpression sqlEntityExpression) {
+    public ColumnPredicate(EntityTableExpression table, String propertyName, SqlPredicateCompare compare, EntityExpression sqlEntityExpression) {
         this.table = table;
         this.propertyName = propertyName;
         this.compare = compare;
@@ -30,7 +30,7 @@ public class ColumnPredicate implements Predicate {
     }
 
     @Override
-    public SqlEntityTableExpression getTable() {
+    public EntityTableExpression getTable() {
         return table;
     }
 

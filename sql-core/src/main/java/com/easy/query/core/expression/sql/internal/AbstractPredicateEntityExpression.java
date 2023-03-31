@@ -4,7 +4,8 @@ import com.easy.query.core.abstraction.EasyQueryLambdaFactory;
 import com.easy.query.core.common.bean.FastBean;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnPropertyPredicate;
-import com.easy.query.core.expression.sql.SqlLambdaEntityExpression;
+import com.easy.query.core.expression.sql.AnonymousEntityTableExpression;
+import com.easy.query.core.expression.sql.LambdaEntityExpression;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.configuration.EasyQueryConfiguration;
@@ -13,9 +14,8 @@ import com.easy.query.core.expression.parser.abstraction.SqlPredicate;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.basic.plugin.interceptor.EasyPredicateFilterInterceptor;
-import com.easy.query.core.expression.sql.AnonymousEntityTableExpression;
-import com.easy.query.core.expression.sql.SqlEntityTableExpression;
-import com.easy.query.core.expression.sql.SqlExpressionContext;
+import com.easy.query.core.expression.sql.EntityTableExpression;
+import com.easy.query.core.expression.sql.ExpressionContext;
 import com.easy.query.core.metadata.VersionMetadata;
 import com.easy.query.core.util.ArrayUtil;
 import com.easy.query.core.util.EasyUtil;
@@ -29,8 +29,8 @@ import java.util.Objects;
  * @Description: 文件说明
  * @Date: 2023/3/15 21:58
  */
-public abstract class AbstractSqlPredicateEntityExpression extends AbstractSqlEntityExpression implements SqlLambdaEntityExpression {
-    public AbstractSqlPredicateEntityExpression(SqlExpressionContext sqlExpressionContext) {
+public abstract class AbstractPredicateEntityExpression extends AbstractEntityExpression implements LambdaEntityExpression {
+    public AbstractPredicateEntityExpression(ExpressionContext sqlExpressionContext) {
         super(sqlExpressionContext);
     }
 
@@ -55,7 +55,7 @@ public abstract class AbstractSqlPredicateEntityExpression extends AbstractSqlEn
      * @param originalPredicate
      * @return
      */
-    protected PredicateSegment sqlPredicateFilter(SqlEntityTableExpression table, PredicateSegment originalPredicate) {
+    protected PredicateSegment sqlPredicateFilter(EntityTableExpression table, PredicateSegment originalPredicate) {
         if (!(table instanceof AnonymousEntityTableExpression)) {
 
             EntityMetadata entityMetadata = table.getEntityMetadata();

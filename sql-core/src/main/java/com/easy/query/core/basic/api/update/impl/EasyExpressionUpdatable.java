@@ -1,7 +1,7 @@
 package com.easy.query.core.basic.api.update.impl;
 
 import com.easy.query.core.basic.api.update.abstraction.AbstractExpressionUpdatable;
-import com.easy.query.core.expression.sql.SqlEntityUpdateExpression;
+import com.easy.query.core.expression.sql.EntityUpdateExpression;
 
 /**
  * @FileName: EasyExpressionUpdate.java
@@ -10,7 +10,7 @@ import com.easy.query.core.expression.sql.SqlEntityUpdateExpression;
  * @author xuejiaming
  */
 public class EasyExpressionUpdatable<T> extends AbstractExpressionUpdatable<T> {
-    public EasyExpressionUpdatable(Class<T> clazz, SqlEntityUpdateExpression sqlEntityUpdateExpression) {
+    public EasyExpressionUpdatable(Class<T> clazz, EntityUpdateExpression sqlEntityUpdateExpression) {
         super(clazz, sqlEntityUpdateExpression);
     }
 

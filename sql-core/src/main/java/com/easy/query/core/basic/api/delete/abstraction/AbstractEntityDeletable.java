@@ -6,8 +6,8 @@ import com.easy.query.core.basic.api.delete.EntityDeletable;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.sql.def.EasyEntityTableExpression;
-import com.easy.query.core.expression.sql.SqlEntityDeleteExpression;
-import com.easy.query.core.expression.sql.SqlEntityTableExpression;
+import com.easy.query.core.expression.sql.EntityDeleteExpression;
+import com.easy.query.core.expression.sql.EntityTableExpression;
 import com.easy.query.core.util.StringUtil;
 import com.easy.query.core.basic.jdbc.executor.EasyExecutor;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
@@ -26,10 +26,10 @@ import java.util.function.Function;
  */
 public abstract class AbstractEntityDeletable<T> extends AbstractSqlExecuteRows implements EntityDeletable<T> {
     protected final List<T> entities= new ArrayList<>();
-    protected final SqlEntityTableExpression table;
-    protected final SqlEntityDeleteExpression sqlEntityDeleteExpression;
+    protected final EntityTableExpression table;
+    protected final EntityDeleteExpression sqlEntityDeleteExpression;
 
-    public AbstractEntityDeletable(Collection<T> entities, SqlEntityDeleteExpression sqlEntityDeleteExpression){
+    public AbstractEntityDeletable(Collection<T> entities, EntityDeleteExpression sqlEntityDeleteExpression){
         super(sqlEntityDeleteExpression);
         if(entities==null||entities.isEmpty()){
             throw new EasyQueryException("不支持空对象的delete");
@@ -67,7 +67,7 @@ public abstract class AbstractEntityDeletable<T> extends AbstractSqlExecuteRows 
 
     @Override
     public EntityDeletable<T> allowDeleteCommand(boolean allow) {
-        sqlEntityDeleteExpression.getSqlExpressionContext().deleteThrow(!allow);
+        sqlEntityDeleteExpression.getExpressionContext().deleteThrow(!allow);
         return this;
     }
 

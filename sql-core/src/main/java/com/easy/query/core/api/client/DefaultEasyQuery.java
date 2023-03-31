@@ -52,6 +52,11 @@ public class DefaultEasyQuery implements EasyQuery {
     }
 
     @Override
+    public <T> Queryable<T> queryable(String sql, Class<T> clazz, String alias) {
+        return easySqlApiFactory.createQueryable(sql,clazz,runtimeContext,alias);
+    }
+
+    @Override
     public Transaction beginTransaction(Integer isolationLevel) {
         EasyConnectionManager connectionManager = runtimeContext.getConnectionManager();
         return connectionManager.beginTransaction(isolationLevel);

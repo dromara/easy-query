@@ -3,9 +3,9 @@ package com.easy.query.core.expression.parser.impl;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
-import com.easy.query.core.expression.sql.SqlEntityTableExpression;
+import com.easy.query.core.expression.sql.EntityTableExpression;
 import com.easy.query.core.expression.parser.abstraction.SqlColumnResultSelector;
-import com.easy.query.core.expression.sql.SqlEntityExpression;
+import com.easy.query.core.expression.sql.EntityExpression;
 
 /**
  * @FileName: DefaultColumnResultSelector.java
@@ -15,10 +15,10 @@ import com.easy.query.core.expression.sql.SqlEntityExpression;
  */
 public class DefaultSqlColumnResultSelector<T1,TR> implements SqlColumnResultSelector<T1, TR> {
     private final int index;
-    private final SqlEntityExpression sqlEntityExpression;
+    private final EntityExpression sqlEntityExpression;
     private final SqlBuilderSegment sqlBuilderSegment;
 
-    public DefaultSqlColumnResultSelector(int index, SqlEntityExpression sqlEntityExpression, SqlBuilderSegment sqlBuilderSegment){
+    public DefaultSqlColumnResultSelector(int index, EntityExpression sqlEntityExpression, SqlBuilderSegment sqlBuilderSegment){
 
         this.index = index;
         this.sqlEntityExpression = sqlEntityExpression;
@@ -29,7 +29,7 @@ public class DefaultSqlColumnResultSelector<T1,TR> implements SqlColumnResultSel
         if(sqlBuilderSegment.isNotEmpty()){
             sqlBuilderSegment.getSqlSegments().clear();
         }
-        SqlEntityTableExpression table = sqlEntityExpression.getTable(index);
+        EntityTableExpression table = sqlEntityExpression.getTable(index);
         String propertyName = table.getPropertyName(column);
         sqlBuilderSegment.append(new ColumnSegment(table,propertyName, sqlEntityExpression));
 

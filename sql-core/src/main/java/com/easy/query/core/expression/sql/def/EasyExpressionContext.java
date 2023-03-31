@@ -3,7 +3,7 @@ package com.easy.query.core.expression.sql.def;
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.enums.UpdateStrategyEnum;
-import com.easy.query.core.expression.sql.SqlExpressionContext;
+import com.easy.query.core.expression.sql.ExpressionContext;
 import com.easy.query.core.expression.sql.internal.EasyBehavior;
 
 import java.util.ArrayList;
@@ -16,7 +16,7 @@ import java.util.Objects;
  * @Date: 2023/3/3 23:06
  * @author xuejiaming
  */
-public class EasySqlExpressionContext implements SqlExpressionContext {
+public class EasyExpressionContext implements ExpressionContext {
     private final EasyQueryRuntimeContext runtimeContext;
     private final String alias;
     protected final List<SQLParameter> params;
@@ -26,7 +26,7 @@ public class EasySqlExpressionContext implements SqlExpressionContext {
     private Object version;
     private UpdateStrategyEnum updateStrategy = UpdateStrategyEnum.DEFAULT;
 
-    public EasySqlExpressionContext(EasyQueryRuntimeContext runtimeContext, String alias) {
+    public EasyExpressionContext(EasyQueryRuntimeContext runtimeContext, String alias) {
 
         this.runtimeContext = runtimeContext;
         this.deleteThrowException = runtimeContext.getEasyQueryConfiguration().deleteThrow();
@@ -67,7 +67,7 @@ public class EasySqlExpressionContext implements SqlExpressionContext {
     }
 
     @Override
-    public void extractParameters(SqlExpressionContext sqlExpressionContext) {
+    public void extractParameters(ExpressionContext sqlExpressionContext) {
         if (!Objects.equals(this, sqlExpressionContext) && !sqlExpressionContext.getParameters().isEmpty()) {
             params.addAll(sqlExpressionContext.getParameters());
         }

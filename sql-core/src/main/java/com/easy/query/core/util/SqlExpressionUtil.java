@@ -8,7 +8,7 @@ import com.easy.query.core.expression.lambda.SqlExpression3;
 import com.easy.query.core.expression.parser.abstraction.SqlPredicate;
 import com.easy.query.core.expression.parser.abstraction.internal.ColumnSelector;
 import com.easy.query.core.expression.sql.AnonymousEntityTableExpression;
-import com.easy.query.core.expression.sql.SqlEntityQueryExpression;
+import com.easy.query.core.expression.sql.EntityQueryExpression;
 import com.easy.query.core.basic.api.select.Queryable4;
 import com.easy.query.core.expression.lambda.SqlExpression4;
 
@@ -24,7 +24,7 @@ public class SqlExpressionUtil {
     }
 
     public static <TSource> Queryable<TSource> cloneAndSelectAllQueryable(Queryable<TSource> queryable) {
-        SqlEntityQueryExpression queryableSqlEntityExpression = queryable.getSqlEntityExpression();
+        EntityQueryExpression queryableSqlEntityExpression = queryable.getSqlEntityExpression();
         if (SqlExpressionUtil.shouldCloneSqlEntityQueryExpression(queryableSqlEntityExpression)) {
             return queryable.cloneQueryable().select(ColumnSelector::columnAll);
         }
@@ -37,20 +37,20 @@ public class SqlExpressionUtil {
      * @param sqlEntityExpression
      * @return
      */
-    public static boolean shouldCloneSqlEntityQueryExpression(SqlEntityQueryExpression sqlEntityExpression) {
+    public static boolean shouldCloneSqlEntityQueryExpression(EntityQueryExpression sqlEntityExpression) {
         return noSelectAndGroup(sqlEntityExpression) && (moreTableExpressionOrNoAnonymous(sqlEntityExpression)||hasAnyOperate(sqlEntityExpression));
     }
-    public static boolean limitAndOrderNotSetCurrent(SqlEntityQueryExpression sqlEntityExpression){
+    public static boolean limitAndOrderNotSetCurrent(EntityQueryExpression sqlEntityExpression){
         return noSelectAndGroup(sqlEntityExpression)&&!moreTableExpressionOrNoAnonymous(sqlEntityExpression)&&!hasAnyOperate(sqlEntityExpression);
     }
-    public static boolean noSelectAndGroup(SqlEntityQueryExpression sqlEntityExpression){
+    public static boolean noSelectAndGroup(EntityQueryExpression sqlEntityExpression){
         return sqlEntityExpression.getProjects().isEmpty() && !sqlEntityExpression.hasGroup();
     }
 
-    public static boolean moreTableExpressionOrNoAnonymous(SqlEntityQueryExpression sqlEntityExpression) {
+    public static boolean moreTableExpressionOrNoAnonymous(EntityQueryExpression sqlEntityExpression) {
         return sqlEntityExpression.getTables().size() != 1 || !(sqlEntityExpression.getTables().get(0) instanceof AnonymousEntityTableExpression);
     }
-    public static boolean hasAnyOperate(SqlEntityQueryExpression sqlEntityExpression){
+    public static boolean hasAnyOperate(EntityQueryExpression sqlEntityExpression){
         return sqlEntityExpression.hasLimit() || sqlEntityExpression.hasWhere() || sqlEntityExpression.hasOrder() || sqlEntityExpression.hasHaving()|| sqlEntityExpression.isDistinct();
     }
 

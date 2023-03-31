@@ -1,8 +1,7 @@
 package com.easy.query.core.basic.plugin.interceptor;
 
 import com.easy.query.core.expression.parser.abstraction.SqlPredicate;
-import com.easy.query.core.expression.sql.SqlEntityExpression;
-import com.easy.query.core.expression.sql.SqlLambdaEntityExpression;
+import com.easy.query.core.expression.sql.LambdaEntityExpression;
 
 /**
  * @FileName: GlobalQueryFilterInterceptor.java
@@ -17,5 +16,5 @@ public interface EasyPredicateFilterInterceptor extends EasyInterceptor {
      * @param entityClass
      * @param sqlPredicate
      */
-    void configure(Class<?> entityClass, SqlLambdaEntityExpression sqlLambdaEntityExpression, SqlPredicate<Object> sqlPredicate);
+    void configure(Class<?> entityClass, LambdaEntityExpression sqlLambdaEntityExpression, SqlPredicate<Object> sqlPredicate);
 }

@@ -3,6 +3,7 @@ package com.easy.query.core.basic.api.select.abstraction;
 import com.easy.query.core.basic.pagination.EasyPageResultProvider;
 import com.easy.query.core.common.bean.FastBean;
 import com.easy.query.core.enums.EasyBehaviorEnum;
+import com.easy.query.core.expression.sql.AnonymousEntityTableExpression;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.annotation.EasyWhereCondition;
@@ -28,9 +29,8 @@ import com.easy.query.core.expression.parser.abstraction.internal.ColumnSelector
 import com.easy.query.core.expression.segment.SelectConstSegment;
 import com.easy.query.core.expression.segment.builder.ProjectSqlBuilderSegment;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnValuePredicate;
-import com.easy.query.core.expression.sql.AnonymousEntityTableExpression;
-import com.easy.query.core.expression.sql.SqlEntityQueryExpression;
-import com.easy.query.core.expression.sql.SqlEntityTableExpression;
+import com.easy.query.core.expression.sql.EntityQueryExpression;
+import com.easy.query.core.expression.sql.EntityTableExpression;
 import com.easy.query.core.enums.EasyFunc;
 import com.easy.query.core.basic.api.select.Queryable;
 import com.easy.query.core.basic.jdbc.executor.EasyExecutor;
@@ -64,7 +64,7 @@ import java.util.function.Function;
 public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     protected final Class<T1> t1Class;
     //    protected final SqlEntityTableExpression sqlTable;
-    protected final SqlEntityQueryExpression sqlEntityExpression;
+    protected final EntityQueryExpression sqlEntityExpression;
 //    protected final Select1SqlProvider<T1> sqlPredicateProvider;
 
     @Override
@@ -72,7 +72,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
         return t1Class;
     }
 
-    public AbstractQueryable(Class<T1> t1Class, SqlEntityQueryExpression sqlEntityExpression) {
+    public AbstractQueryable(Class<T1> t1Class, EntityQueryExpression sqlEntityExpression) {
         this.t1Class = t1Class;
         this.sqlEntityExpression = sqlEntityExpression;
     }
@@ -155,7 +155,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
 
     @Override
     public Integer lenOrDefault(Property<T1, ?> column, Integer def) {
-        SqlEntityTableExpression table = sqlEntityExpression.getTable(0);
+        EntityTableExpression table = sqlEntityExpression.getTable(0);
         String propertyName = table.getPropertyName(column);
         String ownerColumn = sqlEntityExpression.getSqlOwnerColumn(table, propertyName);
         List<Integer> result = cloneQueryable().select(EasyAggregate.LEN.getFuncColumn(ownerColumn)).toList(Integer.class);
@@ -163,7 +163,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     }
 
     private <TMember> List<TMember> selectAggregateList(Property<T1, ?> column, EasyFunc easyFunc) {
-        SqlEntityTableExpression table = sqlEntityExpression.getTable(0);
+        EntityTableExpression table = sqlEntityExpression.getTable(0);
         String propertyName = table.getPropertyName(column);
         ColumnMetadata columnMetadata = EasyUtil.getColumnMetadata(table, propertyName);
         String ownerColumn = sqlEntityExpression.getSqlOwnerColumn(table, propertyName);
@@ -238,7 +238,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     protected <TR> List<TR> toInternalList(Class<TR> resultClass) {
         String sql = toSql(resultClass);
         EasyExecutor easyExecutor = sqlEntityExpression.getRuntimeContext().getEasyExecutor();
-        boolean tracking = sqlEntityExpression.getSqlExpressionContext().getBehavior().hasBehavior(EasyBehaviorEnum.USE_TRACKING);
+        boolean tracking = sqlEntityExpression.getExpressionContext().getBehavior().hasBehavior(EasyBehaviorEnum.USE_TRACKING);
         return easyExecutor.query(ExecutorContext.create(sqlEntityExpression.getRuntimeContext(),tracking ), resultClass, sql, sqlEntityExpression.getParameters());
     }
 
@@ -291,7 +291,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
         if (condition) {
 
             PredicateSegment where = sqlEntityExpression.getWhere();
-            SqlEntityTableExpression table = sqlEntityExpression.getTable(0);
+            EntityTableExpression table = sqlEntityExpression.getTable(0);
             Collection<String> keyProperties = table.getEntityMetadata().getKeyProperties();
             if (keyProperties.isEmpty()) {
                 throw new EasyQueryException("对象:" + ClassUtil.getSimpleName(t1Class) + "未找到主键信息");
@@ -544,12 +544,12 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
         return this;
     }
 
-    private void doWithOutAnonymousAndClearExpression(SqlEntityQueryExpression sqlEntityExpression, Consumer<SqlEntityQueryExpression> consumer) {
+    private void doWithOutAnonymousAndClearExpression(EntityQueryExpression sqlEntityExpression, Consumer<EntityQueryExpression> consumer) {
 
         //如果当前只有一张表并且是匿名表,那么limit直接处理当前的匿名表的表达式
         if (SqlExpressionUtil.limitAndOrderNotSetCurrent(sqlEntityExpression)) {
             AnonymousEntityTableExpression anonymousEntityTableExpression = (AnonymousEntityTableExpression) sqlEntityExpression.getTable(0);
-            doWithOutAnonymousAndClearExpression(anonymousEntityTableExpression.getSqlEntityQueryExpression(), consumer);
+            doWithOutAnonymousAndClearExpression(anonymousEntityTableExpression.getEntityQueryExpression(), consumer);
         } else {
             consumer.accept(sqlEntityExpression);
         }
@@ -592,7 +592,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
 
 
     @Override
-    public SqlEntityQueryExpression getSqlEntityExpression() {
+    public EntityQueryExpression getSqlEntityExpression() {
         return sqlEntityExpression;
     }
 
@@ -640,38 +640,38 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
 
     @Override
     public Queryable<T1> disableLogicDelete() {
-        sqlEntityExpression.getSqlExpressionContext().getBehavior().removeBehavior(EasyBehaviorEnum.LOGIC_DELETE);
+        sqlEntityExpression.getExpressionContext().getBehavior().removeBehavior(EasyBehaviorEnum.LOGIC_DELETE);
         return this;
     }
 
     @Override
     public Queryable<T1> enableLogicDelete() {
-        sqlEntityExpression.getSqlExpressionContext().getBehavior().addBehavior(EasyBehaviorEnum.LOGIC_DELETE);
+        sqlEntityExpression.getExpressionContext().getBehavior().addBehavior(EasyBehaviorEnum.LOGIC_DELETE);
         return this;
     }
 
 
     @Override
     public Queryable<T1> noInterceptor() {
-        sqlEntityExpression.getSqlExpressionContext().getBehavior().removeBehavior(EasyBehaviorEnum.USE_INTERCEPTOR);
+        sqlEntityExpression.getExpressionContext().getBehavior().removeBehavior(EasyBehaviorEnum.USE_INTERCEPTOR);
         return this;
     }
 
     @Override
     public Queryable<T1> useInterceptor() {
-        sqlEntityExpression.getSqlExpressionContext().getBehavior().addBehavior(EasyBehaviorEnum.USE_INTERCEPTOR);
+        sqlEntityExpression.getExpressionContext().getBehavior().addBehavior(EasyBehaviorEnum.USE_INTERCEPTOR);
         return this;
     }
 
     @Override
     public Queryable<T1> asTracking() {
-        sqlEntityExpression.getSqlExpressionContext().getBehavior().addBehavior(EasyBehaviorEnum.USE_TRACKING);
+        sqlEntityExpression.getExpressionContext().getBehavior().addBehavior(EasyBehaviorEnum.USE_TRACKING);
         return this;
     }
 
     @Override
     public Queryable<T1> asNoTracking() {
-        sqlEntityExpression.getSqlExpressionContext().getBehavior().removeBehavior(EasyBehaviorEnum.USE_TRACKING);
+        sqlEntityExpression.getExpressionContext().getBehavior().removeBehavior(EasyBehaviorEnum.USE_TRACKING);
         return this;
     }
 

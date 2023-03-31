@@ -7,10 +7,10 @@ import com.easy.query.core.expression.segment.SqlEntitySegment;
 import com.easy.query.core.expression.segment.builder.ProjectSqlBuilderSegment;
 import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import com.easy.query.core.expression.parser.impl.DefaultInsertSqlColumnSelector;
-import com.easy.query.core.expression.sql.internal.AbstractSqlEntityExpression;
-import com.easy.query.core.expression.sql.SqlEntityInsertExpression;
-import com.easy.query.core.expression.sql.SqlEntityTableExpression;
-import com.easy.query.core.expression.sql.SqlExpressionContext;
+import com.easy.query.core.expression.sql.internal.AbstractEntityExpression;
+import com.easy.query.core.expression.sql.EntityInsertExpression;
+import com.easy.query.core.expression.sql.EntityTableExpression;
+import com.easy.query.core.expression.sql.ExpressionContext;
 import com.easy.query.core.util.ClassUtil;
 
 /**
@@ -19,10 +19,10 @@ import com.easy.query.core.util.ClassUtil;
  * @Date: 2023/3/4 16:49
  * @author xuejiaming
  */
-public abstract class EasySqlInsertExpression extends AbstractSqlEntityExpression implements SqlEntityInsertExpression {
+public abstract class EasyInsertExpression extends AbstractEntityExpression implements EntityInsertExpression {
     private final SqlBuilderSegment columns;
 
-    public EasySqlInsertExpression(SqlExpressionContext queryExpressionContext) {
+    public EasyInsertExpression(ExpressionContext queryExpressionContext) {
         super(queryExpressionContext);
         this.columns = new ProjectSqlBuilderSegment();
     }
@@ -42,7 +42,7 @@ public abstract class EasySqlInsertExpression extends AbstractSqlEntityExpressio
         if (tableCount > 1) {
             throw new EasyQueryException("找到多张表信息");
         }
-        SqlEntityTableExpression table = getTable(0);
+        EntityTableExpression table = getTable(0);
         EntityMetadata entityMetadata = table.getEntityMetadata();
         if (getColumns().isEmpty()) {
             DefaultInsertSqlColumnSelector<?> columnSelector = new DefaultInsertSqlColumnSelector<>(0, this, this.getColumns());

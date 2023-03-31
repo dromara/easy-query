@@ -3,8 +3,8 @@ package com.easy.query.core.expression.segment.condition.predicate;
 import com.easy.query.core.basic.jdbc.parameter.PropertySQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.VersionPropertySQLParameter;
 import com.easy.query.core.basic.plugin.version.EasyVersionStrategy;
-import com.easy.query.core.expression.sql.SqlEntityExpression;
-import com.easy.query.core.expression.sql.SqlEntityTableExpression;
+import com.easy.query.core.expression.sql.EntityExpression;
+import com.easy.query.core.expression.sql.EntityTableExpression;
 
 /**
  * create time 2023/3/27 16:00
@@ -16,7 +16,7 @@ public class ColumnVersionPropertyPredicate extends ColumnPropertyPredicate{
 
     private final EasyVersionStrategy easyVersionStrategy;
 
-    public ColumnVersionPropertyPredicate(SqlEntityTableExpression table, String propertyName, EasyVersionStrategy easyVersionStrategy, SqlEntityExpression sqlEntityExpression) {
+    public ColumnVersionPropertyPredicate(EntityTableExpression table, String propertyName, EasyVersionStrategy easyVersionStrategy, EntityExpression sqlEntityExpression) {
         super(table, propertyName, sqlEntityExpression);
 
         this.easyVersionStrategy = easyVersionStrategy;

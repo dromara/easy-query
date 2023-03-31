@@ -1,7 +1,7 @@
 package com.easy.query.core.basic.api.select.abstraction;
 
 import com.easy.query.core.basic.api.select.provider.EasyQuerySqlBuilderProvider;
-import com.easy.query.core.expression.sql.SqlEntityQueryExpression;
+import com.easy.query.core.expression.sql.EntityQueryExpression;
 import com.easy.query.core.basic.api.select.provider.Select1SqlProvider;
 
 /**
@@ -12,7 +12,7 @@ import com.easy.query.core.basic.api.select.provider.Select1SqlProvider;
  */
 public abstract class AbstractQueryable1<T> extends AbstractQueryable<T> {
     protected final Select1SqlProvider<T> sqlPredicateProvider;
-    public AbstractQueryable1(Class<T> tClass, SqlEntityQueryExpression sqlEntityExpression) {
+    public AbstractQueryable1(Class<T> tClass, EntityQueryExpression sqlEntityExpression) {
         super(tClass, sqlEntityExpression);
 //        EntityMetadata entityMetadata = this.sqlEntityExpression.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(t1Class);
 

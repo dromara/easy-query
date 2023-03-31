@@ -441,5 +441,23 @@ public class QueryTest extends BaseTest {
         Assert.assertNull(blogEntity);
     }
 
-
+    @Test
+    public void query30() {
+        Queryable<BlogEntity> queryable = easyQuery.queryable("SELECT * FROM t_blog t", BlogEntity.class)
+                .where(o -> o.eq(BlogEntity::getId, "123"));
+        String sql = queryable.toSql();
+        Assert.assertEquals("SELECT t.* FROM (SELECT * FROM t_blog t) t WHERE t.`id` = ?", sql);
+        BlogEntity blogEntity = queryable.firstOrNull();
+        Assert.assertNull(blogEntity);
+    }
+    @Test
+    public void query31() {
+        Queryable<BlogEntity> queryable = easyQuery.queryable("SELECT * FROM t_blog t", BlogEntity.class)
+                .where(o -> o.eq(BlogEntity::getId, "123"))
+                .select(BlogEntity.class,o->o.column(BlogEntity::getId).column(BlogEntity::getContent));
+        String sql = queryable.toSql();
+        Assert.assertEquals("SELECT t.`id`,t.`content` FROM (SELECT * FROM t_blog t) t WHERE t.`id` = ?", sql);
+        BlogEntity blogEntity = queryable.firstOrNull();
+        Assert.assertNull(blogEntity);
+    }
 }

@@ -18,7 +18,7 @@ import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.DefaultSqlPredicate;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.sql.def.EasyEntityTableExpression;
-import com.easy.query.core.expression.sql.SqlEntityDeleteExpression;
+import com.easy.query.core.expression.sql.EntityDeleteExpression;
 import com.easy.query.core.util.ClassUtil;
 import com.easy.query.core.util.StringUtil;
 
@@ -34,9 +34,9 @@ import java.util.function.Function;
 public abstract   class AbstractExpressionDeletable<T> extends AbstractSqlExecuteRows implements ExpressionDeletable<T> {
     protected final Class<T> clazz;
     protected final EasyEntityTableExpression table;
-    protected final SqlEntityDeleteExpression sqlEntityDeleteExpression;
+    protected final EntityDeleteExpression sqlEntityDeleteExpression;
 
-    public AbstractExpressionDeletable(Class<T> clazz, SqlEntityDeleteExpression sqlEntityDeleteExpression){
+    public AbstractExpressionDeletable(Class<T> clazz, EntityDeleteExpression sqlEntityDeleteExpression){
         super(sqlEntityDeleteExpression);
         this.sqlEntityDeleteExpression = sqlEntityDeleteExpression;
 
@@ -78,7 +78,7 @@ public abstract   class AbstractExpressionDeletable<T> extends AbstractSqlExecut
     @Override
     public ExpressionDeletable<T> withVersion(boolean condition, Object versionValue) {
         if(condition){
-            sqlEntityDeleteExpression.getSqlExpressionContext().setVersion(versionValue);
+            sqlEntityDeleteExpression.getExpressionContext().setVersion(versionValue);
         }
         return this;
     }
@@ -110,7 +110,7 @@ public abstract   class AbstractExpressionDeletable<T> extends AbstractSqlExecut
 
     @Override
     public ExpressionDeletable<T> allowDeleteCommand(boolean allow) {
-        sqlEntityDeleteExpression.getSqlExpressionContext().deleteThrow(!allow);
+        sqlEntityDeleteExpression.getExpressionContext().deleteThrow(!allow);
         return this;
     }
 

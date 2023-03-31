@@ -1,5 +1,6 @@
 package com.easy.query.core.expression.parser.impl;
 
+import com.easy.query.core.expression.sql.AnonymousEntityTableExpression;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.enums.EasyFunc;
@@ -9,9 +10,8 @@ import com.easy.query.core.expression.parser.abstraction.internal.ColumnAsSelect
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.segment.FuncColumnSegment;
 import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
-import com.easy.query.core.expression.sql.AnonymousEntityTableExpression;
-import com.easy.query.core.expression.sql.SqlEntityExpression;
-import com.easy.query.core.expression.sql.SqlEntityTableExpression;
+import com.easy.query.core.expression.sql.EntityExpression;
+import com.easy.query.core.expression.sql.EntityTableExpression;
 import com.easy.query.core.util.LambdaUtil;
 
 import java.util.Collection;
@@ -26,14 +26,14 @@ public class DefaultSqlColumnAsSelector<T1, TR> extends AbstractSqlColumnSelecto
 
     private final Class<TR> resultClass;
 
-    public DefaultSqlColumnAsSelector(int index, SqlEntityExpression sqlEntityExpression, SqlBuilderSegment sqlSegment0Builder, Class<TR> resultClass) {
+    public DefaultSqlColumnAsSelector(int index, EntityExpression sqlEntityExpression, SqlBuilderSegment sqlSegment0Builder, Class<TR> resultClass) {
         super(index, sqlEntityExpression, sqlSegment0Builder);
         this.resultClass = resultClass;
     }
 
     @Override
     public SqlColumnAsSelector<T1, TR> columnAs(Property<T1, ?> column, Property<TR, ?> alias) {
-        SqlEntityTableExpression table = sqlEntityExpression.getTable(getIndex());
+        EntityTableExpression table = sqlEntityExpression.getTable(getIndex());
         String propertyName = table.getPropertyName(column);
         String columnAsName = LambdaUtil.getPropertyName(alias);
         sqlSegmentBuilder.append(new ColumnSegment(table, propertyName, sqlEntityExpression, columnAsName));
@@ -43,14 +43,14 @@ public class DefaultSqlColumnAsSelector<T1, TR> extends AbstractSqlColumnSelecto
     @Override
     public SqlColumnAsSelector<T1, TR> columnAll() {
 
-        SqlEntityTableExpression table = sqlEntityExpression.getTable(getIndex());
+        EntityTableExpression table = sqlEntityExpression.getTable(getIndex());
         if(table.entityClass().equals(resultClass)){
             return  super.columnAll();
         }else{
             return  columnAll(table);
         }
     }
-    private SqlColumnAsSelector<T1, TR> columnAll(SqlEntityTableExpression table){
+    private SqlColumnAsSelector<T1, TR> columnAll(EntityTableExpression table){
         if (table instanceof AnonymousEntityTableExpression) {
             columnAnonymousAll((AnonymousEntityTableExpression) table);
         } else {
@@ -67,7 +67,7 @@ public class DefaultSqlColumnAsSelector<T1, TR> extends AbstractSqlColumnSelecto
 
     @Override
     public SqlColumnAsSelector<T1, TR> columnFunc(Property<T1, ?> column, Property<TR, ?> alias, EasyFunc easyFunc) {
-        SqlEntityTableExpression table = sqlEntityExpression.getTable(getIndex());
+        EntityTableExpression table = sqlEntityExpression.getTable(getIndex());
         String propertyName = table.getPropertyName(column);
         String columnAsName = alias == null ? table.getColumnName(propertyName) : LambdaUtil.getPropertyName(alias);
         sqlSegmentBuilder.append(new FuncColumnSegment(table, propertyName, sqlEntityExpression, easyFunc, columnAsName));

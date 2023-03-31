@@ -1,12 +1,12 @@
 package com.easy.query.core.expression.sql.def;
 
 import com.easy.query.core.enums.MultiTableTypeEnum;
+import com.easy.query.core.expression.sql.AnonymousEntityTableExpression;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.expression.lambda.SqlExpression;
 import com.easy.query.core.expression.parser.abstraction.SqlColumnSetter;
 import com.easy.query.core.expression.parser.abstraction.SqlPredicate;
-import com.easy.query.core.expression.sql.AnonymousEntityTableExpression;
-import com.easy.query.core.expression.sql.SqlEntityQueryExpression;
+import com.easy.query.core.expression.sql.EntityQueryExpression;
 
 /**
  * @FileName: EasyAnonymousEntityTableExpressionSegment.java
@@ -15,9 +15,9 @@ import com.easy.query.core.expression.sql.SqlEntityQueryExpression;
  * @author xuejiaming
  */
 public class EasyAnonymousEntityTableExpression extends EasyEntityTableExpression implements AnonymousEntityTableExpression {
-    private final SqlEntityQueryExpression sqlEntityExpression;
+    private final EntityQueryExpression sqlEntityExpression;
 
-    public EasyAnonymousEntityTableExpression(EntityMetadata entityMetadata, int index, String alias, MultiTableTypeEnum multiTableType, SqlEntityQueryExpression sqlEntityExpression) {
+    public EasyAnonymousEntityTableExpression(EntityMetadata entityMetadata, int index, String alias, MultiTableTypeEnum multiTableType, EntityQueryExpression sqlEntityExpression) {
         super(entityMetadata, index, alias, multiTableType);
         this.sqlEntityExpression = sqlEntityExpression;
     }
@@ -44,7 +44,7 @@ public class EasyAnonymousEntityTableExpression extends EasyEntityTableExpressio
     }
 
     @Override
-    public SqlEntityQueryExpression getSqlEntityQueryExpression() {
+    public EntityQueryExpression getEntityQueryExpression() {
         return sqlEntityExpression;
     }
 

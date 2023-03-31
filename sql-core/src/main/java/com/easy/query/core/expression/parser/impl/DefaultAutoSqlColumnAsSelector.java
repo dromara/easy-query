@@ -1,5 +1,6 @@
 package com.easy.query.core.expression.parser.impl;
 
+import com.easy.query.core.expression.sql.AnonymousEntityTableExpression;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.enums.EasyFunc;
@@ -8,9 +9,8 @@ import com.easy.query.core.expression.parser.abstraction.SqlColumnAsSelector;
 import com.easy.query.core.expression.parser.abstraction.internal.ColumnAsSelector;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
-import com.easy.query.core.expression.sql.AnonymousEntityTableExpression;
-import com.easy.query.core.expression.sql.SqlEntityExpression;
-import com.easy.query.core.expression.sql.SqlEntityTableExpression;
+import com.easy.query.core.expression.sql.EntityExpression;
+import com.easy.query.core.expression.sql.EntityTableExpression;
 
 import java.util.Collection;
 import java.util.Objects;
@@ -25,7 +25,7 @@ public class DefaultAutoSqlColumnAsSelector<T1, TR> extends AbstractSqlColumnSel
 
     private final Class<TR> resultClass;
 
-    public DefaultAutoSqlColumnAsSelector(int index, SqlEntityExpression sqlEntityExpression, SqlBuilderSegment sqlSegment0Builder, Class<TR> resultClass) {
+    public DefaultAutoSqlColumnAsSelector(int index, EntityExpression sqlEntityExpression, SqlBuilderSegment sqlSegment0Builder, Class<TR> resultClass) {
         super(index, sqlEntityExpression, sqlSegment0Builder);
         this.resultClass = resultClass;
     }
@@ -38,7 +38,7 @@ public class DefaultAutoSqlColumnAsSelector<T1, TR> extends AbstractSqlColumnSel
     @Override
     public SqlColumnAsSelector<T1, TR> columnAll() {
 
-        SqlEntityTableExpression table = sqlEntityExpression.getTable(getIndex());
+        EntityTableExpression table = sqlEntityExpression.getTable(getIndex());
         if (table.entityClass().equals(resultClass)) {
             return super.columnAll();
         } else {
@@ -46,7 +46,7 @@ public class DefaultAutoSqlColumnAsSelector<T1, TR> extends AbstractSqlColumnSel
         }
     }
 
-    private SqlColumnAsSelector<T1, TR> columnAll(SqlEntityTableExpression table) {
+    private SqlColumnAsSelector<T1, TR> columnAll(EntityTableExpression table) {
         if (table instanceof AnonymousEntityTableExpression) {
             columnAnonymousAll((AnonymousEntityTableExpression) table);
         } else {

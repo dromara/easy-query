@@ -3,7 +3,7 @@ package com.easy.query.core.basic.api.internal;
 import com.easy.query.core.basic.jdbc.con.EasyConnectionManager;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
 import com.easy.query.core.exception.EasyQueryConcurrentException;
-import com.easy.query.core.expression.sql.SqlEntityExpression;
+import com.easy.query.core.expression.sql.EntityExpression;
 
 /**
  * @FileName: AbstractSqlExecuteRows.java
@@ -12,9 +12,9 @@ import com.easy.query.core.expression.sql.SqlEntityExpression;
  * @author xuejiaming
  */
 public abstract class AbstractSqlExecuteRows implements SqlExecuteExpectRows {
-    private final SqlEntityExpression sqlEntityExpression;
+    private final EntityExpression sqlEntityExpression;
 
-    public AbstractSqlExecuteRows(SqlEntityExpression sqlEntityExpression){
+    public AbstractSqlExecuteRows(EntityExpression sqlEntityExpression){
 
         this.sqlEntityExpression = sqlEntityExpression;
     }

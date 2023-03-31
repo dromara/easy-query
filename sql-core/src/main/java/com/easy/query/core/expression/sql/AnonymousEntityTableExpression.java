@@ -1,11 +1,11 @@
 package com.easy.query.core.expression.sql;
 
 /**
- * @FileName: AnonymousEntityTableSegment.java
- * @Description: 文件说明
- * @Date: 2023/3/3 21:55
+ * create time 2023/3/31 08:22
+ * 文件说明
+ *
  * @author xuejiaming
  */
-public interface AnonymousEntityTableExpression extends SqlEntityTableExpression {
-    SqlEntityQueryExpression getSqlEntityQueryExpression();
+public interface AnonymousEntityTableExpression extends EntityTableExpression{
+    EntityQueryExpression getEntityQueryExpression();
 }

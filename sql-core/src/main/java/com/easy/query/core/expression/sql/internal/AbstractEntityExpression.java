@@ -2,10 +2,9 @@ package com.easy.query.core.expression.sql.internal;
 
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
-import com.easy.query.core.expression.sql.AnonymousEntityTableExpression;
-import com.easy.query.core.expression.sql.SqlEntityExpression;
-import com.easy.query.core.expression.sql.SqlEntityTableExpression;
-import com.easy.query.core.expression.sql.SqlExpressionContext;
+import com.easy.query.core.expression.sql.EntityExpression;
+import com.easy.query.core.expression.sql.EntityTableExpression;
+import com.easy.query.core.expression.sql.ExpressionContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,19 +15,19 @@ import java.util.List;
  * @Date: 2023/3/6 08:58
  * @author xuejiaming
  */
-public abstract class AbstractSqlEntityExpression implements SqlEntityExpression {
-    protected final SqlExpressionContext sqlExpressionContext;
-    protected final List<SqlEntityTableExpression> tables;
+public abstract class AbstractEntityExpression implements EntityExpression {
+    protected final ExpressionContext sqlExpressionContext;
+    protected final List<EntityTableExpression> tables;
     protected boolean logicDelete;
 
-    public AbstractSqlEntityExpression(SqlExpressionContext sqlExpressionContext){
+    public AbstractEntityExpression(ExpressionContext sqlExpressionContext){
         this.sqlExpressionContext = sqlExpressionContext;
         this.tables = new ArrayList<>();
         logicDelete=true;
     }
 
     @Override
-    public SqlExpressionContext getSqlExpressionContext() {
+    public ExpressionContext getExpressionContext() {
         return sqlExpressionContext;
     }
 
@@ -38,17 +37,17 @@ public abstract class AbstractSqlEntityExpression implements SqlEntityExpression
     }
 
     @Override
-    public void addSqlEntityTableExpression(SqlEntityTableExpression tableExpression) {
+    public void addSqlEntityTableExpression(EntityTableExpression tableExpression) {
         tables.add(tableExpression);
     }
 
     @Override
-    public List<SqlEntityTableExpression> getTables() {
+    public List<EntityTableExpression> getTables() {
         return tables;
     }
 
     @Override
-    public SqlEntityTableExpression getTable(int index) {
+    public EntityTableExpression getTable(int index) {
         return tables.get(index);
     }
 
@@ -57,7 +56,7 @@ public abstract class AbstractSqlEntityExpression implements SqlEntityExpression
     }
 
     @Override
-    public String getSqlOwnerColumn(SqlEntityTableExpression table, String propertyName) {
+    public String getSqlOwnerColumn(EntityTableExpression table, String propertyName) {
         String alias = table.getAlias();
         String columnName = table.getColumnName(propertyName);
         String quoteName = getQuoteName(columnName);

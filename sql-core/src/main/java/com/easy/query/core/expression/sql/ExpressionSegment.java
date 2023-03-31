@@ -8,6 +8,6 @@ import com.easy.query.core.expression.segment.SqlSegment;
  * @Date: 2023/3/3 17:15
  * @author xuejiaming
  */
-public interface SqlExpressionSegment extends SqlSegment {
+public interface ExpressionSegment extends SqlSegment {
 
 }

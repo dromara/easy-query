@@ -1,8 +1,8 @@
 package com.easy.query.core.expression.segment;
 
 import com.easy.query.core.basic.jdbc.parameter.PropertySQLParameter;
-import com.easy.query.core.expression.sql.SqlEntityExpression;
-import com.easy.query.core.expression.sql.SqlEntityTableExpression;
+import com.easy.query.core.expression.sql.EntityExpression;
+import com.easy.query.core.expression.sql.EntityTableExpression;
 
 /**
  * @FileName: ColumnSegment.java
@@ -13,15 +13,15 @@ import com.easy.query.core.expression.sql.SqlEntityTableExpression;
 public class ColumnInsertSegment implements SqlEntityAliasSegment {
 
 
-    protected final SqlEntityTableExpression table;
+    protected final EntityTableExpression table;
     protected final String propertyName;
-    protected final SqlEntityExpression sqlEntityExpression;
+    protected final EntityExpression sqlEntityExpression;
     protected String alias;
 
-    public ColumnInsertSegment(SqlEntityTableExpression table, String propertyName, SqlEntityExpression sqlEntityExpression){
+    public ColumnInsertSegment(EntityTableExpression table, String propertyName, EntityExpression sqlEntityExpression){
         this(table,propertyName,sqlEntityExpression,null);
     }
-    public ColumnInsertSegment(SqlEntityTableExpression table, String propertyName, SqlEntityExpression sqlEntityExpression, String alias){
+    public ColumnInsertSegment(EntityTableExpression table, String propertyName, EntityExpression sqlEntityExpression, String alias){
         this.table = table;
 
         this.propertyName = propertyName;
@@ -42,7 +42,7 @@ public class ColumnInsertSegment implements SqlEntityAliasSegment {
     }
 
     @Override
-    public SqlEntityTableExpression getTable() {
+    public EntityTableExpression getTable() {
         return table;
     }
 

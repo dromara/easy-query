@@ -13,8 +13,8 @@ import com.easy.query.core.expression.lambda.SqlExpression3;
 import com.easy.query.core.expression.parser.abstraction.SqlColumnAsSelector;
 import com.easy.query.core.expression.parser.abstraction.SqlColumnSelector;
 import com.easy.query.core.expression.segment.builder.ProjectSqlBuilderSegment;
-import com.easy.query.core.expression.sql.SqlEntityQueryExpression;
-import com.easy.query.core.expression.sql.SqlEntityTableExpression;
+import com.easy.query.core.expression.sql.EntityQueryExpression;
+import com.easy.query.core.expression.sql.EntityTableExpression;
 import com.easy.query.core.util.ArrayUtil;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.enums.EasyAggregate;
@@ -42,7 +42,7 @@ public abstract class AbstractQueryable2<T1, T2> extends AbstractQueryable<T1> i
     private final Class<T2> t2Class;
     private final EasyQuerySqlBuilderProvider2<T1, T2> sqlPredicateProvider;
 
-    public AbstractQueryable2(Class<T1> t1Class, Class<T2> t2Class, SqlEntityQueryExpression sqlEntityExpression) {
+    public AbstractQueryable2(Class<T1> t1Class, Class<T2> t2Class, EntityQueryExpression sqlEntityExpression) {
         super(t1Class, sqlEntityExpression);
         this.t2Class = t2Class;
 
@@ -166,7 +166,7 @@ public abstract class AbstractQueryable2<T1, T2> extends AbstractQueryable<T1> i
         }
         SqlEntitySegment sqlSegment = (SqlEntitySegment)projectSqlBuilderSegment.getSqlSegments().get(0);
 
-        SqlEntityTableExpression table = sqlSegment.getTable();
+        EntityTableExpression table = sqlSegment.getTable();
         String propertyName = sqlSegment.getPropertyName();
         ColumnMetadata columnMetadata = EasyUtil.getColumnMetadata(table,propertyName);
 

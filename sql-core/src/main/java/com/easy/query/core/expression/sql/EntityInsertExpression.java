@@ -8,6 +8,6 @@ import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
  * @Date: 2023/3/4 16:30
  * @author xuejiaming
  */
-public interface SqlEntityInsertExpression extends SqlEntityExpression {
+public interface EntityInsertExpression extends EntityExpression {
     SqlBuilderSegment getColumns();
 }

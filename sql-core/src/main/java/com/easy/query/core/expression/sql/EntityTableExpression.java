@@ -14,7 +14,7 @@ import java.util.function.Function;
  * @Date: 2023/3/3 21:50
  * @author xuejiaming
  */
-public interface SqlEntityTableExpression extends SqlTableExpressionSegment {
+public interface EntityTableExpression extends TableExpressionSegment {
     EntityMetadata getEntityMetadata();
     <T1> String getPropertyName(Property<T1, ?> column);
     String getColumnName(String propertyName);

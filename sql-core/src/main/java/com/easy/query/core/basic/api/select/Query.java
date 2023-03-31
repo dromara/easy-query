@@ -1,6 +1,6 @@
 package com.easy.query.core.basic.api.select;
 
-import com.easy.query.core.expression.sql.SqlEntityQueryExpression;
+import com.easy.query.core.expression.sql.EntityQueryExpression;
 
 /**
  * @FileName: Query.java
@@ -19,5 +19,5 @@ public interface Query<T> {
      * 当前的查询表达式
      * @return
      */
-    SqlEntityQueryExpression getSqlEntityExpression();
+    EntityQueryExpression getSqlEntityExpression();
 }

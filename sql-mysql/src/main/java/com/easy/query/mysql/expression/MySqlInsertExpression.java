@@ -1,7 +1,7 @@
 package com.easy.query.mysql.expression;
 
-import com.easy.query.core.expression.sql.def.EasySqlInsertExpression;
-import com.easy.query.core.expression.sql.SqlExpressionContext;
+import com.easy.query.core.expression.sql.def.EasyInsertExpression;
+import com.easy.query.core.expression.sql.ExpressionContext;
 
 /**
  * @FileName: MySQLInsertExpression.java
@@ -9,8 +9,8 @@ import com.easy.query.core.expression.sql.SqlExpressionContext;
  * @Date: 2023/3/4 16:51
  * @author xuejiaming
  */
-public class MySqlInsertExpression extends EasySqlInsertExpression {
-    public MySqlInsertExpression(SqlExpressionContext queryExpressionContext) {
+public class MySqlInsertExpression extends EasyInsertExpression {
+    public MySqlInsertExpression(ExpressionContext queryExpressionContext) {
         super(queryExpressionContext);
     }
 

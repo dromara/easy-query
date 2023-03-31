@@ -4,8 +4,8 @@ import com.easy.query.core.basic.jdbc.parameter.ConstLikeSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
 import com.easy.query.core.enums.SqlPredicateCompare;
 import com.easy.query.core.enums.SqlPredicateCompareEnum;
-import com.easy.query.core.expression.sql.SqlEntityExpression;
-import com.easy.query.core.expression.sql.SqlEntityTableExpression;
+import com.easy.query.core.expression.sql.EntityExpression;
+import com.easy.query.core.expression.sql.EntityTableExpression;
 
 import java.util.Objects;
 
@@ -16,13 +16,13 @@ import java.util.Objects;
  * @author xuejiaming
  */
 public class ColumnValuePredicate implements Predicate {
-    private final SqlEntityTableExpression table;
+    private final EntityTableExpression table;
     private final String propertyName;
     private final Object val;
     private final SqlPredicateCompare compare;
-    private final SqlEntityExpression sqlEntityExpression;
+    private final EntityExpression sqlEntityExpression;
 
-    public ColumnValuePredicate(SqlEntityTableExpression table, String propertyName, Object val, SqlPredicateCompare compare, SqlEntityExpression sqlEntityExpression) {
+    public ColumnValuePredicate(EntityTableExpression table, String propertyName, Object val, SqlPredicateCompare compare, EntityExpression sqlEntityExpression) {
         this.table = table;
         this.propertyName = propertyName;
         this.val = val;
@@ -44,7 +44,7 @@ public class ColumnValuePredicate implements Predicate {
     }
 
     @Override
-    public SqlEntityTableExpression getTable() {
+    public EntityTableExpression getTable() {
         return table;
     }
 

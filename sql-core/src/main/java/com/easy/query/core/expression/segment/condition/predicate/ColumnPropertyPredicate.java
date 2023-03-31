@@ -1,8 +1,8 @@
 package com.easy.query.core.expression.segment.condition.predicate;
 
 import com.easy.query.core.basic.jdbc.parameter.PropertySQLParameter;
-import com.easy.query.core.expression.sql.SqlEntityExpression;
-import com.easy.query.core.expression.sql.SqlEntityTableExpression;
+import com.easy.query.core.expression.sql.EntityExpression;
+import com.easy.query.core.expression.sql.EntityTableExpression;
 
 /**
  * @FileName: ColumnPropertyPredicate.java
@@ -11,11 +11,11 @@ import com.easy.query.core.expression.sql.SqlEntityTableExpression;
  * @author xuejiaming
  */
 public class ColumnPropertyPredicate implements Predicate {
-    protected final SqlEntityTableExpression table;
+    protected final EntityTableExpression table;
     protected final String propertyName;
-    protected final SqlEntityExpression sqlEntityExpression;
+    protected final EntityExpression sqlEntityExpression;
 
-    public ColumnPropertyPredicate(SqlEntityTableExpression table, String propertyName, SqlEntityExpression sqlEntityExpression){
+    public ColumnPropertyPredicate(EntityTableExpression table, String propertyName, EntityExpression sqlEntityExpression){
         this.table = table;
         this.propertyName = propertyName;
         this.sqlEntityExpression = sqlEntityExpression;
@@ -29,7 +29,7 @@ public class ColumnPropertyPredicate implements Predicate {
     }
 
     @Override
-    public SqlEntityTableExpression getTable() {
+    public EntityTableExpression getTable() {
         return table;
     }
 

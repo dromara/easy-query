@@ -1,7 +1,7 @@
 package com.easy.query.core.basic.api.insert;
 
 import com.easy.query.core.abstraction.EasySqlApiFactory;
-import com.easy.query.core.expression.sql.SqlEntityInsertExpression;
+import com.easy.query.core.expression.sql.EntityInsertExpression;
 
 import java.util.function.Function;
 
@@ -12,9 +12,9 @@ import java.util.function.Function;
  * @author xuejiaming
  */
 public class EasyEmptyInsertable<T>implements Insertable<T> {
-    private final SqlEntityInsertExpression sqlEntityInsertExpression;
+    private final EntityInsertExpression sqlEntityInsertExpression;
 
-    public EasyEmptyInsertable(SqlEntityInsertExpression sqlEntityInsertExpression){
+    public EasyEmptyInsertable(EntityInsertExpression sqlEntityInsertExpression){
 
         this.sqlEntityInsertExpression = sqlEntityInsertExpression;
     }

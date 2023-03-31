@@ -1,7 +1,7 @@
 package com.easy.query.mysql.expression;
 
-import com.easy.query.core.expression.sql.def.EasySqlUpdateExpression;
-import com.easy.query.core.expression.sql.SqlExpressionContext;
+import com.easy.query.core.expression.sql.def.EasyUpdateExpression;
+import com.easy.query.core.expression.sql.ExpressionContext;
 
 /**
  * @FileName: MySQLUpdateExpression.java
@@ -9,9 +9,9 @@ import com.easy.query.core.expression.sql.SqlExpressionContext;
  * @Date: 2023/3/4 17:11
  * @author xuejiaming
  */
-public class MySqlUpdateExpression extends EasySqlUpdateExpression {
+public class MySqlUpdateExpression extends EasyUpdateExpression {
 
-    public MySqlUpdateExpression(SqlExpressionContext queryExpressionContext, boolean isExpressionUpdate) {
+    public MySqlUpdateExpression(ExpressionContext queryExpressionContext, boolean isExpressionUpdate) {
         super(queryExpressionContext,isExpressionUpdate);
     }
 

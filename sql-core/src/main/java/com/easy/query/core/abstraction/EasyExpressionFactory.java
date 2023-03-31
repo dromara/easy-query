@@ -1,12 +1,13 @@
 package com.easy.query.core.abstraction;
 
 import com.easy.query.core.enums.MultiTableTypeEnum;
-import com.easy.query.core.expression.sql.SqlEntityDeleteExpression;
-import com.easy.query.core.expression.sql.SqlEntityInsertExpression;
-import com.easy.query.core.expression.sql.SqlEntityQueryExpression;
-import com.easy.query.core.expression.sql.SqlEntityTableExpression;
-import com.easy.query.core.expression.sql.SqlEntityUpdateExpression;
-import com.easy.query.core.expression.sql.SqlExpressionContext;
+import com.easy.query.core.expression.sql.EntityDeleteExpression;
+import com.easy.query.core.expression.sql.EntityInsertExpression;
+import com.easy.query.core.expression.sql.EntityQueryExpression;
+import com.easy.query.core.expression.sql.EntityTableExpression;
+import com.easy.query.core.expression.sql.EntityUpdateExpression;
+import com.easy.query.core.expression.sql.ExpressionContext;
+import com.easy.query.core.expression.sql.def.EasyAnonymousQueryExpression;
 import com.easy.query.core.metadata.EntityMetadata;
 
 /**
@@ -16,11 +17,14 @@ import com.easy.query.core.metadata.EntityMetadata;
  * @author xuejiaming
  */
 public interface EasyExpressionFactory {
-    SqlExpressionContext createSqlExpressionContext(EasyQueryRuntimeContext runtimeContext, String alias);
-    SqlEntityTableExpression createSqlEntityTableExpression(EntityMetadata entityMetadata, int index, String alias, MultiTableTypeEnum multiTableType);
-    SqlEntityTableExpression createSqlAnonymousEntityTableExpression(EntityMetadata entityMetadata, int index, String alias, MultiTableTypeEnum multiTableType, SqlEntityQueryExpression sqlEntityQueryExpression);
-    SqlEntityQueryExpression createSqlEntityQueryExpression(SqlExpressionContext sqlExpressionContext);
-    SqlEntityInsertExpression createSqlEntityInsertExpression(SqlExpressionContext sqlExpressionContext);
-    SqlEntityUpdateExpression createSqlEntityUpdateExpression(SqlExpressionContext sqlExpressionContext, boolean expression);
-    SqlEntityDeleteExpression createSqlEntityDeleteExpression(SqlExpressionContext sqlExpressionContext, boolean expression);
+    ExpressionContext createExpressionContext(EasyQueryRuntimeContext runtimeContext, String alias);
+    EntityTableExpression createEntityTableExpression(EntityMetadata entityMetadata, int index, String alias, MultiTableTypeEnum multiTableType);
+    EntityTableExpression createAnonymousEntityTableExpression(EntityMetadata entityMetadata, int index, String alias, MultiTableTypeEnum multiTableType, EntityQueryExpression sqlEntityQueryExpression);
+    EntityQueryExpression createEntityQueryExpression(ExpressionContext sqlExpressionContext);
+    default EntityQueryExpression createAnonymousQueryExpression(String sql,ExpressionContext sqlExpressionContext){
+        return new EasyAnonymousQueryExpression(sql,sqlExpressionContext);
+    }
+    EntityInsertExpression createEntityInsertExpression(ExpressionContext sqlExpressionContext);
+    EntityUpdateExpression createEntityUpdateExpression(ExpressionContext sqlExpressionContext, boolean expression);
+    EntityDeleteExpression createEntityDeleteExpression(ExpressionContext sqlExpressionContext, boolean expression);
 }

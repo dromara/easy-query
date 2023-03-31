@@ -12,13 +12,13 @@ import java.util.List;
  * @Date: 2023/3/4 16:29
  * @author xuejiaming
  */
-public interface SqlEntityExpression extends SqlExpressionSegment {
-    SqlExpressionContext getSqlExpressionContext();
+public interface EntityExpression extends ExpressionSegment {
+    ExpressionContext getExpressionContext();
     EasyQueryRuntimeContext getRuntimeContext();
-    void addSqlEntityTableExpression(SqlEntityTableExpression tableExpression);
-    List<SqlEntityTableExpression> getTables();
-    SqlEntityTableExpression getTable(int index);
-    default SqlEntityTableExpression getRecentlyTable(){
+    void addSqlEntityTableExpression(EntityTableExpression tableExpression);
+    List<EntityTableExpression> getTables();
+    EntityTableExpression getTable(int index);
+    default EntityTableExpression getRecentlyTable(){
         int size = getTables().size();
         if(size==0){
             throw new EasyQueryInvalidOperationException("cant get recently table");
@@ -26,7 +26,7 @@ public interface SqlEntityExpression extends SqlExpressionSegment {
         return getTable(size-1);
     }
     String getQuoteName(String value);
-    String getSqlOwnerColumn(SqlEntityTableExpression table, String propertyName);
+    String getSqlOwnerColumn(EntityTableExpression table, String propertyName);
     List<SQLParameter> getParameters();
     void addParameter(SQLParameter parameter);
     void setLogicDelete(boolean logicDelete);

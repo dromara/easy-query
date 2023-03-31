@@ -9,7 +9,7 @@ import com.easy.query.core.expression.segment.condition.PredicateSegment;
  * @Date: 2023/3/4 17:04
  * @author xuejiaming
  */
-public interface SqlEntityUpdateExpression extends SqlEntityExpression {
+public interface EntityUpdateExpression extends EntityExpression {
 
      SqlBuilderSegment getSetColumns();
      boolean hasSetColumns();

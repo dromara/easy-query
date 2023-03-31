@@ -1,8 +1,7 @@
 package com.easy.query.core.basic.jdbc.parameter;
 
 import com.easy.query.core.basic.plugin.version.EasyVersionStrategy;
-import com.easy.query.core.expression.sql.SqlEntityTableExpression;
-import com.easy.query.core.expression.sql.SqlTableExpressionSegment;
+import com.easy.query.core.expression.sql.EntityTableExpression;
 
 /**
  * create time 2023/3/27 15:48
@@ -25,7 +24,7 @@ public class VersionPropertySQLParameter implements BeanSqlParameter{
     }
 
     @Override
-    public SqlEntityTableExpression getTable() {
+    public EntityTableExpression getTable() {
         return beanSqlParameter.getTable();
     }
 

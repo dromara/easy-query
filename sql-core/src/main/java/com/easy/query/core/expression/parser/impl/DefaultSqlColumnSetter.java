@@ -7,8 +7,8 @@ import com.easy.query.core.expression.parser.abstraction.SqlColumnSetter;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnValuePredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnWithColumnPredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnWithSelfPredicate;
-import com.easy.query.core.expression.sql.SqlEntityExpression;
-import com.easy.query.core.expression.sql.SqlEntityTableExpression;
+import com.easy.query.core.expression.sql.EntityExpression;
+import com.easy.query.core.expression.sql.EntityTableExpression;
 
 /**
  * @FileName: DefaultSqlColumnSetter.java
@@ -18,10 +18,10 @@ import com.easy.query.core.expression.sql.SqlEntityTableExpression;
  */
 public class DefaultSqlColumnSetter<T>  implements SqlColumnSetter<T> {
     private final int index;
-    private final SqlEntityExpression sqlEntityExpression;
+    private final EntityExpression sqlEntityExpression;
     private final SqlBuilderSegment sqlSegment0Builder;
 
-    public DefaultSqlColumnSetter(int index, SqlEntityExpression sqlEntityExpression, SqlBuilderSegment sqlSegment0Builder){
+    public DefaultSqlColumnSetter(int index, EntityExpression sqlEntityExpression, SqlBuilderSegment sqlSegment0Builder){
 
         this.index = index;
         this.sqlEntityExpression = sqlEntityExpression;
@@ -31,7 +31,7 @@ public class DefaultSqlColumnSetter<T>  implements SqlColumnSetter<T> {
     public SqlColumnSetter<T> set(boolean condition, Property<T, ?> column, Object val) {
         if(condition)
         {
-            SqlEntityTableExpression table = sqlEntityExpression.getTable(index);
+            EntityTableExpression table = sqlEntityExpression.getTable(index);
             String propertyName = table.getPropertyName(column);
             sqlSegment0Builder.append(new ColumnValuePredicate(table,propertyName,val, SqlPredicateCompareEnum.EQ, sqlEntityExpression));
         }
@@ -42,9 +42,9 @@ public class DefaultSqlColumnSetter<T>  implements SqlColumnSetter<T> {
     public SqlColumnSetter<T> set(boolean condition, Property<T, ?> column1, Property<T, ?> column2) {
         if(condition)
         {
-            SqlEntityTableExpression table1 = sqlEntityExpression.getTable(index);
+            EntityTableExpression table1 = sqlEntityExpression.getTable(index);
             String propertyName1 = table1.getPropertyName(column1);
-            SqlEntityTableExpression table2 = sqlEntityExpression.getTable(index);
+            EntityTableExpression table2 = sqlEntityExpression.getTable(index);
             String propertyName2 = table2.getPropertyName(column2);
             sqlSegment0Builder.append(new ColumnWithColumnPredicate(table1,propertyName1,table2,propertyName2, SqlPredicateCompareEnum.EQ, sqlEntityExpression));
         }
@@ -63,7 +63,7 @@ public class DefaultSqlColumnSetter<T>  implements SqlColumnSetter<T> {
 
     private void setSelf(boolean increment,Property<T, ? extends Number> column, Number val){
 
-        SqlEntityTableExpression table = sqlEntityExpression.getTable(index);
+        EntityTableExpression table = sqlEntityExpression.getTable(index);
         String propertyName = table.getPropertyName(column);
         sqlSegment0Builder.append(new ColumnWithSelfPredicate(increment,table,propertyName,val, SqlPredicateCompareEnum.EQ, sqlEntityExpression));
     }

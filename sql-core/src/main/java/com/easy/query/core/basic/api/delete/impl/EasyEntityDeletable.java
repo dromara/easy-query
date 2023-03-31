@@ -1,7 +1,7 @@
 package com.easy.query.core.basic.api.delete.impl;
 
 import com.easy.query.core.basic.api.delete.abstraction.AbstractEntityDeletable;
-import com.easy.query.core.expression.sql.SqlEntityDeleteExpression;
+import com.easy.query.core.expression.sql.EntityDeleteExpression;
 
 import java.util.Collection;
 
@@ -12,7 +12,7 @@ import java.util.Collection;
  * @author xuejiaming
  */
 public class EasyEntityDeletable<T> extends AbstractEntityDeletable<T> {
-    public EasyEntityDeletable(Collection<T> entities, SqlEntityDeleteExpression sqlEntityDeleteExpression) {
+    public EasyEntityDeletable(Collection<T> entities, EntityDeleteExpression sqlEntityDeleteExpression) {
         super(entities, sqlEntityDeleteExpression);
     }
 

@@ -1,8 +1,8 @@
 package com.easy.query.core.expression.segment.condition.predicate;
 
 import com.easy.query.core.enums.SqlPredicateCompare;
-import com.easy.query.core.expression.sql.SqlEntityExpression;
-import com.easy.query.core.expression.sql.SqlEntityTableExpression;
+import com.easy.query.core.expression.sql.EntityExpression;
+import com.easy.query.core.expression.sql.EntityTableExpression;
 
 /**
  * @FileName: ColumnValuePredicate.java
@@ -11,14 +11,14 @@ import com.easy.query.core.expression.sql.SqlEntityTableExpression;
  * @author xuejiaming
  */
 public class ColumnWithColumnPredicate implements Predicate {
-    private final SqlEntityTableExpression leftTable;
+    private final EntityTableExpression leftTable;
     private final String leftPropertyName;
-    private final SqlEntityTableExpression rightTable;
+    private final EntityTableExpression rightTable;
     private final String rightPropertyName;
     private final SqlPredicateCompare compare;
-    private final SqlEntityExpression sqlEntityExpression;
+    private final EntityExpression sqlEntityExpression;
 
-    public ColumnWithColumnPredicate(SqlEntityTableExpression leftTable, String leftPropertyName, SqlEntityTableExpression rightTable, String rightPropertyName, SqlPredicateCompare compare, SqlEntityExpression sqlEntityExpression) {
+    public ColumnWithColumnPredicate(EntityTableExpression leftTable, String leftPropertyName, EntityTableExpression rightTable, String rightPropertyName, SqlPredicateCompare compare, EntityExpression sqlEntityExpression) {
         this.leftTable = leftTable;
         this.leftPropertyName = leftPropertyName;
         this.rightTable = rightTable;
@@ -35,7 +35,7 @@ public class ColumnWithColumnPredicate implements Predicate {
     }
 
     @Override
-    public SqlEntityTableExpression getTable() {
+    public EntityTableExpression getTable() {
         return leftTable;
     }
 

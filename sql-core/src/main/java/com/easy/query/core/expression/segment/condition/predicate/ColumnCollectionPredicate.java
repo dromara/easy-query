@@ -3,8 +3,8 @@ package com.easy.query.core.expression.segment.condition.predicate;
 import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
 import com.easy.query.core.enums.SqlPredicateCompare;
 import com.easy.query.core.enums.SqlPredicateCompareEnum;
-import com.easy.query.core.expression.sql.SqlEntityExpression;
-import com.easy.query.core.expression.sql.SqlEntityTableExpression;
+import com.easy.query.core.expression.sql.EntityExpression;
+import com.easy.query.core.expression.sql.EntityTableExpression;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -18,11 +18,11 @@ import java.util.Iterator;
 public class ColumnCollectionPredicate implements Predicate {
     private final Collection<?> collection;
     private final SqlPredicateCompare compare;
-    private final SqlEntityExpression sqlEntityExpression;
-    private final SqlEntityTableExpression table;
+    private final EntityExpression sqlEntityExpression;
+    private final EntityTableExpression table;
     private final String propertyName;
 
-    public ColumnCollectionPredicate(SqlEntityTableExpression table, String propertyName, Collection<?> collection, SqlPredicateCompare compare, SqlEntityExpression sqlEntityExpression) {
+    public ColumnCollectionPredicate(EntityTableExpression table, String propertyName, Collection<?> collection, SqlPredicateCompare compare, EntityExpression sqlEntityExpression) {
         this.table = table;
         this.propertyName = propertyName;
         this.collection = collection;
@@ -59,7 +59,7 @@ public class ColumnCollectionPredicate implements Predicate {
     }
 
     @Override
-    public SqlEntityTableExpression getTable() {
+    public EntityTableExpression getTable() {
         return table;
     }
 

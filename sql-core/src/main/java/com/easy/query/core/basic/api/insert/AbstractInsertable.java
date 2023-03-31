@@ -5,8 +5,8 @@ import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.basic.plugin.interceptor.EasyEntityInterceptor;
 import com.easy.query.core.basic.plugin.interceptor.EasyInterceptor;
 import com.easy.query.core.expression.sql.def.EasyEntityTableExpression;
-import com.easy.query.core.expression.sql.SqlEntityInsertExpression;
-import com.easy.query.core.expression.sql.SqlEntityTableExpression;
+import com.easy.query.core.expression.sql.EntityInsertExpression;
+import com.easy.query.core.expression.sql.EntityTableExpression;
 import com.easy.query.core.util.StringUtil;
 import com.easy.query.core.basic.jdbc.executor.EasyExecutor;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
@@ -24,15 +24,15 @@ import java.util.function.Function;
 public abstract class AbstractInsertable<T> implements Insertable<T> {
     protected final List<T> entities;
     protected final EntityMetadata entityMetadata;
-    protected final SqlEntityInsertExpression sqlEntityInsertExpression;
+    protected final EntityInsertExpression sqlEntityInsertExpression;
 
-    public AbstractInsertable(Class<T> clazz, SqlEntityInsertExpression sqlEntityInsertExpression) {
+    public AbstractInsertable(Class<T> clazz, EntityInsertExpression sqlEntityInsertExpression) {
         this.sqlEntityInsertExpression = sqlEntityInsertExpression;
         this.entities = new ArrayList<>();
         entityMetadata = this.sqlEntityInsertExpression.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(clazz);
         entityMetadata.checkTable();
 
-        SqlEntityTableExpression table = new EasyEntityTableExpression(entityMetadata, 0, null, MultiTableTypeEnum.FROM);
+        EntityTableExpression table = new EasyEntityTableExpression(entityMetadata, 0, null, MultiTableTypeEnum.FROM);
         this.sqlEntityInsertExpression.addSqlEntityTableExpression(table);
     }
 

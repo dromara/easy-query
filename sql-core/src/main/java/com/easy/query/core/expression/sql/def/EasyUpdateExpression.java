@@ -4,7 +4,6 @@ import com.easy.query.core.abstraction.EasyQueryLambdaFactory;
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.plugin.version.EasyVersionStrategy;
 import com.easy.query.core.enums.EasyBehaviorEnum;
-import com.easy.query.core.expression.parser.abstraction.SqlPredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnVersionPropertyPredicate;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
@@ -27,15 +26,14 @@ import com.easy.query.core.basic.plugin.track.EntityState;
 import com.easy.query.core.basic.plugin.track.TrackContext;
 import com.easy.query.core.basic.plugin.track.TrackDiffEntry;
 import com.easy.query.core.basic.plugin.track.TrackManager;
-import com.easy.query.core.expression.sql.internal.AbstractSqlPredicateEntityExpression;
-import com.easy.query.core.expression.sql.SqlEntityTableExpression;
-import com.easy.query.core.expression.sql.SqlEntityUpdateExpression;
-import com.easy.query.core.expression.sql.SqlExpressionContext;
+import com.easy.query.core.expression.sql.internal.AbstractPredicateEntityExpression;
+import com.easy.query.core.expression.sql.EntityTableExpression;
+import com.easy.query.core.expression.sql.EntityUpdateExpression;
+import com.easy.query.core.expression.sql.ExpressionContext;
 import com.easy.query.core.metadata.VersionMetadata;
 import com.easy.query.core.util.ArrayUtil;
 import com.easy.query.core.util.BeanUtil;
 import com.easy.query.core.util.ClassUtil;
-import com.easy.query.core.util.EasyUtil;
 import com.easy.query.core.util.TrackUtil;
 
 import java.util.*;
@@ -46,7 +44,7 @@ import java.util.*;
  * @Date: 2023/3/4 17:05
  * @author xuejiaming
  */
-public abstract class EasySqlUpdateExpression extends AbstractSqlPredicateEntityExpression implements SqlEntityUpdateExpression {
+public abstract class EasyUpdateExpression extends AbstractPredicateEntityExpression implements EntityUpdateExpression {
 
     protected final boolean isExpressionUpdate;
     private SqlBuilderSegment setColumns;
@@ -54,7 +52,7 @@ public abstract class EasySqlUpdateExpression extends AbstractSqlPredicateEntity
     private SqlBuilderSegment setIgnoreColumns;
     private SqlBuilderSegment whereColumns;
 
-    public EasySqlUpdateExpression(SqlExpressionContext queryExpressionContext, boolean isExpressionUpdate) {
+    public EasyUpdateExpression(ExpressionContext queryExpressionContext, boolean isExpressionUpdate) {
         super(queryExpressionContext);
         this.isExpressionUpdate = isExpressionUpdate;
     }
@@ -120,7 +118,7 @@ public abstract class EasySqlUpdateExpression extends AbstractSqlPredicateEntity
 
     @Override
     public String toSql() {
-        getSqlExpressionContext().clearParameters();
+        getExpressionContext().clearParameters();
         int tableCount = getTables().size();
         if (tableCount == 0) {
             throw new EasyQueryException("未找到查询表信息");
@@ -143,7 +141,7 @@ public abstract class EasySqlUpdateExpression extends AbstractSqlPredicateEntity
         if (!hasWhere()) {
             throw new EasyQueryException("'UPDATE' statement without 'WHERE'");
         }
-        SqlEntityTableExpression table = getTable(0);
+        EntityTableExpression table = getTable(0);
 
         //逻辑删除
         PredicateSegment sqlWhere = buildWherePredicateSegment(getWhere(), table);
@@ -167,7 +165,7 @@ public abstract class EasySqlUpdateExpression extends AbstractSqlPredicateEntity
 //        return internalToSql(table, getSetColumns(), sqlWhere);
 //    }
 
-    protected String internalToSql(SqlEntityTableExpression table, SqlBuilderSegment updateSet, PredicateSegment sqlWhere) {
+    protected String internalToSql(EntityTableExpression table, SqlBuilderSegment updateSet, PredicateSegment sqlWhere) {
 
         if (updateSet.isEmpty()) {
             return null;
@@ -178,11 +176,11 @@ public abstract class EasySqlUpdateExpression extends AbstractSqlPredicateEntity
                 sqlWhere.toSql();
     }
 
-    protected SqlBuilderSegment buildSetSqlSegment(SqlEntityTableExpression table) {
+    protected SqlBuilderSegment buildSetSqlSegment(EntityTableExpression table) {
         EntityMetadata entityMetadata = table.getEntityMetadata();
         SqlBuilderSegment updateSet = getSetColumns().cloneSqlBuilder();
         //如果更新拦截器不为空
-        if (getSqlExpressionContext().getBehavior().hasBehavior(EasyBehaviorEnum.USE_INTERCEPTOR) && ArrayUtil.isNotEmpty(entityMetadata.getUpdateSetInterceptors())) {
+        if (getExpressionContext().getBehavior().hasBehavior(EasyBehaviorEnum.USE_INTERCEPTOR) && ArrayUtil.isNotEmpty(entityMetadata.getUpdateSetInterceptors())) {
             EasyQueryConfiguration easyQueryConfiguration = getRuntimeContext().getEasyQueryConfiguration();
             SqlColumnSetter<Object> sqlColumnSetter = getRuntimeContext().getEasyQueryLambdaFactory().createSqlColumnSetter(0, this, updateSet);
             for (String updateSetInterceptor : entityMetadata.getUpdateSetInterceptors()) {
@@ -194,7 +192,7 @@ public abstract class EasySqlUpdateExpression extends AbstractSqlPredicateEntity
         return updateSet;
     }
 
-    protected PredicateSegment buildWherePredicateSegment(PredicateSegment where, SqlEntityTableExpression table) {
+    protected PredicateSegment buildWherePredicateSegment(PredicateSegment where, EntityTableExpression table) {
         if (where.isEmpty()) {
             throw new EasyQueryException("'UPDATE' statement without 'WHERE'");
         }
@@ -203,7 +201,7 @@ public abstract class EasySqlUpdateExpression extends AbstractSqlPredicateEntity
 
     @Override
     public String toSql(Object entity) {
-        getSqlExpressionContext().clearParameters();
+        getExpressionContext().clearParameters();
         int tableCount = getTables().size();
         if (tableCount == 0) {
             throw new EasyQueryException("未找到查询表信息");
@@ -215,7 +213,7 @@ public abstract class EasySqlUpdateExpression extends AbstractSqlPredicateEntity
     }
 
     private String entityToSql(Object entity) {
-        SqlEntityTableExpression table = getTables().get(0);
+        EntityTableExpression table = getTables().get(0);
         AndPredicateSegment where = new AndPredicateSegment(true);
         buildEntityPredicateSegment(where, table);
         PredicateSegment sqlWhere = buildWherePredicateSegment(where, table);
@@ -238,7 +236,7 @@ public abstract class EasySqlUpdateExpression extends AbstractSqlPredicateEntity
 //        }
 //    }
 
-    protected void buildAutoEntitySetColumns(SqlEntityTableExpression table, SqlBuilderSegment updateSet, PredicateSegment sqlWhere, Object entity) {
+    protected void buildAutoEntitySetColumns(EntityTableExpression table, SqlBuilderSegment updateSet, PredicateSegment sqlWhere, Object entity) {
 
         //如果用户没有指定set的列,那么就是set所有列,并且要去掉主键部分
         if (!hasSetColumns()) {
@@ -311,7 +309,7 @@ public abstract class EasySqlUpdateExpression extends AbstractSqlPredicateEntity
      * @param where
      * @param table
      */
-    private void buildEntityPredicateSegment(PredicateSegment where, SqlEntityTableExpression table) {
+    private void buildEntityPredicateSegment(PredicateSegment where, EntityTableExpression table) {
         if (hasWhereColumns()) {
             buildPredicateWithWhereColumns(where, getWhereColumns(), table);
         } else {
@@ -325,7 +323,7 @@ public abstract class EasySqlUpdateExpression extends AbstractSqlPredicateEntity
      * @param where
      * @param table
      */
-    private void buildPredicateWithWhereColumns(PredicateSegment where, SqlBuilderSegment whereColumns, SqlEntityTableExpression table) {
+    private void buildPredicateWithWhereColumns(PredicateSegment where, SqlBuilderSegment whereColumns, EntityTableExpression table) {
 
         if(whereColumns.isNotEmpty()){
             for (SqlSegment sqlSegment : whereColumns.getSqlSegments()) {
@@ -344,7 +342,7 @@ public abstract class EasySqlUpdateExpression extends AbstractSqlPredicateEntity
         return entityMetadata.hasVersionColumn()&&!hasWhereColumns();//如果是手动输入where column那么不会追加
     }
 
-    private void buildPredicateWithKeyColumns(PredicateSegment where, SqlEntityTableExpression table) {
+    private void buildPredicateWithKeyColumns(PredicateSegment where, EntityTableExpression table) {
         EntityMetadata entityMetadata = table.getEntityMetadata();
         Collection<String> keyProperties = entityMetadata.getKeyProperties();
         if (keyProperties.isEmpty()) {

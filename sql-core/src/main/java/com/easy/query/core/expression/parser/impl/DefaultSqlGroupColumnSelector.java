@@ -1,6 +1,6 @@
 package com.easy.query.core.expression.parser.impl;
 
-import com.easy.query.core.expression.sql.SqlEntityQueryExpression;
+import com.easy.query.core.expression.sql.EntityQueryExpression;
 
 /**
  * @FileName: DefaultSqlColumnSelector.java
@@ -9,7 +9,7 @@ import com.easy.query.core.expression.sql.SqlEntityQueryExpression;
  * @author xuejiaming
  */
 public class DefaultSqlGroupColumnSelector<T1> extends DefaultSqlColumnSelector<T1> {
-    public DefaultSqlGroupColumnSelector(int index, SqlEntityQueryExpression sqlEntityExpression) {
+    public DefaultSqlGroupColumnSelector(int index, EntityQueryExpression sqlEntityExpression) {
         super(index, sqlEntityExpression,sqlEntityExpression.getGroup());
     }
 }

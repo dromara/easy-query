@@ -13,8 +13,8 @@ import com.easy.query.core.expression.parser.impl.DefaultSqlColumnSetSelector;
 import com.easy.query.core.basic.plugin.interceptor.EasyEntityInterceptor;
 import com.easy.query.core.basic.plugin.interceptor.EasyInterceptor;
 import com.easy.query.core.expression.sql.def.EasyEntityTableExpression;
-import com.easy.query.core.expression.sql.SqlEntityTableExpression;
-import com.easy.query.core.expression.sql.SqlEntityUpdateExpression;
+import com.easy.query.core.expression.sql.EntityTableExpression;
+import com.easy.query.core.expression.sql.EntityUpdateExpression;
 import com.easy.query.core.basic.plugin.track.TrackManager;
 import com.easy.query.core.basic.jdbc.executor.EasyExecutor;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
@@ -31,11 +31,11 @@ import java.util.function.Function;
  */
 public abstract class AbstractEntityUpdatable<T> extends AbstractSqlExecuteRows implements EntityUpdatable<T> {
     protected final List<T> entities = new ArrayList<>();
-    protected final SqlEntityTableExpression table;
+    protected final EntityTableExpression table;
     protected final  EntityMetadata entityMetadata;
-    protected final SqlEntityUpdateExpression sqlEntityUpdateExpression;
+    protected final EntityUpdateExpression sqlEntityUpdateExpression;
 
-    public AbstractEntityUpdatable(Collection<T> entities, SqlEntityUpdateExpression sqlEntityUpdateExpression) {
+    public AbstractEntityUpdatable(Collection<T> entities, EntityUpdateExpression sqlEntityUpdateExpression) {
         super(sqlEntityUpdateExpression);
         if (entities == null || entities.isEmpty()) {
             throw new EasyQueryException("不支持空对象的update");
@@ -53,7 +53,7 @@ public abstract class AbstractEntityUpdatable<T> extends AbstractSqlExecuteRows 
 
     private List<UpdateEntityNode> createUpdateEntityNode(){
         TrackManager trackManager = sqlEntityUpdateExpression.getRuntimeContext().getTrackManager();
-        if(!UpdateStrategyEnum.DEFAULT.equals(sqlEntityUpdateExpression.getSqlExpressionContext().getUpdateStrategy())||trackManager.currentThreadTracking()){
+        if(!UpdateStrategyEnum.DEFAULT.equals(sqlEntityUpdateExpression.getExpressionContext().getUpdateStrategy())||trackManager.currentThreadTracking()){
             Map<String, UpdateEntityNode> updateEntityNodeMap = new LinkedHashMap<>();
             for (T entity : entities) {
                 String updateSql = toSql(entity);
@@ -147,7 +147,7 @@ public abstract class AbstractEntityUpdatable<T> extends AbstractSqlExecuteRows 
     @Override
     public EntityUpdatable<T> setUpdateStrategy(boolean condition, UpdateStrategyEnum updateStrategy) {
         if(condition){
-            sqlEntityUpdateExpression.getSqlExpressionContext().useUpdateStrategy(updateStrategy);
+            sqlEntityUpdateExpression.getExpressionContext().useUpdateStrategy(updateStrategy);
         }
         return this;
     }
