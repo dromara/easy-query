@@ -12,6 +12,7 @@ import com.easy.query.core.basic.api.insert.Insertable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -26,6 +27,10 @@ public interface EasyQuery {
         return sqlQuery(sql,clazz, Collections.emptyList());
     }
     <T> List<T> sqlQuery(String sql,Class<T> clazz,List<Object> parameters);
+   default List<Map<String,Object>> sqlQueryMap(String sql){
+       return sqlQueryMap(sql,Collections.emptyList());
+   }
+     List<Map<String,Object>> sqlQueryMap(String sql, List<Object> parameters);
     default long sqlExecute(String sql){
         return sqlExecute(sql,Collections.emptyList());
     }

@@ -15,6 +15,7 @@ import com.easy.query.core.basic.plugin.track.TrackManager;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @FileName: EasySqlQuery.java
@@ -39,6 +40,11 @@ public class DefaultEasyQuery implements EasyQuery {
     @Override
     public <T> List<T> sqlQuery(String sql, Class<T> clazz, List<Object> parameters) {
         return easySqlApiFactory.createJDBCExecutor(runtimeContext).sqlQuery(sql,clazz,parameters);
+    }
+
+    @Override
+    public List<Map<String, Object>> sqlQueryMap(String sql, List<Object> parameters) {
+        return easySqlApiFactory.createJDBCExecutor(runtimeContext).sqlQueryMap(sql,parameters);
     }
 
     @Override

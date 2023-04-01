@@ -15,9 +15,12 @@ public interface EasyJDBCExecutor {
    default  <T> List<T> sqlQuery(String sql,Class<T> clazz){
        return sqlQuery(sql,clazz, Collections.emptyList());
    }
+    default List<Map<String,Object>> sqlQueryMap(String sql){
+       return sqlQueryMap(sql,Collections.emptyList());
+    }
    default List<Map<String,Object>> sqlQueryMap(String sql,List<Object> parameters){
-       List<Map> maps = sqlQuery(sql, Map.class, parameters);
-       return maps.stream().map(o->(Map<String,Object>)o).collect(Collectors.toList());
+       List maps = sqlQuery(sql, Map.class, parameters);
+       return (List<Map<String,Object>>)maps;
    }
     <T> List<T> sqlQuery(String sql,Class<T> clazz,List<Object> parameters);
     default long sqlExecute(String sql){

@@ -10,9 +10,9 @@ public interface Interceptable<TChain> {
     TChain noInterceptor();
 
     /**
-     * 单独使用没有效果
      * 如果用在 {@link #noInterceptor()}后面那么就是只使用name的
      * 如果用在 {@link #useInterceptor()} 后面那么就是移除name的
+     * 表达式默认 {@link #useInterceptor()}
      * @param name
      * @return
      */

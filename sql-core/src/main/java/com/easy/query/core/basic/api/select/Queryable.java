@@ -4,6 +4,7 @@ import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.api.dynamic.order.EasyDynamicOrderByConfiguration;
 import com.easy.query.core.basic.api.internal.Interceptable;
 import com.easy.query.core.basic.api.select.provider.EasyQuerySqlBuilderProvider;
+import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
 import com.easy.query.core.exception.EasyQueryWhereInvalidOperationException;
 import com.easy.query.core.expression.lambda.Property;
@@ -15,6 +16,7 @@ import com.easy.query.core.exception.EasyQueryConcurrentException;
 import com.easy.query.core.expression.parser.abstraction.SqlAggregatePredicate;
 import com.easy.query.core.expression.parser.abstraction.SqlPredicate;
 import com.easy.query.core.util.ArrayUtil;
+import com.easy.query.core.util.StringUtil;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -173,11 +175,10 @@ public interface Queryable<T1> extends Query<T1>, Interceptable<Queryable<T1>> {
     Queryable<T1> select(SqlExpression<SqlColumnSelector<T1>> selectExpression);
 
     /**
-     * 将当前T1对象转成TR对象，select会将T1属性映射到TR对象的属性上(忽略大小写)
-     * T1.property1列名叫做column1,T1.property2列名叫做column2，TR.property1的列名也叫column4
-     * 那么生成的sql为:select column1 as column4 from t1 否则不会生成alias别名
-     * 如果当前存在join，那么resultClass只会和当前Queryable的T对象做映射而不会和其他对象做映射,
-     * 简单来说只会和主表做映射
+     * 将当前T1对象转成TR对象，select会将T1属性所对应的列名映射到TR对象的列名上(忽略大小写)
+     * T1.property1列名叫做column1,T1.property2列名叫做column2，TR.property3的列名也叫column1
+     * 那么生成的sql为:select column1 from t1
+     * 如果当前存在join，那么join的子表一律不会映射到resultClass上,如果需要那么请手动调用双参数select
      *
      * @param resultClass
      * @param <TR>
@@ -334,10 +335,14 @@ public interface Queryable<T1> extends Query<T1>, Interceptable<Queryable<T1>> {
      * 将当前表达式最近的一张表的表名修改成 {@param tableName}
      * 如果当前最近的表是正常的数据库表名,那么直接将表名改写
      * 如果当前最近的表是匿名表比如嵌套queryable的表那么将alias改成对应的表名
+     * @throws IllegalArgumentException tableName为null时抛错
      * @param tableName
      * @return
      */
     default Queryable<T1> asTable(String tableName){
+        if(StringUtil.isBlank(tableName)){
+            throw new IllegalArgumentException("tableName is empty");
+        }
         return asTable(old->tableName);
     }
     /**

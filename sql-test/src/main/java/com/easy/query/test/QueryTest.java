@@ -17,6 +17,7 @@ import org.junit.Test;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -460,5 +461,35 @@ public class QueryTest extends BaseTest {
         Assert.assertEquals("SELECT t.`id`,t.`content` FROM (SELECT * FROM t_blog t) t WHERE t.`id` = ?", sql);
         BlogEntity blogEntity = queryable.firstOrNull();
         Assert.assertNull(blogEntity);
+    }
+    @Test
+    public void query32() {
+        List<BlogEntity> blogEntities = easyQuery.sqlQuery("SELECT * FROM t_blog t where t.id=?", BlogEntity.class, Collections.singletonList("1"));
+        Assert.assertNotNull(blogEntities);
+        Assert.assertEquals(1,blogEntities.size());
+    }
+    @Test
+    public void query33() {
+        List<BlogEntity> blogEntities = easyQuery.sqlQuery("SELECT * FROM t_blog t", BlogEntity.class);
+        Assert.assertNotNull(blogEntities);
+        Assert.assertEquals(100,blogEntities.size());
+    }
+    @Test
+    public void query34() {
+        List<BlogEntity> blogEntities = easyQuery.sqlQuery("SELECT * FROM t_blog t where t.id=?", BlogEntity.class, Collections.singletonList("1xx"));
+        Assert.assertNotNull(blogEntities);
+        Assert.assertEquals(0,blogEntities.size());
+    }
+    @Test
+    public void query35() {
+        List<Map<String, Object>> blogs = easyQuery.sqlQueryMap("SELECT * FROM t_blog t");
+        Assert.assertNotNull(blogs);
+        Assert.assertEquals(100,blogs.size());
+    }
+    @Test
+    public void query36() {
+        List<Map<String, Object>> blogs = easyQuery.sqlQueryMap("SELECT * FROM t_blog t  where t.id=?", Collections.singletonList("1xx"));
+        Assert.assertNotNull(blogs);
+        Assert.assertEquals(1,blogs.size());
     }
 }

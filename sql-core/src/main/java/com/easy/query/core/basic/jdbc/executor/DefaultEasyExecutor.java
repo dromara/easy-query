@@ -177,7 +177,7 @@ public class DefaultEasyExecutor implements EasyExecutor {
                         PropertyDescriptor property = incrementProperty[i];
                         if (property == null) {
                             String columnName = incrementColumns.get(i);
-                            String propertyName = entityMetadata.getPropertyName(columnName);
+                            String propertyName = entityMetadata.getPropertyNameOrNull(columnName);
                             property = entityMetadata.getColumnNotNull(propertyName).getProperty();
                             incrementProperty[i] = property;
                         }
@@ -326,7 +326,7 @@ public class DefaultEasyExecutor implements EasyExecutor {
 
             String colName = getColName(rsmd, i + 1);//数据库查询出来的列名
 
-            String propertyName = entityMetadata.getPropertyName(colName);
+            String propertyName = entityMetadata.getPropertyNameOrNull(colName);
             ColumnMetadata column = entityMetadata.getColumnOrNull(propertyName);
             columnMetadatas[i] = column;
         }

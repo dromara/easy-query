@@ -66,7 +66,7 @@ public class ExecutorContext {
     }
 
     public Object getEncryptValue(SQLParameter sqlParameter, Object value) {
-        if (value != null) {
+        if (value != null&&sqlParameter.getTable()!=null) {
             EntityMetadata entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(sqlParameter.getTable().entityClass());
             ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(sqlParameter.getPropertyName());
             if (columnMetadata.isEncryption()) {
