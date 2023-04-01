@@ -2,6 +2,7 @@ package com.easy.query.core.expression.sql.internal;
 
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
+import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.expression.sql.EntityExpression;
 import com.easy.query.core.expression.sql.EntityTableExpression;
 import com.easy.query.core.expression.sql.ExpressionContext;
@@ -18,12 +19,10 @@ import java.util.List;
 public abstract class AbstractEntityExpression implements EntityExpression {
     protected final ExpressionContext sqlExpressionContext;
     protected final List<EntityTableExpression> tables;
-    protected boolean logicDelete;
 
     public AbstractEntityExpression(ExpressionContext sqlExpressionContext){
         this.sqlExpressionContext = sqlExpressionContext;
         this.tables = new ArrayList<>();
-        logicDelete=true;
     }
 
     @Override
@@ -76,6 +75,10 @@ public abstract class AbstractEntityExpression implements EntityExpression {
     }
     @Override
     public void setLogicDelete(boolean logicDelete) {
-        this.logicDelete = logicDelete;
+        if(logicDelete){
+            sqlExpressionContext.getBehavior().addBehavior(EasyBehaviorEnum.LOGIC_DELETE);
+        }else{
+            sqlExpressionContext.getBehavior().removeBehavior(EasyBehaviorEnum.LOGIC_DELETE);
+        }
     }
 }

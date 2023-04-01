@@ -3,6 +3,7 @@ package com.easy.query.core.basic.api.select;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.api.dynamic.order.EasyDynamicOrderByConfiguration;
 import com.easy.query.core.basic.api.internal.Interceptable;
+import com.easy.query.core.basic.api.internal.LogicDeletable;
 import com.easy.query.core.basic.api.select.provider.EasyQuerySqlBuilderProvider;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
@@ -29,7 +30,7 @@ import java.util.function.Function;
  * @Date: 2023/2/6 21:28
  * @author xuejiaming
  */
-public interface Queryable<T1> extends Query<T1>, Interceptable<Queryable<T1>> {
+public interface Queryable<T1> extends Query<T1>, Interceptable<Queryable<T1>>, LogicDeletable<Queryable<T1>> {
     /**
      * 只clone表达式共享上下文
      *
@@ -322,9 +323,6 @@ public interface Queryable<T1> extends Query<T1>, Interceptable<Queryable<T1>> {
 
     EasyQuerySqlBuilderProvider<T1> getSqlBuilderProvider1();
 
-    Queryable<T1> disableLogicDelete();
-
-    Queryable<T1> enableLogicDelete();
 //    Queryable<T1> logicDelete(boolean use);
 
     Queryable<T1> asTracking();

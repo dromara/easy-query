@@ -294,6 +294,11 @@ public abstract class AbstractQueryable3<T1, T2, T3> extends AbstractQueryable<T
         super.enableLogicDelete();
         return this;
     }
+    @Override
+    public Queryable3<T1, T2, T3> useLogicDelete(boolean enable) {
+        super.useLogicDelete(enable);
+        return this;
+    }
 
     @Override
     public Queryable3<T1, T2, T3> noInterceptor() {

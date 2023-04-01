@@ -1,5 +1,6 @@
 package com.easy.query.core.basic.api.delete;
 
+import com.easy.query.core.basic.api.internal.LogicDeletable;
 import com.easy.query.core.basic.api.internal.SqlExecuteExpectRows;
 import com.easy.query.core.basic.api.select.Queryable;
 
@@ -11,35 +12,12 @@ import java.util.function.Function;
  * @Date: 2023/2/28 12:19
  * @author xuejiaming
  */
-public interface Deletable<T, TChain> extends SqlExecuteExpectRows {
+public interface Deletable<T, TChain> extends SqlExecuteExpectRows, LogicDeletable<TChain> {
     /**
      * 语句转成sql
      * @return
      */
     String toSql();
-
-    /**
-     * 禁用逻辑删除
-     * @return
-     */
-    default TChain disableLogicDelete() {
-        return useLogicDelete(false);
-    }
-
-    /**
-     * 启用逻辑删除
-     * @return
-     */
-    default TChain enableLogicDelete() {
-        return useLogicDelete(true);
-    }
-
-    /**
-     * 是否使用逻辑删除
-     * @param enable
-     * @return
-     */
-    TChain useLogicDelete(boolean enable);
 
     /**
      * 是否允许删除命令

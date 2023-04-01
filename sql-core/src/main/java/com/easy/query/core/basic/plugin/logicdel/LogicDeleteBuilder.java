@@ -28,11 +28,11 @@ public class LogicDeleteBuilder {
 
     /**
      * 配置软删除
-     * @param queryFilterExpression
+     * @param sqlPredicateSqlExpression
      * @param deletedSqlExpression
      */
-    public void configure(SqlExpression<SqlPredicate<Object>> queryFilterExpression, SqlExpression<SqlColumnSetter<Object>> deletedSqlExpression){
-        entityMetadata.setLogicDeleteMetadata(new LogicDeleteMetadata(propertyName,queryFilterExpression, deletedSqlExpression));
+    public void configure(SqlExpression<SqlPredicate<Object>> sqlPredicateSqlExpression, SqlExpression<SqlColumnSetter<Object>> deletedSqlExpression){
+        entityMetadata.setLogicDeleteMetadata(new LogicDeleteMetadata(propertyName,sqlPredicateSqlExpression, deletedSqlExpression));
     }
     public Property<Object,?> getPropertyLambda(){
         return EasyUtil.getFastBean(entityMetadata.getEntityClass()).getBeanGetter(propertyName,propertyType);

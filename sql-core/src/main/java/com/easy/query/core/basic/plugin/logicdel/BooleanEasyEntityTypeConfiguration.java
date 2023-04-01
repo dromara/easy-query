@@ -32,7 +32,7 @@ public class BooleanEasyEntityTypeConfiguration extends AbstractEasyLogicDeleteS
 
 
     @Override
-    protected SqlExpression<SqlPredicate<Object>> getQueryFilterExpression(LogicDeleteBuilder builder, Property<Object,?> lambdaProperty) {
+    protected SqlExpression<SqlPredicate<Object>> getPredicateFilterExpression(LogicDeleteBuilder builder, Property<Object,?> lambdaProperty) {
         return o->o.eq(lambdaProperty,false);
     }
 

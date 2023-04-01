@@ -152,6 +152,8 @@ public interface Queryable4<T1,T2,T3,T4> extends Queryable<T1> {
 
     @Override
     Queryable4<T1, T2, T3,T4> enableLogicDelete();
+    @Override
+    Queryable4<T1, T2, T3,T4> useLogicDelete(boolean enable);
 
     @Override
     Queryable4<T1, T2, T3,T4> noInterceptor();

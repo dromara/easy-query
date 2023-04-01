@@ -1,7 +1,10 @@
 package com.easy.query.core.basic.api.internal;
 
+import com.easy.query.core.basic.api.update.EntityUpdatable;
+import com.easy.query.core.basic.api.update.Updatable;
 import com.easy.query.core.basic.jdbc.con.EasyConnectionManager;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
+import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.exception.EasyQueryConcurrentException;
 import com.easy.query.core.expression.sql.EntityExpression;
 
@@ -11,7 +14,7 @@ import com.easy.query.core.expression.sql.EntityExpression;
  * @Date: 2023/3/17 17:14
  * @author xuejiaming
  */
-public abstract class AbstractSqlExecuteRows<TChain>  implements SqlExecuteExpectRows,Interceptable<TChain> {
+public abstract class AbstractSqlExecuteRows<TChain>  implements SqlExecuteExpectRows,Interceptable<TChain>,LogicDeletable<TChain> {
     private final EntityExpression sqlEntityExpression;
 
     public AbstractSqlExecuteRows(EntityExpression sqlEntityExpression){
@@ -61,6 +64,16 @@ public abstract class AbstractSqlExecuteRows<TChain>  implements SqlExecuteExpec
     @Override
     public TChain useInterceptor() {
         sqlEntityExpression.getExpressionContext().useInterceptor();
+        return (TChain) this;
+    }
+
+    @Override
+    public TChain useLogicDelete(boolean enable) {
+        if(enable){
+            sqlEntityExpression.getExpressionContext().getBehavior().addBehavior(EasyBehaviorEnum.LOGIC_DELETE);
+        }else{
+            sqlEntityExpression.getExpressionContext().getBehavior().removeBehavior(EasyBehaviorEnum.LOGIC_DELETE);
+        }
         return (TChain) this;
     }
 }

@@ -31,7 +31,7 @@ public class LocalDateTimeEasyEntityTypeConfiguration extends AbstractEasyLogicD
     }
 
     @Override
-    protected SqlExpression<SqlPredicate<Object>> getQueryFilterExpression(LogicDeleteBuilder builder, Property<Object,?> lambdaProperty) {
+    protected SqlExpression<SqlPredicate<Object>> getPredicateFilterExpression(LogicDeleteBuilder builder, Property<Object,?> lambdaProperty) {
         return o->o.isNull(lambdaProperty);
     }
 

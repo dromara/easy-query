@@ -12,7 +12,21 @@ import java.util.Set;
  * @author xuejiaming
  */
 public interface EasyLogicDeleteStrategy {
+    /**
+     * 逻辑删除策略名称
+     * @return
+     */
     String getStrategy();
+
+    /**
+     * 哪些属性类型支持
+     * @return
+     */
     Set<Class<?>> allowedPropertyTypes();
+
+    /**
+     * 配置逻辑删除过滤和set
+     * @param builder
+     */
     void configure(LogicDeleteBuilder builder);
 }

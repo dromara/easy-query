@@ -52,4 +52,24 @@ public class EasyEmptyEntityUpdatable<T> implements EntityUpdatable<T> {
     public EntityUpdatable<T> asTable(Function<String, String> tableNameAs) {
         return this;
     }
+
+    @Override
+    public EntityUpdatable<T> noInterceptor() {
+        return this;
+    }
+
+    @Override
+    public EntityUpdatable<T> interceptor(String name) {
+        return this;
+    }
+
+    @Override
+    public EntityUpdatable<T> useInterceptor() {
+        return this;
+    }
+
+    @Override
+    public EntityUpdatable<T> useLogicDelete(boolean enable) {
+        return this;
+    }
 }

@@ -156,10 +156,12 @@ public interface Queryable2<T1, T2> extends Queryable<T1> {
     Queryable2<T1, T2> distinct(boolean condition);
     //endregion
     @Override
-    Queryable2<T1, T2> disableLogicDelete();
+   Queryable2<T1, T2> disableLogicDelete();
 
     @Override
     Queryable2<T1, T2> enableLogicDelete();
+    @Override
+    Queryable2<T1, T2> useLogicDelete(boolean enable);
 
     @Override
     Queryable2<T1, T2> noInterceptor();

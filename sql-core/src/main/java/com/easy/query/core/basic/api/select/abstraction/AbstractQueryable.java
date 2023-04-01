@@ -639,17 +639,14 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     }
 
     @Override
-    public Queryable<T1> disableLogicDelete() {
-        sqlEntityExpression.getExpressionContext().getBehavior().removeBehavior(EasyBehaviorEnum.LOGIC_DELETE);
+    public Queryable<T1> useLogicDelete(boolean enable) {
+        if(enable){
+            sqlEntityExpression.getExpressionContext().getBehavior().addBehavior(EasyBehaviorEnum.LOGIC_DELETE);
+        }else{
+            sqlEntityExpression.getExpressionContext().getBehavior().removeBehavior(EasyBehaviorEnum.LOGIC_DELETE);
+        }
         return this;
     }
-
-    @Override
-    public Queryable<T1> enableLogicDelete() {
-        sqlEntityExpression.getExpressionContext().getBehavior().addBehavior(EasyBehaviorEnum.LOGIC_DELETE);
-        return this;
-    }
-
 
     @Override
     public Queryable<T1> noInterceptor() {
