@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
  * @author xuejiaming
  */
 @Data
-public class BlogEntityTest {
+public class BlogEntityTest2 {
 
     /**
      * 标题
@@ -26,6 +26,7 @@ public class BlogEntityTest {
     /**
      * 博客链接
      */
+    @Column("my_url")
     private String url;
     /**
      * 点赞数

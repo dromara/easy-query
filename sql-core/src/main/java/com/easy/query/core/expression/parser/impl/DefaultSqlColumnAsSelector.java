@@ -15,6 +15,7 @@ import com.easy.query.core.expression.sql.EntityTableExpression;
 import com.easy.query.core.util.LambdaUtil;
 
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * @FileName: DefaultSqSelector.java
@@ -25,18 +26,21 @@ import java.util.Collection;
 public class DefaultSqlColumnAsSelector<T1, TR> extends AbstractSqlColumnSelector<T1, SqlColumnAsSelector<T1, TR>> implements SqlColumnAsSelector<T1, TR> {
 
     private final Class<TR> resultClass;
+    private final EntityMetadata resultEntityMetadata;
 
     public DefaultSqlColumnAsSelector(int index, EntityExpression sqlEntityExpression, SqlBuilderSegment sqlSegment0Builder, Class<TR> resultClass) {
         super(index, sqlEntityExpression, sqlSegment0Builder);
         this.resultClass = resultClass;
+        this.resultEntityMetadata = sqlEntityExpression.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(resultClass);
     }
 
     @Override
     public SqlColumnAsSelector<T1, TR> columnAs(Property<T1, ?> column, Property<TR, ?> alias) {
         EntityTableExpression table = sqlEntityExpression.getTable(getIndex());
         String propertyName = table.getPropertyName(column);
-        String columnAsName = LambdaUtil.getPropertyName(alias);
-        sqlSegmentBuilder.append(new ColumnSegment(table, propertyName, sqlEntityExpression, columnAsName));
+        String aliasPropertyName = LambdaUtil.getPropertyName(alias);
+        ColumnMetadata columnMetadata = resultEntityMetadata.getColumnNotNull(aliasPropertyName);
+        sqlSegmentBuilder.append(new ColumnSegment(table, propertyName, sqlEntityExpression, columnMetadata.getName()));
         return this;
     }
 
@@ -54,12 +58,18 @@ public class DefaultSqlColumnAsSelector<T1, TR> extends AbstractSqlColumnSelecto
         if (table instanceof AnonymousEntityTableExpression) {
             columnAnonymousAll((AnonymousEntityTableExpression) table);
         } else {
-            EntityMetadata entityMetadata = sqlEntityExpression.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(resultClass);
-            Collection<String> properties = table.getEntityMetadata().getProperties();
+            EntityMetadata entityMetadata = table.getEntityMetadata();
+            Collection<String> properties = entityMetadata.getProperties();
             for (String property : properties) {
-                ColumnMetadata columnOrNull = entityMetadata.getColumnOrNull(property);
-                String alias = columnOrNull == null ? null :columnOrNull.getName();
-                sqlSegmentBuilder.append(new ColumnSegment(table, property, sqlEntityExpression,alias));
+                ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(property);
+                String columnName = columnMetadata.getName();
+                String aliasPropertyName = resultEntityMetadata.getPropertyNameOrNull(columnName);
+                if(aliasPropertyName!=null){
+                    ColumnMetadata resultColumnMetadata = resultEntityMetadata.getColumnNotNull(aliasPropertyName);
+                    String aliasColumnName = resultColumnMetadata.getName();
+                    String alias = Objects.equals(columnName,aliasColumnName)?null:aliasColumnName;
+                    sqlSegmentBuilder.append(new ColumnSegment(table, property, sqlEntityExpression,alias));
+                }
             }
         }
         return this;

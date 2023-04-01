@@ -7,6 +7,7 @@ import com.easy.query.core.enums.EasyAggregate;
 import com.easy.query.core.enums.SqlPredicateCompareEnum;
 import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
 import com.easy.query.dto.BlogEntityTest;
+import com.easy.query.dto.BlogEntityTest2;
 import com.easy.query.dto.TopicGroupTestDTO;
 import com.easy.query.dto.TopicRequest;
 import com.easy.query.entity.BlogEntity;
@@ -20,6 +21,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * @FileName: QueryTest.java
@@ -488,8 +490,83 @@ public class QueryTest extends BaseTest {
     }
     @Test
     public void query36() {
-        List<Map<String, Object>> blogs = easyQuery.sqlQueryMap("SELECT * FROM t_blog t  where t.id=?", Collections.singletonList("1xx"));
+        List<Map<String, Object>> blogs = easyQuery.sqlQueryMap("SELECT * FROM t_blog t  where t.id=?", Collections.singletonList("1"));
         Assert.assertNotNull(blogs);
         Assert.assertEquals(1,blogs.size());
+    }
+    @Test
+    public void query37() {
+        String newContent= UUID.randomUUID().toString();
+        long l = easyQuery.sqlExecute("update t_blog set content='"+newContent +"' where id='1'");
+        Assert.assertEquals(1,l);
+        BlogEntity blog = easyQuery.queryable(BlogEntity.class)
+                .whereId("1").firstOrNull();
+        Assert.assertNotNull(blog);
+        Assert.assertEquals(newContent,blog.getContent());
+    }
+    @Test
+    public void query38() {
+        String newContent= UUID.randomUUID().toString();
+        long l = easyQuery.sqlExecute("update t_blog set content=? where id=?", Arrays.asList(newContent,"1"));
+        Assert.assertEquals(1,l);
+        BlogEntity blog = easyQuery.queryable(BlogEntity.class)
+                .whereId("1").firstOrNull();
+        Assert.assertNotNull(blog);
+        Assert.assertEquals(newContent,blog.getContent());
+    }
+
+
+    @Test
+    public void query39() {
+        {
+
+            Queryable<BlogEntityTest2> queryable = easyQuery.queryable(BlogEntity.class)
+                    .select(BlogEntityTest2.class,o->o.columnAs(BlogEntity::getUrl, BlogEntityTest2::getUrl));
+            String sql = queryable.toSql();
+            Assert.assertEquals("SELECT t.`url` AS `my_url` FROM t_blog t WHERE t.`deleted` = ?", sql);
+            List<BlogEntityTest2> blogEntityTest2s = easyQuery.queryable(BlogEntity.class)
+                    .select(BlogEntityTest2.class, o -> o.columnAs(BlogEntity::getUrl, BlogEntityTest2::getUrl)).toList();
+            Assert.assertEquals(100,blogEntityTest2s.size());
+        }
+        {
+
+            Queryable<BlogEntityTest2> queryable = easyQuery.queryable(BlogEntity.class)
+                    .select(BlogEntityTest2.class);
+            String sql = queryable.toSql();
+            Assert.assertEquals("SELECT t.`title`,t.`content`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top` FROM t_blog t WHERE t.`deleted` = ?", sql);
+            List<BlogEntityTest2> blogEntityTest2s = easyQuery.queryable(BlogEntity.class)
+                    .select(BlogEntityTest2.class).toList();
+            Assert.assertEquals(100,blogEntityTest2s.size());
+        }
+        {
+
+            Queryable<BlogEntityTest2> queryable = easyQuery.queryable(BlogEntity.class)
+                    .select(BlogEntityTest2.class,o->o.columnAll());
+            String sql = queryable.toSql();
+            Assert.assertEquals("SELECT t.`title`,t.`content`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top` FROM t_blog t WHERE t.`deleted` = ?", sql);
+            List<BlogEntityTest2> blogEntityTest2s = easyQuery.queryable(BlogEntity.class)
+                    .select(BlogEntityTest2.class,o->o.columnAll()).toList();
+            Assert.assertEquals(100,blogEntityTest2s.size());
+        }
+        {
+
+            Queryable<BlogEntityTest2> queryable = easyQuery.queryable(BlogEntity.class)
+                    .select(BlogEntityTest2.class,o->o.columnAll().columnAs(BlogEntity::getUrl,BlogEntityTest2::getUrl));
+            String sql = queryable.toSql();
+            Assert.assertEquals("SELECT t.`title`,t.`content`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top`,t.`url` AS `my_url` FROM t_blog t WHERE t.`deleted` = ?", sql);
+            List<BlogEntityTest2> blogEntityTest2s = easyQuery.queryable(BlogEntity.class)
+                    .select(BlogEntityTest2.class,o->o.columnAll().columnAs(BlogEntity::getUrl,BlogEntityTest2::getUrl)).toList();
+            Assert.assertEquals(100,blogEntityTest2s.size());
+        }
+        {
+
+            Queryable<BlogEntityTest2> queryable = easyQuery.queryable(BlogEntity.class)
+                    .select(BlogEntityTest2.class,o->o.columnAll().columnIgnore(BlogEntity::getTitle).columnAs(BlogEntity::getUrl,BlogEntityTest2::getUrl));
+            String sql = queryable.toSql();
+            Assert.assertEquals("SELECT t.`content`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top`,t.`url` AS `my_url` FROM t_blog t WHERE t.`deleted` = ?", sql);
+            List<BlogEntityTest2> blogEntityTest2s = easyQuery.queryable(BlogEntity.class)
+                    .select(BlogEntityTest2.class,o->o.columnAll().columnIgnore(BlogEntity::getTitle).columnAs(BlogEntity::getUrl,BlogEntityTest2::getUrl)).toList();
+            Assert.assertEquals(100,blogEntityTest2s.size());
+        }
     }
 }

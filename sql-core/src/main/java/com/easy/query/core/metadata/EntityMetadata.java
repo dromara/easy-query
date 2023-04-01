@@ -232,7 +232,7 @@ public class EntityMetadata {
     }
 
     public String getPropertyNameOrNull(String columnName) {
-        return getPropertyNameOrNull(columnName, columnName);
+        return getPropertyNameOrNull(columnName, null);
     }
 
     /**
