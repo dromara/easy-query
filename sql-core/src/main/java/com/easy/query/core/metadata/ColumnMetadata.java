@@ -29,6 +29,7 @@ public class ColumnMetadata {
     private  boolean updateIgnore =false;
 
     private  Class<? extends EasyEncryptionStrategy> encryptionStrategy;
+    private  boolean supportQuery =false;
 
     public ColumnMetadata(EntityMetadata entityMetadata, String name) {
         this.entityMetadata = entityMetadata;
@@ -108,5 +109,13 @@ public class ColumnMetadata {
 
     public void setEncryptionStrategy(Class<? extends EasyEncryptionStrategy> encryptionStrategy) {
         this.encryptionStrategy = encryptionStrategy;
+    }
+
+    public boolean isSupportQuery() {
+        return supportQuery;
+    }
+
+    public void setSupportQuery(boolean supportQuery) {
+        this.supportQuery = supportQuery;
     }
 }

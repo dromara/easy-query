@@ -43,4 +43,19 @@ public class EasyEmptyInsertable<T>implements Insertable<T> {
     public String toSql() {
         return null;
     }
+
+    @Override
+    public Insertable<T> noInterceptor() {
+        return this;
+    }
+
+    @Override
+    public Insertable<T> interceptor(String name) {
+        return this;
+    }
+
+    @Override
+    public Insertable<T> useInterceptor() {
+        return this;
+    }
 }

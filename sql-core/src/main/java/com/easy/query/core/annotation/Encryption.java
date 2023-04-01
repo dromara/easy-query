@@ -19,4 +19,10 @@ import java.lang.annotation.RetentionPolicy;
 @Target({ElementType.FIELD, ElementType.ANNOTATION_TYPE})
 public @interface Encryption {
     Class<? extends EasyEncryptionStrategy> strategy();
+
+    /**
+     * 是否需要支持查询
+     * @return
+     */
+    boolean supportQuery() default false;
 }
