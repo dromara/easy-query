@@ -202,8 +202,8 @@ public interface WherePredicate<T1, TChain> extends IndexAware {
      * @param val
      * @return
      */
-    default TChain notLikeStart(Property<T1, ?> column, Object val) {
-        return notLikeStart(true, column, val);
+    default TChain notLikeMatchLeft(Property<T1, ?> column, Object val) {
+        return notLikeMatchLeft(true, column, val);
     }
 
     /**
@@ -213,7 +213,7 @@ public interface WherePredicate<T1, TChain> extends IndexAware {
      * @param val
      * @return
      */
-    default TChain notLikeStart(boolean condition, Property<T1, ?> column, Object val) {
+    default TChain notLikeMatchLeft(boolean condition, Property<T1, ?> column, Object val) {
         return notLike(condition, column, val, SqlLikeEnum.LIKE_ALL);
     }
 
@@ -223,8 +223,8 @@ public interface WherePredicate<T1, TChain> extends IndexAware {
      * @param val
      * @return
      */
-    default TChain notLikeEnd(Property<T1, ?> column, Object val) {
-        return notLikeEnd(true, column, val);
+    default TChain notLikeMatchRight(Property<T1, ?> column, Object val) {
+        return notLikeMatchRight(true, column, val);
     }
 
     /**
@@ -234,7 +234,7 @@ public interface WherePredicate<T1, TChain> extends IndexAware {
      * @param val
      * @return
      */
-    default TChain notLikeEnd(boolean condition, Property<T1, ?> column, Object val) {
+    default TChain notLikeMatchRight(boolean condition, Property<T1, ?> column, Object val) {
         return notLike(condition, column, val, SqlLikeEnum.LIKE_END);
     }
 
@@ -293,6 +293,7 @@ public interface WherePredicate<T1, TChain> extends IndexAware {
 
     /**
      * column in collection
+     * 集合为空返回False
      */
     default TChain in(Property<T1, ?> column, Collection<?> collection) {
         return in(true, column, collection);
@@ -300,11 +301,13 @@ public interface WherePredicate<T1, TChain> extends IndexAware {
 
     /**
      * column in collection
+     * 集合为空返回False
      */
     TChain in(boolean condition, Property<T1, ?> column, Collection<?> collection);
 
     /**
      * column not in collection
+     * 集合为空返回True
      */
     default TChain notIn(Property<T1, ?> column, Collection<?> collection) {
         return notIn(true, column, collection);
@@ -312,6 +315,7 @@ public interface WherePredicate<T1, TChain> extends IndexAware {
 
     /**
      * column not in collection
+     * 集合为空返回True
      */
     TChain notIn(boolean condition, Property<T1, ?> column, Collection<?> collection);
 
