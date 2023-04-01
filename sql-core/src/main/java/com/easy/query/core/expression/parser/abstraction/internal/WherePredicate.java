@@ -315,6 +315,36 @@ public interface WherePredicate<T1, TChain> extends IndexAware {
      */
     TChain notIn(boolean condition, Property<T1, ?> column, Collection<?> collection);
 
+
+    /**
+     * 区间 (left..right] = {x | left < x <= right}
+     * 一般用于范围比如时间,小的时间在前大的时间在后
+     * @param column
+     * @param conditionLeft
+     * @param valLeft
+     * @param conditionRight
+     * @param valRight
+     * @return
+     */
+    default TChain rangeOpenClosed(Property<T1, ?> column, boolean conditionLeft, Object valLeft, boolean conditionRight, Object valRight) {
+        return rangeOpenClosed(true, column, conditionLeft, valLeft, conditionRight, valRight);
+    }
+
+    /**
+     * 区间 (left..right] = {x | left < x <= right}
+     * 一般用于范围比如时间,小的时间在前大的时间在后
+     * @param condition
+     * @param column
+     * @param conditionLeft
+     * @param valLeft
+     * @param conditionRight
+     * @param valRight
+     * @return
+     */
+    default TChain rangeOpenClosed(boolean condition, Property<T1, ?> column, boolean conditionLeft, Object valLeft, boolean conditionRight, Object valRight) {
+        return range(condition, column, conditionLeft, valLeft, conditionRight, valRight, SqlRangeEnum.openClosed);
+    }
+
     /**
      * 区间 (left..right) = {x | left < x < right}
      * 一般用于范围比如时间,小的时间在前大的时间在后
@@ -342,6 +372,33 @@ public interface WherePredicate<T1, TChain> extends IndexAware {
      */
     default TChain rangeOpen(boolean condition, Property<T1, ?> column, boolean conditionLeft, Object valLeft, boolean conditionRight, Object valRight) {
         return range(condition, column, conditionLeft, valLeft, conditionRight, valRight, SqlRangeEnum.Open);
+    }
+    /**
+     * [left..right) = {x | left <= x < right}
+     * 一般用于范围比如时间,小的时间在前大的时间在后
+     * @param column
+     * @param conditionLeft
+     * @param valLeft
+     * @param conditionRight
+     * @param valRight
+     * @return
+     */
+    default TChain rangeClosedOpen(Property<T1, ?> column, boolean conditionLeft, Object valLeft, boolean conditionRight, Object valRight) {
+        return rangeClosedOpen(true, column, conditionLeft, valLeft, conditionRight, valRight);
+    }
+    /**
+     * [left..right) = {x | left <= x < right}
+     * 一般用于范围比如时间,小的时间在前大的时间在后
+     * @param condition
+     * @param column
+     * @param conditionLeft
+     * @param valLeft
+     * @param conditionRight
+     * @param valRight
+     * @return
+     */
+    default TChain rangeClosedOpen(boolean condition, Property<T1, ?> column, boolean conditionLeft, Object valLeft, boolean conditionRight, Object valRight) {
+        return range(condition, column, conditionLeft, valLeft, conditionRight, valRight, SqlRangeEnum.closedOpen);
     }
 
     /**
