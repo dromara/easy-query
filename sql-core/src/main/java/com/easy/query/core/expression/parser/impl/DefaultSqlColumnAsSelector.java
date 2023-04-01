@@ -38,11 +38,17 @@ public class DefaultSqlColumnAsSelector<T1, TR> extends AbstractSqlColumnSelecto
     public SqlColumnAsSelector<T1, TR> columnAs(Property<T1, ?> column, Property<TR, ?> alias) {
         EntityTableExpression table = sqlEntityExpression.getTable(getIndex());
         String propertyName = table.getPropertyName(column);
-        String aliasPropertyName = LambdaUtil.getPropertyName(alias);
-        ColumnMetadata columnMetadata = resultEntityMetadata.getColumnNotNull(aliasPropertyName);
-        sqlSegmentBuilder.append(new ColumnSegment(table, propertyName, sqlEntityExpression, columnMetadata.getName()));
+        String aliasColumnName = getResultColumnName(alias);
+        sqlSegmentBuilder.append(new ColumnSegment(table, propertyName, sqlEntityExpression, aliasColumnName));
         return this;
     }
+
+    protected String getResultColumnName(Property<TR, ?> alias){
+        String aliasPropertyName = LambdaUtil.getPropertyName(alias);
+        ColumnMetadata columnMetadata = resultEntityMetadata.getColumnNotNull(aliasPropertyName);
+        return columnMetadata.getName();
+    }
+
 
     @Override
     public SqlColumnAsSelector<T1, TR> columnAll() {
@@ -79,7 +85,7 @@ public class DefaultSqlColumnAsSelector<T1, TR> extends AbstractSqlColumnSelecto
     public SqlColumnAsSelector<T1, TR> columnFunc(Property<T1, ?> column, Property<TR, ?> alias, EasyFunc easyFunc) {
         EntityTableExpression table = sqlEntityExpression.getTable(getIndex());
         String propertyName = table.getPropertyName(column);
-        String columnAsName = alias == null ? table.getColumnName(propertyName) : LambdaUtil.getPropertyName(alias);
+        String columnAsName = alias == null ? table.getColumnName(propertyName) : getResultColumnName(alias);
         sqlSegmentBuilder.append(new FuncColumnSegment(table, propertyName, sqlEntityExpression, easyFunc, columnAsName));
         return this;
     }
