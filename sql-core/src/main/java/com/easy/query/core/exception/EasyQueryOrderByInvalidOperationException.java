@@ -7,6 +7,8 @@ package com.easy.query.core.exception;
  * @author xuejiaming
  */
 public class EasyQueryOrderByInvalidOperationException extends EasyQueryException {
+    private final String propertyName;
+
     public EasyQueryOrderByInvalidOperationException(String propertyName, String msg) {
         this(propertyName,msg,null);
     }
@@ -17,5 +19,10 @@ public class EasyQueryOrderByInvalidOperationException extends EasyQueryExceptio
 
     public EasyQueryOrderByInvalidOperationException(String propertyName, String msg, Throwable e) {
         super(msg, e);
+        this.propertyName = propertyName;
+    }
+
+    public String getPropertyName() {
+        return propertyName;
     }
 }
