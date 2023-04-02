@@ -1,5 +1,6 @@
-package com.easy.query.core.abstraction;
+package com.easy.query.core.expression.sql.factory;
 
+import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.expression.sql.EntityDeleteExpression;
 import com.easy.query.core.expression.sql.EntityInsertExpression;

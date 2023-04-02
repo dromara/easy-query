@@ -1,6 +1,6 @@
 package com.easy.query.core.expression.sql.internal;
 
-import com.easy.query.core.abstraction.EasyQueryLambdaFactory;
+import com.easy.query.core.expression.parser.factory.EasyQueryLambdaFactory;
 import com.easy.query.core.common.bean.FastBean;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnPropertyPredicate;

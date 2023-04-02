@@ -1,7 +1,15 @@
-package com.easy.query.core.abstraction;
+package com.easy.query.core.expression.parser.factory;
 
-import com.easy.query.core.expression.parser.abstraction.*;
-import com.easy.query.core.expression.parser.impl.*;
+import com.easy.query.core.expression.parser.abstraction.SqlAggregatePredicate;
+import com.easy.query.core.expression.parser.abstraction.SqlColumnAsSelector;
+import com.easy.query.core.expression.parser.abstraction.SqlColumnSelector;
+import com.easy.query.core.expression.parser.abstraction.SqlColumnSetter;
+import com.easy.query.core.expression.parser.abstraction.SqlPredicate;
+import com.easy.query.core.expression.parser.impl.DefaultSqlAggregatePredicate;
+import com.easy.query.core.expression.parser.impl.DefaultSqlColumnAsSelector;
+import com.easy.query.core.expression.parser.impl.DefaultSqlColumnSelector;
+import com.easy.query.core.expression.parser.impl.DefaultSqlColumnSetSelector;
+import com.easy.query.core.expression.parser.impl.DefaultSqlColumnSetter;
 import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import com.easy.query.core.expression.segment.condition.DefaultSqlPredicate;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
@@ -13,7 +21,7 @@ import com.easy.query.core.expression.sql.EntityExpression;
  * @Date: 2023/2/14 08:33
  * @author xuejiaming
  */
-public class DefaultEasyQueryLambdaFactory implements EasyQueryLambdaFactory{
+public class DefaultEasyQueryLambdaFactory implements EasyQueryLambdaFactory {
     @Override
     public <T1> SqlPredicate<T1> createSqlPredicate(int index, EntityExpression sqlEntityExpression, PredicateSegment predicateSegment) {
         return new DefaultSqlPredicate<>(index,sqlEntityExpression,predicateSegment);

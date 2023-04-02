@@ -1,6 +1,6 @@
 package com.easy.query.core.expression.sql.def;
 
-import com.easy.query.core.abstraction.EasyExpressionFactory;
+import com.easy.query.core.expression.sql.factory.EasyExpressionFactory;
 import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.sql.EntityQueryExpression;

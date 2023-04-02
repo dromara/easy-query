@@ -1,6 +1,6 @@
 package com.easy.query.mysql.expression;
 
-import com.easy.query.core.abstraction.EasyExpressionFactory;
+import com.easy.query.core.expression.sql.factory.EasyExpressionFactory;
 import com.easy.query.core.expression.sql.def.EasyQueryExpression;
 import com.easy.query.core.expression.sql.EntityQueryExpression;
 import com.easy.query.core.expression.sql.ExpressionContext;

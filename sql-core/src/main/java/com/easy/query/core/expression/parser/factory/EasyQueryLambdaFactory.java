@@ -1,4 +1,4 @@
-package com.easy.query.core.abstraction;
+package com.easy.query.core.expression.parser.factory;
 
 import com.easy.query.core.expression.parser.abstraction.*;
 import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;

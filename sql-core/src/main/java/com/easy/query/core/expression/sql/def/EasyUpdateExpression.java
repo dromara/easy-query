@@ -1,6 +1,6 @@
 package com.easy.query.core.expression.sql.def;
 
-import com.easy.query.core.abstraction.EasyQueryLambdaFactory;
+import com.easy.query.core.expression.parser.factory.EasyQueryLambdaFactory;
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.plugin.version.EasyVersionStrategy;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnVersionPropertyPredicate;

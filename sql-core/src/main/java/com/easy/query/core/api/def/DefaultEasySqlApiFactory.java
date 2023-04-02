@@ -8,7 +8,7 @@ import com.easy.query.core.basic.api.jdbc.EasyJDBCExecutor;
 import com.easy.query.core.basic.api.select.impl.EasyQueryable;
 import com.easy.query.core.basic.api.select.impl.EasyQueryable3;
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
-import com.easy.query.core.abstraction.EasyExpressionFactory;
+import com.easy.query.core.expression.sql.factory.EasyExpressionFactory;
 import com.easy.query.core.expression.sql.EntityDeleteExpression;
 import com.easy.query.core.expression.sql.EntityInsertExpression;
 import com.easy.query.core.expression.sql.EntityQueryExpression;

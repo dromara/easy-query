@@ -1,8 +1,8 @@
 package com.easy.query;
 
-import com.easy.query.core.abstraction.DefaultEasyQueryLambdaFactory;
+import com.easy.query.core.expression.parser.factory.DefaultEasyQueryLambdaFactory;
 import com.easy.query.core.abstraction.DefaultEasyQueryRuntimeContext;
-import com.easy.query.core.abstraction.EasyQueryLambdaFactory;
+import com.easy.query.core.expression.parser.factory.EasyQueryLambdaFactory;
 import com.easy.query.core.abstraction.EasySqlApiFactory;
 import com.easy.query.core.basic.pagination.DefaultEasyPageResultProvider;
 import com.easy.query.core.metadata.EntityMetadataManager;
