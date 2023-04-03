@@ -16,7 +16,7 @@ import java.util.Set;
 public class EasyPredicateContext implements PredicateContext,PredicateIndex {
     private final Map<Class<?>, Set<String>> entityProperties=new LinkedHashMap<>();
     public void add(Predicate predicate){
-        Set<String> propertySet = entityProperties.computeIfAbsent(predicate.getTable().entityClass(), key -> new HashSet<>());
+        Set<String> propertySet = entityProperties.computeIfAbsent(predicate.getTable().getEntityClass(), key -> new HashSet<>());
         propertySet.add(predicate.getPropertyName());
     }
     public boolean contains(Class<?> entityClass, String propertyName){

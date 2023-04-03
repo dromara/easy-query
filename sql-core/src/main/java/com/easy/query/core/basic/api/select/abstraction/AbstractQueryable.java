@@ -287,7 +287,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     }
 
     @Override
-    public Queryable<T1> whereId(boolean condition, Object id) {
+    public Queryable<T1> whereById(boolean condition, Object id) {
         if (condition) {
 
             PredicateSegment where = sqlEntityExpression.getWhere();

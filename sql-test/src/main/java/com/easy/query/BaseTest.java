@@ -26,6 +26,9 @@ import com.easy.query.entity.LogicDelTopicCustom;
 import com.easy.query.entity.SysUser;
 import com.easy.query.entity.Topic;
 import com.easy.query.entity.TopicAuto;
+import com.easy.query.entity.TopicInterceptor;
+import com.easy.query.interceptor.MyEntityInterceptor;
+import com.easy.query.interceptor.MyTenantInterceptor;
 import com.easy.query.logicdel.MyLogicDelStrategy;
 import com.easy.query.mysql.MySqlExpressionFactory;
 import com.easy.query.mysql.config.MySqlDialect;
@@ -77,6 +80,8 @@ public abstract class BaseTest {
         configuration.setDialect(new MySqlDialect());
         configuration.applyEasyEncryptionStrategy(new DefaultAesEasyEncryptionStrategy());
         configuration.applyEasyLogicDeleteStrategy(new MyLogicDelStrategy());
+        configuration.applyEasyInterceptor(new MyEntityInterceptor());
+        configuration.applyEasyInterceptor(new MyTenantInterceptor());
         EntityMetadataManager entityMetadataManager = new DefaultEntityMetadataManager(configuration);
         EasyQueryLambdaFactory easyQueryLambdaFactory = new DefaultEasyQueryLambdaFactory();
         MySqlExpressionFactory mySQLSqlExpressionFactory = new MySqlExpressionFactory();
@@ -190,6 +195,23 @@ public abstract class BaseTest {
                 logicDelTopics.add(logicDelTopic);
             }
             long l = easyQuery.insertable(logicDelTopics).executeRows();
+        }
+        boolean topicInterceptorAny = easyQuery.queryable(TopicInterceptor.class).any();
+        if(!topicInterceptorAny){
+            List<TopicInterceptor> topicInterceptors = new ArrayList<>();
+            for (int i = 0; i < 100; i++) {
+                TopicInterceptor topicInterceptor = new TopicInterceptor();
+                topicInterceptor.setId(String.valueOf(i));
+                topicInterceptor.setStars(i + 100);
+                topicInterceptor.setTitle("标题" + i);
+                topicInterceptor.setCreateTime(LocalDateTime.now().plusDays(i));
+                topicInterceptor.setUpdateTime(LocalDateTime.now().plusDays(i));
+                topicInterceptor.setCreateBy(i+"");
+                topicInterceptor.setUpdateBy(i+"");
+                topicInterceptor.setTenantId(i+"");
+                topicInterceptors.add(topicInterceptor);
+            }
+            long l = easyQuery.insertable(topicInterceptors).executeRows();
         }
     }
 

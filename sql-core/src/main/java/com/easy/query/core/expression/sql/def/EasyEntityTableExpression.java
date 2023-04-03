@@ -87,7 +87,7 @@ public class EasyEntityTableExpression implements EntityTableExpression {
     }
 
     @Override
-    public Class<?> entityClass() {
+    public Class<?> getEntityClass() {
         return entityMetadata.getEntityClass();
     }
 

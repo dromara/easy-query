@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 public class DeleteTest  extends BaseTest {
     @Test
     public void deleteTest1(){
-        Topic topic = easyQuery.queryable(Topic.class).whereId("999").firstOrNull();
+        Topic topic = easyQuery.queryable(Topic.class).whereById("999").firstOrNull();
         if(topic==null){
             topic=new Topic();
             topic.setId("999");
@@ -34,7 +34,7 @@ public class DeleteTest  extends BaseTest {
     }
     @Test
     public void deleteTest2(){
-        Topic topic = easyQuery.queryable(Topic.class).whereId("998").firstOrNull();
+        Topic topic = easyQuery.queryable(Topic.class).whereById("998").firstOrNull();
         if(topic==null){
             topic=new Topic();
             topic.setId("998");
@@ -51,7 +51,7 @@ public class DeleteTest  extends BaseTest {
     }
     @Test
     public void deleteTest3(){
-        Topic topic = easyQuery.queryable(Topic.class).whereId("997").firstOrNull();
+        Topic topic = easyQuery.queryable(Topic.class).whereById("997").firstOrNull();
         if(topic==null){
             topic=new Topic();
             topic.setId("997");
@@ -68,7 +68,7 @@ public class DeleteTest  extends BaseTest {
     }
     @Test
     public void deleteTest4(){
-        Topic topic = easyQuery.queryable(Topic.class).whereId("996").firstOrNull();
+        Topic topic = easyQuery.queryable(Topic.class).whereById("996").firstOrNull();
         if(topic==null){
             topic=new Topic();
             topic.setId("996");
@@ -85,7 +85,7 @@ public class DeleteTest  extends BaseTest {
     }
     @Test
     public void deleteTest6(){
-        Topic topic = easyQuery.queryable(Topic.class).whereId("995").firstOrNull();
+        Topic topic = easyQuery.queryable(Topic.class).whereById("995").firstOrNull();
         if(topic==null){
             topic=new Topic();
             topic.setId("995");

@@ -14,4 +14,11 @@ public class CurrentUserHelper {
     public static String getUserId(){
         return userId;
     }
+    private static String tenantId;
+    public static void setTenantId(String tenantId){
+        CurrentUserHelper.tenantId=tenantId;
+    }
+    public static String getTenantId(){
+        return tenantId;
+    }
 }

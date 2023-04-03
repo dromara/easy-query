@@ -10,7 +10,7 @@ import com.easy.query.core.expression.segment.condition.PredicateSegment;
  * @author xuejiaming
  */
 public interface TableExpressionSegment extends ExpressionSegment, IndexAware {
-    Class<?> entityClass();
+    Class<?> getEntityClass();
     PredicateSegment getOn();
     boolean hasOn();
     String getAlias();

@@ -40,7 +40,7 @@ public abstract class AbstractSqlBuilderSegment implements SqlBuilderSegment {
         for (SqlSegment sqlSegment : sqlSegments) {
             if(sqlSegment instanceof SqlEntitySegment){
                 SqlEntitySegment sqlEntitySegment = (SqlEntitySegment) sqlSegment;
-                if(Objects.equals(sqlEntitySegment.getTable().entityClass(),entityClass)&&Objects.equals(sqlEntitySegment.getPropertyName(), propertyName)){
+                if(Objects.equals(sqlEntitySegment.getTable().getEntityClass(),entityClass)&&Objects.equals(sqlEntitySegment.getPropertyName(), propertyName)){
                     return true;
                 }
             }

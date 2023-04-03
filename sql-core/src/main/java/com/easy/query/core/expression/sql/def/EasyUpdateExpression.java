@@ -186,7 +186,7 @@ public abstract class EasyUpdateExpression extends AbstractPredicateEntityExpres
             getExpressionContext().getInterceptorFilter(entityMetadata.getUpdateSetInterceptors())
                     .forEach(interceptor->{
                         EasyUpdateSetInterceptor globalInterceptor = (EasyUpdateSetInterceptor) easyQueryConfiguration.getEasyInterceptor(interceptor.getName());
-                        globalInterceptor.configure(table.getClass(), this, sqlColumnSetter);
+                        globalInterceptor.configure(entityMetadata.getEntityClass(), this, sqlColumnSetter);
                     });
         }
         return updateSet;
@@ -240,7 +240,7 @@ public abstract class EasyUpdateExpression extends AbstractPredicateEntityExpres
 
         //如果用户没有指定set的列,那么就是set所有列,并且要去掉主键部分
         if (!hasSetColumns()) {
-            Class<?> entityClass = table.entityClass();
+            Class<?> entityClass = table.getEntityClass();
             EntityMetadata entityMetadata = table.getEntityMetadata();
             EasyQueryRuntimeContext runtimeContext = getRuntimeContext();
             EasyQueryLambdaFactory easyQueryLambdaFactory = runtimeContext.getEasyQueryLambdaFactory();

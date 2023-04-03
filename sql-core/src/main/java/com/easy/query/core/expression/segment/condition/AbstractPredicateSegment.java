@@ -63,7 +63,7 @@ public class AbstractPredicateSegment implements PredicateSegment {
     @Override
     public boolean containsOnce(Class<?> entityClass, String propertyName) {
         if (isPredicate()) {
-            return Objects.equals(predicate.getTable().entityClass(),entityClass)&&Objects.equals(predicate.getPropertyName(), propertyName);
+            return Objects.equals(predicate.getTable().getEntityClass(),entityClass)&&Objects.equals(predicate.getPropertyName(), propertyName);
         } else {
             if(children!=null){
                 for (PredicateSegment child : children) {

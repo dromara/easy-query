@@ -38,7 +38,7 @@ public class UpdateTest extends BaseTest {
 
     @Test
     public void updateTest3() {
-        Topic topic = easyQuery.queryable(Topic.class).whereId("3").firstOrNull();
+        Topic topic = easyQuery.queryable(Topic.class).whereById("3").firstOrNull();
         Assert.assertNotNull(topic);
         Assert.assertEquals("3", topic.getId());
         long rows = easyQuery.updatable(Topic.class)
@@ -46,7 +46,7 @@ public class UpdateTest extends BaseTest {
                 .where(o -> o.eq(Topic::getId, topic.getId()))
                 .executeRows();
         Assert.assertEquals(1, rows);
-        Topic topic2 = easyQuery.queryable(Topic.class).whereId("3").firstOrNull();
+        Topic topic2 = easyQuery.queryable(Topic.class).whereById("3").firstOrNull();
         Assert.assertNotNull(topic2);
         Assert.assertEquals(String.valueOf(topic.getStars()), topic2.getTitle());
     }
@@ -55,16 +55,16 @@ public class UpdateTest extends BaseTest {
     public void updateTest4() {
         long rows = easyQuery.updatable(Topic.class)
                 .set(Topic::getStars, 2)
-                .whereId("5").executeRows();
+                .whereById("5").executeRows();
         Assert.assertEquals(1, rows);
 
 
         long rows1 = easyQuery.updatable(Topic.class)
                 .setIncrement(Topic::getStars)
-                .whereId("5").executeRows();
+                .whereById("5").executeRows();
         Assert.assertEquals(1, rows1);
         Topic topic1 = easyQuery.queryable(Topic.class)
-                .whereId("5").firstOrNull();
+                .whereById("5").firstOrNull();
         Assert.assertNotNull(topic1);
         Assert.assertEquals(3, (int) topic1.getStars());
 
@@ -73,7 +73,7 @@ public class UpdateTest extends BaseTest {
                 .where(o -> o.eq(Topic::getId, "5")).executeRows();
         Assert.assertEquals(1, rows2);
         Topic topic2 = easyQuery.queryable(Topic.class)
-                .whereId("5").firstOrNull();
+                .whereById("5").firstOrNull();
         Assert.assertNotNull(topic2);
         Assert.assertEquals(5, (int) topic2.getStars());
 
@@ -82,7 +82,7 @@ public class UpdateTest extends BaseTest {
                 .where(o -> o.eq(Topic::getId, "5")).executeRows();
         Assert.assertEquals(1, rows3);
         Topic topic3 = easyQuery.queryable(Topic.class)
-                .whereId("5").firstOrNull();
+                .whereById("5").firstOrNull();
         Assert.assertNotNull(topic3);
         Assert.assertEquals(4, (int) topic3.getStars());
 
@@ -91,7 +91,7 @@ public class UpdateTest extends BaseTest {
                 .where(o -> o.eq(Topic::getId, "5")).executeRows();
         Assert.assertEquals(1, rows4);
         Topic topic4 = easyQuery.queryable(Topic.class)
-                .whereId("5").firstOrNull();
+                .whereById("5").firstOrNull();
         Assert.assertNotNull(topic4);
         Assert.assertEquals(2, (int) topic4.getStars());
     }
@@ -165,10 +165,10 @@ public class UpdateTest extends BaseTest {
     public void updateTest8() {
         long l = easyQuery.updatable(Topic.class)
                 .set(Topic::getTitle, null)
-                .whereId("9").executeRows();
+                .whereById("9").executeRows();
         Assert.assertEquals(1,l);
         Topic topic = easyQuery.queryable(Topic.class)
-                .whereId("9").firstOrNull();
+                .whereById("9").firstOrNull();
         Assert.assertNotNull(topic);
         String updateSql = ((EasyEntityUpdatable<Topic>) easyQuery.updatable(topic).setUpdateStrategy(UpdateStrategyEnum.ONLY_NULL_COLUMNS))
                 .toSql(topic);
@@ -182,10 +182,10 @@ public class UpdateTest extends BaseTest {
     public void updateTest9() {
         long l = easyQuery.updatable(Topic.class)
                 .set(Topic::getTitle, null)
-                .whereId("10").executeRows();
+                .whereById("10").executeRows();
         Assert.assertEquals(1,l);
         Topic topic = easyQuery.queryable(Topic.class)
-                .whereId("10").firstOrNull();
+                .whereById("10").firstOrNull();
         Assert.assertNotNull(topic);
         String updateSql = ((EasyEntityUpdatable<Topic>) easyQuery.updatable(topic)
                 .setUpdateStrategy(UpdateStrategyEnum.ONLY_NOT_NULL_COLUMNS))

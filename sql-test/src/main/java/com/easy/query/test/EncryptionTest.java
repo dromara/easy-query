@@ -17,7 +17,7 @@ public class EncryptionTest extends BaseTest {
 
     @Test
     public void phoneTest(){
-        SysUser sysUser = easyQuery.queryable(SysUser.class).whereId("1").firstOrNull();
+        SysUser sysUser = easyQuery.queryable(SysUser.class).whereById("1").firstOrNull();
         Assert.assertNotNull(sysUser);
         Assert.assertEquals("18888888"+sysUser.getId()+sysUser.getId(),sysUser.getPhone());
         Assert.assertEquals("333333333333333"+sysUser.getId()+sysUser.getId(),sysUser.getIdCard());

@@ -105,7 +105,7 @@ public abstract class AbstractExpressionUpdatable<T> extends AbstractSqlExecuteR
     }
 
     @Override
-    public ExpressionUpdatable<T> whereId(boolean condition, Object id) {
+    public ExpressionUpdatable<T> whereById(boolean condition, Object id) {
 
         if(condition){
 

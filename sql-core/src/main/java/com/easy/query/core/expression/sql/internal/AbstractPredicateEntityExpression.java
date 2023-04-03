@@ -71,7 +71,7 @@ public abstract class AbstractPredicateEntityExpression extends AbstractEntityEx
                 if (isExpression()) {
                     Object version = sqlExpressionContext.getVersion();
                     if (Objects.nonNull(version)) {
-                        FastBean fastBean = EasyUtil.getFastBean(table.entityClass());
+                        FastBean fastBean = EasyUtil.getFastBean(table.getEntityClass());
                         sqlPredicate.eq(fastBean.getBeanGetter(columnMetadata.getProperty()), version);
                     }
                 } else {
@@ -86,7 +86,7 @@ public abstract class AbstractPredicateEntityExpression extends AbstractEntityEx
                         .forEach(interceptor -> {
                             EasyPredicateFilterInterceptor globalSelectInterceptorStrategy = (EasyPredicateFilterInterceptor) easyQueryConfiguration.getEasyInterceptor(interceptor.getName());
                             if (globalSelectInterceptorStrategy != null) {
-                                globalSelectInterceptorStrategy.configure(table.entityClass(), this, sqlPredicate);
+                                globalSelectInterceptorStrategy.configure(entityMetadata.getEntityClass(), this, sqlPredicate);
                             }
                         });
             }

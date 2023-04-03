@@ -36,7 +36,7 @@ public final class PropertySQLParameter implements BeanSqlParameter {
         }
         EntityMetadata entityMetadata = table.getEntityMetadata();
         ColumnMetadata column = entityMetadata.getColumnNotNull(propertyName);
-        FastBean fastBean = EasyUtil.getFastBean(table.entityClass());
+        FastBean fastBean = EasyUtil.getFastBean(table.getEntityClass());
         Property<Object, ?> propertyLambda = fastBean.getBeanGetter(column.getProperty());
         return propertyLambda.apply(bean);
     }

@@ -54,7 +54,7 @@ public class DefaultSqlColumnAsSelector<T1, TR> extends AbstractSqlColumnSelecto
     public SqlColumnAsSelector<T1, TR> columnAll() {
 
         EntityTableExpression table = sqlEntityExpression.getTable(getIndex());
-        if(table.entityClass().equals(resultClass)){
+        if(table.getEntityClass().equals(resultClass)){
             return  super.columnAll();
         }else{
             return  columnAll(table);

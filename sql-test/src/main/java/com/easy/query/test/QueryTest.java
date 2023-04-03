@@ -91,7 +91,7 @@ public class QueryTest extends BaseTest {
     @Test
     public void query6() {
         Queryable<BlogEntity> queryable = easyQuery.queryable(BlogEntity.class)
-                .whereId("97");
+                .whereById("97");
         String sql = queryable.toSql();
         Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`title`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top` FROM t_blog t WHERE t.`deleted` = ? AND t.`id` = ?", sql);
         List<BlogEntity> blogs = queryable.toList();
@@ -501,7 +501,7 @@ public class QueryTest extends BaseTest {
         long l = easyQuery.sqlExecute("update t_blog set content='"+newContent +"' where id='1'");
         Assert.assertEquals(1,l);
         BlogEntity blog = easyQuery.queryable(BlogEntity.class)
-                .whereId("1").firstOrNull();
+                .whereById("1").firstOrNull();
         Assert.assertNotNull(blog);
         Assert.assertEquals(newContent,blog.getContent());
     }
@@ -511,7 +511,7 @@ public class QueryTest extends BaseTest {
         long l = easyQuery.sqlExecute("update t_blog set content=? where id=?", Arrays.asList(newContent,"1"));
         Assert.assertEquals(1,l);
         BlogEntity blog = easyQuery.queryable(BlogEntity.class)
-                .whereId("1").firstOrNull();
+                .whereById("1").firstOrNull();
         Assert.assertNotNull(blog);
         Assert.assertEquals(newContent,blog.getContent());
     }

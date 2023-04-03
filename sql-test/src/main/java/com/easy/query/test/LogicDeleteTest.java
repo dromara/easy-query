@@ -84,7 +84,7 @@ public class LogicDeleteTest extends BaseTest {
         ExpressionUpdatable<LogicDelTopic> logicDelTopicExpressionUpdatable = easyQuery.updatable(LogicDelTopic.class)
                 .disableLogicDelete()
                 .set(LogicDelTopic::getTitle, logicDelTopic.getTitle())
-                .whereId(logicDelTopic.getId());
+                .whereById(logicDelTopic.getId());
         String s = logicDelTopicExpressionUpdatable.toSql();
         Assert.assertEquals("UPDATE t_logic_del_topic SET `title` = ? WHERE `id` = ?",s);
 

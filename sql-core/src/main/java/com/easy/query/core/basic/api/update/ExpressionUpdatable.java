@@ -2,9 +2,7 @@ package com.easy.query.core.basic.api.update;
 
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.SqlExpression;
-import com.easy.query.core.expression.parser.abstraction.SqlColumnSetter;
 import com.easy.query.core.expression.parser.abstraction.SqlPredicate;
-import com.easy.query.core.expression.parser.abstraction.internal.ColumnSetter;
 
 /**
  * @FileName: ExpressionUpdatable.java
@@ -101,11 +99,11 @@ public interface ExpressionUpdatable<T> extends Updatable<T,ExpressionUpdatable<
 
     ExpressionUpdatable<T> where(boolean condition, SqlExpression<SqlPredicate<T>> whereExpression);
 
-    default ExpressionUpdatable<T> whereId(Object id) {
-        return whereId(true, id);
+    default ExpressionUpdatable<T> whereById(Object id) {
+        return whereById(true, id);
     }
 
-    ExpressionUpdatable<T> whereId(boolean condition, Object id);
+    ExpressionUpdatable<T> whereById(boolean condition, Object id);
 
     String toSql();
 }

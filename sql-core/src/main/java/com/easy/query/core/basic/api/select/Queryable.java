@@ -6,7 +6,6 @@ import com.easy.query.core.basic.api.internal.Interceptable;
 import com.easy.query.core.basic.api.internal.LogicDeletable;
 import com.easy.query.core.basic.api.internal.TableReNameable;
 import com.easy.query.core.basic.api.select.provider.EasyQuerySqlBuilderProvider;
-import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
 import com.easy.query.core.exception.EasyQueryWhereInvalidOperationException;
 import com.easy.query.core.expression.lambda.Property;
@@ -18,12 +17,10 @@ import com.easy.query.core.exception.EasyQueryConcurrentException;
 import com.easy.query.core.expression.parser.abstraction.SqlAggregatePredicate;
 import com.easy.query.core.expression.parser.abstraction.SqlPredicate;
 import com.easy.query.core.util.ArrayUtil;
-import com.easy.query.core.util.StringUtil;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 
 /**
  * @FileName: Select0.java
@@ -212,11 +209,11 @@ public interface Queryable<T1> extends Query<T1>, Interceptable<Queryable<T1>>, 
 
     Queryable<T1> where(boolean condition, SqlExpression<SqlPredicate<T1>> whereExpression);
 
-    default Queryable<T1> whereId(Object id) {
-        return whereId(true, id);
+    default Queryable<T1> whereById(Object id) {
+        return whereById(true, id);
     }
 
-    Queryable<T1> whereId(boolean condition, Object id);
+    Queryable<T1> whereById(boolean condition, Object id);
 
     /**
      * @exception EasyQueryWhereInvalidOperationException 当object的where属性和查询对象不匹配或者查询对象属性不匹配

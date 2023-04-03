@@ -3,8 +3,6 @@ package com.easyquery.springbootdemo.controller;
 import com.easy.query.core.annotation.EasyQueryTrack;
 import com.easy.query.core.api.client.EasyQuery;
 import com.easyquery.springbootdemo.domain.TestUserMysql0;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -54,12 +52,12 @@ public class EasyQueryController {
 
     @GetMapping("/sayHello3")
     public Object sayHello3() {
-        TestUserMysql0 testUserMysql = easyQuery.queryable(TestUserMysql0.class).whereId("123321123321xxx").firstOrNull();
+        TestUserMysql0 testUserMysql = easyQuery.queryable(TestUserMysql0.class).whereById("123321123321xxx").firstOrNull();
         return testUserMysql;
     }
     @GetMapping("/sayHello4")
     public Object sayHello4() {
-        TestUserMysql0 testUserMysql = easyQuery.queryable(TestUserMysql0.class).whereId("123321123321").firstOrNull();
+        TestUserMysql0 testUserMysql = easyQuery.queryable(TestUserMysql0.class).whereById("123321123321").firstOrNull();
         return testUserMysql;
     }
 }

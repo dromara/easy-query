@@ -60,7 +60,7 @@ public abstract class EasyInsertExpression extends AbstractEntityExpression impl
 
         int insertColumns = getColumns().getSqlSegments().size();
         if (insertColumns == 0) {
-            throw new EasyQueryException("not found insert columns :"+ ClassUtil.getSimpleName(table.entityClass()));
+            throw new EasyQueryException("not found insert columns :"+ ClassUtil.getSimpleName(table.getEntityClass()));
         }
         StringBuilder sql = new StringBuilder("INSERT INTO ");
         String tableName = entityMetadata.getTableName();
