@@ -157,9 +157,6 @@ public interface Queryable4<T1,T2,T3,T4> extends Queryable<T1> {
 
     @Override
     Queryable4<T1, T2, T3,T4> noInterceptor();
-
-    @Override
-    Queryable4<T1, T2, T3,T4> interceptor(String name);
     @Override
     Queryable4<T1, T2, T3,T4> useInterceptor();
     @Override

@@ -48,9 +48,12 @@ public class EasyEmptyInsertable<T>implements Insertable<T> {
     public Insertable<T> noInterceptor() {
         return this;
     }
-
     @Override
-    public Insertable<T> interceptor(String name) {
+    public Insertable<T> useInterceptor(String name) {
+        return this;
+    }
+    @Override
+    public Insertable<T> noInterceptor(String name) {
         return this;
     }
 

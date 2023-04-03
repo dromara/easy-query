@@ -83,8 +83,8 @@ public abstract class AbstractPredicateEntityExpression extends AbstractEntityEx
             if (ArrayUtil.isNotEmpty(entityMetadata.getPredicateFilterInterceptors())) {
                 EasyQueryConfiguration easyQueryConfiguration = getRuntimeContext().getEasyQueryConfiguration();
                 sqlExpressionContext.getInterceptorFilter(entityMetadata.getPredicateFilterInterceptors())
-                        .forEach(name -> {
-                            EasyPredicateFilterInterceptor globalSelectInterceptorStrategy = (EasyPredicateFilterInterceptor) easyQueryConfiguration.getEasyInterceptor(name);
+                        .forEach(interceptor -> {
+                            EasyPredicateFilterInterceptor globalSelectInterceptorStrategy = (EasyPredicateFilterInterceptor) easyQueryConfiguration.getEasyInterceptor(interceptor.getName());
                             if (globalSelectInterceptorStrategy != null) {
                                 globalSelectInterceptorStrategy.configure(table.entityClass(), this, sqlPredicate);
                             }

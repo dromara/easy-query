@@ -54,10 +54,14 @@ public abstract class AbstractSqlExecuteRows<TChain>  implements SqlExecuteExpec
         sqlEntityExpression.getExpressionContext().noInterceptor();
         return (TChain) this;
     }
-
     @Override
-    public TChain interceptor(String name) {
-        sqlEntityExpression.getExpressionContext().interceptor(name);
+    public TChain useInterceptor(String name) {
+        sqlEntityExpression.getExpressionContext().useInterceptor(name);
+        return (TChain) this;
+    }
+    @Override
+    public TChain noInterceptor(String name) {
+        sqlEntityExpression.getExpressionContext().noInterceptor(name);
         return (TChain) this;
     }
 

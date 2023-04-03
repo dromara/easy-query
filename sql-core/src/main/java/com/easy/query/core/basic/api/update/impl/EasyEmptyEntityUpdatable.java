@@ -57,9 +57,12 @@ public class EasyEmptyEntityUpdatable<T> implements EntityUpdatable<T> {
     public EntityUpdatable<T> noInterceptor() {
         return this;
     }
-
     @Override
-    public EntityUpdatable<T> interceptor(String name) {
+    public EntityUpdatable<T> useInterceptor(String name) {
+        return this;
+    }
+    @Override
+    public EntityUpdatable<T> noInterceptor(String name) {
         return this;
     }
 

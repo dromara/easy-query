@@ -7,16 +7,30 @@ package com.easy.query.core.basic.api.internal;
  * @author xuejiaming
  */
 public interface Interceptable<TChain> {
+
+    /**
+     * 当前表达式不使用拦截器,并且删除之前手动指定的 {@link #noInterceptor(String name)}、{@link #useInterceptor(String name)}
+     * @return
+     */
     TChain noInterceptor();
 
     /**
-     * 如果用在 {@link #noInterceptor()}后面那么就是只使用name的
-     * 如果用在 {@link #useInterceptor()} 后面那么就是移除name的
-     * 表达式默认 {@link #useInterceptor()}
+     * 使用某个拦截器
      * @param name
      * @return
      */
-    TChain interceptor(String name);
+    TChain useInterceptor(String name);
 
+    /**
+     * 不使用某个拦截器
+     * @param name
+     * @return
+     */
+    TChain noInterceptor(String name);
+
+    /**
+     * 当前表达式启用拦截器,并且删除之前手动指定的 {@link #noInterceptor(String name)}、{@link #useInterceptor(String name)}
+     * @return
+     */
     TChain useInterceptor();
 }

@@ -1,5 +1,6 @@
 package com.easy.query.core.basic.api.insert;
 
+import com.easy.query.core.basic.plugin.interceptor.EasyInterceptorEntry;
 import com.easy.query.core.configuration.EasyQueryConfiguration;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.enums.MultiTableTypeEnum;
@@ -54,11 +55,11 @@ public abstract class AbstractInsertable<T> implements Insertable<T> {
 
     protected void insertBefore() {
 
-        List<String> insertInterceptors = entityMetadata.getEntityInterceptors();
+        List<EasyInterceptorEntry> insertInterceptors = entityMetadata.getEntityInterceptors();
         if (ArrayUtil.isNotEmpty(insertInterceptors)) {
             EasyQueryConfiguration easyQueryConfiguration = entityInsertExpression.getRuntimeContext().getEasyQueryConfiguration();
             List<EasyEntityInterceptor> entityInterceptors = entityInsertExpression.getExpressionContext().getInterceptorFilter(insertInterceptors)
-                    .map(name -> (EasyEntityInterceptor) easyQueryConfiguration.getEasyInterceptor(name)).collect(Collectors.toList());
+                    .map(interceptor -> (EasyEntityInterceptor) easyQueryConfiguration.getEasyInterceptor(interceptor.getName())).collect(Collectors.toList());
             if (ArrayUtil.isNotEmpty(entityInterceptors)) {
                 Class<?> entityClass = entityMetadata.getEntityClass();
                 for (T entity : entities) {
@@ -95,10 +96,14 @@ public abstract class AbstractInsertable<T> implements Insertable<T> {
         entityInsertExpression.getExpressionContext().noInterceptor();
         return this;
     }
-
     @Override
-    public Insertable<T> interceptor(String name) {
-        entityInsertExpression.getExpressionContext().interceptor(name);
+    public Insertable<T> useInterceptor(String name) {
+        entityInsertExpression.getExpressionContext().useInterceptor(name);
+        return this;
+    }
+    @Override
+    public Insertable<T> noInterceptor(String name) {
+        entityInsertExpression.getExpressionContext().noInterceptor(name);
         return this;
     }
 

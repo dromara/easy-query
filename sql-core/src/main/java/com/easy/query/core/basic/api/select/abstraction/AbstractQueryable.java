@@ -653,10 +653,14 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
         sqlEntityExpression.getExpressionContext().noInterceptor();
         return this;
     }
-
     @Override
-    public Queryable<T1> interceptor(String name) {
-        sqlEntityExpression.getExpressionContext().interceptor(name);
+    public Queryable<T1> useInterceptor(String name) {
+        sqlEntityExpression.getExpressionContext().useInterceptor(name);
+        return this;
+    }
+    @Override
+    public Queryable<T1> noInterceptor(String name) {
+        sqlEntityExpression.getExpressionContext().noInterceptor(name);
         return this;
     }
 

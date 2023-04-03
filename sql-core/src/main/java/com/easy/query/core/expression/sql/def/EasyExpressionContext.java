@@ -2,6 +2,7 @@ package com.easy.query.core.expression.sql.def;
 
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
+import com.easy.query.core.basic.plugin.interceptor.EasyInterceptorEntry;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.UpdateStrategyEnum;
 import com.easy.query.core.expression.sql.ExpressionContext;
@@ -25,7 +26,8 @@ public class EasyExpressionContext implements ExpressionContext {
     private final String alias;
     protected final List<SQLParameter> params;
     protected final EasyBehavior easyBehavior;
-    protected final Set<String> interceptors;
+    protected final Set<String> useInterceptors;
+    protected final Set<String> noInterceptors;
     private int aliasSeq = -1;
     private boolean deleteThrowException;
     private Object version;
@@ -38,7 +40,8 @@ public class EasyExpressionContext implements ExpressionContext {
         this.alias = alias;
         params = new ArrayList<>();
         this.easyBehavior=new EasyBehavior();
-        this.interceptors=new HashSet<>();
+        this.useInterceptors =new HashSet<>();
+        this.noInterceptors =new HashSet<>();
     }
 
     @Override
@@ -123,28 +126,46 @@ public class EasyExpressionContext implements ExpressionContext {
     }
 
     @Override
-    public void interceptor(String name) {
-        interceptors.add(name);
+    public void useInterceptor(String name) {
+        noInterceptors.remove(name);
+        useInterceptors.add(name);
+    }
+
+    @Override
+    public void noInterceptor(String name) {
+        useInterceptors.remove(name);
+        noInterceptors.add(name);
     }
 
     @Override
     public void useInterceptor() {
-        interceptors.clear();
+        useInterceptors.clear();
+        noInterceptors.clear();
         getBehavior().addBehavior(EasyBehaviorEnum.USE_INTERCEPTOR);
     }
 
     @Override
     public void noInterceptor() {
-        interceptors.clear();
+        useInterceptors.clear();
+        noInterceptors.clear();
         getBehavior().removeBehavior(EasyBehaviorEnum.USE_INTERCEPTOR);
     }
 
     @Override
-    public Stream<String> getInterceptorFilter(List<String> queryInterceptors) {
+    public Stream<EasyInterceptorEntry> getInterceptorFilter(List<EasyInterceptorEntry> queryInterceptors) {
         boolean interceptorBehavior = getBehavior().hasBehavior(EasyBehaviorEnum.USE_INTERCEPTOR);
         //如果当前操作存在interceptor的behavior那么就不应该在interceptors里面
         //否则应该在interceptors里面
-        return queryInterceptors.stream().filter(o->interceptors.contains(o)!=interceptorBehavior);
+        return queryInterceptors.stream().filter(o->{
+            //如果是启用了的
+            if(interceptorBehavior){
+                //拦截器手动指定使用的或者默认要用的并且没有说不用的
+                return useInterceptors.contains(o.getName())||(o.isDefaultEnable()&&!noInterceptors.contains(o.getName()));
+            }else{
+                //手动指定要用的并且不在不使用里面
+                return useInterceptors.contains(o.getName())&&!noInterceptors.contains(o.getName());
+            }
+        });
     }
     //    @Override
 //    public String getSqlColumnSegment(SqlEntityTableExpressionSegment table, String propertyName) {

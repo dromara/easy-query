@@ -14,6 +14,12 @@ public interface EasyInterceptor {
     default int order(){
         return 100;
     }
+
+    /**
+     * 默认生效
+     * @return
+     */
+    default boolean defaultEnable(){return true;}
     /**
      * 拦截器名称
      * @return

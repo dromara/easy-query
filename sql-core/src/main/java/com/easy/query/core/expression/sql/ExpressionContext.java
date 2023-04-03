@@ -2,6 +2,7 @@ package com.easy.query.core.expression.sql;
 
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
+import com.easy.query.core.basic.plugin.interceptor.EasyInterceptorEntry;
 import com.easy.query.core.enums.UpdateStrategyEnum;
 import com.easy.query.core.expression.sql.internal.EasyBehavior;
 
@@ -32,8 +33,9 @@ public interface ExpressionContext {
     UpdateStrategyEnum getUpdateStrategy();
     void setVersion(Object version);
     Object getVersion();
-    void interceptor(String name);
+    void useInterceptor(String name);
+    void noInterceptor(String name);
     void useInterceptor();
     void noInterceptor();
-    Stream<String> getInterceptorFilter(List<String> queryInterceptors);
+    Stream<EasyInterceptorEntry> getInterceptorFilter(List<EasyInterceptorEntry> queryInterceptors);
 }

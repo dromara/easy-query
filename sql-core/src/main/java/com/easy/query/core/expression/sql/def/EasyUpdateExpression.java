@@ -184,8 +184,8 @@ public abstract class EasyUpdateExpression extends AbstractPredicateEntityExpres
             SqlColumnSetter<Object> sqlColumnSetter = getRuntimeContext().getEasyQueryLambdaFactory().createSqlColumnSetter(0, this, updateSet);
 
             getExpressionContext().getInterceptorFilter(entityMetadata.getUpdateSetInterceptors())
-                    .forEach(name->{
-                        EasyUpdateSetInterceptor globalInterceptor = (EasyUpdateSetInterceptor) easyQueryConfiguration.getEasyInterceptor(name);
+                    .forEach(interceptor->{
+                        EasyUpdateSetInterceptor globalInterceptor = (EasyUpdateSetInterceptor) easyQueryConfiguration.getEasyInterceptor(interceptor.getName());
                         globalInterceptor.configure(table.getClass(), this, sqlColumnSetter);
                     });
         }

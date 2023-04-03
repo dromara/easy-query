@@ -288,8 +288,14 @@ public abstract class AbstractQueryable2<T1, T2> extends AbstractQueryable<T1> i
     }
 
     @Override
-    public Queryable2<T1, T2> interceptor(String name) {
-         super.interceptor(name);
+    public Queryable2<T1, T2> useInterceptor(String name) {
+         super.useInterceptor(name);
+        return this;
+    }
+
+    @Override
+    public Queryable2<T1, T2> noInterceptor(String name) {
+         super.noInterceptor(name);
         return this;
     }
 

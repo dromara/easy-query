@@ -2,6 +2,7 @@ package com.easy.query.core.metadata;
 
 import com.easy.query.core.annotation.*;
 import com.easy.query.core.basic.enums.LogicDeleteStrategyEnum;
+import com.easy.query.core.basic.plugin.interceptor.EasyInterceptorEntry;
 import com.easy.query.core.basic.plugin.logicdel.LogicDeleteBuilder;
 import com.easy.query.core.basic.plugin.version.EasyVersionStrategy;
 import com.easy.query.core.config.NameConversion;
@@ -40,9 +41,9 @@ public class EntityMetadata {
     /**
      * 查询过滤器
      */
-    private final List<String> predicateFilterInterceptors = new ArrayList<>();
-    private final List<String> entityInterceptors = new ArrayList<>();
-    private final List<String> updateSetInterceptors = new ArrayList<>();
+    private final List<EasyInterceptorEntry> predicateFilterInterceptors = new ArrayList<>();
+    private final List<EasyInterceptorEntry> entityInterceptors = new ArrayList<>();
+    private final List<EasyInterceptorEntry> updateSetInterceptors = new ArrayList<>();
     private final LinkedHashMap<String, ColumnMetadata> property2ColumnMap = new LinkedHashMap<>();
     private final Map<String/*property name*/, String/*column name*/> keyPropertiesMap = new LinkedHashMap<>();
     private final List<String/*column name*/> incrementColumns = new ArrayList<>(4);
@@ -192,14 +193,15 @@ public class EntityMetadata {
             List<EasyInterceptor> globalInterceptors = configuration.getEasyInterceptors().stream().sorted(Comparator.comparingInt(EasyInterceptor::order)).collect(Collectors.toList());
             for (EasyInterceptor globalInterceptor : globalInterceptors) {
                 if (globalInterceptor.apply(entityClass)) {
+                    EasyInterceptorEntry easyInterceptorEntry = new EasyInterceptorEntry(globalInterceptor.name(), globalInterceptor.defaultEnable());
                     if (globalInterceptor instanceof EasyPredicateFilterInterceptor) {
-                        predicateFilterInterceptors.add(globalInterceptor.name());
+                        predicateFilterInterceptors.add(easyInterceptorEntry);
                     }
                     if (globalInterceptor instanceof EasyEntityInterceptor) {
-                        entityInterceptors.add(globalInterceptor.name());
+                        entityInterceptors.add(easyInterceptorEntry);
                     }
                     if (globalInterceptor instanceof EasyUpdateSetInterceptor) {
-                        updateSetInterceptors.add(globalInterceptor.name());
+                        updateSetInterceptors.add(easyInterceptorEntry);
                     }
                 }
             }
@@ -316,15 +318,15 @@ public class EntityMetadata {
     }
 
 
-    public List<String> getPredicateFilterInterceptors() {
+    public List<EasyInterceptorEntry> getPredicateFilterInterceptors() {
         return predicateFilterInterceptors;
     }
 
-    public List<String> getEntityInterceptors() {
+    public List<EasyInterceptorEntry> getEntityInterceptors() {
         return entityInterceptors;
     }
 
-    public List<String> getUpdateSetInterceptors() {
+    public List<EasyInterceptorEntry> getUpdateSetInterceptors() {
         return updateSetInterceptors;
     }
 
