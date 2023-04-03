@@ -18,6 +18,10 @@
 </dependency>
 ```
 
+## 获取最新
+
+[https://central.sonatype.com/](https://central.sonatype.com/) 搜索`easy-query`获取最新安装包
+
 ### 批量更新版本号
 ```shell
 mvn versions:set '-DnewVersion=0.0.xx'
