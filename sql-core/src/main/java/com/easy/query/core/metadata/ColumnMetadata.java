@@ -1,7 +1,6 @@
 package com.easy.query.core.metadata;
 
 import com.easy.query.core.basic.plugin.encryption.EasyEncryptionStrategy;
-import com.easy.query.core.basic.plugin.version.EasyVersionStrategy;
 
 import java.beans.PropertyDescriptor;
 
@@ -29,7 +28,7 @@ public class ColumnMetadata {
     private  boolean updateIgnore =false;
 
     private  Class<? extends EasyEncryptionStrategy> encryptionStrategy;
-    private  boolean supportQuery =false;
+    private  boolean supportQueryLike =false;
 
     public ColumnMetadata(EntityMetadata entityMetadata, String name) {
         this.entityMetadata = entityMetadata;
@@ -111,11 +110,11 @@ public class ColumnMetadata {
         this.encryptionStrategy = encryptionStrategy;
     }
 
-    public boolean isSupportQuery() {
-        return supportQuery;
+    public boolean isSupportQueryLike() {
+        return supportQueryLike;
     }
 
-    public void setSupportQuery(boolean supportQuery) {
-        this.supportQuery = supportQuery;
+    public void setSupportQueryLike(boolean supportQueryLike) {
+        this.supportQueryLike = supportQueryLike;
     }
 }

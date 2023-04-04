@@ -437,7 +437,7 @@ public class DefaultEasyExecutor implements EasyExecutor {
             Class<?> propertyType = property.getPropertyType();
             easyResultSet.setPropertyType(propertyType);
             JdbcTypeHandler handler = easyJdbcTypeHandler.getHandler(propertyType);
-            Object value = context.getDecryptValue(columnMetadata, handler.getValue(easyResultSet));
+            Object value = context.getDecryptValue(clazz,columnMetadata, handler.getValue(easyResultSet));
 
             if (value != null) {
                 PropertySetterCaller<Object> beanSetter = beanFastSetter.getBeanSetter(property);

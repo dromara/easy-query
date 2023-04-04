@@ -68,13 +68,13 @@ public class GenericTest extends BaseTest {
         DefaultAesEasyEncryptionStrategy aesEasyEncryptionStrategy = new DefaultAesEasyEncryptionStrategy();
         String xx = "❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️垚垚垚垚垚垚";
 
-        Object encryptValue = aesEasyEncryptionStrategy.encrypt(xx);
-        Object decryptValue = aesEasyEncryptionStrategy.decrypt(encryptValue);
+        Object encryptValue = aesEasyEncryptionStrategy.encrypt(null,null,xx);
+        Object decryptValue = aesEasyEncryptionStrategy.decrypt(null,null,encryptValue);
         Assert.assertEquals(xx,decryptValue);
 
         String phone="18888888888";
-        Object encrypt = aesEasyEncryptionStrategy.encrypt(phone);
-        Object decrypt = aesEasyEncryptionStrategy.decrypt(encrypt);
+        Object encrypt = aesEasyEncryptionStrategy.encrypt(null,null,phone);
+        Object decrypt = aesEasyEncryptionStrategy.decrypt(null,null,encrypt);
         Assert.assertEquals(phone,decrypt);
     }
     @Test
@@ -82,10 +82,10 @@ public class GenericTest extends BaseTest {
         DefaultAesEasyEncryptionStrategy aesEasyEncryptionStrategy = new DefaultAesEasyEncryptionStrategy();
         String xx = "188888881212";
 
-        Object encryptValue = aesEasyEncryptionStrategy.encrypt(xx);
-        Object decryptValue = aesEasyEncryptionStrategy.decrypt(encryptValue);
+        Object encryptValue = aesEasyEncryptionStrategy.encrypt(null,null,xx);
+        Object decryptValue = aesEasyEncryptionStrategy.decrypt(null,null,encryptValue);
         Assert.assertEquals(xx,decryptValue);
-        Object encryptValue1 = aesEasyEncryptionStrategy.encrypt("1888888812");
+        Object encryptValue1 = aesEasyEncryptionStrategy.encrypt(null,null,"1888888812");
         Assert.assertTrue(StringUtil.startWith(encryptValue.toString(),encryptValue1.toString()));
     }
     @Test

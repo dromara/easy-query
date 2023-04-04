@@ -66,3 +66,27 @@ create table t_logic_del_topic_custom
     deleted_user varchar(50)   null comment '删除人',
     create_time datetime not null comment '创建时间'
 )comment '自定义逻辑删除主题表';
+
+
+create table t_topic_interceptor
+(
+    id varchar(32) not null comment '主键ID'primary key,
+    stars int not null comment '点赞数',
+    title varchar(50) null comment '标题',
+    create_time datetime not null comment '创建时间',
+    create_by varchar(50) not null comment '创建人',
+    update_time datetime not null comment '修改时间',
+    update_by varchar(50) not null comment '修改人',
+    tenant_id varchar(50) not null comment '租户'
+)comment '拦截器主题表';
+
+
+create table t_sys_user_encryption
+(
+    id varchar(32) not null comment '主键ID'primary key,
+    name varchar(32) not null comment '名称',
+    phone_not_support_like varchar(100) null comment '不支持like的手机号',
+    phone_support_like varchar(200) null comment '支持like的手机号',
+    address_not_support_like varchar(1024)  null comment '支持like的地址',
+    address_support_like varchar(1024)  null comment '不支持like的地址'
+)comment '用户字段加密表';

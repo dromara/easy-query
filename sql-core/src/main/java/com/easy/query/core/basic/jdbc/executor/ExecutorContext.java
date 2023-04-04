@@ -54,12 +54,12 @@ public class ExecutorContext {
      * @param value
      * @return
      */
-    public Object getDecryptValue(ColumnMetadata columnMetadata, Object value) {
+    public Object getDecryptValue(Class<?> entityClass,ColumnMetadata columnMetadata, Object value) {
         if (value != null) {
             if (columnMetadata.isEncryption()) {
                 Class<? extends EasyEncryptionStrategy> encryptionStrategy = columnMetadata.getEncryptionStrategy();
                 EasyEncryptionStrategy easyEncryptionStrategy = easyQueryConfiguration.getEasyEncryptionStrategyNotNull(encryptionStrategy);
-                return easyEncryptionStrategy.decrypt(value);
+                return easyEncryptionStrategy.decrypt(entityClass,columnMetadata.getProperty().getName(),value);
             }
         }
         return value;
@@ -67,20 +67,23 @@ public class ExecutorContext {
 
     public Object getEncryptValue(SQLParameter sqlParameter, Object value) {
         if (value != null&&sqlParameter.getTable()!=null) {
-            EntityMetadata entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(sqlParameter.getTable().getEntityClass());
-            ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(sqlParameter.getPropertyName());
+            Class<?> entityClass = sqlParameter.getTable().getEntityClass();
+            EntityMetadata entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(entityClass);
+            String propertyName = sqlParameter.getPropertyName();
+            ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(propertyName);
             if (columnMetadata.isEncryption()) {
+
                 if (sqlParameter instanceof SQLLikeParameter) {
-                    if (columnMetadata.isSupportQuery()) {
+                    if (columnMetadata.isSupportQueryLike()) {
                         EasyEncryptionStrategy easyEncryptionStrategy = getEncryptionStrategy(columnMetadata);
                         String likeValue = value.toString();
                         String encryptValue = StringUtil.endWithRemove(StringUtil.startWithRemove(likeValue, "%"), "%");
-                        return StringUtil.startWithDefault(likeValue, "%", StringUtil.EMPTY) + easyEncryptionStrategy.encrypt(encryptValue) + StringUtil.endWithDefault(likeValue, "%", StringUtil.EMPTY);
+                        return StringUtil.startWithDefault(likeValue, "%", StringUtil.EMPTY) + easyEncryptionStrategy.encrypt(entityClass,propertyName,encryptValue) + StringUtil.endWithDefault(likeValue, "%", StringUtil.EMPTY);
 
                     }
                 } else {
                     EasyEncryptionStrategy easyEncryptionStrategy = getEncryptionStrategy(columnMetadata);
-                    return easyEncryptionStrategy.encrypt(value);
+                    return easyEncryptionStrategy.encrypt(entityClass,propertyName,value);
                 }
             }
         }

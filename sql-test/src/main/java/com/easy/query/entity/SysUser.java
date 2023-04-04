@@ -15,11 +15,11 @@ import lombok.Data;
 @Table(value = "t_sys_user",ignoreProperties = {"updateTime","createBy","updateBy","deleted"})
 public class SysUser extends BaseEntity{
     private String username;
-    @Encryption(strategy = DefaultAesEasyEncryptionStrategy.class,supportQuery = true)
+    @Encryption(strategy = DefaultAesEasyEncryptionStrategy.class, supportQueryLike = true)
     private String phone;
-    @Encryption(strategy = DefaultAesEasyEncryptionStrategy.class,supportQuery = true)
+    @Encryption(strategy = DefaultAesEasyEncryptionStrategy.class, supportQueryLike = true)
     private String idCard;
-    @Encryption(strategy = DefaultAesEasyEncryptionStrategy.class,supportQuery = true)
+    @Encryption(strategy = DefaultAesEasyEncryptionStrategy.class, supportQueryLike = true)
     private String address;
 }
 

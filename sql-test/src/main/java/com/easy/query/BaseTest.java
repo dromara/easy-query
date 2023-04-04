@@ -19,7 +19,9 @@ import com.easy.query.core.configuration.EasyQueryConfiguration;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.metadata.DefaultEntityMetadataManager;
 import com.easy.query.core.basic.plugin.track.DefaultTrackManager;
+import com.easy.query.encryption.Base64EncryptionStrategy;
 import com.easy.query.encryption.DefaultAesEasyEncryptionStrategy;
+import com.easy.query.encryption.MyEncryptionStrategy;
 import com.easy.query.entity.BlogEntity;
 import com.easy.query.entity.LogicDelTopic;
 import com.easy.query.entity.LogicDelTopicCustom;
@@ -79,6 +81,8 @@ public abstract class BaseTest {
         configuration.setNameConversion(new UnderlinedNameConversion());
         configuration.setDialect(new MySqlDialect());
         configuration.applyEasyEncryptionStrategy(new DefaultAesEasyEncryptionStrategy());
+        configuration.applyEasyEncryptionStrategy(new Base64EncryptionStrategy());
+        configuration.applyEasyEncryptionStrategy(new MyEncryptionStrategy());
         configuration.applyEasyLogicDeleteStrategy(new MyLogicDelStrategy());
         configuration.applyEasyInterceptor(new MyEntityInterceptor());
         configuration.applyEasyInterceptor(new MyTenantInterceptor());

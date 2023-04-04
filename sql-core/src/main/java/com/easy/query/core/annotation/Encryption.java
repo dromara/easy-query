@@ -21,8 +21,9 @@ public @interface Encryption {
     Class<? extends EasyEncryptionStrategy> strategy();
 
     /**
-     * 是否需要支持查询
+     * 是否需要支持模糊查询
+     * 默认支持等于匹配查询
      * @return
      */
-    boolean supportQuery() default false;
+    boolean supportQueryLike() default false;
 }

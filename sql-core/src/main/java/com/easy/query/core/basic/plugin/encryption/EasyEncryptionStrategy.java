@@ -7,6 +7,6 @@ package com.easy.query.core.basic.plugin.encryption;
  * @author xuejiaming
  */
 public interface EasyEncryptionStrategy {
-    Object encrypt(Object plaintext);
-    Object decrypt(Object ciphertext);
+    Object encrypt(Class<?> entityClass,String propertyName,Object plaintext);
+    Object decrypt(Class<?> entityClass,String propertyName,Object ciphertext);
 }

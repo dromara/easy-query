@@ -118,7 +118,7 @@ public class EntityMetadata {
                     throw new EasyQueryException(ClassUtil.getSimpleName(entityClass)+"."+property+" Encryption strategy unknown");
                 }
                 columnMetadata.setEncryptionStrategy(encryption.strategy());
-                columnMetadata.setSupportQuery(encryption.supportQuery());
+                columnMetadata.setSupportQueryLike(encryption.supportQueryLike());
             }
             if (StringUtil.isNotBlank(tableName)) {
 
