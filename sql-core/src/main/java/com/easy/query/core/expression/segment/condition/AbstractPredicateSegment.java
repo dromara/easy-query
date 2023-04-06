@@ -104,7 +104,6 @@ public class AbstractPredicateSegment implements PredicateSegment {
             if (children != null) {
 
                 for (PredicateSegment child : children) {
-
                     boolean isRoot = ((AbstractPredicateSegment) child).root;
                     if (child instanceof AndPredicateSegment) {
                         AndPredicateSegment andPredicateSegment = new AndPredicateSegment(isRoot);

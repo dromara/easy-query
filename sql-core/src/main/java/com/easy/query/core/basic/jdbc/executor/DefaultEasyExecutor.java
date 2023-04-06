@@ -248,12 +248,17 @@ public class DefaultEasyExecutor implements EasyExecutor {
         try {
             easyConnection = connectionManager.getEasyConnection();
             ps = createPreparedStatement(easyConnection.getConnection(), sql, parameters, easyJdbcTypeHandler);
-            rs = ps.executeQuery();
-            result = mapTo(executorContext, rs, clazz);
-
-            if (logDebug) {
-                log.debug("<== Total: " + result.size());
+            if(logDebug){
+                long start = System.currentTimeMillis();
+                rs = ps.executeQuery();
+                long end = System.currentTimeMillis();
+                result = mapTo(executorContext, rs, clazz);
+                log.debug("<== Total: " + result.size()+", executeQuery: "+(end-start)+"(ms)");
+            }else{
+                rs = ps.executeQuery();
+                result = mapTo(executorContext, rs, clazz);
             }
+
         } catch (SQLException e) {
             log.error(sql, e);
             throw new EasyQuerySQLException(sql, e);
@@ -450,19 +455,6 @@ public class DefaultEasyExecutor implements EasyExecutor {
             trackManager.getCurrentTrackContext().addTracking(bean, true);
         }
         return bean;
-    }
-
-    public Method getSetter(PropertyDescriptor prop, Class<?> targetClass) {
-        return ClassUtil.getWriteMethodOrNull(prop, targetClass);
-    }
-
-    public void callSetter(Object target, Method setter, PropertyDescriptor prop, Object value) throws SQLException {
-        try {
-            setter.invoke(target, value);
-        } catch (IllegalArgumentException | IllegalAccessException | InvocationTargetException e) {
-            throw new SQLException("Cannot set " + prop.getName() + ",value: " + value + ".: " + e.getMessage(), e);
-        }
-
     }
 
     protected String getColName(ResultSetMetaData rsmd, int col) throws SQLException {

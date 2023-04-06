@@ -47,4 +47,9 @@ public abstract class AbstractSqlBuilderSegment implements SqlBuilderSegment {
         }
         return false;
     }
+
+    @Override
+    public void clear() {
+        sqlSegments.clear();
+    }
 }

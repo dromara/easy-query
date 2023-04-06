@@ -84,7 +84,12 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
 
     @Override
     public long count() {
-        List<Long> result = cloneQueryable().select(" COUNT(1) ").toList(Long.class);
+        Queryable<T1> countQueryable = cloneQueryable();
+        EntityQueryExpression countSqlEntityExpression = countQueryable.getSqlEntityExpression();
+        if(countSqlEntityExpression.hasOrder()){
+            countSqlEntityExpression.getOrder().clear();
+        }
+        List<Long> result = countQueryable.select(" COUNT(1) ").toList(Long.class);
         if (result.isEmpty()) {
             return 0L;
         }

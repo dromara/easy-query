@@ -20,4 +20,5 @@ public interface SqlBuilderSegment extends SqlSegment {
     void copyTo(SqlBuilderSegment predicateSegment);
     SqlBuilderSegment cloneSqlBuilder();
    boolean containsOnce(Class<?> entityClass,String propertyName);
+   void clear();
 }

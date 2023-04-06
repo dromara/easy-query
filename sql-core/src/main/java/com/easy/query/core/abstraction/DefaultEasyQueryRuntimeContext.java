@@ -9,6 +9,7 @@ import com.easy.query.core.basic.jdbc.types.EasyJdbcTypeHandlerManager;
 import com.easy.query.core.configuration.EasyQueryConfiguration;
 import com.easy.query.core.basic.jdbc.executor.EasyExecutor;
 import com.easy.query.core.basic.plugin.track.TrackManager;
+import com.easy.query.core.sharding.EasyShardingOption;
 
 /**
  * @FileName: DefaultJQDCRuntimeContext.java
@@ -98,5 +99,10 @@ public class DefaultEasyQueryRuntimeContext implements EasyQueryRuntimeContext {
     @Override
     public EasyPageResultProvider getEasyPageResultProvider() {
         return easyPageResultProvider;
+    }
+
+    @Override
+    public EasyShardingOption getEasyShardingOption() {
+        return null;
     }
 }

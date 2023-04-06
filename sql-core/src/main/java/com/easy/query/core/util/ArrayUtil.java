@@ -30,6 +30,36 @@ public class ArrayUtil {
         return !isEmpty(collection);
     }
 
+    /**
+     * 是否存在不一样的元素,当元素个数大于等于2个的时候
+     * @param collection
+     * @param keySelector
+     * @return false表示都是同一个,true表示存在不一样的
+     * @param <T>
+     * @param <K>
+     */
+    public static <T,K> boolean hasDifferent(Collection<T> collection,Function<T,K> keySelector) {
+         if(isEmpty(collection)){
+             return false;
+         }
+         if(collection.size()<=1){
+             return false;
+         }
+        Iterator<T> iterator = collection.iterator();
+        T first = iterator.next();
+        K firstKey = keySelector.apply(first);
+        while(iterator.hasNext()){
+            T next = iterator.next();
+            K nextKey = keySelector.apply(next);
+            if(!Objects.equals(firstKey,nextKey))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
     public static <TSource> TSource firstOrDefault(List<TSource> source, TSource def) {
         TSource result = firstOrNull(source);
         if (result == null) {

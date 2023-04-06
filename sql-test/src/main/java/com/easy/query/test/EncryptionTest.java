@@ -119,5 +119,17 @@ public class EncryptionTest extends BaseTest {
         //中文单字符不支持查询所以是空
         SysUserEncryption sysUserEncryption8 = easyQuery.queryable(SysUserEncryption.class).where(o -> o.like(SysUserEncryption::getAddressSupportLike, "绍")).firstOrNull();
         Assert.assertNull(sysUserEncryption8);
+        sysUserEncryption7.setPhoneSupportLike("13232323321");
+        long l2 = easyQuery.updatable(sysUserEncryption7).executeRows();
+        Assert.assertEquals(1,l2);
+        SysUserEncryption sysUserEncryption9 = easyQuery.queryable(SysUserEncryption.class).where(o -> o.like(SysUserEncryption::getPhoneSupportLike, "23233")).firstOrNull();
+        Assert.assertNotNull(sysUserEncryption9);
+        long l3 = easyQuery.updatable(SysUserEncryption.class).set(SysUserEncryption::getPhoneSupportLike, "19876543210")
+                .where(o -> o.eq(SysUserEncryption::getId, "2")).executeRows();
+        Assert.assertEquals(1,l3);
+        SysUserEncryption sysUserEncryption10 = easyQuery.queryable(SysUserEncryption.class).where(o -> o.like(SysUserEncryption::getPhoneSupportLike, "9876")).firstOrNull();
+        Assert.assertNotNull(sysUserEncryption10);
+        SysUserEncryption sysUserEncryption11 = easyQuery.queryable(SysUserEncryption.class).where(o -> o.like(SysUserEncryption::getPhoneSupportLike, "987")).firstOrNull();
+        Assert.assertNull(sysUserEncryption11);
     }
 }
