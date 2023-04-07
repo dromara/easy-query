@@ -90,3 +90,14 @@ create table t_sys_user_encryption
     address_not_support_like varchar(1024)  null comment '支持like的地址',
     address_support_like varchar(1024)  null comment '不支持like的地址'
 )comment '用户字段加密表';
+
+
+create table t_sys_user_track
+(
+    id varchar(32) not null comment '主键ID'primary key,
+    username varchar(50) null comment '姓名',
+    phone varchar(250) null comment '手机号加密',
+    id_card varchar(500) null comment '身份证编号',
+    address text null comment '地址',
+    create_time datetime not null comment '创建时间'
+)comment '用户追踪表';

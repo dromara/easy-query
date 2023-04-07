@@ -30,11 +30,6 @@ public class DefaultTrackManager implements TrackManager{
     }
 
     @Override
-    public boolean currentThreadTracking() {
-          return threadTC.get()!=null;
-    }
-
-    @Override
     public TrackContext getCurrentTrackContext() {
         return threadTC.get();
     }

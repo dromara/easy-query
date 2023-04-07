@@ -175,6 +175,11 @@ public interface Queryable3<T1, T2, T3> extends Queryable<T1> {
     @Override
     Queryable3<T1, T2, T3> useInterceptor();
 
+    /**
+     * 自动将查询结果集合全部添加到当前上下文追踪中,如果当前查询结果十分庞大,并且更新数据只有个别条数,建议不要使用
+     * 追踪查询，可以通过开启追踪后使用普通的查询，然后添加到当前的追踪上下文中{@link com.easy.query.core.api.client.EasyQuery#addTracking(Object)},开始先数据追踪的差异更新
+     * @return
+     */
     @Override
     Queryable3<T1, T2, T3> asTracking();
     @Override

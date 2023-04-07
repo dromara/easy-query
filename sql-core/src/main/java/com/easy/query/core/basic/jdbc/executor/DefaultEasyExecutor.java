@@ -251,7 +251,7 @@ public class DefaultEasyExecutor implements EasyExecutor {
                 rs = ps.executeQuery();
                 long end = System.currentTimeMillis();
                 result = mapTo(executorContext, rs, clazz);
-                log.debug("<== Total: " + result.size()+", executeQuery: "+(end-start)+"(ms)");
+                log.debug("<== Total: " + result.size()+", Query Use: "+(end-start)+"(ms)");
             }else{
                 rs = ps.executeQuery();
                 result = mapTo(executorContext, rs, clazz);
@@ -405,6 +405,7 @@ public class DefaultEasyExecutor implements EasyExecutor {
     }
 
     private boolean trackBean(ExecutorContext context, Class<?> clazz) {
+        //当前查询是否使用了追踪如果没有就直接不使用追踪
         if (context.isTracking()) {
             EasyQueryRuntimeContext runtimeContext = context.getRuntimeContext();
             TrackManager trackManager = runtimeContext.getTrackManager();

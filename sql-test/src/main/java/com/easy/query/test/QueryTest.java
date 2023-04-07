@@ -240,7 +240,7 @@ public class QueryTest extends BaseTest {
     public void query14() {
 
         EasyPageResult<BlogEntity> page = easyQuery
-                .queryable(Topic.class)
+                .queryable(Topic.class).asTracking()
                 .innerJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
                 .where((t, t1) -> t1.isNotNull(BlogEntity::getTitle))
                 .groupBy((t, t1)->t1.column(BlogEntity::getId))

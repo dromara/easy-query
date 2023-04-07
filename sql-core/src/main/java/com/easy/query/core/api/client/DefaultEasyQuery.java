@@ -132,11 +132,12 @@ public class DefaultEasyQuery implements EasyQuery {
     }
 
     @Override
-    public void addTracking(Object entity) {
+    public boolean addTracking(Object entity) {
         TrackManager trackManager = runtimeContext.getTrackManager();
         TrackContext currentTrackContext = trackManager.getCurrentTrackContext();
         if(currentTrackContext!=null){
-            currentTrackContext.addTracking(entity);
+            return currentTrackContext.addTracking(entity);
         }
+        return false;
     }
 }

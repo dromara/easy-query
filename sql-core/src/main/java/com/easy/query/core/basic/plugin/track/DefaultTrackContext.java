@@ -54,7 +54,7 @@ public class DefaultTrackContext implements TrackContext {
     }
 
     @Override
-    public void addTracking(Object entity,boolean isQuery) {
+    public boolean addTracking(Object entity,boolean isQuery) {
         if(entity==null){
             throw new EasyQueryException("cant track null entity");
         }
@@ -72,6 +72,7 @@ public class DefaultTrackContext implements TrackContext {
             if(!isQuery&&!originalEntityState.getCurrentValue().equals(entity)){
                 throw new EasyQueryException(ClassUtil.getSimpleName(entityClass) + ": current entity already tracked key,primary key:" + trackKey);
             }
+            return false;
         }else{
             EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(entityClass);
             if(StringUtil.isBlank(entityMetadata.getTableName())){
@@ -83,6 +84,7 @@ public class DefaultTrackContext implements TrackContext {
             BeanUtil.copyProperties(entity,original,propertySet);
             EntityState entityState = new EntityState(entityClass, original, entity);
             entityStateMap.putIfAbsent(trackKey,entityState);
+            return true;
         }
     }
 
