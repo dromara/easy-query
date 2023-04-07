@@ -29,8 +29,6 @@ import com.easy.query.core.util.SQLUtil;
 import com.easy.query.core.util.StringUtil;
 
 import java.beans.PropertyDescriptor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -177,7 +175,7 @@ public class DefaultEasyExecutor implements EasyExecutor {
                         PropertyDescriptor property = incrementProperty[i];
                         if (property == null) {
                             String columnName = incrementColumns.get(i);
-                            String propertyName = entityMetadata.getPropertyNameOrNull(columnName);
+                            String propertyName = entityMetadata.getPropertyNameOrDefault(columnName);
                             property = entityMetadata.getColumnNotNull(propertyName).getProperty();
                             incrementProperty[i] = property;
                         }
@@ -331,7 +329,7 @@ public class DefaultEasyExecutor implements EasyExecutor {
 
             String colName = getColName(rsmd, i + 1);//数据库查询出来的列名
 
-            String propertyName = entityMetadata.getPropertyNameOrNull(colName);
+            String propertyName = entityMetadata.getPropertyNameOrDefault(colName);
             if (propertyName == null) {
                 continue;
             }

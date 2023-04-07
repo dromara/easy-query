@@ -7,6 +7,7 @@ import com.easy.query.core.expression.lambda.SqlExpression2;
 import com.easy.query.core.expression.lambda.SqlExpression3;
 import com.easy.query.core.expression.parser.abstraction.SqlPredicate;
 import com.easy.query.core.expression.parser.abstraction.internal.ColumnSelector;
+import com.easy.query.core.expression.segment.SelectConstSegment;
 import com.easy.query.core.expression.sql.AnonymousEntityTableExpression;
 import com.easy.query.core.expression.sql.EntityQueryExpression;
 import com.easy.query.core.basic.api.select.Queryable4;
@@ -38,6 +39,14 @@ public class SqlExpressionUtil {
      * @return
      */
     public static boolean shouldCloneSqlEntityQueryExpression(EntityQueryExpression sqlEntityExpression) {
+//        if(noSelectAndGroup(sqlEntityExpression)){
+//            boolean onlyOneAnonymousTable = sqlEntityExpression.getTables().size() == 1 && sqlEntityExpression.getTables().get(0) instanceof AnonymousEntityTableExpression;
+//            if(onlyOneAnonymousTable){
+//                return true;
+//            }
+//            return hasAnyOperate(sqlEntityExpression);
+//        }
+//        return false;
         return noSelectAndGroup(sqlEntityExpression) && (moreTableExpressionOrNoAnonymous(sqlEntityExpression)||hasAnyOperate(sqlEntityExpression));
     }
     public static boolean limitAndOrderNotSetCurrent(EntityQueryExpression sqlEntityExpression){
@@ -51,7 +60,10 @@ public class SqlExpressionUtil {
         return sqlEntityExpression.getTables().size() != 1 || !(sqlEntityExpression.getTables().get(0) instanceof AnonymousEntityTableExpression);
     }
     public static boolean hasAnyOperate(EntityQueryExpression sqlEntityExpression){
-        return sqlEntityExpression.hasLimit() || sqlEntityExpression.hasWhere() || sqlEntityExpression.hasOrder() || sqlEntityExpression.hasHaving()|| sqlEntityExpression.isDistinct();
+        return sqlEntityExpression.hasLimit() || sqlEntityExpression.hasWhere() || sqlEntityExpression.hasOrder() || sqlEntityExpression.hasHaving()|| sqlEntityExpression.isDistinct() || sqlEntityExpression.hasGroup();
+    }
+    public static boolean hasAnyOperateWithoutWhereAndOrder(EntityQueryExpression sqlEntityExpression){
+        return sqlEntityExpression.hasLimit() || sqlEntityExpression.hasHaving()|| sqlEntityExpression.isDistinct() || sqlEntityExpression.hasGroup();
     }
 
     public static <T1, T2> Queryable2<T1, T2> executeJoinOn(Queryable2<T1, T2> queryable, SqlExpression2<SqlPredicate<T1>, SqlPredicate<T2>> on) {
@@ -75,5 +87,31 @@ public class SqlExpressionUtil {
         SqlPredicate<T4> sqlOnPredicate4 = queryable.getSqlBuilderProvider4().getSqlOnPredicate4();
         on.apply(sqlOnPredicate1, sqlOnPredicate2, sqlOnPredicate3,sqlOnPredicate4);
         return queryable;
+    }
+
+
+    public static EntityQueryExpression getCountEntityQueryExpression(EntityQueryExpression countSqlEntityExpression){
+        if(countSqlEntityExpression.hasOrder()){
+            countSqlEntityExpression.getOrder().clear();
+        }
+        if(SqlExpressionUtil.hasAnyOperateWithoutWhereAndOrder(countSqlEntityExpression)){
+            return null;
+        }
+
+        //如果他只是匿名表那么就使用匿名表的内部表
+        if(!SqlExpressionUtil.moreTableExpressionOrNoAnonymous(countSqlEntityExpression)){
+            AnonymousEntityTableExpression table = (AnonymousEntityTableExpression) countSqlEntityExpression.getTable(0);
+            EntityQueryExpression entityQueryExpression = table.getEntityQueryExpression().cloneSqlQueryExpression();
+            //存在操作那么就返回父类
+            if(!SqlExpressionUtil.hasAnyOperateWithoutWhereAndOrder(entityQueryExpression)){
+                EntityQueryExpression countEntityQueryExpression = getCountEntityQueryExpression(entityQueryExpression);
+                if(countEntityQueryExpression!=null){
+                    return countEntityQueryExpression;
+                }
+            }
+        }
+        countSqlEntityExpression.getProjects().getSqlSegments().clear();
+        countSqlEntityExpression.getProjects().append(new SelectConstSegment(" COUNT(1) "));
+        return countSqlEntityExpression;
     }
 }

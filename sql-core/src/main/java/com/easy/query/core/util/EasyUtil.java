@@ -52,12 +52,12 @@ public class EasyUtil {
         return sqlEntityExpression.getTables().size();
     }
 
-    public static String getAnonymousColumnName(SqlEntityAliasSegment sqlEntityProject) {
+    public static String getAnonymousPropertyName(SqlEntityAliasSegment sqlEntityProject) {
         String alias = sqlEntityProject.getAlias();
         if (StringUtil.isBlank(alias)) {
-            return sqlEntityProject.getTable().getColumnName(sqlEntityProject.getPropertyName());
+            return sqlEntityProject.getPropertyName();
         }
-        return alias;
+        return sqlEntityProject.getTable().getEntityMetadata().getPropertyNameOrDefault(alias,alias);
     }
 
     private static Map<Class<?>, FastBean> CLASS_PROPERTY_FAST_BEAN_CACHE = new ConcurrentHashMap<>();

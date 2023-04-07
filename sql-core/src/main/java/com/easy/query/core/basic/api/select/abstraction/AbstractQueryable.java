@@ -81,23 +81,35 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     public Queryable<T1> cloneQueryable() {
         return sqlEntityExpression.getRuntimeContext().getSqlApiFactory().cloneQueryable(this);
     }
-
     @Override
     public long count() {
-        Queryable<T1> countQueryable = cloneQueryable();
-        EntityQueryExpression countSqlEntityExpression = countQueryable.getSqlEntityExpression();
-        if(countSqlEntityExpression.hasOrder()){
-            countSqlEntityExpression.getOrder().clear();
+
+//        EntityQueryExpression countSqlEntityExpression = countQueryable.getSqlEntityExpression();
+//        if(countSqlEntityExpression.hasOrder()){
+//            countSqlEntityExpression.getOrder().clear();
+//        }
+//        List<Long> result = countQueryable.select(" COUNT(1) ").toList(Long.class);
+//        return ArrayUtil.firstOrDefault(result,0L);
+//        Queryable<T1> t1Queryable = cloneQueryable();
+//        if(entityQueryExpression.hasOrder()){
+//            entityQueryExpression.getOrder().clear();
+//        }
+//
+//        if(SqlExpressionUtil.hasAnyOperate(entityQueryExpression)){
+//            List<Long> result = t1Queryable.select(" COUNT(1) ").toList(Long.class);
+//            return ArrayUtil.firstOrDefault(result,0L);
+//        }
+
+        EntityQueryExpression entityQueryExpression = sqlEntityExpression.cloneSqlQueryExpression();
+        EntityQueryExpression countSqlEntityExpression = SqlExpressionUtil.getCountEntityQueryExpression(entityQueryExpression);
+        if(countSqlEntityExpression==null){
+            List<Long> result =cloneQueryable().select(" COUNT(1) ").toList(Long.class);
+            return ArrayUtil.firstOrDefault(result,0L);
         }
-        List<Long> result = countQueryable.select(" COUNT(1) ").toList(Long.class);
-        if (result.isEmpty()) {
-            return 0L;
-        }
-        Long r = result.get(0);
-        if (r == null) {
-            return 0L;
-        }
-        return r;
+        String countSql = countSqlEntityExpression.toSql();
+
+        List<Long> result = toInternalListWithSql(countSql,Long.class);
+        return ArrayUtil.firstOrDefault(result,0L);
     }
 
     @Override
@@ -192,15 +204,6 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
         return result;
     }
 
-    /**
-     * 存在多张表或者不存在匿名表
-     *
-     * @return
-     */
-    private boolean moreTableExpressionOrNoAnonymous() {
-        return sqlEntityExpression.getTables().size() != 1 || !(sqlEntityExpression.getTables().get(0) instanceof AnonymousEntityTableExpression);
-    }
-
     @Override
     public List<T1> toList() {
         return toList(queryClass());
@@ -242,9 +245,13 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
      */
     protected <TR> List<TR> toInternalList(Class<TR> resultClass) {
         String sql = toSql(resultClass);
+        return toInternalListWithSql(sql,resultClass);
+    }
+    protected <TR> List<TR> toInternalListWithSql(String sql,Class<TR> resultClass){
         EasyExecutor easyExecutor = sqlEntityExpression.getRuntimeContext().getEasyExecutor();
         boolean tracking = sqlEntityExpression.getExpressionContext().getBehavior().hasBehavior(EasyBehaviorEnum.USE_TRACKING);
         return easyExecutor.query(ExecutorContext.create(sqlEntityExpression.getRuntimeContext(),tracking ), resultClass, sql, sqlEntityExpression.getParameters());
+
     }
 
     /**
@@ -495,6 +502,8 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
         if (condition) {
             SqlColumnSelector<T1> sqlPredicate = getSqlBuilderProvider1().getSqlOrderColumnSelector1(asc);
             selectExpression.apply(sqlPredicate);
+
+
         }
         return this;
     }
@@ -571,18 +580,18 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     }
 
     @Override
-    public EasyPageResult<T1> toPageResult(long pageIndex, long pageSize) {
-        return doPageResult(pageIndex, pageSize, t1Class);
+    public EasyPageResult<T1> toPageResult(long pageIndex, long pageSize,long pageTotal) {
+        return doPageResult(pageIndex, pageSize, t1Class,pageTotal);
     }
 
-    protected <TR> EasyPageResult<TR> doPageResult(long pageIndex, long pageSize, Class<TR> clazz) {
+    protected <TR> EasyPageResult<TR> doPageResult(long pageIndex, long pageSize, Class<TR> clazz,long pageTotal) {
         //设置每次获取多少条
         long take = pageSize <= 0 ? 1 : pageSize;
         //设置当前页码最小1
         long index = pageIndex <= 0 ? 1 : pageIndex;
         //需要跳过多少条
         long offset = (index - 1) * take;
-        long total = this.count();
+        long total = pageTotal<0?this.count():pageTotal;
         EasyPageResultProvider easyPageResultProvider = sqlEntityExpression.getRuntimeContext().getEasyPageResultProvider();
         if (total <= offset) {
             return easyPageResultProvider.createPageResult(total, new ArrayList<>(0));

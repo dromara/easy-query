@@ -59,7 +59,7 @@ public class DefaultAutoSqlColumnAsSelector<T1, TR> extends AbstractSqlColumnSel
 
                 ColumnMetadata sourceColumnMetadata = sourceEntityMetadata.getColumnNotNull(property);
                 String sourceColumnName = sourceColumnMetadata.getName();
-                String targetPropertyName = targetEntityMetadata.getPropertyNameOrNull(sourceColumnName, null);
+                String targetPropertyName = targetEntityMetadata.getPropertyNameOrDefault(sourceColumnName, null);
                 if (targetPropertyName != null) {
 
                     ColumnMetadata targetColumnMetadata = targetEntityMetadata.getColumnNotNull(targetPropertyName);

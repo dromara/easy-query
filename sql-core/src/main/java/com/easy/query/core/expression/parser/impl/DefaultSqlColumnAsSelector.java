@@ -69,7 +69,7 @@ public class DefaultSqlColumnAsSelector<T1, TR> extends AbstractSqlColumnSelecto
             for (String property : properties) {
                 ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(property);
                 String columnName = columnMetadata.getName();
-                String aliasPropertyName = resultEntityMetadata.getPropertyNameOrNull(columnName);
+                String aliasPropertyName = resultEntityMetadata.getPropertyNameOrDefault(columnName);
                 if(aliasPropertyName!=null){
                     ColumnMetadata resultColumnMetadata = resultEntityMetadata.getColumnNotNull(aliasPropertyName);
                     String aliasColumnName = resultColumnMetadata.getName();

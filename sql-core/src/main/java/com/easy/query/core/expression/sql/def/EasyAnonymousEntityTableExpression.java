@@ -50,7 +50,7 @@ public class EasyAnonymousEntityTableExpression extends EasyEntityTableExpressio
 
     @Override
     public String getColumnName(String propertyName) {
-        return propertyName;
+        return getEntityMetadata().getColumnName(propertyName);
     }
 
     @Override

@@ -140,7 +140,6 @@ public abstract class EasyQueryExpression extends AbstractPredicateEntityExpress
         this.distinct = distinct;
     }
 
-
     @Override
     public boolean isExpression() {
         return true;

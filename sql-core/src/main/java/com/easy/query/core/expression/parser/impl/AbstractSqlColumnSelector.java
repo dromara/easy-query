@@ -85,8 +85,8 @@ public class AbstractSqlColumnSelector<T1, TChain> implements ColumnSelector<T1,
         List<SqlSegment> sqlSegments = sqlEntityQueryExpression.getProjects().getSqlSegments();
         for (SqlSegment sqlSegment : sqlSegments) {
             if (sqlSegment instanceof SqlEntityAliasSegment) {
-                String columnName = EasyUtil.getAnonymousColumnName((SqlEntityAliasSegment) sqlSegment);
-                sqlSegmentBuilder.append(new ColumnSegment(table,columnName , sqlEntityExpression));
+//                String propertyName = EasyUtil.getAnonymousPropertyName((SqlEntityAliasSegment) sqlSegment);
+                sqlSegmentBuilder.append(new ColumnSegment(table,((SqlEntityAliasSegment) sqlSegment).getPropertyName() , sqlEntityExpression));
             } else {
                 throw new EasyQueryException("columnAll函数无法获取指定列" + ClassUtil.getInstanceSimpleName(sqlSegment));
             }

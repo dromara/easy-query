@@ -6,6 +6,8 @@ import com.easy.query.core.basic.api.select.Queryable;
 import com.easy.query.core.enums.EasyAggregate;
 import com.easy.query.core.enums.SqlPredicateCompareEnum;
 import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
+import com.easy.query.core.expression.sql.EntityQueryExpression;
+import com.easy.query.core.util.SqlExpressionUtil;
 import com.easy.query.dto.BlogEntityTest;
 import com.easy.query.dto.BlogEntityTest2;
 import com.easy.query.dto.TopicGroupTestDTO;
@@ -569,5 +571,40 @@ public class QueryTest extends BaseTest {
                     .select(BlogEntityTest2.class,o->o.columnAll().columnIgnore(BlogEntity::getTitle).columnAs(BlogEntity::getUrl,BlogEntityTest2::getUrl)).toList();
             Assert.assertEquals(100,blogEntityTest2s.size());
         }
+    }
+    @Test
+    public void query40() {
+        Queryable<BlogEntity> select = easyQuery
+                .queryable(Topic.class)
+                .innerJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                .where((t, t1) -> t1.isNotNull(BlogEntity::getTitle))
+                .orderByDesc((t, t1) -> t1.column(BlogEntity::getPublishTime))
+                .select(BlogEntity.class, (t, t1) -> t1.column(BlogEntity::getPublishTime).column(BlogEntity::getId).column(BlogEntity::getScore));
+        EntityQueryExpression countEntityQueryExpression = SqlExpressionUtil.getCountEntityQueryExpression(select.getSqlEntityExpression().cloneSqlQueryExpression());
+        Assert.assertNotNull(countEntityQueryExpression);
+        String s = countEntityQueryExpression.toSql();
+        Assert.assertEquals("SELECT  COUNT(1)  FROM t_topic t INNER JOIN t_blog t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t1.`title` IS NOT NULL",s);
+        String s1 = select.limit(0, 20).toSql();
+        Assert.assertEquals("SELECT t1.`publish_time`,t1.`id`,t1.`score` FROM t_topic t INNER JOIN t_blog t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t1.`title` IS NOT NULL ORDER BY t1.`publish_time` DESC LIMIT 20",s1);
+
+
+//        Assert.assertEquals(100,page.getTotal());
+//        Assert.assertEquals(20,page.getData().size());
+    }
+    @Test
+    public void query41() {
+        Queryable<BlogEntity> blogEntityQueryable = easyQuery
+                .queryable(Topic.class)
+                .innerJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                .where((t, t1) -> t1.isNotNull(BlogEntity::getTitle))
+                .select(BlogEntity.class, (t, t1) -> t1.column(BlogEntity::getPublishTime).column(BlogEntity::getId).column(BlogEntity::getScore))
+                .orderByDesc(t1 -> t1.column(BlogEntity::getPublishTime));
+        EntityQueryExpression countEntityQueryExpression = SqlExpressionUtil.getCountEntityQueryExpression(blogEntityQueryable.getSqlEntityExpression().cloneSqlQueryExpression());
+        Assert.assertNotNull(countEntityQueryExpression);
+        String s = countEntityQueryExpression.toSql();
+        Assert.assertEquals("SELECT  COUNT(1)  FROM t_topic t INNER JOIN t_blog t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t1.`title` IS NOT NULL",s);
+        String s1 = blogEntityQueryable.limit(0, 20).toSql();
+        Assert.assertEquals("SELECT t2.`publish_time`,t2.`id`,t2.`score` FROM (SELECT t1.`publish_time`,t1.`id`,t1.`score` FROM t_topic t INNER JOIN t_blog t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t1.`title` IS NOT NULL) t2 ORDER BY t2.`publish_time` DESC LIMIT 20",s1);
+
     }
 }

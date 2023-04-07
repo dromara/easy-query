@@ -233,8 +233,8 @@ public class EntityMetadata {
         return columnMetadata.getName();
     }
 
-    public String getPropertyNameOrNull(String columnName) {
-        return getPropertyNameOrNull(columnName, null);
+    public String getPropertyNameOrDefault(String columnName) {
+        return getPropertyNameOrDefault(columnName, null);
     }
 
     /**
@@ -243,7 +243,7 @@ public class EntityMetadata {
      * @param def
      * @return
      */
-    public String getPropertyNameOrNull(String columnName, String def) {
+    public String getPropertyNameOrDefault(String columnName, String def) {
         String propertyName = column2PropertyMap.get(columnName);
         if (propertyName == null) {
             return def;

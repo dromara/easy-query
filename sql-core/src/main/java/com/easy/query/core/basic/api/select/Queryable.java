@@ -302,7 +302,18 @@ public interface Queryable<T1> extends Query<T1>, Interceptable<Queryable<T1>>, 
 
     Queryable<T1> limit(boolean condition, long offset, long rows);
 
-    EasyPageResult<T1> toPageResult(long pageIndex, long pageSize);
+   default EasyPageResult<T1> toPageResult(long pageIndex, long pageSize){
+       return toPageResult(pageIndex,pageSize,-1);
+   }
+
+    /**
+     * 分页 如果{@param pageTotal}  < 0 那么将会查询一次count,否则不查询count在total非常大的时候可以有效的提高性能
+     * @param pageIndex
+     * @param pageSize
+     * @param pageTotal
+     * @return
+     */
+    EasyPageResult<T1> toPageResult(long pageIndex, long pageSize,long pageTotal);
 
     //    PageResult<T1> toPageResult(long pageIndex, long pageSize, SqlExpression<SqlColumnSelector<T1>> selectExpression);
 //    <TR> PageResult<TR> toPageResult(long pageIndex, long pageSize, Class<TR> clazz);
