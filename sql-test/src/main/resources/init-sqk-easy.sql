@@ -101,3 +101,24 @@ create table t_sys_user_track
     address text null comment '地址',
     create_time datetime not null comment '创建时间'
 )comment '用户追踪表';
+create table t_sys_user_version
+(
+    id varchar(32) not null comment '主键ID'primary key,
+    username varchar(50) null comment '姓名',
+    phone varchar(250) null comment '手机号加密',
+    id_card varchar(500) null comment '身份证编号',
+    address text null comment '地址',
+    version bigint not null comment '行版本',
+    create_time datetime not null comment '创建时间'
+)comment '用户版本表';
+create table t_sys_user_version_del
+(
+    id varchar(32) not null comment '主键ID'primary key,
+    username varchar(50) null comment '姓名',
+    phone varchar(250) null comment '手机号加密',
+    id_card varchar(500) null comment '身份证编号',
+    address text null comment '地址',
+    version bigint not null comment '行版本',
+    create_time datetime not null comment '创建时间',
+    deleted tinyint(1) not null comment '是否删除'
+)comment '用户版本逻辑删除表';

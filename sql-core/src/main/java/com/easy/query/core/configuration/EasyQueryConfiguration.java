@@ -1,7 +1,11 @@
 package com.easy.query.core.configuration;
 
 import com.easy.query.core.basic.plugin.logicdel.*;
+import com.easy.query.core.basic.plugin.version.EasyVersionIntStrategy;
+import com.easy.query.core.basic.plugin.version.EasyVersionLongStrategy;
 import com.easy.query.core.basic.plugin.version.EasyVersionStrategy;
+import com.easy.query.core.basic.plugin.version.EasyVersionTimestampStrategy;
+import com.easy.query.core.basic.plugin.version.EasyVersionUUIDStrategy;
 import com.easy.query.core.config.DefaultEasyQueryDialect;
 import com.easy.query.core.config.EasyQueryDialect;
 import com.easy.query.core.config.NameConversion;
@@ -43,6 +47,10 @@ public class EasyQueryConfiguration {
     }
     public EasyQueryConfiguration(boolean deleteThrowError) {
         this.deleteThrowError=deleteThrowError;
+        easyVersionStrategyMap.put(EasyVersionIntStrategy.class,new EasyVersionIntStrategy());
+        easyVersionStrategyMap.put(EasyVersionLongStrategy.class,new EasyVersionLongStrategy());
+        easyVersionStrategyMap.put(EasyVersionUUIDStrategy.class,new EasyVersionUUIDStrategy());
+        easyVersionStrategyMap.put(EasyVersionTimestampStrategy.class,new EasyVersionTimestampStrategy());
     }
 
     public boolean deleteThrow(){

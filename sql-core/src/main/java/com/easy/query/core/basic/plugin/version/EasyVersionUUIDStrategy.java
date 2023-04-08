@@ -10,7 +10,7 @@ import java.util.UUID;
  *
  * @author xuejiaming
  */
-public class UUIDEasyVersionStrategy implements EasyVersionStrategy{
+public class EasyVersionUUIDStrategy implements EasyVersionStrategy{
 
     @Override
     public Object nextVersion(EntityMetadata entityMetadata, String propertyName, Object version) {
