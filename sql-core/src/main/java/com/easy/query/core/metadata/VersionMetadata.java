@@ -10,19 +10,17 @@ import com.easy.query.core.basic.plugin.version.EasyVersionStrategy;
  */
 public final class VersionMetadata {
     private final String propertyName;
-    private final Class<? extends EasyVersionStrategy> versionStrategy;
+    private final EasyVersionStrategy easyVersionStrategy;
 
-    public VersionMetadata(String propertyName, Class<? extends EasyVersionStrategy> versionStrategy){
+    public VersionMetadata(String propertyName,EasyVersionStrategy easyVersionStrategy){
 
         this.propertyName = propertyName;
-        this.versionStrategy = versionStrategy;
+        this.easyVersionStrategy = easyVersionStrategy;
     }
     public String getPropertyName() {
         return propertyName;
     }
-
-
-    public Class<? extends EasyVersionStrategy> getVersionStrategy() {
-        return versionStrategy;
+    public EasyVersionStrategy getEasyVersionStrategy() {
+        return easyVersionStrategy;
     }
 }

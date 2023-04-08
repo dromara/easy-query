@@ -146,11 +146,6 @@ public abstract class EasyQueryExpression extends AbstractPredicateEntityExpress
     }
 
     @Override
-    protected boolean hasVersionColumn(EntityMetadata entityMetadata) {
-        return false;
-    }
-
-    @Override
     public String toSql() {
         sqlExpressionContext.clearParameters();
         int tableCount = getTables().size();

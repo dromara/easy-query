@@ -36,15 +36,6 @@ public abstract class AbstractPredicateEntityExpression extends AbstractEntityEx
     protected boolean useLogicDelete(EntityMetadata entityMetadata) {
         return sqlExpressionContext.getBehavior().hasBehavior(EasyBehaviorEnum.LOGIC_DELETE) && entityMetadata.enableLogicDelete();
     }
-
-    /**
-     * entityMetadata.hasVersionColumn() && (this instanceof SqlEntityUpdateExpression || this instanceof SqlEntityDeleteExpression);
-     *
-     * @param entityMetadata
-     * @return
-     */
-    protected abstract boolean hasVersionColumn(EntityMetadata entityMetadata);
-
     /**
      * 存在问题 update必须要总的predicate但是如果在这边导致我手动指定where也会有这个version
      *
@@ -65,7 +56,7 @@ public abstract class AbstractPredicateEntityExpression extends AbstractEntityEx
                 logicDeleteQueryFilterExpression.apply(sqlPredicate);
             }
 
-            if (hasVersionColumn(entityMetadata)) {
+            if (entityMetadata.hasVersionColumn()) {
                 VersionMetadata versionMetadata = entityMetadata.getVersionMetadata();
                 ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(versionMetadata.getPropertyName());
                 if (isExpression()) {

@@ -148,12 +148,13 @@ public class EntityMetadata {
                 if (version != null) {
 
                     Class<? extends EasyVersionStrategy> strategy = version.strategy();
-                    if(!configuration.containEasyVersionStrategy(strategy)){
+                    EasyVersionStrategy easyVersionStrategy = configuration.getEasyVersionStrategy(strategy);
+                    if(easyVersionStrategy==null){
                         throw new EasyQueryException(ClassUtil.getSimpleName(entityClass)+"."+property+" Version strategy unknown");
                     }
                     columnMetadata.setVersion(true);
 
-                    versionMetadata=new VersionMetadata(property,strategy);
+                    versionMetadata=new VersionMetadata(property,easyVersionStrategy);
 
                     versionCount++;
                 }

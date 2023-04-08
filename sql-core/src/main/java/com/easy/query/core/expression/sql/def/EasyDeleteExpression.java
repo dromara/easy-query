@@ -1,5 +1,7 @@
 package com.easy.query.core.expression.sql.def;
 
+import com.easy.query.core.common.bean.FastBean;
+import com.easy.query.core.expression.lambda.PropertySetterCaller;
 import com.easy.query.core.expression.parser.factory.EasyQueryLambdaFactory;
 import com.easy.query.core.basic.plugin.version.EasyVersionStrategy;
 import com.easy.query.core.enums.EasyBehaviorEnum;
@@ -15,6 +17,7 @@ import com.easy.query.core.expression.segment.builder.UpdateSetSqlBuilderSegment
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnPropertyPredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnVersionPropertyPredicate;
+import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.sql.internal.AbstractPredicateEntityExpression;
@@ -23,8 +26,10 @@ import com.easy.query.core.expression.sql.EntityTableExpression;
 import com.easy.query.core.expression.sql.ExpressionContext;
 import com.easy.query.core.metadata.VersionMetadata;
 import com.easy.query.core.util.ClassUtil;
+import com.easy.query.core.util.EasyUtil;
 
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * @FileName: EasySqlDeleteExpression.java
@@ -186,12 +191,21 @@ public abstract class EasyDeleteExpression extends AbstractPredicateEntityExpres
                 SqlColumnSetter<Object> sqlColumnSetter = easyQueryLambdaFactory.createSqlColumnSetter(table.getIndex(), this, setSqlSegmentBuilder);
                 logicDeletedSqlExpression.apply(sqlColumnSetter);//获取set的值
                 //todo 非表达式添加行版本信息
-                if(!isExpression()){
-                    if(entityMetadata.hasVersionColumn()){
-                        VersionMetadata versionMetadata = entityMetadata.getVersionMetadata();
-                        Class<? extends EasyVersionStrategy> versionStrategy = versionMetadata.getVersionStrategy();
-                        EasyVersionStrategy easyVersionStrategy = getRuntimeContext().getEasyQueryConfiguration().getEasyVersionStrategyNotNull(versionStrategy);
+                if(entityMetadata.hasVersionColumn()){
+                    VersionMetadata versionMetadata = entityMetadata.getVersionMetadata();
+                    String propertyName = versionMetadata.getPropertyName();
+                    EasyVersionStrategy easyVersionStrategy = versionMetadata.getEasyVersionStrategy();
+
+                    if(!isExpression()){
                         setSqlSegmentBuilder.append(new ColumnVersionPropertyPredicate(table, versionMetadata.getPropertyName(),easyVersionStrategy,this));
+                    }else{
+                        Object version = getExpressionContext().getVersion();
+                        if(Objects.nonNull(version)){
+                            ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(propertyName);
+                            FastBean fastBean = EasyUtil.getFastBean(entityMetadata.getEntityClass());
+                            Object nextVersion = easyVersionStrategy.nextVersion(entityMetadata, propertyName, version);
+                            sqlColumnSetter.set(fastBean.getBeanGetter(columnMetadata.getProperty()),nextVersion);
+                        }
                     }
                 }
                 return setSqlSegmentBuilder;
@@ -241,11 +255,6 @@ public abstract class EasyDeleteExpression extends AbstractPredicateEntityExpres
     @Override
     public boolean isExpression() {
         return expressionDelete;
-    }
-
-    @Override
-    protected boolean hasVersionColumn(EntityMetadata entityMetadata) {
-        return entityMetadata.hasVersionColumn()&&!hasWhereColumns();
     }
 
     /**

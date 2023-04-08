@@ -13,7 +13,7 @@ import java.util.UUID;
 public class UUIDEasyVersionStrategy implements EasyVersionStrategy{
 
     @Override
-    public Object newVersionValue(EntityMetadata entityMetadata, String propertyName, Object version) {
+    public Object nextVersion(EntityMetadata entityMetadata, String propertyName, Object version) {
         return UUID.randomUUID().toString().replaceAll("-","");
     }
 }

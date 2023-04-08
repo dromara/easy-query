@@ -1,5 +1,6 @@
 package com.easy.query.core.basic.api.update;
 
+import com.easy.query.core.basic.api.internal.Versionable;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.SqlExpression;
 import com.easy.query.core.expression.parser.abstraction.SqlPredicate;
@@ -10,7 +11,7 @@ import com.easy.query.core.expression.parser.abstraction.SqlPredicate;
  * @Date: 2023/2/24 23:21
  * @author xuejiaming
  */
-public interface ExpressionUpdatable<T> extends Updatable<T,ExpressionUpdatable<T>> {
+public interface ExpressionUpdatable<T> extends Updatable<T,ExpressionUpdatable<T>>, Versionable<ExpressionUpdatable<T>> {
     default ExpressionUpdatable<T> set(Property<T, ?> column, Object val) {
         return set(true, column, val);
     }
@@ -22,11 +23,6 @@ public interface ExpressionUpdatable<T> extends Updatable<T,ExpressionUpdatable<
     }
 
     ExpressionUpdatable<T> setSelfColumn(boolean condition, Property<T, ?> column1, Property<T, ?> column2);
-
-    default ExpressionUpdatable<T> withVersion(Object versionValue){
-        return withVersion(true,versionValue);
-    }
-    ExpressionUpdatable<T> withVersion(boolean condition,Object versionValue);
     // region 列++ --
 
 

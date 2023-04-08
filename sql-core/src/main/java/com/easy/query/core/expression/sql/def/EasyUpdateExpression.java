@@ -1,5 +1,6 @@
 package com.easy.query.core.expression.sql.def;
 
+import com.easy.query.core.common.bean.FastBean;
 import com.easy.query.core.expression.parser.factory.EasyQueryLambdaFactory;
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.plugin.version.EasyVersionStrategy;
@@ -33,6 +34,7 @@ import com.easy.query.core.metadata.VersionMetadata;
 import com.easy.query.core.util.ArrayUtil;
 import com.easy.query.core.util.BeanUtil;
 import com.easy.query.core.util.ClassUtil;
+import com.easy.query.core.util.EasyUtil;
 import com.easy.query.core.util.TrackUtil;
 
 import java.util.*;
@@ -118,6 +120,13 @@ public abstract class EasyUpdateExpression extends AbstractPredicateEntityExpres
     @Override
     public String toSql() {
         getExpressionContext().clearParameters();
+        if (isExpressionUpdate) {
+            return expressionUpdate();
+        } else {
+            return toSql(null);
+        }
+    }
+    private void checkTable(){
         int tableCount = getTables().size();
         if (tableCount == 0) {
             throw new EasyQueryException("未找到查询表信息");
@@ -125,15 +134,11 @@ public abstract class EasyUpdateExpression extends AbstractPredicateEntityExpres
         if (tableCount > 1) {
             throw new EasyQueryException("找到多张表信息");
         }
-        if (isExpressionUpdate) {
-            return expressionUpdate();
-        } else {
-            return toSql(null);
-        }
     }
 
     protected String expressionUpdate() {
 
+        checkTable();
         if (!hasSetColumns()) {
             throw new EasyQueryException("'UPDATE' statement without 'SET' execute wrong");
         }
@@ -178,16 +183,28 @@ public abstract class EasyUpdateExpression extends AbstractPredicateEntityExpres
     protected SqlBuilderSegment buildSetSqlSegment(EntityTableExpression table) {
         EntityMetadata entityMetadata = table.getEntityMetadata();
         SqlBuilderSegment updateSet = getSetColumns().cloneSqlBuilder();
+        SqlColumnSetter<Object> sqlColumnSetter = getRuntimeContext().getEasyQueryLambdaFactory().createSqlColumnSetter(0, this, updateSet);
+
         //如果更新拦截器不为空
         if(ArrayUtil.isNotEmpty(entityMetadata.getUpdateSetInterceptors())){
             EasyQueryConfiguration easyQueryConfiguration = getRuntimeContext().getEasyQueryConfiguration();
-            SqlColumnSetter<Object> sqlColumnSetter = getRuntimeContext().getEasyQueryLambdaFactory().createSqlColumnSetter(0, this, updateSet);
-
             getExpressionContext().getInterceptorFilter(entityMetadata.getUpdateSetInterceptors())
                     .forEach(interceptor->{
                         EasyUpdateSetInterceptor globalInterceptor = (EasyUpdateSetInterceptor) easyQueryConfiguration.getEasyInterceptor(interceptor.getName());
                         globalInterceptor.configure(entityMetadata.getEntityClass(), this, sqlColumnSetter);
                     });
+        }
+        if(entityMetadata.hasVersionColumn()){
+            Object version = sqlExpressionContext.getVersion();
+            if (Objects.nonNull(version)) {
+                VersionMetadata versionMetadata = entityMetadata.getVersionMetadata();
+                String propertyName = versionMetadata.getPropertyName();
+                ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(propertyName);
+                FastBean fastBean = EasyUtil.getFastBean(table.getEntityClass());
+                EasyVersionStrategy easyVersionStrategy = versionMetadata.getEasyVersionStrategy();
+                Object newVersionValue = easyVersionStrategy.nextVersion(entityMetadata, propertyName, version);
+                sqlColumnSetter.set(fastBean.getBeanGetter(columnMetadata.getProperty()),newVersionValue);
+            }
         }
         return updateSet;
     }
@@ -201,14 +218,8 @@ public abstract class EasyUpdateExpression extends AbstractPredicateEntityExpres
 
     @Override
     public String toSql(Object entity) {
+        checkTable();
         getExpressionContext().clearParameters();
-        int tableCount = getTables().size();
-        if (tableCount == 0) {
-            throw new EasyQueryException("未找到查询表信息");
-        }
-        if (tableCount > 1) {
-            throw new EasyQueryException("找到多张表信息");
-        }
         return entityToSql(entity);
     }
 
@@ -295,8 +306,7 @@ public abstract class EasyUpdateExpression extends AbstractPredicateEntityExpres
             });
             if(entityMetadata.hasVersionColumn()){
                 VersionMetadata versionMetadata = entityMetadata.getVersionMetadata();
-                Class<? extends EasyVersionStrategy> versionStrategy = versionMetadata.getVersionStrategy();
-                EasyVersionStrategy easyVersionStrategy = getRuntimeContext().getEasyQueryConfiguration().getEasyVersionStrategyNotNull(versionStrategy);
+                EasyVersionStrategy easyVersionStrategy = versionMetadata.getEasyVersionStrategy();
                 updateSet.append(new ColumnVersionPropertyPredicate(table, versionMetadata.getPropertyName(),easyVersionStrategy,this));
             }
 
@@ -337,10 +347,6 @@ public abstract class EasyUpdateExpression extends AbstractPredicateEntityExpres
         }
     }
 
-    @Override
-    protected boolean hasVersionColumn(EntityMetadata entityMetadata) {
-        return entityMetadata.hasVersionColumn()&&!hasWhereColumns();//如果是手动输入where column那么不会追加
-    }
 
     private void buildPredicateWithKeyColumns(PredicateSegment where, EntityTableExpression table) {
         EntityMetadata entityMetadata = table.getEntityMetadata();

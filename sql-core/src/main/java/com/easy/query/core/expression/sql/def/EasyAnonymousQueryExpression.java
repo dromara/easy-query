@@ -112,10 +112,6 @@ public class EasyAnonymousQueryExpression extends EasyQueryExpression implements
         return super.isExpression();
     }
 
-    @Override
-    protected boolean hasVersionColumn(EntityMetadata entityMetadata) {
-        return super.hasVersionColumn(entityMetadata);
-    }
 
     @Override
     public String toSql() {

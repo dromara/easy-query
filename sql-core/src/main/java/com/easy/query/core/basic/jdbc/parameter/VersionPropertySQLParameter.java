@@ -36,6 +36,6 @@ public class VersionPropertySQLParameter implements BeanSqlParameter{
     @Override
     public Object getValue() {
         Object value = beanSqlParameter.getValue();
-        return easyVersionStrategy.newVersionValue(getTable().getEntityMetadata(),getPropertyName(),value);
+        return easyVersionStrategy.nextVersion(getTable().getEntityMetadata(),getPropertyName(),value);
     }
 }

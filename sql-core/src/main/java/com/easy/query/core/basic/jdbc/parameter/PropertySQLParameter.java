@@ -9,17 +9,17 @@ import com.easy.query.core.expression.sql.EntityTableExpression;
 import com.easy.query.core.util.EasyUtil;
 
 /**
+ * @author xuejiaming
  * @FileName: EntitySqlParameter.java
  * @Description: 文件说明
  * @Date: 2023/2/28 20:47
- * @author xuejiaming
  */
 public final class PropertySQLParameter implements BeanSqlParameter {
     private final EntityTableExpression table;
     private final String propertyName;
-    private  Object bean;
+    private Object bean;
 
-    public PropertySQLParameter(EntityTableExpression table, String propertyName){
+    public PropertySQLParameter(EntityTableExpression table, String propertyName) {
         this.table = table;
         this.propertyName = propertyName;
     }
@@ -31,8 +31,8 @@ public final class PropertySQLParameter implements BeanSqlParameter {
 
     @Override
     public Object getValue() {
-        if(bean==null){
-            throw new EasyQueryException("cant get sql parameter value,"+table.getEntityMetadata().getEntityClass()+"."+propertyName+",bean is null");
+        if (bean == null) {
+            throw new EasyQueryException("cant get sql parameter value," + table.getEntityMetadata().getEntityClass() + "." + propertyName + ",bean is null");
         }
         EntityMetadata entityMetadata = table.getEntityMetadata();
         ColumnMetadata column = entityMetadata.getColumnNotNull(propertyName);
@@ -43,7 +43,7 @@ public final class PropertySQLParameter implements BeanSqlParameter {
 
     @Override
     public void setBean(Object bean) {
-        this.bean=bean;
+        this.bean = bean;
     }
 
     @Override
