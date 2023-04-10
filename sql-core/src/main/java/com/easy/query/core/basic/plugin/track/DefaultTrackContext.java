@@ -43,7 +43,7 @@ public class DefaultTrackContext implements TrackContext {
             return null;
         }
         ConcurrentHashMap<String, EntityState> entityStateTrackMap = trackEntityMap.get(entity.getClass());
-        if (entityStateTrackMap == null) {
+        if (entityStateTrackMap == null||entityStateTrackMap.isEmpty()) {
             return null;
         }
         String trackKey = TrackUtil.getTrackKey(entityMetadataManager, entity);

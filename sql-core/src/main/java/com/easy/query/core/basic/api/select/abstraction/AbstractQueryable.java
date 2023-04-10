@@ -45,6 +45,7 @@ import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.util.ArrayUtil;
 import com.easy.query.core.util.ClassUtil;
+import com.easy.query.core.util.EasyShardingUtil;
 import com.easy.query.core.util.EasyUtil;
 import com.easy.query.core.util.SqlExpressionUtil;
 import com.easy.query.core.util.StringUtil;
@@ -226,17 +227,25 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
         return toInternalList(resultClass);
     }
 
-    @Override
-    public <TR> String toSql(Class<TR> resultClass) {
+    protected  void compensateSelect(Class<?> resultClass){
 
         if (SqlExpressionUtil.shouldCloneSqlEntityQueryExpression(sqlEntityExpression)) {
-            return select(resultClass).toSql();
+            select(resultClass);
         }
+    }
+    @Override
+    public <TR> String toSql(Class<TR> resultClass) {
+        compensateSelect(resultClass);
+//        if (SqlExpressionUtil.shouldCloneSqlEntityQueryExpression(sqlEntityExpression)) {
+//            return select(resultClass).toSql();
+//        }
         return toInternalSql();
     }
 
 
-    protected abstract String toInternalSql();
+    protected String toInternalSql(){
+        return sqlEntityExpression.toSql();
+    }
 
     /**
      * 子类实现方法
@@ -246,6 +255,14 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     protected <TR> List<TR> toInternalList(Class<TR> resultClass) {
         String sql = toSql(resultClass);
         return toInternalListWithSql(sql,resultClass);
+//        //todo 检查是否存在分片对象的查询
+//        boolean shardingQuery = EasyShardingUtil.isShardingQuery(sqlEntityExpression);
+//        if(shardingQuery){
+//            compensateSelect(resultClass);
+//            //解析sql where 和join on的表达式返回datasource+sql的组合可以利用强制tableNameAs来实现
+//            sqlEntityExpression.getRuntimeContext()
+//        }else{
+//        }
     }
     protected <TR> List<TR> toInternalListWithSql(String sql,Class<TR> resultClass){
         EasyExecutor easyExecutor = sqlEntityExpression.getRuntimeContext().getEasyExecutor();

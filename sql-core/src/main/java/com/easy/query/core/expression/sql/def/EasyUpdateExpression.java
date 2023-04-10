@@ -1,9 +1,12 @@
 package com.easy.query.core.expression.sql.def;
 
 import com.easy.query.core.common.bean.FastBean;
+import com.easy.query.core.enums.SqlPredicateCompareEnum;
+import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.parser.factory.EasyQueryLambdaFactory;
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.plugin.version.EasyVersionStrategy;
+import com.easy.query.core.expression.segment.condition.predicate.ColumnValuePredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnVersionPropertyPredicate;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
@@ -40,10 +43,10 @@ import com.easy.query.core.util.TrackUtil;
 import java.util.*;
 
 /**
+ * @author xuejiaming
  * @FileName: EasySqlUpdateExpression.java
  * @Description: 文件说明
  * @Date: 2023/3/4 17:05
- * @author xuejiaming
  */
 public abstract class EasyUpdateExpression extends AbstractPredicateEntityExpression implements EntityUpdateExpression {
 
@@ -126,7 +129,8 @@ public abstract class EasyUpdateExpression extends AbstractPredicateEntityExpres
             return toSql(null);
         }
     }
-    private void checkTable(){
+
+    private void checkTable() {
         int tableCount = getTables().size();
         if (tableCount == 0) {
             throw new EasyQueryException("未找到查询表信息");
@@ -186,15 +190,15 @@ public abstract class EasyUpdateExpression extends AbstractPredicateEntityExpres
         SqlColumnSetter<Object> sqlColumnSetter = getRuntimeContext().getEasyQueryLambdaFactory().createSqlColumnSetter(0, this, updateSet);
 
         //如果更新拦截器不为空
-        if(ArrayUtil.isNotEmpty(entityMetadata.getUpdateSetInterceptors())){
+        if (ArrayUtil.isNotEmpty(entityMetadata.getUpdateSetInterceptors())) {
             EasyQueryConfiguration easyQueryConfiguration = getRuntimeContext().getEasyQueryConfiguration();
             getExpressionContext().getInterceptorFilter(entityMetadata.getUpdateSetInterceptors())
-                    .forEach(interceptor->{
+                    .forEach(interceptor -> {
                         EasyUpdateSetInterceptor globalInterceptor = (EasyUpdateSetInterceptor) easyQueryConfiguration.getEasyInterceptor(interceptor.getName());
                         globalInterceptor.configure(entityMetadata.getEntityClass(), this, sqlColumnSetter);
                     });
         }
-        if(entityMetadata.hasVersionColumn()){
+        if (entityMetadata.hasVersionColumn()) {
             Object version = sqlExpressionContext.getVersion();
             if (Objects.nonNull(version)) {
                 VersionMetadata versionMetadata = entityMetadata.getVersionMetadata();
@@ -203,7 +207,7 @@ public abstract class EasyUpdateExpression extends AbstractPredicateEntityExpres
                 FastBean fastBean = EasyUtil.getFastBean(table.getEntityClass());
                 EasyVersionStrategy easyVersionStrategy = versionMetadata.getEasyVersionStrategy();
                 Object newVersionValue = easyVersionStrategy.nextVersion(entityMetadata, propertyName, version);
-                sqlColumnSetter.set(fastBean.getBeanGetter(columnMetadata.getProperty()),newVersionValue);
+                sqlColumnSetter.set(fastBean.getBeanGetter(columnMetadata.getProperty()), newVersionValue);
             }
         }
         return updateSet;
@@ -226,7 +230,7 @@ public abstract class EasyUpdateExpression extends AbstractPredicateEntityExpres
     private String entityToSql(Object entity) {
         EntityTableExpression table = getTables().get(0);
         AndPredicateSegment where = new AndPredicateSegment(true);
-        buildEntityPredicateSegment(where, table);
+        buildEntityPredicateSegment(where, table, entity);
         PredicateSegment sqlWhere = buildWherePredicateSegment(where, table);
         SqlBuilderSegment updateSet = null;
         if (hasSetColumns()) {
@@ -262,6 +266,7 @@ public abstract class EasyUpdateExpression extends AbstractPredicateEntityExpres
             TrackManager trackManager = runtimeContext.getTrackManager();
             Set<String> ignorePropertySet = new HashSet<>(entityMetadata.getProperties().size());
             Set<String> trackPropertySet = new HashSet<>(entityMetadata.getProperties().size());
+            boolean setWithStrategy = false;
             boolean setWithTrack = false;
             if (entity != null) {
                 //以下应该二选一
@@ -269,6 +274,7 @@ public abstract class EasyUpdateExpression extends AbstractPredicateEntityExpres
                 UpdateStrategyEnum updateStrategy = sqlExpressionContext.getUpdateStrategy();
                 if (!Objects.equals(UpdateStrategyEnum.DEFAULT, updateStrategy)) {
                     if (Objects.equals(UpdateStrategyEnum.ONLY_NOT_NULL_COLUMNS, updateStrategy) || Objects.equals(UpdateStrategyEnum.ONLY_NULL_COLUMNS, updateStrategy)) {
+                        setWithStrategy = true;
                         Set<String> beanMatchProperties = BeanUtil.getBeanMatchProperties(runtimeContext.getEntityMetadataManager(), entity, Objects.equals(UpdateStrategyEnum.ONLY_NOT_NULL_COLUMNS, updateStrategy) ? Objects::isNull : Objects::nonNull);
                         ignorePropertySet.addAll(beanMatchProperties);
                     }
@@ -288,26 +294,31 @@ public abstract class EasyUpdateExpression extends AbstractPredicateEntityExpres
             }
 
             boolean finalSetWithTrack = setWithTrack;
+            boolean finalSetWithStrategy = setWithStrategy;
             updateSet.getSqlSegments().removeIf(o -> {
 
                 String propertyName = ((SqlEntitySegment) o).getPropertyName();
                 ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(propertyName);
-                if(columnMetadata.isUpdateIgnore()||columnMetadata.isVersion()){
+                if (columnMetadata.isUpdateIgnore() || columnMetadata.isVersion()) {
                     return true;
                 }
-
-                if (predicateIndex.contains(entityClass, propertyName) || ignorePropertySet.contains(propertyName)) {
-                    return true;
-                }
-                if (finalSetWithTrack) {
+                if (finalSetWithStrategy) {
+                    if (ignorePropertySet.contains(propertyName)) {
+                        return true;
+                    }
+                } else if (finalSetWithTrack) {
+                    //忽略条件
                     return !trackPropertySet.contains(propertyName);
+                }
+                if (predicateIndex.contains(entityClass, propertyName)) {
+                    return true;
                 }
                 return false;
             });
-            if(entityMetadata.hasVersionColumn()){
+            if (entityMetadata.hasVersionColumn()) {
                 VersionMetadata versionMetadata = entityMetadata.getVersionMetadata();
                 EasyVersionStrategy easyVersionStrategy = versionMetadata.getEasyVersionStrategy();
-                updateSet.append(new ColumnVersionPropertyPredicate(table, versionMetadata.getPropertyName(),easyVersionStrategy,this));
+                updateSet.append(new ColumnVersionPropertyPredicate(table, versionMetadata.getPropertyName(), easyVersionStrategy, this));
             }
 
         }
@@ -319,11 +330,11 @@ public abstract class EasyUpdateExpression extends AbstractPredicateEntityExpres
      * @param where
      * @param table
      */
-    private void buildEntityPredicateSegment(PredicateSegment where, EntityTableExpression table) {
+    private void buildEntityPredicateSegment(PredicateSegment where, EntityTableExpression table, Object entity) {
         if (hasWhereColumns()) {
-            buildPredicateWithWhereColumns(where, getWhereColumns(), table);
+            buildPredicateWithWhereColumns(where, getWhereColumns(), table, entity);
         } else {
-            buildPredicateWithKeyColumns(where, table);
+            buildPredicateWithKeyColumns(where, table, entity);
         }
     }
 
@@ -333,30 +344,68 @@ public abstract class EasyUpdateExpression extends AbstractPredicateEntityExpres
      * @param where
      * @param table
      */
-    private void buildPredicateWithWhereColumns(PredicateSegment where, SqlBuilderSegment whereColumns, EntityTableExpression table) {
+    private void buildPredicateWithWhereColumns(PredicateSegment where, SqlBuilderSegment whereColumns, EntityTableExpression table, Object entity) {
 
-        if(whereColumns.isNotEmpty()){
+        if (whereColumns.isNotEmpty()) {
+            TrackManager trackManager = sqlExpressionContext.getRuntimeContext().getTrackManager();
+            TrackContext trackContext = trackManager.getCurrentTrackContext();
             for (SqlSegment sqlSegment : whereColumns.getSqlSegments()) {
                 if (!(sqlSegment instanceof SqlEntitySegment)) {
                     throw new EasyQueryException("where 表达式片段不是SqlEntitySegment");
                 }
+
                 SqlEntitySegment sqlEntitySegment = (SqlEntitySegment) sqlSegment;
-                AndPredicateSegment andPredicateSegment = new AndPredicateSegment(new ColumnPropertyPredicate(table, sqlEntitySegment.getPropertyName(), this));
-                where.addPredicateSegment(andPredicateSegment);
+                if (entity != null) {
+                    Object predicateValue = getPredicateValue(entity, trackContext, sqlEntitySegment.getPropertyName(), table.getEntityMetadata());
+                    ColumnValuePredicate columnValuePredicate = new ColumnValuePredicate(table, sqlEntitySegment.getPropertyName(), predicateValue, SqlPredicateCompareEnum.EQ, this);
+                    AndPredicateSegment andPredicateSegment = new AndPredicateSegment(columnValuePredicate);
+                    where.addPredicateSegment(andPredicateSegment);
+                } else {
+                    ColumnPropertyPredicate columnPropertyPredicate = new ColumnPropertyPredicate(table, sqlEntitySegment.getPropertyName(), this);
+                    AndPredicateSegment andPredicateSegment = new AndPredicateSegment(columnPropertyPredicate);
+                    where.addPredicateSegment(andPredicateSegment);
+                }
             }
         }
     }
 
+    private Object getPredicateValue(Object entity, TrackContext trackContext, String propertyName, EntityMetadata entityMetadata) {
+        FastBean fastBean = EasyUtil.getFastBean(entityMetadata.getEntityClass());
+        ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(propertyName);
+        Property<Object, ?> beanGetter = fastBean.getBeanGetter(columnMetadata.getProperty());
+        if (trackContext != null) {
+            EntityState trackEntityState = trackContext.getTrackEntityState(entity);
+            if (trackEntityState != null) {
+                Object originalEntity = trackEntityState.getOriginalValue();
+                if (originalEntity != null) {
+                    return beanGetter.apply(originalEntity);
+                }
+            }
+        }
+        return beanGetter.apply(entity);
+    }
 
-    private void buildPredicateWithKeyColumns(PredicateSegment where, EntityTableExpression table) {
+
+    private void buildPredicateWithKeyColumns(PredicateSegment where, EntityTableExpression table, Object entity) {
         EntityMetadata entityMetadata = table.getEntityMetadata();
         Collection<String> keyProperties = entityMetadata.getKeyProperties();
         if (keyProperties.isEmpty()) {
             throw new EasyQueryException("entity:" + ClassUtil.getSimpleName(entityMetadata.getEntityClass()) + " not found primary key properties");
         }
+        TrackManager trackManager = sqlExpressionContext.getRuntimeContext().getTrackManager();
+        TrackContext trackContext = trackManager.getCurrentTrackContext();
         for (String keyProperty : keyProperties) {
-            AndPredicateSegment andPredicateSegment = new AndPredicateSegment(new ColumnPropertyPredicate(table, keyProperty, this));
-            where.addPredicateSegment(andPredicateSegment);
+
+            if (entity != null) {
+                Object predicateValue = getPredicateValue(entity, trackContext, keyProperty, entityMetadata);
+                ColumnValuePredicate columnValuePredicate = new ColumnValuePredicate(table, keyProperty, predicateValue, SqlPredicateCompareEnum.EQ, this);
+                AndPredicateSegment andPredicateSegment = new AndPredicateSegment(columnValuePredicate);
+//            AndPredicateSegment andPredicateSegment = new AndPredicateSegment(new ColumnPropertyPredicate(table, keyProperty, this));
+                where.addPredicateSegment(andPredicateSegment);
+            } else {
+                AndPredicateSegment andPredicateSegment = new AndPredicateSegment(new ColumnPropertyPredicate(table, keyProperty, this));
+                where.addPredicateSegment(andPredicateSegment);
+            }
         }
 //        if(entityMetadata.hasVersionColumn()){
 //            VersionMetadata versionMetadata = entityMetadata.getVersionMetadata();

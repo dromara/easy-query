@@ -20,6 +20,7 @@ public interface EntityTableExpression extends TableExpressionSegment {
     String getColumnName(String propertyName);
     String getTableName();
     void setTableNameAs(Function<String,String> tableNameAs);
+    boolean tableNameIsAs();
 
      SqlExpression<SqlPredicate<Object>> getLogicDeleteQueryFilterExpression();
      SqlExpression<SqlColumnSetter<Object>> getLogicDeletedSqlExpression();

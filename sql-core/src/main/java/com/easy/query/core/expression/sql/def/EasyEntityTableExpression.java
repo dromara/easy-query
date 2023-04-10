@@ -71,6 +71,11 @@ public class EasyEntityTableExpression implements EntityTableExpression {
     }
 
     @Override
+    public boolean tableNameIsAs() {
+        return tableNameAs!=null;
+    }
+
+    @Override
     public SqlExpression<SqlPredicate<Object>> getLogicDeleteQueryFilterExpression() {
         if (entityMetadata.enableLogicDelete()) {
             return entityMetadata.getLogicDeleteMetadata().getLogicDeletePredicateFilterExpression();

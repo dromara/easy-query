@@ -13,9 +13,4 @@ public class EasyQueryable<T> extends AbstractQueryable1<T> {
     public EasyQueryable(Class<T> tClass, EntityQueryExpression sqlEntityExpression) {
         super(tClass, sqlEntityExpression);
     }
-
-    @Override
-    public String toInternalSql() {
-        return sqlEntityExpression.toSql();
-    }
 }

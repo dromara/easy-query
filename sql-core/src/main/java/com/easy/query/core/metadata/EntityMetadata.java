@@ -14,6 +14,7 @@ import com.easy.query.core.basic.plugin.interceptor.EasyInterceptor;
 import com.easy.query.core.basic.plugin.interceptor.EasyPredicateFilterInterceptor;
 import com.easy.query.core.basic.plugin.interceptor.EasyUpdateSetInterceptor;
 import com.easy.query.core.basic.plugin.logicdel.EasyLogicDeleteStrategy;
+import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.util.StringUtil;
 import com.easy.query.core.common.LinkedCaseInsensitiveMap;
 import com.easy.query.core.util.ClassUtil;
@@ -35,9 +36,24 @@ public class EntityMetadata {
     private final Class<?> entityClass;
     private String tableName;
 
+    public boolean isMultiTableMapping(){
+        return shardingTablePropertyName!=null;
+    }
+    public boolean isMultiDataSourceMapping(){
+        return shardingDataSourcePropertyName!=null;
+    }
 
     private LogicDeleteMetadata logicDeleteMetadata;
     private VersionMetadata versionMetadata;
+    private String shardingDataSourcePropertyName;
+    private final Set<String> shardingDataSourcePropertyNames=new LinkedHashSet<>();
+    private String shardingTablePropertyName;
+    private final Set<String> shardingTablePropertyNames=new LinkedHashSet<>();
+
+    /**
+     * 分表表名和尾巴的分隔符
+     */
+    private String tableSeparator;
     /**
      * 查询过滤器
      */
@@ -158,6 +174,24 @@ public class EntityMetadata {
 
                     versionCount++;
                 }
+                ShardingDataSourceKey shardingDataSourceKey = field.getAnnotation(ShardingDataSourceKey.class);
+                if(shardingDataSourceKey!=null){
+                    this.setShardingDataSourcePropertyName(property);
+                }
+                ShardingExtraDataSourceKey shardingExtraDataSourceKey = field.getAnnotation(ShardingExtraDataSourceKey.class);
+                if(shardingExtraDataSourceKey!=null){
+                    this.addExtraShardingDataSourcePropertyName(property);
+                }
+                ShardingTableKey shardingTableKey = field.getAnnotation(ShardingTableKey.class);
+                if(shardingTableKey!=null){
+                    this.setShardingTablePropertyName(property);
+                    this.setTableSeparator(shardingTableKey.tableSeparator());
+                }
+                ShardingExtraTableKey shardingExtraTableKey = field.getAnnotation(ShardingExtraTableKey.class);
+                if(shardingExtraTableKey!=null){
+                    this.addExtraShardingTablePropertyName(property);
+                }
+
                 LogicDelete logicDelete = field.getAnnotation(LogicDelete.class);
                 if (logicDelete != null) {
                     LogicDeleteStrategyEnum strategy = logicDelete.strategy();
@@ -344,4 +378,50 @@ public class EntityMetadata {
         return versionMetadata;
     }
 
+    public boolean isSharding(){
+        return isMultiTableMapping()||isMultiDataSourceMapping();
+    }
+    public String getShardingDataSourcePropertyName() {
+        return shardingDataSourcePropertyName;
+    }
+
+    public void setShardingDataSourcePropertyName(String shardingDataSourcePropertyName) {
+        if(shardingDataSourcePropertyNames.contains(shardingDataSourcePropertyName)){
+            throw new EasyQueryInvalidOperationException("same sharding data source property name:["+shardingDataSourcePropertyName+"]");
+        }
+        this.shardingDataSourcePropertyName = shardingDataSourcePropertyName;
+        shardingDataSourcePropertyNames.add(shardingTablePropertyName);
+    }
+
+    public void addExtraShardingDataSourcePropertyName(String shardingExtraDataSourcePropertyName){
+        if(shardingDataSourcePropertyNames.contains(shardingExtraDataSourcePropertyName)){
+            throw new EasyQueryInvalidOperationException("same sharding data source property name:["+shardingExtraDataSourcePropertyName+"]");
+        }
+        shardingDataSourcePropertyNames.add(shardingExtraDataSourcePropertyName);
+    }
+    public String getShardingTablePropertyName() {
+        return shardingTablePropertyName;
+    }
+
+    public void setShardingTablePropertyName(String shardingTablePropertyName) {
+        if(shardingTablePropertyNames.contains(shardingTablePropertyName)){
+            throw new EasyQueryInvalidOperationException("same sharding table property name:["+shardingTablePropertyName+"]");
+        }
+        this.shardingTablePropertyName = shardingTablePropertyName;
+        shardingTablePropertyNames.add(shardingTablePropertyName);
+    }
+    public void addExtraShardingTablePropertyName(String shardingExtraTablePropertyName){
+        if(shardingTablePropertyNames.contains(shardingExtraTablePropertyName)){
+            throw new EasyQueryInvalidOperationException("same sharding table property name:["+shardingExtraTablePropertyName+"]");
+        }
+        shardingTablePropertyNames.add(shardingExtraTablePropertyName);
+    }
+
+    public String getTableSeparator() {
+        return tableSeparator;
+    }
+
+    public void setTableSeparator(String tableSeparator) {
+        this.tableSeparator = tableSeparator;
+    }
 }
