@@ -27,28 +27,29 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
+ * @author xuejiaming
  * @FileName: EntityMetadata.java
  * @Description: 文件说明
  * @Date: 2023/2/11 10:17
- * @author xuejiaming
  */
 public class EntityMetadata {
     private final Class<?> entityClass;
     private String tableName;
 
-    public boolean isMultiTableMapping(){
-        return shardingTablePropertyName!=null;
+    public boolean isMultiTableMapping() {
+        return shardingTablePropertyName != null;
     }
-    public boolean isMultiDataSourceMapping(){
-        return shardingDataSourcePropertyName!=null;
+
+    public boolean isMultiDataSourceMapping() {
+        return shardingDataSourcePropertyName != null;
     }
 
     private LogicDeleteMetadata logicDeleteMetadata;
     private VersionMetadata versionMetadata;
     private String shardingDataSourcePropertyName;
-    private final Set<String> shardingDataSourcePropertyNames=new LinkedHashSet<>();
+    private final Set<String> shardingDataSourcePropertyNames = new LinkedHashSet<>();
     private String shardingTablePropertyName;
-    private final Set<String> shardingTablePropertyNames=new LinkedHashSet<>();
+    private final Set<String> shardingTablePropertyNames = new LinkedHashSet<>();
 
     /**
      * 分表表名和尾巴的分隔符
@@ -93,22 +94,22 @@ public class EntityMetadata {
         NameConversion nameConversion = configuration.getNameConversion();
 
         Table table = ClassUtil.getAnnotation(entityClass, Table.class);
-        this.tableName = (table == null || StringUtil.isBlank(table.value())) ? nameConversion.convert(ClassUtil.getSimpleName(entityClass)) : table.value();
+        this.tableName = table == null ? null : nameConversion.convert(StringUtil.defaultIfBank(table.value(), ClassUtil.getSimpleName(entityClass)));
 
-        HashSet<String> ignoreProperties =table!=null?new HashSet<>(Arrays.asList(table.ignoreProperties())) :new HashSet<>();
+        HashSet<String> ignoreProperties = table != null ? new HashSet<>(Arrays.asList(table.ignoreProperties())) : new HashSet<>();
 
         List<Field> allFields = ClassUtil.getAllFields(this.entityClass);
         PropertyDescriptor[] ps = getPropertyDescriptor();
-        int versionCount=0;
-        int logicDelCount=0;
+        int versionCount = 0;
+        int logicDelCount = 0;
         for (Field field : allFields) {
             String property = field.getName();
-            if(ignoreProperties.contains(property)){
+            if (ignoreProperties.contains(property)) {
                 continue;
             }
             //未找到bean属性就直接忽略
             PropertyDescriptor propertyDescriptor = firstOrNull(ps, o -> Objects.equals(o.getName(), property));
-            if(propertyDescriptor==null){
+            if (propertyDescriptor == null) {
                 continue;
             }
             ColumnIgnore columnIgnore = field.getAnnotation(ColumnIgnore.class);
@@ -130,20 +131,20 @@ public class EntityMetadata {
             Encryption encryption = field.getAnnotation(Encryption.class);
             if (encryption != null) {
                 Class<? extends EasyEncryptionStrategy> strategy = encryption.strategy();
-                if(!configuration.containEasyEncryptionStrategy(strategy)){
-                    throw new EasyQueryException(ClassUtil.getSimpleName(entityClass)+"."+property+" Encryption strategy unknown");
+                if (!configuration.containEasyEncryptionStrategy(strategy)) {
+                    throw new EasyQueryException(ClassUtil.getSimpleName(entityClass) + "." + property + " Encryption strategy unknown");
                 }
                 columnMetadata.setEncryptionStrategy(encryption.strategy());
                 columnMetadata.setSupportQueryLike(encryption.supportQueryLike());
             }
             if (StringUtil.isNotBlank(tableName)) {
 
-                if(column!=null){
-                    if(column.primaryKey()){
+                if (column != null) {
+                    if (column.primaryKey()) {
                         keyPropertiesMap.put(property, columnName);
                     }
                     columnMetadata.setPrimary(column.primaryKey());
-                    if(column.increment()){
+                    if (column.increment()) {
                         incrementColumns.add(columnName);
                     }
                     columnMetadata.setIncrement(column.increment());
@@ -165,30 +166,30 @@ public class EntityMetadata {
 
                     Class<? extends EasyVersionStrategy> strategy = version.strategy();
                     EasyVersionStrategy easyVersionStrategy = configuration.getEasyVersionStrategy(strategy);
-                    if(easyVersionStrategy==null){
-                        throw new EasyQueryException(ClassUtil.getSimpleName(entityClass)+"."+property+" Version strategy unknown");
+                    if (easyVersionStrategy == null) {
+                        throw new EasyQueryException(ClassUtil.getSimpleName(entityClass) + "." + property + " Version strategy unknown");
                     }
                     columnMetadata.setVersion(true);
 
-                    versionMetadata=new VersionMetadata(property,easyVersionStrategy);
+                    versionMetadata = new VersionMetadata(property, easyVersionStrategy);
 
                     versionCount++;
                 }
                 ShardingDataSourceKey shardingDataSourceKey = field.getAnnotation(ShardingDataSourceKey.class);
-                if(shardingDataSourceKey!=null){
+                if (shardingDataSourceKey != null) {
                     this.setShardingDataSourcePropertyName(property);
                 }
                 ShardingExtraDataSourceKey shardingExtraDataSourceKey = field.getAnnotation(ShardingExtraDataSourceKey.class);
-                if(shardingExtraDataSourceKey!=null){
+                if (shardingExtraDataSourceKey != null) {
                     this.addExtraShardingDataSourcePropertyName(property);
                 }
                 ShardingTableKey shardingTableKey = field.getAnnotation(ShardingTableKey.class);
-                if(shardingTableKey!=null){
+                if (shardingTableKey != null) {
                     this.setShardingTablePropertyName(property);
                     this.setTableSeparator(shardingTableKey.tableSeparator());
                 }
                 ShardingExtraTableKey shardingExtraTableKey = field.getAnnotation(ShardingExtraTableKey.class);
-                if(shardingExtraTableKey!=null){
+                if (shardingExtraTableKey != null) {
                     this.addExtraShardingTablePropertyName(property);
                 }
 
@@ -198,7 +199,7 @@ public class EntityMetadata {
                     if (Objects.equals(LogicDeleteStrategyEnum.CUSTOM, strategy)) {//使用自定义
                         String strategyName = logicDelete.strategyName();
                         if (StringUtil.isBlank(strategyName)) {
-                            throw new EasyQueryException(ClassUtil.getSimpleName(entityClass)+"."+property+" logic delete strategy is empty");
+                            throw new EasyQueryException(ClassUtil.getSimpleName(entityClass) + "." + property + " logic delete strategy is empty");
                         }
                         EasyLogicDeleteStrategy globalLogicDeleteStrategy = configuration.getEasyLogicDeleteStrategyNotNull(strategyName);
                         LogicDeleteBuilder logicDeleteBuilder = new LogicDeleteBuilder(this, property, field.getType());
@@ -213,10 +214,10 @@ public class EntityMetadata {
             }
         }
 
-        if(versionCount>1){
+        if (versionCount > 1) {
             throw new EasyQueryException("multi version not support");
         }
-        if(logicDelCount>1){
+        if (logicDelCount > 1) {
             throw new EasyQueryException("multi logic delete not support");
         }
     }
@@ -274,6 +275,7 @@ public class EntityMetadata {
 
     /**
      * 忽略大小写
+     *
      * @param columnName
      * @param def
      * @return
@@ -285,7 +287,8 @@ public class EntityMetadata {
         }
         return propertyName;
     }
-    public boolean containsColumnName(String columnName){
+
+    public boolean containsColumnName(String columnName) {
         return column2PropertyMap.containsKey(columnName);
     }
 
@@ -310,8 +313,8 @@ public class EntityMetadata {
         return keyPropertiesMap.keySet();
     }
 
-    public boolean isKeyProperty(String propertyName){
-        if(propertyName==null){
+    public boolean isKeyProperty(String propertyName) {
+        if (propertyName == null) {
             return false;
         }
         return keyPropertiesMap.containsKey(propertyName);
@@ -371,48 +374,52 @@ public class EntityMetadata {
     }
 
 
-    public boolean hasVersionColumn(){
-        return versionMetadata!=null;
+    public boolean hasVersionColumn() {
+        return versionMetadata != null;
     }
-    public VersionMetadata getVersionMetadata(){
+
+    public VersionMetadata getVersionMetadata() {
         return versionMetadata;
     }
 
-    public boolean isSharding(){
-        return isMultiTableMapping()||isMultiDataSourceMapping();
+    public boolean isSharding() {
+        return isMultiTableMapping() || isMultiDataSourceMapping();
     }
+
     public String getShardingDataSourcePropertyName() {
         return shardingDataSourcePropertyName;
     }
 
     public void setShardingDataSourcePropertyName(String shardingDataSourcePropertyName) {
-        if(shardingDataSourcePropertyNames.contains(shardingDataSourcePropertyName)){
-            throw new EasyQueryInvalidOperationException("same sharding data source property name:["+shardingDataSourcePropertyName+"]");
+        if (shardingDataSourcePropertyNames.contains(shardingDataSourcePropertyName)) {
+            throw new EasyQueryInvalidOperationException("same sharding data source property name:[" + shardingDataSourcePropertyName + "]");
         }
         this.shardingDataSourcePropertyName = shardingDataSourcePropertyName;
         shardingDataSourcePropertyNames.add(shardingTablePropertyName);
     }
 
-    public void addExtraShardingDataSourcePropertyName(String shardingExtraDataSourcePropertyName){
-        if(shardingDataSourcePropertyNames.contains(shardingExtraDataSourcePropertyName)){
-            throw new EasyQueryInvalidOperationException("same sharding data source property name:["+shardingExtraDataSourcePropertyName+"]");
+    public void addExtraShardingDataSourcePropertyName(String shardingExtraDataSourcePropertyName) {
+        if (shardingDataSourcePropertyNames.contains(shardingExtraDataSourcePropertyName)) {
+            throw new EasyQueryInvalidOperationException("same sharding data source property name:[" + shardingExtraDataSourcePropertyName + "]");
         }
         shardingDataSourcePropertyNames.add(shardingExtraDataSourcePropertyName);
     }
+
     public String getShardingTablePropertyName() {
         return shardingTablePropertyName;
     }
 
     public void setShardingTablePropertyName(String shardingTablePropertyName) {
-        if(shardingTablePropertyNames.contains(shardingTablePropertyName)){
-            throw new EasyQueryInvalidOperationException("same sharding table property name:["+shardingTablePropertyName+"]");
+        if (shardingTablePropertyNames.contains(shardingTablePropertyName)) {
+            throw new EasyQueryInvalidOperationException("same sharding table property name:[" + shardingTablePropertyName + "]");
         }
         this.shardingTablePropertyName = shardingTablePropertyName;
         shardingTablePropertyNames.add(shardingTablePropertyName);
     }
-    public void addExtraShardingTablePropertyName(String shardingExtraTablePropertyName){
-        if(shardingTablePropertyNames.contains(shardingExtraTablePropertyName)){
-            throw new EasyQueryInvalidOperationException("same sharding table property name:["+shardingExtraTablePropertyName+"]");
+
+    public void addExtraShardingTablePropertyName(String shardingExtraTablePropertyName) {
+        if (shardingTablePropertyNames.contains(shardingExtraTablePropertyName)) {
+            throw new EasyQueryInvalidOperationException("same sharding table property name:[" + shardingExtraTablePropertyName + "]");
         }
         shardingTablePropertyNames.add(shardingExtraTablePropertyName);
     }

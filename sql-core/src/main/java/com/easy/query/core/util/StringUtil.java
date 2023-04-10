@@ -104,6 +104,13 @@ public class StringUtil {
         return str.substring(0, pos);
     }
 
+    public static String defaultIfBank(String value,String def){
+        if(StringUtil.isBlank(value)){
+            return def;
+        }
+        return value;
+    }
+
     public static boolean isNotBlank(String str) {
         return !isBlank(str);
     }
