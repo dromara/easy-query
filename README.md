@@ -9,7 +9,7 @@
 
 ```xml
 <properties>
-    <easy-query.version>last-version</easy-query.version>
+    <easy-query.version>0.0.50</easy-query.version>
 </properties>
 <dependency>
     <groupId>com.easy-query</groupId>
