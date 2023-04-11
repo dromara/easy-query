@@ -1,7 +1,12 @@
 package com.easy.query.core.basic.api.insert;
 
+import com.easy.query.core.basic.api.internal.SqlEntityNode;
+import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.plugin.interceptor.EasyInterceptorEntry;
+import com.easy.query.core.basic.plugin.track.TrackManager;
 import com.easy.query.core.configuration.EasyQueryConfiguration;
+import com.easy.query.core.configuration.EasyQueryOption;
+import com.easy.query.core.enums.SqlExecuteStrategyEnum;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.basic.plugin.interceptor.EasyEntityInterceptor;
@@ -14,7 +19,10 @@ import com.easy.query.core.basic.jdbc.executor.EasyExecutor;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -70,16 +78,67 @@ public abstract class AbstractInsertable<T> implements Insertable<T> {
             }
         }
     }
+    /**
+     * 不分组就生成一条sql
+     *
+     * @return
+     */
+    private boolean useUpdateSqlGroup() {
+        SqlExecuteStrategyEnum updateStrategy = entityInsertExpression.getExpressionContext().getSqlStrategy();
+        //非默认的那么也不可以是全部
+        if (!SqlExecuteStrategyEnum.DEFAULT.equals(updateStrategy)) {
+            if (!SqlExecuteStrategyEnum.ALL_COLUMNS.equals(updateStrategy)) {
+                return true;
+            }
+        } else {
+
+            //如果是默认那么判断全局不是all columns即可
+            EasyQueryOption easyQueryOption = entityInsertExpression.getRuntimeContext().getEasyQueryConfiguration().getEasyQueryOption();
+            if (!SqlExecuteStrategyEnum.ALL_COLUMNS.equals(easyQueryOption.getUpdateStrategy())) {
+                return true;
+            }
+        }
+        TrackManager trackManager = entityInsertExpression.getRuntimeContext().getTrackManager();
+        if (trackManager.currentThreadTracking()) {
+            return true;
+        }
+        return false;
+    }
+    private List<SqlEntityNode> createInsertEntityNode() {
+        if (useUpdateSqlGroup()) {
+            Map<String, SqlEntityNode> updateEntityNodeMap = new LinkedHashMap<>();
+            for (T entity : entities) {
+                String updateSql = toSql(entity);
+                //如果当前对象没有需要更新的列直接忽略
+                if (updateSql == null) {
+                    continue;
+                }
+                List<SQLParameter> parameters = new ArrayList<>(entityInsertExpression.getParameters());
+                SqlEntityNode updateEntityNode = updateEntityNodeMap.computeIfAbsent(updateSql, k -> new SqlEntityNode(updateSql, parameters));
+                updateEntityNode.getEntities().add(entity);
+            }
+            return new ArrayList<>(updateEntityNodeMap.values());
+        } else {
+            String updateSql = toSql(null);
+            SqlEntityNode updateEntityNode = new SqlEntityNode(updateSql, new ArrayList<>(entityInsertExpression.getParameters()), entities.size());
+            updateEntityNode.getEntities().addAll(entities);
+            return Collections.singletonList(updateEntityNode);
+        }
+    }
 
     @Override
     public long executeRows(boolean fillAutoIncrement) {
         if (!entities.isEmpty()) {
             insertBefore();
-            String insertSql = toSql();
-            if (!StringUtil.isBlank(insertSql)) {
-                EasyExecutor easyExecutor = entityInsertExpression.getRuntimeContext().getEasyExecutor();
-                return easyExecutor.insert(ExecutorContext.create(entityInsertExpression.getRuntimeContext()), insertSql, entities, entityInsertExpression.getParameters(), fillAutoIncrement);
+            List<SqlEntityNode> updateEntityNodes = createInsertEntityNode();
+            EasyExecutor easyExecutor = entityInsertExpression.getRuntimeContext().getEasyExecutor();
+            int i = 0;
+            for (SqlEntityNode updateEntityNode : updateEntityNodes) {
+
+                i += easyExecutor.insert(ExecutorContext.create(entityInsertExpression.getRuntimeContext()), updateEntityNode.getSql(), updateEntityNode.getEntities(), updateEntityNode.getSqlParameters(), fillAutoIncrement);
+
             }
+            return i;
         }
 
         return 0;
@@ -114,5 +173,12 @@ public abstract class AbstractInsertable<T> implements Insertable<T> {
     }
 
     @Override
-    public abstract String toSql();
+    public Insertable<T> setSqlStrategy(boolean condition, SqlExecuteStrategyEnum sqlStrategy) {
+        if(condition){
+            entityInsertExpression.getExpressionContext().useSqlStrategy(sqlStrategy);
+        }
+        return this;
+    }
+
+    public abstract String toSql(Object entity);
 }

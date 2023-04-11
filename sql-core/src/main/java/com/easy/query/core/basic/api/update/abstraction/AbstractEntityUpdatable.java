@@ -2,7 +2,7 @@ package com.easy.query.core.basic.api.update.abstraction;
 
 import com.easy.query.core.basic.api.internal.AbstractSqlExecuteRows;
 import com.easy.query.core.basic.api.update.EntityUpdatable;
-import com.easy.query.core.basic.api.update.UpdateEntityNode;
+import com.easy.query.core.basic.api.internal.SqlEntityNode;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.plugin.interceptor.EasyInterceptorEntry;
 import com.easy.query.core.configuration.EasyQueryConfiguration;
@@ -82,9 +82,9 @@ public abstract class AbstractEntityUpdatable<T> extends AbstractSqlExecuteRows<
         return false;
     }
 
-    private List<UpdateEntityNode> createUpdateEntityNode() {
+    private List<SqlEntityNode> createUpdateEntityNode() {
         if (useUpdateSqlGroup()) {
-            Map<String, UpdateEntityNode> updateEntityNodeMap = new LinkedHashMap<>();
+            Map<String, SqlEntityNode> updateEntityNodeMap = new LinkedHashMap<>();
             for (T entity : entities) {
                 String updateSql = toSql(entity);
                 //如果当前对象没有需要更新的列直接忽略
@@ -92,13 +92,13 @@ public abstract class AbstractEntityUpdatable<T> extends AbstractSqlExecuteRows<
                     continue;
                 }
                 List<SQLParameter> parameters = new ArrayList<>(entityUpdateExpression.getParameters());
-                UpdateEntityNode updateEntityNode = updateEntityNodeMap.computeIfAbsent(updateSql, k -> new UpdateEntityNode(updateSql, parameters));
+                SqlEntityNode updateEntityNode = updateEntityNodeMap.computeIfAbsent(updateSql, k -> new SqlEntityNode(updateSql, parameters));
                 updateEntityNode.getEntities().add(entity);
             }
             return new ArrayList<>(updateEntityNodeMap.values());
         } else {
             String updateSql = toSql(null);
-            UpdateEntityNode updateEntityNode = new UpdateEntityNode(updateSql, new ArrayList<>(entityUpdateExpression.getParameters()), entities.size());
+            SqlEntityNode updateEntityNode = new SqlEntityNode(updateSql, new ArrayList<>(entityUpdateExpression.getParameters()), entities.size());
             updateEntityNode.getEntities().addAll(entities);
             return Collections.singletonList(updateEntityNode);
         }
@@ -108,10 +108,10 @@ public abstract class AbstractEntityUpdatable<T> extends AbstractSqlExecuteRows<
     public long executeRows() {
         if (!entities.isEmpty()) {
             updateBefore();
-            List<UpdateEntityNode> updateEntityNodes = createUpdateEntityNode();
+            List<SqlEntityNode> updateEntityNodes = createUpdateEntityNode();
             EasyExecutor easyExecutor = entityUpdateExpression.getRuntimeContext().getEasyExecutor();
             int i = 0;
-            for (UpdateEntityNode updateEntityNode : updateEntityNodes) {
+            for (SqlEntityNode updateEntityNode : updateEntityNodes) {
 
                 i += easyExecutor.executeRows(ExecutorContext.create(entityUpdateExpression.getRuntimeContext()), updateEntityNode.getSql(), updateEntityNode.getEntities(), updateEntityNode.getSqlParameters());
 

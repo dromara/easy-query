@@ -1,6 +1,7 @@
 package com.easy.query.core.basic.api.insert;
 
 import com.easy.query.core.abstraction.EasySqlApiFactory;
+import com.easy.query.core.enums.SqlExecuteStrategyEnum;
 import com.easy.query.core.expression.sql.EntityInsertExpression;
 
 import java.util.function.Function;
@@ -40,11 +41,6 @@ public class EasyEmptyInsertable<T>implements Insertable<T> {
     }
 
     @Override
-    public String toSql() {
-        return null;
-    }
-
-    @Override
     public Insertable<T> noInterceptor() {
         return this;
     }
@@ -59,6 +55,11 @@ public class EasyEmptyInsertable<T>implements Insertable<T> {
 
     @Override
     public Insertable<T> useInterceptor() {
+        return this;
+    }
+
+    @Override
+    public Insertable<T> setSqlStrategy(boolean condition, SqlExecuteStrategyEnum sqlStrategy) {
         return this;
     }
 }

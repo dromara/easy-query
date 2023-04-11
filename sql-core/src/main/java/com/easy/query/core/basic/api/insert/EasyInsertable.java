@@ -14,7 +14,7 @@ public class EasyInsertable<T> extends AbstractInsertable<T> {
     }
 
     @Override
-    public String toSql() {
+    public String toSql(Object entity) {
         return entityInsertExpression.toSql();
     }
 }

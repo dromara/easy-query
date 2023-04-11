@@ -1,4 +1,4 @@
-package com.easy.query.core.basic.api.update;
+package com.easy.query.core.basic.api.internal;
 
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 
@@ -11,17 +11,17 @@ import java.util.List;
  * @Date: 2023/3/20 11:21
  * @author xuejiaming
  */
-public class UpdateEntityNode {
+public class SqlEntityNode {
 
     private final String sql;
     private final List<SQLParameter> sqlParameters;
     private final List<Object> entities;
 
-    public UpdateEntityNode(String sql,List<SQLParameter> sqlParameters){
+    public SqlEntityNode(String sql, List<SQLParameter> sqlParameters){
         this(sql,sqlParameters,10);
     }
 
-    public UpdateEntityNode(String sql,List<SQLParameter> sqlParameters,int entityCapacity){
+    public SqlEntityNode(String sql, List<SQLParameter> sqlParameters, int entityCapacity){
         this.sql = sql;
         this.sqlParameters = sqlParameters;
         this.entities=new ArrayList<>(entityCapacity);

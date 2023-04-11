@@ -10,4 +10,5 @@ import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
  */
 public interface EntityInsertExpression extends EntityExpression {
     SqlBuilderSegment getColumns();
+    String toSql(Object entity);
 }

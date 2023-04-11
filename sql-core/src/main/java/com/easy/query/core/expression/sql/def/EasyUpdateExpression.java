@@ -122,7 +122,6 @@ public abstract class EasyUpdateExpression extends AbstractPredicateEntityExpres
 
     @Override
     public String toSql() {
-        getExpressionContext().clearParameters();
         if (isExpressionUpdate) {
             return expressionUpdate();
         } else {
@@ -143,6 +142,7 @@ public abstract class EasyUpdateExpression extends AbstractPredicateEntityExpres
     protected String expressionUpdate() {
 
         checkTable();
+        getExpressionContext().clearParameters();
         if (!hasSetColumns()) {
             throw new EasyQueryException("'UPDATE' statement without 'SET' execute wrong");
         }
@@ -255,10 +255,8 @@ public abstract class EasyUpdateExpression extends AbstractPredicateEntityExpres
 
         //如果用户没有指定set的列,那么就是set所有列,并且要去掉主键部分
         if (!hasSetColumns()) {
-            Class<?> entityClass = table.getEntityClass();
             EntityMetadata entityMetadata = table.getEntityMetadata();
             EasyQueryRuntimeContext runtimeContext = getRuntimeContext();
-            EasyQueryConfiguration easyQueryConfiguration = runtimeContext.getEasyQueryConfiguration();
             EasyQueryLambdaFactory easyQueryLambdaFactory = runtimeContext.getEasyQueryLambdaFactory();
             SqlColumnSelector<?> sqlColumnSetter = easyQueryLambdaFactory.createSqlColumnSetSelector(table.getIndex(), this, updateSet);
             sqlColumnSetter.columnAll();
@@ -279,7 +277,7 @@ public abstract class EasyUpdateExpression extends AbstractPredicateEntityExpres
         PredicateIndex predicateIndex = sqlWhere.buildPredicateIndex();
         Set<String> ignorePropertySet = new HashSet<>(entityMetadata.getProperties().size());
         //移除属性包含主键
-        boolean clearIgnoreProperties = clearIgnoreProperties(ignorePropertySet, runtimeContext, entity);
+        boolean clearIgnoreProperties = clearIgnoreProperties(ignorePropertySet, runtimeContext, entity,entityMetadata);
 
         updateSet.getSqlSegments().removeIf(o -> {
 
@@ -298,7 +296,7 @@ public abstract class EasyUpdateExpression extends AbstractPredicateEntityExpres
         });
     }
 
-    private boolean clearIgnoreProperties(Set<String> ignorePropertySet,EasyQueryRuntimeContext runtimeContext,Object entity){
+    private boolean clearIgnoreProperties(Set<String> ignorePropertySet,EasyQueryRuntimeContext runtimeContext,Object entity,EntityMetadata entityMetadata){
 
         if (entity != null) {
             TrackManager trackManager = runtimeContext.getTrackManager();
@@ -306,7 +304,7 @@ public abstract class EasyUpdateExpression extends AbstractPredicateEntityExpres
             //todo 获取更新策略按需更新
             SqlExecuteStrategyEnum updateStrategy = sqlExpressionContext.getSqlStrategy();
             if (!Objects.equals(SqlExecuteStrategyEnum.DEFAULT, updateStrategy)) {
-                getCustomIgnoreProperties(ignorePropertySet,updateStrategy,runtimeContext.getEntityMetadataManager(),entity);
+                getCustomIgnoreProperties(ignorePropertySet,updateStrategy,runtimeContext.getEntityMetadataManager(),entity,entityMetadata);
                 return true;
             } else {
                 //todo 判断是否追踪
@@ -321,18 +319,19 @@ public abstract class EasyUpdateExpression extends AbstractPredicateEntityExpres
                     }
                 }else {
                     SqlExecuteStrategyEnum globalUpdateStrategy = runtimeContext.getEasyQueryConfiguration().getEasyQueryOption().getUpdateStrategy();
-                    getCustomIgnoreProperties(ignorePropertySet,globalUpdateStrategy,runtimeContext.getEntityMetadataManager(),entity);
+                    getCustomIgnoreProperties(ignorePropertySet,globalUpdateStrategy,runtimeContext.getEntityMetadataManager(),entity,entityMetadata);
                     return true;
                 }
             }
         }
         return false;
     }
-    private void getCustomIgnoreProperties(Set<String> ignoreUpdateSet, SqlExecuteStrategyEnum updateStrategy, EntityMetadataManager entityMetadataManager,Object entity){
+    private void getCustomIgnoreProperties(Set<String> ignoreUpdateSet, SqlExecuteStrategyEnum updateStrategy, EntityMetadataManager entityMetadataManager,Object entity,EntityMetadata entityMetadata){
 
         if (Objects.equals(SqlExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS, updateStrategy) || Objects.equals(SqlExecuteStrategyEnum.ONLY_NULL_COLUMNS, updateStrategy)) {
             Set<String> beanMatchProperties = BeanUtil.getBeanMatchProperties(entityMetadataManager, entity, Objects.equals(SqlExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS, updateStrategy) ? Objects::isNull : Objects::nonNull);
             ignoreUpdateSet.addAll(beanMatchProperties);
+            ignoreUpdateSet.addAll(entityMetadata.getKeyProperties());
         }
     }
 
