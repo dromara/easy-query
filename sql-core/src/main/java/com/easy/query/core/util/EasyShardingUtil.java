@@ -1,5 +1,6 @@
 package com.easy.query.core.util;
 
+import com.easy.query.core.expression.sql.AnonymousEntityTableExpression;
 import com.easy.query.core.expression.sql.EntityQueryExpression;
 import com.easy.query.core.expression.sql.EntityTableExpression;
 
@@ -12,6 +13,9 @@ import com.easy.query.core.expression.sql.EntityTableExpression;
 public class EasyShardingUtil {
     public static boolean isShardingQuery(EntityQueryExpression entityQueryExpression){
         for (EntityTableExpression table : entityQueryExpression.getTables()) {
+            if(table instanceof AnonymousEntityTableExpression){
+                continue;
+            }
             if(!table.tableNameIsAs()&&table.getEntityMetadata().isSharding()){
                 return true;
             }

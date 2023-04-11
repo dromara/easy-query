@@ -607,4 +607,13 @@ public class QueryTest extends BaseTest {
         Assert.assertEquals("SELECT t2.`publish_time`,t2.`id`,t2.`score` FROM (SELECT t1.`publish_time`,t1.`id`,t1.`score` FROM t_topic t INNER JOIN t_blog t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t1.`title` IS NOT NULL) t2 ORDER BY t2.`publish_time` DESC LIMIT 20",s1);
 
     }
+    @Test
+    public void query42() {
+        Queryable<BlogEntity> queryable = easyQuery.queryable(BlogEntity.class)
+                .where(o -> o.eq(BlogEntity::getId, "123").eq(o,BlogEntity::getTitle,BlogEntity::getUrl));
+        String sql = queryable.toSql();
+        Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`title`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top` FROM t_blog t WHERE t.`deleted` = ? AND t.`id` = ? AND t.`title` = t.`url`", sql);
+        BlogEntity blogEntity = queryable.firstOrNull();
+        Assert.assertNull(blogEntity);
+    }
 }

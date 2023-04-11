@@ -3,6 +3,7 @@ package com.easy.query.sql.starter;
 import com.easy.query.core.basic.jdbc.con.DefaultConnectionManager;
 import com.easy.query.core.basic.jdbc.con.DefaultEasyConnection;
 import com.easy.query.core.basic.jdbc.con.EasyConnection;
+import com.easy.query.core.exception.EasyQueryException;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
@@ -31,7 +32,18 @@ public class SpringConnectionManager extends DefaultConnectionManager {
 
     @Override
     public void closeEasyConnection(EasyConnection easyConnection) {
+        if(easyConnection==null){
+            return;
+        }
+        if(!this.currentThreadInTransaction()&&super.currentThreadInTransaction()){
+            try {
+                easyConnection.close();
+            } catch (Exception e) {
+                throw new EasyQueryException(e);
+            }
+        }else{
+            DataSourceUtils.releaseConnection(easyConnection.getConnection(),dataSource);
+        }
 
-        DataSourceUtils.releaseConnection(easyConnection.getConnection(),dataSource);
     }
 }

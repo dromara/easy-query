@@ -1,5 +1,7 @@
 package com.easy.query.core.expression.executor.parser;
 
+import com.easy.query.core.expression.sql.EntityQueryExpression;
+
 import java.util.Set;
 
 /**
