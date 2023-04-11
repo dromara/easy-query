@@ -86,23 +86,13 @@ public abstract class AbstractInsertable<T> implements Insertable<T> {
     private boolean useUpdateSqlGroup() {
         SqlExecuteStrategyEnum updateStrategy = entityInsertExpression.getExpressionContext().getSqlStrategy();
         //非默认的那么也不可以是全部
-        if (!SqlExecuteStrategyEnum.DEFAULT.equals(updateStrategy)) {
-            if (!SqlExecuteStrategyEnum.ALL_COLUMNS.equals(updateStrategy)) {
-                return true;
-            }
-        } else {
-
+        if (SqlExecuteStrategyEnum.DEFAULT.equals(updateStrategy)) {
             //如果是默认那么判断全局不是all columns即可
             EasyQueryOption easyQueryOption = entityInsertExpression.getRuntimeContext().getEasyQueryConfiguration().getEasyQueryOption();
-            if (!SqlExecuteStrategyEnum.ALL_COLUMNS.equals(easyQueryOption.getUpdateStrategy())) {
-                return true;
-            }
+            return !SqlExecuteStrategyEnum.ALL_COLUMNS.equals(easyQueryOption.getUpdateStrategy());
+        } else {
+            return !SqlExecuteStrategyEnum.ALL_COLUMNS.equals(updateStrategy);
         }
-        TrackManager trackManager = entityInsertExpression.getRuntimeContext().getTrackManager();
-        if (trackManager.currentThreadTracking()) {
-            return true;
-        }
-        return false;
     }
     private List<SqlEntityNode> createInsertEntityNode() {
         if (useUpdateSqlGroup()) {
