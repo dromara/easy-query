@@ -35,11 +35,11 @@ public class SpringConnectionManager extends DefaultConnectionManager {
         if(easyConnection==null){
             return;
         }
-        if(!this.currentThreadInTransaction()&&super.currentThreadInTransaction()){
-            super.closeEasyConnection(easyConnection);
-        }else{
-            DataSourceUtils.releaseConnection(easyConnection.getConnection(),dataSource);
+        //当前没开事务,但是easy query手动开启了
+        if(!this.currentThreadInTransaction()&&super.easyCurrentThreadInTransaction()){
+            return;
         }
+        DataSourceUtils.releaseConnection(easyConnection.getConnection(),dataSource);
 
     }
 }

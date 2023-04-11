@@ -55,6 +55,9 @@ public class DefaultConnectionManager implements EasyConnectionManager {
 
     @Override
     public boolean currentThreadInTransaction() {
+        return easyCurrentThreadInTransaction();
+    }
+    protected boolean easyCurrentThreadInTransaction() {
         return threadTx.get()!=null;
     }
 
@@ -69,7 +72,7 @@ public class DefaultConnectionManager implements EasyConnectionManager {
         if(easyConnection==null){
             return;
         }
-        if(!this.currentThreadInTransaction()){
+        if(!this.easyCurrentThreadInTransaction()){
             try {
                 easyConnection.close();
             } catch (Exception e) {
