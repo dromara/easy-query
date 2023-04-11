@@ -9,7 +9,7 @@ import com.easy.query.core.abstraction.EasySqlApiFactory;
 import com.easy.query.core.basic.pagination.DefaultEasyPageResultProvider;
 import com.easy.query.core.common.bean.FastBean;
 import com.easy.query.core.enums.SqlRangeEnum;
-import com.easy.query.core.enums.UpdateStrategyEnum;
+import com.easy.query.core.enums.SqlExecuteStrategyEnum;
 import com.easy.query.core.basic.plugin.track.DefaultTrackManager;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
 import com.easy.query.core.metadata.ColumnMetadata;
@@ -266,7 +266,7 @@ public class Main {
             test2.setAge(102);
             test2.setName("111");
             updates.add(test2);
-            long l12xx = easyQuery.updatable(updates).setUpdateStrategy(UpdateStrategyEnum.ONLY_NOT_NULL_COLUMNS).executeRows();
+            long l12xx = easyQuery.updatable(updates).setSqlStrategy(SqlExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS).executeRows();
         }
         {
             TestUserMysql testUserMysqlx11 = easyQuery.queryable(TestUserMysql.class, "y")

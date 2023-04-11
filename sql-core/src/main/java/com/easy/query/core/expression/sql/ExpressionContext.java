@@ -3,7 +3,7 @@ package com.easy.query.core.expression.sql;
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.plugin.interceptor.EasyInterceptorEntry;
-import com.easy.query.core.enums.UpdateStrategyEnum;
+import com.easy.query.core.enums.SqlExecuteStrategyEnum;
 import com.easy.query.core.expression.sql.internal.EasyBehavior;
 
 import java.util.List;
@@ -29,8 +29,8 @@ public interface ExpressionContext {
     void deleteThrow(boolean ifDeleteThrowException);
     boolean isDeleteThrow();
     EasyBehavior getBehavior();
-    void useUpdateStrategy(UpdateStrategyEnum updateStrategy);
-    UpdateStrategyEnum getUpdateStrategy();
+    void useSqlStrategy(SqlExecuteStrategyEnum sqlStrategy);
+    SqlExecuteStrategyEnum getSqlStrategy();
     void setVersion(Object version);
     Object getVersion();
     void useInterceptor(String name);

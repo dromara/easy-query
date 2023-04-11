@@ -32,6 +32,8 @@ public class EasyQueryConfiguration {
     private static final EasyLogicDeleteStrategy LOCAL_DATE_TIME_LOGIC_DELETE = new LocalDateTimeEasyEntityTypeConfiguration();
     private static final EasyLogicDeleteStrategy LOCAL_DATE_LOGIC_DELETE = new LocalDateEasyLogicDeleteStrategy();
 
+    private final EasyQueryOption easyQueryOption;
+
 
     private NameConversion nameConversion = new DefaultNameConversion();
     private EasyQueryDialect dialect = new DefaultEasyQueryDialect();
@@ -40,13 +42,12 @@ public class EasyQueryConfiguration {
     private Map<String, EasyLogicDeleteStrategy> globalLogicDeleteStrategyMap = new ConcurrentHashMap<>();
     private Map<Class<? extends EasyEncryptionStrategy>, EasyEncryptionStrategy> easyEncryptionStrategyMap = new ConcurrentHashMap<>();
     private Map<Class<? extends EasyVersionStrategy>, EasyVersionStrategy> easyVersionStrategyMap = new ConcurrentHashMap<>();
-    private final boolean deleteThrowError;
 
     public EasyQueryConfiguration() {
-       this(true);
+       this(EasyQueryOption.defaultEasyQueryOption());
     }
-    public EasyQueryConfiguration(boolean deleteThrowError) {
-        this.deleteThrowError=deleteThrowError;
+    public EasyQueryConfiguration(EasyQueryOption easyQueryOption) {
+        this.easyQueryOption = easyQueryOption;
         easyVersionStrategyMap.put(EasyVersionIntStrategy.class,new EasyVersionIntStrategy());
         easyVersionStrategyMap.put(EasyVersionLongStrategy.class,new EasyVersionLongStrategy());
         easyVersionStrategyMap.put(EasyVersionUUIDStrategy.class,new EasyVersionUUIDStrategy());
@@ -54,7 +55,7 @@ public class EasyQueryConfiguration {
     }
 
     public boolean deleteThrow(){
-        return deleteThrowError;
+        return easyQueryOption.isDeleteThrowError();
     }
 
     public NameConversion getNameConversion() {
@@ -183,4 +184,8 @@ public class EasyQueryConfiguration {
         }
         return easyVersionStrategy;
     }
+    public EasyQueryOption getEasyQueryOption() {
+        return easyQueryOption;
+    }
+
 }

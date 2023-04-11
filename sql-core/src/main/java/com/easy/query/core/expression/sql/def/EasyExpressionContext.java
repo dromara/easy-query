@@ -4,7 +4,7 @@ import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.plugin.interceptor.EasyInterceptorEntry;
 import com.easy.query.core.enums.EasyBehaviorEnum;
-import com.easy.query.core.enums.UpdateStrategyEnum;
+import com.easy.query.core.enums.SqlExecuteStrategyEnum;
 import com.easy.query.core.expression.sql.ExpressionContext;
 import com.easy.query.core.expression.sql.internal.EasyBehavior;
 
@@ -31,7 +31,7 @@ public class EasyExpressionContext implements ExpressionContext {
     private int aliasSeq = -1;
     private boolean deleteThrowException;
     private Object version;
-    private UpdateStrategyEnum updateStrategy = UpdateStrategyEnum.DEFAULT;
+    private SqlExecuteStrategyEnum sqlStrategy = SqlExecuteStrategyEnum.DEFAULT;
 
     public EasyExpressionContext(EasyQueryRuntimeContext runtimeContext, String alias) {
 
@@ -106,13 +106,13 @@ public class EasyExpressionContext implements ExpressionContext {
     }
 
     @Override
-    public void useUpdateStrategy(UpdateStrategyEnum updateStrategy) {
-        this.updateStrategy=updateStrategy;
+    public void useSqlStrategy(SqlExecuteStrategyEnum sqlStrategy) {
+        this.sqlStrategy = sqlStrategy;
     }
 
     @Override
-    public UpdateStrategyEnum getUpdateStrategy() {
-        return updateStrategy;
+    public SqlExecuteStrategyEnum getSqlStrategy() {
+        return sqlStrategy;
     }
 
     public Object getVersion() {

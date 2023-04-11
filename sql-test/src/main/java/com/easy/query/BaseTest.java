@@ -1,5 +1,7 @@
 package com.easy.query;
 
+import com.easy.query.core.configuration.EasyQueryOption;
+import com.easy.query.core.enums.SqlExecuteStrategyEnum;
 import com.easy.query.core.expression.parser.factory.DefaultEasyQueryLambdaFactory;
 import com.easy.query.core.abstraction.DefaultEasyQueryRuntimeContext;
 import com.easy.query.core.expression.parser.factory.EasyQueryLambdaFactory;
@@ -77,7 +79,8 @@ public abstract class BaseTest {
         EasyConnectionManager connectionManager = new DefaultConnectionManager(dataSource);
         DefaultEasyExecutor defaultExecutor = new DefaultEasyExecutor();
         EasyJdbcTypeHandlerManager jdbcTypeHandler = new DefaultJdbcTypeHandlerManager();
-        EasyQueryConfiguration configuration = new EasyQueryConfiguration(false);
+        EasyQueryOption easyQueryOption = new EasyQueryOption(false, SqlExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS, SqlExecuteStrategyEnum.ALL_COLUMNS);
+        EasyQueryConfiguration configuration = new EasyQueryConfiguration(easyQueryOption);
         configuration.setNameConversion(new UnderlinedNameConversion());
         configuration.setDialect(new MySqlDialect());
         configuration.applyEasyEncryptionStrategy(new DefaultAesEasyEncryptionStrategy());

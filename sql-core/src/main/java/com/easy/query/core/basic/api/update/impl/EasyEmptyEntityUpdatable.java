@@ -1,7 +1,7 @@
 package com.easy.query.core.basic.api.update.impl;
 
 import com.easy.query.core.basic.api.update.EntityUpdatable;
-import com.easy.query.core.enums.UpdateStrategyEnum;
+import com.easy.query.core.enums.SqlExecuteStrategyEnum;
 import com.easy.query.core.exception.EasyQueryConcurrentException;
 import com.easy.query.core.expression.lambda.SqlExpression;
 import com.easy.query.core.expression.parser.abstraction.SqlColumnSelector;
@@ -31,7 +31,7 @@ public class EasyEmptyEntityUpdatable<T> implements EntityUpdatable<T> {
     }
 
     @Override
-    public EntityUpdatable<T> setUpdateStrategy(boolean condition, UpdateStrategyEnum updateStrategy) {
+    public EntityUpdatable<T> setSqlStrategy(boolean condition, SqlExecuteStrategyEnum sqlStrategy) {
         return this;
     }
 

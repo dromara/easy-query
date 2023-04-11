@@ -11,7 +11,7 @@ import com.easy.query.core.expression.segment.condition.predicate.ColumnVersionP
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.configuration.EasyQueryConfiguration;
-import com.easy.query.core.enums.UpdateStrategyEnum;
+import com.easy.query.core.enums.SqlExecuteStrategyEnum;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.parser.abstraction.SqlColumnSelector;
 import com.easy.query.core.expression.parser.abstraction.SqlColumnSetter;
@@ -27,12 +27,12 @@ import com.easy.query.core.expression.segment.condition.predicate.ColumnProperty
 import com.easy.query.core.basic.plugin.interceptor.EasyUpdateSetInterceptor;
 import com.easy.query.core.basic.plugin.track.EntityState;
 import com.easy.query.core.basic.plugin.track.TrackContext;
-import com.easy.query.core.basic.plugin.track.TrackDiffEntry;
 import com.easy.query.core.basic.plugin.track.TrackManager;
 import com.easy.query.core.expression.sql.internal.AbstractPredicateEntityExpression;
 import com.easy.query.core.expression.sql.EntityTableExpression;
 import com.easy.query.core.expression.sql.EntityUpdateExpression;
 import com.easy.query.core.expression.sql.ExpressionContext;
+import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.metadata.VersionMetadata;
 import com.easy.query.core.util.ArrayUtil;
 import com.easy.query.core.util.BeanUtil;
@@ -258,69 +258,81 @@ public abstract class EasyUpdateExpression extends AbstractPredicateEntityExpres
             Class<?> entityClass = table.getEntityClass();
             EntityMetadata entityMetadata = table.getEntityMetadata();
             EasyQueryRuntimeContext runtimeContext = getRuntimeContext();
+            EasyQueryConfiguration easyQueryConfiguration = runtimeContext.getEasyQueryConfiguration();
             EasyQueryLambdaFactory easyQueryLambdaFactory = runtimeContext.getEasyQueryLambdaFactory();
             SqlColumnSelector<?> sqlColumnSetter = easyQueryLambdaFactory.createSqlColumnSetSelector(table.getIndex(), this, updateSet);
             sqlColumnSetter.columnAll();
-            //非手动指定的那么需要移除where的那一部分
-            PredicateIndex predicateIndex = sqlWhere.buildPredicateIndex();
-            TrackManager trackManager = runtimeContext.getTrackManager();
-            Set<String> ignorePropertySet = new HashSet<>(entityMetadata.getProperties().size());
-            Set<String> trackPropertySet = new HashSet<>(entityMetadata.getProperties().size());
-            boolean setWithStrategy = false;
-            boolean setWithTrack = false;
-            if (entity != null) {
-                //以下应该二选一
-                //todo 获取更新策略按需更新
-                UpdateStrategyEnum updateStrategy = sqlExpressionContext.getUpdateStrategy();
-                if (!Objects.equals(UpdateStrategyEnum.DEFAULT, updateStrategy)) {
-                    if (Objects.equals(UpdateStrategyEnum.ONLY_NOT_NULL_COLUMNS, updateStrategy) || Objects.equals(UpdateStrategyEnum.ONLY_NULL_COLUMNS, updateStrategy)) {
-                        setWithStrategy = true;
-                        Set<String> beanMatchProperties = BeanUtil.getBeanMatchProperties(runtimeContext.getEntityMetadataManager(), entity, Objects.equals(UpdateStrategyEnum.ONLY_NOT_NULL_COLUMNS, updateStrategy) ? Objects::isNull : Objects::nonNull);
-                        ignorePropertySet.addAll(beanMatchProperties);
-                    }
-                } else {
-                    //todo 判断是否追踪
-                    if (trackManager.currentThreadTracking()) {
-                        TrackContext trackContext = trackManager.getCurrentTrackContext();
-                        //如果当前对象是追踪的并且没有指定更新策略
-                        EntityState trackEntityState = trackContext.getTrackEntityState(entity);
-                        if (trackEntityState != null) {
-                            setWithTrack = true;
-                            Map<String, TrackDiffEntry> trackDiffProperty = TrackUtil.getTrackDiffProperty(runtimeContext.getEntityMetadataManager(), trackEntityState);
-                            trackPropertySet.addAll(trackDiffProperty.keySet());
-                        }
-                    }
-                }
-            }
+            clearUpdateSet(sqlWhere,runtimeContext,entityMetadata,entity,updateSet);
 
-            boolean finalSetWithTrack = setWithTrack;
-            boolean finalSetWithStrategy = setWithStrategy;
-            updateSet.getSqlSegments().removeIf(o -> {
-
-                String propertyName = ((SqlEntitySegment) o).getPropertyName();
-                ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(propertyName);
-                if (columnMetadata.isUpdateIgnore() || columnMetadata.isVersion()) {
-                    return true;
-                }
-                if (finalSetWithStrategy) {
-                    if (ignorePropertySet.contains(propertyName)) {
-                        return true;
-                    }
-                } else if (finalSetWithTrack) {
-                    //忽略条件
-                    return !trackPropertySet.contains(propertyName);
-                }
-                if (predicateIndex.contains(entityClass, propertyName)) {
-                    return true;
-                }
-                return false;
-            });
             if (entityMetadata.hasVersionColumn()) {
                 VersionMetadata versionMetadata = entityMetadata.getVersionMetadata();
                 EasyVersionStrategy easyVersionStrategy = versionMetadata.getEasyVersionStrategy();
                 updateSet.append(new ColumnVersionPropertyPredicate(table, versionMetadata.getPropertyName(), easyVersionStrategy, this));
             }
 
+        }
+    }
+    private void clearUpdateSet(PredicateSegment sqlWhere,EasyQueryRuntimeContext runtimeContext,EntityMetadata entityMetadata,Object entity,SqlBuilderSegment updateSet){
+
+        Class<?> entityClass = entityMetadata.getEntityClass();
+        //非手动指定的那么需要移除where的那一部分
+        PredicateIndex predicateIndex = sqlWhere.buildPredicateIndex();
+        Set<String> ignorePropertySet = new HashSet<>(entityMetadata.getProperties().size());
+        //移除属性包含主键
+        boolean clearIgnoreProperties = clearIgnoreProperties(ignorePropertySet, runtimeContext, entity);
+
+        updateSet.getSqlSegments().removeIf(o -> {
+
+            String propertyName = ((SqlEntitySegment) o).getPropertyName();
+            ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(propertyName);
+            if (columnMetadata.isUpdateIgnore() || columnMetadata.isVersion()) {
+                return true;
+            }
+            if(clearIgnoreProperties){
+                return ignorePropertySet.contains(propertyName);
+            }
+            if (predicateIndex.contains(entityClass, propertyName)) {
+                return true;
+            }
+            return false;
+        });
+    }
+
+    private boolean clearIgnoreProperties(Set<String> ignorePropertySet,EasyQueryRuntimeContext runtimeContext,Object entity){
+
+        if (entity != null) {
+            TrackManager trackManager = runtimeContext.getTrackManager();
+            //以下应该二选一
+            //todo 获取更新策略按需更新
+            SqlExecuteStrategyEnum updateStrategy = sqlExpressionContext.getSqlStrategy();
+            if (!Objects.equals(SqlExecuteStrategyEnum.DEFAULT, updateStrategy)) {
+                getCustomIgnoreProperties(ignorePropertySet,updateStrategy,runtimeContext.getEntityMetadataManager(),entity);
+                return true;
+            } else {
+                //todo 判断是否追踪
+                if (trackManager.currentThreadTracking()) {
+                    TrackContext trackContext = trackManager.getCurrentTrackContext();
+                    //如果当前对象是追踪的并且没有指定更新策略
+                    EntityState trackEntityState = trackContext.getTrackEntityState(entity);
+                    if (trackEntityState != null) {
+                        Set<String> ignoreProperties = TrackUtil.getTrackIgnoreProperties(runtimeContext.getEntityMetadataManager(), trackEntityState);
+                        ignorePropertySet.addAll(ignoreProperties);
+                        return true;
+                    }
+                }else {
+                    SqlExecuteStrategyEnum globalUpdateStrategy = runtimeContext.getEasyQueryConfiguration().getEasyQueryOption().getUpdateStrategy();
+                    getCustomIgnoreProperties(ignorePropertySet,globalUpdateStrategy,runtimeContext.getEntityMetadataManager(),entity);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    private void getCustomIgnoreProperties(Set<String> ignoreUpdateSet, SqlExecuteStrategyEnum updateStrategy, EntityMetadataManager entityMetadataManager,Object entity){
+
+        if (Objects.equals(SqlExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS, updateStrategy) || Objects.equals(SqlExecuteStrategyEnum.ONLY_NULL_COLUMNS, updateStrategy)) {
+            Set<String> beanMatchProperties = BeanUtil.getBeanMatchProperties(entityMetadataManager, entity, Objects.equals(SqlExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS, updateStrategy) ? Objects::isNull : Objects::nonNull);
+            ignoreUpdateSet.addAll(beanMatchProperties);
         }
     }
 

@@ -2,7 +2,7 @@ package com.easy.query.test;
 
 import com.easy.query.BaseTest;
 import com.easy.query.core.basic.api.update.impl.EasyEntityUpdatable;
-import com.easy.query.core.enums.UpdateStrategyEnum;
+import com.easy.query.core.enums.SqlExecuteStrategyEnum;
 import com.easy.query.core.basic.plugin.track.TrackManager;
 import com.easy.query.entity.Topic;
 import org.junit.Assert;
@@ -171,11 +171,11 @@ public class UpdateTest extends BaseTest {
         Topic topic = easyQuery.queryable(Topic.class)
                 .whereById("9").firstOrNull();
         Assert.assertNotNull(topic);
-        String updateSql = ((EasyEntityUpdatable<Topic>) easyQuery.updatable(topic).setUpdateStrategy(UpdateStrategyEnum.ONLY_NULL_COLUMNS))
+        String updateSql = ((EasyEntityUpdatable<Topic>) easyQuery.updatable(topic).setSqlStrategy(SqlExecuteStrategyEnum.ONLY_NULL_COLUMNS))
                 .toSql(topic);
         Assert.assertEquals("UPDATE t_topic SET `title` = ? WHERE `id` = ?",updateSql);
         long l1 = easyQuery.updatable(topic)
-                .setUpdateStrategy(UpdateStrategyEnum.ONLY_NULL_COLUMNS)
+                .setSqlStrategy(SqlExecuteStrategyEnum.ONLY_NULL_COLUMNS)
                 .executeRows();
         Assert.assertEquals(1,l1);
     }
@@ -189,11 +189,11 @@ public class UpdateTest extends BaseTest {
                 .whereById("10").firstOrNull();
         Assert.assertNotNull(topic);
         String updateSql = ((EasyEntityUpdatable<Topic>) easyQuery.updatable(topic)
-                .setUpdateStrategy(UpdateStrategyEnum.ONLY_NOT_NULL_COLUMNS))
+                .setSqlStrategy(SqlExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS))
                 .toSql(topic);
         Assert.assertEquals("UPDATE t_topic SET `stars` = ?,`create_time` = ? WHERE `id` = ?",updateSql);
         long l1 = easyQuery.updatable(topic)
-                .setUpdateStrategy(UpdateStrategyEnum.ONLY_NOT_NULL_COLUMNS)
+                .setSqlStrategy(SqlExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS)
                 .executeRows();
         Assert.assertEquals(1,l1);
     }

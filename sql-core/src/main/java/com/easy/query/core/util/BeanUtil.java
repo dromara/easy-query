@@ -146,6 +146,11 @@ public class BeanUtil {
         LinkedHashSet<String> matchProperties = new LinkedHashSet<>(properties.size());
         FastBean fastBean = EasyUtil.getFastBean(entityClass);
         for (String propertyName : properties) {
+            //如果是主键就直接忽略更新
+            if(entityMetadata.isKeyProperty(propertyName)){
+                matchProperties.add(propertyName);
+                continue;
+            }
             ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(propertyName);
             Property<Object, ?> propertyGetter = fastBean.getBeanGetter(columnMetadata.getProperty());
 

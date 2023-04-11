@@ -93,4 +93,27 @@ public class TrackUtil {
         }
         return diffProperties;
     }
+    public static Set<String> getTrackIgnoreProperties(EntityMetadataManager entityMetadataManager, EntityState entityState) {
+        Class<?> entityClass = entityState.getEntityClass();
+        EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(entityClass);
+
+        Set<String> ignoreSets = new HashSet<>();
+        Collection<String> properties = entityMetadata.getProperties();
+        FastBean fastBean = EasyUtil.getFastBean(entityClass);
+        for (String propertyName : properties) {
+            ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(propertyName);
+            Property<Object, ?> propertyGetter = fastBean.getBeanGetter(propertyName, columnMetadata.getProperty().getPropertyType());
+
+            Object originalPropertyValue = propertyGetter.apply(entityState.getOriginalValue());
+            Object currentPropertyValue = propertyGetter.apply(entityState.getCurrentValue());
+            if (!Objects.equals(originalPropertyValue, currentPropertyValue)) {
+                if (entityMetadata.isKeyProperty(propertyName)) {
+                    throw new EasyQueryException(ClassUtil.getSimpleName(entityClass) + ": track entity cant modify primary key:[" + originalPropertyValue + "," + currentPropertyValue + "]");
+                }
+            }else{
+                ignoreSets.add(propertyName);
+            }
+        }
+        return ignoreSets;
+    }
 }
