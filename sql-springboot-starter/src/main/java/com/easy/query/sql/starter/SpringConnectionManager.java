@@ -36,11 +36,7 @@ public class SpringConnectionManager extends DefaultConnectionManager {
             return;
         }
         if(!this.currentThreadInTransaction()&&super.currentThreadInTransaction()){
-            try {
-                easyConnection.close();
-            } catch (Exception e) {
-                throw new EasyQueryException(e);
-            }
+            super.closeEasyConnection(easyConnection);
         }else{
             DataSourceUtils.releaseConnection(easyConnection.getConnection(),dataSource);
         }

@@ -69,7 +69,7 @@ public class DefaultConnectionManager implements EasyConnectionManager {
         if(easyConnection==null){
             return;
         }
-        if(!currentThreadInTransaction()){
+        if(!this.currentThreadInTransaction()){
             try {
                 easyConnection.close();
             } catch (Exception e) {
