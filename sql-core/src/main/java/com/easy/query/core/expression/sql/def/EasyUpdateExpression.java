@@ -318,11 +318,10 @@ public abstract class EasyUpdateExpression extends AbstractPredicateEntityExpres
                         ignorePropertySet.addAll(ignoreProperties);
                         return true;
                     }
-                }else {
-                    SqlExecuteStrategyEnum globalUpdateStrategy = runtimeContext.getEasyQueryConfiguration().getEasyQueryOption().getUpdateStrategy();
-                    getCustomIgnoreProperties(ignorePropertySet,globalUpdateStrategy,runtimeContext.getEntityMetadataManager(),entity,entityMetadata);
-                    return true;
                 }
+                SqlExecuteStrategyEnum globalUpdateStrategy = runtimeContext.getEasyQueryConfiguration().getEasyQueryOption().getUpdateStrategy();
+                getCustomIgnoreProperties(ignorePropertySet,globalUpdateStrategy,runtimeContext.getEntityMetadataManager(),entity,entityMetadata);
+                return true;
             }
         }
         return false;
