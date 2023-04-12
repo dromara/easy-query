@@ -3,9 +3,7 @@ package com.easy.query.core.basic.api.insert;
 import com.easy.query.core.basic.api.internal.SqlEntityNode;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.plugin.interceptor.EasyInterceptorEntry;
-import com.easy.query.core.basic.plugin.track.TrackManager;
 import com.easy.query.core.configuration.EasyQueryConfiguration;
-import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.enums.SqlExecuteStrategyEnum;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.enums.MultiTableTypeEnum;
@@ -14,7 +12,7 @@ import com.easy.query.core.expression.sql.def.EasyEntityTableExpression;
 import com.easy.query.core.expression.sql.EntityInsertExpression;
 import com.easy.query.core.expression.sql.EntityTableExpression;
 import com.easy.query.core.util.ArrayUtil;
-import com.easy.query.core.util.StringUtil;
+import com.easy.query.core.util.SqlExpressionUtil;
 import com.easy.query.core.basic.jdbc.executor.EasyExecutor;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 
@@ -83,19 +81,12 @@ public abstract class AbstractInsertable<T> implements Insertable<T> {
      *
      * @return
      */
-    private boolean useUpdateSqlGroup() {
-        SqlExecuteStrategyEnum updateStrategy = entityInsertExpression.getExpressionContext().getSqlStrategy();
-        //非默认的那么也不可以是全部
-        if (SqlExecuteStrategyEnum.DEFAULT.equals(updateStrategy)) {
-            //如果是默认那么判断全局不是all columns即可
-            EasyQueryOption easyQueryOption = entityInsertExpression.getRuntimeContext().getEasyQueryConfiguration().getEasyQueryOption();
-            return !SqlExecuteStrategyEnum.ALL_COLUMNS.equals(easyQueryOption.getUpdateStrategy());
-        } else {
-            return !SqlExecuteStrategyEnum.ALL_COLUMNS.equals(updateStrategy);
-        }
+    private boolean useInsertSqlGroup() {
+        SqlExecuteStrategyEnum sqlStrategy = SqlExpressionUtil.getExecuteStrategy(entityInsertExpression.getExpressionContext());
+        return !SqlExecuteStrategyEnum.ALL_COLUMNS.equals(sqlStrategy);
     }
     private List<SqlEntityNode> createInsertEntityNode() {
-        if (useUpdateSqlGroup()) {
+        if (useInsertSqlGroup()) {
             Map<String, SqlEntityNode> updateEntityNodeMap = new LinkedHashMap<>();
             for (T entity : entities) {
                 String updateSql = toSql(entity);

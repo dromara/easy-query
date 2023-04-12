@@ -38,6 +38,7 @@ import com.easy.query.core.util.ArrayUtil;
 import com.easy.query.core.util.BeanUtil;
 import com.easy.query.core.util.ClassUtil;
 import com.easy.query.core.util.EasyUtil;
+import com.easy.query.core.util.SqlExpressionUtil;
 import com.easy.query.core.util.TrackUtil;
 
 import java.util.*;
@@ -301,7 +302,7 @@ public abstract class EasyUpdateExpression extends AbstractPredicateEntityExpres
         if (entity != null) {
             TrackManager trackManager = runtimeContext.getTrackManager();
             //以下应该二选一
-            //todo 获取更新策略按需更新
+            //优先级是用户设置、追踪、默认配置
             SqlExecuteStrategyEnum updateStrategy = sqlExpressionContext.getSqlStrategy();
             if (!Objects.equals(SqlExecuteStrategyEnum.DEFAULT, updateStrategy)) {
                 getCustomIgnoreProperties(ignorePropertySet,updateStrategy,runtimeContext.getEntityMetadataManager(),entity,entityMetadata);

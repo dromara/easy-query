@@ -3,6 +3,8 @@ package com.easy.query.core.util;
 import com.easy.query.core.basic.api.select.Queryable;
 import com.easy.query.core.basic.api.select.Queryable2;
 import com.easy.query.core.basic.api.select.Queryable3;
+import com.easy.query.core.configuration.EasyQueryOption;
+import com.easy.query.core.enums.SqlExecuteStrategyEnum;
 import com.easy.query.core.expression.lambda.SqlExpression2;
 import com.easy.query.core.expression.lambda.SqlExpression3;
 import com.easy.query.core.expression.parser.abstraction.SqlPredicate;
@@ -12,6 +14,7 @@ import com.easy.query.core.expression.sql.AnonymousEntityTableExpression;
 import com.easy.query.core.expression.sql.EntityQueryExpression;
 import com.easy.query.core.basic.api.select.Queryable4;
 import com.easy.query.core.expression.lambda.SqlExpression4;
+import com.easy.query.core.expression.sql.ExpressionContext;
 
 
 /**
@@ -113,5 +116,19 @@ public class SqlExpressionUtil {
         countSqlEntityExpression.getProjects().getSqlSegments().clear();
         countSqlEntityExpression.getProjects().append(new SelectConstSegment(" COUNT(1) "));
         return countSqlEntityExpression;
+    }
+
+
+    public static SqlExecuteStrategyEnum getExecuteStrategy(ExpressionContext expressionContext){
+
+        SqlExecuteStrategyEnum sqlStrategy = expressionContext.getSqlStrategy();
+        //非默认的那么也不可以是全部
+        if (SqlExecuteStrategyEnum.DEFAULT.equals(sqlStrategy)) {
+            //如果是默认那么判断全局不是all columns即可
+            EasyQueryOption easyQueryOption = expressionContext.getRuntimeContext().getEasyQueryConfiguration().getEasyQueryOption();
+            return easyQueryOption.getUpdateStrategy();
+        } else {
+            return sqlStrategy;
+        }
     }
 }

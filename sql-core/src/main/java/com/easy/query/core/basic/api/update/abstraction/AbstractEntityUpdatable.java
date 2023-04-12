@@ -22,6 +22,7 @@ import com.easy.query.core.basic.jdbc.executor.EasyExecutor;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.util.ArrayUtil;
+import com.easy.query.core.util.SqlExpressionUtil;
 
 import java.util.*;
 import java.util.function.Function;
@@ -61,25 +62,12 @@ public abstract class AbstractEntityUpdatable<T> extends AbstractSqlExecuteRows<
      * @return
      */
     private boolean useUpdateSqlGroup() {
-        SqlExecuteStrategyEnum updateStrategy = entityUpdateExpression.getExpressionContext().getSqlStrategy();
-        //非默认的那么也不可以是全部
-        if (!SqlExecuteStrategyEnum.DEFAULT.equals(updateStrategy)) {
-            if (!SqlExecuteStrategyEnum.ALL_COLUMNS.equals(updateStrategy)) {
-                return true;
-            }
-        } else {
-
-            //如果是默认那么判断全局不是all columns即可
-            EasyQueryOption easyQueryOption = entityUpdateExpression.getRuntimeContext().getEasyQueryConfiguration().getEasyQueryOption();
-            if (!SqlExecuteStrategyEnum.ALL_COLUMNS.equals(easyQueryOption.getUpdateStrategy())) {
-                return true;
-            }
-        }
-        TrackManager trackManager = entityUpdateExpression.getRuntimeContext().getTrackManager();
-        if (trackManager.currentThreadTracking()) {
+        SqlExecuteStrategyEnum updateStrategy = SqlExpressionUtil.getExecuteStrategy(entityUpdateExpression.getExpressionContext());
+        if (!SqlExecuteStrategyEnum.ALL_COLUMNS.equals(updateStrategy)) {
             return true;
         }
-        return false;
+        TrackManager trackManager = entityUpdateExpression.getRuntimeContext().getTrackManager();
+        return trackManager.currentThreadTracking();
     }
 
     private List<SqlEntityNode> createUpdateEntityNode() {
