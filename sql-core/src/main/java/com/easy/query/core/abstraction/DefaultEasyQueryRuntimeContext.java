@@ -1,6 +1,7 @@
 package com.easy.query.core.abstraction;
 
 import com.easy.query.core.basic.pagination.EasyPageResultProvider;
+import com.easy.query.core.expression.executor.query.EasyQueryExecutor;
 import com.easy.query.core.expression.parser.factory.EasyQueryLambdaFactory;
 import com.easy.query.core.expression.sql.factory.EasyExpressionFactory;
 import com.easy.query.core.metadata.EntityMetadataManager;
@@ -23,6 +24,7 @@ public class DefaultEasyQueryRuntimeContext implements EasyQueryRuntimeContext {
     private final EasyQueryLambdaFactory easyQueryLambdaFactory;
     private final EasyConnectionManager easyConnectionManager;
     private final EasyExecutor easyExecutor;
+    private final EasyQueryExecutor easyQueryExecutor;
     private final EasyJdbcTypeHandlerManager easyJdbcTypeHandler;
     private final EasySqlApiFactory easyQueryableFactory;
     private final EasyExpressionFactory easySqlExpressionFactory;
@@ -34,6 +36,7 @@ public class DefaultEasyQueryRuntimeContext implements EasyQueryRuntimeContext {
                                           EasyQueryLambdaFactory easyQueryLambdaFactory,
                                           EasyConnectionManager easyConnectionManager,
                                           EasyExecutor easyExecutor,
+                                          EasyQueryExecutor easyQueryExecutor,
                                           EasyJdbcTypeHandlerManager easyJdbcTypeHandler,
                                           EasySqlApiFactory easyQueryableFactory,
                                           EasyExpressionFactory easySqlExpressionFactory,
@@ -44,6 +47,7 @@ public class DefaultEasyQueryRuntimeContext implements EasyQueryRuntimeContext {
         this.easyQueryLambdaFactory = easyQueryLambdaFactory;
         this.easyConnectionManager = easyConnectionManager;
         this.easyExecutor = easyExecutor;
+        this.easyQueryExecutor = easyQueryExecutor;
         this.easyJdbcTypeHandler = easyJdbcTypeHandler;
         this.easyQueryableFactory = easyQueryableFactory;
         this.easySqlExpressionFactory = easySqlExpressionFactory;
@@ -74,6 +78,11 @@ public class DefaultEasyQueryRuntimeContext implements EasyQueryRuntimeContext {
     @Override
     public EasyExecutor getEasyExecutor() {
         return easyExecutor;
+    }
+
+    @Override
+    public EasyQueryExecutor getEasyQueryExecutor() {
+        return easyQueryExecutor;
     }
 
     @Override

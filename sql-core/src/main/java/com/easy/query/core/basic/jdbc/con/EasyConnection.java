@@ -10,6 +10,7 @@ import java.sql.Connection;
  */
 public interface EasyConnection extends AutoCloseable{
 
+    String getDataSourceName();
     Connection getConnection();
     void setAutoCommit(boolean autoCommit);
     void commit();

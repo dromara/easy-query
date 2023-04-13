@@ -37,4 +37,34 @@ public class DefaultEntityMetadataManager implements EntityMetadataManager {
             return entityMetadata;
         });
     }
+
+    @Override
+    public boolean isSharding(Class<?> entityClass) {
+        EntityMetadata entityMetadata = getEntityMetadata(entityClass);
+        return entityMetadata.isMultiTableMapping() || entityMetadata.isMultiDataSourceMapping();
+    }
+
+    @Override
+    public boolean isShardingTable(Class<?> entityClass) {
+        EntityMetadata entityMetadata = getEntityMetadata(entityClass);
+        return entityMetadata.isMultiTableMapping();
+    }
+
+    @Override
+    public boolean isOnlyShardingTable(Class<?> entityClass) {
+        EntityMetadata entityMetadata = getEntityMetadata(entityClass);
+        return entityMetadata.isMultiTableMapping()&&!entityMetadata.isMultiDataSourceMapping();
+    }
+
+    @Override
+    public boolean isShardingDataSource(Class<?> entityClass) {
+        EntityMetadata entityMetadata = getEntityMetadata(entityClass);
+        return entityMetadata.isMultiDataSourceMapping();
+    }
+
+    @Override
+    public boolean isOnlyShardingDataSource(Class<?> entityClass) {
+        EntityMetadata entityMetadata = getEntityMetadata(entityClass);
+        return entityMetadata.isMultiDataSourceMapping()&&!entityMetadata.isMultiTableMapping();
+    }
 }

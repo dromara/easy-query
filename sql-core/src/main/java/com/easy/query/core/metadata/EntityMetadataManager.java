@@ -16,5 +16,10 @@ public interface EntityMetadataManager {
      * @return 如果对象不包含Table注解那么返回为为null
      */
     EntityMetadata getEntityMetadata(Class<?> entityClass);
+    boolean isSharding(Class<?> entityClass);
+    boolean isShardingTable(Class<?> entityClass);
+    boolean isOnlyShardingTable(Class<?> entityClass);
+    boolean isShardingDataSource(Class<?> entityClass);
+    boolean isOnlyShardingDataSource(Class<?> entityClass);
 
 }

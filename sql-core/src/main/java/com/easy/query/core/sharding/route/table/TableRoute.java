@@ -2,7 +2,7 @@ package com.easy.query.core.sharding.route.table;
 
 import com.easy.query.core.expression.sql.EntityQueryExpression;
 import com.easy.query.core.metadata.EntityMetadata;
-import com.easy.query.core.sharding.route.datasource.DataSourceRouteResult;
+import com.easy.query.core.sharding.route.datasource.engine.DataSourceRouteResult;
 
 import java.util.List;
 

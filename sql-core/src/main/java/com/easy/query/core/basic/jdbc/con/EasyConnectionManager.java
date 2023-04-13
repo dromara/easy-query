@@ -21,6 +21,7 @@ public interface EasyConnectionManager {
      */
     Transaction beginTransaction(Integer isolationLevel);
     EasyConnection getEasyConnection();
+    EasyConnection getEasyConnection(String dataSourceName,ConnectionStrategyEnum connectionStrategy);
     boolean currentThreadInTransaction();
     void clear();
     void closeEasyConnection(EasyConnection easyConnection);

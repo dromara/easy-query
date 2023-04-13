@@ -11,5 +11,5 @@ import java.util.List;
  * @author xuejiaming
  */
 public interface EasyQueryExecutor {
-    <TR> List<TR> execute(EntityQueryExpression entityQueryExpression);
+    <TR> List<TR> execute(EntityQueryExpression entityQueryExpression,Class<TR> resultClass);
 }

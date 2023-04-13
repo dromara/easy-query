@@ -3,6 +3,7 @@ package com.easy.query.core.basic.api.select.abstraction;
 import com.easy.query.core.basic.pagination.EasyPageResultProvider;
 import com.easy.query.core.common.bean.FastBean;
 import com.easy.query.core.enums.EasyBehaviorEnum;
+import com.easy.query.core.expression.executor.query.EasyQueryExecutor;
 import com.easy.query.core.expression.sql.AnonymousEntityTableExpression;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
@@ -107,9 +108,8 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
             List<Long> result =cloneQueryable().select(" COUNT(1) ").toList(Long.class);
             return ArrayUtil.firstOrDefault(result,0L);
         }
-        String countSql = countSqlEntityExpression.toSql();
 
-        List<Long> result = toInternalListWithSql(countSql,Long.class);
+        List<Long> result = toInternalListWithExpression(countSqlEntityExpression,Long.class);
         return ArrayUtil.firstOrDefault(result,0L);
     }
 
@@ -253,8 +253,8 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
      * @return
      */
     protected <TR> List<TR> toInternalList(Class<TR> resultClass) {
-        String sql = toSql(resultClass);
-        return toInternalListWithSql(sql,resultClass);
+        compensateSelect(resultClass);
+        return toInternalListWithExpression(sqlEntityExpression,resultClass);
 //        //todo 检查是否存在分片对象的查询
 //        boolean shardingQuery = EasyShardingUtil.isShardingQuery(sqlEntityExpression);
 //        if(shardingQuery){
@@ -264,12 +264,17 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
 //        }else{
 //        }
     }
-    protected <TR> List<TR> toInternalListWithSql(String sql,Class<TR> resultClass){
-        EasyExecutor easyExecutor = sqlEntityExpression.getRuntimeContext().getEasyExecutor();
-        boolean tracking = sqlEntityExpression.getExpressionContext().getBehavior().hasBehavior(EasyBehaviorEnum.USE_TRACKING);
-        return easyExecutor.query(ExecutorContext.create(sqlEntityExpression.getRuntimeContext(),tracking ), resultClass, sql, sqlEntityExpression.getParameters());
 
+    protected <TR> List<TR> toInternalListWithExpression(EntityQueryExpression entityQueryExpression,Class<TR> resultClass){
+        EasyQueryExecutor easyQueryExecutor = sqlEntityExpression.getRuntimeContext().getEasyQueryExecutor();
+        return easyQueryExecutor.execute(entityQueryExpression,resultClass);
     }
+//    protected <TR> List<TR> toInternalListWithSql(String sql,Class<TR> resultClass){
+//        EasyExecutor easyExecutor = sqlEntityExpression.getRuntimeContext().getEasyExecutor();
+//        boolean tracking = sqlEntityExpression.getExpressionContext().getBehavior().hasBehavior(EasyBehaviorEnum.USE_TRACKING);
+//        return easyExecutor.query(ExecutorContext.create(sqlEntityExpression.getRuntimeContext(),tracking ), resultClass, sql, sqlEntityExpression.getParameters());
+//
+//    }
 
     /**
      * 只有select操作运行操作当前projects

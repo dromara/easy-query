@@ -116,4 +116,20 @@ public class ArrayUtil {
         }
         return chunks;
     }
+
+    public static Set<String> getIntersection(Collection<Set<String>> list) {
+        if(isEmpty(list)){
+            return Collections.emptySet();
+        }
+        // 创建一个新的Set集合来存储交集
+        Iterator<Set<String>> iterator = list.iterator();
+        Set<String> intersection = new HashSet<>(iterator.next());
+
+        while(iterator.hasNext()){
+            intersection.retainAll(iterator.next());
+        }
+
+        // 返回交集
+        return intersection;
+    }
 }

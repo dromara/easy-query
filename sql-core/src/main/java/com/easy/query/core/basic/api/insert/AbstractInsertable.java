@@ -115,9 +115,7 @@ public abstract class AbstractInsertable<T> implements Insertable<T> {
             EasyExecutor easyExecutor = entityInsertExpression.getRuntimeContext().getEasyExecutor();
             int i = 0;
             for (SqlEntityNode updateEntityNode : updateEntityNodes) {
-
                 i += easyExecutor.insert(ExecutorContext.create(entityInsertExpression.getRuntimeContext()), updateEntityNode.getSql(), updateEntityNode.getEntities(), updateEntityNode.getSqlParameters(), fillAutoIncrement);
-
             }
             return i;
         }

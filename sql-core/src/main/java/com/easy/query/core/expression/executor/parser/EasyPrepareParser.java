@@ -1,5 +1,6 @@
 package com.easy.query.core.expression.executor.parser;
 
+import com.easy.query.core.expression.sql.EntityExpression;
 import com.easy.query.core.expression.sql.EntityQueryExpression;
 
 /**
@@ -9,5 +10,5 @@ import com.easy.query.core.expression.sql.EntityQueryExpression;
  * @author xuejiaming
  */
 public interface EasyPrepareParser {
-    PrepareParseResult parse(EntityQueryExpression entityQueryExpression);
+    PrepareParseResult parse(EntityExpression entityExpression);
 }

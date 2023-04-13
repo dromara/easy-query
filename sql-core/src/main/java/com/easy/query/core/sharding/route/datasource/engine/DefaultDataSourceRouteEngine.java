@@ -1,4 +1,4 @@
-package com.easy.query.core.sharding.route.datasource;
+package com.easy.query.core.sharding.route.datasource.engine;
 
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.metadata.EntityMetadata;
@@ -6,6 +6,7 @@ import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.sharding.EasyDataSource;
 import com.easy.query.core.sharding.route.abstraction.DataSourceRouteManager;
 import com.easy.query.core.sharding.route.abstraction.DataSourceRouteParams;
+import com.easy.query.core.util.ArrayUtil;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -41,7 +42,7 @@ public class DefaultDataSourceRouteEngine implements DataSourceRouteEngine{
                 }};
                 dataSourceMaps.put(shardingEntity,defDataSource);
             }
-            List<String> dataSources = dataSourceRouteManager.routeTo(shardingEntity, new DataSourceRouteParams(routeContext.getEntityQueryExpression(), null));
+            List<String> dataSources = dataSourceRouteManager.routeTo(shardingEntity, new DataSourceRouteParams(routeContext.getEntityExpression(), null));
             Set<String> entityDataSources = dataSourceMaps.get(shardingEntity);
             if(entityDataSources==null){
                 dataSourceMaps.put(shardingEntity,new HashSet<>(dataSources));
@@ -57,6 +58,7 @@ public class DefaultDataSourceRouteEngine implements DataSourceRouteEngine{
             Set<String> firstDataSources = dataSourceMaps.values().iterator().next();
             return new DataSourceRouteResult(firstDataSources);
         }
-        return null;
+        Set<String> intersectDataSources = ArrayUtil.getIntersection(dataSourceMaps.values());
+        return new DataSourceRouteResult(intersectDataSources);
     }
 }

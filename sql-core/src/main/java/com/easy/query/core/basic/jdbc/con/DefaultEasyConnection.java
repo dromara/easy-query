@@ -13,17 +13,24 @@ import java.util.Objects;
  * @author xuejiaming
  */
 public class DefaultEasyConnection implements EasyConnection {
+    private final String dataSourceName;
     private final Connection connection;
     private final Integer isolationLevel;
     private  Integer originalIsolationLevel;
     private boolean closed = false;
     private boolean autoCommit;
 
-    public DefaultEasyConnection(Connection connection, Integer isolationLevel) {
+    public DefaultEasyConnection(String dataSourceName,Connection connection, Integer isolationLevel) {
+        this.dataSourceName = dataSourceName;
 
         this.connection = connection;
         this.isolationLevel = isolationLevel;
         setIsolationLevel();
+    }
+
+    @Override
+    public String getDataSourceName() {
+        return dataSourceName;
     }
 
     @Override

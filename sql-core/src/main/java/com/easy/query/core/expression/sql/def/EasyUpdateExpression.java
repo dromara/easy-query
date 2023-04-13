@@ -331,8 +331,8 @@ public abstract class EasyUpdateExpression extends AbstractPredicateEntityExpres
         if (Objects.equals(SqlExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS, updateStrategy) || Objects.equals(SqlExecuteStrategyEnum.ONLY_NULL_COLUMNS, updateStrategy)) {
             Set<String> beanMatchProperties = BeanUtil.getBeanMatchProperties(entityMetadataManager, entity, Objects.equals(SqlExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS, updateStrategy) ? Objects::isNull : Objects::nonNull);
             ignoreUpdateSet.addAll(beanMatchProperties);
-            ignoreUpdateSet.addAll(entityMetadata.getKeyProperties());
         }
+        ignoreUpdateSet.addAll(entityMetadata.getKeyProperties());
     }
 
     /**

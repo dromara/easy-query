@@ -2,6 +2,7 @@ package com.easy.query.core.abstraction;
 
 import com.easy.query.core.basic.jdbc.con.EasyConnectionManager;
 import com.easy.query.core.basic.pagination.EasyPageResultProvider;
+import com.easy.query.core.expression.executor.query.EasyQueryExecutor;
 import com.easy.query.core.expression.parser.factory.EasyQueryLambdaFactory;
 import com.easy.query.core.expression.sql.factory.EasyExpressionFactory;
 import com.easy.query.core.metadata.EntityMetadataManager;
@@ -23,6 +24,7 @@ public interface EasyQueryRuntimeContext {
     EasyQueryLambdaFactory getEasyQueryLambdaFactory();
     EasyConnectionManager getConnectionManager();
     EasyExecutor getEasyExecutor();
+    EasyQueryExecutor getEasyQueryExecutor();
     EasyJdbcTypeHandlerManager getEasyJdbcTypeHandlerManager();
     EasySqlApiFactory getSqlApiFactory();
     EasyExpressionFactory getSqlExpressionFactory();

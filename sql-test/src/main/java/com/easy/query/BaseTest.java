@@ -2,6 +2,9 @@ package com.easy.query;
 
 import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.enums.SqlExecuteStrategyEnum;
+import com.easy.query.core.expression.executor.parser.DefaultEasyPrepareParser;
+import com.easy.query.core.expression.executor.query.DefaultEasyQueryExecutor;
+import com.easy.query.core.expression.executor.query.DefaultQueryCompilerContextFactory;
 import com.easy.query.core.expression.parser.factory.DefaultEasyQueryLambdaFactory;
 import com.easy.query.core.abstraction.DefaultEasyQueryRuntimeContext;
 import com.easy.query.core.expression.parser.factory.EasyQueryLambdaFactory;
@@ -21,6 +24,10 @@ import com.easy.query.core.configuration.EasyQueryConfiguration;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.metadata.DefaultEntityMetadataManager;
 import com.easy.query.core.basic.plugin.track.DefaultTrackManager;
+import com.easy.query.core.sharding.DefaultEasyDataSource;
+import com.easy.query.core.sharding.route.abstraction.DefaultDataSourceRouteManager;
+import com.easy.query.core.sharding.route.datasource.engine.DefaultDataSourceRouteEngine;
+import com.easy.query.core.sharding.route.table.engine.DefaultTableRouteEngine;
 import com.easy.query.encryption.Base64EncryptionStrategy;
 import com.easy.query.encryption.DefaultAesEasyEncryptionStrategy;
 import com.easy.query.encryption.MyEncryptionStrategy;
@@ -76,7 +83,6 @@ public abstract class BaseTest {
     }
 
     public static void initEasyQuery() {
-        EasyConnectionManager connectionManager = new DefaultConnectionManager(dataSource);
         DefaultEasyExecutor defaultExecutor = new DefaultEasyExecutor();
         EasyJdbcTypeHandlerManager jdbcTypeHandler = new DefaultJdbcTypeHandlerManager();
         EasyQueryOption easyQueryOption = new EasyQueryOption(false, SqlExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS, SqlExecuteStrategyEnum.ALL_COLUMNS);
@@ -95,7 +101,17 @@ public abstract class BaseTest {
         EasySqlApiFactory easyQueryableFactory = new DefaultEasySqlApiFactory(mySQLSqlExpressionFactory);
         DefaultTrackManager defaultTrackManager = new DefaultTrackManager(entityMetadataManager);
         DefaultEasyPageResultProvider defaultEasyPageResultProvider = new DefaultEasyPageResultProvider();
-        DefaultEasyQueryRuntimeContext jqdcRuntimeContext = new DefaultEasyQueryRuntimeContext(configuration, entityMetadataManager, easyQueryLambdaFactory, connectionManager, defaultExecutor, jdbcTypeHandler, easyQueryableFactory, mySQLSqlExpressionFactory, defaultTrackManager,defaultEasyPageResultProvider);
+
+        DefaultEasyPrepareParser prepareParser = new DefaultEasyPrepareParser();
+        DefaultEasyDataSource defaultEasyDataSource = new DefaultEasyDataSource("ds0",dataSource);
+        EasyConnectionManager connectionManager = new DefaultConnectionManager(defaultEasyDataSource);
+        DefaultDataSourceRouteManager defaultDataSourceRouteManager = new DefaultDataSourceRouteManager(entityMetadataManager,defaultEasyDataSource);
+        DefaultDataSourceRouteEngine defaultDataSourceRouteEngine = new DefaultDataSourceRouteEngine(defaultEasyDataSource,entityMetadataManager,defaultDataSourceRouteManager);
+        DefaultTableRouteEngine defaultTableRouteEngine = new DefaultTableRouteEngine();
+        DefaultQueryCompilerContextFactory defaultQueryCompilerContextFactory = new DefaultQueryCompilerContextFactory(defaultDataSourceRouteEngine,defaultTableRouteEngine);
+        DefaultEasyQueryExecutor defaultEasyQueryExecutor = new DefaultEasyQueryExecutor(prepareParser, defaultQueryCompilerContextFactory, defaultExecutor);
+
+        DefaultEasyQueryRuntimeContext jqdcRuntimeContext = new DefaultEasyQueryRuntimeContext(configuration, entityMetadataManager, easyQueryLambdaFactory, connectionManager, defaultExecutor,defaultEasyQueryExecutor, jdbcTypeHandler, easyQueryableFactory, mySQLSqlExpressionFactory, defaultTrackManager,defaultEasyPageResultProvider);
 ////        jqdcRuntimeContext.getEasyQueryConfiguration().applyEntityTypeConfiguration(new TestUserMySqlConfiguration());
 //        configuration.applyGlobalInterceptor(new NameQueryFilter());
 

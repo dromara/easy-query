@@ -13,13 +13,22 @@ public class EasyQueryOption {
     private final SqlExecuteStrategyEnum insertStrategy;
     private final SqlExecuteStrategyEnum updateStrategy;
 
-    public EasyQueryOption(boolean deleteThrowError, SqlExecuteStrategyEnum insertStrategy, SqlExecuteStrategyEnum updateStrategy){
+    public EasyQueryOption(boolean deleteThrowError, SqlExecuteStrategyEnum insertStrategy, SqlExecuteStrategyEnum updateStrategy) {
         this.deleteThrowError = deleteThrowError;
-        this.insertStrategy =SqlExecuteStrategyEnum.getDefaultStrategy(insertStrategy,SqlExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS);
-        this.updateStrategy = SqlExecuteStrategyEnum.getDefaultStrategy(updateStrategy,SqlExecuteStrategyEnum.ALL_COLUMNS);
+        this.insertStrategy = SqlExecuteStrategyEnum.getDefaultStrategy(insertStrategy, SqlExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS);
+        this.updateStrategy = SqlExecuteStrategyEnum.getDefaultStrategy(updateStrategy, SqlExecuteStrategyEnum.ALL_COLUMNS);
     }
-    public static EasyQueryOption defaultEasyQueryOption(){
-        return new EasyQueryOption(true,SqlExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS,SqlExecuteStrategyEnum.ALL_COLUMNS);
+
+    public EasyQueryOption(boolean deleteThrowError) {
+        this(deleteThrowError, SqlExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS, SqlExecuteStrategyEnum.ALL_COLUMNS);
+    }
+
+    public static EasyQueryOption defaultEasyQueryOption() {
+        return new EasyQueryOption(true, SqlExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS, SqlExecuteStrategyEnum.ALL_COLUMNS);
+    }
+
+    public static EasyQueryOption defaultEasyQueryOption(boolean deleteThrowError) {
+        return new EasyQueryOption(deleteThrowError, SqlExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS, SqlExecuteStrategyEnum.ALL_COLUMNS);
     }
 
     public boolean isDeleteThrowError() {

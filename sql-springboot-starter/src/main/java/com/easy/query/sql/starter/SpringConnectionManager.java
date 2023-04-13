@@ -3,8 +3,9 @@ package com.easy.query.sql.starter;
 import com.easy.query.core.basic.jdbc.con.DefaultConnectionManager;
 import com.easy.query.core.basic.jdbc.con.DefaultEasyConnection;
 import com.easy.query.core.basic.jdbc.con.EasyConnection;
-import com.easy.query.core.exception.EasyQueryException;
+import com.easy.query.core.sharding.EasyDataSource;
 import org.springframework.jdbc.datasource.DataSourceUtils;
+import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import javax.sql.DataSource;
@@ -16,8 +17,8 @@ import javax.sql.DataSource;
  * @author xuejiaming
  */
 public class SpringConnectionManager extends DefaultConnectionManager {
-    public SpringConnectionManager(DataSource dataSource) {
-        super(dataSource);
+    public SpringConnectionManager(EasyDataSource easyDataSource) {
+        super(easyDataSource);
     }
 
     @Override
@@ -25,9 +26,24 @@ public class SpringConnectionManager extends DefaultConnectionManager {
         return TransactionSynchronizationManager.isActualTransactionActive();
     }
 
+//    @Override
+//    public EasyConnection getEasyConnection(String dataSourceName) {
+//        //如果spring已经开启事务,但是当前easy-query没有开启事务,那么就先开启easy-query的事务,然后注册完成后清理当前上下文
+//        if(currentThreadInTransaction()&&!easyCurrentThreadInTransaction()){
+//            beginTransaction();
+//            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+//                @Override
+//                public void afterCompletion(int status) {
+//                    clear();
+//                }
+//            });
+//        }
+//        return super.getEasyConnection(dataSourceName);
+//    }
+
     @Override
-    protected EasyConnection doGetEasyConnection(Integer isolationLevel) {
-        return new DefaultEasyConnection( DataSourceUtils.getConnection(dataSource),isolationLevel);
+    protected EasyConnection doGetEasyConnection(String dataSourceName,Integer isolationLevel) {
+        return new DefaultEasyConnection( dataSourceName,DataSourceUtils.getConnection(easyDataSource.getDataSource(dataSourceName)),isolationLevel);
     }
 
     @Override
@@ -39,7 +55,7 @@ public class SpringConnectionManager extends DefaultConnectionManager {
         if(!this.currentThreadInTransaction()&&super.easyCurrentThreadInTransaction()){
             return;
         }
-        DataSourceUtils.releaseConnection(easyConnection.getConnection(),dataSource);
+        DataSourceUtils.releaseConnection(easyConnection.getConnection(), easyDataSource.getDataSource(easyConnection.getDataSourceName()));
 
     }
 }

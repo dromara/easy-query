@@ -1,5 +1,7 @@
 package com.easy.query.core.sharding.route.abstraction;
 
+import com.easy.query.core.sharding.route.datasource.DataSourceRoute;
+
 import java.util.List;
 
 /**
@@ -9,5 +11,6 @@ import java.util.List;
  * @author xuejiaming
  */
 public interface DataSourceRouteManager {
-    List<String> routeTo(Class<?> entityType,DataSourceRouteParams dataSourceRouteParams);
+    List<String> routeTo(Class<?> entityClass,DataSourceRouteParams dataSourceRouteParams);
+    DataSourceRoute getRoute(Class<?> entityClass);
 }
