@@ -1,5 +1,7 @@
 package com.easy.query.core.util;
 
+import com.easy.query.core.expression.lambda.Selector;
+
 import java.util.*;
 import java.util.function.Function;
 
@@ -10,6 +12,42 @@ import java.util.function.Function;
  * @Date: 2023/2/26 14:07
  */
 public class ArrayUtil {
+    public static <TSource,TElement> List<TElement> select(List<TSource> sources, Selector<TSource,TElement> selector){
+        int size = sources.size();
+        List<TElement> result = new ArrayList<>(size);
+        for (int i = 0; i < size; i++) {
+            TElement element = selector.apply(sources.get(i), i);
+            result.add(element);
+        }
+        return result;
+    }
+    public static <T> List<List<T>> partition(List<T> list, int size) {
+        if (list == null || list.isEmpty()) {
+            throw new IllegalArgumentException("List cannot be null or empty.");
+        }
+        if (size <= 0) {
+            throw new IllegalArgumentException("Size must be positive.");
+        }
+        List<List<T>> partitions = new ArrayList<>();
+        int numberOfPartitions = (int) Math.ceil((double) list.size() / size);
+        for (int i = 0; i < numberOfPartitions; i++) {
+            int start = i * size;
+            int end = Math.min(start + size, list.size());
+            partitions.add(new ArrayList<>(list.subList(start, end)));
+        }
+        return partitions;
+    }
+    public static <TSource> int sum(List<TSource> arrays,Function<TSource,Integer> selector) {
+        int length = arrays.size();
+        if (length > 0) {
+            int sum = 0;
+            for (TSource array : arrays) {
+                sum += selector.apply(array);
+            }
+            return sum;
+        }
+        return 0;
+    }
     public static int sum(int[] arrays) {
         int length = arrays.length;
         if (length > 0) {

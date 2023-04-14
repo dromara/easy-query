@@ -1,6 +1,7 @@
 package com.easy.query.core.abstraction;
 
 import com.easy.query.core.basic.pagination.EasyPageResultProvider;
+import com.easy.query.core.basic.thread.EasyShardingExecutorService;
 import com.easy.query.core.expression.executor.query.EasyQueryExecutor;
 import com.easy.query.core.expression.parser.factory.EasyQueryLambdaFactory;
 import com.easy.query.core.expression.sql.factory.EasyExpressionFactory;
@@ -11,6 +12,7 @@ import com.easy.query.core.configuration.EasyQueryConfiguration;
 import com.easy.query.core.basic.jdbc.executor.EasyExecutor;
 import com.easy.query.core.basic.plugin.track.TrackManager;
 import com.easy.query.core.sharding.EasyShardingOption;
+import com.easy.query.core.sharding.merge.executor.internal.Executor;
 
 /**
  * @FileName: DefaultJQDCRuntimeContext.java
@@ -30,6 +32,8 @@ public class DefaultEasyQueryRuntimeContext implements EasyQueryRuntimeContext {
     private final EasyExpressionFactory easySqlExpressionFactory;
     private final TrackManager trackManager;
     private final EasyPageResultProvider easyPageResultProvider;
+    private final EasyShardingOption easyShardingOption;
+    private final EasyShardingExecutorService easyShardingExecutorService;
 
     public DefaultEasyQueryRuntimeContext(EasyQueryConfiguration easyQueryConfiguration,
                                           EntityMetadataManager entityMetadataManager,
@@ -41,7 +45,9 @@ public class DefaultEasyQueryRuntimeContext implements EasyQueryRuntimeContext {
                                           EasySqlApiFactory easyQueryableFactory,
                                           EasyExpressionFactory easySqlExpressionFactory,
                                           TrackManager trackManager,
-                                          EasyPageResultProvider easyPageResultProvider){
+                                          EasyPageResultProvider easyPageResultProvider,
+                                          EasyShardingOption easyShardingOption,
+                                          EasyShardingExecutorService easyShardingExecutorService){
         this.easyQueryConfiguration = easyQueryConfiguration;
         this.entityMetadataManager = entityMetadataManager;
         this.easyQueryLambdaFactory = easyQueryLambdaFactory;
@@ -53,6 +59,8 @@ public class DefaultEasyQueryRuntimeContext implements EasyQueryRuntimeContext {
         this.easySqlExpressionFactory = easySqlExpressionFactory;
         this.trackManager = trackManager;
         this.easyPageResultProvider = easyPageResultProvider;
+        this.easyShardingOption = easyShardingOption;
+        this.easyShardingExecutorService = easyShardingExecutorService;
     }
     @Override
     public EasyQueryConfiguration getEasyQueryConfiguration() {
@@ -112,6 +120,16 @@ public class DefaultEasyQueryRuntimeContext implements EasyQueryRuntimeContext {
 
     @Override
     public EasyShardingOption getEasyShardingOption() {
+        return easyShardingOption;
+    }
+
+    @Override
+    public EasyShardingExecutorService getEasyShardingExecutorService() {
+        return easyShardingExecutorService;
+    }
+
+    @Override
+    public Executor getExecutor() {
         return null;
     }
 }

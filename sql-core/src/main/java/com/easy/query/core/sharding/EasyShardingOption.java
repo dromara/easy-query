@@ -8,13 +8,24 @@ package com.easy.query.core.sharding;
  */
 public class EasyShardingOption {
     private final int maxQueryConnectionsLimit;
+    private final int executorSize;
 
-    public  EasyShardingOption(int maxQueryConnectionsLimit){
+    public  EasyShardingOption(int maxQueryConnectionsLimit,int executorSize){
+        if(executorSize>0){
+            if(maxQueryConnectionsLimit>executorSize){
+                throw new IllegalArgumentException("maxQueryConnectionsLimit:"+maxQueryConnectionsLimit+" less than executorSize:"+executorSize);
+            }
+        }
 
         this.maxQueryConnectionsLimit = maxQueryConnectionsLimit;
+        this.executorSize = executorSize;
     }
 
     public int getMaxQueryConnectionsLimit() {
         return maxQueryConnectionsLimit;
+    }
+
+    public int getExecutorSize() {
+        return executorSize;
     }
 }

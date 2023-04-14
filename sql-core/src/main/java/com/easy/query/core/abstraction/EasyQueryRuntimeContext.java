@@ -2,6 +2,7 @@ package com.easy.query.core.abstraction;
 
 import com.easy.query.core.basic.jdbc.con.EasyConnectionManager;
 import com.easy.query.core.basic.pagination.EasyPageResultProvider;
+import com.easy.query.core.basic.thread.EasyShardingExecutorService;
 import com.easy.query.core.expression.executor.query.EasyQueryExecutor;
 import com.easy.query.core.expression.parser.factory.EasyQueryLambdaFactory;
 import com.easy.query.core.expression.sql.factory.EasyExpressionFactory;
@@ -11,6 +12,7 @@ import com.easy.query.core.basic.jdbc.types.EasyJdbcTypeHandlerManager;
 import com.easy.query.core.configuration.EasyQueryConfiguration;
 import com.easy.query.core.basic.plugin.track.TrackManager;
 import com.easy.query.core.sharding.EasyShardingOption;
+import com.easy.query.core.sharding.merge.executor.internal.Executor;
 
 /**
  * @FileName: JQDCRuntimeContext.java
@@ -31,4 +33,6 @@ public interface EasyQueryRuntimeContext {
     TrackManager getTrackManager();
     EasyPageResultProvider getEasyPageResultProvider();
     EasyShardingOption getEasyShardingOption();
+    EasyShardingExecutorService getEasyShardingExecutorService();
+    Executor getExecutor();
 }

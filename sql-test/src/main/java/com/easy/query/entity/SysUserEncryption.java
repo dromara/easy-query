@@ -23,8 +23,8 @@ public class SysUserEncryption {
     private String phoneNotSupportLike;
     @Encryption(strategy = Base64EncryptionStrategy.class)
     private String addressNotSupportLike;
-    @Encryption(strategy = MyEncryptionStrategy.class,supportQueryLike = true)
+    @Encryption(strategy = MyEncryptionStrategy.class, supportQueryLike = true)
     private String phoneSupportLike;
-    @Encryption(strategy = MyEncryptionStrategy.class,supportQueryLike = true)
+    @Encryption(strategy = MyEncryptionStrategy.class, supportQueryLike = true)
     private String addressSupportLike;
 }

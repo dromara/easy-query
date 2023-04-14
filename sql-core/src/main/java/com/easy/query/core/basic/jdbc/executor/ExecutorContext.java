@@ -72,14 +72,12 @@ public class ExecutorContext {
             String propertyName = sqlParameter.getPropertyName();
             ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(propertyName);
             if (columnMetadata.isEncryption()) {
-
                 if (sqlParameter instanceof SQLLikeParameter) {
                     if (columnMetadata.isSupportQueryLike()) {
                         EasyEncryptionStrategy easyEncryptionStrategy = getEncryptionStrategy(columnMetadata);
                         String likeValue = value.toString();
                         String encryptValue = StringUtil.endWithRemove(StringUtil.startWithRemove(likeValue, "%"), "%");
                         return StringUtil.startWithDefault(likeValue, "%", StringUtil.EMPTY) + easyEncryptionStrategy.encrypt(entityClass,propertyName,encryptValue) + StringUtil.endWithDefault(likeValue, "%", StringUtil.EMPTY);
-
                     }
                 } else {
                     EasyEncryptionStrategy easyEncryptionStrategy = getEncryptionStrategy(columnMetadata);

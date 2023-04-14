@@ -111,6 +111,7 @@ public class DefaultEasyExecutor implements EasyExecutor {
                 }
                 ps.addBatch();
             }
+            assert ps != null;
             int[] rs = ps.executeBatch();
             r = ArrayUtil.sum(rs);
             if (logDebug) {
@@ -157,6 +158,7 @@ public class DefaultEasyExecutor implements EasyExecutor {
                 }
                 ps.addBatch();
             }
+            assert ps != null;
             int[] rs = ps.executeBatch();
             r = rs.length;
 
@@ -317,7 +319,7 @@ public class DefaultEasyExecutor implements EasyExecutor {
         return resultList;
     }
 
-    private <T> ColumnMetadata[] columnsToProperties(ExecutorContext context, ResultSet rs, ResultSetMetaData rsmd, Class<T> clazz) throws SQLException {
+    private <T> ColumnMetadata[] columnsToProperties(ExecutorContext context,ResultSetMetaData rsmd, Class<T> clazz) throws SQLException {
 
         EntityMetadataManager entityMetadataManager = context.getRuntimeContext().getEntityMetadataManager();
         EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(clazz);
@@ -396,7 +398,7 @@ public class DefaultEasyExecutor implements EasyExecutor {
         }
         List<T> resultList = new ArrayList<>();
         ResultSetMetaData rsmd = rs.getMetaData();
-        ColumnMetadata[] propertyDescriptors = columnsToProperties(context, rs, rsmd, clazz);
+        ColumnMetadata[] propertyDescriptors = columnsToProperties(context,rsmd, clazz);
         do {
             T bean = mapToBean(context, rs, clazz, propertyDescriptors);
             resultList.add(bean);

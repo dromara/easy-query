@@ -1,5 +1,7 @@
 package com.easy.query.sql.starter;
 
+import com.easy.query.core.basic.thread.DefaultEasyShardingExecutorService;
+import com.easy.query.core.basic.thread.EasyShardingExecutorService;
 import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.expression.executor.parser.DefaultEasyPrepareParser;
 import com.easy.query.core.expression.executor.query.DefaultEasyQueryExecutor;
@@ -35,6 +37,7 @@ import com.easy.query.core.basic.plugin.track.DefaultTrackManager;
 import com.easy.query.core.basic.plugin.track.TrackManager;
 import com.easy.query.core.sharding.DefaultEasyDataSource;
 import com.easy.query.core.sharding.EasyDataSource;
+import com.easy.query.core.sharding.EasyShardingOption;
 import com.easy.query.core.sharding.route.abstraction.DefaultDataSourceRouteManager;
 import com.easy.query.core.sharding.route.datasource.engine.DefaultDataSourceRouteEngine;
 import com.easy.query.core.sharding.route.table.engine.DefaultTableRouteEngine;
@@ -175,6 +178,16 @@ public class EasyQueryStarterAutoConfiguration {
         return  new DefaultEasyQueryExecutor(prepareParser, defaultQueryCompilerContextFactory, easyExecutor);
 
     }
+    @Bean
+    public EasyShardingOption easyShardingOption(){
+
+       return new EasyShardingOption(10, 20);
+
+    }
+    @Bean
+    public EasyShardingExecutorService easyShardingExecutorService(EasyShardingOption easyShardingOption){
+        return new DefaultEasyShardingExecutorService(easyShardingOption);
+    }
 
     @Bean
     public EasyQueryRuntimeContext easyQueryRuntimeContext(EasyQueryConfiguration easyQueryConfiguration,
@@ -187,7 +200,9 @@ public class EasyQueryStarterAutoConfiguration {
                                                            EasySqlApiFactory easyQueryableFactory,
                                                            EasyExpressionFactory easySqlExpressionFactory,
                                                            TrackManager trackManager,
-                                                           EasyPageResultProvider easyPageResultProvider) {
+                                                           EasyPageResultProvider easyPageResultProvider,
+                                                           EasyShardingOption easyShardingOption,
+                                                           EasyShardingExecutorService easyShardingExecutorService) {
         return new DefaultEasyQueryRuntimeContext(
                 easyQueryConfiguration,
                 entityMetadataManager,
@@ -199,7 +214,9 @@ public class EasyQueryStarterAutoConfiguration {
                 easyQueryableFactory,
                 easySqlExpressionFactory,
                 trackManager,
-                easyPageResultProvider
+                easyPageResultProvider,
+                easyShardingOption,
+                easyShardingExecutorService
         );
     }
 

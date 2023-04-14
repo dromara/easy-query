@@ -8,10 +8,13 @@ import com.easy.query.core.expression.segment.SqlEntityAliasSegment;
 import com.easy.query.core.expression.sql.EntityQueryExpression;
 import com.easy.query.core.expression.sql.EntityTableExpression;
 import com.easy.query.core.metadata.ColumnMetadata;
+import com.easy.query.core.sharding.merge.executor.common.Grouping;
 
 import java.beans.PropertyDescriptor;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * @author xuejiaming
@@ -26,7 +29,14 @@ public class EasyUtil {
 
     private EasyUtil() {
     }
-
+    public static <T, K> List<Grouping<K, T>> groupBy(List<T> list, Function<T, K> keyExtractor) {
+        Map<K, List<T>> map = list.stream().collect(Collectors.groupingBy(keyExtractor));
+        return map.entrySet().stream().map(e -> new Grouping<>(e.getKey(), e.getValue())).collect(Collectors.toList());
+    }
+    public static <T, K,V> List<V> groupBy(List<T> list, Function<T, K> keyExtractor,Function<Grouping<K,T>,V> selector) {
+        Map<K, List<T>> map = list.stream().collect(Collectors.groupingBy(keyExtractor));
+        return map.entrySet().stream().map(e -> selector.apply(new Grouping<>(e.getKey(), e.getValue()))).collect(Collectors.toList());
+    }
     public static EntityTableExpression getPredicateTableByOffset(EntityQueryExpression sqlEntityExpression, int offsetForward) {
         List<EntityTableExpression> tables = sqlEntityExpression.getTables();
         if (tables.isEmpty()) {
