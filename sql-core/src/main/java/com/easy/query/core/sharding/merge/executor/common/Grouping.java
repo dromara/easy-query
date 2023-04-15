@@ -2,6 +2,7 @@ package com.easy.query.core.sharding.merge.executor.common;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * create time 2023/4/14 17:00
@@ -9,28 +10,7 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public class Grouping<K, V> {
-    private final K key;
-    private final List<V> values;
-
-    public Grouping(K key, List<V> values) {
-        this.key = key;
-        this.values = values;
-    }
-
-    public K getKey() {
-        return key;
-    }
-
-    public List<V> getValues() {
-        return values;
-    }
-
-    @Override
-    public String toString() {
-        return "Grouping{" +
-                "key=" + key +
-                ", values=" + values +
-                '}';
-    }
+public interface Grouping<K, V> {
+    K key();
+    Stream<V> values();
 }

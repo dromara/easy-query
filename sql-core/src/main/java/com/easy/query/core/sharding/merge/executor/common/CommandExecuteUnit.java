@@ -1,5 +1,6 @@
 package com.easy.query.core.sharding.merge.executor.common;
 
+import com.easy.query.core.sharding.common.SqlRouteUnit;
 import com.easy.query.core.sharding.enums.ConnectionModeEnum;
 import com.easy.query.core.sharding.merge.executor.internal.CommandTypeEnum;
 
@@ -12,20 +13,20 @@ import java.sql.PreparedStatement;
  * @author xuejiaming
  */
 public final class CommandExecuteUnit {
-    private final ExecutionUnit executionUnit;
+    private final SqlRouteUnit sqlRouteUnit;
     private final PreparedStatement preparedStatement;
     private final ConnectionModeEnum connectionMode;
     private final CommandTypeEnum commandType;
 
-    public CommandExecuteUnit(ExecutionUnit executionUnit, PreparedStatement preparedStatement, ConnectionModeEnum connectionMode,CommandTypeEnum commandType) {
-        this.executionUnit = executionUnit;
+    public CommandExecuteUnit(SqlRouteUnit sqlRouteUnit, PreparedStatement preparedStatement, ConnectionModeEnum connectionMode, CommandTypeEnum commandType) {
+        this.sqlRouteUnit = sqlRouteUnit;
         this.preparedStatement = preparedStatement;
         this.connectionMode = connectionMode;
         this.commandType = commandType;
     }
 
-    public ExecutionUnit getExecutionUnit() {
-        return executionUnit;
+    public SqlRouteUnit getSqlRouteUnit() {
+        return sqlRouteUnit;
     }
 
     public PreparedStatement getPreparedStatement() {

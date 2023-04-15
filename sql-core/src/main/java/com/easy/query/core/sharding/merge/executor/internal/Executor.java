@@ -10,7 +10,7 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public interface Executor {
-    ShardingMerger<ExecuteResult> getShardingMerger();
-    List<ExecuteResult> execute(DataSourceSqlExecutorUnit dataSourceSqlExecutorUnit);
+public interface Executor<TResult> {
+    ShardingMerger<TResult> getShardingMerger();
+    List<TResult> execute(DataSourceSqlExecutorUnit dataSourceSqlExecutorUnit);
 }

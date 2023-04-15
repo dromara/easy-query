@@ -1,5 +1,6 @@
 package com.easy.query.core.sharding.common;
 
+import com.easy.query.core.sharding.merge.executor.common.SqlUnit;
 import com.easy.query.core.sharding.route.table.engine.TableRouteResult;
 
 /**
@@ -11,4 +12,6 @@ import com.easy.query.core.sharding.route.table.engine.TableRouteResult;
 public interface SqlRouteUnit {
     String getDataSourceName();
     TableRouteResult getTableRouteResult();
+
+    SqlUnit getSqlUnit();
 }
