@@ -15,7 +15,7 @@ import java.sql.Types;
 public class SqlDateTypeHandler implements JdbcTypeHandler {
     @Override
     public Object getValue(EasyResultSet resultSet) throws SQLException {
-        return resultSet.getRs().getDate(resultSet.getIndex());
+        return resultSet.getStreamResult().getDate(resultSet.getIndex());
     }
 
     @Override

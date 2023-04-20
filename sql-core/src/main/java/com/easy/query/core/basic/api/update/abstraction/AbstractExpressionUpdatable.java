@@ -16,7 +16,7 @@ import com.easy.query.core.expression.sql.EntityTableExpression;
 import com.easy.query.core.expression.sql.EntityUpdateExpression;
 import com.easy.query.core.util.ClassUtil;
 import com.easy.query.core.util.StringUtil;
-import com.easy.query.core.basic.jdbc.executor.EasyExecutor;
+import com.easy.query.core.basic.jdbc.executor.EasyOldExecutor;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.api.update.ExpressionUpdatable;
 import com.easy.query.core.expression.lambda.SqlExpression;
@@ -55,7 +55,7 @@ public abstract class AbstractExpressionUpdatable<T> extends AbstractSqlExecuteR
     public long executeRows() {
         String updateSql = toSql();
         if (StringUtil.isNotBlank(updateSql)) {
-            EasyExecutor easyExecutor = entityUpdateExpression.getRuntimeContext().getEasyExecutor();
+            EasyOldExecutor easyExecutor = entityUpdateExpression.getRuntimeContext().getEasyExecutor();
             return easyExecutor.executeRows(ExecutorContext.create(entityUpdateExpression.getRuntimeContext()), updateSql, entityUpdateExpression.getParameters());
         }
 

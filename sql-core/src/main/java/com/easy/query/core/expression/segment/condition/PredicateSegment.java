@@ -10,6 +10,7 @@ import com.easy.query.core.expression.segment.condition.predicate.Predicate;
  * @author xuejiaming
  */
 public interface PredicateSegment extends SqlSegment {
+    boolean isRoot();
     boolean isEmpty();
 
     default boolean isNotEmpty() {

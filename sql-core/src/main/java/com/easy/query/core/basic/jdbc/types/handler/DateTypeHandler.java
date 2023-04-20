@@ -16,7 +16,7 @@ import java.sql.Types;
 public class DateTypeHandler implements JdbcTypeHandler{
     @Override
     public Object getValue(EasyResultSet resultSet) throws SQLException {
-        Timestamp r = resultSet.getRs().getTimestamp(resultSet.getIndex());
+        Timestamp r = resultSet.getStreamResult().getTimestamp(resultSet.getIndex());
         if(r!=null){
             return new java.util.Date(r.getTime());
         }

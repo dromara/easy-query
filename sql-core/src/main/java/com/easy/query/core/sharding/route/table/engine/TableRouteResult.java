@@ -15,20 +15,14 @@ import java.util.Set;
  */
 public class TableRouteResult {
     private final Set<TableRouteUnit> replaceTables;
-    private final boolean hasDifferentTail;
     private final boolean isEmpty;
     public TableRouteResult(List<TableRouteUnit> replaceTables){
         this.replaceTables=new HashSet<>(replaceTables);
-        hasDifferentTail= ArrayUtil.hasDifferent(replaceTables, TableRouteUnit::getTail);
         isEmpty=replaceTables.size()==0;
     }
 
     public Set<TableRouteUnit> getReplaceTables() {
         return replaceTables;
-    }
-
-    public boolean isHasDifferentTail() {
-        return hasDifferentTail;
     }
 
     public boolean isEmpty() {

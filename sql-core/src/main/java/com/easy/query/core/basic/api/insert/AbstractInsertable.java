@@ -13,7 +13,7 @@ import com.easy.query.core.expression.sql.EntityInsertExpression;
 import com.easy.query.core.expression.sql.EntityTableExpression;
 import com.easy.query.core.util.ArrayUtil;
 import com.easy.query.core.util.SqlExpressionUtil;
-import com.easy.query.core.basic.jdbc.executor.EasyExecutor;
+import com.easy.query.core.basic.jdbc.executor.EasyOldExecutor;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 
 import java.util.ArrayList;
@@ -112,7 +112,7 @@ public abstract class AbstractInsertable<T> implements Insertable<T> {
         if (!entities.isEmpty()) {
             insertBefore();
             List<SqlEntityNode> updateEntityNodes = createInsertEntityNode();
-            EasyExecutor easyExecutor = entityInsertExpression.getRuntimeContext().getEasyExecutor();
+            EasyOldExecutor easyExecutor = entityInsertExpression.getRuntimeContext().getEasyExecutor();
             int i = 0;
             for (SqlEntityNode updateEntityNode : updateEntityNodes) {
                 i += easyExecutor.insert(ExecutorContext.create(entityInsertExpression.getRuntimeContext()), updateEntityNode.getSql(), updateEntityNode.getEntities(), updateEntityNode.getSqlParameters(), fillAutoIncrement);

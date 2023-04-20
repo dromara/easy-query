@@ -2,9 +2,17 @@ package com.easy.query.core.sharding.merge.impl;
 
 import com.easy.query.core.sharding.merge.abstraction.StreamResult;
 
+import java.math.BigDecimal;
+import java.sql.Blob;
+import java.sql.Clob;
+import java.sql.Date;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.SQLXML;
+import java.sql.Time;
+import java.sql.Timestamp;
 
 /**
  * create time 2023/4/13 11:34
@@ -14,10 +22,12 @@ import java.sql.SQLException;
  */
 public final class DefaultStreamResult implements StreamResult {
     private final ResultSet resultSet;
+    private final PreparedStatement preparedStatement;
 
-    public DefaultStreamResult(ResultSet resultSet){
+    public DefaultStreamResult(ResultSet resultSet, PreparedStatement preparedStatement){
 
         this.resultSet = resultSet;
+        this.preparedStatement = preparedStatement;
     }
     @Override
     public boolean next() throws SQLException {
@@ -40,7 +50,88 @@ public final class DefaultStreamResult implements StreamResult {
     }
 
     @Override
+    public SQLXML getSQLXML(int columnIndex) throws SQLException {
+        return resultSet.getSQLXML(columnIndex);
+    }
+
+    @Override
+    public Timestamp getTimestamp(int columnIndex) throws SQLException {
+        return resultSet.getTimestamp(columnIndex);
+    }
+
+    @Override
+    public Time getTime(int columnIndex) throws SQLException {
+        return resultSet.getTime(columnIndex);
+    }
+
+    @Override
+    public String getString(int columnIndex) throws SQLException {
+        return resultSet.getString(columnIndex);
+    }
+
+    @Override
+    public Date getDate(int columnIndex) throws SQLException {
+        return resultSet.getDate(columnIndex);
+    }
+
+    @Override
+    public short getShort(int columnIndex) throws SQLException {
+        return resultSet.getShort(columnIndex);
+    }
+
+    @Override
+    public long getLong(int columnIndex) throws SQLException {
+        return resultSet.getLong(columnIndex);
+    }
+
+    @Override
+    public int getInt(int columnIndex) throws SQLException {
+        return resultSet.getInt(columnIndex);
+    }
+
+    @Override
+    public float getFloat(int columnIndex) throws SQLException {
+        return resultSet.getFloat(columnIndex);
+    }
+
+    @Override
+    public double getDouble(int columnIndex) throws SQLException {
+        return resultSet.getDouble(columnIndex);
+    }
+
+    @Override
+    public Clob getClob(int columnIndex) throws SQLException {
+        return resultSet.getClob(columnIndex);
+    }
+
+    @Override
+    public byte getByte(int columnIndex) throws SQLException {
+        return resultSet.getByte(columnIndex);
+    }
+
+    @Override
+    public byte[] getBytes(int columnIndex) throws SQLException {
+        return resultSet.getBytes(columnIndex);
+    }
+
+    @Override
+    public boolean getBoolean(int columnIndex) throws SQLException {
+        return resultSet.getBoolean(columnIndex);
+    }
+
+    @Override
+    public Blob getBlob(int columnIndex) throws SQLException {
+        return resultSet.getBlob(columnIndex);
+    }
+
+    @Override
+    public BigDecimal getBigDecimal(int columnIndex) throws SQLException {
+        return resultSet.getBigDecimal(columnIndex);
+    }
+
+    @Override
     public void close() throws Exception {
         resultSet.close();
+        preparedStatement.close();
     }
 }

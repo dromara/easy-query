@@ -1,6 +1,7 @@
 package com.easy.query.core.util;
 
 import com.easy.query.core.expression.lambda.Selector;
+import com.easy.query.core.expression.segment.condition.predicate.Predicate;
 
 import java.util.*;
 import java.util.function.Function;
@@ -12,15 +13,26 @@ import java.util.function.Function;
  * @Date: 2023/2/26 14:07
  */
 public class ArrayUtil {
-    public static <TSource,TElement> List<TElement> select(List<TSource> sources, Selector<TSource,TElement> selector){
+    public static <TSource,TElement> List<TElement> select(Collection<TSource> sources, Selector<TSource,TElement> selector){
         int size = sources.size();
         List<TElement> result = new ArrayList<>(size);
-        for (int i = 0; i < size; i++) {
-            TElement element = selector.apply(sources.get(i), i);
+        int i=0;
+        for (TSource source : sources) {
+            TElement element = selector.apply(source, i);
             result.add(element);
+            i++;
         }
         return result;
     }
+//    public static <TSource,TElement> List<TElement> select(List<TSource> sources, Selector<TSource,TElement> selector){
+//        int size = sources.size();
+//        List<TElement> result = new ArrayList<>(size);
+//        for (int i = 0; i < size; i++) {
+//            TElement element = selector.apply(sources.get(i), i);
+//            result.add(element);
+//        }
+//        return result;
+//    }
     public static <T> List<List<T>> partition(List<T> list, int size) {
         if (list == null || list.isEmpty()) {
             throw new IllegalArgumentException("List cannot be null or empty.");
@@ -98,6 +110,21 @@ public class ArrayUtil {
     }
 
 
+    public static <TSource> TSource firstOrDefault(List<TSource> source, java.util.function.Predicate<TSource> predicate, TSource def) {
+        if (source == null) {
+            return def;
+        }
+        if (source.isEmpty()) {
+            return def;
+        }
+        for (TSource tSource : source) {
+            if(predicate.test(tSource)){
+                return tSource;
+            }
+        }
+        return def;
+    }
+
     public static <TSource> TSource firstOrDefault(List<TSource> source, TSource def) {
         TSource result = firstOrNull(source);
         if (result == null) {
@@ -169,5 +196,24 @@ public class ArrayUtil {
 
         // 返回交集
         return intersection;
+    }
+    public static <T> Collection<Collection<T>> getCartesian(Collection<Set<T>> collections) {
+        Collection<Collection<T>> result = new ArrayList<>();
+        if (collections == null || collections.isEmpty()) {
+            result.add(new ArrayList<>());
+            return result;
+        } else {
+            Collection<T> first = collections.iterator().next();
+            Collection<Collection<T>> remaining = getCartesian(new ArrayList<>(collections).subList(1, collections.size()));
+            for (T element : first) {
+                for (Collection<T> product : remaining) {
+                    Collection<T> newProduct = new ArrayList<>();
+                    newProduct.add(element);
+                    newProduct.addAll(product);
+                    result.add(newProduct);
+                }
+            }
+            return result;
+        }
     }
 }

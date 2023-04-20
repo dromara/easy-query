@@ -143,4 +143,12 @@ public class EasyEntityTableExpression implements EntityTableExpression {
         return sql.toString();
     }
 
+    @Override
+    public EntityTableExpression copyEntityTableExpression() {
+        EasyEntityTableExpression easyEntityTableExpression = new EasyEntityTableExpression(entityMetadata, index, alias, multiTableType);
+        if(on!=null){
+            on.copyTo(easyEntityTableExpression.getOn());
+        }
+        return easyEntityTableExpression;
+    }
 }

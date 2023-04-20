@@ -66,6 +66,9 @@ public class EntityMetadata {
     private final List<String/*column name*/> incrementColumns = new ArrayList<>(4);
     private final LinkedCaseInsensitiveMap<String> column2PropertyMap = new LinkedCaseInsensitiveMap<>(Locale.ENGLISH);
 
+    private final Set<String> tableNames=new LinkedHashSet<>();
+    private final Set<String> dataSources=new LinkedHashSet<>();
+
     public EntityMetadata(Class<?> entityClass) {
         this.entityClass = entityClass;
     }
@@ -430,5 +433,13 @@ public class EntityMetadata {
 
     public void setTableSeparator(String tableSeparator) {
         this.tableSeparator = tableSeparator;
+    }
+
+    public Collection<String> getTableNames() {
+        return Collections.unmodifiableCollection(tableNames);
+    }
+
+    public Collection<String> getDataSources() {
+        return Collections.unmodifiableCollection(dataSources);
     }
 }

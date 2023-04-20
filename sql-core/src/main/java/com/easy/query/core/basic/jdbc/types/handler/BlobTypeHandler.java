@@ -16,7 +16,7 @@ import java.sql.Types;
 public class BlobTypeHandler implements JdbcTypeHandler {
     @Override
     public Object getValue(EasyResultSet resultSet) throws SQLException {
-        return resultSet.getRs().getBlob(resultSet.getIndex());
+        return resultSet.getStreamResult().getBlob(resultSet.getIndex());
     }
 
     @Override

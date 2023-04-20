@@ -15,7 +15,7 @@ import java.sql.Types;
 public class ByteArrayTypeHandler implements JdbcTypeHandler{
     @Override
     public Object getValue(EasyResultSet resultSet) throws SQLException {
-        return resultSet.getRs().getBytes(resultSet.getIndex());
+        return resultSet.getStreamResult().getBytes(resultSet.getIndex());
     }
 
     @Override

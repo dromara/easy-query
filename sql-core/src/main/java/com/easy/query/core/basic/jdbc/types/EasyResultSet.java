@@ -1,8 +1,6 @@
 package com.easy.query.core.basic.jdbc.types;
 
-import java.beans.PropertyDescriptor;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
+import com.easy.query.core.sharding.merge.abstraction.StreamResult;
 
 /**
  * @FileName: EasyResultSet.java
@@ -13,11 +11,11 @@ import java.sql.ResultSetMetaData;
 public class EasyResultSet {
     private int index;
     private  Class<?> propertyType;
-    private final ResultSet rs;
+    private final StreamResult streamResult;
 
-    public EasyResultSet(ResultSet rs){
+    public EasyResultSet(StreamResult streamResult){
 
-        this.rs = rs;
+        this.streamResult = streamResult;
     }
 
     public int getIndex() {
@@ -35,8 +33,8 @@ public class EasyResultSet {
         this.propertyType = propertyType;
     }
 
-    public ResultSet getRs() {
-        return rs;
+    public StreamResult getStreamResult() {
+        return streamResult;
     }
 
     public boolean isPrimitive() {

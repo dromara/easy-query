@@ -16,7 +16,7 @@ import java.sql.Types;
 public class BigDecimalTypeHandler implements JdbcTypeHandler{
     @Override
     public Object getValue(EasyResultSet resultSet) throws SQLException {
-        return resultSet.getRs().getBigDecimal(resultSet.getIndex());
+        return resultSet.getStreamResult().getBigDecimal(resultSet.getIndex());
     }
 
     @Override

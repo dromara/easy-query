@@ -1,9 +1,10 @@
 package com.easy.query.core.basic.api.select.abstraction;
 
+import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
+import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.pagination.EasyPageResultProvider;
 import com.easy.query.core.common.bean.FastBean;
 import com.easy.query.core.enums.EasyBehaviorEnum;
-import com.easy.query.core.expression.executor.query.EasyQueryExecutor;
 import com.easy.query.core.expression.sql.AnonymousEntityTableExpression;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
@@ -34,8 +35,6 @@ import com.easy.query.core.expression.sql.EntityQueryExpression;
 import com.easy.query.core.expression.sql.EntityTableExpression;
 import com.easy.query.core.enums.EasyFunc;
 import com.easy.query.core.basic.api.select.Queryable;
-import com.easy.query.core.basic.jdbc.executor.EasyExecutor;
-import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.enums.SqlPredicateCompareEnum;
 import com.easy.query.core.exception.EasyQueryNotFoundException;
 import com.easy.query.core.metadata.ColumnMetadata;
@@ -46,7 +45,6 @@ import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.util.ArrayUtil;
 import com.easy.query.core.util.ClassUtil;
-import com.easy.query.core.util.EasyShardingUtil;
 import com.easy.query.core.util.EasyUtil;
 import com.easy.query.core.util.SqlExpressionUtil;
 import com.easy.query.core.util.StringUtil;
@@ -266,8 +264,9 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     }
 
     protected <TR> List<TR> toInternalListWithExpression(EntityQueryExpression entityQueryExpression,Class<TR> resultClass){
-        EasyQueryExecutor easyQueryExecutor = sqlEntityExpression.getRuntimeContext().getEasyQueryExecutor();
-        return easyQueryExecutor.execute(entityQueryExpression,resultClass);
+        boolean tracking = sqlEntityExpression.getExpressionContext().getBehavior().hasBehavior(EasyBehaviorEnum.USE_TRACKING);
+        EntityExpressionExecutor entityExpressionExecutor = sqlEntityExpression.getRuntimeContext().getEntityExpressionExecutor();
+        return entityExpressionExecutor.query(ExecutorContext.create(sqlEntityExpression.getRuntimeContext(),tracking ),resultClass,entityQueryExpression);
     }
 //    protected <TR> List<TR> toInternalListWithSql(String sql,Class<TR> resultClass){
 //        EasyExecutor easyExecutor = sqlEntityExpression.getRuntimeContext().getEasyExecutor();

@@ -3,7 +3,10 @@ package com.easy.query.core.sharding.route.datasource;
 import com.easy.query.core.expression.sql.EntityExpression;
 import com.easy.query.core.expression.sql.EntityQueryExpression;
 import com.easy.query.core.metadata.EntityMetadata;
+import com.easy.query.core.sharding.parser.SqlParserResult;
+import com.easy.query.core.sharding.rule.datasource.DataSourceRouteRule;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -13,8 +16,5 @@ import java.util.List;
  * @author xuejiaming
  */
 public interface DataSourceRoute {
-
-    EntityMetadata getEntityMetadata();
-    List<String> routeWithPredicate(EntityExpression entityExpression);
-    String routeWithValue(Object shardingKey);
+    Collection<String> route(DataSourceRouteRule dataSourceRouteRule, SqlParserResult sqlParserResult);
 }

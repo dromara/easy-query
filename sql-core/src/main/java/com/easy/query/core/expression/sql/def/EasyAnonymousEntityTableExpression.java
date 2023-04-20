@@ -2,6 +2,7 @@ package com.easy.query.core.expression.sql.def;
 
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.expression.sql.AnonymousEntityTableExpression;
+import com.easy.query.core.expression.sql.EntityTableExpression;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.expression.lambda.SqlExpression;
 import com.easy.query.core.expression.parser.abstraction.SqlColumnSetter;
@@ -59,5 +60,14 @@ public class EasyAnonymousEntityTableExpression extends EasyEntityTableExpressio
             return tableNameAs.apply(alias);
         }
         return alias;
+    }
+
+    @Override
+    public EntityTableExpression copyEntityTableExpression() {
+        EasyAnonymousEntityTableExpression easyAnonymousEntityTableExpression = new EasyAnonymousEntityTableExpression(entityMetadata, index, alias, multiTableType, sqlEntityExpression.cloneSqlQueryExpression());
+        if(on!=null){
+            on.copyTo(easyAnonymousEntityTableExpression.getOn());
+        }
+        return easyAnonymousEntityTableExpression;
     }
 }

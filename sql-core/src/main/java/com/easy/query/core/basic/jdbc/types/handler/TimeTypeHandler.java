@@ -16,7 +16,7 @@ import java.sql.Types;
 public class TimeTypeHandler implements JdbcTypeHandler{
     @Override
     public Object getValue(EasyResultSet resultSet) throws SQLException {
-        return resultSet.getRs().getTime(resultSet.getIndex());
+        return resultSet.getStreamResult().getTime(resultSet.getIndex());
     }
 
     @Override

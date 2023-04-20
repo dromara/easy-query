@@ -25,11 +25,11 @@ import java.util.concurrent.TimeUnit;
  *
  * @author xuejiaming
  */
-public abstract class AbstractMergeExecutor<TResult> implements Executor<TResult> {
-    private static final Log log= LogFactory.getLog(AbstractMergeExecutor.class);
+public abstract class AbstractExecutor<TResult> implements Executor<TResult> {
+    private static final Log log= LogFactory.getLog(AbstractExecutor.class);
     protected final StreamMergeContext streamMergeContext;
 
-    public AbstractMergeExecutor(StreamMergeContext streamMergeContext){
+    public AbstractExecutor(StreamMergeContext streamMergeContext){
         this.streamMergeContext = streamMergeContext;
     }
 

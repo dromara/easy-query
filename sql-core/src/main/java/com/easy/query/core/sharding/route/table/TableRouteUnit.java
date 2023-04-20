@@ -10,13 +10,15 @@ import java.util.Objects;
  */
 public final class TableRouteUnit {
     private final String dataSource;
-    private final String tail;
+    private final String logicTableName;
+    private final String actualTableName;
     private final Class<?> entityClass;
 
-    public TableRouteUnit(String dataSource, String tail, Class<?> entityClass){
+    public TableRouteUnit(String dataSource,String logicTableName, String actualTableName,Class<?> entityClass){
 
         this.dataSource = dataSource;
-        this.tail = tail;
+        this.logicTableName = logicTableName;
+        this.actualTableName = actualTableName;
         this.entityClass = entityClass;
     }
 
@@ -24,8 +26,12 @@ public final class TableRouteUnit {
         return dataSource;
     }
 
-    public String getTail() {
-        return tail;
+    public String getLogicTableName() {
+        return logicTableName;
+    }
+
+    public String getActualTableName() {
+        return actualTableName;
     }
 
     public Class<?> getEntityClass() {
@@ -37,11 +43,11 @@ public final class TableRouteUnit {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         TableRouteUnit that = (TableRouteUnit) o;
-        return dataSource.equals(that.dataSource) && tail.equals(that.tail) && entityClass.equals(that.entityClass);
+        return Objects.equals(dataSource, that.dataSource) && Objects.equals(logicTableName, that.logicTableName) && Objects.equals(actualTableName, that.actualTableName) && Objects.equals(entityClass, that.entityClass);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(dataSource, tail, entityClass);
+        return Objects.hash(dataSource, logicTableName, actualTableName, entityClass);
     }
 }

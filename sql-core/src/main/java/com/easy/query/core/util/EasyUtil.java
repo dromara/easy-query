@@ -38,6 +38,9 @@ public class EasyUtil {
         Map<K, List<T>> map = stream.collect(Collectors.groupingBy(keyExtractor));
         return map.entrySet().stream().map(e -> new GroupingImpl<>(e.getKey(), e.getValue().stream()));
     }
+    public static <T, K> Map<K, List<T>> groupByToMap(Stream<T> stream, Function<T, K> keyExtractor) {
+        return stream.collect(Collectors.groupingBy(keyExtractor));
+    }
 //    public static <T, K,V> List<V> groupBy(List<T> list, Function<T, K> keyExtractor,Function<Grouping<K,T>,V> selector) {
 //        Map<K, List<T>> map = list.stream().collect(Collectors.groupingBy(keyExtractor));
 //        return map.entrySet().stream().map(e -> selector.apply(new Grouping<>(e.getKey(), e.getValue()))).collect(Collectors.toList());

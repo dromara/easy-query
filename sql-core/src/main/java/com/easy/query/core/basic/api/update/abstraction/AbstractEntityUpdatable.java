@@ -6,7 +6,6 @@ import com.easy.query.core.basic.api.internal.SqlEntityNode;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.plugin.interceptor.EasyInterceptorEntry;
 import com.easy.query.core.configuration.EasyQueryConfiguration;
-import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.enums.SqlExecuteStrategyEnum;
 import com.easy.query.core.exception.EasyQueryException;
@@ -18,7 +17,7 @@ import com.easy.query.core.expression.sql.def.EasyEntityTableExpression;
 import com.easy.query.core.expression.sql.EntityTableExpression;
 import com.easy.query.core.expression.sql.EntityUpdateExpression;
 import com.easy.query.core.basic.plugin.track.TrackManager;
-import com.easy.query.core.basic.jdbc.executor.EasyExecutor;
+import com.easy.query.core.basic.jdbc.executor.EasyOldExecutor;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.util.ArrayUtil;
@@ -97,7 +96,7 @@ public abstract class AbstractEntityUpdatable<T> extends AbstractSqlExecuteRows<
         if (!entities.isEmpty()) {
             updateBefore();
             List<SqlEntityNode> updateEntityNodes = createUpdateEntityNode();
-            EasyExecutor easyExecutor = entityUpdateExpression.getRuntimeContext().getEasyExecutor();
+            EasyOldExecutor easyExecutor = entityUpdateExpression.getRuntimeContext().getEasyExecutor();
             int i = 0;
             for (SqlEntityNode updateEntityNode : updateEntityNodes) {
 

@@ -9,7 +9,7 @@ import com.easy.query.core.expression.sql.def.EasyEntityTableExpression;
 import com.easy.query.core.expression.sql.EntityDeleteExpression;
 import com.easy.query.core.expression.sql.EntityTableExpression;
 import com.easy.query.core.util.StringUtil;
-import com.easy.query.core.basic.jdbc.executor.EasyExecutor;
+import com.easy.query.core.basic.jdbc.executor.EasyOldExecutor;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.metadata.EntityMetadata;
 
@@ -51,7 +51,7 @@ public abstract class AbstractEntityDeletable<T> extends AbstractSqlExecuteRows<
             String deleteSql = toSql();
             if(StringUtil.isNotBlank(deleteSql)){
                 EasyQueryRuntimeContext runtimeContext = entityDeleteExpression.getRuntimeContext();
-                EasyExecutor easyExecutor = runtimeContext.getEasyExecutor();
+                EasyOldExecutor easyExecutor = runtimeContext.getEasyExecutor();
                 return easyExecutor.executeRows(ExecutorContext.create(runtimeContext), deleteSql,entities, entityDeleteExpression.getParameters());
             }
         }

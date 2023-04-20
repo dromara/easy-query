@@ -10,7 +10,7 @@ import java.util.List;
  * @Date: 2023/2/16 22:20
  * @author xuejiaming
  */
-public interface EasyExecutor {
+public interface EasyOldExecutor {
     <T> long executeRows(ExecutorContext executorContext, String sql, List<SQLParameter> sqlParameters);
     <T> long executeRows(ExecutorContext executorContext, String sql, List<T> entities, List<SQLParameter> sqlParameters);
     <T> long insert(ExecutorContext executorContext,String sql, List<T> entities,List<SQLParameter> sqlParameters,boolean fillAutoIncrement);

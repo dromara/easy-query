@@ -17,6 +17,11 @@ public class AbstractPredicateSegment implements PredicateSegment {
     private Predicate predicate;
     private final boolean root;
 
+    @Override
+    public boolean isRoot() {
+        return root;
+    }
+
     public boolean isEmpty() {
         return this.predicate == null && this.children == null;
     }
@@ -104,7 +109,7 @@ public class AbstractPredicateSegment implements PredicateSegment {
             if (children != null) {
 
                 for (PredicateSegment child : children) {
-                    boolean isRoot = ((AbstractPredicateSegment) child).root;
+                    boolean isRoot =child.isRoot();
                     if (child instanceof AndPredicateSegment) {
                         AndPredicateSegment andPredicateSegment = new AndPredicateSegment(isRoot);
                         predicateSegment.addPredicateSegment(andPredicateSegment);

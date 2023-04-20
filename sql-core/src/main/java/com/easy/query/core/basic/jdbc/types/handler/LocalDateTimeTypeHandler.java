@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 public class LocalDateTimeTypeHandler implements JdbcTypeHandler{
     @Override
     public Object getValue(EasyResultSet resultSet) throws SQLException {
-        Timestamp timestamp = resultSet.getRs().getTimestamp(resultSet.getIndex());
+        Timestamp timestamp = resultSet.getStreamResult().getTimestamp(resultSet.getIndex());
         if(timestamp!=null){
             return timestamp.toLocalDateTime();
         }

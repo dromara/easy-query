@@ -1,5 +1,6 @@
 package com.easy.query.core.expression.executor.parser;
 
+import com.easy.query.core.expression.executor.ExecutorContext0;
 import com.easy.query.core.expression.sql.EntityExpression;
 import com.easy.query.core.expression.sql.EntityInsertExpression;
 import com.easy.query.core.expression.sql.EntityQueryExpression;
@@ -23,9 +24,8 @@ public class DefaultEasyPrepareParser implements EasyPrepareParser {
         return new PrepareParseResult(shardingEntities, entityExpression);
     }
 
-
     private Set<Class<?>> getShardingEntities(EntityExpression entityExpression) {
-        Set<Class<?>> shardingEntities = new HashSet<>(entityExpression.getTables().size());
+        Set<Class<?>> shardingEntities = new LinkedHashSet<>(entityExpression.getTables().size());
         for (EntityTableExpression table : entityExpression.getTables()) {
             if (!table.tableNameIsAs() && table.getEntityMetadata().isSharding()) {
                 shardingEntities.add(table.getEntityClass());

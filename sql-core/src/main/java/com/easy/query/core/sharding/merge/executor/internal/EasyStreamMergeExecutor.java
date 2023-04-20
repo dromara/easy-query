@@ -1,6 +1,5 @@
 package com.easy.query.core.sharding.merge.executor.internal;
 
-import com.easy.query.core.basic.thread.EasyShardingExecutorService;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.sharding.merge.StreamMergeContext;
 import com.easy.query.core.sharding.merge.executor.common.CommandExecuteUnit;
@@ -16,7 +15,7 @@ import java.sql.SQLException;
  *
  * @author xuejiaming
  */
-public class EasyStreamMergeExecutor extends AbstractMergeExecutor<ExecuteResult> {
+public class EasyStreamMergeExecutor extends AbstractExecutor<ExecuteResult> {
 
     public EasyStreamMergeExecutor(StreamMergeContext streamMergeContext) {
         super(streamMergeContext);
@@ -44,7 +43,7 @@ public class EasyStreamMergeExecutor extends AbstractMergeExecutor<ExecuteResult
         } catch (SQLException e) {
             throw new EasyQueryException(e);
         }
-        return new QueryExecuteResult(new DefaultStreamResult(resultSet), preparedStatement);
+        return new QueryExecuteResult(new DefaultStreamResult(resultSet,preparedStatement), preparedStatement);
     }
 
     private ExecuteResult executeBatch(PreparedStatement preparedStatement) {

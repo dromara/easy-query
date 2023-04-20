@@ -28,4 +28,5 @@ public final class PrepareParseResult {
     public EntityExpression getEntityExpression() {
         return entityExpression;
     }
+
 }

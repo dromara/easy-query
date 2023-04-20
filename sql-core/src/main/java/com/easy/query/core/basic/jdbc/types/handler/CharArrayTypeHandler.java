@@ -15,7 +15,7 @@ import java.sql.Types;
 public class CharArrayTypeHandler implements JdbcTypeHandler{
     @Override
     public Object getValue(EasyResultSet resultSet) throws SQLException {
-        return resultSet.getRs().getString(resultSet.getIndex()).toCharArray();
+        return resultSet.getStreamResult().getString(resultSet.getIndex()).toCharArray();
     }
 
     @Override

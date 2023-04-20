@@ -1,11 +1,11 @@
 package com.easy.query;
 
+import com.easy.query.core.basic.jdbc.executor.DefaultEntityExpressionExecutor;
 import com.easy.query.core.basic.thread.DefaultEasyShardingExecutorService;
 import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.enums.SqlExecuteStrategyEnum;
 import com.easy.query.core.expression.executor.parser.DefaultEasyPrepareParser;
-import com.easy.query.core.expression.executor.query.DefaultEasyQueryExecutor;
-import com.easy.query.core.expression.executor.query.DefaultQueryCompilerContextFactory;
+import com.easy.query.core.expression.executor.query.DefaultExecutionContextFactory;
 import com.easy.query.core.expression.parser.factory.DefaultEasyQueryLambdaFactory;
 import com.easy.query.core.abstraction.DefaultEasyQueryRuntimeContext;
 import com.easy.query.core.expression.parser.factory.EasyQueryLambdaFactory;
@@ -17,7 +17,7 @@ import com.easy.query.core.api.client.EasyQuery;
 import com.easy.query.core.api.def.DefaultEasySqlApiFactory;
 import com.easy.query.core.basic.jdbc.con.DefaultConnectionManager;
 import com.easy.query.core.basic.jdbc.con.EasyConnectionManager;
-import com.easy.query.core.basic.jdbc.executor.DefaultEasyExecutor;
+import com.easy.query.core.basic.jdbc.executor.DefaultEasyOldExecutor0;
 import com.easy.query.core.basic.jdbc.types.DefaultJdbcTypeHandlerManager;
 import com.easy.query.core.basic.jdbc.types.EasyJdbcTypeHandlerManager;
 import com.easy.query.core.config.UnderlinedNameConversion;
@@ -27,7 +27,10 @@ import com.easy.query.core.metadata.DefaultEntityMetadataManager;
 import com.easy.query.core.basic.plugin.track.DefaultTrackManager;
 import com.easy.query.core.sharding.DefaultEasyDataSource;
 import com.easy.query.core.sharding.EasyShardingOption;
+import com.easy.query.core.sharding.rewrite.DefaultRewriteContextFactory;
+import com.easy.query.core.sharding.route.DefaultRouteContextFactory;
 import com.easy.query.core.sharding.route.abstraction.DefaultDataSourceRouteManager;
+import com.easy.query.core.sharding.route.abstraction.DefaultTableRouteManager;
 import com.easy.query.core.sharding.route.datasource.engine.DefaultDataSourceRouteEngine;
 import com.easy.query.core.sharding.route.table.engine.DefaultTableRouteEngine;
 import com.easy.query.encryption.Base64EncryptionStrategy;
@@ -85,7 +88,7 @@ public abstract class BaseTest {
     }
 
     public static void initEasyQuery() {
-        DefaultEasyExecutor defaultExecutor = new DefaultEasyExecutor();
+        DefaultEasyOldExecutor0 defaultExecutor = new DefaultEasyOldExecutor0();
         EasyJdbcTypeHandlerManager jdbcTypeHandler = new DefaultJdbcTypeHandlerManager();
         EasyQueryOption easyQueryOption = new EasyQueryOption(false, SqlExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS, SqlExecuteStrategyEnum.ALL_COLUMNS);
         EasyQueryConfiguration configuration = new EasyQueryConfiguration(easyQueryOption);
@@ -109,14 +112,20 @@ public abstract class BaseTest {
         EasyConnectionManager connectionManager = new DefaultConnectionManager(defaultEasyDataSource);
         DefaultDataSourceRouteManager defaultDataSourceRouteManager = new DefaultDataSourceRouteManager(entityMetadataManager,defaultEasyDataSource);
         DefaultDataSourceRouteEngine defaultDataSourceRouteEngine = new DefaultDataSourceRouteEngine(defaultEasyDataSource,entityMetadataManager,defaultDataSourceRouteManager);
-        DefaultTableRouteEngine defaultTableRouteEngine = new DefaultTableRouteEngine();
-        DefaultQueryCompilerContextFactory defaultQueryCompilerContextFactory = new DefaultQueryCompilerContextFactory(defaultDataSourceRouteEngine,defaultTableRouteEngine);
-        DefaultEasyQueryExecutor defaultEasyQueryExecutor = new DefaultEasyQueryExecutor(prepareParser, defaultQueryCompilerContextFactory, defaultExecutor);
+
+        DefaultTableRouteManager defaultTableRouteManager = new DefaultTableRouteManager(entityMetadataManager);
+        DefaultTableRouteEngine defaultTableRouteEngine = new DefaultTableRouteEngine(entityMetadataManager,defaultTableRouteManager);
+
+
+        DefaultRouteContextFactory defaultRouteContextFactory = new DefaultRouteContextFactory(defaultDataSourceRouteEngine,defaultTableRouteEngine);
+        DefaultRewriteContextFactory defaultRewriteContextFactory = new DefaultRewriteContextFactory();
+        DefaultExecutionContextFactory defaultQueryCompilerContextFactory = new DefaultExecutionContextFactory(defaultRouteContextFactory,defaultRewriteContextFactory,defaultEasyDataSource);
+        DefaultEntityExpressionExecutor defaultEntityExpressionExecutor = new DefaultEntityExpressionExecutor(prepareParser, defaultQueryCompilerContextFactory);
 
         EasyShardingOption easyShardingOption = new EasyShardingOption(10, 20);
         DefaultEasyShardingExecutorService defaultEasyShardingExecutorService = new DefaultEasyShardingExecutorService(easyShardingOption);
 
-        DefaultEasyQueryRuntimeContext jqdcRuntimeContext = new DefaultEasyQueryRuntimeContext(configuration, entityMetadataManager, easyQueryLambdaFactory, connectionManager, defaultExecutor,defaultEasyQueryExecutor, jdbcTypeHandler, easyQueryableFactory, mySQLSqlExpressionFactory, defaultTrackManager,defaultEasyPageResultProvider,easyShardingOption,defaultEasyShardingExecutorService);
+        DefaultEasyQueryRuntimeContext jqdcRuntimeContext = new DefaultEasyQueryRuntimeContext(configuration, entityMetadataManager, easyQueryLambdaFactory, connectionManager, defaultExecutor,defaultEntityExpressionExecutor, jdbcTypeHandler, easyQueryableFactory, mySQLSqlExpressionFactory, defaultTrackManager,defaultEasyPageResultProvider,easyShardingOption,defaultEasyShardingExecutorService);
 ////        jqdcRuntimeContext.getEasyQueryConfiguration().applyEntityTypeConfiguration(new TestUserMySqlConfiguration());
 //        configuration.applyGlobalInterceptor(new NameQueryFilter());
 

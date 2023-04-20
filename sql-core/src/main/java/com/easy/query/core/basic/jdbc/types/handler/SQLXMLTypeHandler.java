@@ -15,7 +15,7 @@ import java.sql.Types;
 public class SQLXMLTypeHandler implements JdbcTypeHandler {
     @Override
     public Object getValue(EasyResultSet resultSet) throws SQLException {
-        return resultSet.getRs().getSQLXML(resultSet.getIndex());
+        return resultSet.getStreamResult().getSQLXML(resultSet.getIndex());
     }
 
     @Override

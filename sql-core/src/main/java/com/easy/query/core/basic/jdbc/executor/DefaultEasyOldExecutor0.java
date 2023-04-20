@@ -40,11 +40,11 @@ import java.util.Map;
  * @Description: 文件说明
  * @Date: 2023/2/16 22:49
  */
-public class DefaultEasyExecutor implements EasyExecutor {
-    private static final Log log = LogFactory.getLog(DefaultEasyExecutor.class);
+public class DefaultEasyOldExecutor0 implements EasyOldExecutor {
+    private static final Log log = LogFactory.getLog(DefaultEasyOldExecutor0.class);
     private final boolean logDebug;
 
-    public DefaultEasyExecutor() {
+    public DefaultEasyOldExecutor0() {
         logDebug = log.isDebugEnabled();
     }
 
@@ -347,7 +347,7 @@ public class DefaultEasyExecutor implements EasyExecutor {
         if (columnCount != 1) {
             throw new SQLException("返回类型:" + clazz + ",期望返回一列");
         }
-        EasyResultSet easyResultSet = new EasyResultSet(rs);
+        EasyResultSet easyResultSet = new EasyResultSet(null);
         easyResultSet.setIndex(0);
         EasyJdbcTypeHandlerManager easyJdbcTypeHandler = context.getRuntimeContext().getEasyJdbcTypeHandlerManager();
         JdbcTypeHandler handler = easyJdbcTypeHandler.getHandler(clazz);
@@ -376,7 +376,7 @@ public class DefaultEasyExecutor implements EasyExecutor {
         }
         EasyJdbcTypeHandlerManager easyJdbcTypeHandler = context.getRuntimeContext().getEasyJdbcTypeHandlerManager();
         int columnCount = rsmd.getColumnCount();//有多少列
-        EasyResultSet easyResultSet = new EasyResultSet(rs);
+        EasyResultSet easyResultSet = new EasyResultSet(null);
         for (int i = 0; i < columnCount; i++) {
 
             String colName = getColName(rsmd, i + 1);//数据库查询出来的列名
@@ -429,7 +429,7 @@ public class DefaultEasyExecutor implements EasyExecutor {
         EasyJdbcTypeHandlerManager easyJdbcTypeHandler = context.getRuntimeContext().getEasyJdbcTypeHandlerManager();
         TrackManager trackManager = context.getRuntimeContext().getTrackManager();
         boolean trackBean = trackBean(context, clazz);
-        EasyResultSet easyResultSet = new EasyResultSet(rs);
+        EasyResultSet easyResultSet = new EasyResultSet(null);
         T bean = ClassUtil.newInstance(clazz);
 
         FastBean beanFastSetter = EasyUtil.getFastBean(clazz);

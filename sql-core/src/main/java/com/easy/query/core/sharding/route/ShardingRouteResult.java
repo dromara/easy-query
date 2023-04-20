@@ -1,6 +1,7 @@
 package com.easy.query.core.sharding.route;
 
-import com.easy.query.core.sharding.common.SqlRouteUnit;
+import com.easy.query.core.sharding.common.RouteUnit;
+import com.easy.query.core.util.ArrayUtil;
 
 import java.util.List;
 
@@ -12,22 +13,20 @@ import java.util.List;
  */
 public final class ShardingRouteResult {
 
-    private final List<SqlRouteUnit> routeUnits;
+    private final List<RouteUnit> routeUnits;
     private final boolean isEmpty;
     private final boolean isCrossDataSource;
     private final boolean isCrossTable;
-    private final boolean existCrossTableTails;
 
-    public ShardingRouteResult(List<SqlRouteUnit> routeUnits, boolean isEmpty, boolean isCrossDataSource, boolean isCrossTable, boolean existCrossTableTails){
+    public ShardingRouteResult(List<RouteUnit> routeUnits,  boolean isCrossDataSource, boolean isCrossTable){
 
         this.routeUnits = routeUnits;
-        this.isEmpty = isEmpty;
+        this.isEmpty = ArrayUtil.isEmpty(routeUnits);
         this.isCrossDataSource = isCrossDataSource;
         this.isCrossTable = isCrossTable;
-        this.existCrossTableTails = existCrossTableTails;
     }
 
-    public List<SqlRouteUnit> getRouteUnits() {
+    public List<RouteUnit> getRouteUnits() {
         return routeUnits;
     }
 
@@ -43,7 +42,4 @@ public final class ShardingRouteResult {
         return isCrossTable;
     }
 
-    public boolean isExistCrossTableTails() {
-        return existCrossTableTails;
-    }
 }

@@ -1,5 +1,6 @@
 package com.easy.query.mysql.expression;
 
+import com.easy.query.core.expression.sql.EntityTableExpression;
 import com.easy.query.core.expression.sql.factory.EasyExpressionFactory;
 import com.easy.query.core.expression.sql.def.EasyQueryExpression;
 import com.easy.query.core.expression.sql.EntityQueryExpression;
@@ -39,7 +40,9 @@ public class MySqlQueryExpression extends EasyQueryExpression {
         getProjects().copyTo(entityQueryExpression.getProjects());
         entityQueryExpression.offset = super.offset;
         entityQueryExpression.rows = super.rows;
-        entityQueryExpression.tables.addAll(super.tables);
+        for (EntityTableExpression table : super.tables) {
+            entityQueryExpression.tables.add(table.copyEntityTableExpression());
+        }
         return entityQueryExpression;
     }
 }

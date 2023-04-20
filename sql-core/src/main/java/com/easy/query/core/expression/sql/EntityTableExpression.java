@@ -24,4 +24,7 @@ public interface EntityTableExpression extends TableExpressionSegment {
 
      SqlExpression<SqlPredicate<Object>> getLogicDeleteQueryFilterExpression();
      SqlExpression<SqlColumnSetter<Object>> getLogicDeletedSqlExpression();
+
+    EntityTableExpression copyEntityTableExpression();
+
 }

@@ -4,6 +4,7 @@ import com.easy.query.core.basic.jdbc.types.EasyParameter;
 import com.easy.query.core.basic.jdbc.types.EasyResultSet;
 
 import java.sql.Clob;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 
@@ -16,7 +17,7 @@ import java.sql.Types;
 public class CLobTypeHandler implements JdbcTypeHandler{
     @Override
     public Object getValue(EasyResultSet resultSet) throws SQLException {
-        return resultSet.getRs().getClob(resultSet.getIndex());
+        return resultSet.getStreamResult().getClob(resultSet.getIndex());
     }
 
     @Override

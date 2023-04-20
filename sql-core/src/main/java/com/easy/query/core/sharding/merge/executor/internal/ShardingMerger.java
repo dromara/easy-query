@@ -2,6 +2,7 @@ package com.easy.query.core.sharding.merge.executor.internal;
 
 import com.easy.query.core.sharding.merge.StreamMergeContext;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -11,6 +12,6 @@ import java.util.List;
  * @author xuejiaming
  */
 public interface ShardingMerger<TResult> {
-    TResult streamMerge(StreamMergeContext streamMergeContext, List<TResult> parallelResults);
-    void inMemoryMerge(StreamMergeContext streamMergeContext,List<TResult> beforeInMemoryResults, List<TResult> parallelResults);
+    TResult streamMerge(StreamMergeContext streamMergeContext, Collection<TResult> parallelResults);
+    void inMemoryMerge(StreamMergeContext streamMergeContext,Collection<TResult> beforeInMemoryResults, Collection<TResult> parallelResults);
 }

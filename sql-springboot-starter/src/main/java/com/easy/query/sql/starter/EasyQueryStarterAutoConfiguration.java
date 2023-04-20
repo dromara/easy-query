@@ -1,12 +1,12 @@
 package com.easy.query.sql.starter;
 
+import com.easy.query.core.basic.jdbc.executor.DefaultEntityExpressionExecutor;
+import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
 import com.easy.query.core.basic.thread.DefaultEasyShardingExecutorService;
 import com.easy.query.core.basic.thread.EasyShardingExecutorService;
 import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.expression.executor.parser.DefaultEasyPrepareParser;
-import com.easy.query.core.expression.executor.query.DefaultEasyQueryExecutor;
-import com.easy.query.core.expression.executor.query.DefaultQueryCompilerContextFactory;
-import com.easy.query.core.expression.executor.query.EasyQueryExecutor;
+import com.easy.query.core.expression.executor.query.DefaultExecutionContextFactory;
 import com.easy.query.core.expression.parser.factory.DefaultEasyQueryLambdaFactory;
 import com.easy.query.core.abstraction.DefaultEasyQueryRuntimeContext;
 import com.easy.query.core.expression.sql.factory.EasyExpressionFactory;
@@ -21,8 +21,8 @@ import com.easy.query.core.api.client.DefaultEasyQuery;
 import com.easy.query.core.api.client.EasyQuery;
 import com.easy.query.core.api.def.DefaultEasySqlApiFactory;
 import com.easy.query.core.basic.jdbc.con.EasyConnectionManager;
-import com.easy.query.core.basic.jdbc.executor.DefaultEasyExecutor;
-import com.easy.query.core.basic.jdbc.executor.EasyExecutor;
+import com.easy.query.core.basic.jdbc.executor.DefaultEasyOldExecutor0;
+import com.easy.query.core.basic.jdbc.executor.EasyOldExecutor;
 import com.easy.query.core.basic.jdbc.types.DefaultJdbcTypeHandlerManager;
 import com.easy.query.core.basic.jdbc.types.EasyJdbcTypeHandlerManager;
 import com.easy.query.core.config.NameConversion;
@@ -38,7 +38,10 @@ import com.easy.query.core.basic.plugin.track.TrackManager;
 import com.easy.query.core.sharding.DefaultEasyDataSource;
 import com.easy.query.core.sharding.EasyDataSource;
 import com.easy.query.core.sharding.EasyShardingOption;
+import com.easy.query.core.sharding.rewrite.DefaultRewriteContextFactory;
+import com.easy.query.core.sharding.route.DefaultRouteContextFactory;
 import com.easy.query.core.sharding.route.abstraction.DefaultDataSourceRouteManager;
+import com.easy.query.core.sharding.route.abstraction.DefaultTableRouteManager;
 import com.easy.query.core.sharding.route.datasource.engine.DefaultDataSourceRouteEngine;
 import com.easy.query.core.sharding.route.table.engine.DefaultTableRouteEngine;
 import com.easy.query.core.util.StringUtil;
@@ -101,8 +104,8 @@ public class EasyQueryStarterAutoConfiguration {
     }
 
     @Bean
-    public EasyExecutor easyExecutor() {
-        return new DefaultEasyExecutor();
+    public EasyOldExecutor easyExecutor() {
+        return new DefaultEasyOldExecutor0();
     }
     @Bean
     public TrackManager trackManager(EntityMetadataManager entityMetadataManager){
@@ -168,14 +171,17 @@ public class EasyQueryStarterAutoConfiguration {
         return new DefaultEasyDataSource("ds0",dataSource);
     }
     @Bean
-    public EasyQueryExecutor easyQueryExecutor(EasyDataSource easyDataSource,EntityMetadataManager entityMetadataManager,EasyExecutor easyExecutor,DataSource dataSource){
+    public EntityExpressionExecutor entityExpressionExecutor(EasyDataSource easyDataSource, EntityMetadataManager entityMetadataManager, EasyOldExecutor easyExecutor, DataSource dataSource){
 
         DefaultEasyPrepareParser prepareParser = new DefaultEasyPrepareParser();
         DefaultDataSourceRouteManager defaultDataSourceRouteManager = new DefaultDataSourceRouteManager(entityMetadataManager,easyDataSource);
         DefaultDataSourceRouteEngine defaultDataSourceRouteEngine = new DefaultDataSourceRouteEngine(easyDataSource,entityMetadataManager,defaultDataSourceRouteManager);
-        DefaultTableRouteEngine defaultTableRouteEngine = new DefaultTableRouteEngine();
-        DefaultQueryCompilerContextFactory defaultQueryCompilerContextFactory = new DefaultQueryCompilerContextFactory(defaultDataSourceRouteEngine,defaultTableRouteEngine);
-        return  new DefaultEasyQueryExecutor(prepareParser, defaultQueryCompilerContextFactory, easyExecutor);
+        DefaultTableRouteManager defaultTableRouteManager = new DefaultTableRouteManager(entityMetadataManager);
+        DefaultTableRouteEngine defaultTableRouteEngine = new DefaultTableRouteEngine(entityMetadataManager,defaultTableRouteManager);
+        DefaultRouteContextFactory defaultRouteContextFactory = new DefaultRouteContextFactory(defaultDataSourceRouteEngine,defaultTableRouteEngine);
+        DefaultRewriteContextFactory defaultRewriteContextFactory = new DefaultRewriteContextFactory();
+        DefaultExecutionContextFactory defaultQueryCompilerContextFactory = new DefaultExecutionContextFactory(defaultRouteContextFactory,defaultRewriteContextFactory,easyDataSource);
+        return new DefaultEntityExpressionExecutor(prepareParser, defaultQueryCompilerContextFactory);
 
     }
     @Bean
@@ -194,8 +200,8 @@ public class EasyQueryStarterAutoConfiguration {
                                                            EntityMetadataManager entityMetadataManager,
                                                            EasyQueryLambdaFactory easyQueryLambdaFactory,
                                                            EasyConnectionManager easyConnectionManager,
-                                                           EasyExecutor easyExecutor,
-                                                           EasyQueryExecutor easyQueryExecutor,
+                                                           EasyOldExecutor easyExecutor,
+                                                           EntityExpressionExecutor entityExpressionExecutor,
                                                            EasyJdbcTypeHandlerManager easyJdbcTypeHandler,
                                                            EasySqlApiFactory easyQueryableFactory,
                                                            EasyExpressionFactory easySqlExpressionFactory,
@@ -209,7 +215,7 @@ public class EasyQueryStarterAutoConfiguration {
                 easyQueryLambdaFactory,
                 easyConnectionManager,
                 easyExecutor,
-                easyQueryExecutor,
+                entityExpressionExecutor,
                 easyJdbcTypeHandler,
                 easyQueryableFactory,
                 easySqlExpressionFactory,
