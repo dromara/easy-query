@@ -3,7 +3,9 @@ package com.easy.query.core.sharding.merge;
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.con.ConnectionStrategyEnum;
 import com.easy.query.core.basic.jdbc.con.EasyConnection;
+import com.easy.query.core.basic.jdbc.con.EasyConnectionManager;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
+import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.executor.parser.ExecutionContext;
 import com.easy.query.core.expression.executor.query.QueryCompilerContext;
 import com.easy.query.core.expression.sql.EntityExpression;
@@ -32,9 +34,10 @@ public class DefaultStreamMergeContext implements StreamMergeContext {
 //    private final EntityExpression entityExpression;
     private final EasyQueryRuntimeContext runtimeContext;
     private final boolean serialExecute;
-    private final Map<String/* data source name*/, Collection<EasyConnection>> parallelConnections=new HashMap<>();
+    private final Map<String/* data source name*/, Collection<CloseableConnection>> parallelConnections=new HashMap<>();
     private final ExecutorContext executorContext;
     private final ExecutionContext executionContext;
+    private final EasyConnectionManager connectionManager;
 
     //    public DefaultStreamMergeContext(List<ExecutionUnit> executionUnits, EntityExpression entityExpression){
 //
@@ -50,7 +53,8 @@ public class DefaultStreamMergeContext implements StreamMergeContext {
 //
 //        this.entityExpression = entityExpression;
         this.runtimeContext= executorContext.getRuntimeContext();
-        serialExecute= !Objects.equals(CommandTypeEnum.QUERY,executionContext.getCommandType());
+        this.connectionManager=runtimeContext.getConnectionManager();
+        this.serialExecute= !Objects.equals(CommandTypeEnum.QUERY,executionContext.getCommandType());
     }
 
     @Override
@@ -80,21 +84,57 @@ public class DefaultStreamMergeContext implements StreamMergeContext {
 
     public List<EasyConnection> getEasyConnections(ConnectionModeEnum connectionMode, String dataSourceName, int createDbConnectionCount){
         List<EasyConnection> easyConnections = new ArrayList<>(createDbConnectionCount);
-
+        //当前需要被回收的链接
+        Collection<CloseableConnection> closeableConnections = parallelConnections.computeIfAbsent(dataSourceName, o -> new ArrayList<>());
+        ConnectionStrategyEnum connectionStrategy = getConnectionStrategy(createDbConnectionCount);
         for (int i = 0; i < createDbConnectionCount; i++) {
-            EasyConnection easyConnection = runtimeContext.getConnectionManager().getEasyConnection(dataSourceName, ConnectionStrategyEnum.IndependentConnectionMaster);
-            Collection<EasyConnection> connections = parallelConnections.computeIfAbsent(dataSourceName, o -> new ArrayList<>());
-            connections.add(easyConnection);
+            EasyConnection easyConnection = connectionManager.getEasyConnection(dataSourceName, connectionStrategy);
+
             easyConnections.add(easyConnection);
+            closeableConnections.add(new CloseableConnection(connectionStrategy,connectionManager,easyConnection));
         }
         return easyConnections;
+    }
+    private ConnectionStrategyEnum getConnectionStrategy(int createDbConnectionCount){
+        if(createDbConnectionCount<=0){
+            throw new EasyQueryInvalidOperationException("cant get connection strategy");
+        }
+        if(createDbConnectionCount==1){
+            return ConnectionStrategyEnum.ShareConnection;
+        }
+        return ConnectionStrategyEnum.IndependentConnectionMaster;
+
     }
 
     @Override
     public void close() throws Exception {
-        for (String s : parallelConnections.keySet()) {
-            Collection<EasyConnection> easyConnections = parallelConnections.get(s);
-            for (EasyConnection easyConnection : easyConnections) {
+        for (Collection<CloseableConnection> value : parallelConnections.values()) {
+            for (CloseableConnection closeableConnection : value) {
+                closeableConnection.close();
+            }
+        }
+    }
+
+    /**
+     * 可关闭的链接用于当前请求链接是否关闭
+     */
+    public static class CloseableConnection implements AutoCloseable{
+        private final ConnectionStrategyEnum connectionStrategy;
+        private final EasyConnectionManager easyConnectionManager;
+        private final EasyConnection easyConnection;
+
+        public CloseableConnection(ConnectionStrategyEnum connectionStrategy, EasyConnectionManager easyConnectionManager, EasyConnection easyConnection){
+
+            this.connectionStrategy = connectionStrategy;
+            this.easyConnectionManager = easyConnectionManager;
+            this.easyConnection = easyConnection;
+        }
+
+        @Override
+        public void close() throws Exception {
+            if(ConnectionStrategyEnum.ShareConnection.equals(connectionStrategy)){
+                easyConnectionManager.closeEasyConnection(easyConnection);
+            }else{
                 easyConnection.close();
             }
         }
