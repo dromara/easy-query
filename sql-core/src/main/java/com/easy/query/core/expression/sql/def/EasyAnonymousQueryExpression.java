@@ -1,5 +1,7 @@
 package com.easy.query.core.expression.sql.def;
 
+import com.easy.query.core.expression.sql.EntityExpression;
+import com.easy.query.core.expression.sql.EntityTableExpression;
 import com.easy.query.core.expression.sql.factory.EasyExpressionFactory;
 import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
@@ -118,14 +120,15 @@ public class EasyAnonymousQueryExpression extends EasyQueryExpression implements
         return sql;
     }
 
-
-
     @Override
-    public EntityQueryExpression cloneSqlQueryExpression() {
+    public EntityExpression cloneEntityExpression() {
+
         ExpressionContext sqlExpressionContext = getExpressionContext();
         EasyExpressionFactory sqlExpressionFactory = getRuntimeContext().getSqlExpressionFactory();
         EasyAnonymousQueryExpression anonymousQueryExpression = (EasyAnonymousQueryExpression) sqlExpressionFactory.createAnonymousQueryExpression(sql,sqlExpressionContext);
-        anonymousQueryExpression.tables.addAll(super.tables);
+        for (EntityTableExpression table : super.tables) {
+            anonymousQueryExpression.tables.add(table.copyEntityTableExpression());
+        }
         return anonymousQueryExpression;
     }
 }

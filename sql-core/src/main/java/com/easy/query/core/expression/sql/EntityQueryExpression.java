@@ -2,6 +2,7 @@ package com.easy.query.core.expression.sql;
 
 import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
+import com.easy.query.core.expression.sql.def.EasyQueryExpression;
 
 /**
  * @FileName: SqlEntityExpressionSegment.java
@@ -42,10 +43,8 @@ public interface EntityQueryExpression extends EntityExpression {
      SqlBuilderSegment getOrder() ;
 
      boolean hasOrder();
+     default EasyQueryExpression cloneSqlQueryExpression(){
+         return (EasyQueryExpression)cloneEntityExpression();
+     }
 
-    /**
-     * 创建一个新的EntityQueryExpression但是会共享同一个上下文
-     * @return
-     */
-    EntityQueryExpression cloneSqlQueryExpression();
 }

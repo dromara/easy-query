@@ -32,7 +32,7 @@ import java.util.Set;
  * @author xuejiaming
  */
 public abstract class EasyInsertExpression extends AbstractEntityExpression implements EntityInsertExpression {
-    private final SqlBuilderSegment columns;
+    protected final SqlBuilderSegment columns;
 
     public EasyInsertExpression(ExpressionContext queryExpressionContext) {
         super(queryExpressionContext);

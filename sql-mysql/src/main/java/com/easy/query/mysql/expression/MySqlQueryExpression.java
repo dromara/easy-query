@@ -1,5 +1,6 @@
 package com.easy.query.mysql.expression;
 
+import com.easy.query.core.expression.sql.EntityExpression;
 import com.easy.query.core.expression.sql.EntityTableExpression;
 import com.easy.query.core.expression.sql.factory.EasyExpressionFactory;
 import com.easy.query.core.expression.sql.def.EasyQueryExpression;
@@ -18,9 +19,8 @@ public class MySqlQueryExpression extends EasyQueryExpression {
     }
 
 
-
     @Override
-    public EntityQueryExpression cloneSqlQueryExpression() {
+    public EntityExpression cloneEntityExpression() {
 
         ExpressionContext sqlExpressionContext = getExpressionContext();
         EasyExpressionFactory sqlExpressionFactory = getRuntimeContext().getSqlExpressionFactory();

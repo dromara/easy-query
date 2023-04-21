@@ -8,6 +8,8 @@ import com.easy.query.core.expression.sql.AnonymousEntityTableExpression;
 import com.easy.query.core.expression.sql.EntityExpression;
 import com.easy.query.core.expression.sql.EntityQueryExpression;
 import com.easy.query.core.expression.sql.EntityTableExpression;
+import com.easy.query.core.expression.sql.ExpressionContext;
+import com.easy.query.core.expression.sql.factory.EasyExpressionFactory;
 import com.easy.query.core.sharding.EasyDataSource;
 import com.easy.query.core.sharding.common.RouteMapper;
 import com.easy.query.core.sharding.common.RouteUnit;
@@ -44,15 +46,13 @@ public class DefaultExecutionContextFactory implements ExecutionContextFactory {
     }
 
     @Override
-    public ExecutionContext create(String sql, List<SQLParameter> parameters) {
-
+    public ExecutionContext createQueryExecutionContext(String sql, List<SQLParameter> parameters) {
         ExecutionUnit executionUnit = new ExecutionUnit(easyDataSource.getDefaultDataSourceName(), new SqlUnit(sql,parameters,CommandTypeEnum.QUERY));
         return new ExecutionContext(CommandTypeEnum.QUERY,Collections.singletonList(executionUnit));
     }
 
     @Override
-    public ExecutionContext create(PrepareParseResult prepareParseResult) {
-
+    public ExecutionContext createExecutionContext(PrepareParseResult prepareParseResult) {
         EntityExpression entityExpression = prepareParseResult.getEntityExpression();
 //        NativeSqlQueryCompilerContext nativeSqlQueryCompilerContext = new NativeSqlQueryCompilerContext(prepareParseResult);
         if(ArrayUtil.isEmpty(prepareParseResult.getShardingEntities())){

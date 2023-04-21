@@ -1,6 +1,5 @@
 package com.easy.query.core.expression.executor.query;
 
-import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.expression.executor.parser.ExecutionContext;
 import com.easy.query.core.expression.executor.parser.PrepareParseResult;
@@ -14,6 +13,6 @@ import java.util.List;
  * @author xuejiaming
  */
 public interface ExecutionContextFactory {
-    ExecutionContext create(PrepareParseResult prepareParseResult);
-    ExecutionContext create(String sql, List<SQLParameter> parameters);
+    ExecutionContext createExecutionContext(PrepareParseResult prepareParseResult);
+    ExecutionContext createQueryExecutionContext(String sql, List<SQLParameter> parameters);
 }

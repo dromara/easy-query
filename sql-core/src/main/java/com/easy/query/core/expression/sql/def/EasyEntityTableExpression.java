@@ -149,6 +149,7 @@ public class EasyEntityTableExpression implements EntityTableExpression {
         if(on!=null){
             on.copyTo(easyEntityTableExpression.getOn());
         }
+        easyEntityTableExpression.tableNameAs=this.tableNameAs;
         return easyEntityTableExpression;
     }
 }

@@ -1,7 +1,10 @@
 package com.easy.query.mysql.expression;
 
+import com.easy.query.core.expression.sql.EntityExpression;
+import com.easy.query.core.expression.sql.EntityTableExpression;
 import com.easy.query.core.expression.sql.def.EasyDeleteExpression;
 import com.easy.query.core.expression.sql.ExpressionContext;
+import com.easy.query.core.expression.sql.factory.EasyExpressionFactory;
 
 
 /**
@@ -17,4 +20,22 @@ public class MySqlDeleteExpression extends EasyDeleteExpression {
         super(sqlExpressionContext,expressionDelete);
     }
 
+    @Override
+    public EntityExpression cloneEntityExpression() {
+
+        ExpressionContext sqlExpressionContext = getExpressionContext();
+        EasyExpressionFactory sqlExpressionFactory = getRuntimeContext().getSqlExpressionFactory();
+        MySqlDeleteExpression entityDeleteExpression = (MySqlDeleteExpression) sqlExpressionFactory.createEntityDeleteExpression(sqlExpressionContext,isExpression());
+
+        if(hasWhere()){
+            getWhere().copyTo(entityDeleteExpression.getWhere());
+        }
+        if(hasWhereColumns()){
+            getWhereColumns().copyTo(entityDeleteExpression.getWhereColumns());
+        }
+        for (EntityTableExpression table : super.tables) {
+            entityDeleteExpression.tables.add(table.copyEntityTableExpression());
+        }
+        return entityDeleteExpression;
+    }
 }

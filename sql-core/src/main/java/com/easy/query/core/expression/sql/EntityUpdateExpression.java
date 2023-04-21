@@ -2,6 +2,8 @@ package com.easy.query.core.expression.sql;
 
 import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
+import com.easy.query.core.expression.sql.def.EasyQueryExpression;
+import com.easy.query.core.expression.sql.def.EasyUpdateExpression;
 
 /**
  * @FileName: SqlEntityUpdateExpression.java
@@ -22,4 +24,7 @@ public interface EntityUpdateExpression extends EntityExpression {
      boolean hasWhereColumns();
 
      String toSql(Object entity);
+     default EasyUpdateExpression cloneSqlUpdateExpression(){
+          return (EasyUpdateExpression)cloneEntityExpression();
+     }
 }

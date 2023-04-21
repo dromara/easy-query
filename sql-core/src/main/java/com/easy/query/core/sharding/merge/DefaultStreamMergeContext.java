@@ -7,13 +7,9 @@ import com.easy.query.core.basic.jdbc.con.EasyConnectionManager;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.executor.parser.ExecutionContext;
-import com.easy.query.core.expression.executor.query.QueryCompilerContext;
-import com.easy.query.core.expression.sql.EntityExpression;
-import com.easy.query.core.expression.sql.EntityQueryExpression;
 import com.easy.query.core.sharding.enums.ConnectionModeEnum;
 import com.easy.query.core.sharding.merge.executor.common.ExecutionUnit;
 import com.easy.query.core.sharding.merge.executor.internal.CommandTypeEnum;
-import com.easy.query.core.sharding.route.ShardingRouteResult;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -34,7 +30,7 @@ public class DefaultStreamMergeContext implements StreamMergeContext {
 //    private final EntityExpression entityExpression;
     private final EasyQueryRuntimeContext runtimeContext;
     private final boolean serialExecute;
-    private final Map<String/* data source name*/, Collection<CloseableConnection>> parallelConnections=new HashMap<>();
+    private final Map<String/* data source name*/, Collection<CloseableConnection>> closeableDataSourceConnections =new HashMap<>();
     private final ExecutorContext executorContext;
     private final ExecutionContext executionContext;
     private final EasyConnectionManager connectionManager;
@@ -82,10 +78,20 @@ public class DefaultStreamMergeContext implements StreamMergeContext {
         return false;
     }
 
+    /**
+     * 创建执行所需的connection
+     * 如果是并发操作那么将获取独立的connection
+     * 如果是非并发顺序操作那么将使用当前共享的connection
+     * 并发与否就是是否分表聚合查询
+     * @param connectionMode
+     * @param dataSourceName
+     * @param createDbConnectionCount
+     * @return
+     */
     public List<EasyConnection> getEasyConnections(ConnectionModeEnum connectionMode, String dataSourceName, int createDbConnectionCount){
         List<EasyConnection> easyConnections = new ArrayList<>(createDbConnectionCount);
         //当前需要被回收的链接
-        Collection<CloseableConnection> closeableConnections = parallelConnections.computeIfAbsent(dataSourceName, o -> new ArrayList<>());
+        Collection<CloseableConnection> closeableConnections = this.closeableDataSourceConnections.computeIfAbsent(dataSourceName, o -> new ArrayList<>());
         ConnectionStrategyEnum connectionStrategy = getConnectionStrategy(createDbConnectionCount);
         for (int i = 0; i < createDbConnectionCount; i++) {
             EasyConnection easyConnection = connectionManager.getEasyConnection(dataSourceName, connectionStrategy);
@@ -108,7 +114,7 @@ public class DefaultStreamMergeContext implements StreamMergeContext {
 
     @Override
     public void close() throws Exception {
-        for (Collection<CloseableConnection> value : parallelConnections.values()) {
+        for (Collection<CloseableConnection> value : closeableDataSourceConnections.values()) {
             for (CloseableConnection closeableConnection : value) {
                 closeableConnection.close();
             }

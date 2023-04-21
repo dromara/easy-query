@@ -76,7 +76,7 @@ public class DefaultEasySqlApiFactory implements EasySqlApiFactory {
         EntityMetadata entityMetadata =runtimeContext.getEntityMetadataManager().getEntityMetadata(clazz);
         int tableIndex = EasyUtil.getNextTableIndex(innerSqlEntityQueryExpression);
         EntityTableExpression sqlTable =easySqlExpressionFactory.createAnonymousEntityTableExpression(entityMetadata,  tableIndex,queryExpressionContext.createTableAlias(), MultiTableTypeEnum.FROM,innerSqlEntityQueryExpression);
-        innerSqlEntityQueryExpression.addSqlEntityTableExpression(sqlTable);
+//        innerSqlEntityQueryExpression.addSqlEntityTableExpression(sqlTable);
 
 
         EntityQueryExpression sqlEntityQueryExpression = easySqlExpressionFactory.createEntityQueryExpression(queryExpressionContext);

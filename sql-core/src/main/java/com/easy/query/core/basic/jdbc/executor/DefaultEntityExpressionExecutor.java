@@ -40,7 +40,7 @@ public class DefaultEntityExpressionExecutor implements EntityExpressionExecutor
     @Override
     public <TR> List<TR> query(ExecutorContext executorContext, Class<TR> clazz, String sql, List<SQLParameter> sqlParameters) {
 
-        ExecutionContext executionContext = executionContextFactory.create(sql, sqlParameters);
+        ExecutionContext executionContext = executionContextFactory.createQueryExecutionContext(sql, sqlParameters);
 
         try (EasyQueryJDBCExecutor easyQueryJDBCExecutor = getJDBCExecuteResult(executorContext, executionContext);
              ExecuteResult executeResult = easyQueryJDBCExecutor.execute()) {
@@ -63,7 +63,7 @@ public class DefaultEntityExpressionExecutor implements EntityExpressionExecutor
     @Override
     public <TR> List<TR> query(ExecutorContext executorContext, Class<TR> clazz, EntityQueryExpression entityQueryExpression) {
         PrepareParseResult prepareParseResult = easyPrepareParser.parse(entityQueryExpression);
-        ExecutionContext executionContext = executionContextFactory.create(prepareParseResult);
+        ExecutionContext executionContext = executionContextFactory.createExecutionContext(prepareParseResult);
 
         try (EasyQueryJDBCExecutor easyQueryJDBCExecutor = getJDBCExecuteResult(executorContext, executionContext);
              ExecuteResult executeResult = easyQueryJDBCExecutor.execute()) {

@@ -30,4 +30,5 @@ public interface EntityExpression extends ExpressionSegment {
     List<SQLParameter> getParameters();
     void addParameter(SQLParameter parameter);
     void setLogicDelete(boolean logicDelete);
+    EntityExpression cloneEntityExpression();
 }

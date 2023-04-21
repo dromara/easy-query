@@ -68,6 +68,7 @@ public class EasyAnonymousEntityTableExpression extends EasyEntityTableExpressio
         if(on!=null){
             on.copyTo(easyAnonymousEntityTableExpression.getOn());
         }
+        easyAnonymousEntityTableExpression.tableNameAs=this.tableNameAs;
         return easyAnonymousEntityTableExpression;
     }
 }

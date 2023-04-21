@@ -19,5 +19,8 @@ public interface EntityDeleteExpression extends EntityExpression {
 
     boolean hasWhereColumns();
 
+    default EntityDeleteExpression cloneSqlDeleteExpression(){
+        return (EntityDeleteExpression)cloneEntityExpression();
+    }
 
 }
