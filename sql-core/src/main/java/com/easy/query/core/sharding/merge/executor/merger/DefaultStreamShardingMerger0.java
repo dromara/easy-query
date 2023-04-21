@@ -2,12 +2,9 @@ package com.easy.query.core.sharding.merge.executor.merger;
 
 import com.easy.query.core.sharding.merge.StreamMergeContext;
 import com.easy.query.core.sharding.merge.abstraction.StreamResult;
-import com.easy.query.core.sharding.merge.executor.internal.CommandTypeEnum;
-import com.easy.query.core.sharding.merge.executor.internal.ShardingMerger;
-import com.easy.query.core.sharding.merge.impl.MultiOrderStreamMergeResult;
+import com.easy.query.core.basic.jdbc.executor.internal.unit.ShardingMerger;
 
 import java.util.Collection;
-import java.util.Objects;
 
 /**
  * create time 2023/4/20 22:35

@@ -1,6 +1,6 @@
-package com.easy.query.core.basic.jdbc.executor.query;
+package com.easy.query.core.basic.jdbc.executor.internal.abstraction;
 
-import com.easy.query.core.sharding.merge.executor.internal.ExecuteResult;
+import com.easy.query.core.basic.jdbc.executor.internal.ExecuteResult;
 
 /**
  * create time 2023/4/21 08:26

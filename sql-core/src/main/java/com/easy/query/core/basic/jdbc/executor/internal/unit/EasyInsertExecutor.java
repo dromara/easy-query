@@ -1,6 +1,7 @@
-package com.easy.query.core.sharding.merge.executor.internal;
+package com.easy.query.core.basic.jdbc.executor.internal.unit;
 
 import com.easy.query.core.basic.jdbc.con.EasyConnection;
+import com.easy.query.core.basic.jdbc.executor.internal.ExecuteResult;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.sharding.merge.StreamMergeContext;
@@ -17,8 +18,8 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public class EasyInsertMergerExecutor extends AbstractExecutor<ExecuteResult>{
-    public EasyInsertMergerExecutor(StreamMergeContext streamMergeContext) {
+public class EasyInsertExecutor extends AbstractExecutor<ExecuteResult>{
+    public EasyInsertExecutor(StreamMergeContext streamMergeContext) {
         super(streamMergeContext);
     }
 

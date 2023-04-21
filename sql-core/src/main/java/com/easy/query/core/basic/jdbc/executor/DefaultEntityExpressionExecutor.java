@@ -1,20 +1,23 @@
 package com.easy.query.core.basic.jdbc.executor;
 
-import com.easy.query.core.basic.jdbc.executor.query.DefaultInsertEasyQueryJDBCExecutor;
-import com.easy.query.core.basic.jdbc.executor.query.DefaultStreamResultEasyQueryJDBCExecutor;
-import com.easy.query.core.basic.jdbc.executor.query.EasyQueryJDBCExecutor;
+import com.easy.query.core.basic.jdbc.executor.internal.AffectedRowsExecuteResult;
+import com.easy.query.core.basic.jdbc.executor.internal.DefaultExecuteBatchEasyQueryJDBCExecutor;
+import com.easy.query.core.basic.jdbc.executor.internal.DefaultExecuteUpdateEasyQueryJDBCExecutor;
+import com.easy.query.core.basic.jdbc.executor.internal.DefaultInsertEasyQueryJDBCExecutor;
+import com.easy.query.core.basic.jdbc.executor.internal.DefaultQueryEasyQueryJDBCExecutor;
+import com.easy.query.core.basic.jdbc.executor.internal.ExecuteResult;
+import com.easy.query.core.basic.jdbc.executor.internal.QueryExecuteResult;
+import com.easy.query.core.basic.jdbc.executor.internal.abstraction.EasyQueryJDBCExecutor;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.executor.parser.EasyPrepareParser;
 import com.easy.query.core.expression.executor.parser.ExecutionContext;
 import com.easy.query.core.expression.executor.parser.PrepareParseResult;
 import com.easy.query.core.expression.executor.query.ExecutionContextFactory;
+import com.easy.query.core.expression.sql.EntityExpression;
 import com.easy.query.core.expression.sql.EntityInsertExpression;
 import com.easy.query.core.expression.sql.EntityQueryExpression;
 import com.easy.query.core.sharding.merge.DefaultStreamMergeContext;
-import com.easy.query.core.sharding.merge.executor.internal.AffectedRowsExecuteResult;
-import com.easy.query.core.sharding.merge.executor.internal.ExecuteResult;
-import com.easy.query.core.sharding.merge.executor.internal.QueryExecuteResult;
 import com.easy.query.core.util.ClassUtil;
 import com.easy.query.core.util.StreamResultUtil;
 
@@ -113,11 +116,51 @@ public class DefaultEntityExpressionExecutor implements EntityExpressionExecutor
         }
     }
 
+    @Override
+    public <T> long executeRows(ExecutorContext executorContext, EntityExpression entityExpression, List<T> entities) {
+        PrepareParseResult prepareParseResult = easyPrepareParser.parse(entityExpression);
+        ExecutionContext executionContext = executionContextFactory.createExecutionContext(prepareParseResult);
+        try (EasyQueryJDBCExecutor easyQueryJDBCExecutor = getExecuteBatchJDBCExecuteResult(executorContext, executionContext);
+             ExecuteResult executeResult = easyQueryJDBCExecutor.execute()) {
+            if (executeResult instanceof AffectedRowsExecuteResult) {
+                AffectedRowsExecuteResult affectedRowsExecuteResult = (AffectedRowsExecuteResult) executeResult;
+                return affectedRowsExecuteResult.getRows();
+            }
+            throw new UnsupportedOperationException("jdbc executor execute error result type :"+ ClassUtil.getInstanceSimpleName(executeResult));
+
+        } catch (Exception e) {
+            throw new EasyQueryException(e);
+        }
+    }
+
+    @Override
+    public <T> long executeRows(ExecutorContext executorContext, EntityExpression entityExpression) {
+        PrepareParseResult prepareParseResult = easyPrepareParser.parse(entityExpression);
+        ExecutionContext executionContext = executionContextFactory.createExecutionContext(prepareParseResult);
+        try (EasyQueryJDBCExecutor easyQueryJDBCExecutor = getExecuteUpdateJDBCExecuteResult(executorContext, executionContext);
+             ExecuteResult executeResult = easyQueryJDBCExecutor.execute()) {
+            if (executeResult instanceof AffectedRowsExecuteResult) {
+                AffectedRowsExecuteResult affectedRowsExecuteResult = (AffectedRowsExecuteResult) executeResult;
+                return affectedRowsExecuteResult.getRows();
+            }
+            throw new UnsupportedOperationException("jdbc executor execute error result type :"+ ClassUtil.getInstanceSimpleName(executeResult));
+
+        } catch (Exception e) {
+            throw new EasyQueryException(e);
+        }
+    }
+
     private EasyQueryJDBCExecutor getQueryJDBCExecuteResult(ExecutorContext executorContext, ExecutionContext executionContext) {
-        return new DefaultStreamResultEasyQueryJDBCExecutor(new DefaultStreamMergeContext(executorContext, executionContext));
+        return new DefaultQueryEasyQueryJDBCExecutor(new DefaultStreamMergeContext(executorContext, executionContext));
     }
     private EasyQueryJDBCExecutor getInsertJDBCExecuteResult(ExecutorContext executorContext, ExecutionContext executionContext) {
         return new DefaultInsertEasyQueryJDBCExecutor(new DefaultStreamMergeContext(executorContext, executionContext));
+    }
+    private EasyQueryJDBCExecutor getExecuteBatchJDBCExecuteResult(ExecutorContext executorContext, ExecutionContext executionContext) {
+        return new DefaultExecuteBatchEasyQueryJDBCExecutor(new DefaultStreamMergeContext(executorContext, executionContext));
+    }
+    private EasyQueryJDBCExecutor getExecuteUpdateJDBCExecuteResult(ExecutorContext executorContext, ExecutionContext executionContext) {
+        return new DefaultExecuteUpdateEasyQueryJDBCExecutor(new DefaultStreamMergeContext(executorContext, executionContext));
     }
 
 }

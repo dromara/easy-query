@@ -18,9 +18,8 @@ import com.easy.query.core.expression.lambda.PropertySetterCaller;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.metadata.EntityMetadata;
-import com.easy.query.core.sharding.merge.executor.internal.AffectedRowsExecuteResult;
-import com.easy.query.core.sharding.merge.executor.internal.ExecuteResult;
-import com.easy.query.core.sharding.merge.executor.internal.QueryExecuteResult;
+import com.easy.query.core.basic.jdbc.executor.internal.AffectedRowsExecuteResult;
+import com.easy.query.core.basic.jdbc.executor.internal.QueryExecuteResult;
 import com.easy.query.core.sharding.merge.impl.DefaultStreamResult;
 
 import java.beans.PropertyDescriptor;
@@ -30,7 +29,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * create time 2023/4/21 17:01
@@ -92,7 +90,7 @@ public class JDBCExecutorUtil {
         return new QueryExecuteResult(new DefaultStreamResult(rs),ps);
     }
 
-    public static AffectedRowsExecuteResult insert(ExecutorContext executorContext, EasyConnection easyConnection, String sql, List<Object> entities, List<SQLParameter> sqlParameters, boolean fillAutoIncrement) {
+    public static <T> AffectedRowsExecuteResult insert(ExecutorContext executorContext, EasyConnection easyConnection, String sql, List<T> entities, List<SQLParameter> sqlParameters, boolean fillAutoIncrement) {
         boolean logDebug = log.isDebugEnabled();
         if (logDebug) {
             log.debug("==> Preparing: " + sql);
@@ -106,7 +104,7 @@ public class JDBCExecutorUtil {
         int r = 0;
         boolean hasParameter = !sqlParameters.isEmpty();
         try {
-            for (Object entity : entities) {
+            for (T entity : entities) {
                 List<SQLParameter> parameters = extractParameters(executorContext, entity, sqlParameters);
                 if (logDebug && hasParameter) {
                     log.debug("==> Parameters: " + SQLUtil.sqlParameterToString(parameters));
@@ -132,7 +130,7 @@ public class JDBCExecutorUtil {
                 PropertyDescriptor[] incrementProperty = new PropertyDescriptor[incrementColumns.size()];
                 FastBean beanFastSetter = EasyUtil.getFastBean(entityClass);
                 while (keysSet.next()) {
-                    Object entity = entities.get(index);
+                    T entity = entities.get(index);
                     for (int i = 0; i < incrementColumns.size(); i++) {
                         PropertyDescriptor property = incrementProperty[i];
                         if (property == null) {
@@ -160,6 +158,72 @@ public class JDBCExecutorUtil {
         return new AffectedRowsExecuteResult(r,ps);
 
     }
+
+    public static  <T> AffectedRowsExecuteResult executeRows(ExecutorContext executorContext,EasyConnection easyConnection, String sql, List<T> entities, List<SQLParameter> sqlParameters) {
+        boolean logDebug = log.isDebugEnabled();
+        if (logDebug) {
+            log.debug("==> Preparing: " + sql);
+        }
+        EasyQueryRuntimeContext runtimeContext = executorContext.getRuntimeContext();
+        EasyJdbcTypeHandlerManager easyJdbcTypeHandlerManager = runtimeContext.getEasyJdbcTypeHandlerManager();
+        PreparedStatement ps = null;
+        int r = 0;
+        boolean hasParameter = ArrayUtil.isNotEmpty(sqlParameters);
+        try {
+            for (T entity : entities) {
+
+                List<SQLParameter> parameters = extractParameters(executorContext, entity, sqlParameters);
+
+                if (logDebug && hasParameter) {
+                    log.debug("==> Parameters: " + SQLUtil.sqlParameterToString(parameters));
+                }
+                if (ps == null) {
+                    ps = createPreparedStatement(easyConnection.getConnection(), sql, parameters, easyJdbcTypeHandlerManager);
+                } else {
+                    setPreparedStatement(ps, parameters, easyJdbcTypeHandlerManager);
+                }
+                ps.addBatch();
+            }
+            assert ps != null;
+            int[] rs = ps.executeBatch();
+            r = ArrayUtil.sum(rs);
+            if (logDebug) {
+                log.debug("<== Total: " + r);
+            }
+            ps.clearBatch();
+        } catch (SQLException e) {
+            log.error(sql, e);
+            throw new EasyQuerySQLException(sql, e);
+        }
+        return new AffectedRowsExecuteResult(r,ps);
+    }
+    public static  <T> AffectedRowsExecuteResult executeRows(ExecutorContext executorContext,EasyConnection easyConnection, String sql, List<SQLParameter> sqlParameters) {
+        boolean logDebug = log.isDebugEnabled();
+        if (logDebug) {
+            log.debug("==> Preparing: " + sql);
+        }
+        EasyQueryRuntimeContext runtimeContext = executorContext.getRuntimeContext();
+        EasyJdbcTypeHandlerManager easyJdbcTypeHandlerManager = runtimeContext.getEasyJdbcTypeHandlerManager();
+        PreparedStatement ps = null;
+        int r = 0;
+
+        List<SQLParameter> parameters = extractParameters(executorContext, null, sqlParameters);
+        if (logDebug && !parameters.isEmpty()) {
+            log.debug("==> Parameters: " + SQLUtil.sqlParameterToString(parameters));
+        }
+        try {
+            ps = createPreparedStatement(easyConnection.getConnection(), sql, parameters, easyJdbcTypeHandlerManager);
+            r = ps.executeUpdate();
+            if (logDebug) {
+                log.debug("<== Total: " + r);
+            }
+        } catch (SQLException e) {
+            log.error(sql, e);
+            throw new EasyQuerySQLException(sql, e);
+        }
+        return new AffectedRowsExecuteResult(r,ps);
+    }
+
 
     private static PreparedStatement createPreparedStatement(Connection connection, String sql, List<SQLParameter> sqlParameters, EasyJdbcTypeHandlerManager easyJdbcTypeHandlerManager) throws SQLException {
         return createPreparedStatement(connection, sql, sqlParameters, easyJdbcTypeHandlerManager, null);

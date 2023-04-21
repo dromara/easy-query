@@ -12,7 +12,7 @@ import com.easy.query.core.basic.jdbc.types.EasyJdbcTypeHandlerManager;
 import com.easy.query.core.configuration.EasyQueryConfiguration;
 import com.easy.query.core.basic.plugin.track.TrackManager;
 import com.easy.query.core.sharding.EasyShardingOption;
-import com.easy.query.core.sharding.merge.executor.internal.Executor;
+import com.easy.query.core.basic.jdbc.executor.internal.unit.Executor;
 
 /**
  * @FileName: JQDCRuntimeContext.java

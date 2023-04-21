@@ -1,9 +1,8 @@
-package com.easy.query.core.sharding.merge.executor.internal;
+package com.easy.query.core.basic.jdbc.executor.internal;
 
 import com.easy.query.core.sharding.merge.abstraction.StreamResult;
 
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 
 /**
  * create time 2023/4/14 16:20

@@ -1,11 +1,10 @@
-package com.easy.query.core.basic.jdbc.executor.query;
+package com.easy.query.core.basic.jdbc.executor.internal.abstraction;
 
 import com.easy.query.core.sharding.merge.StreamMergeContext;
-import com.easy.query.core.sharding.merge.abstraction.StreamResult;
 import com.easy.query.core.sharding.merge.executor.ShardingExecutor;
 import com.easy.query.core.sharding.merge.executor.common.ExecutionUnit;
-import com.easy.query.core.sharding.merge.executor.internal.ExecuteResult;
-import com.easy.query.core.sharding.merge.executor.internal.Executor;
+import com.easy.query.core.basic.jdbc.executor.internal.ExecuteResult;
+import com.easy.query.core.basic.jdbc.executor.internal.unit.Executor;
 
 import java.util.Collection;
 

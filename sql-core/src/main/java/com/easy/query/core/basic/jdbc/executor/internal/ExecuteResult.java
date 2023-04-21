@@ -1,4 +1,4 @@
-package com.easy.query.core.sharding.merge.executor.internal;
+package com.easy.query.core.basic.jdbc.executor.internal;
 
 /**
  * create time 2023/4/14 11:37

@@ -13,7 +13,7 @@ import com.easy.query.core.sharding.merge.executor.common.DataSourceSqlExecutorU
 import com.easy.query.core.sharding.merge.executor.common.ExecutionUnit;
 import com.easy.query.core.sharding.merge.executor.common.Grouping;
 import com.easy.query.core.sharding.merge.executor.common.SqlExecutorGroup;
-import com.easy.query.core.sharding.merge.executor.internal.Executor;
+import com.easy.query.core.basic.jdbc.executor.internal.unit.Executor;
 import com.easy.query.core.util.ArrayUtil;
 import com.easy.query.core.util.EasyUtil;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
