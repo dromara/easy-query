@@ -1,10 +1,6 @@
 package com.easy.query.core.sharding.merge.executor;
 
 import com.easy.query.core.basic.jdbc.con.EasyConnection;
-import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
-import com.easy.query.core.basic.jdbc.types.EasyJdbcTypeHandlerManager;
-import com.easy.query.core.basic.jdbc.types.EasyParameter;
-import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.exception.EasyQueryTimeoutException;
 import com.easy.query.core.logging.Log;
@@ -17,22 +13,13 @@ import com.easy.query.core.sharding.merge.executor.common.DataSourceSqlExecutorU
 import com.easy.query.core.sharding.merge.executor.common.ExecutionUnit;
 import com.easy.query.core.sharding.merge.executor.common.Grouping;
 import com.easy.query.core.sharding.merge.executor.common.SqlExecutorGroup;
-import com.easy.query.core.sharding.merge.executor.common.SqlUnit;
-import com.easy.query.core.sharding.merge.executor.internal.CommandTypeEnum;
 import com.easy.query.core.sharding.merge.executor.internal.Executor;
 import com.easy.query.core.util.ArrayUtil;
-import com.easy.query.core.util.ClassUtil;
 import com.easy.query.core.util.EasyUtil;
-import com.easy.query.core.util.SQLUtil;
-import com.easy.query.core.util.StreamResultUtil;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -112,62 +99,12 @@ public class ShardingExecutor {
         //[1,2,3,4,5,6,7],maxQueryConnectionsLimit=3,结果就是[[1,2,3],[4,5,6],[7]]
         List<List<CommandExecuteUnit>> sqlExecutorUnitPartitions = ArrayUtil.select(sqlUnitPartitions, (executionUnits, index0) -> {
             return ArrayUtil.select(executionUnits, (executionUnit, index1) -> {
-                SqlUnit sqlUnit = executionUnit.getSqlUnit();
                 EasyConnection easyConnection = easyConnections.get(index1);
-                PreparedStatement preparedStatement = createPreparedStatement(streamMergeContext,sqlUnit, easyConnection);
-                return new CommandExecuteUnit(executionUnit, preparedStatement, connectionMode, sqlUnit.getCommandType());
+                return new CommandExecuteUnit(executionUnit, easyConnection, connectionMode);
             });
         });
         List<SqlExecutorGroup<CommandExecuteUnit>> sqlExecutorGroups = ArrayUtil.select(sqlExecutorUnitPartitions, (o, i) -> new SqlExecutorGroup<CommandExecuteUnit>(connectionMode, o));
         return new DataSourceSqlExecutorUnit(connectionMode, sqlExecutorGroups);
 
-    }
-
-    private static PreparedStatement createPreparedStatement(StreamMergeContext streamMergeContext, SqlUnit sqlUnit, EasyConnection easyConnection) {
-        if (Objects.equals(CommandTypeEnum.QUERY,sqlUnit.getCommandType())) {
-            return createQueryPreparedStatement(streamMergeContext, sqlUnit, easyConnection);
-        }
-        throw new UnsupportedOperationException(ClassUtil.getInstanceSimpleName(sqlUnit));
-    }
-
-    private static PreparedStatement createQueryPreparedStatement(StreamMergeContext streamMergeContext, SqlUnit sqlUnit, EasyConnection easyConnection) {
-        EasyJdbcTypeHandlerManager easyJdbcTypeHandlerManager = streamMergeContext.getRuntimeContext().getEasyJdbcTypeHandlerManager();
-        String sql = sqlUnit.getSql();
-
-        List<SQLParameter> parameters = StreamResultUtil.extractParameters(streamMergeContext.getExecutorContext(),null,sqlUnit.getParameters());
-        if(log.isDebugEnabled()){
-            log.debug("==> Preparing: " +sql);
-
-            if (ArrayUtil.isNotEmpty(parameters)) {
-                log.debug("==> Parameters: " + SQLUtil.sqlParameterToString(parameters));
-            }
-        }
-        try {
-            return createPreparedStatement(easyConnection.getConnection(), sql, parameters, easyJdbcTypeHandlerManager);
-        } catch (SQLException e) {
-            throw new EasyQueryException(e);
-        }
-    }
-
-
-    private static PreparedStatement createPreparedStatement(Connection connection, String sql, List<SQLParameter> sqlParameters, EasyJdbcTypeHandlerManager easyJdbcTypeHandlerManager) throws SQLException {
-        return createPreparedStatement(connection, sql, sqlParameters, easyJdbcTypeHandlerManager, null);
-    }
-
-    private static PreparedStatement createPreparedStatement(Connection connection, String sql, List<SQLParameter> sqlParameters, EasyJdbcTypeHandlerManager easyJdbcTypeHandlerManager, List<String> incrementColumns) throws SQLException {
-        PreparedStatement preparedStatement = ArrayUtil.isEmpty(incrementColumns) ? connection.prepareStatement(sql) : connection.prepareStatement(sql, incrementColumns.toArray(new String[0]));
-        return setPreparedStatement(preparedStatement, sqlParameters, easyJdbcTypeHandlerManager);
-    }
-
-    private static PreparedStatement setPreparedStatement(PreparedStatement preparedStatement, List<SQLParameter> sqlParameters, EasyJdbcTypeHandlerManager easyJdbcTypeHandlerManager) throws SQLException {
-
-        EasyParameter easyParameter = new EasyParameter(preparedStatement, sqlParameters);
-        int paramSize = sqlParameters.size();
-        for (int i = 0; i < paramSize; i++) {
-            easyParameter.setIndex(i);
-            JdbcTypeHandler handler = easyJdbcTypeHandlerManager.getHandler(easyParameter.getValueType());
-            handler.setParameter(easyParameter);
-        }
-        return preparedStatement;
     }
 }

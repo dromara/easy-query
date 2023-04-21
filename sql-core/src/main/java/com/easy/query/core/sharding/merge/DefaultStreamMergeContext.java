@@ -50,7 +50,7 @@ public class DefaultStreamMergeContext implements StreamMergeContext {
 //        this.entityExpression = entityExpression;
         this.runtimeContext= executorContext.getRuntimeContext();
         this.connectionManager=runtimeContext.getConnectionManager();
-        this.serialExecute= !Objects.equals(CommandTypeEnum.QUERY,executionContext.getCommandType());
+        this.serialExecute= executorContext.isSerialExecute();
     }
 
     @Override
@@ -58,10 +58,6 @@ public class DefaultStreamMergeContext implements StreamMergeContext {
         return executorContext;
     }
 
-    @Override
-    public CommandTypeEnum getCommandType() {
-        return executionContext.getCommandType();
-    }
 
     public Collection<ExecutionUnit> getExecutionUnits() {
         return executionContext.getExecutionUnits();

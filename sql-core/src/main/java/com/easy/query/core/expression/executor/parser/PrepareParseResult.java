@@ -2,6 +2,7 @@ package com.easy.query.core.expression.executor.parser;
 
 import com.easy.query.core.expression.sql.EntityExpression;
 import com.easy.query.core.expression.sql.EntityQueryExpression;
+import com.easy.query.core.sharding.merge.executor.internal.CommandTypeEnum;
 
 import java.util.Set;
 

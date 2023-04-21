@@ -9,7 +9,7 @@ import com.easy.query.core.expression.segment.condition.PredicateSegment;
  * @Date: 2023/3/4 16:30
  * @author xuejiaming
  */
-public interface EntityDeleteExpression extends EntityExpression {
+public interface EntityDeleteExpression extends EntityExpression,LambdaEntityExpression {
 
     PredicateSegment getWhere();
 

@@ -52,7 +52,7 @@ public abstract class AbstractEntityDeletable<T> extends AbstractSqlExecuteRows<
             if(StringUtil.isNotBlank(deleteSql)){
                 EasyQueryRuntimeContext runtimeContext = entityDeleteExpression.getRuntimeContext();
                 EasyOldExecutor easyExecutor = runtimeContext.getEasyExecutor();
-                return easyExecutor.executeRows(ExecutorContext.create(runtimeContext), deleteSql,entities, entityDeleteExpression.getParameters());
+                return easyExecutor.executeRows(ExecutorContext.create(runtimeContext,true), deleteSql,entities, entityDeleteExpression.getParameters());
             }
         }
         return 0;

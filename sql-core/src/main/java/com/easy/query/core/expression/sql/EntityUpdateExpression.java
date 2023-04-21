@@ -11,7 +11,7 @@ import com.easy.query.core.expression.sql.def.EasyUpdateExpression;
  * @Date: 2023/3/4 17:04
  * @author xuejiaming
  */
-public interface EntityUpdateExpression extends EntityExpression {
+public interface EntityUpdateExpression extends EntityExpression,LambdaEntityExpression {
 
      SqlBuilderSegment getSetColumns();
      boolean hasSetColumns();

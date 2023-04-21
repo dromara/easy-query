@@ -56,7 +56,7 @@ public abstract class AbstractExpressionUpdatable<T> extends AbstractSqlExecuteR
         String updateSql = toSql();
         if (StringUtil.isNotBlank(updateSql)) {
             EasyOldExecutor easyExecutor = entityUpdateExpression.getRuntimeContext().getEasyExecutor();
-            return easyExecutor.executeRows(ExecutorContext.create(entityUpdateExpression.getRuntimeContext()), updateSql, entityUpdateExpression.getParameters());
+            return easyExecutor.executeRows(ExecutorContext.create(entityUpdateExpression.getRuntimeContext(),true), updateSql, entityUpdateExpression.getParameters());
         }
 
         return 0;

@@ -10,7 +10,7 @@ import com.easy.query.core.expression.sql.def.EasyQueryExpression;
  * @Date: 2023/3/3 22:17
  * @author xuejiaming
  */
-public interface EntityQueryExpression extends EntityExpression {
+public interface EntityQueryExpression extends EntityExpression,LambdaEntityExpression {
     boolean isEmpty();
     default boolean isNotEmpty() {
         return !isEmpty();

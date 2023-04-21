@@ -6,6 +6,7 @@ import com.easy.query.core.expression.executor.parser.ExecutionContext;
 import com.easy.query.core.expression.executor.parser.PrepareParseResult;
 import com.easy.query.core.expression.sql.AnonymousEntityTableExpression;
 import com.easy.query.core.expression.sql.EntityExpression;
+import com.easy.query.core.expression.sql.EntityInsertExpression;
 import com.easy.query.core.expression.sql.EntityQueryExpression;
 import com.easy.query.core.expression.sql.EntityTableExpression;
 import com.easy.query.core.expression.sql.ExpressionContext;
@@ -21,6 +22,7 @@ import com.easy.query.core.sharding.rewrite.RewriteContextFactory;
 import com.easy.query.core.sharding.route.RouteContext;
 import com.easy.query.core.sharding.route.RouteContextFactory;
 import com.easy.query.core.util.ArrayUtil;
+import com.easy.query.core.util.EasyUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -47,8 +49,8 @@ public class DefaultExecutionContextFactory implements ExecutionContextFactory {
 
     @Override
     public ExecutionContext createQueryExecutionContext(String sql, List<SQLParameter> parameters) {
-        ExecutionUnit executionUnit = new ExecutionUnit(easyDataSource.getDefaultDataSourceName(), new SqlUnit(sql,parameters,CommandTypeEnum.QUERY));
-        return new ExecutionContext(CommandTypeEnum.QUERY,Collections.singletonList(executionUnit));
+        ExecutionUnit executionUnit = new ExecutionUnit(easyDataSource.getDefaultDataSourceName(), new SqlUnit(sql,parameters));
+        return new ExecutionContext(Collections.singletonList(executionUnit));
     }
 
     @Override
@@ -57,7 +59,7 @@ public class DefaultExecutionContextFactory implements ExecutionContextFactory {
 //        NativeSqlQueryCompilerContext nativeSqlQueryCompilerContext = new NativeSqlQueryCompilerContext(prepareParseResult);
         if(ArrayUtil.isEmpty(prepareParseResult.getShardingEntities())){
             ExecutionUnit executionUnit = new ExecutionUnit(easyDataSource.getDefaultDataSourceName(), createSqlUnit(entityExpression));
-            return new ExecutionContext(CommandTypeEnum.QUERY,Collections.singletonList(executionUnit));
+            return new ExecutionContext(Collections.singletonList(executionUnit));
         }
         RouteContext routeContext = routeContextFactory.createRouteContext(prepareParseResult);
         RewriteContext rewriteContext = rewriteContextFactory.createRewriteContext(routeContext);
@@ -67,7 +69,8 @@ public class DefaultExecutionContextFactory implements ExecutionContextFactory {
         for (RouteUnit routeUnit : routeUnits) {
             String dataSource = routeUnit.getDataSource();
             List<RouteMapper> routeMappers = routeUnit.getRouteMappers();
-            for (EntityTableExpression table : rewriteEntityExpression.getTables()) {
+            EntityExpression cloneRewriteEntityExpression = rewriteEntityExpression.cloneEntityExpression();
+            for (EntityTableExpression table : cloneRewriteEntityExpression.getTables()) {
                 if(!table.tableNameIsAs()&&!(table instanceof AnonymousEntityTableExpression)){
                     RouteMapper routeMapper = ArrayUtil.firstOrDefault(routeMappers, o -> Objects.equals(o.getEntityClass(), table.getEntityClass()), null);
                     if(routeMapper!=null){
@@ -80,7 +83,7 @@ public class DefaultExecutionContextFactory implements ExecutionContextFactory {
             executionUnits.add(executionUnit);
         }
 
-        return new ExecutionContext(CommandTypeEnum.QUERY,executionUnits);
+        return new ExecutionContext(executionUnits);
     }
 
 
@@ -93,6 +96,6 @@ public class DefaultExecutionContextFactory implements ExecutionContextFactory {
     private SqlUnit createQuerySqlUnit(EntityQueryExpression entityQueryExpression){
         String sql = entityQueryExpression.toSql();
         List<SQLParameter> parameters = entityQueryExpression.getParameters();
-        return new SqlUnit(sql,parameters, CommandTypeEnum.QUERY);
+        return new SqlUnit(sql,parameters);
     }
 }

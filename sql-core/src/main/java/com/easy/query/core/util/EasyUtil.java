@@ -2,14 +2,20 @@ package com.easy.query.core.util;
 
 import com.easy.query.core.common.bean.FastBean;
 import com.easy.query.core.exception.EasyQueryException;
+import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
 import com.easy.query.core.expression.segment.SqlEntityAliasSegment;
+import com.easy.query.core.expression.sql.EntityDeleteExpression;
+import com.easy.query.core.expression.sql.EntityExpression;
+import com.easy.query.core.expression.sql.EntityInsertExpression;
 import com.easy.query.core.expression.sql.EntityQueryExpression;
 import com.easy.query.core.expression.sql.EntityTableExpression;
+import com.easy.query.core.expression.sql.EntityUpdateExpression;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.sharding.merge.executor.common.Grouping;
 import com.easy.query.core.sharding.merge.executor.common.GroupingImpl;
+import com.easy.query.core.sharding.merge.executor.internal.CommandTypeEnum;
 
 import java.beans.PropertyDescriptor;
 import java.util.*;
@@ -88,6 +94,24 @@ public class EasyUtil {
     }
     public static PropertySetterCaller<Object> getPropertySetterLambda(Class<?> entityClass, PropertyDescriptor prop) {
         return getFastBean(entityClass).getBeanSetter(prop);
+    }
+
+    public static CommandTypeEnum getCommandType(EntityExpression entityExpression){
+        if(entityExpression instanceof  EntityQueryExpression){
+            return CommandTypeEnum.QUERY;
+        }
+        if(entityExpression instanceof EntityInsertExpression){
+            return CommandTypeEnum.EXECUTE_BATCH;
+        }
+        if(entityExpression instanceof EntityUpdateExpression){
+            EntityUpdateExpression entityUpdateExpression = (EntityUpdateExpression) entityExpression;
+            return entityUpdateExpression.isExpression()?CommandTypeEnum.EXECUTE: CommandTypeEnum.EXECUTE_BATCH;
+        }
+        if(entityExpression instanceof EntityDeleteExpression){
+            EntityDeleteExpression entityDeleteExpression = (EntityDeleteExpression) entityExpression;
+            return entityDeleteExpression.isExpression()?CommandTypeEnum.EXECUTE: CommandTypeEnum.EXECUTE_BATCH;
+        }
+        throw new EasyQueryInvalidOperationException(ClassUtil.getInstanceSimpleName(entityExpression)+" cant get commandType");
     }
 }
 

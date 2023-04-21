@@ -17,20 +17,18 @@ public class SqlUnit {
     private final List<SQLParameter> parameters;
     private final List<Object> entities;
     private final boolean fillAutoIncrement;
-    private final CommandTypeEnum commandType;
 
-    public SqlUnit(String sql, List<SQLParameter> parameters, CommandTypeEnum commandType){
-        this(sql,parameters,null,commandType);
+    public SqlUnit(String sql, List<SQLParameter> parameters){
+        this(sql,parameters,null);
     }
-    public SqlUnit(String sql, List<SQLParameter> parameters, List<Object> entities, CommandTypeEnum commandType){
-        this(sql,parameters,entities,false,commandType);
+    public SqlUnit(String sql, List<SQLParameter> parameters, List<Object> entities){
+        this(sql,parameters,entities,false);
     }
-    public SqlUnit(String sql, List<SQLParameter> parameters, List<Object> entities, boolean fillAutoIncrement, CommandTypeEnum commandType) {
+    public SqlUnit(String sql, List<SQLParameter> parameters, List<Object> entities, boolean fillAutoIncrement) {
         this.sql = sql;
         this.parameters = parameters;
         this.entities = entities;
         this.fillAutoIncrement = fillAutoIncrement;
-        this.commandType = commandType;
     }
 
     public String getSql() {
@@ -47,9 +45,5 @@ public class SqlUnit {
 
     public boolean isFillAutoIncrement() {
         return fillAutoIncrement;
-    }
-
-    public CommandTypeEnum getCommandType() {
-        return commandType;
     }
 }

@@ -28,6 +28,8 @@ public class AffectedRowsExecuteResult implements ExecuteResult{
 
     @Override
     public void close() throws Exception {
-        preparedStatement.close();
+        if(preparedStatement!=null){
+            preparedStatement.close();
+        }
     }
 }

@@ -14,11 +14,11 @@ import java.util.Collection;
  * @author xuejiaming
  */
 public class ExecutionContext {
-    private final CommandTypeEnum commandType;
+//    private final CommandTypeEnum commandType;
     private final Collection<ExecutionUnit> executionUnits;
 
-    public ExecutionContext(CommandTypeEnum commandType, Collection<ExecutionUnit> executionUnits){
-        this.commandType = commandType;
+    public ExecutionContext(Collection<ExecutionUnit> executionUnits){
+//        this.commandType = commandType;
 
         this.executionUnits = executionUnits;
     }
@@ -28,7 +28,7 @@ public class ExecutionContext {
         return executionUnits;
     }
 
-    public CommandTypeEnum getCommandType() {
-        return commandType;
-    }
+//    public CommandTypeEnum getCommandType() {
+//        return commandType;
+//    }
 }

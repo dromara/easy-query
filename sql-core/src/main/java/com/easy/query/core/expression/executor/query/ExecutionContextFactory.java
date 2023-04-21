@@ -3,6 +3,7 @@ package com.easy.query.core.expression.executor.query;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.expression.executor.parser.ExecutionContext;
 import com.easy.query.core.expression.executor.parser.PrepareParseResult;
+import com.easy.query.core.sharding.merge.executor.internal.CommandTypeEnum;
 
 import java.util.List;
 

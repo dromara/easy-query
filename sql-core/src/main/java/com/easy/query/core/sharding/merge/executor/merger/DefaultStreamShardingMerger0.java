@@ -23,9 +23,9 @@ public class DefaultStreamShardingMerger0 implements ShardingMerger<StreamResult
 
     @Override
     public StreamResult streamMerge(StreamMergeContext streamMergeContext, Collection<StreamResult> parallelResults) {
-        if (Objects.equals(CommandTypeEnum.QUERY,streamMergeContext.getCommandType())) {
-            return new MultiOrderStreamMergeResult(streamMergeContext, parallelResults);
-        }
+//        if (Objects.equals(CommandTypeEnum.QUERY,streamMergeContext.getCommandType())) {
+//            return new MultiOrderStreamMergeResult(streamMergeContext, parallelResults);
+//        }
         throw new UnsupportedOperationException();
     }
 

@@ -14,6 +14,8 @@ import com.easy.query.core.basic.plugin.track.TrackManager;
 import com.easy.query.core.common.bean.FastBean;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
+import com.easy.query.core.logging.Log;
+import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
@@ -34,6 +36,8 @@ import java.util.Map;
  * @author xuejiaming
  */
 public final class StreamResultUtil {
+
+    private static final Log log= LogFactory.getLog(StreamResultUtil.class);
     private StreamResultUtil(){}
 
     public static  <TResult> List<TResult> mapTo(ExecutorContext context, StreamResult streamResult, Class<TResult> clazz) throws SQLException{
@@ -48,6 +52,9 @@ public final class StreamResultUtil {
             }
         } else {
             resultList = mapToBeans(context, streamResult, clazz);
+        }
+        if(log.isDebugEnabled()){
+            log.debug("<== Total: " + resultList.size());
         }
         return resultList;
     }
@@ -195,21 +202,4 @@ public final class StreamResultUtil {
         return columnName;
     }
 
-    public static <T> List<SQLParameter> extractParameters(ExecutorContext executorContext, T entity, List<SQLParameter> sqlParameters) {
-        List<SQLParameter> params = new ArrayList<>(sqlParameters.size());
-        for (SQLParameter sqlParameter : sqlParameters) {
-            if (sqlParameter instanceof ConstSQLParameter) {
-                Object value = executorContext.getEncryptValue(sqlParameter, sqlParameter.getValue());
-                params.add(new EasyConstSQLParameter(sqlParameter.getTable(), sqlParameter.getPropertyName(), value));
-            } else if (sqlParameter instanceof BeanSqlParameter) {
-                BeanSqlParameter beanSqlParameter = (BeanSqlParameter) sqlParameter;
-                beanSqlParameter.setBean(entity);
-                Object value = executorContext.getEncryptValue(beanSqlParameter, beanSqlParameter.getValue());
-                params.add(new EasyConstSQLParameter(beanSqlParameter.getTable(), beanSqlParameter.getPropertyName(), value));
-            } else {
-                throw new EasyQueryException("current sql parameter:[" + ClassUtil.getSimpleName(sqlParameter.getClass()) + "],property name:[" + sqlParameter.getPropertyName() + "] is not implements BeanSqlParameter or ConstSQLParameter");
-            }
-        }
-        return params;
-    }
 }

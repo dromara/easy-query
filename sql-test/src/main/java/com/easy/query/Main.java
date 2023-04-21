@@ -206,7 +206,22 @@ public class Main {
             System.out.println("耗时：" + (end - start) + "ms");
 
         }
+        {
 
+
+            Queryable<TestUserMysql> sql = easyQuery.queryable(TestUserMysql.class)
+                    .leftJoin(SysUserLogbyMonth.class, (a, b) -> a.eq(b, TestUserMysql::getName, SysUserLogbyMonth::getId).then(b).eq(SysUserLogbyMonth::getTime, LocalDateTime.now()))
+                    .where(o -> o.eq(TestUserMysql::getId, "102")
+                            .like(TestUserMysql::getName, "1%")
+                            .and(x -> x.like(TestUserMysql::getName, "123").or().eq(TestUserMysql::getAge, 1)
+                            ));
+//            sql.where(o->o.isNotNull(TestUserMysql::getId));
+            long count31 = easyQuery.queryable(SysUserLogbyMonth.class)
+                    .innerJoin(sql,(a,b)->a.eq(b,SysUserLogbyMonth::getId,TestUserMysql::getId))
+                    .where(o -> o.eq(SysUserLogbyMonth::getId, "119")).select(o -> o.column(SysUserLogbyMonth::getId)).count();
+
+
+        }
 
         TopicRequest topicRequest = new TopicRequest();
         LocalDateTime now = LocalDateTime.now();

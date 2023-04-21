@@ -100,7 +100,7 @@ public abstract class AbstractEntityUpdatable<T> extends AbstractSqlExecuteRows<
             int i = 0;
             for (SqlEntityNode updateEntityNode : updateEntityNodes) {
 
-                i += easyExecutor.executeRows(ExecutorContext.create(entityUpdateExpression.getRuntimeContext()), updateEntityNode.getSql(), updateEntityNode.getEntities(), updateEntityNode.getSqlParameters());
+                i += easyExecutor.executeRows(ExecutorContext.create(entityUpdateExpression.getRuntimeContext(),true), updateEntityNode.getSql(), updateEntityNode.getEntities(), updateEntityNode.getSqlParameters());
 
             }
             return i;

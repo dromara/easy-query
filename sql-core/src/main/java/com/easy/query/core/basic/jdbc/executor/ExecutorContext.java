@@ -19,24 +19,26 @@ public class ExecutorContext {
 
     private final EasyQueryRuntimeContext runtimeContext;
     private final EasyQueryConfiguration easyQueryConfiguration;
+    private final boolean serialExecute;
     private final boolean tracking;
 
-    public ExecutorContext(EasyQueryRuntimeContext runtimeContext) {
-        this(runtimeContext, false);
+    public ExecutorContext(EasyQueryRuntimeContext runtimeContext,boolean serialExecute) {
+        this(runtimeContext,serialExecute, false);
     }
 
-    public ExecutorContext(EasyQueryRuntimeContext runtimeContext, boolean tracking) {
+    public ExecutorContext(EasyQueryRuntimeContext runtimeContext,boolean serialExecute, boolean tracking) {
         this.runtimeContext = runtimeContext;
         this.easyQueryConfiguration = runtimeContext.getEasyQueryConfiguration();
+        this.serialExecute = serialExecute;
         this.tracking = tracking;
     }
 
-    public static ExecutorContext create(EasyQueryRuntimeContext runtimeContext) {
-        return new ExecutorContext(runtimeContext);
+    public static ExecutorContext create(EasyQueryRuntimeContext runtimeContext,boolean serialExecute) {
+        return new ExecutorContext(runtimeContext,serialExecute);
     }
 
-    public static ExecutorContext create(EasyQueryRuntimeContext runtimeContext, boolean tracking) {
-        return new ExecutorContext(runtimeContext, tracking);
+    public static ExecutorContext create(EasyQueryRuntimeContext runtimeContext,boolean serialExecute, boolean tracking) {
+        return new ExecutorContext(runtimeContext,serialExecute, tracking);
     }
 
     public EasyQueryRuntimeContext getRuntimeContext() {
@@ -91,5 +93,8 @@ public class ExecutorContext {
     private EasyEncryptionStrategy getEncryptionStrategy(ColumnMetadata columnMetadata) {
         Class<? extends EasyEncryptionStrategy> encryptionStrategy = columnMetadata.getEncryptionStrategy();
         return easyQueryConfiguration.getEasyEncryptionStrategyNotNull(encryptionStrategy);
+    }
+    public boolean isSerialExecute(){
+        return serialExecute;
     }
 }

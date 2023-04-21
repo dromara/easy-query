@@ -21,7 +21,6 @@ import java.util.List;
 public interface StreamMergeContext extends AutoCloseable {
 
  ExecutorContext getExecutorContext();
- CommandTypeEnum getCommandType();
    Collection<ExecutionUnit> getExecutionUnits();
 
 
