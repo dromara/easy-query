@@ -37,7 +37,7 @@ public class DefaultEntityExpressionExecutor implements EntityExpressionExecutor
     public <TR> List<TR> query(ExecutorContext executorContext, Class<TR> clazz, String sql, List<SQLParameter> sqlParameters) {
 
         ExecutionContext executionContext = executionContextFactory.create(sql,sqlParameters);
-        try (StreamIterable queryIterable = getQueryStreamIterable(executorContext.getRuntimeContext(),executionContext)) {
+        try (StreamIterable queryIterable = getQueryStreamIterable(executorContext,executionContext)) {
             StreamResult streamResult = queryIterable.getStreamResult();
             return StreamResultUtil.mapTo(executorContext, streamResult, clazz);
         } catch (Exception e) {
@@ -50,7 +50,7 @@ public class DefaultEntityExpressionExecutor implements EntityExpressionExecutor
         PrepareParseResult prepareParseResult = easyPrepareParser.parse(entityQueryExpression);
         ExecutionContext executionContext = executionContextFactory.create(prepareParseResult);
 
-        try (StreamIterable queryIterable = getQueryStreamIterable(executorContext.getRuntimeContext(),executionContext)) {
+        try (StreamIterable queryIterable = getQueryStreamIterable(executorContext,executionContext)) {
             StreamResult streamResult = queryIterable.getStreamResult();
             return StreamResultUtil.mapTo(executorContext, streamResult, clazz);
         } catch (Exception e) {
@@ -70,7 +70,7 @@ public class DefaultEntityExpressionExecutor implements EntityExpressionExecutor
 //        }
     }
 
-    private StreamIterable getQueryStreamIterable(EasyQueryRuntimeContext runtimeContext, ExecutionContext executionContext) {
+    private StreamIterable getQueryStreamIterable(ExecutorContext executorContext, ExecutionContext executionContext) {
 //        if (queryCompilerContext.isShardingQuery()) {//queryCompilerContext.isSingleShardingQuery()
 //            MergeQueryCompilerContext mergeQueryCompilerContext = (MergeQueryCompilerContext) queryCompilerContext;
 //            StreamResult streamResult = ShardingExecutor.<StreamResult>execute(null, null, mergeQueryCompilerContext.GetShardingRouteResult().getRouteUnits().stream());
@@ -81,6 +81,6 @@ public class DefaultEntityExpressionExecutor implements EntityExpressionExecutor
 //
 //        }
 
-        return new DefaultStreamIterable(new DefaultStreamMergeContext(runtimeContext,executionContext));
+        return new DefaultStreamIterable(new DefaultStreamMergeContext(executorContext,executionContext));
     }
 }

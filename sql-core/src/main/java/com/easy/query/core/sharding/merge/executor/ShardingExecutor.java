@@ -7,6 +7,8 @@ import com.easy.query.core.basic.jdbc.types.EasyParameter;
 import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.exception.EasyQueryTimeoutException;
+import com.easy.query.core.logging.Log;
+import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.sharding.EasyShardingOption;
 import com.easy.query.core.sharding.enums.ConnectionModeEnum;
 import com.easy.query.core.sharding.merge.StreamMergeContext;
@@ -21,6 +23,8 @@ import com.easy.query.core.sharding.merge.executor.internal.Executor;
 import com.easy.query.core.util.ArrayUtil;
 import com.easy.query.core.util.ClassUtil;
 import com.easy.query.core.util.EasyUtil;
+import com.easy.query.core.util.SQLUtil;
+import com.easy.query.core.util.StreamResultUtil;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.sql.Connection;
@@ -44,6 +48,7 @@ import java.util.stream.Stream;
  * @author xuejiaming
  */
 public class ShardingExecutor {
+    private static final Log log= LogFactory.getLog(ShardingExecutor.class);
     private ShardingExecutor() {
     }
 
@@ -127,8 +132,18 @@ public class ShardingExecutor {
 
     private static PreparedStatement createQueryPreparedStatement(StreamMergeContext streamMergeContext, SqlUnit sqlUnit, EasyConnection easyConnection) {
         EasyJdbcTypeHandlerManager easyJdbcTypeHandlerManager = streamMergeContext.getRuntimeContext().getEasyJdbcTypeHandlerManager();
+        String sql = sqlUnit.getSql();
+
+        List<SQLParameter> parameters = StreamResultUtil.extractParameters(streamMergeContext.getExecutorContext(),null,sqlUnit.getParameters());
+        if(log.isDebugEnabled()){
+            log.debug("==> Preparing: " +sql);
+
+            if (ArrayUtil.isNotEmpty(parameters)) {
+                log.debug("==> Parameters: " + SQLUtil.sqlParameterToString(parameters));
+            }
+        }
         try {
-            return createPreparedStatement(easyConnection.getConnection(), sqlUnit.getSql(), sqlUnit.getParameters(), easyJdbcTypeHandlerManager);
+            return createPreparedStatement(easyConnection.getConnection(), sql, parameters, easyJdbcTypeHandlerManager);
         } catch (SQLException e) {
             throw new EasyQueryException(e);
         }

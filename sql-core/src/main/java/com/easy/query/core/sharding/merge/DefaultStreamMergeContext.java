@@ -3,6 +3,7 @@ package com.easy.query.core.sharding.merge;
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.con.ConnectionStrategyEnum;
 import com.easy.query.core.basic.jdbc.con.EasyConnection;
+import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.expression.executor.parser.ExecutionContext;
 import com.easy.query.core.expression.executor.query.QueryCompilerContext;
 import com.easy.query.core.expression.sql.EntityExpression;
@@ -32,6 +33,7 @@ public class DefaultStreamMergeContext implements StreamMergeContext {
     private final EasyQueryRuntimeContext runtimeContext;
     private final boolean serialExecute;
     private final Map<String/* data source name*/, Collection<EasyConnection>> parallelConnections=new HashMap<>();
+    private final ExecutorContext executorContext;
     private final ExecutionContext executionContext;
 
     //    public DefaultStreamMergeContext(List<ExecutionUnit> executionUnits, EntityExpression entityExpression){
@@ -41,13 +43,19 @@ public class DefaultStreamMergeContext implements StreamMergeContext {
 //        this.runtimeContext=entityExpression.getRuntimeContext();
 //        serialExecute=!(entityExpression instanceof EntityQueryExpression);
 //    }
-    public DefaultStreamMergeContext(EasyQueryRuntimeContext runtimeContext,ExecutionContext executionContext){
+    public DefaultStreamMergeContext(ExecutorContext executorContext, ExecutionContext executionContext){
+        this.executorContext = executorContext;
         this.executionContext = executionContext;
 //        this.shardingRouteResult = shardingRouteResult;
 //
 //        this.entityExpression = entityExpression;
-        this.runtimeContext= runtimeContext;
+        this.runtimeContext= executorContext.getRuntimeContext();
         serialExecute= !Objects.equals(CommandTypeEnum.QUERY,executionContext.getCommandType());
+    }
+
+    @Override
+    public ExecutorContext getExecutorContext() {
+        return executorContext;
     }
 
     @Override

@@ -2,12 +2,17 @@ package com.easy.query.core.util;
 
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
+import com.easy.query.core.basic.jdbc.parameter.BeanSqlParameter;
+import com.easy.query.core.basic.jdbc.parameter.ConstSQLParameter;
+import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
+import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.types.EasyJdbcTypeHandlerManager;
 import com.easy.query.core.basic.jdbc.types.EasyResultSet;
 import com.easy.query.core.basic.jdbc.types.JDBCTypes;
 import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
 import com.easy.query.core.basic.plugin.track.TrackManager;
 import com.easy.query.core.common.bean.FastBean;
+import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
@@ -188,5 +193,23 @@ public final class StreamResultUtil {
             columnName = rsmd.getColumnName(col);
         }
         return columnName;
+    }
+
+    public static <T> List<SQLParameter> extractParameters(ExecutorContext executorContext, T entity, List<SQLParameter> sqlParameters) {
+        List<SQLParameter> params = new ArrayList<>(sqlParameters.size());
+        for (SQLParameter sqlParameter : sqlParameters) {
+            if (sqlParameter instanceof ConstSQLParameter) {
+                Object value = executorContext.getEncryptValue(sqlParameter, sqlParameter.getValue());
+                params.add(new EasyConstSQLParameter(sqlParameter.getTable(), sqlParameter.getPropertyName(), value));
+            } else if (sqlParameter instanceof BeanSqlParameter) {
+                BeanSqlParameter beanSqlParameter = (BeanSqlParameter) sqlParameter;
+                beanSqlParameter.setBean(entity);
+                Object value = executorContext.getEncryptValue(beanSqlParameter, beanSqlParameter.getValue());
+                params.add(new EasyConstSQLParameter(beanSqlParameter.getTable(), beanSqlParameter.getPropertyName(), value));
+            } else {
+                throw new EasyQueryException("current sql parameter:[" + ClassUtil.getSimpleName(sqlParameter.getClass()) + "],property name:[" + sqlParameter.getPropertyName() + "] is not implements BeanSqlParameter or ConstSQLParameter");
+            }
+        }
+        return params;
     }
 }
