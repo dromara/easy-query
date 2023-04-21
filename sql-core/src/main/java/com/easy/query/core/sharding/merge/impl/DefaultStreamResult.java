@@ -22,12 +22,10 @@ import java.sql.Timestamp;
  */
 public final class DefaultStreamResult implements StreamResult {
     private final ResultSet resultSet;
-    private final PreparedStatement preparedStatement;
 
-    public DefaultStreamResult(ResultSet resultSet, PreparedStatement preparedStatement){
+    public DefaultStreamResult(ResultSet resultSet){
 
         this.resultSet = resultSet;
-        this.preparedStatement = preparedStatement;
     }
     @Override
     public boolean next() throws SQLException {
@@ -132,6 +130,5 @@ public final class DefaultStreamResult implements StreamResult {
     @Override
     public void close() throws Exception {
         resultSet.close();
-        preparedStatement.close();
     }
 }

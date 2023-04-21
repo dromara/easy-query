@@ -15,6 +15,10 @@ public class QueryExecuteResult implements ExecuteResult{
     private final StreamResult streamResult;
     private final PreparedStatement preparedStatement;
 
+    public QueryExecuteResult(StreamResult streamResult){
+       this(streamResult,null);
+    }
+
     public QueryExecuteResult(StreamResult streamResult, PreparedStatement preparedStatement){
         this.streamResult = streamResult;
 
@@ -25,13 +29,11 @@ public class QueryExecuteResult implements ExecuteResult{
         return streamResult;
     }
 
-    public PreparedStatement getPreparedStatement() {
-        return preparedStatement;
-    }
-
     @Override
     public void close() throws Exception {
         streamResult.close();
-        preparedStatement.close();
+        if(preparedStatement!=null){
+            preparedStatement.close();
+        }
     }
 }
