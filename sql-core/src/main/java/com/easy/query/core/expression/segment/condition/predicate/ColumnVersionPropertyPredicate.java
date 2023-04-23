@@ -1,6 +1,7 @@
 package com.easy.query.core.expression.segment.condition.predicate;
 
 import com.easy.query.core.basic.jdbc.parameter.PropertySQLParameter;
+import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
 import com.easy.query.core.basic.jdbc.parameter.VersionPropertySQLParameter;
 import com.easy.query.core.basic.plugin.version.EasyVersionStrategy;
@@ -29,5 +30,10 @@ public class ColumnVersionPropertyPredicate extends ColumnPropertyPredicate{
         SQLUtil.addParameter(sqlParameterCollector,new VersionPropertySQLParameter(new PropertySQLParameter(table,propertyName),easyVersionStrategy));
         String sqlColumnSegment = sqlEntityExpression.getSqlOwnerColumn(table,propertyName);
         return sqlColumnSegment + " = ?";
+    }
+
+    @Override
+    public SQLParameter getParameter() {
+        return new VersionPropertySQLParameter(new PropertySQLParameter(table,propertyName),easyVersionStrategy);
     }
 }

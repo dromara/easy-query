@@ -12,7 +12,6 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public interface EasyDeleteSqlExpression extends EasyEntitySqlExpression{
+public interface EasyDeleteSqlExpression extends EasyEntityPredicateSqlExpression{
     EasyQueryRuntimeContext getRuntimeContext();
-    PredicateSegment getWhere();
 }

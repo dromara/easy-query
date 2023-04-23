@@ -7,7 +7,6 @@ import com.easy.query.core.common.bean.FastBean;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.expression.EasyQuerySqlExpression;
-import com.easy.query.core.expression.sql.expression.EasySqlExpression;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.annotation.EasyWhereCondition;

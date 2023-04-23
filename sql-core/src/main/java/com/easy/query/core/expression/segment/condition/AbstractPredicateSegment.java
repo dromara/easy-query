@@ -3,6 +3,7 @@ package com.easy.query.core.expression.segment.condition;
 import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.segment.condition.predicate.Predicate;
+import com.easy.query.core.sharding.route.RoutePredicateExpression;
 import com.easy.query.core.util.StringUtil;
 
 import java.util.*;
@@ -17,6 +18,16 @@ public abstract class AbstractPredicateSegment implements PredicateSegment {
     protected List<PredicateSegment> children;
     protected Predicate predicate;
     protected final boolean root;
+
+    @Override
+    public List<PredicateSegment> getChildren() {
+        return children;
+    }
+
+    @Override
+    public Predicate getPredicate() {
+        return predicate;
+    }
 
     @Override
     public boolean isRoot() {
@@ -47,7 +58,8 @@ public abstract class AbstractPredicateSegment implements PredicateSegment {
         this.root = root;
     }
 
-    private boolean isPredicate() {
+    @Override
+    public boolean isPredicate() {
         return predicate != null && children == null;
     }
 

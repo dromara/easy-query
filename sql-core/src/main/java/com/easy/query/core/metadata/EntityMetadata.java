@@ -442,4 +442,12 @@ public class EntityMetadata {
     public Collection<String> getDataSources() {
         return Collections.unmodifiableCollection(dataSources);
     }
+
+    public Set<String> getShardingDataSourcePropertyNames() {
+        return shardingDataSourcePropertyNames;
+    }
+
+    public Set<String> getShardingTablePropertyNames() {
+        return shardingTablePropertyNames;
+    }
 }

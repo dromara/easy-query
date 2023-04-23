@@ -16,7 +16,7 @@ public class ShardingUtil {
 
     public static RoutePredicateExpression getRoutePredicateExpression(SqlParserResult sqlParserResult, EntityMetadata entityMetadata,
                                                                        RouteRuleFilter routeRuleFilter, boolean shardingTableRoute){
-        RoutePredicateDiscover routePredicateDiscover = new RoutePredicateDiscover(entityMetadata,routeRuleFilter,shardingTableRoute);
-        return routePredicateDiscover.getRouteParseExpression(sqlParserResult);
+        RoutePredicateDiscover routePredicateDiscover = new RoutePredicateDiscover(sqlParserResult,entityMetadata,routeRuleFilter,shardingTableRoute);
+        return routePredicateDiscover.getRouteParseExpression();
     }
 }

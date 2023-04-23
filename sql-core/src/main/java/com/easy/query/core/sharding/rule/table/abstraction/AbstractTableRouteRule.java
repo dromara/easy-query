@@ -15,15 +15,17 @@ import java.util.Collection;
  */
 public abstract class AbstractTableRouteRule implements TableRouteRule {
     @Override
-    public RouteFunction<String> routeFilter(Comparable<?> shardingValue, ShardingOperatorEnum shardingOperator, String propertyName,boolean isMainShardingProperty) {
+    public RouteFunction<String> routeFilter(Object shardingValue, ShardingOperatorEnum shardingOperator, String propertyName,boolean isMainShardingProperty) {
        if(isMainShardingProperty){
            return getRouteFilter(shardingValue,shardingOperator);
        }
        return getExtraRouteFilter(shardingValue,shardingOperator,propertyName);
     }
 
-    protected abstract RouteFunction<String> getRouteFilter(Comparable<?> shardingValue,ShardingOperatorEnum shardingOperator);
-    protected abstract RouteFunction<String> getExtraRouteFilter(Comparable<?> shardingValue,ShardingOperatorEnum shardingOperator,String propertyName);
+    protected abstract RouteFunction<String> getRouteFilter(Object shardingValue,ShardingOperatorEnum shardingOperator);
+    protected  RouteFunction<String> getExtraRouteFilter(Object shardingValue,ShardingOperatorEnum shardingOperator,String propertyName){
+        throw new UnsupportedOperationException(propertyName+" sharding route filter");
+    }
     @Override
     public Collection<String> beforeFilterTableName(Collection<String> allTableNames) {
         return allTableNames;

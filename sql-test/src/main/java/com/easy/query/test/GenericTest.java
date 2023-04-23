@@ -86,7 +86,7 @@ public class GenericTest extends BaseTest {
         Object decryptValue = aesEasyEncryptionStrategy.decrypt(null,null,encryptValue);
         Assert.assertEquals(xx,decryptValue);
         Object encryptValue1 = aesEasyEncryptionStrategy.encrypt(null,null,"1888888812");
-        Assert.assertTrue(StringUtil.startWith(encryptValue.toString(),encryptValue1.toString()));
+        Assert.assertTrue(StringUtil.startsWith(encryptValue.toString(),encryptValue1.toString()));
     }
     @Test
     public void behavior(){

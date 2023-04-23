@@ -1,6 +1,6 @@
 package com.easy.query.core.sharding.parser;
 
-import com.easy.query.core.expression.sql.expression.EasySqlExpression;
+import com.easy.query.core.expression.sql.expression.EasyEntitySqlExpression;
 
 /**
  * create time 2023/4/18 23:15
@@ -9,14 +9,14 @@ import com.easy.query.core.expression.sql.expression.EasySqlExpression;
  * @author xuejiaming
  */
 public final class SqlParserResult {
-    private final EasySqlExpression sqlExpression;
+    private final EasyEntitySqlExpression easyEntitySqlExpression;
 
-    public SqlParserResult(EasySqlExpression sqlExpression){
+    public SqlParserResult(EasyEntitySqlExpression easyEntitySqlExpression){
 
-        this.sqlExpression = sqlExpression;
+        this.easyEntitySqlExpression = easyEntitySqlExpression;
     }
 
-    public EasySqlExpression getSqlExpression() {
-        return sqlExpression;
+    public EasyEntitySqlExpression getEntitySqlExpression() {
+        return easyEntitySqlExpression;
     }
 }

@@ -1,6 +1,7 @@
 package com.easy.query.core.expression.segment.condition.predicate;
 
 import com.easy.query.core.basic.jdbc.parameter.PropertySQLParameter;
+import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
 import com.easy.query.core.enums.SqlPredicateCompare;
 import com.easy.query.core.enums.SqlPredicateCompareEnum;
@@ -14,7 +15,7 @@ import com.easy.query.core.util.SQLUtil;
  * @Date: 2023/2/13 15:18
  * @author xuejiaming
  */
-public class ColumnPropertyPredicate implements Predicate {
+public class ColumnPropertyPredicate implements Predicate,ValuePredicate {
     protected final EntityTableExpressionBuilder table;
     protected final String propertyName;
     protected final EntityExpressionBuilder sqlEntityExpression;
@@ -45,5 +46,10 @@ public class ColumnPropertyPredicate implements Predicate {
     @Override
     public SqlPredicateCompare getOperator() {
         return SqlPredicateCompareEnum.EQ;
+    }
+
+    @Override
+    public SQLParameter getParameter() {
+        return new PropertySQLParameter(table,propertyName);
     }
 }

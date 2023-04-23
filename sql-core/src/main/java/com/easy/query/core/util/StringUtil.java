@@ -149,38 +149,38 @@ public class StringUtil {
         return str.regionMatches(ignoreCase, 0, prefix, 0, prefix.length());
     }
 
-    public static boolean startWith(String str, String prefix) {
+    public static boolean startsWith(String str, String prefix) {
         if (str == null || prefix == null || !str.startsWith(prefix)) {
             return false;
         }
         return true;
     }
-    public static boolean endWith(String str, String suffix) {
+    public static boolean endsWith(String str, String suffix) {
         if (str == null || suffix == null || !str.endsWith(suffix)) {
             return false;
         }
         return true;
     }
     public static String startWithRemove(String str, String prefix) {
-        if (!startWith(str,prefix)) {
+        if (!startsWith(str,prefix)) {
             return str;
         }
         return str.substring(prefix.length());
     }
     public static String endWithRemove(String str, String suffix) {
-        if (!endWith(str,suffix)) {
+        if (!endsWith(str,suffix)) {
             return str;
         }
         return str.substring(0, str.length() - suffix.length());
     }
     public static String startWithDefault(String str, String prefix,String def) {
-        if (startWith(str,prefix)) {
+        if (startsWith(str,prefix)) {
             return prefix;
         }
         return def;
     }
     public static String endWithDefault(String str, String suffix,String def) {
-        if (endWith(str,suffix)) {
+        if (endsWith(str,suffix)) {
             return suffix;
         }
         return def;

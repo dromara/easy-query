@@ -2,6 +2,10 @@ package com.easy.query.core.expression.segment.condition;
 
 import com.easy.query.core.expression.segment.SqlSegment;
 import com.easy.query.core.expression.segment.condition.predicate.Predicate;
+import com.easy.query.core.sharding.route.RoutePredicateExpression;
+import com.easy.query.core.sharding.rule.RouteRuleFilter;
+
+import java.util.List;
 
 /**
  * @FileName: PredicateSegment.java
@@ -10,6 +14,9 @@ import com.easy.query.core.expression.segment.condition.predicate.Predicate;
  * @author xuejiaming
  */
 public interface PredicateSegment extends SqlSegment {
+    List<PredicateSegment> getChildren();
+    Predicate getPredicate();
+    boolean isPredicate();
     boolean isRoot();
     boolean isEmpty();
 

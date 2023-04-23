@@ -49,6 +49,7 @@ import com.easy.query.interceptor.MyTenantInterceptor;
 import com.easy.query.logicdel.MyLogicDelStrategy;
 import com.easy.query.mysql.MySqlExpressionFactory;
 import com.easy.query.mysql.config.MySqlDialect;
+import com.easy.query.rule.TopicShardingTableRule;
 import com.zaxxer.hikari.HikariDataSource;
 import org.junit.BeforeClass;
 
@@ -115,6 +116,7 @@ public abstract class BaseTest {
         DefaultDataSourceRouteEngine defaultDataSourceRouteEngine = new DefaultDataSourceRouteEngine(defaultEasyDataSource,entityMetadataManager,defaultDataSourceRouteManager);
 
         DefaultTableRouteManager defaultTableRouteManager = new DefaultTableRouteManager(entityMetadataManager);
+        defaultTableRouteManager.addRouteRule(new TopicShardingTableRule());
         DefaultTableRouteEngine defaultTableRouteEngine = new DefaultTableRouteEngine(entityMetadataManager,defaultTableRouteManager);
 
 
