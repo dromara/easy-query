@@ -1,31 +1,23 @@
 package com.easy.query.core.expression.sql.factory;
 
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
-import com.easy.query.core.enums.MultiTableTypeEnum;
-import com.easy.query.core.expression.sql.EntityDeleteExpression;
-import com.easy.query.core.expression.sql.EntityInsertExpression;
-import com.easy.query.core.expression.sql.EntityQueryExpression;
-import com.easy.query.core.expression.sql.EntityTableExpression;
-import com.easy.query.core.expression.sql.EntityUpdateExpression;
-import com.easy.query.core.expression.sql.ExpressionContext;
-import com.easy.query.core.expression.sql.def.EasyAnonymousQueryExpression;
-import com.easy.query.core.metadata.EntityMetadata;
+import com.easy.query.core.expression.sql.expression.EasyAnonymousQuerySqlExpression;
+import com.easy.query.core.expression.sql.expression.EasyDeleteSqlExpression;
+import com.easy.query.core.expression.sql.expression.EasyInsertSqlExpression;
+import com.easy.query.core.expression.sql.expression.EasyQuerySqlExpression;
+import com.easy.query.core.expression.sql.expression.EasyTableSqlExpression;
+import com.easy.query.core.expression.sql.expression.EasyUpdateSqlExpression;
 
 /**
- * @FileName: EasySqlExpressionFactory.java
- * @Description: 文件说明
- * @Date: 2023/3/4 22:43
+ * create time 2023/4/23 13:08
+ * 文件说明
+ *
  * @author xuejiaming
  */
 public interface EasyExpressionFactory {
-    ExpressionContext createExpressionContext(EasyQueryRuntimeContext runtimeContext, String alias);
-    EntityTableExpression createEntityTableExpression(EntityMetadata entityMetadata, int index, String alias, MultiTableTypeEnum multiTableType);
-    EntityTableExpression createAnonymousEntityTableExpression(EntityMetadata entityMetadata, int index, String alias, MultiTableTypeEnum multiTableType, EntityQueryExpression sqlEntityQueryExpression);
-    EntityQueryExpression createEntityQueryExpression(ExpressionContext sqlExpressionContext);
-    default EntityQueryExpression createAnonymousQueryExpression(String sql,ExpressionContext sqlExpressionContext){
-        return new EasyAnonymousQueryExpression(sql,sqlExpressionContext);
-    }
-    EntityInsertExpression createEntityInsertExpression(ExpressionContext sqlExpressionContext);
-    EntityUpdateExpression createEntityUpdateExpression(ExpressionContext sqlExpressionContext, boolean expression);
-    EntityDeleteExpression createEntityDeleteExpression(ExpressionContext sqlExpressionContext, boolean expression);
+    EasyQuerySqlExpression createEasyQuerySqlExpression(EasyQueryRuntimeContext runtimeContext);
+    EasyInsertSqlExpression createEasyInsertSqlExpression(EasyQueryRuntimeContext runtimeContext, EasyTableSqlExpression tableSqlExpression);
+    EasyUpdateSqlExpression createEasyUpdateSqlExpression(EasyQueryRuntimeContext runtimeContext, EasyTableSqlExpression tableSqlExpression);
+    EasyDeleteSqlExpression createEasyDeleteSqlExpression(EasyQueryRuntimeContext runtimeContext, EasyTableSqlExpression tableSqlExpression);
+    EasyAnonymousQuerySqlExpression createEasyAnonymousQuerySqlExpression(EasyQueryRuntimeContext runtimeContext, String sql);
 }

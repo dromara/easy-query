@@ -1,5 +1,6 @@
 package com.easy.query.core.expression.segment.builder;
 
+import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
 import com.easy.query.core.expression.segment.SqlEntitySegment;
 import com.easy.query.core.expression.segment.SqlSegment;
 
@@ -17,9 +18,6 @@ public abstract class AbstractSqlBuilderSegment implements SqlBuilderSegment {
     public void append(SqlSegment sqlSegment) {
         sqlSegments.add(sqlSegment);
     }
-
-    @Override
-    public abstract String toSql();
     @Override
     public List<SqlSegment> getSqlSegments() {
         return sqlSegments;

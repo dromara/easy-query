@@ -1,28 +1,27 @@
 package com.easy.query.core.expression.executor.query;
 
-import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
+import com.easy.query.core.basic.jdbc.parameter.DefaultSqlParameterCollector;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
+import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
 import com.easy.query.core.expression.executor.parser.ExecutionContext;
 import com.easy.query.core.expression.executor.parser.PrepareParseResult;
-import com.easy.query.core.expression.sql.AnonymousEntityTableExpression;
-import com.easy.query.core.expression.sql.EntityExpression;
-import com.easy.query.core.expression.sql.EntityInsertExpression;
-import com.easy.query.core.expression.sql.EntityQueryExpression;
-import com.easy.query.core.expression.sql.EntityTableExpression;
-import com.easy.query.core.expression.sql.ExpressionContext;
-import com.easy.query.core.expression.sql.factory.EasyExpressionFactory;
+import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
+import com.easy.query.core.expression.sql.expression.EasyEntitySqlExpression;
+import com.easy.query.core.expression.sql.expression.EasyQuerySqlExpression;
+import com.easy.query.core.expression.sql.expression.EasySqlExpression;
+import com.easy.query.core.expression.sql.expression.EasyTableSqlExpression;
+import com.easy.query.core.expression.sql.expression.impl.QuerySqlExpression;
 import com.easy.query.core.sharding.EasyDataSource;
 import com.easy.query.core.sharding.common.RouteMapper;
 import com.easy.query.core.sharding.common.RouteUnit;
 import com.easy.query.core.sharding.merge.executor.common.ExecutionUnit;
 import com.easy.query.core.sharding.merge.executor.common.SqlUnit;
-import com.easy.query.core.sharding.merge.executor.internal.CommandTypeEnum;
 import com.easy.query.core.sharding.rewrite.RewriteContext;
 import com.easy.query.core.sharding.rewrite.RewriteContextFactory;
 import com.easy.query.core.sharding.route.RouteContext;
 import com.easy.query.core.sharding.route.RouteContextFactory;
 import com.easy.query.core.util.ArrayUtil;
-import com.easy.query.core.util.EasyUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -55,30 +54,30 @@ public class DefaultExecutionContextFactory implements ExecutionContextFactory {
 
     @Override
     public ExecutionContext createExecutionContext(PrepareParseResult prepareParseResult) {
-        EntityExpression entityExpression = prepareParseResult.getEntityExpression();
+        EasyEntitySqlExpression entitySqlExpression = prepareParseResult.getEntitySqlExpression();
 //        NativeSqlQueryCompilerContext nativeSqlQueryCompilerContext = new NativeSqlQueryCompilerContext(prepareParseResult);
         if(ArrayUtil.isEmpty(prepareParseResult.getShardingEntities())){
-            ExecutionUnit executionUnit = new ExecutionUnit(easyDataSource.getDefaultDataSourceName(), createSqlUnit(entityExpression));
+            ExecutionUnit executionUnit = new ExecutionUnit(easyDataSource.getDefaultDataSourceName(), createSqlUnit(entitySqlExpression));
             return new ExecutionContext(Collections.singletonList(executionUnit));
         }
         RouteContext routeContext = routeContextFactory.createRouteContext(prepareParseResult);
         RewriteContext rewriteContext = rewriteContextFactory.createRewriteContext(routeContext);
-        EntityExpression rewriteEntityExpression = rewriteContext.getEntityExpression();
+        EasyEntitySqlExpression rewriteEntitySqlExpression = rewriteContext.getEntitySqlExpression();
         List<RouteUnit> routeUnits = routeContext.getEntityRouteResult().getRouteUnits();
         List<ExecutionUnit> executionUnits = new ArrayList<>(routeUnits.size());
         for (RouteUnit routeUnit : routeUnits) {
             String dataSource = routeUnit.getDataSource();
             List<RouteMapper> routeMappers = routeUnit.getRouteMappers();
-            EntityExpression cloneRewriteEntityExpression = rewriteEntityExpression.cloneEntityExpression();
-            for (EntityTableExpression table : cloneRewriteEntityExpression.getTables()) {
-                if(!table.tableNameIsAs()&&!(table instanceof AnonymousEntityTableExpression)){
-                    RouteMapper routeMapper = ArrayUtil.firstOrDefault(routeMappers, o -> Objects.equals(o.getEntityClass(), table.getEntityClass()), null);
+            EasyEntitySqlExpression easySqlExpression = (EasyEntitySqlExpression)rewriteEntitySqlExpression.cloneSqlExpression();
+            for (EasyTableSqlExpression table : easySqlExpression.getTables()) {
+                if(!table.tableNameIsAs()&&!(table instanceof AnonymousEntityTableExpressionBuilder)){
+                    RouteMapper routeMapper = ArrayUtil.firstOrDefault(routeMappers, o -> Objects.equals(o.getEntityClass(), table.getEntityMetadata().getEntityClass()), null);
                     if(routeMapper!=null){
                         table.setTableNameAs(o->routeMapper.getActualName());
                     }
                 }
             }
-            SqlUnit sqlUnit = createSqlUnit(rewriteEntityExpression);
+            SqlUnit sqlUnit = createSqlUnit(easySqlExpression);
             ExecutionUnit executionUnit = new ExecutionUnit(dataSource, sqlUnit);
             executionUnits.add(executionUnit);
         }
@@ -87,15 +86,16 @@ public class DefaultExecutionContextFactory implements ExecutionContextFactory {
     }
 
 
-    private SqlUnit createSqlUnit(EntityExpression entityExpression){
-        if(entityExpression instanceof EntityQueryExpression){
-            return createQuerySqlUnit((EntityQueryExpression) entityExpression);
+    private SqlUnit createSqlUnit(EasyEntitySqlExpression easyEntitySqlExpression){
+        if(easyEntitySqlExpression instanceof EasyQuerySqlExpression){
+            return createQuerySqlUnit((EasyQuerySqlExpression) easyEntitySqlExpression);
         }
         throw new UnsupportedOperationException();
     }
-    private SqlUnit createQuerySqlUnit(EntityQueryExpression entityQueryExpression){
-        String sql = entityQueryExpression.toSql();
-        List<SQLParameter> parameters = entityQueryExpression.getParameters();
+    private SqlUnit createQuerySqlUnit(EasyQuerySqlExpression easyQuerySqlExpression){
+        SqlParameterCollector sqlParameterCollector = DefaultSqlParameterCollector.defaultCollector();
+        String sql = easyQuerySqlExpression.toSql(sqlParameterCollector);
+        List<SQLParameter> parameters = sqlParameterCollector.getParameters();
         return new SqlUnit(sql,parameters);
     }
 }

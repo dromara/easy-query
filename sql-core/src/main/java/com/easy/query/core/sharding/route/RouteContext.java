@@ -1,6 +1,6 @@
 package com.easy.query.core.sharding.route;
 
-import com.easy.query.core.expression.sql.EntityExpression;
+import com.easy.query.core.expression.sql.expression.EasyEntitySqlExpression;
 
 /**
  * create time 2023/4/19 14:05
@@ -9,17 +9,17 @@ import com.easy.query.core.expression.sql.EntityExpression;
  * @author xuejiaming
  */
 public class RouteContext {
-    private final EntityExpression entityExpression;
+    private final EasyEntitySqlExpression easyEntitySqlExpression;
     private final ShardingRouteResult entityRouteResult;
 
-    public RouteContext(EntityExpression entityExpression, ShardingRouteResult entityRouteResult){
+    public RouteContext(EasyEntitySqlExpression easyEntitySqlExpression, ShardingRouteResult entityRouteResult){
 
-        this.entityExpression = entityExpression;
+        this.easyEntitySqlExpression = easyEntitySqlExpression;
         this.entityRouteResult = entityRouteResult;
     }
 
-    public EntityExpression getEntityExpression() {
-        return entityExpression;
+    public EasyEntitySqlExpression getEntitySqlExpression() {
+        return easyEntitySqlExpression;
     }
 
     public ShardingRouteResult getEntityRouteResult() {

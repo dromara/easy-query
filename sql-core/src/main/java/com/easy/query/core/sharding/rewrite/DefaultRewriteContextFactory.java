@@ -1,7 +1,8 @@
 package com.easy.query.core.sharding.rewrite;
 
-import com.easy.query.core.expression.sql.EntityExpression;
-import com.easy.query.core.expression.sql.EntityQueryExpression;
+import com.easy.query.core.expression.sql.expression.EasyEntitySqlExpression;
+import com.easy.query.core.expression.sql.expression.EasyQuerySqlExpression;
+import com.easy.query.core.expression.sql.expression.EasySqlExpression;
 import com.easy.query.core.sharding.route.RouteContext;
 
 /**
@@ -13,24 +14,24 @@ import com.easy.query.core.sharding.route.RouteContext;
 public class DefaultRewriteContextFactory implements RewriteContextFactory{
     @Override
     public RewriteContext createRewriteContext(RouteContext routeContext) {
-        EntityExpression entityExpression = routeContext.getEntityExpression();
-        if(entityExpression instanceof EntityQueryExpression){
-            return createQueryRewriteContext((EntityQueryExpression) entityExpression);
+        EasyEntitySqlExpression easyEntitySqlExpression = routeContext.getEntitySqlExpression();
+        if(easyEntitySqlExpression instanceof EasyQuerySqlExpression){
+            return createQueryRewriteContext((EasyQuerySqlExpression) easyEntitySqlExpression);
         }
        throw new UnsupportedOperationException();
     }
 
-    public RewriteContext createQueryRewriteContext(EntityQueryExpression entityQueryExpression){
-        EntityQueryExpression cloneSqlQueryExpression = entityQueryExpression.cloneSqlQueryExpression();
-        if(entityQueryExpression.hasLimit()){
-            long rows = entityQueryExpression.getRows();
-            long offset = entityQueryExpression.getOffset();
+    public RewriteContext createQueryRewriteContext(EasyQuerySqlExpression easyQuerySqlExpression){
+        EasyQuerySqlExpression easySqlExpression = (EasyQuerySqlExpression)easyQuerySqlExpression.cloneSqlExpression();
+        if(easySqlExpression.hasLimit()){
+            long rows = easySqlExpression.getRows();
+            long offset = easySqlExpression.getOffset();
             if(offset>0){
-                cloneSqlQueryExpression.setOffset(0);
+                easySqlExpression.setOffset(0);
             }
-            cloneSqlQueryExpression.setRows(offset+rows);
+            easySqlExpression.setRows(offset+rows);
         }
 
-        return new RewriteContext(entityQueryExpression,cloneSqlQueryExpression);
+        return new RewriteContext(easyQuerySqlExpression,easySqlExpression);
     }
 }

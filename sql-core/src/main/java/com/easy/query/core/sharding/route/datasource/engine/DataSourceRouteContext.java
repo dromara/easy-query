@@ -1,7 +1,6 @@
 package com.easy.query.core.sharding.route.datasource.engine;
 
-import com.easy.query.core.expression.sql.EntityExpression;
-import com.easy.query.core.expression.sql.EntityQueryExpression;
+import com.easy.query.core.expression.sql.expression.EasyEntitySqlExpression;
 
 import java.util.Set;
 
@@ -13,19 +12,19 @@ import java.util.Set;
  */
 public final class DataSourceRouteContext {
     private final Set<Class<?>> shardingEntities;
-    private final EntityExpression entityExpression;
+    private final EasyEntitySqlExpression easyEntitySqlExpression;
 
-    public DataSourceRouteContext(Set<Class<?>> shardingEntities, EntityExpression entityExpression){
+    public DataSourceRouteContext(Set<Class<?>> shardingEntities, EasyEntitySqlExpression easyEntitySqlExpression){
 
         this.shardingEntities = shardingEntities;
-        this.entityExpression = entityExpression;
+        this.easyEntitySqlExpression = easyEntitySqlExpression;
     }
 
     public Set<Class<?>> getShardingEntities() {
         return shardingEntities;
     }
 
-    public EntityExpression getEntityExpression() {
-        return entityExpression;
+    public EasyEntitySqlExpression getEntitySqlExpression() {
+        return easyEntitySqlExpression;
     }
 }

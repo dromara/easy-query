@@ -6,12 +6,12 @@ import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
 import com.easy.query.core.expression.segment.SqlEntityAliasSegment;
-import com.easy.query.core.expression.sql.EntityDeleteExpression;
-import com.easy.query.core.expression.sql.EntityExpression;
-import com.easy.query.core.expression.sql.EntityInsertExpression;
-import com.easy.query.core.expression.sql.EntityQueryExpression;
-import com.easy.query.core.expression.sql.EntityTableExpression;
-import com.easy.query.core.expression.sql.EntityUpdateExpression;
+import com.easy.query.core.expression.sql.builder.EntityDeleteExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.sharding.merge.executor.common.Grouping;
 import com.easy.query.core.sharding.merge.executor.common.GroupingImpl;
@@ -20,11 +20,9 @@ import com.easy.query.core.sharding.merge.executor.internal.CommandTypeEnum;
 import java.beans.PropertyDescriptor;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 /**
  * @author xuejiaming
@@ -51,8 +49,8 @@ public class EasyUtil {
 //        Map<K, List<T>> map = list.stream().collect(Collectors.groupingBy(keyExtractor));
 //        return map.entrySet().stream().map(e -> selector.apply(new Grouping<>(e.getKey(), e.getValue()))).collect(Collectors.toList());
 //    }
-    public static EntityTableExpression getPredicateTableByOffset(EntityQueryExpression sqlEntityExpression, int offsetForward) {
-        List<EntityTableExpression> tables = sqlEntityExpression.getTables();
+    public static EntityTableExpressionBuilder getPredicateTableByOffset(EntityQueryExpressionBuilder sqlEntityExpression, int offsetForward) {
+        List<EntityTableExpressionBuilder> tables = sqlEntityExpression.getTables();
         if (tables.isEmpty()) {
             throw new EasyQueryException("cant get current join table");
         }
@@ -60,19 +58,19 @@ public class EasyUtil {
         return tables.get(i);
     }
 
-    public static EntityTableExpression getCurrentPredicateTable(EntityQueryExpression sqlEntityExpression) {
+    public static EntityTableExpressionBuilder getCurrentPredicateTable(EntityQueryExpressionBuilder sqlEntityExpression) {
         return getPredicateTableByOffset(sqlEntityExpression, 0);
     }
 
-    public static EntityTableExpression getPreviewPredicateTable(EntityQueryExpression sqlEntityExpression) {
+    public static EntityTableExpressionBuilder getPreviewPredicateTable(EntityQueryExpressionBuilder sqlEntityExpression) {
         return getPredicateTableByOffset(sqlEntityExpression, 1);
     }
 
-    public static ColumnMetadata getColumnMetadata(EntityTableExpression tableExpression, String propertyName) {
+    public static ColumnMetadata getColumnMetadata(EntityTableExpressionBuilder tableExpression, String propertyName) {
         return tableExpression.getEntityMetadata().getColumnNotNull(propertyName);
     }
 
-    public static int getNextTableIndex(EntityQueryExpression sqlEntityExpression) {
+    public static int getNextTableIndex(EntityQueryExpressionBuilder sqlEntityExpression) {
         return sqlEntityExpression.getTables().size();
     }
 
@@ -96,19 +94,19 @@ public class EasyUtil {
         return getFastBean(entityClass).getBeanSetter(prop);
     }
 
-    public static CommandTypeEnum getCommandType(EntityExpression entityExpression){
-        if(entityExpression instanceof  EntityQueryExpression){
+    public static CommandTypeEnum getCommandType(EntityExpressionBuilder entityExpression){
+        if(entityExpression instanceof EntityQueryExpressionBuilder){
             return CommandTypeEnum.QUERY;
         }
-        if(entityExpression instanceof EntityInsertExpression){
+        if(entityExpression instanceof EntityInsertExpressionBuilder){
             return CommandTypeEnum.EXECUTE_BATCH;
         }
-        if(entityExpression instanceof EntityUpdateExpression){
-            EntityUpdateExpression entityUpdateExpression = (EntityUpdateExpression) entityExpression;
+        if(entityExpression instanceof EntityUpdateExpressionBuilder){
+            EntityUpdateExpressionBuilder entityUpdateExpression = (EntityUpdateExpressionBuilder) entityExpression;
             return entityUpdateExpression.isExpression()?CommandTypeEnum.EXECUTE: CommandTypeEnum.EXECUTE_BATCH;
         }
-        if(entityExpression instanceof EntityDeleteExpression){
-            EntityDeleteExpression entityDeleteExpression = (EntityDeleteExpression) entityExpression;
+        if(entityExpression instanceof EntityDeleteExpressionBuilder){
+            EntityDeleteExpressionBuilder entityDeleteExpression = (EntityDeleteExpressionBuilder) entityExpression;
             return entityDeleteExpression.isExpression()?CommandTypeEnum.EXECUTE: CommandTypeEnum.EXECUTE_BATCH;
         }
         throw new EasyQueryInvalidOperationException(ClassUtil.getInstanceSimpleName(entityExpression)+" cant get commandType");

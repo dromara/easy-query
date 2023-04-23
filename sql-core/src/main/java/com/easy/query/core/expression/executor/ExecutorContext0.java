@@ -1,7 +1,7 @@
 package com.easy.query.core.expression.executor;
 
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
-import com.easy.query.core.expression.sql.EntityExpression;
+import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 
 import java.util.List;
 
@@ -12,16 +12,16 @@ import java.util.List;
  * @author xuejiaming
  */
 public class ExecutorContext0 {
-    private final EntityExpression entityExpression;
+    private final EntityExpressionBuilder entityExpression;
     private final List<SQLParameter> parameters;
 
-    public ExecutorContext0(EntityExpression entityExpression, List<SQLParameter> parameters){
+    public ExecutorContext0(EntityExpressionBuilder entityExpression, List<SQLParameter> parameters){
 
         this.entityExpression = entityExpression;
         this.parameters = parameters;
     }
 
-    public EntityExpression getEntityExpression() {
+    public EntityExpressionBuilder getEntityExpression() {
         return entityExpression;
     }
 

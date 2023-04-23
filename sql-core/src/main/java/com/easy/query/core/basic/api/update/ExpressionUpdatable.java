@@ -1,6 +1,7 @@
 package com.easy.query.core.basic.api.update;
 
 import com.easy.query.core.basic.api.internal.Versionable;
+import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.SqlExpression;
 import com.easy.query.core.expression.parser.abstraction.SqlPredicate;
@@ -101,6 +102,9 @@ public interface ExpressionUpdatable<T> extends Updatable<T,ExpressionUpdatable<
 
     ExpressionUpdatable<T> whereById(boolean condition, Object id);
 
-    String toSql();
+   default String toSql(){
+       return toSql(null);
+   }
+    String toSql(SqlParameterCollector sqlParameterCollector);
 }
 

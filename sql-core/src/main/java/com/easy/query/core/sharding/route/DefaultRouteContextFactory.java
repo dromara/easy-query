@@ -1,9 +1,8 @@
 package com.easy.query.core.sharding.route;
 
 import com.easy.query.core.expression.executor.parser.PrepareParseResult;
-import com.easy.query.core.expression.sql.EntityExpression;
-import com.easy.query.core.sharding.parser.SqlParserResult;
-import com.easy.query.core.sharding.route.datasource.DataSourceRoute;
+import com.easy.query.core.expression.sql.expression.EasyEntitySqlExpression;
+import com.easy.query.core.expression.sql.expression.EasySqlExpression;
 import com.easy.query.core.sharding.route.datasource.engine.DataSourceRouteContext;
 import com.easy.query.core.sharding.route.datasource.engine.DataSourceRouteEngine;
 import com.easy.query.core.sharding.route.datasource.engine.DataSourceRouteResult;
@@ -27,14 +26,14 @@ public class DefaultRouteContextFactory implements RouteContextFactory{
     }
     @Override
     public RouteContext createRouteContext(PrepareParseResult prepareParseResult) {
-        EntityExpression entityExpression = prepareParseResult.getEntityExpression();
+        EasyEntitySqlExpression easyEntitySqlExpression = prepareParseResult.getEntitySqlExpression();
 
         //获取分库节点
-        DataSourceRouteResult dataSourceRouteResult = dataSourceRouteEngine.route(new DataSourceRouteContext(prepareParseResult.getShardingEntities(), prepareParseResult.getEntityExpression()));
+        DataSourceRouteResult dataSourceRouteResult = dataSourceRouteEngine.route(new DataSourceRouteContext(prepareParseResult.getShardingEntities(), easyEntitySqlExpression));
 
         //获取分片后的结果
-        ShardingRouteResult shardingRouteResult = tableRouteEngine.route(new TableRouteContext(dataSourceRouteResult, prepareParseResult.getEntityExpression(), prepareParseResult.getShardingEntities()));
+        ShardingRouteResult shardingRouteResult = tableRouteEngine.route(new TableRouteContext(dataSourceRouteResult, easyEntitySqlExpression, prepareParseResult.getShardingEntities()));
 //        tableRouteEngine.route()
-        return new RouteContext(entityExpression, shardingRouteResult);
+        return new RouteContext(easyEntitySqlExpression, shardingRouteResult);
     }
 }

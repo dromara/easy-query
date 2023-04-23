@@ -41,7 +41,7 @@ public class DefaultDataSourceRouteEngine implements DataSourceRouteEngine{
                 }};
                 dataSourceMaps.put(shardingEntity,defDataSource);
             }
-            Collection<String> dataSources = dataSourceRouteManager.routeTo(shardingEntity, routeContext.getEntityExpression());
+            Collection<String> dataSources = dataSourceRouteManager.routeTo(shardingEntity, routeContext.getEntitySqlExpression());
             Set<String> entityDataSources = dataSourceMaps.get(shardingEntity);
             if(entityDataSources==null){
                 dataSourceMaps.put(shardingEntity,new HashSet<>(dataSources));

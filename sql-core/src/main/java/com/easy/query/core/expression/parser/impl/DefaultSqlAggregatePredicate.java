@@ -7,8 +7,8 @@ import com.easy.query.core.expression.parser.abstraction.internal.AggregatePredi
 import com.easy.query.core.expression.segment.condition.OrPredicateSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.segment.condition.predicate.FuncColumnValuePredicate;
-import com.easy.query.core.expression.sql.EntityExpression;
-import com.easy.query.core.expression.sql.EntityTableExpression;
+import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.enums.SqlPredicateCompare;
 import com.easy.query.core.expression.parser.abstraction.SqlAggregatePredicate;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
@@ -21,11 +21,11 @@ import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
  */
 public class DefaultSqlAggregatePredicate<T1> implements SqlAggregatePredicate<T1> {
     private final int index;
-    private final EntityExpression sqlEntityExpression;
+    private final EntityExpressionBuilder sqlEntityExpression;
     private final PredicateSegment rootPredicateSegment;
     private PredicateSegment nextPredicateSegment;
 
-    public DefaultSqlAggregatePredicate(int index, EntityExpression sqlEntityExpression, PredicateSegment predicateSegment) {
+    public DefaultSqlAggregatePredicate(int index, EntityExpressionBuilder sqlEntityExpression, PredicateSegment predicateSegment) {
         this.index = index;
         this.sqlEntityExpression = sqlEntityExpression;
         this.rootPredicateSegment = predicateSegment;
@@ -38,7 +38,7 @@ public class DefaultSqlAggregatePredicate<T1> implements SqlAggregatePredicate<T
     @Override
     public SqlAggregatePredicate<T1> func(boolean condition, EasyFunc easyAggregate, Property<T1, ?> column, SqlPredicateCompare compare, Object val) {
         if (condition) {
-            EntityTableExpression table = sqlEntityExpression.getTable(getIndex());
+            EntityTableExpressionBuilder table = sqlEntityExpression.getTable(getIndex());
             String propertyName = table.getPropertyName(column);
             nextPredicateSegment.setPredicate(new FuncColumnValuePredicate(table,easyAggregate, propertyName, val, compare, sqlEntityExpression));
             nextAnd();

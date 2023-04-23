@@ -5,7 +5,7 @@ import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.exception.EasyQueryException;
-import com.easy.query.core.expression.sql.EntityTableExpression;
+import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.util.EasyUtil;
 
 /**
@@ -15,17 +15,17 @@ import com.easy.query.core.util.EasyUtil;
  * @Date: 2023/2/28 20:47
  */
 public final class PropertySQLParameter implements BeanSqlParameter {
-    private final EntityTableExpression table;
+    private final EntityTableExpressionBuilder table;
     private final String propertyName;
     private Object bean;
 
-    public PropertySQLParameter(EntityTableExpression table, String propertyName) {
+    public PropertySQLParameter(EntityTableExpressionBuilder table, String propertyName) {
         this.table = table;
         this.propertyName = propertyName;
     }
 
     @Override
-    public EntityTableExpression getTable() {
+    public EntityTableExpressionBuilder getTable() {
         return table;
     }
 

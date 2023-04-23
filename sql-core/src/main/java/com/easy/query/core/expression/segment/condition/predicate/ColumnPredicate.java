@@ -1,7 +1,8 @@
 package com.easy.query.core.expression.segment.condition.predicate;
 
-import com.easy.query.core.expression.sql.EntityExpression;
-import com.easy.query.core.expression.sql.EntityTableExpression;
+import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
+import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.enums.SqlPredicateCompare;
 
 /**
@@ -11,12 +12,12 @@ import com.easy.query.core.enums.SqlPredicateCompare;
  * @author xuejiaming
  */
 public class ColumnPredicate implements Predicate {
-    private final EntityTableExpression table;
+    private final EntityTableExpressionBuilder table;
     private final String propertyName;
     private final SqlPredicateCompare compare;
-    private final EntityExpression sqlEntityExpression;
+    private final EntityExpressionBuilder sqlEntityExpression;
 
-    public ColumnPredicate(EntityTableExpression table, String propertyName, SqlPredicateCompare compare, EntityExpression sqlEntityExpression) {
+    public ColumnPredicate(EntityTableExpressionBuilder table, String propertyName, SqlPredicateCompare compare, EntityExpressionBuilder sqlEntityExpression) {
         this.table = table;
         this.propertyName = propertyName;
         this.compare = compare;
@@ -24,18 +25,23 @@ public class ColumnPredicate implements Predicate {
     }
 
     @Override
-    public String toSql() {
+    public String toSql(SqlParameterCollector sqlParameterCollector) {
         String sqlColumnSegment = sqlEntityExpression.getSqlOwnerColumn(table,propertyName);
         return sqlColumnSegment +" "+ compare.getSql();
     }
 
     @Override
-    public EntityTableExpression getTable() {
+    public EntityTableExpressionBuilder getTable() {
         return table;
     }
 
     @Override
     public String getPropertyName() {
         return propertyName;
+    }
+
+    @Override
+    public SqlPredicateCompare getOperator() {
+        return compare;
     }
 }

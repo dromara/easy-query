@@ -1,5 +1,7 @@
 package com.easy.query.core.expression.segment;
 
+import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
+
 /**
  * @FileName: SqlSegment.java
  * @Description: 文件说明
@@ -7,5 +9,8 @@ package com.easy.query.core.expression.segment;
  * @author xuejiaming
  */
 public interface SqlSegment {
-    String toSql();
+//    default String toSql(){
+//        return toSql(null);
+//    }
+    String toSql(SqlParameterCollector sqlParameterCollector);
 }

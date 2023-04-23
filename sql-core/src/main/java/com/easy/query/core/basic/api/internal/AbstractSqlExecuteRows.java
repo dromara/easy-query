@@ -1,12 +1,10 @@
 package com.easy.query.core.basic.api.internal;
 
-import com.easy.query.core.basic.api.update.EntityUpdatable;
-import com.easy.query.core.basic.api.update.Updatable;
 import com.easy.query.core.basic.jdbc.con.EasyConnectionManager;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.exception.EasyQueryConcurrentException;
-import com.easy.query.core.expression.sql.EntityExpression;
+import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 
 /**
  * @FileName: AbstractSqlExecuteRows.java
@@ -15,9 +13,9 @@ import com.easy.query.core.expression.sql.EntityExpression;
  * @author xuejiaming
  */
 public abstract class AbstractSqlExecuteRows<TChain>  implements SqlExecuteExpectRows,Interceptable<TChain>,LogicDeletable<TChain> {
-    private final EntityExpression sqlEntityExpression;
+    private final EntityExpressionBuilder sqlEntityExpression;
 
-    public AbstractSqlExecuteRows(EntityExpression sqlEntityExpression){
+    public AbstractSqlExecuteRows(EntityExpressionBuilder sqlEntityExpression){
 
         this.sqlEntityExpression = sqlEntityExpression;
     }

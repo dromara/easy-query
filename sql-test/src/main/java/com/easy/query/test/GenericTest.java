@@ -3,7 +3,7 @@ package com.easy.query.test;
 import com.easy.query.BaseTest;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.SqlRangeEnum;
-import com.easy.query.core.expression.sql.internal.EasyBehavior;
+import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 import com.easy.query.core.util.AesUtil;
 import com.easy.query.core.util.Base64Util;
 import com.easy.query.core.util.StringUtil;

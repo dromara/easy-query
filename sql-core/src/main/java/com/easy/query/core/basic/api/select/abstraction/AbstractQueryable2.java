@@ -13,8 +13,8 @@ import com.easy.query.core.expression.lambda.SqlExpression3;
 import com.easy.query.core.expression.parser.abstraction.SqlColumnAsSelector;
 import com.easy.query.core.expression.parser.abstraction.SqlColumnSelector;
 import com.easy.query.core.expression.segment.builder.ProjectSqlBuilderSegment;
-import com.easy.query.core.expression.sql.EntityQueryExpression;
-import com.easy.query.core.expression.sql.EntityTableExpression;
+import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.util.ArrayUtil;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.enums.EasyAggregate;
@@ -42,7 +42,7 @@ public abstract class AbstractQueryable2<T1, T2> extends AbstractQueryable<T1> i
     private final Class<T2> t2Class;
     private final EasyQuerySqlBuilderProvider2<T1, T2> sqlPredicateProvider;
 
-    public AbstractQueryable2(Class<T1> t1Class, Class<T2> t2Class, EntityQueryExpression sqlEntityExpression) {
+    public AbstractQueryable2(Class<T1> t1Class, Class<T2> t2Class, EntityQueryExpressionBuilder sqlEntityExpression) {
         super(t1Class, sqlEntityExpression);
         this.t2Class = t2Class;
 
@@ -166,11 +166,11 @@ public abstract class AbstractQueryable2<T1, T2> extends AbstractQueryable<T1> i
         }
         SqlEntitySegment sqlSegment = (SqlEntitySegment)projectSqlBuilderSegment.getSqlSegments().get(0);
 
-        EntityTableExpression table = sqlSegment.getTable();
+        EntityTableExpressionBuilder table = sqlSegment.getTable();
         String propertyName = sqlSegment.getPropertyName();
         ColumnMetadata columnMetadata = EasyUtil.getColumnMetadata(table,propertyName);
 
-        return cloneQueryable().select(easyFunc.getFuncColumn(projectSqlBuilderSegment.toSql())).toList((Class<TMember>)columnMetadata.getProperty().getPropertyType());
+        return cloneQueryable().select(easyFunc.getFuncColumn(projectSqlBuilderSegment.toSql(null))).toList((Class<TMember>)columnMetadata.getProperty().getPropertyType());
     }
     @Override
     public <TMember extends Number> BigDecimal sumBigDecimalOrDefault(SqlExpression2<SqlColumnResultSelector<T1, TMember>, SqlColumnResultSelector<T2, TMember>> columnSelectorExpression, BigDecimal def) {
@@ -219,7 +219,7 @@ public abstract class AbstractQueryable2<T1, T2> extends AbstractQueryable<T1> i
             throw new EasyQueryException("aggreagate query not found column");
         }
 
-        List<Integer> result = cloneQueryable().select(EasyAggregate.LEN.getFuncColumn(projectSqlBuilderSegment.toSql())).toList(Integer.class);
+        List<Integer> result = cloneQueryable().select(EasyAggregate.LEN.getFuncColumn(projectSqlBuilderSegment.toSql(null))).toList(Integer.class);
         return ArrayUtil.firstOrDefault(result,def);
     }
 

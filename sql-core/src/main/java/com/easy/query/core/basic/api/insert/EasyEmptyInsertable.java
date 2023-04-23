@@ -2,7 +2,7 @@ package com.easy.query.core.basic.api.insert;
 
 import com.easy.query.core.abstraction.EasySqlApiFactory;
 import com.easy.query.core.enums.SqlExecuteStrategyEnum;
-import com.easy.query.core.expression.sql.EntityInsertExpression;
+import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 
 import java.util.function.Function;
 
@@ -13,9 +13,9 @@ import java.util.function.Function;
  * @author xuejiaming
  */
 public class EasyEmptyInsertable<T>implements Insertable<T> {
-    private final EntityInsertExpression entityInsertExpression;
+    private final EntityInsertExpressionBuilder entityInsertExpression;
 
-    public EasyEmptyInsertable(EntityInsertExpression entityInsertExpression){
+    public EasyEmptyInsertable(EntityInsertExpressionBuilder entityInsertExpression){
 
         this.entityInsertExpression = entityInsertExpression;
     }

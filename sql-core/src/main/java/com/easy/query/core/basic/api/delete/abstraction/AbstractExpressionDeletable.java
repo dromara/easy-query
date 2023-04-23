@@ -1,6 +1,8 @@
 package com.easy.query.core.basic.api.delete.abstraction;
 
 import com.easy.query.core.basic.api.internal.AbstractSqlExecuteRows;
+import com.easy.query.core.basic.jdbc.parameter.DefaultSqlParameterCollector;
+import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnValuePredicate;
 import com.easy.query.core.basic.jdbc.executor.EasyOldExecutor;
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
@@ -10,15 +12,14 @@ import com.easy.query.core.basic.api.delete.Deletable;
 import com.easy.query.core.basic.api.delete.ExpressionDeletable;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.enums.SqlPredicateCompareEnum;
-import com.easy.query.core.exception.EasyQueryConcurrentException;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.lambda.SqlExpression;
 import com.easy.query.core.expression.parser.abstraction.SqlPredicate;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.DefaultSqlPredicate;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
-import com.easy.query.core.expression.sql.def.EasyEntityTableExpression;
-import com.easy.query.core.expression.sql.EntityDeleteExpression;
+import com.easy.query.core.expression.sql.builder.impl.TableExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.EntityDeleteExpressionBuilder;
 import com.easy.query.core.util.ClassUtil;
 import com.easy.query.core.util.StringUtil;
 
@@ -33,38 +34,39 @@ import java.util.function.Function;
  */
 public abstract   class AbstractExpressionDeletable<T> extends AbstractSqlExecuteRows<ExpressionDeletable<T>> implements ExpressionDeletable<T> {
     protected final Class<T> clazz;
-    protected final EasyEntityTableExpression table;
-    protected final EntityDeleteExpression entityDeleteExpression;
+    protected final TableExpressionBuilder table;
+    protected final EntityDeleteExpressionBuilder entityDeleteExpression;
 
-    public AbstractExpressionDeletable(Class<T> clazz, EntityDeleteExpression entityDeleteExpression){
+    public AbstractExpressionDeletable(Class<T> clazz, EntityDeleteExpressionBuilder entityDeleteExpression){
         super(entityDeleteExpression);
         this.entityDeleteExpression = entityDeleteExpression;
 
         this.clazz = clazz;
         EntityMetadata entityMetadata = this.entityDeleteExpression.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(clazz);
         entityMetadata.checkTable();
-        table = new EasyEntityTableExpression(entityMetadata,  0,null, MultiTableTypeEnum.FROM);
+        table = new TableExpressionBuilder(entityMetadata,  0,null, MultiTableTypeEnum.FROM);
         this.entityDeleteExpression.addSqlEntityTableExpression(table);
     }
 
     @Override
     public long executeRows() {
-        String deleteSql = toSql();
+        DefaultSqlParameterCollector defaultSqlParameterCollector = new DefaultSqlParameterCollector();
+        String deleteSql = toSqlWithParam(defaultSqlParameterCollector);
         if(StringUtil.isNotBlank(deleteSql)){
             EasyQueryRuntimeContext runtimeContext = entityDeleteExpression.getRuntimeContext();
             EasyOldExecutor easyExecutor = runtimeContext.getEasyExecutor();
-            return easyExecutor.executeRows(ExecutorContext.create(runtimeContext,true), deleteSql, entityDeleteExpression.getParameters());
+            return easyExecutor.executeRows(ExecutorContext.create(runtimeContext,true), deleteSql, defaultSqlParameterCollector.getParameters());
         }
         return 0;
     }
 
-    @Override
-    public void executeRows(long expectRows, String msg, String code) {
-        long rows = executeRows();
-        if(rows!=expectRows){
-            throw new EasyQueryConcurrentException(msg,code);
-        }
-    }
+//    @Override
+//    public void executeRows(long expectRows, String msg, String code) {
+//        long rows = executeRows();
+//        if(rows!=expectRows){
+//            throw new EasyQueryConcurrentException(msg,code);
+//        }
+//    }
 
     @Override
     public ExpressionDeletable<T> where(boolean condition, SqlExpression<SqlPredicate<T>> whereExpression) {
@@ -118,5 +120,13 @@ public abstract   class AbstractExpressionDeletable<T> extends AbstractSqlExecut
     public ExpressionDeletable<T> asTable(Function<String, String> tableNameAs) {
         entityDeleteExpression.getRecentlyTable().setTableNameAs(tableNameAs);
         return this;
+    }
+
+    @Override
+    public String toSql() {
+        return toSqlWithParam(null);
+    }
+    private String toSqlWithParam(SqlParameterCollector sqlParameterCollector){
+        return entityDeleteExpression.toExpression().toSql(sqlParameterCollector);
     }
 }

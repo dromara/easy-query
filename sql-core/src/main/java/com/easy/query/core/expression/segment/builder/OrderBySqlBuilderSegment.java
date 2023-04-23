@@ -1,5 +1,6 @@
 package com.easy.query.core.expression.segment.builder;
 
+import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
 import com.easy.query.core.enums.SqlKeywordEnum;
 import com.easy.query.core.expression.segment.OrderColumnSegment;
 import com.easy.query.core.expression.segment.SqlSegment;
@@ -15,7 +16,7 @@ import java.util.List;
 public class OrderBySqlBuilderSegment extends AbstractSqlBuilderSegment {
 
     @Override
-    public String toSql() {
+    public String toSql(SqlParameterCollector sqlParameterCollector) {
 
         StringBuilder sb = new StringBuilder();
         List<SqlSegment> sqlSegments = getSqlSegments();
@@ -28,7 +29,7 @@ public class OrderBySqlBuilderSegment extends AbstractSqlBuilderSegment {
             if (sb.length() != 0) {
                 sb.insert(0, SqlKeywordEnum.DOT.toSql());
             }
-            String orderSql = sqlSegment.toSql();
+            String orderSql = sqlSegment.toSql(sqlParameterCollector);
             if (sb.length() == 0) {
                 sb.insert(0, orderSql);
 

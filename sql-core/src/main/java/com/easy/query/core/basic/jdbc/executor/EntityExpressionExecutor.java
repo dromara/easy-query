@@ -1,9 +1,13 @@
 package com.easy.query.core.basic.jdbc.executor;
 
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
-import com.easy.query.core.expression.sql.EntityExpression;
-import com.easy.query.core.expression.sql.EntityInsertExpression;
-import com.easy.query.core.expression.sql.EntityQueryExpression;
+import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
+import com.easy.query.core.expression.sql.expression.EasyEntitySqlExpression;
+import com.easy.query.core.expression.sql.expression.EasyInsertSqlExpression;
+import com.easy.query.core.expression.sql.expression.EasyQuerySqlExpression;
+import com.easy.query.core.expression.sql.expression.EasySqlExpression;
 
 import java.util.List;
 
@@ -14,9 +18,9 @@ import java.util.List;
  * @author xuejiaming
  */
 public interface EntityExpressionExecutor {
-    <TR> List<TR> query(ExecutorContext executorContext, Class<TR> clazz, EntityQueryExpression entityQueryExpression);
+    <TR> List<TR> query(ExecutorContext executorContext, Class<TR> clazz, EasyQuerySqlExpression easyQuerySqlExpression);
     <TR> List<TR> query(ExecutorContext executorContext, Class<TR> clazz, String sql, List<SQLParameter> sqlParameters);
-    <T> long insert(ExecutorContext executorContext, List<T> entities, EntityInsertExpression entityInsertExpression, boolean fillAutoIncrement);
-    <T> long executeRows(ExecutorContext executorContext, EntityExpression entityExpression, List<T> entities);
-    <T> long executeRows(ExecutorContext executorContext, EntityExpression entityExpression);
+    <T> long insert(ExecutorContext executorContext, List<T> entities, EasyInsertSqlExpression easyInsertSqlExpression, boolean fillAutoIncrement);
+    <T> long executeRows(ExecutorContext executorContext, EasyEntitySqlExpression easyEntitySqlExpression, List<T> entities);
+    <T> long executeRows(ExecutorContext executorContext, EasyEntitySqlExpression easyEntitySqlExpression);
 }

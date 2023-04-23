@@ -2,7 +2,7 @@ package com.easy.query.core.expression.parser.impl;
 
 import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import com.easy.query.core.expression.parser.abstraction.SqlColumnSelector;
-import com.easy.query.core.expression.sql.EntityExpression;
+import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 
 /**
  * @FileName: DefaultSqlColumnSelector.java
@@ -11,7 +11,7 @@ import com.easy.query.core.expression.sql.EntityExpression;
  * @author xuejiaming
  */
 public class DefaultSqlColumnSelector<T1> extends AbstractSqlColumnSelector<T1, SqlColumnSelector<T1>> implements SqlColumnSelector<T1>{
-    public DefaultSqlColumnSelector(int index, EntityExpression sqlEntityExpression, SqlBuilderSegment sqlSegmentBuilder) {
+    public DefaultSqlColumnSelector(int index, EntityExpressionBuilder sqlEntityExpression, SqlBuilderSegment sqlSegmentBuilder) {
         super(index, sqlEntityExpression,sqlSegmentBuilder);
     }
 }

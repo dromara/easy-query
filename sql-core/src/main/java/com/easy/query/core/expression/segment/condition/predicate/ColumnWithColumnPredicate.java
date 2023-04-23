@@ -1,8 +1,9 @@
 package com.easy.query.core.expression.segment.condition.predicate;
 
+import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
 import com.easy.query.core.enums.SqlPredicateCompare;
-import com.easy.query.core.expression.sql.EntityExpression;
-import com.easy.query.core.expression.sql.EntityTableExpression;
+import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 
 /**
  * @FileName: ColumnValuePredicate.java
@@ -11,14 +12,14 @@ import com.easy.query.core.expression.sql.EntityTableExpression;
  * @author xuejiaming
  */
 public class ColumnWithColumnPredicate implements Predicate {
-    private final EntityTableExpression leftTable;
+    private final EntityTableExpressionBuilder leftTable;
     private final String leftPropertyName;
-    private final EntityTableExpression rightTable;
+    private final EntityTableExpressionBuilder rightTable;
     private final String rightPropertyName;
     private final SqlPredicateCompare compare;
-    private final EntityExpression sqlEntityExpression;
+    private final EntityExpressionBuilder sqlEntityExpression;
 
-    public ColumnWithColumnPredicate(EntityTableExpression leftTable, String leftPropertyName, EntityTableExpression rightTable, String rightPropertyName, SqlPredicateCompare compare, EntityExpression sqlEntityExpression) {
+    public ColumnWithColumnPredicate(EntityTableExpressionBuilder leftTable, String leftPropertyName, EntityTableExpressionBuilder rightTable, String rightPropertyName, SqlPredicateCompare compare, EntityExpressionBuilder sqlEntityExpression) {
         this.leftTable = leftTable;
         this.leftPropertyName = leftPropertyName;
         this.rightTable = rightTable;
@@ -28,14 +29,14 @@ public class ColumnWithColumnPredicate implements Predicate {
     }
 
     @Override
-    public String toSql() {
+    public String toSql(SqlParameterCollector sqlParameterCollector) {
         String sqlColumnSegment1 = sqlEntityExpression.getSqlOwnerColumn(leftTable,leftPropertyName);
         String sqlColumnSegment2 = sqlEntityExpression.getSqlOwnerColumn(rightTable,rightPropertyName);
         return sqlColumnSegment1 +" "+ compare.getSql() + " "+sqlColumnSegment2;
     }
 
     @Override
-    public EntityTableExpression getTable() {
+    public EntityTableExpressionBuilder getTable() {
         return leftTable;
     }
 
@@ -44,4 +45,8 @@ public class ColumnWithColumnPredicate implements Predicate {
         return leftPropertyName;
     }
 
+    @Override
+    public SqlPredicateCompare getOperator() {
+        return compare;
+    }
 }

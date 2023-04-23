@@ -5,7 +5,9 @@ import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.pagination.EasyPageResultProvider;
 import com.easy.query.core.common.bean.FastBean;
 import com.easy.query.core.enums.EasyBehaviorEnum;
-import com.easy.query.core.expression.sql.AnonymousEntityTableExpression;
+import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
+import com.easy.query.core.expression.sql.expression.EasyQuerySqlExpression;
+import com.easy.query.core.expression.sql.expression.EasySqlExpression;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.annotation.EasyWhereCondition;
@@ -31,8 +33,8 @@ import com.easy.query.core.expression.parser.abstraction.internal.ColumnSelector
 import com.easy.query.core.expression.segment.SelectConstSegment;
 import com.easy.query.core.expression.segment.builder.ProjectSqlBuilderSegment;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnValuePredicate;
-import com.easy.query.core.expression.sql.EntityQueryExpression;
-import com.easy.query.core.expression.sql.EntityTableExpression;
+import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.enums.EasyFunc;
 import com.easy.query.core.basic.api.select.Queryable;
 import com.easy.query.core.enums.SqlPredicateCompareEnum;
@@ -64,7 +66,7 @@ import java.util.function.Function;
 public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     protected final Class<T1> t1Class;
     //    protected final SqlEntityTableExpression sqlTable;
-    protected final EntityQueryExpression sqlEntityExpression;
+    protected final EntityQueryExpressionBuilder sqlEntityExpression;
 //    protected final Select1SqlProvider<T1> sqlPredicateProvider;
 
     @Override
@@ -72,7 +74,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
         return t1Class;
     }
 
-    public AbstractQueryable(Class<T1> t1Class, EntityQueryExpression sqlEntityExpression) {
+    public AbstractQueryable(Class<T1> t1Class, EntityQueryExpressionBuilder sqlEntityExpression) {
         this.t1Class = t1Class;
         this.sqlEntityExpression = sqlEntityExpression;
     }
@@ -100,14 +102,14 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
 //            return ArrayUtil.firstOrDefault(result,0L);
 //        }
 
-        EntityQueryExpression entityQueryExpression = sqlEntityExpression.cloneSqlQueryExpression();
-        EntityQueryExpression countSqlEntityExpression = SqlExpressionUtil.getCountEntityQueryExpression(entityQueryExpression);
-        if(countSqlEntityExpression==null){
+        EntityQueryExpressionBuilder entityQueryExpression = sqlEntityExpression.cloneSqlQueryExpressionBuilder();
+        EntityQueryExpressionBuilder countSqlEntityExpressionBuilder = SqlExpressionUtil.getCountEntityQueryExpression(entityQueryExpression);
+        if(countSqlEntityExpressionBuilder==null){
             List<Long> result =cloneQueryable().select(" COUNT(1) ").toList(Long.class);
             return ArrayUtil.firstOrDefault(result,0L);
         }
 
-        List<Long> result = toInternalListWithExpression(countSqlEntityExpression,Long.class);
+        List<Long> result = toInternalListWithExpression(countSqlEntityExpressionBuilder,Long.class);
         return ArrayUtil.firstOrDefault(result,0L);
     }
 
@@ -116,7 +118,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
         ProjectSqlBuilderSegment sqlSegmentBuilder = new ProjectSqlBuilderSegment();
         SqlColumnSelector<T1> sqlColumnSelector = getSqlBuilderProvider1().getSqlColumnSelector1(sqlSegmentBuilder);
         selectExpression.apply(sqlColumnSelector);
-        List<Long> result = cloneQueryable().select(EasyAggregate.COUNT_DISTINCT.getFuncColumn(sqlSegmentBuilder.toSql())).toList(Long.class);
+        List<Long> result = cloneQueryable().select(EasyAggregate.COUNT_DISTINCT.getFuncColumn(sqlSegmentBuilder.toSql(null))).toList(Long.class);
 
         if (result.isEmpty()) {
             return 0L;
@@ -171,7 +173,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
 
     @Override
     public Integer lenOrDefault(Property<T1, ?> column, Integer def) {
-        EntityTableExpression table = sqlEntityExpression.getTable(0);
+        EntityTableExpressionBuilder table = sqlEntityExpression.getTable(0);
         String propertyName = table.getPropertyName(column);
         String ownerColumn = sqlEntityExpression.getSqlOwnerColumn(table, propertyName);
         List<Integer> result = cloneQueryable().select(EasyAggregate.LEN.getFuncColumn(ownerColumn)).toList(Integer.class);
@@ -179,7 +181,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     }
 
     private <TMember> List<TMember> selectAggregateList(Property<T1, ?> column, EasyFunc easyFunc) {
-        EntityTableExpression table = sqlEntityExpression.getTable(0);
+        EntityTableExpressionBuilder table = sqlEntityExpression.getTable(0);
         String propertyName = table.getPropertyName(column);
         ColumnMetadata columnMetadata = EasyUtil.getColumnMetadata(table, propertyName);
         String ownerColumn = sqlEntityExpression.getSqlOwnerColumn(table, propertyName);
@@ -237,13 +239,9 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
 //        if (SqlExpressionUtil.shouldCloneSqlEntityQueryExpression(sqlEntityExpression)) {
 //            return select(resultClass).toSql();
 //        }
-        return toInternalSql();
+        return sqlEntityExpression.toExpression().toSql(null);
     }
 
-
-    protected String toInternalSql(){
-        return sqlEntityExpression.toSql();
-    }
 
     /**
      * 子类实现方法
@@ -263,10 +261,11 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
 //        }
     }
 
-    protected <TR> List<TR> toInternalListWithExpression(EntityQueryExpression entityQueryExpression,Class<TR> resultClass){
+    protected <TR> List<TR> toInternalListWithExpression(EntityQueryExpressionBuilder entityQueryExpressionBuilder, Class<TR> resultClass){
         boolean tracking = sqlEntityExpression.getExpressionContext().getBehavior().hasBehavior(EasyBehaviorEnum.USE_TRACKING);
         EntityExpressionExecutor entityExpressionExecutor = sqlEntityExpression.getRuntimeContext().getEntityExpressionExecutor();
-        return entityExpressionExecutor.query(ExecutorContext.create(sqlEntityExpression.getRuntimeContext(),false,tracking ),resultClass,entityQueryExpression);
+        EasyQuerySqlExpression easyQuerySqlExpression = entityQueryExpressionBuilder.toExpression();
+        return entityExpressionExecutor.query(ExecutorContext.create(sqlEntityExpression.getRuntimeContext(),false,tracking ),resultClass,easyQuerySqlExpression);
     }
 //    protected <TR> List<TR> toInternalListWithSql(String sql,Class<TR> resultClass){
 //        EasyExecutor easyExecutor = sqlEntityExpression.getRuntimeContext().getEasyExecutor();
@@ -324,7 +323,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
         if (condition) {
 
             PredicateSegment where = sqlEntityExpression.getWhere();
-            EntityTableExpression table = sqlEntityExpression.getTable(0);
+            EntityTableExpressionBuilder table = sqlEntityExpression.getTable(0);
             Collection<String> keyProperties = table.getEntityMetadata().getKeyProperties();
             if (keyProperties.isEmpty()) {
                 throw new EasyQueryException("对象:" + ClassUtil.getSimpleName(t1Class) + "未找到主键信息");
@@ -579,12 +578,12 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
         return this;
     }
 
-    private void doWithOutAnonymousAndClearExpression(EntityQueryExpression sqlEntityExpression, Consumer<EntityQueryExpression> consumer) {
+    private void doWithOutAnonymousAndClearExpression(EntityQueryExpressionBuilder sqlEntityExpression, Consumer<EntityQueryExpressionBuilder> consumer) {
 
         //如果当前只有一张表并且是匿名表,那么limit直接处理当前的匿名表的表达式
         if (SqlExpressionUtil.limitAndOrderNotSetCurrent(sqlEntityExpression)) {
-            AnonymousEntityTableExpression anonymousEntityTableExpression = (AnonymousEntityTableExpression) sqlEntityExpression.getTable(0);
-            doWithOutAnonymousAndClearExpression(anonymousEntityTableExpression.getEntityQueryExpression(), consumer);
+            AnonymousEntityTableExpressionBuilder anonymousEntityTableExpression = (AnonymousEntityTableExpressionBuilder) sqlEntityExpression.getTable(0);
+            doWithOutAnonymousAndClearExpression(anonymousEntityTableExpression.getEntityQueryExpressionBuilder(), consumer);
         } else {
             consumer.accept(sqlEntityExpression);
         }
@@ -627,7 +626,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
 
 
     @Override
-    public EntityQueryExpression getSqlEntityExpression() {
+    public EntityQueryExpressionBuilder getSqlEntityExpression() {
         return sqlEntityExpression;
     }
 

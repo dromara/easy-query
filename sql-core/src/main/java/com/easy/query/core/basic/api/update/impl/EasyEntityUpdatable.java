@@ -1,7 +1,7 @@
 package com.easy.query.core.basic.api.update.impl;
 
 import com.easy.query.core.basic.api.update.abstraction.AbstractEntityUpdatable;
-import com.easy.query.core.expression.sql.EntityUpdateExpression;
+import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
 
 import java.util.Collection;
 
@@ -13,12 +13,7 @@ import java.util.Collection;
  */
 public class EasyEntityUpdatable<T> extends AbstractEntityUpdatable<T> {
 
-    public EasyEntityUpdatable(Collection<T> entities, EntityUpdateExpression entityUpdateExpression) {
+    public EasyEntityUpdatable(Collection<T> entities, EntityUpdateExpressionBuilder entityUpdateExpression) {
         super(entities, entityUpdateExpression);
-    }
-
-    @Override
-    public String toSql(Object entity) {
-        return entityUpdateExpression.toSql(entity);
     }
 }

@@ -14,9 +14,13 @@ import com.easy.query.core.expression.executor.parser.EasyPrepareParser;
 import com.easy.query.core.expression.executor.parser.ExecutionContext;
 import com.easy.query.core.expression.executor.parser.PrepareParseResult;
 import com.easy.query.core.expression.executor.query.ExecutionContextFactory;
-import com.easy.query.core.expression.sql.EntityExpression;
-import com.easy.query.core.expression.sql.EntityInsertExpression;
-import com.easy.query.core.expression.sql.EntityQueryExpression;
+import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
+import com.easy.query.core.expression.sql.expression.EasyEntitySqlExpression;
+import com.easy.query.core.expression.sql.expression.EasyInsertSqlExpression;
+import com.easy.query.core.expression.sql.expression.EasyQuerySqlExpression;
+import com.easy.query.core.expression.sql.expression.EasySqlExpression;
 import com.easy.query.core.sharding.merge.DefaultStreamMergeContext;
 import com.easy.query.core.util.ClassUtil;
 import com.easy.query.core.util.StreamResultUtil;
@@ -63,8 +67,8 @@ public class DefaultEntityExpressionExecutor implements EntityExpressionExecutor
     }
 
     @Override
-    public <TR> List<TR> query(ExecutorContext executorContext, Class<TR> clazz, EntityQueryExpression entityQueryExpression) {
-        PrepareParseResult prepareParseResult = easyPrepareParser.parse(entityQueryExpression);
+    public <TR> List<TR> query(ExecutorContext executorContext, Class<TR> clazz, EasyQuerySqlExpression easyQuerySqlExpression) {
+        PrepareParseResult prepareParseResult = easyPrepareParser.parse(easyQuerySqlExpression);
         ExecutionContext executionContext = executionContextFactory.createExecutionContext(prepareParseResult);
 
         try (EasyQueryJDBCExecutor easyQueryJDBCExecutor = getQueryJDBCExecuteResult(executorContext, executionContext);
@@ -99,8 +103,8 @@ public class DefaultEntityExpressionExecutor implements EntityExpressionExecutor
     }
 
     @Override
-    public <T> long insert(ExecutorContext executorContext, List<T> entities, EntityInsertExpression entityInsertExpression, boolean fillAutoIncrement) {
-        PrepareParseResult prepareParseResult = easyPrepareParser.parse(entityInsertExpression);
+    public <T> long insert(ExecutorContext executorContext, List<T> entities, EasyInsertSqlExpression easyInsertSqlExpression, boolean fillAutoIncrement) {
+        PrepareParseResult prepareParseResult = easyPrepareParser.parse(easyInsertSqlExpression);
         ExecutionContext executionContext = executionContextFactory.createExecutionContext(prepareParseResult);
 
         try (EasyQueryJDBCExecutor easyQueryJDBCExecutor = getInsertJDBCExecuteResult(executorContext, executionContext);
@@ -117,8 +121,8 @@ public class DefaultEntityExpressionExecutor implements EntityExpressionExecutor
     }
 
     @Override
-    public <T> long executeRows(ExecutorContext executorContext, EntityExpression entityExpression, List<T> entities) {
-        PrepareParseResult prepareParseResult = easyPrepareParser.parse(entityExpression);
+    public <T> long executeRows(ExecutorContext executorContext, EasyEntitySqlExpression easyEntitySqlExpression, List<T> entities) {
+        PrepareParseResult prepareParseResult = easyPrepareParser.parse(easyEntitySqlExpression);
         ExecutionContext executionContext = executionContextFactory.createExecutionContext(prepareParseResult);
         try (EasyQueryJDBCExecutor easyQueryJDBCExecutor = getExecuteBatchJDBCExecuteResult(executorContext, executionContext);
              ExecuteResult executeResult = easyQueryJDBCExecutor.execute()) {
@@ -134,8 +138,8 @@ public class DefaultEntityExpressionExecutor implements EntityExpressionExecutor
     }
 
     @Override
-    public <T> long executeRows(ExecutorContext executorContext, EntityExpression entityExpression) {
-        PrepareParseResult prepareParseResult = easyPrepareParser.parse(entityExpression);
+    public <T> long executeRows(ExecutorContext executorContext, EasyEntitySqlExpression easyEntitySqlExpression) {
+        PrepareParseResult prepareParseResult = easyPrepareParser.parse(easyEntitySqlExpression);
         ExecutionContext executionContext = executionContextFactory.createExecutionContext(prepareParseResult);
         try (EasyQueryJDBCExecutor easyQueryJDBCExecutor = getExecuteUpdateJDBCExecuteResult(executorContext, executionContext);
              ExecuteResult executeResult = easyQueryJDBCExecutor.execute()) {

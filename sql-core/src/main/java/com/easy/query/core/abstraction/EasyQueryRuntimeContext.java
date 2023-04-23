@@ -5,6 +5,7 @@ import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
 import com.easy.query.core.basic.pagination.EasyPageResultProvider;
 import com.easy.query.core.basic.thread.EasyShardingExecutorService;
 import com.easy.query.core.expression.parser.factory.EasyQueryLambdaFactory;
+import com.easy.query.core.expression.sql.factory.EasyExpressionBuilderFactory;
 import com.easy.query.core.expression.sql.factory.EasyExpressionFactory;
 import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.basic.jdbc.executor.EasyOldExecutor;
@@ -29,7 +30,8 @@ public interface EasyQueryRuntimeContext {
     EntityExpressionExecutor getEntityExpressionExecutor();
     EasyJdbcTypeHandlerManager getEasyJdbcTypeHandlerManager();
     EasySqlApiFactory getSqlApiFactory();
-    EasyExpressionFactory getSqlExpressionFactory();
+    EasyExpressionBuilderFactory getSqlExpressionBuilderFactory();
+    EasyExpressionFactory getExpressionFactory();
     TrackManager getTrackManager();
     EasyPageResultProvider getEasyPageResultProvider();
     EasyShardingOption getEasyShardingOption();

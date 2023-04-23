@@ -1,6 +1,6 @@
 package com.easy.query.core.sharding.route.table.engine;
 
-import com.easy.query.core.expression.sql.EntityQueryExpression;
+import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.sharding.route.ShardingRouteResult;
 import com.easy.query.core.sharding.route.datasource.engine.DataSourceRouteResult;
 
@@ -14,5 +14,5 @@ import java.util.Map;
  */
 public interface TableRouteEngineFactory {
 
-    ShardingRouteResult route(DataSourceRouteResult dataSourceRouteResult, EntityQueryExpression entityQueryExpression, Map<Class<?>,EntityQueryExpression> queryEntities);
+    ShardingRouteResult route(DataSourceRouteResult dataSourceRouteResult, EntityQueryExpressionBuilder entityQueryExpression, Map<Class<?>, EntityQueryExpressionBuilder> queryEntities);
 }

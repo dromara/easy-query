@@ -9,12 +9,12 @@ import com.easy.query.core.expression.segment.condition.predicate.ColumnCollecti
 import com.easy.query.core.expression.segment.condition.predicate.ColumnValuePredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnWithColumnPredicate;
 import com.easy.query.core.expression.segment.condition.predicate.FuncColumnValuePredicate;
-import com.easy.query.core.expression.sql.EntityTableExpression;
+import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.enums.SqlPredicateCompareEnum;
 import com.easy.query.core.expression.lambda.SqlExpression;
 import com.easy.query.core.expression.parser.abstraction.SqlPredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnPredicate;
-import com.easy.query.core.expression.sql.EntityExpression;
+import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.util.SQLUtil;
 
 import java.util.Collection;
@@ -27,11 +27,11 @@ import java.util.Collection;
  */
 public class DefaultSqlPredicate<T1> implements SqlPredicate<T1> {
     private final int index;
-    private final EntityExpression sqlEntityExpression;
+    private final EntityExpressionBuilder sqlEntityExpression;
     private final PredicateSegment rootPredicateSegment;
     private PredicateSegment nextPredicateSegment;
 
-    public DefaultSqlPredicate(int index, EntityExpression sqlEntityExpression, PredicateSegment predicateSegment) {
+    public DefaultSqlPredicate(int index, EntityExpressionBuilder sqlEntityExpression, PredicateSegment predicateSegment) {
         this.index = index;
         this.sqlEntityExpression = sqlEntityExpression;
         this.rootPredicateSegment = predicateSegment;
@@ -54,13 +54,13 @@ public class DefaultSqlPredicate<T1> implements SqlPredicate<T1> {
     }
 
     protected void appendThisPredicate(Property<T1, ?> column, Object val, SqlPredicateCompareEnum condition) {
-        EntityTableExpression table = sqlEntityExpression.getTable(getIndex());
+        EntityTableExpressionBuilder table = sqlEntityExpression.getTable(getIndex());
         String propertyName = table.getPropertyName(column);
 
         nextPredicateSegment.setPredicate(new ColumnValuePredicate(table, propertyName, val, condition, sqlEntityExpression));
     }
     protected void appendThisFuncPredicate(Property<T1, ?> column,EasyFunc func, SqlPredicateCompareEnum compare, Object val) {
-        EntityTableExpression table = sqlEntityExpression.getTable(getIndex());
+        EntityTableExpressionBuilder table = sqlEntityExpression.getTable(getIndex());
         String propertyName = table.getPropertyName(column);
 
         nextPredicateSegment.setPredicate(new FuncColumnValuePredicate(table,func, propertyName, val, compare, sqlEntityExpression));
@@ -143,7 +143,7 @@ public class DefaultSqlPredicate<T1> implements SqlPredicate<T1> {
     @Override
     public SqlPredicate<T1> isNull(boolean condition, Property<T1, ?> column) {
         if (condition) {
-            EntityTableExpression table = sqlEntityExpression.getTable(getIndex());
+            EntityTableExpressionBuilder table = sqlEntityExpression.getTable(getIndex());
             String propertyName = table.getPropertyName(column);
             nextPredicateSegment.setPredicate(new ColumnPredicate(table, propertyName, SqlPredicateCompareEnum.IS_NULL, sqlEntityExpression));
             nextAnd();
@@ -154,7 +154,7 @@ public class DefaultSqlPredicate<T1> implements SqlPredicate<T1> {
     @Override
     public SqlPredicate<T1> isNotNull(boolean condition, Property<T1, ?> column) {
         if (condition) {
-            EntityTableExpression table = sqlEntityExpression.getTable(getIndex());
+            EntityTableExpressionBuilder table = sqlEntityExpression.getTable(getIndex());
             String propertyName = table.getPropertyName(column);
             nextPredicateSegment.setPredicate(new ColumnPredicate(table, propertyName, SqlPredicateCompareEnum.IS_NOT_NULL, sqlEntityExpression));
             nextAnd();
@@ -166,7 +166,7 @@ public class DefaultSqlPredicate<T1> implements SqlPredicate<T1> {
     @Override
     public SqlPredicate<T1> in(boolean condition, Property<T1, ?> column, Collection<?> collection) {
         if (condition) {
-            EntityTableExpression table = sqlEntityExpression.getTable(getIndex());
+            EntityTableExpressionBuilder table = sqlEntityExpression.getTable(getIndex());
             String propertyName = table.getPropertyName(column);
             nextPredicateSegment.setPredicate(new ColumnCollectionPredicate(table, propertyName, collection, SqlPredicateCompareEnum.IN, sqlEntityExpression));
             nextAnd();
@@ -177,7 +177,7 @@ public class DefaultSqlPredicate<T1> implements SqlPredicate<T1> {
     @Override
     public SqlPredicate<T1> notIn(boolean condition, Property<T1, ?> column, Collection<?> collection) {
         if (condition) {
-            EntityTableExpression table = sqlEntityExpression.getTable(getIndex());
+            EntityTableExpressionBuilder table = sqlEntityExpression.getTable(getIndex());
             String propertyName = table.getPropertyName(column);
             nextPredicateSegment.setPredicate(new ColumnCollectionPredicate(table, propertyName, collection, SqlPredicateCompareEnum.NOT_IN, sqlEntityExpression));
             nextAnd();
@@ -215,9 +215,9 @@ public class DefaultSqlPredicate<T1> implements SqlPredicate<T1> {
     @Override
     public <T2, TChain2> DefaultSqlPredicate<T1> eq(boolean condition, WherePredicate<T2, TChain2> sub, Property<T1, ?> column1, Property<T2, ?> column2) {
         if (condition) {
-            EntityTableExpression leftTable = sqlEntityExpression.getTable(getIndex());
+            EntityTableExpressionBuilder leftTable = sqlEntityExpression.getTable(getIndex());
             String leftPropertyName = leftTable.getPropertyName(column1);
-            EntityTableExpression rightTable = sqlEntityExpression.getTable(sub.getIndex());
+            EntityTableExpressionBuilder rightTable = sqlEntityExpression.getTable(sub.getIndex());
             String rightPropertyName = rightTable.getPropertyName(column2);
             nextPredicateSegment.setPredicate(new ColumnWithColumnPredicate(leftTable, leftPropertyName, rightTable, rightPropertyName, SqlPredicateCompareEnum.EQ, sqlEntityExpression));
             nextAnd();

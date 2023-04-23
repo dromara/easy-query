@@ -3,11 +3,8 @@ package com.easy.query.core.sharding.merge;
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.con.EasyConnection;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
-import com.easy.query.core.expression.sql.EntityExpression;
 import com.easy.query.core.sharding.enums.ConnectionModeEnum;
 import com.easy.query.core.sharding.merge.executor.common.ExecutionUnit;
-import com.easy.query.core.sharding.merge.executor.internal.CommandTypeEnum;
-import com.easy.query.core.sharding.route.ShardingRouteResult;
 
 import java.util.Collection;
 import java.util.List;

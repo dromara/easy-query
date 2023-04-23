@@ -1,8 +1,9 @@
 package com.easy.query.core.expression.segment;
 
+import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
 import com.easy.query.core.enums.EasyFunc;
-import com.easy.query.core.expression.sql.EntityExpression;
-import com.easy.query.core.expression.sql.EntityTableExpression;
+import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 
 /**
  * @FileName: FuncColumnSegment.java
@@ -13,16 +14,16 @@ import com.easy.query.core.expression.sql.EntityTableExpression;
 public class FuncColumnSegment  implements SqlEntityAliasSegment {
 
 
-    protected final EntityTableExpression table;
+    protected final EntityTableExpressionBuilder table;
     protected final String propertyName;
-    protected final EntityExpression sqlEntityExpression;
+    protected final EntityExpressionBuilder sqlEntityExpression;
     protected final EasyFunc easyFunc;
     protected String alias;
 
-    public FuncColumnSegment(EntityTableExpression table, String propertyName, EntityExpression sqlEntityExpression, EasyFunc easyFunc){
+    public FuncColumnSegment(EntityTableExpressionBuilder table, String propertyName, EntityExpressionBuilder sqlEntityExpression, EasyFunc easyFunc){
         this(table,propertyName,sqlEntityExpression,easyFunc,null);
     }
-    public FuncColumnSegment(EntityTableExpression table, String propertyName, EntityExpression sqlEntityExpression, EasyFunc easyFunc, String alias){
+    public FuncColumnSegment(EntityTableExpressionBuilder table, String propertyName, EntityExpressionBuilder sqlEntityExpression, EasyFunc easyFunc, String alias){
         this.table = table;
         this.propertyName = propertyName;
         this.sqlEntityExpression = sqlEntityExpression;
@@ -31,7 +32,7 @@ public class FuncColumnSegment  implements SqlEntityAliasSegment {
     }
 
     @Override
-    public String toSql() {
+    public String toSql(SqlParameterCollector sqlParameterCollector) {
         String sqlColumnSegment = sqlEntityExpression.getSqlOwnerColumn(table,propertyName);
         String funcColumn = easyFunc.getFuncColumn(sqlColumnSegment);
         StringBuilder sql = new StringBuilder().append(funcColumn);
@@ -42,7 +43,7 @@ public class FuncColumnSegment  implements SqlEntityAliasSegment {
     }
 
     @Override
-    public EntityTableExpression getTable() {
+    public EntityTableExpressionBuilder getTable() {
         return table;
     }
 

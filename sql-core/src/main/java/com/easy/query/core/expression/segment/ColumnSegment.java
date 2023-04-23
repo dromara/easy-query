@@ -1,7 +1,8 @@
 package com.easy.query.core.expression.segment;
 
-import com.easy.query.core.expression.sql.EntityExpression;
-import com.easy.query.core.expression.sql.EntityTableExpression;
+import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
+import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 
 /**
  * @FileName: ColumnSegment.java
@@ -12,17 +13,17 @@ import com.easy.query.core.expression.sql.EntityTableExpression;
 public class ColumnSegment implements SqlEntityAliasSegment {
 
 
-    protected final EntityTableExpression table;
+    protected final EntityTableExpressionBuilder table;
 
 
     protected final String propertyName;
-    protected final EntityExpression sqlEntityExpression;
+    protected final EntityExpressionBuilder sqlEntityExpression;
     protected String alias;
 
-    public ColumnSegment(EntityTableExpression table, String propertyName, EntityExpression sqlEntityExpression){
+    public ColumnSegment(EntityTableExpressionBuilder table, String propertyName, EntityExpressionBuilder sqlEntityExpression){
         this(table,propertyName,sqlEntityExpression,null);
     }
-    public ColumnSegment(EntityTableExpression table, String propertyName, EntityExpression sqlEntityExpression, String alias){
+    public ColumnSegment(EntityTableExpressionBuilder table, String propertyName, EntityExpressionBuilder sqlEntityExpression, String alias){
         this.table = table;
 
         this.propertyName = propertyName;
@@ -31,7 +32,7 @@ public class ColumnSegment implements SqlEntityAliasSegment {
     }
 
     @Override
-    public EntityTableExpression getTable() {
+    public EntityTableExpressionBuilder getTable() {
         return table;
     }
 
@@ -46,7 +47,7 @@ public class ColumnSegment implements SqlEntityAliasSegment {
     }
 
     @Override
-    public String toSql() {
+    public String toSql(SqlParameterCollector sqlParameterCollector) {
         String sqlColumnSegment = sqlEntityExpression.getSqlOwnerColumn(table,propertyName);
         StringBuilder sql = new StringBuilder();
         sql.append(sqlColumnSegment);

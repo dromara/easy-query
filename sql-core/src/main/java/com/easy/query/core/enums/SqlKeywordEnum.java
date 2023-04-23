@@ -1,7 +1,6 @@
 package com.easy.query.core.enums;
 
 
-import com.easy.query.core.expression.segment.SqlSegment;
 
 /**
  * @FileName: SqlKeywordEnum.java
@@ -9,7 +8,7 @@ import com.easy.query.core.expression.segment.SqlSegment;
  * @Date: 2023/2/13 21:40
  * @author xuejiaming
  */
-public enum SqlKeywordEnum implements SqlSegment {
+public enum SqlKeywordEnum  {
 
     AND("AND"),
     OR("OR"),
@@ -43,7 +42,6 @@ public enum SqlKeywordEnum implements SqlSegment {
         this.keyword = keyword;
     }
 
-    @Override
     public String toSql() {
         return keyword;
     }

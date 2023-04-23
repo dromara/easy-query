@@ -1,16 +1,18 @@
 package com.easy.query.core.basic.api.insert;
 
 import com.easy.query.core.basic.api.internal.SqlEntityNode;
+import com.easy.query.core.basic.jdbc.parameter.DefaultSqlParameterCollector;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
+import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
 import com.easy.query.core.basic.plugin.interceptor.EasyInterceptorEntry;
 import com.easy.query.core.configuration.EasyQueryConfiguration;
 import com.easy.query.core.enums.SqlExecuteStrategyEnum;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.basic.plugin.interceptor.EasyEntityInterceptor;
-import com.easy.query.core.expression.sql.def.EasyEntityTableExpression;
-import com.easy.query.core.expression.sql.EntityInsertExpression;
-import com.easy.query.core.expression.sql.EntityTableExpression;
+import com.easy.query.core.expression.sql.builder.impl.TableExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.util.ArrayUtil;
 import com.easy.query.core.util.SqlExpressionUtil;
 import com.easy.query.core.basic.jdbc.executor.EasyOldExecutor;
@@ -33,15 +35,15 @@ import java.util.stream.Collectors;
 public abstract class AbstractInsertable<T> implements Insertable<T> {
     protected final List<T> entities;
     protected final EntityMetadata entityMetadata;
-    protected final EntityInsertExpression entityInsertExpression;
+    protected final EntityInsertExpressionBuilder entityInsertExpression;
 
-    public AbstractInsertable(Class<T> clazz, EntityInsertExpression entityInsertExpression) {
+    public AbstractInsertable(Class<T> clazz, EntityInsertExpressionBuilder entityInsertExpression) {
         this.entityInsertExpression = entityInsertExpression;
         this.entities = new ArrayList<>();
         entityMetadata = this.entityInsertExpression.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(clazz);
         entityMetadata.checkTable();
 
-        EntityTableExpression table = new EasyEntityTableExpression(entityMetadata, 0, null, MultiTableTypeEnum.FROM);
+        EntityTableExpressionBuilder table = new TableExpressionBuilder(entityMetadata, 0, null, MultiTableTypeEnum.FROM);
         this.entityInsertExpression.addSqlEntityTableExpression(table);
     }
 
@@ -89,19 +91,21 @@ public abstract class AbstractInsertable<T> implements Insertable<T> {
         if (useInsertSqlGroup()) {
             Map<String, SqlEntityNode> updateEntityNodeMap = new LinkedHashMap<>();
             for (T entity : entities) {
-                String updateSql = toSql(entity);
+                DefaultSqlParameterCollector defaultSqlParameterCollector = new DefaultSqlParameterCollector();
+                String updateSql = toSqlWithParam(entity,defaultSqlParameterCollector);
                 //如果当前对象没有需要更新的列直接忽略
                 if (updateSql == null) {
                     continue;
                 }
-                List<SQLParameter> parameters = new ArrayList<>(entityInsertExpression.getParameters());
+                List<SQLParameter> parameters = new ArrayList<>(defaultSqlParameterCollector.getParameters());
                 SqlEntityNode updateEntityNode = updateEntityNodeMap.computeIfAbsent(updateSql, k -> new SqlEntityNode(updateSql, parameters));
                 updateEntityNode.getEntities().add(entity);
             }
             return new ArrayList<>(updateEntityNodeMap.values());
         } else {
-            String updateSql = toSql(null);
-            SqlEntityNode updateEntityNode = new SqlEntityNode(updateSql, new ArrayList<>(entityInsertExpression.getParameters()), entities.size());
+            DefaultSqlParameterCollector defaultSqlParameterCollector = new DefaultSqlParameterCollector();
+            String updateSql = toSqlWithParam(null,defaultSqlParameterCollector);
+            SqlEntityNode updateEntityNode = new SqlEntityNode(updateSql, new ArrayList<>(defaultSqlParameterCollector.getParameters()), entities.size());
             updateEntityNode.getEntities().addAll(entities);
             return Collections.singletonList(updateEntityNode);
         }
@@ -159,5 +163,10 @@ public abstract class AbstractInsertable<T> implements Insertable<T> {
         return this;
     }
 
-    public abstract String toSql(Object entity);
+    public String toSql(Object entity) {
+        return toSqlWithParam(entity,null);
+    }
+    private String toSqlWithParam(Object entity,SqlParameterCollector sqlParameterCollector){
+        return entityInsertExpression.toExpression(entity).toSql(sqlParameterCollector);
+    }
 }

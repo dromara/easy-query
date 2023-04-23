@@ -11,6 +11,7 @@ import com.easy.query.core.expression.segment.condition.predicate.Predicate;
  */
 public class OrPredicateSegment extends AbstractPredicateSegment {
     public static final String OR= " "+ SqlKeywordEnum.OR.toSql()+" ";
+
     public OrPredicateSegment() {
     }
 
@@ -20,5 +21,16 @@ public class OrPredicateSegment extends AbstractPredicateSegment {
 
     public OrPredicateSegment(Predicate predicate) {
         super(predicate);
+    }
+
+    public OrPredicateSegment(Predicate predicate, boolean root) {
+        super(predicate, root);
+    }
+
+    @Override
+    public PredicateSegment clonePredicateSegment() {
+        OrPredicateSegment orPredicateSegment = new OrPredicateSegment(predicate, root);
+        copyTo(orPredicateSegment);
+        return orPredicateSegment;
     }
 }

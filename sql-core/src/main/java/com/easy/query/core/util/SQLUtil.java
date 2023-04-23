@@ -3,6 +3,7 @@ package com.easy.query.core.util;
 import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.PropertySQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
+import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
 import com.easy.query.core.enums.SqlLikeEnum;
 
 import java.util.List;
@@ -52,5 +53,13 @@ public class SQLUtil {
             }
         }
         return builder.toString();
+    }
+
+
+
+    public static void addParameter(SqlParameterCollector sqlParameterCollector, SQLParameter sqlParameter){
+        if(sqlParameterCollector!=null){
+            sqlParameterCollector.addParameter(sqlParameter);
+        }
     }
 }

@@ -1,6 +1,5 @@
 package com.easy.query.core.sharding.route.abstraction;
 
-import com.easy.query.core.expression.sql.EntityExpression;
 import com.easy.query.core.sharding.parser.SqlParserResult;
 import com.easy.query.core.sharding.route.datasource.engine.DataSourceRouteResult;
 import com.easy.query.core.sharding.route.table.TableRouteUnit;

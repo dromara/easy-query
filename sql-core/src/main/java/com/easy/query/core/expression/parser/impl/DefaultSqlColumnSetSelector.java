@@ -5,8 +5,8 @@ import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.parser.abstraction.SqlColumnSelector;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnPropertyPredicate;
-import com.easy.query.core.expression.sql.EntityExpression;
-import com.easy.query.core.expression.sql.EntityTableExpression;
+import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 
 import java.util.Collection;
 import java.util.Objects;
@@ -19,10 +19,10 @@ import java.util.Objects;
  */
 public class DefaultSqlColumnSetSelector<T> implements SqlColumnSelector<T> {
     private final int index;
-    private final EntityExpression sqlEntityExpression;
+    private final EntityExpressionBuilder sqlEntityExpression;
     private final SqlBuilderSegment sqlSegmentBuilder;
 
-    public DefaultSqlColumnSetSelector(int index, EntityExpression sqlEntityExpression, SqlBuilderSegment sqlSegmentBuilder){
+    public DefaultSqlColumnSetSelector(int index, EntityExpressionBuilder sqlEntityExpression, SqlBuilderSegment sqlSegmentBuilder){
 
         this.index = index;
         this.sqlEntityExpression = sqlEntityExpression;
@@ -30,7 +30,7 @@ public class DefaultSqlColumnSetSelector<T> implements SqlColumnSelector<T> {
     }
     @Override
     public SqlColumnSelector<T> column(Property<T, ?> column) {
-        EntityTableExpression table = sqlEntityExpression.getTable(index);
+        EntityTableExpressionBuilder table = sqlEntityExpression.getTable(index);
         String propertyName = table.getPropertyName(column);
         sqlSegmentBuilder.append(new ColumnPropertyPredicate(table,propertyName,sqlEntityExpression));
         return this;
@@ -39,7 +39,7 @@ public class DefaultSqlColumnSetSelector<T> implements SqlColumnSelector<T> {
     @Override
     public SqlColumnSelector<T> columnIgnore(Property<T, ?> column) {
 
-        EntityTableExpression table = sqlEntityExpression.getTable(index);
+        EntityTableExpressionBuilder table = sqlEntityExpression.getTable(index);
         String propertyName = table.getPropertyName(column);
         sqlSegmentBuilder.getSqlSegments().removeIf(sqlSegment -> {
             if (sqlSegment instanceof SqlEntitySegment) {
@@ -53,7 +53,7 @@ public class DefaultSqlColumnSetSelector<T> implements SqlColumnSelector<T> {
 
     @Override
     public SqlColumnSelector<T> columnAll() {
-        EntityTableExpression table = sqlEntityExpression.getTable(index);
+        EntityTableExpressionBuilder table = sqlEntityExpression.getTable(index);
         Collection<String> properties = table.getEntityMetadata().getProperties();
         for (String property : properties) {
             sqlSegmentBuilder.append(new ColumnPropertyPredicate(table, property,sqlEntityExpression));

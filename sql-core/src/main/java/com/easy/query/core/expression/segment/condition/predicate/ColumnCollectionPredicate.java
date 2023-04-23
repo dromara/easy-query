@@ -1,10 +1,13 @@
 package com.easy.query.core.expression.segment.condition.predicate;
 
 import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
+import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
+import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
 import com.easy.query.core.enums.SqlPredicateCompare;
 import com.easy.query.core.enums.SqlPredicateCompareEnum;
-import com.easy.query.core.expression.sql.EntityExpression;
-import com.easy.query.core.expression.sql.EntityTableExpression;
+import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
+import com.easy.query.core.util.SQLUtil;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -15,14 +18,14 @@ import java.util.Iterator;
  * @Date: 2023/2/14 23:34
  * @author xuejiaming
  */
-public class ColumnCollectionPredicate implements Predicate {
+public class ColumnCollectionPredicate implements ValuesPredicate,ShardingPredicate {
     private final Collection<?> collection;
     private final SqlPredicateCompare compare;
-    private final EntityExpression sqlEntityExpression;
-    private final EntityTableExpression table;
+    private final EntityExpressionBuilder sqlEntityExpression;
+    private final EntityTableExpressionBuilder table;
     private final String propertyName;
 
-    public ColumnCollectionPredicate(EntityTableExpression table, String propertyName, Collection<?> collection, SqlPredicateCompare compare, EntityExpression sqlEntityExpression) {
+    public ColumnCollectionPredicate(EntityTableExpressionBuilder table, String propertyName, Collection<?> collection, SqlPredicateCompare compare, EntityExpressionBuilder sqlEntityExpression) {
         this.table = table;
         this.propertyName = propertyName;
         this.collection = collection;
@@ -31,7 +34,7 @@ public class ColumnCollectionPredicate implements Predicate {
     }
 
     @Override
-    public String toSql() {
+    public String toSql(SqlParameterCollector sqlParameterCollector) {
         if (collection.isEmpty()) {
             if (SqlPredicateCompareEnum.IN.equals(compare)) {
                 return "FALSE";
@@ -46,11 +49,11 @@ public class ColumnCollectionPredicate implements Predicate {
             sql.append(sqlColumnSegment).append(" ").append(compare.getSql()).append(" (");
             Iterator<?> iterator = collection.iterator();
             Object firstVal = iterator.next();
-            sqlEntityExpression.addParameter(new EasyConstSQLParameter(table,propertyName,firstVal));
+            SQLUtil.addParameter(sqlParameterCollector,new EasyConstSQLParameter(table,propertyName,firstVal));
             sql.append("?");
             while (iterator.hasNext()){
                 Object val = iterator.next();
-                sqlEntityExpression.addParameter(new EasyConstSQLParameter(table,propertyName,val));
+                SQLUtil.addParameter(sqlParameterCollector,new EasyConstSQLParameter(table,propertyName,val));
                 sql.append(",?");
             }
             sql.append(")");
@@ -59,12 +62,22 @@ public class ColumnCollectionPredicate implements Predicate {
     }
 
     @Override
-    public EntityTableExpression getTable() {
+    public EntityTableExpressionBuilder getTable() {
         return table;
     }
 
     @Override
     public String getPropertyName() {
         return propertyName;
+    }
+
+    @Override
+    public SqlPredicateCompare getOperator() {
+        return compare;
+    }
+
+    @Override
+    public Collection<SQLParameter> getParameters() {
+        return null;
     }
 }

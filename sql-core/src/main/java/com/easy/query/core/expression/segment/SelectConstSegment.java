@@ -1,5 +1,7 @@
 package com.easy.query.core.expression.segment;
 
+import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
+
 /**
  * @FileName: SelectCountSegment.java
  * @Description: 文件说明
@@ -14,7 +16,7 @@ public class SelectConstSegment implements SqlSegment{
         this.projects = projects;
     }
     @Override
-    public String toSql() {
+    public String toSql(SqlParameterCollector sqlParameterCollector) {
         return projects;
     }
 }

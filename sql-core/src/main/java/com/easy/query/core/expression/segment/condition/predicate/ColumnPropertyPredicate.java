@@ -1,8 +1,12 @@
 package com.easy.query.core.expression.segment.condition.predicate;
 
 import com.easy.query.core.basic.jdbc.parameter.PropertySQLParameter;
-import com.easy.query.core.expression.sql.EntityExpression;
-import com.easy.query.core.expression.sql.EntityTableExpression;
+import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
+import com.easy.query.core.enums.SqlPredicateCompare;
+import com.easy.query.core.enums.SqlPredicateCompareEnum;
+import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
+import com.easy.query.core.util.SQLUtil;
 
 /**
  * @FileName: ColumnPropertyPredicate.java
@@ -11,25 +15,25 @@ import com.easy.query.core.expression.sql.EntityTableExpression;
  * @author xuejiaming
  */
 public class ColumnPropertyPredicate implements Predicate {
-    protected final EntityTableExpression table;
+    protected final EntityTableExpressionBuilder table;
     protected final String propertyName;
-    protected final EntityExpression sqlEntityExpression;
+    protected final EntityExpressionBuilder sqlEntityExpression;
 
-    public ColumnPropertyPredicate(EntityTableExpression table, String propertyName, EntityExpression sqlEntityExpression){
+    public ColumnPropertyPredicate(EntityTableExpressionBuilder table, String propertyName, EntityExpressionBuilder sqlEntityExpression){
         this.table = table;
         this.propertyName = propertyName;
         this.sqlEntityExpression = sqlEntityExpression;
     }
 
     @Override
-    public String toSql() {
-        sqlEntityExpression.addParameter(new PropertySQLParameter(table,propertyName));
+    public String toSql(SqlParameterCollector sqlParameterCollector) {
+        SQLUtil.addParameter(sqlParameterCollector,new PropertySQLParameter(table,propertyName));
         String sqlColumnSegment = sqlEntityExpression.getSqlOwnerColumn(table,propertyName);
         return sqlColumnSegment + " = ?";
     }
 
     @Override
-    public EntityTableExpression getTable() {
+    public EntityTableExpressionBuilder getTable() {
         return table;
     }
 
@@ -38,4 +42,8 @@ public class ColumnPropertyPredicate implements Predicate {
     }
 
 
+    @Override
+    public SqlPredicateCompare getOperator() {
+        return SqlPredicateCompareEnum.EQ;
+    }
 }

@@ -1,41 +1,48 @@
 package com.easy.query.mysql;
 
-import com.easy.query.core.expression.sql.factory.AbstractEasyExpressionFactory;
-import com.easy.query.core.expression.sql.EntityDeleteExpression;
-import com.easy.query.core.expression.sql.EntityInsertExpression;
-import com.easy.query.core.expression.sql.EntityQueryExpression;
-import com.easy.query.core.expression.sql.EntityUpdateExpression;
-import com.easy.query.core.expression.sql.ExpressionContext;
-import com.easy.query.mysql.expression.MySqlInsertExpression;
-import com.easy.query.mysql.expression.MySqlDeleteExpression;
-import com.easy.query.mysql.expression.MySqlQueryExpression;
-import com.easy.query.mysql.expression.MySqlUpdateExpression;
+import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
+import com.easy.query.core.expression.sql.expression.EasyAnonymousQuerySqlExpression;
+import com.easy.query.core.expression.sql.expression.EasyDeleteSqlExpression;
+import com.easy.query.core.expression.sql.expression.EasyInsertSqlExpression;
+import com.easy.query.core.expression.sql.expression.EasyQuerySqlExpression;
+import com.easy.query.core.expression.sql.expression.EasyTableSqlExpression;
+import com.easy.query.core.expression.sql.expression.EasyUpdateSqlExpression;
+import com.easy.query.core.expression.sql.expression.impl.AnonymousQuerySqlExpression;
+import com.easy.query.core.expression.sql.factory.EasyExpressionFactory;
+import com.easy.query.mysql.expression.MySqlDeleteSqlExpression;
+import com.easy.query.mysql.expression.MySqlInsertSqlExpression;
+import com.easy.query.mysql.expression.MySqlQuerySqlExpression;
+import com.easy.query.mysql.expression.MySqlUpdateSqlExpression;
 
 /**
- * @FileName: MySQLSqlExpressionFactory.java
- * @Description: 文件说明
- * @Date: 2023/3/4 22:55
+ * create time 2023/4/23 13:14
+ * 文件说明
+ *
  * @author xuejiaming
  */
-public class MySqlExpressionFactory extends AbstractEasyExpressionFactory {
-
+public class MySqlExpressionFactory implements EasyExpressionFactory {
     @Override
-    public EntityQueryExpression createEntityQueryExpression(ExpressionContext sqlExpressionContext) {
-        return new MySqlQueryExpression(sqlExpressionContext);
+    public EasyQuerySqlExpression createEasyQuerySqlExpression(EasyQueryRuntimeContext runtimeContext) {
+        return new MySqlQuerySqlExpression(runtimeContext);
     }
 
     @Override
-    public EntityInsertExpression createEntityInsertExpression(ExpressionContext sqlExpressionContext) {
-        return new MySqlInsertExpression(sqlExpressionContext);
+    public EasyInsertSqlExpression createEasyInsertSqlExpression(EasyQueryRuntimeContext runtimeContext, EasyTableSqlExpression tableSqlExpression) {
+        return new MySqlInsertSqlExpression(runtimeContext,tableSqlExpression);
     }
 
     @Override
-    public EntityUpdateExpression createEntityUpdateExpression(ExpressionContext sqlExpressionContext, boolean expression) {
-        return new MySqlUpdateExpression(sqlExpressionContext,expression);
+    public EasyUpdateSqlExpression createEasyUpdateSqlExpression(EasyQueryRuntimeContext runtimeContext, EasyTableSqlExpression tableSqlExpression) {
+        return new MySqlUpdateSqlExpression(runtimeContext,tableSqlExpression);
     }
 
     @Override
-    public EntityDeleteExpression createEntityDeleteExpression(ExpressionContext sqlExpressionContext, boolean expression) {
-        return new MySqlDeleteExpression(sqlExpressionContext,expression);
+    public EasyDeleteSqlExpression createEasyDeleteSqlExpression(EasyQueryRuntimeContext runtimeContext, EasyTableSqlExpression tableSqlExpression) {
+        return new MySqlDeleteSqlExpression(runtimeContext,tableSqlExpression);
+    }
+
+    @Override
+    public EasyAnonymousQuerySqlExpression createEasyAnonymousQuerySqlExpression(EasyQueryRuntimeContext runtimeContext, String sql) {
+        return new AnonymousQuerySqlExpression(runtimeContext,sql);
     }
 }

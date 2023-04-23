@@ -15,8 +15,8 @@ import com.easy.query.core.expression.parser.abstraction.SqlColumnSelector;
 import com.easy.query.core.expression.parser.abstraction.SqlPredicate;
 import com.easy.query.core.expression.segment.SqlEntitySegment;
 import com.easy.query.core.expression.segment.builder.ProjectSqlBuilderSegment;
-import com.easy.query.core.expression.sql.EntityQueryExpression;
-import com.easy.query.core.expression.sql.EntityTableExpression;
+import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.util.ArrayUtil;
 import com.easy.query.core.util.EasyUtil;
 import com.easy.query.core.basic.api.select.Queryable4;
@@ -40,7 +40,7 @@ public abstract class AbstractQueryable4<T1, T2, T3,T4> extends AbstractQueryabl
     private final EasyQuerySqlBuilderProvider4<T1, T2, T3,T4> sqlPredicateProvider;
 
 
-    public AbstractQueryable4(Class<T1> t1Class, Class<T2> t2Class, Class<T3> t3Class, Class<T4> t4Class, EntityQueryExpression sqlEntityExpression) {
+    public AbstractQueryable4(Class<T1> t1Class, Class<T2> t2Class, Class<T3> t3Class, Class<T4> t4Class, EntityQueryExpressionBuilder sqlEntityExpression) {
         super(t1Class, sqlEntityExpression);
         this.t2Class = t2Class;
         this.t3Class = t3Class;
@@ -148,11 +148,11 @@ public abstract class AbstractQueryable4<T1, T2, T3,T4> extends AbstractQueryabl
         }
         SqlEntitySegment sqlSegment = (SqlEntitySegment)projectSqlBuilderSegment.getSqlSegments().get(0);
 
-        EntityTableExpression table = sqlSegment.getTable();
+        EntityTableExpressionBuilder table = sqlSegment.getTable();
         String propertyName = sqlSegment.getPropertyName();
         ColumnMetadata columnMetadata = EasyUtil.getColumnMetadata(table,propertyName);
 
-        return cloneQueryable().select(easyFunc.getFuncColumn(projectSqlBuilderSegment.toSql())).toList((Class<TMember>)columnMetadata.getProperty().getPropertyType());
+        return cloneQueryable().select(easyFunc.getFuncColumn(projectSqlBuilderSegment.toSql(null))).toList((Class<TMember>)columnMetadata.getProperty().getPropertyType());
     }
 
     @Override
@@ -204,7 +204,7 @@ public abstract class AbstractQueryable4<T1, T2, T3,T4> extends AbstractQueryabl
             throw new EasyQueryException("aggreagate query not found column");
         }
 
-        List<Integer> result =  cloneQueryable().select(EasyAggregate.LEN.getFuncColumn(projectSqlBuilderSegment.toSql())).toList(Integer.class);
+        List<Integer> result =  cloneQueryable().select(EasyAggregate.LEN.getFuncColumn(projectSqlBuilderSegment.toSql(null))).toList(Integer.class);
         return ArrayUtil.firstOrDefault(result,def);
     }
 

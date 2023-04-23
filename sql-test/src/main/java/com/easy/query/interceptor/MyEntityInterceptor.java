@@ -4,8 +4,8 @@ import com.easy.query.core.basic.plugin.interceptor.EasyEntityInterceptor;
 import com.easy.query.core.basic.plugin.interceptor.EasyUpdateSetInterceptor;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.parser.abstraction.SqlColumnSetter;
-import com.easy.query.core.expression.sql.EntityInsertExpression;
-import com.easy.query.core.expression.sql.EntityUpdateExpression;
+import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
 import com.easy.query.core.util.EasyUtil;
 import com.easy.query.entity.TopicInterceptor;
 import com.easy.query.logicdel.CurrentUserHelper;
@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
  */
 public class MyEntityInterceptor implements EasyEntityInterceptor, EasyUpdateSetInterceptor {
     @Override
-    public void configureInsert(Class<?> entityClass, EntityInsertExpression entityInsertExpression, Object entity) {
+    public void configureInsert(Class<?> entityClass, EntityInsertExpressionBuilder entityInsertExpression, Object entity) {
         TopicInterceptor topicInterceptor = (TopicInterceptor) entity;
         if (topicInterceptor.getCreateTime() == null) {
             topicInterceptor.setCreateTime(LocalDateTime.now());
@@ -40,7 +40,7 @@ public class MyEntityInterceptor implements EasyEntityInterceptor, EasyUpdateSet
     }
 
     @Override
-    public void configureUpdate(Class<?> entityClass, EntityUpdateExpression entityUpdateExpression, Object entity) {
+    public void configureUpdate(Class<?> entityClass, EntityUpdateExpressionBuilder entityUpdateExpression, Object entity) {
 
         TopicInterceptor topicInterceptor = (TopicInterceptor) entity;
         topicInterceptor.setUpdateTime(LocalDateTime.now());
@@ -58,7 +58,7 @@ public class MyEntityInterceptor implements EasyEntityInterceptor, EasyUpdateSet
     }
 
     @Override
-    public void configure(Class<?> entityClass, EntityUpdateExpression entityUpdateExpression, SqlColumnSetter<Object> columnSetter) {
+    public void configure(Class<?> entityClass, EntityUpdateExpressionBuilder entityUpdateExpression, SqlColumnSetter<Object> columnSetter) {
         String updateBy = "updateBy";//属性名用来动态创建lambda
         String updateTime = "updateTime";//属性名用来动态创建lambda
         //是否已经set了

@@ -1,7 +1,7 @@
 package com.easy.query.core.basic.api.select.impl;
 
 import com.easy.query.core.basic.api.select.abstraction.AbstractQueryable1;
-import com.easy.query.core.expression.sql.EntityQueryExpression;
+import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 
 /**
  * @FileName: EasyQueryable.java
@@ -10,7 +10,7 @@ import com.easy.query.core.expression.sql.EntityQueryExpression;
  * @author xuejiaming
  */
 public class EasyQueryable<T> extends AbstractQueryable1<T> {
-    public EasyQueryable(Class<T> tClass, EntityQueryExpression sqlEntityExpression) {
+    public EasyQueryable(Class<T> tClass, EntityQueryExpressionBuilder sqlEntityExpression) {
         super(tClass, sqlEntityExpression);
     }
 }

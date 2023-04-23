@@ -3,7 +3,9 @@ package com.easy.query.core.basic.api.update.abstraction;
 import com.easy.query.core.basic.api.internal.AbstractSqlExecuteRows;
 import com.easy.query.core.basic.api.update.EntityUpdatable;
 import com.easy.query.core.basic.api.internal.SqlEntityNode;
+import com.easy.query.core.basic.jdbc.parameter.DefaultSqlParameterCollector;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
+import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
 import com.easy.query.core.basic.plugin.interceptor.EasyInterceptorEntry;
 import com.easy.query.core.configuration.EasyQueryConfiguration;
 import com.easy.query.core.enums.MultiTableTypeEnum;
@@ -13,9 +15,9 @@ import com.easy.query.core.expression.lambda.SqlExpression;
 import com.easy.query.core.expression.parser.abstraction.SqlColumnSelector;
 import com.easy.query.core.expression.parser.impl.DefaultSqlColumnSetSelector;
 import com.easy.query.core.basic.plugin.interceptor.EasyEntityInterceptor;
-import com.easy.query.core.expression.sql.def.EasyEntityTableExpression;
-import com.easy.query.core.expression.sql.EntityTableExpression;
-import com.easy.query.core.expression.sql.EntityUpdateExpression;
+import com.easy.query.core.expression.sql.builder.impl.TableExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
 import com.easy.query.core.basic.plugin.track.TrackManager;
 import com.easy.query.core.basic.jdbc.executor.EasyOldExecutor;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
@@ -35,11 +37,11 @@ import java.util.stream.Collectors;
  */
 public abstract class AbstractEntityUpdatable<T> extends AbstractSqlExecuteRows<EntityUpdatable<T>> implements EntityUpdatable<T> {
     protected final List<T> entities = new ArrayList<>();
-    protected final EntityTableExpression table;
+    protected final EntityTableExpressionBuilder table;
     protected final EntityMetadata entityMetadata;
-    protected final EntityUpdateExpression entityUpdateExpression;
+    protected final EntityUpdateExpressionBuilder entityUpdateExpression;
 
-    public AbstractEntityUpdatable(Collection<T> entities, EntityUpdateExpression entityUpdateExpression) {
+    public AbstractEntityUpdatable(Collection<T> entities, EntityUpdateExpressionBuilder entityUpdateExpression) {
         super(entityUpdateExpression);
         if (entities == null || entities.isEmpty()) {
             throw new EasyQueryException("不支持空对象的update");
@@ -51,7 +53,7 @@ public abstract class AbstractEntityUpdatable<T> extends AbstractSqlExecuteRows<
 
         entityMetadata = this.entityUpdateExpression.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(clazz);
         entityMetadata.checkTable();
-        table = new EasyEntityTableExpression(entityMetadata, 0, null, MultiTableTypeEnum.FROM);
+        table = new TableExpressionBuilder(entityMetadata, 0, null, MultiTableTypeEnum.FROM);
         this.entityUpdateExpression.addSqlEntityTableExpression(table);
     }
 
@@ -73,19 +75,21 @@ public abstract class AbstractEntityUpdatable<T> extends AbstractSqlExecuteRows<
         if (useUpdateSqlGroup()) {
             Map<String, SqlEntityNode> updateEntityNodeMap = new LinkedHashMap<>();
             for (T entity : entities) {
-                String updateSql = toSql(entity);
+                SqlParameterCollector sqlParameterCollector = DefaultSqlParameterCollector.defaultCollector();
+                String updateSql = toSqlWithParam(entity,sqlParameterCollector);
                 //如果当前对象没有需要更新的列直接忽略
                 if (updateSql == null) {
                     continue;
                 }
-                List<SQLParameter> parameters = new ArrayList<>(entityUpdateExpression.getParameters());
+                List<SQLParameter> parameters = new ArrayList<>(sqlParameterCollector.getParameters());
                 SqlEntityNode updateEntityNode = updateEntityNodeMap.computeIfAbsent(updateSql, k -> new SqlEntityNode(updateSql, parameters));
                 updateEntityNode.getEntities().add(entity);
             }
             return new ArrayList<>(updateEntityNodeMap.values());
         } else {
-            String updateSql = toSql(null);
-            SqlEntityNode updateEntityNode = new SqlEntityNode(updateSql, new ArrayList<>(entityUpdateExpression.getParameters()), entities.size());
+            SqlParameterCollector sqlParameterCollector = DefaultSqlParameterCollector.defaultCollector();
+            String updateSql = toSqlWithParam(null,sqlParameterCollector);
+            SqlEntityNode updateEntityNode = new SqlEntityNode(updateSql, new ArrayList<>(sqlParameterCollector.getParameters()), entities.size());
             updateEntityNode.getEntities().addAll(entities);
             return Collections.singletonList(updateEntityNode);
         }
@@ -124,9 +128,6 @@ public abstract class AbstractEntityUpdatable<T> extends AbstractSqlExecuteRows<
             }
         }
     }
-
-    public abstract String toSql(Object entity);
-
 
     @Override
     public EntityUpdatable<T> setColumns(boolean condition, SqlExpression<SqlColumnSelector<T>>
@@ -170,5 +171,12 @@ public abstract class AbstractEntityUpdatable<T> extends AbstractSqlExecuteRows<
             entityUpdateExpression.getExpressionContext().useSqlStrategy(sqlStrategy);
         }
         return this;
+    }
+
+    public String toSql(Object entity) {
+        return toSqlWithParam(entity,null);
+    }
+    private String toSqlWithParam(Object entity, SqlParameterCollector sqlParameterCollector){
+        return entityUpdateExpression.toExpression(entity).toSql(sqlParameterCollector);
     }
 }

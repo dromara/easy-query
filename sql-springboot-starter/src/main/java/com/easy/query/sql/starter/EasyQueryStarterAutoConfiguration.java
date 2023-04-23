@@ -9,13 +9,15 @@ import com.easy.query.core.expression.executor.parser.DefaultEasyPrepareParser;
 import com.easy.query.core.expression.executor.query.DefaultExecutionContextFactory;
 import com.easy.query.core.expression.parser.factory.DefaultEasyQueryLambdaFactory;
 import com.easy.query.core.abstraction.DefaultEasyQueryRuntimeContext;
-import com.easy.query.core.expression.sql.factory.EasyExpressionFactory;
+import com.easy.query.core.expression.sql.factory.DefaultEasyExpressionBuilderFactory;
+import com.easy.query.core.expression.sql.factory.EasyExpressionBuilderFactory;
 import com.easy.query.core.expression.parser.factory.EasyQueryLambdaFactory;
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.abstraction.EasySqlApiFactory;
 import com.easy.query.core.basic.pagination.DefaultEasyPageResultProvider;
 import com.easy.query.core.basic.pagination.EasyPageResultProvider;
 import com.easy.query.core.config.EasyQueryDialect;
+import com.easy.query.core.expression.sql.factory.EasyExpressionFactory;
 import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.api.client.DefaultEasyQuery;
 import com.easy.query.core.api.client.EasyQuery;
@@ -154,12 +156,12 @@ public class EasyQueryStarterAutoConfiguration {
     }
 
     @Bean
-    public EasyExpressionFactory easySqlExpressionFactory() {
-        return new MySqlExpressionFactory();
+    public EasyExpressionBuilderFactory easyExpressionBuilderFactory() {
+        return new DefaultEasyExpressionBuilderFactory();
     }
 
     @Bean
-    public EasySqlApiFactory easySqlApiFactory(EasyExpressionFactory easySqlExpressionFactory) {
+    public EasySqlApiFactory easySqlApiFactory(EasyExpressionBuilderFactory easySqlExpressionFactory) {
         return new DefaultEasySqlApiFactory(easySqlExpressionFactory);
     }
     @Bean
@@ -194,6 +196,10 @@ public class EasyQueryStarterAutoConfiguration {
     public EasyShardingExecutorService easyShardingExecutorService(EasyShardingOption easyShardingOption){
         return new DefaultEasyShardingExecutorService(easyShardingOption);
     }
+    @Bean
+    public EasyExpressionFactory easyExpressionFactory(){
+        return new MySqlExpressionFactory();
+    }
 
     @Bean
     public EasyQueryRuntimeContext easyQueryRuntimeContext(EasyQueryConfiguration easyQueryConfiguration,
@@ -204,11 +210,12 @@ public class EasyQueryStarterAutoConfiguration {
                                                            EntityExpressionExecutor entityExpressionExecutor,
                                                            EasyJdbcTypeHandlerManager easyJdbcTypeHandler,
                                                            EasySqlApiFactory easyQueryableFactory,
-                                                           EasyExpressionFactory easySqlExpressionFactory,
+                                                           EasyExpressionBuilderFactory easySqlExpressionFactory,
                                                            TrackManager trackManager,
                                                            EasyPageResultProvider easyPageResultProvider,
                                                            EasyShardingOption easyShardingOption,
-                                                           EasyShardingExecutorService easyShardingExecutorService) {
+                                                           EasyShardingExecutorService easyShardingExecutorService,
+                                                           EasyExpressionFactory easyExpressionFactory) {
         return new DefaultEasyQueryRuntimeContext(
                 easyQueryConfiguration,
                 entityMetadataManager,
@@ -222,7 +229,8 @@ public class EasyQueryStarterAutoConfiguration {
                 trackManager,
                 easyPageResultProvider,
                 easyShardingOption,
-                easyShardingExecutorService
+                easyShardingExecutorService,
+                easyExpressionFactory
         );
     }
 

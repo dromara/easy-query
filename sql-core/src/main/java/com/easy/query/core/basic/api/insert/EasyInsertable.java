@@ -1,6 +1,6 @@
 package com.easy.query.core.basic.api.insert;
 
-import com.easy.query.core.expression.sql.EntityInsertExpression;
+import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 
 /**
  * @FileName: EasyInsertable.java
@@ -9,12 +9,7 @@ import com.easy.query.core.expression.sql.EntityInsertExpression;
  * @author xuejiaming
  */
 public class EasyInsertable<T> extends AbstractInsertable<T> {
-    public EasyInsertable(Class<T> clazz, EntityInsertExpression entityInsertExpression) {
+    public EasyInsertable(Class<T> clazz, EntityInsertExpressionBuilder entityInsertExpression) {
         super(clazz, entityInsertExpression);
-    }
-
-    @Override
-    public String toSql(Object entity) {
-        return entityInsertExpression.toSql();
     }
 }

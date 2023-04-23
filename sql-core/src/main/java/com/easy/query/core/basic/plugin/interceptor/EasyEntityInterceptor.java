@@ -1,7 +1,7 @@
 package com.easy.query.core.basic.plugin.interceptor;
 
-import com.easy.query.core.expression.sql.EntityInsertExpression;
-import com.easy.query.core.expression.sql.EntityUpdateExpression;
+import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
 
 /**
  * @FileName: GlobalEntityInterceptor.java
@@ -10,6 +10,6 @@ import com.easy.query.core.expression.sql.EntityUpdateExpression;
  * @author xuejiaming
  */
 public interface EasyEntityInterceptor extends EasyInterceptor {
-    void configureInsert(Class<?> entityClass, EntityInsertExpression entityInsertExpression, Object entity);
-    void configureUpdate(Class<?> entityClass, EntityUpdateExpression entityUpdateExpression, Object entity);
+    void configureInsert(Class<?> entityClass, EntityInsertExpressionBuilder entityInsertExpression, Object entity);
+    void configureUpdate(Class<?> entityClass, EntityUpdateExpressionBuilder entityUpdateExpression, Object entity);
 }

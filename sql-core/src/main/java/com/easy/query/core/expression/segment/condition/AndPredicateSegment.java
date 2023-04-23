@@ -12,14 +12,26 @@ import com.easy.query.core.expression.segment.condition.predicate.Predicate;
  */
 public class AndPredicateSegment extends AbstractPredicateSegment {
     public static final String AND= " "+ SqlKeywordEnum.AND.toSql()+" ";
+
     public AndPredicateSegment() {
+    }
+
+    public AndPredicateSegment(boolean root) {
+        super(root);
     }
 
     public AndPredicateSegment(Predicate predicate) {
         super(predicate);
     }
 
-    public AndPredicateSegment(boolean root) {
-        super(root);
+    public AndPredicateSegment(Predicate predicate, boolean root) {
+        super(predicate, root);
+    }
+
+    @Override
+    public PredicateSegment clonePredicateSegment() {
+        AndPredicateSegment andPredicateSegment = new AndPredicateSegment(predicate, root);
+        copyTo(andPredicateSegment);
+        return andPredicateSegment;
     }
 }

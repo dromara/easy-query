@@ -1,6 +1,6 @@
 package com.easy.query.core.expression.segment;
 
-import com.easy.query.core.expression.sql.EntityTableExpression;
+import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 
 /**
  * @FileName: SqlEntitySegment.java
@@ -9,6 +9,6 @@ import com.easy.query.core.expression.sql.EntityTableExpression;
  * @author xuejiaming
  */
 public interface SqlEntitySegment extends SqlSegment {
-    EntityTableExpression getTable();
+    EntityTableExpressionBuilder getTable();
     String getPropertyName();
 }

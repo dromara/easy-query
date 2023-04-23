@@ -1,6 +1,6 @@
 package com.easy.query.core.sharding.route.table.engine;
 
-import com.easy.query.core.expression.sql.EntityExpression;
+import com.easy.query.core.expression.sql.expression.EasySqlExpression;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.sharding.common.RouteMapper;
@@ -50,7 +50,7 @@ public class DefaultTableRouteEngine implements TableRouteEngine {
                 continue;
             }
             onlyShardingDataSource = false;
-            Collection<TableRouteUnit> shardingRouteUnits = getEntityRouteUnit(tableRouteContext.getDataSourceRouteResult(), shardingEntity, tableRouteContext.getEntityExpression());
+            Collection<TableRouteUnit> shardingRouteUnits = getEntityRouteUnit(tableRouteContext.getDataSourceRouteResult(), shardingEntity, tableRouteContext.getEntitySqlExpression());
             for (TableRouteUnit shardingRouteUnit : shardingRouteUnits) {
                 if (Objects.equals(shardingRouteUnit.getLogicTableName(),shardingRouteUnit.getActualTableName())) {
                     continue;
@@ -108,7 +108,7 @@ public class DefaultTableRouteEngine implements TableRouteEngine {
         return new ShardingRouteResult(routeUnits,dataSourceCount>1,isCrossTable);
     }
 
-    private Collection<TableRouteUnit> getEntityRouteUnit(DataSourceRouteResult dataSourceRouteResult, Class<?> entityClass, EntityExpression entityExpression) {
-        return tableRouteManager.routeTo(entityClass, dataSourceRouteResult, new SqlParserResult(entityExpression));
+    private Collection<TableRouteUnit> getEntityRouteUnit(DataSourceRouteResult dataSourceRouteResult, Class<?> entityClass, EasySqlExpression sqlExpression) {
+        return tableRouteManager.routeTo(entityClass, dataSourceRouteResult, new SqlParserResult(sqlExpression));
     }
 }

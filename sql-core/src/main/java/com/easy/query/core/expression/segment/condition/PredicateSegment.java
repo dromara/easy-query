@@ -32,5 +32,6 @@ public interface PredicateSegment extends SqlSegment {
     PredicateIndex buildPredicateIndex();
 
     void copyTo(PredicateSegment predicateSegment);
+    PredicateSegment clonePredicateSegment();
 
 }

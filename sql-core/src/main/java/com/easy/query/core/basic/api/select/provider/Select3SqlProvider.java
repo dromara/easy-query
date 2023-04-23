@@ -4,7 +4,7 @@ import com.easy.query.core.expression.parser.abstraction.*;
 import com.easy.query.core.expression.parser.impl.*;
 import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import com.easy.query.core.expression.segment.condition.DefaultSqlPredicate;
-import com.easy.query.core.expression.sql.EntityQueryExpression;
+import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.util.EasyUtil;
 
 /**
@@ -15,7 +15,7 @@ import com.easy.query.core.util.EasyUtil;
  */
 public class Select3SqlProvider<T1,T2,T3> extends Select2SqlProvider<T1,T2> implements EasyQuerySqlBuilderProvider3<T1,T2,T3> {
 
-    private final EntityQueryExpression sqlEntityExpression;
+    private final EntityQueryExpressionBuilder sqlEntityExpression;
     private final int index=2;
     private DefaultSqlGroupColumnSelector<T3> group;
     private DefaultSqlOrderColumnSelector<T3> order;
@@ -24,7 +24,7 @@ public class Select3SqlProvider<T1,T2,T3> extends Select2SqlProvider<T1,T2> impl
     private DefaultSqlPredicate<T3> on;
 
 
-    public Select3SqlProvider(EntityQueryExpression sqlEntityExpression){
+    public Select3SqlProvider(EntityQueryExpressionBuilder sqlEntityExpression){
         super(sqlEntityExpression);
 
         this.sqlEntityExpression = sqlEntityExpression;

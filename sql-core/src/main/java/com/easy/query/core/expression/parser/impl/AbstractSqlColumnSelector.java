@@ -8,12 +8,11 @@ import com.easy.query.core.expression.segment.SqlEntityAliasSegment;
 import com.easy.query.core.expression.segment.SqlEntitySegment;
 import com.easy.query.core.expression.segment.SqlSegment;
 import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
-import com.easy.query.core.expression.sql.AnonymousEntityTableExpression;
-import com.easy.query.core.expression.sql.EntityExpression;
-import com.easy.query.core.expression.sql.EntityQueryExpression;
-import com.easy.query.core.expression.sql.EntityTableExpression;
+import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.util.ClassUtil;
-import com.easy.query.core.util.EasyUtil;
 
 import java.util.Collection;
 import java.util.List;
@@ -27,10 +26,10 @@ import java.util.Objects;
  */
 public class AbstractSqlColumnSelector<T1, TChain> implements ColumnSelector<T1, TChain> {
     private final int index;
-    protected final EntityExpression sqlEntityExpression;
+    protected final EntityExpressionBuilder sqlEntityExpression;
     protected final SqlBuilderSegment sqlSegmentBuilder;
 
-    public AbstractSqlColumnSelector(int index, EntityExpression sqlEntityExpression, SqlBuilderSegment sqlSegmentBuilder) {
+    public AbstractSqlColumnSelector(int index, EntityExpressionBuilder sqlEntityExpression, SqlBuilderSegment sqlSegmentBuilder) {
         this.index = index;
 
         this.sqlEntityExpression = sqlEntityExpression;
@@ -45,7 +44,7 @@ public class AbstractSqlColumnSelector<T1, TChain> implements ColumnSelector<T1,
 
     @Override
     public TChain column(Property<T1, ?> column) {
-        EntityTableExpression table = sqlEntityExpression.getTable(index);
+        EntityTableExpressionBuilder table = sqlEntityExpression.getTable(index);
         String propertyName = table.getPropertyName(column);
         sqlSegmentBuilder.append(new ColumnSegment(table, propertyName, sqlEntityExpression));
         return (TChain) this;
@@ -54,7 +53,7 @@ public class AbstractSqlColumnSelector<T1, TChain> implements ColumnSelector<T1,
 
     @Override
     public TChain columnIgnore(Property<T1, ?> column) {
-        EntityTableExpression table = sqlEntityExpression.getTable(index);
+        EntityTableExpressionBuilder table = sqlEntityExpression.getTable(index);
         String propertyName = table.getPropertyName(column);
         sqlSegmentBuilder.getSqlSegments().removeIf(sqlSegment -> {
             if (sqlSegment instanceof SqlEntitySegment) {
@@ -68,9 +67,9 @@ public class AbstractSqlColumnSelector<T1, TChain> implements ColumnSelector<T1,
 
     @Override
     public TChain columnAll() {
-        EntityTableExpression table = sqlEntityExpression.getTable(index);
-        if (table instanceof AnonymousEntityTableExpression) {
-            columnAnonymousAll((AnonymousEntityTableExpression) table);
+        EntityTableExpressionBuilder table = sqlEntityExpression.getTable(index);
+        if (table instanceof AnonymousEntityTableExpressionBuilder) {
+            columnAnonymousAll((AnonymousEntityTableExpressionBuilder) table);
         } else {
             Collection<String> properties = table.getEntityMetadata().getProperties();
             for (String property : properties) {
@@ -80,8 +79,8 @@ public class AbstractSqlColumnSelector<T1, TChain> implements ColumnSelector<T1,
         return (TChain) this;
     }
 
-    protected TChain columnAnonymousAll(AnonymousEntityTableExpression table){
-        EntityQueryExpression sqlEntityQueryExpression = table.getEntityQueryExpression();
+    protected TChain columnAnonymousAll(AnonymousEntityTableExpressionBuilder table){
+        EntityQueryExpressionBuilder sqlEntityQueryExpression = table.getEntityQueryExpressionBuilder();
         List<SqlSegment> sqlSegments = sqlEntityQueryExpression.getProjects().getSqlSegments();
         for (SqlSegment sqlSegment : sqlSegments) {
             if (sqlSegment instanceof SqlEntityAliasSegment) {
@@ -95,7 +94,7 @@ public class AbstractSqlColumnSelector<T1, TChain> implements ColumnSelector<T1,
     }
 
 
-    public EntityExpression getSqlEntityExpression() {
+    public EntityExpressionBuilder getSqlEntityExpression() {
         return sqlEntityExpression;
     }
 }

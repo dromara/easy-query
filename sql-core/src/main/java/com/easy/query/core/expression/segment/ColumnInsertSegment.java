@@ -1,8 +1,10 @@
 package com.easy.query.core.expression.segment;
 
 import com.easy.query.core.basic.jdbc.parameter.PropertySQLParameter;
-import com.easy.query.core.expression.sql.EntityExpression;
-import com.easy.query.core.expression.sql.EntityTableExpression;
+import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
+import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
+import com.easy.query.core.util.SQLUtil;
 
 /**
  * @FileName: ColumnSegment.java
@@ -13,15 +15,15 @@ import com.easy.query.core.expression.sql.EntityTableExpression;
 public class ColumnInsertSegment implements SqlEntityAliasSegment {
 
 
-    protected final EntityTableExpression table;
+    protected final EntityTableExpressionBuilder table;
     protected final String propertyName;
-    protected final EntityExpression sqlEntityExpression;
+    protected final EntityExpressionBuilder sqlEntityExpression;
     protected String alias;
 
-    public ColumnInsertSegment(EntityTableExpression table, String propertyName, EntityExpression sqlEntityExpression){
+    public ColumnInsertSegment(EntityTableExpressionBuilder table, String propertyName, EntityExpressionBuilder sqlEntityExpression){
         this(table,propertyName,sqlEntityExpression,null);
     }
-    public ColumnInsertSegment(EntityTableExpression table, String propertyName, EntityExpression sqlEntityExpression, String alias){
+    public ColumnInsertSegment(EntityTableExpressionBuilder table, String propertyName, EntityExpressionBuilder sqlEntityExpression, String alias){
         this.table = table;
 
         this.propertyName = propertyName;
@@ -30,8 +32,8 @@ public class ColumnInsertSegment implements SqlEntityAliasSegment {
     }
 
     @Override
-    public String toSql() {
-        sqlEntityExpression.addParameter(new PropertySQLParameter(table,propertyName));
+    public String toSql(SqlParameterCollector sqlParameterCollector) {
+        SQLUtil.addParameter(sqlParameterCollector,new PropertySQLParameter(table,propertyName));
         String sqlColumnSegment = sqlEntityExpression.getSqlOwnerColumn(table,propertyName);
         StringBuilder sql = new StringBuilder();
         sql.append(sqlColumnSegment);
@@ -42,7 +44,7 @@ public class ColumnInsertSegment implements SqlEntityAliasSegment {
     }
 
     @Override
-    public EntityTableExpression getTable() {
+    public EntityTableExpressionBuilder getTable() {
         return table;
     }
 

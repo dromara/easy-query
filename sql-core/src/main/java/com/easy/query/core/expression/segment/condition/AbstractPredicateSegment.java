@@ -1,5 +1,6 @@
 package com.easy.query.core.expression.segment.condition;
 
+import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.segment.condition.predicate.Predicate;
 import com.easy.query.core.util.StringUtil;
@@ -7,15 +8,15 @@ import com.easy.query.core.util.StringUtil;
 import java.util.*;
 
 /**
+ * @author xuejiaming
  * @FileName: PredicateSegment.java
  * @Description: 文件说明
  * @Date: 2023/2/14 23:05
- * @author xuejiaming
  */
-public class AbstractPredicateSegment implements PredicateSegment {
-    private List<PredicateSegment> children;
-    private Predicate predicate;
-    private final boolean root;
+public abstract class AbstractPredicateSegment implements PredicateSegment {
+    protected List<PredicateSegment> children;
+    protected Predicate predicate;
+    protected final boolean root;
 
     @Override
     public boolean isRoot() {
@@ -35,12 +36,15 @@ public class AbstractPredicateSegment implements PredicateSegment {
     }
 
     public AbstractPredicateSegment(boolean root) {
-        this.root = root;
+        this(null, root);
     }
 
     public AbstractPredicateSegment(Predicate predicate) {
+       this(predicate,false);
+    }
+    public AbstractPredicateSegment(Predicate predicate, boolean root) {
         setPredicate(predicate);
-        this.root = false;
+        this.root = root;
     }
 
     private boolean isPredicate() {
@@ -68,11 +72,11 @@ public class AbstractPredicateSegment implements PredicateSegment {
     @Override
     public boolean containsOnce(Class<?> entityClass, String propertyName) {
         if (isPredicate()) {
-            return Objects.equals(predicate.getTable().getEntityClass(),entityClass)&&Objects.equals(predicate.getPropertyName(), propertyName);
+            return Objects.equals(predicate.getTable().getEntityClass(), entityClass) && Objects.equals(predicate.getPropertyName(), propertyName);
         } else {
-            if(children!=null){
+            if (children != null) {
                 for (PredicateSegment child : children) {
-                    if (child.containsOnce(entityClass,propertyName)) {
+                    if (child.containsOnce(entityClass, propertyName)) {
                         return true;
                     }
                 }
@@ -109,7 +113,7 @@ public class AbstractPredicateSegment implements PredicateSegment {
             if (children != null) {
 
                 for (PredicateSegment child : children) {
-                    boolean isRoot =child.isRoot();
+                    boolean isRoot = child.isRoot();
                     if (child instanceof AndPredicateSegment) {
                         AndPredicateSegment andPredicateSegment = new AndPredicateSegment(isRoot);
                         predicateSegment.addPredicateSegment(andPredicateSegment);
@@ -125,9 +129,9 @@ public class AbstractPredicateSegment implements PredicateSegment {
     }
 
     @Override
-    public String toSql() {
+    public String toSql(SqlParameterCollector sqlParameterCollector) {
         if (isPredicate()) {
-            return predicate.toSql();
+            return predicate.toSql(sqlParameterCollector);
         } else {
             if (children != null) {
                 StringBuilder sql = new StringBuilder();
@@ -140,13 +144,13 @@ public class AbstractPredicateSegment implements PredicateSegment {
                         if (sql.length() != 0) {
                             sql.append(AndPredicateSegment.AND);
                         }
-                        sql.append(child.toSql());
+                        sql.append(child.toSql(sqlParameterCollector));
                     } else if (child instanceof OrPredicateSegment) {
                         allAnd = false;
                         if (sql.length() != 0) {
                             sql.append(OrPredicateSegment.OR);
                         }
-                        sql.append(child.toSql());
+                        sql.append(child.toSql(sqlParameterCollector));
                     }
                 }
                 if (sql.length() != 0) {
