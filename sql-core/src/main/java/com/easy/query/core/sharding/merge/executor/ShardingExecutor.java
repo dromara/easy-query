@@ -49,13 +49,17 @@ public class ShardingExecutor {
 
     private static <TResult> List<TResult> execute0(StreamMergeContext streamMergeContext, Executor<TResult> executor, Collection<ExecutionUnit> executionUnits) {
 
+        //先进行顺序重排,可以让按顺序执行的提高性能,比如按时间分片,并且是时间倒序,那么重排后可以减少很多查询
         Collection<ExecutionUnit> reOrderExecutionUnits = reOrderExecutionUnits(streamMergeContext, executionUnits);
+        //将数据以每个数据源进行聚合
         List<DataSourceSqlExecutorUnit> dataSourceSqlExecutorUnits = EasyUtil.groupBy(reOrderExecutionUnits.stream(), ExecutionUnit::getDataSourceName)
                 .map(o -> getSqlExecutorGroups(streamMergeContext, o)).collect(Collectors.toList());
+        //如果本身就只有一条要执行的sql那么就不需要另外开启线程并行执行,直接当前线程执行即可
         if(executionUnits.size()==1){
             DataSourceSqlExecutorUnit dataSourceSqlExecutorUnit = dataSourceSqlExecutorUnits.get(0);
             return executor.execute(dataSourceSqlExecutorUnit);
         }
+        //如果是有多条sql要执行那么就进行并行处理以数据源DataSourceName多组 每组再以maxQueryConnectionsLimit为一组进行同数据源下顺序并行查询
         List<Future<List<TResult>>> futures = executeFuture0(streamMergeContext, executor, dataSourceSqlExecutorUnits);
 
         EasyShardingOption easyShardingOption = streamMergeContext.getRuntimeContext().getEasyShardingOption();

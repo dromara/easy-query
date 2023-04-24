@@ -92,22 +92,21 @@ public abstract class AbstractInsertable<T> implements Insertable<T> {
             Map<String, SqlEntityNode> updateEntityNodeMap = new LinkedHashMap<>();
             for (T entity : entities) {
                 DefaultSqlParameterCollector defaultSqlParameterCollector = new DefaultSqlParameterCollector();
-                String updateSql = toSqlWithParam(entity,defaultSqlParameterCollector);
-                //如果当前对象没有需要更新的列直接忽略
-                if (updateSql == null) {
+                String insertSql = toSqlWithParam(entity,defaultSqlParameterCollector);
+                if (insertSql == null) {
                     continue;
                 }
                 List<SQLParameter> parameters = new ArrayList<>(defaultSqlParameterCollector.getParameters());
-                SqlEntityNode updateEntityNode = updateEntityNodeMap.computeIfAbsent(updateSql, k -> new SqlEntityNode(updateSql, parameters));
-                updateEntityNode.getEntities().add(entity);
+                SqlEntityNode insertEntityNode = updateEntityNodeMap.computeIfAbsent(insertSql, k -> new SqlEntityNode(insertSql, parameters));
+                insertEntityNode.getEntities().add(entity);
             }
             return new ArrayList<>(updateEntityNodeMap.values());
         } else {
             DefaultSqlParameterCollector defaultSqlParameterCollector = new DefaultSqlParameterCollector();
-            String updateSql = toSqlWithParam(null,defaultSqlParameterCollector);
-            SqlEntityNode updateEntityNode = new SqlEntityNode(updateSql, new ArrayList<>(defaultSqlParameterCollector.getParameters()), entities.size());
-            updateEntityNode.getEntities().addAll(entities);
-            return Collections.singletonList(updateEntityNode);
+            String insertSql = toSqlWithParam(null,defaultSqlParameterCollector);
+            SqlEntityNode insertEntityNode = new SqlEntityNode(insertSql, new ArrayList<>(defaultSqlParameterCollector.getParameters()), entities.size());
+            insertEntityNode.getEntities().addAll(entities);
+            return Collections.singletonList(insertEntityNode);
         }
     }
 
