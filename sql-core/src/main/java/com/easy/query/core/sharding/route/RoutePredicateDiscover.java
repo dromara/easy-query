@@ -8,6 +8,7 @@ import com.easy.query.core.expression.lambda.RouteFunction;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.OrPredicateSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
+import com.easy.query.core.expression.segment.condition.ShardingPredicateSegment;
 import com.easy.query.core.expression.segment.condition.predicate.Predicate;
 import com.easy.query.core.expression.segment.condition.predicate.ShardingPredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ValuePredicate;
@@ -121,14 +122,16 @@ public class RoutePredicateDiscover {
     private RoutePredicateExpression getPredicateSqlRouteParseExpression(EasyEntityPredicateSqlExpression easyEntityPredicateSqlExpression) {
 
         PredicateSegment where = easyEntityPredicateSqlExpression.getWhere();
-        if (SqlSegmentUtil.isEmpty(where)) {
-            return RoutePredicateExpression.getDefault();
+        if (SqlSegmentUtil.isNotEmpty(where)) {
+            if(where instanceof ShardingPredicateSegment){
+                return parsePredicate((ShardingPredicateSegment)where);
+            }
         }
-        return parsePredicate(where);
+        return RoutePredicateExpression.getDefault();
 
     }
 
-    private RoutePredicateExpression parsePredicate(PredicateSegment where) {
+    private RoutePredicateExpression parsePredicate(ShardingPredicateSegment where) {
         if (where.isPredicate()) {
             Predicate predicate = where.getPredicate();
             if (predicate instanceof ShardingPredicate) {
@@ -144,9 +147,9 @@ public class RoutePredicateDiscover {
                 RoutePredicateExpression routePredicate = RoutePredicateExpression.getDefault();
                 for (PredicateSegment child : where.getChildren()) {
                     if(child instanceof AndPredicateSegment){
-                        routePredicate.and(parsePredicate(child));
+                        routePredicate=routePredicate.and(parsePredicate((AndPredicateSegment)child));
                     }else if(child instanceof OrPredicateSegment){
-                        routePredicate.or(parsePredicate(child));
+                        routePredicate=routePredicate.or(parsePredicate((OrPredicateSegment)child));
                     }
                 }
                 return routePredicate;

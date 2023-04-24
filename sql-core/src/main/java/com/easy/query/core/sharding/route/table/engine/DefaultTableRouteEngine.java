@@ -1,5 +1,6 @@
 package com.easy.query.core.sharding.route.table.engine;
 
+import com.easy.query.core.expression.sql.expression.EasyEntitySqlExpression;
 import com.easy.query.core.expression.sql.expression.EasySqlExpression;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
@@ -108,7 +109,7 @@ public class DefaultTableRouteEngine implements TableRouteEngine {
         return new ShardingRouteResult(routeUnits,dataSourceCount>1,isCrossTable);
     }
 
-    private Collection<TableRouteUnit> getEntityRouteUnit(DataSourceRouteResult dataSourceRouteResult, Class<?> entityClass, EasySqlExpression sqlExpression) {
-        return tableRouteManager.routeTo(entityClass, dataSourceRouteResult, new SqlParserResult(sqlExpression));
+    private Collection<TableRouteUnit> getEntityRouteUnit(DataSourceRouteResult dataSourceRouteResult, Class<?> entityClass, EasyEntitySqlExpression easyEntitySqlExpression) {
+        return tableRouteManager.routeTo(entityClass, dataSourceRouteResult, new SqlParserResult(easyEntitySqlExpression));
     }
 }

@@ -14,7 +14,7 @@ import java.util.*;
  * @Description: 文件说明
  * @Date: 2023/2/14 23:05
  */
-public abstract class AbstractPredicateSegment implements PredicateSegment {
+public abstract class AbstractPredicateSegment implements PredicateSegment,ShardingPredicateSegment {
     protected List<PredicateSegment> children;
     protected Predicate predicate;
     protected final boolean root;

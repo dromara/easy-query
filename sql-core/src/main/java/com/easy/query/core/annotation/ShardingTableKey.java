@@ -19,8 +19,4 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD, ElementType.ANNOTATION_TYPE})
 public @interface ShardingTableKey {
 
-    /**
-     * 分片表链接后缀
-     */
-    String tableSeparator() default "_";
 }

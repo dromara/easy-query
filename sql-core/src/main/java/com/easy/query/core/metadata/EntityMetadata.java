@@ -15,6 +15,8 @@ import com.easy.query.core.basic.plugin.interceptor.EasyPredicateFilterIntercept
 import com.easy.query.core.basic.plugin.interceptor.EasyUpdateSetInterceptor;
 import com.easy.query.core.basic.plugin.logicdel.EasyLogicDeleteStrategy;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
+import com.easy.query.core.sharding.initializer.EasyShardingInitializer;
+import com.easy.query.core.util.ArrayUtil;
 import com.easy.query.core.util.StringUtil;
 import com.easy.query.core.common.LinkedCaseInsensitiveMap;
 import com.easy.query.core.util.ClassUtil;
@@ -52,10 +54,6 @@ public class EntityMetadata {
     private final Set<String> shardingTablePropertyNames = new LinkedHashSet<>();
 
     /**
-     * 分表表名和尾巴的分隔符
-     */
-    private String tableSeparator;
-    /**
      * 查询过滤器
      */
     private final List<EasyInterceptorEntry> predicateFilterInterceptors = new ArrayList<>();
@@ -73,32 +71,14 @@ public class EntityMetadata {
         this.entityClass = entityClass;
     }
 
-    public void init(EasyQueryConfiguration jdqcConfiguration) {
-//        classInit(jdqcConfiguration);
-        propertyInit(jdqcConfiguration);
-        entityGlobalInterceptorConfigurationInit(jdqcConfiguration);
-    }
+    public void init(EasyQueryConfiguration configuration) {
 
-//    protected void classInit(EasyQueryConfiguration configuration) {
-//        NameConversion nameConversion = configuration.getNameConversion();
-//        this.tableName = nameConversion.getTableName(entityClass);
-//    }
-
-    private PropertyDescriptor firstOrNull(PropertyDescriptor[] ps, Predicate<PropertyDescriptor> predicate) {
-        for (PropertyDescriptor p : ps) {
-            if (predicate.test(p)) {
-                return p;
-            }
-        }
-        return null;
-    }
-
-    protected void propertyInit(EasyQueryConfiguration configuration) {
         NameConversion nameConversion = configuration.getNameConversion();
 
         Table table = ClassUtil.getAnnotation(entityClass, Table.class);
-        this.tableName = table == null ? null : nameConversion.convert(StringUtil.defaultIfBank(table.value(), ClassUtil.getSimpleName(entityClass)));
-
+        if(table != null){
+            this.tableName =nameConversion.convert(StringUtil.defaultIfBank(table.value(), ClassUtil.getSimpleName(entityClass)));
+        }
         HashSet<String> ignoreProperties = table != null ? new HashSet<>(Arrays.asList(table.ignoreProperties())) : new HashSet<>();
 
         List<Field> allFields = ClassUtil.getAllFields(this.entityClass);
@@ -168,7 +148,7 @@ public class EntityMetadata {
                 if (version != null) {
 
                     Class<? extends EasyVersionStrategy> strategy = version.strategy();
-                    EasyVersionStrategy easyVersionStrategy = configuration.getEasyVersionStrategy(strategy);
+                    EasyVersionStrategy easyVersionStrategy = configuration.getEasyVersionStrategyOrNull(strategy);
                     if (easyVersionStrategy == null) {
                         throw new EasyQueryException(ClassUtil.getSimpleName(entityClass) + "." + property + " Version strategy unknown");
                     }
@@ -189,7 +169,6 @@ public class EntityMetadata {
                 ShardingTableKey shardingTableKey = field.getAnnotation(ShardingTableKey.class);
                 if (shardingTableKey != null) {
                     this.setShardingTablePropertyName(property);
-                    this.setTableSeparator(shardingTableKey.tableSeparator());
                 }
                 ShardingExtraTableKey shardingExtraTableKey = field.getAnnotation(ShardingExtraTableKey.class);
                 if (shardingExtraTableKey != null) {
@@ -223,12 +202,49 @@ public class EntityMetadata {
         if (logicDelCount > 1) {
             throw new EasyQueryException("multi logic delete not support");
         }
+        //初始化烂机器
+        entityGlobalInterceptorConfigurationInit(configuration);
+
+        if(table != null&&isSharding()){
+            Class<? extends EasyShardingInitializer> initializer = table.shardingInitializer();
+            initSharding(configuration,initializer);
+        }
+    }
+
+    private PropertyDescriptor firstOrNull(PropertyDescriptor[] ps, Predicate<PropertyDescriptor> predicate) {
+        for (PropertyDescriptor p : ps) {
+            if (predicate.test(p)) {
+                return p;
+            }
+        }
+        return null;
+    }
+
+    private void initSharding(EasyQueryConfiguration configuration,Class<? extends EasyShardingInitializer> initializer){
+
+        EasyShardingInitializer easyShardingInitializer = configuration.getEasyShardingInitializerOrNull(initializer);
+        if(easyShardingInitializer==null){
+            throw new EasyQueryInvalidOperationException("not found sharding initializer:"+ClassUtil.getSimpleName(initializer));
+        }
+        Map<String, Collection<String>> initializeTables = easyShardingInitializer.getInitializeTables(this);
+        if(initializeTables!=null&&!initializeTables.isEmpty()){
+            Set<String> dataSources = initializeTables.keySet();
+            for (String dataSource : dataSources) {
+                Collection<String> tableNames = initializeTables.get(dataSource);
+                if(ArrayUtil.isNotEmpty(tableNames)){
+                    for (String name : tableNames) {
+                        addActualTableWithDataSource(dataSource,name);
+                    }
+                }else{
+                    addActualTableWithDataSource(dataSource,tableName);
+                }
+            }
+        }
     }
 
     protected void entityGlobalInterceptorConfigurationInit(EasyQueryConfiguration configuration) {
 
         if (StringUtil.isNotBlank(tableName)) {
-
             List<EasyInterceptor> globalInterceptors = configuration.getEasyInterceptors().stream().sorted(Comparator.comparingInt(EasyInterceptor::order)).collect(Collectors.toList());
             for (EasyInterceptor globalInterceptor : globalInterceptors) {
                 if (globalInterceptor.apply(entityClass)) {
@@ -427,16 +443,19 @@ public class EntityMetadata {
         shardingTablePropertyNames.add(shardingExtraTablePropertyName);
     }
 
-    public String getTableSeparator() {
-        return tableSeparator;
-    }
-
-    public void setTableSeparator(String tableSeparator) {
-        this.tableSeparator = tableSeparator;
-    }
-
     public Collection<String> getTableNames() {
         return Collections.unmodifiableCollection(tableNames);
+    }
+    public void addActualTableWithDataSource(String dataSource,String actualTableName){
+        if(StringUtil.isBlank(dataSource)){
+            throw new IllegalArgumentException("data source");
+        }
+        if(StringUtil.isBlank(actualTableName)){
+            throw new IllegalArgumentException("actual table name");
+        }
+        dataSources.add(dataSource);
+        String tableName = dataSource + "." + actualTableName;
+        tableNames.add(tableName);
     }
 
     public Collection<String> getDataSources() {

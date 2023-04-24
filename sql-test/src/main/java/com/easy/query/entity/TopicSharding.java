@@ -3,6 +3,7 @@ package com.easy.query.entity;
 import com.easy.query.core.annotation.Column;
 import com.easy.query.core.annotation.ShardingTableKey;
 import com.easy.query.core.annotation.Table;
+import com.easy.query.sharding.FixShardingInitializer;
 import lombok.Data;
 import lombok.ToString;
 
@@ -15,7 +16,7 @@ import java.time.LocalDateTime;
  * @author xuejiaming
  */
 @Data
-@Table("t_topic_sharding")
+@Table(value = "t_topic_sharding",shardingInitializer = FixShardingInitializer.class)
 @ToString
 public class TopicSharding {
 

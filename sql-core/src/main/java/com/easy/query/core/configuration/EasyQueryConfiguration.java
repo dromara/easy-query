@@ -14,6 +14,8 @@ import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.basic.enums.LogicDeleteStrategyEnum;
 import com.easy.query.core.config.DefaultNameConversion;
 import com.easy.query.core.basic.plugin.interceptor.EasyInterceptor;
+import com.easy.query.core.sharding.initializer.EasyShardingInitializer;
+import com.easy.query.core.sharding.initializer.UnShardingInitializer;
 import com.easy.query.core.util.ClassUtil;
 import com.easy.query.core.util.StringUtil;
 
@@ -31,6 +33,7 @@ public class EasyQueryConfiguration {
     private static final EasyLogicDeleteStrategy TIMESTAMP_LOGIC_DELETE = new DeleteLongTimestampEasyEntityTypeConfiguration();
     private static final EasyLogicDeleteStrategy LOCAL_DATE_TIME_LOGIC_DELETE = new LocalDateTimeEasyEntityTypeConfiguration();
     private static final EasyLogicDeleteStrategy LOCAL_DATE_LOGIC_DELETE = new LocalDateEasyLogicDeleteStrategy();
+    private static final EasyShardingInitializer DEFAULT_SHARDING_INITIALIZER = new UnShardingInitializer();
 
     private final EasyQueryOption easyQueryOption;
 
@@ -42,6 +45,7 @@ public class EasyQueryConfiguration {
     private Map<String, EasyLogicDeleteStrategy> globalLogicDeleteStrategyMap = new ConcurrentHashMap<>();
     private Map<Class<? extends EasyEncryptionStrategy>, EasyEncryptionStrategy> easyEncryptionStrategyMap = new ConcurrentHashMap<>();
     private Map<Class<? extends EasyVersionStrategy>, EasyVersionStrategy> easyVersionStrategyMap = new ConcurrentHashMap<>();
+    private Map<Class<? extends EasyShardingInitializer>, EasyShardingInitializer> shardingInitializerMap = new ConcurrentHashMap<>();
 
     public EasyQueryConfiguration() {
        this(EasyQueryOption.defaultEasyQueryOption());
@@ -52,6 +56,7 @@ public class EasyQueryConfiguration {
         easyVersionStrategyMap.put(EasyVersionLongStrategy.class,new EasyVersionLongStrategy());
         easyVersionStrategyMap.put(EasyVersionUUIDStrategy.class,new EasyVersionUUIDStrategy());
         easyVersionStrategyMap.put(EasyVersionTimestampStrategy.class,new EasyVersionTimestampStrategy());
+        shardingInitializerMap.put(UnShardingInitializer.class,DEFAULT_SHARDING_INITIALIZER);
     }
 
     public boolean deleteThrow(){
@@ -171,14 +176,14 @@ public class EasyQueryConfiguration {
         easyVersionStrategyMap.put(strategyClass, versionStrategy);
     }
 
-    public EasyVersionStrategy getEasyVersionStrategy(Class<? extends EasyVersionStrategy> strategy){
+    public EasyVersionStrategy getEasyVersionStrategyOrNull(Class<? extends EasyVersionStrategy> strategy){
         return easyVersionStrategyMap.get(strategy);
     }
     public boolean containEasyVersionStrategy(Class<? extends EasyVersionStrategy> strategy){
-        return getEasyVersionStrategy(strategy)!=null;
+        return getEasyVersionStrategyOrNull(strategy)!=null;
     }
     public EasyVersionStrategy getEasyVersionStrategyNotNull(Class<? extends EasyVersionStrategy> strategy){
-        EasyVersionStrategy easyVersionStrategy = getEasyVersionStrategy(strategy);
+        EasyVersionStrategy easyVersionStrategy = getEasyVersionStrategyOrNull(strategy);
         if(easyVersionStrategy==null){
             throw new EasyQueryException("easy version strategy not found. strategy:"+ClassUtil.getSimpleName(strategy));
         }
@@ -188,4 +193,16 @@ public class EasyQueryConfiguration {
         return easyQueryOption;
     }
 
+
+    public void applyShardingInitializer(EasyShardingInitializer shardingInitializer){
+        Class<? extends EasyShardingInitializer> initializerClass = shardingInitializer.getClass();
+        if(shardingInitializerMap.containsKey(initializerClass)){
+            throw new EasyQueryException("easy sharding initializer:" + ClassUtil.getSimpleName(initializerClass) + ",repeat");
+        }
+        shardingInitializerMap.put(initializerClass,shardingInitializer);
+    }
+
+    public EasyShardingInitializer getEasyShardingInitializerOrNull(Class<? extends EasyShardingInitializer> initializer){
+        return shardingInitializerMap.get(initializer);
+    }
 }

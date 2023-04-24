@@ -49,7 +49,8 @@ import com.easy.query.interceptor.MyTenantInterceptor;
 import com.easy.query.logicdel.MyLogicDelStrategy;
 import com.easy.query.mysql.MySqlExpressionFactory;
 import com.easy.query.mysql.config.MySqlDialect;
-import com.easy.query.rule.TopicShardingTableRule;
+import com.easy.query.sharding.FixShardingInitializer;
+import com.easy.query.sharding.TopicShardingTableRule;
 import com.zaxxer.hikari.HikariDataSource;
 import org.junit.BeforeClass;
 
@@ -102,6 +103,7 @@ public abstract class BaseTest {
         configuration.applyEasyLogicDeleteStrategy(new MyLogicDelStrategy());
         configuration.applyEasyInterceptor(new MyEntityInterceptor());
         configuration.applyEasyInterceptor(new MyTenantInterceptor());
+        configuration.applyShardingInitializer(new FixShardingInitializer());
         EntityMetadataManager entityMetadataManager = new DefaultEntityMetadataManager(configuration);
         EasyQueryLambdaFactory easyQueryLambdaFactory = new DefaultEasyQueryLambdaFactory();
         DefaultEasyExpressionBuilderFactory defaultEasyExpressionBuilderFactory = new DefaultEasyExpressionBuilderFactory();

@@ -14,9 +14,6 @@ import java.util.List;
  * @author xuejiaming
  */
 public interface PredicateSegment extends SqlSegment {
-    List<PredicateSegment> getChildren();
-    Predicate getPredicate();
-    boolean isPredicate();
     boolean isRoot();
     boolean isEmpty();
 

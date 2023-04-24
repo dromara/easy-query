@@ -25,7 +25,6 @@ public class RoutePredicateExpression {
         this(DEFAULT_TRUE_ROUTE_PREDICATE);
     }
     public RoutePredicateExpression(RouteFunction<String> routePredicate){
-
         this.routePredicate = routePredicate;
     }
     public RouteFunction<String> getRoutePredicate() {

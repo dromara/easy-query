@@ -12,6 +12,7 @@ import com.easy.query.core.sharding.rule.table.TableRouteRule;
 import com.easy.query.core.util.ShardingUtil;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -31,17 +32,17 @@ public class ShardingTableRoute extends AbstractFilterTableRoute {
     public Collection<TableRouteUnit> route0(TableRouteRule tableRouteRule,EntityMetadata entityMetadata,DataSourceRouteResult dataSourceRouteResult, Collection<String> beforeTableNames, SqlParserResult sqlParserResult) {
         RoutePredicateExpression routePredicateExpression = ShardingUtil.getRoutePredicateExpression(sqlParserResult, entityMetadata, tableRouteRule, true);
         RouteFunction<String> routePredicate = routePredicateExpression.getRoutePredicate();
-        return filterTableNameWithDataSourceResult(dataSourceRouteResult, beforeTableNames)
+        return filterTableNameWithDataSourceResult(tableRouteRule,dataSourceRouteResult, beforeTableNames)
                 .filter(routePredicate::apply)
                 .map(o->parseRouteWithTableName(entityMetadata,o))
                 .collect(Collectors.toList());
     }
 
-    protected Stream<String> filterTableNameWithDataSourceResult(DataSourceRouteResult dataSourceRouteResult, Collection<String> beforeTableNames) {
+    protected Stream<String> filterTableNameWithDataSourceResult(TableRouteRule tableRouteRule,DataSourceRouteResult dataSourceRouteResult, Collection<String> beforeTableNames) {
         return beforeTableNames.stream().filter(tableName -> {
             String dataSourceName = parseDataSourceWithTableName(tableName);
             return dataSourceRouteResult.getIntersectDataSources().contains(dataSourceName);
-        });
+        }).map(tableRouteRule::mapTableName);
     }
 
     protected String parseDataSourceWithTableName(String tableName) {

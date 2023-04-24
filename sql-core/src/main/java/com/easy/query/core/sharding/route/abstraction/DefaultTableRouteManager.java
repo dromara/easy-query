@@ -3,7 +3,10 @@ package com.easy.query.core.sharding.route.abstraction;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.sharding.parser.SqlParserResult;
+import com.easy.query.core.sharding.route.datasource.DataSourceRoute;
 import com.easy.query.core.sharding.route.datasource.engine.DataSourceRouteResult;
+import com.easy.query.core.sharding.route.table.ShardingTableRoute;
+import com.easy.query.core.sharding.route.table.TableRoute;
 import com.easy.query.core.sharding.route.table.TableRouteUnit;
 import com.easy.query.core.sharding.rule.datasource.DataSourceRouteRule;
 import com.easy.query.core.sharding.rule.table.TableRouteRule;
@@ -21,15 +24,16 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class DefaultTableRouteManager implements TableRouteManager{
     private final Map<Class<?>, TableRouteRule> entityRouteRuleCache= new ConcurrentHashMap<>();
-    private final EntityMetadataManager entityMetadataManager;
+    private final TableRoute tableRoute;
 
     public DefaultTableRouteManager(EntityMetadataManager entityMetadataManager){
 
-        this.entityMetadataManager = entityMetadataManager;
+        this.tableRoute=new ShardingTableRoute(entityMetadataManager);
     }
     @Override
     public Collection<TableRouteUnit> routeTo(Class<?> entityClass, DataSourceRouteResult dataSourceRouteResult, SqlParserResult sqlParserResult) {
-        return null;
+        TableRouteRule routeRule = getRouteRule(entityClass);
+        return tableRoute.route(routeRule,dataSourceRouteResult,sqlParserResult);
     }
 
     @Override

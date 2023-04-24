@@ -1,4 +1,4 @@
-package com.easy.query.rule;
+package com.easy.query.sharding;
 
 import com.easy.query.core.expression.lambda.RouteFunction;
 import com.easy.query.core.sharding.enums.ShardingOperatorEnum;
@@ -21,10 +21,10 @@ public class TopicShardingTableRule extends AbstractTableRouteRule {
 
     @Override
     protected RouteFunction<String> getRouteFilter(Object shardingValue, ShardingOperatorEnum shardingOperator) {
+        String tail = String.valueOf(shardingValue.toString().hashCode() % 3);
         if(Objects.equals(ShardingOperatorEnum.EQUAL,shardingOperator)){
             return t->{
-                String tail = String.valueOf(shardingValue.toString().hashCode() % 3);
-                return Objects.equals(t,tail);
+                return Objects.equals(t,"ds0.t_topic_sharding_"+tail);
             };
         }
         return t->true;
