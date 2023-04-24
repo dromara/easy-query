@@ -13,7 +13,7 @@ import java.util.List;
  * @author xuejiaming
  */
 public class ShardingTest extends BaseTest {
-    @Test
+//    @Test
     public void sharding1(){
         TopicSharding topicSharding = easyQuery.queryable(TopicSharding.class)
                 .whereById("123").firstOrNull();

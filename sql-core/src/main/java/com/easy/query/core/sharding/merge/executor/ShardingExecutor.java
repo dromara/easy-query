@@ -19,6 +19,8 @@ import com.easy.query.core.util.EasyUtil;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -39,8 +41,23 @@ public class ShardingExecutor {
     private ShardingExecutor() {
     }
 
-    public static <TResult> TResult execute(StreamMergeContext streamMergeContext, Executor<TResult> executor, Stream<ExecutionUnit> sqlRouteUnits) {
-        List<Future<List<TResult>>> futures = execute0(streamMergeContext, executor, sqlRouteUnits);
+    public static <TResult> TResult execute(StreamMergeContext streamMergeContext, Executor<TResult> executor, Collection<ExecutionUnit> sqlRouteUnits) {
+
+        List<TResult> results = execute0(streamMergeContext, executor, sqlRouteUnits);
+        return executor.getShardingMerger().streamMerge(streamMergeContext, results);
+    }
+
+    private static <TResult> List<TResult> execute0(StreamMergeContext streamMergeContext, Executor<TResult> executor, Collection<ExecutionUnit> executionUnits) {
+
+        Collection<ExecutionUnit> reOrderExecutionUnits = reOrderExecutionUnits(streamMergeContext, executionUnits);
+        List<DataSourceSqlExecutorUnit> dataSourceSqlExecutorUnits = EasyUtil.groupBy(reOrderExecutionUnits.stream(), ExecutionUnit::getDataSourceName)
+                .map(o -> getSqlExecutorGroups(streamMergeContext, o)).collect(Collectors.toList());
+        if(executionUnits.size()==1){
+            DataSourceSqlExecutorUnit dataSourceSqlExecutorUnit = dataSourceSqlExecutorUnits.get(0);
+            return executor.execute(dataSourceSqlExecutorUnit);
+        }
+        List<Future<List<TResult>>> futures = executeFuture0(streamMergeContext, executor, dataSourceSqlExecutorUnits);
+
         EasyShardingOption easyShardingOption = streamMergeContext.getRuntimeContext().getEasyShardingOption();
         List<TResult> results = new ArrayList<>(futures.size() * easyShardingOption.getMaxQueryConnectionsLimit());
         for (Future<List<TResult>> future : futures) {
@@ -52,21 +69,22 @@ public class ShardingExecutor {
                 throw new EasyQueryTimeoutException(e);
             }
         }
-        return executor.getShardingMerger().streamMerge(streamMergeContext, results);
-    }
+        return results;
 
-    private static <TResult> List<Future<List<TResult>>> execute0(StreamMergeContext streamMergeContext, Executor<TResult> executor, Stream<ExecutionUnit> executionUnits) {
+
+    }
+    private static <TResult> List<Future<List<TResult>>> executeFuture0(StreamMergeContext streamMergeContext, Executor<TResult> executor, List<DataSourceSqlExecutorUnit> dataSourceSqlExecutorUnits) {
         ExecutorService executorService = streamMergeContext.getRuntimeContext().getEasyShardingExecutorService().getExecutorService();
-        Stream<ExecutionUnit> executionUnitStream = reOrderTableTails(streamMergeContext, executionUnits);
-        return EasyUtil.groupBy(executionUnitStream, ExecutionUnit::getDataSourceName)
-                .map(o -> getSqlExecutorGroups(streamMergeContext, o))
-                .map(dataSourceSqlExecutorUnit -> {
-                    return executorService.submit(() -> executor.execute(dataSourceSqlExecutorUnit));
-                }).collect(Collectors.toList());
+        List<Future<List<TResult>>> futures = new ArrayList<>(dataSourceSqlExecutorUnits.size());
+        for (DataSourceSqlExecutorUnit dataSourceSqlExecutorUnit : dataSourceSqlExecutorUnits) {
+            Future<List<TResult>> future = executorService.submit(() -> executor.execute(dataSourceSqlExecutorUnit));
+            futures.add(future);
+        }
+        return futures;
     }
 
-    private static Stream<ExecutionUnit> reOrderTableTails(StreamMergeContext streamMergeContext,
-                                                       Stream<ExecutionUnit> executionUnits) {
+    private static Collection<ExecutionUnit> reOrderExecutionUnits(StreamMergeContext streamMergeContext,
+                                                                   Collection<ExecutionUnit> executionUnits) {
         if (streamMergeContext.isSeqQuery()) {
             throw new NotImplementedException();
 //            return sqlRouteUnits.OrderByAscDescIf(o => o.TableRouteResult.ReplaceTables.First().Tail,

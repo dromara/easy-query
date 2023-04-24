@@ -3,6 +3,7 @@ package com.easy.query.sharding;
 import com.easy.query.core.expression.lambda.RouteFunction;
 import com.easy.query.core.sharding.enums.ShardingOperatorEnum;
 import com.easy.query.core.sharding.rule.table.abstraction.AbstractTableRouteRule;
+import com.easy.query.core.util.StringUtil;
 import com.easy.query.entity.TopicSharding;
 
 import java.util.Objects;
@@ -24,7 +25,7 @@ public class TopicShardingTableRule extends AbstractTableRouteRule {
         String tail = String.valueOf(shardingValue.toString().hashCode() % 3);
         if(Objects.equals(ShardingOperatorEnum.EQUAL,shardingOperator)){
             return t->{
-                return Objects.equals(t,"ds0.t_topic_sharding_"+tail);
+                return StringUtil.endsWith(t,".t_topic_sharding_"+tail);
             };
         }
         return t->true;

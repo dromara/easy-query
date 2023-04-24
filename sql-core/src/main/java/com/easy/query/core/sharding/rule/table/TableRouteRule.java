@@ -14,12 +14,6 @@ import java.util.Collection;
  * @author xuejiaming
  */
 public interface TableRouteRule extends RouteRule, RouteRuleFilter {
-    /**
-     * 用来映射过滤表名
-     * @param originalTableName data source.actual table name
-     * @return 过滤后的表名默认返回 {@param originalTableName} 用于{@link RouteFunction<String>}方法的入参
-     */
-    String mapTableName(String originalTableName);
 
     /**
      * 用于过滤前设置表名 data source.actual table name 全部集合

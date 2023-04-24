@@ -29,7 +29,7 @@ public abstract class AbstractEasyQueryJDBCExecutor implements EasyQueryJDBCExec
     public ExecuteResult execute() {
         Executor<ExecuteResult> executor = createExecutor();
         Collection<ExecutionUnit> executionUnits = getDefaultSSqlRouteUnits();
-        return ShardingExecutor.execute(streamMergeContext,executor,executionUnits.stream());
+        return ShardingExecutor.execute(streamMergeContext,executor,executionUnits);
     }
 
     @Override

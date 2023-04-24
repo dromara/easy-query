@@ -16,11 +16,6 @@ import java.util.Collection;
 public abstract class AbstractTableRouteRule implements TableRouteRule {
 
     @Override
-    public String mapTableName(String originalTableName) {
-        return originalTableName;
-    }
-
-    @Override
     public RouteFunction<String> routeFilter(Object shardingValue, ShardingOperatorEnum shardingOperator, String propertyName,boolean isMainShardingProperty) {
        if(isMainShardingProperty){
            return getRouteFilter(shardingValue,shardingOperator);

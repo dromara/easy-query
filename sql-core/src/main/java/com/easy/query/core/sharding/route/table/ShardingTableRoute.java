@@ -32,17 +32,17 @@ public class ShardingTableRoute extends AbstractFilterTableRoute {
     public Collection<TableRouteUnit> route0(TableRouteRule tableRouteRule,EntityMetadata entityMetadata,DataSourceRouteResult dataSourceRouteResult, Collection<String> beforeTableNames, SqlParserResult sqlParserResult) {
         RoutePredicateExpression routePredicateExpression = ShardingUtil.getRoutePredicateExpression(sqlParserResult, entityMetadata, tableRouteRule, true);
         RouteFunction<String> routePredicate = routePredicateExpression.getRoutePredicate();
-        return filterTableNameWithDataSourceResult(tableRouteRule,dataSourceRouteResult, beforeTableNames)
+        return filterTableNameWithDataSourceResult(dataSourceRouteResult, beforeTableNames)
                 .filter(routePredicate::apply)
                 .map(o->parseRouteWithTableName(entityMetadata,o))
                 .collect(Collectors.toList());
     }
 
-    protected Stream<String> filterTableNameWithDataSourceResult(TableRouteRule tableRouteRule,DataSourceRouteResult dataSourceRouteResult, Collection<String> beforeTableNames) {
+    protected Stream<String> filterTableNameWithDataSourceResult(DataSourceRouteResult dataSourceRouteResult, Collection<String> beforeTableNames) {
         return beforeTableNames.stream().filter(tableName -> {
             String dataSourceName = parseDataSourceWithTableName(tableName);
             return dataSourceRouteResult.getIntersectDataSources().contains(dataSourceName);
-        }).map(tableRouteRule::mapTableName);
+        });
     }
 
     protected String parseDataSourceWithTableName(String tableName) {
@@ -51,7 +51,7 @@ public class ShardingTableRoute extends AbstractFilterTableRoute {
 
     protected TableRouteUnit parseRouteWithTableName(EntityMetadata entityMetadata,String tableName) {
         if (!tableName.contains(".")) {
-            throw new EasyQueryInvalidOperationException("not support table name:" + tableName);
+            throw new EasyQueryInvalidOperationException("table name not full name eg.(dataSource.tableName) :" + tableName);
         }
         String[] tableInfos = tableName.split("\\.");
         return new TableRouteUnit(tableInfos[0],entityMetadata.getTableName() ,tableInfos[1],entityMetadata.getEntityClass());
