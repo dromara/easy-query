@@ -1,8 +1,8 @@
 package com.easy.query.core.sharding.route.table.abstraction;
 
+import com.easy.query.core.expression.executor.parser.PrepareParseResult;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
-import com.easy.query.core.sharding.parser.SqlParserResult;
 import com.easy.query.core.sharding.route.datasource.engine.DataSourceRouteResult;
 import com.easy.query.core.sharding.route.table.TableRouteUnit;
 import com.easy.query.core.sharding.rule.table.TableRouteRule;
@@ -22,14 +22,14 @@ public abstract class AbstractFilterTableRoute extends AbstractTableRoute{
     }
 
     @Override
-    public Collection<TableRouteUnit> route(TableRouteRule tableRouteRule,DataSourceRouteResult dataSourceRouteResult, SqlParserResult sqlParserResult) {
+    public Collection<TableRouteUnit> route(TableRouteRule tableRouteRule,DataSourceRouteResult dataSourceRouteResult, PrepareParseResult prepareParseResult) {
         Class<?> entityClass = tableRouteRule.entityClass();
         EntityMetadata entityMetadata = getEntityMetadataManager().getEntityMetadata(entityClass);
         Collection<String> tableNames = entityMetadata.getTableNames();
         Collection<String> beforeFilterTableNames = tableRouteRule.beforeFilterTableName(tableNames);
-        Collection<TableRouteUnit> tableRouteUnits = route0(tableRouteRule,entityMetadata,dataSourceRouteResult, beforeFilterTableNames, sqlParserResult);
+        Collection<TableRouteUnit> tableRouteUnits = route0(tableRouteRule,entityMetadata,dataSourceRouteResult, beforeFilterTableNames, prepareParseResult);
         return  tableRouteRule.afterFilterTableName(tableNames,beforeFilterTableNames,tableRouteUnits);
 
     }
-    public abstract Collection<TableRouteUnit> route0(TableRouteRule tableRouteRule,EntityMetadata entityMetadata,DataSourceRouteResult dataSourceRouteResult,Collection<String> beforeTableNames, SqlParserResult sqlParserResult);
+    public abstract Collection<TableRouteUnit> route0(TableRouteRule tableRouteRule,EntityMetadata entityMetadata,DataSourceRouteResult dataSourceRouteResult,Collection<String> beforeTableNames, PrepareParseResult prepareParseResult);
 }

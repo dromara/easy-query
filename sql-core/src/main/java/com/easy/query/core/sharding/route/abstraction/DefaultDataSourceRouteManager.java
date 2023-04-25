@@ -1,13 +1,10 @@
 package com.easy.query.core.sharding.route.abstraction;
 
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
-import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
-import com.easy.query.core.expression.sql.expression.EasyEntitySqlExpression;
-import com.easy.query.core.expression.sql.expression.EasySqlExpression;
+import com.easy.query.core.expression.executor.parser.PrepareParseResult;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.sharding.EasyDataSource;
-import com.easy.query.core.sharding.parser.SqlParserResult;
 import com.easy.query.core.sharding.route.datasource.DataSourceRoute;
 import com.easy.query.core.sharding.route.datasource.ShardingDataSourceRoute;
 import com.easy.query.core.sharding.rule.datasource.DataSourceRouteRule;
@@ -37,13 +34,13 @@ public class DefaultDataSourceRouteManager implements DataSourceRouteManager{
         dataSourceRoute=new ShardingDataSourceRoute(entityMetadataManager);
     }
     @Override
-    public Collection<String> routeTo(Class<?> entityClass, EasyEntitySqlExpression easyEntitySqlExpression) {
+    public Collection<String> routeTo(Class<?> entityClass, PrepareParseResult prepareParseResult) {
         EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(entityClass);
         if(!entityMetadata.isMultiDataSourceMapping()){
             return Collections.singletonList(virtualDataSource.getDefaultDataSourceName());
         }
         DataSourceRouteRule routeRule = getRouteRule(entityClass);
-        return dataSourceRoute.route(routeRule, new SqlParserResult(easyEntitySqlExpression));
+        return dataSourceRoute.route(routeRule, prepareParseResult);
     }
 
     @Override

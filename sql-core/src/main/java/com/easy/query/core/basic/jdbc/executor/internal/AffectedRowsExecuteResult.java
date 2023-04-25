@@ -9,27 +9,19 @@ import java.sql.PreparedStatement;
  * @author xuejiaming
  */
 public class AffectedRowsExecuteResult implements ExecuteResult{
-    private final int rows;
-    private final PreparedStatement preparedStatement;
+    private final long rows;
 
-    public AffectedRowsExecuteResult(int rows, PreparedStatement preparedStatement){
+    public AffectedRowsExecuteResult(long rows){
 
         this.rows = rows;
-        this.preparedStatement = preparedStatement;
     }
 
-    public int getRows() {
+    public long getRows() {
         return rows;
     }
 
-    public PreparedStatement getPreparedStatement() {
-        return preparedStatement;
-    }
 
     @Override
     public void close() throws Exception {
-        if(preparedStatement!=null){
-            preparedStatement.close();
-        }
     }
 }

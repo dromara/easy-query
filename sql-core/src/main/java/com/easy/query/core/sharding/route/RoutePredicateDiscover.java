@@ -4,6 +4,11 @@ import com.easy.query.core.basic.jdbc.parameter.ConstSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.enums.SqlPredicateCompare;
 import com.easy.query.core.enums.SqlPredicateCompareEnum;
+import com.easy.query.core.exception.EasyQueryInvalidOperationException;
+import com.easy.query.core.expression.executor.parser.InsertPrepareParseResult;
+import com.easy.query.core.expression.executor.parser.PrepareParseResult;
+import com.easy.query.core.expression.executor.parser.QueryPrepareParseResult;
+import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.RouteFunction;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.OrPredicateSegment;
@@ -14,14 +19,14 @@ import com.easy.query.core.expression.segment.condition.predicate.ShardingPredic
 import com.easy.query.core.expression.segment.condition.predicate.ValuePredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ValuesPredicate;
 import com.easy.query.core.expression.sql.expression.EasyEntityPredicateSqlExpression;
-import com.easy.query.core.expression.sql.expression.EasyEntitySqlExpression;
-import com.easy.query.core.expression.sql.expression.EasyInsertSqlExpression;
+import com.easy.query.core.expression.sql.expression.EasyQuerySqlExpression;
+import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.sharding.enums.ShardingOperatorEnum;
-import com.easy.query.core.sharding.parser.SqlParserResult;
 import com.easy.query.core.sharding.rule.RouteRuleFilter;
 import com.easy.query.core.util.ArrayUtil;
 import com.easy.query.core.util.ClassUtil;
+import com.easy.query.core.util.EasyUtil;
 import com.easy.query.core.util.SqlSegmentUtil;
 import com.easy.query.core.util.StringUtil;
 
@@ -88,14 +93,14 @@ public class RoutePredicateDiscover {
         return ShardingOperatorEnum.UN_KNOWN;
     }
 
-    private final SqlParserResult sqlParserResult;
+    private final PrepareParseResult prepareParseResult;
     private final EntityMetadata entityMetadata;
     private final RouteRuleFilter routeRuleFilter;
     private final Set<String> shardingProperties;
     private final String mainShardingProperty;
 
-    public RoutePredicateDiscover(SqlParserResult sqlParserResult, EntityMetadata entityMetadata, RouteRuleFilter routeRuleFilter, boolean shardingTableRoute) {
-        this.sqlParserResult = sqlParserResult;
+    public RoutePredicateDiscover(PrepareParseResult prepareParseResult, EntityMetadata entityMetadata, RouteRuleFilter routeRuleFilter, boolean shardingTableRoute) {
+        this.prepareParseResult = prepareParseResult;
 
         this.entityMetadata = entityMetadata;
         this.routeRuleFilter = routeRuleFilter;
@@ -109,14 +114,17 @@ public class RoutePredicateDiscover {
     }
 
     public RoutePredicateExpression getRouteParseExpression() {
-        EasyEntitySqlExpression entitySqlExpression = sqlParserResult.getEntitySqlExpression();
-
-        if (entitySqlExpression instanceof EasyEntityPredicateSqlExpression) {
-            return getPredicateSqlRouteParseExpression((EasyEntityPredicateSqlExpression) entitySqlExpression);
-        } else if (entitySqlExpression instanceof EasyInsertSqlExpression) {
-            return getInsertSqlRouteParseExpression((EasyInsertSqlExpression) entitySqlExpression);
+        if (prepareParseResult instanceof QueryPrepareParseResult) {
+            EasyQuerySqlExpression easyQuerySqlExpression = ((QueryPrepareParseResult) prepareParseResult).getEasyQuerySqlExpression();
+            return getPredicateSqlRouteParseExpression(easyQuerySqlExpression);
+        } else if (prepareParseResult instanceof InsertPrepareParseResult) {
+            List<Object> entities = ((InsertPrepareParseResult) prepareParseResult).getEntities();
+            if(entities.size()!=1){
+                throw new EasyQueryInvalidOperationException("route parse un support multi entity");
+            }
+            return getInsertSqlRouteParseExpression(entities.get(0));
         }
-        throw new UnsupportedOperationException(ClassUtil.getInstanceSimpleName(entitySqlExpression));
+        throw new UnsupportedOperationException(ClassUtil.getInstanceSimpleName(prepareParseResult));
     }
 
     private RoutePredicateExpression getPredicateSqlRouteParseExpression(EasyEntityPredicateSqlExpression easyEntityPredicateSqlExpression) {
@@ -202,7 +210,11 @@ public class RoutePredicateDiscover {
         return RoutePredicateExpression.getDefault();
     }
 
-    private RoutePredicateExpression getInsertSqlRouteParseExpression(EasyInsertSqlExpression entitySqlExpression) {
-        return null;
+    private RoutePredicateExpression getInsertSqlRouteParseExpression(Object entity) {
+        ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(mainShardingProperty);
+        Property<Object, ?> shardingKeyPropertyGetter = EasyUtil.getFastBean(entityMetadata.getEntityClass()).getBeanGetter(columnMetadata.getProperty());
+        Object shardingValue = shardingKeyPropertyGetter.apply(entity);
+        RouteFunction<String> routePredicate = routeRuleFilter.routeFilter(shardingValue, ShardingOperatorEnum.EQUAL, mainShardingProperty, true);
+        return new RoutePredicateExpression(routePredicate);
     }
 }

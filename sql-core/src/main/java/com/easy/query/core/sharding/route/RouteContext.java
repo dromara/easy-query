@@ -9,17 +9,11 @@ import com.easy.query.core.expression.sql.expression.EasyEntitySqlExpression;
  * @author xuejiaming
  */
 public class RouteContext {
-    private final EasyEntitySqlExpression easyEntitySqlExpression;
     private final ShardingRouteResult entityRouteResult;
 
-    public RouteContext(EasyEntitySqlExpression easyEntitySqlExpression, ShardingRouteResult entityRouteResult){
+    public RouteContext(ShardingRouteResult entityRouteResult){
 
-        this.easyEntitySqlExpression = easyEntitySqlExpression;
         this.entityRouteResult = entityRouteResult;
-    }
-
-    public EasyEntitySqlExpression getEntitySqlExpression() {
-        return easyEntitySqlExpression;
     }
 
     public ShardingRouteResult getEntityRouteResult() {

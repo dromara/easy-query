@@ -1,12 +1,9 @@
 package com.easy.query.core.sharding.route.datasource.abstraction;
 
+import com.easy.query.core.expression.executor.parser.PrepareParseResult;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
-import com.easy.query.core.sharding.parser.SqlParserResult;
-import com.easy.query.core.sharding.route.datasource.engine.DataSourceRouteResult;
-import com.easy.query.core.sharding.route.table.TableRouteUnit;
 import com.easy.query.core.sharding.rule.datasource.DataSourceRouteRule;
-import com.easy.query.core.sharding.rule.table.TableRouteRule;
 
 import java.util.Collection;
 
@@ -23,15 +20,15 @@ public abstract class AbstractFilterDataSourceRoute extends AbstractDataSourceRo
     }
 
     @Override
-    public Collection<String> route(DataSourceRouteRule dataSourceRouteRule, SqlParserResult sqlParserResult) {
+    public Collection<String> route(DataSourceRouteRule dataSourceRouteRule, PrepareParseResult prepareParseResult) {
         Class<?> entityClass = dataSourceRouteRule.entityClass();
         EntityMetadata entityMetadata = getEntityMetadataManager().getEntityMetadata(entityClass);
         Collection<String> dataSources = entityMetadata.getDataSources();
         Collection<String> beforeFilterDataSource = dataSourceRouteRule.beforeFilterDataSource(dataSources);
-        Collection<String> filterDataSources = route0(dataSourceRouteRule,entityMetadata, beforeFilterDataSource, sqlParserResult);
+        Collection<String> filterDataSources = route0(dataSourceRouteRule,entityMetadata, beforeFilterDataSource, prepareParseResult);
         return  dataSourceRouteRule.afterFilterDataSource(dataSources,beforeFilterDataSource,filterDataSources);
 
     }
-    public abstract Collection<String> route0(DataSourceRouteRule dataSourceRouteRule, EntityMetadata entityMetadata, Collection<String> beforeTableNames, SqlParserResult sqlParserResult);
+    public abstract Collection<String> route0(DataSourceRouteRule dataSourceRouteRule, EntityMetadata entityMetadata, Collection<String> beforeTableNames, PrepareParseResult prepareParseResult);
 
 }

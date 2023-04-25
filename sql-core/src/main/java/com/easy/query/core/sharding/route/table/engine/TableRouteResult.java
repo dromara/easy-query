@@ -3,6 +3,7 @@ package com.easy.query.core.sharding.route.table.engine;
 import com.easy.query.core.sharding.route.table.TableRouteUnit;
 import com.easy.query.core.util.ArrayUtil;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -14,14 +15,14 @@ import java.util.Set;
  * @author xuejiaming
  */
 public class TableRouteResult {
-    private final Set<TableRouteUnit> replaceTables;
+    private final List<TableRouteUnit> replaceTables;
     private final boolean isEmpty;
     public TableRouteResult(List<TableRouteUnit> replaceTables){
-        this.replaceTables=new HashSet<>(replaceTables);
+        this.replaceTables=replaceTables;
         isEmpty=replaceTables.size()==0;
     }
 
-    public Set<TableRouteUnit> getReplaceTables() {
+    public List<TableRouteUnit> getReplaceTables() {
         return replaceTables;
     }
 

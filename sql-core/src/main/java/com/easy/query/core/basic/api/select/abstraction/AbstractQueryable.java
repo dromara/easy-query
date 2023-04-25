@@ -263,8 +263,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     protected <TR> List<TR> toInternalListWithExpression(EntityQueryExpressionBuilder entityQueryExpressionBuilder, Class<TR> resultClass){
         boolean tracking = sqlEntityExpression.getExpressionContext().getBehavior().hasBehavior(EasyBehaviorEnum.USE_TRACKING);
         EntityExpressionExecutor entityExpressionExecutor = sqlEntityExpression.getRuntimeContext().getEntityExpressionExecutor();
-        EasyQuerySqlExpression easyQuerySqlExpression = entityQueryExpressionBuilder.toExpression();
-        return entityExpressionExecutor.query(ExecutorContext.create(sqlEntityExpression.getRuntimeContext(),false,tracking ),resultClass,easyQuerySqlExpression);
+        return entityExpressionExecutor.query(ExecutorContext.create(sqlEntityExpression.getRuntimeContext(),false,tracking ),resultClass,entityQueryExpressionBuilder);
     }
 //    protected <TR> List<TR> toInternalListWithSql(String sql,Class<TR> resultClass){
 //        EasyExecutor easyExecutor = sqlEntityExpression.getRuntimeContext().getEasyExecutor();

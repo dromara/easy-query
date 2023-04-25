@@ -1,5 +1,6 @@
 package com.easy.query.core.sharding.route.abstraction;
 
+import com.easy.query.core.expression.executor.parser.PrepareParseResult;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.expression.EasyEntitySqlExpression;
 import com.easy.query.core.expression.sql.expression.EasySqlExpression;
@@ -14,7 +15,7 @@ import java.util.Collection;
  * @author xuejiaming
  */
 public interface DataSourceRouteManager {
-    Collection<String> routeTo(Class<?> entityClass, EasyEntitySqlExpression easyEntitySqlExpression);
+    Collection<String> routeTo(Class<?> entityClass, PrepareParseResult prepareParseResult);
     DataSourceRouteRule getRouteRule(Class<?> entityClass);
     boolean addRouteRule(DataSourceRouteRule dataSourceRouteRule);
 }

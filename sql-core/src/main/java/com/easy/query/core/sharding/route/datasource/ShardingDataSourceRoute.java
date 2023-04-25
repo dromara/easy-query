@@ -1,9 +1,9 @@
 package com.easy.query.core.sharding.route.datasource;
 
+import com.easy.query.core.expression.executor.parser.PrepareParseResult;
 import com.easy.query.core.expression.lambda.RouteFunction;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
-import com.easy.query.core.sharding.parser.SqlParserResult;
 import com.easy.query.core.sharding.route.RoutePredicateExpression;
 import com.easy.query.core.sharding.route.datasource.abstraction.AbstractFilterDataSourceRoute;
 import com.easy.query.core.sharding.rule.datasource.DataSourceRouteRule;
@@ -24,8 +24,8 @@ public class ShardingDataSourceRoute extends AbstractFilterDataSourceRoute {
     }
 
     @Override
-    public Collection<String> route0(DataSourceRouteRule dataSourceRouteRule, EntityMetadata entityMetadata, Collection<String> beforeTableNames, SqlParserResult sqlParserResult) {
-        RoutePredicateExpression routePredicateExpression = ShardingUtil.getRoutePredicateExpression(sqlParserResult, entityMetadata, dataSourceRouteRule, false);
+    public Collection<String> route0(DataSourceRouteRule dataSourceRouteRule, EntityMetadata entityMetadata, Collection<String> beforeTableNames,  PrepareParseResult prepareParseResult) {
+        RoutePredicateExpression routePredicateExpression = ShardingUtil.getRoutePredicateExpression(prepareParseResult, entityMetadata, dataSourceRouteRule, false);
         RouteFunction<String> routePredicate = routePredicateExpression.getRoutePredicate();
         return beforeTableNames.stream()
                 .filter(routePredicate::apply)

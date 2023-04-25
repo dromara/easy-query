@@ -1,9 +1,8 @@
 package com.easy.query.core.sharding.route.abstraction;
 
-import com.easy.query.core.sharding.parser.SqlParserResult;
+import com.easy.query.core.expression.executor.parser.PrepareParseResult;
 import com.easy.query.core.sharding.route.datasource.engine.DataSourceRouteResult;
 import com.easy.query.core.sharding.route.table.TableRouteUnit;
-import com.easy.query.core.sharding.rule.datasource.DataSourceRouteRule;
 import com.easy.query.core.sharding.rule.table.TableRouteRule;
 
 import java.util.Collection;
@@ -15,7 +14,7 @@ import java.util.Collection;
  * @author xuejiaming
  */
 public interface TableRouteManager {
-    Collection<TableRouteUnit> routeTo(Class<?> entityClass, DataSourceRouteResult dataSourceRouteResult, SqlParserResult sqlParserResult);
+    Collection<TableRouteUnit> routeTo(Class<?> entityClass, DataSourceRouteResult dataSourceRouteResult, PrepareParseResult prepareParseResult);
     TableRouteRule getRouteRule(Class<?> entityClass);
     boolean addRouteRule(TableRouteRule tableRouteRule);
 }

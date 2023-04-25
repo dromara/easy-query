@@ -1,6 +1,5 @@
 package com.easy.query.core.sharding.route;
 
-import com.easy.query.core.sharding.common.RouteUnit;
 import com.easy.query.core.util.ArrayUtil;
 
 import java.util.List;

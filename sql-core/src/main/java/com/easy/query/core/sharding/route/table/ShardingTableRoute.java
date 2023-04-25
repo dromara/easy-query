@@ -1,10 +1,10 @@
 package com.easy.query.core.sharding.route.table;
 
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
+import com.easy.query.core.expression.executor.parser.PrepareParseResult;
 import com.easy.query.core.expression.lambda.RouteFunction;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
-import com.easy.query.core.sharding.parser.SqlParserResult;
 import com.easy.query.core.sharding.route.RoutePredicateExpression;
 import com.easy.query.core.sharding.route.datasource.engine.DataSourceRouteResult;
 import com.easy.query.core.sharding.route.table.abstraction.AbstractFilterTableRoute;
@@ -12,7 +12,6 @@ import com.easy.query.core.sharding.rule.table.TableRouteRule;
 import com.easy.query.core.util.ShardingUtil;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -29,8 +28,8 @@ public class ShardingTableRoute extends AbstractFilterTableRoute {
     }
 
     @Override
-    public Collection<TableRouteUnit> route0(TableRouteRule tableRouteRule,EntityMetadata entityMetadata,DataSourceRouteResult dataSourceRouteResult, Collection<String> beforeTableNames, SqlParserResult sqlParserResult) {
-        RoutePredicateExpression routePredicateExpression = ShardingUtil.getRoutePredicateExpression(sqlParserResult, entityMetadata, tableRouteRule, true);
+    public Collection<TableRouteUnit> route0(TableRouteRule tableRouteRule,EntityMetadata entityMetadata,DataSourceRouteResult dataSourceRouteResult, Collection<String> beforeTableNames, PrepareParseResult prepareParseResult) {
+        RoutePredicateExpression routePredicateExpression = ShardingUtil.getRoutePredicateExpression(prepareParseResult, entityMetadata, tableRouteRule, true);
         RouteFunction<String> routePredicate = routePredicateExpression.getRoutePredicate();
         return filterTableNameWithDataSourceResult(dataSourceRouteResult, beforeTableNames)
                 .filter(routePredicate::apply)
@@ -54,7 +53,7 @@ public class ShardingTableRoute extends AbstractFilterTableRoute {
             throw new EasyQueryInvalidOperationException("table name not full name eg.(dataSource.tableName) :" + tableName);
         }
         String[] tableInfos = tableName.split("\\.");
-        return new TableRouteUnit(tableInfos[0],entityMetadata.getTableName() ,tableInfos[1],entityMetadata.getEntityClass());
+        return new BaseTableRouteUnit(tableInfos[0],entityMetadata.getTableName() ,tableInfos[1],entityMetadata.getEntityClass());
     }
 
 }

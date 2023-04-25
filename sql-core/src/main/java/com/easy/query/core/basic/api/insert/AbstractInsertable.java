@@ -1,12 +1,14 @@
 package com.easy.query.core.basic.api.insert;
 
 import com.easy.query.core.basic.api.internal.SqlEntityNode;
+import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
 import com.easy.query.core.basic.jdbc.parameter.DefaultSqlParameterCollector;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
 import com.easy.query.core.basic.plugin.interceptor.EasyInterceptorEntry;
 import com.easy.query.core.configuration.EasyQueryConfiguration;
 import com.easy.query.core.enums.SqlExecuteStrategyEnum;
+import com.easy.query.core.expression.sql.expression.EasyInsertSqlExpression;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.basic.plugin.interceptor.EasyEntityInterceptor;
@@ -62,6 +64,10 @@ public abstract class AbstractInsertable<T> implements Insertable<T> {
 //    }
 
     protected void insertBefore() {
+        boolean sharding = entityMetadata.isSharding();
+        //是否使用自定义插入策略
+        boolean sqlExecuteStrategyNonDefault = SqlExpressionUtil.sqlExecuteStrategyNonDefault(entityInsertExpression.getExpressionContext());
+
 
         List<EasyInterceptorEntry> insertInterceptors = entityMetadata.getEntityInterceptors();
         if (ArrayUtil.isNotEmpty(insertInterceptors)) {
@@ -73,6 +79,10 @@ public abstract class AbstractInsertable<T> implements Insertable<T> {
                 for (T entity : entities) {
                     for (EasyEntityInterceptor entityInterceptor : entityInterceptors) {
                         entityInterceptor.configureInsert(entityClass, entityInsertExpression, entity);
+                    }
+                    //使用自定义sql插入策略那么每个对象独立一条sql
+                    if(sqlExecuteStrategyNonDefault){
+
                     }
                 }
             }
@@ -114,13 +124,15 @@ public abstract class AbstractInsertable<T> implements Insertable<T> {
     public long executeRows(boolean fillAutoIncrement) {
         if (!entities.isEmpty()) {
             insertBefore();
-            List<SqlEntityNode> updateEntityNodes = createInsertEntityNode();
-            EasyOldExecutor easyExecutor = entityInsertExpression.getRuntimeContext().getEasyExecutor();
-            int i = 0;
-            for (SqlEntityNode updateEntityNode : updateEntityNodes) {
-                i += easyExecutor.insert(ExecutorContext.create(entityInsertExpression.getRuntimeContext(),true), updateEntityNode.getSql(), updateEntityNode.getEntities(), updateEntityNode.getSqlParameters(), fillAutoIncrement);
-            }
-            return i;
+//            List<SqlEntityNode> updateEntityNodes = createInsertEntityNode();
+//            EasyOldExecutor easyExecutor = entityInsertExpression.getRuntimeContext().getEasyExecutor();
+            EntityExpressionExecutor entityExpressionExecutor = entityInsertExpression.getRuntimeContext().getEntityExpressionExecutor();
+
+            return entityExpressionExecutor.insert(ExecutorContext.create(entityInsertExpression.getRuntimeContext(),true),entities,entityInsertExpression,fillAutoIncrement);
+//            for (SqlEntityNode updateEntityNode : updateEntityNodes) {
+//                i += easyExecutor.insert(ExecutorContext.create(entityInsertExpression.getRuntimeContext(),true), updateEntityNode.getSql(), updateEntityNode.getEntities(), updateEntityNode.getSqlParameters(), fillAutoIncrement);
+//            }
+//            return i;
         }
 
         return 0;

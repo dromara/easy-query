@@ -1,7 +1,7 @@
 package com.easy.query.core.util;
 
+import com.easy.query.core.expression.executor.parser.PrepareParseResult;
 import com.easy.query.core.metadata.EntityMetadata;
-import com.easy.query.core.sharding.parser.SqlParserResult;
 import com.easy.query.core.sharding.route.RoutePredicateDiscover;
 import com.easy.query.core.sharding.route.RoutePredicateExpression;
 import com.easy.query.core.sharding.rule.RouteRuleFilter;
@@ -14,9 +14,9 @@ import com.easy.query.core.sharding.rule.RouteRuleFilter;
  */
 public class ShardingUtil {
 
-    public static RoutePredicateExpression getRoutePredicateExpression(SqlParserResult sqlParserResult, EntityMetadata entityMetadata,
+    public static RoutePredicateExpression getRoutePredicateExpression(PrepareParseResult prepareParseResult, EntityMetadata entityMetadata,
                                                                        RouteRuleFilter routeRuleFilter, boolean shardingTableRoute){
-        RoutePredicateDiscover routePredicateDiscover = new RoutePredicateDiscover(sqlParserResult,entityMetadata,routeRuleFilter,shardingTableRoute);
+        RoutePredicateDiscover routePredicateDiscover = new RoutePredicateDiscover(prepareParseResult,entityMetadata,routeRuleFilter,shardingTableRoute);
         return routePredicateDiscover.getRouteParseExpression();
     }
 }

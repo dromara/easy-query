@@ -195,7 +195,7 @@ public class DefaultSqlPredicate<T1> implements SqlPredicate<T1> {
             }
             if (conditionRight) {
                 boolean openEnd = SqlRangeEnum.openEnd(sqlRange);
-                appendThisPredicate(column, valLeft, openEnd ? SqlPredicateCompareEnum.LT : SqlPredicateCompareEnum.LE);
+                appendThisPredicate(column, valRight, openEnd ? SqlPredicateCompareEnum.LT : SqlPredicateCompareEnum.LE);
                 nextAnd();
             }
         }

@@ -1,7 +1,6 @@
 package com.easy.query.core.sharding.route.table;
 
-import com.easy.query.core.metadata.EntityMetadata;
-import com.easy.query.core.sharding.parser.SqlParserResult;
+import com.easy.query.core.expression.executor.parser.PrepareParseResult;
 import com.easy.query.core.sharding.route.Route;
 import com.easy.query.core.sharding.route.datasource.engine.DataSourceRouteResult;
 import com.easy.query.core.sharding.rule.table.TableRouteRule;
@@ -15,7 +14,7 @@ import java.util.Collection;
  * @author xuejiaming
  */
 public interface TableRoute extends Route {
-    Collection<TableRouteUnit> route(TableRouteRule tableRouteRule,DataSourceRouteResult dataSourceRouteResult, SqlParserResult sqlParserResult);
+    Collection<TableRouteUnit> route(TableRouteRule tableRouteRule,DataSourceRouteResult dataSourceRouteResult, PrepareParseResult prepareParseResult);
 //    String shardingKeyToTail(Object shardingKey);
 //
 //    /**

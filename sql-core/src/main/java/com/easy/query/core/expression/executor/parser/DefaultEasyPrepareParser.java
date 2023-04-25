@@ -1,6 +1,9 @@
 package com.easy.query.core.expression.executor.parser;
 
+import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.expression.EasyEntitySqlExpression;
 import com.easy.query.core.expression.sql.expression.EasyQuerySqlExpression;
 import com.easy.query.core.expression.sql.expression.EasySqlExpression;
@@ -19,21 +22,13 @@ import java.util.Set;
  */
 public class DefaultEasyPrepareParser implements EasyPrepareParser {
     @Override
-    public PrepareParseResult parse(EasyEntitySqlExpression easyEntitySqlExpression) {
-        Set<Class<?>> shardingEntities = getShardingEntities(easyEntitySqlExpression);
-        return new PrepareParseResult(shardingEntities, easyEntitySqlExpression);
-//        if (ArrayUtil.isEmpty(shardingEntities)) {
-//            return new PrepareParseResult(shardingEntities, easyEntitySqlExpression);
-//        }
-//        if (easyEntitySqlExpression instanceof EasyQuerySqlExpression) {
-//
-//        }
-//        throw new UnsupportedOperationException(ClassUtil.getInstanceSimpleName(easyEntitySqlExpression));
+    public Set<Class<?>> parse(EntityExpressionBuilder entityExpressionBuilder) {
+        return getShardingEntities(entityExpressionBuilder);
     }
 
-    private Set<Class<?>> getShardingEntities(EasyEntitySqlExpression easyEntitySqlExpression) {
-        Set<Class<?>> shardingEntities = new LinkedHashSet<>(easyEntitySqlExpression.getTables().size());
-        for (EasyTableSqlExpression table : easyEntitySqlExpression.getTables()) {
+    private Set<Class<?>> getShardingEntities(EntityExpressionBuilder entityExpressionBuilder) {
+        Set<Class<?>> shardingEntities = new LinkedHashSet<>(entityExpressionBuilder.getTables().size());
+        for (EntityTableExpressionBuilder table : entityExpressionBuilder.getTables()) {
             if (!table.tableNameIsAs() && table.getEntityMetadata().isSharding()) {
                 shardingEntities.add(table.getEntityMetadata().getEntityClass());
             }

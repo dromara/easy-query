@@ -1,12 +1,10 @@
 package com.easy.query.core.sharding.route.table.engine;
 
-import com.easy.query.core.expression.sql.expression.EasyEntitySqlExpression;
-import com.easy.query.core.expression.sql.expression.EasySqlExpression;
+import com.easy.query.core.exception.EasyQueryInvalidOperationException;
+import com.easy.query.core.expression.executor.parser.PrepareParseResult;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
-import com.easy.query.core.sharding.common.RouteMapper;
-import com.easy.query.core.sharding.common.RouteUnit;
-import com.easy.query.core.sharding.parser.SqlParserResult;
+import com.easy.query.core.sharding.route.RouteUnit;
 import com.easy.query.core.sharding.route.ShardingRouteResult;
 import com.easy.query.core.sharding.route.abstraction.TableRouteManager;
 import com.easy.query.core.sharding.route.datasource.engine.DataSourceRouteResult;
@@ -19,7 +17,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -42,7 +39,8 @@ public class DefaultTableRouteEngine implements TableRouteEngine {
     @Override
     public ShardingRouteResult route(TableRouteContext tableRouteContext) {
         Map<String/*data source*/, Map<Class<?>/*entity class*/, Set<TableRouteUnit>>> routeMaps = new HashMap<>();
-        Set<Class<?>> shardingEntities = tableRouteContext.getShardingEntities();
+        PrepareParseResult prepareParseResult = tableRouteContext.getPrepareParseResult();
+        Set<Class<?>> shardingEntities = prepareParseResult.getShardingEntities();
         int tableRouteUnitSize = 0;
         boolean onlyShardingDataSource = true;
         for (Class<?> shardingEntity : shardingEntities) {
@@ -51,11 +49,11 @@ public class DefaultTableRouteEngine implements TableRouteEngine {
                 continue;
             }
             onlyShardingDataSource = false;
-            Collection<TableRouteUnit> shardingRouteUnits = getEntityRouteUnit(tableRouteContext.getDataSourceRouteResult(), shardingEntity, tableRouteContext.getEntitySqlExpression());
+            Collection<TableRouteUnit> shardingRouteUnits = getEntityRouteUnit(tableRouteContext.getDataSourceRouteResult(), shardingEntity, prepareParseResult);
             for (TableRouteUnit shardingRouteUnit : shardingRouteUnits) {
-                if (Objects.equals(shardingRouteUnit.getLogicTableName(),shardingRouteUnit.getActualTableName())) {
-                    continue;
-                }
+//                if (Objects.equals(shardingRouteUnit.getLogicTableName(),shardingRouteUnit.getActualTableName())) {
+//                    continue;
+//                }
                 String dataSource = shardingRouteUnit.getDataSource();
                 Map<Class<?>, Set<TableRouteUnit>> tableNamMaps = routeMaps.computeIfAbsent(dataSource, o -> new HashMap<>());
                 Set<TableRouteUnit> tableRouteUnits = tableNamMaps.computeIfAbsent(shardingEntity, o -> new HashSet<>());
@@ -91,17 +89,18 @@ public class DefaultTableRouteEngine implements TableRouteEngine {
                         if(tableRouteResult.getReplaceTables().size()>1){
                             isCrossTable=true;
                         }
-                        List<RouteMapper> routeMappers = ArrayUtil.select(tableRouteResult.getReplaceTables(), (o, i) -> new RouteMapper(o.getEntityClass(),o.getLogicTableName(), o.getActualTableName()));
-                        routeUnits.add(new RouteUnit(dataSourceName,routeMappers));
+//                        List<RouteMapper> routeMappers = ArrayUtil.select(tableRouteResult.getReplaceTables(), (o, i) -> new RouteMapper(o.getEntityClass(),o.getLogicTableName(), o.getActualTableName(),o));
+                        routeUnits.add(new RouteUnit(dataSourceName,tableRouteResult.getReplaceTables()));
                     }
                 }
 
             } else if (onlyShardingDataSource) {
-                List<RouteMapper> routeMappers = ArrayUtil.select(shardingEntities, (o, i) -> {
-                    EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(o);
-                    return new RouteMapper(o,entityMetadata.getTableName(), entityMetadata.getTableName());
-                });
-                routeUnits.add(new RouteUnit(dataSourceName, routeMappers));
+                throw new EasyQueryInvalidOperationException("");
+//                List<RouteMapper> routeMappers = ArrayUtil.select(shardingEntities, (o, i) -> {
+//                    EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(o);
+//                    return new RouteMapper(o,entityMetadata.getTableName(), entityMetadata.getTableName());
+//                });
+//                routeUnits.add(new RouteUnit(dataSourceName, routeMappers));
             }
 
         }
@@ -109,7 +108,7 @@ public class DefaultTableRouteEngine implements TableRouteEngine {
         return new ShardingRouteResult(routeUnits,dataSourceCount>1,isCrossTable);
     }
 
-    private Collection<TableRouteUnit> getEntityRouteUnit(DataSourceRouteResult dataSourceRouteResult, Class<?> entityClass, EasyEntitySqlExpression easyEntitySqlExpression) {
-        return tableRouteManager.routeTo(entityClass, dataSourceRouteResult, new SqlParserResult(easyEntitySqlExpression));
+    private Collection<TableRouteUnit> getEntityRouteUnit(DataSourceRouteResult dataSourceRouteResult, Class<?> entityClass, PrepareParseResult prepareParseResult) {
+        return tableRouteManager.routeTo(entityClass, dataSourceRouteResult, prepareParseResult);
     }
 }

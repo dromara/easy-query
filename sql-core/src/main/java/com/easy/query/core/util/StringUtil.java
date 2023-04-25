@@ -1,6 +1,8 @@
 package com.easy.query.core.util;
 
 import java.util.*;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * @author xuejiaming
@@ -279,10 +281,11 @@ public class StringUtil {
         return pos == -1 ? "" : str.substring(0, pos);
     }
 
-    public static String join(String[] strs, int start, int end) {
+    public static <T> String join(Collection<T> strs, Function<T,String> format, String separator) {
         StringBuilder sb = new StringBuilder();
-        for (int i = start; i <= end; i++) {
-            sb.append(strs[i]).append(".");
+        for (T str : strs) {
+            String s = format.apply(str);
+            sb.append(s).append(separator);
         }
         sb.setLength(sb.length() - 1);
         return sb.toString();

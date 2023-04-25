@@ -1,6 +1,7 @@
 package com.easy.query.core.sharding.route.datasource.engine;
 
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
+import com.easy.query.core.expression.executor.parser.PrepareParseResult;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.sharding.EasyDataSource;
@@ -31,9 +32,9 @@ public class DefaultDataSourceRouteEngine implements DataSourceRouteEngine{
         this.dataSourceRouteManager = dataSourceRouteManager;
     }
     @Override
-    public DataSourceRouteResult route(DataSourceRouteContext routeContext) {
+    public DataSourceRouteResult route(PrepareParseResult prepareParseResult) {
         Map<Class<?>, Set<String>> dataSourceMaps = new HashMap<>();
-        for (Class<?> shardingEntity : routeContext.getShardingEntities()) {
+        for (Class<?> shardingEntity : prepareParseResult.getShardingEntities()) {
             EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(shardingEntity);
             if(!entityMetadata.isMultiDataSourceMapping()){
                 HashSet<String> defDataSource = new HashSet<String>() {{
@@ -41,7 +42,7 @@ public class DefaultDataSourceRouteEngine implements DataSourceRouteEngine{
                 }};
                 dataSourceMaps.put(shardingEntity,defDataSource);
             }
-            Collection<String> dataSources = dataSourceRouteManager.routeTo(shardingEntity, routeContext.getEntitySqlExpression());
+            Collection<String> dataSources = dataSourceRouteManager.routeTo(shardingEntity,prepareParseResult);
             Set<String> entityDataSources = dataSourceMaps.get(shardingEntity);
             if(entityDataSources==null){
                 dataSourceMaps.put(shardingEntity,new HashSet<>(dataSources));

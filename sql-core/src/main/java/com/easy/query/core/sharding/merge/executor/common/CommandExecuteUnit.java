@@ -1,11 +1,7 @@
 package com.easy.query.core.sharding.merge.executor.common;
 
 import com.easy.query.core.basic.jdbc.con.EasyConnection;
-import com.easy.query.core.sharding.common.RouteUnit;
 import com.easy.query.core.sharding.enums.ConnectionModeEnum;
-import com.easy.query.core.sharding.merge.executor.internal.CommandTypeEnum;
-
-import java.sql.PreparedStatement;
 
 /**
  * create time 2023/4/13 22:05

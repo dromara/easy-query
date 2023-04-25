@@ -154,9 +154,20 @@ public class JDBCExecutorUtil {
         } catch (SQLException e) {
             log.error(sql, e);
             throw new EasyQuerySQLException(sql, e);
+        }finally {
+            clear(ps);
         }
-        return new AffectedRowsExecuteResult(r,ps);
+        return new AffectedRowsExecuteResult(r);
 
+    }
+
+    private static void clear(PreparedStatement ps){
+        try{
+            if(ps!=null){
+                ps.close();
+            }
+        } catch (SQLException ignored) {
+        }
     }
 
     public static  <T> AffectedRowsExecuteResult executeRows(ExecutorContext executorContext,EasyConnection easyConnection, String sql, List<T> entities, List<SQLParameter> sqlParameters) {
@@ -194,8 +205,10 @@ public class JDBCExecutorUtil {
         } catch (SQLException e) {
             log.error(sql, e);
             throw new EasyQuerySQLException(sql, e);
+        }finally {
+            clear(ps);
         }
-        return new AffectedRowsExecuteResult(r,ps);
+        return new AffectedRowsExecuteResult(r);
     }
     public static  <T> AffectedRowsExecuteResult executeRows(ExecutorContext executorContext,EasyConnection easyConnection, String sql, List<SQLParameter> sqlParameters) {
         boolean logDebug = log.isDebugEnabled();
@@ -221,7 +234,10 @@ public class JDBCExecutorUtil {
             log.error(sql, e);
             throw new EasyQuerySQLException(sql, e);
         }
-        return new AffectedRowsExecuteResult(r,ps);
+        finally {
+            clear(ps);
+        }
+        return new AffectedRowsExecuteResult(r);
     }
 
 

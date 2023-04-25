@@ -119,6 +119,11 @@ public class SqlExpressionUtil {
     }
 
 
+    /**
+     * 返回当前sql执行策略默认也会有一个指定的
+     * @param expressionContext
+     * @return
+     */
     public static SqlExecuteStrategyEnum getExecuteStrategy(ExpressionContext expressionContext){
 
         SqlExecuteStrategyEnum sqlStrategy = expressionContext.getSqlStrategy();
@@ -130,5 +135,15 @@ public class SqlExpressionUtil {
         } else {
             return sqlStrategy;
         }
+    }
+
+    /**
+     * 是否个性化执行sql eg. null列更新,非null列更新等
+     * @param expressionContext
+     * @return
+     */
+    public static boolean sqlExecuteStrategyNonDefault(ExpressionContext expressionContext){
+        SqlExecuteStrategyEnum executeStrategy = getExecuteStrategy(expressionContext);
+        return SqlExecuteStrategyEnum.ALL_COLUMNS!=executeStrategy;
     }
 }

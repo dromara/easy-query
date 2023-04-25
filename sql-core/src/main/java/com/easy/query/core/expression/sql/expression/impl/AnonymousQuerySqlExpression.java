@@ -127,7 +127,7 @@ public class AnonymousQuerySqlExpression implements EasyAnonymousQuerySqlExpress
     }
 
     @Override
-    public EasySqlExpression cloneSqlExpression() {
+    public EasyQuerySqlExpression cloneSqlExpression() {
         EasyExpressionFactory expressionFactory = runtimeContext.getExpressionFactory();
         return expressionFactory.createEasyAnonymousQuerySqlExpression(runtimeContext,sql);
     }

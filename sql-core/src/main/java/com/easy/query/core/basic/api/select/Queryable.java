@@ -37,6 +37,9 @@ public interface Queryable<T1> extends Query<T1>, Interceptable<Queryable<T1>>, 
     Queryable<T1> cloneQueryable();
 
     long count();
+   default int countInt(){
+       return (int)count();
+   }
 
     long countDistinct(SqlExpression<SqlColumnSelector<T1>> selectExpression);
 

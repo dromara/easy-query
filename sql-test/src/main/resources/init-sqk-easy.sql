@@ -122,3 +122,30 @@ create table t_sys_user_version_del
     create_time datetime not null comment '创建时间',
     deleted tinyint(1) not null comment '是否删除'
 )comment '用户版本逻辑删除表';
+
+
+
+
+
+create table t_topic_sharding_0
+(
+    id varchar(32) not null comment '主键ID'primary key,
+    stars int not null comment '点赞数',
+    title varchar(50) null comment '标题',
+    create_time datetime not null comment '创建时间'
+)comment '主题表';
+create table t_topic_sharding_1
+(
+    id varchar(32) not null comment '主键ID'primary key,
+    stars int not null comment '点赞数',
+    title varchar(50) null comment '标题',
+    create_time datetime not null comment '创建时间'
+)comment '主题表';
+
+create table t_topic_sharding_2
+(
+    id varchar(32) not null comment '主键ID'primary key,
+    stars int not null comment '点赞数',
+    title varchar(50) null comment '标题',
+    create_time datetime not null comment '创建时间'
+)comment '主题表';

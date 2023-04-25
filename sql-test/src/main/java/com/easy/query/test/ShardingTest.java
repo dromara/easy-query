@@ -2,9 +2,10 @@ package com.easy.query.test;
 
 import com.easy.query.BaseTest;
 import com.easy.query.entity.TopicSharding;
+import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.List;
+import java.time.LocalDateTime;
 
 /**
  * create time 2023/4/23 23:22
@@ -13,11 +14,23 @@ import java.util.List;
  * @author xuejiaming
  */
 public class ShardingTest extends BaseTest {
-//    @Test
+    @Test
     public void sharding1(){
         TopicSharding topicSharding = easyQuery.queryable(TopicSharding.class)
                 .whereById("123").firstOrNull();
-        System.out.println("1");
+        Assert.assertNull(topicSharding);
+    }
+    @Test
+    public void sharding2(){
+        TopicSharding topicSharding = new TopicSharding();
+        topicSharding.setId("999999");
+        topicSharding.setTitle("title999999");
+        topicSharding.setStars(999999);
+        topicSharding.setCreateTime(LocalDateTime.now());
+        long l = easyQuery.insertable(topicSharding).executeRows();
 
+        TopicSharding topicSharding1 = easyQuery.queryable(TopicSharding.class)
+                .whereById("999999").firstOrNull();
+        Assert.assertNotNull(topicSharding1);
     }
 }

@@ -1,6 +1,7 @@
 package com.easy.query.mysql.expression;
 
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
+import com.easy.query.core.expression.sql.expression.EasyQuerySqlExpression;
 import com.easy.query.core.expression.sql.expression.EasySqlExpression;
 import com.easy.query.core.expression.sql.expression.EasyTableSqlExpression;
 import com.easy.query.core.expression.sql.expression.impl.QuerySqlExpression;
@@ -19,7 +20,7 @@ public class MySqlQuerySqlExpression extends QuerySqlExpression {
     }
 
     @Override
-    public EasySqlExpression cloneSqlExpression() {
+    public EasyQuerySqlExpression cloneSqlExpression() {
         EasyExpressionFactory expressionFactory = getRuntimeContext().getExpressionFactory();
         MySqlQuerySqlExpression easyQuerySqlExpression = (MySqlQuerySqlExpression)expressionFactory.createEasyQuerySqlExpression(getRuntimeContext());
 

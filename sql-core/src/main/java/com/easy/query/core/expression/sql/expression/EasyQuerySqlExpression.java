@@ -41,4 +41,7 @@ public interface EasyQuerySqlExpression extends EasyEntityPredicateSqlExpression
     void setDistinct(boolean distinct);
 
     boolean hasLimit();
+
+    @Override
+    EasyQuerySqlExpression cloneSqlExpression();
 }
