@@ -10,13 +10,13 @@ import com.easy.query.core.sharding.merge.StreamMergeContext;
  *
  * @author xuejiaming
  */
-public abstract class AbstractAffectedRowsEasyQueryJDBCExecutor extends AbstractEasyQueryJDBCExecutor{
+public abstract class AbstractAffectedRowsEasyQueryJDBCExecutor extends AbstractEasyQueryJDBCExecutor<AffectedRowsExecuteResult>{
     public AbstractAffectedRowsEasyQueryJDBCExecutor(StreamMergeContext streamMergeContext) {
         super(streamMergeContext);
     }
 
     @Override
-    protected ExecuteResult defaultResult() {
+    protected AffectedRowsExecuteResult defaultResult() {
         return AffectedRowsExecuteResult.empty();
     }
 }

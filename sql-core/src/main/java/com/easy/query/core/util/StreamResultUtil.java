@@ -54,7 +54,7 @@ public final class StreamResultUtil {
             resultList = mapToBeans(context, streamResult, clazz);
         }
         if(log.isDebugEnabled()){
-            log.debug("<== Total: " + resultList.size());
+            log.debug("<== "+Thread.currentThread().getName()+" Total: " + resultList.size());
         }
         return resultList;
     }

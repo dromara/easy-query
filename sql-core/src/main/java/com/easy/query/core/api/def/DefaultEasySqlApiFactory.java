@@ -88,7 +88,7 @@ public class DefaultEasySqlApiFactory implements EasySqlApiFactory {
     @Override
     public <T> Queryable<T> cloneQueryable(Queryable<T> source) {
         EntityQueryExpressionBuilder sqlEntityExpression = source.getSqlEntityExpression();
-        EntityQueryExpressionBuilder sqlEntityQueryExpression = sqlEntityExpression.cloneSqlQueryExpressionBuilder();
+        EntityQueryExpressionBuilder sqlEntityQueryExpression = sqlEntityExpression.cloneEntityExpressionBuilder();
         return new EasyQueryable<>(source.queryClass(),sqlEntityQueryExpression);
     }
 

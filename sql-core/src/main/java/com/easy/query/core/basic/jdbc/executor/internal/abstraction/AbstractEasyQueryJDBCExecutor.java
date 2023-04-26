@@ -15,27 +15,27 @@ import java.util.Collection;
  *
  * @author xuejiaming
  */
-public abstract class AbstractEasyQueryJDBCExecutor implements EasyQueryJDBCExecutor{
+public abstract class AbstractEasyQueryJDBCExecutor<T extends ExecuteResult> implements EasyQueryJDBCExecutor<T>{
     protected final StreamMergeContext streamMergeContext;
 
     public AbstractEasyQueryJDBCExecutor(StreamMergeContext streamMergeContext){
 
         this.streamMergeContext = streamMergeContext;
     }
-    protected  abstract Executor<ExecuteResult> createExecutor();
+    protected  abstract Executor<T> createExecutor();
     protected Collection<ExecutionUnit> getDefaultSSqlRouteUnits(){
         return streamMergeContext.getExecutionUnits();
     }
     @Override
-    public ExecuteResult execute() {
+    public T execute() {
         Collection<ExecutionUnit> executionUnits = getDefaultSSqlRouteUnits();
         if(ArrayUtil.isEmpty(executionUnits)){
             return defaultResult();
         }
-        Executor<ExecuteResult> executor = createExecutor();
+        Executor<T> executor = createExecutor();
         return ShardingExecutor.execute(streamMergeContext,executor,executionUnits);
     }
-    protected abstract ExecuteResult defaultResult();
+    protected abstract T defaultResult();
 
     @Override
     public void close() throws Exception {

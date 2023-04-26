@@ -4,7 +4,6 @@ import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.expression.EasyQuerySqlExpression;
-import com.easy.query.core.expression.sql.expression.EasySqlExpression;
 import com.easy.query.core.expression.sql.expression.EasyTableSqlExpression;
 import com.easy.query.core.expression.sql.expression.impl.AnonymousTableSqlExpression;
 import com.easy.query.core.metadata.EntityMetadata;
@@ -59,7 +58,7 @@ public class AnonymousTableExpressionBuilder extends TableExpressionBuilder impl
     @Override
     public EntityTableExpressionBuilder copyEntityTableExpressionBuilder() {
 
-        AnonymousTableExpressionBuilder anonymousTableExpressionBuilder = new AnonymousTableExpressionBuilder(entityMetadata, index, alias, multiTableType, entityQueryExpressionBuilder.cloneSqlQueryExpressionBuilder());
+        AnonymousTableExpressionBuilder anonymousTableExpressionBuilder = new AnonymousTableExpressionBuilder(entityMetadata, index, alias, multiTableType, entityQueryExpressionBuilder.cloneEntityExpressionBuilder());
         if (on != null) {
             on.copyTo(anonymousTableExpressionBuilder.getOn());
         }

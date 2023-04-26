@@ -12,12 +12,12 @@ import java.util.Collections;
  *
  * @author xuejiaming
  */
-public class QueryExecutionCreator extends BaseExecutionCreator{
+public class PredicateExecutionCreator extends BaseExecutionCreator{
 
     private final String dataSource;
     private final EasySqlExpression easySqlExpression;
 
-    public QueryExecutionCreator(String dataSource, EasySqlExpression easySqlExpression) {
+    public PredicateExecutionCreator(String dataSource, EasySqlExpression easySqlExpression) {
         this.dataSource = dataSource;
         this.easySqlExpression = easySqlExpression;
     }

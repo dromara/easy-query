@@ -6,6 +6,7 @@ import com.easy.query.core.enums.SqlPredicateCompare;
 import com.easy.query.core.enums.SqlPredicateCompareEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.executor.parser.EntityPrepareParseResult;
+import com.easy.query.core.expression.executor.parser.PredicatePrepareParseResult;
 import com.easy.query.core.expression.executor.parser.PrepareParseResult;
 import com.easy.query.core.expression.executor.parser.QueryPrepareParseResult;
 import com.easy.query.core.expression.lambda.Property;
@@ -114,9 +115,9 @@ public class RoutePredicateDiscover {
     }
 
     public RoutePredicateExpression getRouteParseExpression() {
-        if (prepareParseResult instanceof QueryPrepareParseResult) {
-            EasyQuerySqlExpression easyQuerySqlExpression = ((QueryPrepareParseResult) prepareParseResult).getEasyQuerySqlExpression();
-            return getPredicateSqlRouteParseExpression(easyQuerySqlExpression);
+        if (prepareParseResult instanceof PredicatePrepareParseResult) {
+            EasyEntityPredicateSqlExpression easyEntityPredicateSqlExpression = ((PredicatePrepareParseResult) prepareParseResult).getEasyEntityPredicateSqlExpression();
+            return getPredicateSqlRouteParseExpression(easyEntityPredicateSqlExpression);
         } else if (prepareParseResult instanceof EntityPrepareParseResult) {
             List<Object> entities = ((EntityPrepareParseResult) prepareParseResult).getEntities();
 

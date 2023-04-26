@@ -104,7 +104,7 @@ public class SqlExpressionUtil {
         //如果他只是匿名表那么就使用匿名表的内部表
         if(!SqlExpressionUtil.moreTableExpressionOrNoAnonymous(countSqlEntityExpression)){
             AnonymousEntityTableExpressionBuilder table = (AnonymousEntityTableExpressionBuilder) countSqlEntityExpression.getTable(0);
-            EntityQueryExpressionBuilder entityQueryExpression = table.getEntityQueryExpressionBuilder().cloneSqlQueryExpressionBuilder();
+            EntityQueryExpressionBuilder entityQueryExpression = table.getEntityQueryExpressionBuilder().cloneEntityExpressionBuilder();
             //存在操作那么就返回父类
             if(!SqlExpressionUtil.hasAnyOperateWithoutWhereAndOrder(entityQueryExpression)){
                 EntityQueryExpressionBuilder countEntityQueryExpression = getCountEntityQueryExpression(entityQueryExpression);

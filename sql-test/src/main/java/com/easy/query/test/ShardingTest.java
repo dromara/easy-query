@@ -15,30 +15,33 @@ import java.time.LocalDateTime;
  */
 public class ShardingTest extends BaseTest {
     @Test
-    public void sharding1(){
+    public void sharding1() {
         TopicSharding topicSharding = easyQuery.queryable(TopicSharding.class)
                 .whereById("123").firstOrNull();
         Assert.assertNull(topicSharding);
     }
-    @Test
-    public void sharding2(){
 
+    @Test
+    public void sharding2() {
+        String id = "999999";
         TopicSharding topicShardingTest = easyQuery.queryable(TopicSharding.class)
-                .whereById("999999").firstOrNull();
-        if(topicShardingTest!=null){
+                .whereById(id).firstOrNull();
+        if (topicShardingTest != null) {
             long l = easyQuery.deletable(topicShardingTest).executeRows();
-            Assert.assertEquals(1,l);
+            Assert.assertEquals(1, l);
         }
 
         TopicSharding topicSharding = new TopicSharding();
-        topicSharding.setId("999999");
-        topicSharding.setTitle("title999999");
-        topicSharding.setStars(999999);
+        topicSharding.setId(id);
+        topicSharding.setTitle("title" + id);
+        topicSharding.setStars(Integer.parseInt(id));
         topicSharding.setCreateTime(LocalDateTime.now());
         long l = easyQuery.insertable(topicSharding).executeRows();
 
         TopicSharding topicSharding1 = easyQuery.queryable(TopicSharding.class)
-                .whereById("999999").firstOrNull();
+                .whereById(id).firstOrNull();
         Assert.assertNotNull(topicSharding1);
+        long l1 = easyQuery.deletable(TopicSharding.class).whereById(id).executeRows();
+        Assert.assertEquals(1, l1);
     }
 }

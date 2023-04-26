@@ -19,7 +19,7 @@ public class DefaultRewriteContextFactory implements RewriteContextFactory{
     }
 
     public void rewriteQueryExpression(QueryPrepareParseResult queryPrepareParseResult){
-        EasyQuerySqlExpression easyQuerySqlExpression = queryPrepareParseResult.getEasyQuerySqlExpression();
+        EasyQuerySqlExpression easyQuerySqlExpression =  (EasyQuerySqlExpression)queryPrepareParseResult.getEasyEntityPredicateSqlExpression();
         if(easyQuerySqlExpression.hasLimit()){
             long rows = easyQuerySqlExpression.getRows();
             long offset = easyQuerySqlExpression.getOffset();

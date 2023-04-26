@@ -6,15 +6,15 @@ import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
 import com.easy.query.core.expression.executor.parser.EntityPrepareParseResult;
 import com.easy.query.core.expression.executor.parser.ExecutionContext;
 import com.easy.query.core.expression.executor.parser.InsertPrepareParseResult;
+import com.easy.query.core.expression.executor.parser.PredicatePrepareParseResult;
 import com.easy.query.core.expression.executor.parser.PrepareParseResult;
 import com.easy.query.core.expression.executor.parser.QueryPrepareParseResult;
 import com.easy.query.core.expression.executor.query.base.EntityExecutionCreator;
 import com.easy.query.core.expression.executor.query.base.InsertExecutionCreator;
-import com.easy.query.core.expression.executor.query.base.QueryExecutionCreator;
+import com.easy.query.core.expression.executor.query.base.PredicateExecutionCreator;
 import com.easy.query.core.expression.executor.query.base.ShardingEntityExecutionCreator;
 import com.easy.query.core.expression.executor.query.base.ShardingInsertExecutionCreator;
-import com.easy.query.core.expression.executor.query.base.ShardingQueryExecutionCreator;
-import com.easy.query.core.expression.sql.expression.EasyQuerySqlExpression;
+import com.easy.query.core.expression.executor.query.base.ShardingPredicateExecutionCreator;
 import com.easy.query.core.expression.sql.expression.EasySqlExpression;
 import com.easy.query.core.sharding.EasyDataSource;
 import com.easy.query.core.sharding.merge.executor.common.ExecutionUnit;
@@ -76,8 +76,8 @@ public class DefaultExecutionContextFactory implements ExecutionContextFactory {
 //        NativeSqlQueryCompilerContext nativeSqlQueryCompilerContext = new NativeSqlQueryCompilerContext(prepareParseResult);
         //无需分片的情况下
         if(ArrayUtil.isEmpty(prepareParseResult.getShardingEntities())){
-            if(prepareParseResult instanceof QueryPrepareParseResult){
-                return new QueryExecutionCreator(easyDataSource.getDefaultDataSourceName(), prepareParseResult.getEntityExpressionBuilder().toExpression()).create();
+            if(prepareParseResult instanceof PredicatePrepareParseResult){
+                return new PredicateExecutionCreator(easyDataSource.getDefaultDataSourceName(), prepareParseResult.getEntityExpressionBuilder().toExpression()).create();
             }
             if(prepareParseResult instanceof InsertPrepareParseResult){
                 return new InsertExecutionCreator(easyDataSource.getDefaultDataSourceName(), (InsertPrepareParseResult) prepareParseResult).create();
@@ -89,8 +89,8 @@ public class DefaultExecutionContextFactory implements ExecutionContextFactory {
         }
         RouteContext routeContext = routeContextFactory.createRouteContext(prepareParseResult);
         rewriteContextFactory.rewriteExpression(prepareParseResult);
-        if(prepareParseResult instanceof QueryPrepareParseResult){
-            return new ShardingQueryExecutionCreator((QueryPrepareParseResult)prepareParseResult,routeContext).create();
+        if(prepareParseResult instanceof PredicatePrepareParseResult){
+            return new ShardingPredicateExecutionCreator((PredicatePrepareParseResult)prepareParseResult,routeContext).create();
         }
         if(prepareParseResult instanceof InsertPrepareParseResult){
             return new ShardingInsertExecutionCreator((InsertPrepareParseResult) prepareParseResult,routeContext).create();
@@ -99,11 +99,5 @@ public class DefaultExecutionContextFactory implements ExecutionContextFactory {
             return new ShardingEntityExecutionCreator((EntityPrepareParseResult) prepareParseResult,routeContext).create();
         }
         throw new UnsupportedOperationException();
-    }
-    private SqlUnit createQuerySqlUnit(EasyQuerySqlExpression easyQuerySqlExpression){
-        SqlParameterCollector sqlParameterCollector = DefaultSqlParameterCollector.defaultCollector();
-        String sql = easyQuerySqlExpression.toSql(sqlParameterCollector);
-        List<SQLParameter> parameters = sqlParameterCollector.getParameters();
-        return new SqlUnit(sql,parameters);
     }
 }

@@ -1,6 +1,7 @@
 package com.easy.query.core.expression.executor.parser;
 
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
+import com.easy.query.core.expression.sql.expression.EasyEntityPredicateSqlExpression;
 import com.easy.query.core.expression.sql.expression.EasyQuerySqlExpression;
 
 /**
@@ -10,7 +11,4 @@ import com.easy.query.core.expression.sql.expression.EasyQuerySqlExpression;
  * @author xuejiaming
  */
 public interface QueryPrepareParseResult extends PredicatePrepareParseResult{
-    @Override
-    EntityQueryExpressionBuilder getEntityExpressionBuilder();
-    EasyQuerySqlExpression getEasyQuerySqlExpression();
 }

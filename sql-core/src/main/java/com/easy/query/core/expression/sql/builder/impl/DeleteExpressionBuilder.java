@@ -19,6 +19,7 @@ import com.easy.query.core.expression.segment.condition.predicate.ColumnProperty
 import com.easy.query.core.expression.segment.condition.predicate.ColumnVersionPropertyPredicate;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.expression.EasyDeleteSqlExpression;
+import com.easy.query.core.expression.sql.expression.EasyEntityPredicateSqlExpression;
 import com.easy.query.core.expression.sql.expression.EasyEntitySqlExpression;
 import com.easy.query.core.expression.sql.expression.EasyUpdateSqlExpression;
 import com.easy.query.core.expression.sql.expression.impl.DeleteSqlExpression;
@@ -160,7 +161,7 @@ public class DeleteExpressionBuilder extends AbstractPredicateEntityExpressionBu
         return expressionDelete;
     }
     @Override
-    public EasyEntitySqlExpression toExpression() {
+    public EasyEntityPredicateSqlExpression toExpression() {
 
         int tableCount = getTables().size();
         if (tableCount == 0) {
@@ -175,7 +176,7 @@ public class DeleteExpressionBuilder extends AbstractPredicateEntityExpressionBu
             return toEntityExpression();
         }
     }
-    private EasyEntitySqlExpression  toDeleteExpression(){
+    private EasyEntityPredicateSqlExpression  toDeleteExpression(){
 
         if (!hasWhere()) {
             throw new EasyQueryException("'DELETE' statement without 'WHERE' clears all data in the table");
@@ -206,7 +207,7 @@ public class DeleteExpressionBuilder extends AbstractPredicateEntityExpressionBu
         }
     }
 
-    private EasyEntitySqlExpression toEntityExpression(){
+    private EasyEntityPredicateSqlExpression toEntityExpression(){
 
         EntityTableExpressionBuilder table = getTables().get(0);
         PredicateSegment sqlWhere = buildWherePredicateSegment(table);
@@ -233,7 +234,7 @@ public class DeleteExpressionBuilder extends AbstractPredicateEntityExpressionBu
     }
 
     @Override
-    public EntityExpressionBuilder cloneEntityExpressionBuilder() {
+    public EntityDeleteExpressionBuilder cloneEntityExpressionBuilder() {
 
         ExpressionContext sqlExpressionContext = getExpressionContext();
         DeleteExpressionBuilder deleteExpressionBuilder = new DeleteExpressionBuilder(sqlExpressionContext,expressionDelete);

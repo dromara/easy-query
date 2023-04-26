@@ -14,7 +14,7 @@ import com.easy.query.core.expression.sql.expression.EasySqlExpression;
  * @Date: 2023/3/3 22:17
  * @author xuejiaming
  */
-public interface EntityQueryExpressionBuilder extends EntityExpressionBuilder, LambdaEntityExpressionBuilder {
+public interface EntityQueryExpressionBuilder extends EntityPredicateExpressionBuilder, LambdaEntityExpressionBuilder {
     boolean isEmpty();
     default boolean isNotEmpty() {
         return !isEmpty();
@@ -47,9 +47,8 @@ public interface EntityQueryExpressionBuilder extends EntityExpressionBuilder, L
      SqlBuilderSegment getOrder() ;
 
      boolean hasOrder();
-     default QueryExpressionBuilder cloneSqlQueryExpressionBuilder(){
-         return (QueryExpressionBuilder) cloneEntityExpressionBuilder();
-     }
+    @Override
+    EntityQueryExpressionBuilder cloneEntityExpressionBuilder();
 
     @Override
     EasyQuerySqlExpression toExpression();

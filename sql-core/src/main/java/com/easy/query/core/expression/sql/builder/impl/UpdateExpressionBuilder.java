@@ -400,7 +400,7 @@ public  class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionB
     }
 
     @Override
-    public EntityExpressionBuilder cloneEntityExpressionBuilder() {
+    public EntityUpdateExpressionBuilder cloneEntityExpressionBuilder() {
         ExpressionContext sqlExpressionContext = getExpressionContext();
         UpdateExpressionBuilder updateExpressionBuilder = new UpdateExpressionBuilder(sqlExpressionContext, isExpressionUpdate);
 

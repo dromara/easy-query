@@ -13,18 +13,18 @@ import com.easy.query.core.sharding.merge.impl.EmptyStreamResult;
  *
  * @author xuejiaming
  */
-public class DefaultQueryEasyQueryJDBCExecutor extends AbstractEasyQueryJDBCExecutor {
+public class DefaultQueryEasyQueryJDBCExecutor extends AbstractEasyQueryJDBCExecutor<QueryExecuteResult> {
     public DefaultQueryEasyQueryJDBCExecutor(StreamMergeContext streamMergeContext) {
         super(streamMergeContext);
     }
 
     @Override
-    protected Executor<ExecuteResult> createExecutor() {
+    protected Executor<QueryExecuteResult> createExecutor() {
         return new EasyQueryExecutor(streamMergeContext);
     }
 
     @Override
-    protected ExecuteResult defaultResult() {
+    protected QueryExecuteResult defaultResult() {
         return QueryExecuteResult.empty();
     }
 }

@@ -44,6 +44,7 @@ import com.easy.query.entity.SysUser;
 import com.easy.query.entity.Topic;
 import com.easy.query.entity.TopicAuto;
 import com.easy.query.entity.TopicInterceptor;
+import com.easy.query.entity.TopicSharding;
 import com.easy.query.interceptor.MyEntityInterceptor;
 import com.easy.query.interceptor.MyTenantInterceptor;
 import com.easy.query.logicdel.MyLogicDelStrategy;
@@ -256,6 +257,8 @@ public abstract class BaseTest {
             }
             long l = easyQuery.insertable(topicInterceptors).executeRows();
         }
+        boolean topicShardingAny = easyQuery.queryable(TopicSharding.class).any();
+        System.out.println(topicShardingAny);
     }
 
 

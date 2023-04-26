@@ -3,6 +3,7 @@ package com.easy.query.core.expression.sql.builder;
 import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.sql.expression.EasyDeleteSqlExpression;
+import com.easy.query.core.expression.sql.expression.EasyEntityPredicateSqlExpression;
 import com.easy.query.core.expression.sql.expression.EasyEntitySqlExpression;
 import com.easy.query.core.expression.sql.expression.EasySqlExpression;
 
@@ -12,7 +13,7 @@ import com.easy.query.core.expression.sql.expression.EasySqlExpression;
  * @Date: 2023/3/4 16:30
  * @author xuejiaming
  */
-public interface EntityDeleteExpressionBuilder extends EntityExpressionBuilder, LambdaEntityExpressionBuilder {
+public interface EntityDeleteExpressionBuilder extends EntityPredicateExpressionBuilder, LambdaEntityExpressionBuilder {
 
     PredicateSegment getWhere();
 
@@ -22,10 +23,6 @@ public interface EntityDeleteExpressionBuilder extends EntityExpressionBuilder, 
 
     boolean hasWhereColumns();
 
-    default EntityDeleteExpressionBuilder cloneSqlDeleteExpressionBuilder(){
-        return (EntityDeleteExpressionBuilder) cloneEntityExpressionBuilder();
-    }
-
     @Override
-    EasyEntitySqlExpression toExpression();
+    EntityDeleteExpressionBuilder cloneEntityExpressionBuilder();
 }

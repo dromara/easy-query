@@ -18,7 +18,7 @@ public class DefaultExecuteUpdateEasyQueryJDBCExecutor extends AbstractAffectedR
     }
 
     @Override
-    protected Executor<ExecuteResult> createExecutor() {
+    protected Executor<AffectedRowsExecuteResult> createExecutor() {
         return new EasyExecuteUpdateExecutor(streamMergeContext);
     }
 

@@ -580,7 +580,7 @@ public class QueryTest extends BaseTest {
                 .where((t, t1) -> t1.isNotNull(BlogEntity::getTitle))
                 .orderByDesc((t, t1) -> t1.column(BlogEntity::getPublishTime))
                 .select(BlogEntity.class, (t, t1) -> t1.column(BlogEntity::getPublishTime).column(BlogEntity::getId).column(BlogEntity::getScore));
-        EntityQueryExpressionBuilder countEntityQueryExpression = SqlExpressionUtil.getCountEntityQueryExpression(select.getSqlEntityExpression().cloneSqlQueryExpressionBuilder());
+        EntityQueryExpressionBuilder countEntityQueryExpression = SqlExpressionUtil.getCountEntityQueryExpression(select.getSqlEntityExpression().cloneEntityExpressionBuilder());
         Assert.assertNotNull(countEntityQueryExpression);
         String s = countEntityQueryExpression.toExpression().toSql(null);
         Assert.assertEquals("SELECT  COUNT(1)  FROM t_topic t INNER JOIN t_blog t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t1.`title` IS NOT NULL",s);
@@ -599,7 +599,7 @@ public class QueryTest extends BaseTest {
                 .where((t, t1) -> t1.isNotNull(BlogEntity::getTitle))
                 .select(BlogEntity.class, (t, t1) -> t1.column(BlogEntity::getPublishTime).column(BlogEntity::getId).column(BlogEntity::getScore))
                 .orderByDesc(t1 -> t1.column(BlogEntity::getPublishTime));
-        EntityQueryExpressionBuilder countEntityQueryExpression = SqlExpressionUtil.getCountEntityQueryExpression(blogEntityQueryable.getSqlEntityExpression().cloneSqlQueryExpressionBuilder());
+        EntityQueryExpressionBuilder countEntityQueryExpression = SqlExpressionUtil.getCountEntityQueryExpression(blogEntityQueryable.getSqlEntityExpression().cloneEntityExpressionBuilder());
         Assert.assertNotNull(countEntityQueryExpression);
         String s = countEntityQueryExpression.toExpression().toSql(null);
         Assert.assertEquals("SELECT  COUNT(1)  FROM t_topic t INNER JOIN t_blog t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t1.`title` IS NOT NULL",s);

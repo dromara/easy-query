@@ -12,7 +12,7 @@ import java.util.concurrent.Executors;
  * @author xuejiaming
  */
 public class DefaultEasyShardingExecutorService implements EasyShardingExecutorService{
-    private static final String DEFAULT_NAME_PREFIX="EasySharding_";
+    private static final String DEFAULT_NAME_PREFIX="EasyQuerySharding_";
     private final ExecutorService shardingExecutor;
     public DefaultEasyShardingExecutorService(EasyShardingOption easyShardingOption){
 

@@ -18,7 +18,7 @@ public class DefaultInsertEasyQueryJDBCExecutor extends AbstractAffectedRowsEasy
     }
 
     @Override
-    protected Executor<ExecuteResult> createExecutor() {
+    protected Executor<AffectedRowsExecuteResult> createExecutor() {
         return new EasyInsertExecutor(streamMergeContext);
     }
 

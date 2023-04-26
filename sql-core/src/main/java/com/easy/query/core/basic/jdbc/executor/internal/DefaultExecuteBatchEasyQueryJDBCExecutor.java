@@ -18,7 +18,7 @@ public class DefaultExecuteBatchEasyQueryJDBCExecutor extends AbstractAffectedRo
     }
 
     @Override
-    protected Executor<ExecuteResult> createExecutor() {
+    protected Executor<AffectedRowsExecuteResult> createExecutor() {
         return new EasyExecuteBatchExecutor(streamMergeContext);
     }
 

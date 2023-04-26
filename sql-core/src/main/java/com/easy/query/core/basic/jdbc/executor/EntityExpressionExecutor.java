@@ -3,6 +3,7 @@ package com.easy.query.core.basic.jdbc.executor;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.EntityPredicateExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.expression.EasyEntitySqlExpression;
 import com.easy.query.core.expression.sql.expression.EasyInsertSqlExpression;
@@ -22,5 +23,5 @@ public interface EntityExpressionExecutor {
     <TR> List<TR> query(ExecutorContext executorContext, Class<TR> clazz, String sql, List<SQLParameter> sqlParameters);
     <T> long insert(ExecutorContext executorContext, List<T> entities, EntityInsertExpressionBuilder entityInsertExpressionBuilder, boolean fillAutoIncrement);
     <T> long executeRows(ExecutorContext executorContext, EntityExpressionBuilder entityExpressionBuilder, List<T> entities);
-    <T> long executeRows(ExecutorContext executorContext, EasyEntitySqlExpression easyEntitySqlExpression);
+    <T> long executeRows(ExecutorContext executorContext, EntityPredicateExpressionBuilder entityPredicateExpressionBuilder);
 }

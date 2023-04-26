@@ -230,7 +230,7 @@ public  class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBu
 
 
     @Override
-    public EntityExpressionBuilder cloneEntityExpressionBuilder() {
+    public EntityQueryExpressionBuilder cloneEntityExpressionBuilder() {
 
         ExpressionContext sqlExpressionContext = getExpressionContext();
         QueryExpressionBuilder queryExpressionBuilder = new QueryExpressionBuilder(sqlExpressionContext);

@@ -1,14 +1,13 @@
 package com.easy.query.core.sharding.route;
 
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
-import com.easy.query.core.expression.executor.parser.DefaultEntityPrepareParseResult;
+import com.easy.query.core.expression.executor.parser.EasyEntityPrepareParseResult;
 import com.easy.query.core.expression.executor.parser.EntityPrepareParseResult;
 import com.easy.query.core.expression.executor.parser.PredicatePrepareParseResult;
 import com.easy.query.core.expression.executor.parser.PrepareParseResult;
 import com.easy.query.core.sharding.route.datasource.engine.DataSourceRouteEngine;
 import com.easy.query.core.sharding.route.datasource.engine.DataSourceRouteResult;
 import com.easy.query.core.sharding.route.table.EasyEntityTableRouteUnit;
-import com.easy.query.core.sharding.route.table.EntityTableRouteUnit;
 import com.easy.query.core.sharding.route.table.TableRouteUnit;
 import com.easy.query.core.sharding.route.table.engine.TableRouteContext;
 import com.easy.query.core.sharding.route.table.engine.TableRouteEngine;
@@ -59,7 +58,7 @@ public class DefaultRouteContextFactory implements RouteContextFactory {
         boolean isCrossDataSource = false;
         boolean isCrossTable = false;
         for (Object entity : entities) {
-            RouteContext routeContext = doCreateRouteContext(new DefaultEntityPrepareParseResult(prepareParseResult.getShardingEntities(), prepareParseResult.getEntityExpressionBuilder(), Collections.singletonList(entity)));
+            RouteContext routeContext = doCreateRouteContext(new EasyEntityPrepareParseResult(prepareParseResult.getShardingEntities(), prepareParseResult.getEntityExpressionBuilder(), Collections.singletonList(entity)));
             List<RouteUnit> routeUnits = routeContext.getEntityRouteResult().getRouteUnits();
             if (ArrayUtil.isNotSingle(routeUnits)) {
                 throw new EasyQueryInvalidOperationException("entity route route unit more or empty:"+routeUnits.size());

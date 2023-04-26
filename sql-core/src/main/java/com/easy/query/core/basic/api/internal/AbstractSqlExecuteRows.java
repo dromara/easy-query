@@ -13,17 +13,17 @@ import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
  * @author xuejiaming
  */
 public abstract class AbstractSqlExecuteRows<TChain>  implements SqlExecuteExpectRows,Interceptable<TChain>,LogicDeletable<TChain> {
-    private final EntityExpressionBuilder sqlEntityExpression;
+    private final EntityExpressionBuilder entityExpressionBuilder;
 
-    public AbstractSqlExecuteRows(EntityExpressionBuilder sqlEntityExpression){
+    public AbstractSqlExecuteRows(EntityExpressionBuilder entityExpressionBuilder){
 
-        this.sqlEntityExpression = sqlEntityExpression;
+        this.entityExpressionBuilder = entityExpressionBuilder;
     }
 
     @Override
     public void executeRows(long expectRows, String msg, String code) {
 
-        EasyConnectionManager connectionManager = sqlEntityExpression.getRuntimeContext().getConnectionManager();
+        EasyConnectionManager connectionManager = entityExpressionBuilder.getRuntimeContext().getConnectionManager();
         Transaction transaction=null;
         try {
             boolean inTransaction = connectionManager.currentThreadInTransaction();
@@ -49,32 +49,32 @@ public abstract class AbstractSqlExecuteRows<TChain>  implements SqlExecuteExpec
 
     @Override
     public TChain noInterceptor() {
-        sqlEntityExpression.getExpressionContext().noInterceptor();
+        entityExpressionBuilder.getExpressionContext().noInterceptor();
         return (TChain) this;
     }
     @Override
     public TChain useInterceptor(String name) {
-        sqlEntityExpression.getExpressionContext().useInterceptor(name);
+        entityExpressionBuilder.getExpressionContext().useInterceptor(name);
         return (TChain) this;
     }
     @Override
     public TChain noInterceptor(String name) {
-        sqlEntityExpression.getExpressionContext().noInterceptor(name);
+        entityExpressionBuilder.getExpressionContext().noInterceptor(name);
         return (TChain) this;
     }
 
     @Override
     public TChain useInterceptor() {
-        sqlEntityExpression.getExpressionContext().useInterceptor();
+        entityExpressionBuilder.getExpressionContext().useInterceptor();
         return (TChain) this;
     }
 
     @Override
     public TChain useLogicDelete(boolean enable) {
         if(enable){
-            sqlEntityExpression.getExpressionContext().getBehavior().addBehavior(EasyBehaviorEnum.LOGIC_DELETE);
+            entityExpressionBuilder.getExpressionContext().getBehavior().addBehavior(EasyBehaviorEnum.LOGIC_DELETE);
         }else{
-            sqlEntityExpression.getExpressionContext().getBehavior().removeBehavior(EasyBehaviorEnum.LOGIC_DELETE);
+            entityExpressionBuilder.getExpressionContext().getBehavior().removeBehavior(EasyBehaviorEnum.LOGIC_DELETE);
         }
         return (TChain) this;
     }

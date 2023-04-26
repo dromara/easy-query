@@ -1,7 +1,8 @@
 package com.easy.query.core.basic.api.update.abstraction;
 
+import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.api.internal.AbstractSqlExecuteRows;
-import com.easy.query.core.basic.jdbc.parameter.DefaultSqlParameterCollector;
+import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
 import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.enums.SqlPredicateCompareEnum;
@@ -17,8 +18,6 @@ import com.easy.query.core.expression.sql.builder.impl.TableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
 import com.easy.query.core.util.ClassUtil;
-import com.easy.query.core.util.StringUtil;
-import com.easy.query.core.basic.jdbc.executor.EasyOldExecutor;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.api.update.ExpressionUpdatable;
 import com.easy.query.core.expression.lambda.SqlExpression;
@@ -37,32 +36,27 @@ import java.util.function.Function;
 public abstract class AbstractExpressionUpdatable<T> extends AbstractSqlExecuteRows<ExpressionUpdatable<T>> implements ExpressionUpdatable<T> {
     protected final Class<T> clazz;
     protected final  EntityMetadata entityMetadata;
-    protected final EntityUpdateExpressionBuilder entityUpdateExpression;
+    protected final EntityUpdateExpressionBuilder entityUpdateExpressionBuilder;
     protected final SqlColumnSetter<T> sqlColumnSetter;
 
-    public AbstractExpressionUpdatable(Class<T> clazz, EntityUpdateExpressionBuilder entityUpdateExpression) {
-        super(entityUpdateExpression);
+    public AbstractExpressionUpdatable(Class<T> clazz, EntityUpdateExpressionBuilder entityUpdateExpressionBuilder) {
+        super(entityUpdateExpressionBuilder);
 
         this.clazz = clazz;
-        this.entityUpdateExpression = entityUpdateExpression;
+        this.entityUpdateExpressionBuilder = entityUpdateExpressionBuilder;
 
-         entityMetadata = this.entityUpdateExpression.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(clazz);
+         entityMetadata = this.entityUpdateExpressionBuilder.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(clazz);
         entityMetadata.checkTable();
         EntityTableExpressionBuilder table = new TableExpressionBuilder(entityMetadata, 0, null, MultiTableTypeEnum.FROM);
-        this.entityUpdateExpression.addSqlEntityTableExpression(table);
-        sqlColumnSetter = new DefaultSqlColumnSetter<>(0, entityUpdateExpression, entityUpdateExpression.getSetColumns());
+        this.entityUpdateExpressionBuilder.addSqlEntityTableExpression(table);
+        sqlColumnSetter = new DefaultSqlColumnSetter<>(0, entityUpdateExpressionBuilder, entityUpdateExpressionBuilder.getSetColumns());
     }
 
     @Override
     public long executeRows() {
-        SqlParameterCollector sqlParameterCollector = DefaultSqlParameterCollector.defaultCollector();
-        String updateSql = toSql(sqlParameterCollector);
-        if (StringUtil.isNotBlank(updateSql)) {
-            EasyOldExecutor easyExecutor = entityUpdateExpression.getRuntimeContext().getEasyExecutor();
-            return easyExecutor.executeRows(ExecutorContext.create(entityUpdateExpression.getRuntimeContext(),true), updateSql, sqlParameterCollector.getParameters());
-        }
-
-        return 0;
+        EasyQueryRuntimeContext runtimeContext = entityUpdateExpressionBuilder.getRuntimeContext();
+        EntityExpressionExecutor entityExpressionExecutor = runtimeContext.getEntityExpressionExecutor();
+        return entityExpressionExecutor.executeRows(ExecutorContext.create(entityUpdateExpressionBuilder.getRuntimeContext(),true), entityUpdateExpressionBuilder);
     }
 
     @Override
@@ -80,7 +74,7 @@ public abstract class AbstractExpressionUpdatable<T> extends AbstractSqlExecuteR
     @Override
     public ExpressionUpdatable<T> withVersion(boolean condition, Object versionValue) {
         if(condition){
-            entityUpdateExpression.getExpressionContext().setVersion(versionValue);
+            entityUpdateExpressionBuilder.getExpressionContext().setVersion(versionValue);
         }
         return this;
     }
@@ -101,7 +95,7 @@ public abstract class AbstractExpressionUpdatable<T> extends AbstractSqlExecuteR
     @Override
     public ExpressionUpdatable<T> where(boolean condition, SqlExpression<SqlPredicate<T>> whereExpression) {
         if (condition) {
-            DefaultSqlPredicate<T> sqlPredicate = new DefaultSqlPredicate<>(0, entityUpdateExpression, entityUpdateExpression.getWhere());
+            DefaultSqlPredicate<T> sqlPredicate = new DefaultSqlPredicate<>(0, entityUpdateExpressionBuilder, entityUpdateExpressionBuilder.getWhere());
             whereExpression.apply(sqlPredicate);
         }
         return this;
@@ -112,8 +106,8 @@ public abstract class AbstractExpressionUpdatable<T> extends AbstractSqlExecuteR
 
         if(condition){
 
-            PredicateSegment where = entityUpdateExpression.getWhere();
-            EntityTableExpressionBuilder table = entityUpdateExpression.getTable(0);
+            PredicateSegment where = entityUpdateExpressionBuilder.getWhere();
+            EntityTableExpressionBuilder table = entityUpdateExpressionBuilder.getTable(0);
             Collection<String> keyProperties = table.getEntityMetadata().getKeyProperties();
             if(keyProperties.isEmpty()){
                 throw new EasyQueryException("对象:"+ ClassUtil.getSimpleName(clazz)+"未找到主键信息");
@@ -124,7 +118,7 @@ public abstract class AbstractExpressionUpdatable<T> extends AbstractSqlExecuteR
             String keyProperty = keyProperties.iterator().next();
             AndPredicateSegment andPredicateSegment = new AndPredicateSegment();
             andPredicateSegment
-                    .setPredicate(new ColumnValuePredicate(table, keyProperty, id, SqlPredicateCompareEnum.EQ, entityUpdateExpression));
+                    .setPredicate(new ColumnValuePredicate(table, keyProperty, id, SqlPredicateCompareEnum.EQ, entityUpdateExpressionBuilder));
             where.addPredicateSegment(andPredicateSegment);
         }
         return this;
@@ -132,11 +126,11 @@ public abstract class AbstractExpressionUpdatable<T> extends AbstractSqlExecuteR
 
     @Override
     public ExpressionUpdatable<T> asTable(Function<String, String> tableNameAs) {
-        entityUpdateExpression.getRecentlyTable().setTableNameAs(tableNameAs);
+        entityUpdateExpressionBuilder.getRecentlyTable().setTableNameAs(tableNameAs);
         return this;
     }
     @Override
     public String toSql(SqlParameterCollector sqlParameterCollector){
-        return entityUpdateExpression.toExpression().toSql(sqlParameterCollector);
+        return entityUpdateExpressionBuilder.toExpression().toSql(sqlParameterCollector);
     }
 }

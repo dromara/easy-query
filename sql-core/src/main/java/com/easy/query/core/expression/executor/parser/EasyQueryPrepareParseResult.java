@@ -2,8 +2,8 @@ package com.easy.query.core.expression.executor.parser;
 
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
+import com.easy.query.core.expression.sql.expression.EasyEntityPredicateSqlExpression;
 import com.easy.query.core.expression.sql.expression.EasyQuerySqlExpression;
-import com.easy.query.core.expression.sql.expression.EasySqlExpression;
 
 import java.util.Set;
 
@@ -13,12 +13,12 @@ import java.util.Set;
  *
  * @author xuejiaming
  */
-public class DefaultQueryPrepareParseResult implements PrepareParseResult, QueryPrepareParseResult {
+public class EasyQueryPrepareParseResult implements QueryPrepareParseResult {
     private final Set<Class<?>> shardingEntities;
     private final EntityQueryExpressionBuilder entityQueryExpressionBuilder;
     private final EasyQuerySqlExpression easyQuerySqlExpression;
 
-    public DefaultQueryPrepareParseResult(Set<Class<?>> shardingEntities, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
+    public EasyQueryPrepareParseResult(Set<Class<?>> shardingEntities, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
 
         this.shardingEntities = shardingEntities;
         this.entityQueryExpressionBuilder = entityQueryExpressionBuilder;
@@ -31,12 +31,13 @@ public class DefaultQueryPrepareParseResult implements PrepareParseResult, Query
     }
 
     @Override
-    public EntityQueryExpressionBuilder getEntityExpressionBuilder() {
+    public EntityExpressionBuilder getEntityExpressionBuilder() {
         return entityQueryExpressionBuilder;
     }
 
+
     @Override
-    public EasyQuerySqlExpression getEasyQuerySqlExpression() {
+    public EasyEntityPredicateSqlExpression getEasyEntityPredicateSqlExpression() {
         return easyQuerySqlExpression;
     }
 }

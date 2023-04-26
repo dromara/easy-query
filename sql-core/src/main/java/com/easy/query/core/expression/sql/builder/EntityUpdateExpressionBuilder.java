@@ -12,7 +12,7 @@ import com.easy.query.core.expression.sql.expression.EasyUpdateSqlExpression;
  * @Date: 2023/3/4 17:04
  * @author xuejiaming
  */
-public interface EntityUpdateExpressionBuilder extends EntityExpressionBuilder, LambdaEntityExpressionBuilder,EntityToExpressionBuilder {
+public interface EntityUpdateExpressionBuilder extends EntityPredicateExpressionBuilder, LambdaEntityExpressionBuilder,EntityToExpressionBuilder {
 
      SqlBuilderSegment getSetColumns();
      boolean hasSetColumns();
@@ -24,10 +24,8 @@ public interface EntityUpdateExpressionBuilder extends EntityExpressionBuilder, 
      SqlBuilderSegment getWhereColumns();
      boolean hasWhereColumns();
 
-     default UpdateExpressionBuilder cloneSqlUpdateExpression(){
-          return (UpdateExpressionBuilder) cloneEntityExpressionBuilder();
-     }
-
+     @Override
+     EntityUpdateExpressionBuilder cloneEntityExpressionBuilder();
      @Override
      EasyUpdateSqlExpression toExpression();
 

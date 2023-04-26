@@ -17,8 +17,12 @@ import java.util.List;
  */
 public interface StreamMergeContext extends AutoCloseable {
 
- ExecutorContext getExecutorContext();
-   Collection<ExecutionUnit> getExecutionUnits();
+    ExecutorContext getExecutorContext();
+    default boolean isSharding(){
+        return !isSerialExecute()&&getExecutionUnits().size()!=1;
+    }
+
+    Collection<ExecutionUnit> getExecutionUnits();
 
 
     EasyQueryRuntimeContext getRuntimeContext();

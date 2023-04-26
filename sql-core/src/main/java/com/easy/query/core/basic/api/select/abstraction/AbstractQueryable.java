@@ -100,8 +100,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
 //            List<Long> result = t1Queryable.select(" COUNT(1) ").toList(Long.class);
 //            return ArrayUtil.firstOrDefault(result,0L);
 //        }
-
-        EntityQueryExpressionBuilder entityQueryExpression = sqlEntityExpression.cloneSqlQueryExpressionBuilder();
+        EntityQueryExpressionBuilder entityQueryExpression = sqlEntityExpression.cloneEntityExpressionBuilder();
         EntityQueryExpressionBuilder countSqlEntityExpressionBuilder = SqlExpressionUtil.getCountEntityQueryExpression(entityQueryExpression);
         if(countSqlEntityExpressionBuilder==null){
             List<Long> result =cloneQueryable().select(" COUNT(1) ").toList(Long.class);
