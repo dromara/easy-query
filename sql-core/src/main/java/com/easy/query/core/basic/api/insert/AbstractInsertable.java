@@ -1,14 +1,10 @@
 package com.easy.query.core.basic.api.insert;
 
-import com.easy.query.core.basic.api.internal.SqlEntityNode;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
-import com.easy.query.core.basic.jdbc.parameter.DefaultSqlParameterCollector;
-import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
 import com.easy.query.core.basic.plugin.interceptor.EasyInterceptorEntry;
 import com.easy.query.core.configuration.EasyQueryConfiguration;
 import com.easy.query.core.enums.SqlExecuteStrategyEnum;
-import com.easy.query.core.expression.sql.expression.EasyInsertSqlExpression;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.basic.plugin.interceptor.EasyEntityInterceptor;
@@ -16,15 +12,10 @@ import com.easy.query.core.expression.sql.builder.impl.TableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.util.ArrayUtil;
-import com.easy.query.core.util.SqlExpressionUtil;
-import com.easy.query.core.basic.jdbc.executor.EasyOldExecutor;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 

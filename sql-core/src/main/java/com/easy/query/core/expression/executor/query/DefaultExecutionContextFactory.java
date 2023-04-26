@@ -48,7 +48,7 @@ public class DefaultExecutionContextFactory implements ExecutionContextFactory {
     }
 
     @Override
-    public ExecutionContext createQueryExecutionContext(String sql, List<SQLParameter> parameters) {
+    public ExecutionContext createJDBCExecutionContext(String sql, List<SQLParameter> parameters) {
         ExecutionUnit executionUnit = new ExecutionUnit(easyDataSource.getDefaultDataSourceName(), new SqlUnit(sql,parameters));
         return new ExecutionContext(Collections.singletonList(executionUnit));
     }
@@ -72,7 +72,7 @@ public class DefaultExecutionContextFactory implements ExecutionContextFactory {
         return new ExecutionContext(executionUnits);
     }
     @Override
-    public ExecutionContext createExecutionContext(PrepareParseResult prepareParseResult) {
+    public ExecutionContext createEntityExecutionContext(PrepareParseResult prepareParseResult) {
 //        NativeSqlQueryCompilerContext nativeSqlQueryCompilerContext = new NativeSqlQueryCompilerContext(prepareParseResult);
         //无需分片的情况下
         if(ArrayUtil.isEmpty(prepareParseResult.getShardingEntities())){

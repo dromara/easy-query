@@ -23,8 +23,6 @@ import com.easy.query.core.api.client.DefaultEasyQuery;
 import com.easy.query.core.api.client.EasyQuery;
 import com.easy.query.core.api.def.DefaultEasySqlApiFactory;
 import com.easy.query.core.basic.jdbc.con.EasyConnectionManager;
-import com.easy.query.core.basic.jdbc.executor.DefaultEasyOldExecutor0;
-import com.easy.query.core.basic.jdbc.executor.EasyOldExecutor;
 import com.easy.query.core.basic.jdbc.types.DefaultJdbcTypeHandlerManager;
 import com.easy.query.core.basic.jdbc.types.EasyJdbcTypeHandlerManager;
 import com.easy.query.core.config.NameConversion;
@@ -106,10 +104,6 @@ public class EasyQueryStarterAutoConfiguration {
     }
 
     @Bean
-    public EasyOldExecutor easyExecutor() {
-        return new DefaultEasyOldExecutor0();
-    }
-    @Bean
     public TrackManager trackManager(EntityMetadataManager entityMetadataManager){
         return new DefaultTrackManager(entityMetadataManager);
     }
@@ -173,7 +167,7 @@ public class EasyQueryStarterAutoConfiguration {
         return new DefaultEasyDataSource("ds0",dataSource);
     }
     @Bean
-    public EntityExpressionExecutor entityExpressionExecutor(EasyDataSource easyDataSource, EntityMetadataManager entityMetadataManager, EasyOldExecutor easyExecutor, DataSource dataSource){
+    public EntityExpressionExecutor entityExpressionExecutor(EasyDataSource easyDataSource, EntityMetadataManager entityMetadataManager,DataSource dataSource){
 
         DefaultEasyPrepareParser prepareParser = new DefaultEasyPrepareParser();
         DefaultDataSourceRouteManager defaultDataSourceRouteManager = new DefaultDataSourceRouteManager(entityMetadataManager,easyDataSource);
@@ -206,7 +200,6 @@ public class EasyQueryStarterAutoConfiguration {
                                                            EntityMetadataManager entityMetadataManager,
                                                            EasyQueryLambdaFactory easyQueryLambdaFactory,
                                                            EasyConnectionManager easyConnectionManager,
-                                                           EasyOldExecutor easyExecutor,
                                                            EntityExpressionExecutor entityExpressionExecutor,
                                                            EasyJdbcTypeHandlerManager easyJdbcTypeHandler,
                                                            EasySqlApiFactory easyQueryableFactory,
@@ -221,7 +214,6 @@ public class EasyQueryStarterAutoConfiguration {
                 entityMetadataManager,
                 easyQueryLambdaFactory,
                 easyConnectionManager,
-                easyExecutor,
                 entityExpressionExecutor,
                 easyJdbcTypeHandler,
                 easyQueryableFactory,

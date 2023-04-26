@@ -39,6 +39,31 @@ import java.util.List;
 public class JDBCExecutorUtil {
 
     private static  final Log log= LogFactory.getLog(JDBCExecutorUtil.class);
+    private static void logSql(boolean logDebug,String sql){
+        if (logDebug) {
+            log.debug("==> "+Thread.currentThread().getName()+" Preparing: " + sql);
+        }
+    }
+    private static void logParameter(boolean logDebug,List<SQLParameter> parameters){
+        if (logDebug) {
+            log.debug("==> "+Thread.currentThread().getName()+" Parameters: " + SQLUtil.sqlParameterToString(parameters));
+        }
+    }
+    private static void logResult(boolean logDebug,long total){
+        if (logDebug) {
+            log.debug("<== "+Thread.currentThread().getName()+" Total: " + total);
+        }
+    }
+    private static void logResult(boolean logDebug,int total){
+        if (logDebug) {
+            log.debug("<== "+Thread.currentThread().getName()+" Total: " + total);
+        }
+    }
+    private static void logUse(boolean logDebug,long start,long end){
+        if (logDebug) {
+            log.debug("<== "+Thread.currentThread().getName()+" Query Use: "+(end-start)+"(ms)");
+        }
+    }
 
     public static <T> List<SQLParameter> extractParameters(ExecutorContext executorContext, T entity, List<SQLParameter> sqlParameters) {
         List<SQLParameter> params = new ArrayList<>(sqlParameters.size());
@@ -60,9 +85,7 @@ public class JDBCExecutorUtil {
 
     public static QueryExecuteResult query(ExecutorContext executorContext, EasyConnection easyConnection, String sql, List<SQLParameter> sqlParameters){
         boolean logDebug = log.isDebugEnabled();
-        if (logDebug) {
-            log.debug("==> "+Thread.currentThread().getName()+" Preparing: " + sql);
-        }
+        logSql(logDebug,sql);
         EasyQueryRuntimeContext runtimeContext = executorContext.getRuntimeContext();
         EasyJdbcTypeHandlerManager easyJdbcTypeHandler = runtimeContext.getEasyJdbcTypeHandlerManager();
 
@@ -70,7 +93,7 @@ public class JDBCExecutorUtil {
         ResultSet rs = null;
         List<SQLParameter> parameters = extractParameters(executorContext, null, sqlParameters);
         if (logDebug && ArrayUtil.isNotEmpty(parameters)) {
-            log.debug("==> "+Thread.currentThread().getName()+" Parameters: " + SQLUtil.sqlParameterToString(parameters));
+            logParameter(true,parameters);
         }
         try {
             ps = createPreparedStatement(easyConnection.getConnection(), sql, parameters, easyJdbcTypeHandler);
@@ -78,7 +101,7 @@ public class JDBCExecutorUtil {
                 long start = System.currentTimeMillis();
                 rs = ps.executeQuery();
                 long end = System.currentTimeMillis();
-                log.debug("<== "+Thread.currentThread().getName()+" Query Use: "+(end-start)+"(ms)");
+                logUse(true,start,end);
             }else{
                 rs = ps.executeQuery();
             }
@@ -92,9 +115,7 @@ public class JDBCExecutorUtil {
 
     public static <T> AffectedRowsExecuteResult insert(ExecutorContext executorContext, EasyConnection easyConnection, String sql, List<T> entities, List<SQLParameter> sqlParameters, boolean fillAutoIncrement) {
         boolean logDebug = log.isDebugEnabled();
-        if (logDebug) {
-            log.debug("==> Preparing: " + sql);
-        }
+        logSql(logDebug,sql);
         EasyQueryRuntimeContext runtimeContext = executorContext.getRuntimeContext();
         EasyJdbcTypeHandlerManager easyJdbcTypeHandler = runtimeContext.getEasyJdbcTypeHandlerManager();
         Class<?> entityClass = entities.get(0).getClass();
@@ -107,7 +128,7 @@ public class JDBCExecutorUtil {
             for (T entity : entities) {
                 List<SQLParameter> parameters = extractParameters(executorContext, entity, sqlParameters);
                 if (logDebug && hasParameter) {
-                    log.debug("==> Parameters: " + SQLUtil.sqlParameterToString(parameters));
+                    logParameter(true,parameters);
                 }
                 if (ps == null) {
                     ps = createPreparedStatement(easyConnection.getConnection(), sql, parameters, easyJdbcTypeHandler, incrementColumns);
@@ -119,10 +140,7 @@ public class JDBCExecutorUtil {
             assert ps != null;
             int[] rs = ps.executeBatch();
             r = rs.length;
-
-            if (logDebug) {
-                log.debug("<== Total: " + r);
-            }
+logResult(logDebug,r);
             //如果需要自动填充并且存在自动填充列
             if (fillAutoIncrement && ArrayUtil.isNotEmpty(incrementColumns)) {
                 ResultSet keysSet = ps.getGeneratedKeys();
@@ -172,9 +190,7 @@ public class JDBCExecutorUtil {
 
     public static  <T> AffectedRowsExecuteResult executeRows(ExecutorContext executorContext,EasyConnection easyConnection, String sql, List<T> entities, List<SQLParameter> sqlParameters) {
         boolean logDebug = log.isDebugEnabled();
-        if (logDebug) {
-            log.debug("==> Preparing: " + sql);
-        }
+        logSql(logDebug,sql);
         EasyQueryRuntimeContext runtimeContext = executorContext.getRuntimeContext();
         EasyJdbcTypeHandlerManager easyJdbcTypeHandlerManager = runtimeContext.getEasyJdbcTypeHandlerManager();
         PreparedStatement ps = null;
@@ -186,7 +202,7 @@ public class JDBCExecutorUtil {
                 List<SQLParameter> parameters = extractParameters(executorContext, entity, sqlParameters);
 
                 if (logDebug && hasParameter) {
-                    log.debug("==> Parameters: " + SQLUtil.sqlParameterToString(parameters));
+                    logParameter(true,parameters);
                 }
                 if (ps == null) {
                     ps = createPreparedStatement(easyConnection.getConnection(), sql, parameters, easyJdbcTypeHandlerManager);
@@ -198,9 +214,7 @@ public class JDBCExecutorUtil {
             assert ps != null;
             int[] rs = ps.executeBatch();
             r = ArrayUtil.sum(rs);
-            if (logDebug) {
-                log.debug("<== Total: " + r);
-            }
+            logResult(logDebug,r);
             ps.clearBatch();
         } catch (SQLException e) {
             log.error(sql, e);
@@ -212,9 +226,7 @@ public class JDBCExecutorUtil {
     }
     public static  <T> AffectedRowsExecuteResult executeRows(ExecutorContext executorContext,EasyConnection easyConnection, String sql, List<SQLParameter> sqlParameters) {
         boolean logDebug = log.isDebugEnabled();
-        if (logDebug) {
-            log.debug("==> Preparing: " + sql);
-        }
+        logSql(logDebug,sql);
         EasyQueryRuntimeContext runtimeContext = executorContext.getRuntimeContext();
         EasyJdbcTypeHandlerManager easyJdbcTypeHandlerManager = runtimeContext.getEasyJdbcTypeHandlerManager();
         PreparedStatement ps = null;
@@ -222,14 +234,12 @@ public class JDBCExecutorUtil {
 
         List<SQLParameter> parameters = extractParameters(executorContext, null, sqlParameters);
         if (logDebug && !parameters.isEmpty()) {
-            log.debug("==> Parameters: " + SQLUtil.sqlParameterToString(parameters));
+            logParameter(true,parameters);
         }
         try {
             ps = createPreparedStatement(easyConnection.getConnection(), sql, parameters, easyJdbcTypeHandlerManager);
             r = ps.executeUpdate();
-            if (logDebug) {
-                log.debug("<== Total: " + r);
-            }
+            logResult(logDebug,r);
         } catch (SQLException e) {
             log.error(sql, e);
             throw new EasyQuerySQLException(sql, e);

@@ -18,7 +18,6 @@ import com.easy.query.core.api.client.EasyQuery;
 import com.easy.query.core.api.def.DefaultEasySqlApiFactory;
 import com.easy.query.core.basic.jdbc.con.DefaultConnectionManager;
 import com.easy.query.core.basic.jdbc.con.EasyConnectionManager;
-import com.easy.query.core.basic.jdbc.executor.DefaultEasyOldExecutor0;
 import com.easy.query.core.basic.jdbc.types.DefaultJdbcTypeHandlerManager;
 import com.easy.query.core.basic.jdbc.types.EasyJdbcTypeHandlerManager;
 import com.easy.query.core.config.UnderlinedNameConversion;
@@ -92,7 +91,6 @@ public abstract class BaseTest {
     }
 
     public static void initEasyQuery() {
-        DefaultEasyOldExecutor0 defaultExecutor = new DefaultEasyOldExecutor0();
         EasyJdbcTypeHandlerManager jdbcTypeHandler = new DefaultJdbcTypeHandlerManager();
         EasyQueryOption easyQueryOption = new EasyQueryOption(false, SqlExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS, SqlExecuteStrategyEnum.ALL_COLUMNS);
         EasyQueryConfiguration configuration = new EasyQueryConfiguration(easyQueryOption);
@@ -132,7 +130,7 @@ public abstract class BaseTest {
         DefaultEasyShardingExecutorService defaultEasyShardingExecutorService = new DefaultEasyShardingExecutorService(easyShardingOption);
 
         MySqlExpressionFactory mySqlExpressionFactory = new MySqlExpressionFactory();
-        DefaultEasyQueryRuntimeContext jqdcRuntimeContext = new DefaultEasyQueryRuntimeContext(configuration, entityMetadataManager, easyQueryLambdaFactory, connectionManager, defaultExecutor,defaultEntityExpressionExecutor, jdbcTypeHandler, easyQueryableFactory, defaultEasyExpressionBuilderFactory, defaultTrackManager,defaultEasyPageResultProvider,easyShardingOption,defaultEasyShardingExecutorService,mySqlExpressionFactory);
+        DefaultEasyQueryRuntimeContext jqdcRuntimeContext = new DefaultEasyQueryRuntimeContext(configuration, entityMetadataManager, easyQueryLambdaFactory, connectionManager, defaultEntityExpressionExecutor, jdbcTypeHandler, easyQueryableFactory, defaultEasyExpressionBuilderFactory, defaultTrackManager,defaultEasyPageResultProvider,easyShardingOption,defaultEasyShardingExecutorService,mySqlExpressionFactory);
 ////        jqdcRuntimeContext.getEasyQueryConfiguration().applyEntityTypeConfiguration(new TestUserMySqlConfiguration());
 //        configuration.applyGlobalInterceptor(new NameQueryFilter());
 

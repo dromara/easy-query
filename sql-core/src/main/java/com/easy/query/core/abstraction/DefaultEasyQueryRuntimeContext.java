@@ -10,7 +10,6 @@ import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.basic.jdbc.con.EasyConnectionManager;
 import com.easy.query.core.basic.jdbc.types.EasyJdbcTypeHandlerManager;
 import com.easy.query.core.configuration.EasyQueryConfiguration;
-import com.easy.query.core.basic.jdbc.executor.EasyOldExecutor;
 import com.easy.query.core.basic.plugin.track.TrackManager;
 import com.easy.query.core.sharding.EasyShardingOption;
 import com.easy.query.core.basic.jdbc.executor.internal.unit.Executor;
@@ -26,7 +25,6 @@ public class DefaultEasyQueryRuntimeContext implements EasyQueryRuntimeContext {
     private final EntityMetadataManager entityMetadataManager;
     private final EasyQueryLambdaFactory easyQueryLambdaFactory;
     private final EasyConnectionManager easyConnectionManager;
-    private final EasyOldExecutor easyExecutor;
     private final EntityExpressionExecutor entityExpressionExecutor;
     //    private final EasyQueryExecutor easyQueryExecutor;
     private final EasyJdbcTypeHandlerManager easyJdbcTypeHandler;
@@ -42,7 +40,6 @@ public class DefaultEasyQueryRuntimeContext implements EasyQueryRuntimeContext {
                                           EntityMetadataManager entityMetadataManager,
                                           EasyQueryLambdaFactory easyQueryLambdaFactory,
                                           EasyConnectionManager easyConnectionManager,
-                                          EasyOldExecutor easyExecutor,
                                           EntityExpressionExecutor entityExpressionExecutor,
                                           EasyJdbcTypeHandlerManager easyJdbcTypeHandler,
                                           EasySqlApiFactory easyQueryableFactory,
@@ -56,7 +53,6 @@ public class DefaultEasyQueryRuntimeContext implements EasyQueryRuntimeContext {
         this.entityMetadataManager = entityMetadataManager;
         this.easyQueryLambdaFactory = easyQueryLambdaFactory;
         this.easyConnectionManager = easyConnectionManager;
-        this.easyExecutor = easyExecutor;
         this.entityExpressionExecutor = entityExpressionExecutor;
         this.easyJdbcTypeHandler = easyJdbcTypeHandler;
         this.easyQueryableFactory = easyQueryableFactory;
@@ -85,12 +81,6 @@ public class DefaultEasyQueryRuntimeContext implements EasyQueryRuntimeContext {
     @Override
     public EasyConnectionManager getConnectionManager() {
         return easyConnectionManager;
-    }
-
-
-    @Override
-    public EasyOldExecutor getEasyExecutor() {
-        return easyExecutor;
     }
 
     @Override

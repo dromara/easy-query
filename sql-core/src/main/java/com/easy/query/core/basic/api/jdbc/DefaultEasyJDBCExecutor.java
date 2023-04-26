@@ -1,7 +1,6 @@
 package com.easy.query.core.basic.api.jdbc;
 
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
-import com.easy.query.core.basic.jdbc.executor.EasyOldExecutor;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
@@ -34,7 +33,7 @@ public class DefaultEasyJDBCExecutor implements EasyJDBCExecutor {
     @Override
     public long sqlExecute(String sql, List<Object> parameters) {
         List<SQLParameter> sqlParameters = ArrayUtil.map(parameters, o -> new EasyConstSQLParameter(null, null, o));
-        EasyOldExecutor easyExecutor = runtimeContext.getEasyExecutor();
-        return easyExecutor.executeRows(ExecutorContext.create(runtimeContext,true), sql, sqlParameters);
+        EntityExpressionExecutor entityExpressionExecutor = runtimeContext.getEntityExpressionExecutor();
+        return entityExpressionExecutor.executeRows(ExecutorContext.create(runtimeContext,true), sql, sqlParameters);
     }
 }

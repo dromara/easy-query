@@ -19,7 +19,6 @@ public class EasyShardingThreadFactory implements ThreadFactory {
 
     }
     public EasyShardingThreadFactory(final String threadNamePrefix, boolean daemon){
-
         this.threadNamePrefix = threadNamePrefix;
         this.daemon = daemon;
     }
