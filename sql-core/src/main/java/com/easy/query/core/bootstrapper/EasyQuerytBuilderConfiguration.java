@@ -3,6 +3,8 @@ package com.easy.query.core.bootstrapper;
 import com.easy.query.core.abstraction.DefaultEasyQueryRuntimeContext;
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.abstraction.EasySqlApiFactory;
+import com.easy.query.core.api.client.DefaultEasyQuery;
+import com.easy.query.core.api.client.EasyQuery;
 import com.easy.query.core.api.def.DefaultEasySqlApiFactory;
 import com.easy.query.core.basic.jdbc.con.DefaultConnectionManager;
 import com.easy.query.core.basic.jdbc.con.EasyConnectionManager;
@@ -122,7 +124,7 @@ public class EasyQuerytBuilderConfiguration {
         return configuration;
     }
 
-    public EasyQueryRuntimeContext build() {
+    public EasyQuery build() {
         if(this.defaultEasyDataSource==null&&this.dataSource==null){
             throw new IllegalArgumentException("easy data source and data source null");
         }
@@ -157,7 +159,8 @@ public class EasyQuerytBuilderConfiguration {
         EasyShardingOption easyShardingOption = getDefaultIfNull(this.easyShardingOption,()->new EasyShardingOption(10, 20));
         EasyShardingExecutorService defaultEasyShardingExecutorService = getDefaultIfNull(this.defaultEasyShardingExecutorService,()->new DefaultEasyShardingExecutorService(easyShardingOption));
         EasyExpressionFactory defaultEasyExpressionFactory = getDefaultIfNull(this.defaultEasyExpressionFactory,DefaultEasyExpressionFactory::new);
-        return new DefaultEasyQueryRuntimeContext(configuration, entityMetadataManager, easyQueryLambdaFactory, connectionManager, defaultEntityExpressionExecutor, jdbcTypeHandlerManager, easyQueryableFactory, defaultEasyExpressionBuilderFactory, defaultTrackManager, defaultEasyPageResultProvider, easyShardingOption, defaultEasyShardingExecutorService, defaultEasyExpressionFactory,defaultTableRouteManager,defaultDataSourceRouteManager);
+        EasyQueryRuntimeContext runtimeContext = new DefaultEasyQueryRuntimeContext(configuration, entityMetadataManager, easyQueryLambdaFactory, connectionManager, defaultEntityExpressionExecutor, jdbcTypeHandlerManager, easyQueryableFactory, defaultEasyExpressionBuilderFactory, defaultTrackManager, defaultEasyPageResultProvider, easyShardingOption, defaultEasyShardingExecutorService, defaultEasyExpressionFactory, defaultTableRouteManager, defaultDataSourceRouteManager);
+        return new DefaultEasyQuery(runtimeContext);
     }
 
 }

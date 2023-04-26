@@ -1,5 +1,7 @@
 package com.easy.query.sql.starter;
 
+import com.easy.query.core.basic.plugin.interceptor.EasyInterceptor;
+import com.easy.query.core.basic.plugin.logicdel.EasyLogicDeleteStrategy;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.config.IDialect;
@@ -8,6 +10,7 @@ import com.easy.query.core.api.client.EasyQuery;
 import com.easy.query.core.config.MySqlDialect;
 import com.easy.query.core.config.NameConversion;
 import com.easy.query.core.config.UnderlinedNameConversion;
+import com.easy.query.core.configuration.EasyQueryConfiguration;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.util.StringUtil;
@@ -70,16 +73,20 @@ public class EasyQueryStarterAutoConfiguration {
         return new MySqlDialect();
      }
     @Bean
-    public EasyQueryRuntimeContext easyQueryRuntimeContext(DataSource dataSource,IDialect dialect,NameConversion nameConversion) {
-        return EasyQueryBootstrapper.defaultBuilderConfiguration()
+    public EasyQuery easyQuery(DataSource dataSource, IDialect dialect, NameConversion nameConversion, Map<String, EasyInterceptor> easyInterceptorMap, Map<String, EasyLogicDeleteStrategy> easyLogicDeleteStrategyMap) {
+        EasyQuery easyQuery = EasyQueryBootstrapper.defaultBuilderConfiguration()
                 .setDataSource(dataSource)
                 .setDialect(dialect)
                 .setNameConversion(nameConversion)
                 .build();
-    }
-
-    @Bean
-    public EasyQuery easyQuery(EasyQueryRuntimeContext easyQueryRuntimeContext) {
-        return new DefaultEasyQuery(easyQueryRuntimeContext);
+        EasyQueryRuntimeContext runtimeContext = easyQuery.getRuntimeContext();
+        EasyQueryConfiguration configuration = runtimeContext.getEasyQueryConfiguration();
+        for (EasyInterceptor easyInterceptor : easyInterceptorMap.values()) {
+            configuration.applyEasyInterceptor(easyInterceptor);
+        }
+        for (EasyLogicDeleteStrategy easyLogicDeleteStrategy : easyLogicDeleteStrategyMap.values()) {
+            configuration.applyEasyLogicDeleteStrategy(easyLogicDeleteStrategy);
+        }
+        return easyQuery;
     }
 }

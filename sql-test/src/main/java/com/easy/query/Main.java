@@ -104,14 +104,14 @@ public class Main {
             throw new EasyQueryException(e);
         }
 
-        EasyQueryRuntimeContext runtimeContext = EasyQueryBootstrapper.defaultBuilderConfiguration()
+        easyQuery =  EasyQueryBootstrapper.defaultBuilderConfiguration()
                 .setDataSource(dataSource)
                 .setDialect(new MySqlDialect())
                 .build();
+        EasyQueryRuntimeContext runtimeContext = easyQuery.getRuntimeContext();
 //        jqdcRuntimeContext.getEasyQueryConfiguration().applyEntityTypeConfiguration(new TestUserMySqlConfiguration());
 //        configuration.applyGlobalInterceptor(new NameQueryFilter());
 
-        easyQuery = new DefaultEasyQuery(runtimeContext);
         EntityMetadataManager entityMetadataManager = runtimeContext.getEntityMetadataManager();
 
         EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(BlogEntity.class);

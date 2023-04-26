@@ -64,10 +64,11 @@ public abstract class BaseTest {
     }
 
     public static void initEasyQuery() {
-        EasyQueryRuntimeContext runtimeContext = EasyQueryBootstrapper.defaultBuilderConfiguration()
+        easyQuery = EasyQueryBootstrapper.defaultBuilderConfiguration()
                 .setDataSource(dataSource)
                 .setDialect(new MySqlDialect())
                 .build();
+        EasyQueryRuntimeContext runtimeContext = easyQuery.getRuntimeContext();
         EasyQueryConfiguration configuration = runtimeContext.getEasyQueryConfiguration();
         configuration.applyEasyEncryptionStrategy(new DefaultAesEasyEncryptionStrategy());
         configuration.applyEasyEncryptionStrategy(new Base64EncryptionStrategy());
@@ -80,7 +81,6 @@ public abstract class BaseTest {
         TableRouteManager tableRouteManager = runtimeContext.getTableRouteManager();
         tableRouteManager.addRouteRule(new TopicShardingTableRule());
 
-        easyQuery = new DefaultEasyQuery(runtimeContext);
     }
 
     public static void initData() {
