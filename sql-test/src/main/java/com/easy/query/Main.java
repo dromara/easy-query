@@ -2,32 +2,15 @@ package com.easy.query;
 
 
 import com.alibaba.druid.pool.DruidDataSourceFactory;
-import com.easy.query.core.basic.jdbc.executor.DefaultEntityExpressionExecutor;
-import com.easy.query.core.basic.thread.DefaultEasyShardingExecutorService;
-import com.easy.query.core.expression.executor.parser.DefaultEasyPrepareParser;
-import com.easy.query.core.expression.executor.query.DefaultExecutionContextFactory;
-import com.easy.query.core.expression.parser.factory.DefaultEasyQueryLambdaFactory;
-import com.easy.query.core.abstraction.DefaultEasyQueryRuntimeContext;
-import com.easy.query.core.expression.parser.factory.EasyQueryLambdaFactory;
-import com.easy.query.core.abstraction.EasySqlApiFactory;
-import com.easy.query.core.basic.pagination.DefaultEasyPageResultProvider;
+import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
+import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.common.bean.FastBean;
+import com.easy.query.core.config.MySqlDialect;
 import com.easy.query.core.enums.SqlRangeEnum;
 import com.easy.query.core.enums.SqlExecuteStrategyEnum;
-import com.easy.query.core.basic.plugin.track.DefaultTrackManager;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
-import com.easy.query.core.expression.sql.builder.factory.DefaultEasyExpressionBuilderFactory;
-import com.easy.query.core.expression.sql.expression.factory.DefaultEasyExpressionFactory;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
-import com.easy.query.core.sharding.DefaultEasyDataSource;
-import com.easy.query.core.sharding.EasyShardingOption;
-import com.easy.query.core.sharding.rewrite.DefaultRewriteContextFactory;
-import com.easy.query.core.sharding.route.DefaultRouteContextFactory;
-import com.easy.query.core.sharding.route.abstraction.DefaultDataSourceRouteManager;
-import com.easy.query.core.sharding.route.abstraction.DefaultTableRouteManager;
-import com.easy.query.core.sharding.route.datasource.engine.DefaultDataSourceRouteEngine;
-import com.easy.query.core.sharding.route.table.engine.DefaultTableRouteEngine;
 import com.easy.query.core.util.ClassUtil;
 import com.easy.query.core.util.EasyUtil;
 import com.easy.query.dto.TopicRequest;
@@ -38,21 +21,11 @@ import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.api.client.DefaultEasyQuery;
 import com.easy.query.core.api.client.EasyQuery;
-import com.easy.query.core.api.def.DefaultEasySqlApiFactory;
 import com.easy.query.core.basic.api.select.Queryable;
-import com.easy.query.core.basic.jdbc.con.DefaultConnectionManager;
-import com.easy.query.core.basic.jdbc.con.EasyConnectionManager;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
-import com.easy.query.core.basic.jdbc.types.DefaultJdbcTypeHandlerManager;
-import com.easy.query.core.basic.jdbc.types.EasyJdbcTypeHandlerManager;
-import com.easy.query.core.config.NameConversion;
-import com.easy.query.core.config.UnderlinedNameConversion;
-import com.easy.query.core.configuration.EasyQueryConfiguration;
 import com.easy.query.core.enums.AggregatePredicateCompare;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.logging.LogFactory;
-import com.easy.query.core.metadata.DefaultEntityMetadataManager;
-import com.easy.query.mysql.config.MySqlDialect;
 
 import javax.sql.DataSource;
 import java.beans.PropertyDescriptor;
@@ -130,42 +103,16 @@ public class Main {
         } catch (Exception e) {
             throw new EasyQueryException(e);
         }
-        EasyJdbcTypeHandlerManager jdbcTypeHandler = new DefaultJdbcTypeHandlerManager();
-        NameConversion nameConversion = new UnderlinedNameConversion();
-        EasyQueryConfiguration configuration = new EasyQueryConfiguration();
-        configuration.setNameConversion(nameConversion);
-        configuration.setDialect(new MySqlDialect());
 
-        EntityMetadataManager entityMetadataManager = new DefaultEntityMetadataManager(configuration);
-        EasyQueryLambdaFactory easyQueryLambdaFactory = new DefaultEasyQueryLambdaFactory();
-        DefaultEasyExpressionBuilderFactory defaultEasyExpressionBuilderFactory = new DefaultEasyExpressionBuilderFactory();
-        EasySqlApiFactory easyQueryableFactory = new DefaultEasySqlApiFactory(defaultEasyExpressionBuilderFactory);
-        DefaultTrackManager defaultTrackManager = new DefaultTrackManager(entityMetadataManager);
-        DefaultEasyPageResultProvider defaultEasyPageResultProvider = new DefaultEasyPageResultProvider();
-
-        DefaultEasyPrepareParser prepareParser = new DefaultEasyPrepareParser();
-        DefaultEasyDataSource defaultEasyDataSource = new DefaultEasyDataSource("ds0",dataSource);
-        EasyConnectionManager connectionManager = new DefaultConnectionManager(defaultEasyDataSource);
-        DefaultDataSourceRouteManager defaultDataSourceRouteManager = new DefaultDataSourceRouteManager(entityMetadataManager,defaultEasyDataSource);
-        DefaultDataSourceRouteEngine defaultDataSourceRouteEngine = new DefaultDataSourceRouteEngine(defaultEasyDataSource,entityMetadataManager,defaultDataSourceRouteManager);
-
-        DefaultTableRouteManager defaultTableRouteManager = new DefaultTableRouteManager(entityMetadataManager);
-        DefaultTableRouteEngine defaultTableRouteEngine = new DefaultTableRouteEngine(entityMetadataManager,defaultTableRouteManager);
-
-
-        DefaultRouteContextFactory defaultRouteContextFactory = new DefaultRouteContextFactory(defaultDataSourceRouteEngine,defaultTableRouteEngine);
-        DefaultRewriteContextFactory defaultRewriteContextFactory = new DefaultRewriteContextFactory();
-        DefaultExecutionContextFactory defaultQueryCompilerContextFactory = new DefaultExecutionContextFactory(defaultRouteContextFactory,defaultRewriteContextFactory,defaultEasyDataSource);
-        DefaultEntityExpressionExecutor defaultEntityExpressionExecutor = new DefaultEntityExpressionExecutor(prepareParser, defaultQueryCompilerContextFactory);
-        EasyShardingOption easyShardingOption = new EasyShardingOption(10, 20);
-        DefaultEasyShardingExecutorService defaultEasyShardingExecutorService = new DefaultEasyShardingExecutorService(easyShardingOption);
-        DefaultEasyExpressionFactory defaultEasyExpressionFactory = new DefaultEasyExpressionFactory();
-        DefaultEasyQueryRuntimeContext jqdcRuntimeContext = new DefaultEasyQueryRuntimeContext(configuration, entityMetadataManager, easyQueryLambdaFactory, connectionManager, defaultEntityExpressionExecutor, jdbcTypeHandler, easyQueryableFactory, defaultEasyExpressionBuilderFactory,defaultTrackManager,defaultEasyPageResultProvider,easyShardingOption,defaultEasyShardingExecutorService,defaultEasyExpressionFactory);
-
+        EasyQueryRuntimeContext runtimeContext = EasyQueryBootstrapper.defaultBuilderConfiguration()
+                .setDataSource(dataSource)
+                .setDialect(new MySqlDialect())
+                .build();
 //        jqdcRuntimeContext.getEasyQueryConfiguration().applyEntityTypeConfiguration(new TestUserMySqlConfiguration());
 //        configuration.applyGlobalInterceptor(new NameQueryFilter());
 
-        easyQuery = new DefaultEasyQuery(jqdcRuntimeContext);
+        easyQuery = new DefaultEasyQuery(runtimeContext);
+        EntityMetadataManager entityMetadataManager = runtimeContext.getEntityMetadataManager();
 
         EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(BlogEntity.class);
         ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull("title");
@@ -290,11 +237,11 @@ public class Main {
         }
 
         {
-            defaultTrackManager.begin();
+            runtimeContext.getTrackManager().begin();
             TestUserMysql testUserMysql = easyQuery.queryable(TestUserMysql.class).asTracking().firstOrNull();
             testUserMysql.setName("444444"+new Random().nextInt(100));
             long l = easyQuery.updatable(testUserMysql).executeRows();
-            defaultTrackManager.release();
+            runtimeContext.getTrackManager().release();
 
 
             List<TestUserMysql> updates = new ArrayList<>();

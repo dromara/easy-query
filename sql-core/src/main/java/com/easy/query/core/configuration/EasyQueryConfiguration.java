@@ -6,13 +6,11 @@ import com.easy.query.core.basic.plugin.version.EasyVersionLongStrategy;
 import com.easy.query.core.basic.plugin.version.EasyVersionStrategy;
 import com.easy.query.core.basic.plugin.version.EasyVersionTimestampStrategy;
 import com.easy.query.core.basic.plugin.version.EasyVersionUUIDStrategy;
-import com.easy.query.core.config.NullDialect;
 import com.easy.query.core.config.IDialect;
 import com.easy.query.core.config.NameConversion;
 import com.easy.query.core.basic.plugin.encryption.EasyEncryptionStrategy;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.basic.enums.LogicDeleteStrategyEnum;
-import com.easy.query.core.config.DefaultNameConversion;
 import com.easy.query.core.basic.plugin.interceptor.EasyInterceptor;
 import com.easy.query.core.sharding.initializer.EasyShardingInitializer;
 import com.easy.query.core.sharding.initializer.UnShardingInitializer;
@@ -38,8 +36,8 @@ public class EasyQueryConfiguration {
     private final EasyQueryOption easyQueryOption;
 
 
-    private NameConversion nameConversion = new DefaultNameConversion();
-    private IDialect dialect = new NullDialect();
+    private final NameConversion nameConversion;
+    private final IDialect dialect;
 //    private Map<Class<?>, EntityTypeConfiguration<?>> entityTypeConfigurationMap = new HashMap<>();
     private Map<String, EasyInterceptor> interceptorMap =new ConcurrentHashMap<>();
     private Map<String, EasyLogicDeleteStrategy> globalLogicDeleteStrategyMap = new ConcurrentHashMap<>();
@@ -47,11 +45,13 @@ public class EasyQueryConfiguration {
     private Map<Class<? extends EasyVersionStrategy>, EasyVersionStrategy> easyVersionStrategyMap = new ConcurrentHashMap<>();
     private Map<Class<? extends EasyShardingInitializer>, EasyShardingInitializer> shardingInitializerMap = new ConcurrentHashMap<>();
 
-    public EasyQueryConfiguration() {
-       this(EasyQueryOption.defaultEasyQueryOption());
+    public EasyQueryConfiguration(IDialect dialect,NameConversion nameConversion) {
+       this(EasyQueryOption.defaultEasyQueryOption(),dialect,nameConversion);
     }
-    public EasyQueryConfiguration(EasyQueryOption easyQueryOption) {
+    public EasyQueryConfiguration(EasyQueryOption easyQueryOption,IDialect dialect,NameConversion nameConversion) {
         this.easyQueryOption = easyQueryOption;
+        this.dialect = dialect;
+        this.nameConversion = nameConversion;
         easyVersionStrategyMap.put(EasyVersionIntStrategy.class,new EasyVersionIntStrategy());
         easyVersionStrategyMap.put(EasyVersionLongStrategy.class,new EasyVersionLongStrategy());
         easyVersionStrategyMap.put(EasyVersionUUIDStrategy.class,new EasyVersionUUIDStrategy());
@@ -67,16 +67,8 @@ public class EasyQueryConfiguration {
         return nameConversion;
     }
 
-    public void setNameConversion(NameConversion nameConversion) {
-        this.nameConversion = nameConversion;
-    }
-
     public IDialect getDialect() {
         return dialect;
-    }
-
-    public void setDialect(IDialect dialect) {
-        this.dialect = dialect;
     }
 
     public void applyEasyInterceptor(EasyInterceptor easyInterceptor){

@@ -5,9 +5,9 @@ import com.easy.query.core.util.StringUtil;
 import com.easy.query.core.annotation.Table;
 
 /**
- * @FileName: DeefaultNameConversion.java
- * @Description: 文件说明
- * @Date: 2023/2/11 13:22
+ * create time 2023/2/11 13:22
+ * 默认不转换
+ *
  * @author xuejiaming
  */
 public class DefaultNameConversion implements NameConversion {

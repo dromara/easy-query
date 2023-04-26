@@ -13,6 +13,8 @@ import com.easy.query.core.configuration.EasyQueryConfiguration;
 import com.easy.query.core.basic.plugin.track.TrackManager;
 import com.easy.query.core.sharding.EasyShardingOption;
 import com.easy.query.core.basic.jdbc.executor.internal.unit.Executor;
+import com.easy.query.core.sharding.route.abstraction.DataSourceRouteManager;
+import com.easy.query.core.sharding.route.abstraction.TableRouteManager;
 
 /**
  * @FileName: DefaultJQDCRuntimeContext.java
@@ -35,6 +37,8 @@ public class DefaultEasyQueryRuntimeContext implements EasyQueryRuntimeContext {
     private final EasyShardingOption easyShardingOption;
     private final EasyShardingExecutorService easyShardingExecutorService;
     private final EasyExpressionFactory easyExpressionFactory;
+    private final TableRouteManager tableRouteManager;
+    private final DataSourceRouteManager dataSourceRouteManager;
 
     public DefaultEasyQueryRuntimeContext(EasyQueryConfiguration easyQueryConfiguration,
                                           EntityMetadataManager entityMetadataManager,
@@ -48,7 +52,9 @@ public class DefaultEasyQueryRuntimeContext implements EasyQueryRuntimeContext {
                                           EasyPageResultProvider easyPageResultProvider,
                                           EasyShardingOption easyShardingOption,
                                           EasyShardingExecutorService easyShardingExecutorService,
-                                          EasyExpressionFactory easyExpressionFactory){
+                                          EasyExpressionFactory easyExpressionFactory,
+                                          TableRouteManager tableRouteManager,
+                                          DataSourceRouteManager dataSourceRouteManager){
         this.easyQueryConfiguration = easyQueryConfiguration;
         this.entityMetadataManager = entityMetadataManager;
         this.easyQueryLambdaFactory = easyQueryLambdaFactory;
@@ -62,6 +68,8 @@ public class DefaultEasyQueryRuntimeContext implements EasyQueryRuntimeContext {
         this.easyShardingOption = easyShardingOption;
         this.easyShardingExecutorService = easyShardingExecutorService;
         this.easyExpressionFactory = easyExpressionFactory;
+        this.tableRouteManager = tableRouteManager;
+        this.dataSourceRouteManager = dataSourceRouteManager;
     }
     @Override
     public EasyQueryConfiguration getEasyQueryConfiguration() {
@@ -129,8 +137,12 @@ public class DefaultEasyQueryRuntimeContext implements EasyQueryRuntimeContext {
     }
 
     @Override
-    public Executor getExecutor() {
-        return null;
+    public TableRouteManager getTableRouteManager() {
+        return tableRouteManager;
     }
 
+    @Override
+    public DataSourceRouteManager getDataSourceRouteManager() {
+        return dataSourceRouteManager;
+    }
 }

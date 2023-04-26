@@ -20,7 +20,7 @@
     </licenses>
     <modules>
         <module>sql-core</module>
-        <module>sql-mysql</module>
+<!--        <module>sql-mysql</module>-->
         <module>sql-springboot-starter</module>
 <!--        以下是不需要deploy到远程仓库的-->
         <module>samples</module>

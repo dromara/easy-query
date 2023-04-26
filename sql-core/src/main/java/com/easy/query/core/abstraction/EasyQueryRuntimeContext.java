@@ -13,6 +13,8 @@ import com.easy.query.core.configuration.EasyQueryConfiguration;
 import com.easy.query.core.basic.plugin.track.TrackManager;
 import com.easy.query.core.sharding.EasyShardingOption;
 import com.easy.query.core.basic.jdbc.executor.internal.unit.Executor;
+import com.easy.query.core.sharding.route.abstraction.DataSourceRouteManager;
+import com.easy.query.core.sharding.route.abstraction.TableRouteManager;
 
 /**
  * @FileName: JQDCRuntimeContext.java
@@ -34,5 +36,6 @@ public interface EasyQueryRuntimeContext {
     EasyPageResultProvider getEasyPageResultProvider();
     EasyShardingOption getEasyShardingOption();
     EasyShardingExecutorService getEasyShardingExecutorService();
-    Executor getExecutor();
+    TableRouteManager getTableRouteManager();
+    DataSourceRouteManager getDataSourceRouteManager();
 }
