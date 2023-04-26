@@ -4,6 +4,8 @@ import com.easy.query.core.basic.jdbc.executor.internal.abstraction.AbstractEasy
 import com.easy.query.core.sharding.merge.StreamMergeContext;
 import com.easy.query.core.basic.jdbc.executor.internal.unit.EasyQueryExecutor;
 import com.easy.query.core.basic.jdbc.executor.internal.unit.Executor;
+import com.easy.query.core.sharding.merge.impl.DefaultStreamResult;
+import com.easy.query.core.sharding.merge.impl.EmptyStreamResult;
 
 /**
  * create time 2023/4/21 08:28
@@ -19,5 +21,10 @@ public class DefaultQueryEasyQueryJDBCExecutor extends AbstractEasyQueryJDBCExec
     @Override
     protected Executor<ExecuteResult> createExecutor() {
         return new EasyQueryExecutor(streamMergeContext);
+    }
+
+    @Override
+    protected ExecuteResult defaultResult() {
+        return QueryExecuteResult.empty();
     }
 }

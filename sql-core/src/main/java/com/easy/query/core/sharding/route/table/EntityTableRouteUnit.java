@@ -6,6 +6,6 @@ package com.easy.query.core.sharding.route.table;
  *
  * @author xuejiaming
  */
-public interface InsertTableRouteUnit extends TableRouteUnit {
+public interface EntityTableRouteUnit extends TableRouteUnit {
     Object getEntity();
 }

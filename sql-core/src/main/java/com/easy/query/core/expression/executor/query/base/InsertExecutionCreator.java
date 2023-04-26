@@ -1,5 +1,6 @@
 package com.easy.query.core.expression.executor.query.base;
 
+import com.easy.query.core.expression.executor.parser.InsertPrepareParseResult;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 import com.easy.query.core.expression.sql.expression.EasyInsertSqlExpression;
 import com.easy.query.core.expression.sql.expression.EasySqlExpression;
@@ -17,42 +18,26 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public class InsertExecutionCreator extends BaseExecutionCreator {
-    private final String dataSource;
+public class InsertExecutionCreator extends BaseEntityExecutionCreator {
     private final EntityInsertExpressionBuilder entityInsertExpressionBuilder;
-    private final List<Object> entities;
     private final boolean fillAutoIncrement;
 
+    public InsertExecutionCreator(String dataSource,InsertPrepareParseResult insertPrepareParseResult) {
+       this(dataSource,insertPrepareParseResult.getEntityExpressionBuilder(),insertPrepareParseResult.getEntities(),insertPrepareParseResult.isFillAutoIncrement());
+    }
     public InsertExecutionCreator(String dataSource, EntityInsertExpressionBuilder entityInsertExpressionBuilder, List<Object> entities, boolean fillAutoIncrement) {
-        this.dataSource = dataSource;
+        super(dataSource,entityInsertExpressionBuilder,entities);
         this.entityInsertExpressionBuilder = entityInsertExpressionBuilder;
-        this.entities = entities;
         this.fillAutoIncrement = fillAutoIncrement;
     }
 
     @Override
-    protected Collection<ExecutionUnit> createExecutionUnits() {
-        //是否单个对象运行sql
-        boolean isSingleEntityRun = SqlExpressionUtil.sqlExecuteStrategyNonDefault(entityInsertExpressionBuilder.getExpressionContext());
-        if (isSingleEntityRun) {
-            return createSingleExecutionUnits();
-        }
-
-        return createMultiExecutionUnits();
+    protected EasySqlExpression cretateEasySqlExpression(Object entity) {
+        return entityInsertExpressionBuilder.toExpression(entity);
     }
 
-    private Collection<ExecutionUnit> createSingleExecutionUnits() {
-        List<ExecutionUnit> executionUnits = new ArrayList<>(entities.size());
-        for (Object entity : entities) {
-            EasyInsertSqlExpression expression = entityInsertExpressionBuilder.toExpression(entity);
-            ExecutionUnit executionUnit = createExecutionUnit(dataSource, expression, Collections.singletonList(entity), fillAutoIncrement);
-            executionUnits.add(executionUnit);
-        }
-        return executionUnits;
-    }
-    private Collection<ExecutionUnit> createMultiExecutionUnits() {
-        EasyInsertSqlExpression expression = entityInsertExpressionBuilder.toExpression(null);
-        ExecutionUnit executionUnit = createExecutionUnit(dataSource, expression, entities, fillAutoIncrement);
-        return Collections.singletonList(executionUnit);
+    @Override
+    protected boolean getFillAutoIncrement() {
+        return fillAutoIncrement;
     }
 }

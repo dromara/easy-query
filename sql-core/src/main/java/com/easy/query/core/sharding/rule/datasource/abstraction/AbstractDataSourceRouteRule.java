@@ -1,9 +1,7 @@
 package com.easy.query.core.sharding.rule.datasource.abstraction;
 
 import com.easy.query.core.expression.lambda.RouteFunction;
-import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.sharding.enums.ShardingOperatorEnum;
-import com.easy.query.core.sharding.route.table.TableRouteUnit;
 import com.easy.query.core.sharding.rule.datasource.DataSourceRouteRule;
 
 import java.util.Collection;

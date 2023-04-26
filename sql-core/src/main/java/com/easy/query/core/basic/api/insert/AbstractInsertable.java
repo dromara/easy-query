@@ -64,11 +64,7 @@ public abstract class AbstractInsertable<T> implements Insertable<T> {
 //    }
 
     protected void insertBefore() {
-        boolean sharding = entityMetadata.isSharding();
         //是否使用自定义插入策略
-        boolean sqlExecuteStrategyNonDefault = SqlExpressionUtil.sqlExecuteStrategyNonDefault(entityInsertExpression.getExpressionContext());
-
-
         List<EasyInterceptorEntry> insertInterceptors = entityMetadata.getEntityInterceptors();
         if (ArrayUtil.isNotEmpty(insertInterceptors)) {
             EasyQueryConfiguration easyQueryConfiguration = entityInsertExpression.getRuntimeContext().getEasyQueryConfiguration();
@@ -80,43 +76,8 @@ public abstract class AbstractInsertable<T> implements Insertable<T> {
                     for (EasyEntityInterceptor entityInterceptor : entityInterceptors) {
                         entityInterceptor.configureInsert(entityClass, entityInsertExpression, entity);
                     }
-                    //使用自定义sql插入策略那么每个对象独立一条sql
-                    if(sqlExecuteStrategyNonDefault){
-
-                    }
                 }
             }
-        }
-    }
-    /**
-     * 不分组就生成一条sql
-     *
-     * @return
-     */
-    private boolean useInsertSqlGroup() {
-        SqlExecuteStrategyEnum sqlStrategy = SqlExpressionUtil.getExecuteStrategy(entityInsertExpression.getExpressionContext());
-        return !SqlExecuteStrategyEnum.ALL_COLUMNS.equals(sqlStrategy);
-    }
-    private List<SqlEntityNode> createInsertEntityNode() {
-        if (useInsertSqlGroup()) {
-            Map<String, SqlEntityNode> updateEntityNodeMap = new LinkedHashMap<>();
-            for (T entity : entities) {
-                DefaultSqlParameterCollector defaultSqlParameterCollector = new DefaultSqlParameterCollector();
-                String insertSql = toSqlWithParam(entity,defaultSqlParameterCollector);
-                if (insertSql == null) {
-                    continue;
-                }
-                List<SQLParameter> parameters = new ArrayList<>(defaultSqlParameterCollector.getParameters());
-                SqlEntityNode insertEntityNode = updateEntityNodeMap.computeIfAbsent(insertSql, k -> new SqlEntityNode(insertSql, parameters));
-                insertEntityNode.getEntities().add(entity);
-            }
-            return new ArrayList<>(updateEntityNodeMap.values());
-        } else {
-            DefaultSqlParameterCollector defaultSqlParameterCollector = new DefaultSqlParameterCollector();
-            String insertSql = toSqlWithParam(null,defaultSqlParameterCollector);
-            SqlEntityNode insertEntityNode = new SqlEntityNode(insertSql, new ArrayList<>(defaultSqlParameterCollector.getParameters()), entities.size());
-            insertEntityNode.getEntities().addAll(entities);
-            return Collections.singletonList(insertEntityNode);
         }
     }
 
@@ -124,15 +85,8 @@ public abstract class AbstractInsertable<T> implements Insertable<T> {
     public long executeRows(boolean fillAutoIncrement) {
         if (!entities.isEmpty()) {
             insertBefore();
-//            List<SqlEntityNode> updateEntityNodes = createInsertEntityNode();
-//            EasyOldExecutor easyExecutor = entityInsertExpression.getRuntimeContext().getEasyExecutor();
             EntityExpressionExecutor entityExpressionExecutor = entityInsertExpression.getRuntimeContext().getEntityExpressionExecutor();
-
             return entityExpressionExecutor.insert(ExecutorContext.create(entityInsertExpression.getRuntimeContext(),true),entities,entityInsertExpression,fillAutoIncrement);
-//            for (SqlEntityNode updateEntityNode : updateEntityNodes) {
-//                i += easyExecutor.insert(ExecutorContext.create(entityInsertExpression.getRuntimeContext(),true), updateEntityNode.getSql(), updateEntityNode.getEntities(), updateEntityNode.getSqlParameters(), fillAutoIncrement);
-//            }
-//            return i;
         }
 
         return 0;

@@ -44,11 +44,6 @@ public abstract class AbstractEntityExpressionBuilder implements EntityExpressio
         return tables;
     }
 
-    @Override
-    public EntityTableExpressionBuilder getTable(int index) {
-        return tables.get(index);
-    }
-
     public String getQuoteName(String value) {
         return sqlExpressionContext.getQuoteName(value);
     }

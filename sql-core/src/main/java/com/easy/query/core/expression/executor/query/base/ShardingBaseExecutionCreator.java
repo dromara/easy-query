@@ -10,11 +10,13 @@ import com.easy.query.core.expression.sql.expression.impl.AnonymousTableSqlExpre
 import com.easy.query.core.sharding.merge.executor.common.ExecutionUnit;
 import com.easy.query.core.sharding.route.RouteContext;
 import com.easy.query.core.sharding.route.RouteUnit;
+import com.easy.query.core.sharding.route.table.EntityTableRouteUnit;
 import com.easy.query.core.sharding.route.table.TableRouteUnit;
 import com.easy.query.core.util.ArrayUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -49,10 +51,22 @@ public abstract class ShardingBaseExecutionCreator extends BaseExecutionCreator{
                     easyTableSqlExpression.setTableNameAs(o->tableRouteUnit.getActualTableName());
                 }
             }
-            ExecutionUnit executionUnit = createExecutionUnit(dataSource, easyEntitySqlExpression, null, false);
+
+            ExecutionUnit executionUnit = createExecutionUnit(dataSource, easyEntitySqlExpression, getEntitiesByTableRouteUnits(tableRouteUnits), false);
             executionUnits.add(executionUnit);
         }
         return executionUnits;
+    }
+    private List<Object> getEntitiesByTableRouteUnits(List<TableRouteUnit> tableRouteUnits){
+        if(tableRouteUnits.size()!=1){
+            return null;
+        }
+        TableRouteUnit tableRouteUnit = tableRouteUnits.get(0);
+        if(tableRouteUnit instanceof EntityTableRouteUnit){
+            return Collections.singletonList(((EntityTableRouteUnit)tableRouteUnit).getEntity());
+        }
+        return null;
+
     }
     protected List<RouteUnit> getRouteUnits(){
         return routeContext.getEntityRouteResult().getRouteUnits();

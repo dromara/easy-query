@@ -1,6 +1,7 @@
 package com.easy.query.mysql.expression;
 
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
+import com.easy.query.core.expression.sql.expression.EasyEntitySqlExpression;
 import com.easy.query.core.expression.sql.expression.EasyInsertSqlExpression;
 import com.easy.query.core.expression.sql.expression.EasySqlExpression;
 import com.easy.query.core.expression.sql.expression.EasyTableSqlExpression;
@@ -20,7 +21,7 @@ public class MySqlInsertSqlExpression extends InsertSqlExpression {
     }
 
     @Override
-    public EasySqlExpression cloneSqlExpression() {
+    public EasyEntitySqlExpression cloneSqlExpression() {
         EasyExpressionFactory expressionFactory = runtimeContext.getExpressionFactory();
 
         EasyInsertSqlExpression easyInsertSqlExpression = expressionFactory.createEasyInsertSqlExpression(runtimeContext,(EasyTableSqlExpression)tables.get(0).cloneSqlExpression());

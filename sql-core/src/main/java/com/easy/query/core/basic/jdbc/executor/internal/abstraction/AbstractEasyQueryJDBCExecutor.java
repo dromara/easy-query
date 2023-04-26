@@ -5,6 +5,7 @@ import com.easy.query.core.sharding.merge.executor.ShardingExecutor;
 import com.easy.query.core.sharding.merge.executor.common.ExecutionUnit;
 import com.easy.query.core.basic.jdbc.executor.internal.ExecuteResult;
 import com.easy.query.core.basic.jdbc.executor.internal.unit.Executor;
+import com.easy.query.core.util.ArrayUtil;
 
 import java.util.Collection;
 
@@ -27,10 +28,14 @@ public abstract class AbstractEasyQueryJDBCExecutor implements EasyQueryJDBCExec
     }
     @Override
     public ExecuteResult execute() {
-        Executor<ExecuteResult> executor = createExecutor();
         Collection<ExecutionUnit> executionUnits = getDefaultSSqlRouteUnits();
+        if(ArrayUtil.isEmpty(executionUnits)){
+            return defaultResult();
+        }
+        Executor<ExecuteResult> executor = createExecutor();
         return ShardingExecutor.execute(streamMergeContext,executor,executionUnits);
     }
+    protected abstract ExecuteResult defaultResult();
 
     @Override
     public void close() throws Exception {

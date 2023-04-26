@@ -2,6 +2,9 @@ package com.easy.query.core.expression.sql.builder;
 
 import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
+import com.easy.query.core.expression.sql.expression.EasyDeleteSqlExpression;
+import com.easy.query.core.expression.sql.expression.EasyEntitySqlExpression;
+import com.easy.query.core.expression.sql.expression.EasySqlExpression;
 
 /**
  * @FileName: SqlEntityDeleteExpression.java
@@ -23,4 +26,6 @@ public interface EntityDeleteExpressionBuilder extends EntityExpressionBuilder, 
         return (EntityDeleteExpressionBuilder) cloneEntityExpressionBuilder();
     }
 
+    @Override
+    EasyEntitySqlExpression toExpression();
 }

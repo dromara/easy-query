@@ -10,6 +10,7 @@ import com.easy.query.core.basic.jdbc.executor.internal.QueryExecuteResult;
 import com.easy.query.core.basic.jdbc.executor.internal.abstraction.EasyQueryJDBCExecutor;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.exception.EasyQueryException;
+import com.easy.query.core.expression.executor.parser.DefaultEntityPrepareParseResult;
 import com.easy.query.core.expression.executor.parser.DefaultInsertPrepareParseResult;
 import com.easy.query.core.expression.executor.parser.DefaultQueryPrepareParseResult;
 import com.easy.query.core.expression.executor.parser.EasyPrepareParser;
@@ -126,21 +127,22 @@ public class DefaultEntityExpressionExecutor implements EntityExpressionExecutor
     }
 
     @Override
-    public <T> long executeRows(ExecutorContext executorContext, EasyEntitySqlExpression easyEntitySqlExpression, List<T> entities) {
-        return 0;
-//        PrepareParseResult prepareParseResult = easyPrepareParser.parse(easyEntitySqlExpression);
-//        ExecutionContext executionContext = executionContextFactory.createExecutionContext(prepareParseResult);
-//        try (EasyQueryJDBCExecutor easyQueryJDBCExecutor = getExecuteBatchJDBCExecuteResult(executorContext, executionContext);
-//             ExecuteResult executeResult = easyQueryJDBCExecutor.execute()) {
-//            if (executeResult instanceof AffectedRowsExecuteResult) {
-//                AffectedRowsExecuteResult affectedRowsExecuteResult = (AffectedRowsExecuteResult) executeResult;
-//                return affectedRowsExecuteResult.getRows();
-//            }
-//            throw new UnsupportedOperationException("jdbc executor execute error result type :"+ ClassUtil.getInstanceSimpleName(executeResult));
-//
-//        } catch (Exception e) {
-//            throw new EasyQueryException(e);
-//        }
+    public <T> long executeRows(ExecutorContext executorContext, EntityExpressionBuilder entityExpressionBuilder, List<T> entities) {
+        Set<Class<?>> shardingEntities = easyPrepareParser.parse(entityExpressionBuilder);
+        DefaultEntityPrepareParseResult defaultInsertPrepareParseResult = new DefaultEntityPrepareParseResult(shardingEntities, entityExpressionBuilder, (List<Object>) entities);
+        ExecutionContext executionContext = executionContextFactory.createExecutionContext(defaultInsertPrepareParseResult);
+
+        try (EasyQueryJDBCExecutor easyQueryJDBCExecutor = getExecuteBatchJDBCExecuteResult(executorContext, executionContext);
+             ExecuteResult executeResult = easyQueryJDBCExecutor.execute()) {
+            if (executeResult instanceof AffectedRowsExecuteResult) {
+                AffectedRowsExecuteResult affectedRowsExecuteResult = (AffectedRowsExecuteResult) executeResult;
+                return affectedRowsExecuteResult.getRows();
+            }
+            throw new UnsupportedOperationException("jdbc executor execute error result type :"+ ClassUtil.getInstanceSimpleName(executeResult));
+
+        } catch (Exception e) {
+            throw new EasyQueryException(e);
+        }
     }
 
     @Override

@@ -11,8 +11,7 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public interface InsertPrepareParseResult extends PrepareParseResult{
-    List<Object> getEntities();
+public interface InsertPrepareParseResult extends EntityPrepareParseResult{
 
     @Override
     EntityInsertExpressionBuilder getEntityExpressionBuilder();

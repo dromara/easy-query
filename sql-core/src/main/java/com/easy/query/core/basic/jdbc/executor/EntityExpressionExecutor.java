@@ -21,6 +21,6 @@ public interface EntityExpressionExecutor {
     <TR> List<TR> query(ExecutorContext executorContext, Class<TR> clazz, EntityQueryExpressionBuilder entityQueryExpressionBuilder);
     <TR> List<TR> query(ExecutorContext executorContext, Class<TR> clazz, String sql, List<SQLParameter> sqlParameters);
     <T> long insert(ExecutorContext executorContext, List<T> entities, EntityInsertExpressionBuilder entityInsertExpressionBuilder, boolean fillAutoIncrement);
-    <T> long executeRows(ExecutorContext executorContext, EasyEntitySqlExpression easyEntitySqlExpression, List<T> entities);
+    <T> long executeRows(ExecutorContext executorContext, EntityExpressionBuilder entityExpressionBuilder, List<T> entities);
     <T> long executeRows(ExecutorContext executorContext, EasyEntitySqlExpression easyEntitySqlExpression);
 }

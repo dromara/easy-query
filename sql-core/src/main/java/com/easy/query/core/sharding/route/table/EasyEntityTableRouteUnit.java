@@ -6,13 +6,13 @@ package com.easy.query.core.sharding.route.table;
  *
  * @author xuejiaming
  */
-public class EasyInsertTableRouteUnit extends BaseTableRouteUnit implements InsertTableRouteUnit{
+public class EasyEntityTableRouteUnit extends BaseTableRouteUnit implements EntityTableRouteUnit {
     private final Object entity;
 
-    public EasyInsertTableRouteUnit(TableRouteUnit tableRouteUnit, Object entity) {
+    public EasyEntityTableRouteUnit(TableRouteUnit tableRouteUnit, Object entity) {
         this(tableRouteUnit.getDataSource(), tableRouteUnit.getLogicTableName(), tableRouteUnit.getActualTableName(), tableRouteUnit.getEntityClass(),entity);
     }
-    public EasyInsertTableRouteUnit(String dataSource, String logicTableName, String actualTableName, Class<?> entityClass, Object entity) {
+    public EasyEntityTableRouteUnit(String dataSource, String logicTableName, String actualTableName, Class<?> entityClass, Object entity) {
         super(dataSource, logicTableName, actualTableName, entityClass);
         this.entity = entity;
     }

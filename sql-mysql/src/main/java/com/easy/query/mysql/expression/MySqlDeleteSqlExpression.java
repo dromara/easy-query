@@ -2,6 +2,7 @@ package com.easy.query.mysql.expression;
 
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.expression.sql.expression.EasyDeleteSqlExpression;
+import com.easy.query.core.expression.sql.expression.EasyEntitySqlExpression;
 import com.easy.query.core.expression.sql.expression.EasySqlExpression;
 import com.easy.query.core.expression.sql.expression.EasyTableSqlExpression;
 import com.easy.query.core.expression.sql.expression.impl.DeleteSqlExpression;
@@ -20,7 +21,7 @@ public class MySqlDeleteSqlExpression extends DeleteSqlExpression {
     }
 
     @Override
-    public EasySqlExpression cloneSqlExpression() {
+    public EasyEntitySqlExpression cloneSqlExpression() {
         EasyExpressionFactory expressionFactory = runtimeContext.getExpressionFactory();
         EasyDeleteSqlExpression easyDeleteSqlExpression = expressionFactory.createEasyDeleteSqlExpression(runtimeContext, (EasyTableSqlExpression) tables.get(0).cloneSqlExpression());
         if(SqlSegmentUtil.isNotEmpty(where)){

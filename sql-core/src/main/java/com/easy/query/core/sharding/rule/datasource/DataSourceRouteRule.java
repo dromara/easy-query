@@ -1,6 +1,5 @@
 package com.easy.query.core.sharding.rule.datasource;
 
-import com.easy.query.core.sharding.route.table.TableRouteUnit;
 import com.easy.query.core.sharding.rule.RouteRule;
 import com.easy.query.core.sharding.rule.RouteRuleFilter;
 

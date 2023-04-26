@@ -1,9 +1,6 @@
 package com.easy.query.core.sharding.route.abstraction;
 
 import com.easy.query.core.expression.executor.parser.PrepareParseResult;
-import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
-import com.easy.query.core.expression.sql.expression.EasyEntitySqlExpression;
-import com.easy.query.core.expression.sql.expression.EasySqlExpression;
 import com.easy.query.core.sharding.rule.datasource.DataSourceRouteRule;
 
 import java.util.Collection;

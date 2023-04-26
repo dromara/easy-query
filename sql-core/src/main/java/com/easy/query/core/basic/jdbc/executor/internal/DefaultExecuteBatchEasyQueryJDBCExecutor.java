@@ -1,5 +1,6 @@
 package com.easy.query.core.basic.jdbc.executor.internal;
 
+import com.easy.query.core.basic.jdbc.executor.internal.abstraction.AbstractAffectedRowsEasyQueryJDBCExecutor;
 import com.easy.query.core.basic.jdbc.executor.internal.abstraction.AbstractEasyQueryJDBCExecutor;
 import com.easy.query.core.basic.jdbc.executor.internal.unit.EasyExecuteBatchExecutor;
 import com.easy.query.core.sharding.merge.StreamMergeContext;
@@ -11,7 +12,7 @@ import com.easy.query.core.basic.jdbc.executor.internal.unit.Executor;
  *
  * @author xuejiaming
  */
-public class DefaultExecuteBatchEasyQueryJDBCExecutor extends AbstractEasyQueryJDBCExecutor {
+public class DefaultExecuteBatchEasyQueryJDBCExecutor extends AbstractAffectedRowsEasyQueryJDBCExecutor {
     public DefaultExecuteBatchEasyQueryJDBCExecutor(StreamMergeContext streamMergeContext) {
         super(streamMergeContext);
     }
@@ -20,4 +21,5 @@ public class DefaultExecuteBatchEasyQueryJDBCExecutor extends AbstractEasyQueryJ
     protected Executor<ExecuteResult> createExecutor() {
         return new EasyExecuteBatchExecutor(streamMergeContext);
     }
+
 }

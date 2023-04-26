@@ -1,6 +1,7 @@
 package com.easy.query.mysql.expression;
 
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
+import com.easy.query.core.expression.sql.expression.EasyEntitySqlExpression;
 import com.easy.query.core.expression.sql.expression.EasySqlExpression;
 import com.easy.query.core.expression.sql.expression.EasyTableSqlExpression;
 import com.easy.query.core.expression.sql.expression.EasyUpdateSqlExpression;
@@ -20,7 +21,7 @@ public class MySqlUpdateSqlExpression extends UpdateSqlExpression {
     }
 
     @Override
-    public EasySqlExpression cloneSqlExpression() {
+    public EasyEntitySqlExpression cloneSqlExpression() {
         EasyExpressionFactory expressionFactory = runtimeContext.getExpressionFactory();
         EasyUpdateSqlExpression easyUpdateSqlExpression = expressionFactory.createEasyUpdateSqlExpression(runtimeContext, (EasyTableSqlExpression) tables.get(0).cloneSqlExpression());
         if(SqlSegmentUtil.isNotEmpty(where)){

@@ -10,12 +10,13 @@ import com.easy.query.core.expression.sql.expression.EasySqlExpression;
  * @Date: 2023/3/4 16:30
  * @author xuejiaming
  */
-public interface EntityInsertExpressionBuilder extends EntityExpressionBuilder {
+public interface EntityInsertExpressionBuilder extends EntityExpressionBuilder,EntityToExpressionBuilder {
     SqlBuilderSegment getColumns();
     @Override
     default EasyInsertSqlExpression toExpression(){
         return toExpression(null);
     }
+    @Override
     EasyInsertSqlExpression toExpression(Object entity);
 
 }

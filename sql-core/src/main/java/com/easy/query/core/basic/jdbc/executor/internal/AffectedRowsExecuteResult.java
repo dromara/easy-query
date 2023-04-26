@@ -9,6 +9,10 @@ import java.sql.PreparedStatement;
  * @author xuejiaming
  */
 public class AffectedRowsExecuteResult implements ExecuteResult{
+    private static final AffectedRowsExecuteResult instance=new AffectedRowsExecuteResult(0);
+    public static AffectedRowsExecuteResult empty(){
+        return instance;
+    }
     private final long rows;
 
     public AffectedRowsExecuteResult(long rows){

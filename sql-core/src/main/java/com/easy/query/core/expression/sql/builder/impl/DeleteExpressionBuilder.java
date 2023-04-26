@@ -19,6 +19,7 @@ import com.easy.query.core.expression.segment.condition.predicate.ColumnProperty
 import com.easy.query.core.expression.segment.condition.predicate.ColumnVersionPropertyPredicate;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.expression.EasyDeleteSqlExpression;
+import com.easy.query.core.expression.sql.expression.EasyEntitySqlExpression;
 import com.easy.query.core.expression.sql.expression.EasyUpdateSqlExpression;
 import com.easy.query.core.expression.sql.expression.impl.DeleteSqlExpression;
 import com.easy.query.core.expression.sql.expression.EasySqlExpression;
@@ -159,7 +160,7 @@ public class DeleteExpressionBuilder extends AbstractPredicateEntityExpressionBu
         return expressionDelete;
     }
     @Override
-    public EasySqlExpression toExpression() {
+    public EasyEntitySqlExpression toExpression() {
 
         int tableCount = getTables().size();
         if (tableCount == 0) {
@@ -174,8 +175,7 @@ public class DeleteExpressionBuilder extends AbstractPredicateEntityExpressionBu
             return toEntityExpression();
         }
     }
-
-    private EasySqlExpression  toDeleteExpression(){
+    private EasyEntitySqlExpression  toDeleteExpression(){
 
         if (!hasWhere()) {
             throw new EasyQueryException("'DELETE' statement without 'WHERE' clears all data in the table");
@@ -206,7 +206,7 @@ public class DeleteExpressionBuilder extends AbstractPredicateEntityExpressionBu
         }
     }
 
-    private EasySqlExpression toEntityExpression(){
+    private EasyEntitySqlExpression toEntityExpression(){
 
         EntityTableExpressionBuilder table = getTables().get(0);
         PredicateSegment sqlWhere = buildWherePredicateSegment(table);
@@ -249,4 +249,5 @@ public class DeleteExpressionBuilder extends AbstractPredicateEntityExpressionBu
         }
         return deleteExpressionBuilder;
     }
+
 }

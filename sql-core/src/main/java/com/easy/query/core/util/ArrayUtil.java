@@ -13,10 +13,20 @@ import java.util.function.Function;
  * @Date: 2023/2/26 14:07
  */
 public class ArrayUtil {
-    public static <TSource,TElement> List<TElement> select(Collection<TSource> sources, Selector<TSource,TElement> selector){
+    public static <TSource> boolean isNotSingle(Collection<TSource> sources) {
+        return !isSingle(sources);
+    }
+    public static <TSource> boolean isSingle(Collection<TSource> sources) {
+        if (sources == null) {
+            return false;
+        }
+        return sources.size() == 1;
+    }
+
+    public static <TSource, TElement> List<TElement> select(Collection<TSource> sources, Selector<TSource, TElement> selector) {
         int size = sources.size();
         List<TElement> result = new ArrayList<>(size);
-        int i=0;
+        int i = 0;
         for (TSource source : sources) {
             TElement element = selector.apply(source, i);
             result.add(element);
@@ -24,7 +34,8 @@ public class ArrayUtil {
         }
         return result;
     }
-//    public static <TSource,TElement> List<TElement> select(List<TSource> sources, Selector<TSource,TElement> selector){
+
+    //    public static <TSource,TElement> List<TElement> select(List<TSource> sources, Selector<TSource,TElement> selector){
 //        int size = sources.size();
 //        List<TElement> result = new ArrayList<>(size);
 //        for (int i = 0; i < size; i++) {
@@ -49,7 +60,8 @@ public class ArrayUtil {
         }
         return partitions;
     }
-    public static <TSource> int sum(List<TSource> arrays,Function<TSource,Integer> selector) {
+
+    public static <TSource> int sum(List<TSource> arrays, Function<TSource, Integer> selector) {
         int length = arrays.size();
         if (length > 0) {
             int sum = 0;
@@ -60,6 +72,7 @@ public class ArrayUtil {
         }
         return 0;
     }
+
     public static int sum(int[] arrays) {
         int length = arrays.length;
         if (length > 0) {
@@ -82,27 +95,27 @@ public class ArrayUtil {
 
     /**
      * 是否存在不一样的元素,当元素个数大于等于2个的时候
+     *
      * @param collection
      * @param keySelector
-     * @return false表示都是同一个,true表示存在不一样的
      * @param <T>
      * @param <K>
+     * @return false表示都是同一个, true表示存在不一样的
      */
-    public static <T,K> boolean hasDifferent(Collection<T> collection,Function<T,K> keySelector) {
-         if(isEmpty(collection)){
-             return false;
-         }
-         if(collection.size()<=1){
-             return false;
-         }
+    public static <T, K> boolean hasDifferent(Collection<T> collection, Function<T, K> keySelector) {
+        if (isEmpty(collection)) {
+            return false;
+        }
+        if (collection.size() <= 1) {
+            return false;
+        }
         Iterator<T> iterator = collection.iterator();
         T first = iterator.next();
         K firstKey = keySelector.apply(first);
-        while(iterator.hasNext()){
+        while (iterator.hasNext()) {
             T next = iterator.next();
             K nextKey = keySelector.apply(next);
-            if(!Objects.equals(firstKey,nextKey))
-            {
+            if (!Objects.equals(firstKey, nextKey)) {
                 return true;
             }
         }
@@ -118,7 +131,7 @@ public class ArrayUtil {
             return def;
         }
         for (TSource tSource : source) {
-            if(predicate.test(tSource)){
+            if (predicate.test(tSource)) {
                 return tSource;
             }
         }
@@ -183,20 +196,21 @@ public class ArrayUtil {
     }
 
     public static Set<String> getIntersection(Collection<Set<String>> list) {
-        if(isEmpty(list)){
+        if (isEmpty(list)) {
             return Collections.emptySet();
         }
         // 创建一个新的Set集合来存储交集
         Iterator<Set<String>> iterator = list.iterator();
         Set<String> intersection = new HashSet<>(iterator.next());
 
-        while(iterator.hasNext()){
+        while (iterator.hasNext()) {
             intersection.retainAll(iterator.next());
         }
 
         // 返回交集
         return intersection;
     }
+
     public static <T> Collection<Collection<T>> getCartesian(Collection<Set<T>> collections) {
         Collection<Collection<T>> result = new ArrayList<>();
         if (collections == null || collections.isEmpty()) {

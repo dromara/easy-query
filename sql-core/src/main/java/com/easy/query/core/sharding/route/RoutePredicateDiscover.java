@@ -5,7 +5,7 @@ import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.enums.SqlPredicateCompare;
 import com.easy.query.core.enums.SqlPredicateCompareEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
-import com.easy.query.core.expression.executor.parser.InsertPrepareParseResult;
+import com.easy.query.core.expression.executor.parser.EntityPrepareParseResult;
 import com.easy.query.core.expression.executor.parser.PrepareParseResult;
 import com.easy.query.core.expression.executor.parser.QueryPrepareParseResult;
 import com.easy.query.core.expression.lambda.Property;
@@ -117,12 +117,13 @@ public class RoutePredicateDiscover {
         if (prepareParseResult instanceof QueryPrepareParseResult) {
             EasyQuerySqlExpression easyQuerySqlExpression = ((QueryPrepareParseResult) prepareParseResult).getEasyQuerySqlExpression();
             return getPredicateSqlRouteParseExpression(easyQuerySqlExpression);
-        } else if (prepareParseResult instanceof InsertPrepareParseResult) {
-            List<Object> entities = ((InsertPrepareParseResult) prepareParseResult).getEntities();
-            if(entities.size()!=1){
-                throw new EasyQueryInvalidOperationException("route parse un support multi entity");
+        } else if (prepareParseResult instanceof EntityPrepareParseResult) {
+            List<Object> entities = ((EntityPrepareParseResult) prepareParseResult).getEntities();
+
+            if(ArrayUtil.isNotSingle(entities)){
+                throw new EasyQueryInvalidOperationException("route parse not support multi entity or empty entity:"+entities.size());
             }
-            return getInsertSqlRouteParseExpression(entities.get(0));
+            return getEntitySqlRouteParseExpression(entities.get(0));
         }
         throw new UnsupportedOperationException(ClassUtil.getInstanceSimpleName(prepareParseResult));
     }
@@ -210,7 +211,7 @@ public class RoutePredicateDiscover {
         return RoutePredicateExpression.getDefault();
     }
 
-    private RoutePredicateExpression getInsertSqlRouteParseExpression(Object entity) {
+    private RoutePredicateExpression getEntitySqlRouteParseExpression(Object entity) {
         ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(mainShardingProperty);
         Property<Object, ?> shardingKeyPropertyGetter = EasyUtil.getFastBean(entityMetadata.getEntityClass()).getBeanGetter(columnMetadata.getProperty());
         Object shardingValue = shardingKeyPropertyGetter.apply(entity);

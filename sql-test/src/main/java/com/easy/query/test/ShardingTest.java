@@ -22,6 +22,14 @@ public class ShardingTest extends BaseTest {
     }
     @Test
     public void sharding2(){
+
+        TopicSharding topicShardingTest = easyQuery.queryable(TopicSharding.class)
+                .whereById("999999").firstOrNull();
+        if(topicShardingTest!=null){
+            long l = easyQuery.deletable(topicShardingTest).executeRows();
+            Assert.assertEquals(1,l);
+        }
+
         TopicSharding topicSharding = new TopicSharding();
         topicSharding.setId("999999");
         topicSharding.setTitle("title999999");
