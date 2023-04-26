@@ -1,15 +1,13 @@
 package com.easy.query.core.expression.sql.expression.impl;
 
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
-import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
 import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.sql.expression.EasyAnonymousQuerySqlExpression;
 import com.easy.query.core.expression.sql.expression.EasyQuerySqlExpression;
-import com.easy.query.core.expression.sql.expression.EasySqlExpression;
 import com.easy.query.core.expression.sql.expression.EasyTableSqlExpression;
-import com.easy.query.core.expression.sql.factory.EasyExpressionFactory;
+import com.easy.query.core.expression.sql.expression.factory.EasyExpressionFactory;
 
 import java.util.Collections;
 import java.util.List;

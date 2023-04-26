@@ -47,7 +47,7 @@ public abstract class AbstractExpressionUpdatable<T> extends AbstractSqlExecuteR
 
          entityMetadata = this.entityUpdateExpressionBuilder.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(clazz);
         entityMetadata.checkTable();
-        EntityTableExpressionBuilder table = new TableExpressionBuilder(entityMetadata, 0, null, MultiTableTypeEnum.FROM);
+        EntityTableExpressionBuilder table = new TableExpressionBuilder(entityMetadata, 0, null, MultiTableTypeEnum.FROM,this.entityUpdateExpressionBuilder.getRuntimeContext());
         this.entityUpdateExpressionBuilder.addSqlEntityTableExpression(table);
         sqlColumnSetter = new DefaultSqlColumnSetter<>(0, entityUpdateExpressionBuilder, entityUpdateExpressionBuilder.getSetColumns());
     }

@@ -1,6 +1,8 @@
 package com.easy.query.core.expression.sql.expression.impl;
 
+import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
+import com.easy.query.core.config.IDialect;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
@@ -25,14 +27,18 @@ public class TableSqlExpression implements EasyTableSqlExpression {
     protected final int index;
     protected final String alias;
     protected final MultiTableTypeEnum multiTableType;
+    private final EasyQueryRuntimeContext runtimeContext;
+    private final IDialect dialect;
     protected PredicateSegment on;
     protected Function<String, String> tableNameAs;
 
-    public TableSqlExpression(EntityMetadata entityMetadata, int index, String alias, MultiTableTypeEnum multiTableType) {
+    public TableSqlExpression(EntityMetadata entityMetadata, int index, String alias, MultiTableTypeEnum multiTableType, EasyQueryRuntimeContext runtimeContext) {
         this.entityMetadata = entityMetadata;
         this.index = index;
         this.alias = alias;
         this.multiTableType = multiTableType;
+        this.runtimeContext = runtimeContext;
+        this.dialect = runtimeContext.getEasyQueryConfiguration().getDialect();
     }
 
     @Override
@@ -74,7 +80,11 @@ public class TableSqlExpression implements EasyTableSqlExpression {
         }
         return " FROM ";
     }
+    @Override
     public String getTableName() {
+        return dialect.getQuoteName(doGetTableName());
+    }
+    public String doGetTableName() {
         String tableName = entityMetadata.getTableName();
         if (tableName == null) {
             throw new EasyQueryException("table " + ClassUtil.getSimpleName(entityMetadata.getEntityClass()) + " cant found mapping table name");
@@ -108,8 +118,8 @@ public class TableSqlExpression implements EasyTableSqlExpression {
     }
 
     @Override
-    public EasySqlExpression cloneSqlExpression() {
-        TableSqlExpression tableSqlExpression = new TableSqlExpression(entityMetadata, index, alias, multiTableType);
+    public EasyTableSqlExpression cloneSqlExpression() {
+        TableSqlExpression tableSqlExpression = new TableSqlExpression(entityMetadata, index, alias, multiTableType,runtimeContext);
         if(SqlSegmentUtil.isNotEmpty(on)){
             PredicateSegment predicateSegment = on.clonePredicateSegment();
             tableSqlExpression.setOn(predicateSegment);

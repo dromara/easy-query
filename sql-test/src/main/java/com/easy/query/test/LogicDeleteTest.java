@@ -23,7 +23,7 @@ public class LogicDeleteTest extends BaseTest {
     public void Test1(){
         String logicDeleteSql = easyQuery.queryable(LogicDelTopic.class)
                 .toSql();
-        Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`deleted`,t.`create_time` FROM t_logic_del_topic t WHERE t.`deleted` = ?",logicDeleteSql);
+        Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`deleted`,t.`create_time` FROM `t_logic_del_topic` t WHERE t.`deleted` = ?",logicDeleteSql);
         List<LogicDelTopic> logicDelTopics = easyQuery.queryable(LogicDelTopic.class).toList();
         Assert.assertTrue(ArrayUtil.isNotEmpty(logicDelTopics));
         Assert.assertEquals(100,logicDelTopics.size());
@@ -33,7 +33,7 @@ public class LogicDeleteTest extends BaseTest {
         String logicDeleteSql = easyQuery.deletable(LogicDelTopic.class)
                 .whereById("111")
                 .toSql();
-        Assert.assertEquals("UPDATE t_logic_del_topic SET `deleted` = ? WHERE `deleted` = ? AND `id` = ?",logicDeleteSql);
+        Assert.assertEquals("UPDATE `t_logic_del_topic` SET `deleted` = ? WHERE `deleted` = ? AND `id` = ?",logicDeleteSql);
         long l = easyQuery.deletable(LogicDelTopic.class)
                 .whereById("111")
                 .executeRows();
@@ -45,7 +45,7 @@ public class LogicDeleteTest extends BaseTest {
         logicDelTopic.setId("111");
         String logicDeleteSql = easyQuery.deletable(logicDelTopic)
                 .toSql();
-        Assert.assertEquals("UPDATE t_logic_del_topic SET `deleted` = ? WHERE `deleted` = ? AND `id` = ?",logicDeleteSql);
+        Assert.assertEquals("UPDATE `t_logic_del_topic` SET `deleted` = ? WHERE `deleted` = ? AND `id` = ?",logicDeleteSql);
 
         long l = easyQuery.deletable(logicDelTopic)
                 .executeRows();
@@ -58,7 +58,7 @@ public class LogicDeleteTest extends BaseTest {
         String logicDeleteSql = easyQuery.queryable(LogicDelTopic.class)
                 .disableLogicDelete()
                 .toSql();
-        Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`deleted`,t.`create_time` FROM t_logic_del_topic t",logicDeleteSql);
+        Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`deleted`,t.`create_time` FROM `t_logic_del_topic` t",logicDeleteSql);
         List<LogicDelTopic> logicDelTopics = easyQuery.queryable(LogicDelTopic.class).disableLogicDelete().toList();
         Assert.assertTrue(ArrayUtil.isNotEmpty(logicDelTopics));
         Assert.assertEquals(100,logicDelTopics.size());
@@ -69,7 +69,7 @@ public class LogicDeleteTest extends BaseTest {
                 .disableLogicDelete()
                 .whereById("111xx")
                 .toSql();
-        Assert.assertEquals("DELETE FROM t_logic_del_topic WHERE `id` = ?",logicDeleteSql);
+        Assert.assertEquals("DELETE FROM `t_logic_del_topic` WHERE `id` = ?",logicDeleteSql);
         long l = easyQuery.deletable(LogicDelTopic.class)
                 .disableLogicDelete()
                 .whereById("111xx")
@@ -86,7 +86,7 @@ public class LogicDeleteTest extends BaseTest {
                 .set(LogicDelTopic::getTitle, logicDelTopic.getTitle())
                 .whereById(logicDelTopic.getId());
         String s = logicDelTopicExpressionUpdatable.toSql();
-        Assert.assertEquals("UPDATE t_logic_del_topic SET `title` = ? WHERE `id` = ?",s);
+        Assert.assertEquals("UPDATE `t_logic_del_topic` SET `title` = ? WHERE `id` = ?",s);
 
         long l = logicDelTopicExpressionUpdatable.executeRows();
         Assert.assertEquals(1,l);
@@ -95,7 +95,7 @@ public class LogicDeleteTest extends BaseTest {
     public void Test7(){
         String logicDeleteSql = easyQuery.queryable(LogicDelTopicCustom.class)
                 .toSql();
-        Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`deleted_at`,t.`deleted_user`,t.`create_time` FROM t_logic_del_topic_custom t WHERE t.`deleted_at` IS NULL",logicDeleteSql);
+        Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`deleted_at`,t.`deleted_user`,t.`create_time` FROM `t_logic_del_topic_custom` t WHERE t.`deleted_at` IS NULL",logicDeleteSql);
         List<LogicDelTopicCustom> logicDelTopics = easyQuery.queryable(LogicDelTopicCustom.class).toList();
         Assert.assertTrue(ArrayUtil.isNotEmpty(logicDelTopics));
         Assert.assertEquals(100,logicDelTopics.size());
@@ -105,7 +105,7 @@ public class LogicDeleteTest extends BaseTest {
         String logicDeleteSql = easyQuery.queryable(LogicDelTopicCustom.class)
                 .where(o->o.eq(LogicDelTopicCustom::getId,"1"))
                 .toSql();
-        Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`deleted_at`,t.`deleted_user`,t.`create_time` FROM t_logic_del_topic_custom t WHERE t.`deleted_at` IS NULL AND t.`id` = ?",logicDeleteSql);
+        Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`deleted_at`,t.`deleted_user`,t.`create_time` FROM `t_logic_del_topic_custom` t WHERE t.`deleted_at` IS NULL AND t.`id` = ?",logicDeleteSql);
         LogicDelTopicCustom logicDelTopic = easyQuery.queryable(LogicDelTopicCustom.class)
                 .where(o->o.eq(LogicDelTopicCustom::getId,"1")).firstOrNull();
         Assert.assertNotNull(logicDelTopic);
@@ -117,7 +117,7 @@ public class LogicDeleteTest extends BaseTest {
         String logicDeleteSql = easyQuery.queryable(LogicDelTopicCustom.class)
                 .where(o->o.eq(LogicDelTopicCustom::getId,"1"))
                 .toSql();
-        Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`deleted_at`,t.`deleted_user`,t.`create_time` FROM t_logic_del_topic_custom t WHERE t.`deleted_at` IS NULL AND t.`id` = ?",logicDeleteSql);
+        Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`deleted_at`,t.`deleted_user`,t.`create_time` FROM `t_logic_del_topic_custom` t WHERE t.`deleted_at` IS NULL AND t.`id` = ?",logicDeleteSql);
         LogicDelTopicCustom logicDelTopic = easyQuery.queryable(LogicDelTopicCustom.class)
                 .where(o->o.eq(LogicDelTopicCustom::getId,"1")).firstOrNull();
         Assert.assertNotNull(logicDelTopic);

@@ -28,7 +28,7 @@ public class DeleteTest  extends BaseTest {
             Assert.assertEquals(1,l);
         }
         String deleteSql = easyQuery.deletable(Topic.class).whereById("999").toSql();
-        Assert.assertEquals("DELETE FROM t_topic WHERE `id` = ?",deleteSql);
+        Assert.assertEquals("DELETE FROM `t_topic` WHERE `id` = ?",deleteSql);
         long l = easyQuery.deletable(Topic.class).whereById("999").executeRows();
         Assert.assertEquals(1,l);
     }
@@ -45,7 +45,7 @@ public class DeleteTest  extends BaseTest {
             Assert.assertEquals(1,l);
         }
         String deleteSql = easyQuery.deletable(Topic.class).where(o->o.eq(Topic::getTitle,"title998")).toSql();
-        Assert.assertEquals("DELETE FROM t_topic WHERE `title` = ?",deleteSql);
+        Assert.assertEquals("DELETE FROM `t_topic` WHERE `title` = ?",deleteSql);
         long l = easyQuery.deletable(Topic.class).where(o->o.eq(Topic::getTitle,"title998")).executeRows();
         Assert.assertEquals(1,l);
     }
@@ -62,7 +62,7 @@ public class DeleteTest  extends BaseTest {
             Assert.assertEquals(1,l);
         }
         String deleteSql = easyQuery.deletable(topic).toSql();
-        Assert.assertEquals("DELETE FROM t_topic WHERE `id` = ?",deleteSql);
+        Assert.assertEquals("DELETE FROM `t_topic` WHERE `id` = ?",deleteSql);
         long l = easyQuery.deletable(topic).executeRows();
         Assert.assertEquals(1,l);
     }
@@ -79,7 +79,7 @@ public class DeleteTest  extends BaseTest {
             Assert.assertEquals(1,l);
         }
         String deleteSql = easyQuery.deletable(topic).toSql();
-        Assert.assertEquals("DELETE FROM t_topic WHERE `id` = ?",deleteSql);
+        Assert.assertEquals("DELETE FROM `t_topic` WHERE `id` = ?",deleteSql);
         long l = easyQuery.deletable(topic).executeRows();
         Assert.assertEquals(1,l);
     }

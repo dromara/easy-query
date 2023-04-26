@@ -2,11 +2,12 @@ package com.easy.query.core.expression.sql.expression.impl;
 
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
+import com.easy.query.core.expression.sql.expression.factory.EasyExpressionFactory;
 import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.sql.expression.EasyQuerySqlExpression;
-import com.easy.query.core.expression.sql.expression.EasySqlExpression;
 import com.easy.query.core.expression.sql.expression.EasyTableSqlExpression;
+import com.easy.query.core.util.SqlSegmentUtil;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -18,7 +19,7 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public abstract class QuerySqlExpression implements EasyQuerySqlExpression {
+public class QuerySqlExpression implements EasyQuerySqlExpression {
 
     protected SqlBuilderSegment projects;
     protected PredicateSegment where;
@@ -169,5 +170,34 @@ public abstract class QuerySqlExpression implements EasyQuerySqlExpression {
             }
         }
         return sql.toString();
+    }
+
+    @Override
+    public EasyQuerySqlExpression cloneSqlExpression() {
+
+        EasyExpressionFactory expressionFactory = getRuntimeContext().getExpressionFactory();
+        EasyQuerySqlExpression easyQuerySqlExpression = expressionFactory.createEasyQuerySqlExpression(getRuntimeContext());
+
+        if(SqlSegmentUtil.isNotEmpty(this.where)){
+            easyQuerySqlExpression.setWhere(where.clonePredicateSegment());
+        }
+        if(SqlSegmentUtil.isNotEmpty(this.group)){
+            easyQuerySqlExpression.setGroup(group.cloneSqlBuilder());
+        }
+        if(SqlSegmentUtil.isNotEmpty(this.having)){
+            easyQuerySqlExpression.setHaving(having.clonePredicateSegment());
+        }
+        if(SqlSegmentUtil.isNotEmpty(this.order)){
+            easyQuerySqlExpression.setOrder(order.cloneSqlBuilder());
+        }
+        if(SqlSegmentUtil.isNotEmpty(this.projects)){
+            easyQuerySqlExpression.setProjects(projects.cloneSqlBuilder());
+        }
+        easyQuerySqlExpression.setOffset(this.offset);
+        easyQuerySqlExpression.setRows(this.rows);
+        for (EasyTableSqlExpression table : this.tables) {
+            easyQuerySqlExpression.getTables().add(table.cloneSqlExpression());
+        }
+        return easyQuerySqlExpression;
     }
 }

@@ -6,8 +6,8 @@ import com.easy.query.core.basic.plugin.version.EasyVersionLongStrategy;
 import com.easy.query.core.basic.plugin.version.EasyVersionStrategy;
 import com.easy.query.core.basic.plugin.version.EasyVersionTimestampStrategy;
 import com.easy.query.core.basic.plugin.version.EasyVersionUUIDStrategy;
-import com.easy.query.core.config.DefaultEasyQueryDialect;
-import com.easy.query.core.config.EasyQueryDialect;
+import com.easy.query.core.config.NullDialect;
+import com.easy.query.core.config.IDialect;
 import com.easy.query.core.config.NameConversion;
 import com.easy.query.core.basic.plugin.encryption.EasyEncryptionStrategy;
 import com.easy.query.core.exception.EasyQueryException;
@@ -39,7 +39,7 @@ public class EasyQueryConfiguration {
 
 
     private NameConversion nameConversion = new DefaultNameConversion();
-    private EasyQueryDialect dialect = new DefaultEasyQueryDialect();
+    private IDialect dialect = new NullDialect();
 //    private Map<Class<?>, EntityTypeConfiguration<?>> entityTypeConfigurationMap = new HashMap<>();
     private Map<String, EasyInterceptor> interceptorMap =new ConcurrentHashMap<>();
     private Map<String, EasyLogicDeleteStrategy> globalLogicDeleteStrategyMap = new ConcurrentHashMap<>();
@@ -71,11 +71,11 @@ public class EasyQueryConfiguration {
         this.nameConversion = nameConversion;
     }
 
-    public EasyQueryDialect getDialect() {
+    public IDialect getDialect() {
         return dialect;
     }
 
-    public void setDialect(EasyQueryDialect dialect) {
+    public void setDialect(IDialect dialect) {
         this.dialect = dialect;
     }
 

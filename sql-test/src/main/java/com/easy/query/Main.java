@@ -16,7 +16,8 @@ import com.easy.query.core.enums.SqlRangeEnum;
 import com.easy.query.core.enums.SqlExecuteStrategyEnum;
 import com.easy.query.core.basic.plugin.track.DefaultTrackManager;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
-import com.easy.query.core.expression.sql.factory.DefaultEasyExpressionBuilderFactory;
+import com.easy.query.core.expression.sql.builder.factory.DefaultEasyExpressionBuilderFactory;
+import com.easy.query.core.expression.sql.expression.factory.DefaultEasyExpressionFactory;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.sharding.DefaultEasyDataSource;
@@ -32,7 +33,6 @@ import com.easy.query.core.util.EasyUtil;
 import com.easy.query.dto.TopicRequest;
 import com.easy.query.entity.BlogEntity;
 import com.easy.query.entity.Topic;
-import com.easy.query.mysql.MySqlExpressionFactory;
 import com.easy.query.test.*;
 import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.api.pagination.EasyPageResult;
@@ -45,7 +45,6 @@ import com.easy.query.core.basic.jdbc.con.EasyConnectionManager;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
 import com.easy.query.core.basic.jdbc.types.DefaultJdbcTypeHandlerManager;
 import com.easy.query.core.basic.jdbc.types.EasyJdbcTypeHandlerManager;
-import com.easy.query.core.config.DefaultConfig;
 import com.easy.query.core.config.NameConversion;
 import com.easy.query.core.config.UnderlinedNameConversion;
 import com.easy.query.core.configuration.EasyQueryConfiguration;
@@ -113,15 +112,14 @@ public class Main {
 
         LogFactory.useStdOutLogging();
 
-        DefaultConfig easyConfig = new DefaultConfig("easy-query", driver, username, password, url);
 
         // 设置properties
         Properties properties = new Properties();
-        properties.setProperty("name", easyConfig.getName());
-        properties.setProperty("driverClassName", easyConfig.getDriver());
-        properties.setProperty("url", easyConfig.getUrl());
-        properties.setProperty("username", easyConfig.getUsername());
-        properties.setProperty("password", easyConfig.getPassword());
+        properties.setProperty("name", "easy-query");
+        properties.setProperty("driverClassName", driver);
+        properties.setProperty("url", url);
+        properties.setProperty("username", username);
+        properties.setProperty("password", password);
         int pc = Runtime.getRuntime().availableProcessors();
         properties.setProperty("initialSize", String.valueOf(pc));
         properties.setProperty("maxActive", String.valueOf(2 * pc + 1));
@@ -161,8 +159,8 @@ public class Main {
         DefaultEntityExpressionExecutor defaultEntityExpressionExecutor = new DefaultEntityExpressionExecutor(prepareParser, defaultQueryCompilerContextFactory);
         EasyShardingOption easyShardingOption = new EasyShardingOption(10, 20);
         DefaultEasyShardingExecutorService defaultEasyShardingExecutorService = new DefaultEasyShardingExecutorService(easyShardingOption);
-        MySqlExpressionFactory mySqlExpressionFactory = new MySqlExpressionFactory();
-        DefaultEasyQueryRuntimeContext jqdcRuntimeContext = new DefaultEasyQueryRuntimeContext(configuration, entityMetadataManager, easyQueryLambdaFactory, connectionManager, defaultEntityExpressionExecutor, jdbcTypeHandler, easyQueryableFactory, defaultEasyExpressionBuilderFactory,defaultTrackManager,defaultEasyPageResultProvider,easyShardingOption,defaultEasyShardingExecutorService,mySqlExpressionFactory);
+        DefaultEasyExpressionFactory defaultEasyExpressionFactory = new DefaultEasyExpressionFactory();
+        DefaultEasyQueryRuntimeContext jqdcRuntimeContext = new DefaultEasyQueryRuntimeContext(configuration, entityMetadataManager, easyQueryLambdaFactory, connectionManager, defaultEntityExpressionExecutor, jdbcTypeHandler, easyQueryableFactory, defaultEasyExpressionBuilderFactory,defaultTrackManager,defaultEasyPageResultProvider,easyShardingOption,defaultEasyShardingExecutorService,defaultEasyExpressionFactory);
 
 //        jqdcRuntimeContext.getEasyQueryConfiguration().applyEntityTypeConfiguration(new TestUserMySqlConfiguration());
 //        configuration.applyGlobalInterceptor(new NameQueryFilter());

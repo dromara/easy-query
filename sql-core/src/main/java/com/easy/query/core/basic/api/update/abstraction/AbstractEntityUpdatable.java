@@ -49,7 +49,7 @@ public abstract class AbstractEntityUpdatable<T> extends AbstractSqlExecuteRows<
 
         entityMetadata = this.entityUpdateExpressionBuilder.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(clazz);
         entityMetadata.checkTable();
-        table = new TableExpressionBuilder(entityMetadata, 0, null, MultiTableTypeEnum.FROM);
+        table = new TableExpressionBuilder(entityMetadata, 0, null, MultiTableTypeEnum.FROM,entityUpdateExpressionBuilder.getRuntimeContext());
         this.entityUpdateExpressionBuilder.addSqlEntityTableExpression(table);
     }
     @Override

@@ -20,4 +20,7 @@ public interface EasyTableSqlExpression extends EasySqlExpression{
     void setOn(PredicateSegment predicateSegment);
     String getAlias();
     int getIndex();
+
+    @Override
+    EasyTableSqlExpression cloneSqlExpression();
 }

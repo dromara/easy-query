@@ -22,9 +22,9 @@ import com.easy.query.core.util.SqlSegmentUtil;
 public class AnonymousTableExpressionBuilder extends TableExpressionBuilder implements AnonymousEntityTableExpressionBuilder {
     private final EntityQueryExpressionBuilder entityQueryExpressionBuilder;
 
-    public AnonymousTableExpressionBuilder(EntityMetadata entityMetadata, int index, String alias, MultiTableTypeEnum multiTableType, EntityQueryExpressionBuilder sqlEntityExpression) {
-        super(entityMetadata, index, alias, multiTableType);
-        this.entityQueryExpressionBuilder = sqlEntityExpression;
+    public AnonymousTableExpressionBuilder(EntityMetadata entityMetadata, int index, String alias, MultiTableTypeEnum multiTableType, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
+        super(entityMetadata, index, alias, multiTableType,entityQueryExpressionBuilder.getRuntimeContext());
+        this.entityQueryExpressionBuilder = entityQueryExpressionBuilder;
     }
 
     @Override

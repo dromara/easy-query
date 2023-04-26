@@ -16,7 +16,7 @@ public class AnonymousTableSqlExpression extends TableSqlExpression implements E
     private final EasyQuerySqlExpression easyQuerySqlExpression;
 
     public AnonymousTableSqlExpression(EntityMetadata entityMetadata, int index, String alias, MultiTableTypeEnum multiTableType, EasyQuerySqlExpression easyQuerySqlExpression) {
-        super(entityMetadata, index, alias, multiTableType);
+        super(entityMetadata, index, alias, multiTableType,easyQuerySqlExpression.getRuntimeContext());
         this.easyQuerySqlExpression = easyQuerySqlExpression;
     }
 

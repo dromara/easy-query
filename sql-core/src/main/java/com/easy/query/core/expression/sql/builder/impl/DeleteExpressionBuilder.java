@@ -17,16 +17,10 @@ import com.easy.query.core.expression.segment.builder.UpdateSetSqlBuilderSegment
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnPropertyPredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnVersionPropertyPredicate;
-import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.expression.EasyDeleteSqlExpression;
 import com.easy.query.core.expression.sql.expression.EasyEntityPredicateSqlExpression;
-import com.easy.query.core.expression.sql.expression.EasyEntitySqlExpression;
 import com.easy.query.core.expression.sql.expression.EasyUpdateSqlExpression;
-import com.easy.query.core.expression.sql.expression.impl.DeleteSqlExpression;
-import com.easy.query.core.expression.sql.expression.EasySqlExpression;
-import com.easy.query.core.expression.sql.expression.EasyTableSqlExpression;
-import com.easy.query.core.expression.sql.expression.impl.UpdateSqlExpression;
-import com.easy.query.core.expression.sql.factory.EasyExpressionFactory;
+import com.easy.query.core.expression.sql.expression.factory.EasyExpressionFactory;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;

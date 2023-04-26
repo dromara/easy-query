@@ -77,17 +77,17 @@ public class VersionTest extends BaseTest {
                 .set(SysUserVersionLong::getPhone, "123")
                 .whereById(id)
                 .toSql();
-        Assert.assertEquals("UPDATE t_sys_user_version SET `phone` = ? WHERE `id` = ?",s);
+        Assert.assertEquals("UPDATE `t_sys_user_version` SET `phone` = ? WHERE `id` = ?",s);
         String s1 = easyQuery.updatable(SysUserVersionLong.class)
                 .set(SysUserVersionLong::getPhone, "123")
                 .where(o -> o.eq(SysUserVersionLong::getId, id)).toSql();
-        Assert.assertEquals("UPDATE t_sys_user_version SET `phone` = ? WHERE `id` = ?",s1);
+        Assert.assertEquals("UPDATE `t_sys_user_version` SET `phone` = ? WHERE `id` = ?",s1);
         String s2 = easyQuery.updatable(SysUserVersionLong.class)
                 .set(SysUserVersionLong::getPhone, "123")
                 .withVersion(1L)
                 .where(o->o.eq(SysUserVersionLong::getId,id))
                 .toSql();
-        Assert.assertEquals("UPDATE t_sys_user_version SET `phone` = ?,`version` = ? WHERE `version` = ? AND `id` = ?",s2);
+        Assert.assertEquals("UPDATE `t_sys_user_version` SET `phone` = ?,`version` = ? WHERE `version` = ? AND `id` = ?",s2);
     }
     @Test
     public void test4(){
@@ -135,6 +135,6 @@ public class VersionTest extends BaseTest {
         String sql= easyQuery.deletable(SysUserVersionLongLogicDel.class)
                 .withVersion(1L)
                 .whereById(id).toSql();
-        Assert.assertEquals("UPDATE t_sys_user_version_del SET `deleted` = ?,`version` = ? WHERE `deleted` = ? AND `version` = ? AND `id` = ?",sql);
+        Assert.assertEquals("UPDATE `t_sys_user_version_del` SET `deleted` = ?,`version` = ? WHERE `deleted` = ? AND `version` = ? AND `id` = ?",sql);
     }
 }

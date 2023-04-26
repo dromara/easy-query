@@ -9,15 +9,16 @@ import com.easy.query.core.expression.executor.parser.DefaultEasyPrepareParser;
 import com.easy.query.core.expression.executor.query.DefaultExecutionContextFactory;
 import com.easy.query.core.expression.parser.factory.DefaultEasyQueryLambdaFactory;
 import com.easy.query.core.abstraction.DefaultEasyQueryRuntimeContext;
-import com.easy.query.core.expression.sql.factory.DefaultEasyExpressionBuilderFactory;
-import com.easy.query.core.expression.sql.factory.EasyExpressionBuilderFactory;
+import com.easy.query.core.expression.sql.builder.factory.DefaultEasyExpressionBuilderFactory;
+import com.easy.query.core.expression.sql.builder.factory.EasyExpressionBuilderFactory;
 import com.easy.query.core.expression.parser.factory.EasyQueryLambdaFactory;
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.abstraction.EasySqlApiFactory;
 import com.easy.query.core.basic.pagination.DefaultEasyPageResultProvider;
 import com.easy.query.core.basic.pagination.EasyPageResultProvider;
-import com.easy.query.core.config.EasyQueryDialect;
-import com.easy.query.core.expression.sql.factory.EasyExpressionFactory;
+import com.easy.query.core.config.IDialect;
+import com.easy.query.core.expression.sql.expression.factory.DefaultEasyExpressionFactory;
+import com.easy.query.core.expression.sql.expression.factory.EasyExpressionFactory;
 import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.api.client.DefaultEasyQuery;
 import com.easy.query.core.api.client.EasyQuery;
@@ -45,7 +46,6 @@ import com.easy.query.core.sharding.route.abstraction.DefaultTableRouteManager;
 import com.easy.query.core.sharding.route.datasource.engine.DefaultDataSourceRouteEngine;
 import com.easy.query.core.sharding.route.table.engine.DefaultTableRouteEngine;
 import com.easy.query.core.util.StringUtil;
-import com.easy.query.mysql.MySqlExpressionFactory;
 import com.easy.query.mysql.config.MySqlDialect;
 import com.easy.query.sql.starter.config.EasyQueryProperties;
 import com.easy.query.sql.starter.logging.Slf4jImpl;
@@ -118,13 +118,13 @@ public class EasyQueryStarterAutoConfiguration {
         return new UnderlinedNameConversion();
      }
      @Bean
-     public EasyQueryDialect easyQueryDialect(){
+     public IDialect dialect(){
         return new MySqlDialect();
      }
 
     @Bean
     public EasyQueryConfiguration easyQueryConfiguration(Map<String, EasyInterceptor> easyInterceptorMap, Map<String, EasyLogicDeleteStrategy> easyLogicDeleteStrategyMap,
-                                                         NameConversion nameConversion,EasyQueryDialect sqlDialect) {
+                                                         NameConversion nameConversion, IDialect sqlDialect) {
         //只有当不是false的时候才不是false,比如null那么也是true,说明也是不允许删除命令
         EasyQueryConfiguration configuration = new EasyQueryConfiguration(new EasyQueryOption(!Boolean.FALSE.equals(easyQueryProperties.getDeleteThrow())));
 
@@ -192,7 +192,7 @@ public class EasyQueryStarterAutoConfiguration {
     }
     @Bean
     public EasyExpressionFactory easyExpressionFactory(){
-        return new MySqlExpressionFactory();
+        return new DefaultEasyExpressionFactory();
     }
 
     @Bean

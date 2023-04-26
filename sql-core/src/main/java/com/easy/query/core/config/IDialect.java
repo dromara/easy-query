@@ -6,7 +6,7 @@ package com.easy.query.core.config;
  * @Date: 2023/2/12 08:57
  * @author xuejiaming
  */
-public interface EasyQueryDialect {
+public interface IDialect {
 
     String getQuoteName(String keyword);
 }

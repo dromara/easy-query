@@ -108,7 +108,7 @@ public class UpdateTest extends BaseTest {
             topic.setTitle(newTitle);
             String sql = ((EasyEntityUpdatable<Topic>) easyQuery.updatable(topic))
                     .toSql(topic);
-            Assert.assertEquals("UPDATE t_topic SET `stars` = ?,`title` = ?,`create_time` = ? WHERE `id` = ?", sql);
+            Assert.assertEquals("UPDATE `t_topic` SET `stars` = ?,`title` = ?,`create_time` = ? WHERE `id` = ?", sql);
             long l = easyQuery.updatable(topic).executeRows();
             Assert.assertEquals(1,l);
         }finally {
@@ -130,7 +130,7 @@ public class UpdateTest extends BaseTest {
             topic.setTitle(newTitle);
             String sql = ((EasyEntityUpdatable<Topic>) easyQuery.updatable(topic))
                     .toSql(topic);
-            Assert.assertEquals("UPDATE t_topic SET `title` = ? WHERE `id` = ?", sql);
+            Assert.assertEquals("UPDATE `t_topic` SET `title` = ? WHERE `id` = ?", sql);
             long l = easyQuery.updatable(topic).executeRows();
             Assert.assertEquals(1,l);
         }finally {
@@ -153,7 +153,7 @@ public class UpdateTest extends BaseTest {
             topic.setTitle(newTitle);
             String sql = ((EasyEntityUpdatable<Topic>) easyQuery.updatable(topic))
                     .toSql(topic);
-            Assert.assertEquals("UPDATE t_topic SET `title` = ? WHERE `id` = ?", sql);
+            Assert.assertEquals("UPDATE `t_topic` SET `title` = ? WHERE `id` = ?", sql);
             long l = easyQuery.updatable(topic).executeRows();
             Assert.assertEquals(1,l);
         }finally {
@@ -173,7 +173,7 @@ public class UpdateTest extends BaseTest {
         Assert.assertNotNull(topic);
         String updateSql = ((EasyEntityUpdatable<Topic>) easyQuery.updatable(topic).setSqlStrategy(SqlExecuteStrategyEnum.ONLY_NULL_COLUMNS))
                 .toSql(topic);
-        Assert.assertEquals("UPDATE t_topic SET `title` = ? WHERE `id` = ?",updateSql);
+        Assert.assertEquals("UPDATE `t_topic` SET `title` = ? WHERE `id` = ?",updateSql);
         long l1 = easyQuery.updatable(topic)
                 .setSqlStrategy(SqlExecuteStrategyEnum.ONLY_NULL_COLUMNS)
                 .executeRows();
@@ -191,7 +191,7 @@ public class UpdateTest extends BaseTest {
         String updateSql = ((EasyEntityUpdatable<Topic>) easyQuery.updatable(topic)
                 .setSqlStrategy(SqlExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS))
                 .toSql(topic);
-        Assert.assertEquals("UPDATE t_topic SET `stars` = ?,`create_time` = ? WHERE `id` = ?",updateSql);
+        Assert.assertEquals("UPDATE `t_topic` SET `stars` = ?,`create_time` = ? WHERE `id` = ?",updateSql);
         long l1 = easyQuery.updatable(topic)
                 .setSqlStrategy(SqlExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS)
                 .executeRows();

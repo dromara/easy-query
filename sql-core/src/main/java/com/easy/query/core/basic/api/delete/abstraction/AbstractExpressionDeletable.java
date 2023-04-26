@@ -42,7 +42,7 @@ public abstract   class AbstractExpressionDeletable<T> extends AbstractSqlExecut
         this.clazz = clazz;
         EntityMetadata entityMetadata = this.entityDeleteExpressionBuilder.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(clazz);
         entityMetadata.checkTable();
-        table = new TableExpressionBuilder(entityMetadata,  0,null, MultiTableTypeEnum.FROM);
+        table = new TableExpressionBuilder(entityMetadata,  0,null, MultiTableTypeEnum.FROM,entityDeleteExpressionBuilder.getRuntimeContext());
         this.entityDeleteExpressionBuilder.addSqlEntityTableExpression(table);
     }
 

@@ -1,5 +1,7 @@
 package com.easy.query.core.expression.sql.builder.impl;
 
+import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
+import com.easy.query.core.config.IDialect;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.lambda.Property;
@@ -30,15 +32,19 @@ public class TableExpressionBuilder implements EntityTableExpressionBuilder {
     protected final int index;
     protected final String alias;
     protected final MultiTableTypeEnum multiTableType;
+    private final EasyQueryRuntimeContext runtimeContext;
+    private final IDialect dialect;
     protected PredicateSegment on;
     protected Function<String, String> tableNameAs;
 
-    public TableExpressionBuilder(EntityMetadata entityMetadata, int index, String alias, MultiTableTypeEnum multiTableType) {
+    public TableExpressionBuilder(EntityMetadata entityMetadata, int index, String alias, MultiTableTypeEnum multiTableType, EasyQueryRuntimeContext runtimeContext) {
         this.entityMetadata = entityMetadata;
 
         this.index = index;
         this.alias = alias;
         this.multiTableType = multiTableType;
+        this.runtimeContext = runtimeContext;
+        this.dialect = runtimeContext.getEasyQueryConfiguration().getDialect();
     }
 
     @Override
@@ -58,11 +64,16 @@ public class TableExpressionBuilder implements EntityTableExpressionBuilder {
 
     @Override
     public String getTableName() {
+        return dialect.getQuoteName(doGetTableName());
+    }
+
+    protected String doGetTableName() {
+
         String tableName = entityMetadata.getTableName();
         if (tableName == null) {
             throw new EasyQueryException("table " + ClassUtil.getSimpleName(entityMetadata.getEntityClass()) + " cant found mapping table name");
         }
-        if(tableNameAs!=null){
+        if (tableNameAs != null) {
             return tableNameAs.apply(tableName);
         }
         return tableName;
@@ -75,7 +86,7 @@ public class TableExpressionBuilder implements EntityTableExpressionBuilder {
 
     @Override
     public boolean tableNameIsAs() {
-        return tableNameAs!=null;
+        return tableNameAs != null;
     }
 
     @Override
@@ -97,11 +108,11 @@ public class TableExpressionBuilder implements EntityTableExpressionBuilder {
     @Override
     public EntityTableExpressionBuilder copyEntityTableExpressionBuilder() {
 
-        TableExpressionBuilder tableExpressionBuilder = new TableExpressionBuilder(entityMetadata, index, alias, multiTableType);
-        if(on!=null){
+        TableExpressionBuilder tableExpressionBuilder = new TableExpressionBuilder(entityMetadata, index, alias, multiTableType,runtimeContext);
+        if (on != null) {
             on.copyTo(tableExpressionBuilder.getOn());
         }
-        tableExpressionBuilder.tableNameAs=this.tableNameAs;
+        tableExpressionBuilder.tableNameAs = this.tableNameAs;
         return tableExpressionBuilder;
     }
 
@@ -135,7 +146,7 @@ public class TableExpressionBuilder implements EntityTableExpressionBuilder {
 
     @Override
     public EasyTableSqlExpression toExpression() {
-        TableSqlExpression tableSqlExpression = new TableSqlExpression(entityMetadata, index, alias, multiTableType);
+        TableSqlExpression tableSqlExpression = new TableSqlExpression(entityMetadata, index, alias, multiTableType,runtimeContext);
         tableSqlExpression.setTableNameAs(tableNameAs);
         return tableSqlExpression;
     }

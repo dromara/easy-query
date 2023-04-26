@@ -1,6 +1,6 @@
 package com.easy.query.mysql.config;
 
-import com.easy.query.core.config.AbstractEasyQueryDialect;
+import com.easy.query.core.config.AbstractDialect;
 
 /**
  * @FileName: MySQLDialect.java
@@ -8,7 +8,7 @@ import com.easy.query.core.config.AbstractEasyQueryDialect;
  * @Date: 2023/2/12 09:08
  * @author xuejiaming
  */
-public class MySqlDialect extends AbstractEasyQueryDialect {
+public class MySqlDialect extends AbstractDialect {
     @Override
     public String getQuoteStart() {
         return "`";

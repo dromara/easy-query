@@ -1,4 +1,4 @@
-package com.easy.query.core.expression.sql.factory;
+package com.easy.query.core.expression.sql.expression.factory;
 
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.expression.sql.expression.EasyAnonymousQuerySqlExpression;

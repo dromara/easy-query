@@ -14,4 +14,7 @@ import java.util.List;
  */
 public interface EasyDeleteSqlExpression extends EasyEntityPredicateSqlExpression{
     EasyQueryRuntimeContext getRuntimeContext();
+
+    @Override
+    EasyDeleteSqlExpression cloneSqlExpression();
 }

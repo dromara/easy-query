@@ -1,4 +1,4 @@
-package com.easy.query.core.expression.sql.factory;
+package com.easy.query.core.expression.sql.builder.factory;
 
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.enums.MultiTableTypeEnum;
@@ -30,8 +30,8 @@ public  class DefaultEasyExpressionBuilderFactory implements EasyExpressionBuild
     }
 
     @Override
-    public EntityTableExpressionBuilder createEntityTableExpression(EntityMetadata entityMetadata, int index, String alias, MultiTableTypeEnum multiTableType) {
-        return new TableExpressionBuilder(entityMetadata,index,alias,multiTableType);
+    public EntityTableExpressionBuilder createEntityTableExpression(EntityMetadata entityMetadata, int index, String alias, MultiTableTypeEnum multiTableType,EasyQueryRuntimeContext runtimeContext) {
+        return new TableExpressionBuilder(entityMetadata,index,alias,multiTableType,runtimeContext);
     }
 
     @Override

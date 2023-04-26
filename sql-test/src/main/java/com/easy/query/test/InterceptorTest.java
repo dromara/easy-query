@@ -29,7 +29,7 @@ public class InterceptorTest extends BaseTest {
         long l = easyQuery.insertable(topicInterceptor).executeRows();
         Assert.assertEquals(1,l);
         String s = easyQuery.queryable(TopicInterceptor.class).whereById("123").noInterceptor("MyTenantInterceptor").toSql();
-        Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time`,t.`create_by`,t.`update_time`,t.`update_by`,t.`tenant_id` FROM t_topic_interceptor t WHERE t.`id` = ?",s);
+        Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time`,t.`create_by`,t.`update_time`,t.`update_by`,t.`tenant_id` FROM `t_topic_interceptor` t WHERE t.`id` = ?",s);
         TopicInterceptor topicInterceptor1 = easyQuery.queryable(TopicInterceptor.class).whereById("123").firstOrNull();
         Assert.assertNotNull(topicInterceptor1);
         Assert.assertEquals(CurrentUserHelper.getUserId(),topicInterceptor1.getCreateBy());
@@ -60,7 +60,7 @@ public class InterceptorTest extends BaseTest {
         long l = easyQuery.insertable(topicInterceptor).executeRows();
         Assert.assertEquals(1,l);
         String s = easyQuery.queryable(TopicInterceptor.class).whereById("1234").noInterceptor("MyTenantInterceptor").toSql();
-        Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time`,t.`create_by`,t.`update_time`,t.`update_by`,t.`tenant_id` FROM t_topic_interceptor t WHERE t.`id` = ?",s);
+        Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time`,t.`create_by`,t.`update_time`,t.`update_by`,t.`tenant_id` FROM `t_topic_interceptor` t WHERE t.`id` = ?",s);
         TopicInterceptor topicInterceptor1 = easyQuery.queryable(TopicInterceptor.class).whereById("1234").firstOrNull();
         Assert.assertNotNull(topicInterceptor1);
         Assert.assertEquals(CurrentUserHelper.getUserId(),topicInterceptor1.getCreateBy());
@@ -74,7 +74,7 @@ public class InterceptorTest extends BaseTest {
         Assert.assertEquals(CurrentUserHelper.getUserId(),topicInterceptor2.getUpdateBy());
         String s1 = easyQuery.updatable(TopicInterceptor.class).noInterceptor("MyTenantInterceptor").set(TopicInterceptor::getTitle, topicInterceptor2.getTitle())
                 .whereById(topicInterceptor2.getId()).toSql();
-        Assert.assertEquals("UPDATE t_topic_interceptor SET `title` = ?,`update_by` = ?,`update_time` = ? WHERE `id` = ?",s1);
+        Assert.assertEquals("UPDATE `t_topic_interceptor` SET `title` = ?,`update_by` = ?,`update_time` = ? WHERE `id` = ?",s1);
         long l2 = easyQuery.updatable(TopicInterceptor.class).set(TopicInterceptor::getTitle, topicInterceptor2.getTitle())
                 .whereById(topicInterceptor2.getId()).executeRows();
         Assert.assertEquals(1,l2);
@@ -95,7 +95,7 @@ public class InterceptorTest extends BaseTest {
         long l = easyQuery.insertable(topicInterceptor).executeRows();
         Assert.assertEquals(1,l);
         String s = easyQuery.queryable(TopicInterceptor.class).whereById("12345").toSql();
-        Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time`,t.`create_by`,t.`update_time`,t.`update_by`,t.`tenant_id` FROM t_topic_interceptor t WHERE t.`tenant_id` = ? AND t.`id` = ?",s);
+        Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time`,t.`create_by`,t.`update_time`,t.`update_by`,t.`tenant_id` FROM `t_topic_interceptor` t WHERE t.`tenant_id` = ? AND t.`id` = ?",s);
         TopicInterceptor topicInterceptor1 = easyQuery.queryable(TopicInterceptor.class).whereById("12345").firstOrNull();
         Assert.assertNotNull(topicInterceptor1);
         Assert.assertEquals(CurrentUserHelper.getUserId(),topicInterceptor1.getCreateBy());
@@ -109,15 +109,15 @@ public class InterceptorTest extends BaseTest {
         Assert.assertEquals(CurrentUserHelper.getUserId(),topicInterceptor2.getUpdateBy());
         String s1 = easyQuery.updatable(TopicInterceptor.class).set(TopicInterceptor::getTitle, topicInterceptor2.getTitle())
                 .whereById(topicInterceptor2.getId()).toSql();
-        Assert.assertEquals("UPDATE t_topic_interceptor SET `title` = ?,`update_by` = ?,`update_time` = ? WHERE `tenant_id` = ? AND `id` = ?",s1);
+        Assert.assertEquals("UPDATE `t_topic_interceptor` SET `title` = ?,`update_by` = ?,`update_time` = ? WHERE `tenant_id` = ? AND `id` = ?",s1);
         long l2 = easyQuery.updatable(TopicInterceptor.class).set(TopicInterceptor::getTitle, topicInterceptor2.getTitle())
                 .whereById(topicInterceptor2.getId()).executeRows();
         Assert.assertEquals(1,l2);
         String s2 = easyQuery.deletable(TopicInterceptor.class)
                 .whereById(topicInterceptor2.getId()).toSql();
-        Assert.assertEquals("DELETE FROM t_topic_interceptor WHERE `tenant_id` = ? AND `id` = ?",s2);
+        Assert.assertEquals("DELETE FROM `t_topic_interceptor` WHERE `tenant_id` = ? AND `id` = ?",s2);
         String s3 = easyQuery.deletable(topicInterceptor2).toSql();
-        Assert.assertEquals("DELETE FROM t_topic_interceptor WHERE `tenant_id` = ? AND `id` = ?",s3);
+        Assert.assertEquals("DELETE FROM `t_topic_interceptor` WHERE `tenant_id` = ? AND `id` = ?",s3);
         long l3 = easyQuery.deletable(TopicInterceptor.class)
                 .whereById(topicInterceptor2.getId()).executeRows();
         Assert.assertEquals(1,l3);

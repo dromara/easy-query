@@ -1,8 +1,8 @@
 package com.easy.query.core.expression.sql.expression.impl;
 
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
-import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
+import com.easy.query.core.expression.sql.expression.factory.EasyExpressionFactory;
 import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import com.easy.query.core.expression.segment.builder.UpdateSetSqlBuilderSegment;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
@@ -20,7 +20,7 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public abstract class UpdateSqlExpression implements EasyUpdateSqlExpression {
+public  class UpdateSqlExpression implements EasyUpdateSqlExpression {
     protected final EasyQueryRuntimeContext runtimeContext;
     protected final SqlBuilderSegment setColumns;
     protected final PredicateSegment where;
@@ -69,5 +69,18 @@ public abstract class UpdateSqlExpression implements EasyUpdateSqlExpression {
         String tableName = easyTableSqlExpression.getTableName();
         return "UPDATE " + tableName + " SET " + setColumns.toSql(sqlParameterCollector) + " WHERE " +
                 where.toSql(sqlParameterCollector);
+    }
+
+    @Override
+    public EasyUpdateSqlExpression cloneSqlExpression() {
+
+        EasyExpressionFactory expressionFactory = runtimeContext.getExpressionFactory();
+        EasyUpdateSqlExpression easyUpdateSqlExpression = expressionFactory.createEasyUpdateSqlExpression(runtimeContext,tables.get(0).cloneSqlExpression());
+        if(SqlSegmentUtil.isNotEmpty(where)){
+            where.copyTo(easyUpdateSqlExpression.getWhere());
+        }if(SqlSegmentUtil.isNotEmpty(setColumns)){
+            setColumns.copyTo(easyUpdateSqlExpression.getSetColumns());
+        }
+        return easyUpdateSqlExpression;
     }
 }

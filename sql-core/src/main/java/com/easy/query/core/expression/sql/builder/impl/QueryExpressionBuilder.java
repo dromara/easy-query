@@ -11,16 +11,14 @@ import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.SqlEntityQueryExpressionBuilder;
-import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.expression.EasyQuerySqlExpression;
 import com.easy.query.core.expression.sql.expression.EasySqlExpression;
 import com.easy.query.core.expression.sql.expression.EasyTableSqlExpression;
-import com.easy.query.core.expression.sql.expression.impl.QuerySqlExpression;
 import com.easy.query.core.expression.sql.builder.internal.AbstractPredicateEntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
-import com.easy.query.core.expression.sql.factory.EasyExpressionFactory;
+import com.easy.query.core.expression.sql.expression.factory.EasyExpressionFactory;
 
 import java.util.Iterator;
 
