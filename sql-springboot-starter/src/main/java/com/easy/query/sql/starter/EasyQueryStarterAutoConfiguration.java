@@ -1,5 +1,6 @@
 package com.easy.query.sql.starter;
 
+import com.easy.query.core.basic.plugin.encryption.EasyEncryptionStrategy;
 import com.easy.query.core.basic.plugin.interceptor.EasyInterceptor;
 import com.easy.query.core.basic.plugin.logicdel.EasyLogicDeleteStrategy;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
@@ -13,6 +14,7 @@ import com.easy.query.core.config.UnderlinedNameConversion;
 import com.easy.query.core.configuration.EasyQueryConfiguration;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
+import com.easy.query.core.sharding.initializer.EasyShardingInitializer;
 import com.easy.query.core.util.StringUtil;
 import com.easy.query.sql.starter.config.EasyQueryProperties;
 import com.easy.query.sql.starter.logging.Slf4jImpl;
@@ -73,7 +75,7 @@ public class EasyQueryStarterAutoConfiguration {
         return new MySqlDialect();
      }
     @Bean
-    public EasyQuery easyQuery(DataSource dataSource, IDialect dialect, NameConversion nameConversion, Map<String, EasyInterceptor> easyInterceptorMap, Map<String, EasyLogicDeleteStrategy> easyLogicDeleteStrategyMap) {
+    public EasyQuery easyQuery(DataSource dataSource, IDialect dialect, NameConversion nameConversion, Map<String, EasyInterceptor> easyInterceptorMap, Map<String, EasyLogicDeleteStrategy> easyLogicDeleteStrategyMap,Map<String, EasyShardingInitializer> easyShardingInitializerMap,Map<String, EasyEncryptionStrategy> easyEncryptionStrategyMap) {
         EasyQuery easyQuery = EasyQueryBootstrapper.defaultBuilderConfiguration()
                 .setDataSource(dataSource)
                 .setDialect(dialect)
@@ -81,11 +83,21 @@ public class EasyQueryStarterAutoConfiguration {
                 .build();
         EasyQueryRuntimeContext runtimeContext = easyQuery.getRuntimeContext();
         EasyQueryConfiguration configuration = runtimeContext.getEasyQueryConfiguration();
+        //拦截器注册
         for (EasyInterceptor easyInterceptor : easyInterceptorMap.values()) {
             configuration.applyEasyInterceptor(easyInterceptor);
         }
+        //逻辑删除
         for (EasyLogicDeleteStrategy easyLogicDeleteStrategy : easyLogicDeleteStrategyMap.values()) {
             configuration.applyEasyLogicDeleteStrategy(easyLogicDeleteStrategy);
+        }
+        //分片初始化
+        for (EasyShardingInitializer easyShardingInitializer : easyShardingInitializerMap.values()) {
+            configuration.applyShardingInitializer(easyShardingInitializer);
+        }
+        //列加密
+        for (EasyEncryptionStrategy easyEncryptionStrategy : easyEncryptionStrategyMap.values()) {
+            configuration.applyEasyEncryptionStrategy(easyEncryptionStrategy);
         }
         return easyQuery;
     }
