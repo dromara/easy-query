@@ -7,7 +7,6 @@ import com.easy.query.core.basic.pagination.EasyPageResultProvider;
 import com.easy.query.core.common.bean.FastBean;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
-import com.easy.query.core.expression.sql.expression.EasyQuerySqlExpression;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.annotation.EasyWhereCondition;
@@ -453,10 +452,10 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
                             case LIKE:
                                 sqlPredicate.like(propertyLambda, val);
                                 break;
-                            case LIKE_START:
+                            case LIKE_MATCH_LEFT:
                                 sqlPredicate.likeMatchLeft(propertyLambda, val);
                                 break;
-                            case LIKE_END:
+                            case LIKE_MATCH_RIGHT:
                                 sqlPredicate.likeMatchRight(propertyLambda, val);
                                 break;
                             case GREATER_THAN_EQUAL:

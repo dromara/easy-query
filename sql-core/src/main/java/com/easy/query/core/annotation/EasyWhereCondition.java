@@ -42,9 +42,9 @@ public @interface EasyWhereCondition {
         //模糊
         ,LIKE
         //左模糊 like 'word%'
-        ,LIKE_START
+        , LIKE_MATCH_LEFT
         //右模糊 like '%word'
-        ,LIKE_END
+        , LIKE_MATCH_RIGHT
         //大于等于
         ,GREATER_THAN_EQUAL
         //小于等于
