@@ -1,7 +1,6 @@
 package com.easy.query.core.basic.jdbc.executor.internal.abstraction;
 
 import com.easy.query.core.basic.jdbc.executor.internal.AffectedRowsExecuteResult;
-import com.easy.query.core.basic.jdbc.executor.internal.ExecuteResult;
 import com.easy.query.core.sharding.merge.StreamMergeContext;
 
 /**
@@ -10,8 +9,8 @@ import com.easy.query.core.sharding.merge.StreamMergeContext;
  *
  * @author xuejiaming
  */
-public abstract class AbstractAffectedRowsEasyQueryJDBCExecutor extends AbstractEasyQueryJDBCExecutor<AffectedRowsExecuteResult>{
-    public AbstractAffectedRowsEasyQueryJDBCExecutor(StreamMergeContext streamMergeContext) {
+public abstract class AbstractAffectedRowsEasyQueryJdbcExecutor extends AbstractEasyQueryJdbcExecutor<AffectedRowsExecuteResult> {
+    public AbstractAffectedRowsEasyQueryJdbcExecutor(StreamMergeContext streamMergeContext) {
         super(streamMergeContext);
     }
 

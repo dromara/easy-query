@@ -6,7 +6,6 @@ import com.easy.query.core.basic.jdbc.types.EasyParameter;
 import java.sql.SQLException;
 
 /**
- * @FileName: JdbcTypeHandler.java
  * @Description: 文件说明
  * @Date: 2023/2/17 12:46
  * @author xuejiaming

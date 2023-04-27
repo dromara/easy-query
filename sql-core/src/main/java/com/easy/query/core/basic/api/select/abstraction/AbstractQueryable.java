@@ -2,6 +2,7 @@ package com.easy.query.core.basic.api.select.abstraction;
 
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
+import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
 import com.easy.query.core.basic.pagination.EasyPageResultProvider;
 import com.easy.query.core.common.bean.FastBean;
 import com.easy.query.core.enums.EasyBehaviorEnum;
@@ -232,12 +233,12 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
         }
     }
     @Override
-    public <TR> String toSql(Class<TR> resultClass) {
+    public <TR> String toSql(Class<TR> resultClass, SqlParameterCollector sqlParameterCollector) {
         compensateSelect(resultClass);
 //        if (SqlExpressionUtil.shouldCloneSqlEntityQueryExpression(sqlEntityExpression)) {
 //            return select(resultClass).toSql();
 //        }
-        return sqlEntityExpression.toExpression().toSql(null);
+        return sqlEntityExpression.toExpression().toSql(sqlParameterCollector);
     }
 
 

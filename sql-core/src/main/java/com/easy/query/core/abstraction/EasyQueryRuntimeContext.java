@@ -8,11 +8,10 @@ import com.easy.query.core.expression.parser.factory.EasyQueryLambdaFactory;
 import com.easy.query.core.expression.sql.builder.factory.EasyExpressionBuilderFactory;
 import com.easy.query.core.expression.sql.expression.factory.EasyExpressionFactory;
 import com.easy.query.core.metadata.EntityMetadataManager;
-import com.easy.query.core.basic.jdbc.types.EasyJdbcTypeHandlerManager;
+import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
 import com.easy.query.core.configuration.EasyQueryConfiguration;
 import com.easy.query.core.basic.plugin.track.TrackManager;
 import com.easy.query.core.sharding.EasyShardingOption;
-import com.easy.query.core.basic.jdbc.executor.internal.unit.Executor;
 import com.easy.query.core.sharding.route.abstraction.DataSourceRouteManager;
 import com.easy.query.core.sharding.route.abstraction.TableRouteManager;
 
@@ -28,7 +27,7 @@ public interface EasyQueryRuntimeContext {
     EasyQueryLambdaFactory getEasyQueryLambdaFactory();
     EasyConnectionManager getConnectionManager();
     EntityExpressionExecutor getEntityExpressionExecutor();
-    EasyJdbcTypeHandlerManager getEasyJdbcTypeHandlerManager();
+    JdbcTypeHandlerManager getEasyJdbcTypeHandlerManager();
     EasySqlApiFactory getSqlApiFactory();
     EasyExpressionBuilderFactory getSqlExpressionBuilderFactory();
     EasyExpressionFactory getExpressionFactory();

@@ -64,7 +64,7 @@ public class EasyQueryStarterAutoConfiguration {
             }
         }
     }
-    @Bean
+     @Bean
      public NameConversion nameConversion(){
         return new UnderlinedNameConversion();
      }

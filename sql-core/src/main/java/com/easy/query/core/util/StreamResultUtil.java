@@ -2,17 +2,12 @@ package com.easy.query.core.util;
 
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
-import com.easy.query.core.basic.jdbc.parameter.BeanSqlParameter;
-import com.easy.query.core.basic.jdbc.parameter.ConstSQLParameter;
-import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
-import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
-import com.easy.query.core.basic.jdbc.types.EasyJdbcTypeHandlerManager;
+import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
 import com.easy.query.core.basic.jdbc.types.EasyResultSet;
-import com.easy.query.core.basic.jdbc.types.JDBCTypes;
+import com.easy.query.core.basic.jdbc.types.JdbcTypes;
 import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
 import com.easy.query.core.basic.plugin.track.TrackManager;
 import com.easy.query.core.common.bean.FastBean;
-import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
@@ -22,7 +17,6 @@ import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.sharding.merge.abstraction.StreamResult;
 
 import java.beans.PropertyDescriptor;
-import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -77,7 +71,7 @@ public final class StreamResultUtil {
         if (map == null) {
             throw new SQLException("cant create map:" + ClassUtil.getSimpleName(clazz));
         }
-        EasyJdbcTypeHandlerManager easyJdbcTypeHandler = context.getRuntimeContext().getEasyJdbcTypeHandlerManager();
+        JdbcTypeHandlerManager easyJdbcTypeHandler = context.getRuntimeContext().getEasyJdbcTypeHandlerManager();
         int columnCount = rsmd.getColumnCount();//有多少列
         EasyResultSet easyResultSet = new EasyResultSet(streamResult);
         for (int i = 0; i < columnCount; i++) {
@@ -85,7 +79,7 @@ public final class StreamResultUtil {
             String colName = getColName(rsmd, i + 1);//数据库查询出来的列名
             easyResultSet.setIndex(i);
             int columnType = rsmd.getColumnType(i + 1);
-            Class<?> propertyType = JDBCTypes.jdbcJavaTypes.get(columnType);
+            Class<?> propertyType = JdbcTypes.jdbcJavaTypes.get(columnType);
             easyResultSet.setPropertyType(propertyType);
             JdbcTypeHandler handler = easyJdbcTypeHandler.getHandler(propertyType);
             Object value = handler.getValue(easyResultSet);
@@ -103,7 +97,7 @@ public final class StreamResultUtil {
         }
         EasyResultSet easyResultSet = new EasyResultSet(streamResult);
         easyResultSet.setIndex(0);
-        EasyJdbcTypeHandlerManager easyJdbcTypeHandler = context.getRuntimeContext().getEasyJdbcTypeHandlerManager();
+        JdbcTypeHandlerManager easyJdbcTypeHandler = context.getRuntimeContext().getEasyJdbcTypeHandlerManager();
         JdbcTypeHandler handler = easyJdbcTypeHandler.getHandler(clazz);
         return handler.getValue(easyResultSet);
 
@@ -122,7 +116,7 @@ public final class StreamResultUtil {
         return resultList;
     }
     private static  <TResult> TResult mapToBean(ExecutorContext context, StreamResult streamResult, Class<TResult> clazz, ColumnMetadata[] columnMetadatas) throws SQLException {
-        EasyJdbcTypeHandlerManager easyJdbcTypeHandler = context.getRuntimeContext().getEasyJdbcTypeHandlerManager();
+        JdbcTypeHandlerManager easyJdbcTypeHandler = context.getRuntimeContext().getEasyJdbcTypeHandlerManager();
         TrackManager trackManager = context.getRuntimeContext().getTrackManager();
         boolean trackBean = trackBean(context, clazz);
         EasyResultSet easyResultSet = new EasyResultSet(streamResult);

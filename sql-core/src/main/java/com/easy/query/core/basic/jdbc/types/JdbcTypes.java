@@ -15,7 +15,7 @@ import java.util.Map;
  *
  * @author xuejiaming
  */
-public class JDBCTypes {
+public class JdbcTypes {
     /**
      * jdbc type to java jdbc type 对应的java的type
      */

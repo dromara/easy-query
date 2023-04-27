@@ -12,7 +12,7 @@ import java.sql.Types;
  * @Date: 2023/2/17 21:21
  * @author xuejiaming
  */
-public class ByteArrayTypeHandler implements JdbcTypeHandler{
+public class ByteArrayTypeHandler implements JdbcTypeHandler {
     @Override
     public Object getValue(EasyResultSet resultSet) throws SQLException {
         return resultSet.getStreamResult().getBytes(resultSet.getIndex());

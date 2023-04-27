@@ -13,7 +13,7 @@ import java.sql.Types;
  * @Date: 2023/2/17 21:21
  * @author xuejiaming
  */
-public class ByteTypeHandler implements JdbcTypeHandler{
+public class ByteTypeHandler implements JdbcTypeHandler {
     private static final byte DEFAULT=0;
     @Override
     public Object getValue(EasyResultSet resultSet) throws SQLException {

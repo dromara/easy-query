@@ -6,6 +6,7 @@ import com.easy.query.core.basic.api.internal.Interceptable;
 import com.easy.query.core.basic.api.internal.LogicDeletable;
 import com.easy.query.core.basic.api.internal.TableReNameable;
 import com.easy.query.core.basic.api.select.provider.EasyQuerySqlBuilderProvider;
+import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
 import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
 import com.easy.query.core.exception.EasyQueryWhereInvalidOperationException;
 import com.easy.query.core.expression.lambda.Property;
@@ -158,6 +159,9 @@ public interface Queryable<T1> extends Query<T1>, Interceptable<Queryable<T1>>, 
     default String toSql() {
         return toSql(queryClass());
     }
+    default String toSql(SqlParameterCollector sqlParameterCollector) {
+        return toSql(queryClass(),sqlParameterCollector);
+    }
 
     /**
      * 返回执行sql
@@ -166,7 +170,10 @@ public interface Queryable<T1> extends Query<T1>, Interceptable<Queryable<T1>>, 
      * @param <TR>
      * @return
      */
-    <TR> String toSql(Class<TR> resultClass);
+   default  <TR> String toSql(Class<TR> resultClass){
+       return toSql(resultClass,null);
+   }
+    <TR> String toSql(Class<TR> resultClass, SqlParameterCollector sqlParameterCollector);
 
     /**
      * 对当前表达式返回自定义select列

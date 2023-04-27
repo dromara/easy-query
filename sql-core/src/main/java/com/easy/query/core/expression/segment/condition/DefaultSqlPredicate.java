@@ -1,11 +1,13 @@
 package com.easy.query.core.expression.segment.condition;
 
+import com.easy.query.core.basic.api.select.Queryable;
 import com.easy.query.core.enums.EasyFunc;
 import com.easy.query.core.enums.SqlLikeEnum;
 import com.easy.query.core.enums.SqlRangeEnum;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.parser.abstraction.internal.WherePredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnCollectionPredicate;
+import com.easy.query.core.expression.segment.condition.predicate.ColumnSubQueryPredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnValuePredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnWithColumnPredicate;
 import com.easy.query.core.expression.segment.condition.predicate.FuncColumnValuePredicate;
@@ -175,11 +177,33 @@ public class DefaultSqlPredicate<T1> implements SqlPredicate<T1> {
     }
 
     @Override
+    public <TProperty> SqlPredicate<T1> in(boolean condition, Property<T1, TProperty> column, Queryable<TProperty> subQueryable) {
+        if (condition) {
+            EntityTableExpressionBuilder table = sqlEntityExpression.getTable(getIndex());
+            String propertyName = table.getPropertyName(column);
+            nextPredicateSegment.setPredicate(new ColumnSubQueryPredicate(table, propertyName, subQueryable, SqlPredicateCompareEnum.IN, sqlEntityExpression));
+            nextAnd();
+        }
+        return this;
+    }
+
+    @Override
     public SqlPredicate<T1> notIn(boolean condition, Property<T1, ?> column, Collection<?> collection) {
         if (condition) {
             EntityTableExpressionBuilder table = sqlEntityExpression.getTable(getIndex());
             String propertyName = table.getPropertyName(column);
             nextPredicateSegment.setPredicate(new ColumnCollectionPredicate(table, propertyName, collection, SqlPredicateCompareEnum.NOT_IN, sqlEntityExpression));
+            nextAnd();
+        }
+        return this;
+    }
+
+    @Override
+    public <TProperty> SqlPredicate<T1> notIn(boolean condition, Property<T1, ?> column, Queryable<TProperty> subQueryable) {
+        if (condition) {
+            EntityTableExpressionBuilder table = sqlEntityExpression.getTable(getIndex());
+            String propertyName = table.getPropertyName(column);
+            nextPredicateSegment.setPredicate(new ColumnSubQueryPredicate(table, propertyName, subQueryable, SqlPredicateCompareEnum.NOT_IN, sqlEntityExpression));
             nextAnd();
         }
         return this;

@@ -12,7 +12,7 @@ import java.sql.Types;
  * @Date: 2023/2/17 21:17
  * @author xuejiaming
  */
-public class ObjectTypeHandler implements JdbcTypeHandler{
+public class ObjectTypeHandler implements JdbcTypeHandler {
     @Override
     public Object getValue(EasyResultSet resultSet) throws SQLException {
         return resultSet.getStreamResult().getObject(resultSet.getIndex());

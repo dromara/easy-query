@@ -13,7 +13,7 @@ import java.sql.Types;
  * @Date: 2023/2/17 21:39
  * @author xuejiaming
  */
-public class BooleanTypeHandler implements JdbcTypeHandler{
+public class BooleanTypeHandler implements JdbcTypeHandler {
     private static final boolean DEFAULT=false;
     @Override
     public Object getValue(EasyResultSet resultSet) throws SQLException {

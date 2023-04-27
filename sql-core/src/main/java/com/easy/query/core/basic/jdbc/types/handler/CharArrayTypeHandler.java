@@ -12,7 +12,7 @@ import java.sql.Types;
  * @Date: 2023/2/17 21:53
  * @author xuejiaming
  */
-public class CharArrayTypeHandler implements JdbcTypeHandler{
+public class CharArrayTypeHandler implements JdbcTypeHandler {
     @Override
     public Object getValue(EasyResultSet resultSet) throws SQLException {
         return resultSet.getStreamResult().getString(resultSet.getIndex()).toCharArray();

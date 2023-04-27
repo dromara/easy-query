@@ -15,10 +15,10 @@ import java.util.Collection;
  *
  * @author xuejiaming
  */
-public abstract class AbstractEasyQueryJDBCExecutor<T extends ExecuteResult> implements EasyQueryJDBCExecutor<T>{
+public abstract class AbstractEasyQueryJdbcExecutor<T extends ExecuteResult> implements EasyQueryJdbcExecutor<T> {
     protected final StreamMergeContext streamMergeContext;
 
-    public AbstractEasyQueryJDBCExecutor(StreamMergeContext streamMergeContext){
+    public AbstractEasyQueryJdbcExecutor(StreamMergeContext streamMergeContext){
 
         this.streamMergeContext = streamMergeContext;
     }

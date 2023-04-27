@@ -112,45 +112,48 @@ public class Main {
 //        jqdcRuntimeContext.getEasyQueryConfiguration().applyEntityTypeConfiguration(new TestUserMySqlConfiguration());
 //        configuration.applyGlobalInterceptor(new NameQueryFilter());
 
-        EntityMetadataManager entityMetadataManager = runtimeContext.getEntityMetadataManager();
-
-        EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(BlogEntity.class);
-        ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull("title");
-        BlogEntity blog = new BlogEntity();
-        FastBean beanFastSetter = EasyUtil.getFastBean(BlogEntity.class);
-        PropertySetterCaller<Object> beanSetter = beanFastSetter.getBeanSetter(columnMetadata.getProperty());
-        beanSetter.call(blog,"123");
+//        EntityMetadataManager entityMetadataManager = runtimeContext.getEntityMetadataManager();
+//
+//        EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(BlogEntity.class);
+//        ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull("title");
+//        BlogEntity blog = new BlogEntity();
+//        FastBean beanFastSetter = EasyUtil.getFastBean(BlogEntity.class);
+//        PropertySetterCaller<Object> beanSetter = beanFastSetter.getBeanSetter(columnMetadata.getProperty());
+//        beanSetter.call(blog,"123");
+//        {
+//            long start = System.currentTimeMillis();
+//
+//            for (int i = 0; i < 100000; i++) {
+//                PropertySetterCaller<Object> beanSetter1 = beanFastSetter.getBeanSetter(columnMetadata.getProperty());
+//                beanSetter1.call(blog,"123");
+//            }
+//            long end = System.currentTimeMillis();
+//            System.out.println("耗时：" + (end - start) + "ms");
+//
+//        }
+//        {
+//
+//            PropertyDescriptor property = columnMetadata.getProperty();
+//            Method writeMethodOrNull = ClassUtil.getWriteMethodOrNull(property, BlogEntity.class);
+//            callSetter(blog,writeMethodOrNull,property,"123");
+//        }
+//        {
+//            long start = System.currentTimeMillis();
+//
+//            for (int i = 0; i < 100000; i++) {
+//                PropertyDescriptor property = columnMetadata.getProperty();
+//                Method writeMethodOrNull = ClassUtil.getWriteMethodOrNull(property, BlogEntity.class);
+//                callSetter(blog,writeMethodOrNull,property,"123");
+//            }
+//            long end = System.currentTimeMillis();
+//            System.out.println("耗时：" + (end - start) + "ms");
+//
+//        }
         {
-            long start = System.currentTimeMillis();
-
-            for (int i = 0; i < 100000; i++) {
-                PropertySetterCaller<Object> beanSetter1 = beanFastSetter.getBeanSetter(columnMetadata.getProperty());
-                beanSetter1.call(blog,"123");
-            }
-            long end = System.currentTimeMillis();
-            System.out.println("耗时：" + (end - start) + "ms");
-
-        }
-        {
-
-            PropertyDescriptor property = columnMetadata.getProperty();
-            Method writeMethodOrNull = ClassUtil.getWriteMethodOrNull(property, BlogEntity.class);
-            callSetter(blog,writeMethodOrNull,property,"123");
-        }
-        {
-            long start = System.currentTimeMillis();
-
-            for (int i = 0; i < 100000; i++) {
-                PropertyDescriptor property = columnMetadata.getProperty();
-                Method writeMethodOrNull = ClassUtil.getWriteMethodOrNull(property, BlogEntity.class);
-                callSetter(blog,writeMethodOrNull,property,"123");
-            }
-            long end = System.currentTimeMillis();
-            System.out.println("耗时：" + (end - start) + "ms");
-
-        }
-        {
-
+            Queryable<String> nameSubQuery = easyQuery.queryable(TestUserMysql.class).where(o->o.eq(TestUserMysql::getName,"xhn")).select(String.class, o -> o.column(TestUserMysql::getName));
+            TestUserMysql testUserMysql = easyQuery.queryable(TestUserMysql.class)
+                    .where(o -> o.eq(TestUserMysql::getAge, 12).in(TestUserMysql::getName, nameSubQuery))
+                    .firstOrNull();
 
             Queryable<TestUserMysql> sql = easyQuery.queryable(TestUserMysql.class)
                     .leftJoin(SysUserLogbyMonth.class, (a, b) -> a.eq(b, TestUserMysql::getName, SysUserLogbyMonth::getId).then(b).eq(SysUserLogbyMonth::getTime, LocalDateTime.now()))

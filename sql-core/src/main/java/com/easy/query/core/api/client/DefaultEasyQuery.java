@@ -39,17 +39,17 @@ public class DefaultEasyQuery implements EasyQuery {
 
     @Override
     public <T> List<T> sqlQuery(String sql, Class<T> clazz, List<Object> parameters) {
-        return easySqlApiFactory.createJDBCExecutor(runtimeContext).sqlQuery(sql,clazz,parameters);
+        return easySqlApiFactory.createJdbcExecutor(runtimeContext).sqlQuery(sql,clazz,parameters);
     }
 
     @Override
     public List<Map<String, Object>> sqlQueryMap(String sql, List<Object> parameters) {
-        return easySqlApiFactory.createJDBCExecutor(runtimeContext).sqlQueryMap(sql,parameters);
+        return easySqlApiFactory.createJdbcExecutor(runtimeContext).sqlQueryMap(sql,parameters);
     }
 
     @Override
     public long sqlExecute(String sql, List<Object> parameters) {
-        return easySqlApiFactory.createJDBCExecutor(runtimeContext).sqlExecute(sql,parameters);
+        return easySqlApiFactory.createJdbcExecutor(runtimeContext).sqlExecute(sql,parameters);
     }
 
     @Override

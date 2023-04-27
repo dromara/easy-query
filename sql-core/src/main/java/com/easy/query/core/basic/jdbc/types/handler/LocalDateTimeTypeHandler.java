@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
  * @Date: 2023/2/17 21:21
  * @author xuejiaming
  */
-public class LocalDateTimeTypeHandler implements JdbcTypeHandler{
+public class LocalDateTimeTypeHandler implements JdbcTypeHandler {
     @Override
     public Object getValue(EasyResultSet resultSet) throws SQLException {
         Timestamp timestamp = resultSet.getStreamResult().getTimestamp(resultSet.getIndex());

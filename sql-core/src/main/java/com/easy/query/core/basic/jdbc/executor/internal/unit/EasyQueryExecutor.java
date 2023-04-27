@@ -8,7 +8,7 @@ import com.easy.query.core.sharding.merge.StreamMergeContext;
 import com.easy.query.core.sharding.merge.executor.common.CommandExecuteUnit;
 import com.easy.query.core.sharding.merge.executor.common.SqlUnit;
 import com.easy.query.core.sharding.merge.executor.merger.QueryStreamShardingMerger;
-import com.easy.query.core.util.JDBCExecutorUtil;
+import com.easy.query.core.util.JdbcExecutorUtil;
 
 import java.util.List;
 
@@ -32,7 +32,7 @@ public class EasyQueryExecutor extends AbstractExecutor<QueryExecuteResult> {
         SqlUnit sqlUnit = commandExecuteUnit.getExecutionUnit().getSqlUnit();
         String sql = sqlUnit.getSql();
         List<SQLParameter> parameters = sqlUnit.getParameters();
-        return JDBCExecutorUtil.query(executorContext,easyConnection,sql,parameters);
+        return JdbcExecutorUtil.query(executorContext,easyConnection,sql,parameters);
     }
     @Override
     public ShardingMerger<QueryExecuteResult> getShardingMerger() {

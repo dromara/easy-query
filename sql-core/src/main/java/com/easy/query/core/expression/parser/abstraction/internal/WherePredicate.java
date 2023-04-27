@@ -1,5 +1,6 @@
 package com.easy.query.core.expression.parser.abstraction.internal;
 
+import com.easy.query.core.basic.api.select.Queryable;
 import com.easy.query.core.enums.EasyFunc;
 import com.easy.query.core.enums.SqlLikeEnum;
 import com.easy.query.core.enums.SqlPredicateCompareEnum;
@@ -304,6 +305,10 @@ public interface WherePredicate<T1, TChain> extends IndexAware {
      * 集合为空返回False
      */
     TChain in(boolean condition, Property<T1, ?> column, Collection<?> collection);
+   default  <TProperty>TChain in(Property<T1, TProperty> column, Queryable<TProperty> subQueryable){
+       return in(true,column,subQueryable);
+   }
+    <TProperty>TChain in(boolean condition, Property<T1, TProperty> column, Queryable<TProperty> subQueryable);
 
     /**
      * column not in collection
@@ -318,6 +323,10 @@ public interface WherePredicate<T1, TChain> extends IndexAware {
      * 集合为空返回True
      */
     TChain notIn(boolean condition, Property<T1, ?> column, Collection<?> collection);
+    default  <TProperty> TChain notIn(Property<T1, ?> column, Queryable<TProperty> subQueryable){
+        return notIn(true,column,subQueryable);
+    }
+    <TProperty> TChain notIn(boolean condition, Property<T1, ?> column, Queryable<TProperty> subQueryable);
 
 
     /**

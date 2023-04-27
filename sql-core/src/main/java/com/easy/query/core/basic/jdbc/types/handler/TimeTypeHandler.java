@@ -13,7 +13,7 @@ import java.sql.Types;
  * @Date: 2023/2/18 08:36
  * @author xuejiaming
  */
-public class TimeTypeHandler implements JdbcTypeHandler{
+public class TimeTypeHandler implements JdbcTypeHandler {
     @Override
     public Object getValue(EasyResultSet resultSet) throws SQLException {
         return resultSet.getStreamResult().getTime(resultSet.getIndex());

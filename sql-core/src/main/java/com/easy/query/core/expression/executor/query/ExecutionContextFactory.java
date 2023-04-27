@@ -14,5 +14,5 @@ import java.util.List;
  */
 public interface ExecutionContextFactory {
     ExecutionContext createEntityExecutionContext(PrepareParseResult prepareParseResult);
-    ExecutionContext createJDBCExecutionContext(String sql, List<SQLParameter> parameters);
+    ExecutionContext createJdbcExecutionContext(String sql, List<SQLParameter> parameters);
 }

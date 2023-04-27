@@ -10,8 +10,8 @@ import com.easy.query.core.basic.jdbc.con.DefaultConnectionManager;
 import com.easy.query.core.basic.jdbc.con.EasyConnectionManager;
 import com.easy.query.core.basic.jdbc.executor.DefaultEntityExpressionExecutor;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
-import com.easy.query.core.basic.jdbc.types.DefaultJdbcTypeHandlerManager;
 import com.easy.query.core.basic.jdbc.types.EasyJdbcTypeHandlerManager;
+import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
 import com.easy.query.core.basic.pagination.DefaultEasyPageResultProvider;
 import com.easy.query.core.basic.pagination.EasyPageResultProvider;
 import com.easy.query.core.basic.plugin.track.DefaultTrackManager;
@@ -54,7 +54,6 @@ import com.easy.query.core.sharding.route.table.engine.DefaultTableRouteEngine;
 import com.easy.query.core.sharding.route.table.engine.TableRouteEngine;
 
 import javax.sql.DataSource;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
@@ -65,7 +64,7 @@ import java.util.function.Supplier;
  */
 public class EasyQuerytBuilderConfiguration {
     protected  DataSource dataSource;
-    protected EasyJdbcTypeHandlerManager jdbcTypeHandlerManager;
+    protected JdbcTypeHandlerManager jdbcTypeHandlerManager;
     protected EasyQueryOption easyQueryOption;
     protected EasyQueryConfiguration configuration;
     protected EntityMetadataManager entityMetadataManager;
@@ -129,7 +128,7 @@ public class EasyQuerytBuilderConfiguration {
             throw new IllegalArgumentException("easy data source and data source null");
         }
 
-        EasyJdbcTypeHandlerManager jdbcTypeHandlerManager = getDefaultIfNull(this.jdbcTypeHandlerManager, DefaultJdbcTypeHandlerManager::new);
+        JdbcTypeHandlerManager jdbcTypeHandlerManager = getDefaultIfNull(this.jdbcTypeHandlerManager, EasyJdbcTypeHandlerManager::new);
         EasyQueryOption easyQueryOption = getDefaultIfNull(this.easyQueryOption,()->new EasyQueryOption(false, SqlExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS, SqlExecuteStrategyEnum.ALL_COLUMNS));
         IDialect dialect=getDefaultIfNull(this.dialect, NullDialect::new);
         NameConversion nameConversion=getDefaultIfNull(this.nameConversion, UnderlinedNameConversion::new);

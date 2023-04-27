@@ -13,7 +13,7 @@ import java.sql.Types;
  * @Date: 2023/2/17 22:02
  * @author xuejiaming
  */
-public class FloatTypeHandler implements JdbcTypeHandler{
+public class FloatTypeHandler implements JdbcTypeHandler {
     private static final float DEFAULT=0f;
     @Override
     public Object getValue(EasyResultSet resultSet) throws SQLException {

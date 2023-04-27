@@ -48,7 +48,7 @@ public class DefaultExecutionContextFactory implements ExecutionContextFactory {
     }
 
     @Override
-    public ExecutionContext createJDBCExecutionContext(String sql, List<SQLParameter> parameters) {
+    public ExecutionContext createJdbcExecutionContext(String sql, List<SQLParameter> parameters) {
         ExecutionUnit executionUnit = new ExecutionUnit(easyDataSource.getDefaultDataSourceName(), new SqlUnit(sql,parameters));
         return new ExecutionContext(Collections.singletonList(executionUnit));
     }

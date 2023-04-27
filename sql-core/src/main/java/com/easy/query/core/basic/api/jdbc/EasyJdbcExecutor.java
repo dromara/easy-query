@@ -15,10 +15,10 @@ import java.util.List;
  * @Date: 2023/3/12 22:42
  * @author xuejiaming
  */
-public class DefaultEasyJDBCExecutor implements EasyJDBCExecutor {
+public class EasyJdbcExecutor implements JdbcExecutor {
     private final EasyQueryRuntimeContext runtimeContext;
 
-    public DefaultEasyJDBCExecutor(EasyQueryRuntimeContext runtimeContext){
+    public EasyJdbcExecutor(EasyQueryRuntimeContext runtimeContext){
         this.runtimeContext = runtimeContext;
     }
 

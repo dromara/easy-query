@@ -15,7 +15,7 @@ import java.time.ZoneId;
  * @Date: 2023/2/17 21:21
  * @author xuejiaming
  */
-public class LocalDateTypeHandler implements JdbcTypeHandler{
+public class LocalDateTypeHandler implements JdbcTypeHandler {
     @Override
     public Object getValue(EasyResultSet resultSet) throws SQLException {
         Timestamp timestamp = resultSet.getStreamResult().getTimestamp(resultSet.getIndex());

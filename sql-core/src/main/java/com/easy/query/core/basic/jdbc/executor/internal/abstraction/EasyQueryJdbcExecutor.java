@@ -8,6 +8,6 @@ import com.easy.query.core.basic.jdbc.executor.internal.ExecuteResult;
  *
  * @author xuejiaming
  */
-public interface EasyQueryJDBCExecutor<T extends ExecuteResult> extends AutoCloseable{
+public interface EasyQueryJdbcExecutor<T extends ExecuteResult> extends AutoCloseable{
     T execute();
 }

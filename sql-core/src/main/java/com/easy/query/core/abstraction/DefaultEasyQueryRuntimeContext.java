@@ -8,11 +8,10 @@ import com.easy.query.core.expression.sql.builder.factory.EasyExpressionBuilderF
 import com.easy.query.core.expression.sql.expression.factory.EasyExpressionFactory;
 import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.basic.jdbc.con.EasyConnectionManager;
-import com.easy.query.core.basic.jdbc.types.EasyJdbcTypeHandlerManager;
+import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
 import com.easy.query.core.configuration.EasyQueryConfiguration;
 import com.easy.query.core.basic.plugin.track.TrackManager;
 import com.easy.query.core.sharding.EasyShardingOption;
-import com.easy.query.core.basic.jdbc.executor.internal.unit.Executor;
 import com.easy.query.core.sharding.route.abstraction.DataSourceRouteManager;
 import com.easy.query.core.sharding.route.abstraction.TableRouteManager;
 
@@ -29,7 +28,7 @@ public class DefaultEasyQueryRuntimeContext implements EasyQueryRuntimeContext {
     private final EasyConnectionManager easyConnectionManager;
     private final EntityExpressionExecutor entityExpressionExecutor;
     //    private final EasyQueryExecutor easyQueryExecutor;
-    private final EasyJdbcTypeHandlerManager easyJdbcTypeHandler;
+    private final JdbcTypeHandlerManager easyJdbcTypeHandler;
     private final EasySqlApiFactory easyQueryableFactory;
     private final EasyExpressionBuilderFactory easySqlExpressionFactory;
     private final TrackManager trackManager;
@@ -45,7 +44,7 @@ public class DefaultEasyQueryRuntimeContext implements EasyQueryRuntimeContext {
                                           EasyQueryLambdaFactory easyQueryLambdaFactory,
                                           EasyConnectionManager easyConnectionManager,
                                           EntityExpressionExecutor entityExpressionExecutor,
-                                          EasyJdbcTypeHandlerManager easyJdbcTypeHandler,
+                                          JdbcTypeHandlerManager easyJdbcTypeHandler,
                                           EasySqlApiFactory easyQueryableFactory,
                                           EasyExpressionBuilderFactory easySqlExpressionFactory,
                                           TrackManager trackManager,
@@ -97,7 +96,7 @@ public class DefaultEasyQueryRuntimeContext implements EasyQueryRuntimeContext {
     }
 
     @Override
-    public EasyJdbcTypeHandlerManager getEasyJdbcTypeHandlerManager() {
+    public JdbcTypeHandlerManager getEasyJdbcTypeHandlerManager() {
         return easyJdbcTypeHandler;
     }
 
