@@ -2,6 +2,7 @@ package com.easy.query.core.sharding.merge.executor;
 
 import com.easy.query.core.basic.jdbc.con.EasyConnection;
 import com.easy.query.core.exception.EasyQueryException;
+import com.easy.query.core.exception.EasyQuerySQLException;
 import com.easy.query.core.exception.EasyQueryTimeoutException;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
@@ -20,7 +21,6 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -28,7 +28,6 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * create time 2023/4/15 14:24
@@ -37,13 +36,20 @@ import java.util.stream.Stream;
  * @author xuejiaming
  */
 public class ShardingExecutor {
-    private static final Log log= LogFactory.getLog(ShardingExecutor.class);
+    private static final Log log = LogFactory.getLog(ShardingExecutor.class);
+
     private ShardingExecutor() {
     }
 
     public static <TResult> TResult execute(StreamMergeContext streamMergeContext, Executor<TResult> executor, Collection<ExecutionUnit> sqlRouteUnits) {
 
         List<TResult> results = execute0(streamMergeContext, executor, sqlRouteUnits);
+        if (ArrayUtil.isEmpty(results)) {
+            throw new EasyQueryException("execute result empty");
+        }
+        if(ArrayUtil.isSingle(results)){
+            return ArrayUtil.firstOrNull(results);
+        }
         return executor.getShardingMerger().streamMerge(streamMergeContext, results);
     }
 
@@ -55,7 +61,7 @@ public class ShardingExecutor {
         List<DataSourceSqlExecutorUnit> dataSourceSqlExecutorUnits = EasyUtil.groupBy(reOrderExecutionUnits.stream(), ExecutionUnit::getDataSourceName)
                 .map(o -> getSqlExecutorGroups(streamMergeContext, o)).collect(Collectors.toList());
         //如果本身就只有一条要执行的sql那么就不需要另外开启线程并行执行,直接当前线程执行即可
-        if(executionUnits.size()==1){
+        if (executionUnits.size() == 1) {
             DataSourceSqlExecutorUnit dataSourceSqlExecutorUnit = dataSourceSqlExecutorUnits.get(0);
             return executor.execute(dataSourceSqlExecutorUnit);
         }
@@ -77,6 +83,7 @@ public class ShardingExecutor {
 
 
     }
+
     private static <TResult> List<Future<List<TResult>>> executeFuture0(StreamMergeContext streamMergeContext, Executor<TResult> executor, List<DataSourceSqlExecutorUnit> dataSourceSqlExecutorUnits) {
         ExecutorService executorService = streamMergeContext.getRuntimeContext().getEasyShardingExecutorService().getExecutorService();
         List<Future<List<TResult>>> futures = new ArrayList<>(dataSourceSqlExecutorUnits.size());

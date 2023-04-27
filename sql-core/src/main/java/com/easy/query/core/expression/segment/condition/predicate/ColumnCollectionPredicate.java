@@ -7,9 +7,12 @@ import com.easy.query.core.enums.SqlPredicateCompare;
 import com.easy.query.core.enums.SqlPredicateCompareEnum;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
+import com.easy.query.core.util.ArrayUtil;
 import com.easy.query.core.util.SQLUtil;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 
 /**
@@ -35,7 +38,7 @@ public class ColumnCollectionPredicate implements ValuesPredicate,ShardingPredic
 
     @Override
     public String toSql(SqlParameterCollector sqlParameterCollector) {
-        if (collection.isEmpty()) {
+        if (ArrayUtil.isEmpty(collection)) {
             if (SqlPredicateCompareEnum.IN.equals(compare)) {
                 return "FALSE";
             } else if (SqlPredicateCompareEnum.NOT_IN.equals(compare)) {
@@ -78,6 +81,13 @@ public class ColumnCollectionPredicate implements ValuesPredicate,ShardingPredic
 
     @Override
     public Collection<SQLParameter> getParameters() {
-        return null;
+        if (ArrayUtil.isEmpty(collection)){
+            return Collections.emptyList();
+        }
+        ArrayList<SQLParameter> sqlParameters = new ArrayList<>(collection.size());
+        for (Object o : collection) {
+            sqlParameters.add(new EasyConstSQLParameter(table,propertyName,o));
+        }
+        return sqlParameters;
     }
 }

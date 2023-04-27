@@ -3,7 +3,6 @@ package com.easy.query.core.basic.jdbc.executor.internal.unit;
 import com.easy.query.core.sharding.merge.StreamMergeContext;
 
 import java.util.Collection;
-import java.util.List;
 
 /**
  * create time 2023/4/13 21:59

@@ -37,7 +37,7 @@ public class EasyQueryPrepareParseResult implements QueryPrepareParseResult {
 
 
     @Override
-    public EasyEntityPredicateSqlExpression getEasyEntityPredicateSqlExpression() {
+    public EasyQuerySqlExpression getEasyEntityPredicateSqlExpression() {
         return easyQuerySqlExpression;
     }
 }

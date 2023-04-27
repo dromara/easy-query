@@ -10,6 +10,9 @@ import java.util.List;
  */
 public interface EasyEntitySqlExpression extends EasySqlExpression {
     List<EasyTableSqlExpression> getTables();
+    default EasyTableSqlExpression getTable(int index){
+        return getTables().get(index);
+    }
 
     @Override
     EasyEntitySqlExpression cloneSqlExpression();

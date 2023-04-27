@@ -167,7 +167,7 @@ public final class StreamResultUtil {
         return false;
     }
 
-    private static  <TResult> ColumnMetadata[] columnsToProperties(ExecutorContext context,ResultSetMetaData rsmd, Class<TResult> clazz) throws SQLException {
+    public static  <TResult> ColumnMetadata[] columnsToProperties(ExecutorContext context,ResultSetMetaData rsmd, Class<TResult> clazz) throws SQLException {
 
         EntityMetadataManager entityMetadataManager = context.getRuntimeContext().getEntityMetadataManager();
         EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(clazz);

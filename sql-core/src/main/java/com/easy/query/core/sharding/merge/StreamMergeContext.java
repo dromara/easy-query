@@ -5,6 +5,7 @@ import com.easy.query.core.basic.jdbc.con.EasyConnection;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.sharding.enums.ConnectionModeEnum;
 import com.easy.query.core.sharding.merge.executor.common.ExecutionUnit;
+import com.easy.query.core.sharding.merge.segment.PropertyOrder;
 
 import java.util.Collection;
 import java.util.List;
@@ -16,9 +17,10 @@ import java.util.List;
  * @author xuejiaming
  */
 public interface StreamMergeContext extends AutoCloseable {
+    List<PropertyOrder> getOrders();
 
     ExecutorContext getExecutorContext();
-    default boolean isSharding(){
+    default boolean isShardingMerge(){
         return !isSerialExecute()&&getExecutionUnits().size()!=1;
     }
 
@@ -30,6 +32,9 @@ public interface StreamMergeContext extends AutoCloseable {
     boolean isSerialExecute();
 
     boolean isSeqQuery();
+    boolean groupQueryMemoryMerge();
+    boolean isPaginationQuery();
+    boolean hasGroupQuery();
 
     List<EasyConnection> getEasyConnections(ConnectionModeEnum connectionMode, String dataSourceName, int createDbConnectionCount);
 }

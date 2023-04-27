@@ -1,4 +1,4 @@
-package com.easy.query.core.sharding.merge.impl;
+package com.easy.query.core.sharding.merge.result.impl;
 
 import com.easy.query.core.sharding.merge.abstraction.StreamResult;
 
@@ -19,117 +19,126 @@ import java.sql.Timestamp;
  *
  * @author xuejiaming
  */
-public final class EmptyStreamResult implements StreamResult {
-    private static final EmptyStreamResult instance=new EmptyStreamResult();
-    public static EmptyStreamResult getInstance(){
-        return instance;
+public final class EasyStreamResult implements StreamResult {
+    private final ResultSet resultSet;
+
+    public EasyStreamResult(ResultSet resultSet) {
+
+        this.resultSet = resultSet;
     }
 
-    public EmptyStreamResult(){
-
+    @Override
+    public boolean hasElement() {
+        throw new UnsupportedOperationException();
     }
+
+    @Override
+    public boolean skipFirst() {
+        throw new UnsupportedOperationException();
+    }
+
     @Override
     public boolean next() throws SQLException {
-        return false;
+        return resultSet.next();
     }
 
     @Override
     public Object getObject(int columnIndex) throws SQLException {
-        return null;
+        return resultSet.getObject(columnIndex);
     }
 
     @Override
     public boolean wasNull() throws SQLException {
-        return false;
+        return resultSet.wasNull();
     }
 
     @Override
     public ResultSetMetaData getMetaData() throws SQLException {
-        return null;
+        return resultSet.getMetaData();
     }
 
     @Override
     public SQLXML getSQLXML(int columnIndex) throws SQLException {
-        return null;
+        return resultSet.getSQLXML(columnIndex);
     }
 
     @Override
     public Timestamp getTimestamp(int columnIndex) throws SQLException {
-        return null;
+        return resultSet.getTimestamp(columnIndex);
     }
 
     @Override
     public Time getTime(int columnIndex) throws SQLException {
-        return null;
+        return resultSet.getTime(columnIndex);
     }
 
     @Override
     public String getString(int columnIndex) throws SQLException {
-        return null;
+        return resultSet.getString(columnIndex);
     }
 
     @Override
     public Date getDate(int columnIndex) throws SQLException {
-        return null;
+        return resultSet.getDate(columnIndex);
     }
 
     @Override
     public short getShort(int columnIndex) throws SQLException {
-        return 0;
+        return resultSet.getShort(columnIndex);
     }
 
     @Override
     public long getLong(int columnIndex) throws SQLException {
-        return 0;
+        return resultSet.getLong(columnIndex);
     }
 
     @Override
     public int getInt(int columnIndex) throws SQLException {
-        return 0;
+        return resultSet.getInt(columnIndex);
     }
 
     @Override
     public float getFloat(int columnIndex) throws SQLException {
-        return 0;
+        return resultSet.getFloat(columnIndex);
     }
 
     @Override
     public double getDouble(int columnIndex) throws SQLException {
-        return 0;
+        return resultSet.getDouble(columnIndex);
     }
 
     @Override
     public Clob getClob(int columnIndex) throws SQLException {
-        return null;
+        return resultSet.getClob(columnIndex);
     }
 
     @Override
     public byte getByte(int columnIndex) throws SQLException {
-        return 0;
+        return resultSet.getByte(columnIndex);
     }
 
     @Override
     public byte[] getBytes(int columnIndex) throws SQLException {
-        return new byte[0];
+        return resultSet.getBytes(columnIndex);
     }
 
     @Override
     public boolean getBoolean(int columnIndex) throws SQLException {
-        return false;
+        return resultSet.getBoolean(columnIndex);
     }
 
     @Override
     public Blob getBlob(int columnIndex) throws SQLException {
-        return null;
+        return resultSet.getBlob(columnIndex);
     }
 
     @Override
     public BigDecimal getBigDecimal(int columnIndex) throws SQLException {
-        return null;
+        return resultSet.getBigDecimal(columnIndex);
     }
 
     @Override
     public void close() throws Exception {
-
+        resultSet.close();
     }
 }

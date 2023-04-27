@@ -12,6 +12,7 @@ import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
 import com.easy.query.core.configuration.EasyQueryConfiguration;
 import com.easy.query.core.basic.plugin.track.TrackManager;
 import com.easy.query.core.sharding.EasyShardingOption;
+import com.easy.query.core.sharding.compare.ShardingComparer;
 import com.easy.query.core.sharding.route.abstraction.DataSourceRouteManager;
 import com.easy.query.core.sharding.route.abstraction.TableRouteManager;
 
@@ -38,6 +39,7 @@ public class DefaultEasyQueryRuntimeContext implements EasyQueryRuntimeContext {
     private final EasyExpressionFactory easyExpressionFactory;
     private final TableRouteManager tableRouteManager;
     private final DataSourceRouteManager dataSourceRouteManager;
+    private final ShardingComparer shardingComparer;
 
     public DefaultEasyQueryRuntimeContext(EasyQueryConfiguration easyQueryConfiguration,
                                           EntityMetadataManager entityMetadataManager,
@@ -53,7 +55,8 @@ public class DefaultEasyQueryRuntimeContext implements EasyQueryRuntimeContext {
                                           EasyShardingExecutorService easyShardingExecutorService,
                                           EasyExpressionFactory easyExpressionFactory,
                                           TableRouteManager tableRouteManager,
-                                          DataSourceRouteManager dataSourceRouteManager){
+                                          DataSourceRouteManager dataSourceRouteManager,
+                                          ShardingComparer shardingComparer){
         this.easyQueryConfiguration = easyQueryConfiguration;
         this.entityMetadataManager = entityMetadataManager;
         this.easyQueryLambdaFactory = easyQueryLambdaFactory;
@@ -69,6 +72,7 @@ public class DefaultEasyQueryRuntimeContext implements EasyQueryRuntimeContext {
         this.easyExpressionFactory = easyExpressionFactory;
         this.tableRouteManager = tableRouteManager;
         this.dataSourceRouteManager = dataSourceRouteManager;
+        this.shardingComparer = shardingComparer;
     }
     @Override
     public EasyQueryConfiguration getEasyQueryConfiguration() {
@@ -143,5 +147,10 @@ public class DefaultEasyQueryRuntimeContext implements EasyQueryRuntimeContext {
     @Override
     public DataSourceRouteManager getDataSourceRouteManager() {
         return dataSourceRouteManager;
+    }
+
+    @Override
+    public ShardingComparer getShardingComparer() {
+        return shardingComparer;
     }
 }

@@ -14,6 +14,9 @@ import java.sql.SQLXML;
  * @author xuejiaming
  */
 public interface StreamResult extends AutoCloseable{
+    boolean hasElement();
+    boolean skipFirst();
+
     boolean next() throws SQLException;
     Object getObject(int columnIndex) throws SQLException;
     boolean wasNull() throws SQLException;

@@ -19,7 +19,9 @@ import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.basic.jdbc.executor.internal.AffectedRowsExecuteResult;
 import com.easy.query.core.basic.jdbc.executor.internal.QueryExecuteResult;
-import com.easy.query.core.sharding.merge.impl.DefaultStreamResult;
+import com.easy.query.core.sharding.merge.abstraction.StreamResult;
+import com.easy.query.core.sharding.merge.result.impl.EasyShardingStreamResult;
+import com.easy.query.core.sharding.merge.result.impl.EasyStreamResult;
 
 import java.beans.PropertyDescriptor;
 import java.sql.Connection;
@@ -86,8 +88,10 @@ public class JdbcExecutorUtil {
         }
         return params;
     }
-
-    public static QueryExecuteResult query(ExecutorContext executorContext, EasyConnection easyConnection, String sql, List<SQLParameter> sqlParameters) {
+    public static QueryExecuteResult query(ExecutorContext executorContext, EasyConnection easyConnection, String sql, List<SQLParameter> sqlParameters){
+        return query(executorContext,easyConnection,sql,sqlParameters,false);
+    }
+    public static QueryExecuteResult query(ExecutorContext executorContext, EasyConnection easyConnection, String sql, List<SQLParameter> sqlParameters,boolean shardingMerger) {
         boolean logDebug = log.isDebugEnabled();
         logSql(logDebug, sql);
         EasyQueryRuntimeContext runtimeContext = executorContext.getRuntimeContext();
@@ -99,6 +103,7 @@ public class JdbcExecutorUtil {
         if (logDebug && ArrayUtil.isNotEmpty(parameters)) {
             logParameter(true, parameters);
         }
+        StreamResult sr=null;
         try {
             ps = createPreparedStatement(easyConnection.getConnection(), sql, parameters, easyJdbcTypeHandler);
             if (logDebug) {
@@ -109,12 +114,19 @@ public class JdbcExecutorUtil {
             } else {
                 rs = ps.executeQuery();
             }
+            //如果是分片查询那么需要提前next
+            if(shardingMerger){
+                boolean next = rs.next();
+                sr=new EasyShardingStreamResult(rs,next);
+            }else{
+                sr=new EasyStreamResult(rs);
+            }
 
         } catch (SQLException e) {
             log.error(sql, e);
             throw new EasyQuerySQLException(sql, e);
         }
-        return new QueryExecuteResult(new DefaultStreamResult(rs), ps);
+        return new QueryExecuteResult(sr, ps);
     }
 
     public static <T> AffectedRowsExecuteResult insert(ExecutorContext executorContext, EasyConnection easyConnection, String sql, List<T> entities, List<SQLParameter> sqlParameters, boolean fillAutoIncrement) {

@@ -1,142 +1,158 @@
-package com.easy.query.core.sharding.merge.impl;
+package com.easy.query.core.sharding.merge.result.impl;
 
-import com.easy.query.core.sharding.merge.StreamMergeContext;
 import com.easy.query.core.sharding.merge.abstraction.StreamResult;
 
 import java.math.BigDecimal;
 import java.sql.Blob;
 import java.sql.Clob;
 import java.sql.Date;
+import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.SQLXML;
 import java.sql.Time;
 import java.sql.Timestamp;
-import java.util.Collection;
 
 /**
- * create time 2023/4/20 22:40
+ * create time 2023/4/13 11:34
  * 文件说明
  *
  * @author xuejiaming
  */
-public class MultiOrderStreamMergeResult implements StreamResult {
+public final class EasyShardingStreamResult implements StreamResult {
+    private final ResultSet resultSet;
+    private boolean hasElement;
+    private  boolean skipFirst;
 
-    private final StreamMergeContext streamMergeContext;
-    private final Collection<StreamResult> streamResults;
-    private StreamResult currentStreamResult;
+    public EasyShardingStreamResult(ResultSet resultSet,boolean hasElement){
 
-    public MultiOrderStreamMergeResult(StreamMergeContext streamMergeContext, Collection<StreamResult> streamResults){
+        this.resultSet = resultSet;
+        this.hasElement = hasElement;
+        skipFirst=true;
+    }
 
-        this.streamMergeContext = streamMergeContext;
-        this.streamResults = streamResults;
-        currentStreamResult=streamResults.iterator().next();
+    @Override
+    public boolean hasElement() {
+        return hasElement;
+    }
+
+    @Override
+    public boolean skipFirst() {
+        if (skipFirst)
+        {
+            skipFirst = false;
+            return true;
+        }
+        return false;
     }
 
     @Override
     public boolean next() throws SQLException {
-        return currentStreamResult.next();
+        if(skipFirst){
+            skipFirst=false;
+            return hasElement;
+        }
+        hasElement= resultSet.next();
+        return hasElement;
     }
 
     @Override
     public Object getObject(int columnIndex) throws SQLException {
-        return currentStreamResult.getObject(columnIndex);
+        return resultSet.getObject(columnIndex);
     }
 
     @Override
     public boolean wasNull() throws SQLException {
-        return currentStreamResult.wasNull();
+        return resultSet.wasNull();
     }
 
     @Override
     public ResultSetMetaData getMetaData() throws SQLException {
-        return currentStreamResult.getMetaData();
+        return resultSet.getMetaData();
     }
 
     @Override
     public SQLXML getSQLXML(int columnIndex) throws SQLException {
-        return currentStreamResult.getSQLXML(columnIndex);
+        return resultSet.getSQLXML(columnIndex);
     }
 
     @Override
     public Timestamp getTimestamp(int columnIndex) throws SQLException {
-        return currentStreamResult.getTimestamp(columnIndex);
+        return resultSet.getTimestamp(columnIndex);
     }
 
     @Override
     public Time getTime(int columnIndex) throws SQLException {
-        return currentStreamResult.getTime(columnIndex);
+        return resultSet.getTime(columnIndex);
     }
 
     @Override
     public String getString(int columnIndex) throws SQLException {
-        return currentStreamResult.getString(columnIndex);
+        return resultSet.getString(columnIndex);
     }
 
     @Override
     public Date getDate(int columnIndex) throws SQLException {
-        return currentStreamResult.getDate(columnIndex);
+        return resultSet.getDate(columnIndex);
     }
 
     @Override
     public short getShort(int columnIndex) throws SQLException {
-        return currentStreamResult.getShort(columnIndex);
+        return resultSet.getShort(columnIndex);
     }
 
     @Override
     public long getLong(int columnIndex) throws SQLException {
-        return currentStreamResult.getLong(columnIndex);
+        return resultSet.getLong(columnIndex);
     }
 
     @Override
     public int getInt(int columnIndex) throws SQLException {
-        return currentStreamResult.getInt(columnIndex);
+        return resultSet.getInt(columnIndex);
     }
 
     @Override
     public float getFloat(int columnIndex) throws SQLException {
-        return currentStreamResult.getFloat(columnIndex);
+        return resultSet.getFloat(columnIndex);
     }
 
     @Override
     public double getDouble(int columnIndex) throws SQLException {
-        return currentStreamResult.getDouble(columnIndex);
+        return resultSet.getDouble(columnIndex);
     }
 
     @Override
     public Clob getClob(int columnIndex) throws SQLException {
-        return currentStreamResult.getClob(columnIndex);
+        return resultSet.getClob(columnIndex);
     }
 
     @Override
     public byte getByte(int columnIndex) throws SQLException {
-        return currentStreamResult.getByte(columnIndex);
+        return resultSet.getByte(columnIndex);
     }
 
     @Override
     public byte[] getBytes(int columnIndex) throws SQLException {
-        return currentStreamResult.getBytes(columnIndex);
+        return resultSet.getBytes(columnIndex);
     }
 
     @Override
     public boolean getBoolean(int columnIndex) throws SQLException {
-        return currentStreamResult.getBoolean(columnIndex);
+        return resultSet.getBoolean(columnIndex);
     }
 
     @Override
     public Blob getBlob(int columnIndex) throws SQLException {
-        return currentStreamResult.getBlob(columnIndex);
+        return resultSet.getBlob(columnIndex);
     }
 
     @Override
     public BigDecimal getBigDecimal(int columnIndex) throws SQLException {
-        return currentStreamResult.getBigDecimal(columnIndex);
+        return resultSet.getBigDecimal(columnIndex);
     }
 
     @Override
     public void close() throws Exception {
-        for (StreamResult streamResult : streamResults) {
-            streamResult.close();
-        }
+        resultSet.close();
     }
 }

@@ -9,14 +9,14 @@ import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.executor.parser.ExecutionContext;
 import com.easy.query.core.sharding.enums.ConnectionModeEnum;
 import com.easy.query.core.sharding.merge.executor.common.ExecutionUnit;
-import com.easy.query.core.sharding.merge.executor.internal.CommandTypeEnum;
+import com.easy.query.core.sharding.merge.segment.PropertyOrder;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * create time 2023/4/17 12:32
@@ -24,16 +24,17 @@ import java.util.Objects;
  *
  * @author xuejiaming
  */
-public class DefaultStreamMergeContext implements StreamMergeContext {
+public class EasyStreamMergeContext implements StreamMergeContext {
+    protected static List<PropertyOrder> EMPTY_ORDERS=Collections.emptyList();
 //    private final List<ExecutionUnit> executionUnits;
 //    private final ShardingRouteResult shardingRouteResult;
 //    private final EntityExpression entityExpression;
-    private final EasyQueryRuntimeContext runtimeContext;
-    private final boolean serialExecute;
-    private final Map<String/* data source name*/, Collection<CloseableConnection>> closeableDataSourceConnections =new HashMap<>();
-    private final ExecutorContext executorContext;
-    private final ExecutionContext executionContext;
-    private final EasyConnectionManager connectionManager;
+    protected final EasyQueryRuntimeContext runtimeContext;
+    protected final boolean serialExecute;
+    protected final Map<String/* data source name*/, Collection<CloseableConnection>> closeableDataSourceConnections =new HashMap<>();
+    protected final ExecutorContext executorContext;
+    protected final ExecutionContext executionContext;
+    protected final EasyConnectionManager connectionManager;
 
     //    public DefaultStreamMergeContext(List<ExecutionUnit> executionUnits, EntityExpression entityExpression){
 //
@@ -42,7 +43,7 @@ public class DefaultStreamMergeContext implements StreamMergeContext {
 //        this.runtimeContext=entityExpression.getRuntimeContext();
 //        serialExecute=!(entityExpression instanceof EntityQueryExpression);
 //    }
-    public DefaultStreamMergeContext(ExecutorContext executorContext, ExecutionContext executionContext){
+    public EasyStreamMergeContext(ExecutorContext executorContext, ExecutionContext executionContext){
         this.executorContext = executorContext;
         this.executionContext = executionContext;
 //        this.shardingRouteResult = shardingRouteResult;
@@ -58,6 +59,10 @@ public class DefaultStreamMergeContext implements StreamMergeContext {
         return executorContext;
     }
 
+    @Override
+    public List<PropertyOrder> getOrders() {
+        return EMPTY_ORDERS;
+    }
 
     public Collection<ExecutionUnit> getExecutionUnits() {
         return executionContext.getExecutionUnits();
@@ -106,6 +111,21 @@ public class DefaultStreamMergeContext implements StreamMergeContext {
         }
         return ConnectionStrategyEnum.IndependentConnectionMaster;
 
+    }
+
+    @Override
+    public boolean groupQueryMemoryMerge() {
+        return false;
+    }
+
+    @Override
+    public boolean isPaginationQuery() {
+        return false;
+    }
+
+    @Override
+    public boolean hasGroupQuery() {
+        return false;
     }
 
     @Override

@@ -11,4 +11,6 @@ import com.easy.query.core.expression.sql.expression.EasyQuerySqlExpression;
  * @author xuejiaming
  */
 public interface QueryPrepareParseResult extends PredicatePrepareParseResult{
+    @Override
+    EasyQuerySqlExpression getEasyEntityPredicateSqlExpression();
 }

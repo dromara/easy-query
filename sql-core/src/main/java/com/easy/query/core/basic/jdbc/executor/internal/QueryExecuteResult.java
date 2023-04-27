@@ -1,7 +1,7 @@
 package com.easy.query.core.basic.jdbc.executor.internal;
 
 import com.easy.query.core.sharding.merge.abstraction.StreamResult;
-import com.easy.query.core.sharding.merge.impl.EmptyStreamResult;
+import com.easy.query.core.sharding.merge.result.impl.EmptyStreamResult;
 
 import java.sql.PreparedStatement;
 

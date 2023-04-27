@@ -92,9 +92,6 @@ public class DefaultExecutionContextFactory implements ExecutionContextFactory {
         if(prepareParseResult instanceof PredicatePrepareParseResult){
             return new ShardingPredicateExecutionCreator((PredicatePrepareParseResult)prepareParseResult,routeContext).create();
         }
-        if(prepareParseResult instanceof InsertPrepareParseResult){
-            return new ShardingInsertExecutionCreator((InsertPrepareParseResult) prepareParseResult,routeContext).create();
-        }
         if(prepareParseResult instanceof EntityPrepareParseResult){
             return new ShardingEntityExecutionCreator((EntityPrepareParseResult) prepareParseResult,routeContext).create();
         }

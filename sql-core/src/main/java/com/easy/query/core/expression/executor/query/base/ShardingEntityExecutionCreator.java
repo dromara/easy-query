@@ -1,6 +1,7 @@
 package com.easy.query.core.expression.executor.query.base;
 
 import com.easy.query.core.expression.executor.parser.EntityPrepareParseResult;
+import com.easy.query.core.expression.executor.parser.InsertPrepareParseResult;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityToExpressionBuilder;
 import com.easy.query.core.expression.sql.expression.EasyEntitySqlExpression;
@@ -36,6 +37,9 @@ public class ShardingEntityExecutionCreator extends ShardingBaseExecutionCreator
 
     @Override
     protected boolean getFillAutoIncrement(RouteUnit routeUnit) {
+        if(entityPrepareParseResult instanceof InsertPrepareParseResult){
+            return ((InsertPrepareParseResult)entityPrepareParseResult).isFillAutoIncrement();
+        }
         return false;
     }
 

@@ -40,6 +40,8 @@ import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.sharding.DefaultEasyDataSource;
 import com.easy.query.core.sharding.EasyDataSource;
 import com.easy.query.core.sharding.EasyShardingOption;
+import com.easy.query.core.sharding.compare.JavaLanguageShardingComparer;
+import com.easy.query.core.sharding.compare.ShardingComparer;
 import com.easy.query.core.sharding.rewrite.DefaultRewriteContextFactory;
 import com.easy.query.core.sharding.rewrite.RewriteContextFactory;
 import com.easy.query.core.sharding.route.DefaultRouteContextFactory;
@@ -88,6 +90,7 @@ public class EasyQuerytBuilderConfiguration {
     protected DefaultEasyShardingExecutorService defaultEasyShardingExecutorService;
     protected DefaultEasyExpressionFactory defaultEasyExpressionFactory;
     protected NameConversion nameConversion;
+    protected ShardingComparer shardingComparer;
     protected IDialect dialect;
 
     public EasyQuerytBuilderConfiguration() {
@@ -158,7 +161,8 @@ public class EasyQuerytBuilderConfiguration {
         EasyShardingOption easyShardingOption = getDefaultIfNull(this.easyShardingOption,()->new EasyShardingOption(10, 20));
         EasyShardingExecutorService defaultEasyShardingExecutorService = getDefaultIfNull(this.defaultEasyShardingExecutorService,()->new DefaultEasyShardingExecutorService(easyShardingOption));
         EasyExpressionFactory defaultEasyExpressionFactory = getDefaultIfNull(this.defaultEasyExpressionFactory,DefaultEasyExpressionFactory::new);
-        EasyQueryRuntimeContext runtimeContext = new DefaultEasyQueryRuntimeContext(configuration, entityMetadataManager, easyQueryLambdaFactory, connectionManager, defaultEntityExpressionExecutor, jdbcTypeHandlerManager, easyQueryableFactory, defaultEasyExpressionBuilderFactory, defaultTrackManager, defaultEasyPageResultProvider, easyShardingOption, defaultEasyShardingExecutorService, defaultEasyExpressionFactory, defaultTableRouteManager, defaultDataSourceRouteManager);
+        ShardingComparer shardingComparer=getDefaultIfNull(this.shardingComparer, JavaLanguageShardingComparer::new);
+        EasyQueryRuntimeContext runtimeContext = new DefaultEasyQueryRuntimeContext(configuration, entityMetadataManager, easyQueryLambdaFactory, connectionManager, defaultEntityExpressionExecutor, jdbcTypeHandlerManager, easyQueryableFactory, defaultEasyExpressionBuilderFactory, defaultTrackManager, defaultEasyPageResultProvider, easyShardingOption, defaultEasyShardingExecutorService, defaultEasyExpressionFactory, defaultTableRouteManager, defaultDataSourceRouteManager,shardingComparer);
         return new DefaultEasyQuery(runtimeContext);
     }
 
