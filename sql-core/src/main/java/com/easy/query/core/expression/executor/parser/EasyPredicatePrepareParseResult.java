@@ -1,6 +1,7 @@
 package com.easy.query.core.expression.executor.parser;
 
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.EntityPredicateExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.expression.EasyEntityPredicateSqlExpression;
 import com.easy.query.core.expression.sql.expression.EasyEntitySqlExpression;
@@ -15,14 +16,14 @@ import java.util.Set;
  */
 public class EasyPredicatePrepareParseResult implements PredicatePrepareParseResult{
     private final Set<Class<?>> shardingEntities;
-    private final EntityExpressionBuilder entityExpressionBuilder;
+    private final EntityPredicateExpressionBuilder entityPredicateExpressionBuilder;
     private final EasyEntityPredicateSqlExpression easyEntitySqlExpression;
 
-    public EasyPredicatePrepareParseResult(Set<Class<?>> shardingEntities, EntityExpressionBuilder entityExpressionBuilder){
+    public EasyPredicatePrepareParseResult(Set<Class<?>> shardingEntities, EntityPredicateExpressionBuilder entityPredicateExpressionBuilder){
 
         this.shardingEntities = shardingEntities;
-        this.entityExpressionBuilder = entityExpressionBuilder;
-        this.easyEntitySqlExpression = (EasyEntityPredicateSqlExpression)entityExpressionBuilder.toExpression();
+        this.entityPredicateExpressionBuilder = entityPredicateExpressionBuilder;
+        this.easyEntitySqlExpression = entityPredicateExpressionBuilder.toExpression();
     }
     @Override
     public EasyEntityPredicateSqlExpression getEasyEntityPredicateSqlExpression() {
@@ -35,7 +36,7 @@ public class EasyPredicatePrepareParseResult implements PredicatePrepareParseRes
     }
 
     @Override
-    public EntityExpressionBuilder getEntityExpressionBuilder() {
-        return entityExpressionBuilder;
+    public EntityPredicateExpressionBuilder getEntityExpressionBuilder() {
+        return entityPredicateExpressionBuilder;
     }
 }

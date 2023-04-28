@@ -10,17 +10,21 @@ import com.easy.query.core.basic.jdbc.executor.internal.abstraction.EasyQueryJdb
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.executor.parser.EasyEntityPrepareParseResult;
-import com.easy.query.core.expression.executor.parser.DefaultInsertPrepareParseResult;
+import com.easy.query.core.expression.executor.parser.EasyInsertPrepareParseResult;
 import com.easy.query.core.expression.executor.parser.EasyPredicatePrepareParseResult;
 import com.easy.query.core.expression.executor.parser.EasyQueryPrepareParseResult;
 import com.easy.query.core.expression.executor.parser.EasyPrepareParser;
+import com.easy.query.core.expression.executor.parser.EntityPrepareParseResult;
 import com.easy.query.core.expression.executor.parser.ExecutionContext;
+import com.easy.query.core.expression.executor.parser.InsertPrepareParseResult;
+import com.easy.query.core.expression.executor.parser.PrepareParseResult;
 import com.easy.query.core.expression.executor.query.ExecutionContextFactory;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityPredicateExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.sharding.merge.EasyStreamMergeContext;
+import com.easy.query.core.sharding.merge.EntityStreamMergeContext;
 import com.easy.query.core.sharding.merge.ShardingQueryEasyStreamMergeContext;
 import com.easy.query.core.util.StreamResultUtil;
 
@@ -44,13 +48,25 @@ public class DefaultEntityExpressionExecutor implements EntityExpressionExecutor
     }
 
     @Override
-    public <TR> List<TR> query(ExecutorContext executorContext, Class<TR> clazz, String sql, List<SQLParameter> sqlParameters) {
+    public <TR> List<TR> querySql(ExecutorContext executorContext, Class<TR> clazz, String sql, List<SQLParameter> sqlParameters) {
 
         ExecutionContext executionContext = executionContextFactory.createJdbcExecutionContext(sql, sqlParameters);
 
-        try (EasyQueryJdbcExecutor<QueryExecuteResult> easyQueryJDBCExecutor = getQuerySqlJdbcExecuteResult(executorContext, executionContext);
+        try (EasyQueryJdbcExecutor<QueryExecuteResult> easyQueryJDBCExecutor = getSqlQueryJdbcExecuteResult(executorContext, executionContext);
              QueryExecuteResult executeResult = easyQueryJDBCExecutor.execute()) {
             return StreamResultUtil.mapTo(executorContext, executeResult.getStreamResult(), clazz);
+        } catch (Exception e) {
+            throw new EasyQueryException(e);
+        }
+    }
+    @Override
+    public long executeSqlRows(ExecutorContext executorContext, String sql, List<SQLParameter> sqlParameters) {
+
+        ExecutionContext executionContext = executionContextFactory.createJdbcExecutionContext(sql, sqlParameters);
+
+        try (EasyQueryJdbcExecutor<AffectedRowsExecuteResult> easyQueryJDBCExecutor = getSqlExecuteUpdateJdbcExecuteResult(executorContext, executionContext);
+             AffectedRowsExecuteResult executeResult = easyQueryJDBCExecutor.execute()) {
+            return executeResult.getRows();
         } catch (Exception e) {
             throw new EasyQueryException(e);
         }
@@ -58,11 +74,10 @@ public class DefaultEntityExpressionExecutor implements EntityExpressionExecutor
 
     @Override
     public <TR> List<TR> query(ExecutorContext executorContext, Class<TR> clazz, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
-        Set<Class<?>> shardingEntities = easyPrepareParser.parse(entityQueryExpressionBuilder);
-        EasyQueryPrepareParseResult queryPrepareParseResult = new EasyQueryPrepareParseResult(shardingEntities, entityQueryExpressionBuilder);
-        ExecutionContext executionContext = executionContextFactory.createEntityExecutionContext(queryPrepareParseResult);
+        PrepareParseResult prepareParseResult = easyPrepareParser.parse(entityQueryExpressionBuilder);
+        ExecutionContext executionContext = executionContextFactory.createEntityExecutionContext(prepareParseResult);
 
-        try (EasyQueryJdbcExecutor<QueryExecuteResult> easyQueryJDBCExecutor = getQueryEntityJdbcExecuteResult(executorContext, executionContext,queryPrepareParseResult);
+        try (EasyQueryJdbcExecutor<QueryExecuteResult> easyQueryJDBCExecutor = getQueryEntityJdbcExecuteResult(executorContext, executionContext,(EasyQueryPrepareParseResult)prepareParseResult);
              QueryExecuteResult executeResult = easyQueryJDBCExecutor.execute()) {
             return StreamResultUtil.mapTo(executorContext, executeResult.getStreamResult(), clazz);
         } catch (Exception e) {
@@ -72,11 +87,10 @@ public class DefaultEntityExpressionExecutor implements EntityExpressionExecutor
 
     @Override
     public <T> long insert(ExecutorContext executorContext, List<T> entities, EntityInsertExpressionBuilder entityInsertExpressionBuilder, boolean fillAutoIncrement) {
-        Set<Class<?>> shardingEntities = easyPrepareParser.parse(entityInsertExpressionBuilder);
-        DefaultInsertPrepareParseResult defaultInsertPrepareParseResult = new DefaultInsertPrepareParseResult(shardingEntities, entityInsertExpressionBuilder, (List<Object>) entities, fillAutoIncrement);
-        ExecutionContext executionContext = executionContextFactory.createEntityExecutionContext(defaultInsertPrepareParseResult);
+        PrepareParseResult prepareParseResult = easyPrepareParser.parse(entityInsertExpressionBuilder,(List<Object>) entities,fillAutoIncrement);
+        ExecutionContext executionContext = executionContextFactory.createEntityExecutionContext(prepareParseResult);
 
-        try (EasyQueryJdbcExecutor<AffectedRowsExecuteResult> easyQueryJDBCExecutor = getInsertJdbcExecuteResult(executorContext, executionContext);
+        try (EasyQueryJdbcExecutor<AffectedRowsExecuteResult> easyQueryJDBCExecutor = getInsertJdbcExecuteResult(executorContext, executionContext,prepareParseResult);
              AffectedRowsExecuteResult executeResult = easyQueryJDBCExecutor.execute()) {
             return executeResult.getRows();
         } catch (Exception e) {
@@ -86,11 +100,10 @@ public class DefaultEntityExpressionExecutor implements EntityExpressionExecutor
 
     @Override
     public <T> long executeRows(ExecutorContext executorContext, EntityExpressionBuilder entityExpressionBuilder, List<T> entities) {
-        Set<Class<?>> shardingEntities = easyPrepareParser.parse(entityExpressionBuilder);
-        EasyEntityPrepareParseResult defaultInsertPrepareParseResult = new EasyEntityPrepareParseResult(shardingEntities, entityExpressionBuilder, (List<Object>) entities);
-        ExecutionContext executionContext = executionContextFactory.createEntityExecutionContext(defaultInsertPrepareParseResult);
+        PrepareParseResult prepareParseResult =  easyPrepareParser.parse(entityExpressionBuilder,(List<Object>) entities,false);
+        ExecutionContext executionContext = executionContextFactory.createEntityExecutionContext(prepareParseResult);
 
-        try (EasyQueryJdbcExecutor<AffectedRowsExecuteResult> easyQueryJDBCExecutor = getExecuteBatchJdbcExecuteResult(executorContext, executionContext);
+        try (EasyQueryJdbcExecutor<AffectedRowsExecuteResult> easyQueryJDBCExecutor = getExecuteBatchJdbcExecuteResult(executorContext, executionContext,prepareParseResult);
              AffectedRowsExecuteResult executeResult = easyQueryJDBCExecutor.execute()) {
             return executeResult.getRows();
         } catch (Exception e) {
@@ -100,11 +113,10 @@ public class DefaultEntityExpressionExecutor implements EntityExpressionExecutor
 
     @Override
     public <T> long executeRows(ExecutorContext executorContext, EntityPredicateExpressionBuilder entityPredicateExpressionBuilder) {
-        Set<Class<?>> shardingEntities = easyPrepareParser.parse(entityPredicateExpressionBuilder);
-        EasyPredicatePrepareParseResult easyPredicatePrepareParseResult = new EasyPredicatePrepareParseResult(shardingEntities, entityPredicateExpressionBuilder);
-        ExecutionContext executionContext = executionContextFactory.createEntityExecutionContext(easyPredicatePrepareParseResult);
+        PrepareParseResult prepareParseResult =   easyPrepareParser.parse(entityPredicateExpressionBuilder);
+        ExecutionContext executionContext = executionContextFactory.createEntityExecutionContext(prepareParseResult);
 
-        try (EasyQueryJdbcExecutor<AffectedRowsExecuteResult> easyQueryJDBCExecutor = getExecuteUpdateJdbcExecuteResult(executorContext, executionContext);
+        try (EasyQueryJdbcExecutor<AffectedRowsExecuteResult> easyQueryJDBCExecutor = getExecuteUpdateJdbcExecuteResult(executorContext, executionContext,prepareParseResult);
              AffectedRowsExecuteResult executeResult = easyQueryJDBCExecutor.execute()) {
             return executeResult.getRows();
         } catch (Exception e) {
@@ -112,36 +124,27 @@ public class DefaultEntityExpressionExecutor implements EntityExpressionExecutor
         }
     }
 
-    @Override
-    public long executeRows(ExecutorContext executorContext, String sql, List<SQLParameter> sqlParameters) {
 
-        ExecutionContext executionContext = executionContextFactory.createJdbcExecutionContext(sql, sqlParameters);
-
-        try (EasyQueryJdbcExecutor<AffectedRowsExecuteResult> easyQueryJDBCExecutor = getExecuteUpdateJdbcExecuteResult(executorContext, executionContext);
-             AffectedRowsExecuteResult executeResult = easyQueryJDBCExecutor.execute()) {
-            return executeResult.getRows();
-        } catch (Exception e) {
-            throw new EasyQueryException(e);
-        }
-    }
-
-    private EasyQueryJdbcExecutor<QueryExecuteResult> getQuerySqlJdbcExecuteResult(ExecutorContext executorContext, ExecutionContext executionContext) {
+    private EasyQueryJdbcExecutor<QueryExecuteResult> getSqlQueryJdbcExecuteResult(ExecutorContext executorContext, ExecutionContext executionContext) {
         return new DefaultQueryEasyQueryJdbcExecutor(new EasyStreamMergeContext(executorContext, executionContext));
+    }
+    private EasyQueryJdbcExecutor<AffectedRowsExecuteResult> getSqlExecuteUpdateJdbcExecuteResult(ExecutorContext executorContext, ExecutionContext executionContext) {
+        return new DefaultExecuteUpdateEasyQueryJdbcExecutor(new EasyStreamMergeContext(executorContext, executionContext));
     }
     private EasyQueryJdbcExecutor<QueryExecuteResult> getQueryEntityJdbcExecuteResult(ExecutorContext executorContext, ExecutionContext executionContext,EasyQueryPrepareParseResult easyQueryPrepareParseResult) {
         return new DefaultQueryEasyQueryJdbcExecutor(new ShardingQueryEasyStreamMergeContext(executorContext, executionContext,easyQueryPrepareParseResult));
     }
 
-    private EasyQueryJdbcExecutor<AffectedRowsExecuteResult> getInsertJdbcExecuteResult(ExecutorContext executorContext, ExecutionContext executionContext) {
-        return new DefaultInsertEasyQueryJdbcExecutor(new EasyStreamMergeContext(executorContext, executionContext));
+    private EasyQueryJdbcExecutor<AffectedRowsExecuteResult> getInsertJdbcExecuteResult(ExecutorContext executorContext, ExecutionContext executionContext, PrepareParseResult prepareParseResult) {
+        return new DefaultInsertEasyQueryJdbcExecutor(new EntityStreamMergeContext(executorContext, executionContext,prepareParseResult));
     }
 
-    private EasyQueryJdbcExecutor<AffectedRowsExecuteResult> getExecuteBatchJdbcExecuteResult(ExecutorContext executorContext, ExecutionContext executionContext) {
-        return new DefaultExecuteBatchEasyQueryJdbcExecutor(new EasyStreamMergeContext(executorContext, executionContext));
+    private EasyQueryJdbcExecutor<AffectedRowsExecuteResult> getExecuteBatchJdbcExecuteResult(ExecutorContext executorContext, ExecutionContext executionContext, PrepareParseResult prepareParseResult) {
+        return new DefaultExecuteBatchEasyQueryJdbcExecutor(new EntityStreamMergeContext(executorContext, executionContext,prepareParseResult));
     }
 
-    private EasyQueryJdbcExecutor<AffectedRowsExecuteResult> getExecuteUpdateJdbcExecuteResult(ExecutorContext executorContext, ExecutionContext executionContext) {
-        return new DefaultExecuteUpdateEasyQueryJdbcExecutor(new EasyStreamMergeContext(executorContext, executionContext));
+    private EasyQueryJdbcExecutor<AffectedRowsExecuteResult> getExecuteUpdateJdbcExecuteResult(ExecutorContext executorContext, ExecutionContext executionContext,PrepareParseResult prepareParseResult) {
+        return new DefaultExecuteUpdateEasyQueryJdbcExecutor(new EntityStreamMergeContext(executorContext, executionContext,prepareParseResult));
     }
 
 }

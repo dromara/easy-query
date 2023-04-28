@@ -1,5 +1,6 @@
 package com.easy.query.core.expression.executor.parser;
 
+import com.easy.query.core.expression.sql.builder.EntityPredicateExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.expression.EasyEntityPredicateSqlExpression;
 import com.easy.query.core.expression.sql.expression.EasyQuerySqlExpression;
@@ -13,4 +14,9 @@ import com.easy.query.core.expression.sql.expression.EasyQuerySqlExpression;
 public interface QueryPrepareParseResult extends PredicatePrepareParseResult{
     @Override
     EasyQuerySqlExpression getEasyEntityPredicateSqlExpression();
+    @Override
+    EntityQueryExpressionBuilder getEntityExpressionBuilder();
+    long getOffset();
+    long getRows();
+    boolean isSharding();
 }

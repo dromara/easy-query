@@ -7,9 +7,12 @@ import com.easy.query.core.basic.jdbc.con.EasyConnectionManager;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.executor.parser.ExecutionContext;
+import com.easy.query.core.expression.executor.parser.PrepareParseResult;
 import com.easy.query.core.sharding.enums.ConnectionModeEnum;
 import com.easy.query.core.sharding.merge.executor.common.ExecutionUnit;
 import com.easy.query.core.sharding.merge.segment.PropertyOrder;
+import com.easy.query.core.util.ArrayUtil;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -57,6 +60,11 @@ public class EasyStreamMergeContext implements StreamMergeContext {
     @Override
     public ExecutorContext getExecutorContext() {
         return executorContext;
+    }
+
+    @Override
+    public boolean isSharding() {
+        return false;
     }
 
     @Override
@@ -115,17 +123,37 @@ public class EasyStreamMergeContext implements StreamMergeContext {
 
     @Override
     public boolean groupQueryMemoryMerge() {
-        return false;
+        throw new NotImplementedException();
     }
 
     @Override
     public boolean isPaginationQuery() {
-        return false;
+        throw new NotImplementedException();
     }
 
     @Override
     public boolean hasGroupQuery() {
-        return false;
+        throw new NotImplementedException();
+    }
+
+    @Override
+    public long getOffset() {
+        throw new NotImplementedException();
+    }
+
+    @Override
+    public long getRows() {
+        throw new NotImplementedException();
+    }
+
+    @Override
+    public long getRewriteOffset() {
+        throw new NotImplementedException();
+    }
+
+    @Override
+    public long getRewriteRows() {
+        throw new NotImplementedException();
     }
 
     @Override

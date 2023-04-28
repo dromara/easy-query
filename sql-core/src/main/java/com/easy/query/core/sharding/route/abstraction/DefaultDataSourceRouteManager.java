@@ -1,11 +1,7 @@
 package com.easy.query.core.sharding.route.abstraction;
 
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
-import com.easy.query.core.expression.executor.parser.DefaultInsertPrepareParseResult;
-import com.easy.query.core.expression.executor.parser.EntityPrepareParseResult;
-import com.easy.query.core.expression.executor.parser.InsertPrepareParseResult;
 import com.easy.query.core.expression.executor.parser.PrepareParseResult;
-import com.easy.query.core.expression.executor.parser.QueryPrepareParseResult;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.sharding.EasyDataSource;
@@ -13,12 +9,9 @@ import com.easy.query.core.sharding.route.datasource.DataSourceRoute;
 import com.easy.query.core.sharding.route.datasource.ShardingDataSourceRoute;
 import com.easy.query.core.sharding.rule.datasource.DataSourceRouteRule;
 import com.easy.query.core.util.ClassUtil;
-import com.easy.query.core.util.StringUtil;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 

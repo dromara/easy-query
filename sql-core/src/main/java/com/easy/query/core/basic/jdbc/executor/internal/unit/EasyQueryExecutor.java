@@ -32,8 +32,8 @@ public class EasyQueryExecutor extends AbstractExecutor<QueryExecuteResult> {
         SqlUnit sqlUnit = commandExecuteUnit.getExecutionUnit().getSqlUnit();
         String sql = sqlUnit.getSql();
         List<SQLParameter> parameters = sqlUnit.getParameters();
-        boolean shardingMerger = streamMergeContext.isShardingMerge();
-        return JdbcExecutorUtil.query(executorContext,easyConnection,sql,parameters,shardingMerger);
+        boolean isSharding = streamMergeContext.isSharding();
+        return JdbcExecutorUtil.query(executorContext,easyConnection,sql,parameters,isSharding);
     }
     @Override
     public ShardingMerger<QueryExecuteResult> getShardingMerger() {

@@ -4,6 +4,7 @@ import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.expression.EasyEntitySqlExpression;
 import com.easy.query.core.expression.sql.expression.EasySqlExpression;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -13,5 +14,8 @@ import java.util.Set;
  * @author xuejiaming
  */
 public interface EasyPrepareParser {
-    Set<Class<?>> parse(EntityExpressionBuilder entityExpressionBuilder);
+   default PrepareParseResult parse(EntityExpressionBuilder entityExpressionBuilder){
+       return parse(entityExpressionBuilder,null,false);
+   }
+    PrepareParseResult parse(EntityExpressionBuilder entityExpressionBuilder, List<Object> entities, boolean fillAutoIncrement);
 }

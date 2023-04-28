@@ -1,6 +1,7 @@
 package com.easy.query.test;
 
 import com.easy.query.BaseTest;
+import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.entity.TopicSharding;
 import org.junit.Assert;
 import org.junit.Test;
@@ -22,7 +23,7 @@ public class ShardingTest extends BaseTest {
     public void sharding1() {
         TopicSharding topicSharding = easyQuery.queryable(TopicSharding.class)
                 .whereById("123").firstOrNull();
-        Assert.assertNull(topicSharding);
+        Assert.assertNotNull(topicSharding);
     }
 
     @Test
@@ -48,6 +49,7 @@ public class ShardingTest extends BaseTest {
         long l1 = easyQuery.deletable(TopicSharding.class).whereById(id).executeRows();
         Assert.assertEquals(1, l1);
     }
+
     @Test
     public void sharding3() {
         ArrayList<TopicSharding> topicShardings = new ArrayList<>(3);
@@ -61,22 +63,63 @@ public class ShardingTest extends BaseTest {
         }
         List<String> deleteIds = topicShardings.stream().map(o -> o.getId()).collect(Collectors.toList());
         easyQuery.deletable(TopicSharding.class)
-                .where(o->o.in(TopicSharding::getId,deleteIds)).executeRows();
+                .where(o -> o.in(TopicSharding::getId, deleteIds)).executeRows();
 
         long l = easyQuery.insertable(topicShardings).executeRows();
         List<TopicSharding> list = easyQuery.queryable(TopicSharding.class)
                 .where(o -> o.in(TopicSharding::getId, deleteIds)).toList();
-        Assert.assertEquals(3,list.size());
+        Assert.assertEquals(3, list.size());
         List<TopicSharding> orderList = easyQuery.queryable(TopicSharding.class)
                 .where(o -> o.in(TopicSharding::getId, deleteIds))
-                .orderByAsc(o->o.column(TopicSharding::getStars))
+                .orderByAsc(o -> o.column(TopicSharding::getStars))
                 .toList();
-        Assert.assertEquals(3,orderList.size());
-        int i=10000;
+        Assert.assertEquals(3, orderList.size());
+        int i = 10000;
         for (TopicSharding topicSharding : orderList) {
-            Assert.assertEquals(i,(int)topicSharding.getStars());
+            Assert.assertEquals(i, (int) topicSharding.getStars());
             i++;
         }
+    }
 
+    @Test
+    public void sharding4() {
+        List<TopicSharding> list = easyQuery.queryable(TopicSharding.class).where(o -> o.le(TopicSharding::getStars, 1000)).orderByDesc(o -> o.column(TopicSharding::getStars)).toList();
+        Assert.assertEquals(500, list.size());
+        int i = 499;
+        for (TopicSharding topicSharding : list) {
+            Assert.assertEquals(i, (int) topicSharding.getStars());
+            i--;
+        }
+    }
+    @Test
+    public void sharding5() {
+        EasyPageResult<TopicSharding> pageResult = easyQuery.queryable(TopicSharding.class).where(o -> o.le(TopicSharding::getStars, 1000))
+                .orderByDesc(o -> o.column(TopicSharding::getStars)).toPageResult(1, 20);
+
+        Assert.assertEquals(500, pageResult.getTotal());
+        Assert.assertEquals(20, pageResult.getData().size());
+        int i = 499;
+        for (TopicSharding topicSharding : pageResult.getData()) {
+            Assert.assertEquals(i, (int) topicSharding.getStars());
+            i--;
+        }
+        EasyPageResult<TopicSharding> pageResult2 = easyQuery.queryable(TopicSharding.class).where(o -> o.le(TopicSharding::getStars, 1000))
+                .orderByDesc(o -> o.column(TopicSharding::getStars)).toPageResult(2, 20);
+        Assert.assertEquals(500, pageResult2.getTotal());
+        Assert.assertEquals(20, pageResult2.getData().size());
+        int j = 479;
+        for (TopicSharding topicSharding : pageResult2.getData()) {
+            Assert.assertEquals(j, (int) topicSharding.getStars());
+            j--;
+        }
+        EasyPageResult<TopicSharding> pageResult3 = easyQuery.queryable(TopicSharding.class).where(o -> o.le(TopicSharding::getStars, 1000))
+                .orderByDesc(o -> o.column(TopicSharding::getStars)).toPageResult(7, 7);
+        Assert.assertEquals(500, pageResult3.getTotal());
+        Assert.assertEquals(7, pageResult3.getData().size());
+        int l = 457;
+        for (TopicSharding topicSharding : pageResult3.getData()) {
+            Assert.assertEquals(l, (int) topicSharding.getStars());
+            l--;
+        }
     }
 }

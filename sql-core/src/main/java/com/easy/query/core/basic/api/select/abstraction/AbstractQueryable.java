@@ -108,7 +108,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
         }
 
         List<Long> result = toInternalListWithExpression(countSqlEntityExpressionBuilder,Long.class);
-        return ArrayUtil.firstOrDefault(result,0L);
+        return ArrayUtil.sum(result);
     }
 
     @Override

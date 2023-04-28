@@ -72,6 +72,17 @@ public class ArrayUtil {
         }
         return 0;
     }
+    public static <TSource> long sum(List<Long> arrays) {
+        int length = arrays.size();
+        if (length > 0) {
+            long sum = 0;
+            for (Long array : arrays) {
+                sum += array;
+            }
+            return sum;
+        }
+        return 0;
+    }
 
     public static int sum(int[] arrays) {
         int length = arrays.length;
@@ -146,14 +157,17 @@ public class ArrayUtil {
         return result;
     }
 
-    public static <TSource> TSource firstOrNull(List<TSource> source) {
+    public static <TSource> TSource firstOrNull(Collection<TSource> source) {
         if (source == null) {
             return null;
         }
         if (source.isEmpty()) {
             return null;
         }
-        return source.get(0);
+        if(source instanceof List){
+            return ((List<TSource>)source).get(0);
+        }
+        return source.iterator().next();
     }
 
     public static <TResult, TSource> List<TResult> map(List<TSource> source, Function<? super TSource, ? extends TResult> mapper) {

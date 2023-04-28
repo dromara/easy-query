@@ -30,6 +30,7 @@ import org.junit.BeforeClass;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @FileName: BaseTest.java
@@ -201,8 +202,21 @@ public abstract class BaseTest {
             }
             long l = easyQuery.insertable(topicInterceptors).executeRows();
         }
-        boolean topicShardingAny = easyQuery.queryable(TopicSharding.class).any();
-        System.out.println(topicShardingAny);
+        boolean topicShardingAny = easyQuery.queryable(TopicSharding.class).where(o->o.le(TopicSharding::getStars,1000)).any();
+       if(!topicShardingAny){
+
+           ArrayList<TopicSharding> topicShardings = new ArrayList<>(500);
+           for (int i = 0; i < 500; i++) {
+               TopicSharding topicSharding = new TopicSharding();
+               topicSharding.setId(String.valueOf(i));
+               topicSharding.setTitle("title" + i);
+               topicSharding.setStars(i);
+               topicSharding.setCreateTime(LocalDateTime.now().plusMinutes(i));
+               topicShardings.add(topicSharding);
+           }
+
+           long l = easyQuery.insertable(topicShardings).executeRows();
+       }
     }
 
 

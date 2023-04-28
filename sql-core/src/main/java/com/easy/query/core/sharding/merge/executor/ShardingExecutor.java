@@ -47,9 +47,6 @@ public class ShardingExecutor {
         if (ArrayUtil.isEmpty(results)) {
             throw new EasyQueryException("execute result empty");
         }
-        if(ArrayUtil.isSingle(results)){
-            return ArrayUtil.firstOrNull(results);
-        }
         return executor.getShardingMerger().streamMerge(streamMergeContext, results);
     }
 

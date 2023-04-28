@@ -91,7 +91,7 @@ public class JdbcExecutorUtil {
     public static QueryExecuteResult query(ExecutorContext executorContext, EasyConnection easyConnection, String sql, List<SQLParameter> sqlParameters){
         return query(executorContext,easyConnection,sql,sqlParameters,false);
     }
-    public static QueryExecuteResult query(ExecutorContext executorContext, EasyConnection easyConnection, String sql, List<SQLParameter> sqlParameters,boolean shardingMerger) {
+    public static QueryExecuteResult query(ExecutorContext executorContext, EasyConnection easyConnection, String sql, List<SQLParameter> sqlParameters,boolean sharding) {
         boolean logDebug = log.isDebugEnabled();
         logSql(logDebug, sql);
         EasyQueryRuntimeContext runtimeContext = executorContext.getRuntimeContext();
@@ -115,7 +115,7 @@ public class JdbcExecutorUtil {
                 rs = ps.executeQuery();
             }
             //如果是分片查询那么需要提前next
-            if(shardingMerger){
+            if(sharding){
                 boolean next = rs.next();
                 sr=new EasyShardingStreamResult(rs,next);
             }else{

@@ -11,13 +11,13 @@ import java.util.Set;
  *
  * @author xuejiaming
  */
-public class DefaultInsertPrepareParseResult implements InsertPrepareParseResult{
+public class EasyInsertPrepareParseResult implements InsertPrepareParseResult{
     private final Set<Class<?>> shardingEntities;
     private final EntityInsertExpressionBuilder entityInsertExpressionBuilder;
     private final List<Object> entities;
     private final boolean fillAutoIncrement;
 
-    public DefaultInsertPrepareParseResult(Set<Class<?>> shardingEntities, EntityInsertExpressionBuilder entityInsertExpressionBuilder,List<Object> entities,boolean fillAutoIncrement){
+    public EasyInsertPrepareParseResult(Set<Class<?>> shardingEntities, EntityInsertExpressionBuilder entityInsertExpressionBuilder, List<Object> entities, boolean fillAutoIncrement){
 
         this.shardingEntities = shardingEntities;
         this.entityInsertExpressionBuilder = entityInsertExpressionBuilder;
