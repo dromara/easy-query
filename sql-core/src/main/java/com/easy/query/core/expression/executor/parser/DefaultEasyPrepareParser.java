@@ -1,10 +1,12 @@
 package com.easy.query.core.expression.executor.parser;
 
+import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityPredicateExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.impl.AnonymousTableExpressionBuilder;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.LinkedHashSet;
@@ -22,11 +24,27 @@ public class DefaultEasyPrepareParser implements EasyPrepareParser {
     private Set<Class<?>> getShardingEntities(EntityExpressionBuilder entityExpressionBuilder) {
         Set<Class<?>> shardingEntities = new LinkedHashSet<>(entityExpressionBuilder.getTables().size());
         for (EntityTableExpressionBuilder table : entityExpressionBuilder.getTables()) {
-            if (!table.tableNameIsAs() && table.getEntityMetadata().isSharding()) {
-                shardingEntities.add(table.getEntityMetadata().getEntityClass());
+            if(table instanceof AnonymousEntityTableExpressionBuilder){
+                getAnonymousTable((AnonymousEntityTableExpressionBuilder)table,shardingEntities);
+            }else{
+                if (!table.tableNameIsAs() && table.getEntityMetadata().isSharding()) {
+                    shardingEntities.add(table.getEntityMetadata().getEntityClass());
+                }
             }
         }
         return shardingEntities;
+    }
+    private void getAnonymousTable(AnonymousEntityTableExpressionBuilder anonymousEntityTableExpressionBuilder,Set<Class<?>> shardingEntities){
+        EntityQueryExpressionBuilder entityQueryExpressionBuilder = anonymousEntityTableExpressionBuilder.getEntityQueryExpressionBuilder();
+        for (EntityTableExpressionBuilder table : entityQueryExpressionBuilder.getTables()) {
+            if(table instanceof  AnonymousEntityTableExpressionBuilder){
+                getAnonymousTable((AnonymousEntityTableExpressionBuilder)table,shardingEntities);
+            }else{
+                if (!table.tableNameIsAs() && table.getEntityMetadata().isSharding()) {
+                    shardingEntities.add(table.getEntityMetadata().getEntityClass());
+                }
+            }
+        }
     }
 
     @Override

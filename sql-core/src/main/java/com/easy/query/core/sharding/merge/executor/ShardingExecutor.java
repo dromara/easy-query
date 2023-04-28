@@ -2,7 +2,6 @@ package com.easy.query.core.sharding.merge.executor;
 
 import com.easy.query.core.basic.jdbc.con.EasyConnection;
 import com.easy.query.core.exception.EasyQueryException;
-import com.easy.query.core.exception.EasyQuerySQLException;
 import com.easy.query.core.exception.EasyQueryTimeoutException;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;

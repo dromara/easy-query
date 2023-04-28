@@ -1,5 +1,6 @@
 package com.easy.query.core.sharding.merge.result.impl;
 
+import com.easy.query.core.exception.EasyQuerySQLException;
 import com.easy.query.core.sharding.merge.abstraction.StreamResult;
 
 import java.math.BigDecimal;

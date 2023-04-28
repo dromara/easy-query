@@ -97,7 +97,6 @@ public class EasyMultiOrderStreamMergeResult implements StreamResult {
     public boolean wasNull() throws SQLException {
         return currentStreamResult.wasNull();
     }
-
     @Override
     public ResultSetMetaData getMetaData() throws SQLException {
         return currentStreamResult.getMetaData();

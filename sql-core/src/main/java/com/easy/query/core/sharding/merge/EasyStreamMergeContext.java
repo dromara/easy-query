@@ -7,11 +7,11 @@ import com.easy.query.core.basic.jdbc.con.EasyConnectionManager;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.executor.parser.ExecutionContext;
-import com.easy.query.core.expression.executor.parser.PrepareParseResult;
+import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import com.easy.query.core.sharding.enums.ConnectionModeEnum;
 import com.easy.query.core.sharding.merge.executor.common.ExecutionUnit;
+import com.easy.query.core.sharding.merge.segment.PropertyGroup;
 import com.easy.query.core.sharding.merge.segment.PropertyOrder;
-import com.easy.query.core.util.ArrayUtil;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.ArrayList;
@@ -28,7 +28,6 @@ import java.util.Map;
  * @author xuejiaming
  */
 public class EasyStreamMergeContext implements StreamMergeContext {
-    protected static List<PropertyOrder> EMPTY_ORDERS=Collections.emptyList();
 //    private final List<ExecutionUnit> executionUnits;
 //    private final ShardingRouteResult shardingRouteResult;
 //    private final EntityExpression entityExpression;
@@ -69,7 +68,12 @@ public class EasyStreamMergeContext implements StreamMergeContext {
 
     @Override
     public List<PropertyOrder> getOrders() {
-        return EMPTY_ORDERS;
+        throw new NotImplementedException();
+    }
+
+    @Override
+    public List<PropertyGroup> getGroups() {
+        throw new NotImplementedException();
     }
 
     public Collection<ExecutionUnit> getExecutionUnits() {
@@ -153,6 +157,15 @@ public class EasyStreamMergeContext implements StreamMergeContext {
 
     @Override
     public long getRewriteRows() {
+        throw new NotImplementedException();
+    }
+
+    @Override
+    public SqlBuilderSegment getSelectColumns() {
+        throw new NotImplementedException();
+    }
+    @Override
+    public SqlBuilderSegment getGroupColumns() {
         throw new NotImplementedException();
     }
 

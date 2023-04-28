@@ -2,6 +2,7 @@ package com.easy.query.test;
 
 import com.easy.query.BaseTest;
 import com.easy.query.core.api.pagination.EasyPageResult;
+import com.easy.query.dto.TopicShardingGroup;
 import com.easy.query.entity.TopicSharding;
 import org.junit.Assert;
 import org.junit.Test;
@@ -120,6 +121,47 @@ public class ShardingTest extends BaseTest {
         for (TopicSharding topicSharding : pageResult3.getData()) {
             Assert.assertEquals(l, (int) topicSharding.getStars());
             l--;
+        }
+    }
+    @Test
+    public void sharding6(){
+
+        easyQuery.deletable(TopicSharding.class)
+                .where(o->o.ge(TopicSharding::getStars,20000).le(TopicSharding::getStars,20100)).executeRows();
+        ArrayList<TopicSharding> topicShardings = new ArrayList<>(3);
+        for (int i = 0; i < 100; i++) {
+            TopicSharding topicSharding = new TopicSharding();
+            topicSharding.setId(String.valueOf(i+20000));
+            topicSharding.setTitle("title" + (i%2==0?"1":i));
+            topicSharding.setStars(i+20000);
+            topicSharding.setCreateTime(LocalDateTime.now());
+            topicShardings.add(topicSharding);
+        }
+        long l = easyQuery.insertable(topicShardings).executeRows();
+        Assert.assertEquals(100,l);
+        List<TopicSharding> list = easyQuery.queryable(TopicSharding.class)
+                .where(o -> o.ge(TopicSharding::getStars, 20000).le(TopicSharding::getStars, 20100))
+                .orderByAsc(o->o.column(TopicSharding::getStars))
+                .toList();
+        Assert.assertEquals(100,list.size());
+        int i=0;
+        for (TopicSharding topicSharding : list) {
+            Assert.assertEquals(String.valueOf(i+20000),topicSharding.getId());
+            i++;
+        }
+
+        List<TopicShardingGroup> list1 = easyQuery.queryable(TopicSharding.class)
+                .where(o -> o.ge(TopicSharding::getStars, 20000).le(TopicSharding::getStars, 20100))
+                .groupBy(o -> o.column(TopicSharding::getTitle))
+                .orderByAsc(o->o.column(TopicSharding::getTitle))
+                .select(TopicShardingGroup.class, o -> o.column(TopicSharding::getTitle).columnCount(TopicSharding::getId, TopicShardingGroup::getIdCount))
+                .toList();
+
+        Assert.assertEquals(50,list1.size());
+        for (TopicShardingGroup topicShardingGroup : list1) {
+            if("title1".equals(topicShardingGroup.getTitle())){
+                Assert.assertEquals(51,(int)topicShardingGroup.getIdCount());
+            }
         }
     }
 }

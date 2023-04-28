@@ -3,6 +3,7 @@ package com.easy.query.core.sharding.merge.executor.merger;
 import com.easy.query.core.sharding.merge.StreamMergeContext;
 import com.easy.query.core.sharding.merge.abstraction.StreamResult;
 import com.easy.query.core.basic.jdbc.executor.internal.QueryExecuteResult;
+import com.easy.query.core.sharding.merge.result.impl.EasyMultiAggregateOrderStreamMergeResult;
 import com.easy.query.core.sharding.merge.result.impl.EasyMultiOrderStreamMergeResult;
 import com.easy.query.core.sharding.merge.result.impl.EasyPaginationStreamMergeResult;
 import com.easy.query.core.util.ArrayUtil;
@@ -40,7 +41,8 @@ public class QueryStreamShardingMerger extends AbstractShardingMerger<QueryExecu
             return new QueryExecuteResult(easyPaginationStreamMergeResult);
         }
         if(streamMergeContext.hasGroupQuery()){
-            throw new UnsupportedOperationException();
+            EasyMultiAggregateOrderStreamMergeResult easyMultiAggregateOrderStreamMergeResult = new EasyMultiAggregateOrderStreamMergeResult(streamMergeContext, streamResults);
+            return new QueryExecuteResult(easyMultiAggregateOrderStreamMergeResult);
         }
 
         EasyMultiOrderStreamMergeResult multiOrderStreamMergeResult = new EasyMultiOrderStreamMergeResult(streamMergeContext, streamResults);

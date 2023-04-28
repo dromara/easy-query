@@ -12,7 +12,7 @@ import com.easy.query.core.basic.jdbc.types.EasyParameter;
 import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
 import com.easy.query.core.common.bean.FastBean;
 import com.easy.query.core.exception.EasyQueryException;
-import com.easy.query.core.exception.EasyQuerySQLException;
+import com.easy.query.core.exception.EasyQuerySQLExecuteException;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
@@ -124,7 +124,7 @@ public class JdbcExecutorUtil {
 
         } catch (SQLException e) {
             log.error(sql, e);
-            throw new EasyQuerySQLException(sql, e);
+            throw new EasyQuerySQLExecuteException(sql, e);
         }
         return new QueryExecuteResult(sr, ps);
     }
@@ -187,7 +187,7 @@ public class JdbcExecutorUtil {
             ps.clearBatch();
         } catch (SQLException e) {
             log.error(sql, e);
-            throw new EasyQuerySQLException(sql, e);
+            throw new EasyQuerySQLExecuteException(sql, e);
         } finally {
             clear(ps);
         }
@@ -234,7 +234,7 @@ public class JdbcExecutorUtil {
             ps.clearBatch();
         } catch (SQLException e) {
             log.error(sql, e);
-            throw new EasyQuerySQLException(sql, e);
+            throw new EasyQuerySQLExecuteException(sql, e);
         } finally {
             clear(ps);
         }
@@ -259,7 +259,7 @@ public class JdbcExecutorUtil {
             logResult(logDebug, r);
         } catch (SQLException e) {
             log.error(sql, e);
-            throw new EasyQuerySQLException(sql, e);
+            throw new EasyQuerySQLExecuteException(sql, e);
         } finally {
             clear(ps);
         }

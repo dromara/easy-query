@@ -1,5 +1,7 @@
 package com.easy.query.core.enums;
 
+import com.easy.query.core.sharding.merge.result.aggregation.AggregationType;
+
 /**
  * @FileName: IEasyAggregate.java
  * @Description: 文件说明
@@ -13,4 +15,5 @@ public interface EasyFunc {
      * @return
      */
     String getFuncColumn(String column);
+    AggregationType getAggregationType();
 }

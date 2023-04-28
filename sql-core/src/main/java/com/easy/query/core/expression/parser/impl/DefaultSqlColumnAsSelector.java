@@ -8,7 +8,7 @@ import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.parser.abstraction.SqlColumnAsSelector;
 import com.easy.query.core.expression.parser.abstraction.internal.ColumnAsSelector;
 import com.easy.query.core.expression.segment.ColumnSegment;
-import com.easy.query.core.expression.segment.FuncColumnSegment;
+import com.easy.query.core.expression.segment.FuncColumnSegmentImpl;
 import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
@@ -86,7 +86,7 @@ public class DefaultSqlColumnAsSelector<T1, TR> extends AbstractSqlColumnSelecto
         EntityTableExpressionBuilder table = sqlEntityExpression.getTable(getIndex());
         String propertyName = table.getPropertyName(column);
         String columnAsName = alias == null ? table.getColumnName(propertyName) : getResultColumnName(alias);
-        sqlSegmentBuilder.append(new FuncColumnSegment(table, propertyName, sqlEntityExpression, easyFunc, columnAsName));
+        sqlSegmentBuilder.append(new FuncColumnSegmentImpl(table, propertyName, sqlEntityExpression, easyFunc, columnAsName));
         return this;
     }
 

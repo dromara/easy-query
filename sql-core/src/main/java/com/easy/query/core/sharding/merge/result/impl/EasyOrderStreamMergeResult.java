@@ -1,6 +1,7 @@
 package com.easy.query.core.sharding.merge.result.impl;
 
 import com.easy.query.core.exception.EasyQueryException;
+import com.easy.query.core.exception.EasyQuerySQLException;
 import com.easy.query.core.sharding.compare.ShardingComparer;
 import com.easy.query.core.sharding.merge.StreamMergeContext;
 import com.easy.query.core.sharding.merge.abstraction.StreamResult;
@@ -48,7 +49,7 @@ public class EasyOrderStreamMergeResult implements OrderStreamMergeResult {
         try {
             return doGetCurrentOrderValues();
         } catch (SQLException e) {
-            throw new EasyQueryException(e);
+            throw new EasyQuerySQLException(e);
         }
     }
 
@@ -64,8 +65,8 @@ public class EasyOrderStreamMergeResult implements OrderStreamMergeResult {
         }
         ArrayList<Comparable<?>> orders = new ArrayList<>(streamMergeContext.getOrders().size());
         for (PropertyOrder order : streamMergeContext.getOrders()) {
-            Object value = this.streamResult.getObject(order.columnIndex());
-            if (value instanceof Comparable<?> || Comparable.class.isAssignableFrom(order.propertyType())) {
+            Object value = this.streamResult.getObject(order.columnIndex()+1);
+            if (value==null||value instanceof Comparable<?>) {
                 orders.add((Comparable<?>) value);
             } else {
                 throw new UnsupportedOperationException(" order by value:" + order.propertyName() + "must implements Comparable<?>");
@@ -100,7 +101,6 @@ public class EasyOrderStreamMergeResult implements OrderStreamMergeResult {
     public boolean wasNull() throws SQLException {
         return streamResult.wasNull();
     }
-
     @Override
     public ResultSetMetaData getMetaData() throws SQLException {
         return streamResult.getMetaData();

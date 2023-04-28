@@ -1,5 +1,7 @@
 package com.easy.query.core.sharding.merge.result.impl;
 
+import com.easy.query.core.exception.EasyQueryException;
+import com.easy.query.core.exception.EasyQuerySQLException;
 import com.easy.query.core.sharding.merge.abstraction.StreamResult;
 
 import java.math.BigDecimal;
@@ -51,6 +53,7 @@ public final class EasyStreamResult implements StreamResult {
     public boolean wasNull() throws SQLException {
         return resultSet.wasNull();
     }
+
 
     @Override
     public ResultSetMetaData getMetaData() throws SQLException {

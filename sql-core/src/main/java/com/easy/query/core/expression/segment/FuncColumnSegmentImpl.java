@@ -4,6 +4,7 @@ import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
 import com.easy.query.core.enums.EasyFunc;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
+import com.easy.query.core.sharding.merge.result.aggregation.AggregationType;
 
 /**
  * @FileName: FuncColumnSegment.java
@@ -11,7 +12,7 @@ import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
  * @Date: 2023/2/19 22:17
  * @author xuejiaming
  */
-public class FuncColumnSegment  implements SqlEntityAliasSegment {
+public class FuncColumnSegmentImpl implements AggregationColumnSegment {
 
 
     protected final EntityTableExpressionBuilder table;
@@ -20,10 +21,10 @@ public class FuncColumnSegment  implements SqlEntityAliasSegment {
     protected final EasyFunc easyFunc;
     protected String alias;
 
-    public FuncColumnSegment(EntityTableExpressionBuilder table, String propertyName, EntityExpressionBuilder sqlEntityExpression, EasyFunc easyFunc){
+    public FuncColumnSegmentImpl(EntityTableExpressionBuilder table, String propertyName, EntityExpressionBuilder sqlEntityExpression, EasyFunc easyFunc){
         this(table,propertyName,sqlEntityExpression,easyFunc,null);
     }
-    public FuncColumnSegment(EntityTableExpressionBuilder table, String propertyName, EntityExpressionBuilder sqlEntityExpression, EasyFunc easyFunc, String alias){
+    public FuncColumnSegmentImpl(EntityTableExpressionBuilder table, String propertyName, EntityExpressionBuilder sqlEntityExpression, EasyFunc easyFunc, String alias){
         this.table = table;
         this.propertyName = propertyName;
         this.sqlEntityExpression = sqlEntityExpression;
@@ -56,5 +57,10 @@ public class FuncColumnSegment  implements SqlEntityAliasSegment {
     @Override
     public String getAlias() {
         return alias;
+    }
+
+    @Override
+    public AggregationType getAggregationType() {
+        return easyFunc.getAggregationType();
     }
 }

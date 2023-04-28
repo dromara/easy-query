@@ -1,27 +1,21 @@
 package com.easy.query.core.exception;
 
 /**
- * @FileName: EasyQuerySQLException.java
- * @Description: 文件说明
- * @Date: 2023/3/11 23:23
+ * create time 2023/4/28 09:54
+ * 文件说明
+ *
  * @author xuejiaming
  */
-public class EasyQuerySQLException  extends RuntimeException{
-    private final String sql;
-
-    public EasyQuerySQLException(String sql, String msg){
-        this(sql,msg,null);
-    }
-    public EasyQuerySQLException(String sql,Throwable e){
-        this(sql,null,e);
+public class EasyQuerySQLException extends EasyQueryException{
+    public EasyQuerySQLException(String msg) {
+        super(msg);
     }
 
-    public EasyQuerySQLException(String sql,String msg, Throwable e){
-        super(msg,e);
-        this.sql = sql;
+    public EasyQuerySQLException(Throwable e) {
+        super(e);
     }
 
-    public String getSql() {
-        return sql;
+    public EasyQuerySQLException(String msg, Throwable e) {
+        super(msg, e);
     }
 }

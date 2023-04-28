@@ -3,8 +3,10 @@ package com.easy.query.core.sharding.merge;
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.con.EasyConnection;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
+import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import com.easy.query.core.sharding.enums.ConnectionModeEnum;
 import com.easy.query.core.sharding.merge.executor.common.ExecutionUnit;
+import com.easy.query.core.sharding.merge.segment.PropertyGroup;
 import com.easy.query.core.sharding.merge.segment.PropertyOrder;
 
 import java.util.Collection;
@@ -18,6 +20,7 @@ import java.util.List;
  */
 public interface StreamMergeContext extends AutoCloseable {
     List<PropertyOrder> getOrders();
+    List<PropertyGroup> getGroups();
 
     ExecutorContext getExecutorContext();
 
@@ -45,6 +48,8 @@ public interface StreamMergeContext extends AutoCloseable {
     long getRows();
     long getRewriteOffset();
     long getRewriteRows();
+    SqlBuilderSegment getSelectColumns();
+    SqlBuilderSegment getGroupColumns();
 
     List<EasyConnection> getEasyConnections(ConnectionModeEnum connectionMode, String dataSourceName, int createDbConnectionCount);
 }
