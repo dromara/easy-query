@@ -4,6 +4,7 @@ import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.executor.parser.PrepareParseResult;
 import com.easy.query.core.expression.segment.AggregationColumnSegment;
 import com.easy.query.core.expression.segment.ColumnSegment;
+import com.easy.query.core.expression.segment.ColumnSegmentImpl;
 import com.easy.query.core.expression.segment.OrderColumnSegment;
 import com.easy.query.core.expression.segment.SqlSegment;
 import com.easy.query.core.expression.sql.expression.EasyQuerySqlExpression;
@@ -92,8 +93,8 @@ public class ShardingUtil {
         int selectIndex = -1;
         for (SqlSegment selectColumn : selectColumns) {
             selectIndex++;
-            if (selectColumn instanceof ColumnSegment) {
-                ColumnSegment selectColumnSegment = (ColumnSegment) selectColumn;
+            if (selectColumn instanceof ColumnSegmentImpl) {
+                ColumnSegmentImpl selectColumnSegment = (ColumnSegmentImpl) selectColumn;
                 String selectPropertyName = selectColumnSegment.getPropertyName();
                 if (selectColumnSegment.getTable().getIndex() == tableIndex && Objects.equals(selectPropertyName, propertyName)) {
                     EasyTableSqlExpression table = easyQuerySqlExpression.getTable(tableIndex);
@@ -111,14 +112,14 @@ public class ShardingUtil {
      * @param easyQuerySqlExpression
      * @return
      */
-    public static PropertyGroup findFirstPropertyGroupNotNull(List<SqlSegment> selectColumns, ColumnSegment columnSegment, EasyQuerySqlExpression easyQuerySqlExpression) {
+    public static PropertyGroup findFirstPropertyGroupNotNull(List<SqlSegment> selectColumns, ColumnSegmentImpl columnSegment, EasyQuerySqlExpression easyQuerySqlExpression) {
         int tableIndex = columnSegment.getTable().getIndex();
         String propertyName = columnSegment.getPropertyName();
         int selectIndex = -1;
         for (SqlSegment selectColumn : selectColumns) {
             selectIndex++;
             if (!(selectColumn instanceof AggregationColumnSegment)) {
-                ColumnSegment selectColumnSegment = (ColumnSegment) selectColumn;
+                ColumnSegmentImpl selectColumnSegment = (ColumnSegmentImpl) selectColumn;
                 String selectPropertyName = selectColumnSegment.getPropertyName();
                 if (selectColumnSegment.getTable().getIndex() == tableIndex && Objects.equals(selectPropertyName, propertyName)) {
                     EasyTableSqlExpression table = easyQuerySqlExpression.getTable(tableIndex);
@@ -128,5 +129,33 @@ public class ShardingUtil {
         }
         EasyTableSqlExpression table = easyQuerySqlExpression.getTable(tableIndex);
         return new EntityPropertyGroup(table, propertyName, -1);
+    }
+
+
+    public static  boolean isGroupByAndOrderByStartsWith(List<SqlSegment> groupBy, List<SqlSegment> orderBy){
+
+        if(ArrayUtil.isEmpty(groupBy)||ArrayUtil.isNotEmpty(orderBy)){
+            return false;
+        }
+        int minSize = Math.min(groupBy.size(),orderBy.size());
+        for (int i = 0; i < minSize; i++) {
+            SqlSegment groupSqlSegment = groupBy.get(i);
+            if(!(groupSqlSegment instanceof ColumnSegment)){
+                return false;
+            }
+            SqlSegment orderSqlSegment = orderBy.get(i);
+            if(!(orderSqlSegment instanceof ColumnSegment)){
+                return false;
+            }
+            ColumnSegment groupColumnSegment = (ColumnSegment) groupSqlSegment;
+            ColumnSegment orderColumnSegment = (ColumnSegment) orderSqlSegment;
+            if(groupColumnSegment.getTable().getIndex()!=orderColumnSegment.getTable().getIndex()){
+                return false;
+            }
+            if(!Objects.equals(groupColumnSegment.getPropertyName(),orderColumnSegment.getPropertyName())){
+                return false;
+            }
+        }
+        return true;
     }
 }

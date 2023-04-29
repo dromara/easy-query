@@ -7,7 +7,7 @@ import com.easy.query.core.enums.EasyFunc;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.parser.abstraction.SqlColumnAsSelector;
 import com.easy.query.core.expression.parser.abstraction.internal.ColumnAsSelector;
-import com.easy.query.core.expression.segment.ColumnSegment;
+import com.easy.query.core.expression.segment.ColumnSegmentImpl;
 import com.easy.query.core.expression.segment.FuncColumnSegmentImpl;
 import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
@@ -39,7 +39,7 @@ public class DefaultSqlColumnAsSelector<T1, TR> extends AbstractSqlColumnSelecto
         EntityTableExpressionBuilder table = sqlEntityExpression.getTable(getIndex());
         String propertyName = table.getPropertyName(column);
         String aliasColumnName = getResultColumnName(alias);
-        sqlSegmentBuilder.append(new ColumnSegment(table, propertyName, sqlEntityExpression, aliasColumnName));
+        sqlSegmentBuilder.append(new ColumnSegmentImpl(table, propertyName, sqlEntityExpression, aliasColumnName));
         return this;
     }
 
@@ -69,12 +69,12 @@ public class DefaultSqlColumnAsSelector<T1, TR> extends AbstractSqlColumnSelecto
             for (String property : properties) {
                 ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(property);
                 String columnName = columnMetadata.getName();
-                String aliasPropertyName = resultEntityMetadata.getPropertyNameOrDefault(columnName);
+                String aliasPropertyName = resultEntityMetadata.getPropertyNameOrNull(columnName);
                 if(aliasPropertyName!=null){
                     ColumnMetadata resultColumnMetadata = resultEntityMetadata.getColumnNotNull(aliasPropertyName);
                     String aliasColumnName = resultColumnMetadata.getName();
                     String alias = Objects.equals(columnName,aliasColumnName)?null:aliasColumnName;
-                    sqlSegmentBuilder.append(new ColumnSegment(table, property, sqlEntityExpression,alias));
+                    sqlSegmentBuilder.append(new ColumnSegmentImpl(table, property, sqlEntityExpression,alias));
                 }
             }
         }

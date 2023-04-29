@@ -179,7 +179,7 @@ public final class StreamResultUtil {
 
             String colName = getColName(rsmd, i + 1);//数据库查询出来的列名
 
-            String propertyName = entityMetadata.getPropertyNameOrDefault(colName);
+            String propertyName = entityMetadata.getPropertyNameOrNull(colName);
             if (propertyName == null) {
                 continue;
             }

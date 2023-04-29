@@ -519,8 +519,6 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
         if (condition) {
             SqlColumnSelector<T1> sqlPredicate = getSqlBuilderProvider1().getSqlOrderColumnSelector1(asc);
             selectExpression.apply(sqlPredicate);
-
-
         }
         return this;
     }

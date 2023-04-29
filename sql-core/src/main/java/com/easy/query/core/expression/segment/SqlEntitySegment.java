@@ -1,5 +1,6 @@
 package com.easy.query.core.expression.segment;
 
+import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 
 /**
@@ -11,4 +12,5 @@ import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 public interface SqlEntitySegment extends SqlSegment {
     EntityTableExpressionBuilder getTable();
     String getPropertyName();
+    SqlEntitySegment cloneSqlEntitySegment();
 }

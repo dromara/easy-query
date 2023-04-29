@@ -2,6 +2,7 @@ package com.easy.query.core.expression.segment.condition.predicate;
 
 import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
 import com.easy.query.core.enums.EasyFunc;
+import com.easy.query.core.expression.segment.SqlEntitySegment;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
@@ -47,6 +48,12 @@ public class FuncColumnValuePredicate implements Predicate {
     @Override
     public String getPropertyName() {
         return propertyName;
+    }
+
+    @Override
+    public SqlEntitySegment cloneSqlEntitySegment() {
+
+        throw new UnsupportedOperationException();
     }
 
     @Override

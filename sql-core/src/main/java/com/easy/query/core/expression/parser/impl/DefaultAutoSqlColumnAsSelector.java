@@ -7,7 +7,7 @@ import com.easy.query.core.enums.EasyFunc;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.parser.abstraction.SqlColumnAsSelector;
 import com.easy.query.core.expression.parser.abstraction.internal.ColumnAsSelector;
-import com.easy.query.core.expression.segment.ColumnSegment;
+import com.easy.query.core.expression.segment.ColumnSegmentImpl;
 import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
@@ -59,14 +59,14 @@ public class DefaultAutoSqlColumnAsSelector<T1, TR> extends AbstractSqlColumnSel
 
                 ColumnMetadata sourceColumnMetadata = sourceEntityMetadata.getColumnNotNull(property);
                 String sourceColumnName = sourceColumnMetadata.getName();
-                String targetPropertyName = targetEntityMetadata.getPropertyNameOrDefault(sourceColumnName, null);
+                String targetPropertyName = targetEntityMetadata.getPropertyNameOrNull(sourceColumnName, null);
                 if (targetPropertyName != null) {
 
                     ColumnMetadata targetColumnMetadata = targetEntityMetadata.getColumnNotNull(targetPropertyName);
                     if (targetColumnMetadata != null) {
                         String targetColumnName = targetColumnMetadata.getName();
                         //如果当前属性和查询对象属性一致那么就返回对应的列名，对应的列名如果不一样就返回对应返回结果对象的属性上的列名
-                        sqlSegmentBuilder.append(new ColumnSegment(table, property, sqlEntityExpression, Objects.equals(sourceColumnName,targetColumnName)?null: targetColumnName));
+                        sqlSegmentBuilder.append(new ColumnSegmentImpl(table, property, sqlEntityExpression, Objects.equals(sourceColumnName,targetColumnName)?null: targetColumnName));
                     }
                 }
 

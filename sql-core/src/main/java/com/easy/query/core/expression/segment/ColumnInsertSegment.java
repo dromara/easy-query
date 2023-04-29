@@ -54,6 +54,12 @@ public class ColumnInsertSegment implements SqlEntityAliasSegment {
     }
 
     @Override
+    public SqlEntitySegment cloneSqlEntitySegment() {
+
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public String getAlias() {
         return alias;
     }

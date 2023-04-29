@@ -48,4 +48,9 @@ public class ColumnWithSelfSegment implements SqlEntitySegment {
     public String getPropertyName() {
         return propertyName;
     }
+
+    @Override
+    public SqlEntitySegment cloneSqlEntitySegment() {
+        throw new UnsupportedOperationException();
+    }
 }

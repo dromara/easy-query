@@ -53,6 +53,11 @@ public class FuncColumnSegmentImpl implements AggregationColumnSegment {
         return propertyName;
     }
 
+    @Override
+    public SqlEntitySegment cloneSqlEntitySegment() {
+        throw new UnsupportedOperationException();
+    }
+
 
     @Override
     public String getAlias() {

@@ -1,7 +1,7 @@
 package com.easy.query.core.expression.parser.impl;
 
 import com.easy.query.core.expression.lambda.Property;
-import com.easy.query.core.expression.segment.ColumnSegment;
+import com.easy.query.core.expression.segment.ColumnSegmentImpl;
 import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.parser.abstraction.SqlColumnResultSelector;
@@ -31,7 +31,7 @@ public class DefaultSqlColumnResultSelector<T1,TR> implements SqlColumnResultSel
         }
         EntityTableExpressionBuilder table = sqlEntityExpression.getTable(index);
         String propertyName = table.getPropertyName(column);
-        sqlBuilderSegment.append(new ColumnSegment(table,propertyName, sqlEntityExpression));
+        sqlBuilderSegment.append(new ColumnSegmentImpl(table,propertyName, sqlEntityExpression));
 
     }
 

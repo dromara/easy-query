@@ -9,5 +9,5 @@ import com.easy.query.core.expression.executor.parser.PrepareParseResult;
  * @author xuejiaming
  */
 public interface RewriteContextFactory {
-    void rewriteExpression(PrepareParseResult prepareParseResult);
+    void rewriteShardingExpression(PrepareParseResult prepareParseResult);
 }

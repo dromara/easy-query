@@ -1,9 +1,6 @@
 package com.easy.query.core.sharding.merge.result.impl;
 
-import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.exception.EasyQuerySQLException;
-import com.easy.query.core.expression.segment.ColumnSegment;
-import com.easy.query.core.expression.segment.SqlSegment;
 import com.easy.query.core.sharding.merge.StreamMergeContext;
 import com.easy.query.core.sharding.merge.abstraction.StreamResult;
 import com.easy.query.core.sharding.merge.segment.PropertyGroup;

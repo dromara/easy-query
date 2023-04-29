@@ -1,8 +1,6 @@
 package com.easy.query.core.expression.executor.parser;
 
-import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
-import com.easy.query.core.expression.sql.expression.EasyEntityPredicateSqlExpression;
 import com.easy.query.core.expression.sql.expression.EasyQuerySqlExpression;
 import com.easy.query.core.util.ArrayUtil;
 
@@ -19,6 +17,7 @@ public class EasyQueryPrepareParseResult implements QueryPrepareParseResult {
     private final EntityQueryExpressionBuilder entityQueryExpressionBuilder;
     private final EasyQuerySqlExpression easyQuerySqlExpression;
     private final boolean sharding;
+    private boolean startsWithGroupByInOrderBy;
     private final long offset;
     private final long rows;
 
@@ -27,9 +26,9 @@ public class EasyQueryPrepareParseResult implements QueryPrepareParseResult {
         this.shardingEntities = shardingEntities;
         this.entityQueryExpressionBuilder = entityQueryExpressionBuilder;
         this.easyQuerySqlExpression = entityQueryExpressionBuilder.toExpression();
-        this.sharding=ArrayUtil.isNotEmpty(shardingEntities);
-        this.offset=easyQuerySqlExpression.getOffset();
-        this.rows=easyQuerySqlExpression.getRows();
+        this.sharding = ArrayUtil.isNotEmpty(shardingEntities);
+        this.offset = easyQuerySqlExpression.getOffset();
+        this.rows = easyQuerySqlExpression.getRows();
     }
 
     @Override
@@ -55,6 +54,16 @@ public class EasyQueryPrepareParseResult implements QueryPrepareParseResult {
     @Override
     public boolean isSharding() {
         return sharding;
+    }
+
+    @Override
+    public boolean isStartsWithGroupByInOrderBy() {
+        return startsWithGroupByInOrderBy;
+    }
+
+    @Override
+    public void setStartsWithGroupByInOrderBy(boolean startsWithGroupByInOrderBy) {
+        this.startsWithGroupByInOrderBy = startsWithGroupByInOrderBy;
     }
 
 

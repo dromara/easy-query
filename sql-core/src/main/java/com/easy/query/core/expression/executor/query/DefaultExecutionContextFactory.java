@@ -8,12 +8,10 @@ import com.easy.query.core.expression.executor.parser.ExecutionContext;
 import com.easy.query.core.expression.executor.parser.InsertPrepareParseResult;
 import com.easy.query.core.expression.executor.parser.PredicatePrepareParseResult;
 import com.easy.query.core.expression.executor.parser.PrepareParseResult;
-import com.easy.query.core.expression.executor.parser.QueryPrepareParseResult;
 import com.easy.query.core.expression.executor.query.base.EntityExecutionCreator;
 import com.easy.query.core.expression.executor.query.base.InsertExecutionCreator;
 import com.easy.query.core.expression.executor.query.base.PredicateExecutionCreator;
 import com.easy.query.core.expression.executor.query.base.ShardingEntityExecutionCreator;
-import com.easy.query.core.expression.executor.query.base.ShardingInsertExecutionCreator;
 import com.easy.query.core.expression.executor.query.base.ShardingPredicateExecutionCreator;
 import com.easy.query.core.expression.sql.expression.EasySqlExpression;
 import com.easy.query.core.sharding.EasyDataSource;
@@ -88,7 +86,7 @@ public class DefaultExecutionContextFactory implements ExecutionContextFactory {
             throw new UnsupportedOperationException(ClassUtil.getInstanceSimpleName(prepareParseResult));
         }
         RouteContext routeContext = routeContextFactory.createRouteContext(prepareParseResult);
-        rewriteContextFactory.rewriteExpression(prepareParseResult);
+        rewriteContextFactory.rewriteShardingExpression(prepareParseResult);
         if(prepareParseResult instanceof PredicatePrepareParseResult){
             return new ShardingPredicateExecutionCreator((PredicatePrepareParseResult)prepareParseResult,routeContext).create();
         }

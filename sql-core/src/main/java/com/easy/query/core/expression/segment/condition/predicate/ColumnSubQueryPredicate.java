@@ -4,6 +4,7 @@ import com.easy.query.core.basic.api.select.Queryable;
 import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
 import com.easy.query.core.enums.SqlPredicateCompare;
 import com.easy.query.core.enums.SqlPredicateCompareEnum;
+import com.easy.query.core.expression.segment.SqlEntitySegment;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 
@@ -37,6 +38,11 @@ public class ColumnSubQueryPredicate implements SubQueryPredicate{
     @Override
     public String getPropertyName() {
         return propertyName;
+    }
+
+    @Override
+    public SqlEntitySegment cloneSqlEntitySegment() {
+        throw new UnsupportedOperationException();
     }
 
     @Override

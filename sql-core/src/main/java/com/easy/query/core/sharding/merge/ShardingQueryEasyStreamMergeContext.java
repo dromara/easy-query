@@ -3,7 +3,7 @@ package com.easy.query.core.sharding.merge;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.expression.executor.parser.EasyQueryPrepareParseResult;
 import com.easy.query.core.expression.executor.parser.ExecutionContext;
-import com.easy.query.core.expression.segment.ColumnSegment;
+import com.easy.query.core.expression.segment.ColumnSegmentImpl;
 import com.easy.query.core.expression.segment.OrderColumnSegment;
 import com.easy.query.core.expression.segment.SqlSegment;
 import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
@@ -67,8 +67,8 @@ public class ShardingQueryEasyStreamMergeContext extends EntityStreamMergeContex
             List<PropertyGroup> groups = new ArrayList<>();
             SqlBuilderSegment projects = easyQuerySqlExpression.getProjects();
             for (SqlSegment sqlSegment : easyQuerySqlExpression.getGroup().getSqlSegments()) {
-                if (sqlSegment instanceof ColumnSegment) {
-                    ColumnSegment columnSegment = (ColumnSegment) sqlSegment;
+                if (sqlSegment instanceof ColumnSegmentImpl) {
+                    ColumnSegmentImpl columnSegment = (ColumnSegmentImpl) sqlSegment;
 
                     PropertyGroup propertyGroup = ShardingUtil.findFirstPropertyGroupNotNull(projects.getSqlSegments(), columnSegment, easyQuerySqlExpression);
                     groups.add(propertyGroup);

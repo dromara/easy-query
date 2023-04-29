@@ -2,20 +2,14 @@ package com.easy.query.core.util;
 
 import com.easy.query.core.common.bean.FastBean;
 import com.easy.query.core.exception.EasyQueryException;
-import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
 import com.easy.query.core.expression.segment.SqlEntityAliasSegment;
-import com.easy.query.core.expression.sql.builder.EntityDeleteExpressionBuilder;
-import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
-import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
-import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.sharding.merge.executor.common.Grouping;
 import com.easy.query.core.sharding.merge.executor.common.GroupingImpl;
-import com.easy.query.core.sharding.merge.executor.internal.CommandTypeEnum;
 
 import java.beans.PropertyDescriptor;
 import java.util.*;
@@ -79,7 +73,7 @@ public class EasyUtil {
         if (StringUtil.isBlank(alias)) {
             return sqlEntityProject.getPropertyName();
         }
-        return sqlEntityProject.getTable().getEntityMetadata().getPropertyNameOrDefault(alias,alias);
+        return sqlEntityProject.getTable().getEntityMetadata().getPropertyNameOrNull(alias,alias);
     }
 
     private static Map<Class<?>, FastBean> CLASS_PROPERTY_FAST_BEAN_CACHE = new ConcurrentHashMap<>();
@@ -92,24 +86,6 @@ public class EasyUtil {
     }
     public static PropertySetterCaller<Object> getPropertySetterLambda(Class<?> entityClass, PropertyDescriptor prop) {
         return getFastBean(entityClass).getBeanSetter(prop);
-    }
-
-    public static CommandTypeEnum getCommandType(EntityExpressionBuilder entityExpression){
-        if(entityExpression instanceof EntityQueryExpressionBuilder){
-            return CommandTypeEnum.QUERY;
-        }
-        if(entityExpression instanceof EntityInsertExpressionBuilder){
-            return CommandTypeEnum.EXECUTE_BATCH;
-        }
-        if(entityExpression instanceof EntityUpdateExpressionBuilder){
-            EntityUpdateExpressionBuilder entityUpdateExpression = (EntityUpdateExpressionBuilder) entityExpression;
-            return entityUpdateExpression.isExpression()?CommandTypeEnum.EXECUTE: CommandTypeEnum.EXECUTE_BATCH;
-        }
-        if(entityExpression instanceof EntityDeleteExpressionBuilder){
-            EntityDeleteExpressionBuilder entityDeleteExpression = (EntityDeleteExpressionBuilder) entityExpression;
-            return entityDeleteExpression.isExpression()?CommandTypeEnum.EXECUTE: CommandTypeEnum.EXECUTE_BATCH;
-        }
-        throw new EasyQueryInvalidOperationException(ClassUtil.getInstanceSimpleName(entityExpression)+" cant get commandType");
     }
 }
 

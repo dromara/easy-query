@@ -163,5 +163,17 @@ public class ShardingTest extends BaseTest {
                 Assert.assertEquals(51,(int)topicShardingGroup.getIdCount());
             }
         }
+        List<TopicShardingGroup> list2 = easyQuery.queryable(TopicSharding.class)
+                .where(o -> o.ge(TopicSharding::getStars, 20000).le(TopicSharding::getStars, 20100))
+                .groupBy(o -> o.column(TopicSharding::getTitle))
+                .select(TopicShardingGroup.class, o -> o.column(TopicSharding::getTitle).columnCount(TopicSharding::getId, TopicShardingGroup::getIdCount))
+                .toList();
+
+        Assert.assertEquals(50,list2.size());
+        for (TopicShardingGroup topicShardingGroup : list2) {
+            if("title1".equals(topicShardingGroup.getTitle())){
+                Assert.assertEquals(51,(int)topicShardingGroup.getIdCount());
+            }
+        }
     }
 }

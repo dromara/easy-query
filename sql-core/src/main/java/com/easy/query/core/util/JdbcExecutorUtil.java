@@ -169,7 +169,7 @@ public class JdbcExecutorUtil {
                         PropertyDescriptor property = incrementProperty[i];
                         if (property == null) {
                             String columnName = incrementColumns.get(i);
-                            String propertyName = entityMetadata.getPropertyNameOrDefault(columnName);
+                            String propertyName = entityMetadata.getPropertyNameOrNull(columnName);
                             property = entityMetadata.getColumnNotNull(propertyName).getProperty();
                             incrementProperty[i] = property;
                         }
