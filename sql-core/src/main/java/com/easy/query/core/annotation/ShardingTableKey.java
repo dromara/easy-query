@@ -1,7 +1,5 @@
 package com.easy.query.core.annotation;
 
-import com.easy.query.core.util.StringUtil;
-
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -10,7 +8,7 @@ import java.lang.annotation.Target;
 
 /**
  * create time 2023/4/8 22:36
- * 文件说明
+ * 用于表示对应字段是分表字段,默认参与update set列如果不需要可以添加 {@link UpdateIgnore}
  *
  * @author xuejiaming
  */

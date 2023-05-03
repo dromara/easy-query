@@ -15,8 +15,8 @@ import com.easy.query.core.expression.executor.query.base.ShardingEntityExecutio
 import com.easy.query.core.expression.executor.query.base.ShardingPredicateExecutionCreator;
 import com.easy.query.core.expression.sql.expression.EasySqlExpression;
 import com.easy.query.core.sharding.EasyDataSource;
-import com.easy.query.core.sharding.merge.executor.common.ExecutionUnit;
-import com.easy.query.core.sharding.merge.executor.common.SqlUnit;
+import com.easy.query.core.basic.jdbc.executor.internal.common.ExecutionUnit;
+import com.easy.query.core.basic.jdbc.executor.internal.common.SqlUnit;
 import com.easy.query.core.sharding.rewrite.RewriteContextFactory;
 import com.easy.query.core.sharding.route.RouteContext;
 import com.easy.query.core.sharding.route.RouteContextFactory;

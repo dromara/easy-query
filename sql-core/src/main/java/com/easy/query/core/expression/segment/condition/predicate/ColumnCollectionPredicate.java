@@ -9,7 +9,7 @@ import com.easy.query.core.enums.SqlPredicateCompareEnum;
 import com.easy.query.core.expression.parser.abstraction.internal.EntityTableAvailable;
 import com.easy.query.core.expression.segment.SqlEntitySegment;
 import com.easy.query.core.util.EasyCollectionUtil;
-import com.easy.query.core.util.SQLUtil;
+import com.easy.query.core.util.SqlUtil;
 import com.easy.query.core.util.SqlExpressionUtil;
 
 import java.util.ArrayList;
@@ -54,11 +54,11 @@ public class ColumnCollectionPredicate implements ValuesPredicate,ShardingPredic
             sql.append(sqlColumnSegment).append(" ").append(compare.getSql()).append(" (");
             Iterator<?> iterator = collection.iterator();
             Object firstVal = iterator.next();
-            SQLUtil.addParameter(sqlParameterCollector,new EasyConstSQLParameter(table,propertyName,firstVal));
+            SqlUtil.addParameter(sqlParameterCollector,new EasyConstSQLParameter(table,propertyName,firstVal));
             sql.append("?");
             while (iterator.hasNext()){
                 Object val = iterator.next();
-                SQLUtil.addParameter(sqlParameterCollector,new EasyConstSQLParameter(table,propertyName,val));
+                SqlUtil.addParameter(sqlParameterCollector,new EasyConstSQLParameter(table,propertyName,val));
                 sql.append(",?");
             }
             sql.append(")");

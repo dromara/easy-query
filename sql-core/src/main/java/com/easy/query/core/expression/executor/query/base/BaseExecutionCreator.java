@@ -4,8 +4,8 @@ import com.easy.query.core.basic.jdbc.parameter.DefaultSqlParameterCollector;
 import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
 import com.easy.query.core.expression.executor.parser.ExecutionContext;
 import com.easy.query.core.expression.sql.expression.EasySqlExpression;
-import com.easy.query.core.sharding.merge.executor.common.ExecutionUnit;
-import com.easy.query.core.sharding.merge.executor.common.SqlUnit;
+import com.easy.query.core.basic.jdbc.executor.internal.common.ExecutionUnit;
+import com.easy.query.core.basic.jdbc.executor.internal.common.SqlUnit;
 
 import java.util.Collection;
 import java.util.List;

@@ -1,12 +1,10 @@
 package com.easy.query.core.sharding.merge.result.impl;
 
-import com.easy.query.core.exception.EasyQuerySQLException;
-import com.easy.query.core.sharding.merge.StreamMergeContext;
-import com.easy.query.core.sharding.merge.abstraction.StreamResultSet;
+import com.easy.query.core.sharding.merge.context.StreamMergeContext;
+import com.easy.query.core.sharding.merge.result.StreamResultSet;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**

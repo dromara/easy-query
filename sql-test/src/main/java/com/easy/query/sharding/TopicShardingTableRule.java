@@ -23,11 +23,9 @@ public class TopicShardingTableRule extends AbstractTableRouteRule {
     @Override
     protected RouteFunction<String> getRouteFilter(Object shardingValue, ShardingOperatorEnum shardingOperator) {
         String tail = String.valueOf(shardingValue.toString().hashCode() % 3);
-        if(Objects.equals(ShardingOperatorEnum.EQUAL,shardingOperator)){
-            return t->{
-                return StringUtil.endsWith(t,".t_topic_sharding_"+tail);
-            };
+        switch (shardingOperator){
+            case EQUAL:return t-> StringUtil.endsWith(t,".t_topic_sharding_"+tail);
+            default:return t->true;
         }
-        return t->true;
     }
 }

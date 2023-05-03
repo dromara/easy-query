@@ -2,7 +2,7 @@ package com.easy.query.core.basic.jdbc.types.handler;
 
 import com.easy.query.core.basic.jdbc.types.EasyParameter;
 import com.easy.query.core.basic.jdbc.types.EasyResultSet;
-import com.easy.query.core.sharding.merge.abstraction.StreamResultSet;
+import com.easy.query.core.sharding.merge.result.StreamResultSet;
 
 import java.sql.SQLException;
 import java.sql.Types;

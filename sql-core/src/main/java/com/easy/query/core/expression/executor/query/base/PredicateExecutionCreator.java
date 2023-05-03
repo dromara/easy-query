@@ -1,7 +1,7 @@
 package com.easy.query.core.expression.executor.query.base;
 
 import com.easy.query.core.expression.sql.expression.EasySqlExpression;
-import com.easy.query.core.sharding.merge.executor.common.ExecutionUnit;
+import com.easy.query.core.basic.jdbc.executor.internal.common.ExecutionUnit;
 
 import java.util.Collection;
 import java.util.Collections;

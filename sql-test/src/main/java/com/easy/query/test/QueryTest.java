@@ -616,4 +616,20 @@ public class QueryTest extends BaseTest {
         BlogEntity blogEntity = queryable.firstOrNull();
         Assert.assertNull(blogEntity);
     }
+    @Test
+    public void query43() {
+        TopicGroupTestDTO topicGroupTestDTO = easyQuery.queryable(BlogEntity.class)
+                .where(o -> o.eq(BlogEntity::getId, "123"))
+                .groupBy(o -> o.column(BlogEntity::getId))
+                .select(TopicGroupTestDTO.class, o -> o.columnAs(BlogEntity::getId, TopicGroupTestDTO::getId).columnCount(BlogEntity::getId, TopicGroupTestDTO::getIdCount))
+                .orderByAsc(o -> o.column(TopicGroupTestDTO::getId)).firstOrNull();
+        Assert.assertNull(topicGroupTestDTO);
+        TopicGroupTestDTO topicGroupTestDTO1 = easyQuery.queryable(BlogEntity.class)
+                .where(o -> o.eq(BlogEntity::getId, "123"))
+                .groupBy(o -> o.column(BlogEntity::getId))
+                .orderByAsc(o -> o.column(BlogEntity::getId))
+                .select(TopicGroupTestDTO.class, o -> o.columnAs(BlogEntity::getId, TopicGroupTestDTO::getId).columnCount(BlogEntity::getId, TopicGroupTestDTO::getIdCount))
+                .firstOrNull();
+        Assert.assertNull(topicGroupTestDTO1);
+    }
 }

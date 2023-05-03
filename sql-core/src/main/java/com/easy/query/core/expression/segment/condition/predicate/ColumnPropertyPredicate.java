@@ -8,9 +8,7 @@ import com.easy.query.core.enums.SqlPredicateCompare;
 import com.easy.query.core.enums.SqlPredicateCompareEnum;
 import com.easy.query.core.expression.parser.abstraction.internal.EntityTableAvailable;
 import com.easy.query.core.expression.segment.SqlEntitySegment;
-import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
-import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
-import com.easy.query.core.util.SQLUtil;
+import com.easy.query.core.util.SqlUtil;
 import com.easy.query.core.util.SqlExpressionUtil;
 
 /**
@@ -32,7 +30,7 @@ public class ColumnPropertyPredicate implements Predicate,ValuePredicate {
 
     @Override
     public String toSql(SqlParameterCollector sqlParameterCollector) {
-        SQLUtil.addParameter(sqlParameterCollector,new PropertySQLParameter(table,propertyName));
+        SqlUtil.addParameter(sqlParameterCollector,new PropertySQLParameter(table,propertyName));
         String sqlColumnSegment = SqlExpressionUtil.getSqlOwnerColumn(runtimeContext,table,propertyName);
         return sqlColumnSegment + " = ?";
     }

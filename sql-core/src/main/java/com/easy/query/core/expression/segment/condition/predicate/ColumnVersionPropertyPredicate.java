@@ -7,9 +7,7 @@ import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
 import com.easy.query.core.basic.jdbc.parameter.VersionPropertySQLParameter;
 import com.easy.query.core.basic.plugin.version.EasyVersionStrategy;
 import com.easy.query.core.expression.parser.abstraction.internal.EntityTableAvailable;
-import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
-import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
-import com.easy.query.core.util.SQLUtil;
+import com.easy.query.core.util.SqlUtil;
 import com.easy.query.core.util.SqlExpressionUtil;
 
 /**
@@ -30,7 +28,7 @@ public class ColumnVersionPropertyPredicate extends ColumnPropertyPredicate{
 
     @Override
     public String toSql(SqlParameterCollector sqlParameterCollector) {
-        SQLUtil.addParameter(sqlParameterCollector,new VersionPropertySQLParameter(new PropertySQLParameter(table,propertyName),easyVersionStrategy));
+        SqlUtil.addParameter(sqlParameterCollector,new VersionPropertySQLParameter(new PropertySQLParameter(table,propertyName),easyVersionStrategy));
         String sqlColumnSegment = SqlExpressionUtil.getSqlOwnerColumn(runtimeContext,table,propertyName);
         return sqlColumnSegment + " = ?";
     }

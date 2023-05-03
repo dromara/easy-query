@@ -4,7 +4,7 @@ import com.easy.query.core.basic.plugin.track.TrackManager;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
 import com.easy.query.core.expression.sql.expression.EasySqlExpression;
-import com.easy.query.core.sharding.merge.executor.common.ExecutionUnit;
+import com.easy.query.core.basic.jdbc.executor.internal.common.ExecutionUnit;
 import com.easy.query.core.util.SqlExpressionUtil;
 import com.easy.query.core.util.StringUtil;
 

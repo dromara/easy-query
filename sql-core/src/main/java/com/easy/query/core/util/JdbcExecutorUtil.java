@@ -17,9 +17,9 @@ import com.easy.query.core.expression.lambda.PropertySetterCaller;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.metadata.EntityMetadata;
-import com.easy.query.core.basic.jdbc.executor.internal.AffectedRowsExecuteResult;
-import com.easy.query.core.basic.jdbc.executor.internal.QueryExecuteResult;
-import com.easy.query.core.sharding.merge.abstraction.StreamResultSet;
+import com.easy.query.core.basic.jdbc.executor.internal.result.impl.AffectedRowsExecuteResult;
+import com.easy.query.core.basic.jdbc.executor.internal.result.impl.QueryExecuteResult;
+import com.easy.query.core.sharding.merge.result.StreamResultSet;
 import com.easy.query.core.sharding.merge.result.impl.EasyShardingStreamResult;
 import com.easy.query.core.sharding.merge.result.impl.EasyStreamResult;
 
@@ -49,7 +49,7 @@ public class JdbcExecutorUtil {
 
     private static void logParameter(boolean logDebug, List<SQLParameter> parameters) {
         if (logDebug) {
-            log.debug("==> " + Thread.currentThread().getName() + " Parameters: " + SQLUtil.sqlParameterToString(parameters));
+            log.debug("==> " + Thread.currentThread().getName() + " Parameters: " + SqlUtil.sqlParameterToString(parameters));
         }
     }
 

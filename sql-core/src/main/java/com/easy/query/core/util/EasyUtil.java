@@ -4,12 +4,12 @@ import com.easy.query.core.common.bean.FastBean;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
+import com.easy.query.core.expression.parser.abstraction.internal.EntityTableAvailable;
 import com.easy.query.core.expression.segment.SqlEntityAliasSegment;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
-import com.easy.query.core.metadata.ColumnMetadata;
-import com.easy.query.core.sharding.merge.executor.common.Grouping;
-import com.easy.query.core.sharding.merge.executor.common.GroupingImpl;
+import com.easy.query.core.basic.jdbc.executor.internal.common.Grouping;
+import com.easy.query.core.basic.jdbc.executor.internal.common.GroupingImpl;
 
 import java.beans.PropertyDescriptor;
 import java.util.*;
@@ -64,12 +64,12 @@ public class EasyUtil {
         return sqlEntityExpression.getTables().size();
     }
 
-    public static String getAnonymousPropertyName(SqlEntityAliasSegment sqlEntityProject) {
+    public static String getAnonymousPropertyName(SqlEntityAliasSegment sqlEntityProject, EntityTableAvailable anonymousTable) {
         String alias = sqlEntityProject.getAlias();
         if (StringUtil.isBlank(alias)) {
             return sqlEntityProject.getPropertyName();
         }
-        return sqlEntityProject.getTable().getEntityMetadata().getPropertyNameOrNull(alias,alias);
+        return anonymousTable.getEntityMetadata().getPropertyNameOrNull(alias,alias);
     }
 
     private static Map<Class<?>, FastBean> CLASS_PROPERTY_FAST_BEAN_CACHE = new ConcurrentHashMap<>();

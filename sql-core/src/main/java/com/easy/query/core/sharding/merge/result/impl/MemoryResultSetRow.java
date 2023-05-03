@@ -1,6 +1,6 @@
 package com.easy.query.core.sharding.merge.result.impl;
 
-import com.easy.query.core.sharding.merge.abstraction.StreamResultSet;
+import com.easy.query.core.sharding.merge.result.StreamResultSet;
 import com.easy.query.core.util.EasyCheck;
 
 import java.sql.SQLException;

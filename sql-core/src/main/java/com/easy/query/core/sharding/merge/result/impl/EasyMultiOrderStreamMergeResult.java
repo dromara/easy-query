@@ -1,7 +1,7 @@
 package com.easy.query.core.sharding.merge.result.impl;
 
-import com.easy.query.core.sharding.merge.StreamMergeContext;
-import com.easy.query.core.sharding.merge.abstraction.StreamResultSet;
+import com.easy.query.core.sharding.merge.context.StreamMergeContext;
+import com.easy.query.core.sharding.merge.result.StreamResultSet;
 import com.easy.query.core.sharding.merge.result.OrderStreamMergeResult;
 import com.easy.query.core.util.EasyCollectionUtil;
 

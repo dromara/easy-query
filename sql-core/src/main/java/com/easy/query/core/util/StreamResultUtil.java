@@ -14,7 +14,7 @@ import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
-import com.easy.query.core.sharding.merge.abstraction.StreamResultSet;
+import com.easy.query.core.sharding.merge.result.StreamResultSet;
 
 import java.beans.PropertyDescriptor;
 import java.sql.ResultSetMetaData;

@@ -11,19 +11,19 @@ import java.util.Map;
  * @author xuejiaming
  */
 public interface JdbcExecutor {
-   default  <T> List<T> sqlQuery(String sql,Class<T> clazz){
-       return sqlQuery(sql,clazz, Collections.emptyList());
-   }
-    default List<Map<String,Object>> sqlQueryMap(String sql){
-       return sqlQueryMap(sql,Collections.emptyList());
-    }
+//   default  <T> List<T> sqlQuery(String sql,Class<T> clazz){
+//       return sqlQuery(sql,clazz, Collections.emptyList());
+//   }
+//    default List<Map<String,Object>> sqlQueryMap(String sql){
+//       return sqlQueryMap(sql,Collections.emptyList());
+//    }
    default List<Map<String,Object>> sqlQueryMap(String sql,List<Object> parameters){
        List maps = sqlQuery(sql, Map.class, parameters);
        return (List<Map<String,Object>>)maps;
    }
     <T> List<T> sqlQuery(String sql,Class<T> clazz,List<Object> parameters);
-    default long sqlExecute(String sql){
-        return sqlExecute(sql,Collections.emptyList());
-    }
+//    default long sqlExecute(String sql){
+//        return sqlExecute(sql,Collections.emptyList());
+//    }
     long sqlExecute(String sql,List<Object> parameters);
 }

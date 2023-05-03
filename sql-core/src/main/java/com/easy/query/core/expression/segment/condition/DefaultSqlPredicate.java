@@ -17,7 +17,7 @@ import com.easy.query.core.expression.lambda.SqlExpression;
 import com.easy.query.core.expression.parser.abstraction.SqlPredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnPredicate;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
-import com.easy.query.core.util.SQLUtil;
+import com.easy.query.core.util.SqlUtil;
 
 import java.util.Collection;
 
@@ -108,7 +108,7 @@ public class DefaultSqlPredicate<T1> implements SqlPredicate<T1> {
     @Override
     public SqlPredicate<T1> like(boolean condition, Property<T1, ?> column, Object val, SqlLikeEnum sqlLike) {
         if (condition) {
-            appendThisPredicate(column, SQLUtil.getLikeParameter(val, sqlLike), SqlPredicateCompareEnum.LIKE);
+            appendThisPredicate(column, SqlUtil.getLikeParameter(val, sqlLike), SqlPredicateCompareEnum.LIKE);
             nextAnd();
         }
         return this;

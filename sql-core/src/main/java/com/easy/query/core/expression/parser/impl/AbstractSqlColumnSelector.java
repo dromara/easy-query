@@ -13,6 +13,7 @@ import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.util.ClassUtil;
+import com.easy.query.core.util.EasyUtil;
 
 import java.util.Collection;
 import java.util.List;
@@ -84,8 +85,9 @@ public class AbstractSqlColumnSelector<T1, TChain> implements ColumnSelector<T1,
         List<SqlSegment> sqlSegments = sqlEntityQueryExpression.getProjects().getSqlSegments();
         for (SqlSegment sqlSegment : sqlSegments) {
             if (sqlSegment instanceof SqlEntityAliasSegment) {
-//                String propertyName = EasyUtil.getAnonymousPropertyName((SqlEntityAliasSegment) sqlSegment);
-                sqlSegmentBuilder.append(new ColumnSegmentImpl(table.getEntityTable(),((SqlEntityAliasSegment) sqlSegment).getPropertyName() , entityExpressionBuilder.getRuntimeContext()));
+                SqlEntityAliasSegment sqlEntityAliasSegment = (SqlEntityAliasSegment) sqlSegment;
+                String propertyName = EasyUtil.getAnonymousPropertyName(sqlEntityAliasSegment,table.getEntityTable());
+                sqlSegmentBuilder.append(new ColumnSegmentImpl(table.getEntityTable(),propertyName , entityExpressionBuilder.getRuntimeContext(),sqlEntityAliasSegment.getAlias()));
             } else {
                 throw new EasyQueryException("columnAll函数无法获取指定列" + ClassUtil.getInstanceSimpleName(sqlSegment));
             }

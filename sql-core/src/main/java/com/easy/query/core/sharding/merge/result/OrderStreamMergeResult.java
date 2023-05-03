@@ -1,7 +1,5 @@
 package com.easy.query.core.sharding.merge.result;
 
-import com.easy.query.core.sharding.merge.abstraction.StreamResultSet;
-
 import java.util.List;
 
 /**

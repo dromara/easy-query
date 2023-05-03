@@ -176,4 +176,42 @@ public class ShardingTest extends BaseTest {
             }
         }
     }
+    @Test
+    public void sharding7(){
+        easyQuery.deletable(TopicSharding.class)
+                .where(o->o.ge(TopicSharding::getStars,30000).le(TopicSharding::getStars,30100)).executeRows();
+        ArrayList<TopicSharding> topicShardings = new ArrayList<>(3);
+        for (int i = 0; i < 100; i++) {
+            TopicSharding topicSharding = new TopicSharding();
+            topicSharding.setId(String.valueOf(i+30000));
+            topicSharding.setTitle("title" + (i%2==0?"1":i));
+            topicSharding.setStars(i+30000);
+            topicSharding.setCreateTime(LocalDateTime.now());
+            topicShardings.add(topicSharding);
+        }
+        long l = easyQuery.insertable(topicShardings).executeRows();
+        Assert.assertEquals(100,l);
+        long count = easyQuery.queryable(TopicSharding.class).where(o -> o.ge(TopicSharding::getStars, 30000).le(TopicSharding::getStars, 30100))
+                .count();
+        Assert.assertEquals(100,count);
+    }
+    @Test
+    public void sharding8(){
+        easyQuery.deletable(TopicSharding.class)
+                .where(o->o.ge(TopicSharding::getStars,40000).le(TopicSharding::getStars,40100)).executeRows();
+        ArrayList<TopicSharding> topicShardings = new ArrayList<>(3);
+        for (int i = 0; i < 100; i++) {
+            TopicSharding topicSharding = new TopicSharding();
+            topicSharding.setId(String.valueOf(i+40000));
+            topicSharding.setTitle("title" + (i%2==0?"1":i));
+            topicSharding.setStars(i+40000);
+            topicSharding.setCreateTime(LocalDateTime.now());
+            topicShardings.add(topicSharding);
+        }
+        long l = easyQuery.insertable(topicShardings).executeRows();
+        Assert.assertEquals(100,l);
+        long count = easyQuery.queryable(TopicSharding.class).where(o -> o.ge(TopicSharding::getStars, 40000).lt(TopicSharding::getStars, 40050))
+                .count();
+        Assert.assertEquals(50,count);
+    }
 }

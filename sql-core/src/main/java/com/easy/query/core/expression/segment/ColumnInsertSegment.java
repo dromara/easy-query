@@ -4,9 +4,7 @@ import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.PropertySQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
 import com.easy.query.core.expression.parser.abstraction.internal.EntityTableAvailable;
-import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
-import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
-import com.easy.query.core.util.SQLUtil;
+import com.easy.query.core.util.SqlUtil;
 import com.easy.query.core.util.SqlExpressionUtil;
 
 /**
@@ -36,7 +34,7 @@ public class ColumnInsertSegment implements SqlEntityAliasSegment {
 
     @Override
     public String toSql(SqlParameterCollector sqlParameterCollector) {
-        SQLUtil.addParameter(sqlParameterCollector,new PropertySQLParameter(table,propertyName));
+        SqlUtil.addParameter(sqlParameterCollector,new PropertySQLParameter(table,propertyName));
         String sqlColumnSegment = SqlExpressionUtil.getSqlOwnerColumn(runtimeContext,table,propertyName);
         StringBuilder sql = new StringBuilder();
         sql.append(sqlColumnSegment);

@@ -1,6 +1,6 @@
 package com.easy.query.core.expression.executor.parser;
 
-import com.easy.query.core.sharding.merge.executor.common.ExecutionUnit;
+import com.easy.query.core.basic.jdbc.executor.internal.common.ExecutionUnit;
 
 import java.util.Collection;
 
