@@ -40,7 +40,7 @@ public class DefaultSqlAggregatePredicate<T1> implements SqlAggregatePredicate<T
         if (condition) {
             EntityTableExpressionBuilder table = sqlEntityExpression.getTable(getIndex());
             String propertyName = table.getPropertyName(column);
-            nextPredicateSegment.setPredicate(new FuncColumnValuePredicate(table,easyAggregate, propertyName, val, compare, sqlEntityExpression));
+            nextPredicateSegment.setPredicate(new FuncColumnValuePredicate(table.getEntityTable(),easyAggregate, propertyName, val, compare, sqlEntityExpression.getRuntimeContext()));
             nextAnd();
         }
         return this;

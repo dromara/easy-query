@@ -8,7 +8,7 @@ import com.easy.query.core.expression.lambda.Property;
  * @Date: 2023/2/24 22:35
  * @author xuejiaming
  */
-public interface ColumnSetter<T1,TChain> extends IndexAware {
+public interface ColumnSetter<T1,TChain> extends IndexAvailable {
     /**
      * set column=val
      */

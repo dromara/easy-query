@@ -1,5 +1,6 @@
 package com.easy.query.core.util;
 
+import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.api.select.Queryable;
 import com.easy.query.core.basic.api.select.Queryable2;
 import com.easy.query.core.basic.api.select.Queryable3;
@@ -9,11 +10,13 @@ import com.easy.query.core.expression.lambda.SqlExpression2;
 import com.easy.query.core.expression.lambda.SqlExpression3;
 import com.easy.query.core.expression.parser.abstraction.SqlPredicate;
 import com.easy.query.core.expression.parser.abstraction.internal.ColumnSelector;
+import com.easy.query.core.expression.parser.abstraction.internal.EntityTableAvailable;
 import com.easy.query.core.expression.segment.SelectConstSegment;
 import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.basic.api.select.Queryable4;
 import com.easy.query.core.expression.lambda.SqlExpression4;
+import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 
 
@@ -145,5 +148,18 @@ public class SqlExpressionUtil {
     public static boolean sqlExecuteStrategyNonDefault(ExpressionContext expressionContext){
         SqlExecuteStrategyEnum executeStrategy = getExecuteStrategy(expressionContext);
         return SqlExecuteStrategyEnum.ALL_COLUMNS!=executeStrategy;
+    }
+
+    public static String getSqlOwnerColumn(EasyQueryRuntimeContext runtimeContext, EntityTableAvailable table, String propertyName){
+        String alias = table.getAlias();
+        String columnName = table.getColumnName(propertyName);
+        String quoteName = getQuoteName(runtimeContext,columnName);
+        if (alias == null) {
+            return quoteName;
+        }
+        return alias + "." + quoteName;
+    }
+    public static String getQuoteName(EasyQueryRuntimeContext runtimeContext, String value) {
+        return runtimeContext.getEasyQueryConfiguration().getDialect().getQuoteName(value);
     }
 }

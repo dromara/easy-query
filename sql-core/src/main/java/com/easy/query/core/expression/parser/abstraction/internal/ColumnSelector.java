@@ -9,7 +9,7 @@ import com.easy.query.core.expression.lambda.Property;
  * @Date: 2023/2/6 23:20
  * @author xuejiaming
  */
-public interface ColumnSelector<T1,TChain> extends IndexAware {
+public interface ColumnSelector<T1,TChain> extends IndexAvailable {
     TChain column(Property<T1,?> column);
     TChain columnIgnore(Property<T1,?> column);
     TChain columnAll();

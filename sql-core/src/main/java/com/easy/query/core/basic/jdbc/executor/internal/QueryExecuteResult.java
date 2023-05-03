@@ -1,6 +1,6 @@
 package com.easy.query.core.basic.jdbc.executor.internal;
 
-import com.easy.query.core.sharding.merge.abstraction.StreamResult;
+import com.easy.query.core.sharding.merge.abstraction.StreamResultSet;
 import com.easy.query.core.sharding.merge.result.impl.EmptyStreamResult;
 
 import java.sql.PreparedStatement;
@@ -16,28 +16,18 @@ public class QueryExecuteResult implements ExecuteResult{
     public static QueryExecuteResult empty(){
         return instance;
     }
-    private final StreamResult streamResult;
-    private final PreparedStatement preparedStatement;
+    private final StreamResultSet streamResult;
 
-    public QueryExecuteResult(StreamResult streamResult){
-       this(streamResult,null);
-    }
-
-    public QueryExecuteResult(StreamResult streamResult, PreparedStatement preparedStatement){
+    public QueryExecuteResult(StreamResultSet streamResult){
         this.streamResult = streamResult;
-
-        this.preparedStatement = preparedStatement;
     }
 
-    public StreamResult getStreamResult() {
+    public StreamResultSet getStreamResult() {
         return streamResult;
     }
 
     @Override
     public void close() throws Exception {
         streamResult.close();
-        if(preparedStatement!=null){
-            preparedStatement.close();
-        }
     }
 }

@@ -17,7 +17,7 @@ import com.easy.query.core.basic.plugin.interceptor.EasyPredicateFilterIntercept
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.metadata.VersionMetadata;
-import com.easy.query.core.util.ArrayUtil;
+import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyUtil;
 
 import java.util.Objects;
@@ -66,12 +66,12 @@ public abstract class AbstractPredicateEntityExpressionBuilder extends AbstractE
                         sqlPredicate.eq(fastBean.getBeanGetter(columnMetadata.getProperty()), version);
                     }
                 } else {
-                    AndPredicateSegment versionPredicateSegment = new AndPredicateSegment(new ColumnPropertyPredicate(table, versionMetadata.getPropertyName(), this));
+                    AndPredicateSegment versionPredicateSegment = new AndPredicateSegment(new ColumnPropertyPredicate(table.getEntityTable(), versionMetadata.getPropertyName(), this.getRuntimeContext()));
                     predicateSegment.addPredicateSegment(versionPredicateSegment);
                 }
             }
             //如果当前对象是存在拦截器的那么就通过stream获取剩余的拦截器
-            if (ArrayUtil.isNotEmpty(entityMetadata.getPredicateFilterInterceptors())) {
+            if (EasyCollectionUtil.isNotEmpty(entityMetadata.getPredicateFilterInterceptors())) {
                 EasyQueryConfiguration easyQueryConfiguration = getRuntimeContext().getEasyQueryConfiguration();
                 sqlExpressionContext.getInterceptorFilter(entityMetadata.getPredicateFilterInterceptors())
                         .forEach(interceptor -> {

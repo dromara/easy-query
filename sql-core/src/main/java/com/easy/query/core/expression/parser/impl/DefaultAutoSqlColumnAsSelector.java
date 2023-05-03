@@ -38,7 +38,7 @@ public class DefaultAutoSqlColumnAsSelector<T1, TR> extends AbstractSqlColumnSel
     @Override
     public SqlColumnAsSelector<T1, TR> columnAll() {
 
-        EntityTableExpressionBuilder table = sqlEntityExpression.getTable(getIndex());
+        EntityTableExpressionBuilder table = entityExpressionBuilder.getTable(getIndex());
         if (table.getEntityClass().equals(resultClass)) {
             return super.columnAll();
         } else {
@@ -51,7 +51,7 @@ public class DefaultAutoSqlColumnAsSelector<T1, TR> extends AbstractSqlColumnSel
             columnAnonymousAll((AnonymousEntityTableExpressionBuilder) table);
         } else {
             //只查询当前对象返回结果属性名称匹配
-            EntityMetadata targetEntityMetadata = sqlEntityExpression.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(resultClass);
+            EntityMetadata targetEntityMetadata = entityExpressionBuilder.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(resultClass);
             EntityMetadata sourceEntityMetadata = table.getEntityMetadata();
 
             Collection<String> sourceProperties = sourceEntityMetadata.getProperties();
@@ -66,7 +66,7 @@ public class DefaultAutoSqlColumnAsSelector<T1, TR> extends AbstractSqlColumnSel
                     if (targetColumnMetadata != null) {
                         String targetColumnName = targetColumnMetadata.getName();
                         //如果当前属性和查询对象属性一致那么就返回对应的列名，对应的列名如果不一样就返回对应返回结果对象的属性上的列名
-                        sqlSegmentBuilder.append(new ColumnSegmentImpl(table, property, sqlEntityExpression, Objects.equals(sourceColumnName,targetColumnName)?null: targetColumnName));
+                        sqlSegmentBuilder.append(new ColumnSegmentImpl(table.getEntityTable(), property, entityExpressionBuilder.getRuntimeContext(), Objects.equals(sourceColumnName,targetColumnName)?null: targetColumnName));
                     }
                 }
 

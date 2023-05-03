@@ -33,7 +33,7 @@ public class DefaultSqlColumnSetter<T>  implements SqlColumnSetter<T> {
         {
             EntityTableExpressionBuilder table = sqlEntityExpression.getTable(index);
             String propertyName = table.getPropertyName(column);
-            sqlSegment0Builder.append(new ColumnValuePredicate(table,propertyName,val, SqlPredicateCompareEnum.EQ, sqlEntityExpression));
+            sqlSegment0Builder.append(new ColumnValuePredicate(table.getEntityTable(),propertyName,val, SqlPredicateCompareEnum.EQ, sqlEntityExpression.getRuntimeContext()));
         }
         return this;
     }
@@ -46,7 +46,7 @@ public class DefaultSqlColumnSetter<T>  implements SqlColumnSetter<T> {
             String propertyName1 = table1.getPropertyName(column1);
             EntityTableExpressionBuilder table2 = sqlEntityExpression.getTable(index);
             String propertyName2 = table2.getPropertyName(column2);
-            sqlSegment0Builder.append(new ColumnWithColumnPredicate(table1,propertyName1,table2,propertyName2, SqlPredicateCompareEnum.EQ, sqlEntityExpression));
+            sqlSegment0Builder.append(new ColumnWithColumnPredicate(table1.getEntityTable(),propertyName1,table2.getEntityTable(),propertyName2, SqlPredicateCompareEnum.EQ, sqlEntityExpression.getRuntimeContext()));
         }
         return this;
     }
@@ -65,7 +65,7 @@ public class DefaultSqlColumnSetter<T>  implements SqlColumnSetter<T> {
 
         EntityTableExpressionBuilder table = sqlEntityExpression.getTable(index);
         String propertyName = table.getPropertyName(column);
-        sqlSegment0Builder.append(new ColumnWithSelfSegment(increment,table,propertyName,val, SqlPredicateCompareEnum.EQ, sqlEntityExpression));
+        sqlSegment0Builder.append(new ColumnWithSelfSegment(increment,table.getEntityTable(),propertyName,val, SqlPredicateCompareEnum.EQ, sqlEntityExpression.getRuntimeContext()));
     }
 
     @Override

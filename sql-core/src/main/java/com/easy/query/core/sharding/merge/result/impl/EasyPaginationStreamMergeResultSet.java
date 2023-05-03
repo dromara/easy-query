@@ -1,9 +1,8 @@
 package com.easy.query.core.sharding.merge.result.impl;
 
 import com.easy.query.core.sharding.merge.StreamMergeContext;
-import com.easy.query.core.sharding.merge.abstraction.StreamResult;
+import com.easy.query.core.sharding.merge.abstraction.StreamResultSet;
 
-import javax.lang.model.element.NestingKind;
 import java.math.BigDecimal;
 import java.sql.Blob;
 import java.sql.Clob;
@@ -21,19 +20,19 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public class EasyPaginationStreamMergeResult implements StreamResult {
+public class EasyPaginationStreamMergeResultSet implements StreamResultSet {
     private final StreamMergeContext streamMergeContext;
-    private final StreamResult streamResult;
+    private final StreamResultSet streamResult;
     private final long offset;
     private final long rows;
     private  long realOffset;
     private  long realRows;
 
-    public EasyPaginationStreamMergeResult(StreamMergeContext streamMergeContext, List<StreamResult> streamResults){
+    public EasyPaginationStreamMergeResultSet(StreamMergeContext streamMergeContext, List<StreamResultSet> streamResults) throws SQLException {
         this(streamMergeContext,streamResults,streamMergeContext.getOffset(),streamMergeContext.getRows());
 
     }
-    public EasyPaginationStreamMergeResult(StreamMergeContext streamMergeContext, List<StreamResult> streamResults,long offset,long rows){
+    public EasyPaginationStreamMergeResultSet(StreamMergeContext streamMergeContext, List<StreamResultSet> streamResults, long offset, long rows) throws SQLException {
 
         this.streamMergeContext = streamMergeContext;
         this.offset = offset;
@@ -41,7 +40,7 @@ public class EasyPaginationStreamMergeResult implements StreamResult {
         this.realOffset=0;
         this.realRows=0;
         if(streamMergeContext.hasGroupQuery()){
-            streamResult=new EasyMultiAggregateOrderStreamMergeResult(streamMergeContext,streamResults);
+            streamResult=new EasyGroupByOrderStreamMergeResultSet(streamMergeContext,streamResults);
         }else{
             streamResult=new EasyMultiOrderStreamMergeResult(streamMergeContext,streamResults);
         }

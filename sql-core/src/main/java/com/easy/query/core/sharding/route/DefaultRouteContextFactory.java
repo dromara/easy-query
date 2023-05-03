@@ -11,7 +11,7 @@ import com.easy.query.core.sharding.route.table.EasyEntityTableRouteUnit;
 import com.easy.query.core.sharding.route.table.TableRouteUnit;
 import com.easy.query.core.sharding.route.table.engine.TableRouteContext;
 import com.easy.query.core.sharding.route.table.engine.TableRouteEngine;
-import com.easy.query.core.util.ArrayUtil;
+import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.ClassUtil;
 
 import java.util.ArrayList;
@@ -60,18 +60,18 @@ public class DefaultRouteContextFactory implements RouteContextFactory {
         for (Object entity : entities) {
             RouteContext routeContext = doCreateRouteContext(new EasyEntityPrepareParseResult(prepareParseResult.getShardingEntities(), prepareParseResult.getEntityExpressionBuilder(), Collections.singletonList(entity)));
             List<RouteUnit> routeUnits = routeContext.getEntityRouteResult().getRouteUnits();
-            if (ArrayUtil.isNotSingle(routeUnits)) {
+            if (EasyCollectionUtil.isNotSingle(routeUnits)) {
                 throw new EasyQueryInvalidOperationException("entity route route unit more or empty:"+routeUnits.size());
             }
             RouteUnit routeUnit = routeUnits.get(0);
             List<TableRouteUnit> tableRouteUnits = routeUnit.getTableRouteUnits();
 
-            if (ArrayUtil.isNotSingle(tableRouteUnits)) {
+            if (EasyCollectionUtil.isNotSingle(tableRouteUnits)) {
                 throw new EasyQueryInvalidOperationException("entity route table route unit more or empty:"+tableRouteUnits.size());
             }
             TableRouteUnit tableRouteUnit = tableRouteUnits.get(0);
             //判断是否存在跨datasource或者跨表的操作
-            if (ArrayUtil.isEmpty(entityRouteUnits)) {
+            if (EasyCollectionUtil.isEmpty(entityRouteUnits)) {
                 dataSource = routeUnit.getDataSource();
                 tableName = routeUnit.getTableRouteUnits().get(0).getActualTableName();
             }

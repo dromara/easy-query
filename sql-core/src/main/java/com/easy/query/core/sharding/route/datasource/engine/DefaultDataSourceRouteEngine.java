@@ -6,7 +6,7 @@ import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.sharding.EasyDataSource;
 import com.easy.query.core.sharding.route.abstraction.DataSourceRouteManager;
-import com.easy.query.core.util.ArrayUtil;
+import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -58,7 +58,7 @@ public class DefaultDataSourceRouteEngine implements DataSourceRouteEngine{
             Set<String> firstDataSources = dataSourceMaps.values().iterator().next();
             return new DataSourceRouteResult(firstDataSources);
         }
-        Set<String> intersectDataSources = ArrayUtil.getIntersection(dataSourceMaps.values());
+        Set<String> intersectDataSources = EasyCollectionUtil.getIntersection(dataSourceMaps.values());
         return new DataSourceRouteResult(intersectDataSources);
     }
 }

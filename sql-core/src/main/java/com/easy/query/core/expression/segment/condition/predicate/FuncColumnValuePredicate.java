@@ -1,13 +1,16 @@
 package com.easy.query.core.expression.segment.condition.predicate;
 
+import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
 import com.easy.query.core.enums.EasyFunc;
+import com.easy.query.core.expression.parser.abstraction.internal.EntityTableAvailable;
 import com.easy.query.core.expression.segment.SqlEntitySegment;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
 import com.easy.query.core.enums.SqlPredicateCompare;
 import com.easy.query.core.util.SQLUtil;
+import com.easy.query.core.util.SqlExpressionUtil;
 
 /**
  * @FileName: FuncColumnValuePredicate.java
@@ -16,32 +19,32 @@ import com.easy.query.core.util.SQLUtil;
  * @author xuejiaming
  */
 public class FuncColumnValuePredicate implements Predicate {
-    private final EntityTableExpressionBuilder table;
+    private final EntityTableAvailable table;
     private final EasyFunc func;
     private final String propertyName;
     private final Object val;
     private final SqlPredicateCompare compare;
-    private final EntityExpressionBuilder sqlEntityExpression;
+    private final EasyQueryRuntimeContext runtimeContext;
 
-    public FuncColumnValuePredicate(EntityTableExpressionBuilder table, EasyFunc func, String propertyName, Object val, SqlPredicateCompare compare, EntityExpressionBuilder sqlEntityExpression) {
+    public FuncColumnValuePredicate(EntityTableAvailable table, EasyFunc func, String propertyName, Object val, SqlPredicateCompare compare, EasyQueryRuntimeContext runtimeContext) {
         this.table = table;
         this.propertyName = propertyName;
 
         this.func = func;
         this.val = val;
         this.compare = compare;
-        this.sqlEntityExpression = sqlEntityExpression;
+        this.runtimeContext = runtimeContext;
     }
 
     @Override
     public String toSql(SqlParameterCollector sqlParameterCollector) {
         SQLUtil.addParameter(sqlParameterCollector,new EasyConstSQLParameter(table,propertyName,val));
-        String sqlColumnSegment = sqlEntityExpression.getSqlOwnerColumn(table,propertyName);
+        String sqlColumnSegment = SqlExpressionUtil.getSqlOwnerColumn(runtimeContext,table,propertyName);
         return func.getFuncColumn(sqlColumnSegment) +" "+ compare.getSql() + " ?";
     }
 
     @Override
-    public EntityTableExpressionBuilder getTable() {
+    public EntityTableAvailable getTable() {
         return table;
     }
 

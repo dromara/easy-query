@@ -4,16 +4,19 @@ import com.easy.query.core.basic.thread.EasyShardingExecutorService;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
+import com.easy.query.core.sharding.enums.ConnectionModeEnum;
 import com.easy.query.core.sharding.merge.StreamMergeContext;
 import com.easy.query.core.sharding.merge.executor.common.CommandExecuteUnit;
 import com.easy.query.core.sharding.merge.executor.common.DataSourceSqlExecutorUnit;
 import com.easy.query.core.sharding.merge.executor.common.SqlExecutorGroup;
-import com.easy.query.core.util.ArrayUtil;
+import com.easy.query.core.util.EasyCollectionUtil;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -34,24 +37,32 @@ public abstract class AbstractExecutor<TResult> implements Executor<TResult> {
     }
 
     @Override
-    public List<TResult> execute(DataSourceSqlExecutorUnit dataSourceSqlExecutorUnit) {
+    public List<TResult> execute(DataSourceSqlExecutorUnit dataSourceSqlExecutorUnit) throws SQLException {
         return execute0(dataSourceSqlExecutorUnit);
     }
-    private List<TResult> execute0(DataSourceSqlExecutorUnit dataSourceSqlExecutorUnit){
+    private List<TResult> execute0(DataSourceSqlExecutorUnit dataSourceSqlExecutorUnit) throws SQLException {
         List<SqlExecutorGroup<CommandExecuteUnit>> executorGroups = dataSourceSqlExecutorUnit.getSqlExecutorGroups();
-        int count = ArrayUtil.sum(executorGroups, o -> o.getGroups().size());
+        int count = EasyCollectionUtil.sum(executorGroups, o -> o.getGroups().size());
         List<TResult> result = new ArrayList<>(count);
-        int executorGroupsSize = executorGroups.size();
+//        int executorGroupsSize = executorGroups.size();
         //同数据库下多组数据间采用串行
         for (SqlExecutorGroup<CommandExecuteUnit> executorGroup : executorGroups) {
-            executorGroupsSize--;
+//            executorGroupsSize--;
             Collection<TResult> results = groupExecute(executorGroup.getGroups());
-            result.addAll(results);
+            if(Objects.equals(ConnectionModeEnum.CONNECTION_STRICTLY,dataSourceSqlExecutorUnit.getConnectionMode())){
+                getShardingMerger().inMemoryMerge(streamMergeContext,result,results);
+            }else{
+                result.addAll(results);
+            }
+//            boolean hasNextLoop=executorGroupsSize>0;
+//            if(hasNextLoop){
+//                //todo 中断
+//            }
         }
         return result;
     }
     private Collection<TResult> groupExecute(List<CommandExecuteUnit> commandExecuteUnits){
-        if(ArrayUtil.isEmpty(commandExecuteUnits)){
+        if(EasyCollectionUtil.isEmpty(commandExecuteUnits)){
             return Collections.emptyList();
         }
         if(commandExecuteUnits.size()==1){

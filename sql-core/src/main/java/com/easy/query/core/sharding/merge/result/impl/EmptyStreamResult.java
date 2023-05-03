@@ -1,6 +1,6 @@
 package com.easy.query.core.sharding.merge.result.impl;
 
-import com.easy.query.core.sharding.merge.abstraction.StreamResult;
+import com.easy.query.core.sharding.merge.abstraction.StreamResultSet;
 
 import java.math.BigDecimal;
 import java.sql.Blob;
@@ -18,7 +18,7 @@ import java.sql.Timestamp;
  *
  * @author xuejiaming
  */
-public final class EmptyStreamResult implements StreamResult {
+public final class EmptyStreamResult implements StreamResultSet {
     private static final EmptyStreamResult instance=new EmptyStreamResult();
     public static EmptyStreamResult getInstance(){
         return instance;

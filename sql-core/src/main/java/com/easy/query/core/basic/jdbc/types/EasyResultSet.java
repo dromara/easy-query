@@ -1,6 +1,6 @@
 package com.easy.query.core.basic.jdbc.types;
 
-import com.easy.query.core.sharding.merge.abstraction.StreamResult;
+import com.easy.query.core.sharding.merge.abstraction.StreamResultSet;
 
 /**
  * @FileName: EasyResultSet.java
@@ -11,9 +11,9 @@ import com.easy.query.core.sharding.merge.abstraction.StreamResult;
 public class EasyResultSet {
     private int index;
     private  Class<?> propertyType;
-    private final StreamResult streamResult;
+    private final StreamResultSet streamResult;
 
-    public EasyResultSet(StreamResult streamResult){
+    public EasyResultSet(StreamResultSet streamResult){
 
         this.streamResult = streamResult;
     }
@@ -33,7 +33,7 @@ public class EasyResultSet {
         this.propertyType = propertyType;
     }
 
-    public StreamResult getStreamResult() {
+    public StreamResultSet getStreamResult() {
         return streamResult;
     }
 

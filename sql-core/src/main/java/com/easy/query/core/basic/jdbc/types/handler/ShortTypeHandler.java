@@ -2,7 +2,7 @@ package com.easy.query.core.basic.jdbc.types.handler;
 
 import com.easy.query.core.basic.jdbc.types.EasyParameter;
 import com.easy.query.core.basic.jdbc.types.EasyResultSet;
-import com.easy.query.core.sharding.merge.abstraction.StreamResult;
+import com.easy.query.core.sharding.merge.abstraction.StreamResultSet;
 
 import java.sql.SQLException;
 import java.sql.Types;
@@ -19,7 +19,7 @@ public class ShortTypeHandler implements JdbcTypeHandler {
     @Override
     public Object getValue(EasyResultSet resultSet) throws SQLException {
 
-        StreamResult rs = resultSet.getStreamResult();
+        StreamResultSet rs = resultSet.getStreamResult();
         short r = rs.getShort(resultSet.getIndex());
         if (r != DEFAULT) {
             return r;

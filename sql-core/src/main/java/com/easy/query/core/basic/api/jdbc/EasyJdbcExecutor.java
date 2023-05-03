@@ -5,7 +5,7 @@ import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
-import com.easy.query.core.util.ArrayUtil;
+import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.List;
 
@@ -25,14 +25,14 @@ public class EasyJdbcExecutor implements JdbcExecutor {
 
     @Override
     public <T> List<T> sqlQuery(String sql, Class<T> clazz, List<Object> parameters) {
-        List<SQLParameter> sqlParameters = ArrayUtil.map(parameters, o -> new EasyConstSQLParameter(null, null, o));
+        List<SQLParameter> sqlParameters = EasyCollectionUtil.map(parameters, o -> new EasyConstSQLParameter(null, null, o));
         EntityExpressionExecutor entityExpressionExecutor = runtimeContext.getEntityExpressionExecutor();
         return entityExpressionExecutor.querySql(ExecutorContext.create(runtimeContext,true), clazz, sql, sqlParameters);
     }
 
     @Override
     public long sqlExecute(String sql, List<Object> parameters) {
-        List<SQLParameter> sqlParameters = ArrayUtil.map(parameters, o -> new EasyConstSQLParameter(null, null, o));
+        List<SQLParameter> sqlParameters = EasyCollectionUtil.map(parameters, o -> new EasyConstSQLParameter(null, null, o));
         EntityExpressionExecutor entityExpressionExecutor = runtimeContext.getEntityExpressionExecutor();
         return entityExpressionExecutor.executeSqlRows(ExecutorContext.create(runtimeContext,true), sql, sqlParameters);
     }

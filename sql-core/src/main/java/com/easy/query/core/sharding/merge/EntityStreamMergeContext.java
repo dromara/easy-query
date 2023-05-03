@@ -3,7 +3,7 @@ package com.easy.query.core.sharding.merge;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.expression.executor.parser.ExecutionContext;
 import com.easy.query.core.expression.executor.parser.PrepareParseResult;
-import com.easy.query.core.util.ArrayUtil;
+import com.easy.query.core.util.EasyCollectionUtil;
 
 /**
  * create time 2023/4/27 22:42
@@ -18,7 +18,7 @@ public class EntityStreamMergeContext extends EasyStreamMergeContext{
     public EntityStreamMergeContext(ExecutorContext executorContext, ExecutionContext executionContext, PrepareParseResult prepareParseResult) {
         super(executorContext, executionContext);
         this.prepareParseResult = prepareParseResult;
-        this.isSharding= ArrayUtil.isNotEmpty(prepareParseResult.getShardingEntities());
+        this.isSharding= EasyCollectionUtil.isNotEmpty(prepareParseResult.getShardingEntities());
     }
 
     @Override

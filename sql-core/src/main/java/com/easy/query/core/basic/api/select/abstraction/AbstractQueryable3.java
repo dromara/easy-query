@@ -3,6 +3,8 @@ package com.easy.query.core.basic.api.select.abstraction;
 import com.easy.query.core.basic.api.select.provider.EasyQuerySqlBuilderProvider;
 import com.easy.query.core.basic.api.select.provider.EasyQuerySqlBuilderProvider3;
 import com.easy.query.core.basic.api.select.provider.Select3SqlProvider;
+import com.easy.query.core.expression.parser.abstraction.SqlGroupByColumnSelector;
+import com.easy.query.core.expression.parser.abstraction.internal.EntityTableAvailable;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.enums.EasyAggregate;
 import com.easy.query.core.enums.EasyFunc;
@@ -21,9 +23,7 @@ import com.easy.query.core.expression.parser.abstraction.SqlColumnResultSelector
 import com.easy.query.core.expression.segment.SqlEntitySegment;
 import com.easy.query.core.expression.segment.builder.ProjectSqlBuilderSegment;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
-import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
-import com.easy.query.core.util.ArrayUtil;
-import com.easy.query.core.util.EasyUtil;
+import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.SqlExpressionUtil;
 
 import java.math.BigDecimal;
@@ -180,9 +180,9 @@ public abstract class AbstractQueryable3<T1, T2, T3> extends AbstractQueryable<T
         }
         SqlEntitySegment sqlSegment = (SqlEntitySegment)projectSqlBuilderSegment.getSqlSegments().get(0);
 
-        EntityTableExpressionBuilder table = sqlSegment.getTable();
+        EntityTableAvailable table = sqlSegment.getTable();
         String propertyName = sqlSegment.getPropertyName();
-        ColumnMetadata columnMetadata = EasyUtil.getColumnMetadata(table,propertyName);
+        ColumnMetadata columnMetadata =table.getEntityMetadata().getColumnNotNull(propertyName);
 
         return cloneQueryable().select(easyFunc.getFuncColumn(projectSqlBuilderSegment.toSql(null))).toList((Class<TMember>)columnMetadata.getProperty().getPropertyType());
     }
@@ -191,7 +191,7 @@ public abstract class AbstractQueryable3<T1, T2, T3> extends AbstractQueryable<T
     public <TMember extends Number> BigDecimal sumBigDecimalOrDefault(SqlExpression3<SqlColumnResultSelector<T1, TMember>, SqlColumnResultSelector<T2, TMember>, SqlColumnResultSelector<T3, TMember>> columnSelectorExpression, BigDecimal def) {
 
         List<TMember> result = selectAggregateList(columnSelectorExpression, EasyAggregate.SUM);
-        TMember resultMember = ArrayUtil.firstOrNull(result);
+        TMember resultMember = EasyCollectionUtil.firstOrNull(result);
         if (resultMember == null) {
             return def;
         }
@@ -201,25 +201,25 @@ public abstract class AbstractQueryable3<T1, T2, T3> extends AbstractQueryable<T
     @Override
     public <TMember extends Number> TMember sumOrDefault(SqlExpression3<SqlColumnResultSelector<T1, TMember>, SqlColumnResultSelector<T2, TMember>, SqlColumnResultSelector<T3, TMember>> columnSelectorExpression, TMember def) {
         List<TMember> result = selectAggregateList(columnSelectorExpression, EasyAggregate.SUM);
-        return ArrayUtil.firstOrDefault(result,def);
+        return EasyCollectionUtil.firstOrDefault(result,def);
     }
 
     @Override
     public <TMember> TMember maxOrDefault(SqlExpression3<SqlColumnResultSelector<T1, TMember>, SqlColumnResultSelector<T2, TMember>, SqlColumnResultSelector<T3, TMember>> columnSelectorExpression, TMember def) {
         List<TMember> result = selectAggregateList(columnSelectorExpression, EasyAggregate.MAX);
-        return ArrayUtil.firstOrDefault(result,def);
+        return EasyCollectionUtil.firstOrDefault(result,def);
     }
 
     @Override
     public <TMember> TMember minOrDefault(SqlExpression3<SqlColumnResultSelector<T1, TMember>, SqlColumnResultSelector<T2, TMember>, SqlColumnResultSelector<T3, TMember>> columnSelectorExpression, TMember def) {
         List<TMember> result = selectAggregateList(columnSelectorExpression, EasyAggregate.MIN);
-        return ArrayUtil.firstOrDefault(result,def);
+        return EasyCollectionUtil.firstOrDefault(result,def);
     }
 
     @Override
     public <TMember> TMember avgOrDefault(SqlExpression3<SqlColumnResultSelector<T1, TMember>, SqlColumnResultSelector<T2, TMember>, SqlColumnResultSelector<T3, TMember>> columnSelectorExpression, TMember def) {
         List<TMember> result = selectAggregateList(columnSelectorExpression, EasyAggregate.AVG);
-        return ArrayUtil.firstOrDefault(result,def);
+        return EasyCollectionUtil.firstOrDefault(result,def);
     }
 
     @Override
@@ -236,15 +236,15 @@ public abstract class AbstractQueryable3<T1, T2, T3> extends AbstractQueryable<T
         }
 
         List<Integer> result =  cloneQueryable().select(EasyAggregate.LEN.getFuncColumn(projectSqlBuilderSegment.toSql(null))).toList(Integer.class);
-        return ArrayUtil.firstOrDefault(result,def);
+        return EasyCollectionUtil.firstOrDefault(result,def);
     }
 
     @Override
-    public Queryable3<T1, T2, T3> groupBy(boolean condition, SqlExpression3<SqlColumnSelector<T1>, SqlColumnSelector<T2>, SqlColumnSelector<T3>> selectExpression) {
+    public Queryable3<T1, T2, T3> groupBy(boolean condition, SqlExpression3<SqlGroupByColumnSelector<T1>, SqlGroupByColumnSelector<T2>, SqlGroupByColumnSelector<T3>> selectExpression) {
         if (condition) {
-            SqlColumnSelector<T1> sqlGroupSelector1 = getSqlBuilderProvider3().getSqlGroupColumnSelector1();
-            SqlColumnSelector<T2> sqlGroupSelector2 = getSqlBuilderProvider3().getSqlGroupColumnSelector2();
-            SqlColumnSelector<T3> sqlGroupSelector3 = getSqlBuilderProvider3().getSqlGroupColumnSelector3();
+            SqlGroupByColumnSelector<T1> sqlGroupSelector1 = getSqlBuilderProvider3().getSqlGroupColumnSelector1();
+            SqlGroupByColumnSelector<T2> sqlGroupSelector2 = getSqlBuilderProvider3().getSqlGroupColumnSelector2();
+            SqlGroupByColumnSelector<T3> sqlGroupSelector3 = getSqlBuilderProvider3().getSqlGroupColumnSelector3();
             selectExpression.apply(sqlGroupSelector1, sqlGroupSelector2,sqlGroupSelector3);
         }
         return this;

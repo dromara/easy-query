@@ -1,13 +1,11 @@
 package com.easy.query.core.sharding.merge.result.impl;
 
-import com.easy.query.core.exception.EasyQueryException;
-import com.easy.query.core.exception.EasyQuerySQLException;
 import com.easy.query.core.sharding.compare.ShardingComparer;
 import com.easy.query.core.sharding.merge.StreamMergeContext;
-import com.easy.query.core.sharding.merge.abstraction.StreamResult;
+import com.easy.query.core.sharding.merge.abstraction.StreamResultSet;
 import com.easy.query.core.sharding.merge.segment.PropertyOrder;
 import com.easy.query.core.sharding.merge.result.OrderStreamMergeResult;
-import com.easy.query.core.util.ArrayUtil;
+import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.math.BigDecimal;
 import java.sql.Blob;
@@ -31,26 +29,18 @@ import java.util.List;
 public class EasyOrderStreamMergeResult implements OrderStreamMergeResult {
     private static final List<Comparable<?>> EMPTY_COMPARABLE_VALUES = Collections.emptyList();
     private final StreamMergeContext streamMergeContext;
-    private final StreamResult streamResult;
+    private final StreamResultSet streamResult;
     private List<Comparable<?>> orderValues;
 
-    public EasyOrderStreamMergeResult(StreamMergeContext streamMergeContext, StreamResult streamResult) {
+    public EasyOrderStreamMergeResult(StreamMergeContext streamMergeContext, StreamResultSet streamResult) throws SQLException {
 
         this.streamMergeContext = streamMergeContext;
         this.streamResult = streamResult;
         setOrderValues();
     }
 
-    private void setOrderValues() {
+    private void setOrderValues() throws SQLException {
         orderValues = hasElement() ? getCurrentOrderValues() : EMPTY_COMPARABLE_VALUES;
-    }
-
-    private List<Comparable<?>> getCurrentOrderValues() {
-        try {
-            return doGetCurrentOrderValues();
-        } catch (SQLException e) {
-            throw new EasyQuerySQLException(e);
-        }
     }
 
     /**
@@ -59,8 +49,8 @@ public class EasyOrderStreamMergeResult implements OrderStreamMergeResult {
      * @return
      * @throws SQLException
      */
-    private List<Comparable<?>> doGetCurrentOrderValues() throws SQLException {
-        if (ArrayUtil.isEmpty(streamMergeContext.getOrders())) {
+    private List<Comparable<?>> getCurrentOrderValues() throws SQLException {
+        if (EasyCollectionUtil.isEmpty(streamMergeContext.getOrders())) {
             return EMPTY_COMPARABLE_VALUES;
         }
         ArrayList<Comparable<?>> orders = new ArrayList<>(streamMergeContext.getOrders().size());
@@ -201,7 +191,7 @@ public class EasyOrderStreamMergeResult implements OrderStreamMergeResult {
 
     @Override
     public int compareTo(OrderStreamMergeResult o) {
-        if (ArrayUtil.isEmpty(streamMergeContext.getOrders())) {
+        if (EasyCollectionUtil.isEmpty(streamMergeContext.getOrders())) {
             return 0;
         }
         ShardingComparer shardingComparer = streamMergeContext.getRuntimeContext().getShardingComparer();

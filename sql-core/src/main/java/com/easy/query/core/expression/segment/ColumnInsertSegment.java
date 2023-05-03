@@ -1,10 +1,13 @@
 package com.easy.query.core.expression.segment;
 
+import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.PropertySQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
+import com.easy.query.core.expression.parser.abstraction.internal.EntityTableAvailable;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.util.SQLUtil;
+import com.easy.query.core.util.SqlExpressionUtil;
 
 /**
  * @FileName: ColumnSegment.java
@@ -15,36 +18,36 @@ import com.easy.query.core.util.SQLUtil;
 public class ColumnInsertSegment implements SqlEntityAliasSegment {
 
 
-    protected final EntityTableExpressionBuilder table;
+    protected final EntityTableAvailable table;
     protected final String propertyName;
-    protected final EntityExpressionBuilder sqlEntityExpression;
+    protected final EasyQueryRuntimeContext runtimeContext;
     protected String alias;
 
-    public ColumnInsertSegment(EntityTableExpressionBuilder table, String propertyName, EntityExpressionBuilder sqlEntityExpression){
-        this(table,propertyName,sqlEntityExpression,null);
+    public ColumnInsertSegment(EntityTableAvailable table, String propertyName, EasyQueryRuntimeContext runtimeContext){
+        this(table,propertyName,runtimeContext,null);
     }
-    public ColumnInsertSegment(EntityTableExpressionBuilder table, String propertyName, EntityExpressionBuilder sqlEntityExpression, String alias){
+    public ColumnInsertSegment(EntityTableAvailable table, String propertyName, EasyQueryRuntimeContext runtimeContext, String alias){
         this.table = table;
 
         this.propertyName = propertyName;
-        this.sqlEntityExpression = sqlEntityExpression;
+        this.runtimeContext = runtimeContext;
         this.alias = alias;
     }
 
     @Override
     public String toSql(SqlParameterCollector sqlParameterCollector) {
         SQLUtil.addParameter(sqlParameterCollector,new PropertySQLParameter(table,propertyName));
-        String sqlColumnSegment = sqlEntityExpression.getSqlOwnerColumn(table,propertyName);
+        String sqlColumnSegment = SqlExpressionUtil.getSqlOwnerColumn(runtimeContext,table,propertyName);
         StringBuilder sql = new StringBuilder();
         sql.append(sqlColumnSegment);
         if(alias!=null){
-            sql.append(" AS ").append(sqlEntityExpression.getQuoteName(alias));
+            sql.append(" AS ").append(SqlExpressionUtil.getQuoteName(runtimeContext,alias));
         }
         return sql.toString();
     }
 
     @Override
-    public EntityTableExpressionBuilder getTable() {
+    public EntityTableAvailable getTable() {
         return table;
     }
 

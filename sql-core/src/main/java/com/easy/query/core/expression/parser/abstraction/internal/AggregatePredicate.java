@@ -13,7 +13,7 @@ import com.easy.query.core.enums.SqlPredicateCompare;
  * @Date: 2023/2/18 22:17
  * @author xuejiaming
  */
-public interface AggregatePredicate<T1, TChain> extends  IndexAware {
+public interface AggregatePredicate<T1, TChain> extends IndexAvailable {
     default TChain avg(Property<T1, ?> column, AggregatePredicateCompare compare, Object val){
         return avg(true,column,compare,val);
     }

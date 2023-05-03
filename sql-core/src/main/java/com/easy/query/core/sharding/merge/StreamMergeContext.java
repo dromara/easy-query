@@ -41,7 +41,15 @@ public interface StreamMergeContext extends AutoCloseable {
     boolean isSerialExecute();
 
     boolean isSeqQuery();
-    boolean groupQueryMemoryMerge();
+
+    /**
+     * group和order前半段匹配支持stream merger
+     * @return
+     */
+    boolean isStartsWithGroupByInOrderBy();
+    default boolean groupWithInMemoryMerge(){
+        return hasGroupQuery()&&!isStartsWithGroupByInOrderBy();
+    }
     boolean isPaginationQuery();
     boolean hasGroupQuery();
     long getOffset();

@@ -14,10 +14,11 @@ import com.easy.query.core.sharding.merge.executor.common.ExecutionUnit;
 import com.easy.query.core.sharding.merge.executor.common.Grouping;
 import com.easy.query.core.sharding.merge.executor.common.SqlExecutorGroup;
 import com.easy.query.core.basic.jdbc.executor.internal.unit.Executor;
-import com.easy.query.core.util.ArrayUtil;
+import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyUtil;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -40,16 +41,16 @@ public class ShardingExecutor {
     private ShardingExecutor() {
     }
 
-    public static <TResult> TResult execute(StreamMergeContext streamMergeContext, Executor<TResult> executor, Collection<ExecutionUnit> sqlRouteUnits) {
+    public static <TResult> TResult execute(StreamMergeContext streamMergeContext, Executor<TResult> executor, Collection<ExecutionUnit> sqlRouteUnits) throws SQLException {
 
         List<TResult> results = execute0(streamMergeContext, executor, sqlRouteUnits);
-        if (ArrayUtil.isEmpty(results)) {
+        if (EasyCollectionUtil.isEmpty(results)) {
             throw new EasyQueryException("execute result empty");
         }
         return executor.getShardingMerger().streamMerge(streamMergeContext, results);
     }
 
-    private static <TResult> List<TResult> execute0(StreamMergeContext streamMergeContext, Executor<TResult> executor, Collection<ExecutionUnit> executionUnits) {
+    private static <TResult> List<TResult> execute0(StreamMergeContext streamMergeContext, Executor<TResult> executor, Collection<ExecutionUnit> executionUnits) throws SQLException {
 
         //先进行顺序重排,可以让按顺序执行的提高性能,比如按时间分片,并且是时间倒序,那么重排后可以减少很多查询
         Collection<ExecutionUnit> reOrderExecutionUnits = reOrderExecutionUnits(streamMergeContext, executionUnits);
@@ -116,19 +117,19 @@ public class ShardingExecutor {
         //如果是串行执行就是说每个组只有1个,如果是不是并行每个组有最大执行个数个
         int parallelCount = isSerialExecute ? 1 : maxQueryConnectionsLimit;
 
-        List<List<ExecutionUnit>> sqlUnitPartitions = ArrayUtil.partition(sqlGroupExecutionUnits, parallelCount);
+        List<List<ExecutionUnit>> sqlUnitPartitions = EasyCollectionUtil.partition(sqlGroupExecutionUnits, parallelCount);
         //由于分组后除了最后一个元素其余元素都满足parallelCount为最大,第一个元素的分组数将是实际的创建连接数
         int createDbConnectionCount = sqlUnitPartitions.get(0).size();
         List<EasyConnection> easyConnections = streamMergeContext.getEasyConnections(connectionMode, dataSourceName, createDbConnectionCount);
         //将SqlExecutorUnit进行分区,每个区maxQueryConnectionsLimit个
         //[1,2,3,4,5,6,7],maxQueryConnectionsLimit=3,结果就是[[1,2,3],[4,5,6],[7]]
-        List<List<CommandExecuteUnit>> sqlExecutorUnitPartitions = ArrayUtil.select(sqlUnitPartitions, (executionUnits, index0) -> {
-            return ArrayUtil.select(executionUnits, (executionUnit, index1) -> {
+        List<List<CommandExecuteUnit>> sqlExecutorUnitPartitions = EasyCollectionUtil.select(sqlUnitPartitions, (executionUnits, index0) -> {
+            return EasyCollectionUtil.select(executionUnits, (executionUnit, index1) -> {
                 EasyConnection easyConnection = easyConnections.get(index1);
                 return new CommandExecuteUnit(executionUnit, easyConnection, connectionMode);
             });
         });
-        List<SqlExecutorGroup<CommandExecuteUnit>> sqlExecutorGroups = ArrayUtil.select(sqlExecutorUnitPartitions, (o, i) -> new SqlExecutorGroup<CommandExecuteUnit>(connectionMode, o));
+        List<SqlExecutorGroup<CommandExecuteUnit>> sqlExecutorGroups = EasyCollectionUtil.select(sqlExecutorUnitPartitions, (o, i) -> new SqlExecutorGroup<CommandExecuteUnit>(connectionMode, o));
         return new DataSourceSqlExecutorUnit(connectionMode, sqlExecutorGroups);
 
     }

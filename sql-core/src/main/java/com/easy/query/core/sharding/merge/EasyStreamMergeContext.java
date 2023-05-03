@@ -126,7 +126,7 @@ public class EasyStreamMergeContext implements StreamMergeContext {
     }
 
     @Override
-    public boolean groupQueryMemoryMerge() {
+    public boolean isStartsWithGroupByInOrderBy() {
         throw new NotImplementedException();
     }
 

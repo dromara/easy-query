@@ -12,6 +12,6 @@ import com.easy.query.core.util.ShardingUtil;
 public class JavaLanguageShardingComparer implements ShardingComparer{
     @Override
     public int compare(Comparable<?> x, Comparable<?> y, boolean asc) {
-        return ShardingUtil.safeCompare(x,y,asc);
+        return ShardingUtil.safeCompare(x,y,asc,false);
     }
 }

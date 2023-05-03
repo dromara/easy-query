@@ -1,5 +1,6 @@
 package com.easy.query.core.basic.api.select.provider;
 
+import com.easy.query.core.expression.parser.abstraction.SqlGroupByColumnSelector;
 import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import com.easy.query.core.expression.parser.abstraction.SqlAggregatePredicate;
 import com.easy.query.core.expression.parser.abstraction.SqlColumnAsSelector;
@@ -14,7 +15,7 @@ import com.easy.query.core.expression.parser.abstraction.SqlColumnResultSelector
  * @author xuejiaming
  */
 public interface EasyQuerySqlBuilderProvider<T1> {
-    SqlColumnSelector<T1> getSqlGroupColumnSelector1();
+    SqlGroupByColumnSelector<T1> getSqlGroupColumnSelector1();
     SqlColumnSelector<T1> getSqlOrderColumnSelector1(boolean asc);
     SqlPredicate<T1> getSqlWherePredicate1();
     SqlAggregatePredicate<T1> getSqlAggregatePredicate1();

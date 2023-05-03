@@ -11,7 +11,7 @@ import com.easy.query.core.basic.plugin.interceptor.EasyEntityInterceptor;
 import com.easy.query.core.expression.sql.builder.impl.TableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
-import com.easy.query.core.util.ArrayUtil;
+import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 
 import java.util.ArrayList;
@@ -57,11 +57,11 @@ public abstract class AbstractInsertable<T> implements Insertable<T> {
     protected void insertBefore() {
         //是否使用自定义插入策略
         List<EasyInterceptorEntry> insertInterceptors = entityMetadata.getEntityInterceptors();
-        if (ArrayUtil.isNotEmpty(insertInterceptors)) {
+        if (EasyCollectionUtil.isNotEmpty(insertInterceptors)) {
             EasyQueryConfiguration easyQueryConfiguration = entityInsertExpression.getRuntimeContext().getEasyQueryConfiguration();
             List<EasyEntityInterceptor> entityInterceptors = entityInsertExpression.getExpressionContext().getInterceptorFilter(insertInterceptors)
                     .map(interceptor -> (EasyEntityInterceptor) easyQueryConfiguration.getEasyInterceptor(interceptor.getName())).collect(Collectors.toList());
-            if (ArrayUtil.isNotEmpty(entityInterceptors)) {
+            if (EasyCollectionUtil.isNotEmpty(entityInterceptors)) {
                 Class<?> entityClass = entityMetadata.getEntityClass();
                 for (T entity : entities) {
                     for (EasyEntityInterceptor entityInterceptor : entityInterceptors) {

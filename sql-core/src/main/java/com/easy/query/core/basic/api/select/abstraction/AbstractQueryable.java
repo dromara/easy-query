@@ -6,6 +6,7 @@ import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
 import com.easy.query.core.basic.pagination.EasyPageResultProvider;
 import com.easy.query.core.common.bean.FastBean;
 import com.easy.query.core.enums.EasyBehaviorEnum;
+import com.easy.query.core.expression.parser.abstraction.SqlGroupByColumnSelector;
 import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
@@ -44,7 +45,7 @@ import com.easy.query.core.expression.parser.abstraction.SqlAggregatePredicate;
 import com.easy.query.core.expression.parser.abstraction.SqlPredicate;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
-import com.easy.query.core.util.ArrayUtil;
+import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.ClassUtil;
 import com.easy.query.core.util.EasyUtil;
 import com.easy.query.core.util.SqlExpressionUtil;
@@ -104,11 +105,11 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
         EntityQueryExpressionBuilder countSqlEntityExpressionBuilder = SqlExpressionUtil.getCountEntityQueryExpression(entityQueryExpression);
         if(countSqlEntityExpressionBuilder==null){
             List<Long> result =cloneQueryable().select(" COUNT(1) ").toList(Long.class);
-            return ArrayUtil.firstOrDefault(result,0L);
+            return EasyCollectionUtil.firstOrDefault(result,0L);
         }
 
         List<Long> result = toInternalListWithExpression(countSqlEntityExpressionBuilder,Long.class);
-        return ArrayUtil.sum(result);
+        return EasyCollectionUtil.sum(result);
     }
 
     @Override
@@ -137,7 +138,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     @Override
     public <TMember extends Number> BigDecimal sumBigDecimalOrDefault(Property<T1, TMember> column, BigDecimal def) {
         List<TMember> result = selectAggregateList(column, EasyAggregate.SUM);
-        TMember resultMember = ArrayUtil.firstOrNull(result);
+        TMember resultMember = EasyCollectionUtil.firstOrNull(result);
         if (resultMember == null) {
             return def;
         }
@@ -147,42 +148,42 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     @Override
     public <TMember extends Number> TMember sumOrDefault(Property<T1, TMember> column, TMember def) {
         List<TMember> result = selectAggregateList(column, EasyAggregate.SUM);
-        return ArrayUtil.firstOrDefault(result, def);
+        return EasyCollectionUtil.firstOrDefault(result, def);
     }
 
     @Override
     public <TMember> TMember maxOrDefault(Property<T1, TMember> column, TMember def) {
 
         List<TMember> result = selectAggregateList(column, EasyAggregate.MAX);
-        return ArrayUtil.firstOrDefault(result, def);
+        return EasyCollectionUtil.firstOrDefault(result, def);
     }
 
     @Override
     public <TMember> TMember minOrDefault(Property<T1, TMember> column, TMember def) {
         List<TMember> result = selectAggregateList(column, EasyAggregate.MIN);
-        return ArrayUtil.firstOrDefault(result, def);
+        return EasyCollectionUtil.firstOrDefault(result, def);
     }
 
     @Override
     public <TMember extends Number> TMember avgOrDefault(Property<T1, TMember> column, TMember def) {
         List<TMember> result = selectAggregateList(column, EasyAggregate.AVG);
-        return ArrayUtil.firstOrDefault(result, def);
+        return EasyCollectionUtil.firstOrDefault(result, def);
     }
 
     @Override
     public Integer lenOrDefault(Property<T1, ?> column, Integer def) {
         EntityTableExpressionBuilder table = sqlEntityExpression.getTable(0);
         String propertyName = table.getPropertyName(column);
-        String ownerColumn = sqlEntityExpression.getSqlOwnerColumn(table, propertyName);
+        String ownerColumn = SqlExpressionUtil.getSqlOwnerColumn(sqlEntityExpression.getRuntimeContext(),table.getEntityTable(), propertyName);
         List<Integer> result = cloneQueryable().select(EasyAggregate.LEN.getFuncColumn(ownerColumn)).toList(Integer.class);
-        return ArrayUtil.firstOrDefault(result, def);
+        return EasyCollectionUtil.firstOrDefault(result, def);
     }
 
     private <TMember> List<TMember> selectAggregateList(Property<T1, ?> column, EasyFunc easyFunc) {
         EntityTableExpressionBuilder table = sqlEntityExpression.getTable(0);
         String propertyName = table.getPropertyName(column);
-        ColumnMetadata columnMetadata = EasyUtil.getColumnMetadata(table, propertyName);
-        String ownerColumn = sqlEntityExpression.getSqlOwnerColumn(table, propertyName);
+        ColumnMetadata columnMetadata =table.getEntityMetadata().getColumnNotNull(propertyName);
+        String ownerColumn =SqlExpressionUtil.getSqlOwnerColumn(sqlEntityExpression.getRuntimeContext(),table.getEntityTable(), propertyName);
         return cloneQueryable().select(easyFunc.getFuncColumn(ownerColumn)).toList((Class<TMember>) columnMetadata.getProperty().getPropertyType());
     }
 
@@ -191,7 +192,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     public <TR> TR firstOrNull(Class<TR> resultClass) {
         List<TR> list = cloneQueryable().limit(1).toList(resultClass);
 
-        return ArrayUtil.firstOrNull(list);
+        return EasyCollectionUtil.firstOrNull(list);
     }
 
     @Override
@@ -331,7 +332,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
             String keyProperty = keyProperties.iterator().next();
             AndPredicateSegment andPredicateSegment = new AndPredicateSegment();
             andPredicateSegment
-                    .setPredicate(new ColumnValuePredicate(table, keyProperty, id, SqlPredicateCompareEnum.EQ, sqlEntityExpression));
+                    .setPredicate(new ColumnValuePredicate(table.getEntityTable(), keyProperty, id, SqlPredicateCompareEnum.EQ, sqlEntityExpression.getRuntimeContext()));
             where.addPredicateSegment(andPredicateSegment);
         }
         return this;
@@ -467,12 +468,12 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
                                 sqlPredicate.le(propertyLambda, val);
                                 break;
                             case IN:
-                                if (ArrayUtil.isNotEmpty((Collection<?>) val)) {
+                                if (EasyCollectionUtil.isNotEmpty((Collection<?>) val)) {
                                     sqlPredicate.in(propertyLambda, (Collection<?>) val);
                                 }
                                 break;
                             case NOT_IN:
-                                if (ArrayUtil.isNotEmpty((Collection<?>) val)) {
+                                if (EasyCollectionUtil.isNotEmpty((Collection<?>) val)) {
                                     sqlPredicate.notIn(propertyLambda, (Collection<?>) val);
                                 }
                                 break;
@@ -496,9 +497,9 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     }
 
     @Override
-    public Queryable<T1> groupBy(boolean condition, SqlExpression<SqlColumnSelector<T1>> selectExpression) {
+    public Queryable<T1> groupBy(boolean condition, SqlExpression<SqlGroupByColumnSelector<T1>> selectExpression) {
         if (condition) {
-            SqlColumnSelector<T1> sqlPredicate = getSqlBuilderProvider1().getSqlGroupColumnSelector1();
+            SqlGroupByColumnSelector<T1> sqlPredicate = getSqlBuilderProvider1().getSqlGroupColumnSelector1();
             selectExpression.apply(sqlPredicate);
         }
         return this;

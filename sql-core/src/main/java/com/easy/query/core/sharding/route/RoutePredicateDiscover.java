@@ -8,7 +8,6 @@ import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.executor.parser.EntityPrepareParseResult;
 import com.easy.query.core.expression.executor.parser.PredicatePrepareParseResult;
 import com.easy.query.core.expression.executor.parser.PrepareParseResult;
-import com.easy.query.core.expression.executor.parser.QueryPrepareParseResult;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.RouteFunction;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
@@ -20,12 +19,11 @@ import com.easy.query.core.expression.segment.condition.predicate.ShardingPredic
 import com.easy.query.core.expression.segment.condition.predicate.ValuePredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ValuesPredicate;
 import com.easy.query.core.expression.sql.expression.EasyEntityPredicateSqlExpression;
-import com.easy.query.core.expression.sql.expression.EasyQuerySqlExpression;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.sharding.enums.ShardingOperatorEnum;
 import com.easy.query.core.sharding.rule.RouteRuleFilter;
-import com.easy.query.core.util.ArrayUtil;
+import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.ClassUtil;
 import com.easy.query.core.util.EasyUtil;
 import com.easy.query.core.util.SqlSegmentUtil;
@@ -121,7 +119,7 @@ public class RoutePredicateDiscover {
         } else if (prepareParseResult instanceof EntityPrepareParseResult) {
             List<Object> entities = ((EntityPrepareParseResult) prepareParseResult).getEntities();
 
-            if(ArrayUtil.isNotSingle(entities)){
+            if(EasyCollectionUtil.isNotSingle(entities)){
                 throw new EasyQueryInvalidOperationException("route parse not support multi entity or empty entity:"+entities.size());
             }
             return getEntitySqlRouteParseExpression(entities.get(0));
@@ -153,7 +151,7 @@ public class RoutePredicateDiscover {
                 }
             }
         } else {
-            if (ArrayUtil.isNotEmpty(where.getChildren())) {
+            if (EasyCollectionUtil.isNotEmpty(where.getChildren())) {
                 RoutePredicateExpression routePredicate = RoutePredicateExpression.getDefault();
                 for (PredicateSegment child : where.getChildren()) {
                     if(child instanceof AndPredicateSegment){

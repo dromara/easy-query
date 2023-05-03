@@ -1,6 +1,7 @@
 package com.easy.query.core.expression.sql.builder.impl;
 
 import com.easy.query.core.enums.MultiTableTypeEnum;
+import com.easy.query.core.expression.parser.abstraction.internal.EntityTableAvailable;
 import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.expression.EasyQuerySqlExpression;
@@ -22,8 +23,8 @@ import com.easy.query.core.util.SqlSegmentUtil;
 public class AnonymousTableExpressionBuilder extends TableExpressionBuilder implements AnonymousEntityTableExpressionBuilder {
     private final EntityQueryExpressionBuilder entityQueryExpressionBuilder;
 
-    public AnonymousTableExpressionBuilder(EntityMetadata entityMetadata, int index, String alias, MultiTableTypeEnum multiTableType, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
-        super(entityMetadata, index, alias, multiTableType,entityQueryExpressionBuilder.getRuntimeContext());
+    public AnonymousTableExpressionBuilder(EntityTableAvailable entityTable, MultiTableTypeEnum multiTableType, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
+        super(entityTable, multiTableType,entityQueryExpressionBuilder.getRuntimeContext());
         this.entityQueryExpressionBuilder = entityQueryExpressionBuilder;
     }
 
@@ -50,15 +51,15 @@ public class AnonymousTableExpressionBuilder extends TableExpressionBuilder impl
     @Override
     public String getTableName() {
         if (tableNameAs != null) {
-            return tableNameAs.apply(alias);
+            return tableNameAs.apply(getAlias());
         }
-        return alias;
+        return getAlias();
     }
 
     @Override
     public EntityTableExpressionBuilder copyEntityTableExpressionBuilder() {
 
-        AnonymousTableExpressionBuilder anonymousTableExpressionBuilder = new AnonymousTableExpressionBuilder(entityMetadata, index, alias, multiTableType, entityQueryExpressionBuilder.cloneEntityExpressionBuilder());
+        AnonymousTableExpressionBuilder anonymousTableExpressionBuilder = new AnonymousTableExpressionBuilder(entityTable, multiTableType, entityQueryExpressionBuilder.cloneEntityExpressionBuilder());
         if (on != null) {
             on.copyTo(anonymousTableExpressionBuilder.getOn());
         }
@@ -68,7 +69,7 @@ public class AnonymousTableExpressionBuilder extends TableExpressionBuilder impl
 
     @Override
     public EasyTableSqlExpression toExpression() {
-        AnonymousTableSqlExpression anonymousTableSqlExpression = new AnonymousTableSqlExpression(entityMetadata, index, alias, multiTableType, (EasyQuerySqlExpression) entityQueryExpressionBuilder.toExpression());
+        AnonymousTableSqlExpression anonymousTableSqlExpression = new AnonymousTableSqlExpression(entityTable, multiTableType,entityQueryExpressionBuilder.toExpression());
         if(SqlSegmentUtil.isNotEmpty(on)){
             anonymousTableSqlExpression.setOn(on.clonePredicateSegment());
         }

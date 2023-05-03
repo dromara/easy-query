@@ -1,15 +1,18 @@
 package com.easy.query.core.expression.segment.condition.predicate;
 
+import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.ConstLikeSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
 import com.easy.query.core.enums.SqlPredicateCompare;
 import com.easy.query.core.enums.SqlPredicateCompareEnum;
+import com.easy.query.core.expression.parser.abstraction.internal.EntityTableAvailable;
 import com.easy.query.core.expression.segment.SqlEntitySegment;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.util.SQLUtil;
+import com.easy.query.core.util.SqlExpressionUtil;
 
 import java.util.Objects;
 
@@ -20,18 +23,18 @@ import java.util.Objects;
  * @author xuejiaming
  */
 public class ColumnValuePredicate implements ValuePredicate, ShardingPredicate {
-    private final EntityTableExpressionBuilder table;
+    private final EntityTableAvailable table;
     private final String propertyName;
     private final Object val;
     private final SqlPredicateCompare compare;
-    private final EntityExpressionBuilder sqlEntityExpression;
+    private final EasyQueryRuntimeContext runtimeContext;
 
-    public ColumnValuePredicate(EntityTableExpressionBuilder table, String propertyName, Object val, SqlPredicateCompare compare, EntityExpressionBuilder sqlEntityExpression) {
+    public ColumnValuePredicate(EntityTableAvailable table, String propertyName, Object val, SqlPredicateCompare compare, EasyQueryRuntimeContext runtimeContext) {
         this.table = table;
         this.propertyName = propertyName;
         this.val = val;
         this.compare = compare;
-        this.sqlEntityExpression = sqlEntityExpression;
+        this.runtimeContext = runtimeContext;
     }
 
     @Override
@@ -43,12 +46,12 @@ public class ColumnValuePredicate implements ValuePredicate, ShardingPredicate {
         }else{
             SQLUtil.addParameter(sqlParameterCollector,constSQLParameter);
         }
-        String sqlColumnSegment = sqlEntityExpression.getSqlOwnerColumn(table,propertyName);
+        String sqlColumnSegment = SqlExpressionUtil.getSqlOwnerColumn(runtimeContext,table,propertyName);
         return sqlColumnSegment + " " + compareSql + " ?";
     }
 
     @Override
-    public EntityTableExpressionBuilder getTable() {
+    public EntityTableAvailable getTable() {
         return table;
     }
 

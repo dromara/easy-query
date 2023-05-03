@@ -1,6 +1,6 @@
 package com.easy.query.core.sharding.merge.result.aggregation;
 
-import com.easy.query.core.util.ArrayUtil;
+import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.math.BigDecimal;
 import java.util.HashSet;
@@ -18,7 +18,7 @@ public final class DistinctSumAggregationUnit implements AggregationUnit{
     private Set<Comparable<?>> values=new HashSet<>();
     @Override
     public void merge(List<Comparable<?>> values) {
-        if(ArrayUtil.isEmpty(values)||values.get(0)==null){
+        if(EasyCollectionUtil.isEmpty(values)||values.get(0)==null){
             return;
         }
         if(this.values.add(values.get(0))){

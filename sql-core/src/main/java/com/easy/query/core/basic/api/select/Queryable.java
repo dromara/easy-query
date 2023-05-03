@@ -16,8 +16,9 @@ import com.easy.query.core.expression.parser.abstraction.SqlColumnAsSelector;
 import com.easy.query.core.expression.parser.abstraction.SqlColumnSelector;
 import com.easy.query.core.exception.EasyQueryConcurrentException;
 import com.easy.query.core.expression.parser.abstraction.SqlAggregatePredicate;
+import com.easy.query.core.expression.parser.abstraction.SqlGroupByColumnSelector;
 import com.easy.query.core.expression.parser.abstraction.SqlPredicate;
-import com.easy.query.core.util.ArrayUtil;
+import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -144,7 +145,7 @@ public interface Queryable<T1> extends Query<T1>, Interceptable<Queryable<T1>>, 
    default Map<String,Object> toMap(){
        limit(1);
        List<Map<String, Object>> maps = toMaps();
-       return ArrayUtil.firstOrNull(maps);
+       return EasyCollectionUtil.firstOrNull(maps);
    }
     List<Map<String,Object>> toMaps();
 
@@ -242,11 +243,11 @@ public interface Queryable<T1> extends Query<T1>, Interceptable<Queryable<T1>>, 
      */
     Queryable<T1> whereObject(boolean condition, Object object);
 
-    default Queryable<T1> groupBy(SqlExpression<SqlColumnSelector<T1>> selectExpression) {
+    default Queryable<T1> groupBy(SqlExpression<SqlGroupByColumnSelector<T1>> selectExpression) {
         return groupBy(true, selectExpression);
     }
 
-    Queryable<T1> groupBy(boolean condition, SqlExpression<SqlColumnSelector<T1>> selectExpression);
+    Queryable<T1> groupBy(boolean condition, SqlExpression<SqlGroupByColumnSelector<T1>> selectExpression);
 
     default Queryable<T1> having(SqlExpression<SqlAggregatePredicate<T1>> predicateExpression) {
         return having(true, predicateExpression);

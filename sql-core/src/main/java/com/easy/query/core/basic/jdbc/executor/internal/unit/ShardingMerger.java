@@ -2,6 +2,7 @@ package com.easy.query.core.basic.jdbc.executor.internal.unit;
 
 import com.easy.query.core.sharding.merge.StreamMergeContext;
 
+import java.sql.SQLException;
 import java.util.Collection;
 
 /**
@@ -11,6 +12,6 @@ import java.util.Collection;
  * @author xuejiaming
  */
 public interface ShardingMerger<TResult> {
-    TResult streamMerge(StreamMergeContext streamMergeContext, Collection<TResult> parallelResults);
-    void inMemoryMerge(StreamMergeContext streamMergeContext,Collection<TResult> beforeInMemoryResults, Collection<TResult> parallelResults);
+    TResult streamMerge(StreamMergeContext streamMergeContext, Collection<TResult> parallelResults) throws SQLException;
+    void inMemoryMerge(StreamMergeContext streamMergeContext,Collection<TResult> beforeInMemoryResults, Collection<TResult> parallelResults) throws SQLException;
 }

@@ -43,7 +43,7 @@ public class TrackUtil {
                 properties.add(lambdaProperty);
             }
             return o -> {
-                if (ArrayUtil.isEmpty(properties)) {
+                if (EasyCollectionUtil.isEmpty(properties)) {
                     return null;
                 }
                 StringBuilder trackKey = new StringBuilder();

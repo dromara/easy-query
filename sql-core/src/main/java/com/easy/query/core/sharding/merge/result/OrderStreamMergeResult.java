@@ -1,8 +1,7 @@
 package com.easy.query.core.sharding.merge.result;
 
-import com.easy.query.core.sharding.merge.abstraction.StreamResult;
+import com.easy.query.core.sharding.merge.abstraction.StreamResultSet;
 
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -11,6 +10,6 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public interface OrderStreamMergeResult extends StreamResult,Comparable<OrderStreamMergeResult> {
+public interface OrderStreamMergeResult extends StreamResultSet,Comparable<OrderStreamMergeResult> {
     List<Comparable<?>> compareValues();
 }

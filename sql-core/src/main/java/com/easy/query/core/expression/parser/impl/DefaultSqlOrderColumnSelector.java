@@ -1,6 +1,6 @@
 package com.easy.query.core.expression.parser.impl;
 
-import com.easy.query.core.expression.segment.OrderColumnSegment;
+import com.easy.query.core.expression.segment.OrderColumnSegmentImpl;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.parser.abstraction.SqlColumnSelector;
 import com.easy.query.core.expression.segment.SqlEntitySegment;
@@ -34,7 +34,7 @@ public  class DefaultSqlOrderColumnSelector<T1> implements SqlColumnSelector<T1>
     public SqlColumnSelector<T1> column(Property<T1, ?> column) {
         EntityTableExpressionBuilder table = sqlEntityExpression.getTable(index);
         String propertyName = table.getPropertyName(column);
-        sqlEntityExpression.getOrder().append(new OrderColumnSegment(table,propertyName, sqlEntityExpression,asc));
+        sqlEntityExpression.getOrder().append(new OrderColumnSegmentImpl(table.getEntityTable(),propertyName, sqlEntityExpression.getRuntimeContext(),asc));
         return this;
     }
 
@@ -58,7 +58,7 @@ public  class DefaultSqlOrderColumnSelector<T1> implements SqlColumnSelector<T1>
         EntityTableExpressionBuilder table = sqlEntityExpression.getTable(index);
         Collection<String> properties = table.getEntityMetadata().getProperties();
         for (String property : properties) {
-            sqlEntityExpression.getOrder().append(new OrderColumnSegment(table, property, sqlEntityExpression,asc));
+            sqlEntityExpression.getOrder().append(new OrderColumnSegmentImpl(table.getEntityTable(), property, sqlEntityExpression.getRuntimeContext(),asc));
         }
         return this;
     }

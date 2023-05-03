@@ -1,10 +1,13 @@
 package com.easy.query.core.expression.segment.condition.predicate;
 
+import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
+import com.easy.query.core.expression.parser.abstraction.internal.EntityTableAvailable;
 import com.easy.query.core.expression.segment.SqlEntitySegment;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.enums.SqlPredicateCompare;
+import com.easy.query.core.util.SqlExpressionUtil;
 
 /**
  * @FileName: ColumnValuePredicate.java
@@ -13,26 +16,26 @@ import com.easy.query.core.enums.SqlPredicateCompare;
  * @author xuejiaming
  */
 public class ColumnPredicate implements Predicate {
-    private final EntityTableExpressionBuilder table;
+    private final EntityTableAvailable table;
     private final String propertyName;
     private final SqlPredicateCompare compare;
-    private final EntityExpressionBuilder sqlEntityExpression;
+    private final EasyQueryRuntimeContext runtimeContext;
 
-    public ColumnPredicate(EntityTableExpressionBuilder table, String propertyName, SqlPredicateCompare compare, EntityExpressionBuilder sqlEntityExpression) {
+    public ColumnPredicate(EntityTableAvailable table, String propertyName, SqlPredicateCompare compare, EasyQueryRuntimeContext runtimeContext) {
         this.table = table;
         this.propertyName = propertyName;
         this.compare = compare;
-        this.sqlEntityExpression = sqlEntityExpression;
+        this.runtimeContext = runtimeContext;
     }
 
     @Override
     public String toSql(SqlParameterCollector sqlParameterCollector) {
-        String sqlColumnSegment = sqlEntityExpression.getSqlOwnerColumn(table,propertyName);
+        String sqlColumnSegment = SqlExpressionUtil.getSqlOwnerColumn(runtimeContext,table,propertyName);
         return sqlColumnSegment +" "+ compare.getSql();
     }
 
     @Override
-    public EntityTableExpressionBuilder getTable() {
+    public EntityTableAvailable getTable() {
         return table;
     }
 

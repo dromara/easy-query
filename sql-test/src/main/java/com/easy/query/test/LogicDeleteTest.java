@@ -2,7 +2,7 @@ package com.easy.query.test;
 
 import com.easy.query.BaseTest;
 import com.easy.query.core.basic.api.update.ExpressionUpdatable;
-import com.easy.query.core.util.ArrayUtil;
+import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.entity.LogicDelTopic;
 import com.easy.query.entity.LogicDelTopicCustom;
 import com.easy.query.logicdel.CurrentUserHelper;
@@ -25,7 +25,7 @@ public class LogicDeleteTest extends BaseTest {
                 .toSql();
         Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`deleted`,t.`create_time` FROM `t_logic_del_topic` t WHERE t.`deleted` = ?",logicDeleteSql);
         List<LogicDelTopic> logicDelTopics = easyQuery.queryable(LogicDelTopic.class).toList();
-        Assert.assertTrue(ArrayUtil.isNotEmpty(logicDelTopics));
+        Assert.assertTrue(EasyCollectionUtil.isNotEmpty(logicDelTopics));
         Assert.assertEquals(100,logicDelTopics.size());
     }
     @Test
@@ -60,7 +60,7 @@ public class LogicDeleteTest extends BaseTest {
                 .toSql();
         Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`deleted`,t.`create_time` FROM `t_logic_del_topic` t",logicDeleteSql);
         List<LogicDelTopic> logicDelTopics = easyQuery.queryable(LogicDelTopic.class).disableLogicDelete().toList();
-        Assert.assertTrue(ArrayUtil.isNotEmpty(logicDelTopics));
+        Assert.assertTrue(EasyCollectionUtil.isNotEmpty(logicDelTopics));
         Assert.assertEquals(100,logicDelTopics.size());
     }
     @Test
@@ -97,7 +97,7 @@ public class LogicDeleteTest extends BaseTest {
                 .toSql();
         Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`deleted_at`,t.`deleted_user`,t.`create_time` FROM `t_logic_del_topic_custom` t WHERE t.`deleted_at` IS NULL",logicDeleteSql);
         List<LogicDelTopicCustom> logicDelTopics = easyQuery.queryable(LogicDelTopicCustom.class).toList();
-        Assert.assertTrue(ArrayUtil.isNotEmpty(logicDelTopics));
+        Assert.assertTrue(EasyCollectionUtil.isNotEmpty(logicDelTopics));
         Assert.assertEquals(100,logicDelTopics.size());
     }
     @Test

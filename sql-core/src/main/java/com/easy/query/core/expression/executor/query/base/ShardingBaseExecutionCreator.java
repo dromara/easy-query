@@ -1,10 +1,7 @@
 package com.easy.query.core.expression.executor.query.base;
 
 import com.easy.query.core.expression.executor.parser.PrepareParseResult;
-import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.expression.EasyEntitySqlExpression;
-import com.easy.query.core.expression.sql.expression.EasyQuerySqlExpression;
-import com.easy.query.core.expression.sql.expression.EasySqlExpression;
 import com.easy.query.core.expression.sql.expression.EasyTableSqlExpression;
 import com.easy.query.core.expression.sql.expression.impl.AnonymousTableSqlExpression;
 import com.easy.query.core.sharding.merge.executor.common.ExecutionUnit;
@@ -12,7 +9,7 @@ import com.easy.query.core.sharding.route.RouteContext;
 import com.easy.query.core.sharding.route.RouteUnit;
 import com.easy.query.core.sharding.route.table.EntityTableRouteUnit;
 import com.easy.query.core.sharding.route.table.TableRouteUnit;
-import com.easy.query.core.util.ArrayUtil;
+import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -46,7 +43,7 @@ public abstract class ShardingBaseExecutionCreator extends BaseExecutionCreator{
             EasyEntitySqlExpression easyEntitySqlExpression = createEasyEntitySqlExpression(routeUnit);
             for (TableRouteUnit tableRouteUnit : tableRouteUnits) {
                 List<EasyTableSqlExpression> tables = easyEntitySqlExpression.getTables();
-                EasyTableSqlExpression easyTableSqlExpression = ArrayUtil.firstOrDefault(tables, o -> Objects.equals(o.getEntityMetadata().getEntityClass(), tableRouteUnit.getEntityClass()), null);
+                EasyTableSqlExpression easyTableSqlExpression = EasyCollectionUtil.firstOrDefault(tables, o -> Objects.equals(o.getEntityMetadata().getEntityClass(), tableRouteUnit.getEntityClass()), null);
                 if(easyTableSqlExpression!=null&&!(easyTableSqlExpression instanceof AnonymousTableSqlExpression)){
                     easyTableSqlExpression.setTableNameAs(o->tableRouteUnit.getActualTableName());
                 }

@@ -3,9 +3,10 @@ package com.easy.query.core.util;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.executor.parser.PrepareParseResult;
 import com.easy.query.core.expression.segment.AggregationColumnSegment;
-import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.segment.ColumnSegmentImpl;
-import com.easy.query.core.expression.segment.OrderColumnSegment;
+import com.easy.query.core.expression.segment.GroupByColumnSegment;
+import com.easy.query.core.expression.segment.OrderByColumnSegment;
+import com.easy.query.core.expression.segment.OrderColumnSegmentImpl;
 import com.easy.query.core.expression.segment.SqlSegment;
 import com.easy.query.core.expression.sql.expression.EasyQuerySqlExpression;
 import com.easy.query.core.expression.sql.expression.EasyTableSqlExpression;
@@ -37,15 +38,15 @@ public class ShardingUtil {
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public static int safeCompare(final Comparable x, final Comparable y, final boolean asc) {
+    public static int safeCompare(final Comparable x, final Comparable y, final boolean asc, final boolean caseSensitive) {
         if (asc) {
-            return doSafeCompare(x, y);
+            return doSafeCompare(x, y,caseSensitive);
         }
-        return doSafeCompare(y, x);
+        return doSafeCompare(y, x,caseSensitive);
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public static int doSafeCompare(final Comparable x, final Comparable y) {
+    private static int doSafeCompare(final Comparable x, final Comparable y, final boolean caseSensitive) {
 
         if (x == null && y == null) {
             return 0;
@@ -59,7 +60,14 @@ public class ShardingUtil {
         if (x instanceof UUID && y instanceof UUID) {
             return compareUUID0((UUID) x, (UUID) y);
         }
+        if (!caseSensitive && x instanceof String && y instanceof String) {
+            return compareToIgnoreCaseString((String) x, (String) y);
+        }
         return x.compareTo(y);
+    }
+
+    private static int compareToIgnoreCaseString(String x, String y) {
+        return x.toUpperCase().compareTo(y.toUpperCase());
     }
 
     private static int compareUUID0(UUID x, UUID y) {
@@ -86,7 +94,7 @@ public class ShardingUtil {
     }
 
 
-    public static PropertyOrder findFirstPropertyOrderNotNull(List<SqlSegment> selectColumns, OrderColumnSegment orderColumnSegment, EasyQuerySqlExpression easyQuerySqlExpression) {
+    public static PropertyOrder findFirstPropertyOrderNotNull(List<SqlSegment> selectColumns, OrderColumnSegmentImpl orderColumnSegment, EasyQuerySqlExpression easyQuerySqlExpression) {
         int tableIndex = orderColumnSegment.getTable().getIndex();
         String propertyName = orderColumnSegment.getPropertyName();
         boolean asc = orderColumnSegment.isAsc();
@@ -107,6 +115,7 @@ public class ShardingUtil {
 
     /**
      * group 如果不存在select中返回-1
+     *
      * @param selectColumns
      * @param columnSegment
      * @param easyQuerySqlExpression
@@ -132,27 +141,30 @@ public class ShardingUtil {
     }
 
 
-    public static  boolean isGroupByAndOrderByStartsWith(List<SqlSegment> groupBy, List<SqlSegment> orderBy){
+    public static boolean isGroupByAndOrderByStartsWith(List<SqlSegment> groupBy, List<SqlSegment> orderBy) {
 
-        if(ArrayUtil.isEmpty(groupBy)||ArrayUtil.isNotEmpty(orderBy)){
+        if (EasyCollectionUtil.isEmpty(groupBy)) {
             return false;
         }
-        int minSize = Math.min(groupBy.size(),orderBy.size());
+        if (EasyCollectionUtil.isNotEmpty(orderBy)) {
+            return true;
+        }
+        int minSize = Math.min(groupBy.size(), orderBy.size());
         for (int i = 0; i < minSize; i++) {
             SqlSegment groupSqlSegment = groupBy.get(i);
-            if(!(groupSqlSegment instanceof ColumnSegment)){
+            if (!(groupSqlSegment instanceof GroupByColumnSegment)) {
                 return false;
             }
             SqlSegment orderSqlSegment = orderBy.get(i);
-            if(!(orderSqlSegment instanceof ColumnSegment)){
+            if (!(orderSqlSegment instanceof OrderByColumnSegment)) {
                 return false;
             }
-            ColumnSegment groupColumnSegment = (ColumnSegment) groupSqlSegment;
-            ColumnSegment orderColumnSegment = (ColumnSegment) orderSqlSegment;
-            if(groupColumnSegment.getTable().getIndex()!=orderColumnSegment.getTable().getIndex()){
+            GroupByColumnSegment groupColumnSegment = (GroupByColumnSegment) groupSqlSegment;
+            OrderByColumnSegment orderColumnSegment = (OrderByColumnSegment) orderSqlSegment;
+            if (groupColumnSegment.getTable().getIndex() != orderColumnSegment.getTable().getIndex()) {
                 return false;
             }
-            if(!Objects.equals(groupColumnSegment.getPropertyName(),orderColumnSegment.getPropertyName())){
+            if (!Objects.equals(groupColumnSegment.getPropertyName(), orderColumnSegment.getPropertyName())) {
                 return false;
             }
         }

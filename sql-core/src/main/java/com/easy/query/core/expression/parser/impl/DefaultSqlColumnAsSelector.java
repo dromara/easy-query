@@ -36,10 +36,10 @@ public class DefaultSqlColumnAsSelector<T1, TR> extends AbstractSqlColumnSelecto
 
     @Override
     public SqlColumnAsSelector<T1, TR> columnAs(Property<T1, ?> column, Property<TR, ?> alias) {
-        EntityTableExpressionBuilder table = sqlEntityExpression.getTable(getIndex());
+        EntityTableExpressionBuilder table = entityExpressionBuilder.getTable(getIndex());
         String propertyName = table.getPropertyName(column);
         String aliasColumnName = getResultColumnName(alias);
-        sqlSegmentBuilder.append(new ColumnSegmentImpl(table, propertyName, sqlEntityExpression, aliasColumnName));
+        sqlSegmentBuilder.append(new ColumnSegmentImpl(table.getEntityTable(), propertyName, entityExpressionBuilder.getRuntimeContext(), aliasColumnName));
         return this;
     }
 
@@ -53,7 +53,7 @@ public class DefaultSqlColumnAsSelector<T1, TR> extends AbstractSqlColumnSelecto
     @Override
     public SqlColumnAsSelector<T1, TR> columnAll() {
 
-        EntityTableExpressionBuilder table = sqlEntityExpression.getTable(getIndex());
+        EntityTableExpressionBuilder table = entityExpressionBuilder.getTable(getIndex());
         if(table.getEntityClass().equals(resultClass)){
             return  super.columnAll();
         }else{
@@ -74,7 +74,7 @@ public class DefaultSqlColumnAsSelector<T1, TR> extends AbstractSqlColumnSelecto
                     ColumnMetadata resultColumnMetadata = resultEntityMetadata.getColumnNotNull(aliasPropertyName);
                     String aliasColumnName = resultColumnMetadata.getName();
                     String alias = Objects.equals(columnName,aliasColumnName)?null:aliasColumnName;
-                    sqlSegmentBuilder.append(new ColumnSegmentImpl(table, property, sqlEntityExpression,alias));
+                    sqlSegmentBuilder.append(new ColumnSegmentImpl(table.getEntityTable(), property, entityExpressionBuilder.getRuntimeContext(),alias));
                 }
             }
         }
@@ -83,10 +83,10 @@ public class DefaultSqlColumnAsSelector<T1, TR> extends AbstractSqlColumnSelecto
 
     @Override
     public SqlColumnAsSelector<T1, TR> columnFunc(Property<T1, ?> column, Property<TR, ?> alias, EasyFunc easyFunc) {
-        EntityTableExpressionBuilder table = sqlEntityExpression.getTable(getIndex());
+        EntityTableExpressionBuilder table = entityExpressionBuilder.getTable(getIndex());
         String propertyName = table.getPropertyName(column);
         String columnAsName = alias == null ? table.getColumnName(propertyName) : getResultColumnName(alias);
-        sqlSegmentBuilder.append(new FuncColumnSegmentImpl(table, propertyName, sqlEntityExpression, easyFunc, columnAsName));
+        sqlSegmentBuilder.append(new FuncColumnSegmentImpl(table.getEntityTable(), propertyName, entityExpressionBuilder.getRuntimeContext(), easyFunc, columnAsName));
         return this;
     }
 

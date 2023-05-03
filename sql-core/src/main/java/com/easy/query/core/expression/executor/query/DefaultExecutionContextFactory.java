@@ -20,7 +20,7 @@ import com.easy.query.core.sharding.merge.executor.common.SqlUnit;
 import com.easy.query.core.sharding.rewrite.RewriteContextFactory;
 import com.easy.query.core.sharding.route.RouteContext;
 import com.easy.query.core.sharding.route.RouteContextFactory;
-import com.easy.query.core.util.ArrayUtil;
+import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.ClassUtil;
 
 import java.util.Collection;
@@ -73,7 +73,7 @@ public class DefaultExecutionContextFactory implements ExecutionContextFactory {
     public ExecutionContext createEntityExecutionContext(PrepareParseResult prepareParseResult) {
 //        NativeSqlQueryCompilerContext nativeSqlQueryCompilerContext = new NativeSqlQueryCompilerContext(prepareParseResult);
         //无需分片的情况下
-        if(ArrayUtil.isEmpty(prepareParseResult.getShardingEntities())){
+        if(EasyCollectionUtil.isEmpty(prepareParseResult.getShardingEntities())){
             if(prepareParseResult instanceof PredicatePrepareParseResult){
                 return new PredicateExecutionCreator(easyDataSource.getDefaultDataSourceName(), prepareParseResult.getEntityExpressionBuilder().toExpression()).create();
             }

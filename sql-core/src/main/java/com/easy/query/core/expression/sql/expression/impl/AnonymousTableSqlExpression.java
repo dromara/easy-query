@@ -2,6 +2,8 @@ package com.easy.query.core.expression.sql.expression.impl;
 
 import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
 import com.easy.query.core.enums.MultiTableTypeEnum;
+import com.easy.query.core.expression.EasyEntityTableAvailable;
+import com.easy.query.core.expression.parser.abstraction.internal.EntityTableAvailable;
 import com.easy.query.core.expression.sql.expression.EasyAnonymousTableSqlExpression;
 import com.easy.query.core.expression.sql.expression.EasyQuerySqlExpression;
 import com.easy.query.core.metadata.EntityMetadata;
@@ -15,8 +17,8 @@ import com.easy.query.core.metadata.EntityMetadata;
 public class AnonymousTableSqlExpression extends TableSqlExpression implements EasyAnonymousTableSqlExpression {
     private final EasyQuerySqlExpression easyQuerySqlExpression;
 
-    public AnonymousTableSqlExpression(EntityMetadata entityMetadata, int index, String alias, MultiTableTypeEnum multiTableType, EasyQuerySqlExpression easyQuerySqlExpression) {
-        super(entityMetadata, index, alias, multiTableType,easyQuerySqlExpression.getRuntimeContext());
+    public AnonymousTableSqlExpression(EntityTableAvailable entityTable, MultiTableTypeEnum multiTableType, EasyQuerySqlExpression easyQuerySqlExpression) {
+        super(entityTable, multiTableType,easyQuerySqlExpression.getRuntimeContext());
         this.easyQuerySqlExpression = easyQuerySqlExpression;
     }
 
@@ -28,9 +30,9 @@ public class AnonymousTableSqlExpression extends TableSqlExpression implements E
     @Override
     public String getTableName() {
         if(tableNameAs!=null){
-            return tableNameAs.apply(alias);
+            return tableNameAs.apply(getAlias());
         }
-        return alias;
+        return getAlias();
     }
 
     @Override

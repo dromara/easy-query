@@ -1,9 +1,9 @@
 package com.easy.query.core.sharding.merge.result.impl;
 
 import com.easy.query.core.sharding.merge.StreamMergeContext;
-import com.easy.query.core.sharding.merge.abstraction.StreamResult;
+import com.easy.query.core.sharding.merge.abstraction.StreamResultSet;
 import com.easy.query.core.sharding.merge.result.OrderStreamMergeResult;
-import com.easy.query.core.util.ArrayUtil;
+import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.math.BigDecimal;
 import java.sql.Blob;
@@ -24,16 +24,16 @@ import java.util.Queue;
  *
  * @author xuejiaming
  */
-public class EasyMultiOrderStreamMergeResult implements StreamResult {
+public class EasyMultiOrderStreamMergeResult implements StreamResultSet {
 
     private final StreamMergeContext streamMergeContext;
-    private final List<StreamResult> orderStreamMergeResults;
+    private final List<StreamResultSet> orderStreamMergeResults;
     private final Queue<OrderStreamMergeResult> queue;
-    private StreamResult currentStreamResult;
+    private StreamResultSet currentStreamResult;
     private boolean skipFirst;
 
 
-    public EasyMultiOrderStreamMergeResult(StreamMergeContext streamMergeContext, List<StreamResult> streamResults){
+    public EasyMultiOrderStreamMergeResult(StreamMergeContext streamMergeContext, List<StreamResultSet> streamResults) throws SQLException {
 
         this.streamMergeContext = streamMergeContext;
         this.orderStreamMergeResults = streamResults;
@@ -42,15 +42,15 @@ public class EasyMultiOrderStreamMergeResult implements StreamResult {
         setOrderStreamResult();
     }
 
-    private void setOrderStreamResult(){
-        for (StreamResult orderStreamMergeResult : this.orderStreamMergeResults) {
+    private void setOrderStreamResult() throws SQLException {
+        for (StreamResultSet orderStreamMergeResult : this.orderStreamMergeResults) {
             EasyOrderStreamMergeResult easyOrderStreamMergeResult = new EasyOrderStreamMergeResult(streamMergeContext, orderStreamMergeResult);
             if(easyOrderStreamMergeResult.hasElement()){
                 easyOrderStreamMergeResult.skipFirst();
                 queue.offer(easyOrderStreamMergeResult);
             }
         }
-        currentStreamResult= queue.isEmpty()? ArrayUtil.firstOrNull(orderStreamMergeResults) : queue.peek();
+        currentStreamResult= queue.isEmpty()? EasyCollectionUtil.firstOrNull(orderStreamMergeResults) : queue.peek();
     }
 
     @Override
@@ -184,7 +184,7 @@ public class EasyMultiOrderStreamMergeResult implements StreamResult {
 
     @Override
     public void close() throws Exception {
-        for (StreamResult streamResult : orderStreamMergeResults) {
+        for (StreamResultSet streamResult : orderStreamMergeResults) {
             streamResult.close();
         }
     }

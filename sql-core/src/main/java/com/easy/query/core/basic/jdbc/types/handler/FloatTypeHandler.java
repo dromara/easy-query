@@ -2,7 +2,7 @@ package com.easy.query.core.basic.jdbc.types.handler;
 
 import com.easy.query.core.basic.jdbc.types.EasyParameter;
 import com.easy.query.core.basic.jdbc.types.EasyResultSet;
-import com.easy.query.core.sharding.merge.abstraction.StreamResult;
+import com.easy.query.core.sharding.merge.abstraction.StreamResultSet;
 
 import java.sql.SQLException;
 import java.sql.Types;
@@ -18,7 +18,7 @@ public class FloatTypeHandler implements JdbcTypeHandler {
     @Override
     public Object getValue(EasyResultSet resultSet) throws SQLException {
 
-        StreamResult rs = resultSet.getStreamResult();
+        StreamResultSet rs = resultSet.getStreamResult();
         float r = rs.getFloat(resultSet.getIndex());
         if(r!=DEFAULT){
             return r;

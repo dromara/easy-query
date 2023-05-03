@@ -1,6 +1,6 @@
 package com.easy.query.core.sharding.route;
 
-import com.easy.query.core.util.ArrayUtil;
+import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.List;
 
@@ -20,7 +20,7 @@ public final class ShardingRouteResult {
     public ShardingRouteResult(List<RouteUnit> routeUnits,  boolean isCrossDataSource, boolean isCrossTable){
 
         this.routeUnits = routeUnits;
-        this.isEmpty = ArrayUtil.isEmpty(routeUnits);
+        this.isEmpty = EasyCollectionUtil.isEmpty(routeUnits);
         this.isCrossDataSource = isCrossDataSource;
         this.isCrossTable = isCrossTable;
     }

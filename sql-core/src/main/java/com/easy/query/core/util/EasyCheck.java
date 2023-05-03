@@ -14,4 +14,9 @@ public class EasyCheck {
             throw new EasyQueryUnexpectedException(unexpectedMsg);
         }
     }
+    public static void assertArgumentElse(boolean expected){
+        if(!expected){
+            throw new IllegalArgumentException();
+        }
+    }
 }

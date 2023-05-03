@@ -1,5 +1,6 @@
 package com.easy.query.core.basic.jdbc.parameter;
 
+import com.easy.query.core.expression.parser.abstraction.internal.EntityTableAvailable;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 
 /**
@@ -9,19 +10,19 @@ import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
  * @Date: 2023/2/28 20:47
  */
 public final class EasyConstSQLParameter implements ConstSQLParameter {
-    private final EntityTableExpressionBuilder table;
     private final String propertyName;
     private final Object val;
+    private final EntityTableAvailable entityTable;
 
-    public EasyConstSQLParameter(EntityTableExpressionBuilder table, String propertyName, Object val) {
-        this.table = table;
+    public EasyConstSQLParameter(EntityTableAvailable entityTable, String propertyName, Object val) {
+        this.entityTable = entityTable;
         this.propertyName = propertyName;
         this.val = val;
     }
 
     @Override
-    public EntityTableExpressionBuilder getTable() {
-        return table;
+    public EntityTableAvailable getTable() {
+        return entityTable;
     }
 
     @Override

@@ -15,13 +15,13 @@ import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
  */
 public class DefaultSqlColumnResultSelector<T1,TR> implements SqlColumnResultSelector<T1, TR> {
     private final int index;
-    private final EntityExpressionBuilder sqlEntityExpression;
+    private final EntityExpressionBuilder entityExpressionBuilder;
     private final SqlBuilderSegment sqlBuilderSegment;
 
-    public DefaultSqlColumnResultSelector(int index, EntityExpressionBuilder sqlEntityExpression, SqlBuilderSegment sqlBuilderSegment){
+    public DefaultSqlColumnResultSelector(int index, EntityExpressionBuilder entityExpressionBuilder, SqlBuilderSegment sqlBuilderSegment){
 
         this.index = index;
-        this.sqlEntityExpression = sqlEntityExpression;
+        this.entityExpressionBuilder = entityExpressionBuilder;
         this.sqlBuilderSegment = sqlBuilderSegment;
     }
     @Override
@@ -29,9 +29,9 @@ public class DefaultSqlColumnResultSelector<T1,TR> implements SqlColumnResultSel
         if(sqlBuilderSegment.isNotEmpty()){
             sqlBuilderSegment.getSqlSegments().clear();
         }
-        EntityTableExpressionBuilder table = sqlEntityExpression.getTable(index);
+        EntityTableExpressionBuilder table = entityExpressionBuilder.getTable(index);
         String propertyName = table.getPropertyName(column);
-        sqlBuilderSegment.append(new ColumnSegmentImpl(table,propertyName, sqlEntityExpression));
+        sqlBuilderSegment.append(new ColumnSegmentImpl(table.getEntityTable(),propertyName, entityExpressionBuilder.getRuntimeContext()));
 
     }
 

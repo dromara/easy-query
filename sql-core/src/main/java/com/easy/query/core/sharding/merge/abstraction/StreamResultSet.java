@@ -13,7 +13,7 @@ import java.sql.SQLXML;
  *
  * @author xuejiaming
  */
-public interface StreamResult extends AutoCloseable {
+public interface StreamResultSet extends AutoCloseable {
     boolean hasElement();
 
     boolean skipFirst();

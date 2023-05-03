@@ -1,5 +1,6 @@
 package com.easy.query.core.basic.api.select.provider;
 
+import com.easy.query.core.expression.parser.abstraction.SqlGroupByColumnSelector;
 import com.easy.query.core.expression.parser.impl.*;
 import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import com.easy.query.core.expression.segment.condition.DefaultSqlPredicate;
@@ -32,7 +33,7 @@ public class Select1SqlProvider<T1> implements EasyQuerySqlBuilderProvider<T1> {
         this.sqlEntityExpression = sqlEntityExpression;
     }
     @Override
-    public SqlColumnSelector<T1> getSqlGroupColumnSelector1() {
+    public SqlGroupByColumnSelector<T1> getSqlGroupColumnSelector1() {
         if(group==null){
             group= new DefaultSqlGroupColumnSelector<>(index, sqlEntityExpression);
         }

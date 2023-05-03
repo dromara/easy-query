@@ -126,7 +126,7 @@ public class UpdateTest extends BaseTest {
             trackManager.begin();
             Topic topic = easyQuery.queryable(Topic.class)
                     .where(o -> o.eq(Topic::getId, "7")).asTracking().firstNotNull("未找到对应的数据");
-            String newTitle = "test123" + new Random().nextInt(100);
+            String newTitle = "test123" + new Random().nextInt(100000);
             topic.setTitle(newTitle);
             String sql = ((EasyEntityUpdatable<Topic>) easyQuery.updatable(topic))
                     .toSql(topic);

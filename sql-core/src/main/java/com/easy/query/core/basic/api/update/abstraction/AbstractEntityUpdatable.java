@@ -18,7 +18,7 @@ import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.metadata.EntityMetadata;
-import com.easy.query.core.util.ArrayUtil;
+import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.*;
 import java.util.function.Function;
@@ -63,11 +63,11 @@ public abstract class AbstractEntityUpdatable<T> extends AbstractSqlExecuteRows<
 
     protected void updateBefore() {
         List<EasyInterceptorEntry> updateInterceptors = entityMetadata.getEntityInterceptors();
-        if (ArrayUtil.isNotEmpty(updateInterceptors)) {
+        if (EasyCollectionUtil.isNotEmpty(updateInterceptors)) {
             EasyQueryConfiguration easyQueryConfiguration = entityUpdateExpressionBuilder.getRuntimeContext().getEasyQueryConfiguration();
             List<EasyEntityInterceptor> entityInterceptors = entityUpdateExpressionBuilder.getExpressionContext().getInterceptorFilter(updateInterceptors)
                     .map(interceptor -> (EasyEntityInterceptor) easyQueryConfiguration.getEasyInterceptor(interceptor.getName())).collect(Collectors.toList());
-            if (ArrayUtil.isNotEmpty(entityInterceptors)) {
+            if (EasyCollectionUtil.isNotEmpty(entityInterceptors)) {
                 Class<?> entityClass = entityMetadata.getEntityClass();
                 for (T entity : entities) {
                     for (EasyEntityInterceptor entityInterceptor : entityInterceptors) {

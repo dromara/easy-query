@@ -16,7 +16,7 @@ import com.easy.query.core.basic.plugin.interceptor.EasyUpdateSetInterceptor;
 import com.easy.query.core.basic.plugin.logicdel.EasyLogicDeleteStrategy;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.sharding.initializer.EasyShardingInitializer;
-import com.easy.query.core.util.ArrayUtil;
+import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.StringUtil;
 import com.easy.query.core.common.LinkedCaseInsensitiveMap;
 import com.easy.query.core.util.ClassUtil;
@@ -231,7 +231,7 @@ public class EntityMetadata {
             Set<String> dataSources = initializeTables.keySet();
             for (String dataSource : dataSources) {
                 Collection<String> tableNames = initializeTables.get(dataSource);
-                if(ArrayUtil.isNotEmpty(tableNames)){
+                if(EasyCollectionUtil.isNotEmpty(tableNames)){
                     for (String name : tableNames) {
                         addActualTableWithDataSource(dataSource,name);
                     }
@@ -280,10 +280,10 @@ public class EntityMetadata {
         return tableName;
     }
 
-    public String getColumnName(String attrName) {
-        ColumnMetadata columnMetadata = property2ColumnMap.get(attrName);
+    public String getColumnName(String propertyName) {
+        ColumnMetadata columnMetadata = property2ColumnMap.get(propertyName);
         if (columnMetadata == null) {
-            throw new EasyQueryException(String.format("未找到属性:[%s]对应的列名", attrName));
+            throw new EasyQueryException(String.format("未找到属性:[%s]对应的列名", propertyName));
         }
         return columnMetadata.getName();
     }

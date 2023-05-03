@@ -1,5 +1,7 @@
 package com.easy.query.core.basic.api.select.abstraction;
 
+import com.easy.query.core.expression.parser.abstraction.SqlGroupByColumnSelector;
+import com.easy.query.core.expression.parser.abstraction.internal.EntityTableAvailable;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.basic.api.select.Queryable;
 import com.easy.query.core.basic.api.select.provider.EasyQuerySqlBuilderProvider;
@@ -16,9 +18,7 @@ import com.easy.query.core.expression.parser.abstraction.SqlPredicate;
 import com.easy.query.core.expression.segment.SqlEntitySegment;
 import com.easy.query.core.expression.segment.builder.ProjectSqlBuilderSegment;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
-import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
-import com.easy.query.core.util.ArrayUtil;
-import com.easy.query.core.util.EasyUtil;
+import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.basic.api.select.Queryable4;
 import com.easy.query.core.basic.api.select.provider.EasyQuerySqlBuilderProvider4;
 
@@ -148,9 +148,9 @@ public abstract class AbstractQueryable4<T1, T2, T3,T4> extends AbstractQueryabl
         }
         SqlEntitySegment sqlSegment = (SqlEntitySegment)projectSqlBuilderSegment.getSqlSegments().get(0);
 
-        EntityTableExpressionBuilder table = sqlSegment.getTable();
+        EntityTableAvailable table = sqlSegment.getTable();
         String propertyName = sqlSegment.getPropertyName();
-        ColumnMetadata columnMetadata = EasyUtil.getColumnMetadata(table,propertyName);
+        ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(propertyName);
 
         return cloneQueryable().select(easyFunc.getFuncColumn(projectSqlBuilderSegment.toSql(null))).toList((Class<TMember>)columnMetadata.getProperty().getPropertyType());
     }
@@ -159,7 +159,7 @@ public abstract class AbstractQueryable4<T1, T2, T3,T4> extends AbstractQueryabl
     public <TMember extends Number> BigDecimal sumBigDecimalOrDefault(SqlExpression4<SqlColumnResultSelector<T1, TMember>, SqlColumnResultSelector<T2, TMember>, SqlColumnResultSelector<T3, TMember>, SqlColumnResultSelector<T4, TMember>> columnSelectorExpression, BigDecimal def) {
 
         List<TMember> result = selectAggregateList(columnSelectorExpression, EasyAggregate.SUM);
-        TMember resultMember = ArrayUtil.firstOrNull(result);
+        TMember resultMember = EasyCollectionUtil.firstOrNull(result);
         if (resultMember == null) {
             return def;
         }
@@ -169,25 +169,25 @@ public abstract class AbstractQueryable4<T1, T2, T3,T4> extends AbstractQueryabl
     @Override
     public <TMember extends Number> TMember sumOrDefault(SqlExpression4<SqlColumnResultSelector<T1, TMember>, SqlColumnResultSelector<T2, TMember>, SqlColumnResultSelector<T3, TMember>, SqlColumnResultSelector<T4, TMember>> columnSelectorExpression, TMember def) {
         List<TMember> result = selectAggregateList(columnSelectorExpression, EasyAggregate.SUM);
-        return ArrayUtil.firstOrDefault(result,def);
+        return EasyCollectionUtil.firstOrDefault(result,def);
     }
 
     @Override
     public <TMember> TMember maxOrDefault(SqlExpression4<SqlColumnResultSelector<T1, TMember>, SqlColumnResultSelector<T2, TMember>, SqlColumnResultSelector<T3, TMember>, SqlColumnResultSelector<T4, TMember>> columnSelectorExpression, TMember def) {
         List<TMember> result = selectAggregateList(columnSelectorExpression, EasyAggregate.MAX);
-        return ArrayUtil.firstOrDefault(result,def);
+        return EasyCollectionUtil.firstOrDefault(result,def);
     }
 
     @Override
     public <TMember> TMember minOrDefault(SqlExpression4<SqlColumnResultSelector<T1, TMember>, SqlColumnResultSelector<T2, TMember>, SqlColumnResultSelector<T3, TMember>, SqlColumnResultSelector<T4, TMember>> columnSelectorExpression, TMember def) {
         List<TMember> result = selectAggregateList(columnSelectorExpression, EasyAggregate.MIN);
-        return ArrayUtil.firstOrDefault(result,def);
+        return EasyCollectionUtil.firstOrDefault(result,def);
     }
 
     @Override
     public <TMember> TMember avgOrDefault(SqlExpression4<SqlColumnResultSelector<T1, TMember>, SqlColumnResultSelector<T2, TMember>, SqlColumnResultSelector<T3, TMember>, SqlColumnResultSelector<T4, TMember>> columnSelectorExpression, TMember def) {
         List<TMember> result = selectAggregateList(columnSelectorExpression, EasyAggregate.AVG);
-        return ArrayUtil.firstOrDefault(result,def);
+        return EasyCollectionUtil.firstOrDefault(result,def);
     }
 
     @Override
@@ -205,16 +205,16 @@ public abstract class AbstractQueryable4<T1, T2, T3,T4> extends AbstractQueryabl
         }
 
         List<Integer> result =  cloneQueryable().select(EasyAggregate.LEN.getFuncColumn(projectSqlBuilderSegment.toSql(null))).toList(Integer.class);
-        return ArrayUtil.firstOrDefault(result,def);
+        return EasyCollectionUtil.firstOrDefault(result,def);
     }
 
     @Override
-    public Queryable4<T1, T2, T3,T4> groupBy(boolean condition, SqlExpression4<SqlColumnSelector<T1>, SqlColumnSelector<T2>, SqlColumnSelector<T3>, SqlColumnSelector<T4>> selectExpression) {
+    public Queryable4<T1, T2, T3,T4> groupBy(boolean condition, SqlExpression4<SqlGroupByColumnSelector<T1>, SqlGroupByColumnSelector<T2>, SqlGroupByColumnSelector<T3>, SqlGroupByColumnSelector<T4>> selectExpression) {
         if (condition) {
-            SqlColumnSelector<T1> sqlGroupSelector1 = getSqlBuilderProvider4().getSqlGroupColumnSelector1();
-            SqlColumnSelector<T2> sqlGroupSelector2 = getSqlBuilderProvider4().getSqlGroupColumnSelector2();
-            SqlColumnSelector<T3> sqlGroupSelector3 = getSqlBuilderProvider4().getSqlGroupColumnSelector3();
-            SqlColumnSelector<T4> sqlGroupSelector4 = getSqlBuilderProvider4().getSqlGroupColumnSelector4();
+            SqlGroupByColumnSelector<T1> sqlGroupSelector1 = getSqlBuilderProvider4().getSqlGroupColumnSelector1();
+            SqlGroupByColumnSelector<T2> sqlGroupSelector2 = getSqlBuilderProvider4().getSqlGroupColumnSelector2();
+            SqlGroupByColumnSelector<T3> sqlGroupSelector3 = getSqlBuilderProvider4().getSqlGroupColumnSelector3();
+            SqlGroupByColumnSelector<T4> sqlGroupSelector4 = getSqlBuilderProvider4().getSqlGroupColumnSelector4();
             selectExpression.apply(sqlGroupSelector1, sqlGroupSelector2,sqlGroupSelector3,sqlGroupSelector4);
         }
         return this;

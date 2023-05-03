@@ -1,8 +1,8 @@
 package com.easy.query.core.expression.sql.builder;
 
-import com.easy.query.core.expression.parser.abstraction.internal.IndexAware;
+import com.easy.query.core.expression.parser.abstraction.internal.EntityTableAvailable;
+import com.easy.query.core.expression.parser.abstraction.internal.IndexAvailable;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
-import com.easy.query.core.expression.sql.builder.ExpressionBuilder;
 
 /**
  * @FileName: TableSegment.java
@@ -10,11 +10,12 @@ import com.easy.query.core.expression.sql.builder.ExpressionBuilder;
  * @Date: 2023/3/3 22:06
  * @author xuejiaming
  */
-public interface TableExpressionBuilder extends ExpressionBuilder, IndexAware {
+public interface TableExpressionBuilder extends ExpressionBuilder {
     Class<?> getEntityClass();
     PredicateSegment getOn();
     boolean hasOn();
     String getAlias();
     int getIndex();
 //    String getSqlColumnSegment(String propertyName);
+    EntityTableAvailable getEntityTable();
 }

@@ -11,7 +11,7 @@ import com.easy.query.core.expression.parser.abstraction.*;
  * @author xuejiaming
  */
 public interface EasyQuerySqlBuilderProvider4<T1,T2,T3,T4> extends EasyQuerySqlBuilderProvider3<T1,T2,T3> {
-    SqlColumnSelector<T4> getSqlGroupColumnSelector4();
+    SqlGroupByColumnSelector<T4> getSqlGroupColumnSelector4();
     SqlColumnSelector<T4> getSqlOrderColumnSelector4(boolean asc);
     SqlPredicate<T4> getSqlWherePredicate4();
     SqlAggregatePredicate<T4> getSqlAggregatePredicate4();

@@ -29,8 +29,8 @@ public interface EntityExpressionBuilder extends ExpressionBuilder {
         }
         return getTable(size-1);
     }
-    String getQuoteName(String value);
-    String getSqlOwnerColumn(EntityTableExpressionBuilder table, String propertyName);
+//    String getQuoteName(String value);
+//    String getSqlOwnerColumn(EntityTableExpressionBuilder table, String propertyName);
     void setLogicDelete(boolean logicDelete);
 
     @Override

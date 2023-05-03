@@ -2,7 +2,7 @@ package com.easy.query.core.basic.jdbc.types.handler;
 
 import com.easy.query.core.basic.jdbc.types.EasyParameter;
 import com.easy.query.core.basic.jdbc.types.EasyResultSet;
-import com.easy.query.core.sharding.merge.abstraction.StreamResult;
+import com.easy.query.core.sharding.merge.abstraction.StreamResultSet;
 
 import java.sql.SQLException;
 import java.sql.Types;
@@ -18,7 +18,7 @@ public class BooleanTypeHandler implements JdbcTypeHandler {
     @Override
     public Object getValue(EasyResultSet resultSet) throws SQLException {
 
-        StreamResult rs = resultSet.getStreamResult();
+        StreamResultSet rs = resultSet.getStreamResult();
         boolean r = rs.getBoolean(resultSet.getIndex());
         if(rs.wasNull()){//判断当前读取的列是否可以为null，因为基本类型存在默认值而包装类型存在null值
             if(resultSet.isPrimitive()){

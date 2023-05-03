@@ -1,12 +1,12 @@
 package com.easy.query.core.sharding.merge.result.impl;
 
-import com.easy.query.core.exception.EasyQuerySQLException;
-import com.easy.query.core.sharding.merge.abstraction.StreamResult;
+import com.easy.query.core.sharding.merge.abstraction.StreamResultSet;
 
 import java.math.BigDecimal;
 import java.sql.Blob;
 import java.sql.Clob;
 import java.sql.Date;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -20,14 +20,16 @@ import java.sql.Timestamp;
  *
  * @author xuejiaming
  */
-public final class EasyShardingStreamResult implements StreamResult {
+public final class EasyShardingStreamResult implements StreamResultSet {
     private final ResultSet resultSet;
+    private final PreparedStatement preparedStatement;
     private boolean hasElement;
     private  boolean skipFirst;
 
-    public EasyShardingStreamResult(ResultSet resultSet,boolean hasElement){
+    public EasyShardingStreamResult(ResultSet resultSet, PreparedStatement preparedStatement, boolean hasElement){
 
         this.resultSet = resultSet;
+        this.preparedStatement = preparedStatement;
         this.hasElement = hasElement;
         skipFirst=true;
     }
@@ -155,5 +157,6 @@ public final class EasyShardingStreamResult implements StreamResult {
     @Override
     public void close() throws Exception {
         resultSet.close();
+        preparedStatement.close();
     }
 }

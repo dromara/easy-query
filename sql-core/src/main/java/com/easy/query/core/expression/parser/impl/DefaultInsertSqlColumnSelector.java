@@ -38,7 +38,7 @@ public class DefaultInsertSqlColumnSelector<T1> implements SqlColumnSelector<T1>
     public SqlColumnSelector<T1> column(Property<T1, ?> column) {
         EntityTableExpressionBuilder table = sqlEntityExpression.getTable(index);
         String propertyName = table.getPropertyName(column);
-        sqlSegmentBuilder.append(new ColumnInsertSegment(table, propertyName, sqlEntityExpression));
+        sqlSegmentBuilder.append(new ColumnInsertSegment(table.getEntityTable(), propertyName, sqlEntityExpression.getRuntimeContext()));
         return this;
     }
 
@@ -62,7 +62,7 @@ public class DefaultInsertSqlColumnSelector<T1> implements SqlColumnSelector<T1>
         EntityTableExpressionBuilder table = sqlEntityExpression.getTable(index);
         Collection<String> properties = table.getEntityMetadata().getProperties();
         for (String property : properties) {
-            sqlSegmentBuilder.append(new ColumnInsertSegment(table, property, sqlEntityExpression));
+            sqlSegmentBuilder.append(new ColumnInsertSegment(table.getEntityTable(), property, sqlEntityExpression.getRuntimeContext()));
         }
         return this;
     }

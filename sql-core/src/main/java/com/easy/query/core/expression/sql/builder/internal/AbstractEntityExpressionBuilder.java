@@ -43,21 +43,21 @@ public abstract class AbstractEntityExpressionBuilder implements EntityExpressio
     public List<EntityTableExpressionBuilder> getTables() {
         return tables;
     }
-
-    public String getQuoteName(String value) {
-        return sqlExpressionContext.getQuoteName(value);
-    }
-
-    @Override
-    public String getSqlOwnerColumn(EntityTableExpressionBuilder table, String propertyName) {
-        String alias = table.getAlias();
-        String columnName = table.getColumnName(propertyName);
-        String quoteName = getQuoteName(columnName);
-        if (alias == null) {
-            return quoteName;
-        }
-        return alias + "." + quoteName;
-    }
+//
+//    public String getQuoteName(String value) {
+//        return sqlExpressionContext.getQuoteName(value);
+//    }
+//
+//    @Override
+//    public String getSqlOwnerColumn(EntityTableExpressionBuilder table, String propertyName) {
+//        String alias = table.getAlias();
+//        String columnName = table.getColumnName(propertyName);
+//        String quoteName = getQuoteName(columnName);
+//        if (alias == null) {
+//            return quoteName;
+//        }
+//        return alias + "." + quoteName;
+//    }
     @Override
     public void setLogicDelete(boolean logicDelete) {
         if(logicDelete){

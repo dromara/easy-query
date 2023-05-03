@@ -1,14 +1,17 @@
 package com.easy.query.core.expression.segment.condition.predicate;
 
+import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.PropertySQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
 import com.easy.query.core.enums.SqlPredicateCompare;
 import com.easy.query.core.enums.SqlPredicateCompareEnum;
+import com.easy.query.core.expression.parser.abstraction.internal.EntityTableAvailable;
 import com.easy.query.core.expression.segment.SqlEntitySegment;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.util.SQLUtil;
+import com.easy.query.core.util.SqlExpressionUtil;
 
 /**
  * @FileName: ColumnPropertyPredicate.java
@@ -17,25 +20,25 @@ import com.easy.query.core.util.SQLUtil;
  * @author xuejiaming
  */
 public class ColumnPropertyPredicate implements Predicate,ValuePredicate {
-    protected final EntityTableExpressionBuilder table;
+    protected final EntityTableAvailable table;
     protected final String propertyName;
-    protected final EntityExpressionBuilder sqlEntityExpression;
+    protected final EasyQueryRuntimeContext runtimeContext;
 
-    public ColumnPropertyPredicate(EntityTableExpressionBuilder table, String propertyName, EntityExpressionBuilder sqlEntityExpression){
+    public ColumnPropertyPredicate(EntityTableAvailable table, String propertyName, EasyQueryRuntimeContext runtimeContext){
         this.table = table;
         this.propertyName = propertyName;
-        this.sqlEntityExpression = sqlEntityExpression;
+        this.runtimeContext = runtimeContext;
     }
 
     @Override
     public String toSql(SqlParameterCollector sqlParameterCollector) {
         SQLUtil.addParameter(sqlParameterCollector,new PropertySQLParameter(table,propertyName));
-        String sqlColumnSegment = sqlEntityExpression.getSqlOwnerColumn(table,propertyName);
+        String sqlColumnSegment = SqlExpressionUtil.getSqlOwnerColumn(runtimeContext,table,propertyName);
         return sqlColumnSegment + " = ?";
     }
 
     @Override
-    public EntityTableExpressionBuilder getTable() {
+    public EntityTableAvailable getTable() {
         return table;
     }
 

@@ -1,7 +1,6 @@
 package com.easy.query.core.util;
 
 import com.easy.query.core.expression.lambda.Selector;
-import com.easy.query.core.expression.segment.condition.predicate.Predicate;
 
 import java.util.*;
 import java.util.function.Function;
@@ -12,7 +11,7 @@ import java.util.function.Function;
  * @Description: 文件说明
  * @Date: 2023/2/26 14:07
  */
-public class ArrayUtil {
+public class EasyCollectionUtil {
     public static <TSource> boolean isNotSingle(Collection<TSource> sources) {
         return !isSingle(sources);
     }

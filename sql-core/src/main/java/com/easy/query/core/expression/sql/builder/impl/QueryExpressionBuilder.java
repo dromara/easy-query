@@ -194,15 +194,9 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
         if (where != null && where.isNotEmpty()) {
             easyQuerySqlExpression.setWhere(where);
         }
-        if (hasGroup()) {
-            easyQuerySqlExpression.setGroup(getGroup());
-        }
-        if (hasHaving()) {
-            easyQuerySqlExpression.setHaving(getHaving());
-        }
-        if (hasOrder()) {
-            easyQuerySqlExpression.setOrder(getOrder());
-        }
+        easyQuerySqlExpression.setGroup(getGroup());
+        easyQuerySqlExpression.setHaving(getHaving());
+        easyQuerySqlExpression.setOrder(getOrder());
         easyQuerySqlExpression.setOffset(getOffset());
         easyQuerySqlExpression.setRows(getRows());
         return easyQuerySqlExpression;

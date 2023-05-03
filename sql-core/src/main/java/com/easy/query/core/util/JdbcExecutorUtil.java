@@ -19,7 +19,7 @@ import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.basic.jdbc.executor.internal.AffectedRowsExecuteResult;
 import com.easy.query.core.basic.jdbc.executor.internal.QueryExecuteResult;
-import com.easy.query.core.sharding.merge.abstraction.StreamResult;
+import com.easy.query.core.sharding.merge.abstraction.StreamResultSet;
 import com.easy.query.core.sharding.merge.result.impl.EasyShardingStreamResult;
 import com.easy.query.core.sharding.merge.result.impl.EasyStreamResult;
 
@@ -100,10 +100,10 @@ public class JdbcExecutorUtil {
         PreparedStatement ps = null;
         ResultSet rs = null;
         List<SQLParameter> parameters = extractParameters(executorContext, null, sqlParameters);
-        if (logDebug && ArrayUtil.isNotEmpty(parameters)) {
+        if (logDebug && EasyCollectionUtil.isNotEmpty(parameters)) {
             logParameter(true, parameters);
         }
-        StreamResult sr=null;
+        StreamResultSet sr=null;
         try {
             ps = createPreparedStatement(easyConnection.getConnection(), sql, parameters, easyJdbcTypeHandler);
             if (logDebug) {
@@ -117,16 +117,16 @@ public class JdbcExecutorUtil {
             //如果是分片查询那么需要提前next
             if(sharding){
                 boolean next = rs.next();
-                sr=new EasyShardingStreamResult(rs,next);
+                sr=new EasyShardingStreamResult(rs,ps,next);
             }else{
-                sr=new EasyStreamResult(rs);
+                sr=new EasyStreamResult(rs,ps);
             }
 
         } catch (SQLException e) {
             log.error(sql, e);
             throw new EasyQuerySQLExecuteException(sql, e);
         }
-        return new QueryExecuteResult(sr, ps);
+        return new QueryExecuteResult(sr);
     }
 
     public static <T> AffectedRowsExecuteResult insert(ExecutorContext executorContext, EasyConnection easyConnection, String sql, List<T> entities, List<SQLParameter> sqlParameters, boolean fillAutoIncrement) {
@@ -158,7 +158,7 @@ public class JdbcExecutorUtil {
             r = rs.length;
             logResult(logDebug, r);
             //如果需要自动填充并且存在自动填充列
-            if (fillAutoIncrement && ArrayUtil.isNotEmpty(incrementColumns)) {
+            if (fillAutoIncrement && EasyCollectionUtil.isNotEmpty(incrementColumns)) {
                 ResultSet keysSet = ps.getGeneratedKeys();
                 int index = 0;
                 PropertyDescriptor[] incrementProperty = new PropertyDescriptor[incrementColumns.size()];
@@ -211,7 +211,7 @@ public class JdbcExecutorUtil {
         JdbcTypeHandlerManager easyJdbcTypeHandlerManager = runtimeContext.getEasyJdbcTypeHandlerManager();
         PreparedStatement ps = null;
         int r = 0;
-        boolean hasParameter = ArrayUtil.isNotEmpty(sqlParameters);
+        boolean hasParameter = EasyCollectionUtil.isNotEmpty(sqlParameters);
         try {
             for (T entity : entities) {
 
@@ -229,7 +229,7 @@ public class JdbcExecutorUtil {
             }
             assert ps != null;
             int[] rs = ps.executeBatch();
-            r = ArrayUtil.sum(rs);
+            r = EasyCollectionUtil.sum(rs);
             logResult(logDebug, r);
             ps.clearBatch();
         } catch (SQLException e) {
@@ -272,7 +272,7 @@ public class JdbcExecutorUtil {
     }
 
     private static PreparedStatement createPreparedStatement(Connection connection, String sql, List<SQLParameter> sqlParameters, JdbcTypeHandlerManager easyJdbcTypeHandlerManager, List<String> incrementColumns) throws SQLException {
-        PreparedStatement preparedStatement = ArrayUtil.isEmpty(incrementColumns) ? connection.prepareStatement(sql) : connection.prepareStatement(sql, incrementColumns.toArray(new String[0]));
+        PreparedStatement preparedStatement = EasyCollectionUtil.isEmpty(incrementColumns) ? connection.prepareStatement(sql) : connection.prepareStatement(sql, incrementColumns.toArray(new String[0]));
         return setPreparedStatement(preparedStatement, sqlParameters, easyJdbcTypeHandlerManager);
     }
 

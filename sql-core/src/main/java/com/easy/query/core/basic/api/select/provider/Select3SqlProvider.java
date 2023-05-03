@@ -31,7 +31,7 @@ public class Select3SqlProvider<T1,T2,T3> extends Select2SqlProvider<T1,T2> impl
     }
 
     @Override
-    public SqlColumnSelector<T3> getSqlGroupColumnSelector3() {
+    public SqlGroupByColumnSelector<T3> getSqlGroupColumnSelector3() {
         if(group==null){
             group= new DefaultSqlGroupColumnSelector<>(index, sqlEntityExpression);
         }

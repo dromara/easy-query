@@ -2,12 +2,13 @@ package com.easy.query.core.sharding.merge.result.impl;
 
 import com.easy.query.core.exception.EasyQuerySQLException;
 import com.easy.query.core.sharding.merge.StreamMergeContext;
-import com.easy.query.core.sharding.merge.abstraction.StreamResult;
+import com.easy.query.core.sharding.merge.abstraction.StreamResultSet;
 import com.easy.query.core.sharding.merge.segment.PropertyGroup;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * create time 2023/4/28 10:38
@@ -18,20 +19,11 @@ import java.util.List;
 public final class GroupValue {
     private final List<Object> groupValues;
 
-    public GroupValue(StreamMergeContext streamMergeContext, StreamResult streamResult) {
+    public GroupValue(StreamMergeContext streamMergeContext, StreamResultSet streamResult) throws SQLException {
         this.groupValues = getGroupByValues(streamMergeContext, streamResult);
     }
 
-    private List<Object> getGroupByValues(StreamMergeContext streamMergeContext, StreamResult streamResult) {
-
-        try {
-            return doGetGroupByValues(streamMergeContext, streamResult);
-        } catch (SQLException e) {
-            throw new EasyQuerySQLException(e);
-        }
-    }
-
-    private List<Object> doGetGroupByValues(StreamMergeContext streamMergeContext, StreamResult streamResult) throws SQLException {
+    private List<Object> getGroupByValues(StreamMergeContext streamMergeContext, StreamResultSet streamResult) throws SQLException {
 
         List<PropertyGroup> groups = streamMergeContext.getGroups();
         int groupSize = groups.size();
@@ -52,5 +44,18 @@ public final class GroupValue {
 
     public List<Object> getGroupValues() {
         return groupValues;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        GroupValue that = (GroupValue) o;
+        return Objects.equals(groupValues, that.groupValues);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(groupValues);
     }
 }

@@ -118,7 +118,7 @@ public abstract class AbstractExpressionUpdatable<T> extends AbstractSqlExecuteR
             String keyProperty = keyProperties.iterator().next();
             AndPredicateSegment andPredicateSegment = new AndPredicateSegment();
             andPredicateSegment
-                    .setPredicate(new ColumnValuePredicate(table, keyProperty, id, SqlPredicateCompareEnum.EQ, entityUpdateExpressionBuilder));
+                    .setPredicate(new ColumnValuePredicate(table.getEntityTable(), keyProperty, id, SqlPredicateCompareEnum.EQ, entityUpdateExpressionBuilder.getRuntimeContext()));
             where.addPredicateSegment(andPredicateSegment);
         }
         return this;

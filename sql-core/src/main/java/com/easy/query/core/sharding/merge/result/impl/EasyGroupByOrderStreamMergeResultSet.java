@@ -4,10 +4,10 @@ import com.easy.query.core.exception.EasyQuerySQLException;
 import com.easy.query.core.expression.segment.AggregationColumnSegment;
 import com.easy.query.core.expression.segment.SqlSegment;
 import com.easy.query.core.sharding.merge.StreamMergeContext;
-import com.easy.query.core.sharding.merge.abstraction.StreamResult;
+import com.easy.query.core.sharding.merge.abstraction.StreamResultSet;
 import com.easy.query.core.sharding.merge.result.aggregation.AggregationUnitFactory;
 import com.easy.query.core.sharding.merge.segment.PropertyGroup;
-import com.easy.query.core.util.ArrayUtil;
+import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.ClassUtil;
 
 import java.math.BigDecimal;
@@ -31,12 +31,12 @@ import java.util.Queue;
  *
  * @author xuejiaming
  */
-public class EasyMultiAggregateOrderStreamMergeResult implements StreamResult {
+public class EasyGroupByOrderStreamMergeResultSet implements StreamResultSet {
     private final StreamMergeContext streamMergeContext;
-    private final List<StreamResult> streamResults;
-    private final Queue<StreamResult> queue;
+    private final List<StreamResultSet> streamResults;
+    private final Queue<StreamResultSet> queue;
     private final ResultSetMetaData resultSetMetaData;
-    private StreamResult currentStreamResult;
+    private StreamResultSet currentStreamResult;
     private final List<Object> currentRow;
     private final int columnCount;
     //数组下标对应select的下标,值为1的表示他是Group列0表示为func列
@@ -46,7 +46,7 @@ public class EasyMultiAggregateOrderStreamMergeResult implements StreamResult {
 
     private boolean wasNull;
 
-    public EasyMultiAggregateOrderStreamMergeResult(StreamMergeContext streamMergeContext, List<StreamResult> streamResults) {
+    public EasyGroupByOrderStreamMergeResultSet(StreamMergeContext streamMergeContext, List<StreamResultSet> streamResults) throws SQLException {
 
         this.streamMergeContext = streamMergeContext;
         this.streamResults = streamResults;
@@ -54,7 +54,7 @@ public class EasyMultiAggregateOrderStreamMergeResult implements StreamResult {
         this.skipFirst = true;
         setOrderStreamResult();
         this.resultSetMetaData=getResultSetMetaData();
-        this.columnCount = streamMergeContext.getSelectColumns().getSqlSegments().size();
+        this.columnCount = resultSetMetaData.getColumnCount();
         this.currentRow = new ArrayList<>(columnCount);
 
         List<PropertyGroup> groups = streamMergeContext.getGroups();
@@ -67,23 +67,19 @@ public class EasyMultiAggregateOrderStreamMergeResult implements StreamResult {
         }
     }
 
-    private void setOrderStreamResult() {
-        for (StreamResult streamResult : streamResults) {
+    private void setOrderStreamResult() throws SQLException {
+        for (StreamResultSet streamResult : streamResults) {
             EasyOrderStreamMergeResult easyOrderStreamMergeResult = new EasyOrderStreamMergeResult(streamMergeContext, streamResult);
             if (easyOrderStreamMergeResult.hasElement()) {
                 easyOrderStreamMergeResult.skipFirst();
                 queue.offer(easyOrderStreamMergeResult);
             }
         }
-        currentStreamResult = queue.isEmpty() ? ArrayUtil.firstOrNull(streamResults) : queue.peek();
+        currentStreamResult = queue.isEmpty() ? EasyCollectionUtil.firstOrNull(streamResults) : queue.peek();
         currentGroupValues = queue.isEmpty() ? Collections.emptyList() : new GroupValue(streamMergeContext, currentStreamResult).getGroupValues();
     }
-    private ResultSetMetaData getResultSetMetaData(){
-        try {
-            return  currentStreamResult.getMetaData();
-        } catch (SQLException e) {
-            throw new EasyQuerySQLException(e);
-        }
+    private ResultSetMetaData getResultSetMetaData() throws SQLException {
+        return  currentStreamResult.getMetaData();
     }
 
     @Override
@@ -121,7 +117,7 @@ public class EasyMultiAggregateOrderStreamMergeResult implements StreamResult {
             skipFirst = false;
             return true;
         }
-        StreamResult first = queue.poll();
+        StreamResultSet first = queue.poll();
         if (first.next()) {
             queue.offer(first);
         }
@@ -366,7 +362,7 @@ public class EasyMultiAggregateOrderStreamMergeResult implements StreamResult {
     @Override
     public void close() throws Exception {
         currentRow.clear();
-        for (StreamResult streamResult : streamResults) {
+        for (StreamResultSet streamResult : streamResults) {
             streamResult.close();
         }
     }

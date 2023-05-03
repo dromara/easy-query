@@ -2,10 +2,8 @@ package com.easy.query.sharding;
 
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.sharding.initializer.EasyShardingInitializer;
-import com.easy.query.core.util.ArrayUtil;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;

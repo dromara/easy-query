@@ -1,15 +1,16 @@
 package com.easy.query.core.expression.segment.condition.predicate;
 
+import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
 import com.easy.query.core.enums.SqlPredicateCompare;
 import com.easy.query.core.enums.SqlPredicateCompareEnum;
+import com.easy.query.core.expression.parser.abstraction.internal.EntityTableAvailable;
 import com.easy.query.core.expression.segment.SqlEntitySegment;
-import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
-import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
-import com.easy.query.core.util.ArrayUtil;
+import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.SQLUtil;
+import com.easy.query.core.util.SqlExpressionUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,21 +26,21 @@ import java.util.Iterator;
 public class ColumnCollectionPredicate implements ValuesPredicate,ShardingPredicate {
     private final Collection<?> collection;
     private final SqlPredicateCompare compare;
-    private final EntityExpressionBuilder sqlEntityExpression;
-    private final EntityTableExpressionBuilder table;
+    private final EasyQueryRuntimeContext runtimeContext;
+    private final EntityTableAvailable table;
     private final String propertyName;
 
-    public ColumnCollectionPredicate(EntityTableExpressionBuilder table, String propertyName, Collection<?> collection, SqlPredicateCompare compare, EntityExpressionBuilder sqlEntityExpression) {
+    public ColumnCollectionPredicate(EntityTableAvailable table, String propertyName, Collection<?> collection, SqlPredicateCompare compare, EasyQueryRuntimeContext runtimeContext) {
         this.table = table;
         this.propertyName = propertyName;
         this.collection = collection;
         this.compare = compare;
-        this.sqlEntityExpression = sqlEntityExpression;
+        this.runtimeContext = runtimeContext;
     }
 
     @Override
     public String toSql(SqlParameterCollector sqlParameterCollector) {
-        if (ArrayUtil.isEmpty(collection)) {
+        if (EasyCollectionUtil.isEmpty(collection)) {
             if (SqlPredicateCompareEnum.IN.equals(compare)) {
                 return "FALSE";
             } else if (SqlPredicateCompareEnum.NOT_IN.equals(compare)) {
@@ -48,7 +49,7 @@ public class ColumnCollectionPredicate implements ValuesPredicate,ShardingPredic
                 throw new UnsupportedOperationException();
             }
         } else {
-            String sqlColumnSegment = sqlEntityExpression.getSqlOwnerColumn(table,propertyName);
+            String sqlColumnSegment = SqlExpressionUtil.getSqlOwnerColumn(runtimeContext,table,propertyName);
             StringBuilder sql = new StringBuilder();
             sql.append(sqlColumnSegment).append(" ").append(compare.getSql()).append(" (");
             Iterator<?> iterator = collection.iterator();
@@ -66,7 +67,7 @@ public class ColumnCollectionPredicate implements ValuesPredicate,ShardingPredic
     }
 
     @Override
-    public EntityTableExpressionBuilder getTable() {
+    public EntityTableAvailable getTable() {
         return table;
     }
 
@@ -88,7 +89,7 @@ public class ColumnCollectionPredicate implements ValuesPredicate,ShardingPredic
 
     @Override
     public Collection<SQLParameter> getParameters() {
-        if (ArrayUtil.isEmpty(collection)){
+        if (EasyCollectionUtil.isEmpty(collection)){
             return Collections.emptyList();
         }
         ArrayList<SQLParameter> sqlParameters = new ArrayList<>(collection.size());

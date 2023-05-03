@@ -16,7 +16,7 @@ import java.util.Collection;
  * @Date: 2023/2/5 09:09
  * @author xuejiaming
  */
-public interface WherePredicate<T1, TChain> extends IndexAware {
+public interface WherePredicate<T1, TChain> extends IndexAvailable {
     /**
      * 大于 column > val
      */

@@ -9,7 +9,7 @@ import com.easy.query.core.sharding.route.ShardingRouteResult;
 import com.easy.query.core.sharding.route.abstraction.TableRouteManager;
 import com.easy.query.core.sharding.route.datasource.engine.DataSourceRouteResult;
 import com.easy.query.core.sharding.route.table.TableRouteUnit;
-import com.easy.query.core.util.ArrayUtil;
+import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -76,11 +76,11 @@ public class DefaultTableRouteEngine implements TableRouteEngine {
         for (String dataSourceName : tableRouteContext.getDataSourceRouteResult().getIntersectDataSources()) {
             Map<Class<?>, Set<TableRouteUnit>> routeMap = routeMaps.get(dataSourceName);
             if (routeMap != null) {
-                Collection<Collection<TableRouteUnit>> cartesian = ArrayUtil.getCartesian(routeMap.values());
+                Collection<Collection<TableRouteUnit>> cartesian = EasyCollectionUtil.getCartesian(routeMap.values());
                 List<TableRouteResult> tableRouteResults = cartesian.stream().map(o -> new TableRouteResult(new ArrayList<>(o)))
                         .filter(o -> !o.isEmpty()).collect(Collectors.toList());
 
-                if(ArrayUtil.isNotEmpty(tableRouteResults)){
+                if(EasyCollectionUtil.isNotEmpty(tableRouteResults)){
                     dataSourceCount++;
                     if(tableRouteResults.size()>1){
                         isCrossTable=true;

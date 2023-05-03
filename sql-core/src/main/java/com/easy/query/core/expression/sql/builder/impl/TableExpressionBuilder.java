@@ -4,8 +4,9 @@ import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.config.IDialect;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.exception.EasyQueryException;
+import com.easy.query.core.expression.EasyEntityTableAvailable;
 import com.easy.query.core.expression.lambda.Property;
-import com.easy.query.core.expression.sql.expression.EasySqlExpression;
+import com.easy.query.core.expression.parser.abstraction.internal.EntityTableAvailable;
 import com.easy.query.core.expression.sql.expression.EasyTableSqlExpression;
 import com.easy.query.core.expression.sql.expression.impl.TableSqlExpression;
 import com.easy.query.core.metadata.EntityMetadata;
@@ -28,20 +29,19 @@ import java.util.function.Function;
  */
 public class TableExpressionBuilder implements EntityTableExpressionBuilder {
 
-    protected final EntityMetadata entityMetadata;
-    protected final int index;
-    protected final String alias;
+    protected final EntityTableAvailable entityTable;
     protected final MultiTableTypeEnum multiTableType;
     private final EasyQueryRuntimeContext runtimeContext;
     private final IDialect dialect;
     protected PredicateSegment on;
     protected Function<String, String> tableNameAs;
-
     public TableExpressionBuilder(EntityMetadata entityMetadata, int index, String alias, MultiTableTypeEnum multiTableType, EasyQueryRuntimeContext runtimeContext) {
-        this.entityMetadata = entityMetadata;
+        this(new EasyEntityTableAvailable(index,entityMetadata,alias),multiTableType,runtimeContext);
 
-        this.index = index;
-        this.alias = alias;
+    }
+    public TableExpressionBuilder(EntityTableAvailable entityTable, MultiTableTypeEnum multiTableType, EasyQueryRuntimeContext runtimeContext) {
+        this.entityTable = entityTable;
+
         this.multiTableType = multiTableType;
         this.runtimeContext = runtimeContext;
         this.dialect = runtimeContext.getEasyQueryConfiguration().getDialect();
@@ -49,7 +49,7 @@ public class TableExpressionBuilder implements EntityTableExpressionBuilder {
 
     @Override
     public EntityMetadata getEntityMetadata() {
-        return entityMetadata;
+        return entityTable.getEntityMetadata();
     }
 
     @Override
@@ -59,7 +59,7 @@ public class TableExpressionBuilder implements EntityTableExpressionBuilder {
 
     @Override
     public String getColumnName(String propertyName) {
-        return this.entityMetadata.getColumnName(propertyName);
+        return entityTable.getColumnName(propertyName);
     }
 
     @Override
@@ -69,9 +69,9 @@ public class TableExpressionBuilder implements EntityTableExpressionBuilder {
 
     protected String doGetTableName() {
 
-        String tableName = entityMetadata.getTableName();
+        String tableName = entityTable.getTableName();
         if (tableName == null) {
-            throw new EasyQueryException("table " + ClassUtil.getSimpleName(entityMetadata.getEntityClass()) + " cant found mapping table name");
+            throw new EasyQueryException("table " + ClassUtil.getSimpleName(entityTable.getEntityClass()) + " cant found mapping table name");
         }
         if (tableNameAs != null) {
             return tableNameAs.apply(tableName);
@@ -91,16 +91,16 @@ public class TableExpressionBuilder implements EntityTableExpressionBuilder {
 
     @Override
     public SqlExpression<SqlPredicate<Object>> getLogicDeleteQueryFilterExpression() {
-        if (entityMetadata.enableLogicDelete()) {
-            return entityMetadata.getLogicDeleteMetadata().getLogicDeletePredicateFilterExpression();
+        if (getEntityMetadata().enableLogicDelete()) {
+            return getEntityMetadata().getLogicDeleteMetadata().getLogicDeletePredicateFilterExpression();
         }
         return null;
     }
 
     @Override
     public SqlExpression<SqlColumnSetter<Object>> getLogicDeletedSqlExpression() {
-        if (entityMetadata.enableLogicDelete()) {
-            return entityMetadata.getLogicDeleteMetadata().getLogicDeletedSqlExpression();
+        if (getEntityMetadata().enableLogicDelete()) {
+            return getEntityMetadata().getLogicDeleteMetadata().getLogicDeletedSqlExpression();
         }
         return null;
     }
@@ -108,7 +108,7 @@ public class TableExpressionBuilder implements EntityTableExpressionBuilder {
     @Override
     public EntityTableExpressionBuilder copyEntityTableExpressionBuilder() {
 
-        TableExpressionBuilder tableExpressionBuilder = new TableExpressionBuilder(entityMetadata, index, alias, multiTableType,runtimeContext);
+        TableExpressionBuilder tableExpressionBuilder = new TableExpressionBuilder(entityTable, multiTableType,runtimeContext);
         if (on != null) {
             on.copyTo(tableExpressionBuilder.getOn());
         }
@@ -118,7 +118,7 @@ public class TableExpressionBuilder implements EntityTableExpressionBuilder {
 
     @Override
     public Class<?> getEntityClass() {
-        return entityMetadata.getEntityClass();
+        return entityTable.getEntityClass();
     }
 
     @Override
@@ -136,17 +136,22 @@ public class TableExpressionBuilder implements EntityTableExpressionBuilder {
 
     @Override
     public String getAlias() {
-        return alias;
+        return entityTable.getAlias();
     }
 
     @Override
     public int getIndex() {
-        return index;
+        return entityTable.getIndex();
+    }
+
+    @Override
+    public EntityTableAvailable getEntityTable() {
+        return entityTable;
     }
 
     @Override
     public EasyTableSqlExpression toExpression() {
-        TableSqlExpression tableSqlExpression = new TableSqlExpression(entityMetadata, index, alias, multiTableType,runtimeContext);
+        TableSqlExpression tableSqlExpression = new TableSqlExpression(entityTable, multiTableType,runtimeContext);
         tableSqlExpression.setTableNameAs(tableNameAs);
         return tableSqlExpression;
     }

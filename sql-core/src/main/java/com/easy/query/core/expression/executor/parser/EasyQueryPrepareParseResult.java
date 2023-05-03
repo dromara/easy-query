@@ -2,7 +2,7 @@ package com.easy.query.core.expression.executor.parser;
 
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.expression.EasyQuerySqlExpression;
-import com.easy.query.core.util.ArrayUtil;
+import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.Set;
 
@@ -26,7 +26,7 @@ public class EasyQueryPrepareParseResult implements QueryPrepareParseResult {
         this.shardingEntities = shardingEntities;
         this.entityQueryExpressionBuilder = entityQueryExpressionBuilder;
         this.easyQuerySqlExpression = entityQueryExpressionBuilder.toExpression();
-        this.sharding = ArrayUtil.isNotEmpty(shardingEntities);
+        this.sharding = EasyCollectionUtil.isNotEmpty(shardingEntities);
         this.offset = easyQuerySqlExpression.getOffset();
         this.rows = easyQuerySqlExpression.getRows();
     }

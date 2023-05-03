@@ -92,7 +92,7 @@ public abstract   class AbstractExpressionDeletable<T> extends AbstractSqlExecut
         String keyProperty = keyProperties.iterator().next();
         AndPredicateSegment andPredicateSegment = new AndPredicateSegment();
         andPredicateSegment
-                .setPredicate(new ColumnValuePredicate(table, keyProperty, id, SqlPredicateCompareEnum.EQ, entityDeleteExpressionBuilder));
+                .setPredicate(new ColumnValuePredicate(table.getEntityTable(), keyProperty, id, SqlPredicateCompareEnum.EQ, entityDeleteExpressionBuilder.getRuntimeContext()));
         where.addPredicateSegment(andPredicateSegment);
         return this;
     }

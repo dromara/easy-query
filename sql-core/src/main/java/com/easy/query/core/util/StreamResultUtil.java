@@ -14,7 +14,7 @@ import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
-import com.easy.query.core.sharding.merge.abstraction.StreamResult;
+import com.easy.query.core.sharding.merge.abstraction.StreamResultSet;
 
 import java.beans.PropertyDescriptor;
 import java.sql.ResultSetMetaData;
@@ -34,7 +34,7 @@ public final class StreamResultUtil {
     private static final Log log= LogFactory.getLog(StreamResultUtil.class);
     private StreamResultUtil(){}
 
-    public static  <TResult> List<TResult> mapTo(ExecutorContext context, StreamResult streamResult, Class<TResult> clazz) throws SQLException{
+    public static  <TResult> List<TResult> mapTo(ExecutorContext context, StreamResultSet streamResult, Class<TResult> clazz) throws SQLException{
         List<TResult> resultList = null;
         if (Map.class.isAssignableFrom(clazz)) {
             resultList = mapToMaps(context, streamResult, clazz);
@@ -52,7 +52,7 @@ public final class StreamResultUtil {
         }
         return resultList;
     }
-    private static <T> List<T> mapToMaps(ExecutorContext context, StreamResult streamResult, Class<T> clazz) throws SQLException {
+    private static <T> List<T> mapToMaps(ExecutorContext context, StreamResultSet streamResult, Class<T> clazz) throws SQLException {
 
         if (!streamResult.next()) {
             return new ArrayList<>(0);
@@ -66,7 +66,7 @@ public final class StreamResultUtil {
         return resultList;
     }
 
-    private static Map<String, Object> mapToMap(ExecutorContext context, StreamResult streamResult, Class<?> clazz, ResultSetMetaData rsmd) throws SQLException {
+    private static Map<String, Object> mapToMap(ExecutorContext context, StreamResultSet streamResult, Class<?> clazz, ResultSetMetaData rsmd) throws SQLException {
         Map<String, Object> map = ClassUtil.newMapInstanceOrNull(clazz);
         if (map == null) {
             throw new SQLException("cant create map:" + ClassUtil.getSimpleName(clazz));
@@ -89,7 +89,7 @@ public final class StreamResultUtil {
         return map;
     }
 
-    private static  <T> Object mapToBasic(ExecutorContext context, StreamResult streamResult, Class<T> clazz) throws SQLException {
+    private static  <T> Object mapToBasic(ExecutorContext context, StreamResultSet streamResult, Class<T> clazz) throws SQLException {
         ResultSetMetaData rsmd = streamResult.getMetaData();
         int columnCount = rsmd.getColumnCount();
         if (columnCount != 1) {
@@ -102,7 +102,7 @@ public final class StreamResultUtil {
         return handler.getValue(easyResultSet);
 
     }
-    private static  <TResult> List<TResult> mapToBeans(ExecutorContext context, StreamResult streamResult, Class<TResult> clazz) throws SQLException {
+    private static  <TResult> List<TResult> mapToBeans(ExecutorContext context, StreamResultSet streamResult, Class<TResult> clazz) throws SQLException {
         if (!streamResult.next()) {
             return new ArrayList<>(0);
         }
@@ -115,7 +115,7 @@ public final class StreamResultUtil {
         } while (streamResult.next());
         return resultList;
     }
-    private static  <TResult> TResult mapToBean(ExecutorContext context, StreamResult streamResult, Class<TResult> clazz, ColumnMetadata[] columnMetadatas) throws SQLException {
+    private static  <TResult> TResult mapToBean(ExecutorContext context, StreamResultSet streamResult, Class<TResult> clazz, ColumnMetadata[] columnMetadatas) throws SQLException {
         JdbcTypeHandlerManager easyJdbcTypeHandler = context.getRuntimeContext().getEasyJdbcTypeHandlerManager();
         TrackManager trackManager = context.getRuntimeContext().getTrackManager();
         boolean trackBean = trackBean(context, clazz);

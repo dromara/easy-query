@@ -26,13 +26,13 @@ import java.util.Objects;
  */
 public class AbstractSqlColumnSelector<T1, TChain> implements ColumnSelector<T1, TChain> {
     private final int index;
-    protected final EntityExpressionBuilder sqlEntityExpression;
+    protected final EntityExpressionBuilder entityExpressionBuilder;
     protected final SqlBuilderSegment sqlSegmentBuilder;
 
-    public AbstractSqlColumnSelector(int index, EntityExpressionBuilder sqlEntityExpression, SqlBuilderSegment sqlSegmentBuilder) {
+    public AbstractSqlColumnSelector(int index, EntityExpressionBuilder entityExpressionBuilder, SqlBuilderSegment sqlSegmentBuilder) {
         this.index = index;
 
-        this.sqlEntityExpression = sqlEntityExpression;
+        this.entityExpressionBuilder = entityExpressionBuilder;
         this.sqlSegmentBuilder = sqlSegmentBuilder;
     }
 
@@ -44,21 +44,21 @@ public class AbstractSqlColumnSelector<T1, TChain> implements ColumnSelector<T1,
 
     @Override
     public TChain column(Property<T1, ?> column) {
-        EntityTableExpressionBuilder table = sqlEntityExpression.getTable(index);
+        EntityTableExpressionBuilder table = entityExpressionBuilder.getTable(index);
         String propertyName = table.getPropertyName(column);
-        sqlSegmentBuilder.append(new ColumnSegmentImpl(table, propertyName, sqlEntityExpression));
+        sqlSegmentBuilder.append(new ColumnSegmentImpl(table.getEntityTable(), propertyName, entityExpressionBuilder.getRuntimeContext()));
         return (TChain) this;
     }
 
 
     @Override
     public TChain columnIgnore(Property<T1, ?> column) {
-        EntityTableExpressionBuilder table = sqlEntityExpression.getTable(index);
+        EntityTableExpressionBuilder table = entityExpressionBuilder.getTable(index);
         String propertyName = table.getPropertyName(column);
         sqlSegmentBuilder.getSqlSegments().removeIf(sqlSegment -> {
             if (sqlSegment instanceof SqlEntitySegment) {
                 SqlEntitySegment sqlEntitySegment = (SqlEntitySegment) sqlSegment;
-                return Objects.equals(sqlEntitySegment.getTable(), table) && Objects.equals(sqlEntitySegment.getPropertyName(), propertyName);
+                return Objects.equals(sqlEntitySegment.getTable(), table.getEntityTable()) && Objects.equals(sqlEntitySegment.getPropertyName(), propertyName);
             }
             return false;
         });
@@ -67,13 +67,13 @@ public class AbstractSqlColumnSelector<T1, TChain> implements ColumnSelector<T1,
 
     @Override
     public TChain columnAll() {
-        EntityTableExpressionBuilder table = sqlEntityExpression.getTable(index);
+        EntityTableExpressionBuilder table = entityExpressionBuilder.getTable(index);
         if (table instanceof AnonymousEntityTableExpressionBuilder) {
             columnAnonymousAll((AnonymousEntityTableExpressionBuilder) table);
         } else {
             Collection<String> properties = table.getEntityMetadata().getProperties();
             for (String property : properties) {
-                sqlSegmentBuilder.append(new ColumnSegmentImpl(table, property, sqlEntityExpression));
+                sqlSegmentBuilder.append(new ColumnSegmentImpl(table.getEntityTable(), property, entityExpressionBuilder.getRuntimeContext()));
             }
         }
         return (TChain) this;
@@ -85,7 +85,7 @@ public class AbstractSqlColumnSelector<T1, TChain> implements ColumnSelector<T1,
         for (SqlSegment sqlSegment : sqlSegments) {
             if (sqlSegment instanceof SqlEntityAliasSegment) {
 //                String propertyName = EasyUtil.getAnonymousPropertyName((SqlEntityAliasSegment) sqlSegment);
-                sqlSegmentBuilder.append(new ColumnSegmentImpl(table,((SqlEntityAliasSegment) sqlSegment).getPropertyName() , sqlEntityExpression));
+                sqlSegmentBuilder.append(new ColumnSegmentImpl(table.getEntityTable(),((SqlEntityAliasSegment) sqlSegment).getPropertyName() , entityExpressionBuilder.getRuntimeContext()));
             } else {
                 throw new EasyQueryException("columnAll函数无法获取指定列" + ClassUtil.getInstanceSimpleName(sqlSegment));
             }
@@ -94,7 +94,7 @@ public class AbstractSqlColumnSelector<T1, TChain> implements ColumnSelector<T1,
     }
 
 
-    public EntityExpressionBuilder getSqlEntityExpression() {
-        return sqlEntityExpression;
+    public EntityExpressionBuilder getEntityExpressionBuilder() {
+        return entityExpressionBuilder;
     }
 }

@@ -5,8 +5,9 @@ import com.easy.query.core.sharding.merge.executor.ShardingExecutor;
 import com.easy.query.core.sharding.merge.executor.common.ExecutionUnit;
 import com.easy.query.core.basic.jdbc.executor.internal.ExecuteResult;
 import com.easy.query.core.basic.jdbc.executor.internal.unit.Executor;
-import com.easy.query.core.util.ArrayUtil;
+import com.easy.query.core.util.EasyCollectionUtil;
 
+import java.sql.SQLException;
 import java.util.Collection;
 
 /**
@@ -27,9 +28,9 @@ public abstract class AbstractEasyQueryJdbcExecutor<T extends ExecuteResult> imp
         return streamMergeContext.getExecutionUnits();
     }
     @Override
-    public T execute() {
+    public T execute() throws SQLException {
         Collection<ExecutionUnit> executionUnits = getDefaultSSqlRouteUnits();
-        if(ArrayUtil.isEmpty(executionUnits)){
+        if(EasyCollectionUtil.isEmpty(executionUnits)){
             return defaultResult();
         }
         Executor<T> executor = createExecutor();

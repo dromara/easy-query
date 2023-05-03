@@ -76,7 +76,7 @@ public abstract class AbstractAesBase64EasyEncryptionStrategy implements EasyEnc
         String plaintextString = plaintext.toString();
         List<String> stringCharSegments = StringUtil.getStringCharSegments(plaintextString, encryptWordMinLength(),otherCharOccupancyLength(),chineseCharOccupancyLength());
         //符合要求譬如最少4个非中文字符或者2个中文字的情况下,可以选择抛错重写或者直接加密对应的值
-        if (ArrayUtil.isEmpty(stringCharSegments)) {
+        if (EasyCollectionUtil.isEmpty(stringCharSegments)) {
             stringCharSegments.add(plaintextString);
 //            throw new EasyQueryException("输入字符不符合要求,中文一个字符2位长度,英文数字字母等一个字符一位长度，最小输入数据必须满足4位长度:" + plaintextString);
         }

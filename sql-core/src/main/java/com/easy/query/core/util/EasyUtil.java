@@ -60,10 +60,6 @@ public class EasyUtil {
         return getPredicateTableByOffset(sqlEntityExpression, 1);
     }
 
-    public static ColumnMetadata getColumnMetadata(EntityTableExpressionBuilder tableExpression, String propertyName) {
-        return tableExpression.getEntityMetadata().getColumnNotNull(propertyName);
-    }
-
     public static int getNextTableIndex(EntityQueryExpressionBuilder sqlEntityExpression) {
         return sqlEntityExpression.getTables().size();
     }

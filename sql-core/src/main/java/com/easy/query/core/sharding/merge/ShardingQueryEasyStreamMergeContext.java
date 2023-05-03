@@ -4,7 +4,7 @@ import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.expression.executor.parser.EasyQueryPrepareParseResult;
 import com.easy.query.core.expression.executor.parser.ExecutionContext;
 import com.easy.query.core.expression.segment.ColumnSegmentImpl;
-import com.easy.query.core.expression.segment.OrderColumnSegment;
+import com.easy.query.core.expression.segment.OrderColumnSegmentImpl;
 import com.easy.query.core.expression.segment.SqlSegment;
 import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import com.easy.query.core.expression.sql.expression.EasyQuerySqlExpression;
@@ -50,8 +50,8 @@ public class ShardingQueryEasyStreamMergeContext extends EntityStreamMergeContex
             List<PropertyOrder> orders = new ArrayList<>();
             SqlBuilderSegment projects = easyQuerySqlExpression.getProjects();
             for (SqlSegment sqlSegment : easyQuerySqlExpression.getOrder().getSqlSegments()) {
-                if (sqlSegment instanceof OrderColumnSegment) {
-                    OrderColumnSegment orderColumnSegment = (OrderColumnSegment) sqlSegment;
+                if (sqlSegment instanceof OrderColumnSegmentImpl) {
+                    OrderColumnSegmentImpl orderColumnSegment = (OrderColumnSegmentImpl) sqlSegment;
 
                     PropertyOrder propertyOrder = ShardingUtil.findFirstPropertyOrderNotNull(projects.getSqlSegments(), orderColumnSegment, easyQuerySqlExpression);
                     orders.add(propertyOrder);
@@ -121,8 +121,8 @@ public class ShardingQueryEasyStreamMergeContext extends EntityStreamMergeContex
         return rows;
     }
     @Override
-    public boolean groupQueryMemoryMerge() {
-        return false;
+    public boolean isStartsWithGroupByInOrderBy() {
+        return easyQueryPrepareParseResult.isStartsWithGroupByInOrderBy();
     }
 
     @Override

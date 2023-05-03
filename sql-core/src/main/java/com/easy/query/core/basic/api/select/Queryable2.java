@@ -6,6 +6,7 @@ import com.easy.query.core.expression.parser.abstraction.SqlColumnAsSelector;
 import com.easy.query.core.expression.parser.abstraction.SqlColumnSelector;
 import com.easy.query.core.expression.lambda.SqlExpression2;
 import com.easy.query.core.expression.lambda.SqlExpression3;
+import com.easy.query.core.expression.parser.abstraction.SqlGroupByColumnSelector;
 import com.easy.query.core.expression.parser.abstraction.SqlPredicate;
 import com.easy.query.core.expression.parser.abstraction.SqlColumnResultSelector;
 
@@ -109,11 +110,11 @@ public interface Queryable2<T1, T2> extends Queryable<T1> {
     //endregion
 
     //region group
-    default Queryable2<T1, T2> groupBy(SqlExpression2<SqlColumnSelector<T1>, SqlColumnSelector<T2>> selectExpression) {
+    default Queryable2<T1, T2> groupBy(SqlExpression2<SqlGroupByColumnSelector<T1>, SqlGroupByColumnSelector<T2>> selectExpression) {
         return groupBy(true, selectExpression);
     }
 
-    Queryable2<T1, T2> groupBy(boolean condition, SqlExpression2<SqlColumnSelector<T1>, SqlColumnSelector<T2>> selectExpression);
+    Queryable2<T1, T2> groupBy(boolean condition, SqlExpression2<SqlGroupByColumnSelector<T1>, SqlGroupByColumnSelector<T2>> selectExpression);
 
     //endregion
     //region order
