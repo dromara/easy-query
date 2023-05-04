@@ -1,6 +1,7 @@
 package com.easy.query.core.expression.parser.impl;
 
 import com.easy.query.core.expression.lambda.Property;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.SqlColumnSelector;
 import com.easy.query.core.expression.segment.ColumnInsertSegment;
 import com.easy.query.core.expression.segment.SqlEntitySegment;
@@ -21,18 +22,18 @@ import java.util.Objects;
 public class DefaultInsertSqlColumnSelector<T1> implements SqlColumnSelector<T1> {
     private final int index;
     private final EntityExpressionBuilder sqlEntityExpression;
+    private final TableAvailable table;
     private final SqlBuilderSegment sqlSegmentBuilder;
 
     public DefaultInsertSqlColumnSelector(int index, EntityExpressionBuilder sqlEntityExpression, SqlBuilderSegment sqlSegmentBuilder) {
         this.index = index;
-
         this.sqlEntityExpression = sqlEntityExpression;
+        this.table = sqlEntityExpression.getTable(index).getEntityTable();
         this.sqlSegmentBuilder = sqlSegmentBuilder;
     }
-
     @Override
-    public int getIndex() {
-        return this.index;
+    public TableAvailable getTable() {
+        return table;
     }
 
     @Override

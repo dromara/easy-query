@@ -8,6 +8,7 @@ import com.easy.query.core.common.bean.FastBean;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.expression.parser.core.SqlPredicate;
 import com.easy.query.core.expression.parser.core.SqlGroupBySelector;
+import com.easy.query.core.expression.parser.core.SqlColumnAsSelector;
 import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
@@ -28,9 +29,7 @@ import com.easy.query.core.exception.EasyQueryWhereInvalidOperationException;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.SqlExpression;
 import com.easy.query.core.expression.lambda.SqlExpression2;
-import com.easy.query.core.expression.parser.core.SqlColumnAsSelector;
 import com.easy.query.core.expression.parser.core.SqlColumnSelector;
-import com.easy.query.core.expression.parser.core.internal.ColumnSelector;
 import com.easy.query.core.expression.segment.SelectConstSegment;
 import com.easy.query.core.expression.segment.builder.ProjectSqlBuilderSegment;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnValuePredicate;
@@ -302,7 +301,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
 
     @Override
     public <TR> Queryable<TR> select(Class<TR> resultClass) {
-        SqlExpression<SqlColumnAsSelector<T1, TR>> selectExpression = ColumnSelector::columnAll;
+        SqlExpression<SqlColumnAsSelector<T1, TR>> selectExpression = SqlColumnAsSelector::columnAll;
         SqlColumnAsSelector<T1, TR> sqlColumnSelector = getSqlBuilderProvider1().getSqlAutoColumnAsSelector1(sqlEntityExpression.getProjects(), resultClass);
         selectExpression.apply(sqlColumnSelector);
         return sqlEntityExpression.getRuntimeContext().getSqlApiFactory().createQueryable(resultClass, sqlEntityExpression);

@@ -5,7 +5,6 @@ import com.easy.query.core.expression.parser.core.available.IndexAvailable;
 
 /**
  *
- * @FileName: SqlColumnSelector.java
  * @Description: 文件说明
  * @Date: 2023/2/6 23:20
  * @author xuejiaming

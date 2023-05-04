@@ -12,12 +12,12 @@ import com.easy.query.core.exception.EasyQueryWhereInvalidOperationException;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.SqlExpression;
 import com.easy.query.core.expression.lambda.SqlExpression2;
-import com.easy.query.core.expression.parser.core.SqlColumnAsSelector;
-import com.easy.query.core.expression.parser.core.SqlColumnSelector;
 import com.easy.query.core.exception.EasyQueryConcurrentException;
 import com.easy.query.core.expression.parser.core.SqlAggregatePredicate;
 import com.easy.query.core.expression.parser.core.SqlPredicate;
 import com.easy.query.core.expression.parser.core.SqlGroupBySelector;
+import com.easy.query.core.expression.parser.core.SqlColumnSelector;
+import com.easy.query.core.expression.parser.core.SqlColumnAsSelector;
 import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.math.BigDecimal;
@@ -271,10 +271,10 @@ public interface Queryable<T1> extends Query<T1>, Interceptable<Queryable<T1>>, 
         return orderBy(condition,selectExpression,false);
    }
 
-   default Queryable<T1> orderBy(SqlExpression<SqlColumnSelector<T1>> selectExpression,boolean asc){
+   default Queryable<T1> orderBy(SqlExpression<SqlColumnSelector<T1>> selectExpression, boolean asc){
        return orderBy(true,selectExpression,asc);
    }
-    Queryable<T1> orderBy(boolean condition,SqlExpression<SqlColumnSelector<T1>> selectExpression,boolean asc);
+    Queryable<T1> orderBy(boolean condition, SqlExpression<SqlColumnSelector<T1>> selectExpression, boolean asc);
 
     /**
      * @exception EasyQueryOrderByInvalidOperationException 当配置{@link EasyDynamicOrderByConfiguration} 为{@code  DynamicModeEnum.STRICT}排序设置的属性不存在当前排序对象里面或者当前查询对象无法获取 {@link SqlColumnSelector}
@@ -326,9 +326,9 @@ public interface Queryable<T1> extends Query<T1>, Interceptable<Queryable<T1>>, 
      */
     EasyPageResult<T1> toPageResult(long pageIndex, long pageSize,long pageTotal);
 
-    //    PageResult<T1> toPageResult(long pageIndex, long pageSize, SqlExpression<SqlColumnSelector<T1>> selectExpression);
+    //    PageResult<T1> toPageResult(long pageIndex, long pageSize, SqlExpression<ColumnSelector<T1>> selectExpression);
 //    <TR> PageResult<TR> toPageResult(long pageIndex, long pageSize, Class<TR> clazz);
-//    <TR> PageResult<TR> toPageResult(long pageIndex, long pageSize, Class<TR> clazz, SqlExpression<SqlColumnAsSelector<T1,TR>> selectExpression);
+//    <TR> PageResult<TR> toPageResult(long pageIndex, long pageSize, Class<TR> clazz, SqlExpression<ColumnAsSelector<T1,TR>> selectExpression);
     <T2> Queryable2<T1, T2> leftJoin(Class<T2> joinClass, SqlExpression2<SqlPredicate<T1>, SqlPredicate<T2>> on);
 
     <T2> Queryable2<T1, T2> leftJoin(Queryable<T2> joinQueryable, SqlExpression2<SqlPredicate<T1>, SqlPredicate<T2>> on);

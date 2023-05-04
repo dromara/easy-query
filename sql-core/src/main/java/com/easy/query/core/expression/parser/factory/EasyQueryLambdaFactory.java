@@ -1,10 +1,10 @@
 package com.easy.query.core.expression.parser.factory;
 
 import com.easy.query.core.expression.parser.core.SqlAggregatePredicate;
-import com.easy.query.core.expression.parser.core.SqlColumnAsSelector;
-import com.easy.query.core.expression.parser.core.SqlColumnSelector;
 import com.easy.query.core.expression.parser.core.SqlColumnSetter;
 import com.easy.query.core.expression.parser.core.SqlPredicate;
+import com.easy.query.core.expression.parser.core.SqlColumnSelector;
+import com.easy.query.core.expression.parser.core.SqlColumnAsSelector;
 import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
@@ -25,7 +25,8 @@ public interface EasyQueryLambdaFactory {
     default <T1> SqlColumnSelector<T1> createSqlColumnOrderSelector(EntityExpressionBuilder sqlEntityExpression, SqlBuilderSegment sqlSegmentBuilder, boolean asc){
         return createSqlColumnOrderSelector(0,sqlEntityExpression,sqlSegmentBuilder,asc);
     }
-    default <T1,TR> SqlColumnAsSelector<T1,TR> createSqlColumnAsSelector(EntityExpressionBuilder sqlEntityExpression, SqlBuilderSegment sqlSegmentBuilder, Class<TR> resultClass){
+    default <T1,TR>
+    SqlColumnAsSelector<T1,TR> createSqlColumnAsSelector(EntityExpressionBuilder sqlEntityExpression, SqlBuilderSegment sqlSegmentBuilder, Class<TR> resultClass){
         return createSqlColumnAsSelector(0,sqlEntityExpression,sqlSegmentBuilder,resultClass);
     }
     <T1> SqlPredicate<T1> createSqlPredicate(int index, EntityExpressionBuilder sqlEntityExpression, PredicateSegment predicateSegment);

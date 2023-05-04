@@ -1,12 +1,12 @@
 package com.easy.query.core.expression.parser.impl;
 
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.enums.EasyFunc;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.parser.core.SqlColumnAsSelector;
-import com.easy.query.core.expression.parser.core.internal.ColumnAsSelector;
 import com.easy.query.core.expression.segment.ColumnSegmentImpl;
 import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
@@ -23,7 +23,7 @@ import java.util.Objects;
  */
 public class DefaultAutoSqlColumnAsSelector<T1, TR> extends AbstractSqlColumnSelector<T1, SqlColumnAsSelector<T1, TR>> implements SqlColumnAsSelector<T1, TR> {
 
-    private final Class<TR> resultClass;
+    protected final Class<TR> resultClass;
 
     public DefaultAutoSqlColumnAsSelector(int index, EntityExpressionBuilder sqlEntityExpression, SqlBuilderSegment sqlSegment0Builder, Class<TR> resultClass) {
         super(index, sqlEntityExpression, sqlSegment0Builder);
@@ -36,11 +36,17 @@ public class DefaultAutoSqlColumnAsSelector<T1, TR> extends AbstractSqlColumnSel
     }
 
     @Override
+    public TableAvailable getTable() {
+        return table;
+    }
+
+    @Override
     public SqlColumnAsSelector<T1, TR> columnAll() {
 
-        EntityTableExpressionBuilder table = entityExpressionBuilder.getTable(getIndex());
+        EntityTableExpressionBuilder table = entityExpressionBuilder.getTable(index);
         if (table.getEntityClass().equals(resultClass)) {
-            return super.columnAll();
+             super.columnAll();
+             return this;
         } else {
             return columnAll(table);
         }
@@ -73,10 +79,6 @@ public class DefaultAutoSqlColumnAsSelector<T1, TR> extends AbstractSqlColumnSel
             }
         }
         return this;
-    }
-    @Override
-    public <T2, TChain2> ColumnAsSelector<T2, TR, TChain2> then(ColumnAsSelector<T2, TR, TChain2> sub) {
-        throw new UnsupportedOperationException();
     }
     @Override
     public SqlColumnAsSelector<T1, TR> columnFunc(Property<T1, ?> column, Property<TR, ?> alias, EasyFunc easyFunc) {

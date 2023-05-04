@@ -8,7 +8,7 @@ import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.enums.SqlExecuteStrategyEnum;
 import com.easy.query.core.expression.lambda.SqlExpression2;
 import com.easy.query.core.expression.lambda.SqlExpression3;
-import com.easy.query.core.expression.parser.core.internal.ColumnSelector;
+import com.easy.query.core.expression.parser.core.SqlColumnSelector;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.SqlPredicate;
 import com.easy.query.core.expression.segment.SelectConstSegment;
@@ -32,7 +32,7 @@ public class SqlExpressionUtil {
     public static <TSource> Queryable<TSource> cloneAndSelectAllQueryable(Queryable<TSource> queryable) {
         EntityQueryExpressionBuilder queryableSqlEntityExpression = queryable.getSqlEntityExpressionBuilder();
         if (SqlExpressionUtil.shouldCloneSqlEntityQueryExpression(queryableSqlEntityExpression)) {
-            return queryable.cloneQueryable().select(ColumnSelector::columnAll);
+            return queryable.cloneQueryable().select(SqlColumnSelector::columnAll);
         }
         return queryable;
     }

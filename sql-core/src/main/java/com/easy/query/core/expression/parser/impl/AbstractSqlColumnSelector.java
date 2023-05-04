@@ -2,7 +2,7 @@ package com.easy.query.core.expression.parser.impl;
 
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.lambda.Property;
-import com.easy.query.core.expression.parser.core.internal.ColumnSelector;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.ColumnSegmentImpl;
 import com.easy.query.core.expression.segment.SqlEntityAliasSegment;
 import com.easy.query.core.expression.segment.SqlEntitySegment;
@@ -26,25 +26,20 @@ import java.util.Objects;
  * @Date: 2023/2/8 12:26
  * @author xuejiaming
  */
-public class AbstractSqlColumnSelector<T1, TChain> implements ColumnSelector<T1, TChain> {
-    private final int index;
+public class AbstractSqlColumnSelector<T1, TChain> {
+    protected final int index;
     protected final EntityExpressionBuilder entityExpressionBuilder;
+    protected final TableAvailable table;
     protected final SqlBuilderSegment sqlSegmentBuilder;
 
     public AbstractSqlColumnSelector(int index, EntityExpressionBuilder entityExpressionBuilder, SqlBuilderSegment sqlSegmentBuilder) {
         this.index = index;
 
         this.entityExpressionBuilder = entityExpressionBuilder;
+        this.table=entityExpressionBuilder.getTable(index).getEntityTable();
         this.sqlSegmentBuilder = sqlSegmentBuilder;
     }
 
-    @Override
-    public int getIndex() {
-        return this.index;
-    }
-
-
-    @Override
     public TChain column(Property<T1, ?> column) {
         EntityTableExpressionBuilder table = entityExpressionBuilder.getTable(index);
         String propertyName = LambdaUtil.getPropertyName(column);
@@ -53,7 +48,6 @@ public class AbstractSqlColumnSelector<T1, TChain> implements ColumnSelector<T1,
     }
 
 
-    @Override
     public TChain columnIgnore(Property<T1, ?> column) {
         EntityTableExpressionBuilder table = entityExpressionBuilder.getTable(index);
         String propertyName = LambdaUtil.getPropertyName(column);
@@ -67,7 +61,6 @@ public class AbstractSqlColumnSelector<T1, TChain> implements ColumnSelector<T1,
         return (TChain) this;
     }
 
-    @Override
     public TChain columnAll() {
         EntityTableExpressionBuilder table = entityExpressionBuilder.getTable(index);
         if (table instanceof AnonymousEntityTableExpressionBuilder) {
