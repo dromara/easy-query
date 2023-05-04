@@ -4,7 +4,7 @@ import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
 import com.easy.query.core.enums.SqlPredicateCompare;
-import com.easy.query.core.expression.parser.core.internal.EntityTableAvailable;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.util.SqlUtil;
 import com.easy.query.core.util.SqlExpressionUtil;
 
@@ -22,9 +22,9 @@ public class ColumnWithSelfSegment implements SqlEntitySegment {
     private final SqlPredicateCompare compare;
     private final EasyQueryRuntimeContext runtimeContext;
     private final String selfLink;
-    private final EntityTableAvailable entityTable;
+    private final TableAvailable entityTable;
 
-    public ColumnWithSelfSegment(boolean increment, EntityTableAvailable entityTable, String propertyName, Object val, SqlPredicateCompare compare, EasyQueryRuntimeContext runtimeContext) {
+    public ColumnWithSelfSegment(boolean increment, TableAvailable entityTable, String propertyName, Object val, SqlPredicateCompare compare, EasyQueryRuntimeContext runtimeContext) {
         this.selfLink=increment?INCREMENT:DECREMENT;
         this.entityTable = entityTable;
         this.propertyName = propertyName;
@@ -41,7 +41,7 @@ public class ColumnWithSelfSegment implements SqlEntitySegment {
     }
 
     @Override
-    public EntityTableAvailable getTable() {
+    public TableAvailable getTable() {
         return entityTable;
     }
 

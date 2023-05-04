@@ -1,6 +1,6 @@
 package com.easy.query.core.expression.sql.expression;
 
-import com.easy.query.core.expression.parser.core.internal.EntityTableAvailable;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.metadata.EntityMetadata;
 
@@ -21,7 +21,7 @@ public interface EasyTableSqlExpression extends EasySqlExpression{
     void setOn(PredicateSegment predicateSegment);
     String getAlias();
     int getIndex();
-    EntityTableAvailable getEntityTable();
+    TableAvailable getEntityTable();
 
     @Override
     EasyTableSqlExpression cloneSqlExpression();

@@ -5,7 +5,7 @@ import com.easy.query.core.enums.EasyFunc;
 import com.easy.query.core.enums.SqlLikeEnum;
 import com.easy.query.core.enums.SqlRangeEnum;
 import com.easy.query.core.expression.lambda.Property;
-import com.easy.query.core.expression.parser.core.internal.EntityTableAvailable;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.SqlPredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnCollectionPredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnSubQueryPredicate;
@@ -31,7 +31,7 @@ public class DefaultSqlPredicate<T1> implements SqlPredicate<T1> {
     private final int index;
     private final EntityExpressionBuilder entityExpressionBuilder;
     private final PredicateSegment rootPredicateSegment;
-    private final EntityTableAvailable entityTable;
+    private final TableAvailable entityTable;
     private PredicateSegment nextPredicateSegment;
 
     public DefaultSqlPredicate(int index, EntityExpressionBuilder entityExpressionBuilder, PredicateSegment predicateSegment) {
@@ -235,9 +235,9 @@ public class DefaultSqlPredicate<T1> implements SqlPredicate<T1> {
     @Override
     public <T2> DefaultSqlPredicate<T1> eq(boolean condition, SqlPredicate<T2> sub, Property<T1, ?> column1, Property<T2, ?> column2) {
         if (condition) {
-            EntityTableAvailable leftTable = getTable();
+            TableAvailable leftTable = getTable();
             String leftPropertyName = LambdaUtil.getPropertyName(column1);
-            EntityTableAvailable rightTable = sub.getTable();
+            TableAvailable rightTable = sub.getTable();
             String rightPropertyName = LambdaUtil.getPropertyName(column2);
             nextPredicateSegment.setPredicate(new ColumnWithColumnPredicate(leftTable, leftPropertyName, rightTable, rightPropertyName, SqlPredicateCompareEnum.EQ, entityExpressionBuilder.getRuntimeContext()));
             nextAnd();
@@ -296,7 +296,7 @@ public class DefaultSqlPredicate<T1> implements SqlPredicate<T1> {
     }
 
     @Override
-    public EntityTableAvailable getTable() {
+    public TableAvailable getTable() {
         return entityTable;
     }
 }

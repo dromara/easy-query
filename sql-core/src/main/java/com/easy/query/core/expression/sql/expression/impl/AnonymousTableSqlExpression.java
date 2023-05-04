@@ -2,7 +2,7 @@ package com.easy.query.core.expression.sql.expression.impl;
 
 import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
 import com.easy.query.core.enums.MultiTableTypeEnum;
-import com.easy.query.core.expression.parser.core.internal.EntityTableAvailable;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.sql.expression.EasyAnonymousTableSqlExpression;
 import com.easy.query.core.expression.sql.expression.EasyQuerySqlExpression;
 
@@ -15,7 +15,7 @@ import com.easy.query.core.expression.sql.expression.EasyQuerySqlExpression;
 public class AnonymousTableSqlExpression extends TableSqlExpression implements EasyAnonymousTableSqlExpression {
     private final EasyQuerySqlExpression easyQuerySqlExpression;
 
-    public AnonymousTableSqlExpression(EntityTableAvailable entityTable, MultiTableTypeEnum multiTableType, EasyQuerySqlExpression easyQuerySqlExpression) {
+    public AnonymousTableSqlExpression(TableAvailable entityTable, MultiTableTypeEnum multiTableType, EasyQuerySqlExpression easyQuerySqlExpression) {
         super(entityTable, multiTableType,easyQuerySqlExpression.getRuntimeContext());
         this.easyQuerySqlExpression = easyQuerySqlExpression;
     }

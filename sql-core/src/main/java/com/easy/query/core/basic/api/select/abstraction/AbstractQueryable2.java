@@ -12,9 +12,9 @@ import com.easy.query.core.expression.lambda.SqlExpression2;
 import com.easy.query.core.expression.lambda.SqlExpression3;
 import com.easy.query.core.expression.parser.core.SqlColumnAsSelector;
 import com.easy.query.core.expression.parser.core.SqlColumnSelector;
-import com.easy.query.core.expression.parser.core.SqlGroupByColumnSelector;
-import com.easy.query.core.expression.parser.core.internal.EntityTableAvailable;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.SqlPredicate;
+import com.easy.query.core.expression.parser.core.SqlGroupBySelector;
 import com.easy.query.core.expression.segment.builder.ProjectSqlBuilderSegment;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.util.EasyCollectionUtil;
@@ -166,7 +166,7 @@ public abstract class AbstractQueryable2<T1, T2> extends AbstractQueryable<T1> i
         }
         SqlEntitySegment sqlSegment = (SqlEntitySegment)projectSqlBuilderSegment.getSqlSegments().get(0);
 
-        EntityTableAvailable table = sqlSegment.getTable();
+        TableAvailable table = sqlSegment.getTable();
         String propertyName = sqlSegment.getPropertyName();
         ColumnMetadata columnMetadata =table.getEntityMetadata().getColumnNotNull(propertyName);
 
@@ -244,10 +244,10 @@ public abstract class AbstractQueryable2<T1, T2> extends AbstractQueryable<T1> i
     }
 
     @Override
-    public Queryable2<T1, T2> groupBy(boolean condition, SqlExpression2<SqlGroupByColumnSelector<T1>, SqlGroupByColumnSelector<T2>> selectExpression) {
+    public Queryable2<T1, T2> groupBy(boolean condition, SqlExpression2<SqlGroupBySelector<T1>, SqlGroupBySelector<T2>> selectExpression) {
         if (condition) {
-            SqlGroupByColumnSelector<T1> sqlGroupSelector1 = getSqlBuilderProvider2().getSqlGroupColumnSelector1();
-            SqlGroupByColumnSelector<T2> sqlGroupSelector2 = getSqlBuilderProvider2().getSqlGroupColumnSelector2();
+            SqlGroupBySelector<T1> sqlGroupSelector1 = getSqlBuilderProvider2().getSqlGroupColumnSelector1();
+            SqlGroupBySelector<T2> sqlGroupSelector2 = getSqlBuilderProvider2().getSqlGroupColumnSelector2();
             selectExpression.apply(sqlGroupSelector1, sqlGroupSelector2);
         }
         return this;

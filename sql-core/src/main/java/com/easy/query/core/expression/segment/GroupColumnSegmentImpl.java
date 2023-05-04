@@ -1,7 +1,7 @@
 package com.easy.query.core.expression.segment;
 
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
-import com.easy.query.core.expression.parser.core.internal.EntityTableAvailable;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 
 /**
  * create time 2023/4/30 21:45
@@ -10,7 +10,7 @@ import com.easy.query.core.expression.parser.core.internal.EntityTableAvailable;
  * @author xuejiaming
  */
 public class GroupColumnSegmentImpl extends ColumnSegmentImpl implements GroupByColumnSegment{
-    public GroupColumnSegmentImpl(EntityTableAvailable table, String propertyName, EasyQueryRuntimeContext runtimeContext) {
+    public GroupColumnSegmentImpl(TableAvailable table, String propertyName, EasyQueryRuntimeContext runtimeContext) {
         super(table, propertyName, runtimeContext);
     }
 

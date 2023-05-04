@@ -6,7 +6,7 @@ import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
 import com.easy.query.core.enums.SqlPredicateCompare;
 import com.easy.query.core.enums.SqlPredicateCompareEnum;
-import com.easy.query.core.expression.parser.core.internal.EntityTableAvailable;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.SqlEntitySegment;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.SqlUtil;
@@ -27,10 +27,10 @@ public class ColumnCollectionPredicate implements ValuesPredicate,ShardingPredic
     private final Collection<?> collection;
     private final SqlPredicateCompare compare;
     private final EasyQueryRuntimeContext runtimeContext;
-    private final EntityTableAvailable table;
+    private final TableAvailable table;
     private final String propertyName;
 
-    public ColumnCollectionPredicate(EntityTableAvailable table, String propertyName, Collection<?> collection, SqlPredicateCompare compare, EasyQueryRuntimeContext runtimeContext) {
+    public ColumnCollectionPredicate(TableAvailable table, String propertyName, Collection<?> collection, SqlPredicateCompare compare, EasyQueryRuntimeContext runtimeContext) {
         this.table = table;
         this.propertyName = propertyName;
         this.collection = collection;
@@ -67,7 +67,7 @@ public class ColumnCollectionPredicate implements ValuesPredicate,ShardingPredic
     }
 
     @Override
-    public EntityTableAvailable getTable() {
+    public TableAvailable getTable() {
         return table;
     }
 

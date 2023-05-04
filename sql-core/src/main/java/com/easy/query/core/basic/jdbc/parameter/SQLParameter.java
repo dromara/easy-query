@@ -1,6 +1,6 @@
 package com.easy.query.core.basic.jdbc.parameter;
 
-import com.easy.query.core.expression.parser.core.internal.EntityTableAvailable;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 
 /**
  * @FileName: SqlParameter.java
@@ -9,7 +9,7 @@ import com.easy.query.core.expression.parser.core.internal.EntityTableAvailable;
  * @author xuejiaming
  */
 public interface SQLParameter {
-    EntityTableAvailable getTable();
+    TableAvailable getTable();
     String getPropertyName();
     Object getValue();
 }

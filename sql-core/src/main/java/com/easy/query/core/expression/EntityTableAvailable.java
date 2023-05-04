@@ -1,6 +1,6 @@
 package com.easy.query.core.expression;
 
-import com.easy.query.core.expression.parser.core.internal.EntityTableAvailable;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.metadata.EntityMetadata;
 
 /**
@@ -9,12 +9,12 @@ import com.easy.query.core.metadata.EntityMetadata;
  *
  * @author xuejiaming
  */
-public final class EasyEntityTableAvailable implements EntityTableAvailable {
+public final class EntityTableAvailable implements TableAvailable {
     private final int tableIndex;
     private final EntityMetadata entityMetadata;
     private final String alias;
 
-    public EasyEntityTableAvailable(int tableIndex, EntityMetadata entityMetadata,String alias){
+    public EntityTableAvailable(int tableIndex, EntityMetadata entityMetadata, String alias){
 
         this.tableIndex = tableIndex;
         this.entityMetadata = entityMetadata;

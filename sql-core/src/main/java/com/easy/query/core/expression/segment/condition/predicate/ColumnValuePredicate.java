@@ -7,7 +7,7 @@ import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
 import com.easy.query.core.enums.SqlPredicateCompare;
 import com.easy.query.core.enums.SqlPredicateCompareEnum;
-import com.easy.query.core.expression.parser.core.internal.EntityTableAvailable;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.SqlEntitySegment;
 import com.easy.query.core.util.SqlUtil;
 import com.easy.query.core.util.SqlExpressionUtil;
@@ -21,13 +21,13 @@ import java.util.Objects;
  * @author xuejiaming
  */
 public class ColumnValuePredicate implements ValuePredicate, ShardingPredicate {
-    private final EntityTableAvailable table;
+    private final TableAvailable table;
     private final String propertyName;
     private final Object val;
     private final SqlPredicateCompare compare;
     private final EasyQueryRuntimeContext runtimeContext;
 
-    public ColumnValuePredicate(EntityTableAvailable table, String propertyName, Object val, SqlPredicateCompare compare, EasyQueryRuntimeContext runtimeContext) {
+    public ColumnValuePredicate(TableAvailable table, String propertyName, Object val, SqlPredicateCompare compare, EasyQueryRuntimeContext runtimeContext) {
         this.table = table;
         this.propertyName = propertyName;
         this.val = val;
@@ -49,7 +49,7 @@ public class ColumnValuePredicate implements ValuePredicate, ShardingPredicate {
     }
 
     @Override
-    public EntityTableAvailable getTable() {
+    public TableAvailable getTable() {
         return table;
     }
 

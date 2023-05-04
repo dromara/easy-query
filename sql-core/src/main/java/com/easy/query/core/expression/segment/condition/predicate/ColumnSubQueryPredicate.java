@@ -4,7 +4,7 @@ import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.api.select.Queryable;
 import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
 import com.easy.query.core.enums.SqlPredicateCompare;
-import com.easy.query.core.expression.parser.core.internal.EntityTableAvailable;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.SqlEntitySegment;
 import com.easy.query.core.util.SqlExpressionUtil;
 
@@ -17,11 +17,11 @@ import com.easy.query.core.util.SqlExpressionUtil;
 public class ColumnSubQueryPredicate implements SubQueryPredicate{
     private final SqlPredicateCompare compare;
     private final EasyQueryRuntimeContext runtimeContext;
-    private final EntityTableAvailable table;
+    private final TableAvailable table;
     private final String propertyName;
     private final Queryable<?> subQueryable;
 
-    public ColumnSubQueryPredicate(EntityTableAvailable table, String propertyName, Queryable<?> subQueryable, SqlPredicateCompare compare, EasyQueryRuntimeContext runtimeContext) {
+    public ColumnSubQueryPredicate(TableAvailable table, String propertyName, Queryable<?> subQueryable, SqlPredicateCompare compare, EasyQueryRuntimeContext runtimeContext) {
         this.table = table;
         this.propertyName = propertyName;
         this.subQueryable = subQueryable;
@@ -29,7 +29,7 @@ public class ColumnSubQueryPredicate implements SubQueryPredicate{
         this.runtimeContext = runtimeContext;
     }
     @Override
-    public EntityTableAvailable getTable() {
+    public TableAvailable getTable() {
         return table;
     }
 

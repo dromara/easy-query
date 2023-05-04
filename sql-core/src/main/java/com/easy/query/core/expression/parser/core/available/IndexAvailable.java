@@ -1,4 +1,4 @@
-package com.easy.query.core.expression.parser.core.internal;
+package com.easy.query.core.expression.parser.core.available;
 
 /**
  *

@@ -5,8 +5,8 @@ import com.easy.query.core.expression.parser.core.SqlPredicate;
 import com.easy.query.core.sql.dialect.Dialect;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.exception.EasyQueryException;
-import com.easy.query.core.expression.EasyEntityTableAvailable;
-import com.easy.query.core.expression.parser.core.internal.EntityTableAvailable;
+import com.easy.query.core.expression.EntityTableAvailable;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.sql.expression.EasyTableSqlExpression;
 import com.easy.query.core.expression.sql.expression.impl.TableSqlExpression;
 import com.easy.query.core.metadata.EntityMetadata;
@@ -27,17 +27,17 @@ import java.util.function.Function;
  */
 public class TableExpressionBuilder implements EntityTableExpressionBuilder {
 
-    protected final EntityTableAvailable entityTable;
+    protected final TableAvailable entityTable;
     protected final MultiTableTypeEnum multiTableType;
     private final EasyQueryRuntimeContext runtimeContext;
     private final Dialect dialect;
     protected PredicateSegment on;
     protected Function<String, String> tableNameAs;
     public TableExpressionBuilder(EntityMetadata entityMetadata, int index, String alias, MultiTableTypeEnum multiTableType, EasyQueryRuntimeContext runtimeContext) {
-        this(new EasyEntityTableAvailable(index,entityMetadata,alias),multiTableType,runtimeContext);
+        this(new EntityTableAvailable(index,entityMetadata,alias),multiTableType,runtimeContext);
 
     }
-    public TableExpressionBuilder(EntityTableAvailable entityTable, MultiTableTypeEnum multiTableType, EasyQueryRuntimeContext runtimeContext) {
+    public TableExpressionBuilder(TableAvailable entityTable, MultiTableTypeEnum multiTableType, EasyQueryRuntimeContext runtimeContext) {
         this.entityTable = entityTable;
 
         this.multiTableType = multiTableType;
@@ -138,7 +138,7 @@ public class TableExpressionBuilder implements EntityTableExpressionBuilder {
     }
 
     @Override
-    public EntityTableAvailable getEntityTable() {
+    public TableAvailable getEntityTable() {
         return entityTable;
     }
 

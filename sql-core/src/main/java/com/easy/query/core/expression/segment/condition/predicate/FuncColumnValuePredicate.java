@@ -3,7 +3,7 @@ package com.easy.query.core.expression.segment.condition.predicate;
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
 import com.easy.query.core.enums.EasyFunc;
-import com.easy.query.core.expression.parser.core.internal.EntityTableAvailable;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.SqlEntitySegment;
 import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
 import com.easy.query.core.enums.SqlPredicateCompare;
@@ -17,14 +17,14 @@ import com.easy.query.core.util.SqlExpressionUtil;
  * @author xuejiaming
  */
 public class FuncColumnValuePredicate implements Predicate {
-    private final EntityTableAvailable table;
+    private final TableAvailable table;
     private final EasyFunc func;
     private final String propertyName;
     private final Object val;
     private final SqlPredicateCompare compare;
     private final EasyQueryRuntimeContext runtimeContext;
 
-    public FuncColumnValuePredicate(EntityTableAvailable table, EasyFunc func, String propertyName, Object val, SqlPredicateCompare compare, EasyQueryRuntimeContext runtimeContext) {
+    public FuncColumnValuePredicate(TableAvailable table, EasyFunc func, String propertyName, Object val, SqlPredicateCompare compare, EasyQueryRuntimeContext runtimeContext) {
         this.table = table;
         this.propertyName = propertyName;
 
@@ -42,7 +42,7 @@ public class FuncColumnValuePredicate implements Predicate {
     }
 
     @Override
-    public EntityTableAvailable getTable() {
+    public TableAvailable getTable() {
         return table;
     }
 

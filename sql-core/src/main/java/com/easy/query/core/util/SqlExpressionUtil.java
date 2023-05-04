@@ -9,7 +9,7 @@ import com.easy.query.core.enums.SqlExecuteStrategyEnum;
 import com.easy.query.core.expression.lambda.SqlExpression2;
 import com.easy.query.core.expression.lambda.SqlExpression3;
 import com.easy.query.core.expression.parser.core.internal.ColumnSelector;
-import com.easy.query.core.expression.parser.core.internal.EntityTableAvailable;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.SqlPredicate;
 import com.easy.query.core.expression.segment.SelectConstSegment;
 import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
@@ -149,7 +149,7 @@ public class SqlExpressionUtil {
         return SqlExecuteStrategyEnum.ALL_COLUMNS!=executeStrategy;
     }
 
-    public static String getSqlOwnerColumn(EasyQueryRuntimeContext runtimeContext, EntityTableAvailable table, String propertyName){
+    public static String getSqlOwnerColumn(EasyQueryRuntimeContext runtimeContext, TableAvailable table, String propertyName){
         String alias = table.getAlias();
         String columnName = table.getColumnName(propertyName);
         String quoteName = getQuoteName(runtimeContext,columnName);

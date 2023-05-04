@@ -3,7 +3,7 @@ package com.easy.query.core.expression.segment.condition.predicate;
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
 import com.easy.query.core.enums.SqlPredicateCompare;
-import com.easy.query.core.expression.parser.core.internal.EntityTableAvailable;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.SqlEntitySegment;
 import com.easy.query.core.util.SqlExpressionUtil;
 
@@ -14,14 +14,14 @@ import com.easy.query.core.util.SqlExpressionUtil;
  * @author xuejiaming
  */
 public class ColumnWithColumnPredicate implements Predicate {
-    private final EntityTableAvailable leftTable;
+    private final TableAvailable leftTable;
     private final String leftPropertyName;
-    private final EntityTableAvailable rightTable;
+    private final TableAvailable rightTable;
     private final String rightPropertyName;
     private final SqlPredicateCompare compare;
     private final EasyQueryRuntimeContext runtimeContext;
 
-    public ColumnWithColumnPredicate(EntityTableAvailable leftTable, String leftPropertyName, EntityTableAvailable rightTable, String rightPropertyName, SqlPredicateCompare compare, EasyQueryRuntimeContext runtimeContext) {
+    public ColumnWithColumnPredicate(TableAvailable leftTable, String leftPropertyName, TableAvailable rightTable, String rightPropertyName, SqlPredicateCompare compare, EasyQueryRuntimeContext runtimeContext) {
         this.leftTable = leftTable;
         this.leftPropertyName = leftPropertyName;
         this.rightTable = rightTable;
@@ -39,7 +39,7 @@ public class ColumnWithColumnPredicate implements Predicate {
     }
 
     @Override
-    public EntityTableAvailable getTable() {
+    public TableAvailable getTable() {
         return leftTable;
     }
 

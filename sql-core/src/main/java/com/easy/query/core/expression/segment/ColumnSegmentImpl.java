@@ -2,7 +2,7 @@ package com.easy.query.core.expression.segment;
 
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
-import com.easy.query.core.expression.parser.core.internal.EntityTableAvailable;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.util.SqlExpressionUtil;
 
 /**
@@ -14,17 +14,17 @@ import com.easy.query.core.util.SqlExpressionUtil;
 public class ColumnSegmentImpl implements ColumnSegment {
 
 
-    protected final EntityTableAvailable table;
+    protected final TableAvailable table;
 
 
     protected final String propertyName;
     protected final EasyQueryRuntimeContext runtimeContext;
     protected String alias;
 
-    public ColumnSegmentImpl(EntityTableAvailable table, String propertyName, EasyQueryRuntimeContext runtimeContext){
+    public ColumnSegmentImpl(TableAvailable table, String propertyName, EasyQueryRuntimeContext runtimeContext){
         this(table,propertyName,runtimeContext,null);
     }
-    public ColumnSegmentImpl(EntityTableAvailable table, String propertyName, EasyQueryRuntimeContext runtimeContext, String alias){
+    public ColumnSegmentImpl(TableAvailable table, String propertyName, EasyQueryRuntimeContext runtimeContext, String alias){
         this.table = table;
 
         this.propertyName = propertyName;
@@ -33,7 +33,7 @@ public class ColumnSegmentImpl implements ColumnSegment {
     }
 
     @Override
-    public EntityTableAvailable getTable() {
+    public TableAvailable getTable() {
         return table;
     }
 

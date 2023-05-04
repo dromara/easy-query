@@ -1,4 +1,4 @@
-package com.easy.query.core.expression.parser.core.internal;
+package com.easy.query.core.expression.parser.core.available;
 
 import com.easy.query.core.metadata.EntityMetadata;
 
@@ -8,7 +8,7 @@ import com.easy.query.core.metadata.EntityMetadata;
  *
  * @author xuejiaming
  */
-public interface EntityTableAvailable extends IndexAvailable{
+public interface TableAvailable extends IndexAvailable{
     Class<?> getEntityClass();
     EntityMetadata getEntityMetadata();
     String getTableName();

@@ -4,8 +4,8 @@ import com.easy.query.core.expression.parser.core.SqlAggregatePredicate;
 import com.easy.query.core.expression.parser.core.SqlColumnAsSelector;
 import com.easy.query.core.expression.parser.core.SqlColumnResultSelector;
 import com.easy.query.core.expression.parser.core.SqlColumnSelector;
-import com.easy.query.core.expression.parser.core.SqlGroupByColumnSelector;
 import com.easy.query.core.expression.parser.core.SqlPredicate;
+import com.easy.query.core.expression.parser.core.SqlGroupBySelector;
 import com.easy.query.core.expression.parser.impl.*;
 import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import com.easy.query.core.expression.segment.condition.DefaultSqlPredicate;
@@ -35,7 +35,7 @@ public class Select2SqlProvider<T1,T2> extends Select1SqlProvider<T1> implements
     }
 
     @Override
-    public SqlGroupByColumnSelector<T2> getSqlGroupColumnSelector2() {
+    public SqlGroupBySelector<T2> getSqlGroupColumnSelector2() {
         if(group==null){
             group= new DefaultSqlGroupColumnSelector<>(index, sqlEntityExpression);
         }

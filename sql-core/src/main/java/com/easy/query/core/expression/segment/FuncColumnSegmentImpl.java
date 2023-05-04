@@ -3,7 +3,7 @@ package com.easy.query.core.expression.segment;
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
 import com.easy.query.core.enums.EasyFunc;
-import com.easy.query.core.expression.parser.core.internal.EntityTableAvailable;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.sharding.merge.result.aggregation.AggregationType;
 import com.easy.query.core.util.SqlExpressionUtil;
 
@@ -16,16 +16,16 @@ import com.easy.query.core.util.SqlExpressionUtil;
 public class FuncColumnSegmentImpl implements AggregationColumnSegment {
 
 
-    protected final EntityTableAvailable table;
+    protected final TableAvailable table;
     protected final String propertyName;
     protected final EasyQueryRuntimeContext runtimeContext;
     protected final EasyFunc easyFunc;
     protected String alias;
 
-    public FuncColumnSegmentImpl(EntityTableAvailable table, String propertyName, EasyQueryRuntimeContext runtimeContext, EasyFunc easyFunc){
+    public FuncColumnSegmentImpl(TableAvailable table, String propertyName, EasyQueryRuntimeContext runtimeContext, EasyFunc easyFunc){
         this(table,propertyName,runtimeContext,easyFunc,null);
     }
-    public FuncColumnSegmentImpl(EntityTableAvailable table, String propertyName, EasyQueryRuntimeContext runtimeContext, EasyFunc easyFunc, String alias){
+    public FuncColumnSegmentImpl(TableAvailable table, String propertyName, EasyQueryRuntimeContext runtimeContext, EasyFunc easyFunc, String alias){
         this.table = table;
         this.propertyName = propertyName;
         this.runtimeContext = runtimeContext;
@@ -46,7 +46,7 @@ public class FuncColumnSegmentImpl implements AggregationColumnSegment {
     }
 
     @Override
-    public EntityTableAvailable getTable() {
+    public TableAvailable getTable() {
         return table;
     }
 

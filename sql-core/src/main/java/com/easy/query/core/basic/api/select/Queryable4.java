@@ -6,8 +6,8 @@ import com.easy.query.core.expression.lambda.SqlExpression4;
 import com.easy.query.core.expression.parser.core.SqlColumnAsSelector;
 import com.easy.query.core.expression.parser.core.SqlColumnResultSelector;
 import com.easy.query.core.expression.parser.core.SqlColumnSelector;
-import com.easy.query.core.expression.parser.core.SqlGroupByColumnSelector;
 import com.easy.query.core.expression.parser.core.SqlPredicate;
+import com.easy.query.core.expression.parser.core.SqlGroupBySelector;
 
 import java.math.BigDecimal;
 import java.util.function.Function;
@@ -101,11 +101,11 @@ public interface Queryable4<T1,T2,T3,T4> extends Queryable<T1> {
 
 
     //region group
-    default Queryable4<T1, T2, T3,T4> groupBy(SqlExpression4<SqlGroupByColumnSelector<T1>, SqlGroupByColumnSelector<T2>, SqlGroupByColumnSelector<T3>, SqlGroupByColumnSelector<T4>> selectExpression) {
+    default Queryable4<T1, T2, T3,T4> groupBy(SqlExpression4<SqlGroupBySelector<T1>, SqlGroupBySelector<T2>, SqlGroupBySelector<T3>, SqlGroupBySelector<T4>> selectExpression) {
         return groupBy(true, selectExpression);
     }
 
-    Queryable4<T1, T2, T3,T4> groupBy(boolean condition, SqlExpression4<SqlGroupByColumnSelector<T1>, SqlGroupByColumnSelector<T2>, SqlGroupByColumnSelector<T3>, SqlGroupByColumnSelector<T4>> selectExpression);
+    Queryable4<T1, T2, T3,T4> groupBy(boolean condition, SqlExpression4<SqlGroupBySelector<T1>, SqlGroupBySelector<T2>, SqlGroupBySelector<T3>, SqlGroupBySelector<T4>> selectExpression);
 
     //endregion
     //region order

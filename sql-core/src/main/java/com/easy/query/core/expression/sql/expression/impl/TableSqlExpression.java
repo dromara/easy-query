@@ -5,7 +5,7 @@ import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
 import com.easy.query.core.sql.dialect.Dialect;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.exception.EasyQueryException;
-import com.easy.query.core.expression.parser.core.internal.EntityTableAvailable;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.sql.expression.EasyTableSqlExpression;
 import com.easy.query.core.metadata.EntityMetadata;
@@ -26,11 +26,11 @@ public class TableSqlExpression implements EasyTableSqlExpression {
     protected final MultiTableTypeEnum multiTableType;
     private final EasyQueryRuntimeContext runtimeContext;
     private final Dialect dialect;
-    private final EntityTableAvailable entityTable;
+    private final TableAvailable entityTable;
     protected PredicateSegment on;
     protected Function<String, String> tableNameAs;
 
-    public TableSqlExpression(EntityTableAvailable entityTable, MultiTableTypeEnum multiTableType, EasyQueryRuntimeContext runtimeContext) {
+    public TableSqlExpression(TableAvailable entityTable, MultiTableTypeEnum multiTableType, EasyQueryRuntimeContext runtimeContext) {
         this.entityTable = entityTable;
         this.multiTableType = multiTableType;
         this.runtimeContext = runtimeContext;
@@ -48,7 +48,7 @@ public class TableSqlExpression implements EasyTableSqlExpression {
     }
 
     @Override
-    public EntityTableAvailable getEntityTable() {
+    public TableAvailable getEntityTable() {
         return entityTable;
     }
 

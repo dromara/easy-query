@@ -1,6 +1,6 @@
 package com.easy.query.core.expression.sql.builder;
 
-import com.easy.query.core.expression.parser.core.internal.EntityTableAvailable;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 
 /**
@@ -16,5 +16,5 @@ public interface TableExpressionBuilder extends ExpressionBuilder {
     String getAlias();
     int getIndex();
 //    String getSqlColumnSegment(String propertyName);
-    EntityTableAvailable getEntityTable();
+    TableAvailable getEntityTable();
 }

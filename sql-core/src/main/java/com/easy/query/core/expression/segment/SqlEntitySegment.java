@@ -1,6 +1,6 @@
 package com.easy.query.core.expression.segment;
 
-import com.easy.query.core.expression.parser.core.internal.EntityTableAvailable;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 
 /**
  * @author xuejiaming
@@ -9,7 +9,7 @@ import com.easy.query.core.expression.parser.core.internal.EntityTableAvailable;
  * @Date: 2023/3/4 23:48
  */
 public interface SqlEntitySegment extends SqlSegment {
-    EntityTableAvailable getTable();
+    TableAvailable getTable();
 
     String getPropertyName();
 

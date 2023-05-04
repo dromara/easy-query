@@ -6,9 +6,9 @@ import com.easy.query.core.expression.lambda.SqlExpression3;
 import com.easy.query.core.expression.parser.core.SqlColumnAsSelector;
 import com.easy.query.core.expression.parser.core.SqlColumnSelector;
 import com.easy.query.core.expression.lambda.SqlExpression4;
-import com.easy.query.core.expression.parser.core.SqlGroupByColumnSelector;
 import com.easy.query.core.expression.parser.core.SqlColumnResultSelector;
 import com.easy.query.core.expression.parser.core.SqlPredicate;
+import com.easy.query.core.expression.parser.core.SqlGroupBySelector;
 
 import java.math.BigDecimal;
 import java.util.function.Function;
@@ -112,11 +112,11 @@ public interface Queryable3<T1, T2, T3> extends Queryable<T1> {
     //endregion
 
     //region group
-    default Queryable3<T1, T2, T3> groupBy(SqlExpression3<SqlGroupByColumnSelector<T1>, SqlGroupByColumnSelector<T2>, SqlGroupByColumnSelector<T3>> selectExpression) {
+    default Queryable3<T1, T2, T3> groupBy(SqlExpression3<SqlGroupBySelector<T1>, SqlGroupBySelector<T2>, SqlGroupBySelector<T3>> selectExpression) {
         return groupBy(true, selectExpression);
     }
 
-    Queryable3<T1, T2, T3> groupBy(boolean condition, SqlExpression3<SqlGroupByColumnSelector<T1>, SqlGroupByColumnSelector<T2>, SqlGroupByColumnSelector<T3>> selectExpression);
+    Queryable3<T1, T2, T3> groupBy(boolean condition, SqlExpression3<SqlGroupBySelector<T1>, SqlGroupBySelector<T2>, SqlGroupBySelector<T3>> selectExpression);
 
     //endregion
     //region order

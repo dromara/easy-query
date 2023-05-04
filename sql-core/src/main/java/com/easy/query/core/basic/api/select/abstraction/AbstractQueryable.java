@@ -6,8 +6,8 @@ import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
 import com.easy.query.core.basic.pagination.EasyPageResultProvider;
 import com.easy.query.core.common.bean.FastBean;
 import com.easy.query.core.enums.EasyBehaviorEnum;
-import com.easy.query.core.expression.parser.core.SqlGroupByColumnSelector;
 import com.easy.query.core.expression.parser.core.SqlPredicate;
+import com.easy.query.core.expression.parser.core.SqlGroupBySelector;
 import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
@@ -498,9 +498,9 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     }
 
     @Override
-    public Queryable<T1> groupBy(boolean condition, SqlExpression<SqlGroupByColumnSelector<T1>> selectExpression) {
+    public Queryable<T1> groupBy(boolean condition, SqlExpression<SqlGroupBySelector<T1>> selectExpression) {
         if (condition) {
-            SqlGroupByColumnSelector<T1> sqlPredicate = getSqlBuilderProvider1().getSqlGroupColumnSelector1();
+            SqlGroupBySelector<T1> sqlPredicate = getSqlBuilderProvider1().getSqlGroupColumnSelector1();
             selectExpression.apply(sqlPredicate);
         }
         return this;

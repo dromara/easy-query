@@ -2,7 +2,7 @@ package com.easy.query.core.expression.sql.builder.factory;
 
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.enums.MultiTableTypeEnum;
-import com.easy.query.core.expression.EasyEntityTableAvailable;
+import com.easy.query.core.expression.EntityTableAvailable;
 import com.easy.query.core.expression.sql.builder.EntityDeleteExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
@@ -37,7 +37,7 @@ public  class DefaultEasyExpressionBuilderFactory implements EasyExpressionBuild
 
     @Override
     public EntityTableExpressionBuilder createAnonymousEntityTableExpression(EntityMetadata entityMetadata, int index, String alias, MultiTableTypeEnum multiTableType, EntityQueryExpressionBuilder sqlEntityQueryExpression) {
-        return new AnonymousTableExpressionBuilder(new EasyEntityTableAvailable(index,entityMetadata,alias),multiTableType,sqlEntityQueryExpression);
+        return new AnonymousTableExpressionBuilder(new EntityTableAvailable(index,entityMetadata,alias),multiTableType,sqlEntityQueryExpression);
     }
     @Override
     public EntityQueryExpressionBuilder createEntityQueryExpression(ExpressionContext sqlExpressionContext) {

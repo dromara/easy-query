@@ -1,7 +1,7 @@
 package com.easy.query.core.expression.sql.builder.impl;
 
 import com.easy.query.core.enums.MultiTableTypeEnum;
-import com.easy.query.core.expression.parser.core.internal.EntityTableAvailable;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.SqlPredicate;
 import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
@@ -21,7 +21,7 @@ import com.easy.query.core.util.SqlSegmentUtil;
 public class AnonymousTableExpressionBuilder extends TableExpressionBuilder implements AnonymousEntityTableExpressionBuilder {
     private final EntityQueryExpressionBuilder entityQueryExpressionBuilder;
 
-    public AnonymousTableExpressionBuilder(EntityTableAvailable entityTable, MultiTableTypeEnum multiTableType, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
+    public AnonymousTableExpressionBuilder(TableAvailable entityTable, MultiTableTypeEnum multiTableType, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
         super(entityTable, multiTableType,entityQueryExpressionBuilder.getRuntimeContext());
         this.entityQueryExpressionBuilder = entityQueryExpressionBuilder;
     }

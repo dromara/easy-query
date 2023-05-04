@@ -6,6 +6,7 @@ import com.easy.query.core.enums.EasyFunc;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.SqlExpression;
 import com.easy.query.core.enums.SqlPredicateCompare;
+import com.easy.query.core.expression.parser.core.available.IndexAvailable;
 
 /**
  * @FileName: AggregatePredicate.java

@@ -6,7 +6,7 @@ import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
 import com.easy.query.core.basic.jdbc.parameter.VersionPropertySQLParameter;
 import com.easy.query.core.basic.plugin.version.EasyVersionStrategy;
-import com.easy.query.core.expression.parser.core.internal.EntityTableAvailable;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.util.SqlUtil;
 import com.easy.query.core.util.SqlExpressionUtil;
 
@@ -20,7 +20,7 @@ public class ColumnVersionPropertyPredicate extends ColumnPropertyPredicate{
 
     private final EasyVersionStrategy easyVersionStrategy;
 
-    public ColumnVersionPropertyPredicate(EntityTableAvailable table, String propertyName, EasyVersionStrategy easyVersionStrategy, EasyQueryRuntimeContext runtimeContext) {
+    public ColumnVersionPropertyPredicate(TableAvailable table, String propertyName, EasyVersionStrategy easyVersionStrategy, EasyQueryRuntimeContext runtimeContext) {
         super(table, propertyName, runtimeContext);
 
         this.easyVersionStrategy = easyVersionStrategy;

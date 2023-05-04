@@ -4,7 +4,7 @@ import com.easy.query.core.common.bean.FastBean;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
-import com.easy.query.core.expression.parser.core.internal.EntityTableAvailable;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.SqlEntityAliasSegment;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
@@ -64,7 +64,7 @@ public class EasyUtil {
         return sqlEntityExpression.getTables().size();
     }
 
-    public static String getAnonymousPropertyName(SqlEntityAliasSegment sqlEntityProject, EntityTableAvailable anonymousTable) {
+    public static String getAnonymousPropertyName(SqlEntityAliasSegment sqlEntityProject, TableAvailable anonymousTable) {
         String alias = sqlEntityProject.getAlias();
         if (StringUtil.isBlank(alias)) {
             return sqlEntityProject.getPropertyName();

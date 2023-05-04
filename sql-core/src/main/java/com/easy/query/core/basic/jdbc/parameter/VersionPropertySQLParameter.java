@@ -1,7 +1,7 @@
 package com.easy.query.core.basic.jdbc.parameter;
 
 import com.easy.query.core.basic.plugin.version.EasyVersionStrategy;
-import com.easy.query.core.expression.parser.core.internal.EntityTableAvailable;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 
 /**
  * create time 2023/3/27 15:48
@@ -24,7 +24,7 @@ public class VersionPropertySQLParameter implements BeanSqlParameter{
     }
 
     @Override
-    public EntityTableAvailable getTable() {
+    public TableAvailable getTable() {
         return beanSqlParameter.getTable();
     }
 

@@ -1,6 +1,6 @@
 package com.easy.query.core.basic.jdbc.parameter;
 
-import com.easy.query.core.expression.parser.core.internal.EntityTableAvailable;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 
 /**
  * @FileName: ConstSqlParameter.java
@@ -16,7 +16,7 @@ public final class ConstLikeSQLParameter implements ConstSQLParameter, SQLLikePa
     }
 
     @Override
-    public EntityTableAvailable getTable() {
+    public TableAvailable getTable() {
         return constSQLParameter.getTable();
     }
 

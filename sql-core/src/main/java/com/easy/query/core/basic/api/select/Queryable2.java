@@ -6,9 +6,9 @@ import com.easy.query.core.expression.parser.core.SqlColumnAsSelector;
 import com.easy.query.core.expression.parser.core.SqlColumnSelector;
 import com.easy.query.core.expression.lambda.SqlExpression2;
 import com.easy.query.core.expression.lambda.SqlExpression3;
-import com.easy.query.core.expression.parser.core.SqlGroupByColumnSelector;
 import com.easy.query.core.expression.parser.core.SqlColumnResultSelector;
 import com.easy.query.core.expression.parser.core.SqlPredicate;
+import com.easy.query.core.expression.parser.core.SqlGroupBySelector;
 
 import java.math.BigDecimal;
 import java.util.function.Function;
@@ -110,11 +110,11 @@ public interface Queryable2<T1, T2> extends Queryable<T1> {
     //endregion
 
     //region group
-    default Queryable2<T1, T2> groupBy(SqlExpression2<SqlGroupByColumnSelector<T1>, SqlGroupByColumnSelector<T2>> selectExpression) {
+    default Queryable2<T1, T2> groupBy(SqlExpression2<SqlGroupBySelector<T1>, SqlGroupBySelector<T2>> selectExpression) {
         return groupBy(true, selectExpression);
     }
 
-    Queryable2<T1, T2> groupBy(boolean condition, SqlExpression2<SqlGroupByColumnSelector<T1>, SqlGroupByColumnSelector<T2>> selectExpression);
+    Queryable2<T1, T2> groupBy(boolean condition, SqlExpression2<SqlGroupBySelector<T1>, SqlGroupBySelector<T2>> selectExpression);
 
     //endregion
     //region order

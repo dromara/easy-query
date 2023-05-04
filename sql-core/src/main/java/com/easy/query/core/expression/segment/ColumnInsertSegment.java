@@ -3,7 +3,7 @@ package com.easy.query.core.expression.segment;
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.PropertySQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
-import com.easy.query.core.expression.parser.core.internal.EntityTableAvailable;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.util.SqlUtil;
 import com.easy.query.core.util.SqlExpressionUtil;
 
@@ -16,15 +16,15 @@ import com.easy.query.core.util.SqlExpressionUtil;
 public class ColumnInsertSegment implements SqlEntityAliasSegment {
 
 
-    protected final EntityTableAvailable table;
+    protected final TableAvailable table;
     protected final String propertyName;
     protected final EasyQueryRuntimeContext runtimeContext;
     protected String alias;
 
-    public ColumnInsertSegment(EntityTableAvailable table, String propertyName, EasyQueryRuntimeContext runtimeContext){
+    public ColumnInsertSegment(TableAvailable table, String propertyName, EasyQueryRuntimeContext runtimeContext){
         this(table,propertyName,runtimeContext,null);
     }
-    public ColumnInsertSegment(EntityTableAvailable table, String propertyName, EasyQueryRuntimeContext runtimeContext, String alias){
+    public ColumnInsertSegment(TableAvailable table, String propertyName, EasyQueryRuntimeContext runtimeContext, String alias){
         this.table = table;
 
         this.propertyName = propertyName;
@@ -45,7 +45,7 @@ public class ColumnInsertSegment implements SqlEntityAliasSegment {
     }
 
     @Override
-    public EntityTableAvailable getTable() {
+    public TableAvailable getTable() {
         return table;
     }
 

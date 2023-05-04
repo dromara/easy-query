@@ -6,7 +6,7 @@ import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
 import com.easy.query.core.enums.SqlPredicateCompare;
 import com.easy.query.core.enums.SqlPredicateCompareEnum;
-import com.easy.query.core.expression.parser.core.internal.EntityTableAvailable;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.SqlEntitySegment;
 import com.easy.query.core.util.SqlUtil;
 import com.easy.query.core.util.SqlExpressionUtil;
@@ -18,11 +18,11 @@ import com.easy.query.core.util.SqlExpressionUtil;
  * @author xuejiaming
  */
 public class ColumnPropertyPredicate implements Predicate,ValuePredicate {
-    protected final EntityTableAvailable table;
+    protected final TableAvailable table;
     protected final String propertyName;
     protected final EasyQueryRuntimeContext runtimeContext;
 
-    public ColumnPropertyPredicate(EntityTableAvailable table, String propertyName, EasyQueryRuntimeContext runtimeContext){
+    public ColumnPropertyPredicate(TableAvailable table, String propertyName, EasyQueryRuntimeContext runtimeContext){
         this.table = table;
         this.propertyName = propertyName;
         this.runtimeContext = runtimeContext;
@@ -36,7 +36,7 @@ public class ColumnPropertyPredicate implements Predicate,ValuePredicate {
     }
 
     @Override
-    public EntityTableAvailable getTable() {
+    public TableAvailable getTable() {
         return table;
     }
 

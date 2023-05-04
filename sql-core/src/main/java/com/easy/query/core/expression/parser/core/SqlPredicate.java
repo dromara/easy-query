@@ -7,7 +7,7 @@ import com.easy.query.core.enums.SqlPredicateCompareEnum;
 import com.easy.query.core.enums.SqlRangeEnum;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.SqlExpression;
-import com.easy.query.core.expression.parser.core.internal.EntityTableAvailable;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 
 import java.util.Collection;
 
@@ -18,7 +18,7 @@ import java.util.Collection;
  * @author xuejiaming
  */
 public interface SqlPredicate<T1> {
-    EntityTableAvailable getTable();
+    TableAvailable getTable();
     /**
      * 大于 column > val
      */

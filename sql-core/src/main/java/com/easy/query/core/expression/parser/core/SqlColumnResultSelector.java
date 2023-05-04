@@ -1,7 +1,7 @@
 package com.easy.query.core.expression.parser.core;
 
 import com.easy.query.core.expression.lambda.Property;
-import com.easy.query.core.expression.parser.core.internal.IndexAvailable;
+import com.easy.query.core.expression.parser.core.available.IndexAvailable;
 
 /**
  *
