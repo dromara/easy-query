@@ -1,12 +1,10 @@
 package com.easy.query.core.expression.sql.builder;
 
-import com.easy.query.core.expression.sql.expression.EasySqlExpression;
+import com.easy.query.core.expression.parser.core.SqlPredicate;
 import com.easy.query.core.expression.sql.expression.EasyTableSqlExpression;
 import com.easy.query.core.metadata.EntityMetadata;
-import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.SqlExpression;
-import com.easy.query.core.expression.parser.abstraction.SqlColumnSetter;
-import com.easy.query.core.expression.parser.abstraction.SqlPredicate;
+import com.easy.query.core.expression.parser.core.SqlColumnSetter;
 
 import java.util.function.Function;
 
@@ -21,7 +19,6 @@ public interface EntityTableExpressionBuilder extends TableExpressionBuilder {
     String getTableName();
     void setTableNameAs(Function<String,String> tableNameAs);
     boolean tableNameIsAs();
-    <T1> String getPropertyName(Property<T1, ?> column);
     String getColumnName(String propertyName);
 
      SqlExpression<SqlPredicate<Object>> getLogicDeleteQueryFilterExpression();

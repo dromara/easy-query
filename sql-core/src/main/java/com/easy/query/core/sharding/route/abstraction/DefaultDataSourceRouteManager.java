@@ -4,7 +4,7 @@ import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.executor.parser.PrepareParseResult;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
-import com.easy.query.core.sharding.EasyDataSource;
+import com.easy.query.core.sharding.EasyQueryDataSource;
 import com.easy.query.core.sharding.route.datasource.DataSourceRoute;
 import com.easy.query.core.sharding.route.datasource.ShardingDataSourceRoute;
 import com.easy.query.core.sharding.rule.datasource.DataSourceRouteRule;
@@ -25,9 +25,9 @@ public class DefaultDataSourceRouteManager implements DataSourceRouteManager{
     private final Map<Class<?>, DataSourceRouteRule> entityRouteRuleCache= new ConcurrentHashMap<>();
     private final DataSourceRoute dataSourceRoute;
     private final EntityMetadataManager entityMetadataManager;
-    private final EasyDataSource easyDataSource;
+    private final EasyQueryDataSource easyDataSource;
 
-    public DefaultDataSourceRouteManager(EntityMetadataManager entityMetadataManager, EasyDataSource easyDataSource){
+    public DefaultDataSourceRouteManager(EntityMetadataManager entityMetadataManager, EasyQueryDataSource easyDataSource){
 
         this.entityMetadataManager = entityMetadataManager;
         this.easyDataSource = easyDataSource;

@@ -3,12 +3,10 @@ package com.easy.query.core.basic.plugin.logicdel;
 import com.easy.query.core.basic.enums.LogicDeleteStrategyEnum;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.SqlExpression;
-import com.easy.query.core.expression.parser.abstraction.SqlColumnSetter;
-import com.easy.query.core.metadata.EntityMetadata;
-import com.easy.query.core.expression.parser.abstraction.SqlPredicate;
+import com.easy.query.core.expression.parser.core.SqlColumnSetter;
+import com.easy.query.core.expression.parser.core.SqlPredicate;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 

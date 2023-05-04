@@ -580,7 +580,7 @@ public class QueryTest extends BaseTest {
                 .where((t, t1) -> t1.isNotNull(BlogEntity::getTitle))
                 .orderByDesc((t, t1) -> t1.column(BlogEntity::getPublishTime))
                 .select(BlogEntity.class, (t, t1) -> t1.column(BlogEntity::getPublishTime).column(BlogEntity::getId).column(BlogEntity::getScore));
-        EntityQueryExpressionBuilder countEntityQueryExpression = SqlExpressionUtil.getCountEntityQueryExpression(select.getSqlEntityExpression().cloneEntityExpressionBuilder());
+        EntityQueryExpressionBuilder countEntityQueryExpression = SqlExpressionUtil.getCountEntityQueryExpression(select.getSqlEntityExpressionBuilder().cloneEntityExpressionBuilder());
         Assert.assertNotNull(countEntityQueryExpression);
         String s = countEntityQueryExpression.toExpression().toSql(null);
         Assert.assertEquals("SELECT  COUNT(1)  FROM `t_topic` t INNER JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t1.`title` IS NOT NULL",s);
@@ -599,7 +599,7 @@ public class QueryTest extends BaseTest {
                 .where((t, t1) -> t1.isNotNull(BlogEntity::getTitle))
                 .select(BlogEntity.class, (t, t1) -> t1.column(BlogEntity::getPublishTime).column(BlogEntity::getId).column(BlogEntity::getScore))
                 .orderByDesc(t1 -> t1.column(BlogEntity::getPublishTime));
-        EntityQueryExpressionBuilder countEntityQueryExpression = SqlExpressionUtil.getCountEntityQueryExpression(blogEntityQueryable.getSqlEntityExpression().cloneEntityExpressionBuilder());
+        EntityQueryExpressionBuilder countEntityQueryExpression = SqlExpressionUtil.getCountEntityQueryExpression(blogEntityQueryable.getSqlEntityExpressionBuilder().cloneEntityExpressionBuilder());
         Assert.assertNotNull(countEntityQueryExpression);
         String s = countEntityQueryExpression.toExpression().toSql(null);
         Assert.assertEquals("SELECT  COUNT(1)  FROM `t_topic` t INNER JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t1.`title` IS NOT NULL",s);
@@ -631,5 +631,29 @@ public class QueryTest extends BaseTest {
                 .select(TopicGroupTestDTO.class, o -> o.columnAs(BlogEntity::getId, TopicGroupTestDTO::getId).columnCount(BlogEntity::getId, TopicGroupTestDTO::getIdCount))
                 .firstOrNull();
         Assert.assertNull(topicGroupTestDTO1);
+    }
+    @Test
+    public void query44() {
+        Queryable<TopicGroupTestDTO> topicGroupTestDTOQueryable = easyQuery.queryable(BlogEntity.class)
+                .where(o -> o.eq(BlogEntity::getId, "123"))
+                .groupBy(o -> o.column(BlogEntity::getId))
+                .select(TopicGroupTestDTO.class, o -> o.columnAs(BlogEntity::getId, TopicGroupTestDTO::getId).columnCount(BlogEntity::getId, TopicGroupTestDTO::getIdCount))
+                .orderByAsc(o -> o.column(TopicGroupTestDTO::getId));
+        String sql = topicGroupTestDTOQueryable.toSql();
+        Assert.assertEquals("SELECT t1.`id` AS `id`,t1.`id_count` AS `id_count` FROM (SELECT t.`id` AS `id`,COUNT(t.`id`) AS `id_count` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? GROUP BY t.`id`) t1 ORDER BY t1.`id` ASC",sql);
+        Queryable<TopicGroupTestDTO> select = easyQuery.queryable(BlogEntity.class)
+                .where(o -> o.eq(BlogEntity::getId, "123"))
+                .groupBy(o -> o.column(BlogEntity::getId))
+                .orderByAsc(o -> o.column(BlogEntity::getId))
+                .select(TopicGroupTestDTO.class, o -> o.columnAs(BlogEntity::getId, TopicGroupTestDTO::getId).columnCount(BlogEntity::getId, TopicGroupTestDTO::getIdCount));
+        String sql1 = select.toSql();
+        Assert.assertEquals("SELECT t.`id` AS `id`,COUNT(t.`id`) AS `id_count` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? GROUP BY t.`id` ORDER BY t.`id` ASC",sql1);
+    }
+    @Test
+    public void query45() {
+        Queryable<BlogEntity> where = easyQuery.queryable(BlogEntity.class)
+                .where(o -> o.eq(BlogEntity::getId, "123"));
+        String sql = easyQuery
+                .queryable(Topic.class).where(o -> o.exists(where, q -> q.eq(o, BlogEntity::getId, Topic::getId))).toSql();
     }
 }

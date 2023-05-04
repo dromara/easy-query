@@ -4,8 +4,8 @@ import com.easy.query.core.basic.plugin.logicdel.AbstractEasyLogicDeleteStrategy
 import com.easy.query.core.basic.plugin.logicdel.LogicDeleteBuilder;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.SqlExpression;
-import com.easy.query.core.expression.parser.abstraction.SqlColumnSetter;
-import com.easy.query.core.expression.parser.abstraction.SqlPredicate;
+import com.easy.query.core.expression.parser.core.SqlColumnSetter;
+import com.easy.query.core.expression.parser.core.SqlPredicate;
 import com.easy.query.core.util.EasyUtil;
 
 import java.time.LocalDateTime;

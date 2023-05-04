@@ -2,11 +2,9 @@ package com.easy.query.core.expression.sql.expression.impl;
 
 import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
 import com.easy.query.core.enums.MultiTableTypeEnum;
-import com.easy.query.core.expression.EasyEntityTableAvailable;
-import com.easy.query.core.expression.parser.abstraction.internal.EntityTableAvailable;
+import com.easy.query.core.expression.parser.core.internal.EntityTableAvailable;
 import com.easy.query.core.expression.sql.expression.EasyAnonymousTableSqlExpression;
 import com.easy.query.core.expression.sql.expression.EasyQuerySqlExpression;
-import com.easy.query.core.metadata.EntityMetadata;
 
 /**
  * create time 2023/4/23 16:30

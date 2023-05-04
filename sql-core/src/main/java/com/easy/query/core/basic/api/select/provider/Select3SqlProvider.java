@@ -1,6 +1,11 @@
 package com.easy.query.core.basic.api.select.provider;
 
-import com.easy.query.core.expression.parser.abstraction.*;
+import com.easy.query.core.expression.parser.core.SqlAggregatePredicate;
+import com.easy.query.core.expression.parser.core.SqlColumnAsSelector;
+import com.easy.query.core.expression.parser.core.SqlColumnResultSelector;
+import com.easy.query.core.expression.parser.core.SqlColumnSelector;
+import com.easy.query.core.expression.parser.core.SqlGroupByColumnSelector;
+import com.easy.query.core.expression.parser.core.SqlPredicate;
 import com.easy.query.core.expression.parser.impl.*;
 import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import com.easy.query.core.expression.segment.condition.DefaultSqlPredicate;
@@ -77,7 +82,7 @@ public class Select3SqlProvider<T1,T2,T3> extends Select2SqlProvider<T1,T2> impl
     }
 
     @Override
-    public <TR> SqlColumnAsSelector<T3, TR> getSqlColumnAsSelector3(SqlBuilderSegment sqlSegment0Builder,Class<TR> resultClass) {
+    public <TR> SqlColumnAsSelector<T3, TR> getSqlColumnAsSelector3(SqlBuilderSegment sqlSegment0Builder, Class<TR> resultClass) {
         return new DefaultSqlColumnAsSelector<>(index, sqlEntityExpression,sqlSegment0Builder,resultClass);
     }
 

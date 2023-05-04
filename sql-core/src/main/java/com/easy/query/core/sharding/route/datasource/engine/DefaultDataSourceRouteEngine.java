@@ -4,7 +4,7 @@ import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.executor.parser.PrepareParseResult;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
-import com.easy.query.core.sharding.EasyDataSource;
+import com.easy.query.core.sharding.EasyQueryDataSource;
 import com.easy.query.core.sharding.route.abstraction.DataSourceRouteManager;
 import com.easy.query.core.util.EasyCollectionUtil;
 
@@ -21,11 +21,11 @@ import java.util.Set;
  * @author xuejiaming
  */
 public class DefaultDataSourceRouteEngine implements DataSourceRouteEngine{
-    private final EasyDataSource easyDataSource;
+    private final EasyQueryDataSource easyDataSource;
     private final EntityMetadataManager entityMetadataManager;
     private final DataSourceRouteManager dataSourceRouteManager;
 
-    public DefaultDataSourceRouteEngine(EasyDataSource easyDataSource, EntityMetadataManager entityMetadataManager, DataSourceRouteManager dataSourceRouteManager){
+    public DefaultDataSourceRouteEngine(EasyQueryDataSource easyDataSource, EntityMetadataManager entityMetadataManager, DataSourceRouteManager dataSourceRouteManager){
 
         this.easyDataSource = easyDataSource;
         this.entityMetadataManager = entityMetadataManager;

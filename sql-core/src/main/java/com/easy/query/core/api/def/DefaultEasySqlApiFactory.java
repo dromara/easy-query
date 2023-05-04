@@ -87,9 +87,9 @@ public class DefaultEasySqlApiFactory implements EasySqlApiFactory {
 
     @Override
     public <T> Queryable<T> cloneQueryable(Queryable<T> source) {
-        EntityQueryExpressionBuilder sqlEntityExpression = source.getSqlEntityExpression();
-        EntityQueryExpressionBuilder sqlEntityQueryExpression = sqlEntityExpression.cloneEntityExpressionBuilder();
-        return new EasyQueryable<>(source.queryClass(),sqlEntityQueryExpression);
+        EntityQueryExpressionBuilder sqlEntityExpressionBuilder = source.getSqlEntityExpressionBuilder();
+        EntityQueryExpressionBuilder entityQueryExpressionBuilder = sqlEntityExpressionBuilder.cloneEntityExpressionBuilder();
+        return new EasyQueryable<>(source.queryClass(),entityQueryExpressionBuilder);
     }
 
     @Override
@@ -131,7 +131,7 @@ public class DefaultEasySqlApiFactory implements EasySqlApiFactory {
         Class<T2> t2Class = joinQueryable.queryClass();
 
         EntityMetadata entityMetadata = sqlEntityExpression.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(t2Class);
-        EntityQueryExpressionBuilder joinQueryableSqlEntityExpression = joinQueryable.getSqlEntityExpression();
+        EntityQueryExpressionBuilder joinQueryableSqlEntityExpression = joinQueryable.getSqlEntityExpressionBuilder();
 
         int tableIndex =  EasyUtil.getNextTableIndex(sqlEntityExpression);
         ExpressionContext queryExpressionContext = sqlEntityExpression.getExpressionContext();
@@ -159,7 +159,7 @@ public class DefaultEasySqlApiFactory implements EasySqlApiFactory {
         Class<T3> t3Class = joinQueryable.queryClass();
 
         EntityMetadata entityMetadata = sqlEntityExpression.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(t3Class);
-        EntityQueryExpressionBuilder joinQueryableSqlEntityExpression = joinQueryable.getSqlEntityExpression();
+        EntityQueryExpressionBuilder joinQueryableSqlEntityExpression = joinQueryable.getSqlEntityExpressionBuilder();
 
         int tableIndex =  EasyUtil.getNextTableIndex(sqlEntityExpression);
         ExpressionContext queryExpressionContext = sqlEntityExpression.getExpressionContext();
@@ -187,7 +187,7 @@ public class DefaultEasySqlApiFactory implements EasySqlApiFactory {
         Class<T4> t4Class = joinQueryable.queryClass();
 
         EntityMetadata entityMetadata = sqlEntityExpression.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(t4Class);
-        EntityQueryExpressionBuilder joinQueryableSqlEntityExpression = joinQueryable.getSqlEntityExpression();
+        EntityQueryExpressionBuilder joinQueryableSqlEntityExpression = joinQueryable.getSqlEntityExpressionBuilder();
 
         int tableIndex =  EasyUtil.getNextTableIndex(sqlEntityExpression);
         ExpressionContext queryExpressionContext = sqlEntityExpression.getExpressionContext();

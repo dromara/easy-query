@@ -2,11 +2,10 @@ package com.easy.query.core.basic.jdbc.parameter;
 
 import com.easy.query.core.common.bean.FastBean;
 import com.easy.query.core.expression.lambda.Property;
-import com.easy.query.core.expression.parser.abstraction.internal.EntityTableAvailable;
+import com.easy.query.core.expression.parser.core.internal.EntityTableAvailable;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.exception.EasyQueryException;
-import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.util.EasyUtil;
 
 /**

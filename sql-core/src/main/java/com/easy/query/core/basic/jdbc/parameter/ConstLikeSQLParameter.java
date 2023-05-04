@@ -1,6 +1,6 @@
 package com.easy.query.core.basic.jdbc.parameter;
 
-import com.easy.query.core.expression.parser.abstraction.internal.EntityTableAvailable;
+import com.easy.query.core.expression.parser.core.internal.EntityTableAvailable;
 
 /**
  * @FileName: ConstSqlParameter.java

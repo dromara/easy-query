@@ -1,9 +1,7 @@
 package com.easy.query.core.expression.segment;
 
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
-import com.easy.query.core.expression.parser.abstraction.internal.EntityTableAvailable;
-import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
-import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
+import com.easy.query.core.expression.parser.core.internal.EntityTableAvailable;
 
 /**
  * create time 2023/4/30 21:45

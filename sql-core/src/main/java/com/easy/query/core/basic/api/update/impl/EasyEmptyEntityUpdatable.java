@@ -4,7 +4,7 @@ import com.easy.query.core.basic.api.update.EntityUpdatable;
 import com.easy.query.core.enums.SqlExecuteStrategyEnum;
 import com.easy.query.core.exception.EasyQueryConcurrentException;
 import com.easy.query.core.expression.lambda.SqlExpression;
-import com.easy.query.core.expression.parser.abstraction.SqlColumnSelector;
+import com.easy.query.core.expression.parser.core.SqlColumnSelector;
 
 import java.util.function.Function;
 

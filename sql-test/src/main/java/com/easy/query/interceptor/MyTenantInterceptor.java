@@ -3,7 +3,7 @@ package com.easy.query.interceptor;
 import com.easy.query.core.basic.plugin.interceptor.EasyEntityInterceptor;
 import com.easy.query.core.basic.plugin.interceptor.EasyPredicateFilterInterceptor;
 import com.easy.query.core.expression.lambda.Property;
-import com.easy.query.core.expression.parser.abstraction.SqlPredicate;
+import com.easy.query.core.expression.parser.core.SqlPredicate;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.LambdaEntityExpressionBuilder;

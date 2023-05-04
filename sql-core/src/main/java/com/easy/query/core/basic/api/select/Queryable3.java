@@ -3,12 +3,12 @@ package com.easy.query.core.basic.api.select;
 import com.easy.query.core.basic.api.select.provider.EasyQuerySqlBuilderProvider3;
 import com.easy.query.core.expression.lambda.SqlExpression;
 import com.easy.query.core.expression.lambda.SqlExpression3;
-import com.easy.query.core.expression.parser.abstraction.SqlColumnAsSelector;
-import com.easy.query.core.expression.parser.abstraction.SqlColumnSelector;
+import com.easy.query.core.expression.parser.core.SqlColumnAsSelector;
+import com.easy.query.core.expression.parser.core.SqlColumnSelector;
 import com.easy.query.core.expression.lambda.SqlExpression4;
-import com.easy.query.core.expression.parser.abstraction.SqlGroupByColumnSelector;
-import com.easy.query.core.expression.parser.abstraction.SqlPredicate;
-import com.easy.query.core.expression.parser.abstraction.SqlColumnResultSelector;
+import com.easy.query.core.expression.parser.core.SqlGroupByColumnSelector;
+import com.easy.query.core.expression.parser.core.SqlColumnResultSelector;
+import com.easy.query.core.expression.parser.core.SqlPredicate;
 
 import java.math.BigDecimal;
 import java.util.function.Function;

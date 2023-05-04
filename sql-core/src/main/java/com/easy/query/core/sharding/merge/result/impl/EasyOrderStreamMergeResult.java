@@ -1,6 +1,6 @@
 package com.easy.query.core.sharding.merge.result.impl;
 
-import com.easy.query.core.sharding.compare.ShardingComparer;
+import com.easy.query.core.sharding.comparer.ShardingComparer;
 import com.easy.query.core.sharding.merge.context.StreamMergeContext;
 import com.easy.query.core.sharding.merge.result.StreamResultSet;
 import com.easy.query.core.sharding.merge.segment.PropertyOrder;

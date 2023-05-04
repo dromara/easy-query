@@ -3,12 +3,13 @@ package com.easy.query.core.expression.parser.impl;
 import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import com.easy.query.core.enums.SqlPredicateCompareEnum;
 import com.easy.query.core.expression.lambda.Property;
-import com.easy.query.core.expression.parser.abstraction.SqlColumnSetter;
+import com.easy.query.core.expression.parser.core.SqlColumnSetter;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnValuePredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnWithColumnPredicate;
 import com.easy.query.core.expression.segment.ColumnWithSelfSegment;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
+import com.easy.query.core.util.LambdaUtil;
 
 /**
  * @FileName: DefaultSqlColumnSetter.java
@@ -32,7 +33,7 @@ public class DefaultSqlColumnSetter<T>  implements SqlColumnSetter<T> {
         if(condition)
         {
             EntityTableExpressionBuilder table = sqlEntityExpression.getTable(index);
-            String propertyName = table.getPropertyName(column);
+            String propertyName = LambdaUtil.getPropertyName(column);
             sqlSegment0Builder.append(new ColumnValuePredicate(table.getEntityTable(),propertyName,val, SqlPredicateCompareEnum.EQ, sqlEntityExpression.getRuntimeContext()));
         }
         return this;
@@ -43,9 +44,9 @@ public class DefaultSqlColumnSetter<T>  implements SqlColumnSetter<T> {
         if(condition)
         {
             EntityTableExpressionBuilder table1 = sqlEntityExpression.getTable(index);
-            String propertyName1 = table1.getPropertyName(column1);
+            String propertyName1 = LambdaUtil.getPropertyName(column1);
             EntityTableExpressionBuilder table2 = sqlEntityExpression.getTable(index);
-            String propertyName2 = table2.getPropertyName(column2);
+            String propertyName2 = LambdaUtil.getPropertyName(column2);
             sqlSegment0Builder.append(new ColumnWithColumnPredicate(table1.getEntityTable(),propertyName1,table2.getEntityTable(),propertyName2, SqlPredicateCompareEnum.EQ, sqlEntityExpression.getRuntimeContext()));
         }
         return this;
@@ -64,7 +65,7 @@ public class DefaultSqlColumnSetter<T>  implements SqlColumnSetter<T> {
     private void setSelf(boolean increment,Property<T, ? extends Number> column, Number val){
 
         EntityTableExpressionBuilder table = sqlEntityExpression.getTable(index);
-        String propertyName = table.getPropertyName(column);
+        String propertyName = LambdaUtil.getPropertyName(column);
         sqlSegment0Builder.append(new ColumnWithSelfSegment(increment,table.getEntityTable(),propertyName,val, SqlPredicateCompareEnum.EQ, sqlEntityExpression.getRuntimeContext()));
     }
 

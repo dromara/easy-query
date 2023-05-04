@@ -3,9 +3,9 @@ package com.easy.query.core.basic.plugin.logicdel;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.SqlExpression;
-import com.easy.query.core.expression.parser.abstraction.SqlColumnSetter;
+import com.easy.query.core.expression.parser.core.SqlColumnSetter;
+import com.easy.query.core.expression.parser.core.SqlPredicate;
 import com.easy.query.core.metadata.EntityMetadata;
-import com.easy.query.core.expression.parser.abstraction.SqlPredicate;
 import com.easy.query.core.util.ClassUtil;
 
 import java.util.Set;

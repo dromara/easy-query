@@ -2,10 +2,10 @@ package com.easy.query.core.expression.sql.expression.impl;
 
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
-import com.easy.query.core.config.IDialect;
+import com.easy.query.core.sql.dialect.Dialect;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.exception.EasyQueryException;
-import com.easy.query.core.expression.parser.abstraction.internal.EntityTableAvailable;
+import com.easy.query.core.expression.parser.core.internal.EntityTableAvailable;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.sql.expression.EasyTableSqlExpression;
 import com.easy.query.core.metadata.EntityMetadata;
@@ -25,7 +25,7 @@ public class TableSqlExpression implements EasyTableSqlExpression {
 
     protected final MultiTableTypeEnum multiTableType;
     private final EasyQueryRuntimeContext runtimeContext;
-    private final IDialect dialect;
+    private final Dialect dialect;
     private final EntityTableAvailable entityTable;
     protected PredicateSegment on;
     protected Function<String, String> tableNameAs;

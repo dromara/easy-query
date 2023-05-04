@@ -12,12 +12,12 @@ import com.easy.query.core.exception.EasyQueryWhereInvalidOperationException;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.SqlExpression;
 import com.easy.query.core.expression.lambda.SqlExpression2;
-import com.easy.query.core.expression.parser.abstraction.SqlColumnAsSelector;
-import com.easy.query.core.expression.parser.abstraction.SqlColumnSelector;
+import com.easy.query.core.expression.parser.core.SqlColumnAsSelector;
+import com.easy.query.core.expression.parser.core.SqlColumnSelector;
 import com.easy.query.core.exception.EasyQueryConcurrentException;
-import com.easy.query.core.expression.parser.abstraction.SqlAggregatePredicate;
-import com.easy.query.core.expression.parser.abstraction.SqlGroupByColumnSelector;
-import com.easy.query.core.expression.parser.abstraction.SqlPredicate;
+import com.easy.query.core.expression.parser.core.SqlAggregatePredicate;
+import com.easy.query.core.expression.parser.core.SqlGroupByColumnSelector;
+import com.easy.query.core.expression.parser.core.SqlPredicate;
 import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.math.BigDecimal;
@@ -342,6 +342,8 @@ public interface Queryable<T1> extends Query<T1>, Interceptable<Queryable<T1>>, 
     <T2> Queryable2<T1, T2> innerJoin(Queryable<T2> joinQueryable, SqlExpression2<SqlPredicate<T1>, SqlPredicate<T2>> on);
 
     EasyQuerySqlBuilderProvider<T1> getSqlBuilderProvider1();
+
+//    Queryable<T1> unionAll(Queryable<T1>... otherQueryables);
 
 //    Queryable<T1> logicDelete(boolean use);
 

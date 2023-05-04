@@ -5,12 +5,11 @@ import com.easy.query.core.basic.plugin.interceptor.EasyInterceptor;
 import com.easy.query.core.basic.plugin.logicdel.EasyLogicDeleteStrategy;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
-import com.easy.query.core.config.IDialect;
-import com.easy.query.core.api.client.DefaultEasyQuery;
+import com.easy.query.core.sql.dialect.Dialect;
 import com.easy.query.core.api.client.EasyQuery;
-import com.easy.query.core.config.MySqlDialect;
-import com.easy.query.core.config.NameConversion;
-import com.easy.query.core.config.UnderlinedNameConversion;
+import com.easy.query.core.sql.dialect.impl.MySqlDialect;
+import com.easy.query.core.sql.nameconversion.NameConversion;
+import com.easy.query.core.sql.nameconversion.impl.UnderlinedNameConversion;
 import com.easy.query.core.configuration.EasyQueryConfiguration;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
@@ -71,11 +70,11 @@ public class EasyQueryStarterAutoConfiguration {
         return new UnderlinedNameConversion();
      }
      @Bean
-     public IDialect dialect(){
+     public Dialect dialect(){
         return new MySqlDialect();
      }
     @Bean
-    public EasyQuery easyQuery(DataSource dataSource, IDialect dialect, NameConversion nameConversion, Map<String, EasyInterceptor> easyInterceptorMap, Map<String, EasyLogicDeleteStrategy> easyLogicDeleteStrategyMap,Map<String, EasyShardingInitializer> easyShardingInitializerMap,Map<String, EasyEncryptionStrategy> easyEncryptionStrategyMap) {
+    public EasyQuery easyQuery(DataSource dataSource, Dialect dialect, NameConversion nameConversion, Map<String, EasyInterceptor> easyInterceptorMap, Map<String, EasyLogicDeleteStrategy> easyLogicDeleteStrategyMap, Map<String, EasyShardingInitializer> easyShardingInitializerMap, Map<String, EasyEncryptionStrategy> easyEncryptionStrategyMap) {
         EasyQuery easyQuery = EasyQueryBootstrapper.defaultBuilderConfiguration()
                 .setDataSource(dataSource)
                 .setDialect(dialect)

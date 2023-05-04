@@ -5,8 +5,8 @@ import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.enums.EasyFunc;
 import com.easy.query.core.expression.lambda.Property;
-import com.easy.query.core.expression.parser.abstraction.SqlColumnAsSelector;
-import com.easy.query.core.expression.parser.abstraction.internal.ColumnAsSelector;
+import com.easy.query.core.expression.parser.core.SqlColumnAsSelector;
+import com.easy.query.core.expression.parser.core.internal.ColumnAsSelector;
 import com.easy.query.core.expression.segment.ColumnSegmentImpl;
 import com.easy.query.core.expression.segment.FuncColumnSegmentImpl;
 import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
@@ -37,7 +37,7 @@ public class DefaultSqlColumnAsSelector<T1, TR> extends AbstractSqlColumnSelecto
     @Override
     public SqlColumnAsSelector<T1, TR> columnAs(Property<T1, ?> column, Property<TR, ?> alias) {
         EntityTableExpressionBuilder table = entityExpressionBuilder.getTable(getIndex());
-        String propertyName = table.getPropertyName(column);
+        String propertyName = LambdaUtil.getPropertyName(column);
         String aliasColumnName = getResultColumnName(alias);
         sqlSegmentBuilder.append(new ColumnSegmentImpl(table.getEntityTable(), propertyName, entityExpressionBuilder.getRuntimeContext(), aliasColumnName));
         return this;
@@ -84,7 +84,7 @@ public class DefaultSqlColumnAsSelector<T1, TR> extends AbstractSqlColumnSelecto
     @Override
     public SqlColumnAsSelector<T1, TR> columnFunc(Property<T1, ?> column, Property<TR, ?> alias, EasyFunc easyFunc) {
         EntityTableExpressionBuilder table = entityExpressionBuilder.getTable(getIndex());
-        String propertyName = table.getPropertyName(column);
+        String propertyName = LambdaUtil.getPropertyName(column);
         String columnAsName = alias == null ? table.getColumnName(propertyName) : getResultColumnName(alias);
         sqlSegmentBuilder.append(new FuncColumnSegmentImpl(table.getEntityTable(), propertyName, entityExpressionBuilder.getRuntimeContext(), easyFunc, columnAsName));
         return this;

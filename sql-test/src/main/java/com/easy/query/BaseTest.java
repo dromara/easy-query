@@ -2,9 +2,8 @@ package com.easy.query;
 
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
-import com.easy.query.core.api.client.DefaultEasyQuery;
 import com.easy.query.core.api.client.EasyQuery;
-import com.easy.query.core.config.MySqlDialect;
+import com.easy.query.core.sql.dialect.impl.MySqlDialect;
 import com.easy.query.core.configuration.EasyQueryConfiguration;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.sharding.route.abstraction.TableRouteManager;
@@ -30,7 +29,6 @@ import org.junit.BeforeClass;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @FileName: BaseTest.java

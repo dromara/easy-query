@@ -6,8 +6,8 @@ import com.easy.query.core.basic.plugin.version.EasyVersionLongStrategy;
 import com.easy.query.core.basic.plugin.version.EasyVersionStrategy;
 import com.easy.query.core.basic.plugin.version.EasyVersionTimestampStrategy;
 import com.easy.query.core.basic.plugin.version.EasyVersionUUIDStrategy;
-import com.easy.query.core.config.IDialect;
-import com.easy.query.core.config.NameConversion;
+import com.easy.query.core.sql.dialect.Dialect;
+import com.easy.query.core.sql.nameconversion.NameConversion;
 import com.easy.query.core.basic.plugin.encryption.EasyEncryptionStrategy;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.basic.enums.LogicDeleteStrategyEnum;
@@ -37,7 +37,7 @@ public class EasyQueryConfiguration {
 
 
     private final NameConversion nameConversion;
-    private final IDialect dialect;
+    private final Dialect dialect;
 //    private Map<Class<?>, EntityTypeConfiguration<?>> entityTypeConfigurationMap = new HashMap<>();
     private Map<String, EasyInterceptor> interceptorMap =new ConcurrentHashMap<>();
     private Map<String, EasyLogicDeleteStrategy> globalLogicDeleteStrategyMap = new ConcurrentHashMap<>();
@@ -45,10 +45,10 @@ public class EasyQueryConfiguration {
     private Map<Class<? extends EasyVersionStrategy>, EasyVersionStrategy> easyVersionStrategyMap = new ConcurrentHashMap<>();
     private Map<Class<? extends EasyShardingInitializer>, EasyShardingInitializer> shardingInitializerMap = new ConcurrentHashMap<>();
 
-    public EasyQueryConfiguration(IDialect dialect,NameConversion nameConversion) {
+    public EasyQueryConfiguration(Dialect dialect, NameConversion nameConversion) {
        this(EasyQueryOption.defaultEasyQueryOption(),dialect,nameConversion);
     }
-    public EasyQueryConfiguration(EasyQueryOption easyQueryOption,IDialect dialect,NameConversion nameConversion) {
+    public EasyQueryConfiguration(EasyQueryOption easyQueryOption, Dialect dialect, NameConversion nameConversion) {
         this.easyQueryOption = easyQueryOption;
         this.dialect = dialect;
         this.nameConversion = nameConversion;
@@ -67,7 +67,7 @@ public class EasyQueryConfiguration {
         return nameConversion;
     }
 
-    public IDialect getDialect() {
+    public Dialect getDialect() {
         return dialect;
     }
 

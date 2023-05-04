@@ -1,6 +1,6 @@
 package com.easy.query.core.basic.plugin.interceptor;
 
-import com.easy.query.core.expression.parser.abstraction.SqlColumnSetter;
+import com.easy.query.core.expression.parser.core.SqlColumnSetter;
 import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
 
 /**

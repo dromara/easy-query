@@ -1,12 +1,12 @@
 package com.easy.query.core.basic.api.select.provider;
 
-import com.easy.query.core.expression.parser.abstraction.SqlGroupByColumnSelector;
+import com.easy.query.core.expression.parser.core.SqlGroupByColumnSelector;
+import com.easy.query.core.expression.parser.core.SqlPredicate;
 import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
-import com.easy.query.core.expression.parser.abstraction.SqlAggregatePredicate;
-import com.easy.query.core.expression.parser.abstraction.SqlColumnAsSelector;
-import com.easy.query.core.expression.parser.abstraction.SqlColumnSelector;
-import com.easy.query.core.expression.parser.abstraction.SqlPredicate;
-import com.easy.query.core.expression.parser.abstraction.SqlColumnResultSelector;
+import com.easy.query.core.expression.parser.core.SqlAggregatePredicate;
+import com.easy.query.core.expression.parser.core.SqlColumnAsSelector;
+import com.easy.query.core.expression.parser.core.SqlColumnSelector;
+import com.easy.query.core.expression.parser.core.SqlColumnResultSelector;
 
 /**
  * @FileName: EasyQueryLambdaBuilder.java

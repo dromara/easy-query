@@ -2,7 +2,7 @@ package com.easy.query.core.expression.parser.impl;
 
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.lambda.Property;
-import com.easy.query.core.expression.parser.abstraction.internal.ColumnSelector;
+import com.easy.query.core.expression.parser.core.internal.ColumnSelector;
 import com.easy.query.core.expression.segment.ColumnSegmentImpl;
 import com.easy.query.core.expression.segment.SqlEntityAliasSegment;
 import com.easy.query.core.expression.segment.SqlEntitySegment;
@@ -14,6 +14,7 @@ import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.util.ClassUtil;
 import com.easy.query.core.util.EasyUtil;
+import com.easy.query.core.util.LambdaUtil;
 
 import java.util.Collection;
 import java.util.List;
@@ -46,7 +47,7 @@ public class AbstractSqlColumnSelector<T1, TChain> implements ColumnSelector<T1,
     @Override
     public TChain column(Property<T1, ?> column) {
         EntityTableExpressionBuilder table = entityExpressionBuilder.getTable(index);
-        String propertyName = table.getPropertyName(column);
+        String propertyName = LambdaUtil.getPropertyName(column);
         sqlSegmentBuilder.append(new ColumnSegmentImpl(table.getEntityTable(), propertyName, entityExpressionBuilder.getRuntimeContext()));
         return (TChain) this;
     }
@@ -55,7 +56,7 @@ public class AbstractSqlColumnSelector<T1, TChain> implements ColumnSelector<T1,
     @Override
     public TChain columnIgnore(Property<T1, ?> column) {
         EntityTableExpressionBuilder table = entityExpressionBuilder.getTable(index);
-        String propertyName = table.getPropertyName(column);
+        String propertyName = LambdaUtil.getPropertyName(column);
         sqlSegmentBuilder.getSqlSegments().removeIf(sqlSegment -> {
             if (sqlSegment instanceof SqlEntitySegment) {
                 SqlEntitySegment sqlEntitySegment = (SqlEntitySegment) sqlSegment;

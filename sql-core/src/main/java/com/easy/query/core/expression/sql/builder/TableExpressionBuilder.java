@@ -1,7 +1,6 @@
 package com.easy.query.core.expression.sql.builder;
 
-import com.easy.query.core.expression.parser.abstraction.internal.EntityTableAvailable;
-import com.easy.query.core.expression.parser.abstraction.internal.IndexAvailable;
+import com.easy.query.core.expression.parser.core.internal.EntityTableAvailable;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 
 /**

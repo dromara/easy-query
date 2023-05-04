@@ -1,8 +1,12 @@
 package com.easy.query.core.basic.api.select.provider;
 
-import com.easy.query.core.expression.parser.abstraction.*;
+import com.easy.query.core.expression.parser.core.SqlAggregatePredicate;
+import com.easy.query.core.expression.parser.core.SqlColumnAsSelector;
+import com.easy.query.core.expression.parser.core.SqlColumnResultSelector;
+import com.easy.query.core.expression.parser.core.SqlColumnSelector;
+import com.easy.query.core.expression.parser.core.SqlGroupByColumnSelector;
+import com.easy.query.core.expression.parser.core.SqlPredicate;
 import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
-import com.easy.query.core.expression.parser.abstraction.*;
 
 /**
  * @FileName: EasyQueryLambdaBuilder.java
@@ -18,7 +22,7 @@ public interface EasyQuerySqlBuilderProvider4<T1,T2,T3,T4> extends EasyQuerySqlB
     SqlPredicate<T4> getSqlOnPredicate4();
 
     SqlColumnSelector<T4> getSqlColumnSelector4(SqlBuilderSegment sqlSegment0Builder);
-    <TR> SqlColumnAsSelector<T4,TR> getSqlColumnAsSelector4(SqlBuilderSegment sqlSegment0Builder,Class<TR> resultClass);
+    <TR> SqlColumnAsSelector<T4,TR> getSqlColumnAsSelector4(SqlBuilderSegment sqlSegment0Builder, Class<TR> resultClass);
 //    <TR> SqlColumnAsSelector<T4,TR> getAutoSqlColumnAsSelector4(SqlBuilderSegment sqlSegment0Builder,Class<TR> resultClass);
     <TR> SqlColumnResultSelector<T4,TR> getSqlColumnResultSelector4(SqlBuilderSegment sqlSegment0Builder);
 }

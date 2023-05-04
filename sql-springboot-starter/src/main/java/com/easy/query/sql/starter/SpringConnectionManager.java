@@ -3,12 +3,9 @@ package com.easy.query.sql.starter;
 import com.easy.query.core.basic.jdbc.con.DefaultConnectionManager;
 import com.easy.query.core.basic.jdbc.con.DefaultEasyConnection;
 import com.easy.query.core.basic.jdbc.con.EasyConnection;
-import com.easy.query.core.sharding.EasyDataSource;
+import com.easy.query.core.sharding.EasyQueryDataSource;
 import org.springframework.jdbc.datasource.DataSourceUtils;
-import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
-
-import javax.sql.DataSource;
 
 /**
  * @FileName: SpringConnectionManager.java
@@ -17,7 +14,7 @@ import javax.sql.DataSource;
  * @author xuejiaming
  */
 public class SpringConnectionManager extends DefaultConnectionManager {
-    public SpringConnectionManager(EasyDataSource easyDataSource) {
+    public SpringConnectionManager(EasyQueryDataSource easyDataSource) {
         super(easyDataSource);
     }
 
@@ -43,7 +40,7 @@ public class SpringConnectionManager extends DefaultConnectionManager {
 
     @Override
     protected EasyConnection doGetEasyConnection(String dataSourceName,Integer isolationLevel) {
-        return new DefaultEasyConnection( dataSourceName,DataSourceUtils.getConnection(easyDataSource.getDataSource(dataSourceName)),isolationLevel);
+        return new DefaultEasyConnection( dataSourceName,DataSourceUtils.getConnection(easyDataSource.getDataSourceNotNull(dataSourceName)),isolationLevel);
     }
 
     @Override
@@ -55,7 +52,7 @@ public class SpringConnectionManager extends DefaultConnectionManager {
         if(!this.currentThreadInTransaction()&&super.easyCurrentThreadInTransaction()){
             return;
         }
-        DataSourceUtils.releaseConnection(easyConnection.getConnection(), easyDataSource.getDataSource(easyConnection.getDataSourceName()));
+        DataSourceUtils.releaseConnection(easyConnection.getConnection(), easyDataSource.getDataSourceNotNull(easyConnection.getDataSourceName()));
 
     }
 }

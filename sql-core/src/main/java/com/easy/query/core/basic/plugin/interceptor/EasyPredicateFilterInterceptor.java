@@ -1,6 +1,6 @@
 package com.easy.query.core.basic.plugin.interceptor;
 
-import com.easy.query.core.expression.parser.abstraction.SqlPredicate;
+import com.easy.query.core.expression.parser.core.SqlPredicate;
 import com.easy.query.core.expression.sql.builder.LambdaEntityExpressionBuilder;
 
 /**

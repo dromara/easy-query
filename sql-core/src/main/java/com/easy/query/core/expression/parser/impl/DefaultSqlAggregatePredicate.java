@@ -3,15 +3,16 @@ package com.easy.query.core.expression.parser.impl;
 import com.easy.query.core.enums.EasyFunc;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.SqlExpression;
-import com.easy.query.core.expression.parser.abstraction.internal.AggregatePredicate;
+import com.easy.query.core.expression.parser.core.internal.AggregatePredicate;
 import com.easy.query.core.expression.segment.condition.OrPredicateSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.segment.condition.predicate.FuncColumnValuePredicate;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.enums.SqlPredicateCompare;
-import com.easy.query.core.expression.parser.abstraction.SqlAggregatePredicate;
+import com.easy.query.core.expression.parser.core.SqlAggregatePredicate;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
+import com.easy.query.core.util.LambdaUtil;
 
 /**
  * @FileName: DefaultSqlAggregatePredicate.java
@@ -39,7 +40,7 @@ public class DefaultSqlAggregatePredicate<T1> implements SqlAggregatePredicate<T
     public SqlAggregatePredicate<T1> func(boolean condition, EasyFunc easyAggregate, Property<T1, ?> column, SqlPredicateCompare compare, Object val) {
         if (condition) {
             EntityTableExpressionBuilder table = sqlEntityExpression.getTable(getIndex());
-            String propertyName = table.getPropertyName(column);
+            String propertyName = LambdaUtil.getPropertyName(column);
             nextPredicateSegment.setPredicate(new FuncColumnValuePredicate(table.getEntityTable(),easyAggregate, propertyName, val, compare, sqlEntityExpression.getRuntimeContext()));
             nextAnd();
         }

@@ -2,7 +2,7 @@ package com.easy.query.core.basic.api.delete;
 
 import com.easy.query.core.basic.api.internal.Versionable;
 import com.easy.query.core.expression.lambda.SqlExpression;
-import com.easy.query.core.expression.parser.abstraction.SqlPredicate;
+import com.easy.query.core.expression.parser.core.SqlPredicate;
 
 /**
  * @FileName: EasyExpressionDelete.java

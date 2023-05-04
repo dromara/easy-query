@@ -3,9 +3,8 @@ package com.easy.query.core.basic.jdbc.con;
 import com.easy.query.core.basic.jdbc.tx.DefaultTransaction;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
 import com.easy.query.core.exception.EasyQueryException;
-import com.easy.query.core.sharding.EasyDataSource;
+import com.easy.query.core.sharding.EasyQueryDataSource;
 
-import javax.sql.DataSource;
 import java.sql.SQLException;
 
 /**
@@ -17,9 +16,9 @@ import java.sql.SQLException;
 public class DefaultConnectionManager implements EasyConnectionManager {
     private final ThreadLocal<Transaction> threadTx = ThreadLocal.withInitial(() -> null);
     private final ThreadLocal<EasyConnection> threadConnection = new ThreadLocal<>();
-    protected final EasyDataSource easyDataSource;
+    protected final EasyQueryDataSource easyDataSource;
 
-    public DefaultConnectionManager(EasyDataSource easyDataSource){
+    public DefaultConnectionManager(EasyQueryDataSource easyDataSource){
 
         this.easyDataSource = easyDataSource;
     }
@@ -56,7 +55,7 @@ public class DefaultConnectionManager implements EasyConnectionManager {
     }
     protected EasyConnection doGetEasyConnection(String dataSourceName,Integer isolationLevel){
         try {
-            return new DefaultEasyConnection(dataSourceName,easyDataSource.getDataSource(dataSourceName).getConnection(),isolationLevel);
+            return new DefaultEasyConnection(dataSourceName,easyDataSource.getDataSourceNotNull(dataSourceName).getConnection(),isolationLevel);
         } catch (SQLException e) {
             throw new EasyQueryException(e);
         }

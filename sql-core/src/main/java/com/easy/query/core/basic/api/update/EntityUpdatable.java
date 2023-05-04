@@ -1,8 +1,7 @@
 package com.easy.query.core.basic.api.update;
 
 import com.easy.query.core.basic.api.internal.SqlExecuteStrategy;
-import com.easy.query.core.enums.SqlExecuteStrategyEnum;
-import com.easy.query.core.expression.parser.abstraction.SqlColumnSelector;
+import com.easy.query.core.expression.parser.core.SqlColumnSelector;
 import com.easy.query.core.expression.lambda.SqlExpression;
 
 /**

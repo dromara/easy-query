@@ -1,23 +1,21 @@
 package com.easy.query.core.expression.sql.builder.impl;
 
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
-import com.easy.query.core.config.IDialect;
+import com.easy.query.core.expression.parser.core.SqlPredicate;
+import com.easy.query.core.sql.dialect.Dialect;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.EasyEntityTableAvailable;
-import com.easy.query.core.expression.lambda.Property;
-import com.easy.query.core.expression.parser.abstraction.internal.EntityTableAvailable;
+import com.easy.query.core.expression.parser.core.internal.EntityTableAvailable;
 import com.easy.query.core.expression.sql.expression.EasyTableSqlExpression;
 import com.easy.query.core.expression.sql.expression.impl.TableSqlExpression;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.expression.lambda.SqlExpression;
-import com.easy.query.core.expression.parser.abstraction.SqlColumnSetter;
-import com.easy.query.core.expression.parser.abstraction.SqlPredicate;
+import com.easy.query.core.expression.parser.core.SqlColumnSetter;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.util.ClassUtil;
-import com.easy.query.core.util.LambdaUtil;
 
 import java.util.function.Function;
 
@@ -32,7 +30,7 @@ public class TableExpressionBuilder implements EntityTableExpressionBuilder {
     protected final EntityTableAvailable entityTable;
     protected final MultiTableTypeEnum multiTableType;
     private final EasyQueryRuntimeContext runtimeContext;
-    private final IDialect dialect;
+    private final Dialect dialect;
     protected PredicateSegment on;
     protected Function<String, String> tableNameAs;
     public TableExpressionBuilder(EntityMetadata entityMetadata, int index, String alias, MultiTableTypeEnum multiTableType, EasyQueryRuntimeContext runtimeContext) {
@@ -50,11 +48,6 @@ public class TableExpressionBuilder implements EntityTableExpressionBuilder {
     @Override
     public EntityMetadata getEntityMetadata() {
         return entityTable.getEntityMetadata();
-    }
-
-    @Override
-    public <T1> String getPropertyName(Property<T1, ?> column) {
-        return LambdaUtil.getPropertyName(column);
     }
 
     @Override

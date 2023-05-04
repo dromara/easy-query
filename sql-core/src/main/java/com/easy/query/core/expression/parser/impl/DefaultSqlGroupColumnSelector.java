@@ -1,14 +1,13 @@
 package com.easy.query.core.expression.parser.impl;
 
 import com.easy.query.core.expression.lambda.Property;
-import com.easy.query.core.expression.parser.abstraction.SqlGroupByColumnSelector;
-import com.easy.query.core.expression.parser.abstraction.internal.GroupByColumnSelector;
-import com.easy.query.core.expression.segment.ColumnSegmentImpl;
+import com.easy.query.core.expression.parser.core.SqlGroupByColumnSelector;
 import com.easy.query.core.expression.segment.GroupColumnSegmentImpl;
 import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
+import com.easy.query.core.util.LambdaUtil;
 
 /**
  * @FileName: DefaultSqlColumnSelector.java
@@ -37,7 +36,7 @@ public class DefaultSqlGroupColumnSelector<T1> implements SqlGroupByColumnSelect
     @Override
     public SqlGroupByColumnSelector<T1> column(Property<T1, ?> column) {
         EntityTableExpressionBuilder table = entityQueryExpressionBuilder.getTable(index);
-        String propertyName = table.getPropertyName(column);
+        String propertyName = LambdaUtil.getPropertyName(column);
         sqlSegmentBuilder.append(new GroupColumnSegmentImpl(table.getEntityTable(), propertyName, entityQueryExpressionBuilder.getRuntimeContext()));
         return this;
     }

@@ -1,8 +1,8 @@
 package com.easy.query.core.metadata;
 
 import com.easy.query.core.expression.lambda.SqlExpression;
-import com.easy.query.core.expression.parser.abstraction.SqlColumnSetter;
-import com.easy.query.core.expression.parser.abstraction.SqlPredicate;
+import com.easy.query.core.expression.parser.core.SqlColumnSetter;
+import com.easy.query.core.expression.parser.core.SqlPredicate;
 
 /**
  * @FileName: LogicDeleteMetadata.java
@@ -12,7 +12,7 @@ import com.easy.query.core.expression.parser.abstraction.SqlPredicate;
  */
 public final class LogicDeleteMetadata {
 
-    public LogicDeleteMetadata(String propertyName,SqlExpression<SqlPredicate<Object>> logicDeletePredicateFilterExpression, SqlExpression<SqlColumnSetter<Object>> logicDeletedSqlExpression) {
+    public LogicDeleteMetadata(String propertyName, SqlExpression<SqlPredicate<Object>> logicDeletePredicateFilterExpression, SqlExpression<SqlColumnSetter<Object>> logicDeletedSqlExpression) {
         this.propertyName = propertyName;
         this.logicDeletePredicateFilterExpression = logicDeletePredicateFilterExpression;
         this.logicDeletedSqlExpression = logicDeletedSqlExpression;

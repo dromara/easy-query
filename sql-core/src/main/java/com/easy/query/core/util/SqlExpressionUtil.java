@@ -8,15 +8,14 @@ import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.enums.SqlExecuteStrategyEnum;
 import com.easy.query.core.expression.lambda.SqlExpression2;
 import com.easy.query.core.expression.lambda.SqlExpression3;
-import com.easy.query.core.expression.parser.abstraction.SqlPredicate;
-import com.easy.query.core.expression.parser.abstraction.internal.ColumnSelector;
-import com.easy.query.core.expression.parser.abstraction.internal.EntityTableAvailable;
+import com.easy.query.core.expression.parser.core.internal.ColumnSelector;
+import com.easy.query.core.expression.parser.core.internal.EntityTableAvailable;
+import com.easy.query.core.expression.parser.core.SqlPredicate;
 import com.easy.query.core.expression.segment.SelectConstSegment;
 import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.basic.api.select.Queryable4;
 import com.easy.query.core.expression.lambda.SqlExpression4;
-import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 
 
@@ -31,7 +30,7 @@ public class SqlExpressionUtil {
     }
 
     public static <TSource> Queryable<TSource> cloneAndSelectAllQueryable(Queryable<TSource> queryable) {
-        EntityQueryExpressionBuilder queryableSqlEntityExpression = queryable.getSqlEntityExpression();
+        EntityQueryExpressionBuilder queryableSqlEntityExpression = queryable.getSqlEntityExpressionBuilder();
         if (SqlExpressionUtil.shouldCloneSqlEntityQueryExpression(queryableSqlEntityExpression)) {
             return queryable.cloneQueryable().select(ColumnSelector::columnAll);
         }

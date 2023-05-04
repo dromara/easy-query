@@ -5,7 +5,7 @@ import com.easy.query.core.basic.enums.LogicDeleteStrategyEnum;
 import com.easy.query.core.basic.plugin.interceptor.EasyInterceptorEntry;
 import com.easy.query.core.basic.plugin.logicdel.LogicDeleteBuilder;
 import com.easy.query.core.basic.plugin.version.EasyVersionStrategy;
-import com.easy.query.core.config.NameConversion;
+import com.easy.query.core.sql.nameconversion.NameConversion;
 import com.easy.query.core.configuration.EasyQueryConfiguration;
 import com.easy.query.core.basic.plugin.encryption.EasyEncryptionStrategy;
 import com.easy.query.core.exception.EasyQueryException;

@@ -4,8 +4,9 @@ import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.segment.ColumnSegmentImpl;
 import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
-import com.easy.query.core.expression.parser.abstraction.SqlColumnResultSelector;
+import com.easy.query.core.expression.parser.core.SqlColumnResultSelector;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
+import com.easy.query.core.util.LambdaUtil;
 
 /**
  * @FileName: DefaultColumnResultSelector.java
@@ -30,7 +31,7 @@ public class DefaultSqlColumnResultSelector<T1,TR> implements SqlColumnResultSel
             sqlBuilderSegment.getSqlSegments().clear();
         }
         EntityTableExpressionBuilder table = entityExpressionBuilder.getTable(index);
-        String propertyName = table.getPropertyName(column);
+        String propertyName = LambdaUtil.getPropertyName(column);
         sqlBuilderSegment.append(new ColumnSegmentImpl(table.getEntityTable(),propertyName, entityExpressionBuilder.getRuntimeContext()));
 
     }

@@ -14,7 +14,7 @@ import com.easy.query.core.expression.executor.query.base.PredicateExecutionCrea
 import com.easy.query.core.expression.executor.query.base.ShardingEntityExecutionCreator;
 import com.easy.query.core.expression.executor.query.base.ShardingPredicateExecutionCreator;
 import com.easy.query.core.expression.sql.expression.EasySqlExpression;
-import com.easy.query.core.sharding.EasyDataSource;
+import com.easy.query.core.sharding.EasyQueryDataSource;
 import com.easy.query.core.basic.jdbc.executor.internal.common.ExecutionUnit;
 import com.easy.query.core.basic.jdbc.executor.internal.common.SqlUnit;
 import com.easy.query.core.sharding.rewrite.RewriteContextFactory;
@@ -36,9 +36,9 @@ import java.util.List;
 public class DefaultExecutionContextFactory implements ExecutionContextFactory {
     private final RouteContextFactory routeContextFactory;
     private final RewriteContextFactory rewriteContextFactory;
-    private final EasyDataSource easyDataSource;
+    private final EasyQueryDataSource easyDataSource;
 
-    public DefaultExecutionContextFactory(RouteContextFactory routeContextFactory, RewriteContextFactory rewriteContextFactory, EasyDataSource easyDataSource){
+    public DefaultExecutionContextFactory(RouteContextFactory routeContextFactory, RewriteContextFactory rewriteContextFactory, EasyQueryDataSource easyDataSource){
         this.routeContextFactory = routeContextFactory;
         this.rewriteContextFactory = rewriteContextFactory;
 
