@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
  */
 public class MyEntityInterceptor implements EasyEntityInterceptor, EasyUpdateSetInterceptor {
     @Override
-    public void configureInsert(Class<?> entityClass, EntityInsertExpressionBuilder entityInsertExpression, Object entity) {
+    public void configureInsert(Class<?> entityClass, EntityInsertExpressionBuilder entityInsertExpressionBuilder, Object entity) {
         TopicInterceptor topicInterceptor = (TopicInterceptor) entity;
         if (topicInterceptor.getCreateTime() == null) {
             topicInterceptor.setCreateTime(LocalDateTime.now());
@@ -40,7 +40,7 @@ public class MyEntityInterceptor implements EasyEntityInterceptor, EasyUpdateSet
     }
 
     @Override
-    public void configureUpdate(Class<?> entityClass, EntityUpdateExpressionBuilder entityUpdateExpression, Object entity) {
+    public void configureUpdate(Class<?> entityClass, EntityUpdateExpressionBuilder entityUpdateExpressionBuilder, Object entity) {
 
         TopicInterceptor topicInterceptor = (TopicInterceptor) entity;
         topicInterceptor.setUpdateTime(LocalDateTime.now());
@@ -58,20 +58,20 @@ public class MyEntityInterceptor implements EasyEntityInterceptor, EasyUpdateSet
     }
 
     @Override
-    public void configure(Class<?> entityClass, EntityUpdateExpressionBuilder entityUpdateExpression, SqlColumnSetter<Object> columnSetter) {
+    public void configure(Class<?> entityClass, EntityUpdateExpressionBuilder entityUpdateExpressionBuilder, SqlColumnSetter<Object> sqlColumnSetter) {
         String updateBy = "updateBy";//属性名用来动态创建lambda
         String updateTime = "updateTime";//属性名用来动态创建lambda
         //是否已经set了
-        if(!entityUpdateExpression.getSetColumns().containsOnce(entityClass,updateBy)){
+        if(!entityUpdateExpressionBuilder.getSetColumns().containsOnce(entityClass,updateBy)){
             String userId = CurrentUserHelper.getUserId();
             //获取updateBy属性的lambda表达式
             Property<Object, ?> propertyLambda = EasyUtil.getPropertyGetterLambda(entityClass, updateBy, String.class);
-            columnSetter.set(propertyLambda,userId);
+            sqlColumnSetter.set(propertyLambda,userId);
         }
-        if(!entityUpdateExpression.getSetColumns().containsOnce(entityClass,updateTime)){
+        if(!entityUpdateExpressionBuilder.getSetColumns().containsOnce(entityClass,updateTime)){
             //获取updateTime属性的lambda表达式
             Property<Object, ?> propertyLambda = EasyUtil.getPropertyGetterLambda(entityClass, updateTime, LocalDateTime.class);
-            columnSetter.set(propertyLambda,LocalDateTime.now());
+            sqlColumnSetter.set(propertyLambda,LocalDateTime.now());
         }
     }
 }

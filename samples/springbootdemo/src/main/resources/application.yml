@@ -18,3 +18,5 @@ logging:
 
 easy-query:
   enable: true
+  dialect: mysql
+  name-conversion: underlined

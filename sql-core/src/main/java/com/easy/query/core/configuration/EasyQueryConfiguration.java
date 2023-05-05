@@ -1,6 +1,10 @@
 package com.easy.query.core.configuration;
 
 import com.easy.query.core.basic.plugin.logicdel.*;
+import com.easy.query.core.basic.plugin.logicdel.impl.BooleanEasyEntityTypeConfiguration;
+import com.easy.query.core.basic.plugin.logicdel.impl.DeleteLongTimestampEasyEntityTypeConfiguration;
+import com.easy.query.core.basic.plugin.logicdel.impl.LocalDateEasyLogicDeleteStrategy;
+import com.easy.query.core.basic.plugin.logicdel.impl.LocalDateTimeEasyEntityTypeConfiguration;
 import com.easy.query.core.basic.plugin.version.EasyVersionIntStrategy;
 import com.easy.query.core.basic.plugin.version.EasyVersionLongStrategy;
 import com.easy.query.core.basic.plugin.version.EasyVersionStrategy;

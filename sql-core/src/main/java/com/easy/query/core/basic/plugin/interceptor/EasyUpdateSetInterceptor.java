@@ -8,6 +8,6 @@ import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
  * @author xuejiaming
  */
 public interface EasyUpdateSetInterceptor extends EasyInterceptor {
-    void configure(Class<?> entityClass, EntityUpdateExpressionBuilder entityUpdateExpression, SqlColumnSetter<Object> columnSetter);
+    void configure(Class<?> entityClass, EntityUpdateExpressionBuilder entityUpdateExpressionBuilder, SqlColumnSetter<Object> sqlColumnSetter);
 //    void configureWhere(Class<?> entityClass, SqlEntityUpdateExpression sqlEntityUpdateExpression, SqlPredicate<Object> sqlPredicate);
 }

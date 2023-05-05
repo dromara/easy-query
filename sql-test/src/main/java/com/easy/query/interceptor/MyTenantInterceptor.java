@@ -29,16 +29,16 @@ public class MyTenantInterceptor implements EasyEntityInterceptor,EasyPredicateF
     }
 
     @Override
-    public void configure(Class<?> entityClass, LambdaEntityExpressionBuilder lambdaEntityExpression, SqlWherePredicate<Object> sqlPredicate) {
+    public void configure(Class<?> entityClass, LambdaEntityExpressionBuilder lambdaEntityExpressionBuilder, SqlWherePredicate<Object> sqlWherePredicate) {
         if(CurrentUserHelper.getUserId()!=null){
             //获取租户id的lambda表达式
             Property<Object, ?> tenantId = EasyUtil.getPropertyGetterLambda(entityClass, "tenantId", String.class);
-            sqlPredicate.eq(tenantId, CurrentUserHelper.getTenantId());
+            sqlWherePredicate.eq(tenantId, CurrentUserHelper.getTenantId());
         }
     }
 
     @Override
-    public void configureInsert(Class<?> entityClass, EntityInsertExpressionBuilder entityInsertExpression, Object entity) {
+    public void configureInsert(Class<?> entityClass, EntityInsertExpressionBuilder entityInsertExpressionBuilder, Object entity) {
 
         TopicInterceptor topicInterceptor = (TopicInterceptor) entity;
         if (topicInterceptor.getTenantId() == null) {
@@ -47,7 +47,7 @@ public class MyTenantInterceptor implements EasyEntityInterceptor,EasyPredicateF
     }
 
     @Override
-    public void configureUpdate(Class<?> entityClass, EntityUpdateExpressionBuilder entityUpdateExpression, Object entity) {
+    public void configureUpdate(Class<?> entityClass, EntityUpdateExpressionBuilder entityUpdateExpressionBuilder, Object entity) {
 
     }
 }

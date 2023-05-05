@@ -1,6 +1,8 @@
-package com.easy.query.core.basic.plugin.logicdel;
+package com.easy.query.core.basic.plugin.logicdel.impl;
 
 import com.easy.query.core.basic.enums.LogicDeleteStrategyEnum;
+import com.easy.query.core.basic.plugin.logicdel.LogicDeleteBuilder;
+import com.easy.query.core.basic.plugin.logicdel.abstraction.AbstractEasyLogicDeleteStrategy;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.SqlExpression;
 import com.easy.query.core.expression.parser.core.SqlWherePredicate;
@@ -11,16 +13,16 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * @FileName: TimestampGlobalEntityTypeConfiguration.java
+ * @FileName: ClassGlobalEntityTypeConfiguration.java
  * @Description: 文件说明
  * @Date: 2023/3/6 22:45
  * @author xuejiaming
  */
-public class DeleteLongTimestampEasyEntityTypeConfiguration extends AbstractEasyLogicDeleteStrategy {
-    private static final Set<Class<?>> allowedPropertyTypes =new HashSet<>(Arrays.asList(Long.class,long.class));
+public class BooleanEasyEntityTypeConfiguration extends AbstractEasyLogicDeleteStrategy {
+    private static final Set<Class<?>> allowedPropertyTypes =new HashSet<>(Arrays.asList(Boolean.class,boolean.class));
     @Override
     public String getStrategy() {
-        return LogicDeleteStrategyEnum.DELETE_LONG_TIMESTAMP.getStrategy();
+        return LogicDeleteStrategyEnum.BOOLEAN.getStrategy();
     }
 
     @Override
@@ -31,11 +33,11 @@ public class DeleteLongTimestampEasyEntityTypeConfiguration extends AbstractEasy
 
     @Override
     protected SqlExpression<SqlWherePredicate<Object>> getPredicateFilterExpression(LogicDeleteBuilder builder, Property<Object,?> lambdaProperty) {
-        return o->o.eq(lambdaProperty,0);
+        return o->o.eq(lambdaProperty,false);
     }
 
     @Override
     protected SqlExpression<SqlColumnSetter<Object>> getDeletedSqlExpression(LogicDeleteBuilder builder, Property<Object,?> lambdaProperty) {
-        return o->o.set(lambdaProperty, System.currentTimeMillis());
+        return o->o.set(lambdaProperty, true);
     }
 }

@@ -1,6 +1,8 @@
 package com.easy.query.sql.starter.config;
 
 
+import com.easy.query.sql.starter.option.DialectEnum;
+import com.easy.query.sql.starter.option.NameConversionEnum;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -14,6 +16,8 @@ public class EasyQueryProperties {
 
     private Boolean enable =false;
     private Boolean deleteThrow =true;
+    private DialectEnum dialect;
+    private NameConversionEnum nameConversion;
 
     private String logClass="com.easy.query.sql.starter.logging.Slf4jImpl";
 
@@ -41,6 +45,23 @@ public class EasyQueryProperties {
 
     public void setDeleteThrow(Boolean deleteThrow) {
         this.deleteThrow = deleteThrow;
+    }
+
+
+    public DialectEnum getDialect() {
+        return dialect;
+    }
+
+    public void setDialect(DialectEnum dialect) {
+        this.dialect = dialect;
+    }
+
+    public NameConversionEnum getNameConversion() {
+        return nameConversion;
+    }
+
+    public void setNameConversion(NameConversionEnum nameConversion) {
+        this.nameConversion = nameConversion;
     }
 
     public EasyQueryProperties() {

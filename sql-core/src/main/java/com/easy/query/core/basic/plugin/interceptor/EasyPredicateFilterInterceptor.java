@@ -15,8 +15,8 @@ public interface EasyPredicateFilterInterceptor extends EasyInterceptor {
     /**
      * 配置
      * @param entityClass
-     * @param lambdaEntityExpression
-     * @param sqlPredicate
+     * @param lambdaEntityExpressionBuilder
+     * @param sqlWherePredicate
      */
-    void configure(Class<?> entityClass, LambdaEntityExpressionBuilder lambdaEntityExpression, SqlWherePredicate<Object> sqlPredicate);
+    void configure(Class<?> entityClass, LambdaEntityExpressionBuilder lambdaEntityExpressionBuilder, SqlWherePredicate<Object> sqlWherePredicate);
 }

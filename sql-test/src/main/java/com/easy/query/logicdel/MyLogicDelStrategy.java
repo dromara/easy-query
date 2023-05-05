@@ -1,6 +1,6 @@
 package com.easy.query.logicdel;
 
-import com.easy.query.core.basic.plugin.logicdel.AbstractEasyLogicDeleteStrategy;
+import com.easy.query.core.basic.plugin.logicdel.abstraction.AbstractEasyLogicDeleteStrategy;
 import com.easy.query.core.basic.plugin.logicdel.LogicDeleteBuilder;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.SqlExpression;

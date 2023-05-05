@@ -14,9 +14,9 @@ import com.easy.query.core.util.EasyUtil;
  */
 public class NameQueryFilter implements EasyPredicateFilterInterceptor {
     @Override
-    public void configure(Class<?> entityClass, LambdaEntityExpressionBuilder lambdaEntityExpression, SqlWherePredicate<Object> sqlPredicate) {
+    public void configure(Class<?> entityClass, LambdaEntityExpressionBuilder lambdaEntityExpressionBuilder, SqlWherePredicate<Object> sqlWherePredicate) {
         Property<Object,?> property = EasyUtil.getFastBean(entityClass).getBeanGetter("name", String.class);
-        sqlPredicate.isNull(property);
+        sqlWherePredicate.isNull(property);
     }
 
     @Override
