@@ -1,12 +1,17 @@
 package com.easy.query.core.basic.api.select.provider;
 
-import com.easy.query.core.expression.parser.core.SqlAggregatePredicate;
 import com.easy.query.core.expression.parser.core.SqlColumnResultSelector;
 import com.easy.query.core.expression.parser.core.SqlPredicate;
 import com.easy.query.core.expression.parser.core.SqlGroupBySelector;
 import com.easy.query.core.expression.parser.core.SqlColumnSelector;
 import com.easy.query.core.expression.parser.core.SqlColumnAsSelector;
-import com.easy.query.core.expression.parser.impl.*;
+import com.easy.query.core.expression.parser.core.SqlAggregatePredicate;
+import com.easy.query.core.expression.parser.impl.DefaultSqlAggregatePredicate;
+import com.easy.query.core.expression.parser.impl.DefaultSqlColumnAsSelector;
+import com.easy.query.core.expression.parser.impl.DefaultSqlColumnResultSelector;
+import com.easy.query.core.expression.parser.impl.DefaultSqlColumnSelector;
+import com.easy.query.core.expression.parser.impl.DefaultSqlGroupColumnSelector;
+import com.easy.query.core.expression.parser.impl.DefaultSqlOrderColumnSelector;
 import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import com.easy.query.core.expression.segment.condition.DefaultSqlPredicate;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
