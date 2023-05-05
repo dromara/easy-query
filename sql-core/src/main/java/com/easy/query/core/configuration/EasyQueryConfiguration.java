@@ -49,9 +49,9 @@ public class EasyQueryConfiguration {
     private Map<Class<? extends EasyVersionStrategy>, EasyVersionStrategy> easyVersionStrategyMap = new ConcurrentHashMap<>();
     private Map<Class<? extends EasyShardingInitializer>, EasyShardingInitializer> shardingInitializerMap = new ConcurrentHashMap<>();
 
-    public EasyQueryConfiguration(Dialect dialect, NameConversion nameConversion) {
-       this(EasyQueryOption.defaultEasyQueryOption(),dialect,nameConversion);
-    }
+//    public EasyQueryConfiguration(Dialect dialect, NameConversion nameConversion) {
+//       this(EasyQueryOption.defaultEasyQueryOption(),dialect,nameConversion);
+//    }
     public EasyQueryConfiguration(EasyQueryOption easyQueryOption, Dialect dialect, NameConversion nameConversion) {
         this.easyQueryOption = easyQueryOption;
         this.dialect = dialect;

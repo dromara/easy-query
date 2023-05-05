@@ -95,38 +95,29 @@ public class EasyQueryStarterAutoConfiguration {
     }
 
     @Bean
-    @ConditionalOnProperty(name = "easy-query.name-conversion",havingValue = "underlined")
+    @ConditionalOnProperty(name = "easy-query.name-conversion",havingValue = "underlined",matchIfMissing = true)
     public NameConversion underlinedNameConversion() {
         return new UnderlinedNameConversion();
     }
     @Bean
-    @ConditionalOnProperty(name = "easy-query.name-conversion",havingValue = "default",matchIfMissing = true)
+    @ConditionalOnProperty(name = "easy-query.name-conversion",havingValue = "default")
     public NameConversion defaultNameConversion() {
         return new DefaultNameConversion();
     }
 
-    @Bean
-    public EasyQueryDataSource easyQueryDataSource(DataSource dataSource){
-        return new DefaultEasyQueryDataSource("ds0",dataSource);
-    }
-    @Bean
-    public EasyConnectionManager easyConnectionManager(EasyQueryDataSource easyQueryDataSource){
-        return new SpringConnectionManager(easyQueryDataSource);
-    }
-
-
-
-
-
 
     @Bean
-    public EasyQuery easyQuery(DataSource dataSource,EasyQueryDataSource easyQueryDataSource,EasyConnectionManager easyConnectionManager, Dialect dialect, NameConversion nameConversion, Map<String, EasyInterceptor> easyInterceptorMap, Map<String, EasyLogicDeleteStrategy> easyLogicDeleteStrategyMap, Map<String, EasyShardingInitializer> easyShardingInitializerMap, Map<String, EasyEncryptionStrategy> easyEncryptionStrategyMap) {
+    public EasyQuery easyQuery(DataSource dataSource, Dialect dialect, NameConversion nameConversion, Map<String, EasyInterceptor> easyInterceptorMap, Map<String, EasyLogicDeleteStrategy> easyLogicDeleteStrategyMap, Map<String, EasyShardingInitializer> easyShardingInitializerMap, Map<String, EasyEncryptionStrategy> easyEncryptionStrategyMap) {
         EasyQuery easyQuery = EasyQueryBootstrapper.defaultBuilderConfiguration()
                 .setDataSource(dataSource)
-                .setEasyQueryDataSource(easyQueryDataSource)
-                .setConnectionManager(easyConnectionManager)
-                .setDialect(dialect)
-                .setNameConversion(nameConversion)
+                .replaceService(Dialect.class,dialect)
+                .replaceService(NameConversion.class,nameConversion)
+                .replaceServiceFactory(EasyQueryDataSource.class, sp1->new DefaultEasyQueryDataSource("ds0",sp1.getService(DataSource.class)))
+                .replaceService(EasyConnectionManager.class,SpringConnectionManager.class)
+//                .setEasyQueryDataSource(easyQueryDataSource)
+//                .setConnectionManager(easyConnectionManager)
+//                .setDialect(dialect)
+//                .setNameConversion(nameConversion)
                 .build();
         EasyQueryRuntimeContext runtimeContext = easyQuery.getRuntimeContext();
         EasyQueryConfiguration configuration = runtimeContext.getEasyQueryConfiguration();

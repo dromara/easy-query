@@ -1,0 +1,30 @@
+package com.easy.query.test;
+
+import com.easy.query.core.inject.ServiceCollection;
+import com.easy.query.core.inject.ServiceProvider;
+import com.easy.query.core.inject.impl.ServiceCollectionImpl;
+import com.easy.query.inject.Car;
+import com.easy.query.inject.Car1;
+import com.easy.query.inject.Driver;
+import com.easy.query.inject.Driver1;
+import org.junit.Assert;
+import org.junit.Test;
+
+/**
+ * create time 2023/5/5 22:00
+ * 文件说明
+ *
+ * @author xuejiaming
+ */
+public class InjectTest {
+    @Test
+    public void injectTest1(){
+        ServiceCollection serviceCollection = new ServiceCollectionImpl();
+        serviceCollection.addService(Car.class, Car1.class);
+        serviceCollection.addService(Driver.class, Driver1.class);
+        ServiceProvider serviceProvider = serviceCollection.build();
+        Car service = serviceProvider.getService(Car.class);
+        Assert.assertEquals(Car1.class,service.getClass());
+        service.run();
+    }
+}

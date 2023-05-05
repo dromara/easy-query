@@ -4,6 +4,7 @@ package com.easy.query;
 import com.alibaba.druid.pool.DruidDataSourceFactory;
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
+import com.easy.query.core.sql.dialect.Dialect;
 import com.easy.query.core.sql.dialect.impl.MySqlDialect;
 import com.easy.query.core.enums.SqlRangeEnum;
 import com.easy.query.core.enums.SqlExecuteStrategyEnum;
@@ -97,7 +98,7 @@ public class Main {
 
         easyQuery =  EasyQueryBootstrapper.defaultBuilderConfiguration()
                 .setDataSource(dataSource)
-                .setDialect(new MySqlDialect())
+                .replaceService(Dialect.class,MySqlDialect.class)
                 .build();
         EasyQueryRuntimeContext runtimeContext = easyQuery.getRuntimeContext();
 //        jqdcRuntimeContext.getEasyQueryConfiguration().applyEntityTypeConfiguration(new TestUserMySqlConfiguration());

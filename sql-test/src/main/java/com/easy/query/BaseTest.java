@@ -3,6 +3,7 @@ package com.easy.query;
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.api.client.EasyQuery;
+import com.easy.query.core.sql.dialect.Dialect;
 import com.easy.query.core.sql.dialect.impl.MySqlDialect;
 import com.easy.query.core.configuration.EasyQueryConfiguration;
 import com.easy.query.core.logging.LogFactory;
@@ -65,7 +66,7 @@ public abstract class BaseTest {
     public static void initEasyQuery() {
         easyQuery = EasyQueryBootstrapper.defaultBuilderConfiguration()
                 .setDataSource(dataSource)
-                .setDialect(new MySqlDialect())
+                .replaceService(Dialect.class,MySqlDialect.class)
                 .build();
         EasyQueryRuntimeContext runtimeContext = easyQuery.getRuntimeContext();
         EasyQueryConfiguration configuration = runtimeContext.getEasyQueryConfiguration();
