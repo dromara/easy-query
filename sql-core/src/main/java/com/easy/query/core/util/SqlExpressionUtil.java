@@ -10,7 +10,7 @@ import com.easy.query.core.expression.lambda.SqlExpression2;
 import com.easy.query.core.expression.lambda.SqlExpression3;
 import com.easy.query.core.expression.parser.core.SqlColumnSelector;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.parser.core.SqlPredicate;
+import com.easy.query.core.expression.parser.core.SqlWherePredicate;
 import com.easy.query.core.expression.segment.SelectConstSegment;
 import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
@@ -71,25 +71,25 @@ public class SqlExpressionUtil {
         return sqlEntityExpression.hasLimit() || sqlEntityExpression.hasHaving()|| sqlEntityExpression.isDistinct() || sqlEntityExpression.hasGroup();
     }
 
-    public static <T1, T2> Queryable2<T1, T2> executeJoinOn(Queryable2<T1, T2> queryable, SqlExpression2<SqlPredicate<T1>, SqlPredicate<T2>> on) {
-        SqlPredicate<T1> sqlOnPredicate1 = queryable.getSqlBuilderProvider2().getSqlOnPredicate1();
-        SqlPredicate<T2> sqlOnPredicate2 = queryable.getSqlBuilderProvider2().getSqlOnPredicate2();
+    public static <T1, T2> Queryable2<T1, T2> executeJoinOn(Queryable2<T1, T2> queryable, SqlExpression2<SqlWherePredicate<T1>, SqlWherePredicate<T2>> on) {
+        SqlWherePredicate<T1> sqlOnPredicate1 = queryable.getSqlBuilderProvider2().getSqlOnPredicate1();
+        SqlWherePredicate<T2> sqlOnPredicate2 = queryable.getSqlBuilderProvider2().getSqlOnPredicate2();
         on.apply(sqlOnPredicate1, sqlOnPredicate2);
         return queryable;
     }
 
-    public static <T1, T2, T3> Queryable3<T1, T2, T3> executeJoinOn(Queryable3<T1, T2, T3> queryable, SqlExpression3<SqlPredicate<T1>, SqlPredicate<T2>, SqlPredicate<T3>> on) {
-        SqlPredicate<T1> sqlOnPredicate1 = queryable.getSqlBuilderProvider3().getSqlOnPredicate1();
-        SqlPredicate<T2> sqlOnPredicate2 = queryable.getSqlBuilderProvider3().getSqlOnPredicate2();
-        SqlPredicate<T3> sqlOnPredicate3 = queryable.getSqlBuilderProvider3().getSqlOnPredicate3();
+    public static <T1, T2, T3> Queryable3<T1, T2, T3> executeJoinOn(Queryable3<T1, T2, T3> queryable, SqlExpression3<SqlWherePredicate<T1>, SqlWherePredicate<T2>, SqlWherePredicate<T3>> on) {
+        SqlWherePredicate<T1> sqlOnPredicate1 = queryable.getSqlBuilderProvider3().getSqlOnPredicate1();
+        SqlWherePredicate<T2> sqlOnPredicate2 = queryable.getSqlBuilderProvider3().getSqlOnPredicate2();
+        SqlWherePredicate<T3> sqlOnPredicate3 = queryable.getSqlBuilderProvider3().getSqlOnPredicate3();
         on.apply(sqlOnPredicate1, sqlOnPredicate2, sqlOnPredicate3);
         return queryable;
     }
-    public static <T1, T2, T3,T4> Queryable4<T1, T2, T3,T4> executeJoinOn(Queryable4<T1, T2, T3,T4> queryable, SqlExpression4<SqlPredicate<T1>, SqlPredicate<T2>, SqlPredicate<T3>, SqlPredicate<T4>> on) {
-        SqlPredicate<T1> sqlOnPredicate1 = queryable.getSqlBuilderProvider4().getSqlOnPredicate1();
-        SqlPredicate<T2> sqlOnPredicate2 = queryable.getSqlBuilderProvider4().getSqlOnPredicate2();
-        SqlPredicate<T3> sqlOnPredicate3 = queryable.getSqlBuilderProvider4().getSqlOnPredicate3();
-        SqlPredicate<T4> sqlOnPredicate4 = queryable.getSqlBuilderProvider4().getSqlOnPredicate4();
+    public static <T1, T2, T3,T4> Queryable4<T1, T2, T3,T4> executeJoinOn(Queryable4<T1, T2, T3,T4> queryable, SqlExpression4<SqlWherePredicate<T1>, SqlWherePredicate<T2>, SqlWherePredicate<T3>, SqlWherePredicate<T4>> on) {
+        SqlWherePredicate<T1> sqlOnPredicate1 = queryable.getSqlBuilderProvider4().getSqlOnPredicate1();
+        SqlWherePredicate<T2> sqlOnPredicate2 = queryable.getSqlBuilderProvider4().getSqlOnPredicate2();
+        SqlWherePredicate<T3> sqlOnPredicate3 = queryable.getSqlBuilderProvider4().getSqlOnPredicate3();
+        SqlWherePredicate<T4> sqlOnPredicate4 = queryable.getSqlBuilderProvider4().getSqlOnPredicate4();
         on.apply(sqlOnPredicate1, sqlOnPredicate2, sqlOnPredicate3,sqlOnPredicate4);
         return queryable;
     }

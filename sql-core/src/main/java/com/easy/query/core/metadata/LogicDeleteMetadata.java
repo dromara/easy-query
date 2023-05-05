@@ -1,7 +1,7 @@
 package com.easy.query.core.metadata;
 
 import com.easy.query.core.expression.lambda.SqlExpression;
-import com.easy.query.core.expression.parser.core.SqlPredicate;
+import com.easy.query.core.expression.parser.core.SqlWherePredicate;
 import com.easy.query.core.expression.parser.core.SqlColumnSetter;
 
 /**
@@ -12,7 +12,7 @@ import com.easy.query.core.expression.parser.core.SqlColumnSetter;
  */
 public final class LogicDeleteMetadata {
 
-    public LogicDeleteMetadata(String propertyName, SqlExpression<SqlPredicate<Object>> logicDeletePredicateFilterExpression, SqlExpression<SqlColumnSetter<Object>> logicDeletedSqlExpression) {
+    public LogicDeleteMetadata(String propertyName, SqlExpression<SqlWherePredicate<Object>> logicDeletePredicateFilterExpression, SqlExpression<SqlColumnSetter<Object>> logicDeletedSqlExpression) {
         this.propertyName = propertyName;
         this.logicDeletePredicateFilterExpression = logicDeletePredicateFilterExpression;
         this.logicDeletedSqlExpression = logicDeletedSqlExpression;
@@ -22,13 +22,13 @@ public final class LogicDeleteMetadata {
     /**
      * where
      */
-    private final SqlExpression<SqlPredicate<Object>> logicDeletePredicateFilterExpression;
+    private final SqlExpression<SqlWherePredicate<Object>> logicDeletePredicateFilterExpression;
     /**
      * update set
      */
     private final SqlExpression<SqlColumnSetter<Object>> logicDeletedSqlExpression;
 
-    public SqlExpression<SqlPredicate<Object>> getLogicDeletePredicateFilterExpression() {
+    public SqlExpression<SqlWherePredicate<Object>> getLogicDeletePredicateFilterExpression() {
         return logicDeletePredicateFilterExpression;
     }
 

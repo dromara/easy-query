@@ -1,6 +1,6 @@
 package com.easy.query.core.expression.sql.builder.internal;
 
-import com.easy.query.core.expression.parser.core.SqlPredicate;
+import com.easy.query.core.expression.parser.core.SqlWherePredicate;
 import com.easy.query.core.expression.parser.factory.EasyQueryLambdaFactory;
 import com.easy.query.core.common.bean.FastBean;
 import com.easy.query.core.enums.EasyBehaviorEnum;
@@ -49,10 +49,10 @@ public abstract class AbstractPredicateEntityExpressionBuilder extends AbstractE
             EntityMetadata entityMetadata = table.getEntityMetadata();
             PredicateSegment predicateSegment = new AndPredicateSegment(true);
             EasyQueryLambdaFactory easyQueryLambdaFactory = getRuntimeContext().getEasyQueryLambdaFactory();
-            SqlPredicate<Object> sqlPredicate = easyQueryLambdaFactory.createSqlPredicate(table.getIndex(), this, predicateSegment);
+            SqlWherePredicate<Object> sqlPredicate = easyQueryLambdaFactory.createSqlPredicate(table.getIndex(), this, predicateSegment);
 
             if (useLogicDelete(entityMetadata)) {
-                SqlExpression<SqlPredicate<Object>> logicDeleteQueryFilterExpression = table.getLogicDeleteQueryFilterExpression();
+                SqlExpression<SqlWherePredicate<Object>> logicDeleteQueryFilterExpression = table.getLogicDeleteQueryFilterExpression();
                 logicDeleteQueryFilterExpression.apply(sqlPredicate);
             }
 

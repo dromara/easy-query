@@ -2,7 +2,7 @@ package com.easy.query.core.basic.plugin.logicdel;
 
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.SqlExpression;
-import com.easy.query.core.expression.parser.core.SqlPredicate;
+import com.easy.query.core.expression.parser.core.SqlWherePredicate;
 import com.easy.query.core.expression.parser.core.SqlColumnSetter;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.LogicDeleteMetadata;
@@ -31,7 +31,7 @@ public class LogicDeleteBuilder {
      * @param sqlPredicateSqlExpression
      * @param deletedSqlExpression
      */
-    public void configure(SqlExpression<SqlPredicate<Object>> sqlPredicateSqlExpression, SqlExpression<SqlColumnSetter<Object>> deletedSqlExpression){
+    public void configure(SqlExpression<SqlWherePredicate<Object>> sqlPredicateSqlExpression, SqlExpression<SqlColumnSetter<Object>> deletedSqlExpression){
         entityMetadata.setLogicDeleteMetadata(new LogicDeleteMetadata(propertyName,sqlPredicateSqlExpression, deletedSqlExpression));
     }
     public Property<Object,?> getPropertyLambda(){

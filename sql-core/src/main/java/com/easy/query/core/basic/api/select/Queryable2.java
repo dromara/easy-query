@@ -5,7 +5,7 @@ import com.easy.query.core.expression.lambda.SqlExpression;
 import com.easy.query.core.expression.lambda.SqlExpression2;
 import com.easy.query.core.expression.lambda.SqlExpression3;
 import com.easy.query.core.expression.parser.core.SqlColumnResultSelector;
-import com.easy.query.core.expression.parser.core.SqlPredicate;
+import com.easy.query.core.expression.parser.core.SqlWherePredicate;
 import com.easy.query.core.expression.parser.core.SqlGroupBySelector;
 import com.easy.query.core.expression.parser.core.SqlColumnSelector;
 import com.easy.query.core.expression.parser.core.SqlColumnAsSelector;
@@ -21,13 +21,13 @@ import java.util.function.Function;
  * @author xuejiaming
  */
 public interface Queryable2<T1, T2> extends Queryable<T1> {
-    <T3> Queryable3<T1, T2, T3> leftJoin(Class<T3> joinClass, SqlExpression3<SqlPredicate<T1>, SqlPredicate<T2>, SqlPredicate<T3>> on);
-    <T3> Queryable3<T1, T2, T3> leftJoin(Queryable<T3> joinQueryable, SqlExpression3<SqlPredicate<T1>, SqlPredicate<T2>, SqlPredicate<T3>> on);
-    <T3> Queryable3<T1, T2, T3> rightJoin(Class<T3> joinClass, SqlExpression3<SqlPredicate<T1>, SqlPredicate<T2>, SqlPredicate<T3>> on);
-    <T3> Queryable3<T1, T2, T3> rightJoin(Queryable<T3> joinQueryable, SqlExpression3<SqlPredicate<T1>, SqlPredicate<T2>, SqlPredicate<T3>> on);
+    <T3> Queryable3<T1, T2, T3> leftJoin(Class<T3> joinClass, SqlExpression3<SqlWherePredicate<T1>, SqlWherePredicate<T2>, SqlWherePredicate<T3>> on);
+    <T3> Queryable3<T1, T2, T3> leftJoin(Queryable<T3> joinQueryable, SqlExpression3<SqlWherePredicate<T1>, SqlWherePredicate<T2>, SqlWherePredicate<T3>> on);
+    <T3> Queryable3<T1, T2, T3> rightJoin(Class<T3> joinClass, SqlExpression3<SqlWherePredicate<T1>, SqlWherePredicate<T2>, SqlWherePredicate<T3>> on);
+    <T3> Queryable3<T1, T2, T3> rightJoin(Queryable<T3> joinQueryable, SqlExpression3<SqlWherePredicate<T1>, SqlWherePredicate<T2>, SqlWherePredicate<T3>> on);
 
-    <T3> Queryable3<T1, T2, T3> innerJoin(Class<T3> joinClass, SqlExpression3<SqlPredicate<T1>, SqlPredicate<T2>, SqlPredicate<T3>> on);
-    <T3> Queryable3<T1, T2, T3> innerJoin(Queryable<T3> joinQueryable, SqlExpression3<SqlPredicate<T1>, SqlPredicate<T2>, SqlPredicate<T3>> on);
+    <T3> Queryable3<T1, T2, T3> innerJoin(Class<T3> joinClass, SqlExpression3<SqlWherePredicate<T1>, SqlWherePredicate<T2>, SqlWherePredicate<T3>> on);
+    <T3> Queryable3<T1, T2, T3> innerJoin(Queryable<T3> joinQueryable, SqlExpression3<SqlWherePredicate<T1>, SqlWherePredicate<T2>, SqlWherePredicate<T3>> on);
 
     //region where
 
@@ -36,17 +36,17 @@ public interface Queryable2<T1, T2> extends Queryable<T1> {
     }
     Queryable2<T1, T2> whereObject(boolean condition, Object object);
     @Override
-    default Queryable2<T1, T2> where(SqlExpression<SqlPredicate<T1>> whereExpression) {
+    default Queryable2<T1, T2> where(SqlExpression<SqlWherePredicate<T1>> whereExpression) {
         return where(true, whereExpression);
     }
 
     @Override
-    Queryable2<T1, T2> where(boolean condition, SqlExpression<SqlPredicate<T1>> whereExpression);
-    default Queryable2<T1, T2> where(SqlExpression2<SqlPredicate<T1>, SqlPredicate<T2>> whereExpression) {
+    Queryable2<T1, T2> where(boolean condition, SqlExpression<SqlWherePredicate<T1>> whereExpression);
+    default Queryable2<T1, T2> where(SqlExpression2<SqlWherePredicate<T1>, SqlWherePredicate<T2>> whereExpression) {
         return where(true, whereExpression);
     }
 
-    Queryable2<T1, T2> where(boolean condition, SqlExpression2<SqlPredicate<T1>, SqlPredicate<T2>> whereExpression);
+    Queryable2<T1, T2> where(boolean condition, SqlExpression2<SqlWherePredicate<T1>, SqlWherePredicate<T2>> whereExpression);
 
     //endregion
 

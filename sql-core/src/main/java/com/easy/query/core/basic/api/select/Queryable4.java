@@ -4,7 +4,7 @@ import com.easy.query.core.basic.api.select.provider.EasyQuerySqlBuilderProvider
 import com.easy.query.core.expression.lambda.SqlExpression;
 import com.easy.query.core.expression.lambda.SqlExpression4;
 import com.easy.query.core.expression.parser.core.SqlColumnResultSelector;
-import com.easy.query.core.expression.parser.core.SqlPredicate;
+import com.easy.query.core.expression.parser.core.SqlWherePredicate;
 import com.easy.query.core.expression.parser.core.SqlGroupBySelector;
 import com.easy.query.core.expression.parser.core.SqlColumnSelector;
 import com.easy.query.core.expression.parser.core.SqlColumnAsSelector;
@@ -25,17 +25,17 @@ public interface Queryable4<T1,T2,T3,T4> extends Queryable<T1> {
     }
     Queryable4<T1, T2, T3,T4> whereObject(boolean condition, Object object);
     @Override
-    default Queryable4<T1, T2, T3,T4> where(SqlExpression<SqlPredicate<T1>> whereExpression) {
+    default Queryable4<T1, T2, T3,T4> where(SqlExpression<SqlWherePredicate<T1>> whereExpression) {
         return where(true, whereExpression);
     }
 
     @Override
-    Queryable4<T1, T2, T3,T4> where(boolean condition, SqlExpression<SqlPredicate<T1>> whereExpression);
-    default Queryable4<T1,T2,T3,T4> where(SqlExpression4<SqlPredicate<T1>, SqlPredicate<T2>, SqlPredicate<T3>, SqlPredicate<T4>> whereExpression) {
+    Queryable4<T1, T2, T3,T4> where(boolean condition, SqlExpression<SqlWherePredicate<T1>> whereExpression);
+    default Queryable4<T1,T2,T3,T4> where(SqlExpression4<SqlWherePredicate<T1>, SqlWherePredicate<T2>, SqlWherePredicate<T3>, SqlWherePredicate<T4>> whereExpression) {
         return where(true, whereExpression);
     }
 
-    Queryable4<T1,T2,T3,T4> where(boolean condition, SqlExpression4<SqlPredicate<T1>, SqlPredicate<T2>, SqlPredicate<T3>, SqlPredicate<T4>> whereExpression);
+    Queryable4<T1,T2,T3,T4> where(boolean condition, SqlExpression4<SqlWherePredicate<T1>, SqlWherePredicate<T2>, SqlWherePredicate<T3>, SqlWherePredicate<T4>> whereExpression);
 
     //endregion
     //region select

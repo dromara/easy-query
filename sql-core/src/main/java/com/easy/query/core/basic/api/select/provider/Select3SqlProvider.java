@@ -1,7 +1,7 @@
 package com.easy.query.core.basic.api.select.provider;
 
 import com.easy.query.core.expression.parser.core.SqlColumnResultSelector;
-import com.easy.query.core.expression.parser.core.SqlPredicate;
+import com.easy.query.core.expression.parser.core.SqlWherePredicate;
 import com.easy.query.core.expression.parser.core.SqlGroupBySelector;
 import com.easy.query.core.expression.parser.core.SqlColumnSelector;
 import com.easy.query.core.expression.parser.core.SqlColumnAsSelector;
@@ -53,7 +53,7 @@ public class Select3SqlProvider<T1,T2,T3> extends Select2SqlProvider<T1,T2> impl
     }
 
     @Override
-    public SqlPredicate<T3> getSqlWherePredicate3() {
+    public SqlWherePredicate<T3> getSqlWherePredicate3() {
         if(where==null){
             where=new DefaultSqlPredicate<>(index, sqlEntityExpression, sqlEntityExpression.getWhere());
         }
@@ -69,7 +69,7 @@ public class Select3SqlProvider<T1,T2,T3> extends Select2SqlProvider<T1,T2> impl
     }
 
     @Override
-    public SqlPredicate<T3> getSqlOnPredicate3() {
+    public SqlWherePredicate<T3> getSqlOnPredicate3() {
         if(on==null){
             on=new DefaultSqlPredicate<>(index, sqlEntityExpression, EasyUtil.getCurrentPredicateTable(sqlEntityExpression).getOn());
         }

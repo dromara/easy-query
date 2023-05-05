@@ -1,6 +1,7 @@
 package com.easy.query.core.expression.parser.impl;
 
 import com.easy.query.core.expression.lambda.Property;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.ColumnSegmentImpl;
 import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
@@ -15,16 +16,24 @@ import com.easy.query.core.util.LambdaUtil;
  * @author xuejiaming
  */
 public class DefaultSqlColumnResultSelector<T1,TR> implements SqlColumnResultSelector<T1, TR> {
-    private final int index;
-    private final EntityExpressionBuilder entityExpressionBuilder;
-    private final SqlBuilderSegment sqlBuilderSegment;
+    protected final int index;
+    protected final EntityExpressionBuilder entityExpressionBuilder;
+    protected final SqlBuilderSegment sqlBuilderSegment;
+    protected final TableAvailable table;
 
     public DefaultSqlColumnResultSelector(int index, EntityExpressionBuilder entityExpressionBuilder, SqlBuilderSegment sqlBuilderSegment){
 
         this.index = index;
         this.entityExpressionBuilder = entityExpressionBuilder;
+        this.table = entityExpressionBuilder.getTable(index).getEntityTable();
         this.sqlBuilderSegment = sqlBuilderSegment;
     }
+
+    @Override
+    public TableAvailable getTable() {
+        return table;
+    }
+
     @Override
     public void column(Property<T1, TR> column) {
         if(sqlBuilderSegment.isNotEmpty()){
@@ -34,10 +43,5 @@ public class DefaultSqlColumnResultSelector<T1,TR> implements SqlColumnResultSel
         String propertyName = LambdaUtil.getPropertyName(column);
         sqlBuilderSegment.append(new ColumnSegmentImpl(table.getEntityTable(),propertyName, entityExpressionBuilder.getRuntimeContext()));
 
-    }
-
-    @Override
-    public int getIndex() {
-        return index;
     }
 }

@@ -1,7 +1,7 @@
 package com.easy.query.core.expression.sql.builder.impl;
 
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
-import com.easy.query.core.expression.parser.core.SqlPredicate;
+import com.easy.query.core.expression.parser.core.SqlWherePredicate;
 import com.easy.query.core.expression.parser.core.SqlColumnSetter;
 import com.easy.query.core.sql.dialect.Dialect;
 import com.easy.query.core.enums.MultiTableTypeEnum;
@@ -83,7 +83,7 @@ public class TableExpressionBuilder implements EntityTableExpressionBuilder {
     }
 
     @Override
-    public SqlExpression<SqlPredicate<Object>> getLogicDeleteQueryFilterExpression() {
+    public SqlExpression<SqlWherePredicate<Object>> getLogicDeleteQueryFilterExpression() {
         if (getEntityMetadata().enableLogicDelete()) {
             return getEntityMetadata().getLogicDeleteMetadata().getLogicDeletePredicateFilterExpression();
         }

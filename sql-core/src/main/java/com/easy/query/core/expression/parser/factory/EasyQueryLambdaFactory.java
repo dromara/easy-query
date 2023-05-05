@@ -1,6 +1,6 @@
 package com.easy.query.core.expression.parser.factory;
 
-import com.easy.query.core.expression.parser.core.SqlPredicate;
+import com.easy.query.core.expression.parser.core.SqlWherePredicate;
 import com.easy.query.core.expression.parser.core.SqlColumnSelector;
 import com.easy.query.core.expression.parser.core.SqlColumnAsSelector;
 import com.easy.query.core.expression.parser.core.SqlColumnSetter;
@@ -16,7 +16,7 @@ import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
  * @author xuejiaming
  */
 public interface EasyQueryLambdaFactory {
-    default <T1> SqlPredicate<T1> createSqlPredicate(EntityExpressionBuilder sqlEntityExpression, PredicateSegment predicateSegment){
+    default <T1> SqlWherePredicate<T1> createSqlPredicate(EntityExpressionBuilder sqlEntityExpression, PredicateSegment predicateSegment){
         return createSqlPredicate(0,sqlEntityExpression,predicateSegment);
     }
     default <T1> SqlColumnSelector<T1> createSqlColumnSelector(EntityExpressionBuilder sqlEntityExpression, SqlBuilderSegment sqlSegmentBuilder){
@@ -29,7 +29,7 @@ public interface EasyQueryLambdaFactory {
     SqlColumnAsSelector<T1,TR> createSqlColumnAsSelector(EntityExpressionBuilder sqlEntityExpression, SqlBuilderSegment sqlSegmentBuilder, Class<TR> resultClass){
         return createSqlColumnAsSelector(0,sqlEntityExpression,sqlSegmentBuilder,resultClass);
     }
-    <T1> SqlPredicate<T1> createSqlPredicate(int index, EntityExpressionBuilder sqlEntityExpression, PredicateSegment predicateSegment);
+    <T1> SqlWherePredicate<T1> createSqlPredicate(int index, EntityExpressionBuilder sqlEntityExpression, PredicateSegment predicateSegment);
     <T1> SqlAggregatePredicate<T1> createSqlAggregatePredicate(int index, EntityExpressionBuilder sqlEntityExpression, PredicateSegment predicateSegment);
     <T1> SqlColumnSelector<T1> createSqlColumnSelector(int index, EntityExpressionBuilder sqlEntityExpression, SqlBuilderSegment sqlSegmentBuilder);
     <T1> SqlColumnSelector<T1> createSqlColumnOrderSelector(int index, EntityExpressionBuilder sqlEntityExpression, SqlBuilderSegment sqlSegmentBuilder, boolean asc);

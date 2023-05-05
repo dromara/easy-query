@@ -3,7 +3,7 @@ package com.easy.query.core.basic.plugin.logicdel;
 import com.easy.query.core.basic.enums.LogicDeleteStrategyEnum;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.SqlExpression;
-import com.easy.query.core.expression.parser.core.SqlPredicate;
+import com.easy.query.core.expression.parser.core.SqlWherePredicate;
 import com.easy.query.core.expression.parser.core.SqlColumnSetter;
 
 import java.time.LocalDate;
@@ -31,7 +31,7 @@ public  class LocalDateEasyLogicDeleteStrategy extends AbstractEasyLogicDeleteSt
 
 
     @Override
-    protected SqlExpression<SqlPredicate<Object>> getPredicateFilterExpression(LogicDeleteBuilder builder, Property<Object,?> lambdaProperty) {
+    protected SqlExpression<SqlWherePredicate<Object>> getPredicateFilterExpression(LogicDeleteBuilder builder, Property<Object,?> lambdaProperty) {
         return o->o.isNull(lambdaProperty);
     }
 

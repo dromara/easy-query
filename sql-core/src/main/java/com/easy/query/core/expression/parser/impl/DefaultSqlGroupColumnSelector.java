@@ -17,7 +17,7 @@ import com.easy.query.core.util.LambdaUtil;
  * @author xuejiaming
  */
 public class DefaultSqlGroupColumnSelector<T1> implements SqlGroupBySelector<T1> {
-    private final int index;
+    protected final int index;
     protected final EntityExpressionBuilder entityQueryExpressionBuilder;
     protected final TableAvailable table;
     protected final SqlBuilderSegment sqlSegmentBuilder;

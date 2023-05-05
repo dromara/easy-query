@@ -1,7 +1,7 @@
 package com.easy.query.core.basic.api.select.abstraction;
 
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.parser.core.SqlPredicate;
+import com.easy.query.core.expression.parser.core.SqlWherePredicate;
 import com.easy.query.core.expression.parser.core.SqlGroupBySelector;
 import com.easy.query.core.expression.parser.core.SqlColumnSelector;
 import com.easy.query.core.expression.parser.core.SqlColumnAsSelector;
@@ -68,7 +68,7 @@ public abstract class AbstractQueryable4<T1, T2, T3,T4> extends AbstractQueryabl
     }
 
     @Override
-    protected SqlPredicate<?> matchWhereObjectSqlPredicate(Class<?> entityClass) {
+    protected SqlWherePredicate<?> matchWhereObjectSqlPredicate(Class<?> entityClass) {
         if(entityClass==t1Class){
             return getSqlBuilderProvider4().getSqlWherePredicate1();
         }
@@ -108,17 +108,17 @@ public abstract class AbstractQueryable4<T1, T2, T3,T4> extends AbstractQueryabl
         return this;
     }
     @Override
-    public Queryable4<T1, T2, T3,T4> where(boolean condition, SqlExpression<SqlPredicate<T1>> whereExpression) {
+    public Queryable4<T1, T2, T3,T4> where(boolean condition, SqlExpression<SqlWherePredicate<T1>> whereExpression) {
         super.where(condition,whereExpression);
         return this;
     }
     @Override
-    public Queryable4<T1, T2, T3,T4> where(boolean condition, SqlExpression4<SqlPredicate<T1>, SqlPredicate<T2>, SqlPredicate<T3>, SqlPredicate<T4>> whereExpression) {
+    public Queryable4<T1, T2, T3,T4> where(boolean condition, SqlExpression4<SqlWherePredicate<T1>, SqlWherePredicate<T2>, SqlWherePredicate<T3>, SqlWherePredicate<T4>> whereExpression) {
         if (condition) {
-            SqlPredicate<T1> sqlWherePredicate1 = getSqlBuilderProvider4().getSqlWherePredicate1();
-            SqlPredicate<T2> sqlWherePredicate2 = getSqlBuilderProvider4().getSqlWherePredicate2();
-            SqlPredicate<T3> sqlWherePredicate3 = getSqlBuilderProvider4().getSqlWherePredicate3();
-            SqlPredicate<T4> sqlWherePredicate4 = getSqlBuilderProvider4().getSqlWherePredicate4();
+            SqlWherePredicate<T1> sqlWherePredicate1 = getSqlBuilderProvider4().getSqlWherePredicate1();
+            SqlWherePredicate<T2> sqlWherePredicate2 = getSqlBuilderProvider4().getSqlWherePredicate2();
+            SqlWherePredicate<T3> sqlWherePredicate3 = getSqlBuilderProvider4().getSqlWherePredicate3();
+            SqlWherePredicate<T4> sqlWherePredicate4 = getSqlBuilderProvider4().getSqlWherePredicate4();
             whereExpression.apply(sqlWherePredicate1, sqlWherePredicate2,sqlWherePredicate3,sqlWherePredicate4);
         }
         return this;

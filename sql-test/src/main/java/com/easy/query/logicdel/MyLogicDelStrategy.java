@@ -4,7 +4,7 @@ import com.easy.query.core.basic.plugin.logicdel.AbstractEasyLogicDeleteStrategy
 import com.easy.query.core.basic.plugin.logicdel.LogicDeleteBuilder;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.SqlExpression;
-import com.easy.query.core.expression.parser.core.SqlPredicate;
+import com.easy.query.core.expression.parser.core.SqlWherePredicate;
 import com.easy.query.core.expression.parser.core.SqlColumnSetter;
 import com.easy.query.core.util.EasyUtil;
 
@@ -26,7 +26,7 @@ public class MyLogicDelStrategy extends AbstractEasyLogicDeleteStrategy {
      */
     private final Set<Class<?>> allowTypes=new HashSet<>(Arrays.asList(LocalDateTime.class));
     @Override
-    protected SqlExpression<SqlPredicate<Object>> getPredicateFilterExpression(LogicDeleteBuilder builder, Property<Object, ?> lambdaProperty) {
+    protected SqlExpression<SqlWherePredicate<Object>> getPredicateFilterExpression(LogicDeleteBuilder builder, Property<Object, ?> lambdaProperty) {
         return o->o.isNull(lambdaProperty);
     }
 

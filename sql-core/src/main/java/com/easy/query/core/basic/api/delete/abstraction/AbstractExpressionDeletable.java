@@ -3,7 +3,7 @@ package com.easy.query.core.basic.api.delete.abstraction;
 import com.easy.query.core.basic.api.internal.AbstractSqlExecuteRows;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
 import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
-import com.easy.query.core.expression.parser.core.SqlPredicate;
+import com.easy.query.core.expression.parser.core.SqlWherePredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnValuePredicate;
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
@@ -62,7 +62,7 @@ public abstract   class AbstractExpressionDeletable<T> extends AbstractSqlExecut
 //    }
 
     @Override
-    public ExpressionDeletable<T> where(boolean condition, SqlExpression<SqlPredicate<T>> whereExpression) {
+    public ExpressionDeletable<T> where(boolean condition, SqlExpression<SqlWherePredicate<T>> whereExpression) {
         if(condition){
             DefaultSqlPredicate<T> sqlPredicate = new DefaultSqlPredicate<>(0, entityDeleteExpressionBuilder, entityDeleteExpressionBuilder.getWhere());
             whereExpression.apply(sqlPredicate);

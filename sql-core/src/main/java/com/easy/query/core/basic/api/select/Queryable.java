@@ -13,7 +13,7 @@ import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.SqlExpression;
 import com.easy.query.core.expression.lambda.SqlExpression2;
 import com.easy.query.core.exception.EasyQueryConcurrentException;
-import com.easy.query.core.expression.parser.core.SqlPredicate;
+import com.easy.query.core.expression.parser.core.SqlWherePredicate;
 import com.easy.query.core.expression.parser.core.SqlGroupBySelector;
 import com.easy.query.core.expression.parser.core.SqlColumnSelector;
 import com.easy.query.core.expression.parser.core.SqlColumnAsSelector;
@@ -214,11 +214,11 @@ public interface Queryable<T1> extends Query<T1>, Interceptable<Queryable<T1>>, 
      */
     Queryable<T1> select(String columns);
 
-    default Queryable<T1> where(SqlExpression<SqlPredicate<T1>> whereExpression) {
+    default Queryable<T1> where(SqlExpression<SqlWherePredicate<T1>> whereExpression) {
         return where(true, whereExpression);
     }
 
-    Queryable<T1> where(boolean condition, SqlExpression<SqlPredicate<T1>> whereExpression);
+    Queryable<T1> where(boolean condition, SqlExpression<SqlWherePredicate<T1>> whereExpression);
 
     default Queryable<T1> whereById(Object id) {
         return whereById(true, id);
@@ -236,7 +236,7 @@ public interface Queryable<T1> extends Query<T1>, Interceptable<Queryable<T1>>, 
     }
 
     /**
-     * @exception EasyQueryWhereInvalidOperationException 当object的where属性和查询对象不匹配或者查询对象属性不匹配,无法获取 {@link SqlPredicate}
+     * @exception EasyQueryWhereInvalidOperationException 当object的where属性和查询对象不匹配或者查询对象属性不匹配,无法获取 {@link SqlWherePredicate}
      * @param condition
      * @param object
      * @return
@@ -329,17 +329,17 @@ public interface Queryable<T1> extends Query<T1>, Interceptable<Queryable<T1>>, 
     //    PageResult<T1> toPageResult(long pageIndex, long pageSize, SqlExpression<ColumnSelector<T1>> selectExpression);
 //    <TR> PageResult<TR> toPageResult(long pageIndex, long pageSize, Class<TR> clazz);
 //    <TR> PageResult<TR> toPageResult(long pageIndex, long pageSize, Class<TR> clazz, SqlExpression<ColumnAsSelector<T1,TR>> selectExpression);
-    <T2> Queryable2<T1, T2> leftJoin(Class<T2> joinClass, SqlExpression2<SqlPredicate<T1>, SqlPredicate<T2>> on);
+    <T2> Queryable2<T1, T2> leftJoin(Class<T2> joinClass, SqlExpression2<SqlWherePredicate<T1>, SqlWherePredicate<T2>> on);
 
-    <T2> Queryable2<T1, T2> leftJoin(Queryable<T2> joinQueryable, SqlExpression2<SqlPredicate<T1>, SqlPredicate<T2>> on);
+    <T2> Queryable2<T1, T2> leftJoin(Queryable<T2> joinQueryable, SqlExpression2<SqlWherePredicate<T1>, SqlWherePredicate<T2>> on);
 
-    <T2> Queryable2<T1, T2> rightJoin(Class<T2> joinClass, SqlExpression2<SqlPredicate<T1>, SqlPredicate<T2>> on);
+    <T2> Queryable2<T1, T2> rightJoin(Class<T2> joinClass, SqlExpression2<SqlWherePredicate<T1>, SqlWherePredicate<T2>> on);
 
-    <T2> Queryable2<T1, T2> rightJoin(Queryable<T2> joinQueryable, SqlExpression2<SqlPredicate<T1>, SqlPredicate<T2>> on);
+    <T2> Queryable2<T1, T2> rightJoin(Queryable<T2> joinQueryable, SqlExpression2<SqlWherePredicate<T1>, SqlWherePredicate<T2>> on);
 
-    <T2> Queryable2<T1, T2> innerJoin(Class<T2> joinClass, SqlExpression2<SqlPredicate<T1>, SqlPredicate<T2>> on);
+    <T2> Queryable2<T1, T2> innerJoin(Class<T2> joinClass, SqlExpression2<SqlWherePredicate<T1>, SqlWherePredicate<T2>> on);
 
-    <T2> Queryable2<T1, T2> innerJoin(Queryable<T2> joinQueryable, SqlExpression2<SqlPredicate<T1>, SqlPredicate<T2>> on);
+    <T2> Queryable2<T1, T2> innerJoin(Queryable<T2> joinQueryable, SqlExpression2<SqlWherePredicate<T1>, SqlWherePredicate<T2>> on);
 
     EasyQuerySqlBuilderProvider<T1> getSqlBuilderProvider1();
 

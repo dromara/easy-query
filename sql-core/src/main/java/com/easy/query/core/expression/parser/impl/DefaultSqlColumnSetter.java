@@ -19,10 +19,10 @@ import com.easy.query.core.util.LambdaUtil;
  * @author xuejiaming
  */
 public class DefaultSqlColumnSetter<T>  implements SqlColumnSetter<T> {
-    private final int index;
-    private final EntityExpressionBuilder entityExpressionBuilder;
-    private final TableAvailable table;
-    private final SqlBuilderSegment sqlBuilderSegment;
+    protected final int index;
+    protected final EntityExpressionBuilder entityExpressionBuilder;
+    protected final TableAvailable table;
+    protected final SqlBuilderSegment sqlBuilderSegment;
 
     public DefaultSqlColumnSetter(int index, EntityExpressionBuilder entityExpressionBuilder, SqlBuilderSegment sqlBuilderSegment){
 

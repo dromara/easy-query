@@ -1,6 +1,6 @@
 package com.easy.query.core.expression.parser.factory;
 
-import com.easy.query.core.expression.parser.core.SqlPredicate;
+import com.easy.query.core.expression.parser.core.SqlWherePredicate;
 import com.easy.query.core.expression.parser.core.SqlColumnSelector;
 import com.easy.query.core.expression.parser.core.SqlColumnAsSelector;
 import com.easy.query.core.expression.parser.core.SqlColumnSetter;
@@ -23,7 +23,7 @@ import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
  */
 public class DefaultEasyQueryLambdaFactory implements EasyQueryLambdaFactory {
     @Override
-    public <T1> SqlPredicate<T1> createSqlPredicate(int index, EntityExpressionBuilder sqlEntityExpression, PredicateSegment predicateSegment) {
+    public <T1> SqlWherePredicate<T1> createSqlPredicate(int index, EntityExpressionBuilder sqlEntityExpression, PredicateSegment predicateSegment) {
         return new DefaultSqlPredicate<>(index,sqlEntityExpression,predicateSegment);
     }
 

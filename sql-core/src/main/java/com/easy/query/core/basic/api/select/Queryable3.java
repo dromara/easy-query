@@ -5,7 +5,7 @@ import com.easy.query.core.expression.lambda.SqlExpression;
 import com.easy.query.core.expression.lambda.SqlExpression3;
 import com.easy.query.core.expression.lambda.SqlExpression4;
 import com.easy.query.core.expression.parser.core.SqlColumnResultSelector;
-import com.easy.query.core.expression.parser.core.SqlPredicate;
+import com.easy.query.core.expression.parser.core.SqlWherePredicate;
 import com.easy.query.core.expression.parser.core.SqlGroupBySelector;
 import com.easy.query.core.expression.parser.core.SqlColumnSelector;
 import com.easy.query.core.expression.parser.core.SqlColumnAsSelector;
@@ -22,13 +22,13 @@ import java.util.function.Function;
  */
 public interface Queryable3<T1, T2, T3> extends Queryable<T1> {
 
-    <T4> Queryable4<T1, T2, T3,T4> leftJoin(Class<T4> joinClass, SqlExpression4<SqlPredicate<T1>, SqlPredicate<T2>, SqlPredicate<T3>, SqlPredicate<T4>> on);
-    <T4> Queryable4<T1, T2, T3,T4> leftJoin(Queryable<T4> joinQueryable, SqlExpression4<SqlPredicate<T1>, SqlPredicate<T2>, SqlPredicate<T3>, SqlPredicate<T4>> on);
-    <T4> Queryable4<T1, T2, T3,T4> rightJoin(Class<T4> joinClass, SqlExpression4<SqlPredicate<T1>, SqlPredicate<T2>, SqlPredicate<T3>, SqlPredicate<T4>> on);
-    <T4> Queryable4<T1, T2, T3,T4> rightJoin(Queryable<T4> joinQueryable, SqlExpression4<SqlPredicate<T1>, SqlPredicate<T2>, SqlPredicate<T3>, SqlPredicate<T4>> on);
+    <T4> Queryable4<T1, T2, T3,T4> leftJoin(Class<T4> joinClass, SqlExpression4<SqlWherePredicate<T1>, SqlWherePredicate<T2>, SqlWherePredicate<T3>, SqlWherePredicate<T4>> on);
+    <T4> Queryable4<T1, T2, T3,T4> leftJoin(Queryable<T4> joinQueryable, SqlExpression4<SqlWherePredicate<T1>, SqlWherePredicate<T2>, SqlWherePredicate<T3>, SqlWherePredicate<T4>> on);
+    <T4> Queryable4<T1, T2, T3,T4> rightJoin(Class<T4> joinClass, SqlExpression4<SqlWherePredicate<T1>, SqlWherePredicate<T2>, SqlWherePredicate<T3>, SqlWherePredicate<T4>> on);
+    <T4> Queryable4<T1, T2, T3,T4> rightJoin(Queryable<T4> joinQueryable, SqlExpression4<SqlWherePredicate<T1>, SqlWherePredicate<T2>, SqlWherePredicate<T3>, SqlWherePredicate<T4>> on);
 
-    <T4> Queryable4<T1, T2, T3,T4> innerJoin(Class<T4> joinClass, SqlExpression4<SqlPredicate<T1>, SqlPredicate<T2>, SqlPredicate<T3>, SqlPredicate<T4>> on);
-    <T4> Queryable4<T1, T2, T3,T4> innerJoin(Queryable<T4> joinQueryable, SqlExpression4<SqlPredicate<T1>, SqlPredicate<T2>, SqlPredicate<T3>, SqlPredicate<T4>> on);
+    <T4> Queryable4<T1, T2, T3,T4> innerJoin(Class<T4> joinClass, SqlExpression4<SqlWherePredicate<T1>, SqlWherePredicate<T2>, SqlWherePredicate<T3>, SqlWherePredicate<T4>> on);
+    <T4> Queryable4<T1, T2, T3,T4> innerJoin(Queryable<T4> joinQueryable, SqlExpression4<SqlWherePredicate<T1>, SqlWherePredicate<T2>, SqlWherePredicate<T3>, SqlWherePredicate<T4>> on);
 
     //region where
     default Queryable3<T1, T2, T3> whereObject(Object object){
@@ -36,17 +36,17 @@ public interface Queryable3<T1, T2, T3> extends Queryable<T1> {
     }
     Queryable3<T1, T2, T3> whereObject(boolean condition, Object object);
     @Override
-    default Queryable3<T1, T2, T3> where(SqlExpression<SqlPredicate<T1>> whereExpression) {
+    default Queryable3<T1, T2, T3> where(SqlExpression<SqlWherePredicate<T1>> whereExpression) {
         return where(true, whereExpression);
     }
 
     @Override
-    Queryable3<T1, T2, T3> where(boolean condition, SqlExpression<SqlPredicate<T1>> whereExpression);
-    default Queryable3<T1, T2, T3> where(SqlExpression3<SqlPredicate<T1>, SqlPredicate<T2>, SqlPredicate<T3>> whereExpression) {
+    Queryable3<T1, T2, T3> where(boolean condition, SqlExpression<SqlWherePredicate<T1>> whereExpression);
+    default Queryable3<T1, T2, T3> where(SqlExpression3<SqlWherePredicate<T1>, SqlWherePredicate<T2>, SqlWherePredicate<T3>> whereExpression) {
         return where(true, whereExpression);
     }
 
-    Queryable3<T1, T2, T3> where(boolean condition, SqlExpression3<SqlPredicate<T1>, SqlPredicate<T2>, SqlPredicate<T3>> whereExpression);
+    Queryable3<T1, T2, T3> where(boolean condition, SqlExpression3<SqlWherePredicate<T1>, SqlWherePredicate<T2>, SqlWherePredicate<T3>> whereExpression);
 
     //endregion
 

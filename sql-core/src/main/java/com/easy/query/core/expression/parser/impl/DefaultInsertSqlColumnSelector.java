@@ -20,10 +20,10 @@ import java.util.Objects;
  * @author xuejiaming
  */
 public class DefaultInsertSqlColumnSelector<T1> implements SqlColumnSelector<T1> {
-    private final int index;
-    private final EntityExpressionBuilder sqlEntityExpression;
-    private final TableAvailable table;
-    private final SqlBuilderSegment sqlSegmentBuilder;
+    protected final int index;
+    protected final EntityExpressionBuilder sqlEntityExpression;
+    protected final TableAvailable table;
+    protected final SqlBuilderSegment sqlSegmentBuilder;
 
     public DefaultInsertSqlColumnSelector(int index, EntityExpressionBuilder sqlEntityExpression, SqlBuilderSegment sqlSegmentBuilder) {
         this.index = index;

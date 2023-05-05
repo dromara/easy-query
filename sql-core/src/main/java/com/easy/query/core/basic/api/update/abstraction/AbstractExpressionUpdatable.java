@@ -9,7 +9,7 @@ import com.easy.query.core.enums.SqlPredicateCompareEnum;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.SqlExpression;
-import com.easy.query.core.expression.parser.core.SqlPredicate;
+import com.easy.query.core.expression.parser.core.SqlWherePredicate;
 import com.easy.query.core.expression.parser.core.SqlColumnSetter;
 import com.easy.query.core.expression.parser.impl.DefaultSqlColumnSetter;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
@@ -93,7 +93,7 @@ public abstract class AbstractExpressionUpdatable<T> extends AbstractSqlExecuteR
 
 
     @Override
-    public ExpressionUpdatable<T> where(boolean condition, SqlExpression<SqlPredicate<T>> whereExpression) {
+    public ExpressionUpdatable<T> where(boolean condition, SqlExpression<SqlWherePredicate<T>> whereExpression) {
         if (condition) {
             DefaultSqlPredicate<T> sqlPredicate = new DefaultSqlPredicate<>(0, entityUpdateExpressionBuilder, entityUpdateExpressionBuilder.getWhere());
             whereExpression.apply(sqlPredicate);

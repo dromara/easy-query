@@ -11,7 +11,7 @@ import com.easy.query.core.expression.lambda.SqlExpression;
 import com.easy.query.core.expression.lambda.SqlExpression2;
 import com.easy.query.core.expression.lambda.SqlExpression3;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.parser.core.SqlPredicate;
+import com.easy.query.core.expression.parser.core.SqlWherePredicate;
 import com.easy.query.core.expression.parser.core.SqlGroupBySelector;
 import com.easy.query.core.expression.parser.core.SqlColumnSelector;
 import com.easy.query.core.expression.parser.core.SqlColumnAsSelector;
@@ -50,39 +50,39 @@ public abstract class AbstractQueryable2<T1, T2> extends AbstractQueryable<T1> i
     }
 
     @Override
-    public <T3> Queryable3<T1, T2, T3> leftJoin(Class<T3> joinClass, SqlExpression3<SqlPredicate<T1>, SqlPredicate<T2>, SqlPredicate<T3>> on) {
+    public <T3> Queryable3<T1, T2, T3> leftJoin(Class<T3> joinClass, SqlExpression3<SqlWherePredicate<T1>, SqlWherePredicate<T2>, SqlWherePredicate<T3>> on) {
         Queryable3<T1, T2, T3> queryable3 = sqlEntityExpression.getRuntimeContext().getSqlApiFactory().createQueryable3(t1Class, t2Class, joinClass, MultiTableTypeEnum.LEFT_JOIN, sqlEntityExpression);
         return SqlExpressionUtil.executeJoinOn(queryable3,on);
     }
 
     @Override
-    public <T3> Queryable3<T1, T2, T3> leftJoin(Queryable<T3> joinQueryable, SqlExpression3<SqlPredicate<T1>, SqlPredicate<T2>, SqlPredicate<T3>> on) {
+    public <T3> Queryable3<T1, T2, T3> leftJoin(Queryable<T3> joinQueryable, SqlExpression3<SqlWherePredicate<T1>, SqlWherePredicate<T2>, SqlWherePredicate<T3>> on) {
         Queryable<T3> selectAllT2Queryable = SqlExpressionUtil.cloneAndSelectAllQueryable(joinQueryable);
         Queryable3<T1, T2, T3> queryable3 = sqlEntityExpression.getRuntimeContext().getSqlApiFactory().createQueryable3(t1Class,t2Class, selectAllT2Queryable, MultiTableTypeEnum.LEFT_JOIN, sqlEntityExpression);
         return SqlExpressionUtil.executeJoinOn(queryable3,on);
     }
 
     @Override
-    public <T3> Queryable3<T1, T2, T3> rightJoin(Class<T3> joinClass, SqlExpression3<SqlPredicate<T1>, SqlPredicate<T2>, SqlPredicate<T3>> on) {
+    public <T3> Queryable3<T1, T2, T3> rightJoin(Class<T3> joinClass, SqlExpression3<SqlWherePredicate<T1>, SqlWherePredicate<T2>, SqlWherePredicate<T3>> on) {
         Queryable3<T1, T2, T3> queryable3 = sqlEntityExpression.getRuntimeContext().getSqlApiFactory().createQueryable3(t1Class, t2Class, joinClass, MultiTableTypeEnum.RIGHT_JOIN, sqlEntityExpression);
         return SqlExpressionUtil.executeJoinOn(queryable3,on);
     }
 
     @Override
-    public <T3> Queryable3<T1, T2, T3> rightJoin(Queryable<T3> joinQueryable, SqlExpression3<SqlPredicate<T1>, SqlPredicate<T2>, SqlPredicate<T3>> on) {
+    public <T3> Queryable3<T1, T2, T3> rightJoin(Queryable<T3> joinQueryable, SqlExpression3<SqlWherePredicate<T1>, SqlWherePredicate<T2>, SqlWherePredicate<T3>> on) {
         Queryable<T3> selectAllT2Queryable = SqlExpressionUtil.cloneAndSelectAllQueryable(joinQueryable);
         Queryable3<T1, T2, T3> queryable3 = sqlEntityExpression.getRuntimeContext().getSqlApiFactory().createQueryable3(t1Class,t2Class, selectAllT2Queryable, MultiTableTypeEnum.RIGHT_JOIN, sqlEntityExpression);
         return SqlExpressionUtil.executeJoinOn(queryable3,on);
     }
 
     @Override
-    public <T3> Queryable3<T1, T2, T3> innerJoin(Class<T3> joinClass, SqlExpression3<SqlPredicate<T1>, SqlPredicate<T2>, SqlPredicate<T3>> on) {
+    public <T3> Queryable3<T1, T2, T3> innerJoin(Class<T3> joinClass, SqlExpression3<SqlWherePredicate<T1>, SqlWherePredicate<T2>, SqlWherePredicate<T3>> on) {
         Queryable3<T1, T2, T3> queryable3 = sqlEntityExpression.getRuntimeContext().getSqlApiFactory().createQueryable3(t1Class, t2Class, joinClass, MultiTableTypeEnum.INNER_JOIN, sqlEntityExpression);
         return SqlExpressionUtil.executeJoinOn(queryable3,on);
     }
 
     @Override
-    public <T3> Queryable3<T1, T2, T3> innerJoin(Queryable<T3> joinQueryable, SqlExpression3<SqlPredicate<T1>, SqlPredicate<T2>, SqlPredicate<T3>> on) {
+    public <T3> Queryable3<T1, T2, T3> innerJoin(Queryable<T3> joinQueryable, SqlExpression3<SqlWherePredicate<T1>, SqlWherePredicate<T2>, SqlWherePredicate<T3>> on) {
         Queryable<T3> selectAllT2Queryable = SqlExpressionUtil.cloneAndSelectAllQueryable(joinQueryable);
         Queryable3<T1, T2, T3> queryable3 = sqlEntityExpression.getRuntimeContext().getSqlApiFactory().createQueryable3(t1Class,t2Class, selectAllT2Queryable, MultiTableTypeEnum.INNER_JOIN, sqlEntityExpression);
         return SqlExpressionUtil.executeJoinOn(queryable3,on);
@@ -102,7 +102,7 @@ public abstract class AbstractQueryable2<T1, T2> extends AbstractQueryable<T1> i
     }
 
     @Override
-    protected SqlPredicate<?> matchWhereObjectSqlPredicate(Class<?> entityClass) {
+    protected SqlWherePredicate<?> matchWhereObjectSqlPredicate(Class<?> entityClass) {
         if(entityClass==t1Class){
             return getSqlBuilderProvider2().getSqlWherePredicate1();
         }
@@ -130,16 +130,16 @@ public abstract class AbstractQueryable2<T1, T2> extends AbstractQueryable<T1> i
         return this;
     }
     @Override
-    public Queryable2<T1, T2> where(boolean condition, SqlExpression<SqlPredicate<T1>> whereExpression) {
+    public Queryable2<T1, T2> where(boolean condition, SqlExpression<SqlWherePredicate<T1>> whereExpression) {
         super.where(condition,whereExpression);
         return this;
     }
 
     @Override
-    public Queryable2<T1, T2> where(boolean condition, SqlExpression2<SqlPredicate<T1>, SqlPredicate<T2>> whereExpression) {
+    public Queryable2<T1, T2> where(boolean condition, SqlExpression2<SqlWherePredicate<T1>, SqlWherePredicate<T2>> whereExpression) {
         if (condition) {
-            SqlPredicate<T1> sqlWherePredicate1 = getSqlBuilderProvider2().getSqlWherePredicate1();
-            SqlPredicate<T2> sqlWherePredicate2 = getSqlBuilderProvider2().getSqlWherePredicate2();
+            SqlWherePredicate<T1> sqlWherePredicate1 = getSqlBuilderProvider2().getSqlWherePredicate1();
+            SqlWherePredicate<T2> sqlWherePredicate2 = getSqlBuilderProvider2().getSqlWherePredicate2();
             whereExpression.apply(sqlWherePredicate1, sqlWherePredicate2);
         }
         return this;
