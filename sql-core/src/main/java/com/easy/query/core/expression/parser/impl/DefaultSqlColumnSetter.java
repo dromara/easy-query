@@ -1,9 +1,10 @@
 package com.easy.query.core.expression.parser.impl;
 
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.parser.core.SqlColumnSetter;
 import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import com.easy.query.core.enums.SqlPredicateCompareEnum;
 import com.easy.query.core.expression.lambda.Property;
-import com.easy.query.core.expression.parser.core.SqlColumnSetter;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnValuePredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnWithColumnPredicate;
 import com.easy.query.core.expression.segment.ColumnWithSelfSegment;
@@ -19,22 +20,30 @@ import com.easy.query.core.util.LambdaUtil;
  */
 public class DefaultSqlColumnSetter<T>  implements SqlColumnSetter<T> {
     private final int index;
-    private final EntityExpressionBuilder sqlEntityExpression;
-    private final SqlBuilderSegment sqlSegment0Builder;
+    private final EntityExpressionBuilder entityExpressionBuilder;
+    private final TableAvailable table;
+    private final SqlBuilderSegment sqlBuilderSegment;
 
-    public DefaultSqlColumnSetter(int index, EntityExpressionBuilder sqlEntityExpression, SqlBuilderSegment sqlSegment0Builder){
+    public DefaultSqlColumnSetter(int index, EntityExpressionBuilder entityExpressionBuilder, SqlBuilderSegment sqlBuilderSegment){
 
         this.index = index;
-        this.sqlEntityExpression = sqlEntityExpression;
-        this.sqlSegment0Builder = sqlSegment0Builder;
+        this.entityExpressionBuilder = entityExpressionBuilder;
+        this.table=entityExpressionBuilder.getTable(index).getEntityTable();
+        this.sqlBuilderSegment = sqlBuilderSegment;
     }
+
+    @Override
+    public TableAvailable getTable() {
+        return table;
+    }
+
     @Override
     public SqlColumnSetter<T> set(boolean condition, Property<T, ?> column, Object val) {
         if(condition)
         {
-            EntityTableExpressionBuilder table = sqlEntityExpression.getTable(index);
+            EntityTableExpressionBuilder table = entityExpressionBuilder.getTable(index);
             String propertyName = LambdaUtil.getPropertyName(column);
-            sqlSegment0Builder.append(new ColumnValuePredicate(table.getEntityTable(),propertyName,val, SqlPredicateCompareEnum.EQ, sqlEntityExpression.getRuntimeContext()));
+            sqlBuilderSegment.append(new ColumnValuePredicate(table.getEntityTable(),propertyName,val, SqlPredicateCompareEnum.EQ, entityExpressionBuilder.getRuntimeContext()));
         }
         return this;
     }
@@ -43,11 +52,11 @@ public class DefaultSqlColumnSetter<T>  implements SqlColumnSetter<T> {
     public SqlColumnSetter<T> set(boolean condition, Property<T, ?> column1, Property<T, ?> column2) {
         if(condition)
         {
-            EntityTableExpressionBuilder table1 = sqlEntityExpression.getTable(index);
+            EntityTableExpressionBuilder table1 = entityExpressionBuilder.getTable(index);
             String propertyName1 = LambdaUtil.getPropertyName(column1);
-            EntityTableExpressionBuilder table2 = sqlEntityExpression.getTable(index);
+            EntityTableExpressionBuilder table2 = entityExpressionBuilder.getTable(index);
             String propertyName2 = LambdaUtil.getPropertyName(column2);
-            sqlSegment0Builder.append(new ColumnWithColumnPredicate(table1.getEntityTable(),propertyName1,table2.getEntityTable(),propertyName2, SqlPredicateCompareEnum.EQ, sqlEntityExpression.getRuntimeContext()));
+            sqlBuilderSegment.append(new ColumnWithColumnPredicate(table1.getEntityTable(),propertyName1,table2.getEntityTable(),propertyName2, SqlPredicateCompareEnum.EQ, entityExpressionBuilder.getRuntimeContext()));
         }
         return this;
     }
@@ -64,9 +73,9 @@ public class DefaultSqlColumnSetter<T>  implements SqlColumnSetter<T> {
 
     private void setSelf(boolean increment,Property<T, ? extends Number> column, Number val){
 
-        EntityTableExpressionBuilder table = sqlEntityExpression.getTable(index);
+        EntityTableExpressionBuilder table = entityExpressionBuilder.getTable(index);
         String propertyName = LambdaUtil.getPropertyName(column);
-        sqlSegment0Builder.append(new ColumnWithSelfSegment(increment,table.getEntityTable(),propertyName,val, SqlPredicateCompareEnum.EQ, sqlEntityExpression.getRuntimeContext()));
+        sqlBuilderSegment.append(new ColumnWithSelfSegment(increment,table.getEntityTable(),propertyName,val, SqlPredicateCompareEnum.EQ, entityExpressionBuilder.getRuntimeContext()));
     }
 
     @Override
@@ -77,10 +86,5 @@ public class DefaultSqlColumnSetter<T>  implements SqlColumnSetter<T> {
             setSelf(false,column,val);
         }
         return this;
-    }
-
-    @Override
-    public int getIndex() {
-        return index;
     }
 }

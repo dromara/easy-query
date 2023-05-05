@@ -1,8 +1,8 @@
 package com.easy.query.core.metadata;
 
 import com.easy.query.core.expression.lambda.SqlExpression;
-import com.easy.query.core.expression.parser.core.SqlColumnSetter;
 import com.easy.query.core.expression.parser.core.SqlPredicate;
+import com.easy.query.core.expression.parser.core.SqlColumnSetter;
 
 /**
  * @FileName: LogicDeleteMetadata.java
