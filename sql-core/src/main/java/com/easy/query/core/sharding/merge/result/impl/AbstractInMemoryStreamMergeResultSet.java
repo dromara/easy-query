@@ -31,6 +31,7 @@ public abstract class AbstractInMemoryStreamMergeResultSet implements InMemorySt
     protected final int reallyCount;
     private MemoryResultSetRow currentResultSetRow;
     private boolean wasNull;
+    private boolean skipFirst;
     public AbstractInMemoryStreamMergeResultSet(StreamMergeContext streamMergeContext, List<StreamResultSet> streamResultSets) throws SQLException {
         this.streamMergeContext = streamMergeContext;
         this.streamResultSets=streamResultSets;
@@ -42,23 +43,37 @@ public abstract class AbstractInMemoryStreamMergeResultSet implements InMemorySt
         if(this.memoryResultSetRows.hasNext()){
             currentResultSetRow=this.memoryResultSetRows.next();
         }
+        this.skipFirst=true;
     }
     protected abstract List<MemoryResultSetRow> init(StreamMergeContext streamMergeContext, List<StreamResultSet> streamResultSets) throws SQLException;
     @Override
     public boolean hasElement() {
-        return this.memoryResultSetRows.hasNext();
+        return currentResultSetRow!=null;
     }
 
     @Override
     public boolean skipFirst() {
+        if (skipFirst)
+        {
+            skipFirst = false;
+            return true;
+        }
         return false;
     }
 
     @Override
     public boolean next() throws SQLException {
+
+        if(skipFirst){
+            skipFirst=false;
+            return currentResultSetRow!=null;
+        }
+
         if(this.memoryResultSetRows.hasNext()){
             this.currentResultSetRow=this.memoryResultSetRows.next();
             return true;
+        }else{
+            this.currentResultSetRow=null;
         }
         return false;
     }

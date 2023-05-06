@@ -15,13 +15,13 @@ import java.util.Collection;
 public abstract class AbstractDataSourceRouteRule implements DataSourceRouteRule {
 
     @Override
-    public RouteFunction<String> routeFilter(Object shardingValue, ShardingOperatorEnum shardingOperator, String propertyName, boolean isMainShardingProperty) {
+    public RouteFunction<String> routeFilter(Object shardingValue, ShardingOperatorEnum shardingOperator, String propertyName, boolean isMainShardingProperty,boolean withEntity) {
        if(isMainShardingProperty){
-           return getRouteFilter(shardingValue,shardingOperator);
+           return getRouteFilter(shardingValue,shardingOperator,withEntity);
        }
         return getExtraRouteFilter(shardingValue,shardingOperator,propertyName);
     }
-    protected abstract RouteFunction<String> getRouteFilter(Object shardingValue,ShardingOperatorEnum shardingOperator);
+    protected abstract RouteFunction<String> getRouteFilter(Object shardingValue,ShardingOperatorEnum shardingOperator,boolean withEntity);
     protected RouteFunction<String> getExtraRouteFilter(Object shardingValue,ShardingOperatorEnum shardingOperator,String propertyName){
         throw new UnsupportedOperationException(propertyName+" sharding route filter");
     }

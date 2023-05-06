@@ -177,7 +177,7 @@ public class RoutePredicateDiscover {
 
                 SqlPredicateCompare operator = valuePredicate.getOperator();
                 ShardingOperatorEnum shardingOperator = translateOperator(operator, value);
-                RouteFunction<String> routePredicate = routeRuleFilter.routeFilter(value, shardingOperator, propertyName, Objects.equals(mainShardingProperty, propertyName));
+                RouteFunction<String> routePredicate = routeRuleFilter.routeFilter(value, shardingOperator, propertyName, Objects.equals(mainShardingProperty, propertyName),false);
                 return new RoutePredicateExpression(routePredicate);
             }
             System.out.println("不支持的sql参数");
@@ -199,7 +199,7 @@ public class RoutePredicateDiscover {
             for (SQLParameter parameter : parameters) {
                 ConstSQLParameter constSQLParameter = (ConstSQLParameter) parameter;
                 Object value = constSQLParameter.getValue();
-                RouteFunction<String> routePredicate = routeRuleFilter.routeFilter(value, shardingOperator, propertyName, Objects.equals(mainShardingProperty, propertyName));
+                RouteFunction<String> routePredicate = routeRuleFilter.routeFilter(value, shardingOperator, propertyName, Objects.equals(mainShardingProperty, propertyName),false);
                 if(in){
                     containsRoutePredicate.or(new RoutePredicateExpression(routePredicate));
                 }else{
@@ -214,7 +214,7 @@ public class RoutePredicateDiscover {
         ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(mainShardingProperty);
         Property<Object, ?> shardingKeyPropertyGetter = EasyUtil.getFastBean(entityMetadata.getEntityClass()).getBeanGetter(columnMetadata.getProperty());
         Object shardingValue = shardingKeyPropertyGetter.apply(entity);
-        RouteFunction<String> routePredicate = routeRuleFilter.routeFilter(shardingValue, ShardingOperatorEnum.EQUAL, mainShardingProperty, true);
+        RouteFunction<String> routePredicate = routeRuleFilter.routeFilter(shardingValue, ShardingOperatorEnum.EQUAL, mainShardingProperty, true,true);
         return new RoutePredicateExpression(routePredicate);
     }
 }

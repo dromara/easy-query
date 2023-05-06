@@ -11,5 +11,5 @@ import com.easy.query.core.sharding.enums.ShardingOperatorEnum;
  * @author xuejiaming
  */
 public interface RouteRuleFilter {
-    RouteFunction<String> routeFilter(Object shardingValue, ShardingOperatorEnum shardingOperator, String propertyName, boolean isMainShardingProperty);
+    RouteFunction<String> routeFilter(Object shardingValue, ShardingOperatorEnum shardingOperator, String propertyName, boolean isMainShardingProperty,boolean withEntity);
 }

@@ -131,7 +131,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
 
     @Override
     public boolean any() {
-        List<Integer> result = cloneQueryable().limit(1).select(" 1 ").toList(Integer.class);
+        List<Long> result = cloneQueryable().limit(1).select(" 1 ").toList(Long.class);
         return !result.isEmpty();
     }
 

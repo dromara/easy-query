@@ -39,7 +39,7 @@ public final class StreamResultUtil {
         if (Map.class.isAssignableFrom(clazz)) {
             resultList = mapToMaps(context, streamResult, clazz);
         } else if (ClassUtil.isBasicType(clazz)) {//如果返回的是基本类型
-            resultList = new ArrayList<>(1);
+            resultList = new ArrayList<>();
             while (streamResult.next()) {
                 Object value = mapToBasic(context, streamResult, clazz);
                 resultList.add((TResult) value);

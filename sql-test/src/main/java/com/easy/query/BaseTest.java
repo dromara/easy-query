@@ -3,6 +3,7 @@ package com.easy.query;
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.api.client.EasyQuery;
+import com.easy.query.core.sharding.EasyShardingOption;
 import com.easy.query.core.sql.dialect.Dialect;
 import com.easy.query.core.sql.dialect.impl.MySqlDialect;
 import com.easy.query.core.configuration.EasyQueryConfiguration;
@@ -19,16 +20,20 @@ import com.easy.query.entity.Topic;
 import com.easy.query.entity.TopicAuto;
 import com.easy.query.entity.TopicInterceptor;
 import com.easy.query.entity.TopicSharding;
+import com.easy.query.entity.TopicShardingTime;
 import com.easy.query.interceptor.MyEntityInterceptor;
 import com.easy.query.interceptor.MyTenantInterceptor;
 import com.easy.query.logicdel.MyLogicDelStrategy;
 import com.easy.query.sharding.FixShardingInitializer;
 import com.easy.query.sharding.TopicShardingTableRule;
+import com.easy.query.sharding.TopicShardingTimeTableRule;
 import com.zaxxer.hikari.HikariDataSource;
 import org.junit.BeforeClass;
 
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /**
@@ -66,6 +71,7 @@ public abstract class BaseTest {
     public static void initEasyQuery() {
         easyQuery = EasyQueryBootstrapper.defaultBuilderConfiguration()
                 .setDataSource(dataSource)
+//                .replaceService(EasyShardingOption.class, new EasyShardingOption(2, 0))
                 .replaceService(Dialect.class,MySqlDialect.class)
                 .build();
         EasyQueryRuntimeContext runtimeContext = easyQuery.getRuntimeContext();
@@ -80,6 +86,7 @@ public abstract class BaseTest {
 
         TableRouteManager tableRouteManager = runtimeContext.getTableRouteManager();
         tableRouteManager.addRouteRule(new TopicShardingTableRule());
+        tableRouteManager.addRouteRule(new TopicShardingTimeTableRule());
 
     }
 
@@ -215,6 +222,28 @@ public abstract class BaseTest {
            }
 
            long l = easyQuery.insertable(topicShardings).executeRows();
+       }
+        boolean shardingTimeExists = easyQuery.queryable(TopicShardingTime.class).any();
+       if(!shardingTimeExists){
+
+           LocalDateTime beginTime = LocalDateTime.of(2020, 1, 1, 1, 1);
+           LocalDateTime endTime = LocalDateTime.of(2023, 5, 1, 1, 1);
+           Duration between = Duration.between(beginTime, endTime);
+           long days = between.toDays();
+           ArrayList<TopicShardingTime> topicShardingTimes = new ArrayList<>(500);
+           for (int i = 0; i < days; i++) {
+               LocalDateTime now = beginTime.plusDays(i);
+               String month = now.format(DateTimeFormatter.ofPattern("yyyyMM"));
+               TopicShardingTime topicShardingTime = new TopicShardingTime();
+               topicShardingTime.setId(UUID.randomUUID().toString().replaceAll("-","")+month);
+               topicShardingTime.setTitle("title" + month);
+               topicShardingTime.setStars(i);
+               topicShardingTime.setCreateTime(now);
+               topicShardingTimes.add(topicShardingTime);
+           }
+
+           long l = easyQuery.insertable(topicShardingTimes).executeRows();
+           System.out.println("插入时间条数:"+l);
        }
     }
 

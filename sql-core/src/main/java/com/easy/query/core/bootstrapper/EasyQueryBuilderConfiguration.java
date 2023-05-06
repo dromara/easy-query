@@ -96,7 +96,7 @@ public class EasyQueryBuilderConfiguration {
                 .replaceService(RewriteContextFactory.class, DefaultRewriteContextFactory.class)
                 .replaceService(ExecutionContextFactory.class, DefaultExecutionContextFactory.class)
                 .replaceService(EntityExpressionExecutor.class, DefaultEntityExpressionExecutor.class)
-                .replaceService(EasyShardingOption.class,new EasyShardingOption(Math.max(Runtime.getRuntime().availableProcessors(),4), 0))
+                .replaceService(EasyShardingOption.class, new EasyShardingOption(Math.max(Runtime.getRuntime().availableProcessors(), 4), 0))
                 .replaceService(EasyShardingExecutorService.class, DefaultEasyShardingExecutorService.class)
                 .replaceService(EasyExpressionFactory.class, DefaultEasyExpressionFactory.class)
                 .replaceService(ShardingComparer.class, JavaLanguageShardingComparer.class)
@@ -110,31 +110,71 @@ public class EasyQueryBuilderConfiguration {
         return this;
     }
 
+    /**
+     * 添加服务如果已经存在则替换
+     * @param implementType 依赖注入当前实例类型
+     * @return 当前服务集合
+     * @param <TImplement> 实现类型
+     */
     public <TImplement> EasyQueryBuilderConfiguration replaceService(Class<TImplement> implementType) {
         serviceCollection.addService(implementType);
         return this;
     }
 
+    /**
+     * 添加服务如果已经存在则替换
+     * @param implementInstance 依赖注入当前实例
+     * @return 当前服务集合
+     * @param <TImplement> 实现类型
+     */
     public <TImplement> EasyQueryBuilderConfiguration replaceService(TImplement implementInstance) {
         serviceCollection.addService(implementInstance);
         return this;
     }
 
+    /**
+     * 添加服务如果已经存在则替换
+     * @param serviceType 依赖注入的接口
+     * @param implementType 依赖注入的实现类
+     * @return 当前服务集合
+     * @param <TService> 接口类型
+     * @param <TImplement> 实现类型
+     */
     public <TService, TImplement extends TService> EasyQueryBuilderConfiguration replaceService(Class<TService> serviceType, Class<TImplement> implementType) {
         serviceCollection.addService(serviceType, implementType);
         return this;
     }
 
+    /**
+     * 添加服务如果已经存在则替换
+     * @param serviceType 依赖注入的接口
+     * @param implementInstance 依赖注入的实现
+     * @return 当前服务集合
+     * @param <TService> 接口类型
+     * @param <TImplement> 实现类型
+     */
     public <TService, TImplement extends TService> EasyQueryBuilderConfiguration replaceService(Class<TService> serviceType, TImplement implementInstance) {
         serviceCollection.addService(serviceType, implementInstance);
         return this;
     }
 
+    /**
+     * 添加服务如果已经存在则替换
+     * @param serviceType 依赖注入的接口
+     * @param implementFactory 依赖注入的实现工厂
+     * @return 当前服务集合
+     * @param <TService> 接口类型
+     * @param <TImplement> 实现类型
+     */
     public <TService, TImplement extends TService> EasyQueryBuilderConfiguration replaceServiceFactory(Class<TService> serviceType, Function<ServiceProvider, TImplement> implementFactory) {
         serviceCollection.addServiceFactory(serviceType, implementFactory);
         return this;
     }
 
+    /**
+     * 创建对应的查询器
+     * @return EasyQuery实例
+     */
     public EasyQuery build() {
         if (this.dataSource == null) {
             throw new IllegalArgumentException("data source null");
