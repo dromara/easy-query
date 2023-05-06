@@ -68,32 +68,6 @@ import java.util.function.Function;
  */
 public class EasyQueryBuilderConfiguration {
     protected DataSource dataSource;
-    //    protected JdbcTypeHandlerManager jdbcTypeHandlerManager;
-//    protected EasyQueryOption easyQueryOption;
-//    protected EasyQueryConfiguration configuration;
-//    protected EntityMetadataManager entityMetadataManager;
-//    protected EasyQueryLambdaFactory easyQueryLambdaFactory;
-//    protected DefaultEasyExpressionBuilderFactory defaultEasyExpressionBuilderFactory;
-//    protected EasySqlApiFactory easyQueryableFactory;
-//    protected DefaultTrackManager defaultTrackManager;
-//    protected DefaultEasyPageResultProvider defaultEasyPageResultProvider;
-//    protected DefaultEasyPrepareParser prepareParser;
-//    protected EasyQueryDataSource defaultEasyDataSource;
-//    protected EasyConnectionManager connectionManager;
-//    protected DefaultDataSourceRouteManager defaultDataSourceRouteManager;
-//    protected DefaultDataSourceRouteEngine defaultDataSourceRouteEngine;
-//    protected DefaultTableRouteManager defaultTableRouteManager;
-//    protected DefaultTableRouteEngine defaultTableRouteEngine;
-//    protected DefaultRouteContextFactory defaultRouteContextFactory;
-//    protected DefaultRewriteContextFactory defaultRewriteContextFactory;
-//    protected DefaultExecutionContextFactory defaultQueryCompilerContextFactory;
-//    protected DefaultEntityExpressionExecutor defaultEntityExpressionExecutor;
-//    protected EasyShardingOption easyShardingOption;
-//    protected DefaultEasyShardingExecutorService defaultEasyShardingExecutorService;
-//    protected DefaultEasyExpressionFactory defaultEasyExpressionFactory;
-//    protected NameConversion nameConversion;
-//    protected ShardingComparer shardingComparer;
-//    protected Dialect dialect;
     private final ServiceCollection serviceCollection = new ServiceCollectionImpl();
 
     public EasyQueryBuilderConfiguration() {
@@ -104,39 +78,37 @@ public class EasyQueryBuilderConfiguration {
 
     private void defaultConfiguration() {
         replaceService(EasyQueryOption.defaultEasyQueryOption(false))
-                .replaceServiceFactory(EasyQueryDataSource.class,sp-> new DefaultEasyQueryDataSource("ds0",sp.getService(DataSource.class)))
-                .replaceService(Dialect.class,DefaultDialect.class)
+                .replaceServiceFactory(EasyQueryDataSource.class, sp -> new DefaultEasyQueryDataSource("ds0", sp.getService(DataSource.class)))
+                .replaceService(Dialect.class, DefaultDialect.class)
                 .replaceService(NameConversion.class, UnderlinedNameConversion.class)
                 .replaceService(EasyQueryConfiguration.class)
-                .replaceService(EntityMetadataManager.class,DefaultEntityMetadataManager.class)
-                .replaceService(EasyQueryLambdaFactory.class,DefaultEasyQueryLambdaFactory.class)
-                .replaceService(EasyExpressionBuilderFactory.class,DefaultEasyExpressionBuilderFactory.class)
-                .replaceService(EasySqlApiFactory.class,DefaultEasySqlApiFactory.class)
+                .replaceService(EntityMetadataManager.class, DefaultEntityMetadataManager.class)
+                .replaceService(EasyQueryLambdaFactory.class, DefaultEasyQueryLambdaFactory.class)
+                .replaceService(EasyExpressionBuilderFactory.class, DefaultEasyExpressionBuilderFactory.class)
+                .replaceService(EasySqlApiFactory.class, DefaultEasySqlApiFactory.class)
                 .replaceService(TrackManager.class, DefaultTrackManager.class)
-                .replaceService(EasyPageResultProvider.class,DefaultEasyPageResultProvider.class)
-                .replaceService(EasyPrepareParser.class,DefaultEasyPrepareParser.class)
-                .replaceService(EasyConnectionManager.class,DefaultConnectionManager.class)
-                .replaceService(DataSourceRouteManager.class,DefaultDataSourceRouteManager.class)
-                .replaceService(DataSourceRouteEngine.class,DefaultDataSourceRouteEngine.class)
-
-                .replaceService(TableRouteManager.class,DefaultTableRouteManager.class)
-                .replaceService(TableRouteEngine.class,DefaultTableRouteEngine.class)
-
-                .replaceService(RouteContextFactory.class,DefaultRouteContextFactory.class)
-                .replaceService(RewriteContextFactory.class,DefaultRewriteContextFactory.class)
-                .replaceService(ExecutionContextFactory.class,DefaultExecutionContextFactory.class)
-                .replaceService(EntityExpressionExecutor.class,DefaultEntityExpressionExecutor.class)
-
-                .replaceServiceFactory(EasyShardingOption.class,sp->new EasyShardingOption(10,20))
-                .replaceService(EasyShardingExecutorService.class,DefaultEasyShardingExecutorService.class)
-                .replaceService(EasyExpressionFactory.class,DefaultEasyExpressionFactory.class)
-                .replaceService(ShardingComparer.class,JavaLanguageShardingComparer.class)
-                .replaceService(JdbcTypeHandlerManager.class,EasyJdbcTypeHandlerManager.class)
-                .replaceService(EasyQueryRuntimeContext.class,DefaultEasyQueryRuntimeContext.class);
+                .replaceService(EasyPageResultProvider.class, DefaultEasyPageResultProvider.class)
+                .replaceService(EasyPrepareParser.class, DefaultEasyPrepareParser.class)
+                .replaceService(EasyConnectionManager.class, DefaultConnectionManager.class)
+                .replaceService(DataSourceRouteManager.class, DefaultDataSourceRouteManager.class)
+                .replaceService(DataSourceRouteEngine.class, DefaultDataSourceRouteEngine.class)
+                .replaceService(TableRouteManager.class, DefaultTableRouteManager.class)
+                .replaceService(TableRouteEngine.class, DefaultTableRouteEngine.class)
+                .replaceService(RouteContextFactory.class, DefaultRouteContextFactory.class)
+                .replaceService(RewriteContextFactory.class, DefaultRewriteContextFactory.class)
+                .replaceService(ExecutionContextFactory.class, DefaultExecutionContextFactory.class)
+                .replaceService(EntityExpressionExecutor.class, DefaultEntityExpressionExecutor.class)
+                .replaceService(EasyShardingOption.class,new EasyShardingOption(10, 20))
+                .replaceService(EasyShardingExecutorService.class, DefaultEasyShardingExecutorService.class)
+                .replaceService(EasyExpressionFactory.class, DefaultEasyExpressionFactory.class)
+                .replaceService(ShardingComparer.class, JavaLanguageShardingComparer.class)
+                .replaceService(JdbcTypeHandlerManager.class, EasyJdbcTypeHandlerManager.class)
+                .replaceService(EasyQueryRuntimeContext.class, DefaultEasyQueryRuntimeContext.class)
+                .replaceService(EasyQuery.class, DefaultEasyQuery.class);
     }
 
     public EasyQueryBuilderConfiguration setDataSource(DataSource dataSource) {
-        this.dataSource=dataSource;
+        this.dataSource = dataSource;
         return this;
     }
 
@@ -144,6 +116,7 @@ public class EasyQueryBuilderConfiguration {
         serviceCollection.addService(implementType);
         return this;
     }
+
     public <TImplement> EasyQueryBuilderConfiguration replaceService(TImplement implementInstance) {
         serviceCollection.addService(implementInstance);
         return this;
@@ -163,13 +136,14 @@ public class EasyQueryBuilderConfiguration {
         serviceCollection.addServiceFactory(serviceType, implementFactory);
         return this;
     }
+
     public EasyQuery build() {
         if (this.dataSource == null) {
             throw new IllegalArgumentException("data source null");
         }
         replaceService(DataSource.class, this.dataSource);
         ServiceProvider serviceProvider = serviceCollection.build();
-        return new DefaultEasyQuery(serviceProvider.getService(EasyQueryRuntimeContext.class));
+        return serviceProvider.getService(EasyQuery.class);
     }
 
 }

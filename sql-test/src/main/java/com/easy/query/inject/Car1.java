@@ -8,14 +8,24 @@ package com.easy.query.inject;
  */
 public class Car1 implements Car{
     private final Driver driver;
+    private String name;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public Car1(Driver driver){
 
         this.driver = driver;
+        this.name="car1";
     }
     @Override
     public void run() {
         driver.drive();
-        System.out.println("Car1");
+        System.out.println("Car1:"+name);
     }
 }

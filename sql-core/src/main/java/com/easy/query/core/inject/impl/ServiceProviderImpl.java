@@ -6,7 +6,6 @@ import com.easy.query.core.util.ClassUtil;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -16,50 +15,54 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author xuejiaming
  */
-public class ServiceProviderImpl implements ServiceProvider {
-    private final Map<Class<?>/*interface*/, ServiceDescriptor/*impl*/> servicesMapping;
+public final class ServiceProviderImpl implements ServiceProvider {
+    private final Map<Class<?>/*interface*/, ServiceDescriptor> servicesMapping;
     private final Map<Class<?>/*interface*/, Object> services;
 
-    public ServiceProviderImpl(Map<Class<?>/*interface*/, ServiceDescriptor/*impl*/> servicesMapping) {
+    public ServiceProviderImpl(Map<Class<?>/*interface*/, ServiceDescriptor> servicesMapping) {
         this.servicesMapping = servicesMapping;
-        services=new ConcurrentHashMap<>(servicesMapping.size());
+        services = new ConcurrentHashMap<>(servicesMapping.size() + 1);
+        services.put(ServiceProvider.class,this);
     }
+
     public <T> T getService(Class<T> serviceType) {
-        System.out.println("创建:"+ClassUtil.getSimpleName(serviceType));
+        Object service =  getServiceObject0(serviceType);
+        return serviceType.cast(service);
+    }
+
+    public Object getServiceObject(Class<?> serviceType) {
+        return getServiceObject0(serviceType);
+    }
+    private Object getServiceObject0(Class<?> serviceType){
         Object service = services.get(serviceType);
         if (service == null) {
             ServiceDescriptor serviceDescriptor = servicesMapping.get(serviceType);
-            if(serviceDescriptor==null){
+            if (serviceDescriptor == null) {
                 throw new IllegalArgumentException("Service not found for type " + serviceType.getName());
             }
             Object o = resolveByServiceDescriptor(serviceDescriptor);
-            service=services.computeIfAbsent(serviceType,k->o);
-        }
-        return serviceType.cast(service);
-    }
-    public Object getServiceObject(Class<?> serviceType) {
-        Object service = services.get(serviceType);
-        if (service == null) {
-            ServiceDescriptor serviceDescriptor = servicesMapping.get(serviceType);
-            if(serviceDescriptor==null){
-                throw new IllegalArgumentException("Service not found for type " + serviceType.getName());
-            }
-            service=services.computeIfAbsent(serviceType,k->resolveByServiceDescriptor(serviceDescriptor));
+            serviceDescriptor.resetBeanCurrently();
+           services.putIfAbsent(serviceType, o);//services.computeIfAbsent() jdk 1.8如果嵌套使用的情况下key的hashcode一样会造成死锁
+
+            service =services.get(serviceType);
         }
         return service;
     }
-    private Object resolveByServiceDescriptor(ServiceDescriptor serviceDescriptor){
-        if(serviceDescriptor.getImplementationInstance()!=null){
+
+    private Object resolveByServiceDescriptor(ServiceDescriptor serviceDescriptor) {
+        serviceDescriptor.checkBeanCurrently();
+        if (serviceDescriptor.getImplementationInstance() != null) {
             return serviceDescriptor.getImplementationInstance();
         }
-        if(serviceDescriptor.getImplementationFactory()!=null){
+        if (serviceDescriptor.getImplementationFactory() != null) {
             return serviceDescriptor.getImplementationFactory().apply(this);
         }
-        if(serviceDescriptor.getImplementationType()!=null){
+        if (serviceDescriptor.getImplementationType() != null) {
             return createInstance(serviceDescriptor.getImplementationType());
         }
         throw new IllegalArgumentException("cant to resolve service type " + ClassUtil.getSimpleName(serviceDescriptor.getServiceType()));
     }
+
     private Object createInstance(Class<?> serviceType) {
         try {
             Constructor<?>[] constructors = serviceType.getConstructors();

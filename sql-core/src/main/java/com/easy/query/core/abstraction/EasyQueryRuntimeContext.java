@@ -7,6 +7,7 @@ import com.easy.query.core.basic.thread.EasyShardingExecutorService;
 import com.easy.query.core.expression.parser.factory.EasyQueryLambdaFactory;
 import com.easy.query.core.expression.sql.builder.factory.EasyExpressionBuilderFactory;
 import com.easy.query.core.expression.sql.expression.factory.EasyExpressionFactory;
+import com.easy.query.core.inject.ServiceProvider;
 import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
 import com.easy.query.core.configuration.EasyQueryConfiguration;
@@ -23,6 +24,7 @@ import com.easy.query.core.sharding.route.abstraction.TableRouteManager;
  * @author xuejiaming
  */
 public interface EasyQueryRuntimeContext {
+    <T> T getService(Class<T> serviceType);
     EasyQueryConfiguration getEasyQueryConfiguration();
     EntityMetadataManager getEntityMetadataManager();
     EasyQueryLambdaFactory getEasyQueryLambdaFactory();

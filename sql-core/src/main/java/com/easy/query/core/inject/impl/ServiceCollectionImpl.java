@@ -4,6 +4,7 @@ import com.easy.query.core.inject.ServiceCollection;
 import com.easy.query.core.inject.ServiceDescriptor;
 import com.easy.query.core.inject.ServiceProvider;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -47,7 +48,7 @@ public class ServiceCollectionImpl implements ServiceCollection {
 
     @Override
     public ServiceProvider build() {
-        return new ServiceProviderImpl(services);
+        return new ServiceProviderImpl(new HashMap<>(services));
     }
 
 

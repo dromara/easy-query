@@ -6,6 +6,7 @@ import com.easy.query.core.basic.thread.EasyShardingExecutorService;
 import com.easy.query.core.expression.parser.factory.EasyQueryLambdaFactory;
 import com.easy.query.core.expression.sql.builder.factory.EasyExpressionBuilderFactory;
 import com.easy.query.core.expression.sql.expression.factory.EasyExpressionFactory;
+import com.easy.query.core.inject.ServiceProvider;
 import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.basic.jdbc.con.EasyConnectionManager;
 import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
@@ -23,6 +24,7 @@ import com.easy.query.core.sharding.route.abstraction.TableRouteManager;
  * @author xuejiaming
  */
 public class DefaultEasyQueryRuntimeContext implements EasyQueryRuntimeContext {
+    private final ServiceProvider serviceProvider;
     private final EasyQueryConfiguration easyQueryConfiguration;
     private final EntityMetadataManager entityMetadataManager;
     private final EasyQueryLambdaFactory easyQueryLambdaFactory;
@@ -41,7 +43,7 @@ public class DefaultEasyQueryRuntimeContext implements EasyQueryRuntimeContext {
     private final DataSourceRouteManager dataSourceRouteManager;
     private final ShardingComparer shardingComparer;
 
-    public DefaultEasyQueryRuntimeContext(EasyQueryConfiguration easyQueryConfiguration,
+    public DefaultEasyQueryRuntimeContext(ServiceProvider serviceProvider, EasyQueryConfiguration easyQueryConfiguration,
                                           EntityMetadataManager entityMetadataManager,
                                           EasyQueryLambdaFactory easyQueryLambdaFactory,
                                           EasyConnectionManager easyConnectionManager,
@@ -57,6 +59,7 @@ public class DefaultEasyQueryRuntimeContext implements EasyQueryRuntimeContext {
                                           TableRouteManager tableRouteManager,
                                           DataSourceRouteManager dataSourceRouteManager,
                                           ShardingComparer shardingComparer){
+        this.serviceProvider = serviceProvider;
         this.easyQueryConfiguration = easyQueryConfiguration;
         this.entityMetadataManager = entityMetadataManager;
         this.easyQueryLambdaFactory = easyQueryLambdaFactory;
@@ -74,6 +77,12 @@ public class DefaultEasyQueryRuntimeContext implements EasyQueryRuntimeContext {
         this.dataSourceRouteManager = dataSourceRouteManager;
         this.shardingComparer = shardingComparer;
     }
+
+    @Override
+    public <T> T getService(Class<T> serviceType) {
+        return serviceProvider.getService(serviceType);
+    }
+
     @Override
     public EasyQueryConfiguration getEasyQueryConfiguration() {
         return easyQueryConfiguration;

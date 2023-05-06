@@ -6,6 +6,7 @@ import com.easy.query.core.basic.plugin.interceptor.EasyInterceptor;
 import com.easy.query.core.basic.plugin.logicdel.EasyLogicDeleteStrategy;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
+import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.sharding.DefaultEasyQueryDataSource;
 import com.easy.query.core.sharding.EasyQueryDataSource;
 import com.easy.query.core.sql.dialect.Dialect;
@@ -110,14 +111,11 @@ public class EasyQueryStarterAutoConfiguration {
     public EasyQuery easyQuery(DataSource dataSource, Dialect dialect, NameConversion nameConversion, Map<String, EasyInterceptor> easyInterceptorMap, Map<String, EasyLogicDeleteStrategy> easyLogicDeleteStrategyMap, Map<String, EasyShardingInitializer> easyShardingInitializerMap, Map<String, EasyEncryptionStrategy> easyEncryptionStrategyMap) {
         EasyQuery easyQuery = EasyQueryBootstrapper.defaultBuilderConfiguration()
                 .setDataSource(dataSource)
+                .replaceService(EasyQueryOption.class,EasyQueryOption.defaultEasyQueryOption(easyQueryProperties.getDeleteThrow()))
                 .replaceService(Dialect.class,dialect)
                 .replaceService(NameConversion.class,nameConversion)
-                .replaceServiceFactory(EasyQueryDataSource.class, sp1->new DefaultEasyQueryDataSource("ds0",sp1.getService(DataSource.class)))
+                .replaceServiceFactory(EasyQueryDataSource.class, sp->new DefaultEasyQueryDataSource("ds0",sp.getService(DataSource.class)))
                 .replaceService(EasyConnectionManager.class,SpringConnectionManager.class)
-//                .setEasyQueryDataSource(easyQueryDataSource)
-//                .setConnectionManager(easyConnectionManager)
-//                .setDialect(dialect)
-//                .setNameConversion(nameConversion)
                 .build();
         EasyQueryRuntimeContext runtimeContext = easyQuery.getRuntimeContext();
         EasyQueryConfiguration configuration = runtimeContext.getEasyQueryConfiguration();
