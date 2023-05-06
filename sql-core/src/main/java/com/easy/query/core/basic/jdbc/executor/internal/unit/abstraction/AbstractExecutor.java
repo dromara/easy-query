@@ -3,6 +3,7 @@ package com.easy.query.core.basic.jdbc.executor.internal.unit.abstraction;
 import com.easy.query.core.basic.jdbc.executor.internal.unit.Executor;
 import com.easy.query.core.basic.thread.EasyShardingExecutorService;
 import com.easy.query.core.exception.EasyQueryException;
+import com.easy.query.core.exception.EasyQueryTimeoutException;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.sharding.enums.ConnectionModeEnum;
@@ -22,6 +23,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * create time 2023/4/13 22:43
@@ -70,22 +72,24 @@ public abstract class AbstractExecutor<TResult> implements Executor<TResult> {
             TResult result = executeCommandUnit(commandExecuteUnits.get(0));
             return Collections.singletonList(result);
         }else{
+            EasyShardingExecutorService easyShardingExecutorService = streamMergeContext.getRuntimeContext().getEasyShardingExecutorService();
             List<TResult> resultList = new ArrayList<>(commandExecuteUnits.size());
-            ArrayList<Callable<TResult>> tasks = new ArrayList<>(commandExecuteUnits.size());
+            ArrayList<Future<TResult>> tasks = new ArrayList<>(commandExecuteUnits.size());
             for (CommandExecuteUnit commandExecuteUnit : commandExecuteUnits) {
-                Callable<TResult> task=()->executeCommandUnit(commandExecuteUnit);
+                Future<TResult> task = easyShardingExecutorService.getExecutorService().submit(() -> executeCommandUnit(commandExecuteUnit));
                 tasks.add(task);
             }
 
             try {
-                EasyShardingExecutorService easyShardingExecutorService = streamMergeContext.getRuntimeContext().getEasyShardingExecutorService();
-                List<Future<TResult>> futures = easyShardingExecutorService.getExecutorService().invokeAll(tasks,60, TimeUnit.SECONDS);
-                for (Future<TResult> future : futures) {
-                    resultList.add(future.get());
+
+                for (Future<TResult> task : tasks) {
+                    resultList.add(task.get(60L,TimeUnit.SECONDS));
                 }
             } catch (InterruptedException | ExecutionException e) {
                 log.error("group execute error.",e);
                 throw new EasyQueryException(e);
+            } catch (TimeoutException e) {
+                throw new EasyQueryTimeoutException(e);
             }
             return resultList;
         }

@@ -9,6 +9,7 @@ import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.sharding.DefaultEasyQueryDataSource;
 import com.easy.query.core.sharding.EasyQueryDataSource;
+import com.easy.query.core.sharding.EasyShardingOption;
 import com.easy.query.core.sql.dialect.Dialect;
 import com.easy.query.core.api.client.EasyQuery;
 import com.easy.query.core.sql.dialect.impl.MsSqlDialect;
@@ -112,6 +113,7 @@ public class EasyQueryStarterAutoConfiguration {
         EasyQuery easyQuery = EasyQueryBootstrapper.defaultBuilderConfiguration()
                 .setDataSource(dataSource)
                 .replaceService(EasyQueryOption.class,new EasyQueryOption(easyQueryProperties.getDeleteThrow(),easyQueryProperties.getInsertStrategy(),easyQueryProperties.getUpdateStrategy()))
+                .replaceService(EasyShardingOption.class,new EasyShardingOption(easyQueryProperties.getMaxQueryConnectionsLimit(), easyQueryProperties.getExecutorSize()))
                 .replaceService(Dialect.class,dialect)
                 .replaceService(NameConversion.class,nameConversion)
                 .replaceServiceFactory(EasyQueryDataSource.class, sp->new DefaultEasyQueryDataSource("ds0",sp.getService(DataSource.class)))

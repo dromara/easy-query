@@ -58,7 +58,7 @@ public class ShardingExecutor {
         List<DataSourceSqlExecutorUnit> dataSourceSqlExecutorUnits = EasyUtil.groupBy(reOrderExecutionUnits.stream(), ExecutionUnit::getDataSourceName)
                 .map(o -> getSqlExecutorGroups(streamMergeContext, o)).collect(Collectors.toList());
         //如果本身就只有一条要执行的sql那么就不需要另外开启线程并行执行,直接当前线程执行即可
-        if (executionUnits.size() == 1) {
+        if (dataSourceSqlExecutorUnits.size() == 1) {
             DataSourceSqlExecutorUnit dataSourceSqlExecutorUnit = dataSourceSqlExecutorUnits.get(0);
             return executor.execute(dataSourceSqlExecutorUnit);
         }

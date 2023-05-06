@@ -71,9 +71,7 @@ public class EasyQueryBuilderConfiguration {
     private final ServiceCollection serviceCollection = new ServiceCollectionImpl();
 
     public EasyQueryBuilderConfiguration() {
-
         defaultConfiguration();
-
     }
 
     private void defaultConfiguration() {
@@ -98,7 +96,7 @@ public class EasyQueryBuilderConfiguration {
                 .replaceService(RewriteContextFactory.class, DefaultRewriteContextFactory.class)
                 .replaceService(ExecutionContextFactory.class, DefaultExecutionContextFactory.class)
                 .replaceService(EntityExpressionExecutor.class, DefaultEntityExpressionExecutor.class)
-                .replaceService(EasyShardingOption.class,new EasyShardingOption(10, 20))
+                .replaceService(EasyShardingOption.class,new EasyShardingOption(Math.max(Runtime.getRuntime().availableProcessors(),4), 0))
                 .replaceService(EasyShardingExecutorService.class, DefaultEasyShardingExecutorService.class)
                 .replaceService(EasyExpressionFactory.class, DefaultEasyExpressionFactory.class)
                 .replaceService(ShardingComparer.class, JavaLanguageShardingComparer.class)

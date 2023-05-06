@@ -6,6 +6,8 @@ import com.easy.query.sql.starter.option.DialectEnum;
 import com.easy.query.sql.starter.option.NameConversionEnum;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import java.util.concurrent.Executors;
+
 /**
  * @FileName: EasyQueryProperties.java
  * @Description: 文件说明
@@ -21,7 +23,16 @@ public class EasyQueryProperties {
     private NameConversionEnum nameConversion;
     private SqlExecuteStrategyEnum insertStrategy=SqlExecuteStrategyEnum.DEFAULT;
     private SqlExecuteStrategyEnum updateStrategy=SqlExecuteStrategyEnum.DEFAULT;
-
+    /**
+     * 仅分片时有效
+     * 最大查询限制链接数默认cpu核心数当小于4取4
+     */
+    private int maxQueryConnectionsLimit=Math.max(Runtime.getRuntime().availableProcessors(), 4);
+    /**
+     * 仅分片时有效默认0如果需要建议大于 maxQueryConnectionsLimit * 分库数目
+     * 执行线程数 如果为0那么采用无界线程池{@link Executors#newCachedThreadPool},如果是大于0采用固定线程池{@link Executors#newFixedThreadPool}
+     */
+    private int executorSize=0;
     private String logClass="com.easy.query.sql.starter.logging.Slf4jImpl";
 
     public Boolean getEnable() {
@@ -82,6 +93,23 @@ public class EasyQueryProperties {
     public void setUpdateStrategy(SqlExecuteStrategyEnum updateStrategy) {
         this.updateStrategy = updateStrategy;
     }
+
+    public int getMaxQueryConnectionsLimit() {
+        return maxQueryConnectionsLimit;
+    }
+
+    public void setMaxQueryConnectionsLimit(int maxQueryConnectionsLimit) {
+        this.maxQueryConnectionsLimit = maxQueryConnectionsLimit;
+    }
+
+    public int getExecutorSize() {
+        return executorSize;
+    }
+
+    public void setExecutorSize(int executorSize) {
+        this.executorSize = executorSize;
+    }
+
 
     public EasyQueryProperties() {
     }

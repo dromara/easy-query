@@ -11,6 +11,9 @@ public class EasyShardingOption {
     private final int executorSize;
 
     public  EasyShardingOption(int maxQueryConnectionsLimit,int executorSize){
+        if(executorSize<0){
+            throw new IllegalArgumentException("executor size less than zero");
+        }
         if(executorSize>0){
             if(maxQueryConnectionsLimit>executorSize){
                 throw new IllegalArgumentException("maxQueryConnectionsLimit:"+maxQueryConnectionsLimit+" less than executorSize:"+executorSize);

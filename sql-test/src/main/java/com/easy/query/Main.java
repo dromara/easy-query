@@ -37,6 +37,22 @@ public class Main {
 
     public static void main(String[] args) throws SQLException {
 
+        List<String> list = new ArrayList<>(); // 假设列表为字符串类型的示例
+
+// 添加列表元素
+        list.add("元素1");
+        list.add("元素2");
+        list.add("元素3");
+        list.add("元素4");
+
+// 获取数据集（排除第一个元素）
+        List<String> dataSet = new ArrayList<>(list.subList(1, list.size()));
+
+// 打印数据集
+        for (String data : dataSet) {
+            System.out.println(data);
+        }
+
 //        int[] ints = {1, 2, 3, 4, 5, 6, 7, 8, 9, 0};
 //        HashSet<String> strings = new HashSet<>(Arrays.asList("id","title","createTime","isTop","top"));
 //        BlogEntity xaa=   new BlogEntity();
