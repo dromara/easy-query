@@ -9,6 +9,8 @@ package com.easy.query.core.enums;
 public enum SqlExecuteStrategyEnum {
     /**
      * 默认策略全部更新
+     * INSERT:{@link SqlExecuteStrategyEnum#ONLY_NOT_NULL_COLUMNS}
+     * UPDATE:{@link SqlExecuteStrategyEnum#ALL_COLUMNS}
      */
     DEFAULT,
     /**
@@ -16,7 +18,7 @@ public enum SqlExecuteStrategyEnum {
      */
     ALL_COLUMNS,
     /**
-     * 插入/更新非null的列
+     * 插入/更新非null的列 insert默认
      */
     ONLY_NOT_NULL_COLUMNS,
     /**

@@ -111,7 +111,7 @@ public class EasyQueryStarterAutoConfiguration {
     public EasyQuery easyQuery(DataSource dataSource, Dialect dialect, NameConversion nameConversion, Map<String, EasyInterceptor> easyInterceptorMap, Map<String, EasyLogicDeleteStrategy> easyLogicDeleteStrategyMap, Map<String, EasyShardingInitializer> easyShardingInitializerMap, Map<String, EasyEncryptionStrategy> easyEncryptionStrategyMap) {
         EasyQuery easyQuery = EasyQueryBootstrapper.defaultBuilderConfiguration()
                 .setDataSource(dataSource)
-                .replaceService(EasyQueryOption.class,EasyQueryOption.defaultEasyQueryOption(easyQueryProperties.getDeleteThrow()))
+                .replaceService(EasyQueryOption.class,new EasyQueryOption(easyQueryProperties.getDeleteThrow(),easyQueryProperties.getInsertStrategy(),easyQueryProperties.getUpdateStrategy()))
                 .replaceService(Dialect.class,dialect)
                 .replaceService(NameConversion.class,nameConversion)
                 .replaceServiceFactory(EasyQueryDataSource.class, sp->new DefaultEasyQueryDataSource("ds0",sp.getService(DataSource.class)))

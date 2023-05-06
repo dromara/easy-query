@@ -1,6 +1,7 @@
 package com.easy.query.sql.starter.config;
 
 
+import com.easy.query.core.enums.SqlExecuteStrategyEnum;
 import com.easy.query.sql.starter.option.DialectEnum;
 import com.easy.query.sql.starter.option.NameConversionEnum;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -18,6 +19,8 @@ public class EasyQueryProperties {
     private Boolean deleteThrow =true;
     private DialectEnum dialect;
     private NameConversionEnum nameConversion;
+    private SqlExecuteStrategyEnum insertStrategy=SqlExecuteStrategyEnum.DEFAULT;
+    private SqlExecuteStrategyEnum updateStrategy=SqlExecuteStrategyEnum.DEFAULT;
 
     private String logClass="com.easy.query.sql.starter.logging.Slf4jImpl";
 
@@ -62,6 +65,22 @@ public class EasyQueryProperties {
 
     public void setNameConversion(NameConversionEnum nameConversion) {
         this.nameConversion = nameConversion;
+    }
+
+    public SqlExecuteStrategyEnum getInsertStrategy() {
+        return insertStrategy;
+    }
+
+    public void setInsertStrategy(SqlExecuteStrategyEnum insertStrategy) {
+        this.insertStrategy = insertStrategy;
+    }
+
+    public SqlExecuteStrategyEnum getUpdateStrategy() {
+        return updateStrategy;
+    }
+
+    public void setUpdateStrategy(SqlExecuteStrategyEnum updateStrategy) {
+        this.updateStrategy = updateStrategy;
     }
 
     public EasyQueryProperties() {

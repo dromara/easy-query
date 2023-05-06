@@ -1,9 +1,12 @@
 package com.easy.query.core.inject;
 
-import com.easy.query.core.exception.EasyQueryInjectBeanCurrentlyInCreationException;
+import com.easy.query.core.exception.EasyQueryInjectCurrentlyInCreationException;
 import com.easy.query.core.util.ClassUtil;
 
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.function.Function;
 
 /**
@@ -20,10 +23,8 @@ public class ServiceDescriptor {
     /**
      * 使用ThreadLocal主要是考虑到多线程getService创建服务所以要单独对当前线程进行检查
      */
-    private static final ThreadLocal<Boolean> THREAD_VERSION=new ThreadLocal<>();
-
+    private final Map<Long,Object> THREAD_VERSION= new ConcurrentHashMap<>();
     public ServiceDescriptor(Class<?> serviceType, Class<?> implementationType) {
-
         if(serviceType==null){
             throw new IllegalArgumentException(ClassUtil.getSimpleName(serviceType));
         }
@@ -82,12 +83,10 @@ public class ServiceDescriptor {
      * 对当前线程下进行循环依赖检查
      */
     public void checkBeanCurrently(){
-        Boolean created = THREAD_VERSION.get();
-        if(created==null){
-            created=true;
-            THREAD_VERSION.set(created);
-        }else{
-            throw new EasyQueryInjectBeanCurrentlyInCreationException("bean currently creation:"+ClassUtil.getSimpleName(serviceType));
+        long currentThreadId = Thread.currentThread().getId();
+        Object o = THREAD_VERSION.putIfAbsent(currentThreadId, currentThreadId);
+        if(o!=null){
+            throw new EasyQueryInjectCurrentlyInCreationException("bean currently creation:"+ClassUtil.getSimpleName(serviceType));
         }
     }
 
@@ -95,6 +94,7 @@ public class ServiceDescriptor {
      * 重置检查点
      */
     public void resetBeanCurrently(){
-        THREAD_VERSION.remove();
+        long currentThreadId = Thread.currentThread().getId();
+        THREAD_VERSION.remove(currentThreadId);
     }
 }

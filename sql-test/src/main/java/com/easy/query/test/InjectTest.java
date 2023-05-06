@@ -1,6 +1,6 @@
 package com.easy.query.test;
 
-import com.easy.query.core.exception.EasyQueryInjectBeanCurrentlyInCreationException;
+import com.easy.query.core.exception.EasyQueryInjectCurrentlyInCreationException;
 import com.easy.query.core.inject.ServiceCollection;
 import com.easy.query.core.inject.ServiceProvider;
 import com.easy.query.core.inject.impl.ServiceCollectionImpl;
@@ -60,7 +60,7 @@ public class InjectTest {
         try{
             BeanCurrent1 service = serviceProvider.getService(BeanCurrent1.class);
         }catch (Exception ex){
-            Assert.assertTrue(ex instanceof EasyQueryInjectBeanCurrentlyInCreationException);
+            Assert.assertTrue(ex instanceof EasyQueryInjectCurrentlyInCreationException);
         }
     }
 }
