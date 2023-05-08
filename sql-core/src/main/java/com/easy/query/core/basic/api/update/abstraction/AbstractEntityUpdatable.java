@@ -6,6 +6,7 @@ import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
 import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
 import com.easy.query.core.basic.plugin.interceptor.EasyInterceptorEntry;
 import com.easy.query.core.configuration.EasyQueryConfiguration;
+import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.enums.SqlExecuteStrategyEnum;
 import com.easy.query.core.exception.EasyQueryException;
@@ -56,7 +57,7 @@ public abstract class AbstractEntityUpdatable<T> extends AbstractSqlExecuteRows<
         if (!entities.isEmpty()) {
             updateBefore();
             EntityExpressionExecutor entityExpressionExecutor = entityUpdateExpressionBuilder.getRuntimeContext().getEntityExpressionExecutor();
-            return entityExpressionExecutor.executeRows(ExecutorContext.create(entityUpdateExpressionBuilder.getRuntimeContext(),true), entityUpdateExpressionBuilder,entities);
+            return entityExpressionExecutor.executeRows(ExecutorContext.create(entityUpdateExpressionBuilder.getRuntimeContext(),true, ExecuteMethodEnum.UPDATE), entityUpdateExpressionBuilder,entities);
         }
         return 0;
     }

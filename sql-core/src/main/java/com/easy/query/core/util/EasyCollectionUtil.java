@@ -60,7 +60,7 @@ public class EasyCollectionUtil {
         return partitions;
     }
 
-    public static <TSource> int sum(List<TSource> arrays, Function<TSource, Integer> selector) {
+    public static <TSource> int sum(Collection<TSource> arrays, Function<TSource, Integer> selector) {
         int length = arrays.size();
         if (length > 0) {
             int sum = 0;
@@ -71,7 +71,7 @@ public class EasyCollectionUtil {
         }
         return 0;
     }
-    public static <TSource> long sum(List<Long> arrays) {
+    public static <TSource> long sum(Collection<Long> arrays) {
         int length = arrays.size();
         if (length > 0) {
             long sum = 0;

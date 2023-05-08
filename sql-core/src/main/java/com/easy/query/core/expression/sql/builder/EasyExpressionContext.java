@@ -3,11 +3,13 @@ package com.easy.query.core.expression.sql.builder;
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.plugin.interceptor.EasyInterceptorEntry;
 import com.easy.query.core.enums.EasyBehaviorEnum;
+import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.SqlExecuteStrategyEnum;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -27,6 +29,7 @@ public class EasyExpressionContext implements ExpressionContext {
     private int aliasSeq = -1;
     private boolean deleteThrowException;
     private Object version;
+    private ExecuteMethodEnum executeMethod=ExecuteMethodEnum.UNKNOWN;
     private SqlExecuteStrategyEnum sqlStrategy = SqlExecuteStrategyEnum.DEFAULT;
 
     public EasyExpressionContext(EasyQueryRuntimeContext runtimeContext, String alias) {
@@ -152,6 +155,22 @@ public class EasyExpressionContext implements ExpressionContext {
                 return useInterceptors.contains(o.getName())&&!noInterceptors.contains(o.getName());
             }
         });
+    }
+
+    @Override
+    public void executeMethod(ExecuteMethodEnum executeMethod,boolean ifUnknown) {
+        if(ifUnknown){
+            if(Objects.equals(ExecuteMethodEnum.UNKNOWN,this.executeMethod)){
+                this.executeMethod=executeMethod;
+            }
+        }else{
+            this.executeMethod=executeMethod;
+        }
+    }
+
+    @Override
+    public ExecuteMethodEnum getExecuteMethod() {
+        return this.executeMethod;
     }
     //    @Override
 //    public String getSqlColumnSegment(SqlEntityTableExpressionSegment table, String propertyName) {

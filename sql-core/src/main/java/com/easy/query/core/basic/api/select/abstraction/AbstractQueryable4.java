@@ -127,12 +127,12 @@ public abstract class AbstractQueryable4<T1, T2, T3,T4> extends AbstractQueryabl
     @Override
     public <TR> Queryable<TR> select(Class<TR> resultClass, SqlExpression4<SqlColumnAsSelector<T1, TR>, SqlColumnAsSelector<T2, TR>, SqlColumnAsSelector<T3, TR>, SqlColumnAsSelector<T4, TR>> selectExpression) {
 
-        SqlColumnAsSelector<T1, TR> sqlColumnAsSelector1 = getSqlBuilderProvider4().getSqlColumnAsSelector1(sqlEntityExpression.getProjects(),resultClass);
-        SqlColumnAsSelector<T2, TR> sqlColumnAsSelector2 = getSqlBuilderProvider4().getSqlColumnAsSelector2(sqlEntityExpression.getProjects(),resultClass);
-        SqlColumnAsSelector<T3, TR> sqlColumnAsSelector3 = getSqlBuilderProvider4().getSqlColumnAsSelector3(sqlEntityExpression.getProjects(),resultClass);
-        SqlColumnAsSelector<T4, TR> sqlColumnAsSelector4 = getSqlBuilderProvider4().getSqlColumnAsSelector4(sqlEntityExpression.getProjects(),resultClass);
+        SqlColumnAsSelector<T1, TR> sqlColumnAsSelector1 = getSqlBuilderProvider4().getSqlColumnAsSelector1(entityQueryExpressionBuilder.getProjects(),resultClass);
+        SqlColumnAsSelector<T2, TR> sqlColumnAsSelector2 = getSqlBuilderProvider4().getSqlColumnAsSelector2(entityQueryExpressionBuilder.getProjects(),resultClass);
+        SqlColumnAsSelector<T3, TR> sqlColumnAsSelector3 = getSqlBuilderProvider4().getSqlColumnAsSelector3(entityQueryExpressionBuilder.getProjects(),resultClass);
+        SqlColumnAsSelector<T4, TR> sqlColumnAsSelector4 = getSqlBuilderProvider4().getSqlColumnAsSelector4(entityQueryExpressionBuilder.getProjects(),resultClass);
         selectExpression.apply(sqlColumnAsSelector1,sqlColumnAsSelector2,sqlColumnAsSelector3,sqlColumnAsSelector4);
-        return sqlEntityExpression.getRuntimeContext().getSqlApiFactory().createQueryable(resultClass, sqlEntityExpression);
+        return entityQueryExpressionBuilder.getRuntimeContext().getSqlApiFactory().createQueryable(resultClass, entityQueryExpressionBuilder);
     }
     private <TMember> List<TMember> selectAggregateList(SqlExpression4<SqlColumnResultSelector<T1, TMember>, SqlColumnResultSelector<T2, TMember>, SqlColumnResultSelector<T3, TMember>, SqlColumnResultSelector<T4, TMember>> columnSelectorExpression, EasyFunc easyFunc) {
 

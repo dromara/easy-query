@@ -16,7 +16,7 @@ public abstract class AbstractQueryable1<T> extends AbstractQueryable<T> {
         super(tClass, sqlEntityExpression);
 //        EntityMetadata entityMetadata = this.sqlEntityExpression.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(t1Class);
 
-        sqlPredicateProvider = new Select1SqlProvider<>(this.sqlEntityExpression);
+        sqlPredicateProvider = new Select1SqlProvider<>(this.entityQueryExpressionBuilder);
     }
 
     @Override

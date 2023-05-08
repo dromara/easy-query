@@ -5,6 +5,8 @@ import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.executor.internal.result.impl.AffectedRowsExecuteResult;
 import com.easy.query.core.basic.jdbc.executor.internal.merger.ShardingMerger;
 import com.easy.query.core.basic.jdbc.executor.internal.unit.abstraction.AbstractExecutor;
+import com.easy.query.core.basic.jdbc.executor.internal.unit.impl.breaker.CircuitBreaker;
+import com.easy.query.core.basic.jdbc.executor.internal.unit.impl.breaker.NoCircuitBreaker;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.sharding.merge.context.StreamMergeContext;
 import com.easy.query.core.basic.jdbc.executor.internal.common.CommandExecuteUnit;
@@ -34,6 +36,11 @@ public class EasyExecuteBatchExecutor extends AbstractExecutor<AffectedRowsExecu
         List<SQLParameter> parameters = sqlUnit.getParameters();
         List<Object> entities = sqlUnit.getEntities();
         return JdbcExecutorUtil.executeRows(executorContext,easyConnection,sql,entities,parameters);
+    }
+
+    @Override
+    protected CircuitBreaker createCircuitBreak() {
+        return NoCircuitBreaker.getInstance();
     }
 
     @Override

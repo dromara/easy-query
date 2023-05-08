@@ -4,6 +4,7 @@ import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
 import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
 import com.easy.query.core.basic.plugin.interceptor.EasyInterceptorEntry;
 import com.easy.query.core.configuration.EasyQueryConfiguration;
+import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.SqlExecuteStrategyEnum;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.enums.MultiTableTypeEnum;
@@ -77,7 +78,7 @@ public abstract class AbstractInsertable<T> implements Insertable<T> {
         if (!entities.isEmpty()) {
             insertBefore();
             EntityExpressionExecutor entityExpressionExecutor = entityInsertExpression.getRuntimeContext().getEntityExpressionExecutor();
-            return entityExpressionExecutor.insert(ExecutorContext.create(entityInsertExpression.getRuntimeContext(),true),entities,entityInsertExpression,fillAutoIncrement);
+            return entityExpressionExecutor.insert(ExecutorContext.create(entityInsertExpression.getRuntimeContext(),true, ExecuteMethodEnum.INSERT),entities,entityInsertExpression,fillAutoIncrement);
         }
 
         return 0;

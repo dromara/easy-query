@@ -1,6 +1,7 @@
 package com.easy.query.core.basic.jdbc.executor.internal.unit.abstraction;
 
 import com.easy.query.core.basic.jdbc.executor.internal.unit.Executor;
+import com.easy.query.core.basic.jdbc.executor.internal.unit.impl.breaker.CircuitBreaker;
 import com.easy.query.core.basic.thread.EasyShardingExecutorService;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.exception.EasyQueryTimeoutException;
@@ -46,21 +47,24 @@ public abstract class AbstractExecutor<TResult> implements Executor<TResult> {
     private List<TResult> execute0(DataSourceSqlExecutorUnit dataSourceSqlExecutorUnit) throws SQLException {
         List<SqlExecutorGroup<CommandExecuteUnit>> executorGroups = dataSourceSqlExecutorUnit.getSqlExecutorGroups();
         int count = EasyCollectionUtil.sum(executorGroups, o -> o.getGroups().size());
+        CircuitBreaker circuitBreak = createCircuitBreak();
         List<TResult> result = new ArrayList<>(count);
-//        int executorGroupsSize = executorGroups.size();
+        int executorGroupsSize = executorGroups.size();
         //同数据库下多组数据间采用串行
         for (SqlExecutorGroup<CommandExecuteUnit> executorGroup : executorGroups) {
-//            executorGroupsSize--;
+            executorGroupsSize--;
             Collection<TResult> results = groupExecute(executorGroup.getGroups());
             if(Objects.equals(ConnectionModeEnum.CONNECTION_STRICTLY,dataSourceSqlExecutorUnit.getConnectionMode())){
                 getShardingMerger().inMemoryMerge(streamMergeContext,result,results);
             }else{
                 result.addAll(results);
             }
-//            boolean hasNextLoop=executorGroupsSize>0;
-//            if(hasNextLoop){
-//                //todo 中断
-//            }
+            boolean hasNextLoop=executorGroupsSize>0;
+            if(hasNextLoop){
+                if(circuitBreak.terminated(results)){
+                    break;
+                }
+            }
         }
         return result;
     }
@@ -95,4 +99,5 @@ public abstract class AbstractExecutor<TResult> implements Executor<TResult> {
         }
     }
     protected abstract TResult executeCommandUnit(CommandExecuteUnit commandExecuteUnit);
+    protected abstract CircuitBreaker createCircuitBreak();
 }

@@ -5,6 +5,7 @@ import com.easy.query.core.basic.api.internal.AbstractSqlExecuteRows;
 import com.easy.query.core.basic.api.delete.EntityDeletable;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
 import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
+import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.sql.builder.impl.TableExpressionBuilder;
@@ -50,7 +51,7 @@ public abstract class AbstractEntityDeletable<T> extends AbstractSqlExecuteRows<
         if (!entities.isEmpty()) {
             EasyQueryRuntimeContext runtimeContext = entityDeleteExpressionBuilder.getRuntimeContext();
             EntityExpressionExecutor entityExpressionExecutor = runtimeContext.getEntityExpressionExecutor();
-            return entityExpressionExecutor.executeRows(ExecutorContext.create(runtimeContext, true), entityDeleteExpressionBuilder, entities);
+            return entityExpressionExecutor.executeRows(ExecutorContext.create(runtimeContext, true, ExecuteMethodEnum.DELETE), entityDeleteExpressionBuilder, entities);
         }
         return 0;
     }

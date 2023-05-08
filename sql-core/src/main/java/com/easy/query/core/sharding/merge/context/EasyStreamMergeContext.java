@@ -5,6 +5,7 @@ import com.easy.query.core.basic.jdbc.con.ConnectionStrategyEnum;
 import com.easy.query.core.basic.jdbc.con.EasyConnection;
 import com.easy.query.core.basic.jdbc.con.EasyConnectionManager;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
+import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.executor.parser.ExecutionContext;
 import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
@@ -168,6 +169,11 @@ public class EasyStreamMergeContext implements StreamMergeContext {
     @Override
     public SqlBuilderSegment getGroupColumns() {
         throw new NotImplementedException();
+    }
+
+    @Override
+    public ExecuteMethodEnum getExecuteMethod() {
+        return executorContext.getExecuteMethod();
     }
 
     @Override

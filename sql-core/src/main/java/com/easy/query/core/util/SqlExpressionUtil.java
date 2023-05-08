@@ -31,7 +31,7 @@ public class SqlExpressionUtil {
 
     public static <TSource> Queryable<TSource> cloneAndSelectAllQueryable(Queryable<TSource> queryable) {
         EntityQueryExpressionBuilder queryableSqlEntityExpression = queryable.getSqlEntityExpressionBuilder();
-        if (SqlExpressionUtil.shouldCloneSqlEntityQueryExpression(queryableSqlEntityExpression)) {
+        if (SqlExpressionUtil.shouldCloneSqlEntityQueryExpressionBuilder(queryableSqlEntityExpression)) {
             return queryable.cloneQueryable().select(SqlColumnSelector::columnAll);
         }
         return queryable;
@@ -43,7 +43,7 @@ public class SqlExpressionUtil {
      * @param sqlEntityExpression
      * @return
      */
-    public static boolean shouldCloneSqlEntityQueryExpression(EntityQueryExpressionBuilder sqlEntityExpression) {
+    public static boolean shouldCloneSqlEntityQueryExpressionBuilder(EntityQueryExpressionBuilder sqlEntityExpression) {
 //        if(noSelectAndGroup(sqlEntityExpression)){
 //            boolean onlyOneAnonymousTable = sqlEntityExpression.getTables().size() == 1 && sqlEntityExpression.getTables().get(0) instanceof AnonymousEntityTableExpression;
 //            if(onlyOneAnonymousTable){

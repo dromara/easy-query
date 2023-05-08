@@ -1,6 +1,7 @@
 package com.easy.query.core.basic.jdbc.executor;
 
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
+import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.basic.jdbc.parameter.SQLLikeParameter;
@@ -20,25 +21,27 @@ public class ExecutorContext {
     private final EasyQueryRuntimeContext runtimeContext;
     private final EasyQueryConfiguration easyQueryConfiguration;
     private final boolean serialExecute;
+    private final ExecuteMethodEnum executeMethod;
     private final boolean tracking;
 
-    public ExecutorContext(EasyQueryRuntimeContext runtimeContext,boolean serialExecute) {
-        this(runtimeContext,serialExecute, false);
+    public ExecutorContext(EasyQueryRuntimeContext runtimeContext, boolean serialExecute, ExecuteMethodEnum executeMethod) {
+        this(runtimeContext,serialExecute,executeMethod, false);
     }
 
-    public ExecutorContext(EasyQueryRuntimeContext runtimeContext,boolean serialExecute, boolean tracking) {
+    public ExecutorContext(EasyQueryRuntimeContext runtimeContext,boolean serialExecute, ExecuteMethodEnum executeMethod, boolean tracking) {
         this.runtimeContext = runtimeContext;
         this.easyQueryConfiguration = runtimeContext.getEasyQueryConfiguration();
         this.serialExecute = serialExecute;
+        this.executeMethod = executeMethod;
         this.tracking = tracking;
     }
 
-    public static ExecutorContext create(EasyQueryRuntimeContext runtimeContext,boolean serialExecute) {
-        return new ExecutorContext(runtimeContext,serialExecute);
+    public static ExecutorContext create(EasyQueryRuntimeContext runtimeContext,boolean serialExecute, ExecuteMethodEnum executeMethod) {
+        return new ExecutorContext(runtimeContext,serialExecute,executeMethod);
     }
 
-    public static ExecutorContext create(EasyQueryRuntimeContext runtimeContext,boolean serialExecute, boolean tracking) {
-        return new ExecutorContext(runtimeContext,serialExecute, tracking);
+    public static ExecutorContext create(EasyQueryRuntimeContext runtimeContext,boolean serialExecute, ExecuteMethodEnum executeMethod, boolean tracking) {
+        return new ExecutorContext(runtimeContext,serialExecute,executeMethod, tracking);
     }
 
     public EasyQueryRuntimeContext getRuntimeContext() {
@@ -96,5 +99,9 @@ public class ExecutorContext {
     }
     public boolean isSerialExecute(){
         return serialExecute;
+    }
+
+    public ExecuteMethodEnum getExecuteMethod() {
+        return executeMethod;
     }
 }
