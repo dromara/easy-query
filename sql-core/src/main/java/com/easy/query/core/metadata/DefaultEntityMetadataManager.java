@@ -3,6 +3,9 @@ package com.easy.query.core.metadata;
 import com.easy.query.core.configuration.EasyQueryConfiguration;
 import com.easy.query.core.common.cache.Cache;
 import com.easy.query.core.common.cache.DefaultMemoryCache;
+import com.easy.query.core.inject.ServiceProvider;
+import com.easy.query.core.sharding.route.abstraction.DataSourceRouteManager;
+import com.easy.query.core.sharding.route.abstraction.TableRouteManager;
 
 /**
  * @FileName: DefaultMetadataManager.java
@@ -12,11 +15,11 @@ import com.easy.query.core.common.cache.DefaultMemoryCache;
  */
 public class DefaultEntityMetadataManager implements EntityMetadataManager {
     private final Cache<Class<?>,EntityMetadata> entityMetadataCache=new DefaultMemoryCache<>();
-    private final EasyQueryConfiguration jdqcConfiguration;
+    private final ServiceProvider serviceProvider;
 
-    public DefaultEntityMetadataManager(EasyQueryConfiguration jdqcConfiguration){
+    public DefaultEntityMetadataManager(ServiceProvider serviceProvider){
 
-        this.jdqcConfiguration = jdqcConfiguration;
+        this.serviceProvider = serviceProvider;
     }
 
     @Override
@@ -33,7 +36,7 @@ public class DefaultEntityMetadataManager implements EntityMetadataManager {
 //        }
         return entityMetadataCache.computeIfAbsent(entityClass,key->{
             EntityMetadata entityMetadata = new EntityMetadata(entityClass);
-            entityMetadata.init(jdqcConfiguration);
+            entityMetadata.init(serviceProvider);
             return entityMetadata;
         });
     }

@@ -3,6 +3,7 @@ package com.easy.query.core.sharding.merge.context;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.expression.executor.parser.EasyQueryPrepareParseResult;
 import com.easy.query.core.expression.executor.parser.ExecutionContext;
+import com.easy.query.core.expression.executor.parser.SequenceOrderPrepareParseResult;
 import com.easy.query.core.expression.segment.ColumnSegmentImpl;
 import com.easy.query.core.expression.segment.OrderColumnSegmentImpl;
 import com.easy.query.core.expression.segment.SqlSegment;
@@ -31,6 +32,7 @@ public class ShardingQueryEasyStreamMergeContext extends EntityStreamMergeContex
     protected final List<PropertyGroup> groups;
     protected final EasyQuerySqlExpression easyQuerySqlExpression;
     protected final boolean hasGroup;
+    protected final MergeSequenceOrder mergeSequenceOrder;
     protected long offset;
     protected long rows;
 
@@ -43,6 +45,13 @@ public class ShardingQueryEasyStreamMergeContext extends EntityStreamMergeContex
         this.rows = easyQuerySqlExpression.getRows();
         this.hasGroup=SqlSegmentUtil.isNotEmpty(easyQuerySqlExpression.getGroup());
         this.groups = getGroups(easyQuerySqlExpression);
+        SequenceOrderPrepareParseResult sequenceOrderPrepareParseResult = easyQueryPrepareParseResult.getSequenceOrderPrepareParseResult();
+        if(executionContext.isSequenceQuery()&&sequenceOrderPrepareParseResult!=null){
+           this.mergeSequenceOrder=new MergeSequenceOrder(sequenceOrderPrepareParseResult);
+        }
+        else{
+            this.mergeSequenceOrder=null;
+        }
     }
 
     private List<PropertyOrder> getOrders(EasyQuerySqlExpression easyQuerySqlExpression) {
@@ -132,5 +141,10 @@ public class ShardingQueryEasyStreamMergeContext extends EntityStreamMergeContex
     @Override
     public SqlBuilderSegment getGroupColumns() {
         return easyQuerySqlExpression.getGroup();
+    }
+
+    @Override
+    public MergeSequenceOrder getMergeSequenceOrder() {
+        return mergeSequenceOrder;
     }
 }

@@ -2,6 +2,7 @@ package com.easy.query.core.sharding.route.datasource.engine;
 
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.executor.parser.PrepareParseResult;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.sharding.EasyQueryDataSource;
@@ -22,30 +23,28 @@ import java.util.Set;
  */
 public class DefaultDataSourceRouteEngine implements DataSourceRouteEngine{
     private final EasyQueryDataSource easyDataSource;
-    private final EntityMetadataManager entityMetadataManager;
     private final DataSourceRouteManager dataSourceRouteManager;
 
-    public DefaultDataSourceRouteEngine(EasyQueryDataSource easyDataSource, EntityMetadataManager entityMetadataManager, DataSourceRouteManager dataSourceRouteManager){
+    public DefaultDataSourceRouteEngine(EasyQueryDataSource easyDataSource,  DataSourceRouteManager dataSourceRouteManager){
 
         this.easyDataSource = easyDataSource;
-        this.entityMetadataManager = entityMetadataManager;
         this.dataSourceRouteManager = dataSourceRouteManager;
     }
     @Override
     public DataSourceRouteResult route(PrepareParseResult prepareParseResult) {
         Map<Class<?>, Set<String>> dataSourceMaps = new HashMap<>();
-        for (Class<?> shardingEntity : prepareParseResult.getShardingEntities()) {
-            EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(shardingEntity);
+        for (TableAvailable shardingTable : prepareParseResult.getShardingTables()) {
+            EntityMetadata entityMetadata = shardingTable.getEntityMetadata();
             if(!entityMetadata.isMultiDataSourceMapping()){
                 HashSet<String> defDataSource = new HashSet<String>() {{
                     add(easyDataSource.getDefaultDataSourceName());
                 }};
-                dataSourceMaps.put(shardingEntity,defDataSource);
+                dataSourceMaps.put(shardingTable.getEntityClass(),defDataSource);
             }
-            Collection<String> dataSources = dataSourceRouteManager.routeTo(shardingEntity,prepareParseResult);
-            Set<String> entityDataSources = dataSourceMaps.get(shardingEntity);
+            Collection<String> dataSources = dataSourceRouteManager.routeTo(shardingTable,prepareParseResult);
+            Set<String> entityDataSources = dataSourceMaps.get(shardingTable.getEntityClass());
             if(entityDataSources==null){
-                dataSourceMaps.put(shardingEntity,new HashSet<>(dataSources));
+                dataSourceMaps.put(shardingTable.getEntityClass(),new HashSet<>(dataSources));
             }else {
                 entityDataSources.addAll(dataSources);
             }

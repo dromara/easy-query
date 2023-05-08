@@ -16,5 +16,6 @@ public interface TableRouteUnit {
      String getActualTableName();
 
      Class<?> getEntityClass();
+     int getTableIndex();
 
 }

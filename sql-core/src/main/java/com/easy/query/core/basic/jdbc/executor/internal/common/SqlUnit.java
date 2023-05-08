@@ -1,6 +1,7 @@
 package com.easy.query.core.basic.jdbc.executor.internal.common;
 
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 
 import java.util.List;
 

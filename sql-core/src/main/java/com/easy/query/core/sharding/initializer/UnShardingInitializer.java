@@ -13,8 +13,9 @@ import java.util.Map;
  * @author xuejiaming
  */
 public class UnShardingInitializer implements EasyShardingInitializer {
+
     @Override
-    public Map<String, Collection<String>> getInitializeTables(EntityMetadata entityMetadata) {
-        return Collections.emptyMap();
+    public void configure(ShardingInitializerBuilder<?> shardingInitializerBuilder) {
+
     }
 }

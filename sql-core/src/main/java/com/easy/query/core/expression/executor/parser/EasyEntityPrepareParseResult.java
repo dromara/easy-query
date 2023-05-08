@@ -1,5 +1,6 @@
 package com.easy.query.core.expression.executor.parser;
 
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 
 import java.util.List;
@@ -12,13 +13,13 @@ import java.util.Set;
  * @author xuejiaming
  */
 public class EasyEntityPrepareParseResult implements EntityPrepareParseResult{
-    private final Set<Class<?>> shardingEntities;
+    private final Set<TableAvailable> shardingTables;
     private final EntityExpressionBuilder entityExpressionBuilder;
     private final List<Object> entities;
 
-    public EasyEntityPrepareParseResult(Set<Class<?>> shardingEntities, EntityExpressionBuilder entityExpressionBuilder, List<Object> entities){
+    public EasyEntityPrepareParseResult(Set<TableAvailable> shardingTables, EntityExpressionBuilder entityExpressionBuilder, List<Object> entities){
 
-        this.shardingEntities = shardingEntities;
+        this.shardingTables = shardingTables;
         this.entityExpressionBuilder = entityExpressionBuilder;
         this.entities = entities;
     }
@@ -28,8 +29,8 @@ public class EasyEntityPrepareParseResult implements EntityPrepareParseResult{
     }
 
     @Override
-    public Set<Class<?>> getShardingEntities() {
-        return shardingEntities;
+    public Set<TableAvailable> getShardingTables() {
+        return shardingTables;
     }
 
     @Override

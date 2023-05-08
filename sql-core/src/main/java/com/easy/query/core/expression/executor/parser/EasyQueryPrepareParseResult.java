@@ -1,8 +1,14 @@
 package com.easy.query.core.expression.executor.parser;
 
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.segment.OrderByColumnSegment;
+import com.easy.query.core.expression.segment.SqlSegment;
+import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.expression.EasyQuerySqlExpression;
+import com.easy.query.core.metadata.EntityShardingOrder;
 import com.easy.query.core.util.EasyCollectionUtil;
+import com.easy.query.core.util.SqlSegmentUtil;
 
 import java.util.Set;
 
@@ -13,27 +19,56 @@ import java.util.Set;
  * @author xuejiaming
  */
 public class EasyQueryPrepareParseResult implements QueryPrepareParseResult {
-    private final Set<Class<?>> shardingEntities;
+    private final Set<TableAvailable> shardingTables;
     private final EntityQueryExpressionBuilder entityQueryExpressionBuilder;
     private final EasyQuerySqlExpression easyQuerySqlExpression;
     private final boolean sharding;
     private boolean startsWithGroupByInOrderBy;
     private final long offset;
     private final long rows;
+    private final SequenceOrderPrepareParseResult sequenceOrderPrepareParseResult;
 
-    public EasyQueryPrepareParseResult(Set<Class<?>> shardingEntities, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
+    public EasyQueryPrepareParseResult(Set<TableAvailable> shardingEntities, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
 
-        this.shardingEntities = shardingEntities;
+        this.shardingTables = shardingEntities;
         this.entityQueryExpressionBuilder = entityQueryExpressionBuilder;
         this.easyQuerySqlExpression = entityQueryExpressionBuilder.toExpression();
         this.sharding = EasyCollectionUtil.isNotEmpty(shardingEntities);
         this.offset = easyQuerySqlExpression.getOffset();
         this.rows = easyQuerySqlExpression.getRows();
+        this.sequenceOrderPrepareParseResult=initSequenceOrderPrepareParseResult();
+    }
+    private SequenceOrderPrepareParseResult initSequenceOrderPrepareParseResult(){
+        //存在分片对象的情况下
+        if(EasyCollectionUtil.isNotEmpty(shardingTables)){
+            SqlBuilderSegment order = easyQuerySqlExpression.getOrder();
+            if(SqlSegmentUtil.isNotEmpty(order)){
+                SqlSegment firstOrder = EasyCollectionUtil.first(order.getSqlSegments());
+                OrderByColumnSegment firstOrderColumn = (OrderByColumnSegment) firstOrder;
+                TableAvailable table = firstOrderColumn.getTable();
+                EntityShardingOrder entityShardingOrder = table.getEntityMetadata().getEntityShardingOrder();
+                if(entityShardingOrder!=null){
+                    //存在配置
+                    Boolean asc = entityShardingOrder.getSequenceProperties().get(firstOrderColumn.getPropertyName());
+                    if(asc!=null){
+                        boolean reverse = firstOrderColumn.isAsc() != asc;
+                        return new SequenceOrderPrepareParseResult(table,entityShardingOrder.getTableComparator(),reverse,entityShardingOrder.getConnectionsLimit());
+                    }
+                }
+            }else{
+                TableAvailable table = EasyCollectionUtil.first(shardingTables);
+                EntityShardingOrder entityShardingOrder = table.getEntityMetadata().getEntityShardingOrder();
+                if(entityShardingOrder!=null){
+                    return new SequenceOrderPrepareParseResult(table,entityShardingOrder.getTableComparator(),entityShardingOrder.isReverse(),entityShardingOrder.getConnectionsLimit());
+                }
+            }
+        }
+        return null;
     }
 
     @Override
-    public Set<Class<?>> getShardingEntities() {
-        return shardingEntities;
+    public Set<TableAvailable> getShardingTables() {
+        return shardingTables;
     }
 
     @Override
@@ -70,5 +105,10 @@ public class EasyQueryPrepareParseResult implements QueryPrepareParseResult {
     @Override
     public EasyQuerySqlExpression getEasyEntityPredicateSqlExpression() {
         return easyQuerySqlExpression;
+    }
+
+    @Override
+    public SequenceOrderPrepareParseResult getSequenceOrderPrepareParseResult() {
+        return sequenceOrderPrepareParseResult;
     }
 }

@@ -5,6 +5,9 @@ import com.easy.query.core.basic.enums.LogicDeleteStrategyEnum;
 import com.easy.query.core.basic.plugin.interceptor.EasyInterceptorEntry;
 import com.easy.query.core.basic.plugin.logicdel.LogicDeleteBuilder;
 import com.easy.query.core.basic.plugin.version.EasyVersionStrategy;
+import com.easy.query.core.inject.ServiceProvider;
+import com.easy.query.core.sharding.initializer.ShardingInitOption;
+import com.easy.query.core.sharding.initializer.ShardingInitializerBuilder;
 import com.easy.query.core.sql.nameconversion.NameConversion;
 import com.easy.query.core.configuration.EasyQueryConfiguration;
 import com.easy.query.core.basic.plugin.encryption.EasyEncryptionStrategy;
@@ -52,6 +55,7 @@ public class EntityMetadata {
     private final Set<String> shardingDataSourcePropertyNames = new LinkedHashSet<>();
     private String shardingTablePropertyName;
     private final Set<String> shardingTablePropertyNames = new LinkedHashSet<>();
+    private EntityShardingOrder entityShardingOrder;
 
     /**
      * 查询过滤器
@@ -64,20 +68,21 @@ public class EntityMetadata {
     private final List<String/*column name*/> incrementColumns = new ArrayList<>(4);
     private final LinkedCaseInsensitiveMap<String> column2PropertyMap = new LinkedCaseInsensitiveMap<>(Locale.ENGLISH);
 
-    private final Set<String> tableNames=new LinkedHashSet<>();
-    private final Set<String> dataSources=new LinkedHashSet<>();
+    private final Set<String> tableNames = new LinkedHashSet<>();
+    private final Set<String> dataSources = new LinkedHashSet<>();
 
     public EntityMetadata(Class<?> entityClass) {
         this.entityClass = entityClass;
     }
 
-    public void init(EasyQueryConfiguration configuration) {
+    public void init(ServiceProvider serviceProvider) {
 
+        EasyQueryConfiguration configuration = serviceProvider.getService(EasyQueryConfiguration.class);
         NameConversion nameConversion = configuration.getNameConversion();
 
         Table table = ClassUtil.getAnnotation(entityClass, Table.class);
-        if(table != null){
-            this.tableName =nameConversion.convert(StringUtil.defaultIfBank(table.value(), ClassUtil.getSimpleName(entityClass)));
+        if (table != null) {
+            this.tableName = nameConversion.convert(StringUtil.defaultIfBank(table.value(), ClassUtil.getSimpleName(entityClass)));
         }
         HashSet<String> ignoreProperties = table != null ? new HashSet<>(Arrays.asList(table.ignoreProperties())) : new HashSet<>();
 
@@ -205,9 +210,9 @@ public class EntityMetadata {
         //初始化烂机器
         entityGlobalInterceptorConfigurationInit(configuration);
 
-        if(table != null&&isSharding()){
+        if (table != null && isSharding()) {
             Class<? extends EasyShardingInitializer> initializer = table.shardingInitializer();
-            initSharding(configuration,initializer);
+            initSharding(configuration, initializer);
         }
     }
 
@@ -220,25 +225,34 @@ public class EntityMetadata {
         return null;
     }
 
-    private void initSharding(EasyQueryConfiguration configuration,Class<? extends EasyShardingInitializer> initializer){
+    private void initSharding(EasyQueryConfiguration configuration, Class<? extends EasyShardingInitializer> initializer) {
 
         EasyShardingInitializer easyShardingInitializer = configuration.getEasyShardingInitializerOrNull(initializer);
-        if(easyShardingInitializer==null){
-            throw new EasyQueryInvalidOperationException("not found sharding initializer:"+ClassUtil.getSimpleName(initializer));
+        if (easyShardingInitializer == null) {
+            throw new EasyQueryInvalidOperationException("not found sharding initializer:" + ClassUtil.getSimpleName(initializer));
         }
-        Map<String, Collection<String>> initializeTables = easyShardingInitializer.getInitializeTables(this);
-        if(initializeTables!=null&&!initializeTables.isEmpty()){
+        ShardingInitializerBuilder<Object> shardingInitializerBuilder = new ShardingInitializerBuilder<Object>(this);
+        easyShardingInitializer.configure(shardingInitializerBuilder);
+        ShardingInitOption shardingInitOption = shardingInitializerBuilder.build();
+        Map<String, Collection<String>> initializeTables = shardingInitOption.getActualTableNames();
+        if (initializeTables != null && !initializeTables.isEmpty()) {
             Set<String> dataSources = initializeTables.keySet();
             for (String dataSource : dataSources) {
                 Collection<String> tableNames = initializeTables.get(dataSource);
-                if(EasyCollectionUtil.isNotEmpty(tableNames)){
+                if (EasyCollectionUtil.isNotEmpty(tableNames)) {
                     for (String name : tableNames) {
-                        addActualTableWithDataSource(dataSource,name);
+                        addActualTableWithDataSource(dataSource, name);
                     }
-                }else{
-                    addActualTableWithDataSource(dataSource,tableName);
+                } else {
+                    addActualTableWithDataSource(dataSource, tableName);
                 }
             }
+        }
+        //如果有配置
+        Comparator<String> defaultTableNameComparator = shardingInitOption.getDefaultTableNameComparator();
+        if (defaultTableNameComparator != null) {
+            Map<String, Boolean> sequenceProperties = shardingInitOption.getSequenceProperties();
+            this.entityShardingOrder = new EntityShardingOrder(defaultTableNameComparator, shardingInitOption.isReverse(), shardingInitOption.getConnectionsLimit(),sequenceProperties);
         }
     }
 
@@ -446,11 +460,12 @@ public class EntityMetadata {
     public Collection<String> getTableNames() {
         return Collections.unmodifiableCollection(tableNames);
     }
-    public void addActualTableWithDataSource(String dataSource,String actualTableName){
-        if(StringUtil.isBlank(dataSource)){
+
+    public void addActualTableWithDataSource(String dataSource, String actualTableName) {
+        if (StringUtil.isBlank(dataSource)) {
             throw new IllegalArgumentException("data source");
         }
-        if(StringUtil.isBlank(actualTableName)){
+        if (StringUtil.isBlank(actualTableName)) {
             throw new IllegalArgumentException("actual table name");
         }
         dataSources.add(dataSource);
@@ -468,5 +483,9 @@ public class EntityMetadata {
 
     public Set<String> getShardingTablePropertyNames() {
         return shardingTablePropertyNames;
+    }
+
+    public EntityShardingOrder getEntityShardingOrder() {
+        return entityShardingOrder;
     }
 }

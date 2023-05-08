@@ -16,13 +16,15 @@ public final class ShardingRouteResult {
     private final boolean isEmpty;
     private final boolean isCrossDataSource;
     private final boolean isCrossTable;
+    private final boolean sequenceQuery;
 
-    public ShardingRouteResult(List<RouteUnit> routeUnits,  boolean isCrossDataSource, boolean isCrossTable){
+    public ShardingRouteResult(List<RouteUnit> routeUnits,  boolean isCrossDataSource, boolean isCrossTable,boolean sequenceQuery){
 
         this.routeUnits = routeUnits;
         this.isEmpty = EasyCollectionUtil.isEmpty(routeUnits);
         this.isCrossDataSource = isCrossDataSource;
         this.isCrossTable = isCrossTable;
+        this.sequenceQuery = sequenceQuery;
     }
 
     public List<RouteUnit> getRouteUnits() {
@@ -39,6 +41,9 @@ public final class ShardingRouteResult {
 
     public boolean isCrossTable() {
         return isCrossTable;
+    }
+    public boolean isSequenceQuery(){
+        return sequenceQuery;
     }
 
 }

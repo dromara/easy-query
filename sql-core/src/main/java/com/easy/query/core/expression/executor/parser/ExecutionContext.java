@@ -14,19 +14,19 @@ import java.util.Collection;
 public class ExecutionContext {
 //    private final CommandTypeEnum commandType;
     private final Collection<ExecutionUnit> executionUnits;
+    private final boolean sequenceQuery;
 
-    public ExecutionContext(Collection<ExecutionUnit> executionUnits){
-//        this.commandType = commandType;
+    public ExecutionContext(Collection<ExecutionUnit> executionUnits,boolean sequenceQuery){
 
         this.executionUnits = executionUnits;
+        this.sequenceQuery = sequenceQuery;
     }
 
 
     public Collection<ExecutionUnit> getExecutionUnits() {
         return executionUnits;
     }
-
-//    public CommandTypeEnum getCommandType() {
-//        return commandType;
-//    }
+    public boolean isSequenceQuery() {
+        return sequenceQuery;
+    }
 }

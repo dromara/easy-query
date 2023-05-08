@@ -47,33 +47,14 @@ public class DefaultExecutionContextFactory implements ExecutionContextFactory {
 
     @Override
     public ExecutionContext createJdbcExecutionContext(String sql, List<SQLParameter> parameters) {
-        ExecutionUnit executionUnit = new ExecutionUnit(easyDataSource.getDefaultDataSourceName(), new SqlUnit(sql,parameters));
-        return new ExecutionContext(Collections.singletonList(executionUnit));
-    }
-
-    private SqlUnit createSqlUnit(String sql, List<SQLParameter> parameters, List<Object> entities, boolean fillAutoIncrement){
-        return new SqlUnit(sql, parameters,entities, fillAutoIncrement);
-    }
-    private ExecutionUnit createExecutionUnit(String dataSource,EasySqlExpression expression, List<Object> entities, boolean fillAutoIncrement){
-        SqlUnit sqlUnit = createSqlUnit(expression, entities, fillAutoIncrement);
-        return createExecutionUnit(dataSource, sqlUnit);
-    }
-    private SqlUnit createSqlUnit(EasySqlExpression expression, List<Object> entities, boolean fillAutoIncrement){
-        SqlParameterCollector sqlParameterCollector = DefaultSqlParameterCollector.defaultCollector();
-        String sql = expression.toSql(sqlParameterCollector);
-        return new SqlUnit(sql, sqlParameterCollector.getParameters(),entities, fillAutoIncrement);
-    }
-    private ExecutionUnit createExecutionUnit(String dataSource,SqlUnit sqlUnit){
-        return new  ExecutionUnit(dataSource, sqlUnit);
-    }
-    private ExecutionContext createExecutionContext(Collection<ExecutionUnit> executionUnits){
-        return new ExecutionContext(executionUnits);
+        ExecutionUnit executionUnit = new ExecutionUnit(easyDataSource.getDefaultDataSourceName(), new SqlUnit( sql,parameters));
+        return new ExecutionContext(Collections.singletonList(executionUnit),false);
     }
     @Override
     public ExecutionContext createEntityExecutionContext(PrepareParseResult prepareParseResult) {
 //        NativeSqlQueryCompilerContext nativeSqlQueryCompilerContext = new NativeSqlQueryCompilerContext(prepareParseResult);
         //无需分片的情况下
-        if(EasyCollectionUtil.isEmpty(prepareParseResult.getShardingEntities())){
+        if(EasyCollectionUtil.isEmpty(prepareParseResult.getShardingTables())){
             if(prepareParseResult instanceof PredicatePrepareParseResult){
                 return new PredicateExecutionCreator(easyDataSource.getDefaultDataSourceName(), prepareParseResult.getEntityExpressionBuilder().toExpression()).create();
             }

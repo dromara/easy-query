@@ -4,6 +4,7 @@ import com.easy.query.core.expression.lambda.RouteFunction;
 import com.easy.query.core.sharding.enums.ShardingOperatorEnum;
 import com.easy.query.core.sharding.rule.datasource.DataSourceRouteRule;
 
+import java.lang.reflect.ParameterizedType;
 import java.util.Collection;
 
 /**
@@ -12,8 +13,16 @@ import java.util.Collection;
  *
  * @author xuejiaming
  */
-public abstract class AbstractDataSourceRouteRule implements DataSourceRouteRule {
+public abstract class AbstractDataSourceRouteRule<T> implements DataSourceRouteRule<T> {
 
+    private final Class<T> clazz;
+    public AbstractDataSourceRouteRule(){
+        this.clazz=(Class<T>)((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+    }
+    @Override
+    public Class<?> entityClass() {
+        return clazz;
+    }
     @Override
     public RouteFunction<String> routeFilter(Object shardingValue, ShardingOperatorEnum shardingOperator, String propertyName, boolean isMainShardingProperty,boolean withEntity) {
        if(isMainShardingProperty){

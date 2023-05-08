@@ -25,6 +25,7 @@ public final class EasyShardingStreamResult implements StreamResultSet {
     private final PreparedStatement preparedStatement;
     private boolean hasElement;
     private  boolean skipFirst;
+    private boolean closed=false;
 
     public EasyShardingStreamResult(ResultSet resultSet, PreparedStatement preparedStatement, boolean hasElement){
 
@@ -156,6 +157,10 @@ public final class EasyShardingStreamResult implements StreamResultSet {
 
     @Override
     public void close() throws Exception {
+        if (closed) {
+            return;
+        }
+        closed = true;
         resultSet.close();
         preparedStatement.close();
     }

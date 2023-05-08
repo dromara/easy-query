@@ -5,6 +5,7 @@ import com.easy.query.core.sharding.enums.ShardingOperatorEnum;
 import com.easy.query.core.sharding.route.table.TableRouteUnit;
 import com.easy.query.core.sharding.rule.table.TableRouteRule;
 
+import java.lang.reflect.ParameterizedType;
 import java.util.Collection;
 
 /**
@@ -13,7 +14,15 @@ import java.util.Collection;
  *
  * @author xuejiaming
  */
-public abstract class AbstractTableRouteRule implements TableRouteRule {
+public abstract class AbstractTableRouteRule<T> implements TableRouteRule<T> {
+    private final Class<T> clazz;
+    public AbstractTableRouteRule(){
+        this.clazz=(Class<T>)((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+    }
+    @Override
+    public Class<?> entityClass() {
+        return clazz;
+    }
 
     @Override
     public RouteFunction<String> routeFilter(Object shardingValue, ShardingOperatorEnum shardingOperator, String propertyName,boolean isMainShardingProperty,boolean withEntity) {

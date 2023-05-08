@@ -7,6 +7,7 @@ import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.sharding.EasyShardingOption;
 import com.easy.query.core.sharding.enums.ConnectionModeEnum;
+import com.easy.query.core.sharding.merge.context.MergeSequenceOrder;
 import com.easy.query.core.sharding.merge.context.StreamMergeContext;
 import com.easy.query.core.basic.jdbc.executor.internal.common.CommandExecuteUnit;
 import com.easy.query.core.basic.jdbc.executor.internal.common.DataSourceSqlExecutorUnit;
@@ -21,6 +22,8 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -28,6 +31,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * create time 2023/4/15 14:24
@@ -51,11 +55,13 @@ public class ShardingExecutor {
     }
 
     private static <TResult> List<TResult> execute0(StreamMergeContext streamMergeContext, Executor<TResult> executor, Collection<ExecutionUnit> executionUnits) throws SQLException {
-
-        //先进行顺序重排,可以让按顺序执行的提高性能,比如按时间分片,并且是时间倒序,那么重排后可以减少很多查询
-        Collection<ExecutionUnit> reOrderExecutionUnits = reOrderExecutionUnits(streamMergeContext, executionUnits);
+        //如果只有单个执行那么直接创建不需要过多处理
+        if(EasyCollectionUtil.isSingle(executionUnits)){
+            DataSourceSqlExecutorUnit dataSourceSqlExecutorUnit = getSingleSqlExecutorGroups(streamMergeContext,EasyCollectionUtil.first(executionUnits));
+            return executor.execute(dataSourceSqlExecutorUnit);
+        }
         //将数据以每个数据源进行聚合
-        List<DataSourceSqlExecutorUnit> dataSourceSqlExecutorUnits = EasyUtil.groupBy(reOrderExecutionUnits.stream(), ExecutionUnit::getDataSourceName)
+        List<DataSourceSqlExecutorUnit> dataSourceSqlExecutorUnits = EasyUtil.groupBy(executionUnits.stream(), ExecutionUnit::getDataSourceName)
                 .map(o -> getSqlExecutorGroups(streamMergeContext, o)).collect(Collectors.toList());
         //如果本身就只有一条要执行的sql那么就不需要另外开启线程并行执行,直接当前线程执行即可
         if (dataSourceSqlExecutorUnits.size() == 1) {
@@ -91,20 +97,10 @@ public class ShardingExecutor {
         return futures;
     }
 
-    private static Collection<ExecutionUnit> reOrderExecutionUnits(StreamMergeContext streamMergeContext,
-                                                                   Collection<ExecutionUnit> executionUnits) {
-        if (streamMergeContext.isSeqQuery()) {
-            throw new NotImplementedException();
-//            return sqlRouteUnits.OrderByAscDescIf(o => o.TableRouteResult.ReplaceTables.First().Tail,
-//            streamMergeContext.TailComparerNeedReverse, streamMergeContext.ShardingTailComparer);
-        }
-
-        return executionUnits;
-    }
-
     private static DataSourceSqlExecutorUnit getSqlExecutorGroups(StreamMergeContext streamMergeContext, Grouping<String, ExecutionUnit> sqlGroups) {
         boolean isSerialExecute = streamMergeContext.isSerialExecute();
         EasyShardingOption easyShardingOption = streamMergeContext.getRuntimeContext().getEasyShardingOption();
+        //如果是顺序查询应该使用顺序的connectionlimit或者表达式指定分片的connectionlimit
         int maxQueryConnectionsLimit = easyShardingOption.getMaxQueryConnectionsLimit();
         String dataSourceName = sqlGroups.key();
         List<ExecutionUnit> sqlGroupExecutionUnits = sqlGroups.values().collect(Collectors.toList());
@@ -131,6 +127,25 @@ public class ShardingExecutor {
         });
         List<SqlExecutorGroup<CommandExecuteUnit>> sqlExecutorGroups = EasyCollectionUtil.select(sqlExecutorUnitPartitions, (o, i) -> new SqlExecutorGroup<CommandExecuteUnit>(connectionMode, o));
         return new DataSourceSqlExecutorUnit(connectionMode, sqlExecutorGroups);
+
+    }
+
+    /**
+     * 单条sql执行时创建单个执行单元
+     * @param streamMergeContext
+     * @param executionUnit
+     * @return
+     */
+    private static DataSourceSqlExecutorUnit getSingleSqlExecutorGroups(StreamMergeContext streamMergeContext, ExecutionUnit executionUnit) {
+
+        ConnectionModeEnum connectionMode = ConnectionModeEnum.MEMORY_STRICTLY;
+
+        List<EasyConnection> easyConnections = streamMergeContext.getEasyConnections(connectionMode, executionUnit.getDataSourceName(), 1);
+        EasyConnection easyConnection = EasyCollectionUtil.first(easyConnections);
+        CommandExecuteUnit commandExecuteUnit = new CommandExecuteUnit(executionUnit, easyConnection, connectionMode);
+        SqlExecutorGroup<CommandExecuteUnit> sqlExecutorGroup = new SqlExecutorGroup<>(connectionMode, Collections.singletonList(commandExecuteUnit));
+
+        return new DataSourceSqlExecutorUnit(connectionMode, Collections.singletonList(sqlExecutorGroup));
 
     }
 }

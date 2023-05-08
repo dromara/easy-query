@@ -1,5 +1,6 @@
 package com.easy.query.core.expression.executor.query.base;
 
+import com.easy.query.core.expression.executor.parser.ExecutionContext;
 import com.easy.query.core.expression.executor.parser.PrepareParseResult;
 import com.easy.query.core.expression.sql.expression.EasyEntitySqlExpression;
 import com.easy.query.core.expression.sql.expression.EasyTableSqlExpression;
@@ -9,13 +10,11 @@ import com.easy.query.core.sharding.route.RouteContext;
 import com.easy.query.core.sharding.route.RouteUnit;
 import com.easy.query.core.sharding.route.table.EntityTableRouteUnit;
 import com.easy.query.core.sharding.route.table.TableRouteUnit;
-import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * create time 2023/4/25 16:44
@@ -34,6 +33,11 @@ public abstract class ShardingBaseExecutionCreator extends BaseExecutionCreator{
     }
 
     @Override
+    protected boolean sequenceQuery() {
+        return routeContext.getEntityRouteResult().isSequenceQuery();
+    }
+
+    @Override
     protected Collection<ExecutionUnit> createExecutionUnits() {
         List<RouteUnit> routeUnits = getRouteUnits();
         List<ExecutionUnit> executionUnits = new ArrayList<>(routeUnits.size());
@@ -42,9 +46,8 @@ public abstract class ShardingBaseExecutionCreator extends BaseExecutionCreator{
             List<TableRouteUnit> tableRouteUnits = routeUnit.getTableRouteUnits();
             EasyEntitySqlExpression easyEntitySqlExpression = createEasyEntitySqlExpression(routeUnit);
             for (TableRouteUnit tableRouteUnit : tableRouteUnits) {
-                List<EasyTableSqlExpression> tables = easyEntitySqlExpression.getTables();
-                EasyTableSqlExpression easyTableSqlExpression = EasyCollectionUtil.firstOrDefault(tables, o -> Objects.equals(o.getEntityMetadata().getEntityClass(), tableRouteUnit.getEntityClass()), null);
-                if(easyTableSqlExpression!=null&&!(easyTableSqlExpression instanceof AnonymousTableSqlExpression)){
+                EasyTableSqlExpression easyTableSqlExpression = easyEntitySqlExpression.getTable(tableRouteUnit.getTableIndex());
+                if(!(easyTableSqlExpression instanceof AnonymousTableSqlExpression)){
                     easyTableSqlExpression.setTableNameAs(o->tableRouteUnit.getActualTableName());
                 }
             }
@@ -71,4 +74,5 @@ public abstract class ShardingBaseExecutionCreator extends BaseExecutionCreator{
     protected abstract List<Object> getEntities(RouteUnit routeUnit);
     protected abstract boolean getFillAutoIncrement(RouteUnit routeUnit);
     protected abstract  EasyEntitySqlExpression createEasyEntitySqlExpression(RouteUnit routeUnit);
+
 }

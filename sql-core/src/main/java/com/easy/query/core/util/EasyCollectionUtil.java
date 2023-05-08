@@ -168,6 +168,18 @@ public class EasyCollectionUtil {
         }
         return source.iterator().next();
     }
+    public static <TSource> TSource first(Collection<TSource> source) {
+        if (source == null) {
+           throw new NoSuchElementException();
+        }
+        if (source.isEmpty()) {
+            throw new NoSuchElementException();
+        }
+        if(source instanceof List){
+            return ((List<TSource>)source).get(0);
+        }
+        return source.iterator().next();
+    }
 
     public static <TResult, TSource> List<TResult> map(List<TSource> source, Function<? super TSource, ? extends TResult> mapper) {
         if (isEmpty(source)) {

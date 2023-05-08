@@ -1,7 +1,11 @@
 package com.easy.query.core.sharding.route.table.engine;
 
+import com.easy.query.core.basic.jdbc.executor.internal.common.ExecutionUnit;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.executor.parser.PrepareParseResult;
+import com.easy.query.core.expression.executor.parser.QueryPrepareParseResult;
+import com.easy.query.core.expression.executor.parser.SequenceOrderPrepareParseResult;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.sharding.route.RouteUnit;
@@ -13,6 +17,7 @@ import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -27,12 +32,10 @@ import java.util.stream.Collectors;
  * @author xuejiaming
  */
 public class DefaultTableRouteEngine implements TableRouteEngine {
-    private final EntityMetadataManager entityMetadataManager;
     private final TableRouteManager tableRouteManager;
 
-    public DefaultTableRouteEngine(EntityMetadataManager entityMetadataManager, TableRouteManager tableRouteManager) {
+    public DefaultTableRouteEngine(TableRouteManager tableRouteManager) {
 
-        this.entityMetadataManager = entityMetadataManager;
         this.tableRouteManager = tableRouteManager;
     }
 
@@ -40,23 +43,23 @@ public class DefaultTableRouteEngine implements TableRouteEngine {
     public ShardingRouteResult route(TableRouteContext tableRouteContext) {
         Map<String/*data source*/, Map<Class<?>/*entity class*/, Set<TableRouteUnit>>> routeMaps = new HashMap<>();
         PrepareParseResult prepareParseResult = tableRouteContext.getPrepareParseResult();
-        Set<Class<?>> shardingEntities = prepareParseResult.getShardingEntities();
+        Set<TableAvailable> shardingTables = prepareParseResult.getShardingTables();
         int tableRouteUnitSize = 0;
         boolean onlyShardingDataSource = true;
-        for (Class<?> shardingEntity : shardingEntities) {
-            EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(shardingEntity);
+        for (TableAvailable shardingTable : shardingTables) {
+            EntityMetadata entityMetadata = shardingTable.getEntityMetadata();
             if (!entityMetadata.isMultiTableMapping()) {
                 continue;
             }
             onlyShardingDataSource = false;
-            Collection<TableRouteUnit> shardingRouteUnits = getEntityRouteUnit(tableRouteContext.getDataSourceRouteResult(), shardingEntity, prepareParseResult);
+            Collection<TableRouteUnit> shardingRouteUnits = getEntityRouteUnit(tableRouteContext.getDataSourceRouteResult(), shardingTable, prepareParseResult);
             for (TableRouteUnit shardingRouteUnit : shardingRouteUnits) {
 //                if (Objects.equals(shardingRouteUnit.getLogicTableName(),shardingRouteUnit.getActualTableName())) {
 //                    continue;
 //                }
                 String dataSource = shardingRouteUnit.getDataSource();
                 Map<Class<?>, Set<TableRouteUnit>> tableNamMaps = routeMaps.computeIfAbsent(dataSource, o -> new HashMap<>());
-                Set<TableRouteUnit> tableRouteUnits = tableNamMaps.computeIfAbsent(shardingEntity, o -> new HashSet<>());
+                Set<TableRouteUnit> tableRouteUnits = tableNamMaps.computeIfAbsent(shardingTable.getEntityClass(), o -> new HashSet<>());
                 tableRouteUnits.add(shardingRouteUnit);
                 tableRouteUnitSize++;
             }
@@ -80,17 +83,17 @@ public class DefaultTableRouteEngine implements TableRouteEngine {
                 List<TableRouteResult> tableRouteResults = cartesian.stream().map(o -> new TableRouteResult(new ArrayList<>(o)))
                         .filter(o -> !o.isEmpty()).collect(Collectors.toList());
 
-                if(EasyCollectionUtil.isNotEmpty(tableRouteResults)){
+                if (EasyCollectionUtil.isNotEmpty(tableRouteResults)) {
                     dataSourceCount++;
-                    if(tableRouteResults.size()>1){
-                        isCrossTable=true;
+                    if (tableRouteResults.size() > 1) {
+                        isCrossTable = true;
                     }
                     for (TableRouteResult tableRouteResult : tableRouteResults) {
-                        if(tableRouteResult.getReplaceTables().size()>1){
-                            isCrossTable=true;
+                        if (tableRouteResult.getReplaceTables().size() > 1) {
+                            isCrossTable = true;
                         }
 //                        List<RouteMapper> routeMappers = ArrayUtil.select(tableRouteResult.getReplaceTables(), (o, i) -> new RouteMapper(o.getEntityClass(),o.getLogicTableName(), o.getActualTableName(),o));
-                        routeUnits.add(new RouteUnit(dataSourceName,tableRouteResult.getReplaceTables()));
+                        routeUnits.add(new RouteUnit(dataSourceName, tableRouteResult.getReplaceTables()));
                     }
                 }
 
@@ -104,11 +107,50 @@ public class DefaultTableRouteEngine implements TableRouteEngine {
             }
 
         }
+        boolean sequenceQuery=false;
+        if (prepareParseResult instanceof QueryPrepareParseResult) {
+            QueryPrepareParseResult queryPrepareParseResult = (QueryPrepareParseResult) prepareParseResult;
 
-        return new ShardingRouteResult(routeUnits,dataSourceCount>1,isCrossTable);
+
+            //先进行顺序重排,可以让按顺序执行的提高性能,比如按时间分片,并且是时间倒序,那么重排后可以减少很多查询
+            SequenceOrderPrepareParseResult sequenceOrderPrepareParseResult = queryPrepareParseResult.getSequenceOrderPrepareParseResult();
+            if (sequenceOrderPrepareParseResult != null) {
+                TableAvailable table = sequenceOrderPrepareParseResult.getTable();
+                if (EasyCollectionUtil.isNotEmpty(routeUnits)) {
+                    RouteUnit first = EasyCollectionUtil.first(routeUnits);
+                    int i=getCompareRouteUnitIndex(first,table);
+                    if(i>=0){
+                        Comparator<String> tableComparator = sequenceOrderPrepareParseResult.getTableComparator();
+                        int compareFactor = sequenceOrderPrepareParseResult.isReverse() ? 1 : -1;
+                        routeUnits.sort((c1, c2) -> tableComparator.compare(c1.getTableRouteUnits().get(i).getActualTableName(), c2.getTableRouteUnits().get(i).getActualTableName()) * compareFactor);
+                        sequenceQuery=true;
+                    }
+                }
+            }
+        }
+
+        return new ShardingRouteResult(routeUnits, dataSourceCount > 1, isCrossTable,sequenceQuery);
     }
 
-    private Collection<TableRouteUnit> getEntityRouteUnit(DataSourceRouteResult dataSourceRouteResult, Class<?> entityClass, PrepareParseResult prepareParseResult) {
-        return tableRouteManager.routeTo(entityClass, dataSourceRouteResult, prepareParseResult);
+    /**
+     * 寻找顺序排序的表的索引在本次路由里面是哪个然后进行排序
+     * @param routeUnit
+     * @param table
+     * @return
+     */
+    private int getCompareRouteUnitIndex(RouteUnit routeUnit,TableAvailable table){
+
+        int i = -1;
+        for (TableRouteUnit tableRouteUnit : routeUnit.getTableRouteUnits()) {
+            i++;
+            if(tableRouteUnit.getTableIndex()==table.getIndex()){
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private Collection<TableRouteUnit> getEntityRouteUnit(DataSourceRouteResult dataSourceRouteResult, TableAvailable table, PrepareParseResult prepareParseResult) {
+        return tableRouteManager.routeTo(table, dataSourceRouteResult, prepareParseResult);
     }
 }

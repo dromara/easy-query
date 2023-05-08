@@ -1,7 +1,13 @@
 package com.easy.query.core.sharding.route.datasource.abstraction;
 
+import com.easy.query.core.expression.executor.parser.PrepareParseResult;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.sharding.route.datasource.DataSourceRoute;
+import com.easy.query.core.sharding.rule.datasource.DataSourceRouteRule;
+
+import java.util.Collection;
 
 /**
  * create time 2023/4/19 13:10
@@ -10,14 +16,15 @@ import com.easy.query.core.sharding.route.datasource.DataSourceRoute;
  * @author xuejiaming
  */
 public abstract class AbstractDataSourceRoute implements DataSourceRoute {
-    private final EntityMetadataManager entityMetadataManager;
+    @Override
+    public <T> Collection<String> route(DataSourceRouteRule<T> dataSourceRouteRule, TableAvailable table, PrepareParseResult prepareParseResult) {
+        EntityMetadata entityMetadata = table.getEntityMetadata();
+        Collection<String> dataSources = entityMetadata.getDataSources();
+        Collection<String> beforeFilterDataSource = dataSourceRouteRule.beforeFilterDataSource(dataSources);
+        Collection<String> filterDataSources = route0(dataSourceRouteRule,table, beforeFilterDataSource, prepareParseResult);
+        return  dataSourceRouteRule.afterFilterDataSource(dataSources,beforeFilterDataSource,filterDataSources);
 
-    public AbstractDataSourceRoute(EntityMetadataManager entityMetadataManager){
-
-        this.entityMetadataManager = entityMetadataManager;
     }
+    public abstract <T> Collection<String> route0(DataSourceRouteRule<T> dataSourceRouteRule,TableAvailable table, Collection<String> beforeTableNames, PrepareParseResult prepareParseResult);
 
-    public EntityMetadataManager getEntityMetadataManager() {
-        return entityMetadataManager;
-    }
 }

@@ -3,6 +3,7 @@ package com.easy.query.core.expression.executor.query.base;
 import com.easy.query.core.basic.plugin.track.TrackManager;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
+import com.easy.query.core.expression.sql.expression.EasyEntitySqlExpression;
 import com.easy.query.core.expression.sql.expression.EasySqlExpression;
 import com.easy.query.core.basic.jdbc.executor.internal.common.ExecutionUnit;
 import com.easy.query.core.util.SqlExpressionUtil;
@@ -50,22 +51,22 @@ public abstract class BaseEntityExecutionCreator extends BaseExecutionCreator{
     }
 
     private Collection<ExecutionUnit> createSingleExecutionUnits() {
-        List<ExecutionUnit> executionUnits = new ArrayList<>(entities.size());
+        List<ExecutionUnit> routeExecutionUnits = new ArrayList<>(entities.size());
         for (Object entity : entities) {
-            EasySqlExpression expression =cretateEasySqlExpression(entity);
+            EasyEntitySqlExpression expression = createEasySqlExpression(entity);
             ExecutionUnit executionUnit = createExecutionUnit(dataSource, expression, Collections.singletonList(entity), getFillAutoIncrement());
             //开启追踪的情况下update可能没有可以更新的数据那么就不会生成sql
             if(StringUtil.isNotBlank(executionUnit.getSqlUnit().getSql())){
-                executionUnits.add(executionUnit);
+                routeExecutionUnits.add(executionUnit);
             }
         }
-        return executionUnits;
+        return routeExecutionUnits;
     }
     private Collection<ExecutionUnit> createMultiExecutionUnits() {
-        EasySqlExpression expression = entityExpressionBuilder.toExpression();
+        EasyEntitySqlExpression expression = entityExpressionBuilder.toExpression();
         ExecutionUnit executionUnit = createExecutionUnit(dataSource, expression, entities, getFillAutoIncrement());
         return Collections.singletonList(executionUnit);
     }
-    protected abstract EasySqlExpression cretateEasySqlExpression(Object entity);
+    protected abstract EasyEntitySqlExpression createEasySqlExpression(Object entity);
     protected abstract boolean getFillAutoIncrement();
 }

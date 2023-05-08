@@ -31,6 +31,7 @@ public class EasyOrderStreamMergeResult implements OrderStreamMergeResult {
     private final StreamMergeContext streamMergeContext;
     private final StreamResultSet streamResult;
     private List<Comparable<?>> orderValues;
+    private boolean closed=false;
 
     public EasyOrderStreamMergeResult(StreamMergeContext streamMergeContext, StreamResultSet streamResult) throws SQLException {
 
@@ -186,6 +187,10 @@ public class EasyOrderStreamMergeResult implements OrderStreamMergeResult {
 
     @Override
     public void close() throws Exception {
+        if (closed) {
+            return;
+        }
+        closed = true;
         streamResult.close();
     }
 

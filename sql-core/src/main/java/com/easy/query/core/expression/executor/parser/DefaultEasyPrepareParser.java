@@ -1,12 +1,12 @@
 package com.easy.query.core.expression.executor.parser;
 
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityPredicateExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
-import com.easy.query.core.expression.sql.builder.impl.AnonymousTableExpressionBuilder;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.LinkedHashSet;
@@ -21,27 +21,27 @@ import java.util.Set;
  */
 public class DefaultEasyPrepareParser implements EasyPrepareParser {
 
-    private Set<Class<?>> getShardingEntities(EntityExpressionBuilder entityExpressionBuilder) {
-        Set<Class<?>> shardingEntities = new LinkedHashSet<>(entityExpressionBuilder.getTables().size());
+    private Set<TableAvailable> getShardingTable(EntityExpressionBuilder entityExpressionBuilder) {
+        Set<TableAvailable> shardingTables = new LinkedHashSet<>(entityExpressionBuilder.getTables().size());
         for (EntityTableExpressionBuilder table : entityExpressionBuilder.getTables()) {
             if(table instanceof AnonymousEntityTableExpressionBuilder){
-                getAnonymousTable((AnonymousEntityTableExpressionBuilder)table,shardingEntities);
+                getAnonymousTable((AnonymousEntityTableExpressionBuilder)table,shardingTables);
             }else{
                 if (!table.tableNameIsAs() && table.getEntityMetadata().isSharding()) {
-                    shardingEntities.add(table.getEntityMetadata().getEntityClass());
+                    shardingTables.add(table.getEntityTable());
                 }
             }
         }
-        return shardingEntities;
+        return shardingTables;
     }
-    private void getAnonymousTable(AnonymousEntityTableExpressionBuilder anonymousEntityTableExpressionBuilder,Set<Class<?>> shardingEntities){
+    private void getAnonymousTable(AnonymousEntityTableExpressionBuilder anonymousEntityTableExpressionBuilder,Set<TableAvailable> shardingEntities){
         EntityQueryExpressionBuilder entityQueryExpressionBuilder = anonymousEntityTableExpressionBuilder.getEntityQueryExpressionBuilder();
         for (EntityTableExpressionBuilder table : entityQueryExpressionBuilder.getTables()) {
             if(table instanceof  AnonymousEntityTableExpressionBuilder){
                 getAnonymousTable((AnonymousEntityTableExpressionBuilder)table,shardingEntities);
             }else{
                 if (!table.tableNameIsAs() && table.getEntityMetadata().isSharding()) {
-                    shardingEntities.add(table.getEntityMetadata().getEntityClass());
+                    shardingEntities.add(table.getEntityTable());
                 }
             }
         }
@@ -49,37 +49,37 @@ public class DefaultEasyPrepareParser implements EasyPrepareParser {
 
     @Override
     public PrepareParseResult parse(EntityExpressionBuilder entityExpressionBuilder, List<Object> entities, boolean fillAutoIncrement) {
-        Set<Class<?>> shardingEntities = getShardingEntities(entityExpressionBuilder);
+        Set<TableAvailable> shardingTables = getShardingTable(entityExpressionBuilder);
         if (entityExpressionBuilder instanceof EntityQueryExpressionBuilder) {
-            return queryParseResult(shardingEntities, (EntityQueryExpressionBuilder) entityExpressionBuilder);
+            return queryParseResult(shardingTables, (EntityQueryExpressionBuilder) entityExpressionBuilder);
         }
         if (entityExpressionBuilder instanceof EntityInsertExpressionBuilder) {
-            return insertParseResult(shardingEntities, (EntityInsertExpressionBuilder) entityExpressionBuilder, entities, fillAutoIncrement);
+            return insertParseResult(shardingTables, (EntityInsertExpressionBuilder) entityExpressionBuilder, entities, fillAutoIncrement);
         }
         if (entities == null) {
             if (entityExpressionBuilder instanceof EntityPredicateExpressionBuilder) {
-                return predicatePrepareParseResult(shardingEntities, (EntityPredicateExpressionBuilder) entityExpressionBuilder);
+                return predicatePrepareParseResult(shardingTables, (EntityPredicateExpressionBuilder) entityExpressionBuilder);
             }
         } if (entities != null) {
-            return entityParseResult(shardingEntities, entityExpressionBuilder, entities);
+            return entityParseResult(shardingTables, entityExpressionBuilder, entities);
         }
         throw new NotImplementedException();
     }
 
-    private QueryPrepareParseResult queryParseResult(Set<Class<?>> shardingEntities, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
+    private QueryPrepareParseResult queryParseResult(Set<TableAvailable> shardingEntities, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
         return new EasyQueryPrepareParseResult(shardingEntities, entityQueryExpressionBuilder);
     }
 
-    private InsertPrepareParseResult insertParseResult(Set<Class<?>> shardingEntities, EntityInsertExpressionBuilder entityInsertExpressionBuilder, List<Object> entities, boolean fillAutoIncrement) {
-        return new EasyInsertPrepareParseResult(shardingEntities, entityInsertExpressionBuilder, entities, fillAutoIncrement);
+    private InsertPrepareParseResult insertParseResult(Set<TableAvailable> shardingTables, EntityInsertExpressionBuilder entityInsertExpressionBuilder, List<Object> entities, boolean fillAutoIncrement) {
+        return new EasyInsertPrepareParseResult(shardingTables, entityInsertExpressionBuilder, entities, fillAutoIncrement);
     }
 
-    private EntityPrepareParseResult entityParseResult(Set<Class<?>> shardingEntities, EntityExpressionBuilder entityExpressionBuilder, List<Object> entities) {
-        return new EasyEntityPrepareParseResult(shardingEntities, entityExpressionBuilder, entities);
+    private EntityPrepareParseResult entityParseResult(Set<TableAvailable> shardingTables, EntityExpressionBuilder entityExpressionBuilder, List<Object> entities) {
+        return new EasyEntityPrepareParseResult(shardingTables, entityExpressionBuilder, entities);
     }
 
-    private EasyPredicatePrepareParseResult predicatePrepareParseResult(Set<Class<?>> shardingEntities, EntityPredicateExpressionBuilder entityPredicateExpressionBuilder) {
-        return new EasyPredicatePrepareParseResult(shardingEntities, entityPredicateExpressionBuilder);
+    private EasyPredicatePrepareParseResult predicatePrepareParseResult(Set<TableAvailable> shardingTables, EntityPredicateExpressionBuilder entityPredicateExpressionBuilder) {
+        return new EasyPredicatePrepareParseResult(shardingTables, entityPredicateExpressionBuilder);
     }
 
 

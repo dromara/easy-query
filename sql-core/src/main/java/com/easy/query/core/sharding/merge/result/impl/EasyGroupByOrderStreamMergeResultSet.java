@@ -45,6 +45,7 @@ public class EasyGroupByOrderStreamMergeResultSet implements StreamResultSet {
     private boolean skipFirst;
 
     private boolean wasNull;
+    private boolean closed = false;
 
     public EasyGroupByOrderStreamMergeResultSet(StreamMergeContext streamMergeContext, List<StreamResultSet> streamResults) throws SQLException {
 
@@ -53,7 +54,7 @@ public class EasyGroupByOrderStreamMergeResultSet implements StreamResultSet {
         this.queue = new PriorityQueue<>(streamResults.size());
         this.skipFirst = true;
         setOrderStreamResult();
-        this.resultSetMetaData=getResultSetMetaData();
+        this.resultSetMetaData = getResultSetMetaData();
         this.columnCount = resultSetMetaData.getColumnCount();
         this.currentRow = new ArrayList<>(columnCount);
 
@@ -78,8 +79,9 @@ public class EasyGroupByOrderStreamMergeResultSet implements StreamResultSet {
         currentStreamResult = queue.isEmpty() ? EasyCollectionUtil.firstOrNull(streamResults) : queue.peek();
         currentGroupValues = queue.isEmpty() ? Collections.emptyList() : new GroupValue(streamMergeContext, currentStreamResult).getGroupValues();
     }
+
     private ResultSetMetaData getResultSetMetaData() throws SQLException {
-        return  currentStreamResult.getMetaData();
+        return currentStreamResult.getMetaData();
     }
 
     @Override
@@ -203,13 +205,14 @@ public class EasyGroupByOrderStreamMergeResultSet implements StreamResultSet {
 //        return true;
 //    }
 
-    private void setWasNull(boolean wasNull){
-        this.wasNull=wasNull;
+    private void setWasNull(boolean wasNull) {
+        this.wasNull = wasNull;
     }
+
     @Override
     public Object getObject(int columnIndex) throws SQLException {
         Object value = currentRow.get(columnIndex - 1);
-        setWasNull(value==null);
+        setWasNull(value == null);
         return value;
     }
 
@@ -226,141 +229,145 @@ public class EasyGroupByOrderStreamMergeResultSet implements StreamResultSet {
     @Override
     public SQLXML getSQLXML(int columnIndex) throws SQLException {
         Object value = currentRow.get(columnIndex - 1);
-        setWasNull(value==null);
-        return (SQLXML)value;
+        setWasNull(value == null);
+        return (SQLXML) value;
     }
 
     @Override
     public Timestamp getTimestamp(int columnIndex) throws SQLException {
         Object value = currentRow.get(columnIndex - 1);
-        setWasNull(value==null);
-        return (Timestamp)value;
+        setWasNull(value == null);
+        return (Timestamp) value;
     }
 
     @Override
     public Time getTime(int columnIndex) throws SQLException {
         Object value = currentRow.get(columnIndex - 1);
-        setWasNull(value==null);
-        return (Time)value;
+        setWasNull(value == null);
+        return (Time) value;
     }
 
     @Override
     public String getString(int columnIndex) throws SQLException {
         Object value = currentRow.get(columnIndex - 1);
-        setWasNull(value==null);
-        return (String)value;
+        setWasNull(value == null);
+        return (String) value;
     }
 
     @Override
     public Date getDate(int columnIndex) throws SQLException {
         Object value = currentRow.get(columnIndex - 1);
-        setWasNull(value==null);
-        return (Date)value;
+        setWasNull(value == null);
+        return (Date) value;
     }
 
     @Override
     public short getShort(int columnIndex) throws SQLException {
         Object value = currentRow.get(columnIndex - 1);
-        setWasNull(value==null);
-        if(value==null){
+        setWasNull(value == null);
+        if (value == null) {
             return 0;
         }
-        return ((BigDecimal)value).shortValue();
+        return ((BigDecimal) value).shortValue();
     }
 
     @Override
     public long getLong(int columnIndex) throws SQLException {
         Object value = currentRow.get(columnIndex - 1);
-        setWasNull(value==null);
-        if(value==null){
+        setWasNull(value == null);
+        if (value == null) {
             return 0;
         }
-        return ((BigDecimal)value).longValue();
+        return ((BigDecimal) value).longValue();
     }
 
     @Override
     public int getInt(int columnIndex) throws SQLException {
         Object value = currentRow.get(columnIndex - 1);
-        setWasNull(value==null);
-        if(value==null){
+        setWasNull(value == null);
+        if (value == null) {
             return 0;
         }
-        return ((BigDecimal)value).intValue();
+        return ((BigDecimal) value).intValue();
     }
 
     @Override
     public float getFloat(int columnIndex) throws SQLException {
         Object value = currentRow.get(columnIndex - 1);
-        setWasNull(value==null);
-        if(value==null){
+        setWasNull(value == null);
+        if (value == null) {
             return 0;
         }
-        return ((BigDecimal)value).floatValue();
+        return ((BigDecimal) value).floatValue();
     }
 
     @Override
     public double getDouble(int columnIndex) throws SQLException {
         Object value = currentRow.get(columnIndex - 1);
-        setWasNull(value==null);
-        if(value==null){
+        setWasNull(value == null);
+        if (value == null) {
             return 0;
         }
-        return ((BigDecimal)value).doubleValue();
+        return ((BigDecimal) value).doubleValue();
     }
 
     @Override
     public Clob getClob(int columnIndex) throws SQLException {
         Object value = currentRow.get(columnIndex - 1);
-        setWasNull(value==null);
-        return (Clob)value;
+        setWasNull(value == null);
+        return (Clob) value;
     }
 
     @Override
     public byte getByte(int columnIndex) throws SQLException {
         Object value = currentRow.get(columnIndex - 1);
-        setWasNull(value==null);
-        if(value==null){
+        setWasNull(value == null);
+        if (value == null) {
             return 0;
         }
-        return (byte)value;
+        return (byte) value;
     }
 
     @Override
     public byte[] getBytes(int columnIndex) throws SQLException {
         Object value = currentRow.get(columnIndex - 1);
-        setWasNull(value==null);
-        if(value==null){
+        setWasNull(value == null);
+        if (value == null) {
             return new byte[0];
         }
-        return (byte[])value;
+        return (byte[]) value;
     }
 
     @Override
     public boolean getBoolean(int columnIndex) throws SQLException {
         Object value = currentRow.get(columnIndex - 1);
-        setWasNull(value==null);
-        if(value==null){
+        setWasNull(value == null);
+        if (value == null) {
             return false;
         }
-        return (boolean)value;
+        return (boolean) value;
     }
 
     @Override
     public Blob getBlob(int columnIndex) throws SQLException {
         Object value = currentRow.get(columnIndex - 1);
-        setWasNull(value==null);
-        return (Blob)value;
+        setWasNull(value == null);
+        return (Blob) value;
     }
 
     @Override
     public BigDecimal getBigDecimal(int columnIndex) throws SQLException {
         Object value = currentRow.get(columnIndex - 1);
-        setWasNull(value==null);
-        return (BigDecimal)value;
+        setWasNull(value == null);
+        return (BigDecimal) value;
     }
 
     @Override
     public void close() throws Exception {
+        if (closed) {
+            return;
+        }
+        closed = true;
         currentRow.clear();
         for (StreamResultSet streamResult : streamResults) {
             streamResult.close();

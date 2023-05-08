@@ -2,6 +2,7 @@ package com.easy.query.core.sharding.route.abstraction;
 
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.executor.parser.PrepareParseResult;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.sharding.EasyQueryDataSource;
@@ -24,28 +25,26 @@ import java.util.concurrent.ConcurrentHashMap;
 public class DefaultDataSourceRouteManager implements DataSourceRouteManager{
     private final Map<Class<?>, DataSourceRouteRule> entityRouteRuleCache= new ConcurrentHashMap<>();
     private final DataSourceRoute dataSourceRoute;
-    private final EntityMetadataManager entityMetadataManager;
     private final EasyQueryDataSource easyDataSource;
 
-    public DefaultDataSourceRouteManager(EntityMetadataManager entityMetadataManager, EasyQueryDataSource easyDataSource){
+    public DefaultDataSourceRouteManager(EasyQueryDataSource easyDataSource){
 
-        this.entityMetadataManager = entityMetadataManager;
         this.easyDataSource = easyDataSource;
-        dataSourceRoute=new ShardingDataSourceRoute(entityMetadataManager);
+        dataSourceRoute=new ShardingDataSourceRoute();
     }
     @Override
-    public Collection<String> routeTo(Class<?> entityClass, PrepareParseResult prepareParseResult) {
-        EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(entityClass);
+    public Collection<String> routeTo(TableAvailable table, PrepareParseResult prepareParseResult) {
+        EntityMetadata entityMetadata = table.getEntityMetadata();
         if(!entityMetadata.isMultiDataSourceMapping()){
             return Collections.singletonList(easyDataSource.getDefaultDataSourceName());
         }
-        DataSourceRouteRule routeRule = getRouteRule(entityClass);
-        return dataSourceRoute.route(routeRule, prepareParseResult);
+        DataSourceRouteRule<?> routeRule = getRouteRule(table.getEntityClass());
+        return dataSourceRoute.route(routeRule,table, prepareParseResult);
     }
 
     @Override
-    public DataSourceRouteRule getRouteRule(Class<?> entityClass) {
-        DataSourceRouteRule dataSourceRouteRule = entityRouteRuleCache.get(entityClass);
+    public DataSourceRouteRule<?> getRouteRule(Class<?> entityClass) {
+        DataSourceRouteRule<?> dataSourceRouteRule = entityRouteRuleCache.get(entityClass);
         if(dataSourceRouteRule==null){
             throw new EasyQueryInvalidOperationException(ClassUtil.getSimpleName(entityClass) +" not found data source route rule");
         }

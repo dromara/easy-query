@@ -10,6 +10,7 @@ import com.easy.query.core.expression.executor.parser.PredicatePrepareParseResul
 import com.easy.query.core.expression.executor.parser.PrepareParseResult;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.RouteFunction;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.OrPredicateSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
@@ -93,15 +94,17 @@ public class RoutePredicateDiscover {
     }
 
     private final PrepareParseResult prepareParseResult;
+    private final TableAvailable table;
     private final EntityMetadata entityMetadata;
     private final RouteRuleFilter routeRuleFilter;
     private final Set<String> shardingProperties;
     private final String mainShardingProperty;
 
-    public RoutePredicateDiscover(PrepareParseResult prepareParseResult, EntityMetadata entityMetadata, RouteRuleFilter routeRuleFilter, boolean shardingTableRoute) {
+    public RoutePredicateDiscover(PrepareParseResult prepareParseResult, TableAvailable table, RouteRuleFilter routeRuleFilter, boolean shardingTableRoute) {
         this.prepareParseResult = prepareParseResult;
+        this.table = table;
 
-        this.entityMetadata = entityMetadata;
+        this.entityMetadata = table.getEntityMetadata();
         this.routeRuleFilter = routeRuleFilter;
         if (shardingTableRoute) {
             shardingProperties = entityMetadata.getShardingTablePropertyNames();

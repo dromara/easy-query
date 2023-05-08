@@ -1,6 +1,7 @@
 package com.easy.query.core.sharding.route.table;
 
 import com.easy.query.core.expression.executor.parser.PrepareParseResult;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.sharding.route.Route;
 import com.easy.query.core.sharding.route.datasource.engine.DataSourceRouteResult;
 import com.easy.query.core.sharding.rule.table.TableRouteRule;
@@ -14,30 +15,5 @@ import java.util.Collection;
  * @author xuejiaming
  */
 public interface TableRoute extends Route {
-    Collection<TableRouteUnit> route(TableRouteRule tableRouteRule,DataSourceRouteResult dataSourceRouteResult, PrepareParseResult prepareParseResult);
-//    String shardingKeyToTail(Object shardingKey);
-//
-//    /**
-//     * 根据查询条件路由返回物理表
-//     * @param dataSourceRouteResult
-//     * @param entityQueryExpression
-//     * @param isQuery
-//     * @return
-//     */
-//    List<TableRouteUnit> routeWithPredicate(DataSourceRouteResult dataSourceRouteResult, EntityQueryExpression entityQueryExpression, boolean isQuery);
-//
-//
-//    /**
-//     * 根据值进行路由
-//     * @param dataSourceRouteResult
-//     * @param shardingKey
-//     * @return
-//     */
-//    TableRouteUnit RouteWithValue(DataSourceRouteResult dataSourceRouteResult, Object shardingKey);
-//
-//    /**
-//     * 获取所有的目前数据库存在的尾巴,每次路由都会调用
-//     * @return
-//     */
-//    List<String> getTails();
+    <T> Collection<TableRouteUnit> route(TableRouteRule<T> tableRouteRule, DataSourceRouteResult dataSourceRouteResult, TableAvailable table, PrepareParseResult prepareParseResult);
 }

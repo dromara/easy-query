@@ -14,11 +14,7 @@ import java.util.Objects;
  *
  * @author xuejiaming
  */
-public class TopicShardingTableRule extends AbstractTableRouteRule {
-    @Override
-    public Class<?> entityClass() {
-        return TopicSharding.class;
-    }
+public class TopicShardingTableRule extends AbstractTableRouteRule<TopicSharding> {
 
     @Override
     protected RouteFunction<String> getRouteFilter(Object shardingValue, ShardingOperatorEnum shardingOperator,boolean withEntity) {

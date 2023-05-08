@@ -2,6 +2,7 @@ package com.easy.query.sharding;
 
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.sharding.initializer.EasyShardingInitializer;
+import com.easy.query.core.sharding.initializer.ShardingInitializerBuilder;
 import com.easy.query.entity.TopicSharding;
 import com.easy.query.entity.TopicShardingTime;
 
@@ -20,7 +21,8 @@ import java.util.Map;
  */
 public class FixShardingInitializer implements EasyShardingInitializer {
     @Override
-    public Map<String, Collection<String>> getInitializeTables(EntityMetadata entityMetadata) {
+    public void configure(ShardingInitializerBuilder<?> shardingInitializerBuilder) {
+        EntityMetadata entityMetadata = shardingInitializerBuilder.getEntityMetadata();
         if(TopicSharding.class.equals(entityMetadata.getEntityClass())){
 
             String tableName = entityMetadata.getTableName();
@@ -28,11 +30,11 @@ public class FixShardingInitializer implements EasyShardingInitializer {
             for (int i = 0; i < 3; i++) {
                 actualTableNames.add(tableName+"_"+i);
             }
-            return new LinkedHashMap<String, Collection<String>>(){{
-                put("ds0",actualTableNames);
+            LinkedHashMap<String, Collection<String>> initTables = new LinkedHashMap<String, Collection<String>>() {{
+                put("ds0", actualTableNames);
             }};
-        }
-        if(TopicShardingTime.class.equals(entityMetadata.getEntityClass())){
+           shardingInitializerBuilder.actualTableNameInit(initTables);
+        }else if(TopicShardingTime.class.equals(entityMetadata.getEntityClass())){
 
             String tableName = entityMetadata.getTableName();
             LocalDateTime beginTime = LocalDateTime.of(2020, 1, 1, 1, 1);
@@ -44,10 +46,15 @@ public class FixShardingInitializer implements EasyShardingInitializer {
                 actualTableNames.add(tableName+"_"+month);
                 beginTime=beginTime.plusMonths(1);
             }
-            return new LinkedHashMap<String, Collection<String>>(){{
-                put("ds0",actualTableNames);
+            LinkedHashMap<String, Collection<String>> initTables = new LinkedHashMap<String, Collection<String>>() {{
+                put("ds0", actualTableNames);
             }};
+
+            ((ShardingInitializerBuilder<TopicShardingTime>)shardingInitializerBuilder).actualTableNameInit(initTables)
+                    .orderConfigure(String::compareToIgnoreCase,true)
+                    .addPropertyWhenDesc(TopicShardingTime::getCreateTime);
+        }else{
+            throw new UnsupportedOperationException();
         }
-        throw new UnsupportedOperationException();
     }
 }

@@ -32,6 +32,7 @@ public class EasyMultiOrderStreamMergeResult implements StreamResultSet {
     private StreamResultSet currentStreamResult;
     private boolean skipFirst;
 
+    private boolean closed=false;
 
     public EasyMultiOrderStreamMergeResult(StreamMergeContext streamMergeContext, List<StreamResultSet> streamResults) throws SQLException {
 
@@ -184,6 +185,10 @@ public class EasyMultiOrderStreamMergeResult implements StreamResultSet {
 
     @Override
     public void close() throws Exception {
+        if (closed) {
+            return;
+        }
+        closed = true;
         for (StreamResultSet streamResult : orderStreamMergeResults) {
             streamResult.close();
         }

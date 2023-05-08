@@ -86,8 +86,10 @@ public class EasyStreamMergeContext implements StreamMergeContext {
     public boolean isSerialExecute() {
         return serialExecute;
     }
-    public boolean isSeqQuery(){
-        return false;
+
+    @Override
+    public MergeSequenceOrder getMergeSequenceOrder() {
+        return null;
     }
 
     /**

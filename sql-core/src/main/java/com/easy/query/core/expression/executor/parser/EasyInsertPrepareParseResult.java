@@ -1,5 +1,6 @@
 package com.easy.query.core.expression.executor.parser;
 
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 
 import java.util.List;
@@ -12,14 +13,14 @@ import java.util.Set;
  * @author xuejiaming
  */
 public class EasyInsertPrepareParseResult implements InsertPrepareParseResult{
-    private final Set<Class<?>> shardingEntities;
+    private final Set<TableAvailable> shardingTables;
     private final EntityInsertExpressionBuilder entityInsertExpressionBuilder;
     private final List<Object> entities;
     private final boolean fillAutoIncrement;
 
-    public EasyInsertPrepareParseResult(Set<Class<?>> shardingEntities, EntityInsertExpressionBuilder entityInsertExpressionBuilder, List<Object> entities, boolean fillAutoIncrement){
+    public EasyInsertPrepareParseResult(Set<TableAvailable> shardingTables, EntityInsertExpressionBuilder entityInsertExpressionBuilder, List<Object> entities, boolean fillAutoIncrement){
 
-        this.shardingEntities = shardingEntities;
+        this.shardingTables = shardingTables;
         this.entityInsertExpressionBuilder = entityInsertExpressionBuilder;
         this.entities = entities;
         this.fillAutoIncrement = fillAutoIncrement;
@@ -30,8 +31,8 @@ public class EasyInsertPrepareParseResult implements InsertPrepareParseResult{
     }
 
     @Override
-    public Set<Class<?>> getShardingEntities() {
-        return shardingEntities;
+    public Set<TableAvailable> getShardingTables() {
+        return shardingTables;
     }
 
     @Override

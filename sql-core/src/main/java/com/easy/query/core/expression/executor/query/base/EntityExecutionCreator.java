@@ -3,6 +3,7 @@ package com.easy.query.core.expression.executor.query.base;
 import com.easy.query.core.expression.executor.parser.EntityPrepareParseResult;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
+import com.easy.query.core.expression.sql.expression.EasyEntitySqlExpression;
 import com.easy.query.core.expression.sql.expression.EasySqlExpression;
 
 import java.util.List;
@@ -22,7 +23,7 @@ public class EntityExecutionCreator extends BaseEntityExecutionCreator{
         super(dataSource,entityExpressionBuilder,entities);
     }
     @Override
-    protected EasySqlExpression cretateEasySqlExpression(Object entity) {
+    protected EasyEntitySqlExpression createEasySqlExpression(Object entity) {
         if(entityExpressionBuilder instanceof EntityUpdateExpressionBuilder){
             return ((EntityUpdateExpressionBuilder)entityExpressionBuilder).toExpression(entity);
         }else{

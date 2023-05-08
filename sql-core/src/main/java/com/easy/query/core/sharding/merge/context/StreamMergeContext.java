@@ -40,7 +40,10 @@ public interface StreamMergeContext extends AutoCloseable {
 
     boolean isSerialExecute();
 
-    boolean isSeqQuery();
+    default boolean isSeqQuery(){
+        return getMergeSequenceOrder()!=null;
+    }
+    MergeSequenceOrder getMergeSequenceOrder();
 
     /**
      * group和order前半段匹配支持stream merger

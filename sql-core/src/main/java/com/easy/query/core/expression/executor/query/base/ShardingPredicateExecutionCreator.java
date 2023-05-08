@@ -1,6 +1,7 @@
 package com.easy.query.core.expression.executor.query.base;
 
 import com.easy.query.core.expression.executor.parser.PredicatePrepareParseResult;
+import com.easy.query.core.expression.executor.parser.QueryPrepareParseResult;
 import com.easy.query.core.expression.sql.expression.EasyEntitySqlExpression;
 import com.easy.query.core.sharding.route.RouteContext;
 import com.easy.query.core.sharding.route.RouteUnit;
@@ -13,7 +14,7 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public class ShardingPredicateExecutionCreator extends ShardingBaseExecutionCreator{
+public class ShardingPredicateExecutionCreator extends ShardingBaseExecutionCreator {
     private final PredicatePrepareParseResult predicatePrepareParseResult;
 
     public ShardingPredicateExecutionCreator(PredicatePrepareParseResult prepareParseResult, RouteContext routeContext) {
@@ -35,5 +36,4 @@ public class ShardingPredicateExecutionCreator extends ShardingBaseExecutionCrea
     protected EasyEntitySqlExpression createEasyEntitySqlExpression(RouteUnit routeUnit) {
         return predicatePrepareParseResult.getEasyEntityPredicateSqlExpression().cloneSqlExpression();
     }
-
 }

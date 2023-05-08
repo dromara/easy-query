@@ -18,7 +18,7 @@ public class EntityStreamMergeContext extends EasyStreamMergeContext{
     public EntityStreamMergeContext(ExecutorContext executorContext, ExecutionContext executionContext, PrepareParseResult prepareParseResult) {
         super(executorContext, executionContext);
         this.prepareParseResult = prepareParseResult;
-        this.isSharding= EasyCollectionUtil.isNotEmpty(prepareParseResult.getShardingEntities());
+        this.isSharding= EasyCollectionUtil.isNotEmpty(prepareParseResult.getShardingTables());
     }
 
     @Override

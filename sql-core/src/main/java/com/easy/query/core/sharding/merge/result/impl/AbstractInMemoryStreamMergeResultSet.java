@@ -24,22 +24,22 @@ import java.util.List;
  */
 public abstract class AbstractInMemoryStreamMergeResultSet implements InMemoryStreamMergeResultSet {
     protected final Iterator<MemoryResultSetRow> memoryResultSetRows;
+    protected final List<MemoryResultSetRow> memoryResultSetRowList;
     protected final ResultSetMetaData metaData;
     protected final int columnCount;
     protected final StreamMergeContext streamMergeContext;
-    protected final List<StreamResultSet> streamResultSets;
     protected final int reallyCount;
     private MemoryResultSetRow currentResultSetRow;
     private boolean wasNull;
     private boolean skipFirst;
+    private boolean closed=false;
     public AbstractInMemoryStreamMergeResultSet(StreamMergeContext streamMergeContext, List<StreamResultSet> streamResultSets) throws SQLException {
         this.streamMergeContext = streamMergeContext;
-        this.streamResultSets=streamResultSets;
         this.metaData = streamResultSets.get(0).getMetaData();
         this.columnCount=metaData.getColumnCount();
-        List<MemoryResultSetRow> memoryResultSetRows = init(streamMergeContext, streamResultSets);
-        this.reallyCount=memoryResultSetRows.size();
-        this.memoryResultSetRows=memoryResultSetRows.iterator();
+        this.memoryResultSetRowList = init(streamMergeContext, streamResultSets);
+        this.reallyCount=memoryResultSetRowList.size();
+        this.memoryResultSetRows=memoryResultSetRowList.iterator();
         if(this.memoryResultSetRows.hasNext()){
             currentResultSetRow=this.memoryResultSetRows.next();
         }
@@ -238,8 +238,10 @@ public abstract class AbstractInMemoryStreamMergeResultSet implements InMemorySt
 
     @Override
     public void close() throws Exception {
-        for (StreamResultSet streamResultSet : streamResultSets) {
-            streamResultSet.close();
+        if(closed){
+            return;
         }
+        closed=true;
+        memoryResultSetRowList.clear();
     }
 }

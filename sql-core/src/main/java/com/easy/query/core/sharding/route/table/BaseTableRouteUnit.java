@@ -11,13 +11,15 @@ public class BaseTableRouteUnit implements TableRouteUnit{
     private final String logicTableName;
     private final String actualTableName;
     private final Class<?> entityClass;
+    private final int tableIndex;
 
-    public BaseTableRouteUnit(String dataSource, String logicTableName, String actualTableName, Class<?> entityClass){
+    public BaseTableRouteUnit(String dataSource, String logicTableName, String actualTableName, Class<?> entityClass,int tableIndex){
 
         this.dataSource = dataSource;
         this.logicTableName = logicTableName;
         this.actualTableName = actualTableName;
         this.entityClass = entityClass;
+        this.tableIndex = tableIndex;
     }
 
     public String getDataSource() {
@@ -34,5 +36,8 @@ public class BaseTableRouteUnit implements TableRouteUnit{
 
     public Class<?> getEntityClass() {
         return entityClass;
+    }
+    public int getTableIndex(){
+        return tableIndex;
     }
 }

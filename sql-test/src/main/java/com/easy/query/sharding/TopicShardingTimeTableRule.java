@@ -16,11 +16,7 @@ import java.time.format.DateTimeFormatter;
  *
  * @author xuejiaming
  */
-public class TopicShardingTimeTableRule extends AbstractTableRouteRule {
-    @Override
-    public Class<?> entityClass() {
-        return TopicShardingTime.class;
-    }
+public class TopicShardingTimeTableRule extends AbstractTableRouteRule<TopicShardingTime> {
 
     @Override
     protected RouteFunction<String> getRouteFilter(Object shardingValue, ShardingOperatorEnum shardingOperator,boolean withEntity) {

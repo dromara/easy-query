@@ -2,6 +2,7 @@ package com.easy.query.core.sharding.route.abstraction;
 
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.executor.parser.PrepareParseResult;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.sharding.route.datasource.engine.DataSourceRouteResult;
 import com.easy.query.core.sharding.route.table.ShardingTableRoute;
@@ -21,17 +22,13 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author xuejiaming
  */
 public class DefaultTableRouteManager implements TableRouteManager{
-    private final Map<Class<?>, TableRouteRule> entityRouteRuleCache= new ConcurrentHashMap<>();
-    private final TableRoute tableRoute;
+    private final Map<Class<?>, TableRouteRule<?>> entityRouteRuleCache= new ConcurrentHashMap<>();
+    private final TableRoute tableRoute=new ShardingTableRoute();
 
-    public DefaultTableRouteManager(EntityMetadataManager entityMetadataManager){
-
-        this.tableRoute=new ShardingTableRoute(entityMetadataManager);
-    }
     @Override
-    public Collection<TableRouteUnit> routeTo(Class<?> entityClass, DataSourceRouteResult dataSourceRouteResult, PrepareParseResult prepareParseResult) {
-        TableRouteRule routeRule = getRouteRule(entityClass);
-        return tableRoute.route(routeRule,dataSourceRouteResult,prepareParseResult);
+    public Collection<TableRouteUnit> routeTo(TableAvailable table, DataSourceRouteResult dataSourceRouteResult, PrepareParseResult prepareParseResult) {
+        TableRouteRule<?> routeRule = getRouteRule(table.getEntityClass());
+        return tableRoute.route(routeRule,dataSourceRouteResult,table,prepareParseResult);
 //        if(prepareParseResult instanceof QueryPrepareParseResult){
 //            return tableRoute.route(routeRule,dataSourceRouteResult,prepareParseResult);
 //        }
@@ -57,9 +54,9 @@ public class DefaultTableRouteManager implements TableRouteManager{
     }
 
     @Override
-    public TableRouteRule getRouteRule(Class<?> entityClass) {
+    public TableRouteRule<?> getRouteRule(Class<?> entityClass) {
 
-        TableRouteRule tableRouteRule = entityRouteRuleCache.get(entityClass);
+        TableRouteRule<?> tableRouteRule = entityRouteRuleCache.get(entityClass);
         if(tableRouteRule==null){
             throw new EasyQueryInvalidOperationException(ClassUtil.getSimpleName(entityClass) +" not found table route rule");
         }
@@ -67,8 +64,8 @@ public class DefaultTableRouteManager implements TableRouteManager{
     }
 
     @Override
-    public boolean addRouteRule(TableRouteRule tableRouteRule) {
-        TableRouteRule oldTableRouteRule = entityRouteRuleCache.get(tableRouteRule.entityClass());
+    public boolean addRouteRule(TableRouteRule<?> tableRouteRule) {
+        TableRouteRule<?> oldTableRouteRule = entityRouteRuleCache.get(tableRouteRule.entityClass());
         if(oldTableRouteRule==null){
             entityRouteRuleCache.put(tableRouteRule.entityClass(),tableRouteRule);
             return true;

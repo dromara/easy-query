@@ -2,6 +2,7 @@ package com.easy.query.core.util;
 
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.executor.parser.PrepareParseResult;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.AggregationColumnSegment;
 import com.easy.query.core.expression.segment.ColumnSegmentImpl;
 import com.easy.query.core.expression.segment.GroupByColumnSegment;
@@ -31,9 +32,9 @@ import java.util.UUID;
  */
 public class ShardingUtil {
 
-    public static RoutePredicateExpression getRoutePredicateExpression(PrepareParseResult prepareParseResult, EntityMetadata entityMetadata,
+    public static RoutePredicateExpression getRoutePredicateExpression(PrepareParseResult prepareParseResult, TableAvailable table,
                                                                        RouteRuleFilter routeRuleFilter, boolean shardingTableRoute) {
-        RoutePredicateDiscover routePredicateDiscover = new RoutePredicateDiscover(prepareParseResult, entityMetadata, routeRuleFilter, shardingTableRoute);
+        RoutePredicateDiscover routePredicateDiscover = new RoutePredicateDiscover(prepareParseResult, table, routeRuleFilter, shardingTableRoute);
         return routePredicateDiscover.getRouteParseExpression();
     }
 

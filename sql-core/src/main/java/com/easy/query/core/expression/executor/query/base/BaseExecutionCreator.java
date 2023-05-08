@@ -3,9 +3,11 @@ package com.easy.query.core.expression.executor.query.base;
 import com.easy.query.core.basic.jdbc.parameter.DefaultSqlParameterCollector;
 import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
 import com.easy.query.core.expression.executor.parser.ExecutionContext;
-import com.easy.query.core.expression.sql.expression.EasySqlExpression;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.sql.expression.EasyEntitySqlExpression;
 import com.easy.query.core.basic.jdbc.executor.internal.common.ExecutionUnit;
 import com.easy.query.core.basic.jdbc.executor.internal.common.SqlUnit;
+import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.Collection;
 import java.util.List;
@@ -17,11 +19,11 @@ import java.util.List;
  * @author xuejiaming
  */
 public abstract class BaseExecutionCreator implements ExecutionCreator{
-    protected ExecutionUnit createExecutionUnit(String dataSource, EasySqlExpression expression, List<Object> entities, boolean fillAutoIncrement){
+    protected ExecutionUnit createExecutionUnit(String dataSource, EasyEntitySqlExpression expression, List<Object> entities, boolean fillAutoIncrement){
         SqlUnit sqlUnit = createSqlUnit(expression, entities, fillAutoIncrement);
         return createExecutionUnit(dataSource, sqlUnit);
     }
-    protected SqlUnit createSqlUnit(EasySqlExpression expression, List<Object> entities, boolean fillAutoIncrement){
+    protected SqlUnit createSqlUnit(EasyEntitySqlExpression expression, List<Object> entities, boolean fillAutoIncrement){
         SqlParameterCollector sqlParameterCollector = DefaultSqlParameterCollector.defaultCollector();
         String sql = expression.toSql(sqlParameterCollector);
         return new SqlUnit(sql, sqlParameterCollector.getParameters(),entities, fillAutoIncrement);
@@ -30,9 +32,12 @@ public abstract class BaseExecutionCreator implements ExecutionCreator{
         return new  ExecutionUnit(dataSource, sqlUnit);
     }
     protected ExecutionContext createExecutionContext(Collection<ExecutionUnit> executionUnits){
-        return new ExecutionContext(executionUnits);
+        return new ExecutionContext(executionUnits,sequenceQuery());
     }
 
+    protected boolean sequenceQuery(){
+        return false;
+    }
     @Override
     public ExecutionContext create() {
         Collection<ExecutionUnit> executionUnits = createExecutionUnits();

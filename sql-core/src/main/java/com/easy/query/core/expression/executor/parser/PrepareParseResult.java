@@ -1,5 +1,6 @@
 package com.easy.query.core.expression.executor.parser;
 
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.expression.EasyEntitySqlExpression;
 
@@ -12,7 +13,7 @@ import java.util.Set;
  * @author xuejiaming
  */
 public interface PrepareParseResult {
-    Set<Class<?>> getShardingEntities();
+    Set<TableAvailable> getShardingTables();
     EntityExpressionBuilder getEntityExpressionBuilder();
 
 

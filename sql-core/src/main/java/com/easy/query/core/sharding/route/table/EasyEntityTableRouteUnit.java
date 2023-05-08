@@ -13,7 +13,7 @@ public class EasyEntityTableRouteUnit extends BaseTableRouteUnit implements Enti
         this(tableRouteUnit.getDataSource(), tableRouteUnit.getLogicTableName(), tableRouteUnit.getActualTableName(), tableRouteUnit.getEntityClass(),entity);
     }
     public EasyEntityTableRouteUnit(String dataSource, String logicTableName, String actualTableName, Class<?> entityClass, Object entity) {
-        super(dataSource, logicTableName, actualTableName, entityClass);
+        super(dataSource, logicTableName, actualTableName, entityClass,0);
         this.entity = entity;
     }
 

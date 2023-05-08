@@ -23,6 +23,7 @@ import java.sql.Timestamp;
 public final class EasyStreamResult implements StreamResultSet {
     private final ResultSet resultSet;
     private final PreparedStatement preparedStatement;
+    private boolean closed=false;
 
     public EasyStreamResult(ResultSet resultSet, PreparedStatement preparedStatement) {
 
@@ -143,6 +144,10 @@ public final class EasyStreamResult implements StreamResultSet {
 
     @Override
     public void close() throws Exception {
+        if (closed) {
+            return;
+        }
+        closed = true;
         resultSet.close();
         preparedStatement.close();
     }

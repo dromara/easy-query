@@ -13,7 +13,7 @@ import java.util.Collection;
  *
  * @author xuejiaming
  */
-public interface TableRouteRule extends RouteRule, RouteRuleFilter {
+public interface TableRouteRule<T> extends RouteRule, RouteRuleFilter {
 
     /**
      * 用于过滤前设置表名 data source.actual table name 全部集合
@@ -30,4 +30,5 @@ public interface TableRouteRule extends RouteRule, RouteRuleFilter {
      * @return 过滤后的路由执行单元,默认就是 {@param filterRouteUnits}
      */
     Collection<TableRouteUnit> afterFilterTableName(Collection<String> allTableNames, Collection<String> beforeTableNames, Collection<TableRouteUnit> filterRouteUnits);
+
 }

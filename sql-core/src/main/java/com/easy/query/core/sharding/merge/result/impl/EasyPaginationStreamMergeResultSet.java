@@ -27,6 +27,7 @@ public class EasyPaginationStreamMergeResultSet implements StreamResultSet {
     private final long rows;
     private  long realOffset;
     private  long realRows;
+    private boolean closed=false;
 
     public EasyPaginationStreamMergeResultSet(StreamMergeContext streamMergeContext, List<StreamResultSet> streamResults) throws SQLException {
         this(streamMergeContext,streamResults,streamMergeContext.getOffset(),streamMergeContext.getRows());
@@ -173,6 +174,10 @@ public class EasyPaginationStreamMergeResultSet implements StreamResultSet {
 
     @Override
     public void close() throws Exception {
+        if (closed) {
+            return;
+        }
+        closed = true;
         streamResult.close();
     }
 }
