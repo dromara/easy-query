@@ -17,13 +17,15 @@ public class ShardingInitOption {
     private final boolean reverse;
     private final Map<String,Boolean/*asc or desc*/> sequenceProperties;
     private final int connectionsLimit;
+    private final ExecuteMethodBehavior executeMethodBehavior;
 
-    public ShardingInitOption(Map<String, Collection<String>> actualTableNames, Comparator<String> defaultTableNameComparator,Map<String,Boolean/*asc or desc*/> sequenceProperties, boolean reverse, int connectionsLimit) {
+    public ShardingInitOption(Map<String, Collection<String>> actualTableNames, Comparator<String> defaultTableNameComparator,Map<String,Boolean/*asc or desc*/> sequenceProperties, boolean reverse, int connectionsLimit,ExecuteMethodBehavior executeMethodBehavior) {
         this.actualTableNames = actualTableNames;
         this.defaultTableNameComparator = defaultTableNameComparator;
         this.sequenceProperties = sequenceProperties;
         this.reverse = reverse;
         this.connectionsLimit = connectionsLimit;
+        this.executeMethodBehavior = executeMethodBehavior;
     }
 
     public Map<String, Collection<String>> getActualTableNames() {
@@ -44,5 +46,9 @@ public class ShardingInitOption {
 
     public int getConnectionsLimit() {
         return connectionsLimit;
+    }
+
+    public ExecuteMethodBehavior getExecuteMethodBehavior() {
+        return executeMethodBehavior;
     }
 }

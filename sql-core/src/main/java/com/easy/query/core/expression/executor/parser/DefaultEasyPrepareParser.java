@@ -1,5 +1,6 @@
 package com.easy.query.core.expression.executor.parser;
 
+import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
@@ -48,10 +49,10 @@ public class DefaultEasyPrepareParser implements EasyPrepareParser {
     }
 
     @Override
-    public PrepareParseResult parse(EntityExpressionBuilder entityExpressionBuilder, List<Object> entities, boolean fillAutoIncrement) {
+    public PrepareParseResult parse(ExecutorContext executorContext, EntityExpressionBuilder entityExpressionBuilder, List<Object> entities, boolean fillAutoIncrement) {
         Set<TableAvailable> shardingTables = getShardingTable(entityExpressionBuilder);
         if (entityExpressionBuilder instanceof EntityQueryExpressionBuilder) {
-            return queryParseResult(shardingTables, (EntityQueryExpressionBuilder) entityExpressionBuilder);
+            return queryParseResult(executorContext,shardingTables, (EntityQueryExpressionBuilder) entityExpressionBuilder);
         }
         if (entityExpressionBuilder instanceof EntityInsertExpressionBuilder) {
             return insertParseResult(shardingTables, (EntityInsertExpressionBuilder) entityExpressionBuilder, entities, fillAutoIncrement);
@@ -66,8 +67,8 @@ public class DefaultEasyPrepareParser implements EasyPrepareParser {
         throw new NotImplementedException();
     }
 
-    private QueryPrepareParseResult queryParseResult(Set<TableAvailable> shardingEntities, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
-        return new EasyQueryPrepareParseResult(shardingEntities, entityQueryExpressionBuilder);
+    private QueryPrepareParseResult queryParseResult(ExecutorContext executorContext,Set<TableAvailable> shardingEntities, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
+        return new EasyQueryPrepareParseResult(executorContext,shardingEntities, entityQueryExpressionBuilder);
     }
 
     private InsertPrepareParseResult insertParseResult(Set<TableAvailable> shardingTables, EntityInsertExpressionBuilder entityInsertExpressionBuilder, List<Object> entities, boolean fillAutoIncrement) {

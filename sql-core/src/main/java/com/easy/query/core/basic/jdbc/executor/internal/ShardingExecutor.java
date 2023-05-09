@@ -40,7 +40,7 @@ import java.util.stream.Stream;
  * @author xuejiaming
  */
 public class ShardingExecutor {
-    private static final Log log = LogFactory.getLog(ShardingExecutor.class);
+//    private static final Log log = LogFactory.getLog(ShardingExecutor.class);
 
     private ShardingExecutor() {
     }
@@ -97,11 +97,17 @@ public class ShardingExecutor {
         return futures;
     }
 
+    /**
+     * 将多个按数据源分组的执行单元进行分组查询每组最大数目就是max query connections limit
+     * 如果当前是顺序查询那么则为配置的值
+     * @param streamMergeContext
+     * @param sqlGroups
+     * @return
+     */
     private static DataSourceSqlExecutorUnit getSqlExecutorGroups(StreamMergeContext streamMergeContext, Grouping<String, ExecutionUnit> sqlGroups) {
         boolean isSerialExecute = streamMergeContext.isSerialExecute();
-        EasyShardingOption easyShardingOption = streamMergeContext.getRuntimeContext().getEasyShardingOption();
         //如果是顺序查询应该使用顺序的connectionlimit或者表达式指定分片的connectionlimit
-        int maxQueryConnectionsLimit = easyShardingOption.getMaxQueryConnectionsLimit();
+        int maxQueryConnectionsLimit = streamMergeContext.getExecuteMaxQueryConnectionsLimit();
         String dataSourceName = sqlGroups.key();
         List<ExecutionUnit> sqlGroupExecutionUnits = sqlGroups.values().collect(Collectors.toList());
         int sqlCount = sqlGroupExecutionUnits.size();
@@ -117,8 +123,8 @@ public class ShardingExecutor {
         //由于分组后除了最后一个元素其余元素都满足parallelCount为最大,第一个元素的分组数将是实际的创建连接数
         int createDbConnectionCount = sqlUnitPartitions.get(0).size();
         List<EasyConnection> easyConnections = streamMergeContext.getEasyConnections(connectionMode, dataSourceName, createDbConnectionCount);
-        //将SqlExecutorUnit进行分区,每个区maxQueryConnectionsLimit个
-        //[1,2,3,4,5,6,7],maxQueryConnectionsLimit=3,结果就是[[1,2,3],[4,5,6],[7]]
+        //将SqlExecutorUnit进行分区,每个区parallelCount个
+        //[1,2,3,4,5,6,7],parallelCount=3,结果就是[[1,2,3],[4,5,6],[7]]
         List<List<CommandExecuteUnit>> sqlExecutorUnitPartitions = EasyCollectionUtil.select(sqlUnitPartitions, (executionUnits, index0) -> {
             return EasyCollectionUtil.select(executionUnits, (executionUnit, index1) -> {
                 EasyConnection easyConnection = easyConnections.get(index1);

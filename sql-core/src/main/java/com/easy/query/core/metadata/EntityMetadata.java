@@ -252,7 +252,7 @@ public class EntityMetadata {
         Comparator<String> defaultTableNameComparator = shardingInitOption.getDefaultTableNameComparator();
         if (defaultTableNameComparator != null) {
             Map<String, Boolean> sequenceProperties = shardingInitOption.getSequenceProperties();
-            this.entityShardingOrder = new EntityShardingOrder(defaultTableNameComparator, shardingInitOption.isReverse(), shardingInitOption.getConnectionsLimit(),sequenceProperties);
+            this.entityShardingOrder = new EntityShardingOrder(defaultTableNameComparator, shardingInitOption.isReverse(), shardingInitOption.getConnectionsLimit(),sequenceProperties,shardingInitOption.getExecuteMethodBehavior());
         }
     }
 

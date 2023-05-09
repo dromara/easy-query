@@ -38,6 +38,7 @@ public interface StreamMergeContext extends AutoCloseable {
 
 
     EasyQueryRuntimeContext getRuntimeContext();
+    int getExecuteMaxQueryConnectionsLimit();
 
     boolean isSerialExecute();
 

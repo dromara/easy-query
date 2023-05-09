@@ -680,4 +680,25 @@ public class QueryTest extends BaseTest {
         Assert.assertEquals("0",x.get(0).getId());
         Assert.assertEquals("10",x.get(1).getId());
     }
+    @Test
+    public void query47() {
+        Queryable<BlogEntity> queryable = easyQuery.queryable(BlogEntity.class)
+                .where(o -> o.eq(BlogEntity::getId, "98"));
+        String sql = queryable.toSql();
+        Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`title`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ?", sql);
+        BlogEntity blogEntity = queryable.firstOrNull();
+        System.out.println(blogEntity);
+        Assert.assertNotNull(blogEntity);
+        Assert.assertEquals("98", blogEntity.getId());
+        Assert.assertEquals("title98", blogEntity.getTitle());
+        Assert.assertEquals(true, blogEntity.getTop());
+        Assert.assertEquals(true, blogEntity.getIsTop());
+        Assert.assertEquals("content98", blogEntity.getContent());
+        Assert.assertEquals("http://blog.easy-query.com/98", blogEntity.getUrl());
+        Assert.assertEquals(98, (int)blogEntity.getStar());
+        Assert.assertNull(blogEntity.getPublishTime());
+        Assert.assertEquals(new BigDecimal("1.20"), blogEntity.getScore());
+        Assert.assertEquals(1, (int)blogEntity.getStatus());
+        Assert.assertEquals(new BigDecimal("117.60"), blogEntity.getOrder());
+    }
 }

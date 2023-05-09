@@ -121,7 +121,7 @@ public class DefaultTableRouteEngine implements TableRouteEngine {
                     int i=getCompareRouteUnitIndex(first,table);
                     if(i>=0){
                         Comparator<String> tableComparator = sequenceOrderPrepareParseResult.getTableComparator();
-                        int compareFactor = sequenceOrderPrepareParseResult.isReverse() ? 1 : -1;
+                        int compareFactor = sequenceOrderPrepareParseResult.isReverse() ? -1 : 1;
                         routeUnits.sort((c1, c2) -> tableComparator.compare(c1.getTableRouteUnits().get(i).getActualTableName(), c2.getTableRouteUnits().get(i).getActualTableName()) * compareFactor);
                         sequenceQuery=true;
                     }

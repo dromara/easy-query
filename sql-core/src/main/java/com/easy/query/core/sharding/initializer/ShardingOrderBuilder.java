@@ -1,5 +1,6 @@
 package com.easy.query.core.sharding.initializer;
 
+import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.metadata.EntityMetadata;
@@ -21,11 +22,13 @@ public class ShardingOrderBuilder<T> {
     private final boolean defaultReverse;
     private final Map<String,Boolean/*asc or desc*/> sequenceProperties=new HashMap<>();
     private int connectionsLimit =0;
+    private final ExecuteMethodBehavior executeMethodBehavior;
     public ShardingOrderBuilder(EntityMetadata entityMetadata,Comparator<String> defaultTableNameComparator, boolean defaultReverse){
 
         this.entityMetadata = entityMetadata;
         this.defaultTableNameComparator = defaultTableNameComparator;
         this.defaultReverse = defaultReverse;
+        this.executeMethodBehavior=ExecuteMethodBehavior.getDefault();
     }
 
 
@@ -63,11 +66,23 @@ public class ShardingOrderBuilder<T> {
     }
 
     /**
+     * 表达式没有order的时候哪些方法需要支持顺序排序,譬如any可以设置连接数不需要那么大,first可以设置只需要2个连接查询譬如,并且不需要查询所有表
+     * @param executeMethods
+     * @return
+     */
+    public ShardingOrderBuilder<T> defaultAffectedMethod(ExecuteMethodEnum... executeMethods){
+        for (ExecuteMethodEnum executeMethod : executeMethods) {
+            executeMethodBehavior.addBehavior(executeMethod);
+        }
+        return this;
+    }
+
+    /**
      * 当符合顺序查询时使用的connectionsLimit
      * @param connectionsLimit
      * @return
      */
-    public ShardingOrderBuilder<T> addConnectionsLimit(int connectionsLimit){
+    public ShardingOrderBuilder<T> setMaxQueryConnectionsLimit(int connectionsLimit){
         this.connectionsLimit =connectionsLimit;
         return this;
     }
@@ -86,5 +101,9 @@ public class ShardingOrderBuilder<T> {
 
     public int getConnectionsLimit() {
         return connectionsLimit;
+    }
+
+    public ExecuteMethodBehavior getExecuteMethodBehavior() {
+        return executeMethodBehavior;
     }
 }

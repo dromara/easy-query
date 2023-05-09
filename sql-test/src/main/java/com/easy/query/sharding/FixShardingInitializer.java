@@ -1,5 +1,6 @@
 package com.easy.query.sharding;
 
+import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.sharding.initializer.EasyShardingInitializer;
 import com.easy.query.core.sharding.initializer.ShardingInitializerBuilder;
@@ -11,7 +12,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * create time 2023/4/24 10:14
@@ -52,7 +52,9 @@ public class FixShardingInitializer implements EasyShardingInitializer {
 
             ((ShardingInitializerBuilder<TopicShardingTime>)shardingInitializerBuilder).actualTableNameInit(initTables)
                     .orderConfigure(String::compareToIgnoreCase,true)
-                    .addPropertyWhenDesc(TopicShardingTime::getCreateTime);
+                    .addPropertyWhenDesc(TopicShardingTime::getCreateTime)
+                    .defaultAffectedMethod(ExecuteMethodEnum.LIST,ExecuteMethodEnum.ANY,ExecuteMethodEnum.FIRST)
+                    .setMaxQueryConnectionsLimit(2);
         }else{
             throw new UnsupportedOperationException();
         }

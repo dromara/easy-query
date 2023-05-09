@@ -1,9 +1,10 @@
 package com.easy.query.test;
 
-import com.easy.query.BaseTest;
 import com.easy.query.core.enums.EasyBehaviorEnum;
+import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.SqlRangeEnum;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
+import com.easy.query.core.sharding.initializer.ExecuteMethodBehavior;
 import com.easy.query.core.util.AesUtil;
 import com.easy.query.core.util.Base64Util;
 import com.easy.query.core.util.StringUtil;
@@ -20,7 +21,7 @@ import java.util.UUID;
  * @Date: 2023/3/17 22:22
  * @author xuejiaming
  */
-public class GenericTest extends BaseTest {
+public class GenericTest {
 
     @Test
     public void SqlRangeTest1(){
@@ -110,5 +111,12 @@ public class GenericTest extends BaseTest {
         Assert.assertFalse(easyBehavior.hasBehavior(EasyBehaviorEnum.LOGIC_DELETE));
         easyBehavior.removeBehavior(EasyBehaviorEnum.USE_INTERCEPTOR);
         Assert.assertTrue(easyBehavior.isDefaultBehavior());
+    }
+
+    @Test
+    public void executeMethodBehaviorTest1(){
+        ExecuteMethodBehavior aDefault = ExecuteMethodBehavior.getDefault();
+        aDefault.removeBehavior(ExecuteMethodEnum.UNKNOWN);
+        Assert.assertEquals(true,aDefault.isDefault());
     }
 }

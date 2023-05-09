@@ -1,5 +1,7 @@
 package com.easy.query.core.metadata;
 
+import com.easy.query.core.sharding.initializer.ExecuteMethodBehavior;
+
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -16,8 +18,9 @@ public class EntityShardingOrder {
     private final boolean reverse;
     private final int connectionsLimit;
     private final Map<String, Boolean> sequenceProperties;
+    private final ExecuteMethodBehavior executeMethodBehavior;
 
-    public EntityShardingOrder(Comparator<String> tableComparator, boolean reverse, int connectionsLimit, Map<String, Boolean> sequenceProperties) {
+    public EntityShardingOrder(Comparator<String> tableComparator, boolean reverse, int connectionsLimit, Map<String, Boolean> sequenceProperties,ExecuteMethodBehavior executeMethodBehavior) {
         this.tableComparator = tableComparator;
         this.reverse = reverse;
 
@@ -27,6 +30,7 @@ public class EntityShardingOrder {
         } else {
             this.sequenceProperties = Collections.emptyMap();
         }
+        this.executeMethodBehavior = executeMethodBehavior;
     }
 
     public Comparator<String> getTableComparator() {
@@ -43,5 +47,9 @@ public class EntityShardingOrder {
 
     public Map<String, Boolean> getSequenceProperties() {
         return sequenceProperties;
+    }
+
+    public ExecuteMethodBehavior getExecuteMethodBehavior() {
+        return executeMethodBehavior;
     }
 }

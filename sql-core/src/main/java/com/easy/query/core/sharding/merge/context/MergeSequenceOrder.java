@@ -18,19 +18,8 @@ public final class MergeSequenceOrder {
         this.sequenceOrderPrepareParseResult = sequenceOrderPrepareParseResult;
     }
 
-    public Comparator<String> getTableComparator() {
-        return sequenceOrderPrepareParseResult.getTableComparator();
-    }
-
-    public boolean isReverse() {
-        return sequenceOrderPrepareParseResult.isReverse();
-    }
-
     public int getConnectionsLimit() {
         return sequenceOrderPrepareParseResult.getConnectionsLimit();
     }
 
-    public TableAvailable getTable() {
-        return sequenceOrderPrepareParseResult.getTable();
-    }
 }

@@ -84,6 +84,11 @@ public class EasyStreamMergeContext implements StreamMergeContext {
         return runtimeContext;
     }
 
+    @Override
+    public int getExecuteMaxQueryConnectionsLimit() {
+       return 1;
+    }
+
     public boolean isSerialExecute() {
         return serialExecute;
     }

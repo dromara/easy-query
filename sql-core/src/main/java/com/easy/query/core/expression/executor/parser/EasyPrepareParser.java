@@ -1,5 +1,6 @@
 package com.easy.query.core.expression.executor.parser;
 
+import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.expression.EasyEntitySqlExpression;
 import com.easy.query.core.expression.sql.expression.EasySqlExpression;
@@ -14,8 +15,8 @@ import java.util.Set;
  * @author xuejiaming
  */
 public interface EasyPrepareParser {
-   default PrepareParseResult parse(EntityExpressionBuilder entityExpressionBuilder){
-       return parse(entityExpressionBuilder,null,false);
+   default PrepareParseResult parse(ExecutorContext executorContext, EntityExpressionBuilder entityExpressionBuilder){
+       return parse(executorContext,entityExpressionBuilder,null,false);
    }
-    PrepareParseResult parse(EntityExpressionBuilder entityExpressionBuilder, List<Object> entities, boolean fillAutoIncrement);
+    PrepareParseResult parse(ExecutorContext executorContext,EntityExpressionBuilder entityExpressionBuilder, List<Object> entities, boolean fillAutoIncrement);
 }

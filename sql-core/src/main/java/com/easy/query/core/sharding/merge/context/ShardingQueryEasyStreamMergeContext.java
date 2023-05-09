@@ -147,4 +147,15 @@ public class ShardingQueryEasyStreamMergeContext extends EntityStreamMergeContex
     public MergeSequenceOrder getMergeSequenceOrder() {
         return mergeSequenceOrder;
     }
+
+    @Override
+    public int getExecuteMaxQueryConnectionsLimit() {
+        if(isSeqQuery()){
+            int connectionsLimit = mergeSequenceOrder.getConnectionsLimit();
+            if(connectionsLimit>0){
+                return connectionsLimit;
+            }
+        }
+        return runtimeContext.getEasyShardingOption().getMaxQueryConnectionsLimit();
+    }
 }
