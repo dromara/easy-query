@@ -51,6 +51,6 @@ public class ProjectSqlBuilderSegmentImpl extends AbstractSqlBuilderSegment impl
 
     @Override
     public boolean hasAggregateColumns() {
-        return false;
+        return projectHasAggregate;
     }
 }

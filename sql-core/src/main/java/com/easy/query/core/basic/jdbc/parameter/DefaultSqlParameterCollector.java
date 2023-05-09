@@ -11,12 +11,27 @@ import java.util.List;
  */
 public class DefaultSqlParameterCollector implements SqlParameterCollector{
     private final List<SQLParameter> parameters;
+    private int invokeCount;
     public DefaultSqlParameterCollector(){
         this(10);
     }
     public DefaultSqlParameterCollector(int initialCapacity){
-        parameters=new ArrayList<>(initialCapacity);
+        this.parameters=new ArrayList<>(initialCapacity);
+        this.invokeCount=0;
     }
+
+    @Override
+    public int expressionInvokeCountGetIncrement() {
+        int oldInvokeCount = invokeCount;
+        invokeCount++;
+        return oldInvokeCount;
+    }
+
+    @Override
+    public int currentInvokeCount() {
+        return invokeCount;
+    }
+
     @Override
     public void addParameter(SQLParameter sqlParameter) {
         parameters.add(sqlParameter);

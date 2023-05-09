@@ -1,6 +1,8 @@
 package com.easy.query.core.expression.sql.expression.factory;
 
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
+import com.easy.query.core.enums.ExecuteMethodEnum;
+import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.expression.EasyAnonymousQuerySqlExpression;
 import com.easy.query.core.expression.sql.expression.EasyDeleteSqlExpression;
 import com.easy.query.core.expression.sql.expression.EasyInsertSqlExpression;
@@ -21,27 +23,27 @@ import com.easy.query.core.expression.sql.expression.impl.UpdateSqlExpression;
  */
 public class DefaultEasyExpressionFactory implements EasyExpressionFactory{
     @Override
-    public EasyQuerySqlExpression createEasyQuerySqlExpression(EasyQueryRuntimeContext runtimeContext) {
-        return new QuerySqlExpression(runtimeContext);
+    public EasyQuerySqlExpression createEasyQuerySqlExpression(EasyQueryRuntimeContext runtimeContext, ExecuteMethodEnum executeMethod) {
+        return new QuerySqlExpression(runtimeContext,executeMethod);
     }
 
     @Override
-    public EasyInsertSqlExpression createEasyInsertSqlExpression(EasyQueryRuntimeContext runtimeContext, EasyTableSqlExpression tableSqlExpression) {
-        return new InsertSqlExpression(runtimeContext,tableSqlExpression);
+    public EasyInsertSqlExpression createEasyInsertSqlExpression(EasyQueryRuntimeContext runtimeContext, EasyTableSqlExpression tableSqlExpression, ExecuteMethodEnum executeMethod) {
+        return new InsertSqlExpression(runtimeContext,tableSqlExpression,executeMethod);
     }
 
     @Override
-    public EasyUpdateSqlExpression createEasyUpdateSqlExpression(EasyQueryRuntimeContext runtimeContext, EasyTableSqlExpression tableSqlExpression) {
-        return new UpdateSqlExpression(runtimeContext,tableSqlExpression);
+    public EasyUpdateSqlExpression createEasyUpdateSqlExpression(EasyQueryRuntimeContext runtimeContext, EasyTableSqlExpression tableSqlExpression, ExecuteMethodEnum executeMethod) {
+        return new UpdateSqlExpression(runtimeContext,tableSqlExpression,executeMethod);
     }
 
     @Override
-    public EasyDeleteSqlExpression createEasyDeleteSqlExpression(EasyQueryRuntimeContext runtimeContext, EasyTableSqlExpression tableSqlExpression) {
-        return new DeleteSqlExpression(runtimeContext,tableSqlExpression);
+    public EasyDeleteSqlExpression createEasyDeleteSqlExpression(EasyQueryRuntimeContext runtimeContext, EasyTableSqlExpression tableSqlExpression, ExecuteMethodEnum executeMethod) {
+        return new DeleteSqlExpression(runtimeContext,tableSqlExpression,executeMethod);
     }
 
     @Override
-    public EasyAnonymousQuerySqlExpression createEasyAnonymousQuerySqlExpression(EasyQueryRuntimeContext runtimeContext, String sql) {
-        return new AnonymousQuerySqlExpression(runtimeContext,sql);
+    public EasyAnonymousQuerySqlExpression createEasyAnonymousQuerySqlExpression(EasyQueryRuntimeContext runtimeContext, String sql, ExecuteMethodEnum executeMethod) {
+        return new AnonymousQuerySqlExpression(runtimeContext,sql,executeMethod);
     }
 }

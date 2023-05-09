@@ -6,6 +6,6 @@ package com.easy.query.core.api.dynamic.where;
  * @Date: 2023/3/24 07:54
  * @author xuejiaming
  */
-public interface EasyDynamicWhereBuilder<TObject> {
-    <TEntity> EasyDynamicWherePropertyBuilder<TEntity,TObject> entity(Class<TEntity> entityClass);
+public interface EasyWhereBuilder<TObject> {
+    <TEntity> EasyWherePropertyBuilder<TEntity,TObject> mapTo(Class<TEntity> entityClass);
 }

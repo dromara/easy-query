@@ -32,6 +32,7 @@ public class ShardingQueryEasyStreamMergeContext extends EntityStreamMergeContex
     protected final List<PropertyGroup> groups;
     protected final EasyQuerySqlExpression easyQuerySqlExpression;
     protected final boolean hasGroup;
+    protected volatile boolean terminated = false;
     protected final MergeSequenceOrder mergeSequenceOrder;
     protected long offset;
     protected long rows;
@@ -159,5 +160,15 @@ public class ShardingQueryEasyStreamMergeContext extends EntityStreamMergeContex
             }
         }
         return runtimeContext.getEasyShardingOption().getMaxQueryConnectionsLimit();
+    }
+
+    @Override
+    public void terminatedBreak() {
+        this.terminated=true;
+    }
+
+    @Override
+    public boolean isTerminated() {
+        return terminated;
     }
 }

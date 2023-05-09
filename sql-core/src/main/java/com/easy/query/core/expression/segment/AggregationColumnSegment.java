@@ -8,6 +8,8 @@ import com.easy.query.core.sharding.merge.result.aggregation.AggregationType;
  *
  * @author xuejiaming
  */
-public interface AggregationColumnSegment extends SqlEntityAliasSegment {
+public interface AggregationColumnSegment extends ColumnSegment {
     AggregationType getAggregationType();
+    @Override
+    AggregationColumnSegment cloneSqlEntitySegment();
 }

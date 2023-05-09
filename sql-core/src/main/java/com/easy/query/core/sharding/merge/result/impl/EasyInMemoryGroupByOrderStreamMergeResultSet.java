@@ -23,19 +23,9 @@ import java.util.Map;
  * @author xuejiaming
  */
 public final class EasyInMemoryGroupByOrderStreamMergeResultSet extends AbstractInMemoryStreamMergeResultSet {
-    //数组下标对应select的下标,值为1的表示他是Group列0表示为func列
-    private final int[] selectColumns;
     public EasyInMemoryGroupByOrderStreamMergeResultSet(StreamMergeContext streamMergeContext, List<StreamResultSet> streamResultSets) throws SQLException {
         super(streamMergeContext, streamResultSets);
 
-        List<PropertyGroup> groups = streamMergeContext.getGroups();
-        this.selectColumns = new int[streamMergeContext.getSelectColumns().getSqlSegments().size()];
-        for (PropertyGroup group : groups) {
-            int columnIndex = group.columnIndex();
-            if (columnIndex >= 0) {
-                selectColumns[columnIndex] = 1;
-            }
-        }
     }
 
     @Override
@@ -112,13 +102,11 @@ public final class EasyInMemoryGroupByOrderStreamMergeResultSet extends Abstract
     private List<AggregateValue> createAggregationUnitValues() {
         List<SqlSegment> sqlSegments = streamMergeContext.getSelectColumns().getSqlSegments();
         ArrayList<AggregateValue> aggregationUnits = new ArrayList<>(columnCount);
-        for (int i = 0; i < selectColumns.length; i++) {
-            boolean aggregateColumn = selectColumns[i] == 0;
-            if (aggregateColumn) {
-                SqlSegment sqlSegment = sqlSegments.get(i);
-                if (!(sqlSegment instanceof AggregationColumnSegment)) {
-                    throw new UnsupportedOperationException("unknown aggregate column:" + ClassUtil.getInstanceSimpleName(sqlSegment));
-                }
+        for (SqlSegment sqlSegment : sqlSegments) {
+        }
+        for (int i = 0; i < sqlSegments.size(); i++) {
+            SqlSegment sqlSegment = sqlSegments.get(i);
+            if(sqlSegment instanceof AggregationColumnSegment){
                 AggregationColumnSegment aggregationColumnSegment = (AggregationColumnSegment) sqlSegment;
                 aggregationUnits.add(new AggregateValue(i, AggregationUnitFactory.create(aggregationColumnSegment.getAggregationType())));
             }

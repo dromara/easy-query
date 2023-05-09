@@ -5,6 +5,7 @@ import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.executor.internal.result.impl.QueryExecuteResult;
 import com.easy.query.core.basic.jdbc.executor.internal.merger.ShardingMerger;
 import com.easy.query.core.basic.jdbc.executor.internal.unit.abstraction.AbstractExecutor;
+import com.easy.query.core.basic.jdbc.executor.internal.unit.breaker.AllCircuitBreaker;
 import com.easy.query.core.basic.jdbc.executor.internal.unit.breaker.AnyCircuitBreaker;
 import com.easy.query.core.basic.jdbc.executor.internal.unit.breaker.AnyElementCircuitBreaker;
 import com.easy.query.core.basic.jdbc.executor.internal.unit.breaker.CircuitBreaker;
@@ -48,9 +49,13 @@ public class EasyQueryExecutor extends AbstractExecutor<QueryExecuteResult> {
     protected CircuitBreaker createCircuitBreak() {
         ExecuteMethodEnum executeMethod = streamMergeContext.getExecuteMethod();
         switch (executeMethod){
-            case FIRST:return AnyElementCircuitBreaker.getInstance();
+            case FIRST:
+            case MAX:
+            case MIN:
+                return AnyElementCircuitBreaker.getInstance();
             case LIST:return ListCircuitBreaker.getInstance();
             case ANY:return AnyCircuitBreaker.getInstance();
+            case ALL:return AllCircuitBreaker.getInstance();
             default:return NoCircuitBreaker.getInstance();
         }
     }

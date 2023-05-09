@@ -35,6 +35,7 @@ public class AnonymousTableSqlExpression extends TableSqlExpression implements E
 
     @Override
     public String toSql(SqlParameterCollector sqlParameterCollector) {
+        sqlParameterCollector.expressionInvokeCountGetIncrement();
 
         StringBuilder sql = new StringBuilder();
 

@@ -20,6 +20,8 @@ import java.util.List;
  * @author xuejiaming
  */
 public interface StreamMergeContext extends AutoCloseable {
+    void terminatedBreak();
+    boolean isTerminated();
     List<PropertyOrder> getOrders();
     List<PropertyGroup> getGroups();
 

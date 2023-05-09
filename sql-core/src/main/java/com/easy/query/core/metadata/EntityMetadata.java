@@ -7,7 +7,7 @@ import com.easy.query.core.basic.plugin.logicdel.LogicDeleteBuilder;
 import com.easy.query.core.basic.plugin.version.EasyVersionStrategy;
 import com.easy.query.core.inject.ServiceProvider;
 import com.easy.query.core.sharding.initializer.ShardingInitOption;
-import com.easy.query.core.sharding.initializer.ShardingInitializerBuilder;
+import com.easy.query.core.sharding.initializer.ShardingEntityBuilder;
 import com.easy.query.core.sql.nameconversion.NameConversion;
 import com.easy.query.core.configuration.EasyQueryConfiguration;
 import com.easy.query.core.basic.plugin.encryption.EasyEncryptionStrategy;
@@ -231,7 +231,7 @@ public class EntityMetadata {
         if (easyShardingInitializer == null) {
             throw new EasyQueryInvalidOperationException("not found sharding initializer:" + ClassUtil.getSimpleName(initializer));
         }
-        ShardingInitializerBuilder<Object> shardingInitializerBuilder = new ShardingInitializerBuilder<Object>(this);
+        ShardingEntityBuilder<Object> shardingInitializerBuilder = new ShardingEntityBuilder<Object>(this);
         easyShardingInitializer.configure(shardingInitializerBuilder);
         ShardingInitOption shardingInitOption = shardingInitializerBuilder.build();
         Map<String, Collection<String>> initializeTables = shardingInitOption.getActualTableNames();
@@ -252,7 +252,7 @@ public class EntityMetadata {
         Comparator<String> defaultTableNameComparator = shardingInitOption.getDefaultTableNameComparator();
         if (defaultTableNameComparator != null) {
             Map<String, Boolean> sequenceProperties = shardingInitOption.getSequenceProperties();
-            this.entityShardingOrder = new EntityShardingOrder(defaultTableNameComparator, shardingInitOption.isReverse(), shardingInitOption.getConnectionsLimit(),sequenceProperties,shardingInitOption.getExecuteMethodBehavior());
+            this.entityShardingOrder = new EntityShardingOrder(defaultTableNameComparator, shardingInitOption.getConnectionsLimit(),sequenceProperties,shardingInitOption.getExecuteMethodBehavior());
         }
     }
 

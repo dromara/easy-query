@@ -3,7 +3,7 @@ package com.easy.query.sharding;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.sharding.initializer.EasyShardingInitializer;
-import com.easy.query.core.sharding.initializer.ShardingInitializerBuilder;
+import com.easy.query.core.sharding.initializer.ShardingEntityBuilder;
 import com.easy.query.entity.TopicSharding;
 import com.easy.query.entity.TopicShardingTime;
 
@@ -21,8 +21,8 @@ import java.util.LinkedHashMap;
  */
 public class FixShardingInitializer implements EasyShardingInitializer {
     @Override
-    public void configure(ShardingInitializerBuilder<?> shardingInitializerBuilder) {
-        EntityMetadata entityMetadata = shardingInitializerBuilder.getEntityMetadata();
+    public void configure(ShardingEntityBuilder<?> builder) {
+        EntityMetadata entityMetadata = builder.getEntityMetadata();
         if(TopicSharding.class.equals(entityMetadata.getEntityClass())){
 
             String tableName = entityMetadata.getTableName();
@@ -33,7 +33,7 @@ public class FixShardingInitializer implements EasyShardingInitializer {
             LinkedHashMap<String, Collection<String>> initTables = new LinkedHashMap<String, Collection<String>>() {{
                 put("ds0", actualTableNames);
             }};
-           shardingInitializerBuilder.actualTableNameInit(initTables);
+           builder.actualTableNameInit(initTables);
         }else if(TopicShardingTime.class.equals(entityMetadata.getEntityClass())){
 
             String tableName = entityMetadata.getTableName();
@@ -50,10 +50,10 @@ public class FixShardingInitializer implements EasyShardingInitializer {
                 put("ds0", actualTableNames);
             }};
 
-            ((ShardingInitializerBuilder<TopicShardingTime>)shardingInitializerBuilder).actualTableNameInit(initTables)
-                    .ascSequenceConfigure(String::compareToIgnoreCase,true)
+            ((ShardingEntityBuilder<TopicShardingTime>) builder).actualTableNameInit(initTables)
+                    .ascSequenceConfigure(String::compareToIgnoreCase)
                     .addPropertyWhenDesc(TopicShardingTime::getCreateTime)
-                    .defaultAffectedMethod(ExecuteMethodEnum.LIST,ExecuteMethodEnum.ANY,ExecuteMethodEnum.FIRST)
+                    .defaultAffectedMethod(false,ExecuteMethodEnum.LIST,ExecuteMethodEnum.ANY,ExecuteMethodEnum.FIRST)
                     .setMaxQueryConnectionsLimit(2);
         }else{
             throw new UnsupportedOperationException();

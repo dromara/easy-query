@@ -8,6 +8,6 @@ import java.util.Map;
  * @Date: 2023/3/23 21:21
  * @author xuejiaming
  */
-public interface EasyDynamicOrderByPropertyGetter {
+public interface EasyOrderByPropertyGetter {
     Map<String, DynamicOrderByPropertyNode> getOrderProperties();
 }

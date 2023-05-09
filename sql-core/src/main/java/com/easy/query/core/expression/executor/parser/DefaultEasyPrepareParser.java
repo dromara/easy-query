@@ -55,14 +55,14 @@ public class DefaultEasyPrepareParser implements EasyPrepareParser {
             return queryParseResult(executorContext,shardingTables, (EntityQueryExpressionBuilder) entityExpressionBuilder);
         }
         if (entityExpressionBuilder instanceof EntityInsertExpressionBuilder) {
-            return insertParseResult(shardingTables, (EntityInsertExpressionBuilder) entityExpressionBuilder, entities, fillAutoIncrement);
+            return insertParseResult(executorContext,shardingTables, (EntityInsertExpressionBuilder) entityExpressionBuilder, entities, fillAutoIncrement);
         }
         if (entities == null) {
             if (entityExpressionBuilder instanceof EntityPredicateExpressionBuilder) {
-                return predicatePrepareParseResult(shardingTables, (EntityPredicateExpressionBuilder) entityExpressionBuilder);
+                return predicatePrepareParseResult(executorContext,shardingTables, (EntityPredicateExpressionBuilder) entityExpressionBuilder);
             }
         } if (entities != null) {
-            return entityParseResult(shardingTables, entityExpressionBuilder, entities);
+            return entityParseResult(executorContext,shardingTables, entityExpressionBuilder, entities);
         }
         throw new NotImplementedException();
     }
@@ -71,16 +71,16 @@ public class DefaultEasyPrepareParser implements EasyPrepareParser {
         return new EasyQueryPrepareParseResult(executorContext,shardingEntities, entityQueryExpressionBuilder);
     }
 
-    private InsertPrepareParseResult insertParseResult(Set<TableAvailable> shardingTables, EntityInsertExpressionBuilder entityInsertExpressionBuilder, List<Object> entities, boolean fillAutoIncrement) {
-        return new EasyInsertPrepareParseResult(shardingTables, entityInsertExpressionBuilder, entities, fillAutoIncrement);
+    private InsertPrepareParseResult insertParseResult(ExecutorContext executorContext,Set<TableAvailable> shardingTables, EntityInsertExpressionBuilder entityInsertExpressionBuilder, List<Object> entities, boolean fillAutoIncrement) {
+        return new EasyInsertPrepareParseResult(executorContext,shardingTables, entityInsertExpressionBuilder, entities, fillAutoIncrement);
     }
 
-    private EntityPrepareParseResult entityParseResult(Set<TableAvailable> shardingTables, EntityExpressionBuilder entityExpressionBuilder, List<Object> entities) {
-        return new EasyEntityPrepareParseResult(shardingTables, entityExpressionBuilder, entities);
+    private EntityPrepareParseResult entityParseResult(ExecutorContext executorContext,Set<TableAvailable> shardingTables, EntityExpressionBuilder entityExpressionBuilder, List<Object> entities) {
+        return new EasyEntityPrepareParseResult(executorContext,shardingTables, entityExpressionBuilder, entities);
     }
 
-    private EasyPredicatePrepareParseResult predicatePrepareParseResult(Set<TableAvailable> shardingTables, EntityPredicateExpressionBuilder entityPredicateExpressionBuilder) {
-        return new EasyPredicatePrepareParseResult(shardingTables, entityPredicateExpressionBuilder);
+    private EasyPredicatePrepareParseResult predicatePrepareParseResult(ExecutorContext executorContext,Set<TableAvailable> shardingTables, EntityPredicateExpressionBuilder entityPredicateExpressionBuilder) {
+        return new EasyPredicatePrepareParseResult(executorContext,shardingTables, entityPredicateExpressionBuilder);
     }
 
 

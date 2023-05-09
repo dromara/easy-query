@@ -1,7 +1,7 @@
 package com.easy.query.core.basic.api.select;
 
 import com.easy.query.core.api.pagination.EasyPageResult;
-import com.easy.query.core.api.dynamic.order.EasyDynamicOrderByConfiguration;
+import com.easy.query.core.api.dynamic.order.EasyOrderBy;
 import com.easy.query.core.basic.api.internal.Interceptable;
 import com.easy.query.core.basic.api.internal.LogicDeletable;
 import com.easy.query.core.basic.api.internal.TableReNameable;
@@ -18,6 +18,7 @@ import com.easy.query.core.expression.parser.core.SqlGroupBySelector;
 import com.easy.query.core.expression.parser.core.SqlColumnSelector;
 import com.easy.query.core.expression.parser.core.SqlColumnAsSelector;
 import com.easy.query.core.expression.parser.core.SqlAggregatePredicate;
+import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.math.BigDecimal;
@@ -25,10 +26,10 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * @author xuejiaming
  * @FileName: Select0.java
  * @Description: 文件说明
  * @Date: 2023/2/6 21:28
- * @author xuejiaming
  */
 public interface Queryable<T1> extends Query<T1>, Interceptable<Queryable<T1>>, LogicDeletable<Queryable<T1>>, TableReNameable<Queryable<T1>> {
     /**
@@ -39,9 +40,10 @@ public interface Queryable<T1> extends Query<T1>, Interceptable<Queryable<T1>>, 
     Queryable<T1> cloneQueryable();
 
     long count();
-   default int countInt(){
-       return (int)count();
-   }
+
+    default int intCount() {
+        return (int) count();
+    }
 
     long countDistinct(SqlExpression<SqlColumnSelector<T1>> selectExpression);
 
@@ -53,6 +55,14 @@ public interface Queryable<T1> extends Query<T1>, Interceptable<Queryable<T1>>, 
      */
     boolean any();
 
+    /**
+     *  SELECT NOT EXISTS (
+     *           SELECT 1
+     *           FROM `table` AS `t`
+     *           WHERE (`t`.`columns` = ?))
+     * @return
+     */
+    boolean all();
     /**
      * 防止溢出
      *
@@ -83,11 +93,11 @@ public interface Queryable<T1> extends Query<T1>, Interceptable<Queryable<T1>>, 
 
     <TMember extends Number> TMember sumOrDefault(Property<T1, TMember> column, TMember def);
 
-    default <TMember> TMember maxOrNull(Property<T1, TMember> column) {
+    default <TMember extends Comparable<?>> TMember maxOrNull(Property<T1, TMember> column) {
         return maxOrDefault(column, null);
     }
 
-    <TMember> TMember maxOrDefault(Property<T1, TMember> column, TMember def);
+    <TMember extends Comparable<?>> TMember maxOrDefault(Property<T1, TMember> column, TMember def);
 
     default <TMember> TMember minOrNull(Property<T1, TMember> column) {
         return minOrDefault(column, null);
@@ -142,12 +152,14 @@ public interface Queryable<T1> extends Query<T1>, Interceptable<Queryable<T1>>, 
     <TR> TR firstNotNull(Class<TR> resultClass, String msg, String code);
 
     List<T1> toList();
-   default Map<String,Object> toMap(){
-       limit(1);
-       List<Map<String, Object>> maps = toMaps();
-       return EasyCollectionUtil.firstOrNull(maps);
-   }
-    List<Map<String,Object>> toMaps();
+
+    default Map<String, Object> toMap() {
+        limit(1);
+        List<Map<String, Object>> maps = toMaps();
+        return EasyCollectionUtil.firstOrNull(maps);
+    }
+
+    List<Map<String, Object>> toMaps();
 
 
     <TR> List<TR> toList(Class<TR> resultClass);
@@ -160,8 +172,9 @@ public interface Queryable<T1> extends Query<T1>, Interceptable<Queryable<T1>>, 
     default String toSql() {
         return toSql(queryClass());
     }
+
     default String toSql(SqlParameterCollector sqlParameterCollector) {
-        return toSql(queryClass(),sqlParameterCollector);
+        return toSql(queryClass(), sqlParameterCollector);
     }
 
     /**
@@ -171,9 +184,10 @@ public interface Queryable<T1> extends Query<T1>, Interceptable<Queryable<T1>>, 
      * @param <TR>
      * @return
      */
-   default  <TR> String toSql(Class<TR> resultClass){
-       return toSql(resultClass,null);
-   }
+    default <TR> String toSql(Class<TR> resultClass) {
+        return toSql(resultClass, null);
+    }
+
     <TR> String toSql(Class<TR> resultClass, SqlParameterCollector sqlParameterCollector);
 
     /**
@@ -214,6 +228,8 @@ public interface Queryable<T1> extends Query<T1>, Interceptable<Queryable<T1>>, 
      */
     Queryable<T1> select(String columns);
 
+    Queryable<T1> select(ColumnSegment columnSegment, boolean clearAll);
+
     default Queryable<T1> where(SqlExpression<SqlWherePredicate<T1>> whereExpression) {
         return where(true, whereExpression);
     }
@@ -227,19 +243,19 @@ public interface Queryable<T1> extends Query<T1>, Interceptable<Queryable<T1>>, 
     Queryable<T1> whereById(boolean condition, Object id);
 
     /**
-     * @exception EasyQueryWhereInvalidOperationException 当object的where属性和查询对象不匹配或者查询对象属性不匹配
      * @param object
      * @return
+     * @throws EasyQueryWhereInvalidOperationException 当object的where属性和查询对象不匹配或者查询对象属性不匹配
      */
     default Queryable<T1> whereObject(Object object) {
         return whereObject(true, object);
     }
 
     /**
-     * @exception EasyQueryWhereInvalidOperationException 当object的where属性和查询对象不匹配或者查询对象属性不匹配,无法获取 {@link SqlWherePredicate}
      * @param condition
      * @param object
      * @return
+     * @throws EasyQueryWhereInvalidOperationException 当object的where属性和查询对象不匹配或者查询对象属性不匹配,无法获取 {@link SqlWherePredicate}
      */
     Queryable<T1> whereObject(boolean condition, Object object);
 
@@ -259,39 +275,40 @@ public interface Queryable<T1> extends Query<T1>, Interceptable<Queryable<T1>>, 
         return orderByAsc(true, selectExpression);
     }
 
-  default   Queryable<T1> orderByAsc(boolean condition, SqlExpression<SqlColumnSelector<T1>> selectExpression){
-        return orderBy(condition,selectExpression,true);
-  }
+    default Queryable<T1> orderByAsc(boolean condition, SqlExpression<SqlColumnSelector<T1>> selectExpression) {
+        return orderBy(condition, selectExpression, true);
+    }
 
     default Queryable<T1> orderByDesc(SqlExpression<SqlColumnSelector<T1>> selectExpression) {
         return orderByDesc(true, selectExpression);
     }
 
-   default Queryable<T1> orderByDesc(boolean condition, SqlExpression<SqlColumnSelector<T1>> selectExpression){
-        return orderBy(condition,selectExpression,false);
-   }
+    default Queryable<T1> orderByDesc(boolean condition, SqlExpression<SqlColumnSelector<T1>> selectExpression) {
+        return orderBy(condition, selectExpression, false);
+    }
 
-   default Queryable<T1> orderBy(SqlExpression<SqlColumnSelector<T1>> selectExpression, boolean asc){
-       return orderBy(true,selectExpression,asc);
-   }
+    default Queryable<T1> orderBy(SqlExpression<SqlColumnSelector<T1>> selectExpression, boolean asc) {
+        return orderBy(true, selectExpression, asc);
+    }
+
     Queryable<T1> orderBy(boolean condition, SqlExpression<SqlColumnSelector<T1>> selectExpression, boolean asc);
 
     /**
-     * @exception EasyQueryOrderByInvalidOperationException 当配置{@link EasyDynamicOrderByConfiguration} 为{@code  DynamicModeEnum.STRICT}排序设置的属性不存在当前排序对象里面或者当前查询对象无法获取 {@link SqlColumnSelector}
      * @param configuration
      * @return
+     * @throws EasyQueryOrderByInvalidOperationException 当配置{@link EasyOrderBy} 为{@code  DynamicModeEnum.STRICT}排序设置的属性不存在当前排序对象里面或者当前查询对象无法获取 {@link SqlColumnSelector}
      */
-   default Queryable<T1> orderByDynamic(EasyDynamicOrderByConfiguration configuration){
-       return orderByDynamic(true,configuration);
-   }
+    default Queryable<T1> orderByDynamic(EasyOrderBy configuration) {
+        return orderByDynamic(true, configuration);
+    }
 
     /**
-     * @exception EasyQueryOrderByInvalidOperationException 当配置{@link EasyDynamicOrderByConfiguration} 为{@code  DynamicModeEnum.STRICT}排序设置的属性不存在当前排序对象里面或者当前查询对象无法获取 {@link SqlColumnSelector}
      * @param condition
      * @param configuration
      * @return
+     * @throws EasyQueryOrderByInvalidOperationException 当配置{@link EasyOrderBy} 为{@code  DynamicModeEnum.STRICT}排序设置的属性不存在当前排序对象里面或者当前查询对象无法获取 {@link SqlColumnSelector}
      */
-    Queryable<T1> orderByDynamic(boolean condition, EasyDynamicOrderByConfiguration configuration);
+    Queryable<T1> orderByDynamic(boolean condition, EasyOrderBy configuration);
 
     default Queryable<T1> distinct() {
         return distinct(true);
@@ -313,18 +330,19 @@ public interface Queryable<T1> extends Query<T1>, Interceptable<Queryable<T1>>, 
 
     Queryable<T1> limit(boolean condition, long offset, long rows);
 
-   default EasyPageResult<T1> toPageResult(long pageIndex, long pageSize){
-       return toPageResult(pageIndex,pageSize,-1);
-   }
+    default EasyPageResult<T1> toPageResult(long pageIndex, long pageSize) {
+        return toPageResult(pageIndex, pageSize, -1);
+    }
 
     /**
      * 分页 如果{@param pageTotal}  < 0 那么将会查询一次count,否则不查询count在total非常大的时候可以有效的提高性能
+     *
      * @param pageIndex
      * @param pageSize
      * @param pageTotal
      * @return
      */
-    EasyPageResult<T1> toPageResult(long pageIndex, long pageSize,long pageTotal);
+    EasyPageResult<T1> toPageResult(long pageIndex, long pageSize, long pageTotal);
 
     //    PageResult<T1> toPageResult(long pageIndex, long pageSize, SqlExpression<ColumnSelector<T1>> selectExpression);
 //    <TR> PageResult<TR> toPageResult(long pageIndex, long pageSize, Class<TR> clazz);
@@ -350,6 +368,7 @@ public interface Queryable<T1> extends Query<T1>, Interceptable<Queryable<T1>>, 
     /**
      * 自动将查询结果集合全部添加到当前上下文追踪中,如果当前查询结果十分庞大,并且更新数据只有个别条数,建议不要使用
      * 追踪查询，可以通过开启追踪后使用普通的查询，然后添加到当前的追踪上下文中{@link com.easy.query.core.api.client.EasyQuery#addTracking(Object)},开始先数据追踪的差异更新
+     *
      * @return
      */
     Queryable<T1> asTracking();

@@ -67,6 +67,16 @@ public class EasyStreamMergeContext implements StreamMergeContext {
     }
 
     @Override
+    public void terminatedBreak() {
+
+    }
+
+    @Override
+    public boolean isTerminated() {
+        return false;
+    }
+
+    @Override
     public List<PropertyOrder> getOrders() {
         throw new NotImplementedException();
     }

@@ -2,6 +2,7 @@ package com.easy.query.core.expression.sql.expression.impl;
 
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
+import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.sql.expression.EasyAnonymousQuerySqlExpression;
@@ -19,14 +20,16 @@ import java.util.List;
  * @author xuejiaming
  */
 public class AnonymousQuerySqlExpression implements EasyAnonymousQuerySqlExpression {
-    private final EasyQueryRuntimeContext runtimeContext;
-    private final String sql;
-    private final List<EasyTableSqlExpression> tables;
+    protected final EasyQueryRuntimeContext runtimeContext;
+    protected final String sql;
+    protected final ExecuteMethodEnum executeMethod;
+    protected final List<EasyTableSqlExpression> tables;
 
-    public AnonymousQuerySqlExpression(EasyQueryRuntimeContext runtimeContext,String sql){
+    public AnonymousQuerySqlExpression(EasyQueryRuntimeContext runtimeContext,String sql, ExecuteMethodEnum executeMethod){
         this.runtimeContext = runtimeContext;
 
         this.sql = sql;
+        this.executeMethod = executeMethod;
         this.tables = Collections.emptyList();
     }
     @Override
@@ -130,9 +133,14 @@ public class AnonymousQuerySqlExpression implements EasyAnonymousQuerySqlExpress
     }
 
     @Override
+    public ExecuteMethodEnum getExecuteMethod() {
+        return executeMethod;
+    }
+
+    @Override
     public EasyQuerySqlExpression cloneSqlExpression() {
         EasyExpressionFactory expressionFactory = runtimeContext.getExpressionFactory();
-        return expressionFactory.createEasyAnonymousQuerySqlExpression(runtimeContext,sql);
+        return expressionFactory.createEasyAnonymousQuerySqlExpression(runtimeContext,sql,executeMethod);
     }
 
 }

@@ -8,6 +8,6 @@ import com.easy.query.core.api.dynamic.EasyDynamicStrategy;
  * @Date: 2023/3/23 17:23
  * @author xuejiaming
  */
-public interface EasyDynamicOrderByConfiguration extends EasyDynamicStrategy {
-    void configure(EasyDynamicOrderByBuilder builder);
+public interface EasyOrderBy extends EasyDynamicStrategy {
+    void configure(EasyOrderByBuilder builder);
 }

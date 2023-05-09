@@ -11,6 +11,8 @@ import com.easy.query.core.expression.parser.core.SqlWherePredicate;
 import com.easy.query.core.expression.parser.core.SqlGroupBySelector;
 import com.easy.query.core.expression.parser.core.SqlColumnAsSelector;
 import com.easy.query.core.expression.parser.core.SqlAggregatePredicate;
+import com.easy.query.core.expression.segment.ColumnSegment;
+import com.easy.query.core.expression.segment.FuncColumnSegmentImpl;
 import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.metadata.EntityMetadata;
@@ -18,10 +20,10 @@ import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.annotation.EasyWhereCondition;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.api.dynamic.where.internal.DynamicWherePropertyNode;
-import com.easy.query.core.api.dynamic.where.internal.DefaultEasyDynamicWhereBuilder;
-import com.easy.query.core.api.dynamic.where.EasyDynamicWhereConfiguration;
-import com.easy.query.core.api.dynamic.order.EasyDynamicOrderByConfiguration;
-import com.easy.query.core.api.dynamic.order.internal.DefaultEasyDynamicOrderByBuilder;
+import com.easy.query.core.api.dynamic.where.internal.DefaultEasyWhereBuilder;
+import com.easy.query.core.api.dynamic.where.EasyWhere;
+import com.easy.query.core.api.dynamic.order.EasyOrderBy;
+import com.easy.query.core.api.dynamic.order.internal.DefaultOrderByBuilder;
 import com.easy.query.core.api.dynamic.order.internal.DynamicOrderByPropertyNode;
 import com.easy.query.core.basic.api.select.Queryable2;
 import com.easy.query.core.basic.api.select.provider.EasyQuerySqlBuilderProvider;
@@ -133,6 +135,13 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     }
 
     @Override
+    public boolean all() {
+        setExecuteMethod(ExecuteMethodEnum.ALL);
+        List<Long> result = cloneQueryable().select(" 1 ").toList(Long.class);
+        return !EasyCollectionUtil.any(result,o->o==1L);
+    }
+
+    @Override
     public <TMember extends Number> BigDecimal sumBigDecimalOrDefault(Property<T1, TMember> column, BigDecimal def) {
         setExecuteMethod(ExecuteMethodEnum.SUM);
         List<TMember> result = selectAggregateList(column, EasyAggregate.SUM);
@@ -151,7 +160,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     }
 
     @Override
-    public <TMember> TMember maxOrDefault(Property<T1, TMember> column, TMember def) {
+    public <TMember extends Comparable<?>> TMember maxOrDefault(Property<T1, TMember> column, TMember def) {
 
         setExecuteMethod(ExecuteMethodEnum.MAX);
         List<TMember> result = selectAggregateList(column, EasyAggregate.MAX);
@@ -185,9 +194,9 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     private <TMember> List<TMember> selectAggregateList(Property<T1, ?> column, EasyFunc easyFunc) {
         EntityTableExpressionBuilder table = entityQueryExpressionBuilder.getTable(0);
         String propertyName = LambdaUtil.getPropertyName(column);
+        FuncColumnSegmentImpl funcColumnSegment = new FuncColumnSegmentImpl(table.getEntityTable(), propertyName, entityQueryExpressionBuilder.getRuntimeContext(), easyFunc);
         ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(propertyName);
-        String ownerColumn = SqlExpressionUtil.getSqlOwnerColumn(entityQueryExpressionBuilder.getRuntimeContext(), table.getEntityTable(), propertyName);
-        return cloneQueryable().select(easyFunc.getFuncColumn(ownerColumn)).toList((Class<TMember>) columnMetadata.getProperty().getPropertyType());
+        return cloneQueryable().select(funcColumnSegment,true).toList((Class<TMember>) columnMetadata.getProperty().getPropertyType());
     }
 
 
@@ -313,6 +322,15 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     }
 
     @Override
+    public Queryable<T1> select(ColumnSegment columnSegment, boolean clearAll) {
+        if(clearAll){
+            entityQueryExpressionBuilder.getProjects().getSqlSegments().clear();
+        }
+        entityQueryExpressionBuilder.getProjects().append(columnSegment);
+        return this;
+    }
+
+    @Override
     public <TR> Queryable<TR> select(Class<TR> resultClass) {
         SqlExpression<SqlColumnAsSelector<T1, TR>> selectExpression = SqlColumnAsSelector::columnAll;
         SqlColumnAsSelector<T1, TR> sqlColumnSelector = getSqlBuilderProvider1().getSqlAutoColumnAsSelector1(entityQueryExpressionBuilder.getProjects(), resultClass);
@@ -403,10 +421,10 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
                 List<Field> allFields = ClassUtil.getAllFields(object.getClass());
 
 
-                DefaultEasyDynamicWhereBuilder<Object> objectObjectQueryBuilder = new DefaultEasyDynamicWhereBuilder<>();
+                DefaultEasyWhereBuilder<Object> objectObjectQueryBuilder = new DefaultEasyWhereBuilder<>();
                 boolean strictMode = true;
-                if (EasyDynamicWhereConfiguration.class.isAssignableFrom(object.getClass())) {
-                    EasyDynamicWhereConfiguration<Object> configuration = (EasyDynamicWhereConfiguration<Object>) object;
+                if (EasyWhere.class.isAssignableFrom(object.getClass())) {
+                    EasyWhere<Object> configuration = (EasyWhere<Object>) object;
                     configuration.configure(objectObjectQueryBuilder);
                     strictMode = configuration.useStrictMode();
                 }
@@ -538,14 +556,14 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     }
 
     @Override
-    public Queryable<T1> orderByDynamic(boolean condition, EasyDynamicOrderByConfiguration configuration) {
+    public Queryable<T1> orderByDynamic(boolean condition, EasyOrderBy configuration) {
 
         if (condition) {
             if (configuration != null) {
                 boolean strictMode = configuration.useStrictMode();
                 EntityMetadataManager entityMetadataManager = entityQueryExpressionBuilder.getRuntimeContext().getEntityMetadataManager();
 
-                DefaultEasyDynamicOrderByBuilder orderByBuilder = new DefaultEasyDynamicOrderByBuilder(configuration.dynamicMode());
+                DefaultOrderByBuilder orderByBuilder = new DefaultOrderByBuilder(configuration.dynamicMode());
                 configuration.configure(orderByBuilder);
                 Map<String, DynamicOrderByPropertyNode> orderProperties = orderByBuilder.getOrderProperties();
                 for (String property : orderProperties.keySet()) {

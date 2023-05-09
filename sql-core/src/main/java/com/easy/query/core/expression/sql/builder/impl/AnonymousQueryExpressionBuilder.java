@@ -31,7 +31,7 @@ public class AnonymousQueryExpressionBuilder extends QueryExpressionBuilder impl
 
     @Override
     public EasyQuerySqlExpression toExpression() {
-        return new AnonymousQuerySqlExpression(getRuntimeContext(), sql);
+        return new AnonymousQuerySqlExpression(getRuntimeContext(), sql,sqlExpressionContext.getExecuteMethod());
     }
 
 //    @Override

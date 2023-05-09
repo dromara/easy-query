@@ -2,6 +2,7 @@ package com.easy.query.core.expression.sql.expression.impl;
 
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
+import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.expression.sql.expression.factory.EasyExpressionFactory;
 import com.easy.query.core.expression.segment.builder.ProjectSqlBuilderSegmentImpl;
 import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
@@ -22,10 +23,12 @@ public  class InsertSqlExpression implements EasyInsertSqlExpression {
 
     protected final SqlBuilderSegment columns;
     protected final EasyQueryRuntimeContext runtimeContext;
+    protected final ExecuteMethodEnum executeMethod;
     protected final List<EasyTableSqlExpression> tables=new ArrayList<>(1);
 
-    public InsertSqlExpression(EasyQueryRuntimeContext runtimeContext,EasyTableSqlExpression table) {
+    public InsertSqlExpression(EasyQueryRuntimeContext runtimeContext,EasyTableSqlExpression table, ExecuteMethodEnum executeMethod) {
         this.runtimeContext = runtimeContext;
+        this.executeMethod = executeMethod;
         this.tables.add(table);
         columns=new ProjectSqlBuilderSegmentImpl();
     }
@@ -33,6 +36,11 @@ public  class InsertSqlExpression implements EasyInsertSqlExpression {
     @Override
     public List<EasyTableSqlExpression> getTables() {
         return tables;
+    }
+
+    @Override
+    public ExecuteMethodEnum getExecuteMethod() {
+        return executeMethod;
     }
 
     @Override
@@ -47,6 +55,7 @@ public  class InsertSqlExpression implements EasyInsertSqlExpression {
 
     @Override
     public String toSql(SqlParameterCollector sqlParameterCollector) {
+        sqlParameterCollector.expressionInvokeCountGetIncrement();
         EasyTableSqlExpression easyTableSqlExpression = tables.get(0);
         String tableName = easyTableSqlExpression.getTableName();
         int insertColumns = columns.getSqlSegments().size();
@@ -65,7 +74,7 @@ public  class InsertSqlExpression implements EasyInsertSqlExpression {
 
         EasyExpressionFactory expressionFactory = runtimeContext.getExpressionFactory();
 
-        EasyInsertSqlExpression easyInsertSqlExpression = expressionFactory.createEasyInsertSqlExpression(runtimeContext,tables.get(0).cloneSqlExpression());
+        EasyInsertSqlExpression easyInsertSqlExpression = expressionFactory.createEasyInsertSqlExpression(runtimeContext,tables.get(0).cloneSqlExpression(),executeMethod);
         if(SqlSegmentUtil.isNotEmpty(columns)){
             columns.copyTo(easyInsertSqlExpression.getColumns());
         }

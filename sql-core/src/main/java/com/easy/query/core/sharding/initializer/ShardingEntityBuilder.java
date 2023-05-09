@@ -13,12 +13,12 @@ import java.util.Map;
  *
  * @author xuejiaming
  */
-public class ShardingInitializerBuilder<T> {
+public class ShardingEntityBuilder<T> {
     private final EntityMetadata entityMetadata;
     private Map<String, Collection<String>> actualTableNames;
-    private ShardingOrderBuilder<T> shardingOrderBuilder;
+    private ShardingSequenceBuilder<T> shardingOrderBuilder;
 
-    public ShardingInitializerBuilder(EntityMetadata entityMetadata) {
+    public ShardingEntityBuilder(EntityMetadata entityMetadata) {
 
         this.entityMetadata = entityMetadata;
     }
@@ -30,33 +30,30 @@ public class ShardingInitializerBuilder<T> {
     public ShardingInitOption build() {
         Comparator<String> defaultTableNameComparator = null;
         Map<String, Boolean> sequenceProperties = null;
-        boolean reverse = false;
         ExecuteMethodBehavior executeMethodBehavior=null;
         int connectionsLimit = 0;
         if (shardingOrderBuilder != null) {
             defaultTableNameComparator = shardingOrderBuilder.getDefaultTableNameComparator();
             sequenceProperties = shardingOrderBuilder.getSequenceProperties();
-            reverse = shardingOrderBuilder.isDefaultReverse();
             connectionsLimit = shardingOrderBuilder.getConnectionsLimit();
             executeMethodBehavior=shardingOrderBuilder.getExecuteMethodBehavior();
-            executeMethodBehavior.removeBehavior(ExecuteMethodEnum.UNKNOWN);
+            executeMethodBehavior.removeMethod(ExecuteMethodEnum.UNKNOWN);
         }
-        return new ShardingInitOption(actualTableNames,defaultTableNameComparator,sequenceProperties,reverse,connectionsLimit,executeMethodBehavior);
+        return new ShardingInitOption(actualTableNames,defaultTableNameComparator,sequenceProperties,connectionsLimit,executeMethodBehavior);
     }
 
-    public ShardingInitializerBuilder<T> actualTableNameInit(Map<String, Collection<String>> actualTableNames) {
+    public ShardingEntityBuilder<T> actualTableNameInit(Map<String, Collection<String>> actualTableNames) {
         this.actualTableNames = actualTableNames;
         return this;
     }
     /**
-     * 实际表排序
-     * @param defaultTableNameComparator
-     * @param defaultReverse 默认使用是否取反
+     * 实际表asc下的排序
+     * @param defaultTableNameComparator 默认没有匹配orderby的时候也会将表进行当前排序器进行排序后再分批处理
      * @return
      */
-    public ShardingOrderBuilder<T> ascSequenceConfigure(Comparator<String> defaultTableNameComparator, boolean defaultReverse) {
+    public ShardingSequenceBuilder<T> ascSequenceConfigure(Comparator<String> defaultTableNameComparator) {
 
-        this.shardingOrderBuilder = new ShardingOrderBuilder<>(entityMetadata, defaultTableNameComparator,  defaultReverse);
+        this.shardingOrderBuilder = new ShardingSequenceBuilder<>(entityMetadata, defaultTableNameComparator);
         return shardingOrderBuilder;
     }
 }

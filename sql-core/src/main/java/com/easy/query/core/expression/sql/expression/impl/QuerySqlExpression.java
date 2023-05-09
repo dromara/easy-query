@@ -2,6 +2,8 @@ package com.easy.query.core.expression.sql.expression.impl;
 
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
+import com.easy.query.core.enums.ExecuteMethodEnum;
+import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.expression.factory.EasyExpressionFactory;
 import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
@@ -12,6 +14,7 @@ import com.easy.query.core.util.SqlSegmentUtil;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * create time 2023/4/22 20:53
@@ -31,9 +34,11 @@ public class QuerySqlExpression implements EasyQuerySqlExpression {
     protected boolean distinct;
     protected final List<EasyTableSqlExpression> tables=new ArrayList<>();
     protected final EasyQueryRuntimeContext runtimeContext;
+    protected final ExecuteMethodEnum executeMethod;
 
-    public QuerySqlExpression(EasyQueryRuntimeContext runtimeContext) {
+    public QuerySqlExpression(EasyQueryRuntimeContext runtimeContext, ExecuteMethodEnum executeMethod) {
         this.runtimeContext = runtimeContext;
+        this.executeMethod = executeMethod;
     }
 
     @Override
@@ -131,7 +136,14 @@ public class QuerySqlExpression implements EasyQuerySqlExpression {
     }
 
     @Override
+    public ExecuteMethodEnum getExecuteMethod() {
+        return executeMethod;
+    }
+
+    @Override
     public String toSql(SqlParameterCollector sqlParameterCollector) {
+        int invokeCount = sqlParameterCollector.expressionInvokeCountGetIncrement();
+        boolean root = invokeCount == 0;
         StringBuilder sql = new StringBuilder("SELECT ");
         if(this.distinct){
             sql.append("DISTINCT ");
@@ -171,14 +183,19 @@ public class QuerySqlExpression implements EasyQuerySqlExpression {
                 sql.append(this.rows);
             }
         }
-        return sql.toString();
+        String resultSql = sql.toString();
+        if(root&& Objects.equals(ExecuteMethodEnum.ALL,executeMethod)){
+            return " SELECT NOT EXISTS ( "+resultSql+" ) ";
+        }else{
+            return resultSql;
+        }
     }
 
     @Override
     public EasyQuerySqlExpression cloneSqlExpression() {
 
         EasyExpressionFactory expressionFactory = getRuntimeContext().getExpressionFactory();
-        EasyQuerySqlExpression easyQuerySqlExpression = expressionFactory.createEasyQuerySqlExpression(getRuntimeContext());
+        EasyQuerySqlExpression easyQuerySqlExpression = expressionFactory.createEasyQuerySqlExpression(getRuntimeContext(),executeMethod);
 
         if(SqlSegmentUtil.isNotEmpty(this.where)){
             easyQuerySqlExpression.setWhere(where.clonePredicateSegment());

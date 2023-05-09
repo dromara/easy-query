@@ -14,16 +14,14 @@ import java.util.Map;
 public class ShardingInitOption {
     private final Map<String, Collection<String>> actualTableNames;
     private final Comparator<String> defaultTableNameComparator;
-    private final boolean reverse;
     private final Map<String,Boolean/*asc or desc*/> sequenceProperties;
     private final int connectionsLimit;
     private final ExecuteMethodBehavior executeMethodBehavior;
 
-    public ShardingInitOption(Map<String, Collection<String>> actualTableNames, Comparator<String> defaultTableNameComparator,Map<String,Boolean/*asc or desc*/> sequenceProperties, boolean reverse, int connectionsLimit,ExecuteMethodBehavior executeMethodBehavior) {
+    public ShardingInitOption(Map<String, Collection<String>> actualTableNames, Comparator<String> defaultTableNameComparator,Map<String,Boolean/*asc or desc*/> sequenceProperties, int connectionsLimit,ExecuteMethodBehavior executeMethodBehavior) {
         this.actualTableNames = actualTableNames;
         this.defaultTableNameComparator = defaultTableNameComparator;
         this.sequenceProperties = sequenceProperties;
-        this.reverse = reverse;
         this.connectionsLimit = connectionsLimit;
         this.executeMethodBehavior = executeMethodBehavior;
     }
@@ -34,10 +32,6 @@ public class ShardingInitOption {
 
     public Comparator<String> getDefaultTableNameComparator() {
         return defaultTableNameComparator;
-    }
-
-    public boolean isReverse() {
-        return reverse;
     }
 
     public Map<String, Boolean> getSequenceProperties() {

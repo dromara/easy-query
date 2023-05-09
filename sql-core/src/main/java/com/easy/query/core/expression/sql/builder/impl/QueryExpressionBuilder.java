@@ -164,7 +164,7 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
         }
         EasyQueryRuntimeContext runtimeContext = getRuntimeContext();
         EasyExpressionFactory expressionFactory = runtimeContext.getExpressionFactory();
-        EasyQuerySqlExpression easyQuerySqlExpression = expressionFactory.createEasyQuerySqlExpression(runtimeContext);
+        EasyQuerySqlExpression easyQuerySqlExpression = expressionFactory.createEasyQuerySqlExpression(runtimeContext,sqlExpressionContext.getExecuteMethod());
         easyQuerySqlExpression.setDistinct(isDistinct());
 
         if (emptySelect) {
@@ -202,15 +202,15 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
         return easyQuerySqlExpression;
     }
 
-    protected EasySqlExpression toTableExpressionSql(EntityTableExpressionBuilder sqlEntityTableExpression, boolean onlySingleAnonymousTable) {
-        if (sqlEntityTableExpression instanceof AnonymousEntityTableExpressionBuilder) {
+    protected EasySqlExpression toTableExpressionSql(EntityTableExpressionBuilder entityTableExpressionBuilder, boolean onlySingleAnonymousTable) {
+        if (entityTableExpressionBuilder instanceof AnonymousEntityTableExpressionBuilder) {
 
-            EntityQueryExpressionBuilder sqlEntityQueryExpression = ((AnonymousEntityTableExpressionBuilder) sqlEntityTableExpression).getEntityQueryExpressionBuilder();
+            EntityQueryExpressionBuilder sqlEntityQueryExpression = ((AnonymousEntityTableExpressionBuilder) entityTableExpressionBuilder).getEntityQueryExpressionBuilder();
             //如果只有单匿名表且未对齐select那么嵌套表需要被展开
             //todo 如果对其进行order 或者 where了呢怎么办
-            return onlySingleAnonymousTable ? sqlEntityQueryExpression.toExpression() : sqlEntityTableExpression.toExpression();
+            return onlySingleAnonymousTable ? sqlEntityQueryExpression.toExpression() : entityTableExpressionBuilder.toExpression();
         }
-        return sqlEntityTableExpression.toExpression();
+        return entityTableExpressionBuilder.toExpression();
     }
 
     protected PredicateSegment getTableOnWithQueryFilter(EntityTableExpressionBuilder table) {

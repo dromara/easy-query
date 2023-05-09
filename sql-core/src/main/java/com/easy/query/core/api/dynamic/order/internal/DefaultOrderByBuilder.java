@@ -1,7 +1,7 @@
 package com.easy.query.core.api.dynamic.order.internal;
 
-import com.easy.query.core.api.dynamic.order.EasyDynamicOrderByBuilder;
-import com.easy.query.core.api.dynamic.order.EasyDynamicOrderByPropertyBuilder;
+import com.easy.query.core.api.dynamic.order.EasyOrderByBuilder;
+import com.easy.query.core.api.dynamic.order.EasyOrderByPropertyBuilder;
 import com.easy.query.core.enums.dynamic.DynamicModeEnum;
 import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
 
@@ -16,12 +16,12 @@ import java.util.Objects;
  * @Date: 2023/3/23 17:24
  * @author xuejiaming
  */
-public class DefaultEasyDynamicOrderByBuilder implements EasyDynamicOrderByBuilder, EasyDynamicOrderByPropertyGetter {
+public class DefaultOrderByBuilder implements EasyOrderByBuilder, EasyOrderByPropertyGetter {
     private final Map<String,Class<?>> orderEntityMap=new HashMap<>();
     private final Map<String, DynamicOrderByPropertyNode> orderPropertyMap=new LinkedHashMap<>();
     private final DynamicModeEnum dynamicMode;
 
-    public DefaultEasyDynamicOrderByBuilder(DynamicModeEnum dynamicMode){
+    public DefaultOrderByBuilder(DynamicModeEnum dynamicMode){
 
         this.dynamicMode = dynamicMode;
     }
@@ -29,12 +29,12 @@ public class DefaultEasyDynamicOrderByBuilder implements EasyDynamicOrderByBuild
     private boolean isStrictMode(){
         return Objects.equals(DynamicModeEnum.STRICT,dynamicMode);
     }
-    public <TEntity> EasyDynamicOrderByPropertyBuilder<TEntity> entity(Class<TEntity> entityClass){
-        return new DefaultEasyDynamicOrderByPropertyBuilder<>(orderEntityMap,entityClass);
+    public <TEntity> EasyOrderByPropertyBuilder<TEntity> mapTo(Class<TEntity> entityClass){
+        return new DefaultEasyOrderByPropertyBuilder<>(orderEntityMap,entityClass);
     }
 
     @Override
-    public EasyDynamicOrderByBuilder orderBy(String propertyName, boolean asc) {
+    public EasyOrderByBuilder orderBy(String propertyName, boolean asc) {
         Class<?> entityClass = orderEntityMap.get(propertyName);
         if(entityClass==null){
             if(isStrictMode()){

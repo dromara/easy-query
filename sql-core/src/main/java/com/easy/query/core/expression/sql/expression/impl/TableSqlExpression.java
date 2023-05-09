@@ -98,6 +98,7 @@ public class TableSqlExpression implements EasyTableSqlExpression {
 
     @Override
     public String toSql(SqlParameterCollector sqlParameterCollector) {
+        sqlParameterCollector.expressionInvokeCountGetIncrement();
         //如果当前对象没有映射到表那么直接抛错
         StringBuilder sql = new StringBuilder();
 

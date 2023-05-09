@@ -8,6 +8,6 @@ import com.easy.query.core.api.dynamic.EasyDynamicStrategy;
  * @Date: 2023/3/13 12:13
  * @author xuejiaming
  */
-public interface EasyDynamicWhereConfiguration<TObject> extends EasyDynamicStrategy {
-    void configure(EasyDynamicWhereBuilder<TObject> builder);
+public interface EasyWhere<TObject> extends EasyDynamicStrategy {
+    void configure(EasyWhereBuilder<TObject> builder);
 }

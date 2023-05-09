@@ -45,6 +45,17 @@ public class EasyCollectionUtil {
         }
         return false;
     }
+    public static <TSource> boolean all(Collection<TSource> sources, Predicate<TSource> predicate){
+        if(isEmpty(sources)){
+            return false;
+        }
+        for (TSource source : sources) {
+            if(!predicate.test(source)){
+                return false;
+            }
+        }
+        return true;
+    }
 
     //    public static <TSource,TElement> List<TElement> select(List<TSource> sources, Selector<TSource,TElement> selector){
 //        int size = sources.size();

@@ -9,6 +9,13 @@ import java.util.List;
  * @author xuejiaming
  */
 public interface SqlParameterCollector {
+    /**
+     * 表达式调用次数
+     * @return
+     */
+    int expressionInvokeCountGetIncrement();
+    int currentInvokeCount();
+
     void addParameter(SQLParameter sqlParameter);
     List<SQLParameter> getParameters();
 }

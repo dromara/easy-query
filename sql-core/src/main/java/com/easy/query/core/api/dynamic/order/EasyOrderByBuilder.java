@@ -8,8 +8,8 @@ import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
  * @Date: 2023/3/23 21:16
  * @author xuejiaming
  */
-public interface EasyDynamicOrderByBuilder {
-    <TEntity> EasyDynamicOrderByPropertyBuilder<TEntity> entity(Class<TEntity> entityClass);
+public interface EasyOrderByBuilder {
+    <TEntity> EasyOrderByPropertyBuilder<TEntity> mapTo(Class<TEntity> entityClass);
 
     /**
      * 添加字段属性排序
@@ -18,5 +18,5 @@ public interface EasyDynamicOrderByBuilder {
      * @param asc
      * @return
      */
-    EasyDynamicOrderByBuilder orderBy(String propertyName, boolean asc);
+    EasyOrderByBuilder orderBy(String propertyName, boolean asc);
 }

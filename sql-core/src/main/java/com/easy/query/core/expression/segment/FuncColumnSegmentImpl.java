@@ -56,7 +56,7 @@ public class FuncColumnSegmentImpl implements AggregationColumnSegment {
     }
 
     @Override
-    public SqlEntitySegment cloneSqlEntitySegment() {
+    public AggregationColumnSegment cloneSqlEntitySegment() {
         throw new UnsupportedOperationException();
     }
 

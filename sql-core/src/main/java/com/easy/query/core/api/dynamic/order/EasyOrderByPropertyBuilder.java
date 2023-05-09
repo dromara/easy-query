@@ -8,6 +8,6 @@ import com.easy.query.core.expression.lambda.Property;
  * @Date: 2023/3/23 21:17
  * @author xuejiaming
  */
-public interface EasyDynamicOrderByPropertyBuilder<TEntity> {
-    EasyDynamicOrderByPropertyBuilder<TEntity> orderProperty(Property<TEntity,?> orderProperty);
+public interface EasyOrderByPropertyBuilder<TEntity> {
+    EasyOrderByPropertyBuilder<TEntity> orderProperty(Property<TEntity,?> orderProperty);
 }

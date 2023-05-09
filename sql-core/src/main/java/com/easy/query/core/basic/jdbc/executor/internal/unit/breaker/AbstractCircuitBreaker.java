@@ -11,21 +11,20 @@ import java.util.Collection;
  * @author xuejiaming
  */
 public abstract class AbstractCircuitBreaker implements CircuitBreaker {
-    protected volatile boolean terminated = false;
 
     @Override
     public <TResult> boolean terminated(StreamMergeContext streamMergeContext,Collection<TResult> results) {
-        if (terminated) {
+        if (streamMergeContext.isTerminated()) {
             return true;
         }
         if (streamMergeContext.isSeqQuery()) {
             if (SequenceTerminated(streamMergeContext,results)) {
-                terminatedBreak();
+                streamMergeContext.terminatedBreak();
                 return true;
             }
         } else {
             if (RandomTerminated(streamMergeContext,results)) {
-                terminatedBreak();
+                streamMergeContext.terminatedBreak();
                 return true;
             }
         }
@@ -36,7 +35,4 @@ public abstract class AbstractCircuitBreaker implements CircuitBreaker {
 
     protected abstract <TResult> boolean RandomTerminated(StreamMergeContext streamMergeContext,Collection<TResult> results);
 
-    private void terminatedBreak() {
-        terminated = true;
-    }
 }

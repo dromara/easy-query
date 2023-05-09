@@ -1,6 +1,5 @@
 package com.easy.query.core.sharding.initializer;
 
-import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 
 /**
@@ -14,26 +13,46 @@ public final class ExecuteMethodBehavior {
     public static ExecuteMethodBehavior getDefault(){
         return new ExecuteMethodBehavior();
     }
-    private int behavior=DEFAULT;
+    private int methods =DEFAULT;
+    private int orders=DEFAULT;
     public boolean isDefault(){
-        return behavior==0;
+        return methods ==0;
     }
 
-    public boolean hasBehavior(ExecuteMethodEnum executeMethod){
-        return (behavior& executeMethod.getCode())== executeMethod.getCode();
+    public boolean hasMethod(ExecuteMethodEnum executeMethod){
+        return (methods & executeMethod.getCode())== executeMethod.getCode();
     }
 
-    public boolean addBehavior(ExecuteMethodEnum executeMethod){
-        if(hasBehavior(executeMethod)){
+    public boolean addMethod(ExecuteMethodEnum executeMethod){
+        if(hasMethod(executeMethod)){
             return false;
         }else{
-            behavior=behavior|executeMethod.getCode();
+            methods = methods |executeMethod.getCode();
             return true;
         }
     }
-    public boolean removeBehavior(ExecuteMethodEnum executeMethod){
-        if(hasBehavior(executeMethod)){
-            behavior=behavior&~executeMethod.getCode();
+    public boolean removeMethod(ExecuteMethodEnum executeMethod){
+        if(hasMethod(executeMethod)){
+            methods = methods &~executeMethod.getCode();
+            return true;
+        }
+        return false;
+    }
+    public boolean hasMethodAsc(ExecuteMethodEnum executeMethod){
+        return (orders & executeMethod.getCode())== executeMethod.getCode();
+    }
+
+    public boolean addMethodAsc(ExecuteMethodEnum executeMethod){
+        if(hasMethod(executeMethod)){
+            return false;
+        }else{
+            orders = orders |executeMethod.getCode();
+            return true;
+        }
+    }
+    public boolean removeMethodAsc(ExecuteMethodEnum executeMethod){
+        if(hasMethod(executeMethod)){
+            orders = orders &~executeMethod.getCode();
             return true;
         }
         return false;

@@ -1,5 +1,7 @@
 package com.easy.query.core.expression.sql.expression;
 
+import com.easy.query.core.enums.ExecuteMethodEnum;
+
 import java.util.List;
 
 /**
@@ -13,6 +15,9 @@ public interface EasyEntitySqlExpression extends EasySqlExpression {
     default EasyTableSqlExpression getTable(int index){
         return getTables().get(index);
     }
+
+    ExecuteMethodEnum getExecuteMethod();
+
 
     @Override
     EasyEntitySqlExpression cloneSqlExpression();

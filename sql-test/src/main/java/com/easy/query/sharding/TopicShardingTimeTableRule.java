@@ -26,18 +26,18 @@ public class TopicShardingTimeTableRule extends AbstractTableRouteRule<TopicShar
         switch (shardingOperator){
             case GREATER_THAN:
             case GREATER_THAN_OR_EQUAL:
-                return t-> tableName.compareToIgnoreCase(getTableRemoveDataSource(t))>=0;
+                return t-> tableName.compareToIgnoreCase(getTableRemoveDataSource(t))<=0;
             case LESS_THAN:
             {
                 //如果小于月初那么月初的表是不需要被查询的
                 LocalDateTime timeMonthFirstDay = createTime.toLocalDate().atStartOfDay();
                 if(createTime.isEqual(timeMonthFirstDay)){
-                    return t->tableName.compareToIgnoreCase(getTableRemoveDataSource(t))<0;
+                    return t->tableName.compareToIgnoreCase(getTableRemoveDataSource(t))>0;
                 }
-                return t->tableName.compareToIgnoreCase(getTableRemoveDataSource(t))<=0;
+                return t->tableName.compareToIgnoreCase(getTableRemoveDataSource(t))>=0;
             }
             case LESS_THAN_OR_EQUAL:
-                return t->tableName.compareToIgnoreCase(getTableRemoveDataSource(t))<=0;
+                return t->tableName.compareToIgnoreCase(getTableRemoveDataSource(t))>=0;
 
             case EQUAL:
                 return t->tableName.compareToIgnoreCase(getTableRemoveDataSource(t))==0;

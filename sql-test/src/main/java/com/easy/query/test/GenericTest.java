@@ -116,7 +116,7 @@ public class GenericTest {
     @Test
     public void executeMethodBehaviorTest1(){
         ExecuteMethodBehavior aDefault = ExecuteMethodBehavior.getDefault();
-        aDefault.removeBehavior(ExecuteMethodEnum.UNKNOWN);
+        aDefault.removeMethod(ExecuteMethodEnum.UNKNOWN);
         Assert.assertEquals(true,aDefault.isDefault());
     }
 }

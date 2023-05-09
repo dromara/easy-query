@@ -1,7 +1,7 @@
 package com.easy.query.core.api.dynamic.where.internal;
 
-import com.easy.query.core.api.dynamic.where.EasyDynamicWhereBuilder;
-import com.easy.query.core.api.dynamic.where.EasyDynamicWherePropertyBuilder;
+import com.easy.query.core.api.dynamic.where.EasyWhereBuilder;
+import com.easy.query.core.api.dynamic.where.EasyWherePropertyBuilder;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,10 +12,10 @@ import java.util.Map;
  * @Date: 2023/3/22 22:15
  * @author xuejiaming
  */
-public class DefaultEasyDynamicWhereBuilder<TObject> implements EasyDynamicWhereBuilder<TObject> {
+public class DefaultEasyWhereBuilder<TObject> implements EasyWhereBuilder<TObject> {
     private final Map<String, DynamicWherePropertyNode> propertyMap=new HashMap<>();
-    public <TEntity> EasyDynamicWherePropertyBuilder<TEntity,TObject> entity(Class<TEntity> entityClass){
-        return new DefaultEasyDynamicWherePropertyBuilder<>(entityClass,propertyMap);
+    public <TEntity> EasyWherePropertyBuilder<TEntity,TObject> mapTo(Class<TEntity> entityClass){
+        return new DefaultEasyWherePropertyBuilder<>(entityClass,propertyMap);
     }
 
     public DynamicWherePropertyNode getPropertyMapping(String propertyName){

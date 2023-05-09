@@ -15,14 +15,12 @@ import java.util.Map;
  */
 public class EntityShardingOrder {
     private final Comparator<String> tableComparator;
-    private final boolean reverse;
     private final int connectionsLimit;
     private final Map<String, Boolean> sequenceProperties;
     private final ExecuteMethodBehavior executeMethodBehavior;
 
-    public EntityShardingOrder(Comparator<String> tableComparator, boolean reverse, int connectionsLimit, Map<String, Boolean> sequenceProperties,ExecuteMethodBehavior executeMethodBehavior) {
+    public EntityShardingOrder(Comparator<String> tableComparator,int connectionsLimit, Map<String, Boolean> sequenceProperties,ExecuteMethodBehavior executeMethodBehavior) {
         this.tableComparator = tableComparator;
-        this.reverse = reverse;
 
         this.connectionsLimit = connectionsLimit;
         if (sequenceProperties != null) {
@@ -35,10 +33,6 @@ public class EntityShardingOrder {
 
     public Comparator<String> getTableComparator() {
         return tableComparator;
-    }
-
-    public boolean isReverse() {
-        return reverse;
     }
 
     public int getConnectionsLimit() {
