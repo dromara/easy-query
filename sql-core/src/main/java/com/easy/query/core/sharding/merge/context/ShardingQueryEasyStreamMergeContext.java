@@ -3,7 +3,7 @@ package com.easy.query.core.sharding.merge.context;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.expression.executor.parser.EasyQueryPrepareParseResult;
 import com.easy.query.core.expression.executor.parser.ExecutionContext;
-import com.easy.query.core.expression.executor.parser.SequenceOrderPrepareParseResult;
+import com.easy.query.core.expression.executor.parser.SequenceParseResult;
 import com.easy.query.core.expression.segment.ColumnSegmentImpl;
 import com.easy.query.core.expression.segment.OrderColumnSegmentImpl;
 import com.easy.query.core.expression.segment.SqlSegment;
@@ -45,7 +45,7 @@ public class ShardingQueryEasyStreamMergeContext extends EntityStreamMergeContex
         this.rows = easyQuerySqlExpression.getRows();
         this.hasGroup=SqlSegmentUtil.isNotEmpty(easyQuerySqlExpression.getGroup());
         this.groups = getGroups(easyQuerySqlExpression);
-        SequenceOrderPrepareParseResult sequenceOrderPrepareParseResult = easyQueryPrepareParseResult.getSequenceOrderPrepareParseResult();
+        SequenceParseResult sequenceOrderPrepareParseResult = easyQueryPrepareParseResult.getSequenceParseResult();
         if(executionContext.isSequenceQuery()&&sequenceOrderPrepareParseResult!=null){
            this.mergeSequenceOrder=new MergeSequenceOrder(sequenceOrderPrepareParseResult);
         }
@@ -138,6 +138,8 @@ public class ShardingQueryEasyStreamMergeContext extends EntityStreamMergeContex
     public SqlBuilderSegment getSelectColumns() {
         return easyQuerySqlExpression.getProjects();
     }
+
+
     @Override
     public SqlBuilderSegment getGroupColumns() {
         return easyQuerySqlExpression.getGroup();

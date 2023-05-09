@@ -1,7 +1,6 @@
 package com.easy.query.core.sharding.rewrite;
 
 import com.easy.query.core.enums.EasyAggregate;
-import com.easy.query.core.enums.EasyFunc;
 import com.easy.query.core.expression.executor.parser.PrepareParseResult;
 import com.easy.query.core.expression.executor.parser.QueryPrepareParseResult;
 import com.easy.query.core.expression.segment.AggregationColumnSegment;
@@ -9,7 +8,7 @@ import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.segment.FuncColumnSegmentImpl;
 import com.easy.query.core.expression.segment.GroupByColumnSegment;
 import com.easy.query.core.expression.segment.SqlSegment;
-import com.easy.query.core.expression.segment.builder.OrderBySqlBuilderSegment;
+import com.easy.query.core.expression.segment.builder.ProjectSqlBuilderSegment;
 import com.easy.query.core.expression.sql.expression.EasyQuerySqlExpression;
 import com.easy.query.core.expression.sql.expression.EasyTableSqlExpression;
 import com.easy.query.core.sharding.merge.result.aggregation.AggregationType;
@@ -17,9 +16,7 @@ import com.easy.query.core.util.ClassUtil;
 import com.easy.query.core.util.ShardingUtil;
 import com.easy.query.core.util.SqlSegmentUtil;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -126,6 +123,18 @@ public class DefaultRewriteContextFactory implements RewriteContextFactory {
                     if(rewriteStatusKvKey.hasBehavior(GroupAvgBehaviorEnum.COUNT)&&rewriteStatusKvKey.hasBehavior(GroupAvgBehaviorEnum.SUM)){
                         EasyTableSqlExpression table = easyQuerySqlExpression.getTable(rewriteStatusKvKey.getTableIndex());
                         easyQuerySqlExpression.getProjects().append(new FuncColumnSegmentImpl(table.getEntityTable(),rewriteStatusKvKey.getPropertyName(), easyQuerySqlExpression.getRuntimeContext(), EasyAggregate.COUNT,rewriteStatusKvKey.getPropertyName()+"RewriteCount"));
+                    }
+                }
+            }
+        }else{
+            //distinct的时候并且没有aggregate projects的都放到group上
+            if(easyQuerySqlExpression.isDistinct()){
+                ProjectSqlBuilderSegment projects = (ProjectSqlBuilderSegment) easyQuerySqlExpression.getProjects();
+                if(!projects.hasAggregateColumns()){
+                    for(SqlSegment sqlSegment : easyQuerySqlExpression.getProjects().getSqlSegments()){
+                        if(sqlSegment instanceof ColumnSegment){
+                            easyQuerySqlExpression.getGroup().append(sqlSegment);
+                        }
                     }
                 }
             }

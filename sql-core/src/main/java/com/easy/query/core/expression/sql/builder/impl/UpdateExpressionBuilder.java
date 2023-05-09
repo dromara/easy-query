@@ -19,7 +19,7 @@ import com.easy.query.core.enums.SqlExecuteStrategyEnum;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.segment.SqlEntitySegment;
 import com.easy.query.core.expression.segment.SqlSegment;
-import com.easy.query.core.expression.segment.builder.ProjectSqlBuilderSegment;
+import com.easy.query.core.expression.segment.builder.ProjectSqlBuilderSegmentImpl;
 import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import com.easy.query.core.expression.segment.builder.UpdateSetSqlBuilderSegment;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
@@ -111,7 +111,7 @@ public  class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionB
     @Override
     public SqlBuilderSegment getWhereColumns() {
         if (whereColumns == null) {
-            whereColumns = new ProjectSqlBuilderSegment();
+            whereColumns = new ProjectSqlBuilderSegmentImpl();
         }
         return whereColumns;
     }

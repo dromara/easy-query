@@ -3,7 +3,6 @@ package com.easy.query.core.expression.segment.builder;
 import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
 import com.easy.query.core.enums.SqlKeywordEnum;
 import com.easy.query.core.expression.segment.OrderByColumnSegment;
-import com.easy.query.core.expression.segment.OrderColumnSegmentImpl;
 import com.easy.query.core.expression.segment.SqlSegment;
 
 import java.util.List;
@@ -14,7 +13,7 @@ import java.util.List;
  * @Date: 2023/2/13 22:39
  * @author xuejiaming
  */
-public class OrderBySqlBuilderSegment extends AbstractSqlBuilderSegment {
+public class OrderBySqlBuilderSegmentImpl extends AbstractSqlBuilderSegment {
 
     @Override
     public String toSql(SqlParameterCollector sqlParameterCollector) {
@@ -48,7 +47,7 @@ public class OrderBySqlBuilderSegment extends AbstractSqlBuilderSegment {
 
     @Override
     public SqlBuilderSegment cloneSqlBuilder() {
-        OrderBySqlBuilderSegment orderBySqlBuilderSegment = new OrderBySqlBuilderSegment();
+        OrderBySqlBuilderSegmentImpl orderBySqlBuilderSegment = new OrderBySqlBuilderSegmentImpl();
         copyTo(orderBySqlBuilderSegment);
         return orderBySqlBuilderSegment;
     }

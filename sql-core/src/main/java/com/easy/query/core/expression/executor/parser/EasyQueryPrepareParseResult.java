@@ -27,7 +27,7 @@ public class EasyQueryPrepareParseResult implements QueryPrepareParseResult {
     private boolean startsWithGroupByInOrderBy;
     private final long offset;
     private final long rows;
-    private final SequenceOrderPrepareParseResult sequenceOrderPrepareParseResult;
+    private final SequenceParseResult sequenceParseResult;
 
     public EasyQueryPrepareParseResult(ExecutorContext executorContext, Set<TableAvailable> shardingEntities, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
 
@@ -37,9 +37,9 @@ public class EasyQueryPrepareParseResult implements QueryPrepareParseResult {
         this.sharding = EasyCollectionUtil.isNotEmpty(shardingEntities);
         this.offset = easyQuerySqlExpression.getOffset();
         this.rows = easyQuerySqlExpression.getRows();
-        this.sequenceOrderPrepareParseResult=initSequenceOrderPrepareParseResult(executorContext);
+        this.sequenceParseResult =initSequenceOrderPrepareParseResult(executorContext);
     }
-    private SequenceOrderPrepareParseResult initSequenceOrderPrepareParseResult(ExecutorContext executorContext){
+    private SequenceParseResult initSequenceOrderPrepareParseResult(ExecutorContext executorContext){
         //存在分片对象的情况下
         if(EasyCollectionUtil.isNotEmpty(shardingTables)){
             SqlBuilderSegment order = easyQuerySqlExpression.getOrder();
@@ -50,17 +50,17 @@ public class EasyQueryPrepareParseResult implements QueryPrepareParseResult {
                 EntityShardingOrder entityShardingOrder = table.getEntityMetadata().getEntityShardingOrder();
                 if(entityShardingOrder!=null){
                     //存在配置
-                    Boolean asc = entityShardingOrder.getSequenceProperties().get(firstOrderColumn.getPropertyName());
+                    Boolean asc = entityShardingOrder.getSequenceProperty(firstOrderColumn.getPropertyName());
                     if(asc!=null){
                         boolean reverse = firstOrderColumn.isAsc() != asc;
-                        return new SequenceOrderPrepareParseResult(table,entityShardingOrder.getTableComparator(),reverse,entityShardingOrder.getConnectionsLimit());
+                        return new SequenceParseResult(table,entityShardingOrder.getTableComparator(),reverse,entityShardingOrder.getConnectionsLimit());
                     }
                 }
             }else{//默认匹配顺序
                 TableAvailable table = EasyCollectionUtil.first(shardingTables);
                 EntityShardingOrder entityShardingOrder = table.getEntityMetadata().getEntityShardingOrder();
                 if(entityShardingOrder!=null&&entityShardingOrder.getExecuteMethodBehavior().hasBehavior(executorContext.getExecuteMethod())){
-                    return new SequenceOrderPrepareParseResult(table,entityShardingOrder.getTableComparator(),entityShardingOrder.isReverse(),entityShardingOrder.getConnectionsLimit());
+                    return new SequenceParseResult(table,entityShardingOrder.getTableComparator(),entityShardingOrder.isReverse(),entityShardingOrder.getConnectionsLimit());
                 }
             }
         }
@@ -109,7 +109,8 @@ public class EasyQueryPrepareParseResult implements QueryPrepareParseResult {
     }
 
     @Override
-    public SequenceOrderPrepareParseResult getSequenceOrderPrepareParseResult() {
-        return sequenceOrderPrepareParseResult;
+    public SequenceParseResult getSequenceParseResult() {
+        return sequenceParseResult;
     }
+
 }

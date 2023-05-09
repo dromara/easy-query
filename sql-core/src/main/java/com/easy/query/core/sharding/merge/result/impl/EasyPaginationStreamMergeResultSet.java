@@ -29,22 +29,18 @@ public class EasyPaginationStreamMergeResultSet implements StreamResultSet {
     private  long realRows;
     private boolean closed=false;
 
-    public EasyPaginationStreamMergeResultSet(StreamMergeContext streamMergeContext, List<StreamResultSet> streamResults) throws SQLException {
-        this(streamMergeContext,streamResults,streamMergeContext.getOffset(),streamMergeContext.getRows());
+    public EasyPaginationStreamMergeResultSet(StreamMergeContext streamMergeContext, StreamResultSet streamResult) throws SQLException {
+        this(streamMergeContext,streamResult,streamMergeContext.getOffset(),streamMergeContext.getRows());
 
     }
-    public EasyPaginationStreamMergeResultSet(StreamMergeContext streamMergeContext, List<StreamResultSet> streamResults, long offset, long rows) throws SQLException {
+    public EasyPaginationStreamMergeResultSet(StreamMergeContext streamMergeContext, StreamResultSet streamResult, long offset, long rows) throws SQLException {
 
         this.streamMergeContext = streamMergeContext;
         this.offset = offset;
         this.rows = rows;
         this.realOffset=0;
         this.realRows=0;
-        if(streamMergeContext.hasGroupQuery()){
-            streamResult=new EasyGroupByOrderStreamMergeResultSet(streamMergeContext,streamResults);
-        }else{
-            streamResult=new EasyMultiOrderStreamMergeResult(streamMergeContext,streamResults);
-        }
+        this.streamResult=streamResult;
     }
     @Override
     public boolean hasElement() {

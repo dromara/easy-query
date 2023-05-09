@@ -1,4 +1,4 @@
-package com.easy.query.core.basic.jdbc.executor.internal.unit.impl.breaker;
+package com.easy.query.core.basic.jdbc.executor.internal.unit.breaker;
 
 import com.easy.query.core.sharding.merge.context.StreamMergeContext;
 
@@ -16,7 +16,7 @@ public final class NoCircuitBreaker implements CircuitBreaker{
         return instance;
     }
     @Override
-    public <TResult> boolean terminated(Collection<TResult> results) {
+    public <TResult> boolean terminated(StreamMergeContext streamMergeContext, Collection<TResult> results) {
         return false;
     }
 }

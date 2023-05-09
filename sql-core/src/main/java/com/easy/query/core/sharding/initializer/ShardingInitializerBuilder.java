@@ -54,7 +54,7 @@ public class ShardingInitializerBuilder<T> {
      * @param defaultReverse 默认使用是否取反
      * @return
      */
-    public ShardingOrderBuilder<T> orderConfigure(Comparator<String> defaultTableNameComparator, boolean defaultReverse) {
+    public ShardingOrderBuilder<T> ascSequenceConfigure(Comparator<String> defaultTableNameComparator, boolean defaultReverse) {
 
         this.shardingOrderBuilder = new ShardingOrderBuilder<>(entityMetadata, defaultTableNameComparator,  defaultReverse);
         return shardingOrderBuilder;

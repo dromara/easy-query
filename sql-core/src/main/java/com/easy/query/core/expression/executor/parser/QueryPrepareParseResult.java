@@ -19,5 +19,5 @@ public interface QueryPrepareParseResult extends PredicatePrepareParseResult{
     boolean isSharding();
     boolean isStartsWithGroupByInOrderBy();
     void setStartsWithGroupByInOrderBy(boolean startsWithGroupByInOrderBy);
-    SequenceOrderPrepareParseResult getSequenceOrderPrepareParseResult();
+    SequenceParseResult getSequenceParseResult();
 }

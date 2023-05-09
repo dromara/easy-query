@@ -45,8 +45,8 @@ public class EntityShardingOrder {
         return connectionsLimit;
     }
 
-    public Map<String, Boolean> getSequenceProperties() {
-        return sequenceProperties;
+    public Boolean getSequenceProperty(String propertyName){
+        return sequenceProperties.get(propertyName);
     }
 
     public ExecuteMethodBehavior getExecuteMethodBehavior() {

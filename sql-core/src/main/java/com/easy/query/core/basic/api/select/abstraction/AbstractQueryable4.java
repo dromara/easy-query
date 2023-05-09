@@ -16,7 +16,7 @@ import com.easy.query.core.expression.lambda.SqlExpression;
 import com.easy.query.core.expression.lambda.SqlExpression4;
 import com.easy.query.core.expression.parser.core.SqlColumnResultSelector;
 import com.easy.query.core.expression.segment.SqlEntitySegment;
-import com.easy.query.core.expression.segment.builder.ProjectSqlBuilderSegment;
+import com.easy.query.core.expression.segment.builder.ProjectSqlBuilderSegmentImpl;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.basic.api.select.Queryable4;
@@ -136,7 +136,7 @@ public abstract class AbstractQueryable4<T1, T2, T3,T4> extends AbstractQueryabl
     }
     private <TMember> List<TMember> selectAggregateList(SqlExpression4<SqlColumnResultSelector<T1, TMember>, SqlColumnResultSelector<T2, TMember>, SqlColumnResultSelector<T3, TMember>, SqlColumnResultSelector<T4, TMember>> columnSelectorExpression, EasyFunc easyFunc) {
 
-        ProjectSqlBuilderSegment projectSqlBuilderSegment = new ProjectSqlBuilderSegment();
+        ProjectSqlBuilderSegmentImpl projectSqlBuilderSegment = new ProjectSqlBuilderSegmentImpl();
 
         SqlColumnResultSelector<T1, TMember> sqlColumnResultSelector1 = getSqlBuilderProvider4().getSqlColumnResultSelector1(projectSqlBuilderSegment);
         SqlColumnResultSelector<T2, TMember> sqlColumnResultSelector2 = getSqlBuilderProvider4().getSqlColumnResultSelector2(projectSqlBuilderSegment);
@@ -193,7 +193,7 @@ public abstract class AbstractQueryable4<T1, T2, T3,T4> extends AbstractQueryabl
     @Override
     public Integer lenOrDefault(SqlExpression4<SqlColumnResultSelector<T1, ?>, SqlColumnResultSelector<T2, ?>, SqlColumnResultSelector<T3, ?>, SqlColumnResultSelector<T4, ?>> columnSelectorExpression, Integer def) {
 
-        ProjectSqlBuilderSegment projectSqlBuilderSegment = new ProjectSqlBuilderSegment();
+        ProjectSqlBuilderSegmentImpl projectSqlBuilderSegment = new ProjectSqlBuilderSegmentImpl();
 
         SqlColumnResultSelector<T1, ?> sqlColumnResultSelector1 = getSqlBuilderProvider4().getSqlColumnResultSelector1(projectSqlBuilderSegment);
         SqlColumnResultSelector<T2, ?> sqlColumnResultSelector2 = getSqlBuilderProvider4().getSqlColumnResultSelector2(projectSqlBuilderSegment);

@@ -3,9 +3,9 @@ package com.easy.query.core.expression.sql.builder.impl;
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.segment.SelectConstSegment;
-import com.easy.query.core.expression.segment.builder.GroupBySqlBuilderSegment;
-import com.easy.query.core.expression.segment.builder.OrderBySqlBuilderSegment;
-import com.easy.query.core.expression.segment.builder.ProjectSqlBuilderSegment;
+import com.easy.query.core.expression.segment.builder.GroupBySqlBuilderSegmentImpl;
+import com.easy.query.core.expression.segment.builder.OrderBySqlBuilderSegmentImpl;
+import com.easy.query.core.expression.segment.builder.ProjectSqlBuilderSegmentImpl;
 import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
@@ -42,7 +42,7 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
 
     public QueryExpressionBuilder(ExpressionContext queryExpressionContext) {
         super(queryExpressionContext);
-        this.projects = new ProjectSqlBuilderSegment();
+        this.projects = new ProjectSqlBuilderSegmentImpl();
     }
 
 
@@ -110,7 +110,7 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
     @Override
     public SqlBuilderSegment getGroup() {
         if (group == null) {
-            group = new GroupBySqlBuilderSegment();
+            group = new GroupBySqlBuilderSegmentImpl();
         }
         return group;
     }
@@ -123,7 +123,7 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
     @Override
     public SqlBuilderSegment getOrder() {
         if (order == null) {
-            order = new OrderBySqlBuilderSegment();
+            order = new OrderBySqlBuilderSegmentImpl();
         }
         return order;
     }
@@ -169,11 +169,11 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
 
         if (emptySelect) {
             if (!hasGroup()) {
-                ProjectSqlBuilderSegment projects = new ProjectSqlBuilderSegment();
+                ProjectSqlBuilderSegmentImpl projects = new ProjectSqlBuilderSegmentImpl();
                 projects.append(new SelectConstSegment(firstTable.getAlias() + ".*"));
                 easyQuerySqlExpression.setProjects(projects);
             } else {
-                ProjectSqlBuilderSegment projects = new ProjectSqlBuilderSegment();
+                ProjectSqlBuilderSegmentImpl projects = new ProjectSqlBuilderSegmentImpl();
                 getGroup().copyTo(projects);
                 easyQuerySqlExpression.setProjects(projects);
             }

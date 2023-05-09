@@ -1,4 +1,4 @@
-package com.easy.query.core.basic.jdbc.executor.internal.unit.impl.breaker;
+package com.easy.query.core.basic.jdbc.executor.internal.unit.breaker;
 
 import com.easy.query.core.sharding.merge.context.StreamMergeContext;
 import com.easy.query.core.sharding.merge.result.InMemoryStreamMergeResultSet;
@@ -13,12 +13,13 @@ import java.util.Collection;
  * @author xuejiaming
  */
 public final class ListCircuitBreaker extends AbstractCircuitBreaker{
-    public ListCircuitBreaker(StreamMergeContext streamMergeContext) {
-        super(streamMergeContext);
-    }
 
+    private static final CircuitBreaker instance=new ListCircuitBreaker();
+    public static CircuitBreaker getInstance(){
+        return instance;
+    }
     @Override
-    protected <TResult> boolean SequenceTerminated(Collection<TResult> results) {
+    protected <TResult> boolean SequenceTerminated(StreamMergeContext streamMergeContext,Collection<TResult> results) {
         if(streamMergeContext.isPaginationQuery()){
             long rows = streamMergeContext.getRewriteRows();
             if(rows>0){
@@ -36,7 +37,7 @@ public final class ListCircuitBreaker extends AbstractCircuitBreaker{
     }
 
     @Override
-    protected <TResult> boolean RandomTerminated(Collection<TResult> results) {
+    protected <TResult> boolean RandomTerminated(StreamMergeContext streamMergeContext,Collection<TResult> results) {
         return false;
     }
 }

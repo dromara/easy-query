@@ -9,9 +9,11 @@ import com.easy.query.core.expression.segment.GroupByColumnSegment;
 import com.easy.query.core.expression.segment.OrderByColumnSegment;
 import com.easy.query.core.expression.segment.OrderColumnSegmentImpl;
 import com.easy.query.core.expression.segment.SqlSegment;
+import com.easy.query.core.expression.segment.builder.ProjectSqlBuilderSegment;
 import com.easy.query.core.expression.sql.expression.EasyQuerySqlExpression;
 import com.easy.query.core.expression.sql.expression.EasyTableSqlExpression;
 import com.easy.query.core.metadata.EntityMetadata;
+import com.easy.query.core.sharding.merge.context.StreamMergeContext;
 import com.easy.query.core.sharding.merge.segment.EntityPropertyGroup;
 import com.easy.query.core.sharding.merge.segment.EntityPropertyOrder;
 import com.easy.query.core.sharding.merge.segment.PropertyGroup;
@@ -113,5 +115,15 @@ public class ShardingUtil {
             }
         }
         return true;
+    }
+
+    public static boolean processGroup(StreamMergeContext streamMergeContext){
+        return streamMergeContext.hasGroupQuery()||hasAggregateSelect(streamMergeContext);
+    }
+    private static boolean hasAggregateSelect(StreamMergeContext streamMergeContext){
+        if(SqlSegmentUtil.isNotEmpty(streamMergeContext.getSelectColumns())){
+            return ((ProjectSqlBuilderSegment)streamMergeContext.getSelectColumns()).hasAggregateColumns();
+        }
+        return false;
     }
 }

@@ -1,4 +1,4 @@
-package com.easy.query.core.basic.jdbc.executor.internal.unit.impl.breaker;
+package com.easy.query.core.basic.jdbc.executor.internal.unit.breaker;
 
 import com.easy.query.core.sharding.merge.context.StreamMergeContext;
 
@@ -12,25 +12,19 @@ import java.util.Collection;
  */
 public abstract class AbstractCircuitBreaker implements CircuitBreaker {
     protected volatile boolean terminated = false;
-    protected final StreamMergeContext streamMergeContext;
-
-    public AbstractCircuitBreaker(StreamMergeContext streamMergeContext) {
-
-        this.streamMergeContext = streamMergeContext;
-    }
 
     @Override
-    public <TResult> boolean terminated(Collection<TResult> results) {
+    public <TResult> boolean terminated(StreamMergeContext streamMergeContext,Collection<TResult> results) {
         if (terminated) {
             return true;
         }
         if (streamMergeContext.isSeqQuery()) {
-            if (SequenceTerminated(results)) {
+            if (SequenceTerminated(streamMergeContext,results)) {
                 terminatedBreak();
                 return true;
             }
         } else {
-            if (RandomTerminated(results)) {
+            if (RandomTerminated(streamMergeContext,results)) {
                 terminatedBreak();
                 return true;
             }
@@ -38,9 +32,9 @@ public abstract class AbstractCircuitBreaker implements CircuitBreaker {
         return false;
     }
 
-    protected abstract <TResult> boolean SequenceTerminated(Collection<TResult> results);
+    protected abstract <TResult> boolean SequenceTerminated(StreamMergeContext streamMergeContext,Collection<TResult> results);
 
-    protected abstract <TResult> boolean RandomTerminated(Collection<TResult> results);
+    protected abstract <TResult> boolean RandomTerminated(StreamMergeContext streamMergeContext,Collection<TResult> results);
 
     private void terminatedBreak() {
         terminated = true;

@@ -1,9 +1,6 @@
 package com.easy.query.core.sharding.merge.context;
 
-import com.easy.query.core.expression.executor.parser.SequenceOrderPrepareParseResult;
-import com.easy.query.core.expression.parser.core.available.TableAvailable;
-
-import java.util.Comparator;
+import com.easy.query.core.expression.executor.parser.SequenceParseResult;
 
 /**
  * create time 2023/5/8 08:51
@@ -12,9 +9,9 @@ import java.util.Comparator;
  * @author xuejiaming
  */
 public final class MergeSequenceOrder {
-    private final SequenceOrderPrepareParseResult sequenceOrderPrepareParseResult;
+    private final SequenceParseResult sequenceOrderPrepareParseResult;
 
-    public MergeSequenceOrder(SequenceOrderPrepareParseResult sequenceOrderPrepareParseResult) {
+    public MergeSequenceOrder(SequenceParseResult sequenceOrderPrepareParseResult) {
         this.sequenceOrderPrepareParseResult = sequenceOrderPrepareParseResult;
     }
 

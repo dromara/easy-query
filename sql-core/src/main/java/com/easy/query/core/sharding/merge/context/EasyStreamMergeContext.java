@@ -171,6 +171,7 @@ public class EasyStreamMergeContext implements StreamMergeContext {
     public SqlBuilderSegment getSelectColumns() {
         throw new NotImplementedException();
     }
+
     @Override
     public SqlBuilderSegment getGroupColumns() {
         throw new NotImplementedException();

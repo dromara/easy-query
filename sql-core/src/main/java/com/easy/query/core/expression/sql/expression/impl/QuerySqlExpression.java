@@ -116,10 +116,12 @@ public class QuerySqlExpression implements EasyQuerySqlExpression {
         return this.rows>0;
     }
 
+    @Override
     public boolean isDistinct() {
         return distinct;
     }
 
+    @Override
     public void setDistinct(boolean distinct) {
         this.distinct = distinct;
     }

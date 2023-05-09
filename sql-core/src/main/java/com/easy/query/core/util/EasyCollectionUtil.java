@@ -4,6 +4,7 @@ import com.easy.query.core.expression.lambda.Selector;
 
 import java.util.*;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 /**
  * @author xuejiaming
@@ -32,6 +33,17 @@ public class EasyCollectionUtil {
             i++;
         }
         return result;
+    }
+    public static <TSource> boolean any(Collection<TSource> sources, Predicate<TSource> predicate){
+        if(isEmpty(sources)){
+            return false;
+        }
+        for (TSource source : sources) {
+            if(predicate.test(source)){
+                return true;
+            }
+        }
+        return false;
     }
 
     //    public static <TSource,TElement> List<TElement> select(List<TSource> sources, Selector<TSource,TElement> selector){

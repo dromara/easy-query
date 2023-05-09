@@ -3,7 +3,7 @@ package com.easy.query.core.expression.sql.expression.impl;
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
 import com.easy.query.core.expression.sql.expression.factory.EasyExpressionFactory;
-import com.easy.query.core.expression.segment.builder.ProjectSqlBuilderSegment;
+import com.easy.query.core.expression.segment.builder.ProjectSqlBuilderSegmentImpl;
 import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import com.easy.query.core.expression.sql.expression.EasyInsertSqlExpression;
 import com.easy.query.core.expression.sql.expression.EasyTableSqlExpression;
@@ -27,7 +27,7 @@ public  class InsertSqlExpression implements EasyInsertSqlExpression {
     public InsertSqlExpression(EasyQueryRuntimeContext runtimeContext,EasyTableSqlExpression table) {
         this.runtimeContext = runtimeContext;
         this.tables.add(table);
-        columns=new ProjectSqlBuilderSegment();
+        columns=new ProjectSqlBuilderSegmentImpl();
     }
 
     @Override

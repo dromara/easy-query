@@ -1,4 +1,4 @@
-package com.easy.query.core.basic.jdbc.executor.internal.unit.impl.breaker;
+package com.easy.query.core.basic.jdbc.executor.internal.unit.breaker;
 
 import com.easy.query.core.basic.jdbc.executor.internal.result.impl.QueryExecuteResult;
 import com.easy.query.core.sharding.merge.context.StreamMergeContext;
@@ -12,12 +12,13 @@ import java.util.Collection;
  * @author xuejiaming
  */
 public final class AnyElementCircuitBreaker extends AbstractCircuitBreaker{
-    public AnyElementCircuitBreaker(StreamMergeContext streamMergeContext) {
-        super(streamMergeContext);
-    }
 
+    private static final CircuitBreaker instance=new AnyElementCircuitBreaker();
+    public static CircuitBreaker getInstance(){
+        return instance;
+    }
     @Override
-    protected <TResult> boolean SequenceTerminated(Collection<TResult> results) {
+    protected <TResult> boolean SequenceTerminated(StreamMergeContext streamMergeContext,Collection<TResult> results) {
         for (TResult result : results) {
             if(result instanceof QueryExecuteResult){
                 if(((QueryExecuteResult)result).getStreamResult().hasElement()){
@@ -29,7 +30,7 @@ public final class AnyElementCircuitBreaker extends AbstractCircuitBreaker{
     }
 
     @Override
-    protected <TResult> boolean RandomTerminated(Collection<TResult> results) {
+    protected <TResult> boolean RandomTerminated(StreamMergeContext streamMergeContext,Collection<TResult> results) {
         return false;
     }
 }

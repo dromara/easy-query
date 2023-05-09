@@ -26,14 +26,14 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public class EasyOrderStreamMergeResult implements OrderStreamMergeResult {
+public class EasyOrderStreamMergeResultSet implements OrderStreamMergeResult {
     private static final List<Comparable<?>> EMPTY_COMPARABLE_VALUES = Collections.emptyList();
     private final StreamMergeContext streamMergeContext;
     private final StreamResultSet streamResult;
     private List<Comparable<?>> orderValues;
     private boolean closed=false;
 
-    public EasyOrderStreamMergeResult(StreamMergeContext streamMergeContext, StreamResultSet streamResult) throws SQLException {
+    public EasyOrderStreamMergeResultSet(StreamMergeContext streamMergeContext, StreamResultSet streamResult) throws SQLException {
 
         this.streamMergeContext = streamMergeContext;
         this.streamResult = streamResult;

@@ -34,7 +34,7 @@ import com.easy.query.core.expression.lambda.SqlExpression;
 import com.easy.query.core.expression.lambda.SqlExpression2;
 import com.easy.query.core.expression.parser.core.SqlColumnSelector;
 import com.easy.query.core.expression.segment.SelectConstSegment;
-import com.easy.query.core.expression.segment.builder.ProjectSqlBuilderSegment;
+import com.easy.query.core.expression.segment.builder.ProjectSqlBuilderSegmentImpl;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnValuePredicate;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
@@ -108,7 +108,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
 
     @Override
     public long countDistinct(SqlExpression<SqlColumnSelector<T1>> selectExpression) {
-        ProjectSqlBuilderSegment sqlSegmentBuilder = new ProjectSqlBuilderSegment();
+        ProjectSqlBuilderSegmentImpl sqlSegmentBuilder = new ProjectSqlBuilderSegmentImpl();
         SqlColumnSelector<T1> sqlColumnSelector = getSqlBuilderProvider1().getSqlColumnSelector1(sqlSegmentBuilder);
         selectExpression.apply(sqlColumnSelector);
 

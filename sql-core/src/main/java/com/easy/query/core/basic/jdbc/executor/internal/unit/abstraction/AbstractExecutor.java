@@ -1,7 +1,7 @@
 package com.easy.query.core.basic.jdbc.executor.internal.unit.abstraction;
 
 import com.easy.query.core.basic.jdbc.executor.internal.unit.Executor;
-import com.easy.query.core.basic.jdbc.executor.internal.unit.impl.breaker.CircuitBreaker;
+import com.easy.query.core.basic.jdbc.executor.internal.unit.breaker.CircuitBreaker;
 import com.easy.query.core.basic.thread.EasyShardingExecutorService;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.exception.EasyQueryTimeoutException;
@@ -20,7 +20,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -61,7 +60,7 @@ public abstract class AbstractExecutor<TResult> implements Executor<TResult> {
             }
             boolean hasNextLoop=executorGroupsSize>0;
             if(hasNextLoop){
-                if(circuitBreak.terminated(results)){
+                if(circuitBreak.terminated(streamMergeContext,results)){
                     break;
                 }
             }

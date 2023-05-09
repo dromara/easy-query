@@ -51,7 +51,7 @@ public class FixShardingInitializer implements EasyShardingInitializer {
             }};
 
             ((ShardingInitializerBuilder<TopicShardingTime>)shardingInitializerBuilder).actualTableNameInit(initTables)
-                    .orderConfigure(String::compareToIgnoreCase,true)
+                    .ascSequenceConfigure(String::compareToIgnoreCase,true)
                     .addPropertyWhenDesc(TopicShardingTime::getCreateTime)
                     .defaultAffectedMethod(ExecuteMethodEnum.LIST,ExecuteMethodEnum.ANY,ExecuteMethodEnum.FIRST)
                     .setMaxQueryConnectionsLimit(2);

@@ -9,7 +9,7 @@ import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.segment.SqlEntitySegment;
-import com.easy.query.core.expression.segment.builder.ProjectSqlBuilderSegment;
+import com.easy.query.core.expression.segment.builder.ProjectSqlBuilderSegmentImpl;
 import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import com.easy.query.core.expression.parser.impl.DefaultInsertSqlColumnSelector;
 import com.easy.query.core.expression.sql.builder.internal.AbstractEntityExpressionBuilder;
@@ -35,7 +35,7 @@ public class InsertExpressionBuilder extends AbstractEntityExpressionBuilder imp
 
     public InsertExpressionBuilder(ExpressionContext expressionContext) {
         super(expressionContext);
-        this.columns = new ProjectSqlBuilderSegment();
+        this.columns = new ProjectSqlBuilderSegmentImpl();
     }
 
     @Override

@@ -13,7 +13,7 @@ import java.util.List;
  * @Date: 2023/2/13 22:39
  * @author xuejiaming
  */
-public class GroupBySqlBuilderSegment extends AbstractSqlBuilderSegment {
+public class GroupBySqlBuilderSegmentImpl extends AbstractSqlBuilderSegment {
 
     @Override
     public String toSql(SqlParameterCollector sqlParameterCollector) {
@@ -35,7 +35,7 @@ public class GroupBySqlBuilderSegment extends AbstractSqlBuilderSegment {
 
     @Override
     public SqlBuilderSegment cloneSqlBuilder() {
-        GroupBySqlBuilderSegment groupBySqlBuilderSegment = new GroupBySqlBuilderSegment();
+        GroupBySqlBuilderSegmentImpl groupBySqlBuilderSegment = new GroupBySqlBuilderSegmentImpl();
         copyTo(groupBySqlBuilderSegment);
         return groupBySqlBuilderSegment;
     }

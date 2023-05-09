@@ -115,6 +115,11 @@ public class AnonymousQuerySqlExpression implements EasyAnonymousQuerySqlExpress
     }
 
     @Override
+    public boolean isDistinct() {
+        return false;
+    }
+
+    @Override
     public boolean hasLimit() {
         return false;
     }

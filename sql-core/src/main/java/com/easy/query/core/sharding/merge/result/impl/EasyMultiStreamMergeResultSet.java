@@ -2,8 +2,6 @@ package com.easy.query.core.sharding.merge.result.impl;
 
 import com.easy.query.core.sharding.merge.context.StreamMergeContext;
 import com.easy.query.core.sharding.merge.result.StreamResultSet;
-import com.easy.query.core.sharding.merge.result.OrderStreamMergeResult;
-import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.math.BigDecimal;
 import java.sql.Blob;
@@ -14,45 +12,30 @@ import java.sql.SQLException;
 import java.sql.SQLXML;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.util.Iterator;
 import java.util.List;
-import java.util.PriorityQueue;
-import java.util.Queue;
 
 /**
- * create time 2023/4/20 22:40
+ * create time 2023/5/9 11:18
  * 文件说明
  *
  * @author xuejiaming
  */
-public class EasyMultiOrderStreamMergeResult implements StreamResultSet {
-
+public class EasyMultiStreamMergeResultSet implements StreamResultSet {
     private final StreamMergeContext streamMergeContext;
-    private final List<StreamResultSet> orderStreamMergeResults;
-    private final Queue<OrderStreamMergeResult> queue;
+    private final List<StreamResultSet> streamResults;
     private StreamResultSet currentStreamResult;
-    private boolean skipFirst;
+    private Iterator<StreamResultSet> streamResultIterator;
 
     private boolean closed=false;
 
-    public EasyMultiOrderStreamMergeResult(StreamMergeContext streamMergeContext, List<StreamResultSet> streamResults) throws SQLException {
-
+    public EasyMultiStreamMergeResultSet(StreamMergeContext streamMergeContext, List<StreamResultSet> streamResults) throws SQLException {
         this.streamMergeContext = streamMergeContext;
-        this.orderStreamMergeResults = streamResults;
-        this.queue =new PriorityQueue<>(streamResults.size());
-        skipFirst=true;
-        setOrderStreamResult();
+        this.streamResults = streamResults;
+        streamResultIterator=streamResults.iterator();
+        currentStreamResult=streamResultIterator.next();
     }
 
-    private void setOrderStreamResult() throws SQLException {
-        for (StreamResultSet orderStreamMergeResult : this.orderStreamMergeResults) {
-            EasyOrderStreamMergeResult easyOrderStreamMergeResult = new EasyOrderStreamMergeResult(streamMergeContext, orderStreamMergeResult);
-            if(easyOrderStreamMergeResult.hasElement()){
-                easyOrderStreamMergeResult.skipFirst();
-                queue.offer(easyOrderStreamMergeResult);
-            }
-        }
-        currentStreamResult= queue.isEmpty()? EasyCollectionUtil.firstOrNull(orderStreamMergeResults) : queue.peek();
-    }
 
     @Override
     public boolean hasElement() {
@@ -61,32 +44,31 @@ public class EasyMultiOrderStreamMergeResult implements StreamResultSet {
 
     @Override
     public boolean skipFirst() {
-        if (skipFirst)
-        {
-            skipFirst = false;
-            return true;
-        }
         return false;
     }
 
     @Override
     public boolean next() throws SQLException {
-        if(queue.isEmpty()){
-            return false;
-        }
-        if(skipFirst){
-            skipFirst=false;
+//        if(skipFirst){
+//            skipFirst=false;
+//            return true;
+//        }
+        if(currentStreamResult.next()){
             return true;
         }
-        OrderStreamMergeResult first = queue.poll();
-        if(first.next()){
-            queue.offer(first);
-        }
-        if(queue.isEmpty()){
+        if(!streamResultIterator.hasNext()){
             return false;
         }
-        currentStreamResult=queue.peek();
-        return true;
+        currentStreamResult=streamResultIterator.next();
+        boolean hasNext = currentStreamResult.next();
+        if(hasNext){
+            return true;
+        }
+        while(!hasNext&&streamResultIterator.hasNext()){
+            currentStreamResult=streamResultIterator.next();
+            hasNext=currentStreamResult.next();
+        }
+        return hasNext;
     }
 
     @Override
@@ -189,7 +171,7 @@ public class EasyMultiOrderStreamMergeResult implements StreamResultSet {
             return;
         }
         closed = true;
-        for (StreamResultSet streamResult : orderStreamMergeResults) {
+        for (StreamResultSet streamResult : streamResults) {
             streamResult.close();
         }
     }

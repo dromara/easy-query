@@ -39,6 +39,7 @@ public interface EasyQuerySqlExpression extends EasyEntityPredicateSqlExpression
     void setRows(long rows);
 
     void setDistinct(boolean distinct);
+    boolean isDistinct();
 
     boolean hasLimit();
 

@@ -1,13 +1,11 @@
 package com.easy.query.core.sharding.route.table.engine;
 
-import com.easy.query.core.basic.jdbc.executor.internal.common.ExecutionUnit;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.executor.parser.PrepareParseResult;
 import com.easy.query.core.expression.executor.parser.QueryPrepareParseResult;
-import com.easy.query.core.expression.executor.parser.SequenceOrderPrepareParseResult;
+import com.easy.query.core.expression.executor.parser.SequenceParseResult;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.metadata.EntityMetadata;
-import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.sharding.route.RouteUnit;
 import com.easy.query.core.sharding.route.ShardingRouteResult;
 import com.easy.query.core.sharding.route.abstraction.TableRouteManager;
@@ -113,7 +111,7 @@ public class DefaultTableRouteEngine implements TableRouteEngine {
 
 
             //先进行顺序重排,可以让按顺序执行的提高性能,比如按时间分片,并且是时间倒序,那么重排后可以减少很多查询
-            SequenceOrderPrepareParseResult sequenceOrderPrepareParseResult = queryPrepareParseResult.getSequenceOrderPrepareParseResult();
+            SequenceParseResult sequenceOrderPrepareParseResult = queryPrepareParseResult.getSequenceParseResult();
             if (sequenceOrderPrepareParseResult != null) {
                 TableAvailable table = sequenceOrderPrepareParseResult.getTable();
                 if (EasyCollectionUtil.isNotEmpty(routeUnits)) {

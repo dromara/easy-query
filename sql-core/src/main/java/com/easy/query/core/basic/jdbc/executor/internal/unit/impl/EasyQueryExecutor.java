@@ -5,11 +5,11 @@ import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.executor.internal.result.impl.QueryExecuteResult;
 import com.easy.query.core.basic.jdbc.executor.internal.merger.ShardingMerger;
 import com.easy.query.core.basic.jdbc.executor.internal.unit.abstraction.AbstractExecutor;
-import com.easy.query.core.basic.jdbc.executor.internal.unit.impl.breaker.AnyCircuitBreaker;
-import com.easy.query.core.basic.jdbc.executor.internal.unit.impl.breaker.AnyElementCircuitBreaker;
-import com.easy.query.core.basic.jdbc.executor.internal.unit.impl.breaker.CircuitBreaker;
-import com.easy.query.core.basic.jdbc.executor.internal.unit.impl.breaker.ListCircuitBreaker;
-import com.easy.query.core.basic.jdbc.executor.internal.unit.impl.breaker.NoCircuitBreaker;
+import com.easy.query.core.basic.jdbc.executor.internal.unit.breaker.AnyCircuitBreaker;
+import com.easy.query.core.basic.jdbc.executor.internal.unit.breaker.AnyElementCircuitBreaker;
+import com.easy.query.core.basic.jdbc.executor.internal.unit.breaker.CircuitBreaker;
+import com.easy.query.core.basic.jdbc.executor.internal.unit.breaker.ListCircuitBreaker;
+import com.easy.query.core.basic.jdbc.executor.internal.unit.breaker.NoCircuitBreaker;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.sharding.merge.context.StreamMergeContext;
@@ -48,9 +48,9 @@ public class EasyQueryExecutor extends AbstractExecutor<QueryExecuteResult> {
     protected CircuitBreaker createCircuitBreak() {
         ExecuteMethodEnum executeMethod = streamMergeContext.getExecuteMethod();
         switch (executeMethod){
-            case FIRST:return new AnyElementCircuitBreaker(streamMergeContext);
-            case LIST:return new ListCircuitBreaker(streamMergeContext);
-            case ANY:return new AnyCircuitBreaker(streamMergeContext);
+            case FIRST:return AnyElementCircuitBreaker.getInstance();
+            case LIST:return ListCircuitBreaker.getInstance();
+            case ANY:return AnyCircuitBreaker.getInstance();
             default:return NoCircuitBreaker.getInstance();
         }
     }

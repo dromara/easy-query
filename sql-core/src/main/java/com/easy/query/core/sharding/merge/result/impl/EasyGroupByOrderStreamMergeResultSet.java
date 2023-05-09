@@ -70,7 +70,7 @@ public class EasyGroupByOrderStreamMergeResultSet implements StreamResultSet {
 
     private void setOrderStreamResult() throws SQLException {
         for (StreamResultSet streamResult : streamResults) {
-            EasyOrderStreamMergeResult easyOrderStreamMergeResult = new EasyOrderStreamMergeResult(streamMergeContext, streamResult);
+            EasyOrderStreamMergeResultSet easyOrderStreamMergeResult = new EasyOrderStreamMergeResultSet(streamMergeContext, streamResult);
             if (easyOrderStreamMergeResult.hasElement()) {
                 easyOrderStreamMergeResult.skipFirst();
                 queue.offer(easyOrderStreamMergeResult);
