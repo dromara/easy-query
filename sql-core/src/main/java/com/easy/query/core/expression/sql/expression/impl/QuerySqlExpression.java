@@ -3,18 +3,17 @@ package com.easy.query.core.expression.sql.expression.impl;
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
 import com.easy.query.core.enums.ExecuteMethodEnum;
-import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.expression.factory.EasyExpressionFactory;
 import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.sql.expression.EasyQuerySqlExpression;
 import com.easy.query.core.expression.sql.expression.EasyTableSqlExpression;
+import com.easy.query.core.util.SqlExpressionUtil;
 import com.easy.query.core.util.SqlSegmentUtil;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * create time 2023/4/22 20:53
@@ -26,6 +25,7 @@ public class QuerySqlExpression implements EasyQuerySqlExpression {
 
     protected SqlBuilderSegment projects;
     protected PredicateSegment where;
+    protected PredicateSegment allPredicate;
     protected SqlBuilderSegment group;
     protected PredicateSegment having;
     protected SqlBuilderSegment order;
@@ -122,6 +122,16 @@ public class QuerySqlExpression implements EasyQuerySqlExpression {
     }
 
     @Override
+    public void setAllPredicate(PredicateSegment allPredicate) {
+        this.allPredicate=allPredicate;
+    }
+
+    @Override
+    public PredicateSegment getAllPredicate() {
+        return allPredicate;
+    }
+
+    @Override
     public boolean isDistinct() {
         return distinct;
     }
@@ -142,8 +152,7 @@ public class QuerySqlExpression implements EasyQuerySqlExpression {
 
     @Override
     public String toSql(SqlParameterCollector sqlParameterCollector) {
-        int invokeCount = sqlParameterCollector.expressionInvokeCountGetIncrement();
-        boolean root = invokeCount == 0;
+        boolean root = SqlExpressionUtil.expressionInvokeRoot(sqlParameterCollector);
         StringBuilder sql = new StringBuilder("SELECT ");
         if(this.distinct){
             sql.append("DISTINCT ");
@@ -163,19 +172,31 @@ public class QuerySqlExpression implements EasyQuerySqlExpression {
                 sql.append(" ON ").append(on.toSql(sqlParameterCollector));
             }
         }
-        if (this.where != null && this.where.isNotEmpty()) {
-            sql.append(" WHERE ").append(this.where.toSql(sqlParameterCollector));
+        boolean notExistsSql = SqlSegmentUtil.isNotEmpty(this.allPredicate);
+        boolean hasWhere = SqlSegmentUtil.isNotEmpty(this.where);
+        if (hasWhere) {
+            String whereSql = this.where.toSql(sqlParameterCollector);
+            if(root&&notExistsSql){
+                sql.append(" WHERE ").append("( ").append(whereSql).append(" )");
+            }else{
+                sql.append(" WHERE ").append(whereSql);
+            }
         }
+        boolean onlyWhere=true;
         if (this.group!=null&&this.group.isNotEmpty()) {
+            onlyWhere=false;
             sql.append(" GROUP BY ").append(this.group.toSql(sqlParameterCollector));
         }
         if (this.having!=null&&this.having.isNotEmpty()) {
+            onlyWhere=false;
             sql.append(" HAVING ").append(this.having.toSql(sqlParameterCollector));
         }
         if (this.order!=null&&this.order.isNotEmpty()) {
+            onlyWhere=false;
             sql.append(" ORDER BY ").append(this.order.toSql(sqlParameterCollector));
         }
         if (this.rows > 0) {
+            onlyWhere=false;
             sql.append(" LIMIT ");
             if (this.offset > 0) {
                 sql.append(this.offset).append(" OFFSET ").append(this.rows);
@@ -184,8 +205,17 @@ public class QuerySqlExpression implements EasyQuerySqlExpression {
             }
         }
         String resultSql = sql.toString();
-        if(root&& Objects.equals(ExecuteMethodEnum.ALL,executeMethod)){
-            return " SELECT NOT EXISTS ( "+resultSql+" ) ";
+        if(root&&notExistsSql){
+            StringBuilder notExistsResultSql = new StringBuilder("SELECT NOT EXISTS ( ");
+            if(onlyWhere){
+
+                notExistsResultSql.append(resultSql).append(hasWhere?" AND ":" WHERE ").append("( ").append(allPredicate.toSql(sqlParameterCollector))
+                        .append(" )").append(" )");
+            }else{
+                notExistsResultSql.append("SELECT 1 FROM ( ").append(resultSql).append(" ) t ").append(" WHERE ").append(allPredicate.toSql(sqlParameterCollector))
+                        .append(" )");
+            }
+            return notExistsResultSql.toString();
         }else{
             return resultSql;
         }
@@ -211,6 +241,9 @@ public class QuerySqlExpression implements EasyQuerySqlExpression {
         }
         if(SqlSegmentUtil.isNotEmpty(this.projects)){
             easyQuerySqlExpression.setProjects(projects.cloneSqlBuilder());
+        }
+        if(SqlSegmentUtil.isNotEmpty(this.allPredicate)){
+            easyQuerySqlExpression.setAllPredicate(allPredicate.clonePredicateSegment());
         }
         easyQuerySqlExpression.setOffset(this.offset);
         easyQuerySqlExpression.setRows(this.rows);

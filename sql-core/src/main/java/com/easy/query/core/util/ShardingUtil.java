@@ -37,10 +37,7 @@ public class ShardingUtil {
 
     public static RoutePredicateExpression getRoutePredicateExpression(PrepareParseResult prepareParseResult, TableAvailable table,
                                                                        RouteRuleFilter routeRuleFilter, boolean shardingTableRoute) {
-        //all的话不可以路由必须返回所有的表
-        if(Objects.equals(ExecuteMethodEnum.ALL,prepareParseResult.getExecutorContext().getExecuteMethod())){
-            return RoutePredicateExpression.getDefault();
-        }
+
         RoutePredicateDiscover routePredicateDiscover = new RoutePredicateDiscover(prepareParseResult, table, routeRuleFilter, shardingTableRoute);
         return routePredicateDiscover.getRouteParseExpression();
     }

@@ -20,16 +20,40 @@ public enum SqlPredicateCompareEnum implements SqlPredicateCompare {
     LT("<"),
     LE("<="),
     IS_NULL("IS NULL"),
-    IS_NOT_NULL("IS NOT NULL");
-    private final String sql;
+    IS_NOT_NULL("IS NOT NULL"),
 
-    SqlPredicateCompareEnum(String sql){
+    EXISTS("EXISTS"),
+    NOT_EXISTS("NOT EXISTS"),;
+    private final String compare;
 
-        this.sql = sql;
+    SqlPredicateCompareEnum(String compare){
+
+        this.compare = compare;
     }
 
     @Override
     public String getSql() {
-        return sql;
+        return compare;
+    }
+
+    @Override
+    public SqlPredicateCompare toReverse() {
+        switch (this){
+            case IN:return NOT_IN;
+            case NOT_IN:return IN;
+            case LIKE:return NOT_LIKE;
+            case NOT_LIKE:return LIKE;
+            case EQ:return NE;
+            case NE:return EQ;
+            case GT:return LE;
+            case LE:return GT;
+            case GE:return LT;
+            case LT:return GE;
+            case IS_NULL:return IS_NOT_NULL;
+            case IS_NOT_NULL:return IS_NULL;
+            case EXISTS:return NOT_EXISTS;
+            case NOT_EXISTS:return EXISTS;
+        }
+        throw new UnsupportedOperationException();
     }
 }

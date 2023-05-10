@@ -1,4 +1,4 @@
-package com.easy.query.core.sharding.merge.result.impl;
+package com.easy.query.core.sharding.merge.result.impl.memory;
 
 import com.easy.query.core.sharding.merge.result.InMemoryStreamMergeResultSet;
 

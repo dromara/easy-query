@@ -16,15 +16,15 @@ import com.easy.query.core.util.SqlExpressionUtil;
  * @author xuejiaming
  */
 public class ColumnExistsSubQueryPredicate implements SubQueryPredicate{
-    private final SqlKeywordEnum sqlKeyword;
+    private final SqlPredicateCompare sqlPredicateCompare;
     private final EasyQueryRuntimeContext runtimeContext;
     private final TableAvailable table;
     private final Queryable<?> subQueryable;
 
-    public ColumnExistsSubQueryPredicate(TableAvailable table, Queryable<?> subQueryable, SqlKeywordEnum sqlKeyword, EasyQueryRuntimeContext runtimeContext) {
+    public ColumnExistsSubQueryPredicate(TableAvailable table, Queryable<?> subQueryable, SqlPredicateCompare sqlPredicateCompare, EasyQueryRuntimeContext runtimeContext) {
         this.table = table;
         this.subQueryable = subQueryable;
-        this.sqlKeyword = sqlKeyword;
+        this.sqlPredicateCompare = sqlPredicateCompare;
         this.runtimeContext = runtimeContext;
     }
     @Override
@@ -46,7 +46,7 @@ public class ColumnExistsSubQueryPredicate implements SubQueryPredicate{
     public String toSql(SqlParameterCollector sqlParameterCollector) {
 
         StringBuilder sql = new StringBuilder();
-        sql.append(sqlKeyword.toSql()).append(" (");
+        sql.append(sqlPredicateCompare.getSql()).append(" (");
         String queryableSql = subQueryable.toSql(sqlParameterCollector);
         sql.append(queryableSql).append(") ");
         return sql.toString();

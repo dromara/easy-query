@@ -19,6 +19,7 @@ import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.expression.factory.EasyExpressionFactory;
+import com.easy.query.core.util.SqlSegmentUtil;
 
 import java.util.Iterator;
 
@@ -31,6 +32,7 @@ import java.util.Iterator;
 public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBuilder implements EntityQueryExpressionBuilder {
 
     protected PredicateSegment where;
+    protected PredicateSegment allPredicate;
     protected SqlBuilderSegment group;
     protected PredicateSegment having;
     protected SqlBuilderSegment order;
@@ -62,6 +64,19 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
             where = new AndPredicateSegment(true);
         }
         return where;
+    }
+
+    @Override
+    public boolean hasAllPredicate() {
+        return SqlSegmentUtil.isNotEmpty(allPredicate);
+    }
+
+    @Override
+    public PredicateSegment getAllPredicate() {
+        if (allPredicate == null) {
+            allPredicate = new AndPredicateSegment(true);
+        }
+        return allPredicate;
     }
 
     @Override
@@ -104,7 +119,7 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
 
     @Override
     public boolean hasHaving() {
-        return having != null && having.isNotEmpty();
+        return SqlSegmentUtil.isNotEmpty(having);
     }
 
     @Override
@@ -199,6 +214,7 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
         easyQuerySqlExpression.setOrder(getOrder());
         easyQuerySqlExpression.setOffset(getOffset());
         easyQuerySqlExpression.setRows(getRows());
+        easyQuerySqlExpression.setAllPredicate(getAllPredicate());
         return easyQuerySqlExpression;
     }
 
@@ -239,6 +255,9 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
         }
         if (hasOrder()) {
             getOrder().copyTo(queryExpressionBuilder.getOrder());
+        }
+        if(hasAllPredicate()){
+            getAllPredicate().copyTo(queryExpressionBuilder.getAllPredicate());
         }
         getProjects().copyTo(queryExpressionBuilder.getProjects());
         queryExpressionBuilder.offset = this.offset;

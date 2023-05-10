@@ -324,37 +324,29 @@ public class ShardingTest extends BaseTest {
     public void sharding14(){
 
         boolean all1 = easyQuery.queryable(TopicShardingTime.class)
-                .where(o -> o.ge(TopicShardingTime::getCreateTime, LocalDateTime.of(2099, 1, 1, 1, 1)))
-                .all();
+                .all(o -> o.ge(TopicShardingTime::getCreateTime, LocalDateTime.of(2099, 1, 1, 1, 1)));
         Assert.assertFalse(all1);
         boolean all2 = easyQuery.queryable(TopicShardingTime.class)
-                .where(o -> o.ge(TopicShardingTime::getCreateTime, LocalDateTime.of(2022, 1, 1, 1, 1)))
-                .all();
+                .all(o -> o.ge(TopicShardingTime::getCreateTime, LocalDateTime.of(2022, 1, 1, 1, 1)));
         Assert.assertFalse(all2);
         LocalDateTime beginTime = LocalDateTime.of(2020, 1, 1, 1, 1);
         boolean all3 = easyQuery.queryable(TopicShardingTime.class)
-                .where(o -> o.gt(TopicShardingTime::getCreateTime, beginTime))
-                .all();
+                .all(o -> o.gt(TopicShardingTime::getCreateTime, beginTime));
         Assert.assertFalse(all3);
         boolean all4 = easyQuery.queryable(TopicShardingTime.class)
-                .where(o -> o.ge(TopicShardingTime::getCreateTime, beginTime))
-                .all();
+                .all(o -> o.ge(TopicShardingTime::getCreateTime, beginTime));
         Assert.assertTrue(all4);
         boolean all5 = easyQuery.queryable(TopicShardingTime.class)
-                .where(o -> o.le(TopicShardingTime::getCreateTime, LocalDateTime.of(2099, 1, 1, 1, 1)))
-                .all();
+                .all(o -> o.le(TopicShardingTime::getCreateTime, LocalDateTime.of(2099, 1, 1, 1, 1)));
         Assert.assertTrue(all5);
         boolean all6 = easyQuery.queryable(TopicShardingTime.class)
-                .where(o -> o.lt(TopicShardingTime::getCreateTime, LocalDateTime.of(2099, 1, 1, 1, 1)))
-                .all();
+                .all(o -> o.lt(TopicShardingTime::getCreateTime, LocalDateTime.of(2099, 1, 1, 1, 1)));
         Assert.assertTrue(all6);
         boolean all7 = easyQuery.queryable(TopicShardingTime.class)
-                .where(o -> o.ge(TopicShardingTime::getCreateTime, beginTime.plusDays(-1)))
-                .all();
+                .all(o -> o.ge(TopicShardingTime::getCreateTime, beginTime.plusDays(-1)));
         Assert.assertTrue(all7);
         boolean all8 = easyQuery.queryable(TopicShardingTime.class)
-                .where(o -> o.ge(TopicShardingTime::getCreateTime, beginTime.plusDays(1)))
-                .all();
+                .all(o -> o.ge(TopicShardingTime::getCreateTime, beginTime.plusDays(1)));
         Assert.assertFalse(all8);
     }
     @Test
@@ -367,5 +359,41 @@ public class ShardingTest extends BaseTest {
 
         Assert.assertNotNull(localDateTime);
         Assert.assertEquals(localDateTime,topicShardingTime1.getCreateTime());
+    }
+    @Test
+    public void sharding17(){
+
+        boolean all1 = easyQuery.queryable(TopicShardingTime.class)
+                .where(o->o.le(TopicShardingTime::getCreateTime,LocalDateTime.of(2099, 1, 1, 1, 1)))
+                .all(o -> o.ge(TopicShardingTime::getCreateTime, LocalDateTime.of(2099, 1, 1, 1, 1)));
+        Assert.assertFalse(all1);
+        boolean all2 = easyQuery.queryable(TopicShardingTime.class)
+                .where(o->o.ge(TopicShardingTime::getCreateTime,LocalDateTime.of(2022, 1, 1, 1, 1)))
+                .all(o -> o.ge(TopicShardingTime::getCreateTime, LocalDateTime.of(2022, 1, 1, 1, 1)));
+        Assert.assertTrue(all2);
+        boolean all21 = easyQuery.queryable(TopicShardingTime.class)
+                .where(o->o.ge(TopicShardingTime::getCreateTime,LocalDateTime.of(2022, 1, 1, 1, 1).plusDays(-1)))
+                .all(o -> o.ge(TopicShardingTime::getCreateTime, LocalDateTime.of(2022, 1, 1, 1, 1)));
+        Assert.assertFalse(all21);
+        boolean all22 = easyQuery.queryable(TopicShardingTime.class)
+                .where(o->o.ge(TopicShardingTime::getCreateTime,LocalDateTime.of(2022, 1, 1, 1, 1).plusDays(1)))
+                .all(o -> o.ge(TopicShardingTime::getCreateTime, LocalDateTime.of(2022, 1, 1, 1, 1)));
+        Assert.assertTrue(all22);
+        LocalDateTime beginTime = LocalDateTime.of(2020, 1, 1, 1, 1);
+        boolean all3 = easyQuery.queryable(TopicShardingTime.class)
+                .all(o -> o.gt(TopicShardingTime::getCreateTime, beginTime));
+        Assert.assertFalse(all3);
+        boolean all31 = easyQuery.queryable(TopicShardingTime.class)
+                .where(o -> o.gt(TopicShardingTime::getCreateTime, beginTime))
+                .all(o -> o.gt(TopicShardingTime::getCreateTime, beginTime));
+        Assert.assertTrue(all31);
+        boolean all32 = easyQuery.queryable(TopicShardingTime.class)
+                .where(o -> o.ge(TopicShardingTime::getCreateTime, beginTime))
+                .all(o -> o.gt(TopicShardingTime::getCreateTime, beginTime));
+        Assert.assertFalse(all32);
+        boolean all33 = easyQuery.queryable(TopicShardingTime.class)
+                .where(o -> o.rangeClosed(TopicShardingTime::getCreateTime,true,beginTime,true,beginTime))
+                .all(o -> o.gt(TopicShardingTime::getCreateTime, beginTime));
+        Assert.assertFalse(all33);
     }
 }

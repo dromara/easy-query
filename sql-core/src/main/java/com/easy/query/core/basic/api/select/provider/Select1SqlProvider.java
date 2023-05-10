@@ -31,6 +31,7 @@ public class Select1SqlProvider<T1> implements EasyQuerySqlBuilderProvider<T1> {
     private DefaultSqlGroupColumnSelector<T1> group;
     private DefaultSqlOrderColumnSelector<T1> order;
     private DefaultSqlPredicate<T1> where;
+    private DefaultSqlPredicate<T1> allPredicate;
     private DefaultSqlAggregatePredicate<T1> having;
     private DefaultSqlPredicate<T1> on;
 
@@ -61,6 +62,14 @@ public class Select1SqlProvider<T1> implements EasyQuerySqlBuilderProvider<T1> {
             where=new DefaultSqlPredicate<>(index, sqlEntityExpression, sqlEntityExpression.getWhere());
         }
         return where;
+    }
+
+    @Override
+    public SqlWherePredicate<T1> getSqlAllPredicate1() {
+        if(allPredicate==null){
+            allPredicate=new DefaultSqlPredicate<>(index, sqlEntityExpression, sqlEntityExpression.getAllPredicate(),true);
+        }
+        return allPredicate;
     }
 
     @Override

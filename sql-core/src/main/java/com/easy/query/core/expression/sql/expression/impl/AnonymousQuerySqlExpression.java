@@ -128,6 +128,16 @@ public class AnonymousQuerySqlExpression implements EasyAnonymousQuerySqlExpress
     }
 
     @Override
+    public void setAllPredicate(PredicateSegment allPredicate) {
+
+    }
+
+    @Override
+    public PredicateSegment getAllPredicate() {
+        return null;
+    }
+
+    @Override
     public List<EasyTableSqlExpression> getTables() {
         return tables;
     }

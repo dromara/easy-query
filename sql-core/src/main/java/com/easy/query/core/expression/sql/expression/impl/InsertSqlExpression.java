@@ -8,6 +8,7 @@ import com.easy.query.core.expression.segment.builder.ProjectSqlBuilderSegmentIm
 import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import com.easy.query.core.expression.sql.expression.EasyInsertSqlExpression;
 import com.easy.query.core.expression.sql.expression.EasyTableSqlExpression;
+import com.easy.query.core.util.SqlExpressionUtil;
 import com.easy.query.core.util.SqlSegmentUtil;
 
 import java.util.ArrayList;
@@ -55,7 +56,7 @@ public  class InsertSqlExpression implements EasyInsertSqlExpression {
 
     @Override
     public String toSql(SqlParameterCollector sqlParameterCollector) {
-        sqlParameterCollector.expressionInvokeCountGetIncrement();
+        SqlExpressionUtil.expressionInvokeRoot(sqlParameterCollector);
         EasyTableSqlExpression easyTableSqlExpression = tables.get(0);
         String tableName = easyTableSqlExpression.getTableName();
         int insertColumns = columns.getSqlSegments().size();

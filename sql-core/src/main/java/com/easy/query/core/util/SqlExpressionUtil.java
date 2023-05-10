@@ -4,6 +4,7 @@ import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.api.select.Queryable;
 import com.easy.query.core.basic.api.select.Queryable2;
 import com.easy.query.core.basic.api.select.Queryable3;
+import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
 import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.enums.SqlExecuteStrategyEnum;
 import com.easy.query.core.expression.lambda.SqlExpression2;
@@ -29,6 +30,12 @@ public class SqlExpressionUtil {
     private SqlExpressionUtil() {
     }
 
+    public static boolean expressionInvokeRoot(SqlParameterCollector sqlParameterCollector){
+        if(sqlParameterCollector==null){
+            return false;
+        }
+        return sqlParameterCollector.expressionInvokeCountGetIncrement()==0;
+    }
     public static <TSource> Queryable<TSource> cloneAndSelectAllQueryable(Queryable<TSource> queryable) {
         EntityQueryExpressionBuilder queryableSqlEntityExpression = queryable.getSqlEntityExpressionBuilder();
         if (SqlExpressionUtil.shouldCloneSqlEntityQueryExpressionBuilder(queryableSqlEntityExpression)) {

@@ -36,7 +36,7 @@ public final class AllCircuitBreaker extends AbstractCircuitBreaker{
                 StreamResultSet resultSet = ((QueryExecuteResult) o).getStreamResult();
                 if(resultSet.hasElement()){
                     try {
-                        return resultSet.getLong(1)==1L;
+                        return resultSet.getLong(1)==0L;
                     } catch (SQLException e) {
                         throw new RuntimeException(e);
                     }

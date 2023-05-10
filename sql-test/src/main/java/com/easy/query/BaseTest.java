@@ -48,10 +48,10 @@ public abstract class BaseTest {
 
     static {
         LogFactory.useStdOutLogging();
+        init();
     }
 
 
-    @BeforeClass
     public static void init() {
         initDatasource();
         initEasyQuery();

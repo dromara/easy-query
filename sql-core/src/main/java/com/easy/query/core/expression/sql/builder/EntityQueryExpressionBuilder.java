@@ -22,6 +22,8 @@ public interface EntityQueryExpressionBuilder extends EntityPredicateExpressionB
 
     SqlBuilderSegment getProjects();
     PredicateSegment getWhere();
+    boolean hasAllPredicate();
+    PredicateSegment getAllPredicate();
      long getOffset();
 
      void setOffset(long offset);

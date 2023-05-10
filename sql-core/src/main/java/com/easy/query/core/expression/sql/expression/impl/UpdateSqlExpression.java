@@ -10,6 +10,7 @@ import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.sql.expression.EasyTableSqlExpression;
 import com.easy.query.core.expression.sql.expression.EasyUpdateSqlExpression;
+import com.easy.query.core.util.SqlExpressionUtil;
 import com.easy.query.core.util.SqlSegmentUtil;
 
 import java.util.ArrayList;
@@ -70,7 +71,7 @@ public  class UpdateSqlExpression implements EasyUpdateSqlExpression {
 
     @Override
     public String toSql(SqlParameterCollector sqlParameterCollector) {
-        sqlParameterCollector.expressionInvokeCountGetIncrement();
+        SqlExpressionUtil.expressionInvokeRoot(sqlParameterCollector);
         if(SqlSegmentUtil.isEmpty(setColumns)){
             return null;
         }

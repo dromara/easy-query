@@ -1,8 +1,9 @@
-package com.easy.query.core.sharding.merge.result.impl;
+package com.easy.query.core.sharding.merge.result.impl.memory;
 
 import com.easy.query.core.sharding.merge.context.StreamMergeContext;
 import com.easy.query.core.sharding.merge.result.StreamResultSet;
 import com.easy.query.core.sharding.merge.result.InMemoryStreamMergeResultSet;
+import com.easy.query.core.sharding.merge.result.impl.memory.row.MemoryResultSetRow;
 
 import java.math.BigDecimal;
 import java.sql.Blob;

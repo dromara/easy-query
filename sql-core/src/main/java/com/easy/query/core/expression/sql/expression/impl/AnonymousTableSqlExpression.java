@@ -5,6 +5,7 @@ import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.sql.expression.EasyAnonymousTableSqlExpression;
 import com.easy.query.core.expression.sql.expression.EasyQuerySqlExpression;
+import com.easy.query.core.util.SqlExpressionUtil;
 
 /**
  * create time 2023/4/23 16:30
@@ -35,7 +36,7 @@ public class AnonymousTableSqlExpression extends TableSqlExpression implements E
 
     @Override
     public String toSql(SqlParameterCollector sqlParameterCollector) {
-        sqlParameterCollector.expressionInvokeCountGetIncrement();
+        SqlExpressionUtil.expressionInvokeRoot(sqlParameterCollector);
 
         StringBuilder sql = new StringBuilder();
 

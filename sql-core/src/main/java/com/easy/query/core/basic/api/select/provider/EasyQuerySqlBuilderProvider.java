@@ -18,6 +18,7 @@ public interface EasyQuerySqlBuilderProvider<T1> {
     SqlGroupBySelector<T1> getSqlGroupColumnSelector1();
     SqlColumnSelector<T1> getSqlOrderColumnSelector1(boolean asc);
     SqlWherePredicate<T1> getSqlWherePredicate1();
+    SqlWherePredicate<T1> getSqlAllPredicate1();
     SqlAggregatePredicate<T1> getSqlAggregatePredicate1();
     SqlWherePredicate<T1> getSqlOnPredicate1();
 

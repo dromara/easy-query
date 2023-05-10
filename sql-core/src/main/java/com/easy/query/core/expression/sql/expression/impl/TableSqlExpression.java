@@ -10,6 +10,7 @@ import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.sql.expression.EasyTableSqlExpression;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.util.ClassUtil;
+import com.easy.query.core.util.SqlExpressionUtil;
 import com.easy.query.core.util.SqlSegmentUtil;
 
 import java.util.function.Function;
@@ -98,7 +99,7 @@ public class TableSqlExpression implements EasyTableSqlExpression {
 
     @Override
     public String toSql(SqlParameterCollector sqlParameterCollector) {
-        sqlParameterCollector.expressionInvokeCountGetIncrement();
+        SqlExpressionUtil.expressionInvokeRoot(sqlParameterCollector);
         //如果当前对象没有映射到表那么直接抛错
         StringBuilder sql = new StringBuilder();
 

@@ -135,10 +135,14 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     }
 
     @Override
-    public boolean all() {
+    public boolean all(SqlExpression<SqlWherePredicate<T1>> whereExpression) {
         setExecuteMethod(ExecuteMethodEnum.ALL);
-        List<Long> result = cloneQueryable().select(" 1 ").toList(Long.class);
-        return !EasyCollectionUtil.any(result,o->o==1L);
+        Queryable<T1> cloneQueryable = cloneQueryable();
+        SqlWherePredicate<T1> sqlAllPredicate = cloneQueryable.getSqlBuilderProvider1().getSqlAllPredicate1();
+        whereExpression.apply(sqlAllPredicate);
+        EntityQueryExpressionBuilder sqlEntityExpressionBuilder = cloneQueryable.select(" 1 ").getSqlEntityExpressionBuilder();
+        List<Long> result = toInternalListWithExpression(sqlEntityExpressionBuilder,Long.class);
+        return EasyCollectionUtil.all(result,o->o==1L);
     }
 
     @Override

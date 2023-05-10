@@ -7,4 +7,5 @@ package com.easy.query.core.enums;
  */
 public interface SqlPredicateCompare {
     String getSql();
+    SqlPredicateCompare toReverse();
 }

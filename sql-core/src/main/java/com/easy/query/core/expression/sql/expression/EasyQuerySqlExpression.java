@@ -42,6 +42,8 @@ public interface EasyQuerySqlExpression extends EasyEntityPredicateSqlExpression
     boolean isDistinct();
 
     boolean hasLimit();
+    void setAllPredicate(PredicateSegment allPredicate);
+    PredicateSegment getAllPredicate();
 
     @Override
     EasyQuerySqlExpression cloneSqlExpression();

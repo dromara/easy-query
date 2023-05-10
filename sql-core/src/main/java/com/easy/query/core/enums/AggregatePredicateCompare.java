@@ -27,4 +27,9 @@ public enum AggregatePredicateCompare implements SqlPredicateCompare {
     public String getSql() {
         return sql;
     }
+
+    @Override
+    public SqlPredicateCompare toReverse() {
+        return null;
+    }
 }

@@ -1,13 +1,18 @@
-package com.easy.query.core.sharding.merge.result.impl;
+package com.easy.query.core.sharding.merge.result.impl.memory;
 import com.easy.query.core.exception.EasyQuerySQLException;
 import com.easy.query.core.expression.segment.AggregationColumnSegment;
 import com.easy.query.core.expression.segment.SqlSegment;
+import com.easy.query.core.logging.Log;
+import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.sharding.merge.context.StreamMergeContext;
 import com.easy.query.core.sharding.merge.result.StreamResultSet;
 import com.easy.query.core.sharding.merge.result.aggregation.AggregationUnitFactory;
-import com.easy.query.core.sharding.merge.segment.PropertyGroup;
+import com.easy.query.core.sharding.merge.result.impl.AggregateValue;
+import com.easy.query.core.sharding.merge.result.impl.GroupByRowComparator;
+import com.easy.query.core.sharding.merge.result.impl.GroupValue;
+import com.easy.query.core.sharding.merge.result.impl.memory.row.DefaultMemoryResultSetRow;
+import com.easy.query.core.sharding.merge.result.impl.memory.row.MemoryResultSetRow;
 import com.easy.query.core.util.EasyCollectionUtil;
-import com.easy.query.core.util.ClassUtil;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -23,6 +28,7 @@ import java.util.Map;
  * @author xuejiaming
  */
 public final class EasyInMemoryGroupByOrderStreamMergeResultSet extends AbstractInMemoryStreamMergeResultSet {
+    private static final Log log= LogFactory.getLog(EasyInMemoryGroupByOrderStreamMergeResultSet.class);
     public EasyInMemoryGroupByOrderStreamMergeResultSet(StreamMergeContext streamMergeContext, List<StreamResultSet> streamResultSets) throws SQLException {
         super(streamMergeContext, streamResultSets);
 
@@ -42,6 +48,7 @@ public final class EasyInMemoryGroupByOrderStreamMergeResultSet extends Abstract
                 }
 
             } catch (Exception e) {
+                log.error("init memory merge result set error.",e);
                 throw new SQLException(e);
             }
         }
@@ -68,7 +75,7 @@ public final class EasyInMemoryGroupByOrderStreamMergeResultSet extends Abstract
     private void initForFirstGroupByValue(StreamMergeContext streamMergeContext,StreamResultSet streamResultSet,GroupValue groupValue,
                                           Map<GroupValue, MemoryResultSetRow> dataMap,Map<GroupValue, List<AggregateValue>> aggregationMap) throws SQLException {
         if(!dataMap.containsKey(groupValue)){
-            dataMap.put(groupValue,new MemoryResultSetRow(streamResultSet,columnCount));
+            dataMap.put(groupValue,new DefaultMemoryResultSetRow(streamResultSet,columnCount));
         }
         if(!aggregationMap.containsKey(groupValue)){
             List<AggregateValue> aggregationUnitValues = createAggregationUnitValues();

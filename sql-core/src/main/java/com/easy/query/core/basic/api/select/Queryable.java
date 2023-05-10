@@ -55,14 +55,17 @@ public interface Queryable<T1> extends Query<T1>, Interceptable<Queryable<T1>>, 
      */
     boolean any();
 
+
     /**
+     *
      *  SELECT NOT EXISTS (
      *           SELECT 1
      *           FROM `table` AS `t`
      *           WHERE (`t`.`columns` = ?))
+     * @param whereExpression 表达式最后一个是取反
      * @return
      */
-    boolean all();
+    boolean all(SqlExpression<SqlWherePredicate<T1>> whereExpression);
     /**
      * 防止溢出
      *
