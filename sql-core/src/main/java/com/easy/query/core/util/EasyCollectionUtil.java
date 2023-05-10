@@ -94,7 +94,7 @@ public class EasyCollectionUtil {
         }
         return 0;
     }
-    public static <TSource> long sum(Collection<Long> arrays) {
+    public static long sum(Collection<Long> arrays) {
         int length = arrays.size();
         if (length > 0) {
             long sum = 0;

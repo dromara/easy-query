@@ -16,9 +16,6 @@ public interface EasyEntitySqlExpression extends EasySqlExpression {
         return getTables().get(index);
     }
 
-    ExecuteMethodEnum getExecuteMethod();
-
-
     @Override
     EasyEntitySqlExpression cloneSqlExpression();
 }

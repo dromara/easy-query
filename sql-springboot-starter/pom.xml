@@ -19,7 +19,7 @@
     <dependencies>
         <dependency>
             <groupId>com.easy-query</groupId>
-            <artifactId>sql-core</artifactId>
+            <artifactId>sql-mysql</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>

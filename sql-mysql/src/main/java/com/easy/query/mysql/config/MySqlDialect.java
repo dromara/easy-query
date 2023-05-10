@@ -1,14 +1,14 @@
 package com.easy.query.mysql.config;
 
-import com.easy.query.core.config.AbstractDialect;
+import com.easy.query.core.sql.dialect.abstraction.AbstractDialect;
 
 /**
- * @FileName: MySQLDialect.java
- * @Description: 文件说明
- * @Date: 2023/2/12 09:08
+ * create time 2023/4/26 17:24
+ * 文件说明
+ *
  * @author xuejiaming
  */
-public class MySqlDialect extends AbstractDialect {
+public final class MySqlDialect extends AbstractDialect {
     @Override
     public String getQuoteStart() {
         return "`";

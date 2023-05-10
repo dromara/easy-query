@@ -5,11 +5,11 @@ import com.alibaba.druid.pool.DruidDataSourceFactory;
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.sql.dialect.Dialect;
-import com.easy.query.core.sql.dialect.impl.MySqlDialect;
 import com.easy.query.core.enums.SqlRangeEnum;
 import com.easy.query.core.enums.SqlExecuteStrategyEnum;
 import com.easy.query.dto.TopicRequest;
 import com.easy.query.entity.Topic;
+import com.easy.query.mysql.config.MySqlDatabaseConfiguration;
 import com.easy.query.test.*;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.api.client.EasyQuery;
@@ -114,7 +114,7 @@ public class Main {
 
         easyQuery =  EasyQueryBootstrapper.defaultBuilderConfiguration()
                 .setDataSource(dataSource)
-                .replaceService(Dialect.class,MySqlDialect.class)
+                .useDatabaseConfigure(new MySqlDatabaseConfiguration())
                 .build();
         EasyQueryRuntimeContext runtimeContext = easyQuery.getRuntimeContext();
 //        jqdcRuntimeContext.getEasyQueryConfiguration().applyEntityTypeConfiguration(new TestUserMySqlConfiguration());

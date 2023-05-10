@@ -179,7 +179,7 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
         }
         EasyQueryRuntimeContext runtimeContext = getRuntimeContext();
         EasyExpressionFactory expressionFactory = runtimeContext.getExpressionFactory();
-        EasyQuerySqlExpression easyQuerySqlExpression = expressionFactory.createEasyQuerySqlExpression(runtimeContext,sqlExpressionContext.getExecuteMethod());
+        EasyQuerySqlExpression easyQuerySqlExpression = expressionFactory.createEasyQuerySqlExpression(runtimeContext);
         easyQuerySqlExpression.setDistinct(isDistinct());
 
         if (emptySelect) {

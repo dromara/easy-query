@@ -2,7 +2,7 @@ package com.easy.query.sql.starter.config;
 
 
 import com.easy.query.core.enums.SqlExecuteStrategyEnum;
-import com.easy.query.sql.starter.option.DialectEnum;
+import com.easy.query.sql.starter.option.DatabaseEnum;
 import com.easy.query.sql.starter.option.NameConversionEnum;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -19,7 +19,7 @@ public class EasyQueryProperties {
 
     private Boolean enable =false;
     private Boolean deleteThrow =true;
-    private DialectEnum dialect;
+    private DatabaseEnum database;
     private NameConversionEnum nameConversion;
     private SqlExecuteStrategyEnum insertStrategy=SqlExecuteStrategyEnum.DEFAULT;
     private SqlExecuteStrategyEnum updateStrategy=SqlExecuteStrategyEnum.DEFAULT;
@@ -62,12 +62,12 @@ public class EasyQueryProperties {
     }
 
 
-    public DialectEnum getDialect() {
-        return dialect;
+    public DatabaseEnum getDatabase() {
+        return database;
     }
 
-    public void setDialect(DialectEnum dialect) {
-        this.dialect = dialect;
+    public void setDatabase(DatabaseEnum database) {
+        this.database = database;
     }
 
     public NameConversionEnum getNameConversion() {

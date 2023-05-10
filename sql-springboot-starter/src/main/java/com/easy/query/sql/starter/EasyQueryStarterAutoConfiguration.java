@@ -4,6 +4,8 @@ import com.easy.query.core.basic.jdbc.con.EasyConnectionManager;
 import com.easy.query.core.basic.plugin.encryption.EasyEncryptionStrategy;
 import com.easy.query.core.basic.plugin.interceptor.EasyInterceptor;
 import com.easy.query.core.basic.plugin.logicdel.EasyLogicDeleteStrategy;
+import com.easy.query.core.bootstrapper.DatabaseConfiguration;
+import com.easy.query.core.bootstrapper.DefaultDatabaseConfiguration;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.configuration.EasyQueryOption;
@@ -13,7 +15,6 @@ import com.easy.query.core.sharding.EasyShardingOption;
 import com.easy.query.core.sql.dialect.Dialect;
 import com.easy.query.core.api.client.EasyQuery;
 import com.easy.query.core.sql.dialect.impl.MsSqlDialect;
-import com.easy.query.core.sql.dialect.impl.MySqlDialect;
 import com.easy.query.core.sql.dialect.impl.DefaultDialect;
 import com.easy.query.core.sql.dialect.impl.PgSqlDialect;
 import com.easy.query.core.sql.nameconversion.NameConversion;
@@ -24,6 +25,7 @@ import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.sharding.initializer.EasyShardingInitializer;
 import com.easy.query.core.util.StringUtil;
+import com.easy.query.mysql.config.MySqlDatabaseConfiguration;
 import com.easy.query.sql.starter.config.EasyQueryProperties;
 import com.easy.query.sql.starter.logging.Slf4jImpl;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -75,25 +77,30 @@ public class EasyQueryStarterAutoConfiguration {
         }
     }
 
+//    @Bean
+//    @ConditionalOnProperty(name = "setDatabase",havingValue = "mssql")
+//    public Dialect msSqlDialect() {
+//        return new MsSqlDialect();
+//    }
+//    @Bean
+//    @ConditionalOnProperty(name = "setDatabase",havingValue = "pgsql")
+//    public Dialect pgSqlDialect() {
+//        return new PgSqlDialect();
+//    }
+//    @Bean
+//    @ConditionalOnProperty(name = "setDatabase",havingValue = "default",matchIfMissing = true)
+//    public Dialect defaultDialect() {
+//        return new DefaultDialect();
+//    }
     @Bean
-    @ConditionalOnProperty(name = "easy-query.dialect",havingValue = "mysql")
-    public Dialect mySqlDialect() {
-        return new MySqlDialect();
+    @ConditionalOnProperty(name = "easy-query.database",havingValue = "default",matchIfMissing = true)
+    public DatabaseConfiguration databaseConfiguration() {
+        return new DefaultDatabaseConfiguration();
     }
     @Bean
-    @ConditionalOnProperty(name = "easy-query.dialect",havingValue = "mssql")
-    public Dialect msSqlDialect() {
-        return new MsSqlDialect();
-    }
-    @Bean
-    @ConditionalOnProperty(name = "easy-query.dialect",havingValue = "pgsql")
-    public Dialect pgSqlDialect() {
-        return new PgSqlDialect();
-    }
-    @Bean
-    @ConditionalOnProperty(name = "easy-query.dialect",havingValue = "default",matchIfMissing = true)
-    public Dialect defaultDialect() {
-        return new DefaultDialect();
+    @ConditionalOnProperty(name = "easy-query.database",havingValue = "mysql")
+    public DatabaseConfiguration mysqlDatabaseConfiguration() {
+        return new MySqlDatabaseConfiguration();
     }
 
     @Bean
@@ -109,15 +116,15 @@ public class EasyQueryStarterAutoConfiguration {
 
 
     @Bean
-    public EasyQuery easyQuery(DataSource dataSource, Dialect dialect, NameConversion nameConversion, Map<String, EasyInterceptor> easyInterceptorMap, Map<String, EasyLogicDeleteStrategy> easyLogicDeleteStrategyMap, Map<String, EasyShardingInitializer> easyShardingInitializerMap, Map<String, EasyEncryptionStrategy> easyEncryptionStrategyMap) {
+    public EasyQuery easyQuery(DataSource dataSource, DatabaseConfiguration databaseConfiguration, NameConversion nameConversion, Map<String, EasyInterceptor> easyInterceptorMap, Map<String, EasyLogicDeleteStrategy> easyLogicDeleteStrategyMap, Map<String, EasyShardingInitializer> easyShardingInitializerMap, Map<String, EasyEncryptionStrategy> easyEncryptionStrategyMap) {
         EasyQuery easyQuery = EasyQueryBootstrapper.defaultBuilderConfiguration()
                 .setDataSource(dataSource)
                 .replaceService(EasyQueryOption.class,new EasyQueryOption(easyQueryProperties.getDeleteThrow(),easyQueryProperties.getInsertStrategy(),easyQueryProperties.getUpdateStrategy()))
                 .replaceService(EasyShardingOption.class,new EasyShardingOption(easyQueryProperties.getMaxQueryConnectionsLimit(), easyQueryProperties.getExecutorSize()))
-                .replaceService(Dialect.class,dialect)
                 .replaceService(NameConversion.class,nameConversion)
                 .replaceServiceFactory(EasyQueryDataSource.class, sp->new DefaultEasyQueryDataSource("ds0",sp.getService(DataSource.class)))
                 .replaceService(EasyConnectionManager.class,SpringConnectionManager.class)
+                .useDatabaseConfigure(databaseConfiguration)
                 .build();
         EasyQueryRuntimeContext runtimeContext = easyQuery.getRuntimeContext();
         EasyQueryConfiguration configuration = runtimeContext.getEasyQueryConfiguration();

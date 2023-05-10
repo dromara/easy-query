@@ -6,15 +6,15 @@ package com.easy.query.sql.starter.option;
  *
  * @author xuejiaming
  */
-public enum DialectEnum {
+public enum DatabaseEnum {
     /**
-     * 无方言
+     * 无
      */
     DEFAULT,
     /**
-     * mysql方言
+     * mysql
      */
     MYSQL,
-    MSSQL,
-    PGSQL
+//    MSSQL,
+//    PGSQL
 }

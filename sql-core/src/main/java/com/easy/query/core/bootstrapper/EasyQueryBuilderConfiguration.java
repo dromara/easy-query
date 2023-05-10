@@ -58,6 +58,7 @@ import com.easy.query.core.sharding.route.table.engine.DefaultTableRouteEngine;
 import com.easy.query.core.sharding.route.table.engine.TableRouteEngine;
 
 import javax.sql.DataSource;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
@@ -168,6 +169,11 @@ public class EasyQueryBuilderConfiguration {
      */
     public <TService, TImplement extends TService> EasyQueryBuilderConfiguration replaceServiceFactory(Class<TService> serviceType, Function<ServiceProvider, TImplement> implementFactory) {
         serviceCollection.addServiceFactory(serviceType, implementFactory);
+        return this;
+    }
+
+    public EasyQueryBuilderConfiguration useDatabaseConfigure(DatabaseConfiguration databaseConfiguration){
+        databaseConfiguration.configure(serviceCollection);
         return this;
     }
 

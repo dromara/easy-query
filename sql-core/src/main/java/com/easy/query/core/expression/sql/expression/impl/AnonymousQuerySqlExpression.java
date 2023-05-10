@@ -22,14 +22,12 @@ import java.util.List;
 public class AnonymousQuerySqlExpression implements EasyAnonymousQuerySqlExpression {
     protected final EasyQueryRuntimeContext runtimeContext;
     protected final String sql;
-    protected final ExecuteMethodEnum executeMethod;
     protected final List<EasyTableSqlExpression> tables;
 
-    public AnonymousQuerySqlExpression(EasyQueryRuntimeContext runtimeContext,String sql, ExecuteMethodEnum executeMethod){
+    public AnonymousQuerySqlExpression(EasyQueryRuntimeContext runtimeContext,String sql){
         this.runtimeContext = runtimeContext;
 
         this.sql = sql;
-        this.executeMethod = executeMethod;
         this.tables = Collections.emptyList();
     }
     @Override
@@ -143,14 +141,9 @@ public class AnonymousQuerySqlExpression implements EasyAnonymousQuerySqlExpress
     }
 
     @Override
-    public ExecuteMethodEnum getExecuteMethod() {
-        return executeMethod;
-    }
-
-    @Override
     public EasyQuerySqlExpression cloneSqlExpression() {
         EasyExpressionFactory expressionFactory = runtimeContext.getExpressionFactory();
-        return expressionFactory.createEasyAnonymousQuerySqlExpression(runtimeContext,sql,executeMethod);
+        return expressionFactory.createEasyAnonymousQuerySqlExpression(runtimeContext,sql);
     }
 
 }

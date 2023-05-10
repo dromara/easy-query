@@ -34,11 +34,9 @@ public class QuerySqlExpression implements EasyQuerySqlExpression {
     protected boolean distinct;
     protected final List<EasyTableSqlExpression> tables=new ArrayList<>();
     protected final EasyQueryRuntimeContext runtimeContext;
-    protected final ExecuteMethodEnum executeMethod;
 
-    public QuerySqlExpression(EasyQueryRuntimeContext runtimeContext, ExecuteMethodEnum executeMethod) {
+    public QuerySqlExpression(EasyQueryRuntimeContext runtimeContext) {
         this.runtimeContext = runtimeContext;
-        this.executeMethod = executeMethod;
     }
 
     @Override
@@ -146,11 +144,6 @@ public class QuerySqlExpression implements EasyQuerySqlExpression {
     }
 
     @Override
-    public ExecuteMethodEnum getExecuteMethod() {
-        return executeMethod;
-    }
-
-    @Override
     public String toSql(SqlParameterCollector sqlParameterCollector) {
         boolean root = SqlExpressionUtil.expressionInvokeRoot(sqlParameterCollector);
         StringBuilder sql = new StringBuilder("SELECT ");
@@ -225,7 +218,7 @@ public class QuerySqlExpression implements EasyQuerySqlExpression {
     public EasyQuerySqlExpression cloneSqlExpression() {
 
         EasyExpressionFactory expressionFactory = getRuntimeContext().getExpressionFactory();
-        EasyQuerySqlExpression easyQuerySqlExpression = expressionFactory.createEasyQuerySqlExpression(getRuntimeContext(),executeMethod);
+        EasyQuerySqlExpression easyQuerySqlExpression = expressionFactory.createEasyQuerySqlExpression(getRuntimeContext());
 
         if(SqlSegmentUtil.isNotEmpty(this.where)){
             easyQuerySqlExpression.setWhere(where.clonePredicateSegment());

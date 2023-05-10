@@ -24,14 +24,12 @@ import java.util.List;
  */
 public  class UpdateSqlExpression implements EasyUpdateSqlExpression {
     protected final EasyQueryRuntimeContext runtimeContext;
-    protected final ExecuteMethodEnum executeMethod;
     protected final SqlBuilderSegment setColumns;
     protected final PredicateSegment where;
     protected final List<EasyTableSqlExpression> tables=new ArrayList<>(1);
 
-    public UpdateSqlExpression(EasyQueryRuntimeContext runtimeContext, EasyTableSqlExpression table, ExecuteMethodEnum executeMethod) {
+    public UpdateSqlExpression(EasyQueryRuntimeContext runtimeContext, EasyTableSqlExpression table) {
         this.runtimeContext = runtimeContext;
-        this.executeMethod = executeMethod;
         this.tables.add(table);
         this.setColumns = new UpdateSetSqlBuilderSegment();
         this.where = new AndPredicateSegment(true);
@@ -59,11 +57,6 @@ public  class UpdateSqlExpression implements EasyUpdateSqlExpression {
     }
 
     @Override
-    public ExecuteMethodEnum getExecuteMethod() {
-        return executeMethod;
-    }
-
-    @Override
     public EasyQueryRuntimeContext getRuntimeContext() {
         return runtimeContext;
     }
@@ -85,7 +78,7 @@ public  class UpdateSqlExpression implements EasyUpdateSqlExpression {
     public EasyUpdateSqlExpression cloneSqlExpression() {
 
         EasyExpressionFactory expressionFactory = runtimeContext.getExpressionFactory();
-        EasyUpdateSqlExpression easyUpdateSqlExpression = expressionFactory.createEasyUpdateSqlExpression(runtimeContext,tables.get(0).cloneSqlExpression(),executeMethod);
+        EasyUpdateSqlExpression easyUpdateSqlExpression = expressionFactory.createEasyUpdateSqlExpression(runtimeContext,tables.get(0).cloneSqlExpression());
         if(SqlSegmentUtil.isNotEmpty(where)){
             where.copyTo(easyUpdateSqlExpression.getWhere());
         }if(SqlSegmentUtil.isNotEmpty(setColumns)){

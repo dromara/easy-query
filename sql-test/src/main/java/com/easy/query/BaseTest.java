@@ -3,9 +3,6 @@ package com.easy.query;
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.api.client.EasyQuery;
-import com.easy.query.core.sharding.EasyShardingOption;
-import com.easy.query.core.sql.dialect.Dialect;
-import com.easy.query.core.sql.dialect.impl.MySqlDialect;
 import com.easy.query.core.configuration.EasyQueryConfiguration;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.sharding.route.abstraction.TableRouteManager;
@@ -24,11 +21,11 @@ import com.easy.query.entity.TopicShardingTime;
 import com.easy.query.interceptor.MyEntityInterceptor;
 import com.easy.query.interceptor.MyTenantInterceptor;
 import com.easy.query.logicdel.MyLogicDelStrategy;
+import com.easy.query.mysql.config.MySqlDatabaseConfiguration;
 import com.easy.query.sharding.FixShardingInitializer;
 import com.easy.query.sharding.TopicShardingTableRule;
 import com.easy.query.sharding.TopicShardingTimeTableRule;
 import com.zaxxer.hikari.HikariDataSource;
-import org.junit.BeforeClass;
 
 import java.math.BigDecimal;
 import java.time.Duration;
@@ -71,8 +68,8 @@ public abstract class BaseTest {
     public static void initEasyQuery() {
         easyQuery = EasyQueryBootstrapper.defaultBuilderConfiguration()
                 .setDataSource(dataSource)
+                .useDatabaseConfigure(new MySqlDatabaseConfiguration()::configure)
 //                .replaceService(EasyShardingOption.class, new EasyShardingOption(2, 0))
-                .replaceService(Dialect.class,MySqlDialect.class)
                 .build();
         EasyQueryRuntimeContext runtimeContext = easyQuery.getRuntimeContext();
         EasyQueryConfiguration configuration = runtimeContext.getEasyQueryConfiguration();

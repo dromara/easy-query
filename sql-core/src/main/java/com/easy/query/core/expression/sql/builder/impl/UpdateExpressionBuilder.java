@@ -366,7 +366,7 @@ public  class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionB
         }
         EasyQueryRuntimeContext runtimeContext = getRuntimeContext();
         EasyExpressionFactory expressionFactory = runtimeContext.getExpressionFactory();
-        EasyUpdateSqlExpression easyUpdateSqlExpression = expressionFactory.createEasyUpdateSqlExpression(runtimeContext, table.toExpression(),sqlExpressionContext.getExecuteMethod());
+        EasyUpdateSqlExpression easyUpdateSqlExpression = expressionFactory.createEasyUpdateSqlExpression(runtimeContext, table.toExpression());
         updateSet.copyTo(easyUpdateSqlExpression.getSetColumns());
         sqlWhere.copyTo(easyUpdateSqlExpression.getWhere());
         return easyUpdateSqlExpression;
@@ -389,7 +389,7 @@ public  class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionB
         SqlBuilderSegment updateSet = buildSetSqlSegment(table);
         EasyQueryRuntimeContext runtimeContext = getRuntimeContext();
         EasyExpressionFactory expressionFactory = runtimeContext.getExpressionFactory();
-        EasyUpdateSqlExpression easyUpdateSqlExpression = expressionFactory.createEasyUpdateSqlExpression(runtimeContext, table.toExpression(),sqlExpressionContext.getExecuteMethod());
+        EasyUpdateSqlExpression easyUpdateSqlExpression = expressionFactory.createEasyUpdateSqlExpression(runtimeContext, table.toExpression());
         updateSet.copyTo(easyUpdateSqlExpression.getSetColumns());
         sqlWhere.copyTo(easyUpdateSqlExpression.getWhere());
         return easyUpdateSqlExpression;

@@ -24,12 +24,10 @@ public  class InsertSqlExpression implements EasyInsertSqlExpression {
 
     protected final SqlBuilderSegment columns;
     protected final EasyQueryRuntimeContext runtimeContext;
-    protected final ExecuteMethodEnum executeMethod;
     protected final List<EasyTableSqlExpression> tables=new ArrayList<>(1);
 
-    public InsertSqlExpression(EasyQueryRuntimeContext runtimeContext,EasyTableSqlExpression table, ExecuteMethodEnum executeMethod) {
+    public InsertSqlExpression(EasyQueryRuntimeContext runtimeContext,EasyTableSqlExpression table) {
         this.runtimeContext = runtimeContext;
-        this.executeMethod = executeMethod;
         this.tables.add(table);
         columns=new ProjectSqlBuilderSegmentImpl();
     }
@@ -37,11 +35,6 @@ public  class InsertSqlExpression implements EasyInsertSqlExpression {
     @Override
     public List<EasyTableSqlExpression> getTables() {
         return tables;
-    }
-
-    @Override
-    public ExecuteMethodEnum getExecuteMethod() {
-        return executeMethod;
     }
 
     @Override
@@ -75,7 +68,7 @@ public  class InsertSqlExpression implements EasyInsertSqlExpression {
 
         EasyExpressionFactory expressionFactory = runtimeContext.getExpressionFactory();
 
-        EasyInsertSqlExpression easyInsertSqlExpression = expressionFactory.createEasyInsertSqlExpression(runtimeContext,tables.get(0).cloneSqlExpression(),executeMethod);
+        EasyInsertSqlExpression easyInsertSqlExpression = expressionFactory.createEasyInsertSqlExpression(runtimeContext,tables.get(0).cloneSqlExpression());
         if(SqlSegmentUtil.isNotEmpty(columns)){
             columns.copyTo(easyInsertSqlExpression.getColumns());
         }
