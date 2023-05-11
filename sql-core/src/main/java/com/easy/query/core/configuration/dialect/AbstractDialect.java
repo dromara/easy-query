@@ -1,6 +1,5 @@
-package com.easy.query.core.sql.dialect.abstraction;
+package com.easy.query.core.configuration.dialect;
 
-import com.easy.query.core.sql.dialect.Dialect;
 import com.easy.query.core.util.StringUtil;
 
 /**

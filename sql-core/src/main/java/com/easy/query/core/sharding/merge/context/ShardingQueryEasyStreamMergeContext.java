@@ -9,6 +9,7 @@ import com.easy.query.core.expression.segment.OrderColumnSegmentImpl;
 import com.easy.query.core.expression.segment.SqlSegment;
 import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import com.easy.query.core.expression.sql.expression.EasyQuerySqlExpression;
+import com.easy.query.core.sharding.enums.ConnectionModeEnum;
 import com.easy.query.core.sharding.merge.segment.PropertyGroup;
 import com.easy.query.core.sharding.merge.segment.PropertyOrder;
 import com.easy.query.core.util.ShardingUtil;
@@ -33,7 +34,6 @@ public class ShardingQueryEasyStreamMergeContext extends EntityStreamMergeContex
     protected final EasyQuerySqlExpression easyQuerySqlExpression;
     protected final boolean hasGroup;
     protected volatile boolean terminated = false;
-    protected final MergeSequenceOrder mergeSequenceOrder;
     protected long offset;
     protected long rows;
 
@@ -46,13 +46,6 @@ public class ShardingQueryEasyStreamMergeContext extends EntityStreamMergeContex
         this.rows = easyQuerySqlExpression.getRows();
         this.hasGroup=SqlSegmentUtil.isNotEmpty(easyQuerySqlExpression.getGroup());
         this.groups = getGroups(easyQuerySqlExpression);
-        SequenceParseResult sequenceOrderPrepareParseResult = easyQueryPrepareParseResult.getSequenceParseResult();
-        if(executionContext.isSequenceQuery()&&sequenceOrderPrepareParseResult!=null){
-           this.mergeSequenceOrder=new MergeSequenceOrder(sequenceOrderPrepareParseResult);
-        }
-        else{
-            this.mergeSequenceOrder=null;
-        }
     }
 
     private List<PropertyOrder> getOrders(EasyQuerySqlExpression easyQuerySqlExpression) {
@@ -146,20 +139,20 @@ public class ShardingQueryEasyStreamMergeContext extends EntityStreamMergeContex
         return easyQuerySqlExpression.getGroup();
     }
 
+
     @Override
-    public MergeSequenceOrder getMergeSequenceOrder() {
-        return mergeSequenceOrder;
+    public boolean isSeqQuery() {
+        return executionContext.isSequenceQuery()&&easyQueryPrepareParseResult.getSequenceParseResult()!=null;
     }
 
     @Override
-    public int getExecuteMaxQueryConnectionsLimit() {
-        if(isSeqQuery()){
-            int connectionsLimit = mergeSequenceOrder.getConnectionsLimit();
-            if(connectionsLimit>0){
-                return connectionsLimit;
-            }
-        }
-        return runtimeContext.getEasyQueryConfiguration().getEasyQueryOption().getMaxShardingQueryLimit();
+    public ConnectionModeEnum getConnectionMode() {
+        return easyQueryPrepareParseResult.getConnectionMode();
+    }
+
+    @Override
+    public int getMaxShardingQueryLimit() {
+        return easyQueryPrepareParseResult.getMaxShardingQueryLimit();
     }
 
     @Override

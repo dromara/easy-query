@@ -14,6 +14,7 @@ import com.easy.query.core.basic.jdbc.executor.internal.common.SqlExecutorGroup;
 import com.easy.query.core.basic.jdbc.executor.internal.unit.Executor;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyUtil;
+import com.easy.query.core.util.ShardingUtil;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -101,17 +102,19 @@ public class ShardingExecutor {
     private static DataSourceSqlExecutorUnit getSqlExecutorGroups(StreamMergeContext streamMergeContext, Grouping<String, ExecutionUnit> sqlGroups) {
         boolean isSerialExecute = streamMergeContext.isSerialExecute();
         //如果是顺序查询应该使用顺序的connectionlimit或者表达式指定分片的connectionlimit
-        int maxQueryConnectionsLimit = streamMergeContext.getExecuteMaxQueryConnectionsLimit();
+        int maxShardingQueryLimit = streamMergeContext.getMaxShardingQueryLimit();
         String dataSourceName = sqlGroups.key();
         List<ExecutionUnit> sqlGroupExecutionUnits = sqlGroups.values().collect(Collectors.toList());
-        int sqlCount = sqlGroupExecutionUnits.size();
+        int groupUnitSize = sqlGroupExecutionUnits.size();
+        ConnectionModeEnum useConnectionMode = streamMergeContext.getConnectionMode();
         //串行执行insert update delete或者最大连接数大于每个数据源分库的执行数目
-        ConnectionModeEnum connectionMode = (isSerialExecute || maxQueryConnectionsLimit >= sqlCount)
-                ? ConnectionModeEnum.MEMORY_STRICTLY
-                : ConnectionModeEnum.CONNECTION_STRICTLY;
+        ConnectionModeEnum connectionMode = ShardingUtil.getActualConnectionMode(isSerialExecute,maxShardingQueryLimit,groupUnitSize,useConnectionMode);
+//        ConnectionModeEnum connectionMode = (isSerialExecute || maxShardingQueryLimit >= groupUnitSize)
+//                ? ConnectionModeEnum.MEMORY_STRICTLY
+//                : ConnectionModeEnum.CONNECTION_STRICTLY;
 
         //如果是串行执行就是说每个组只有1个,如果是不是并行每个组有最大执行个数个
-        int parallelCount = isSerialExecute ? 1 : maxQueryConnectionsLimit;
+        int parallelCount = isSerialExecute ? 1 : maxShardingQueryLimit;
 
         List<List<ExecutionUnit>> sqlUnitPartitions = EasyCollectionUtil.partition(sqlGroupExecutionUnits, parallelCount);
         //由于分组后除了最后一个元素其余元素都满足parallelCount为最大,第一个元素的分组数将是实际的创建连接数

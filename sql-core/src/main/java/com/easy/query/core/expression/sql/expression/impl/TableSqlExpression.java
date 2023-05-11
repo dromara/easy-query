@@ -2,7 +2,7 @@ package com.easy.query.core.expression.sql.expression.impl;
 
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
-import com.easy.query.core.sql.dialect.Dialect;
+import com.easy.query.core.configuration.dialect.Dialect;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;

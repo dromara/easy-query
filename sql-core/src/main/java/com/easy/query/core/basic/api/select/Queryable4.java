@@ -8,6 +8,7 @@ import com.easy.query.core.expression.parser.core.SqlWherePredicate;
 import com.easy.query.core.expression.parser.core.SqlGroupBySelector;
 import com.easy.query.core.expression.parser.core.SqlColumnSelector;
 import com.easy.query.core.expression.parser.core.SqlColumnAsSelector;
+import com.easy.query.core.sharding.enums.ConnectionModeEnum;
 
 import java.math.BigDecimal;
 import java.util.function.Function;
@@ -169,6 +170,12 @@ public interface Queryable4<T1,T2,T3,T4> extends Queryable<T1> {
     Queryable4<T1, T2, T3,T4> asTracking();
     @Override
     Queryable4<T1, T2, T3,T4> asNoTracking();
+    @Override
+    Queryable4<T1, T2, T3,T4> useConnectionSetting(int maxShardingQueryLimit, ConnectionModeEnum connectionMode);
+    @Override
+    Queryable4<T1, T2, T3,T4> useMaxShardingQueryLimit(int maxShardingQueryLimit);
+    @Override
+    Queryable4<T1, T2, T3,T4> useConnectionMode(ConnectionModeEnum connectionMode);
     /**
      * 将当前表达式最近的一张表的表名修改成 {@param tableName}
      * 如果当前最近的表是正常的数据库表名,那么直接将表名改写

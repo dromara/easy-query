@@ -6,6 +6,7 @@ import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.SqlExecuteStrategyEnum;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
+import com.easy.query.core.sharding.enums.ConnectionModeEnum;
 
 import java.util.HashSet;
 import java.util.List;
@@ -14,23 +15,26 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 /**
+ * @author xuejiaming
  * @FileName: EasyQueryExpressionContext.java
  * @Description: 文件说明
  * @Date: 2023/3/3 23:06
- * @author xuejiaming
  */
 public class EasyExpressionContext implements ExpressionContext {
     private final EasyQueryRuntimeContext runtimeContext;
     private final String alias;
-//    protected final List<SQLParameter> params;
+    //    protected final List<SQLParameter> params;
     protected final EasyBehavior easyBehavior;
     protected final Set<String> useInterceptors;
     protected final Set<String> noInterceptors;
     private int aliasSeq = -1;
     private boolean deleteThrowException;
     private Object version;
-    private ExecuteMethodEnum executeMethod=ExecuteMethodEnum.UNKNOWN;
+    private ExecuteMethodEnum executeMethod = ExecuteMethodEnum.UNKNOWN;
     private SqlExecuteStrategyEnum sqlStrategy = SqlExecuteStrategyEnum.DEFAULT;
+
+    private Integer maxShardingQueryLimit;
+    private ConnectionModeEnum connectionMode;
 
     public EasyExpressionContext(EasyQueryRuntimeContext runtimeContext, String alias) {
 
@@ -38,9 +42,11 @@ public class EasyExpressionContext implements ExpressionContext {
         this.deleteThrowException = runtimeContext.getEasyQueryConfiguration().deleteThrow();
         this.alias = alias;
 //        params = new ArrayList<>();
-        this.easyBehavior=new EasyBehavior();
-        this.useInterceptors =new HashSet<>();
-        this.noInterceptors =new HashSet<>();
+        this.easyBehavior = new EasyBehavior();
+        this.useInterceptors = new HashSet<>();
+        this.noInterceptors = new HashSet<>();
+        this.maxShardingQueryLimit = null;
+        this.connectionMode = null;
     }
 
     @Override
@@ -145,26 +151,26 @@ public class EasyExpressionContext implements ExpressionContext {
         boolean interceptorBehavior = getBehavior().hasBehavior(EasyBehaviorEnum.USE_INTERCEPTOR);
         //如果当前操作存在interceptor的behavior那么就不应该在interceptors里面
         //否则应该在interceptors里面
-        return queryInterceptors.stream().filter(o->{
+        return queryInterceptors.stream().filter(o -> {
             //如果是启用了的
-            if(interceptorBehavior){
+            if (interceptorBehavior) {
                 //拦截器手动指定使用的或者默认要用的并且没有说不用的
-                return useInterceptors.contains(o.getName())||(o.isDefaultEnable()&&!noInterceptors.contains(o.getName()));
-            }else{
+                return useInterceptors.contains(o.getName()) || (o.isDefaultEnable() && !noInterceptors.contains(o.getName()));
+            } else {
                 //手动指定要用的并且不在不使用里面
-                return useInterceptors.contains(o.getName())&&!noInterceptors.contains(o.getName());
+                return useInterceptors.contains(o.getName()) && !noInterceptors.contains(o.getName());
             }
         });
     }
 
     @Override
-    public void executeMethod(ExecuteMethodEnum executeMethod,boolean ifUnknown) {
-        if(ifUnknown){
-            if(Objects.equals(ExecuteMethodEnum.UNKNOWN,this.executeMethod)){
-                this.executeMethod=executeMethod;
+    public void executeMethod(ExecuteMethodEnum executeMethod, boolean ifUnknown) {
+        if (ifUnknown) {
+            if (Objects.equals(ExecuteMethodEnum.UNKNOWN, this.executeMethod)) {
+                this.executeMethod = executeMethod;
             }
-        }else{
-            this.executeMethod=executeMethod;
+        } else {
+            this.executeMethod = executeMethod;
         }
     }
 
@@ -172,6 +178,28 @@ public class EasyExpressionContext implements ExpressionContext {
     public ExecuteMethodEnum getExecuteMethod() {
         return this.executeMethod;
     }
+
+    @Override
+    public void setMaxShardingQueryLimit(int maxShardingQueryLimit) {
+        this.maxShardingQueryLimit = maxShardingQueryLimit;
+    }
+
+    @Override
+    public Integer getMaxShardingQueryLimitOrNull() {
+        return maxShardingQueryLimit;
+    }
+
+    @Override
+    public void setConnectionMode(ConnectionModeEnum connectionMode) {
+        this.connectionMode = connectionMode;
+    }
+
+    @Override
+    public ConnectionModeEnum getConnectionModeOrNull() {
+        return connectionMode;
+    }
+
+
     //    @Override
 //    public String getSqlColumnSegment(SqlEntityTableExpressionSegment table, String propertyName) {
 //        String alias = table.getAlias();

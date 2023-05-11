@@ -2,6 +2,7 @@ package com.easy.query.sql.starter.config;
 
 
 import com.easy.query.core.enums.SqlExecuteStrategyEnum;
+import com.easy.query.core.sharding.enums.ConnectionModeEnum;
 import com.easy.query.sql.starter.option.DatabaseEnum;
 import com.easy.query.sql.starter.option.NameConversionEnum;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -23,6 +24,7 @@ public class EasyQueryProperties {
     private NameConversionEnum nameConversion;
     private SqlExecuteStrategyEnum insertStrategy=SqlExecuteStrategyEnum.DEFAULT;
     private SqlExecuteStrategyEnum updateStrategy=SqlExecuteStrategyEnum.DEFAULT;
+    private ConnectionModeEnum connectionMode=ConnectionModeEnum.SYSTEM_AUTO;
     /**
      * 仅分片时有效
      * 最大查询限制链接数默认cpu核心数当小于4取4
@@ -93,6 +95,15 @@ public class EasyQueryProperties {
 
     public void setUpdateStrategy(SqlExecuteStrategyEnum updateStrategy) {
         this.updateStrategy = updateStrategy;
+    }
+
+
+    public ConnectionModeEnum getConnectionMode() {
+        return connectionMode;
+    }
+
+    public void setConnectionMode(ConnectionModeEnum connectionMode) {
+        this.connectionMode = connectionMode;
     }
 
     public int getMaxShardingQueryLimit() {

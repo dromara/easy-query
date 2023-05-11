@@ -3,7 +3,7 @@ package com.easy.query.core.expression.sql.builder.impl;
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.expression.parser.core.SqlWherePredicate;
 import com.easy.query.core.expression.parser.core.SqlColumnSetter;
-import com.easy.query.core.sql.dialect.Dialect;
+import com.easy.query.core.configuration.dialect.Dialect;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.EntityTableAvailable;

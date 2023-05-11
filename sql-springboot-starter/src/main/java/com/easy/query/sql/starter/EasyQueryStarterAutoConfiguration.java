@@ -4,6 +4,7 @@ import com.easy.query.core.basic.jdbc.con.EasyConnectionManager;
 import com.easy.query.core.basic.plugin.encryption.EasyEncryptionStrategy;
 import com.easy.query.core.basic.plugin.interceptor.EasyInterceptor;
 import com.easy.query.core.basic.plugin.logicdel.EasyLogicDeleteStrategy;
+import com.easy.query.core.basic.plugin.version.EasyVersionStrategy;
 import com.easy.query.core.bootstrapper.DatabaseConfiguration;
 import com.easy.query.core.bootstrapper.DefaultDatabaseConfiguration;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
@@ -11,9 +12,9 @@ import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.sharding.DefaultEasyQueryDataSource;
 import com.easy.query.core.sharding.EasyQueryDataSource;
 import com.easy.query.core.api.client.EasyQuery;
-import com.easy.query.core.sql.nameconversion.NameConversion;
-import com.easy.query.core.sql.nameconversion.impl.DefaultNameConversion;
-import com.easy.query.core.sql.nameconversion.impl.UnderlinedNameConversion;
+import com.easy.query.core.configuration.nameconversion.NameConversion;
+import com.easy.query.core.configuration.nameconversion.impl.DefaultNameConversion;
+import com.easy.query.core.configuration.nameconversion.impl.UnderlinedNameConversion;
 import com.easy.query.core.configuration.EasyQueryConfiguration;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
@@ -125,7 +126,7 @@ public class EasyQueryStarterAutoConfiguration {
 
 
     @Bean
-    public EasyQuery easyQuery(DataSource dataSource, DatabaseConfiguration databaseConfiguration, NameConversion nameConversion, Map<String, EasyInterceptor> easyInterceptorMap, Map<String, EasyLogicDeleteStrategy> easyLogicDeleteStrategyMap, Map<String, EasyShardingInitializer> easyShardingInitializerMap, Map<String, EasyEncryptionStrategy> easyEncryptionStrategyMap) {
+    public EasyQuery easyQuery(DataSource dataSource, DatabaseConfiguration databaseConfiguration, NameConversion nameConversion, Map<String, EasyInterceptor> easyInterceptorMap, Map<String, EasyVersionStrategy> easyVersionStrategyMap, Map<String, EasyLogicDeleteStrategy> easyLogicDeleteStrategyMap, Map<String, EasyShardingInitializer> easyShardingInitializerMap, Map<String, EasyEncryptionStrategy> easyEncryptionStrategyMap) {
         EasyQuery easyQuery = EasyQueryBootstrapper.defaultBuilderConfiguration()
                 .setDataSource(dataSource)
                 .optionConfigure(builder->{
@@ -144,20 +145,23 @@ public class EasyQueryStarterAutoConfiguration {
         EasyQueryRuntimeContext runtimeContext = easyQuery.getRuntimeContext();
         EasyQueryConfiguration configuration = runtimeContext.getEasyQueryConfiguration();
         //拦截器注册
-        for (EasyInterceptor easyInterceptor : easyInterceptorMap.values()) {
-            configuration.applyEasyInterceptor(easyInterceptor);
+        for (Map.Entry<String, EasyInterceptor> easyInterceptorEntry : easyInterceptorMap.entrySet()) {
+            configuration.applyEasyInterceptor(easyInterceptorEntry.getValue());
         }
         //逻辑删除
-        for (EasyLogicDeleteStrategy easyLogicDeleteStrategy : easyLogicDeleteStrategyMap.values()) {
-            configuration.applyEasyLogicDeleteStrategy(easyLogicDeleteStrategy);
+        for (Map.Entry<String, EasyLogicDeleteStrategy> easyLogicDeleteStrategyEntry : easyLogicDeleteStrategyMap.entrySet()) {
+            configuration.applyEasyLogicDeleteStrategy(easyLogicDeleteStrategyEntry.getValue());
         }
         //分片初始化
-        for (EasyShardingInitializer easyShardingInitializer : easyShardingInitializerMap.values()) {
-            configuration.applyShardingInitializer(easyShardingInitializer);
+        for (Map.Entry<String, EasyShardingInitializer> easyShardingInitializerEntry : easyShardingInitializerMap.entrySet()) {
+            configuration.applyShardingInitializer(easyShardingInitializerEntry.getValue());
         }
         //列加密
-        for (EasyEncryptionStrategy easyEncryptionStrategy : easyEncryptionStrategyMap.values()) {
-            configuration.applyEasyEncryptionStrategy(easyEncryptionStrategy);
+        for (Map.Entry<String, EasyEncryptionStrategy> easyEncryptionStrategyEntry : easyEncryptionStrategyMap.entrySet()) {
+            configuration.applyEasyEncryptionStrategy(easyEncryptionStrategyEntry.getValue());
+        }
+        for (Map.Entry<String, EasyVersionStrategy> easyVersionStrategyEntry : easyVersionStrategyMap.entrySet()) {
+            configuration.applyEasyVersionStrategy(easyVersionStrategyEntry.getValue());
         }
         return easyQuery;
     }

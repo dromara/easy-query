@@ -10,7 +10,9 @@ import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.expression.EasyQuerySqlExpression;
 import com.easy.query.core.metadata.EntityShardingOrder;
+import com.easy.query.core.sharding.enums.ConnectionModeEnum;
 import com.easy.query.core.util.EasyCollectionUtil;
+import com.easy.query.core.util.ShardingUtil;
 import com.easy.query.core.util.SqlSegmentUtil;
 
 import java.util.Objects;
@@ -29,6 +31,8 @@ public class EasyQueryPrepareParseResult implements QueryPrepareParseResult {
     private final EasyQuerySqlExpression easyQuerySqlExpression;
     private final boolean sharding;
     private boolean startsWithGroupByInOrderBy;
+    private int maxShardingQueryLimit;
+    private ConnectionModeEnum connectionMode;
     private final long offset;
     private final long rows;
     private final SequenceParseResult sequenceParseResult;
@@ -43,6 +47,8 @@ public class EasyQueryPrepareParseResult implements QueryPrepareParseResult {
         this.offset = easyQuerySqlExpression.getOffset();
         this.rows = easyQuerySqlExpression.getRows();
         this.sequenceParseResult = initSequenceOrderPrepareParseResult(executorContext);
+        this.maxShardingQueryLimit= ShardingUtil.getMaxShardingQueryLimit(entityQueryExpressionBuilder,sequenceParseResult);
+        this.connectionMode=ShardingUtil.getConnectionMode(entityQueryExpressionBuilder,sequenceParseResult);
     }
 
     private SequenceParseResult initSequenceOrderPrepareParseResult(ExecutorContext executorContext) {
@@ -59,7 +65,7 @@ public class EasyQueryPrepareParseResult implements QueryPrepareParseResult {
                     Boolean asc = entityShardingOrder.getSequenceProperty(firstOrderColumn.getPropertyName());
                     if (asc != null) {
                         boolean reverse = firstOrderColumn.isAsc() == asc;
-                        return new SequenceParseResult(table, entityShardingOrder.getTableComparator(), reverse, entityShardingOrder.getConnectionsLimit());
+                        return new SequenceParseResult(table, entityShardingOrder.getTableComparator(), reverse,entityShardingOrder.getConnectionMode(), entityShardingOrder.getConnectionsLimit());
                     }
                 }
             } else {
@@ -76,7 +82,7 @@ public class EasyQueryPrepareParseResult implements QueryPrepareParseResult {
                             Boolean asc = entityShardingOrder.getSequenceProperty(firstMaxColumn.getPropertyName());
                             if (asc != null) {
                                 boolean reverse = !asc;
-                                return new SequenceParseResult(table, entityShardingOrder.getTableComparator(), reverse, entityShardingOrder.getConnectionsLimit());
+                                return new SequenceParseResult(table, entityShardingOrder.getTableComparator(), reverse,entityShardingOrder.getConnectionMode(), entityShardingOrder.getConnectionsLimit());
                             }
                         }
                     }
@@ -93,7 +99,7 @@ public class EasyQueryPrepareParseResult implements QueryPrepareParseResult {
                             Boolean asc = entityShardingOrder.getSequenceProperty(firstMinColumn.getPropertyName());
                             if (asc != null) {
                                 boolean reverse = asc;
-                                return new SequenceParseResult(table, entityShardingOrder.getTableComparator(), reverse, entityShardingOrder.getConnectionsLimit());
+                                return new SequenceParseResult(table, entityShardingOrder.getTableComparator(), reverse,entityShardingOrder.getConnectionMode(), entityShardingOrder.getConnectionsLimit());
                             }
                         }
                     }
@@ -105,7 +111,7 @@ public class EasyQueryPrepareParseResult implements QueryPrepareParseResult {
                     if (entityShardingOrder != null && entityShardingOrder.getExecuteMethodBehavior().hasMethod(executorContext.getExecuteMethod())) {
                         boolean asc = entityShardingOrder.getExecuteMethodBehavior().hasMethodAsc(executorContext.getExecuteMethod());
                         boolean reverse = !asc;
-                        return new SequenceParseResult(table, entityShardingOrder.getTableComparator(), reverse, entityShardingOrder.getConnectionsLimit());
+                        return new SequenceParseResult(table, entityShardingOrder.getTableComparator(), reverse,entityShardingOrder.getConnectionMode(), entityShardingOrder.getConnectionsLimit());
                     }
                 }
             }
@@ -162,6 +168,16 @@ public class EasyQueryPrepareParseResult implements QueryPrepareParseResult {
     @Override
     public SequenceParseResult getSequenceParseResult() {
         return sequenceParseResult;
+    }
+
+    @Override
+    public int getMaxShardingQueryLimit() {
+        return maxShardingQueryLimit;
+    }
+
+    @Override
+    public ConnectionModeEnum getConnectionMode() {
+        return connectionMode;
     }
 
 }

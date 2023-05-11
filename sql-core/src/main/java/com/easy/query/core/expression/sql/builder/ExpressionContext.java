@@ -5,6 +5,7 @@ import com.easy.query.core.basic.plugin.interceptor.EasyInterceptorEntry;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.SqlExecuteStrategyEnum;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
+import com.easy.query.core.sharding.enums.ConnectionModeEnum;
 
 import java.util.List;
 import java.util.stream.Stream;
@@ -44,4 +45,9 @@ public interface ExpressionContext {
    }
     void executeMethod(ExecuteMethodEnum executeMethod,boolean ifUnknown);
     ExecuteMethodEnum getExecuteMethod();
+
+    void setMaxShardingQueryLimit(int maxShardingQueryLimit);
+    Integer getMaxShardingQueryLimitOrNull();
+    void setConnectionMode(ConnectionModeEnum connectionMode);
+    ConnectionModeEnum getConnectionModeOrNull();
 }

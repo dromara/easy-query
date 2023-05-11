@@ -1,5 +1,6 @@
 package com.easy.query.core.metadata;
 
+import com.easy.query.core.sharding.enums.ConnectionModeEnum;
 import com.easy.query.core.sharding.initializer.ExecuteMethodBehavior;
 
 import java.util.Collections;
@@ -15,12 +16,14 @@ import java.util.Map;
  */
 public class EntityShardingOrder {
     private final Comparator<String> tableComparator;
+    private final ConnectionModeEnum connectionMode;
     private final int connectionsLimit;
     private final Map<String, Boolean> sequenceProperties;
     private final ExecuteMethodBehavior executeMethodBehavior;
 
-    public EntityShardingOrder(Comparator<String> tableComparator,int connectionsLimit, Map<String, Boolean> sequenceProperties,ExecuteMethodBehavior executeMethodBehavior) {
+    public EntityShardingOrder(Comparator<String> tableComparator, ConnectionModeEnum connectionMode, int connectionsLimit, Map<String, Boolean> sequenceProperties, ExecuteMethodBehavior executeMethodBehavior) {
         this.tableComparator = tableComparator;
+        this.connectionMode = connectionMode;
 
         this.connectionsLimit = connectionsLimit;
         if (sequenceProperties != null) {
@@ -33,6 +36,10 @@ public class EntityShardingOrder {
 
     public Comparator<String> getTableComparator() {
         return tableComparator;
+    }
+
+    public ConnectionModeEnum getConnectionMode() {
+        return connectionMode;
     }
 
     public int getConnectionsLimit() {

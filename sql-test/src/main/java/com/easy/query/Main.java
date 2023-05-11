@@ -4,7 +4,6 @@ package com.easy.query;
 import com.alibaba.druid.pool.DruidDataSourceFactory;
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
-import com.easy.query.core.sql.dialect.Dialect;
 import com.easy.query.core.enums.SqlRangeEnum;
 import com.easy.query.core.enums.SqlExecuteStrategyEnum;
 import com.easy.query.dto.TopicRequest;

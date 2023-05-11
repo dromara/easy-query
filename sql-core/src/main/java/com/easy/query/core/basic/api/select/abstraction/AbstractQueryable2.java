@@ -17,6 +17,7 @@ import com.easy.query.core.expression.parser.core.SqlColumnSelector;
 import com.easy.query.core.expression.parser.core.SqlColumnAsSelector;
 import com.easy.query.core.expression.segment.builder.ProjectSqlBuilderSegmentImpl;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
+import com.easy.query.core.sharding.enums.ConnectionModeEnum;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.enums.EasyAggregate;
@@ -313,6 +314,22 @@ public abstract class AbstractQueryable2<T1, T2> extends AbstractQueryable<T1> i
     @Override
     public Queryable2<T1, T2> asNoTracking() {
         super.asNoTracking();
+        return this;
+    }
+
+    @Override
+    public Queryable2<T1, T2> useConnectionSetting(int maxShardingQueryLimit, ConnectionModeEnum connectionMode){
+        super.useConnectionSetting(maxShardingQueryLimit,connectionMode);
+        return this;
+    }
+    @Override
+    public Queryable2<T1, T2> useMaxShardingQueryLimit(int maxShardingQueryLimit){
+        super.useMaxShardingQueryLimit(maxShardingQueryLimit);
+        return this;
+    }
+    @Override
+    public  Queryable2<T1, T2> useConnectionMode(ConnectionModeEnum connectionMode){
+        super.useConnectionMode(connectionMode);
         return this;
     }
 

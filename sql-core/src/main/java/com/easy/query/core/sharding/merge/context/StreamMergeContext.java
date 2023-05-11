@@ -20,6 +20,7 @@ import java.util.List;
  * @author xuejiaming
  */
 public interface StreamMergeContext extends AutoCloseable {
+    ConnectionModeEnum getConnectionMode();
     void terminatedBreak();
     boolean isTerminated();
     List<PropertyOrder> getOrders();
@@ -40,14 +41,11 @@ public interface StreamMergeContext extends AutoCloseable {
 
 
     EasyQueryRuntimeContext getRuntimeContext();
-    int getExecuteMaxQueryConnectionsLimit();
+    int getMaxShardingQueryLimit();
 
     boolean isSerialExecute();
 
-    default boolean isSeqQuery(){
-        return getMergeSequenceOrder()!=null;
-    }
-    MergeSequenceOrder getMergeSequenceOrder();
+     boolean isSeqQuery();
 
     /**
      * group和order前半段匹配支持stream merger

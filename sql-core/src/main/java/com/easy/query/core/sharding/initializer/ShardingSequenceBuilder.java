@@ -4,6 +4,7 @@ import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.metadata.EntityMetadata;
+import com.easy.query.core.sharding.enums.ConnectionModeEnum;
 import com.easy.query.core.util.LambdaUtil;
 
 import java.util.Comparator;
@@ -20,7 +21,8 @@ public class ShardingSequenceBuilder<T> {
     private final EntityMetadata entityMetadata;
     private final Comparator<String> defaultTableNameComparator;
     private final Map<String, Boolean/*asc or desc*/> sequenceProperties = new HashMap<>();
-    private int connectionsLimit = 0;
+    private int maxShardingQueryLimit = 0;
+    private ConnectionModeEnum connectionMode = null;
     private final ExecuteMethodBehavior executeMethodBehavior;
 
     public ShardingSequenceBuilder(EntityMetadata entityMetadata, Comparator<String> defaultTableNameComparator) {
@@ -91,11 +93,15 @@ public class ShardingSequenceBuilder<T> {
     /**
      * 当符合顺序查询时使用的connectionsLimit
      *
-     * @param connectionsLimit
+     * @param maxShardingQueryLimit
      * @return
      */
-    public ShardingSequenceBuilder<T> setMaxQueryConnectionsLimit(int connectionsLimit) {
-        this.connectionsLimit = connectionsLimit;
+    public ShardingSequenceBuilder<T> setMaxShardingQueryLimit(int maxShardingQueryLimit) {
+        this.maxShardingQueryLimit = maxShardingQueryLimit;
+        return this;
+    }
+    public ShardingSequenceBuilder<T> setConnectionMode(ConnectionModeEnum connectionMode) {
+        this.connectionMode = connectionMode;
         return this;
     }
 
@@ -107,8 +113,12 @@ public class ShardingSequenceBuilder<T> {
         return sequenceProperties;
     }
 
-    public int getConnectionsLimit() {
-        return connectionsLimit;
+    public ConnectionModeEnum getConnectionMode() {
+        return connectionMode;
+    }
+
+    public int getMaxShardingQueryLimit() {
+        return maxShardingQueryLimit;
     }
 
     public ExecuteMethodBehavior getExecuteMethodBehavior() {

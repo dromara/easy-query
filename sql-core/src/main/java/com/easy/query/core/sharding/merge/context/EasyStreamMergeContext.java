@@ -67,6 +67,11 @@ public class EasyStreamMergeContext implements StreamMergeContext {
     }
 
     @Override
+    public ConnectionModeEnum getConnectionMode() {
+        return ConnectionModeEnum.SYSTEM_AUTO;
+    }
+
+    @Override
     public void terminatedBreak() {
 
     }
@@ -95,7 +100,7 @@ public class EasyStreamMergeContext implements StreamMergeContext {
     }
 
     @Override
-    public int getExecuteMaxQueryConnectionsLimit() {
+    public int getMaxShardingQueryLimit() {
        return 1;
     }
 
@@ -104,8 +109,8 @@ public class EasyStreamMergeContext implements StreamMergeContext {
     }
 
     @Override
-    public MergeSequenceOrder getMergeSequenceOrder() {
-        return null;
+    public boolean isSeqQuery() {
+        return false;
     }
 
     /**

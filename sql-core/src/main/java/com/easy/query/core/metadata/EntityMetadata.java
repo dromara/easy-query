@@ -6,9 +6,10 @@ import com.easy.query.core.basic.plugin.interceptor.EasyInterceptorEntry;
 import com.easy.query.core.basic.plugin.logicdel.LogicDeleteBuilder;
 import com.easy.query.core.basic.plugin.version.EasyVersionStrategy;
 import com.easy.query.core.inject.ServiceProvider;
+import com.easy.query.core.sharding.enums.ConnectionModeEnum;
 import com.easy.query.core.sharding.initializer.ShardingInitOption;
 import com.easy.query.core.sharding.initializer.ShardingEntityBuilder;
-import com.easy.query.core.sql.nameconversion.NameConversion;
+import com.easy.query.core.configuration.nameconversion.NameConversion;
 import com.easy.query.core.configuration.EasyQueryConfiguration;
 import com.easy.query.core.basic.plugin.encryption.EasyEncryptionStrategy;
 import com.easy.query.core.exception.EasyQueryException;
@@ -252,7 +253,9 @@ public class EntityMetadata {
         Comparator<String> defaultTableNameComparator = shardingInitOption.getDefaultTableNameComparator();
         if (defaultTableNameComparator != null) {
             Map<String, Boolean> sequenceProperties = shardingInitOption.getSequenceProperties();
-            this.entityShardingOrder = new EntityShardingOrder(defaultTableNameComparator, shardingInitOption.getConnectionsLimit(),sequenceProperties,shardingInitOption.getExecuteMethodBehavior());
+            ConnectionModeEnum connectionMode = Objects.nonNull(shardingInitOption.getConnectionMode())? shardingInitOption.getConnectionMode(): configuration.getEasyQueryOption().getConnectionMode();
+
+            this.entityShardingOrder = new EntityShardingOrder(defaultTableNameComparator,connectionMode, shardingInitOption.getConnectionsLimit(),sequenceProperties,shardingInitOption.getExecuteMethodBehavior());
         }
     }
 

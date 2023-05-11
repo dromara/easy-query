@@ -1,4 +1,4 @@
-package com.easy.query.core.sql.dialect;
+package com.easy.query.core.configuration.dialect;
 
 /**
  * create time 2023/2/12 08:57

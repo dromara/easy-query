@@ -1,6 +1,4 @@
-package com.easy.query.core.sql.dialect.impl;
-
-import com.easy.query.core.sql.dialect.Dialect;
+package com.easy.query.core.configuration.dialect;
 
 /**
  * create time 2023/2/12 09:25

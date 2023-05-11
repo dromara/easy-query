@@ -2,6 +2,7 @@ package com.easy.query.core.sharding.initializer;
 
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.metadata.EntityMetadata;
+import com.easy.query.core.sharding.enums.ConnectionModeEnum;
 
 import java.util.Collection;
 import java.util.Comparator;
@@ -31,15 +32,17 @@ public class ShardingEntityBuilder<T> {
         Comparator<String> defaultTableNameComparator = null;
         Map<String, Boolean> sequenceProperties = null;
         ExecuteMethodBehavior executeMethodBehavior=null;
+        ConnectionModeEnum connectionMode=null;
         int connectionsLimit = 0;
         if (shardingOrderBuilder != null) {
             defaultTableNameComparator = shardingOrderBuilder.getDefaultTableNameComparator();
             sequenceProperties = shardingOrderBuilder.getSequenceProperties();
-            connectionsLimit = shardingOrderBuilder.getConnectionsLimit();
+            connectionMode=shardingOrderBuilder.getConnectionMode();
+            connectionsLimit = shardingOrderBuilder.getMaxShardingQueryLimit();
             executeMethodBehavior=shardingOrderBuilder.getExecuteMethodBehavior();
             executeMethodBehavior.removeMethod(ExecuteMethodEnum.UNKNOWN);
         }
-        return new ShardingInitOption(actualTableNames,defaultTableNameComparator,sequenceProperties,connectionsLimit,executeMethodBehavior);
+        return new ShardingInitOption(actualTableNames,defaultTableNameComparator,sequenceProperties,connectionMode,connectionsLimit,executeMethodBehavior);
     }
 
     public ShardingEntityBuilder<T> actualTableNameInit(Map<String, Collection<String>> actualTableNames) {

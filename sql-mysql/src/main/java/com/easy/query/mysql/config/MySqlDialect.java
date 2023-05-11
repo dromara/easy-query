@@ -1,6 +1,6 @@
 package com.easy.query.mysql.config;
 
-import com.easy.query.core.sql.dialect.abstraction.AbstractDialect;
+import com.easy.query.core.configuration.dialect.AbstractDialect;
 
 /**
  * create time 2023/4/26 17:24

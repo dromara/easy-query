@@ -1,5 +1,6 @@
 package com.easy.query.core.basic.api.select.abstraction;
 
+import com.easy.query.core.basic.api.select.Queryable2;
 import com.easy.query.core.basic.api.select.provider.EasyQuerySqlBuilderProvider;
 import com.easy.query.core.basic.api.select.provider.EasyQuerySqlBuilderProvider3;
 import com.easy.query.core.basic.api.select.provider.Select3SqlProvider;
@@ -23,6 +24,7 @@ import com.easy.query.core.expression.parser.core.SqlColumnResultSelector;
 import com.easy.query.core.expression.segment.SqlEntitySegment;
 import com.easy.query.core.expression.segment.builder.ProjectSqlBuilderSegmentImpl;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
+import com.easy.query.core.sharding.enums.ConnectionModeEnum;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.SqlExpressionUtil;
 
@@ -330,6 +332,21 @@ public abstract class AbstractQueryable3<T1, T2, T3> extends AbstractQueryable<T
     @Override
     public Queryable3<T1, T2, T3> asNoTracking() {
         super.asNoTracking();
+        return this;
+    }
+    @Override
+    public Queryable3<T1, T2, T3> useConnectionSetting(int maxShardingQueryLimit, ConnectionModeEnum connectionMode){
+        super.useConnectionSetting(maxShardingQueryLimit,connectionMode);
+        return this;
+    }
+    @Override
+    public Queryable3<T1, T2, T3> useMaxShardingQueryLimit(int maxShardingQueryLimit){
+        super.useMaxShardingQueryLimit(maxShardingQueryLimit);
+        return this;
+    }
+    @Override
+    public  Queryable3<T1, T2, T3> useConnectionMode(ConnectionModeEnum connectionMode){
+        super.useConnectionMode(connectionMode);
         return this;
     }
     @Override

@@ -1,8 +1,10 @@
 package com.easy.query.core.util;
 
+import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.executor.parser.PrepareParseResult;
+import com.easy.query.core.expression.executor.parser.SequenceParseResult;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.AggregationColumnSegment;
 import com.easy.query.core.expression.segment.ColumnSegmentImpl;
@@ -11,9 +13,12 @@ import com.easy.query.core.expression.segment.OrderByColumnSegment;
 import com.easy.query.core.expression.segment.OrderColumnSegmentImpl;
 import com.easy.query.core.expression.segment.SqlSegment;
 import com.easy.query.core.expression.segment.builder.ProjectSqlBuilderSegment;
+import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.expression.EasyQuerySqlExpression;
 import com.easy.query.core.expression.sql.expression.EasyTableSqlExpression;
 import com.easy.query.core.metadata.EntityMetadata;
+import com.easy.query.core.sharding.enums.ConnectionModeEnum;
 import com.easy.query.core.sharding.merge.context.StreamMergeContext;
 import com.easy.query.core.sharding.merge.segment.EntityPropertyGroup;
 import com.easy.query.core.sharding.merge.segment.EntityPropertyOrder;
@@ -127,5 +132,44 @@ public class ShardingUtil {
             return ((ProjectSqlBuilderSegment)streamMergeContext.getSelectColumns()).hasAggregateColumns();
         }
         return false;
+    }
+
+    public static ConnectionModeEnum getActualConnectionMode(boolean isSerialExecute,int maxShardingQueryLimit,int groupUnitSize,ConnectionModeEnum connectionMode){
+        if(isSerialExecute){
+            return ConnectionModeEnum.MEMORY_STRICTLY;
+        }
+        if(Objects.equals(ConnectionModeEnum.SYSTEM_AUTO,connectionMode)){
+            if(maxShardingQueryLimit>=groupUnitSize){
+                return ConnectionModeEnum.MEMORY_STRICTLY;
+            }
+            return ConnectionModeEnum.CONNECTION_STRICTLY;
+        }else{
+            return connectionMode;
+        }
+    }
+
+    public static int getMaxShardingQueryLimit(EntityQueryExpressionBuilder entityQueryExpressionBuilder, SequenceParseResult sequenceParseResult){
+        ExpressionContext expressionContext = entityQueryExpressionBuilder.getExpressionContext();
+        Integer maxShardingQueryLimitOrNull = expressionContext.getMaxShardingQueryLimitOrNull();
+        if(maxShardingQueryLimitOrNull!=null){
+            return maxShardingQueryLimitOrNull;
+        }
+        if(sequenceParseResult!=null){
+            return sequenceParseResult.getConnectionsLimit();
+        }
+        EasyQueryRuntimeContext runtimeContext = expressionContext.getRuntimeContext();
+        return runtimeContext.getEasyQueryConfiguration().getEasyQueryOption().getMaxShardingQueryLimit();
+    }
+    public static ConnectionModeEnum getConnectionMode(EntityQueryExpressionBuilder entityQueryExpressionBuilder, SequenceParseResult sequenceParseResult){
+        ExpressionContext expressionContext = entityQueryExpressionBuilder.getExpressionContext();
+        ConnectionModeEnum connectionModeOrNull = expressionContext.getConnectionModeOrNull();
+        if(connectionModeOrNull!=null){
+            return connectionModeOrNull;
+        }
+        if(sequenceParseResult!=null){
+            return sequenceParseResult.getConnectionMode();
+        }
+        EasyQueryRuntimeContext runtimeContext = expressionContext.getRuntimeContext();
+        return runtimeContext.getEasyQueryConfiguration().getEasyQueryOption().getConnectionMode();
     }
 }

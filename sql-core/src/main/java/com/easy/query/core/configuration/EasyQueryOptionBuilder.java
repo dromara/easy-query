@@ -1,6 +1,7 @@
 package com.easy.query.core.configuration;
 
 import com.easy.query.core.enums.SqlExecuteStrategyEnum;
+import com.easy.query.core.sharding.enums.ConnectionModeEnum;
 
 /**
  * create time 2023/5/10 17:00
@@ -16,11 +17,13 @@ public class EasyQueryOptionBuilder {
     private int maxShardingQueryLimit;
     private int executorMaximumPoolSize;
     private int executorCorePoolSize;
+    private ConnectionModeEnum connectionMode;
 
     public EasyQueryOptionBuilder() {
         this.deleteThrowError = true;
         this.insertStrategy = SqlExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS;
         this.updateStrategy = SqlExecuteStrategyEnum.ALL_COLUMNS;
+        this.connectionMode=ConnectionModeEnum.SYSTEM_AUTO;
         this.maxShardingQueryLimit = Math.max(Runtime.getRuntime().availableProcessors(), 4);
         this.executorMaximumPoolSize = 0;
         this.executorCorePoolSize = Math.min(Runtime.getRuntime().availableProcessors(), 4);
@@ -34,6 +37,11 @@ public class EasyQueryOptionBuilder {
     public void setUpdateStrategy(SqlExecuteStrategyEnum updateStrategy) {
         this.updateStrategy = updateStrategy;
     }
+
+    public void setConnectionMode(ConnectionModeEnum connectionMode) {
+        this.connectionMode = connectionMode;
+    }
+
     public void setMaxShardingQueryLimit(int maxShardingQueryLimit) {
         this.maxShardingQueryLimit = maxShardingQueryLimit;
     }
@@ -48,6 +56,6 @@ public class EasyQueryOptionBuilder {
 
     public EasyQueryOption build(){
 
-        return new EasyQueryOption(this.deleteThrowError,this.insertStrategy,this.updateStrategy,this.maxShardingQueryLimit,this.executorMaximumPoolSize,this.executorCorePoolSize);
+        return new EasyQueryOption(this.deleteThrowError,this.insertStrategy,this.updateStrategy,this.connectionMode,this.maxShardingQueryLimit,this.executorMaximumPoolSize,this.executorCorePoolSize);
     }
 }

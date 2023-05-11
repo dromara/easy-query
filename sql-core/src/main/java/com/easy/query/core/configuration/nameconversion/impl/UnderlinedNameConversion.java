@@ -1,6 +1,6 @@
-package com.easy.query.core.sql.nameconversion.impl;
+package com.easy.query.core.configuration.nameconversion.impl;
 
-import com.easy.query.core.sql.nameconversion.NameConversion;
+import com.easy.query.core.configuration.nameconversion.NameConversion;
 import com.easy.query.core.util.StringUtil;
 
 /**

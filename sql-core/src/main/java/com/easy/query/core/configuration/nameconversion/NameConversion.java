@@ -1,4 +1,4 @@
-package com.easy.query.core.sql.nameconversion;
+package com.easy.query.core.configuration.nameconversion;
 
 /**
  * create time 2023/2/12 08:57
