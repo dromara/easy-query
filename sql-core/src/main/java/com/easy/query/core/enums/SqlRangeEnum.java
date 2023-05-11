@@ -14,8 +14,8 @@ public enum SqlRangeEnum {
 
         this.code = code;
     }
-    private static int OPEN_FIRST= Open.code | openClosed.code;
-    private static int OPEN_END= Open.code | closedOpen.code;
+    private static final int OPEN_FIRST= Open.code | openClosed.code;
+    private static final int OPEN_END= Open.code | closedOpen.code;
     public static boolean openFirst(SqlRangeEnum sqlRange){
         return (OPEN_FIRST& sqlRange.code)== sqlRange.code;
     }

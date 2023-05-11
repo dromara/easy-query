@@ -4,7 +4,7 @@ import com.easy.query.core.basic.jdbc.con.EasyConnection;
 import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.exception.EasyQueryTimeoutException;
-import com.easy.query.core.sharding.enums.ConnectionModeEnum;
+import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.sharding.merge.context.StreamMergeContext;
 import com.easy.query.core.basic.jdbc.executor.internal.common.CommandExecuteUnit;
 import com.easy.query.core.basic.jdbc.executor.internal.common.DataSourceSqlExecutorUnit;

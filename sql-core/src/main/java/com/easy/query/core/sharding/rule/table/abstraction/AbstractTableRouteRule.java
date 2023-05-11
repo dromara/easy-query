@@ -1,7 +1,7 @@
 package com.easy.query.core.sharding.rule.table.abstraction;
 
 import com.easy.query.core.expression.lambda.RouteFunction;
-import com.easy.query.core.sharding.enums.ShardingOperatorEnum;
+import com.easy.query.core.enums.sharding.ShardingOperatorEnum;
 import com.easy.query.core.sharding.route.table.TableRouteUnit;
 import com.easy.query.core.sharding.rule.table.TableRouteRule;
 

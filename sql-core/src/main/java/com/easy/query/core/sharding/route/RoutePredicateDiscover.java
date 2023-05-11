@@ -22,7 +22,7 @@ import com.easy.query.core.expression.segment.condition.predicate.ValuesPredicat
 import com.easy.query.core.expression.sql.expression.EasyEntityPredicateSqlExpression;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
-import com.easy.query.core.sharding.enums.ShardingOperatorEnum;
+import com.easy.query.core.enums.sharding.ShardingOperatorEnum;
 import com.easy.query.core.sharding.rule.RouteRuleFilter;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.ClassUtil;

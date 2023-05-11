@@ -1,7 +1,7 @@
 package com.easy.query.core.configuration;
 
 import com.easy.query.core.enums.SqlExecuteStrategyEnum;
-import com.easy.query.core.sharding.enums.ConnectionModeEnum;
+import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 
 /**
  * create time 2023/5/10 17:00

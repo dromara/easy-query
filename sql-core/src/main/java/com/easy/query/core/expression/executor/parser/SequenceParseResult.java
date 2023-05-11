@@ -1,7 +1,7 @@
 package com.easy.query.core.expression.executor.parser;
 
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.sharding.enums.ConnectionModeEnum;
+import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 
 import java.util.Comparator;
 

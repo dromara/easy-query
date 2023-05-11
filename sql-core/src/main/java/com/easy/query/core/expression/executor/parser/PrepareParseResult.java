@@ -3,8 +3,6 @@ package com.easy.query.core.expression.executor.parser;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
-import com.easy.query.core.expression.sql.expression.EasyEntitySqlExpression;
-import com.easy.query.core.sharding.enums.ConnectionModeEnum;
 
 import java.util.Set;
 

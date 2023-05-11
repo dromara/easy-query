@@ -1,10 +1,8 @@
 package com.easy.query.sharding;
 
 import com.easy.query.core.expression.lambda.RouteFunction;
-import com.easy.query.core.sharding.enums.ShardingOperatorEnum;
+import com.easy.query.core.enums.sharding.ShardingOperatorEnum;
 import com.easy.query.core.sharding.rule.table.abstraction.AbstractTableRouteRule;
-import com.easy.query.core.util.StringUtil;
-import com.easy.query.entity.TopicSharding;
 import com.easy.query.entity.TopicShardingTime;
 
 import java.time.LocalDateTime;

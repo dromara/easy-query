@@ -1,5 +1,7 @@
 package com.easy.query.core.enums;
 
+import com.easy.query.core.enums.SqlPredicateCompare;
+
 /**
  * @FileName: EasyAggregate.java
  * @Description: 文件说明

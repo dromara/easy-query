@@ -1,4 +1,4 @@
-package com.easy.query.core.sharding.enums;
+package com.easy.query.core.enums.sharding;
 
 /**
  * create time 2023/4/18 22:59

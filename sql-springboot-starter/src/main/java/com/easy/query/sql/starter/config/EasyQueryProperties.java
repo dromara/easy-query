@@ -2,7 +2,7 @@ package com.easy.query.sql.starter.config;
 
 
 import com.easy.query.core.enums.SqlExecuteStrategyEnum;
-import com.easy.query.core.sharding.enums.ConnectionModeEnum;
+import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.sql.starter.option.DatabaseEnum;
 import com.easy.query.sql.starter.option.NameConversionEnum;
 import org.springframework.boot.context.properties.ConfigurationProperties;

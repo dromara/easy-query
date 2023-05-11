@@ -1,7 +1,7 @@
 package com.easy.query.core.basic.jdbc.executor.internal.common;
 
 import com.easy.query.core.basic.jdbc.con.EasyConnection;
-import com.easy.query.core.sharding.enums.ConnectionModeEnum;
+import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 
 /**
  * create time 2023/4/13 22:05

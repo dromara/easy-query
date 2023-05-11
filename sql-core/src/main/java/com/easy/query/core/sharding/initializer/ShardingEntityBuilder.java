@@ -2,7 +2,7 @@ package com.easy.query.core.sharding.initializer;
 
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.metadata.EntityMetadata;
-import com.easy.query.core.sharding.enums.ConnectionModeEnum;
+import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 
 import java.util.Collection;
 import java.util.Comparator;

@@ -1,6 +1,6 @@
 package com.easy.query.core.basic.jdbc.executor.internal.common;
 
-import com.easy.query.core.sharding.enums.ConnectionModeEnum;
+import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 
 import java.util.List;
 
