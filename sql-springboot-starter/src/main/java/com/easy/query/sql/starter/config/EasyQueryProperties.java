@@ -37,6 +37,12 @@ public class EasyQueryProperties {
     private int executorMaximumPoolSize =0;
     private int executorCorePoolSize =Math.min(Runtime.getRuntime().availableProcessors(), 4);
     private String logClass="com.easy.query.sql.starter.logging.Slf4jImpl";
+    /**
+     * 当没有路由匹配的时候查询是否报错
+     * true:表示报错
+     * false:表示返回默认值
+     */
+    private boolean throwIfRouteNotMatch =true;
 
     public Boolean getEnable() {
         return enable;
@@ -128,6 +134,14 @@ public class EasyQueryProperties {
 
     public void setExecutorCorePoolSize(int executorCorePoolSize) {
         this.executorCorePoolSize = executorCorePoolSize;
+    }
+
+    public boolean isThrowIfRouteNotMatch() {
+        return throwIfRouteNotMatch;
+    }
+
+    public void setThrowIfRouteNotMatch(boolean throwIfRouteNotMatch) {
+        this.throwIfRouteNotMatch = throwIfRouteNotMatch;
     }
 
     public EasyQueryProperties() {

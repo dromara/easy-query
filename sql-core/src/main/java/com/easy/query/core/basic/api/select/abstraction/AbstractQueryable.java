@@ -768,7 +768,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     public abstract EasyQuerySqlBuilderProvider<T1> getSqlBuilderProvider1();
 
     @Override
-    public Queryable<T1> useConnectionSetting(int maxShardingQueryLimit, ConnectionModeEnum connectionMode) {
+    public Queryable<T1> useShardingConfigure(int maxShardingQueryLimit, ConnectionModeEnum connectionMode) {
         entityQueryExpressionBuilder.getExpressionContext().setMaxShardingQueryLimit(maxShardingQueryLimit);
         entityQueryExpressionBuilder.getExpressionContext().setConnectionMode(connectionMode);
         return this;

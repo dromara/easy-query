@@ -54,7 +54,7 @@ public class FixShardingInitializer implements EasyShardingInitializer {
                     .ascSequenceConfigure(String::compareToIgnoreCase)
                     .addPropertyWhenDesc(TopicShardingTime::getCreateTime)
                     .defaultAffectedMethod(false,ExecuteMethodEnum.LIST,ExecuteMethodEnum.ANY,ExecuteMethodEnum.FIRST)
-                    .setMaxShardingQueryLimit(2);
+                    .useMaxShardingQueryLimit(2);
         }else{
             throw new UnsupportedOperationException();
         }

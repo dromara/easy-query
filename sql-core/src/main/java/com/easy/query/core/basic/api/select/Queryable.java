@@ -379,7 +379,7 @@ public interface Queryable<T1> extends Query<T1>, Interceptable<Queryable<T1>>, 
 
     Queryable<T1> asNoTracking();
 
-    Queryable<T1> useConnectionSetting(int maxShardingQueryLimit, ConnectionModeEnum connectionMode);
+    Queryable<T1> useShardingConfigure(int maxShardingQueryLimit, ConnectionModeEnum connectionMode);
     Queryable<T1> useMaxShardingQueryLimit(int maxShardingQueryLimit);
     Queryable<T1> useConnectionMode(ConnectionModeEnum connectionMode);
 

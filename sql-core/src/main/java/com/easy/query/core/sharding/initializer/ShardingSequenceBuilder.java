@@ -96,11 +96,11 @@ public class ShardingSequenceBuilder<T> {
      * @param maxShardingQueryLimit
      * @return
      */
-    public ShardingSequenceBuilder<T> setMaxShardingQueryLimit(int maxShardingQueryLimit) {
+    public ShardingSequenceBuilder<T> useMaxShardingQueryLimit(int maxShardingQueryLimit) {
         this.maxShardingQueryLimit = maxShardingQueryLimit;
         return this;
     }
-    public ShardingSequenceBuilder<T> setConnectionMode(ConnectionModeEnum connectionMode) {
+    public ShardingSequenceBuilder<T> useConnectionMode(ConnectionModeEnum connectionMode) {
         this.connectionMode = connectionMode;
         return this;
     }

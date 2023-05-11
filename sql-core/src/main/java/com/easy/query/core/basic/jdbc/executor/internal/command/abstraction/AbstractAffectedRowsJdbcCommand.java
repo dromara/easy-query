@@ -9,7 +9,7 @@ import com.easy.query.core.sharding.merge.context.StreamMergeContext;
  *
  * @author xuejiaming
  */
-public abstract class AbstractAffectedRowsJdbcCommand extends AbstractQueryJdbcCommand<AffectedRowsExecuteResult> {
+public abstract class AbstractAffectedRowsJdbcCommand extends AbstractJdbcCommand<AffectedRowsExecuteResult> {
     public AbstractAffectedRowsJdbcCommand(StreamMergeContext streamMergeContext) {
         super(streamMergeContext);
     }

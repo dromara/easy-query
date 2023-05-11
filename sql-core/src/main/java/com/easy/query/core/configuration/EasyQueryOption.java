@@ -17,8 +17,10 @@ public class EasyQueryOption {
     private final int executorMaximumPoolSize;
     private final int executorCorePoolSize;
     private final ConnectionModeEnum connectionMode;
+    private final boolean throwIfRouteNotMatch;
 
-    public EasyQueryOption(boolean deleteThrowError, SqlExecuteStrategyEnum insertStrategy, SqlExecuteStrategyEnum updateStrategy, ConnectionModeEnum connectionMode, int maxShardingQueryLimit, int executorMaximumPoolSize, int executorCorePoolSize) {
+    public EasyQueryOption(boolean deleteThrowError, SqlExecuteStrategyEnum insertStrategy, SqlExecuteStrategyEnum updateStrategy, ConnectionModeEnum connectionMode, int maxShardingQueryLimit, int executorMaximumPoolSize, int executorCorePoolSize,
+                           boolean throwIfNotMatchRoute) {
         this.connectionMode = connectionMode;
 
         if(executorMaximumPoolSize<0){
@@ -38,6 +40,7 @@ public class EasyQueryOption {
         this.maxShardingQueryLimit = maxShardingQueryLimit;
         this.executorMaximumPoolSize = executorMaximumPoolSize;
         this.executorCorePoolSize = executorCorePoolSize;
+        this.throwIfRouteNotMatch = throwIfNotMatchRoute;
     }
 
     public boolean isDeleteThrowError() {
@@ -66,5 +69,9 @@ public class EasyQueryOption {
 
     public int getExecutorCorePoolSize() {
         return executorCorePoolSize;
+    }
+
+    public boolean isThrowIfRouteNotMatch() {
+        return throwIfRouteNotMatch;
     }
 }

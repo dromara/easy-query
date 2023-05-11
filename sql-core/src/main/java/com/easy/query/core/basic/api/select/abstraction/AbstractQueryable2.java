@@ -318,8 +318,8 @@ public abstract class AbstractQueryable2<T1, T2> extends AbstractQueryable<T1> i
     }
 
     @Override
-    public Queryable2<T1, T2> useConnectionSetting(int maxShardingQueryLimit, ConnectionModeEnum connectionMode){
-        super.useConnectionSetting(maxShardingQueryLimit,connectionMode);
+    public Queryable2<T1, T2> useShardingConfigure(int maxShardingQueryLimit, ConnectionModeEnum connectionMode){
+        super.useShardingConfigure(maxShardingQueryLimit,connectionMode);
         return this;
     }
     @Override

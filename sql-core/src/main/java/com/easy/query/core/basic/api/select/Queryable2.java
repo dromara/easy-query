@@ -183,7 +183,7 @@ public interface Queryable2<T1, T2> extends Queryable<T1> {
     @Override
     Queryable2<T1, T2> asNoTracking();
     @Override
-    Queryable2<T1, T2> useConnectionSetting(int maxShardingQueryLimit, ConnectionModeEnum connectionMode);
+    Queryable2<T1, T2> useShardingConfigure(int maxShardingQueryLimit, ConnectionModeEnum connectionMode);
     @Override
     Queryable2<T1, T2> useMaxShardingQueryLimit(int maxShardingQueryLimit);
     @Override

@@ -1,6 +1,5 @@
 package com.easy.query.core.basic.api.select.abstraction;
 
-import com.easy.query.core.basic.api.select.Queryable2;
 import com.easy.query.core.basic.api.select.provider.EasyQuerySqlBuilderProvider;
 import com.easy.query.core.basic.api.select.provider.EasyQuerySqlBuilderProvider3;
 import com.easy.query.core.basic.api.select.provider.Select3SqlProvider;
@@ -335,8 +334,8 @@ public abstract class AbstractQueryable3<T1, T2, T3> extends AbstractQueryable<T
         return this;
     }
     @Override
-    public Queryable3<T1, T2, T3> useConnectionSetting(int maxShardingQueryLimit, ConnectionModeEnum connectionMode){
-        super.useConnectionSetting(maxShardingQueryLimit,connectionMode);
+    public Queryable3<T1, T2, T3> useShardingConfigure(int maxShardingQueryLimit, ConnectionModeEnum connectionMode){
+        super.useShardingConfigure(maxShardingQueryLimit,connectionMode);
         return this;
     }
     @Override
