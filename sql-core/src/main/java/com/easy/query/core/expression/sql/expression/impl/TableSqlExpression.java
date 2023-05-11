@@ -12,6 +12,7 @@ import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.util.ClassUtil;
 import com.easy.query.core.util.SqlExpressionUtil;
 import com.easy.query.core.util.SqlSegmentUtil;
+import com.easy.query.core.util.StringUtil;
 
 import java.util.function.Function;
 
@@ -84,7 +85,12 @@ public class TableSqlExpression implements EasyTableSqlExpression {
     }
     @Override
     public String getTableName() {
-        return dialect.getQuoteName(doGetTableName());
+        String tableName = dialect.getQuoteName(doGetTableName());
+        String schema = entityTable.getSchema();
+        if(StringUtil.isNotBlank(schema)){
+            return dialect.getQuoteName(schema)+"."+tableName;
+        }
+        return tableName;
     }
     public String doGetTableName() {
         String tableName = entityTable.getTableName();

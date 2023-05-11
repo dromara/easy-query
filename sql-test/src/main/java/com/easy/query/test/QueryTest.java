@@ -13,6 +13,7 @@ import com.easy.query.dto.BlogEntityTest2;
 import com.easy.query.dto.TopicGroupTestDTO;
 import com.easy.query.dto.TopicRequest;
 import com.easy.query.entity.BlogEntity;
+import com.easy.query.entity.SysUser;
 import com.easy.query.entity.Topic;
 import org.junit.Assert;
 import org.junit.Test;
@@ -32,6 +33,15 @@ import java.util.UUID;
  * @author xuejiaming
  */
 public class QueryTest extends BaseTest {
+    @Test
+    public void query0() {
+        Queryable<SysUser> queryable = easyQuery.queryable(SysUser.class)
+                .where(o -> o.eq(SysUser::getId, "123xxx"));
+        String sql = queryable.toSql();
+        Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`username`,t.`phone`,t.`id_card`,t.`address` FROM `easy-query-test`.`t_sys_user` t WHERE t.`id` = ?", sql);
+        SysUser sysUser = queryable.firstOrNull();
+        Assert.assertNull(sysUser);
+    }
     @Test
     public void query1() {
         Queryable<BlogEntity> queryable = easyQuery.queryable(BlogEntity.class)

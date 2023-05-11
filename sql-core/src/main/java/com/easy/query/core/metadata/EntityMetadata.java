@@ -41,6 +41,7 @@ import java.util.stream.Collectors;
 public class EntityMetadata {
     private final Class<?> entityClass;
     private String tableName;
+    private String schema;
 
     public boolean isMultiTableMapping() {
         return shardingTablePropertyName != null;
@@ -84,6 +85,7 @@ public class EntityMetadata {
         Table table = ClassUtil.getAnnotation(entityClass, Table.class);
         if (table != null) {
             this.tableName = nameConversion.convert(StringUtil.defaultIfBank(table.value(), ClassUtil.getSimpleName(entityClass)));
+            this.schema=table.schema();
         }
         HashSet<String> ignoreProperties = table != null ? new HashSet<>(Arrays.asList(table.ignoreProperties())) : new HashSet<>();
 
@@ -295,6 +297,9 @@ public class EntityMetadata {
 
     public String getTableName() {
         return tableName;
+    }
+    public String getSchema() {
+        return schema;
     }
 
     public String getColumnName(String propertyName) {

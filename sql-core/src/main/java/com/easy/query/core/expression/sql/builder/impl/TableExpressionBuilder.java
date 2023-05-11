@@ -56,23 +56,6 @@ public class TableExpressionBuilder implements EntityTableExpressionBuilder {
     }
 
     @Override
-    public String getTableName() {
-        return dialect.getQuoteName(doGetTableName());
-    }
-
-    protected String doGetTableName() {
-
-        String tableName = entityTable.getTableName();
-        if (tableName == null) {
-            throw new EasyQueryException("table " + ClassUtil.getSimpleName(entityTable.getEntityClass()) + " cant found mapping table name");
-        }
-        if (tableNameAs != null) {
-            return tableNameAs.apply(tableName);
-        }
-        return tableName;
-    }
-
-    @Override
     public void setTableNameAs(Function<String, String> tableNameAs) {
         this.tableNameAs = tableNameAs;
     }

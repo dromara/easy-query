@@ -11,6 +11,7 @@ import com.easy.query.core.metadata.EntityMetadata;
 public interface TableAvailable extends IndexAvailable{
     Class<?> getEntityClass();
     EntityMetadata getEntityMetadata();
+    String getSchema();
     String getTableName();
     String getAlias();
     String getColumnName(String propertyName);

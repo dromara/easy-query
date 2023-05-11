@@ -12,7 +12,7 @@ import lombok.Data;
  * @author xuejiaming
  */
 @Data
-@Table(value = "t_sys_user",ignoreProperties = {"updateTime","createBy","updateBy","deleted"})
+@Table(value = "t_sys_user",schema = "easy-query-test",ignoreProperties = {"updateTime","createBy","updateBy","deleted"})
 public class SysUser extends BaseEntity{
     private String username;
     @Encryption(strategy = DefaultAesEasyEncryptionStrategy.class, supportQueryLike = true)

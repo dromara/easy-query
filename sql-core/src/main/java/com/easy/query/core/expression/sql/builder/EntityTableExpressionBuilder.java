@@ -16,7 +16,6 @@ import java.util.function.Function;
  */
 public interface EntityTableExpressionBuilder extends TableExpressionBuilder {
     EntityMetadata getEntityMetadata();
-    String getTableName();
     void setTableNameAs(Function<String,String> tableNameAs);
     boolean tableNameIsAs();
     String getColumnName(String propertyName);

@@ -47,14 +47,6 @@ public class AnonymousTableExpressionBuilder extends TableExpressionBuilder impl
     }
 
     @Override
-    public String getTableName() {
-        if (tableNameAs != null) {
-            return tableNameAs.apply(getAlias());
-        }
-        return getAlias();
-    }
-
-    @Override
     public EntityTableExpressionBuilder copyEntityTableExpressionBuilder() {
 
         AnonymousTableExpressionBuilder anonymousTableExpressionBuilder = new AnonymousTableExpressionBuilder(entityTable, multiTableType, entityQueryExpressionBuilder.cloneEntityExpressionBuilder());

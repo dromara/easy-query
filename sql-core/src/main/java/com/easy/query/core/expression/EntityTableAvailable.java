@@ -36,6 +36,11 @@ public final class EntityTableAvailable implements TableAvailable {
     }
 
     @Override
+    public String getSchema() {
+        return entityMetadata.getSchema();
+    }
+
+    @Override
     public String getAlias() {
         return alias;
     }
