@@ -24,35 +24,55 @@ public class TrackUtil {
 
     /**
      * 返回未null表示当前对象没有追踪key无法追踪
-     *
+     * 属性名+冒号+属性值多个之间用逗号分割,除了key外额外添加分片字段
      * @param entityMetadataManager
      * @param entity
-     * @return
+     * @return userId:123,userName:xxxx
      */
     public static String getTrackKey(EntityMetadataManager entityMetadataManager, Object entity) {
         //构建获取对象追踪key表达式缓存
         TrackKeyFunc<Object> entityTrackKeyFunc = trackKeyFuncMap.computeIfAbsent(entity.getClass(), k -> {
             EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(entity.getClass());
             Collection<String> keyProperties = entityMetadata.getKeyProperties();
-
-            ArrayList<Property<Object, ?>> properties = new ArrayList<>(keyProperties.size());
+            int shardingCapacity=0;
+            boolean multiDataSourceMapping = entityMetadata.isMultiDataSourceMapping();
+            if(multiDataSourceMapping){
+                shardingCapacity++;
+            }
+            boolean multiTableMapping = entityMetadata.isMultiTableMapping();
+            if(multiTableMapping){
+                shardingCapacity++;
+            }
+            LinkedHashMap<String, Property<Object, ?>> propertiesMap = new LinkedHashMap<>(keyProperties.size()+shardingCapacity);
             FastBean fastBean = EasyUtil.getFastBean(entity.getClass());
             for (String keyProperty : keyProperties) {
                 ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(keyProperty);
                 Property<Object, ?> lambdaProperty = fastBean.getBeanGetter(columnMetadata.getProperty());
-                properties.add(lambdaProperty);
+                propertiesMap.put(keyProperty,lambdaProperty);
+            }
+            if(multiDataSourceMapping){
+                String propertyName = entityMetadata.getShardingDataSourcePropertyName();
+                ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(propertyName);
+                Property<Object, ?> lambdaProperty = fastBean.getBeanGetter(columnMetadata.getProperty());
+                propertiesMap.put(propertyName,lambdaProperty);
+            }
+            if(multiTableMapping){
+                String propertyName = entityMetadata.getShardingTablePropertyName();
+                ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(propertyName);
+                Property<Object, ?> lambdaProperty = fastBean.getBeanGetter(columnMetadata.getProperty());
+                propertiesMap.put(propertyName,lambdaProperty);
             }
             return o -> {
-                if (EasyCollectionUtil.isEmpty(properties)) {
+                if (propertiesMap.isEmpty()) {
                     return null;
                 }
                 StringBuilder trackKey = new StringBuilder();
-
-                Iterator<Property<Object, ?>> iterator = properties.iterator();
-                Property<Object, ?> firstProperty = iterator.next();
-                trackKey.append(firstProperty.apply(o));
+                Iterator<Map.Entry<String, Property<Object, ?>>> iterator = propertiesMap.entrySet().iterator();
+                Map.Entry<String, Property<Object, ?>> firstProperty = iterator.next();
+                trackKey.append(firstProperty.getKey()).append(":").append(firstProperty.getValue().apply(o));
                 while (iterator.hasNext()) {
-                    trackKey.append(",").append(iterator.next().apply(o));
+                    Map.Entry<String, Property<Object, ?>> property = iterator.next();
+                    trackKey.append(",").append(property.getKey()).append(":").append(property.getValue().apply(o));
                 }
                 return trackKey.toString();
             };
