@@ -12,7 +12,6 @@ import com.easy.query.core.basic.jdbc.con.EasyConnectionManager;
 import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
 import com.easy.query.core.configuration.EasyQueryConfiguration;
 import com.easy.query.core.basic.plugin.track.TrackManager;
-import com.easy.query.core.sharding.EasyShardingOption;
 import com.easy.query.core.sharding.comparer.ShardingComparer;
 import com.easy.query.core.sharding.route.abstraction.DataSourceRouteManager;
 import com.easy.query.core.sharding.route.abstraction.TableRouteManager;
@@ -36,7 +35,6 @@ public class DefaultEasyQueryRuntimeContext implements EasyQueryRuntimeContext {
     private final EasyExpressionBuilderFactory easySqlExpressionFactory;
     private final TrackManager trackManager;
     private final EasyPageResultProvider easyPageResultProvider;
-    private final EasyShardingOption easyShardingOption;
     private final EasyShardingExecutorService easyShardingExecutorService;
     private final EasyExpressionFactory easyExpressionFactory;
     private final TableRouteManager tableRouteManager;
@@ -53,7 +51,6 @@ public class DefaultEasyQueryRuntimeContext implements EasyQueryRuntimeContext {
                                           EasyExpressionBuilderFactory easySqlExpressionFactory,
                                           TrackManager trackManager,
                                           EasyPageResultProvider easyPageResultProvider,
-                                          EasyShardingOption easyShardingOption,
                                           EasyShardingExecutorService easyShardingExecutorService,
                                           EasyExpressionFactory easyExpressionFactory,
                                           TableRouteManager tableRouteManager,
@@ -70,7 +67,6 @@ public class DefaultEasyQueryRuntimeContext implements EasyQueryRuntimeContext {
         this.easySqlExpressionFactory = easySqlExpressionFactory;
         this.trackManager = trackManager;
         this.easyPageResultProvider = easyPageResultProvider;
-        this.easyShardingOption = easyShardingOption;
         this.easyShardingExecutorService = easyShardingExecutorService;
         this.easyExpressionFactory = easyExpressionFactory;
         this.tableRouteManager = tableRouteManager;
@@ -136,11 +132,6 @@ public class DefaultEasyQueryRuntimeContext implements EasyQueryRuntimeContext {
     @Override
     public EasyPageResultProvider getEasyPageResultProvider() {
         return easyPageResultProvider;
-    }
-
-    @Override
-    public EasyShardingOption getEasyShardingOption() {
-        return easyShardingOption;
     }
 
     @Override

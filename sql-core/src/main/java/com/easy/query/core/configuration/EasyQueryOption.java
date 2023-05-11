@@ -12,23 +12,29 @@ public class EasyQueryOption {
     private final boolean deleteThrowError;
     private final SqlExecuteStrategyEnum insertStrategy;
     private final SqlExecuteStrategyEnum updateStrategy;
+    private final int maxShardingQueryLimit;
+    private final int executorMaximumPoolSize;
+    private final int executorCorePoolSize;
 
-    public EasyQueryOption(boolean deleteThrowError, SqlExecuteStrategyEnum insertStrategy, SqlExecuteStrategyEnum updateStrategy) {
+    public EasyQueryOption(boolean deleteThrowError, SqlExecuteStrategyEnum insertStrategy, SqlExecuteStrategyEnum updateStrategy, int maxShardingQueryLimit, int executorMaximumPoolSize, int executorCorePoolSize) {
+
+        if(executorMaximumPoolSize<0){
+            throw new IllegalArgumentException("executor size less than zero");
+        }
+        if(executorMaximumPoolSize>0){
+            if(maxShardingQueryLimit>executorMaximumPoolSize){
+                throw new IllegalArgumentException("maxShardingQueryLimit:"+maxShardingQueryLimit+" should less than executorMaximumPoolSize:"+executorMaximumPoolSize);
+            }
+            if(executorCorePoolSize>executorMaximumPoolSize){
+                throw new IllegalArgumentException("executorCorePoolSize:"+executorCorePoolSize+" should less than executorMaximumPoolSize:"+executorMaximumPoolSize);
+            }
+        }
         this.deleteThrowError = deleteThrowError;
         this.insertStrategy = SqlExecuteStrategyEnum.getDefaultStrategy(insertStrategy, SqlExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS);
         this.updateStrategy = SqlExecuteStrategyEnum.getDefaultStrategy(updateStrategy, SqlExecuteStrategyEnum.ALL_COLUMNS);
-    }
-
-    public EasyQueryOption(boolean deleteThrowError) {
-        this(deleteThrowError, SqlExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS, SqlExecuteStrategyEnum.ALL_COLUMNS);
-    }
-
-    public static EasyQueryOption defaultEasyQueryOption() {
-        return new EasyQueryOption(true, SqlExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS, SqlExecuteStrategyEnum.ALL_COLUMNS);
-    }
-
-    public static EasyQueryOption defaultEasyQueryOption(boolean deleteThrowError) {
-        return new EasyQueryOption(deleteThrowError, SqlExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS, SqlExecuteStrategyEnum.ALL_COLUMNS);
+        this.maxShardingQueryLimit = maxShardingQueryLimit;
+        this.executorMaximumPoolSize = executorMaximumPoolSize;
+        this.executorCorePoolSize = executorCorePoolSize;
     }
 
     public boolean isDeleteThrowError() {
@@ -41,5 +47,17 @@ public class EasyQueryOption {
 
     public SqlExecuteStrategyEnum getUpdateStrategy() {
         return updateStrategy;
+    }
+
+    public int getMaxShardingQueryLimit() {
+        return maxShardingQueryLimit;
+    }
+
+    public int getExecutorMaximumPoolSize() {
+        return executorMaximumPoolSize;
+    }
+
+    public int getExecutorCorePoolSize() {
+        return executorCorePoolSize;
     }
 }

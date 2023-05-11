@@ -15,6 +15,9 @@ public enum DatabaseEnum {
      * mysql
      */
     MYSQL,
-//    MSSQL,
-//    PGSQL
+    /**
+     * sql server
+     */
+    MSSQL,
+    PGSQL
 }

@@ -62,13 +62,19 @@ public abstract class BaseTest {
         dataSource.setPassword("root");
         dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
         dataSource.setMaximumPoolSize(20);
-
+//        postgres://postgres:postgrespw@localhost:55000
     }
 
     public static void initEasyQuery() {
         easyQuery = EasyQueryBootstrapper.defaultBuilderConfiguration()
                 .setDataSource(dataSource)
-                .useDatabaseConfigure(new MySqlDatabaseConfiguration()::configure)
+                .optionConfigure(op->{
+                    op.setDeleteThrowError(false);
+                    op.setExecutorCorePoolSize(1);
+                    op.setExecutorMaximumPoolSize(20);
+                    op.setMaxShardingQueryLimit(10);
+                })
+                .useDatabaseConfigure(new MySqlDatabaseConfiguration())
 //                .replaceService(EasyShardingOption.class, new EasyShardingOption(2, 0))
                 .build();
         EasyQueryRuntimeContext runtimeContext = easyQuery.getRuntimeContext();

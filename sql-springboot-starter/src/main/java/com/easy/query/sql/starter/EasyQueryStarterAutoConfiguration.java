@@ -8,15 +8,9 @@ import com.easy.query.core.bootstrapper.DatabaseConfiguration;
 import com.easy.query.core.bootstrapper.DefaultDatabaseConfiguration;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
-import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.sharding.DefaultEasyQueryDataSource;
 import com.easy.query.core.sharding.EasyQueryDataSource;
-import com.easy.query.core.sharding.EasyShardingOption;
-import com.easy.query.core.sql.dialect.Dialect;
 import com.easy.query.core.api.client.EasyQuery;
-import com.easy.query.core.sql.dialect.impl.MsSqlDialect;
-import com.easy.query.core.sql.dialect.impl.DefaultDialect;
-import com.easy.query.core.sql.dialect.impl.PgSqlDialect;
 import com.easy.query.core.sql.nameconversion.NameConversion;
 import com.easy.query.core.sql.nameconversion.impl.DefaultNameConversion;
 import com.easy.query.core.sql.nameconversion.impl.UnderlinedNameConversion;
@@ -25,7 +19,9 @@ import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.sharding.initializer.EasyShardingInitializer;
 import com.easy.query.core.util.StringUtil;
+import com.easy.query.mssql.MsSqlDatabaseConfiguration;
 import com.easy.query.mysql.config.MySqlDatabaseConfiguration;
+import com.easy.query.pgsql.PgSqlDatabaseConfiguration;
 import com.easy.query.sql.starter.config.EasyQueryProperties;
 import com.easy.query.sql.starter.logging.Slf4jImpl;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -77,7 +73,7 @@ public class EasyQueryStarterAutoConfiguration {
         }
     }
 
-//    @Bean
+    //    @Bean
 //    @ConditionalOnProperty(name = "setDatabase",havingValue = "mssql")
 //    public Dialect msSqlDialect() {
 //        return new MsSqlDialect();
@@ -93,23 +89,36 @@ public class EasyQueryStarterAutoConfiguration {
 //        return new DefaultDialect();
 //    }
     @Bean
-    @ConditionalOnProperty(name = "easy-query.database",havingValue = "default",matchIfMissing = true)
-    public DatabaseConfiguration databaseConfiguration() {
-        return new DefaultDatabaseConfiguration();
-    }
-    @Bean
-    @ConditionalOnProperty(name = "easy-query.database",havingValue = "mysql")
+    @ConditionalOnProperty(name = "easy-query.database", havingValue = "mysql")
     public DatabaseConfiguration mysqlDatabaseConfiguration() {
         return new MySqlDatabaseConfiguration();
     }
 
     @Bean
-    @ConditionalOnProperty(name = "easy-query.name-conversion",havingValue = "underlined",matchIfMissing = true)
+    @ConditionalOnProperty(name = "easy-query.database", havingValue = "mssql")
+    public DatabaseConfiguration mssqlDatabaseConfiguration() {
+        return new MsSqlDatabaseConfiguration();
+    }
+    @Bean
+    @ConditionalOnProperty(name = "easy-query.database", havingValue = "pgsql")
+    public DatabaseConfiguration pgsqlDatabaseConfiguration() {
+        return new PgSqlDatabaseConfiguration();
+    }
+
+    @Bean
+    @ConditionalOnProperty(name = "easy-query.database", havingValue = "default", matchIfMissing = true)
+    public DatabaseConfiguration databaseConfiguration() {
+        return new DefaultDatabaseConfiguration();
+    }
+
+    @Bean
+    @ConditionalOnProperty(name = "easy-query.name-conversion", havingValue = "underlined", matchIfMissing = true)
     public NameConversion underlinedNameConversion() {
         return new UnderlinedNameConversion();
     }
+
     @Bean
-    @ConditionalOnProperty(name = "easy-query.name-conversion",havingValue = "default")
+    @ConditionalOnProperty(name = "easy-query.name-conversion", havingValue = "default")
     public NameConversion defaultNameConversion() {
         return new DefaultNameConversion();
     }
@@ -119,11 +128,17 @@ public class EasyQueryStarterAutoConfiguration {
     public EasyQuery easyQuery(DataSource dataSource, DatabaseConfiguration databaseConfiguration, NameConversion nameConversion, Map<String, EasyInterceptor> easyInterceptorMap, Map<String, EasyLogicDeleteStrategy> easyLogicDeleteStrategyMap, Map<String, EasyShardingInitializer> easyShardingInitializerMap, Map<String, EasyEncryptionStrategy> easyEncryptionStrategyMap) {
         EasyQuery easyQuery = EasyQueryBootstrapper.defaultBuilderConfiguration()
                 .setDataSource(dataSource)
-                .replaceService(EasyQueryOption.class,new EasyQueryOption(easyQueryProperties.getDeleteThrow(),easyQueryProperties.getInsertStrategy(),easyQueryProperties.getUpdateStrategy()))
-                .replaceService(EasyShardingOption.class,new EasyShardingOption(easyQueryProperties.getMaxQueryConnectionsLimit(), easyQueryProperties.getExecutorSize()))
-                .replaceService(NameConversion.class,nameConversion)
-                .replaceServiceFactory(EasyQueryDataSource.class, sp->new DefaultEasyQueryDataSource("ds0",sp.getService(DataSource.class)))
-                .replaceService(EasyConnectionManager.class,SpringConnectionManager.class)
+                .optionConfigure(builder->{
+                    builder.setDeleteThrowError(easyQueryProperties.getDeleteThrow());
+                    builder.setInsertStrategy(easyQueryProperties.getInsertStrategy());
+                    builder.setUpdateStrategy(easyQueryProperties.getUpdateStrategy());
+                    builder.setMaxShardingQueryLimit(easyQueryProperties.getMaxShardingQueryLimit());
+                    builder.setExecutorMaximumPoolSize(easyQueryProperties.getExecutorMaximumPoolSize());
+                    builder.setExecutorCorePoolSize(easyQueryProperties.getExecutorCorePoolSize());
+                })
+                .replaceService(NameConversion.class, nameConversion)
+                .replaceServiceFactory(EasyQueryDataSource.class, sp -> new DefaultEasyQueryDataSource("ds0", sp.getService(DataSource.class)))
+                .replaceService(EasyConnectionManager.class, SpringConnectionManager.class)
                 .useDatabaseConfigure(databaseConfiguration)
                 .build();
         EasyQueryRuntimeContext runtimeContext = easyQuery.getRuntimeContext();

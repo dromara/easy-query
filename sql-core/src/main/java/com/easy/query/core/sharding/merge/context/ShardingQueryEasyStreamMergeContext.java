@@ -159,7 +159,7 @@ public class ShardingQueryEasyStreamMergeContext extends EntityStreamMergeContex
                 return connectionsLimit;
             }
         }
-        return runtimeContext.getEasyShardingOption().getMaxQueryConnectionsLimit();
+        return runtimeContext.getEasyQueryConfiguration().getEasyQueryOption().getMaxShardingQueryLimit();
     }
 
     @Override

@@ -60,8 +60,8 @@ public class InsertExpressionBuilder extends AbstractEntityExpressionBuilder imp
             //todo 获取更新策略按需更新
             SqlExecuteStrategyEnum insertStrategy = sqlExpressionContext.getSqlStrategy();
             if (Objects.equals(SqlExecuteStrategyEnum.DEFAULT, insertStrategy)) {
-                SqlExecuteStrategyEnum globalUpdateStrategy = runtimeContext.getEasyQueryConfiguration().getEasyQueryOption().getUpdateStrategy();
-                getCustomIgnoreProperties(ignorePropertySet, globalUpdateStrategy, runtimeContext.getEntityMetadataManager(), entity);
+                SqlExecuteStrategyEnum globalInsertStrategy = runtimeContext.getEasyQueryConfiguration().getEasyQueryOption().getInsertStrategy();
+                getCustomIgnoreProperties(ignorePropertySet, globalInsertStrategy, runtimeContext.getEntityMetadataManager(), entity);
                 return true;
             } else {
                 getCustomIgnoreProperties(ignorePropertySet, insertStrategy, runtimeContext.getEntityMetadataManager(), entity);

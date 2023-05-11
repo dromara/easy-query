@@ -373,11 +373,23 @@ public interface SqlWherePredicate<T1> {
     /**
      * 区间 (left..right) = {x | left < x < right}
      * 一般用于范围比如时间,小的时间在前大的时间在后
-     * @param column
-     * @param conditionLeft
-     * @param valLeft
-     * @param conditionRight
-     * @param valRight
+     * @param column 数据库列
+     * @param valLeft 区间左侧值
+     * @param valRight 区间右侧的值
+     * @return
+     */
+    default SqlWherePredicate<T1> rangeOpen(Property<T1, ?> column, Object valLeft, Object valRight) {
+        return rangeOpen(true, column, true, valLeft, true, valRight);
+    }
+
+    /**
+     * 区间 (left..right) = {x | left < x < right}
+     * 一般用于范围比如时间,小的时间在前大的时间在后
+     * @param column 数据库列
+     * @param conditionLeft 是否添加左侧条件
+     * @param valLeft 区间左侧值
+     * @param conditionRight 是否添加右侧条件
+     * @param valRight 区间右侧的值
      * @return
      */
     default SqlWherePredicate<T1> rangeOpen(Property<T1, ?> column, boolean conditionLeft, Object valLeft, boolean conditionRight, Object valRight) {
@@ -426,6 +438,17 @@ public interface SqlWherePredicate<T1> {
         return range(condition, column, conditionLeft, valLeft, conditionRight, valRight, SqlRangeEnum.closedOpen);
     }
 
+    /**
+     * [left..right] = {x | left <= x <= right}
+     * 一般用于范围比如时间,小的时间在前大的时间在后
+     * @param column
+     * @param valLeft
+     * @param valRight
+     * @return
+     */
+    default SqlWherePredicate<T1> rangeClosed(Property<T1, ?> column, Object valLeft, Object valRight) {
+        return rangeClosed(true, column, true, valLeft, true, valRight);
+    }
     /**
      * [left..right] = {x | left <= x <= right}
      * 一般用于范围比如时间,小的时间在前大的时间在后

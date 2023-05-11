@@ -25,6 +25,8 @@
 <!--        以下是不需要deploy到远程仓库的-->
         <module>samples</module>
         <module>sql-test</module>
+        <module>sql-mssql</module>
+        <module>sql-pgsql</module>
     </modules>
 
     <properties>

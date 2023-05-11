@@ -18,6 +18,7 @@ import com.easy.query.core.basic.plugin.track.DefaultTrackManager;
 import com.easy.query.core.basic.plugin.track.TrackManager;
 import com.easy.query.core.basic.thread.DefaultEasyShardingExecutorService;
 import com.easy.query.core.basic.thread.EasyShardingExecutorService;
+import com.easy.query.core.configuration.EasyQueryOptionBuilder;
 import com.easy.query.core.inject.ServiceCollection;
 import com.easy.query.core.inject.ServiceProvider;
 import com.easy.query.core.inject.impl.ServiceCollectionImpl;
@@ -41,7 +42,6 @@ import com.easy.query.core.metadata.DefaultEntityMetadataManager;
 import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.sharding.DefaultEasyQueryDataSource;
 import com.easy.query.core.sharding.EasyQueryDataSource;
-import com.easy.query.core.sharding.EasyShardingOption;
 import com.easy.query.core.sharding.comparer.JavaLanguageShardingComparer;
 import com.easy.query.core.sharding.comparer.ShardingComparer;
 import com.easy.query.core.sharding.rewrite.DefaultRewriteContextFactory;
@@ -69,6 +69,7 @@ import java.util.function.Function;
  */
 public class EasyQueryBuilderConfiguration {
     protected DataSource dataSource;
+    protected final EasyQueryOptionBuilder easyQueryOptionBuilder=new EasyQueryOptionBuilder();
     private final ServiceCollection serviceCollection = new ServiceCollectionImpl();
 
     public EasyQueryBuilderConfiguration() {
@@ -76,8 +77,7 @@ public class EasyQueryBuilderConfiguration {
     }
 
     private void defaultConfiguration() {
-        replaceService(EasyQueryOption.defaultEasyQueryOption(false))
-                .replaceServiceFactory(EasyQueryDataSource.class, sp -> new DefaultEasyQueryDataSource("ds0", sp.getService(DataSource.class)))
+    replaceServiceFactory(EasyQueryDataSource.class, sp -> new DefaultEasyQueryDataSource("ds0", sp.getService(DataSource.class)))
                 .replaceService(Dialect.class, DefaultDialect.class)
                 .replaceService(NameConversion.class, UnderlinedNameConversion.class)
                 .replaceService(EasyQueryConfiguration.class)
@@ -97,7 +97,6 @@ public class EasyQueryBuilderConfiguration {
                 .replaceService(RewriteContextFactory.class, DefaultRewriteContextFactory.class)
                 .replaceService(ExecutionContextFactory.class, DefaultExecutionContextFactory.class)
                 .replaceService(EntityExpressionExecutor.class, DefaultEntityExpressionExecutor.class)
-                .replaceService(EasyShardingOption.class, new EasyShardingOption(Math.max(Runtime.getRuntime().availableProcessors(), 4), 0))
                 .replaceService(EasyShardingExecutorService.class, DefaultEasyShardingExecutorService.class)
                 .replaceService(EasyExpressionFactory.class, DefaultEasyExpressionFactory.class)
                 .replaceService(ShardingComparer.class, JavaLanguageShardingComparer.class)
@@ -176,6 +175,10 @@ public class EasyQueryBuilderConfiguration {
         databaseConfiguration.configure(serviceCollection);
         return this;
     }
+    public EasyQueryBuilderConfiguration optionConfigure(Consumer<EasyQueryOptionBuilder> configure){
+        configure.accept(this.easyQueryOptionBuilder);
+        return this;
+    }
 
     /**
      * 创建对应的查询器
@@ -186,6 +189,8 @@ public class EasyQueryBuilderConfiguration {
             throw new IllegalArgumentException("data source null");
         }
         replaceService(DataSource.class, this.dataSource);
+        EasyQueryOption easyQueryOption = easyQueryOptionBuilder.build();
+        replaceService(easyQueryOption);
         ServiceProvider serviceProvider = serviceCollection.build();
         return serviceProvider.getService(EasyQuery.class);
     }

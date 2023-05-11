@@ -27,12 +27,13 @@ public class EasyQueryProperties {
      * 仅分片时有效
      * 最大查询限制链接数默认cpu核心数当小于4取4
      */
-    private int maxQueryConnectionsLimit=Math.max(Runtime.getRuntime().availableProcessors(), 4);
+    private int maxShardingQueryLimit =Math.max(Runtime.getRuntime().availableProcessors(), 4);
     /**
      * 仅分片时有效默认0如果需要建议大于 maxQueryConnectionsLimit * 分库数目
      * 执行线程数 如果为0那么采用无界线程池{@link Executors#newCachedThreadPool},如果是大于0采用固定线程池{@link Executors#newFixedThreadPool}
      */
-    private int executorSize=0;
+    private int executorMaximumPoolSize =0;
+    private int executorCorePoolSize =Math.min(Runtime.getRuntime().availableProcessors(), 4);
     private String logClass="com.easy.query.sql.starter.logging.Slf4jImpl";
 
     public Boolean getEnable() {
@@ -94,22 +95,29 @@ public class EasyQueryProperties {
         this.updateStrategy = updateStrategy;
     }
 
-    public int getMaxQueryConnectionsLimit() {
-        return maxQueryConnectionsLimit;
+    public int getMaxShardingQueryLimit() {
+        return maxShardingQueryLimit;
     }
 
-    public void setMaxQueryConnectionsLimit(int maxQueryConnectionsLimit) {
-        this.maxQueryConnectionsLimit = maxQueryConnectionsLimit;
+    public void setMaxShardingQueryLimit(int maxShardingQueryLimit) {
+        this.maxShardingQueryLimit = maxShardingQueryLimit;
     }
 
-    public int getExecutorSize() {
-        return executorSize;
+    public int getExecutorMaximumPoolSize() {
+        return executorMaximumPoolSize;
     }
 
-    public void setExecutorSize(int executorSize) {
-        this.executorSize = executorSize;
+    public void setExecutorMaximumPoolSize(int executorMaximumPoolSize) {
+        this.executorMaximumPoolSize = executorMaximumPoolSize;
     }
 
+    public int getExecutorCorePoolSize() {
+        return executorCorePoolSize;
+    }
+
+    public void setExecutorCorePoolSize(int executorCorePoolSize) {
+        this.executorCorePoolSize = executorCorePoolSize;
+    }
 
     public EasyQueryProperties() {
     }

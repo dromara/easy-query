@@ -1,21 +1,22 @@
-package com.easy.query.core.sql.dialect.impl;
+package com.easy.query.pgsql;
+
 
 import com.easy.query.core.sql.dialect.abstraction.AbstractDialect;
 
 /**
- * create time 2023/5/4 08:30
- * sql server 方言
+ * create time 2023/5/4 09:03
+ * 文件说明
  *
  * @author xuejiaming
  */
-public final class MsSqlDialect extends AbstractDialect {
+public final class PgSqlDialect extends AbstractDialect {
     @Override
     protected String getQuoteStart() {
-        return "[";
+        return "\"";
     }
 
     @Override
     protected String getQuoteEnd() {
-        return "]";
+        return "\"";
     }
 }

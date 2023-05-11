@@ -1,13 +1,10 @@
 package com.easy.query.core.basic.jdbc.executor.internal;
 
 import com.easy.query.core.basic.jdbc.con.EasyConnection;
+import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.exception.EasyQueryTimeoutException;
-import com.easy.query.core.logging.Log;
-import com.easy.query.core.logging.LogFactory;
-import com.easy.query.core.sharding.EasyShardingOption;
 import com.easy.query.core.sharding.enums.ConnectionModeEnum;
-import com.easy.query.core.sharding.merge.context.MergeSequenceOrder;
 import com.easy.query.core.sharding.merge.context.StreamMergeContext;
 import com.easy.query.core.basic.jdbc.executor.internal.common.CommandExecuteUnit;
 import com.easy.query.core.basic.jdbc.executor.internal.common.DataSourceSqlExecutorUnit;
@@ -17,13 +14,11 @@ import com.easy.query.core.basic.jdbc.executor.internal.common.SqlExecutorGroup;
 import com.easy.query.core.basic.jdbc.executor.internal.unit.Executor;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyUtil;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -31,7 +26,6 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * create time 2023/4/15 14:24
@@ -71,8 +65,8 @@ public class ShardingExecutor {
         //如果是有多条sql要执行那么就进行并行处理以数据源DataSourceName多组 每组再以maxQueryConnectionsLimit为一组进行同数据源下顺序并行查询
         List<Future<List<TResult>>> futures = executeFuture0(streamMergeContext, executor, dataSourceSqlExecutorUnits);
 
-        EasyShardingOption easyShardingOption = streamMergeContext.getRuntimeContext().getEasyShardingOption();
-        List<TResult> results = new ArrayList<>(futures.size() * easyShardingOption.getMaxQueryConnectionsLimit());
+        EasyQueryOption easyQueryOption = streamMergeContext.getRuntimeContext().getEasyQueryConfiguration().getEasyQueryOption();
+        List<TResult> results = new ArrayList<>(futures.size() * easyQueryOption.getMaxShardingQueryLimit());
         for (Future<List<TResult>> future : futures) {
             try {
                 results.addAll(future.get(60, TimeUnit.SECONDS));
