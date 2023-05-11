@@ -1,6 +1,8 @@
 package com.easy.query.core.util;
 
 import com.easy.query.core.common.bean.FastBean;
+import com.easy.query.core.exception.EasyQueryInvalidOperationException;
+import com.easy.query.core.exception.EasyQueryTrackInvalidOperationException;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
@@ -69,15 +71,27 @@ public class TrackUtil {
                 StringBuilder trackKey = new StringBuilder();
                 Iterator<Map.Entry<String, Property<Object, ?>>> iterator = propertiesMap.entrySet().iterator();
                 Map.Entry<String, Property<Object, ?>> firstProperty = iterator.next();
-                trackKey.append(firstProperty.getKey()).append(":").append(firstProperty.getValue().apply(o));
+                String firstTrackValue = getAndCheckTrackValue(o, firstProperty);
+                trackKey.append(firstTrackValue);
                 while (iterator.hasNext()) {
                     Map.Entry<String, Property<Object, ?>> property = iterator.next();
-                    trackKey.append(",").append(property.getKey()).append(":").append(property.getValue().apply(o));
+                    String trackValue = getAndCheckTrackValue(o, property);
+                    trackKey.append(",").append(trackValue);
                 }
                 return trackKey.toString();
             };
         });
         return entityTrackKeyFunc.get(entity);
+    }
+
+    private static String getAndCheckTrackValue(Object entity, Map.Entry<String, Property<Object, ?>> property){
+
+        String propertyName = property.getKey();
+        Object propertyValue = property.getValue().apply(entity);
+        if(Objects.isNull(propertyValue)){
+            throw new EasyQueryTrackInvalidOperationException("track key cant null :"+propertyName);
+        }
+        return propertyName+":"+propertyValue;
     }
 
     /**
