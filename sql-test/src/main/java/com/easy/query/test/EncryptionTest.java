@@ -1,8 +1,8 @@
 package com.easy.query.test;
 
-import com.easy.query.BaseTest;
-import com.easy.query.entity.SysUser;
-import com.easy.query.entity.SysUserEncryption;
+import com.easy.query.test.BaseTest;
+import com.easy.query.test.entity.SysUser;
+import com.easy.query.test.entity.SysUserEncryption;
 import org.junit.Assert;
 import org.junit.Test;
 

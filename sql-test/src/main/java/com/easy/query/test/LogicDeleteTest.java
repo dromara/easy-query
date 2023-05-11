@@ -1,11 +1,11 @@
 package com.easy.query.test;
 
-import com.easy.query.BaseTest;
+import com.easy.query.test.BaseTest;
 import com.easy.query.core.basic.api.update.ExpressionUpdatable;
 import com.easy.query.core.util.EasyCollectionUtil;
-import com.easy.query.entity.LogicDelTopic;
-import com.easy.query.entity.LogicDelTopicCustom;
-import com.easy.query.logicdel.CurrentUserHelper;
+import com.easy.query.test.entity.LogicDelTopic;
+import com.easy.query.test.entity.LogicDelTopicCustom;
+import com.easy.query.test.logicdel.CurrentUserHelper;
 import org.junit.Assert;
 import org.junit.Test;
 

@@ -1,3 +1,5 @@
+
+CREATE DATABASE IF NOT EXISTS easy-query-test CHARACTER SET 'utf8mb4';
 create table t_blog
 (
     id varchar(32) not null comment '主键ID'primary key,

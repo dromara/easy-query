@@ -3,12 +3,13 @@ package com.easy.query.test;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.SqlRangeEnum;
+import com.easy.query.core.exception.EasyQueryUnexpectedException;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 import com.easy.query.core.sharding.initializer.ExecuteMethodBehavior;
 import com.easy.query.core.util.AesUtil;
 import com.easy.query.core.util.Base64Util;
 import com.easy.query.core.util.StringUtil;
-import com.easy.query.encryption.DefaultAesEasyEncryptionStrategy;
+import com.easy.query.test.encryption.DefaultAesEasyEncryptionStrategy;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -119,4 +120,5 @@ public class GenericTest {
         aDefault.removeMethod(ExecuteMethodEnum.UNKNOWN);
         Assert.assertEquals(true,aDefault.isDefault());
     }
+
 }

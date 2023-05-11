@@ -1,8 +1,8 @@
 package com.easy.query.test;
 
-import com.easy.query.BaseTest;
-import com.easy.query.entity.TopicInterceptor;
-import com.easy.query.logicdel.CurrentUserHelper;
+import com.easy.query.test.BaseTest;
+import com.easy.query.test.entity.TopicInterceptor;
+import com.easy.query.test.logicdel.CurrentUserHelper;
 import org.junit.Assert;
 import org.junit.Test;
 

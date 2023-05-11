@@ -1,6 +1,6 @@
 package com.easy.query.test;
 
-import com.easy.query.BaseTest;
+import com.easy.query.test.BaseTest;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.api.select.Queryable;
 import com.easy.query.core.enums.EasyAggregate;
@@ -8,13 +8,14 @@ import com.easy.query.core.enums.SqlPredicateCompareEnum;
 import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.util.SqlExpressionUtil;
-import com.easy.query.dto.BlogEntityTest;
-import com.easy.query.dto.BlogEntityTest2;
-import com.easy.query.dto.TopicGroupTestDTO;
-import com.easy.query.dto.TopicRequest;
-import com.easy.query.entity.BlogEntity;
-import com.easy.query.entity.SysUser;
-import com.easy.query.entity.Topic;
+import com.easy.query.test.dto.BlogEntityTest;
+import com.easy.query.test.dto.BlogEntityTest2;
+import com.easy.query.test.dto.TopicGroupTestDTO;
+import com.easy.query.test.dto.TopicRequest;
+import com.easy.query.test.entity.BlogEntity;
+import com.easy.query.test.entity.SysUser;
+import com.easy.query.test.entity.Topic;
+import com.easy.query.test.mytest.IfNullEasyFunc;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -428,7 +429,7 @@ public class QueryTest extends BaseTest {
         {
 
             Queryable<BlogEntityTest> queryable = easyQuery.queryable(BlogEntity.class)
-                    .select(BlogEntityTest.class,o->o.columnIgnore(BlogEntity::getUrl).columnFunc(BlogEntity::getUrl,BlogEntityTest::getUrl,IfNullEasyFunc.IfNull));
+                    .select(BlogEntityTest.class,o->o.columnIgnore(BlogEntity::getUrl).columnFunc(BlogEntity::getUrl,BlogEntityTest::getUrl, IfNullEasyFunc.IfNull));
             String sql = queryable.toSql();
             Assert.assertEquals("SELECT IfNull(t.`url`,'') AS `url` FROM `t_blog` t WHERE t.`deleted` = ?", sql);
         }
@@ -710,5 +711,39 @@ public class QueryTest extends BaseTest {
         Assert.assertEquals(new BigDecimal("1.20"), blogEntity.getScore());
         Assert.assertEquals(1, (int)blogEntity.getStatus());
         Assert.assertEquals(new BigDecimal("117.60"), blogEntity.getOrder());
+    }
+    @Test
+    public void query48(){
+        Integer integer1 = easyQuery.queryable(BlogEntity.class)
+                .where(o -> o.eq(BlogEntity::getId, UUID.randomUUID().toString()))
+                .maxOrNull(BlogEntity::getStar);
+        Assert.assertNull(integer1);
+        Integer integer2 = easyQuery.queryable(BlogEntity.class)
+                .where(o -> o.eq(BlogEntity::getId, UUID.randomUUID().toString()))
+                .maxOrDefault(BlogEntity::getStar,12345);
+        Assert.assertNotNull(integer2);
+        Assert.assertEquals(12345,(int)integer2);
+    }
+    @Test
+    public void query49(){
+        Integer integer1 = easyQuery.queryable(BlogEntity.class)
+                .where(o -> o.eq(BlogEntity::getId, UUID.randomUUID().toString()))
+                .minOrNull(BlogEntity::getStar);
+        Assert.assertNull(integer1);
+        Integer integer2 = easyQuery.queryable(BlogEntity.class)
+                .where(o -> o.eq(BlogEntity::getId, UUID.randomUUID().toString()))
+                .minOrDefault(BlogEntity::getStar,4567);
+        Assert.assertNotNull(integer2);
+        Assert.assertEquals(4567,(int)integer2);
+    }
+    @Test
+    public void query50() {
+
+        EasyPageResult<Topic> topicPageResult = easyQuery
+                .queryable(Topic.class)
+                .where(o -> o.isNotNull(Topic::getId))
+                .toPageResult(3, 10);
+        List<Topic> data = topicPageResult.getData();
+        Assert.assertEquals(10,data.size());
     }
 }

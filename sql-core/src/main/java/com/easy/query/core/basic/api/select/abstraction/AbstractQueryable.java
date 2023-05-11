@@ -52,7 +52,6 @@ import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.util.BeanUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.ClassUtil;
-import com.easy.query.core.util.EasyUtil;
 import com.easy.query.core.util.LambdaUtil;
 import com.easy.query.core.util.SqlExpressionUtil;
 import com.easy.query.core.util.StringUtil;

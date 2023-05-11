@@ -4,12 +4,12 @@ import com.easy.query.core.exception.EasyQueryInjectCurrentlyInCreationException
 import com.easy.query.core.inject.ServiceCollection;
 import com.easy.query.core.inject.ServiceProvider;
 import com.easy.query.core.inject.impl.ServiceCollectionImpl;
-import com.easy.query.inject.BeanCurrent1;
-import com.easy.query.inject.BeanCurrent2;
-import com.easy.query.inject.Car;
-import com.easy.query.inject.Car1;
-import com.easy.query.inject.Driver;
-import com.easy.query.inject.Driver1;
+import com.easy.query.test.inject.BeanCurrent1;
+import com.easy.query.test.inject.BeanCurrent2;
+import com.easy.query.test.inject.Car;
+import com.easy.query.test.inject.Car1;
+import com.easy.query.test.inject.Driver;
+import com.easy.query.test.inject.Driver1;
 import org.junit.Assert;
 import org.junit.Test;
 

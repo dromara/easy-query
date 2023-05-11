@@ -17,6 +17,9 @@ public interface Insertable<T> extends SqlExecuteRows, Interceptable<Insertable<
     Insertable<T> insert(T entity);
 
     default Insertable<T> insert(Collection<T> entities) {
+        if(entities==null){
+            return this;
+        }
         for (T entity : entities) {
             insert(entity);
         }

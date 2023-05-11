@@ -192,7 +192,7 @@ public class QuerySqlExpression implements EasyQuerySqlExpression {
             onlyWhere=false;
             sql.append(" LIMIT ");
             if (this.offset > 0) {
-                sql.append(this.offset).append(" OFFSET ").append(this.rows);
+                sql.append(this.rows).append(" OFFSET ").append(this.offset);
             } else {
                 sql.append(this.rows);
             }

@@ -1,14 +1,16 @@
 package com.easy.query.test;
 
-import com.easy.query.BaseTest;
+import com.easy.query.core.exception.EasyQueryConcurrentException;
+import com.easy.query.test.BaseTest;
 import com.easy.query.core.basic.api.update.impl.EasyEntityUpdatable;
 import com.easy.query.core.enums.SqlExecuteStrategyEnum;
 import com.easy.query.core.basic.plugin.track.TrackManager;
-import com.easy.query.entity.Topic;
+import com.easy.query.test.entity.Topic;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Random;
+import java.util.UUID;
 
 /**
  * @FileName: UpdateTest.java
@@ -196,5 +198,17 @@ public class UpdateTest extends BaseTest {
                 .setSqlStrategy(SqlExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS)
                 .executeRows();
         Assert.assertEquals(1,l1);
+    }
+    @Test
+    public void updateTest10() {
+        try {
+
+            easyQuery.updatable(Topic.class)
+                    .set(Topic::getStars, 12)
+                    .where(o -> o.eq(Topic::getId, UUID.randomUUID().toString()))
+                    .executeRows(1,"123");
+        }catch (Exception e){
+            Assert.assertEquals(EasyQueryConcurrentException.class,e.getClass());
+        }
     }
 }

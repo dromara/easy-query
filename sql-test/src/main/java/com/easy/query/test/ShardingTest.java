@@ -1,17 +1,16 @@
 package com.easy.query.test;
 
-import com.easy.query.BaseTest;
+import com.easy.query.test.BaseTest;
 import com.easy.query.core.api.pagination.EasyPageResult;
-import com.easy.query.dto.TopicShardingGroup;
-import com.easy.query.entity.TopicSharding;
-import com.easy.query.entity.TopicShardingTime;
+import com.easy.query.test.dto.TopicShardingGroup;
+import com.easy.query.test.entity.TopicSharding;
+import com.easy.query.test.entity.TopicShardingTime;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 

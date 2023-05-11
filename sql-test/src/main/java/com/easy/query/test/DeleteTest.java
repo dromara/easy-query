@@ -1,8 +1,8 @@
 package com.easy.query.test;
 
-import com.easy.query.BaseTest;
+import com.easy.query.test.BaseTest;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
-import com.easy.query.entity.Topic;
+import com.easy.query.test.entity.Topic;
 import org.junit.Assert;
 import org.junit.Test;
 

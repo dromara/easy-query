@@ -1,8 +1,8 @@
 package com.easy.query.test;
 
-import com.easy.query.BaseTest;
-import com.easy.query.entity.SysUserVersionLong;
-import com.easy.query.entity.SysUserVersionLongLogicDel;
+import com.easy.query.test.BaseTest;
+import com.easy.query.test.entity.SysUserVersionLong;
+import com.easy.query.test.entity.SysUserVersionLongLogicDel;
 import org.junit.Assert;
 import org.junit.Test;
 
