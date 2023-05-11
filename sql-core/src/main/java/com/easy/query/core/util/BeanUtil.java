@@ -1,6 +1,7 @@
 package com.easy.query.core.util;
 
 import com.easy.query.core.common.bean.FastBean;
+import com.easy.query.core.expression.lambda.PropertySetterCaller;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
@@ -15,6 +16,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 
 /**
@@ -32,6 +34,7 @@ public class BeanUtil {
      *
      * @param source 源对象
      * @param target 目标对象
+     * @param propertyNameSet 哪些属性需要拷贝
      */
     public static void copyProperties(Object source, Object target, Set<String> propertyNameSet) {
         Class<?> sourceClass = source.getClass();
@@ -144,7 +147,7 @@ public class BeanUtil {
 
         Collection<String> properties = entityMetadata.getProperties();
         LinkedHashSet<String> matchProperties = new LinkedHashSet<>(properties.size());
-        FastBean fastBean = EasyUtil.getFastBean(entityClass);
+        FastBean fastBean = getFastBean(entityClass);
         for (String propertyName : properties) {
             ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(propertyName);
             Property<Object, ?> propertyGetter = fastBean.getBeanGetter(columnMetadata.getProperty());
@@ -155,5 +158,16 @@ public class BeanUtil {
             }
         }
         return matchProperties;
+    }
+    private static final Map<Class<?>, FastBean> CLASS_PROPERTY_FAST_BEAN_CACHE = new ConcurrentHashMap<>();
+
+    public static FastBean getFastBean(Class<?> entityClass) {
+        return CLASS_PROPERTY_FAST_BEAN_CACHE.computeIfAbsent(entityClass, key -> new FastBean(entityClass));
+    }
+    public static Property<Object, ?> getPropertyGetterLambda(Class<?> entityClass, String propertyName, Class<?> fieldType) {
+        return getFastBean(entityClass).getBeanGetter(propertyName, fieldType);
+    }
+    public static PropertySetterCaller<Object> getPropertySetterLambda(Class<?> entityClass, PropertyDescriptor prop) {
+        return getFastBean(entityClass).getBeanSetter(prop);
     }
 }

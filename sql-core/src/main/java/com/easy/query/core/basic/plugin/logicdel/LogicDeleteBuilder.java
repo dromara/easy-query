@@ -6,6 +6,7 @@ import com.easy.query.core.expression.parser.core.SqlWherePredicate;
 import com.easy.query.core.expression.parser.core.SqlColumnSetter;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.LogicDeleteMetadata;
+import com.easy.query.core.util.BeanUtil;
 import com.easy.query.core.util.EasyUtil;
 
 /**
@@ -35,7 +36,7 @@ public class LogicDeleteBuilder {
         entityMetadata.setLogicDeleteMetadata(new LogicDeleteMetadata(propertyName,sqlPredicateSqlExpression, deletedSqlExpression));
     }
     public Property<Object,?> getPropertyLambda(){
-        return EasyUtil.getFastBean(entityMetadata.getEntityClass()).getBeanGetter(propertyName,propertyType);
+        return BeanUtil.getFastBean(entityMetadata.getEntityClass()).getBeanGetter(propertyName,propertyType);
     }
 
     public EntityMetadata getEntityMetadata() {

@@ -24,6 +24,7 @@ import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.enums.sharding.ShardingOperatorEnum;
 import com.easy.query.core.sharding.rule.RouteRuleFilter;
+import com.easy.query.core.util.BeanUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.ClassUtil;
 import com.easy.query.core.util.EasyUtil;
@@ -215,7 +216,7 @@ public class RoutePredicateDiscover {
 
     private RoutePredicateExpression getEntitySqlRouteParseExpression(Object entity) {
         ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(mainShardingProperty);
-        Property<Object, ?> shardingKeyPropertyGetter = EasyUtil.getFastBean(entityMetadata.getEntityClass()).getBeanGetter(columnMetadata.getProperty());
+        Property<Object, ?> shardingKeyPropertyGetter = BeanUtil.getFastBean(entityMetadata.getEntityClass()).getBeanGetter(columnMetadata.getProperty());
         Object shardingValue = shardingKeyPropertyGetter.apply(entity);
         RouteFunction<String> routePredicate = routeRuleFilter.routeFilter(shardingValue, ShardingOperatorEnum.EQUAL, mainShardingProperty, true,true);
         return new RoutePredicateExpression(routePredicate);

@@ -122,7 +122,7 @@ public final class StreamResultUtil {
         EasyResultSet easyResultSet = new EasyResultSet(streamResult);
         TResult bean = ClassUtil.newInstance(clazz);
 
-        FastBean beanFastSetter = EasyUtil.getFastBean(clazz);
+        FastBean beanFastSetter = BeanUtil.getFastBean(clazz);
         for (int i = 0; i < columnMetadatas.length; i++) {
             ColumnMetadata columnMetadata = columnMetadatas[i];
             if (columnMetadata == null) {

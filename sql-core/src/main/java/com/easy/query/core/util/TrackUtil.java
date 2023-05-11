@@ -27,14 +27,13 @@ public class TrackUtil {
     /**
      * 返回未null表示当前对象没有追踪key无法追踪
      * 属性名+冒号+属性值多个之间用逗号分割,除了key外额外添加分片字段
-     * @param entityMetadataManager
+     * @param entityMetadata
      * @param entity
      * @return userId:123,userName:xxxx
      */
-    public static String getTrackKey(EntityMetadataManager entityMetadataManager, Object entity) {
+    public static String getTrackKey(EntityMetadata entityMetadata, Object entity) {
         //构建获取对象追踪key表达式缓存
         TrackKeyFunc<Object> entityTrackKeyFunc = trackKeyFuncMap.computeIfAbsent(entity.getClass(), k -> {
-            EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(entity.getClass());
             Collection<String> keyProperties = entityMetadata.getKeyProperties();
             int shardingCapacity=0;
             boolean multiDataSourceMapping = entityMetadata.isMultiDataSourceMapping();
@@ -46,7 +45,7 @@ public class TrackUtil {
                 shardingCapacity++;
             }
             LinkedHashMap<String, Property<Object, ?>> propertiesMap = new LinkedHashMap<>(keyProperties.size()+shardingCapacity);
-            FastBean fastBean = EasyUtil.getFastBean(entity.getClass());
+            FastBean fastBean = BeanUtil.getFastBean(entity.getClass());
             for (String keyProperty : keyProperties) {
                 ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(keyProperty);
                 Property<Object, ?> lambdaProperty = fastBean.getBeanGetter(columnMetadata.getProperty());
@@ -107,7 +106,7 @@ public class TrackUtil {
 
         Map<String, TrackDiffEntry> diffProperties =new LinkedHashMap<>();
         Collection<String> properties = entityMetadata.getProperties();
-        FastBean fastBean = EasyUtil.getFastBean(entityClass);
+        FastBean fastBean = BeanUtil.getFastBean(entityClass);
         for (String propertyName : properties) {
             ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(propertyName);
             Property<Object, ?> propertyGetter = fastBean.getBeanGetter(propertyName, columnMetadata.getProperty().getPropertyType());
@@ -133,7 +132,7 @@ public class TrackUtil {
 
         Set<String> ignoreSets = new HashSet<>();
         Collection<String> properties = entityMetadata.getProperties();
-        FastBean fastBean = EasyUtil.getFastBean(entityClass);
+        FastBean fastBean = BeanUtil.getFastBean(entityClass);
         for (String propertyName : properties) {
             ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(propertyName);
             Property<Object, ?> propertyGetter = fastBean.getBeanGetter(propertyName, columnMetadata.getProperty().getPropertyType());

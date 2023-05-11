@@ -23,9 +23,6 @@ public abstract class AbstractQueryJdbcCommand extends AbstractJdbcCommand<Query
     @Override
     public QueryExecuteResult execute() throws SQLException {
         if(streamMergeContext.isSharding()){
-            if(streamMergeContext.getRows()<=0){
-                return defaultResult();
-            }
             Collection<ExecutionUnit> executionUnits = streamMergeContext.getExecutionUnits();
             if(EasyCollectionUtil.isEmpty(executionUnits)){
                 if(streamMergeContext.getRuntimeContext().getEasyQueryConfiguration().getEasyQueryOption().isThrowIfRouteNotMatch()){
@@ -33,7 +30,6 @@ public abstract class AbstractQueryJdbcCommand extends AbstractJdbcCommand<Query
                 }
                 return defaultResult();
             }
-
         }
         return super.execute();
     }

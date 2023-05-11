@@ -162,7 +162,7 @@ public class JdbcExecutorUtil {
                 ResultSet keysSet = ps.getGeneratedKeys();
                 int index = 0;
                 PropertyDescriptor[] incrementProperty = new PropertyDescriptor[incrementColumns.size()];
-                FastBean beanFastSetter = EasyUtil.getFastBean(entityClass);
+                FastBean beanFastSetter = BeanUtil.getFastBean(entityClass);
                 while (keysSet.next()) {
                     T entity = entities.get(index);
                     for (int i = 0; i < incrementColumns.size(); i++) {

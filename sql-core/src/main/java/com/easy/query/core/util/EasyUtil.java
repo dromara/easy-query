@@ -72,16 +72,5 @@ public class EasyUtil {
         return anonymousTable.getEntityMetadata().getPropertyNameOrNull(alias,alias);
     }
 
-    private static Map<Class<?>, FastBean> CLASS_PROPERTY_FAST_BEAN_CACHE = new ConcurrentHashMap<>();
-
-    public static FastBean getFastBean(Class<?> entityClass) {
-        return CLASS_PROPERTY_FAST_BEAN_CACHE.computeIfAbsent(entityClass, key -> new FastBean(entityClass));
-    }
-    public static Property<Object, ?> getPropertyGetterLambda(Class<?> entityClass, String propertyName, Class<?> fieldType) {
-        return getFastBean(entityClass).getBeanGetter(propertyName, fieldType);
-    }
-    public static PropertySetterCaller<Object> getPropertySetterLambda(Class<?> entityClass, PropertyDescriptor prop) {
-        return getFastBean(entityClass).getBeanSetter(prop);
-    }
 }
 

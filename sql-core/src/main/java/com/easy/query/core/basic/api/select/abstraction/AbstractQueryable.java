@@ -49,6 +49,7 @@ import com.easy.query.core.enums.EasyAggregate;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
+import com.easy.query.core.util.BeanUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.ClassUtil;
 import com.easy.query.core.util.EasyUtil;
@@ -471,7 +472,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
                         String objectPropertyName = getObjectPropertyMappingPropertyName(entityPropertyNode, q, field.getName());
                         EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(propertyQueryEntityClass);
                         ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(objectPropertyName);
-                        FastBean fastBean = EasyUtil.getFastBean(propertyQueryEntityClass);
+                        FastBean fastBean = BeanUtil.getFastBean(propertyQueryEntityClass);
                         Property propertyLambda = fastBean.getBeanGetter(objectPropertyName, columnMetadata.getProperty().getPropertyType());
 
                         switch (q.type()) {
@@ -583,7 +584,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
                     }
                     EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(orderByEntityClass);
                     ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(property);
-                    FastBean fastBean = EasyUtil.getFastBean(orderByEntityClass);
+                    FastBean fastBean = BeanUtil.getFastBean(orderByEntityClass);
                     Property propertyLambda = fastBean.getBeanGetter(columnMetadata.getProperty());
                     SqlColumnSelector<?> sqlColumnSelector = matchOrderBySqlColumnSelector(orderByEntityClass, orderByPropertyNode.isAsc());
                     if (sqlColumnSelector == null) {

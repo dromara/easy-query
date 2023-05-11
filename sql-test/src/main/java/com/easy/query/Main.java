@@ -124,7 +124,7 @@ public class Main {
 //        EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(BlogEntity.class);
 //        ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull("title");
 //        BlogEntity blog = new BlogEntity();
-//        FastBean beanFastSetter = EasyUtil.getFastBean(BlogEntity.class);
+//        FastBean beanFastSetter = BeanUtil.getFastBean(BlogEntity.class);
 //        PropertySetterCaller<Object> beanSetter = beanFastSetter.getBeanSetter(columnMetadata.getProperty());
 //        beanSetter.call(blog,"123");
 //        {

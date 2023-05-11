@@ -152,7 +152,7 @@ public  class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionB
                 VersionMetadata versionMetadata = entityMetadata.getVersionMetadata();
                 String propertyName = versionMetadata.getPropertyName();
                 ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(propertyName);
-                FastBean fastBean = EasyUtil.getFastBean(table.getEntityClass());
+                FastBean fastBean = BeanUtil.getFastBean(table.getEntityClass());
                 EasyVersionStrategy easyVersionStrategy = versionMetadata.getEasyVersionStrategy();
                 Object newVersionValue = easyVersionStrategy.nextVersion(entityMetadata, propertyName, version);
                 sqlColumnSetter.set(fastBean.getBeanGetter(columnMetadata.getProperty()), newVersionValue);
@@ -297,7 +297,7 @@ public  class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionB
     }
 
     private Object getPredicateValue(Object entity, TrackContext trackContext, String propertyName, EntityMetadata entityMetadata) {
-        FastBean fastBean = EasyUtil.getFastBean(entityMetadata.getEntityClass());
+        FastBean fastBean = BeanUtil.getFastBean(entityMetadata.getEntityClass());
         ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(propertyName);
         Property<Object, ?> beanGetter = fastBean.getBeanGetter(columnMetadata.getProperty());
         if (trackContext != null) {

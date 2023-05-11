@@ -17,6 +17,7 @@ import com.easy.query.core.basic.plugin.interceptor.EasyPredicateFilterIntercept
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.metadata.VersionMetadata;
+import com.easy.query.core.util.BeanUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyUtil;
 
@@ -62,7 +63,7 @@ public abstract class AbstractPredicateEntityExpressionBuilder extends AbstractE
                 if (isExpression()) {
                     Object version = sqlExpressionContext.getVersion();
                     if (Objects.nonNull(version)) {
-                        FastBean fastBean = EasyUtil.getFastBean(table.getEntityClass());
+                        FastBean fastBean = BeanUtil.getFastBean(table.getEntityClass());
                         sqlPredicate.eq(fastBean.getBeanGetter(columnMetadata.getProperty()), version);
                     }
                 } else {

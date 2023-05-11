@@ -29,6 +29,7 @@ import com.easy.query.core.expression.sql.builder.EntityDeleteExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.metadata.VersionMetadata;
+import com.easy.query.core.util.BeanUtil;
 import com.easy.query.core.util.ClassUtil;
 import com.easy.query.core.util.EasyUtil;
 
@@ -100,7 +101,7 @@ public class DeleteExpressionBuilder extends AbstractPredicateEntityExpressionBu
                         Object version = getExpressionContext().getVersion();
                         if(Objects.nonNull(version)){
                             ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(propertyName);
-                            FastBean fastBean = EasyUtil.getFastBean(entityMetadata.getEntityClass());
+                            FastBean fastBean = BeanUtil.getFastBean(entityMetadata.getEntityClass());
                             Object nextVersion = easyVersionStrategy.nextVersion(entityMetadata, propertyName, version);
                             sqlColumnSetter.set(fastBean.getBeanGetter(columnMetadata.getProperty()),nextVersion);
                         }

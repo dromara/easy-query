@@ -6,6 +6,7 @@ import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.parser.core.SqlColumnSetter;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
+import com.easy.query.core.util.BeanUtil;
 import com.easy.query.core.util.EasyUtil;
 import com.easy.query.entity.TopicInterceptor;
 import com.easy.query.logicdel.CurrentUserHelper;
@@ -65,12 +66,12 @@ public class MyEntityInterceptor implements EasyEntityInterceptor, EasyUpdateSet
         if(!entityUpdateExpressionBuilder.getSetColumns().containsOnce(entityClass,updateBy)){
             String userId = CurrentUserHelper.getUserId();
             //获取updateBy属性的lambda表达式
-            Property<Object, ?> propertyLambda = EasyUtil.getPropertyGetterLambda(entityClass, updateBy, String.class);
+            Property<Object, ?> propertyLambda = BeanUtil.getPropertyGetterLambda(entityClass, updateBy, String.class);
             sqlColumnSetter.set(propertyLambda,userId);
         }
         if(!entityUpdateExpressionBuilder.getSetColumns().containsOnce(entityClass,updateTime)){
             //获取updateTime属性的lambda表达式
-            Property<Object, ?> propertyLambda = EasyUtil.getPropertyGetterLambda(entityClass, updateTime, LocalDateTime.class);
+            Property<Object, ?> propertyLambda = BeanUtil.getPropertyGetterLambda(entityClass, updateTime, LocalDateTime.class);
             sqlColumnSetter.set(propertyLambda,LocalDateTime.now());
         }
     }
