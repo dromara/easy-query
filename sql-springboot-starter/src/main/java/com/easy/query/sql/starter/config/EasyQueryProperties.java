@@ -44,6 +44,9 @@ public class EasyQueryProperties {
      */
     private boolean throwIfRouteNotMatch =true;
 
+    private  long shardingExecuteTimeoutMillis=30000L;
+    private  long shardingGroupExecuteTimeoutMillis=20000L;
+
     public Boolean getEnable() {
         return enable;
     }
@@ -142,6 +145,22 @@ public class EasyQueryProperties {
 
     public void setThrowIfRouteNotMatch(boolean throwIfRouteNotMatch) {
         this.throwIfRouteNotMatch = throwIfRouteNotMatch;
+    }
+
+    public long getShardingExecuteTimeoutMillis() {
+        return shardingExecuteTimeoutMillis;
+    }
+
+    public void setShardingExecuteTimeoutMillis(long shardingExecuteTimeoutMillis) {
+        this.shardingExecuteTimeoutMillis = shardingExecuteTimeoutMillis;
+    }
+
+    public long getShardingGroupExecuteTimeoutMillis() {
+        return shardingGroupExecuteTimeoutMillis;
+    }
+
+    public void setShardingGroupExecuteTimeoutMillis(long shardingGroupExecuteTimeoutMillis) {
+        this.shardingGroupExecuteTimeoutMillis = shardingGroupExecuteTimeoutMillis;
     }
 
     public EasyQueryProperties() {

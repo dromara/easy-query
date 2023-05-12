@@ -139,6 +139,8 @@ public class EasyQueryStarterAutoConfiguration {
                     builder.setExecutorMaximumPoolSize(easyQueryProperties.getExecutorMaximumPoolSize());
                     builder.setExecutorCorePoolSize(easyQueryProperties.getExecutorCorePoolSize());
                     builder.setThrowIfRouteNotMatch(easyQueryProperties.isThrowIfRouteNotMatch());
+                    builder.setShardingExecuteTimeoutMillis(easyQueryProperties.getShardingExecuteTimeoutMillis());
+                    builder.setShardingGroupExecuteTimeoutMillis(easyQueryProperties.getShardingGroupExecuteTimeoutMillis());
                 })
                 .replaceService(NameConversion.class, nameConversion)
                 .replaceServiceFactory(EasyQueryDataSource.class, sp -> new DefaultEasyQueryDataSource("ds0", sp.getService(DataSource.class)))

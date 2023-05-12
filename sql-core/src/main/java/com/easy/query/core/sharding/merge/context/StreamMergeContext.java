@@ -3,6 +3,7 @@ package com.easy.query.core.sharding.merge.context;
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.con.EasyConnection;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
+import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
@@ -20,6 +21,7 @@ import java.util.List;
  * @author xuejiaming
  */
 public interface StreamMergeContext extends AutoCloseable {
+    EasyQueryOption getEasyQueryOption();
     ConnectionModeEnum getConnectionMode();
     void terminatedBreak();
     boolean isTerminated();

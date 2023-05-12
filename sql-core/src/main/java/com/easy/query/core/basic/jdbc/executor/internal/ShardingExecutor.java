@@ -66,8 +66,9 @@ public class ShardingExecutor {
         //如果是有多条sql要执行那么就进行并行处理以数据源DataSourceName多组 每组再以maxQueryConnectionsLimit为一组进行同数据源下顺序并行查询
         List<Future<List<TResult>>> futures = executeFuture0(streamMergeContext, executor, dataSourceSqlExecutorUnits);
 
-        EasyQueryOption easyQueryOption = streamMergeContext.getRuntimeContext().getEasyQueryConfiguration().getEasyQueryOption();
-        List<TResult> results = new ArrayList<>(futures.size() * easyQueryOption.getMaxShardingQueryLimit());
+        EasyQueryOption easyQueryOption = streamMergeContext.getEasyQueryOption();
+        int groupSize =streamMergeContext.isSerialExecute()?1: streamMergeContext.getMaxShardingQueryLimit();
+        List<TResult> results = new ArrayList<>(futures.size() * groupSize);
         for (Future<List<TResult>> future : futures) {
             try {
                 results.addAll(future.get(60L, TimeUnit.SECONDS));

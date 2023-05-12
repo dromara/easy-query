@@ -19,6 +19,8 @@ public class EasyQueryOptionBuilder {
     private int executorCorePoolSize;
     private ConnectionModeEnum connectionMode;
     private boolean throwIfRouteNotMatch;
+    private  long shardingExecuteTimeoutMillis;
+    private  long shardingGroupExecuteTimeoutMillis;
 
     public EasyQueryOptionBuilder() {
         this.deleteThrowError = true;
@@ -29,6 +31,8 @@ public class EasyQueryOptionBuilder {
         this.executorMaximumPoolSize = 0;
         this.executorCorePoolSize = Math.min(Runtime.getRuntime().availableProcessors(), 4);
         this.throwIfRouteNotMatch = true;
+        this.shardingExecuteTimeoutMillis = 30000L;
+        this.shardingGroupExecuteTimeoutMillis = 20000L;
     }
     public void setDeleteThrowError(boolean deleteThrowError) {
         this.deleteThrowError = deleteThrowError;
@@ -60,7 +64,16 @@ public class EasyQueryOptionBuilder {
         this.throwIfRouteNotMatch = throwIfRouteNotMatch;
     }
 
+    public void setShardingExecuteTimeoutMillis(long shardingExecuteTimeoutMillis) {
+        this.shardingExecuteTimeoutMillis = shardingExecuteTimeoutMillis;
+    }
+
+    public void setShardingGroupExecuteTimeoutMillis(long shardingGroupExecuteTimeoutMillis) {
+        this.shardingGroupExecuteTimeoutMillis = shardingGroupExecuteTimeoutMillis;
+    }
+
     public EasyQueryOption build(){
-        return new EasyQueryOption(this.deleteThrowError,this.insertStrategy,this.updateStrategy,this.connectionMode,this.maxShardingQueryLimit,this.executorMaximumPoolSize,this.executorCorePoolSize,this.throwIfRouteNotMatch);
+        return new EasyQueryOption(this.deleteThrowError,this.insertStrategy,this.updateStrategy,this.connectionMode,this.maxShardingQueryLimit,this.executorMaximumPoolSize,this.executorCorePoolSize,this.throwIfRouteNotMatch,
+                this.shardingExecuteTimeoutMillis,this.shardingGroupExecuteTimeoutMillis);
     }
 }

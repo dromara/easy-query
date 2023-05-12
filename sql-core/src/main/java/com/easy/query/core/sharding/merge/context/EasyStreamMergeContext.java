@@ -5,6 +5,7 @@ import com.easy.query.core.basic.jdbc.con.ConnectionStrategyEnum;
 import com.easy.query.core.basic.jdbc.con.EasyConnection;
 import com.easy.query.core.basic.jdbc.con.EasyConnectionManager;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
+import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.executor.parser.ExecutionContext;
@@ -37,6 +38,7 @@ public class EasyStreamMergeContext implements StreamMergeContext {
     protected final ExecutorContext executorContext;
     protected final ExecutionContext executionContext;
     protected final EasyConnectionManager connectionManager;
+    protected final EasyQueryOption easyQueryOption;
 
     //    public DefaultStreamMergeContext(List<ExecutionUnit> executionUnits, EntityExpression entityExpression){
 //
@@ -54,6 +56,7 @@ public class EasyStreamMergeContext implements StreamMergeContext {
         this.runtimeContext= executorContext.getRuntimeContext();
         this.connectionManager=runtimeContext.getConnectionManager();
         this.serialExecute= executorContext.isSerialExecute();
+       this.easyQueryOption= runtimeContext.getEasyQueryConfiguration().getEasyQueryOption();
     }
 
     @Override
@@ -64,6 +67,11 @@ public class EasyStreamMergeContext implements StreamMergeContext {
     @Override
     public boolean isSharding() {
         return false;
+    }
+
+    @Override
+    public EasyQueryOption getEasyQueryOption() {
+        return easyQueryOption;
     }
 
     @Override
