@@ -41,23 +41,6 @@ public class DefaultConnectionManager implements EasyConnectionManager {
 
     @Override
     public EasyConnection getEasyConnection(String dataSourceName, ConnectionStrategyEnum connectionStrategy) {
-//        if(ConnectionStrategyEnum.ShareConnection.equals(connectionStrategy)){
-//
-//            Transaction transaction = threadTx.get();
-//            if(transaction!=null){
-//                EasyConnection easyConnection = threadConnection.get();
-//                if(easyConnection==null){
-//
-//                    easyConnection=doGetEasyConnection(dataSourceName,transaction.getIsolationLevel());
-//                    easyConnection.setAutoCommit(false);
-//                    threadConnection.set(easyConnection);
-//                }
-//                return easyConnection;
-//            }
-//            return doGetEasyConnection(dataSourceName,null);
-//        }else{
-//            return doGetEasyConnection(dataSourceName,null);
-//        }
 
         if (ConnectionStrategyEnum.ShareConnection.equals(connectionStrategy)) {
             Transaction transaction = threadTx.get();
@@ -69,14 +52,14 @@ public class DefaultConnectionManager implements EasyConnectionManager {
                 }
                 EasyConnection easyConnection = easyDataSourceConnection.getEasyConnectionOrNull(dataSourceName);
                 if (easyConnection == null) {
-                    easyConnection = easyConnectionFactory.createEasyConnection(dataSourceName, transaction.getIsolationLevel());
+                    easyConnection = easyConnectionFactory.createEasyConnection(dataSourceName, transaction.getIsolationLevel(),connectionStrategy);
                     easyConnection.setAutoCommit(false);
                     easyDataSourceConnection.putIfAbsent(dataSourceName, easyConnection);
                 }
                 return easyConnection;
             }
         }
-        return easyConnectionFactory.createEasyConnection(dataSourceName, null);
+        return easyConnectionFactory.createEasyConnection(dataSourceName, null,connectionStrategy);
     }
 
     @Override

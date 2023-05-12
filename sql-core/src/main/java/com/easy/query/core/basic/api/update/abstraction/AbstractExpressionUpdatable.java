@@ -57,7 +57,7 @@ public abstract class AbstractExpressionUpdatable<T> extends AbstractSqlExecuteR
     public long executeRows() {
         EasyQueryRuntimeContext runtimeContext = entityUpdateExpressionBuilder.getRuntimeContext();
         EntityExpressionExecutor entityExpressionExecutor = runtimeContext.getEntityExpressionExecutor();
-        return entityExpressionExecutor.executeRows(ExecutorContext.create(entityUpdateExpressionBuilder.getRuntimeContext(),true, ExecuteMethodEnum.UPDATE), entityUpdateExpressionBuilder);
+        return entityExpressionExecutor.executeRows(ExecutorContext.create(entityUpdateExpressionBuilder.getRuntimeContext(),false, ExecuteMethodEnum.UPDATE), entityUpdateExpressionBuilder);
     }
 
     @Override

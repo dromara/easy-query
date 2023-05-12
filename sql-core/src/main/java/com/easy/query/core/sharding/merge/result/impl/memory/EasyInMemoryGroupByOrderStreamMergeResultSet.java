@@ -4,7 +4,7 @@ import com.easy.query.core.expression.segment.AggregationColumnSegment;
 import com.easy.query.core.expression.segment.SqlSegment;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
-import com.easy.query.core.sharding.merge.context.StreamMergeContext;
+import com.easy.query.core.sharding.context.StreamMergeContext;
 import com.easy.query.core.sharding.merge.result.StreamResultSet;
 import com.easy.query.core.sharding.merge.result.aggregation.AggregationUnitFactory;
 import com.easy.query.core.sharding.merge.result.impl.AggregateValue;

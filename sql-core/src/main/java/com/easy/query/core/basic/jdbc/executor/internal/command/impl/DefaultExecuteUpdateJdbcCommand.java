@@ -4,7 +4,7 @@ import com.easy.query.core.basic.jdbc.executor.internal.result.impl.AffectedRows
 import com.easy.query.core.basic.jdbc.executor.internal.command.abstraction.AbstractAffectedRowsJdbcCommand;
 import com.easy.query.core.basic.jdbc.executor.internal.unit.impl.EasyExecuteUpdateExecutor;
 import com.easy.query.core.basic.jdbc.executor.internal.unit.Executor;
-import com.easy.query.core.sharding.merge.context.StreamMergeContext;
+import com.easy.query.core.sharding.context.StreamMergeContext;
 
 /**
  * create time 2023/4/21 22:07

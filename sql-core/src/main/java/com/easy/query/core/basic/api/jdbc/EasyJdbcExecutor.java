@@ -35,6 +35,6 @@ public class EasyJdbcExecutor implements JdbcExecutor {
     public long sqlExecute(String sql, List<Object> parameters) {
         List<SQLParameter> sqlParameters = EasyCollectionUtil.map(parameters, o -> new EasyConstSQLParameter(null, null, o));
         EntityExpressionExecutor entityExpressionExecutor = runtimeContext.getEntityExpressionExecutor();
-        return entityExpressionExecutor.executeSqlRows(ExecutorContext.create(runtimeContext,true,ExecuteMethodEnum.UNKNOWN), sql, sqlParameters);
+        return entityExpressionExecutor.executeSqlRows(ExecutorContext.create(runtimeContext,false,ExecuteMethodEnum.UNKNOWN), sql, sqlParameters);
     }
 }

@@ -38,6 +38,16 @@ public abstract class ShardingBaseExecutionCreator extends BaseExecutionCreator{
     }
 
     @Override
+    protected boolean isCrossTable() {
+        return routeContext.getEntityRouteResult().isCrossTable();
+    }
+
+    @Override
+    protected boolean isCrossDataSource() {
+        return routeContext.getEntityRouteResult().isCrossDataSource();
+    }
+
+    @Override
     protected Collection<ExecutionUnit> createExecutionUnits() {
         List<RouteUnit> routeUnits = getRouteUnits();
         List<ExecutionUnit> executionUnits = new ArrayList<>(routeUnits.size());

@@ -2,7 +2,7 @@ package com.easy.query.core.basic.jdbc.executor.internal.merger.impl;
 
 import com.easy.query.core.basic.jdbc.executor.internal.merger.abstraction.AbstractShardingMerger;
 import com.easy.query.core.basic.jdbc.executor.internal.result.impl.AffectedRowsExecuteResult;
-import com.easy.query.core.sharding.merge.context.StreamMergeContext;
+import com.easy.query.core.sharding.context.StreamMergeContext;
 
 import java.util.Collection;
 

@@ -2,8 +2,7 @@ package com.easy.query.core.basic.jdbc.executor.internal.command.impl;
 
 import com.easy.query.core.basic.jdbc.executor.internal.command.abstraction.AbstractQueryJdbcCommand;
 import com.easy.query.core.basic.jdbc.executor.internal.result.impl.QueryExecuteResult;
-import com.easy.query.core.basic.jdbc.executor.internal.command.abstraction.AbstractJdbcCommand;
-import com.easy.query.core.sharding.merge.context.StreamMergeContext;
+import com.easy.query.core.sharding.context.StreamMergeContext;
 import com.easy.query.core.basic.jdbc.executor.internal.unit.impl.EasyQueryExecutor;
 import com.easy.query.core.basic.jdbc.executor.internal.unit.Executor;
 

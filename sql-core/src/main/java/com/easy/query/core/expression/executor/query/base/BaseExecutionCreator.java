@@ -32,10 +32,17 @@ public abstract class BaseExecutionCreator implements ExecutionCreator{
         return new  ExecutionUnit(dataSource, sqlUnit);
     }
     protected ExecutionContext createExecutionContext(Collection<ExecutionUnit> executionUnits){
-        return new ExecutionContext(executionUnits,sequenceQuery());
+        return new ExecutionContext(executionUnits,sequenceQuery(),isCrossTable(),isCrossDataSource());
     }
 
+
     protected boolean sequenceQuery(){
+        return false;
+    }
+    protected boolean isCrossTable(){
+        return false;
+    }
+    protected boolean isCrossDataSource(){
         return false;
     }
     @Override

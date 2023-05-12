@@ -7,5 +7,5 @@ package com.easy.query.core.basic.jdbc.con;
  * @author xuejiaming
  */
 public interface EasyConnectionFactory {
-    EasyConnection createEasyConnection(String dataSourceName, Integer isolationLevel);
+    EasyConnection createEasyConnection(String dataSourceName, Integer isolationLevel,ConnectionStrategyEnum connectionStrategy);
 }

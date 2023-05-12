@@ -1,6 +1,6 @@
 package com.easy.query.core.sharding.merge.result.impl.memory.single;
 
-import com.easy.query.core.sharding.merge.context.StreamMergeContext;
+import com.easy.query.core.sharding.context.StreamMergeContext;
 import com.easy.query.core.sharding.merge.result.StreamResultSet;
 import com.easy.query.core.sharding.merge.result.impl.memory.AbstractInMemoryStreamMergeResultSet;
 import com.easy.query.core.sharding.merge.result.impl.memory.row.ConstMemoryResultSetRow;
@@ -9,7 +9,6 @@ import com.easy.query.core.sharding.merge.result.impl.memory.row.MemoryResultSet
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * create time 2023/5/10 11:12

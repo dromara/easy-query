@@ -1,5 +1,6 @@
 package com.easy.query.sql.starter;
 
+import com.easy.query.core.basic.jdbc.con.ConnectionStrategyEnum;
 import com.easy.query.core.basic.jdbc.con.DefaultEasyConnection;
 import com.easy.query.core.basic.jdbc.con.EasyConnection;
 import com.easy.query.core.basic.jdbc.con.EasyConnectionFactory;
@@ -15,12 +16,13 @@ import org.springframework.jdbc.datasource.DataSourceUtils;
 public class SpringEasyConnectionFactory implements EasyConnectionFactory {
     private final EasyQueryDataSource easyQueryDataSource;
 
-    public SpringEasyConnectionFactory(EasyQueryDataSource easyQueryDataSource){
+    public SpringEasyConnectionFactory(EasyQueryDataSource easyQueryDataSource) {
 
         this.easyQueryDataSource = easyQueryDataSource;
     }
+
     @Override
-    public EasyConnection createEasyConnection(String dataSourceName, Integer isolationLevel) {
-        return new DefaultEasyConnection( dataSourceName, DataSourceUtils.getConnection(easyQueryDataSource.getDataSourceNotNull(dataSourceName)),isolationLevel);
+    public EasyConnection createEasyConnection(String dataSourceName, Integer isolationLevel, ConnectionStrategyEnum connectionStrategy) {
+        return new DefaultEasyConnection(dataSourceName, DataSourceUtils.getConnection(easyQueryDataSource.getDataSourceNotNull(dataSourceName,connectionStrategy)), isolationLevel);
     }
 }

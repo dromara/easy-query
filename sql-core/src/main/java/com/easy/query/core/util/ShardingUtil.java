@@ -17,7 +17,7 @@ import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.expression.EasyQuerySqlExpression;
 import com.easy.query.core.expression.sql.expression.EasyTableSqlExpression;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
-import com.easy.query.core.sharding.merge.context.StreamMergeContext;
+import com.easy.query.core.sharding.context.StreamMergeContext;
 import com.easy.query.core.sharding.merge.segment.EntityPropertyGroup;
 import com.easy.query.core.sharding.merge.segment.EntityPropertyOrder;
 import com.easy.query.core.sharding.merge.segment.PropertyGroup;

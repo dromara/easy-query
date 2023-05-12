@@ -129,7 +129,7 @@ public class EasyQueryStarterAutoConfiguration {
     @Bean
     public EasyQuery easyQuery(DataSource dataSource, DatabaseConfiguration databaseConfiguration, NameConversion nameConversion, Map<String, EasyInterceptor> easyInterceptorMap, Map<String, EasyVersionStrategy> easyVersionStrategyMap, Map<String, EasyLogicDeleteStrategy> easyLogicDeleteStrategyMap, Map<String, EasyShardingInitializer> easyShardingInitializerMap, Map<String, EasyEncryptionStrategy> easyEncryptionStrategyMap) {
         EasyQuery easyQuery = EasyQueryBootstrapper.defaultBuilderConfiguration()
-                .setDataSource(dataSource)
+                .setDefaultDataSource(dataSource)
                 .replaceService(EasyConnectionFactory.class,SpringEasyConnectionFactory.class)
                 .optionConfigure(builder->{
                     builder.setDeleteThrowError(easyQueryProperties.getDeleteThrow());
@@ -143,7 +143,6 @@ public class EasyQueryStarterAutoConfiguration {
                     builder.setShardingGroupExecuteTimeoutMillis(easyQueryProperties.getShardingGroupExecuteTimeoutMillis());
                 })
                 .replaceService(NameConversion.class, nameConversion)
-                .replaceServiceFactory(EasyQueryDataSource.class, sp -> new DefaultEasyQueryDataSource("ds0", sp.getService(DataSource.class)))
                 .replaceService(EasyConnectionManager.class, SpringConnectionManager.class)
                 .useDatabaseConfigure(databaseConfiguration)
                 .build();

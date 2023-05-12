@@ -18,6 +18,7 @@ public enum ConnectionStrategyEnum {
     IndependentConnectionMaster,
     /**
      *  用于分库分表下需要聚合的查询查询完成后直接释放从库
+     *  如果当前策略获取不到则会采用IndependentConnectionMaster模式获取
      */
     IndependentConnectionReplica
 }

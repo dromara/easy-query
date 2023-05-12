@@ -20,9 +20,13 @@ public class EasyQueryOption {
     private final boolean throwIfRouteNotMatch;
     private final long shardingExecuteTimeoutMillis;
     private final long shardingGroupExecuteTimeoutMillis;
+    private final EasyQueryReplicaOption replicaOption;
+    private final EasyQueryShardingOption shardingOption;
+    private final String defaultDataSourceName;
 
     public EasyQueryOption(boolean deleteThrowError, SqlExecuteStrategyEnum insertStrategy, SqlExecuteStrategyEnum updateStrategy, ConnectionModeEnum connectionMode, int maxShardingQueryLimit, int executorMaximumPoolSize, int executorCorePoolSize,
-                           boolean throwIfNotMatchRoute,long shardingExecuteTimeoutMillis,long shardingGroupExecuteTimeoutMillis) {
+                           boolean throwIfNotMatchRoute,long shardingExecuteTimeoutMillis,long shardingGroupExecuteTimeoutMillis,
+                           EasyQueryShardingOption shardingOption,EasyQueryReplicaOption replicaOption, String defaultDataSourceName) {
         this.connectionMode = connectionMode;
 
         if(executorMaximumPoolSize<0){
@@ -54,6 +58,9 @@ public class EasyQueryOption {
         this.throwIfRouteNotMatch = throwIfNotMatchRoute;
         this.shardingExecuteTimeoutMillis = shardingExecuteTimeoutMillis;
         this.shardingGroupExecuteTimeoutMillis = shardingGroupExecuteTimeoutMillis;
+        this.shardingOption = shardingOption;
+        this.replicaOption = replicaOption;
+        this.defaultDataSourceName = defaultDataSourceName;
     }
 
     public boolean isDeleteThrowError() {
@@ -94,5 +101,17 @@ public class EasyQueryOption {
 
     public long getShardingGroupExecuteTimeoutMillis() {
         return shardingGroupExecuteTimeoutMillis;
+    }
+
+    public EasyQueryShardingOption getShardingOption() {
+        return shardingOption;
+    }
+
+    public EasyQueryReplicaOption getReplicaOption() {
+        return replicaOption;
+    }
+
+    public String getDefaultDataSourceName() {
+        return defaultDataSourceName;
     }
 }

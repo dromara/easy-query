@@ -57,7 +57,7 @@ public abstract class AbstractEntityUpdatable<T> extends AbstractSqlExecuteRows<
         if (!entities.isEmpty()) {
             updateBefore();
             EntityExpressionExecutor entityExpressionExecutor = entityUpdateExpressionBuilder.getRuntimeContext().getEntityExpressionExecutor();
-            return entityExpressionExecutor.executeRows(ExecutorContext.create(entityUpdateExpressionBuilder.getRuntimeContext(),true, ExecuteMethodEnum.UPDATE), entityUpdateExpressionBuilder,entities);
+            return entityExpressionExecutor.executeRows(ExecutorContext.create(entityUpdateExpressionBuilder.getRuntimeContext(),false, ExecuteMethodEnum.UPDATE), entityUpdateExpressionBuilder,entities);
         }
         return 0;
     }

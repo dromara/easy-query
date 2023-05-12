@@ -15,11 +15,15 @@ public class ExecutionContext {
 //    private final CommandTypeEnum commandType;
     private final Collection<ExecutionUnit> executionUnits;
     private final boolean sequenceQuery;
+    private final boolean isCrossDataSource;
+    private final boolean isCrossTable;
 
-    public ExecutionContext(Collection<ExecutionUnit> executionUnits,boolean sequenceQuery){
+    public ExecutionContext(Collection<ExecutionUnit> executionUnits,boolean sequenceQuery,boolean isCrossTable,boolean isCrossDataSource){
 
         this.executionUnits = executionUnits;
         this.sequenceQuery = sequenceQuery;
+        this.isCrossTable = isCrossTable;
+        this.isCrossDataSource = isCrossDataSource;
     }
 
 
@@ -28,5 +32,13 @@ public class ExecutionContext {
     }
     public boolean isSequenceQuery() {
         return sequenceQuery;
+    }
+
+    public boolean isCrossDataSource() {
+        return isCrossDataSource;
+    }
+
+    public boolean isCrossTable() {
+        return isCrossTable;
     }
 }

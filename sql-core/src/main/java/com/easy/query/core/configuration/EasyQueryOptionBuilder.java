@@ -21,6 +21,9 @@ public class EasyQueryOptionBuilder {
     private boolean throwIfRouteNotMatch;
     private  long shardingExecuteTimeoutMillis;
     private  long shardingGroupExecuteTimeoutMillis;
+    private  EasyQueryReplicaOption replicaOption;
+    private  EasyQueryShardingOption shardingOption;
+    private  String defaultDataSourceName;
 
     public EasyQueryOptionBuilder() {
         this.deleteThrowError = true;
@@ -33,6 +36,7 @@ public class EasyQueryOptionBuilder {
         this.throwIfRouteNotMatch = true;
         this.shardingExecuteTimeoutMillis = 30000L;
         this.shardingGroupExecuteTimeoutMillis = 20000L;
+        this.defaultDataSourceName = "ds0";
     }
     public void setDeleteThrowError(boolean deleteThrowError) {
         this.deleteThrowError = deleteThrowError;
@@ -72,8 +76,23 @@ public class EasyQueryOptionBuilder {
         this.shardingGroupExecuteTimeoutMillis = shardingGroupExecuteTimeoutMillis;
     }
 
+    public void setReplicaOption(EasyQueryReplicaOption replicaOption) {
+        this.replicaOption = replicaOption;
+    }
+
+    public void setDefaultDataSourceName(String defaultDataSourceName) {
+        this.defaultDataSourceName = defaultDataSourceName;
+    }
+
+    public void setShardingOption(EasyQueryShardingOption shardingOption) {
+        this.shardingOption = shardingOption;
+    }
+
+    public boolean isUseReplica(){
+        return replicaOption!=null;
+    }
     public EasyQueryOption build(){
         return new EasyQueryOption(this.deleteThrowError,this.insertStrategy,this.updateStrategy,this.connectionMode,this.maxShardingQueryLimit,this.executorMaximumPoolSize,this.executorCorePoolSize,this.throwIfRouteNotMatch,
-                this.shardingExecuteTimeoutMillis,this.shardingGroupExecuteTimeoutMillis);
+                this.shardingExecuteTimeoutMillis,this.shardingGroupExecuteTimeoutMillis,this.shardingOption,this.replicaOption,this.defaultDataSourceName);
     }
 }

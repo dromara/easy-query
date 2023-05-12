@@ -118,7 +118,7 @@ public class Main {
         }
 
         easyQuery =  EasyQueryBootstrapper.defaultBuilderConfiguration()
-                .setDataSource(dataSource)
+                .setDefaultDataSource(dataSource)
                 .useDatabaseConfigure(new MySqlDatabaseConfiguration())
                 .build();
         EasyQueryRuntimeContext runtimeContext = easyQuery.getRuntimeContext();

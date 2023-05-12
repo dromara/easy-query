@@ -18,9 +18,9 @@ import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityPredicateExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
-import com.easy.query.core.sharding.merge.context.EasyStreamMergeContext;
-import com.easy.query.core.sharding.merge.context.EntityStreamMergeContext;
-import com.easy.query.core.sharding.merge.context.ShardingQueryEasyStreamMergeContext;
+import com.easy.query.core.sharding.context.EasyStreamMergeContext;
+import com.easy.query.core.sharding.context.EntityStreamMergeContext;
+import com.easy.query.core.sharding.context.ShardingQueryEasyStreamMergeContext;
 import com.easy.query.core.util.StreamResultUtil;
 
 import java.util.List;

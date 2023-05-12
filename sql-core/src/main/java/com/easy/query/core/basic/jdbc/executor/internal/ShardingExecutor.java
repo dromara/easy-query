@@ -5,7 +5,7 @@ import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.exception.EasyQueryTimeoutException;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
-import com.easy.query.core.sharding.merge.context.StreamMergeContext;
+import com.easy.query.core.sharding.context.StreamMergeContext;
 import com.easy.query.core.basic.jdbc.executor.internal.common.CommandExecuteUnit;
 import com.easy.query.core.basic.jdbc.executor.internal.common.DataSourceSqlExecutorUnit;
 import com.easy.query.core.basic.jdbc.executor.internal.common.ExecutionUnit;
@@ -67,11 +67,11 @@ public class ShardingExecutor {
         List<Future<List<TResult>>> futures = executeFuture0(streamMergeContext, executor, dataSourceSqlExecutorUnits);
 
         EasyQueryOption easyQueryOption = streamMergeContext.getEasyQueryOption();
-        int groupSize =streamMergeContext.isSerialExecute()?1: streamMergeContext.getMaxShardingQueryLimit();
+        int groupSize =!streamMergeContext.isQuery()?1: streamMergeContext.getMaxShardingQueryLimit();
         List<TResult> results = new ArrayList<>(futures.size() * groupSize);
         for (Future<List<TResult>> future : futures) {
             try {
-                results.addAll(future.get(60L, TimeUnit.SECONDS));
+                results.addAll(future.get(easyQueryOption.getShardingExecuteTimeoutMillis(), TimeUnit.SECONDS));
             } catch (InterruptedException | ExecutionException e) {
                 throw new EasyQueryException(e);
             } catch (TimeoutException e) {
@@ -101,7 +101,7 @@ public class ShardingExecutor {
      * @return
      */
     private static DataSourceSqlExecutorUnit getSqlExecutorGroups(StreamMergeContext streamMergeContext, Grouping<String, ExecutionUnit> sqlGroups) {
-        boolean isSerialExecute = streamMergeContext.isSerialExecute();
+        boolean isSerialExecute = !streamMergeContext.isQuery();
         //如果是顺序查询应该使用顺序的connectionlimit或者表达式指定分片的connectionlimit
         int maxShardingQueryLimit = streamMergeContext.getMaxShardingQueryLimit();
         String dataSourceName = sqlGroups.key();

@@ -23,6 +23,10 @@ import com.easy.query.core.basic.plugin.track.TrackManager;
 import com.easy.query.core.basic.thread.DefaultEasyShardingExecutorService;
 import com.easy.query.core.basic.thread.EasyShardingExecutorService;
 import com.easy.query.core.configuration.EasyQueryOptionBuilder;
+import com.easy.query.core.datasource.DataSourceManager;
+import com.easy.query.core.datasource.DefaultDataSourceManager;
+import com.easy.query.core.datasource.replica.DefaultReplicaDataSourceManager;
+import com.easy.query.core.datasource.replica.ReplicaNode;
 import com.easy.query.core.inject.ServiceCollection;
 import com.easy.query.core.inject.ServiceProvider;
 import com.easy.query.core.inject.impl.ServiceCollectionImpl;
@@ -73,7 +77,7 @@ import java.util.function.Function;
  */
 public class EasyQueryBuilderConfiguration {
     protected DataSource dataSource;
-    protected final EasyQueryOptionBuilder easyQueryOptionBuilder=new EasyQueryOptionBuilder();
+    protected final EasyQueryOptionBuilder easyQueryOptionBuilder = new EasyQueryOptionBuilder();
     private final ServiceCollection serviceCollection = new ServiceCollectionImpl();
 
     public EasyQueryBuilderConfiguration() {
@@ -81,7 +85,7 @@ public class EasyQueryBuilderConfiguration {
     }
 
     private void defaultConfiguration() {
-    replaceServiceFactory(EasyQueryDataSource.class, sp -> new DefaultEasyQueryDataSource("ds0", sp.getService(DataSource.class)))
+        replaceService(EasyQueryDataSource.class, DefaultEasyQueryDataSource.class)
                 .replaceService(Dialect.class, DefaultDialect.class)
                 .replaceService(NameConversion.class, UnderlinedNameConversion.class)
                 .replaceService(EasyQueryConfiguration.class)
@@ -108,19 +112,21 @@ public class EasyQueryBuilderConfiguration {
                 .replaceService(EasyQueryRuntimeContext.class, DefaultEasyQueryRuntimeContext.class)
                 .replaceService(EasyDataSourceConnectionFactory.class, DefaultEasyDataSourceConnectionFactory.class)
                 .replaceService(EasyConnectionFactory.class, DefaultEasyConnectionFactory.class)
+                .replaceService(DataSourceManager.class, DefaultDataSourceManager.class)
                 .replaceService(EasyQuery.class, DefaultEasyQuery.class);
     }
 
-    public EasyQueryBuilderConfiguration setDataSource(DataSource dataSource) {
+    public EasyQueryBuilderConfiguration setDefaultDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
         return this;
     }
 
     /**
      * 添加服务如果已经存在则替换
+     *
      * @param implementType 依赖注入当前实例类型
+     * @param <TImplement>  实现类型
      * @return 当前服务集合
-     * @param <TImplement> 实现类型
      */
     public <TImplement> EasyQueryBuilderConfiguration replaceService(Class<TImplement> implementType) {
         serviceCollection.addService(implementType);
@@ -129,9 +135,10 @@ public class EasyQueryBuilderConfiguration {
 
     /**
      * 添加服务如果已经存在则替换
+     *
      * @param implementInstance 依赖注入当前实例
+     * @param <TImplement>      实现类型
      * @return 当前服务集合
-     * @param <TImplement> 实现类型
      */
     public <TImplement> EasyQueryBuilderConfiguration replaceService(TImplement implementInstance) {
         serviceCollection.addService(implementInstance);
@@ -140,11 +147,12 @@ public class EasyQueryBuilderConfiguration {
 
     /**
      * 添加服务如果已经存在则替换
-     * @param serviceType 依赖注入的接口
+     *
+     * @param serviceType   依赖注入的接口
      * @param implementType 依赖注入的实现类
+     * @param <TService>    接口类型
+     * @param <TImplement>  实现类型
      * @return 当前服务集合
-     * @param <TService> 接口类型
-     * @param <TImplement> 实现类型
      */
     public <TService, TImplement extends TService> EasyQueryBuilderConfiguration replaceService(Class<TService> serviceType, Class<TImplement> implementType) {
         serviceCollection.addService(serviceType, implementType);
@@ -153,11 +161,12 @@ public class EasyQueryBuilderConfiguration {
 
     /**
      * 添加服务如果已经存在则替换
-     * @param serviceType 依赖注入的接口
+     *
+     * @param serviceType       依赖注入的接口
      * @param implementInstance 依赖注入的实现
+     * @param <TService>        接口类型
+     * @param <TImplement>      实现类型
      * @return 当前服务集合
-     * @param <TService> 接口类型
-     * @param <TImplement> 实现类型
      */
     public <TService, TImplement extends TService> EasyQueryBuilderConfiguration replaceService(Class<TService> serviceType, TImplement implementInstance) {
         serviceCollection.addService(serviceType, implementInstance);
@@ -166,28 +175,36 @@ public class EasyQueryBuilderConfiguration {
 
     /**
      * 添加服务如果已经存在则替换
-     * @param serviceType 依赖注入的接口
+     *
+     * @param serviceType      依赖注入的接口
      * @param implementFactory 依赖注入的实现工厂
+     * @param <TService>       接口类型
+     * @param <TImplement>     实现类型
      * @return 当前服务集合
-     * @param <TService> 接口类型
-     * @param <TImplement> 实现类型
      */
     public <TService, TImplement extends TService> EasyQueryBuilderConfiguration replaceServiceFactory(Class<TService> serviceType, Function<ServiceProvider, TImplement> implementFactory) {
         serviceCollection.addServiceFactory(serviceType, implementFactory);
         return this;
     }
 
-    public EasyQueryBuilderConfiguration useDatabaseConfigure(DatabaseConfiguration databaseConfiguration){
+    public EasyQueryBuilderConfiguration useDatabaseConfigure(DatabaseConfiguration databaseConfiguration) {
         databaseConfiguration.configure(serviceCollection);
         return this;
     }
-    public EasyQueryBuilderConfiguration optionConfigure(Consumer<EasyQueryOptionBuilder> configure){
+
+    public EasyQueryBuilderConfiguration optionConfigure(Consumer<EasyQueryOptionBuilder> configure) {
         configure.accept(this.easyQueryOptionBuilder);
+        if(this.easyQueryOptionBuilder.isUseReplica()){
+            replaceService(DataSourceManager.class, DefaultReplicaDataSourceManager.class);
+        }else{
+            replaceService(DataSourceManager.class, DefaultDataSourceManager.class);
+        }
         return this;
     }
 
     /**
      * 创建对应的查询器
+     *
      * @return EasyQuery实例
      */
     public EasyQuery build() {

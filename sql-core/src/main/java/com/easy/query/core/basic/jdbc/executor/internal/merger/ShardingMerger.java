@@ -1,6 +1,6 @@
 package com.easy.query.core.basic.jdbc.executor.internal.merger;
 
-import com.easy.query.core.sharding.merge.context.StreamMergeContext;
+import com.easy.query.core.sharding.context.StreamMergeContext;
 
 import java.sql.SQLException;
 import java.util.Collection;

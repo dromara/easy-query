@@ -1,5 +1,9 @@
 package com.easy.query.core.sharding;
 
+import com.easy.query.core.basic.jdbc.con.ConnectionStrategyEnum;
+import com.easy.query.core.configuration.EasyQueryOption;
+import com.easy.query.core.datasource.DataSourceManager;
+import com.easy.query.core.datasource.replica.ReplicaDataSourceManager;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 
 import javax.sql.DataSource;
@@ -14,43 +18,37 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author xuejiaming
  */
 public final class DefaultEasyQueryDataSource implements EasyQueryDataSource {
-    private final String defaultDataSourceName;
-    private final DataSource defaultDataSource;
-    private final Map<String, DataSource> dataSourceMap = new ConcurrentHashMap<>();
 
-    public DefaultEasyQueryDataSource(String defaultDataSourceName, DataSource defaultDataSource) {
+    private final EasyQueryOption easyQueryOption;
+    private final DataSourceManager dataSourceManager;
 
-        this.defaultDataSourceName = defaultDataSourceName;
-        this.defaultDataSource = defaultDataSource;
-        dataSourceMap.putIfAbsent(defaultDataSourceName, defaultDataSource);
+    public DefaultEasyQueryDataSource(EasyQueryOption easyQueryOption, DataSourceManager dataSourceManager) {
+        this.easyQueryOption = easyQueryOption;
+        this.dataSourceManager = dataSourceManager;
     }
 
     @Override
     public String getDefaultDataSourceName() {
-        return defaultDataSourceName;
+        return dataSourceManager.getDefaultDataSourceName();
     }
 
     @Override
     public DataSource getDefaultDataSource() {
-        return defaultDataSource;
+        return dataSourceManager.getDefaultDataSource();
     }
 
     @Override
     public boolean addDataSource(String dataSourceName, DataSource dataSource) {
-        DataSource existDataSource = dataSourceMap.computeIfAbsent(dataSourceName, k -> dataSource);
-        return Objects.equals(existDataSource,dataSource);
+       return dataSourceManager.addDataSource(dataSourceName,dataSource);
     }
 
     @Override
     public Map<String, DataSource> getAllDataSource() {
-        return dataSourceMap;
+        return dataSourceManager.getAllDataSource();
     }
 
     @Override
-    public DataSource getDataSourceOrNull(String dataSourceName) {
-        if (dataSourceName == null) {
-            throw new IllegalArgumentException("dataSourceName");
-        }
-        return dataSourceMap.get(dataSourceName);
+    public DataSource getDataSourceOrNull(String dataSourceName, ConnectionStrategyEnum connectionStrategy) {
+        return dataSourceManager.getDataSourceOrNull(dataSourceName,connectionStrategy);
     }
 }

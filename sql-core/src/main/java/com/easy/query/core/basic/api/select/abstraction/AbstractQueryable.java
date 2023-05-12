@@ -287,7 +287,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
         boolean tracking = expressionContext.getBehavior().hasBehavior(EasyBehaviorEnum.USE_TRACKING);
         ExecuteMethodEnum executeMethod = expressionContext.getExecuteMethod();
         EntityExpressionExecutor entityExpressionExecutor = this.entityQueryExpressionBuilder.getRuntimeContext().getEntityExpressionExecutor();
-        List<TR> result = entityExpressionExecutor.query(ExecutorContext.create(this.entityQueryExpressionBuilder.getRuntimeContext(), false, executeMethod, tracking), resultClass, entityQueryExpressionBuilder);
+        List<TR> result = entityExpressionExecutor.query(ExecutorContext.create(this.entityQueryExpressionBuilder.getRuntimeContext(), true, executeMethod, tracking), resultClass, entityQueryExpressionBuilder);
         //将当前方法设置为unknown
         setExecuteMethod(ExecuteMethodEnum.UNKNOWN);
         return result;

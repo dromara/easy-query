@@ -4,6 +4,7 @@ import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.api.client.EasyQuery;
 import com.easy.query.core.configuration.EasyQueryConfiguration;
+import com.easy.query.core.configuration.EasyQueryShardingOption;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.sharding.DefaultEasyQueryDataSource;
 import com.easy.query.core.sharding.EasyQueryDataSource;
@@ -34,6 +35,7 @@ import com.easy.query.test.sharding.TopicShardingTableRule;
 import com.easy.query.test.sharding.TopicShardingTimeTableRule;
 import com.zaxxer.hikari.HikariDataSource;
 
+import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -48,7 +50,7 @@ import java.util.*;
  */
 public abstract class BaseTest {
     public static HikariDataSource dataSource;
-    public static EasyQueryDataSource easyQueryDataSource;
+    public static EasyQueryShardingOption easyQueryShardingOption;
     public static EasyQuery easyQuery;
 
     static {
@@ -70,7 +72,7 @@ public abstract class BaseTest {
         dataSource.setPassword("root");
         dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
         dataSource.setMaximumPoolSize(20);
-        easyQueryDataSource=new DefaultEasyQueryDataSource("ds2020",dataSource);
+        Map<String, DataSource> shardingConfig=new HashMap<>();
         {
             HikariDataSource dataSource = new HikariDataSource();
             dataSource.setJdbcUrl("jdbc:mysql://127.0.0.1:3306/easy-query-test2021?serverTimezone=GMT%2B8&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&rewriteBatchedStatements=true");
@@ -78,7 +80,7 @@ public abstract class BaseTest {
             dataSource.setPassword("root");
             dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
             dataSource.setMaximumPoolSize(20);
-            easyQueryDataSource.addDataSource("ds2021",dataSource);
+            shardingConfig.put("ds2021",dataSource);
         }
         {
             HikariDataSource dataSource = new HikariDataSource();
@@ -87,7 +89,7 @@ public abstract class BaseTest {
             dataSource.setPassword("root");
             dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
             dataSource.setMaximumPoolSize(20);
-            easyQueryDataSource.addDataSource("ds2022",dataSource);
+            shardingConfig.put("ds2022",dataSource);
         }
         {
             HikariDataSource dataSource = new HikariDataSource();
@@ -96,20 +98,23 @@ public abstract class BaseTest {
             dataSource.setPassword("root");
             dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
             dataSource.setMaximumPoolSize(20);
-            easyQueryDataSource.addDataSource("ds2023",dataSource);
+            shardingConfig.put("ds2023",dataSource);
         }
+        easyQueryShardingOption=new EasyQueryShardingOption(shardingConfig);
 //        postgres://postgres:postgrespw@localhost:55000
     }
 
     public static void initEasyQuery() {
         easyQuery = EasyQueryBootstrapper.defaultBuilderConfiguration()
-                .setDataSource(dataSource)
-                .replaceService(EasyQueryDataSource.class,easyQueryDataSource)
+                .setDefaultDataSource(dataSource)
                 .optionConfigure(op->{
                     op.setDeleteThrowError(false);
                     op.setExecutorCorePoolSize(1);
                     op.setExecutorMaximumPoolSize(0);
                     op.setMaxShardingQueryLimit(10);
+                    op.setShardingOption(easyQueryShardingOption);
+                    op.setDefaultDataSourceName("ds2020");
+                    op.setThrowIfRouteNotMatch(false);
                 })
                 .useDatabaseConfigure(new MySqlDatabaseConfiguration())
 //                .replaceService(EasyShardingOption.class, new EasyShardingOption(2, 0))

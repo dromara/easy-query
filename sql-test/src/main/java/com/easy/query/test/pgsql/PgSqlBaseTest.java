@@ -58,7 +58,7 @@ public class PgSqlBaseTest {
 
     public static void initEasyQuery() {
         easyQuery = EasyQueryBootstrapper.defaultBuilderConfiguration()
-                .setDataSource(dataSource)
+                .setDefaultDataSource(dataSource)
                 .optionConfigure(op->{
                     op.setDeleteThrowError(false);
                     op.setExecutorCorePoolSize(1);

@@ -3,7 +3,7 @@ package com.easy.query.core.basic.jdbc.executor.internal.command.abstraction;
 import com.easy.query.core.basic.jdbc.executor.internal.common.ExecutionUnit;
 import com.easy.query.core.basic.jdbc.executor.internal.result.impl.QueryExecuteResult;
 import com.easy.query.core.exception.EasyQueryRouteNotMatchException;
-import com.easy.query.core.sharding.merge.context.StreamMergeContext;
+import com.easy.query.core.sharding.context.StreamMergeContext;
 import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.sql.SQLException;
@@ -27,6 +27,9 @@ public abstract class AbstractQueryJdbcCommand extends AbstractJdbcCommand<Query
             if(EasyCollectionUtil.isEmpty(executionUnits)){
                 if(streamMergeContext.getRuntimeContext().getEasyQueryConfiguration().getEasyQueryOption().isThrowIfRouteNotMatch()){
                     throw new EasyQueryRouteNotMatchException("sharding query route not match");
+                }
+                if(!streamMergeContext.isQuery()){
+                    throw new EasyQueryRouteNotMatchException("sharding execute route not match");
                 }
                 return defaultResult();
             }

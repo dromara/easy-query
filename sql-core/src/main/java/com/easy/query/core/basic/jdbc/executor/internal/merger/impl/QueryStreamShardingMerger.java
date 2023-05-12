@@ -4,7 +4,7 @@ import com.easy.query.core.basic.jdbc.executor.internal.merger.abstraction.Abstr
 import com.easy.query.core.basic.jdbc.executor.internal.result.impl.QueryExecuteResult;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
-import com.easy.query.core.sharding.merge.context.StreamMergeContext;
+import com.easy.query.core.sharding.context.StreamMergeContext;
 import com.easy.query.core.sharding.merge.result.StreamResultSet;
 import com.easy.query.core.sharding.merge.result.impl.memory.single.EasyAllInMemoryStreamMergeResultSet;
 import com.easy.query.core.sharding.merge.result.impl.memory.single.EasyAnyInMemoryStreamMergeResultSet;

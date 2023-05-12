@@ -1,6 +1,6 @@
 package com.easy.query.core.sharding.merge.result.impl;
 
-import com.easy.query.core.sharding.merge.context.StreamMergeContext;
+import com.easy.query.core.sharding.context.StreamMergeContext;
 import com.easy.query.core.sharding.merge.result.StreamResultSet;
 
 import java.math.BigDecimal;
@@ -12,7 +12,6 @@ import java.sql.SQLException;
 import java.sql.SQLXML;
 import java.sql.Time;
 import java.sql.Timestamp;
-import java.util.List;
 
 /**
  * create time 2023/4/27 23:03

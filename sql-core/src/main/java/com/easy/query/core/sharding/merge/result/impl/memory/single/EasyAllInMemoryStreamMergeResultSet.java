@@ -1,6 +1,6 @@
 package com.easy.query.core.sharding.merge.result.impl.memory.single;
 
-import com.easy.query.core.sharding.merge.context.StreamMergeContext;
+import com.easy.query.core.sharding.context.StreamMergeContext;
 import com.easy.query.core.sharding.merge.result.StreamResultSet;
 
 import java.sql.SQLException;

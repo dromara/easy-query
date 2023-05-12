@@ -3,7 +3,7 @@ package com.easy.query.core.basic.jdbc.executor.internal.command.impl;
 import com.easy.query.core.basic.jdbc.executor.internal.result.impl.AffectedRowsExecuteResult;
 import com.easy.query.core.basic.jdbc.executor.internal.command.abstraction.AbstractAffectedRowsJdbcCommand;
 import com.easy.query.core.basic.jdbc.executor.internal.unit.impl.EasyExecuteBatchExecutor;
-import com.easy.query.core.sharding.merge.context.StreamMergeContext;
+import com.easy.query.core.sharding.context.StreamMergeContext;
 import com.easy.query.core.basic.jdbc.executor.internal.unit.Executor;
 
 /**

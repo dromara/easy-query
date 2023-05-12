@@ -54,7 +54,6 @@ public class DefaultRewriteContextFactory implements RewriteContextFactory {
         }
         //添加默认排序字段,并且添加默认排序字段到select 如果不添加那么streamResultSet将无法进行order排序获取
         if(SqlSegmentUtil.isEmpty(easyQuerySqlExpression.getOrder())&&Objects.equals(ExecuteMethodEnum.LIST,queryPrepareParseResult.getExecutorContext().getExecuteMethod())){
-
             SequenceParseResult sequenceParseResult = queryPrepareParseResult.getSequenceParseResult();
             if(sequenceParseResult!=null){
                 TableAvailable table = sequenceParseResult.getTable();

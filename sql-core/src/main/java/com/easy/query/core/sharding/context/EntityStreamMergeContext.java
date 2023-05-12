@@ -1,4 +1,4 @@
-package com.easy.query.core.sharding.merge.context;
+package com.easy.query.core.sharding.context;
 
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.expression.executor.parser.ExecutionContext;

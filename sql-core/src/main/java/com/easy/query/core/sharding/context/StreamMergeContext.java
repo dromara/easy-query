@@ -1,4 +1,4 @@
-package com.easy.query.core.sharding.merge.context;
+package com.easy.query.core.sharding.context;
 
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.con.EasyConnection;
@@ -36,7 +36,7 @@ public interface StreamMergeContext extends AutoCloseable {
      */
     boolean isSharding();
     default boolean isShardingMerge(){
-        return isSharding()&&!isSerialExecute()&&getExecutionUnits().size()!=1;
+        return isSharding()&&isQuery()&&getExecutionUnits().size()!=1;
     }
 
     Collection<ExecutionUnit> getExecutionUnits();
@@ -45,7 +45,7 @@ public interface StreamMergeContext extends AutoCloseable {
     EasyQueryRuntimeContext getRuntimeContext();
     int getMaxShardingQueryLimit();
 
-    boolean isSerialExecute();
+    boolean isQuery();
 
      boolean isSeqQuery();
 
