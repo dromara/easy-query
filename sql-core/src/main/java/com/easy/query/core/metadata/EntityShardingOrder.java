@@ -2,11 +2,13 @@ package com.easy.query.core.metadata;
 
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.sharding.initializer.ExecuteMethodBehavior;
+import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * create time 2023/5/8 08:40
@@ -52,5 +54,14 @@ public class EntityShardingOrder {
 
     public ExecuteMethodBehavior getExecuteMethodBehavior() {
         return executeMethodBehavior;
+    }
+
+    public String getFirstSequencePropertyOrNull(){
+        Set<Map.Entry<String, Boolean>> entries = sequenceProperties.entrySet();
+        Map.Entry<String, Boolean> firstPropertyKv = EasyCollectionUtil.firstOrNull(entries);
+        if(firstPropertyKv!=null){
+            return firstPropertyKv.getKey();
+        }
+        return null;
     }
 }

@@ -1,16 +1,23 @@
 package com.easy.query.core.sharding.rewrite;
 
 import com.easy.query.core.enums.EasyAggregate;
+import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.expression.executor.parser.PrepareParseResult;
 import com.easy.query.core.expression.executor.parser.QueryPrepareParseResult;
+import com.easy.query.core.expression.executor.parser.SequenceParseResult;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.AggregationColumnSegment;
 import com.easy.query.core.expression.segment.ColumnSegment;
+import com.easy.query.core.expression.segment.ColumnSegmentImpl;
 import com.easy.query.core.expression.segment.FuncColumnSegmentImpl;
 import com.easy.query.core.expression.segment.GroupByColumnSegment;
+import com.easy.query.core.expression.segment.OrderColumnSegmentImpl;
 import com.easy.query.core.expression.segment.SqlSegment;
 import com.easy.query.core.expression.segment.builder.ProjectSqlBuilderSegment;
 import com.easy.query.core.expression.sql.expression.EasyQuerySqlExpression;
 import com.easy.query.core.expression.sql.expression.EasyTableSqlExpression;
+import com.easy.query.core.metadata.EntityMetadata;
+import com.easy.query.core.metadata.EntityShardingOrder;
 import com.easy.query.core.sharding.merge.result.aggregation.AggregationType;
 import com.easy.query.core.util.ClassUtil;
 import com.easy.query.core.util.ShardingUtil;
@@ -44,6 +51,28 @@ public class DefaultRewriteContextFactory implements RewriteContextFactory {
                 easyQuerySqlExpression.setOffset(0);
             }
             easyQuerySqlExpression.setRows(offset + rows);
+        }
+        //添加默认排序字段,并且添加默认排序字段到select 如果不添加那么streamResultSet将无法进行order排序获取
+        if(SqlSegmentUtil.isEmpty(easyQuerySqlExpression.getOrder())&&Objects.equals(ExecuteMethodEnum.LIST,queryPrepareParseResult.getExecutorContext().getExecuteMethod())){
+
+            SequenceParseResult sequenceParseResult = queryPrepareParseResult.getSequenceParseResult();
+            if(sequenceParseResult!=null){
+                TableAvailable table = sequenceParseResult.getTable();
+                EntityMetadata entityMetadata = table.getEntityMetadata();
+                EntityShardingOrder entityShardingOrder = entityMetadata.getEntityShardingOrder();
+                if(entityShardingOrder!=null){
+                    boolean reverse = sequenceParseResult.isReverse();
+                    String firstSequenceProperty = entityShardingOrder.getFirstSequencePropertyOrNull();
+                    if(firstSequenceProperty!=null){
+                        OrderColumnSegmentImpl orderColumnSegment = new OrderColumnSegmentImpl(table, firstSequenceProperty, easyQuerySqlExpression.getRuntimeContext(), !reverse);
+                        easyQuerySqlExpression.getOrder().append(orderColumnSegment);
+                        if(!easyQuerySqlExpression.getProjects().containsOnce(entityMetadata.getEntityClass(),firstSequenceProperty)){
+                            ColumnSegmentImpl columnSegment = new ColumnSegmentImpl(table, firstSequenceProperty, easyQuerySqlExpression.getRuntimeContext());
+                            easyQuerySqlExpression.getProjects().append(columnSegment);
+                        }
+                    }
+                }
+            }
         }
         //如果当前表达式存在group 并且
         if (SqlSegmentUtil.isNotEmpty(easyQuerySqlExpression.getGroup())) {

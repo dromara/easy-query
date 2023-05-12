@@ -123,7 +123,7 @@ public class DefaultTableRouteEngine implements TableRouteEngine {
                         routeUnits.sort((c1, c2) -> {
                             TableRouteUnit tableRouteUnit1 = c1.getTableRouteUnits().get(i);
                             TableRouteUnit tableRouteUnit2 = c2.getTableRouteUnits().get(i);
-                            return tableComparator.compare(tableRouteUnit1.getDataSource() + "." + tableRouteUnit1.getActualTableName(), tableRouteUnit2.getDataSource() + "." + tableRouteUnit2.getActualTableName()) * compareFactor;
+                            return compareFactor*tableComparator.compare(tableRouteUnit1.getDataSource() + "." + tableRouteUnit1.getActualTableName(), tableRouteUnit2.getDataSource() + "." + tableRouteUnit2.getActualTableName());
                         });
                         sequenceQuery = true;
                     }

@@ -64,8 +64,8 @@ public class EasyQueryPrepareParseResult implements QueryPrepareParseResult {
                     //存在配置
                     Boolean asc = entityShardingOrder.getSequenceProperty(firstOrderColumn.getPropertyName());
                     if (asc != null) {
-                        boolean reverse = firstOrderColumn.isAsc() == asc;
-                        return new SequenceParseResult(table, entityShardingOrder.getTableComparator(), reverse,entityShardingOrder.getConnectionMode(), entityShardingOrder.getConnectionsLimit());
+                        boolean reverse = !firstOrderColumn.isAsc();
+                        return new SequenceParseResult(table, entityShardingOrder.getTableComparator(),reverse ,entityShardingOrder.getConnectionMode(), entityShardingOrder.getConnectionsLimit());
                     }
                 }
             } else {
@@ -81,8 +81,7 @@ public class EasyQueryPrepareParseResult implements QueryPrepareParseResult {
                             //存在配置
                             Boolean asc = entityShardingOrder.getSequenceProperty(firstMaxColumn.getPropertyName());
                             if (asc != null) {
-                                boolean reverse = !asc;
-                                return new SequenceParseResult(table, entityShardingOrder.getTableComparator(), reverse,entityShardingOrder.getConnectionMode(), entityShardingOrder.getConnectionsLimit());
+                                return new SequenceParseResult(table, entityShardingOrder.getTableComparator(), true,entityShardingOrder.getConnectionMode(), entityShardingOrder.getConnectionsLimit());
                             }
                         }
                     }
@@ -98,8 +97,7 @@ public class EasyQueryPrepareParseResult implements QueryPrepareParseResult {
                             //存在配置
                             Boolean asc = entityShardingOrder.getSequenceProperty(firstMinColumn.getPropertyName());
                             if (asc != null) {
-                                boolean reverse = asc;
-                                return new SequenceParseResult(table, entityShardingOrder.getTableComparator(), reverse,entityShardingOrder.getConnectionMode(), entityShardingOrder.getConnectionsLimit());
+                                return new SequenceParseResult(table, entityShardingOrder.getTableComparator(), false,entityShardingOrder.getConnectionMode(), entityShardingOrder.getConnectionsLimit());
                             }
                         }
                     }
