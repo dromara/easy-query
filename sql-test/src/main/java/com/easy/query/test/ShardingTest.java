@@ -555,4 +555,21 @@ public class ShardingTest extends BaseTest {
                 .all(o -> o.gt(TopicShardingDataSourceTime::getCreateTime, beginTime));
         Assert.assertFalse(all33);
     }
+    @Test
+    public void sharding26(){
+        List<TopicShardingTime> list = easyQuery.queryable(TopicShardingTime.class)
+                .orderByDesc(o->o.column(TopicShardingTime::getCreateTime))
+                .limit(10).toList();
+        Assert.assertEquals(10,list.size());
+
+        LocalDateTime endTime = LocalDateTime.of(2023, 5, 1, 1, 1);
+        for (TopicShardingTime topicShardingTime : list) {
+            endTime=endTime.plusDays(-1);
+            Assert.assertEquals(endTime,topicShardingTime.getCreateTime());
+        }
+        TopicShardingTime topicShardingTime = easyQuery.queryable(TopicShardingTime.class).whereById(list.get(0).getId()).firstOrNull();
+        Assert.assertEquals(topicShardingTime.getId(),list.get(0).getId());
+        Assert.assertEquals(topicShardingTime.getCreateTime(),list.get(0).getCreateTime());
+
+    }
 }

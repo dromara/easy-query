@@ -1,7 +1,9 @@
 package com.easy.query.core.basic.jdbc.executor.internal.unit.breaker;
 
+import com.easy.query.core.basic.jdbc.executor.internal.result.impl.QueryExecuteResult;
 import com.easy.query.core.sharding.merge.context.StreamMergeContext;
 import com.easy.query.core.sharding.merge.result.InMemoryStreamMergeResultSet;
+import com.easy.query.core.sharding.merge.result.StreamResultSet;
 import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.Collection;
@@ -25,8 +27,12 @@ public final class ListCircuitBreaker extends AbstractCircuitBreaker{
             if(rows>0){
                 long offset = streamMergeContext.getRewriteOffset();
                 int reallyCount = EasyCollectionUtil.sum(results, element -> {
-                    if (element instanceof InMemoryStreamMergeResultSet) {
-                        return ((InMemoryStreamMergeResultSet)element).getReallyCount();
+                    if(element instanceof QueryExecuteResult){
+                        QueryExecuteResult queryExecuteResult = (QueryExecuteResult) element;
+                        StreamResultSet streamResult = queryExecuteResult.getStreamResult();
+                        if (streamResult instanceof InMemoryStreamMergeResultSet) {
+                            return ((InMemoryStreamMergeResultSet)streamResult).getReallyCount();
+                        }
                     }
                     return 0;
                 });
