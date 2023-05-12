@@ -29,7 +29,9 @@ public abstract class AbstractSingleInMemoryStreamMergeResultSet extends Abstrac
             throw new SQLException("column count "+columnCount+" !=1");
         }
         Object resultValue = resultValue();
+        Object defaultValue = defaultValue();
         MemoryResultSetRow resultRow=null;
+        MemoryResultSetRow defaultRow=null;
         for (StreamResultSet resultSet : streamResultSets) {
             try (StreamResultSet streamResultSet = resultSet) {
                 //调用为了streamResultSet可以被close
@@ -42,6 +44,9 @@ public abstract class AbstractSingleInMemoryStreamMergeResultSet extends Abstrac
                         resultRow=new ConstMemoryResultSetRow(resultValue);
                         break;
                     }
+                    if(defaultRow==null){
+                        defaultRow=new ConstMemoryResultSetRow(defaultValue);
+                    }
                 }
             } catch (Exception e) {
                 throw new SQLException(e);
@@ -50,8 +55,7 @@ public abstract class AbstractSingleInMemoryStreamMergeResultSet extends Abstrac
         ArrayList<MemoryResultSetRow> list = new ArrayList<>(1);
         if(resultRow!=null){
             list.add(resultRow);
-        } else{
-            Object defaultValue = defaultValue();
+        } else if(defaultRow!=null){
             list.add(new ConstMemoryResultSetRow(defaultValue));
         }
         return list;

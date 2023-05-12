@@ -1,6 +1,7 @@
 package com.easy.query.core.basic.jdbc.executor.internal.unit.impl;
 
 import com.easy.query.core.basic.jdbc.con.EasyConnection;
+import com.easy.query.core.basic.jdbc.executor.internal.common.ExecutionUnit;
 import com.easy.query.core.basic.jdbc.executor.internal.result.impl.AffectedRowsExecuteResult;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.executor.internal.merger.ShardingMerger;
@@ -31,12 +32,14 @@ public class EasyInsertExecutor extends AbstractExecutor<AffectedRowsExecuteResu
     protected AffectedRowsExecuteResult executeCommandUnit(CommandExecuteUnit commandExecuteUnit) {
         ExecutorContext executorContext = streamMergeContext.getExecutorContext();
         EasyConnection easyConnection = commandExecuteUnit.getEasyConnection();
-        SqlUnit sqlUnit = commandExecuteUnit.getExecutionUnit().getSqlUnit();
+        ExecutionUnit executionUnit = commandExecuteUnit.getExecutionUnit();
+        String dataSourceName = executionUnit.getDataSourceName();
+        SqlUnit sqlUnit = executionUnit.getSqlUnit();
         String sql = sqlUnit.getSql();
         List<Object> entities = sqlUnit.getEntities();
         List<SQLParameter> parameters = sqlUnit.getParameters();
         boolean fillAutoIncrement = sqlUnit.isFillAutoIncrement();
-        return JdbcExecutorUtil.insert(executorContext,easyConnection,sql,entities,parameters,fillAutoIncrement);
+        return JdbcExecutorUtil.insert(dataSourceName,executorContext,easyConnection,sql,entities,parameters,fillAutoIncrement);
     }
 
     @Override

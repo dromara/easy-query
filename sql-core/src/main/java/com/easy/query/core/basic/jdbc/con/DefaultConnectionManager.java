@@ -8,79 +8,99 @@ import com.easy.query.core.sharding.EasyQueryDataSource;
 import java.sql.SQLException;
 
 /**
+ * @author xuejiaming
  * @FileName: DefaultConnectionManager.java
  * @Description: 文件说明
  * @Date: 2023/2/21 08:57
- * @author xuejiaming
  */
 public class DefaultConnectionManager implements EasyConnectionManager {
-    private final ThreadLocal<Transaction> threadTx = ThreadLocal.withInitial(() -> null);
-    private final ThreadLocal<EasyConnection> threadConnection = new ThreadLocal<>();
+    protected final ThreadLocal<Transaction> threadTx = ThreadLocal.withInitial(() -> null);
+    protected final ThreadLocal<EasyDataSourceConnection> threadDataSourceConnection = ThreadLocal.withInitial(() -> null);
     protected final EasyQueryDataSource easyDataSource;
+    protected final EasyConnectionFactory easyConnectionFactory;
+    protected final EasyDataSourceConnectionFactory easyDataSourceConnectionFactory;
 
-    public DefaultConnectionManager(EasyQueryDataSource easyDataSource){
+    public DefaultConnectionManager(EasyQueryDataSource easyDataSource, EasyConnectionFactory easyConnectionFactory, EasyDataSourceConnectionFactory easyDataSourceConnectionFactory) {
 
         this.easyDataSource = easyDataSource;
+        this.easyConnectionFactory = easyConnectionFactory;
+        this.easyDataSourceConnectionFactory = easyDataSourceConnectionFactory;
     }
+
     @Override
     public Transaction beginTransaction(Integer isolationLevel) {
-        DefaultTransaction defaultTransaction = new DefaultTransaction(isolationLevel,this);
+        DefaultTransaction defaultTransaction = new DefaultTransaction(isolationLevel, this);
         threadTx.set(defaultTransaction);
         return defaultTransaction;
     }
 
     @Override
-    public EasyConnection getEasyConnection(){
-        return getEasyConnection(easyDataSource.getDefaultDataSourceName(),ConnectionStrategyEnum.ShareConnection);
+    public EasyConnection getEasyConnection() {
+        return getEasyConnection(easyDataSource.getDefaultDataSourceName(), ConnectionStrategyEnum.ShareConnection);
     }
+
     @Override
-    public EasyConnection getEasyConnection(String dataSourceName,ConnectionStrategyEnum connectionStrategy){
-        if(ConnectionStrategyEnum.ShareConnection.equals(connectionStrategy)){
+    public EasyConnection getEasyConnection(String dataSourceName, ConnectionStrategyEnum connectionStrategy) {
+//        if(ConnectionStrategyEnum.ShareConnection.equals(connectionStrategy)){
+//
+//            Transaction transaction = threadTx.get();
+//            if(transaction!=null){
+//                EasyConnection easyConnection = threadConnection.get();
+//                if(easyConnection==null){
+//
+//                    easyConnection=doGetEasyConnection(dataSourceName,transaction.getIsolationLevel());
+//                    easyConnection.setAutoCommit(false);
+//                    threadConnection.set(easyConnection);
+//                }
+//                return easyConnection;
+//            }
+//            return doGetEasyConnection(dataSourceName,null);
+//        }else{
+//            return doGetEasyConnection(dataSourceName,null);
+//        }
 
+        if (ConnectionStrategyEnum.ShareConnection.equals(connectionStrategy)) {
             Transaction transaction = threadTx.get();
-            if(transaction!=null){
-                EasyConnection easyConnection = threadConnection.get();
-                if(easyConnection==null){
-
-                    easyConnection=doGetEasyConnection(dataSourceName,transaction.getIsolationLevel());
+            if (transaction != null) {
+                EasyDataSourceConnection easyDataSourceConnection = threadDataSourceConnection.get();
+                if (easyDataSourceConnection == null) {
+                    easyDataSourceConnection = easyDataSourceConnectionFactory.create();
+                    threadDataSourceConnection.set(easyDataSourceConnection);
+                }
+                EasyConnection easyConnection = easyDataSourceConnection.getEasyConnectionOrNull(dataSourceName);
+                if (easyConnection == null) {
+                    easyConnection = easyConnectionFactory.createEasyConnection(dataSourceName, transaction.getIsolationLevel());
                     easyConnection.setAutoCommit(false);
-                    threadConnection.set(easyConnection);
+                    easyDataSourceConnection.putIfAbsent(dataSourceName, easyConnection);
                 }
                 return easyConnection;
             }
-            return doGetEasyConnection(dataSourceName,null);
-        }else{
-            return doGetEasyConnection(dataSourceName,null);
         }
-    }
-    protected EasyConnection doGetEasyConnection(String dataSourceName,Integer isolationLevel){
-        try {
-            return new DefaultEasyConnection(dataSourceName,easyDataSource.getDataSourceNotNull(dataSourceName).getConnection(),isolationLevel);
-        } catch (SQLException e) {
-            throw new EasyQueryException(e);
-        }
+        return easyConnectionFactory.createEasyConnection(dataSourceName, null);
     }
 
     @Override
     public boolean currentThreadInTransaction() {
         return easyCurrentThreadInTransaction();
     }
+
     protected boolean easyCurrentThreadInTransaction() {
-        return threadTx.get()!=null;
+        return threadTx.get() != null;
     }
 
     @Override
     public void clear() {
-        threadConnection.remove();
+//        threadConnection.remove();
+        threadDataSourceConnection.remove();
         threadTx.remove();
     }
 
     @Override
     public void closeEasyConnection(EasyConnection easyConnection) {
-        if(easyConnection==null){
+        if (easyConnection == null) {
             return;
         }
-        if(!this.easyCurrentThreadInTransaction()){
+        if (!this.easyCurrentThreadInTransaction()) {
             try {
                 easyConnection.close();
             } catch (Exception e) {
@@ -91,37 +111,53 @@ public class DefaultConnectionManager implements EasyConnectionManager {
 
     @Override
     public void commit() {
-        EasyConnection easyConnection = threadConnection.get();
-        try{
-            if(easyConnection==null){
-                return;
+        EasyDataSourceConnection easyDataSourceConnection = threadDataSourceConnection.get();
+        if (easyDataSourceConnection == null) {
+            clear();
+            return;
+        }
+        try {
+            try {
+
+                easyDataSourceConnection.commit();
+            } finally {
+                easyDataSourceConnection.close();
             }
-            try{
-                easyConnection.commit();
-            }finally {
-                easyConnection.close();
-            }
-        }finally {
+        } finally {
             clear();
         }
+//        EasyConnection easyConnection = threadConnection.get();
+//        try {
+//            if (easyConnection == null) {
+//                return;
+//            }
+//            try {
+//                easyConnection.commit();
+//            } finally {
+//                easyConnection.close();
+//            }
+//        } finally {
+//            clear();
+//        }
 
     }
 
     @Override
     public void rollback() {
-        EasyConnection easyConnection = threadConnection.get();
-        try{
-            if(easyConnection==null){
-                return;
+        EasyDataSourceConnection easyDataSourceConnection = threadDataSourceConnection.get();
+        if (easyDataSourceConnection == null) {
+            clear();
+            return;
+        }
+        try {
+            try {
+
+                easyDataSourceConnection.rollback();
+            } finally {
+                easyDataSourceConnection.close();
             }
-            try{
-                easyConnection.rollback();
-            }finally {
-                easyConnection.close();
-            }
-        }finally {
+        } finally {
             clear();
         }
-
     }
 }

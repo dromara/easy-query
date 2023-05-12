@@ -184,7 +184,7 @@ public class RoutePredicateDiscover {
                 RouteFunction<String> routePredicate = routeRuleFilter.routeFilter(value, shardingOperator, propertyName, Objects.equals(mainShardingProperty, propertyName),false);
                 return new RoutePredicateExpression(routePredicate);
             }
-            System.out.println("不支持的sql参数");
+            System.out.println("不支持的sql参数:"+ClassUtil.getInstanceSimpleName(parameter));
         }
         return RoutePredicateExpression.getDefault();
     }

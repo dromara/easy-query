@@ -1,14 +1,15 @@
-package com.easy.query.core.sharding.route.abstraction;
+package com.easy.query.core.sharding.route.manager.impl;
 
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.executor.parser.PrepareParseResult;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.metadata.EntityMetadata;
-import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.sharding.EasyQueryDataSource;
 import com.easy.query.core.sharding.route.datasource.DataSourceRoute;
 import com.easy.query.core.sharding.route.datasource.ShardingDataSourceRoute;
+import com.easy.query.core.sharding.route.manager.DataSourceRouteManager;
 import com.easy.query.core.sharding.rule.datasource.DataSourceRouteRule;
+import com.easy.query.core.sharding.rule.table.TableRouteRule;
 import com.easy.query.core.util.ClassUtil;
 
 import java.util.Collection;
@@ -22,7 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author xuejiaming
  */
-public class DefaultDataSourceRouteManager implements DataSourceRouteManager{
+public class DefaultDataSourceRouteManager implements DataSourceRouteManager {
     private final Map<Class<?>, DataSourceRouteRule> entityRouteRuleCache= new ConcurrentHashMap<>();
     private final DataSourceRoute dataSourceRoute;
     private final EasyQueryDataSource easyDataSource;
@@ -52,7 +53,12 @@ public class DefaultDataSourceRouteManager implements DataSourceRouteManager{
     }
 
     @Override
-    public boolean addRouteRule(DataSourceRouteRule dataSourceRouteRule) {
+    public boolean addRouteRule(DataSourceRouteRule<?> dataSourceRouteRule) {
+        DataSourceRouteRule<?> oldDataSourceRouteRule = entityRouteRuleCache.get(dataSourceRouteRule.entityClass());
+        if(oldDataSourceRouteRule==null){
+            entityRouteRuleCache.put(dataSourceRouteRule.entityClass(),dataSourceRouteRule);
+            return true;
+        }
         return false;
     }
 }

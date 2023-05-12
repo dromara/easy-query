@@ -39,12 +39,12 @@ public class ShardingSequenceBuilder<T> {
      * @param orderProperty
      * @return
      */
-    public ShardingSequenceBuilder<T> addPropertyWhenAsc(Property<T, ?> orderProperty) {
+    public ShardingSequenceBuilder<T> addPropertyDefaultUseAsc(Property<T, ?> orderProperty) {
         String propertyName = LambdaUtil.getPropertyName(orderProperty);
-        return addPropertyWhenAsc(propertyName);
+        return addPropertyDefaultUseAsc(propertyName);
     }
 
-    public ShardingSequenceBuilder<T> addPropertyWhenAsc(String propertyName) {
+    public ShardingSequenceBuilder<T> addPropertyDefaultUseAsc(String propertyName) {
         if (entityMetadata.getColumnOrNull(propertyName) == null) {
             throw new EasyQueryInvalidOperationException("sharding initializer add asc unknown property:" + propertyName);
         }
@@ -58,12 +58,12 @@ public class ShardingSequenceBuilder<T> {
      * @param orderProperty
      * @return
      */
-    public ShardingSequenceBuilder<T> addPropertyWhenDesc(Property<T, ?> orderProperty) {
+    public ShardingSequenceBuilder<T> addPropertyDefaultUseDesc(Property<T, ?> orderProperty) {
         String propertyName = LambdaUtil.getPropertyName(orderProperty);
-        return addPropertyWhenDesc(propertyName);
+        return addPropertyDefaultUseDesc(propertyName);
     }
 
-    public ShardingSequenceBuilder<T> addPropertyWhenDesc(String propertyName) {
+    public ShardingSequenceBuilder<T> addPropertyDefaultUseDesc(String propertyName) {
         if (entityMetadata.getColumnOrNull(propertyName) == null) {
             throw new EasyQueryInvalidOperationException("sharding initializer add desc unknown property:" + propertyName);
         }

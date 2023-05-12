@@ -31,7 +31,7 @@ public class FixShardingInitializer implements EasyShardingInitializer {
                 actualTableNames.add(tableName+"_"+i);
             }
             LinkedHashMap<String, Collection<String>> initTables = new LinkedHashMap<String, Collection<String>>() {{
-                put("ds0", actualTableNames);
+                put("ds2020", actualTableNames);
             }};
            builder.actualTableNameInit(initTables);
         }else if(TopicShardingTime.class.equals(entityMetadata.getEntityClass())){
@@ -47,12 +47,12 @@ public class FixShardingInitializer implements EasyShardingInitializer {
                 beginTime=beginTime.plusMonths(1);
             }
             LinkedHashMap<String, Collection<String>> initTables = new LinkedHashMap<String, Collection<String>>() {{
-                put("ds0", actualTableNames);
+                put("ds2020", actualTableNames);
             }};
 
             ((ShardingEntityBuilder<TopicShardingTime>) builder).actualTableNameInit(initTables)
                     .ascSequenceConfigure(String::compareToIgnoreCase)
-                    .addPropertyWhenDesc(TopicShardingTime::getCreateTime)
+                    .addPropertyDefaultUseDesc(TopicShardingTime::getCreateTime)
                     .defaultAffectedMethod(false,ExecuteMethodEnum.LIST,ExecuteMethodEnum.ANY,ExecuteMethodEnum.FIRST)
                     .useMaxShardingQueryLimit(2);
         }else{

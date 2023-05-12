@@ -2,6 +2,7 @@ package com.easy.query.core.basic.jdbc.executor.internal.unit.impl;
 
 import com.easy.query.core.basic.jdbc.con.EasyConnection;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
+import com.easy.query.core.basic.jdbc.executor.internal.common.ExecutionUnit;
 import com.easy.query.core.basic.jdbc.executor.internal.result.impl.AffectedRowsExecuteResult;
 import com.easy.query.core.basic.jdbc.executor.internal.merger.ShardingMerger;
 import com.easy.query.core.basic.jdbc.executor.internal.unit.abstraction.AbstractExecutor;
@@ -31,11 +32,13 @@ public class EasyExecuteBatchExecutor extends AbstractExecutor<AffectedRowsExecu
     protected AffectedRowsExecuteResult executeCommandUnit(CommandExecuteUnit commandExecuteUnit) {
         ExecutorContext executorContext = streamMergeContext.getExecutorContext();
         EasyConnection easyConnection = commandExecuteUnit.getEasyConnection();
-        SqlUnit sqlUnit = commandExecuteUnit.getExecutionUnit().getSqlUnit();
+        ExecutionUnit executionUnit = commandExecuteUnit.getExecutionUnit();
+        String dataSourceName = executionUnit.getDataSourceName();
+        SqlUnit sqlUnit = executionUnit.getSqlUnit();
         String sql = sqlUnit.getSql();
         List<SQLParameter> parameters = sqlUnit.getParameters();
         List<Object> entities = sqlUnit.getEntities();
-        return JdbcExecutorUtil.executeRows(executorContext,easyConnection,sql,entities,parameters);
+        return JdbcExecutorUtil.executeRows(dataSourceName,executorContext,easyConnection,sql,entities,parameters);
     }
 
     @Override

@@ -8,7 +8,7 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.sharding.route.RouteUnit;
 import com.easy.query.core.sharding.route.ShardingRouteResult;
-import com.easy.query.core.sharding.route.abstraction.TableRouteManager;
+import com.easy.query.core.sharding.route.manager.TableRouteManager;
 import com.easy.query.core.sharding.route.datasource.engine.DataSourceRouteResult;
 import com.easy.query.core.sharding.route.table.TableRouteUnit;
 import com.easy.query.core.util.EasyCollectionUtil;
@@ -105,7 +105,7 @@ public class DefaultTableRouteEngine implements TableRouteEngine {
             }
 
         }
-        boolean sequenceQuery=false;
+        boolean sequenceQuery = false;
         if (prepareParseResult instanceof QueryPrepareParseResult) {
             QueryPrepareParseResult queryPrepareParseResult = (QueryPrepareParseResult) prepareParseResult;
 
@@ -116,32 +116,37 @@ public class DefaultTableRouteEngine implements TableRouteEngine {
                 TableAvailable table = sequenceOrderPrepareParseResult.getTable();
                 if (EasyCollectionUtil.isNotEmpty(routeUnits)) {
                     RouteUnit first = EasyCollectionUtil.first(routeUnits);
-                    int i=getCompareRouteUnitIndex(first,table);
-                    if(i>=0){
+                    int i = getCompareRouteUnitIndex(first, table);
+                    if (i >= 0) {
                         Comparator<String> tableComparator = sequenceOrderPrepareParseResult.getTableComparator();
                         int compareFactor = sequenceOrderPrepareParseResult.isReverse() ? -1 : 1;
-                        routeUnits.sort((c1, c2) -> tableComparator.compare(c1.getTableRouteUnits().get(i).getActualTableName(), c2.getTableRouteUnits().get(i).getActualTableName()) * compareFactor);
-                        sequenceQuery=true;
+                        routeUnits.sort((c1, c2) -> {
+                            TableRouteUnit tableRouteUnit1 = c1.getTableRouteUnits().get(i);
+                            TableRouteUnit tableRouteUnit2 = c2.getTableRouteUnits().get(i);
+                            return tableComparator.compare(tableRouteUnit1.getDataSource() + "." + tableRouteUnit1.getActualTableName(), tableRouteUnit2.getDataSource() + "." + tableRouteUnit2.getActualTableName()) * compareFactor;
+                        });
+                        sequenceQuery = true;
                     }
                 }
             }
         }
 
-        return new ShardingRouteResult(routeUnits, dataSourceCount > 1, isCrossTable,sequenceQuery);
+        return new ShardingRouteResult(routeUnits, dataSourceCount > 1, isCrossTable, sequenceQuery);
     }
 
     /**
      * 寻找顺序排序的表的索引在本次路由里面是哪个然后进行排序
+     *
      * @param routeUnit
      * @param table
      * @return
      */
-    private int getCompareRouteUnitIndex(RouteUnit routeUnit,TableAvailable table){
+    private int getCompareRouteUnitIndex(RouteUnit routeUnit, TableAvailable table) {
 
         int i = -1;
         for (TableRouteUnit tableRouteUnit : routeUnit.getTableRouteUnits()) {
             i++;
-            if(tableRouteUnit.getTableIndex()==table.getIndex()){
+            if (tableRouteUnit.getTableIndex() == table.getIndex()) {
                 return i;
             }
         }

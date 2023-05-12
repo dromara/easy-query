@@ -3,6 +3,8 @@ package com.easy.query.sql.starter;
 import com.easy.query.core.basic.jdbc.con.DefaultConnectionManager;
 import com.easy.query.core.basic.jdbc.con.DefaultEasyConnection;
 import com.easy.query.core.basic.jdbc.con.EasyConnection;
+import com.easy.query.core.basic.jdbc.con.EasyConnectionFactory;
+import com.easy.query.core.basic.jdbc.con.EasyDataSourceConnectionFactory;
 import com.easy.query.core.sharding.EasyQueryDataSource;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
@@ -14,8 +16,9 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
  * @author xuejiaming
  */
 public class SpringConnectionManager extends DefaultConnectionManager {
-    public SpringConnectionManager(EasyQueryDataSource easyDataSource) {
-        super(easyDataSource);
+
+    public SpringConnectionManager(EasyQueryDataSource easyDataSource, EasyConnectionFactory easyConnectionFactory, EasyDataSourceConnectionFactory easyDataSourceConnectionFactory) {
+        super(easyDataSource, easyConnectionFactory, easyDataSourceConnectionFactory);
     }
 
     @Override
@@ -37,11 +40,6 @@ public class SpringConnectionManager extends DefaultConnectionManager {
 //        }
 //        return super.getEasyConnection(dataSourceName);
 //    }
-
-    @Override
-    protected EasyConnection doGetEasyConnection(String dataSourceName,Integer isolationLevel) {
-        return new DefaultEasyConnection( dataSourceName,DataSourceUtils.getConnection(easyDataSource.getDataSourceNotNull(dataSourceName)),isolationLevel);
-    }
 
     @Override
     public void closeEasyConnection(EasyConnection easyConnection) {

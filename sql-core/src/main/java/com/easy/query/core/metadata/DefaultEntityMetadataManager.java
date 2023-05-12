@@ -1,11 +1,8 @@
 package com.easy.query.core.metadata;
 
-import com.easy.query.core.configuration.EasyQueryConfiguration;
 import com.easy.query.core.common.cache.Cache;
 import com.easy.query.core.common.cache.DefaultMemoryCache;
 import com.easy.query.core.inject.ServiceProvider;
-import com.easy.query.core.sharding.route.abstraction.DataSourceRouteManager;
-import com.easy.query.core.sharding.route.abstraction.TableRouteManager;
 
 /**
  * @FileName: DefaultMetadataManager.java

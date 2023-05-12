@@ -70,7 +70,7 @@ public class ShardingExecutor {
         List<TResult> results = new ArrayList<>(futures.size() * easyQueryOption.getMaxShardingQueryLimit());
         for (Future<List<TResult>> future : futures) {
             try {
-                results.addAll(future.get(60, TimeUnit.SECONDS));
+                results.addAll(future.get(60L, TimeUnit.SECONDS));
             } catch (InterruptedException | ExecutionException e) {
                 throw new EasyQueryException(e);
             } catch (TimeoutException e) {

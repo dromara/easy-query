@@ -1,26 +1,27 @@
 package com.easy.query.core.basic.jdbc.con;
 
 import com.easy.query.core.exception.EasyQueryException;
+import com.easy.query.core.logging.Log;
+import com.easy.query.core.logging.LogFactory;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Objects;
 
 /**
+ * @author xuejiaming
  * @FileName: DefaultEasyConnection.java
  * @Description: 文件说明
  * @Date: 2023/2/21 09:26
- * @author xuejiaming
  */
 public class DefaultEasyConnection implements EasyConnection {
+    private static final Log log= LogFactory.getLog(DefaultEasyConnection.class);
     private final String dataSourceName;
     private final Connection connection;
     private final Integer isolationLevel;
-    private  Integer originalIsolationLevel;
     private boolean closed = false;
-    private boolean autoCommit;
 
-    public DefaultEasyConnection(String dataSourceName,Connection connection, Integer isolationLevel) {
+    public DefaultEasyConnection(String dataSourceName, Connection connection, Integer isolationLevel) {
         this.dataSourceName = dataSourceName;
 
         this.connection = connection;
@@ -37,14 +38,12 @@ public class DefaultEasyConnection implements EasyConnection {
     public Connection getConnection() {
         return connection;
     }
-    private void setIsolationLevel(){
-        if(!closed){
-            if(isolationLevel!=null&&this.originalIsolationLevel==null){
+
+    private void setIsolationLevel() {
+        if (!closed) {
+            if(isolationLevel!=null){
                 try {
-                    this.originalIsolationLevel = connection.getTransactionIsolation();
-                    if(!this.isolationLevel.equals(originalIsolationLevel)){
-                        connection.setTransactionIsolation(isolationLevel);
-                    }
+                    connection.setTransactionIsolation(isolationLevel);
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
                 }
@@ -54,7 +53,6 @@ public class DefaultEasyConnection implements EasyConnection {
 
     public void setAutoCommit(boolean autoCommit) {
         try {
-            this.autoCommit = autoCommit;
             connection.setAutoCommit(autoCommit);
         } catch (SQLException e) {
             throw new EasyQueryException(e);
@@ -62,21 +60,13 @@ public class DefaultEasyConnection implements EasyConnection {
     }
 
     @Override
-    public void commit() {
-        try {
-            connection.commit();
-        } catch (SQLException e) {
-            throw new EasyQueryException(e);
-        }
+    public void commit() throws SQLException {
+        connection.commit();
     }
 
     @Override
-    public void rollback() {
-        try {
-            connection.rollback();
-        } catch (SQLException e) {
-            throw new EasyQueryException(e);
-        }
+    public void rollback() throws SQLException {
+        connection.rollback();
     }
 
     @Override
@@ -92,25 +82,20 @@ public class DefaultEasyConnection implements EasyConnection {
     public void close() {
         close(true);
     }
-    public void close(boolean closeConnection){
+
+    public void close(boolean closeConnection) {
         if (closed) {
             return;
         }
         if (connection != null) {
             try {
                 if (!connection.isClosed()) {
-                    if (!autoCommit) {
-                        connection.setAutoCommit(true);
-                    }
-                    if (this.originalIsolationLevel!=null&&!Objects.equals(this.isolationLevel,this.originalIsolationLevel)) {
-                        connection.setTransactionIsolation(this.isolationLevel);
-                    }
-                    if(closeConnection){
+                    if (closeConnection) {
                         connection.close();
                     }
                 }
             } catch (SQLException ex) {
-                System.err.println("close connection error: "+ ex.getMessage());
+                log.error("close connection error.",ex);
 
             }
         }

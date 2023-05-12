@@ -152,7 +152,9 @@ public class ShardingUtil {
             return maxShardingQueryLimitOrNull;
         }
         if(sequenceParseResult!=null){
-            return sequenceParseResult.getConnectionsLimit();
+            if(sequenceParseResult.getConnectionsLimit()>0){
+                return sequenceParseResult.getConnectionsLimit();
+            }
         }
         EasyQueryRuntimeContext runtimeContext = expressionContext.getRuntimeContext();
         return runtimeContext.getEasyQueryConfiguration().getEasyQueryOption().getMaxShardingQueryLimit();
@@ -164,7 +166,9 @@ public class ShardingUtil {
             return connectionModeOrNull;
         }
         if(sequenceParseResult!=null){
-            return sequenceParseResult.getConnectionMode();
+            if(sequenceParseResult.getConnectionMode()!=null){
+                return sequenceParseResult.getConnectionMode();
+            }
         }
         EasyQueryRuntimeContext runtimeContext = expressionContext.getRuntimeContext();
         return runtimeContext.getEasyQueryConfiguration().getEasyQueryOption().getConnectionMode();

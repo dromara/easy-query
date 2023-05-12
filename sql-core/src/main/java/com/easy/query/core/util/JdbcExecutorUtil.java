@@ -41,33 +41,33 @@ public class JdbcExecutorUtil {
 
     private static final Log log = LogFactory.getLog(JdbcExecutorUtil.class);
 
-    private static void logSql(boolean logDebug, String sql) {
+    private static void logSql(boolean logDebug,String dataSource, String sql) {
         if (logDebug) {
-            log.debug("==> " + Thread.currentThread().getName() + " Preparing: " + sql);
+            log.debug("==> " + Thread.currentThread().getName() + ", DS:" +dataSource+", Preparing: " + sql);
         }
     }
 
-    private static void logParameter(boolean logDebug, List<SQLParameter> parameters) {
+    private static void logParameter(boolean logDebug,String dataSource, List<SQLParameter> parameters) {
         if (logDebug) {
-            log.debug("==> " + Thread.currentThread().getName() + " Parameters: " + SqlUtil.sqlParameterToString(parameters));
+            log.debug("==> " + Thread.currentThread().getName() + ", DS:" +dataSource+", Parameters: " + SqlUtil.sqlParameterToString(parameters));
         }
     }
 
-    private static void logResult(boolean logDebug, long total) {
+    private static void logResult(boolean logDebug,String dataSource, long total) {
         if (logDebug) {
-            log.debug("<== " + Thread.currentThread().getName() + " Total: " + total);
+            log.debug("<== " + Thread.currentThread().getName() +  ", DS:" +dataSource+", Total: " + total);
         }
     }
 
-    private static void logResult(boolean logDebug, int total) {
+    private static void logResult(boolean logDebug,String dataSource, int total) {
         if (logDebug) {
-            log.debug("<== " + Thread.currentThread().getName() + " Total: " + total);
+            log.debug("<== " + Thread.currentThread().getName() + ", DS:" +dataSource+", Total: " + total);
         }
     }
 
-    private static void logUse(boolean logDebug, long start, long end) {
+    private static void logUse(boolean logDebug,String dataSource, long start, long end) {
         if (logDebug) {
-            log.debug("<== " + Thread.currentThread().getName() + " Query Use: " + (end - start) + "(ms)");
+            log.debug("<== " + Thread.currentThread().getName() + ", DS:" +dataSource+", Time Elapsed: " + (end - start) + "(ms)");
         }
     }
 
@@ -88,12 +88,12 @@ public class JdbcExecutorUtil {
         }
         return params;
     }
-    public static QueryExecuteResult query(ExecutorContext executorContext, EasyConnection easyConnection, String sql, List<SQLParameter> sqlParameters){
-        return query(executorContext,easyConnection,sql,sqlParameters,false);
+    public static QueryExecuteResult query(String dataSourceName,ExecutorContext executorContext, EasyConnection easyConnection, String sql, List<SQLParameter> sqlParameters){
+        return query(dataSourceName,executorContext,easyConnection,sql,sqlParameters,false);
     }
-    public static QueryExecuteResult query(ExecutorContext executorContext, EasyConnection easyConnection, String sql, List<SQLParameter> sqlParameters,boolean sharding) {
+    public static QueryExecuteResult query(String dataSourceName,ExecutorContext executorContext, EasyConnection easyConnection, String sql, List<SQLParameter> sqlParameters,boolean sharding) {
         boolean logDebug = log.isDebugEnabled();
-        logSql(logDebug, sql);
+        logSql(logDebug,dataSourceName, sql);
         EasyQueryRuntimeContext runtimeContext = executorContext.getRuntimeContext();
         JdbcTypeHandlerManager easyJdbcTypeHandler = runtimeContext.getEasyJdbcTypeHandlerManager();
 
@@ -101,7 +101,7 @@ public class JdbcExecutorUtil {
         ResultSet rs = null;
         List<SQLParameter> parameters = extractParameters(executorContext, null, sqlParameters);
         if (logDebug && EasyCollectionUtil.isNotEmpty(parameters)) {
-            logParameter(true, parameters);
+            logParameter(true,dataSourceName, parameters);
         }
         StreamResultSet sr=null;
         try {
@@ -110,7 +110,7 @@ public class JdbcExecutorUtil {
                 long start = System.currentTimeMillis();
                 rs = ps.executeQuery();
                 long end = System.currentTimeMillis();
-                logUse(true, start, end);
+                logUse(true,dataSourceName, start, end);
             } else {
                 rs = ps.executeQuery();
             }
@@ -129,9 +129,9 @@ public class JdbcExecutorUtil {
         return new QueryExecuteResult(sr);
     }
 
-    public static <T> AffectedRowsExecuteResult insert(ExecutorContext executorContext, EasyConnection easyConnection, String sql, List<T> entities, List<SQLParameter> sqlParameters, boolean fillAutoIncrement) {
+    public static <T> AffectedRowsExecuteResult insert(String dataSourceName,ExecutorContext executorContext, EasyConnection easyConnection, String sql, List<T> entities, List<SQLParameter> sqlParameters, boolean fillAutoIncrement) {
         boolean logDebug = log.isDebugEnabled();
-        logSql(logDebug, sql);
+        logSql(logDebug,dataSourceName, sql);
         EasyQueryRuntimeContext runtimeContext = executorContext.getRuntimeContext();
         JdbcTypeHandlerManager easyJdbcTypeHandler = runtimeContext.getEasyJdbcTypeHandlerManager();
         Class<?> entityClass = entities.get(0).getClass();
@@ -144,7 +144,7 @@ public class JdbcExecutorUtil {
             for (T entity : entities) {
                 List<SQLParameter> parameters = extractParameters(executorContext, entity, sqlParameters);
                 if (logDebug && hasParameter) {
-                    logParameter(true, parameters);
+                    logParameter(true,dataSourceName, parameters);
                 }
                 if (ps == null) {
                     ps = createPreparedStatement(easyConnection.getConnection(), sql, parameters, easyJdbcTypeHandler, incrementColumns);
@@ -156,7 +156,7 @@ public class JdbcExecutorUtil {
             assert ps != null;
             int[] rs = ps.executeBatch();
             r = rs.length;
-            logResult(logDebug, r);
+            logResult(logDebug,dataSourceName, r);
             //如果需要自动填充并且存在自动填充列
             if (fillAutoIncrement && EasyCollectionUtil.isNotEmpty(incrementColumns)) {
                 ResultSet keysSet = ps.getGeneratedKeys();
@@ -204,9 +204,9 @@ public class JdbcExecutorUtil {
         }
     }
 
-    public static <T> AffectedRowsExecuteResult executeRows(ExecutorContext executorContext, EasyConnection easyConnection, String sql, List<T> entities, List<SQLParameter> sqlParameters) {
+    public static <T> AffectedRowsExecuteResult executeRows(String dataSourceName,ExecutorContext executorContext, EasyConnection easyConnection, String sql, List<T> entities, List<SQLParameter> sqlParameters) {
         boolean logDebug = log.isDebugEnabled();
-        logSql(logDebug, sql);
+        logSql(logDebug,dataSourceName, sql);
         EasyQueryRuntimeContext runtimeContext = executorContext.getRuntimeContext();
         JdbcTypeHandlerManager easyJdbcTypeHandlerManager = runtimeContext.getEasyJdbcTypeHandlerManager();
         PreparedStatement ps = null;
@@ -218,7 +218,7 @@ public class JdbcExecutorUtil {
                 List<SQLParameter> parameters = extractParameters(executorContext, entity, sqlParameters);
 
                 if (logDebug && hasParameter) {
-                    logParameter(true, parameters);
+                    logParameter(true,dataSourceName, parameters);
                 }
                 if (ps == null) {
                     ps = createPreparedStatement(easyConnection.getConnection(), sql, parameters, easyJdbcTypeHandlerManager);
@@ -230,7 +230,7 @@ public class JdbcExecutorUtil {
             assert ps != null;
             int[] rs = ps.executeBatch();
             r = EasyCollectionUtil.sum(rs);
-            logResult(logDebug, r);
+            logResult(logDebug,dataSourceName, r);
             ps.clearBatch();
         } catch (SQLException e) {
             log.error(sql, e);
@@ -241,9 +241,9 @@ public class JdbcExecutorUtil {
         return new AffectedRowsExecuteResult(r);
     }
 
-    public static <T> AffectedRowsExecuteResult executeRows(ExecutorContext executorContext, EasyConnection easyConnection, String sql, List<SQLParameter> sqlParameters) {
+    public static <T> AffectedRowsExecuteResult executeRows(String dataSourceName,ExecutorContext executorContext, EasyConnection easyConnection, String sql, List<SQLParameter> sqlParameters) {
         boolean logDebug = log.isDebugEnabled();
-        logSql(logDebug, sql);
+        logSql(logDebug,dataSourceName, sql);
         EasyQueryRuntimeContext runtimeContext = executorContext.getRuntimeContext();
         JdbcTypeHandlerManager easyJdbcTypeHandlerManager = runtimeContext.getEasyJdbcTypeHandlerManager();
         PreparedStatement ps = null;
@@ -251,12 +251,12 @@ public class JdbcExecutorUtil {
 
         List<SQLParameter> parameters = extractParameters(executorContext, null, sqlParameters);
         if (logDebug && !parameters.isEmpty()) {
-            logParameter(true, parameters);
+            logParameter(true,dataSourceName, parameters);
         }
         try {
             ps = createPreparedStatement(easyConnection.getConnection(), sql, parameters, easyJdbcTypeHandlerManager);
             r = ps.executeUpdate();
-            logResult(logDebug, r);
+            logResult(logDebug,dataSourceName, r);
         } catch (SQLException e) {
             log.error(sql, e);
             throw new EasyQuerySQLExecuteException(sql, e);

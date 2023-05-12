@@ -5,7 +5,10 @@ import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.api.client.EasyQuery;
 import com.easy.query.core.configuration.EasyQueryConfiguration;
 import com.easy.query.core.logging.LogFactory;
-import com.easy.query.core.sharding.route.abstraction.TableRouteManager;
+import com.easy.query.core.sharding.DefaultEasyQueryDataSource;
+import com.easy.query.core.sharding.EasyQueryDataSource;
+import com.easy.query.core.sharding.route.manager.DataSourceRouteManager;
+import com.easy.query.core.sharding.route.manager.TableRouteManager;
 import com.easy.query.test.encryption.Base64EncryptionStrategy;
 import com.easy.query.test.encryption.DefaultAesEasyEncryptionStrategy;
 import com.easy.query.test.encryption.MyEncryptionStrategy;
@@ -17,12 +20,16 @@ import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.TopicAuto;
 import com.easy.query.test.entity.TopicInterceptor;
 import com.easy.query.test.entity.TopicSharding;
+import com.easy.query.test.entity.TopicShardingDataSourceTime;
 import com.easy.query.test.entity.TopicShardingTime;
 import com.easy.query.test.interceptor.MyEntityInterceptor;
 import com.easy.query.test.interceptor.MyTenantInterceptor;
 import com.easy.query.test.logicdel.MyLogicDelStrategy;
 import com.easy.query.mysql.config.MySqlDatabaseConfiguration;
+import com.easy.query.test.sharding.DataSourceAndTableShardingInitializer;
 import com.easy.query.test.sharding.FixShardingInitializer;
+import com.easy.query.test.sharding.TopicShardingDataSourceTimeDataSourceRule;
+import com.easy.query.test.sharding.TopicShardingDataSourceTimeTableRule;
 import com.easy.query.test.sharding.TopicShardingTableRule;
 import com.easy.query.test.sharding.TopicShardingTimeTableRule;
 import com.zaxxer.hikari.HikariDataSource;
@@ -41,6 +48,7 @@ import java.util.*;
  */
 public abstract class BaseTest {
     public static HikariDataSource dataSource;
+    public static EasyQueryDataSource easyQueryDataSource;
     public static EasyQuery easyQuery;
 
     static {
@@ -62,16 +70,45 @@ public abstract class BaseTest {
         dataSource.setPassword("root");
         dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
         dataSource.setMaximumPoolSize(20);
+        easyQueryDataSource=new DefaultEasyQueryDataSource("ds2020",dataSource);
+        {
+            HikariDataSource dataSource = new HikariDataSource();
+            dataSource.setJdbcUrl("jdbc:mysql://127.0.0.1:3306/easy-query-test2021?serverTimezone=GMT%2B8&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&rewriteBatchedStatements=true");
+            dataSource.setUsername("root");
+            dataSource.setPassword("root");
+            dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
+            dataSource.setMaximumPoolSize(20);
+            easyQueryDataSource.addDataSource("ds2021",dataSource);
+        }
+        {
+            HikariDataSource dataSource = new HikariDataSource();
+            dataSource.setJdbcUrl("jdbc:mysql://127.0.0.1:3306/easy-query-test2022?serverTimezone=GMT%2B8&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&rewriteBatchedStatements=true");
+            dataSource.setUsername("root");
+            dataSource.setPassword("root");
+            dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
+            dataSource.setMaximumPoolSize(20);
+            easyQueryDataSource.addDataSource("ds2022",dataSource);
+        }
+        {
+            HikariDataSource dataSource = new HikariDataSource();
+            dataSource.setJdbcUrl("jdbc:mysql://127.0.0.1:3306/easy-query-test2023?serverTimezone=GMT%2B8&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&rewriteBatchedStatements=true");
+            dataSource.setUsername("root");
+            dataSource.setPassword("root");
+            dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
+            dataSource.setMaximumPoolSize(20);
+            easyQueryDataSource.addDataSource("ds2023",dataSource);
+        }
 //        postgres://postgres:postgrespw@localhost:55000
     }
 
     public static void initEasyQuery() {
         easyQuery = EasyQueryBootstrapper.defaultBuilderConfiguration()
                 .setDataSource(dataSource)
+                .replaceService(EasyQueryDataSource.class,easyQueryDataSource)
                 .optionConfigure(op->{
                     op.setDeleteThrowError(false);
                     op.setExecutorCorePoolSize(1);
-                    op.setExecutorMaximumPoolSize(20);
+                    op.setExecutorMaximumPoolSize(0);
                     op.setMaxShardingQueryLimit(10);
                 })
                 .useDatabaseConfigure(new MySqlDatabaseConfiguration())
@@ -86,10 +123,14 @@ public abstract class BaseTest {
         configuration.applyEasyInterceptor(new MyEntityInterceptor());
         configuration.applyEasyInterceptor(new MyTenantInterceptor());
         configuration.applyShardingInitializer(new FixShardingInitializer());
+        configuration.applyShardingInitializer(new DataSourceAndTableShardingInitializer());
 
         TableRouteManager tableRouteManager = runtimeContext.getTableRouteManager();
         tableRouteManager.addRouteRule(new TopicShardingTableRule());
         tableRouteManager.addRouteRule(new TopicShardingTimeTableRule());
+        tableRouteManager.addRouteRule(new TopicShardingDataSourceTimeTableRule());
+        DataSourceRouteManager dataSourceRouteManager = runtimeContext.getDataSourceRouteManager();
+        dataSourceRouteManager.addRouteRule(new TopicShardingDataSourceTimeDataSourceRule());
 
     }
 
@@ -204,9 +245,9 @@ public abstract class BaseTest {
                 topicInterceptor.setTitle("标题" + i);
                 topicInterceptor.setCreateTime(LocalDateTime.now().plusDays(i));
                 topicInterceptor.setUpdateTime(LocalDateTime.now().plusDays(i));
-                topicInterceptor.setCreateBy(i+"");
-                topicInterceptor.setUpdateBy(i+"");
-                topicInterceptor.setTenantId(i+"");
+                topicInterceptor.setCreateBy(String.valueOf(i));
+                topicInterceptor.setUpdateBy(String.valueOf(i));
+                topicInterceptor.setTenantId(String.valueOf(i));
                 topicInterceptors.add(topicInterceptor);
             }
             long l = easyQuery.insertable(topicInterceptors).executeRows();
@@ -246,6 +287,29 @@ public abstract class BaseTest {
            }
 
            long l = easyQuery.insertable(topicShardingTimes).executeRows();
+           System.out.println("插入时间条数:"+l);
+       }
+        boolean shardingDataSourceTimeExists = easyQuery.queryable(TopicShardingDataSourceTime.class).any();
+        System.out.println(shardingDataSourceTimeExists);
+       if(!shardingDataSourceTimeExists){
+
+           LocalDateTime beginTime = LocalDateTime.of(2020, 1, 1, 1, 1);
+           LocalDateTime endTime = LocalDateTime.of(2023, 5, 1, 1, 1);
+           Duration between = Duration.between(beginTime, endTime);
+           long days = between.toDays();
+           ArrayList<TopicShardingDataSourceTime> topicShardingDataSourceTimes = new ArrayList<>(500);
+           for (int i = 0; i < days; i++) {
+               LocalDateTime now = beginTime.plusDays(i);
+               String month = now.format(DateTimeFormatter.ofPattern("yyyyMM"));
+               TopicShardingDataSourceTime topicShardingDataSourceTime = new TopicShardingDataSourceTime();
+               topicShardingDataSourceTime.setId(UUID.randomUUID().toString().replaceAll("-","")+month);
+               topicShardingDataSourceTime.setTitle("title" + month);
+               topicShardingDataSourceTime.setStars(i);
+               topicShardingDataSourceTime.setCreateTime(now);
+               topicShardingDataSourceTimes.add(topicShardingDataSourceTime);
+           }
+
+           long l = easyQuery.insertable(topicShardingDataSourceTimes).executeRows();
            System.out.println("插入时间条数:"+l);
        }
     }

@@ -1,10 +1,10 @@
-package com.easy.query.core.sharding.route.abstraction;
+package com.easy.query.core.sharding.route.manager.impl;
 
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.executor.parser.PrepareParseResult;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.sharding.route.datasource.engine.DataSourceRouteResult;
+import com.easy.query.core.sharding.route.manager.TableRouteManager;
 import com.easy.query.core.sharding.route.table.ShardingTableRoute;
 import com.easy.query.core.sharding.route.table.TableRoute;
 import com.easy.query.core.sharding.route.table.TableRouteUnit;
@@ -21,7 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author xuejiaming
  */
-public class DefaultTableRouteManager implements TableRouteManager{
+public class DefaultTableRouteManager implements TableRouteManager {
     private final Map<Class<?>, TableRouteRule<?>> entityRouteRuleCache= new ConcurrentHashMap<>();
     private final TableRoute tableRoute=new ShardingTableRoute();
 

@@ -2,6 +2,7 @@ package com.easy.query.core.basic.jdbc.executor.internal.unit.impl;
 
 import com.easy.query.core.basic.jdbc.con.EasyConnection;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
+import com.easy.query.core.basic.jdbc.executor.internal.common.ExecutionUnit;
 import com.easy.query.core.basic.jdbc.executor.internal.result.impl.QueryExecuteResult;
 import com.easy.query.core.basic.jdbc.executor.internal.merger.ShardingMerger;
 import com.easy.query.core.basic.jdbc.executor.internal.unit.abstraction.AbstractExecutor;
@@ -37,12 +38,15 @@ public class EasyQueryExecutor extends AbstractExecutor<QueryExecuteResult> {
     protected QueryExecuteResult executeCommandUnit(CommandExecuteUnit commandExecuteUnit) {
 
         ExecutorContext executorContext = streamMergeContext.getExecutorContext();
+
         EasyConnection easyConnection = commandExecuteUnit.getEasyConnection();
-        SqlUnit sqlUnit = commandExecuteUnit.getExecutionUnit().getSqlUnit();
+        ExecutionUnit executionUnit = commandExecuteUnit.getExecutionUnit();
+        String dataSourceName = executionUnit.getDataSourceName();
+        SqlUnit sqlUnit = executionUnit.getSqlUnit();
         String sql = sqlUnit.getSql();
         List<SQLParameter> parameters = sqlUnit.getParameters();
         boolean isSharding = streamMergeContext.isSharding();
-        return JdbcExecutorUtil.query(executorContext,easyConnection,sql,parameters,isSharding);
+        return JdbcExecutorUtil.query(dataSourceName,executorContext,easyConnection,sql,parameters,isSharding);
     }
 
     @Override

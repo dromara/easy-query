@@ -1,4 +1,4 @@
-package com.easy.query.core.sharding.route.abstraction;
+package com.easy.query.core.sharding.route.manager;
 
 import com.easy.query.core.expression.executor.parser.PrepareParseResult;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;

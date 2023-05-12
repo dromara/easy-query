@@ -12,8 +12,8 @@ import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
 import com.easy.query.core.configuration.EasyQueryConfiguration;
 import com.easy.query.core.basic.plugin.track.TrackManager;
 import com.easy.query.core.sharding.comparer.ShardingComparer;
-import com.easy.query.core.sharding.route.abstraction.DataSourceRouteManager;
-import com.easy.query.core.sharding.route.abstraction.TableRouteManager;
+import com.easy.query.core.sharding.route.manager.DataSourceRouteManager;
+import com.easy.query.core.sharding.route.manager.TableRouteManager;
 
 /**
  * @FileName: JQDCRuntimeContext.java

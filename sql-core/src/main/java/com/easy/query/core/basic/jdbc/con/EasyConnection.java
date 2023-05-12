@@ -1,6 +1,7 @@
 package com.easy.query.core.basic.jdbc.con;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 
 /**
  * @FileName: EasyConnection.java
@@ -13,8 +14,8 @@ public interface EasyConnection extends AutoCloseable{
     String getDataSourceName();
     Connection getConnection();
     void setAutoCommit(boolean autoCommit);
-    void commit();
-    void rollback();
+    void commit() throws SQLException;
+    void rollback() throws SQLException;
     boolean isClosed();
     void close();
 }

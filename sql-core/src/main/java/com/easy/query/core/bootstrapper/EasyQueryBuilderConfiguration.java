@@ -7,7 +7,11 @@ import com.easy.query.core.api.client.DefaultEasyQuery;
 import com.easy.query.core.api.client.EasyQuery;
 import com.easy.query.core.api.def.DefaultEasySqlApiFactory;
 import com.easy.query.core.basic.jdbc.con.DefaultConnectionManager;
+import com.easy.query.core.basic.jdbc.con.DefaultEasyConnectionFactory;
+import com.easy.query.core.basic.jdbc.con.DefaultEasyDataSourceConnectionFactory;
+import com.easy.query.core.basic.jdbc.con.EasyConnectionFactory;
 import com.easy.query.core.basic.jdbc.con.EasyConnectionManager;
+import com.easy.query.core.basic.jdbc.con.EasyDataSourceConnectionFactory;
 import com.easy.query.core.basic.jdbc.executor.DefaultEntityExpressionExecutor;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
 import com.easy.query.core.basic.jdbc.types.EasyJdbcTypeHandlerManager;
@@ -48,10 +52,10 @@ import com.easy.query.core.sharding.rewrite.DefaultRewriteContextFactory;
 import com.easy.query.core.sharding.rewrite.RewriteContextFactory;
 import com.easy.query.core.sharding.route.DefaultRouteContextFactory;
 import com.easy.query.core.sharding.route.RouteContextFactory;
-import com.easy.query.core.sharding.route.abstraction.DataSourceRouteManager;
-import com.easy.query.core.sharding.route.abstraction.DefaultDataSourceRouteManager;
-import com.easy.query.core.sharding.route.abstraction.DefaultTableRouteManager;
-import com.easy.query.core.sharding.route.abstraction.TableRouteManager;
+import com.easy.query.core.sharding.route.manager.DataSourceRouteManager;
+import com.easy.query.core.sharding.route.manager.impl.DefaultDataSourceRouteManager;
+import com.easy.query.core.sharding.route.manager.impl.DefaultTableRouteManager;
+import com.easy.query.core.sharding.route.manager.TableRouteManager;
 import com.easy.query.core.sharding.route.datasource.engine.DataSourceRouteEngine;
 import com.easy.query.core.sharding.route.datasource.engine.DefaultDataSourceRouteEngine;
 import com.easy.query.core.sharding.route.table.engine.DefaultTableRouteEngine;
@@ -102,6 +106,8 @@ public class EasyQueryBuilderConfiguration {
                 .replaceService(ShardingComparer.class, JavaLanguageShardingComparer.class)
                 .replaceService(JdbcTypeHandlerManager.class, EasyJdbcTypeHandlerManager.class)
                 .replaceService(EasyQueryRuntimeContext.class, DefaultEasyQueryRuntimeContext.class)
+                .replaceService(EasyDataSourceConnectionFactory.class, DefaultEasyDataSourceConnectionFactory.class)
+                .replaceService(EasyConnectionFactory.class, DefaultEasyConnectionFactory.class)
                 .replaceService(EasyQuery.class, DefaultEasyQuery.class);
     }
 

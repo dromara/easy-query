@@ -5,7 +5,7 @@ import com.easy.query.core.api.client.EasyQuery;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.configuration.EasyQueryConfiguration;
 import com.easy.query.core.logging.LogFactory;
-import com.easy.query.core.sharding.route.abstraction.TableRouteManager;
+import com.easy.query.core.sharding.route.manager.TableRouteManager;
 import com.easy.query.test.encryption.Base64EncryptionStrategy;
 import com.easy.query.test.encryption.DefaultAesEasyEncryptionStrategy;
 import com.easy.query.test.encryption.MyEncryptionStrategy;
