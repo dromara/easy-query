@@ -54,15 +54,21 @@ public class ShardingSequenceConfig {
         return tableComparator;
     }
 
-    public ConnectionModeEnum getConnectionModeOrDefault(ConnectionModeEnum def) {
+    public ConnectionModeEnum getConnectionModeOrDefault(ExecuteMethodEnum executeMethod,ConnectionModeEnum def) {
         if(connectionMode==null){
+            return def;
+        }
+        if(!hasConnectionModeMethods(executeMethod)){
             return def;
         }
         return connectionMode;
     }
 
-    public int getMaxShardingQueryLimitOrDefault(int def) {
+    public int getMaxShardingQueryLimitOrDefault(ExecuteMethodEnum executeMethod,int def) {
         if(maxShardingQueryLimit<=0){
+            return def;
+        }
+        if(!hasLimitMethods(executeMethod)){
             return def;
         }
         return maxShardingQueryLimit;

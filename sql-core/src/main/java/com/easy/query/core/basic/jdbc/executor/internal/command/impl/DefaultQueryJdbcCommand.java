@@ -4,6 +4,7 @@ import com.easy.query.core.basic.jdbc.executor.internal.command.abstraction.Abst
 import com.easy.query.core.basic.jdbc.executor.internal.common.ExecutionUnit;
 import com.easy.query.core.basic.jdbc.executor.internal.result.QueryExecuteResult;
 import com.easy.query.core.enums.ExecuteMethodEnum;
+import com.easy.query.core.enums.MergeBehaviorEnum;
 import com.easy.query.core.expression.executor.parser.SequenceParseResult;
 import com.easy.query.core.sharding.context.StreamMergeContext;
 import com.easy.query.core.basic.jdbc.executor.internal.unit.impl.EasyQueryExecutor;
@@ -34,22 +35,16 @@ public class DefaultQueryJdbcCommand extends AbstractQueryJdbcCommand {
     @Override
     protected Collection<ExecutionUnit> getDefaultSqlRouteUnits() {
         Collection<ExecutionUnit> defaultSqlRouteUnits = super.getDefaultSqlRouteUnits();
-        if(streamMergeContext.isQuery()&&streamMergeContext.isSharding()&&streamMergeContext.isPaginationQuery()){
-            //顺序分页
-            if(streamMergeContext.isSeqQuery()&& streamMergeContext.getSequenceParseResult().getTable().getEntityMetadata().getShardingInitConfig().getShardingSequenceConfig().hasCompareMethods(ExecuteMethodEnum.COUNT)){
+        if(streamMergeContext.isSharding()){
+            if(streamMergeContext.hasBehavior(MergeBehaviorEnum.SEQUENCE_PAGINATION)){
                 ShardingQueryCountManager shardingQueryCountManager = streamMergeContext.getRuntimeContext().getShardingQueryCountManager();
-                if(shardingQueryCountManager.isBegin()){
-
-                    List<QueryCountResult> countResult = shardingQueryCountManager.getCountResult();
-                    long offset = streamMergeContext.getOffset();
-                    long rows = streamMergeContext.getRows();
-                    SequenceParseResult sequenceParseResult = streamMergeContext.getSequenceParseResult();
-                    Collection<ExecutionUnit> sequencePaginationExecutionUnits = ShardingUtil.getSequencePaginationExecutionUnits(defaultSqlRouteUnits, countResult,sequenceParseResult, offset, rows);
-                    return sequencePaginationExecutionUnits;
-                }
+                List<QueryCountResult> countResult = shardingQueryCountManager.getCountResult();
+                long offset = streamMergeContext.getOffset();
+                long rows = streamMergeContext.getRows();
+                SequenceParseResult sequenceParseResult = streamMergeContext.getSequenceParseResult();
+                return ShardingUtil.getSequencePaginationExecutionUnits(defaultSqlRouteUnits, countResult,sequenceParseResult, offset, rows);
             }
             //反向排序
-
         }
         return defaultSqlRouteUnits;
     }

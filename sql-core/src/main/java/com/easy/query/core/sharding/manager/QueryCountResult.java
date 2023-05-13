@@ -7,32 +7,16 @@ package com.easy.query.core.sharding.manager;
  * @author xuejiaming
  */
 public class QueryCountResult {
-    private final int index;
     private final long total;
-    private final String sql;
 
-    public QueryCountResult(int index, long total,String sql){
+    public QueryCountResult(long total){
 
-        this.index = index;
         this.total = total;
-        this.sql = sql;
     }
 
 
-    public int getIndex() {
-        return index;
-    }
 
     public long getTotal() {
         return total;
-    }
-
-    @Override
-    public String toString() {
-        return "{" +
-                "index=" + index +
-                ", total=" + total +
-                ", sql=" + sql +
-                '}';
     }
 }

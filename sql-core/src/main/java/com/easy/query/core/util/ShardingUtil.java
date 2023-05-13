@@ -186,7 +186,6 @@ public class ShardingUtil {
 
     public static Collection<ExecutionUnit> getSequencePaginationExecutionUnits(Collection<ExecutionUnit> defaultExecutionUnits,List<QueryCountResult> countResult,SequenceParseResult sequenceParseResult, long skip, long take){
 
-        System.out.println(countResult);
         if(defaultExecutionUnits.size()!=countResult.size()){
             throw new EasyQueryInvalidOperationException("cant use sequence pagination");
         }

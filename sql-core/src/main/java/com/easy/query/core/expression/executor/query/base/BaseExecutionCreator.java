@@ -17,15 +17,15 @@ import java.util.List;
  * @author xuejiaming
  */
 public abstract class BaseExecutionCreator implements ExecutionCreator{
-    protected ExecutionUnit createExecutionUnit(String dataSource,int index, EasyEntitySqlExpression expression, List<Object> entities, boolean fillAutoIncrement){
+    protected ExecutionUnit createExecutionUnit(String dataSource,EasyEntitySqlExpression expression, List<Object> entities, boolean fillAutoIncrement){
         SqlRouteUnit sqlUnit = createSqlUnit(expression, entities, fillAutoIncrement);
-        return createExecutionUnit(dataSource,index, sqlUnit);
+        return createExecutionUnit(dataSource, sqlUnit);
     }
     protected SqlRouteUnit createSqlUnit(EasyEntitySqlExpression expression, List<Object> entities, boolean fillAutoIncrement){
         return new SqlRouteUnit(expression,entities, fillAutoIncrement);
     }
-    protected ExecutionUnit createExecutionUnit(String dataSource, int index, SqlRouteUnit sqlUnit){
-        return new  ExecutionUnit(dataSource, index,sqlUnit);
+    protected ExecutionUnit createExecutionUnit(String dataSource,SqlRouteUnit sqlUnit){
+        return new  ExecutionUnit(dataSource, sqlUnit);
     }
     protected ExecutionContext createExecutionContext(Collection<ExecutionUnit> executionUnits){
         return new ExecutionContext(executionUnits,sequenceQuery(),isCrossTable(),isCrossDataSource());

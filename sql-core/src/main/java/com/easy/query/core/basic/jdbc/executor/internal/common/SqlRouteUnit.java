@@ -20,6 +20,7 @@ public class SqlRouteUnit {
     private final List<Object> entities;
     private final boolean fillAutoIncrement;
     private final EasyEntitySqlExpression easyEntitySqlExpression;
+    private final SqlUnit sqlUnit;
 
     public SqlRouteUnit(String sql, List<SQLParameter> parameters){
         this(sql,parameters,null,false);
@@ -30,6 +31,7 @@ public class SqlRouteUnit {
         this.entities = entities;
         this.fillAutoIncrement = fillAutoIncrement;
         this.easyEntitySqlExpression = null;
+        this.sqlUnit=new SqlUnit(sql,parameters,entities,fillAutoIncrement);
     }
 
     public SqlRouteUnit(EasyEntitySqlExpression easyEntitySqlExpression, List<Object> entities, boolean fillAutoIncrement){
@@ -38,6 +40,7 @@ public class SqlRouteUnit {
         this.fillAutoIncrement = fillAutoIncrement;
         this.sql = null;
         this.parameters = null;
+        this.sqlUnit = null;
     }
 
 //    public String getSql() {
@@ -60,10 +63,11 @@ public class SqlRouteUnit {
         return easyEntitySqlExpression;
     }
     public SqlUnit getSqlUnit(){
-        if(easyEntitySqlExpression==null){
-            return new SqlUnit(sql,parameters,entities,fillAutoIncrement);
+        if(sqlUnit!=null){
+            return sqlUnit;
         }
         SqlParameterCollector sqlParameterCollector = DefaultSqlParameterCollector.defaultCollector();
+        assert easyEntitySqlExpression != null;
         String sql = easyEntitySqlExpression.toSql(sqlParameterCollector);
         return new SqlUnit(sql,sqlParameterCollector.getParameters(),entities,fillAutoIncrement);
     }

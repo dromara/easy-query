@@ -69,7 +69,7 @@ public class EasyQueryPrepareParseResult implements QueryPrepareParseResult {
                     Boolean asc = shardingSequenceConfig.getSequenceProperty(firstOrderColumn.getPropertyName());
                     if (asc != null) {
                         boolean reverse = !firstOrderColumn.isAsc();
-                        return new SequenceParseResult(table, shardingSequenceConfig.getTableComparator(),reverse ,shardingSequenceConfig.getConnectionModeOrDefault(easyQueryOption.getConnectionMode()), shardingSequenceConfig.getMaxShardingQueryLimitOrDefault(easyQueryOption.getMaxShardingQueryLimit()));
+                        return new SequenceParseResult(table, shardingSequenceConfig.getTableComparator(),reverse ,shardingSequenceConfig.getConnectionModeOrDefault(executorContext.getExecuteMethod(),easyQueryOption.getConnectionMode()), shardingSequenceConfig.getMaxShardingQueryLimitOrDefault(executorContext.getExecuteMethod(),easyQueryOption.getMaxShardingQueryLimit()));
                     }
                 }
             } else {
@@ -86,7 +86,7 @@ public class EasyQueryPrepareParseResult implements QueryPrepareParseResult {
                             //存在配置
                             Boolean asc = shardingSequenceConfig.getSequenceProperty(firstMaxColumn.getPropertyName());
                             if (asc != null) {
-                                return new SequenceParseResult(table, shardingSequenceConfig.getTableComparator(), true,shardingSequenceConfig.getConnectionModeOrDefault(easyQueryOption.getConnectionMode()), shardingSequenceConfig.getMaxShardingQueryLimitOrDefault(easyQueryOption.getMaxShardingQueryLimit()));
+                                return new SequenceParseResult(table, shardingSequenceConfig.getTableComparator(), true,shardingSequenceConfig.getConnectionModeOrDefault(executorContext.getExecuteMethod(),easyQueryOption.getConnectionMode()), shardingSequenceConfig.getMaxShardingQueryLimitOrDefault(executorContext.getExecuteMethod(),easyQueryOption.getMaxShardingQueryLimit()));
                             }
                         }
                     }
@@ -103,7 +103,7 @@ public class EasyQueryPrepareParseResult implements QueryPrepareParseResult {
                             //存在配置
                             Boolean asc = shardingSequenceConfig.getSequenceProperty(firstMinColumn.getPropertyName());
                             if (asc != null) {
-                                return new SequenceParseResult(table, shardingSequenceConfig.getTableComparator(), false,shardingSequenceConfig.getConnectionModeOrDefault(easyQueryOption.getConnectionMode()), shardingSequenceConfig.getMaxShardingQueryLimitOrDefault(easyQueryOption.getMaxShardingQueryLimit()));
+                                return new SequenceParseResult(table, shardingSequenceConfig.getTableComparator(), false,shardingSequenceConfig.getConnectionModeOrDefault(executorContext.getExecuteMethod(),easyQueryOption.getConnectionMode()), shardingSequenceConfig.getMaxShardingQueryLimitOrDefault(executorContext.getExecuteMethod(),easyQueryOption.getMaxShardingQueryLimit()));
                             }
                         }
                     }
@@ -116,7 +116,7 @@ public class EasyQueryPrepareParseResult implements QueryPrepareParseResult {
                     if (shardingSequenceConfig != null && shardingSequenceConfig.hasCompareMethods(executorContext.getExecuteMethod())) {
                         boolean asc = shardingSequenceConfig.hasCompareAscMethods(executorContext.getExecuteMethod());
                         boolean reverse = !asc;
-                        return new SequenceParseResult(table, shardingSequenceConfig.getTableComparator(), reverse,shardingSequenceConfig.getConnectionModeOrDefault(easyQueryOption.getConnectionMode()), shardingSequenceConfig.getMaxShardingQueryLimitOrDefault(easyQueryOption.getMaxShardingQueryLimit()));
+                        return new SequenceParseResult(table, shardingSequenceConfig.getTableComparator(), reverse,shardingSequenceConfig.getConnectionModeOrDefault(executorContext.getExecuteMethod(),easyQueryOption.getConnectionMode()), shardingSequenceConfig.getMaxShardingQueryLimitOrDefault(executorContext.getExecuteMethod(),easyQueryOption.getMaxShardingQueryLimit()));
                     }
                 }
             }
