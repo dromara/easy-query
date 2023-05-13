@@ -17,7 +17,8 @@ import com.easy.query.core.expression.segment.builder.ProjectSqlBuilderSegment;
 import com.easy.query.core.expression.sql.expression.EasyQuerySqlExpression;
 import com.easy.query.core.expression.sql.expression.EasyTableSqlExpression;
 import com.easy.query.core.metadata.EntityMetadata;
-import com.easy.query.core.metadata.EntityShardingOrder;
+import com.easy.query.core.metadata.ShardingInitConfig;
+import com.easy.query.core.metadata.ShardingSequenceConfig;
 import com.easy.query.core.sharding.merge.result.aggregation.AggregationType;
 import com.easy.query.core.util.ClassUtil;
 import com.easy.query.core.util.ShardingUtil;
@@ -58,10 +59,11 @@ public class DefaultRewriteContextFactory implements RewriteContextFactory {
             if(sequenceParseResult!=null){
                 TableAvailable table = sequenceParseResult.getTable();
                 EntityMetadata entityMetadata = table.getEntityMetadata();
-                EntityShardingOrder entityShardingOrder = entityMetadata.getEntityShardingOrder();
-                if(entityShardingOrder!=null){
+                ShardingInitConfig shardingInitConfig = entityMetadata.getShardingInitConfig();
+                ShardingSequenceConfig shardingSequenceConfig = shardingInitConfig.getShardingSequenceConfig();
+                if(shardingSequenceConfig!=null){
                     boolean reverse = sequenceParseResult.isReverse();
-                    String firstSequenceProperty = entityShardingOrder.getFirstSequencePropertyOrNull();
+                    String firstSequenceProperty = shardingSequenceConfig.getFirstSequencePropertyOrNull();
                     if(firstSequenceProperty!=null){
                         OrderColumnSegmentImpl orderColumnSegment = new OrderColumnSegmentImpl(table, firstSequenceProperty, easyQuerySqlExpression.getRuntimeContext(), !reverse);
                         easyQuerySqlExpression.getOrder().append(orderColumnSegment);

@@ -53,7 +53,7 @@ public class FixShardingInitializer implements EasyShardingInitializer {
             ((ShardingEntityBuilder<TopicShardingTime>) builder).actualTableNameInit(initTables)
                     .ascSequenceConfigure(String::compareToIgnoreCase)
                     .addPropertyDefaultUseDesc(TopicShardingTime::getCreateTime)
-                    .defaultAffectedMethod(false,ExecuteMethodEnum.LIST,ExecuteMethodEnum.ANY,ExecuteMethodEnum.FIRST)
+                    .defaultAffectedMethod(false,ExecuteMethodEnum.LIST,ExecuteMethodEnum.ANY,ExecuteMethodEnum.COUNT,ExecuteMethodEnum.FIRST)
                     .useMaxShardingQueryLimit(2);
         }else{
             throw new UnsupportedOperationException();

@@ -52,6 +52,8 @@ import com.easy.query.core.sharding.DefaultEasyQueryDataSource;
 import com.easy.query.core.sharding.EasyQueryDataSource;
 import com.easy.query.core.sharding.comparer.JavaLanguageShardingComparer;
 import com.easy.query.core.sharding.comparer.ShardingComparer;
+import com.easy.query.core.sharding.manager.DefaultShardingQueryCountManager;
+import com.easy.query.core.sharding.manager.ShardingQueryCountManager;
 import com.easy.query.core.sharding.rewrite.DefaultRewriteContextFactory;
 import com.easy.query.core.sharding.rewrite.RewriteContextFactory;
 import com.easy.query.core.sharding.route.DefaultRouteContextFactory;
@@ -113,6 +115,7 @@ public class EasyQueryBuilderConfiguration {
                 .replaceService(EasyDataSourceConnectionFactory.class, DefaultEasyDataSourceConnectionFactory.class)
                 .replaceService(EasyConnectionFactory.class, DefaultEasyConnectionFactory.class)
                 .replaceService(DataSourceManager.class, DefaultDataSourceManager.class)
+                .replaceService(ShardingQueryCountManager.class, DefaultShardingQueryCountManager.class)
                 .replaceService(EasyQuery.class, DefaultEasyQuery.class);
     }
 

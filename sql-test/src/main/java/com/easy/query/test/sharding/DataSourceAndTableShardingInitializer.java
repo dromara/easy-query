@@ -78,8 +78,9 @@ public class DataSourceAndTableShardingInitializer implements EasyShardingInitia
             initTables.put("ds2023", actualTableNames);
         }
         ((ShardingEntityBuilder<TopicShardingDataSourceTime>)builder).actualTableNameInit(initTables)
+                .paginationReverse(0.5,100L)
                 .ascSequenceConfigure(new DataSourceAndTableComparator())
                 .addPropertyDefaultUseDesc(TopicShardingDataSourceTime::getCreateTime)
-                .defaultAffectedMethod(false, ExecuteMethodEnum.LIST,ExecuteMethodEnum.ANY,ExecuteMethodEnum.FIRST);
+                .defaultAffectedMethod(false, ExecuteMethodEnum.LIST,ExecuteMethodEnum.ANY,ExecuteMethodEnum.FIRST,ExecuteMethodEnum.COUNT);
     }
 }

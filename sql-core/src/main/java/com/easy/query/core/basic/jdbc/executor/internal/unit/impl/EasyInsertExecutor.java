@@ -2,7 +2,8 @@ package com.easy.query.core.basic.jdbc.executor.internal.unit.impl;
 
 import com.easy.query.core.basic.jdbc.con.EasyConnection;
 import com.easy.query.core.basic.jdbc.executor.internal.common.ExecutionUnit;
-import com.easy.query.core.basic.jdbc.executor.internal.result.impl.AffectedRowsExecuteResult;
+import com.easy.query.core.basic.jdbc.executor.internal.common.SqlUnit;
+import com.easy.query.core.basic.jdbc.executor.internal.result.AffectedRowsExecuteResult;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.executor.internal.merger.ShardingMerger;
 import com.easy.query.core.basic.jdbc.executor.internal.unit.abstraction.AbstractExecutor;
@@ -11,7 +12,7 @@ import com.easy.query.core.basic.jdbc.executor.internal.unit.breaker.NoCircuitBr
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.sharding.context.StreamMergeContext;
 import com.easy.query.core.basic.jdbc.executor.internal.common.CommandExecuteUnit;
-import com.easy.query.core.basic.jdbc.executor.internal.common.SqlUnit;
+import com.easy.query.core.basic.jdbc.executor.internal.common.SqlRouteUnit;
 import com.easy.query.core.basic.jdbc.executor.internal.merger.impl.AffectedRowsShardingMerger;
 import com.easy.query.core.util.JdbcExecutorUtil;
 
@@ -34,12 +35,14 @@ public class EasyInsertExecutor extends AbstractExecutor<AffectedRowsExecuteResu
         EasyConnection easyConnection = commandExecuteUnit.getEasyConnection();
         ExecutionUnit executionUnit = commandExecuteUnit.getExecutionUnit();
         String dataSourceName = executionUnit.getDataSourceName();
-        SqlUnit sqlUnit = executionUnit.getSqlUnit();
+        SqlRouteUnit sqlRouteUnit = executionUnit.getSqlRouteUnit();
+        SqlUnit sqlUnit = sqlRouteUnit.getSqlUnit();
         String sql = sqlUnit.getSql();
         List<Object> entities = sqlUnit.getEntities();
         List<SQLParameter> parameters = sqlUnit.getParameters();
         boolean fillAutoIncrement = sqlUnit.isFillAutoIncrement();
-        return JdbcExecutorUtil.insert(dataSourceName,executorContext,easyConnection,sql,entities,parameters,fillAutoIncrement);
+        int rows = JdbcExecutorUtil.insert(dataSourceName, executorContext, easyConnection, sql, entities, parameters, fillAutoIncrement);
+        return new AffectedRowsExecuteResult(rows);
     }
 
     @Override

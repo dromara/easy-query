@@ -5,6 +5,8 @@ import com.easy.query.core.basic.jdbc.con.EasyConnection;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.enums.ExecuteMethodEnum;
+import com.easy.query.core.enums.MergeBehaviorEnum;
+import com.easy.query.core.expression.executor.parser.SequenceParseResult;
 import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.basic.jdbc.executor.internal.common.ExecutionUnit;
@@ -30,6 +32,8 @@ public interface StreamMergeContext extends AutoCloseable {
 
     ExecutorContext getExecutorContext();
 
+    boolean hasBehavior(MergeBehaviorEnum mergeBehavior);
+
     /**
      * 当前没有分片
      * @return
@@ -48,6 +52,7 @@ public interface StreamMergeContext extends AutoCloseable {
     boolean isQuery();
 
      boolean isSeqQuery();
+    SequenceParseResult getSequenceParseResult();
 
     /**
      * group和order前半段匹配支持stream merger

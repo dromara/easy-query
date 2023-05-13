@@ -6,8 +6,6 @@ import com.easy.query.core.basic.plugin.interceptor.EasyInterceptorEntry;
 import com.easy.query.core.basic.plugin.logicdel.LogicDeleteBuilder;
 import com.easy.query.core.basic.plugin.version.EasyVersionStrategy;
 import com.easy.query.core.inject.ServiceProvider;
-import com.easy.query.core.enums.sharding.ConnectionModeEnum;
-import com.easy.query.core.sharding.initializer.ShardingInitOption;
 import com.easy.query.core.sharding.initializer.ShardingEntityBuilder;
 import com.easy.query.core.configuration.nameconversion.NameConversion;
 import com.easy.query.core.configuration.EasyQueryConfiguration;
@@ -20,6 +18,7 @@ import com.easy.query.core.basic.plugin.interceptor.EasyUpdateSetInterceptor;
 import com.easy.query.core.basic.plugin.logicdel.EasyLogicDeleteStrategy;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.sharding.initializer.EasyShardingInitializer;
+import com.easy.query.core.sharding.initializer.ShardingInitOption;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.StringUtil;
 import com.easy.query.core.common.LinkedCaseInsensitiveMap;
@@ -57,7 +56,7 @@ public class EntityMetadata {
     private final Set<String> shardingDataSourcePropertyNames = new LinkedHashSet<>();
     private String shardingTablePropertyName;
     private final Set<String> shardingTablePropertyNames = new LinkedHashSet<>();
-    private EntityShardingOrder entityShardingOrder;
+    private ShardingInitConfig shardingInitConfig;
 
     /**
      * 查询过滤器
@@ -251,14 +250,22 @@ public class EntityMetadata {
                 }
             }
         }
+        ShardingSequenceConfig shardingSequenceConfig=null;
         //如果有配置
         Comparator<String> defaultTableNameComparator = shardingInitOption.getDefaultTableNameComparator();
         if (defaultTableNameComparator != null) {
-            Map<String, Boolean> sequenceProperties = shardingInitOption.getSequenceProperties();
-            ConnectionModeEnum connectionMode = Objects.nonNull(shardingInitOption.getConnectionMode())? shardingInitOption.getConnectionMode(): configuration.getEasyQueryOption().getConnectionMode();
 
-            this.entityShardingOrder = new EntityShardingOrder(defaultTableNameComparator,connectionMode, shardingInitOption.getConnectionsLimit(),sequenceProperties,shardingInitOption.getExecuteMethodBehavior());
+            shardingSequenceConfig=new ShardingSequenceConfig(defaultTableNameComparator
+                    ,shardingInitOption.getSequenceProperties()
+                    ,shardingInitOption.getMaxShardingQueryLimit()
+                    ,shardingInitOption.getSequenceCompareMethods()
+                    ,shardingInitOption.getSequenceCompareAscMethods()
+                    ,shardingInitOption.getSequenceLimitMethods()
+                    ,shardingInitOption.getSequenceConnectionModeMethods()
+                    ,shardingInitOption.getConnectionMode());
+
         }
+        this.shardingInitConfig = new ShardingInitConfig(shardingInitOption.getReverseFactor(),shardingInitOption.getMinReverseTotal(),shardingSequenceConfig);
     }
 
     protected void entityGlobalInterceptorConfigurationInit(EasyQueryConfiguration configuration) {
@@ -493,7 +500,7 @@ public class EntityMetadata {
         return shardingTablePropertyNames;
     }
 
-    public EntityShardingOrder getEntityShardingOrder() {
-        return entityShardingOrder;
+    public ShardingInitConfig getShardingInitConfig() {
+        return shardingInitConfig;
     }
 }

@@ -25,12 +25,12 @@ public abstract class AbstractJdbcCommand<T extends ExecuteResult> implements Jd
         this.streamMergeContext = streamMergeContext;
     }
     protected  abstract Executor<T> createExecutor();
-    protected Collection<ExecutionUnit> getDefaultSSqlRouteUnits(){
+    protected Collection<ExecutionUnit> getDefaultSqlRouteUnits(){
         return streamMergeContext.getExecutionUnits();
     }
     @Override
     public T execute() throws SQLException {
-        Collection<ExecutionUnit> executionUnits = getDefaultSSqlRouteUnits();
+        Collection<ExecutionUnit> executionUnits = getDefaultSqlRouteUnits();
         if(EasyCollectionUtil.isEmpty(executionUnits)){
             return defaultResult();
         }

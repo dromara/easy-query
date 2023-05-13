@@ -1,5 +1,6 @@
 package com.easy.query.core.basic.api.select.abstraction;
 
+import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
@@ -49,6 +50,7 @@ import com.easy.query.core.enums.EasyAggregate;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
+import com.easy.query.core.sharding.manager.ShardingQueryCountManager;
 import com.easy.query.core.util.BeanUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.ClassUtil;
@@ -89,12 +91,14 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
         return entityQueryExpressionBuilder.getRuntimeContext().getSqlApiFactory().cloneQueryable(this);
     }
 
-    private void setExecuteMethod(ExecuteMethodEnum executeMethod){
-        setExecuteMethod(executeMethod,false);
+    private void setExecuteMethod(ExecuteMethodEnum executeMethod) {
+        setExecuteMethod(executeMethod, false);
     }
-    private void setExecuteMethod(ExecuteMethodEnum executeMethod,boolean ifUnknown){
-        entityQueryExpressionBuilder.getExpressionContext().executeMethod(executeMethod,ifUnknown);
+
+    private void setExecuteMethod(ExecuteMethodEnum executeMethod, boolean ifUnknown) {
+        entityQueryExpressionBuilder.getExpressionContext().executeMethod(executeMethod, ifUnknown);
     }
+
     @Override
     public long count() {
         EntityQueryExpressionBuilder queryExpressionBuilder = entityQueryExpressionBuilder.cloneEntityExpressionBuilder();
@@ -142,8 +146,8 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
         SqlWherePredicate<T1> sqlAllPredicate = cloneQueryable.getSqlBuilderProvider1().getSqlAllPredicate1();
         whereExpression.apply(sqlAllPredicate);
         EntityQueryExpressionBuilder sqlEntityExpressionBuilder = cloneQueryable.select(" 1 ").getSqlEntityExpressionBuilder();
-        List<Long> result = toInternalListWithExpression(sqlEntityExpressionBuilder,Long.class);
-        return EasyCollectionUtil.all(result,o->o==1L);
+        List<Long> result = toInternalListWithExpression(sqlEntityExpressionBuilder, Long.class);
+        return EasyCollectionUtil.all(result, o -> o == 1L);
     }
 
     @Override
@@ -201,7 +205,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
         String propertyName = LambdaUtil.getPropertyName(column);
         FuncColumnSegmentImpl funcColumnSegment = new FuncColumnSegmentImpl(table.getEntityTable(), propertyName, entityQueryExpressionBuilder.getRuntimeContext(), easyFunc);
         ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(propertyName);
-        return cloneQueryable().select(funcColumnSegment,true).toList((Class<TMember>) columnMetadata.getProperty().getPropertyType());
+        return cloneQueryable().select(funcColumnSegment, true).toList((Class<TMember>) columnMetadata.getProperty().getPropertyType());
     }
 
 
@@ -243,7 +247,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
 
     @Override
     public <TR> List<TR> toList(Class<TR> resultClass) {
-        setExecuteMethod(ExecuteMethodEnum.LIST,true);
+        setExecuteMethod(ExecuteMethodEnum.LIST, true);
         return toInternalList(resultClass);
     }
 
@@ -328,7 +332,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
 
     @Override
     public Queryable<T1> select(ColumnSegment columnSegment, boolean clearAll) {
-        if(clearAll){
+        if (clearAll) {
             entityQueryExpressionBuilder.getProjects().getSqlSegments().clear();
         }
         entityQueryExpressionBuilder.getProjects().append(columnSegment);
@@ -651,9 +655,48 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
         long remainingCount = total - offset;
         //当剩余条数小于take数就取remainingCount
         long realTake = Math.min(remainingCount, take);
+        if(realTake<=0){
+            return easyPageResultProvider.createPageResult(total, new ArrayList<>(0));
+        }
         this.limit(offset, realTake);
         List<TR> data = this.toInternalList(clazz);
         return easyPageResultProvider.createPageResult(total, data);
+    }
+
+    @Override
+    public EasyPageResult<T1> toShardingPageResult(long pageIndex, long pageSize) {
+        return doShardingPageResult(pageIndex, pageSize, t1Class);
+    }
+
+    protected <TR> EasyPageResult<TR> doShardingPageResult(long pageIndex, long pageSize, Class<TR> clazz) {
+        //设置每次获取多少条
+        long take = pageSize <= 0 ? 1 : pageSize;
+        //设置当前页码最小1
+        long index = pageIndex <= 0 ? 1 : pageIndex;
+        //需要跳过多少条
+        long offset = (index - 1) * take;
+        EasyQueryRuntimeContext runtimeContext = entityQueryExpressionBuilder.getRuntimeContext();
+        ShardingQueryCountManager shardingQueryCountManager = runtimeContext.getShardingQueryCountManager();
+        try {
+            shardingQueryCountManager.begin();
+            long total = this.count();
+            EasyPageResultProvider easyPageResultProvider = runtimeContext.getEasyPageResultProvider();
+            if (total <= offset) {
+                return easyPageResultProvider.createPageResult(total, new ArrayList<>(0));
+            }
+            //获取剩余条数
+            long remainingCount = total - offset;
+            //当剩余条数小于take数就取remainingCount
+            long realTake = Math.min(remainingCount, take);
+            if(realTake<=0){
+                return easyPageResultProvider.createPageResult(total, new ArrayList<>(0));
+            }
+            this.limit(offset, realTake);
+            List<TR> data = this.toInternalList(clazz);
+            return easyPageResultProvider.createPageResult(total, data);
+        } finally {
+            shardingQueryCountManager.clear();
+        }
     }
 
 

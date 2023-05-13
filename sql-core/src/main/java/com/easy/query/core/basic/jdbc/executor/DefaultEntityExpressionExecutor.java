@@ -1,11 +1,11 @@
 package com.easy.query.core.basic.jdbc.executor;
 
-import com.easy.query.core.basic.jdbc.executor.internal.result.impl.AffectedRowsExecuteResult;
+import com.easy.query.core.basic.jdbc.executor.internal.result.AffectedRowsExecuteResult;
 import com.easy.query.core.basic.jdbc.executor.internal.command.impl.DefaultExecuteBatchJdbcCommand;
 import com.easy.query.core.basic.jdbc.executor.internal.command.impl.DefaultExecuteUpdateJdbcCommand;
 import com.easy.query.core.basic.jdbc.executor.internal.command.impl.DefaultInsertJdbcCommand;
 import com.easy.query.core.basic.jdbc.executor.internal.command.impl.DefaultQueryJdbcCommand;
-import com.easy.query.core.basic.jdbc.executor.internal.result.impl.QueryExecuteResult;
+import com.easy.query.core.basic.jdbc.executor.internal.result.QueryExecuteResult;
 import com.easy.query.core.basic.jdbc.executor.internal.command.JdbcCommand;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.exception.EasyQueryException;

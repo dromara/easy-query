@@ -348,6 +348,8 @@ public interface Queryable<T1> extends Query<T1>, Interceptable<Queryable<T1>>, 
      */
     EasyPageResult<T1> toPageResult(long pageIndex, long pageSize, long pageTotal);
 
+    EasyPageResult<T1> toShardingPageResult(long pageIndex, long pageSize);
+
     //    PageResult<T1> toPageResult(long pageIndex, long pageSize, SqlExpression<ColumnSelector<T1>> selectExpression);
 //    <TR> PageResult<TR> toPageResult(long pageIndex, long pageSize, Class<TR> clazz);
 //    <TR> PageResult<TR> toPageResult(long pageIndex, long pageSize, Class<TR> clazz, SqlExpression<ColumnAsSelector<T1,TR>> selectExpression);

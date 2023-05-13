@@ -1,8 +1,6 @@
 package com.easy.query.core.sharding.initializer;
 
-import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.metadata.EntityMetadata;
-import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 
 import java.util.Collection;
 import java.util.Comparator;
@@ -16,12 +14,12 @@ import java.util.Map;
  */
 public class ShardingEntityBuilder<T> {
     private final EntityMetadata entityMetadata;
-    private Map<String, Collection<String>> actualTableNames;
-    private ShardingSequenceBuilder<T> shardingOrderBuilder;
+    private final ShardingInitOptionBuilder shardingInitOptionBuilder;
 
     public ShardingEntityBuilder(EntityMetadata entityMetadata) {
 
         this.entityMetadata = entityMetadata;
+        this.shardingInitOptionBuilder = new ShardingInitOptionBuilder();
     }
 
     public EntityMetadata getEntityMetadata() {
@@ -29,34 +27,44 @@ public class ShardingEntityBuilder<T> {
     }
 
     public ShardingInitOption build() {
-        Comparator<String> defaultTableNameComparator = null;
-        Map<String, Boolean> sequenceProperties = null;
-        ExecuteMethodBehavior executeMethodBehavior=null;
-        ConnectionModeEnum connectionMode=null;
-        int connectionsLimit = 0;
-        if (shardingOrderBuilder != null) {
-            defaultTableNameComparator = shardingOrderBuilder.getDefaultTableNameComparator();
-            sequenceProperties = shardingOrderBuilder.getSequenceProperties();
-            connectionMode=shardingOrderBuilder.getConnectionMode();
-            connectionsLimit = shardingOrderBuilder.getMaxShardingQueryLimit();
-            executeMethodBehavior=shardingOrderBuilder.getExecuteMethodBehavior();
-            executeMethodBehavior.removeMethod(ExecuteMethodEnum.UNKNOWN);
-        }
-        return new ShardingInitOption(actualTableNames,defaultTableNameComparator,sequenceProperties,connectionMode,connectionsLimit,executeMethodBehavior);
+        return shardingInitOptionBuilder.build();
     }
 
     public ShardingEntityBuilder<T> actualTableNameInit(Map<String, Collection<String>> actualTableNames) {
-        this.actualTableNames = actualTableNames;
+        shardingInitOptionBuilder.setActualTableNames(actualTableNames);
         return this;
     }
+
     /**
      * 实际表asc下的排序
+     *
      * @param defaultTableNameComparator 默认没有匹配orderby的时候也会将表进行当前排序器进行排序后再分批处理
      * @return
      */
     public ShardingSequenceBuilder<T> ascSequenceConfigure(Comparator<String> defaultTableNameComparator) {
-
-        this.shardingOrderBuilder = new ShardingSequenceBuilder<>(entityMetadata, defaultTableNameComparator);
-        return shardingOrderBuilder;
+        shardingInitOptionBuilder
+                .setDefaultTableNameComparator(defaultTableNameComparator);
+        return new ShardingSequenceBuilder<>(this, shardingInitOptionBuilder, entityMetadata);
     }
+
+    /**
+     * 分页反排序
+     * 比如 reverseFactor=0.5，minReverseTotal=100000，当offset>0.5*100000时分片分页会启用反向排序
+     *
+     * @param reverseFactor
+     * @param minReverseTotal
+     * @return
+     */
+    public ShardingEntityBuilder<T> paginationReverse(double reverseFactor, long minReverseTotal) {
+        if (reverseFactor <= 0) {
+            throw new IllegalArgumentException("reverseFactor less than zero:" + reverseFactor);
+        }
+        if (minReverseTotal <= 1) {
+            throw new IllegalArgumentException("minReverseTotal less than one:" + minReverseTotal);
+        }
+        shardingInitOptionBuilder.setReverseFactor(reverseFactor);
+        shardingInitOptionBuilder.setMinReverseTotal(minReverseTotal);
+        return this;
+    }
+
 }

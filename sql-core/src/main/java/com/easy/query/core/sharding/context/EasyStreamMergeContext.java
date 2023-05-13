@@ -7,9 +7,11 @@ import com.easy.query.core.basic.jdbc.con.EasyConnectionManager;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.enums.ExecuteMethodEnum;
+import com.easy.query.core.enums.MergeBehaviorEnum;
 import com.easy.query.core.enums.replica.ReplicaBehaviorEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.executor.parser.ExecutionContext;
+import com.easy.query.core.expression.executor.parser.SequenceParseResult;
 import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.basic.jdbc.executor.internal.common.ExecutionUnit;
@@ -50,6 +52,11 @@ public class EasyStreamMergeContext implements StreamMergeContext {
     @Override
     public ExecutorContext getExecutorContext() {
         return executorContext;
+    }
+
+    @Override
+    public boolean hasBehavior(MergeBehaviorEnum mergeBehavior) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -107,6 +114,11 @@ public class EasyStreamMergeContext implements StreamMergeContext {
     @Override
     public boolean isSeqQuery() {
         return false;
+    }
+
+    @Override
+    public SequenceParseResult getSequenceParseResult() {
+        return null;
     }
 
     /**

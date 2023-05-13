@@ -3,11 +3,9 @@ package com.easy.query.core.expression.executor.query.base;
 import com.easy.query.core.basic.jdbc.parameter.DefaultSqlParameterCollector;
 import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
 import com.easy.query.core.expression.executor.parser.ExecutionContext;
-import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.sql.expression.EasyEntitySqlExpression;
 import com.easy.query.core.basic.jdbc.executor.internal.common.ExecutionUnit;
-import com.easy.query.core.basic.jdbc.executor.internal.common.SqlUnit;
-import com.easy.query.core.util.EasyCollectionUtil;
+import com.easy.query.core.basic.jdbc.executor.internal.common.SqlRouteUnit;
 
 import java.util.Collection;
 import java.util.List;
@@ -19,17 +17,15 @@ import java.util.List;
  * @author xuejiaming
  */
 public abstract class BaseExecutionCreator implements ExecutionCreator{
-    protected ExecutionUnit createExecutionUnit(String dataSource, EasyEntitySqlExpression expression, List<Object> entities, boolean fillAutoIncrement){
-        SqlUnit sqlUnit = createSqlUnit(expression, entities, fillAutoIncrement);
-        return createExecutionUnit(dataSource, sqlUnit);
+    protected ExecutionUnit createExecutionUnit(String dataSource,int index, EasyEntitySqlExpression expression, List<Object> entities, boolean fillAutoIncrement){
+        SqlRouteUnit sqlUnit = createSqlUnit(expression, entities, fillAutoIncrement);
+        return createExecutionUnit(dataSource,index, sqlUnit);
     }
-    protected SqlUnit createSqlUnit(EasyEntitySqlExpression expression, List<Object> entities, boolean fillAutoIncrement){
-        SqlParameterCollector sqlParameterCollector = DefaultSqlParameterCollector.defaultCollector();
-        String sql = expression.toSql(sqlParameterCollector);
-        return new SqlUnit(sql, sqlParameterCollector.getParameters(),entities, fillAutoIncrement);
+    protected SqlRouteUnit createSqlUnit(EasyEntitySqlExpression expression, List<Object> entities, boolean fillAutoIncrement){
+        return new SqlRouteUnit(expression,entities, fillAutoIncrement);
     }
-    protected ExecutionUnit createExecutionUnit(String dataSource,SqlUnit sqlUnit){
-        return new  ExecutionUnit(dataSource, sqlUnit);
+    protected ExecutionUnit createExecutionUnit(String dataSource, int index, SqlRouteUnit sqlUnit){
+        return new  ExecutionUnit(dataSource, index,sqlUnit);
     }
     protected ExecutionContext createExecutionContext(Collection<ExecutionUnit> executionUnits){
         return new ExecutionContext(executionUnits,sequenceQuery(),isCrossTable(),isCrossDataSource());

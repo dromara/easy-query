@@ -8,18 +8,24 @@ package com.easy.query.core.basic.jdbc.executor.internal.common;
  */
 public final class ExecutionUnit {
     private final String dataSourceName;
-    private final SqlUnit sqlUnit;
+    private final int index;
+    private final SqlRouteUnit sqlRouteUnit;
 
-    public ExecutionUnit(String dataSourceName, SqlUnit sqlUnit) {
+    public ExecutionUnit(String dataSourceName,int index, SqlRouteUnit sqlRouteUnit) {
         this.dataSourceName = dataSourceName;
-        this.sqlUnit = sqlUnit;
+        this.index = index;
+        this.sqlRouteUnit = sqlRouteUnit;
     }
 
     public String getDataSourceName() {
         return dataSourceName;
     }
 
-    public SqlUnit getSqlUnit() {
-        return sqlUnit;
+    public SqlRouteUnit getSqlRouteUnit() {
+        return sqlRouteUnit;
+    }
+
+    public int getIndex() {
+        return index;
     }
 }

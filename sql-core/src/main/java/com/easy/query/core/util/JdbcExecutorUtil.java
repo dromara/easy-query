@@ -17,8 +17,7 @@ import com.easy.query.core.expression.lambda.PropertySetterCaller;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.metadata.EntityMetadata;
-import com.easy.query.core.basic.jdbc.executor.internal.result.impl.AffectedRowsExecuteResult;
-import com.easy.query.core.basic.jdbc.executor.internal.result.impl.QueryExecuteResult;
+import com.easy.query.core.basic.jdbc.executor.internal.result.AffectedRowsExecuteResult;
 import com.easy.query.core.sharding.merge.result.StreamResultSet;
 import com.easy.query.core.sharding.merge.result.impl.EasyShardingStreamResult;
 import com.easy.query.core.sharding.merge.result.impl.EasyStreamResult;
@@ -88,10 +87,10 @@ public class JdbcExecutorUtil {
         }
         return params;
     }
-    public static QueryExecuteResult query(String dataSourceName,ExecutorContext executorContext, EasyConnection easyConnection, String sql, List<SQLParameter> sqlParameters){
+    public static StreamResultSet query(String dataSourceName,ExecutorContext executorContext, EasyConnection easyConnection, String sql, List<SQLParameter> sqlParameters){
         return query(dataSourceName,executorContext,easyConnection,sql,sqlParameters,false);
     }
-    public static QueryExecuteResult query(String dataSourceName,ExecutorContext executorContext, EasyConnection easyConnection, String sql, List<SQLParameter> sqlParameters,boolean sharding) {
+    public static StreamResultSet query(String dataSourceName,ExecutorContext executorContext, EasyConnection easyConnection, String sql, List<SQLParameter> sqlParameters,boolean sharding) {
         boolean logDebug = log.isDebugEnabled();
         logSql(logDebug,dataSourceName, sql);
         EasyQueryRuntimeContext runtimeContext = executorContext.getRuntimeContext();
@@ -126,10 +125,10 @@ public class JdbcExecutorUtil {
             log.error(sql, e);
             throw new EasyQuerySQLExecuteException(sql, e);
         }
-        return new QueryExecuteResult(sr);
+        return sr;
     }
 
-    public static <T> AffectedRowsExecuteResult insert(String dataSourceName,ExecutorContext executorContext, EasyConnection easyConnection, String sql, List<T> entities, List<SQLParameter> sqlParameters, boolean fillAutoIncrement) {
+    public static <T> int insert(String dataSourceName,ExecutorContext executorContext, EasyConnection easyConnection, String sql, List<T> entities, List<SQLParameter> sqlParameters, boolean fillAutoIncrement) {
         boolean logDebug = log.isDebugEnabled();
         logSql(logDebug,dataSourceName, sql);
         EasyQueryRuntimeContext runtimeContext = executorContext.getRuntimeContext();
@@ -191,7 +190,7 @@ public class JdbcExecutorUtil {
         } finally {
             clear(ps);
         }
-        return new AffectedRowsExecuteResult(r);
+        return r;
 
     }
 
@@ -204,7 +203,7 @@ public class JdbcExecutorUtil {
         }
     }
 
-    public static <T> AffectedRowsExecuteResult executeRows(String dataSourceName,ExecutorContext executorContext, EasyConnection easyConnection, String sql, List<T> entities, List<SQLParameter> sqlParameters) {
+    public static <T> int executeRows(String dataSourceName,ExecutorContext executorContext, EasyConnection easyConnection, String sql, List<T> entities, List<SQLParameter> sqlParameters) {
         boolean logDebug = log.isDebugEnabled();
         logSql(logDebug,dataSourceName, sql);
         EasyQueryRuntimeContext runtimeContext = executorContext.getRuntimeContext();
@@ -238,10 +237,10 @@ public class JdbcExecutorUtil {
         } finally {
             clear(ps);
         }
-        return new AffectedRowsExecuteResult(r);
+        return r;
     }
 
-    public static <T> AffectedRowsExecuteResult executeRows(String dataSourceName,ExecutorContext executorContext, EasyConnection easyConnection, String sql, List<SQLParameter> sqlParameters) {
+    public static <T> int executeRows(String dataSourceName,ExecutorContext executorContext, EasyConnection easyConnection, String sql, List<SQLParameter> sqlParameters) {
         boolean logDebug = log.isDebugEnabled();
         logSql(logDebug,dataSourceName, sql);
         EasyQueryRuntimeContext runtimeContext = executorContext.getRuntimeContext();
@@ -263,7 +262,7 @@ public class JdbcExecutorUtil {
         } finally {
             clear(ps);
         }
-        return new AffectedRowsExecuteResult(r);
+        return r;
     }
 
 

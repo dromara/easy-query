@@ -45,5 +45,4 @@ public final class ShardingRouteResult {
     public boolean isSequenceQuery(){
         return sequenceQuery;
     }
-
 }

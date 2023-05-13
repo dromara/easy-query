@@ -51,6 +51,7 @@ public abstract class ShardingBaseExecutionCreator extends BaseExecutionCreator{
     protected Collection<ExecutionUnit> createExecutionUnits() {
         List<RouteUnit> routeUnits = getRouteUnits();
         List<ExecutionUnit> executionUnits = new ArrayList<>(routeUnits.size());
+        int i=0;
         for (RouteUnit routeUnit : routeUnits) {
             String dataSource = routeUnit.getDataSource();
             List<TableRouteUnit> tableRouteUnits = routeUnit.getTableRouteUnits();
@@ -61,9 +62,9 @@ public abstract class ShardingBaseExecutionCreator extends BaseExecutionCreator{
                     easyTableSqlExpression.setTableNameAs(o->tableRouteUnit.getActualTableName());
                 }
             }
-
-            ExecutionUnit executionUnit = createExecutionUnit(dataSource, easyEntitySqlExpression, getEntitiesByTableRouteUnits(tableRouteUnits), false);
+            ExecutionUnit executionUnit = createExecutionUnit(dataSource,i, easyEntitySqlExpression, getEntitiesByTableRouteUnits(tableRouteUnits), false);
             executionUnits.add(executionUnit);
+            i++;
         }
         return executionUnits;
     }

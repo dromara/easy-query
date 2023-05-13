@@ -588,4 +588,73 @@ public class ShardingTest extends BaseTest {
         Assert.assertEquals(topicShardingTime.getCreateTime(),list.get(0).getCreateTime());
 
     }
+
+
+    @Test
+    public void sharding28() {
+        EasyPageResult<TopicSharding> pageResult = easyQuery.queryable(TopicSharding.class).where(o -> o.le(TopicSharding::getStars, 1000))
+                .orderByDesc(o -> o.column(TopicSharding::getStars)).toShardingPageResult(1, 20);
+
+        Assert.assertEquals(500, pageResult.getTotal());
+        Assert.assertEquals(20, pageResult.getData().size());
+        int i = 499;
+        for (TopicSharding topicSharding : pageResult.getData()) {
+            Assert.assertEquals(i, (int) topicSharding.getStars());
+            i--;
+        }
+        EasyPageResult<TopicSharding> pageResult2 = easyQuery.queryable(TopicSharding.class).where(o -> o.le(TopicSharding::getStars, 1000))
+                .orderByDesc(o -> o.column(TopicSharding::getStars)).toShardingPageResult(2, 20);
+        Assert.assertEquals(500, pageResult2.getTotal());
+        Assert.assertEquals(20, pageResult2.getData().size());
+        int j = 479;
+        for (TopicSharding topicSharding : pageResult2.getData()) {
+            Assert.assertEquals(j, (int) topicSharding.getStars());
+            j--;
+        }
+        EasyPageResult<TopicSharding> pageResult3 = easyQuery.queryable(TopicSharding.class).where(o -> o.le(TopicSharding::getStars, 1000))
+                .orderByDesc(o -> o.column(TopicSharding::getStars)).toShardingPageResult(7, 7);
+        Assert.assertEquals(500, pageResult3.getTotal());
+        Assert.assertEquals(7, pageResult3.getData().size());
+        int l = 457;
+        for (TopicSharding topicSharding : pageResult3.getData()) {
+            Assert.assertEquals(l, (int) topicSharding.getStars());
+            l--;
+        }
+    }
+
+
+    @Test
+    public void sharding29(){
+
+        LocalDateTime beginTime = LocalDateTime.of(2020, 1, 1, 1, 1);
+        LocalDateTime endTime = LocalDateTime.of(2023, 5, 1, 1, 1);
+        Duration between = Duration.between(beginTime, endTime);
+        long days = between.toDays();
+        EasyPageResult<TopicShardingTime> pageResult = easyQuery.queryable(TopicShardingTime.class)
+                .orderByAsc(o -> o.column(TopicShardingTime::getCreateTime))
+                .toShardingPageResult(2, 33);
+        Assert.assertEquals(days,pageResult.getTotal());
+        beginTime=beginTime.plusDays(33);
+        for (int i = 0; i < 33; i++) {
+            TopicShardingTime topicShardingTime = pageResult.getData().get(i);
+            Assert.assertEquals(beginTime.plusDays(i),topicShardingTime.getCreateTime());
+        }
+    }
+    @Test
+    public void sharding30(){
+
+        LocalDateTime beginTime = LocalDateTime.of(2020, 1, 1, 1, 1);
+        LocalDateTime endTime = LocalDateTime.of(2023, 5, 1, 1, 1);
+        Duration between = Duration.between(beginTime, endTime);
+        long days = between.toDays();
+        EasyPageResult<TopicShardingTime> pageResult = easyQuery.queryable(TopicShardingTime.class)
+                .orderByAsc(o -> o.column(TopicShardingTime::getCreateTime))
+                .toShardingPageResult(3, 33);
+        Assert.assertEquals(days,pageResult.getTotal());
+        beginTime=beginTime.plusDays(66);
+        for (int i = 0; i < 33; i++) {
+            TopicShardingTime topicShardingTime = pageResult.getData().get(i);
+            Assert.assertEquals(beginTime.plusDays(i),topicShardingTime.getCreateTime());
+        }
+    }
 }

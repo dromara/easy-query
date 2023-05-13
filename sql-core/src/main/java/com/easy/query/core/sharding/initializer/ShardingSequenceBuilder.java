@@ -5,11 +5,8 @@ import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
+import com.easy.query.core.util.BitwiseUtil;
 import com.easy.query.core.util.LambdaUtil;
-
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * create time 2023/5/7 23:52
@@ -18,18 +15,15 @@ import java.util.Map;
  * @author xuejiaming
  */
 public class ShardingSequenceBuilder<T> {
+    private final ShardingEntityBuilder<T> baseBuilder;
+    private final ShardingInitOptionBuilder shardingInitOptionBuilder;
     private final EntityMetadata entityMetadata;
-    private final Comparator<String> defaultTableNameComparator;
-    private final Map<String, Boolean/*asc or desc*/> sequenceProperties = new HashMap<>();
-    private int maxShardingQueryLimit = 0;
-    private ConnectionModeEnum connectionMode = null;
-    private final ExecuteMethodBehavior executeMethodBehavior;
 
-    public ShardingSequenceBuilder(EntityMetadata entityMetadata, Comparator<String> defaultTableNameComparator) {
+    public ShardingSequenceBuilder(ShardingEntityBuilder<T> baseBuilder, ShardingInitOptionBuilder shardingInitOptionBuilder, EntityMetadata entityMetadata) {
+        this.baseBuilder = baseBuilder;
+        this.shardingInitOptionBuilder = shardingInitOptionBuilder;
 
         this.entityMetadata = entityMetadata;
-        this.defaultTableNameComparator = defaultTableNameComparator;
-        this.executeMethodBehavior = ExecuteMethodBehavior.getDefault();
     }
 
 
@@ -48,7 +42,7 @@ public class ShardingSequenceBuilder<T> {
         if (entityMetadata.getColumnOrNull(propertyName) == null) {
             throw new EasyQueryInvalidOperationException("sharding initializer add asc unknown property:" + propertyName);
         }
-        sequenceProperties.put(propertyName, true);
+        shardingInitOptionBuilder.getSequenceProperties().put(propertyName, true);
         return this;
     }
 
@@ -67,7 +61,7 @@ public class ShardingSequenceBuilder<T> {
         if (entityMetadata.getColumnOrNull(propertyName) == null) {
             throw new EasyQueryInvalidOperationException("sharding initializer add desc unknown property:" + propertyName);
         }
-        sequenceProperties.put(propertyName, false);
+        shardingInitOptionBuilder.getSequenceProperties().put(propertyName, false);
         return this;
     }
 
@@ -79,14 +73,18 @@ public class ShardingSequenceBuilder<T> {
      * @return
      */
     public ShardingSequenceBuilder<T> defaultAffectedMethod(boolean asc, ExecuteMethodEnum... executeMethods) {
+        int sequenceCompareMethods = ExecuteMethodEnum.UNKNOWN.getCode();
+        int sequenceCompareAscMethods = ExecuteMethodEnum.UNKNOWN.getCode();
         for (ExecuteMethodEnum executeMethod : executeMethods) {
-            executeMethodBehavior.removeMethod(executeMethod);
-            executeMethodBehavior.removeMethodAsc(executeMethod);
-            executeMethodBehavior.addMethod(executeMethod);
+            int executeMethodCode = executeMethod.getCode();
+            sequenceCompareAscMethods = BitwiseUtil.removeBit(sequenceCompareAscMethods, executeMethodCode);
+            sequenceCompareMethods = BitwiseUtil.addBit(sequenceCompareMethods, executeMethodCode);
             if (asc) {
-                executeMethodBehavior.addMethod(executeMethod);
+                sequenceCompareAscMethods = BitwiseUtil.addBit(sequenceCompareAscMethods, executeMethodCode);
             }
         }
+        shardingInitOptionBuilder.setSequenceCompareMethods(sequenceCompareMethods);
+        shardingInitOptionBuilder.setSequenceCompareAscMethods(sequenceCompareAscMethods);
         return this;
     }
 
@@ -94,34 +92,34 @@ public class ShardingSequenceBuilder<T> {
      * 当符合顺序查询时使用的connectionsLimit
      *
      * @param maxShardingQueryLimit
+     * @param executeMethods
      * @return
      */
-    public ShardingSequenceBuilder<T> useMaxShardingQueryLimit(int maxShardingQueryLimit) {
-        this.maxShardingQueryLimit = maxShardingQueryLimit;
+    public ShardingSequenceBuilder<T> useMaxShardingQueryLimit(int maxShardingQueryLimit, ExecuteMethodEnum... executeMethods) {
+        shardingInitOptionBuilder.setMaxShardingQueryLimit(maxShardingQueryLimit);
+        int sequenceLimitMethods = ExecuteMethodEnum.UNKNOWN.getCode();
+        for (ExecuteMethodEnum executeMethod : executeMethods) {
+            int executeMethodCode = executeMethod.getCode();
+            sequenceLimitMethods = BitwiseUtil.addBit(sequenceLimitMethods, executeMethodCode);
+        }
+        shardingInitOptionBuilder.setSequenceLimitMethods(sequenceLimitMethods);
         return this;
     }
-    public ShardingSequenceBuilder<T> useConnectionMode(ConnectionModeEnum connectionMode) {
-        this.connectionMode = connectionMode;
+
+    public ShardingSequenceBuilder<T> useConnectionMode(ConnectionModeEnum connectionMode, ExecuteMethodEnum... executeMethods) {
+        shardingInitOptionBuilder.setConnectionMode(connectionMode);
+        int sequenceConnectionModeMethods = ExecuteMethodEnum.UNKNOWN.getCode();
+        for (ExecuteMethodEnum executeMethod : executeMethods) {
+            int executeMethodCode = executeMethod.getCode();
+            sequenceConnectionModeMethods = BitwiseUtil.addBit(sequenceConnectionModeMethods, executeMethodCode);
+        }
+        shardingInitOptionBuilder.setSequenceConnectionModeMethods(sequenceConnectionModeMethods);
         return this;
     }
 
-    public Comparator<String> getDefaultTableNameComparator() {
-        return defaultTableNameComparator;
+    public ShardingEntityBuilder<T> and() {
+        return baseBuilder;
     }
 
-    public Map<String, Boolean> getSequenceProperties() {
-        return sequenceProperties;
-    }
 
-    public ConnectionModeEnum getConnectionMode() {
-        return connectionMode;
-    }
-
-    public int getMaxShardingQueryLimit() {
-        return maxShardingQueryLimit;
-    }
-
-    public ExecuteMethodBehavior getExecuteMethodBehavior() {
-        return executeMethodBehavior;
-    }
 }

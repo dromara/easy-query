@@ -3,6 +3,7 @@ package com.easy.query.core.basic.jdbc.con;
 import com.easy.query.core.basic.jdbc.tx.DefaultTransaction;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
 import com.easy.query.core.exception.EasyQueryException;
+import com.easy.query.core.exception.EasyQuerySQLException;
 import com.easy.query.core.sharding.EasyQueryDataSource;
 
 import java.sql.SQLException;
@@ -29,6 +30,9 @@ public class DefaultConnectionManager implements EasyConnectionManager {
 
     @Override
     public Transaction beginTransaction(Integer isolationLevel) {
+        if(threadTx.get()!=null){
+            throw new EasyQuerySQLException("repeat begin transaction");
+        }
         DefaultTransaction defaultTransaction = new DefaultTransaction(isolationLevel, this);
         threadTx.set(defaultTransaction);
         return defaultTransaction;

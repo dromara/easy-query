@@ -1,8 +1,10 @@
 package com.easy.query.core.basic.jdbc.executor.internal.merger.impl;
 
 import com.easy.query.core.basic.jdbc.executor.internal.merger.abstraction.AbstractShardingMerger;
-import com.easy.query.core.basic.jdbc.executor.internal.result.impl.QueryExecuteResult;
+import com.easy.query.core.basic.jdbc.executor.internal.result.QueryExecuteResult;
+import com.easy.query.core.basic.jdbc.executor.internal.result.impl.DefaultQueryExecuteResult;
 import com.easy.query.core.enums.ExecuteMethodEnum;
+import com.easy.query.core.enums.MergeBehaviorEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.sharding.context.StreamMergeContext;
 import com.easy.query.core.sharding.merge.result.StreamResultSet;
@@ -41,7 +43,7 @@ public class QueryStreamShardingMerger extends AbstractShardingMerger<QueryExecu
     protected StreamResultSet streamMergeToSingle(StreamMergeContext streamMergeContext, List<StreamResultSet> streamResults) throws SQLException {
 
         StreamResultSet streamResultSet = multiStreamMerge(streamMergeContext, streamResults);
-        if (!streamMergeContext.isPaginationQuery()) {
+        if (!streamMergeContext.hasBehavior(MergeBehaviorEnum.PAGINATION)||streamMergeContext.hasBehavior(MergeBehaviorEnum.SEQUENCE_PAGINATION)) {
             return streamResultSet;
         }
         return new EasyPaginationStreamMergeResultSet(streamMergeContext, streamResultSet);
@@ -49,19 +51,19 @@ public class QueryStreamShardingMerger extends AbstractShardingMerger<QueryExecu
     }
 
     protected StreamResultSet multiStreamMerge(StreamMergeContext streamMergeContext, List<StreamResultSet> streamResults) throws SQLException {
-        if (Objects.equals(ExecuteMethodEnum.ALL, streamMergeContext.getExecuteMethod())) {
+        if (streamMergeContext.hasBehavior(MergeBehaviorEnum.ALL)) {
             return new EasyAllInMemoryStreamMergeResultSet(streamMergeContext, streamResults);
         }
-        if (Objects.equals(ExecuteMethodEnum.ANY, streamMergeContext.getExecuteMethod())) {
+        if (streamMergeContext.hasBehavior(MergeBehaviorEnum.ANY)) {
             return new EasyAnyInMemoryStreamMergeResultSet(streamMergeContext, streamResults);
         }
-        if (Objects.equals(ExecuteMethodEnum.COUNT, streamMergeContext.getExecuteMethod())) {
+        if (streamMergeContext.hasBehavior(MergeBehaviorEnum.COUNT)) {
             return new EasyCountInMemoryStreamMergeResultSet(streamMergeContext, streamResults);
         }
-        if (ShardingUtil.processGroup(streamMergeContext)) {
+        if (streamMergeContext.hasBehavior(MergeBehaviorEnum.GROUP)) {
             return groupMerge(streamMergeContext, streamResults);
         }
-        if (EasyCollectionUtil.isNotEmpty(streamMergeContext.getOrders())) {
+        if (streamMergeContext.hasBehavior(MergeBehaviorEnum.ORDER)) {
             return new EasyMultiOrderStreamMergeResultSet(streamMergeContext, streamResults);
         }
         return new EasyMultiStreamMergeResultSet(streamMergeContext, streamResults);
@@ -69,7 +71,7 @@ public class QueryStreamShardingMerger extends AbstractShardingMerger<QueryExecu
 
     private StreamResultSet groupMerge(StreamMergeContext streamMergeContext, List<StreamResultSet> streamResults) throws SQLException {
 
-        if (streamMergeContext.isStartsWithGroupByInOrderBy()) {
+        if (streamMergeContext.hasBehavior(MergeBehaviorEnum.STREAM_GROUP)) {
             return new EasyGroupByOrderStreamMergeResultSet(streamMergeContext, streamResults);
         } else {
             return new EasyInMemoryGroupByOrderStreamMergeResultSet(streamMergeContext, streamResults);
@@ -87,13 +89,13 @@ public class QueryStreamShardingMerger extends AbstractShardingMerger<QueryExecu
         }
         List<StreamResultSet> streamResults = EasyCollectionUtil.select(parallelResults, (o, i) -> o.getStreamResult());
         StreamResultSet streamResultSet = streamMergeToSingle(streamMergeContext, streamResults);
-        return new QueryExecuteResult(streamResultSet);
+        return new DefaultQueryExecuteResult(streamResultSet);
     }
 
     protected StreamResultSet streamInMemoryMerge(StreamMergeContext streamMergeContext, List<StreamResultSet> parallelResults) throws SQLException {
 
         StreamResultSet streamResultSet = multiStreamMerge(streamMergeContext, parallelResults);
-        if (!streamMergeContext.isPaginationQuery()) {
+        if (!streamMergeContext.hasBehavior(MergeBehaviorEnum.PAGINATION)||streamMergeContext.hasBehavior(MergeBehaviorEnum.SEQUENCE_PAGINATION)) {
             return streamResultSet;
         }
         return new EasyPaginationStreamMergeResultSet(streamMergeContext, streamResultSet, streamMergeContext.getRewriteOffset(), streamMergeContext.getRewriteRows());
@@ -119,6 +121,6 @@ public class QueryStreamShardingMerger extends AbstractShardingMerger<QueryExecu
         StreamResultSet combineStreamMergeResultSet = streamInMemoryMerge(streamMergeContext, mergeList);
         EasyInMemoryStreamMergeResultSet easyInMemoryStreamMergeResultSet = new EasyInMemoryStreamMergeResultSet(streamMergeContext, Collections.singletonList(combineStreamMergeResultSet));
         beforeInMemoryResults.clear();
-        beforeInMemoryResults.add(new QueryExecuteResult(easyInMemoryStreamMergeResultSet));
+        beforeInMemoryResults.add(new DefaultQueryExecuteResult(easyInMemoryStreamMergeResultSet));
     }
 }

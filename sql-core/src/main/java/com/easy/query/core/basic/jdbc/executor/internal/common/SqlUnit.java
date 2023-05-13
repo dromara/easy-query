@@ -1,36 +1,28 @@
 package com.easy.query.core.basic.jdbc.executor.internal.common;
 
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
-import com.easy.query.core.expression.parser.core.available.TableAvailable;
 
 import java.util.List;
 
 /**
- * create time 2023/4/20 09:19
- * sql执行单元
+ * create time 2023/5/13 09:40
+ * 文件说明
  *
  * @author xuejiaming
  */
 public class SqlUnit {
-
     private final String sql;
     private final List<SQLParameter> parameters;
     private final List<Object> entities;
     private final boolean fillAutoIncrement;
 
-    public SqlUnit(String sql, List<SQLParameter> parameters){
-        this(sql,parameters,null);
-    }
-    public SqlUnit(String sql, List<SQLParameter> parameters, List<Object> entities){
-        this(sql,parameters,entities,false);
-    }
-    public SqlUnit(String sql, List<SQLParameter> parameters, List<Object> entities, boolean fillAutoIncrement) {
+    public SqlUnit(String sql, List<SQLParameter> parameters, List<Object> entities, boolean fillAutoIncrement){
+
         this.sql = sql;
         this.parameters = parameters;
         this.entities = entities;
         this.fillAutoIncrement = fillAutoIncrement;
     }
-
     public String getSql() {
         return sql;
     }

@@ -3,11 +3,10 @@ package com.easy.query.test;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.SqlRangeEnum;
-import com.easy.query.core.exception.EasyQueryUnexpectedException;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
-import com.easy.query.core.sharding.initializer.ExecuteMethodBehavior;
 import com.easy.query.core.util.AesUtil;
 import com.easy.query.core.util.Base64Util;
+import com.easy.query.core.util.BitwiseUtil;
 import com.easy.query.core.util.StringUtil;
 import com.easy.query.test.encryption.DefaultAesEasyEncryptionStrategy;
 import org.junit.Assert;
@@ -116,9 +115,17 @@ public class GenericTest {
 
     @Test
     public void executeMethodBehaviorTest1(){
-        ExecuteMethodBehavior aDefault = ExecuteMethodBehavior.getDefault();
-        aDefault.removeMethod(ExecuteMethodEnum.UNKNOWN);
-        Assert.assertEquals(true,aDefault.isDefault());
+        int code = ExecuteMethodEnum.UNKNOWN.getCode();
+        code = BitwiseUtil.addBit(code, ExecuteMethodEnum.ANY.getCode());
+        Assert.assertNotEquals(code,ExecuteMethodEnum.UNKNOWN.getCode());
+        Assert.assertTrue(BitwiseUtil.hasBit(code, ExecuteMethodEnum.ANY.getCode()));
+        Assert.assertFalse(BitwiseUtil.hasBit(code, ExecuteMethodEnum.ALL.getCode()));
+        code = BitwiseUtil.removeBit(code, ExecuteMethodEnum.ALL.getCode());
+        Assert.assertNotEquals(code,ExecuteMethodEnum.UNKNOWN.getCode());
+        Assert.assertTrue(BitwiseUtil.hasBit(code, ExecuteMethodEnum.ANY.getCode()));
+        code = BitwiseUtil.removeBit(code, ExecuteMethodEnum.ANY.getCode());
+        Assert.assertFalse(BitwiseUtil.hasBit(code, ExecuteMethodEnum.ANY.getCode()));
+        Assert.assertEquals(code,ExecuteMethodEnum.UNKNOWN.getCode());
     }
 
 }

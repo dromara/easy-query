@@ -1,8 +1,6 @@
 package com.easy.query.core.expression.executor.query;
 
-import com.easy.query.core.basic.jdbc.parameter.DefaultSqlParameterCollector;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
-import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
 import com.easy.query.core.expression.executor.parser.EntityPrepareParseResult;
 import com.easy.query.core.expression.executor.parser.ExecutionContext;
 import com.easy.query.core.expression.executor.parser.InsertPrepareParseResult;
@@ -13,17 +11,15 @@ import com.easy.query.core.expression.executor.query.base.InsertExecutionCreator
 import com.easy.query.core.expression.executor.query.base.PredicateExecutionCreator;
 import com.easy.query.core.expression.executor.query.base.ShardingEntityExecutionCreator;
 import com.easy.query.core.expression.executor.query.base.ShardingPredicateExecutionCreator;
-import com.easy.query.core.expression.sql.expression.EasySqlExpression;
 import com.easy.query.core.sharding.EasyQueryDataSource;
 import com.easy.query.core.basic.jdbc.executor.internal.common.ExecutionUnit;
-import com.easy.query.core.basic.jdbc.executor.internal.common.SqlUnit;
+import com.easy.query.core.basic.jdbc.executor.internal.common.SqlRouteUnit;
 import com.easy.query.core.sharding.rewrite.RewriteContextFactory;
 import com.easy.query.core.sharding.route.RouteContext;
 import com.easy.query.core.sharding.route.RouteContextFactory;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.ClassUtil;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -47,7 +43,7 @@ public class DefaultExecutionContextFactory implements ExecutionContextFactory {
 
     @Override
     public ExecutionContext createJdbcExecutionContext(String sql, List<SQLParameter> parameters) {
-        ExecutionUnit executionUnit = new ExecutionUnit(easyDataSource.getDefaultDataSourceName(), new SqlUnit( sql,parameters));
+        ExecutionUnit executionUnit = new ExecutionUnit(easyDataSource.getDefaultDataSourceName(),0, new SqlRouteUnit( sql,parameters));
         return new ExecutionContext(Collections.singletonList(executionUnit),false,false,false);
     }
     @Override

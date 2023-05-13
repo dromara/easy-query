@@ -14,23 +14,52 @@ import java.util.Map;
  */
 public class ShardingInitOption {
     private final Map<String, Collection<String>> actualTableNames;
+    private final double reverseFactor;
+    private final long minReverseTotal;
     private final Comparator<String> defaultTableNameComparator;
-    private final Map<String,Boolean/*asc or desc*/> sequenceProperties;
+    private final Map<String, Boolean> sequenceProperties;
+    private final int maxShardingQueryLimit;
+    private final int sequenceCompareMethods;
+    private final int sequenceCompareAscMethods;
+    private final int sequenceLimitMethods;
+    private final int sequenceConnectionModeMethods;
     private final ConnectionModeEnum connectionMode;
-    private final int connectionsLimit;
-    private final ExecuteMethodBehavior executeMethodBehavior;
 
-    public ShardingInitOption(Map<String, Collection<String>> actualTableNames, Comparator<String> defaultTableNameComparator, Map<String,Boolean/*asc or desc*/> sequenceProperties, ConnectionModeEnum connectionMode, int connectionsLimit, ExecuteMethodBehavior executeMethodBehavior) {
+    public ShardingInitOption(Map<String, Collection<String>> actualTableNames,
+                              double reverseFactor,
+                              long minReverseTotal,
+                              Comparator<String> defaultTableNameComparator,
+                              Map<String, Boolean/*asc or desc*/> sequenceProperties,
+                              int maxShardingQueryLimit,
+                              int sequenceCompareMethods,
+                              int sequenceCompareAscMethods,
+                              int sequenceLimitMethods,
+                              int sequenceConnectionModeMethods,
+                              ConnectionModeEnum connectionMode){
+
         this.actualTableNames = actualTableNames;
+        this.reverseFactor = reverseFactor;
+        this.minReverseTotal = minReverseTotal;
         this.defaultTableNameComparator = defaultTableNameComparator;
         this.sequenceProperties = sequenceProperties;
+        this.maxShardingQueryLimit = maxShardingQueryLimit;
+        this.sequenceCompareMethods = sequenceCompareMethods;
+        this.sequenceCompareAscMethods = sequenceCompareAscMethods;
+        this.sequenceLimitMethods = sequenceLimitMethods;
+        this.sequenceConnectionModeMethods = sequenceConnectionModeMethods;
         this.connectionMode = connectionMode;
-        this.connectionsLimit = connectionsLimit;
-        this.executeMethodBehavior = executeMethodBehavior;
     }
 
     public Map<String, Collection<String>> getActualTableNames() {
         return actualTableNames;
+    }
+
+    public double getReverseFactor() {
+        return reverseFactor;
+    }
+
+    public long getMinReverseTotal() {
+        return minReverseTotal;
     }
 
     public Comparator<String> getDefaultTableNameComparator() {
@@ -41,15 +70,27 @@ public class ShardingInitOption {
         return sequenceProperties;
     }
 
+    public int getMaxShardingQueryLimit() {
+        return maxShardingQueryLimit;
+    }
+
+    public int getSequenceCompareMethods() {
+        return sequenceCompareMethods;
+    }
+
+    public int getSequenceCompareAscMethods() {
+        return sequenceCompareAscMethods;
+    }
+
+    public int getSequenceLimitMethods() {
+        return sequenceLimitMethods;
+    }
+
+    public int getSequenceConnectionModeMethods() {
+        return sequenceConnectionModeMethods;
+    }
+
     public ConnectionModeEnum getConnectionMode() {
         return connectionMode;
-    }
-
-    public int getConnectionsLimit() {
-        return connectionsLimit;
-    }
-
-    public ExecuteMethodBehavior getExecuteMethodBehavior() {
-        return executeMethodBehavior;
     }
 }

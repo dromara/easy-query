@@ -1,6 +1,6 @@
 package com.easy.query.core.basic.jdbc.executor.internal.unit.breaker;
 
-import com.easy.query.core.basic.jdbc.executor.internal.result.impl.QueryExecuteResult;
+import com.easy.query.core.basic.jdbc.executor.internal.result.QueryExecuteResult;
 import com.easy.query.core.sharding.context.StreamMergeContext;
 
 import java.util.Collection;

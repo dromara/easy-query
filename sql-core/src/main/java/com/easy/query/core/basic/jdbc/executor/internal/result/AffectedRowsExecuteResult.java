@@ -1,6 +1,4 @@
-package com.easy.query.core.basic.jdbc.executor.internal.result.impl;
-
-import com.easy.query.core.basic.jdbc.executor.internal.result.ExecuteResult;
+package com.easy.query.core.basic.jdbc.executor.internal.result;
 
 /**
  * create time 2023/4/14 16:37

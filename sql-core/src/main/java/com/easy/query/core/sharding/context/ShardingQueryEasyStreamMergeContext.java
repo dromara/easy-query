@@ -1,8 +1,10 @@
 package com.easy.query.core.sharding.context;
 
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
+import com.easy.query.core.enums.MergeBehaviorEnum;
 import com.easy.query.core.expression.executor.parser.EasyQueryPrepareParseResult;
 import com.easy.query.core.expression.executor.parser.ExecutionContext;
+import com.easy.query.core.expression.executor.parser.SequenceParseResult;
 import com.easy.query.core.expression.segment.ColumnSegmentImpl;
 import com.easy.query.core.expression.segment.OrderColumnSegmentImpl;
 import com.easy.query.core.expression.segment.SqlSegment;
@@ -11,6 +13,7 @@ import com.easy.query.core.expression.sql.expression.EasyQuerySqlExpression;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.sharding.merge.segment.PropertyGroup;
 import com.easy.query.core.sharding.merge.segment.PropertyOrder;
+import com.easy.query.core.util.BitwiseUtil;
 import com.easy.query.core.util.ShardingUtil;
 import com.easy.query.core.util.SqlSegmentUtil;
 
@@ -32,6 +35,7 @@ public class ShardingQueryEasyStreamMergeContext extends EntityStreamMergeContex
     protected final List<PropertyGroup> groups;
     protected final EasyQuerySqlExpression easyQuerySqlExpression;
     protected final boolean hasGroup;
+    protected final int mergeBehavior;
     protected volatile boolean terminated = false;
     protected long offset;
     protected long rows;
@@ -45,6 +49,7 @@ public class ShardingQueryEasyStreamMergeContext extends EntityStreamMergeContex
         this.rows = easyQuerySqlExpression.getRows();
         this.hasGroup=SqlSegmentUtil.isNotEmpty(easyQuerySqlExpression.getGroup());
         this.groups = getGroups(easyQuerySqlExpression);
+        this.mergeBehavior=ShardingUtil.parseStreamMergeContextMergeBehavior(this);
     }
 
     private List<PropertyOrder> getOrders(EasyQuerySqlExpression easyQuerySqlExpression) {
@@ -82,6 +87,10 @@ public class ShardingQueryEasyStreamMergeContext extends EntityStreamMergeContex
         }
     }
 
+    @Override
+    public boolean hasBehavior(MergeBehaviorEnum mergeBehavior) {
+        return BitwiseUtil.hasBit(this.mergeBehavior,mergeBehavior.getCode());
+    }
 
     @Override
     public List<PropertyOrder> getOrders() {
@@ -142,6 +151,14 @@ public class ShardingQueryEasyStreamMergeContext extends EntityStreamMergeContex
     @Override
     public boolean isSeqQuery() {
         return executionContext.isSequenceQuery()&&easyQueryPrepareParseResult.getSequenceParseResult()!=null;
+    }
+
+    @Override
+    public SequenceParseResult getSequenceParseResult() {
+        if(isSeqQuery()){
+            return easyQueryPrepareParseResult.getSequenceParseResult();
+        }
+        return null;
     }
 
     @Override

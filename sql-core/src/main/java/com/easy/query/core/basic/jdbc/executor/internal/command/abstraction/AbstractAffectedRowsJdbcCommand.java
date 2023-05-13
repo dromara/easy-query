@@ -1,6 +1,6 @@
 package com.easy.query.core.basic.jdbc.executor.internal.command.abstraction;
 
-import com.easy.query.core.basic.jdbc.executor.internal.result.impl.AffectedRowsExecuteResult;
+import com.easy.query.core.basic.jdbc.executor.internal.result.AffectedRowsExecuteResult;
 import com.easy.query.core.sharding.context.StreamMergeContext;
 
 /**
