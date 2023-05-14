@@ -43,7 +43,7 @@ public interface StreamMergeContext extends AutoCloseable {
         return isSharding()&&isQuery()&&getExecutionUnits().size()!=1;
     }
 
-    Collection<ExecutionUnit> getExecutionUnits();
+    List<ExecutionUnit> getExecutionUnits();
 
 
     EasyQueryRuntimeContext getRuntimeContext();

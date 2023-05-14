@@ -3,6 +3,7 @@ package com.easy.query.core.expression.executor.parser;
 import com.easy.query.core.basic.jdbc.executor.internal.common.ExecutionUnit;
 
 import java.util.Collection;
+import java.util.List;
 
 
 /**
@@ -13,12 +14,12 @@ import java.util.Collection;
  */
 public class ExecutionContext {
 //    private final CommandTypeEnum commandType;
-    private final Collection<ExecutionUnit> executionUnits;
+    private final List<ExecutionUnit> executionUnits;
     private final boolean sequenceQuery;
     private final boolean isCrossDataSource;
     private final boolean isCrossTable;
 
-    public ExecutionContext(Collection<ExecutionUnit> executionUnits,boolean sequenceQuery,boolean isCrossTable,boolean isCrossDataSource){
+    public ExecutionContext(List<ExecutionUnit> executionUnits,boolean sequenceQuery,boolean isCrossTable,boolean isCrossDataSource){
 
         this.executionUnits = executionUnits;
         this.sequenceQuery = sequenceQuery;
@@ -27,7 +28,7 @@ public class ExecutionContext {
     }
 
 
-    public Collection<ExecutionUnit> getExecutionUnits() {
+    public List<ExecutionUnit> getExecutionUnits() {
         return executionUnits;
     }
     public boolean isSequenceQuery() {

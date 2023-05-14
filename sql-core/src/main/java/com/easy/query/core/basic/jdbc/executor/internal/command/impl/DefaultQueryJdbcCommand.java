@@ -33,8 +33,8 @@ public class DefaultQueryJdbcCommand extends AbstractQueryJdbcCommand {
     }
 
     @Override
-    protected Collection<ExecutionUnit> getDefaultSqlRouteUnits() {
-        Collection<ExecutionUnit> defaultSqlRouteUnits = super.getDefaultSqlRouteUnits();
+    protected List<ExecutionUnit> getDefaultSqlRouteUnits() {
+        List<ExecutionUnit> defaultSqlRouteUnits = super.getDefaultSqlRouteUnits();
         if(streamMergeContext.isSharding()){
             if(streamMergeContext.hasBehavior(MergeBehaviorEnum.SEQUENCE_PAGINATION)){
                 ShardingQueryCountManager shardingQueryCountManager = streamMergeContext.getRuntimeContext().getShardingQueryCountManager();

@@ -94,7 +94,7 @@ public class EasyStreamMergeContext implements StreamMergeContext {
         throw new NotImplementedException();
     }
 
-    public Collection<ExecutionUnit> getExecutionUnits() {
+    public List<ExecutionUnit> getExecutionUnits() {
         return executionContext.getExecutionUnits();
     }
 

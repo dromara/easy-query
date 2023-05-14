@@ -131,52 +131,54 @@ public class ShardingUtil {
         return true;
     }
 
-    public static boolean processGroup(StreamMergeContext streamMergeContext){
-        return streamMergeContext.hasGroupQuery()||hasAggregateSelect(streamMergeContext);
+    public static boolean processGroup(StreamMergeContext streamMergeContext) {
+        return streamMergeContext.hasGroupQuery() || hasAggregateSelect(streamMergeContext);
     }
-    private static boolean hasAggregateSelect(StreamMergeContext streamMergeContext){
-        if(SqlSegmentUtil.isNotEmpty(streamMergeContext.getSelectColumns())){
-            return ((ProjectSqlBuilderSegment)streamMergeContext.getSelectColumns()).hasAggregateColumns();
+
+    private static boolean hasAggregateSelect(StreamMergeContext streamMergeContext) {
+        if (SqlSegmentUtil.isNotEmpty(streamMergeContext.getSelectColumns())) {
+            return ((ProjectSqlBuilderSegment) streamMergeContext.getSelectColumns()).hasAggregateColumns();
         }
         return false;
     }
 
-    public static ConnectionModeEnum getActualConnectionMode(boolean isSerialExecute,int maxShardingQueryLimit,int groupUnitSize,ConnectionModeEnum connectionMode){
-        if(isSerialExecute){
+    public static ConnectionModeEnum getActualConnectionMode(boolean isSerialExecute, int maxShardingQueryLimit, int groupUnitSize, ConnectionModeEnum connectionMode) {
+        if (isSerialExecute) {
             return ConnectionModeEnum.MEMORY_STRICTLY;
         }
-        if(Objects.equals(ConnectionModeEnum.SYSTEM_AUTO,connectionMode)){
-            if(maxShardingQueryLimit>=groupUnitSize){
+        if (Objects.equals(ConnectionModeEnum.SYSTEM_AUTO, connectionMode)) {
+            if (maxShardingQueryLimit >= groupUnitSize) {
                 return ConnectionModeEnum.MEMORY_STRICTLY;
             }
             return ConnectionModeEnum.CONNECTION_STRICTLY;
-        }else{
+        } else {
             return connectionMode;
         }
     }
 
-    public static int getMaxShardingQueryLimit(EntityQueryExpressionBuilder entityQueryExpressionBuilder, SequenceParseResult sequenceParseResult){
+    public static int getMaxShardingQueryLimit(EntityQueryExpressionBuilder entityQueryExpressionBuilder, SequenceParseResult sequenceParseResult) {
         ExpressionContext expressionContext = entityQueryExpressionBuilder.getExpressionContext();
         Integer maxShardingQueryLimitOrNull = expressionContext.getMaxShardingQueryLimitOrNull();
-        if(maxShardingQueryLimitOrNull!=null){
+        if (maxShardingQueryLimitOrNull != null) {
             return maxShardingQueryLimitOrNull;
         }
-        if(sequenceParseResult!=null){
-            if(sequenceParseResult.getConnectionsLimit()>0){
+        if (sequenceParseResult != null) {
+            if (sequenceParseResult.getConnectionsLimit() > 0) {
                 return sequenceParseResult.getConnectionsLimit();
             }
         }
         EasyQueryRuntimeContext runtimeContext = expressionContext.getRuntimeContext();
         return runtimeContext.getEasyQueryConfiguration().getEasyQueryOption().getMaxShardingQueryLimit();
     }
-    public static ConnectionModeEnum getConnectionMode(EntityQueryExpressionBuilder entityQueryExpressionBuilder, SequenceParseResult sequenceParseResult){
+
+    public static ConnectionModeEnum getConnectionMode(EntityQueryExpressionBuilder entityQueryExpressionBuilder, SequenceParseResult sequenceParseResult) {
         ExpressionContext expressionContext = entityQueryExpressionBuilder.getExpressionContext();
         ConnectionModeEnum connectionModeOrNull = expressionContext.getConnectionModeOrNull();
-        if(connectionModeOrNull!=null){
+        if (connectionModeOrNull != null) {
             return connectionModeOrNull;
         }
-        if(sequenceParseResult!=null){
-            if(sequenceParseResult.getConnectionMode()!=null){
+        if (sequenceParseResult != null) {
+            if (sequenceParseResult.getConnectionMode() != null) {
                 return sequenceParseResult.getConnectionMode();
             }
         }
@@ -184,31 +186,26 @@ public class ShardingUtil {
         return runtimeContext.getEasyQueryConfiguration().getEasyQueryOption().getConnectionMode();
     }
 
-    public static Collection<ExecutionUnit> getSequencePaginationExecutionUnits(Collection<ExecutionUnit> defaultExecutionUnits,List<QueryCountResult> countResult,SequenceParseResult sequenceParseResult, long skip, long take){
+    public static List<ExecutionUnit> getSequencePaginationExecutionUnits(List<ExecutionUnit> defaultExecutionUnits, List<QueryCountResult> countResult, SequenceParseResult sequenceParseResult, long skip, long take) {
 
-        if(defaultExecutionUnits.size()!=countResult.size()){
-            throw new EasyQueryInvalidOperationException("cant use sequence pagination");
-        }
         boolean reverse = sequenceParseResult.isReverse();
         boolean asc = sequenceParseResult.getTable().getEntityMetadata().getShardingInitConfig().getShardingSequenceConfig().hasCompareAscMethods(ExecuteMethodEnum.COUNT);
-        if(reverse==asc){
-            Collections.reverse(countResult);
-        }
+        boolean countResultReverse = reverse == asc;
         ArrayList<ExecutionUnit> executionUnits = new ArrayList<>(defaultExecutionUnits.size());
-        long currentSkip=skip;
-        long currentTake=take;
-        boolean stopSkip=false;
-        boolean needBreak=false;
+        long currentSkip = skip;
+        long currentTake = take;
+        boolean stopSkip = false;
+        boolean needBreak = false;
         int countSize = countResult.size();
-        Iterator<ExecutionUnit> iterator = defaultExecutionUnits.iterator();
         for (int i = 0; i < countSize; i++) {
-            QueryCountResult queryCountResult= countResult.get(i);
-            ExecutionUnit executionUnit = iterator.next();
-            if(!stopSkip){
-                if(queryCountResult.getTotal()>currentSkip){
-                    stopSkip=true;
-                }else{
-                    currentSkip=currentSkip-queryCountResult.getTotal();
+            int countResultIndex = countResultReverse ? countSize - 1 - i : i;
+            QueryCountResult queryCountResult = countResult.get(countResultIndex);
+            ExecutionUnit executionUnit = defaultExecutionUnits.get(i);
+            if (!stopSkip) {
+                if (queryCountResult.getTotal() > currentSkip) {
+                    stopSkip = true;
+                } else {
+                    currentSkip = currentSkip - queryCountResult.getTotal();
                     continue;
                 }
             }
@@ -217,20 +214,17 @@ public class ShardingUtil {
             if (currentSkip != 0L)
                 currentSkip = 0;
 
-            if (currentTake <= currentRealTake)
-            {
+            if (currentTake <= currentRealTake) {
                 currentRealTake = currentTake;
                 needBreak = true;
-            }
-            else
-            {
+            } else {
                 currentTake = currentTake - currentRealTake;
             }
             EasyQuerySqlExpression easyEntitySqlExpression = (EasyQuerySqlExpression) executionUnit.getSqlRouteUnit().getEasyEntitySqlExpression();
             easyEntitySqlExpression.setOffset(currentRealSkip);
             easyEntitySqlExpression.setRows(currentRealTake);
             executionUnits.add(executionUnit);
-            if(needBreak){
+            if (needBreak) {
                 break;
             }
 
@@ -238,40 +232,48 @@ public class ShardingUtil {
         return executionUnits;
     }
 
-    public static int parseStreamMergeContextMergeBehavior(StreamMergeContext streamMergeContext){
+    public static int parseStreamMergeContextMergeBehavior(StreamMergeContext streamMergeContext) {
 
-        int mergeBehavior=MergeBehaviorEnum.DEFAULT.getCode();
+        int mergeBehavior = MergeBehaviorEnum.DEFAULT.getCode();
 
-        if(streamMergeContext.isQuery()&&streamMergeContext.isSharding()){
+        if (streamMergeContext.isQuery() && streamMergeContext.isSharding()) {
 
-            switch (streamMergeContext.getExecutorContext().getExecuteMethod()){
-                case ALL:mergeBehavior=BitwiseUtil.addBit(mergeBehavior,MergeBehaviorEnum.ALL.getCode());break;
-                case ANY:mergeBehavior=BitwiseUtil.addBit(mergeBehavior,MergeBehaviorEnum.ANY.getCode());break;
-                case COUNT:mergeBehavior=BitwiseUtil.addBit(mergeBehavior,MergeBehaviorEnum.COUNT.getCode());break;
+            switch (streamMergeContext.getExecutorContext().getExecuteMethod()) {
+                case ALL:
+                    mergeBehavior = BitwiseUtil.addBit(mergeBehavior, MergeBehaviorEnum.ALL.getCode());
+                    break;
+                case ANY:
+                    mergeBehavior = BitwiseUtil.addBit(mergeBehavior, MergeBehaviorEnum.ANY.getCode());
+                    break;
+                case COUNT:
+                    mergeBehavior = BitwiseUtil.addBit(mergeBehavior, MergeBehaviorEnum.COUNT.getCode());
+                    break;
             }
-            if(processGroup(streamMergeContext)){
-                mergeBehavior=BitwiseUtil.addBit(mergeBehavior,MergeBehaviorEnum.GROUP.getCode());
-                if(streamMergeContext.isStartsWithGroupByInOrderBy()){
-                    mergeBehavior=BitwiseUtil.addBit(mergeBehavior,MergeBehaviorEnum.STREAM_GROUP.getCode());
+            if (processGroup(streamMergeContext)) {
+                mergeBehavior = BitwiseUtil.addBit(mergeBehavior, MergeBehaviorEnum.GROUP.getCode());
+                if (streamMergeContext.isStartsWithGroupByInOrderBy()) {
+                    mergeBehavior = BitwiseUtil.addBit(mergeBehavior, MergeBehaviorEnum.STREAM_GROUP.getCode());
                 }
             }
-            if(EasyCollectionUtil.isNotEmpty(streamMergeContext.getOrders())){
-                mergeBehavior=BitwiseUtil.addBit(mergeBehavior,MergeBehaviorEnum.ORDER.getCode());
+            if (EasyCollectionUtil.isNotEmpty(streamMergeContext.getOrders())) {
+                mergeBehavior = BitwiseUtil.addBit(mergeBehavior, MergeBehaviorEnum.ORDER.getCode());
             }
-            if(streamMergeContext.isPaginationQuery()){
-                mergeBehavior=BitwiseUtil.addBit(mergeBehavior,MergeBehaviorEnum.PAGINATION.getCode());
+            if (streamMergeContext.isPaginationQuery()) {
+                mergeBehavior = BitwiseUtil.addBit(mergeBehavior, MergeBehaviorEnum.PAGINATION.getCode());
 
                 ShardingQueryCountManager shardingQueryCountManager = streamMergeContext.getRuntimeContext().getShardingQueryCountManager();
-                if(shardingQueryCountManager.isBegin()){
-                    //顺序分页
-                    if(streamMergeContext.isSeqQuery()&& streamMergeContext.getSequenceParseResult().getTable().getEntityMetadata().getShardingInitConfig().getShardingSequenceConfig().hasCompareMethods(ExecuteMethodEnum.COUNT)){
-                        mergeBehavior=BitwiseUtil.addBit(mergeBehavior,MergeBehaviorEnum.SEQUENCE_PAGINATION.getCode());
+                if (shardingQueryCountManager.isBegin()) {
+                    //顺序分页并且count也是顺序查询
+                    if (streamMergeContext.isSeqQuery() &&
+                            streamMergeContext.getSequenceParseResult().getTable().getEntityMetadata().getShardingInitConfig().getShardingSequenceConfig().hasCompareMethods(ExecuteMethodEnum.COUNT)
+                            && streamMergeContext.getExecutionUnits().size() == shardingQueryCountManager.getCountResult().size()) {
+                        mergeBehavior = BitwiseUtil.addBit(mergeBehavior, MergeBehaviorEnum.SEQUENCE_PAGINATION.getCode());
                     }
-                    if(BitwiseUtil.hasBit(mergeBehavior,MergeBehaviorEnum.ORDER.getCode())){
+                    if (BitwiseUtil.hasBit(mergeBehavior, MergeBehaviorEnum.ORDER.getCode())) {
                         PropertyOrder propertyOrder = EasyCollectionUtil.first(streamMergeContext.getOrders());
                         ShardingInitConfig shardingInitConfig = propertyOrder.getTable().getEntityTable().getEntityMetadata().getShardingInitConfig();
-                        if(shardingInitConfig.isReverse()){
-                            mergeBehavior=BitwiseUtil.addBit(mergeBehavior,MergeBehaviorEnum.REVERSE_PAGINATION.getCode());
+                        if (shardingInitConfig.isReverse()) {
+                            mergeBehavior = BitwiseUtil.addBit(mergeBehavior, MergeBehaviorEnum.REVERSE_PAGINATION.getCode());
                         }
                     }
                 }

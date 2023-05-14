@@ -31,7 +31,7 @@ public abstract class BaseEntityExecutionCreator extends BaseExecutionCreator{
         this.entities = entities;
     }
     @Override
-    protected Collection<ExecutionUnit> createExecutionUnits() {
+    protected List<ExecutionUnit> createExecutionUnits() {
         //是否单个对象运行sql
         boolean isSingleEntityRun = SqlExpressionUtil.sqlExecuteStrategyNonDefault(entityExpressionBuilder.getExpressionContext());
         if (isSingleEntityRun||updateSingleEntityRun()) {
@@ -49,7 +49,7 @@ public abstract class BaseEntityExecutionCreator extends BaseExecutionCreator{
         return false;
     }
 
-    private Collection<ExecutionUnit> createSingleExecutionUnits() {
+    private List<ExecutionUnit> createSingleExecutionUnits() {
         List<ExecutionUnit> routeExecutionUnits = new ArrayList<>(entities.size());
         for (Object entity : entities) {
             EasyEntitySqlExpression expression = createEasySqlExpression(entity);
@@ -61,7 +61,7 @@ public abstract class BaseEntityExecutionCreator extends BaseExecutionCreator{
         }
         return routeExecutionUnits;
     }
-    private Collection<ExecutionUnit> createMultiExecutionUnits() {
+    private List<ExecutionUnit> createMultiExecutionUnits() {
         EasyEntitySqlExpression expression = entityExpressionBuilder.toExpression();
         ExecutionUnit executionUnit = createExecutionUnit(dataSource,expression, entities, getFillAutoIncrement());
         return Collections.singletonList(executionUnit);

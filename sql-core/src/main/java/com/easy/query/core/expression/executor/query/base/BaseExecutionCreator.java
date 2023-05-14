@@ -27,7 +27,7 @@ public abstract class BaseExecutionCreator implements ExecutionCreator{
     protected ExecutionUnit createExecutionUnit(String dataSource,SqlRouteUnit sqlUnit){
         return new  ExecutionUnit(dataSource, sqlUnit);
     }
-    protected ExecutionContext createExecutionContext(Collection<ExecutionUnit> executionUnits){
+    protected ExecutionContext createExecutionContext(List<ExecutionUnit> executionUnits){
         return new ExecutionContext(executionUnits,sequenceQuery(),isCrossTable(),isCrossDataSource());
     }
 
@@ -43,8 +43,8 @@ public abstract class BaseExecutionCreator implements ExecutionCreator{
     }
     @Override
     public ExecutionContext create() {
-        Collection<ExecutionUnit> executionUnits = createExecutionUnits();
+        List<ExecutionUnit> executionUnits = createExecutionUnits();
         return createExecutionContext(executionUnits);
     }
-    protected abstract Collection<ExecutionUnit> createExecutionUnits();
+    protected abstract List<ExecutionUnit> createExecutionUnits();
 }

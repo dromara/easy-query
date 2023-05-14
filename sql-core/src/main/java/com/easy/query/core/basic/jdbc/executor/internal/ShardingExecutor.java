@@ -40,7 +40,7 @@ public class ShardingExecutor {
     private ShardingExecutor() {
     }
 
-    public static <TResult> TResult execute(StreamMergeContext streamMergeContext, Executor<TResult> executor, Collection<ExecutionUnit> sqlRouteUnits) throws SQLException {
+    public static <TResult> TResult execute(StreamMergeContext streamMergeContext, Executor<TResult> executor, List<ExecutionUnit> sqlRouteUnits) throws SQLException {
 
         List<TResult> results = execute0(streamMergeContext, executor, sqlRouteUnits);
         if (EasyCollectionUtil.isEmpty(results)) {
@@ -49,7 +49,7 @@ public class ShardingExecutor {
         return executor.getShardingMerger().streamMerge(streamMergeContext, results);
     }
 
-    private static <TResult> List<TResult> execute0(StreamMergeContext streamMergeContext, Executor<TResult> executor, Collection<ExecutionUnit> executionUnits) throws SQLException {
+    private static <TResult> List<TResult> execute0(StreamMergeContext streamMergeContext, Executor<TResult> executor, List<ExecutionUnit> executionUnits) throws SQLException {
         //如果只有单个执行那么直接创建不需要过多处理
         if(EasyCollectionUtil.isSingle(executionUnits)){
             DataSourceSqlExecutorUnit dataSourceSqlExecutorUnit = getSingleSqlExecutorGroups(streamMergeContext,EasyCollectionUtil.first(executionUnits));

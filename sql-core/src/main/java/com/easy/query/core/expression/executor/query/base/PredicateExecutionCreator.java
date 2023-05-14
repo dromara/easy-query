@@ -6,6 +6,7 @@ import com.easy.query.core.basic.jdbc.executor.internal.common.ExecutionUnit;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * create time 2023/4/25 08:47
@@ -24,8 +25,8 @@ public class PredicateExecutionCreator extends BaseExecutionCreator{
     }
 
     @Override
-    protected Collection<ExecutionUnit> createExecutionUnits() {
+    protected List<ExecutionUnit> createExecutionUnits() {
         ExecutionUnit executionUnit = createExecutionUnit(dataSource,easyEntitySqlExpression, null, false);
-        return Collections.singleton(executionUnit);
+        return Collections.singletonList(executionUnit);
     }
 }

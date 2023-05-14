@@ -48,7 +48,7 @@ public abstract class ShardingBaseExecutionCreator extends BaseExecutionCreator{
     }
 
     @Override
-    protected Collection<ExecutionUnit> createExecutionUnits() {
+    protected List<ExecutionUnit> createExecutionUnits() {
         List<RouteUnit> routeUnits = getRouteUnits();
         List<ExecutionUnit> executionUnits = new ArrayList<>(routeUnits.size());
         for (RouteUnit routeUnit : routeUnits) {

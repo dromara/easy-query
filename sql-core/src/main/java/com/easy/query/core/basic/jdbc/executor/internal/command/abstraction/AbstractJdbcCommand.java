@@ -10,6 +10,7 @@ import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * create time 2023/4/21 08:26
@@ -25,12 +26,12 @@ public abstract class AbstractJdbcCommand<T extends ExecuteResult> implements Jd
         this.streamMergeContext = streamMergeContext;
     }
     protected  abstract Executor<T> createExecutor();
-    protected Collection<ExecutionUnit> getDefaultSqlRouteUnits(){
+    protected List<ExecutionUnit> getDefaultSqlRouteUnits(){
         return streamMergeContext.getExecutionUnits();
     }
     @Override
     public T execute() throws SQLException {
-        Collection<ExecutionUnit> executionUnits = getDefaultSqlRouteUnits();
+        List<ExecutionUnit> executionUnits = getDefaultSqlRouteUnits();
         if(EasyCollectionUtil.isEmpty(executionUnits)){
             return defaultResult();
         }
