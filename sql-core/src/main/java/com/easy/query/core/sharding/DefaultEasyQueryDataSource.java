@@ -1,6 +1,7 @@
 package com.easy.query.core.sharding;
 
 import com.easy.query.core.basic.jdbc.con.ConnectionStrategyEnum;
+import com.easy.query.core.basic.jdbc.con.DataSourceUnit;
 import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.datasource.DataSourceManager;
 import com.easy.query.core.datasource.replica.ReplicaDataSourceManager;
@@ -48,7 +49,7 @@ public final class DefaultEasyQueryDataSource implements EasyQueryDataSource {
     }
 
     @Override
-    public DataSource getDataSourceOrNull(String dataSourceName, ConnectionStrategyEnum connectionStrategy) {
+    public DataSourceUnit getDataSourceOrNull(String dataSourceName, ConnectionStrategyEnum connectionStrategy) {
         return dataSourceManager.getDataSourceOrNull(dataSourceName,connectionStrategy);
     }
 }

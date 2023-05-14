@@ -6,6 +6,6 @@ package com.easy.query.core.sharding.merge.result;
  *
  * @author xuejiaming
  */
-public interface InMemoryStreamMergeResultSet extends StreamResultSet {
+public interface InMemoryStreamMergeResultSet extends ShardingStreamResultSet {
     int getReallyCount();
 }

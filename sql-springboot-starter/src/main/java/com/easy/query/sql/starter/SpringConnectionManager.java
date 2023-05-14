@@ -1,6 +1,7 @@
 package com.easy.query.sql.starter;
 
 import com.easy.query.core.basic.jdbc.con.ConnectionStrategyEnum;
+import com.easy.query.core.basic.jdbc.con.DataSourceUnit;
 import com.easy.query.core.basic.jdbc.con.DefaultConnectionManager;
 import com.easy.query.core.basic.jdbc.con.DefaultEasyConnection;
 import com.easy.query.core.basic.jdbc.con.EasyConnection;
@@ -51,6 +52,7 @@ public class SpringConnectionManager extends DefaultConnectionManager {
         if(!this.currentThreadInTransaction()&&super.easyCurrentThreadInTransaction()){
             return;
         }
-        DataSourceUtils.releaseConnection(easyConnection.getConnection(), easyDataSource.getDataSourceNotNull(easyConnection.getDataSourceName(), ConnectionStrategyEnum.ShareConnection));
+        DataSourceUnit dataSourceUnit = easyDataSource.getDataSourceNotNull(easyConnection.getDataSourceName(), ConnectionStrategyEnum.ShareConnection);
+        DataSourceUtils.releaseConnection(easyConnection.getConnection(), dataSourceUnit.getDataSource());
     }
 }

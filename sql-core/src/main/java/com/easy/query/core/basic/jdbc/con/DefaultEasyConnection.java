@@ -17,16 +17,23 @@ import java.util.Objects;
 public class DefaultEasyConnection implements EasyConnection {
     private static final Log log= LogFactory.getLog(DefaultEasyConnection.class);
     private final String dataSourceName;
+    private final ConnectionStrategyEnum connectionStrategy;
     private final Connection connection;
     private final Integer isolationLevel;
     private boolean closed = false;
 
-    public DefaultEasyConnection(String dataSourceName, Connection connection, Integer isolationLevel) {
+    public DefaultEasyConnection(String dataSourceName,ConnectionStrategyEnum connectionStrategy, Connection connection, Integer isolationLevel) {
         this.dataSourceName = dataSourceName;
+        this.connectionStrategy = connectionStrategy;
 
         this.connection = connection;
         this.isolationLevel = isolationLevel;
         setIsolationLevel();
+    }
+
+    @Override
+    public ConnectionStrategyEnum getConnectionStrategy() {
+        return connectionStrategy;
     }
 
     @Override

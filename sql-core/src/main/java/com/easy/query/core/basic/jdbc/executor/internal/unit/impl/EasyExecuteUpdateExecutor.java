@@ -34,12 +34,12 @@ public class EasyExecuteUpdateExecutor extends AbstractExecutor<AffectedRowsExec
         ExecutorContext executorContext = streamMergeContext.getExecutorContext();
         EasyConnection easyConnection = commandExecuteUnit.getEasyConnection();
         ExecutionUnit executionUnit = commandExecuteUnit.getExecutionUnit();
-        String dataSourceName = executionUnit.getDataSourceName();
         SqlRouteUnit sqlRouteUnit = executionUnit.getSqlRouteUnit();
         SqlUnit sqlUnit = sqlRouteUnit.getSqlUnit();
         String sql = sqlUnit.getSql();
         List<SQLParameter> parameters = sqlUnit.getParameters();
-        int rows= JdbcExecutorUtil.executeRows(dataSourceName,executorContext,easyConnection,sql,parameters);
+        boolean isSharding = streamMergeContext.isSharding();
+        int rows= JdbcExecutorUtil.executeRows(executorContext,easyConnection,sql,parameters,isSharding);
         return new AffectedRowsExecuteResult(rows);
     }
 

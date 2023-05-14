@@ -4,7 +4,7 @@ import com.easy.query.core.sharding.comparer.ShardingComparer;
 import com.easy.query.core.sharding.context.StreamMergeContext;
 import com.easy.query.core.sharding.merge.result.StreamResultSet;
 import com.easy.query.core.sharding.merge.segment.PropertyOrder;
-import com.easy.query.core.sharding.merge.result.OrderStreamMergeResult;
+import com.easy.query.core.sharding.merge.result.OrderStreamMergeResultSet;
 import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.math.BigDecimal;
@@ -26,7 +26,7 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public class EasyOrderStreamMergeResultSet implements OrderStreamMergeResult {
+public class EasyOrderStreamMergeResultSet implements OrderStreamMergeResultSet {
     private static final List<Comparable<?>> EMPTY_COMPARABLE_VALUES = Collections.emptyList();
     private final StreamMergeContext streamMergeContext;
     private final StreamResultSet streamResult;
@@ -195,7 +195,7 @@ public class EasyOrderStreamMergeResultSet implements OrderStreamMergeResult {
     }
 
     @Override
-    public int compareTo(OrderStreamMergeResult o) {
+    public int compareTo(OrderStreamMergeResultSet o) {
         if (EasyCollectionUtil.isEmpty(streamMergeContext.getOrders())) {
             return 0;
         }

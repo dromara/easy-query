@@ -11,6 +11,7 @@ import java.sql.SQLException;
  */
 public interface EasyConnection extends AutoCloseable{
 
+    ConnectionStrategyEnum getConnectionStrategy();
     String getDataSourceName();
     Connection getConnection();
     void setAutoCommit(boolean autoCommit);

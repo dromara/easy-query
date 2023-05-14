@@ -1,7 +1,6 @@
 package com.easy.query.core.sharding.merge.result.impl;
 
-import com.easy.query.core.sharding.merge.result.ShardingStreamResult;
-import com.easy.query.core.sharding.merge.result.StreamResultSet;
+import com.easy.query.core.sharding.merge.result.ShardingStreamResultSet;
 
 import java.math.BigDecimal;
 import java.sql.Blob;
@@ -21,14 +20,14 @@ import java.sql.Timestamp;
  *
  * @author xuejiaming
  */
-public final class EasyShardingStreamResult implements ShardingStreamResult {
+public final class EasyShardingStreamResultSet implements ShardingStreamResultSet {
     private final ResultSet resultSet;
     private final PreparedStatement preparedStatement;
     private boolean hasElement;
     private  boolean skipFirst;
     private boolean closed=false;
 
-    public EasyShardingStreamResult(ResultSet resultSet, PreparedStatement preparedStatement, boolean hasElement){
+    public EasyShardingStreamResultSet(ResultSet resultSet, PreparedStatement preparedStatement, boolean hasElement){
 
         this.resultSet = resultSet;
         this.preparedStatement = preparedStatement;

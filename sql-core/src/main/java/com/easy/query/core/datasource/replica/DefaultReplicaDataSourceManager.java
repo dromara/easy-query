@@ -1,6 +1,8 @@
 package com.easy.query.core.datasource.replica;
 
 import com.easy.query.core.basic.jdbc.con.ConnectionStrategyEnum;
+import com.easy.query.core.basic.jdbc.con.DataSourceUnit;
+import com.easy.query.core.basic.jdbc.con.DefaultDataSourceUnit;
 import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.configuration.EasyQueryReplicaOption;
 import com.easy.query.core.datasource.DefaultDataSourceManager;
@@ -74,16 +76,17 @@ public final class DefaultReplicaDataSourceManager extends DefaultDataSourceMana
     }
 
     @Override
-    public DataSource getDataSourceOrNull(String dataSourceName, ConnectionStrategyEnum connectionStrategy) {
+    public DataSourceUnit getDataSourceOrNull(String dataSourceName, ConnectionStrategyEnum connectionStrategy) {
         if(Objects.equals(ConnectionStrategyEnum.IndependentConnectionReplica,connectionStrategy)){
 
             ReplicaConnector replicaConnector = replicaDataSource.get(dataSourceName);
             if(replicaConnector!=null){
                 DataSource dataSource = replicaConnector.getDataSourceOrNull(null);
                 if(dataSource!=null){
-                    return dataSource;
+                    return new DefaultDataSourceUnit(dataSource,connectionStrategy);
                 }
             }
+            return super.getDataSourceOrNull(dataSourceName,ConnectionStrategyEnum.IndependentConnectionMaster);
         }
         return super.getDataSourceOrNull(dataSourceName,connectionStrategy);
     }

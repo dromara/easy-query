@@ -34,14 +34,14 @@ public class EasyInsertExecutor extends AbstractExecutor<AffectedRowsExecuteResu
         ExecutorContext executorContext = streamMergeContext.getExecutorContext();
         EasyConnection easyConnection = commandExecuteUnit.getEasyConnection();
         ExecutionUnit executionUnit = commandExecuteUnit.getExecutionUnit();
-        String dataSourceName = executionUnit.getDataSourceName();
         SqlRouteUnit sqlRouteUnit = executionUnit.getSqlRouteUnit();
         SqlUnit sqlUnit = sqlRouteUnit.getSqlUnit();
         String sql = sqlUnit.getSql();
         List<Object> entities = sqlUnit.getEntities();
         List<SQLParameter> parameters = sqlUnit.getParameters();
         boolean fillAutoIncrement = sqlUnit.isFillAutoIncrement();
-        int rows = JdbcExecutorUtil.insert(dataSourceName, executorContext, easyConnection, sql, entities, parameters, fillAutoIncrement);
+        boolean isSharding = streamMergeContext.isSharding();
+        int rows = JdbcExecutorUtil.insert(executorContext, easyConnection, sql, entities, parameters, fillAutoIncrement,isSharding);
         return new AffectedRowsExecuteResult(rows);
     }
 

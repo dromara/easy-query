@@ -1,6 +1,8 @@
 package com.easy.query.core.datasource;
 
 import com.easy.query.core.basic.jdbc.con.ConnectionStrategyEnum;
+import com.easy.query.core.basic.jdbc.con.DataSourceUnit;
+import com.easy.query.core.basic.jdbc.con.DefaultDataSourceUnit;
 import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.configuration.EasyQueryShardingOption;
 
@@ -60,10 +62,11 @@ public class DefaultDataSourceManager implements DataSourceManager{
     }
 
     @Override
-    public DataSource getDataSourceOrNull(String dataSourceName,ConnectionStrategyEnum connectionStrategy) {
+    public DataSourceUnit getDataSourceOrNull(String dataSourceName, ConnectionStrategyEnum connectionStrategy) {
         if (dataSourceName == null) {
             throw new IllegalArgumentException("dataSourceName");
         }
-        return dataSourceMap.get(dataSourceName);
+        DataSource dataSource = dataSourceMap.get(dataSourceName);
+        return new DefaultDataSourceUnit(dataSource,connectionStrategy);
     }
 }

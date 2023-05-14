@@ -1,8 +1,9 @@
 package com.easy.query.core.sharding.merge.result.impl;
 
 import com.easy.query.core.sharding.context.StreamMergeContext;
+import com.easy.query.core.sharding.merge.result.ShardingStreamResultSet;
 import com.easy.query.core.sharding.merge.result.StreamResultSet;
-import com.easy.query.core.sharding.merge.result.OrderStreamMergeResult;
+import com.easy.query.core.sharding.merge.result.OrderStreamMergeResultSet;
 import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.math.BigDecimal;
@@ -24,11 +25,11 @@ import java.util.Queue;
  *
  * @author xuejiaming
  */
-public class EasyMultiOrderStreamMergeResultSet implements StreamResultSet {
+public class EasyMultiOrderStreamMergeResultSet implements ShardingStreamResultSet {
 
     private final StreamMergeContext streamMergeContext;
     private final List<StreamResultSet> orderStreamMergeResults;
-    private final Queue<OrderStreamMergeResult> queue;
+    private final Queue<OrderStreamMergeResultSet> queue;
     private StreamResultSet currentStreamResult;
     private boolean skipFirst;
 
@@ -78,7 +79,7 @@ public class EasyMultiOrderStreamMergeResultSet implements StreamResultSet {
             skipFirst=false;
             return true;
         }
-        OrderStreamMergeResult first = queue.poll();
+        OrderStreamMergeResultSet first = queue.poll();
         if(first.next()){
             queue.offer(first);
         }

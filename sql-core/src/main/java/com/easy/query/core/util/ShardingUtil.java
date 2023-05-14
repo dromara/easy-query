@@ -33,9 +33,6 @@ import com.easy.query.core.sharding.route.RoutePredicateExpression;
 import com.easy.query.core.sharding.rule.RouteRuleFilter;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 

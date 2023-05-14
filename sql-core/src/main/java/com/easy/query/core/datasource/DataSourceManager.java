@@ -2,6 +2,7 @@ package com.easy.query.core.datasource;
 
 
 import com.easy.query.core.basic.jdbc.con.ConnectionStrategyEnum;
+import com.easy.query.core.basic.jdbc.con.DataSourceUnit;
 
 import javax.sql.DataSource;
 import java.util.Map;
@@ -45,5 +46,5 @@ public interface DataSourceManager {
      * @param dataSourceName 数据源名称
      * @return 数据源
      */
-    DataSource getDataSourceOrNull(String dataSourceName,ConnectionStrategyEnum connectionStrategy);
+    DataSourceUnit getDataSourceOrNull(String dataSourceName, ConnectionStrategyEnum connectionStrategy);
 }

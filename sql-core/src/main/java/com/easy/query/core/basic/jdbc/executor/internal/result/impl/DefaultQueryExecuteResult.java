@@ -2,7 +2,7 @@ package com.easy.query.core.basic.jdbc.executor.internal.result.impl;
 
 import com.easy.query.core.basic.jdbc.executor.internal.result.QueryExecuteResult;
 import com.easy.query.core.sharding.merge.result.StreamResultSet;
-import com.easy.query.core.sharding.merge.result.impl.EmptyStreamResult;
+import com.easy.query.core.sharding.merge.result.impl.EmptyStreamResultSet;
 
 /**
  * create time 2023/5/12 23:57
@@ -11,7 +11,7 @@ import com.easy.query.core.sharding.merge.result.impl.EmptyStreamResult;
  * @author xuejiaming
  */
 public class DefaultQueryExecuteResult implements QueryExecuteResult {
-    public static final QueryExecuteResult EMPTY=new DefaultQueryExecuteResult(EmptyStreamResult.getInstance());
+    public static final QueryExecuteResult EMPTY=new DefaultQueryExecuteResult(EmptyStreamResultSet.getInstance());
     private final StreamResultSet streamResult;
 
     public DefaultQueryExecuteResult(StreamResultSet streamResult){

@@ -1,6 +1,7 @@
 package com.easy.query.core.sharding;
 
 import com.easy.query.core.basic.jdbc.con.ConnectionStrategyEnum;
+import com.easy.query.core.basic.jdbc.con.DataSourceUnit;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 
 import javax.sql.DataSource;
@@ -47,8 +48,8 @@ public interface EasyQueryDataSource {
      * @return 数据源
      * @throws EasyQueryInvalidOperationException 如果数据源名称对应的数据源不存在
      */
-   default DataSource getDataSourceNotNull(String dataSourceName, ConnectionStrategyEnum connectionStrategy){
-       DataSource dataSource = getDataSourceOrNull(dataSourceName,connectionStrategy);
+   default DataSourceUnit getDataSourceNotNull(String dataSourceName, ConnectionStrategyEnum connectionStrategy){
+       DataSourceUnit dataSource = getDataSourceOrNull(dataSourceName,connectionStrategy);
        if(dataSource==null){
            throw new EasyQueryInvalidOperationException("not found data source :" + dataSourceName);
        }
@@ -60,5 +61,5 @@ public interface EasyQueryDataSource {
      * @param dataSourceName 数据源名称
      * @return 数据源
      */
-    DataSource getDataSourceOrNull(String dataSourceName,ConnectionStrategyEnum connectionStrategy);
+    DataSourceUnit getDataSourceOrNull(String dataSourceName, ConnectionStrategyEnum connectionStrategy);
 }

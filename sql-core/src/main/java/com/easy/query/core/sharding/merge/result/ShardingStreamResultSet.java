@@ -6,5 +6,5 @@ package com.easy.query.core.sharding.merge.result;
  *
  * @author xuejiaming
  */
-public interface ShardingStreamResult extends StreamResultSet{
+public interface ShardingStreamResultSet extends StreamResultSet{
 }

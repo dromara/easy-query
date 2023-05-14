@@ -3,7 +3,7 @@ package com.easy.query.core.sharding.merge.result.impl.memory.single;
 import com.easy.query.core.sharding.context.StreamMergeContext;
 import com.easy.query.core.sharding.manager.QueryCountResult;
 import com.easy.query.core.sharding.manager.ShardingQueryCountManager;
-import com.easy.query.core.sharding.merge.result.ShardingStreamResult;
+import com.easy.query.core.sharding.merge.result.ShardingStreamResultSet;
 import com.easy.query.core.sharding.merge.result.StreamResultSet;
 import com.easy.query.core.sharding.merge.result.impl.memory.AbstractInMemoryStreamMergeResultSet;
 import com.easy.query.core.sharding.merge.result.impl.memory.row.ConstMemoryResultSetRow;
@@ -39,7 +39,7 @@ public  class EasyCountInMemoryStreamMergeResultSet extends AbstractInMemoryStre
                     long rows = streamResultSet.getLong(1);
                     result=result+rows;
                     if(recordCount){
-                        if(streamResultSet instanceof ShardingStreamResult){
+                        if(streamResultSet instanceof ShardingStreamResultSet){
                             shardingQueryCountManager.addCountResult(new QueryCountResult(rows));
                         }
                     }

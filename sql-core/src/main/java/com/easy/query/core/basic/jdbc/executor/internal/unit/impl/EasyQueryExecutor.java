@@ -21,7 +21,6 @@ import com.easy.query.core.basic.jdbc.executor.internal.common.CommandExecuteUni
 import com.easy.query.core.basic.jdbc.executor.internal.common.SqlRouteUnit;
 import com.easy.query.core.basic.jdbc.executor.internal.merger.impl.QueryStreamShardingMerger;
 import com.easy.query.core.sharding.merge.result.StreamResultSet;
-import com.easy.query.core.sharding.merge.result.impl.EasyShardingStreamResult;
 import com.easy.query.core.util.JdbcExecutorUtil;
 
 import java.util.List;
@@ -45,13 +44,12 @@ public class EasyQueryExecutor extends AbstractExecutor<QueryExecuteResult> {
 
         EasyConnection easyConnection = commandExecuteUnit.getEasyConnection();
         ExecutionUnit executionUnit = commandExecuteUnit.getExecutionUnit();
-        String dataSourceName = executionUnit.getDataSourceName();
         SqlRouteUnit sqlRouteUnit = executionUnit.getSqlRouteUnit();
         SqlUnit sqlUnit = sqlRouteUnit.getSqlUnit();
         String sql = sqlUnit.getSql();
         List<SQLParameter> parameters = sqlUnit.getParameters();
         boolean isSharding = streamMergeContext.isSharding();
-        StreamResultSet streamResultSet = JdbcExecutorUtil.query(dataSourceName, executorContext, easyConnection, sql, parameters, isSharding);
+        StreamResultSet streamResultSet = JdbcExecutorUtil.query( executorContext, easyConnection, sql, parameters, isSharding);
 
         return new DefaultQueryExecuteResult(streamResultSet);
     }

@@ -8,6 +8,6 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public interface OrderStreamMergeResult extends StreamResultSet,Comparable<OrderStreamMergeResult> {
+public interface OrderStreamMergeResultSet extends ShardingStreamResultSet,Comparable<OrderStreamMergeResultSet> {
     List<Comparable<?>> compareValues();
 }

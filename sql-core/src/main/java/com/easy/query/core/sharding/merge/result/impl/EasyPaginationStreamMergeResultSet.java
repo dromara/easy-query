@@ -1,6 +1,7 @@
 package com.easy.query.core.sharding.merge.result.impl;
 
 import com.easy.query.core.sharding.context.StreamMergeContext;
+import com.easy.query.core.sharding.merge.result.ShardingStreamResultSet;
 import com.easy.query.core.sharding.merge.result.StreamResultSet;
 
 import java.math.BigDecimal;
@@ -19,7 +20,7 @@ import java.sql.Timestamp;
  *
  * @author xuejiaming
  */
-public class EasyPaginationStreamMergeResultSet implements StreamResultSet {
+public class EasyPaginationStreamMergeResultSet implements ShardingStreamResultSet {
     private final StreamMergeContext streamMergeContext;
     private final StreamResultSet streamResult;
     private final long offset;

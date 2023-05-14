@@ -22,8 +22,9 @@ public class DefaultEasyConnectionFactory implements EasyConnectionFactory{
     @Override
     public EasyConnection createEasyConnection(String dataSourceName, Integer isolationLevel,ConnectionStrategyEnum connectionStrategy) {
         try {
-            Connection connection = easyQueryDataSource.getDataSourceNotNull(dataSourceName,connectionStrategy).getConnection();
-            return new DefaultEasyConnection(dataSourceName,connection,isolationLevel);
+            DataSourceUnit dataSourceUnit = easyQueryDataSource.getDataSourceNotNull(dataSourceName, connectionStrategy);
+            Connection connection = dataSourceUnit.getDataSource().getConnection();
+            return new DefaultEasyConnection(dataSourceName,dataSourceUnit.getStrategy(),connection,isolationLevel);
         } catch (SQLException e) {
             throw new EasyQuerySQLException(e);
         }

@@ -4,6 +4,7 @@ import com.easy.query.core.exception.EasyQuerySQLException;
 import com.easy.query.core.expression.segment.AggregationColumnSegment;
 import com.easy.query.core.expression.segment.SqlSegment;
 import com.easy.query.core.sharding.context.StreamMergeContext;
+import com.easy.query.core.sharding.merge.result.ShardingStreamResultSet;
 import com.easy.query.core.sharding.merge.result.StreamResultSet;
 import com.easy.query.core.sharding.merge.result.aggregation.AggregationUnitFactory;
 import com.easy.query.core.sharding.merge.segment.PropertyGroup;
@@ -31,7 +32,7 @@ import java.util.Queue;
  *
  * @author xuejiaming
  */
-public class EasyGroupByOrderStreamMergeResultSet implements StreamResultSet {
+public class EasyGroupByOrderStreamMergeResultSet implements ShardingStreamResultSet {
     private final StreamMergeContext streamMergeContext;
     private final List<StreamResultSet> streamResults;
     private final Queue<StreamResultSet> queue;

@@ -1,6 +1,7 @@
 package com.easy.query.core.sharding.merge.result.impl;
 
 import com.easy.query.core.sharding.context.StreamMergeContext;
+import com.easy.query.core.sharding.merge.result.ShardingStreamResultSet;
 import com.easy.query.core.sharding.merge.result.StreamResultSet;
 
 import java.math.BigDecimal;
@@ -21,7 +22,7 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public class EasyMultiStreamMergeResultSet implements StreamResultSet {
+public class EasyMultiStreamMergeResultSet implements ShardingStreamResultSet {
     private final StreamMergeContext streamMergeContext;
     private final List<StreamResultSet> streamResults;
     private StreamResultSet currentStreamResult;

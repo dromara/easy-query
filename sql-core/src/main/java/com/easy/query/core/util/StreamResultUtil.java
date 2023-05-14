@@ -14,6 +14,7 @@ import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
+import com.easy.query.core.sharding.merge.result.ShardingStreamResultSet;
 import com.easy.query.core.sharding.merge.result.StreamResultSet;
 
 import java.beans.PropertyDescriptor;
@@ -48,7 +49,7 @@ public final class StreamResultUtil {
             resultList = mapToBeans(context, streamResult, clazz);
         }
         if(log.isDebugEnabled()){
-            log.debug("<== "+Thread.currentThread().getName()+" Total: " + resultList.size());
+            log.debug("<== "+"Total: " + resultList.size());
         }
         return resultList;
     }
