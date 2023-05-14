@@ -657,4 +657,55 @@ public class ShardingTest extends BaseTest {
             Assert.assertEquals(beginTime.plusDays(i),topicShardingTime.getCreateTime());
         }
     }
+    @Test
+    public void sharding31(){
+
+        LocalDateTime beginTime = LocalDateTime.of(2020, 1, 1, 1, 1);
+        LocalDateTime endTime = LocalDateTime.of(2023, 5, 1, 1, 1);
+        Duration between = Duration.between(beginTime, endTime);
+        long days = between.toDays();
+        EasyPageResult<TopicShardingTime> pageResult = easyQuery.queryable(TopicShardingTime.class)
+                .orderByAsc(o -> o.column(TopicShardingTime::getStars))
+                .toShardingPageResult(2, 33);
+        Assert.assertEquals(days,pageResult.getTotal());
+        beginTime=beginTime.plusDays(33);
+        for (int i = 0; i < 33; i++) {
+            TopicShardingTime topicShardingTime = pageResult.getData().get(i);
+            Assert.assertEquals(beginTime.plusDays(i),topicShardingTime.getCreateTime());
+        }
+    }
+    @Test
+    public void sharding32(){
+
+        LocalDateTime beginTime = LocalDateTime.of(2020, 1, 1, 1, 1);
+        LocalDateTime endTime = LocalDateTime.of(2023, 5, 1, 1, 1);
+        Duration between = Duration.between(beginTime, endTime);
+        long days = between.toDays();
+        EasyPageResult<TopicShardingTime> pageResult = easyQuery.queryable(TopicShardingTime.class)
+                .orderByAsc(o -> o.column(TopicShardingTime::getStars))
+                .toShardingPageResult(30, 33);
+        Assert.assertEquals(days,pageResult.getTotal());
+        beginTime=beginTime.plusDays(957);
+        for (int i = 0; i < 33; i++) {
+            TopicShardingTime topicShardingTime = pageResult.getData().get(i);
+            Assert.assertEquals(beginTime.plusDays(i),topicShardingTime.getCreateTime());
+        }
+    }
+    @Test
+    public void sharding33(){
+
+        LocalDateTime beginTime = LocalDateTime.of(2020, 1, 1, 1, 1);
+        LocalDateTime endTime = LocalDateTime.of(2023, 5, 1, 1, 1);
+        Duration between = Duration.between(beginTime, endTime);
+        long days = between.toDays();
+        EasyPageResult<TopicShardingTime> pageResult = easyQuery.queryable(TopicShardingTime.class)
+                .orderByAsc(o -> o.column(TopicShardingTime::getStars))
+                .toShardingPageResult(3, 33);
+        Assert.assertEquals(days,pageResult.getTotal());
+        beginTime=beginTime.plusDays(66);
+        for (int i = 0; i < 33; i++) {
+            TopicShardingTime topicShardingTime = pageResult.getData().get(i);
+            Assert.assertEquals(beginTime.plusDays(i),topicShardingTime.getCreateTime());
+        }
+    }
 }

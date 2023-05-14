@@ -95,9 +95,11 @@ public class ShardingSequenceBuilder<T> {
      * @param executeMethods
      * @return
      */
-    public ShardingSequenceBuilder<T> useMaxShardingQueryLimit(int maxShardingQueryLimit, ExecuteMethodEnum... executeMethods) {
+    public ShardingSequenceBuilder<T> useMaxShardingQueryLimit(int maxShardingQueryLimit,ExecuteMethodEnum firstMethod, ExecuteMethodEnum... executeMethods) {
         shardingInitOptionBuilder.setMaxShardingQueryLimit(maxShardingQueryLimit);
         int sequenceLimitMethods = ExecuteMethodEnum.UNKNOWN.getCode();
+        int firstMethodCode = firstMethod.getCode();
+        sequenceLimitMethods = BitwiseUtil.addBit(sequenceLimitMethods,firstMethodCode);
         for (ExecuteMethodEnum executeMethod : executeMethods) {
             int executeMethodCode = executeMethod.getCode();
             sequenceLimitMethods = BitwiseUtil.addBit(sequenceLimitMethods, executeMethodCode);

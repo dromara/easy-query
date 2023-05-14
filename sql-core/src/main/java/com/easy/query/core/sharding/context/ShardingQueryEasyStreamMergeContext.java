@@ -39,6 +39,8 @@ public class ShardingQueryEasyStreamMergeContext extends EntityStreamMergeContex
     protected volatile boolean terminated = false;
     protected long offset;
     protected long rows;
+    protected boolean useReverseMerge=false;
+    protected long reverseSkip=0;
 
     public ShardingQueryEasyStreamMergeContext(ExecutorContext executorContext, ExecutionContext executionContext, EasyQueryPrepareParseResult easyQueryPrepareParseResult) {
         super(executorContext, executionContext, easyQueryPrepareParseResult);
@@ -123,6 +125,19 @@ public class ShardingQueryEasyStreamMergeContext extends EntityStreamMergeContex
     }
 
     @Override
+    public long getMergeOffset() {
+        if(isReverseMerge()){
+            return this.reverseSkip;
+        }
+        return getOffset();
+    }
+
+    @Override
+    public long getMergeRows() {
+        return getRows();
+    }
+
+    @Override
     public long getRewriteOffset() {
         return offset;
     }
@@ -159,6 +174,17 @@ public class ShardingQueryEasyStreamMergeContext extends EntityStreamMergeContex
             return easyQueryPrepareParseResult.getSequenceParseResult();
         }
         return null;
+    }
+
+    @Override
+    public void useReverseMerge(boolean reverse,long reverseSkip) {
+        this.useReverseMerge=reverse;
+        this.reverseSkip=reverseSkip;
+    }
+
+    @Override
+    public boolean isReverseMerge() {
+        return this.useReverseMerge;
     }
 
     @Override

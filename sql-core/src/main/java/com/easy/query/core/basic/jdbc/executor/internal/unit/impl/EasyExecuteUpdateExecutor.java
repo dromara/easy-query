@@ -45,7 +45,7 @@ public class EasyExecuteUpdateExecutor extends AbstractExecutor<AffectedRowsExec
 
     @Override
     protected CircuitBreaker createCircuitBreak() {
-        return NoCircuitBreaker.getInstance();
+        return NoCircuitBreaker.INSTANCE;
     }
 
     @Override

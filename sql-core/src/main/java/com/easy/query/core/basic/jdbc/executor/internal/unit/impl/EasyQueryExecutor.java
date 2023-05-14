@@ -61,17 +61,17 @@ public class EasyQueryExecutor extends AbstractExecutor<QueryExecuteResult> {
             case FIRST:
             case MAX:
             case MIN:
-                return AnyElementCircuitBreaker.getInstance();
-            case LIST:return ListCircuitBreaker.getInstance();
-            case ANY:return AnyCircuitBreaker.getInstance();
-            case ALL:return AllCircuitBreaker.getInstance();
-            default:return NoCircuitBreaker.getInstance();
+                return AnyElementCircuitBreaker.INSTANCE;
+            case LIST:return ListCircuitBreaker.INSTANCE;
+            case ANY:return AnyCircuitBreaker.INSTANCE;
+            case ALL:return AllCircuitBreaker.INSTANCE;
+            default:return NoCircuitBreaker.INSTANCE;
         }
     }
 
 
     @Override
     public ShardingMerger<QueryExecuteResult> getShardingMerger() {
-        return QueryStreamShardingMerger.getInstance();
+        return QueryStreamShardingMerger.INSTANCE;
     }
 }

@@ -49,7 +49,7 @@ public class ShardingEntityBuilder<T> {
 
     /**
      * 分页反排序
-     * 比如 reverseFactor=0.5，minReverseTotal=100000，当offset>0.5*100000时分片分页会启用反向排序
+     * 比如 reverseFactor=0.5，minReverseTotal=100000，当0.5*total>100000时分片分页会启用反向排序
      *
      * @param reverseFactor
      * @param minReverseTotal

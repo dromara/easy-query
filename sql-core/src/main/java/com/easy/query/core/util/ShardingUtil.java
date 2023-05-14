@@ -270,7 +270,11 @@ public class ShardingUtil {
                         PropertyOrder propertyOrder = EasyCollectionUtil.first(streamMergeContext.getOrders());
                         ShardingInitConfig shardingInitConfig = propertyOrder.getTable().getEntityTable().getEntityMetadata().getShardingInitConfig();
                         if (shardingInitConfig.isReverse()) {
-                            mergeBehavior = BitwiseUtil.addBit(mergeBehavior, MergeBehaviorEnum.REVERSE_PAGINATION.getCode());
+                            List<QueryCountResult> countResult = shardingQueryCountManager.getCountResult();
+                            long total = EasyCollectionUtil.sumLong(countResult, QueryCountResult::getTotal);
+                            if(shardingInitConfig.getReverseFactor()*total>shardingInitConfig.getMinReverseTotal()){
+                                mergeBehavior = BitwiseUtil.addBit(mergeBehavior, MergeBehaviorEnum.REVERSE_PAGINATION.getCode());
+                            }
                         }
                     }
                 }

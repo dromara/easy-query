@@ -55,6 +55,13 @@ public interface StreamMergeContext extends AutoCloseable {
     SequenceParseResult getSequenceParseResult();
 
     /**
+     * 是否使用反向聚合
+     * @return
+     */
+    void useReverseMerge(boolean reverse,long reverseSkip);
+    boolean isReverseMerge();
+
+    /**
      * group和order前半段匹配支持stream merger
      * @return
      */
@@ -66,6 +73,8 @@ public interface StreamMergeContext extends AutoCloseable {
     boolean hasGroupQuery();
     long getOffset();
     long getRows();
+    long getMergeOffset();
+    long getMergeRows();
     long getRewriteOffset();
     long getRewriteRows();
     SqlBuilderSegment getSelectColumns();

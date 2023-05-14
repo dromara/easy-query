@@ -16,10 +16,7 @@ import java.util.Collection;
  */
 public final class ListCircuitBreaker extends AbstractCircuitBreaker{
 
-    private static final CircuitBreaker instance=new ListCircuitBreaker();
-    public static CircuitBreaker getInstance(){
-        return instance;
-    }
+    public static final CircuitBreaker INSTANCE=new ListCircuitBreaker();
     @Override
     protected <TResult> boolean SequenceTerminated(StreamMergeContext streamMergeContext,Collection<TResult> results) {
         if(streamMergeContext.isPaginationQuery()){

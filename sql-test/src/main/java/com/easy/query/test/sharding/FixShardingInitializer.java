@@ -51,10 +51,11 @@ public class FixShardingInitializer implements EasyShardingInitializer {
             }};
 
             ((ShardingEntityBuilder<TopicShardingTime>) builder).actualTableNameInit(initTables)
+                    .paginationReverse(0.5,100)
                     .ascSequenceConfigure(String::compareToIgnoreCase)
                     .addPropertyDefaultUseDesc(TopicShardingTime::getCreateTime)
                     .defaultAffectedMethod(false,ExecuteMethodEnum.LIST,ExecuteMethodEnum.ANY,ExecuteMethodEnum.COUNT,ExecuteMethodEnum.FIRST)
-                    .useMaxShardingQueryLimit(2);
+                    .useMaxShardingQueryLimit(2,ExecuteMethodEnum.LIST,ExecuteMethodEnum.ANY,ExecuteMethodEnum.FIRST);
         }else{
             throw new UnsupportedOperationException();
         }

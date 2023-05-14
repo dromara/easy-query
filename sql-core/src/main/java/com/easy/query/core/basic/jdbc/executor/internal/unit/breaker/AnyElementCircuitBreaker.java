@@ -13,10 +13,7 @@ import java.util.Collection;
  */
 public final class AnyElementCircuitBreaker extends AbstractCircuitBreaker{
 
-    private static final CircuitBreaker instance=new AnyElementCircuitBreaker();
-    public static CircuitBreaker getInstance(){
-        return instance;
-    }
+    public static final CircuitBreaker INSTANCE=new AnyElementCircuitBreaker();
     @Override
     protected <TResult> boolean SequenceTerminated(StreamMergeContext streamMergeContext,Collection<TResult> results) {
         for (TResult result : results) {

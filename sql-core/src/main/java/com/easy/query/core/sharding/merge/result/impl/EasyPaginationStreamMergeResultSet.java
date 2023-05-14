@@ -30,7 +30,7 @@ public class EasyPaginationStreamMergeResultSet implements ShardingStreamResultS
     private boolean closed=false;
 
     public EasyPaginationStreamMergeResultSet(StreamMergeContext streamMergeContext, StreamResultSet streamResult) throws SQLException {
-        this(streamMergeContext,streamResult,streamMergeContext.getOffset(),streamMergeContext.getRows());
+        this(streamMergeContext,streamResult,streamMergeContext.getMergeOffset(),streamMergeContext.getMergeRows());
 
     }
     public EasyPaginationStreamMergeResultSet(StreamMergeContext streamMergeContext, StreamResultSet streamResult, long offset, long rows) throws SQLException {

@@ -201,8 +201,9 @@ public class EasyOrderStreamMergeResultSet implements OrderStreamMergeResultSet 
         }
         ShardingComparer shardingComparer = streamMergeContext.getRuntimeContext().getShardingComparer();
         int i = 0;
+        boolean reverseMerge = streamMergeContext.isReverseMerge();
         for (PropertyOrder order : streamMergeContext.getOrders()) {
-            int compared = shardingComparer.compare(orderValues.get(i), o.compareValues().get(i), order.asc());
+            int compared = shardingComparer.compare(orderValues.get(i), o.compareValues().get(i), order.asc()==!reverseMerge);
             if (compared != 0) {
                 return compared;
             }

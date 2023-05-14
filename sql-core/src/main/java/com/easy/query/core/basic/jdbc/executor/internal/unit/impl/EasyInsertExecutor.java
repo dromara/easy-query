@@ -47,7 +47,7 @@ public class EasyInsertExecutor extends AbstractExecutor<AffectedRowsExecuteResu
 
     @Override
     protected CircuitBreaker createCircuitBreak() {
-        return NoCircuitBreaker.getInstance();
+        return NoCircuitBreaker.INSTANCE;
     }
 
     @Override

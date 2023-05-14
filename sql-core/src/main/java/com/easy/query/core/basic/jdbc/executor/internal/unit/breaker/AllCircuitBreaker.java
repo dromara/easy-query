@@ -16,10 +16,7 @@ import java.util.Collection;
  */
 public final class AllCircuitBreaker extends AbstractCircuitBreaker{
 
-    private static final CircuitBreaker instance=new AllCircuitBreaker();
-    public static CircuitBreaker getInstance(){
-        return instance;
-    }
+    public static final CircuitBreaker INSTANCE=new AllCircuitBreaker();
 
     @Override
     protected <TResult> boolean SequenceTerminated(StreamMergeContext streamMergeContext,Collection<TResult> results) {

@@ -121,6 +121,16 @@ public class EasyStreamMergeContext implements StreamMergeContext {
         return null;
     }
 
+    @Override
+    public void useReverseMerge(boolean reverse,long reverseSkip) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean isReverseMerge() {
+        throw new UnsupportedOperationException();
+    }
+
     /**
      * 创建执行所需的connection
      * 如果是并发操作那么将获取独立的connection
@@ -190,6 +200,16 @@ public class EasyStreamMergeContext implements StreamMergeContext {
 
     @Override
     public long getRows() {
+        throw new NotImplementedException();
+    }
+
+    @Override
+    public long getMergeOffset() {
+        throw new NotImplementedException();
+    }
+
+    @Override
+    public long getMergeRows() {
         throw new NotImplementedException();
     }
 
