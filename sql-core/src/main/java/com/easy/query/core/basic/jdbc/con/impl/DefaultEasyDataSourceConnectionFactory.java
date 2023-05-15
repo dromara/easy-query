@@ -1,5 +1,7 @@
-package com.easy.query.core.basic.jdbc.con;
+package com.easy.query.core.basic.jdbc.con.impl;
 
+import com.easy.query.core.basic.jdbc.con.EasyDataSourceConnection;
+import com.easy.query.core.basic.jdbc.con.EasyDataSourceConnectionFactory;
 import com.easy.query.core.sharding.EasyQueryDataSource;
 
 /**
@@ -8,7 +10,7 @@ import com.easy.query.core.sharding.EasyQueryDataSource;
  *
  * @author xuejiaming
  */
-public final class DefaultEasyDataSourceConnectionFactory implements EasyDataSourceConnectionFactory{
+public final class DefaultEasyDataSourceConnectionFactory implements EasyDataSourceConnectionFactory {
     private final EasyQueryDataSource easyQueryDataSource;
 
     public DefaultEasyDataSourceConnectionFactory(EasyQueryDataSource easyQueryDataSource){

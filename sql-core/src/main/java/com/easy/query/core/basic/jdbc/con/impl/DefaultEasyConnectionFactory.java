@@ -1,5 +1,9 @@
-package com.easy.query.core.basic.jdbc.con;
+package com.easy.query.core.basic.jdbc.con.impl;
 
+import com.easy.query.core.enums.con.ConnectionStrategyEnum;
+import com.easy.query.core.basic.jdbc.con.DataSourceUnit;
+import com.easy.query.core.basic.jdbc.con.EasyConnection;
+import com.easy.query.core.basic.jdbc.con.EasyConnectionFactory;
 import com.easy.query.core.exception.EasyQuerySQLException;
 import com.easy.query.core.sharding.EasyQueryDataSource;
 
@@ -12,7 +16,7 @@ import java.sql.SQLException;
  *
  * @author xuejiaming
  */
-public class DefaultEasyConnectionFactory implements EasyConnectionFactory{
+public class DefaultEasyConnectionFactory implements EasyConnectionFactory {
     private final EasyQueryDataSource easyQueryDataSource;
 
     public DefaultEasyConnectionFactory(EasyQueryDataSource easyQueryDataSource){
@@ -20,7 +24,7 @@ public class DefaultEasyConnectionFactory implements EasyConnectionFactory{
         this.easyQueryDataSource = easyQueryDataSource;
     }
     @Override
-    public EasyConnection createEasyConnection(String dataSourceName, Integer isolationLevel,ConnectionStrategyEnum connectionStrategy) {
+    public EasyConnection createEasyConnection(String dataSourceName, Integer isolationLevel, ConnectionStrategyEnum connectionStrategy) {
         try {
             DataSourceUnit dataSourceUnit = easyQueryDataSource.getDataSourceNotNull(dataSourceName, connectionStrategy);
             Connection connection = dataSourceUnit.getDataSource().getConnection();

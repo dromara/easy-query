@@ -1,10 +1,9 @@
-package com.easy.query.core.basic.jdbc.con;
+package com.easy.query.core.basic.jdbc.con.impl;
 
-import com.easy.query.core.exception.EasyQuerySQLException;
+import com.easy.query.core.enums.con.ConnectionStrategyEnum;
+import com.easy.query.core.basic.jdbc.con.DataSourceUnit;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.SQLException;
 
 /**
  * create time 2023/5/14 10:54
@@ -12,7 +11,7 @@ import java.sql.SQLException;
  *
  * @author xuejiaming
  */
-public final class DefaultDataSourceUnit implements DataSourceUnit{
+public final class DefaultDataSourceUnit implements DataSourceUnit {
     private final DataSource dataSource;
     private final ConnectionStrategyEnum strategy;
 

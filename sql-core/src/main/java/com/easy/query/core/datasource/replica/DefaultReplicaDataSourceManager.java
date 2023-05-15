@@ -1,8 +1,8 @@
 package com.easy.query.core.datasource.replica;
 
-import com.easy.query.core.basic.jdbc.con.ConnectionStrategyEnum;
+import com.easy.query.core.enums.con.ConnectionStrategyEnum;
 import com.easy.query.core.basic.jdbc.con.DataSourceUnit;
-import com.easy.query.core.basic.jdbc.con.DefaultDataSourceUnit;
+import com.easy.query.core.basic.jdbc.con.impl.DefaultDataSourceUnit;
 import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.configuration.EasyQueryReplicaOption;
 import com.easy.query.core.datasource.DefaultDataSourceManager;

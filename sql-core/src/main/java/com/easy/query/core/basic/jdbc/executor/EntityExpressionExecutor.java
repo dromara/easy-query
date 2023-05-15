@@ -22,8 +22,23 @@ public interface EntityExpressionExecutor {
 
     <T> long insert(ExecutorContext executorContext, List<T> entities, EntityInsertExpressionBuilder entityInsertExpressionBuilder, boolean fillAutoIncrement);
 
+    /**
+     * update或者delete对象
+     * @param executorContext
+     * @param entityExpressionBuilder
+     * @param entities
+     * @return
+     * @param <T>
+     */
     <T> long executeRows(ExecutorContext executorContext, EntityExpressionBuilder entityExpressionBuilder, List<T> entities);
 
+    /**
+     * update或者delete表达式
+     * @param executorContext
+     * @param entityPredicateExpressionBuilder
+     * @return
+     * @param <T>
+     */
     <T> long executeRows(ExecutorContext executorContext, EntityPredicateExpressionBuilder entityPredicateExpressionBuilder);
 
 }

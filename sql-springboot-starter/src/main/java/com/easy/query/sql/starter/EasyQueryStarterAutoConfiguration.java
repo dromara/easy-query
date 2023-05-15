@@ -127,7 +127,7 @@ public class EasyQueryStarterAutoConfiguration {
         return new DefaultNameConversion();
     }
 
-    @Bean
+    @Bean("easy-query-default-starter-configurer")
     public StarterConfigurer starterConfigurer() {
         return new DefaultStarterConfigurer();
     }
@@ -171,6 +171,7 @@ public class EasyQueryStarterAutoConfiguration {
         for (Map.Entry<String, EasyEncryptionStrategy> easyEncryptionStrategyEntry : easyEncryptionStrategyMap.entrySet()) {
             configuration.applyEasyEncryptionStrategy(easyEncryptionStrategyEntry.getValue());
         }
+        //数据行版本
         for (Map.Entry<String, EasyVersionStrategy> easyVersionStrategyEntry : easyVersionStrategyMap.entrySet()) {
             configuration.applyEasyVersionStrategy(easyVersionStrategyEntry.getValue());
         }

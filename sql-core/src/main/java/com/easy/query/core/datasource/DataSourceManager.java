@@ -1,7 +1,7 @@
 package com.easy.query.core.datasource;
 
 
-import com.easy.query.core.basic.jdbc.con.ConnectionStrategyEnum;
+import com.easy.query.core.enums.con.ConnectionStrategyEnum;
 import com.easy.query.core.basic.jdbc.con.DataSourceUnit;
 
 import javax.sql.DataSource;

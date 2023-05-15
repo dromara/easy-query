@@ -1,12 +1,16 @@
-package com.easy.query.core.basic.jdbc.con;
+package com.easy.query.core.basic.jdbc.con.impl;
 
+import com.easy.query.core.enums.con.ConnectionStrategyEnum;
+import com.easy.query.core.basic.jdbc.con.EasyConnection;
+import com.easy.query.core.basic.jdbc.con.EasyConnectionFactory;
+import com.easy.query.core.basic.jdbc.con.EasyConnectionManager;
+import com.easy.query.core.basic.jdbc.con.EasyDataSourceConnection;
+import com.easy.query.core.basic.jdbc.con.EasyDataSourceConnectionFactory;
 import com.easy.query.core.basic.jdbc.tx.DefaultTransaction;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.exception.EasyQuerySQLException;
 import com.easy.query.core.sharding.EasyQueryDataSource;
-
-import java.sql.SQLException;
 
 /**
  * @author xuejiaming
@@ -105,7 +109,6 @@ public class DefaultConnectionManager implements EasyConnectionManager {
         }
         try {
             try {
-
                 easyDataSourceConnection.commit();
             } finally {
                 easyDataSourceConnection.close();
@@ -113,20 +116,6 @@ public class DefaultConnectionManager implements EasyConnectionManager {
         } finally {
             clear();
         }
-//        EasyConnection easyConnection = threadConnection.get();
-//        try {
-//            if (easyConnection == null) {
-//                return;
-//            }
-//            try {
-//                easyConnection.commit();
-//            } finally {
-//                easyConnection.close();
-//            }
-//        } finally {
-//            clear();
-//        }
-
     }
 
     @Override
@@ -138,7 +127,6 @@ public class DefaultConnectionManager implements EasyConnectionManager {
         }
         try {
             try {
-
                 easyDataSourceConnection.rollback();
             } finally {
                 easyDataSourceConnection.close();

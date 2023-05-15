@@ -1,7 +1,8 @@
 package com.easy.query.core.basic.jdbc.con;
 
+import com.easy.query.core.enums.con.ConnectionStrategyEnum;
+
 import javax.sql.DataSource;
-import java.sql.Connection;
 
 /**
  * create time 2023/5/14 10:54

@@ -1,9 +1,8 @@
 package com.easy.query.sql.starter;
 
-import com.easy.query.core.basic.jdbc.con.ConnectionStrategyEnum;
+import com.easy.query.core.enums.con.ConnectionStrategyEnum;
 import com.easy.query.core.basic.jdbc.con.DataSourceUnit;
-import com.easy.query.core.basic.jdbc.con.DefaultConnectionManager;
-import com.easy.query.core.basic.jdbc.con.DefaultEasyConnection;
+import com.easy.query.core.basic.jdbc.con.impl.DefaultConnectionManager;
 import com.easy.query.core.basic.jdbc.con.EasyConnection;
 import com.easy.query.core.basic.jdbc.con.EasyConnectionFactory;
 import com.easy.query.core.basic.jdbc.con.EasyDataSourceConnectionFactory;

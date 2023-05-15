@@ -652,23 +652,24 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
         long total = pageTotal < 0 ? this.count() : pageTotal;
         EasyPageResultProvider easyPageResultProvider = entityQueryExpressionBuilder.getRuntimeContext().getEasyPageResultProvider();
         if (total <= offset) {
-            return easyPageResultProvider.createPageResult(pageIndex,pageSize,total, Collections.emptyList());
+            return easyPageResultProvider.createPageResult(pageIndex, pageSize, total, Collections.emptyList());
         }//获取剩余条数
         long remainingCount = total - offset;
         //当剩余条数小于take数就取remainingCount
         long realTake = Math.min(remainingCount, take);
-        if(realTake<=0){
-            return easyPageResultProvider.createPageResult(pageIndex,pageSize,total, Collections.emptyList());
+        if (realTake <= 0) {
+            return easyPageResultProvider.createPageResult(pageIndex, pageSize, total, Collections.emptyList());
         }
         this.limit(offset, realTake);
         List<TR> data = this.toInternalList(clazz);
-        return easyPageResultProvider.createPageResult(pageIndex,pageSize,total, data);
+        return easyPageResultProvider.createPageResult(pageIndex, pageSize, total, data);
     }
 
     @Override
     public EasyPageResult<T1> toShardingPageResult(long pageIndex, long pageSize, SequenceCountLine sequenceCountLine) {
-        return doShardingPageResult(pageIndex,pageSize,t1Class,sequenceCountLine);
+        return doShardingPageResult(pageIndex, pageSize, t1Class, sequenceCountLine);
     }
+
     protected <TR> EasyPageResult<TR> doShardingPageResult(long pageIndex, long pageSize, Class<TR> clazz, SequenceCountLine sequenceCountLine) {
         //设置每次获取多少条
         long take = pageSize <= 0 ? 1 : pageSize;
@@ -680,30 +681,30 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
         ShardingQueryCountManager shardingQueryCountManager = runtimeContext.getShardingQueryCountManager();
         try {
             shardingQueryCountManager.begin();
-            if(sequenceCountLine!=null){
+            if (sequenceCountLine != null) {
                 List<SequenceCountNode> countNodes = sequenceCountLine.getCountNodes();
                 for (SequenceCountNode countNode : countNodes) {
-                    shardingQueryCountManager.addCountResult(countNode.getTotal(),true);
+                    shardingQueryCountManager.addCountResult(countNode.getTotal(), true);
                 }
             }
             long total = this.count();
-           if(sequenceCountLine!=null){
-               total=EasyCollectionUtil.sumLong(shardingQueryCountManager.getCountResult(), SequenceCountNode::getTotal);
-           }
+            if (sequenceCountLine != null) {
+                total = EasyCollectionUtil.sumLong(shardingQueryCountManager.getCountResult(), SequenceCountNode::getTotal);
+            }
             EasyPageResultProvider easyPageResultProvider = runtimeContext.getEasyPageResultProvider();
             if (total <= offset) {
-                return easyPageResultProvider.createShardingPageResult(pageIndex,pageSize,total, Collections.emptyList(),shardingQueryCountManager.getSequenceCountLine());
+                return easyPageResultProvider.createShardingPageResult(pageIndex, pageSize, total, Collections.emptyList(), shardingQueryCountManager.getSequenceCountLine());
             }
             //获取剩余条数
             long remainingCount = total - offset;
             //当剩余条数小于take数就取remainingCount
             long realTake = Math.min(remainingCount, take);
-            if(realTake<=0){
-                return easyPageResultProvider.createShardingPageResult(pageIndex,pageSize,total, Collections.emptyList(),shardingQueryCountManager.getSequenceCountLine());
+            if (realTake <= 0) {
+                return easyPageResultProvider.createShardingPageResult(pageIndex, pageSize, total, Collections.emptyList(), shardingQueryCountManager.getSequenceCountLine());
             }
             this.limit(offset, realTake);
             List<TR> data = this.toInternalList(clazz);
-            return easyPageResultProvider.createShardingPageResult(pageIndex,pageSize,total, data,shardingQueryCountManager.getSequenceCountLine());
+            return easyPageResultProvider.createShardingPageResult(pageIndex, pageSize, total, data, shardingQueryCountManager.getSequenceCountLine());
         } finally {
             shardingQueryCountManager.clear();
         }

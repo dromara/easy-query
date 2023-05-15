@@ -1,6 +1,7 @@
-package com.easy.query.core.basic.jdbc.con;
+package com.easy.query.core.basic.jdbc.con.impl;
 
-import com.easy.query.core.exception.EasyQueryException;
+import com.easy.query.core.basic.jdbc.con.EasyConnection;
+import com.easy.query.core.basic.jdbc.con.EasyDataSourceConnection;
 import com.easy.query.core.exception.EasyQuerySQLException;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
@@ -11,7 +12,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
