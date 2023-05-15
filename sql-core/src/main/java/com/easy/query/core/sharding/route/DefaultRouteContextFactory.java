@@ -59,7 +59,7 @@ public class DefaultRouteContextFactory implements RouteContextFactory {
         boolean isCrossTable = false;
         for (Object entity : entities) {
             RouteContext routeContext = doCreateRouteContext(new EasyEntityPrepareParseResult(prepareParseResult.getExecutorContext(),prepareParseResult.getShardingTables(), prepareParseResult.getEntityExpressionBuilder(), Collections.singletonList(entity)));
-            List<RouteUnit> routeUnits = routeContext.getEntityRouteResult().getRouteUnits();
+            List<RouteUnit> routeUnits = routeContext.getShardingRouteResult().getRouteUnits();
             if (EasyCollectionUtil.isNotSingle(routeUnits)) {
                 throw new EasyQueryInvalidOperationException("entity route route unit more or empty:"+routeUnits.size());
             }

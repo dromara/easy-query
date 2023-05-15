@@ -14,7 +14,6 @@ import java.util.List;
  */
 public interface EasyInsertSqlExpression extends EasyEntitySqlExpression{
     SqlBuilderSegment getColumns();
-    EasyQueryRuntimeContext getRuntimeContext();
 
     @Override
     EasyInsertSqlExpression cloneSqlExpression();

@@ -14,7 +14,6 @@ import java.util.List;
  * @author xuejiaming
  */
 public interface EasyUpdateSqlExpression extends EasyEntityPredicateSqlExpression{
-    EasyQueryRuntimeContext getRuntimeContext();
     SqlBuilderSegment getSetColumns();
 
     @Override

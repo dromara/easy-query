@@ -15,12 +15,17 @@ public interface QueryPrepareParseResult extends PredicatePrepareParseResult{
     EasyQuerySqlExpression getEasyEntityPredicateSqlExpression();
     @Override
     EntityQueryExpressionBuilder getEntityExpressionBuilder();
-    long getOffset();
-    long getRows();
-    boolean isSharding();
+    long getOriginalOffset();
+    long getOriginalRows();
+    default boolean isPaginationQuery(){
+        return getOriginalOffset()>0|| getOriginalRows()>0;
+    }
     boolean isStartsWithGroupByInOrderBy();
     void setStartsWithGroupByInOrderBy(boolean startsWithGroupByInOrderBy);
     SequenceParseResult getSequenceParseResult();
+    default boolean isSeqQuery(){
+        return getSequenceParseResult()!=null;
+    }
 
     int getMaxShardingQueryLimit();
     ConnectionModeEnum getConnectionMode();

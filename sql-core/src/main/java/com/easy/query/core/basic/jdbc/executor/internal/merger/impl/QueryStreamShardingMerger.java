@@ -94,12 +94,12 @@ public class QueryStreamShardingMerger extends AbstractShardingMerger<QueryExecu
         if (!streamMergeContext.hasBehavior(MergeBehaviorEnum.PAGINATION)||streamMergeContext.hasBehavior(MergeBehaviorEnum.SEQUENCE_PAGINATION)) {
             return streamResultSet;
         }
-        long rewriteOffset = streamMergeContext.getRewriteOffset();
-        long rewriteRows = streamMergeContext.getRewriteRows();
-        if(streamMergeContext.isReverseMerge()){
-            rewriteRows=streamMergeContext.getMergeOffset()+streamMergeContext.getRows();
-        }
-        return new EasyPaginationStreamMergeResultSet(streamMergeContext, streamResultSet,rewriteOffset, rewriteRows);
+//        long rewriteOffset = streamMergeContext.getRewriteOffset();
+//        long rewriteRows = streamMergeContext.getRewriteRows();
+//        if(streamMergeContext.isReverseMerge()){
+//            rewriteRows=streamMergeContext.getMergeOffset()+streamMergeContext.getRows();
+//        }
+        return new EasyPaginationStreamMergeResultSet(streamMergeContext, streamResultSet,streamMergeContext.getRewriteOffset(), streamMergeContext.getRewriteRows());
 
     }
 

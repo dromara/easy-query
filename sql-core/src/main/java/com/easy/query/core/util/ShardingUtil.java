@@ -1,11 +1,13 @@
 package com.easy.query.core.util;
 
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
+import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.executor.internal.common.ExecutionUnit;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.MergeBehaviorEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.executor.parser.PrepareParseResult;
+import com.easy.query.core.expression.executor.parser.QueryPrepareParseResult;
 import com.easy.query.core.expression.executor.parser.SequenceParseResult;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.AggregationColumnSegment;
@@ -17,19 +19,23 @@ import com.easy.query.core.expression.segment.SqlSegment;
 import com.easy.query.core.expression.segment.builder.ProjectSqlBuilderSegment;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
+import com.easy.query.core.expression.sql.expression.EasyEntitySqlExpression;
 import com.easy.query.core.expression.sql.expression.EasyQuerySqlExpression;
 import com.easy.query.core.expression.sql.expression.EasyTableSqlExpression;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.metadata.ShardingInitConfig;
-import com.easy.query.core.sharding.context.StreamMergeContext;
 import com.easy.query.core.sharding.manager.QueryCountResult;
 import com.easy.query.core.sharding.manager.ShardingQueryCountManager;
 import com.easy.query.core.sharding.merge.segment.EntityPropertyGroup;
 import com.easy.query.core.sharding.merge.segment.EntityPropertyOrder;
 import com.easy.query.core.sharding.merge.segment.PropertyGroup;
 import com.easy.query.core.sharding.merge.segment.PropertyOrder;
+import com.easy.query.core.sharding.rewrite.RewriteRouteUnit;
+import com.easy.query.core.sharding.rewrite.SequencePaginationRewriteRouteUnit;
+import com.easy.query.core.sharding.route.RouteContext;
 import com.easy.query.core.sharding.route.RoutePredicateDiscover;
 import com.easy.query.core.sharding.route.RoutePredicateExpression;
+import com.easy.query.core.sharding.route.RouteUnit;
 import com.easy.query.core.sharding.rule.RouteRuleFilter;
 
 import java.util.ArrayList;
@@ -128,13 +134,13 @@ public class ShardingUtil {
         return true;
     }
 
-    public static boolean processGroup(StreamMergeContext streamMergeContext) {
-        return streamMergeContext.hasGroupQuery() || hasAggregateSelect(streamMergeContext);
+    public static boolean processGroup(EasyQuerySqlExpression easyQuerySqlExpression) {
+        return SqlSegmentUtil.isNotEmpty(easyQuerySqlExpression.getGroup()) || hasAggregateSelect(easyQuerySqlExpression);
     }
 
-    private static boolean hasAggregateSelect(StreamMergeContext streamMergeContext) {
-        if (SqlSegmentUtil.isNotEmpty(streamMergeContext.getSelectColumns())) {
-            return ((ProjectSqlBuilderSegment) streamMergeContext.getSelectColumns()).hasAggregateColumns();
+    private static boolean hasAggregateSelect(EasyQuerySqlExpression easyQuerySqlExpression) {
+        if (SqlSegmentUtil.isNotEmpty(easyQuerySqlExpression.getProjects())) {
+            return ((ProjectSqlBuilderSegment) easyQuerySqlExpression.getProjects()).hasAggregateColumns();
         }
         return false;
     }
@@ -228,14 +234,113 @@ public class ShardingUtil {
         }
         return executionUnits;
     }
+    public static List<RewriteRouteUnit> getSequencePaginationRewriteRouteUnits(QueryPrepareParseResult queryPrepareParseResult,  RouteContext routeContext, List<QueryCountResult> countResult) {
 
-    public static int parseStreamMergeContextMergeBehavior(StreamMergeContext streamMergeContext) {
+        SequenceParseResult sequenceParseResult = queryPrepareParseResult.getSequenceParseResult();
+        boolean reverse = sequenceParseResult.isReverse();
+        boolean asc = sequenceParseResult.getTable().getEntityMetadata().getShardingInitConfig().getShardingSequenceConfig().hasCompareAscMethods(ExecuteMethodEnum.COUNT);
+        boolean countResultReverse = reverse == asc;
+        List<RouteUnit> routeUnits = routeContext.getShardingRouteResult().getRouteUnits();
+        ArrayList<RewriteRouteUnit> rewriteRouteUnits = new ArrayList<>(routeUnits.size());
+        long offset=queryPrepareParseResult.getOriginalOffset();
+        long rows=queryPrepareParseResult.getOriginalRows();
+        long currentOffset = offset;
+        long currentRows = rows;
+        boolean stopSkip = false;
+        boolean needBreak = false;
+        int countSize = countResult.size();
+        for (int i = 0; i < countSize; i++) {
+            int countResultIndex = countResultReverse ? countSize - 1 - i : i;
+            QueryCountResult queryCountResult = countResult.get(countResultIndex);
+            RouteUnit routeUnit = routeUnits.get(i);
+            if (!stopSkip) {
+                if (queryCountResult.getTotal() > currentOffset) {
+                    stopSkip = true;
+                } else {
+                    currentOffset = currentOffset - queryCountResult.getTotal();
+                    continue;
+                }
+            }
+            long currentRealOffset = currentOffset;
+            long currentRealRows = queryCountResult.getTotal() - currentOffset;
+            if (currentOffset != 0L)
+                currentOffset = 0;
+
+            if (currentRows <= currentRealRows) {
+                currentRealRows = currentRows;
+                needBreak = true;
+            } else {
+                currentRows = currentRows - currentRealRows;
+            }
+            rewriteRouteUnits.add(new SequencePaginationRewriteRouteUnit(currentRealOffset,currentRealRows,routeUnit));
+            if (needBreak) {
+                break;
+            }
+        }
+        return rewriteRouteUnits;
+    }
+//
+//    public static int parseStreamMergeContextMergeBehavior(StreamMergeContext streamMergeContext) {
+//
+//        int mergeBehavior = MergeBehaviorEnum.DEFAULT.getCode();
+//
+//        if (streamMergeContext.isQuery() && streamMergeContext.isSharding()) {
+//
+//            switch (streamMergeContext.getExecutorContext().getExecuteMethod()) {
+//                case ALL:
+//                    mergeBehavior = BitwiseUtil.addBit(mergeBehavior, MergeBehaviorEnum.ALL.getCode());
+//                    break;
+//                case ANY:
+//                    mergeBehavior = BitwiseUtil.addBit(mergeBehavior, MergeBehaviorEnum.ANY.getCode());
+//                    break;
+//                case COUNT:
+//                    mergeBehavior = BitwiseUtil.addBit(mergeBehavior, MergeBehaviorEnum.COUNT.getCode());
+//                    break;
+//            }
+//            if (processGroup(streamMergeContext)) {
+//                mergeBehavior = BitwiseUtil.addBit(mergeBehavior, MergeBehaviorEnum.GROUP.getCode());
+//                if (streamMergeContext.isStartsWithGroupByInOrderBy()) {
+//                    mergeBehavior = BitwiseUtil.addBit(mergeBehavior, MergeBehaviorEnum.STREAM_GROUP.getCode());
+//                }
+//            }
+//            if (EasyCollectionUtil.isNotEmpty(streamMergeContext.getOrders())) {
+//                mergeBehavior = BitwiseUtil.addBit(mergeBehavior, MergeBehaviorEnum.ORDER.getCode());
+//            }
+//            if (streamMergeContext.isPaginationQuery()) {
+//                mergeBehavior = BitwiseUtil.addBit(mergeBehavior, MergeBehaviorEnum.PAGINATION.getCode());
+//
+//                ShardingQueryCountManager shardingQueryCountManager = streamMergeContext.getRuntimeContext().getShardingQueryCountManager();
+//                if (shardingQueryCountManager.isBegin()) {
+//                    //顺序分页并且count也是顺序查询
+//                    if (streamMergeContext.isSeqQuery() &&
+//                            streamMergeContext.getSequenceParseResult().getTable().getEntityMetadata().getShardingInitConfig().getShardingSequenceConfig().hasCompareMethods(ExecuteMethodEnum.COUNT)
+//                            && streamMergeContext.getExecutionUnits().size() == shardingQueryCountManager.getCountResult().size()) {
+//                        mergeBehavior = BitwiseUtil.addBit(mergeBehavior, MergeBehaviorEnum.SEQUENCE_PAGINATION.getCode());
+//                    }
+//                    if (BitwiseUtil.hasBit(mergeBehavior, MergeBehaviorEnum.ORDER.getCode())) {
+//                        PropertyOrder propertyOrder = EasyCollectionUtil.first(streamMergeContext.getOrders());
+//                        ShardingInitConfig shardingInitConfig = propertyOrder.getTable().getEntityTable().getEntityMetadata().getShardingInitConfig();
+//                        if (shardingInitConfig.isReverse()) {
+//                            List<QueryCountResult> countResult = shardingQueryCountManager.getCountResult();
+//                            long total = EasyCollectionUtil.sumLong(countResult, QueryCountResult::getTotal);
+//                            if(shardingInitConfig.getReverseFactor()*total>shardingInitConfig.getMinReverseTotal()){
+//                                mergeBehavior = BitwiseUtil.addBit(mergeBehavior, MergeBehaviorEnum.REVERSE_PAGINATION.getCode());
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//        return mergeBehavior;
+//    }
+    public static int parseMergeBehavior(PrepareParseResult prepareParseResult, EasyEntitySqlExpression easyEntitySqlExpression, RouteContext routeContext) {
 
         int mergeBehavior = MergeBehaviorEnum.DEFAULT.getCode();
-
-        if (streamMergeContext.isQuery() && streamMergeContext.isSharding()) {
-
-            switch (streamMergeContext.getExecutorContext().getExecuteMethod()) {
+        ExecutorContext executorContext = prepareParseResult.getExecutorContext();
+        if (executorContext.isQuery() && EasyCollectionUtil.isNotEmpty(prepareParseResult.getShardingTables())) {
+            QueryPrepareParseResult queryPrepareParseResult = (QueryPrepareParseResult) prepareParseResult;
+            EasyQuerySqlExpression easyQuerySqlExpression = (EasyQuerySqlExpression) easyEntitySqlExpression;
+            switch (executorContext.getExecuteMethod()) {
                 case ALL:
                     mergeBehavior = BitwiseUtil.addBit(mergeBehavior, MergeBehaviorEnum.ALL.getCode());
                     break;
@@ -246,29 +351,29 @@ public class ShardingUtil {
                     mergeBehavior = BitwiseUtil.addBit(mergeBehavior, MergeBehaviorEnum.COUNT.getCode());
                     break;
             }
-            if (processGroup(streamMergeContext)) {
+            if (processGroup(easyQuerySqlExpression)) {
                 mergeBehavior = BitwiseUtil.addBit(mergeBehavior, MergeBehaviorEnum.GROUP.getCode());
-                if (streamMergeContext.isStartsWithGroupByInOrderBy()) {
+                if (queryPrepareParseResult.isStartsWithGroupByInOrderBy()) {
                     mergeBehavior = BitwiseUtil.addBit(mergeBehavior, MergeBehaviorEnum.STREAM_GROUP.getCode());
                 }
             }
-            if (EasyCollectionUtil.isNotEmpty(streamMergeContext.getOrders())) {
+            if (SqlSegmentUtil.isNotEmpty(easyQuerySqlExpression.getOrder())) {
                 mergeBehavior = BitwiseUtil.addBit(mergeBehavior, MergeBehaviorEnum.ORDER.getCode());
             }
-            if (streamMergeContext.isPaginationQuery()) {
+            if (queryPrepareParseResult.isPaginationQuery()) {
                 mergeBehavior = BitwiseUtil.addBit(mergeBehavior, MergeBehaviorEnum.PAGINATION.getCode());
 
-                ShardingQueryCountManager shardingQueryCountManager = streamMergeContext.getRuntimeContext().getShardingQueryCountManager();
+                ShardingQueryCountManager shardingQueryCountManager = executorContext.getRuntimeContext().getShardingQueryCountManager();
                 if (shardingQueryCountManager.isBegin()) {
                     //顺序分页并且count也是顺序查询
-                    if (streamMergeContext.isSeqQuery() &&
-                            streamMergeContext.getSequenceParseResult().getTable().getEntityMetadata().getShardingInitConfig().getShardingSequenceConfig().hasCompareMethods(ExecuteMethodEnum.COUNT)
-                            && streamMergeContext.getExecutionUnits().size() == shardingQueryCountManager.getCountResult().size()) {
+                    if (queryPrepareParseResult.isSeqQuery() &&
+                            queryPrepareParseResult.getSequenceParseResult().getTable().getEntityMetadata().getShardingInitConfig().getShardingSequenceConfig().hasCompareMethods(ExecuteMethodEnum.COUNT)
+                            && routeContext.getShardingRouteResult().getRouteUnits().size() == shardingQueryCountManager.getCountResult().size()) {
                         mergeBehavior = BitwiseUtil.addBit(mergeBehavior, MergeBehaviorEnum.SEQUENCE_PAGINATION.getCode());
                     }
                     if (BitwiseUtil.hasBit(mergeBehavior, MergeBehaviorEnum.ORDER.getCode())) {
-                        PropertyOrder propertyOrder = EasyCollectionUtil.first(streamMergeContext.getOrders());
-                        ShardingInitConfig shardingInitConfig = propertyOrder.getTable().getEntityTable().getEntityMetadata().getShardingInitConfig();
+                        OrderByColumnSegment firstOrder = (OrderByColumnSegment)EasyCollectionUtil.first(easyQuerySqlExpression.getOrder().getSqlSegments());
+                        ShardingInitConfig shardingInitConfig = firstOrder.getTable().getEntityMetadata().getShardingInitConfig();
                         if (shardingInitConfig.isReverse()) {
                             List<QueryCountResult> countResult = shardingQueryCountManager.getCountResult();
                             long total = EasyCollectionUtil.sumLong(countResult, QueryCountResult::getTotal);

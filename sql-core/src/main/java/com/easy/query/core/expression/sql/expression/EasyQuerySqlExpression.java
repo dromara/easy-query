@@ -13,7 +13,6 @@ import java.util.List;
  * @author xuejiaming
  */
 public interface EasyQuerySqlExpression extends EasyEntityPredicateSqlExpression {
-    EasyQueryRuntimeContext getRuntimeContext();
 
     SqlBuilderSegment getProjects();
     void setProjects(SqlBuilderSegment projects);

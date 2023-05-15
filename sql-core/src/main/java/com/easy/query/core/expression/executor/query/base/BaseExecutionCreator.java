@@ -2,6 +2,7 @@ package com.easy.query.core.expression.executor.query.base;
 
 import com.easy.query.core.basic.jdbc.parameter.DefaultSqlParameterCollector;
 import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
+import com.easy.query.core.enums.MergeBehaviorEnum;
 import com.easy.query.core.expression.executor.parser.ExecutionContext;
 import com.easy.query.core.expression.sql.expression.EasyEntitySqlExpression;
 import com.easy.query.core.basic.jdbc.executor.internal.common.ExecutionUnit;
@@ -28,10 +29,13 @@ public abstract class BaseExecutionCreator implements ExecutionCreator{
         return new  ExecutionUnit(dataSource, sqlUnit);
     }
     protected ExecutionContext createExecutionContext(List<ExecutionUnit> executionUnits){
-        return new ExecutionContext(executionUnits,sequenceQuery(),isCrossTable(),isCrossDataSource());
+        return new ExecutionContext(executionUnits,sequenceQuery(),isCrossTable(),isCrossDataSource(),isReverseMerge(),mergeBehavior());
     }
 
 
+    protected int mergeBehavior(){
+        return MergeBehaviorEnum.DEFAULT.getCode();
+    }
     protected boolean sequenceQuery(){
         return false;
     }
@@ -39,6 +43,9 @@ public abstract class BaseExecutionCreator implements ExecutionCreator{
         return false;
     }
     protected boolean isCrossDataSource(){
+        return false;
+    }
+    protected boolean isReverseMerge(){
         return false;
     }
     @Override

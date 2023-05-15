@@ -34,24 +34,14 @@ public class ShardingQueryEasyStreamMergeContext extends EntityStreamMergeContex
     protected final List<PropertyOrder> orders;
     protected final List<PropertyGroup> groups;
     protected final EasyQuerySqlExpression easyQuerySqlExpression;
-    protected final boolean hasGroup;
-    protected final int mergeBehavior;
     protected volatile boolean terminated = false;
-    protected long offset;
-    protected long rows;
-    protected boolean useReverseMerge=false;
-    protected long reverseSkip=0;
 
     public ShardingQueryEasyStreamMergeContext(ExecutorContext executorContext, ExecutionContext executionContext, EasyQueryPrepareParseResult easyQueryPrepareParseResult) {
         super(executorContext, executionContext, easyQueryPrepareParseResult);
         this.easyQueryPrepareParseResult = easyQueryPrepareParseResult;
         this.easyQuerySqlExpression = easyQueryPrepareParseResult.getEasyEntityPredicateSqlExpression();
         this.orders = getOrders(easyQuerySqlExpression);
-        this.offset = easyQuerySqlExpression.getOffset();
-        this.rows = easyQuerySqlExpression.getRows();
-        this.hasGroup=SqlSegmentUtil.isNotEmpty(easyQuerySqlExpression.getGroup());
         this.groups = getGroups(easyQuerySqlExpression);
-        this.mergeBehavior=ShardingUtil.parseStreamMergeContextMergeBehavior(this);
     }
 
     private List<PropertyOrder> getOrders(EasyQuerySqlExpression easyQuerySqlExpression) {
@@ -91,7 +81,7 @@ public class ShardingQueryEasyStreamMergeContext extends EntityStreamMergeContex
 
     @Override
     public boolean hasBehavior(MergeBehaviorEnum mergeBehavior) {
-        return BitwiseUtil.hasBit(this.mergeBehavior,mergeBehavior.getCode());
+        return BitwiseUtil.hasBit(executionContext.getMergeBehavior(),mergeBehavior.getCode());
     }
 
     @Override
@@ -106,49 +96,40 @@ public class ShardingQueryEasyStreamMergeContext extends EntityStreamMergeContex
 
     @Override
     public boolean isPaginationQuery() {
-        return easyQueryPrepareParseResult.getOffset() > 0 || easyQueryPrepareParseResult.getRows() > 0;
+        return easyQueryPrepareParseResult.getOriginalOffset() > 0 || easyQueryPrepareParseResult.getOriginalRows() > 0;
     }
 
     @Override
-    public boolean hasGroupQuery() {
-        return hasGroup;
+    public long getOriginalOffset() {
+        return easyQueryPrepareParseResult.getOriginalOffset();
     }
 
     @Override
-    public long getOffset() {
-        return easyQueryPrepareParseResult.getOffset();
-    }
-
-    @Override
-    public long getRows() {
-        return easyQueryPrepareParseResult.getRows();
+    public long getOriginalRows() {
+        return easyQueryPrepareParseResult.getOriginalRows();
     }
 
     @Override
     public long getMergeOffset() {
         if(isReverseMerge()){
-            return this.reverseSkip;
+            return this.getRewriteRows()-this.getOriginalRows();
         }
-        return getOffset();
+        return getOriginalOffset();
     }
 
     @Override
     public long getMergeRows() {
-        return getRows();
+        return getOriginalRows();
     }
 
     @Override
     public long getRewriteOffset() {
-        return offset;
+        return easyQuerySqlExpression.getOffset();
     }
 
     @Override
     public long getRewriteRows() {
-        return rows;
-    }
-    @Override
-    public boolean isStartsWithGroupByInOrderBy() {
-        return easyQueryPrepareParseResult.isStartsWithGroupByInOrderBy();
+        return easyQuerySqlExpression.getRows();
     }
 
     @Override
@@ -169,22 +150,8 @@ public class ShardingQueryEasyStreamMergeContext extends EntityStreamMergeContex
     }
 
     @Override
-    public SequenceParseResult getSequenceParseResult() {
-        if(isSeqQuery()){
-            return easyQueryPrepareParseResult.getSequenceParseResult();
-        }
-        return null;
-    }
-
-    @Override
-    public void useReverseMerge(boolean reverse,long reverseSkip) {
-        this.useReverseMerge=reverse;
-        this.reverseSkip=reverseSkip;
-    }
-
-    @Override
     public boolean isReverseMerge() {
-        return this.useReverseMerge;
+        return this.executionContext.isReverseMerge();
     }
 
     @Override

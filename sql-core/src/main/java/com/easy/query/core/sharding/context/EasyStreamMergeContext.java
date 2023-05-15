@@ -117,16 +117,6 @@ public class EasyStreamMergeContext implements StreamMergeContext {
     }
 
     @Override
-    public SequenceParseResult getSequenceParseResult() {
-        return null;
-    }
-
-    @Override
-    public void useReverseMerge(boolean reverse,long reverseSkip) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public boolean isReverseMerge() {
         throw new UnsupportedOperationException();
     }
@@ -179,27 +169,17 @@ public class EasyStreamMergeContext implements StreamMergeContext {
     }
 
     @Override
-    public boolean isStartsWithGroupByInOrderBy() {
-        throw new NotImplementedException();
-    }
-
-    @Override
     public boolean isPaginationQuery() {
         throw new NotImplementedException();
     }
 
     @Override
-    public boolean hasGroupQuery() {
+    public long getOriginalOffset() {
         throw new NotImplementedException();
     }
 
     @Override
-    public long getOffset() {
-        throw new NotImplementedException();
-    }
-
-    @Override
-    public long getRows() {
+    public long getOriginalRows() {
         throw new NotImplementedException();
     }
 

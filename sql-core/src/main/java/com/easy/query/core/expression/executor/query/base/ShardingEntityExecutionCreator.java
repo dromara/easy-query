@@ -5,6 +5,8 @@ import com.easy.query.core.expression.executor.parser.InsertPrepareParseResult;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityToExpressionBuilder;
 import com.easy.query.core.expression.sql.expression.EasyEntitySqlExpression;
+import com.easy.query.core.sharding.rewrite.RewriteContext;
+import com.easy.query.core.sharding.rewrite.RewriteRouteUnit;
 import com.easy.query.core.sharding.route.RouteContext;
 import com.easy.query.core.sharding.route.RouteUnit;
 import com.easy.query.core.sharding.route.table.EntityTableRouteUnit;
@@ -21,9 +23,9 @@ import java.util.List;
 public class ShardingEntityExecutionCreator extends ShardingBaseExecutionCreator{
     private final EntityPrepareParseResult entityPrepareParseResult;
 
-    public ShardingEntityExecutionCreator(EntityPrepareParseResult entityPrepareParseResult, RouteContext routeContext) {
-        super(entityPrepareParseResult, routeContext);
-        this.entityPrepareParseResult = entityPrepareParseResult;
+    public ShardingEntityExecutionCreator(RewriteContext rewriteContext) {
+        super(rewriteContext);
+        this.entityPrepareParseResult = (EntityPrepareParseResult)rewriteContext.getPrepareParseResult();
     }
 
     @Override
@@ -44,11 +46,11 @@ public class ShardingEntityExecutionCreator extends ShardingBaseExecutionCreator
     }
 
     @Override
-    protected EasyEntitySqlExpression createEasyEntitySqlExpression(RouteUnit routeUnit) {
+    protected EasyEntitySqlExpression createEasyEntitySqlExpression(RewriteRouteUnit rewriteRouteUnit) {
         EntityExpressionBuilder entityExpressionBuilder = entityPrepareParseResult.getEntityExpressionBuilder();
         if(entityExpressionBuilder instanceof EntityToExpressionBuilder){
             EntityToExpressionBuilder entityToExpressionBuilder = (EntityToExpressionBuilder) entityExpressionBuilder;
-            Object entity = getEntity(routeUnit);
+            Object entity = getEntity(rewriteRouteUnit.getRouteUnit());
             return entityToExpressionBuilder.toExpression(entity);
         }
         return entityExpressionBuilder.toExpression();

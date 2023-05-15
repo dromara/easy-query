@@ -13,6 +13,7 @@ import java.util.Set;
  * @author xuejiaming
  */
 public interface PrepareParseResult {
+    boolean isSharding();
     ExecutorContext getExecutorContext();
     Set<TableAvailable> getShardingTables();
     EntityExpressionBuilder getEntityExpressionBuilder();

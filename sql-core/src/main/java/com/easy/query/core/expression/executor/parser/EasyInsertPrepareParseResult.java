@@ -3,6 +3,7 @@ package com.easy.query.core.expression.executor.parser;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
+import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.List;
 import java.util.Set;
@@ -19,6 +20,7 @@ public class EasyInsertPrepareParseResult implements InsertPrepareParseResult{
     private final EntityInsertExpressionBuilder entityInsertExpressionBuilder;
     private final List<Object> entities;
     private final boolean fillAutoIncrement;
+    private final boolean sharding;
 
     public EasyInsertPrepareParseResult(ExecutorContext executorContext, Set<TableAvailable> shardingTables, EntityInsertExpressionBuilder entityInsertExpressionBuilder, List<Object> entities, boolean fillAutoIncrement){
         this.executorContext = executorContext;
@@ -27,10 +29,16 @@ public class EasyInsertPrepareParseResult implements InsertPrepareParseResult{
         this.entityInsertExpressionBuilder = entityInsertExpressionBuilder;
         this.entities = entities;
         this.fillAutoIncrement = fillAutoIncrement;
+        this.sharding = EasyCollectionUtil.isNotEmpty(shardingTables);
     }
     @Override
     public List<Object> getEntities() {
         return entities;
+    }
+
+    @Override
+    public boolean isSharding() {
+        return sharding;
     }
 
     @Override

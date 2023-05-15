@@ -1,6 +1,7 @@
 package com.easy.query.core.sharding.rewrite;
 
 import com.easy.query.core.expression.executor.parser.PrepareParseResult;
+import com.easy.query.core.sharding.route.RouteContext;
 
 /**
  * create time 2023/4/20 13:23
@@ -9,5 +10,5 @@ import com.easy.query.core.expression.executor.parser.PrepareParseResult;
  * @author xuejiaming
  */
 public interface RewriteContextFactory {
-    void rewriteShardingExpression(PrepareParseResult prepareParseResult);
+    RewriteContext rewriteShardingExpression(PrepareParseResult prepareParseResult, RouteContext routeContext);
 }

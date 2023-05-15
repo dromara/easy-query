@@ -13,7 +13,6 @@ import com.easy.query.core.basic.jdbc.executor.internal.common.ExecutionUnit;
 import com.easy.query.core.sharding.merge.segment.PropertyGroup;
 import com.easy.query.core.sharding.merge.segment.PropertyOrder;
 
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -45,34 +44,21 @@ public interface StreamMergeContext extends AutoCloseable {
 
     List<ExecutionUnit> getExecutionUnits();
 
-
     EasyQueryRuntimeContext getRuntimeContext();
     int getMaxShardingQueryLimit();
 
     boolean isQuery();
 
      boolean isSeqQuery();
-    SequenceParseResult getSequenceParseResult();
-
-    /**
-     * 是否使用反向聚合
-     * @return
-     */
-    void useReverseMerge(boolean reverse,long reverseSkip);
     boolean isReverseMerge();
 
     /**
      * group和order前半段匹配支持stream merger
      * @return
      */
-    boolean isStartsWithGroupByInOrderBy();
-    default boolean groupWithInMemoryMerge(){
-        return hasGroupQuery()&&!isStartsWithGroupByInOrderBy();
-    }
     boolean isPaginationQuery();
-    boolean hasGroupQuery();
-    long getOffset();
-    long getRows();
+    long getOriginalOffset();
+    long getOriginalRows();
     long getMergeOffset();
     long getMergeRows();
     long getRewriteOffset();

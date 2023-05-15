@@ -35,8 +35,8 @@ public class EasyQueryPrepareParseResult implements QueryPrepareParseResult {
     private boolean startsWithGroupByInOrderBy;
     private int maxShardingQueryLimit;
     private ConnectionModeEnum connectionMode;
-    private final long offset;
-    private final long rows;
+    private final long originalOffset;
+    private final long originalRows;
     private final SequenceParseResult sequenceParseResult;
 
     public EasyQueryPrepareParseResult(ExecutorContext executorContext, Set<TableAvailable> shardingEntities, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
@@ -46,8 +46,8 @@ public class EasyQueryPrepareParseResult implements QueryPrepareParseResult {
         this.entityQueryExpressionBuilder = entityQueryExpressionBuilder;
         this.easyQuerySqlExpression = entityQueryExpressionBuilder.toExpression();
         this.sharding = EasyCollectionUtil.isNotEmpty(shardingEntities);
-        this.offset = easyQuerySqlExpression.getOffset();
-        this.rows = easyQuerySqlExpression.getRows();
+        this.originalOffset = easyQuerySqlExpression.getOffset();
+        this.originalRows = easyQuerySqlExpression.getRows();
         this.sequenceParseResult = initSequenceOrderPrepareParseResult(executorContext);
         this.maxShardingQueryLimit= ShardingUtil.getMaxShardingQueryLimit(entityQueryExpressionBuilder,sequenceParseResult);
         this.connectionMode=ShardingUtil.getConnectionMode(entityQueryExpressionBuilder,sequenceParseResult);
@@ -140,13 +140,13 @@ public class EasyQueryPrepareParseResult implements QueryPrepareParseResult {
     }
 
     @Override
-    public long getOffset() {
-        return offset;
+    public long getOriginalOffset() {
+        return originalOffset;
     }
 
     @Override
-    public long getRows() {
-        return rows;
+    public long getOriginalRows() {
+        return originalRows;
     }
 
     @Override

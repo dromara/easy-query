@@ -1,5 +1,6 @@
 package com.easy.query.core.expression.sql.expression;
 
+import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.List;
  * @author xuejiaming
  */
 public interface EasyEntitySqlExpression extends EasySqlExpression {
+    EasyQueryRuntimeContext getRuntimeContext();
     List<EasyTableSqlExpression> getTables();
     default EasyTableSqlExpression getTable(int index){
         return getTables().get(index);

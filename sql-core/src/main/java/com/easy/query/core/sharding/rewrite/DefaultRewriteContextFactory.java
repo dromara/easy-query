@@ -1,7 +1,9 @@
 package com.easy.query.core.sharding.rewrite;
 
+import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.enums.EasyAggregate;
 import com.easy.query.core.enums.ExecuteMethodEnum;
+import com.easy.query.core.enums.MergeBehaviorEnum;
 import com.easy.query.core.expression.executor.parser.PrepareParseResult;
 import com.easy.query.core.expression.executor.parser.QueryPrepareParseResult;
 import com.easy.query.core.expression.executor.parser.SequenceParseResult;
@@ -19,11 +21,19 @@ import com.easy.query.core.expression.sql.expression.EasyTableSqlExpression;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.ShardingInitConfig;
 import com.easy.query.core.metadata.ShardingSequenceConfig;
+import com.easy.query.core.sharding.manager.QueryCountResult;
+import com.easy.query.core.sharding.manager.ShardingQueryCountManager;
 import com.easy.query.core.sharding.merge.result.aggregation.AggregationType;
+import com.easy.query.core.sharding.route.RouteContext;
+import com.easy.query.core.sharding.route.RouteUnit;
+import com.easy.query.core.sharding.route.ShardingRouteResult;
+import com.easy.query.core.util.BitwiseUtil;
 import com.easy.query.core.util.ClassUtil;
+import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.ShardingUtil;
 import com.easy.query.core.util.SqlSegmentUtil;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,22 +47,17 @@ import java.util.Objects;
  */
 public class DefaultRewriteContextFactory implements RewriteContextFactory {
     @Override
-    public void rewriteShardingExpression(PrepareParseResult prepareParseResult) {
+    public RewriteContext rewriteShardingExpression(PrepareParseResult prepareParseResult, RouteContext routeContext) {
         if (prepareParseResult instanceof QueryPrepareParseResult) {
-            rewriteShardingQueryExpression((QueryPrepareParseResult) prepareParseResult);
+          return rewriteShardingQueryExpression((QueryPrepareParseResult) prepareParseResult,routeContext);
         }
+        return createDefaultRewriteContext(prepareParseResult,routeContext);
     }
 
-    public void rewriteShardingQueryExpression(QueryPrepareParseResult queryPrepareParseResult) {
+    public RewriteContext rewriteShardingQueryExpression(QueryPrepareParseResult queryPrepareParseResult,RouteContext routeContext) {
+
         EasyQuerySqlExpression easyQuerySqlExpression = queryPrepareParseResult.getEasyEntityPredicateSqlExpression();
-        if (easyQuerySqlExpression.hasLimit()) {
-            long rows = easyQuerySqlExpression.getRows();
-            long offset = easyQuerySqlExpression.getOffset();
-            if (offset > 0) {
-                easyQuerySqlExpression.setOffset(0);
-            }
-            easyQuerySqlExpression.setRows(offset + rows);
-        }
+        EasyQueryRuntimeContext runtimeContext = easyQuerySqlExpression.getRuntimeContext();
         //添加默认排序字段,并且添加默认排序字段到select 如果不添加那么streamResultSet将无法进行order排序获取
         if(SqlSegmentUtil.isEmpty(easyQuerySqlExpression.getOrder())&&Objects.equals(ExecuteMethodEnum.LIST,queryPrepareParseResult.getExecutorContext().getExecuteMethod())){
             SequenceParseResult sequenceParseResult = queryPrepareParseResult.getSequenceParseResult();
@@ -65,10 +70,10 @@ public class DefaultRewriteContextFactory implements RewriteContextFactory {
                     boolean reverse = sequenceParseResult.isReverse();
                     String firstSequenceProperty = shardingSequenceConfig.getFirstSequencePropertyOrNull();
                     if(firstSequenceProperty!=null){
-                        OrderColumnSegmentImpl orderColumnSegment = new OrderColumnSegmentImpl(table, firstSequenceProperty, easyQuerySqlExpression.getRuntimeContext(), !reverse);
+                        OrderColumnSegmentImpl orderColumnSegment = new OrderColumnSegmentImpl(table, firstSequenceProperty, runtimeContext, !reverse);
                         easyQuerySqlExpression.getOrder().append(orderColumnSegment);
                         if(!easyQuerySqlExpression.getProjects().containsOnce(entityMetadata.getEntityClass(),firstSequenceProperty)){
-                            ColumnSegmentImpl columnSegment = new ColumnSegmentImpl(table, firstSequenceProperty, easyQuerySqlExpression.getRuntimeContext());
+                            ColumnSegmentImpl columnSegment = new ColumnSegmentImpl(table, firstSequenceProperty, runtimeContext);
                             easyQuerySqlExpression.getProjects().append(columnSegment);
                         }
                     }
@@ -168,6 +173,121 @@ public class DefaultRewriteContextFactory implements RewriteContextFactory {
                     }
                 }
             }
+        }
+
+        int mergeBehavior = ShardingUtil.parseMergeBehavior(queryPrepareParseResult, easyQuerySqlExpression, routeContext);
+        if(BitwiseUtil.hasBit(mergeBehavior,MergeBehaviorEnum.PAGINATION.getCode())){
+           return createPaginationRewriteContext(mergeBehavior,queryPrepareParseResult,easyQuerySqlExpression,routeContext);
+        }
+        return createDefaultRewriteContext(mergeBehavior,queryPrepareParseResult,routeContext);
+    }
+
+    /**
+     * 创建默认的重写上下文
+     * @param mergeBehavior
+     * @param prepareParseResult
+     * @param routeContext
+     * @return
+     */
+    private RewriteContext createDefaultRewriteContext(int mergeBehavior,PrepareParseResult prepareParseResult,RouteContext routeContext){
+        ShardingRouteResult shardingRouteResult = routeContext.getShardingRouteResult();
+        List<RewriteRouteUnit> rewriteRouteUnits = createDefaultRewriteRouteUnit(routeContext);
+        return  new RewriteContext(mergeBehavior,prepareParseResult,rewriteRouteUnits,shardingRouteResult.isCrossDataSource(),shardingRouteResult.isCrossTable(),shardingRouteResult.isSequenceQuery(),false);
+    }
+    private RewriteContext createDefaultRewriteContext(PrepareParseResult prepareParseResult,RouteContext routeContext){
+        return  createDefaultRewriteContext(MergeBehaviorEnum.DEFAULT.getCode(),prepareParseResult,routeContext);
+    }
+
+    /**
+     * 创建默认的重写路由单元
+     * @param routeContext
+     * @return
+     */
+    private List<RewriteRouteUnit> createDefaultRewriteRouteUnit(RouteContext routeContext){
+        ShardingRouteResult shardingRouteResult = routeContext.getShardingRouteResult();
+        List<RouteUnit> routeUnits = shardingRouteResult.getRouteUnits();
+        ArrayList<RewriteRouteUnit> rewriteRouteUnits = new ArrayList<>(routeUnits.size());
+        for (RouteUnit routeUnit : routeUnits) {
+            rewriteRouteUnits.add(new DefaultRewriteRouteUnit(routeUnit));
+        }
+        return rewriteRouteUnits;
+    }
+
+    /**
+     * 创建分页重写上下文
+     * @param mergeBehavior
+     * @param queryPrepareParseResult
+     * @param easyQuerySqlExpression
+     * @param routeContext
+     * @return
+     */
+    private RewriteContext createPaginationRewriteContext(int mergeBehavior,QueryPrepareParseResult queryPrepareParseResult,EasyQuerySqlExpression easyQuerySqlExpression,RouteContext routeContext){
+        List<RewriteRouteUnit> rewriteRouteUnits = getPaginationRewriteRouteUnitsAndRewriteQuerySqlExpression(mergeBehavior,queryPrepareParseResult,easyQuerySqlExpression, routeContext);
+        ShardingRouteResult shardingRouteResult = routeContext.getShardingRouteResult();
+        //是否需要反向排序
+        boolean reverseMerge = !BitwiseUtil.hasBit(mergeBehavior, MergeBehaviorEnum.SEQUENCE_PAGINATION.getCode()) && BitwiseUtil.hasBit(mergeBehavior, MergeBehaviorEnum.REVERSE_PAGINATION.getCode());
+        return new RewriteContext(mergeBehavior,queryPrepareParseResult,rewriteRouteUnits,shardingRouteResult.isCrossDataSource(),shardingRouteResult.isCrossTable(),shardingRouteResult.isSequenceQuery(),reverseMerge);
+    }
+
+    /**
+     * 获取分页重新路由单元和重写分页sql表达式
+     * @param mergeBehavior
+     * @param queryPrepareParseResult
+     * @param easyQuerySqlExpression
+     * @param routeContext
+     * @return
+     */
+    private List<RewriteRouteUnit> getPaginationRewriteRouteUnitsAndRewriteQuerySqlExpression(int mergeBehavior,QueryPrepareParseResult queryPrepareParseResult,EasyQuerySqlExpression easyQuerySqlExpression,RouteContext routeContext){
+
+        EasyQueryRuntimeContext runtimeContext = queryPrepareParseResult.getExecutorContext().getRuntimeContext();
+        if(BitwiseUtil.hasBit(mergeBehavior, MergeBehaviorEnum.SEQUENCE_PAGINATION.getCode())){
+            ShardingQueryCountManager shardingQueryCountManager = runtimeContext.getShardingQueryCountManager();
+            List<QueryCountResult> countResult = shardingQueryCountManager.getCountResult();
+            List<RewriteRouteUnit> rewriteRouteUnits = ShardingUtil.getSequencePaginationRewriteRouteUnits(queryPrepareParseResult, routeContext, countResult);
+            rewritePagination(easyQuerySqlExpression);
+            return rewriteRouteUnits;
+        }
+        if(BitwiseUtil.hasBit(mergeBehavior, MergeBehaviorEnum.REVERSE_PAGINATION.getCode())){
+            ShardingQueryCountManager shardingQueryCountManager = runtimeContext.getShardingQueryCountManager();
+            List<QueryCountResult> countResult = shardingQueryCountManager.getCountResult();
+            long total = EasyCollectionUtil.sumLong(countResult, QueryCountResult::getTotal);
+            long originalOffset = queryPrepareParseResult.getOriginalOffset();
+            long originalRows = queryPrepareParseResult.getOriginalRows();
+            long realOffset = total - originalOffset - originalRows;
+            long realRows = realOffset + originalRows;
+            ShardingRouteResult shardingRouteResult = routeContext.getShardingRouteResult();
+            List<RouteUnit> routeUnits = shardingRouteResult.getRouteUnits();
+            ArrayList<RewriteRouteUnit> rewriteRouteUnits = new ArrayList<>(routeUnits.size());
+            for (RouteUnit routeUnit : routeUnits) {
+                rewriteRouteUnits.add(new ReversePaginationRewriteRouteUnit(0L,realRows,routeUnit));
+            }
+            rewriteReversePagination(easyQuerySqlExpression,realOffset);
+            return rewriteRouteUnits;
+        }
+        rewritePagination(easyQuerySqlExpression);
+        return createDefaultRewriteRouteUnit(routeContext);
+    }
+
+    private void rewritePagination(EasyQuerySqlExpression easyQuerySqlExpression){
+
+        if (easyQuerySqlExpression.hasLimit()) {
+            long rows = easyQuerySqlExpression.getRows();
+            long offset = easyQuerySqlExpression.getOffset();
+            if (offset > 0) {
+                easyQuerySqlExpression.setOffset(0);
+            }
+            easyQuerySqlExpression.setRows(offset + rows);
+        }
+    }
+    private void rewriteReversePagination(EasyQuerySqlExpression easyQuerySqlExpression,long realOffset){
+
+        if (easyQuerySqlExpression.hasLimit()) {
+            long rows = easyQuerySqlExpression.getRows();
+            long offset = easyQuerySqlExpression.getOffset();
+            if (offset > 0) {
+                easyQuerySqlExpression.setOffset(0);
+            }
+            easyQuerySqlExpression.setRows(realOffset + rows);
         }
     }
 }
