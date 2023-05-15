@@ -42,9 +42,6 @@ public class JdbcExecutorUtil {
         printSql.append(Thread.currentThread().getName());
         printSql.append(", name:");
         printSql.append(easyConnection.getDataSourceName());
-        printSql.append(", strategy:");
-        printSql.append(easyConnection.getConnectionStrategy().getName());
-        printSql.append(", ");
     }
 
     private static void logSql(final boolean logDebug,final String sql,final EasyConnection easyConnection,final boolean sharding) {
@@ -54,6 +51,9 @@ public class JdbcExecutorUtil {
             if(sharding){
                 printShardingSqlFormat(printSql,easyConnection);
             }
+            printSql.append(", strategy:");
+            printSql.append(easyConnection.getConnectionStrategy().getName());
+            printSql.append(", ");
             printSql.append("Preparing: ");
             printSql.append(sql);
             log.debug(printSql.toString());

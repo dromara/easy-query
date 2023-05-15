@@ -2,7 +2,6 @@ package com.easy.query.core.util;
 
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
-import com.easy.query.core.basic.jdbc.executor.internal.common.ExecutionUnit;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.MergeBehaviorEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
@@ -24,12 +23,13 @@ import com.easy.query.core.expression.sql.expression.EasyQuerySqlExpression;
 import com.easy.query.core.expression.sql.expression.EasyTableSqlExpression;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.metadata.ShardingInitConfig;
-import com.easy.query.core.sharding.manager.QueryCountResult;
+import com.easy.query.core.sharding.manager.SequenceCountNode;
 import com.easy.query.core.sharding.manager.ShardingQueryCountManager;
 import com.easy.query.core.sharding.merge.segment.EntityPropertyGroup;
 import com.easy.query.core.sharding.merge.segment.EntityPropertyOrder;
 import com.easy.query.core.sharding.merge.segment.PropertyGroup;
 import com.easy.query.core.sharding.merge.segment.PropertyOrder;
+import com.easy.query.core.sharding.rewrite.DefaultRewriteRouteUnit;
 import com.easy.query.core.sharding.rewrite.RewriteRouteUnit;
 import com.easy.query.core.sharding.rewrite.SequencePaginationRewriteRouteUnit;
 import com.easy.query.core.sharding.route.RouteContext;
@@ -188,53 +188,7 @@ public class ShardingUtil {
         EasyQueryRuntimeContext runtimeContext = expressionContext.getRuntimeContext();
         return runtimeContext.getEasyQueryConfiguration().getEasyQueryOption().getConnectionMode();
     }
-
-    public static List<ExecutionUnit> getSequencePaginationExecutionUnits(List<ExecutionUnit> defaultExecutionUnits, List<QueryCountResult> countResult, SequenceParseResult sequenceParseResult, long skip, long take) {
-
-        boolean reverse = sequenceParseResult.isReverse();
-        boolean asc = sequenceParseResult.getTable().getEntityMetadata().getShardingInitConfig().getShardingSequenceConfig().hasCompareAscMethods(ExecuteMethodEnum.COUNT);
-        boolean countResultReverse = reverse == asc;
-        ArrayList<ExecutionUnit> executionUnits = new ArrayList<>(defaultExecutionUnits.size());
-        long currentSkip = skip;
-        long currentTake = take;
-        boolean stopSkip = false;
-        boolean needBreak = false;
-        int countSize = countResult.size();
-        for (int i = 0; i < countSize; i++) {
-            int countResultIndex = countResultReverse ? countSize - 1 - i : i;
-            QueryCountResult queryCountResult = countResult.get(countResultIndex);
-            ExecutionUnit executionUnit = defaultExecutionUnits.get(i);
-            if (!stopSkip) {
-                if (queryCountResult.getTotal() > currentSkip) {
-                    stopSkip = true;
-                } else {
-                    currentSkip = currentSkip - queryCountResult.getTotal();
-                    continue;
-                }
-            }
-            long currentRealSkip = currentSkip;
-            long currentRealTake = queryCountResult.getTotal() - currentSkip;
-            if (currentSkip != 0L)
-                currentSkip = 0;
-
-            if (currentTake <= currentRealTake) {
-                currentRealTake = currentTake;
-                needBreak = true;
-            } else {
-                currentTake = currentTake - currentRealTake;
-            }
-            EasyQuerySqlExpression easyEntitySqlExpression = (EasyQuerySqlExpression) executionUnit.getSqlRouteUnit().getEasyEntitySqlExpression();
-            easyEntitySqlExpression.setOffset(currentRealSkip);
-            easyEntitySqlExpression.setRows(currentRealTake);
-            executionUnits.add(executionUnit);
-            if (needBreak) {
-                break;
-            }
-
-        }
-        return executionUnits;
-    }
-    public static List<RewriteRouteUnit> getSequencePaginationRewriteRouteUnits(QueryPrepareParseResult queryPrepareParseResult,  RouteContext routeContext, List<QueryCountResult> countResult) {
+    public static List<RewriteRouteUnit> getSequenceCountRewriteRouteUnits(QueryPrepareParseResult queryPrepareParseResult, RouteContext routeContext, List<SequenceCountNode> countResult){
 
         SequenceParseResult sequenceParseResult = queryPrepareParseResult.getSequenceParseResult();
         boolean reverse = sequenceParseResult.isReverse();
@@ -242,8 +196,33 @@ public class ShardingUtil {
         boolean countResultReverse = reverse == asc;
         List<RouteUnit> routeUnits = routeContext.getShardingRouteResult().getRouteUnits();
         ArrayList<RewriteRouteUnit> rewriteRouteUnits = new ArrayList<>(routeUnits.size());
-        long offset=queryPrepareParseResult.getOriginalOffset();
-        long rows=queryPrepareParseResult.getOriginalRows();
+        int routeUnitsSize =routeUnits.size();
+        int countSize = countResult.size();
+        for (int i = 0; i < routeUnitsSize; i++) {
+            RouteUnit routeUnit = routeUnits.get(i);
+            int countResultIndex = countResultReverse ? countSize - 1 - i : i;
+            SequenceCountNode SequenceCountNode =countResult.size()>countResultIndex? countResult.get(countResultIndex):null;
+            if(SequenceCountNode==null){
+                rewriteRouteUnits.add(new DefaultRewriteRouteUnit(routeUnit));
+            }else{
+                if(SequenceCountNode.getTotal()<0L){
+                    rewriteRouteUnits.add(new DefaultRewriteRouteUnit(routeUnit));
+                }
+            }
+        }
+        return rewriteRouteUnits;
+    }
+
+    public static List<RewriteRouteUnit> getSequencePaginationRewriteRouteUnits(QueryPrepareParseResult queryPrepareParseResult, RouteContext routeContext, List<SequenceCountNode> countResult) {
+
+        SequenceParseResult sequenceParseResult = queryPrepareParseResult.getSequenceParseResult();
+        boolean reverse = sequenceParseResult.isReverse();
+        boolean asc = sequenceParseResult.getTable().getEntityMetadata().getShardingInitConfig().getShardingSequenceConfig().hasCompareAscMethods(ExecuteMethodEnum.COUNT);
+        boolean countResultReverse = reverse == asc;
+        List<RouteUnit> routeUnits = routeContext.getShardingRouteResult().getRouteUnits();
+        ArrayList<RewriteRouteUnit> rewriteRouteUnits = new ArrayList<>(routeUnits.size());
+        long offset = queryPrepareParseResult.getOriginalOffset();
+        long rows = queryPrepareParseResult.getOriginalRows();
         long currentOffset = offset;
         long currentRows = rows;
         boolean stopSkip = false;
@@ -251,18 +230,18 @@ public class ShardingUtil {
         int countSize = countResult.size();
         for (int i = 0; i < countSize; i++) {
             int countResultIndex = countResultReverse ? countSize - 1 - i : i;
-            QueryCountResult queryCountResult = countResult.get(countResultIndex);
+            SequenceCountNode SequenceCountNode = countResult.get(countResultIndex);
             RouteUnit routeUnit = routeUnits.get(i);
             if (!stopSkip) {
-                if (queryCountResult.getTotal() > currentOffset) {
+                if (SequenceCountNode.getTotal() > currentOffset) {
                     stopSkip = true;
                 } else {
-                    currentOffset = currentOffset - queryCountResult.getTotal();
+                    currentOffset = currentOffset - SequenceCountNode.getTotal();
                     continue;
                 }
             }
             long currentRealOffset = currentOffset;
-            long currentRealRows = queryCountResult.getTotal() - currentOffset;
+            long currentRealRows = SequenceCountNode.getTotal() - currentOffset;
             if (currentOffset != 0L)
                 currentOffset = 0;
 
@@ -272,14 +251,15 @@ public class ShardingUtil {
             } else {
                 currentRows = currentRows - currentRealRows;
             }
-            rewriteRouteUnits.add(new SequencePaginationRewriteRouteUnit(currentRealOffset,currentRealRows,routeUnit));
+            rewriteRouteUnits.add(new SequencePaginationRewriteRouteUnit(currentRealOffset, currentRealRows, routeUnit));
             if (needBreak) {
                 break;
             }
         }
         return rewriteRouteUnits;
     }
-//
+
+    //
 //    public static int parseStreamMergeContextMergeBehavior(StreamMergeContext streamMergeContext) {
 //
 //        int mergeBehavior = MergeBehaviorEnum.DEFAULT.getCode();
@@ -321,8 +301,8 @@ public class ShardingUtil {
 //                        PropertyOrder propertyOrder = EasyCollectionUtil.first(streamMergeContext.getOrders());
 //                        ShardingInitConfig shardingInitConfig = propertyOrder.getTable().getEntityTable().getEntityMetadata().getShardingInitConfig();
 //                        if (shardingInitConfig.isReverse()) {
-//                            List<QueryCountResult> countResult = shardingQueryCountManager.getCountResult();
-//                            long total = EasyCollectionUtil.sumLong(countResult, QueryCountResult::getTotal);
+//                            List<SequenceCountNode> countResult = shardingQueryCountManager.getCountResult();
+//                            long total = EasyCollectionUtil.sumLong(countResult, SequenceCountNode::getTotal);
 //                            if(shardingInitConfig.getReverseFactor()*total>shardingInitConfig.getMinReverseTotal()){
 //                                mergeBehavior = BitwiseUtil.addBit(mergeBehavior, MergeBehaviorEnum.REVERSE_PAGINATION.getCode());
 //                            }
@@ -347,9 +327,16 @@ public class ShardingUtil {
                 case ANY:
                     mergeBehavior = BitwiseUtil.addBit(mergeBehavior, MergeBehaviorEnum.ANY.getCode());
                     break;
-                case COUNT:
+                case COUNT: {
                     mergeBehavior = BitwiseUtil.addBit(mergeBehavior, MergeBehaviorEnum.COUNT.getCode());
-                    break;
+                    if (queryPrepareParseResult.isSeqQuery()) {
+                        ShardingQueryCountManager shardingQueryCountManager = executorContext.getRuntimeContext().getShardingQueryCountManager();
+                        if (shardingQueryCountManager.isBegin()){
+                            mergeBehavior = BitwiseUtil.addBit(mergeBehavior, MergeBehaviorEnum.SEQUENCE_COUNT.getCode());
+                        }
+                    }
+                }
+                break;
             }
             if (processGroup(easyQuerySqlExpression)) {
                 mergeBehavior = BitwiseUtil.addBit(mergeBehavior, MergeBehaviorEnum.GROUP.getCode());
@@ -372,12 +359,12 @@ public class ShardingUtil {
                         mergeBehavior = BitwiseUtil.addBit(mergeBehavior, MergeBehaviorEnum.SEQUENCE_PAGINATION.getCode());
                     }
                     if (BitwiseUtil.hasBit(mergeBehavior, MergeBehaviorEnum.ORDER.getCode())) {
-                        OrderByColumnSegment firstOrder = (OrderByColumnSegment)EasyCollectionUtil.first(easyQuerySqlExpression.getOrder().getSqlSegments());
+                        OrderByColumnSegment firstOrder = (OrderByColumnSegment) EasyCollectionUtil.first(easyQuerySqlExpression.getOrder().getSqlSegments());
                         ShardingInitConfig shardingInitConfig = firstOrder.getTable().getEntityMetadata().getShardingInitConfig();
                         if (shardingInitConfig.isReverse()) {
-                            List<QueryCountResult> countResult = shardingQueryCountManager.getCountResult();
-                            long total = EasyCollectionUtil.sumLong(countResult, QueryCountResult::getTotal);
-                            if(shardingInitConfig.getReverseFactor()*total>shardingInitConfig.getMinReverseTotal()){
+                            List<SequenceCountNode> countResult = shardingQueryCountManager.getCountResult();
+                            long total = EasyCollectionUtil.sumLong(countResult, SequenceCountNode::getTotal);
+                            if (shardingInitConfig.getReverseFactor() * total > shardingInitConfig.getMinReverseTotal()) {
                                 mergeBehavior = BitwiseUtil.addBit(mergeBehavior, MergeBehaviorEnum.REVERSE_PAGINATION.getCode());
                             }
                         }

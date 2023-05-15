@@ -1,6 +1,5 @@
 package com.easy.query.core.sharding.manager;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -10,11 +9,17 @@ import java.util.List;
  * @author xuejiaming
  */
 public class QueryCountContext {
-    private final List<QueryCountResult> results=new ArrayList<>();
-    public void addCountResult(QueryCountResult queryCountResult){
-        results.add(queryCountResult);
+    private final SequenceCountLine sequenceCountLine = new DefaultSequenceCountLine();
+
+    public void addCountResult(long total,boolean init) {
+        sequenceCountLine.addCountResult(total,init);
     }
-    public List<QueryCountResult> getCountResult(){
-        return results;
+
+    public List<SequenceCountNode> getCountResult() {
+        return sequenceCountLine.getCountNodes();
+    }
+
+    public SequenceCountLine getSequenceCountLine() {
+        return sequenceCountLine;
     }
 }

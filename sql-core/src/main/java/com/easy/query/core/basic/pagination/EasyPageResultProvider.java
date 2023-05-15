@@ -1,6 +1,7 @@
 package com.easy.query.core.basic.pagination;
 
 import com.easy.query.core.api.pagination.EasyPageResult;
+import com.easy.query.core.sharding.manager.SequenceCountLine;
 
 import java.util.List;
 
@@ -11,5 +12,6 @@ import java.util.List;
  * @author xuejiaming
  */
 public interface EasyPageResultProvider {
-    <T> EasyPageResult<T> createPageResult(long total, List<T> data);
+    <T> EasyPageResult<T> createPageResult(long pageIndex, long pageSize,long total, List<T> data);
+    <T> EasyPageResult<T> createShardingPageResult(long pageIndex, long pageSize,long total, List<T> data, SequenceCountLine sequenceCountLine);
 }

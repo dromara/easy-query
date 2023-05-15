@@ -1,7 +1,9 @@
 package com.easy.query.core.basic.pagination;
 
-import com.easy.query.core.api.pagination.DefaultEasyPageResult;
+import com.easy.query.core.api.pagination.DefaultPageResult;
+import com.easy.query.core.api.pagination.DefaultShardingPageResult;
 import com.easy.query.core.api.pagination.EasyPageResult;
+import com.easy.query.core.sharding.manager.SequenceCountLine;
 
 import java.util.List;
 
@@ -13,7 +15,12 @@ import java.util.List;
  */
 public class DefaultEasyPageResultProvider implements EasyPageResultProvider{
     @Override
-    public <T> EasyPageResult<T> createPageResult(long total, List<T> data) {
-        return new DefaultEasyPageResult<>(total,data);
+    public <T> EasyPageResult<T> createPageResult(long pageIndex, long pageSize,long total, List<T> data) {
+        return new DefaultPageResult<>(total,data);
+    }
+
+    @Override
+    public <T> EasyPageResult<T> createShardingPageResult(long pageIndex, long pageSize,long total, List<T> data,SequenceCountLine sequenceCountLine) {
+        return new DefaultShardingPageResult<>(total,data,sequenceCountLine);
     }
 }

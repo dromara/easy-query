@@ -2,6 +2,8 @@ package com.easy.query.sql.starter;
 
 import com.easy.query.core.basic.jdbc.con.EasyConnectionFactory;
 import com.easy.query.core.basic.jdbc.con.EasyConnectionManager;
+import com.easy.query.core.basic.pagination.DefaultEasyPageResultProvider;
+import com.easy.query.core.basic.pagination.EasyPageResultProvider;
 import com.easy.query.core.basic.plugin.encryption.EasyEncryptionStrategy;
 import com.easy.query.core.basic.plugin.interceptor.EasyInterceptor;
 import com.easy.query.core.basic.plugin.logicdel.EasyLogicDeleteStrategy;
@@ -125,9 +127,13 @@ public class EasyQueryStarterAutoConfiguration {
         return new DefaultNameConversion();
     }
 
+    @Bean
+    public EasyPageResultProvider easyPageResultProvider() {
+        return new DefaultEasyPageResultProvider();
+    }
 
     @Bean
-    public EasyQuery easyQuery(DataSource dataSource, DatabaseConfiguration databaseConfiguration, NameConversion nameConversion, Map<String, EasyInterceptor> easyInterceptorMap, Map<String, EasyVersionStrategy> easyVersionStrategyMap, Map<String, EasyLogicDeleteStrategy> easyLogicDeleteStrategyMap, Map<String, EasyShardingInitializer> easyShardingInitializerMap, Map<String, EasyEncryptionStrategy> easyEncryptionStrategyMap) {
+    public EasyQuery easyQuery(DataSource dataSource, DatabaseConfiguration databaseConfiguration,EasyPageResultProvider easyPageResultProvider, NameConversion nameConversion, Map<String, EasyInterceptor> easyInterceptorMap, Map<String, EasyVersionStrategy> easyVersionStrategyMap, Map<String, EasyLogicDeleteStrategy> easyLogicDeleteStrategyMap, Map<String, EasyShardingInitializer> easyShardingInitializerMap, Map<String, EasyEncryptionStrategy> easyEncryptionStrategyMap) {
         EasyQuery easyQuery = EasyQueryBootstrapper.defaultBuilderConfiguration()
                 .setDefaultDataSource(dataSource)
                 .replaceService(EasyConnectionFactory.class,SpringEasyConnectionFactory.class)
@@ -142,6 +148,7 @@ public class EasyQueryStarterAutoConfiguration {
                     builder.setShardingExecuteTimeoutMillis(easyQueryProperties.getShardingExecuteTimeoutMillis());
                     builder.setShardingGroupExecuteTimeoutMillis(easyQueryProperties.getShardingGroupExecuteTimeoutMillis());
                 })
+                .replaceService(EasyPageResultProvider.class,easyPageResultProvider)
                 .replaceService(NameConversion.class, nameConversion)
                 .replaceService(EasyConnectionManager.class, SpringConnectionManager.class)
                 .useDatabaseConfigure(databaseConfiguration)

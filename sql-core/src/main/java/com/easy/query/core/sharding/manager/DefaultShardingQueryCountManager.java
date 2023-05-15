@@ -1,6 +1,5 @@
 package com.easy.query.core.sharding.manager;
 
-import com.easy.query.core.basic.jdbc.tx.DefaultTransaction;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.exception.EasyQuerySQLException;
 
@@ -38,15 +37,21 @@ public class DefaultShardingQueryCountManager implements ShardingQueryCountManag
     }
 
     @Override
-    public void addCountResult(QueryCountResult queryCountResult) {
+    public void addCountResult(long total,boolean init) {
         QueryCountContext queryCountContext = getQueryCountContextNotNull();
-        queryCountContext.addCountResult(queryCountResult);
+        queryCountContext.addCountResult(total,init);
     }
 
     @Override
-    public List<QueryCountResult> getCountResult() {
+    public List<SequenceCountNode> getCountResult() {
         QueryCountContext queryCountContext = getQueryCountContextNotNull();
         return queryCountContext.getCountResult();
+    }
+
+    @Override
+    public SequenceCountLine getSequenceCountLine() {
+        QueryCountContext queryCountContext = getQueryCountContextNotNull();
+        return queryCountContext.getSequenceCountLine();
     }
 
     @Override

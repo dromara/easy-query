@@ -92,11 +92,8 @@ public class DefaultEasyDataSourceConnection implements EasyDataSourceConnection
         if(EasyCollectionUtil.isEmpty(exceptions)){
             return;
         }
-        Iterator<SQLException> iterator = exceptions.iterator();
-        SQLException ex = iterator.next();
-        while (iterator.hasNext()) {
-            ex.setNextException(iterator.next());
-        }
+        SQLException ex = new SQLException("");
+        exceptions.forEach(ex::setNextException);
         throw new EasyQuerySQLException(ex);
     }
 

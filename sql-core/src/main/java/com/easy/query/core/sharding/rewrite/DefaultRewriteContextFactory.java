@@ -21,7 +21,7 @@ import com.easy.query.core.expression.sql.expression.EasyTableSqlExpression;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.ShardingInitConfig;
 import com.easy.query.core.metadata.ShardingSequenceConfig;
-import com.easy.query.core.sharding.manager.QueryCountResult;
+import com.easy.query.core.sharding.manager.SequenceCountNode;
 import com.easy.query.core.sharding.manager.ShardingQueryCountManager;
 import com.easy.query.core.sharding.merge.result.aggregation.AggregationType;
 import com.easy.query.core.sharding.route.RouteContext;
@@ -179,6 +179,14 @@ public class DefaultRewriteContextFactory implements RewriteContextFactory {
         if(BitwiseUtil.hasBit(mergeBehavior,MergeBehaviorEnum.PAGINATION.getCode())){
            return createPaginationRewriteContext(mergeBehavior,queryPrepareParseResult,easyQuerySqlExpression,routeContext);
         }
+        if(BitwiseUtil.hasBit(mergeBehavior,MergeBehaviorEnum.SEQUENCE_COUNT.getCode())){
+            ShardingQueryCountManager shardingQueryCountManager = runtimeContext.getShardingQueryCountManager();
+            List<SequenceCountNode> countResult = shardingQueryCountManager.getCountResult();
+            List<RewriteRouteUnit> sequenceCountRewriteRouteUnits = ShardingUtil.getSequenceCountRewriteRouteUnits(queryPrepareParseResult, routeContext, countResult);
+            ShardingRouteResult shardingRouteResult = routeContext.getShardingRouteResult();
+            return new RewriteContext(mergeBehavior,queryPrepareParseResult,sequenceCountRewriteRouteUnits,shardingRouteResult.isCrossDataSource(),shardingRouteResult.isCrossTable(),shardingRouteResult.isSequenceQuery(),false);
+        }
+
         return createDefaultRewriteContext(mergeBehavior,queryPrepareParseResult,routeContext);
     }
 
@@ -242,15 +250,15 @@ public class DefaultRewriteContextFactory implements RewriteContextFactory {
         EasyQueryRuntimeContext runtimeContext = queryPrepareParseResult.getExecutorContext().getRuntimeContext();
         if(BitwiseUtil.hasBit(mergeBehavior, MergeBehaviorEnum.SEQUENCE_PAGINATION.getCode())){
             ShardingQueryCountManager shardingQueryCountManager = runtimeContext.getShardingQueryCountManager();
-            List<QueryCountResult> countResult = shardingQueryCountManager.getCountResult();
+            List<SequenceCountNode> countResult = shardingQueryCountManager.getCountResult();
             List<RewriteRouteUnit> rewriteRouteUnits = ShardingUtil.getSequencePaginationRewriteRouteUnits(queryPrepareParseResult, routeContext, countResult);
             rewritePagination(easyQuerySqlExpression);
             return rewriteRouteUnits;
         }
         if(BitwiseUtil.hasBit(mergeBehavior, MergeBehaviorEnum.REVERSE_PAGINATION.getCode())){
             ShardingQueryCountManager shardingQueryCountManager = runtimeContext.getShardingQueryCountManager();
-            List<QueryCountResult> countResult = shardingQueryCountManager.getCountResult();
-            long total = EasyCollectionUtil.sumLong(countResult, QueryCountResult::getTotal);
+            List<SequenceCountNode> countResult = shardingQueryCountManager.getCountResult();
+            long total = EasyCollectionUtil.sumLong(countResult, SequenceCountNode::getTotal);
             long originalOffset = queryPrepareParseResult.getOriginalOffset();
             long originalRows = queryPrepareParseResult.getOriginalRows();
             long realOffset = total - originalOffset - originalRows;

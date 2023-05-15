@@ -8,11 +8,11 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public class DefaultEasyPageResult<T> implements EasyPageResult<T> {
+public class DefaultPageResult<T> implements EasyPageResult<T> {
     private final long total;
     private final List<T> data;
 
-    public DefaultEasyPageResult(long total, List<T> data) {
+    public DefaultPageResult(long total, List<T> data) {
         this.total = total;
 
         this.data = data;

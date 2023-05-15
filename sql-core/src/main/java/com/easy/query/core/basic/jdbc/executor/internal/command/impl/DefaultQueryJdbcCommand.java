@@ -1,24 +1,12 @@
 package com.easy.query.core.basic.jdbc.executor.internal.command.impl;
 
 import com.easy.query.core.basic.jdbc.executor.internal.command.abstraction.AbstractQueryJdbcCommand;
-import com.easy.query.core.basic.jdbc.executor.internal.common.ExecutionUnit;
 import com.easy.query.core.basic.jdbc.executor.internal.result.QueryExecuteResult;
 import com.easy.query.core.basic.jdbc.executor.internal.unit.impl.EasyReverseQueryExecutor;
 import com.easy.query.core.enums.MergeBehaviorEnum;
-import com.easy.query.core.expression.executor.parser.SequenceParseResult;
-import com.easy.query.core.expression.segment.OrderByColumnSegment;
-import com.easy.query.core.expression.segment.OrderColumnSegmentImpl;
-import com.easy.query.core.expression.segment.SqlSegment;
-import com.easy.query.core.expression.sql.expression.EasyQuerySqlExpression;
 import com.easy.query.core.sharding.context.StreamMergeContext;
 import com.easy.query.core.basic.jdbc.executor.internal.unit.impl.EasyQueryExecutor;
 import com.easy.query.core.basic.jdbc.executor.internal.unit.Executor;
-import com.easy.query.core.sharding.manager.QueryCountResult;
-import com.easy.query.core.sharding.manager.ShardingQueryCountManager;
-import com.easy.query.core.util.EasyCollectionUtil;
-import com.easy.query.core.util.ShardingUtil;
-
-import java.util.List;
 
 /**
  * create time 2023/4/21 08:28

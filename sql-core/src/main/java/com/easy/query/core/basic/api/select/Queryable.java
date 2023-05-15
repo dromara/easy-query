@@ -2,6 +2,7 @@ package com.easy.query.core.basic.api.select;
 
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.api.dynamic.order.EasyOrderBy;
+import com.easy.query.core.sharding.manager.SequenceCountLine;
 import com.easy.query.core.basic.api.internal.Interceptable;
 import com.easy.query.core.basic.api.internal.LogicDeletable;
 import com.easy.query.core.basic.api.internal.TableReNameable;
@@ -348,7 +349,10 @@ public interface Queryable<T1> extends Query<T1>, Interceptable<Queryable<T1>>, 
      */
     EasyPageResult<T1> toPageResult(long pageIndex, long pageSize, long pageTotal);
 
-    EasyPageResult<T1> toShardingPageResult(long pageIndex, long pageSize);
+   default EasyPageResult<T1> toShardingPageResult(long pageIndex, long pageSize){
+       return toShardingPageResult(pageIndex,pageSize,null);
+   }
+    EasyPageResult<T1> toShardingPageResult(long pageIndex, long pageSize, SequenceCountLine sequenceCountLine);
 
     //    PageResult<T1> toPageResult(long pageIndex, long pageSize, SqlExpression<ColumnSelector<T1>> selectExpression);
 //    <TR> PageResult<TR> toPageResult(long pageIndex, long pageSize, Class<TR> clazz);

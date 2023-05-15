@@ -16,7 +16,8 @@ public enum MergeBehaviorEnum {
     GROUP(1<<6),
     STREAM_GROUP(1<<7),
     SEQUENCE_PAGINATION(1<<8),
-    REVERSE_PAGINATION(1<<9);
+    REVERSE_PAGINATION(1<<9),
+    SEQUENCE_COUNT(1<<10);
     private final int code;
 
     MergeBehaviorEnum(int code){

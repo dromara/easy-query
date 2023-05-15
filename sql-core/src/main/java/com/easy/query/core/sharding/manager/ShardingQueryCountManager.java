@@ -10,9 +10,15 @@ import java.util.List;
  */
 public interface ShardingQueryCountManager {
     void begin();
+
     boolean isBegin();
-    void addCountResult(QueryCountResult queryCountResult);
-    List<QueryCountResult> getCountResult();
+
+    void addCountResult(long total,boolean init);
+
+    List<SequenceCountNode> getCountResult();
+
+    SequenceCountLine getSequenceCountLine();
+
     void clear();
 
 }
