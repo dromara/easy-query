@@ -5,7 +5,6 @@ import com.easy.query.core.annotation.ShardingDataSourceKey;
 import com.easy.query.core.annotation.ShardingTableKey;
 import com.easy.query.core.annotation.Table;
 import com.easy.query.test.sharding.DataSourceAndTableShardingInitializer;
-import com.easy.query.test.sharding.FixShardingInitializer;
 import lombok.Data;
 import lombok.ToString;
 

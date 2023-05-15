@@ -16,7 +16,7 @@ import com.easy.query.core.basic.plugin.encryption.EasyEncryptionStrategy;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.basic.enums.LogicDeleteStrategyEnum;
 import com.easy.query.core.basic.plugin.interceptor.EasyInterceptor;
-import com.easy.query.core.sharding.initializer.EasyShardingInitializer;
+import com.easy.query.core.sharding.initializer.ShardingInitializer;
 import com.easy.query.core.sharding.initializer.UnShardingInitializer;
 import com.easy.query.core.util.ClassUtil;
 import com.easy.query.core.util.StringUtil;
@@ -35,7 +35,7 @@ public class EasyQueryConfiguration {
     private static final EasyLogicDeleteStrategy TIMESTAMP_LOGIC_DELETE = new DeleteLongTimestampEasyEntityTypeConfiguration();
     private static final EasyLogicDeleteStrategy LOCAL_DATE_TIME_LOGIC_DELETE = new LocalDateTimeEasyEntityTypeConfiguration();
     private static final EasyLogicDeleteStrategy LOCAL_DATE_LOGIC_DELETE = new LocalDateEasyLogicDeleteStrategy();
-    private static final EasyShardingInitializer DEFAULT_SHARDING_INITIALIZER = new UnShardingInitializer();
+    private static final ShardingInitializer DEFAULT_SHARDING_INITIALIZER = new UnShardingInitializer();
 
     private final EasyQueryOption easyQueryOption;
 
@@ -47,7 +47,7 @@ public class EasyQueryConfiguration {
     private Map<String, EasyLogicDeleteStrategy> globalLogicDeleteStrategyMap = new ConcurrentHashMap<>();
     private Map<Class<? extends EasyEncryptionStrategy>, EasyEncryptionStrategy> easyEncryptionStrategyMap = new ConcurrentHashMap<>();
     private Map<Class<? extends EasyVersionStrategy>, EasyVersionStrategy> easyVersionStrategyMap = new ConcurrentHashMap<>();
-    private Map<Class<? extends EasyShardingInitializer>, EasyShardingInitializer> shardingInitializerMap = new ConcurrentHashMap<>();
+    private Map<Class<? extends ShardingInitializer>, ShardingInitializer> shardingInitializerMap = new ConcurrentHashMap<>();
 
 //    public EasyQueryConfiguration(Dialect dialect, NameConversion nameConversion) {
 //       this(EasyQueryOption.defaultEasyQueryOption(),dialect,nameConversion);
@@ -190,15 +190,15 @@ public class EasyQueryConfiguration {
     }
 
 
-    public void applyShardingInitializer(EasyShardingInitializer shardingInitializer){
-        Class<? extends EasyShardingInitializer> initializerClass = shardingInitializer.getClass();
+    public void applyShardingInitializer(ShardingInitializer shardingInitializer){
+        Class<? extends ShardingInitializer> initializerClass = shardingInitializer.getClass();
         if(shardingInitializerMap.containsKey(initializerClass)){
             throw new EasyQueryException("easy sharding initializer:" + ClassUtil.getSimpleName(initializerClass) + ",repeat");
         }
         shardingInitializerMap.put(initializerClass,shardingInitializer);
     }
 
-    public EasyShardingInitializer getEasyShardingInitializerOrNull(Class<? extends EasyShardingInitializer> initializer){
+    public ShardingInitializer getEasyShardingInitializerOrNull(Class<? extends ShardingInitializer> initializer){
         return shardingInitializerMap.get(initializer);
     }
 }

@@ -2,7 +2,8 @@ package com.easy.query.test.sharding;
 
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.metadata.EntityMetadata;
-import com.easy.query.core.sharding.initializer.EasyShardingInitializer;
+import com.easy.query.core.sharding.initializer.EntityShardingInitializer;
+import com.easy.query.core.sharding.initializer.ShardingInitializer;
 import com.easy.query.core.sharding.initializer.ShardingEntityBuilder;
 import com.easy.query.test.entity.TopicShardingDataSourceTime;
 
@@ -18,9 +19,9 @@ import java.util.LinkedHashMap;
  *
  * @author xuejiaming
  */
-public class DataSourceAndTableShardingInitializer implements EasyShardingInitializer {
+public class DataSourceAndTableShardingInitializer implements EntityShardingInitializer<TopicShardingDataSourceTime> {
     @Override
-    public void configure(ShardingEntityBuilder<?> builder) {
+    public void configure(ShardingEntityBuilder<TopicShardingDataSourceTime> builder) {
         EntityMetadata entityMetadata = builder.getEntityMetadata();
 
         String tableName = entityMetadata.getTableName();
@@ -77,7 +78,7 @@ public class DataSourceAndTableShardingInitializer implements EasyShardingInitia
             }
             initTables.put("ds2023", actualTableNames);
         }
-        ((ShardingEntityBuilder<TopicShardingDataSourceTime>)builder).actualTableNameInit(initTables)
+        builder.actualTableNameInit(initTables)
                 .paginationReverse(0.5,100L)
                 .ascSequenceConfigure(new DataSourceAndTableComparator())
                 .addPropertyDefaultUseDesc(TopicShardingDataSourceTime::getCreateTime)

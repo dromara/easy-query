@@ -1,6 +1,6 @@
 package com.easy.query.core.annotation;
 
-import com.easy.query.core.sharding.initializer.EasyShardingInitializer;
+import com.easy.query.core.sharding.initializer.ShardingInitializer;
 import com.easy.query.core.sharding.initializer.UnShardingInitializer;
 import com.easy.query.core.util.StringUtil;
 
@@ -45,5 +45,5 @@ public @interface Table {
      * 分片表名初始化器
      * @return
      */
-    Class<? extends EasyShardingInitializer> shardingInitializer() default UnShardingInitializer.class;
+    Class<? extends ShardingInitializer> shardingInitializer() default UnShardingInitializer.class;
 }

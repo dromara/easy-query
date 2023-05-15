@@ -12,8 +12,6 @@ import com.easy.query.core.bootstrapper.DatabaseConfiguration;
 import com.easy.query.core.bootstrapper.DefaultDatabaseConfiguration;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
-import com.easy.query.core.sharding.DefaultEasyQueryDataSource;
-import com.easy.query.core.sharding.EasyQueryDataSource;
 import com.easy.query.core.api.client.EasyQuery;
 import com.easy.query.core.configuration.nameconversion.NameConversion;
 import com.easy.query.core.configuration.nameconversion.impl.DefaultNameConversion;
@@ -21,7 +19,7 @@ import com.easy.query.core.configuration.nameconversion.impl.UnderlinedNameConve
 import com.easy.query.core.configuration.EasyQueryConfiguration;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
-import com.easy.query.core.sharding.initializer.EasyShardingInitializer;
+import com.easy.query.core.sharding.initializer.ShardingInitializer;
 import com.easy.query.core.util.StringUtil;
 import com.easy.query.mssql.MsSqlDatabaseConfiguration;
 import com.easy.query.mysql.config.MySqlDatabaseConfiguration;
@@ -133,7 +131,7 @@ public class EasyQueryStarterAutoConfiguration {
     }
 
     @Bean
-    public EasyQuery easyQuery(DataSource dataSource, DatabaseConfiguration databaseConfiguration,EasyPageResultProvider easyPageResultProvider, NameConversion nameConversion, Map<String, EasyInterceptor> easyInterceptorMap, Map<String, EasyVersionStrategy> easyVersionStrategyMap, Map<String, EasyLogicDeleteStrategy> easyLogicDeleteStrategyMap, Map<String, EasyShardingInitializer> easyShardingInitializerMap, Map<String, EasyEncryptionStrategy> easyEncryptionStrategyMap) {
+    public EasyQuery easyQuery(DataSource dataSource, DatabaseConfiguration databaseConfiguration, EasyPageResultProvider easyPageResultProvider, NameConversion nameConversion, Map<String, EasyInterceptor> easyInterceptorMap, Map<String, EasyVersionStrategy> easyVersionStrategyMap, Map<String, EasyLogicDeleteStrategy> easyLogicDeleteStrategyMap, Map<String, ShardingInitializer> easyShardingInitializerMap, Map<String, EasyEncryptionStrategy> easyEncryptionStrategyMap) {
         EasyQuery easyQuery = EasyQueryBootstrapper.defaultBuilderConfiguration()
                 .setDefaultDataSource(dataSource)
                 .replaceService(EasyConnectionFactory.class,SpringEasyConnectionFactory.class)
@@ -164,7 +162,7 @@ public class EasyQueryStarterAutoConfiguration {
             configuration.applyEasyLogicDeleteStrategy(easyLogicDeleteStrategyEntry.getValue());
         }
         //分片初始化
-        for (Map.Entry<String, EasyShardingInitializer> easyShardingInitializerEntry : easyShardingInitializerMap.entrySet()) {
+        for (Map.Entry<String, ShardingInitializer> easyShardingInitializerEntry : easyShardingInitializerMap.entrySet()) {
             configuration.applyShardingInitializer(easyShardingInitializerEntry.getValue());
         }
         //列加密

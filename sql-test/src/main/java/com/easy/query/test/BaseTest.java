@@ -6,8 +6,6 @@ import com.easy.query.core.api.client.EasyQuery;
 import com.easy.query.core.configuration.EasyQueryConfiguration;
 import com.easy.query.core.configuration.EasyQueryShardingOption;
 import com.easy.query.core.logging.LogFactory;
-import com.easy.query.core.sharding.DefaultEasyQueryDataSource;
-import com.easy.query.core.sharding.EasyQueryDataSource;
 import com.easy.query.core.sharding.route.manager.DataSourceRouteManager;
 import com.easy.query.core.sharding.route.manager.TableRouteManager;
 import com.easy.query.test.encryption.Base64EncryptionStrategy;
@@ -28,10 +26,11 @@ import com.easy.query.test.interceptor.MyTenantInterceptor;
 import com.easy.query.test.logicdel.MyLogicDelStrategy;
 import com.easy.query.mysql.config.MySqlDatabaseConfiguration;
 import com.easy.query.test.sharding.DataSourceAndTableShardingInitializer;
-import com.easy.query.test.sharding.FixShardingInitializer;
 import com.easy.query.test.sharding.TopicShardingDataSourceTimeDataSourceRule;
 import com.easy.query.test.sharding.TopicShardingDataSourceTimeTableRule;
+import com.easy.query.test.sharding.TopicShardingShardingInitializer;
 import com.easy.query.test.sharding.TopicShardingTableRule;
+import com.easy.query.test.sharding.TopicShardingTimeShardingInitializer;
 import com.easy.query.test.sharding.TopicShardingTimeTableRule;
 import com.zaxxer.hikari.HikariDataSource;
 
@@ -127,8 +126,10 @@ public abstract class BaseTest {
         configuration.applyEasyLogicDeleteStrategy(new MyLogicDelStrategy());
         configuration.applyEasyInterceptor(new MyEntityInterceptor());
         configuration.applyEasyInterceptor(new MyTenantInterceptor());
-        configuration.applyShardingInitializer(new FixShardingInitializer());
+//        configuration.applyShardingInitializer(new FixShardingInitializer());
         configuration.applyShardingInitializer(new DataSourceAndTableShardingInitializer());
+        configuration.applyShardingInitializer(new TopicShardingShardingInitializer());
+        configuration.applyShardingInitializer(new TopicShardingTimeShardingInitializer());
 
         TableRouteManager tableRouteManager = runtimeContext.getTableRouteManager();
         tableRouteManager.addRouteRule(new TopicShardingTableRule());

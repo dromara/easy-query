@@ -2,7 +2,7 @@ package com.easy.query.test.sharding;
 
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.metadata.EntityMetadata;
-import com.easy.query.core.sharding.initializer.EasyShardingInitializer;
+import com.easy.query.core.sharding.initializer.ShardingInitializer;
 import com.easy.query.core.sharding.initializer.ShardingEntityBuilder;
 import com.easy.query.test.entity.TopicSharding;
 import com.easy.query.test.entity.TopicShardingTime;
@@ -19,9 +19,9 @@ import java.util.LinkedHashMap;
  *
  * @author xuejiaming
  */
-public class FixShardingInitializer implements EasyShardingInitializer {
+public class FixShardingInitializer implements ShardingInitializer {
     @Override
-    public void configure(ShardingEntityBuilder<?> builder) {
+    public void initialize(ShardingEntityBuilder<?> builder) {
         EntityMetadata entityMetadata = builder.getEntityMetadata();
         if(TopicSharding.class.equals(entityMetadata.getEntityClass())){
 

@@ -17,7 +17,7 @@ import com.easy.query.core.basic.plugin.interceptor.EasyPredicateFilterIntercept
 import com.easy.query.core.basic.plugin.interceptor.EasyUpdateSetInterceptor;
 import com.easy.query.core.basic.plugin.logicdel.EasyLogicDeleteStrategy;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
-import com.easy.query.core.sharding.initializer.EasyShardingInitializer;
+import com.easy.query.core.sharding.initializer.ShardingInitializer;
 import com.easy.query.core.sharding.initializer.ShardingInitOption;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.StringUtil;
@@ -213,7 +213,7 @@ public class EntityMetadata {
         entityGlobalInterceptorConfigurationInit(configuration);
 
         if (table != null && isSharding()) {
-            Class<? extends EasyShardingInitializer> initializer = table.shardingInitializer();
+            Class<? extends ShardingInitializer> initializer = table.shardingInitializer();
             initSharding(configuration, initializer);
         }
     }
@@ -227,14 +227,14 @@ public class EntityMetadata {
         return null;
     }
 
-    private void initSharding(EasyQueryConfiguration configuration, Class<? extends EasyShardingInitializer> initializer) {
+    private void initSharding(EasyQueryConfiguration configuration, Class<? extends ShardingInitializer> initializer) {
 
-        EasyShardingInitializer easyShardingInitializer = configuration.getEasyShardingInitializerOrNull(initializer);
+        ShardingInitializer easyShardingInitializer = configuration.getEasyShardingInitializerOrNull(initializer);
         if (easyShardingInitializer == null) {
             throw new EasyQueryInvalidOperationException("not found sharding initializer:" + ClassUtil.getSimpleName(initializer));
         }
         ShardingEntityBuilder<Object> shardingInitializerBuilder = new ShardingEntityBuilder<Object>(this);
-        easyShardingInitializer.configure(shardingInitializerBuilder);
+        easyShardingInitializer.initialize(shardingInitializerBuilder);
         ShardingInitOption shardingInitOption = shardingInitializerBuilder.build();
         Map<String, Collection<String>> initializeTables = shardingInitOption.getActualTableNames();
         if (initializeTables != null && !initializeTables.isEmpty()) {
