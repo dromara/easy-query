@@ -64,6 +64,11 @@ public class EasyStreamMergeContext implements StreamMergeContext {
     }
 
     @Override
+    public boolean configReplica() {
+        return false;
+    }
+
+    @Override
     public EasyQueryOption getEasyQueryOption() {
         return easyQueryOption;
     }

@@ -25,4 +25,9 @@ public class EntityStreamMergeContext extends EasyStreamMergeContext{
     public boolean isSharding() {
         return isSharding;
     }
+
+    @Override
+    public boolean configReplica() {
+        return easyQueryOption.getReplicaOption()!=null;
+    }
 }

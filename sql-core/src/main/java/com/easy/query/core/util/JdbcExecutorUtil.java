@@ -42,30 +42,39 @@ public class JdbcExecutorUtil {
         printSql.append(Thread.currentThread().getName());
         printSql.append(", name:");
         printSql.append(easyConnection.getDataSourceName());
+        printSql.append(", ");
+    }
+    private static void printReplicaSqlFormat(final StringBuilder printSql,final EasyConnection easyConnection){
+        printSql.append("strategy:");
+        printSql.append(easyConnection.getConnectionStrategy().getName());
+        printSql.append(", ");
     }
 
-    private static void logSql(final boolean logDebug,final String sql,final EasyConnection easyConnection,final boolean sharding) {
+    private static void logSql(final boolean logDebug,final String sql,final EasyConnection easyConnection,final boolean shardingPrint,final boolean replicaPrint) {
         if (logDebug) {
             StringBuilder printSql = new StringBuilder();
             printSql.append("==> ");
-            if(sharding){
+            if(shardingPrint){
                 printShardingSqlFormat(printSql,easyConnection);
             }
-            printSql.append(", strategy:");
-            printSql.append(easyConnection.getConnectionStrategy().getName());
-            printSql.append(", ");
+            if(replicaPrint){
+                printReplicaSqlFormat(printSql,easyConnection);
+            }
             printSql.append("Preparing: ");
             printSql.append(sql);
             log.debug(printSql.toString());
         }
     }
 
-    private static void logParameter(boolean logDebug,List<SQLParameter> parameters,final EasyConnection easyConnection,final boolean sharding) {
+    private static void logParameter(boolean logDebug,List<SQLParameter> parameters,final EasyConnection easyConnection,final boolean shardingPrint,final boolean replicaPrint) {
         if (logDebug) {
             StringBuilder printSql = new StringBuilder();
             printSql.append("==> ");
-            if(sharding){
+            if(shardingPrint){
                 printShardingSqlFormat(printSql,easyConnection);
+            }
+            if(replicaPrint){
+                printReplicaSqlFormat(printSql,easyConnection);
             }
             printSql.append("Parameters: ");
             printSql.append(SqlUtil.sqlParameterToString(parameters));
@@ -73,12 +82,15 @@ public class JdbcExecutorUtil {
         }
     }
 
-    private static void logResult(boolean logDebug,long total,final EasyConnection easyConnection,final boolean sharding) {
+    private static void logResult(boolean logDebug,long total,final EasyConnection easyConnection,final boolean shardingPrint,final boolean replicaPrint) {
         if (logDebug) {
             StringBuilder printSql = new StringBuilder();
             printSql.append("<== ");
-            if(sharding){
+            if(shardingPrint){
                 printShardingSqlFormat(printSql,easyConnection);
+            }
+            if(replicaPrint){
+                printReplicaSqlFormat(printSql,easyConnection);
             }
             printSql.append("Total: ");
             printSql.append(total);
@@ -86,17 +98,20 @@ public class JdbcExecutorUtil {
         }
     }
 
-    private static void logResult(boolean logDebug,int total,final EasyConnection easyConnection,final boolean sharding) {
+    private static void logResult(boolean logDebug,int total,final EasyConnection easyConnection,final boolean shardingPrint,final boolean replicaPrint) {
         if (logDebug) {
-             logResult(true,(long)total,easyConnection,sharding); }
+             logResult(true,(long)total,easyConnection,shardingPrint,replicaPrint); }
     }
 
-    private static void logUse(boolean logDebug,long start, long end,final EasyConnection easyConnection,final boolean sharding) {
+    private static void logUse(boolean logDebug,long start, long end,final EasyConnection easyConnection,final boolean shardingPrint,final boolean replicaPrint) {
         if (logDebug) {
             StringBuilder printSql = new StringBuilder();
             printSql.append("<== ");
-            if(sharding){
+            if(shardingPrint){
                 printShardingSqlFormat(printSql,easyConnection);
+            }
+            if(replicaPrint){
+                printReplicaSqlFormat(printSql,easyConnection);
             }
             printSql.append("Time Elapsed: ");
             printSql.append(end - start);
@@ -123,11 +138,11 @@ public class JdbcExecutorUtil {
         return params;
     }
     public static StreamResultSet query(ExecutorContext executorContext, EasyConnection easyConnection, String sql, List<SQLParameter> sqlParameters){
-        return query(executorContext,easyConnection,sql,sqlParameters,false);
+        return query(executorContext,easyConnection,sql,sqlParameters,false,false);
     }
-    public static StreamResultSet query(ExecutorContext executorContext, EasyConnection easyConnection, String sql, List<SQLParameter> sqlParameters,boolean sharding) {
+    public static StreamResultSet query(ExecutorContext executorContext, EasyConnection easyConnection, String sql, List<SQLParameter> sqlParameters,boolean shardingPrint,boolean replicaPrint) {
         boolean logDebug = log.isDebugEnabled();
-        logSql(logDebug, sql,easyConnection,sharding);
+        logSql(logDebug, sql,easyConnection,shardingPrint,replicaPrint);
         EasyQueryRuntimeContext runtimeContext = executorContext.getRuntimeContext();
         JdbcTypeHandlerManager easyJdbcTypeHandler = runtimeContext.getEasyJdbcTypeHandlerManager();
 
@@ -135,7 +150,7 @@ public class JdbcExecutorUtil {
         ResultSet rs = null;
         List<SQLParameter> parameters = extractParameters(executorContext, null, sqlParameters);
         if (logDebug && EasyCollectionUtil.isNotEmpty(parameters)) {
-            logParameter(true, parameters,easyConnection,sharding);
+            logParameter(true, parameters,easyConnection,shardingPrint,replicaPrint);
         }
         StreamResultSet sr=null;
         try {
@@ -144,12 +159,12 @@ public class JdbcExecutorUtil {
                 long start = System.currentTimeMillis();
                 rs = ps.executeQuery();
                 long end = System.currentTimeMillis();
-                logUse(true, start, end,easyConnection,sharding);
+                logUse(true, start, end,easyConnection,shardingPrint,replicaPrint);
             } else {
                 rs = ps.executeQuery();
             }
             //如果是分片查询那么需要提前next
-            if(sharding){
+            if(shardingPrint){
                 boolean next = rs.next();
                 sr=new EasyShardingStreamResultSet(rs,ps,next);
             }else{
@@ -163,9 +178,9 @@ public class JdbcExecutorUtil {
         return sr;
     }
 
-    public static <T> int insert(ExecutorContext executorContext, EasyConnection easyConnection, String sql, List<T> entities, List<SQLParameter> sqlParameters, boolean fillAutoIncrement,boolean sharding) {
+    public static <T> int insert(ExecutorContext executorContext, EasyConnection easyConnection, String sql, List<T> entities, List<SQLParameter> sqlParameters, boolean fillAutoIncrement,boolean shardingPrint,boolean replicaPrint) {
         boolean logDebug = log.isDebugEnabled();
-        logSql(logDebug, sql,easyConnection,sharding);
+        logSql(logDebug, sql,easyConnection,shardingPrint,replicaPrint);
         EasyQueryRuntimeContext runtimeContext = executorContext.getRuntimeContext();
         JdbcTypeHandlerManager easyJdbcTypeHandler = runtimeContext.getEasyJdbcTypeHandlerManager();
         Class<?> entityClass = entities.get(0).getClass();
@@ -178,7 +193,7 @@ public class JdbcExecutorUtil {
             for (T entity : entities) {
                 List<SQLParameter> parameters = extractParameters(executorContext, entity, sqlParameters);
                 if (logDebug && hasParameter) {
-                    logParameter(true, parameters,easyConnection,sharding);
+                    logParameter(true, parameters,easyConnection,shardingPrint,replicaPrint);
                 }
                 if (ps == null) {
                     ps = createPreparedStatement(easyConnection.getConnection(), sql, parameters, easyJdbcTypeHandler, incrementColumns);
@@ -190,7 +205,7 @@ public class JdbcExecutorUtil {
             assert ps != null;
             int[] rs = ps.executeBatch();
             r = rs.length;
-            logResult(logDebug, r,easyConnection,sharding);
+            logResult(logDebug, r,easyConnection,shardingPrint,replicaPrint);
             //如果需要自动填充并且存在自动填充列
             if (fillAutoIncrement && EasyCollectionUtil.isNotEmpty(incrementColumns)) {
                 ResultSet keysSet = ps.getGeneratedKeys();
@@ -238,9 +253,9 @@ public class JdbcExecutorUtil {
         }
     }
 
-    public static <T> int executeRows(ExecutorContext executorContext, EasyConnection easyConnection, String sql, List<T> entities, List<SQLParameter> sqlParameters,boolean sharding) {
+    public static <T> int executeRows(ExecutorContext executorContext, EasyConnection easyConnection, String sql, List<T> entities, List<SQLParameter> sqlParameters,boolean shardingPrint,boolean replicaPrint) {
         boolean logDebug = log.isDebugEnabled();
-        logSql(logDebug, sql,easyConnection,sharding);
+        logSql(logDebug, sql,easyConnection,shardingPrint,replicaPrint);
         EasyQueryRuntimeContext runtimeContext = executorContext.getRuntimeContext();
         JdbcTypeHandlerManager easyJdbcTypeHandlerManager = runtimeContext.getEasyJdbcTypeHandlerManager();
         PreparedStatement ps = null;
@@ -252,7 +267,7 @@ public class JdbcExecutorUtil {
                 List<SQLParameter> parameters = extractParameters(executorContext, entity, sqlParameters);
 
                 if (logDebug && hasParameter) {
-                    logParameter(true, parameters,easyConnection,sharding);
+                    logParameter(true, parameters,easyConnection,shardingPrint,replicaPrint);
                 }
                 if (ps == null) {
                     ps = createPreparedStatement(easyConnection.getConnection(), sql, parameters, easyJdbcTypeHandlerManager);
@@ -264,7 +279,7 @@ public class JdbcExecutorUtil {
             assert ps != null;
             int[] rs = ps.executeBatch();
             r = EasyCollectionUtil.sum(rs);
-            logResult(logDebug, r,easyConnection,sharding);
+            logResult(logDebug, r,easyConnection,shardingPrint,replicaPrint);
             ps.clearBatch();
         } catch (SQLException e) {
             log.error(sql, e);
@@ -275,9 +290,9 @@ public class JdbcExecutorUtil {
         return r;
     }
 
-    public static <T> int executeRows(ExecutorContext executorContext, EasyConnection easyConnection, String sql, List<SQLParameter> sqlParameters,boolean sharding) {
+    public static <T> int executeRows(ExecutorContext executorContext, EasyConnection easyConnection, String sql, List<SQLParameter> sqlParameters,boolean shardingPrint,boolean replicaPrint) {
         boolean logDebug = log.isDebugEnabled();
-        logSql(logDebug, sql,easyConnection,sharding);
+        logSql(logDebug, sql,easyConnection,shardingPrint,replicaPrint);
         EasyQueryRuntimeContext runtimeContext = executorContext.getRuntimeContext();
         JdbcTypeHandlerManager easyJdbcTypeHandlerManager = runtimeContext.getEasyJdbcTypeHandlerManager();
         PreparedStatement ps = null;
@@ -285,12 +300,12 @@ public class JdbcExecutorUtil {
 
         List<SQLParameter> parameters = extractParameters(executorContext, null, sqlParameters);
         if (logDebug && !parameters.isEmpty()) {
-            logParameter(true, parameters,easyConnection,sharding);
+            logParameter(true, parameters,easyConnection,shardingPrint,replicaPrint);
         }
         try {
             ps = createPreparedStatement(easyConnection.getConnection(), sql, parameters, easyJdbcTypeHandlerManager);
             r = ps.executeUpdate();
-            logResult(logDebug, r,easyConnection,sharding);
+            logResult(logDebug, r,easyConnection,shardingPrint,replicaPrint);
         } catch (SQLException e) {
             log.error(sql, e);
             throw new EasyQuerySQLExecuteException(sql, e);

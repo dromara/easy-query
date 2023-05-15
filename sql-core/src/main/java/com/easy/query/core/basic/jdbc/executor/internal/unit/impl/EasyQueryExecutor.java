@@ -49,7 +49,8 @@ public class EasyQueryExecutor extends AbstractExecutor<QueryExecuteResult> {
         String sql = sqlUnit.getSql();
         List<SQLParameter> parameters = sqlUnit.getParameters();
         boolean isSharding = streamMergeContext.isSharding();
-        StreamResultSet streamResultSet = JdbcExecutorUtil.query( executorContext, easyConnection, sql, parameters, isSharding);
+        boolean configReplica = streamMergeContext.configReplica();
+        StreamResultSet streamResultSet = JdbcExecutorUtil.query( executorContext, easyConnection, sql, parameters, isSharding,configReplica);
 
         return new DefaultQueryExecuteResult(streamResultSet);
     }

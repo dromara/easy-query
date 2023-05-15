@@ -41,7 +41,8 @@ public class EasyInsertExecutor extends AbstractExecutor<AffectedRowsExecuteResu
         List<SQLParameter> parameters = sqlUnit.getParameters();
         boolean fillAutoIncrement = sqlUnit.isFillAutoIncrement();
         boolean isSharding = streamMergeContext.isSharding();
-        int rows = JdbcExecutorUtil.insert(executorContext, easyConnection, sql, entities, parameters, fillAutoIncrement,isSharding);
+        boolean configReplica = streamMergeContext.configReplica();
+        int rows = JdbcExecutorUtil.insert(executorContext, easyConnection, sql, entities, parameters, fillAutoIncrement,isSharding,configReplica);
         return new AffectedRowsExecuteResult(rows);
     }
 

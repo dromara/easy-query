@@ -37,6 +37,12 @@ public interface StreamMergeContext extends AutoCloseable {
      * @return
      */
     boolean isSharding();
+
+    /**
+     * 是否配置了副本
+     * @return
+     */
+    boolean configReplica();
     default boolean isShardingMerge(){
         return isSharding()&&isQuery()&&getExecutionUnits().size()!=1;
     }
