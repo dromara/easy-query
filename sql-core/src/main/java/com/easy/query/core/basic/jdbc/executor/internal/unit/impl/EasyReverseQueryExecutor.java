@@ -1,7 +1,7 @@
 package com.easy.query.core.basic.jdbc.executor.internal.unit.impl;
 
-import com.easy.query.core.basic.jdbc.executor.internal.merger.ShardingMerger;
-import com.easy.query.core.basic.jdbc.executor.internal.merger.impl.ReverseQueryStreamShardingMerger;
+import com.easy.query.core.basic.jdbc.executor.internal.sharding.merger.ShardingMerger;
+import com.easy.query.core.basic.jdbc.executor.internal.sharding.merger.impl.ReverseQueryStreamShardingMerger;
 import com.easy.query.core.basic.jdbc.executor.internal.result.QueryExecuteResult;
 import com.easy.query.core.sharding.context.StreamMergeContext;
 

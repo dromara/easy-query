@@ -17,9 +17,9 @@ import com.easy.query.core.expression.lambda.PropertySetterCaller;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.metadata.EntityMetadata;
-import com.easy.query.core.sharding.merge.result.StreamResultSet;
-import com.easy.query.core.sharding.merge.result.impl.EasyShardingStreamResultSet;
-import com.easy.query.core.sharding.merge.result.impl.EasyStreamResultSet;
+import com.easy.query.core.basic.jdbc.executor.internal.merge.result.StreamResultSet;
+import com.easy.query.core.basic.jdbc.executor.internal.merge.result.impl.EasyShardingStreamResultSet;
+import com.easy.query.core.basic.jdbc.executor.internal.merge.result.impl.EasyStreamResultSet;
 
 import java.beans.PropertyDescriptor;
 import java.sql.Connection;

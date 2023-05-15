@@ -1,7 +1,6 @@
 package com.easy.query.core.enums;
 
-import com.easy.query.core.expression.segment.AggregationColumnSegment;
-import com.easy.query.core.sharding.merge.result.aggregation.AggregationType;
+import com.easy.query.core.basic.jdbc.executor.internal.merge.result.aggregation.AggregationType;
 
 /**
  * @FileName: IEasyAggregate.java

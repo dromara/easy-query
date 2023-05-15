@@ -1,6 +1,6 @@
 package com.easy.query.core.basic.jdbc.executor.internal.result;
 
-import com.easy.query.core.sharding.merge.result.StreamResultSet;
+import com.easy.query.core.basic.jdbc.executor.internal.merge.result.StreamResultSet;
 
 /**
  * create time 2023/4/14 16:20

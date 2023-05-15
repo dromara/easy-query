@@ -1,7 +1,7 @@
 package com.easy.query.test.mytest;
 
 import com.easy.query.core.enums.EasyFunc;
-import com.easy.query.core.sharding.merge.result.aggregation.AggregationType;
+import com.easy.query.core.basic.jdbc.executor.internal.merge.result.aggregation.AggregationType;
 
 /**
  * create time 2023/3/30 22:13

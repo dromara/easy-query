@@ -194,6 +194,10 @@ public class EasyQueryBuilderConfiguration {
         databaseConfiguration.configure(serviceCollection);
         return this;
     }
+    public EasyQueryBuilderConfiguration useStarterConfigure(StarterConfigurer starterConfigurer) {
+        starterConfigurer.configure(serviceCollection);
+        return this;
+    }
 
     public EasyQueryBuilderConfiguration optionConfigure(Consumer<EasyQueryOptionBuilder> configure) {
         configure.accept(this.easyQueryOptionBuilder);

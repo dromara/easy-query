@@ -11,12 +11,11 @@ import com.easy.query.core.enums.MergeBehaviorEnum;
 import com.easy.query.core.enums.replica.ReplicaBehaviorEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.executor.parser.ExecutionContext;
-import com.easy.query.core.expression.executor.parser.SequenceParseResult;
 import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.basic.jdbc.executor.internal.common.ExecutionUnit;
-import com.easy.query.core.sharding.merge.segment.PropertyGroup;
-import com.easy.query.core.sharding.merge.segment.PropertyOrder;
+import com.easy.query.core.basic.jdbc.executor.internal.merge.segment.PropertyGroup;
+import com.easy.query.core.basic.jdbc.executor.internal.merge.segment.PropertyOrder;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.ArrayList;

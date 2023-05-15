@@ -10,9 +10,11 @@ import com.easy.query.core.basic.plugin.logicdel.EasyLogicDeleteStrategy;
 import com.easy.query.core.basic.plugin.version.EasyVersionStrategy;
 import com.easy.query.core.bootstrapper.DatabaseConfiguration;
 import com.easy.query.core.bootstrapper.DefaultDatabaseConfiguration;
+import com.easy.query.core.bootstrapper.DefaultStarterConfigurer;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.api.client.EasyQuery;
+import com.easy.query.core.bootstrapper.StarterConfigurer;
 import com.easy.query.core.configuration.nameconversion.NameConversion;
 import com.easy.query.core.configuration.nameconversion.impl.DefaultNameConversion;
 import com.easy.query.core.configuration.nameconversion.impl.UnderlinedNameConversion;
@@ -126,12 +128,12 @@ public class EasyQueryStarterAutoConfiguration {
     }
 
     @Bean
-    public EasyPageResultProvider easyPageResultProvider() {
-        return new DefaultEasyPageResultProvider();
+    public StarterConfigurer starterConfigurer() {
+        return new DefaultStarterConfigurer();
     }
 
     @Bean
-    public EasyQuery easyQuery(DataSource dataSource, DatabaseConfiguration databaseConfiguration, EasyPageResultProvider easyPageResultProvider, NameConversion nameConversion, Map<String, EasyInterceptor> easyInterceptorMap, Map<String, EasyVersionStrategy> easyVersionStrategyMap, Map<String, EasyLogicDeleteStrategy> easyLogicDeleteStrategyMap, Map<String, ShardingInitializer> easyShardingInitializerMap, Map<String, EasyEncryptionStrategy> easyEncryptionStrategyMap) {
+    public EasyQuery easyQuery(DataSource dataSource, DatabaseConfiguration databaseConfiguration, StarterConfigurer starterConfigurer, NameConversion nameConversion, Map<String, EasyInterceptor> easyInterceptorMap, Map<String, EasyVersionStrategy> easyVersionStrategyMap, Map<String, EasyLogicDeleteStrategy> easyLogicDeleteStrategyMap, Map<String, ShardingInitializer> easyShardingInitializerMap, Map<String, EasyEncryptionStrategy> easyEncryptionStrategyMap) {
         EasyQuery easyQuery = EasyQueryBootstrapper.defaultBuilderConfiguration()
                 .setDefaultDataSource(dataSource)
                 .replaceService(EasyConnectionFactory.class,SpringEasyConnectionFactory.class)
@@ -146,10 +148,10 @@ public class EasyQueryStarterAutoConfiguration {
                     builder.setShardingExecuteTimeoutMillis(easyQueryProperties.getShardingExecuteTimeoutMillis());
                     builder.setShardingGroupExecuteTimeoutMillis(easyQueryProperties.getShardingGroupExecuteTimeoutMillis());
                 })
-                .replaceService(EasyPageResultProvider.class,easyPageResultProvider)
                 .replaceService(NameConversion.class, nameConversion)
                 .replaceService(EasyConnectionManager.class, SpringConnectionManager.class)
                 .useDatabaseConfigure(databaseConfiguration)
+                .useStarterConfigure(starterConfigurer)
                 .build();
         EasyQueryRuntimeContext runtimeContext = easyQuery.getRuntimeContext();
         EasyQueryConfiguration configuration = runtimeContext.getEasyQueryConfiguration();

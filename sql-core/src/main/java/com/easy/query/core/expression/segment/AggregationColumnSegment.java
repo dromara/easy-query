@@ -1,6 +1,6 @@
 package com.easy.query.core.expression.segment;
 
-import com.easy.query.core.sharding.merge.result.aggregation.AggregationType;
+import com.easy.query.core.basic.jdbc.executor.internal.merge.result.aggregation.AggregationType;
 
 /**
  * create time 2023/4/28 21:33

@@ -1,6 +1,6 @@
 package com.easy.query.core.basic.jdbc.types;
 
-import com.easy.query.core.sharding.merge.result.StreamResultSet;
+import com.easy.query.core.basic.jdbc.executor.internal.merge.result.StreamResultSet;
 
 /**
  * @FileName: EasyResultSet.java

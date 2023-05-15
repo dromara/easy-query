@@ -23,7 +23,7 @@ import com.easy.query.core.metadata.ShardingInitConfig;
 import com.easy.query.core.metadata.ShardingSequenceConfig;
 import com.easy.query.core.sharding.manager.SequenceCountNode;
 import com.easy.query.core.sharding.manager.ShardingQueryCountManager;
-import com.easy.query.core.sharding.merge.result.aggregation.AggregationType;
+import com.easy.query.core.basic.jdbc.executor.internal.merge.result.aggregation.AggregationType;
 import com.easy.query.core.sharding.route.RouteContext;
 import com.easy.query.core.sharding.route.RouteUnit;
 import com.easy.query.core.sharding.route.ShardingRouteResult;

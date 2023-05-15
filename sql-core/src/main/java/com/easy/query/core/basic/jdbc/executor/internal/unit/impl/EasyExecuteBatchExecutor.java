@@ -5,7 +5,7 @@ import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.executor.internal.common.ExecutionUnit;
 import com.easy.query.core.basic.jdbc.executor.internal.common.SqlUnit;
 import com.easy.query.core.basic.jdbc.executor.internal.result.AffectedRowsExecuteResult;
-import com.easy.query.core.basic.jdbc.executor.internal.merger.ShardingMerger;
+import com.easy.query.core.basic.jdbc.executor.internal.sharding.merger.ShardingMerger;
 import com.easy.query.core.basic.jdbc.executor.internal.unit.abstraction.AbstractExecutor;
 import com.easy.query.core.basic.jdbc.executor.internal.unit.breaker.CircuitBreaker;
 import com.easy.query.core.basic.jdbc.executor.internal.unit.breaker.NoCircuitBreaker;
@@ -13,7 +13,7 @@ import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.sharding.context.StreamMergeContext;
 import com.easy.query.core.basic.jdbc.executor.internal.common.CommandExecuteUnit;
 import com.easy.query.core.basic.jdbc.executor.internal.common.SqlRouteUnit;
-import com.easy.query.core.basic.jdbc.executor.internal.merger.impl.AffectedRowsShardingMerger;
+import com.easy.query.core.basic.jdbc.executor.internal.sharding.merger.impl.AffectedRowsShardingMerger;
 import com.easy.query.core.util.JdbcExecutorUtil;
 
 import java.util.List;

@@ -4,7 +4,7 @@ import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
 import com.easy.query.core.enums.EasyFunc;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.sharding.merge.result.aggregation.AggregationType;
+import com.easy.query.core.basic.jdbc.executor.internal.merge.result.aggregation.AggregationType;
 import com.easy.query.core.util.SqlExpressionUtil;
 
 /**
