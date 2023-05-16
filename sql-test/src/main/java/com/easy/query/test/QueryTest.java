@@ -746,4 +746,18 @@ public class QueryTest extends BaseTest {
         List<Topic> data = topicPageResult.getData();
         Assert.assertEquals(10,data.size());
     }
+    @Test
+    public void query51() {
+
+        String sql = easyQuery
+                .queryable(Topic.class)
+                .where(o -> o.isNotNull(Topic::getId))
+                .select(String.class, o -> o.column(Topic::getId)).distinct().toSql();
+        Assert.assertEquals("SELECT DISTINCT t.`id` FROM `t_topic` t WHERE t.`id` IS NOT NULL",sql);
+        List<String> list = easyQuery
+                .queryable(Topic.class)
+                .where(o -> o.isNotNull(Topic::getId))
+                .select(String.class, o -> o.column(Topic::getId)).distinct().toList();
+        Assert.assertEquals(101,list.size());
+    }
 }

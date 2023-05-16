@@ -40,10 +40,12 @@ public class Main {
     private static final String url = "jdbc:mysql://127.0.0.1:3306/dbdbd0?serverTimezone=GMT%2B8&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&rewriteBatchedStatements=true";
     private static EasyQuery easyQuery;
 
-    public static void main(String[] args) throws SQLException {
+    public static void main(String[] args) throws SQLException, ClassNotFoundException, InstantiationException, IllegalAccessException {
 
         List<String> list = new ArrayList<>(); // 假设列表为字符串类型的示例
-
+        String name = Main.class.getName();
+        Class<?> aClass = Class.forName(name);
+        Object o1 = aClass.newInstance();
 // 添加列表元素
         list.add("元素1");
         list.add("元素2");
