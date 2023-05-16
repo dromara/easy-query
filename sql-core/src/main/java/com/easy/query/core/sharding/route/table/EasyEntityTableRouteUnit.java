@@ -10,7 +10,7 @@ public class EasyEntityTableRouteUnit extends BaseTableRouteUnit implements Enti
     private final Object entity;
 
     public EasyEntityTableRouteUnit(TableRouteUnit tableRouteUnit, Object entity) {
-        this(tableRouteUnit.getDataSource(), tableRouteUnit.getLogicTableName(), tableRouteUnit.getActualTableName(), tableRouteUnit.getEntityClass(),entity);
+        this(tableRouteUnit.getDataSourceName(), tableRouteUnit.getLogicTableName(), tableRouteUnit.getActualTableName(), tableRouteUnit.getEntityClass(),entity);
     }
     public EasyEntityTableRouteUnit(String dataSource, String logicTableName, String actualTableName, Class<?> entityClass, Object entity) {
         super(dataSource, logicTableName, actualTableName, entityClass,0);

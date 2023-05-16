@@ -16,6 +16,9 @@ import java.util.function.Function;
  * @author xuejiaming
  */
 public class ServiceCollectionImpl implements ServiceCollection {
+    /**
+     * 服务和服务描述者
+     */
     private final Map<Class<?>/*interface*/, ServiceDescriptor/*impl*/> services = new HashMap<>();
 
     @Override

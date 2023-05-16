@@ -2,6 +2,7 @@ package com.easy.query.core.sharding.rule.table.abstraction;
 
 import com.easy.query.core.expression.lambda.RouteFunction;
 import com.easy.query.core.enums.sharding.ShardingOperatorEnum;
+import com.easy.query.core.metadata.ActualTable;
 import com.easy.query.core.sharding.route.table.TableRouteUnit;
 import com.easy.query.core.sharding.rule.table.TableRouteRule;
 
@@ -25,24 +26,24 @@ public abstract class AbstractTableRouteRule<T> implements TableRouteRule<T> {
     }
 
     @Override
-    public RouteFunction<String> routeFilter(Object shardingValue, ShardingOperatorEnum shardingOperator, String propertyName,boolean isMainShardingProperty,boolean withEntity) {
+    public RouteFunction<ActualTable> routeFilter(Object shardingValue, ShardingOperatorEnum shardingOperator, String propertyName,boolean isMainShardingProperty,boolean withEntity) {
        if(isMainShardingProperty){
            return getRouteFilter(shardingValue,shardingOperator,withEntity);
        }
        return getExtraRouteFilter(shardingValue,shardingOperator,propertyName);
     }
 
-    protected abstract RouteFunction<String> getRouteFilter(Object shardingValue,ShardingOperatorEnum shardingOperator,boolean withEntity);
-    protected  RouteFunction<String> getExtraRouteFilter(Object shardingValue,ShardingOperatorEnum shardingOperator,String propertyName){
+    protected abstract RouteFunction<ActualTable> getRouteFilter(Object shardingValue,ShardingOperatorEnum shardingOperator,boolean withEntity);
+    protected  RouteFunction<ActualTable> getExtraRouteFilter(Object shardingValue,ShardingOperatorEnum shardingOperator,String propertyName){
         throw new UnsupportedOperationException(propertyName+" sharding route filter");
     }
     @Override
-    public Collection<String> beforeFilterTableName(Collection<String> allTableNames) {
-        return allTableNames;
+    public Collection<ActualTable> beforeFilterTableName(Collection<ActualTable> allActualTables) {
+        return allActualTables;
     }
 
     @Override
-    public Collection<TableRouteUnit> afterFilterTableName(Collection<String> allTableNames, Collection<String> beforeTableNames, Collection<TableRouteUnit> filterRouteUnits) {
+    public Collection<TableRouteUnit> afterFilterTableName(Collection<ActualTable> allActualTables, Collection<ActualTable> beforeActualTables, Collection<TableRouteUnit> filterRouteUnits) {
         return filterRouteUnits;
     }
 }

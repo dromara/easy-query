@@ -1,6 +1,9 @@
 package com.easy.query.core.sharding.initializer;
 
 import com.easy.query.core.metadata.EntityMetadata;
+import com.easy.query.core.sharding.common.DataSourceThenTableNameStringComparator;
+import com.easy.query.core.sharding.common.TableNameStringComparator;
+import com.easy.query.core.sharding.route.table.TableUnit;
 
 import java.util.Collection;
 import java.util.Comparator;
@@ -37,11 +40,12 @@ public class ShardingEntityBuilder<T> {
 
     /**
      * 实际表asc下的排序
-     *
+     * 默认提供{@link TableNameStringComparator} 忽略数据源仅以字符串形式比较表名
+     * 默认提供{@link DataSourceThenTableNameStringComparator} 先比较数据源如果一样在比较表名仅以字符串形式比较
      * @param defaultTableNameComparator 默认没有匹配orderby的时候也会将表进行当前排序器进行排序后再分批处理
      * @return
      */
-    public ShardingSequenceBuilder<T> ascSequenceConfigure(Comparator<String> defaultTableNameComparator) {
+    public ShardingSequenceBuilder<T> ascSequenceConfigure(Comparator<TableUnit> defaultTableNameComparator) {
         shardingInitOptionBuilder
                 .setDefaultTableNameComparator(defaultTableNameComparator);
         return new ShardingSequenceBuilder<>(this, shardingInitOptionBuilder, entityMetadata);

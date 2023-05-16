@@ -1,7 +1,8 @@
 package com.easy.query.test.sharding;
 
+import com.easy.query.core.sharding.route.table.TableUnit;
+
 import java.util.Comparator;
-import java.util.Objects;
 
 /**
  * create time 2023/5/11 22:09
@@ -9,19 +10,13 @@ import java.util.Objects;
  *
  * @author xuejiaming
  */
-public class DataSourceAndTableComparator implements Comparator<String> {
+public class DataSourceAndTableComparator implements Comparator<TableUnit> {
     @Override
-    public int compare(String o1, String o2) {
-        String[] sp1 = o1.split("\"");
-        String ds1 = sp1[0];
-        String[] sp2 = o2.split("\"");
-        String ds2 = sp2[0];
-        int i = ds1.compareToIgnoreCase(ds2);
+    public int compare(TableUnit o1, TableUnit o2) {
+        int i = o1.getDataSourceName().compareToIgnoreCase(o2.getDataSourceName());
         if(i!=0){
             return i;
         }
-        String table1 = sp1[1];
-        String table2 = sp2[1];
-        return table1.compareToIgnoreCase(table2);
+        return o1.getActualTableName().compareToIgnoreCase(o2.getActualTableName());
     }
 }

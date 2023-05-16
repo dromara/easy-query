@@ -1,5 +1,6 @@
 package com.easy.query.core.inject.impl;
 
+import com.easy.query.core.inject.BeanCurrentlyInjectMarker;
 import com.easy.query.core.inject.ServiceDescriptor;
 import com.easy.query.core.inject.ServiceProvider;
 import com.easy.query.core.util.ClassUtil;
@@ -19,21 +20,25 @@ public final class ServiceProviderImpl implements ServiceProvider {
     private final Map<Class<?>/*interface*/, ServiceDescriptor> servicesMapping;
     private final Map<Class<?>/*interface*/, Object> services;
 
+    private final BeanCurrentlyInjectMarker beanCurrentlyInjectMarker;
+
     public ServiceProviderImpl(Map<Class<?>/*interface*/, ServiceDescriptor> servicesMapping) {
         this.servicesMapping = servicesMapping;
+        this.beanCurrentlyInjectMarker = new BeanCurrentlyInjectMarker();
         services = new ConcurrentHashMap<>(servicesMapping.size() + 1);
-        services.put(ServiceProvider.class,this);
+        services.put(ServiceProvider.class, this);
     }
 
     public <T> T getService(Class<T> serviceType) {
-        Object service =  getServiceObject0(serviceType);
+        Object service = getServiceObject0(serviceType);
         return serviceType.cast(service);
     }
 
     public Object getServiceObject(Class<?> serviceType) {
         return getServiceObject0(serviceType);
     }
-    private Object getServiceObject0(Class<?> serviceType){
+
+    private Object getServiceObject0(Class<?> serviceType) {
         Object service = services.get(serviceType);
         if (service == null) {
             ServiceDescriptor serviceDescriptor = servicesMapping.get(serviceType);
@@ -41,16 +46,16 @@ public final class ServiceProviderImpl implements ServiceProvider {
                 throw new IllegalArgumentException("Service not found for type " + serviceType.getName());
             }
             Object o = resolveByServiceDescriptor(serviceDescriptor);
-            serviceDescriptor.resetBeanCurrently();
-           services.putIfAbsent(serviceType, o);//services.computeIfAbsent() jdk 1.8如果嵌套使用的情况下key的hashcode一样会造成死锁
+            beanCurrentlyInjectMarker.beanCreated(serviceDescriptor);
+            services.putIfAbsent(serviceType, o);//services.computeIfAbsent() jdk 1.8如果嵌套使用的情况下key的hashcode一样会造成死锁
 
-            service =services.get(serviceType);
+            service = services.get(serviceType);
         }
         return service;
     }
 
     private Object resolveByServiceDescriptor(ServiceDescriptor serviceDescriptor) {
-        serviceDescriptor.checkBeanCurrently();
+        beanCurrentlyInjectMarker.beanCreateMark(serviceDescriptor);
         if (serviceDescriptor.getImplementationInstance() != null) {
             return serviceDescriptor.getImplementationInstance();
         }

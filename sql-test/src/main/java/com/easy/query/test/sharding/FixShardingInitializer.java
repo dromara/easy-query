@@ -2,6 +2,7 @@ package com.easy.query.test.sharding;
 
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.metadata.EntityMetadata;
+import com.easy.query.core.sharding.common.TableNameStringComparator;
 import com.easy.query.core.sharding.initializer.ShardingInitializer;
 import com.easy.query.core.sharding.initializer.ShardingEntityBuilder;
 import com.easy.query.test.entity.TopicSharding;
@@ -52,7 +53,7 @@ public class FixShardingInitializer implements ShardingInitializer {
 
             ((ShardingEntityBuilder<TopicShardingTime>) builder).actualTableNameInit(initTables)
                     .paginationReverse(0.5,100)
-                    .ascSequenceConfigure(String::compareToIgnoreCase)
+                    .ascSequenceConfigure(new TableNameStringComparator())
                     .addPropertyDefaultUseDesc(TopicShardingTime::getCreateTime)
                     .defaultAffectedMethod(false,ExecuteMethodEnum.LIST,ExecuteMethodEnum.ANY,ExecuteMethodEnum.COUNT,ExecuteMethodEnum.FIRST)
                     .useMaxShardingQueryLimit(2,ExecuteMethodEnum.LIST,ExecuteMethodEnum.ANY,ExecuteMethodEnum.FIRST);

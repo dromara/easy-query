@@ -50,10 +50,10 @@ import java.util.Objects;
  */
 public class ShardingUtil {
 
-    public static RoutePredicateExpression getRoutePredicateExpression(PrepareParseResult prepareParseResult, TableAvailable table,
-                                                                       RouteRuleFilter routeRuleFilter, boolean shardingTableRoute) {
+    public static <T> RoutePredicateExpression<T> getRoutePredicateExpression(PrepareParseResult prepareParseResult, TableAvailable table,
+                                                                       RouteRuleFilter<T> routeRuleFilter, boolean shardingTableRoute) {
 
-        RoutePredicateDiscover routePredicateDiscover = new RoutePredicateDiscover(prepareParseResult, table, routeRuleFilter, shardingTableRoute);
+        RoutePredicateDiscover<T> routePredicateDiscover = new RoutePredicateDiscover<T>(prepareParseResult, table, routeRuleFilter, shardingTableRoute);
         return routePredicateDiscover.getRouteParseExpression();
     }
 

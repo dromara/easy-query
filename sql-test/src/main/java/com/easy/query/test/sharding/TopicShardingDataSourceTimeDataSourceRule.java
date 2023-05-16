@@ -21,25 +21,22 @@ public class TopicShardingDataSourceTimeDataSourceRule extends AbstractDataSourc
         switch (shardingOperator){
             case GREATER_THAN:
             case GREATER_THAN_OR_EQUAL:
-                return t-> dataSource.compareToIgnoreCase(getTableRemoveTable(t))<=0;
+                return ds-> dataSource.compareToIgnoreCase(ds)<=0;
             case LESS_THAN:
             {
                 //如果小于月初那么月初的表是不需要被查询的
                 LocalDateTime timeYearFirstDay = LocalDateTime.of(createTime.getYear(),1,1,0,0,0);
                 if(createTime.isEqual(timeYearFirstDay)){
-                    return t->dataSource.compareToIgnoreCase(getTableRemoveTable(t))>0;
+                    return ds->dataSource.compareToIgnoreCase(ds)>0;
                 }
-                return t->dataSource.compareToIgnoreCase(getTableRemoveTable(t))>=0;
+                return ds->dataSource.compareToIgnoreCase(ds)>=0;
             }
             case LESS_THAN_OR_EQUAL:
-                return t->dataSource.compareToIgnoreCase(getTableRemoveTable(t))>=0;
+                return ds->dataSource.compareToIgnoreCase(ds)>=0;
 
             case EQUAL:
-                return t->dataSource.compareToIgnoreCase(getTableRemoveTable(t))==0;
+                return ds->dataSource.compareToIgnoreCase(ds)==0;
             default:return t->true;
         }
-    }
-    private String getTableRemoveTable(String fullTableName) {
-        return fullTableName.split("\\.")[0];
     }
 }

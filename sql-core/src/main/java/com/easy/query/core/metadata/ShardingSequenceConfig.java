@@ -2,6 +2,7 @@ package com.easy.query.core.metadata;
 
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
+import com.easy.query.core.sharding.route.table.TableUnit;
 import com.easy.query.core.util.BitwiseUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 
@@ -18,7 +19,7 @@ import java.util.Set;
  * @author xuejiaming
  */
 public class ShardingSequenceConfig {
-    private final Comparator<String> tableComparator;
+    private final Comparator<TableUnit> tableComparator;
     private final int sequenceCompareMethods;
     private final int sequenceCompareAscMethods;
     private final int sequenceLimitMethods;
@@ -27,7 +28,7 @@ public class ShardingSequenceConfig {
     private final int maxShardingQueryLimit;
     private final Map<String, Boolean> sequenceProperties;
 
-    public ShardingSequenceConfig(Comparator<String> tableComparator,
+    public ShardingSequenceConfig(Comparator<TableUnit> tableComparator,
                                   Map<String, Boolean/*asc or desc*/> sequenceProperties,
                                   int maxShardingQueryLimit,
                                   int sequenceCompareMethods,
@@ -50,7 +51,7 @@ public class ShardingSequenceConfig {
         }
     }
 
-    public Comparator<String> getTableComparator() {
+    public Comparator<TableUnit> getTableComparator() {
         return tableComparator;
     }
 

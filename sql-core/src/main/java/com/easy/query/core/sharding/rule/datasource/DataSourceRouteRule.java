@@ -11,7 +11,7 @@ import java.util.Collection;
  *
  * @author xuejiaming
  */
-public interface DataSourceRouteRule<T> extends RouteRule, RouteRuleFilter {
+public interface DataSourceRouteRule<T> extends RouteRule, RouteRuleFilter<String> {
     Collection<String> beforeFilterDataSource(Collection<String> allDataSources);
     Collection<String> afterFilterDataSource(Collection<String> allDataSources, Collection<String> beforeDataSources, Collection<String> filterDataSources);
 

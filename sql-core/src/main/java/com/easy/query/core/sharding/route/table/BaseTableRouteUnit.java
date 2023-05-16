@@ -22,7 +22,7 @@ public class BaseTableRouteUnit implements TableRouteUnit{
         this.tableIndex = tableIndex;
     }
 
-    public String getDataSource() {
+    public String getDataSourceName() {
         return dataSource;
     }
 

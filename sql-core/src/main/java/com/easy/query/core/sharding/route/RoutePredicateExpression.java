@@ -8,38 +8,38 @@ import com.easy.query.core.expression.lambda.RouteFunction;
  *
  * @author xuejiaming
  */
-public class RoutePredicateExpression {
-    private static final RouteFunction<String> DEFAULT_TRUE_ROUTE_PREDICATE=v->true;
-    private static final RouteFunction<String> DEFAULT_FALSE_ROUTE_PREDICATE=v->true;
-    public static RoutePredicateExpression getDefault(){
-        return new RoutePredicateExpression();
+public class RoutePredicateExpression<T> {
+    private static final RouteFunction<?> DEFAULT_TRUE_ROUTE_PREDICATE=v->true;
+    private static final RouteFunction<?> DEFAULT_FALSE_ROUTE_PREDICATE=v->false;
+    public static  <TSource> RoutePredicateExpression<TSource> getDefault(){
+        return new RoutePredicateExpression<TSource>();
     }
-    public static RoutePredicateExpression getDefaultFalse(){
-        return new RoutePredicateExpression(DEFAULT_FALSE_ROUTE_PREDICATE);
+    public static <TSource> RoutePredicateExpression<TSource> getDefaultFalse(){
+        return new RoutePredicateExpression<>(DEFAULT_FALSE_ROUTE_PREDICATE);
     }
 
 
-    private final RouteFunction<String> routePredicate;
+    private final RouteFunction<T> routePredicate;
 
     public RoutePredicateExpression(){
         this(DEFAULT_TRUE_ROUTE_PREDICATE);
     }
-    public RoutePredicateExpression(RouteFunction<String> routePredicate){
+    public RoutePredicateExpression(RouteFunction routePredicate){
         this.routePredicate = routePredicate;
     }
-    public RouteFunction<String> getRoutePredicate() {
+    public RouteFunction<T> getRoutePredicate() {
         return routePredicate;
     }
 
-    public RoutePredicateExpression and(RoutePredicateExpression routePredicateExpression){
-        RouteFunction<String> routePredicate = routePredicateExpression.getRoutePredicate();
-        RouteFunction<String> func=v->this.routePredicate.apply(v)&& routePredicate.apply(v);
-        return new RoutePredicateExpression(func);
+    public RoutePredicateExpression<T> and(RoutePredicateExpression<T> routePredicateExpression){
+        RouteFunction<T> routePredicate = routePredicateExpression.getRoutePredicate();
+        RouteFunction<T> func=v->this.routePredicate.apply(v)&& routePredicate.apply(v);
+        return new RoutePredicateExpression<T>(func);
     }
-    public RoutePredicateExpression or(RoutePredicateExpression routePredicateExpression){
+    public RoutePredicateExpression<T> or(RoutePredicateExpression<T> routePredicateExpression){
 
-        RouteFunction<String> routePredicate = routePredicateExpression.getRoutePredicate();
-        RouteFunction<String> func=v->this.routePredicate.apply(v)|| routePredicate.apply(v);
-        return new RoutePredicateExpression(func);
+        RouteFunction<T> routePredicate = routePredicateExpression.getRoutePredicate();
+        RouteFunction<T> func=v->this.routePredicate.apply(v)|| routePredicate.apply(v);
+        return new RoutePredicateExpression<T>(func);
     }
 }

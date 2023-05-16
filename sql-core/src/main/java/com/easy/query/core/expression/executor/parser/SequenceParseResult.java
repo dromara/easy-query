@@ -2,6 +2,7 @@ package com.easy.query.core.expression.executor.parser;
 
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
+import com.easy.query.core.sharding.route.table.TableUnit;
 
 import java.util.Comparator;
 
@@ -14,12 +15,12 @@ import java.util.Comparator;
 public class SequenceParseResult {
 
     private final TableAvailable table;
-    private final Comparator<String> tableComparator;
+    private final Comparator<TableUnit> tableComparator;
     private final boolean reverse;
     private final ConnectionModeEnum connectionMode;
     private final int connectionsLimit;
 
-    public SequenceParseResult(TableAvailable table, Comparator<String> tableComparator, boolean reverse,ConnectionModeEnum connectionMode, int connectionsLimit){
+    public SequenceParseResult(TableAvailable table, Comparator<TableUnit> tableComparator, boolean reverse,ConnectionModeEnum connectionMode, int connectionsLimit){
         this.table = table;
         this.tableComparator = tableComparator;
 
@@ -32,7 +33,7 @@ public class SequenceParseResult {
         return table;
     }
 
-    public Comparator<String> getTableComparator() {
+    public Comparator<TableUnit> getTableComparator() {
         return tableComparator;
     }
 

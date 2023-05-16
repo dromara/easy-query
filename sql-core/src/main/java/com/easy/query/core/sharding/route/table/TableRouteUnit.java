@@ -8,12 +8,7 @@ import java.util.Objects;
  *
  * @author xuejiaming
  */
-public interface TableRouteUnit {
-     String getDataSource();
-
-     String getLogicTableName();
-
-     String getActualTableName();
+public interface TableRouteUnit extends TableUnit {
 
      Class<?> getEntityClass();
      int getTableIndex();

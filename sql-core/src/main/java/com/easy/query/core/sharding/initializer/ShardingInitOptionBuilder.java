@@ -3,6 +3,7 @@ package com.easy.query.core.sharding.initializer;
 
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
+import com.easy.query.core.sharding.route.table.TableUnit;
 
 import java.util.Collection;
 import java.util.Comparator;
@@ -19,7 +20,7 @@ public class ShardingInitOptionBuilder {
     private Map<String, Collection<String>> actualTableNames;
     private double reverseFactor = 0;
     private long minReverseTotal = 0;
-    private Comparator<String> defaultTableNameComparator;
+    private Comparator<TableUnit> defaultTableNameComparator;
     private Map<String, Boolean/*asc or desc*/> sequenceProperties = new HashMap<>();
     private int maxShardingQueryLimit = 0;
     private int sequenceCompareMethods = ExecuteMethodEnum.UNKNOWN.getCode();
@@ -52,11 +53,11 @@ public class ShardingInitOptionBuilder {
         this.minReverseTotal = minReverseTotal;
     }
 
-    public Comparator<String> getDefaultTableNameComparator() {
+    public Comparator<TableUnit> getDefaultTableNameComparator() {
         return defaultTableNameComparator;
     }
 
-    public void setDefaultTableNameComparator(Comparator<String> defaultTableNameComparator) {
+    public void setDefaultTableNameComparator(Comparator<TableUnit> defaultTableNameComparator) {
         this.defaultTableNameComparator = defaultTableNameComparator;
     }
 

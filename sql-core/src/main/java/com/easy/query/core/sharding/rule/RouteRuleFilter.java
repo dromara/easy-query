@@ -2,6 +2,7 @@ package com.easy.query.core.sharding.rule;
 
 import com.easy.query.core.expression.lambda.RouteFunction;
 import com.easy.query.core.enums.sharding.ShardingOperatorEnum;
+import com.easy.query.core.metadata.ActualTable;
 
 
 /**
@@ -10,6 +11,6 @@ import com.easy.query.core.enums.sharding.ShardingOperatorEnum;
  *
  * @author xuejiaming
  */
-public interface RouteRuleFilter {
-    RouteFunction<String> routeFilter(Object shardingValue, ShardingOperatorEnum shardingOperator, String propertyName, boolean isMainShardingProperty,boolean withEntity);
+public interface RouteRuleFilter<T> {
+    RouteFunction<T> routeFilter(Object shardingValue, ShardingOperatorEnum shardingOperator, String propertyName, boolean isMainShardingProperty, boolean withEntity);
 }

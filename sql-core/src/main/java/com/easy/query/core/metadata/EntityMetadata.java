@@ -19,6 +19,7 @@ import com.easy.query.core.basic.plugin.logicdel.EasyLogicDeleteStrategy;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.sharding.initializer.ShardingInitializer;
 import com.easy.query.core.sharding.initializer.ShardingInitOption;
+import com.easy.query.core.sharding.route.table.TableUnit;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.StringUtil;
 import com.easy.query.core.common.LinkedCaseInsensitiveMap;
@@ -69,7 +70,7 @@ public class EntityMetadata {
     private final List<String/*column name*/> incrementColumns = new ArrayList<>(4);
     private final LinkedCaseInsensitiveMap<String> column2PropertyMap = new LinkedCaseInsensitiveMap<>(Locale.ENGLISH);
 
-    private final Set<String> tableNames = new LinkedHashSet<>();
+    private final Set<ActualTable> actualTables = new LinkedHashSet<>();
     private final Set<String> dataSources = new LinkedHashSet<>();
 
     public EntityMetadata(Class<?> entityClass) {
@@ -252,7 +253,7 @@ public class EntityMetadata {
         }
         ShardingSequenceConfig shardingSequenceConfig=null;
         //如果有配置
-        Comparator<String> defaultTableNameComparator = shardingInitOption.getDefaultTableNameComparator();
+        Comparator<TableUnit> defaultTableNameComparator = shardingInitOption.getDefaultTableNameComparator();
         if (defaultTableNameComparator != null) {
 
             shardingSequenceConfig=new ShardingSequenceConfig(defaultTableNameComparator
@@ -472,8 +473,8 @@ public class EntityMetadata {
         shardingTablePropertyNames.add(shardingExtraTablePropertyName);
     }
 
-    public Collection<String> getTableNames() {
-        return Collections.unmodifiableCollection(tableNames);
+    public Collection<ActualTable> getActualTables() {
+        return Collections.unmodifiableCollection(actualTables);
     }
 
     public void addActualTableWithDataSource(String dataSource, String actualTableName) {
@@ -484,8 +485,7 @@ public class EntityMetadata {
             throw new IllegalArgumentException("actual table name");
         }
         dataSources.add(dataSource);
-        String tableName = dataSource + "." + actualTableName;
-        tableNames.add(tableName);
+        actualTables.add(new ActualTable(dataSource,actualTableName));
     }
 
     public Collection<String> getDataSources() {

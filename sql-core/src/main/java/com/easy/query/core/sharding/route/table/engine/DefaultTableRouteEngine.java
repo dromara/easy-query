@@ -11,6 +11,7 @@ import com.easy.query.core.sharding.route.ShardingRouteResult;
 import com.easy.query.core.sharding.route.manager.TableRouteManager;
 import com.easy.query.core.sharding.route.datasource.engine.DataSourceRouteResult;
 import com.easy.query.core.sharding.route.table.TableRouteUnit;
+import com.easy.query.core.sharding.route.table.TableUnit;
 import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.ArrayList;
@@ -55,7 +56,7 @@ public class DefaultTableRouteEngine implements TableRouteEngine {
 //                if (Objects.equals(shardingRouteUnit.getLogicTableName(),shardingRouteUnit.getActualTableName())) {
 //                    continue;
 //                }
-                String dataSource = shardingRouteUnit.getDataSource();
+                String dataSource = shardingRouteUnit.getDataSourceName();
                 Map<Class<?>, Set<TableRouteUnit>> tableNamMaps = routeMaps.computeIfAbsent(dataSource, o -> new HashMap<>());
                 Set<TableRouteUnit> tableRouteUnits = tableNamMaps.computeIfAbsent(shardingTable.getEntityClass(), o -> new HashSet<>());
                 tableRouteUnits.add(shardingRouteUnit);
@@ -118,12 +119,12 @@ public class DefaultTableRouteEngine implements TableRouteEngine {
                     RouteUnit first = EasyCollectionUtil.first(routeUnits);
                     int i = getCompareRouteUnitIndex(first, table);
                     if (i >= 0) {
-                        Comparator<String> tableComparator = sequenceOrderPrepareParseResult.getTableComparator();
+                        Comparator<TableUnit> tableComparator = sequenceOrderPrepareParseResult.getTableComparator();
                         int compareFactor = sequenceOrderPrepareParseResult.isReverse() ? -1 : 1;
                         routeUnits.sort((c1, c2) -> {
                             TableRouteUnit tableRouteUnit1 = c1.getTableRouteUnits().get(i);
                             TableRouteUnit tableRouteUnit2 = c2.getTableRouteUnits().get(i);
-                            return compareFactor*tableComparator.compare(tableRouteUnit1.getDataSource() + "." + tableRouteUnit1.getActualTableName(), tableRouteUnit2.getDataSource() + "." + tableRouteUnit2.getActualTableName());
+                            return compareFactor*tableComparator.compare(tableRouteUnit1,tableRouteUnit2);
                         });
                         sequenceQuery = true;
                     }

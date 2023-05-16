@@ -24,10 +24,10 @@ public abstract class AbstractDataSourceRouteRule<T> implements DataSourceRouteR
         return clazz;
     }
     @Override
-    public RouteFunction<String> routeFilter(Object shardingValue, ShardingOperatorEnum shardingOperator, String propertyName, boolean isMainShardingProperty,boolean withEntity) {
-       if(isMainShardingProperty){
-           return getRouteFilter(shardingValue,shardingOperator,withEntity);
-       }
+    public RouteFunction<String> routeFilter(Object shardingValue, ShardingOperatorEnum shardingOperator, String propertyName, boolean isMainShardingProperty, boolean withEntity) {
+        if(isMainShardingProperty){
+            return getRouteFilter(shardingValue,shardingOperator,withEntity);
+        }
         return getExtraRouteFilter(shardingValue,shardingOperator,propertyName);
     }
     protected abstract RouteFunction<String> getRouteFilter(Object shardingValue,ShardingOperatorEnum shardingOperator,boolean withEntity);
