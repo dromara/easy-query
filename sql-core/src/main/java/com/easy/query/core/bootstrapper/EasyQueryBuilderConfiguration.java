@@ -26,6 +26,8 @@ import com.easy.query.core.configuration.EasyQueryOptionBuilder;
 import com.easy.query.core.datasource.DataSourceManager;
 import com.easy.query.core.datasource.DefaultDataSourceManager;
 import com.easy.query.core.datasource.replica.DefaultReplicaDataSourceManager;
+import com.easy.query.core.expression.func.ColumnFunctionFactory;
+import com.easy.query.core.expression.func.DefaultColumnFunctionFactory;
 import com.easy.query.core.inject.ServiceCollection;
 import com.easy.query.core.inject.ServiceProvider;
 import com.easy.query.core.inject.impl.ServiceCollectionImpl;
@@ -115,6 +117,7 @@ public class EasyQueryBuilderConfiguration {
                 .replaceService(EasyConnectionFactory.class, DefaultEasyConnectionFactory.class)
                 .replaceService(DataSourceManager.class, DefaultDataSourceManager.class)
                 .replaceService(ShardingQueryCountManager.class, DefaultShardingQueryCountManager.class)
+                .replaceService(ColumnFunctionFactory.class, DefaultColumnFunctionFactory.class)
                 .replaceService(EasyQuery.class, DefaultEasyQuery.class);
     }
 

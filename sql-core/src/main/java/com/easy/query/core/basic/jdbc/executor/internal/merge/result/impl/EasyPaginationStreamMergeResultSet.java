@@ -22,46 +22,46 @@ import java.sql.Timestamp;
  */
 public class EasyPaginationStreamMergeResultSet implements ShardingStreamResultSet {
     private final StreamMergeContext streamMergeContext;
-    private final StreamResultSet streamResult;
+    private final StreamResultSet streamResultSet;
     private final long offset;
     private final long rows;
     private  long realOffset;
     private  long realRows;
     private boolean closed=false;
 
-    public EasyPaginationStreamMergeResultSet(StreamMergeContext streamMergeContext, StreamResultSet streamResult) throws SQLException {
-        this(streamMergeContext,streamResult,streamMergeContext.getMergeOffset(),streamMergeContext.getMergeRows());
+    public EasyPaginationStreamMergeResultSet(StreamMergeContext streamMergeContext, StreamResultSet streamResultSet) throws SQLException {
+        this(streamMergeContext,streamResultSet,streamMergeContext.getMergeOffset(),streamMergeContext.getMergeRows());
 
     }
-    public EasyPaginationStreamMergeResultSet(StreamMergeContext streamMergeContext, StreamResultSet streamResult, long offset, long rows) throws SQLException {
+    public EasyPaginationStreamMergeResultSet(StreamMergeContext streamMergeContext, StreamResultSet streamResultSet, long offset, long rows) throws SQLException {
 
         this.streamMergeContext = streamMergeContext;
         this.offset = offset;
         this.rows = rows;
         this.realOffset=0;
         this.realRows=0;
-        this.streamResult=streamResult;
+        this.streamResultSet =streamResultSet;
     }
     @Override
     public boolean hasElement() {
-        return streamResult.hasElement();
+        return streamResultSet.hasElement();
     }
 
     @Override
     public boolean skipFirst() {
-        return streamResult.skipFirst();
+        return streamResultSet.skipFirst();
     }
 
     @Override
     public boolean next() throws SQLException {
         while(offset>realOffset){
-            boolean has = streamResult.next();
+            boolean has = streamResultSet.next();
             realOffset++;
             if(!has){
                 return false;
             }
         }
-        boolean next = streamResult.next();
+        boolean next = streamResultSet.next();
         if(next){
             if(rows>0){
                 realRows++;
@@ -75,97 +75,97 @@ public class EasyPaginationStreamMergeResultSet implements ShardingStreamResultS
 
     @Override
     public Object getObject(int columnIndex) throws SQLException {
-        return streamResult.getObject(columnIndex);
+        return streamResultSet.getObject(columnIndex);
     }
 
     @Override
     public boolean wasNull() throws SQLException {
-        return streamResult.wasNull();
+        return streamResultSet.wasNull();
     }
 
     @Override
     public ResultSetMetaData getMetaData() throws SQLException {
-        return streamResult.getMetaData();
+        return streamResultSet.getMetaData();
     }
 
     @Override
     public SQLXML getSQLXML(int columnIndex) throws SQLException {
-        return streamResult.getSQLXML(columnIndex);
+        return streamResultSet.getSQLXML(columnIndex);
     }
 
     @Override
     public Timestamp getTimestamp(int columnIndex) throws SQLException {
-        return streamResult.getTimestamp(columnIndex);
+        return streamResultSet.getTimestamp(columnIndex);
     }
 
     @Override
     public Time getTime(int columnIndex) throws SQLException {
-        return streamResult.getTime(columnIndex);
+        return streamResultSet.getTime(columnIndex);
     }
 
     @Override
     public String getString(int columnIndex) throws SQLException {
-        return streamResult.getString(columnIndex);
+        return streamResultSet.getString(columnIndex);
     }
 
     @Override
     public Date getDate(int columnIndex) throws SQLException {
-        return streamResult.getDate(columnIndex);
+        return streamResultSet.getDate(columnIndex);
     }
 
     @Override
     public short getShort(int columnIndex) throws SQLException {
-        return streamResult.getShort(columnIndex);
+        return streamResultSet.getShort(columnIndex);
     }
 
     @Override
     public long getLong(int columnIndex) throws SQLException {
-        return streamResult.getLong(columnIndex);
+        return streamResultSet.getLong(columnIndex);
     }
 
     @Override
     public int getInt(int columnIndex) throws SQLException {
-        return streamResult.getInt(columnIndex);
+        return streamResultSet.getInt(columnIndex);
     }
 
     @Override
     public float getFloat(int columnIndex) throws SQLException {
-        return streamResult.getFloat(columnIndex);
+        return streamResultSet.getFloat(columnIndex);
     }
 
     @Override
     public double getDouble(int columnIndex) throws SQLException {
-        return streamResult.getDouble(columnIndex);
+        return streamResultSet.getDouble(columnIndex);
     }
 
     @Override
     public Clob getClob(int columnIndex) throws SQLException {
-        return streamResult.getClob(columnIndex);
+        return streamResultSet.getClob(columnIndex);
     }
 
     @Override
     public byte getByte(int columnIndex) throws SQLException {
-        return streamResult.getByte(columnIndex);
+        return streamResultSet.getByte(columnIndex);
     }
 
     @Override
     public byte[] getBytes(int columnIndex) throws SQLException {
-        return streamResult.getBytes(columnIndex);
+        return streamResultSet.getBytes(columnIndex);
     }
 
     @Override
     public boolean getBoolean(int columnIndex) throws SQLException {
-        return streamResult.getBoolean(columnIndex);
+        return streamResultSet.getBoolean(columnIndex);
     }
 
     @Override
     public Blob getBlob(int columnIndex) throws SQLException {
-        return streamResult.getBlob(columnIndex);
+        return streamResultSet.getBlob(columnIndex);
     }
 
     @Override
     public BigDecimal getBigDecimal(int columnIndex) throws SQLException {
-        return streamResult.getBigDecimal(columnIndex);
+        return streamResultSet.getBigDecimal(columnIndex);
     }
 
     @Override
@@ -174,6 +174,6 @@ public class EasyPaginationStreamMergeResultSet implements ShardingStreamResultS
             return;
         }
         closed = true;
-        streamResult.close();
+        streamResultSet.close();
     }
 }

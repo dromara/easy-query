@@ -1,6 +1,6 @@
 package com.easy.query.core.sharding.rewrite;
 
-import com.easy.query.core.basic.jdbc.executor.internal.merge.result.aggregation.AggregationType;
+import com.easy.query.core.expression.func.AggregationType;
 
 /**
  * create time 2023/4/30 23:10

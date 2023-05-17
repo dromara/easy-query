@@ -1,7 +1,7 @@
 package com.easy.query.test.mytest;
 
-import com.easy.query.core.enums.EasyFunc;
-import com.easy.query.core.basic.jdbc.executor.internal.merge.result.aggregation.AggregationType;
+import com.easy.query.core.expression.func.ColumnFunction;
+import com.easy.query.core.expression.func.AggregationType;
 
 /**
  * create time 2023/3/30 22:13
@@ -9,7 +9,7 @@ import com.easy.query.core.basic.jdbc.executor.internal.merge.result.aggregation
  *
  * @author xuejiaming
  */
-public enum IfNullEasyFunc implements EasyFunc {
+public enum IfNullEasyFunc implements ColumnFunction {
     IfNull("IfNull(%s,'')",AggregationType.UNKNOWN);
     private final String format;
     private final AggregationType aggregationType;

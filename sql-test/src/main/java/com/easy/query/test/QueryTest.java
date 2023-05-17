@@ -1,9 +1,8 @@
 package com.easy.query.test;
 
-import com.easy.query.test.BaseTest;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.api.select.Queryable;
-import com.easy.query.core.enums.EasyAggregate;
+import com.easy.query.test.mytest.EasyAggregate;
 import com.easy.query.core.enums.SqlPredicateCompareEnum;
 import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;

@@ -48,7 +48,7 @@ public class DefaultEntityExpressionExecutor implements EntityExpressionExecutor
 
         try (JdbcCommand<QueryExecuteResult> command = getSqlQueryJdbcCommand(executorContext, executionContext);
              QueryExecuteResult executeResult = command.execute()) {
-            return StreamResultUtil.mapTo(executorContext, executeResult.getStreamResult(), clazz);
+            return StreamResultUtil.mapTo(executorContext, executeResult.getStreamResultSet(), clazz);
         } catch (Exception e) {
             throw new EasyQueryException(e);
         }
@@ -73,7 +73,7 @@ public class DefaultEntityExpressionExecutor implements EntityExpressionExecutor
 
         try (JdbcCommand<QueryExecuteResult> command = getQueryEntityJdbcCommand(executorContext, executionContext,(EasyQueryPrepareParseResult)prepareParseResult);
              QueryExecuteResult executeResult = command.execute()) {
-            return StreamResultUtil.mapTo(executorContext, executeResult.getStreamResult(), clazz);
+            return StreamResultUtil.mapTo(executorContext, executeResult.getStreamResultSet(), clazz);
         } catch (Exception e) {
             throw new EasyQueryException(e);
         }

@@ -2,6 +2,8 @@ package com.easy.query.core.basic.jdbc.executor.internal.merge.result.impl;
 
 import com.easy.query.core.basic.jdbc.executor.internal.merge.result.JdbcShardingStreamResultSet;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.result.ShardingStreamResultSet;
+import com.easy.query.core.logging.Log;
+import com.easy.query.core.logging.LogFactory;
 
 import java.math.BigDecimal;
 import java.sql.Blob;
@@ -22,6 +24,7 @@ import java.sql.Timestamp;
  * @author xuejiaming
  */
 public final class EasyShardingStreamResultSet implements ShardingStreamResultSet, JdbcShardingStreamResultSet {
+    private static final Log log= LogFactory.getLog(EasyShardingStreamResultSet.class);
     private final ResultSet resultSet;
     private final PreparedStatement preparedStatement;
     private boolean hasElement;
@@ -162,7 +165,15 @@ public final class EasyShardingStreamResultSet implements ShardingStreamResultSe
             return;
         }
         closed = true;
-        resultSet.close();
-        preparedStatement.close();
+        try {
+            resultSet.close();
+        }catch (SQLException ex){
+            log.error("result set close error.",ex);
+        }
+        try {
+            preparedStatement.close();
+        }catch (SQLException ex){
+            log.error("prepared statement close error.",ex);
+        }
     }
 }

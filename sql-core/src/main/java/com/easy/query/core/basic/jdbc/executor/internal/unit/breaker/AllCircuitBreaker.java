@@ -30,7 +30,7 @@ public final class AllCircuitBreaker extends AbstractCircuitBreaker{
     private <TResult> boolean doTerminated(StreamMergeContext streamMergeContext,Collection<TResult> results) {
         return EasyCollectionUtil.isEmpty(results)||EasyCollectionUtil.any(results,o->{
             if(o instanceof QueryExecuteResult){
-                StreamResultSet resultSet = ((QueryExecuteResult) o).getStreamResult();
+                StreamResultSet resultSet = ((QueryExecuteResult) o).getStreamResultSet();
                 if(resultSet.hasElement()){
                     try {
                         return resultSet.getLong(1)==0L;

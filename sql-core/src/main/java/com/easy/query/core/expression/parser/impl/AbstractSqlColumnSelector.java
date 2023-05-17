@@ -1,5 +1,6 @@
 package com.easy.query.core.expression.parser.impl;
 
+import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
@@ -33,13 +34,20 @@ public class AbstractSqlColumnSelector<T1, TChain> {
     protected final EntityExpressionBuilder entityExpressionBuilder;
     protected final TableAvailable table;
     protected final SqlBuilderSegment sqlSegmentBuilder;
+    protected final EasyQueryRuntimeContext runtimeContext;
 
     public AbstractSqlColumnSelector(int index, EntityExpressionBuilder entityExpressionBuilder, SqlBuilderSegment sqlSegmentBuilder) {
         this.index = index;
 
         this.entityExpressionBuilder = entityExpressionBuilder;
+        this.runtimeContext=entityExpressionBuilder.getRuntimeContext();
         this.table=entityExpressionBuilder.getTable(index).getEntityTable();
         this.sqlSegmentBuilder = sqlSegmentBuilder;
+    }
+
+
+    public EasyQueryRuntimeContext getRuntimeContext() {
+        return runtimeContext;
     }
 
     public TChain column(Property<T1, ?> column) {

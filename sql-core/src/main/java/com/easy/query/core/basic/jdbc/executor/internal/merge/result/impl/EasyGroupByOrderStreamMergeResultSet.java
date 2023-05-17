@@ -6,6 +6,8 @@ import com.easy.query.core.basic.jdbc.executor.internal.merge.segment.PropertyGr
 import com.easy.query.core.exception.EasyQuerySQLException;
 import com.easy.query.core.expression.segment.AggregationColumnSegment;
 import com.easy.query.core.expression.segment.SqlSegment;
+import com.easy.query.core.logging.Log;
+import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.sharding.context.StreamMergeContext;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.result.ShardingStreamResultSet;
 import com.easy.query.core.util.EasyCollectionUtil;
@@ -33,8 +35,9 @@ import java.util.Queue;
  * @author xuejiaming
  */
 public class EasyGroupByOrderStreamMergeResultSet implements ShardingStreamResultSet {
+    private static final Log log= LogFactory.getLog(EasyGroupByOrderStreamMergeResultSet.class);
     private final StreamMergeContext streamMergeContext;
-    private final List<StreamResultSet> streamResults;
+    private final List<StreamResultSet> streamResultSets;
     private final Queue<StreamResultSet> queue;
     private final ResultSetMetaData resultSetMetaData;
     private StreamResultSet currentStreamResult;
@@ -48,11 +51,11 @@ public class EasyGroupByOrderStreamMergeResultSet implements ShardingStreamResul
     private boolean wasNull;
     private boolean closed = false;
 
-    public EasyGroupByOrderStreamMergeResultSet(StreamMergeContext streamMergeContext, List<StreamResultSet> streamResults) throws SQLException {
+    public EasyGroupByOrderStreamMergeResultSet(StreamMergeContext streamMergeContext, List<StreamResultSet> streamResultSets) throws SQLException {
 
         this.streamMergeContext = streamMergeContext;
-        this.streamResults = streamResults;
-        this.queue = new PriorityQueue<>(streamResults.size());
+        this.streamResultSets = streamResultSets;
+        this.queue = new PriorityQueue<>(streamResultSets.size());
         this.skipFirst = true;
         setOrderStreamResult();
         this.resultSetMetaData = getResultSetMetaData();
@@ -70,14 +73,14 @@ public class EasyGroupByOrderStreamMergeResultSet implements ShardingStreamResul
     }
 
     private void setOrderStreamResult() throws SQLException {
-        for (StreamResultSet streamResult : streamResults) {
+        for (StreamResultSet streamResult : streamResultSets) {
             EasyOrderStreamMergeResultSet easyOrderStreamMergeResult = new EasyOrderStreamMergeResultSet(streamMergeContext, streamResult);
             if (easyOrderStreamMergeResult.hasElement()) {
                 easyOrderStreamMergeResult.skipFirst();
                 queue.offer(easyOrderStreamMergeResult);
             }
         }
-        currentStreamResult = queue.isEmpty() ? EasyCollectionUtil.firstOrNull(streamResults) : queue.peek();
+        currentStreamResult = queue.isEmpty() ? EasyCollectionUtil.firstOrNull(streamResultSets) : queue.peek();
         currentGroupValues = queue.isEmpty() ? Collections.emptyList() : new GroupValue(streamMergeContext, currentStreamResult).getGroupValues();
     }
 
@@ -370,8 +373,12 @@ public class EasyGroupByOrderStreamMergeResultSet implements ShardingStreamResul
         }
         closed = true;
         currentRow.clear();
-        for (StreamResultSet streamResult : streamResults) {
-            streamResult.close();
+        for (StreamResultSet streamResultSet : streamResultSets) {
+            try {
+                streamResultSet.close();
+            }catch (Exception exception){
+                log.error("close stream result set error.",exception);
+            }
         }
     }
 }

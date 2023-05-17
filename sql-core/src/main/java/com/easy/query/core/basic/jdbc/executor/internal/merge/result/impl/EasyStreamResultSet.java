@@ -1,6 +1,8 @@
 package com.easy.query.core.basic.jdbc.executor.internal.merge.result.impl;
 
 import com.easy.query.core.basic.jdbc.executor.internal.merge.result.StreamResultSet;
+import com.easy.query.core.logging.Log;
+import com.easy.query.core.logging.LogFactory;
 
 import java.math.BigDecimal;
 import java.sql.Blob;
@@ -21,6 +23,7 @@ import java.sql.Timestamp;
  * @author xuejiaming
  */
 public final class EasyStreamResultSet implements StreamResultSet {
+    private static final Log log= LogFactory.getLog(EasyStreamResultSet.class);
     private final ResultSet resultSet;
     private final PreparedStatement preparedStatement;
     private boolean closed=false;
@@ -148,7 +151,15 @@ public final class EasyStreamResultSet implements StreamResultSet {
             return;
         }
         closed = true;
-        resultSet.close();
-        preparedStatement.close();
+        try {
+            resultSet.close();
+        }catch (SQLException ex){
+            log.error("result set close error.",ex);
+        }
+        try {
+            preparedStatement.close();
+        }catch (SQLException ex){
+            log.error("prepared statement close error.",ex);
+        }
     }
 }

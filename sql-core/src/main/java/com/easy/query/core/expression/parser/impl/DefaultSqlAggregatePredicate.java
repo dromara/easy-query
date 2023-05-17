@@ -1,6 +1,7 @@
 package com.easy.query.core.expression.parser.impl;
 
-import com.easy.query.core.enums.EasyFunc;
+import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
+import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.SqlExpression;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
@@ -14,14 +15,15 @@ import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.util.LambdaUtil;
 
 /**
+ * @author xuejiaming
  * @FileName: DefaultSqlAggregatePredicate.java
  * @Description: 文件说明
  * @Date: 2023/2/18 22:41
- * @author xuejiaming
  */
 public class DefaultSqlAggregatePredicate<T1> implements SqlAggregatePredicate<T1> {
     protected final int index;
     protected final EntityExpressionBuilder entityExpressionBuilder;
+    protected final EasyQueryRuntimeContext runtimeContext;
     protected final PredicateSegment rootPredicateSegment;
     protected final TableAvailable table;
     protected PredicateSegment nextPredicateSegment;
@@ -29,10 +31,12 @@ public class DefaultSqlAggregatePredicate<T1> implements SqlAggregatePredicate<T
     public DefaultSqlAggregatePredicate(int index, EntityExpressionBuilder entityExpressionBuilder, PredicateSegment predicateSegment) {
         this.index = index;
         this.entityExpressionBuilder = entityExpressionBuilder;
+        this.runtimeContext = entityExpressionBuilder.getRuntimeContext();
         this.table = entityExpressionBuilder.getTable(index).getEntityTable();
         this.rootPredicateSegment = predicateSegment;
         this.nextPredicateSegment = new AndPredicateSegment();
     }
+
     protected void nextAnd() {
         this.rootPredicateSegment.addPredicateSegment(nextPredicateSegment);
         this.nextPredicateSegment = new AndPredicateSegment();
@@ -44,10 +48,15 @@ public class DefaultSqlAggregatePredicate<T1> implements SqlAggregatePredicate<T
     }
 
     @Override
-    public SqlAggregatePredicate<T1> func(boolean condition, EasyFunc easyAggregate, Property<T1, ?> column, SqlPredicateCompare compare, Object val) {
+    public EasyQueryRuntimeContext getRuntimeContext() {
+        return runtimeContext;
+    }
+
+    @Override
+    public SqlAggregatePredicate<T1> func(boolean condition, ColumnFunction columnFunction, Property<T1, ?> column, SqlPredicateCompare compare, Object val) {
         if (condition) {
             String propertyName = LambdaUtil.getPropertyName(column);
-            nextPredicateSegment.setPredicate(new FuncColumnValuePredicate(getTable(),easyAggregate, propertyName, val, compare, entityExpressionBuilder.getRuntimeContext()));
+            nextPredicateSegment.setPredicate(new FuncColumnValuePredicate(getTable(), columnFunction, propertyName, val, compare, runtimeContext));
             nextAnd();
         }
         return this;

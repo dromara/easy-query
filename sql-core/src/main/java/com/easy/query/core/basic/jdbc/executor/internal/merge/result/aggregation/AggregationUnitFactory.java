@@ -1,5 +1,7 @@
 package com.easy.query.core.basic.jdbc.executor.internal.merge.result.aggregation;
 
+import com.easy.query.core.expression.func.AggregationType;
+
 /**
  * create time 2023/4/28 21:03
  * 文件说明

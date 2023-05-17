@@ -266,7 +266,7 @@ public class ClassUtil {
         if (result == null) {
             return null;
         }
-        Class type = result.getClass();
+        Class<?> type = result.getClass();
         if (type == result) {
             //大多数情况，都是这样
             return result;

@@ -12,19 +12,19 @@ import com.easy.query.core.basic.jdbc.executor.internal.merge.result.impl.EmptyS
  */
 public class DefaultQueryExecuteResult implements QueryExecuteResult {
     public static final QueryExecuteResult EMPTY=new DefaultQueryExecuteResult(EmptyStreamResultSet.getInstance());
-    private final StreamResultSet streamResult;
+    private final StreamResultSet streamResultSet;
 
-    public DefaultQueryExecuteResult(StreamResultSet streamResult){
-        this.streamResult = streamResult;
+    public DefaultQueryExecuteResult(StreamResultSet streamResultSet){
+        this.streamResultSet = streamResultSet;
     }
 
     @Override
-    public StreamResultSet getStreamResult() {
-        return streamResult;
+    public StreamResultSet getStreamResultSet() {
+        return streamResultSet;
     }
 
     @Override
     public void close() throws Exception {
-        streamResult.close();
+        streamResultSet.close();
     }
 }

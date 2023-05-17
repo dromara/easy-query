@@ -1,5 +1,7 @@
 package com.easy.query.core.basic.jdbc.executor.internal.merge.result.impl;
 
+import com.easy.query.core.logging.Log;
+import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.sharding.context.StreamMergeContext;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.result.ShardingStreamResultSet;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.result.StreamResultSet;
@@ -26,33 +28,33 @@ import java.util.Queue;
  * @author xuejiaming
  */
 public class EasyMultiOrderStreamMergeResultSet implements ShardingStreamResultSet {
-
+private static final Log log= LogFactory.getLog(EasyMultiOrderStreamMergeResultSet.class);
     private final StreamMergeContext streamMergeContext;
-    private final List<StreamResultSet> orderStreamMergeResults;
+    private final List<StreamResultSet> orderStreamMergeResultSets;
     private final Queue<OrderStreamMergeResultSet> queue;
     private StreamResultSet currentStreamResult;
     private boolean skipFirst;
 
     private boolean closed=false;
 
-    public EasyMultiOrderStreamMergeResultSet(StreamMergeContext streamMergeContext, List<StreamResultSet> streamResults) throws SQLException {
+    public EasyMultiOrderStreamMergeResultSet(StreamMergeContext streamMergeContext, List<StreamResultSet> streamResultSets) throws SQLException {
 
         this.streamMergeContext = streamMergeContext;
-        this.orderStreamMergeResults = streamResults;
-        this.queue =new PriorityQueue<>(streamResults.size());
+        this.orderStreamMergeResultSets = streamResultSets;
+        this.queue =new PriorityQueue<>(streamResultSets.size());
         skipFirst=true;
         setOrderStreamResult();
     }
 
     private void setOrderStreamResult() throws SQLException {
-        for (StreamResultSet orderStreamMergeResult : this.orderStreamMergeResults) {
+        for (StreamResultSet orderStreamMergeResult : this.orderStreamMergeResultSets) {
             EasyOrderStreamMergeResultSet easyOrderStreamMergeResult = new EasyOrderStreamMergeResultSet(streamMergeContext, orderStreamMergeResult);
             if(easyOrderStreamMergeResult.hasElement()){
                 easyOrderStreamMergeResult.skipFirst();
                 queue.offer(easyOrderStreamMergeResult);
             }
         }
-        currentStreamResult= queue.isEmpty()? EasyCollectionUtil.firstOrNull(orderStreamMergeResults) : queue.peek();
+        currentStreamResult= queue.isEmpty()? EasyCollectionUtil.firstOrNull(orderStreamMergeResultSets) : queue.peek();
     }
 
     @Override
@@ -190,8 +192,12 @@ public class EasyMultiOrderStreamMergeResultSet implements ShardingStreamResultS
             return;
         }
         closed = true;
-        for (StreamResultSet streamResult : orderStreamMergeResults) {
-            streamResult.close();
+        for (StreamResultSet streamResultSet : orderStreamMergeResultSets) {
+            try {
+                streamResultSet.close();
+            } catch (Exception exception) {
+                log.error("close stream result set error.", exception);
+            }
         }
     }
 }

@@ -1,8 +1,7 @@
 package com.easy.query.core.expression.segment.condition;
 
 import com.easy.query.core.basic.api.select.Queryable;
-import com.easy.query.core.enums.EasyFunc;
-import com.easy.query.core.enums.SqlKeywordEnum;
+import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.enums.SqlLikeEnum;
 import com.easy.query.core.enums.SqlPredicateCompare;
 import com.easy.query.core.enums.SqlRangeEnum;
@@ -77,7 +76,7 @@ public class DefaultSqlPredicate<T1> implements SqlWherePredicate<T1> {
 
         nextPredicateSegment.setPredicate(new ColumnValuePredicate(getTable(), propertyName, val, getReallyPredicateCompare(condition), entityExpressionBuilder.getRuntimeContext()));
     }
-    protected void appendThisFuncPredicate(Property<T1, ?> column,EasyFunc func, SqlPredicateCompare compare, Object val) {
+    protected void appendThisFuncPredicate(Property<T1, ?> column, ColumnFunction func, SqlPredicateCompare compare, Object val) {
         String propertyName = LambdaUtil.getPropertyName(column);
 
         nextPredicateSegment.setPredicate(new FuncColumnValuePredicate(getTable(),func, propertyName, val, compare, entityExpressionBuilder.getRuntimeContext()));
@@ -258,7 +257,7 @@ public class DefaultSqlPredicate<T1> implements SqlWherePredicate<T1> {
     }
 
     @Override
-    public SqlWherePredicate<T1> columnFunc(boolean condition, Property<T1, ?> column, EasyFunc easyFunc, SqlPredicateCompare sqlPredicateCompare, Object val) {
+    public SqlWherePredicate<T1> columnFunc(boolean condition, Property<T1, ?> column, ColumnFunction easyFunc, SqlPredicateCompare sqlPredicateCompare, Object val) {
 
         if (condition) {
             appendThisFuncPredicate(column,easyFunc, getReallyPredicateCompare(sqlPredicateCompare), val);

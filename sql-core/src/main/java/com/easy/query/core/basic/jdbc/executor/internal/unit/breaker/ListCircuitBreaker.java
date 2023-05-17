@@ -26,7 +26,7 @@ public final class ListCircuitBreaker extends AbstractCircuitBreaker{
                 int reallyCount = EasyCollectionUtil.sum(results, element -> {
                     if(element instanceof QueryExecuteResult){
                         QueryExecuteResult queryExecuteResult = (QueryExecuteResult) element;
-                        StreamResultSet streamResult = queryExecuteResult.getStreamResult();
+                        StreamResultSet streamResult = queryExecuteResult.getStreamResultSet();
                         if (streamResult instanceof InMemoryStreamMergeResultSet) {
                             return ((InMemoryStreamMergeResultSet)streamResult).getReallyCount();
                         }

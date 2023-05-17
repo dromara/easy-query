@@ -2,9 +2,9 @@ package com.easy.query.core.expression.segment;
 
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
-import com.easy.query.core.enums.EasyFunc;
+import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.basic.jdbc.executor.internal.merge.result.aggregation.AggregationType;
+import com.easy.query.core.expression.func.AggregationType;
 import com.easy.query.core.util.SqlExpressionUtil;
 
 /**
@@ -19,17 +19,17 @@ public class FuncColumnSegmentImpl implements AggregationColumnSegment {
     protected final TableAvailable table;
     protected final String propertyName;
     protected final EasyQueryRuntimeContext runtimeContext;
-    protected final EasyFunc easyFunc;
+    protected final ColumnFunction columnFunction;
     protected String alias;
 
-    public FuncColumnSegmentImpl(TableAvailable table, String propertyName, EasyQueryRuntimeContext runtimeContext, EasyFunc easyFunc){
-        this(table,propertyName,runtimeContext,easyFunc,null);
+    public FuncColumnSegmentImpl(TableAvailable table, String propertyName, EasyQueryRuntimeContext runtimeContext, ColumnFunction columnFunction){
+        this(table,propertyName,runtimeContext,columnFunction,null);
     }
-    public FuncColumnSegmentImpl(TableAvailable table, String propertyName, EasyQueryRuntimeContext runtimeContext, EasyFunc easyFunc, String alias){
+    public FuncColumnSegmentImpl(TableAvailable table, String propertyName, EasyQueryRuntimeContext runtimeContext, ColumnFunction columnFunction, String alias){
         this.table = table;
         this.propertyName = propertyName;
         this.runtimeContext = runtimeContext;
-        this.easyFunc = easyFunc;
+        this.columnFunction = columnFunction;
         this.alias = alias;
     }
 
@@ -37,7 +37,7 @@ public class FuncColumnSegmentImpl implements AggregationColumnSegment {
     public String toSql(SqlParameterCollector sqlParameterCollector) {
 
         String sqlColumnSegment = SqlExpressionUtil.getSqlOwnerColumn(runtimeContext,table,propertyName);
-        String funcColumn = easyFunc.getFuncColumn(sqlColumnSegment);
+        String funcColumn = columnFunction.getFuncColumn(sqlColumnSegment);
         StringBuilder sql = new StringBuilder().append(funcColumn);
         if(alias!=null){
             sql.append(" AS ").append(SqlExpressionUtil.getQuoteName(runtimeContext,alias));
@@ -68,6 +68,6 @@ public class FuncColumnSegmentImpl implements AggregationColumnSegment {
 
     @Override
     public AggregationType getAggregationType() {
-        return easyFunc.getAggregationType();
+        return columnFunction.getAggregationType();
     }
 }

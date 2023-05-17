@@ -1,7 +1,6 @@
 package com.easy.query.core.sharding.rewrite;
 
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
-import com.easy.query.core.enums.EasyAggregate;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.MergeBehaviorEnum;
 import com.easy.query.core.expression.executor.parser.PrepareParseResult;
@@ -18,12 +17,13 @@ import com.easy.query.core.expression.segment.SqlSegment;
 import com.easy.query.core.expression.segment.builder.ProjectSqlBuilderSegment;
 import com.easy.query.core.expression.sql.expression.EasyQuerySqlExpression;
 import com.easy.query.core.expression.sql.expression.EasyTableSqlExpression;
+import com.easy.query.core.expression.func.ColumnFunctionFactory;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.ShardingInitConfig;
 import com.easy.query.core.metadata.ShardingSequenceConfig;
 import com.easy.query.core.sharding.manager.SequenceCountNode;
 import com.easy.query.core.sharding.manager.ShardingQueryCountManager;
-import com.easy.query.core.basic.jdbc.executor.internal.merge.result.aggregation.AggregationType;
+import com.easy.query.core.expression.func.AggregationType;
 import com.easy.query.core.sharding.route.RouteContext;
 import com.easy.query.core.sharding.route.RouteUnit;
 import com.easy.query.core.sharding.route.ShardingRouteResult;
@@ -157,7 +157,8 @@ public class DefaultRewriteContextFactory implements RewriteContextFactory {
                     //如果存在avg那么分片必须要存在count或者sum不然无法计算avg
                     if(rewriteStatusKvKey.hasBehavior(GroupAvgBehaviorEnum.COUNT)&&rewriteStatusKvKey.hasBehavior(GroupAvgBehaviorEnum.SUM)){
                         EasyTableSqlExpression table = easyQuerySqlExpression.getTable(rewriteStatusKvKey.getTableIndex());
-                        easyQuerySqlExpression.getProjects().append(new FuncColumnSegmentImpl(table.getEntityTable(),rewriteStatusKvKey.getPropertyName(), easyQuerySqlExpression.getRuntimeContext(), EasyAggregate.COUNT,rewriteStatusKvKey.getPropertyName()+"RewriteCount"));
+                        ColumnFunctionFactory columnFunctionFactory = runtimeContext.getColumnFunctionFactory();
+                        easyQuerySqlExpression.getProjects().append(new FuncColumnSegmentImpl(table.getEntityTable(),rewriteStatusKvKey.getPropertyName(), runtimeContext, columnFunctionFactory.createCountFunction(false),rewriteStatusKvKey.getPropertyName()+"RewriteCount"));
                     }
                 }
             }

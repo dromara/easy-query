@@ -2,7 +2,7 @@ package com.easy.query.core.expression.segment.condition.predicate;
 
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
-import com.easy.query.core.enums.EasyFunc;
+import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.SqlEntitySegment;
 import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
@@ -18,13 +18,13 @@ import com.easy.query.core.util.SqlExpressionUtil;
  */
 public class FuncColumnValuePredicate implements Predicate {
     private final TableAvailable table;
-    private final EasyFunc func;
+    private final ColumnFunction func;
     private final String propertyName;
     private final Object val;
     private final SqlPredicateCompare compare;
     private final EasyQueryRuntimeContext runtimeContext;
 
-    public FuncColumnValuePredicate(TableAvailable table, EasyFunc func, String propertyName, Object val, SqlPredicateCompare compare, EasyQueryRuntimeContext runtimeContext) {
+    public FuncColumnValuePredicate(TableAvailable table, ColumnFunction func, String propertyName, Object val, SqlPredicateCompare compare, EasyQueryRuntimeContext runtimeContext) {
         this.table = table;
         this.propertyName = propertyName;
 

@@ -7,6 +7,7 @@ import com.easy.query.core.basic.thread.EasyShardingExecutorService;
 import com.easy.query.core.expression.parser.factory.EasyQueryLambdaFactory;
 import com.easy.query.core.expression.sql.builder.factory.EasyExpressionBuilderFactory;
 import com.easy.query.core.expression.sql.expression.factory.EasyExpressionFactory;
+import com.easy.query.core.expression.func.ColumnFunctionFactory;
 import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
 import com.easy.query.core.configuration.EasyQueryConfiguration;
@@ -40,4 +41,5 @@ public interface EasyQueryRuntimeContext {
     DataSourceRouteManager getDataSourceRouteManager();
     ShardingComparer getShardingComparer();
     ShardingQueryCountManager getShardingQueryCountManager();
+    ColumnFunctionFactory getColumnFunctionFactory();
 }

@@ -29,14 +29,14 @@ import java.util.List;
 public class EasyOrderStreamMergeResultSet implements OrderStreamMergeResultSet {
     private static final List<Comparable<?>> EMPTY_COMPARABLE_VALUES = Collections.emptyList();
     private final StreamMergeContext streamMergeContext;
-    private final StreamResultSet streamResult;
+    private final StreamResultSet streamResultSet;
     private List<Comparable<?>> orderValues;
     private boolean closed=false;
 
-    public EasyOrderStreamMergeResultSet(StreamMergeContext streamMergeContext, StreamResultSet streamResult) throws SQLException {
+    public EasyOrderStreamMergeResultSet(StreamMergeContext streamMergeContext, StreamResultSet streamResultSet) throws SQLException {
 
         this.streamMergeContext = streamMergeContext;
-        this.streamResult = streamResult;
+        this.streamResultSet = streamResultSet;
         setOrderValues();
     }
 
@@ -56,7 +56,7 @@ public class EasyOrderStreamMergeResultSet implements OrderStreamMergeResultSet 
         }
         ArrayList<Comparable<?>> orders = new ArrayList<>(streamMergeContext.getOrders().size());
         for (PropertyOrder order : streamMergeContext.getOrders()) {
-            Object value = this.streamResult.getObject(order.columnIndex()+1);
+            Object value = this.streamResultSet.getObject(order.columnIndex()+1);
             if (value==null||value instanceof Comparable<?>) {
                 orders.add((Comparable<?>) value);
             } else {
@@ -68,113 +68,113 @@ public class EasyOrderStreamMergeResultSet implements OrderStreamMergeResultSet 
 
     @Override
     public boolean hasElement() {
-        return streamResult.hasElement();
+        return streamResultSet.hasElement();
     }
 
     @Override
     public boolean skipFirst() {
-        return streamResult.skipFirst();
+        return streamResultSet.skipFirst();
     }
 
     @Override
     public boolean next() throws SQLException {
-        boolean next = streamResult.next();
+        boolean next = streamResultSet.next();
         setOrderValues();
         return next;
     }
 
     @Override
     public Object getObject(int columnIndex) throws SQLException {
-        return streamResult.getObject(columnIndex);
+        return streamResultSet.getObject(columnIndex);
     }
 
     @Override
     public boolean wasNull() throws SQLException {
-        return streamResult.wasNull();
+        return streamResultSet.wasNull();
     }
     @Override
     public ResultSetMetaData getMetaData() throws SQLException {
-        return streamResult.getMetaData();
+        return streamResultSet.getMetaData();
     }
 
     @Override
     public SQLXML getSQLXML(int columnIndex) throws SQLException {
-        return streamResult.getSQLXML(columnIndex);
+        return streamResultSet.getSQLXML(columnIndex);
     }
 
     @Override
     public Timestamp getTimestamp(int columnIndex) throws SQLException {
-        return streamResult.getTimestamp(columnIndex);
+        return streamResultSet.getTimestamp(columnIndex);
     }
 
     @Override
     public Time getTime(int columnIndex) throws SQLException {
-        return streamResult.getTime(columnIndex);
+        return streamResultSet.getTime(columnIndex);
     }
 
     @Override
     public String getString(int columnIndex) throws SQLException {
-        return streamResult.getString(columnIndex);
+        return streamResultSet.getString(columnIndex);
     }
 
     @Override
     public Date getDate(int columnIndex) throws SQLException {
-        return streamResult.getDate(columnIndex);
+        return streamResultSet.getDate(columnIndex);
     }
 
     @Override
     public short getShort(int columnIndex) throws SQLException {
-        return streamResult.getShort(columnIndex);
+        return streamResultSet.getShort(columnIndex);
     }
 
     @Override
     public long getLong(int columnIndex) throws SQLException {
-        return streamResult.getLong(columnIndex);
+        return streamResultSet.getLong(columnIndex);
     }
 
     @Override
     public int getInt(int columnIndex) throws SQLException {
-        return streamResult.getInt(columnIndex);
+        return streamResultSet.getInt(columnIndex);
     }
 
     @Override
     public float getFloat(int columnIndex) throws SQLException {
-        return streamResult.getFloat(columnIndex);
+        return streamResultSet.getFloat(columnIndex);
     }
 
     @Override
     public double getDouble(int columnIndex) throws SQLException {
-        return streamResult.getDouble(columnIndex);
+        return streamResultSet.getDouble(columnIndex);
     }
 
     @Override
     public Clob getClob(int columnIndex) throws SQLException {
-        return streamResult.getClob(columnIndex);
+        return streamResultSet.getClob(columnIndex);
     }
 
     @Override
     public byte getByte(int columnIndex) throws SQLException {
-        return streamResult.getByte(columnIndex);
+        return streamResultSet.getByte(columnIndex);
     }
 
     @Override
     public byte[] getBytes(int columnIndex) throws SQLException {
-        return streamResult.getBytes(columnIndex);
+        return streamResultSet.getBytes(columnIndex);
     }
 
     @Override
     public boolean getBoolean(int columnIndex) throws SQLException {
-        return streamResult.getBoolean(columnIndex);
+        return streamResultSet.getBoolean(columnIndex);
     }
 
     @Override
     public Blob getBlob(int columnIndex) throws SQLException {
-        return streamResult.getBlob(columnIndex);
+        return streamResultSet.getBlob(columnIndex);
     }
 
     @Override
     public BigDecimal getBigDecimal(int columnIndex) throws SQLException {
-        return streamResult.getBigDecimal(columnIndex);
+        return streamResultSet.getBigDecimal(columnIndex);
     }
 
     @Override
@@ -191,7 +191,7 @@ public class EasyOrderStreamMergeResultSet implements OrderStreamMergeResultSet 
             return;
         }
         closed = true;
-        streamResult.close();
+        streamResultSet.close();
     }
 
     @Override

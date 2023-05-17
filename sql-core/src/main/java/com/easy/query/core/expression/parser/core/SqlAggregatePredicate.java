@@ -1,8 +1,8 @@
 package com.easy.query.core.expression.parser.core;
 
+import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.enums.AggregatePredicateCompare;
-import com.easy.query.core.enums.EasyAggregate;
-import com.easy.query.core.enums.EasyFunc;
+import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.SqlExpression;
 import com.easy.query.core.enums.SqlPredicateCompare;
@@ -16,13 +16,21 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
  */
 public interface SqlAggregatePredicate<T1> {
     TableAvailable getTable();
+    EasyQueryRuntimeContext getRuntimeContext();
 
     default SqlAggregatePredicate<T1> avg(Property<T1, ?> column, AggregatePredicateCompare compare, Object val) {
         return avg(true, column, compare, val);
     }
 
     default SqlAggregatePredicate<T1> avg(boolean condition, Property<T1, ?> column, AggregatePredicateCompare compare, Object val) {
-        return func(condition, EasyAggregate.MIN, column, compare, val);
+        return func(condition, getRuntimeContext().getColumnFunctionFactory().createAvgFunction(false), column, compare, val);
+    }
+    default SqlAggregatePredicate<T1> avgDistinct(Property<T1, ?> column, AggregatePredicateCompare compare, Object val) {
+        return avgDistinct(true, column, compare, val);
+    }
+
+    default SqlAggregatePredicate<T1> avgDistinct(boolean condition, Property<T1, ?> column, AggregatePredicateCompare compare, Object val) {
+        return func(condition, getRuntimeContext().getColumnFunctionFactory().createAvgFunction(true), column, compare, val);
     }
 
     default SqlAggregatePredicate<T1> min(Property<T1, ?> column, AggregatePredicateCompare compare, Object val) {
@@ -30,7 +38,7 @@ public interface SqlAggregatePredicate<T1> {
     }
 
     default SqlAggregatePredicate<T1> min(boolean condition, Property<T1, ?> column, AggregatePredicateCompare compare, Object val) {
-        return func(condition, EasyAggregate.MIN, column, compare, val);
+        return func(condition, getRuntimeContext().getColumnFunctionFactory().createMinFunction(), column, compare, val);
     }
 
     default SqlAggregatePredicate<T1> max(Property<T1, ?> column, AggregatePredicateCompare compare, Object val) {
@@ -38,7 +46,7 @@ public interface SqlAggregatePredicate<T1> {
     }
 
     default SqlAggregatePredicate<T1> max(boolean condition, Property<T1, ?> column, AggregatePredicateCompare compare, Object val) {
-        return func(condition, EasyAggregate.MAX, column, compare, val);
+        return func(condition, getRuntimeContext().getColumnFunctionFactory().createMaxFunction(), column, compare, val);
     }
 
     default SqlAggregatePredicate<T1> sum(Property<T1, ?> column, AggregatePredicateCompare compare, Object val) {
@@ -46,7 +54,14 @@ public interface SqlAggregatePredicate<T1> {
     }
 
     default SqlAggregatePredicate<T1> sum(boolean condition, Property<T1, ?> column, AggregatePredicateCompare compare, Object val) {
-        return func(condition, EasyAggregate.SUM, column, compare, val);
+        return func(condition, getRuntimeContext().getColumnFunctionFactory().createSumFunction(false), column, compare, val);
+    }
+    default SqlAggregatePredicate<T1> sumDistinct(Property<T1, ?> column, AggregatePredicateCompare compare, Object val) {
+        return sum(true, column, compare, val);
+    }
+
+    default SqlAggregatePredicate<T1> sumDistinct(boolean condition, Property<T1, ?> column, AggregatePredicateCompare compare, Object val) {
+        return func(condition, getRuntimeContext().getColumnFunctionFactory().createSumFunction(true), column, compare, val);
     }
 
     default SqlAggregatePredicate<T1> countDistinct(Property<T1, ?> column, AggregatePredicateCompare compare, Object val) {
@@ -54,7 +69,7 @@ public interface SqlAggregatePredicate<T1> {
     }
 
     default SqlAggregatePredicate<T1> countDistinct(boolean condition, Property<T1, ?> column, AggregatePredicateCompare compare, Object val) {
-        return func(condition, EasyAggregate.COUNT_DISTINCT, column, compare, val);
+        return func(condition, getRuntimeContext().getColumnFunctionFactory().createCountFunction(true), column, compare, val);
     }
 
     default SqlAggregatePredicate<T1> count(Property<T1, ?> column, AggregatePredicateCompare compare, Object val) {
@@ -62,10 +77,10 @@ public interface SqlAggregatePredicate<T1> {
     }
 
     default SqlAggregatePredicate<T1> count(boolean condition, Property<T1, ?> column, SqlPredicateCompare compare, Object val) {
-        return func(condition, EasyAggregate.COUNT, column, compare, val);
+        return func(condition, getRuntimeContext().getColumnFunctionFactory().createCountFunction(false), column, compare, val);
     }
 
-    SqlAggregatePredicate<T1> func(boolean condition, EasyFunc easyAggregate, Property<T1, ?> column, SqlPredicateCompare compare, Object val);
+    SqlAggregatePredicate<T1> func(boolean condition, ColumnFunction columnFunction, Property<T1, ?> column, SqlPredicateCompare compare, Object val);
 
 
     <T2> SqlAggregatePredicate<T2> then(SqlAggregatePredicate<T2> sub);

@@ -16,6 +16,8 @@ import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.basic.jdbc.executor.internal.common.ExecutionUnit;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.segment.PropertyGroup;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.segment.PropertyOrder;
+import com.easy.query.core.logging.Log;
+import com.easy.query.core.logging.LogFactory;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.ArrayList;
@@ -31,6 +33,7 @@ import java.util.Map;
  * @author xuejiaming
  */
 public class EasyStreamMergeContext implements StreamMergeContext {
+    private static final Log log= LogFactory.getLog(EasyStreamMergeContext.class);
     protected final EasyQueryRuntimeContext runtimeContext;
     protected final boolean isQuery;
     protected final Map<String/* data source name*/, Collection<CloseableConnection>> closeableDataSourceConnections = new HashMap<>();
@@ -226,7 +229,11 @@ public class EasyStreamMergeContext implements StreamMergeContext {
     public void close() throws Exception {
         for (Collection<CloseableConnection> value : closeableDataSourceConnections.values()) {
             for (CloseableConnection closeableConnection : value) {
-                closeableConnection.close();
+               try {
+                   closeableConnection.close();
+               }catch (Exception ex){
+                   log.error("close stream merge context error.",ex);
+               }
             }
         }
     }

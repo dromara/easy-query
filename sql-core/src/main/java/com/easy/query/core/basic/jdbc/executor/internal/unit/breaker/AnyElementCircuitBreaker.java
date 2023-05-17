@@ -18,7 +18,7 @@ public final class AnyElementCircuitBreaker extends AbstractCircuitBreaker{
     protected <TResult> boolean SequenceTerminated(StreamMergeContext streamMergeContext,Collection<TResult> results) {
         for (TResult result : results) {
             if(result instanceof QueryExecuteResult){
-                if(((QueryExecuteResult)result).getStreamResult().hasElement()){
+                if(((QueryExecuteResult)result).getStreamResultSet().hasElement()){
                     return true;
                 }
             }

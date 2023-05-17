@@ -1,6 +1,4 @@
-package com.easy.query.core.enums;
-
-import com.easy.query.core.basic.jdbc.executor.internal.merge.result.aggregation.AggregationType;
+package com.easy.query.core.expression.func;
 
 /**
  * @FileName: IEasyAggregate.java
@@ -8,7 +6,7 @@ import com.easy.query.core.basic.jdbc.executor.internal.merge.result.aggregation
  * @Date: 2023/2/18 22:24
  * @author xuejiaming
  */
-public interface EasyFunc {
+public interface ColumnFunction {
     /**
      * 传入列名:name，返回substring(name,1,1)
      * @param column

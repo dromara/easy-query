@@ -80,7 +80,7 @@ public class QueryStreamShardingMerger extends AbstractShardingMerger<QueryExecu
         if (EasyCollectionUtil.isSingle(parallelResults) && !streamMergeContext.isSharding()) {
             return EasyCollectionUtil.firstOrNull(parallelResults);
         }
-        List<StreamResultSet> streamResults = EasyCollectionUtil.select(parallelResults, (o, i) -> o.getStreamResult());
+        List<StreamResultSet> streamResults = EasyCollectionUtil.select(parallelResults, (o, i) -> o.getStreamResultSet());
         StreamResultSet streamResultSet = streamMergeToSingle(streamMergeContext, streamResults);
         return new DefaultQueryExecuteResult(streamResultSet);
     }
@@ -111,10 +111,10 @@ public class QueryStreamShardingMerger extends AbstractShardingMerger<QueryExecu
         }
         ArrayList<StreamResultSet> mergeList = new ArrayList<>(parallelResults.size() + previewResultsSize);
         if (previewResultsSize == 1) {
-            mergeList.add(EasyCollectionUtil.firstOrNull(beforeInMemoryResults).getStreamResult());
+            mergeList.add(EasyCollectionUtil.firstOrNull(beforeInMemoryResults).getStreamResultSet());
         }
         for (QueryExecuteResult parallelResult : parallelResults) {
-            mergeList.add(parallelResult.getStreamResult());
+            mergeList.add(parallelResult.getStreamResultSet());
         }
         StreamResultSet combineStreamMergeResultSet = streamInMemoryMerge(streamMergeContext, mergeList);
         EasyInMemoryStreamMergeResultSet easyInMemoryStreamMergeResultSet = new EasyInMemoryStreamMergeResultSet(streamMergeContext, Collections.singletonList(combineStreamMergeResultSet));

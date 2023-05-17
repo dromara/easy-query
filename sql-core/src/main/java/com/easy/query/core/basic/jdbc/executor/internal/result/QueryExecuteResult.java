@@ -9,5 +9,5 @@ import com.easy.query.core.basic.jdbc.executor.internal.merge.result.StreamResul
  * @author xuejiaming
  */
 public interface QueryExecuteResult extends ExecuteResult {
-    StreamResultSet getStreamResult();
+    StreamResultSet getStreamResultSet();
 }

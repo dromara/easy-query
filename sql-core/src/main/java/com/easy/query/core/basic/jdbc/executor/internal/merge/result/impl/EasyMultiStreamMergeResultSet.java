@@ -1,6 +1,8 @@
 package com.easy.query.core.basic.jdbc.executor.internal.merge.result.impl;
 
 import com.easy.query.core.basic.jdbc.executor.internal.merge.result.StreamResultSet;
+import com.easy.query.core.logging.Log;
+import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.sharding.context.StreamMergeContext;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.result.ShardingStreamResultSet;
 
@@ -23,17 +25,18 @@ import java.util.List;
  * @author xuejiaming
  */
 public class EasyMultiStreamMergeResultSet implements ShardingStreamResultSet {
+    private static final Log log= LogFactory.getLog(EasyMultiStreamMergeResultSet.class);
     private final StreamMergeContext streamMergeContext;
-    private final List<StreamResultSet> streamResults;
+    private final List<StreamResultSet> streamResultSets;
     private StreamResultSet currentStreamResult;
     private Iterator<StreamResultSet> streamResultIterator;
 
     private boolean closed=false;
 
-    public EasyMultiStreamMergeResultSet(StreamMergeContext streamMergeContext, List<StreamResultSet> streamResults) throws SQLException {
+    public EasyMultiStreamMergeResultSet(StreamMergeContext streamMergeContext, List<StreamResultSet> streamResultSets) throws SQLException {
         this.streamMergeContext = streamMergeContext;
-        this.streamResults = streamResults;
-        streamResultIterator=streamResults.iterator();
+        this.streamResultSets = streamResultSets;
+        streamResultIterator=streamResultSets.iterator();
         currentStreamResult=streamResultIterator.next();
     }
 
@@ -172,8 +175,12 @@ public class EasyMultiStreamMergeResultSet implements ShardingStreamResultSet {
             return;
         }
         closed = true;
-        for (StreamResultSet streamResult : streamResults) {
-            streamResult.close();
+        for (StreamResultSet streamResultSet : streamResultSets) {
+            try {
+                streamResultSet.close();
+            }catch (Exception exception){
+                log.error("close stream result set error.",exception);
+            }
         }
     }
 }
