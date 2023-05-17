@@ -3,10 +3,10 @@ package com.easy.query.test;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.api.select.Queryable;
 import com.easy.query.test.mytest.EasyAggregate;
-import com.easy.query.core.enums.SqlPredicateCompareEnum;
+import com.easy.query.core.enums.SQLPredicateCompareEnum;
 import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
-import com.easy.query.core.util.SqlExpressionUtil;
+import com.easy.query.core.util.SQLExpressionUtil;
 import com.easy.query.test.dto.BlogEntityTest;
 import com.easy.query.test.dto.BlogEntityTest2;
 import com.easy.query.test.dto.TopicGroupTestDTO;
@@ -37,7 +37,7 @@ public class QueryTest extends BaseTest {
     public void query0() {
         Queryable<SysUser> queryable = easyQuery.queryable(SysUser.class)
                 .where(o -> o.eq(SysUser::getId, "123xxx"));
-        String sql = queryable.toSql();
+        String sql = queryable.toSQL();
         Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`username`,t.`phone`,t.`id_card`,t.`address` FROM `easy-query-test`.`t_sys_user` t WHERE t.`id` = ?", sql);
         SysUser sysUser = queryable.firstOrNull();
         Assert.assertNull(sysUser);
@@ -46,7 +46,7 @@ public class QueryTest extends BaseTest {
     public void query1() {
         Queryable<BlogEntity> queryable = easyQuery.queryable(BlogEntity.class)
                 .where(o -> o.eq(BlogEntity::getId, "123"));
-        String sql = queryable.toSql();
+        String sql = queryable.toSQL();
         Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`title`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ?", sql);
         BlogEntity blogEntity = queryable.firstOrNull();
         Assert.assertNull(blogEntity);
@@ -56,7 +56,7 @@ public class QueryTest extends BaseTest {
     public void query2() {
         Queryable<BlogEntity> queryable = easyQuery.queryable(BlogEntity.class)
                 .where(o -> o.eq(BlogEntity::getId, "97"));
-        String sql = queryable.toSql();
+        String sql = queryable.toSQL();
         Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`title`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ?", sql);
         BlogEntity blogEntity = queryable.firstOrNull();
         Assert.assertNotNull(blogEntity);
@@ -67,7 +67,7 @@ public class QueryTest extends BaseTest {
     public void query3() {
         Queryable<BlogEntity> queryable = easyQuery.queryable(BlogEntity.class)
                 .where(o -> o.eq(BlogEntity::getId, "97")).limit(1).select(" 1 ");
-        String sql = queryable.toSql();
+        String sql = queryable.toSQL();
         Assert.assertEquals("SELECT  1  FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? LIMIT 1", sql);
         BlogEntity blogEntity = queryable.firstOrNull();
         Assert.assertNotNull(blogEntity);
@@ -78,7 +78,7 @@ public class QueryTest extends BaseTest {
     public void query4() {
         Queryable<BlogEntity> queryable = easyQuery.queryable(BlogEntity.class)
                 .where(o -> o.eq(BlogEntity::getId, "97")).limit(1).select("1 as id");
-        String sql = queryable.toSql();
+        String sql = queryable.toSQL();
         Assert.assertEquals("SELECT 1 as id FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? LIMIT 1", sql);
         BlogEntity blogEntity = queryable.firstOrNull();
         Assert.assertNotNull(blogEntity);
@@ -89,7 +89,7 @@ public class QueryTest extends BaseTest {
     public void query5() {
         Queryable<BlogEntity> queryable = easyQuery.queryable(BlogEntity.class)
                 .where(o -> o.in(BlogEntity::getId, Arrays.asList("97", "98")));
-        String sql = queryable.toSql();
+        String sql = queryable.toSQL();
         Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`title`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` IN (?,?)", sql);
         List<BlogEntity> blogs = queryable.toList();
         Assert.assertNotNull(blogs);
@@ -104,7 +104,7 @@ public class QueryTest extends BaseTest {
     public void query6() {
         Queryable<BlogEntity> queryable = easyQuery.queryable(BlogEntity.class)
                 .whereById("97");
-        String sql = queryable.toSql();
+        String sql = queryable.toSQL();
         Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`title`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ?", sql);
         List<BlogEntity> blogs = queryable.toList();
         Assert.assertNotNull(blogs);
@@ -144,7 +144,7 @@ public class QueryTest extends BaseTest {
     public void query8() {
         String sql = easyQuery
                 .queryable(Topic.class)
-                .limit(1).toSql();
+                .limit(1).toSQL();
         Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t LIMIT 1", sql);
         List<Topic> topics = easyQuery
                 .queryable(Topic.class)
@@ -179,7 +179,7 @@ public class QueryTest extends BaseTest {
                 .queryable(Topic.class)
                 .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
                 .where(o -> o.eq(Topic::getId, "3"))
-                .toSql();
+                .toSQL();
         Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t.`id` = ?",
                 toSql);
         Topic topic = easyQuery
@@ -192,7 +192,7 @@ public class QueryTest extends BaseTest {
                 .queryable(Topic.class)
                 .innerJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
                 .where((t, t1) -> t1.isNotNull(BlogEntity::getTitle).then(t).eq(Topic::getId, "3"))
-                .select(BlogEntity.class, (t, t1) -> t1.columnAll()).toSql();
+                .select(BlogEntity.class, (t, t1) -> t1.columnAll()).toSQL();
         Assert.assertEquals("SELECT t1.`id`,t1.`create_time`,t1.`update_time`,t1.`create_by`,t1.`update_by`,t1.`deleted`,t1.`title`,t1.`content`,t1.`url`,t1.`star`,t1.`publish_time`,t1.`score`,t1.`status`,t1.`order`,t1.`is_top`,t1.`top` FROM `t_topic` t INNER JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t1.`title` IS NOT NULL AND t.`id` = ?",
                 toSql1);
         List<BlogEntity> blogEntities = easyQuery
@@ -276,9 +276,9 @@ public class QueryTest extends BaseTest {
                 .where((t, t1) -> t1.isNotNull(BlogEntity::getTitle))
                 .groupBy((t, t1) -> t1.column(BlogEntity::getId))
                 .select(BlogEntity.class, (t, t1) -> t1.column(BlogEntity::getId).columnSum(BlogEntity::getScore));
-        String countSql = sql.cloneQueryable().select(" COUNT(1) ").toSql();
+        String countSql = sql.cloneQueryable().select(" COUNT(1) ").toSQL();
         Assert.assertEquals("SELECT  COUNT(1)  FROM (SELECT t1.`id`,SUM(t1.`score`) AS `score` FROM `t_topic` t INNER JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t1.`title` IS NOT NULL GROUP BY t1.`id`) t2",countSql);
-        String limitSql= sql.limit(2, 2).toSql();
+        String limitSql= sql.limit(2, 2).toSQL();
         Assert.assertEquals("SELECT t1.`id`,SUM(t1.`score`) AS `score` FROM `t_topic` t INNER JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t1.`title` IS NOT NULL GROUP BY t1.`id` LIMIT 2 OFFSET 2",limitSql);
     }
     @Test
@@ -288,9 +288,9 @@ public class QueryTest extends BaseTest {
                 .innerJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
                 .where((t, t1) -> t1.isNotNull(BlogEntity::getTitle).then(t).eq(Topic::getId, "3"))
                 .select(BlogEntity.class, (t, t1) -> t1.columnAll().columnIgnore(BlogEntity::getId));
-        String countSql = sql.cloneQueryable().select(" COUNT(1) ").toSql();
+        String countSql = sql.cloneQueryable().select(" COUNT(1) ").toSQL();
         Assert.assertEquals("SELECT  COUNT(1)  FROM (SELECT t1.`create_time`,t1.`update_time`,t1.`create_by`,t1.`update_by`,t1.`deleted`,t1.`title`,t1.`content`,t1.`url`,t1.`star`,t1.`publish_time`,t1.`score`,t1.`status`,t1.`order`,t1.`is_top`,t1.`top` FROM `t_topic` t INNER JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t1.`title` IS NOT NULL AND t.`id` = ?) t2",countSql);
-        String limitSql = sql.limit(2, 2).toSql();
+        String limitSql = sql.limit(2, 2).toSQL();
         Assert.assertEquals("SELECT t1.`create_time`,t1.`update_time`,t1.`create_by`,t1.`update_by`,t1.`deleted`,t1.`title`,t1.`content`,t1.`url`,t1.`star`,t1.`publish_time`,t1.`score`,t1.`status`,t1.`order`,t1.`is_top`,t1.`top` FROM `t_topic` t INNER JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t1.`title` IS NOT NULL AND t.`id` = ? LIMIT 2 OFFSET 2",limitSql);
     }
     @Test
@@ -308,7 +308,7 @@ public class QueryTest extends BaseTest {
         topicRequest.getOrders().clear();
         topicRequest.getOrders().add("createTime");
         String orderSql = easyQuery
-                .queryable(Topic.class).whereObject(topicRequest).orderByDynamic(topicRequest).limit(1).toSql();
+                .queryable(Topic.class).whereObject(topicRequest).orderByDynamic(topicRequest).limit(1).toSQL();
         Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t WHERE t.`create_time` > ? ORDER BY t.`create_time` ASC LIMIT 1",orderSql);
         Topic topic = easyQuery
                 .queryable(Topic.class).whereObject(topicRequest).orderByDynamic(topicRequest).firstOrNull();
@@ -341,7 +341,7 @@ public class QueryTest extends BaseTest {
                 .groupBy(o->o.column(Topic::getId))
                 .select(TopicGroupTestDTO.class, o->o.columnAs(Topic::getId,TopicGroupTestDTO::getId)
                         .columnCount(Topic::getId,TopicGroupTestDTO::getIdCount));
-        String s = sql.toSql();
+        String s = sql.toSQL();
         Assert.assertEquals("SELECT t.`id` AS `id`,COUNT(t.`id`) AS `id_count` FROM `t_topic` t WHERE t.`id` = ? GROUP BY t.`id`",s);
         List<TopicGroupTestDTO> topicGroupTestDTOS = sql.toList();
         Assert.assertNotNull(topicGroupTestDTOS);
@@ -358,7 +358,7 @@ public class QueryTest extends BaseTest {
                 .where(o -> o.eq(Topic::getId, "3"))
                 .groupBy(o->o.column(Topic::getId))
                 .select(TopicGroupTestDTO.class, o->o.column(Topic::getId).columnCount(Topic::getId,TopicGroupTestDTO::getIdCount));
-        String s = sql.toSql();
+        String s = sql.toSQL();
         Assert.assertEquals("SELECT t.`id`,COUNT(t.`id`) AS `id_count` FROM `t_topic` t WHERE t.`id` = ? GROUP BY t.`id`",s);
         List<TopicGroupTestDTO> topicGroupTestDTOS = sql.toList();
         Assert.assertNotNull(topicGroupTestDTOS);
@@ -387,7 +387,7 @@ public class QueryTest extends BaseTest {
         Queryable<BlogEntity> queryable = easyQuery.queryable(BlogEntity.class)
                 .asTable(a->"aa_bb_cc")
                 .where(o -> o.eq(BlogEntity::getId, "123"));
-        String sql = queryable.toSql();
+        String sql = queryable.toSQL();
         Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`title`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top` FROM `aa_bb_cc` t WHERE t.`deleted` = ? AND t.`id` = ?", sql);
     }
     @Test
@@ -401,7 +401,7 @@ public class QueryTest extends BaseTest {
                     return "xxx";
                 })
                 .where(o -> o.eq(BlogEntity::getId, "123"));
-        String sql = queryable.toSql();
+        String sql = queryable.toSQL();
         Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`title`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top` FROM `aa_bb_cc1` t WHERE t.`deleted` = ? AND t.`id` = ?", sql);
     }
     @Test
@@ -412,7 +412,7 @@ public class QueryTest extends BaseTest {
                 .innerJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
                 .asTable("x_t_blog")
                 .where((t, t1) -> t1.isNotNull(BlogEntity::getTitle).then(t).eq(Topic::getId, "3"))
-                .select(BlogEntity.class, (t, t1) -> t1.columnAll()).toSql();
+                .select(BlogEntity.class, (t, t1) -> t1.columnAll()).toSQL();
         Assert.assertEquals("SELECT t1.`id`,t1.`create_time`,t1.`update_time`,t1.`create_by`,t1.`update_by`,t1.`deleted`,t1.`title`,t1.`content`,t1.`url`,t1.`star`,t1.`publish_time`,t1.`score`,t1.`status`,t1.`order`,t1.`is_top`,t1.`top` FROM `t_topic_123` t INNER JOIN `x_t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t1.`title` IS NOT NULL AND t.`id` = ?",
                 toSql1);
     }
@@ -420,7 +420,7 @@ public class QueryTest extends BaseTest {
     public void query27() {
         Queryable<BlogEntityTest> queryable = easyQuery.queryable(BlogEntity.class)
                 .select(BlogEntityTest.class);
-        String sql = queryable.toSql();
+        String sql = queryable.toSQL();
         Assert.assertEquals("SELECT t.`title`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top` FROM `t_blog` t WHERE t.`deleted` = ?", sql);
     }
     @Test
@@ -429,29 +429,29 @@ public class QueryTest extends BaseTest {
 
             Queryable<BlogEntityTest> queryable = easyQuery.queryable(BlogEntity.class)
                     .select(BlogEntityTest.class,o->o.columnIgnore(BlogEntity::getUrl).columnFunc(BlogEntity::getUrl,BlogEntityTest::getUrl, IfNullEasyFunc.IfNull));
-            String sql = queryable.toSql();
+            String sql = queryable.toSQL();
             Assert.assertEquals("SELECT IfNull(t.`url`,'') AS `url` FROM `t_blog` t WHERE t.`deleted` = ?", sql);
         }
         {
 
             Queryable<BlogEntityTest> queryable = easyQuery.queryable(BlogEntity.class)
                     .select(BlogEntityTest.class,o->o.columnAll().columnIgnore(BlogEntity::getUrl).columnFunc(BlogEntity::getUrl,BlogEntityTest::getUrl,IfNullEasyFunc.IfNull));
-            String sql = queryable.toSql();
+            String sql = queryable.toSQL();
             Assert.assertEquals("SELECT t.`title`,t.`content`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top`,IfNull(t.`url`,'') AS `url` FROM `t_blog` t WHERE t.`deleted` = ?", sql);
         }
         {
 
             Queryable<BlogEntityTest> queryable = easyQuery.queryable(BlogEntity.class)
                     .select(BlogEntityTest.class,o->o.columnAll().columnFunc(BlogEntity::getUrl,BlogEntityTest::getUrl,IfNullEasyFunc.IfNull));
-            String sql = queryable.toSql();
+            String sql = queryable.toSQL();
             Assert.assertEquals("SELECT t.`title`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top`,IfNull(t.`url`,'') AS `url` FROM `t_blog` t WHERE t.`deleted` = ?", sql);
         }
     }
     @Test
     public void query29() {
         Queryable<BlogEntity> queryable = easyQuery.queryable(BlogEntity.class)
-                .where(o -> o.columnFunc(BlogEntity::getId,EasyAggregate.LEN, SqlPredicateCompareEnum.EQ, "123"));
-        String sql = queryable.toSql();
+                .where(o -> o.columnFunc(BlogEntity::getId,EasyAggregate.LEN, SQLPredicateCompareEnum.EQ, "123"));
+        String sql = queryable.toSQL();
         Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`title`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top` FROM `t_blog` t WHERE t.`deleted` = ? AND LENGTH(t.`id`) = ?", sql);
         BlogEntity blogEntity = queryable.firstOrNull();
         Assert.assertNull(blogEntity);
@@ -461,7 +461,7 @@ public class QueryTest extends BaseTest {
     public void query30() {
         Queryable<BlogEntity> queryable = easyQuery.queryable("SELECT * FROM `t_blog` t", BlogEntity.class)
                 .where(o -> o.eq(BlogEntity::getId, "123"));
-        String sql = queryable.toSql();
+        String sql = queryable.toSQL();
         Assert.assertEquals("SELECT t.* FROM (SELECT * FROM `t_blog` t) t WHERE t.`id` = ?", sql);
         BlogEntity blogEntity = queryable.firstOrNull();
         Assert.assertNull(blogEntity);
@@ -472,7 +472,7 @@ public class QueryTest extends BaseTest {
                 .noInterceptor()
                 .where(o -> o.eq(BlogEntity::getId, "123"))
                 .select(BlogEntity.class,o->o.column(BlogEntity::getId).column(BlogEntity::getContent));
-        String sql = queryable.toSql();
+        String sql = queryable.toSQL();
         Assert.assertEquals("SELECT t.`id`,t.`content` FROM (SELECT * FROM `t_blog` t) t WHERE t.`id` = ?", sql);
         BlogEntity blogEntity = queryable.firstOrNull();
         Assert.assertNull(blogEntity);
@@ -535,7 +535,7 @@ public class QueryTest extends BaseTest {
 
             Queryable<BlogEntityTest2> queryable = easyQuery.queryable(BlogEntity.class)
                     .select(BlogEntityTest2.class,o->o.columnAs(BlogEntity::getUrl, BlogEntityTest2::getUrl));
-            String sql = queryable.toSql();
+            String sql = queryable.toSQL();
             Assert.assertEquals("SELECT t.`url` AS `my_url` FROM `t_blog` t WHERE t.`deleted` = ?", sql);
             List<BlogEntityTest2> blogEntityTest2s = easyQuery.queryable(BlogEntity.class)
                     .select(BlogEntityTest2.class, o -> o.columnAs(BlogEntity::getUrl, BlogEntityTest2::getUrl)).toList();
@@ -545,7 +545,7 @@ public class QueryTest extends BaseTest {
 
             Queryable<BlogEntityTest2> queryable = easyQuery.queryable(BlogEntity.class)
                     .select(BlogEntityTest2.class);
-            String sql = queryable.toSql();
+            String sql = queryable.toSQL();
             Assert.assertEquals("SELECT t.`title`,t.`content`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top` FROM `t_blog` t WHERE t.`deleted` = ?", sql);
             List<BlogEntityTest2> blogEntityTest2s = easyQuery.queryable(BlogEntity.class)
                     .select(BlogEntityTest2.class).toList();
@@ -555,7 +555,7 @@ public class QueryTest extends BaseTest {
 
             Queryable<BlogEntityTest2> queryable = easyQuery.queryable(BlogEntity.class)
                     .select(BlogEntityTest2.class,o->o.columnAll());
-            String sql = queryable.toSql();
+            String sql = queryable.toSQL();
             Assert.assertEquals("SELECT t.`title`,t.`content`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top` FROM `t_blog` t WHERE t.`deleted` = ?", sql);
             List<BlogEntityTest2> blogEntityTest2s = easyQuery.queryable(BlogEntity.class)
                     .select(BlogEntityTest2.class,o->o.columnAll()).toList();
@@ -565,7 +565,7 @@ public class QueryTest extends BaseTest {
 
             Queryable<BlogEntityTest2> queryable = easyQuery.queryable(BlogEntity.class)
                     .select(BlogEntityTest2.class,o->o.columnAll().columnAs(BlogEntity::getUrl,BlogEntityTest2::getUrl));
-            String sql = queryable.toSql();
+            String sql = queryable.toSQL();
             Assert.assertEquals("SELECT t.`title`,t.`content`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top`,t.`url` AS `my_url` FROM `t_blog` t WHERE t.`deleted` = ?", sql);
             List<BlogEntityTest2> blogEntityTest2s = easyQuery.queryable(BlogEntity.class)
                     .select(BlogEntityTest2.class,o->o.columnAll().columnAs(BlogEntity::getUrl,BlogEntityTest2::getUrl)).toList();
@@ -575,7 +575,7 @@ public class QueryTest extends BaseTest {
 
             Queryable<BlogEntityTest2> queryable = easyQuery.queryable(BlogEntity.class)
                     .select(BlogEntityTest2.class,o->o.columnAll().columnIgnore(BlogEntity::getTitle).columnAs(BlogEntity::getUrl,BlogEntityTest2::getUrl));
-            String sql = queryable.toSql();
+            String sql = queryable.toSQL();
             Assert.assertEquals("SELECT t.`content`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top`,t.`url` AS `my_url` FROM `t_blog` t WHERE t.`deleted` = ?", sql);
             List<BlogEntityTest2> blogEntityTest2s = easyQuery.queryable(BlogEntity.class)
                     .select(BlogEntityTest2.class,o->o.columnAll().columnIgnore(BlogEntity::getTitle).columnAs(BlogEntity::getUrl,BlogEntityTest2::getUrl)).toList();
@@ -590,11 +590,11 @@ public class QueryTest extends BaseTest {
                 .where((t, t1) -> t1.isNotNull(BlogEntity::getTitle))
                 .orderByDesc((t, t1) -> t1.column(BlogEntity::getPublishTime))
                 .select(BlogEntity.class, (t, t1) -> t1.column(BlogEntity::getPublishTime).column(BlogEntity::getId).column(BlogEntity::getScore));
-        EntityQueryExpressionBuilder countEntityQueryExpression = SqlExpressionUtil.getCountEntityQueryExpression(select.getSqlEntityExpressionBuilder().cloneEntityExpressionBuilder());
+        EntityQueryExpressionBuilder countEntityQueryExpression = SQLExpressionUtil.getCountEntityQueryExpression(select.getSQLEntityExpressionBuilder().cloneEntityExpressionBuilder());
         Assert.assertNotNull(countEntityQueryExpression);
-        String s = countEntityQueryExpression.toExpression().toSql(null);
+        String s = countEntityQueryExpression.toExpression().toSQL(null);
         Assert.assertEquals("SELECT  COUNT(1)  FROM `t_topic` t INNER JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t1.`title` IS NOT NULL",s);
-        String s1 = select.limit(0, 20).toSql();
+        String s1 = select.limit(0, 20).toSQL();
         Assert.assertEquals("SELECT t1.`publish_time`,t1.`id`,t1.`score` FROM `t_topic` t INNER JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t1.`title` IS NOT NULL ORDER BY t1.`publish_time` DESC LIMIT 20",s1);
 
 
@@ -609,11 +609,11 @@ public class QueryTest extends BaseTest {
                 .where((t, t1) -> t1.isNotNull(BlogEntity::getTitle))
                 .select(BlogEntity.class, (t, t1) -> t1.column(BlogEntity::getPublishTime).column(BlogEntity::getId).column(BlogEntity::getScore))
                 .orderByDesc(t1 -> t1.column(BlogEntity::getPublishTime));
-        EntityQueryExpressionBuilder countEntityQueryExpression = SqlExpressionUtil.getCountEntityQueryExpression(blogEntityQueryable.getSqlEntityExpressionBuilder().cloneEntityExpressionBuilder());
+        EntityQueryExpressionBuilder countEntityQueryExpression = SQLExpressionUtil.getCountEntityQueryExpression(blogEntityQueryable.getSQLEntityExpressionBuilder().cloneEntityExpressionBuilder());
         Assert.assertNotNull(countEntityQueryExpression);
-        String s = countEntityQueryExpression.toExpression().toSql(null);
+        String s = countEntityQueryExpression.toExpression().toSQL(null);
         Assert.assertEquals("SELECT  COUNT(1)  FROM `t_topic` t INNER JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t1.`title` IS NOT NULL",s);
-        String s1 = blogEntityQueryable.limit(0, 20).toSql();
+        String s1 = blogEntityQueryable.limit(0, 20).toSQL();
         Assert.assertEquals("SELECT t2.`publish_time`,t2.`id`,t2.`score` FROM (SELECT t1.`publish_time`,t1.`id`,t1.`score` FROM `t_topic` t INNER JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t1.`title` IS NOT NULL) t2 ORDER BY t2.`publish_time` DESC LIMIT 20",s1);
 
     }
@@ -621,7 +621,7 @@ public class QueryTest extends BaseTest {
     public void query42() {
         Queryable<BlogEntity> queryable = easyQuery.queryable(BlogEntity.class)
                 .where(o -> o.eq(BlogEntity::getId, "123").eq(o,BlogEntity::getTitle,BlogEntity::getUrl));
-        String sql = queryable.toSql();
+        String sql = queryable.toSQL();
         Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`title`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? AND t.`title` = t.`url`", sql);
         BlogEntity blogEntity = queryable.firstOrNull();
         Assert.assertNull(blogEntity);
@@ -649,14 +649,14 @@ public class QueryTest extends BaseTest {
                 .groupBy(o -> o.column(BlogEntity::getId))
                 .select(TopicGroupTestDTO.class, o -> o.columnAs(BlogEntity::getId, TopicGroupTestDTO::getId).columnCount(BlogEntity::getId, TopicGroupTestDTO::getIdCount))
                 .orderByAsc(o -> o.column(TopicGroupTestDTO::getId));
-        String sql = topicGroupTestDTOQueryable.toSql();
+        String sql = topicGroupTestDTOQueryable.toSQL();
         Assert.assertEquals("SELECT t1.`id` AS `id`,t1.`id_count` AS `id_count` FROM (SELECT t.`id` AS `id`,COUNT(t.`id`) AS `id_count` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? GROUP BY t.`id`) t1 ORDER BY t1.`id` ASC",sql);
         Queryable<TopicGroupTestDTO> select = easyQuery.queryable(BlogEntity.class)
                 .where(o -> o.eq(BlogEntity::getId, "123"))
                 .groupBy(o -> o.column(BlogEntity::getId))
                 .orderByAsc(o -> o.column(BlogEntity::getId))
                 .select(TopicGroupTestDTO.class, o -> o.columnAs(BlogEntity::getId, TopicGroupTestDTO::getId).columnCount(BlogEntity::getId, TopicGroupTestDTO::getIdCount));
-        String sql1 = select.toSql();
+        String sql1 = select.toSQL();
         Assert.assertEquals("SELECT t.`id` AS `id`,COUNT(t.`id`) AS `id_count` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? GROUP BY t.`id` ORDER BY t.`id` ASC",sql1);
     }
     @Test
@@ -664,7 +664,7 @@ public class QueryTest extends BaseTest {
         Queryable<BlogEntity> where = easyQuery.queryable(BlogEntity.class)
                 .where(o -> o.eq(BlogEntity::getId, "123"));
         String sql = easyQuery
-                .queryable(Topic.class,"x").where(o -> o.exists(where, q -> q.eq(o, BlogEntity::getId, Topic::getId))).toSql();
+                .queryable(Topic.class,"x").where(o -> o.exists(where, q -> q.eq(o, BlogEntity::getId, Topic::getId))).toSQL();
         Assert.assertEquals("SELECT x.`id`,x.`stars`,x.`title`,x.`create_time` FROM `t_topic` x WHERE EXISTS (SELECT 1 FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? AND t.`id` = x.`id`) ",sql);
 
         Queryable<BlogEntity> where1 = easyQuery.queryable(BlogEntity.class)
@@ -679,7 +679,7 @@ public class QueryTest extends BaseTest {
         Queryable<BlogEntity> where = easyQuery.queryable(BlogEntity.class)
                 .where(o -> o.eq(BlogEntity::getId, "123"));
         String sql = easyQuery
-                .queryable(Topic.class,"x").where(o -> o.notExists(where, q -> q.eq(o, BlogEntity::getId, Topic::getId))).toSql();
+                .queryable(Topic.class,"x").where(o -> o.notExists(where, q -> q.eq(o, BlogEntity::getId, Topic::getId))).toSQL();
         Assert.assertEquals("SELECT x.`id`,x.`stars`,x.`title`,x.`create_time` FROM `t_topic` x WHERE NOT EXISTS (SELECT 1 FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? AND t.`id` = x.`id`) ",sql);
 
         Queryable<BlogEntity> where1 = easyQuery.queryable(BlogEntity.class)
@@ -694,7 +694,7 @@ public class QueryTest extends BaseTest {
     public void query47() {
         Queryable<BlogEntity> queryable = easyQuery.queryable(BlogEntity.class)
                 .where(o -> o.eq(BlogEntity::getId, "98"));
-        String sql = queryable.toSql();
+        String sql = queryable.toSQL();
         Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`title`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ?", sql);
         BlogEntity blogEntity = queryable.firstOrNull();
         System.out.println(blogEntity);
@@ -751,7 +751,7 @@ public class QueryTest extends BaseTest {
         String sql = easyQuery
                 .queryable(Topic.class)
                 .where(o -> o.isNotNull(Topic::getId))
-                .select(String.class, o -> o.column(Topic::getId)).distinct().toSql();
+                .select(String.class, o -> o.column(Topic::getId)).distinct().toSQL();
         Assert.assertEquals("SELECT DISTINCT t.`id` FROM `t_topic` t WHERE t.`id` IS NOT NULL",sql);
         List<String> list = easyQuery
                 .queryable(Topic.class)
@@ -771,7 +771,7 @@ public class QueryTest extends BaseTest {
                 .queryable(Topic.class)
                 .where(o -> o.eq(Topic::getId,"123"));
 
-        String sql = q1.union(q2, q3).toSql();
+        String sql = q1.union(q2, q3).toSQL();
         Assert.assertEquals("SELECT t1.`id`,t1.`stars`,t1.`title`,t1.`create_time` FROM (SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t WHERE t.`id` IS NOT NULL UNION SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t WHERE t.`id` IS NULL UNION SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t WHERE t.`id` = ?) t1",sql);
     }
     @Test
@@ -783,7 +783,7 @@ public class QueryTest extends BaseTest {
         Queryable<Topic> q3 = easyQuery
                 .queryable(Topic.class);
 
-        String sql = q1.union(q2, q3).toSql();
+        String sql = q1.union(q2, q3).toSQL();
         Assert.assertEquals("SELECT t1.`id`,t1.`stars`,t1.`title`,t1.`create_time` FROM (SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t UNION SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t UNION SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t) t1",sql);
     }
     @Test
@@ -795,7 +795,7 @@ public class QueryTest extends BaseTest {
         Queryable<Topic> q3 = easyQuery
                 .queryable(Topic.class);
 
-        String sql = q1.union(q2, q3).where(o->o.eq(Topic::getId,"123321")).toSql();
+        String sql = q1.union(q2, q3).where(o->o.eq(Topic::getId,"123321")).toSQL();
         Assert.assertEquals("SELECT t1.`id`,t1.`stars`,t1.`title`,t1.`create_time` FROM (SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t UNION SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t UNION SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t) t1 WHERE t1.`id` = ?",sql);
     }
     @Test
@@ -807,7 +807,7 @@ public class QueryTest extends BaseTest {
         Queryable<Topic> q3 = easyQuery
                 .queryable(Topic.class);
 
-        String sql = q1.union(q2, q3).select(o->o.column(Topic::getCreateTime).column(Topic::getStars)).toSql();
+        String sql = q1.union(q2, q3).select(o->o.column(Topic::getCreateTime).column(Topic::getStars)).toSQL();
         Assert.assertEquals("SELECT t1.`create_time`,t1.`stars` FROM (SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t UNION SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t UNION SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t) t1",sql);
     }
     @Test
@@ -825,7 +825,7 @@ public class QueryTest extends BaseTest {
                 .queryable(Topic.class)
                 .where(o -> o.eq(Topic::getCreateTime,"123"));
 
-        String sql = q1.union(q2, q3).unionAll(q4).toSql();
+        String sql = q1.union(q2, q3).unionAll(q4).toSQL();
         Assert.assertEquals("SELECT t2.`id`,t2.`stars`,t2.`title`,t2.`create_time` FROM (SELECT t1.`id`,t1.`stars`,t1.`title`,t1.`create_time` FROM (SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t WHERE t.`id` IS NOT NULL UNION SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t WHERE t.`id` IS NULL UNION SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t WHERE t.`id` = ?) t1 UNION ALL SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t WHERE t.`create_time` = ?) t2",sql);
     }
 }

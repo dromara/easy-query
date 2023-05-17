@@ -2,8 +2,6 @@ package com.easy.query.sql.starter;
 
 import com.easy.query.core.basic.jdbc.con.EasyConnectionFactory;
 import com.easy.query.core.basic.jdbc.con.EasyConnectionManager;
-import com.easy.query.core.basic.pagination.DefaultEasyPageResultProvider;
-import com.easy.query.core.basic.pagination.EasyPageResultProvider;
 import com.easy.query.core.basic.plugin.encryption.EasyEncryptionStrategy;
 import com.easy.query.core.basic.plugin.interceptor.EasyInterceptor;
 import com.easy.query.core.basic.plugin.logicdel.EasyLogicDeleteStrategy;
@@ -23,9 +21,9 @@ import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.sharding.initializer.ShardingInitializer;
 import com.easy.query.core.util.StringUtil;
-import com.easy.query.mssql.MsSqlDatabaseConfiguration;
-import com.easy.query.mysql.config.MySqlDatabaseConfiguration;
-import com.easy.query.pgsql.PgSqlDatabaseConfiguration;
+import com.easy.query.mssql.MsSQLDatabaseConfiguration;
+import com.easy.query.mysql.config.MySQLDatabaseConfiguration;
+import com.easy.query.pgsql.PgSQLDatabaseConfiguration;
 import com.easy.query.sql.starter.config.EasyQueryProperties;
 import com.easy.query.sql.starter.logging.Slf4jImpl;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -95,18 +93,18 @@ public class EasyQueryStarterAutoConfiguration {
     @Bean
     @ConditionalOnProperty(name = "easy-query.database", havingValue = "mysql")
     public DatabaseConfiguration mysqlDatabaseConfiguration() {
-        return new MySqlDatabaseConfiguration();
+        return new MySQLDatabaseConfiguration();
     }
 
     @Bean
     @ConditionalOnProperty(name = "easy-query.database", havingValue = "mssql")
     public DatabaseConfiguration mssqlDatabaseConfiguration() {
-        return new MsSqlDatabaseConfiguration();
+        return new MsSQLDatabaseConfiguration();
     }
     @Bean
     @ConditionalOnProperty(name = "easy-query.database", havingValue = "pgsql")
     public DatabaseConfiguration pgsqlDatabaseConfiguration() {
-        return new PgSqlDatabaseConfiguration();
+        return new PgSQLDatabaseConfiguration();
     }
 
     @Bean

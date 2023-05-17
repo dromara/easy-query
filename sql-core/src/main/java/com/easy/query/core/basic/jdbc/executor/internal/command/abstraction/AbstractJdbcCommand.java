@@ -9,7 +9,6 @@ import com.easy.query.core.basic.jdbc.executor.internal.unit.Executor;
 import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.sql.SQLException;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -26,12 +25,12 @@ public abstract class AbstractJdbcCommand<T extends ExecuteResult> implements Jd
         this.streamMergeContext = streamMergeContext;
     }
     protected  abstract Executor<T> createExecutor();
-    protected List<ExecutionUnit> getDefaultSqlRouteUnits(){
+    protected List<ExecutionUnit> getDefaultSQLRouteUnits(){
         return streamMergeContext.getExecutionUnits();
     }
     @Override
     public T execute() throws SQLException {
-        List<ExecutionUnit> executionUnits = getDefaultSqlRouteUnits();
+        List<ExecutionUnit> executionUnits = getDefaultSQLRouteUnits();
         if(EasyCollectionUtil.isEmpty(executionUnits)){
             return defaultResult();
         }

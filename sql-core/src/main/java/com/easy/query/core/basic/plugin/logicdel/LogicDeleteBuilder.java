@@ -1,13 +1,12 @@
 package com.easy.query.core.basic.plugin.logicdel;
 
 import com.easy.query.core.expression.lambda.Property;
-import com.easy.query.core.expression.lambda.SqlExpression;
-import com.easy.query.core.expression.parser.core.SqlWherePredicate;
-import com.easy.query.core.expression.parser.core.SqlColumnSetter;
+import com.easy.query.core.expression.lambda.SQLExpression;
+import com.easy.query.core.expression.parser.core.SQLWherePredicate;
+import com.easy.query.core.expression.parser.core.SQLColumnSetter;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.LogicDeleteMetadata;
 import com.easy.query.core.util.BeanUtil;
-import com.easy.query.core.util.EasyUtil;
 
 /**
  * create time 2023/3/28 09:28
@@ -29,11 +28,11 @@ public class LogicDeleteBuilder {
 
     /**
      * 配置软删除
-     * @param sqlPredicateSqlExpression
-     * @param deletedSqlExpression
+     * @param sqlWherePredicateSQLExpression
+     * @param sqlColumnSetterSQLExpression
      */
-    public void configure(SqlExpression<SqlWherePredicate<Object>> sqlPredicateSqlExpression, SqlExpression<SqlColumnSetter<Object>> deletedSqlExpression){
-        entityMetadata.setLogicDeleteMetadata(new LogicDeleteMetadata(propertyName,sqlPredicateSqlExpression, deletedSqlExpression));
+    public void configure(SQLExpression<SQLWherePredicate<Object>> sqlWherePredicateSQLExpression, SQLExpression<SQLColumnSetter<Object>> sqlColumnSetterSQLExpression){
+        entityMetadata.setLogicDeleteMetadata(new LogicDeleteMetadata(propertyName,sqlWherePredicateSQLExpression, sqlColumnSetterSQLExpression));
     }
     public Property<Object,?> getPropertyLambda(){
         return BeanUtil.getFastBean(entityMetadata.getEntityClass()).getBeanGetter(propertyName,propertyType);

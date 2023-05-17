@@ -1,8 +1,8 @@
 package com.easy.query.core.expression.executor.query.base;
 
-import com.easy.query.core.expression.sql.expression.EasyEntitySqlExpression;
-import com.easy.query.core.expression.sql.expression.EasyTableSqlExpression;
-import com.easy.query.core.expression.sql.expression.impl.AnonymousTableSqlExpression;
+import com.easy.query.core.expression.sql.expression.EasyEntitySQLExpression;
+import com.easy.query.core.expression.sql.expression.EasyTableSQLExpression;
+import com.easy.query.core.expression.sql.expression.impl.AnonymousTableSQLExpression;
 import com.easy.query.core.basic.jdbc.executor.internal.common.ExecutionUnit;
 import com.easy.query.core.sharding.rewrite.RewriteContext;
 import com.easy.query.core.sharding.rewrite.RewriteRouteUnit;
@@ -62,10 +62,10 @@ public abstract class ShardingBaseExecutionCreator extends BaseExecutionCreator{
             RouteUnit routeUnit = rewriteRouteUnit.getRouteUnit();
             String dataSource = routeUnit.getDataSource();
             List<TableRouteUnit> tableRouteUnits = routeUnit.getTableRouteUnits();
-            EasyEntitySqlExpression easyEntitySqlExpression = createEasyEntitySqlExpression(rewriteRouteUnit);
+            EasyEntitySQLExpression easyEntitySqlExpression = createEasyEntitySqlExpression(rewriteRouteUnit);
             for (TableRouteUnit tableRouteUnit : tableRouteUnits) {
-                EasyTableSqlExpression easyTableSqlExpression = easyEntitySqlExpression.getTable(tableRouteUnit.getTableIndex());
-                if(!(easyTableSqlExpression instanceof AnonymousTableSqlExpression)){
+                EasyTableSQLExpression easyTableSqlExpression = easyEntitySqlExpression.getTable(tableRouteUnit.getTableIndex());
+                if(!(easyTableSqlExpression instanceof AnonymousTableSQLExpression)){
                     easyTableSqlExpression.setTableNameAs(o->tableRouteUnit.getActualTableName());
                 }
             }
@@ -90,6 +90,6 @@ public abstract class ShardingBaseExecutionCreator extends BaseExecutionCreator{
     }
     protected abstract List<Object> getEntities(RouteUnit routeUnit);
     protected abstract boolean getFillAutoIncrement(RouteUnit routeUnit);
-    protected abstract  EasyEntitySqlExpression createEasyEntitySqlExpression(RewriteRouteUnit routeUnit);
+    protected abstract EasyEntitySQLExpression createEasyEntitySqlExpression(RewriteRouteUnit routeUnit);
 
 }

@@ -1,10 +1,10 @@
 package com.easy.query.core.basic.api.update.impl;
 
 import com.easy.query.core.basic.api.update.EntityUpdatable;
-import com.easy.query.core.enums.SqlExecuteStrategyEnum;
+import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.exception.EasyQueryConcurrentException;
-import com.easy.query.core.expression.lambda.SqlExpression;
-import com.easy.query.core.expression.parser.core.SqlColumnSelector;
+import com.easy.query.core.expression.lambda.SQLExpression;
+import com.easy.query.core.expression.parser.core.SQLColumnSelector;
 
 import java.util.function.Function;
 
@@ -16,22 +16,22 @@ import java.util.function.Function;
  */
 public class EasyEmptyEntityUpdatable<T> implements EntityUpdatable<T> {
     @Override
-    public EntityUpdatable<T> setColumns(boolean condition, SqlExpression<SqlColumnSelector<T>> columnSelectorExpression) {
+    public EntityUpdatable<T> setColumns(boolean condition, SQLExpression<SQLColumnSelector<T>> columnSelectorExpression) {
         return this;
     }
 
     @Override
-    public EntityUpdatable<T> setIgnoreColumns(boolean condition, SqlExpression<SqlColumnSelector<T>> columnSelectorExpression) {
+    public EntityUpdatable<T> setIgnoreColumns(boolean condition, SQLExpression<SQLColumnSelector<T>> columnSelectorExpression) {
         return this;
     }
 
     @Override
-    public EntityUpdatable<T> whereColumns(boolean condition, SqlExpression<SqlColumnSelector<T>> columnSelectorExpression) {
+    public EntityUpdatable<T> whereColumns(boolean condition, SQLExpression<SQLColumnSelector<T>> columnSelectorExpression) {
         return this;
     }
 
     @Override
-    public EntityUpdatable<T> setSqlStrategy(boolean condition, SqlExecuteStrategyEnum sqlStrategy) {
+    public EntityUpdatable<T> setSQLStrategy(boolean condition, SQLExecuteStrategyEnum sqlStrategy) {
         return this;
     }
 

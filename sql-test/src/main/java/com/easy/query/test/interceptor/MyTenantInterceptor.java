@@ -3,7 +3,7 @@ package com.easy.query.test.interceptor;
 import com.easy.query.core.basic.plugin.interceptor.EasyEntityInterceptor;
 import com.easy.query.core.basic.plugin.interceptor.EasyPredicateFilterInterceptor;
 import com.easy.query.core.expression.lambda.Property;
-import com.easy.query.core.expression.parser.core.SqlWherePredicate;
+import com.easy.query.core.expression.parser.core.SQLWherePredicate;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.LambdaEntityExpressionBuilder;
@@ -29,7 +29,7 @@ public class MyTenantInterceptor implements EasyEntityInterceptor,EasyPredicateF
     }
 
     @Override
-    public void configure(Class<?> entityClass, LambdaEntityExpressionBuilder lambdaEntityExpressionBuilder, SqlWherePredicate<Object> sqlWherePredicate) {
+    public void configure(Class<?> entityClass, LambdaEntityExpressionBuilder lambdaEntityExpressionBuilder, SQLWherePredicate<Object> sqlWherePredicate) {
         if(CurrentUserHelper.getUserId()!=null){
             //获取租户id的lambda表达式
             Property<Object, ?> tenantId = BeanUtil.getPropertyGetterLambda(entityClass, "tenantId", String.class);

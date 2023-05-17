@@ -6,15 +6,15 @@ import com.easy.query.core.expression.executor.parser.EasyQueryPrepareParseResul
 import com.easy.query.core.expression.executor.parser.ExecutionContext;
 import com.easy.query.core.expression.segment.ColumnSegmentImpl;
 import com.easy.query.core.expression.segment.OrderColumnSegmentImpl;
-import com.easy.query.core.expression.segment.SqlSegment;
-import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
-import com.easy.query.core.expression.sql.expression.EasyQuerySqlExpression;
+import com.easy.query.core.expression.segment.SQLSegment;
+import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
+import com.easy.query.core.expression.sql.expression.EasyQuerySQLExpression;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.segment.PropertyGroup;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.segment.PropertyOrder;
 import com.easy.query.core.util.BitwiseUtil;
 import com.easy.query.core.util.ShardingUtil;
-import com.easy.query.core.util.SqlSegmentUtil;
+import com.easy.query.core.util.SQLSegmentUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,26 +32,26 @@ public class ShardingQueryEasyStreamMergeContext extends EntityStreamMergeContex
     private final EasyQueryPrepareParseResult easyQueryPrepareParseResult;
     protected final List<PropertyOrder> orders;
     protected final List<PropertyGroup> groups;
-    protected final EasyQuerySqlExpression easyQuerySqlExpression;
+    protected final EasyQuerySQLExpression easyQuerySqlExpression;
     protected volatile boolean terminated = false;
 
     public ShardingQueryEasyStreamMergeContext(ExecutorContext executorContext, ExecutionContext executionContext, EasyQueryPrepareParseResult easyQueryPrepareParseResult) {
         super(executorContext, executionContext, easyQueryPrepareParseResult);
         this.easyQueryPrepareParseResult = easyQueryPrepareParseResult;
-        this.easyQuerySqlExpression = easyQueryPrepareParseResult.getEasyEntityPredicateSqlExpression();
+        this.easyQuerySqlExpression = easyQueryPrepareParseResult.getEasyEntityPredicateSQLExpression();
         this.orders = getOrders(easyQuerySqlExpression);
         this.groups = getGroups(easyQuerySqlExpression);
     }
 
-    private List<PropertyOrder> getOrders(EasyQuerySqlExpression easyQuerySqlExpression) {
-        if (isShardingMerge() && SqlSegmentUtil.isNotEmpty(easyQuerySqlExpression.getOrder())) {
+    private List<PropertyOrder> getOrders(EasyQuerySQLExpression easyQuerySqlExpression) {
+        if (isShardingMerge() && SQLSegmentUtil.isNotEmpty(easyQuerySqlExpression.getOrder())) {
             List<PropertyOrder> orders = new ArrayList<>();
-            SqlBuilderSegment projects = easyQuerySqlExpression.getProjects();
-            for (SqlSegment sqlSegment : easyQuerySqlExpression.getOrder().getSqlSegments()) {
+            SQLBuilderSegment projects = easyQuerySqlExpression.getProjects();
+            for (SQLSegment sqlSegment : easyQuerySqlExpression.getOrder().getSQLSegments()) {
                 if (sqlSegment instanceof OrderColumnSegmentImpl) {
                     OrderColumnSegmentImpl orderColumnSegment = (OrderColumnSegmentImpl) sqlSegment;
 
-                    PropertyOrder propertyOrder = ShardingUtil.findFirstPropertyOrderNotNull(projects.getSqlSegments(), orderColumnSegment, easyQuerySqlExpression);
+                    PropertyOrder propertyOrder = ShardingUtil.findFirstPropertyOrderNotNull(projects.getSQLSegments(), orderColumnSegment, easyQuerySqlExpression);
                     orders.add(propertyOrder);
                 }
             }
@@ -60,15 +60,15 @@ public class ShardingQueryEasyStreamMergeContext extends EntityStreamMergeContex
             return EMPTY_SQL_ORDERS;
         }
     }
-    private List<PropertyGroup> getGroups(EasyQuerySqlExpression easyQuerySqlExpression) {
-        if (isShardingMerge() && SqlSegmentUtil.isNotEmpty(easyQuerySqlExpression.getGroup())) {
+    private List<PropertyGroup> getGroups(EasyQuerySQLExpression easyQuerySqlExpression) {
+        if (isShardingMerge() && SQLSegmentUtil.isNotEmpty(easyQuerySqlExpression.getGroup())) {
             List<PropertyGroup> groups = new ArrayList<>();
-            SqlBuilderSegment projects = easyQuerySqlExpression.getProjects();
-            for (SqlSegment sqlSegment : easyQuerySqlExpression.getGroup().getSqlSegments()) {
+            SQLBuilderSegment projects = easyQuerySqlExpression.getProjects();
+            for (SQLSegment sqlSegment : easyQuerySqlExpression.getGroup().getSQLSegments()) {
                 if (sqlSegment instanceof ColumnSegmentImpl) {
                     ColumnSegmentImpl columnSegment = (ColumnSegmentImpl) sqlSegment;
 
-                    PropertyGroup propertyGroup = ShardingUtil.findFirstPropertyGroupNotNull(projects.getSqlSegments(), columnSegment, easyQuerySqlExpression);
+                    PropertyGroup propertyGroup = ShardingUtil.findFirstPropertyGroupNotNull(projects.getSQLSegments(), columnSegment, easyQuerySqlExpression);
                     groups.add(propertyGroup);
                 }
             }
@@ -132,13 +132,13 @@ public class ShardingQueryEasyStreamMergeContext extends EntityStreamMergeContex
     }
 
     @Override
-    public SqlBuilderSegment getSelectColumns() {
+    public SQLBuilderSegment getSelectColumns() {
         return easyQuerySqlExpression.getProjects();
     }
 
 
     @Override
-    public SqlBuilderSegment getGroupColumns() {
+    public SQLBuilderSegment getGroupColumns() {
         return easyQuerySqlExpression.getGroup();
     }
 

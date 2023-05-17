@@ -1,6 +1,6 @@
 package com.easy.query.core.expression.segment.condition;
 
-import com.easy.query.core.enums.SqlKeywordEnum;
+import com.easy.query.core.enums.SQLKeywordEnum;
 import com.easy.query.core.expression.segment.condition.predicate.Predicate;
 
 /**
@@ -10,7 +10,7 @@ import com.easy.query.core.expression.segment.condition.predicate.Predicate;
  * @author xuejiaming
  */
 public class OrPredicateSegment extends AbstractPredicateSegment {
-    public static final String OR= " "+ SqlKeywordEnum.OR.toSql()+" ";
+    public static final String OR= " "+ SQLKeywordEnum.OR.toSQL()+" ";
 
     public OrPredicateSegment() {
     }

@@ -1,14 +1,14 @@
 package com.easy.query.core.expression.segment.condition.predicate;
 
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
-import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
+import com.easy.query.core.basic.jdbc.parameter.SQLParameterCollector;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.segment.SqlEntitySegment;
+import com.easy.query.core.expression.segment.SQLEntitySegment;
 import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
-import com.easy.query.core.enums.SqlPredicateCompare;
-import com.easy.query.core.util.SqlUtil;
-import com.easy.query.core.util.SqlExpressionUtil;
+import com.easy.query.core.enums.SQLPredicateCompare;
+import com.easy.query.core.util.SQLUtil;
+import com.easy.query.core.util.SQLExpressionUtil;
 
 /**
  * @FileName: FuncColumnValuePredicate.java
@@ -21,10 +21,10 @@ public class FuncColumnValuePredicate implements Predicate {
     private final ColumnFunction func;
     private final String propertyName;
     private final Object val;
-    private final SqlPredicateCompare compare;
+    private final SQLPredicateCompare compare;
     private final EasyQueryRuntimeContext runtimeContext;
 
-    public FuncColumnValuePredicate(TableAvailable table, ColumnFunction func, String propertyName, Object val, SqlPredicateCompare compare, EasyQueryRuntimeContext runtimeContext) {
+    public FuncColumnValuePredicate(TableAvailable table, ColumnFunction func, String propertyName, Object val, SQLPredicateCompare compare, EasyQueryRuntimeContext runtimeContext) {
         this.table = table;
         this.propertyName = propertyName;
 
@@ -35,10 +35,10 @@ public class FuncColumnValuePredicate implements Predicate {
     }
 
     @Override
-    public String toSql(SqlParameterCollector sqlParameterCollector) {
-        SqlUtil.addParameter(sqlParameterCollector,new EasyConstSQLParameter(table,propertyName,val));
-        String sqlColumnSegment = SqlExpressionUtil.getSqlOwnerColumn(runtimeContext,table,propertyName);
-        return func.getFuncColumn(sqlColumnSegment) +" "+ compare.getSql() + " ?";
+    public String toSQL(SQLParameterCollector sqlParameterCollector) {
+        SQLUtil.addParameter(sqlParameterCollector,new EasyConstSQLParameter(table,propertyName,val));
+        String sqlColumnSegment = SQLExpressionUtil.getSQLOwnerColumn(runtimeContext,table,propertyName);
+        return func.getFuncColumn(sqlColumnSegment) +" "+ compare.getSQL() + " ?";
     }
 
     @Override
@@ -52,13 +52,13 @@ public class FuncColumnValuePredicate implements Predicate {
     }
 
     @Override
-    public SqlEntitySegment cloneSqlEntitySegment() {
+    public SQLEntitySegment cloneSQLEntitySegment() {
 
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public SqlPredicateCompare getOperator() {
+    public SQLPredicateCompare getOperator() {
         return compare;
     }
 }

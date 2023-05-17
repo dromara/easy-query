@@ -1,10 +1,10 @@
 package com.easy.query.core.basic.api.delete.abstraction;
 
-import com.easy.query.core.basic.api.internal.AbstractSqlExecuteRows;
+import com.easy.query.core.basic.api.internal.AbstractSQLExecuteRows;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
-import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
+import com.easy.query.core.basic.jdbc.parameter.SQLParameterCollector;
 import com.easy.query.core.enums.ExecuteMethodEnum;
-import com.easy.query.core.expression.parser.core.SqlWherePredicate;
+import com.easy.query.core.expression.parser.core.SQLWherePredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnValuePredicate;
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
@@ -12,11 +12,11 @@ import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.basic.api.delete.Deletable;
 import com.easy.query.core.basic.api.delete.ExpressionDeletable;
 import com.easy.query.core.enums.MultiTableTypeEnum;
-import com.easy.query.core.enums.SqlPredicateCompareEnum;
+import com.easy.query.core.enums.SQLPredicateCompareEnum;
 import com.easy.query.core.exception.EasyQueryException;
-import com.easy.query.core.expression.lambda.SqlExpression;
+import com.easy.query.core.expression.lambda.SQLExpression;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
-import com.easy.query.core.expression.segment.condition.DefaultSqlPredicate;
+import com.easy.query.core.expression.segment.condition.DefaultSQLPredicate;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.sql.builder.impl.TableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityDeleteExpressionBuilder;
@@ -31,7 +31,7 @@ import java.util.function.Function;
  * @Date: 2023/3/1 22:30
  * @author xuejiaming
  */
-public abstract   class AbstractExpressionDeletable<T> extends AbstractSqlExecuteRows<ExpressionDeletable<T>> implements ExpressionDeletable<T> {
+public abstract   class AbstractExpressionDeletable<T> extends AbstractSQLExecuteRows<ExpressionDeletable<T>> implements ExpressionDeletable<T> {
     protected final Class<T> clazz;
     protected final TableExpressionBuilder table;
     protected final EntityDeleteExpressionBuilder entityDeleteExpressionBuilder;
@@ -44,7 +44,7 @@ public abstract   class AbstractExpressionDeletable<T> extends AbstractSqlExecut
         EntityMetadata entityMetadata = this.entityDeleteExpressionBuilder.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(clazz);
         entityMetadata.checkTable();
         table = new TableExpressionBuilder(entityMetadata,  0,null, MultiTableTypeEnum.FROM,entityDeleteExpressionBuilder.getRuntimeContext());
-        this.entityDeleteExpressionBuilder.addSqlEntityTableExpression(table);
+        this.entityDeleteExpressionBuilder.addSQLEntityTableExpression(table);
     }
 
     @Override
@@ -63,9 +63,9 @@ public abstract   class AbstractExpressionDeletable<T> extends AbstractSqlExecut
 //    }
 
     @Override
-    public ExpressionDeletable<T> where(boolean condition, SqlExpression<SqlWherePredicate<T>> whereExpression) {
+    public ExpressionDeletable<T> where(boolean condition, SQLExpression<SQLWherePredicate<T>> whereExpression) {
         if(condition){
-            DefaultSqlPredicate<T> sqlPredicate = new DefaultSqlPredicate<>(0, entityDeleteExpressionBuilder, entityDeleteExpressionBuilder.getWhere());
+            DefaultSQLPredicate<T> sqlPredicate = new DefaultSQLPredicate<>(0, entityDeleteExpressionBuilder, entityDeleteExpressionBuilder.getWhere());
             whereExpression.apply(sqlPredicate);
         }
         return this;
@@ -93,7 +93,7 @@ public abstract   class AbstractExpressionDeletable<T> extends AbstractSqlExecut
         String keyProperty = keyProperties.iterator().next();
         AndPredicateSegment andPredicateSegment = new AndPredicateSegment();
         andPredicateSegment
-                .setPredicate(new ColumnValuePredicate(table.getEntityTable(), keyProperty, id, SqlPredicateCompareEnum.EQ, entityDeleteExpressionBuilder.getRuntimeContext()));
+                .setPredicate(new ColumnValuePredicate(table.getEntityTable(), keyProperty, id, SQLPredicateCompareEnum.EQ, entityDeleteExpressionBuilder.getRuntimeContext()));
         where.addPredicateSegment(andPredicateSegment);
         return this;
     }
@@ -117,10 +117,10 @@ public abstract   class AbstractExpressionDeletable<T> extends AbstractSqlExecut
     }
 
     @Override
-    public String toSql() {
-        return toSqlWithParam(null);
+    public String toSQL() {
+        return toSQLWithParam(null);
     }
-    private String toSqlWithParam(SqlParameterCollector sqlParameterCollector){
-        return entityDeleteExpressionBuilder.toExpression().toSql(sqlParameterCollector);
+    private String toSQLWithParam(SQLParameterCollector sqlParameterCollector){
+        return entityDeleteExpressionBuilder.toExpression().toSQL(sqlParameterCollector);
     }
 }

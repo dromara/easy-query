@@ -1,10 +1,10 @@
 package com.easy.query.core.basic.api.update;
 
 import com.easy.query.core.basic.api.internal.Versionable;
-import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
+import com.easy.query.core.basic.jdbc.parameter.SQLParameterCollector;
 import com.easy.query.core.expression.lambda.Property;
-import com.easy.query.core.expression.lambda.SqlExpression;
-import com.easy.query.core.expression.parser.core.SqlWherePredicate;
+import com.easy.query.core.expression.lambda.SQLExpression;
+import com.easy.query.core.expression.parser.core.SQLWherePredicate;
 
 /**
  * @FileName: ExpressionUpdatable.java
@@ -90,11 +90,11 @@ public interface ExpressionUpdatable<T> extends Updatable<T,ExpressionUpdatable<
     ExpressionUpdatable<T> setDecrementNumber(boolean condition, Property<T, ? extends Number> column, Number val);
     // endregion
 
-    default ExpressionUpdatable<T> where(SqlExpression<SqlWherePredicate<T>> whereExpression) {
+    default ExpressionUpdatable<T> where(SQLExpression<SQLWherePredicate<T>> whereExpression) {
         return where(true, whereExpression);
     }
 
-    ExpressionUpdatable<T> where(boolean condition, SqlExpression<SqlWherePredicate<T>> whereExpression);
+    ExpressionUpdatable<T> where(boolean condition, SQLExpression<SQLWherePredicate<T>> whereExpression);
 
     default ExpressionUpdatable<T> whereById(Object id) {
         return whereById(true, id);
@@ -102,9 +102,9 @@ public interface ExpressionUpdatable<T> extends Updatable<T,ExpressionUpdatable<
 
     ExpressionUpdatable<T> whereById(boolean condition, Object id);
 
-   default String toSql(){
-       return toSql(null);
+   default String toSQL(){
+       return toSQL(null);
    }
-    String toSql(SqlParameterCollector sqlParameterCollector);
+    String toSQL(SQLParameterCollector sqlParameterCollector);
 }
 

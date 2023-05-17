@@ -1,13 +1,11 @@
 package com.easy.query.core.expression.sql.builder.impl;
 
-import com.easy.query.core.enums.SqlUnionEnum;
+import com.easy.query.core.enums.SQLUnionEnum;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
-import com.easy.query.core.expression.sql.builder.SqlAnonymousUnionEntityQueryExpressionBuilder;
-import com.easy.query.core.expression.sql.builder.SqlEntityQueryExpressionBuilder;
-import com.easy.query.core.expression.sql.expression.EasyQuerySqlExpression;
-import com.easy.query.core.expression.sql.expression.impl.AnonymousQuerySqlExpression;
+import com.easy.query.core.expression.sql.builder.SQLAnonymousUnionEntityQueryExpressionBuilder;
+import com.easy.query.core.expression.sql.expression.EasyQuerySQLExpression;
 import com.easy.query.core.expression.sql.expression.impl.AnonymousUnionQuerySqlExpression;
 
 import java.util.ArrayList;
@@ -19,12 +17,12 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public class AnonymousUnionQueryExpressionBuilder extends QueryExpressionBuilder implements SqlAnonymousUnionEntityQueryExpressionBuilder {
+public class AnonymousUnionQueryExpressionBuilder extends QueryExpressionBuilder implements SQLAnonymousUnionEntityQueryExpressionBuilder {
 
     private final List<EntityQueryExpressionBuilder> entityQueryExpressionBuilders;
-    private final SqlUnionEnum sqlUnion;
+    private final SQLUnionEnum sqlUnion;
 
-    public AnonymousUnionQueryExpressionBuilder(List<EntityQueryExpressionBuilder> entityQueryExpressionBuilders, ExpressionContext queryExpressionContext, SqlUnionEnum sqlUnion) {
+    public AnonymousUnionQueryExpressionBuilder(List<EntityQueryExpressionBuilder> entityQueryExpressionBuilders, ExpressionContext queryExpressionContext, SQLUnionEnum sqlUnion) {
         super(queryExpressionContext);
         this.entityQueryExpressionBuilders = entityQueryExpressionBuilders;
         this.sqlUnion = sqlUnion;
@@ -42,11 +40,11 @@ public class AnonymousUnionQueryExpressionBuilder extends QueryExpressionBuilder
 
 
     @Override
-    public EasyQuerySqlExpression toExpression() {
-       List<EasyQuerySqlExpression> easyQuerySqlExpressions = new ArrayList<>(entityQueryExpressionBuilders.size());
+    public EasyQuerySQLExpression toExpression() {
+       List<EasyQuerySQLExpression> easyQuerySqlExpressions = new ArrayList<>(entityQueryExpressionBuilders.size());
         for (EntityQueryExpressionBuilder entityQueryExpressionBuilder : entityQueryExpressionBuilders) {
 
-            EasyQuerySqlExpression expression = entityQueryExpressionBuilder.toExpression();
+            EasyQuerySQLExpression expression = entityQueryExpressionBuilder.toExpression();
             easyQuerySqlExpressions.add(expression);
         }
         return new AnonymousUnionQuerySqlExpression(getRuntimeContext(), easyQuerySqlExpressions,sqlUnion);

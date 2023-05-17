@@ -42,11 +42,11 @@ public class DefaultEntityExpressionExecutor implements EntityExpressionExecutor
     }
 
     @Override
-    public <TR> List<TR> querySql(ExecutorContext executorContext, Class<TR> clazz, String sql, List<SQLParameter> sqlParameters) {
+    public <TR> List<TR> querySQL(ExecutorContext executorContext, Class<TR> clazz, String sql, List<SQLParameter> sqlParameters) {
 
         ExecutionContext executionContext = executionContextFactory.createJdbcExecutionContext(sql, sqlParameters);
 
-        try (JdbcCommand<QueryExecuteResult> command = getSqlQueryJdbcCommand(executorContext, executionContext);
+        try (JdbcCommand<QueryExecuteResult> command = getSQLQueryJdbcCommand(executorContext, executionContext);
              QueryExecuteResult executeResult = command.execute()) {
             return StreamResultUtil.mapTo(executorContext, executeResult.getStreamResultSet(), clazz);
         } catch (Exception e) {
@@ -54,11 +54,11 @@ public class DefaultEntityExpressionExecutor implements EntityExpressionExecutor
         }
     }
     @Override
-    public long executeSqlRows(ExecutorContext executorContext, String sql, List<SQLParameter> sqlParameters) {
+    public long executeSQLRows(ExecutorContext executorContext, String sql, List<SQLParameter> sqlParameters) {
 
         ExecutionContext executionContext = executionContextFactory.createJdbcExecutionContext(sql, sqlParameters);
 
-        try (JdbcCommand<AffectedRowsExecuteResult> command = getSqlExecuteUpdateJdbcCommand(executorContext, executionContext);
+        try (JdbcCommand<AffectedRowsExecuteResult> command = getSQLExecuteUpdateJdbcCommand(executorContext, executionContext);
              AffectedRowsExecuteResult executeResult = command.execute()) {
             return executeResult.getRows();
         } catch (Exception e) {
@@ -119,10 +119,10 @@ public class DefaultEntityExpressionExecutor implements EntityExpressionExecutor
     }
 
 
-    private JdbcCommand<QueryExecuteResult> getSqlQueryJdbcCommand(ExecutorContext executorContext, ExecutionContext executionContext) {
+    private JdbcCommand<QueryExecuteResult> getSQLQueryJdbcCommand(ExecutorContext executorContext, ExecutionContext executionContext) {
         return new DefaultQueryJdbcCommand(new EasyStreamMergeContext(executorContext, executionContext));
     }
-    private JdbcCommand<AffectedRowsExecuteResult> getSqlExecuteUpdateJdbcCommand(ExecutorContext executorContext, ExecutionContext executionContext) {
+    private JdbcCommand<AffectedRowsExecuteResult> getSQLExecuteUpdateJdbcCommand(ExecutorContext executorContext, ExecutionContext executionContext) {
         return new DefaultExecuteUpdateJdbcCommand(new EasyStreamMergeContext(executorContext, executionContext));
     }
     private JdbcCommand<QueryExecuteResult> getQueryEntityJdbcCommand(ExecutorContext executorContext, ExecutionContext executionContext, EasyQueryPrepareParseResult easyQueryPrepareParseResult) {

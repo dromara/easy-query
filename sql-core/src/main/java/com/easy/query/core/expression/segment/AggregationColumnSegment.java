@@ -11,5 +11,5 @@ import com.easy.query.core.expression.func.AggregationType;
 public interface AggregationColumnSegment extends ColumnSegment {
     AggregationType getAggregationType();
     @Override
-    AggregationColumnSegment cloneSqlEntitySegment();
+    AggregationColumnSegment cloneSQLEntitySegment();
 }

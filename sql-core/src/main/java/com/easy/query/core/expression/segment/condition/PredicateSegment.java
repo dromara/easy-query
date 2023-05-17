@@ -1,11 +1,7 @@
 package com.easy.query.core.expression.segment.condition;
 
-import com.easy.query.core.expression.segment.SqlSegment;
+import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.expression.segment.condition.predicate.Predicate;
-import com.easy.query.core.sharding.route.RoutePredicateExpression;
-import com.easy.query.core.sharding.rule.RouteRuleFilter;
-
-import java.util.List;
 
 /**
  * @FileName: PredicateSegment.java
@@ -13,7 +9,7 @@ import java.util.List;
  * @Date: 2023/3/2 22:04
  * @author xuejiaming
  */
-public interface PredicateSegment extends SqlSegment {
+public interface PredicateSegment extends SQLSegment {
     boolean isRoot();
     boolean isEmpty();
 

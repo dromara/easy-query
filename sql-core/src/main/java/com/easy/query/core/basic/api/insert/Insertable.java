@@ -1,8 +1,8 @@
 package com.easy.query.core.basic.api.insert;
 
 import com.easy.query.core.basic.api.internal.Interceptable;
-import com.easy.query.core.basic.api.internal.SqlExecuteRows;
-import com.easy.query.core.basic.api.internal.SqlExecuteStrategy;
+import com.easy.query.core.basic.api.internal.SQLExecuteRows;
+import com.easy.query.core.basic.api.internal.SQLExecuteStrategy;
 import com.easy.query.core.basic.api.internal.TableReNameable;
 
 import java.util.Collection;
@@ -13,7 +13,7 @@ import java.util.Collection;
  * @Date: 2023/2/20 08:48
  * @author xuejiaming
  */
-public interface Insertable<T> extends SqlExecuteRows, Interceptable<Insertable<T>>, TableReNameable<Insertable<T>>, SqlExecuteStrategy<Insertable<T>> {
+public interface Insertable<T> extends SQLExecuteRows, Interceptable<Insertable<T>>, TableReNameable<Insertable<T>>, SQLExecuteStrategy<Insertable<T>> {
     Insertable<T> insert(T entity);
 
     default Insertable<T> insert(Collection<T> entities) {

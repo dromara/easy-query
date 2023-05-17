@@ -1,7 +1,7 @@
 package com.easy.query.sql.starter.config;
 
 
-import com.easy.query.core.enums.SqlExecuteStrategyEnum;
+import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.sql.starter.option.DatabaseEnum;
 import com.easy.query.sql.starter.option.NameConversionEnum;
@@ -22,8 +22,8 @@ public class EasyQueryProperties {
     private Boolean deleteThrow =true;
     private DatabaseEnum database;
     private NameConversionEnum nameConversion;
-    private SqlExecuteStrategyEnum insertStrategy=SqlExecuteStrategyEnum.DEFAULT;
-    private SqlExecuteStrategyEnum updateStrategy=SqlExecuteStrategyEnum.DEFAULT;
+    private SQLExecuteStrategyEnum insertStrategy= SQLExecuteStrategyEnum.DEFAULT;
+    private SQLExecuteStrategyEnum updateStrategy= SQLExecuteStrategyEnum.DEFAULT;
     private ConnectionModeEnum connectionMode=ConnectionModeEnum.SYSTEM_AUTO;
     /**
      * 仅分片时有效
@@ -90,19 +90,19 @@ public class EasyQueryProperties {
         this.nameConversion = nameConversion;
     }
 
-    public SqlExecuteStrategyEnum getInsertStrategy() {
+    public SQLExecuteStrategyEnum getInsertStrategy() {
         return insertStrategy;
     }
 
-    public void setInsertStrategy(SqlExecuteStrategyEnum insertStrategy) {
+    public void setInsertStrategy(SQLExecuteStrategyEnum insertStrategy) {
         this.insertStrategy = insertStrategy;
     }
 
-    public SqlExecuteStrategyEnum getUpdateStrategy() {
+    public SQLExecuteStrategyEnum getUpdateStrategy() {
         return updateStrategy;
     }
 
-    public void setUpdateStrategy(SqlExecuteStrategyEnum updateStrategy) {
+    public void setUpdateStrategy(SQLExecuteStrategyEnum updateStrategy) {
         this.updateStrategy = updateStrategy;
     }
 

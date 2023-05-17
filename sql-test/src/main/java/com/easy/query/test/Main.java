@@ -4,11 +4,11 @@ package com.easy.query.test;
 import com.alibaba.druid.pool.DruidDataSourceFactory;
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
-import com.easy.query.core.enums.SqlRangeEnum;
-import com.easy.query.core.enums.SqlExecuteStrategyEnum;
+import com.easy.query.core.enums.SQLRangeEnum;
+import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.test.dto.TopicRequest;
 import com.easy.query.test.entity.Topic;
-import com.easy.query.mysql.config.MySqlDatabaseConfiguration;
+import com.easy.query.mysql.config.MySQLDatabaseConfiguration;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.api.client.EasyQuery;
 import com.easy.query.core.basic.api.select.Queryable;
@@ -89,14 +89,14 @@ public class Main {
 //            System.out.println("耗时：" + (end - start) + "ms");
 //        }
 
-        boolean openFirst1 = SqlRangeEnum.openFirst(SqlRangeEnum.Open);
-        boolean openFirst2 = SqlRangeEnum.openFirst(SqlRangeEnum.Closed);
-        boolean openFirst3 = SqlRangeEnum.openFirst(SqlRangeEnum.closedOpen);
-        boolean openFirst4 = SqlRangeEnum.openFirst(SqlRangeEnum.openClosed);
-        boolean openEnd1 = SqlRangeEnum.openEnd(SqlRangeEnum.Open);
-        boolean openEnd2 = SqlRangeEnum.openEnd(SqlRangeEnum.Closed);
-        boolean openEnd3 = SqlRangeEnum.openEnd(SqlRangeEnum.closedOpen);
-        boolean openEnd4 = SqlRangeEnum.openEnd(SqlRangeEnum.openClosed);
+        boolean openFirst1 = SQLRangeEnum.openFirst(SQLRangeEnum.Open);
+        boolean openFirst2 = SQLRangeEnum.openFirst(SQLRangeEnum.Closed);
+        boolean openFirst3 = SQLRangeEnum.openFirst(SQLRangeEnum.closedOpen);
+        boolean openFirst4 = SQLRangeEnum.openFirst(SQLRangeEnum.openClosed);
+        boolean openEnd1 = SQLRangeEnum.openEnd(SQLRangeEnum.Open);
+        boolean openEnd2 = SQLRangeEnum.openEnd(SQLRangeEnum.Closed);
+        boolean openEnd3 = SQLRangeEnum.openEnd(SQLRangeEnum.closedOpen);
+        boolean openEnd4 = SQLRangeEnum.openEnd(SQLRangeEnum.openClosed);
 
         LogFactory.useStdOutLogging();
 
@@ -121,7 +121,7 @@ public class Main {
 
         easyQuery =  EasyQueryBootstrapper.defaultBuilderConfiguration()
                 .setDefaultDataSource(dataSource)
-                .useDatabaseConfigure(new MySqlDatabaseConfiguration())
+                .useDatabaseConfigure(new MySQLDatabaseConfiguration())
                 .build();
         EasyQueryRuntimeContext runtimeContext = easyQuery.getRuntimeContext();
 //        jqdcRuntimeContext.getEasyQueryConfiguration().applyEntityTypeConfiguration(new TestUserMySqlConfiguration());
@@ -191,12 +191,12 @@ public class Main {
         {
             long start = System.currentTimeMillis();
             String s1 = easyQuery
-                    .queryable(Topic.class).where(o->o.gt(Topic::getCreateTime,now)).toSql();
+                    .queryable(Topic.class).where(o->o.gt(Topic::getCreateTime,now)).toSQL();
 
             for (int i = 0; i < 100000; i++) {
 
                 String s = easyQuery
-                        .queryable(Topic.class).where(o->o.gt(Topic::getCreateTime,now)).toSql();
+                        .queryable(Topic.class).where(o->o.gt(Topic::getCreateTime,now)).toSQL();
             }
             long end = System.currentTimeMillis();
             System.out.println("耗时：" + (end - start) + "ms");
@@ -205,11 +205,11 @@ public class Main {
         {
             long start = System.currentTimeMillis();
             String s1 = easyQuery
-                    .queryable(Topic.class).whereObject(topicRequest).toSql();
+                    .queryable(Topic.class).whereObject(topicRequest).toSQL();
 
             for (int i = 0; i < 100000; i++) {
                 String s = easyQuery
-                        .queryable(Topic.class).whereObject(topicRequest).toSql();
+                        .queryable(Topic.class).whereObject(topicRequest).toSQL();
             }
             long end = System.currentTimeMillis();
             System.out.println("耗时：" + (end - start) + "ms");
@@ -272,7 +272,7 @@ public class Main {
             test2.setAge(102);
             test2.setName("111");
             updates.add(test2);
-            long l12xx = easyQuery.updatable(updates).setSqlStrategy(SqlExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS).executeRows();
+            long l12xx = easyQuery.updatable(updates).setSQLStrategy(SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS).executeRows();
         }
         {
             TestUserMysql testUserMysqlx11 = easyQuery.queryable(TestUserMysql.class, "y")
@@ -308,7 +308,7 @@ public class Main {
                     .where(o -> o.eq(TestUserMysql::getId, "102")
                             .like(TestUserMysql::getName, "1%")
                             .and(x -> x.like(TestUserMysql::getName, "123").or().eq(TestUserMysql::getAge, 1)
-                            )).toSql();
+                            )).toSQL();
             System.out.println("---------:"+s);
 
             TestUserMysql testUserMysqlxa = easyQuery.queryable(TestUserMysql.class)
@@ -393,7 +393,7 @@ public class Main {
                     .groupBy(o -> o.column(TestUserMysql::getAge))
                     .having(o -> o.count(TestUserMysql::getId, AggregatePredicateCompare.GE, 0))
                     .select(TestUserMysqlGroup.class, o -> o.column(TestUserMysql::getAge).columnCount(TestUserMysql::getId, TestUserMysqlGroup::getAcount))
-                    .toSql();
+                    .toSQL();
             System.out.println(ds0z);
 
             try (Transaction transaction = easyQuery.beginTransaction()) {
@@ -496,13 +496,13 @@ public class Main {
                     .groupBy(o -> o.column(TestUserMysql::getAge))
                     .having(o -> o.count(TestUserMysql::getId, AggregatePredicateCompare.GE, 0))
                     .select(TestUserMysqlGroup.class, o -> o.column(TestUserMysql::getAge).columnCount(TestUserMysql::getId, TestUserMysqlGroup::getAcount))
-                    .toSql();
+                    .toSQL();
             String ds02 = easyQuery.queryable(TestUserMysql.class)
                     .where(o -> o.eq(TestUserMysql::getName, "ds0"))
                     .groupBy(o -> o.column(TestUserMysql::getAge))
                     .having(o -> o.count(TestUserMysql::getId, AggregatePredicateCompare.GE, 0))
                     .select(TestUserMysqlGroup.class, o -> o.column(TestUserMysql::getAge).columnCount(TestUserMysql::getId, TestUserMysqlGroup::getAcount))
-                    .toSql();
+                    .toSQL();
             System.out.println("ds01==ds02:" + ds01.equals(ds02));
             long start = System.currentTimeMillis();
             for (int ii = 0; ii < 10000; ii++) {
@@ -513,7 +513,7 @@ public class Main {
                         .groupBy(o -> o.column(TestUserMysql::getAge))
                         .having(o -> o.count(TestUserMysql::getId, AggregatePredicateCompare.GE, 0))
                         .select(TestUserMysqlGroup.class, o -> o.column(TestUserMysql::getAge).columnCount(TestUserMysql::getId, TestUserMysqlGroup::getAcount))
-                        .toSql();
+                        .toSQL();
             }
             long end = System.currentTimeMillis();
             System.out.println("耗时：" + (end - start) + "ms");

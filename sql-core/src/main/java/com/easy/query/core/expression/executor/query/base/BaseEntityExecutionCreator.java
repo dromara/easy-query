@@ -3,13 +3,12 @@ package com.easy.query.core.expression.executor.query.base;
 import com.easy.query.core.basic.plugin.track.TrackManager;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
-import com.easy.query.core.expression.sql.expression.EasyEntitySqlExpression;
+import com.easy.query.core.expression.sql.expression.EasyEntitySQLExpression;
 import com.easy.query.core.basic.jdbc.executor.internal.common.ExecutionUnit;
-import com.easy.query.core.util.SqlExpressionUtil;
+import com.easy.query.core.util.SQLExpressionUtil;
 import com.easy.query.core.util.StringUtil;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -33,7 +32,7 @@ public abstract class BaseEntityExecutionCreator extends BaseExecutionCreator{
     @Override
     protected List<ExecutionUnit> createExecutionUnits() {
         //是否单个对象运行sql
-        boolean isSingleEntityRun = SqlExpressionUtil.sqlExecuteStrategyNonDefault(entityExpressionBuilder.getExpressionContext());
+        boolean isSingleEntityRun = SQLExpressionUtil.sqlExecuteStrategyNonDefault(entityExpressionBuilder.getExpressionContext());
         if (isSingleEntityRun||updateSingleEntityRun()) {
             return createSingleExecutionUnits();
         }
@@ -52,20 +51,20 @@ public abstract class BaseEntityExecutionCreator extends BaseExecutionCreator{
     private List<ExecutionUnit> createSingleExecutionUnits() {
         List<ExecutionUnit> routeExecutionUnits = new ArrayList<>(entities.size());
         for (Object entity : entities) {
-            EasyEntitySqlExpression expression = createEasySqlExpression(entity);
+            EasyEntitySQLExpression expression = createEasySQLExpression(entity);
             ExecutionUnit executionUnit = createExecutionUnit(dataSource,expression, Collections.singletonList(entity), getFillAutoIncrement());
             //开启追踪的情况下update可能没有可以更新的数据那么就不会生成sql
-            if(StringUtil.isNotBlank(executionUnit.getSqlRouteUnit().getSqlUnit().getSql())){
+            if(StringUtil.isNotBlank(executionUnit.getSQLRouteUnit().getSQLUnit().getSQL())){
                 routeExecutionUnits.add(executionUnit);
             }
         }
         return routeExecutionUnits;
     }
     private List<ExecutionUnit> createMultiExecutionUnits() {
-        EasyEntitySqlExpression expression = entityExpressionBuilder.toExpression();
+        EasyEntitySQLExpression expression = entityExpressionBuilder.toExpression();
         ExecutionUnit executionUnit = createExecutionUnit(dataSource,expression, entities, getFillAutoIncrement());
         return Collections.singletonList(executionUnit);
     }
-    protected abstract EasyEntitySqlExpression createEasySqlExpression(Object entity);
+    protected abstract EasyEntitySQLExpression createEasySQLExpression(Object entity);
     protected abstract boolean getFillAutoIncrement();
 }

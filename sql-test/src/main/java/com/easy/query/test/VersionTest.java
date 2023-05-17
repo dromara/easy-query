@@ -1,6 +1,5 @@
 package com.easy.query.test;
 
-import com.easy.query.test.BaseTest;
 import com.easy.query.test.entity.SysUserVersionLong;
 import com.easy.query.test.entity.SysUserVersionLongLogicDel;
 import org.junit.Assert;
@@ -76,17 +75,17 @@ public class VersionTest extends BaseTest {
         String s = easyQuery.updatable(SysUserVersionLong.class)
                 .set(SysUserVersionLong::getPhone, "123")
                 .whereById(id)
-                .toSql();
+                .toSQL();
         Assert.assertEquals("UPDATE `t_sys_user_version` SET `phone` = ? WHERE `id` = ?",s);
         String s1 = easyQuery.updatable(SysUserVersionLong.class)
                 .set(SysUserVersionLong::getPhone, "123")
-                .where(o -> o.eq(SysUserVersionLong::getId, id)).toSql();
+                .where(o -> o.eq(SysUserVersionLong::getId, id)).toSQL();
         Assert.assertEquals("UPDATE `t_sys_user_version` SET `phone` = ? WHERE `id` = ?",s1);
         String s2 = easyQuery.updatable(SysUserVersionLong.class)
                 .set(SysUserVersionLong::getPhone, "123")
                 .withVersion(1L)
                 .where(o->o.eq(SysUserVersionLong::getId,id))
-                .toSql();
+                .toSQL();
         Assert.assertEquals("UPDATE `t_sys_user_version` SET `phone` = ?,`version` = ? WHERE `version` = ? AND `id` = ?",s2);
     }
     @Test
@@ -134,7 +133,7 @@ public class VersionTest extends BaseTest {
         String id="56";
         String sql= easyQuery.deletable(SysUserVersionLongLogicDel.class)
                 .withVersion(1L)
-                .whereById(id).toSql();
+                .whereById(id).toSQL();
         Assert.assertEquals("UPDATE `t_sys_user_version_del` SET `deleted` = ?,`version` = ? WHERE `deleted` = ? AND `version` = ? AND `id` = ?",sql);
     }
 }

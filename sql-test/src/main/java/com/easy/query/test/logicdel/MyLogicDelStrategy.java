@@ -3,9 +3,9 @@ package com.easy.query.test.logicdel;
 import com.easy.query.core.basic.plugin.logicdel.abstraction.AbstractEasyLogicDeleteStrategy;
 import com.easy.query.core.basic.plugin.logicdel.LogicDeleteBuilder;
 import com.easy.query.core.expression.lambda.Property;
-import com.easy.query.core.expression.lambda.SqlExpression;
-import com.easy.query.core.expression.parser.core.SqlWherePredicate;
-import com.easy.query.core.expression.parser.core.SqlColumnSetter;
+import com.easy.query.core.expression.lambda.SQLExpression;
+import com.easy.query.core.expression.parser.core.SQLWherePredicate;
+import com.easy.query.core.expression.parser.core.SQLColumnSetter;
 import com.easy.query.core.util.BeanUtil;
 
 import java.time.LocalDateTime;
@@ -26,12 +26,12 @@ public class MyLogicDelStrategy extends AbstractEasyLogicDeleteStrategy {
      */
     private final Set<Class<?>> allowTypes=new HashSet<>(Arrays.asList(LocalDateTime.class));
     @Override
-    protected SqlExpression<SqlWherePredicate<Object>> getPredicateFilterExpression(LogicDeleteBuilder builder, Property<Object, ?> lambdaProperty) {
+    protected SQLExpression<SQLWherePredicate<Object>> getPredicateFilterExpression(LogicDeleteBuilder builder, Property<Object, ?> lambdaProperty) {
         return o->o.isNull(lambdaProperty);
     }
 
     @Override
-    protected SqlExpression<SqlColumnSetter<Object>> getDeletedSqlExpression(LogicDeleteBuilder builder, Property<Object, ?> lambdaProperty) {
+    protected SQLExpression<SQLColumnSetter<Object>> getDeletedSQLExpression(LogicDeleteBuilder builder, Property<Object, ?> lambdaProperty) {
 //        LocalDateTime now = LocalDateTime.now();
 //        return o->o.set(lambdaProperty,now);
         //上面的是错误用法,将now值获取后那么这个now就是个固定值而不是动态值

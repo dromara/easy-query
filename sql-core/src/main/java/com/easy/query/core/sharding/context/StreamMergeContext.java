@@ -6,7 +6,7 @@ import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.MergeBehaviorEnum;
-import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
+import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.basic.jdbc.executor.internal.common.ExecutionUnit;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.segment.PropertyGroup;
@@ -68,8 +68,8 @@ public interface StreamMergeContext extends AutoCloseable {
     long getMergeRows();
     long getRewriteOffset();
     long getRewriteRows();
-    SqlBuilderSegment getSelectColumns();
-    SqlBuilderSegment getGroupColumns();
+    SQLBuilderSegment getSelectColumns();
+    SQLBuilderSegment getGroupColumns();
     ExecuteMethodEnum getExecuteMethod();
 
     List<EasyConnection> getEasyConnections(ConnectionModeEnum connectionMode, String dataSourceName, int createDbConnectionCount);

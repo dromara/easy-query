@@ -1,9 +1,9 @@
 package com.easy.query.core.expression.segment;
 
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
-import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
+import com.easy.query.core.basic.jdbc.parameter.SQLParameterCollector;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.util.SqlExpressionUtil;
+import com.easy.query.core.util.SQLExpressionUtil;
 
 /**
  * @FileName: ColumnSegment.java
@@ -48,18 +48,18 @@ public class ColumnSegmentImpl implements ColumnSegment {
     }
 
     @Override
-    public String toSql(SqlParameterCollector sqlParameterCollector) {
-        String sqlColumnSegment = SqlExpressionUtil.getSqlOwnerColumn(runtimeContext,table,propertyName);
+    public String toSQL(SQLParameterCollector sqlParameterCollector) {
+        String sqlColumnSegment = SQLExpressionUtil.getSQLOwnerColumn(runtimeContext,table,propertyName);
         StringBuilder sql = new StringBuilder();
         sql.append(sqlColumnSegment);
         if(alias!=null){
-            sql.append(" AS ").append(SqlExpressionUtil.getQuoteName(runtimeContext,alias));
+            sql.append(" AS ").append(SQLExpressionUtil.getQuoteName(runtimeContext,alias));
         }
         return sql.toString();
     }
 
     @Override
-    public ColumnSegment cloneSqlEntitySegment() {
+    public ColumnSegment cloneSQLEntitySegment() {
         return new ColumnSegmentImpl(table,propertyName, runtimeContext,alias);
     }
 

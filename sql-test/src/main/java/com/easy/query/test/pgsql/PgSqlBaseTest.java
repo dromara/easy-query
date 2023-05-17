@@ -9,7 +9,7 @@ import com.easy.query.core.sharding.route.manager.TableRouteManager;
 import com.easy.query.test.encryption.Base64EncryptionStrategy;
 import com.easy.query.test.encryption.DefaultAesEasyEncryptionStrategy;
 import com.easy.query.test.encryption.MyEncryptionStrategy;
-import com.easy.query.pgsql.PgSqlDatabaseConfiguration;
+import com.easy.query.pgsql.PgSQLDatabaseConfiguration;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.interceptor.MyEntityInterceptor;
 import com.easy.query.test.interceptor.MyTenantInterceptor;
@@ -65,7 +65,7 @@ public class PgSqlBaseTest {
                     op.setExecutorMaximumPoolSize(2);
                     op.setMaxShardingQueryLimit(1);
                 })
-                .useDatabaseConfigure(new PgSqlDatabaseConfiguration())
+                .useDatabaseConfigure(new PgSQLDatabaseConfiguration())
 //                .replaceService(EasyShardingOption.class, new EasyShardingOption(2, 0))
                 .build();
         EasyQueryRuntimeContext runtimeContext = easyQuery.getRuntimeContext();

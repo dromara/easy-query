@@ -1,6 +1,6 @@
 package com.easy.query.core.expression.sql.builder.internal;
 
-import com.easy.query.core.expression.parser.core.SqlWherePredicate;
+import com.easy.query.core.expression.parser.core.SQLWherePredicate;
 import com.easy.query.core.expression.parser.factory.EasyQueryLambdaFactory;
 import com.easy.query.core.common.bean.FastBean;
 import com.easy.query.core.enums.EasyBehaviorEnum;
@@ -10,7 +10,7 @@ import com.easy.query.core.expression.sql.builder.LambdaEntityExpressionBuilder;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.configuration.EasyQueryConfiguration;
-import com.easy.query.core.expression.lambda.SqlExpression;
+import com.easy.query.core.expression.lambda.SQLExpression;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.basic.plugin.interceptor.EasyPredicateFilterInterceptor;
@@ -19,7 +19,6 @@ import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.metadata.VersionMetadata;
 import com.easy.query.core.util.BeanUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
-import com.easy.query.core.util.EasyUtil;
 
 import java.util.Objects;
 
@@ -50,10 +49,10 @@ public abstract class AbstractPredicateEntityExpressionBuilder extends AbstractE
             EntityMetadata entityMetadata = table.getEntityMetadata();
             PredicateSegment predicateSegment = new AndPredicateSegment(true);
             EasyQueryLambdaFactory easyQueryLambdaFactory = getRuntimeContext().getEasyQueryLambdaFactory();
-            SqlWherePredicate<Object> sqlPredicate = easyQueryLambdaFactory.createSqlPredicate(table.getIndex(), this, predicateSegment);
+            SQLWherePredicate<Object> sqlPredicate = easyQueryLambdaFactory.createSQLPredicate(table.getIndex(), this, predicateSegment);
 
             if (useLogicDelete(entityMetadata)) {
-                SqlExpression<SqlWherePredicate<Object>> logicDeleteQueryFilterExpression = table.getLogicDeleteQueryFilterExpression();
+                SQLExpression<SQLWherePredicate<Object>> logicDeleteQueryFilterExpression = table.getLogicDeleteQueryFilterExpression();
                 logicDeleteQueryFilterExpression.apply(sqlPredicate);
             }
 

@@ -13,10 +13,10 @@ import com.easy.query.core.expression.segment.ColumnSegmentImpl;
 import com.easy.query.core.expression.segment.FuncColumnSegmentImpl;
 import com.easy.query.core.expression.segment.GroupByColumnSegment;
 import com.easy.query.core.expression.segment.OrderColumnSegmentImpl;
-import com.easy.query.core.expression.segment.SqlSegment;
-import com.easy.query.core.expression.segment.builder.ProjectSqlBuilderSegment;
-import com.easy.query.core.expression.sql.expression.EasyQuerySqlExpression;
-import com.easy.query.core.expression.sql.expression.EasyTableSqlExpression;
+import com.easy.query.core.expression.segment.SQLSegment;
+import com.easy.query.core.expression.segment.builder.ProjectSQLBuilderSegment;
+import com.easy.query.core.expression.sql.expression.EasyQuerySQLExpression;
+import com.easy.query.core.expression.sql.expression.EasyTableSQLExpression;
 import com.easy.query.core.expression.func.ColumnFunctionFactory;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.ShardingInitConfig;
@@ -31,7 +31,7 @@ import com.easy.query.core.util.BitwiseUtil;
 import com.easy.query.core.util.ClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.ShardingUtil;
-import com.easy.query.core.util.SqlSegmentUtil;
+import com.easy.query.core.util.SQLSegmentUtil;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -56,10 +56,10 @@ public class DefaultRewriteContextFactory implements RewriteContextFactory {
 
     public RewriteContext rewriteShardingQueryExpression(QueryPrepareParseResult queryPrepareParseResult,RouteContext routeContext) {
 
-        EasyQuerySqlExpression easyQuerySqlExpression = queryPrepareParseResult.getEasyEntityPredicateSqlExpression();
-        EasyQueryRuntimeContext runtimeContext = easyQuerySqlExpression.getRuntimeContext();
+        EasyQuerySQLExpression easyEntityPredicateSQLExpression = queryPrepareParseResult.getEasyEntityPredicateSQLExpression();
+        EasyQueryRuntimeContext runtimeContext = easyEntityPredicateSQLExpression.getRuntimeContext();
         //添加默认排序字段,并且添加默认排序字段到select 如果不添加那么streamResultSet将无法进行order排序获取
-        if(SqlSegmentUtil.isEmpty(easyQuerySqlExpression.getOrder())&&Objects.equals(ExecuteMethodEnum.LIST,queryPrepareParseResult.getExecutorContext().getExecuteMethod())){
+        if(SQLSegmentUtil.isEmpty(easyEntityPredicateSQLExpression.getOrder())&&Objects.equals(ExecuteMethodEnum.LIST,queryPrepareParseResult.getExecutorContext().getExecuteMethod())){
             SequenceParseResult sequenceParseResult = queryPrepareParseResult.getSequenceParseResult();
             if(sequenceParseResult!=null){
                 TableAvailable table = sequenceParseResult.getTable();
@@ -71,31 +71,31 @@ public class DefaultRewriteContextFactory implements RewriteContextFactory {
                     String firstSequenceProperty = shardingSequenceConfig.getFirstSequencePropertyOrNull();
                     if(firstSequenceProperty!=null){
                         OrderColumnSegmentImpl orderColumnSegment = new OrderColumnSegmentImpl(table, firstSequenceProperty, runtimeContext, !reverse);
-                        easyQuerySqlExpression.getOrder().append(orderColumnSegment);
-                        if(!easyQuerySqlExpression.getProjects().containsOnce(entityMetadata.getEntityClass(),firstSequenceProperty)){
+                        easyEntityPredicateSQLExpression.getOrder().append(orderColumnSegment);
+                        if(!easyEntityPredicateSQLExpression.getProjects().containsOnce(entityMetadata.getEntityClass(),firstSequenceProperty)){
                             ColumnSegmentImpl columnSegment = new ColumnSegmentImpl(table, firstSequenceProperty, runtimeContext);
-                            easyQuerySqlExpression.getProjects().append(columnSegment);
+                            easyEntityPredicateSQLExpression.getProjects().append(columnSegment);
                         }
                     }
                 }
             }
         }
         //如果当前表达式存在group 并且
-        if (SqlSegmentUtil.isNotEmpty(easyQuerySqlExpression.getGroup())) {
+        if (SQLSegmentUtil.isNotEmpty(easyEntityPredicateSQLExpression.getGroup())) {
 
             boolean hasAvg=false;
             //分组重写的如果存在count avg sum那么就会存储
-            Map<GroupRewriteStatus,GroupRewriteStatus> groupRewriteStatusMap = new LinkedHashMap<>(easyQuerySqlExpression.getProjects().getSqlSegments().size());
+            Map<GroupRewriteStatus,GroupRewriteStatus> groupRewriteStatusMap = new LinkedHashMap<>(easyEntityPredicateSQLExpression.getProjects().getSQLSegments().size());
             //group的字段必须要全部存在于select中
             //遍历所有的表达式
-            for (SqlSegment groupSqlSegment : easyQuerySqlExpression.getGroup().getSqlSegments()) {
-                if (!(groupSqlSegment instanceof ColumnSegment)) {
-                    throw new UnsupportedOperationException("sharding rewrite group not implement ColumnSegment:" + ClassUtil.getInstanceSimpleName(groupSqlSegment));
+            for (SQLSegment groupSQLSegment : easyEntityPredicateSQLExpression.getGroup().getSQLSegments()) {
+                if (!(groupSQLSegment instanceof ColumnSegment)) {
+                    throw new UnsupportedOperationException("sharding rewrite group not implement ColumnSegment:" + ClassUtil.getInstanceSimpleName(groupSQLSegment));
                 }
-                ColumnSegment groupColumnSegment = (ColumnSegment) groupSqlSegment;
+                ColumnSegment groupColumnSegment = (ColumnSegment) groupSQLSegment;
 
                 boolean addToProjection = true;
-                for (SqlSegment sqlSegment : easyQuerySqlExpression.getProjects().getSqlSegments()) {
+                for (SQLSegment sqlSegment : easyEntityPredicateSQLExpression.getProjects().getSQLSegments()) {
                     if (sqlSegment instanceof AggregationColumnSegment) {
                         AggregationColumnSegment aggregationColumnSegment = (AggregationColumnSegment) sqlSegment;
                         //是否存在avg
@@ -126,23 +126,23 @@ public class DefaultRewriteContextFactory implements RewriteContextFactory {
                     }
                 }
                 if (addToProjection) {
-                    easyQuerySqlExpression.getProjects().append(groupColumnSegment.cloneSqlEntitySegment());
+                    easyEntityPredicateSQLExpression.getProjects().append(groupColumnSegment.cloneSQLEntitySegment());
                 }
             }
 
-            List<SqlSegment> groupSqlSegments = easyQuerySqlExpression.getGroup().getSqlSegments();
-            List<SqlSegment> orderSqlSegments = easyQuerySqlExpression.getOrder().getSqlSegments();
+            List<SQLSegment> groupSQLSegments = easyEntityPredicateSQLExpression.getGroup().getSQLSegments();
+            List<SQLSegment> orderSQLSegments = easyEntityPredicateSQLExpression.getOrder().getSQLSegments();
             //group by或者order by小的那个是另一个的startsWith即可
-            boolean startsWithGroupByAndOrderBy = ShardingUtil.isGroupByAndOrderByStartsWith(groupSqlSegments,orderSqlSegments);
+            boolean startsWithGroupByAndOrderBy = ShardingUtil.isGroupByAndOrderByStartsWith(groupSQLSegments,orderSQLSegments);
             queryPrepareParseResult.setStartsWithGroupByInOrderBy(startsWithGroupByAndOrderBy);
             //如果是的情况下
             if(startsWithGroupByAndOrderBy){
-                int orderBySize = orderSqlSegments.size();
-                int groupBySize = groupSqlSegments.size();
+                int orderBySize = orderSQLSegments.size();
+                int groupBySize = groupSQLSegments.size();
                 if(orderBySize<groupBySize){
                     for (int i = orderBySize; i < groupBySize; i++) {
-                        GroupByColumnSegment groupByColumnSegment = (GroupByColumnSegment)groupSqlSegments.get(i);
-                        easyQuerySqlExpression.getOrder().append(groupByColumnSegment.createOrderByColumnSegment(true));
+                        GroupByColumnSegment groupByColumnSegment = (GroupByColumnSegment)groupSQLSegments.get(i);
+                        easyEntityPredicateSQLExpression.getOrder().append(groupByColumnSegment.createOrderByColumnSegment(true));
                     }
                 }
             }
@@ -156,29 +156,29 @@ public class DefaultRewriteContextFactory implements RewriteContextFactory {
                     }
                     //如果存在avg那么分片必须要存在count或者sum不然无法计算avg
                     if(rewriteStatusKvKey.hasBehavior(GroupAvgBehaviorEnum.COUNT)&&rewriteStatusKvKey.hasBehavior(GroupAvgBehaviorEnum.SUM)){
-                        EasyTableSqlExpression table = easyQuerySqlExpression.getTable(rewriteStatusKvKey.getTableIndex());
+                        EasyTableSQLExpression table = easyEntityPredicateSQLExpression.getTable(rewriteStatusKvKey.getTableIndex());
                         ColumnFunctionFactory columnFunctionFactory = runtimeContext.getColumnFunctionFactory();
-                        easyQuerySqlExpression.getProjects().append(new FuncColumnSegmentImpl(table.getEntityTable(),rewriteStatusKvKey.getPropertyName(), runtimeContext, columnFunctionFactory.createCountFunction(false),rewriteStatusKvKey.getPropertyName()+"RewriteCount"));
+                        easyEntityPredicateSQLExpression.getProjects().append(new FuncColumnSegmentImpl(table.getEntityTable(),rewriteStatusKvKey.getPropertyName(), runtimeContext, columnFunctionFactory.createCountFunction(false),rewriteStatusKvKey.getPropertyName()+"RewriteCount"));
                     }
                 }
             }
         }else{
             //distinct的时候并且没有aggregate projects的都放到group上
-            if(easyQuerySqlExpression.isDistinct()){
-                ProjectSqlBuilderSegment projects = (ProjectSqlBuilderSegment) easyQuerySqlExpression.getProjects();
+            if(easyEntityPredicateSQLExpression.isDistinct()){
+                ProjectSQLBuilderSegment projects = (ProjectSQLBuilderSegment) easyEntityPredicateSQLExpression.getProjects();
                 if(!projects.hasAggregateColumns()){
-                    for(SqlSegment sqlSegment : easyQuerySqlExpression.getProjects().getSqlSegments()){
+                    for(SQLSegment sqlSegment : easyEntityPredicateSQLExpression.getProjects().getSQLSegments()){
                         if(sqlSegment instanceof ColumnSegment){
-                            easyQuerySqlExpression.getGroup().append(sqlSegment);
+                            easyEntityPredicateSQLExpression.getGroup().append(sqlSegment);
                         }
                     }
                 }
             }
         }
 
-        int mergeBehavior = ShardingUtil.parseMergeBehavior(queryPrepareParseResult, easyQuerySqlExpression, routeContext);
+        int mergeBehavior = ShardingUtil.parseMergeBehavior(queryPrepareParseResult, easyEntityPredicateSQLExpression, routeContext);
         if(BitwiseUtil.hasBit(mergeBehavior,MergeBehaviorEnum.PAGINATION.getCode())){
-           return createPaginationRewriteContext(mergeBehavior,queryPrepareParseResult,easyQuerySqlExpression,routeContext);
+           return createPaginationRewriteContext(mergeBehavior,queryPrepareParseResult,easyEntityPredicateSQLExpression,routeContext);
         }
         if(BitwiseUtil.hasBit(mergeBehavior,MergeBehaviorEnum.SEQUENCE_COUNT.getCode())){
             ShardingQueryCountManager shardingQueryCountManager = runtimeContext.getShardingQueryCountManager();
@@ -226,12 +226,12 @@ public class DefaultRewriteContextFactory implements RewriteContextFactory {
      * 创建分页重写上下文
      * @param mergeBehavior
      * @param queryPrepareParseResult
-     * @param easyQuerySqlExpression
+     * @param easyQuerySQLExpression
      * @param routeContext
      * @return
      */
-    private RewriteContext createPaginationRewriteContext(int mergeBehavior,QueryPrepareParseResult queryPrepareParseResult,EasyQuerySqlExpression easyQuerySqlExpression,RouteContext routeContext){
-        List<RewriteRouteUnit> rewriteRouteUnits = getPaginationRewriteRouteUnitsAndRewriteQuerySqlExpression(mergeBehavior,queryPrepareParseResult,easyQuerySqlExpression, routeContext);
+    private RewriteContext createPaginationRewriteContext(int mergeBehavior, QueryPrepareParseResult queryPrepareParseResult, EasyQuerySQLExpression easyQuerySQLExpression, RouteContext routeContext){
+        List<RewriteRouteUnit> rewriteRouteUnits = getPaginationRewriteRouteUnitsAndRewriteQuerySQLExpression(mergeBehavior,queryPrepareParseResult,easyQuerySQLExpression, routeContext);
         ShardingRouteResult shardingRouteResult = routeContext.getShardingRouteResult();
         //是否需要反向排序
         boolean reverseMerge = !BitwiseUtil.hasBit(mergeBehavior, MergeBehaviorEnum.SEQUENCE_PAGINATION.getCode()) && BitwiseUtil.hasBit(mergeBehavior, MergeBehaviorEnum.REVERSE_PAGINATION.getCode());
@@ -242,18 +242,18 @@ public class DefaultRewriteContextFactory implements RewriteContextFactory {
      * 获取分页重新路由单元和重写分页sql表达式
      * @param mergeBehavior
      * @param queryPrepareParseResult
-     * @param easyQuerySqlExpression
+     * @param easyQuerySQLExpression
      * @param routeContext
      * @return
      */
-    private List<RewriteRouteUnit> getPaginationRewriteRouteUnitsAndRewriteQuerySqlExpression(int mergeBehavior,QueryPrepareParseResult queryPrepareParseResult,EasyQuerySqlExpression easyQuerySqlExpression,RouteContext routeContext){
+    private List<RewriteRouteUnit> getPaginationRewriteRouteUnitsAndRewriteQuerySQLExpression(int mergeBehavior, QueryPrepareParseResult queryPrepareParseResult, EasyQuerySQLExpression easyQuerySQLExpression, RouteContext routeContext){
 
         EasyQueryRuntimeContext runtimeContext = queryPrepareParseResult.getExecutorContext().getRuntimeContext();
         if(BitwiseUtil.hasBit(mergeBehavior, MergeBehaviorEnum.SEQUENCE_PAGINATION.getCode())){
             ShardingQueryCountManager shardingQueryCountManager = runtimeContext.getShardingQueryCountManager();
             List<SequenceCountNode> countResult = shardingQueryCountManager.getCountResult();
             List<RewriteRouteUnit> rewriteRouteUnits = ShardingUtil.getSequencePaginationRewriteRouteUnits(queryPrepareParseResult, routeContext, countResult);
-            rewritePagination(easyQuerySqlExpression);
+            rewritePagination(easyQuerySQLExpression);
             return rewriteRouteUnits;
         }
         if(BitwiseUtil.hasBit(mergeBehavior, MergeBehaviorEnum.REVERSE_PAGINATION.getCode())){
@@ -270,33 +270,33 @@ public class DefaultRewriteContextFactory implements RewriteContextFactory {
             for (RouteUnit routeUnit : routeUnits) {
                 rewriteRouteUnits.add(new ReversePaginationRewriteRouteUnit(0L,realRows,routeUnit));
             }
-            rewriteReversePagination(easyQuerySqlExpression,realOffset);
+            rewriteReversePagination(easyQuerySQLExpression,realOffset);
             return rewriteRouteUnits;
         }
-        rewritePagination(easyQuerySqlExpression);
+        rewritePagination(easyQuerySQLExpression);
         return createDefaultRewriteRouteUnit(routeContext);
     }
 
-    private void rewritePagination(EasyQuerySqlExpression easyQuerySqlExpression){
+    private void rewritePagination(EasyQuerySQLExpression easyQuerySQLExpression){
 
-        if (easyQuerySqlExpression.hasLimit()) {
-            long rows = easyQuerySqlExpression.getRows();
-            long offset = easyQuerySqlExpression.getOffset();
+        if (easyQuerySQLExpression.hasLimit()) {
+            long rows = easyQuerySQLExpression.getRows();
+            long offset = easyQuerySQLExpression.getOffset();
             if (offset > 0) {
-                easyQuerySqlExpression.setOffset(0);
+                easyQuerySQLExpression.setOffset(0);
             }
-            easyQuerySqlExpression.setRows(offset + rows);
+            easyQuerySQLExpression.setRows(offset + rows);
         }
     }
-    private void rewriteReversePagination(EasyQuerySqlExpression easyQuerySqlExpression,long realOffset){
+    private void rewriteReversePagination(EasyQuerySQLExpression easyQuerySQLExpression, long realOffset){
 
-        if (easyQuerySqlExpression.hasLimit()) {
-            long rows = easyQuerySqlExpression.getRows();
-            long offset = easyQuerySqlExpression.getOffset();
+        if (easyQuerySQLExpression.hasLimit()) {
+            long rows = easyQuerySQLExpression.getRows();
+            long offset = easyQuerySQLExpression.getOffset();
             if (offset > 0) {
-                easyQuerySqlExpression.setOffset(0);
+                easyQuerySQLExpression.setOffset(0);
             }
-            easyQuerySqlExpression.setRows(realOffset + rows);
+            easyQuerySQLExpression.setRows(realOffset + rows);
         }
     }
 }

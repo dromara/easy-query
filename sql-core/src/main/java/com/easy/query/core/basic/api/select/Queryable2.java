@@ -1,14 +1,14 @@
 package com.easy.query.core.basic.api.select;
 
-import com.easy.query.core.basic.api.select.provider.EasyQuerySqlBuilderProvider2;
-import com.easy.query.core.expression.lambda.SqlExpression;
-import com.easy.query.core.expression.lambda.SqlExpression2;
-import com.easy.query.core.expression.lambda.SqlExpression3;
-import com.easy.query.core.expression.parser.core.SqlColumnResultSelector;
-import com.easy.query.core.expression.parser.core.SqlWherePredicate;
-import com.easy.query.core.expression.parser.core.SqlGroupBySelector;
-import com.easy.query.core.expression.parser.core.SqlColumnSelector;
-import com.easy.query.core.expression.parser.core.SqlColumnAsSelector;
+import com.easy.query.core.basic.api.select.provider.EasyQuerySQLBuilderProvider2;
+import com.easy.query.core.expression.lambda.SQLExpression;
+import com.easy.query.core.expression.lambda.SQLExpression2;
+import com.easy.query.core.expression.lambda.SQLExpression3;
+import com.easy.query.core.expression.parser.core.SQLColumnResultSelector;
+import com.easy.query.core.expression.parser.core.SQLWherePredicate;
+import com.easy.query.core.expression.parser.core.SQLGroupBySelector;
+import com.easy.query.core.expression.parser.core.SQLColumnSelector;
+import com.easy.query.core.expression.parser.core.SQLColumnAsSelector;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 
 import java.math.BigDecimal;
@@ -22,13 +22,13 @@ import java.util.function.Function;
  * @author xuejiaming
  */
 public interface Queryable2<T1, T2> extends Queryable<T1> {
-    <T3> Queryable3<T1, T2, T3> leftJoin(Class<T3> joinClass, SqlExpression3<SqlWherePredicate<T1>, SqlWherePredicate<T2>, SqlWherePredicate<T3>> on);
-    <T3> Queryable3<T1, T2, T3> leftJoin(Queryable<T3> joinQueryable, SqlExpression3<SqlWherePredicate<T1>, SqlWherePredicate<T2>, SqlWherePredicate<T3>> on);
-    <T3> Queryable3<T1, T2, T3> rightJoin(Class<T3> joinClass, SqlExpression3<SqlWherePredicate<T1>, SqlWherePredicate<T2>, SqlWherePredicate<T3>> on);
-    <T3> Queryable3<T1, T2, T3> rightJoin(Queryable<T3> joinQueryable, SqlExpression3<SqlWherePredicate<T1>, SqlWherePredicate<T2>, SqlWherePredicate<T3>> on);
+    <T3> Queryable3<T1, T2, T3> leftJoin(Class<T3> joinClass, SQLExpression3<SQLWherePredicate<T1>, SQLWherePredicate<T2>, SQLWherePredicate<T3>> on);
+    <T3> Queryable3<T1, T2, T3> leftJoin(Queryable<T3> joinQueryable, SQLExpression3<SQLWherePredicate<T1>, SQLWherePredicate<T2>, SQLWherePredicate<T3>> on);
+    <T3> Queryable3<T1, T2, T3> rightJoin(Class<T3> joinClass, SQLExpression3<SQLWherePredicate<T1>, SQLWherePredicate<T2>, SQLWherePredicate<T3>> on);
+    <T3> Queryable3<T1, T2, T3> rightJoin(Queryable<T3> joinQueryable, SQLExpression3<SQLWherePredicate<T1>, SQLWherePredicate<T2>, SQLWherePredicate<T3>> on);
 
-    <T3> Queryable3<T1, T2, T3> innerJoin(Class<T3> joinClass, SqlExpression3<SqlWherePredicate<T1>, SqlWherePredicate<T2>, SqlWherePredicate<T3>> on);
-    <T3> Queryable3<T1, T2, T3> innerJoin(Queryable<T3> joinQueryable, SqlExpression3<SqlWherePredicate<T1>, SqlWherePredicate<T2>, SqlWherePredicate<T3>> on);
+    <T3> Queryable3<T1, T2, T3> innerJoin(Class<T3> joinClass, SQLExpression3<SQLWherePredicate<T1>, SQLWherePredicate<T2>, SQLWherePredicate<T3>> on);
+    <T3> Queryable3<T1, T2, T3> innerJoin(Queryable<T3> joinQueryable, SQLExpression3<SQLWherePredicate<T1>, SQLWherePredicate<T2>, SQLWherePredicate<T3>> on);
 
     //region where
 
@@ -37,22 +37,22 @@ public interface Queryable2<T1, T2> extends Queryable<T1> {
     }
     Queryable2<T1, T2> whereObject(boolean condition, Object object);
     @Override
-    default Queryable2<T1, T2> where(SqlExpression<SqlWherePredicate<T1>> whereExpression) {
+    default Queryable2<T1, T2> where(SQLExpression<SQLWherePredicate<T1>> whereExpression) {
         return where(true, whereExpression);
     }
 
     @Override
-    Queryable2<T1, T2> where(boolean condition, SqlExpression<SqlWherePredicate<T1>> whereExpression);
-    default Queryable2<T1, T2> where(SqlExpression2<SqlWherePredicate<T1>, SqlWherePredicate<T2>> whereExpression) {
+    Queryable2<T1, T2> where(boolean condition, SQLExpression<SQLWherePredicate<T1>> whereExpression);
+    default Queryable2<T1, T2> where(SQLExpression2<SQLWherePredicate<T1>, SQLWherePredicate<T2>> whereExpression) {
         return where(true, whereExpression);
     }
 
-    Queryable2<T1, T2> where(boolean condition, SqlExpression2<SqlWherePredicate<T1>, SqlWherePredicate<T2>> whereExpression);
+    Queryable2<T1, T2> where(boolean condition, SQLExpression2<SQLWherePredicate<T1>, SQLWherePredicate<T2>> whereExpression);
 
     //endregion
 
     //region select
-    <TR> Queryable<TR> select(Class<TR> resultClass, SqlExpression2<SqlColumnAsSelector<T1, TR>, SqlColumnAsSelector<T2, TR>> selectExpression);
+    <TR> Queryable<TR> select(Class<TR> resultClass, SQLExpression2<SQLColumnAsSelector<T1, TR>, SQLColumnAsSelector<T2, TR>> selectExpression);
     //endregion
     //region aggregate
 
@@ -63,7 +63,7 @@ public interface Queryable2<T1, T2> extends Queryable<T1> {
      * @param <TMember>
      * @return
      */
-    default <TMember extends Number> BigDecimal sumBigDecimalOrNull(SqlExpression2<SqlColumnResultSelector<T1, TMember>, SqlColumnResultSelector<T2, TMember>> columnSelectorExpression) {
+    default <TMember extends Number> BigDecimal sumBigDecimalOrNull(SQLExpression2<SQLColumnResultSelector<T1, TMember>, SQLColumnResultSelector<T2, TMember>> columnSelectorExpression) {
         return sumBigDecimalOrDefault(columnSelectorExpression, null);
     }
 
@@ -74,62 +74,62 @@ public interface Queryable2<T1, T2> extends Queryable<T1> {
      * @param <TMember>
      * @return
      */
-    default <TMember extends Number> BigDecimal sumBigDecimalNotNull(SqlExpression2<SqlColumnResultSelector<T1, TMember>, SqlColumnResultSelector<T2, TMember>> columnSelectorExpression) {
+    default <TMember extends Number> BigDecimal sumBigDecimalNotNull(SQLExpression2<SQLColumnResultSelector<T1, TMember>, SQLColumnResultSelector<T2, TMember>> columnSelectorExpression) {
         return sumBigDecimalOrDefault(columnSelectorExpression, BigDecimal.ZERO);
     }
 
-    <TMember extends Number> BigDecimal sumBigDecimalOrDefault(SqlExpression2<SqlColumnResultSelector<T1, TMember>, SqlColumnResultSelector<T2, TMember>> columnSelectorExpression, BigDecimal def);
+    <TMember extends Number> BigDecimal sumBigDecimalOrDefault(SQLExpression2<SQLColumnResultSelector<T1, TMember>, SQLColumnResultSelector<T2, TMember>> columnSelectorExpression, BigDecimal def);
 
-    default <TMember extends Number> TMember sumOrNull(SqlExpression2<SqlColumnResultSelector<T1, TMember>, SqlColumnResultSelector<T2, TMember>> columnSelectorExpression) {
+    default <TMember extends Number> TMember sumOrNull(SQLExpression2<SQLColumnResultSelector<T1, TMember>, SQLColumnResultSelector<T2, TMember>> columnSelectorExpression) {
         return sumOrDefault(columnSelectorExpression, null);
     }
 
-    <TMember extends Number> TMember sumOrDefault(SqlExpression2<SqlColumnResultSelector<T1, TMember>, SqlColumnResultSelector<T2, TMember>> columnSelectorExpression, TMember def);
+    <TMember extends Number> TMember sumOrDefault(SQLExpression2<SQLColumnResultSelector<T1, TMember>, SQLColumnResultSelector<T2, TMember>> columnSelectorExpression, TMember def);
 
-    default <TMember> TMember maxOrNull(SqlExpression2<SqlColumnResultSelector<T1, TMember>, SqlColumnResultSelector<T2, TMember>> columnSelectorExpression) {
+    default <TMember> TMember maxOrNull(SQLExpression2<SQLColumnResultSelector<T1, TMember>, SQLColumnResultSelector<T2, TMember>> columnSelectorExpression) {
         return maxOrDefault(columnSelectorExpression, null);
     }
 
-    <TMember> TMember maxOrDefault(SqlExpression2<SqlColumnResultSelector<T1, TMember>, SqlColumnResultSelector<T2, TMember>> columnSelectorExpression, TMember def);
+    <TMember> TMember maxOrDefault(SQLExpression2<SQLColumnResultSelector<T1, TMember>, SQLColumnResultSelector<T2, TMember>> columnSelectorExpression, TMember def);
 
-    default <TMember> TMember minOrNull(SqlExpression2<SqlColumnResultSelector<T1, TMember>, SqlColumnResultSelector<T2, TMember>> columnSelectorExpression) {
+    default <TMember> TMember minOrNull(SQLExpression2<SQLColumnResultSelector<T1, TMember>, SQLColumnResultSelector<T2, TMember>> columnSelectorExpression) {
         return minOrDefault(columnSelectorExpression, null);
     }
 
-    <TMember> TMember minOrDefault(SqlExpression2<SqlColumnResultSelector<T1, TMember>, SqlColumnResultSelector<T2, TMember>> columnSelectorExpression, TMember def);
+    <TMember> TMember minOrDefault(SQLExpression2<SQLColumnResultSelector<T1, TMember>, SQLColumnResultSelector<T2, TMember>> columnSelectorExpression, TMember def);
 
-    default <TMember extends Number> TMember avgOrNull(SqlExpression2<SqlColumnResultSelector<T1, TMember>, SqlColumnResultSelector<T2, TMember>> columnSelectorExpression) {
+    default <TMember extends Number> TMember avgOrNull(SQLExpression2<SQLColumnResultSelector<T1, TMember>, SQLColumnResultSelector<T2, TMember>> columnSelectorExpression) {
         return avgOrDefault(columnSelectorExpression, null);
     }
 
-    <TMember extends Number> TMember avgOrDefault(SqlExpression2<SqlColumnResultSelector<T1, TMember>, SqlColumnResultSelector<T2, TMember>> columnSelectorExpression, TMember def);
-    default Integer lenOrNull(SqlExpression2<SqlColumnResultSelector<T1, ?>, SqlColumnResultSelector<T2, ?>> columnSelectorExpression) {
+    <TMember extends Number> TMember avgOrDefault(SQLExpression2<SQLColumnResultSelector<T1, TMember>, SQLColumnResultSelector<T2, TMember>> columnSelectorExpression, TMember def);
+    default Integer lenOrNull(SQLExpression2<SQLColumnResultSelector<T1, ?>, SQLColumnResultSelector<T2, ?>> columnSelectorExpression) {
         return lenOrDefault(columnSelectorExpression, null);
     }
 
-    Integer lenOrDefault(SqlExpression2<SqlColumnResultSelector<T1, ?>, SqlColumnResultSelector<T2, ?>> columnSelectorExpression, Integer def);
+    Integer lenOrDefault(SQLExpression2<SQLColumnResultSelector<T1, ?>, SQLColumnResultSelector<T2, ?>> columnSelectorExpression, Integer def);
     //endregion
 
     //region group
-    default Queryable2<T1, T2> groupBy(SqlExpression2<SqlGroupBySelector<T1>, SqlGroupBySelector<T2>> selectExpression) {
+    default Queryable2<T1, T2> groupBy(SQLExpression2<SQLGroupBySelector<T1>, SQLGroupBySelector<T2>> selectExpression) {
         return groupBy(true, selectExpression);
     }
 
-    Queryable2<T1, T2> groupBy(boolean condition, SqlExpression2<SqlGroupBySelector<T1>, SqlGroupBySelector<T2>> selectExpression);
+    Queryable2<T1, T2> groupBy(boolean condition, SQLExpression2<SQLGroupBySelector<T1>, SQLGroupBySelector<T2>> selectExpression);
 
     //endregion
     //region order
-    default Queryable2<T1, T2> orderByAsc(SqlExpression2<SqlColumnSelector<T1>, SqlColumnSelector<T2>> selectExpression) {
+    default Queryable2<T1, T2> orderByAsc(SQLExpression2<SQLColumnSelector<T1>, SQLColumnSelector<T2>> selectExpression) {
         return orderByAsc(true, selectExpression);
     }
 
-    Queryable2<T1, T2> orderByAsc(boolean condition, SqlExpression2<SqlColumnSelector<T1>, SqlColumnSelector<T2>> selectExpression);
+    Queryable2<T1, T2> orderByAsc(boolean condition, SQLExpression2<SQLColumnSelector<T1>, SQLColumnSelector<T2>> selectExpression);
 
-    default Queryable2<T1, T2> orderByDesc(SqlExpression2<SqlColumnSelector<T1>, SqlColumnSelector<T2>> selectExpression) {
+    default Queryable2<T1, T2> orderByDesc(SQLExpression2<SQLColumnSelector<T1>, SQLColumnSelector<T2>> selectExpression) {
         return orderByDesc(true, selectExpression);
     }
 
-    Queryable2<T1, T2> orderByDesc(boolean condition, SqlExpression2<SqlColumnSelector<T1>, SqlColumnSelector<T2>> selectExpression);
+    Queryable2<T1, T2> orderByDesc(boolean condition, SQLExpression2<SQLColumnSelector<T1>, SQLColumnSelector<T2>> selectExpression);
     //endregion
     //region limit
 
@@ -211,5 +211,5 @@ public interface Queryable2<T1, T2> extends Queryable<T1> {
     @Override
     Queryable2<T1, T2> asTable(Function<String,String> tableNameAs);
 
-    EasyQuerySqlBuilderProvider2<T1, T2> getSqlBuilderProvider2();
+    EasyQuerySQLBuilderProvider2<T1, T2> getSQLBuilderProvider2();
 }

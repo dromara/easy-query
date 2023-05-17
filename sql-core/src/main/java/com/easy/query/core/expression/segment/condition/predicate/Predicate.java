@@ -1,8 +1,7 @@
 package com.easy.query.core.expression.segment.condition.predicate;
 
-import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
-import com.easy.query.core.enums.SqlPredicateCompare;
-import com.easy.query.core.expression.segment.SqlEntitySegment;
+import com.easy.query.core.enums.SQLPredicateCompare;
+import com.easy.query.core.expression.segment.SQLEntitySegment;
 
 /**
  * @FileName: Predicate.java
@@ -10,6 +9,6 @@ import com.easy.query.core.expression.segment.SqlEntitySegment;
  * @Date: 2023/2/14 23:05
  * @author xuejiaming
  */
-public interface Predicate extends SqlEntitySegment {
-    SqlPredicateCompare getOperator();
+public interface Predicate extends SQLEntitySegment {
+    SQLPredicateCompare getOperator();
 }

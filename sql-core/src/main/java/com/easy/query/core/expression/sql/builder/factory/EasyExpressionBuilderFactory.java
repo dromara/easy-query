@@ -2,7 +2,7 @@ package com.easy.query.core.expression.sql.builder.factory;
 
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.enums.MultiTableTypeEnum;
-import com.easy.query.core.enums.SqlUnionEnum;
+import com.easy.query.core.enums.SQLUnionEnum;
 import com.easy.query.core.expression.sql.builder.EntityDeleteExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
@@ -29,7 +29,7 @@ public interface EasyExpressionBuilderFactory {
     default EntityQueryExpressionBuilder createAnonymousQueryExpression(String sql, ExpressionContext sqlExpressionContext){
         return new AnonymousQueryExpressionBuilder(sql,sqlExpressionContext);
     }
-    default EntityQueryExpressionBuilder createAnonymousUnionQueryExpression(List<EntityQueryExpressionBuilder> entityQueryExpressionBuilders, ExpressionContext sqlExpressionContext, SqlUnionEnum sqlUnion){
+    default EntityQueryExpressionBuilder createAnonymousUnionQueryExpression(List<EntityQueryExpressionBuilder> entityQueryExpressionBuilders, ExpressionContext sqlExpressionContext, SQLUnionEnum sqlUnion){
         return new AnonymousUnionQueryExpressionBuilder(entityQueryExpressionBuilders,sqlExpressionContext,sqlUnion);
     }
     EntityInsertExpressionBuilder createEntityInsertExpression(ExpressionContext sqlExpressionContext);

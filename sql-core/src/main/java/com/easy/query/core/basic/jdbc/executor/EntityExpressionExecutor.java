@@ -17,8 +17,8 @@ import java.util.List;
 public interface EntityExpressionExecutor {
     <TR> List<TR> query(ExecutorContext executorContext, Class<TR> clazz, EntityQueryExpressionBuilder entityQueryExpressionBuilder);
 
-    <TR> List<TR> querySql(ExecutorContext executorContext, Class<TR> clazz, String sql, List<SQLParameter> sqlParameters);
-    long executeSqlRows(ExecutorContext executorContext, String sql, List<SQLParameter> sqlParameters);
+    <TR> List<TR> querySQL(ExecutorContext executorContext, Class<TR> clazz, String sql, List<SQLParameter> sqlParameters);
+    long executeSQLRows(ExecutorContext executorContext, String sql, List<SQLParameter> sqlParameters);
 
     <T> long insert(ExecutorContext executorContext, List<T> entities, EntityInsertExpressionBuilder entityInsertExpressionBuilder, boolean fillAutoIncrement);
 

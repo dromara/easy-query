@@ -2,29 +2,29 @@ package com.easy.query.core.basic.api.select.abstraction;
 
 import com.easy.query.core.basic.api.select.Queryable2;
 import com.easy.query.core.basic.api.select.Queryable3;
-import com.easy.query.core.basic.api.select.provider.EasyQuerySqlBuilderProvider;
-import com.easy.query.core.basic.api.select.provider.EasyQuerySqlBuilderProvider2;
-import com.easy.query.core.basic.api.select.provider.Select2SqlProvider;
+import com.easy.query.core.basic.api.select.provider.EasyQuerySQLBuilderProvider;
+import com.easy.query.core.basic.api.select.provider.EasyQuerySQLBuilderProvider2;
+import com.easy.query.core.basic.api.select.provider.Select2SQLProvider;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.exception.EasyQueryException;
-import com.easy.query.core.expression.lambda.SqlExpression;
-import com.easy.query.core.expression.lambda.SqlExpression2;
-import com.easy.query.core.expression.lambda.SqlExpression3;
+import com.easy.query.core.expression.lambda.SQLExpression;
+import com.easy.query.core.expression.lambda.SQLExpression2;
+import com.easy.query.core.expression.lambda.SQLExpression3;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.parser.core.SqlWherePredicate;
-import com.easy.query.core.expression.parser.core.SqlGroupBySelector;
-import com.easy.query.core.expression.parser.core.SqlColumnSelector;
-import com.easy.query.core.expression.parser.core.SqlColumnAsSelector;
-import com.easy.query.core.expression.segment.builder.ProjectSqlBuilderSegmentImpl;
+import com.easy.query.core.expression.parser.core.SQLWherePredicate;
+import com.easy.query.core.expression.parser.core.SQLGroupBySelector;
+import com.easy.query.core.expression.parser.core.SQLColumnSelector;
+import com.easy.query.core.expression.parser.core.SQLColumnAsSelector;
+import com.easy.query.core.expression.segment.builder.ProjectSQLBuilderSegmentImpl;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.basic.api.select.Queryable;
-import com.easy.query.core.expression.parser.core.SqlColumnResultSelector;
-import com.easy.query.core.expression.segment.SqlEntitySegment;
-import com.easy.query.core.util.SqlExpressionUtil;
+import com.easy.query.core.expression.parser.core.SQLColumnResultSelector;
+import com.easy.query.core.expression.segment.SQLEntitySegment;
+import com.easy.query.core.util.SQLExpressionUtil;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -40,52 +40,52 @@ import java.util.function.Function;
 public abstract class AbstractQueryable2<T1, T2> extends AbstractQueryable<T1> implements Queryable2<T1, T2> {
 
     private final Class<T2> t2Class;
-    private final EasyQuerySqlBuilderProvider2<T1, T2> sqlPredicateProvider;
+    private final EasyQuerySQLBuilderProvider2<T1, T2> sqlPredicateProvider;
 
     public AbstractQueryable2(Class<T1> t1Class, Class<T2> t2Class, EntityQueryExpressionBuilder sqlEntityExpression) {
         super(t1Class, sqlEntityExpression);
         this.t2Class = t2Class;
 
-        this.sqlPredicateProvider = new Select2SqlProvider<>(sqlEntityExpression);
+        this.sqlPredicateProvider = new Select2SQLProvider<>(sqlEntityExpression);
     }
 
     @Override
-    public <T3> Queryable3<T1, T2, T3> leftJoin(Class<T3> joinClass, SqlExpression3<SqlWherePredicate<T1>, SqlWherePredicate<T2>, SqlWherePredicate<T3>> on) {
-        Queryable3<T1, T2, T3> queryable3 = entityQueryExpressionBuilder.getRuntimeContext().getSqlApiFactory().createQueryable3(t1Class, t2Class, joinClass, MultiTableTypeEnum.LEFT_JOIN, entityQueryExpressionBuilder);
-        return SqlExpressionUtil.executeJoinOn(queryable3,on);
+    public <T3> Queryable3<T1, T2, T3> leftJoin(Class<T3> joinClass, SQLExpression3<SQLWherePredicate<T1>, SQLWherePredicate<T2>, SQLWherePredicate<T3>> on) {
+        Queryable3<T1, T2, T3> queryable3 = entityQueryExpressionBuilder.getRuntimeContext().getSQLApiFactory().createQueryable3(t1Class, t2Class, joinClass, MultiTableTypeEnum.LEFT_JOIN, entityQueryExpressionBuilder);
+        return SQLExpressionUtil.executeJoinOn(queryable3,on);
     }
 
     @Override
-    public <T3> Queryable3<T1, T2, T3> leftJoin(Queryable<T3> joinQueryable, SqlExpression3<SqlWherePredicate<T1>, SqlWherePredicate<T2>, SqlWherePredicate<T3>> on) {
-        Queryable<T3> selectAllT2Queryable = SqlExpressionUtil.cloneAndSelectAllQueryable(joinQueryable);
-        Queryable3<T1, T2, T3> queryable3 = entityQueryExpressionBuilder.getRuntimeContext().getSqlApiFactory().createQueryable3(t1Class,t2Class, selectAllT2Queryable, MultiTableTypeEnum.LEFT_JOIN, entityQueryExpressionBuilder);
-        return SqlExpressionUtil.executeJoinOn(queryable3,on);
+    public <T3> Queryable3<T1, T2, T3> leftJoin(Queryable<T3> joinQueryable, SQLExpression3<SQLWherePredicate<T1>, SQLWherePredicate<T2>, SQLWherePredicate<T3>> on) {
+        Queryable<T3> selectAllT2Queryable = SQLExpressionUtil.cloneAndSelectAllQueryable(joinQueryable);
+        Queryable3<T1, T2, T3> queryable3 = entityQueryExpressionBuilder.getRuntimeContext().getSQLApiFactory().createQueryable3(t1Class,t2Class, selectAllT2Queryable, MultiTableTypeEnum.LEFT_JOIN, entityQueryExpressionBuilder);
+        return SQLExpressionUtil.executeJoinOn(queryable3,on);
     }
 
     @Override
-    public <T3> Queryable3<T1, T2, T3> rightJoin(Class<T3> joinClass, SqlExpression3<SqlWherePredicate<T1>, SqlWherePredicate<T2>, SqlWherePredicate<T3>> on) {
-        Queryable3<T1, T2, T3> queryable3 = entityQueryExpressionBuilder.getRuntimeContext().getSqlApiFactory().createQueryable3(t1Class, t2Class, joinClass, MultiTableTypeEnum.RIGHT_JOIN, entityQueryExpressionBuilder);
-        return SqlExpressionUtil.executeJoinOn(queryable3,on);
+    public <T3> Queryable3<T1, T2, T3> rightJoin(Class<T3> joinClass, SQLExpression3<SQLWherePredicate<T1>, SQLWherePredicate<T2>, SQLWherePredicate<T3>> on) {
+        Queryable3<T1, T2, T3> queryable3 = entityQueryExpressionBuilder.getRuntimeContext().getSQLApiFactory().createQueryable3(t1Class, t2Class, joinClass, MultiTableTypeEnum.RIGHT_JOIN, entityQueryExpressionBuilder);
+        return SQLExpressionUtil.executeJoinOn(queryable3,on);
     }
 
     @Override
-    public <T3> Queryable3<T1, T2, T3> rightJoin(Queryable<T3> joinQueryable, SqlExpression3<SqlWherePredicate<T1>, SqlWherePredicate<T2>, SqlWherePredicate<T3>> on) {
-        Queryable<T3> selectAllT2Queryable = SqlExpressionUtil.cloneAndSelectAllQueryable(joinQueryable);
-        Queryable3<T1, T2, T3> queryable3 = entityQueryExpressionBuilder.getRuntimeContext().getSqlApiFactory().createQueryable3(t1Class,t2Class, selectAllT2Queryable, MultiTableTypeEnum.RIGHT_JOIN, entityQueryExpressionBuilder);
-        return SqlExpressionUtil.executeJoinOn(queryable3,on);
+    public <T3> Queryable3<T1, T2, T3> rightJoin(Queryable<T3> joinQueryable, SQLExpression3<SQLWherePredicate<T1>, SQLWherePredicate<T2>, SQLWherePredicate<T3>> on) {
+        Queryable<T3> selectAllT2Queryable = SQLExpressionUtil.cloneAndSelectAllQueryable(joinQueryable);
+        Queryable3<T1, T2, T3> queryable3 = entityQueryExpressionBuilder.getRuntimeContext().getSQLApiFactory().createQueryable3(t1Class,t2Class, selectAllT2Queryable, MultiTableTypeEnum.RIGHT_JOIN, entityQueryExpressionBuilder);
+        return SQLExpressionUtil.executeJoinOn(queryable3,on);
     }
 
     @Override
-    public <T3> Queryable3<T1, T2, T3> innerJoin(Class<T3> joinClass, SqlExpression3<SqlWherePredicate<T1>, SqlWherePredicate<T2>, SqlWherePredicate<T3>> on) {
-        Queryable3<T1, T2, T3> queryable3 = entityQueryExpressionBuilder.getRuntimeContext().getSqlApiFactory().createQueryable3(t1Class, t2Class, joinClass, MultiTableTypeEnum.INNER_JOIN, entityQueryExpressionBuilder);
-        return SqlExpressionUtil.executeJoinOn(queryable3,on);
+    public <T3> Queryable3<T1, T2, T3> innerJoin(Class<T3> joinClass, SQLExpression3<SQLWherePredicate<T1>, SQLWherePredicate<T2>, SQLWherePredicate<T3>> on) {
+        Queryable3<T1, T2, T3> queryable3 = entityQueryExpressionBuilder.getRuntimeContext().getSQLApiFactory().createQueryable3(t1Class, t2Class, joinClass, MultiTableTypeEnum.INNER_JOIN, entityQueryExpressionBuilder);
+        return SQLExpressionUtil.executeJoinOn(queryable3,on);
     }
 
     @Override
-    public <T3> Queryable3<T1, T2, T3> innerJoin(Queryable<T3> joinQueryable, SqlExpression3<SqlWherePredicate<T1>, SqlWherePredicate<T2>, SqlWherePredicate<T3>> on) {
-        Queryable<T3> selectAllT2Queryable = SqlExpressionUtil.cloneAndSelectAllQueryable(joinQueryable);
-        Queryable3<T1, T2, T3> queryable3 = entityQueryExpressionBuilder.getRuntimeContext().getSqlApiFactory().createQueryable3(t1Class,t2Class, selectAllT2Queryable, MultiTableTypeEnum.INNER_JOIN, entityQueryExpressionBuilder);
-        return SqlExpressionUtil.executeJoinOn(queryable3,on);
+    public <T3> Queryable3<T1, T2, T3> innerJoin(Queryable<T3> joinQueryable, SQLExpression3<SQLWherePredicate<T1>, SQLWherePredicate<T2>, SQLWherePredicate<T3>> on) {
+        Queryable<T3> selectAllT2Queryable = SQLExpressionUtil.cloneAndSelectAllQueryable(joinQueryable);
+        Queryable3<T1, T2, T3> queryable3 = entityQueryExpressionBuilder.getRuntimeContext().getSQLApiFactory().createQueryable3(t1Class,t2Class, selectAllT2Queryable, MultiTableTypeEnum.INNER_JOIN, entityQueryExpressionBuilder);
+        return SQLExpressionUtil.executeJoinOn(queryable3,on);
     }
 
 
@@ -102,24 +102,24 @@ public abstract class AbstractQueryable2<T1, T2> extends AbstractQueryable<T1> i
     }
 
     @Override
-    protected SqlWherePredicate<?> matchWhereObjectSqlPredicate(Class<?> entityClass) {
+    protected SQLWherePredicate<?> matchWhereObjectSQLPredicate(Class<?> entityClass) {
         if(entityClass==t1Class){
-            return getSqlBuilderProvider2().getSqlWherePredicate1();
+            return getSQLBuilderProvider2().getSQLWherePredicate1();
         }
         if(entityClass==t2Class){
-            return getSqlBuilderProvider2().getSqlWherePredicate2();
+            return getSQLBuilderProvider2().getSQLWherePredicate2();
         }
         return null;
     }
 
     @Override
-    protected SqlColumnSelector<?> matchOrderBySqlColumnSelector(Class<?> entityClass, boolean asc) {
-        SqlColumnSelector<?> sqlColumnSelector = super.matchOrderBySqlColumnSelector(entityClass, asc);
+    protected SQLColumnSelector<?> matchOrderBySQLColumnSelector(Class<?> entityClass, boolean asc) {
+        SQLColumnSelector<?> sqlColumnSelector = super.matchOrderBySQLColumnSelector(entityClass, asc);
         if(sqlColumnSelector!=null){
             return sqlColumnSelector;
         }
         if(entityClass==t2Class){
-            return getSqlBuilderProvider2().getSqlOrderColumnSelector2(asc);
+            return getSQLBuilderProvider2().getSQLOrderColumnSelector2(asc);
         }
         return null;
     }
@@ -130,16 +130,16 @@ public abstract class AbstractQueryable2<T1, T2> extends AbstractQueryable<T1> i
         return this;
     }
     @Override
-    public Queryable2<T1, T2> where(boolean condition, SqlExpression<SqlWherePredicate<T1>> whereExpression) {
+    public Queryable2<T1, T2> where(boolean condition, SQLExpression<SQLWherePredicate<T1>> whereExpression) {
         super.where(condition,whereExpression);
         return this;
     }
 
     @Override
-    public Queryable2<T1, T2> where(boolean condition, SqlExpression2<SqlWherePredicate<T1>, SqlWherePredicate<T2>> whereExpression) {
+    public Queryable2<T1, T2> where(boolean condition, SQLExpression2<SQLWherePredicate<T1>, SQLWherePredicate<T2>> whereExpression) {
         if (condition) {
-            SqlWherePredicate<T1> sqlWherePredicate1 = getSqlBuilderProvider2().getSqlWherePredicate1();
-            SqlWherePredicate<T2> sqlWherePredicate2 = getSqlBuilderProvider2().getSqlWherePredicate2();
+            SQLWherePredicate<T1> sqlWherePredicate1 = getSQLBuilderProvider2().getSQLWherePredicate1();
+            SQLWherePredicate<T2> sqlWherePredicate2 = getSQLBuilderProvider2().getSQLWherePredicate2();
             whereExpression.apply(sqlWherePredicate1, sqlWherePredicate2);
         }
         return this;
@@ -147,33 +147,33 @@ public abstract class AbstractQueryable2<T1, T2> extends AbstractQueryable<T1> i
 
 
     @Override
-    public <TR> Queryable<TR> select(Class<TR> resultClass, SqlExpression2<SqlColumnAsSelector<T1, TR>, SqlColumnAsSelector<T2, TR>> selectExpression) {
-        SqlColumnAsSelector<T1, TR> sqlColumnAsSelector1 = getSqlBuilderProvider2().getSqlColumnAsSelector1(entityQueryExpressionBuilder.getProjects(),resultClass);
-        SqlColumnAsSelector<T2, TR> sqlColumnAsSelector2 = getSqlBuilderProvider2().getSqlColumnAsSelector2(entityQueryExpressionBuilder.getProjects(),resultClass);
+    public <TR> Queryable<TR> select(Class<TR> resultClass, SQLExpression2<SQLColumnAsSelector<T1, TR>, SQLColumnAsSelector<T2, TR>> selectExpression) {
+        SQLColumnAsSelector<T1, TR> sqlColumnAsSelector1 = getSQLBuilderProvider2().getSQLColumnAsSelector1(entityQueryExpressionBuilder.getProjects(),resultClass);
+        SQLColumnAsSelector<T2, TR> sqlColumnAsSelector2 = getSQLBuilderProvider2().getSQLColumnAsSelector2(entityQueryExpressionBuilder.getProjects(),resultClass);
         selectExpression.apply(sqlColumnAsSelector1,sqlColumnAsSelector2);
-        return entityQueryExpressionBuilder.getRuntimeContext().getSqlApiFactory().createQueryable(resultClass, entityQueryExpressionBuilder);
+        return entityQueryExpressionBuilder.getRuntimeContext().getSQLApiFactory().createQueryable(resultClass, entityQueryExpressionBuilder);
     }
 
-    private <TMember> List<TMember> selectAggregateList(SqlExpression2<SqlColumnResultSelector<T1, TMember>, SqlColumnResultSelector<T2, TMember>> columnSelectorExpression, ColumnFunction easyFunc) {
+    private <TMember> List<TMember> selectAggregateList(SQLExpression2<SQLColumnResultSelector<T1, TMember>, SQLColumnResultSelector<T2, TMember>> columnSelectorExpression, ColumnFunction easyFunc) {
 
-        ProjectSqlBuilderSegmentImpl projectSqlBuilderSegment = new ProjectSqlBuilderSegmentImpl();
+        ProjectSQLBuilderSegmentImpl projectSQLBuilderSegment = new ProjectSQLBuilderSegmentImpl();
 
-        SqlColumnResultSelector<T1, TMember> sqlColumnResultSelector1 = getSqlBuilderProvider2().getSqlColumnResultSelector1(projectSqlBuilderSegment);
-        SqlColumnResultSelector<T2, TMember> sqlColumnResultSelector2 = getSqlBuilderProvider2().getSqlColumnResultSelector2(projectSqlBuilderSegment);
+        SQLColumnResultSelector<T1, TMember> sqlColumnResultSelector1 = getSQLBuilderProvider2().getSQLColumnResultSelector1(projectSQLBuilderSegment);
+        SQLColumnResultSelector<T2, TMember> sqlColumnResultSelector2 = getSQLBuilderProvider2().getSQLColumnResultSelector2(projectSQLBuilderSegment);
         columnSelectorExpression.apply(sqlColumnResultSelector1,sqlColumnResultSelector2);
-        if(projectSqlBuilderSegment.isEmpty()){
+        if(projectSQLBuilderSegment.isEmpty()){
             throw new EasyQueryException("aggreagate query not found column");
         }
-        SqlEntitySegment sqlSegment = (SqlEntitySegment)projectSqlBuilderSegment.getSqlSegments().get(0);
+        SQLEntitySegment sqlSegment = (SQLEntitySegment)projectSQLBuilderSegment.getSQLSegments().get(0);
 
         TableAvailable table = sqlSegment.getTable();
         String propertyName = sqlSegment.getPropertyName();
         ColumnMetadata columnMetadata =table.getEntityMetadata().getColumnNotNull(propertyName);
 
-        return cloneQueryable().select(easyFunc.getFuncColumn(projectSqlBuilderSegment.toSql(null))).toList((Class<TMember>)columnMetadata.getProperty().getPropertyType());
+        return cloneQueryable().select(easyFunc.getFuncColumn(projectSQLBuilderSegment.toSQL(null))).toList((Class<TMember>)columnMetadata.getProperty().getPropertyType());
     }
     @Override
-    public <TMember extends Number> BigDecimal sumBigDecimalOrDefault(SqlExpression2<SqlColumnResultSelector<T1, TMember>, SqlColumnResultSelector<T2, TMember>> columnSelectorExpression, BigDecimal def) {
+    public <TMember extends Number> BigDecimal sumBigDecimalOrDefault(SQLExpression2<SQLColumnResultSelector<T1, TMember>, SQLColumnResultSelector<T2, TMember>> columnSelectorExpression, BigDecimal def) {
 
         ColumnFunction sumFunction = runtimeContext.getColumnFunctionFactory().createSumFunction(false);
         List<TMember> result = selectAggregateList(columnSelectorExpression, sumFunction);
@@ -185,74 +185,74 @@ public abstract class AbstractQueryable2<T1, T2> extends AbstractQueryable<T1> i
     }
 
     @Override
-    public <TMember extends Number> TMember sumOrDefault(SqlExpression2<SqlColumnResultSelector<T1, TMember>, SqlColumnResultSelector<T2, TMember>> columnSelectorExpression, TMember def) {
+    public <TMember extends Number> TMember sumOrDefault(SQLExpression2<SQLColumnResultSelector<T1, TMember>, SQLColumnResultSelector<T2, TMember>> columnSelectorExpression, TMember def) {
         ColumnFunction sumFunction = runtimeContext.getColumnFunctionFactory().createSumFunction(false);
         List<TMember> result = selectAggregateList(columnSelectorExpression, sumFunction);
         return EasyCollectionUtil.firstOrDefault(result,def);
     }
 
     @Override
-    public <TMember> TMember maxOrDefault(SqlExpression2<SqlColumnResultSelector<T1, TMember>, SqlColumnResultSelector<T2, TMember>> columnSelectorExpression, TMember def) {
+    public <TMember> TMember maxOrDefault(SQLExpression2<SQLColumnResultSelector<T1, TMember>, SQLColumnResultSelector<T2, TMember>> columnSelectorExpression, TMember def) {
         ColumnFunction maxFunction = runtimeContext.getColumnFunctionFactory().createMaxFunction();
         List<TMember> result = selectAggregateList(columnSelectorExpression, maxFunction);
         return EasyCollectionUtil.firstOrDefault(result,def);
     }
 
     @Override
-    public <TMember> TMember minOrDefault(SqlExpression2<SqlColumnResultSelector<T1, TMember>, SqlColumnResultSelector<T2, TMember>> columnSelectorExpression, TMember def) {
+    public <TMember> TMember minOrDefault(SQLExpression2<SQLColumnResultSelector<T1, TMember>, SQLColumnResultSelector<T2, TMember>> columnSelectorExpression, TMember def) {
         ColumnFunction minFunction = runtimeContext.getColumnFunctionFactory().createMinFunction();
         List<TMember> result = selectAggregateList(columnSelectorExpression, minFunction);
         return EasyCollectionUtil.firstOrDefault(result,def);
     }
 
     @Override
-    public <TMember extends Number> TMember avgOrDefault(SqlExpression2<SqlColumnResultSelector<T1, TMember>, SqlColumnResultSelector<T2, TMember>> columnSelectorExpression, TMember def) {
+    public <TMember extends Number> TMember avgOrDefault(SQLExpression2<SQLColumnResultSelector<T1, TMember>, SQLColumnResultSelector<T2, TMember>> columnSelectorExpression, TMember def) {
         ColumnFunction avgFunction = runtimeContext.getColumnFunctionFactory().createAvgFunction(false);
         List<TMember> result = selectAggregateList(columnSelectorExpression, avgFunction);
         return EasyCollectionUtil.firstOrDefault(result,def);
     }
 
     @Override
-    public Integer lenOrDefault(SqlExpression2<SqlColumnResultSelector<T1, ?>, SqlColumnResultSelector<T2, ?>> columnSelectorExpression, Integer def) {
+    public Integer lenOrDefault(SQLExpression2<SQLColumnResultSelector<T1, ?>, SQLColumnResultSelector<T2, ?>> columnSelectorExpression, Integer def) {
 
-        ProjectSqlBuilderSegmentImpl projectSqlBuilderSegment = new ProjectSqlBuilderSegmentImpl();
+        ProjectSQLBuilderSegmentImpl projectSQLBuilderSegment = new ProjectSQLBuilderSegmentImpl();
 
-        SqlColumnResultSelector<T1, ?> sqlColumnResultSelector1 = getSqlBuilderProvider2().getSqlColumnResultSelector1(projectSqlBuilderSegment);
-        SqlColumnResultSelector<T2, ?> sqlColumnResultSelector2 = getSqlBuilderProvider2().getSqlColumnResultSelector2(projectSqlBuilderSegment);
+        SQLColumnResultSelector<T1, ?> sqlColumnResultSelector1 = getSQLBuilderProvider2().getSQLColumnResultSelector1(projectSQLBuilderSegment);
+        SQLColumnResultSelector<T2, ?> sqlColumnResultSelector2 = getSQLBuilderProvider2().getSQLColumnResultSelector2(projectSQLBuilderSegment);
         columnSelectorExpression.apply(sqlColumnResultSelector1,sqlColumnResultSelector2);
-        if(projectSqlBuilderSegment.isEmpty()){
+        if(projectSQLBuilderSegment.isEmpty()){
             throw new EasyQueryException("aggreagate query not found column");
         }
         ColumnFunction lenFunction = runtimeContext.getColumnFunctionFactory().createLenFunction();
-        List<Integer> result = cloneQueryable().select(lenFunction.getFuncColumn(projectSqlBuilderSegment.toSql(null))).toList(Integer.class);
+        List<Integer> result = cloneQueryable().select(lenFunction.getFuncColumn(projectSQLBuilderSegment.toSQL(null))).toList(Integer.class);
         return EasyCollectionUtil.firstOrDefault(result,def);
     }
 
     @Override
-    public Queryable2<T1, T2> orderByAsc(boolean condition, SqlExpression2<SqlColumnSelector<T1>, SqlColumnSelector<T2>> selectExpression) {
+    public Queryable2<T1, T2> orderByAsc(boolean condition, SQLExpression2<SQLColumnSelector<T1>, SQLColumnSelector<T2>> selectExpression) {
         if (condition) {
-            SqlColumnSelector<T1> sqlOrderColumnSelector1 = getSqlBuilderProvider2().getSqlOrderColumnSelector1(true);
-            SqlColumnSelector<T2> sqlOrderColumnSelector2 = getSqlBuilderProvider2().getSqlOrderColumnSelector2(true);
+            SQLColumnSelector<T1> sqlOrderColumnSelector1 = getSQLBuilderProvider2().getSQLOrderColumnSelector1(true);
+            SQLColumnSelector<T2> sqlOrderColumnSelector2 = getSQLBuilderProvider2().getSQLOrderColumnSelector2(true);
             selectExpression.apply(sqlOrderColumnSelector1, sqlOrderColumnSelector2);
         }
         return this;
     }
 
     @Override
-    public Queryable2<T1, T2> orderByDesc(boolean condition, SqlExpression2<SqlColumnSelector<T1>, SqlColumnSelector<T2>> selectExpression) {
+    public Queryable2<T1, T2> orderByDesc(boolean condition, SQLExpression2<SQLColumnSelector<T1>, SQLColumnSelector<T2>> selectExpression) {
         if (condition) {
-            SqlColumnSelector<T1> sqlOrderColumnSelector1 = getSqlBuilderProvider2().getSqlOrderColumnSelector1(false);
-            SqlColumnSelector<T2> sqlOrderColumnSelector2 = getSqlBuilderProvider2().getSqlOrderColumnSelector2(false);
+            SQLColumnSelector<T1> sqlOrderColumnSelector1 = getSQLBuilderProvider2().getSQLOrderColumnSelector1(false);
+            SQLColumnSelector<T2> sqlOrderColumnSelector2 = getSQLBuilderProvider2().getSQLOrderColumnSelector2(false);
             selectExpression.apply(sqlOrderColumnSelector1, sqlOrderColumnSelector2);
         }
         return this;
     }
 
     @Override
-    public Queryable2<T1, T2> groupBy(boolean condition, SqlExpression2<SqlGroupBySelector<T1>, SqlGroupBySelector<T2>> selectExpression) {
+    public Queryable2<T1, T2> groupBy(boolean condition, SQLExpression2<SQLGroupBySelector<T1>, SQLGroupBySelector<T2>> selectExpression) {
         if (condition) {
-            SqlGroupBySelector<T1> sqlGroupSelector1 = getSqlBuilderProvider2().getSqlGroupColumnSelector1();
-            SqlGroupBySelector<T2> sqlGroupSelector2 = getSqlBuilderProvider2().getSqlGroupColumnSelector2();
+            SQLGroupBySelector<T1> sqlGroupSelector1 = getSQLBuilderProvider2().getSQLGroupColumnSelector1();
+            SQLGroupBySelector<T2> sqlGroupSelector2 = getSQLBuilderProvider2().getSQLGroupColumnSelector2();
             selectExpression.apply(sqlGroupSelector1, sqlGroupSelector2);
         }
         return this;
@@ -344,12 +344,12 @@ public abstract class AbstractQueryable2<T1, T2> extends AbstractQueryable<T1> i
     }
 
 
-    public EasyQuerySqlBuilderProvider2<T1, T2> getSqlBuilderProvider2() {
+    public EasyQuerySQLBuilderProvider2<T1, T2> getSQLBuilderProvider2() {
         return sqlPredicateProvider;
     }
 
     @Override
-    public EasyQuerySqlBuilderProvider<T1> getSqlBuilderProvider1() {
+    public EasyQuerySQLBuilderProvider<T1> getSQLBuilderProvider1() {
         return sqlPredicateProvider;
     }
 

@@ -31,7 +31,7 @@ public interface EasyQueryRuntimeContext {
     EasyConnectionManager getConnectionManager();
     EntityExpressionExecutor getEntityExpressionExecutor();
     JdbcTypeHandlerManager getEasyJdbcTypeHandlerManager();
-    EasySqlApiFactory getSqlApiFactory();
+    EasySQLApiFactory getSQLApiFactory();
     EasyExpressionBuilderFactory getSqlExpressionBuilderFactory();
     EasyExpressionFactory getExpressionFactory();
     TrackManager getTrackManager();

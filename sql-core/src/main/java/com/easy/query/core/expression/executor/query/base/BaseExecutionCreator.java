@@ -1,14 +1,11 @@
 package com.easy.query.core.expression.executor.query.base;
 
-import com.easy.query.core.basic.jdbc.parameter.DefaultSqlParameterCollector;
-import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
 import com.easy.query.core.enums.MergeBehaviorEnum;
 import com.easy.query.core.expression.executor.parser.ExecutionContext;
-import com.easy.query.core.expression.sql.expression.EasyEntitySqlExpression;
+import com.easy.query.core.expression.sql.expression.EasyEntitySQLExpression;
 import com.easy.query.core.basic.jdbc.executor.internal.common.ExecutionUnit;
-import com.easy.query.core.basic.jdbc.executor.internal.common.SqlRouteUnit;
+import com.easy.query.core.basic.jdbc.executor.internal.common.SQLRouteUnit;
 
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -18,14 +15,14 @@ import java.util.List;
  * @author xuejiaming
  */
 public abstract class BaseExecutionCreator implements ExecutionCreator{
-    protected ExecutionUnit createExecutionUnit(String dataSource,EasyEntitySqlExpression expression, List<Object> entities, boolean fillAutoIncrement){
-        SqlRouteUnit sqlUnit = createSqlUnit(expression, entities, fillAutoIncrement);
+    protected ExecutionUnit createExecutionUnit(String dataSource, EasyEntitySQLExpression expression, List<Object> entities, boolean fillAutoIncrement){
+        SQLRouteUnit sqlUnit = createSQLUnit(expression, entities, fillAutoIncrement);
         return createExecutionUnit(dataSource, sqlUnit);
     }
-    protected SqlRouteUnit createSqlUnit(EasyEntitySqlExpression expression, List<Object> entities, boolean fillAutoIncrement){
-        return new SqlRouteUnit(expression,entities, fillAutoIncrement);
+    protected SQLRouteUnit createSQLUnit(EasyEntitySQLExpression expression, List<Object> entities, boolean fillAutoIncrement){
+        return new SQLRouteUnit(expression,entities, fillAutoIncrement);
     }
-    protected ExecutionUnit createExecutionUnit(String dataSource,SqlRouteUnit sqlUnit){
+    protected ExecutionUnit createExecutionUnit(String dataSource, SQLRouteUnit sqlUnit){
         return new  ExecutionUnit(dataSource, sqlUnit);
     }
     protected ExecutionContext createExecutionContext(List<ExecutionUnit> executionUnits){

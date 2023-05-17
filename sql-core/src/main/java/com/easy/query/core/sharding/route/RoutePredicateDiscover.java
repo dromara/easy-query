@@ -2,8 +2,8 @@ package com.easy.query.core.sharding.route;
 
 import com.easy.query.core.basic.jdbc.parameter.ConstSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
-import com.easy.query.core.enums.SqlPredicateCompare;
-import com.easy.query.core.enums.SqlPredicateCompareEnum;
+import com.easy.query.core.enums.SQLPredicateCompare;
+import com.easy.query.core.enums.SQLPredicateCompareEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.executor.parser.EntityPrepareParseResult;
 import com.easy.query.core.expression.executor.parser.PredicatePrepareParseResult;
@@ -19,7 +19,7 @@ import com.easy.query.core.expression.segment.condition.predicate.Predicate;
 import com.easy.query.core.expression.segment.condition.predicate.ShardingPredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ValuePredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ValuesPredicate;
-import com.easy.query.core.expression.sql.expression.EasyEntityPredicateSqlExpression;
+import com.easy.query.core.expression.sql.expression.EasyEntityPredicateSQLExpression;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.enums.sharding.ShardingOperatorEnum;
@@ -27,7 +27,7 @@ import com.easy.query.core.sharding.rule.RouteRuleFilter;
 import com.easy.query.core.util.BeanUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.ClassUtil;
-import com.easy.query.core.util.SqlSegmentUtil;
+import com.easy.query.core.util.SQLSegmentUtil;
 import com.easy.query.core.util.StringUtil;
 
 import java.util.Collection;
@@ -45,15 +45,15 @@ import java.util.Set;
  */
 public class RoutePredicateDiscover<T> {
 
-    private static final String GREATER_THAN = SqlPredicateCompareEnum.GT.getSql();
-    private static final String GREATER_THAN_OR_EQUAL = SqlPredicateCompareEnum.GE.getSql();
-    private static final String LESS_THAN = SqlPredicateCompareEnum.LT.getSql();
-    private static final String LESS_THAN_OR_EQUAL = SqlPredicateCompareEnum.LE.getSql();
-    private static final String EQUAL = SqlPredicateCompareEnum.EQ.getSql();
-    private static final String NOT_EQUAL = SqlPredicateCompareEnum.NE.getSql();
-    private static final String LIKE = SqlPredicateCompareEnum.LIKE.getSql();
-    private static final String NOT_IN = SqlPredicateCompareEnum.NOT_IN.getSql();
-    private static final String IN = SqlPredicateCompareEnum.IN.getSql();
+    private static final String GREATER_THAN = SQLPredicateCompareEnum.GT.getSQL();
+    private static final String GREATER_THAN_OR_EQUAL = SQLPredicateCompareEnum.GE.getSQL();
+    private static final String LESS_THAN = SQLPredicateCompareEnum.LT.getSQL();
+    private static final String LESS_THAN_OR_EQUAL = SQLPredicateCompareEnum.LE.getSQL();
+    private static final String EQUAL = SQLPredicateCompareEnum.EQ.getSQL();
+    private static final String NOT_EQUAL = SQLPredicateCompareEnum.NE.getSQL();
+    private static final String LIKE = SQLPredicateCompareEnum.LIKE.getSQL();
+    private static final String NOT_IN = SQLPredicateCompareEnum.NOT_IN.getSQL();
+    private static final String IN = SQLPredicateCompareEnum.IN.getSQL();
     private static final Map<String, ShardingOperatorEnum> operatorTranslate;
 
     static {
@@ -67,8 +67,8 @@ public class RoutePredicateDiscover<T> {
         operatorTranslate.put(LIKE, ShardingOperatorEnum.ALL_LIKE);
     }
 
-    private ShardingOperatorEnum translateOperator(SqlPredicateCompare operator, Object value) {
-        String operatorText = operator.getSql();
+    private ShardingOperatorEnum translateOperator(SQLPredicateCompare operator, Object value) {
+        String operatorText = operator.getSQL();
         ShardingOperatorEnum shardingOperatorEnum = operatorTranslate.get(operatorText);
         if (shardingOperatorEnum != null) {
             if (Objects.equals(ShardingOperatorEnum.ALL_LIKE, shardingOperatorEnum)) {
@@ -117,23 +117,23 @@ public class RoutePredicateDiscover<T> {
 
     public RoutePredicateExpression<T> getRouteParseExpression() {
         if (prepareParseResult instanceof PredicatePrepareParseResult) {
-            EasyEntityPredicateSqlExpression easyEntityPredicateSqlExpression = ((PredicatePrepareParseResult) prepareParseResult).getEasyEntityPredicateSqlExpression();
-            return getPredicateSqlRouteParseExpression(easyEntityPredicateSqlExpression);
+            EasyEntityPredicateSQLExpression easyEntityPredicateSQLExpression = ((PredicatePrepareParseResult) prepareParseResult).getEasyEntityPredicateSQLExpression();
+            return getPredicateSQLRouteParseExpression(easyEntityPredicateSQLExpression);
         } else if (prepareParseResult instanceof EntityPrepareParseResult) {
             List<Object> entities = ((EntityPrepareParseResult) prepareParseResult).getEntities();
 
             if(EasyCollectionUtil.isNotSingle(entities)){
                 throw new EasyQueryInvalidOperationException("route parse not support multi entity or empty entity:"+entities.size());
             }
-            return getEntitySqlRouteParseExpression(entities.get(0));
+            return getEntitySQLRouteParseExpression(entities.get(0));
         }
         throw new UnsupportedOperationException(ClassUtil.getInstanceSimpleName(prepareParseResult));
     }
 
-    private RoutePredicateExpression<T> getPredicateSqlRouteParseExpression(EasyEntityPredicateSqlExpression easyEntityPredicateSqlExpression) {
+    private RoutePredicateExpression<T> getPredicateSQLRouteParseExpression(EasyEntityPredicateSQLExpression easyEntityPredicateSQLExpression) {
 
-        PredicateSegment where = easyEntityPredicateSqlExpression.getWhere();
-        if (SqlSegmentUtil.isNotEmpty(where)) {
+        PredicateSegment where = easyEntityPredicateSQLExpression.getWhere();
+        if (SQLSegmentUtil.isNotEmpty(where)) {
             if(where instanceof ShardingPredicateSegment){
                 return parsePredicate((ShardingPredicateSegment)where);
             }
@@ -178,7 +178,7 @@ public class RoutePredicateDiscover<T> {
                 ConstSQLParameter constSQLParameter = (ConstSQLParameter) parameter;
                 Object value = constSQLParameter.getValue();
 
-                SqlPredicateCompare operator = valuePredicate.getOperator();
+                SQLPredicateCompare operator = valuePredicate.getOperator();
                 ShardingOperatorEnum shardingOperator = translateOperator(operator, value);
                 RouteFunction<T> routePredicate = routeRuleFilter.routeFilter(value, shardingOperator, propertyName, Objects.equals(mainShardingProperty, propertyName),false);
                 return new RoutePredicateExpression<T>(routePredicate);
@@ -193,7 +193,7 @@ public class RoutePredicateDiscover<T> {
         String propertyName = valuesPredicate.getPropertyName();
         if (Objects.equals(entityMetadata.getEntityClass(), entityClass) && shardingProperties.contains(propertyName)) {
 
-            SqlPredicateCompare operator = valuesPredicate.getOperator();
+            SQLPredicateCompare operator = valuesPredicate.getOperator();
             ShardingOperatorEnum shardingOperator = translateOperator(operator, null);
             boolean in = Objects.equals(ShardingOperatorEnum.EQUAL, shardingOperator);
             RoutePredicateExpression<T> containsRoutePredicate = in ? RoutePredicateExpression.getDefaultFalse() : RoutePredicateExpression.getDefault();
@@ -213,7 +213,7 @@ public class RoutePredicateDiscover<T> {
         return RoutePredicateExpression.getDefault();
     }
 
-    private RoutePredicateExpression<T> getEntitySqlRouteParseExpression(Object entity) {
+    private RoutePredicateExpression<T> getEntitySQLRouteParseExpression(Object entity) {
         ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(mainShardingProperty);
         Property<Object, ?> shardingKeyPropertyGetter = BeanUtil.getFastBean(entityMetadata.getEntityClass()).getBeanGetter(columnMetadata.getProperty());
         Object shardingValue = shardingKeyPropertyGetter.apply(entity);

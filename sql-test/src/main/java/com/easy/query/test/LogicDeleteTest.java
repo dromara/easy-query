@@ -1,6 +1,5 @@
 package com.easy.query.test;
 
-import com.easy.query.test.BaseTest;
 import com.easy.query.core.basic.api.update.ExpressionUpdatable;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.test.entity.LogicDelTopic;
@@ -21,9 +20,9 @@ public class LogicDeleteTest extends BaseTest {
 
     @Test
     public void Test1(){
-        String logicDeleteSql = easyQuery.queryable(LogicDelTopic.class)
-                .toSql();
-        Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`deleted`,t.`create_time` FROM `t_logic_del_topic` t WHERE t.`deleted` = ?",logicDeleteSql);
+        String logicDeleteSQL = easyQuery.queryable(LogicDelTopic.class)
+                .toSQL();
+        Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`deleted`,t.`create_time` FROM `t_logic_del_topic` t WHERE t.`deleted` = ?",logicDeleteSQL);
         List<LogicDelTopic> logicDelTopics = easyQuery.queryable(LogicDelTopic.class).toList();
         Assert.assertTrue(EasyCollectionUtil.isNotEmpty(logicDelTopics));
         Assert.assertEquals(100,logicDelTopics.size());
@@ -32,7 +31,7 @@ public class LogicDeleteTest extends BaseTest {
     public void Test2(){
         String logicDeleteSql = easyQuery.deletable(LogicDelTopic.class)
                 .whereById("111")
-                .toSql();
+                .toSQL();
         Assert.assertEquals("UPDATE `t_logic_del_topic` SET `deleted` = ? WHERE `deleted` = ? AND `id` = ?",logicDeleteSql);
         long l = easyQuery.deletable(LogicDelTopic.class)
                 .whereById("111")
@@ -44,7 +43,7 @@ public class LogicDeleteTest extends BaseTest {
         LogicDelTopic logicDelTopic = new LogicDelTopic();
         logicDelTopic.setId("111");
         String logicDeleteSql = easyQuery.deletable(logicDelTopic)
-                .toSql();
+                .toSQL();
         Assert.assertEquals("UPDATE `t_logic_del_topic` SET `deleted` = ? WHERE `deleted` = ? AND `id` = ?",logicDeleteSql);
 
         long l = easyQuery.deletable(logicDelTopic)
@@ -57,7 +56,7 @@ public class LogicDeleteTest extends BaseTest {
     public void Test4(){
         String logicDeleteSql = easyQuery.queryable(LogicDelTopic.class)
                 .disableLogicDelete()
-                .toSql();
+                .toSQL();
         Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`deleted`,t.`create_time` FROM `t_logic_del_topic` t",logicDeleteSql);
         List<LogicDelTopic> logicDelTopics = easyQuery.queryable(LogicDelTopic.class).disableLogicDelete().toList();
         Assert.assertTrue(EasyCollectionUtil.isNotEmpty(logicDelTopics));
@@ -68,7 +67,7 @@ public class LogicDeleteTest extends BaseTest {
         String logicDeleteSql = easyQuery.deletable(LogicDelTopic.class)
                 .disableLogicDelete()
                 .whereById("111xx")
-                .toSql();
+                .toSQL();
         Assert.assertEquals("DELETE FROM `t_logic_del_topic` WHERE `id` = ?",logicDeleteSql);
         long l = easyQuery.deletable(LogicDelTopic.class)
                 .disableLogicDelete()
@@ -85,7 +84,7 @@ public class LogicDeleteTest extends BaseTest {
                 .disableLogicDelete()
                 .set(LogicDelTopic::getTitle, logicDelTopic.getTitle())
                 .whereById(logicDelTopic.getId());
-        String s = logicDelTopicExpressionUpdatable.toSql();
+        String s = logicDelTopicExpressionUpdatable.toSQL();
         Assert.assertEquals("UPDATE `t_logic_del_topic` SET `title` = ? WHERE `id` = ?",s);
 
         long l = logicDelTopicExpressionUpdatable.executeRows();
@@ -94,7 +93,7 @@ public class LogicDeleteTest extends BaseTest {
     @Test
     public void Test7(){
         String logicDeleteSql = easyQuery.queryable(LogicDelTopicCustom.class)
-                .toSql();
+                .toSQL();
         Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`deleted_at`,t.`deleted_user`,t.`create_time` FROM `t_logic_del_topic_custom` t WHERE t.`deleted_at` IS NULL",logicDeleteSql);
         List<LogicDelTopicCustom> logicDelTopics = easyQuery.queryable(LogicDelTopicCustom.class).toList();
         Assert.assertTrue(EasyCollectionUtil.isNotEmpty(logicDelTopics));
@@ -104,7 +103,7 @@ public class LogicDeleteTest extends BaseTest {
     public void Test8(){
         String logicDeleteSql = easyQuery.queryable(LogicDelTopicCustom.class)
                 .where(o->o.eq(LogicDelTopicCustom::getId,"1"))
-                .toSql();
+                .toSQL();
         Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`deleted_at`,t.`deleted_user`,t.`create_time` FROM `t_logic_del_topic_custom` t WHERE t.`deleted_at` IS NULL AND t.`id` = ?",logicDeleteSql);
         LogicDelTopicCustom logicDelTopic = easyQuery.queryable(LogicDelTopicCustom.class)
                 .where(o->o.eq(LogicDelTopicCustom::getId,"1")).firstOrNull();
@@ -116,7 +115,7 @@ public class LogicDeleteTest extends BaseTest {
     public void Test9(){
         String logicDeleteSql = easyQuery.queryable(LogicDelTopicCustom.class)
                 .where(o->o.eq(LogicDelTopicCustom::getId,"1"))
-                .toSql();
+                .toSQL();
         Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`deleted_at`,t.`deleted_user`,t.`create_time` FROM `t_logic_del_topic_custom` t WHERE t.`deleted_at` IS NULL AND t.`id` = ?",logicDeleteSql);
         LogicDelTopicCustom logicDelTopic = easyQuery.queryable(LogicDelTopicCustom.class)
                 .where(o->o.eq(LogicDelTopicCustom::getId,"1")).firstOrNull();

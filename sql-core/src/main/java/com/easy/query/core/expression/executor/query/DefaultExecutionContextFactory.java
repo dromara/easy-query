@@ -1,7 +1,6 @@
 package com.easy.query.core.expression.executor.query;
 
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
-import com.easy.query.core.enums.MergeBehaviorEnum;
 import com.easy.query.core.expression.executor.parser.EntityPrepareParseResult;
 import com.easy.query.core.expression.executor.parser.ExecutionContext;
 import com.easy.query.core.expression.executor.parser.InsertPrepareParseResult;
@@ -14,7 +13,7 @@ import com.easy.query.core.expression.executor.query.base.ShardingEntityExecutio
 import com.easy.query.core.expression.executor.query.base.ShardingPredicateExecutionCreator;
 import com.easy.query.core.sharding.EasyQueryDataSource;
 import com.easy.query.core.basic.jdbc.executor.internal.common.ExecutionUnit;
-import com.easy.query.core.basic.jdbc.executor.internal.common.SqlRouteUnit;
+import com.easy.query.core.basic.jdbc.executor.internal.common.SQLRouteUnit;
 import com.easy.query.core.sharding.rewrite.RewriteContext;
 import com.easy.query.core.sharding.rewrite.RewriteContextFactory;
 import com.easy.query.core.sharding.route.RouteContext;
@@ -45,7 +44,7 @@ public class DefaultExecutionContextFactory implements ExecutionContextFactory {
 
     @Override
     public ExecutionContext createJdbcExecutionContext(String sql, List<SQLParameter> parameters) {
-        ExecutionUnit executionUnit = new ExecutionUnit(easyDataSource.getDefaultDataSourceName(),new SqlRouteUnit( sql,parameters));
+        ExecutionUnit executionUnit = new ExecutionUnit(easyDataSource.getDefaultDataSourceName(),new SQLRouteUnit( sql,parameters));
         return new ExecutionContext(Collections.singletonList(executionUnit),false,false,false,false);
     }
     @Override

@@ -1,7 +1,7 @@
 package com.easy.query.core.expression.segment.condition;
 
 
-import com.easy.query.core.enums.SqlKeywordEnum;
+import com.easy.query.core.enums.SQLKeywordEnum;
 import com.easy.query.core.expression.segment.condition.predicate.Predicate;
 
 /**
@@ -11,7 +11,7 @@ import com.easy.query.core.expression.segment.condition.predicate.Predicate;
  * @author xuejiaming
  */
 public class AndPredicateSegment extends AbstractPredicateSegment {
-    public static final String AND= " "+ SqlKeywordEnum.AND.toSql()+" ";
+    public static final String AND= " "+ SQLKeywordEnum.AND.toSQL()+" ";
 
     public AndPredicateSegment() {
     }

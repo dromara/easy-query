@@ -1,6 +1,6 @@
 package com.easy.query.core.configuration;
 
-import com.easy.query.core.enums.SqlExecuteStrategyEnum;
+import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 
 /**
@@ -11,8 +11,8 @@ import com.easy.query.core.enums.sharding.ConnectionModeEnum;
  */
 public class EasyQueryOption {
     private final boolean deleteThrowError;
-    private final SqlExecuteStrategyEnum insertStrategy;
-    private final SqlExecuteStrategyEnum updateStrategy;
+    private final SQLExecuteStrategyEnum insertStrategy;
+    private final SQLExecuteStrategyEnum updateStrategy;
     private final int maxShardingQueryLimit;
     private final int executorMaximumPoolSize;
     private final int executorCorePoolSize;
@@ -24,9 +24,9 @@ public class EasyQueryOption {
     private final EasyQueryShardingOption shardingOption;
     private final String defaultDataSourceName;
 
-    public EasyQueryOption(boolean deleteThrowError, SqlExecuteStrategyEnum insertStrategy, SqlExecuteStrategyEnum updateStrategy, ConnectionModeEnum connectionMode, int maxShardingQueryLimit, int executorMaximumPoolSize, int executorCorePoolSize,
-                           boolean throwIfNotMatchRoute,long shardingExecuteTimeoutMillis,long shardingGroupExecuteTimeoutMillis,
-                           EasyQueryShardingOption shardingOption,EasyQueryReplicaOption replicaOption, String defaultDataSourceName) {
+    public EasyQueryOption(boolean deleteThrowError, SQLExecuteStrategyEnum insertStrategy, SQLExecuteStrategyEnum updateStrategy, ConnectionModeEnum connectionMode, int maxShardingQueryLimit, int executorMaximumPoolSize, int executorCorePoolSize,
+                           boolean throwIfNotMatchRoute, long shardingExecuteTimeoutMillis, long shardingGroupExecuteTimeoutMillis,
+                           EasyQueryShardingOption shardingOption, EasyQueryReplicaOption replicaOption, String defaultDataSourceName) {
         this.connectionMode = connectionMode;
 
         if(executorMaximumPoolSize<0){
@@ -50,8 +50,8 @@ public class EasyQueryOption {
             throw new IllegalArgumentException("shardingExecuteTimeoutMillis:"+shardingExecuteTimeoutMillis+" should less than shardingGroupExecuteTimeoutMillis:"+shardingGroupExecuteTimeoutMillis);
         }
         this.deleteThrowError = deleteThrowError;
-        this.insertStrategy = SqlExecuteStrategyEnum.getDefaultStrategy(insertStrategy, SqlExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS);
-        this.updateStrategy = SqlExecuteStrategyEnum.getDefaultStrategy(updateStrategy, SqlExecuteStrategyEnum.ALL_COLUMNS);
+        this.insertStrategy = SQLExecuteStrategyEnum.getDefaultStrategy(insertStrategy, SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS);
+        this.updateStrategy = SQLExecuteStrategyEnum.getDefaultStrategy(updateStrategy, SQLExecuteStrategyEnum.ALL_COLUMNS);
         this.maxShardingQueryLimit = maxShardingQueryLimit;
         this.executorMaximumPoolSize = executorMaximumPoolSize;
         this.executorCorePoolSize = executorCorePoolSize;
@@ -67,11 +67,11 @@ public class EasyQueryOption {
         return deleteThrowError;
     }
 
-    public SqlExecuteStrategyEnum getInsertStrategy() {
+    public SQLExecuteStrategyEnum getInsertStrategy() {
         return insertStrategy;
     }
 
-    public SqlExecuteStrategyEnum getUpdateStrategy() {
+    public SQLExecuteStrategyEnum getUpdateStrategy() {
         return updateStrategy;
     }
 

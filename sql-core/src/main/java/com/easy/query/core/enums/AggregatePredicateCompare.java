@@ -1,14 +1,12 @@
 package com.easy.query.core.enums;
 
-import com.easy.query.core.enums.SqlPredicateCompare;
-
 /**
  * @FileName: EasyAggregate.java
  * @Description: 文件说明
  * @Date: 2023/2/18 22:18
  * @author xuejiaming
  */
-public enum AggregatePredicateCompare implements SqlPredicateCompare {
+public enum AggregatePredicateCompare implements SQLPredicateCompare {
     EQ("="),
     NE("<>"),
     /**
@@ -26,12 +24,12 @@ public enum AggregatePredicateCompare implements SqlPredicateCompare {
     }
 
     @Override
-    public String getSql() {
+    public String getSQL() {
         return sql;
     }
 
     @Override
-    public SqlPredicateCompare toReverse() {
+    public SQLPredicateCompare toReverse() {
         return null;
     }
 }

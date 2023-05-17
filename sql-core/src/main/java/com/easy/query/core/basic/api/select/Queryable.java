@@ -6,19 +6,19 @@ import com.easy.query.core.sharding.manager.SequenceCountLine;
 import com.easy.query.core.basic.api.internal.Interceptable;
 import com.easy.query.core.basic.api.internal.LogicDeletable;
 import com.easy.query.core.basic.api.internal.TableReNameable;
-import com.easy.query.core.basic.api.select.provider.EasyQuerySqlBuilderProvider;
-import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
+import com.easy.query.core.basic.api.select.provider.EasyQuerySQLBuilderProvider;
+import com.easy.query.core.basic.jdbc.parameter.SQLParameterCollector;
 import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
 import com.easy.query.core.exception.EasyQueryWhereInvalidOperationException;
 import com.easy.query.core.expression.lambda.Property;
-import com.easy.query.core.expression.lambda.SqlExpression;
-import com.easy.query.core.expression.lambda.SqlExpression2;
+import com.easy.query.core.expression.lambda.SQLExpression;
+import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.exception.EasyQueryConcurrentException;
-import com.easy.query.core.expression.parser.core.SqlWherePredicate;
-import com.easy.query.core.expression.parser.core.SqlGroupBySelector;
-import com.easy.query.core.expression.parser.core.SqlColumnSelector;
-import com.easy.query.core.expression.parser.core.SqlColumnAsSelector;
-import com.easy.query.core.expression.parser.core.SqlAggregatePredicate;
+import com.easy.query.core.expression.parser.core.SQLWherePredicate;
+import com.easy.query.core.expression.parser.core.SQLGroupBySelector;
+import com.easy.query.core.expression.parser.core.SQLColumnSelector;
+import com.easy.query.core.expression.parser.core.SQLColumnAsSelector;
+import com.easy.query.core.expression.parser.core.SQLAggregatePredicate;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.util.EasyCollectionUtil;
@@ -50,7 +50,7 @@ public interface Queryable<T1> extends Query<T1>, Interceptable<Queryable<T1>>, 
         return (int) count();
     }
 
-    long countDistinct(SqlExpression<SqlColumnSelector<T1>> selectExpression);
+    long countDistinct(SQLExpression<SQLColumnSelector<T1>> selectExpression);
 
     /**
      * 判断是否存在
@@ -70,7 +70,7 @@ public interface Queryable<T1> extends Query<T1>, Interceptable<Queryable<T1>>, 
      * @param whereExpression 表达式最后一个是取反
      * @return
      */
-    boolean all(SqlExpression<SqlWherePredicate<T1>> whereExpression);
+    boolean all(SQLExpression<SQLWherePredicate<T1>> whereExpression);
     /**
      * 防止溢出
      *
@@ -177,12 +177,12 @@ public interface Queryable<T1> extends Query<T1>, Interceptable<Queryable<T1>>, 
      *
      * @return
      */
-    default String toSql() {
-        return toSql(queryClass());
+    default String toSQL() {
+        return toSQL(queryClass());
     }
 
-    default String toSql(SqlParameterCollector sqlParameterCollector) {
-        return toSql(queryClass(), sqlParameterCollector);
+    default String toSQL(SQLParameterCollector sqlParameterCollector) {
+        return toSQL(queryClass(), sqlParameterCollector);
     }
 
     /**
@@ -192,11 +192,11 @@ public interface Queryable<T1> extends Query<T1>, Interceptable<Queryable<T1>>, 
      * @param <TR>
      * @return
      */
-    default <TR> String toSql(Class<TR> resultClass) {
-        return toSql(resultClass, null);
+    default <TR> String toSQL(Class<TR> resultClass) {
+        return toSQL(resultClass, null);
     }
 
-    <TR> String toSql(Class<TR> resultClass, SqlParameterCollector sqlParameterCollector);
+    <TR> String toSQL(Class<TR> resultClass, SQLParameterCollector sqlParameterCollector);
 
     /**
      * 对当前表达式返回自定义select列
@@ -204,7 +204,7 @@ public interface Queryable<T1> extends Query<T1>, Interceptable<Queryable<T1>>, 
      * @param selectExpression
      * @return
      */
-    Queryable<T1> select(SqlExpression<SqlColumnSelector<T1>> selectExpression);
+    Queryable<T1> select(SQLExpression<SQLColumnSelector<T1>> selectExpression);
 
     /**
      * 将当前T1对象转成TR对象，select会将T1属性所对应的列名映射到TR对象的列名上(忽略大小写)
@@ -226,7 +226,7 @@ public interface Queryable<T1> extends Query<T1>, Interceptable<Queryable<T1>>, 
      * @param <TR>
      * @return
      */
-    <TR> Queryable<TR> select(Class<TR> resultClass, SqlExpression<SqlColumnAsSelector<T1, TR>> selectExpression);
+    <TR> Queryable<TR> select(Class<TR> resultClass, SQLExpression<SQLColumnAsSelector<T1, TR>> selectExpression);
 
     /**
      * 设置column所有join表都会生效
@@ -238,11 +238,11 @@ public interface Queryable<T1> extends Query<T1>, Interceptable<Queryable<T1>>, 
 
     Queryable<T1> select(ColumnSegment columnSegment, boolean clearAll);
 
-    default Queryable<T1> where(SqlExpression<SqlWherePredicate<T1>> whereExpression) {
+    default Queryable<T1> where(SQLExpression<SQLWherePredicate<T1>> whereExpression) {
         return where(true, whereExpression);
     }
 
-    Queryable<T1> where(boolean condition, SqlExpression<SqlWherePredicate<T1>> whereExpression);
+    Queryable<T1> where(boolean condition, SQLExpression<SQLWherePredicate<T1>> whereExpression);
 
     default Queryable<T1> whereById(Object id) {
         return whereById(true, id);
@@ -263,48 +263,48 @@ public interface Queryable<T1> extends Query<T1>, Interceptable<Queryable<T1>>, 
      * @param condition
      * @param object
      * @return
-     * @throws EasyQueryWhereInvalidOperationException 当object的where属性和查询对象不匹配或者查询对象属性不匹配,无法获取 {@link SqlWherePredicate}
+     * @throws EasyQueryWhereInvalidOperationException 当object的where属性和查询对象不匹配或者查询对象属性不匹配,无法获取 {@link SQLWherePredicate}
      */
     Queryable<T1> whereObject(boolean condition, Object object);
 
-    default Queryable<T1> groupBy(SqlExpression<SqlGroupBySelector<T1>> selectExpression) {
+    default Queryable<T1> groupBy(SQLExpression<SQLGroupBySelector<T1>> selectExpression) {
         return groupBy(true, selectExpression);
     }
 
-    Queryable<T1> groupBy(boolean condition, SqlExpression<SqlGroupBySelector<T1>> selectExpression);
+    Queryable<T1> groupBy(boolean condition, SQLExpression<SQLGroupBySelector<T1>> selectExpression);
 
-    default Queryable<T1> having(SqlExpression<SqlAggregatePredicate<T1>> predicateExpression) {
+    default Queryable<T1> having(SQLExpression<SQLAggregatePredicate<T1>> predicateExpression) {
         return having(true, predicateExpression);
     }
 
-    Queryable<T1> having(boolean condition, SqlExpression<SqlAggregatePredicate<T1>> predicateExpression);
+    Queryable<T1> having(boolean condition, SQLExpression<SQLAggregatePredicate<T1>> predicateExpression);
 
-    default Queryable<T1> orderByAsc(SqlExpression<SqlColumnSelector<T1>> selectExpression) {
+    default Queryable<T1> orderByAsc(SQLExpression<SQLColumnSelector<T1>> selectExpression) {
         return orderByAsc(true, selectExpression);
     }
 
-    default Queryable<T1> orderByAsc(boolean condition, SqlExpression<SqlColumnSelector<T1>> selectExpression) {
+    default Queryable<T1> orderByAsc(boolean condition, SQLExpression<SQLColumnSelector<T1>> selectExpression) {
         return orderBy(condition, selectExpression, true);
     }
 
-    default Queryable<T1> orderByDesc(SqlExpression<SqlColumnSelector<T1>> selectExpression) {
+    default Queryable<T1> orderByDesc(SQLExpression<SQLColumnSelector<T1>> selectExpression) {
         return orderByDesc(true, selectExpression);
     }
 
-    default Queryable<T1> orderByDesc(boolean condition, SqlExpression<SqlColumnSelector<T1>> selectExpression) {
+    default Queryable<T1> orderByDesc(boolean condition, SQLExpression<SQLColumnSelector<T1>> selectExpression) {
         return orderBy(condition, selectExpression, false);
     }
 
-    default Queryable<T1> orderBy(SqlExpression<SqlColumnSelector<T1>> selectExpression, boolean asc) {
+    default Queryable<T1> orderBy(SQLExpression<SQLColumnSelector<T1>> selectExpression, boolean asc) {
         return orderBy(true, selectExpression, asc);
     }
 
-    Queryable<T1> orderBy(boolean condition, SqlExpression<SqlColumnSelector<T1>> selectExpression, boolean asc);
+    Queryable<T1> orderBy(boolean condition, SQLExpression<SQLColumnSelector<T1>> selectExpression, boolean asc);
 
     /**
      * @param configuration
      * @return
-     * @throws EasyQueryOrderByInvalidOperationException 当配置{@link EasyOrderBy} 为{@code  DynamicModeEnum.STRICT}排序设置的属性不存在当前排序对象里面或者当前查询对象无法获取 {@link SqlColumnSelector}
+     * @throws EasyQueryOrderByInvalidOperationException 当配置{@link EasyOrderBy} 为{@code  DynamicModeEnum.STRICT}排序设置的属性不存在当前排序对象里面或者当前查询对象无法获取 {@link SQLColumnSelector}
      */
     default Queryable<T1> orderByDynamic(EasyOrderBy configuration) {
         return orderByDynamic(true, configuration);
@@ -314,7 +314,7 @@ public interface Queryable<T1> extends Query<T1>, Interceptable<Queryable<T1>>, 
      * @param condition
      * @param configuration
      * @return
-     * @throws EasyQueryOrderByInvalidOperationException 当配置{@link EasyOrderBy} 为{@code  DynamicModeEnum.STRICT}排序设置的属性不存在当前排序对象里面或者当前查询对象无法获取 {@link SqlColumnSelector}
+     * @throws EasyQueryOrderByInvalidOperationException 当配置{@link EasyOrderBy} 为{@code  DynamicModeEnum.STRICT}排序设置的属性不存在当前排序对象里面或者当前查询对象无法获取 {@link SQLColumnSelector}
      */
     Queryable<T1> orderByDynamic(boolean condition, EasyOrderBy configuration);
 
@@ -360,17 +360,17 @@ public interface Queryable<T1> extends Query<T1>, Interceptable<Queryable<T1>>, 
     //    PageResult<T1> toPageResult(long pageIndex, long pageSize, SqlExpression<ColumnSelector<T1>> selectExpression);
 //    <TR> PageResult<TR> toPageResult(long pageIndex, long pageSize, Class<TR> clazz);
 //    <TR> PageResult<TR> toPageResult(long pageIndex, long pageSize, Class<TR> clazz, SqlExpression<ColumnAsSelector<T1,TR>> selectExpression);
-    <T2> Queryable2<T1, T2> leftJoin(Class<T2> joinClass, SqlExpression2<SqlWherePredicate<T1>, SqlWherePredicate<T2>> on);
+    <T2> Queryable2<T1, T2> leftJoin(Class<T2> joinClass, SQLExpression2<SQLWherePredicate<T1>, SQLWherePredicate<T2>> on);
 
-    <T2> Queryable2<T1, T2> leftJoin(Queryable<T2> joinQueryable, SqlExpression2<SqlWherePredicate<T1>, SqlWherePredicate<T2>> on);
+    <T2> Queryable2<T1, T2> leftJoin(Queryable<T2> joinQueryable, SQLExpression2<SQLWherePredicate<T1>, SQLWherePredicate<T2>> on);
 
-    <T2> Queryable2<T1, T2> rightJoin(Class<T2> joinClass, SqlExpression2<SqlWherePredicate<T1>, SqlWherePredicate<T2>> on);
+    <T2> Queryable2<T1, T2> rightJoin(Class<T2> joinClass, SQLExpression2<SQLWherePredicate<T1>, SQLWherePredicate<T2>> on);
 
-    <T2> Queryable2<T1, T2> rightJoin(Queryable<T2> joinQueryable, SqlExpression2<SqlWherePredicate<T1>, SqlWherePredicate<T2>> on);
+    <T2> Queryable2<T1, T2> rightJoin(Queryable<T2> joinQueryable, SQLExpression2<SQLWherePredicate<T1>, SQLWherePredicate<T2>> on);
 
-    <T2> Queryable2<T1, T2> innerJoin(Class<T2> joinClass, SqlExpression2<SqlWherePredicate<T1>, SqlWherePredicate<T2>> on);
+    <T2> Queryable2<T1, T2> innerJoin(Class<T2> joinClass, SQLExpression2<SQLWherePredicate<T1>, SQLWherePredicate<T2>> on);
 
-    <T2> Queryable2<T1, T2> innerJoin(Queryable<T2> joinQueryable, SqlExpression2<SqlWherePredicate<T1>, SqlWherePredicate<T2>> on);
+    <T2> Queryable2<T1, T2> innerJoin(Queryable<T2> joinQueryable, SQLExpression2<SQLWherePredicate<T1>, SQLWherePredicate<T2>> on);
 
    default Queryable<T1> union(Queryable<T1> unionQueryable){
        return union(Collections.singletonList(unionQueryable));
@@ -394,7 +394,7 @@ public interface Queryable<T1> extends Query<T1>, Interceptable<Queryable<T1>>, 
    }
     Queryable<T1> unionAll(Collection<Queryable<T1>> unionQueries);
 
-    EasyQuerySqlBuilderProvider<T1> getSqlBuilderProvider1();
+    EasyQuerySQLBuilderProvider<T1> getSQLBuilderProvider1();
 
 //    Queryable<T1> unionAll(Queryable<T1>... otherQueryables);
 

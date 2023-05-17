@@ -1,6 +1,6 @@
 package com.easy.query.core.expression.segment;
 
-import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
+import com.easy.query.core.basic.jdbc.parameter.SQLParameterCollector;
 
 /**
  * @FileName: SelectCountSegment.java
@@ -8,7 +8,7 @@ import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
  * @Date: 2023/3/3 12:52
  * @author xuejiaming
  */
-public class SelectConstSegment implements SqlSegment{
+public class SelectConstSegment implements SQLSegment {
     private final String projects;
 
     public SelectConstSegment(String projects){
@@ -16,7 +16,7 @@ public class SelectConstSegment implements SqlSegment{
         this.projects = projects;
     }
     @Override
-    public String toSql(SqlParameterCollector sqlParameterCollector) {
+    public String toSQL(SQLParameterCollector sqlParameterCollector) {
         return projects;
     }
 }

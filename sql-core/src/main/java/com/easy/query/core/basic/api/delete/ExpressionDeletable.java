@@ -1,8 +1,8 @@
 package com.easy.query.core.basic.api.delete;
 
 import com.easy.query.core.basic.api.internal.Versionable;
-import com.easy.query.core.expression.lambda.SqlExpression;
-import com.easy.query.core.expression.parser.core.SqlWherePredicate;
+import com.easy.query.core.expression.lambda.SQLExpression;
+import com.easy.query.core.expression.parser.core.SQLWherePredicate;
 
 /**
  * @FileName: EasyExpressionDelete.java
@@ -11,10 +11,10 @@ import com.easy.query.core.expression.parser.core.SqlWherePredicate;
  * @author xuejiaming
  */
 public interface ExpressionDeletable<T> extends Deletable<T, ExpressionDeletable<T>>, Versionable<ExpressionDeletable<T>> {
-    default ExpressionDeletable<T> where(SqlExpression<SqlWherePredicate<T>> whereExpression){
+    default ExpressionDeletable<T> where(SQLExpression<SQLWherePredicate<T>> whereExpression){
         return where(true,whereExpression);
     }
-    ExpressionDeletable<T> where(boolean condition, SqlExpression<SqlWherePredicate<T>> whereExpression);
+    ExpressionDeletable<T> where(boolean condition, SQLExpression<SQLWherePredicate<T>> whereExpression);
 
 
     Deletable<T, ExpressionDeletable<T>> whereById(Object id);

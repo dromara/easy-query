@@ -1,7 +1,7 @@
 package com.easy.query.core.expression.executor.parser;
 
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
-import com.easy.query.core.expression.sql.expression.EasyQuerySqlExpression;
+import com.easy.query.core.expression.sql.expression.EasyQuerySQLExpression;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 
 /**
@@ -12,7 +12,7 @@ import com.easy.query.core.enums.sharding.ConnectionModeEnum;
  */
 public interface QueryPrepareParseResult extends PredicatePrepareParseResult{
     @Override
-    EasyQuerySqlExpression getEasyEntityPredicateSqlExpression();
+    EasyQuerySQLExpression getEasyEntityPredicateSQLExpression();
     @Override
     EntityQueryExpressionBuilder getEntityExpressionBuilder();
     long getOriginalOffset();

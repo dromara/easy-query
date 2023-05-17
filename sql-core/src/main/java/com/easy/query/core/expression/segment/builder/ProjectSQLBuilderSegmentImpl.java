@@ -1,0 +1,56 @@
+package com.easy.query.core.expression.segment.builder;
+
+import com.easy.query.core.basic.jdbc.parameter.SQLParameterCollector;
+import com.easy.query.core.enums.SQLKeywordEnum;
+import com.easy.query.core.expression.segment.AggregationColumnSegment;
+import com.easy.query.core.expression.segment.SQLSegment;
+
+import java.util.Iterator;
+import java.util.List;
+
+/**
+ * @FileName: SelectSqlSegmentBuilder.java
+ * @Description: 查询projects
+ * @Date: 2023/2/13 22:39
+ * @author xuejiaming
+ */
+public class ProjectSQLBuilderSegmentImpl extends AbstractSqlBuilderSegment implements ProjectSQLBuilderSegment {
+
+    private boolean projectHasAggregate=false;
+    @Override
+    public String toSQL(SQLParameterCollector sqlParameterCollector) {
+        StringBuilder sb = new StringBuilder();
+        List<SQLSegment> sqlSegments = getSQLSegments();
+        if (!sqlSegments.isEmpty()) {
+            Iterator<SQLSegment> iterator = sqlSegments.iterator();
+            SQLSegment first = iterator.next();
+            sb.append(first.toSQL(sqlParameterCollector));
+            while (iterator.hasNext()) {
+                SQLSegment sqlSegment = iterator.next();
+                sb.append(SQLKeywordEnum.DOT.toSQL()).append(sqlSegment.toSQL(sqlParameterCollector));
+            }
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public SQLBuilderSegment cloneSQLBuilder() {
+        ProjectSQLBuilderSegmentImpl projectSqlBuilderSegment = new ProjectSQLBuilderSegmentImpl();
+        projectSqlBuilderSegment.projectHasAggregate=projectHasAggregate;
+        copyTo(projectSqlBuilderSegment);
+        return projectSqlBuilderSegment;
+    }
+
+    @Override
+    public void append(SQLSegment sqlSegment) {
+        super.append(sqlSegment);
+        if(sqlSegment instanceof AggregationColumnSegment){
+            projectHasAggregate=true;
+        }
+    }
+
+    @Override
+    public boolean hasAggregateColumns() {
+        return projectHasAggregate;
+    }
+}

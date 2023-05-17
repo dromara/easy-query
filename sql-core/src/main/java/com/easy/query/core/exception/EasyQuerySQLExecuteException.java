@@ -21,7 +21,7 @@ public class EasyQuerySQLExecuteException extends RuntimeException{
         this.sql = sql;
     }
 
-    public String getSql() {
+    public String getSQL() {
         return sql;
     }
 }

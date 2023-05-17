@@ -7,7 +7,6 @@ import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.util.BeanUtil;
-import com.easy.query.core.util.EasyUtil;
 
 /**
  * @author xuejiaming
@@ -15,7 +14,7 @@ import com.easy.query.core.util.EasyUtil;
  * @Description: 文件说明
  * @Date: 2023/2/28 20:47
  */
-public final class PropertySQLParameter implements BeanSqlParameter {
+public final class PropertySQLParameter implements BeanSQLParameter {
     private final TableAvailable table;
     private final String propertyName;
     private Object bean;

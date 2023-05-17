@@ -1,6 +1,6 @@
 package com.easy.query.core.expression.segment.condition;
 
-import com.easy.query.core.expression.segment.SqlSegment;
+import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.expression.segment.condition.predicate.Predicate;
 
 import java.util.List;
@@ -11,7 +11,7 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public interface ShardingPredicateSegment extends SqlSegment {
+public interface ShardingPredicateSegment extends SQLSegment {
     List<PredicateSegment> getChildren();
     Predicate getPredicate();
     boolean isPredicate();

@@ -19,5 +19,5 @@ public interface Query<T> {
      * 当前的查询表达式
      * @return
      */
-    EntityQueryExpressionBuilder getSqlEntityExpressionBuilder();
+    EntityQueryExpressionBuilder getSQLEntityExpressionBuilder();
 }

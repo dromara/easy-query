@@ -1,11 +1,11 @@
 package com.easy.query.core.basic.api.insert;
 
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
-import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
+import com.easy.query.core.basic.jdbc.parameter.SQLParameterCollector;
 import com.easy.query.core.basic.plugin.interceptor.EasyInterceptorEntry;
 import com.easy.query.core.configuration.EasyQueryConfiguration;
 import com.easy.query.core.enums.ExecuteMethodEnum;
-import com.easy.query.core.enums.SqlExecuteStrategyEnum;
+import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.basic.plugin.interceptor.EasyEntityInterceptor;
@@ -38,7 +38,7 @@ public abstract class AbstractInsertable<T> implements Insertable<T> {
         entityMetadata.checkTable();
 
         EntityTableExpressionBuilder table = new TableExpressionBuilder(entityMetadata, 0, null, MultiTableTypeEnum.FROM,entityInsertExpression.getRuntimeContext());
-        this.entityInsertExpression.addSqlEntityTableExpression(table);
+        this.entityInsertExpression.addSQLEntityTableExpression(table);
     }
 
     @Override
@@ -113,17 +113,17 @@ public abstract class AbstractInsertable<T> implements Insertable<T> {
     }
 
     @Override
-    public Insertable<T> setSqlStrategy(boolean condition, SqlExecuteStrategyEnum sqlStrategy) {
+    public Insertable<T> setSQLStrategy(boolean condition, SQLExecuteStrategyEnum sqlStrategy) {
         if(condition){
-            entityInsertExpression.getExpressionContext().useSqlStrategy(sqlStrategy);
+            entityInsertExpression.getExpressionContext().useSQLStrategy(sqlStrategy);
         }
         return this;
     }
 
-    public String toSql(Object entity) {
-        return toSqlWithParam(entity,null);
+    public String toSQL(Object entity) {
+        return toSQLWithParam(entity,null);
     }
-    private String toSqlWithParam(Object entity,SqlParameterCollector sqlParameterCollector){
-        return entityInsertExpression.toExpression(entity).toSql(sqlParameterCollector);
+    private String toSQLWithParam(Object entity, SQLParameterCollector sqlParameterCollector){
+        return entityInsertExpression.toExpression(entity).toSQL(sqlParameterCollector);
     }
 }

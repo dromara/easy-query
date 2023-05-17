@@ -1,11 +1,11 @@
 package com.easy.query.core.expression.segment.condition.predicate;
 
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
-import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
-import com.easy.query.core.enums.SqlPredicateCompare;
+import com.easy.query.core.basic.jdbc.parameter.SQLParameterCollector;
+import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.segment.SqlEntitySegment;
-import com.easy.query.core.util.SqlExpressionUtil;
+import com.easy.query.core.expression.segment.SQLEntitySegment;
+import com.easy.query.core.util.SQLExpressionUtil;
 
 /**
  * @FileName: ColumnValuePredicate.java
@@ -18,10 +18,10 @@ public class ColumnWithColumnPredicate implements Predicate {
     private final String leftPropertyName;
     private final TableAvailable rightTable;
     private final String rightPropertyName;
-    private final SqlPredicateCompare compare;
+    private final SQLPredicateCompare compare;
     private final EasyQueryRuntimeContext runtimeContext;
 
-    public ColumnWithColumnPredicate(TableAvailable leftTable, String leftPropertyName, TableAvailable rightTable, String rightPropertyName, SqlPredicateCompare compare, EasyQueryRuntimeContext runtimeContext) {
+    public ColumnWithColumnPredicate(TableAvailable leftTable, String leftPropertyName, TableAvailable rightTable, String rightPropertyName, SQLPredicateCompare compare, EasyQueryRuntimeContext runtimeContext) {
         this.leftTable = leftTable;
         this.leftPropertyName = leftPropertyName;
         this.rightTable = rightTable;
@@ -31,11 +31,11 @@ public class ColumnWithColumnPredicate implements Predicate {
     }
 
     @Override
-    public String toSql(SqlParameterCollector sqlParameterCollector) {
+    public String toSQL(SQLParameterCollector sqlParameterCollector) {
 
-        String sqlColumnSegment1 =  SqlExpressionUtil.getSqlOwnerColumn(runtimeContext,leftTable,leftPropertyName);
-        String sqlColumnSegment2 =  SqlExpressionUtil.getSqlOwnerColumn(runtimeContext,rightTable,rightPropertyName);
-        return sqlColumnSegment1 +" "+ compare.getSql() + " "+sqlColumnSegment2;
+        String sqlColumnSegment1 =  SQLExpressionUtil.getSQLOwnerColumn(runtimeContext,leftTable,leftPropertyName);
+        String sqlColumnSegment2 =  SQLExpressionUtil.getSQLOwnerColumn(runtimeContext,rightTable,rightPropertyName);
+        return sqlColumnSegment1 +" "+ compare.getSQL() + " "+sqlColumnSegment2;
     }
 
     @Override
@@ -49,12 +49,12 @@ public class ColumnWithColumnPredicate implements Predicate {
     }
 
     @Override
-    public SqlEntitySegment cloneSqlEntitySegment() {
+    public SQLEntitySegment cloneSQLEntitySegment() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public SqlPredicateCompare getOperator() {
+    public SQLPredicateCompare getOperator() {
         return compare;
     }
 }

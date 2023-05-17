@@ -1,10 +1,8 @@
 package com.easy.query.core.expression.sql.builder;
 
-import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
+import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
-import com.easy.query.core.expression.sql.builder.impl.UpdateExpressionBuilder;
-import com.easy.query.core.expression.sql.expression.EasySqlExpression;
-import com.easy.query.core.expression.sql.expression.EasyUpdateSqlExpression;
+import com.easy.query.core.expression.sql.expression.EasyUpdateSQLExpression;
 
 /**
  * @FileName: SqlEntityUpdateExpression.java
@@ -14,21 +12,21 @@ import com.easy.query.core.expression.sql.expression.EasyUpdateSqlExpression;
  */
 public interface EntityUpdateExpressionBuilder extends EntityPredicateExpressionBuilder, LambdaEntityExpressionBuilder,EntityToExpressionBuilder {
 
-     SqlBuilderSegment getSetColumns();
+     SQLBuilderSegment getSetColumns();
      boolean hasSetColumns();
 
      PredicateSegment getWhere();
      boolean hasWhere();
-     SqlBuilderSegment getSetIgnoreColumns();
+     SQLBuilderSegment getSetIgnoreColumns();
      boolean hasSetIgnoreColumns();
-     SqlBuilderSegment getWhereColumns();
+     SQLBuilderSegment getWhereColumns();
      boolean hasWhereColumns();
 
      @Override
      EntityUpdateExpressionBuilder cloneEntityExpressionBuilder();
      @Override
-     EasyUpdateSqlExpression toExpression();
+     EasyUpdateSQLExpression toExpression();
 
      @Override
-     EasyUpdateSqlExpression toExpression(Object entity);
+     EasyUpdateSQLExpression toExpression(Object entity);
 }

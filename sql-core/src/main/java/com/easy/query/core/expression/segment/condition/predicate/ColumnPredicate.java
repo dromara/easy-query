@@ -1,11 +1,11 @@
 package com.easy.query.core.expression.segment.condition.predicate;
 
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
-import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
+import com.easy.query.core.basic.jdbc.parameter.SQLParameterCollector;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.segment.SqlEntitySegment;
-import com.easy.query.core.enums.SqlPredicateCompare;
-import com.easy.query.core.util.SqlExpressionUtil;
+import com.easy.query.core.expression.segment.SQLEntitySegment;
+import com.easy.query.core.enums.SQLPredicateCompare;
+import com.easy.query.core.util.SQLExpressionUtil;
 
 /**
  * @FileName: ColumnValuePredicate.java
@@ -16,10 +16,10 @@ import com.easy.query.core.util.SqlExpressionUtil;
 public class ColumnPredicate implements Predicate {
     private final TableAvailable table;
     private final String propertyName;
-    private final SqlPredicateCompare compare;
+    private final SQLPredicateCompare compare;
     private final EasyQueryRuntimeContext runtimeContext;
 
-    public ColumnPredicate(TableAvailable table, String propertyName, SqlPredicateCompare compare, EasyQueryRuntimeContext runtimeContext) {
+    public ColumnPredicate(TableAvailable table, String propertyName, SQLPredicateCompare compare, EasyQueryRuntimeContext runtimeContext) {
         this.table = table;
         this.propertyName = propertyName;
         this.compare = compare;
@@ -27,9 +27,9 @@ public class ColumnPredicate implements Predicate {
     }
 
     @Override
-    public String toSql(SqlParameterCollector sqlParameterCollector) {
-        String sqlColumnSegment = SqlExpressionUtil.getSqlOwnerColumn(runtimeContext,table,propertyName);
-        return sqlColumnSegment +" "+ compare.getSql();
+    public String toSQL(SQLParameterCollector sqlParameterCollector) {
+        String sqlColumnSegment = SQLExpressionUtil.getSQLOwnerColumn(runtimeContext,table,propertyName);
+        return sqlColumnSegment +" "+ compare.getSQL();
     }
 
     @Override
@@ -43,12 +43,12 @@ public class ColumnPredicate implements Predicate {
     }
 
     @Override
-    public SqlEntitySegment cloneSqlEntitySegment() {
+    public SQLEntitySegment cloneSQLEntitySegment() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public SqlPredicateCompare getOperator() {
+    public SQLPredicateCompare getOperator() {
         return compare;
     }
 }

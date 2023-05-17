@@ -26,7 +26,7 @@ public class EasyEmptyEntityDeletable<T> implements EntityDeletable<T> {
     }
 
     @Override
-    public String toSql() {
+    public String toSQL() {
         return null;
     }
 

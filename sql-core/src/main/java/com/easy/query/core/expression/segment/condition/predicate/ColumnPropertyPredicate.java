@@ -3,13 +3,13 @@ package com.easy.query.core.expression.segment.condition.predicate;
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.PropertySQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
-import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
-import com.easy.query.core.enums.SqlPredicateCompare;
-import com.easy.query.core.enums.SqlPredicateCompareEnum;
+import com.easy.query.core.basic.jdbc.parameter.SQLParameterCollector;
+import com.easy.query.core.enums.SQLPredicateCompare;
+import com.easy.query.core.enums.SQLPredicateCompareEnum;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.segment.SqlEntitySegment;
-import com.easy.query.core.util.SqlUtil;
-import com.easy.query.core.util.SqlExpressionUtil;
+import com.easy.query.core.expression.segment.SQLEntitySegment;
+import com.easy.query.core.util.SQLUtil;
+import com.easy.query.core.util.SQLExpressionUtil;
 
 /**
  * @FileName: ColumnPropertyPredicate.java
@@ -29,9 +29,9 @@ public class ColumnPropertyPredicate implements Predicate,ValuePredicate {
     }
 
     @Override
-    public String toSql(SqlParameterCollector sqlParameterCollector) {
-        SqlUtil.addParameter(sqlParameterCollector,new PropertySQLParameter(table,propertyName));
-        String sqlColumnSegment = SqlExpressionUtil.getSqlOwnerColumn(runtimeContext,table,propertyName);
+    public String toSQL(SQLParameterCollector sqlParameterCollector) {
+        SQLUtil.addParameter(sqlParameterCollector,new PropertySQLParameter(table,propertyName));
+        String sqlColumnSegment = SQLExpressionUtil.getSQLOwnerColumn(runtimeContext,table,propertyName);
         return sqlColumnSegment + " = ?";
     }
 
@@ -45,14 +45,14 @@ public class ColumnPropertyPredicate implements Predicate,ValuePredicate {
     }
 
     @Override
-    public SqlEntitySegment cloneSqlEntitySegment() {
+    public SQLEntitySegment cloneSQLEntitySegment() {
         throw new UnsupportedOperationException();
     }
 
 
     @Override
-    public SqlPredicateCompare getOperator() {
-        return SqlPredicateCompareEnum.EQ;
+    public SQLPredicateCompare getOperator() {
+        return SQLPredicateCompareEnum.EQ;
     }
 
     @Override

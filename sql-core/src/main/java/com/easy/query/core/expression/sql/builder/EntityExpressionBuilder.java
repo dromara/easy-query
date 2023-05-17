@@ -1,11 +1,8 @@
 package com.easy.query.core.expression.sql.builder;
 
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
-import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
-import com.easy.query.core.expression.sql.expression.EasyEntitySqlExpression;
-import com.easy.query.core.expression.sql.expression.EasyInsertSqlExpression;
-import com.easy.query.core.expression.sql.expression.EasySqlExpression;
+import com.easy.query.core.expression.sql.expression.EasyEntitySQLExpression;
 
 import java.util.List;
 
@@ -18,7 +15,7 @@ import java.util.List;
 public interface EntityExpressionBuilder extends ExpressionBuilder {
     ExpressionContext getExpressionContext();
     EasyQueryRuntimeContext getRuntimeContext();
-    void addSqlEntityTableExpression(EntityTableExpressionBuilder tableExpression);
+    void addSQLEntityTableExpression(EntityTableExpressionBuilder tableExpression);
     List<EntityTableExpressionBuilder> getTables();
     default EntityTableExpressionBuilder getTable(int index){
         return getTables().get(index);
@@ -35,7 +32,7 @@ public interface EntityExpressionBuilder extends ExpressionBuilder {
     void setLogicDelete(boolean logicDelete);
 
     @Override
-    EasyEntitySqlExpression toExpression();
+    EasyEntitySQLExpression toExpression();
 
     EntityExpressionBuilder cloneEntityExpressionBuilder();
 

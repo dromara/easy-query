@@ -6,7 +6,7 @@ package com.easy.query.core.expression.segment;
  *
  * @author xuejiaming
  */
-public interface ColumnSegment extends SqlEntityAliasSegment{
+public interface ColumnSegment extends SQLEntityAliasSegment {
     @Override
-    ColumnSegment cloneSqlEntitySegment();
+    ColumnSegment cloneSQLEntitySegment();
 }

@@ -4,9 +4,9 @@ import com.easy.query.core.basic.enums.LogicDeleteStrategyEnum;
 import com.easy.query.core.basic.plugin.logicdel.LogicDeleteBuilder;
 import com.easy.query.core.basic.plugin.logicdel.abstraction.AbstractEasyLogicDeleteStrategy;
 import com.easy.query.core.expression.lambda.Property;
-import com.easy.query.core.expression.lambda.SqlExpression;
-import com.easy.query.core.expression.parser.core.SqlWherePredicate;
-import com.easy.query.core.expression.parser.core.SqlColumnSetter;
+import com.easy.query.core.expression.lambda.SQLExpression;
+import com.easy.query.core.expression.parser.core.SQLWherePredicate;
+import com.easy.query.core.expression.parser.core.SQLColumnSetter;
 
 import java.time.LocalDate;
 import java.util.Collections;
@@ -33,12 +33,12 @@ public  class LocalDateEasyLogicDeleteStrategy extends AbstractEasyLogicDeleteSt
 
 
     @Override
-    protected SqlExpression<SqlWherePredicate<Object>> getPredicateFilterExpression(LogicDeleteBuilder builder, Property<Object,?> lambdaProperty) {
+    protected SQLExpression<SQLWherePredicate<Object>> getPredicateFilterExpression(LogicDeleteBuilder builder, Property<Object,?> lambdaProperty) {
         return o->o.isNull(lambdaProperty);
     }
 
     @Override
-    protected SqlExpression<SqlColumnSetter<Object>> getDeletedSqlExpression(LogicDeleteBuilder builder, Property<Object,?> lambdaProperty) {
+    protected SQLExpression<SQLColumnSetter<Object>> getDeletedSQLExpression(LogicDeleteBuilder builder, Property<Object,?> lambdaProperty) {
         return o->o.set(lambdaProperty,LocalDate.now());
     }
 }

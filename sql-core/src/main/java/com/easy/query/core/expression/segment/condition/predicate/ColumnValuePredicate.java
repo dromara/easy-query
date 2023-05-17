@@ -4,13 +4,13 @@ import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.ConstLikeSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
-import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
-import com.easy.query.core.enums.SqlPredicateCompare;
-import com.easy.query.core.enums.SqlPredicateCompareEnum;
+import com.easy.query.core.basic.jdbc.parameter.SQLParameterCollector;
+import com.easy.query.core.enums.SQLPredicateCompare;
+import com.easy.query.core.enums.SQLPredicateCompareEnum;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.segment.SqlEntitySegment;
-import com.easy.query.core.util.SqlUtil;
-import com.easy.query.core.util.SqlExpressionUtil;
+import com.easy.query.core.expression.segment.SQLEntitySegment;
+import com.easy.query.core.util.SQLUtil;
+import com.easy.query.core.util.SQLExpressionUtil;
 
 import java.util.Objects;
 
@@ -24,10 +24,10 @@ public class ColumnValuePredicate implements ValuePredicate, ShardingPredicate {
     private final TableAvailable table;
     private final String propertyName;
     private final Object val;
-    private final SqlPredicateCompare compare;
+    private final SQLPredicateCompare compare;
     private final EasyQueryRuntimeContext runtimeContext;
 
-    public ColumnValuePredicate(TableAvailable table, String propertyName, Object val, SqlPredicateCompare compare, EasyQueryRuntimeContext runtimeContext) {
+    public ColumnValuePredicate(TableAvailable table, String propertyName, Object val, SQLPredicateCompare compare, EasyQueryRuntimeContext runtimeContext) {
         this.table = table;
         this.propertyName = propertyName;
         this.val = val;
@@ -36,15 +36,15 @@ public class ColumnValuePredicate implements ValuePredicate, ShardingPredicate {
     }
 
     @Override
-    public String toSql(SqlParameterCollector sqlParameterCollector) {
+    public String toSQL(SQLParameterCollector sqlParameterCollector) {
         EasyConstSQLParameter constSQLParameter = new EasyConstSQLParameter(table, propertyName, val);
-        String compareSql = compare.getSql();
-        if(Objects.equals(SqlPredicateCompareEnum.LIKE.getSql(),compareSql)){
-            SqlUtil.addParameter(sqlParameterCollector,new ConstLikeSQLParameter(constSQLParameter));
+        String compareSql = compare.getSQL();
+        if(Objects.equals(SQLPredicateCompareEnum.LIKE.getSQL(),compareSql)){
+            SQLUtil.addParameter(sqlParameterCollector,new ConstLikeSQLParameter(constSQLParameter));
         }else{
-            SqlUtil.addParameter(sqlParameterCollector,constSQLParameter);
+            SQLUtil.addParameter(sqlParameterCollector,constSQLParameter);
         }
-        String sqlColumnSegment = SqlExpressionUtil.getSqlOwnerColumn(runtimeContext,table,propertyName);
+        String sqlColumnSegment = SQLExpressionUtil.getSQLOwnerColumn(runtimeContext,table,propertyName);
         return sqlColumnSegment + " " + compareSql + " ?";
     }
 
@@ -59,20 +59,20 @@ public class ColumnValuePredicate implements ValuePredicate, ShardingPredicate {
     }
 
     @Override
-    public SqlEntitySegment cloneSqlEntitySegment() {
+    public SQLEntitySegment cloneSQLEntitySegment() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public SqlPredicateCompare getOperator() {
+    public SQLPredicateCompare getOperator() {
         return compare;
     }
 
     @Override
     public SQLParameter getParameter() {
         EasyConstSQLParameter constSQLParameter = new EasyConstSQLParameter(table, propertyName, val);
-        String compareSql = compare.getSql();
-        if(Objects.equals(SqlPredicateCompareEnum.LIKE.getSql(),compareSql)) {
+        String compareSql = compare.getSQL();
+        if(Objects.equals(SQLPredicateCompareEnum.LIKE.getSQL(),compareSql)) {
              return new ConstLikeSQLParameter(constSQLParameter);
         }
         return constSQLParameter;

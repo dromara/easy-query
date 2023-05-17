@@ -2,19 +2,15 @@ package com.easy.query.core.expression.sql.builder.impl;
 
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.parser.core.SqlWherePredicate;
-import com.easy.query.core.expression.parser.core.SqlColumnSetter;
+import com.easy.query.core.expression.parser.core.SQLWherePredicate;
+import com.easy.query.core.expression.parser.core.SQLColumnSetter;
 import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
-import com.easy.query.core.expression.sql.expression.EasyQuerySqlExpression;
-import com.easy.query.core.expression.sql.expression.EasyTableSqlExpression;
-import com.easy.query.core.expression.sql.expression.impl.AnonymousTableSqlExpression;
-import com.easy.query.core.expression.lambda.SqlExpression;
+import com.easy.query.core.expression.sql.expression.EasyTableSQLExpression;
+import com.easy.query.core.expression.sql.expression.impl.AnonymousTableSQLExpression;
+import com.easy.query.core.expression.lambda.SQLExpression;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
-import com.easy.query.core.util.SqlSegmentUtil;
-
-import java.util.Collections;
-import java.util.List;
+import com.easy.query.core.util.SQLSegmentUtil;
 
 /**
  * @author xuejiaming
@@ -31,12 +27,12 @@ public class AnonymousTableExpressionBuilder extends TableExpressionBuilder impl
     }
 
     @Override
-    public SqlExpression<SqlWherePredicate<Object>> getLogicDeleteQueryFilterExpression() {
+    public SQLExpression<SQLWherePredicate<Object>> getLogicDeleteQueryFilterExpression() {
         return null;
     }
 
     @Override
-    public SqlExpression<SqlColumnSetter<Object>> getLogicDeletedSqlExpression() {
+    public SQLExpression<SQLColumnSetter<Object>> getLogicDeletedSQLExpression() {
         return null;
     }
 
@@ -62,12 +58,12 @@ public class AnonymousTableExpressionBuilder extends TableExpressionBuilder impl
     }
 
     @Override
-    public EasyTableSqlExpression toExpression() {
+    public EasyTableSQLExpression toExpression() {
 
-        AnonymousTableSqlExpression anonymousTableSqlExpression = new AnonymousTableSqlExpression(entityTable, multiTableType,entityQueryExpressionBuilder.toExpression(),runtimeContext);
-        if(SqlSegmentUtil.isNotEmpty(on)){
-            anonymousTableSqlExpression.setOn(on.clonePredicateSegment());
+        AnonymousTableSQLExpression anonymousTableSQLExpression = new AnonymousTableSQLExpression(entityTable, multiTableType,entityQueryExpressionBuilder.toExpression(),runtimeContext);
+        if(SQLSegmentUtil.isNotEmpty(on)){
+            anonymousTableSQLExpression.setOn(on.clonePredicateSegment());
         }
-        return anonymousTableSqlExpression;
+        return anonymousTableSQLExpression;
     }
 }

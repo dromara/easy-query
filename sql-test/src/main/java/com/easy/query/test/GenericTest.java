@@ -2,7 +2,7 @@ package com.easy.query.test;
 
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.ExecuteMethodEnum;
-import com.easy.query.core.enums.SqlRangeEnum;
+import com.easy.query.core.enums.SQLRangeEnum;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 import com.easy.query.core.util.AesUtil;
 import com.easy.query.core.util.Base64Util;
@@ -25,21 +25,21 @@ public class GenericTest {
 
     @Test
     public void SqlRangeTest1(){
-        boolean openFirst1 = SqlRangeEnum.openFirst(SqlRangeEnum.Open);
+        boolean openFirst1 = SQLRangeEnum.openFirst(SQLRangeEnum.Open);
         Assert.assertTrue(openFirst1);
-        boolean openFirst2 = SqlRangeEnum.openFirst(SqlRangeEnum.Closed);
+        boolean openFirst2 = SQLRangeEnum.openFirst(SQLRangeEnum.Closed);
         Assert.assertFalse(openFirst2);
-        boolean openFirst3 = SqlRangeEnum.openFirst(SqlRangeEnum.closedOpen);
+        boolean openFirst3 = SQLRangeEnum.openFirst(SQLRangeEnum.closedOpen);
         Assert.assertFalse(openFirst3);
-        boolean openFirst4 = SqlRangeEnum.openFirst(SqlRangeEnum.openClosed);
+        boolean openFirst4 = SQLRangeEnum.openFirst(SQLRangeEnum.openClosed);
         Assert.assertTrue(openFirst4);
-        boolean openEnd1 = SqlRangeEnum.openEnd(SqlRangeEnum.Open);
+        boolean openEnd1 = SQLRangeEnum.openEnd(SQLRangeEnum.Open);
         Assert.assertTrue(openEnd1);
-        boolean openEnd2 = SqlRangeEnum.openEnd(SqlRangeEnum.Closed);
+        boolean openEnd2 = SQLRangeEnum.openEnd(SQLRangeEnum.Closed);
         Assert.assertFalse(openEnd2);
-        boolean openEnd3 = SqlRangeEnum.openEnd(SqlRangeEnum.closedOpen);
+        boolean openEnd3 = SQLRangeEnum.openEnd(SQLRangeEnum.closedOpen);
         Assert.assertTrue(openEnd3);
-        boolean openEnd4 = SqlRangeEnum.openEnd(SqlRangeEnum.openClosed);
+        boolean openEnd4 = SQLRangeEnum.openEnd(SQLRangeEnum.openClosed);
         Assert.assertFalse(openEnd4);
     }
     @Test

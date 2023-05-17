@@ -30,7 +30,7 @@ public class EasyJdbcTypeHandlerManager implements JdbcTypeHandlerManager {
     private static final LocalDateTypeHandler localDateHandler = new LocalDateTypeHandler();
     private static final LongTypeHandler longTypeHandler = new LongTypeHandler();
     private static final ShortTypeHandler shortTypeHandler = new ShortTypeHandler();
-    private static final SqlDateTypeHandler sqlDateTypeHandler = new SqlDateTypeHandler();
+    private static final SQLDateTypeHandler sqlDateTypeHandler = new SQLDateTypeHandler();
     private static final SQLXMLTypeHandler sqlXMLTypeHandler = new SQLXMLTypeHandler();
     private static final StringTypeHandler stringTypeHandler = new StringTypeHandler();
     private static final UtilDateTypeHandler utilDateTypeHandler = new UtilDateTypeHandler();

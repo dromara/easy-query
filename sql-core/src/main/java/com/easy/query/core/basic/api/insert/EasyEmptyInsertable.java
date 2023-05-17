@@ -1,7 +1,7 @@
 package com.easy.query.core.basic.api.insert;
 
-import com.easy.query.core.abstraction.EasySqlApiFactory;
-import com.easy.query.core.enums.SqlExecuteStrategyEnum;
+import com.easy.query.core.abstraction.EasySQLApiFactory;
+import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 
 import java.util.function.Function;
@@ -24,7 +24,7 @@ public class EasyEmptyInsertable<T>implements Insertable<T> {
         if(entity==null){
             return  this;
         }
-        EasySqlApiFactory sqlApiFactory = entityInsertExpression.getRuntimeContext().getSqlApiFactory();
+        EasySQLApiFactory sqlApiFactory = entityInsertExpression.getRuntimeContext().getSQLApiFactory();
         Insertable<T> insertable = (Insertable<T>) sqlApiFactory.createInsertable((Class<T>) entity.getClass(), entityInsertExpression);
         insertable.insert(entity);
         return insertable;
@@ -59,7 +59,7 @@ public class EasyEmptyInsertable<T>implements Insertable<T> {
     }
 
     @Override
-    public Insertable<T> setSqlStrategy(boolean condition, SqlExecuteStrategyEnum sqlStrategy) {
+    public Insertable<T> setSQLStrategy(boolean condition, SQLExecuteStrategyEnum sqlStrategy) {
         return this;
     }
 }

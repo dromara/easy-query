@@ -1,8 +1,7 @@
 package com.easy.query.core.expression.segment.builder;
 
-import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
-import com.easy.query.core.expression.segment.SqlEntitySegment;
-import com.easy.query.core.expression.segment.SqlSegment;
+import com.easy.query.core.expression.segment.SQLEntitySegment;
+import com.easy.query.core.expression.segment.SQLSegment;
 
 import java.util.*;
 
@@ -12,14 +11,14 @@ import java.util.*;
  * @Date: 2023/2/13 21:30
  * @author xuejiaming
  */
-public abstract class AbstractSqlBuilderSegment implements SqlBuilderSegment {
-    private final List<SqlSegment> sqlSegments=new ArrayList<>();
+public abstract class AbstractSqlBuilderSegment implements SQLBuilderSegment {
+    private final List<SQLSegment> sqlSegments=new ArrayList<>();
     @Override
-    public void append(SqlSegment sqlSegment) {
+    public void append(SQLSegment sqlSegment) {
         sqlSegments.add(sqlSegment);
     }
     @Override
-    public List<SqlSegment> getSqlSegments() {
+    public List<SQLSegment> getSQLSegments() {
         return sqlSegments;
     }
 
@@ -29,15 +28,15 @@ public abstract class AbstractSqlBuilderSegment implements SqlBuilderSegment {
     }
 
     @Override
-    public void copyTo(SqlBuilderSegment predicateSegment) {
-        predicateSegment.getSqlSegments().addAll(sqlSegments);
+    public void copyTo(SQLBuilderSegment predicateSegment) {
+        predicateSegment.getSQLSegments().addAll(sqlSegments);
     }
 
     @Override
     public boolean containsOnce(Class<?> entityClass, String propertyName) {
-        for (SqlSegment sqlSegment : sqlSegments) {
-            if(sqlSegment instanceof SqlEntitySegment){
-                SqlEntitySegment sqlEntitySegment = (SqlEntitySegment) sqlSegment;
+        for (SQLSegment sqlSegment : sqlSegments) {
+            if(sqlSegment instanceof SQLEntitySegment){
+                SQLEntitySegment sqlEntitySegment = (SQLEntitySegment) sqlSegment;
                 if(Objects.equals(sqlEntitySegment.getTable().getEntityClass(),entityClass)&&Objects.equals(sqlEntitySegment.getPropertyName(), propertyName)){
                     return true;
                 }

@@ -1,10 +1,10 @@
 package com.easy.query.core.basic.api.delete.abstraction;
 
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
-import com.easy.query.core.basic.api.internal.AbstractSqlExecuteRows;
+import com.easy.query.core.basic.api.internal.AbstractSQLExecuteRows;
 import com.easy.query.core.basic.api.delete.EntityDeletable;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
-import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
+import com.easy.query.core.basic.jdbc.parameter.SQLParameterCollector;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.exception.EasyQueryException;
@@ -25,7 +25,7 @@ import java.util.function.Function;
  * @Description: 文件说明
  * @Date: 2023/2/28 12:33
  */
-public abstract class AbstractEntityDeletable<T> extends AbstractSqlExecuteRows<EntityDeletable<T>> implements EntityDeletable<T> {
+public abstract class AbstractEntityDeletable<T> extends AbstractSQLExecuteRows<EntityDeletable<T>> implements EntityDeletable<T> {
     protected final List<T> entities = new ArrayList<>();
     protected final EntityTableExpressionBuilder table;
     protected final EntityDeleteExpressionBuilder entityDeleteExpressionBuilder;
@@ -42,7 +42,7 @@ public abstract class AbstractEntityDeletable<T> extends AbstractSqlExecuteRows<
         EntityMetadata entityMetadata = entityDeleteExpressionBuilder.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(clazz);
         entityMetadata.checkTable();
         table = new TableExpressionBuilder(entityMetadata, 0, null, MultiTableTypeEnum.FROM,entityDeleteExpressionBuilder.getRuntimeContext());
-        this.entityDeleteExpressionBuilder.addSqlEntityTableExpression(table);
+        this.entityDeleteExpressionBuilder.addSQLEntityTableExpression(table);
     }
 
     @Override
@@ -77,11 +77,11 @@ public abstract class AbstractEntityDeletable<T> extends AbstractSqlExecuteRows<
 
 
     @Override
-    public String toSql() {
-        return toSqlWithParam(null);
+    public String toSQL() {
+        return toSQLWithParam(null);
     }
 
-    private String toSqlWithParam(SqlParameterCollector sqlParameterCollector) {
-        return entityDeleteExpressionBuilder.toExpression().toSql(sqlParameterCollector);
+    private String toSQLWithParam(SQLParameterCollector sqlParameterCollector) {
+        return entityDeleteExpressionBuilder.toExpression().toSQL(sqlParameterCollector);
     }
 }

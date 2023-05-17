@@ -1,19 +1,15 @@
 package com.easy.query.core.util;
 
-import com.easy.query.core.common.bean.FastBean;
 import com.easy.query.core.exception.EasyQueryException;
-import com.easy.query.core.expression.lambda.Property;
-import com.easy.query.core.expression.lambda.PropertySetterCaller;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.segment.SqlEntityAliasSegment;
+import com.easy.query.core.expression.segment.SQLEntityAliasSegment;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.basic.jdbc.executor.internal.common.Grouping;
 import com.easy.query.core.basic.jdbc.executor.internal.common.GroupingImpl;
 
-import java.beans.PropertyDescriptor;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -64,7 +60,7 @@ public class EasyUtil {
         return sqlEntityExpression.getTables().size();
     }
 
-    public static String getAnonymousPropertyName(SqlEntityAliasSegment sqlEntityProject, TableAvailable anonymousTable) {
+    public static String getAnonymousPropertyName(SQLEntityAliasSegment sqlEntityProject, TableAvailable anonymousTable) {
         String alias = sqlEntityProject.getAlias();
         if (StringUtil.isBlank(alias)) {
             return sqlEntityProject.getPropertyName();

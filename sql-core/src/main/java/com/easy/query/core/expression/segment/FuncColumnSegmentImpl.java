@@ -1,11 +1,11 @@
 package com.easy.query.core.expression.segment;
 
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
-import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
+import com.easy.query.core.basic.jdbc.parameter.SQLParameterCollector;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.func.AggregationType;
-import com.easy.query.core.util.SqlExpressionUtil;
+import com.easy.query.core.util.SQLExpressionUtil;
 
 /**
  * @FileName: FuncColumnSegment.java
@@ -34,13 +34,13 @@ public class FuncColumnSegmentImpl implements AggregationColumnSegment {
     }
 
     @Override
-    public String toSql(SqlParameterCollector sqlParameterCollector) {
+    public String toSQL(SQLParameterCollector sqlParameterCollector) {
 
-        String sqlColumnSegment = SqlExpressionUtil.getSqlOwnerColumn(runtimeContext,table,propertyName);
+        String sqlColumnSegment = SQLExpressionUtil.getSQLOwnerColumn(runtimeContext,table,propertyName);
         String funcColumn = columnFunction.getFuncColumn(sqlColumnSegment);
         StringBuilder sql = new StringBuilder().append(funcColumn);
         if(alias!=null){
-            sql.append(" AS ").append(SqlExpressionUtil.getQuoteName(runtimeContext,alias));
+            sql.append(" AS ").append(SQLExpressionUtil.getQuoteName(runtimeContext,alias));
         }
         return sql.toString();
     }
@@ -56,7 +56,7 @@ public class FuncColumnSegmentImpl implements AggregationColumnSegment {
     }
 
     @Override
-    public AggregationColumnSegment cloneSqlEntitySegment() {
+    public AggregationColumnSegment cloneSQLEntitySegment() {
         throw new UnsupportedOperationException();
     }
 

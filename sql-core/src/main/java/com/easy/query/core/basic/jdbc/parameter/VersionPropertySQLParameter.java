@@ -9,33 +9,33 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
  *
  * @author xuejiaming
  */
-public class VersionPropertySQLParameter implements BeanSqlParameter{
-    private final BeanSqlParameter beanSqlParameter;
+public class VersionPropertySQLParameter implements BeanSQLParameter {
+    private final BeanSQLParameter beanSQLParameter;
     private final EasyVersionStrategy easyVersionStrategy;
 
-    public VersionPropertySQLParameter(BeanSqlParameter beanSqlParameter, EasyVersionStrategy easyVersionStrategy){
+    public VersionPropertySQLParameter(BeanSQLParameter beanSQLParameter, EasyVersionStrategy easyVersionStrategy){
 
-        this.beanSqlParameter = beanSqlParameter;
+        this.beanSQLParameter = beanSQLParameter;
         this.easyVersionStrategy = easyVersionStrategy;
     }
     @Override
     public void setBean(Object bean) {
-        beanSqlParameter.setBean(bean);
+        beanSQLParameter.setBean(bean);
     }
 
     @Override
     public TableAvailable getTable() {
-        return beanSqlParameter.getTable();
+        return beanSQLParameter.getTable();
     }
 
     @Override
     public String getPropertyName() {
-        return beanSqlParameter.getPropertyName();
+        return beanSQLParameter.getPropertyName();
     }
 
     @Override
     public Object getValue() {
-        Object value = beanSqlParameter.getValue();
+        Object value = beanSQLParameter.getValue();
         return easyVersionStrategy.nextVersion(getTable().getEntityMetadata(),getPropertyName(),value);
     }
 }

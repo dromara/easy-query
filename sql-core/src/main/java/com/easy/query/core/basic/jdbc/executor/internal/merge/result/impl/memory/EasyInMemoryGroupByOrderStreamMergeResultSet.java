@@ -2,7 +2,7 @@ package com.easy.query.core.basic.jdbc.executor.internal.merge.result.impl.memor
 import com.easy.query.core.basic.jdbc.executor.internal.merge.result.impl.memory.row.DefaultMemoryResultSetRow;
 import com.easy.query.core.exception.EasyQuerySQLException;
 import com.easy.query.core.expression.segment.AggregationColumnSegment;
-import com.easy.query.core.expression.segment.SqlSegment;
+import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.sharding.context.StreamMergeContext;
@@ -107,12 +107,12 @@ public final class EasyInMemoryGroupByOrderStreamMergeResultSet extends Abstract
         }
     }
     private List<AggregateValue> createAggregationUnitValues() {
-        List<SqlSegment> sqlSegments = streamMergeContext.getSelectColumns().getSqlSegments();
+        List<SQLSegment> sqlSegments = streamMergeContext.getSelectColumns().getSQLSegments();
         ArrayList<AggregateValue> aggregationUnits = new ArrayList<>(columnCount);
-        for (SqlSegment sqlSegment : sqlSegments) {
+        for (SQLSegment sqlSegment : sqlSegments) {
         }
         for (int i = 0; i < sqlSegments.size(); i++) {
-            SqlSegment sqlSegment = sqlSegments.get(i);
+            SQLSegment sqlSegment = sqlSegments.get(i);
             if(sqlSegment instanceof AggregationColumnSegment){
                 AggregationColumnSegment aggregationColumnSegment = (AggregationColumnSegment) sqlSegment;
                 aggregationUnits.add(new AggregateValue(i, AggregationUnitFactory.create(aggregationColumnSegment.getAggregationType())));

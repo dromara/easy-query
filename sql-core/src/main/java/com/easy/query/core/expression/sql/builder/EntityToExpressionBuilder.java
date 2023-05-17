@@ -1,6 +1,6 @@
 package com.easy.query.core.expression.sql.builder;
 
-import com.easy.query.core.expression.sql.expression.EasyEntitySqlExpression;
+import com.easy.query.core.expression.sql.expression.EasyEntitySQLExpression;
 
 /**
  * create time 2023/4/26 09:36
@@ -12,5 +12,5 @@ public interface EntityToExpressionBuilder extends EntityExpressionBuilder {
     @Override
     EntityExpressionBuilder cloneEntityExpressionBuilder();
 
-    EasyEntitySqlExpression toExpression(Object entity);
+    EasyEntitySQLExpression toExpression(Object entity);
 }

@@ -11,7 +11,7 @@ import com.easy.query.core.enums.MergeBehaviorEnum;
 import com.easy.query.core.enums.replica.ReplicaBehaviorEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.executor.parser.ExecutionContext;
-import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
+import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.basic.jdbc.executor.internal.common.ExecutionUnit;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.segment.PropertyGroup;
@@ -211,12 +211,12 @@ public class EasyStreamMergeContext implements StreamMergeContext {
     }
 
     @Override
-    public SqlBuilderSegment getSelectColumns() {
+    public SQLBuilderSegment getSelectColumns() {
         throw new NotImplementedException();
     }
 
     @Override
-    public SqlBuilderSegment getGroupColumns() {
+    public SQLBuilderSegment getGroupColumns() {
         throw new NotImplementedException();
     }
 

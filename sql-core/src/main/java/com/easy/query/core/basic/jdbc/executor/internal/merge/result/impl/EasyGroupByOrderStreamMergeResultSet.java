@@ -5,7 +5,7 @@ import com.easy.query.core.basic.jdbc.executor.internal.merge.result.aggregation
 import com.easy.query.core.basic.jdbc.executor.internal.merge.segment.PropertyGroup;
 import com.easy.query.core.exception.EasyQuerySQLException;
 import com.easy.query.core.expression.segment.AggregationColumnSegment;
-import com.easy.query.core.expression.segment.SqlSegment;
+import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.sharding.context.StreamMergeContext;
@@ -63,7 +63,7 @@ public class EasyGroupByOrderStreamMergeResultSet implements ShardingStreamResul
         this.currentRow = new ArrayList<>(columnCount);
 
         List<PropertyGroup> groups = streamMergeContext.getGroups();
-        this.selectColumns = new int[streamMergeContext.getSelectColumns().getSqlSegments().size()];
+        this.selectColumns = new int[streamMergeContext.getSelectColumns().getSQLSegments().size()];
         for (PropertyGroup group : groups) {
             int columnIndex = group.columnIndex();
             if (columnIndex >= 0) {
@@ -176,12 +176,12 @@ public class EasyGroupByOrderStreamMergeResultSet implements ShardingStreamResul
     }
 
     private List<AggregateValue> createAggregationUnitValues() {
-        List<SqlSegment> sqlSegments = streamMergeContext.getSelectColumns().getSqlSegments();
+        List<SQLSegment> sqlSegments = streamMergeContext.getSelectColumns().getSQLSegments();
         ArrayList<AggregateValue> aggregationUnits = new ArrayList<>(columnCount);
         for (int i = 0; i < selectColumns.length; i++) {
             boolean aggregateColumn = selectColumns[i] == 0;
             if (aggregateColumn) {
-                SqlSegment sqlSegment = sqlSegments.get(i);
+                SQLSegment sqlSegment = sqlSegments.get(i);
                 if (!(sqlSegment instanceof AggregationColumnSegment)) {
                     throw new UnsupportedOperationException("unknown aggregate column:" + ClassUtil.getInstanceSimpleName(sqlSegment));
                 }

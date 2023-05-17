@@ -1,11 +1,11 @@
 package com.easy.query.core.expression.parser.factory;
 
-import com.easy.query.core.expression.parser.core.SqlWherePredicate;
-import com.easy.query.core.expression.parser.core.SqlColumnSelector;
-import com.easy.query.core.expression.parser.core.SqlColumnAsSelector;
-import com.easy.query.core.expression.parser.core.SqlColumnSetter;
-import com.easy.query.core.expression.parser.core.SqlAggregatePredicate;
-import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
+import com.easy.query.core.expression.parser.core.SQLWherePredicate;
+import com.easy.query.core.expression.parser.core.SQLColumnSelector;
+import com.easy.query.core.expression.parser.core.SQLColumnAsSelector;
+import com.easy.query.core.expression.parser.core.SQLColumnSetter;
+import com.easy.query.core.expression.parser.core.SQLAggregatePredicate;
+import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 
@@ -16,24 +16,24 @@ import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
  * @author xuejiaming
  */
 public interface EasyQueryLambdaFactory {
-    default <T1> SqlWherePredicate<T1> createSqlPredicate(EntityExpressionBuilder sqlEntityExpression, PredicateSegment predicateSegment){
-        return createSqlPredicate(0,sqlEntityExpression,predicateSegment);
+    default <T1> SQLWherePredicate<T1> createSQLPredicate(EntityExpressionBuilder sqlEntityExpression, PredicateSegment predicateSegment){
+        return createSQLPredicate(0,sqlEntityExpression,predicateSegment);
     }
-    default <T1> SqlColumnSelector<T1> createSqlColumnSelector(EntityExpressionBuilder sqlEntityExpression, SqlBuilderSegment sqlSegmentBuilder){
+    default <T1> SQLColumnSelector<T1> createSqlColumnSelector(EntityExpressionBuilder sqlEntityExpression, SQLBuilderSegment sqlSegmentBuilder){
         return createSqlColumnSelector(0,sqlEntityExpression,sqlSegmentBuilder);
     }
-    default <T1> SqlColumnSelector<T1> createSqlColumnOrderSelector(EntityExpressionBuilder sqlEntityExpression, SqlBuilderSegment sqlSegmentBuilder, boolean asc){
+    default <T1> SQLColumnSelector<T1> createSqlColumnOrderSelector(EntityExpressionBuilder sqlEntityExpression, SQLBuilderSegment sqlSegmentBuilder, boolean asc){
         return createSqlColumnOrderSelector(0,sqlEntityExpression,sqlSegmentBuilder,asc);
     }
     default <T1,TR>
-    SqlColumnAsSelector<T1,TR> createSqlColumnAsSelector(EntityExpressionBuilder sqlEntityExpression, SqlBuilderSegment sqlSegmentBuilder, Class<TR> resultClass){
+    SQLColumnAsSelector<T1,TR> createSqlColumnAsSelector(EntityExpressionBuilder sqlEntityExpression, SQLBuilderSegment sqlSegmentBuilder, Class<TR> resultClass){
         return createSqlColumnAsSelector(0,sqlEntityExpression,sqlSegmentBuilder,resultClass);
     }
-    <T1> SqlWherePredicate<T1> createSqlPredicate(int index, EntityExpressionBuilder sqlEntityExpression, PredicateSegment predicateSegment);
-    <T1> SqlAggregatePredicate<T1> createSqlAggregatePredicate(int index, EntityExpressionBuilder sqlEntityExpression, PredicateSegment predicateSegment);
-    <T1> SqlColumnSelector<T1> createSqlColumnSelector(int index, EntityExpressionBuilder sqlEntityExpression, SqlBuilderSegment sqlSegmentBuilder);
-    <T1> SqlColumnSelector<T1> createSqlColumnOrderSelector(int index, EntityExpressionBuilder sqlEntityExpression, SqlBuilderSegment sqlSegmentBuilder, boolean asc);
-    <T1,TR> SqlColumnAsSelector<T1,TR> createSqlColumnAsSelector(int index, EntityExpressionBuilder sqlEntityExpression, SqlBuilderSegment sqlSegmentBuilder, Class<TR> resultClass);
-    <T1> SqlColumnSetter<T1> createSqlColumnSetter(int index, EntityExpressionBuilder sqlEntityExpression, SqlBuilderSegment sqlSegmentBuilder);
-    <T1> SqlColumnSelector<T1> createSqlColumnSetSelector(int index, EntityExpressionBuilder sqlEntityExpression, SqlBuilderSegment sqlSegmentBuilder);
+    <T1> SQLWherePredicate<T1> createSQLPredicate(int index, EntityExpressionBuilder sqlEntityExpression, PredicateSegment predicateSegment);
+    <T1> SQLAggregatePredicate<T1> createSQLAggregatePredicate(int index, EntityExpressionBuilder sqlEntityExpression, PredicateSegment predicateSegment);
+    <T1> SQLColumnSelector<T1> createSqlColumnSelector(int index, EntityExpressionBuilder sqlEntityExpression, SQLBuilderSegment sqlSegmentBuilder);
+    <T1> SQLColumnSelector<T1> createSqlColumnOrderSelector(int index, EntityExpressionBuilder sqlEntityExpression, SQLBuilderSegment sqlSegmentBuilder, boolean asc);
+    <T1,TR> SQLColumnAsSelector<T1,TR> createSqlColumnAsSelector(int index, EntityExpressionBuilder sqlEntityExpression, SQLBuilderSegment sqlSegmentBuilder, Class<TR> resultClass);
+    <T1> SQLColumnSetter<T1> createSQLColumnSetter(int index, EntityExpressionBuilder sqlEntityExpression, SQLBuilderSegment sqlSegmentBuilder);
+    <T1> SQLColumnSelector<T1> createSQLColumnSetSelector(int index, EntityExpressionBuilder sqlEntityExpression, SQLBuilderSegment sqlSegmentBuilder);
 }

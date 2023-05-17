@@ -3,23 +3,23 @@ package com.easy.query.core.expression.sql.builder.impl;
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.segment.SelectConstSegment;
-import com.easy.query.core.expression.segment.builder.GroupBySqlBuilderSegmentImpl;
-import com.easy.query.core.expression.segment.builder.OrderBySqlBuilderSegmentImpl;
-import com.easy.query.core.expression.segment.builder.ProjectSqlBuilderSegmentImpl;
-import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
+import com.easy.query.core.expression.segment.builder.GroupBySQLBuilderSegmentImpl;
+import com.easy.query.core.expression.segment.builder.OrderBySQLBuilderSegmentImpl;
+import com.easy.query.core.expression.segment.builder.ProjectSQLBuilderSegmentImpl;
+import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
-import com.easy.query.core.expression.sql.builder.SqlEntityQueryExpressionBuilder;
-import com.easy.query.core.expression.sql.expression.EasyQuerySqlExpression;
-import com.easy.query.core.expression.sql.expression.EasySqlExpression;
-import com.easy.query.core.expression.sql.expression.EasyTableSqlExpression;
+import com.easy.query.core.expression.sql.builder.SQLEntityQueryExpressionBuilder;
+import com.easy.query.core.expression.sql.expression.EasyQuerySQLExpression;
+import com.easy.query.core.expression.sql.expression.EasySQLExpression;
+import com.easy.query.core.expression.sql.expression.EasyTableSQLExpression;
 import com.easy.query.core.expression.sql.builder.internal.AbstractPredicateEntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.expression.factory.EasyExpressionFactory;
-import com.easy.query.core.util.SqlSegmentUtil;
+import com.easy.query.core.util.SQLSegmentUtil;
 
 import java.util.Iterator;
 
@@ -33,18 +33,18 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
 
     protected PredicateSegment where;
     protected PredicateSegment allPredicate;
-    protected SqlBuilderSegment group;
+    protected SQLBuilderSegment group;
     protected PredicateSegment having;
-    protected SqlBuilderSegment order;
+    protected SQLBuilderSegment order;
     protected long offset;
     protected long rows;
     protected boolean distinct;
 
-    protected final SqlBuilderSegment projects;
+    protected final SQLBuilderSegment projects;
 
     public QueryExpressionBuilder(ExpressionContext queryExpressionContext) {
         super(queryExpressionContext);
-        this.projects = new ProjectSqlBuilderSegmentImpl();
+        this.projects = new ProjectSQLBuilderSegmentImpl();
     }
 
 
@@ -54,7 +54,7 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
     }
 
     @Override
-    public SqlBuilderSegment getProjects() {
+    public SQLBuilderSegment getProjects() {
         return projects;
     }
 
@@ -68,7 +68,7 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
 
     @Override
     public boolean hasAllPredicate() {
-        return SqlSegmentUtil.isNotEmpty(allPredicate);
+        return SQLSegmentUtil.isNotEmpty(allPredicate);
     }
 
     @Override
@@ -119,13 +119,13 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
 
     @Override
     public boolean hasHaving() {
-        return SqlSegmentUtil.isNotEmpty(having);
+        return SQLSegmentUtil.isNotEmpty(having);
     }
 
     @Override
-    public SqlBuilderSegment getGroup() {
+    public SQLBuilderSegment getGroup() {
         if (group == null) {
-            group = new GroupBySqlBuilderSegmentImpl();
+            group = new GroupBySQLBuilderSegmentImpl();
         }
         return group;
     }
@@ -136,9 +136,9 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
     }
 
     @Override
-    public SqlBuilderSegment getOrder() {
+    public SQLBuilderSegment getOrder() {
         if (order == null) {
-            order = new OrderBySqlBuilderSegmentImpl();
+            order = new OrderBySQLBuilderSegmentImpl();
         }
         return order;
     }
@@ -165,7 +165,7 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
     }
 
     @Override
-    public EasyQuerySqlExpression toExpression() {
+    public EasyQuerySQLExpression toExpression() {
         int tableCount = getTables().size();
         if (tableCount == 0) {
             throw new EasyQueryException("未找到查询表信息");
@@ -174,51 +174,51 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
         Iterator<EntityTableExpressionBuilder> iterator = getTables().iterator();
         EntityTableExpressionBuilder firstTable = iterator.next();
         //如果有order需要将order移到内部表达式
-        if (emptySelect && tableCount == 1 && (firstTable instanceof AnonymousEntityTableExpressionBuilder && !(((AnonymousEntityTableExpressionBuilder) firstTable).getEntityQueryExpressionBuilder() instanceof SqlEntityQueryExpressionBuilder))) {
-            return (EasyQuerySqlExpression) toTableExpressionSql(firstTable, true);
+        if (emptySelect && tableCount == 1 && (firstTable instanceof AnonymousEntityTableExpressionBuilder && !(((AnonymousEntityTableExpressionBuilder) firstTable).getEntityQueryExpressionBuilder() instanceof SQLEntityQueryExpressionBuilder))) {
+            return (EasyQuerySQLExpression) toTableExpressionSQL(firstTable, true);
         }
         EasyQueryRuntimeContext runtimeContext = getRuntimeContext();
         EasyExpressionFactory expressionFactory = runtimeContext.getExpressionFactory();
-        EasyQuerySqlExpression easyQuerySqlExpression = expressionFactory.createEasyQuerySqlExpression(runtimeContext);
-        easyQuerySqlExpression.setDistinct(isDistinct());
+        EasyQuerySQLExpression easyQuerySQLExpression = expressionFactory.createEasyQuerySQLExpression(runtimeContext);
+        easyQuerySQLExpression.setDistinct(isDistinct());
 
         if (emptySelect) {
             if (!hasGroup()) {
-                ProjectSqlBuilderSegmentImpl projects = new ProjectSqlBuilderSegmentImpl();
+                ProjectSQLBuilderSegmentImpl projects = new ProjectSQLBuilderSegmentImpl();
                 projects.append(new SelectConstSegment(firstTable.getAlias() + ".*"));
-                easyQuerySqlExpression.setProjects(projects);
+                easyQuerySQLExpression.setProjects(projects);
             } else {
-                ProjectSqlBuilderSegmentImpl projects = new ProjectSqlBuilderSegmentImpl();
+                ProjectSQLBuilderSegmentImpl projects = new ProjectSQLBuilderSegmentImpl();
                 getGroup().copyTo(projects);
-                easyQuerySqlExpression.setProjects(projects);
+                easyQuerySQLExpression.setProjects(projects);
             }
         } else {
-            easyQuerySqlExpression.setProjects(getProjects());
+            easyQuerySQLExpression.setProjects(getProjects());
         }
-        easyQuerySqlExpression.getTables().add((EasyTableSqlExpression) toTableExpressionSql(firstTable, false));
+        easyQuerySQLExpression.getTables().add((EasyTableSQLExpression) toTableExpressionSQL(firstTable, false));
         while (iterator.hasNext()) {
             EntityTableExpressionBuilder table = iterator.next();
-            EasyTableSqlExpression tableExpression = (EasyTableSqlExpression) toTableExpressionSql(table, false);
-            easyQuerySqlExpression.getTables().add(tableExpression);
+            EasyTableSQLExpression tableExpression = (EasyTableSQLExpression) toTableExpressionSQL(table, false);
+            easyQuerySQLExpression.getTables().add(tableExpression);
             PredicateSegment on = getTableOnWithQueryFilter(table);
             if (on != null && on.isNotEmpty()) {
                 tableExpression.setOn(on);
             }
         }
-        PredicateSegment where = getSqlWhereWithQueryFilter();
+        PredicateSegment where = getSQLWhereWithQueryFilter();
         if (where != null && where.isNotEmpty()) {
-            easyQuerySqlExpression.setWhere(where);
+            easyQuerySQLExpression.setWhere(where);
         }
-        easyQuerySqlExpression.setGroup(getGroup());
-        easyQuerySqlExpression.setHaving(getHaving());
-        easyQuerySqlExpression.setOrder(getOrder());
-        easyQuerySqlExpression.setOffset(getOffset());
-        easyQuerySqlExpression.setRows(getRows());
-        easyQuerySqlExpression.setAllPredicate(getAllPredicate());
-        return easyQuerySqlExpression;
+        easyQuerySQLExpression.setGroup(getGroup());
+        easyQuerySQLExpression.setHaving(getHaving());
+        easyQuerySQLExpression.setOrder(getOrder());
+        easyQuerySQLExpression.setOffset(getOffset());
+        easyQuerySQLExpression.setRows(getRows());
+        easyQuerySQLExpression.setAllPredicate(getAllPredicate());
+        return easyQuerySQLExpression;
     }
 
-    protected EasySqlExpression toTableExpressionSql(EntityTableExpressionBuilder entityTableExpressionBuilder, boolean onlySingleAnonymousTable) {
+    protected EasySQLExpression toTableExpressionSQL(EntityTableExpressionBuilder entityTableExpressionBuilder, boolean onlySingleAnonymousTable) {
         if (entityTableExpressionBuilder instanceof AnonymousEntityTableExpressionBuilder) {
 
             EntityQueryExpressionBuilder sqlEntityQueryExpression = ((AnonymousEntityTableExpressionBuilder) entityTableExpressionBuilder).getEntityQueryExpressionBuilder();
@@ -233,7 +233,7 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
         return sqlPredicateFilter(table, table.hasOn() ? table.getOn() : null);
     }
 
-    protected PredicateSegment getSqlWhereWithQueryFilter() {
+    protected PredicateSegment getSQLWhereWithQueryFilter() {
         EntityTableExpressionBuilder table = getTable(0);
         return sqlPredicateFilter(table, hasWhere() ? getWhere() : null);
     }

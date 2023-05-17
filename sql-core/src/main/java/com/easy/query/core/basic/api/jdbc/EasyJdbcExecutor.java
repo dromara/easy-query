@@ -28,13 +28,13 @@ public class EasyJdbcExecutor implements JdbcExecutor {
     public <T> List<T> sqlQuery(String sql, Class<T> clazz, List<Object> parameters) {
         List<SQLParameter> sqlParameters = EasyCollectionUtil.map(parameters, o -> new EasyConstSQLParameter(null, null, o));
         EntityExpressionExecutor entityExpressionExecutor = runtimeContext.getEntityExpressionExecutor();
-        return entityExpressionExecutor.querySql(ExecutorContext.create(runtimeContext,true, ExecuteMethodEnum.LIST), clazz, sql, sqlParameters);
+        return entityExpressionExecutor.querySQL(ExecutorContext.create(runtimeContext,true, ExecuteMethodEnum.LIST), clazz, sql, sqlParameters);
     }
 
     @Override
     public long sqlExecute(String sql, List<Object> parameters) {
         List<SQLParameter> sqlParameters = EasyCollectionUtil.map(parameters, o -> new EasyConstSQLParameter(null, null, o));
         EntityExpressionExecutor entityExpressionExecutor = runtimeContext.getEntityExpressionExecutor();
-        return entityExpressionExecutor.executeSqlRows(ExecutorContext.create(runtimeContext,false,ExecuteMethodEnum.UNKNOWN), sql, sqlParameters);
+        return entityExpressionExecutor.executeSQLRows(ExecutorContext.create(runtimeContext,false,ExecuteMethodEnum.UNKNOWN), sql, sqlParameters);
     }
 }

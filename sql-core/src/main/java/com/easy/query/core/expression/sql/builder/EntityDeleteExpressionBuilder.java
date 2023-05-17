@@ -1,11 +1,7 @@
 package com.easy.query.core.expression.sql.builder;
 
-import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
+import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
-import com.easy.query.core.expression.sql.expression.EasyDeleteSqlExpression;
-import com.easy.query.core.expression.sql.expression.EasyEntityPredicateSqlExpression;
-import com.easy.query.core.expression.sql.expression.EasyEntitySqlExpression;
-import com.easy.query.core.expression.sql.expression.EasySqlExpression;
 
 /**
  * @FileName: SqlEntityDeleteExpression.java
@@ -19,7 +15,7 @@ public interface EntityDeleteExpressionBuilder extends EntityPredicateExpression
 
     boolean hasWhere();
 
-    SqlBuilderSegment getWhereColumns();
+    SQLBuilderSegment getWhereColumns();
 
     boolean hasWhereColumns();
 

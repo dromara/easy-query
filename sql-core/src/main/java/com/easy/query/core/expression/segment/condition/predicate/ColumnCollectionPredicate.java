@@ -3,14 +3,14 @@ package com.easy.query.core.expression.segment.condition.predicate;
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
-import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
-import com.easy.query.core.enums.SqlPredicateCompare;
-import com.easy.query.core.enums.SqlPredicateCompareEnum;
+import com.easy.query.core.basic.jdbc.parameter.SQLParameterCollector;
+import com.easy.query.core.enums.SQLPredicateCompare;
+import com.easy.query.core.enums.SQLPredicateCompareEnum;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.segment.SqlEntitySegment;
+import com.easy.query.core.expression.segment.SQLEntitySegment;
 import com.easy.query.core.util.EasyCollectionUtil;
-import com.easy.query.core.util.SqlUtil;
-import com.easy.query.core.util.SqlExpressionUtil;
+import com.easy.query.core.util.SQLUtil;
+import com.easy.query.core.util.SQLExpressionUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,12 +25,12 @@ import java.util.Iterator;
  */
 public class ColumnCollectionPredicate implements ValuesPredicate,ShardingPredicate {
     private final Collection<?> collection;
-    private final SqlPredicateCompare compare;
+    private final SQLPredicateCompare compare;
     private final EasyQueryRuntimeContext runtimeContext;
     private final TableAvailable table;
     private final String propertyName;
 
-    public ColumnCollectionPredicate(TableAvailable table, String propertyName, Collection<?> collection, SqlPredicateCompare compare, EasyQueryRuntimeContext runtimeContext) {
+    public ColumnCollectionPredicate(TableAvailable table, String propertyName, Collection<?> collection, SQLPredicateCompare compare, EasyQueryRuntimeContext runtimeContext) {
         this.table = table;
         this.propertyName = propertyName;
         this.collection = collection;
@@ -39,26 +39,26 @@ public class ColumnCollectionPredicate implements ValuesPredicate,ShardingPredic
     }
 
     @Override
-    public String toSql(SqlParameterCollector sqlParameterCollector) {
+    public String toSQL(SQLParameterCollector sqlParameterCollector) {
         if (EasyCollectionUtil.isEmpty(collection)) {
-            if (SqlPredicateCompareEnum.IN.equals(compare)) {
+            if (SQLPredicateCompareEnum.IN.equals(compare)) {
                 return "FALSE";
-            } else if (SqlPredicateCompareEnum.NOT_IN.equals(compare)) {
+            } else if (SQLPredicateCompareEnum.NOT_IN.equals(compare)) {
                 return "TRUE";
             } else {
                 throw new UnsupportedOperationException();
             }
         } else {
-            String sqlColumnSegment = SqlExpressionUtil.getSqlOwnerColumn(runtimeContext,table,propertyName);
+            String sqlColumnSegment = SQLExpressionUtil.getSQLOwnerColumn(runtimeContext,table,propertyName);
             StringBuilder sql = new StringBuilder();
-            sql.append(sqlColumnSegment).append(" ").append(compare.getSql()).append(" (");
+            sql.append(sqlColumnSegment).append(" ").append(compare.getSQL()).append(" (");
             Iterator<?> iterator = collection.iterator();
             Object firstVal = iterator.next();
-            SqlUtil.addParameter(sqlParameterCollector,new EasyConstSQLParameter(table,propertyName,firstVal));
+            SQLUtil.addParameter(sqlParameterCollector,new EasyConstSQLParameter(table,propertyName,firstVal));
             sql.append("?");
             while (iterator.hasNext()){
                 Object val = iterator.next();
-                SqlUtil.addParameter(sqlParameterCollector,new EasyConstSQLParameter(table,propertyName,val));
+                SQLUtil.addParameter(sqlParameterCollector,new EasyConstSQLParameter(table,propertyName,val));
                 sql.append(",?");
             }
             sql.append(")");
@@ -77,13 +77,13 @@ public class ColumnCollectionPredicate implements ValuesPredicate,ShardingPredic
     }
 
     @Override
-    public SqlEntitySegment cloneSqlEntitySegment() {
+    public SQLEntitySegment cloneSQLEntitySegment() {
 
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public SqlPredicateCompare getOperator() {
+    public SQLPredicateCompare getOperator() {
         return compare;
     }
 

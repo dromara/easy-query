@@ -2,10 +2,10 @@ package com.easy.query.core.bootstrapper;
 
 import com.easy.query.core.abstraction.DefaultEasyQueryRuntimeContext;
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
-import com.easy.query.core.abstraction.EasySqlApiFactory;
+import com.easy.query.core.abstraction.EasySQLApiFactory;
 import com.easy.query.core.api.client.DefaultEasyQuery;
 import com.easy.query.core.api.client.EasyQuery;
-import com.easy.query.core.api.def.DefaultEasySqlApiFactory;
+import com.easy.query.core.api.def.DefaultEasySQLApiFactory;
 import com.easy.query.core.basic.jdbc.con.impl.DefaultConnectionManager;
 import com.easy.query.core.basic.jdbc.con.impl.DefaultEasyConnectionFactory;
 import com.easy.query.core.basic.jdbc.con.impl.DefaultEasyDataSourceConnectionFactory;
@@ -95,7 +95,7 @@ public class EasyQueryBuilderConfiguration {
                 .replaceService(EntityMetadataManager.class, DefaultEntityMetadataManager.class)
                 .replaceService(EasyQueryLambdaFactory.class, DefaultEasyQueryLambdaFactory.class)
                 .replaceService(EasyExpressionBuilderFactory.class, DefaultEasyExpressionBuilderFactory.class)
-                .replaceService(EasySqlApiFactory.class, DefaultEasySqlApiFactory.class)
+                .replaceService(EasySQLApiFactory.class, DefaultEasySQLApiFactory.class)
                 .replaceService(TrackManager.class, DefaultTrackManager.class)
                 .replaceService(EasyPageResultProvider.class, DefaultEasyPageResultProvider.class)
                 .replaceService(EasyPrepareParser.class, DefaultEasyPrepareParser.class)

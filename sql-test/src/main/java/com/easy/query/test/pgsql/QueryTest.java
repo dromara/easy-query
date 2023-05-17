@@ -22,7 +22,7 @@ public class QueryTest extends PgSqlBaseTest{
     public void query1() {
         Queryable<BlogEntity> queryable = easyQuery.queryable(BlogEntity.class)
                 .where(o -> o.eq(BlogEntity::getId, "123"));
-        String sql = queryable.toSql();
+        String sql = queryable.toSQL();
         Assert.assertEquals("SELECT t.\"id\",t.\"create_time\",t.\"update_time\",t.\"create_by\",t.\"update_by\",t.\"deleted\",t.\"title\",t.\"content\",t.\"url\",t.\"star\",t.\"publish_time\",t.\"score\",t.\"status\",t.\"order\",t.\"is_top\",t.\"top\" FROM \"t_blog\" t WHERE t.\"deleted\" = ? AND t.\"id\" = ?", sql);
         BlogEntity blogEntity = queryable.firstOrNull();
         Assert.assertNull(blogEntity);
@@ -32,7 +32,7 @@ public class QueryTest extends PgSqlBaseTest{
     public void query2() {
         Queryable<BlogEntity> queryable = easyQuery.queryable(BlogEntity.class)
                 .where(o -> o.eq(BlogEntity::getId, "97"));
-        String sql = queryable.toSql();
+        String sql = queryable.toSQL();
         Assert.assertEquals("SELECT t.\"id\",t.\"create_time\",t.\"update_time\",t.\"create_by\",t.\"update_by\",t.\"deleted\",t.\"title\",t.\"content\",t.\"url\",t.\"star\",t.\"publish_time\",t.\"score\",t.\"status\",t.\"order\",t.\"is_top\",t.\"top\" FROM \"t_blog\" t WHERE t.\"deleted\" = ? AND t.\"id\" = ?", sql);
         BlogEntity blogEntity = queryable.firstOrNull();
         Assert.assertNotNull(blogEntity);
@@ -43,7 +43,7 @@ public class QueryTest extends PgSqlBaseTest{
     public void query3() {
         Queryable<BlogEntity> queryable = easyQuery.queryable(BlogEntity.class)
                 .where(o -> o.eq(BlogEntity::getId, "97")).limit(1).select(" 1 ");
-        String sql = queryable.toSql();
+        String sql = queryable.toSQL();
         Assert.assertEquals("SELECT  1  FROM \"t_blog\" t WHERE t.\"deleted\" = ? AND t.\"id\" = ? LIMIT 1", sql);
         BlogEntity blogEntity = queryable.firstOrNull();
         Assert.assertNotNull(blogEntity);
@@ -54,7 +54,7 @@ public class QueryTest extends PgSqlBaseTest{
     public void query4() {
         Queryable<BlogEntity> queryable = easyQuery.queryable(BlogEntity.class)
                 .where(o -> o.eq(BlogEntity::getId, "97")).limit(1).select("1 as id");
-        String sql = queryable.toSql();
+        String sql = queryable.toSQL();
         Assert.assertEquals("SELECT 1 as id FROM \"t_blog\" t WHERE t.\"deleted\" = ? AND t.\"id\" = ? LIMIT 1", sql);
         BlogEntity blogEntity = queryable.firstOrNull();
         Assert.assertNotNull(blogEntity);
@@ -65,7 +65,7 @@ public class QueryTest extends PgSqlBaseTest{
     public void query5() {
         Queryable<BlogEntity> queryable = easyQuery.queryable(BlogEntity.class)
                 .where(o -> o.in(BlogEntity::getId, Arrays.asList("97", "98")));
-        String sql = queryable.toSql();
+        String sql = queryable.toSQL();
         Assert.assertEquals("SELECT t.\"id\",t.\"create_time\",t.\"update_time\",t.\"create_by\",t.\"update_by\",t.\"deleted\",t.\"title\",t.\"content\",t.\"url\",t.\"star\",t.\"publish_time\",t.\"score\",t.\"status\",t.\"order\",t.\"is_top\",t.\"top\" FROM \"t_blog\" t WHERE t.\"deleted\" = ? AND t.\"id\" IN (?,?)", sql);
         List<BlogEntity> blogs = queryable.toList();
         Assert.assertNotNull(blogs);
@@ -80,7 +80,7 @@ public class QueryTest extends PgSqlBaseTest{
     public void query6() {
         Queryable<BlogEntity> queryable = easyQuery.queryable(BlogEntity.class)
                 .whereById("97");
-        String sql = queryable.toSql();
+        String sql = queryable.toSQL();
         Assert.assertEquals("SELECT t.\"id\",t.\"create_time\",t.\"update_time\",t.\"create_by\",t.\"update_by\",t.\"deleted\",t.\"title\",t.\"content\",t.\"url\",t.\"star\",t.\"publish_time\",t.\"score\",t.\"status\",t.\"order\",t.\"is_top\",t.\"top\" FROM \"t_blog\" t WHERE t.\"deleted\" = ? AND t.\"id\" = ?", sql);
         List<BlogEntity> blogs = queryable.toList();
         Assert.assertNotNull(blogs);

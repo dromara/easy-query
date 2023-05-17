@@ -2,9 +2,9 @@ package com.easy.query.core.sharding.rewrite;
 
 import com.easy.query.core.expression.segment.OrderByColumnSegment;
 import com.easy.query.core.expression.segment.OrderColumnSegmentImpl;
-import com.easy.query.core.expression.segment.SqlSegment;
-import com.easy.query.core.expression.sql.expression.EasyEntitySqlExpression;
-import com.easy.query.core.expression.sql.expression.EasyQuerySqlExpression;
+import com.easy.query.core.expression.segment.SQLSegment;
+import com.easy.query.core.expression.sql.expression.EasyEntitySQLExpression;
+import com.easy.query.core.expression.sql.expression.EasyQuerySQLExpression;
 import com.easy.query.core.sharding.route.RouteUnit;
 
 import java.util.List;
@@ -26,13 +26,13 @@ public class ReversePaginationRewriteRouteUnit  extends DefaultRewriteRouteUnit{
     }
 
     @Override
-    public EasyEntitySqlExpression rewrite(EasyEntitySqlExpression entitySqlExpression) {
-        EasyQuerySqlExpression easyQuerySqlExpression = (EasyQuerySqlExpression)super.rewrite(entitySqlExpression);
+    public EasyEntitySQLExpression rewrite(EasyEntitySQLExpression entitySqlExpression) {
+        EasyQuerySQLExpression easyQuerySqlExpression = (EasyQuerySQLExpression)super.rewrite(entitySqlExpression);
         easyQuerySqlExpression.setOffset(rewriteOffset);
         easyQuerySqlExpression.setRows(rewriteRows);
-        List<SqlSegment> sqlSegments = easyQuerySqlExpression.getOrder().cloneSqlBuilder().getSqlSegments();
+        List<SQLSegment> sqlSegments = easyQuerySqlExpression.getOrder().cloneSQLBuilder().getSQLSegments();
         easyQuerySqlExpression.getOrder().clear();
-        for (SqlSegment sqlSegment : sqlSegments) {
+        for (SQLSegment sqlSegment : sqlSegments) {
             if(sqlSegment instanceof OrderByColumnSegment){
                 OrderByColumnSegment orderByColumnSegment = (OrderByColumnSegment) sqlSegment;
                 easyQuerySqlExpression.getOrder().append(new OrderColumnSegmentImpl(orderByColumnSegment.getTable(),orderByColumnSegment.getPropertyName(),entitySqlExpression.getRuntimeContext(),!orderByColumnSegment.isAsc()));

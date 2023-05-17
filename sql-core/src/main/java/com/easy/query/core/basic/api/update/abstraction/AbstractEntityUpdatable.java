@@ -1,18 +1,18 @@
 package com.easy.query.core.basic.api.update.abstraction;
 
-import com.easy.query.core.basic.api.internal.AbstractSqlExecuteRows;
+import com.easy.query.core.basic.api.internal.AbstractSQLExecuteRows;
 import com.easy.query.core.basic.api.update.EntityUpdatable;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
-import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
+import com.easy.query.core.basic.jdbc.parameter.SQLParameterCollector;
 import com.easy.query.core.basic.plugin.interceptor.EasyInterceptorEntry;
 import com.easy.query.core.configuration.EasyQueryConfiguration;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.MultiTableTypeEnum;
-import com.easy.query.core.enums.SqlExecuteStrategyEnum;
+import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.exception.EasyQueryException;
-import com.easy.query.core.expression.lambda.SqlExpression;
-import com.easy.query.core.expression.parser.core.SqlColumnSelector;
-import com.easy.query.core.expression.parser.impl.DefaultSqlColumnSetSelector;
+import com.easy.query.core.expression.lambda.SQLExpression;
+import com.easy.query.core.expression.parser.core.SQLColumnSelector;
+import com.easy.query.core.expression.parser.impl.DefaultSQLColumnSetSelector;
 import com.easy.query.core.basic.plugin.interceptor.EasyEntityInterceptor;
 import com.easy.query.core.expression.sql.builder.impl.TableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
  * @Description: 文件说明
  * @Date: 2023/2/24 22:06
  */
-public abstract class AbstractEntityUpdatable<T> extends AbstractSqlExecuteRows<EntityUpdatable<T>> implements EntityUpdatable<T> {
+public abstract class AbstractEntityUpdatable<T> extends AbstractSQLExecuteRows<EntityUpdatable<T>> implements EntityUpdatable<T> {
     protected final List<T> entities = new ArrayList<>();
     protected final EntityTableExpressionBuilder table;
     protected final EntityMetadata entityMetadata;
@@ -50,7 +50,7 @@ public abstract class AbstractEntityUpdatable<T> extends AbstractSqlExecuteRows<
         entityMetadata = this.entityUpdateExpressionBuilder.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(clazz);
         entityMetadata.checkTable();
         table = new TableExpressionBuilder(entityMetadata, 0, null, MultiTableTypeEnum.FROM,entityUpdateExpressionBuilder.getRuntimeContext());
-        this.entityUpdateExpressionBuilder.addSqlEntityTableExpression(table);
+        this.entityUpdateExpressionBuilder.addSQLEntityTableExpression(table);
     }
     @Override
     public long executeRows() {
@@ -80,30 +80,30 @@ public abstract class AbstractEntityUpdatable<T> extends AbstractSqlExecuteRows<
     }
 
     @Override
-    public EntityUpdatable<T> setColumns(boolean condition, SqlExpression<SqlColumnSelector<T>>
+    public EntityUpdatable<T> setColumns(boolean condition, SQLExpression<SQLColumnSelector<T>>
             columnSelectorExpression) {
         if (condition) {
-            DefaultSqlColumnSetSelector<T> columnSelector = new DefaultSqlColumnSetSelector<>(0, entityUpdateExpressionBuilder, entityUpdateExpressionBuilder.getSetColumns());
+            DefaultSQLColumnSetSelector<T> columnSelector = new DefaultSQLColumnSetSelector<>(0, entityUpdateExpressionBuilder, entityUpdateExpressionBuilder.getSetColumns());
             columnSelectorExpression.apply(columnSelector);
         }
         return this;
     }
 
     @Override
-    public EntityUpdatable<T> setIgnoreColumns(boolean condition, SqlExpression<SqlColumnSelector<T>>
+    public EntityUpdatable<T> setIgnoreColumns(boolean condition, SQLExpression<SQLColumnSelector<T>>
             columnSelectorExpression) {
         if (condition) {
-            DefaultSqlColumnSetSelector<T> columnSelector = new DefaultSqlColumnSetSelector<>(0, entityUpdateExpressionBuilder, entityUpdateExpressionBuilder.getSetIgnoreColumns());
+            DefaultSQLColumnSetSelector<T> columnSelector = new DefaultSQLColumnSetSelector<>(0, entityUpdateExpressionBuilder, entityUpdateExpressionBuilder.getSetIgnoreColumns());
             columnSelectorExpression.apply(columnSelector);
         }
         return this;
     }
 
     @Override
-    public EntityUpdatable<T> whereColumns(boolean condition, SqlExpression<SqlColumnSelector<T>>
+    public EntityUpdatable<T> whereColumns(boolean condition, SQLExpression<SQLColumnSelector<T>>
             columnSelectorExpression) {
         if (condition) {
-            DefaultSqlColumnSetSelector<T> columnSelector = new DefaultSqlColumnSetSelector<>(0, entityUpdateExpressionBuilder, entityUpdateExpressionBuilder.getWhereColumns());
+            DefaultSQLColumnSetSelector<T> columnSelector = new DefaultSQLColumnSetSelector<>(0, entityUpdateExpressionBuilder, entityUpdateExpressionBuilder.getWhereColumns());
             columnSelectorExpression.apply(columnSelector);
         }
         return this;
@@ -116,17 +116,17 @@ public abstract class AbstractEntityUpdatable<T> extends AbstractSqlExecuteRows<
     }
 
     @Override
-    public EntityUpdatable<T> setSqlStrategy(boolean condition, SqlExecuteStrategyEnum sqlStrategy) {
+    public EntityUpdatable<T> setSQLStrategy(boolean condition, SQLExecuteStrategyEnum sqlStrategy) {
         if (condition) {
-            entityUpdateExpressionBuilder.getExpressionContext().useSqlStrategy(sqlStrategy);
+            entityUpdateExpressionBuilder.getExpressionContext().useSQLStrategy(sqlStrategy);
         }
         return this;
     }
 
-    public String toSql(Object entity) {
-        return toSqlWithParam(entity,null);
+    public String toSQL(Object entity) {
+        return toSQLWithParam(entity,null);
     }
-    private String toSqlWithParam(Object entity, SqlParameterCollector sqlParameterCollector){
-        return entityUpdateExpressionBuilder.toExpression(entity).toSql(sqlParameterCollector);
+    private String toSQLWithParam(Object entity, SQLParameterCollector sqlParameterCollector){
+        return entityUpdateExpressionBuilder.toExpression(entity).toSQL(sqlParameterCollector);
     }
 }

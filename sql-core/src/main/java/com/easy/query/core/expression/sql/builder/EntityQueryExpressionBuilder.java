@@ -1,12 +1,8 @@
 package com.easy.query.core.expression.sql.builder;
 
-import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
+import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
-import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
-import com.easy.query.core.expression.sql.builder.LambdaEntityExpressionBuilder;
-import com.easy.query.core.expression.sql.builder.impl.QueryExpressionBuilder;
-import com.easy.query.core.expression.sql.expression.EasyQuerySqlExpression;
-import com.easy.query.core.expression.sql.expression.EasySqlExpression;
+import com.easy.query.core.expression.sql.expression.EasyQuerySQLExpression;
 
 /**
  * @FileName: SqlEntityExpressionSegment.java
@@ -20,7 +16,7 @@ public interface EntityQueryExpressionBuilder extends EntityPredicateExpressionB
         return !isEmpty();
     }
 
-    SqlBuilderSegment getProjects();
+    SQLBuilderSegment getProjects();
     PredicateSegment getWhere();
     boolean hasAllPredicate();
     PredicateSegment getAllPredicate();
@@ -40,18 +36,18 @@ public interface EntityQueryExpressionBuilder extends EntityPredicateExpressionB
      PredicateSegment getHaving() ;
 
      boolean hasHaving();
-     SqlBuilderSegment getGroup();
+     SQLBuilderSegment getGroup();
      boolean isDistinct();
      void setDistinct(boolean distinct);
 
      boolean hasGroup();
 
-     SqlBuilderSegment getOrder() ;
+     SQLBuilderSegment getOrder() ;
 
      boolean hasOrder();
     @Override
     EntityQueryExpressionBuilder cloneEntityExpressionBuilder();
 
     @Override
-    EasyQuerySqlExpression toExpression();
+    EasyQuerySQLExpression toExpression();
 }

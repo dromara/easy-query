@@ -1,6 +1,6 @@
 package com.easy.query.core.sharding.rewrite;
 
-import com.easy.query.core.expression.sql.expression.EasyEntitySqlExpression;
+import com.easy.query.core.expression.sql.expression.EasyEntitySQLExpression;
 import com.easy.query.core.sharding.route.RouteUnit;
 
 /**
@@ -11,5 +11,5 @@ import com.easy.query.core.sharding.route.RouteUnit;
  */
 public interface RewriteRouteUnit {
     RouteUnit getRouteUnit();
-    EasyEntitySqlExpression rewrite(EasyEntitySqlExpression entitySqlExpression);
+    EasyEntitySQLExpression rewrite(EasyEntitySQLExpression entitySqlExpression);
 }

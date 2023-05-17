@@ -24,7 +24,7 @@ import com.easy.query.test.entity.TopicShardingTime;
 import com.easy.query.test.interceptor.MyEntityInterceptor;
 import com.easy.query.test.interceptor.MyTenantInterceptor;
 import com.easy.query.test.logicdel.MyLogicDelStrategy;
-import com.easy.query.mysql.config.MySqlDatabaseConfiguration;
+import com.easy.query.mysql.config.MySQLDatabaseConfiguration;
 import com.easy.query.test.sharding.DataSourceAndTableShardingInitializer;
 import com.easy.query.test.sharding.TopicShardingDataSourceTimeDataSourceRule;
 import com.easy.query.test.sharding.TopicShardingDataSourceTimeTableRule;
@@ -115,7 +115,7 @@ public abstract class BaseTest {
                     op.setDefaultDataSourceName("ds2020");
                     op.setThrowIfRouteNotMatch(false);
                 })
-                .useDatabaseConfigure(new MySqlDatabaseConfiguration())
+                .useDatabaseConfigure(new MySQLDatabaseConfiguration())
 //                .replaceService(EasyShardingOption.class, new EasyShardingOption(2, 0))
                 .build();
         EasyQueryRuntimeContext runtimeContext = easyQuery.getRuntimeContext();

@@ -2,10 +2,10 @@ package com.easy.query.core.expression.segment;
 
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.PropertySQLParameter;
-import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
+import com.easy.query.core.basic.jdbc.parameter.SQLParameterCollector;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.util.SqlUtil;
-import com.easy.query.core.util.SqlExpressionUtil;
+import com.easy.query.core.util.SQLUtil;
+import com.easy.query.core.util.SQLExpressionUtil;
 
 /**
  * @FileName: ColumnSegment.java
@@ -13,7 +13,7 @@ import com.easy.query.core.util.SqlExpressionUtil;
  * @Date: 2023/2/13 15:18
  * @author xuejiaming
  */
-public class ColumnInsertSegment implements SqlEntityAliasSegment {
+public class ColumnInsertSegment implements SQLEntityAliasSegment {
 
 
     protected final TableAvailable table;
@@ -33,13 +33,13 @@ public class ColumnInsertSegment implements SqlEntityAliasSegment {
     }
 
     @Override
-    public String toSql(SqlParameterCollector sqlParameterCollector) {
-        SqlUtil.addParameter(sqlParameterCollector,new PropertySQLParameter(table,propertyName));
-        String sqlColumnSegment = SqlExpressionUtil.getSqlOwnerColumn(runtimeContext,table,propertyName);
+    public String toSQL(SQLParameterCollector sqlParameterCollector) {
+        SQLUtil.addParameter(sqlParameterCollector,new PropertySQLParameter(table,propertyName));
+        String sqlColumnSegment = SQLExpressionUtil.getSQLOwnerColumn(runtimeContext,table,propertyName);
         StringBuilder sql = new StringBuilder();
         sql.append(sqlColumnSegment);
         if(alias!=null){
-            sql.append(" AS ").append(SqlExpressionUtil.getQuoteName(runtimeContext,alias));
+            sql.append(" AS ").append(SQLExpressionUtil.getQuoteName(runtimeContext,alias));
         }
         return sql.toString();
     }
@@ -55,7 +55,7 @@ public class ColumnInsertSegment implements SqlEntityAliasSegment {
     }
 
     @Override
-    public SqlEntitySegment cloneSqlEntitySegment() {
+    public SQLEntitySegment cloneSQLEntitySegment() {
 
         throw new UnsupportedOperationException();
     }

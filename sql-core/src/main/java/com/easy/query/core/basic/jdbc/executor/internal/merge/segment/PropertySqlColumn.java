@@ -1,6 +1,6 @@
 package com.easy.query.core.basic.jdbc.executor.internal.merge.segment;
 
-import com.easy.query.core.expression.sql.expression.EasyTableSqlExpression;
+import com.easy.query.core.expression.sql.expression.EasyTableSQLExpression;
 
 /**
  * create time 2023/4/28 16:27
@@ -10,7 +10,7 @@ import com.easy.query.core.expression.sql.expression.EasyTableSqlExpression;
  */
 public interface PropertySqlColumn {
 
-    EasyTableSqlExpression getTable();
+    EasyTableSQLExpression getTable();
 
     String propertyName();
 

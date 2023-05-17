@@ -1,6 +1,5 @@
 package com.easy.query.test;
 
-import com.easy.query.test.BaseTest;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.test.entity.Topic;
 import org.junit.Assert;
@@ -27,8 +26,8 @@ public class DeleteTest  extends BaseTest {
             long l = easyQuery.insertable(topic).executeRows();
             Assert.assertEquals(1,l);
         }
-        String deleteSql = easyQuery.deletable(Topic.class).whereById("999").toSql();
-        Assert.assertEquals("DELETE FROM `t_topic` WHERE `id` = ?",deleteSql);
+        String deleteSQL = easyQuery.deletable(Topic.class).whereById("999").toSQL();
+        Assert.assertEquals("DELETE FROM `t_topic` WHERE `id` = ?",deleteSQL);
         long l = easyQuery.deletable(Topic.class).whereById("999").executeRows();
         Assert.assertEquals(1,l);
     }
@@ -44,7 +43,7 @@ public class DeleteTest  extends BaseTest {
             long l = easyQuery.insertable(topic).executeRows();
             Assert.assertEquals(1,l);
         }
-        String deleteSql = easyQuery.deletable(Topic.class).where(o->o.eq(Topic::getTitle,"title998")).toSql();
+        String deleteSql = easyQuery.deletable(Topic.class).where(o->o.eq(Topic::getTitle,"title998")).toSQL();
         Assert.assertEquals("DELETE FROM `t_topic` WHERE `title` = ?",deleteSql);
         long l = easyQuery.deletable(Topic.class).where(o->o.eq(Topic::getTitle,"title998")).executeRows();
         Assert.assertEquals(1,l);
@@ -61,7 +60,7 @@ public class DeleteTest  extends BaseTest {
             long l = easyQuery.insertable(topic).executeRows();
             Assert.assertEquals(1,l);
         }
-        String deleteSql = easyQuery.deletable(topic).toSql();
+        String deleteSql = easyQuery.deletable(topic).toSQL();
         Assert.assertEquals("DELETE FROM `t_topic` WHERE `id` = ?",deleteSql);
         long l = easyQuery.deletable(topic).executeRows();
         Assert.assertEquals(1,l);
@@ -78,7 +77,7 @@ public class DeleteTest  extends BaseTest {
             long l = easyQuery.insertable(topic).executeRows();
             Assert.assertEquals(1,l);
         }
-        String deleteSql = easyQuery.deletable(topic).toSql();
+        String deleteSql = easyQuery.deletable(topic).toSQL();
         Assert.assertEquals("DELETE FROM `t_topic` WHERE `id` = ?",deleteSql);
         long l = easyQuery.deletable(topic).executeRows();
         Assert.assertEquals(1,l);

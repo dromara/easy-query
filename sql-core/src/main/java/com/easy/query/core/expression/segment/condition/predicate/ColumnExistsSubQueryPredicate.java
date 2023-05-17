@@ -2,12 +2,10 @@ package com.easy.query.core.expression.segment.condition.predicate;
 
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.api.select.Queryable;
-import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
-import com.easy.query.core.enums.SqlKeywordEnum;
-import com.easy.query.core.enums.SqlPredicateCompare;
+import com.easy.query.core.basic.jdbc.parameter.SQLParameterCollector;
+import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.segment.SqlEntitySegment;
-import com.easy.query.core.util.SqlExpressionUtil;
+import com.easy.query.core.expression.segment.SQLEntitySegment;
 
 /**
  * create time 2023/4/27 09:22
@@ -16,12 +14,12 @@ import com.easy.query.core.util.SqlExpressionUtil;
  * @author xuejiaming
  */
 public class ColumnExistsSubQueryPredicate implements SubQueryPredicate{
-    private final SqlPredicateCompare sqlPredicateCompare;
+    private final SQLPredicateCompare sqlPredicateCompare;
     private final EasyQueryRuntimeContext runtimeContext;
     private final TableAvailable table;
     private final Queryable<?> subQueryable;
 
-    public ColumnExistsSubQueryPredicate(TableAvailable table, Queryable<?> subQueryable, SqlPredicateCompare sqlPredicateCompare, EasyQueryRuntimeContext runtimeContext) {
+    public ColumnExistsSubQueryPredicate(TableAvailable table, Queryable<?> subQueryable, SQLPredicateCompare sqlPredicateCompare, EasyQueryRuntimeContext runtimeContext) {
         this.table = table;
         this.subQueryable = subQueryable;
         this.sqlPredicateCompare = sqlPredicateCompare;
@@ -38,22 +36,22 @@ public class ColumnExistsSubQueryPredicate implements SubQueryPredicate{
     }
 
     @Override
-    public SqlEntitySegment cloneSqlEntitySegment() {
+    public SQLEntitySegment cloneSQLEntitySegment() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public String toSql(SqlParameterCollector sqlParameterCollector) {
+    public String toSQL(SQLParameterCollector sqlParameterCollector) {
 
         StringBuilder sql = new StringBuilder();
-        sql.append(sqlPredicateCompare.getSql()).append(" (");
-        String queryableSql = subQueryable.toSql(sqlParameterCollector);
+        sql.append(sqlPredicateCompare.getSQL()).append(" (");
+        String queryableSql = subQueryable.toSQL(sqlParameterCollector);
         sql.append(queryableSql).append(") ");
         return sql.toString();
     }
 
     @Override
-    public SqlPredicateCompare getOperator() {
+    public SQLPredicateCompare getOperator() {
         throw new UnsupportedOperationException();
     }
 

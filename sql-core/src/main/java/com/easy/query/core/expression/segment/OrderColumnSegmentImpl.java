@@ -1,10 +1,10 @@
 package com.easy.query.core.expression.segment;
 
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
-import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
-import com.easy.query.core.enums.SqlKeywordEnum;
+import com.easy.query.core.basic.jdbc.parameter.SQLParameterCollector;
+import com.easy.query.core.enums.SQLKeywordEnum;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.util.SqlExpressionUtil;
+import com.easy.query.core.util.SQLExpressionUtil;
 
 /**
  * @FileName: OrderColumnSegment.java
@@ -31,14 +31,14 @@ public class OrderColumnSegmentImpl extends ColumnSegmentImpl implements OrderBy
     }
 
     @Override
-    public String toSql(SqlParameterCollector sqlParameterCollector) {
+    public String toSQL(SQLParameterCollector sqlParameterCollector) {
 
-        String sqlColumnSegment = SqlExpressionUtil.getSqlOwnerColumn(runtimeContext,table,propertyName);
+        String sqlColumnSegment = SQLExpressionUtil.getSQLOwnerColumn(runtimeContext,table,propertyName);
         StringBuilder sql = new StringBuilder().append(sqlColumnSegment);
         if(asc){
-            sql.append(" ").append(SqlKeywordEnum.ASC.toSql());
+            sql.append(" ").append(SQLKeywordEnum.ASC.toSQL());
         }else {
-            sql.append(" ").append(SqlKeywordEnum.DESC.toSql());
+            sql.append(" ").append(SQLKeywordEnum.DESC.toSQL());
         }
         return sql.toString();
     }

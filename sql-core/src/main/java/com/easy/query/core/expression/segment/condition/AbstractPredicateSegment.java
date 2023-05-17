@@ -1,9 +1,8 @@
 package com.easy.query.core.expression.segment.condition;
 
-import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
+import com.easy.query.core.basic.jdbc.parameter.SQLParameterCollector;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.segment.condition.predicate.Predicate;
-import com.easy.query.core.sharding.route.RoutePredicateExpression;
 import com.easy.query.core.util.StringUtil;
 
 import java.util.*;
@@ -141,9 +140,9 @@ public abstract class AbstractPredicateSegment implements PredicateSegment,Shard
     }
 
     @Override
-    public String toSql(SqlParameterCollector sqlParameterCollector) {
+    public String toSQL(SQLParameterCollector sqlParameterCollector) {
         if (isPredicate()) {
-            return predicate.toSql(sqlParameterCollector);
+            return predicate.toSQL(sqlParameterCollector);
         } else {
             if (children != null) {
                 StringBuilder sql = new StringBuilder();
@@ -156,13 +155,13 @@ public abstract class AbstractPredicateSegment implements PredicateSegment,Shard
                         if (sql.length() != 0) {
                             sql.append(AndPredicateSegment.AND);
                         }
-                        sql.append(child.toSql(sqlParameterCollector));
+                        sql.append(child.toSQL(sqlParameterCollector));
                     } else if (child instanceof OrPredicateSegment) {
                         allAnd = false;
                         if (sql.length() != 0) {
                             sql.append(OrPredicateSegment.OR);
                         }
-                        sql.append(child.toSql(sqlParameterCollector));
+                        sql.append(child.toSQL(sqlParameterCollector));
                     }
                 }
                 if (sql.length() != 0) {

@@ -2,11 +2,11 @@ package com.easy.query.core.expression.segment.condition.predicate;
 
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.api.select.Queryable;
-import com.easy.query.core.basic.jdbc.parameter.SqlParameterCollector;
-import com.easy.query.core.enums.SqlPredicateCompare;
+import com.easy.query.core.basic.jdbc.parameter.SQLParameterCollector;
+import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.segment.SqlEntitySegment;
-import com.easy.query.core.util.SqlExpressionUtil;
+import com.easy.query.core.expression.segment.SQLEntitySegment;
+import com.easy.query.core.util.SQLExpressionUtil;
 
 /**
  * create time 2023/4/27 09:22
@@ -15,13 +15,13 @@ import com.easy.query.core.util.SqlExpressionUtil;
  * @author xuejiaming
  */
 public class ColumnSubQueryPredicate implements SubQueryPredicate{
-    private final SqlPredicateCompare compare;
+    private final SQLPredicateCompare compare;
     private final EasyQueryRuntimeContext runtimeContext;
     private final TableAvailable table;
     private final String propertyName;
     private final Queryable<?> subQueryable;
 
-    public ColumnSubQueryPredicate(TableAvailable table, String propertyName, Queryable<?> subQueryable, SqlPredicateCompare compare, EasyQueryRuntimeContext runtimeContext) {
+    public ColumnSubQueryPredicate(TableAvailable table, String propertyName, Queryable<?> subQueryable, SQLPredicateCompare compare, EasyQueryRuntimeContext runtimeContext) {
         this.table = table;
         this.propertyName = propertyName;
         this.subQueryable = subQueryable;
@@ -39,23 +39,23 @@ public class ColumnSubQueryPredicate implements SubQueryPredicate{
     }
 
     @Override
-    public SqlEntitySegment cloneSqlEntitySegment() {
+    public SQLEntitySegment cloneSQLEntitySegment() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public String toSql(SqlParameterCollector sqlParameterCollector) {
+    public String toSQL(SQLParameterCollector sqlParameterCollector) {
 
-        String sqlColumnSegment = SqlExpressionUtil.getSqlOwnerColumn(runtimeContext,table,propertyName);
+        String sqlColumnSegment = SQLExpressionUtil.getSQLOwnerColumn(runtimeContext,table,propertyName);
         StringBuilder sql = new StringBuilder();
-        sql.append(sqlColumnSegment).append(" ").append(compare.getSql()).append(" (");
-        String queryableSql = subQueryable.toSql(sqlParameterCollector);
+        sql.append(sqlColumnSegment).append(" ").append(compare.getSQL()).append(" (");
+        String queryableSql = subQueryable.toSQL(sqlParameterCollector);
         sql.append(queryableSql).append(") ");
         return sql.toString();
     }
 
     @Override
-    public SqlPredicateCompare getOperator() {
+    public SQLPredicateCompare getOperator() {
         return compare;
     }
 

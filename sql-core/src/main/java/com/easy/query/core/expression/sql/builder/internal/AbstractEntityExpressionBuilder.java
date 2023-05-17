@@ -35,7 +35,7 @@ public abstract class AbstractEntityExpressionBuilder implements EntityExpressio
     }
 
     @Override
-    public void addSqlEntityTableExpression(EntityTableExpressionBuilder tableExpression) {
+    public void addSQLEntityTableExpression(EntityTableExpressionBuilder tableExpression) {
         tables.add(tableExpression);
     }
 

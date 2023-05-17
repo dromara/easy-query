@@ -4,7 +4,7 @@ import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.plugin.interceptor.EasyInterceptorEntry;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.ExecuteMethodEnum;
-import com.easy.query.core.enums.SqlExecuteStrategyEnum;
+import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 
@@ -31,7 +31,7 @@ public class EasyExpressionContext implements ExpressionContext {
     private boolean deleteThrowException;
     private Object version;
     private ExecuteMethodEnum executeMethod = ExecuteMethodEnum.UNKNOWN;
-    private SqlExecuteStrategyEnum sqlStrategy = SqlExecuteStrategyEnum.DEFAULT;
+    private SQLExecuteStrategyEnum sqlStrategy = SQLExecuteStrategyEnum.DEFAULT;
 
     private Integer maxShardingQueryLimit;
     private ConnectionModeEnum connectionMode;
@@ -101,12 +101,12 @@ public class EasyExpressionContext implements ExpressionContext {
     }
 
     @Override
-    public void useSqlStrategy(SqlExecuteStrategyEnum sqlStrategy) {
+    public void useSQLStrategy(SQLExecuteStrategyEnum sqlStrategy) {
         this.sqlStrategy = sqlStrategy;
     }
 
     @Override
-    public SqlExecuteStrategyEnum getSqlStrategy() {
+    public SQLExecuteStrategyEnum getSQLStrategy() {
         return sqlStrategy;
     }
 

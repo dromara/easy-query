@@ -14,13 +14,13 @@ import com.easy.query.core.expression.segment.ColumnSegmentImpl;
 import com.easy.query.core.expression.segment.GroupByColumnSegment;
 import com.easy.query.core.expression.segment.OrderByColumnSegment;
 import com.easy.query.core.expression.segment.OrderColumnSegmentImpl;
-import com.easy.query.core.expression.segment.SqlSegment;
-import com.easy.query.core.expression.segment.builder.ProjectSqlBuilderSegment;
+import com.easy.query.core.expression.segment.SQLSegment;
+import com.easy.query.core.expression.segment.builder.ProjectSQLBuilderSegment;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
-import com.easy.query.core.expression.sql.expression.EasyEntitySqlExpression;
-import com.easy.query.core.expression.sql.expression.EasyQuerySqlExpression;
-import com.easy.query.core.expression.sql.expression.EasyTableSqlExpression;
+import com.easy.query.core.expression.sql.expression.EasyEntitySQLExpression;
+import com.easy.query.core.expression.sql.expression.EasyQuerySQLExpression;
+import com.easy.query.core.expression.sql.expression.EasyTableSQLExpression;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.metadata.ShardingInitConfig;
 import com.easy.query.core.sharding.manager.SequenceCountNode;
@@ -57,18 +57,18 @@ public class ShardingUtil {
         return routePredicateDiscover.getRouteParseExpression();
     }
 
-    public static PropertyOrder findFirstPropertyOrderNotNull(List<SqlSegment> selectColumns, OrderColumnSegmentImpl orderColumnSegment, EasyQuerySqlExpression easyQuerySqlExpression) {
+    public static PropertyOrder findFirstPropertyOrderNotNull(List<SQLSegment> selectColumns, OrderColumnSegmentImpl orderColumnSegment, EasyQuerySQLExpression easyQuerySQLExpression) {
         int tableIndex = orderColumnSegment.getTable().getIndex();
         String propertyName = orderColumnSegment.getPropertyName();
         boolean asc = orderColumnSegment.isAsc();
         int selectIndex = -1;
-        for (SqlSegment selectColumn : selectColumns) {
+        for (SQLSegment selectColumn : selectColumns) {
             selectIndex++;
             if (selectColumn instanceof ColumnSegmentImpl) {
                 ColumnSegmentImpl selectColumnSegment = (ColumnSegmentImpl) selectColumn;
                 String selectPropertyName = selectColumnSegment.getPropertyName();
                 if (selectColumnSegment.getTable().getIndex() == tableIndex && Objects.equals(selectPropertyName, propertyName)) {
-                    EasyTableSqlExpression table = easyQuerySqlExpression.getTable(tableIndex);
+                    EasyTableSQLExpression table = easyQuerySQLExpression.getTable(tableIndex);
                     return new EntityPropertyOrder(table, propertyName, selectIndex, asc);
                 }
             }
@@ -81,30 +81,30 @@ public class ShardingUtil {
      *
      * @param selectColumns
      * @param columnSegment
-     * @param easyQuerySqlExpression
+     * @param easyQuerySQLExpression
      * @return
      */
-    public static PropertyGroup findFirstPropertyGroupNotNull(List<SqlSegment> selectColumns, ColumnSegmentImpl columnSegment, EasyQuerySqlExpression easyQuerySqlExpression) {
+    public static PropertyGroup findFirstPropertyGroupNotNull(List<SQLSegment> selectColumns, ColumnSegmentImpl columnSegment, EasyQuerySQLExpression easyQuerySQLExpression) {
         int tableIndex = columnSegment.getTable().getIndex();
         String propertyName = columnSegment.getPropertyName();
         int selectIndex = -1;
-        for (SqlSegment selectColumn : selectColumns) {
+        for (SQLSegment selectColumn : selectColumns) {
             selectIndex++;
             if (!(selectColumn instanceof AggregationColumnSegment)) {
                 ColumnSegmentImpl selectColumnSegment = (ColumnSegmentImpl) selectColumn;
                 String selectPropertyName = selectColumnSegment.getPropertyName();
                 if (selectColumnSegment.getTable().getIndex() == tableIndex && Objects.equals(selectPropertyName, propertyName)) {
-                    EasyTableSqlExpression table = easyQuerySqlExpression.getTable(tableIndex);
+                    EasyTableSQLExpression table = easyQuerySQLExpression.getTable(tableIndex);
                     return new EntityPropertyGroup(table, propertyName, selectIndex);
                 }
             }
         }
-        EasyTableSqlExpression table = easyQuerySqlExpression.getTable(tableIndex);
+        EasyTableSQLExpression table = easyQuerySQLExpression.getTable(tableIndex);
         return new EntityPropertyGroup(table, propertyName, -1);
     }
 
 
-    public static boolean isGroupByAndOrderByStartsWith(List<SqlSegment> groupBy, List<SqlSegment> orderBy) {
+    public static boolean isGroupByAndOrderByStartsWith(List<SQLSegment> groupBy, List<SQLSegment> orderBy) {
 
         if (EasyCollectionUtil.isEmpty(groupBy)) {
             return false;
@@ -114,16 +114,16 @@ public class ShardingUtil {
         }
         int minSize = Math.min(groupBy.size(), orderBy.size());
         for (int i = 0; i < minSize; i++) {
-            SqlSegment groupSqlSegment = groupBy.get(i);
-            if (!(groupSqlSegment instanceof GroupByColumnSegment)) {
+            SQLSegment groupSQLSegment = groupBy.get(i);
+            if (!(groupSQLSegment instanceof GroupByColumnSegment)) {
                 return false;
             }
-            SqlSegment orderSqlSegment = orderBy.get(i);
-            if (!(orderSqlSegment instanceof OrderByColumnSegment)) {
+            SQLSegment orderSQLSegment = orderBy.get(i);
+            if (!(orderSQLSegment instanceof OrderByColumnSegment)) {
                 return false;
             }
-            GroupByColumnSegment groupColumnSegment = (GroupByColumnSegment) groupSqlSegment;
-            OrderByColumnSegment orderColumnSegment = (OrderByColumnSegment) orderSqlSegment;
+            GroupByColumnSegment groupColumnSegment = (GroupByColumnSegment) groupSQLSegment;
+            OrderByColumnSegment orderColumnSegment = (OrderByColumnSegment) orderSQLSegment;
             if (groupColumnSegment.getTable().getIndex() != orderColumnSegment.getTable().getIndex()) {
                 return false;
             }
@@ -134,13 +134,13 @@ public class ShardingUtil {
         return true;
     }
 
-    public static boolean processGroup(EasyQuerySqlExpression easyQuerySqlExpression) {
-        return SqlSegmentUtil.isNotEmpty(easyQuerySqlExpression.getGroup()) || hasAggregateSelect(easyQuerySqlExpression);
+    public static boolean processGroup(EasyQuerySQLExpression easyQuerySQLExpression) {
+        return SQLSegmentUtil.isNotEmpty(easyQuerySQLExpression.getGroup()) || hasAggregateSelect(easyQuerySQLExpression);
     }
 
-    private static boolean hasAggregateSelect(EasyQuerySqlExpression easyQuerySqlExpression) {
-        if (SqlSegmentUtil.isNotEmpty(easyQuerySqlExpression.getProjects())) {
-            return ((ProjectSqlBuilderSegment) easyQuerySqlExpression.getProjects()).hasAggregateColumns();
+    private static boolean hasAggregateSelect(EasyQuerySQLExpression easyQuerySQLExpression) {
+        if (SQLSegmentUtil.isNotEmpty(easyQuerySQLExpression.getProjects())) {
+            return ((ProjectSQLBuilderSegment) easyQuerySQLExpression.getProjects()).hasAggregateColumns();
         }
         return false;
     }
@@ -313,13 +313,13 @@ public class ShardingUtil {
 //        }
 //        return mergeBehavior;
 //    }
-    public static int parseMergeBehavior(PrepareParseResult prepareParseResult, EasyEntitySqlExpression easyEntitySqlExpression, RouteContext routeContext) {
+    public static int parseMergeBehavior(PrepareParseResult prepareParseResult, EasyEntitySQLExpression easyEntitySQLExpression, RouteContext routeContext) {
 
         int mergeBehavior = MergeBehaviorEnum.DEFAULT.getCode();
         ExecutorContext executorContext = prepareParseResult.getExecutorContext();
         if (executorContext.isQuery() && EasyCollectionUtil.isNotEmpty(prepareParseResult.getShardingTables())) {
             QueryPrepareParseResult queryPrepareParseResult = (QueryPrepareParseResult) prepareParseResult;
-            EasyQuerySqlExpression easyQuerySqlExpression = (EasyQuerySqlExpression) easyEntitySqlExpression;
+            EasyQuerySQLExpression easyQuerySQLExpression = (EasyQuerySQLExpression) easyEntitySQLExpression;
             switch (executorContext.getExecuteMethod()) {
                 case ALL:
                     mergeBehavior = BitwiseUtil.addBit(mergeBehavior, MergeBehaviorEnum.ALL.getCode());
@@ -338,13 +338,13 @@ public class ShardingUtil {
                 }
                 break;
             }
-            if (processGroup(easyQuerySqlExpression)) {
+            if (processGroup(easyQuerySQLExpression)) {
                 mergeBehavior = BitwiseUtil.addBit(mergeBehavior, MergeBehaviorEnum.GROUP.getCode());
                 if (queryPrepareParseResult.isStartsWithGroupByInOrderBy()) {
                     mergeBehavior = BitwiseUtil.addBit(mergeBehavior, MergeBehaviorEnum.STREAM_GROUP.getCode());
                 }
             }
-            if (SqlSegmentUtil.isNotEmpty(easyQuerySqlExpression.getOrder())) {
+            if (SQLSegmentUtil.isNotEmpty(easyQuerySQLExpression.getOrder())) {
                 mergeBehavior = BitwiseUtil.addBit(mergeBehavior, MergeBehaviorEnum.ORDER.getCode());
             }
             if (queryPrepareParseResult.isPaginationQuery()) {
@@ -359,7 +359,7 @@ public class ShardingUtil {
                         mergeBehavior = BitwiseUtil.addBit(mergeBehavior, MergeBehaviorEnum.SEQUENCE_PAGINATION.getCode());
                     }
                     if (BitwiseUtil.hasBit(mergeBehavior, MergeBehaviorEnum.ORDER.getCode())) {
-                        OrderByColumnSegment firstOrder = (OrderByColumnSegment) EasyCollectionUtil.first(easyQuerySqlExpression.getOrder().getSqlSegments());
+                        OrderByColumnSegment firstOrder = (OrderByColumnSegment) EasyCollectionUtil.first(easyQuerySQLExpression.getOrder().getSQLSegments());
                         ShardingInitConfig shardingInitConfig = firstOrder.getTable().getEntityMetadata().getShardingInitConfig();
                         if (shardingInitConfig.isReverse()) {
                             List<SequenceCountNode> countResult = shardingQueryCountManager.getCountResult();

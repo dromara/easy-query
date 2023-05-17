@@ -1,6 +1,6 @@
 package com.easy.query.core.configuration;
 
-import com.easy.query.core.enums.SqlExecuteStrategyEnum;
+import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 
 /**
@@ -12,8 +12,8 @@ import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 public class EasyQueryOptionBuilder {
 
     private boolean deleteThrowError;
-    private SqlExecuteStrategyEnum insertStrategy;
-    private SqlExecuteStrategyEnum updateStrategy;
+    private SQLExecuteStrategyEnum insertStrategy;
+    private SQLExecuteStrategyEnum updateStrategy;
     private int maxShardingQueryLimit;
     private int executorMaximumPoolSize;
     private int executorCorePoolSize;
@@ -27,8 +27,8 @@ public class EasyQueryOptionBuilder {
 
     public EasyQueryOptionBuilder() {
         this.deleteThrowError = true;
-        this.insertStrategy = SqlExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS;
-        this.updateStrategy = SqlExecuteStrategyEnum.ALL_COLUMNS;
+        this.insertStrategy = SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS;
+        this.updateStrategy = SQLExecuteStrategyEnum.ALL_COLUMNS;
         this.connectionMode=ConnectionModeEnum.SYSTEM_AUTO;
         this.maxShardingQueryLimit = Math.max(Runtime.getRuntime().availableProcessors(), 4);
         this.executorMaximumPoolSize = 0;
@@ -41,10 +41,10 @@ public class EasyQueryOptionBuilder {
     public void setDeleteThrowError(boolean deleteThrowError) {
         this.deleteThrowError = deleteThrowError;
     }
-    public void setInsertStrategy(SqlExecuteStrategyEnum insertStrategy) {
+    public void setInsertStrategy(SQLExecuteStrategyEnum insertStrategy) {
         this.insertStrategy = insertStrategy;
     }
-    public void setUpdateStrategy(SqlExecuteStrategyEnum updateStrategy) {
+    public void setUpdateStrategy(SQLExecuteStrategyEnum updateStrategy) {
         this.updateStrategy = updateStrategy;
     }
 

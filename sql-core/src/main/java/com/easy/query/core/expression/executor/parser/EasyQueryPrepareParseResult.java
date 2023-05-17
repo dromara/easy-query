@@ -6,16 +6,16 @@ import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.AggregationColumnSegment;
 import com.easy.query.core.expression.segment.OrderByColumnSegment;
-import com.easy.query.core.expression.segment.SqlSegment;
-import com.easy.query.core.expression.segment.builder.SqlBuilderSegment;
+import com.easy.query.core.expression.segment.SQLSegment;
+import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
-import com.easy.query.core.expression.sql.expression.EasyQuerySqlExpression;
+import com.easy.query.core.expression.sql.expression.EasyQuerySQLExpression;
 import com.easy.query.core.metadata.ShardingInitConfig;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.metadata.ShardingSequenceConfig;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.ShardingUtil;
-import com.easy.query.core.util.SqlSegmentUtil;
+import com.easy.query.core.util.SQLSegmentUtil;
 
 import java.util.Objects;
 import java.util.Set;
@@ -30,7 +30,7 @@ public class EasyQueryPrepareParseResult implements QueryPrepareParseResult {
     private final ExecutorContext executorContext;
     private final Set<TableAvailable> shardingTables;
     private final EntityQueryExpressionBuilder entityQueryExpressionBuilder;
-    private final EasyQuerySqlExpression easyQuerySqlExpression;
+    private final EasyQuerySQLExpression easyQuerySQLExpression;
     private final boolean sharding;
     private boolean startsWithGroupByInOrderBy;
     private int maxShardingQueryLimit;
@@ -44,10 +44,10 @@ public class EasyQueryPrepareParseResult implements QueryPrepareParseResult {
 
         this.shardingTables = shardingEntities;
         this.entityQueryExpressionBuilder = entityQueryExpressionBuilder;
-        this.easyQuerySqlExpression = entityQueryExpressionBuilder.toExpression();
+        this.easyQuerySQLExpression = entityQueryExpressionBuilder.toExpression();
         this.sharding = EasyCollectionUtil.isNotEmpty(shardingEntities);
-        this.originalOffset = easyQuerySqlExpression.getOffset();
-        this.originalRows = easyQuerySqlExpression.getRows();
+        this.originalOffset = easyQuerySQLExpression.getOffset();
+        this.originalRows = easyQuerySQLExpression.getRows();
         this.sequenceParseResult = initSequenceOrderPrepareParseResult(executorContext);
         this.maxShardingQueryLimit= ShardingUtil.getMaxShardingQueryLimit(entityQueryExpressionBuilder,sequenceParseResult);
         this.connectionMode=ShardingUtil.getConnectionMode(entityQueryExpressionBuilder,sequenceParseResult);
@@ -57,9 +57,9 @@ public class EasyQueryPrepareParseResult implements QueryPrepareParseResult {
         EasyQueryOption easyQueryOption = executorContext.getRuntimeContext().getEasyQueryConfiguration().getEasyQueryOption();
         //存在分片对象的情况下
         if (EasyCollectionUtil.isNotEmpty(shardingTables)) {
-            SqlBuilderSegment order = easyQuerySqlExpression.getOrder();
-            if (SqlSegmentUtil.isNotEmpty(order)) {
-                SqlSegment firstOrder = EasyCollectionUtil.first(order.getSqlSegments());
+            SQLBuilderSegment order = easyQuerySQLExpression.getOrder();
+            if (SQLSegmentUtil.isNotEmpty(order)) {
+                SQLSegment firstOrder = EasyCollectionUtil.first(order.getSQLSegments());
                 OrderByColumnSegment firstOrderColumn = (OrderByColumnSegment) firstOrder;
                 TableAvailable table = firstOrderColumn.getTable();
                 ShardingInitConfig shardingInitConfig = table.getEntityMetadata().getShardingInitConfig();
@@ -75,7 +75,7 @@ public class EasyQueryPrepareParseResult implements QueryPrepareParseResult {
             } else {
 
                 if (Objects.equals(ExecuteMethodEnum.MAX, executorContext.getExecuteMethod())) {
-                    SqlSegment firstMax = EasyCollectionUtil.first(easyQuerySqlExpression.getProjects().getSqlSegments());
+                    SQLSegment firstMax = EasyCollectionUtil.first(easyQuerySQLExpression.getProjects().getSQLSegments());
                     if (firstMax instanceof AggregationColumnSegment) {
                         AggregationColumnSegment firstMaxColumn = (AggregationColumnSegment) firstMax;
 
@@ -92,7 +92,7 @@ public class EasyQueryPrepareParseResult implements QueryPrepareParseResult {
                     }
 
                 } else if (Objects.equals(ExecuteMethodEnum.MIN, executorContext.getExecuteMethod())) {
-                    SqlSegment firstMin = EasyCollectionUtil.first(easyQuerySqlExpression.getProjects().getSqlSegments());
+                    SQLSegment firstMin = EasyCollectionUtil.first(easyQuerySQLExpression.getProjects().getSQLSegments());
                     if (firstMin instanceof AggregationColumnSegment) {
                         AggregationColumnSegment firstMinColumn = (AggregationColumnSegment) firstMin;
 
@@ -166,8 +166,8 @@ public class EasyQueryPrepareParseResult implements QueryPrepareParseResult {
 
 
     @Override
-    public EasyQuerySqlExpression getEasyEntityPredicateSqlExpression() {
-        return easyQuerySqlExpression;
+    public EasyQuerySQLExpression getEasyEntityPredicateSQLExpression() {
+        return easyQuerySQLExpression;
     }
 
     @Override

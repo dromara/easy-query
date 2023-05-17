@@ -1,6 +1,6 @@
 package com.easy.query.core.basic.jdbc.executor.internal.unit;
 
-import com.easy.query.core.basic.jdbc.executor.internal.common.DataSourceSqlExecutorUnit;
+import com.easy.query.core.basic.jdbc.executor.internal.common.DataSourceSQLExecutorUnit;
 import com.easy.query.core.basic.jdbc.executor.internal.sharding.merger.ShardingMerger;
 
 import java.sql.SQLException;
@@ -14,5 +14,5 @@ import java.util.List;
  */
 public interface Executor<TResult> {
     ShardingMerger<TResult> getShardingMerger();
-    List<TResult> execute(DataSourceSqlExecutorUnit dataSourceSqlExecutorUnit) throws SQLException;
+    List<TResult> execute(DataSourceSQLExecutorUnit dataSourceSQLExecutorUnit) throws SQLException;
 }

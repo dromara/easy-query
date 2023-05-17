@@ -1,10 +1,8 @@
 package com.easy.query.core.expression.executor.query.base;
 
-import com.easy.query.core.expression.sql.expression.EasyEntitySqlExpression;
-import com.easy.query.core.expression.sql.expression.EasySqlExpression;
+import com.easy.query.core.expression.sql.expression.EasyEntitySQLExpression;
 import com.easy.query.core.basic.jdbc.executor.internal.common.ExecutionUnit;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -17,16 +15,16 @@ import java.util.List;
 public class PredicateExecutionCreator extends BaseExecutionCreator{
 
     private final String dataSource;
-    private final EasyEntitySqlExpression easyEntitySqlExpression;
+    private final EasyEntitySQLExpression easyEntitySQLExpression;
 
-    public PredicateExecutionCreator(String dataSource, EasyEntitySqlExpression easyEntitySqlExpression) {
+    public PredicateExecutionCreator(String dataSource, EasyEntitySQLExpression easyEntitySQLExpression) {
         this.dataSource = dataSource;
-        this.easyEntitySqlExpression = easyEntitySqlExpression;
+        this.easyEntitySQLExpression = easyEntitySQLExpression;
     }
 
     @Override
     protected List<ExecutionUnit> createExecutionUnits() {
-        ExecutionUnit executionUnit = createExecutionUnit(dataSource,easyEntitySqlExpression, null, false);
+        ExecutionUnit executionUnit = createExecutionUnit(dataSource, easyEntitySQLExpression, null, false);
         return Collections.singletonList(executionUnit);
     }
 }
