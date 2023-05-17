@@ -1,6 +1,6 @@
 package com.easy.query.core.util;
 
-import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
 import com.easy.query.core.basic.jdbc.types.EasyResultSet;
@@ -151,7 +151,7 @@ public final class StreamResultUtil {
     private static boolean trackBean(ExecutorContext context, Class<?> clazz) {
         //当前查询是否使用了追踪如果没有就直接不使用追踪
         if (context.isTracking()) {
-            EasyQueryRuntimeContext runtimeContext = context.getRuntimeContext();
+            QueryRuntimeContext runtimeContext = context.getRuntimeContext();
             TrackManager trackManager = runtimeContext.getTrackManager();
             //当前是否开启追踪
             if (!trackManager.currentThreadTracking()) {

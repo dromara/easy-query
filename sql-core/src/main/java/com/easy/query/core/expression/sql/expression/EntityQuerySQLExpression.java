@@ -9,7 +9,7 @@ import com.easy.query.core.expression.segment.condition.PredicateSegment;
  *
  * @author xuejiaming
  */
-public interface QuerySQLExpression extends EntityPredicateSQLExpression {
+public interface EntityQuerySQLExpression extends EntityPredicateSQLExpression {
 
     SQLBuilderSegment getProjects();
     void setProjects(SQLBuilderSegment projects);
@@ -42,5 +42,5 @@ public interface QuerySQLExpression extends EntityPredicateSQLExpression {
     PredicateSegment getAllPredicate();
 
     @Override
-    QuerySQLExpression cloneSQLExpression();
+    EntityQuerySQLExpression cloneSQLExpression();
 }

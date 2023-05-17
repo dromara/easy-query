@@ -6,8 +6,8 @@ import com.easy.query.core.expression.parser.core.SQLWherePredicate;
 import com.easy.query.core.expression.parser.core.SQLColumnSetter;
 import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
-import com.easy.query.core.expression.sql.expression.TableSQLExpression;
-import com.easy.query.core.expression.sql.expression.impl.AnonymousTableSQLExpressionImpl;
+import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
+import com.easy.query.core.expression.sql.expression.impl.AnonymousEntityTableSQLExpressionImpl;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.util.SQLSegmentUtil;
@@ -49,18 +49,19 @@ public class AnonymousTableExpressionBuilder extends TableExpressionBuilder impl
     @Override
     public EntityTableExpressionBuilder copyEntityTableExpressionBuilder() {
 
-        AnonymousTableExpressionBuilder anonymousTableExpressionBuilder = new AnonymousTableExpressionBuilder(entityTable, multiTableType, entityQueryExpressionBuilder.cloneEntityExpressionBuilder());
+
+        EntityTableExpressionBuilder anonymousTableExpressionBuilder = runtimeContext.getExpressionBuilderFactory().createAnonymousEntityTableExpressionBuilder(entityTable, multiTableType, entityQueryExpressionBuilder.cloneEntityExpressionBuilder());
         if (on != null) {
             on.copyTo(anonymousTableExpressionBuilder.getOn());
         }
-        anonymousTableExpressionBuilder.tableNameAs = this.tableNameAs;
+        anonymousTableExpressionBuilder.setTableNameAs(this.tableNameAs);
         return anonymousTableExpressionBuilder;
     }
 
     @Override
-    public TableSQLExpression toExpression() {
+    public EntityTableSQLExpression toExpression() {
 
-        AnonymousTableSQLExpressionImpl anonymousTableSQLExpression = new AnonymousTableSQLExpressionImpl(entityTable, multiTableType,entityQueryExpressionBuilder.toExpression(),runtimeContext);
+        EntityTableSQLExpression anonymousTableSQLExpression = runtimeContext.getExpressionFactory().createAnonymousEntityTableSQLExpression(entityTable,multiTableType,entityQueryExpressionBuilder.toExpression(),runtimeContext);
         if(SQLSegmentUtil.isNotEmpty(on)){
             anonymousTableSQLExpression.setOn(on.clonePredicateSegment());
         }

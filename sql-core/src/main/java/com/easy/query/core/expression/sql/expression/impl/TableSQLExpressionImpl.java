@@ -1,13 +1,13 @@
 package com.easy.query.core.expression.sql.expression.impl;
 
-import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameterCollector;
 import com.easy.query.core.configuration.dialect.Dialect;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
-import com.easy.query.core.expression.sql.expression.TableSQLExpression;
+import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.util.ClassUtil;
 import com.easy.query.core.util.SQLExpressionUtil;
@@ -23,16 +23,16 @@ import java.util.function.Function;
  *
  * @author xuejiaming
  */
-public class TableSQLExpressionImpl implements TableSQLExpression {
+public class TableSQLExpressionImpl implements EntityTableSQLExpression {
 
     protected final MultiTableTypeEnum multiTableType;
-    private final EasyQueryRuntimeContext runtimeContext;
+    private final QueryRuntimeContext runtimeContext;
     private final Dialect dialect;
     private final TableAvailable entityTable;
     protected PredicateSegment on;
     protected Function<String, String> tableNameAs;
 
-    public TableSQLExpressionImpl(TableAvailable entityTable, MultiTableTypeEnum multiTableType, EasyQueryRuntimeContext runtimeContext) {
+    public TableSQLExpressionImpl(TableAvailable entityTable, MultiTableTypeEnum multiTableType, QueryRuntimeContext runtimeContext) {
         this.entityTable = entityTable;
         this.multiTableType = multiTableType;
         this.runtimeContext = runtimeContext;
@@ -127,8 +127,9 @@ public class TableSQLExpressionImpl implements TableSQLExpression {
     }
 
     @Override
-    public com.easy.query.core.expression.sql.expression.TableSQLExpression cloneSQLExpression() {
-        TableSQLExpressionImpl tableSQLExpression = new TableSQLExpressionImpl(entityTable, multiTableType,runtimeContext);
+    public EntityTableSQLExpression cloneSQLExpression() {
+
+        EntityTableSQLExpression tableSQLExpression = runtimeContext.getExpressionFactory().createEntityTableSQLExpression(entityTable, multiTableType,runtimeContext);
         if(SQLSegmentUtil.isNotEmpty(on)){
             PredicateSegment predicateSegment = on.clonePredicateSegment();
             tableSQLExpression.setOn(predicateSegment);

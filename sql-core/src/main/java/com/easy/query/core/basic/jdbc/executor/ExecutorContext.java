@@ -1,6 +1,6 @@
 package com.easy.query.core.basic.jdbc.executor;
 
-import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
@@ -18,17 +18,17 @@ import com.easy.query.core.util.StringUtil;
  */
 public class ExecutorContext {
 
-    private final EasyQueryRuntimeContext runtimeContext;
+    private final QueryRuntimeContext runtimeContext;
     private final EasyQueryConfiguration easyQueryConfiguration;
     private final boolean isQuery;
     private final ExecuteMethodEnum executeMethod;
     private final boolean tracking;
 
-    public ExecutorContext(EasyQueryRuntimeContext runtimeContext, boolean isQuery, ExecuteMethodEnum executeMethod) {
+    public ExecutorContext(QueryRuntimeContext runtimeContext, boolean isQuery, ExecuteMethodEnum executeMethod) {
         this(runtimeContext,isQuery,executeMethod, false);
     }
 
-    public ExecutorContext(EasyQueryRuntimeContext runtimeContext,boolean isQuery, ExecuteMethodEnum executeMethod, boolean tracking) {
+    public ExecutorContext(QueryRuntimeContext runtimeContext, boolean isQuery, ExecuteMethodEnum executeMethod, boolean tracking) {
         this.runtimeContext = runtimeContext;
         this.easyQueryConfiguration = runtimeContext.getEasyQueryConfiguration();
         this.isQuery = isQuery;
@@ -36,15 +36,15 @@ public class ExecutorContext {
         this.tracking = tracking;
     }
 
-    public static ExecutorContext create(EasyQueryRuntimeContext runtimeContext,boolean isQuery, ExecuteMethodEnum executeMethod) {
+    public static ExecutorContext create(QueryRuntimeContext runtimeContext, boolean isQuery, ExecuteMethodEnum executeMethod) {
         return new ExecutorContext(runtimeContext,isQuery,executeMethod);
     }
 
-    public static ExecutorContext create(EasyQueryRuntimeContext runtimeContext,boolean isQuery, ExecuteMethodEnum executeMethod, boolean tracking) {
+    public static ExecutorContext create(QueryRuntimeContext runtimeContext, boolean isQuery, ExecuteMethodEnum executeMethod, boolean tracking) {
         return new ExecutorContext(runtimeContext,isQuery,executeMethod, tracking);
     }
 
-    public EasyQueryRuntimeContext getRuntimeContext() {
+    public QueryRuntimeContext getRuntimeContext() {
         return runtimeContext;
     }
 

@@ -1,6 +1,6 @@
 package com.easy.query.core.api.client;
 
-import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.basic.api.delete.EntityDeletable;
 import com.easy.query.core.basic.api.delete.ExpressionDeletable;
 import com.easy.query.core.basic.api.select.Queryable;
@@ -22,7 +22,7 @@ import java.util.Map;
  * @author xuejiaming
  */
 public interface EasyQuery {
-    EasyQueryRuntimeContext getRuntimeContext();
+    QueryRuntimeContext getRuntimeContext();
     default  <T> List<T> sqlQuery(String sql,Class<T> clazz){
         return sqlQuery(sql,clazz, Collections.emptyList());
     }

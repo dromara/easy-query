@@ -1,6 +1,6 @@
 package com.easy.query.core.basic.api.insert;
 
-import com.easy.query.core.abstraction.SQLApiFactory;
+import com.easy.query.core.api.SQLApiFactory;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 

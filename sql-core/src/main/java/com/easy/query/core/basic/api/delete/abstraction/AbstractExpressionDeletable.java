@@ -6,7 +6,7 @@ import com.easy.query.core.basic.jdbc.parameter.SQLParameterCollector;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.expression.parser.core.SQLWherePredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnValuePredicate;
-import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.basic.api.delete.Deletable;
@@ -49,7 +49,7 @@ public abstract   class AbstractExpressionDeletable<T> extends AbstractSQLExecut
 
     @Override
     public long executeRows() {
-        EasyQueryRuntimeContext runtimeContext = entityDeleteExpressionBuilder.getRuntimeContext();
+        QueryRuntimeContext runtimeContext = entityDeleteExpressionBuilder.getRuntimeContext();
         EntityExpressionExecutor entityExpressionExecutor = runtimeContext.getEntityExpressionExecutor();
         return entityExpressionExecutor.executeRows(ExecutorContext.create(entityDeleteExpressionBuilder.getRuntimeContext(),false, ExecuteMethodEnum.DELETE), entityDeleteExpressionBuilder);
     }

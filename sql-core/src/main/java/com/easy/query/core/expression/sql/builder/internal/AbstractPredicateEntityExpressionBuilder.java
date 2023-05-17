@@ -27,12 +27,12 @@ import java.util.Objects;
  * @Date: 2023/3/15 21:58
  */
 public abstract class AbstractPredicateEntityExpressionBuilder extends AbstractEntityExpressionBuilder implements LambdaEntityExpressionBuilder {
-    public AbstractPredicateEntityExpressionBuilder(ExpressionContext sqlExpressionContext) {
-        super(sqlExpressionContext);
+    public AbstractPredicateEntityExpressionBuilder(ExpressionContext expressionContext) {
+        super(expressionContext);
     }
 
     protected boolean useLogicDelete(EntityMetadata entityMetadata) {
-        return sqlExpressionContext.getBehavior().hasBehavior(EasyBehaviorEnum.LOGIC_DELETE) && entityMetadata.enableLogicDelete();
+        return expressionContext.getBehavior().hasBehavior(EasyBehaviorEnum.LOGIC_DELETE) && entityMetadata.enableLogicDelete();
     }
     /**
      * 存在问题 update必须要总的predicate但是如果在这边导致我手动指定where也会有这个version
@@ -58,7 +58,7 @@ public abstract class AbstractPredicateEntityExpressionBuilder extends AbstractE
                 VersionMetadata versionMetadata = entityMetadata.getVersionMetadata();
                 ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(versionMetadata.getPropertyName());
                 if (isExpression()) {
-                    Object version = sqlExpressionContext.getVersion();
+                    Object version = expressionContext.getVersion();
                     if (Objects.nonNull(version)) {
                         FastBean fastBean = BeanUtil.getFastBean(table.getEntityClass());
                         sqlPredicate.eq(fastBean.getBeanGetter(columnMetadata.getProperty()), version);
@@ -71,7 +71,7 @@ public abstract class AbstractPredicateEntityExpressionBuilder extends AbstractE
             //如果当前对象是存在拦截器的那么就通过stream获取剩余的拦截器
             if (EasyCollectionUtil.isNotEmpty(entityMetadata.getPredicateFilterInterceptors())) {
                 EasyQueryConfiguration easyQueryConfiguration = getRuntimeContext().getEasyQueryConfiguration();
-                sqlExpressionContext.getInterceptorFilter(entityMetadata.getPredicateFilterInterceptors())
+                expressionContext.getInterceptorFilter(entityMetadata.getPredicateFilterInterceptors())
                         .forEach(interceptor -> {
                             EasyPredicateFilterInterceptor globalSelectInterceptorStrategy = (EasyPredicateFilterInterceptor) easyQueryConfiguration.getEasyInterceptor(interceptor.getName());
                             if (globalSelectInterceptorStrategy != null) {

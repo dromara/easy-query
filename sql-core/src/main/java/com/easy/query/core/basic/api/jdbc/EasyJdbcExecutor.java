@@ -1,6 +1,6 @@
 package com.easy.query.core.basic.api.jdbc;
 
-import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
@@ -17,9 +17,9 @@ import java.util.List;
  * @author xuejiaming
  */
 public class EasyJdbcExecutor implements JdbcExecutor {
-    private final EasyQueryRuntimeContext runtimeContext;
+    private final QueryRuntimeContext runtimeContext;
 
-    public EasyJdbcExecutor(EasyQueryRuntimeContext runtimeContext){
+    public EasyJdbcExecutor(QueryRuntimeContext runtimeContext){
         this.runtimeContext = runtimeContext;
     }
 

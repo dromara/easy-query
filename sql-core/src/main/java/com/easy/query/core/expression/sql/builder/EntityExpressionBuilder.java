@@ -1,6 +1,6 @@
 package com.easy.query.core.expression.sql.builder;
 
-import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.sql.expression.EntitySQLExpression;
 
@@ -13,7 +13,7 @@ import java.util.List;
  */
 public interface EntityExpressionBuilder extends ExpressionBuilder {
     ExpressionContext getExpressionContext();
-    EasyQueryRuntimeContext getRuntimeContext();
+    QueryRuntimeContext getRuntimeContext();
     void addSQLEntityTableExpression(EntityTableExpressionBuilder tableExpression);
     List<EntityTableExpressionBuilder> getTables();
     default EntityTableExpressionBuilder getTable(int index){

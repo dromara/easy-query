@@ -1,6 +1,6 @@
 package com.easy.query.core.util;
 
-import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.basic.api.select.Queryable;
 import com.easy.query.core.basic.api.select.Queryable2;
 import com.easy.query.core.basic.api.select.Queryable3;
@@ -170,7 +170,7 @@ public class SQLExpressionUtil {
         return SQLExecuteStrategyEnum.ALL_COLUMNS!=executeStrategy;
     }
 
-    public static String getSQLOwnerColumn(EasyQueryRuntimeContext runtimeContext, TableAvailable table, String propertyName){
+    public static String getSQLOwnerColumn(QueryRuntimeContext runtimeContext, TableAvailable table, String propertyName){
         String alias = table.getAlias();
         String columnName = table.getColumnName(propertyName);
         String quoteName = getQuoteName(runtimeContext,columnName);
@@ -179,7 +179,7 @@ public class SQLExpressionUtil {
         }
         return alias + "." + quoteName;
     }
-    public static String getQuoteName(EasyQueryRuntimeContext runtimeContext, String value) {
+    public static String getQuoteName(QueryRuntimeContext runtimeContext, String value) {
         return runtimeContext.getEasyQueryConfiguration().getDialect().getQuoteName(value);
     }
 }

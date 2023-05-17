@@ -1,7 +1,7 @@
 package com.easy.query.core.sharding.rewrite;
 
 import com.easy.query.core.expression.sql.expression.EntitySQLExpression;
-import com.easy.query.core.expression.sql.expression.QuerySQLExpression;
+import com.easy.query.core.expression.sql.expression.EntityQuerySQLExpression;
 import com.easy.query.core.sharding.route.RouteUnit;
 
 /**
@@ -22,7 +22,7 @@ public class SequencePaginationRewriteRouteUnit extends DefaultRewriteRouteUnit{
 
     @Override
     public EntitySQLExpression rewrite(EntitySQLExpression entitySQLExpression) {
-        QuerySQLExpression querySQLExpression = (QuerySQLExpression)super.rewrite(entitySQLExpression);
+        EntityQuerySQLExpression querySQLExpression = (EntityQuerySQLExpression)super.rewrite(entitySQLExpression);
         querySQLExpression.setOffset(rewriteOffset);
         querySQLExpression.setRows(rewriteRows);
         return querySQLExpression;

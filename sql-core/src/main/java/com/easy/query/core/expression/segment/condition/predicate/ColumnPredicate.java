@@ -1,6 +1,6 @@
 package com.easy.query.core.expression.segment.condition.predicate;
 
-import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameterCollector;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.SQLEntitySegment;
@@ -17,9 +17,9 @@ public class ColumnPredicate implements Predicate {
     private final TableAvailable table;
     private final String propertyName;
     private final SQLPredicateCompare compare;
-    private final EasyQueryRuntimeContext runtimeContext;
+    private final QueryRuntimeContext runtimeContext;
 
-    public ColumnPredicate(TableAvailable table, String propertyName, SQLPredicateCompare compare, EasyQueryRuntimeContext runtimeContext) {
+    public ColumnPredicate(TableAvailable table, String propertyName, SQLPredicateCompare compare, QueryRuntimeContext runtimeContext) {
         this.table = table;
         this.propertyName = propertyName;
         this.compare = compare;

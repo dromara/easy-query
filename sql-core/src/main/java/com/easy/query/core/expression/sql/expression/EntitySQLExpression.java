@@ -1,6 +1,6 @@
 package com.easy.query.core.expression.sql.expression;
 
-import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
+import com.easy.query.core.context.QueryRuntimeContext;
 
 import java.util.List;
 
@@ -11,9 +11,9 @@ import java.util.List;
  * @author xuejiaming
  */
 public interface EntitySQLExpression extends SQLExpression {
-    EasyQueryRuntimeContext getRuntimeContext();
-    List<TableSQLExpression> getTables();
-    default TableSQLExpression getTable(int index){
+    QueryRuntimeContext getRuntimeContext();
+    List<EntityTableSQLExpression> getTables();
+    default EntityTableSQLExpression getTable(int index){
         return getTables().get(index);
     }
 

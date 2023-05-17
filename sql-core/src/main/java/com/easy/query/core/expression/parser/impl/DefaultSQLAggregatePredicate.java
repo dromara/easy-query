@@ -1,6 +1,6 @@
 package com.easy.query.core.expression.parser.impl;
 
-import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.SQLExpression1;
@@ -22,7 +22,7 @@ import com.easy.query.core.util.LambdaUtil;
 public class DefaultSQLAggregatePredicate<T1> implements SQLAggregatePredicate<T1> {
     protected final int index;
     protected final EntityExpressionBuilder entityExpressionBuilder;
-    protected final EasyQueryRuntimeContext runtimeContext;
+    protected final QueryRuntimeContext runtimeContext;
     protected final PredicateSegment rootPredicateSegment;
     protected final TableAvailable table;
     protected PredicateSegment nextPredicateSegment;
@@ -47,7 +47,7 @@ public class DefaultSQLAggregatePredicate<T1> implements SQLAggregatePredicate<T
     }
 
     @Override
-    public EasyQueryRuntimeContext getRuntimeContext() {
+    public QueryRuntimeContext getRuntimeContext() {
         return runtimeContext;
     }
 

@@ -1,6 +1,6 @@
 package com.easy.query.core.expression.sql.builder.internal;
 
-import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
@@ -15,22 +15,24 @@ import java.util.List;
  * @author xuejiaming
  */
 public abstract class AbstractEntityExpressionBuilder implements EntityExpressionBuilder {
-    protected final ExpressionContext sqlExpressionContext;
+    protected final ExpressionContext expressionContext;
+    protected final QueryRuntimeContext runtimeContext;
     protected final List<EntityTableExpressionBuilder> tables;
 
-    public AbstractEntityExpressionBuilder(ExpressionContext sqlExpressionContext){
-        this.sqlExpressionContext = sqlExpressionContext;
+    public AbstractEntityExpressionBuilder(ExpressionContext expressionContext){
+        this.expressionContext = expressionContext;
+        this.runtimeContext = expressionContext.getRuntimeContext();
         this.tables = new ArrayList<>();
     }
 
     @Override
     public ExpressionContext getExpressionContext() {
-        return sqlExpressionContext;
+        return expressionContext;
     }
 
     @Override
-    public EasyQueryRuntimeContext getRuntimeContext() {
-        return sqlExpressionContext.getRuntimeContext();
+    public QueryRuntimeContext getRuntimeContext() {
+        return expressionContext.getRuntimeContext();
     }
 
     @Override
@@ -45,9 +47,9 @@ public abstract class AbstractEntityExpressionBuilder implements EntityExpressio
     @Override
     public void setLogicDelete(boolean logicDelete) {
         if(logicDelete){
-            sqlExpressionContext.getBehavior().addBehavior(EasyBehaviorEnum.LOGIC_DELETE);
+            expressionContext.getBehavior().addBehavior(EasyBehaviorEnum.LOGIC_DELETE);
         }else{
-            sqlExpressionContext.getBehavior().removeBehavior(EasyBehaviorEnum.LOGIC_DELETE);
+            expressionContext.getBehavior().removeBehavior(EasyBehaviorEnum.LOGIC_DELETE);
         }
     }
 }

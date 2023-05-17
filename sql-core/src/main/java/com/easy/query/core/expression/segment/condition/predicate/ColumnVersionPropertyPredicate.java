@@ -1,6 +1,6 @@
 package com.easy.query.core.expression.segment.condition.predicate;
 
-import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.PropertySQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameterCollector;
@@ -20,7 +20,7 @@ public class ColumnVersionPropertyPredicate extends ColumnPropertyPredicate{
 
     private final EasyVersionStrategy easyVersionStrategy;
 
-    public ColumnVersionPropertyPredicate(TableAvailable table, String propertyName, EasyVersionStrategy easyVersionStrategy, EasyQueryRuntimeContext runtimeContext) {
+    public ColumnVersionPropertyPredicate(TableAvailable table, String propertyName, EasyVersionStrategy easyVersionStrategy, QueryRuntimeContext runtimeContext) {
         super(table, propertyName, runtimeContext);
 
         this.easyVersionStrategy = easyVersionStrategy;

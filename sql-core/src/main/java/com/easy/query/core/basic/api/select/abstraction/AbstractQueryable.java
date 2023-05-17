@@ -1,6 +1,6 @@
 package com.easy.query.core.basic.api.select.abstraction;
 
-import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.SQLUnionEnum;
 import com.easy.query.core.sharding.manager.SequenceCountLine;
 import com.easy.query.core.sharding.manager.SequenceCountNode;
@@ -75,7 +75,7 @@ import java.util.function.Function;
 public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     protected final Class<T1> t1Class;
     protected final EntityQueryExpressionBuilder entityQueryExpressionBuilder;
-    protected final EasyQueryRuntimeContext runtimeContext;
+    protected final QueryRuntimeContext runtimeContext;
 
     @Override
     public Class<T1> queryClass() {
@@ -683,7 +683,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
         long index = pageIndex <= 0 ? 1 : pageIndex;
         //需要跳过多少条
         long offset = (index - 1) * take;
-        EasyQueryRuntimeContext runtimeContext = entityQueryExpressionBuilder.getRuntimeContext();
+        QueryRuntimeContext runtimeContext = entityQueryExpressionBuilder.getRuntimeContext();
         ShardingQueryCountManager shardingQueryCountManager = runtimeContext.getShardingQueryCountManager();
         try {
             shardingQueryCountManager.begin();

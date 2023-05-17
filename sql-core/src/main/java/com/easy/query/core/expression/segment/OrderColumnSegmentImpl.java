@@ -1,6 +1,6 @@
 package com.easy.query.core.expression.segment;
 
-import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameterCollector;
 import com.easy.query.core.enums.SQLKeywordEnum;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
@@ -25,7 +25,7 @@ public class OrderColumnSegmentImpl extends ColumnSegmentImpl implements OrderBy
 
     private final boolean asc;
 
-    public OrderColumnSegmentImpl(TableAvailable table, String propertyName, EasyQueryRuntimeContext runtimeContext, boolean asc) {
+    public OrderColumnSegmentImpl(TableAvailable table, String propertyName, QueryRuntimeContext runtimeContext, boolean asc) {
         super(table,propertyName, runtimeContext);
         this.asc = asc;
     }

@@ -1,6 +1,6 @@
 package com.easy.query.core.basic.api.update.abstraction;
 
-import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.basic.api.internal.AbstractSQLExecuteRows;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameterCollector;
@@ -55,7 +55,7 @@ public abstract class AbstractExpressionUpdatable<T> extends AbstractSQLExecuteR
 
     @Override
     public long executeRows() {
-        EasyQueryRuntimeContext runtimeContext = entityUpdateExpressionBuilder.getRuntimeContext();
+        QueryRuntimeContext runtimeContext = entityUpdateExpressionBuilder.getRuntimeContext();
         EntityExpressionExecutor entityExpressionExecutor = runtimeContext.getEntityExpressionExecutor();
         return entityExpressionExecutor.executeRows(ExecutorContext.create(entityUpdateExpressionBuilder.getRuntimeContext(),false, ExecuteMethodEnum.UPDATE), entityUpdateExpressionBuilder);
     }

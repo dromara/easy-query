@@ -1,6 +1,6 @@
 package com.easy.query.core.expression.sql.builder.impl;
 
-import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.segment.SelectConstSegment;
 import com.easy.query.core.expression.segment.builder.GroupBySQLBuilderSegmentImpl;
@@ -11,14 +11,14 @@ import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.SQLEntityQueryExpressionBuilder;
-import com.easy.query.core.expression.sql.expression.QuerySQLExpression;
+import com.easy.query.core.expression.sql.expression.EntityQuerySQLExpression;
 import com.easy.query.core.expression.sql.expression.SQLExpression;
-import com.easy.query.core.expression.sql.expression.TableSQLExpression;
+import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
 import com.easy.query.core.expression.sql.builder.internal.AbstractPredicateEntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
-import com.easy.query.core.expression.sql.expression.factory.EasyExpressionFactory;
+import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.util.SQLSegmentUtil;
 
 import java.util.Iterator;
@@ -41,8 +41,8 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
 
     protected final SQLBuilderSegment projects;
 
-    public QueryExpressionBuilder(ExpressionContext queryExpressionContext) {
-        super(queryExpressionContext);
+    public QueryExpressionBuilder(ExpressionContext expressionContext) {
+        super(expressionContext);
         this.projects = new ProjectSQLBuilderSegmentImpl();
     }
 
@@ -164,7 +164,7 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
     }
 
     @Override
-    public QuerySQLExpression toExpression() {
+    public EntityQuerySQLExpression toExpression() {
         int tableCount = getTables().size();
         if (tableCount == 0) {
             throw new EasyQueryException("未找到查询表信息");
@@ -174,11 +174,11 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
         EntityTableExpressionBuilder firstTable = iterator.next();
         //如果有order需要将order移到内部表达式
         if (emptySelect && tableCount == 1 && (firstTable instanceof AnonymousEntityTableExpressionBuilder && !(((AnonymousEntityTableExpressionBuilder) firstTable).getEntityQueryExpressionBuilder() instanceof SQLEntityQueryExpressionBuilder))) {
-            return (QuerySQLExpression) toTableExpressionSQL(firstTable, true);
+            return (EntityQuerySQLExpression) toTableExpressionSQL(firstTable, true);
         }
-        EasyQueryRuntimeContext runtimeContext = getRuntimeContext();
-        EasyExpressionFactory expressionFactory = runtimeContext.getExpressionFactory();
-        QuerySQLExpression easyQuerySQLExpression = expressionFactory.createEasyQuerySQLExpression(runtimeContext);
+        QueryRuntimeContext runtimeContext = getRuntimeContext();
+        ExpressionFactory expressionFactory = runtimeContext.getExpressionFactory();
+        EntityQuerySQLExpression easyQuerySQLExpression = expressionFactory.createEasyQuerySQLExpression(runtimeContext);
         easyQuerySQLExpression.setDistinct(isDistinct());
 
         if (emptySelect) {
@@ -194,10 +194,10 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
         } else {
             easyQuerySQLExpression.setProjects(getProjects());
         }
-        easyQuerySQLExpression.getTables().add((TableSQLExpression) toTableExpressionSQL(firstTable, false));
+        easyQuerySQLExpression.getTables().add((EntityTableSQLExpression) toTableExpressionSQL(firstTable, false));
         while (iterator.hasNext()) {
             EntityTableExpressionBuilder table = iterator.next();
-            TableSQLExpression tableExpression = (TableSQLExpression) toTableExpressionSQL(table, false);
+            EntityTableSQLExpression tableExpression = (EntityTableSQLExpression) toTableExpressionSQL(table, false);
             easyQuerySQLExpression.getTables().add(tableExpression);
             PredicateSegment on = getTableOnWithQueryFilter(table);
             if (on != null && on.isNotEmpty()) {
@@ -241,8 +241,7 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
     @Override
     public EntityQueryExpressionBuilder cloneEntityExpressionBuilder() {
 
-        ExpressionContext sqlExpressionContext = getExpressionContext();
-        QueryExpressionBuilder queryExpressionBuilder = new QueryExpressionBuilder(sqlExpressionContext);
+        EntityQueryExpressionBuilder queryExpressionBuilder = runtimeContext.getExpressionBuilderFactory().createEntityQueryExpressionBuilder(expressionContext);
         if (hasWhere()) {
             getWhere().copyTo(queryExpressionBuilder.getWhere());
         }
@@ -259,10 +258,10 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
             getAllPredicate().copyTo(queryExpressionBuilder.getAllPredicate());
         }
         getProjects().copyTo(queryExpressionBuilder.getProjects());
-        queryExpressionBuilder.offset = this.offset;
-        queryExpressionBuilder.rows = this.rows;
+        queryExpressionBuilder.setOffset(this.offset);
+        queryExpressionBuilder.setRows(this.rows);
         for (EntityTableExpressionBuilder table : super.tables) {
-            queryExpressionBuilder.tables.add(table.copyEntityTableExpressionBuilder());
+            queryExpressionBuilder.getTables().add(table.copyEntityTableExpressionBuilder());
         }
         return queryExpressionBuilder;
     }

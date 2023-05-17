@@ -10,7 +10,7 @@ import com.easy.query.core.bootstrapper.DatabaseConfiguration;
 import com.easy.query.core.bootstrapper.DefaultDatabaseConfiguration;
 import com.easy.query.core.bootstrapper.DefaultStarterConfigurer;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
-import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.api.client.EasyQuery;
 import com.easy.query.core.bootstrapper.StarterConfigurer;
 import com.easy.query.core.configuration.nameconversion.NameConversion;
@@ -135,7 +135,7 @@ public class EasyQueryStarterAutoConfiguration {
                 .useDatabaseConfigure(databaseConfiguration)
                 .useStarterConfigure(starterConfigurer)
                 .build();
-        EasyQueryRuntimeContext runtimeContext = easyQuery.getRuntimeContext();
+        QueryRuntimeContext runtimeContext = easyQuery.getRuntimeContext();
         EasyQueryConfiguration configuration = runtimeContext.getEasyQueryConfiguration();
         //拦截器注册
         for (Map.Entry<String, EasyInterceptor> easyInterceptorEntry : easyInterceptorMap.entrySet()) {

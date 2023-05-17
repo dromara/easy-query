@@ -1,13 +1,13 @@
 package com.easy.query.core.expression.sql.builder.impl;
 
-import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.parser.core.SQLWherePredicate;
 import com.easy.query.core.expression.parser.core.SQLColumnSetter;
 import com.easy.query.core.configuration.dialect.Dialect;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.expression.EntityTableAvailable;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.sql.expression.TableSQLExpression;
+import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
 import com.easy.query.core.expression.sql.expression.impl.TableSQLExpressionImpl;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.expression.lambda.SQLExpression1;
@@ -27,20 +27,17 @@ public class TableExpressionBuilder implements EntityTableExpressionBuilder {
 
     protected final TableAvailable entityTable;
     protected final MultiTableTypeEnum multiTableType;
-    protected final EasyQueryRuntimeContext runtimeContext;
-    private final Dialect dialect;
+    protected final QueryRuntimeContext runtimeContext;
     protected PredicateSegment on;
     protected Function<String, String> tableNameAs;
-    public TableExpressionBuilder(EntityMetadata entityMetadata, int index, String alias, MultiTableTypeEnum multiTableType, EasyQueryRuntimeContext runtimeContext) {
+    public TableExpressionBuilder(EntityMetadata entityMetadata, int index, String alias, MultiTableTypeEnum multiTableType, QueryRuntimeContext runtimeContext) {
         this(new EntityTableAvailable(index,entityMetadata,alias),multiTableType,runtimeContext);
 
     }
-    public TableExpressionBuilder(TableAvailable entityTable, MultiTableTypeEnum multiTableType, EasyQueryRuntimeContext runtimeContext) {
+    public TableExpressionBuilder(TableAvailable entityTable, MultiTableTypeEnum multiTableType, QueryRuntimeContext runtimeContext) {
         this.entityTable = entityTable;
-
         this.multiTableType = multiTableType;
         this.runtimeContext = runtimeContext;
-        this.dialect = runtimeContext.getEasyQueryConfiguration().getDialect();
     }
 
     @Override
@@ -82,11 +79,12 @@ public class TableExpressionBuilder implements EntityTableExpressionBuilder {
     @Override
     public EntityTableExpressionBuilder copyEntityTableExpressionBuilder() {
 
-        TableExpressionBuilder tableExpressionBuilder = new TableExpressionBuilder(entityTable, multiTableType,runtimeContext);
+
+        EntityTableExpressionBuilder tableExpressionBuilder =runtimeContext.getExpressionBuilderFactory().createEntityTableExpressionBuilder(entityTable,multiTableType,runtimeContext);
         if (on != null) {
             on.copyTo(tableExpressionBuilder.getOn());
         }
-        tableExpressionBuilder.tableNameAs = this.tableNameAs;
+        tableExpressionBuilder.setTableNameAs(this.tableNameAs);
         return tableExpressionBuilder;
     }
 
@@ -124,8 +122,8 @@ public class TableExpressionBuilder implements EntityTableExpressionBuilder {
     }
 
     @Override
-    public TableSQLExpression toExpression() {
-        TableSQLExpressionImpl tableSQLExpression = new TableSQLExpressionImpl(entityTable, multiTableType,runtimeContext);
+    public EntityTableSQLExpression toExpression() {
+        EntityTableSQLExpression tableSQLExpression = runtimeContext.getExpressionFactory().createEntityTableSQLExpression(entityTable,multiTableType,runtimeContext);
         tableSQLExpression.setTableNameAs(tableNameAs);
         return tableSQLExpression;
     }

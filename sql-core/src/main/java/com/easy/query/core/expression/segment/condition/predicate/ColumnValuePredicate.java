@@ -1,6 +1,6 @@
 package com.easy.query.core.expression.segment.condition.predicate;
 
-import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.ConstLikeSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
@@ -25,9 +25,9 @@ public class ColumnValuePredicate implements ValuePredicate, ShardingPredicate {
     private final String propertyName;
     private final Object val;
     private final SQLPredicateCompare compare;
-    private final EasyQueryRuntimeContext runtimeContext;
+    private final QueryRuntimeContext runtimeContext;
 
-    public ColumnValuePredicate(TableAvailable table, String propertyName, Object val, SQLPredicateCompare compare, EasyQueryRuntimeContext runtimeContext) {
+    public ColumnValuePredicate(TableAvailable table, String propertyName, Object val, SQLPredicateCompare compare, QueryRuntimeContext runtimeContext) {
         this.table = table;
         this.propertyName = propertyName;
         this.val = val;

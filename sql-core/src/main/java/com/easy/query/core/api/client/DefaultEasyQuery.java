@@ -1,7 +1,7 @@
 package com.easy.query.core.api.client;
 
-import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
-import com.easy.query.core.abstraction.SQLApiFactory;
+import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.api.SQLApiFactory;
 import com.easy.query.core.basic.api.delete.EntityDeletable;
 import com.easy.query.core.basic.jdbc.con.EasyConnectionManager;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
@@ -22,16 +22,16 @@ import java.util.Map;
  * @author xuejiaming
  */
 public class DefaultEasyQuery implements EasyQuery {
-    private final EasyQueryRuntimeContext runtimeContext;
+    private final QueryRuntimeContext runtimeContext;
     private final SQLApiFactory easySQLApiFactory;
-    public DefaultEasyQuery(EasyQueryRuntimeContext runtimeContext){
+    public DefaultEasyQuery(QueryRuntimeContext runtimeContext){
 
         this.runtimeContext = runtimeContext;
         easySQLApiFactory =runtimeContext.getSQLApiFactory();
     }
 
     @Override
-    public EasyQueryRuntimeContext getRuntimeContext() {
+    public QueryRuntimeContext getRuntimeContext() {
         return runtimeContext;
     }
 

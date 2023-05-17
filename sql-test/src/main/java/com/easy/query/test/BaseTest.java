@@ -1,6 +1,6 @@
 package com.easy.query.test;
 
-import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.api.client.EasyQuery;
 import com.easy.query.core.configuration.EasyQueryConfiguration;
@@ -118,7 +118,7 @@ public abstract class BaseTest {
                 .useDatabaseConfigure(new MySQLDatabaseConfiguration())
 //                .replaceService(EasyShardingOption.class, new EasyShardingOption(2, 0))
                 .build();
-        EasyQueryRuntimeContext runtimeContext = easyQuery.getRuntimeContext();
+        QueryRuntimeContext runtimeContext = easyQuery.getRuntimeContext();
         EasyQueryConfiguration configuration = runtimeContext.getEasyQueryConfiguration();
         configuration.applyEasyEncryptionStrategy(new DefaultAesEasyEncryptionStrategy());
         configuration.applyEasyEncryptionStrategy(new Base64EncryptionStrategy());

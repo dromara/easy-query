@@ -1,6 +1,6 @@
 package com.easy.query.core.expression.segment;
 
-import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameterCollector;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
@@ -18,14 +18,14 @@ public class FuncColumnSegmentImpl implements AggregationColumnSegment {
 
     protected final TableAvailable table;
     protected final String propertyName;
-    protected final EasyQueryRuntimeContext runtimeContext;
+    protected final QueryRuntimeContext runtimeContext;
     protected final ColumnFunction columnFunction;
     protected String alias;
 
-    public FuncColumnSegmentImpl(TableAvailable table, String propertyName, EasyQueryRuntimeContext runtimeContext, ColumnFunction columnFunction){
+    public FuncColumnSegmentImpl(TableAvailable table, String propertyName, QueryRuntimeContext runtimeContext, ColumnFunction columnFunction){
         this(table,propertyName,runtimeContext,columnFunction,null);
     }
-    public FuncColumnSegmentImpl(TableAvailable table, String propertyName, EasyQueryRuntimeContext runtimeContext, ColumnFunction columnFunction, String alias){
+    public FuncColumnSegmentImpl(TableAvailable table, String propertyName, QueryRuntimeContext runtimeContext, ColumnFunction columnFunction, String alias){
         this.table = table;
         this.propertyName = propertyName;
         this.runtimeContext = runtimeContext;

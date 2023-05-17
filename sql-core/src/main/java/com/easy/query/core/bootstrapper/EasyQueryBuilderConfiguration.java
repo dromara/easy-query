@@ -1,8 +1,8 @@
 package com.easy.query.core.bootstrapper;
 
-import com.easy.query.core.abstraction.DefaultEasyQueryRuntimeContext;
-import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
-import com.easy.query.core.abstraction.SQLApiFactory;
+import com.easy.query.core.context.DefaultEasyQueryRuntimeContext;
+import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.api.SQLApiFactory;
 import com.easy.query.core.api.client.DefaultEasyQuery;
 import com.easy.query.core.api.client.EasyQuery;
 import com.easy.query.core.api.def.DefaultEasySQLApiFactory;
@@ -44,9 +44,9 @@ import com.easy.query.core.expression.executor.query.ExecutionContextFactory;
 import com.easy.query.core.expression.parser.factory.DefaultEasyQueryLambdaFactory;
 import com.easy.query.core.expression.parser.factory.EasyQueryLambdaFactory;
 import com.easy.query.core.expression.sql.builder.factory.DefaultEasyExpressionBuilderFactory;
-import com.easy.query.core.expression.sql.builder.factory.SQLExpressionBuilderFactory;
+import com.easy.query.core.expression.sql.builder.factory.ExpressionBuilderFactory;
 import com.easy.query.core.expression.sql.expression.factory.DefaultEasyExpressionFactory;
-import com.easy.query.core.expression.sql.expression.factory.EasyExpressionFactory;
+import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.metadata.DefaultEntityMetadataManager;
 import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.sharding.DefaultEasyQueryDataSource;
@@ -94,7 +94,7 @@ public class EasyQueryBuilderConfiguration {
                 .replaceService(EasyQueryConfiguration.class)
                 .replaceService(EntityMetadataManager.class, DefaultEntityMetadataManager.class)
                 .replaceService(EasyQueryLambdaFactory.class, DefaultEasyQueryLambdaFactory.class)
-                .replaceService(SQLExpressionBuilderFactory.class, DefaultEasyExpressionBuilderFactory.class)
+                .replaceService(ExpressionBuilderFactory.class, DefaultEasyExpressionBuilderFactory.class)
                 .replaceService(SQLApiFactory.class, DefaultEasySQLApiFactory.class)
                 .replaceService(TrackManager.class, DefaultTrackManager.class)
                 .replaceService(EasyPageResultProvider.class, DefaultEasyPageResultProvider.class)
@@ -109,10 +109,10 @@ public class EasyQueryBuilderConfiguration {
                 .replaceService(ExecutionContextFactory.class, DefaultExecutionContextFactory.class)
                 .replaceService(EntityExpressionExecutor.class, DefaultEntityExpressionExecutor.class)
                 .replaceService(EasyShardingExecutorService.class, DefaultEasyShardingExecutorService.class)
-                .replaceService(EasyExpressionFactory.class, DefaultEasyExpressionFactory.class)
+                .replaceService(ExpressionFactory.class, DefaultEasyExpressionFactory.class)
                 .replaceService(ShardingComparer.class, JavaLanguageShardingComparer.class)
                 .replaceService(JdbcTypeHandlerManager.class, EasyJdbcTypeHandlerManager.class)
-                .replaceService(EasyQueryRuntimeContext.class, DefaultEasyQueryRuntimeContext.class)
+                .replaceService(QueryRuntimeContext.class, DefaultEasyQueryRuntimeContext.class)
                 .replaceService(EasyDataSourceConnectionFactory.class, DefaultEasyDataSourceConnectionFactory.class)
                 .replaceService(EasyConnectionFactory.class, DefaultEasyConnectionFactory.class)
                 .replaceService(DataSourceManager.class, DefaultDataSourceManager.class)

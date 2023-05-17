@@ -1,6 +1,6 @@
 package com.easy.query.core.expression.segment;
 
-import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameterCollector;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.util.SQLExpressionUtil;
@@ -18,13 +18,13 @@ public class ColumnSegmentImpl implements ColumnSegment {
 
 
     protected final String propertyName;
-    protected final EasyQueryRuntimeContext runtimeContext;
+    protected final QueryRuntimeContext runtimeContext;
     protected String alias;
 
-    public ColumnSegmentImpl(TableAvailable table, String propertyName, EasyQueryRuntimeContext runtimeContext){
+    public ColumnSegmentImpl(TableAvailable table, String propertyName, QueryRuntimeContext runtimeContext){
         this(table,propertyName,runtimeContext,null);
     }
-    public ColumnSegmentImpl(TableAvailable table, String propertyName, EasyQueryRuntimeContext runtimeContext, String alias){
+    public ColumnSegmentImpl(TableAvailable table, String propertyName, QueryRuntimeContext runtimeContext, String alias){
         this.table = table;
 
         this.propertyName = propertyName;

@@ -4,7 +4,7 @@ import com.easy.query.core.expression.segment.OrderByColumnSegment;
 import com.easy.query.core.expression.segment.OrderColumnSegmentImpl;
 import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.expression.sql.expression.EntitySQLExpression;
-import com.easy.query.core.expression.sql.expression.QuerySQLExpression;
+import com.easy.query.core.expression.sql.expression.EntityQuerySQLExpression;
 import com.easy.query.core.sharding.route.RouteUnit;
 
 import java.util.List;
@@ -27,7 +27,7 @@ public class ReversePaginationRewriteRouteUnit  extends DefaultRewriteRouteUnit{
 
     @Override
     public EntitySQLExpression rewrite(EntitySQLExpression entitySQLExpression) {
-        QuerySQLExpression querySQLExpression = (QuerySQLExpression)super.rewrite(entitySQLExpression);
+        EntityQuerySQLExpression querySQLExpression = (EntityQuerySQLExpression)super.rewrite(entitySQLExpression);
         querySQLExpression.setOffset(rewriteOffset);
         querySQLExpression.setRows(rewriteRows);
         List<SQLSegment> sqlSegments = querySQLExpression.getOrder().cloneSQLBuilder().getSQLSegments();

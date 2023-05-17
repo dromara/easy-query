@@ -1,8 +1,9 @@
 package com.easy.query.core.expression.sql.builder.factory;
 
-import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.expression.EntityTableAvailable;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.sql.builder.EntityDeleteExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
@@ -24,38 +25,39 @@ import com.easy.query.core.metadata.EntityMetadata;
  *
  * @author xuejiaming
  */
-public  class DefaultEasyExpressionBuilderFactory implements SQLExpressionBuilderFactory {
+public  class DefaultEasyExpressionBuilderFactory implements ExpressionBuilderFactory {
     @Override
-    public ExpressionContext createExpressionContext(EasyQueryRuntimeContext runtimeContext, String alias) {
+    public ExpressionContext createExpressionContext(QueryRuntimeContext runtimeContext, String alias) {
         return new EasyExpressionContext(runtimeContext,alias);
     }
 
     @Override
-    public EntityTableExpressionBuilder createEntityTableExpression(EntityMetadata entityMetadata, int index, String alias, MultiTableTypeEnum multiTableType,EasyQueryRuntimeContext runtimeContext) {
-        return new TableExpressionBuilder(entityMetadata,index,alias,multiTableType,runtimeContext);
+    public EntityTableExpressionBuilder createEntityTableExpressionBuilder(TableAvailable tableAvailable, MultiTableTypeEnum multiTableType, QueryRuntimeContext runtimeContext) {
+        return new TableExpressionBuilder(tableAvailable,multiTableType,runtimeContext);
     }
 
     @Override
-    public EntityTableExpressionBuilder createAnonymousEntityTableExpression(EntityMetadata entityMetadata, int index, String alias, MultiTableTypeEnum multiTableType, EntityQueryExpressionBuilder sqlEntityQueryExpression) {
-        return new AnonymousTableExpressionBuilder(new EntityTableAvailable(index,entityMetadata,alias),multiTableType,sqlEntityQueryExpression);
+    public EntityTableExpressionBuilder createAnonymousEntityTableExpressionBuilder(TableAvailable tableAvailable, MultiTableTypeEnum multiTableType, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
+        return new AnonymousTableExpressionBuilder(tableAvailable,multiTableType, entityQueryExpressionBuilder);
     }
+
     @Override
-    public EntityQueryExpressionBuilder createEntityQueryExpression(ExpressionContext sqlExpressionContext) {
+    public EntityQueryExpressionBuilder createEntityQueryExpressionBuilder(ExpressionContext sqlExpressionContext) {
         return new QueryExpressionBuilder(sqlExpressionContext);
     }
 
     @Override
-    public EntityInsertExpressionBuilder createEntityInsertExpression(ExpressionContext sqlExpressionContext) {
+    public EntityInsertExpressionBuilder createEntityInsertExpressionBuilder(ExpressionContext sqlExpressionContext) {
         return new InsertExpressionBuilder(sqlExpressionContext);
     }
 
     @Override
-    public EntityUpdateExpressionBuilder createEntityUpdateExpression(ExpressionContext sqlExpressionContext, boolean expression) {
+    public EntityUpdateExpressionBuilder createEntityUpdateExpressionBuilder(ExpressionContext sqlExpressionContext, boolean expression) {
         return new UpdateExpressionBuilder(sqlExpressionContext,expression);
     }
 
     @Override
-    public EntityDeleteExpressionBuilder createEntityDeleteExpression(ExpressionContext sqlExpressionContext, boolean expression) {
+    public EntityDeleteExpressionBuilder createEntityDeleteExpressionBuilder(ExpressionContext sqlExpressionContext, boolean expression) {
         return new DeleteExpressionBuilder(sqlExpressionContext,expression);
     }
 }

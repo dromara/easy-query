@@ -1,12 +1,12 @@
 package com.easy.query.core.expression.sql.expression.impl;
 
-import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameterCollector;
-import com.easy.query.core.expression.sql.expression.QuerySQLExpression;
-import com.easy.query.core.expression.sql.expression.factory.EasyExpressionFactory;
+import com.easy.query.core.expression.sql.expression.EntityQuerySQLExpression;
+import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
-import com.easy.query.core.expression.sql.expression.TableSQLExpression;
+import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
 import com.easy.query.core.util.SQLExpressionUtil;
 import com.easy.query.core.util.SQLSegmentUtil;
 
@@ -20,7 +20,7 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public class QuerySQLExpressionImpl implements QuerySQLExpression {
+public class QuerySQLExpressionImpl implements EntityQuerySQLExpression {
 
     protected SQLBuilderSegment projects;
     protected PredicateSegment where;
@@ -31,15 +31,15 @@ public class QuerySQLExpressionImpl implements QuerySQLExpression {
     protected long offset;
     protected long rows;
     protected boolean distinct;
-    protected final List<TableSQLExpression> tables=new ArrayList<>();
-    protected final EasyQueryRuntimeContext runtimeContext;
+    protected final List<EntityTableSQLExpression> tables=new ArrayList<>();
+    protected final QueryRuntimeContext runtimeContext;
 
-    public QuerySQLExpressionImpl(EasyQueryRuntimeContext runtimeContext) {
+    public QuerySQLExpressionImpl(QueryRuntimeContext runtimeContext) {
         this.runtimeContext = runtimeContext;
     }
 
     @Override
-    public EasyQueryRuntimeContext getRuntimeContext() {
+    public QueryRuntimeContext getRuntimeContext() {
         return runtimeContext;
     }
 
@@ -138,7 +138,7 @@ public class QuerySQLExpressionImpl implements QuerySQLExpression {
         this.distinct = distinct;
     }
     @Override
-    public List<TableSQLExpression> getTables() {
+    public List<EntityTableSQLExpression> getTables() {
         return tables;
     }
 
@@ -152,11 +152,11 @@ public class QuerySQLExpressionImpl implements QuerySQLExpression {
 
         sql.append(this.projects.toSQL(sqlParameterCollector));
 
-        Iterator<TableSQLExpression> iterator = getTables().iterator();
-        TableSQLExpression firstTable = iterator.next();
+        Iterator<EntityTableSQLExpression> iterator = getTables().iterator();
+        EntityTableSQLExpression firstTable = iterator.next();
         sql.append(firstTable.toSQL(sqlParameterCollector));
         while (iterator.hasNext()) {
-            TableSQLExpression table = iterator.next();
+            EntityTableSQLExpression table = iterator.next();
             sql.append(table.toSQL(sqlParameterCollector));// [from table alias] | [left join table alias] 匿名表 应该使用  [left join (table) alias]
 
             PredicateSegment on = table.getOn();
@@ -213,10 +213,10 @@ public class QuerySQLExpressionImpl implements QuerySQLExpression {
     }
 
     @Override
-    public com.easy.query.core.expression.sql.expression.QuerySQLExpression cloneSQLExpression() {
+    public EntityQuerySQLExpression cloneSQLExpression() {
 
-        EasyExpressionFactory expressionFactory = getRuntimeContext().getExpressionFactory();
-        com.easy.query.core.expression.sql.expression.QuerySQLExpression easyQuerySQLExpression = expressionFactory.createEasyQuerySQLExpression(getRuntimeContext());
+        ExpressionFactory expressionFactory = getRuntimeContext().getExpressionFactory();
+        EntityQuerySQLExpression easyQuerySQLExpression = expressionFactory.createEasyQuerySQLExpression(getRuntimeContext());
 
         if(SQLSegmentUtil.isNotEmpty(this.where)){
             easyQuerySQLExpression.setWhere(where.clonePredicateSegment());
@@ -238,7 +238,7 @@ public class QuerySQLExpressionImpl implements QuerySQLExpression {
         }
         easyQuerySQLExpression.setOffset(this.offset);
         easyQuerySQLExpression.setRows(this.rows);
-        for (TableSQLExpression table : this.tables) {
+        for (EntityTableSQLExpression table : this.tables) {
             easyQuerySQLExpression.getTables().add(table.cloneSQLExpression());
         }
         return easyQuerySQLExpression;

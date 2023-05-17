@@ -1,6 +1,6 @@
 package com.easy.query.core.expression.sql.builder;
 
-import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.basic.plugin.interceptor.EasyInterceptorEntry;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.ExecuteMethodEnum;
@@ -21,7 +21,7 @@ import java.util.stream.Stream;
  * @Date: 2023/3/3 23:06
  */
 public class EasyExpressionContext implements ExpressionContext {
-    private final EasyQueryRuntimeContext runtimeContext;
+    private final QueryRuntimeContext runtimeContext;
     private final String alias;
     //    protected final List<SQLParameter> params;
     protected final EasyBehavior easyBehavior;
@@ -36,7 +36,7 @@ public class EasyExpressionContext implements ExpressionContext {
     private Integer maxShardingQueryLimit;
     private ConnectionModeEnum connectionMode;
 
-    public EasyExpressionContext(EasyQueryRuntimeContext runtimeContext, String alias) {
+    public EasyExpressionContext(QueryRuntimeContext runtimeContext, String alias) {
 
         this.runtimeContext = runtimeContext;
         this.deleteThrowException = runtimeContext.getEasyQueryConfiguration().deleteThrow();
@@ -50,7 +50,7 @@ public class EasyExpressionContext implements ExpressionContext {
     }
 
     @Override
-    public EasyQueryRuntimeContext getRuntimeContext() {
+    public QueryRuntimeContext getRuntimeContext() {
         return runtimeContext;
     }
 

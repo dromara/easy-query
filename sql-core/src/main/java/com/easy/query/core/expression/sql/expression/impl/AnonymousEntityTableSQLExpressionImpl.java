@@ -1,11 +1,11 @@
 package com.easy.query.core.expression.sql.expression.impl;
 
-import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameterCollector;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.sql.expression.AnonymousTableSQLExpression;
-import com.easy.query.core.expression.sql.expression.QuerySQLExpression;
+import com.easy.query.core.expression.sql.expression.AnonymousEntityTableSQLExpression;
+import com.easy.query.core.expression.sql.expression.EntityQuerySQLExpression;
 import com.easy.query.core.util.SQLExpressionUtil;
 
 /**
@@ -14,10 +14,10 @@ import com.easy.query.core.util.SQLExpressionUtil;
  *
  * @author xuejiaming
  */
-public class AnonymousTableSQLExpressionImpl extends TableSQLExpressionImpl implements AnonymousTableSQLExpression {
-    private final QuerySQLExpression easyQuerySQLExpression;
+public class AnonymousEntityTableSQLExpressionImpl extends TableSQLExpressionImpl implements AnonymousEntityTableSQLExpression {
+    private final EntityQuerySQLExpression easyQuerySQLExpression;
 
-    public AnonymousTableSQLExpressionImpl(TableAvailable entityTable, MultiTableTypeEnum multiTableType, QuerySQLExpression easyQuerySQLExpression, EasyQueryRuntimeContext runtimeContext) {
+    public AnonymousEntityTableSQLExpressionImpl(TableAvailable entityTable, MultiTableTypeEnum multiTableType, EntityQuerySQLExpression easyQuerySQLExpression, QueryRuntimeContext runtimeContext) {
         super(entityTable, multiTableType, runtimeContext);
         this.easyQuerySQLExpression = easyQuerySQLExpression;
     }

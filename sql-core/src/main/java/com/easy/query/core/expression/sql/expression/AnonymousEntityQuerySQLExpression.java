@@ -6,5 +6,5 @@ package com.easy.query.core.expression.sql.expression;
  *
  * @author xuejiaming
  */
-public interface AnonymousQuerySQLExpression extends QuerySQLExpression {
+public interface AnonymousEntityQuerySQLExpression extends EntityQuerySQLExpression {
 }

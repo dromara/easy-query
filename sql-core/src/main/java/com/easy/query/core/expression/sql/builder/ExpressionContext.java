@@ -1,6 +1,6 @@
 package com.easy.query.core.expression.sql.builder;
 
-import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.basic.plugin.interceptor.EasyInterceptorEntry;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
@@ -17,7 +17,7 @@ import java.util.stream.Stream;
  * @author xuejiaming
  */
 public interface ExpressionContext {
-    EasyQueryRuntimeContext getRuntimeContext();
+    QueryRuntimeContext getRuntimeContext();
 
 //     List<SQLParameter> getParameters();
 //     void addParameter(SQLParameter parameter);

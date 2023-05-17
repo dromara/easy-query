@@ -1,6 +1,6 @@
 package com.easy.query.core.sharding.context;
 
-import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.con.ConnectionStrategyEnum;
 import com.easy.query.core.basic.jdbc.con.EasyConnection;
 import com.easy.query.core.basic.jdbc.con.EasyConnectionManager;
@@ -34,7 +34,7 @@ import java.util.Map;
  */
 public class EasyStreamMergeContext implements StreamMergeContext {
     private static final Log log= LogFactory.getLog(EasyStreamMergeContext.class);
-    protected final EasyQueryRuntimeContext runtimeContext;
+    protected final QueryRuntimeContext runtimeContext;
     protected final boolean isQuery;
     protected final Map<String/* data source name*/, Collection<CloseableConnection>> closeableDataSourceConnections = new HashMap<>();
     protected final ExecutorContext executorContext;
@@ -105,7 +105,7 @@ public class EasyStreamMergeContext implements StreamMergeContext {
         return executionContext.getExecutionUnits();
     }
 
-    public EasyQueryRuntimeContext getRuntimeContext() {
+    public QueryRuntimeContext getRuntimeContext() {
         return runtimeContext;
     }
 

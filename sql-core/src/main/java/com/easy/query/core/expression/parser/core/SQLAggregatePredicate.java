@@ -1,6 +1,6 @@
 package com.easy.query.core.expression.parser.core;
 
-import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.AggregatePredicateCompare;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.lambda.Property;
@@ -16,7 +16,7 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
  */
 public interface SQLAggregatePredicate<T1> {
     TableAvailable getTable();
-    EasyQueryRuntimeContext getRuntimeContext();
+    QueryRuntimeContext getRuntimeContext();
 
     default SQLAggregatePredicate<T1> avg(Property<T1, ?> column, AggregatePredicateCompare compare, Object val) {
         return avg(true, column, compare, val);

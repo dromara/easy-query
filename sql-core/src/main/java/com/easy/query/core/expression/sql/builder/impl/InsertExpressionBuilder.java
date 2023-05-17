@@ -1,10 +1,10 @@
 package com.easy.query.core.expression.sql.builder.impl;
 
-import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
-import com.easy.query.core.expression.sql.expression.InsertSQLExpression;
-import com.easy.query.core.expression.sql.expression.factory.EasyExpressionFactory;
+import com.easy.query.core.expression.sql.expression.EntityInsertSQLExpression;
+import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.exception.EasyQueryException;
@@ -52,12 +52,12 @@ public class InsertExpressionBuilder extends AbstractEntityExpressionBuilder imp
         }
     }
 
-    private boolean clearIgnoreProperties(Set<String> ignorePropertySet, EasyQueryRuntimeContext runtimeContext, Object entity) {
+    private boolean clearIgnoreProperties(Set<String> ignorePropertySet, QueryRuntimeContext runtimeContext, Object entity) {
 
         if (entity != null) {
             //以下应该二选一
             //todo 获取更新策略按需更新
-            SQLExecuteStrategyEnum insertStrategy = sqlExpressionContext.getSQLStrategy();
+            SQLExecuteStrategyEnum insertStrategy = expressionContext.getSQLStrategy();
             if (Objects.equals(SQLExecuteStrategyEnum.DEFAULT, insertStrategy)) {
                 SQLExecuteStrategyEnum globalInsertStrategy = runtimeContext.getEasyQueryConfiguration().getEasyQueryOption().getInsertStrategy();
                 getCustomIgnoreProperties(ignorePropertySet, globalInsertStrategy, runtimeContext.getEntityMetadataManager(), entity);
@@ -79,14 +79,14 @@ public class InsertExpressionBuilder extends AbstractEntityExpressionBuilder imp
     }
 
     @Override
-    public InsertSQLExpression toExpression(Object entity) {
+    public EntityInsertSQLExpression toExpression(Object entity) {
 
         checkTable();
 
         EntityTableExpressionBuilder table = getTable(0);
-        EasyQueryRuntimeContext runtimeContext = getRuntimeContext();
-        EasyExpressionFactory expressionFactory = runtimeContext.getExpressionFactory();
-        InsertSQLExpression easyInsertSQLExpression = expressionFactory.createEasyInsertSQLExpression(runtimeContext, table.toExpression());
+        QueryRuntimeContext runtimeContext = getRuntimeContext();
+        ExpressionFactory expressionFactory = runtimeContext.getExpressionFactory();
+        EntityInsertSQLExpression easyInsertSQLExpression = expressionFactory.createEasyInsertSQLExpression(runtimeContext, table.toExpression());
         EntityMetadata entityMetadata = table.getEntityMetadata();
         SQLBuilderSegment insertCloneColumns = getColumns().cloneSQLBuilder();
         if (insertCloneColumns.isEmpty()) {
@@ -122,17 +122,16 @@ public class InsertExpressionBuilder extends AbstractEntityExpressionBuilder imp
     }
 
     @Override
-    public EntityExpressionBuilder cloneEntityExpressionBuilder() {
+    public EntityInsertExpressionBuilder cloneEntityExpressionBuilder() {
 
 
-        ExpressionContext sqlExpressionContext = getExpressionContext();
-        InsertExpressionBuilder insertExpressionBuilder = new InsertExpressionBuilder(sqlExpressionContext);
+        EntityInsertExpressionBuilder insertExpressionBuilder = runtimeContext.getExpressionBuilderFactory().createEntityInsertExpressionBuilder(expressionContext);
 
         if (getColumns().isNotEmpty()) {
             getColumns().copyTo(insertExpressionBuilder.getColumns());
         }
         for (EntityTableExpressionBuilder table : super.tables) {
-            insertExpressionBuilder.tables.add(table.copyEntityTableExpressionBuilder());
+            insertExpressionBuilder.getTables().add(table.copyEntityTableExpressionBuilder());
         }
         return insertExpressionBuilder;
     }

@@ -2,7 +2,7 @@ package com.easy.query.test;
 
 
 import com.alibaba.druid.pool.DruidDataSourceFactory;
-import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.enums.SQLRangeEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
@@ -123,7 +123,7 @@ public class Main {
                 .setDefaultDataSource(dataSource)
                 .useDatabaseConfigure(new MySQLDatabaseConfiguration())
                 .build();
-        EasyQueryRuntimeContext runtimeContext = easyQuery.getRuntimeContext();
+        QueryRuntimeContext runtimeContext = easyQuery.getRuntimeContext();
 //        jqdcRuntimeContext.getEasyQueryConfiguration().applyEntityTypeConfiguration(new TestUserMySqlConfiguration());
 //        configuration.applyGlobalInterceptor(new NameQueryFilter());
 

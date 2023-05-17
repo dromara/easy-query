@@ -1,6 +1,6 @@
 package com.easy.query.core.util;
 
-import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.con.EasyConnection;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.parameter.BeanSQLParameter;
@@ -143,7 +143,7 @@ public class JdbcExecutorUtil {
     public static StreamResultSet query(ExecutorContext executorContext, EasyConnection easyConnection, String sql, List<SQLParameter> sqlParameters,boolean shardingPrint,boolean replicaPrint) {
         boolean logDebug = log.isDebugEnabled();
         logSQL(logDebug, sql,easyConnection,shardingPrint,replicaPrint);
-        EasyQueryRuntimeContext runtimeContext = executorContext.getRuntimeContext();
+        QueryRuntimeContext runtimeContext = executorContext.getRuntimeContext();
         JdbcTypeHandlerManager easyJdbcTypeHandler = runtimeContext.getJdbcTypeHandlerManager();
 
         PreparedStatement ps = null;
@@ -181,7 +181,7 @@ public class JdbcExecutorUtil {
     public static <T> int insert(ExecutorContext executorContext, EasyConnection easyConnection, String sql, List<T> entities, List<SQLParameter> sqlParameters, boolean fillAutoIncrement,boolean shardingPrint,boolean replicaPrint) {
         boolean logDebug = log.isDebugEnabled();
         logSQL(logDebug, sql,easyConnection,shardingPrint,replicaPrint);
-        EasyQueryRuntimeContext runtimeContext = executorContext.getRuntimeContext();
+        QueryRuntimeContext runtimeContext = executorContext.getRuntimeContext();
         JdbcTypeHandlerManager easyJdbcTypeHandler = runtimeContext.getJdbcTypeHandlerManager();
         Class<?> entityClass = entities.get(0).getClass();
         EntityMetadata entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(entityClass);
@@ -256,7 +256,7 @@ public class JdbcExecutorUtil {
     public static <T> int executeRows(ExecutorContext executorContext, EasyConnection easyConnection, String sql, List<T> entities, List<SQLParameter> sqlParameters,boolean shardingPrint,boolean replicaPrint) {
         boolean logDebug = log.isDebugEnabled();
         logSQL(logDebug, sql,easyConnection,shardingPrint,replicaPrint);
-        EasyQueryRuntimeContext runtimeContext = executorContext.getRuntimeContext();
+        QueryRuntimeContext runtimeContext = executorContext.getRuntimeContext();
         JdbcTypeHandlerManager easyJdbcTypeHandlerManager = runtimeContext.getJdbcTypeHandlerManager();
         PreparedStatement ps = null;
         int r = 0;
@@ -293,7 +293,7 @@ public class JdbcExecutorUtil {
     public static <T> int executeRows(ExecutorContext executorContext, EasyConnection easyConnection, String sql, List<SQLParameter> sqlParameters,boolean shardingPrint,boolean replicaPrint) {
         boolean logDebug = log.isDebugEnabled();
         logSQL(logDebug, sql,easyConnection,shardingPrint,replicaPrint);
-        EasyQueryRuntimeContext runtimeContext = executorContext.getRuntimeContext();
+        QueryRuntimeContext runtimeContext = executorContext.getRuntimeContext();
         JdbcTypeHandlerManager easyJdbcTypeHandlerManager = runtimeContext.getJdbcTypeHandlerManager();
         PreparedStatement ps = null;
         int r = 0;

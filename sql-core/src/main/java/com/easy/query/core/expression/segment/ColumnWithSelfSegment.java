@@ -1,6 +1,6 @@
 package com.easy.query.core.expression.segment;
 
-import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameterCollector;
 import com.easy.query.core.enums.SQLPredicateCompare;
@@ -20,11 +20,11 @@ public class ColumnWithSelfSegment implements SQLEntitySegment {
     private final String propertyName;
     private final Object val;
     private final SQLPredicateCompare compare;
-    private final EasyQueryRuntimeContext runtimeContext;
+    private final QueryRuntimeContext runtimeContext;
     private final String selfLink;
     private final TableAvailable entityTable;
 
-    public ColumnWithSelfSegment(boolean increment, TableAvailable entityTable, String propertyName, Object val, SQLPredicateCompare compare, EasyQueryRuntimeContext runtimeContext) {
+    public ColumnWithSelfSegment(boolean increment, TableAvailable entityTable, String propertyName, Object val, SQLPredicateCompare compare, QueryRuntimeContext runtimeContext) {
         this.selfLink=increment?INCREMENT:DECREMENT;
         this.entityTable = entityTable;
         this.propertyName = propertyName;

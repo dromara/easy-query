@@ -1,12 +1,13 @@
-package com.easy.query.core.abstraction;
+package com.easy.query.core.context;
 
+import com.easy.query.core.api.SQLApiFactory;
 import com.easy.query.core.basic.jdbc.con.EasyConnectionManager;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
 import com.easy.query.core.basic.pagination.EasyPageResultProvider;
 import com.easy.query.core.basic.thread.EasyShardingExecutorService;
 import com.easy.query.core.expression.parser.factory.EasyQueryLambdaFactory;
-import com.easy.query.core.expression.sql.builder.factory.SQLExpressionBuilderFactory;
-import com.easy.query.core.expression.sql.expression.factory.EasyExpressionFactory;
+import com.easy.query.core.expression.sql.builder.factory.ExpressionBuilderFactory;
+import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.expression.func.ColumnFunctionFactory;
 import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
@@ -23,7 +24,7 @@ import com.easy.query.core.sharding.route.manager.TableRouteManager;
  * @Date: 2023/2/11 13:46
  * @author xuejiaming
  */
-public interface EasyQueryRuntimeContext {
+public interface QueryRuntimeContext {
     <T> T getService(Class<T> serviceType);
     EasyQueryConfiguration getEasyQueryConfiguration();
     EntityMetadataManager getEntityMetadataManager();
@@ -32,8 +33,8 @@ public interface EasyQueryRuntimeContext {
     EntityExpressionExecutor getEntityExpressionExecutor();
     JdbcTypeHandlerManager getJdbcTypeHandlerManager();
     SQLApiFactory getSQLApiFactory();
-    SQLExpressionBuilderFactory getSQLExpressionBuilderFactory();
-    EasyExpressionFactory getExpressionFactory();
+    ExpressionBuilderFactory getExpressionBuilderFactory();
+    ExpressionFactory getExpressionFactory();
     TrackManager getTrackManager();
     EasyPageResultProvider getEasyPageResultProvider();
     EasyShardingExecutorService getEasyShardingExecutorService();

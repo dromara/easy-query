@@ -1,6 +1,6 @@
 package com.easy.query.core.expression.segment.condition.predicate;
 
-import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameterCollector;
@@ -26,11 +26,11 @@ import java.util.Iterator;
 public class ColumnCollectionPredicate implements ValuesPredicate,ShardingPredicate {
     private final Collection<?> collection;
     private final SQLPredicateCompare compare;
-    private final EasyQueryRuntimeContext runtimeContext;
+    private final QueryRuntimeContext runtimeContext;
     private final TableAvailable table;
     private final String propertyName;
 
-    public ColumnCollectionPredicate(TableAvailable table, String propertyName, Collection<?> collection, SQLPredicateCompare compare, EasyQueryRuntimeContext runtimeContext) {
+    public ColumnCollectionPredicate(TableAvailable table, String propertyName, Collection<?> collection, SQLPredicateCompare compare, QueryRuntimeContext runtimeContext) {
         this.table = table;
         this.propertyName = propertyName;
         this.collection = collection;

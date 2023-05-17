@@ -1,6 +1,6 @@
 package com.easy.query.core.util;
 
-import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.MergeBehaviorEnum;
@@ -19,8 +19,8 @@ import com.easy.query.core.expression.segment.builder.ProjectSQLBuilderSegment;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.expression.EntitySQLExpression;
-import com.easy.query.core.expression.sql.expression.QuerySQLExpression;
-import com.easy.query.core.expression.sql.expression.TableSQLExpression;
+import com.easy.query.core.expression.sql.expression.EntityQuerySQLExpression;
+import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.metadata.ShardingInitConfig;
 import com.easy.query.core.sharding.manager.SequenceCountNode;
@@ -57,7 +57,7 @@ public class ShardingUtil {
         return routePredicateDiscover.getRouteParseExpression();
     }
 
-    public static PropertyOrder findFirstPropertyOrderNotNull(List<SQLSegment> selectColumns, OrderColumnSegmentImpl orderColumnSegment, QuerySQLExpression easyQuerySQLExpression) {
+    public static PropertyOrder findFirstPropertyOrderNotNull(List<SQLSegment> selectColumns, OrderColumnSegmentImpl orderColumnSegment, EntityQuerySQLExpression easyQuerySQLExpression) {
         int tableIndex = orderColumnSegment.getTable().getIndex();
         String propertyName = orderColumnSegment.getPropertyName();
         boolean asc = orderColumnSegment.isAsc();
@@ -68,7 +68,7 @@ public class ShardingUtil {
                 ColumnSegmentImpl selectColumnSegment = (ColumnSegmentImpl) selectColumn;
                 String selectPropertyName = selectColumnSegment.getPropertyName();
                 if (selectColumnSegment.getTable().getIndex() == tableIndex && Objects.equals(selectPropertyName, propertyName)) {
-                    TableSQLExpression table = easyQuerySQLExpression.getTable(tableIndex);
+                    EntityTableSQLExpression table = easyQuerySQLExpression.getTable(tableIndex);
                     return new EntityPropertyOrder(table, propertyName, selectIndex, asc);
                 }
             }
@@ -84,7 +84,7 @@ public class ShardingUtil {
      * @param easyQuerySQLExpression
      * @return
      */
-    public static PropertyGroup findFirstPropertyGroupNotNull(List<SQLSegment> selectColumns, ColumnSegmentImpl columnSegment, QuerySQLExpression easyQuerySQLExpression) {
+    public static PropertyGroup findFirstPropertyGroupNotNull(List<SQLSegment> selectColumns, ColumnSegmentImpl columnSegment, EntityQuerySQLExpression easyQuerySQLExpression) {
         int tableIndex = columnSegment.getTable().getIndex();
         String propertyName = columnSegment.getPropertyName();
         int selectIndex = -1;
@@ -94,12 +94,12 @@ public class ShardingUtil {
                 ColumnSegmentImpl selectColumnSegment = (ColumnSegmentImpl) selectColumn;
                 String selectPropertyName = selectColumnSegment.getPropertyName();
                 if (selectColumnSegment.getTable().getIndex() == tableIndex && Objects.equals(selectPropertyName, propertyName)) {
-                    TableSQLExpression table = easyQuerySQLExpression.getTable(tableIndex);
+                    EntityTableSQLExpression table = easyQuerySQLExpression.getTable(tableIndex);
                     return new EntityPropertyGroup(table, propertyName, selectIndex);
                 }
             }
         }
-        TableSQLExpression table = easyQuerySQLExpression.getTable(tableIndex);
+        EntityTableSQLExpression table = easyQuerySQLExpression.getTable(tableIndex);
         return new EntityPropertyGroup(table, propertyName, -1);
     }
 
@@ -134,11 +134,11 @@ public class ShardingUtil {
         return true;
     }
 
-    public static boolean processGroup(QuerySQLExpression easyQuerySQLExpression) {
+    public static boolean processGroup(EntityQuerySQLExpression easyQuerySQLExpression) {
         return SQLSegmentUtil.isNotEmpty(easyQuerySQLExpression.getGroup()) || hasAggregateSelect(easyQuerySQLExpression);
     }
 
-    private static boolean hasAggregateSelect(QuerySQLExpression easyQuerySQLExpression) {
+    private static boolean hasAggregateSelect(EntityQuerySQLExpression easyQuerySQLExpression) {
         if (SQLSegmentUtil.isNotEmpty(easyQuerySQLExpression.getProjects())) {
             return ((ProjectSQLBuilderSegment) easyQuerySQLExpression.getProjects()).hasAggregateColumns();
         }
@@ -170,7 +170,7 @@ public class ShardingUtil {
                 return sequenceParseResult.getConnectionsLimit();
             }
         }
-        EasyQueryRuntimeContext runtimeContext = expressionContext.getRuntimeContext();
+        QueryRuntimeContext runtimeContext = expressionContext.getRuntimeContext();
         return runtimeContext.getEasyQueryConfiguration().getEasyQueryOption().getMaxShardingQueryLimit();
     }
 
@@ -185,7 +185,7 @@ public class ShardingUtil {
                 return sequenceParseResult.getConnectionMode();
             }
         }
-        EasyQueryRuntimeContext runtimeContext = expressionContext.getRuntimeContext();
+        QueryRuntimeContext runtimeContext = expressionContext.getRuntimeContext();
         return runtimeContext.getEasyQueryConfiguration().getEasyQueryOption().getConnectionMode();
     }
     public static List<RewriteRouteUnit> getSequenceCountRewriteRouteUnits(QueryPrepareParseResult queryPrepareParseResult, RouteContext routeContext, List<SequenceCountNode> countResult){
@@ -319,7 +319,7 @@ public class ShardingUtil {
         ExecutorContext executorContext = prepareParseResult.getExecutorContext();
         if (executorContext.isQuery() && EasyCollectionUtil.isNotEmpty(prepareParseResult.getShardingTables())) {
             QueryPrepareParseResult queryPrepareParseResult = (QueryPrepareParseResult) prepareParseResult;
-            QuerySQLExpression easyQuerySQLExpression = (QuerySQLExpression) easyEntitySQLExpression;
+            EntityQuerySQLExpression easyQuerySQLExpression = (EntityQuerySQLExpression) easyEntitySQLExpression;
             switch (executorContext.getExecuteMethod()) {
                 case ALL:
                     mergeBehavior = BitwiseUtil.addBit(mergeBehavior, MergeBehaviorEnum.ALL.getCode());

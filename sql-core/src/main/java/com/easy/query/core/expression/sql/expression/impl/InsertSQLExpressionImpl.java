@@ -1,12 +1,12 @@
 package com.easy.query.core.expression.sql.expression.impl;
 
-import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameterCollector;
-import com.easy.query.core.expression.sql.expression.InsertSQLExpression;
-import com.easy.query.core.expression.sql.expression.factory.EasyExpressionFactory;
+import com.easy.query.core.expression.sql.expression.EntityInsertSQLExpression;
+import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.expression.segment.builder.ProjectSQLBuilderSegmentImpl;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
-import com.easy.query.core.expression.sql.expression.TableSQLExpression;
+import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
 import com.easy.query.core.util.SQLExpressionUtil;
 import com.easy.query.core.util.SQLSegmentUtil;
 
@@ -19,20 +19,20 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public  class InsertSQLExpressionImpl implements InsertSQLExpression {
+public  class InsertSQLExpressionImpl implements EntityInsertSQLExpression {
 
     protected final SQLBuilderSegment columns;
-    protected final EasyQueryRuntimeContext runtimeContext;
-    protected final List<TableSQLExpression> tables=new ArrayList<>(1);
+    protected final QueryRuntimeContext runtimeContext;
+    protected final List<EntityTableSQLExpression> tables=new ArrayList<>(1);
 
-    public InsertSQLExpressionImpl(EasyQueryRuntimeContext runtimeContext, TableSQLExpression table) {
+    public InsertSQLExpressionImpl(QueryRuntimeContext runtimeContext, EntityTableSQLExpression table) {
         this.runtimeContext = runtimeContext;
         this.tables.add(table);
         columns=new ProjectSQLBuilderSegmentImpl();
     }
 
     @Override
-    public List<TableSQLExpression> getTables() {
+    public List<EntityTableSQLExpression> getTables() {
         return tables;
     }
 
@@ -41,7 +41,7 @@ public  class InsertSQLExpressionImpl implements InsertSQLExpression {
         return columns;
     }
     @Override
-    public EasyQueryRuntimeContext getRuntimeContext() {
+    public QueryRuntimeContext getRuntimeContext() {
         return runtimeContext;
     }
 
@@ -49,7 +49,7 @@ public  class InsertSQLExpressionImpl implements InsertSQLExpression {
     @Override
     public String toSQL(SQLParameterCollector sqlParameterCollector) {
         SQLExpressionUtil.expressionInvokeRoot(sqlParameterCollector);
-        TableSQLExpression easyTableSQLExpression = tables.get(0);
+        EntityTableSQLExpression easyTableSQLExpression = tables.get(0);
         String tableName = easyTableSQLExpression.getTableName();
         int insertColumns = columns.getSQLSegments().size();
         StringBuilder sql = new StringBuilder("INSERT INTO ");
@@ -63,11 +63,11 @@ public  class InsertSQLExpressionImpl implements InsertSQLExpression {
     }
 
     @Override
-    public com.easy.query.core.expression.sql.expression.InsertSQLExpression cloneSQLExpression() {
+    public EntityInsertSQLExpression cloneSQLExpression() {
 
-        EasyExpressionFactory expressionFactory = runtimeContext.getExpressionFactory();
+        ExpressionFactory expressionFactory = runtimeContext.getExpressionFactory();
 
-        com.easy.query.core.expression.sql.expression.InsertSQLExpression easyInsertSQLExpression = expressionFactory.createEasyInsertSQLExpression(runtimeContext,tables.get(0).cloneSQLExpression());
+        EntityInsertSQLExpression easyInsertSQLExpression = expressionFactory.createEasyInsertSQLExpression(runtimeContext,tables.get(0).cloneSQLExpression());
         if(SQLSegmentUtil.isNotEmpty(columns)){
             columns.copyTo(easyInsertSQLExpression.getColumns());
         }

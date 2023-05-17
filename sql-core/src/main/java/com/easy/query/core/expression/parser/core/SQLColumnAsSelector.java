@@ -1,6 +1,6 @@
 package com.easy.query.core.expression.parser.core;
 
-import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
@@ -12,7 +12,7 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
  * @author xuejiaming
  */
 public interface SQLColumnAsSelector<T1,TR>  {
-    EasyQueryRuntimeContext getRuntimeContext();
+    QueryRuntimeContext getRuntimeContext();
     TableAvailable getTable();
     SQLColumnAsSelector<T1,TR> column(Property<T1,?> column);
     SQLColumnAsSelector<T1,TR> columnIgnore(Property<T1,?> column);

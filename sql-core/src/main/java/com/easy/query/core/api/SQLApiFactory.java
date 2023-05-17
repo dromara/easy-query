@@ -1,4 +1,4 @@
-package com.easy.query.core.abstraction;
+package com.easy.query.core.api;
 
 import com.easy.query.core.basic.api.delete.EntityDeletable;
 import com.easy.query.core.basic.api.delete.ExpressionDeletable;
@@ -10,6 +10,7 @@ import com.easy.query.core.basic.api.select.Queryable3;
 import com.easy.query.core.basic.api.select.Queryable4;
 import com.easy.query.core.basic.api.update.EntityUpdatable;
 import com.easy.query.core.basic.api.update.ExpressionUpdatable;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.enums.SQLUnionEnum;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
@@ -25,10 +26,10 @@ import java.util.Collection;
  */
 public interface SQLApiFactory {
 
-    JdbcExecutor createJdbcExecutor(EasyQueryRuntimeContext runtimeContext);
+    JdbcExecutor createJdbcExecutor(QueryRuntimeContext runtimeContext);
 
-    <T> Queryable<T> createQueryable(Class<T> clazz, EasyQueryRuntimeContext runtimeContext, String alias);
-    <T> Queryable<T> createQueryable(String sql, Class<T> clazz, EasyQueryRuntimeContext runtimeContext, String alias);
+    <T> Queryable<T> createQueryable(Class<T> clazz, QueryRuntimeContext runtimeContext, String alias);
+    <T> Queryable<T> createQueryable(String sql, Class<T> clazz, QueryRuntimeContext runtimeContext, String alias);
 
     <T> Queryable<T> cloneQueryable(Queryable<T> source);
 
@@ -37,7 +38,7 @@ public interface SQLApiFactory {
 
 
 
-    <T> Queryable<T> createUnionQueryable(EasyQueryRuntimeContext runtimeContext, SQLUnionEnum sqlUnion, Collection<Queryable<T>> unionQueries);
+    <T> Queryable<T> createUnionQueryable(QueryRuntimeContext runtimeContext, SQLUnionEnum sqlUnion, Collection<Queryable<T>> unionQueries);
 
 
 
@@ -55,7 +56,7 @@ public interface SQLApiFactory {
 
 
 
-    <T> Insertable<T> createInsertable(Class<T> clazz, EasyQueryRuntimeContext runtimeContext, String alias);
+    <T> Insertable<T> createInsertable(Class<T> clazz, QueryRuntimeContext runtimeContext, String alias);
 
     /**
      * 创建一个空的insert接口
@@ -65,21 +66,21 @@ public interface SQLApiFactory {
      * @param <T>
      * @return
      */
-    <T> Insertable<T> createEmptyInsertable(EasyQueryRuntimeContext runtimeContext, String alias);
+    <T> Insertable<T> createEmptyInsertable(QueryRuntimeContext runtimeContext, String alias);
 
     <T> Insertable<T> createInsertable(Class<T> clazz, EntityInsertExpressionBuilder entityInsertExpression);
 
     <T> EntityUpdatable<T> createEmptyEntityUpdatable();
 
-    <T> EntityUpdatable<T> createEntityUpdatable(T entity, EasyQueryRuntimeContext runtimeContext, String alias);
+    <T> EntityUpdatable<T> createEntityUpdatable(T entity, QueryRuntimeContext runtimeContext, String alias);
 
-    <T> EntityUpdatable<T> createEntityUpdatable(Collection<T> entities, EasyQueryRuntimeContext runtimeContext, String alias);
+    <T> EntityUpdatable<T> createEntityUpdatable(Collection<T> entities, QueryRuntimeContext runtimeContext, String alias);
 
-    <T> ExpressionUpdatable<T> createExpressionUpdatable(Class<T> entityClass, EasyQueryRuntimeContext runtimeContext, String alias);
+    <T> ExpressionUpdatable<T> createExpressionUpdatable(Class<T> entityClass, QueryRuntimeContext runtimeContext, String alias);
 
     <T> EntityDeletable<T> createEmptyEntityDeletable();
-    <T> EntityDeletable<T> createEntityDeletable(T entity, EasyQueryRuntimeContext runtimeContext, String alias);
-    <T> EntityDeletable<T> createEntityDeletable(Collection<T> entities, EasyQueryRuntimeContext runtimeContext, String alias);
+    <T> EntityDeletable<T> createEntityDeletable(T entity, QueryRuntimeContext runtimeContext, String alias);
+    <T> EntityDeletable<T> createEntityDeletable(Collection<T> entities, QueryRuntimeContext runtimeContext, String alias);
 
-    <T> ExpressionDeletable<T> createExpressionDeletable(Class<T> entityClass, EasyQueryRuntimeContext runtimeContext, String alias);
+    <T> ExpressionDeletable<T> createExpressionDeletable(Class<T> entityClass, QueryRuntimeContext runtimeContext, String alias);
 }

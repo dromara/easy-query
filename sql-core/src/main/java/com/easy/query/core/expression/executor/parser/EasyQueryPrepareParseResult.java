@@ -9,7 +9,7 @@ import com.easy.query.core.expression.segment.OrderByColumnSegment;
 import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
-import com.easy.query.core.expression.sql.expression.QuerySQLExpression;
+import com.easy.query.core.expression.sql.expression.EntityQuerySQLExpression;
 import com.easy.query.core.metadata.ShardingInitConfig;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.metadata.ShardingSequenceConfig;
@@ -30,7 +30,7 @@ public class EasyQueryPrepareParseResult implements QueryPrepareParseResult {
     private final ExecutorContext executorContext;
     private final Set<TableAvailable> shardingTables;
     private final EntityQueryExpressionBuilder entityQueryExpressionBuilder;
-    private final QuerySQLExpression easyQuerySQLExpression;
+    private final EntityQuerySQLExpression easyQuerySQLExpression;
     private final boolean sharding;
     private boolean startsWithGroupByInOrderBy;
     private int maxShardingQueryLimit;
@@ -166,7 +166,7 @@ public class EasyQueryPrepareParseResult implements QueryPrepareParseResult {
 
 
     @Override
-    public QuerySQLExpression getEntityPredicateSQLExpression() {
+    public EntityQuerySQLExpression getEntityPredicateSQLExpression() {
         return easyQuerySQLExpression;
     }
 
