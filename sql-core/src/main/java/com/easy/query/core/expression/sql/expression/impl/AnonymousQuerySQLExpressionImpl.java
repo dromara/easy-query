@@ -2,17 +2,15 @@ package com.easy.query.core.expression.sql.expression.impl;
 
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameterCollector;
-import com.easy.query.core.enums.SQLUnionEnum;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
-import com.easy.query.core.expression.sql.expression.EasyAnonymousQuerySQLExpression;
-import com.easy.query.core.expression.sql.expression.EasyQuerySQLExpression;
-import com.easy.query.core.expression.sql.expression.EasyTableSQLExpression;
+import com.easy.query.core.expression.sql.expression.AnonymousQuerySQLExpression;
+import com.easy.query.core.expression.sql.expression.QuerySQLExpression;
+import com.easy.query.core.expression.sql.expression.TableSQLExpression;
 import com.easy.query.core.expression.sql.expression.factory.EasyExpressionFactory;
 import com.easy.query.core.util.SQLExpressionUtil;
 
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -21,33 +19,21 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public class AnonymousUnionQuerySqlExpression implements EasyAnonymousQuerySQLExpression {
+public class AnonymousQuerySQLExpressionImpl implements AnonymousQuerySQLExpression {
     protected final EasyQueryRuntimeContext runtimeContext;
-    private final List<EasyQuerySQLExpression> easyQuerySqlExpressions;
-    private final SQLUnionEnum sqlUnion;
-    protected final List<EasyTableSQLExpression> tables;
+    protected final String sql;
+    protected final List<TableSQLExpression> tables;
 
-    public AnonymousUnionQuerySqlExpression(EasyQueryRuntimeContext runtimeContext, List<EasyQuerySQLExpression> easyQuerySqlExpressions, SQLUnionEnum sqlUnion){
+    public AnonymousQuerySQLExpressionImpl(EasyQueryRuntimeContext runtimeContext, String sql){
         this.runtimeContext = runtimeContext;
-        this.easyQuerySqlExpressions = easyQuerySqlExpressions;
-        this.sqlUnion = sqlUnion;
 
+        this.sql = sql;
         this.tables = Collections.emptyList();
     }
     @Override
     public String toSQL(SQLParameterCollector sqlParameterCollector) {
         SQLExpressionUtil.expressionInvokeRoot(sqlParameterCollector);
-        Iterator<EasyQuerySQLExpression> iterator = easyQuerySqlExpressions.iterator();
-        EasyQuerySQLExpression firstEasyQuerySqlExpression = iterator.next();
-        String unionSql = " " + sqlUnion.getSql() + " ";
-        StringBuilder sql = new StringBuilder();
-        sql.append(firstEasyQuerySqlExpression.toSQL(sqlParameterCollector));
-        while(iterator.hasNext()){
-            sql.append(unionSql);
-            EasyQuerySQLExpression easyQuerySqlExpression = iterator.next();
-            sql.append(easyQuerySqlExpression.toSQL(sqlParameterCollector));
-        }
-        return sql.toString();
+        return sql;
     }
 
     @Override
@@ -151,14 +137,14 @@ public class AnonymousUnionQuerySqlExpression implements EasyAnonymousQuerySQLEx
     }
 
     @Override
-    public List<EasyTableSQLExpression> getTables() {
+    public List<TableSQLExpression> getTables() {
         return tables;
     }
 
     @Override
-    public EasyQuerySQLExpression cloneSQLExpression() {
+    public QuerySQLExpression cloneSQLExpression() {
         EasyExpressionFactory expressionFactory = runtimeContext.getExpressionFactory();
-        return expressionFactory.createEasyAnonymousUnionQuerySQLExpression(runtimeContext,easyQuerySqlExpressions,sqlUnion);
+        return expressionFactory.createEasyAnonymousQuerySQLExpression(runtimeContext,sql);
     }
 
 }

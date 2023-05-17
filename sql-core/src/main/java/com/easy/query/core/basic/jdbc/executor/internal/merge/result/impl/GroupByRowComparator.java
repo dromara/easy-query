@@ -4,7 +4,7 @@ import com.easy.query.core.basic.jdbc.executor.internal.merge.segment.PropertyOr
 import com.easy.query.core.sharding.context.StreamMergeContext;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.result.impl.memory.row.MemoryResultSetRow;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.segment.PropertyGroup;
-import com.easy.query.core.basic.jdbc.executor.internal.merge.segment.PropertySqlColumn;
+import com.easy.query.core.basic.jdbc.executor.internal.merge.segment.PropertySQLColumn;
 import com.easy.query.core.util.CompareUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyCheck;
@@ -57,17 +57,17 @@ public class GroupByRowComparator implements Comparator<MemoryResultSetRow> {
         return 0;
     }
     @SuppressWarnings("rawtypes")
-    private int compare(MemoryResultSetRow o1, MemoryResultSetRow o2,PropertySqlColumn propertySqlColumn){
-        Object value1 = o1.getValue(propertySqlColumn.columnIndex() + 1);
+    private int compare(MemoryResultSetRow o1, MemoryResultSetRow o2, PropertySQLColumn propertySQLColumn){
+        Object value1 = o1.getValue(propertySQLColumn.columnIndex() + 1);
         EasyCheck.assertElse(value1==null||value1 instanceof Comparable<?>,"order by value must implements Comparable");
-        Object value2 = o2.getValue(propertySqlColumn.columnIndex() + 1);
+        Object value2 = o2.getValue(propertySQLColumn.columnIndex() + 1);
         EasyCheck.assertElse(value2==null||value2 instanceof Comparable<?>,"order by value must implements Comparable");
         boolean asc=true;
-        if(propertySqlColumn instanceof PropertyOrder){
-            PropertyOrder propertyOrder = (PropertyOrder) propertySqlColumn;
+        if(propertySQLColumn instanceof PropertyOrder){
+            PropertyOrder propertyOrder = (PropertyOrder) propertySQLColumn;
             asc=propertyOrder.asc();
         }
-        boolean caseSensitive = valueCaseSensitive.get(propertySqlColumn.columnIndex());
+        boolean caseSensitive = valueCaseSensitive.get(propertySQLColumn.columnIndex());
         return CompareUtil.safeCompare((Comparable) value1,(Comparable)value2,asc,caseSensitive);
     }
 }

@@ -19,7 +19,7 @@ import com.easy.query.core.expression.segment.condition.predicate.Predicate;
 import com.easy.query.core.expression.segment.condition.predicate.ShardingPredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ValuePredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ValuesPredicate;
-import com.easy.query.core.expression.sql.expression.EasyEntityPredicateSQLExpression;
+import com.easy.query.core.expression.sql.expression.EntityPredicateSQLExpression;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.enums.sharding.ShardingOperatorEnum;
@@ -117,7 +117,7 @@ public class RoutePredicateDiscover<T> {
 
     public RoutePredicateExpression<T> getRouteParseExpression() {
         if (prepareParseResult instanceof PredicatePrepareParseResult) {
-            EasyEntityPredicateSQLExpression easyEntityPredicateSQLExpression = ((PredicatePrepareParseResult) prepareParseResult).getEasyEntityPredicateSQLExpression();
+            EntityPredicateSQLExpression easyEntityPredicateSQLExpression = ((PredicatePrepareParseResult) prepareParseResult).getEntityPredicateSQLExpression();
             return getPredicateSQLRouteParseExpression(easyEntityPredicateSQLExpression);
         } else if (prepareParseResult instanceof EntityPrepareParseResult) {
             List<Object> entities = ((EntityPrepareParseResult) prepareParseResult).getEntities();
@@ -130,7 +130,7 @@ public class RoutePredicateDiscover<T> {
         throw new UnsupportedOperationException(ClassUtil.getInstanceSimpleName(prepareParseResult));
     }
 
-    private RoutePredicateExpression<T> getPredicateSQLRouteParseExpression(EasyEntityPredicateSQLExpression easyEntityPredicateSQLExpression) {
+    private RoutePredicateExpression<T> getPredicateSQLRouteParseExpression(EntityPredicateSQLExpression easyEntityPredicateSQLExpression) {
 
         PredicateSegment where = easyEntityPredicateSQLExpression.getWhere();
         if (SQLSegmentUtil.isNotEmpty(where)) {

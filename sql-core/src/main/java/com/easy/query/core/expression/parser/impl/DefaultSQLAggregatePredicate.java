@@ -3,7 +3,7 @@ package com.easy.query.core.expression.parser.impl;
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.lambda.Property;
-import com.easy.query.core.expression.lambda.SQLExpression;
+import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.SQLAggregatePredicate;
 import com.easy.query.core.expression.segment.condition.OrPredicateSegment;
@@ -16,7 +16,6 @@ import com.easy.query.core.util.LambdaUtil;
 
 /**
  * @author xuejiaming
- * @FileName: DefaultSqlAggregatePredicate.java
  * @Description: 文件说明
  * @Date: 2023/2/18 22:41
  */
@@ -82,7 +81,7 @@ public class DefaultSQLAggregatePredicate<T1> implements SQLAggregatePredicate<T
     }
 
     @Override
-    public SQLAggregatePredicate<T1> and(boolean condition, SQLExpression<SQLAggregatePredicate<T1>> sqlAggregatePredicateSQLExpression) {
+    public SQLAggregatePredicate<T1> and(boolean condition, SQLExpression1<SQLAggregatePredicate<T1>> sqlAggregatePredicateSQLExpression) {
         if (condition) {
             this.rootPredicateSegment.addPredicateSegment(this.nextPredicateSegment);
             SQLAggregatePredicate<T1> sqlPredicate = entityExpressionBuilder.getRuntimeContext().getEasyQueryLambdaFactory().createSQLAggregatePredicate(index, entityExpressionBuilder, this.nextPredicateSegment);
@@ -100,7 +99,7 @@ public class DefaultSQLAggregatePredicate<T1> implements SQLAggregatePredicate<T
     }
 
     @Override
-    public SQLAggregatePredicate<T1> or(boolean condition, SQLExpression<SQLAggregatePredicate<T1>> sqlAggregatePredicateSQLExpression) {
+    public SQLAggregatePredicate<T1> or(boolean condition, SQLExpression1<SQLAggregatePredicate<T1>> sqlAggregatePredicateSQLExpression) {
         if (condition) {
             this.nextPredicateSegment = new OrPredicateSegment();
             this.rootPredicateSegment.addPredicateSegment(this.nextPredicateSegment);

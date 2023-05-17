@@ -23,7 +23,7 @@ import java.util.Collection;
  * @Date: 2023/3/3 13:28
  * @author xuejiaming
  */
-public interface EasySQLApiFactory {
+public interface SQLApiFactory {
 
     JdbcExecutor createJdbcExecutor(EasyQueryRuntimeContext runtimeContext);
 

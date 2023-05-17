@@ -7,7 +7,6 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 
 /**
  *
- * @FileName: SqlSelector.java
  * @Description: 文件说明
  * @Date: 2023/2/6 22:58
  * @author xuejiaming

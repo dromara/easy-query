@@ -16,7 +16,7 @@ public enum SQLUnionEnum {
         this.sql = sql;
     }
 
-    public String getSql() {
+    public String getSQL() {
         return sql;
     }
 }

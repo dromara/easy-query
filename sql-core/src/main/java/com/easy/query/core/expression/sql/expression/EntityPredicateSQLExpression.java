@@ -8,6 +8,6 @@ import com.easy.query.core.expression.segment.condition.PredicateSegment;
  *
  * @author xuejiaming
  */
-public interface EasyEntityPredicateSQLExpression extends EasyEntitySQLExpression {
+public interface EntityPredicateSQLExpression extends EntitySQLExpression {
     PredicateSegment getWhere();
 }

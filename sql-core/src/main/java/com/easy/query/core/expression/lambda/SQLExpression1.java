@@ -8,7 +8,7 @@ package com.easy.query.core.expression.lambda;
  * @author xuejiaming
  */
 @FunctionalInterface
-public interface SQLExpression<T1> {
+public interface SQLExpression1<T1> {
 
     void apply(T1 p1);
 }

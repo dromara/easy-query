@@ -7,12 +7,11 @@ import com.easy.query.core.expression.segment.SQLSegment;
 import java.util.*;
 
 /**
- * @FileName: UpdateSetSqlSegmentBuilder.java
  * @Description: 文件说明
  * @Date: 2023/2/24 22:15
  * @author xuejiaming
  */
-public class UpdateSetSQLBuilderSegment extends AbstractSqlBuilderSegment {
+public class UpdateSetSQLBuilderSegment extends AbstractSQLBuilderSegment {
 
     @Override
     public String toSQL(SQLParameterCollector sqlParameterCollector) {
@@ -33,8 +32,8 @@ public class UpdateSetSQLBuilderSegment extends AbstractSqlBuilderSegment {
 
     @Override
     public SQLBuilderSegment cloneSQLBuilder() {
-        UpdateSetSQLBuilderSegment updateSetSqlBuilderSegment = new UpdateSetSQLBuilderSegment();
-        copyTo(updateSetSqlBuilderSegment);
-        return updateSetSqlBuilderSegment;
+        UpdateSetSQLBuilderSegment updateSetSQLBuilderSegment = new UpdateSetSQLBuilderSegment();
+        copyTo(updateSetSQLBuilderSegment);
+        return updateSetSQLBuilderSegment;
     }
 }

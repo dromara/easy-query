@@ -7,7 +7,6 @@ import com.easy.query.core.exception.EasyQueryConcurrentException;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 
 /**
- * @FileName: AbstractSqlExecuteRows.java
  * @Description: 文件说明
  * @Date: 2023/3/17 17:14
  * @author xuejiaming

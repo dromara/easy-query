@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * @FileName: DefaultSqlColumnSelector.java
  * @Description: 文件说明
  * @Date: 2023/2/8 12:26
  * @author xuejiaming

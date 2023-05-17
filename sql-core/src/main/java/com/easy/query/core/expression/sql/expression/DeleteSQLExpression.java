@@ -6,8 +6,8 @@ package com.easy.query.core.expression.sql.expression;
  *
  * @author xuejiaming
  */
-public interface EasyDeleteSQLExpression extends EasyEntityPredicateSQLExpression {
+public interface DeleteSQLExpression extends EntityPredicateSQLExpression {
 
     @Override
-    EasyDeleteSQLExpression cloneSQLExpression();
+    DeleteSQLExpression cloneSQLExpression();
 }

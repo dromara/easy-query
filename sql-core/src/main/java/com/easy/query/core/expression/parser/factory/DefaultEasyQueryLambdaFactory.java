@@ -33,17 +33,17 @@ public class DefaultEasyQueryLambdaFactory implements EasyQueryLambdaFactory {
     }
 
     @Override
-    public <T1> SQLColumnSelector<T1> createSqlColumnSelector(int index, EntityExpressionBuilder sqlEntityExpression, SQLBuilderSegment sqlSegmentBuilder) {
+    public <T1> SQLColumnSelector<T1> createSQLColumnSelector(int index, EntityExpressionBuilder sqlEntityExpression, SQLBuilderSegment sqlSegmentBuilder) {
         return new DefaultSQLColumnSelector<>(index,sqlEntityExpression,sqlSegmentBuilder);
     }
 
     @Override
-    public <T1> SQLColumnSelector<T1> createSqlColumnOrderSelector(int index, EntityExpressionBuilder sqlEntityExpression, SQLBuilderSegment sqlSegmentBuilder, boolean asc) {
+    public <T1> SQLColumnSelector<T1> createSQLColumnOrderSelector(int index, EntityExpressionBuilder sqlEntityExpression, SQLBuilderSegment sqlSegmentBuilder, boolean asc) {
         return new DefaultSQLColumnSelector<>(index,sqlEntityExpression,sqlSegmentBuilder);
     }
 
     @Override
-    public <T1, TR> SQLColumnAsSelector<T1, TR> createSqlColumnAsSelector(int index, EntityExpressionBuilder sqlEntityExpression, SQLBuilderSegment sqlSegmentBuilder, Class<TR> resultClass) {
+    public <T1, TR> SQLColumnAsSelector<T1, TR> createSQLColumnAsSelector(int index, EntityExpressionBuilder sqlEntityExpression, SQLBuilderSegment sqlSegmentBuilder, Class<TR> resultClass) {
         return new DefaultSQLColumnAsSelector<T1,TR>(index,sqlEntityExpression,sqlSegmentBuilder,resultClass);
     }
 

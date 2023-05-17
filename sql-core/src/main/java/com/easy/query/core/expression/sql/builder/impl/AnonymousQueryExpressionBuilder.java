@@ -3,8 +3,8 @@ package com.easy.query.core.expression.sql.builder.impl;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.SQLAnonymousEntityQueryExpressionBuilder;
-import com.easy.query.core.expression.sql.expression.EasyQuerySQLExpression;
-import com.easy.query.core.expression.sql.expression.impl.AnonymousQuerySQLExpression;
+import com.easy.query.core.expression.sql.expression.QuerySQLExpression;
+import com.easy.query.core.expression.sql.expression.impl.AnonymousQuerySQLExpressionImpl;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 
 /**
@@ -28,19 +28,10 @@ public class AnonymousQueryExpressionBuilder extends QueryExpressionBuilder impl
 
 
     @Override
-    public EasyQuerySQLExpression toExpression() {
-        return new AnonymousQuerySQLExpression(getRuntimeContext(), sql);
+    public QuerySQLExpression toExpression() {
+        return new AnonymousQuerySQLExpressionImpl(getRuntimeContext(), sql);
     }
 
-//    @Override
-//    public QueryExpressionBuilder cloneSqlQueryExpressionBuilder() {
-//        AnonymousQueryExpressionBuilder anonymousQueryExpressionBuilder = new AnonymousQueryExpressionBuilder(sql, sqlExpressionContext);
-//
-//        for (EntityTableExpressionBuilder table : super.tables) {
-//            anonymousQueryExpressionBuilder.tables.add(table.copyEntityTableExpressionBuilder());
-//        }
-//        return anonymousQueryExpressionBuilder;
-//    }
 
 
     @Override

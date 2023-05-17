@@ -2,11 +2,11 @@ package com.easy.query.core.expression.sql.expression.impl;
 
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameterCollector;
+import com.easy.query.core.expression.sql.expression.QuerySQLExpression;
 import com.easy.query.core.expression.sql.expression.factory.EasyExpressionFactory;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
-import com.easy.query.core.expression.sql.expression.EasyQuerySQLExpression;
-import com.easy.query.core.expression.sql.expression.EasyTableSQLExpression;
+import com.easy.query.core.expression.sql.expression.TableSQLExpression;
 import com.easy.query.core.util.SQLExpressionUtil;
 import com.easy.query.core.util.SQLSegmentUtil;
 
@@ -20,7 +20,7 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public class QuerySQLExpression implements EasyQuerySQLExpression {
+public class QuerySQLExpressionImpl implements QuerySQLExpression {
 
     protected SQLBuilderSegment projects;
     protected PredicateSegment where;
@@ -31,10 +31,10 @@ public class QuerySQLExpression implements EasyQuerySQLExpression {
     protected long offset;
     protected long rows;
     protected boolean distinct;
-    protected final List<EasyTableSQLExpression> tables=new ArrayList<>();
+    protected final List<TableSQLExpression> tables=new ArrayList<>();
     protected final EasyQueryRuntimeContext runtimeContext;
 
-    public QuerySQLExpression(EasyQueryRuntimeContext runtimeContext) {
+    public QuerySQLExpressionImpl(EasyQueryRuntimeContext runtimeContext) {
         this.runtimeContext = runtimeContext;
     }
 
@@ -138,7 +138,7 @@ public class QuerySQLExpression implements EasyQuerySQLExpression {
         this.distinct = distinct;
     }
     @Override
-    public List<EasyTableSQLExpression> getTables() {
+    public List<TableSQLExpression> getTables() {
         return tables;
     }
 
@@ -152,11 +152,11 @@ public class QuerySQLExpression implements EasyQuerySQLExpression {
 
         sql.append(this.projects.toSQL(sqlParameterCollector));
 
-        Iterator<EasyTableSQLExpression> iterator = getTables().iterator();
-        EasyTableSQLExpression firstTable = iterator.next();
+        Iterator<TableSQLExpression> iterator = getTables().iterator();
+        TableSQLExpression firstTable = iterator.next();
         sql.append(firstTable.toSQL(sqlParameterCollector));
         while (iterator.hasNext()) {
-            EasyTableSQLExpression table = iterator.next();
+            TableSQLExpression table = iterator.next();
             sql.append(table.toSQL(sqlParameterCollector));// [from table alias] | [left join table alias] 匿名表 应该使用  [left join (table) alias]
 
             PredicateSegment on = table.getOn();
@@ -213,10 +213,10 @@ public class QuerySQLExpression implements EasyQuerySQLExpression {
     }
 
     @Override
-    public EasyQuerySQLExpression cloneSQLExpression() {
+    public com.easy.query.core.expression.sql.expression.QuerySQLExpression cloneSQLExpression() {
 
         EasyExpressionFactory expressionFactory = getRuntimeContext().getExpressionFactory();
-        EasyQuerySQLExpression easyQuerySQLExpression = expressionFactory.createEasyQuerySQLExpression(getRuntimeContext());
+        com.easy.query.core.expression.sql.expression.QuerySQLExpression easyQuerySQLExpression = expressionFactory.createEasyQuerySQLExpression(getRuntimeContext());
 
         if(SQLSegmentUtil.isNotEmpty(this.where)){
             easyQuerySQLExpression.setWhere(where.clonePredicateSegment());
@@ -238,7 +238,7 @@ public class QuerySQLExpression implements EasyQuerySQLExpression {
         }
         easyQuerySQLExpression.setOffset(this.offset);
         easyQuerySQLExpression.setRows(this.rows);
-        for (EasyTableSQLExpression table : this.tables) {
+        for (TableSQLExpression table : this.tables) {
             easyQuerySQLExpression.getTables().add(table.cloneSQLExpression());
         }
         return easyQuerySQLExpression;

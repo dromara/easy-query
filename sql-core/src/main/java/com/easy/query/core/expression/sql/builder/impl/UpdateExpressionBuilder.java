@@ -10,7 +10,7 @@ import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.plugin.version.EasyVersionStrategy;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnValuePredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnVersionPropertyPredicate;
-import com.easy.query.core.expression.sql.expression.EasyUpdateSQLExpression;
+import com.easy.query.core.expression.sql.expression.UpdateSQLExpression;
 import com.easy.query.core.expression.sql.expression.factory.EasyExpressionFactory;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
@@ -45,7 +45,6 @@ import java.util.*;
 
 /**
  * @author xuejiaming
- * @FileName: EasySqlUpdateExpression.java
  * @Description: 文件说明
  * @Date: 2023/3/4 17:05
  */
@@ -341,7 +340,7 @@ public  class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionB
     }
 
     @Override
-    public EasyUpdateSQLExpression toExpression() {
+    public UpdateSQLExpression toExpression() {
         if (isExpressionUpdate) {
             return toUpdateExpression();
         } else {
@@ -350,7 +349,7 @@ public  class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionB
     }
 
     @Override
-    public EasyUpdateSQLExpression toExpression(Object entity) {
+    public UpdateSQLExpression toExpression(Object entity) {
 
         EntityTableExpressionBuilder table = getTables().get(0);
         AndPredicateSegment where = new AndPredicateSegment(true);
@@ -365,13 +364,13 @@ public  class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionB
         }
         EasyQueryRuntimeContext runtimeContext = getRuntimeContext();
         EasyExpressionFactory expressionFactory = runtimeContext.getExpressionFactory();
-        EasyUpdateSQLExpression easyUpdateSQLExpression = expressionFactory.createEasyUpdateSQLExpression(runtimeContext, table.toExpression());
+        UpdateSQLExpression easyUpdateSQLExpression = expressionFactory.createEasyUpdateSQLExpression(runtimeContext, table.toExpression());
         updateSet.copyTo(easyUpdateSQLExpression.getSetColumns());
         sqlWhere.copyTo(easyUpdateSQLExpression.getWhere());
         return easyUpdateSQLExpression;
     }
 
-    private EasyUpdateSQLExpression toUpdateExpression(){
+    private UpdateSQLExpression toUpdateExpression(){
 
         checkTable();
         if (!hasSetColumns()) {
@@ -388,7 +387,7 @@ public  class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionB
         SQLBuilderSegment updateSet = buildSetSQLSegment(table);
         EasyQueryRuntimeContext runtimeContext = getRuntimeContext();
         EasyExpressionFactory expressionFactory = runtimeContext.getExpressionFactory();
-        EasyUpdateSQLExpression easyUpdateSQLExpression = expressionFactory.createEasyUpdateSQLExpression(runtimeContext, table.toExpression());
+        UpdateSQLExpression easyUpdateSQLExpression = expressionFactory.createEasyUpdateSQLExpression(runtimeContext, table.toExpression());
         updateSet.copyTo(easyUpdateSQLExpression.getSetColumns());
         sqlWhere.copyTo(easyUpdateSQLExpression.getWhere());
         return easyUpdateSQLExpression;

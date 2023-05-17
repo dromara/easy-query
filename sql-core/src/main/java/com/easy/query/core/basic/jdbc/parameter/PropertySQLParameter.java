@@ -10,7 +10,6 @@ import com.easy.query.core.util.BeanUtil;
 
 /**
  * @author xuejiaming
- * @FileName: EntitySqlParameter.java
  * @Description: 文件说明
  * @Date: 2023/2/28 20:47
  */

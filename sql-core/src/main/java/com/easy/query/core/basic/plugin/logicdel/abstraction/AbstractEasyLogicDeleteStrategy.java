@@ -4,7 +4,7 @@ import com.easy.query.core.basic.plugin.logicdel.EasyLogicDeleteStrategy;
 import com.easy.query.core.basic.plugin.logicdel.LogicDeleteBuilder;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.lambda.Property;
-import com.easy.query.core.expression.lambda.SQLExpression;
+import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.SQLWherePredicate;
 import com.easy.query.core.expression.parser.core.SQLColumnSetter;
 import com.easy.query.core.metadata.EntityMetadata;
@@ -33,10 +33,10 @@ public abstract class AbstractEasyLogicDeleteStrategy implements EasyLogicDelete
             throw new EasyQueryException(ClassUtil.getSimpleName(entityMetadata.getEntityClass())+"."+propertyName+" logic delete not support, property type not allowed");
         }
         Property<Object, ?> lambdaProperty = builder.getPropertyLambda();
-        SQLExpression<SQLWherePredicate<Object>> predicateFilterExpression = getPredicateFilterExpression(builder,lambdaProperty);
-        SQLExpression<SQLColumnSetter<Object>> deletedSQLExpression = getDeletedSQLExpression(builder,lambdaProperty);
+        SQLExpression1<SQLWherePredicate<Object>> predicateFilterExpression = getPredicateFilterExpression(builder,lambdaProperty);
+        SQLExpression1<SQLColumnSetter<Object>> deletedSQLExpression = getDeletedSQLExpression(builder,lambdaProperty);
         builder.configure(predicateFilterExpression,deletedSQLExpression);
     }
-    protected abstract SQLExpression<SQLWherePredicate<Object>> getPredicateFilterExpression(LogicDeleteBuilder builder, Property<Object,?> lambdaProperty);
-    protected abstract SQLExpression<SQLColumnSetter<Object>> getDeletedSQLExpression(LogicDeleteBuilder builder, Property<Object,?> lambdaProperty);
+    protected abstract SQLExpression1<SQLWherePredicate<Object>> getPredicateFilterExpression(LogicDeleteBuilder builder, Property<Object,?> lambdaProperty);
+    protected abstract SQLExpression1<SQLColumnSetter<Object>> getDeletedSQLExpression(LogicDeleteBuilder builder, Property<Object,?> lambdaProperty);
 }

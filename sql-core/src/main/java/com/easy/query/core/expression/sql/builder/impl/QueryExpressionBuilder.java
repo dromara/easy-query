@@ -11,9 +11,9 @@ import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.SQLEntityQueryExpressionBuilder;
-import com.easy.query.core.expression.sql.expression.EasyQuerySQLExpression;
-import com.easy.query.core.expression.sql.expression.EasySQLExpression;
-import com.easy.query.core.expression.sql.expression.EasyTableSQLExpression;
+import com.easy.query.core.expression.sql.expression.QuerySQLExpression;
+import com.easy.query.core.expression.sql.expression.SQLExpression;
+import com.easy.query.core.expression.sql.expression.TableSQLExpression;
 import com.easy.query.core.expression.sql.builder.internal.AbstractPredicateEntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
@@ -25,7 +25,6 @@ import java.util.Iterator;
 
 /**
  * @author xuejiaming
- * @FileName: EasySqlExpressionSegment.java
  * @Description: 文件说明
  * @Date: 2023/3/3 22:10
  */
@@ -165,7 +164,7 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
     }
 
     @Override
-    public EasyQuerySQLExpression toExpression() {
+    public QuerySQLExpression toExpression() {
         int tableCount = getTables().size();
         if (tableCount == 0) {
             throw new EasyQueryException("未找到查询表信息");
@@ -175,11 +174,11 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
         EntityTableExpressionBuilder firstTable = iterator.next();
         //如果有order需要将order移到内部表达式
         if (emptySelect && tableCount == 1 && (firstTable instanceof AnonymousEntityTableExpressionBuilder && !(((AnonymousEntityTableExpressionBuilder) firstTable).getEntityQueryExpressionBuilder() instanceof SQLEntityQueryExpressionBuilder))) {
-            return (EasyQuerySQLExpression) toTableExpressionSQL(firstTable, true);
+            return (QuerySQLExpression) toTableExpressionSQL(firstTable, true);
         }
         EasyQueryRuntimeContext runtimeContext = getRuntimeContext();
         EasyExpressionFactory expressionFactory = runtimeContext.getExpressionFactory();
-        EasyQuerySQLExpression easyQuerySQLExpression = expressionFactory.createEasyQuerySQLExpression(runtimeContext);
+        QuerySQLExpression easyQuerySQLExpression = expressionFactory.createEasyQuerySQLExpression(runtimeContext);
         easyQuerySQLExpression.setDistinct(isDistinct());
 
         if (emptySelect) {
@@ -195,10 +194,10 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
         } else {
             easyQuerySQLExpression.setProjects(getProjects());
         }
-        easyQuerySQLExpression.getTables().add((EasyTableSQLExpression) toTableExpressionSQL(firstTable, false));
+        easyQuerySQLExpression.getTables().add((TableSQLExpression) toTableExpressionSQL(firstTable, false));
         while (iterator.hasNext()) {
             EntityTableExpressionBuilder table = iterator.next();
-            EasyTableSQLExpression tableExpression = (EasyTableSQLExpression) toTableExpressionSQL(table, false);
+            TableSQLExpression tableExpression = (TableSQLExpression) toTableExpressionSQL(table, false);
             easyQuerySQLExpression.getTables().add(tableExpression);
             PredicateSegment on = getTableOnWithQueryFilter(table);
             if (on != null && on.isNotEmpty()) {
@@ -218,7 +217,7 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
         return easyQuerySQLExpression;
     }
 
-    protected EasySQLExpression toTableExpressionSQL(EntityTableExpressionBuilder entityTableExpressionBuilder, boolean onlySingleAnonymousTable) {
+    protected SQLExpression toTableExpressionSQL(EntityTableExpressionBuilder entityTableExpressionBuilder, boolean onlySingleAnonymousTable) {
         if (entityTableExpressionBuilder instanceof AnonymousEntityTableExpressionBuilder) {
 
             EntityQueryExpressionBuilder sqlEntityQueryExpression = ((AnonymousEntityTableExpressionBuilder) entityTableExpressionBuilder).getEntityQueryExpressionBuilder();

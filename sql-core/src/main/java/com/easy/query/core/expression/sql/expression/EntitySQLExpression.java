@@ -10,13 +10,13 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public interface EasyEntitySQLExpression extends EasySQLExpression {
+public interface EntitySQLExpression extends SQLExpression {
     EasyQueryRuntimeContext getRuntimeContext();
-    List<EasyTableSQLExpression> getTables();
-    default EasyTableSQLExpression getTable(int index){
+    List<TableSQLExpression> getTables();
+    default TableSQLExpression getTable(int index){
         return getTables().get(index);
     }
 
     @Override
-    EasyEntitySQLExpression cloneSQLExpression();
+    EntitySQLExpression cloneSQLExpression();
 }

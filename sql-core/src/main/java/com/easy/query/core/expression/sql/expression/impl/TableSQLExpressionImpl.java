@@ -7,7 +7,7 @@ import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
-import com.easy.query.core.expression.sql.expression.EasyTableSQLExpression;
+import com.easy.query.core.expression.sql.expression.TableSQLExpression;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.util.ClassUtil;
 import com.easy.query.core.util.SQLExpressionUtil;
@@ -23,7 +23,7 @@ import java.util.function.Function;
  *
  * @author xuejiaming
  */
-public class TableSQLExpression implements EasyTableSQLExpression {
+public class TableSQLExpressionImpl implements TableSQLExpression {
 
     protected final MultiTableTypeEnum multiTableType;
     private final EasyQueryRuntimeContext runtimeContext;
@@ -32,7 +32,7 @@ public class TableSQLExpression implements EasyTableSQLExpression {
     protected PredicateSegment on;
     protected Function<String, String> tableNameAs;
 
-    public TableSQLExpression(TableAvailable entityTable, MultiTableTypeEnum multiTableType, EasyQueryRuntimeContext runtimeContext) {
+    public TableSQLExpressionImpl(TableAvailable entityTable, MultiTableTypeEnum multiTableType, EasyQueryRuntimeContext runtimeContext) {
         this.entityTable = entityTable;
         this.multiTableType = multiTableType;
         this.runtimeContext = runtimeContext;
@@ -127,8 +127,8 @@ public class TableSQLExpression implements EasyTableSQLExpression {
     }
 
     @Override
-    public EasyTableSQLExpression cloneSQLExpression() {
-        TableSQLExpression tableSQLExpression = new TableSQLExpression(entityTable, multiTableType,runtimeContext);
+    public com.easy.query.core.expression.sql.expression.TableSQLExpression cloneSQLExpression() {
+        TableSQLExpressionImpl tableSQLExpression = new TableSQLExpressionImpl(entityTable, multiTableType,runtimeContext);
         if(SQLSegmentUtil.isNotEmpty(on)){
             PredicateSegment predicateSegment = on.clonePredicateSegment();
             tableSQLExpression.setOn(predicateSegment);

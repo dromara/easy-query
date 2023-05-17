@@ -5,8 +5,8 @@ import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.builder.SQLAnonymousUnionEntityQueryExpressionBuilder;
-import com.easy.query.core.expression.sql.expression.EasyQuerySQLExpression;
-import com.easy.query.core.expression.sql.expression.impl.AnonymousUnionQuerySqlExpression;
+import com.easy.query.core.expression.sql.expression.QuerySQLExpression;
+import com.easy.query.core.expression.sql.expression.impl.AnonymousUnionQuerySQLExpressionImpl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,25 +40,15 @@ public class AnonymousUnionQueryExpressionBuilder extends QueryExpressionBuilder
 
 
     @Override
-    public EasyQuerySQLExpression toExpression() {
-       List<EasyQuerySQLExpression> easyQuerySqlExpressions = new ArrayList<>(entityQueryExpressionBuilders.size());
+    public QuerySQLExpression toExpression() {
+       List<QuerySQLExpression> querySQLExpressions = new ArrayList<>(entityQueryExpressionBuilders.size());
         for (EntityQueryExpressionBuilder entityQueryExpressionBuilder : entityQueryExpressionBuilders) {
 
-            EasyQuerySQLExpression expression = entityQueryExpressionBuilder.toExpression();
-            easyQuerySqlExpressions.add(expression);
+            QuerySQLExpression expression = entityQueryExpressionBuilder.toExpression();
+            querySQLExpressions.add(expression);
         }
-        return new AnonymousUnionQuerySqlExpression(getRuntimeContext(), easyQuerySqlExpressions,sqlUnion);
+        return new AnonymousUnionQuerySQLExpressionImpl(getRuntimeContext(), querySQLExpressions,sqlUnion);
     }
-
-//    @Override
-//    public QueryExpressionBuilder cloneSqlQueryExpressionBuilder() {
-//        AnonymousQueryExpressionBuilder anonymousQueryExpressionBuilder = new AnonymousQueryExpressionBuilder(sql, sqlExpressionContext);
-//
-//        for (EntityTableExpressionBuilder table : super.tables) {
-//            anonymousQueryExpressionBuilder.tables.add(table.copyEntityTableExpressionBuilder());
-//        }
-//        return anonymousQueryExpressionBuilder;
-//    }
 
 
     @Override

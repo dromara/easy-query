@@ -4,7 +4,7 @@ import com.easy.query.core.expression.executor.parser.EntityPrepareParseResult;
 import com.easy.query.core.expression.executor.parser.InsertPrepareParseResult;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityToExpressionBuilder;
-import com.easy.query.core.expression.sql.expression.EasyEntitySQLExpression;
+import com.easy.query.core.expression.sql.expression.EntitySQLExpression;
 import com.easy.query.core.sharding.rewrite.RewriteContext;
 import com.easy.query.core.sharding.rewrite.RewriteRouteUnit;
 import com.easy.query.core.sharding.route.RouteUnit;
@@ -45,7 +45,7 @@ public class ShardingEntityExecutionCreator extends ShardingBaseExecutionCreator
     }
 
     @Override
-    protected EasyEntitySQLExpression createEasyEntitySqlExpression(RewriteRouteUnit rewriteRouteUnit) {
+    protected EntitySQLExpression createEntitySQLExpression(RewriteRouteUnit rewriteRouteUnit) {
         EntityExpressionBuilder entityExpressionBuilder = entityPrepareParseResult.getEntityExpressionBuilder();
         if(entityExpressionBuilder instanceof EntityToExpressionBuilder){
             EntityToExpressionBuilder entityToExpressionBuilder = (EntityToExpressionBuilder) entityExpressionBuilder;

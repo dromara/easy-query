@@ -1,6 +1,6 @@
 package com.easy.query.core.expression.executor.query.base;
 
-import com.easy.query.core.expression.sql.expression.EasyEntitySQLExpression;
+import com.easy.query.core.expression.sql.expression.EntitySQLExpression;
 import com.easy.query.core.basic.jdbc.executor.internal.common.ExecutionUnit;
 
 import java.util.Collections;
@@ -15,9 +15,9 @@ import java.util.List;
 public class PredicateExecutionCreator extends BaseExecutionCreator{
 
     private final String dataSource;
-    private final EasyEntitySQLExpression easyEntitySQLExpression;
+    private final EntitySQLExpression easyEntitySQLExpression;
 
-    public PredicateExecutionCreator(String dataSource, EasyEntitySQLExpression easyEntitySQLExpression) {
+    public PredicateExecutionCreator(String dataSource, EntitySQLExpression easyEntitySQLExpression) {
         this.dataSource = dataSource;
         this.easyEntitySQLExpression = easyEntitySQLExpression;
     }

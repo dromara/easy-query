@@ -10,7 +10,7 @@ import com.easy.query.core.expression.sql.builder.LambdaEntityExpressionBuilder;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.configuration.EasyQueryConfiguration;
-import com.easy.query.core.expression.lambda.SQLExpression;
+import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.basic.plugin.interceptor.EasyPredicateFilterInterceptor;
@@ -24,8 +24,6 @@ import java.util.Objects;
 
 /**
  * @author xuejiaming
- * @FileName: AbstractSqlPredicateEntityExpression.java
- * @Description: 文件说明
  * @Date: 2023/3/15 21:58
  */
 public abstract class AbstractPredicateEntityExpressionBuilder extends AbstractEntityExpressionBuilder implements LambdaEntityExpressionBuilder {
@@ -52,7 +50,7 @@ public abstract class AbstractPredicateEntityExpressionBuilder extends AbstractE
             SQLWherePredicate<Object> sqlPredicate = easyQueryLambdaFactory.createSQLPredicate(table.getIndex(), this, predicateSegment);
 
             if (useLogicDelete(entityMetadata)) {
-                SQLExpression<SQLWherePredicate<Object>> logicDeleteQueryFilterExpression = table.getLogicDeleteQueryFilterExpression();
+                SQLExpression1<SQLWherePredicate<Object>> logicDeleteQueryFilterExpression = table.getLogicDeleteQueryFilterExpression();
                 logicDeleteQueryFilterExpression.apply(sqlPredicate);
             }
 

@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @FileName: AbstractSqlEntityExpression.java
  * @Description: 文件说明
  * @Date: 2023/3/6 08:58
  * @author xuejiaming
@@ -43,21 +42,6 @@ public abstract class AbstractEntityExpressionBuilder implements EntityExpressio
     public List<EntityTableExpressionBuilder> getTables() {
         return tables;
     }
-//
-//    public String getQuoteName(String value) {
-//        return sqlExpressionContext.getQuoteName(value);
-//    }
-//
-//    @Override
-//    public String getSqlOwnerColumn(EntityTableExpressionBuilder table, String propertyName) {
-//        String alias = table.getAlias();
-//        String columnName = table.getColumnName(propertyName);
-//        String quoteName = getQuoteName(columnName);
-//        if (alias == null) {
-//            return quoteName;
-//        }
-//        return alias + "." + quoteName;
-//    }
     @Override
     public void setLogicDelete(boolean logicDelete) {
         if(logicDelete){

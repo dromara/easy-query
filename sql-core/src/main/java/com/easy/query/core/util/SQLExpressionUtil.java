@@ -23,7 +23,6 @@ import com.easy.query.core.expression.sql.builder.impl.AnonymousUnionQueryExpres
 
 
 /**
- * @FileName: SqlExpressionUtil.java
  * @Description: 文件说明
  * @Date: 2023/3/7 12:32
  * @author xuejiaming

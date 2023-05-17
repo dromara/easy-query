@@ -38,14 +38,14 @@ public class ColumnValuePredicate implements ValuePredicate, ShardingPredicate {
     @Override
     public String toSQL(SQLParameterCollector sqlParameterCollector) {
         EasyConstSQLParameter constSQLParameter = new EasyConstSQLParameter(table, propertyName, val);
-        String compareSql = compare.getSQL();
-        if(Objects.equals(SQLPredicateCompareEnum.LIKE.getSQL(),compareSql)){
+        String compareSQL = compare.getSQL();
+        if(Objects.equals(SQLPredicateCompareEnum.LIKE.getSQL(),compareSQL)){
             SQLUtil.addParameter(sqlParameterCollector,new ConstLikeSQLParameter(constSQLParameter));
         }else{
             SQLUtil.addParameter(sqlParameterCollector,constSQLParameter);
         }
         String sqlColumnSegment = SQLExpressionUtil.getSQLOwnerColumn(runtimeContext,table,propertyName);
-        return sqlColumnSegment + " " + compareSql + " ?";
+        return sqlColumnSegment + " " + compareSQL + " ?";
     }
 
     @Override
@@ -71,8 +71,8 @@ public class ColumnValuePredicate implements ValuePredicate, ShardingPredicate {
     @Override
     public SQLParameter getParameter() {
         EasyConstSQLParameter constSQLParameter = new EasyConstSQLParameter(table, propertyName, val);
-        String compareSql = compare.getSQL();
-        if(Objects.equals(SQLPredicateCompareEnum.LIKE.getSQL(),compareSql)) {
+        String compareSQL = compare.getSQL();
+        if(Objects.equals(SQLPredicateCompareEnum.LIKE.getSQL(),compareSQL)) {
              return new ConstLikeSQLParameter(constSQLParameter);
         }
         return constSQLParameter;

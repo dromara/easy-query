@@ -7,10 +7,10 @@ import com.easy.query.core.configuration.dialect.Dialect;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.expression.EntityTableAvailable;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.sql.expression.EasyTableSQLExpression;
-import com.easy.query.core.expression.sql.expression.impl.TableSQLExpression;
+import com.easy.query.core.expression.sql.expression.TableSQLExpression;
+import com.easy.query.core.expression.sql.expression.impl.TableSQLExpressionImpl;
 import com.easy.query.core.metadata.EntityMetadata;
-import com.easy.query.core.expression.lambda.SQLExpression;
+import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
@@ -64,7 +64,7 @@ public class TableExpressionBuilder implements EntityTableExpressionBuilder {
     }
 
     @Override
-    public SQLExpression<SQLWherePredicate<Object>> getLogicDeleteQueryFilterExpression() {
+    public SQLExpression1<SQLWherePredicate<Object>> getLogicDeleteQueryFilterExpression() {
         if (getEntityMetadata().enableLogicDelete()) {
             return getEntityMetadata().getLogicDeleteMetadata().getLogicDeletePredicateFilterExpression();
         }
@@ -72,7 +72,7 @@ public class TableExpressionBuilder implements EntityTableExpressionBuilder {
     }
 
     @Override
-    public SQLExpression<SQLColumnSetter<Object>> getLogicDeletedSQLExpression() {
+    public SQLExpression1<SQLColumnSetter<Object>> getLogicDeletedSQLExpression() {
         if (getEntityMetadata().enableLogicDelete()) {
             return getEntityMetadata().getLogicDeleteMetadata().getLogicDeletedSQLExpression();
         }
@@ -124,8 +124,8 @@ public class TableExpressionBuilder implements EntityTableExpressionBuilder {
     }
 
     @Override
-    public EasyTableSQLExpression toExpression() {
-        TableSQLExpression tableSQLExpression = new TableSQLExpression(entityTable, multiTableType,runtimeContext);
+    public TableSQLExpression toExpression() {
+        TableSQLExpressionImpl tableSQLExpression = new TableSQLExpressionImpl(entityTable, multiTableType,runtimeContext);
         tableSQLExpression.setTableNameAs(tableNameAs);
         return tableSQLExpression;
     }

@@ -1,7 +1,7 @@
 package com.easy.query.core.basic.api.select;
 
 import com.easy.query.core.basic.api.select.provider.EasyQuerySQLBuilderProvider2;
-import com.easy.query.core.expression.lambda.SQLExpression;
+import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.lambda.SQLExpression3;
 import com.easy.query.core.expression.parser.core.SQLColumnResultSelector;
@@ -37,12 +37,12 @@ public interface Queryable2<T1, T2> extends Queryable<T1> {
     }
     Queryable2<T1, T2> whereObject(boolean condition, Object object);
     @Override
-    default Queryable2<T1, T2> where(SQLExpression<SQLWherePredicate<T1>> whereExpression) {
+    default Queryable2<T1, T2> where(SQLExpression1<SQLWherePredicate<T1>> whereExpression) {
         return where(true, whereExpression);
     }
 
     @Override
-    Queryable2<T1, T2> where(boolean condition, SQLExpression<SQLWherePredicate<T1>> whereExpression);
+    Queryable2<T1, T2> where(boolean condition, SQLExpression1<SQLWherePredicate<T1>> whereExpression);
     default Queryable2<T1, T2> where(SQLExpression2<SQLWherePredicate<T1>, SQLWherePredicate<T2>> whereExpression) {
         return where(true, whereExpression);
     }

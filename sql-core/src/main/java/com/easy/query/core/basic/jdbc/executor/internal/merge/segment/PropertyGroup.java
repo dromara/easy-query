@@ -6,5 +6,5 @@ package com.easy.query.core.basic.jdbc.executor.internal.merge.segment;
  *
  * @author xuejiaming
  */
-public interface PropertyGroup extends PropertySqlColumn{
+public interface PropertyGroup extends PropertySQLColumn {
 }

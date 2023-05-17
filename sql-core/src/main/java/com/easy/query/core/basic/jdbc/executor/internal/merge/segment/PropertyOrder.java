@@ -7,6 +7,6 @@ package com.easy.query.core.basic.jdbc.executor.internal.merge.segment;
  *
  * @author xuejiaming
  */
-public interface PropertyOrder extends PropertySqlColumn {
+public interface PropertyOrder extends PropertySQLColumn {
     boolean asc();
 }

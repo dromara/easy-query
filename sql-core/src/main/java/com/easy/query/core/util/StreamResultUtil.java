@@ -71,7 +71,7 @@ public final class StreamResultUtil {
         if (map == null) {
             throw new SQLException("cant create map:" + ClassUtil.getSimpleName(clazz));
         }
-        JdbcTypeHandlerManager easyJdbcTypeHandler = context.getRuntimeContext().getEasyJdbcTypeHandlerManager();
+        JdbcTypeHandlerManager easyJdbcTypeHandler = context.getRuntimeContext().getJdbcTypeHandlerManager();
         int columnCount = rsmd.getColumnCount();//有多少列
         EasyResultSet easyResultSet = new EasyResultSet(streamResult);
         for (int i = 0; i < columnCount; i++) {
@@ -97,7 +97,7 @@ public final class StreamResultUtil {
         }
         EasyResultSet easyResultSet = new EasyResultSet(streamResult);
         easyResultSet.setIndex(0);
-        JdbcTypeHandlerManager easyJdbcTypeHandler = context.getRuntimeContext().getEasyJdbcTypeHandlerManager();
+        JdbcTypeHandlerManager easyJdbcTypeHandler = context.getRuntimeContext().getJdbcTypeHandlerManager();
         JdbcTypeHandler handler = easyJdbcTypeHandler.getHandler(clazz);
         return handler.getValue(easyResultSet);
 
@@ -116,7 +116,7 @@ public final class StreamResultUtil {
         return resultList;
     }
     private static  <TResult> TResult mapToBean(ExecutorContext context, StreamResultSet streamResult, Class<TResult> clazz, ColumnMetadata[] columnMetadatas) throws SQLException {
-        JdbcTypeHandlerManager easyJdbcTypeHandler = context.getRuntimeContext().getEasyJdbcTypeHandlerManager();
+        JdbcTypeHandlerManager easyJdbcTypeHandler = context.getRuntimeContext().getJdbcTypeHandlerManager();
         TrackManager trackManager = context.getRuntimeContext().getTrackManager();
         boolean trackBean = trackBean(context, clazz);
         EasyResultSet easyResultSet = new EasyResultSet(streamResult);

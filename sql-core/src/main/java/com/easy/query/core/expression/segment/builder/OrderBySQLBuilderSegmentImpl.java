@@ -8,12 +8,11 @@ import com.easy.query.core.expression.segment.SQLSegment;
 import java.util.List;
 
 /**
- * @FileName: PredicateSqlSegmentBuilder.java
  * @Description: 文件说明
  * @Date: 2023/2/13 22:39
  * @author xuejiaming
  */
-public class OrderBySQLBuilderSegmentImpl extends AbstractSqlBuilderSegment {
+public class OrderBySQLBuilderSegmentImpl extends AbstractSQLBuilderSegment {
 
     @Override
     public String toSQL(SQLParameterCollector sqlParameterCollector) {
@@ -29,15 +28,15 @@ public class OrderBySQLBuilderSegmentImpl extends AbstractSqlBuilderSegment {
             if (sb.length() != 0) {
                 sb.insert(0, SQLKeywordEnum.DOT.toSQL());
             }
-            String orderSql = sqlSegment.toSQL(sqlParameterCollector);
+            String orderSQL = sqlSegment.toSQL(sqlParameterCollector);
             if (sb.length() == 0) {
-                sb.insert(0, orderSql);
+                sb.insert(0, orderSQL);
 
             } else {
                 if (asc == orderColumnSegment.isAsc()) {
-                    sb.insert(0, orderSql.substring(0,orderSql.length()-(asc?4:5)));//4=asc.length+1,5=desc.length+1
+                    sb.insert(0, orderSQL.substring(0,orderSQL.length()-(asc?4:5)));//4=asc.length+1,5=desc.length+1
                 }else{
-                    sb.insert(0, orderSql);
+                    sb.insert(0, orderSQL);
                 }
             }
             asc = orderColumnSegment.isAsc();
@@ -47,8 +46,8 @@ public class OrderBySQLBuilderSegmentImpl extends AbstractSqlBuilderSegment {
 
     @Override
     public SQLBuilderSegment cloneSQLBuilder() {
-        OrderBySQLBuilderSegmentImpl orderBySqlBuilderSegment = new OrderBySQLBuilderSegmentImpl();
-        copyTo(orderBySqlBuilderSegment);
-        return orderBySqlBuilderSegment;
+        OrderBySQLBuilderSegmentImpl orderBySQLBuilderSegment = new OrderBySQLBuilderSegmentImpl();
+        copyTo(orderBySQLBuilderSegment);
+        return orderBySQLBuilderSegment;
     }
 }

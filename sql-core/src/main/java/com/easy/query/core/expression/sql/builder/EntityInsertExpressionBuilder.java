@@ -1,10 +1,9 @@
 package com.easy.query.core.expression.sql.builder;
 
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
-import com.easy.query.core.expression.sql.expression.EasyInsertSQLExpression;
+import com.easy.query.core.expression.sql.expression.InsertSQLExpression;
 
 /**
- * @FileName: SqlEntityDeleteExpression.java
  * @Description: 文件说明
  * @Date: 2023/3/4 16:30
  * @author xuejiaming
@@ -12,10 +11,10 @@ import com.easy.query.core.expression.sql.expression.EasyInsertSQLExpression;
 public interface EntityInsertExpressionBuilder extends EntityExpressionBuilder,EntityToExpressionBuilder {
     SQLBuilderSegment getColumns();
     @Override
-    default EasyInsertSQLExpression toExpression(){
+    default InsertSQLExpression toExpression(){
         return toExpression(null);
     }
     @Override
-    EasyInsertSQLExpression toExpression(Object entity);
+    InsertSQLExpression toExpression(Object entity);
 
 }

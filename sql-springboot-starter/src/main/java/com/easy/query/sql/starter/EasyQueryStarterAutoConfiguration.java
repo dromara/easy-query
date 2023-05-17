@@ -74,22 +74,6 @@ public class EasyQueryStarterAutoConfiguration {
             }
         }
     }
-
-    //    @Bean
-//    @ConditionalOnProperty(name = "setDatabase",havingValue = "mssql")
-//    public Dialect msSqlDialect() {
-//        return new MsSqlDialect();
-//    }
-//    @Bean
-//    @ConditionalOnProperty(name = "setDatabase",havingValue = "pgsql")
-//    public Dialect pgSqlDialect() {
-//        return new PgSqlDialect();
-//    }
-//    @Bean
-//    @ConditionalOnProperty(name = "setDatabase",havingValue = "default",matchIfMissing = true)
-//    public Dialect defaultDialect() {
-//        return new DefaultDialect();
-//    }
     @Bean
     @ConditionalOnProperty(name = "easy-query.database", havingValue = "mysql")
     public DatabaseConfiguration mysqlDatabaseConfiguration() {

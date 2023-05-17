@@ -3,8 +3,8 @@ package com.easy.query.core.sharding.rewrite;
 import com.easy.query.core.expression.segment.OrderByColumnSegment;
 import com.easy.query.core.expression.segment.OrderColumnSegmentImpl;
 import com.easy.query.core.expression.segment.SQLSegment;
-import com.easy.query.core.expression.sql.expression.EasyEntitySQLExpression;
-import com.easy.query.core.expression.sql.expression.EasyQuerySQLExpression;
+import com.easy.query.core.expression.sql.expression.EntitySQLExpression;
+import com.easy.query.core.expression.sql.expression.QuerySQLExpression;
 import com.easy.query.core.sharding.route.RouteUnit;
 
 import java.util.List;
@@ -26,18 +26,18 @@ public class ReversePaginationRewriteRouteUnit  extends DefaultRewriteRouteUnit{
     }
 
     @Override
-    public EasyEntitySQLExpression rewrite(EasyEntitySQLExpression entitySqlExpression) {
-        EasyQuerySQLExpression easyQuerySqlExpression = (EasyQuerySQLExpression)super.rewrite(entitySqlExpression);
-        easyQuerySqlExpression.setOffset(rewriteOffset);
-        easyQuerySqlExpression.setRows(rewriteRows);
-        List<SQLSegment> sqlSegments = easyQuerySqlExpression.getOrder().cloneSQLBuilder().getSQLSegments();
-        easyQuerySqlExpression.getOrder().clear();
+    public EntitySQLExpression rewrite(EntitySQLExpression entitySQLExpression) {
+        QuerySQLExpression querySQLExpression = (QuerySQLExpression)super.rewrite(entitySQLExpression);
+        querySQLExpression.setOffset(rewriteOffset);
+        querySQLExpression.setRows(rewriteRows);
+        List<SQLSegment> sqlSegments = querySQLExpression.getOrder().cloneSQLBuilder().getSQLSegments();
+        querySQLExpression.getOrder().clear();
         for (SQLSegment sqlSegment : sqlSegments) {
             if(sqlSegment instanceof OrderByColumnSegment){
                 OrderByColumnSegment orderByColumnSegment = (OrderByColumnSegment) sqlSegment;
-                easyQuerySqlExpression.getOrder().append(new OrderColumnSegmentImpl(orderByColumnSegment.getTable(),orderByColumnSegment.getPropertyName(),entitySqlExpression.getRuntimeContext(),!orderByColumnSegment.isAsc()));
+                querySQLExpression.getOrder().append(new OrderColumnSegmentImpl(orderByColumnSegment.getTable(),orderByColumnSegment.getPropertyName(), entitySQLExpression.getRuntimeContext(),!orderByColumnSegment.isAsc()));
             }
         }
-        return easyQuerySqlExpression;
+        return querySQLExpression;
     }
 }

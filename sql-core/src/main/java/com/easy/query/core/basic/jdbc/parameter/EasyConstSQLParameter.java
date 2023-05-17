@@ -4,7 +4,6 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 
 /**
  * @author xuejiaming
- * @FileName: ConstSqlParameter.java
  * @Description: 文件说明
  * @Date: 2023/2/28 20:47
  */

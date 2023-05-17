@@ -7,7 +7,7 @@ import com.easy.query.core.basic.api.select.provider.EasyQuerySQLBuilderProvider
 import com.easy.query.core.basic.api.select.provider.Select2SQLProvider;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.exception.EasyQueryException;
-import com.easy.query.core.expression.lambda.SQLExpression;
+import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.lambda.SQLExpression3;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
@@ -130,7 +130,7 @@ public abstract class AbstractQueryable2<T1, T2> extends AbstractQueryable<T1> i
         return this;
     }
     @Override
-    public Queryable2<T1, T2> where(boolean condition, SQLExpression<SQLWherePredicate<T1>> whereExpression) {
+    public Queryable2<T1, T2> where(boolean condition, SQLExpression1<SQLWherePredicate<T1>> whereExpression) {
         super.where(condition,whereExpression);
         return this;
     }

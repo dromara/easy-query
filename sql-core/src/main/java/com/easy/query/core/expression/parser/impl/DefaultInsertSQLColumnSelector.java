@@ -14,7 +14,6 @@ import java.util.Collection;
 import java.util.Objects;
 
 /**
- * @FileName: DefaultSqlColumnSelector.java
  * @Description: 文件说明
  * @Date: 2023/2/12 21:36
  * @author xuejiaming

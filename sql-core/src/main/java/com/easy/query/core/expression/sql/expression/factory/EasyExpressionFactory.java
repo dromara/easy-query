@@ -2,12 +2,12 @@ package com.easy.query.core.expression.sql.expression.factory;
 
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.enums.SQLUnionEnum;
-import com.easy.query.core.expression.sql.expression.EasyAnonymousQuerySQLExpression;
-import com.easy.query.core.expression.sql.expression.EasyDeleteSQLExpression;
-import com.easy.query.core.expression.sql.expression.EasyInsertSQLExpression;
-import com.easy.query.core.expression.sql.expression.EasyQuerySQLExpression;
-import com.easy.query.core.expression.sql.expression.EasyTableSQLExpression;
-import com.easy.query.core.expression.sql.expression.EasyUpdateSQLExpression;
+import com.easy.query.core.expression.sql.expression.AnonymousQuerySQLExpression;
+import com.easy.query.core.expression.sql.expression.DeleteSQLExpression;
+import com.easy.query.core.expression.sql.expression.InsertSQLExpression;
+import com.easy.query.core.expression.sql.expression.QuerySQLExpression;
+import com.easy.query.core.expression.sql.expression.TableSQLExpression;
+import com.easy.query.core.expression.sql.expression.UpdateSQLExpression;
 
 import java.util.List;
 
@@ -18,10 +18,10 @@ import java.util.List;
  * @author xuejiaming
  */
 public interface EasyExpressionFactory {
-    EasyQuerySQLExpression createEasyQuerySQLExpression(EasyQueryRuntimeContext runtimeContext);
-    EasyInsertSQLExpression createEasyInsertSQLExpression(EasyQueryRuntimeContext runtimeContext, EasyTableSQLExpression easyTableSQLExpression);
-    EasyUpdateSQLExpression createEasyUpdateSQLExpression(EasyQueryRuntimeContext runtimeContext, EasyTableSQLExpression easyTableSQLExpression);
-    EasyDeleteSQLExpression createEasyDeleteSQLExpression(EasyQueryRuntimeContext runtimeContext, EasyTableSQLExpression easyTableSQLExpression);
-    EasyAnonymousQuerySQLExpression createEasyAnonymousQuerySQLExpression(EasyQueryRuntimeContext runtimeContext, String sql);
-    EasyAnonymousQuerySQLExpression createEasyAnonymousUnionQuerySQLExpression(EasyQueryRuntimeContext runtimeContext, List<EasyQuerySQLExpression> easyQuerySQLExpressions, SQLUnionEnum sqlUnion);
+    QuerySQLExpression createEasyQuerySQLExpression(EasyQueryRuntimeContext runtimeContext);
+    InsertSQLExpression createEasyInsertSQLExpression(EasyQueryRuntimeContext runtimeContext, TableSQLExpression easyTableSQLExpression);
+    UpdateSQLExpression createEasyUpdateSQLExpression(EasyQueryRuntimeContext runtimeContext, TableSQLExpression easyTableSQLExpression);
+    DeleteSQLExpression createEasyDeleteSQLExpression(EasyQueryRuntimeContext runtimeContext, TableSQLExpression easyTableSQLExpression);
+    AnonymousQuerySQLExpression createEasyAnonymousQuerySQLExpression(EasyQueryRuntimeContext runtimeContext, String sql);
+    AnonymousQuerySQLExpression createEasyAnonymousUnionQuerySQLExpression(EasyQueryRuntimeContext runtimeContext, List<QuerySQLExpression> easyQuerySQLExpressions, SQLUnionEnum sqlUnion);
 }

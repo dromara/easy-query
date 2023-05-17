@@ -23,6 +23,5 @@ public interface EasyQuerySQLBuilderProvider4<T1,T2,T3,T4> extends EasyQuerySQLB
 
     SQLColumnSelector<T4> getSQLColumnSelector4(SQLBuilderSegment sqlSegment0Builder);
     <TR> SQLColumnAsSelector<T4,TR> getSQLColumnAsSelector4(SQLBuilderSegment sqlSegment0Builder, Class<TR> resultClass);
-//    <TR> ColumnAsSelector<T4,TR> getAutoSqlColumnAsSelector4(SqlBuilderSegment sqlSegment0Builder,Class<TR> resultClass);
     <TR> SQLColumnResultSelector<T4,TR> getSQLColumnResultSelector4(SQLBuilderSegment sqlSegment0Builder);
 }

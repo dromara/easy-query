@@ -3,7 +3,7 @@ package com.easy.query.core.basic.jdbc.executor.internal.common;
 import com.easy.query.core.basic.jdbc.parameter.DefaultSQLParameterCollector;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameterCollector;
-import com.easy.query.core.expression.sql.expression.EasyEntitySQLExpression;
+import com.easy.query.core.expression.sql.expression.EntitySQLExpression;
 
 import java.util.List;
 
@@ -19,7 +19,7 @@ public class SQLRouteUnit {
     private final List<SQLParameter> parameters;
     private final List<Object> entities;
     private final boolean fillAutoIncrement;
-    private final EasyEntitySQLExpression easyEntitySQLExpression;
+    private final EntitySQLExpression easyEntitySQLExpression;
     private final SQLUnit sqlUnit;
 
     public SQLRouteUnit(String sql, List<SQLParameter> parameters){
@@ -34,7 +34,7 @@ public class SQLRouteUnit {
         this.sqlUnit=new SQLUnit(sql,parameters,entities,fillAutoIncrement);
     }
 
-    public SQLRouteUnit(EasyEntitySQLExpression easyEntitySQLExpression, List<Object> entities, boolean fillAutoIncrement){
+    public SQLRouteUnit(EntitySQLExpression easyEntitySQLExpression, List<Object> entities, boolean fillAutoIncrement){
         this.easyEntitySQLExpression = easyEntitySQLExpression;
         this.entities = entities;
         this.fillAutoIncrement = fillAutoIncrement;
@@ -43,23 +43,7 @@ public class SQLRouteUnit {
         this.sqlUnit = null;
     }
 
-//    public String getSql() {
-//        return sql;
-//    }
-//
-//    public List<SQLParameter> getParameters() {
-//        return parameters;
-//    }
-//
-//    public List<Object> getEntities() {
-//        return entities;
-//    }
-//
-//    public boolean isFillAutoIncrement() {
-//        return fillAutoIncrement;
-//    }
-
-    public EasyEntitySQLExpression getEasyEntitySQLExpression() {
+    public EntitySQLExpression getEasyEntitySQLExpression() {
         return easyEntitySQLExpression;
     }
     public SQLUnit getSQLUnit(){

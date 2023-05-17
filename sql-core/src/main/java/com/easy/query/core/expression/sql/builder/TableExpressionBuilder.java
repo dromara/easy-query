@@ -15,6 +15,5 @@ public interface TableExpressionBuilder extends ExpressionBuilder {
     boolean hasOn();
     String getAlias();
     int getIndex();
-//    String getSqlColumnSegment(String propertyName);
     TableAvailable getEntityTable();
 }

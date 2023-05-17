@@ -12,7 +12,7 @@ import java.util.function.Function;
  *
  * @author xuejiaming
  */
-public interface EasyTableSQLExpression extends EasySQLExpression {
+public interface TableSQLExpression extends SQLExpression {
     EntityMetadata getEntityMetadata();
     String getTableName();
     void setTableNameAs(Function<String,String> tableNameAs);
@@ -24,5 +24,5 @@ public interface EasyTableSQLExpression extends EasySQLExpression {
     TableAvailable getEntityTable();
 
     @Override
-    EasyTableSQLExpression cloneSQLExpression();
+    TableSQLExpression cloneSQLExpression();
 }

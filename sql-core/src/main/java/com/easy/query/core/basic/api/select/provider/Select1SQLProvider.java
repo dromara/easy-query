@@ -19,7 +19,6 @@ import com.easy.query.core.util.EasyUtil;
  import com.easy.query.core.expression.parser.core.SQLColumnResultSelector;
 
 /**
- * @FileName: Select1SqlPredicateProvider.java
  * @Description: 文件说明
  * @Date: 2023/2/7 23:45
  * @author xuejiaming

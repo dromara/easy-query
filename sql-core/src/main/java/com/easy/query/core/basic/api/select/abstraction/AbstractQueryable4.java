@@ -11,7 +11,7 @@ import com.easy.query.core.basic.api.select.provider.EasyQuerySQLBuilderProvider
 import com.easy.query.core.basic.api.select.provider.Select4SQLProvider;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.exception.EasyQueryException;
-import com.easy.query.core.expression.lambda.SQLExpression;
+import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression4;
 import com.easy.query.core.expression.parser.core.SQLColumnResultSelector;
 import com.easy.query.core.expression.segment.SQLEntitySegment;
@@ -108,7 +108,7 @@ public abstract class AbstractQueryable4<T1, T2, T3,T4> extends AbstractQueryabl
         return this;
     }
     @Override
-    public Queryable4<T1, T2, T3,T4> where(boolean condition, SQLExpression<SQLWherePredicate<T1>> whereExpression) {
+    public Queryable4<T1, T2, T3,T4> where(boolean condition, SQLExpression1<SQLWherePredicate<T1>> whereExpression) {
         super.where(condition,whereExpression);
         return this;
     }

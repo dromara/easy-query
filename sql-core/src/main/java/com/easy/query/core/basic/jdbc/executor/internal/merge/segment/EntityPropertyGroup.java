@@ -1,6 +1,6 @@
 package com.easy.query.core.basic.jdbc.executor.internal.merge.segment;
 
-import com.easy.query.core.expression.sql.expression.EasyTableSQLExpression;
+import com.easy.query.core.expression.sql.expression.TableSQLExpression;
 
 /**
  * create time 2023/4/28 16:28
@@ -10,18 +10,18 @@ import com.easy.query.core.expression.sql.expression.EasyTableSQLExpression;
  */
 public class EntityPropertyGroup implements PropertyGroup{
 
-    private final EasyTableSQLExpression tableSqlExpression;
+    private final TableSQLExpression tableSQLExpression;
     private final String propertyName;
     private final int columnIndex;
 
-    public EntityPropertyGroup(EasyTableSQLExpression tableSqlExpression, String propertyName, int columnIndex){
+    public EntityPropertyGroup(TableSQLExpression tableSQLExpression, String propertyName, int columnIndex){
 
-        this.tableSqlExpression = tableSqlExpression;
+        this.tableSQLExpression = tableSQLExpression;
         this.propertyName = propertyName;
         this.columnIndex = columnIndex;
     }
-    public EasyTableSQLExpression getTable(){
-        return tableSqlExpression;
+    public TableSQLExpression getTable(){
+        return tableSQLExpression;
     }
     public String propertyName(){
         return propertyName;

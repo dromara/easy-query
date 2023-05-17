@@ -49,12 +49,6 @@ public abstract class AbstractInsertable<T> implements Insertable<T> {
         return this;
     }
 
-//
-//    @Override
-//    public Insert<T> ignoreColumns(SqlExpression<SqlColumnSelector<T>> columnExpression) {
-//        return null;
-//    }
-
     protected void insertBefore() {
         //是否使用自定义插入策略
         List<EasyInterceptorEntry> insertInterceptors = entityMetadata.getEntityInterceptors();

@@ -1,7 +1,7 @@
 package com.easy.query.core.expression.executor.query.base;
 
 import com.easy.query.core.expression.executor.parser.PredicatePrepareParseResult;
-import com.easy.query.core.expression.sql.expression.EasyEntitySQLExpression;
+import com.easy.query.core.expression.sql.expression.EntitySQLExpression;
 import com.easy.query.core.sharding.rewrite.RewriteContext;
 import com.easy.query.core.sharding.rewrite.RewriteRouteUnit;
 import com.easy.query.core.sharding.route.RouteUnit;
@@ -33,8 +33,8 @@ public class ShardingPredicateExecutionCreator extends ShardingBaseExecutionCrea
     }
 
     @Override
-    protected EasyEntitySQLExpression createEasyEntitySqlExpression(RewriteRouteUnit rewriteRouteUnit) {
-        EasyEntitySQLExpression easyEntitySqlExpression = predicatePrepareParseResult.getEasyEntityPredicateSQLExpression().cloneSQLExpression();
-        return rewriteRouteUnit.rewrite(easyEntitySqlExpression);
+    protected EntitySQLExpression createEntitySQLExpression(RewriteRouteUnit rewriteRouteUnit) {
+        EntitySQLExpression entitySQLExpression = predicatePrepareParseResult.getEntityPredicateSQLExpression().cloneSQLExpression();
+        return rewriteRouteUnit.rewrite(entitySQLExpression);
     }
 }

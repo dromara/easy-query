@@ -15,8 +15,8 @@ import com.easy.query.core.expression.segment.GroupByColumnSegment;
 import com.easy.query.core.expression.segment.OrderColumnSegmentImpl;
 import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.expression.segment.builder.ProjectSQLBuilderSegment;
-import com.easy.query.core.expression.sql.expression.EasyQuerySQLExpression;
-import com.easy.query.core.expression.sql.expression.EasyTableSQLExpression;
+import com.easy.query.core.expression.sql.expression.QuerySQLExpression;
+import com.easy.query.core.expression.sql.expression.TableSQLExpression;
 import com.easy.query.core.expression.func.ColumnFunctionFactory;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.ShardingInitConfig;
@@ -56,7 +56,7 @@ public class DefaultRewriteContextFactory implements RewriteContextFactory {
 
     public RewriteContext rewriteShardingQueryExpression(QueryPrepareParseResult queryPrepareParseResult,RouteContext routeContext) {
 
-        EasyQuerySQLExpression easyEntityPredicateSQLExpression = queryPrepareParseResult.getEasyEntityPredicateSQLExpression();
+        QuerySQLExpression easyEntityPredicateSQLExpression = queryPrepareParseResult.getEntityPredicateSQLExpression();
         EasyQueryRuntimeContext runtimeContext = easyEntityPredicateSQLExpression.getRuntimeContext();
         //添加默认排序字段,并且添加默认排序字段到select 如果不添加那么streamResultSet将无法进行order排序获取
         if(SQLSegmentUtil.isEmpty(easyEntityPredicateSQLExpression.getOrder())&&Objects.equals(ExecuteMethodEnum.LIST,queryPrepareParseResult.getExecutorContext().getExecuteMethod())){
@@ -156,7 +156,7 @@ public class DefaultRewriteContextFactory implements RewriteContextFactory {
                     }
                     //如果存在avg那么分片必须要存在count或者sum不然无法计算avg
                     if(rewriteStatusKvKey.hasBehavior(GroupAvgBehaviorEnum.COUNT)&&rewriteStatusKvKey.hasBehavior(GroupAvgBehaviorEnum.SUM)){
-                        EasyTableSQLExpression table = easyEntityPredicateSQLExpression.getTable(rewriteStatusKvKey.getTableIndex());
+                        TableSQLExpression table = easyEntityPredicateSQLExpression.getTable(rewriteStatusKvKey.getTableIndex());
                         ColumnFunctionFactory columnFunctionFactory = runtimeContext.getColumnFunctionFactory();
                         easyEntityPredicateSQLExpression.getProjects().append(new FuncColumnSegmentImpl(table.getEntityTable(),rewriteStatusKvKey.getPropertyName(), runtimeContext, columnFunctionFactory.createCountFunction(false),rewriteStatusKvKey.getPropertyName()+"RewriteCount"));
                     }
@@ -230,7 +230,7 @@ public class DefaultRewriteContextFactory implements RewriteContextFactory {
      * @param routeContext
      * @return
      */
-    private RewriteContext createPaginationRewriteContext(int mergeBehavior, QueryPrepareParseResult queryPrepareParseResult, EasyQuerySQLExpression easyQuerySQLExpression, RouteContext routeContext){
+    private RewriteContext createPaginationRewriteContext(int mergeBehavior, QueryPrepareParseResult queryPrepareParseResult, QuerySQLExpression easyQuerySQLExpression, RouteContext routeContext){
         List<RewriteRouteUnit> rewriteRouteUnits = getPaginationRewriteRouteUnitsAndRewriteQuerySQLExpression(mergeBehavior,queryPrepareParseResult,easyQuerySQLExpression, routeContext);
         ShardingRouteResult shardingRouteResult = routeContext.getShardingRouteResult();
         //是否需要反向排序
@@ -246,7 +246,7 @@ public class DefaultRewriteContextFactory implements RewriteContextFactory {
      * @param routeContext
      * @return
      */
-    private List<RewriteRouteUnit> getPaginationRewriteRouteUnitsAndRewriteQuerySQLExpression(int mergeBehavior, QueryPrepareParseResult queryPrepareParseResult, EasyQuerySQLExpression easyQuerySQLExpression, RouteContext routeContext){
+    private List<RewriteRouteUnit> getPaginationRewriteRouteUnitsAndRewriteQuerySQLExpression(int mergeBehavior, QueryPrepareParseResult queryPrepareParseResult, QuerySQLExpression easyQuerySQLExpression, RouteContext routeContext){
 
         EasyQueryRuntimeContext runtimeContext = queryPrepareParseResult.getExecutorContext().getRuntimeContext();
         if(BitwiseUtil.hasBit(mergeBehavior, MergeBehaviorEnum.SEQUENCE_PAGINATION.getCode())){
@@ -277,7 +277,7 @@ public class DefaultRewriteContextFactory implements RewriteContextFactory {
         return createDefaultRewriteRouteUnit(routeContext);
     }
 
-    private void rewritePagination(EasyQuerySQLExpression easyQuerySQLExpression){
+    private void rewritePagination(QuerySQLExpression easyQuerySQLExpression){
 
         if (easyQuerySQLExpression.hasLimit()) {
             long rows = easyQuerySQLExpression.getRows();
@@ -288,7 +288,7 @@ public class DefaultRewriteContextFactory implements RewriteContextFactory {
             easyQuerySQLExpression.setRows(offset + rows);
         }
     }
-    private void rewriteReversePagination(EasyQuerySQLExpression easyQuerySQLExpression, long realOffset){
+    private void rewriteReversePagination(QuerySQLExpression easyQuerySQLExpression, long realOffset){
 
         if (easyQuerySQLExpression.hasLimit()) {
             long rows = easyQuerySQLExpression.getRows();

@@ -2,12 +2,11 @@ package com.easy.query.core.expression.sql.builder;
 
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
-import com.easy.query.core.expression.sql.expression.EasyEntitySQLExpression;
+import com.easy.query.core.expression.sql.expression.EntitySQLExpression;
 
 import java.util.List;
 
 /**
- * @FileName: SqlEntityExpression.java
  * @Description: 文件说明
  * @Date: 2023/3/4 16:29
  * @author xuejiaming
@@ -27,12 +26,10 @@ public interface EntityExpressionBuilder extends ExpressionBuilder {
         }
         return getTable(size-1);
     }
-//    String getQuoteName(String value);
-//    String getSqlOwnerColumn(EntityTableExpressionBuilder table, String propertyName);
     void setLogicDelete(boolean logicDelete);
 
     @Override
-    EasyEntitySQLExpression toExpression();
+    EntitySQLExpression toExpression();
 
     EntityExpressionBuilder cloneEntityExpressionBuilder();
 

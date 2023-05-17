@@ -3,7 +3,7 @@ package com.easy.query.core.basic.api.update;
 import com.easy.query.core.basic.api.internal.Versionable;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameterCollector;
 import com.easy.query.core.expression.lambda.Property;
-import com.easy.query.core.expression.lambda.SQLExpression;
+import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.SQLWherePredicate;
 
 /**
@@ -90,11 +90,11 @@ public interface ExpressionUpdatable<T> extends Updatable<T,ExpressionUpdatable<
     ExpressionUpdatable<T> setDecrementNumber(boolean condition, Property<T, ? extends Number> column, Number val);
     // endregion
 
-    default ExpressionUpdatable<T> where(SQLExpression<SQLWherePredicate<T>> whereExpression) {
+    default ExpressionUpdatable<T> where(SQLExpression1<SQLWherePredicate<T>> whereExpression) {
         return where(true, whereExpression);
     }
 
-    ExpressionUpdatable<T> where(boolean condition, SQLExpression<SQLWherePredicate<T>> whereExpression);
+    ExpressionUpdatable<T> where(boolean condition, SQLExpression1<SQLWherePredicate<T>> whereExpression);
 
     default ExpressionUpdatable<T> whereById(Object id) {
         return whereById(true, id);

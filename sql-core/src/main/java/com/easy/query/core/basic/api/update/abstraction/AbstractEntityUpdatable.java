@@ -10,7 +10,7 @@ import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.exception.EasyQueryException;
-import com.easy.query.core.expression.lambda.SQLExpression;
+import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.SQLColumnSelector;
 import com.easy.query.core.expression.parser.impl.DefaultSQLColumnSetSelector;
 import com.easy.query.core.basic.plugin.interceptor.EasyEntityInterceptor;
@@ -80,7 +80,7 @@ public abstract class AbstractEntityUpdatable<T> extends AbstractSQLExecuteRows<
     }
 
     @Override
-    public EntityUpdatable<T> setColumns(boolean condition, SQLExpression<SQLColumnSelector<T>>
+    public EntityUpdatable<T> setColumns(boolean condition, SQLExpression1<SQLColumnSelector<T>>
             columnSelectorExpression) {
         if (condition) {
             DefaultSQLColumnSetSelector<T> columnSelector = new DefaultSQLColumnSetSelector<>(0, entityUpdateExpressionBuilder, entityUpdateExpressionBuilder.getSetColumns());
@@ -90,7 +90,7 @@ public abstract class AbstractEntityUpdatable<T> extends AbstractSQLExecuteRows<
     }
 
     @Override
-    public EntityUpdatable<T> setIgnoreColumns(boolean condition, SQLExpression<SQLColumnSelector<T>>
+    public EntityUpdatable<T> setIgnoreColumns(boolean condition, SQLExpression1<SQLColumnSelector<T>>
             columnSelectorExpression) {
         if (condition) {
             DefaultSQLColumnSetSelector<T> columnSelector = new DefaultSQLColumnSetSelector<>(0, entityUpdateExpressionBuilder, entityUpdateExpressionBuilder.getSetIgnoreColumns());
@@ -100,7 +100,7 @@ public abstract class AbstractEntityUpdatable<T> extends AbstractSQLExecuteRows<
     }
 
     @Override
-    public EntityUpdatable<T> whereColumns(boolean condition, SQLExpression<SQLColumnSelector<T>>
+    public EntityUpdatable<T> whereColumns(boolean condition, SQLExpression1<SQLColumnSelector<T>>
             columnSelectorExpression) {
         if (condition) {
             DefaultSQLColumnSetSelector<T> columnSelector = new DefaultSQLColumnSetSelector<>(0, entityUpdateExpressionBuilder, entityUpdateExpressionBuilder.getWhereColumns());

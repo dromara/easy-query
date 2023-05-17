@@ -5,7 +5,6 @@ import com.easy.query.core.expression.segment.SQLSegment;
 import java.util.List;
 
 /**
- * @FileName: SqlSegment0Builder.java
  * @Description: 文件说明
  * @Date: 2023/2/13 12:49
  * @author xuejiaming

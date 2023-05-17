@@ -9,6 +9,6 @@ import com.easy.query.core.expression.segment.SQLSegment;
  *
  * @author xuejiaming
  */
-public interface EasySQLExpression extends SQLSegment {
-    EasySQLExpression cloneSQLExpression();
+public interface SQLExpression extends SQLSegment {
+    SQLExpression cloneSQLExpression();
 }

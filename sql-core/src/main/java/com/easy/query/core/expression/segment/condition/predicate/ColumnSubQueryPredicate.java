@@ -49,8 +49,8 @@ public class ColumnSubQueryPredicate implements SubQueryPredicate{
         String sqlColumnSegment = SQLExpressionUtil.getSQLOwnerColumn(runtimeContext,table,propertyName);
         StringBuilder sql = new StringBuilder();
         sql.append(sqlColumnSegment).append(" ").append(compare.getSQL()).append(" (");
-        String queryableSql = subQueryable.toSQL(sqlParameterCollector);
-        sql.append(queryableSql).append(") ");
+        String subQueryableSQL = subQueryable.toSQL(sqlParameterCollector);
+        sql.append(subQueryableSQL).append(") ");
         return sql.toString();
     }
 

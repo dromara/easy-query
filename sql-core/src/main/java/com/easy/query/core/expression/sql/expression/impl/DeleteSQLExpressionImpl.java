@@ -2,11 +2,11 @@ package com.easy.query.core.expression.sql.expression.impl;
 
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameterCollector;
+import com.easy.query.core.expression.sql.expression.DeleteSQLExpression;
 import com.easy.query.core.expression.sql.expression.factory.EasyExpressionFactory;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
-import com.easy.query.core.expression.sql.expression.EasyDeleteSQLExpression;
-import com.easy.query.core.expression.sql.expression.EasyTableSQLExpression;
+import com.easy.query.core.expression.sql.expression.TableSQLExpression;
 import com.easy.query.core.util.SQLExpressionUtil;
 import com.easy.query.core.util.SQLSegmentUtil;
 
@@ -19,13 +19,13 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public  class DeleteSQLExpression implements EasyDeleteSQLExpression {
+public  class DeleteSQLExpressionImpl implements DeleteSQLExpression {
 
     protected final EasyQueryRuntimeContext runtimeContext;
     protected final PredicateSegment where;
-    protected final List<EasyTableSQLExpression> tables=new ArrayList<>(1);
+    protected final List<TableSQLExpression> tables=new ArrayList<>(1);
 
-    public DeleteSQLExpression(EasyQueryRuntimeContext runtimeContext, EasyTableSQLExpression table) {
+    public DeleteSQLExpressionImpl(EasyQueryRuntimeContext runtimeContext, TableSQLExpression table) {
         this.runtimeContext = runtimeContext;
         this.tables.add(table);
         this.where = new AndPredicateSegment(true);
@@ -38,7 +38,7 @@ public  class DeleteSQLExpression implements EasyDeleteSQLExpression {
     }
 
     @Override
-    public List<EasyTableSQLExpression> getTables() {
+    public List<TableSQLExpression> getTables() {
         return tables;
     }
 
@@ -52,7 +52,7 @@ public  class DeleteSQLExpression implements EasyDeleteSQLExpression {
     public String toSQL(SQLParameterCollector sqlParameterCollector) {
         
         SQLExpressionUtil.expressionInvokeRoot(sqlParameterCollector);
-        EasyTableSQLExpression easyTableSQLExpression = tables.get(0);
+        TableSQLExpression easyTableSQLExpression = tables.get(0);
         String tableName = easyTableSQLExpression.getTableName();
 
         StringBuilder sql = new StringBuilder("DELETE FROM ");
@@ -63,10 +63,10 @@ public  class DeleteSQLExpression implements EasyDeleteSQLExpression {
     }
 
     @Override
-    public EasyDeleteSQLExpression cloneSQLExpression() {
+    public com.easy.query.core.expression.sql.expression.DeleteSQLExpression cloneSQLExpression() {
 
         EasyExpressionFactory expressionFactory = runtimeContext.getExpressionFactory();
-        EasyDeleteSQLExpression easyDeleteSQLExpression = expressionFactory.createEasyDeleteSQLExpression(runtimeContext, tables.get(0).cloneSQLExpression());
+        com.easy.query.core.expression.sql.expression.DeleteSQLExpression easyDeleteSQLExpression = expressionFactory.createEasyDeleteSQLExpression(runtimeContext, tables.get(0).cloneSQLExpression());
         if(SQLSegmentUtil.isNotEmpty(where)){
             where.copyTo(easyDeleteSQLExpression.getWhere());
         }

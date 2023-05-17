@@ -86,9 +86,9 @@ public class DefaultEasyDataSourceConnection implements EasyDataSourceConnection
             }
             i++;
         }
-        throwAggregateSqlException(exceptions);
+        throwAggregateSQLException(exceptions);
     }
-    private void throwAggregateSqlException(Collection<SQLException> exceptions){
+    private void throwAggregateSQLException(Collection<SQLException> exceptions){
         if(EasyCollectionUtil.isEmpty(exceptions)){
             return;
         }
@@ -110,7 +110,7 @@ public class DefaultEasyDataSourceConnection implements EasyDataSourceConnection
                 exceptions.add(ex);
             }
         }
-        throwAggregateSqlException(exceptions);
+        throwAggregateSQLException(exceptions);
     }
 
     @Override

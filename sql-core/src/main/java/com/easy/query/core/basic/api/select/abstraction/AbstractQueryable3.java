@@ -15,7 +15,7 @@ import com.easy.query.core.basic.api.select.Queryable3;
 import com.easy.query.core.basic.api.select.Queryable4;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.exception.EasyQueryException;
-import com.easy.query.core.expression.lambda.SQLExpression;
+import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression3;
 import com.easy.query.core.expression.lambda.SQLExpression4;
 import com.easy.query.core.expression.parser.core.SQLColumnResultSelector;
@@ -143,7 +143,7 @@ public abstract class AbstractQueryable3<T1, T2, T3> extends AbstractQueryable<T
         return this;
     }
     @Override
-    public Queryable3<T1, T2, T3> where(boolean condition, SQLExpression<SQLWherePredicate<T1>> whereExpression) {
+    public Queryable3<T1, T2, T3> where(boolean condition, SQLExpression1<SQLWherePredicate<T1>> whereExpression) {
         super.where(condition,whereExpression);
         return this;
     }

@@ -189,10 +189,10 @@ public class UpdateTest extends BaseTest {
         Topic topic = easyQuery.queryable(Topic.class)
                 .whereById("10").firstOrNull();
         Assert.assertNotNull(topic);
-        String updateSql = ((EasyEntityUpdatable<Topic>) easyQuery.updatable(topic)
+        String updateSQL = ((EasyEntityUpdatable<Topic>) easyQuery.updatable(topic)
                 .setSQLStrategy(SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS))
                 .toSQL(topic);
-        Assert.assertEquals("UPDATE `t_topic` SET `stars` = ?,`create_time` = ? WHERE `id` = ?",updateSql);
+        Assert.assertEquals("UPDATE `t_topic` SET `stars` = ?,`create_time` = ? WHERE `id` = ?",updateSQL);
         long l1 = easyQuery.updatable(topic)
                 .setSQLStrategy(SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS)
                 .executeRows();

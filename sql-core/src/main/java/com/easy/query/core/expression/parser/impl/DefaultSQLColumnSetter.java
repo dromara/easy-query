@@ -13,7 +13,6 @@ import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.util.LambdaUtil;
 
 /**
- * @FileName: DefaultSqlColumnSetter.java
  * @Description: 文件说明
  * @Date: 2023/2/25 17:39
  * @author xuejiaming

@@ -2,7 +2,7 @@ package com.easy.query.core.expression.executor.query.base;
 
 import com.easy.query.core.enums.MergeBehaviorEnum;
 import com.easy.query.core.expression.executor.parser.ExecutionContext;
-import com.easy.query.core.expression.sql.expression.EasyEntitySQLExpression;
+import com.easy.query.core.expression.sql.expression.EntitySQLExpression;
 import com.easy.query.core.basic.jdbc.executor.internal.common.ExecutionUnit;
 import com.easy.query.core.basic.jdbc.executor.internal.common.SQLRouteUnit;
 
@@ -15,11 +15,11 @@ import java.util.List;
  * @author xuejiaming
  */
 public abstract class BaseExecutionCreator implements ExecutionCreator{
-    protected ExecutionUnit createExecutionUnit(String dataSource, EasyEntitySQLExpression expression, List<Object> entities, boolean fillAutoIncrement){
+    protected ExecutionUnit createExecutionUnit(String dataSource, EntitySQLExpression expression, List<Object> entities, boolean fillAutoIncrement){
         SQLRouteUnit sqlUnit = createSQLUnit(expression, entities, fillAutoIncrement);
         return createExecutionUnit(dataSource, sqlUnit);
     }
-    protected SQLRouteUnit createSQLUnit(EasyEntitySQLExpression expression, List<Object> entities, boolean fillAutoIncrement){
+    protected SQLRouteUnit createSQLUnit(EntitySQLExpression expression, List<Object> entities, boolean fillAutoIncrement){
         return new SQLRouteUnit(expression,entities, fillAutoIncrement);
     }
     protected ExecutionUnit createExecutionUnit(String dataSource, SQLRouteUnit sqlUnit){

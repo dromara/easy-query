@@ -9,12 +9,11 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * @FileName: SelectSqlSegmentBuilder.java
  * @Description: 查询projects
  * @Date: 2023/2/13 22:39
  * @author xuejiaming
  */
-public class ProjectSQLBuilderSegmentImpl extends AbstractSqlBuilderSegment implements ProjectSQLBuilderSegment {
+public class ProjectSQLBuilderSegmentImpl extends AbstractSQLBuilderSegment implements ProjectSQLBuilderSegment {
 
     private boolean projectHasAggregate=false;
     @Override
@@ -35,10 +34,10 @@ public class ProjectSQLBuilderSegmentImpl extends AbstractSqlBuilderSegment impl
 
     @Override
     public SQLBuilderSegment cloneSQLBuilder() {
-        ProjectSQLBuilderSegmentImpl projectSqlBuilderSegment = new ProjectSQLBuilderSegmentImpl();
-        projectSqlBuilderSegment.projectHasAggregate=projectHasAggregate;
-        copyTo(projectSqlBuilderSegment);
-        return projectSqlBuilderSegment;
+        ProjectSQLBuilderSegmentImpl projectSQLBuilderSegment = new ProjectSQLBuilderSegmentImpl();
+        projectSQLBuilderSegment.projectHasAggregate=projectHasAggregate;
+        copyTo(projectSQLBuilderSegment);
+        return projectSQLBuilderSegment;
     }
 
     @Override

@@ -2,10 +2,9 @@ package com.easy.query.core.expression.sql.builder;
 
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
-import com.easy.query.core.expression.sql.expression.EasyQuerySQLExpression;
+import com.easy.query.core.expression.sql.expression.QuerySQLExpression;
 
 /**
- * @FileName: SqlEntityExpressionSegment.java
  * @Description: 文件说明
  * @Date: 2023/3/3 22:17
  * @author xuejiaming
@@ -49,5 +48,5 @@ public interface EntityQueryExpressionBuilder extends EntityPredicateExpressionB
     EntityQueryExpressionBuilder cloneEntityExpressionBuilder();
 
     @Override
-    EasyQuerySQLExpression toExpression();
+    QuerySQLExpression toExpression();
 }

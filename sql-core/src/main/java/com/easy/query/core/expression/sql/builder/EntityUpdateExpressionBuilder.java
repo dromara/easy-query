@@ -2,10 +2,9 @@ package com.easy.query.core.expression.sql.builder;
 
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
-import com.easy.query.core.expression.sql.expression.EasyUpdateSQLExpression;
+import com.easy.query.core.expression.sql.expression.UpdateSQLExpression;
 
 /**
- * @FileName: SqlEntityUpdateExpression.java
  * @Description: 文件说明
  * @Date: 2023/3/4 17:04
  * @author xuejiaming
@@ -25,8 +24,8 @@ public interface EntityUpdateExpressionBuilder extends EntityPredicateExpression
      @Override
      EntityUpdateExpressionBuilder cloneEntityExpressionBuilder();
      @Override
-     EasyUpdateSQLExpression toExpression();
+     UpdateSQLExpression toExpression();
 
      @Override
-     EasyUpdateSQLExpression toExpression(Object entity);
+     UpdateSQLExpression toExpression(Object entity);
 }

@@ -3,7 +3,7 @@ package com.easy.query.core.expression.sql.builder.impl;
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
-import com.easy.query.core.expression.sql.expression.EasyInsertSQLExpression;
+import com.easy.query.core.expression.sql.expression.InsertSQLExpression;
 import com.easy.query.core.expression.sql.expression.factory.EasyExpressionFactory;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
@@ -26,7 +26,6 @@ import java.util.Set;
 
 /**
  * @author xuejiaming
- * @FileName: EasySqlInsertExpression.java
  * @Description: 文件说明
  * @Date: 2023/3/4 16:49
  */
@@ -80,14 +79,14 @@ public class InsertExpressionBuilder extends AbstractEntityExpressionBuilder imp
     }
 
     @Override
-    public EasyInsertSQLExpression toExpression(Object entity) {
+    public InsertSQLExpression toExpression(Object entity) {
 
         checkTable();
 
         EntityTableExpressionBuilder table = getTable(0);
         EasyQueryRuntimeContext runtimeContext = getRuntimeContext();
         EasyExpressionFactory expressionFactory = runtimeContext.getExpressionFactory();
-        EasyInsertSQLExpression easyInsertSQLExpression = expressionFactory.createEasyInsertSQLExpression(runtimeContext, table.toExpression());
+        InsertSQLExpression easyInsertSQLExpression = expressionFactory.createEasyInsertSQLExpression(runtimeContext, table.toExpression());
         EntityMetadata entityMetadata = table.getEntityMetadata();
         SQLBuilderSegment insertCloneColumns = getColumns().cloneSQLBuilder();
         if (insertCloneColumns.isEmpty()) {

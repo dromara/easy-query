@@ -2,7 +2,7 @@ package com.easy.query.core.bootstrapper;
 
 import com.easy.query.core.abstraction.DefaultEasyQueryRuntimeContext;
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
-import com.easy.query.core.abstraction.EasySQLApiFactory;
+import com.easy.query.core.abstraction.SQLApiFactory;
 import com.easy.query.core.api.client.DefaultEasyQuery;
 import com.easy.query.core.api.client.EasyQuery;
 import com.easy.query.core.api.def.DefaultEasySQLApiFactory;
@@ -44,7 +44,7 @@ import com.easy.query.core.expression.executor.query.ExecutionContextFactory;
 import com.easy.query.core.expression.parser.factory.DefaultEasyQueryLambdaFactory;
 import com.easy.query.core.expression.parser.factory.EasyQueryLambdaFactory;
 import com.easy.query.core.expression.sql.builder.factory.DefaultEasyExpressionBuilderFactory;
-import com.easy.query.core.expression.sql.builder.factory.EasyExpressionBuilderFactory;
+import com.easy.query.core.expression.sql.builder.factory.SQLExpressionBuilderFactory;
 import com.easy.query.core.expression.sql.expression.factory.DefaultEasyExpressionFactory;
 import com.easy.query.core.expression.sql.expression.factory.EasyExpressionFactory;
 import com.easy.query.core.metadata.DefaultEntityMetadataManager;
@@ -94,8 +94,8 @@ public class EasyQueryBuilderConfiguration {
                 .replaceService(EasyQueryConfiguration.class)
                 .replaceService(EntityMetadataManager.class, DefaultEntityMetadataManager.class)
                 .replaceService(EasyQueryLambdaFactory.class, DefaultEasyQueryLambdaFactory.class)
-                .replaceService(EasyExpressionBuilderFactory.class, DefaultEasyExpressionBuilderFactory.class)
-                .replaceService(EasySQLApiFactory.class, DefaultEasySQLApiFactory.class)
+                .replaceService(SQLExpressionBuilderFactory.class, DefaultEasyExpressionBuilderFactory.class)
+                .replaceService(SQLApiFactory.class, DefaultEasySQLApiFactory.class)
                 .replaceService(TrackManager.class, DefaultTrackManager.class)
                 .replaceService(EasyPageResultProvider.class, DefaultEasyPageResultProvider.class)
                 .replaceService(EasyPrepareParser.class, DefaultEasyPrepareParser.class)

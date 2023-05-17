@@ -16,12 +16,11 @@ import com.easy.query.core.metadata.EntityMetadata;
 import java.util.List;
 
 /**
- * @FileName: EasySqlExpressionFactory.java
  * @Description: 文件说明
  * @Date: 2023/3/4 22:43
  * @author xuejiaming
  */
-public interface EasyExpressionBuilderFactory {
+public interface SQLExpressionBuilderFactory {
     ExpressionContext createExpressionContext(EasyQueryRuntimeContext runtimeContext, String alias);
     EntityTableExpressionBuilder createEntityTableExpression(EntityMetadata entityMetadata, int index, String alias, MultiTableTypeEnum multiTableType,EasyQueryRuntimeContext runtimeContext);
     EntityTableExpressionBuilder createAnonymousEntityTableExpression(EntityMetadata entityMetadata, int index, String alias, MultiTableTypeEnum multiTableType, EntityQueryExpressionBuilder sqlEntityQueryExpression);

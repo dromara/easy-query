@@ -3,7 +3,7 @@ package com.easy.query.core.expression.executor.query.base;
 import com.easy.query.core.basic.plugin.track.TrackManager;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
-import com.easy.query.core.expression.sql.expression.EasyEntitySQLExpression;
+import com.easy.query.core.expression.sql.expression.EntitySQLExpression;
 import com.easy.query.core.basic.jdbc.executor.internal.common.ExecutionUnit;
 import com.easy.query.core.util.SQLExpressionUtil;
 import com.easy.query.core.util.StringUtil;
@@ -51,7 +51,7 @@ public abstract class BaseEntityExecutionCreator extends BaseExecutionCreator{
     private List<ExecutionUnit> createSingleExecutionUnits() {
         List<ExecutionUnit> routeExecutionUnits = new ArrayList<>(entities.size());
         for (Object entity : entities) {
-            EasyEntitySQLExpression expression = createEasySQLExpression(entity);
+            EntitySQLExpression expression = createEasySQLExpression(entity);
             ExecutionUnit executionUnit = createExecutionUnit(dataSource,expression, Collections.singletonList(entity), getFillAutoIncrement());
             //开启追踪的情况下update可能没有可以更新的数据那么就不会生成sql
             if(StringUtil.isNotBlank(executionUnit.getSQLRouteUnit().getSQLUnit().getSQL())){
@@ -61,10 +61,10 @@ public abstract class BaseEntityExecutionCreator extends BaseExecutionCreator{
         return routeExecutionUnits;
     }
     private List<ExecutionUnit> createMultiExecutionUnits() {
-        EasyEntitySQLExpression expression = entityExpressionBuilder.toExpression();
+        EntitySQLExpression expression = entityExpressionBuilder.toExpression();
         ExecutionUnit executionUnit = createExecutionUnit(dataSource,expression, entities, getFillAutoIncrement());
         return Collections.singletonList(executionUnit);
     }
-    protected abstract EasyEntitySQLExpression createEasySQLExpression(Object entity);
+    protected abstract EntitySQLExpression createEasySQLExpression(Object entity);
     protected abstract boolean getFillAutoIncrement();
 }

@@ -1,7 +1,7 @@
 package com.easy.query.core.api.client;
 
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
-import com.easy.query.core.abstraction.EasySQLApiFactory;
+import com.easy.query.core.abstraction.SQLApiFactory;
 import com.easy.query.core.basic.api.delete.EntityDeletable;
 import com.easy.query.core.basic.jdbc.con.EasyConnectionManager;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
@@ -18,14 +18,12 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @FileName: EasySqlQuery.java
- * @Description: 文件说明
  * @Date: 2023/3/6 13:30
  * @author xuejiaming
  */
 public class DefaultEasyQuery implements EasyQuery {
     private final EasyQueryRuntimeContext runtimeContext;
-    private final EasySQLApiFactory easySQLApiFactory;
+    private final SQLApiFactory easySQLApiFactory;
     public DefaultEasyQuery(EasyQueryRuntimeContext runtimeContext){
 
         this.runtimeContext = runtimeContext;

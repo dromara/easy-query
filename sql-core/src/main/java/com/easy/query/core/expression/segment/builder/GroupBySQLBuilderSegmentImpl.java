@@ -8,12 +8,11 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * @FileName: PredicateSqlSegmentBuilder.java
  * @Description: 文件说明
  * @Date: 2023/2/13 22:39
  * @author xuejiaming
  */
-public class GroupBySQLBuilderSegmentImpl extends AbstractSqlBuilderSegment {
+public class GroupBySQLBuilderSegmentImpl extends AbstractSQLBuilderSegment {
 
     @Override
     public String toSQL(SQLParameterCollector sqlParameterCollector) {
@@ -35,8 +34,8 @@ public class GroupBySQLBuilderSegmentImpl extends AbstractSqlBuilderSegment {
 
     @Override
     public SQLBuilderSegment cloneSQLBuilder() {
-        GroupBySQLBuilderSegmentImpl groupBySqlBuilderSegment = new GroupBySQLBuilderSegmentImpl();
-        copyTo(groupBySqlBuilderSegment);
-        return groupBySqlBuilderSegment;
+        GroupBySQLBuilderSegmentImpl groupBySQLBuilderSegment = new GroupBySQLBuilderSegmentImpl();
+        copyTo(groupBySQLBuilderSegment);
+        return groupBySQLBuilderSegment;
     }
 }

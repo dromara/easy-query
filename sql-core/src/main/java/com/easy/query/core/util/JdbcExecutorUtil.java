@@ -144,7 +144,7 @@ public class JdbcExecutorUtil {
         boolean logDebug = log.isDebugEnabled();
         logSQL(logDebug, sql,easyConnection,shardingPrint,replicaPrint);
         EasyQueryRuntimeContext runtimeContext = executorContext.getRuntimeContext();
-        JdbcTypeHandlerManager easyJdbcTypeHandler = runtimeContext.getEasyJdbcTypeHandlerManager();
+        JdbcTypeHandlerManager easyJdbcTypeHandler = runtimeContext.getJdbcTypeHandlerManager();
 
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -182,7 +182,7 @@ public class JdbcExecutorUtil {
         boolean logDebug = log.isDebugEnabled();
         logSQL(logDebug, sql,easyConnection,shardingPrint,replicaPrint);
         EasyQueryRuntimeContext runtimeContext = executorContext.getRuntimeContext();
-        JdbcTypeHandlerManager easyJdbcTypeHandler = runtimeContext.getEasyJdbcTypeHandlerManager();
+        JdbcTypeHandlerManager easyJdbcTypeHandler = runtimeContext.getJdbcTypeHandlerManager();
         Class<?> entityClass = entities.get(0).getClass();
         EntityMetadata entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(entityClass);
         List<String> incrementColumns = fillAutoIncrement ? entityMetadata.getIncrementColumns() : null;
@@ -257,7 +257,7 @@ public class JdbcExecutorUtil {
         boolean logDebug = log.isDebugEnabled();
         logSQL(logDebug, sql,easyConnection,shardingPrint,replicaPrint);
         EasyQueryRuntimeContext runtimeContext = executorContext.getRuntimeContext();
-        JdbcTypeHandlerManager easyJdbcTypeHandlerManager = runtimeContext.getEasyJdbcTypeHandlerManager();
+        JdbcTypeHandlerManager easyJdbcTypeHandlerManager = runtimeContext.getJdbcTypeHandlerManager();
         PreparedStatement ps = null;
         int r = 0;
         boolean hasParameter = EasyCollectionUtil.isNotEmpty(sqlParameters);
@@ -294,7 +294,7 @@ public class JdbcExecutorUtil {
         boolean logDebug = log.isDebugEnabled();
         logSQL(logDebug, sql,easyConnection,shardingPrint,replicaPrint);
         EasyQueryRuntimeContext runtimeContext = executorContext.getRuntimeContext();
-        JdbcTypeHandlerManager easyJdbcTypeHandlerManager = runtimeContext.getEasyJdbcTypeHandlerManager();
+        JdbcTypeHandlerManager easyJdbcTypeHandlerManager = runtimeContext.getJdbcTypeHandlerManager();
         PreparedStatement ps = null;
         int r = 0;
 

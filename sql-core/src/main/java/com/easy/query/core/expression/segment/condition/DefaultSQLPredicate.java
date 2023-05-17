@@ -15,7 +15,7 @@ import com.easy.query.core.expression.segment.condition.predicate.ColumnValuePre
 import com.easy.query.core.expression.segment.condition.predicate.ColumnWithColumnPredicate;
 import com.easy.query.core.expression.segment.condition.predicate.FuncColumnValuePredicate;
 import com.easy.query.core.enums.SQLPredicateCompareEnum;
-import com.easy.query.core.expression.lambda.SQLExpression;
+import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnPredicate;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.util.LambdaUtil;
@@ -24,7 +24,6 @@ import com.easy.query.core.util.SQLUtil;
 import java.util.Collection;
 
 /**
- * @FileName: DefaultSqlPredicate.java
  * @Description: 默认的数据库条件比较
  * @Date: 2023/2/7 06:58
  * @author xuejiaming
@@ -218,7 +217,7 @@ public class DefaultSQLPredicate<T1> implements SQLWherePredicate<T1> {
     }
 
     @Override
-    public <T2> SQLWherePredicate<T1> exists(boolean condition, Queryable<T2> subQueryable, SQLExpression<SQLWherePredicate<T2>> whereExpression) {
+    public <T2> SQLWherePredicate<T1> exists(boolean condition, Queryable<T2> subQueryable, SQLExpression1<SQLWherePredicate<T2>> whereExpression) {
         if (condition) {
             Queryable<T2> existsQueryable = subQueryable.cloneQueryable().where(whereExpression).select("1");
 
@@ -229,7 +228,7 @@ public class DefaultSQLPredicate<T1> implements SQLWherePredicate<T1> {
     }
 
     @Override
-    public <T2> SQLWherePredicate<T1> notExists(boolean condition, Queryable<T2> subQueryable, SQLExpression<SQLWherePredicate<T2>> whereExpression) {
+    public <T2> SQLWherePredicate<T1> notExists(boolean condition, Queryable<T2> subQueryable, SQLExpression1<SQLWherePredicate<T2>> whereExpression) {
         if (condition) {
             Queryable<T2> existsQueryable = subQueryable.cloneQueryable().where(whereExpression).select("1");
 
@@ -300,11 +299,11 @@ public class DefaultSQLPredicate<T1> implements SQLWherePredicate<T1> {
     }
 
     @Override
-    public SQLWherePredicate<T1> and(boolean condition, SQLExpression<SQLWherePredicate<T1>> predicateSqlExpression) {
+    public SQLWherePredicate<T1> and(boolean condition, SQLExpression1<SQLWherePredicate<T1>> sqlWherePredicateSQLExpression) {
         if (condition) {
             and0();
              SQLWherePredicate<T1> sqlPredicate = entityExpressionBuilder.getRuntimeContext().getEasyQueryLambdaFactory().createSQLPredicate(index, entityExpressionBuilder, this.nextPredicateSegment);
-            predicateSqlExpression.apply(sqlPredicate);
+            sqlWherePredicateSQLExpression.apply(sqlPredicate);
             next();
         }
         return this;
@@ -333,11 +332,11 @@ public class DefaultSQLPredicate<T1> implements SQLWherePredicate<T1> {
     }
 
     @Override
-    public SQLWherePredicate<T1> or(boolean condition, SQLExpression<SQLWherePredicate<T1>> predicateSqlExpression) {
+    public SQLWherePredicate<T1> or(boolean condition, SQLExpression1<SQLWherePredicate<T1>> sqlWherePredicateSQLExpression) {
         if (condition) {
             or0();
              SQLWherePredicate<T1> sqlPredicate = entityExpressionBuilder.getRuntimeContext().getEasyQueryLambdaFactory().createSQLPredicate(index, entityExpressionBuilder, this.nextPredicateSegment);
-            predicateSqlExpression.apply(sqlPredicate);
+            sqlWherePredicateSQLExpression.apply(sqlPredicate);
             next();
         }
         return this;

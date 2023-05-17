@@ -18,7 +18,6 @@ import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.util.EasyUtil;
 
 /**
- * @FileName: Select1SqlPredicateProvider.java
  * @Description: 文件说明
  * @Date: 2023/2/7 23:45
  * @author xuejiaming
@@ -90,12 +89,6 @@ public class Select4SQLProvider<T1,T2,T3,T4> extends Select3SQLProvider<T1,T2,T3
     public <TR> SQLColumnAsSelector<T4, TR> getSQLColumnAsSelector4(SQLBuilderSegment sqlSegment0Builder, Class<TR> resultClass) {
         return new DefaultSQLColumnAsSelector<>(index, sqlEntityExpression,sqlSegment0Builder,resultClass);
     }
-
-//    @Override
-//    public <TR> SqlColumnAsSelector<T4, TR> getAutoSqlColumnAsSelector4(SqlBuilderSegment sqlSegment0Builder, Class<TR> resultClass) {
-//        return new DefaultAutoSqlColumnAsSelector<>(index, sqlEntityExpression,sqlSegment0Builder,resultClass);
-//    }
-
     @Override
     public <TR> SQLColumnResultSelector<T4, TR> getSQLColumnResultSelector4(SQLBuilderSegment sqlSegment0Builder) {
         return new DefaultSQLColumnResultSelector<T4,TR>(index,sqlEntityExpression,sqlSegment0Builder);

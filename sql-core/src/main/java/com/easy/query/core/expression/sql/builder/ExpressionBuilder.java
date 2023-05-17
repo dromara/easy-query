@@ -1,6 +1,6 @@
 package com.easy.query.core.expression.sql.builder;
 
-import com.easy.query.core.expression.sql.expression.EasySQLExpression;
+import com.easy.query.core.expression.sql.expression.SQLExpression;
 
 /**
  * @FileName: TableSegment.java
@@ -10,5 +10,5 @@ import com.easy.query.core.expression.sql.expression.EasySQLExpression;
  */
 public interface ExpressionBuilder {
 
-    EasySQLExpression toExpression();
+    SQLExpression toExpression();
 }

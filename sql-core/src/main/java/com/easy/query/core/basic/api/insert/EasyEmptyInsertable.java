@@ -1,6 +1,6 @@
 package com.easy.query.core.basic.api.insert;
 
-import com.easy.query.core.abstraction.EasySQLApiFactory;
+import com.easy.query.core.abstraction.SQLApiFactory;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 
@@ -24,7 +24,7 @@ public class EasyEmptyInsertable<T>implements Insertable<T> {
         if(entity==null){
             return  this;
         }
-        EasySQLApiFactory sqlApiFactory = entityInsertExpression.getRuntimeContext().getSQLApiFactory();
+        SQLApiFactory sqlApiFactory = entityInsertExpression.getRuntimeContext().getSQLApiFactory();
         Insertable<T> insertable = (Insertable<T>) sqlApiFactory.createInsertable((Class<T>) entity.getClass(), entityInsertExpression);
         insertable.insert(entity);
         return insertable;

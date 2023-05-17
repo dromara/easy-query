@@ -6,7 +6,7 @@ import com.easy.query.core.enums.SQLLikeEnum;
 import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.enums.SQLRangeEnum;
 import com.easy.query.core.expression.lambda.Property;
-import com.easy.query.core.expression.lambda.SQLExpression;
+import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 
 import java.util.Collection;
@@ -330,15 +330,15 @@ public interface SQLWherePredicate<T1> {
     }
     <TProperty> SQLWherePredicate<T1> notIn(boolean condition, Property<T1, ?> column, Queryable<TProperty> subQueryable);
 
-   default  <T2> SQLWherePredicate<T1> exists(Queryable<T2> subQueryable, SQLExpression<SQLWherePredicate<T2>> whereExpression){
+   default  <T2> SQLWherePredicate<T1> exists(Queryable<T2> subQueryable, SQLExpression1<SQLWherePredicate<T2>> whereExpression){
        return exists(true,subQueryable,whereExpression);
    }
-    <T2> SQLWherePredicate<T1> exists(boolean condition, Queryable<T2> subQueryable, SQLExpression<SQLWherePredicate<T2>> whereExpression);
+    <T2> SQLWherePredicate<T1> exists(boolean condition, Queryable<T2> subQueryable, SQLExpression1<SQLWherePredicate<T2>> whereExpression);
 
-   default  <T2> SQLWherePredicate<T1> notExists(Queryable<T2> subQueryable, SQLExpression<SQLWherePredicate<T2>> whereExpression){
+   default  <T2> SQLWherePredicate<T1> notExists(Queryable<T2> subQueryable, SQLExpression1<SQLWherePredicate<T2>> whereExpression){
        return notExists(true,subQueryable,whereExpression);
    }
-    <T2> SQLWherePredicate<T1> notExists(boolean condition, Queryable<T2> subQueryable, SQLExpression<SQLWherePredicate<T2>> whereExpression);
+    <T2> SQLWherePredicate<T1> notExists(boolean condition, Queryable<T2> subQueryable, SQLExpression1<SQLWherePredicate<T2>> whereExpression);
 
     /**
      * 区间 (left..right] = {x | left < x <= right}
@@ -510,11 +510,11 @@ public interface SQLWherePredicate<T1> {
 
     SQLWherePredicate<T1> and(boolean condition);
 
-    default SQLWherePredicate<T1> and(SQLExpression<SQLWherePredicate<T1>> predicateSqlExpression) {
-        return and(true, predicateSqlExpression);
+    default SQLWherePredicate<T1> and(SQLExpression1<SQLWherePredicate<T1>> sqlWherePredicateSQLExpression) {
+        return and(true, sqlWherePredicateSQLExpression);
     }
 
-    SQLWherePredicate<T1> and(boolean condition, SQLExpression<SQLWherePredicate<T1>> predicateSqlExpression);
+    SQLWherePredicate<T1> and(boolean condition, SQLExpression1<SQLWherePredicate<T1>> sqlWherePredicateSQLExpression);
 
     default SQLWherePredicate<T1> or() {
         return or(true);
@@ -522,9 +522,9 @@ public interface SQLWherePredicate<T1> {
 
     SQLWherePredicate<T1> or(boolean condition);
 
-    default SQLWherePredicate<T1> or(SQLExpression<SQLWherePredicate<T1>> predicateSqlExpression) {
-        return or(true, predicateSqlExpression);
+    default SQLWherePredicate<T1> or(SQLExpression1<SQLWherePredicate<T1>> sqlWherePredicateSQLExpression) {
+        return or(true, sqlWherePredicateSQLExpression);
     }
 
-    SQLWherePredicate<T1> or(boolean condition, SQLExpression<SQLWherePredicate<T1>> predicateSqlExpression);
+    SQLWherePredicate<T1> or(boolean condition, SQLExpression1<SQLWherePredicate<T1>> sqlWherePredicateSQLExpression);
 }

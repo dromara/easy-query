@@ -200,15 +200,4 @@ public class EasyExpressionContext implements ExpressionContext {
     }
 
 
-    //    @Override
-//    public String getSqlColumnSegment(SqlEntityTableExpressionSegment table, String propertyName) {
-//        String alias = table.getAlias();
-//        String columnName = table.getColumnName(propertyName);
-//        String quoteName = getQuoteName(columnName);
-//        if(alias==null){
-//            return quoteName;
-//        }else{
-//            return alias+"."+quoteName;
-//        }
-//    }
 }

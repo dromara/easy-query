@@ -14,7 +14,7 @@ import com.easy.query.core.basic.api.delete.ExpressionDeletable;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.enums.SQLPredicateCompareEnum;
 import com.easy.query.core.exception.EasyQueryException;
-import com.easy.query.core.expression.lambda.SQLExpression;
+import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.DefaultSQLPredicate;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
@@ -63,7 +63,7 @@ public abstract   class AbstractExpressionDeletable<T> extends AbstractSQLExecut
 //    }
 
     @Override
-    public ExpressionDeletable<T> where(boolean condition, SQLExpression<SQLWherePredicate<T>> whereExpression) {
+    public ExpressionDeletable<T> where(boolean condition, SQLExpression1<SQLWherePredicate<T>> whereExpression) {
         if(condition){
             DefaultSQLPredicate<T> sqlPredicate = new DefaultSQLPredicate<>(0, entityDeleteExpressionBuilder, entityDeleteExpressionBuilder.getWhere());
             whereExpression.apply(sqlPredicate);

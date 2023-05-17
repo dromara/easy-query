@@ -6,9 +6,9 @@ import com.easy.query.core.expression.parser.core.SQLWherePredicate;
 import com.easy.query.core.expression.parser.core.SQLColumnSetter;
 import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
-import com.easy.query.core.expression.sql.expression.EasyTableSQLExpression;
-import com.easy.query.core.expression.sql.expression.impl.AnonymousTableSQLExpression;
-import com.easy.query.core.expression.lambda.SQLExpression;
+import com.easy.query.core.expression.sql.expression.TableSQLExpression;
+import com.easy.query.core.expression.sql.expression.impl.AnonymousTableSQLExpressionImpl;
+import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.util.SQLSegmentUtil;
 
@@ -27,12 +27,12 @@ public class AnonymousTableExpressionBuilder extends TableExpressionBuilder impl
     }
 
     @Override
-    public SQLExpression<SQLWherePredicate<Object>> getLogicDeleteQueryFilterExpression() {
+    public SQLExpression1<SQLWherePredicate<Object>> getLogicDeleteQueryFilterExpression() {
         return null;
     }
 
     @Override
-    public SQLExpression<SQLColumnSetter<Object>> getLogicDeletedSQLExpression() {
+    public SQLExpression1<SQLColumnSetter<Object>> getLogicDeletedSQLExpression() {
         return null;
     }
 
@@ -58,9 +58,9 @@ public class AnonymousTableExpressionBuilder extends TableExpressionBuilder impl
     }
 
     @Override
-    public EasyTableSQLExpression toExpression() {
+    public TableSQLExpression toExpression() {
 
-        AnonymousTableSQLExpression anonymousTableSQLExpression = new AnonymousTableSQLExpression(entityTable, multiTableType,entityQueryExpressionBuilder.toExpression(),runtimeContext);
+        AnonymousTableSQLExpressionImpl anonymousTableSQLExpression = new AnonymousTableSQLExpressionImpl(entityTable, multiTableType,entityQueryExpressionBuilder.toExpression(),runtimeContext);
         if(SQLSegmentUtil.isNotEmpty(on)){
             anonymousTableSQLExpression.setOn(on.clonePredicateSegment());
         }
