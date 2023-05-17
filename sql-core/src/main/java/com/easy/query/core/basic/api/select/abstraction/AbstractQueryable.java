@@ -254,6 +254,10 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
         return toInternalList(resultClass);
     }
 
+    /**
+     * 补齐select操作
+     * @param resultClass
+     */
     protected void compensateSelect(Class<?> resultClass) {
 
         if (SqlExpressionUtil.shouldCloneSqlEntityQueryExpressionBuilder(entityQueryExpressionBuilder)) {
