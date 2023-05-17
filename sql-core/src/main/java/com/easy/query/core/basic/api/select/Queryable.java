@@ -24,6 +24,9 @@ import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -368,6 +371,28 @@ public interface Queryable<T1> extends Query<T1>, Interceptable<Queryable<T1>>, 
     <T2> Queryable2<T1, T2> innerJoin(Class<T2> joinClass, SqlExpression2<SqlWherePredicate<T1>, SqlWherePredicate<T2>> on);
 
     <T2> Queryable2<T1, T2> innerJoin(Queryable<T2> joinQueryable, SqlExpression2<SqlWherePredicate<T1>, SqlWherePredicate<T2>> on);
+
+   default Queryable<T1> union(Queryable<T1> unionQueryable){
+       return union(Collections.singletonList(unionQueryable));
+   }
+   default Queryable<T1> union(Queryable<T1> unionQueryable1,Queryable<T1> unionQueryable2){
+       return union(Arrays.asList(unionQueryable1,unionQueryable2));
+   }
+   default Queryable<T1> union(Queryable<T1> unionQueryable1,Queryable<T1> unionQueryable2,Queryable<T1> unionQueryable3){
+       return union(Arrays.asList(unionQueryable1,unionQueryable2,unionQueryable3));
+   }
+    Queryable<T1> union(Collection<Queryable<T1>> unionQueries);
+   <TQ extends Queryable<T1>> Queryable<T1> union1(TQ ...unionQueries);
+   default Queryable<T1> unionAll(Queryable<T1> unionQueryable){
+       return unionAll(Collections.singletonList(unionQueryable));
+   }
+   default Queryable<T1> unionAll(Queryable<T1> unionQueryable1,Queryable<T1> unionQueryable2){
+       return unionAll(Arrays.asList(unionQueryable1,unionQueryable2));
+   }
+   default Queryable<T1> unionAll(Queryable<T1> unionQueryable1,Queryable<T1> unionQueryable2,Queryable<T1> unionQueryable3){
+       return unionAll(Arrays.asList(unionQueryable1,unionQueryable2,unionQueryable3));
+   }
+    Queryable<T1> unionAll(Collection<Queryable<T1>> unionQueries);
 
     EasyQuerySqlBuilderProvider<T1> getSqlBuilderProvider1();
 

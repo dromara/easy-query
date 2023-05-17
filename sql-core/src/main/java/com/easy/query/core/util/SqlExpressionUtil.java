@@ -17,7 +17,9 @@ import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpression
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.basic.api.select.Queryable4;
 import com.easy.query.core.expression.lambda.SqlExpression4;
+import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
+import com.easy.query.core.expression.sql.builder.impl.AnonymousUnionQueryExpressionBuilder;
 
 
 /**
@@ -37,11 +39,11 @@ public class SqlExpressionUtil {
         return sqlParameterCollector.expressionInvokeCountGetIncrement()==0;
     }
     public static <TSource> Queryable<TSource> cloneAndSelectAllQueryable(Queryable<TSource> queryable) {
-        EntityQueryExpressionBuilder queryableSqlEntityExpression = queryable.getSqlEntityExpressionBuilder();
-        if (SqlExpressionUtil.shouldCloneSqlEntityQueryExpressionBuilder(queryableSqlEntityExpression)) {
+        EntityQueryExpressionBuilder sqlEntityExpressionBuilder = queryable.getSqlEntityExpressionBuilder();
+        if (SqlExpressionUtil.shouldCloneSqlEntityQueryExpressionBuilder(sqlEntityExpressionBuilder)) {
             return queryable.cloneQueryable().select(SqlColumnSelector::columnAll);
         }
-        return queryable;
+        return queryable.cloneQueryable();
     }
 
     /**
@@ -69,7 +71,20 @@ public class SqlExpressionUtil {
     }
 
     public static boolean moreTableExpressionOrNoAnonymous(EntityQueryExpressionBuilder sqlEntityExpression) {
-        return sqlEntityExpression.getTables().size() != 1 || !(sqlEntityExpression.getTables().get(0) instanceof AnonymousEntityTableExpressionBuilder);
+       if(EasyCollectionUtil.isNotSingle(sqlEntityExpression.getTables())){
+           return true;
+       }
+        EntityTableExpressionBuilder entityTableExpressionBuilder = EasyCollectionUtil.first(sqlEntityExpression.getTables());
+       if(!(entityTableExpressionBuilder instanceof  AnonymousEntityTableExpressionBuilder)){
+           return true;
+       }
+        AnonymousEntityTableExpressionBuilder anonymousEntityTableExpressionBuilder = (AnonymousEntityTableExpressionBuilder) entityTableExpressionBuilder;
+        EntityQueryExpressionBuilder entityQueryExpressionBuilder = anonymousEntityTableExpressionBuilder.getEntityQueryExpressionBuilder();
+        if(entityQueryExpressionBuilder instanceof AnonymousUnionQueryExpressionBuilder){
+            return true;
+        }
+        return false;
+//     return sqlEntityExpression.getTables().size() != 1 || !(sqlEntityExpression.getTables().get(0) instanceof AnonymousEntityTableExpressionBuilder);
     }
     public static boolean hasAnyOperate(EntityQueryExpressionBuilder sqlEntityExpression){
         return sqlEntityExpression.hasLimit() || sqlEntityExpression.hasWhere() || sqlEntityExpression.hasOrder() || sqlEntityExpression.hasHaving()|| sqlEntityExpression.isDistinct() || sqlEntityExpression.hasGroup();

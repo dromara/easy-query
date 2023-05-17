@@ -2,6 +2,7 @@ package com.easy.query.core.expression.sql.expression.factory;
 
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.enums.ExecuteMethodEnum;
+import com.easy.query.core.enums.SqlUnionEnum;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.expression.EasyAnonymousQuerySqlExpression;
 import com.easy.query.core.expression.sql.expression.EasyDeleteSqlExpression;
@@ -10,10 +11,14 @@ import com.easy.query.core.expression.sql.expression.EasyQuerySqlExpression;
 import com.easy.query.core.expression.sql.expression.EasyTableSqlExpression;
 import com.easy.query.core.expression.sql.expression.EasyUpdateSqlExpression;
 import com.easy.query.core.expression.sql.expression.impl.AnonymousQuerySqlExpression;
+import com.easy.query.core.expression.sql.expression.impl.AnonymousUnionQuerySqlExpression;
 import com.easy.query.core.expression.sql.expression.impl.DeleteSqlExpression;
 import com.easy.query.core.expression.sql.expression.impl.InsertSqlExpression;
 import com.easy.query.core.expression.sql.expression.impl.QuerySqlExpression;
 import com.easy.query.core.expression.sql.expression.impl.UpdateSqlExpression;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * create time 2023/4/26 15:46
@@ -45,5 +50,10 @@ public class DefaultEasyExpressionFactory implements EasyExpressionFactory{
     @Override
     public EasyAnonymousQuerySqlExpression createEasyAnonymousQuerySqlExpression(EasyQueryRuntimeContext runtimeContext, String sql) {
         return new AnonymousQuerySqlExpression(runtimeContext,sql);
+    }
+
+    @Override
+    public EasyAnonymousQuerySqlExpression createEasyAnonymousUnionQuerySqlExpression(EasyQueryRuntimeContext runtimeContext, List<EasyQuerySqlExpression> easyQuerySqlExpressions, SqlUnionEnum sqlUnion) {
+        return new AnonymousUnionQuerySqlExpression(runtimeContext,new ArrayList<>(easyQuerySqlExpressions),sqlUnion);
     }
 }

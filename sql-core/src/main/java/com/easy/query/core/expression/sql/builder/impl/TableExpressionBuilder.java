@@ -29,7 +29,7 @@ public class TableExpressionBuilder implements EntityTableExpressionBuilder {
 
     protected final TableAvailable entityTable;
     protected final MultiTableTypeEnum multiTableType;
-    private final EasyQueryRuntimeContext runtimeContext;
+    protected final EasyQueryRuntimeContext runtimeContext;
     private final Dialect dialect;
     protected PredicateSegment on;
     protected Function<String, String> tableNameAs;

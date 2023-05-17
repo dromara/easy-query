@@ -3,6 +3,7 @@ package com.easy.query.core.expression.sql.builder.impl;
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.SqlAnonymousEntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.expression.EasyQuerySqlExpression;
 import com.easy.query.core.expression.sql.expression.impl.AnonymousQuerySqlExpression;
 import com.easy.query.core.expression.sql.expression.EasySqlExpression;
@@ -15,7 +16,7 @@ import com.easy.query.core.expression.sql.builder.SqlEntityQueryExpressionBuilde
  *
  * @author xuejiaming
  */
-public class AnonymousQueryExpressionBuilder extends QueryExpressionBuilder implements SqlEntityQueryExpressionBuilder {
+public class AnonymousQueryExpressionBuilder extends QueryExpressionBuilder implements SqlAnonymousEntityQueryExpressionBuilder {
     private final String sql;
 
     public AnonymousQueryExpressionBuilder(String sql, ExpressionContext queryExpressionContext) {

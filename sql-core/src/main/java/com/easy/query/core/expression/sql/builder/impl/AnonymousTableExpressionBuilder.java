@@ -6,11 +6,15 @@ import com.easy.query.core.expression.parser.core.SqlWherePredicate;
 import com.easy.query.core.expression.parser.core.SqlColumnSetter;
 import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
+import com.easy.query.core.expression.sql.expression.EasyQuerySqlExpression;
 import com.easy.query.core.expression.sql.expression.EasyTableSqlExpression;
 import com.easy.query.core.expression.sql.expression.impl.AnonymousTableSqlExpression;
 import com.easy.query.core.expression.lambda.SqlExpression;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.util.SqlSegmentUtil;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author xuejiaming
@@ -59,7 +63,8 @@ public class AnonymousTableExpressionBuilder extends TableExpressionBuilder impl
 
     @Override
     public EasyTableSqlExpression toExpression() {
-        AnonymousTableSqlExpression anonymousTableSqlExpression = new AnonymousTableSqlExpression(entityTable, multiTableType,entityQueryExpressionBuilder.toExpression());
+
+        AnonymousTableSqlExpression anonymousTableSqlExpression = new AnonymousTableSqlExpression(entityTable, multiTableType,entityQueryExpressionBuilder.toExpression(),runtimeContext);
         if(SqlSegmentUtil.isNotEmpty(on)){
             anonymousTableSqlExpression.setOn(on.clonePredicateSegment());
         }

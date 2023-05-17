@@ -760,4 +760,73 @@ public class QueryTest extends BaseTest {
                 .select(String.class, o -> o.column(Topic::getId)).distinct().toList();
         Assert.assertEquals(101,list.size());
     }
+    @Test
+    public void query52() {
+        Queryable<Topic> q1 = easyQuery
+                .queryable(Topic.class)
+                .where(o -> o.isNotNull(Topic::getId));
+        Queryable<Topic> q2 = easyQuery
+                .queryable(Topic.class)
+                .where(o -> o.isNull(Topic::getId));
+        Queryable<Topic> q3 = easyQuery
+                .queryable(Topic.class)
+                .where(o -> o.eq(Topic::getId,"123"));
+
+        String sql = q1.union(q2, q3).toSql();
+        Assert.assertEquals("SELECT t1.`id`,t1.`stars`,t1.`title`,t1.`create_time` FROM (SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t WHERE t.`id` IS NOT NULL UNION SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t WHERE t.`id` IS NULL UNION SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t WHERE t.`id` = ?) t1",sql);
+    }
+    @Test
+    public void query53() {
+        Queryable<Topic> q1 = easyQuery
+                .queryable(Topic.class);
+        Queryable<Topic> q2 = easyQuery
+                .queryable(Topic.class);
+        Queryable<Topic> q3 = easyQuery
+                .queryable(Topic.class);
+
+        String sql = q1.union(q2, q3).toSql();
+        Assert.assertEquals("SELECT t1.`id`,t1.`stars`,t1.`title`,t1.`create_time` FROM (SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t UNION SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t UNION SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t) t1",sql);
+    }
+    @Test
+    public void query54() {
+        Queryable<Topic> q1 = easyQuery
+                .queryable(Topic.class);
+        Queryable<Topic> q2 = easyQuery
+                .queryable(Topic.class);
+        Queryable<Topic> q3 = easyQuery
+                .queryable(Topic.class);
+
+        String sql = q1.union(q2, q3).where(o->o.eq(Topic::getId,"123321")).toSql();
+        Assert.assertEquals("SELECT t1.`id`,t1.`stars`,t1.`title`,t1.`create_time` FROM (SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t UNION SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t UNION SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t) t1 WHERE t1.`id` = ?",sql);
+    }
+    @Test
+    public void query55() {
+        Queryable<Topic> q1 = easyQuery
+                .queryable(Topic.class);
+        Queryable<Topic> q2 = easyQuery
+                .queryable(Topic.class);
+        Queryable<Topic> q3 = easyQuery
+                .queryable(Topic.class);
+
+        String sql = q1.union(q2, q3).select(o->o.column(Topic::getCreateTime).column(Topic::getStars)).toSql();
+        Assert.assertEquals("SELECT t1.`create_time`,t1.`stars` FROM (SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t UNION SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t UNION SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t) t1",sql);
+    }
+    @Test
+    public void query56() {
+        Queryable<Topic> q1 = easyQuery
+                .queryable(Topic.class)
+                .where(o -> o.isNotNull(Topic::getId));
+        Queryable<Topic> q2 = easyQuery
+                .queryable(Topic.class)
+                .where(o -> o.isNull(Topic::getId));
+        Queryable<Topic> q3 = easyQuery
+                .queryable(Topic.class)
+                .where(o -> o.eq(Topic::getId,"123"));
+        Queryable<Topic> q4 = easyQuery
+                .queryable(Topic.class)
+                .where(o -> o.eq(Topic::getCreateTime,"123"));
+
+        String sql = q1.union(q2, q3).unionAll(q4).toSql();
+        Assert.assertEquals("SELECT t2.`id`,t2.`stars`,t2.`title`,t2.`create_time` FROM (SELECT t1.`id`,t1.`stars`,t1.`title`,t1.`create_time` FROM (SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t WHERE t.`id` IS NOT NULL UNION SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t WHERE t.`id` IS NULL UNION SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t WHERE t.`id` = ?) t1 UNION ALL SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t WHERE t.`create_time` = ?) t2",sql);
+    }
 }

@@ -8,6 +8,8 @@ import com.easy.query.core.basic.api.jdbc.JdbcExecutor;
 import com.easy.query.core.basic.api.select.impl.EasyQueryable;
 import com.easy.query.core.basic.api.select.impl.EasyQueryable3;
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
+import com.easy.query.core.enums.SqlUnionEnum;
+import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.sql.builder.factory.EasyExpressionBuilderFactory;
 import com.easy.query.core.expression.sql.builder.EntityDeleteExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
@@ -34,10 +36,14 @@ import com.easy.query.core.basic.api.update.impl.EasyEmptyEntityUpdatable;
 import com.easy.query.core.basic.api.update.impl.EasyEntityUpdatable;
 import com.easy.query.core.basic.api.update.impl.EasyExpressionUpdatable;
 import com.easy.query.core.enums.MultiTableTypeEnum;
+import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyUtil;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * @FileName: DefaultEasySqlApiFactory.java
@@ -58,7 +64,7 @@ public class DefaultEasySqlApiFactory implements EasySqlApiFactory {
     }
 
     @Override
-    public <T> Queryable<T> createQueryable(Class<T> clazz, EasyQueryRuntimeContext runtimeContext,String alias) {
+    public <T> Queryable<T> createQueryable(Class<T> clazz, EasyQueryRuntimeContext runtimeContext, String alias) {
         ExpressionContext queryExpressionContext =easySqlExpressionFactory.createExpressionContext(runtimeContext,alias);
         EntityQueryExpressionBuilder entityQueryExpression = easySqlExpressionFactory.createEntityQueryExpression(queryExpressionContext);
         EntityMetadata entityMetadata =runtimeContext.getEntityMetadataManager().getEntityMetadata(clazz);
@@ -92,14 +98,56 @@ public class DefaultEasySqlApiFactory implements EasySqlApiFactory {
         return new EasyQueryable<>(source.queryClass(),entityQueryExpressionBuilder);
     }
 
+    /**
+     * 判断单表不需要匿名多表才需要
+     * @param clazz
+     * @param entityQueryExpressionBuilder
+     * @return
+     * @param <T>
+     */
     @Override
-    public <T> Queryable<T> createQueryable(Class<T> clazz, EntityQueryExpressionBuilder sqlEntityExpression) {
-        ExpressionContext queryExpressionContext = sqlEntityExpression.getExpressionContext();
+    public <T> Queryable<T> createQueryable(Class<T> clazz, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
+        ExpressionContext queryExpressionContext = entityQueryExpressionBuilder.getExpressionContext();
         EntityQueryExpressionBuilder sqlEntityQueryExpression = easySqlExpressionFactory.createEntityQueryExpression(queryExpressionContext);
         EntityMetadata entityMetadata = queryExpressionContext.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(clazz);
-        EntityTableExpressionBuilder anonymousTable = easySqlExpressionFactory.createAnonymousEntityTableExpression(entityMetadata, 0, queryExpressionContext.createTableAlias(), MultiTableTypeEnum.FROM, sqlEntityExpression);
+        EntityTableExpressionBuilder anonymousTable = easySqlExpressionFactory.createAnonymousEntityTableExpression(entityMetadata, 0, queryExpressionContext.createTableAlias(), MultiTableTypeEnum.FROM, entityQueryExpressionBuilder);
         sqlEntityQueryExpression.addSqlEntityTableExpression(anonymousTable);
         return new EasyQueryable<>(clazz,sqlEntityQueryExpression);
+    }
+
+    @Override
+    public <T> Queryable<T> createUnionQueryable(EasyQueryRuntimeContext runtimeContext, SqlUnionEnum sqlUnion, Collection<Queryable<T>> unionQueries) {
+        if(EasyCollectionUtil.isEmpty(unionQueries)){
+            throw new EasyQueryInvalidOperationException("cant create queryable with queryable union or union all");
+        }
+        List<EntityQueryExpressionBuilder> entityQueryExpressionBuilders = new ArrayList<>(unionQueries.size());
+        Iterator<Queryable<T>> queryableIterator = unionQueries.iterator();
+        Queryable<T> firstQueryable = queryableIterator.next();
+        Class<T> queryClass = firstQueryable.queryClass();
+        EntityMetadata entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(queryClass);
+        EntityQueryExpressionBuilder firstQueryableSqlEntityExpressionBuilder = firstQueryable.getSqlEntityExpressionBuilder();
+        ExpressionContext queryExpressionContext = firstQueryableSqlEntityExpressionBuilder.getExpressionContext();
+
+
+        EntityQueryExpressionBuilder sqlEntityExpressionBuilder = firstQueryable.getSqlEntityExpressionBuilder();
+        entityQueryExpressionBuilders.add(sqlEntityExpressionBuilder);
+        while (queryableIterator.hasNext()){
+            Queryable<T> unionQuery = queryableIterator.next();
+            EntityQueryExpressionBuilder unionSqlEntityExpressionBuilder = unionQuery.getSqlEntityExpressionBuilder();
+            entityQueryExpressionBuilders.add(unionSqlEntityExpressionBuilder);
+        }
+        EntityQueryExpressionBuilder innerSqlEntityQueryExpression = easySqlExpressionFactory.createAnonymousUnionQueryExpression(entityQueryExpressionBuilders,queryExpressionContext,sqlUnion);
+
+
+        int tableIndex = EasyUtil.getNextTableIndex(innerSqlEntityQueryExpression);
+        EntityTableExpressionBuilder sqlTable =easySqlExpressionFactory.createAnonymousEntityTableExpression(entityMetadata,  tableIndex,queryExpressionContext.createTableAlias(), MultiTableTypeEnum.FROM,innerSqlEntityQueryExpression);
+//        //todo
+//       innerSqlEntityQueryExpression.addSqlEntityTableExpression(sqlTable);
+
+
+        EntityQueryExpressionBuilder sqlEntityQueryExpression = easySqlExpressionFactory.createEntityQueryExpression(queryExpressionContext);
+        sqlEntityQueryExpression.addSqlEntityTableExpression(sqlTable);
+        return new EasyQueryable<>(queryClass,sqlEntityQueryExpression);
     }
 
     @Override

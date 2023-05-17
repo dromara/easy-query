@@ -1,6 +1,7 @@
 package com.easy.query.core.basic.api.select.abstraction;
 
 import com.easy.query.core.abstraction.EasyQueryRuntimeContext;
+import com.easy.query.core.enums.SqlUnionEnum;
 import com.easy.query.core.sharding.manager.SequenceCountLine;
 import com.easy.query.core.sharding.manager.SequenceCountNode;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
@@ -315,6 +316,9 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     public Queryable<T1> select(SqlExpression<SqlColumnSelector<T1>> selectExpression) {
         SqlColumnSelector<T1> sqlColumnSelector = getSqlBuilderProvider1().getSqlColumnSelector1(entityQueryExpressionBuilder.getProjects());
         selectExpression.apply(sqlColumnSelector);
+        if(EasyCollectionUtil.isSingle(entityQueryExpressionBuilder.getTables())){
+            return this;
+        }
         return entityQueryExpressionBuilder.getRuntimeContext().getSqlApiFactory().createQueryable(queryClass(), entityQueryExpressionBuilder);
     }
 
@@ -757,7 +761,42 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
         Queryable2<T1, T2> queryable = entityQueryExpressionBuilder.getRuntimeContext().getSqlApiFactory().createQueryable2(t1Class, selectAllTQueryable, MultiTableTypeEnum.INNER_JOIN, entityQueryExpressionBuilder);
         return SqlExpressionUtil.executeJoinOn(queryable, on);
     }
-//    @SafeVarargs
+
+    @Override
+    public Queryable<T1> union(Collection<Queryable<T1>> unionQueries) {
+        if (EasyCollectionUtil.isEmpty(unionQueries)) {
+            return this;
+        }
+        return internalUnion(unionQueries, SqlUnionEnum.UNION);
+    }
+
+    @SafeVarargs
+    @Override
+    public final <TQ extends Queryable<T1>> Queryable<T1> union1(TQ... unionQueries) {
+        return null;
+    }
+
+    @Override
+    public Queryable<T1> unionAll(Collection<Queryable<T1>> unionQueries) {
+        if (EasyCollectionUtil.isEmpty(unionQueries)) {
+            return this;
+        }
+        return internalUnion(unionQueries, SqlUnionEnum.UNION_ALL);
+    }
+
+    protected Queryable<T1> internalUnion(Collection<Queryable<T1>> unionQueries, SqlUnionEnum sqlUnion) {
+
+        List<Queryable<T1>> selectUnionQueries = new ArrayList<>(unionQueries.size() + 1);
+        Queryable<T1> myQueryable = SqlExpressionUtil.cloneAndSelectAllQueryable(this);
+        selectUnionQueries.add(myQueryable);
+        for (Queryable<T1> unionQuery : unionQueries) {
+            Queryable<T1> unionQueryable = SqlExpressionUtil.cloneAndSelectAllQueryable(unionQuery);
+            selectUnionQueries.add(unionQueryable);
+        }
+        return entityQueryExpressionBuilder.getRuntimeContext().getSqlApiFactory().createUnionQueryable(entityQueryExpressionBuilder.getRuntimeContext(), sqlUnion, selectUnionQueries);
+    }
+
+    //    @SafeVarargs
 //    @SuppressWarnings("varargs")
 //    @Override
 //    public final Queryable<T1> unionAll(Queryable<T1>... otherQueryables) {

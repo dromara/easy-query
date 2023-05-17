@@ -12,7 +12,9 @@ import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpression
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.SqlAnonymousUnionEntityQueryExpressionBuilder;
 import com.easy.query.core.util.ClassUtil;
+import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyUtil;
 import com.easy.query.core.util.LambdaUtil;
 
@@ -74,8 +76,16 @@ public class AbstractSqlColumnSelector<T1, TChain> {
         return (TChain) this;
     }
 
+    private EntityQueryExpressionBuilder getAnonymousTableQueryExpressionBuilder(AnonymousEntityTableExpressionBuilder table){
+        EntityQueryExpressionBuilder entityQueryExpressionBuilder = table.getEntityQueryExpressionBuilder();
+        if(entityQueryExpressionBuilder instanceof SqlAnonymousUnionEntityQueryExpressionBuilder){
+            List<EntityQueryExpressionBuilder> entityQueryExpressionBuilders = ((SqlAnonymousUnionEntityQueryExpressionBuilder) entityQueryExpressionBuilder).getEntityQueryExpressionBuilders();
+            return EasyCollectionUtil.first(entityQueryExpressionBuilders);
+        }
+        return entityQueryExpressionBuilder;
+    }
     protected TChain columnAnonymousAll(AnonymousEntityTableExpressionBuilder table){
-        EntityQueryExpressionBuilder sqlEntityQueryExpression = table.getEntityQueryExpressionBuilder();
+        EntityQueryExpressionBuilder sqlEntityQueryExpression = getAnonymousTableQueryExpressionBuilder(table);
         List<SqlSegment> sqlSegments = sqlEntityQueryExpression.getProjects().getSqlSegments();
         for (SqlSegment sqlSegment : sqlSegments) {
             if (sqlSegment instanceof SqlEntityAliasSegment) {
