@@ -24,7 +24,7 @@ import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.basic.api.select.Queryable;
 import com.easy.query.core.expression.parser.core.SQLColumnResultSelector;
 import com.easy.query.core.expression.segment.SQLEntitySegment;
-import com.easy.query.core.util.SQLExpressionUtil;
+import com.easy.query.core.util.EasySQLExpressionUtil;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -52,40 +52,40 @@ public abstract class AbstractQueryable2<T1, T2> extends AbstractQueryable<T1> i
     @Override
     public <T3> Queryable3<T1, T2, T3> leftJoin(Class<T3> joinClass, SQLExpression3<SQLWherePredicate<T1>, SQLWherePredicate<T2>, SQLWherePredicate<T3>> on) {
         Queryable3<T1, T2, T3> queryable3 = entityQueryExpressionBuilder.getRuntimeContext().getSQLApiFactory().createQueryable3(t1Class, t2Class, joinClass, MultiTableTypeEnum.LEFT_JOIN, entityQueryExpressionBuilder);
-        return SQLExpressionUtil.executeJoinOn(queryable3,on);
+        return EasySQLExpressionUtil.executeJoinOn(queryable3,on);
     }
 
     @Override
     public <T3> Queryable3<T1, T2, T3> leftJoin(Queryable<T3> joinQueryable, SQLExpression3<SQLWherePredicate<T1>, SQLWherePredicate<T2>, SQLWherePredicate<T3>> on) {
-        Queryable<T3> selectAllT2Queryable = SQLExpressionUtil.cloneAndSelectAllQueryable(joinQueryable);
+        Queryable<T3> selectAllT2Queryable = EasySQLExpressionUtil.cloneAndSelectAllQueryable(joinQueryable);
         Queryable3<T1, T2, T3> queryable3 = entityQueryExpressionBuilder.getRuntimeContext().getSQLApiFactory().createQueryable3(t1Class,t2Class, selectAllT2Queryable, MultiTableTypeEnum.LEFT_JOIN, entityQueryExpressionBuilder);
-        return SQLExpressionUtil.executeJoinOn(queryable3,on);
+        return EasySQLExpressionUtil.executeJoinOn(queryable3,on);
     }
 
     @Override
     public <T3> Queryable3<T1, T2, T3> rightJoin(Class<T3> joinClass, SQLExpression3<SQLWherePredicate<T1>, SQLWherePredicate<T2>, SQLWherePredicate<T3>> on) {
         Queryable3<T1, T2, T3> queryable3 = entityQueryExpressionBuilder.getRuntimeContext().getSQLApiFactory().createQueryable3(t1Class, t2Class, joinClass, MultiTableTypeEnum.RIGHT_JOIN, entityQueryExpressionBuilder);
-        return SQLExpressionUtil.executeJoinOn(queryable3,on);
+        return EasySQLExpressionUtil.executeJoinOn(queryable3,on);
     }
 
     @Override
     public <T3> Queryable3<T1, T2, T3> rightJoin(Queryable<T3> joinQueryable, SQLExpression3<SQLWherePredicate<T1>, SQLWherePredicate<T2>, SQLWherePredicate<T3>> on) {
-        Queryable<T3> selectAllT2Queryable = SQLExpressionUtil.cloneAndSelectAllQueryable(joinQueryable);
+        Queryable<T3> selectAllT2Queryable = EasySQLExpressionUtil.cloneAndSelectAllQueryable(joinQueryable);
         Queryable3<T1, T2, T3> queryable3 = entityQueryExpressionBuilder.getRuntimeContext().getSQLApiFactory().createQueryable3(t1Class,t2Class, selectAllT2Queryable, MultiTableTypeEnum.RIGHT_JOIN, entityQueryExpressionBuilder);
-        return SQLExpressionUtil.executeJoinOn(queryable3,on);
+        return EasySQLExpressionUtil.executeJoinOn(queryable3,on);
     }
 
     @Override
     public <T3> Queryable3<T1, T2, T3> innerJoin(Class<T3> joinClass, SQLExpression3<SQLWherePredicate<T1>, SQLWherePredicate<T2>, SQLWherePredicate<T3>> on) {
         Queryable3<T1, T2, T3> queryable3 = entityQueryExpressionBuilder.getRuntimeContext().getSQLApiFactory().createQueryable3(t1Class, t2Class, joinClass, MultiTableTypeEnum.INNER_JOIN, entityQueryExpressionBuilder);
-        return SQLExpressionUtil.executeJoinOn(queryable3,on);
+        return EasySQLExpressionUtil.executeJoinOn(queryable3,on);
     }
 
     @Override
     public <T3> Queryable3<T1, T2, T3> innerJoin(Queryable<T3> joinQueryable, SQLExpression3<SQLWherePredicate<T1>, SQLWherePredicate<T2>, SQLWherePredicate<T3>> on) {
-        Queryable<T3> selectAllT2Queryable = SQLExpressionUtil.cloneAndSelectAllQueryable(joinQueryable);
+        Queryable<T3> selectAllT2Queryable = EasySQLExpressionUtil.cloneAndSelectAllQueryable(joinQueryable);
         Queryable3<T1, T2, T3> queryable3 = entityQueryExpressionBuilder.getRuntimeContext().getSQLApiFactory().createQueryable3(t1Class,t2Class, selectAllT2Queryable, MultiTableTypeEnum.INNER_JOIN, entityQueryExpressionBuilder);
-        return SQLExpressionUtil.executeJoinOn(queryable3,on);
+        return EasySQLExpressionUtil.executeJoinOn(queryable3,on);
     }
 
 

@@ -3,7 +3,7 @@ package com.easy.query.core.metadata;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.sharding.route.table.TableUnit;
-import com.easy.query.core.util.BitwiseUtil;
+import com.easy.query.core.util.EasyBitwiseUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.Collections;
@@ -89,15 +89,15 @@ public class ShardingSequenceConfig {
     }
 
     public boolean hasCompareMethods(ExecuteMethodEnum executeMethod){
-        return BitwiseUtil.hasBit(sequenceCompareMethods,executeMethod.getCode());
+        return EasyBitwiseUtil.hasBit(sequenceCompareMethods,executeMethod.getCode());
     }
     public boolean hasCompareAscMethods(ExecuteMethodEnum executeMethod){
-        return BitwiseUtil.hasBit(sequenceCompareAscMethods,executeMethod.getCode());
+        return EasyBitwiseUtil.hasBit(sequenceCompareAscMethods,executeMethod.getCode());
     }
     public boolean hasLimitMethods(ExecuteMethodEnum executeMethod){
-        return BitwiseUtil.hasBit(sequenceLimitMethods,executeMethod.getCode());
+        return EasyBitwiseUtil.hasBit(sequenceLimitMethods,executeMethod.getCode());
     }
     public boolean hasConnectionModeMethods(ExecuteMethodEnum executeMethod){
-        return BitwiseUtil.hasBit(sequenceConnectionModeMethods,executeMethod.getCode());
+        return EasyBitwiseUtil.hasBit(sequenceConnectionModeMethods,executeMethod.getCode());
     }
 }

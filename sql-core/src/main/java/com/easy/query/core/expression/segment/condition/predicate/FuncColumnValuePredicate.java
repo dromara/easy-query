@@ -7,8 +7,8 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.SQLEntitySegment;
 import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
 import com.easy.query.core.enums.SQLPredicateCompare;
-import com.easy.query.core.util.SQLUtil;
-import com.easy.query.core.util.SQLExpressionUtil;
+import com.easy.query.core.util.EasySQLUtil;
+import com.easy.query.core.util.EasySQLExpressionUtil;
 
 /**
  * @FileName: FuncColumnValuePredicate.java
@@ -36,8 +36,8 @@ public class FuncColumnValuePredicate implements Predicate {
 
     @Override
     public String toSQL(SQLParameterCollector sqlParameterCollector) {
-        SQLUtil.addParameter(sqlParameterCollector,new EasyConstSQLParameter(table,propertyName,val));
-        String sqlColumnSegment = SQLExpressionUtil.getSQLOwnerColumn(runtimeContext,table,propertyName);
+        EasySQLUtil.addParameter(sqlParameterCollector,new EasyConstSQLParameter(table,propertyName,val));
+        String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumn(runtimeContext,table,propertyName);
         return func.getFuncColumn(sqlColumnSegment) +" "+ compare.getSQL() + " ?";
     }
 

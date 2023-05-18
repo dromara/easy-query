@@ -27,11 +27,11 @@ import com.easy.query.core.expression.func.AggregationType;
 import com.easy.query.core.sharding.route.RouteContext;
 import com.easy.query.core.sharding.route.RouteUnit;
 import com.easy.query.core.sharding.route.ShardingRouteResult;
-import com.easy.query.core.util.BitwiseUtil;
-import com.easy.query.core.util.ClassUtil;
+import com.easy.query.core.util.EasyBitwiseUtil;
+import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
-import com.easy.query.core.util.ShardingUtil;
-import com.easy.query.core.util.SQLSegmentUtil;
+import com.easy.query.core.util.EasyShardingUtil;
+import com.easy.query.core.util.EasySQLSegmentUtil;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -59,7 +59,7 @@ public class DefaultRewriteContextFactory implements RewriteContextFactory {
         EntityQuerySQLExpression easyEntityPredicateSQLExpression = queryPrepareParseResult.getEntityPredicateSQLExpression();
         QueryRuntimeContext runtimeContext = easyEntityPredicateSQLExpression.getRuntimeContext();
         //添加默认排序字段,并且添加默认排序字段到select 如果不添加那么streamResultSet将无法进行order排序获取
-        if(SQLSegmentUtil.isEmpty(easyEntityPredicateSQLExpression.getOrder())&&Objects.equals(ExecuteMethodEnum.LIST,queryPrepareParseResult.getExecutorContext().getExecuteMethod())){
+        if(EasySQLSegmentUtil.isEmpty(easyEntityPredicateSQLExpression.getOrder())&&Objects.equals(ExecuteMethodEnum.LIST,queryPrepareParseResult.getExecutorContext().getExecuteMethod())){
             SequenceParseResult sequenceParseResult = queryPrepareParseResult.getSequenceParseResult();
             if(sequenceParseResult!=null){
                 TableAvailable table = sequenceParseResult.getTable();
@@ -81,7 +81,7 @@ public class DefaultRewriteContextFactory implements RewriteContextFactory {
             }
         }
         //如果当前表达式存在group 并且
-        if (SQLSegmentUtil.isNotEmpty(easyEntityPredicateSQLExpression.getGroup())) {
+        if (EasySQLSegmentUtil.isNotEmpty(easyEntityPredicateSQLExpression.getGroup())) {
 
             boolean hasAvg=false;
             //分组重写的如果存在count avg sum那么就会存储
@@ -90,7 +90,7 @@ public class DefaultRewriteContextFactory implements RewriteContextFactory {
             //遍历所有的表达式
             for (SQLSegment groupSQLSegment : easyEntityPredicateSQLExpression.getGroup().getSQLSegments()) {
                 if (!(groupSQLSegment instanceof ColumnSegment)) {
-                    throw new UnsupportedOperationException("sharding rewrite group not implement ColumnSegment:" + ClassUtil.getInstanceSimpleName(groupSQLSegment));
+                    throw new UnsupportedOperationException("sharding rewrite group not implement ColumnSegment:" + EasyClassUtil.getInstanceSimpleName(groupSQLSegment));
                 }
                 ColumnSegment groupColumnSegment = (ColumnSegment) groupSQLSegment;
 
@@ -113,7 +113,7 @@ public class DefaultRewriteContextFactory implements RewriteContextFactory {
                         continue;
                     }
                     if (!(sqlSegment instanceof ColumnSegment)) {
-                        throw new UnsupportedOperationException("sharding rewrite projection not implement ColumnSegment:" + ClassUtil.getInstanceSimpleName(sqlSegment));
+                        throw new UnsupportedOperationException("sharding rewrite projection not implement ColumnSegment:" + EasyClassUtil.getInstanceSimpleName(sqlSegment));
                     }
                     ColumnSegment columnSegment = (ColumnSegment) sqlSegment;
                     //
@@ -133,7 +133,7 @@ public class DefaultRewriteContextFactory implements RewriteContextFactory {
             List<SQLSegment> groupSQLSegments = easyEntityPredicateSQLExpression.getGroup().getSQLSegments();
             List<SQLSegment> orderSQLSegments = easyEntityPredicateSQLExpression.getOrder().getSQLSegments();
             //group by或者order by小的那个是另一个的startsWith即可
-            boolean startsWithGroupByAndOrderBy = ShardingUtil.isGroupByAndOrderByStartsWith(groupSQLSegments,orderSQLSegments);
+            boolean startsWithGroupByAndOrderBy = EasyShardingUtil.isGroupByAndOrderByStartsWith(groupSQLSegments,orderSQLSegments);
             queryPrepareParseResult.setStartsWithGroupByInOrderBy(startsWithGroupByAndOrderBy);
             //如果是的情况下
             if(startsWithGroupByAndOrderBy){
@@ -176,14 +176,14 @@ public class DefaultRewriteContextFactory implements RewriteContextFactory {
             }
         }
 
-        int mergeBehavior = ShardingUtil.parseMergeBehavior(queryPrepareParseResult, easyEntityPredicateSQLExpression, routeContext);
-        if(BitwiseUtil.hasBit(mergeBehavior,MergeBehaviorEnum.PAGINATION.getCode())){
+        int mergeBehavior = EasyShardingUtil.parseMergeBehavior(queryPrepareParseResult, easyEntityPredicateSQLExpression, routeContext);
+        if(EasyBitwiseUtil.hasBit(mergeBehavior,MergeBehaviorEnum.PAGINATION.getCode())){
            return createPaginationRewriteContext(mergeBehavior,queryPrepareParseResult,easyEntityPredicateSQLExpression,routeContext);
         }
-        if(BitwiseUtil.hasBit(mergeBehavior,MergeBehaviorEnum.SEQUENCE_COUNT.getCode())){
+        if(EasyBitwiseUtil.hasBit(mergeBehavior,MergeBehaviorEnum.SEQUENCE_COUNT.getCode())){
             ShardingQueryCountManager shardingQueryCountManager = runtimeContext.getShardingQueryCountManager();
             List<SequenceCountNode> countResult = shardingQueryCountManager.getCountResult();
-            List<RewriteRouteUnit> sequenceCountRewriteRouteUnits = ShardingUtil.getSequenceCountRewriteRouteUnits(queryPrepareParseResult, routeContext, countResult);
+            List<RewriteRouteUnit> sequenceCountRewriteRouteUnits = EasyShardingUtil.getSequenceCountRewriteRouteUnits(queryPrepareParseResult, routeContext, countResult);
             ShardingRouteResult shardingRouteResult = routeContext.getShardingRouteResult();
             return new RewriteContext(mergeBehavior,queryPrepareParseResult,sequenceCountRewriteRouteUnits,shardingRouteResult.isCrossDataSource(),shardingRouteResult.isCrossTable(),shardingRouteResult.isSequenceQuery(),false);
         }
@@ -234,7 +234,7 @@ public class DefaultRewriteContextFactory implements RewriteContextFactory {
         List<RewriteRouteUnit> rewriteRouteUnits = getPaginationRewriteRouteUnitsAndRewriteQuerySQLExpression(mergeBehavior,queryPrepareParseResult,easyQuerySQLExpression, routeContext);
         ShardingRouteResult shardingRouteResult = routeContext.getShardingRouteResult();
         //是否需要反向排序
-        boolean reverseMerge = !BitwiseUtil.hasBit(mergeBehavior, MergeBehaviorEnum.SEQUENCE_PAGINATION.getCode()) && BitwiseUtil.hasBit(mergeBehavior, MergeBehaviorEnum.REVERSE_PAGINATION.getCode());
+        boolean reverseMerge = !EasyBitwiseUtil.hasBit(mergeBehavior, MergeBehaviorEnum.SEQUENCE_PAGINATION.getCode()) && EasyBitwiseUtil.hasBit(mergeBehavior, MergeBehaviorEnum.REVERSE_PAGINATION.getCode());
         return new RewriteContext(mergeBehavior,queryPrepareParseResult,rewriteRouteUnits,shardingRouteResult.isCrossDataSource(),shardingRouteResult.isCrossTable(),shardingRouteResult.isSequenceQuery(),reverseMerge);
     }
 
@@ -249,14 +249,14 @@ public class DefaultRewriteContextFactory implements RewriteContextFactory {
     private List<RewriteRouteUnit> getPaginationRewriteRouteUnitsAndRewriteQuerySQLExpression(int mergeBehavior, QueryPrepareParseResult queryPrepareParseResult, EntityQuerySQLExpression easyQuerySQLExpression, RouteContext routeContext){
 
         QueryRuntimeContext runtimeContext = queryPrepareParseResult.getExecutorContext().getRuntimeContext();
-        if(BitwiseUtil.hasBit(mergeBehavior, MergeBehaviorEnum.SEQUENCE_PAGINATION.getCode())){
+        if(EasyBitwiseUtil.hasBit(mergeBehavior, MergeBehaviorEnum.SEQUENCE_PAGINATION.getCode())){
             ShardingQueryCountManager shardingQueryCountManager = runtimeContext.getShardingQueryCountManager();
             List<SequenceCountNode> countResult = shardingQueryCountManager.getCountResult();
-            List<RewriteRouteUnit> rewriteRouteUnits = ShardingUtil.getSequencePaginationRewriteRouteUnits(queryPrepareParseResult, routeContext, countResult);
+            List<RewriteRouteUnit> rewriteRouteUnits = EasyShardingUtil.getSequencePaginationRewriteRouteUnits(queryPrepareParseResult, routeContext, countResult);
             rewritePagination(easyQuerySQLExpression);
             return rewriteRouteUnits;
         }
-        if(BitwiseUtil.hasBit(mergeBehavior, MergeBehaviorEnum.REVERSE_PAGINATION.getCode())){
+        if(EasyBitwiseUtil.hasBit(mergeBehavior, MergeBehaviorEnum.REVERSE_PAGINATION.getCode())){
             ShardingQueryCountManager shardingQueryCountManager = runtimeContext.getShardingQueryCountManager();
             List<SequenceCountNode> countResult = shardingQueryCountManager.getCountResult();
             long total = EasyCollectionUtil.sumLong(countResult, SequenceCountNode::getTotal);

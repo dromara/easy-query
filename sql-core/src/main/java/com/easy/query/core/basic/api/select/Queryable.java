@@ -1,7 +1,7 @@
 package com.easy.query.core.basic.api.select;
 
 import com.easy.query.core.api.pagination.EasyPageResult;
-import com.easy.query.core.api.dynamic.order.EasyOrderBy;
+import com.easy.query.core.api.dynamic.sort.ObjectSort;
 import com.easy.query.core.sharding.manager.SequenceCountLine;
 import com.easy.query.core.basic.api.internal.Interceptable;
 import com.easy.query.core.basic.api.internal.LogicDeletable;
@@ -304,9 +304,9 @@ public interface Queryable<T1> extends Query<T1>, Interceptable<Queryable<T1>>, 
     /**
      * @param configuration
      * @return
-     * @throws EasyQueryOrderByInvalidOperationException 当配置{@link EasyOrderBy} 为{@code  DynamicModeEnum.STRICT}排序设置的属性不存在当前排序对象里面或者当前查询对象无法获取 {@link SQLColumnSelector}
+     * @throws EasyQueryOrderByInvalidOperationException 当配置{@link ObjectSort} 为{@code  DynamicModeEnum.STRICT}排序设置的属性不存在当前排序对象里面或者当前查询对象无法获取 {@link SQLColumnSelector}
      */
-    default Queryable<T1> orderByDynamic(EasyOrderBy configuration) {
+    default Queryable<T1> orderByDynamic(ObjectSort configuration) {
         return orderByDynamic(true, configuration);
     }
 
@@ -314,9 +314,9 @@ public interface Queryable<T1> extends Query<T1>, Interceptable<Queryable<T1>>, 
      * @param condition
      * @param configuration
      * @return
-     * @throws EasyQueryOrderByInvalidOperationException 当配置{@link EasyOrderBy} 为{@code  DynamicModeEnum.STRICT}排序设置的属性不存在当前排序对象里面或者当前查询对象无法获取 {@link SQLColumnSelector}
+     * @throws EasyQueryOrderByInvalidOperationException 当配置{@link ObjectSort} 为{@code  DynamicModeEnum.STRICT}排序设置的属性不存在当前排序对象里面或者当前查询对象无法获取 {@link SQLColumnSelector}
      */
-    Queryable<T1> orderByDynamic(boolean condition, EasyOrderBy configuration);
+    Queryable<T1> orderByDynamic(boolean condition, ObjectSort configuration);
 
     default Queryable<T1> distinct() {
         return distinct(true);

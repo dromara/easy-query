@@ -1,5 +1,5 @@
 package com.easy.query.core.annotation;
-import com.easy.query.core.util.StringUtil;
+import com.easy.query.core.util.EasyStringUtil;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -29,7 +29,7 @@ public @interface Column {
     /**
      * 指定实体对象映射到数据库的名称
      */
-    String value() default StringUtil.EMPTY;
+    String value() default EasyStringUtil.EMPTY;
 
 //    /**
 //     * 仅decimal有效

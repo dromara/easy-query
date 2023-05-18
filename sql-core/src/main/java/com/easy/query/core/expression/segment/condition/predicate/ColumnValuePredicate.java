@@ -9,8 +9,8 @@ import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.enums.SQLPredicateCompareEnum;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.SQLEntitySegment;
-import com.easy.query.core.util.SQLUtil;
-import com.easy.query.core.util.SQLExpressionUtil;
+import com.easy.query.core.util.EasySQLUtil;
+import com.easy.query.core.util.EasySQLExpressionUtil;
 
 import java.util.Objects;
 
@@ -40,11 +40,11 @@ public class ColumnValuePredicate implements ValuePredicate, ShardingPredicate {
         EasyConstSQLParameter constSQLParameter = new EasyConstSQLParameter(table, propertyName, val);
         String compareSQL = compare.getSQL();
         if(Objects.equals(SQLPredicateCompareEnum.LIKE.getSQL(),compareSQL)){
-            SQLUtil.addParameter(sqlParameterCollector,new ConstLikeSQLParameter(constSQLParameter));
+            EasySQLUtil.addParameter(sqlParameterCollector,new ConstLikeSQLParameter(constSQLParameter));
         }else{
-            SQLUtil.addParameter(sqlParameterCollector,constSQLParameter);
+            EasySQLUtil.addParameter(sqlParameterCollector,constSQLParameter);
         }
-        String sqlColumnSegment = SQLExpressionUtil.getSQLOwnerColumn(runtimeContext,table,propertyName);
+        String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumn(runtimeContext,table,propertyName);
         return sqlColumnSegment + " " + compareSQL + " ?";
     }
 

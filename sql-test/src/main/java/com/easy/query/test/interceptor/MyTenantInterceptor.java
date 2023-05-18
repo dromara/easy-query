@@ -7,7 +7,7 @@ import com.easy.query.core.expression.parser.core.SQLWherePredicate;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.LambdaEntityExpressionBuilder;
-import com.easy.query.core.util.BeanUtil;
+import com.easy.query.core.util.EasyBeanUtil;
 import com.easy.query.test.entity.TopicInterceptor;
 import com.easy.query.test.logicdel.CurrentUserHelper;
 
@@ -32,7 +32,7 @@ public class MyTenantInterceptor implements EasyEntityInterceptor,EasyPredicateF
     public void configure(Class<?> entityClass, LambdaEntityExpressionBuilder lambdaEntityExpressionBuilder, SQLWherePredicate<Object> sqlWherePredicate) {
         if(CurrentUserHelper.getUserId()!=null){
             //获取租户id的lambda表达式
-            Property<Object, ?> tenantId = BeanUtil.getPropertyGetterLambda(entityClass, "tenantId", String.class);
+            Property<Object, ?> tenantId = EasyBeanUtil.getPropertyGetterLambda(entityClass, "tenantId", String.class);
             sqlWherePredicate.eq(tenantId, CurrentUserHelper.getTenantId());
         }
     }

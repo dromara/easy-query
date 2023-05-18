@@ -21,7 +21,7 @@ import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.sharding.context.EasyStreamMergeContext;
 import com.easy.query.core.sharding.context.EntityStreamMergeContext;
 import com.easy.query.core.sharding.context.ShardingQueryEasyStreamMergeContext;
-import com.easy.query.core.util.StreamResultUtil;
+import com.easy.query.core.util.EasyStreamResultUtil;
 
 import java.util.List;
 
@@ -48,7 +48,7 @@ public class DefaultEntityExpressionExecutor implements EntityExpressionExecutor
 
         try (JdbcCommand<QueryExecuteResult> command = getSQLQueryJdbcCommand(executorContext, executionContext);
              QueryExecuteResult executeResult = command.execute()) {
-            return StreamResultUtil.mapTo(executorContext, executeResult.getStreamResultSet(), clazz);
+            return EasyStreamResultUtil.mapTo(executorContext, executeResult.getStreamResultSet(), clazz);
         } catch (Exception e) {
             throw new EasyQueryException(e);
         }
@@ -73,7 +73,7 @@ public class DefaultEntityExpressionExecutor implements EntityExpressionExecutor
 
         try (JdbcCommand<QueryExecuteResult> command = getQueryEntityJdbcCommand(executorContext, executionContext,(EasyQueryPrepareParseResult)prepareParseResult);
              QueryExecuteResult executeResult = command.execute()) {
-            return StreamResultUtil.mapTo(executorContext, executeResult.getStreamResultSet(), clazz);
+            return EasyStreamResultUtil.mapTo(executorContext, executeResult.getStreamResultSet(), clazz);
         } catch (Exception e) {
             throw new EasyQueryException(e);
         }

@@ -3,7 +3,7 @@ package com.easy.query.core.expression.segment;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameterCollector;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.util.SQLExpressionUtil;
+import com.easy.query.core.util.EasySQLExpressionUtil;
 
 /**
  * @FileName: ColumnSegment.java
@@ -49,11 +49,11 @@ public class ColumnSegmentImpl implements ColumnSegment {
 
     @Override
     public String toSQL(SQLParameterCollector sqlParameterCollector) {
-        String sqlColumnSegment = SQLExpressionUtil.getSQLOwnerColumn(runtimeContext,table,propertyName);
+        String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumn(runtimeContext,table,propertyName);
         StringBuilder sql = new StringBuilder();
         sql.append(sqlColumnSegment);
         if(alias!=null){
-            sql.append(" AS ").append(SQLExpressionUtil.getQuoteName(runtimeContext,alias));
+            sql.append(" AS ").append(EasySQLExpressionUtil.getQuoteName(runtimeContext,alias));
         }
         return sql.toString();
     }

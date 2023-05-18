@@ -7,8 +7,8 @@ import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.expression.segment.builder.ProjectSQLBuilderSegmentImpl;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
-import com.easy.query.core.util.SQLExpressionUtil;
-import com.easy.query.core.util.SQLSegmentUtil;
+import com.easy.query.core.util.EasySQLExpressionUtil;
+import com.easy.query.core.util.EasySQLSegmentUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +48,7 @@ public  class InsertSQLExpressionImpl implements EntityInsertSQLExpression {
 
     @Override
     public String toSQL(SQLParameterCollector sqlParameterCollector) {
-        SQLExpressionUtil.expressionInvokeRoot(sqlParameterCollector);
+        EasySQLExpressionUtil.expressionInvokeRoot(sqlParameterCollector);
         EntityTableSQLExpression easyTableSQLExpression = tables.get(0);
         String tableName = easyTableSQLExpression.getTableName();
         int insertColumns = columns.getSQLSegments().size();
@@ -68,7 +68,7 @@ public  class InsertSQLExpressionImpl implements EntityInsertSQLExpression {
         ExpressionFactory expressionFactory = runtimeContext.getExpressionFactory();
 
         EntityInsertSQLExpression easyInsertSQLExpression = expressionFactory.createEasyInsertSQLExpression(runtimeContext,tables.get(0).cloneSQLExpression());
-        if(SQLSegmentUtil.isNotEmpty(columns)){
+        if(EasySQLSegmentUtil.isNotEmpty(columns)){
             columns.copyTo(easyInsertSQLExpression.getColumns());
         }
         return easyInsertSQLExpression;

@@ -1,6 +1,5 @@
 package com.easy.query.core.sharding.route.table;
 
-import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.executor.parser.PrepareParseResult;
 import com.easy.query.core.expression.lambda.RouteFunction;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
@@ -9,7 +8,7 @@ import com.easy.query.core.sharding.route.RoutePredicateExpression;
 import com.easy.query.core.sharding.route.datasource.engine.DataSourceRouteResult;
 import com.easy.query.core.sharding.route.table.abstraction.AbstractTableRoute;
 import com.easy.query.core.sharding.rule.table.TableRouteRule;
-import com.easy.query.core.util.ShardingUtil;
+import com.easy.query.core.util.EasyShardingUtil;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -25,7 +24,7 @@ public class ShardingTableRoute extends AbstractTableRoute {
 
     @Override
     public <T> Collection<TableRouteUnit> route0(TableRouteRule<T> tableRouteRule, TableAvailable table, DataSourceRouteResult dataSourceRouteResult, Collection<ActualTable> beforeTableNames, PrepareParseResult prepareParseResult) {
-        RoutePredicateExpression<ActualTable> routePredicateExpression = ShardingUtil.getRoutePredicateExpression(prepareParseResult, table, tableRouteRule, true);
+        RoutePredicateExpression<ActualTable> routePredicateExpression = EasyShardingUtil.getRoutePredicateExpression(prepareParseResult, table, tableRouteRule, true);
         RouteFunction<ActualTable> routePredicate = routePredicateExpression.getRoutePredicate();
         return filterTableNameWithDataSourceResult(dataSourceRouteResult, beforeTableNames)
                 .filter(routePredicate::apply)

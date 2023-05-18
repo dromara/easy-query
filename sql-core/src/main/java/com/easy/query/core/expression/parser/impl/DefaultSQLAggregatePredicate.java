@@ -12,7 +12,7 @@ import com.easy.query.core.expression.segment.condition.predicate.FuncColumnValu
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
-import com.easy.query.core.util.LambdaUtil;
+import com.easy.query.core.util.EasyLambdaUtil;
 
 /**
  * @author xuejiaming
@@ -54,7 +54,7 @@ public class DefaultSQLAggregatePredicate<T1> implements SQLAggregatePredicate<T
     @Override
     public SQLAggregatePredicate<T1> func(boolean condition, ColumnFunction columnFunction, Property<T1, ?> column, SQLPredicateCompare compare, Object val) {
         if (condition) {
-            String propertyName = LambdaUtil.getPropertyName(column);
+            String propertyName = EasyLambdaUtil.getPropertyName(column);
             nextPredicateSegment.setPredicate(new FuncColumnValuePredicate(getTable(), columnFunction, propertyName, val, compare, runtimeContext));
             nextAnd();
         }
@@ -84,7 +84,7 @@ public class DefaultSQLAggregatePredicate<T1> implements SQLAggregatePredicate<T
     public SQLAggregatePredicate<T1> and(boolean condition, SQLExpression1<SQLAggregatePredicate<T1>> sqlAggregatePredicateSQLExpression) {
         if (condition) {
             this.rootPredicateSegment.addPredicateSegment(this.nextPredicateSegment);
-            SQLAggregatePredicate<T1> sqlPredicate = entityExpressionBuilder.getRuntimeContext().getEasyQueryLambdaFactory().createSQLAggregatePredicate(index, entityExpressionBuilder, this.nextPredicateSegment);
+            SQLAggregatePredicate<T1> sqlPredicate = entityExpressionBuilder.getRuntimeContext().getQueryLambdaFactory().createSQLAggregatePredicate(index, entityExpressionBuilder, this.nextPredicateSegment);
             sqlAggregatePredicateSQLExpression.apply(sqlPredicate);
         }
         return this;
@@ -103,7 +103,7 @@ public class DefaultSQLAggregatePredicate<T1> implements SQLAggregatePredicate<T
         if (condition) {
             this.nextPredicateSegment = new OrPredicateSegment();
             this.rootPredicateSegment.addPredicateSegment(this.nextPredicateSegment);
-            SQLAggregatePredicate<T1> sqlPredicate = entityExpressionBuilder.getRuntimeContext().getEasyQueryLambdaFactory().createSQLAggregatePredicate(index, entityExpressionBuilder, this.nextPredicateSegment);
+            SQLAggregatePredicate<T1> sqlPredicate = entityExpressionBuilder.getRuntimeContext().getQueryLambdaFactory().createSQLAggregatePredicate(index, entityExpressionBuilder, this.nextPredicateSegment);
             sqlAggregatePredicateSQLExpression.apply(sqlPredicate);
         }
         return this;

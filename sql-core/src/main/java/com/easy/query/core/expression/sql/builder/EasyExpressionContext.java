@@ -39,7 +39,7 @@ public class EasyExpressionContext implements ExpressionContext {
     public EasyExpressionContext(QueryRuntimeContext runtimeContext, String alias) {
 
         this.runtimeContext = runtimeContext;
-        this.deleteThrowException = runtimeContext.getEasyQueryConfiguration().deleteThrow();
+        this.deleteThrowException = runtimeContext.getQueryConfiguration().deleteThrow();
         this.alias = alias;
 //        params = new ArrayList<>();
         this.easyBehavior = new EasyBehavior();
@@ -67,7 +67,7 @@ public class EasyExpressionContext implements ExpressionContext {
 
     @Override
     public String getQuoteName(String value) {
-        return runtimeContext.getEasyQueryConfiguration().getDialect().getQuoteName(value);
+        return runtimeContext.getQueryConfiguration().getDialect().getQuoteName(value);
     }
 
 //    @Override

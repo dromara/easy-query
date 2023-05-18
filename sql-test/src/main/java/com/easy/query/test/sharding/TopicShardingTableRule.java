@@ -4,7 +4,6 @@ import com.easy.query.core.expression.lambda.RouteFunction;
 import com.easy.query.core.enums.sharding.ShardingOperatorEnum;
 import com.easy.query.core.metadata.ActualTable;
 import com.easy.query.core.sharding.rule.table.abstraction.AbstractTableRouteRule;
-import com.easy.query.core.util.StringUtil;
 import com.easy.query.test.entity.TopicSharding;
 
 /**

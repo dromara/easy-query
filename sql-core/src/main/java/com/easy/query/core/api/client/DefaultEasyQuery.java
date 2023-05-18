@@ -3,7 +3,7 @@ package com.easy.query.core.api.client;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.api.SQLApiFactory;
 import com.easy.query.core.basic.api.delete.EntityDeletable;
-import com.easy.query.core.basic.jdbc.con.EasyConnectionManager;
+import com.easy.query.core.basic.jdbc.con.ConnectionManager;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
 import com.easy.query.core.basic.api.delete.ExpressionDeletable;
 import com.easy.query.core.basic.api.insert.Insertable;
@@ -62,7 +62,7 @@ public class DefaultEasyQuery implements EasyQuery {
 
     @Override
     public Transaction beginTransaction(Integer isolationLevel) {
-        EasyConnectionManager connectionManager = runtimeContext.getConnectionManager();
+        ConnectionManager connectionManager = runtimeContext.getConnectionManager();
         return connectionManager.beginTransaction(isolationLevel);
     }
 

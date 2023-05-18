@@ -1,6 +1,6 @@
 package com.easy.query.core.basic.api.internal;
 
-import com.easy.query.core.util.StringUtil;
+import com.easy.query.core.util.EasyStringUtil;
 
 import java.util.function.Function;
 
@@ -20,7 +20,7 @@ public interface TableReNameable<TChain> {
      * @return
      */
     default TChain asTable(String tableName){
-        if(StringUtil.isBlank(tableName)){
+        if(EasyStringUtil.isBlank(tableName)){
             throw new IllegalArgumentException("tableName is empty");
         }
         return asTable(old->tableName);

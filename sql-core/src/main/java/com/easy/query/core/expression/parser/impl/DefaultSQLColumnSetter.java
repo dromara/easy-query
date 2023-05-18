@@ -10,7 +10,7 @@ import com.easy.query.core.expression.segment.condition.predicate.ColumnWithColu
 import com.easy.query.core.expression.segment.ColumnWithSelfSegment;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
-import com.easy.query.core.util.LambdaUtil;
+import com.easy.query.core.util.EasyLambdaUtil;
 
 /**
  * @Description: 文件说明
@@ -41,7 +41,7 @@ public class DefaultSQLColumnSetter<T>  implements SQLColumnSetter<T> {
         if(condition)
         {
             EntityTableExpressionBuilder table = entityExpressionBuilder.getTable(index);
-            String propertyName = LambdaUtil.getPropertyName(column);
+            String propertyName = EasyLambdaUtil.getPropertyName(column);
             sqlBuilderSegment.append(new ColumnValuePredicate(table.getEntityTable(),propertyName,val, SQLPredicateCompareEnum.EQ, entityExpressionBuilder.getRuntimeContext()));
         }
         return this;
@@ -52,9 +52,9 @@ public class DefaultSQLColumnSetter<T>  implements SQLColumnSetter<T> {
         if(condition)
         {
             EntityTableExpressionBuilder table1 = entityExpressionBuilder.getTable(index);
-            String propertyName1 = LambdaUtil.getPropertyName(column1);
+            String propertyName1 = EasyLambdaUtil.getPropertyName(column1);
             EntityTableExpressionBuilder table2 = entityExpressionBuilder.getTable(index);
-            String propertyName2 = LambdaUtil.getPropertyName(column2);
+            String propertyName2 = EasyLambdaUtil.getPropertyName(column2);
             sqlBuilderSegment.append(new ColumnWithColumnPredicate(table1.getEntityTable(),propertyName1,table2.getEntityTable(),propertyName2, SQLPredicateCompareEnum.EQ, entityExpressionBuilder.getRuntimeContext()));
         }
         return this;
@@ -73,7 +73,7 @@ public class DefaultSQLColumnSetter<T>  implements SQLColumnSetter<T> {
     private void setSelf(boolean increment,Property<T, ? extends Number> column, Number val){
 
         EntityTableExpressionBuilder table = entityExpressionBuilder.getTable(index);
-        String propertyName = LambdaUtil.getPropertyName(column);
+        String propertyName = EasyLambdaUtil.getPropertyName(column);
         sqlBuilderSegment.append(new ColumnWithSelfSegment(increment,table.getEntityTable(),propertyName,val, SQLPredicateCompareEnum.EQ, entityExpressionBuilder.getRuntimeContext()));
     }
 

@@ -3,7 +3,7 @@ package com.easy.query.test.pgsql;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.api.client.EasyQuery;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
-import com.easy.query.core.configuration.EasyQueryConfiguration;
+import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.sharding.route.manager.TableRouteManager;
 import com.easy.query.test.encryption.Base64EncryptionStrategy;
@@ -69,7 +69,7 @@ public class PgSqlBaseTest {
 //                .replaceService(EasyShardingOption.class, new EasyShardingOption(2, 0))
                 .build();
         QueryRuntimeContext runtimeContext = easyQuery.getRuntimeContext();
-        EasyQueryConfiguration configuration = runtimeContext.getEasyQueryConfiguration();
+        QueryConfiguration configuration = runtimeContext.getQueryConfiguration();
         configuration.applyEasyEncryptionStrategy(new DefaultAesEasyEncryptionStrategy());
         configuration.applyEasyEncryptionStrategy(new Base64EncryptionStrategy());
         configuration.applyEasyEncryptionStrategy(new MyEncryptionStrategy());

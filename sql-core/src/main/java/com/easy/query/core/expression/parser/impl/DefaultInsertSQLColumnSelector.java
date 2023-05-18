@@ -8,7 +8,7 @@ import com.easy.query.core.expression.segment.SQLEntitySegment;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
-import com.easy.query.core.util.LambdaUtil;
+import com.easy.query.core.util.EasyLambdaUtil;
 
 import java.util.Collection;
 import java.util.Objects;
@@ -38,7 +38,7 @@ public class DefaultInsertSQLColumnSelector<T1> implements SQLColumnSelector<T1>
     @Override
     public SQLColumnSelector<T1> column(Property<T1, ?> column) {
         EntityTableExpressionBuilder table = sqlEntityExpression.getTable(index);
-        String propertyName = LambdaUtil.getPropertyName(column);
+        String propertyName = EasyLambdaUtil.getPropertyName(column);
         sqlSegmentBuilder.append(new ColumnInsertSegment(table.getEntityTable(), propertyName, sqlEntityExpression.getRuntimeContext()));
         return this;
     }
@@ -47,7 +47,7 @@ public class DefaultInsertSQLColumnSelector<T1> implements SQLColumnSelector<T1>
     public SQLColumnSelector<T1> columnIgnore(Property<T1, ?> column) {
 
         EntityTableExpressionBuilder table = sqlEntityExpression.getTable(index);
-        String propertyName = LambdaUtil.getPropertyName(column);
+        String propertyName = EasyLambdaUtil.getPropertyName(column);
         sqlSegmentBuilder.getSQLSegments().removeIf(sqlSegment -> {
             if (sqlSegment instanceof SQLEntitySegment) {
                 SQLEntitySegment sqlEntitySegment = (SQLEntitySegment) sqlSegment;

@@ -12,7 +12,7 @@ import com.easy.query.core.sharding.route.table.TableRouteUnit;
 import com.easy.query.core.sharding.route.table.engine.TableRouteContext;
 import com.easy.query.core.sharding.route.table.engine.TableRouteEngine;
 import com.easy.query.core.util.EasyCollectionUtil;
-import com.easy.query.core.util.ClassUtil;
+import com.easy.query.core.util.EasyClassUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -43,7 +43,7 @@ public class DefaultRouteContextFactory implements RouteContextFactory {
         if (prepareParseResult instanceof EntityPrepareParseResult) {
             return createRouteContextByEntity((EntityPrepareParseResult) prepareParseResult);
         }
-        throw new UnsupportedOperationException(ClassUtil.getInstanceSimpleName(prepareParseResult));
+        throw new UnsupportedOperationException(EasyClassUtil.getInstanceSimpleName(prepareParseResult));
     }
 
     private RouteContext createRouteContextByPredicate(PredicatePrepareParseResult prepareParseResult) {

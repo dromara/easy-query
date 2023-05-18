@@ -8,7 +8,7 @@ import com.easy.query.core.basic.plugin.version.EasyVersionStrategy;
 import com.easy.query.core.inject.ServiceProvider;
 import com.easy.query.core.sharding.initializer.ShardingEntityBuilder;
 import com.easy.query.core.configuration.nameconversion.NameConversion;
-import com.easy.query.core.configuration.EasyQueryConfiguration;
+import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.basic.plugin.encryption.EasyEncryptionStrategy;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.basic.plugin.interceptor.EasyEntityInterceptor;
@@ -21,14 +21,15 @@ import com.easy.query.core.sharding.initializer.ShardingInitializer;
 import com.easy.query.core.sharding.initializer.ShardingInitOption;
 import com.easy.query.core.sharding.route.table.TableUnit;
 import com.easy.query.core.util.EasyCollectionUtil;
-import com.easy.query.core.util.StringUtil;
+import com.easy.query.core.util.EasyStringUtil;
 import com.easy.query.core.common.LinkedCaseInsensitiveMap;
-import com.easy.query.core.util.ClassUtil;
+import com.easy.query.core.util.EasyClassUtil;
 
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -70,8 +71,8 @@ public class EntityMetadata {
     private final List<String/*column name*/> incrementColumns = new ArrayList<>(4);
     private final LinkedCaseInsensitiveMap<String> column2PropertyMap = new LinkedCaseInsensitiveMap<>(Locale.ENGLISH);
 
-    private final Set<ActualTable> actualTables = new LinkedHashSet<>();
-    private final Set<String> dataSources = new LinkedHashSet<>();
+    private final Set<ActualTable> actualTables = new CopyOnWriteArraySet<>();
+    private final Set<String> dataSources =new CopyOnWriteArraySet<>();
 
     public EntityMetadata(Class<?> entityClass) {
         this.entityClass = entityClass;
@@ -79,17 +80,17 @@ public class EntityMetadata {
 
     public void init(ServiceProvider serviceProvider) {
 
-        EasyQueryConfiguration configuration = serviceProvider.getService(EasyQueryConfiguration.class);
+        QueryConfiguration configuration = serviceProvider.getService(QueryConfiguration.class);
         NameConversion nameConversion = configuration.getNameConversion();
 
-        Table table = ClassUtil.getAnnotation(entityClass, Table.class);
+        Table table = EasyClassUtil.getAnnotation(entityClass, Table.class);
         if (table != null) {
-            this.tableName = nameConversion.convert(StringUtil.defaultIfBank(table.value(), ClassUtil.getSimpleName(entityClass)));
+            this.tableName = nameConversion.convert(EasyStringUtil.defaultIfBank(table.value(), EasyClassUtil.getSimpleName(entityClass)));
             this.schema=table.schema();
         }
         HashSet<String> ignoreProperties = table != null ? new HashSet<>(Arrays.asList(table.ignoreProperties())) : new HashSet<>();
 
-        List<Field> allFields = ClassUtil.getAllFields(this.entityClass);
+        List<Field> allFields = EasyClassUtil.getAllFields(this.entityClass);
         PropertyDescriptor[] ps = getPropertyDescriptor();
         int versionCount = 0;
         int logicDelCount = 0;
@@ -109,7 +110,7 @@ public class EntityMetadata {
             }
 
             Column column = field.getAnnotation(Column.class);
-            boolean hasColumnName = column != null && StringUtil.isNotBlank(column.value());
+            boolean hasColumnName = column != null && EasyStringUtil.isNotBlank(column.value());
             String columnName = hasColumnName ? column.value() : nameConversion.convert(property);
             ColumnMetadata columnMetadata = new ColumnMetadata(this, columnName);
 //            if (column != null) {
@@ -123,12 +124,12 @@ public class EntityMetadata {
             if (encryption != null) {
                 Class<? extends EasyEncryptionStrategy> strategy = encryption.strategy();
                 if (!configuration.containEasyEncryptionStrategy(strategy)) {
-                    throw new EasyQueryException(ClassUtil.getSimpleName(entityClass) + "." + property + " Encryption strategy unknown");
+                    throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " Encryption strategy unknown");
                 }
                 columnMetadata.setEncryptionStrategy(encryption.strategy());
                 columnMetadata.setSupportQueryLike(encryption.supportQueryLike());
             }
-            if (StringUtil.isNotBlank(tableName)) {
+            if (EasyStringUtil.isNotBlank(tableName)) {
 
                 if (column != null) {
                     if (column.primaryKey()) {
@@ -158,7 +159,7 @@ public class EntityMetadata {
                     Class<? extends EasyVersionStrategy> strategy = version.strategy();
                     EasyVersionStrategy easyVersionStrategy = configuration.getEasyVersionStrategyOrNull(strategy);
                     if (easyVersionStrategy == null) {
-                        throw new EasyQueryException(ClassUtil.getSimpleName(entityClass) + "." + property + " Version strategy unknown");
+                        throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " Version strategy unknown");
                     }
                     columnMetadata.setVersion(true);
 
@@ -188,8 +189,8 @@ public class EntityMetadata {
                     LogicDeleteStrategyEnum strategy = logicDelete.strategy();
                     if (Objects.equals(LogicDeleteStrategyEnum.CUSTOM, strategy)) {//使用自定义
                         String strategyName = logicDelete.strategyName();
-                        if (StringUtil.isBlank(strategyName)) {
-                            throw new EasyQueryException(ClassUtil.getSimpleName(entityClass) + "." + property + " logic delete strategy is empty");
+                        if (EasyStringUtil.isBlank(strategyName)) {
+                            throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " logic delete strategy is empty");
                         }
                         EasyLogicDeleteStrategy globalLogicDeleteStrategy = configuration.getEasyLogicDeleteStrategyNotNull(strategyName);
                         LogicDeleteBuilder logicDeleteBuilder = new LogicDeleteBuilder(this, property, field.getType());
@@ -228,11 +229,11 @@ public class EntityMetadata {
         return null;
     }
 
-    private void initSharding(EasyQueryConfiguration configuration, Class<? extends ShardingInitializer> initializer) {
+    private void initSharding(QueryConfiguration configuration, Class<? extends ShardingInitializer> initializer) {
 
         ShardingInitializer easyShardingInitializer = configuration.getEasyShardingInitializerOrNull(initializer);
         if (easyShardingInitializer == null) {
-            throw new EasyQueryInvalidOperationException("not found sharding initializer:" + ClassUtil.getSimpleName(initializer));
+            throw new EasyQueryInvalidOperationException("not found sharding initializer:" + EasyClassUtil.getSimpleName(initializer));
         }
         ShardingEntityBuilder<Object> shardingInitializerBuilder = new ShardingEntityBuilder<Object>(this);
         easyShardingInitializer.initialize(shardingInitializerBuilder);
@@ -269,9 +270,9 @@ public class EntityMetadata {
         this.shardingInitConfig = new ShardingInitConfig(shardingInitOption.getReverseFactor(),shardingInitOption.getMinReverseTotal(),shardingSequenceConfig);
     }
 
-    protected void entityGlobalInterceptorConfigurationInit(EasyQueryConfiguration configuration) {
+    protected void entityGlobalInterceptorConfigurationInit(QueryConfiguration configuration) {
 
-        if (StringUtil.isNotBlank(tableName)) {
+        if (EasyStringUtil.isNotBlank(tableName)) {
             List<EasyInterceptor> globalInterceptors = configuration.getEasyInterceptors().stream().sorted(Comparator.comparingInt(EasyInterceptor::order)).collect(Collectors.toList());
             for (EasyInterceptor globalInterceptor : globalInterceptors) {
                 if (globalInterceptor.apply(entityClass)) {
@@ -292,7 +293,7 @@ public class EntityMetadata {
 
     private PropertyDescriptor[] getPropertyDescriptor() {
         try {
-            return ClassUtil.propertyDescriptors(entityClass);
+            return EasyClassUtil.propertyDescriptors(entityClass);
         } catch (IntrospectionException e) {
             throw new EasyQueryException(e);
         }
@@ -382,8 +383,8 @@ public class EntityMetadata {
     }
 
     public void checkTable() {
-        if (StringUtil.isEmpty(tableName)) {
-            throw new EasyQueryException("当前对象不是数据库对象," + ClassUtil.getSimpleName(entityClass));
+        if (EasyStringUtil.isEmpty(tableName)) {
+            throw new EasyQueryException("当前对象不是数据库对象," + EasyClassUtil.getSimpleName(entityClass));
         }
     }
 
@@ -478,10 +479,10 @@ public class EntityMetadata {
     }
 
     public void addActualTableWithDataSource(String dataSource, String actualTableName) {
-        if (StringUtil.isBlank(dataSource)) {
+        if (EasyStringUtil.isBlank(dataSource)) {
             throw new IllegalArgumentException("data source");
         }
-        if (StringUtil.isBlank(actualTableName)) {
+        if (EasyStringUtil.isBlank(actualTableName)) {
             throw new IllegalArgumentException("actual table name");
         }
         dataSources.add(dataSource);

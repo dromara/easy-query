@@ -1,7 +1,7 @@
 package com.easy.query.core.configuration.nameconversion.impl;
 
 import com.easy.query.core.configuration.nameconversion.NameConversion;
-import com.easy.query.core.util.StringUtil;
+import com.easy.query.core.util.EasyStringUtil;
 
 /**
  * create time 023/2/11 13:29
@@ -13,6 +13,6 @@ public class UnderlinedNameConversion implements NameConversion {
 
     @Override
     public String convert(String name) {
-        return StringUtil.enCodeUnderlined(name);
+        return EasyStringUtil.enCodeUnderlined(name);
     }
 }

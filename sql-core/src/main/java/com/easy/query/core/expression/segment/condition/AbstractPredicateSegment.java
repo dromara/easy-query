@@ -3,7 +3,7 @@ package com.easy.query.core.expression.segment.condition;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameterCollector;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.segment.condition.predicate.Predicate;
-import com.easy.query.core.util.StringUtil;
+import com.easy.query.core.util.EasyStringUtil;
 
 import java.util.*;
 
@@ -172,7 +172,7 @@ public abstract class AbstractPredicateSegment implements PredicateSegment,Shard
                     }
                 }
             }
-            return StringUtil.EMPTY;
+            return EasyStringUtil.EMPTY;
         }
     }
 

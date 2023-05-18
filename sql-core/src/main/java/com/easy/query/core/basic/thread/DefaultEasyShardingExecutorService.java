@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @author xuejiaming
  */
-public class DefaultEasyShardingExecutorService implements EasyShardingExecutorService{
+public class DefaultEasyShardingExecutorService implements ShardingExecutorService {
     private static final String DEFAULT_NAME_PREFIX="SHARDING_EXECUTOR_";
     private final ExecutorService shardingExecutor;
     public DefaultEasyShardingExecutorService(EasyQueryOption easyQueryOption){

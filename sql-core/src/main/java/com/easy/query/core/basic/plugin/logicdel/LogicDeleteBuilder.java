@@ -6,7 +6,7 @@ import com.easy.query.core.expression.parser.core.SQLWherePredicate;
 import com.easy.query.core.expression.parser.core.SQLColumnSetter;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.LogicDeleteMetadata;
-import com.easy.query.core.util.BeanUtil;
+import com.easy.query.core.util.EasyBeanUtil;
 
 /**
  * create time 2023/3/28 09:28
@@ -35,7 +35,7 @@ public class LogicDeleteBuilder {
         entityMetadata.setLogicDeleteMetadata(new LogicDeleteMetadata(propertyName,sqlWherePredicateSQLExpression, sqlColumnSetterSQLExpression));
     }
     public Property<Object,?> getPropertyLambda(){
-        return BeanUtil.getFastBean(entityMetadata.getEntityClass()).getBeanGetter(propertyName,propertyType);
+        return EasyBeanUtil.getFastBean(entityMetadata.getEntityClass()).getBeanGetter(propertyName,propertyType);
     }
 
     public EntityMetadata getEntityMetadata() {

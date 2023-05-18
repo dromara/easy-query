@@ -8,8 +8,8 @@ import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.enums.SQLPredicateCompareEnum;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.SQLEntitySegment;
-import com.easy.query.core.util.SQLUtil;
-import com.easy.query.core.util.SQLExpressionUtil;
+import com.easy.query.core.util.EasySQLUtil;
+import com.easy.query.core.util.EasySQLExpressionUtil;
 
 /**
  * @FileName: ColumnPropertyPredicate.java
@@ -30,8 +30,8 @@ public class ColumnPropertyPredicate implements Predicate,ValuePredicate {
 
     @Override
     public String toSQL(SQLParameterCollector sqlParameterCollector) {
-        SQLUtil.addParameter(sqlParameterCollector,new PropertySQLParameter(table,propertyName));
-        String sqlColumnSegment = SQLExpressionUtil.getSQLOwnerColumn(runtimeContext,table,propertyName);
+        EasySQLUtil.addParameter(sqlParameterCollector,new PropertySQLParameter(table,propertyName));
+        String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumn(runtimeContext,table,propertyName);
         return sqlColumnSegment + " = ?";
     }
 

@@ -14,7 +14,7 @@ import com.easy.query.core.sharding.context.StreamMergeContext;
 import com.easy.query.core.basic.jdbc.executor.internal.common.CommandExecuteUnit;
 import com.easy.query.core.basic.jdbc.executor.internal.common.SQLRouteUnit;
 import com.easy.query.core.basic.jdbc.executor.internal.sharding.merger.impl.AffectedRowsShardingMerger;
-import com.easy.query.core.util.JdbcExecutorUtil;
+import com.easy.query.core.util.EasyJdbcExecutorUtil;
 
 import java.util.List;
 
@@ -40,7 +40,7 @@ public class EasyExecuteUpdateExecutor extends AbstractExecutor<AffectedRowsExec
         List<SQLParameter> parameters = sqlUnit.getParameters();
         boolean isSharding = streamMergeContext.isSharding();
         boolean configReplica = streamMergeContext.configReplica();
-        int rows= JdbcExecutorUtil.executeRows(executorContext,easyConnection,sql,parameters,isSharding,configReplica);
+        int rows= EasyJdbcExecutorUtil.executeRows(executorContext,easyConnection,sql,parameters,isSharding,configReplica);
         return new AffectedRowsExecuteResult(rows);
     }
 

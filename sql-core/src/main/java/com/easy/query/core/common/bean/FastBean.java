@@ -5,8 +5,8 @@ import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.PropertySetter;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
 import com.easy.query.core.expression.lambda.PropertyVoidSetter;
-import com.easy.query.core.util.ClassUtil;
-import com.easy.query.core.util.StringUtil;
+import com.easy.query.core.util.EasyClassUtil;
+import com.easy.query.core.util.EasyStringUtil;
 
 import java.beans.PropertyDescriptor;
 import java.lang.invoke.CallSite;
@@ -55,7 +55,7 @@ public class FastBean {
         MethodType methodType = MethodType.methodType(fieldType, beanClass);
         final CallSite site;
 
-        String getFunName = "get" + StringUtil.toUpperCaseFirstOne(propertyName);
+        String getFunName = "get" + EasyStringUtil.toUpperCaseFirstOne(propertyName);
         try {
             site = LambdaMetafactory.altMetafactory(caller,
                     "apply",
@@ -83,10 +83,10 @@ public class FastBean {
         String propertyName = prop.getName();
         Class<?> propertyType = prop.getPropertyType();
         MethodHandles.Lookup caller = MethodHandles.lookup();
-        Method writeMethod = ClassUtil.getWriteMethodNotNull(prop, beanClass);
+        Method writeMethod = EasyClassUtil.getWriteMethodNotNull(prop, beanClass);
         MethodType setter = MethodType.methodType(writeMethod.getReturnType(), propertyType);
 
-        String getFunName = "set" + StringUtil.toUpperCaseFirstOne(propertyName);
+        String getFunName = "set" + EasyStringUtil.toUpperCaseFirstOne(propertyName);
         try {
 
 

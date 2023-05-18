@@ -67,14 +67,14 @@ public abstract class AbstractAesBase64EasyEncryptionStrategy implements EasyEnc
         try {
             return doEncrypt(plaintext);
         }catch (Exception exception){
-            log.error(ClassUtil.getInstanceSimpleName(this)+" "+ClassUtil.getSimpleName(entityClass)+"."+ "."+propertyName+" decrypt error:" + plaintext, exception);
+            log.error(EasyClassUtil.getInstanceSimpleName(this)+" "+ EasyClassUtil.getSimpleName(entityClass)+"."+ "."+propertyName+" decrypt error:" + plaintext, exception);
             throw exception;
         }
     }
 
     protected Object doEncrypt(Object plaintext){
         String plaintextString = plaintext.toString();
-        List<String> stringCharSegments = StringUtil.getStringCharSegments(plaintextString, encryptWordMinLength(),otherCharOccupancyLength(),chineseCharOccupancyLength());
+        List<String> stringCharSegments = EasyStringUtil.getStringCharSegments(plaintextString, encryptWordMinLength(),otherCharOccupancyLength(),chineseCharOccupancyLength());
         //符合要求譬如最少4个非中文字符或者2个中文字的情况下,可以选择抛错重写或者直接加密对应的值
         if (EasyCollectionUtil.isEmpty(stringCharSegments)) {
             stringCharSegments.add(plaintextString);
@@ -84,7 +84,7 @@ public abstract class AbstractAesBase64EasyEncryptionStrategy implements EasyEnc
 //        int destPos = 0;
         StringBuilder stringBuilder = new StringBuilder();
         for (String stringCharSegment : stringCharSegments) {
-            String str= AesUtil.encrypt(stringCharSegment, getKey(), getIv(),StandardCharsets.UTF_8);
+            String str= EasyAesUtil.encrypt(stringCharSegment, getKey(), getIv(),StandardCharsets.UTF_8);
             stringBuilder.append(str);
 //            System.arraycopy(encrypt, 0, mergedArray, destPos, encrypt.length);
 //            destPos += encrypt.length;
@@ -99,7 +99,7 @@ public abstract class AbstractAesBase64EasyEncryptionStrategy implements EasyEnc
         try {
             return doDecrypt(entityClass,propertyName,ciphertext);
         } catch (Exception exception) {
-            log.error(ClassUtil.getInstanceSimpleName(this)+" "+ClassUtil.getSimpleName(entityClass)+"."+ "."+propertyName+" decrypt error:" + ciphertext, exception);
+            log.error(EasyClassUtil.getInstanceSimpleName(this)+" "+ EasyClassUtil.getSimpleName(entityClass)+"."+ "."+propertyName+" decrypt error:" + ciphertext, exception);
             if (throwIfDecryptFail()) {
                 throw exception;
             }
@@ -116,12 +116,12 @@ public abstract class AbstractAesBase64EasyEncryptionStrategy implements EasyEnc
         //当前数据非base64或者base64但是不是aes加密的返回原始数据
         if (ciphertextString.length() % 24 != 0) {
             if (throwIfDecryptFail()) {
-                throw new IllegalArgumentException(ClassUtil.getSimpleName(entityClass)+"."+propertyName+" decrypt cant decode base64:" + ciphertext);
+                throw new IllegalArgumentException(EasyClassUtil.getSimpleName(entityClass)+"."+propertyName+" decrypt cant decode base64:" + ciphertext);
             }
             return ciphertext;
         }
 
-        List<String> segments = StringUtil.splitString(ciphertextString, 24);
+        List<String> segments = EasyStringUtil.splitString(ciphertextString, 24);
 //        byte[][] chunks = ArrayUtil.splitByteArray(decode, 16);
 
         StringBuilder stringBuilder = new StringBuilder();
@@ -137,7 +137,7 @@ public abstract class AbstractAesBase64EasyEncryptionStrategy implements EasyEnc
 //            }
 //        }
         for (int i = 0; i < segments.size(); i++) {
-            String str=AesUtil.decrypt(segments.get(i), getKey(), getIv(),StandardCharsets.UTF_8);
+            String str= EasyAesUtil.decrypt(segments.get(i), getKey(), getIv(),StandardCharsets.UTF_8);
             boolean last = i == (segments.size() - 1);
             if (last) {
                 stringBuilder.append(str);

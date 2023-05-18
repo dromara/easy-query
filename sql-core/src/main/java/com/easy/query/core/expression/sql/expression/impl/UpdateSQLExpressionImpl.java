@@ -9,8 +9,8 @@ import com.easy.query.core.expression.segment.builder.UpdateSetSQLBuilderSegment
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
-import com.easy.query.core.util.SQLExpressionUtil;
-import com.easy.query.core.util.SQLSegmentUtil;
+import com.easy.query.core.util.EasySQLExpressionUtil;
+import com.easy.query.core.util.EasySQLSegmentUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,8 +58,8 @@ public  class UpdateSQLExpressionImpl implements EntityUpdateSQLExpression {
 
     @Override
     public String toSQL(SQLParameterCollector sqlParameterCollector) {
-        SQLExpressionUtil.expressionInvokeRoot(sqlParameterCollector);
-        if(SQLSegmentUtil.isEmpty(setColumns)){
+        EasySQLExpressionUtil.expressionInvokeRoot(sqlParameterCollector);
+        if(EasySQLSegmentUtil.isEmpty(setColumns)){
             return null;
         }
         EntityTableSQLExpression easyTableSQLExpression = tables.get(0);
@@ -73,9 +73,9 @@ public  class UpdateSQLExpressionImpl implements EntityUpdateSQLExpression {
 
         ExpressionFactory expressionFactory = runtimeContext.getExpressionFactory();
         EntityUpdateSQLExpression easyUpdateSQLExpression = expressionFactory.createEasyUpdateSQLExpression(runtimeContext,tables.get(0).cloneSQLExpression());
-        if(SQLSegmentUtil.isNotEmpty(where)){
+        if(EasySQLSegmentUtil.isNotEmpty(where)){
             where.copyTo(easyUpdateSQLExpression.getWhere());
-        }if(SQLSegmentUtil.isNotEmpty(setColumns)){
+        }if(EasySQLSegmentUtil.isNotEmpty(setColumns)){
             setColumns.copyTo(easyUpdateSQLExpression.getSetColumns());
         }
         return easyUpdateSQLExpression;

@@ -3,7 +3,7 @@ package com.easy.query.core.basic.jdbc.con.impl;
 import com.easy.query.core.enums.con.ConnectionStrategyEnum;
 import com.easy.query.core.basic.jdbc.con.EasyConnection;
 import com.easy.query.core.basic.jdbc.con.EasyConnectionFactory;
-import com.easy.query.core.basic.jdbc.con.EasyConnectionManager;
+import com.easy.query.core.basic.jdbc.con.ConnectionManager;
 import com.easy.query.core.basic.jdbc.con.EasyDataSourceConnection;
 import com.easy.query.core.basic.jdbc.con.EasyDataSourceConnectionFactory;
 import com.easy.query.core.basic.jdbc.tx.DefaultTransaction;
@@ -18,7 +18,7 @@ import com.easy.query.core.sharding.EasyQueryDataSource;
  * @Description: 文件说明
  * @Date: 2023/2/21 08:57
  */
-public class DefaultConnectionManager implements EasyConnectionManager {
+public class DefaultConnectionManager implements ConnectionManager {
     protected final ThreadLocal<Transaction> threadTx = ThreadLocal.withInitial(() -> null);
     protected final ThreadLocal<EasyDataSourceConnection> threadDataSourceConnection = ThreadLocal.withInitial(() -> null);
     protected final EasyQueryDataSource easyDataSource;

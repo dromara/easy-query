@@ -4,7 +4,7 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.common.bean.FastBean;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.SQLColumnSetter;
-import com.easy.query.core.expression.parser.factory.EasyQueryLambdaFactory;
+import com.easy.query.core.expression.parser.factory.QueryLambdaFactory;
 import com.easy.query.core.basic.plugin.version.EasyVersionStrategy;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.exception.EasyQueryException;
@@ -29,8 +29,8 @@ import com.easy.query.core.expression.sql.builder.EntityDeleteExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.metadata.VersionMetadata;
-import com.easy.query.core.util.BeanUtil;
-import com.easy.query.core.util.ClassUtil;
+import com.easy.query.core.util.EasyBeanUtil;
+import com.easy.query.core.util.EasyClassUtil;
 
 import java.util.Collection;
 import java.util.Objects;
@@ -84,7 +84,7 @@ public class DeleteExpressionBuilder extends AbstractPredicateEntityExpressionBu
             SQLExpression1<SQLColumnSetter<Object>> logicDeletedSQLExpression = table.getLogicDeletedSQLExpression();
             if (logicDeletedSQLExpression != null) {
                 UpdateSetSQLBuilderSegment setSQLSegmentBuilder = new UpdateSetSQLBuilderSegment();
-                EasyQueryLambdaFactory easyQueryLambdaFactory = getRuntimeContext().getEasyQueryLambdaFactory();
+                QueryLambdaFactory easyQueryLambdaFactory = getRuntimeContext().getQueryLambdaFactory();
                 SQLColumnSetter<Object> sqlColumnSetter = easyQueryLambdaFactory.createSQLColumnSetter(table.getIndex(), this, setSQLSegmentBuilder);
                 logicDeletedSQLExpression.apply(sqlColumnSetter);//获取set的值
                 //todo 非表达式添加行版本信息
@@ -99,7 +99,7 @@ public class DeleteExpressionBuilder extends AbstractPredicateEntityExpressionBu
                         Object version = getExpressionContext().getVersion();
                         if(Objects.nonNull(version)){
                             ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(propertyName);
-                            FastBean fastBean = BeanUtil.getFastBean(entityMetadata.getEntityClass());
+                            FastBean fastBean = EasyBeanUtil.getFastBean(entityMetadata.getEntityClass());
                             Object nextVersion = easyVersionStrategy.nextVersion(entityMetadata, propertyName, version);
                             sqlColumnSetter.set(fastBean.getBeanGetter(columnMetadata.getProperty()),nextVersion);
                         }
@@ -133,7 +133,7 @@ public class DeleteExpressionBuilder extends AbstractPredicateEntityExpressionBu
                     //如果没有指定where那么就使用主键作为更新条件
                     Collection<String> keyProperties = entityMetadata.getKeyProperties();
                     if (keyProperties.isEmpty()) {
-                        throw new EasyQueryException("entity:" + ClassUtil.getSimpleName(entityMetadata.getEntityClass()) + "  not found primary key properties");
+                        throw new EasyQueryException("entity:" + EasyClassUtil.getSimpleName(entityMetadata.getEntityClass()) + "  not found primary key properties");
                     }
                     for (String keyProperty : keyProperties) {
                         AndPredicateSegment andPredicateSegment = new AndPredicateSegment(new ColumnPropertyPredicate(table.getEntityTable(), keyProperty, this.getRuntimeContext()));

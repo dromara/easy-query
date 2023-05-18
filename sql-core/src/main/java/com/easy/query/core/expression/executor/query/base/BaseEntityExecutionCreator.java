@@ -5,8 +5,8 @@ import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
 import com.easy.query.core.expression.sql.expression.EntitySQLExpression;
 import com.easy.query.core.basic.jdbc.executor.internal.common.ExecutionUnit;
-import com.easy.query.core.util.SQLExpressionUtil;
-import com.easy.query.core.util.StringUtil;
+import com.easy.query.core.util.EasySQLExpressionUtil;
+import com.easy.query.core.util.EasyStringUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,7 +32,7 @@ public abstract class BaseEntityExecutionCreator extends BaseExecutionCreator{
     @Override
     protected List<ExecutionUnit> createExecutionUnits() {
         //是否单个对象运行sql
-        boolean isSingleEntityRun = SQLExpressionUtil.sqlExecuteStrategyNonDefault(entityExpressionBuilder.getExpressionContext());
+        boolean isSingleEntityRun = EasySQLExpressionUtil.sqlExecuteStrategyNonDefault(entityExpressionBuilder.getExpressionContext());
         if (isSingleEntityRun||updateSingleEntityRun()) {
             return createSingleExecutionUnits();
         }
@@ -54,7 +54,7 @@ public abstract class BaseEntityExecutionCreator extends BaseExecutionCreator{
             EntitySQLExpression expression = createEasySQLExpression(entity);
             ExecutionUnit executionUnit = createExecutionUnit(dataSource,expression, Collections.singletonList(entity), getFillAutoIncrement());
             //开启追踪的情况下update可能没有可以更新的数据那么就不会生成sql
-            if(StringUtil.isNotBlank(executionUnit.getSQLRouteUnit().getSQLUnit().getSQL())){
+            if(EasyStringUtil.isNotBlank(executionUnit.getSQLRouteUnit().getSQLUnit().getSQL())){
                 routeExecutionUnits.add(executionUnit);
             }
         }

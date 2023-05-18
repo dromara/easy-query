@@ -2,7 +2,7 @@ package com.easy.query.core.basic.jdbc.executor.internal.unit.abstraction;
 
 import com.easy.query.core.basic.jdbc.executor.internal.unit.Executor;
 import com.easy.query.core.basic.jdbc.executor.internal.unit.breaker.CircuitBreaker;
-import com.easy.query.core.basic.thread.EasyShardingExecutorService;
+import com.easy.query.core.basic.thread.ShardingExecutorService;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.exception.EasyQueryTimeoutException;
 import com.easy.query.core.logging.Log;
@@ -93,7 +93,7 @@ public abstract class AbstractExecutor<TResult> implements Executor<TResult> {
             TResult result = executeCommandUnit(commandExecuteUnits.get(0));
             return Collections.singletonList(result);
         } else {
-            EasyShardingExecutorService easyShardingExecutorService = streamMergeContext.getRuntimeContext().getEasyShardingExecutorService();
+            ShardingExecutorService easyShardingExecutorService = streamMergeContext.getRuntimeContext().getShardingExecutorService();
             List<TResult> resultList = new ArrayList<>(commandExecuteUnits.size());
             ArrayList<Future<TResult>> tasks = new ArrayList<>(commandExecuteUnits.size());
             for (CommandExecuteUnit commandExecuteUnit : commandExecuteUnits) {

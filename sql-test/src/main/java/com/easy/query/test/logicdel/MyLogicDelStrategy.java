@@ -6,7 +6,7 @@ import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.SQLWherePredicate;
 import com.easy.query.core.expression.parser.core.SQLColumnSetter;
-import com.easy.query.core.util.BeanUtil;
+import com.easy.query.core.util.EasyBeanUtil;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -35,7 +35,7 @@ public class MyLogicDelStrategy extends AbstractEasyLogicDeleteStrategy {
 //        LocalDateTime now = LocalDateTime.now();
 //        return o->o.set(lambdaProperty,now);
         //上面的是错误用法,将now值获取后那么这个now就是个固定值而不是动态值
-        Property<Object, ?> deletedUserProperty = BeanUtil.getFastBean(builder.getEntityMetadata().getEntityClass()).getBeanGetter("deletedUser", String.class);
+        Property<Object, ?> deletedUserProperty = EasyBeanUtil.getFastBean(builder.getEntityMetadata().getEntityClass()).getBeanGetter("deletedUser", String.class);
         return o->o.set(lambdaProperty,LocalDateTime.now())
                 .set(deletedUserProperty,CurrentUserHelper.getUserId());
     }

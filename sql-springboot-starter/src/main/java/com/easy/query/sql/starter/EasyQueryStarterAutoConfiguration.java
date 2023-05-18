@@ -1,7 +1,7 @@
 package com.easy.query.sql.starter;
 
 import com.easy.query.core.basic.jdbc.con.EasyConnectionFactory;
-import com.easy.query.core.basic.jdbc.con.EasyConnectionManager;
+import com.easy.query.core.basic.jdbc.con.ConnectionManager;
 import com.easy.query.core.basic.plugin.encryption.EasyEncryptionStrategy;
 import com.easy.query.core.basic.plugin.interceptor.EasyInterceptor;
 import com.easy.query.core.basic.plugin.logicdel.EasyLogicDeleteStrategy;
@@ -16,11 +16,11 @@ import com.easy.query.core.bootstrapper.StarterConfigurer;
 import com.easy.query.core.configuration.nameconversion.NameConversion;
 import com.easy.query.core.configuration.nameconversion.impl.DefaultNameConversion;
 import com.easy.query.core.configuration.nameconversion.impl.UnderlinedNameConversion;
-import com.easy.query.core.configuration.EasyQueryConfiguration;
+import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.sharding.initializer.ShardingInitializer;
-import com.easy.query.core.util.StringUtil;
+import com.easy.query.core.util.EasyStringUtil;
 import com.easy.query.mssql.MsSQLDatabaseConfiguration;
 import com.easy.query.mysql.config.MySQLDatabaseConfiguration;
 import com.easy.query.pgsql.PgSQLDatabaseConfiguration;
@@ -57,7 +57,7 @@ public class EasyQueryStarterAutoConfiguration {
 
     public EasyQueryStarterAutoConfiguration(EasyQueryProperties easyQueryProperties) {
         this.easyQueryProperties = easyQueryProperties;
-        if (StringUtil.isBlank(easyQueryProperties.getLogClass())) {
+        if (EasyStringUtil.isBlank(easyQueryProperties.getLogClass())) {
             LogFactory.useCustomLogging(Slf4jImpl.class);
         } else {
             try {
@@ -131,12 +131,12 @@ public class EasyQueryStarterAutoConfiguration {
                     builder.setShardingGroupExecuteTimeoutMillis(easyQueryProperties.getShardingGroupExecuteTimeoutMillis());
                 })
                 .replaceService(NameConversion.class, nameConversion)
-                .replaceService(EasyConnectionManager.class, SpringConnectionManager.class)
+                .replaceService(ConnectionManager.class, SpringConnectionManager.class)
                 .useDatabaseConfigure(databaseConfiguration)
                 .useStarterConfigure(starterConfigurer)
                 .build();
         QueryRuntimeContext runtimeContext = easyQuery.getRuntimeContext();
-        EasyQueryConfiguration configuration = runtimeContext.getEasyQueryConfiguration();
+        QueryConfiguration configuration = runtimeContext.getQueryConfiguration();
         //拦截器注册
         for (Map.Entry<String, EasyInterceptor> easyInterceptorEntry : easyInterceptorMap.entrySet()) {
             configuration.applyEasyInterceptor(easyInterceptorEntry.getValue());

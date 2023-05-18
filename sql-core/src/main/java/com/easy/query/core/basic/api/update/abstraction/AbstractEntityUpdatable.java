@@ -5,7 +5,7 @@ import com.easy.query.core.basic.api.update.EntityUpdatable;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameterCollector;
 import com.easy.query.core.basic.plugin.interceptor.EasyInterceptorEntry;
-import com.easy.query.core.configuration.EasyQueryConfiguration;
+import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
@@ -65,7 +65,7 @@ public abstract class AbstractEntityUpdatable<T> extends AbstractSQLExecuteRows<
     protected void updateBefore() {
         List<EasyInterceptorEntry> updateInterceptors = entityMetadata.getEntityInterceptors();
         if (EasyCollectionUtil.isNotEmpty(updateInterceptors)) {
-            EasyQueryConfiguration easyQueryConfiguration = entityUpdateExpressionBuilder.getRuntimeContext().getEasyQueryConfiguration();
+            QueryConfiguration easyQueryConfiguration = entityUpdateExpressionBuilder.getRuntimeContext().getQueryConfiguration();
             List<EasyEntityInterceptor> entityInterceptors = entityUpdateExpressionBuilder.getExpressionContext().getInterceptorFilter(updateInterceptors)
                     .map(interceptor -> (EasyEntityInterceptor) easyQueryConfiguration.getEasyInterceptor(interceptor.getName())).collect(Collectors.toList());
             if (EasyCollectionUtil.isNotEmpty(entityInterceptors)) {

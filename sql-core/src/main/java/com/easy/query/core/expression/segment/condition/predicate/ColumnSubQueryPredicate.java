@@ -6,7 +6,7 @@ import com.easy.query.core.basic.jdbc.parameter.SQLParameterCollector;
 import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.SQLEntitySegment;
-import com.easy.query.core.util.SQLExpressionUtil;
+import com.easy.query.core.util.EasySQLExpressionUtil;
 
 /**
  * create time 2023/4/27 09:22
@@ -46,7 +46,7 @@ public class ColumnSubQueryPredicate implements SubQueryPredicate{
     @Override
     public String toSQL(SQLParameterCollector sqlParameterCollector) {
 
-        String sqlColumnSegment = SQLExpressionUtil.getSQLOwnerColumn(runtimeContext,table,propertyName);
+        String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumn(runtimeContext,table,propertyName);
         StringBuilder sql = new StringBuilder();
         sql.append(sqlColumnSegment).append(" ").append(compare.getSQL()).append(" (");
         String subQueryableSQL = subQueryable.toSQL(sqlParameterCollector);

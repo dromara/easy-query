@@ -8,7 +8,7 @@ import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.SQLWherePredicate;
 import com.easy.query.core.expression.parser.core.SQLColumnSetter;
 import com.easy.query.core.metadata.EntityMetadata;
-import com.easy.query.core.util.ClassUtil;
+import com.easy.query.core.util.EasyClassUtil;
 
 import java.util.Set;
 
@@ -30,7 +30,7 @@ public abstract class AbstractEasyLogicDeleteStrategy implements EasyLogicDelete
         String propertyName = builder.getPropertyName();
         Class<?> propertyType = builder.getPropertyType();
         if(!allowTypes.contains(propertyType)){
-            throw new EasyQueryException(ClassUtil.getSimpleName(entityMetadata.getEntityClass())+"."+propertyName+" logic delete not support, property type not allowed");
+            throw new EasyQueryException(EasyClassUtil.getSimpleName(entityMetadata.getEntityClass())+"."+propertyName+" logic delete not support, property type not allowed");
         }
         Property<Object, ?> lambdaProperty = builder.getPropertyLambda();
         SQLExpression1<SQLWherePredicate<Object>> predicateFilterExpression = getPredicateFilterExpression(builder,lambdaProperty);

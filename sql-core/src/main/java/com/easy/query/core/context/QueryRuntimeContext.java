@@ -1,17 +1,17 @@
 package com.easy.query.core.context;
 
 import com.easy.query.core.api.SQLApiFactory;
-import com.easy.query.core.basic.jdbc.con.EasyConnectionManager;
+import com.easy.query.core.basic.jdbc.con.ConnectionManager;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
 import com.easy.query.core.basic.pagination.EasyPageResultProvider;
-import com.easy.query.core.basic.thread.EasyShardingExecutorService;
-import com.easy.query.core.expression.parser.factory.EasyQueryLambdaFactory;
+import com.easy.query.core.basic.thread.ShardingExecutorService;
+import com.easy.query.core.expression.parser.factory.QueryLambdaFactory;
 import com.easy.query.core.expression.sql.builder.factory.ExpressionBuilderFactory;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.expression.func.ColumnFunctionFactory;
 import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
-import com.easy.query.core.configuration.EasyQueryConfiguration;
+import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.basic.plugin.track.TrackManager;
 import com.easy.query.core.sharding.comparer.ShardingComparer;
 import com.easy.query.core.sharding.manager.ShardingQueryCountManager;
@@ -26,10 +26,10 @@ import com.easy.query.core.sharding.route.manager.TableRouteManager;
  */
 public interface QueryRuntimeContext {
     <T> T getService(Class<T> serviceType);
-    EasyQueryConfiguration getEasyQueryConfiguration();
+    QueryConfiguration getQueryConfiguration();
     EntityMetadataManager getEntityMetadataManager();
-    EasyQueryLambdaFactory getEasyQueryLambdaFactory();
-    EasyConnectionManager getConnectionManager();
+    QueryLambdaFactory getQueryLambdaFactory();
+    ConnectionManager getConnectionManager();
     EntityExpressionExecutor getEntityExpressionExecutor();
     JdbcTypeHandlerManager getJdbcTypeHandlerManager();
     SQLApiFactory getSQLApiFactory();
@@ -37,7 +37,7 @@ public interface QueryRuntimeContext {
     ExpressionFactory getExpressionFactory();
     TrackManager getTrackManager();
     EasyPageResultProvider getEasyPageResultProvider();
-    EasyShardingExecutorService getEasyShardingExecutorService();
+    ShardingExecutorService getShardingExecutorService();
     TableRouteManager getTableRouteManager();
     DataSourceRouteManager getDataSourceRouteManager();
     ShardingComparer getShardingComparer();

@@ -2,7 +2,7 @@ package com.easy.query.core.annotation;
 
 import com.easy.query.core.sharding.initializer.ShardingInitializer;
 import com.easy.query.core.sharding.initializer.UnShardingInitializer;
-import com.easy.query.core.util.StringUtil;
+import com.easy.query.core.util.EasyStringUtil;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -28,7 +28,7 @@ public @interface Table {
     /**
      * 对应的表名称
      */
-    String value() default StringUtil.EMPTY;
+    String value() default EasyStringUtil.EMPTY;
 
     /**
      * 数据库schema

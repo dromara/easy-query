@@ -7,10 +7,10 @@ import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.exception.EasyQueryException;
-import com.easy.query.core.util.BeanUtil;
-import com.easy.query.core.util.ClassUtil;
-import com.easy.query.core.util.StringUtil;
-import com.easy.query.core.util.TrackUtil;
+import com.easy.query.core.util.EasyBeanUtil;
+import com.easy.query.core.util.EasyClassUtil;
+import com.easy.query.core.util.EasyStringUtil;
+import com.easy.query.core.util.EasyTrackUtil;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -51,7 +51,7 @@ public class DefaultTrackContext implements TrackContext {
             return null;
         }
         EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(entity.getClass());
-        String trackKey = TrackUtil.getTrackKey(entityMetadata, entity);
+        String trackKey = EasyTrackUtil.getTrackKey(entityMetadata, entity);
         if (trackKey == null) {
             return null;
         }
@@ -66,21 +66,21 @@ public class DefaultTrackContext implements TrackContext {
 
         Class<?> entityClass = entity.getClass();
         EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(entityClass);
-        String trackKey = TrackUtil.getTrackKey(entityMetadata, entity);
+        String trackKey = EasyTrackUtil.getTrackKey(entityMetadata, entity);
         if (trackKey == null) {
-            throw new EasyQueryException(ClassUtil.getSimpleName(entityClass) + ": current entity cant get track key,primary maybe null");
+            throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + ": current entity cant get track key,primary maybe null");
         }
         ConcurrentHashMap<String, EntityState> entityStateMap = trackEntityMap.computeIfAbsent(entityClass, o -> new ConcurrentHashMap<>());
         EntityState originalEntityState = entityStateMap.get(trackKey);
         if (originalEntityState!=null) {
             //查询的情况下直接使用追踪后的数据
             if(!isQuery&&!originalEntityState.getCurrentValue().equals(entity)){
-                throw new EasyQueryException(ClassUtil.getSimpleName(entityClass) + ": current entity already tracked key,primary key:" + trackKey);
+                throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + ": current entity already tracked key,primary key:" + trackKey);
             }
             return false;
         }else{
-            if(StringUtil.isBlank(entityMetadata.getTableName())){
-                throw new EasyQueryException(ClassUtil.getSimpleName(entityClass) + ": is not table entity,cant tracking");
+            if(EasyStringUtil.isBlank(entityMetadata.getTableName())){
+                throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + ": is not table entity,cant tracking");
             }
             Object original = createAndCopyValue(entity,entityMetadata);
             EntityState entityState = new EntityState(entityClass, original, entity);
@@ -97,8 +97,8 @@ public class DefaultTrackContext implements TrackContext {
      */
     private Object createAndCopyValue(Object entity, EntityMetadata entityMetadata){
 
-        Object original = ClassUtil.newInstance(entity.getClass());
-        FastBean fastBean = BeanUtil.getFastBean(entity.getClass());
+        Object original = EasyClassUtil.newInstance(entity.getClass());
+        FastBean fastBean = EasyBeanUtil.getFastBean(entity.getClass());
         for (Map.Entry<String, ColumnMetadata> columnMetadataEntry : entityMetadata.getProperty2ColumnMap().entrySet()) {
 
             PropertySetterCaller<Object> beanSetter = fastBean.getBeanSetter(columnMetadataEntry.getValue().getProperty());

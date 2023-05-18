@@ -1,6 +1,6 @@
 package com.easy.query.core.basic.api.internal;
 
-import com.easy.query.core.basic.jdbc.con.EasyConnectionManager;
+import com.easy.query.core.basic.jdbc.con.ConnectionManager;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.exception.EasyQueryConcurrentException;
@@ -22,7 +22,7 @@ public abstract class AbstractSQLExecuteRows<TChain>  implements SQLExecuteExpec
     @Override
     public void executeRows(long expectRows, String msg, String code) {
 
-        EasyConnectionManager connectionManager = entityExpressionBuilder.getRuntimeContext().getConnectionManager();
+        ConnectionManager connectionManager = entityExpressionBuilder.getRuntimeContext().getConnectionManager();
         Transaction transaction=null;
         try {
             boolean inTransaction = connectionManager.currentThreadInTransaction();

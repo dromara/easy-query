@@ -9,10 +9,10 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
 import com.easy.query.core.metadata.EntityMetadata;
-import com.easy.query.core.util.ClassUtil;
-import com.easy.query.core.util.SQLExpressionUtil;
-import com.easy.query.core.util.SQLSegmentUtil;
-import com.easy.query.core.util.StringUtil;
+import com.easy.query.core.util.EasyClassUtil;
+import com.easy.query.core.util.EasySQLExpressionUtil;
+import com.easy.query.core.util.EasySQLSegmentUtil;
+import com.easy.query.core.util.EasyStringUtil;
 
 import java.util.function.Function;
 
@@ -36,7 +36,7 @@ public class TableSQLExpressionImpl implements EntityTableSQLExpression {
         this.entityTable = entityTable;
         this.multiTableType = multiTableType;
         this.runtimeContext = runtimeContext;
-        this.dialect = runtimeContext.getEasyQueryConfiguration().getDialect();
+        this.dialect = runtimeContext.getQueryConfiguration().getDialect();
     }
 
     @Override
@@ -87,7 +87,7 @@ public class TableSQLExpressionImpl implements EntityTableSQLExpression {
     public String getTableName() {
         String tableName = dialect.getQuoteName(doGetTableName());
         String schema = entityTable.getSchema();
-        if(StringUtil.isNotBlank(schema)){
+        if(EasyStringUtil.isNotBlank(schema)){
             return dialect.getQuoteName(schema)+"."+tableName;
         }
         return tableName;
@@ -95,7 +95,7 @@ public class TableSQLExpressionImpl implements EntityTableSQLExpression {
     public String doGetTableName() {
         String tableName = entityTable.getTableName();
         if (tableName == null) {
-            throw new EasyQueryException("table " + ClassUtil.getSimpleName(entityTable.getEntityClass()) + " cant found mapping table name");
+            throw new EasyQueryException("table " + EasyClassUtil.getSimpleName(entityTable.getEntityClass()) + " cant found mapping table name");
         }
         if(tableNameAs!=null){
             return tableNameAs.apply(tableName);
@@ -105,7 +105,7 @@ public class TableSQLExpressionImpl implements EntityTableSQLExpression {
 
     @Override
     public String toSQL(SQLParameterCollector sqlParameterCollector) {
-        SQLExpressionUtil.expressionInvokeRoot(sqlParameterCollector);
+        EasySQLExpressionUtil.expressionInvokeRoot(sqlParameterCollector);
         //如果当前对象没有映射到表那么直接抛错
         StringBuilder sql = new StringBuilder();
 
@@ -130,7 +130,7 @@ public class TableSQLExpressionImpl implements EntityTableSQLExpression {
     public EntityTableSQLExpression cloneSQLExpression() {
 
         EntityTableSQLExpression tableSQLExpression = runtimeContext.getExpressionFactory().createEntityTableSQLExpression(entityTable, multiTableType,runtimeContext);
-        if(SQLSegmentUtil.isNotEmpty(on)){
+        if(EasySQLSegmentUtil.isNotEmpty(on)){
             PredicateSegment predicateSegment = on.clonePredicateSegment();
             tableSQLExpression.setOn(predicateSegment);
         }

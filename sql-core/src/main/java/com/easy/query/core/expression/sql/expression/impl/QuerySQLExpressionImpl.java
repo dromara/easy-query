@@ -7,8 +7,8 @@ import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
-import com.easy.query.core.util.SQLExpressionUtil;
-import com.easy.query.core.util.SQLSegmentUtil;
+import com.easy.query.core.util.EasySQLExpressionUtil;
+import com.easy.query.core.util.EasySQLSegmentUtil;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -144,7 +144,7 @@ public class QuerySQLExpressionImpl implements EntityQuerySQLExpression {
 
     @Override
     public String toSQL(SQLParameterCollector sqlParameterCollector) {
-        boolean root = SQLExpressionUtil.expressionInvokeRoot(sqlParameterCollector);
+        boolean root = EasySQLExpressionUtil.expressionInvokeRoot(sqlParameterCollector);
         StringBuilder sql = new StringBuilder("SELECT ");
         if(this.distinct){
             sql.append("DISTINCT ");
@@ -164,8 +164,8 @@ public class QuerySQLExpressionImpl implements EntityQuerySQLExpression {
                 sql.append(" ON ").append(on.toSQL(sqlParameterCollector));
             }
         }
-        boolean notExistsSQL = SQLSegmentUtil.isNotEmpty(this.allPredicate);
-        boolean hasWhere = SQLSegmentUtil.isNotEmpty(this.where);
+        boolean notExistsSQL = EasySQLSegmentUtil.isNotEmpty(this.allPredicate);
+        boolean hasWhere = EasySQLSegmentUtil.isNotEmpty(this.where);
         if (hasWhere) {
             String whereSQL = this.where.toSQL(sqlParameterCollector);
             if(root&&notExistsSQL){
@@ -218,22 +218,22 @@ public class QuerySQLExpressionImpl implements EntityQuerySQLExpression {
         ExpressionFactory expressionFactory = getRuntimeContext().getExpressionFactory();
         EntityQuerySQLExpression easyQuerySQLExpression = expressionFactory.createEasyQuerySQLExpression(getRuntimeContext());
 
-        if(SQLSegmentUtil.isNotEmpty(this.where)){
+        if(EasySQLSegmentUtil.isNotEmpty(this.where)){
             easyQuerySQLExpression.setWhere(where.clonePredicateSegment());
         }
-        if(SQLSegmentUtil.isNotEmpty(this.group)){
+        if(EasySQLSegmentUtil.isNotEmpty(this.group)){
             easyQuerySQLExpression.setGroup(group.cloneSQLBuilder());
         }
-        if(SQLSegmentUtil.isNotEmpty(this.having)){
+        if(EasySQLSegmentUtil.isNotEmpty(this.having)){
             easyQuerySQLExpression.setHaving(having.clonePredicateSegment());
         }
-        if(SQLSegmentUtil.isNotEmpty(this.order)){
+        if(EasySQLSegmentUtil.isNotEmpty(this.order)){
             easyQuerySQLExpression.setOrder(order.cloneSQLBuilder());
         }
-        if(SQLSegmentUtil.isNotEmpty(this.projects)){
+        if(EasySQLSegmentUtil.isNotEmpty(this.projects)){
             easyQuerySQLExpression.setProjects(projects.cloneSQLBuilder());
         }
-        if(SQLSegmentUtil.isNotEmpty(this.allPredicate)){
+        if(EasySQLSegmentUtil.isNotEmpty(this.allPredicate)){
             easyQuerySQLExpression.setAllPredicate(allPredicate.clonePredicateSegment());
         }
         easyQuerySQLExpression.setOffset(this.offset);

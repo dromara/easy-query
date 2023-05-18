@@ -1,12 +1,7 @@
 package com.easy.query.core.inject;
 
-import com.easy.query.core.exception.EasyQueryInjectCurrentlyInCreationException;
-import com.easy.query.core.util.ClassUtil;
+import com.easy.query.core.util.EasyClassUtil;
 
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.function.Function;
 
 /**
@@ -22,11 +17,11 @@ public class ServiceDescriptor {
     private final Function<ServiceProvider,Object> implementationFactory;
     public ServiceDescriptor(Class<?> serviceType, Class<?> implementationType) {
         if(serviceType==null){
-            throw new IllegalArgumentException(ClassUtil.getSimpleName(serviceType));
+            throw new IllegalArgumentException(EasyClassUtil.getSimpleName(serviceType));
         }
         this.serviceType = serviceType;
         if(implementationType==null){
-            throw new IllegalArgumentException(ClassUtil.getSimpleName(implementationType));
+            throw new IllegalArgumentException(EasyClassUtil.getSimpleName(implementationType));
         }
         this.implementationType = implementationType;
         this.implementationInstance = null;
@@ -35,11 +30,11 @@ public class ServiceDescriptor {
     public ServiceDescriptor(Class<?> serviceType, Object implementationInstance) {
 
         if(serviceType==null){
-            throw new IllegalArgumentException(ClassUtil.getSimpleName(serviceType));
+            throw new IllegalArgumentException(EasyClassUtil.getSimpleName(serviceType));
         }
         this.serviceType = serviceType;
         if(implementationInstance==null){
-            throw new IllegalArgumentException(ClassUtil.getInstanceSimpleName(implementationInstance));
+            throw new IllegalArgumentException(EasyClassUtil.getInstanceSimpleName(implementationInstance));
         }
         this.implementationInstance = implementationInstance;
         this.implementationType = null;
@@ -48,11 +43,11 @@ public class ServiceDescriptor {
     public ServiceDescriptor(Class<?> serviceType, Function<ServiceProvider,Object> implementationFactory) {
 
         if(serviceType==null){
-            throw new IllegalArgumentException(ClassUtil.getSimpleName(serviceType));
+            throw new IllegalArgumentException(EasyClassUtil.getSimpleName(serviceType));
         }
         this.serviceType = serviceType;
         if(implementationFactory==null){
-            throw new IllegalArgumentException(ClassUtil.getInstanceSimpleName(implementationFactory));
+            throw new IllegalArgumentException(EasyClassUtil.getInstanceSimpleName(implementationFactory));
         }
         this.implementationFactory = implementationFactory;
         this.implementationType = null;

@@ -5,8 +5,8 @@ import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameterCollector;
 import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.util.SQLUtil;
-import com.easy.query.core.util.SQLExpressionUtil;
+import com.easy.query.core.util.EasySQLUtil;
+import com.easy.query.core.util.EasySQLExpressionUtil;
 
 /**
  * @FileName: ColumnValuePredicate.java
@@ -35,8 +35,8 @@ public class ColumnWithSelfSegment implements SQLEntitySegment {
 
     @Override
     public String toSQL(SQLParameterCollector sqlParameterCollector) {
-        SQLUtil.addParameter(sqlParameterCollector,new EasyConstSQLParameter(entityTable,propertyName,val));
-        String sqlColumnSegment1 = SQLExpressionUtil.getSQLOwnerColumn(runtimeContext,entityTable,propertyName);
+        EasySQLUtil.addParameter(sqlParameterCollector,new EasyConstSQLParameter(entityTable,propertyName,val));
+        String sqlColumnSegment1 = EasySQLExpressionUtil.getSQLOwnerColumn(runtimeContext,entityTable,propertyName);
         return sqlColumnSegment1 +" "+ compare.getSQL() + " "+sqlColumnSegment1+selfLink;
     }
 

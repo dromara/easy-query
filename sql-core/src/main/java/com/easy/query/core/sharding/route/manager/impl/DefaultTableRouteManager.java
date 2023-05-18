@@ -9,7 +9,7 @@ import com.easy.query.core.sharding.route.table.ShardingTableRoute;
 import com.easy.query.core.sharding.route.table.TableRoute;
 import com.easy.query.core.sharding.route.table.TableRouteUnit;
 import com.easy.query.core.sharding.rule.table.TableRouteRule;
-import com.easy.query.core.util.ClassUtil;
+import com.easy.query.core.util.EasyClassUtil;
 
 import java.util.Collection;
 import java.util.Map;
@@ -58,7 +58,7 @@ public class DefaultTableRouteManager implements TableRouteManager {
 
         TableRouteRule<?> tableRouteRule = entityRouteRuleCache.get(entityClass);
         if(tableRouteRule==null){
-            throw new EasyQueryInvalidOperationException(ClassUtil.getSimpleName(entityClass) +" not found table route rule");
+            throw new EasyQueryInvalidOperationException(EasyClassUtil.getSimpleName(entityClass) +" not found table route rule");
         }
         return tableRouteRule;
     }

@@ -14,7 +14,7 @@ import com.easy.query.core.basic.jdbc.executor.internal.common.SQLExecutorGroup;
 import com.easy.query.core.basic.jdbc.executor.internal.unit.Executor;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyUtil;
-import com.easy.query.core.util.ShardingUtil;
+import com.easy.query.core.util.EasyShardingUtil;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -83,7 +83,7 @@ public class ShardingExecutor {
     }
 
     private static <TResult> List<Future<List<TResult>>> executeFuture0(StreamMergeContext streamMergeContext, Executor<TResult> executor, List<DataSourceSQLExecutorUnit> dataSourceSQLExecutorUnits) {
-        ExecutorService executorService = streamMergeContext.getRuntimeContext().getEasyShardingExecutorService().getExecutorService();
+        ExecutorService executorService = streamMergeContext.getRuntimeContext().getShardingExecutorService().getExecutorService();
         List<Future<List<TResult>>> futures = new ArrayList<>(dataSourceSQLExecutorUnits.size());
         for (DataSourceSQLExecutorUnit dataSourceSQLExecutorUnit : dataSourceSQLExecutorUnits) {
             Future<List<TResult>> future = executorService.submit(() -> executor.execute(dataSourceSQLExecutorUnit));
@@ -108,7 +108,7 @@ public class ShardingExecutor {
         int groupUnitSize = sqlGroupExecutionUnits.size();
         ConnectionModeEnum useConnectionMode = streamMergeContext.getConnectionMode();
         //串行执行insert update delete或者最大连接数大于每个数据源分库的执行数目
-        ConnectionModeEnum connectionMode = ShardingUtil.getActualConnectionMode(isSerialExecute,maxShardingQueryLimit,groupUnitSize,useConnectionMode);
+        ConnectionModeEnum connectionMode = EasyShardingUtil.getActualConnectionMode(isSerialExecute,maxShardingQueryLimit,groupUnitSize,useConnectionMode);
 //        ConnectionModeEnum connectionMode = (isSerialExecute || maxShardingQueryLimit >= groupUnitSize)
 //                ? ConnectionModeEnum.MEMORY_STRICTLY
 //                : ConnectionModeEnum.CONNECTION_STRICTLY;

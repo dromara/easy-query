@@ -3,7 +3,7 @@ package com.easy.query.test;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.api.client.EasyQuery;
-import com.easy.query.core.configuration.EasyQueryConfiguration;
+import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.configuration.EasyQueryShardingOption;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.sharding.route.manager.DataSourceRouteManager;
@@ -119,7 +119,7 @@ public abstract class BaseTest {
 //                .replaceService(EasyShardingOption.class, new EasyShardingOption(2, 0))
                 .build();
         QueryRuntimeContext runtimeContext = easyQuery.getRuntimeContext();
-        EasyQueryConfiguration configuration = runtimeContext.getEasyQueryConfiguration();
+        QueryConfiguration configuration = runtimeContext.getQueryConfiguration();
         configuration.applyEasyEncryptionStrategy(new DefaultAesEasyEncryptionStrategy());
         configuration.applyEasyEncryptionStrategy(new Base64EncryptionStrategy());
         configuration.applyEasyEncryptionStrategy(new MyEncryptionStrategy());

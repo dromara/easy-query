@@ -1,7 +1,7 @@
 package com.easy.query.core.expression.sql.builder.internal;
 
 import com.easy.query.core.expression.parser.core.SQLWherePredicate;
-import com.easy.query.core.expression.parser.factory.EasyQueryLambdaFactory;
+import com.easy.query.core.expression.parser.factory.QueryLambdaFactory;
 import com.easy.query.core.common.bean.FastBean;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnPropertyPredicate;
@@ -9,7 +9,7 @@ import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpression
 import com.easy.query.core.expression.sql.builder.LambdaEntityExpressionBuilder;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
-import com.easy.query.core.configuration.EasyQueryConfiguration;
+import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
@@ -17,7 +17,7 @@ import com.easy.query.core.basic.plugin.interceptor.EasyPredicateFilterIntercept
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.metadata.VersionMetadata;
-import com.easy.query.core.util.BeanUtil;
+import com.easy.query.core.util.EasyBeanUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.Objects;
@@ -46,7 +46,7 @@ public abstract class AbstractPredicateEntityExpressionBuilder extends AbstractE
 
             EntityMetadata entityMetadata = table.getEntityMetadata();
             PredicateSegment predicateSegment = new AndPredicateSegment(true);
-            EasyQueryLambdaFactory easyQueryLambdaFactory = getRuntimeContext().getEasyQueryLambdaFactory();
+            QueryLambdaFactory easyQueryLambdaFactory = getRuntimeContext().getQueryLambdaFactory();
             SQLWherePredicate<Object> sqlPredicate = easyQueryLambdaFactory.createSQLPredicate(table.getIndex(), this, predicateSegment);
 
             if (useLogicDelete(entityMetadata)) {
@@ -60,7 +60,7 @@ public abstract class AbstractPredicateEntityExpressionBuilder extends AbstractE
                 if (isExpression()) {
                     Object version = expressionContext.getVersion();
                     if (Objects.nonNull(version)) {
-                        FastBean fastBean = BeanUtil.getFastBean(table.getEntityClass());
+                        FastBean fastBean = EasyBeanUtil.getFastBean(table.getEntityClass());
                         sqlPredicate.eq(fastBean.getBeanGetter(columnMetadata.getProperty()), version);
                     }
                 } else {
@@ -70,7 +70,7 @@ public abstract class AbstractPredicateEntityExpressionBuilder extends AbstractE
             }
             //如果当前对象是存在拦截器的那么就通过stream获取剩余的拦截器
             if (EasyCollectionUtil.isNotEmpty(entityMetadata.getPredicateFilterInterceptors())) {
-                EasyQueryConfiguration easyQueryConfiguration = getRuntimeContext().getEasyQueryConfiguration();
+                QueryConfiguration easyQueryConfiguration = getRuntimeContext().getQueryConfiguration();
                 expressionContext.getInterceptorFilter(entityMetadata.getPredicateFilterInterceptors())
                         .forEach(interceptor -> {
                             EasyPredicateFilterInterceptor globalSelectInterceptorStrategy = (EasyPredicateFilterInterceptor) easyQueryConfiguration.getEasyInterceptor(interceptor.getName());

@@ -23,12 +23,12 @@ import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.annotation.EasyWhereCondition;
 import com.easy.query.core.api.pagination.EasyPageResult;
-import com.easy.query.core.api.dynamic.where.internal.DynamicWherePropertyNode;
-import com.easy.query.core.api.dynamic.where.internal.DefaultEasyWhereBuilder;
-import com.easy.query.core.api.dynamic.where.EasyWhere;
-import com.easy.query.core.api.dynamic.order.EasyOrderBy;
-import com.easy.query.core.api.dynamic.order.internal.DefaultOrderByBuilder;
-import com.easy.query.core.api.dynamic.order.internal.DynamicOrderByPropertyNode;
+import com.easy.query.core.api.dynamic.condition.internal.ObjectQueryPropertyNode;
+import com.easy.query.core.api.dynamic.condition.internal.ObjectQueryBuilderImpl;
+import com.easy.query.core.api.dynamic.condition.ObjectQuery;
+import com.easy.query.core.api.dynamic.sort.ObjectSort;
+import com.easy.query.core.api.dynamic.sort.internal.ObjectSortBuilderImpl;
+import com.easy.query.core.api.dynamic.sort.internal.ObjectSortPropertyNode;
 import com.easy.query.core.basic.api.select.Queryable2;
 import com.easy.query.core.basic.api.select.provider.EasyQuerySQLBuilderProvider;
 import com.easy.query.core.enums.MultiTableTypeEnum;
@@ -53,12 +53,12 @@ import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.sharding.manager.ShardingQueryCountManager;
-import com.easy.query.core.util.BeanUtil;
+import com.easy.query.core.util.EasyBeanUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
-import com.easy.query.core.util.ClassUtil;
-import com.easy.query.core.util.LambdaUtil;
-import com.easy.query.core.util.SQLExpressionUtil;
-import com.easy.query.core.util.StringUtil;
+import com.easy.query.core.util.EasyClassUtil;
+import com.easy.query.core.util.EasyLambdaUtil;
+import com.easy.query.core.util.EasySQLExpressionUtil;
+import com.easy.query.core.util.EasyStringUtil;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
@@ -105,7 +105,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     public long count() {
         EntityQueryExpressionBuilder queryExpressionBuilder = entityQueryExpressionBuilder.cloneEntityExpressionBuilder();
         setExecuteMethod(ExecuteMethodEnum.COUNT);
-        EntityQueryExpressionBuilder countSQLEntityExpressionBuilder = SQLExpressionUtil.getCountEntityQueryExpression(queryExpressionBuilder);
+        EntityQueryExpressionBuilder countSQLEntityExpressionBuilder = EasySQLExpressionUtil.getCountEntityQueryExpression(queryExpressionBuilder);
         if (countSQLEntityExpressionBuilder == null) {
             List<Long> result = cloneQueryable().select(" COUNT(1) ").toList(Long.class);
             return EasyCollectionUtil.firstOrDefault(result, 0L);
@@ -202,8 +202,8 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     public Integer lenOrDefault(Property<T1, ?> column, Integer def) {
         setExecuteMethod(ExecuteMethodEnum.LEN);
         EntityTableExpressionBuilder table = entityQueryExpressionBuilder.getTable(0);
-        String propertyName = LambdaUtil.getPropertyName(column);
-        String ownerColumn = SQLExpressionUtil.getSQLOwnerColumn(entityQueryExpressionBuilder.getRuntimeContext(), table.getEntityTable(), propertyName);
+        String propertyName = EasyLambdaUtil.getPropertyName(column);
+        String ownerColumn = EasySQLExpressionUtil.getSQLOwnerColumn(entityQueryExpressionBuilder.getRuntimeContext(), table.getEntityTable(), propertyName);
 
         ColumnFunction lenFunction = runtimeContext.getColumnFunctionFactory().createLenFunction();
         List<Integer> result = cloneQueryable().select(lenFunction.getFuncColumn(ownerColumn)).toList(Integer.class);
@@ -212,7 +212,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
 
     private <TMember> List<TMember> selectAggregateList(Property<T1, ?> column, ColumnFunction easyFunc) {
         EntityTableExpressionBuilder table = entityQueryExpressionBuilder.getTable(0);
-        String propertyName = LambdaUtil.getPropertyName(column);
+        String propertyName = EasyLambdaUtil.getPropertyName(column);
         FuncColumnSegmentImpl funcColumnSegment = new FuncColumnSegmentImpl(table.getEntityTable(), propertyName, entityQueryExpressionBuilder.getRuntimeContext(), easyFunc);
         ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(propertyName);
         return cloneQueryable().select(funcColumnSegment, true).toList((Class<TMember>) columnMetadata.getProperty().getPropertyType());
@@ -249,7 +249,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
 
     private List<Map> toQueryMaps() {
         setExecuteMethod(ExecuteMethodEnum.LIST);
-        if (SQLExpressionUtil.shouldCloneSQLEntityQueryExpressionBuilder(entityQueryExpressionBuilder)) {
+        if (EasySQLExpressionUtil.shouldCloneSQLEntityQueryExpressionBuilder(entityQueryExpressionBuilder)) {
             return select(queryClass()).toList(Map.class);
         }
         return toList(Map.class);
@@ -267,7 +267,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
      */
     protected void compensateSelect(Class<?> resultClass) {
 
-        if (SQLExpressionUtil.shouldCloneSQLEntityQueryExpressionBuilder(entityQueryExpressionBuilder)) {
+        if (EasySQLExpressionUtil.shouldCloneSQLEntityQueryExpressionBuilder(entityQueryExpressionBuilder)) {
             select(resultClass);
         }
     }
@@ -372,10 +372,10 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
             EntityTableExpressionBuilder table = entityQueryExpressionBuilder.getTable(0);
             Collection<String> keyProperties = table.getEntityMetadata().getKeyProperties();
             if (keyProperties.isEmpty()) {
-                throw new EasyQueryException("对象:" + ClassUtil.getSimpleName(t1Class) + "未找到主键信息");
+                throw new EasyQueryException("对象:" + EasyClassUtil.getSimpleName(t1Class) + "未找到主键信息");
             }
             if (keyProperties.size() > 1) {
-                throw new EasyQueryException("对象:" + ClassUtil.getSimpleName(t1Class) + "存在多个主键");
+                throw new EasyQueryException("对象:" + EasyClassUtil.getSimpleName(t1Class) + "存在多个主键");
             }
             String keyProperty = keyProperties.iterator().next();
             AndPredicateSegment andPredicateSegment = new AndPredicateSegment();
@@ -419,13 +419,13 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
         return null;
     }
 
-    private String getObjectPropertyMappingPropertyName(DynamicWherePropertyNode entityPropertyNode, EasyWhereCondition easyWhereCondition, String fieldName) {
+    private String getObjectPropertyMappingPropertyName(ObjectQueryPropertyNode entityPropertyNode, EasyWhereCondition easyWhereCondition, String fieldName) {
         String configureMapProperty = entityPropertyNode != null ? entityPropertyNode.getProperty() : null;
         if (configureMapProperty != null) {
             return configureMapProperty;
         }
         String propName = easyWhereCondition.propName();
-        return StringUtil.isBlank(propName) ? fieldName : propName;
+        return EasyStringUtil.isBlank(propName) ? fieldName : propName;
     }
 
 
@@ -435,13 +435,13 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
             if (object != null) {
                 EntityMetadataManager entityMetadataManager = entityQueryExpressionBuilder.getRuntimeContext().getEntityMetadataManager();
 
-                List<Field> allFields = ClassUtil.getAllFields(object.getClass());
+                List<Field> allFields = EasyClassUtil.getAllFields(object.getClass());
 
 
-                DefaultEasyWhereBuilder<Object> objectObjectQueryBuilder = new DefaultEasyWhereBuilder<>();
+                ObjectQueryBuilderImpl<Object> objectObjectQueryBuilder = new ObjectQueryBuilderImpl<>();
                 boolean strictMode = true;
-                if (EasyWhere.class.isAssignableFrom(object.getClass())) {
-                    EasyWhere<Object> configuration = (EasyWhere<Object>) object;
+                if (ObjectQuery.class.isAssignableFrom(object.getClass())) {
+                    ObjectQuery<Object> configuration = (ObjectQuery<Object>) object;
                     configuration.configure(objectObjectQueryBuilder);
                     strictMode = configuration.useStrictMode();
                 }
@@ -454,21 +454,21 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
                         if (q == null) {
                             continue;
                         }
-                        DynamicWherePropertyNode entityPropertyNode = objectObjectQueryBuilder.getPropertyMapping(field.getName());
+                        ObjectQueryPropertyNode entityPropertyNode = objectObjectQueryBuilder.getPropertyMapping(field.getName());
                         Class<?> property2Class = entityPropertyNode != null ? entityPropertyNode.getEntityClass() : q.entityClass();
                         Class<?> propertyQueryEntityClass = Objects.equals(Object.class, property2Class) ? t1Class : matchQueryEntityClass(property2Class);
                         if (propertyQueryEntityClass == null) {
                             if (!strictMode) {
                                 continue;
                             }
-                            throw new EasyQueryWhereInvalidOperationException(ClassUtil.getSimpleName(property2Class) + " not found query entity class");
+                            throw new EasyQueryWhereInvalidOperationException(EasyClassUtil.getSimpleName(property2Class) + " not found query entity class");
                         }
                         SQLWherePredicate<?> sqlPredicate = matchWhereObjectSQLPredicate(propertyQueryEntityClass);
                         if (sqlPredicate == null) {
                             if (!strictMode) {
                                 continue;
                             }
-                            throw new EasyQueryWhereInvalidOperationException("not found sql predicate,entity class:" + ClassUtil.getSimpleName(propertyQueryEntityClass));
+                            throw new EasyQueryWhereInvalidOperationException("not found sql predicate,entity class:" + EasyClassUtil.getSimpleName(propertyQueryEntityClass));
                         }
                         Object val = field.get(object);
 
@@ -476,14 +476,14 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
                             continue;
                         }
                         if (val instanceof String) {
-                            if (StringUtil.isBlank(String.valueOf(val)) && !q.allowEmptyStrings()) {
+                            if (EasyStringUtil.isBlank(String.valueOf(val)) && !q.allowEmptyStrings()) {
                                 continue;
                             }
                         }
                         String objectPropertyName = getObjectPropertyMappingPropertyName(entityPropertyNode, q, field.getName());
                         EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(propertyQueryEntityClass);
                         ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(objectPropertyName);
-                        FastBean fastBean = BeanUtil.getFastBean(propertyQueryEntityClass);
+                        FastBean fastBean = EasyBeanUtil.getFastBean(propertyQueryEntityClass);
                         Property propertyLambda = fastBean.getBeanGetter(objectPropertyName, columnMetadata.getProperty().getPropertyType());
 
                         switch (q.type()) {
@@ -573,36 +573,36 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     }
 
     @Override
-    public Queryable<T1> orderByDynamic(boolean condition, EasyOrderBy configuration) {
+    public Queryable<T1> orderByDynamic(boolean condition, ObjectSort configuration) {
 
         if (condition) {
             if (configuration != null) {
                 boolean strictMode = configuration.useStrictMode();
                 EntityMetadataManager entityMetadataManager = entityQueryExpressionBuilder.getRuntimeContext().getEntityMetadataManager();
 
-                DefaultOrderByBuilder orderByBuilder = new DefaultOrderByBuilder(configuration.dynamicMode());
+                ObjectSortBuilderImpl orderByBuilder = new ObjectSortBuilderImpl(configuration.dynamicMode());
                 configuration.configure(orderByBuilder);
-                Map<String, DynamicOrderByPropertyNode> orderProperties = orderByBuilder.getOrderProperties();
+                Map<String, ObjectSortPropertyNode> orderProperties = orderByBuilder.getProperties();
                 for (String property : orderProperties.keySet()) {
-                    DynamicOrderByPropertyNode orderByPropertyNode = orderProperties.get(property);
+                    ObjectSortPropertyNode orderByPropertyNode = orderProperties.get(property);
 
                     Class<?> orderByEntityClass = matchQueryEntityClass(orderByPropertyNode.getEntityClass());
                     if (orderByEntityClass == null) {
                         if (!strictMode) {
                             continue;
                         }
-                        throw new EasyQueryOrderByInvalidOperationException(property, ClassUtil.getSimpleName(orderByPropertyNode.getEntityClass()) + " not found query entity class");
+                        throw new EasyQueryOrderByInvalidOperationException(property, EasyClassUtil.getSimpleName(orderByPropertyNode.getEntityClass()) + " not found query entity class");
                     }
                     EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(orderByEntityClass);
                     ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(property);
-                    FastBean fastBean = BeanUtil.getFastBean(orderByEntityClass);
+                    FastBean fastBean = EasyBeanUtil.getFastBean(orderByEntityClass);
                     Property propertyLambda = fastBean.getBeanGetter(columnMetadata.getProperty());
                     SQLColumnSelector<?> sqlColumnSelector = matchOrderBySQLColumnSelector(orderByEntityClass, orderByPropertyNode.isAsc());
                     if (sqlColumnSelector == null) {
                         if (!strictMode) {
                             continue;
                         }
-                        throw new EasyQueryOrderByInvalidOperationException(property, "not found sql column selector,entity class:" + ClassUtil.getSimpleName(orderByEntityClass));
+                        throw new EasyQueryOrderByInvalidOperationException(property, "not found sql column selector,entity class:" + EasyClassUtil.getSimpleName(orderByEntityClass));
                     }
                     sqlColumnSelector.column(propertyLambda);
                 }
@@ -625,7 +625,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     private void doWithOutAnonymousAndClearExpression(EntityQueryExpressionBuilder sqlEntityExpression, Consumer<EntityQueryExpressionBuilder> consumer) {
 
         //如果当前只有一张表并且是匿名表,那么limit直接处理当前的匿名表的表达式
-        if (SQLExpressionUtil.limitAndOrderNotSetCurrent(sqlEntityExpression)) {
+        if (EasySQLExpressionUtil.limitAndOrderNotSetCurrent(sqlEntityExpression)) {
             AnonymousEntityTableExpressionBuilder anonymousEntityTableExpression = (AnonymousEntityTableExpressionBuilder) sqlEntityExpression.getTable(0);
             doWithOutAnonymousAndClearExpression(anonymousEntityTableExpression.getEntityQueryExpressionBuilder(), consumer);
         } else {
@@ -725,33 +725,33 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     @Override
     public <T2> Queryable2<T1, T2> leftJoin(Class<T2> joinClass, SQLExpression2<SQLWherePredicate<T1>, SQLWherePredicate<T2>> on) {
         Queryable2<T1, T2> queryable = entityQueryExpressionBuilder.getRuntimeContext().getSQLApiFactory().createQueryable2(t1Class, joinClass, MultiTableTypeEnum.LEFT_JOIN, entityQueryExpressionBuilder);
-        return SQLExpressionUtil.executeJoinOn(queryable, on);
+        return EasySQLExpressionUtil.executeJoinOn(queryable, on);
     }
 
     @Override
     public <T2> Queryable2<T1, T2> leftJoin(Queryable<T2> joinQueryable, SQLExpression2<SQLWherePredicate<T1>, SQLWherePredicate<T2>> on) {
-        Queryable<T2> selectAllTQueryable = SQLExpressionUtil.cloneAndSelectAllQueryable(joinQueryable);
+        Queryable<T2> selectAllTQueryable = EasySQLExpressionUtil.cloneAndSelectAllQueryable(joinQueryable);
         Queryable2<T1, T2> queryable = entityQueryExpressionBuilder.getRuntimeContext().getSQLApiFactory().createQueryable2(t1Class, selectAllTQueryable, MultiTableTypeEnum.LEFT_JOIN, entityQueryExpressionBuilder);
-        return SQLExpressionUtil.executeJoinOn(queryable, on);
+        return EasySQLExpressionUtil.executeJoinOn(queryable, on);
     }
 
     @Override
     public <T2> Queryable2<T1, T2> rightJoin(Class<T2> joinClass, SQLExpression2<SQLWherePredicate<T1>, SQLWherePredicate<T2>> on) {
         Queryable2<T1, T2> queryable = entityQueryExpressionBuilder.getRuntimeContext().getSQLApiFactory().createQueryable2(t1Class, joinClass, MultiTableTypeEnum.RIGHT_JOIN, entityQueryExpressionBuilder);
-        return SQLExpressionUtil.executeJoinOn(queryable, on);
+        return EasySQLExpressionUtil.executeJoinOn(queryable, on);
     }
 
     @Override
     public <T2> Queryable2<T1, T2> rightJoin(Queryable<T2> joinQueryable, SQLExpression2<SQLWherePredicate<T1>, SQLWherePredicate<T2>> on) {
-        Queryable<T2> selectAllTQueryable = SQLExpressionUtil.cloneAndSelectAllQueryable(joinQueryable);
+        Queryable<T2> selectAllTQueryable = EasySQLExpressionUtil.cloneAndSelectAllQueryable(joinQueryable);
         Queryable2<T1, T2> queryable = entityQueryExpressionBuilder.getRuntimeContext().getSQLApiFactory().createQueryable2(t1Class, selectAllTQueryable, MultiTableTypeEnum.RIGHT_JOIN, entityQueryExpressionBuilder);
-        return SQLExpressionUtil.executeJoinOn(queryable, on);
+        return EasySQLExpressionUtil.executeJoinOn(queryable, on);
     }
 
     @Override
     public <T2> Queryable2<T1, T2> innerJoin(Class<T2> joinClass, SQLExpression2<SQLWherePredicate<T1>, SQLWherePredicate<T2>> on) {
         Queryable2<T1, T2> queryable = entityQueryExpressionBuilder.getRuntimeContext().getSQLApiFactory().createQueryable2(t1Class, joinClass, MultiTableTypeEnum.INNER_JOIN, entityQueryExpressionBuilder);
-        return SQLExpressionUtil.executeJoinOn(queryable, on);
+        return EasySQLExpressionUtil.executeJoinOn(queryable, on);
     }
 
     @Override
@@ -759,9 +759,9 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
         //todo 需要判断当前的表达式是否存在where group order之类的操作,是否是一个clear expression如果不是那么就需要先select all如果没有select过然后创建一个anonymous的table去join
         //简单理解就是queryable需要支持join操作 还有queryable 和queryable之间如何join
 
-        Queryable<T2> selectAllTQueryable = SQLExpressionUtil.cloneAndSelectAllQueryable(joinQueryable);
+        Queryable<T2> selectAllTQueryable = EasySQLExpressionUtil.cloneAndSelectAllQueryable(joinQueryable);
         Queryable2<T1, T2> queryable = entityQueryExpressionBuilder.getRuntimeContext().getSQLApiFactory().createQueryable2(t1Class, selectAllTQueryable, MultiTableTypeEnum.INNER_JOIN, entityQueryExpressionBuilder);
-        return SQLExpressionUtil.executeJoinOn(queryable, on);
+        return EasySQLExpressionUtil.executeJoinOn(queryable, on);
     }
 
     @Override
@@ -789,10 +789,10 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     protected Queryable<T1> internalUnion(Collection<Queryable<T1>> unionQueries, SQLUnionEnum sqlUnion) {
 
         List<Queryable<T1>> selectUnionQueries = new ArrayList<>(unionQueries.size() + 1);
-        Queryable<T1> myQueryable = SQLExpressionUtil.cloneAndSelectAllQueryable(this);
+        Queryable<T1> myQueryable = EasySQLExpressionUtil.cloneAndSelectAllQueryable(this);
         selectUnionQueries.add(myQueryable);
         for (Queryable<T1> unionQuery : unionQueries) {
-            Queryable<T1> unionQueryable = SQLExpressionUtil.cloneAndSelectAllQueryable(unionQuery);
+            Queryable<T1> unionQueryable = EasySQLExpressionUtil.cloneAndSelectAllQueryable(unionQuery);
             selectUnionQueries.add(unionQueryable);
         }
         return entityQueryExpressionBuilder.getRuntimeContext().getSQLApiFactory().createUnionQueryable(entityQueryExpressionBuilder.getRuntimeContext(), sqlUnion, selectUnionQueries);

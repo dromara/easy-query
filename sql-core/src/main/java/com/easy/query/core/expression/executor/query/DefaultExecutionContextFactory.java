@@ -19,7 +19,7 @@ import com.easy.query.core.sharding.rewrite.RewriteContextFactory;
 import com.easy.query.core.sharding.route.RouteContext;
 import com.easy.query.core.sharding.route.RouteContextFactory;
 import com.easy.query.core.util.EasyCollectionUtil;
-import com.easy.query.core.util.ClassUtil;
+import com.easy.query.core.util.EasyClassUtil;
 
 import java.util.Collections;
 import java.util.List;
@@ -61,7 +61,7 @@ public class DefaultExecutionContextFactory implements ExecutionContextFactory {
             if(prepareParseResult instanceof EntityPrepareParseResult){
                 return new EntityExecutionCreator(easyDataSource.getDefaultDataSourceName(),(EntityPrepareParseResult)prepareParseResult).create();
             }
-            throw new UnsupportedOperationException(ClassUtil.getInstanceSimpleName(prepareParseResult));
+            throw new UnsupportedOperationException(EasyClassUtil.getInstanceSimpleName(prepareParseResult));
         }
         RouteContext routeContext = routeContextFactory.createRouteContext(prepareParseResult);
         RewriteContext rewriteContext = rewriteContextFactory.rewriteShardingExpression(prepareParseResult, routeContext);

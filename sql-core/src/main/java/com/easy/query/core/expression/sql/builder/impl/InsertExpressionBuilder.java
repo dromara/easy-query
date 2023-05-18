@@ -2,7 +2,6 @@ package com.easy.query.core.expression.sql.builder.impl;
 
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
-import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.expression.EntityInsertSQLExpression;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.metadata.ColumnMetadata;
@@ -17,8 +16,8 @@ import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.metadata.EntityMetadataManager;
-import com.easy.query.core.util.BeanUtil;
-import com.easy.query.core.util.ClassUtil;
+import com.easy.query.core.util.EasyBeanUtil;
+import com.easy.query.core.util.EasyClassUtil;
 
 import java.util.HashSet;
 import java.util.Objects;
@@ -59,7 +58,7 @@ public class InsertExpressionBuilder extends AbstractEntityExpressionBuilder imp
             //todo 获取更新策略按需更新
             SQLExecuteStrategyEnum insertStrategy = expressionContext.getSQLStrategy();
             if (Objects.equals(SQLExecuteStrategyEnum.DEFAULT, insertStrategy)) {
-                SQLExecuteStrategyEnum globalInsertStrategy = runtimeContext.getEasyQueryConfiguration().getEasyQueryOption().getInsertStrategy();
+                SQLExecuteStrategyEnum globalInsertStrategy = runtimeContext.getQueryConfiguration().getEasyQueryOption().getInsertStrategy();
                 getCustomIgnoreProperties(ignorePropertySet, globalInsertStrategy, runtimeContext.getEntityMetadataManager(), entity);
                 return true;
             } else {
@@ -73,7 +72,7 @@ public class InsertExpressionBuilder extends AbstractEntityExpressionBuilder imp
     private void getCustomIgnoreProperties(Set<String> ignoreUpdateSet, SQLExecuteStrategyEnum updateStrategy, EntityMetadataManager entityMetadataManager, Object entity) {
 
         if (Objects.equals(SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS, updateStrategy) || Objects.equals(SQLExecuteStrategyEnum.ONLY_NULL_COLUMNS, updateStrategy)) {
-            Set<String> beanMatchProperties = BeanUtil.getBeanMatchProperties(entityMetadataManager, entity, Objects.equals(SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS, updateStrategy) ? Objects::isNull : Objects::nonNull);
+            Set<String> beanMatchProperties = EasyBeanUtil.getBeanMatchProperties(entityMetadataManager, entity, Objects.equals(SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS, updateStrategy) ? Objects::isNull : Objects::nonNull);
             ignoreUpdateSet.addAll(beanMatchProperties);
         }
     }
@@ -115,7 +114,7 @@ public class InsertExpressionBuilder extends AbstractEntityExpressionBuilder imp
 
         int insertColumns = insertCloneColumns.getSQLSegments().size();
         if (insertColumns == 0) {
-            throw new EasyQueryException("not found insert columns :" + ClassUtil.getSimpleName(table.getEntityClass()));
+            throw new EasyQueryException("not found insert columns :" + EasyClassUtil.getSimpleName(table.getEntityClass()));
         }
         insertCloneColumns.copyTo(easyInsertSQLExpression.getColumns());
         return easyInsertSQLExpression;

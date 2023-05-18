@@ -4,7 +4,7 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameterCollector;
 import com.easy.query.core.enums.SQLKeywordEnum;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.util.SQLExpressionUtil;
+import com.easy.query.core.util.EasySQLExpressionUtil;
 
 /**
  * @FileName: OrderColumnSegment.java
@@ -33,7 +33,7 @@ public class OrderColumnSegmentImpl extends ColumnSegmentImpl implements OrderBy
     @Override
     public String toSQL(SQLParameterCollector sqlParameterCollector) {
 
-        String sqlColumnSegment = SQLExpressionUtil.getSQLOwnerColumn(runtimeContext,table,propertyName);
+        String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumn(runtimeContext,table,propertyName);
         StringBuilder sql = new StringBuilder().append(sqlColumnSegment);
         if(asc){
             sql.append(" ").append(SQLKeywordEnum.ASC.toSQL());

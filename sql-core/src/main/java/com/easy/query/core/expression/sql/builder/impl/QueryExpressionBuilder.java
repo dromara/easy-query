@@ -19,7 +19,7 @@ import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
-import com.easy.query.core.util.SQLSegmentUtil;
+import com.easy.query.core.util.EasySQLSegmentUtil;
 
 import java.util.Iterator;
 
@@ -67,7 +67,7 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
 
     @Override
     public boolean hasAllPredicate() {
-        return SQLSegmentUtil.isNotEmpty(allPredicate);
+        return EasySQLSegmentUtil.isNotEmpty(allPredicate);
     }
 
     @Override
@@ -118,7 +118,7 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
 
     @Override
     public boolean hasHaving() {
-        return SQLSegmentUtil.isNotEmpty(having);
+        return EasySQLSegmentUtil.isNotEmpty(having);
     }
 
     @Override

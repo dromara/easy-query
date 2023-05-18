@@ -5,7 +5,7 @@ import com.easy.query.core.enums.SQLPredicateCompareEnum;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.parser.core.SQLColumnSelector;
 import com.easy.query.core.expression.parser.core.SQLColumnSetter;
-import com.easy.query.core.expression.parser.factory.EasyQueryLambdaFactory;
+import com.easy.query.core.expression.parser.factory.QueryLambdaFactory;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.basic.plugin.version.EasyVersionStrategy;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnValuePredicate;
@@ -14,7 +14,7 @@ import com.easy.query.core.expression.sql.expression.EntityUpdateSQLExpression;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
-import com.easy.query.core.configuration.EasyQueryConfiguration;
+import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.segment.SQLEntitySegment;
@@ -37,9 +37,9 @@ import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.metadata.VersionMetadata;
 import com.easy.query.core.util.EasyCollectionUtil;
-import com.easy.query.core.util.BeanUtil;
-import com.easy.query.core.util.ClassUtil;
-import com.easy.query.core.util.TrackUtil;
+import com.easy.query.core.util.EasyBeanUtil;
+import com.easy.query.core.util.EasyClassUtil;
+import com.easy.query.core.util.EasyTrackUtil;
 
 import java.util.*;
 
@@ -133,11 +133,11 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
     protected SQLBuilderSegment buildSetSQLSegment(EntityTableExpressionBuilder table) {
         EntityMetadata entityMetadata = table.getEntityMetadata();
         SQLBuilderSegment updateSet = getSetColumns().cloneSQLBuilder();
-        SQLColumnSetter<Object> sqlColumnSetter = getRuntimeContext().getEasyQueryLambdaFactory().createSQLColumnSetter(0, this, updateSet);
+        SQLColumnSetter<Object> sqlColumnSetter = getRuntimeContext().getQueryLambdaFactory().createSQLColumnSetter(0, this, updateSet);
 
         //如果更新拦截器不为空
         if (EasyCollectionUtil.isNotEmpty(entityMetadata.getUpdateSetInterceptors())) {
-            EasyQueryConfiguration easyQueryConfiguration = getRuntimeContext().getEasyQueryConfiguration();
+            QueryConfiguration easyQueryConfiguration = getRuntimeContext().getQueryConfiguration();
             getExpressionContext().getInterceptorFilter(entityMetadata.getUpdateSetInterceptors())
                     .forEach(interceptor -> {
                         EasyUpdateSetInterceptor globalInterceptor = (EasyUpdateSetInterceptor) easyQueryConfiguration.getEasyInterceptor(interceptor.getName());
@@ -150,7 +150,7 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
                 VersionMetadata versionMetadata = entityMetadata.getVersionMetadata();
                 String propertyName = versionMetadata.getPropertyName();
                 ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(propertyName);
-                FastBean fastBean = BeanUtil.getFastBean(table.getEntityClass());
+                FastBean fastBean = EasyBeanUtil.getFastBean(table.getEntityClass());
                 EasyVersionStrategy easyVersionStrategy = versionMetadata.getEasyVersionStrategy();
                 Object newVersionValue = easyVersionStrategy.nextVersion(entityMetadata, propertyName, version);
                 sqlColumnSetter.set(fastBean.getBeanGetter(columnMetadata.getProperty()), newVersionValue);
@@ -172,7 +172,7 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
         if (!hasSetColumns()) {
             EntityMetadata entityMetadata = table.getEntityMetadata();
             QueryRuntimeContext runtimeContext = getRuntimeContext();
-            EasyQueryLambdaFactory easyQueryLambdaFactory = runtimeContext.getEasyQueryLambdaFactory();
+            QueryLambdaFactory easyQueryLambdaFactory = runtimeContext.getQueryLambdaFactory();
             SQLColumnSelector<?> sqlColumnSetter = easyQueryLambdaFactory.createSQLColumnSetSelector(table.getIndex(), this, updateSet);
             sqlColumnSetter.columnAll();
             clearUpdateSet(sqlWhere, runtimeContext, entityMetadata, entity, updateSet);
@@ -229,12 +229,12 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
                     //如果当前对象是追踪的并且没有指定更新策略
                     EntityState trackEntityState = trackContext.getTrackEntityState(entity);
                     if (trackEntityState != null) {
-                        Set<String> ignoreProperties = TrackUtil.getTrackIgnoreProperties(runtimeContext.getEntityMetadataManager(), trackEntityState);
+                        Set<String> ignoreProperties = EasyTrackUtil.getTrackIgnoreProperties(runtimeContext.getEntityMetadataManager(), trackEntityState);
                         ignorePropertySet.addAll(ignoreProperties);
                         return true;
                     }
                 }
-                SQLExecuteStrategyEnum globalUpdateStrategy = runtimeContext.getEasyQueryConfiguration().getEasyQueryOption().getUpdateStrategy();
+                SQLExecuteStrategyEnum globalUpdateStrategy = runtimeContext.getQueryConfiguration().getEasyQueryOption().getUpdateStrategy();
                 getCustomIgnoreProperties(ignorePropertySet, globalUpdateStrategy, runtimeContext.getEntityMetadataManager(), entity, entityMetadata);
                 return true;
             }
@@ -245,7 +245,7 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
     private void getCustomIgnoreProperties(Set<String> ignoreUpdateSet, SQLExecuteStrategyEnum updateStrategy, EntityMetadataManager entityMetadataManager, Object entity, EntityMetadata entityMetadata) {
 
         if (Objects.equals(SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS, updateStrategy) || Objects.equals(SQLExecuteStrategyEnum.ONLY_NULL_COLUMNS, updateStrategy)) {
-            Set<String> beanMatchProperties = BeanUtil.getBeanMatchProperties(entityMetadataManager, entity, Objects.equals(SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS, updateStrategy) ? Objects::isNull : Objects::nonNull);
+            Set<String> beanMatchProperties = EasyBeanUtil.getBeanMatchProperties(entityMetadataManager, entity, Objects.equals(SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS, updateStrategy) ? Objects::isNull : Objects::nonNull);
             ignoreUpdateSet.addAll(beanMatchProperties);
         }
         ignoreUpdateSet.addAll(entityMetadata.getKeyProperties());
@@ -297,7 +297,7 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
     }
 
     private Object getPredicateValue(Object entity, TrackContext trackContext, String propertyName, EntityMetadata entityMetadata) {
-        FastBean fastBean = BeanUtil.getFastBean(entityMetadata.getEntityClass());
+        FastBean fastBean = EasyBeanUtil.getFastBean(entityMetadata.getEntityClass());
         ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(propertyName);
         Property<Object, ?> beanGetter = fastBean.getBeanGetter(columnMetadata.getProperty());
         if (trackContext != null) {
@@ -317,7 +317,7 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
         EntityMetadata entityMetadata = table.getEntityMetadata();
         Collection<String> keyProperties = entityMetadata.getKeyProperties();
         if (keyProperties.isEmpty()) {
-            throw new EasyQueryException("entity:" + ClassUtil.getSimpleName(entityMetadata.getEntityClass()) + " not found primary key properties");
+            throw new EasyQueryException("entity:" + EasyClassUtil.getSimpleName(entityMetadata.getEntityClass()) + " not found primary key properties");
         }
         TrackManager trackManager = expressionContext.getRuntimeContext().getTrackManager();
         TrackContext trackContext = trackManager.getCurrentTrackContext();

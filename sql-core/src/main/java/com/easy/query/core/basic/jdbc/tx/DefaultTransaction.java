@@ -1,6 +1,6 @@
 package com.easy.query.core.basic.jdbc.tx;
 
-import com.easy.query.core.basic.jdbc.con.EasyConnectionManager;
+import com.easy.query.core.basic.jdbc.con.ConnectionManager;
 
 
 
@@ -13,11 +13,11 @@ import com.easy.query.core.basic.jdbc.con.EasyConnectionManager;
 public class DefaultTransaction implements Transaction {
 
     private final Integer isolationLevel;
-    private final EasyConnectionManager connectionManager;
+    private final ConnectionManager connectionManager;
     private boolean open;
     private boolean closed;
 
-    public DefaultTransaction(Integer isolationLevel, EasyConnectionManager connectionManager) {
+    public DefaultTransaction(Integer isolationLevel, ConnectionManager connectionManager) {
         this.isolationLevel = isolationLevel;
         this.connectionManager = connectionManager;
 

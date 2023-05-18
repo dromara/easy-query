@@ -5,7 +5,7 @@ import com.easy.query.core.sharding.context.StreamMergeContext;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.result.impl.memory.row.MemoryResultSetRow;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.segment.PropertyGroup;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.segment.PropertySQLColumn;
-import com.easy.query.core.util.CompareUtil;
+import com.easy.query.core.util.EasyCompareUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyCheck;
 
@@ -68,6 +68,6 @@ public class GroupByRowComparator implements Comparator<MemoryResultSetRow> {
             asc=propertyOrder.asc();
         }
         boolean caseSensitive = valueCaseSensitive.get(propertySQLColumn.columnIndex());
-        return CompareUtil.safeCompare((Comparable) value1,(Comparable)value2,asc,caseSensitive);
+        return EasyCompareUtil.safeCompare((Comparable) value1,(Comparable)value2,asc,caseSensitive);
     }
 }

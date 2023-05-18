@@ -24,11 +24,11 @@ import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.enums.sharding.ShardingOperatorEnum;
 import com.easy.query.core.sharding.rule.RouteRuleFilter;
-import com.easy.query.core.util.BeanUtil;
+import com.easy.query.core.util.EasyBeanUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
-import com.easy.query.core.util.ClassUtil;
-import com.easy.query.core.util.SQLSegmentUtil;
-import com.easy.query.core.util.StringUtil;
+import com.easy.query.core.util.EasyClassUtil;
+import com.easy.query.core.util.EasySQLSegmentUtil;
+import com.easy.query.core.util.EasyStringUtil;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -74,10 +74,10 @@ public class RoutePredicateDiscover<T> {
             if (Objects.equals(ShardingOperatorEnum.ALL_LIKE, shardingOperatorEnum)) {
                 if (value != null) {
                     String valueStr = value.toString();
-                    if (!StringUtil.startsWith(valueStr, "%")) {
+                    if (!EasyStringUtil.startsWith(valueStr, "%")) {
                         return ShardingOperatorEnum.LIKE_MATCH_LEFT;
                     }
-                    if (!StringUtil.endsWith(valueStr, "%")) {
+                    if (!EasyStringUtil.endsWith(valueStr, "%")) {
                         return ShardingOperatorEnum.LIKE_MATCH_RIGHT;
                     }
                 }
@@ -127,13 +127,13 @@ public class RoutePredicateDiscover<T> {
             }
             return getEntitySQLRouteParseExpression(entities.get(0));
         }
-        throw new UnsupportedOperationException(ClassUtil.getInstanceSimpleName(prepareParseResult));
+        throw new UnsupportedOperationException(EasyClassUtil.getInstanceSimpleName(prepareParseResult));
     }
 
     private RoutePredicateExpression<T> getPredicateSQLRouteParseExpression(EntityPredicateSQLExpression easyEntityPredicateSQLExpression) {
 
         PredicateSegment where = easyEntityPredicateSQLExpression.getWhere();
-        if (SQLSegmentUtil.isNotEmpty(where)) {
+        if (EasySQLSegmentUtil.isNotEmpty(where)) {
             if(where instanceof ShardingPredicateSegment){
                 return parsePredicate((ShardingPredicateSegment)where);
             }
@@ -183,7 +183,7 @@ public class RoutePredicateDiscover<T> {
                 RouteFunction<T> routePredicate = routeRuleFilter.routeFilter(value, shardingOperator, propertyName, Objects.equals(mainShardingProperty, propertyName),false);
                 return new RoutePredicateExpression<T>(routePredicate);
             }
-            System.out.println("不支持的sql参数:"+ClassUtil.getInstanceSimpleName(parameter));
+            System.out.println("不支持的sql参数:"+ EasyClassUtil.getInstanceSimpleName(parameter));
         }
         return RoutePredicateExpression.getDefault();
     }
@@ -215,7 +215,7 @@ public class RoutePredicateDiscover<T> {
 
     private RoutePredicateExpression<T> getEntitySQLRouteParseExpression(Object entity) {
         ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(mainShardingProperty);
-        Property<Object, ?> shardingKeyPropertyGetter = BeanUtil.getFastBean(entityMetadata.getEntityClass()).getBeanGetter(columnMetadata.getProperty());
+        Property<Object, ?> shardingKeyPropertyGetter = EasyBeanUtil.getFastBean(entityMetadata.getEntityClass()).getBeanGetter(columnMetadata.getProperty());
         Object shardingValue = shardingKeyPropertyGetter.apply(entity);
         RouteFunction<T> routePredicate = routeRuleFilter.routeFilter(shardingValue, ShardingOperatorEnum.EQUAL, mainShardingProperty, true,true);
         return new RoutePredicateExpression<T>(routePredicate);

@@ -3,7 +3,7 @@ package com.easy.query.core.sharding.context;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.con.ConnectionStrategyEnum;
 import com.easy.query.core.basic.jdbc.con.EasyConnection;
-import com.easy.query.core.basic.jdbc.con.EasyConnectionManager;
+import com.easy.query.core.basic.jdbc.con.ConnectionManager;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.enums.ExecuteMethodEnum;
@@ -39,7 +39,7 @@ public class EasyStreamMergeContext implements StreamMergeContext {
     protected final Map<String/* data source name*/, Collection<CloseableConnection>> closeableDataSourceConnections = new HashMap<>();
     protected final ExecutorContext executorContext;
     protected final ExecutionContext executionContext;
-    protected final EasyConnectionManager connectionManager;
+    protected final ConnectionManager connectionManager;
     protected final EasyQueryOption easyQueryOption;
 
     public EasyStreamMergeContext(ExecutorContext executorContext, ExecutionContext executionContext) {
@@ -48,7 +48,7 @@ public class EasyStreamMergeContext implements StreamMergeContext {
         this.runtimeContext = executorContext.getRuntimeContext();
         this.connectionManager = runtimeContext.getConnectionManager();
         this.isQuery = executorContext.isQuery();
-        this.easyQueryOption = runtimeContext.getEasyQueryConfiguration().getEasyQueryOption();
+        this.easyQueryOption = runtimeContext.getQueryConfiguration().getEasyQueryOption();
     }
 
     @Override
@@ -243,10 +243,10 @@ public class EasyStreamMergeContext implements StreamMergeContext {
      */
     public static class CloseableConnection implements AutoCloseable {
         private final ConnectionStrategyEnum connectionStrategy;
-        private final EasyConnectionManager easyConnectionManager;
+        private final ConnectionManager easyConnectionManager;
         private final EasyConnection easyConnection;
 
-        public CloseableConnection(ConnectionStrategyEnum connectionStrategy, EasyConnectionManager easyConnectionManager, EasyConnection easyConnection) {
+        public CloseableConnection(ConnectionStrategyEnum connectionStrategy, ConnectionManager easyConnectionManager, EasyConnection easyConnection) {
 
             this.connectionStrategy = connectionStrategy;
             this.easyConnectionManager = easyConnectionManager;

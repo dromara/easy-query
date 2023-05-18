@@ -6,9 +6,9 @@ import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.basic.jdbc.parameter.SQLLikeParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
-import com.easy.query.core.configuration.EasyQueryConfiguration;
+import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.basic.plugin.encryption.EasyEncryptionStrategy;
-import com.easy.query.core.util.StringUtil;
+import com.easy.query.core.util.EasyStringUtil;
 
 /**
  * @author xuejiaming
@@ -19,7 +19,7 @@ import com.easy.query.core.util.StringUtil;
 public class ExecutorContext {
 
     private final QueryRuntimeContext runtimeContext;
-    private final EasyQueryConfiguration easyQueryConfiguration;
+    private final QueryConfiguration easyQueryConfiguration;
     private final boolean isQuery;
     private final ExecuteMethodEnum executeMethod;
     private final boolean tracking;
@@ -30,7 +30,7 @@ public class ExecutorContext {
 
     public ExecutorContext(QueryRuntimeContext runtimeContext, boolean isQuery, ExecuteMethodEnum executeMethod, boolean tracking) {
         this.runtimeContext = runtimeContext;
-        this.easyQueryConfiguration = runtimeContext.getEasyQueryConfiguration();
+        this.easyQueryConfiguration = runtimeContext.getQueryConfiguration();
         this.isQuery = isQuery;
         this.executeMethod = executeMethod;
         this.tracking = tracking;
@@ -81,8 +81,8 @@ public class ExecutorContext {
                     if (columnMetadata.isSupportQueryLike()) {
                         EasyEncryptionStrategy easyEncryptionStrategy = getEncryptionStrategy(columnMetadata);
                         String likeValue = value.toString();
-                        String encryptValue = StringUtil.endWithRemove(StringUtil.startWithRemove(likeValue, "%"), "%");
-                        return StringUtil.startWithDefault(likeValue, "%", StringUtil.EMPTY) + easyEncryptionStrategy.encrypt(entityClass,propertyName,encryptValue) + StringUtil.endWithDefault(likeValue, "%", StringUtil.EMPTY);
+                        String encryptValue = EasyStringUtil.endWithRemove(EasyStringUtil.startWithRemove(likeValue, "%"), "%");
+                        return EasyStringUtil.startWithDefault(likeValue, "%", EasyStringUtil.EMPTY) + easyEncryptionStrategy.encrypt(entityClass,propertyName,encryptValue) + EasyStringUtil.endWithDefault(likeValue, "%", EasyStringUtil.EMPTY);
                     }
                 } else {
                     EasyEncryptionStrategy easyEncryptionStrategy = getEncryptionStrategy(columnMetadata);

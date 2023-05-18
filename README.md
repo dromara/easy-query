@@ -263,7 +263,8 @@ long rows = easyQuery.insertable(topic).executeRows();
         .where(o -> o.eq(Topic::getId, "7")).firstNotNull("未找到对应的数据");
         String newTitle = "test123" + new Random().nextInt(100);
         topic.setTitle(newTitle);
-        long rows=easyQuery.updatable(topic).executeRows();
+
+long rows=easyQuery.updatable(topic).executeRows();
 
 ==> Preparing: UPDATE t_topic SET `stars` = ?,`title` = ?,`create_time` = ? WHERE `id` = ?
 ==> Parameters: 107(Integer),test12364(String),2023-03-27T22:05:23(LocalDateTime),7(String)

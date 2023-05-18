@@ -3,7 +3,7 @@ package com.easy.query.core.inject.impl;
 import com.easy.query.core.inject.BeanCurrentlyInjectMarker;
 import com.easy.query.core.inject.ServiceDescriptor;
 import com.easy.query.core.inject.ServiceProvider;
-import com.easy.query.core.util.ClassUtil;
+import com.easy.query.core.util.EasyClassUtil;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -65,7 +65,7 @@ public final class ServiceProviderImpl implements ServiceProvider {
         if (serviceDescriptor.getImplementationType() != null) {
             return createInstance(serviceDescriptor.getImplementationType());
         }
-        throw new IllegalArgumentException("cant to resolve service type " + ClassUtil.getSimpleName(serviceDescriptor.getServiceType()));
+        throw new IllegalArgumentException("cant to resolve service type " + EasyClassUtil.getSimpleName(serviceDescriptor.getServiceType()));
     }
 
     private Object createInstance(Class<?> serviceType) {
@@ -82,7 +82,7 @@ public final class ServiceProviderImpl implements ServiceProvider {
             }
             return serviceType.cast(constructor.newInstance(arguments));
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
-            throw new IllegalArgumentException("Failed to create instance of service type " + ClassUtil.getSimpleName(serviceType), e);
+            throw new IllegalArgumentException("Failed to create instance of service type " + EasyClassUtil.getSimpleName(serviceType), e);
         }
     }
 }

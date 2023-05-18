@@ -1,7 +1,7 @@
 package com.easy.query.test.encryption;
 
 import com.easy.query.core.basic.plugin.encryption.EasyEncryptionStrategy;
-import com.easy.query.core.util.Base64Util;
+import com.easy.query.core.util.EasyBase64Util;
 
 import java.nio.charset.StandardCharsets;
 
@@ -17,7 +17,7 @@ public class Base64EncryptionStrategy implements EasyEncryptionStrategy {
         if(plaintext==null){
             return null;
         }
-        return new String(Base64Util.encode(plaintext.toString().getBytes(StandardCharsets.UTF_8)),StandardCharsets.UTF_8);
+        return new String(EasyBase64Util.encode(plaintext.toString().getBytes(StandardCharsets.UTF_8)),StandardCharsets.UTF_8);
     }
 
     @Override
@@ -26,6 +26,6 @@ public class Base64EncryptionStrategy implements EasyEncryptionStrategy {
             return null;
         }
 
-        return new String(Base64Util.decode(ciphertext.toString().getBytes(StandardCharsets.UTF_8)),StandardCharsets.UTF_8);
+        return new String(EasyBase64Util.decode(ciphertext.toString().getBytes(StandardCharsets.UTF_8)),StandardCharsets.UTF_8);
     }
 }

@@ -11,7 +11,7 @@ import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.sharding.context.StreamMergeContext;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.result.ShardingStreamResultSet;
 import com.easy.query.core.util.EasyCollectionUtil;
-import com.easy.query.core.util.ClassUtil;
+import com.easy.query.core.util.EasyClassUtil;
 
 import java.math.BigDecimal;
 import java.sql.Blob;
@@ -183,7 +183,7 @@ public class EasyGroupByOrderStreamMergeResultSet implements ShardingStreamResul
             if (aggregateColumn) {
                 SQLSegment sqlSegment = sqlSegments.get(i);
                 if (!(sqlSegment instanceof AggregationColumnSegment)) {
-                    throw new UnsupportedOperationException("unknown aggregate column:" + ClassUtil.getInstanceSimpleName(sqlSegment));
+                    throw new UnsupportedOperationException("unknown aggregate column:" + EasyClassUtil.getInstanceSimpleName(sqlSegment));
                 }
                 AggregationColumnSegment aggregationColumnSegment = (AggregationColumnSegment) sqlSegment;
                 aggregationUnits.add(new AggregateValue(i, AggregationUnitFactory.create(aggregationColumnSegment.getAggregationType())));

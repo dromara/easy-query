@@ -14,8 +14,8 @@ import com.easy.query.core.metadata.ShardingInitConfig;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.metadata.ShardingSequenceConfig;
 import com.easy.query.core.util.EasyCollectionUtil;
-import com.easy.query.core.util.ShardingUtil;
-import com.easy.query.core.util.SQLSegmentUtil;
+import com.easy.query.core.util.EasyShardingUtil;
+import com.easy.query.core.util.EasySQLSegmentUtil;
 
 import java.util.Objects;
 import java.util.Set;
@@ -49,16 +49,16 @@ public class EasyQueryPrepareParseResult implements QueryPrepareParseResult {
         this.originalOffset = easyQuerySQLExpression.getOffset();
         this.originalRows = easyQuerySQLExpression.getRows();
         this.sequenceParseResult = initSequenceOrderPrepareParseResult(executorContext);
-        this.maxShardingQueryLimit= ShardingUtil.getMaxShardingQueryLimit(entityQueryExpressionBuilder,sequenceParseResult);
-        this.connectionMode=ShardingUtil.getConnectionMode(entityQueryExpressionBuilder,sequenceParseResult);
+        this.maxShardingQueryLimit= EasyShardingUtil.getMaxShardingQueryLimit(entityQueryExpressionBuilder,sequenceParseResult);
+        this.connectionMode= EasyShardingUtil.getConnectionMode(entityQueryExpressionBuilder,sequenceParseResult);
     }
 
     private SequenceParseResult initSequenceOrderPrepareParseResult(ExecutorContext executorContext) {
-        EasyQueryOption easyQueryOption = executorContext.getRuntimeContext().getEasyQueryConfiguration().getEasyQueryOption();
+        EasyQueryOption easyQueryOption = executorContext.getRuntimeContext().getQueryConfiguration().getEasyQueryOption();
         //存在分片对象的情况下
         if (EasyCollectionUtil.isNotEmpty(shardingTables)) {
             SQLBuilderSegment order = easyQuerySQLExpression.getOrder();
-            if (SQLSegmentUtil.isNotEmpty(order)) {
+            if (EasySQLSegmentUtil.isNotEmpty(order)) {
                 SQLSegment firstOrder = EasyCollectionUtil.first(order.getSQLSegments());
                 OrderByColumnSegment firstOrderColumn = (OrderByColumnSegment) firstOrder;
                 TableAvailable table = firstOrderColumn.getTable();

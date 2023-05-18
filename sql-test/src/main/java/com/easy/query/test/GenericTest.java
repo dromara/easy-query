@@ -4,10 +4,10 @@ import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.SQLRangeEnum;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
-import com.easy.query.core.util.AesUtil;
-import com.easy.query.core.util.Base64Util;
-import com.easy.query.core.util.BitwiseUtil;
-import com.easy.query.core.util.StringUtil;
+import com.easy.query.core.util.EasyAesUtil;
+import com.easy.query.core.util.EasyBase64Util;
+import com.easy.query.core.util.EasyBitwiseUtil;
+import com.easy.query.core.util.EasyStringUtil;
 import com.easy.query.test.encryption.DefaultAesEasyEncryptionStrategy;
 import org.junit.Assert;
 import org.junit.Test;
@@ -46,8 +46,8 @@ public class GenericTest {
     public void base64Test(){
         String uuid = UUID.randomUUID().toString();
         byte[] bytes = uuid.getBytes(StandardCharsets.UTF_8);
-        byte[] encode = Base64Util.encode(bytes);
-        byte[] decode = Base64Util.decode(encode);
+        byte[] encode = EasyBase64Util.encode(bytes);
+        byte[] decode = EasyBase64Util.decode(encode);
         Assert.assertArrayEquals(bytes,decode);
         Assert.assertEquals(uuid,new String(decode,StandardCharsets.UTF_8));
     }
@@ -57,8 +57,8 @@ public class GenericTest {
     @Test
     public void aesTest2(){
         String uuid = UUID.randomUUID().toString();
-        String encryptToString = AesUtil.encrypt(uuid,key , iv,StandardCharsets.UTF_8);
-        String decryptToString =AesUtil.decrypt(encryptToString, key, iv,StandardCharsets.UTF_8);
+        String encryptToString = EasyAesUtil.encrypt(uuid,key , iv,StandardCharsets.UTF_8);
+        String decryptToString = EasyAesUtil.decrypt(encryptToString, key, iv,StandardCharsets.UTF_8);
 
         Assert.assertEquals(uuid,decryptToString);
 
@@ -87,7 +87,7 @@ public class GenericTest {
         Object decryptValue = aesEasyEncryptionStrategy.decrypt(null,null,encryptValue);
         Assert.assertEquals(xx,decryptValue);
         Object encryptValue1 = aesEasyEncryptionStrategy.encrypt(null,null,"1888888812");
-        Assert.assertTrue(StringUtil.startsWith(encryptValue.toString(),encryptValue1.toString()));
+        Assert.assertTrue(EasyStringUtil.startsWith(encryptValue.toString(),encryptValue1.toString()));
     }
     @Test
     public void behavior(){
@@ -116,15 +116,15 @@ public class GenericTest {
     @Test
     public void executeMethodBehaviorTest1(){
         int code = ExecuteMethodEnum.UNKNOWN.getCode();
-        code = BitwiseUtil.addBit(code, ExecuteMethodEnum.ANY.getCode());
+        code = EasyBitwiseUtil.addBit(code, ExecuteMethodEnum.ANY.getCode());
         Assert.assertNotEquals(code,ExecuteMethodEnum.UNKNOWN.getCode());
-        Assert.assertTrue(BitwiseUtil.hasBit(code, ExecuteMethodEnum.ANY.getCode()));
-        Assert.assertFalse(BitwiseUtil.hasBit(code, ExecuteMethodEnum.ALL.getCode()));
-        code = BitwiseUtil.removeBit(code, ExecuteMethodEnum.ALL.getCode());
+        Assert.assertTrue(EasyBitwiseUtil.hasBit(code, ExecuteMethodEnum.ANY.getCode()));
+        Assert.assertFalse(EasyBitwiseUtil.hasBit(code, ExecuteMethodEnum.ALL.getCode()));
+        code = EasyBitwiseUtil.removeBit(code, ExecuteMethodEnum.ALL.getCode());
         Assert.assertNotEquals(code,ExecuteMethodEnum.UNKNOWN.getCode());
-        Assert.assertTrue(BitwiseUtil.hasBit(code, ExecuteMethodEnum.ANY.getCode()));
-        code = BitwiseUtil.removeBit(code, ExecuteMethodEnum.ANY.getCode());
-        Assert.assertFalse(BitwiseUtil.hasBit(code, ExecuteMethodEnum.ANY.getCode()));
+        Assert.assertTrue(EasyBitwiseUtil.hasBit(code, ExecuteMethodEnum.ANY.getCode()));
+        code = EasyBitwiseUtil.removeBit(code, ExecuteMethodEnum.ANY.getCode());
+        Assert.assertFalse(EasyBitwiseUtil.hasBit(code, ExecuteMethodEnum.ANY.getCode()));
         Assert.assertEquals(code,ExecuteMethodEnum.UNKNOWN.getCode());
     }
 

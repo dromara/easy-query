@@ -1,7 +1,7 @@
 package com.easy.query.core.inject;
 
 import com.easy.query.core.exception.EasyQueryInjectCurrentlyInCreationException;
-import com.easy.query.core.util.ClassUtil;
+import com.easy.query.core.util.EasyClassUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,7 +27,7 @@ public class BeanCurrentlyInjectMarker {
         Map<Class<?>, Long> beanMarker = THREAD_BEAN_CREATED_MARKER.get();
         Long o = beanMarker.putIfAbsent(serviceDescriptor.getServiceType(), currentThreadId);
         if(o!=null){
-            throw new EasyQueryInjectCurrentlyInCreationException("bean currently creation:"+ ClassUtil.getSimpleName(serviceDescriptor.getServiceType()));
+            throw new EasyQueryInjectCurrentlyInCreationException("bean currently creation:"+ EasyClassUtil.getSimpleName(serviceDescriptor.getServiceType()));
         }
     }
 

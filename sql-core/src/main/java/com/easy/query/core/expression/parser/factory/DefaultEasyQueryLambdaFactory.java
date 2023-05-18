@@ -21,7 +21,7 @@ import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
  * @Date: 2023/2/14 08:33
  * @author xuejiaming
  */
-public class DefaultEasyQueryLambdaFactory implements EasyQueryLambdaFactory {
+public class DefaultEasyQueryLambdaFactory implements QueryLambdaFactory {
     @Override
     public <T1> SQLWherePredicate<T1> createSQLPredicate(int index, EntityExpressionBuilder sqlEntityExpression, PredicateSegment predicateSegment) {
         return new DefaultSQLPredicate<>(index,sqlEntityExpression,predicateSegment);

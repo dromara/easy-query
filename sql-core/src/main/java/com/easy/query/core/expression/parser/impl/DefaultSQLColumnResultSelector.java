@@ -7,7 +7,7 @@ import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.parser.core.SQLColumnResultSelector;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
-import com.easy.query.core.util.LambdaUtil;
+import com.easy.query.core.util.EasyLambdaUtil;
 
 /**
  * @FileName: DefaultColumnResultSelector.java
@@ -40,7 +40,7 @@ public class DefaultSQLColumnResultSelector<T1,TR> implements SQLColumnResultSel
             sqlBuilderSegment.getSQLSegments().clear();
         }
         EntityTableExpressionBuilder table = entityExpressionBuilder.getTable(index);
-        String propertyName = LambdaUtil.getPropertyName(column);
+        String propertyName = EasyLambdaUtil.getPropertyName(column);
         sqlBuilderSegment.append(new ColumnSegmentImpl(table.getEntityTable(),propertyName, entityExpressionBuilder.getRuntimeContext()));
 
     }

@@ -5,7 +5,7 @@ import com.easy.query.core.basic.jdbc.parameter.SQLParameterCollector;
 import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.SQLEntitySegment;
-import com.easy.query.core.util.SQLExpressionUtil;
+import com.easy.query.core.util.EasySQLExpressionUtil;
 
 /**
  * @FileName: ColumnValuePredicate.java
@@ -33,8 +33,8 @@ public class ColumnWithColumnPredicate implements Predicate {
     @Override
     public String toSQL(SQLParameterCollector sqlParameterCollector) {
 
-        String sqlColumnSegment1 =  SQLExpressionUtil.getSQLOwnerColumn(runtimeContext,leftTable,leftPropertyName);
-        String sqlColumnSegment2 =  SQLExpressionUtil.getSQLOwnerColumn(runtimeContext,rightTable,rightPropertyName);
+        String sqlColumnSegment1 =  EasySQLExpressionUtil.getSQLOwnerColumn(runtimeContext,leftTable,leftPropertyName);
+        String sqlColumnSegment2 =  EasySQLExpressionUtil.getSQLOwnerColumn(runtimeContext,rightTable,rightPropertyName);
         return sqlColumnSegment1 +" "+ compare.getSQL() + " "+sqlColumnSegment2;
     }
 

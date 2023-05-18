@@ -12,7 +12,7 @@ import com.easy.query.core.expression.segment.FuncColumnSegmentImpl;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
-import com.easy.query.core.util.LambdaUtil;
+import com.easy.query.core.util.EasyLambdaUtil;
 
 import java.util.Collection;
 import java.util.Objects;
@@ -37,14 +37,14 @@ public class DefaultSQLColumnAsSelector<T1, TR> extends AbstractSQLColumnSelecto
     @Override
     public SQLColumnAsSelector<T1, TR> columnAs(Property<T1, ?> column, Property<TR, ?> alias) {
         EntityTableExpressionBuilder table = entityExpressionBuilder.getTable(index);
-        String propertyName = LambdaUtil.getPropertyName(column);
+        String propertyName = EasyLambdaUtil.getPropertyName(column);
         String aliasColumnName = getResultColumnName(alias);
         sqlSegmentBuilder.append(new ColumnSegmentImpl(table.getEntityTable(), propertyName, entityExpressionBuilder.getRuntimeContext(), aliasColumnName));
         return this;
     }
 
     protected String getResultColumnName(Property<TR, ?> alias){
-        String aliasPropertyName = LambdaUtil.getPropertyName(alias);
+        String aliasPropertyName = EasyLambdaUtil.getPropertyName(alias);
         ColumnMetadata columnMetadata = resultEntityMetadata.getColumnNotNull(aliasPropertyName);
         return columnMetadata.getName();
     }
@@ -89,7 +89,7 @@ public class DefaultSQLColumnAsSelector<T1, TR> extends AbstractSQLColumnSelecto
     @Override
     public SQLColumnAsSelector<T1, TR> columnFunc(Property<T1, ?> column, Property<TR, ?> alias, ColumnFunction columnFunction) {
         EntityTableExpressionBuilder table = entityExpressionBuilder.getTable(index);
-        String propertyName = LambdaUtil.getPropertyName(column);
+        String propertyName = EasyLambdaUtil.getPropertyName(column);
         String columnAsName = alias == null ? table.getColumnName(propertyName) : getResultColumnName(alias);
         sqlSegmentBuilder.append(new FuncColumnSegmentImpl(table.getEntityTable(), propertyName, entityExpressionBuilder.getRuntimeContext(), columnFunction, columnAsName));
         return this;

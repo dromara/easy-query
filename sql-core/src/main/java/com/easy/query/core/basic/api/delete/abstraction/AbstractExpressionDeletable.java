@@ -20,7 +20,7 @@ import com.easy.query.core.expression.segment.condition.DefaultSQLPredicate;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.sql.builder.impl.TableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityDeleteExpressionBuilder;
-import com.easy.query.core.util.ClassUtil;
+import com.easy.query.core.util.EasyClassUtil;
 
 import java.util.Collection;
 import java.util.function.Function;
@@ -85,10 +85,10 @@ public abstract   class AbstractExpressionDeletable<T> extends AbstractSQLExecut
         PredicateSegment where = entityDeleteExpressionBuilder.getWhere();
         Collection<String> keyProperties = table.getEntityMetadata().getKeyProperties();
         if(keyProperties.isEmpty()){
-            throw new EasyQueryException("对象:"+ ClassUtil.getSimpleName(clazz)+"未找到主键信息");
+            throw new EasyQueryException("对象:"+ EasyClassUtil.getSimpleName(clazz)+"未找到主键信息");
         }
         if(keyProperties.size()>1){
-            throw new EasyQueryException("对象:"+ ClassUtil.getSimpleName(clazz)+"存在多个主键");
+            throw new EasyQueryException("对象:"+ EasyClassUtil.getSimpleName(clazz)+"存在多个主键");
         }
         String keyProperty = keyProperties.iterator().next();
         AndPredicateSegment andPredicateSegment = new AndPredicateSegment();

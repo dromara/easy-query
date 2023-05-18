@@ -8,7 +8,7 @@ import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
-import com.easy.query.core.util.LambdaUtil;
+import com.easy.query.core.util.EasyLambdaUtil;
 
 /**
  * @Description: 文件说明
@@ -38,7 +38,7 @@ public class DefaultSQLGroupColumnSelector<T1> implements SQLGroupBySelector<T1>
     @Override
     public SQLGroupBySelector<T1> column(Property<T1, ?> column) {
         EntityTableExpressionBuilder table = entityQueryExpressionBuilder.getTable(index);
-        String propertyName = LambdaUtil.getPropertyName(column);
+        String propertyName = EasyLambdaUtil.getPropertyName(column);
         sqlSegmentBuilder.append(new GroupColumnSegmentImpl(table.getEntityTable(), propertyName, entityQueryExpressionBuilder.getRuntimeContext()));
         return this;
     }

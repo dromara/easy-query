@@ -4,8 +4,8 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.PropertySQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameterCollector;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.util.SQLUtil;
-import com.easy.query.core.util.SQLExpressionUtil;
+import com.easy.query.core.util.EasySQLUtil;
+import com.easy.query.core.util.EasySQLExpressionUtil;
 
 /**
  * @FileName: ColumnSegment.java
@@ -34,12 +34,12 @@ public class ColumnInsertSegment implements SQLEntityAliasSegment {
 
     @Override
     public String toSQL(SQLParameterCollector sqlParameterCollector) {
-        SQLUtil.addParameter(sqlParameterCollector,new PropertySQLParameter(table,propertyName));
-        String sqlColumnSegment = SQLExpressionUtil.getSQLOwnerColumn(runtimeContext,table,propertyName);
+        EasySQLUtil.addParameter(sqlParameterCollector,new PropertySQLParameter(table,propertyName));
+        String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumn(runtimeContext,table,propertyName);
         StringBuilder sql = new StringBuilder();
         sql.append(sqlColumnSegment);
         if(alias!=null){
-            sql.append(" AS ").append(SQLExpressionUtil.getQuoteName(runtimeContext,alias));
+            sql.append(" AS ").append(EasySQLExpressionUtil.getQuoteName(runtimeContext,alias));
         }
         return sql.toString();
     }

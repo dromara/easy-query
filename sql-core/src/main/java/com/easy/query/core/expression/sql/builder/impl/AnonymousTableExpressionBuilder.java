@@ -7,10 +7,9 @@ import com.easy.query.core.expression.parser.core.SQLColumnSetter;
 import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
-import com.easy.query.core.expression.sql.expression.impl.AnonymousEntityTableSQLExpressionImpl;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
-import com.easy.query.core.util.SQLSegmentUtil;
+import com.easy.query.core.util.EasySQLSegmentUtil;
 
 /**
  * @author xuejiaming
@@ -62,7 +61,7 @@ public class AnonymousTableExpressionBuilder extends TableExpressionBuilder impl
     public EntityTableSQLExpression toExpression() {
 
         EntityTableSQLExpression anonymousTableSQLExpression = runtimeContext.getExpressionFactory().createAnonymousEntityTableSQLExpression(entityTable,multiTableType,entityQueryExpressionBuilder.toExpression(),runtimeContext);
-        if(SQLSegmentUtil.isNotEmpty(on)){
+        if(EasySQLSegmentUtil.isNotEmpty(on)){
             anonymousTableSQLExpression.setOn(on.clonePredicateSegment());
         }
         return anonymousTableSQLExpression;

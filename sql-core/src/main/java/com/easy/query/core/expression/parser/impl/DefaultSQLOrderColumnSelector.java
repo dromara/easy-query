@@ -7,7 +7,7 @@ import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.segment.SQLEntitySegment;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
-import com.easy.query.core.util.LambdaUtil;
+import com.easy.query.core.util.EasyLambdaUtil;
 
 import java.util.Collection;
 import java.util.Objects;
@@ -37,7 +37,7 @@ public  class DefaultSQLOrderColumnSelector<T1> implements SQLColumnSelector<T1>
     @Override
     public SQLColumnSelector<T1> column(Property<T1, ?> column) {
         EntityTableExpressionBuilder table = entityQueryExpressionBuilder.getTable(index);
-        String propertyName = LambdaUtil.getPropertyName(column);
+        String propertyName = EasyLambdaUtil.getPropertyName(column);
         entityQueryExpressionBuilder.getOrder().append(new OrderColumnSegmentImpl(table.getEntityTable(),propertyName, entityQueryExpressionBuilder.getRuntimeContext(),asc));
         return this;
     }
@@ -46,7 +46,7 @@ public  class DefaultSQLOrderColumnSelector<T1> implements SQLColumnSelector<T1>
     public SQLColumnSelector<T1> columnIgnore(Property<T1, ?> column) {
 
         EntityTableExpressionBuilder table = entityQueryExpressionBuilder.getTable(index);
-        String propertyName = LambdaUtil.getPropertyName(column);
+        String propertyName = EasyLambdaUtil.getPropertyName(column);
         entityQueryExpressionBuilder.getOrder().getSQLSegments().removeIf(sqlSegment -> {
             if (sqlSegment instanceof SQLEntitySegment) {
                 SQLEntitySegment sqlEntitySegment = (SQLEntitySegment) sqlSegment;

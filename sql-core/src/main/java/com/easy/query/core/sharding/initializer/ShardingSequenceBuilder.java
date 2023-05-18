@@ -5,8 +5,8 @@ import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
-import com.easy.query.core.util.BitwiseUtil;
-import com.easy.query.core.util.LambdaUtil;
+import com.easy.query.core.util.EasyBitwiseUtil;
+import com.easy.query.core.util.EasyLambdaUtil;
 
 /**
  * create time 2023/5/7 23:52
@@ -34,7 +34,7 @@ public class ShardingSequenceBuilder<T> {
      * @return
      */
     public ShardingSequenceBuilder<T> addPropertyDefaultUseAsc(Property<T, ?> orderProperty) {
-        String propertyName = LambdaUtil.getPropertyName(orderProperty);
+        String propertyName = EasyLambdaUtil.getPropertyName(orderProperty);
         return addPropertyDefaultUseAsc(propertyName);
     }
 
@@ -53,7 +53,7 @@ public class ShardingSequenceBuilder<T> {
      * @return
      */
     public ShardingSequenceBuilder<T> addPropertyDefaultUseDesc(Property<T, ?> orderProperty) {
-        String propertyName = LambdaUtil.getPropertyName(orderProperty);
+        String propertyName = EasyLambdaUtil.getPropertyName(orderProperty);
         return addPropertyDefaultUseDesc(propertyName);
     }
 
@@ -77,10 +77,10 @@ public class ShardingSequenceBuilder<T> {
         int sequenceCompareAscMethods = ExecuteMethodEnum.UNKNOWN.getCode();
         for (ExecuteMethodEnum executeMethod : executeMethods) {
             int executeMethodCode = executeMethod.getCode();
-            sequenceCompareAscMethods = BitwiseUtil.removeBit(sequenceCompareAscMethods, executeMethodCode);
-            sequenceCompareMethods = BitwiseUtil.addBit(sequenceCompareMethods, executeMethodCode);
+            sequenceCompareAscMethods = EasyBitwiseUtil.removeBit(sequenceCompareAscMethods, executeMethodCode);
+            sequenceCompareMethods = EasyBitwiseUtil.addBit(sequenceCompareMethods, executeMethodCode);
             if (asc) {
-                sequenceCompareAscMethods = BitwiseUtil.addBit(sequenceCompareAscMethods, executeMethodCode);
+                sequenceCompareAscMethods = EasyBitwiseUtil.addBit(sequenceCompareAscMethods, executeMethodCode);
             }
         }
         shardingInitOptionBuilder.setSequenceCompareMethods(sequenceCompareMethods);
@@ -99,10 +99,10 @@ public class ShardingSequenceBuilder<T> {
         shardingInitOptionBuilder.setMaxShardingQueryLimit(maxShardingQueryLimit);
         int sequenceLimitMethods = ExecuteMethodEnum.UNKNOWN.getCode();
         int firstMethodCode = firstMethod.getCode();
-        sequenceLimitMethods = BitwiseUtil.addBit(sequenceLimitMethods,firstMethodCode);
+        sequenceLimitMethods = EasyBitwiseUtil.addBit(sequenceLimitMethods,firstMethodCode);
         for (ExecuteMethodEnum executeMethod : executeMethods) {
             int executeMethodCode = executeMethod.getCode();
-            sequenceLimitMethods = BitwiseUtil.addBit(sequenceLimitMethods, executeMethodCode);
+            sequenceLimitMethods = EasyBitwiseUtil.addBit(sequenceLimitMethods, executeMethodCode);
         }
         shardingInitOptionBuilder.setSequenceLimitMethods(sequenceLimitMethods);
         return this;
@@ -113,7 +113,7 @@ public class ShardingSequenceBuilder<T> {
         int sequenceConnectionModeMethods = ExecuteMethodEnum.UNKNOWN.getCode();
         for (ExecuteMethodEnum executeMethod : executeMethods) {
             int executeMethodCode = executeMethod.getCode();
-            sequenceConnectionModeMethods = BitwiseUtil.addBit(sequenceConnectionModeMethods, executeMethodCode);
+            sequenceConnectionModeMethods = EasyBitwiseUtil.addBit(sequenceConnectionModeMethods, executeMethodCode);
         }
         shardingInitOptionBuilder.setSequenceConnectionModeMethods(sequenceConnectionModeMethods);
         return this;

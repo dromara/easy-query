@@ -9,8 +9,7 @@ import com.easy.query.core.sharding.route.datasource.DataSourceRoute;
 import com.easy.query.core.sharding.route.datasource.ShardingDataSourceRoute;
 import com.easy.query.core.sharding.route.manager.DataSourceRouteManager;
 import com.easy.query.core.sharding.rule.datasource.DataSourceRouteRule;
-import com.easy.query.core.sharding.rule.table.TableRouteRule;
-import com.easy.query.core.util.ClassUtil;
+import com.easy.query.core.util.EasyClassUtil;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -47,7 +46,7 @@ public class DefaultDataSourceRouteManager implements DataSourceRouteManager {
     public DataSourceRouteRule<?> getRouteRule(Class<?> entityClass) {
         DataSourceRouteRule<?> dataSourceRouteRule = entityRouteRuleCache.get(entityClass);
         if(dataSourceRouteRule==null){
-            throw new EasyQueryInvalidOperationException(ClassUtil.getSimpleName(entityClass) +" not found data source route rule");
+            throw new EasyQueryInvalidOperationException(EasyClassUtil.getSimpleName(entityClass) +" not found data source route rule");
         }
         return dataSourceRouteRule;
     }

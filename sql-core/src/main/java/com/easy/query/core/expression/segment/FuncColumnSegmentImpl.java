@@ -5,7 +5,7 @@ import com.easy.query.core.basic.jdbc.parameter.SQLParameterCollector;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.func.AggregationType;
-import com.easy.query.core.util.SQLExpressionUtil;
+import com.easy.query.core.util.EasySQLExpressionUtil;
 
 /**
  * @FileName: FuncColumnSegment.java
@@ -36,11 +36,11 @@ public class FuncColumnSegmentImpl implements AggregationColumnSegment {
     @Override
     public String toSQL(SQLParameterCollector sqlParameterCollector) {
 
-        String sqlColumnSegment = SQLExpressionUtil.getSQLOwnerColumn(runtimeContext,table,propertyName);
+        String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumn(runtimeContext,table,propertyName);
         String funcColumn = columnFunction.getFuncColumn(sqlColumnSegment);
         StringBuilder sql = new StringBuilder().append(funcColumn);
         if(alias!=null){
-            sql.append(" AS ").append(SQLExpressionUtil.getQuoteName(runtimeContext,alias));
+            sql.append(" AS ").append(EasySQLExpressionUtil.getQuoteName(runtimeContext,alias));
         }
         return sql.toString();
     }

@@ -3,16 +3,16 @@ package com.easy.query.core.context;
 import com.easy.query.core.api.SQLApiFactory;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
 import com.easy.query.core.basic.pagination.EasyPageResultProvider;
-import com.easy.query.core.basic.thread.EasyShardingExecutorService;
-import com.easy.query.core.expression.parser.factory.EasyQueryLambdaFactory;
+import com.easy.query.core.basic.thread.ShardingExecutorService;
+import com.easy.query.core.expression.parser.factory.QueryLambdaFactory;
 import com.easy.query.core.expression.sql.builder.factory.ExpressionBuilderFactory;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.expression.func.ColumnFunctionFactory;
 import com.easy.query.core.inject.ServiceProvider;
 import com.easy.query.core.metadata.EntityMetadataManager;
-import com.easy.query.core.basic.jdbc.con.EasyConnectionManager;
+import com.easy.query.core.basic.jdbc.con.ConnectionManager;
 import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
-import com.easy.query.core.configuration.EasyQueryConfiguration;
+import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.basic.plugin.track.TrackManager;
 import com.easy.query.core.sharding.comparer.ShardingComparer;
 import com.easy.query.core.sharding.manager.ShardingQueryCountManager;
@@ -27,10 +27,10 @@ import com.easy.query.core.sharding.route.manager.TableRouteManager;
  */
 public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     private final ServiceProvider serviceProvider;
-    private final EasyQueryConfiguration easyQueryConfiguration;
+    private final QueryConfiguration easyQueryConfiguration;
     private final EntityMetadataManager entityMetadataManager;
-    private final EasyQueryLambdaFactory easyQueryLambdaFactory;
-    private final EasyConnectionManager easyConnectionManager;
+    private final QueryLambdaFactory easyQueryLambdaFactory;
+    private final ConnectionManager easyConnectionManager;
     private final EntityExpressionExecutor entityExpressionExecutor;
     //    private final EasyQueryExecutor easyQueryExecutor;
     private final JdbcTypeHandlerManager easyJdbcTypeHandler;
@@ -38,7 +38,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     private final ExpressionBuilderFactory expressionBuilderFactory;
     private final TrackManager trackManager;
     private final EasyPageResultProvider easyPageResultProvider;
-    private final EasyShardingExecutorService easyShardingExecutorService;
+    private final ShardingExecutorService easyShardingExecutorService;
     private final ExpressionFactory easyExpressionFactory;
     private final TableRouteManager tableRouteManager;
     private final DataSourceRouteManager dataSourceRouteManager;
@@ -46,17 +46,17 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     private final ShardingQueryCountManager shardingQueryCountManager;
     private final ColumnFunctionFactory columnFunctionFactory;
 
-    public DefaultEasyQueryRuntimeContext(ServiceProvider serviceProvider, EasyQueryConfiguration easyQueryConfiguration,
+    public DefaultEasyQueryRuntimeContext(ServiceProvider serviceProvider, QueryConfiguration easyQueryConfiguration,
                                           EntityMetadataManager entityMetadataManager,
-                                          EasyQueryLambdaFactory easyQueryLambdaFactory,
-                                          EasyConnectionManager easyConnectionManager,
+                                          QueryLambdaFactory easyQueryLambdaFactory,
+                                          ConnectionManager easyConnectionManager,
                                           EntityExpressionExecutor entityExpressionExecutor,
                                           JdbcTypeHandlerManager easyJdbcTypeHandler,
                                           SQLApiFactory easyQueryableFactory,
                                           ExpressionBuilderFactory expressionBuilderFactory,
                                           TrackManager trackManager,
                                           EasyPageResultProvider easyPageResultProvider,
-                                          EasyShardingExecutorService easyShardingExecutorService,
+                                          ShardingExecutorService easyShardingExecutorService,
                                           ExpressionFactory easyExpressionFactory,
                                           TableRouteManager tableRouteManager,
                                           DataSourceRouteManager dataSourceRouteManager,
@@ -89,7 +89,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     }
 
     @Override
-    public EasyQueryConfiguration getEasyQueryConfiguration() {
+    public QueryConfiguration getQueryConfiguration() {
         return easyQueryConfiguration;
     }
 
@@ -99,12 +99,12 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     }
 
     @Override
-    public EasyQueryLambdaFactory getEasyQueryLambdaFactory() {
+    public QueryLambdaFactory getQueryLambdaFactory() {
         return easyQueryLambdaFactory;
     }
 
     @Override
-    public EasyConnectionManager getConnectionManager() {
+    public ConnectionManager getConnectionManager() {
         return easyConnectionManager;
     }
 
@@ -144,7 +144,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     }
 
     @Override
-    public EasyShardingExecutorService getEasyShardingExecutorService() {
+    public ShardingExecutorService getShardingExecutorService() {
         return easyShardingExecutorService;
     }
 

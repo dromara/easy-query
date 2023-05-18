@@ -8,7 +8,7 @@ import com.easy.query.core.expression.sql.expression.AnonymousEntityQuerySQLExpr
 import com.easy.query.core.expression.sql.expression.EntityQuerySQLExpression;
 import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
-import com.easy.query.core.util.SQLExpressionUtil;
+import com.easy.query.core.util.EasySQLExpressionUtil;
 
 import java.util.Collections;
 import java.util.List;
@@ -31,7 +31,7 @@ public class AnonymousEntityQuerySQLExpressionImpl implements AnonymousEntityQue
     }
     @Override
     public String toSQL(SQLParameterCollector sqlParameterCollector) {
-        SQLExpressionUtil.expressionInvokeRoot(sqlParameterCollector);
+        EasySQLExpressionUtil.expressionInvokeRoot(sqlParameterCollector);
         return sql;
     }
 
