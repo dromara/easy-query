@@ -38,7 +38,7 @@
 
 ```xml
 <properties>
-    <easy-query.version>0.5.1</easy-query.version>
+    <easy-query.version>0.5.2</easy-query.version>
 </properties>
 <dependency>
     <groupId>com.easy-query</groupId>
@@ -50,7 +50,7 @@
 以mysql为例
 ```xml
 <properties>
-    <easy-query.version>0.5.1</easy-query.version>
+    <easy-query.version>0.5.2</easy-query.version>
 </properties>
 <dependency>
     <groupId>com.easy-query</groupId>
