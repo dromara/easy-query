@@ -4,12 +4,10 @@ import com.easy.query.core.expression.lambda.RouteFunction;
 import com.easy.query.core.enums.sharding.ShardingOperatorEnum;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.metadata.ActualTable;
-import com.easy.query.core.sharding.rule.def.AbstractLocalDateTimeMonthTableRule;
-import com.easy.query.core.sharding.rule.table.abstraction.AbstractTableRouteRule;
+import com.easy.query.core.sharding.api.rule.time.AbstractMonthTableRule;
 import com.easy.query.test.entity.TopicShardingTime;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 /**
@@ -18,7 +16,7 @@ import java.util.Objects;
  *
  * @author xuejiaming
  */
-public class TopicShardingTimeTableRule extends AbstractLocalDateTimeMonthTableRule<TopicShardingTime> {
+public class TopicShardingTimeTableRule extends AbstractMonthTableRule<TopicShardingTime> {
 
     @Override
     protected RouteFunction<ActualTable> getExtraRouteFilter(TableAvailable table, Object shardingValue, ShardingOperatorEnum shardingOperator, String propertyName) {
@@ -41,5 +39,10 @@ public class TopicShardingTimeTableRule extends AbstractLocalDateTimeMonthTableR
             default:
                 return t -> true;
         }
+    }
+
+    @Override
+    protected LocalDateTime convertLocalDateTime(Object shardingValue) {
+        return (LocalDateTime)shardingValue;
     }
 }

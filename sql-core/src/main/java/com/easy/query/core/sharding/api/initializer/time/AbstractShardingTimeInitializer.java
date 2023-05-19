@@ -1,13 +1,11 @@
-package com.easy.query.core.sharding.api.initializer;
+package com.easy.query.core.sharding.api.initializer.time;
 
 import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.sharding.initializer.EntityShardingInitializer;
 import com.easy.query.core.sharding.initializer.ShardingEntityBuilder;
-import com.easy.query.core.util.EasyUtil;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -19,11 +17,16 @@ import java.util.Map;
  *
  * @author xuejiaming
  */
-public abstract class AbstractShardingLocalDateTimeInitializer<T> implements EntityShardingInitializer<T> {
+public abstract class AbstractShardingTimeInitializer<T> implements EntityShardingInitializer<T> {
     protected abstract LocalDateTime getBeginTime();
+    protected  LocalDateTime getEndTime(){
+        return LocalDateTime.now();
+    }
     protected abstract LocalDateTime getBeginTimeToStart(LocalDateTime beginTime);
     protected abstract LocalDateTime getNextTime(LocalDateTime currentTime);
-    protected abstract String getTableSeparator();
+    protected String getTableSeparator() {
+        return "_";
+    }
     protected abstract String formatTail(LocalDateTime time);
     @Override
     public void configure(ShardingEntityBuilder<T> builder) {
@@ -33,8 +36,11 @@ public abstract class AbstractShardingLocalDateTimeInitializer<T> implements Ent
         LocalDateTime setBeginTime = getBeginTime();
 
         LocalDateTime beginTime = getBeginTimeToStart(setBeginTime);
+        LocalDateTime endTime = getEndTime();
+        if(beginTime.isAfter(endTime)){
+            throw new IllegalArgumentException("begin time:"+beginTime+" is after end time:"+endTime);
+        }
         String tableSeparator = getTableSeparator();
-        LocalDateTime endTime = LocalDateTime.now();
 
         ArrayList<String> actualTableNames = new ArrayList<>();
         while(beginTime.isBefore(endTime)){

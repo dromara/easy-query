@@ -73,6 +73,10 @@ public class EasyUtil {
     }
 
 
+    public static LocalDateTime getDayStart(LocalDateTime dateTime) {
+        return dateTime.toLocalDate().atStartOfDay();  // 设置时分秒为 0:00:00
+    }
+
     public static LocalDateTime getMonthStart(LocalDateTime dateTime) {
         LocalDate date = dateTime.toLocalDate();  // 获取日期部分
         LocalDate firstDayOfMonth = date.withDayOfMonth(1);  // 设置为月初第一天

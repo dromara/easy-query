@@ -1,6 +1,4 @@
-package com.easy.query.core.sharding.api.initializer;
-
-import com.easy.query.core.util.EasyUtil;
+package com.easy.query.core.sharding.api.initializer.time;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -11,20 +9,20 @@ import java.time.format.DateTimeFormatter;
  *
  * @author xuejiaming
  */
-public abstract class AbstractShardingYearLocalDateTimeInitializer<T> extends AbstractShardingLocalDateTimeInitializer<T> {
+public abstract class AbstractShardingDayInitializer<T> extends AbstractShardingTimeInitializer<T> {
 
     @Override
     protected LocalDateTime getBeginTimeToStart(LocalDateTime beginTime) {
-        return EasyUtil.getYearStart(beginTime);
+        return beginTime.toLocalDate().atStartOfDay();
     }
 
     @Override
     protected LocalDateTime getNextTime(LocalDateTime currentTime) {
-        return currentTime.plusYears(1);
+        return currentTime.plusDays(1);
     }
 
     @Override
     protected String formatTail(LocalDateTime time) {
-        return time.format(DateTimeFormatter.ofPattern("yyyy"));
+        return time.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
     }
 }

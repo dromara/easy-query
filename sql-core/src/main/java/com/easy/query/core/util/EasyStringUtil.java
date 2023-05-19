@@ -444,6 +444,17 @@ public class EasyStringUtil {
         }
         return groups;
     }
+    public static String leftPad(String input, int totalWidth, char paddingChar) {
+        if (input.length() >= totalWidth) {
+            return input;
+        }
+        StringBuilder sb = new StringBuilder(totalWidth);
+        for (int i = 0; i < totalWidth - input.length(); i++) {
+            sb.append(paddingChar);
+        }
+        sb.append(input);
+        return sb.toString();
+    }
 //
 //    public static void main(String[] args) {
 //        System.out.println(addEscape("abc", '[', ']'));

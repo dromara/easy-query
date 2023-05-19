@@ -394,31 +394,40 @@ public class TopicShardingTime {
     private LocalDateTime createTime;
 }
 //分片初始化器很简单 假设我们是2020年1月到2023年5月也就是当前时间进行分片那么要生成对应的分片表每月一张
-public class TopicShardingTimeShardingInitializer implements EntityShardingInitializer<TopicShardingTime> {
+public class TopicShardingTimeShardingInitializer extends AbstractShardingMonthInitializer<TopicShardingTime> {
+
     @Override
-    public void configure(ShardingEntityBuilder<TopicShardingTime> builder) {
-        EntityMetadata entityMetadata = builder.getEntityMetadata();
-        String tableName = entityMetadata.getTableName();
-        LocalDateTime beginTime = LocalDateTime.of(2020, 1, 1, 1, 1);
-        LocalDateTime endTime = LocalDateTime.of(2023, 5, 1, 1, 1);
+    protected LocalDateTime getBeginTime() {
+        return LocalDateTime.of(2020, 1, 1, 1, 1);
+    }
 
-        ArrayList<String> actualTableNames = new ArrayList<>();
-        while(beginTime.isBefore(endTime)){
-            String month = beginTime.format(DateTimeFormatter.ofPattern("yyyyMM"));
-            actualTableNames.add(tableName+"_"+month);
-            beginTime=beginTime.plusMonths(1);
-        }
-        LinkedHashMap<String, Collection<String>> initTables = new LinkedHashMap<String, Collection<String>>() {{
-            put("ds2020", actualTableNames);
-        }};
+    @Override
+    protected LocalDateTime getEndTime() {
+        return LocalDateTime.of(2023, 5, 1, 0, 0);
+    }
 
-       builder.actualTableNameInit(initTables);
+
+    @Override
+    public void configure0(ShardingEntityBuilder<TopicShardingTime> builder) {
+
+////以下条件可以选择配置也可以不配置用于优化分片性能
+//        builder.paginationReverse(0.5,100)
+//                .ascSequenceConfigure(new TableNameStringComparator())
+//                .addPropertyDefaultUseDesc(TopicShardingTime::getCreateTime)
+//                .defaultAffectedMethod(false, ExecuteMethodEnum.LIST,ExecuteMethodEnum.ANY,ExecuteMethodEnum.COUNT,ExecuteMethodEnum.FIRST)
+//                .useMaxShardingQueryLimit(2,ExecuteMethodEnum.LIST,ExecuteMethodEnum.ANY,ExecuteMethodEnum.FIRST);
+
     }
 }
 //分片时间路由规则按月然后bean分片属性就是LocalDateTime也可以自定义实现
-public class TopicShardingTimeTableRule extends AbstractLocalDateTimeMonthTableRule<TopicShardingTime> {
+public class TopicShardingTimeTableRule extends AbstractMonthTableRule<TopicShardingTime> {
 
+    @Override
+    protected LocalDateTime convertLocalDateTime(Object shardingValue) {
+        return (LocalDateTime)shardingValue;
+    }
 }
+
 ```
 [数据库脚本参考源码](https://github.com/xuejmnet/easy-query/blob/main/sql-test/src/main/resources/mysql-init-sqk-easy-sharding.sql)
 
@@ -486,12 +495,7 @@ public class DataSourceShardingInitializer implements EntityShardingInitializer<
             put("ds2022", tables);
             put("ds2023", tables);
         }};
-        builder.actualTableNameInit(initTables)
-                .paginationReverse(0.5, 100L)
-                .ascSequenceConfigure(new DataSourceAndTableComparator())
-                .addPropertyDefaultUseDesc(TopicShardingDataSource::getCreateTime)
-                .defaultAffectedMethod(false, ExecuteMethodEnum.LIST, ExecuteMethodEnum.ANY, ExecuteMethodEnum.FIRST, ExecuteMethodEnum.COUNT)
-                .useMaxShardingQueryLimit(1, ExecuteMethodEnum.FIRST);
+        builder.actualTableNameInit(initTables);
 
 
     }

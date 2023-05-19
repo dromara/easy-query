@@ -1,4 +1,4 @@
-package com.easy.query.core.sharding.api.initializer;
+package com.easy.query.core.sharding.api.initializer.time;
 
 import com.easy.query.core.util.EasyUtil;
 
@@ -11,7 +11,7 @@ import java.time.format.DateTimeFormatter;
  *
  * @author xuejiaming
  */
-public abstract class AbstractShardingWeekLocalDateTimeInitializer<T> extends AbstractShardingLocalDateTimeInitializer<T> {
+public abstract class AbstractShardingWeekInitializer<T> extends AbstractShardingTimeInitializer<T> {
 
     @Override
     protected LocalDateTime getBeginTimeToStart(LocalDateTime beginTime) {
@@ -27,6 +27,6 @@ public abstract class AbstractShardingWeekLocalDateTimeInitializer<T> extends Ab
     protected String formatTail(LocalDateTime time) {
         LocalDateTime weekEnd = EasyUtil.getWeekEnd(time);
         String dd = weekEnd.format(DateTimeFormatter.ofPattern("dd"));
-        return time.format(DateTimeFormatter.ofPattern("yyyyMMdd"))+"_"+dd;
+        return EasyUtil.getWeekStart(time).format(DateTimeFormatter.ofPattern("yyyyMMdd"))+"_"+dd;
     }
 }
