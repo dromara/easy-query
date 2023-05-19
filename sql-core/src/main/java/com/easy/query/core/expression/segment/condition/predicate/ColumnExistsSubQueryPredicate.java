@@ -13,7 +13,7 @@ import com.easy.query.core.expression.segment.SQLEntitySegment;
  *
  * @author xuejiaming
  */
-public class ColumnExistsSubQueryPredicate implements SubQueryPredicate{
+public class ColumnExistsSubQueryPredicate implements SubQueryPredicate {
     private final SQLPredicateCompare sqlPredicateCompare;
     private final QueryRuntimeContext runtimeContext;
     private final TableAvailable table;
@@ -25,6 +25,7 @@ public class ColumnExistsSubQueryPredicate implements SubQueryPredicate{
         this.sqlPredicateCompare = sqlPredicateCompare;
         this.runtimeContext = runtimeContext;
     }
+
     @Override
     public TableAvailable getTable() {
         return table;
@@ -58,5 +59,11 @@ public class ColumnExistsSubQueryPredicate implements SubQueryPredicate{
     @Override
     public Queryable<?> getSubQueryable() {
         return subQueryable;
+    }
+
+    @Override
+    public SubQueryPredicate cloneSubQueryPredicate() {
+
+        return new ColumnExistsSubQueryPredicate(table, subQueryable.cloneQueryable(), sqlPredicateCompare, runtimeContext);
     }
 }

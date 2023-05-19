@@ -6,11 +6,13 @@ import com.easy.query.core.enums.SQLUnionEnum;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.sql.expression.AnonymousEntityQuerySQLExpression;
+import com.easy.query.core.expression.sql.expression.AnonymousUnionEntityQuerySQLExpression;
 import com.easy.query.core.expression.sql.expression.EntityQuerySQLExpression;
 import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -21,7 +23,7 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public class AnonymousUnionQuerySQLExpressionImpl implements AnonymousEntityQuerySQLExpression {
+public class AnonymousUnionQuerySQLExpressionImpl implements AnonymousUnionEntityQuerySQLExpression {
     protected final QueryRuntimeContext runtimeContext;
     private final List<EntityQuerySQLExpression> querySQLExpressions;
     private final SQLUnionEnum sqlUnion;
@@ -157,8 +159,20 @@ public class AnonymousUnionQuerySQLExpressionImpl implements AnonymousEntityQuer
 
     @Override
     public EntityQuerySQLExpression cloneSQLExpression() {
+        ArrayList<EntityQuerySQLExpression> entityQuerySQLExpressionCopies = new ArrayList<>(querySQLExpressions.size());
+        for (EntityQuerySQLExpression querySQLExpression : querySQLExpressions) {
+            entityQuerySQLExpressionCopies.add(querySQLExpression.cloneSQLExpression());
+        }
         ExpressionFactory expressionFactory = runtimeContext.getExpressionFactory();
-        return expressionFactory.createEasyAnonymousUnionQuerySQLExpression(runtimeContext, querySQLExpressions,sqlUnion);
+        AnonymousEntityQuerySQLExpression easyAnonymousUnionQuerySQLExpression = expressionFactory.createEasyAnonymousUnionQuerySQLExpression(runtimeContext,entityQuerySQLExpressionCopies , sqlUnion);
+        for (EntityTableSQLExpression table : tables) {
+            easyAnonymousUnionQuerySQLExpression.getTables().add(table.cloneSQLExpression());
+        }
+        return easyAnonymousUnionQuerySQLExpression;
     }
 
+    @Override
+    public List<EntityQuerySQLExpression> getEntityQuerySQLExpressions() {
+        return querySQLExpressions;
+    }
 }

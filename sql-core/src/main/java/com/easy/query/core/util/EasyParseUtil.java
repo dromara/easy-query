@@ -5,9 +5,11 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.segment.condition.predicate.SubQueryPredicate;
 import com.easy.query.core.expression.sql.expression.AnonymousEntityTableSQLExpression;
+import com.easy.query.core.expression.sql.expression.AnonymousUnionEntityQuerySQLExpression;
 import com.easy.query.core.expression.sql.expression.EntityPredicateSQLExpression;
 import com.easy.query.core.expression.sql.expression.EntityQuerySQLExpression;
 import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
+import com.easy.query.core.expression.sql.expression.impl.AnonymousUnionQuerySQLExpressionImpl;
 
 import java.util.HashSet;
 
@@ -62,8 +64,15 @@ public class EasyParseUtil {
 
     private static void getAnonymousTable(TablePredicateParseDescriptor tablePredicateParseDescriptor, AnonymousEntityTableSQLExpression anonymousEntityTableSQLExpression) {
         EntityQuerySQLExpression entityQuerySQLExpression = anonymousEntityTableSQLExpression.getEntityQuerySQLExpression();
-        for (EntityTableSQLExpression table : entityQuerySQLExpression.getTables()) {
-            parseTableAndPredicates(tablePredicateParseDescriptor, table);
+        if(entityQuerySQLExpression instanceof AnonymousUnionEntityQuerySQLExpression){
+            AnonymousUnionEntityQuerySQLExpression anonymousUnionEntityQuerySQLExpression = (AnonymousUnionEntityQuerySQLExpression) entityQuerySQLExpression;
+            for (EntityQuerySQLExpression querySQLExpression : anonymousUnionEntityQuerySQLExpression.getEntityQuerySQLExpressions()) {
+                getTablePredicateParseDescriptor(querySQLExpression,tablePredicateParseDescriptor);
+            }
+        }else{
+            for (EntityTableSQLExpression table : entityQuerySQLExpression.getTables()) {
+                parseTableAndPredicates(tablePredicateParseDescriptor, table);
+            }
         }
     }
 }

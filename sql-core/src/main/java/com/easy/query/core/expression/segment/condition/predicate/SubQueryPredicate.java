@@ -10,4 +10,5 @@ import com.easy.query.core.basic.api.select.Queryable;
  */
 public interface SubQueryPredicate extends Predicate{
     Queryable<?> getSubQueryable();
+    SubQueryPredicate cloneSubQueryPredicate();
 }

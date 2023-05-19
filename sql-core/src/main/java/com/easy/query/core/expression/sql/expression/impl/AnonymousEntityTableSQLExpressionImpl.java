@@ -4,9 +4,12 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.sql.expression.AnonymousEntityTableSQLExpression;
 import com.easy.query.core.expression.sql.expression.EntityQuerySQLExpression;
+import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
 import com.easy.query.core.util.EasySQLExpressionUtil;
+import com.easy.query.core.util.EasySQLSegmentUtil;
 
 /**
  * create time 2023/4/23 16:30
@@ -48,5 +51,16 @@ public class AnonymousEntityTableSQLExpressionImpl extends TableSQLExpressionImp
     @Override
     public EntityQuerySQLExpression getEntityQuerySQLExpression() {
         return easyQuerySQLExpression;
+    }
+
+    @Override
+    public EntityTableSQLExpression cloneSQLExpression() {
+
+        EntityTableSQLExpression tableSQLExpression = runtimeContext.getExpressionFactory().createAnonymousEntityTableSQLExpression(entityTable,multiTableType,easyQuerySQLExpression.cloneSQLExpression(),runtimeContext);
+        if(EasySQLSegmentUtil.isNotEmpty(on)){
+            PredicateSegment predicateSegment = on.clonePredicateSegment();
+            tableSQLExpression.setOn(predicateSegment);
+        }
+        return tableSQLExpression;
     }
 }

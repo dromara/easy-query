@@ -4,6 +4,7 @@ import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.lambda.BreakConsumer;
 import com.easy.query.core.expression.segment.condition.predicate.Predicate;
+import com.easy.query.core.expression.segment.condition.predicate.SubQueryPredicate;
 import com.easy.query.core.util.EasyStringUtil;
 
 import java.util.*;
@@ -137,7 +138,12 @@ public abstract class AbstractPredicateSegment implements PredicateSegment,Shard
     @Override
     public void copyTo(PredicateSegment predicateSegment) {
         if (isPredicate()) {
-            predicateSegment.setPredicate(predicate);
+            if(predicate instanceof SubQueryPredicate){
+                SubQueryPredicate subQueryPredicate = (SubQueryPredicate) predicate;
+                predicateSegment.setPredicate(subQueryPredicate);
+            }else{
+                predicateSegment.setPredicate(predicate);
+            }
         } else {
             if (children != null) {
 

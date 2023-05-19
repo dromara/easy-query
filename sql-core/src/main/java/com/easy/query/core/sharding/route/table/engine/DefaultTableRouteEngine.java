@@ -45,7 +45,7 @@ public class DefaultTableRouteEngine implements TableRouteEngine {
 
     @Override
     public ShardingRouteResult route(TableRouteContext tableRouteContext) {
-        Map<String/*data source*/, Map<Class<?>/*entity class*/, Set<TableRouteUnit>>> routeMaps = new HashMap<>();
+        Map<String/*data source*/, Map<TableAvailable, Set<TableRouteUnit>>> routeMaps = new HashMap<>();
         TableParseDescriptor tableParseDescriptor = tableRouteContext.getTableParseDescriptor();
         Set<TableAvailable> shardingTables = tableParseDescriptor.getTables();
         int tableRouteUnitSize = 0;
@@ -63,8 +63,8 @@ public class DefaultTableRouteEngine implements TableRouteEngine {
 //                    continue;
 //                }
                 String dataSource = shardingRouteUnit.getDataSourceName();
-                Map<Class<?>, Set<TableRouteUnit>> tableNamMaps = routeMaps.computeIfAbsent(dataSource, o -> new HashMap<>());
-                Set<TableRouteUnit> tableRouteUnits = tableNamMaps.computeIfAbsent(shardingTable.getEntityClass(), o -> new HashSet<>());
+                Map<TableAvailable, Set<TableRouteUnit>> tableNamMaps = routeMaps.computeIfAbsent(dataSource, o -> new HashMap<>());
+                Set<TableRouteUnit> tableRouteUnits = tableNamMaps.computeIfAbsent(shardingTable, o -> new HashSet<>());
                 tableRouteUnits.add(shardingRouteUnit);
                 tableRouteUnitSize++;
             }
@@ -82,7 +82,7 @@ public class DefaultTableRouteEngine implements TableRouteEngine {
         int dataSourceCount = 0;
         boolean isCrossTable = false;
         for (String dataSourceName : tableRouteContext.getDataSourceRouteResult().getIntersectDataSources()) {
-            Map<Class<?>, Set<TableRouteUnit>> routeMap = routeMaps.get(dataSourceName);
+            Map<TableAvailable, Set<TableRouteUnit>> routeMap = routeMaps.get(dataSourceName);
             if (routeMap != null) {
                 Collection<Collection<TableRouteUnit>> cartesian = EasyCollectionUtil.getCartesian(routeMap.values());
                 List<TableRouteResult> tableRouteResults = cartesian.stream().map(o -> new TableRouteResult(new ArrayList<>(o)))

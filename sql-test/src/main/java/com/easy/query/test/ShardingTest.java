@@ -823,4 +823,43 @@ public class ShardingTest extends BaseTest {
 
         Assert.assertEquals(0,list1.size());
     }
+    @Test
+    public void sharding40(){
+        LocalDateTime beginTime = LocalDateTime.of(2021, 1, 1, 1, 1);
+        LocalDateTime endTime = LocalDateTime.of(2021, 2, 1, 1, 1);
+
+        Queryable<TopicShardingTime> topicShardingTimeQueryable1 = easyQuery.queryable(TopicShardingTime.class).where(o -> o.rangeOpen(TopicShardingTime::getCreateTime, beginTime, endTime));
+        Queryable<TopicShardingTime> topicShardingTimeQueryable2 = easyQuery.queryable(TopicShardingTime.class).where(o -> o.rangeOpen(TopicShardingTime::getCreateTime, beginTime, endTime));
+
+        List<TopicShardingTime> list = topicShardingTimeQueryable1.union(topicShardingTimeQueryable2).toList();
+        Assert.assertEquals(90,list.size());
+        List<TopicShardingTime> list2 = topicShardingTimeQueryable1.unionAll(topicShardingTimeQueryable2).toList();
+        Assert.assertEquals(90,list.size());
+    }
+    @Test
+    public void sharding41(){
+        LocalDateTime beginTime = LocalDateTime.of(2021, 1, 1, 1, 1);
+        LocalDateTime endTime = LocalDateTime.of(2021, 3, 1, 1, 1);
+
+        Queryable<TopicShardingTime> topicShardingTimeQueryable1 = easyQuery.queryable(TopicShardingTime.class).where(o -> o.rangeOpen(TopicShardingTime::getCreateTime, beginTime, endTime));
+        Queryable<TopicShardingTime> topicShardingTimeQueryable2 = easyQuery.queryable(TopicShardingTime.class).where(o -> o.rangeOpen(TopicShardingTime::getCreateTime, beginTime, endTime));
+
+        List<TopicShardingTime> list = topicShardingTimeQueryable1.union(topicShardingTimeQueryable2).toList();
+        Assert.assertEquals(290,list.size());
+        List<TopicShardingTime> list2 = topicShardingTimeQueryable1.unionAll(topicShardingTimeQueryable2).toList();
+        Assert.assertEquals(290,list.size());
+    }
+    @Test
+    public void sharding42(){
+        LocalDateTime beginTime = LocalDateTime.of(2021, 1, 1, 1, 1);
+        LocalDateTime endTime = LocalDateTime.of(2022, 5, 1, 1, 1);
+
+        Queryable<TopicShardingTime> topicShardingTimeQueryable1 = easyQuery.queryable(TopicShardingTime.class).where(o -> o.rangeOpen(TopicShardingTime::getCreateTime, beginTime, endTime));
+        Queryable<TopicShardingTime> topicShardingTimeQueryable2 = easyQuery.queryable(TopicShardingTime.class).where(o -> o.rangeOpen(TopicShardingTime::getCreateTime, beginTime, endTime));
+
+        List<TopicShardingTime> list = topicShardingTimeQueryable1.union(topicShardingTimeQueryable2).toList();
+        Assert.assertEquals(15972,list.size());
+        List<TopicShardingTime> list2 = topicShardingTimeQueryable1.unionAll(topicShardingTimeQueryable2).toList();
+        Assert.assertEquals(15972,list.size());
+    }
 }

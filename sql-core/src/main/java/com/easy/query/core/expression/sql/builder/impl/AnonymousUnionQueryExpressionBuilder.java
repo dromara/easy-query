@@ -53,8 +53,12 @@ public class AnonymousUnionQueryExpressionBuilder extends QueryExpressionBuilder
 
     @Override
     public EntityQueryExpressionBuilder cloneEntityExpressionBuilder() {
+        ArrayList<EntityQueryExpressionBuilder> entityQueryExpressionBuilderCopies = new ArrayList<>(entityQueryExpressionBuilders.size());
+        for (EntityQueryExpressionBuilder entityQueryExpressionBuilder : entityQueryExpressionBuilders) {
+            entityQueryExpressionBuilderCopies.add(entityQueryExpressionBuilder.cloneEntityExpressionBuilder());
+        }
 
-        EntityQueryExpressionBuilder anonymousQueryExpressionBuilder =runtimeContext.getExpressionBuilderFactory().createAnonymousUnionQueryExpressionBuilder(new ArrayList<>(entityQueryExpressionBuilders),expressionContext,sqlUnion);
+        EntityQueryExpressionBuilder anonymousQueryExpressionBuilder =runtimeContext.getExpressionBuilderFactory().createAnonymousUnionQueryExpressionBuilder(entityQueryExpressionBuilderCopies,expressionContext,sqlUnion);
 
         for (EntityTableExpressionBuilder table : super.tables) {
             anonymousQueryExpressionBuilder.getTables().add(table.copyEntityTableExpressionBuilder());

@@ -63,4 +63,9 @@ public class ColumnInSubQueryPredicate implements SubQueryPredicate{
     public Queryable<?> getSubQueryable() {
         return subQueryable;
     }
+
+    @Override
+    public SubQueryPredicate cloneSubQueryPredicate() {
+        return new ColumnInSubQueryPredicate(table,propertyName,subQueryable.cloneQueryable(),compare,runtimeContext);
+    }
 }

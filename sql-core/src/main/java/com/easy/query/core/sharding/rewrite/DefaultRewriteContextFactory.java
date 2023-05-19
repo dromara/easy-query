@@ -63,18 +63,20 @@ public class DefaultRewriteContextFactory implements RewriteContextFactory {
             SequenceParseResult sequenceParseResult = queryPrepareParseResult.getSequenceParseResult();
             if(sequenceParseResult!=null){
                 TableAvailable table = sequenceParseResult.getTable();
-                EntityMetadata entityMetadata = table.getEntityMetadata();
-                ShardingInitConfig shardingInitConfig = entityMetadata.getShardingInitConfig();
-                ShardingSequenceConfig shardingSequenceConfig = shardingInitConfig.getShardingSequenceConfig();
-                if(shardingSequenceConfig!=null){
-                    boolean reverse = sequenceParseResult.isReverse();
-                    String firstSequenceProperty = shardingSequenceConfig.getFirstSequencePropertyOrNull();
-                    if(firstSequenceProperty!=null){
-                        OrderColumnSegmentImpl orderColumnSegment = new OrderColumnSegmentImpl(table, firstSequenceProperty, runtimeContext, !reverse);
-                        easyEntityPredicateSQLExpression.getOrder().append(orderColumnSegment);
-                        if(!easyEntityPredicateSQLExpression.getProjects().containsOnce(entityMetadata.getEntityClass(),firstSequenceProperty)){
-                            ColumnSegmentImpl columnSegment = new ColumnSegmentImpl(table, firstSequenceProperty, runtimeContext);
-                            easyEntityPredicateSQLExpression.getProjects().append(columnSegment);
+                if(EasyCollectionUtil.any(easyEntityPredicateSQLExpression.getTables(),t->Objects.equals(t.getEntityTable(),table))){
+                    EntityMetadata entityMetadata = table.getEntityMetadata();
+                    ShardingInitConfig shardingInitConfig = entityMetadata.getShardingInitConfig();
+                    ShardingSequenceConfig shardingSequenceConfig = shardingInitConfig.getShardingSequenceConfig();
+                    if(shardingSequenceConfig!=null){
+                        boolean reverse = sequenceParseResult.isReverse();
+                        String firstSequenceProperty = shardingSequenceConfig.getFirstSequencePropertyOrNull();
+                        if(firstSequenceProperty!=null){
+                            OrderColumnSegmentImpl orderColumnSegment = new OrderColumnSegmentImpl(table, firstSequenceProperty, runtimeContext, !reverse);
+                            easyEntityPredicateSQLExpression.getOrder().append(orderColumnSegment);
+                            if(!easyEntityPredicateSQLExpression.getProjects().containsOnce(entityMetadata.getEntityClass(),firstSequenceProperty)){
+                                ColumnSegmentImpl columnSegment = new ColumnSegmentImpl(table, firstSequenceProperty, runtimeContext);
+                                easyEntityPredicateSQLExpression.getProjects().append(columnSegment);
+                            }
                         }
                     }
                 }

@@ -26,9 +26,9 @@ import java.util.function.Function;
 public class TableSQLExpressionImpl implements EntityTableSQLExpression {
 
     protected final MultiTableTypeEnum multiTableType;
-    private final QueryRuntimeContext runtimeContext;
-    private final Dialect dialect;
-    private final TableAvailable entityTable;
+    protected final QueryRuntimeContext runtimeContext;
+    protected final Dialect dialect;
+    protected final TableAvailable entityTable;
     protected PredicateSegment on;
     protected Function<String, String> tableNameAs;
 
@@ -131,7 +131,6 @@ public class TableSQLExpressionImpl implements EntityTableSQLExpression {
 
     @Override
     public EntityTableSQLExpression cloneSQLExpression() {
-
         EntityTableSQLExpression tableSQLExpression = runtimeContext.getExpressionFactory().createEntityTableSQLExpression(entityTable, multiTableType,runtimeContext);
         if(EasySQLSegmentUtil.isNotEmpty(on)){
             PredicateSegment predicateSegment = on.clonePredicateSegment();
