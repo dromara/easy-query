@@ -25,8 +25,8 @@
         <module>sql-pgsql</module>
         <module>sql-springboot-starter</module>
 <!--        以下是不需要deploy到远程仓库的-->
-        <module>samples</module>
         <module>sql-test</module>
+        <module>samples</module>
     </modules>
 
     <properties>

@@ -8,6 +8,7 @@ package com.easy.query.core.sharding.initializer;
  */
 public class UnShardingInitializer implements ShardingInitializer {
 
+    public static final ShardingInitializer INSTANCE=new UnShardingInitializer();
     @Override
     public void initialize(ShardingEntityBuilder<?> builder) {
 

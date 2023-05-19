@@ -46,3 +46,26 @@ public class TopicShardingTimeShardingInitializer implements EntityShardingIniti
 
     }
 }
+//public class TopicShardingTimeShardingInitializer extends AbstractShardingMonthLocalDateTimeInitializer<TopicShardingTime> {
+//
+//    @Override
+//    protected LocalDateTime getBeginTime() {
+//        return LocalDateTime.of(2020, 1, 1, 1, 1);
+//    }
+//
+//    @Override
+//    protected String getTableSeparator() {
+//        return "_";
+//    }
+//
+//    @Override
+//    public void configure0(ShardingEntityBuilder<TopicShardingTime> builder) {
+//
+//        builder.paginationReverse(0.5,100)
+//                .ascSequenceConfigure(new TableNameStringComparator())
+//                .addPropertyDefaultUseDesc(TopicShardingTime::getCreateTime)
+//                .defaultAffectedMethod(false, ExecuteMethodEnum.LIST,ExecuteMethodEnum.ANY,ExecuteMethodEnum.COUNT,ExecuteMethodEnum.FIRST)
+//                .useMaxShardingQueryLimit(2,ExecuteMethodEnum.LIST,ExecuteMethodEnum.ANY,ExecuteMethodEnum.FIRST);
+//
+//    }
+//}

@@ -35,7 +35,6 @@ public class QueryConfiguration {
     private static final EasyLogicDeleteStrategy TIMESTAMP_LOGIC_DELETE = new DeleteLongTimestampEasyEntityTypeConfiguration();
     private static final EasyLogicDeleteStrategy LOCAL_DATE_TIME_LOGIC_DELETE = new LocalDateTimeEasyEntityTypeConfiguration();
     private static final EasyLogicDeleteStrategy LOCAL_DATE_LOGIC_DELETE = new LocalDateEasyLogicDeleteStrategy();
-    private static final ShardingInitializer DEFAULT_SHARDING_INITIALIZER = new UnShardingInitializer();
 
     private final EasyQueryOption easyQueryOption;
 
@@ -60,7 +59,7 @@ public class QueryConfiguration {
         easyVersionStrategyMap.put(EasyVersionLongStrategy.class,new EasyVersionLongStrategy());
         easyVersionStrategyMap.put(EasyVersionUUIDStrategy.class,new EasyVersionUUIDStrategy());
         easyVersionStrategyMap.put(EasyVersionTimestampStrategy.class,new EasyVersionTimestampStrategy());
-        shardingInitializerMap.put(UnShardingInitializer.class,DEFAULT_SHARDING_INITIALIZER);
+        shardingInitializerMap.put(UnShardingInitializer.class,UnShardingInitializer.INSTANCE);
     }
 
     public boolean deleteThrow(){

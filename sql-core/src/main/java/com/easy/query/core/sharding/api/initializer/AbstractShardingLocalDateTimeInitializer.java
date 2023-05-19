@@ -1,7 +1,9 @@
-package com.easy.query.core.sharding.initializer;
+package com.easy.query.core.sharding.api.initializer;
 
 import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.metadata.EntityMetadata;
+import com.easy.query.core.sharding.initializer.EntityShardingInitializer;
+import com.easy.query.core.sharding.initializer.ShardingEntityBuilder;
 import com.easy.query.core.util.EasyUtil;
 
 import java.time.LocalDateTime;
@@ -17,9 +19,12 @@ import java.util.Map;
  *
  * @author xuejiaming
  */
-public abstract class AbstractShardingMonthLocalDateTimeInitializer<T> implements EntityShardingInitializer<T>{
+public abstract class AbstractShardingLocalDateTimeInitializer<T> implements EntityShardingInitializer<T> {
     protected abstract LocalDateTime getBeginTime();
+    protected abstract LocalDateTime getBeginTimeToStart(LocalDateTime beginTime);
+    protected abstract LocalDateTime getNextTime(LocalDateTime currentTime);
     protected abstract String getTableSeparator();
+    protected abstract String formatTail(LocalDateTime time);
     @Override
     public void configure(ShardingEntityBuilder<T> builder) {
         EntityMetadata entityMetadata = builder.getEntityMetadata();
@@ -27,15 +32,15 @@ public abstract class AbstractShardingMonthLocalDateTimeInitializer<T> implement
         String tableName = entityMetadata.getTableName();
         LocalDateTime setBeginTime = getBeginTime();
 
-        LocalDateTime beginTime = EasyUtil.getMonthStart(setBeginTime);
+        LocalDateTime beginTime = getBeginTimeToStart(setBeginTime);
         String tableSeparator = getTableSeparator();
         LocalDateTime endTime = LocalDateTime.now();
 
         ArrayList<String> actualTableNames = new ArrayList<>();
         while(beginTime.isBefore(endTime)){
-            String month = beginTime.format(DateTimeFormatter.ofPattern("yyyyMM"));
-            actualTableNames.add(tableName+tableSeparator+month);
-            beginTime=beginTime.plusMonths(1);
+            String tail =formatTail(beginTime);
+            actualTableNames.add(tableName+tableSeparator+tail);
+            beginTime=getNextTime(beginTime);
         }
         Map<String, Collection<String>> initTables = new LinkedHashMap<String, Collection<String>>() {{
             put(easyQueryOption.getDefaultDataSourceName(), actualTableNames);

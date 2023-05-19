@@ -8,6 +8,7 @@ import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.basic.jdbc.executor.internal.common.Grouping;
 import com.easy.query.core.basic.jdbc.executor.internal.common.GroupingImpl;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -76,6 +77,23 @@ public class EasyUtil {
         LocalDate date = dateTime.toLocalDate();  // 获取日期部分
         LocalDate firstDayOfMonth = date.withDayOfMonth(1);  // 设置为月初第一天
         return firstDayOfMonth.atStartOfDay();  // 设置时分秒为 0:00:00
+    }
+    public static LocalDateTime getYearStart(LocalDateTime dateTime) {
+        LocalDate date = dateTime.toLocalDate();  // 获取日期部分
+        LocalDate firstDayOfYear = date.withDayOfYear(1);  // 设置为年初第一天
+        return firstDayOfYear.atStartOfDay();  // 设置时分秒为 0:00:00
+    }
+    public static LocalDateTime getWeekStart(LocalDateTime dateTime) {
+        LocalDateTime weekStart = dateTime.with(DayOfWeek.MONDAY)  // 设置为周一
+                .toLocalDate()
+                .atStartOfDay();  // 设置时分秒为 0:00:00
+        return weekStart;
+    }
+    public static LocalDateTime getWeekEnd(LocalDateTime dateTime) {
+        LocalDateTime weekEnd = dateTime.with(DayOfWeek.SUNDAY)  // 设置为周日
+                .toLocalDate()
+                .atStartOfDay();  // 设置时分秒为 0:00:00
+        return weekEnd;
     }
 
 }
