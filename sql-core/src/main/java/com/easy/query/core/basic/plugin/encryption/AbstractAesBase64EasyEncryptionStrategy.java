@@ -78,19 +78,12 @@ public abstract class AbstractAesBase64EasyEncryptionStrategy implements EasyEnc
         //符合要求譬如最少4个非中文字符或者2个中文字的情况下,可以选择抛错重写或者直接加密对应的值
         if (EasyCollectionUtil.isEmpty(stringCharSegments)) {
             stringCharSegments.add(plaintextString);
-//            throw new EasyQueryException("输入字符不符合要求,中文一个字符2位长度,英文数字字母等一个字符一位长度，最小输入数据必须满足4位长度:" + plaintextString);
         }
-//        byte[] mergedArray = new byte[stringCharSegments.size() * byteLength];
-//        int destPos = 0;
         StringBuilder stringBuilder = new StringBuilder();
         for (String stringCharSegment : stringCharSegments) {
             String str= EasyAesUtil.encrypt(stringCharSegment, getKey(), getIv(),StandardCharsets.UTF_8);
             stringBuilder.append(str);
-//            System.arraycopy(encrypt, 0, mergedArray, destPos, encrypt.length);
-//            destPos += encrypt.length;
         }
-//        byte[] encode = Base64Util.encode(mergedArray);
-//        return new String(encode, StandardCharsets.UTF_8);
         return stringBuilder.toString();
     }
 
@@ -112,8 +105,6 @@ public abstract class AbstractAesBase64EasyEncryptionStrategy implements EasyEnc
             return null;
         }
         String ciphertextString = ciphertext.toString();
-//        byte[] decode = Base64Util.tryDecode(ciphertextString.getBytes(StandardCharsets.UTF_8));
-        //当前数据非base64或者base64但是不是aes加密的返回原始数据
         if (ciphertextString.length() % 24 != 0) {
             if (throwIfDecryptFail()) {
                 throw new IllegalArgumentException(EasyClassUtil.getSimpleName(entityClass)+"."+propertyName+" decrypt cant decode base64:" + ciphertext);
@@ -122,20 +113,8 @@ public abstract class AbstractAesBase64EasyEncryptionStrategy implements EasyEnc
         }
 
         List<String> segments = EasyStringUtil.splitString(ciphertextString, 24);
-//        byte[][] chunks = ArrayUtil.splitByteArray(decode, 16);
 
         StringBuilder stringBuilder = new StringBuilder();
-//        for (int i = 0; i < chunks.length; i++) {
-//            byte[] chunk = chunks[i];
-//            byte[] decrypt = AesUtil.decrypt(chunk, getKey(), getIv());
-//            String str = new String(decrypt, StandardCharsets.UTF_8);
-//            boolean last = i == (chunks.length - 1);
-//            if (last) {
-//                stringBuilder.append(str);
-//            } else {
-//                stringBuilder.append(str.charAt(0));
-//            }
-//        }
         for (int i = 0; i < segments.size(); i++) {
             String str= EasyAesUtil.decrypt(segments.get(i), getKey(), getIv(),StandardCharsets.UTF_8);
             boolean last = i == (segments.size() - 1);

@@ -34,9 +34,6 @@ public class MyEntityInterceptor implements EasyEntityInterceptor, EasyUpdateSet
         if (topicInterceptor.getUpdateBy() == null) {
             topicInterceptor.setUpdateBy(CurrentUserHelper.getUserId());
         }
-//        if (topicInterceptor.getTenantId() == null) {
-//            topicInterceptor.setTenantId(CurrentUserHelper.getTenantId());
-//        }
     }
 
     @Override

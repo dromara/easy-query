@@ -62,15 +62,16 @@ public interface Queryable<T1> extends Query<T1>, Interceptable<Queryable<T1>>, 
 
 
     /**
+     * SELECT NOT EXISTS (
+     * SELECT 1
+     * FROM `table` AS `t`
+     * WHERE (`t`.`columns` = ?))
      *
-     *  SELECT NOT EXISTS (
-     *           SELECT 1
-     *           FROM `table` AS `t`
-     *           WHERE (`t`.`columns` = ?))
      * @param whereExpression 表达式最后一个是取反
      * @return
      */
     boolean all(SQLExpression1<SQLWherePredicate<T1>> whereExpression);
+
     /**
      * 防止溢出
      *
@@ -352,9 +353,10 @@ public interface Queryable<T1> extends Query<T1>, Interceptable<Queryable<T1>>, 
      */
     EasyPageResult<T1> toPageResult(long pageIndex, long pageSize, long pageTotal);
 
-   default EasyPageResult<T1> toShardingPageResult(long pageIndex, long pageSize){
-       return toShardingPageResult(pageIndex,pageSize,null);
-   }
+    default EasyPageResult<T1> toShardingPageResult(long pageIndex, long pageSize) {
+        return toShardingPageResult(pageIndex, pageSize, null);
+    }
+
     EasyPageResult<T1> toShardingPageResult(long pageIndex, long pageSize, SequenceCountLine sequenceCountLine);
 
     <T2> Queryable2<T1, T2> leftJoin(Class<T2> joinClass, SQLExpression2<SQLWherePredicate<T1>, SQLWherePredicate<T2>> on);
@@ -369,26 +371,32 @@ public interface Queryable<T1> extends Query<T1>, Interceptable<Queryable<T1>>, 
 
     <T2> Queryable2<T1, T2> innerJoin(Queryable<T2> joinQueryable, SQLExpression2<SQLWherePredicate<T1>, SQLWherePredicate<T2>> on);
 
-   default Queryable<T1> union(Queryable<T1> unionQueryable){
-       return union(Collections.singletonList(unionQueryable));
-   }
-   default Queryable<T1> union(Queryable<T1> unionQueryable1,Queryable<T1> unionQueryable2){
-       return union(Arrays.asList(unionQueryable1,unionQueryable2));
-   }
-   default Queryable<T1> union(Queryable<T1> unionQueryable1,Queryable<T1> unionQueryable2,Queryable<T1> unionQueryable3){
-       return union(Arrays.asList(unionQueryable1,unionQueryable2,unionQueryable3));
-   }
+    default Queryable<T1> union(Queryable<T1> unionQueryable) {
+        return union(Collections.singletonList(unionQueryable));
+    }
+
+    default Queryable<T1> union(Queryable<T1> unionQueryable1, Queryable<T1> unionQueryable2) {
+        return union(Arrays.asList(unionQueryable1, unionQueryable2));
+    }
+
+    default Queryable<T1> union(Queryable<T1> unionQueryable1, Queryable<T1> unionQueryable2, Queryable<T1> unionQueryable3) {
+        return union(Arrays.asList(unionQueryable1, unionQueryable2, unionQueryable3));
+    }
+
     Queryable<T1> union(Collection<Queryable<T1>> unionQueries);
-   <TQ extends Queryable<T1>> Queryable<T1> union1(TQ ...unionQueries);
-   default Queryable<T1> unionAll(Queryable<T1> unionQueryable){
-       return unionAll(Collections.singletonList(unionQueryable));
-   }
-   default Queryable<T1> unionAll(Queryable<T1> unionQueryable1,Queryable<T1> unionQueryable2){
-       return unionAll(Arrays.asList(unionQueryable1,unionQueryable2));
-   }
-   default Queryable<T1> unionAll(Queryable<T1> unionQueryable1,Queryable<T1> unionQueryable2,Queryable<T1> unionQueryable3){
-       return unionAll(Arrays.asList(unionQueryable1,unionQueryable2,unionQueryable3));
-   }
+
+    default Queryable<T1> unionAll(Queryable<T1> unionQueryable) {
+        return unionAll(Collections.singletonList(unionQueryable));
+    }
+
+    default Queryable<T1> unionAll(Queryable<T1> unionQueryable1, Queryable<T1> unionQueryable2) {
+        return unionAll(Arrays.asList(unionQueryable1, unionQueryable2));
+    }
+
+    default Queryable<T1> unionAll(Queryable<T1> unionQueryable1, Queryable<T1> unionQueryable2, Queryable<T1> unionQueryable3) {
+        return unionAll(Arrays.asList(unionQueryable1, unionQueryable2, unionQueryable3));
+    }
+
     Queryable<T1> unionAll(Collection<Queryable<T1>> unionQueries);
 
     EasyQuerySQLBuilderProvider<T1> getSQLBuilderProvider1();
@@ -408,7 +416,9 @@ public interface Queryable<T1> extends Query<T1>, Interceptable<Queryable<T1>>, 
     Queryable<T1> asNoTracking();
 
     Queryable<T1> useShardingConfigure(int maxShardingQueryLimit, ConnectionModeEnum connectionMode);
+
     Queryable<T1> useMaxShardingQueryLimit(int maxShardingQueryLimit);
+
     Queryable<T1> useConnectionMode(ConnectionModeEnum connectionMode);
 
 }

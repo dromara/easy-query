@@ -2,6 +2,8 @@
   <img height="340" src="./imgs/logo.png">
 </p>
 
+- [GITEE](https://gitee.com/xuejm/easy-query)  国内镜像
+
 ## 📚 文档
 [GITHUB地址](https://xuejmnet.github.io/easy-query-doc/) | [GITEE地址](https://xuejm.gitee.io/easy-query-doc/)
 

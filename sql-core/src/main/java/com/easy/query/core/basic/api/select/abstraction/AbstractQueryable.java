@@ -772,12 +772,6 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
         return internalUnion(unionQueries, SQLUnionEnum.UNION);
     }
 
-    @SafeVarargs
-    @Override
-    public final <TQ extends Queryable<T1>> Queryable<T1> union1(TQ... unionQueries) {
-        return null;
-    }
-
     @Override
     public Queryable<T1> unionAll(Collection<Queryable<T1>> unionQueries) {
         if (EasyCollectionUtil.isEmpty(unionQueries)) {
