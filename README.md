@@ -5,6 +5,9 @@
 ## 📚 文档
 [GITHUB地址](https://xuejmnet.github.io/easy-query-doc/) | [GITEE地址](https://xuejm.gitee.io/easy-query-doc/)
 
+<img src="./imgs/qrcode.jpg" title="JetBrains" width=122 />
+QQ群:170029046
+
 
 - [使用介绍](#使用介绍)
     - [简介](#简介)
@@ -548,7 +551,6 @@ EasyPageResult<TopicShardingDataSource> pageResult = easyQuery.queryable(TopicSh
 <img src="./imgs/wx.jpg" title="JetBrains" width=222 />
 [博客](https://www.cnblogs.com/xuejiaming)
 
-QQ群:170029046
 
 个人QQ:326308290(欢迎技术支持提供您宝贵的意见)
 
