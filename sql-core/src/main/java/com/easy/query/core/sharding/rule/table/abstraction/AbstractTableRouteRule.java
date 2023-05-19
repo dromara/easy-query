@@ -2,6 +2,7 @@ package com.easy.query.core.sharding.rule.table.abstraction;
 
 import com.easy.query.core.expression.lambda.RouteFunction;
 import com.easy.query.core.enums.sharding.ShardingOperatorEnum;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.metadata.ActualTable;
 import com.easy.query.core.sharding.route.table.TableRouteUnit;
 import com.easy.query.core.sharding.rule.table.TableRouteRule;
@@ -26,15 +27,15 @@ public abstract class AbstractTableRouteRule<T> implements TableRouteRule<T> {
     }
 
     @Override
-    public RouteFunction<ActualTable> routeFilter(Object shardingValue, ShardingOperatorEnum shardingOperator, String propertyName,boolean isMainShardingProperty,boolean withEntity) {
+    public RouteFunction<ActualTable> routeFilter(TableAvailable table, Object shardingValue, ShardingOperatorEnum shardingOperator, String propertyName, boolean isMainShardingProperty, boolean withEntity) {
        if(isMainShardingProperty){
-           return getRouteFilter(shardingValue,shardingOperator,withEntity);
+           return getRouteFilter(table,shardingValue,shardingOperator,withEntity);
        }
-       return getExtraRouteFilter(shardingValue,shardingOperator,propertyName);
+       return getExtraRouteFilter(table,shardingValue,shardingOperator,propertyName);
     }
 
-    protected abstract RouteFunction<ActualTable> getRouteFilter(Object shardingValue,ShardingOperatorEnum shardingOperator,boolean withEntity);
-    protected  RouteFunction<ActualTable> getExtraRouteFilter(Object shardingValue,ShardingOperatorEnum shardingOperator,String propertyName){
+    protected abstract RouteFunction<ActualTable> getRouteFilter(TableAvailable table, Object shardingValue,ShardingOperatorEnum shardingOperator,boolean withEntity);
+    protected  RouteFunction<ActualTable> getExtraRouteFilter(TableAvailable table, Object shardingValue,ShardingOperatorEnum shardingOperator,String propertyName){
         throw new UnsupportedOperationException(propertyName+" sharding route filter");
     }
     @Override

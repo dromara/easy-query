@@ -8,6 +8,8 @@ import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.basic.jdbc.executor.internal.common.Grouping;
 import com.easy.query.core.basic.jdbc.executor.internal.common.GroupingImpl;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,6 +69,13 @@ public class EasyUtil {
             return sqlEntityProject.getPropertyName();
         }
         return anonymousTable.getEntityMetadata().getPropertyNameOrNull(alias,alias);
+    }
+
+
+    public static LocalDateTime getMonthStart(LocalDateTime dateTime) {
+        LocalDate date = dateTime.toLocalDate();  // 获取日期部分
+        LocalDate firstDayOfMonth = date.withDayOfMonth(1);  // 设置为月初第一天
+        return firstDayOfMonth.atStartOfDay();  // 设置时分秒为 0:00:00
     }
 
 }

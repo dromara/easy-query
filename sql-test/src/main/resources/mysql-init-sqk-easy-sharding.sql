@@ -1,5 +1,6 @@
 
 
+use `easy-query-test`;
 create table t_topic_sharding_0
 (
     id varchar(32) not null comment '主键ID'primary key,
@@ -597,6 +598,56 @@ create table t_topic_sharding_ds_time_202303
     create_time datetime not null comment '创建时间'
 )comment '主题表';
 create table t_topic_sharding_ds_time_202304
+(
+    id varchar(50) not null comment '主键ID'primary key,
+    stars int not null comment '点赞数',
+    title varchar(50) null comment '标题',
+    create_time datetime not null comment '创建时间'
+)comment '主题表';
+
+
+
+use `easy-query-test`;
+
+create table t_topic_sharding_ds_2020
+(
+    id varchar(50) not null comment '主键ID'primary key,
+    stars int not null comment '点赞数',
+    title varchar(50) null comment '标题',
+    create_time datetime not null comment '创建时间'
+)comment '主题表';
+
+
+CREATE DATABASE IF NOT EXISTS `easy-query-test2021` CHARACTER SET 'utf8mb4';
+use `easy-query-test2021`;
+
+create table t_topic_sharding_ds_2021
+(
+    id varchar(50) not null comment '主键ID'primary key,
+    stars int not null comment '点赞数',
+    title varchar(50) null comment '标题',
+    create_time datetime not null comment '创建时间'
+)comment '主题表';
+
+
+CREATE DATABASE IF NOT EXISTS `easy-query-test2022` CHARACTER SET 'utf8mb4';
+    use `easy-query-test2022`;
+
+create table t_topic_sharding_ds_2022
+(
+    id varchar(50) not null comment '主键ID'primary key,
+    stars int not null comment '点赞数',
+    title varchar(50) null comment '标题',
+    create_time datetime not null comment '创建时间'
+)comment '主题表';
+
+
+
+CREATE DATABASE IF NOT EXISTS `easy-query-test2023` CHARACTER SET 'utf8mb4';
+use `easy-query-test2023`;
+
+
+create table t_topic_sharding_ds_2023
 (
     id varchar(50) not null comment '主键ID'primary key,
     stars int not null comment '点赞数',

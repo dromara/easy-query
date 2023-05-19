@@ -82,6 +82,7 @@ public class DataSourceAndTableShardingInitializer implements EntityShardingInit
                 .paginationReverse(0.5,100L)
                 .ascSequenceConfigure(new DataSourceAndTableComparator())
                 .addPropertyDefaultUseDesc(TopicShardingDataSourceTime::getCreateTime)
-                .defaultAffectedMethod(false, ExecuteMethodEnum.LIST,ExecuteMethodEnum.ANY,ExecuteMethodEnum.FIRST,ExecuteMethodEnum.COUNT);
+                .defaultAffectedMethod(false, ExecuteMethodEnum.LIST,ExecuteMethodEnum.ANY,ExecuteMethodEnum.FIRST,ExecuteMethodEnum.COUNT)
+                .useMaxShardingQueryLimit(2,ExecuteMethodEnum.FIRST);
     }
 }

@@ -187,7 +187,7 @@ public class RoutePredicateDiscover<T> {
 
                 SQLPredicateCompare operator = valuePredicate.getOperator();
                 ShardingOperatorEnum shardingOperator = translateOperator(operator, value);
-                RouteFunction<T> routePredicate = routeRuleFilter.routeFilter(value, shardingOperator, propertyName, Objects.equals(mainShardingProperty, propertyName),false);
+                RouteFunction<T> routePredicate = routeRuleFilter.routeFilter(table,value, shardingOperator, propertyName, Objects.equals(mainShardingProperty, propertyName),false);
                 return new RoutePredicateExpression<T>(routePredicate);
             }
             //System.out.println("不支持的sql参数:"+ EasyClassUtil.getInstanceSimpleName(parameter));
@@ -196,9 +196,9 @@ public class RoutePredicateDiscover<T> {
     }
 
     private RoutePredicateExpression<T> parseValuesPredicate(ValuesPredicate valuesPredicate) {
-        Class<?> entityClass = valuesPredicate.getTable().getEntityClass();
+        TableAvailable table = valuesPredicate.getTable();
         String propertyName = valuesPredicate.getPropertyName();
-        if (Objects.equals(entityMetadata.getEntityClass(), entityClass) && shardingProperties.contains(propertyName)) {
+        if (Objects.equals(table,routeDescriptor.getTable()) && shardingProperties.contains(propertyName)) {
 
             SQLPredicateCompare operator = valuesPredicate.getOperator();
             ShardingOperatorEnum shardingOperator = translateOperator(operator, null);
@@ -209,7 +209,7 @@ public class RoutePredicateDiscover<T> {
             for (SQLParameter parameter : parameters) {
                 ConstSQLParameter constSQLParameter = (ConstSQLParameter) parameter;
                 Object value = constSQLParameter.getValue();
-                RouteFunction<T> routePredicate = routeRuleFilter.routeFilter(value, shardingOperator, propertyName, Objects.equals(mainShardingProperty, propertyName),false);
+                RouteFunction<T> routePredicate = routeRuleFilter.routeFilter(table,value, shardingOperator, propertyName, Objects.equals(mainShardingProperty, propertyName),false);
                 if(in){
                     containsRoutePredicate.or(new RoutePredicateExpression<T>(routePredicate));
                 }else{
@@ -224,7 +224,7 @@ public class RoutePredicateDiscover<T> {
         ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(mainShardingProperty);
         Property<Object, ?> shardingKeyPropertyGetter = EasyBeanUtil.getFastBean(entityMetadata.getEntityClass()).getBeanGetter(columnMetadata.getProperty());
         Object shardingValue = shardingKeyPropertyGetter.apply(entity);
-        RouteFunction<T> routePredicate = routeRuleFilter.routeFilter(shardingValue, ShardingOperatorEnum.EQUAL, mainShardingProperty, true,true);
+        RouteFunction<T> routePredicate = routeRuleFilter.routeFilter(routeDescriptor.getTable(),shardingValue, ShardingOperatorEnum.EQUAL, mainShardingProperty, true,true);
         return new RoutePredicateExpression<T>(routePredicate);
     }
 }

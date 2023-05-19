@@ -19,6 +19,7 @@ import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.TopicAuto;
 import com.easy.query.test.entity.TopicInterceptor;
 import com.easy.query.test.entity.TopicSharding;
+import com.easy.query.test.entity.TopicShardingDataSource;
 import com.easy.query.test.entity.TopicShardingDataSourceTime;
 import com.easy.query.test.entity.TopicShardingTime;
 import com.easy.query.test.interceptor.MyEntityInterceptor;
@@ -26,6 +27,8 @@ import com.easy.query.test.interceptor.MyTenantInterceptor;
 import com.easy.query.test.logicdel.MyLogicDelStrategy;
 import com.easy.query.mysql.config.MySQLDatabaseConfiguration;
 import com.easy.query.test.sharding.DataSourceAndTableShardingInitializer;
+import com.easy.query.test.sharding.DataSourceShardingInitializer;
+import com.easy.query.test.sharding.TopicShardingDataSourceRule;
 import com.easy.query.test.sharding.TopicShardingDataSourceTimeDataSourceRule;
 import com.easy.query.test.sharding.TopicShardingDataSourceTimeTableRule;
 import com.easy.query.test.sharding.TopicShardingShardingInitializer;
@@ -130,6 +133,7 @@ public abstract class BaseTest {
         configuration.applyShardingInitializer(new DataSourceAndTableShardingInitializer());
         configuration.applyShardingInitializer(new TopicShardingShardingInitializer());
         configuration.applyShardingInitializer(new TopicShardingTimeShardingInitializer());
+        configuration.applyShardingInitializer(new DataSourceShardingInitializer());
 
         TableRouteManager tableRouteManager = runtimeContext.getTableRouteManager();
         tableRouteManager.addRouteRule(new TopicShardingTableRule());
@@ -137,6 +141,7 @@ public abstract class BaseTest {
         tableRouteManager.addRouteRule(new TopicShardingDataSourceTimeTableRule());
         DataSourceRouteManager dataSourceRouteManager = runtimeContext.getDataSourceRouteManager();
         dataSourceRouteManager.addRouteRule(new TopicShardingDataSourceTimeDataSourceRule());
+        dataSourceRouteManager.addRouteRule(new TopicShardingDataSourceRule());
 
     }
 
@@ -317,6 +322,29 @@ public abstract class BaseTest {
 
            long l = easyQuery.insertable(topicShardingDataSourceTimes).executeRows();
            System.out.println("插入时间条数:"+l);
+       }
+
+        boolean any1 = easyQuery.queryable(TopicShardingDataSource.class)
+                .any();
+       if(!any1){
+
+           LocalDateTime beginTime = LocalDateTime.of(2020, 1, 1, 1, 1);
+           LocalDateTime endTime = LocalDateTime.of(2023, 5, 1, 1, 1);
+           Duration between = Duration.between(beginTime, endTime);
+           long days = between.toDays();
+           ArrayList<TopicShardingDataSource> topicShardingDataSources = new ArrayList<>(500);
+           for (int i = 0; i < days; i++) {
+               LocalDateTime now = beginTime.plusDays(i);
+               String month = now.format(DateTimeFormatter.ofPattern("yyyyMM"));
+               TopicShardingDataSource topicShardingDataSource = new TopicShardingDataSource();
+               topicShardingDataSource.setId(UUID.randomUUID().toString().replaceAll("-","")+month);
+               topicShardingDataSource.setTitle("title" + month);
+               topicShardingDataSource.setStars(i);
+               topicShardingDataSource.setCreateTime(now);
+               topicShardingDataSources.add(topicShardingDataSource);
+           }
+
+           long l = easyQuery.insertable(topicShardingDataSources).executeRows();
        }
     }
 

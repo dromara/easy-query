@@ -1,5 +1,6 @@
 package com.easy.query.core.sharding.initializer;
 
+import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.sharding.common.DataSourceThenTableNameStringComparator;
 import com.easy.query.core.sharding.common.TableNameStringComparator;
@@ -17,12 +18,18 @@ import java.util.Map;
  */
 public class ShardingEntityBuilder<T> {
     private final EntityMetadata entityMetadata;
+    private final EasyQueryOption easyQueryOption;
     private final ShardingInitOptionBuilder shardingInitOptionBuilder;
 
-    public ShardingEntityBuilder(EntityMetadata entityMetadata) {
+    public ShardingEntityBuilder(EntityMetadata entityMetadata, EasyQueryOption easyQueryOption) {
 
         this.entityMetadata = entityMetadata;
+        this.easyQueryOption = easyQueryOption;
         this.shardingInitOptionBuilder = new ShardingInitOptionBuilder();
+    }
+
+    public EasyQueryOption getEasyQueryOption() {
+        return easyQueryOption;
     }
 
     public EntityMetadata getEntityMetadata() {

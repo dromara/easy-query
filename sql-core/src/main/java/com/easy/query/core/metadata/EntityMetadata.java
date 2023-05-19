@@ -235,7 +235,7 @@ public class EntityMetadata {
         if (easyShardingInitializer == null) {
             throw new EasyQueryInvalidOperationException("not found sharding initializer:" + EasyClassUtil.getSimpleName(initializer));
         }
-        ShardingEntityBuilder<Object> shardingInitializerBuilder = new ShardingEntityBuilder<Object>(this);
+        ShardingEntityBuilder<Object> shardingInitializerBuilder = new ShardingEntityBuilder<Object>(this,configuration.getEasyQueryOption());
         easyShardingInitializer.initialize(shardingInitializerBuilder);
         ShardingInitOption shardingInitOption = shardingInitializerBuilder.build();
         Map<String, Collection<String>> initializeTables = shardingInitOption.getActualTableNames();

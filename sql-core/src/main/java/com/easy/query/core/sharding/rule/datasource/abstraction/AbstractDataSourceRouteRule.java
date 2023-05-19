@@ -2,6 +2,7 @@ package com.easy.query.core.sharding.rule.datasource.abstraction;
 
 import com.easy.query.core.expression.lambda.RouteFunction;
 import com.easy.query.core.enums.sharding.ShardingOperatorEnum;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.sharding.rule.datasource.DataSourceRouteRule;
 
 import java.lang.reflect.ParameterizedType;
@@ -24,14 +25,14 @@ public abstract class AbstractDataSourceRouteRule<T> implements DataSourceRouteR
         return clazz;
     }
     @Override
-    public RouteFunction<String> routeFilter(Object shardingValue, ShardingOperatorEnum shardingOperator, String propertyName, boolean isMainShardingProperty, boolean withEntity) {
+    public RouteFunction<String> routeFilter(TableAvailable table, Object shardingValue, ShardingOperatorEnum shardingOperator, String propertyName, boolean isMainShardingProperty, boolean withEntity) {
         if(isMainShardingProperty){
-            return getRouteFilter(shardingValue,shardingOperator,withEntity);
+            return getRouteFilter(table,shardingValue,shardingOperator,withEntity);
         }
-        return getExtraRouteFilter(shardingValue,shardingOperator,propertyName);
+        return getExtraRouteFilter(table,shardingValue,shardingOperator,propertyName);
     }
-    protected abstract RouteFunction<String> getRouteFilter(Object shardingValue,ShardingOperatorEnum shardingOperator,boolean withEntity);
-    protected RouteFunction<String> getExtraRouteFilter(Object shardingValue,ShardingOperatorEnum shardingOperator,String propertyName){
+    protected abstract RouteFunction<String> getRouteFilter(TableAvailable table,Object shardingValue,ShardingOperatorEnum shardingOperator,boolean withEntity);
+    protected RouteFunction<String> getExtraRouteFilter(TableAvailable table,Object shardingValue,ShardingOperatorEnum shardingOperator,String propertyName){
         throw new UnsupportedOperationException(propertyName+" sharding route filter");
     }
 

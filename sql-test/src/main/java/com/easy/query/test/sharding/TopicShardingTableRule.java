@@ -2,6 +2,7 @@ package com.easy.query.test.sharding;
 
 import com.easy.query.core.expression.lambda.RouteFunction;
 import com.easy.query.core.enums.sharding.ShardingOperatorEnum;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.metadata.ActualTable;
 import com.easy.query.core.sharding.rule.table.abstraction.AbstractTableRouteRule;
 import com.easy.query.test.entity.TopicSharding;
@@ -15,9 +16,9 @@ import com.easy.query.test.entity.TopicSharding;
 public class TopicShardingTableRule extends AbstractTableRouteRule<TopicSharding> {
 
     @Override
-    protected RouteFunction<ActualTable> getRouteFilter(Object shardingValue, ShardingOperatorEnum shardingOperator, boolean withEntity) {
+    protected RouteFunction<ActualTable> getRouteFilter(TableAvailable table, Object shardingValue, ShardingOperatorEnum shardingOperator, boolean withEntity) {
         String tail = String.valueOf(shardingValue.toString().hashCode() % 3);
-        String actualTableName = "t_topic_sharding_" + tail;
+        String actualTableName = table.getTableName()+"_" + tail;
         switch (shardingOperator){
             case EQUAL:return t->  actualTableName.compareToIgnoreCase(t.getActualTableName())==0;
             default:return t->true;

@@ -4,17 +4,17 @@ import com.easy.query.core.enums.sharding.ShardingOperatorEnum;
 import com.easy.query.core.expression.lambda.RouteFunction;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.sharding.rule.datasource.abstraction.AbstractDataSourceRouteRule;
-import com.easy.query.test.entity.TopicShardingDataSourceTime;
+import com.easy.query.test.entity.TopicShardingDataSource;
 
 import java.time.LocalDateTime;
 
 /**
- * create time 2023/5/11 22:15
+ * create time 2023/5/19 13:50
  * 文件说明
  *
  * @author xuejiaming
  */
-public class TopicShardingDataSourceTimeDataSourceRule extends AbstractDataSourceRouteRule<TopicShardingDataSourceTime> {
+public class TopicShardingDataSourceRule extends AbstractDataSourceRouteRule<TopicShardingDataSource> {
     @Override
     protected RouteFunction<String> getRouteFilter(TableAvailable table, Object shardingValue, ShardingOperatorEnum shardingOperator, boolean withEntity) {
         LocalDateTime createTime = (LocalDateTime) shardingValue;

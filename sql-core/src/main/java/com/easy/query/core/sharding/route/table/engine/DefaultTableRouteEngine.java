@@ -13,12 +13,14 @@ import com.easy.query.core.sharding.route.descriptor.RouteDescriptor;
 import com.easy.query.core.sharding.route.descriptor.RouteDescriptorFactory;
 import com.easy.query.core.sharding.route.manager.TableRouteManager;
 import com.easy.query.core.sharding.route.datasource.engine.DataSourceRouteResult;
+import com.easy.query.core.sharding.route.table.BaseTableRouteUnit;
 import com.easy.query.core.sharding.route.table.TableRouteUnit;
 import com.easy.query.core.sharding.route.table.TableUnit;
 import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -103,7 +105,13 @@ public class DefaultTableRouteEngine implements TableRouteEngine {
                 }
 
             } else if (onlyShardingDataSource) {
-                throw new EasyQueryInvalidOperationException("123123");
+                ArrayList<TableRouteUnit> tableRouteUnits = new ArrayList<>(shardingTables.size());
+                for (TableAvailable shardingTable : shardingTables) {
+                    BaseTableRouteUnit baseTableRouteUnit = new BaseTableRouteUnit(dataSourceName, shardingTable.getTableName(), shardingTable);
+                    tableRouteUnits.add(baseTableRouteUnit);
+                }
+                RouteUnit routeUnit = new RouteUnit(dataSourceName, tableRouteUnits);
+                routeUnits.add(routeUnit);
 //                List<RouteMapper> routeMappers = ArrayUtil.select(shardingEntities, (o, i) -> {
 //                    EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(o);
 //                    return new RouteMapper(o,entityMetadata.getTableName(), entityMetadata.getTableName());
