@@ -3,7 +3,7 @@ package com.easy.query.core.basic.api.update.abstraction;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.basic.api.internal.AbstractSQLExecuteRows;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
-import com.easy.query.core.basic.jdbc.parameter.SQLParameterCollector;
+import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.enums.SQLPredicateCompareEnum;
@@ -48,7 +48,7 @@ public abstract class AbstractExpressionUpdatable<T> extends AbstractSQLExecuteR
 
          entityMetadata = this.entityUpdateExpressionBuilder.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(clazz);
         entityMetadata.checkTable();
-        EntityTableExpressionBuilder table = new TableExpressionBuilder(entityMetadata, 0, null, MultiTableTypeEnum.FROM,this.entityUpdateExpressionBuilder.getRuntimeContext());
+        EntityTableExpressionBuilder table = new TableExpressionBuilder(entityMetadata, 0, null, MultiTableTypeEnum.NONE,this.entityUpdateExpressionBuilder.getRuntimeContext());
         this.entityUpdateExpressionBuilder.addSQLEntityTableExpression(table);
         sqlColumnSetter = new DefaultSQLColumnSetter<>(0, entityUpdateExpressionBuilder, entityUpdateExpressionBuilder.getSetColumns());
     }
@@ -131,7 +131,7 @@ public abstract class AbstractExpressionUpdatable<T> extends AbstractSQLExecuteR
         return this;
     }
     @Override
-    public String toSQL(SQLParameterCollector sqlParameterCollector){
+    public String toSQL(ToSQLContext sqlParameterCollector){
         return entityUpdateExpressionBuilder.toExpression().toSQL(sqlParameterCollector);
     }
 }

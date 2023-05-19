@@ -2,7 +2,7 @@ package com.easy.query.core.expression.segment;
 
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.PropertySQLParameter;
-import com.easy.query.core.basic.jdbc.parameter.SQLParameterCollector;
+import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.core.util.EasySQLExpressionUtil;
@@ -33,7 +33,7 @@ public class ColumnInsertSegment implements SQLEntityAliasSegment {
     }
 
     @Override
-    public String toSQL(SQLParameterCollector sqlParameterCollector) {
+    public String toSQL(ToSQLContext sqlParameterCollector) {
         EasySQLUtil.addParameter(sqlParameterCollector,new PropertySQLParameter(table,propertyName));
         String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumn(runtimeContext,table,propertyName);
         StringBuilder sql = new StringBuilder();

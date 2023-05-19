@@ -50,4 +50,12 @@ public interface ExpressionContext {
     Integer getMaxShardingQueryLimitOrNull();
     void setConnectionMode(ConnectionModeEnum connectionMode);
     ConnectionModeEnum getConnectionModeOrNull();
+
+    /**
+     * 设置当前为sharding需要解析
+     * 可以对非sharding的表达式进行优化不需要判断
+     */
+    void useSharding();
+    boolean isSharding();
+    void extract(ExpressionContext otherExpressionContext);
 }

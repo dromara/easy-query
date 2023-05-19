@@ -4,10 +4,13 @@ import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.executor.parser.PrepareParseResult;
 import com.easy.query.core.expression.executor.parser.QueryPrepareParseResult;
 import com.easy.query.core.expression.executor.parser.SequenceParseResult;
+import com.easy.query.core.expression.executor.parser.descriptor.TableParseDescriptor;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.sharding.route.RouteUnit;
 import com.easy.query.core.sharding.route.ShardingRouteResult;
+import com.easy.query.core.sharding.route.descriptor.RouteDescriptor;
+import com.easy.query.core.sharding.route.descriptor.RouteDescriptorFactory;
 import com.easy.query.core.sharding.route.manager.TableRouteManager;
 import com.easy.query.core.sharding.route.datasource.engine.DataSourceRouteResult;
 import com.easy.query.core.sharding.route.table.TableRouteUnit;
@@ -32,17 +35,19 @@ import java.util.stream.Collectors;
  */
 public class DefaultTableRouteEngine implements TableRouteEngine {
     private final TableRouteManager tableRouteManager;
+    private final RouteDescriptorFactory routeDescriptorFactory;
 
-    public DefaultTableRouteEngine(TableRouteManager tableRouteManager) {
+    public DefaultTableRouteEngine(TableRouteManager tableRouteManager, RouteDescriptorFactory routeDescriptorFactory) {
 
         this.tableRouteManager = tableRouteManager;
+        this.routeDescriptorFactory = routeDescriptorFactory;
     }
 
     @Override
     public ShardingRouteResult route(TableRouteContext tableRouteContext) {
         Map<String/*data source*/, Map<Class<?>/*entity class*/, Set<TableRouteUnit>>> routeMaps = new HashMap<>();
-        PrepareParseResult prepareParseResult = tableRouteContext.getPrepareParseResult();
-        Set<TableAvailable> shardingTables = prepareParseResult.getShardingTables();
+        TableParseDescriptor tableParseDescriptor = tableRouteContext.getTableParseDescriptor();
+        Set<TableAvailable> shardingTables = tableParseDescriptor.getTables();
         int tableRouteUnitSize = 0;
         boolean onlyShardingDataSource = true;
         for (TableAvailable shardingTable : shardingTables) {
@@ -51,7 +56,8 @@ public class DefaultTableRouteEngine implements TableRouteEngine {
                 continue;
             }
             onlyShardingDataSource = false;
-            Collection<TableRouteUnit> shardingRouteUnits = getEntityRouteUnit(tableRouteContext.getDataSourceRouteResult(), shardingTable, prepareParseResult);
+            RouteDescriptor routeDescriptor = routeDescriptorFactory.createRouteDescriptor(shardingTable, tableParseDescriptor);
+            Collection<TableRouteUnit> shardingRouteUnits = getEntityRouteUnit(tableRouteContext.getDataSourceRouteResult(), routeDescriptor);
             for (TableRouteUnit shardingRouteUnit : shardingRouteUnits) {
 //                if (Objects.equals(shardingRouteUnit.getLogicTableName(),shardingRouteUnit.getActualTableName())) {
 //                    continue;
@@ -97,7 +103,7 @@ public class DefaultTableRouteEngine implements TableRouteEngine {
                 }
 
             } else if (onlyShardingDataSource) {
-                throw new EasyQueryInvalidOperationException("");
+                throw new EasyQueryInvalidOperationException("123123");
 //                List<RouteMapper> routeMappers = ArrayUtil.select(shardingEntities, (o, i) -> {
 //                    EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(o);
 //                    return new RouteMapper(o,entityMetadata.getTableName(), entityMetadata.getTableName());
@@ -107,27 +113,23 @@ public class DefaultTableRouteEngine implements TableRouteEngine {
 
         }
         boolean sequenceQuery = false;
-        if (prepareParseResult instanceof QueryPrepareParseResult) {
-            QueryPrepareParseResult queryPrepareParseResult = (QueryPrepareParseResult) prepareParseResult;
-
+        SequenceParseResult sequenceOrderPrepareParseResult = tableRouteContext.getSequenceParseResult();
+        if (sequenceOrderPrepareParseResult != null) {
 
             //先进行顺序重排,可以让按顺序执行的提高性能,比如按时间分片,并且是时间倒序,那么重排后可以减少很多查询
-            SequenceParseResult sequenceOrderPrepareParseResult = queryPrepareParseResult.getSequenceParseResult();
-            if (sequenceOrderPrepareParseResult != null) {
-                TableAvailable table = sequenceOrderPrepareParseResult.getTable();
-                if (EasyCollectionUtil.isNotEmpty(routeUnits)) {
-                    RouteUnit first = EasyCollectionUtil.first(routeUnits);
-                    int i = getCompareRouteUnitIndex(first, table);
-                    if (i >= 0) {
-                        Comparator<TableUnit> tableComparator = sequenceOrderPrepareParseResult.getTableComparator();
-                        int compareFactor = sequenceOrderPrepareParseResult.isReverse() ? -1 : 1;
-                        routeUnits.sort((c1, c2) -> {
-                            TableRouteUnit tableRouteUnit1 = c1.getTableRouteUnits().get(i);
-                            TableRouteUnit tableRouteUnit2 = c2.getTableRouteUnits().get(i);
-                            return compareFactor*tableComparator.compare(tableRouteUnit1,tableRouteUnit2);
-                        });
-                        sequenceQuery = true;
-                    }
+            TableAvailable table = sequenceOrderPrepareParseResult.getTable();
+            if (EasyCollectionUtil.isNotEmpty(routeUnits)) {
+                RouteUnit first = EasyCollectionUtil.first(routeUnits);
+                int i = getCompareRouteUnitIndex(first, table);
+                if (i >= 0) {
+                    Comparator<TableUnit> tableComparator = sequenceOrderPrepareParseResult.getTableComparator();
+                    int compareFactor = sequenceOrderPrepareParseResult.isReverse() ? -1 : 1;
+                    routeUnits.sort((c1, c2) -> {
+                        TableRouteUnit tableRouteUnit1 = c1.getTableRouteUnits().get(i);
+                        TableRouteUnit tableRouteUnit2 = c2.getTableRouteUnits().get(i);
+                        return compareFactor * tableComparator.compare(tableRouteUnit1, tableRouteUnit2);
+                    });
+                    sequenceQuery = true;
                 }
             }
         }
@@ -147,14 +149,14 @@ public class DefaultTableRouteEngine implements TableRouteEngine {
         int i = -1;
         for (TableRouteUnit tableRouteUnit : routeUnit.getTableRouteUnits()) {
             i++;
-            if (tableRouteUnit.getTableIndex() == table.getIndex()) {
+            if (tableRouteUnit.getTable().getIndex() == table.getIndex()) {
                 return i;
             }
         }
         return -1;
     }
 
-    private Collection<TableRouteUnit> getEntityRouteUnit(DataSourceRouteResult dataSourceRouteResult, TableAvailable table, PrepareParseResult prepareParseResult) {
-        return tableRouteManager.routeTo(table, dataSourceRouteResult, prepareParseResult);
+    private Collection<TableRouteUnit> getEntityRouteUnit(DataSourceRouteResult dataSourceRouteResult, RouteDescriptor routeDescriptor) {
+        return tableRouteManager.routeTo(dataSourceRouteResult, routeDescriptor);
     }
 }

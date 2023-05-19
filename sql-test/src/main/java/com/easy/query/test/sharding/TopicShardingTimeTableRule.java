@@ -54,6 +54,9 @@ public class TopicShardingTimeTableRule extends AbstractTableRouteRule<TopicShar
 
     private RouteFunction<ActualTable> getIdRouteFilter(Object shardingValue, ShardingOperatorEnum shardingOperator) {
         String id = shardingValue.toString();
+        if(id.length()<=6){
+            return t->true;
+        }
         String month = id.substring(id.length() - 6);
         String tableName = "t_topic_sharding_time_" + month;
         switch (shardingOperator) {

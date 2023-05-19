@@ -1,5 +1,7 @@
 package com.easy.query.core.sharding.route.table;
 
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
+
 /**
  * create time 2023/4/25 14:51
  * 文件说明
@@ -9,21 +11,24 @@ package com.easy.query.core.sharding.route.table;
 public class BaseTableRouteUnit implements TableRouteUnit{
     private final String dataSource;
     private final String logicTableName;
+    private final TableAvailable table;
     private final String actualTableName;
-    private final Class<?> entityClass;
-    private final int tableIndex;
 
-    public BaseTableRouteUnit(String dataSource, String logicTableName, String actualTableName, Class<?> entityClass,int tableIndex){
+    public BaseTableRouteUnit(String dataSource, String actualTableName, TableAvailable table){
 
         this.dataSource = dataSource;
-        this.logicTableName = logicTableName;
         this.actualTableName = actualTableName;
-        this.entityClass = entityClass;
-        this.tableIndex = tableIndex;
+        this.logicTableName = table.getTableName();
+        this.table = table;
     }
 
     public String getDataSourceName() {
         return dataSource;
+    }
+
+    @Override
+    public TableAvailable getTable() {
+        return table;
     }
 
     public String getLogicTableName() {
@@ -34,10 +39,4 @@ public class BaseTableRouteUnit implements TableRouteUnit{
         return actualTableName;
     }
 
-    public Class<?> getEntityClass() {
-        return entityClass;
-    }
-    public int getTableIndex(){
-        return tableIndex;
-    }
 }

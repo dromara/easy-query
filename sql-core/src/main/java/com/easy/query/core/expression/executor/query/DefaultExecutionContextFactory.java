@@ -51,7 +51,7 @@ public class DefaultExecutionContextFactory implements ExecutionContextFactory {
     public ExecutionContext createEntityExecutionContext(PrepareParseResult prepareParseResult) {
 //        NativeSqlQueryCompilerContext nativeSqlQueryCompilerContext = new NativeSqlQueryCompilerContext(prepareParseResult);
         //无需分片的情况下
-        if(EasyCollectionUtil.isEmpty(prepareParseResult.getShardingTables())){
+        if(!prepareParseResult.isSharding()){
             if(prepareParseResult instanceof PredicatePrepareParseResult){
                 return new PredicateExecutionCreator(easyDataSource.getDefaultDataSourceName(), prepareParseResult.getEntityExpressionBuilder().toExpression()).create();
             }

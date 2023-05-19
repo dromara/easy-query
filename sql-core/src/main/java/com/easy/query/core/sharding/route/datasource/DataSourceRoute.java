@@ -1,7 +1,9 @@
 package com.easy.query.core.sharding.route.datasource;
 
 import com.easy.query.core.expression.executor.parser.PrepareParseResult;
+import com.easy.query.core.expression.executor.parser.descriptor.TableParseDescriptor;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.sharding.route.descriptor.RouteDescriptor;
 import com.easy.query.core.sharding.rule.datasource.DataSourceRouteRule;
 
 import java.util.Collection;
@@ -13,5 +15,5 @@ import java.util.Collection;
  * @author xuejiaming
  */
 public interface DataSourceRoute {
-    <T> Collection<String> route(DataSourceRouteRule<T> dataSourceRouteRule, TableAvailable table, PrepareParseResult prepareParseResult);
+    <T> Collection<String> route(DataSourceRouteRule<T> dataSourceRouteRule, RouteDescriptor routeDescriptor);
 }

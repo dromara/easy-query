@@ -1,6 +1,6 @@
 package com.easy.query.core.expression.segment.builder;
 
-import com.easy.query.core.basic.jdbc.parameter.SQLParameterCollector;
+import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.enums.SQLKeywordEnum;
 import com.easy.query.core.expression.segment.AggregationColumnSegment;
 import com.easy.query.core.expression.segment.SQLSegment;
@@ -17,7 +17,7 @@ public class ProjectSQLBuilderSegmentImpl extends AbstractSQLBuilderSegment impl
 
     private boolean projectHasAggregate=false;
     @Override
-    public String toSQL(SQLParameterCollector sqlParameterCollector) {
+    public String toSQL(ToSQLContext sqlParameterCollector) {
         StringBuilder sb = new StringBuilder();
         List<SQLSegment> sqlSegments = getSQLSegments();
         if (!sqlSegments.isEmpty()) {

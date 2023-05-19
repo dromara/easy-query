@@ -7,7 +7,7 @@ import com.easy.query.core.basic.api.internal.Interceptable;
 import com.easy.query.core.basic.api.internal.LogicDeletable;
 import com.easy.query.core.basic.api.internal.TableReNameable;
 import com.easy.query.core.basic.api.select.provider.EasyQuerySQLBuilderProvider;
-import com.easy.query.core.basic.jdbc.parameter.SQLParameterCollector;
+import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
 import com.easy.query.core.exception.EasyQueryWhereInvalidOperationException;
 import com.easy.query.core.expression.lambda.Property;
@@ -181,7 +181,7 @@ public interface Queryable<T1> extends Query<T1>, Interceptable<Queryable<T1>>, 
         return toSQL(queryClass());
     }
 
-    default String toSQL(SQLParameterCollector sqlParameterCollector) {
+    default String toSQL(ToSQLContext sqlParameterCollector) {
         return toSQL(queryClass(), sqlParameterCollector);
     }
 
@@ -196,7 +196,7 @@ public interface Queryable<T1> extends Query<T1>, Interceptable<Queryable<T1>>, 
         return toSQL(resultClass, null);
     }
 
-    <TR> String toSQL(Class<TR> resultClass, SQLParameterCollector sqlParameterCollector);
+    <TR> String toSQL(Class<TR> resultClass, ToSQLContext sqlParameterCollector);
 
     /**
      * 对当前表达式返回自定义select列

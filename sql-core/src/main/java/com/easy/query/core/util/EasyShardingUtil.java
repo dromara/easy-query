@@ -36,6 +36,7 @@ import com.easy.query.core.sharding.route.RouteContext;
 import com.easy.query.core.sharding.route.RoutePredicateDiscover;
 import com.easy.query.core.sharding.route.RoutePredicateExpression;
 import com.easy.query.core.sharding.route.RouteUnit;
+import com.easy.query.core.sharding.route.descriptor.RouteDescriptor;
 import com.easy.query.core.sharding.rule.RouteRuleFilter;
 
 import java.util.ArrayList;
@@ -50,10 +51,10 @@ import java.util.Objects;
  */
 public class EasyShardingUtil {
 
-    public static <T> RoutePredicateExpression<T> getRoutePredicateExpression(PrepareParseResult prepareParseResult, TableAvailable table,
-                                                                       RouteRuleFilter<T> routeRuleFilter, boolean shardingTableRoute) {
+    public static <T> RoutePredicateExpression<T> getRoutePredicateExpression(RouteDescriptor routeDescriptor,
+                                                                              RouteRuleFilter<T> routeRuleFilter, boolean shardingTableRoute) {
 
-        RoutePredicateDiscover<T> routePredicateDiscover = new RoutePredicateDiscover<T>(prepareParseResult, table, routeRuleFilter, shardingTableRoute);
+        RoutePredicateDiscover<T> routePredicateDiscover = new RoutePredicateDiscover<T>(routeDescriptor, routeRuleFilter, shardingTableRoute);
         return routePredicateDiscover.getRouteParseExpression();
     }
 
@@ -317,7 +318,7 @@ public class EasyShardingUtil {
 
         int mergeBehavior = MergeBehaviorEnum.DEFAULT.getCode();
         ExecutorContext executorContext = prepareParseResult.getExecutorContext();
-        if (executorContext.isQuery() && EasyCollectionUtil.isNotEmpty(prepareParseResult.getShardingTables())) {
+        if (executorContext.isQuery() && EasyCollectionUtil.isNotEmpty(prepareParseResult.getTableParseDescriptor().getTables())) {
             QueryPrepareParseResult queryPrepareParseResult = (QueryPrepareParseResult) prepareParseResult;
             EntityQuerySQLExpression easyQuerySQLExpression = (EntityQuerySQLExpression) easyEntitySQLExpression;
             switch (executorContext.getExecuteMethod()) {

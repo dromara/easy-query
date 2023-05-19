@@ -5,6 +5,7 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.metadata.ActualTable;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.sharding.route.datasource.engine.DataSourceRouteResult;
+import com.easy.query.core.sharding.route.descriptor.RouteDescriptor;
 import com.easy.query.core.sharding.route.table.TableRoute;
 import com.easy.query.core.sharding.route.table.TableRouteUnit;
 import com.easy.query.core.sharding.rule.table.TableRouteRule;
@@ -21,14 +22,15 @@ public abstract class AbstractTableRoute implements TableRoute {
 
 
     @Override
-    public <T> Collection<TableRouteUnit> route(TableRouteRule<T> tableRouteRule, DataSourceRouteResult dataSourceRouteResult, TableAvailable table, PrepareParseResult prepareParseResult) {
+    public <T> Collection<TableRouteUnit> route(TableRouteRule<T> tableRouteRule, DataSourceRouteResult dataSourceRouteResult, RouteDescriptor routeDescriptor) {
+        TableAvailable table = routeDescriptor.getTable();
         EntityMetadata entityMetadata = table.getEntityMetadata();
         Collection<ActualTable> actualTables = entityMetadata.getActualTables();
         Collection<ActualTable> beforeFilterTableNames = tableRouteRule.beforeFilterTableName(actualTables);
-        Collection<TableRouteUnit> tableRouteUnits = route0(tableRouteRule,table,dataSourceRouteResult, beforeFilterTableNames, prepareParseResult);
+        Collection<TableRouteUnit> tableRouteUnits = route0(tableRouteRule,dataSourceRouteResult, beforeFilterTableNames, routeDescriptor);
         return  tableRouteRule.afterFilterTableName(actualTables,beforeFilterTableNames,tableRouteUnits);
 
     }
-    public abstract <T> Collection<TableRouteUnit> route0(TableRouteRule<T> tableRouteRule, TableAvailable table, DataSourceRouteResult dataSourceRouteResult, Collection<ActualTable> beforeTableNames, PrepareParseResult prepareParseResult);
+    public abstract <T> Collection<TableRouteUnit> route0(TableRouteRule<T> tableRouteRule, DataSourceRouteResult dataSourceRouteResult, Collection<ActualTable> beforeTableNames, RouteDescriptor routeDescriptor);
 
 }

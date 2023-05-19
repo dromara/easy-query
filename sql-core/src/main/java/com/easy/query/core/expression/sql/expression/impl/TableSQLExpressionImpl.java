@@ -1,7 +1,7 @@
 package com.easy.query.core.expression.sql.expression.impl;
 
 import com.easy.query.core.context.QueryRuntimeContext;
-import com.easy.query.core.basic.jdbc.parameter.SQLParameterCollector;
+import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.configuration.dialect.Dialect;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.exception.EasyQueryException;
@@ -80,8 +80,10 @@ public class TableSQLExpressionImpl implements EntityTableSQLExpression {
             return " INNER JOIN ";
         } else if (MultiTableTypeEnum.RIGHT_JOIN.equals(multiTableType)) {
             return " RIGHT JOIN ";
+        } else if(MultiTableTypeEnum.FROM.equals(multiTableType)){
+            return " FROM ";
         }
-        return " FROM ";
+        return EasyStringUtil.EMPTY;
     }
     @Override
     public String getTableName() {
@@ -104,8 +106,9 @@ public class TableSQLExpressionImpl implements EntityTableSQLExpression {
     }
 
     @Override
-    public String toSQL(SQLParameterCollector sqlParameterCollector) {
-        EasySQLExpressionUtil.expressionInvokeRoot(sqlParameterCollector);
+    public String toSQL(ToSQLContext toSQLContext) {
+        EasySQLExpressionUtil.expressionInvokeRoot(toSQLContext);
+        EasySQLExpressionUtil.tableSQLExpressionRewrite(toSQLContext,this);
         //如果当前对象没有映射到表那么直接抛错
         StringBuilder sql = new StringBuilder();
 

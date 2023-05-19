@@ -1,18 +1,21 @@
 package com.easy.query.core.expression.executor.parser;
 
-import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
+import com.easy.query.core.expression.executor.parser.context.EntityParseContext;
+import com.easy.query.core.expression.executor.parser.context.InsertEntityParseContext;
+import com.easy.query.core.expression.executor.parser.context.PredicatePrepareParseContext;
+import com.easy.query.core.expression.executor.parser.context.PrepareParseContext;
+import com.easy.query.core.expression.executor.parser.context.QueryPredicateParseContext;
+import com.easy.query.core.expression.executor.parser.descriptor.TableEntityParseDescriptor;
+import com.easy.query.core.expression.executor.parser.descriptor.TablePredicateParseDescriptor;
+import com.easy.query.core.expression.executor.parser.descriptor.impl.DefaultEmptyTableParseDescriptorImpl;
+import com.easy.query.core.expression.executor.parser.descriptor.impl.TableEntityParseDescriptorImpl;
+import com.easy.query.core.expression.executor.parser.descriptor.impl.TablePredicateParseDescriptorImpl;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
-import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
-import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
-import com.easy.query.core.expression.sql.builder.EntityPredicateExpressionBuilder;
-import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
-import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.ExpressionContext;
+import com.easy.query.core.util.EasyParseUtil;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.HashMap;
 
 /**
  * create time 2023/4/9 22:20
@@ -21,66 +24,62 @@ import java.util.Set;
  * @author xuejiaming
  */
 public class DefaultEasyPrepareParser implements EasyPrepareParser {
-
-    private Set<TableAvailable> getShardingTable(EntityExpressionBuilder entityExpressionBuilder) {
-        Set<TableAvailable> shardingTables = new LinkedHashSet<>(entityExpressionBuilder.getTables().size());
-        for (EntityTableExpressionBuilder table : entityExpressionBuilder.getTables()) {
-            if(table instanceof AnonymousEntityTableExpressionBuilder){
-                getAnonymousTable((AnonymousEntityTableExpressionBuilder)table,shardingTables);
-            }else{
-                if (!table.tableNameIsAs() && table.getEntityMetadata().isSharding()) {
-                    shardingTables.add(table.getEntityTable());
-                }
-            }
+    private TablePredicateParseDescriptor parseQueryDescriptor(PredicatePrepareParseContext predicatePrepareParseContext){
+        ExpressionContext expressionContext = predicatePrepareParseContext.getEntityExpressionBuilder().getExpressionContext();
+        if(expressionContext.isSharding()){
+            TablePredicateParseDescriptor tablePredicateParseDescriptor = new TablePredicateParseDescriptorImpl(new HashMap<>());
+            EasyParseUtil.getTablePredicateParseDescriptor(predicatePrepareParseContext.getEntityPredicateSQLExpression(), tablePredicateParseDescriptor);
+            return tablePredicateParseDescriptor;
         }
-        return shardingTables;
+        return DefaultEmptyTableParseDescriptorImpl.INSTANCE;
     }
-    private void getAnonymousTable(AnonymousEntityTableExpressionBuilder anonymousEntityTableExpressionBuilder,Set<TableAvailable> shardingEntities){
-        EntityQueryExpressionBuilder entityQueryExpressionBuilder = anonymousEntityTableExpressionBuilder.getEntityQueryExpressionBuilder();
-        for (EntityTableExpressionBuilder table : entityQueryExpressionBuilder.getTables()) {
-            if(table instanceof  AnonymousEntityTableExpressionBuilder){
-                getAnonymousTable((AnonymousEntityTableExpressionBuilder)table,shardingEntities);
-            }else{
-                if (!table.tableNameIsAs() && table.getEntityMetadata().isSharding()) {
-                    shardingEntities.add(table.getEntityTable());
-                }
-            }
+    private TableEntityParseDescriptor parseEntityDescriptor(EntityParseContext entityPrepareParseContext){
+        ExpressionContext expressionContext = entityPrepareParseContext.getEntityExpressionBuilder().getExpressionContext();
+        if(expressionContext.isSharding()){
+            TableAvailable entityTable = entityPrepareParseContext.getEntityExpressionBuilder().getTable(0).getEntityTable();
+            return new TableEntityParseDescriptorImpl(entityTable, entityPrepareParseContext.getEntities());
         }
+        return DefaultEmptyTableParseDescriptorImpl.INSTANCE;
     }
-
     @Override
-    public PrepareParseResult parse(ExecutorContext executorContext, EntityExpressionBuilder entityExpressionBuilder, List<Object> entities, boolean fillAutoIncrement) {
-        Set<TableAvailable> shardingTables = getShardingTable(entityExpressionBuilder);
-        if (entityExpressionBuilder instanceof EntityQueryExpressionBuilder) {
-            return queryParseResult(executorContext,shardingTables, (EntityQueryExpressionBuilder) entityExpressionBuilder);
+    public PrepareParseResult parse(PrepareParseContext prepareParseContext) {
+        if (prepareParseContext instanceof QueryPredicateParseContext) {
+            QueryPredicateParseContext queryPredicatePrepareParseContext = (QueryPredicateParseContext) prepareParseContext;
+            TablePredicateParseDescriptor tablePredicateParseDescriptor = parseQueryDescriptor(queryPredicatePrepareParseContext);
+            return queryParseResult(queryPredicatePrepareParseContext, tablePredicateParseDescriptor);
         }
-        if (entityExpressionBuilder instanceof EntityInsertExpressionBuilder) {
-            return insertParseResult(executorContext,shardingTables, (EntityInsertExpressionBuilder) entityExpressionBuilder, entities, fillAutoIncrement);
+        if (prepareParseContext instanceof InsertEntityParseContext) {
+            InsertEntityParseContext insertEntityPrepareParseContext = (InsertEntityParseContext) prepareParseContext;
+            TableEntityParseDescriptor tableEntityParseDescriptor = parseEntityDescriptor(insertEntityPrepareParseContext);
+            return insertParseResult(insertEntityPrepareParseContext, tableEntityParseDescriptor);
         }
-        if (entities == null) {
-            if (entityExpressionBuilder instanceof EntityPredicateExpressionBuilder) {
-                return predicatePrepareParseResult(executorContext,shardingTables, (EntityPredicateExpressionBuilder) entityExpressionBuilder);
-            }
-        } if (entities != null) {
-            return entityParseResult(executorContext,shardingTables, entityExpressionBuilder, entities);
+        if (prepareParseContext instanceof EntityParseContext) {
+            EntityParseContext entityPrepareParseContext = (EntityParseContext) prepareParseContext;
+            TableEntityParseDescriptor tableEntityParseDescriptor = parseEntityDescriptor(entityPrepareParseContext);
+            return entityParseResult(entityPrepareParseContext, tableEntityParseDescriptor);
+        }
+        if (prepareParseContext instanceof PredicatePrepareParseContext) {
+            PredicatePrepareParseContext predicatePrepareParseContext = (PredicatePrepareParseContext) prepareParseContext;
+            TablePredicateParseDescriptor tablePredicateParseDescriptor = parseQueryDescriptor(predicatePrepareParseContext);
+            return predicatePrepareParseResult(predicatePrepareParseContext, tablePredicateParseDescriptor);
         }
         throw new NotImplementedException();
     }
 
-    private QueryPrepareParseResult queryParseResult(ExecutorContext executorContext,Set<TableAvailable> shardingEntities, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
-        return new EasyQueryPrepareParseResult(executorContext,shardingEntities, entityQueryExpressionBuilder);
+    private QueryPrepareParseResult queryParseResult(QueryPredicateParseContext queryPredicatePrepareParseContext, TablePredicateParseDescriptor tablePredicateParseDescriptor) {
+        return new EasyQueryPrepareParseResult(queryPredicatePrepareParseContext, tablePredicateParseDescriptor);
     }
 
-    private InsertPrepareParseResult insertParseResult(ExecutorContext executorContext,Set<TableAvailable> shardingTables, EntityInsertExpressionBuilder entityInsertExpressionBuilder, List<Object> entities, boolean fillAutoIncrement) {
-        return new EasyInsertPrepareParseResult(executorContext,shardingTables, entityInsertExpressionBuilder, entities, fillAutoIncrement);
+    private InsertPrepareParseResult insertParseResult(InsertEntityParseContext insertEntityPrepareParseContext, TableEntityParseDescriptor tableEntityParseDescriptor) {
+        return new EasyInsertPrepareParseResult(insertEntityPrepareParseContext, tableEntityParseDescriptor);
     }
 
-    private EntityPrepareParseResult entityParseResult(ExecutorContext executorContext,Set<TableAvailable> shardingTables, EntityExpressionBuilder entityExpressionBuilder, List<Object> entities) {
-        return new EasyEntityPrepareParseResult(executorContext,shardingTables, entityExpressionBuilder, entities);
+    private EntityPrepareParseResult entityParseResult(EntityParseContext entityPrepareParseContext, TableEntityParseDescriptor tableEntityParseDescriptor) {
+        return new EasyEntityPrepareParseResult(entityPrepareParseContext, tableEntityParseDescriptor);
     }
 
-    private EasyPredicatePrepareParseResult predicatePrepareParseResult(ExecutorContext executorContext,Set<TableAvailable> shardingTables, EntityPredicateExpressionBuilder entityPredicateExpressionBuilder) {
-        return new EasyPredicatePrepareParseResult(executorContext,shardingTables, entityPredicateExpressionBuilder);
+    private EasyPredicatePrepareParseResult predicatePrepareParseResult(PredicatePrepareParseContext predicatePrepareParseContext, TablePredicateParseDescriptor tablePredicateParseDescriptor) {
+        return new EasyPredicatePrepareParseResult(predicatePrepareParseContext, tablePredicateParseDescriptor);
     }
 
 

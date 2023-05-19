@@ -3,7 +3,7 @@ package com.easy.query.core.expression.segment.condition.predicate;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
-import com.easy.query.core.basic.jdbc.parameter.SQLParameterCollector;
+import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.enums.SQLPredicateCompareEnum;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
@@ -39,7 +39,7 @@ public class ColumnCollectionPredicate implements ValuesPredicate,ShardingPredic
     }
 
     @Override
-    public String toSQL(SQLParameterCollector sqlParameterCollector) {
+    public String toSQL(ToSQLContext sqlParameterCollector) {
         if (EasyCollectionUtil.isEmpty(collection)) {
             if (SQLPredicateCompareEnum.IN.equals(compare)) {
                 return "FALSE";

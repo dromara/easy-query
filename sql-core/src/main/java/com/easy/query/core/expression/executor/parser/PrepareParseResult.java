@@ -1,6 +1,7 @@
 package com.easy.query.core.expression.executor.parser;
 
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
+import com.easy.query.core.expression.executor.parser.descriptor.TableParseDescriptor;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 
@@ -15,7 +16,7 @@ import java.util.Set;
 public interface PrepareParseResult {
     boolean isSharding();
     ExecutorContext getExecutorContext();
-    Set<TableAvailable> getShardingTables();
+    TableParseDescriptor getTableParseDescriptor();
     EntityExpressionBuilder getEntityExpressionBuilder();
 
 }

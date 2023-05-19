@@ -6,7 +6,7 @@ import com.easy.query.core.sharding.manager.SequenceCountLine;
 import com.easy.query.core.sharding.manager.SequenceCountNode;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
-import com.easy.query.core.basic.jdbc.parameter.SQLParameterCollector;
+import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.basic.pagination.EasyPageResultProvider;
 import com.easy.query.core.common.bean.FastBean;
 import com.easy.query.core.enums.EasyBehaviorEnum;
@@ -273,7 +273,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     }
 
     @Override
-    public <TR> String toSQL(Class<TR> resultClass, SQLParameterCollector sqlParameterCollector) {
+    public <TR> String toSQL(Class<TR> resultClass, ToSQLContext sqlParameterCollector) {
         compensateSelect(resultClass);
         return entityQueryExpressionBuilder.toExpression().toSQL(sqlParameterCollector);
     }

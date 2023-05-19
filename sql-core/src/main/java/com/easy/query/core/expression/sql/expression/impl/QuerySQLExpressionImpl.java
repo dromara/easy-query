@@ -1,7 +1,7 @@
 package com.easy.query.core.expression.sql.expression.impl;
 
 import com.easy.query.core.context.QueryRuntimeContext;
-import com.easy.query.core.basic.jdbc.parameter.SQLParameterCollector;
+import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.expression.sql.expression.EntityQuerySQLExpression;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
@@ -143,7 +143,7 @@ public class QuerySQLExpressionImpl implements EntityQuerySQLExpression {
     }
 
     @Override
-    public String toSQL(SQLParameterCollector sqlParameterCollector) {
+    public String toSQL(ToSQLContext sqlParameterCollector) {
         boolean root = EasySQLExpressionUtil.expressionInvokeRoot(sqlParameterCollector);
         StringBuilder sql = new StringBuilder("SELECT ");
         if(this.distinct){

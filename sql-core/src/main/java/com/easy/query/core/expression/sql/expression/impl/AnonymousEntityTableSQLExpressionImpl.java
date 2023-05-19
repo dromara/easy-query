@@ -1,7 +1,7 @@
 package com.easy.query.core.expression.sql.expression.impl;
 
 import com.easy.query.core.context.QueryRuntimeContext;
-import com.easy.query.core.basic.jdbc.parameter.SQLParameterCollector;
+import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.sql.expression.AnonymousEntityTableSQLExpression;
@@ -32,7 +32,7 @@ public class AnonymousEntityTableSQLExpressionImpl extends TableSQLExpressionImp
     }
 
     @Override
-    public String toSQL(SQLParameterCollector sqlParameterCollector) {
+    public String toSQL(ToSQLContext sqlParameterCollector) {
         EasySQLExpressionUtil.expressionInvokeRoot(sqlParameterCollector);
 
         StringBuilder sql = new StringBuilder();
@@ -45,4 +45,8 @@ public class AnonymousEntityTableSQLExpressionImpl extends TableSQLExpressionImp
         return sql.toString();
     }
 
+    @Override
+    public EntityQuerySQLExpression getEntityQuerySQLExpression() {
+        return easyQuerySQLExpression;
+    }
 }

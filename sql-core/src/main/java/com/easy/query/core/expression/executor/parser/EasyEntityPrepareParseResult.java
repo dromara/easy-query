@@ -1,12 +1,13 @@
 package com.easy.query.core.expression.executor.parser;
 
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
-import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.executor.parser.context.EntityParseContext;
+import com.easy.query.core.expression.executor.parser.descriptor.TableEntityParseDescriptor;
+import com.easy.query.core.expression.executor.parser.descriptor.TableParseDescriptor;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * create time 2023/4/25 17:36
@@ -14,21 +15,21 @@ import java.util.Set;
  *
  * @author xuejiaming
  */
-public class EasyEntityPrepareParseResult implements EntityPrepareParseResult{
+public class EasyEntityPrepareParseResult implements EntityPrepareParseResult {
     private final ExecutorContext executorContext;
-    private final Set<TableAvailable> shardingTables;
+    private final TableEntityParseDescriptor tableEntityParseDescriptor;
     private final EntityExpressionBuilder entityExpressionBuilder;
     private final List<Object> entities;
     private final boolean sharding;
 
-    public EasyEntityPrepareParseResult(ExecutorContext executorContext, Set<TableAvailable> shardingTables, EntityExpressionBuilder entityExpressionBuilder, List<Object> entities){
-        this.executorContext = executorContext;
-
-        this.shardingTables = shardingTables;
-        this.entityExpressionBuilder = entityExpressionBuilder;
-        this.entities = entities;
-        this.sharding = EasyCollectionUtil.isNotEmpty(shardingTables);
+    public EasyEntityPrepareParseResult(EntityParseContext entityPrepareParseContext, TableEntityParseDescriptor tableEntityParseDescriptor) {
+        this.executorContext = entityPrepareParseContext.getExecutorContext();
+        this.tableEntityParseDescriptor = tableEntityParseDescriptor;
+        this.entityExpressionBuilder = entityPrepareParseContext.getEntityExpressionBuilder();
+        this.entities = entityPrepareParseContext.getEntities();
+        this.sharding = EasyCollectionUtil.isNotEmpty(tableEntityParseDescriptor.getTables());
     }
+
     @Override
     public List<Object> getEntities() {
         return entities;
@@ -45,8 +46,8 @@ public class EasyEntityPrepareParseResult implements EntityPrepareParseResult{
     }
 
     @Override
-    public Set<TableAvailable> getShardingTables() {
-        return shardingTables;
+    public TableEntityParseDescriptor getTableParseDescriptor() {
+        return tableEntityParseDescriptor;
     }
 
     @Override

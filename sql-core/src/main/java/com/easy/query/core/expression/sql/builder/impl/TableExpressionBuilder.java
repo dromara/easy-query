@@ -32,7 +32,6 @@ public class TableExpressionBuilder implements EntityTableExpressionBuilder {
     protected Function<String, String> tableNameAs;
     public TableExpressionBuilder(EntityMetadata entityMetadata, int index, String alias, MultiTableTypeEnum multiTableType, QueryRuntimeContext runtimeContext) {
         this(new EntityTableAvailable(index,entityMetadata,alias),multiTableType,runtimeContext);
-
     }
     public TableExpressionBuilder(TableAvailable entityTable, MultiTableTypeEnum multiTableType, QueryRuntimeContext runtimeContext) {
         this.entityTable = entityTable;

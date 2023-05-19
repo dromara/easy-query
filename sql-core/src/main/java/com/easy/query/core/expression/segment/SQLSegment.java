@@ -1,6 +1,6 @@
 package com.easy.query.core.expression.segment;
 
-import com.easy.query.core.basic.jdbc.parameter.SQLParameterCollector;
+import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 
 /**
  * @Description: 文件说明
@@ -8,5 +8,5 @@ import com.easy.query.core.basic.jdbc.parameter.SQLParameterCollector;
  * @author xuejiaming
  */
 public interface SQLSegment {
-    String toSQL(SQLParameterCollector sqlParameterCollector);
+    String toSQL(ToSQLContext sqlParameterCollector);
 }

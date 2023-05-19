@@ -1,10 +1,12 @@
 package com.easy.query.core.sharding.route.datasource.engine;
 
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
-import com.easy.query.core.expression.executor.parser.PrepareParseResult;
+import com.easy.query.core.expression.executor.parser.descriptor.TableParseDescriptor;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.sharding.EasyQueryDataSource;
+import com.easy.query.core.sharding.route.descriptor.RouteDescriptor;
+import com.easy.query.core.sharding.route.descriptor.RouteDescriptorFactory;
 import com.easy.query.core.sharding.route.manager.DataSourceRouteManager;
 import com.easy.query.core.util.EasyCollectionUtil;
 
@@ -23,27 +25,31 @@ import java.util.Set;
 public class DefaultDataSourceRouteEngine implements DataSourceRouteEngine{
     private final EasyQueryDataSource easyDataSource;
     private final DataSourceRouteManager dataSourceRouteManager;
+    private final RouteDescriptorFactory routeDescriptorFactory;
 
-    public DefaultDataSourceRouteEngine(EasyQueryDataSource easyDataSource,  DataSourceRouteManager dataSourceRouteManager){
+    public DefaultDataSourceRouteEngine(EasyQueryDataSource easyDataSource, DataSourceRouteManager dataSourceRouteManager, RouteDescriptorFactory routeDescriptorFactory){
 
         this.easyDataSource = easyDataSource;
         this.dataSourceRouteManager = dataSourceRouteManager;
+        this.routeDescriptorFactory = routeDescriptorFactory;
     }
     @Override
-    public DataSourceRouteResult route(PrepareParseResult prepareParseResult) {
-        Map<Class<?>, Set<String>> dataSourceMaps = new HashMap<>();
-        for (TableAvailable shardingTable : prepareParseResult.getShardingTables()) {
+    public DataSourceRouteResult route(TableParseDescriptor tableParseDescriptor) {
+        Map<TableAvailable, Set<String>> dataSourceMaps = new HashMap<>();
+        Set<TableAvailable> tables = tableParseDescriptor.getTables();
+        for (TableAvailable shardingTable : tables) {
             EntityMetadata entityMetadata = shardingTable.getEntityMetadata();
             if(!entityMetadata.isMultiDataSourceMapping()){
                 HashSet<String> defDataSource = new HashSet<String>() {{
                     add(easyDataSource.getDefaultDataSourceName());
                 }};
-                dataSourceMaps.put(shardingTable.getEntityClass(),defDataSource);
+                dataSourceMaps.put(shardingTable,defDataSource);
             }
-            Collection<String> dataSources = dataSourceRouteManager.routeTo(shardingTable,prepareParseResult);
-            Set<String> entityDataSources = dataSourceMaps.get(shardingTable.getEntityClass());
+            RouteDescriptor routeDescriptor = routeDescriptorFactory.createRouteDescriptor(shardingTable,tableParseDescriptor);
+            Collection<String> dataSources = dataSourceRouteManager.routeTo(routeDescriptor);
+            Set<String> entityDataSources = dataSourceMaps.get(shardingTable);
             if(entityDataSources==null){
-                dataSourceMaps.put(shardingTable.getEntityClass(),new HashSet<>(dataSources));
+                dataSourceMaps.put(shardingTable,new HashSet<>(dataSources));
             }else {
                 entityDataSources.addAll(dataSources);
             }
@@ -59,4 +65,5 @@ public class DefaultDataSourceRouteEngine implements DataSourceRouteEngine{
         Set<String> intersectDataSources = EasyCollectionUtil.getIntersection(dataSourceMaps.values());
         return new DataSourceRouteResult(intersectDataSources);
     }
+
 }

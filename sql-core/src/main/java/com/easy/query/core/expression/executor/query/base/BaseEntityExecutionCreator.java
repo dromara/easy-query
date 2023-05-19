@@ -52,7 +52,7 @@ public abstract class BaseEntityExecutionCreator extends BaseExecutionCreator{
         List<ExecutionUnit> routeExecutionUnits = new ArrayList<>(entities.size());
         for (Object entity : entities) {
             EntitySQLExpression expression = createEasySQLExpression(entity);
-            ExecutionUnit executionUnit = createExecutionUnit(dataSource,expression, Collections.singletonList(entity), getFillAutoIncrement());
+            ExecutionUnit executionUnit = createExecutionUnit(dataSource,expression, Collections.singletonList(entity), getFillAutoIncrement(),null);
             //开启追踪的情况下update可能没有可以更新的数据那么就不会生成sql
             if(EasyStringUtil.isNotBlank(executionUnit.getSQLRouteUnit().getSQLUnit().getSQL())){
                 routeExecutionUnits.add(executionUnit);
@@ -62,7 +62,7 @@ public abstract class BaseEntityExecutionCreator extends BaseExecutionCreator{
     }
     private List<ExecutionUnit> createMultiExecutionUnits() {
         EntitySQLExpression expression = entityExpressionBuilder.toExpression();
-        ExecutionUnit executionUnit = createExecutionUnit(dataSource,expression, entities, getFillAutoIncrement());
+        ExecutionUnit executionUnit = createExecutionUnit(dataSource,expression, entities, getFillAutoIncrement(),null);
         return Collections.singletonList(executionUnit);
     }
     protected abstract EntitySQLExpression createEasySQLExpression(Object entity);

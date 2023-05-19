@@ -1,6 +1,9 @@
 package com.easy.query.core.expression.executor.parser;
 
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
+import com.easy.query.core.expression.executor.parser.context.PredicatePrepareParseContext;
+import com.easy.query.core.expression.executor.parser.descriptor.TableParseDescriptor;
+import com.easy.query.core.expression.executor.parser.descriptor.TablePredicateParseDescriptor;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.sql.builder.EntityPredicateExpressionBuilder;
 import com.easy.query.core.expression.sql.expression.EntityPredicateSQLExpression;
@@ -16,19 +19,25 @@ import java.util.Set;
  */
 public class EasyPredicatePrepareParseResult implements PredicatePrepareParseResult{
     private final ExecutorContext executorContext;
-    private final Set<TableAvailable> shardingTables;
+    private final TablePredicateParseDescriptor tablePredicateParseDescriptor;
     private final EntityPredicateExpressionBuilder entityPredicateExpressionBuilder;
     private final EntityPredicateSQLExpression entityPredicateSQLExpression;
     private final boolean sharding;
 
-    public EasyPredicatePrepareParseResult(ExecutorContext executorContext,Set<TableAvailable> shardingTables, EntityPredicateExpressionBuilder entityPredicateExpressionBuilder){
-        this.executorContext = executorContext;
+    public EasyPredicatePrepareParseResult(PredicatePrepareParseContext predicatePrepareParseContext, TablePredicateParseDescriptor tablePredicateParseDescriptor){
+        this.executorContext = predicatePrepareParseContext.getExecutorContext();
+        this.tablePredicateParseDescriptor = tablePredicateParseDescriptor;
 
-        this.shardingTables = shardingTables;
-        this.entityPredicateExpressionBuilder = entityPredicateExpressionBuilder;
+        this.entityPredicateExpressionBuilder = predicatePrepareParseContext.getEntityExpressionBuilder();
         this.entityPredicateSQLExpression = entityPredicateExpressionBuilder.toExpression();
-        this.sharding = EasyCollectionUtil.isNotEmpty(shardingTables);
+        this.sharding = EasyCollectionUtil.isNotEmpty(tablePredicateParseDescriptor.getTables());
     }
+
+    @Override
+    public TablePredicateParseDescriptor getTablePredicateParseDescriptor() {
+        return tablePredicateParseDescriptor;
+    }
+
     @Override
     public EntityPredicateSQLExpression getEntityPredicateSQLExpression() {
         return entityPredicateSQLExpression;
@@ -45,8 +54,8 @@ public class EasyPredicatePrepareParseResult implements PredicatePrepareParseRes
     }
 
     @Override
-    public Set<TableAvailable> getShardingTables() {
-        return shardingTables;
+    public TableParseDescriptor getTableParseDescriptor() {
+        return tablePredicateParseDescriptor;
     }
 
     @Override

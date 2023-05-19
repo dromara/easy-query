@@ -1,5 +1,7 @@
 package com.easy.query.core.expression.executor.parser;
 
+import com.easy.query.core.expression.executor.parser.descriptor.TableEntityParseDescriptor;
+import com.easy.query.core.expression.executor.parser.descriptor.TableParseDescriptor;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 
@@ -16,4 +18,7 @@ public interface EntityPrepareParseResult extends PrepareParseResult{
 
     @Override
     EntityExpressionBuilder getEntityExpressionBuilder();
+
+    @Override
+    TableEntityParseDescriptor getTableParseDescriptor();
 }

@@ -2,7 +2,7 @@ package com.easy.query.core.basic.api.delete.abstraction;
 
 import com.easy.query.core.basic.api.internal.AbstractSQLExecuteRows;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
-import com.easy.query.core.basic.jdbc.parameter.SQLParameterCollector;
+import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.expression.parser.core.SQLWherePredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnValuePredicate;
@@ -43,7 +43,7 @@ public abstract   class AbstractExpressionDeletable<T> extends AbstractSQLExecut
         this.clazz = clazz;
         EntityMetadata entityMetadata = this.entityDeleteExpressionBuilder.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(clazz);
         entityMetadata.checkTable();
-        table = new TableExpressionBuilder(entityMetadata,  0,null, MultiTableTypeEnum.FROM,entityDeleteExpressionBuilder.getRuntimeContext());
+        table = new TableExpressionBuilder(entityMetadata,  0,null, MultiTableTypeEnum.NONE,entityDeleteExpressionBuilder.getRuntimeContext());
         this.entityDeleteExpressionBuilder.addSQLEntityTableExpression(table);
     }
 
@@ -120,7 +120,7 @@ public abstract   class AbstractExpressionDeletable<T> extends AbstractSQLExecut
     public String toSQL() {
         return toSQLWithParam(null);
     }
-    private String toSQLWithParam(SQLParameterCollector sqlParameterCollector){
+    private String toSQLWithParam(ToSQLContext sqlParameterCollector){
         return entityDeleteExpressionBuilder.toExpression().toSQL(sqlParameterCollector);
     }
 }

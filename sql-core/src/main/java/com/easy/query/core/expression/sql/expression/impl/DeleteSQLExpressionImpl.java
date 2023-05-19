@@ -1,7 +1,7 @@
 package com.easy.query.core.expression.sql.expression.impl;
 
 import com.easy.query.core.context.QueryRuntimeContext;
-import com.easy.query.core.basic.jdbc.parameter.SQLParameterCollector;
+import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.expression.sql.expression.EntityDeleteSQLExpression;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
@@ -49,16 +49,16 @@ public  class DeleteSQLExpressionImpl implements EntityDeleteSQLExpression {
 
 
     @Override
-    public String toSQL(SQLParameterCollector sqlParameterCollector) {
+    public String toSQL(ToSQLContext toSQLContext) {
         
-        EasySQLExpressionUtil.expressionInvokeRoot(sqlParameterCollector);
+        EasySQLExpressionUtil.expressionInvokeRoot(toSQLContext);
         EntityTableSQLExpression easyTableSQLExpression = tables.get(0);
-        String tableName = easyTableSQLExpression.getTableName();
+        String tableName = easyTableSQLExpression.toSQL(toSQLContext);
 
         StringBuilder sql = new StringBuilder("DELETE FROM ");
         sql.append(tableName);
         sql.append(" WHERE ");
-        sql.append(where.toSQL(sqlParameterCollector));
+        sql.append(where.toSQL(toSQLContext));
         return sql.toString();
     }
 

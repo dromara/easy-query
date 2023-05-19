@@ -1,12 +1,13 @@
 package com.easy.query.core.expression.executor.parser;
 
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
-import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.executor.parser.context.InsertEntityParseContext;
+import com.easy.query.core.expression.executor.parser.descriptor.TableEntityParseDescriptor;
+import com.easy.query.core.expression.executor.parser.descriptor.TableParseDescriptor;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * create time 2023/4/24 22:44
@@ -14,23 +15,23 @@ import java.util.Set;
  *
  * @author xuejiaming
  */
-public class EasyInsertPrepareParseResult implements InsertPrepareParseResult{
+public class EasyInsertPrepareParseResult implements InsertPrepareParseResult {
     private final ExecutorContext executorContext;
-    private final Set<TableAvailable> shardingTables;
+    private final TableEntityParseDescriptor tableEntityParseDescriptor;
     private final EntityInsertExpressionBuilder entityInsertExpressionBuilder;
     private final List<Object> entities;
     private final boolean fillAutoIncrement;
     private final boolean sharding;
 
-    public EasyInsertPrepareParseResult(ExecutorContext executorContext, Set<TableAvailable> shardingTables, EntityInsertExpressionBuilder entityInsertExpressionBuilder, List<Object> entities, boolean fillAutoIncrement){
-        this.executorContext = executorContext;
-
-        this.shardingTables = shardingTables;
-        this.entityInsertExpressionBuilder = entityInsertExpressionBuilder;
-        this.entities = entities;
-        this.fillAutoIncrement = fillAutoIncrement;
-        this.sharding = EasyCollectionUtil.isNotEmpty(shardingTables);
+    public EasyInsertPrepareParseResult(InsertEntityParseContext insertEntityPrepareParseContext, TableEntityParseDescriptor tableEntityParseDescriptor) {
+        this.executorContext = insertEntityPrepareParseContext.getExecutorContext();
+        this.tableEntityParseDescriptor = tableEntityParseDescriptor;
+        this.entityInsertExpressionBuilder = insertEntityPrepareParseContext.getEntityExpressionBuilder();
+        this.entities = insertEntityPrepareParseContext.getEntities();
+        this.fillAutoIncrement = insertEntityPrepareParseContext.getFillAutoIncrement();
+        this.sharding = EasyCollectionUtil.isNotEmpty(tableEntityParseDescriptor.getTables());
     }
+
     @Override
     public List<Object> getEntities() {
         return entities;
@@ -47,10 +48,9 @@ public class EasyInsertPrepareParseResult implements InsertPrepareParseResult{
     }
 
     @Override
-    public Set<TableAvailable> getShardingTables() {
-        return shardingTables;
+    public TableEntityParseDescriptor getTableParseDescriptor() {
+        return tableEntityParseDescriptor;
     }
-
     @Override
     public EntityInsertExpressionBuilder getEntityExpressionBuilder() {
         return entityInsertExpressionBuilder;

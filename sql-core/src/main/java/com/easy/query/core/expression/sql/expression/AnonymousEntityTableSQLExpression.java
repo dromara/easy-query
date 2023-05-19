@@ -7,4 +7,5 @@ package com.easy.query.core.expression.sql.expression;
  * @author xuejiaming
  */
 public interface AnonymousEntityTableSQLExpression {
+    EntityQuerySQLExpression getEntityQuerySQLExpression();
 }

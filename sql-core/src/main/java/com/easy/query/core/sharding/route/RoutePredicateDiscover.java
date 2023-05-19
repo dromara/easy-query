@@ -5,9 +5,6 @@ import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.enums.SQLPredicateCompareEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
-import com.easy.query.core.expression.executor.parser.EntityPrepareParseResult;
-import com.easy.query.core.expression.executor.parser.PredicatePrepareParseResult;
-import com.easy.query.core.expression.executor.parser.PrepareParseResult;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.RouteFunction;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
@@ -19,15 +16,16 @@ import com.easy.query.core.expression.segment.condition.predicate.Predicate;
 import com.easy.query.core.expression.segment.condition.predicate.ShardingPredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ValuePredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ValuesPredicate;
-import com.easy.query.core.expression.sql.expression.EntityPredicateSQLExpression;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.enums.sharding.ShardingOperatorEnum;
+import com.easy.query.core.sharding.route.descriptor.EntityRouteDescriptor;
+import com.easy.query.core.sharding.route.descriptor.PredicateRouteDescriptor;
+import com.easy.query.core.sharding.route.descriptor.RouteDescriptor;
 import com.easy.query.core.sharding.rule.RouteRuleFilter;
 import com.easy.query.core.util.EasyBeanUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyClassUtil;
-import com.easy.query.core.util.EasySQLSegmentUtil;
 import com.easy.query.core.util.EasyStringUtil;
 
 import java.util.Collection;
@@ -93,18 +91,16 @@ public class RoutePredicateDiscover<T> {
         return ShardingOperatorEnum.UN_KNOWN;
     }
 
-    private final PrepareParseResult prepareParseResult;
-    private final TableAvailable table;
+    private final RouteDescriptor routeDescriptor;
     private final EntityMetadata entityMetadata;
     private final RouteRuleFilter<T> routeRuleFilter;
     private final Set<String> shardingProperties;
     private final String mainShardingProperty;
 
-    public RoutePredicateDiscover(PrepareParseResult prepareParseResult, TableAvailable table, RouteRuleFilter<T> routeRuleFilter, boolean shardingTableRoute) {
-        this.prepareParseResult = prepareParseResult;
-        this.table = table;
+    public RoutePredicateDiscover(RouteDescriptor routeDescriptor, RouteRuleFilter<T> routeRuleFilter, boolean shardingTableRoute) {
+        this.routeDescriptor = routeDescriptor;
 
-        this.entityMetadata = table.getEntityMetadata();
+        this.entityMetadata = routeDescriptor.getTable().getEntityMetadata();
         this.routeRuleFilter = routeRuleFilter;
         if (shardingTableRoute) {
             shardingProperties = entityMetadata.getShardingTablePropertyNames();
@@ -116,29 +112,40 @@ public class RoutePredicateDiscover<T> {
     }
 
     public RoutePredicateExpression<T> getRouteParseExpression() {
-        if (prepareParseResult instanceof PredicatePrepareParseResult) {
-            EntityPredicateSQLExpression easyEntityPredicateSQLExpression = ((PredicatePrepareParseResult) prepareParseResult).getEntityPredicateSQLExpression();
-            return getPredicateSQLRouteParseExpression(easyEntityPredicateSQLExpression);
-        } else if (prepareParseResult instanceof EntityPrepareParseResult) {
-            List<Object> entities = ((EntityPrepareParseResult) prepareParseResult).getEntities();
+        if (routeDescriptor instanceof PredicateRouteDescriptor) {
+            return getPredicateSQLRouteParseExpression((PredicateRouteDescriptor) routeDescriptor);
+        } else if (routeDescriptor instanceof EntityRouteDescriptor) {
+            Object entity = ((EntityRouteDescriptor) routeDescriptor).getEntity();
 
-            if(EasyCollectionUtil.isNotSingle(entities)){
-                throw new EasyQueryInvalidOperationException("route parse not support multi entity or empty entity:"+entities.size());
+            if(entity==null){
+                throw new EasyQueryInvalidOperationException("route parse not support null entity.");
             }
-            return getEntitySQLRouteParseExpression(entities.get(0));
+            return getEntitySQLRouteParseExpression(entity);
         }
-        throw new UnsupportedOperationException(EasyClassUtil.getInstanceSimpleName(prepareParseResult));
+        throw new UnsupportedOperationException(EasyClassUtil.getInstanceSimpleName(routeDescriptor));
     }
 
-    private RoutePredicateExpression<T> getPredicateSQLRouteParseExpression(EntityPredicateSQLExpression easyEntityPredicateSQLExpression) {
+    private RoutePredicateExpression<T> getPredicateSQLRouteParseExpression(PredicateRouteDescriptor predicateRouteDescriptor) {
 
-        PredicateSegment where = easyEntityPredicateSQLExpression.getWhere();
-        if (EasySQLSegmentUtil.isNotEmpty(where)) {
-            if(where instanceof ShardingPredicateSegment){
-                return parsePredicate((ShardingPredicateSegment)where);
+        List<PredicateSegment> predicates = predicateRouteDescriptor.getPredicates();
+        if(EasyCollectionUtil.isEmpty(predicates)){
+            return RoutePredicateExpression.getDefault();
+        }
+        if(EasyCollectionUtil.isSingle(predicates)){
+            PredicateSegment predicate = EasyCollectionUtil.first(predicates);
+            if(predicate instanceof ShardingPredicateSegment){
+                return parsePredicate((ShardingPredicateSegment) predicate);
+            }
+            return RoutePredicateExpression.getDefault();
+        }
+        RoutePredicateExpression<T> defaultRoutePredicate = RoutePredicateExpression.getDefault();
+        for (PredicateSegment predicate : predicates) {
+            if(predicate instanceof ShardingPredicateSegment){
+                RoutePredicateExpression<T> parseRoutePredicate = parsePredicate((ShardingPredicateSegment) predicate);
+                defaultRoutePredicate=defaultRoutePredicate.and(parseRoutePredicate);
             }
         }
-        return RoutePredicateExpression.getDefault();
+        return defaultRoutePredicate;
 
     }
 
@@ -170,9 +177,9 @@ public class RoutePredicateDiscover<T> {
     }
 
     private RoutePredicateExpression<T> parseValuePredicate(ValuePredicate valuePredicate) {
-        Class<?> entityClass = valuePredicate.getTable().getEntityClass();
+        TableAvailable table = valuePredicate.getTable();
         String propertyName = valuePredicate.getPropertyName();
-        if (Objects.equals(entityMetadata.getEntityClass(), entityClass) && shardingProperties.contains(propertyName)) {
+        if (Objects.equals(table,routeDescriptor.getTable()) && shardingProperties.contains(propertyName)) {
             SQLParameter parameter = valuePredicate.getParameter();
             if (parameter instanceof ConstSQLParameter) {
                 ConstSQLParameter constSQLParameter = (ConstSQLParameter) parameter;
@@ -183,7 +190,7 @@ public class RoutePredicateDiscover<T> {
                 RouteFunction<T> routePredicate = routeRuleFilter.routeFilter(value, shardingOperator, propertyName, Objects.equals(mainShardingProperty, propertyName),false);
                 return new RoutePredicateExpression<T>(routePredicate);
             }
-            System.out.println("不支持的sql参数:"+ EasyClassUtil.getInstanceSimpleName(parameter));
+            //System.out.println("不支持的sql参数:"+ EasyClassUtil.getInstanceSimpleName(parameter));
         }
         return RoutePredicateExpression.getDefault();
     }

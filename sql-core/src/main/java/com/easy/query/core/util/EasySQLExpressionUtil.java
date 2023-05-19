@@ -1,10 +1,11 @@
 package com.easy.query.core.util;
 
+import com.easy.query.core.basic.jdbc.executor.internal.common.SQLRewriteUnit;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.basic.api.select.Queryable;
 import com.easy.query.core.basic.api.select.Queryable2;
 import com.easy.query.core.basic.api.select.Queryable3;
-import com.easy.query.core.basic.jdbc.parameter.SQLParameterCollector;
+import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.expression.lambda.SQLExpression2;
@@ -20,6 +21,7 @@ import com.easy.query.core.expression.lambda.SQLExpression4;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.builder.impl.AnonymousUnionQueryExpressionBuilder;
+import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
 
 
 /**
@@ -31,11 +33,21 @@ public class EasySQLExpressionUtil {
     private EasySQLExpressionUtil() {
     }
 
-    public static boolean expressionInvokeRoot(SQLParameterCollector sqlParameterCollector){
-        if(sqlParameterCollector==null){
+    public static boolean expressionInvokeRoot(ToSQLContext sqlContext){
+        if(sqlContext==null){
             return false;
         }
-        return sqlParameterCollector.expressionInvokeCountGetIncrement()==0;
+        return sqlContext.expressionInvokeCountGetIncrement()==0;
+    }
+    public static void tableSQLExpressionRewrite(ToSQLContext sqlContext, EntityTableSQLExpression entityTableSQLExpression){
+        if(sqlContext==null){
+            return;
+        }
+        SQLRewriteUnit sqlRewriteUnit = sqlContext.getSqlRewriteUnit();
+        if(sqlRewriteUnit==null){
+            return;
+        }
+        sqlRewriteUnit.rewriteTableName(entityTableSQLExpression);
     }
     public static <TSource> Queryable<TSource> cloneAndSelectAllQueryable(Queryable<TSource> queryable) {
         EntityQueryExpressionBuilder sqlEntityExpressionBuilder = queryable.getSQLEntityExpressionBuilder();

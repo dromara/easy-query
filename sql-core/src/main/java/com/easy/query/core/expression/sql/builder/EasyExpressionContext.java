@@ -35,6 +35,7 @@ public class EasyExpressionContext implements ExpressionContext {
 
     private Integer maxShardingQueryLimit;
     private ConnectionModeEnum connectionMode;
+    private boolean sharding;
 
     public EasyExpressionContext(QueryRuntimeContext runtimeContext, String alias) {
 
@@ -47,6 +48,7 @@ public class EasyExpressionContext implements ExpressionContext {
         this.noInterceptors = new HashSet<>();
         this.maxShardingQueryLimit = null;
         this.connectionMode = null;
+        this.sharding = false;
     }
 
     @Override
@@ -199,5 +201,20 @@ public class EasyExpressionContext implements ExpressionContext {
         return connectionMode;
     }
 
+    @Override
+    public void useSharding() {
+        this.sharding=true;
+    }
 
+    @Override
+    public boolean isSharding() {
+        return sharding;
+    }
+
+    @Override
+    public void extract(ExpressionContext otherExpressionContext) {
+        if(otherExpressionContext.isSharding()){
+            this.sharding=true;
+        }
+    }
 }

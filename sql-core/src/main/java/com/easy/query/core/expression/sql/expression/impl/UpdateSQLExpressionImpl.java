@@ -1,7 +1,7 @@
 package com.easy.query.core.expression.sql.expression.impl;
 
 import com.easy.query.core.context.QueryRuntimeContext;
-import com.easy.query.core.basic.jdbc.parameter.SQLParameterCollector;
+import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.expression.sql.expression.EntityUpdateSQLExpression;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
@@ -57,15 +57,15 @@ public  class UpdateSQLExpressionImpl implements EntityUpdateSQLExpression {
 
 
     @Override
-    public String toSQL(SQLParameterCollector sqlParameterCollector) {
-        EasySQLExpressionUtil.expressionInvokeRoot(sqlParameterCollector);
+    public String toSQL(ToSQLContext toSQLContext) {
+        EasySQLExpressionUtil.expressionInvokeRoot(toSQLContext);
         if(EasySQLSegmentUtil.isEmpty(setColumns)){
             return null;
         }
         EntityTableSQLExpression easyTableSQLExpression = tables.get(0);
-        String tableName = easyTableSQLExpression.getTableName();
-        return "UPDATE " + tableName + " SET " + setColumns.toSQL(sqlParameterCollector) + " WHERE " +
-                where.toSQL(sqlParameterCollector);
+        String tableName = easyTableSQLExpression.toSQL(toSQLContext);
+        return "UPDATE " + tableName + " SET " + setColumns.toSQL(toSQLContext) + " WHERE " +
+                where.toSQL(toSQLContext);
     }
 
     @Override

@@ -1,7 +1,7 @@
 package com.easy.query.core.expression.sql.expression.impl;
 
 import com.easy.query.core.context.QueryRuntimeContext;
-import com.easy.query.core.basic.jdbc.parameter.SQLParameterCollector;
+import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.enums.SQLUnionEnum;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
@@ -35,7 +35,7 @@ public class AnonymousUnionQuerySQLExpressionImpl implements AnonymousEntityQuer
         this.tables = Collections.emptyList();
     }
     @Override
-    public String toSQL(SQLParameterCollector sqlParameterCollector) {
+    public String toSQL(ToSQLContext sqlParameterCollector) {
         EasySQLExpressionUtil.expressionInvokeRoot(sqlParameterCollector);
         Iterator<EntityQuerySQLExpression> iterator = querySQLExpressions.iterator();
         EntityQuerySQLExpression firstQuerySQLExpression = iterator.next();

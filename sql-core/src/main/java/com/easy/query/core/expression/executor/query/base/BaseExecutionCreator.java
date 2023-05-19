@@ -1,12 +1,16 @@
 package com.easy.query.core.expression.executor.query.base;
 
+import com.easy.query.core.basic.jdbc.executor.internal.common.SQLRewriteUnit;
 import com.easy.query.core.enums.MergeBehaviorEnum;
 import com.easy.query.core.expression.executor.parser.ExecutionContext;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.sql.expression.EntitySQLExpression;
 import com.easy.query.core.basic.jdbc.executor.internal.common.ExecutionUnit;
 import com.easy.query.core.basic.jdbc.executor.internal.common.SQLRouteUnit;
+import com.easy.query.core.sharding.route.table.TableRouteUnit;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * create time 2023/4/25 08:48
@@ -15,12 +19,12 @@ import java.util.List;
  * @author xuejiaming
  */
 public abstract class BaseExecutionCreator implements ExecutionCreator{
-    protected ExecutionUnit createExecutionUnit(String dataSource, EntitySQLExpression expression, List<Object> entities, boolean fillAutoIncrement){
-        SQLRouteUnit sqlUnit = createSQLUnit(expression, entities, fillAutoIncrement);
+    protected ExecutionUnit createExecutionUnit(String dataSource, EntitySQLExpression expression, List<Object> entities, boolean fillAutoIncrement, SQLRewriteUnit sqlRewriteUnit){
+        SQLRouteUnit sqlUnit = createSQLUnit(expression, entities, fillAutoIncrement,sqlRewriteUnit);
         return createExecutionUnit(dataSource, sqlUnit);
     }
-    protected SQLRouteUnit createSQLUnit(EntitySQLExpression expression, List<Object> entities, boolean fillAutoIncrement){
-        return new SQLRouteUnit(expression,entities, fillAutoIncrement);
+    protected SQLRouteUnit createSQLUnit(EntitySQLExpression expression, List<Object> entities, boolean fillAutoIncrement,SQLRewriteUnit sqlRewriteUnit){
+        return new SQLRouteUnit(expression,entities, fillAutoIncrement,sqlRewriteUnit);
     }
     protected ExecutionUnit createExecutionUnit(String dataSource, SQLRouteUnit sqlUnit){
         return new  ExecutionUnit(dataSource, sqlUnit);

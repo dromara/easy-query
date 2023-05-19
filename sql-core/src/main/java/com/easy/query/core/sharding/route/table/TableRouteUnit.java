@@ -1,5 +1,7 @@
 package com.easy.query.core.sharding.route.table;
 
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
+
 import java.util.Objects;
 
 /**
@@ -10,7 +12,6 @@ import java.util.Objects;
  */
 public interface TableRouteUnit extends TableUnit {
 
-     Class<?> getEntityClass();
-     int getTableIndex();
+     TableAvailable getTable();
 
 }

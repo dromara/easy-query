@@ -24,7 +24,7 @@ public class PredicateExecutionCreator extends BaseExecutionCreator{
 
     @Override
     protected List<ExecutionUnit> createExecutionUnits() {
-        ExecutionUnit executionUnit = createExecutionUnit(dataSource, easyEntitySQLExpression, null, false);
+        ExecutionUnit executionUnit = createExecutionUnit(dataSource, easyEntitySQLExpression, null, false,null);
         return Collections.singletonList(executionUnit);
     }
 }

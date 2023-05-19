@@ -2,11 +2,13 @@ package com.easy.query.core.sharding.route.manager.impl;
 
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.executor.parser.PrepareParseResult;
+import com.easy.query.core.expression.executor.parser.descriptor.TableParseDescriptor;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.sharding.EasyQueryDataSource;
 import com.easy.query.core.sharding.route.datasource.DataSourceRoute;
 import com.easy.query.core.sharding.route.datasource.ShardingDataSourceRoute;
+import com.easy.query.core.sharding.route.descriptor.RouteDescriptor;
 import com.easy.query.core.sharding.route.manager.DataSourceRouteManager;
 import com.easy.query.core.sharding.rule.datasource.DataSourceRouteRule;
 import com.easy.query.core.util.EasyClassUtil;
@@ -33,13 +35,14 @@ public class DefaultDataSourceRouteManager implements DataSourceRouteManager {
         dataSourceRoute=new ShardingDataSourceRoute();
     }
     @Override
-    public Collection<String> routeTo(TableAvailable table, PrepareParseResult prepareParseResult) {
+    public Collection<String> routeTo(RouteDescriptor routeDescriptor) {
+        TableAvailable table = routeDescriptor.getTable();
         EntityMetadata entityMetadata = table.getEntityMetadata();
         if(!entityMetadata.isMultiDataSourceMapping()){
             return Collections.singletonList(easyDataSource.getDefaultDataSourceName());
         }
         DataSourceRouteRule<?> routeRule = getRouteRule(table.getEntityClass());
-        return dataSourceRoute.route(routeRule,table, prepareParseResult);
+        return dataSourceRoute.route(routeRule,routeDescriptor);
     }
 
     @Override

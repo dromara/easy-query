@@ -1,5 +1,8 @@
 package com.easy.query.core.basic.jdbc.parameter;
 
+import com.easy.query.core.basic.jdbc.executor.internal.common.SQLRewriteUnit;
+import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
+
 import java.util.List;
 
 /**
@@ -8,14 +11,19 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public interface SQLParameterCollector {
+public interface ToSQLContext {
     /**
      * 表达式调用次数
+     *
      * @return
      */
     int expressionInvokeCountGetIncrement();
+
     int currentInvokeCount();
 
     void addParameter(SQLParameter sqlParameter);
+
     List<SQLParameter> getParameters();
+
+    SQLRewriteUnit getSqlRewriteUnit();
 }

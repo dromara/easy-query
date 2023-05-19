@@ -5,8 +5,19 @@ import com.easy.query.core.expression.executor.parser.EasyEntityPrepareParseResu
 import com.easy.query.core.expression.executor.parser.EntityPrepareParseResult;
 import com.easy.query.core.expression.executor.parser.PredicatePrepareParseResult;
 import com.easy.query.core.expression.executor.parser.PrepareParseResult;
+import com.easy.query.core.expression.executor.parser.QueryPrepareParseResult;
+import com.easy.query.core.expression.executor.parser.SequenceParseResult;
+import com.easy.query.core.expression.executor.parser.descriptor.TableEntityParseDescriptor;
+import com.easy.query.core.expression.executor.parser.descriptor.TableParseDescriptor;
+import com.easy.query.core.expression.executor.parser.descriptor.TablePredicateParseDescriptor;
+import com.easy.query.core.expression.executor.parser.descriptor.impl.TableEntityParseDescriptorImpl;
+import com.easy.query.core.expression.executor.parser.descriptor.impl.TablePredicateParseDescriptorImpl;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.sharding.route.datasource.engine.DataSourceRouteEngine;
 import com.easy.query.core.sharding.route.datasource.engine.DataSourceRouteResult;
+import com.easy.query.core.sharding.route.descriptor.PredicateRouteDescriptorImpl;
+import com.easy.query.core.sharding.route.descriptor.RouteDescriptor;
 import com.easy.query.core.sharding.route.table.EasyEntityTableRouteUnit;
 import com.easy.query.core.sharding.route.table.TableRouteUnit;
 import com.easy.query.core.sharding.route.table.engine.TableRouteContext;
@@ -18,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * create time 2023/4/20 13:13
@@ -38,27 +50,32 @@ public class DefaultRouteContextFactory implements RouteContextFactory {
     @Override
     public RouteContext createRouteContext(PrepareParseResult prepareParseResult) {
         if (prepareParseResult instanceof PredicatePrepareParseResult) {
-            return createRouteContextByPredicate((PredicatePrepareParseResult) prepareParseResult);
+            PredicatePrepareParseResult predicatePrepareParseResult = (PredicatePrepareParseResult) prepareParseResult;
+            SequenceParseResult sequenceParseResult = (predicatePrepareParseResult instanceof QueryPrepareParseResult) ? ((QueryPrepareParseResult) predicatePrepareParseResult).getSequenceParseResult() : null;
+            return createRouteContextByPredicate(predicatePrepareParseResult.getTableParseDescriptor(),sequenceParseResult);
         }
         if (prepareParseResult instanceof EntityPrepareParseResult) {
-            return createRouteContextByEntity((EntityPrepareParseResult) prepareParseResult);
+            EntityPrepareParseResult entityPrepareParseResult = (EntityPrepareParseResult) prepareParseResult;
+            return createRouteContextByEntity(entityPrepareParseResult.getTableParseDescriptor());
         }
         throw new UnsupportedOperationException(EasyClassUtil.getInstanceSimpleName(prepareParseResult));
     }
 
-    private RouteContext createRouteContextByPredicate(PredicatePrepareParseResult prepareParseResult) {
-        return doCreateRouteContext(prepareParseResult);
+    private RouteContext createRouteContextByPredicate(TableParseDescriptor tableParseDescriptor,SequenceParseResult sequenceParseResult) {
+        return doCreateRouteContext(tableParseDescriptor,sequenceParseResult);
     }
 
-    private RouteContext createRouteContextByEntity(EntityPrepareParseResult prepareParseResult) {
-        List<Object> entities = prepareParseResult.getEntities();
+    private RouteContext createRouteContextByEntity(TableEntityParseDescriptor tableEntityParseDescriptor) {
+        TableAvailable table = EasyCollectionUtil.first(tableEntityParseDescriptor.getTables());
+        List<Object> entities = tableEntityParseDescriptor.getEntitiesNotNull(table);
         ArrayList<RouteUnit> entityRouteUnits = new ArrayList<>(entities.size());
         String dataSource = null;
         String tableName = null;
         boolean isCrossDataSource = false;
         boolean isCrossTable = false;
         for (Object entity : entities) {
-            RouteContext routeContext = doCreateRouteContext(new EasyEntityPrepareParseResult(prepareParseResult.getExecutorContext(),prepareParseResult.getShardingTables(), prepareParseResult.getEntityExpressionBuilder(), Collections.singletonList(entity)));
+            TableEntityParseDescriptorImpl entityParseDescriptor = new TableEntityParseDescriptorImpl(table, Collections.singletonList(entity));
+            RouteContext routeContext = doCreateRouteContext(entityParseDescriptor,null);
             List<RouteUnit> routeUnits = routeContext.getShardingRouteResult().getRouteUnits();
             if (EasyCollectionUtil.isNotSingle(routeUnits)) {
                 throw new EasyQueryInvalidOperationException("entity route route unit more or empty:"+routeUnits.size());
@@ -92,12 +109,12 @@ public class DefaultRouteContextFactory implements RouteContextFactory {
 
     }
 
-    private RouteContext doCreateRouteContext(PrepareParseResult prepareParseResult) {
+    private RouteContext doCreateRouteContext(TableParseDescriptor tableParseDescriptor, SequenceParseResult sequenceParseResult) {
         //获取分库节点
-        DataSourceRouteResult dataSourceRouteResult = dataSourceRouteEngine.route(prepareParseResult);
+        DataSourceRouteResult dataSourceRouteResult = dataSourceRouteEngine.route(tableParseDescriptor);
 
         //获取分片后的结果
-        ShardingRouteResult shardingRouteResult = tableRouteEngine.route(new TableRouteContext(dataSourceRouteResult, prepareParseResult));
+        ShardingRouteResult shardingRouteResult = tableRouteEngine.route(new TableRouteContext(dataSourceRouteResult, tableParseDescriptor,sequenceParseResult));
 //        tableRouteEngine.route()
         return new RouteContext(shardingRouteResult);
     }

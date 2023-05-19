@@ -1,6 +1,8 @@
 package com.easy.query.core.sharding.route.table.engine;
 
-import com.easy.query.core.expression.executor.parser.PrepareParseResult;
+import com.easy.query.core.expression.executor.parser.QueryPrepareParseResult;
+import com.easy.query.core.expression.executor.parser.SequenceParseResult;
+import com.easy.query.core.expression.executor.parser.descriptor.TableParseDescriptor;
 import com.easy.query.core.sharding.route.datasource.engine.DataSourceRouteResult;
 
 /**
@@ -11,19 +13,26 @@ import com.easy.query.core.sharding.route.datasource.engine.DataSourceRouteResul
  */
 public final class TableRouteContext {
     private final DataSourceRouteResult dataSourceRouteResult;
-    private final PrepareParseResult prepareParseResult;
+    private final TableParseDescriptor tableParseDescriptor;
+    private final SequenceParseResult sequenceParseResult;
 
-    public TableRouteContext(DataSourceRouteResult dataSourceRouteResult, PrepareParseResult prepareParseResult){
+    public TableRouteContext(DataSourceRouteResult dataSourceRouteResult, TableParseDescriptor tableParseDescriptor, SequenceParseResult sequenceParseResult){
 
         this.dataSourceRouteResult = dataSourceRouteResult;
-        this.prepareParseResult = prepareParseResult;
+        this.tableParseDescriptor = tableParseDescriptor;
+        this.sequenceParseResult = sequenceParseResult;
+    }
+
+    public SequenceParseResult getSequenceParseResult() {
+        return sequenceParseResult;
     }
 
     public DataSourceRouteResult getDataSourceRouteResult() {
         return dataSourceRouteResult;
     }
 
-    public PrepareParseResult getPrepareParseResult() {
-        return prepareParseResult;
+    public TableParseDescriptor getTableParseDescriptor() {
+        return tableParseDescriptor;
     }
+
 }

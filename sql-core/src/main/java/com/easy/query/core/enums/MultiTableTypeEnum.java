@@ -8,6 +8,7 @@ package com.easy.query.core.enums;
  * @author xuejiaming
  */
 public enum MultiTableTypeEnum {
+    NONE(0),
     FROM(1),
     LEFT_JOIN(2),
     INNER_JOIN(3),

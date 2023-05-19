@@ -1,6 +1,6 @@
 package com.easy.query.core.expression.segment.builder;
 
-import com.easy.query.core.basic.jdbc.parameter.SQLParameterCollector;
+import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.enums.SQLKeywordEnum;
 import com.easy.query.core.expression.segment.SQLSegment;
 
@@ -14,7 +14,7 @@ import java.util.*;
 public class UpdateSetSQLBuilderSegment extends AbstractSQLBuilderSegment {
 
     @Override
-    public String toSQL(SQLParameterCollector sqlParameterCollector) {
+    public String toSQL(ToSQLContext sqlParameterCollector) {
 
         StringBuilder sb=new StringBuilder();
         List<SQLSegment> sqlSegments = getSQLSegments();

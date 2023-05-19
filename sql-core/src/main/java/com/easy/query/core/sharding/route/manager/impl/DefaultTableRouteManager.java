@@ -4,6 +4,7 @@ import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.executor.parser.PrepareParseResult;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.sharding.route.datasource.engine.DataSourceRouteResult;
+import com.easy.query.core.sharding.route.descriptor.RouteDescriptor;
 import com.easy.query.core.sharding.route.manager.TableRouteManager;
 import com.easy.query.core.sharding.route.table.ShardingTableRoute;
 import com.easy.query.core.sharding.route.table.TableRoute;
@@ -26,9 +27,9 @@ public class DefaultTableRouteManager implements TableRouteManager {
     private final TableRoute tableRoute=new ShardingTableRoute();
 
     @Override
-    public Collection<TableRouteUnit> routeTo(TableAvailable table, DataSourceRouteResult dataSourceRouteResult, PrepareParseResult prepareParseResult) {
-        TableRouteRule<?> routeRule = getRouteRule(table.getEntityClass());
-        return tableRoute.route(routeRule,dataSourceRouteResult,table,prepareParseResult);
+    public Collection<TableRouteUnit> routeTo(DataSourceRouteResult dataSourceRouteResult, RouteDescriptor routeDescriptor) {
+        TableRouteRule<?> routeRule = getRouteRule(routeDescriptor.getTable().getEntityClass());
+        return tableRoute.route(routeRule,dataSourceRouteResult,routeDescriptor);
 //        if(prepareParseResult instanceof QueryPrepareParseResult){
 //            return tableRoute.route(routeRule,dataSourceRouteResult,prepareParseResult);
 //        }

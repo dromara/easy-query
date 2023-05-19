@@ -37,6 +37,9 @@ public abstract class AbstractEntityExpressionBuilder implements EntityExpressio
 
     @Override
     public void addSQLEntityTableExpression(EntityTableExpressionBuilder tableExpression) {
+        if(tableExpression.getEntityTable().getEntityMetadata().isSharding()){
+            expressionContext.useSharding();
+        }
         tables.add(tableExpression);
     }
 

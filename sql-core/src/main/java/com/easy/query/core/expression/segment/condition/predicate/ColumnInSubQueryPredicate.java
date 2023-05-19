@@ -2,7 +2,7 @@ package com.easy.query.core.expression.segment.condition.predicate;
 
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.basic.api.select.Queryable;
-import com.easy.query.core.basic.jdbc.parameter.SQLParameterCollector;
+import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.SQLEntitySegment;
@@ -14,14 +14,14 @@ import com.easy.query.core.util.EasySQLExpressionUtil;
  *
  * @author xuejiaming
  */
-public class ColumnSubQueryPredicate implements SubQueryPredicate{
+public class ColumnInSubQueryPredicate implements SubQueryPredicate{
     private final SQLPredicateCompare compare;
     private final QueryRuntimeContext runtimeContext;
     private final TableAvailable table;
     private final String propertyName;
     private final Queryable<?> subQueryable;
 
-    public ColumnSubQueryPredicate(TableAvailable table, String propertyName, Queryable<?> subQueryable, SQLPredicateCompare compare, QueryRuntimeContext runtimeContext) {
+    public ColumnInSubQueryPredicate(TableAvailable table, String propertyName, Queryable<?> subQueryable, SQLPredicateCompare compare, QueryRuntimeContext runtimeContext) {
         this.table = table;
         this.propertyName = propertyName;
         this.subQueryable = subQueryable;
@@ -44,7 +44,7 @@ public class ColumnSubQueryPredicate implements SubQueryPredicate{
     }
 
     @Override
-    public String toSQL(SQLParameterCollector sqlParameterCollector) {
+    public String toSQL(ToSQLContext sqlParameterCollector) {
 
         String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumn(runtimeContext,table,propertyName);
         StringBuilder sql = new StringBuilder();

@@ -1,7 +1,7 @@
 package com.easy.query.core.basic.api.insert;
 
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
-import com.easy.query.core.basic.jdbc.parameter.SQLParameterCollector;
+import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.basic.plugin.interceptor.EasyInterceptorEntry;
 import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.enums.ExecuteMethodEnum;
@@ -37,7 +37,7 @@ public abstract class AbstractInsertable<T> implements Insertable<T> {
         entityMetadata = this.entityInsertExpression.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(clazz);
         entityMetadata.checkTable();
 
-        EntityTableExpressionBuilder table = new TableExpressionBuilder(entityMetadata, 0, null, MultiTableTypeEnum.FROM,entityInsertExpression.getRuntimeContext());
+        EntityTableExpressionBuilder table = new TableExpressionBuilder(entityMetadata, 0, null, MultiTableTypeEnum.NONE,entityInsertExpression.getRuntimeContext());
         this.entityInsertExpression.addSQLEntityTableExpression(table);
     }
 
@@ -117,7 +117,7 @@ public abstract class AbstractInsertable<T> implements Insertable<T> {
     public String toSQL(Object entity) {
         return toSQLWithParam(entity,null);
     }
-    private String toSQLWithParam(Object entity, SQLParameterCollector sqlParameterCollector){
+    private String toSQLWithParam(Object entity, ToSQLContext sqlParameterCollector){
         return entityInsertExpression.toExpression(entity).toSQL(sqlParameterCollector);
     }
 }

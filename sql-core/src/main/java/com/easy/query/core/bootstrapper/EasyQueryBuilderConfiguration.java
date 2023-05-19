@@ -59,6 +59,8 @@ import com.easy.query.core.sharding.rewrite.DefaultRewriteContextFactory;
 import com.easy.query.core.sharding.rewrite.RewriteContextFactory;
 import com.easy.query.core.sharding.route.DefaultRouteContextFactory;
 import com.easy.query.core.sharding.route.RouteContextFactory;
+import com.easy.query.core.sharding.route.descriptor.DefaultRouteDescriptorFactor;
+import com.easy.query.core.sharding.route.descriptor.RouteDescriptorFactory;
 import com.easy.query.core.sharding.route.manager.DataSourceRouteManager;
 import com.easy.query.core.sharding.route.manager.impl.DefaultDataSourceRouteManager;
 import com.easy.query.core.sharding.route.manager.impl.DefaultTableRouteManager;
@@ -118,6 +120,7 @@ public class EasyQueryBuilderConfiguration {
                 .replaceService(DataSourceManager.class, DefaultDataSourceManager.class)
                 .replaceService(ShardingQueryCountManager.class, DefaultShardingQueryCountManager.class)
                 .replaceService(ColumnFunctionFactory.class, DefaultColumnFunctionFactory.class)
+                .replaceService(RouteDescriptorFactory.class, DefaultRouteDescriptorFactor.class)
                 .replaceService(EasyQuery.class, DefaultEasyQuery.class);
     }
 

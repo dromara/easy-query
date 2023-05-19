@@ -2,7 +2,7 @@ package com.easy.query.core.expression.segment.condition.predicate;
 
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.basic.api.select.Queryable;
-import com.easy.query.core.basic.jdbc.parameter.SQLParameterCollector;
+import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.SQLEntitySegment;
@@ -41,7 +41,7 @@ public class ColumnExistsSubQueryPredicate implements SubQueryPredicate{
     }
 
     @Override
-    public String toSQL(SQLParameterCollector sqlParameterCollector) {
+    public String toSQL(ToSQLContext sqlParameterCollector) {
 
         StringBuilder sql = new StringBuilder();
         sql.append(sqlPredicateCompare.getSQL()).append(" (");

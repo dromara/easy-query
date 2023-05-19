@@ -1,7 +1,7 @@
 package com.easy.query.core.expression.sql.expression.impl;
 
 import com.easy.query.core.context.QueryRuntimeContext;
-import com.easy.query.core.basic.jdbc.parameter.SQLParameterCollector;
+import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.expression.sql.expression.EntityInsertSQLExpression;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.expression.segment.builder.ProjectSQLBuilderSegmentImpl;
@@ -47,13 +47,13 @@ public  class InsertSQLExpressionImpl implements EntityInsertSQLExpression {
 
 
     @Override
-    public String toSQL(SQLParameterCollector sqlParameterCollector) {
-        EasySQLExpressionUtil.expressionInvokeRoot(sqlParameterCollector);
+    public String toSQL(ToSQLContext toSQLContext) {
+        EasySQLExpressionUtil.expressionInvokeRoot(toSQLContext);
         EntityTableSQLExpression easyTableSQLExpression = tables.get(0);
-        String tableName = easyTableSQLExpression.getTableName();
+        String tableName = easyTableSQLExpression.toSQL(toSQLContext);
         int insertColumns = columns.getSQLSegments().size();
         StringBuilder sql = new StringBuilder("INSERT INTO ");
-        sql.append(tableName).append(" (").append(columns.toSQL(sqlParameterCollector)).append(") VALUES (");
+        sql.append(tableName).append(" (").append(columns.toSQL(toSQLContext)).append(") VALUES (");
         sql.append("?");
         for (int i = 0; i < insertColumns - 1; i++) {
             sql.append(",?");
