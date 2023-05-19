@@ -15,6 +15,7 @@ import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.SysUser;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.mytest.IfNullEasyFunc;
+import com.easy.query.test.mytest.TestUserMysql;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -827,5 +828,54 @@ public class QueryTest extends BaseTest {
 
         String sql = q1.union(q2, q3).unionAll(q4).toSQL();
         Assert.assertEquals("SELECT t2.`id`,t2.`stars`,t2.`title`,t2.`create_time` FROM (SELECT t1.`id`,t1.`stars`,t1.`title`,t1.`create_time` FROM (SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t WHERE t.`id` IS NOT NULL UNION SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t WHERE t.`id` IS NULL UNION SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t WHERE t.`id` = ?) t1 UNION ALL SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t WHERE t.`create_time` = ?) t2",sql);
+    }
+    @Test
+    public void query57() {
+        Queryable<Topic> q1 = easyQuery
+                .queryable(Topic.class);
+        Queryable<Topic> q2 = easyQuery
+                .queryable(Topic.class);
+        Queryable<Topic> q3 = easyQuery
+                .queryable(Topic.class);
+        List<Topic> list = q1.union(q2, q3).where(o -> o.eq(Topic::getId, "123321")).toList();
+        Assert.assertEquals(0,list.size());
+    }
+    @Test
+    public void query58() {
+        Queryable<String> idQueryable = easyQuery.queryable(BlogEntity.class)
+                .where(o -> o.eq(BlogEntity::getId, "123"))
+                .select(String.class,o->o.column(BlogEntity::getId));
+        String sql = easyQuery
+                .queryable(Topic.class,"x").where(o -> o.in(Topic::getId,idQueryable)).toSQL();
+        Assert.assertEquals("SELECT x.`id`,x.`stars`,x.`title`,x.`create_time` FROM `t_topic` x WHERE x.`id` IN (SELECT t.`id` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ?) ",sql);
+    }
+    @Test
+    public void query59() {
+        Queryable<String> idQueryable = easyQuery.queryable(BlogEntity.class)
+                .where(o -> o.eq(BlogEntity::getId, "123"))
+                .select(String.class,o->o.column(BlogEntity::getId));
+        List<Topic> list = easyQuery
+                .queryable(Topic.class, "x").where(o -> o.in(Topic::getId, idQueryable)).toList();
+        Assert.assertEquals(0,list.size());
+    }
+    @Test
+    public void query60() {
+        Queryable<String> idQueryable = easyQuery.queryable(BlogEntity.class)
+                .where(o -> o.eq(BlogEntity::getId, "1"))
+                .select(String.class,o->o.column(BlogEntity::getId));
+        List<Topic> list = easyQuery
+                .queryable(Topic.class, "x").where(o -> o.in(Topic::getId, idQueryable)).toList();
+        Assert.assertEquals(1,list.size());
+    }
+    @Test
+    public void query61() {
+        long count = easyQuery
+                .queryable(Topic.class, "x").count();
+        Queryable<String> idQueryable = easyQuery.queryable(BlogEntity.class)
+                .where(o -> o.eq(BlogEntity::getId, "1"))
+                .select(String.class,o->o.column(BlogEntity::getId));
+        List<Topic> list = easyQuery
+                .queryable(Topic.class, "x").where(o -> o.notIn(Topic::getId, idQueryable)).toList();
+        Assert.assertEquals(count-1,list.size());
     }
 }

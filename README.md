@@ -18,6 +18,10 @@
     - [新增](#新增)
     - [修改](#修改)
     - [删除](#删除)
+    - [联结查询](#联结查询)
+    - [子查询](#子查询)
+- [分片](#分片)
+    - [分表](#分表)
 - [捐赠](#捐赠)
 
 
@@ -38,7 +42,7 @@
 
 ```xml
 <properties>
-    <easy-query.version>0.5.2</easy-query.version>
+    <easy-query.version>0.6.1</easy-query.version>
 </properties>
 <dependency>
     <groupId>com.easy-query</groupId>
@@ -50,7 +54,7 @@
 以mysql为例
 ```xml
 <properties>
-    <easy-query.version>0.5.2</easy-query.version>
+    <easy-query.version>0.6.1</easy-query.version>
 </properties>
 <dependency>
     <groupId>com.easy-query</groupId>
@@ -302,6 +306,51 @@ long l = easyQuery.deletable(topic).executeRows();
 
 ==> Preparing: DELETE FROM t_topic WHERE `id` = ?
 ==> Parameters: 997(String)
+<== Total: 1
+```
+
+## 联结查询
+```java
+Queryable<Topic> q1 = easyQuery
+                .queryable(Topic.class);
+Queryable<Topic> q2 = easyQuery
+        .queryable(Topic.class);
+Queryable<Topic> q3 = easyQuery
+        .queryable(Topic.class);
+List<Topic> list = q1.union(q2, q3).where(o -> o.eq(Topic::getId, "123321")).toList();
+
+
+==> Preparing: SELECT t1.`id`,t1.`stars`,t1.`title`,t1.`create_time` FROM (SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t UNION SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t UNION SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t) t1 WHERE t1.`id` = ?
+==> Parameters: 123321(String)
+<== Time Elapsed: 19(ms)
+<== Total: 0
+```
+
+## 子查询
+### in子查询
+```java
+Queryable<String> idQueryable = easyQuery.queryable(BlogEntity.class)
+        .where(o -> o.eq(BlogEntity::getId, "1"))
+        .select(String.class,o->o.column(BlogEntity::getId));
+List<Topic> list = easyQuery
+        .queryable(Topic.class, "x").where(o -> o.in(Topic::getId, idQueryable)).toList();
+
+==> Preparing: SELECT x.`id`,x.`stars`,x.`title`,x.`create_time` FROM `t_topic` x WHERE x.`id` IN (SELECT t.`id` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ?) 
+==> Parameters: false(Boolean),1(String)
+<== Time Elapsed: 3(ms)
+<== Total: 1    
+```
+
+### exists子查询
+```java
+Queryable<BlogEntity> where1 = easyQuery.queryable(BlogEntity.class)
+                .where(o -> o.eq(BlogEntity::getId, "1"));
+List<Topic> x = easyQuery
+        .queryable(Topic.class, "x").where(o -> o.exists(where1, q -> q.eq(o, BlogEntity::getId, Topic::getId))).toList();
+
+==> Preparing: SELECT x.`id`,x.`stars`,x.`title`,x.`create_time` FROM `t_topic` x WHERE EXISTS (SELECT 1 FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? AND t.`id` = x.`id`) 
+==> Parameters: false(Boolean),1(String)
+<== Time Elapsed: 10(ms)
 <== Total: 1
 ```
 
