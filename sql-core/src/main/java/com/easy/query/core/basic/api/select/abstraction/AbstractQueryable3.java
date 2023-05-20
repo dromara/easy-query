@@ -343,6 +343,11 @@ public abstract class AbstractQueryable3<T1, T2, T3> extends AbstractQueryable<T
         return this;
     }
     @Override
+    public Queryable3<T1, T2, T3> queryLargeColumn(boolean queryLarge) {
+        super.queryLargeColumn(queryLarge);
+        return this;
+    }
+    @Override
     public Queryable3<T1, T2, T3> useShardingConfigure(int maxShardingQueryLimit, ConnectionModeEnum connectionMode){
         super.useShardingConfigure(maxShardingQueryLimit,connectionMode);
         return this;

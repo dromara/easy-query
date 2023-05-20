@@ -1,5 +1,6 @@
 package com.easy.query.test.entity;
 
+import com.easy.query.core.annotation.Column;
 import com.easy.query.core.annotation.Table;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -26,6 +27,7 @@ public class BlogEntity extends BaseEntity{
     /**
      * 内容
      */
+    @Column(large = true)
     private String content;
     /**
      * 博客链接

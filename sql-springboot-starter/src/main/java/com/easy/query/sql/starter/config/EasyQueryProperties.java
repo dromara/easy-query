@@ -47,6 +47,8 @@ public class EasyQueryProperties {
     private  long shardingExecuteTimeoutMillis=30000L;
     private  long shardingGroupExecuteTimeoutMillis=20000L;
 
+    private boolean queryLargeColumn=true;
+
     public Boolean getEnable() {
         return enable;
     }
@@ -161,6 +163,14 @@ public class EasyQueryProperties {
 
     public void setShardingGroupExecuteTimeoutMillis(long shardingGroupExecuteTimeoutMillis) {
         this.shardingGroupExecuteTimeoutMillis = shardingGroupExecuteTimeoutMillis;
+    }
+
+    public boolean isQueryLargeColumn() {
+        return queryLargeColumn;
+    }
+
+    public void setQueryLargeColumn(boolean queryLargeColumn) {
+        this.queryLargeColumn = queryLargeColumn;
     }
 
     public EasyQueryProperties() {

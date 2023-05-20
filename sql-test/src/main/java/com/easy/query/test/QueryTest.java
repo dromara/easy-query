@@ -330,8 +330,53 @@ public class QueryTest extends BaseTest {
                 .toList();
         Assert.assertNotNull(topics);
         Assert.assertEquals(1, topics.size());
+    }
+    @Test
+    public void query19_1() {
 
+        Queryable<TopicGroupTestDTO> sql = easyQuery
+                .queryable(Topic.class)
+                .where(o -> o.eq(Topic::getId, "3"))
+                .groupBy(o->o.column(Topic::getId))
+                .select(TopicGroupTestDTO.class, o->o.columnAs(Topic::getId,TopicGroupTestDTO::getId).columnCount(Topic::getId,TopicGroupTestDTO::getIdCount));
+       String sqlPrint= easyQuery
+                .queryable(BlogEntity.class)
+                .leftJoin(sql,(a,b)->a.eq(b,BlogEntity::getId,TopicGroupTestDTO::getId))
+                .where(o -> o.isNotNull(BlogEntity::getId).eq(BlogEntity::getId,"3"))
+                .toSQL();
+        Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`title`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top` FROM `t_blog` t LEFT JOIN (SELECT t.`id` AS `id`,COUNT(t.`id`) AS `id_count` FROM `t_topic` t WHERE t.`id` = ? GROUP BY t.`id`) t1 ON t.`id` = t1.`id` WHERE t.`deleted` = ? AND t.`id` IS NOT NULL AND t.`id` = ?", sqlPrint);
+    }
+    @Test
+    public void query19_2() {
 
+        Queryable<TopicGroupTestDTO> sql = easyQuery
+                .queryable(Topic.class)
+                .queryLargeColumn(false)
+                .where(o -> o.eq(Topic::getId, "3"))
+                .groupBy(o->o.column(Topic::getId))
+                .select(TopicGroupTestDTO.class, o->o.columnAs(Topic::getId,TopicGroupTestDTO::getId).columnCount(Topic::getId,TopicGroupTestDTO::getIdCount));
+       String sqlPrint= easyQuery
+                .queryable(BlogEntity.class)
+                .leftJoin(sql,(a,b)->a.eq(b,BlogEntity::getId,TopicGroupTestDTO::getId))
+                .where(o -> o.isNotNull(BlogEntity::getId).eq(BlogEntity::getId,"3"))
+                .toSQL();
+        Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`title`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top` FROM `t_blog` t LEFT JOIN (SELECT t.`id` AS `id`,COUNT(t.`id`) AS `id_count` FROM `t_topic` t WHERE t.`id` = ? GROUP BY t.`id`) t1 ON t.`id` = t1.`id` WHERE t.`deleted` = ? AND t.`id` IS NOT NULL AND t.`id` = ?", sqlPrint);
+    }
+    @Test
+    public void query19_3() {
+
+        Queryable<TopicGroupTestDTO> sql = easyQuery
+                .queryable(Topic.class)
+                .where(o -> o.eq(Topic::getId, "3"))
+                .groupBy(o->o.column(Topic::getId))
+                .select(TopicGroupTestDTO.class, o->o.columnAs(Topic::getId,TopicGroupTestDTO::getId).columnCount(Topic::getId,TopicGroupTestDTO::getIdCount));
+       String sqlPrint= easyQuery
+                .queryable(BlogEntity.class)
+               .queryLargeColumn(false)
+                .leftJoin(sql,(a,b)->a.eq(b,BlogEntity::getId,TopicGroupTestDTO::getId))
+                .where(o -> o.isNotNull(BlogEntity::getId).eq(BlogEntity::getId,"3"))
+                .toSQL();
+        Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`title`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top` FROM `t_blog` t LEFT JOIN (SELECT t.`id` AS `id`,COUNT(t.`id`) AS `id_count` FROM `t_topic` t WHERE t.`id` = ? GROUP BY t.`id`) t1 ON t.`id` = t1.`id` WHERE t.`deleted` = ? AND t.`id` IS NOT NULL AND t.`id` = ?", sqlPrint);
     }
     @Test
     public void query20() {
@@ -877,5 +922,15 @@ public class QueryTest extends BaseTest {
         List<Topic> list = easyQuery
                 .queryable(Topic.class, "x").where(o -> o.notIn(Topic::getId, idQueryable)).toList();
         Assert.assertEquals(count-1,list.size());
+    }
+    @Test
+    public void query62() {
+        Queryable<SysUser> queryable = easyQuery.queryable(SysUser.class)
+                .queryLargeColumn(false)
+                .where(o -> o.eq(SysUser::getId, "123xxx"));
+        String sql = queryable.toSQL();
+        Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`username`,t.`phone`,t.`id_card` FROM `easy-query-test`.`t_sys_user` t WHERE t.`id` = ?", sql);
+        SysUser sysUser = queryable.firstOrNull();
+        Assert.assertNull(sysUser);
     }
 }

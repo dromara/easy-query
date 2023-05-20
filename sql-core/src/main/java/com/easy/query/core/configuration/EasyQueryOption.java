@@ -23,10 +23,11 @@ public class EasyQueryOption {
     private final EasyQueryReplicaOption replicaOption;
     private final EasyQueryShardingOption shardingOption;
     private final String defaultDataSourceName;
+    private final boolean queryLargeColumn;
 
     public EasyQueryOption(boolean deleteThrowError, SQLExecuteStrategyEnum insertStrategy, SQLExecuteStrategyEnum updateStrategy, ConnectionModeEnum connectionMode, int maxShardingQueryLimit, int executorMaximumPoolSize, int executorCorePoolSize,
                            boolean throwIfNotMatchRoute, long shardingExecuteTimeoutMillis, long shardingGroupExecuteTimeoutMillis,
-                           EasyQueryShardingOption shardingOption, EasyQueryReplicaOption replicaOption, String defaultDataSourceName) {
+                           EasyQueryShardingOption shardingOption, EasyQueryReplicaOption replicaOption, String defaultDataSourceName,boolean queryLargeColumn) {
         this.connectionMode = connectionMode;
 
         if(executorMaximumPoolSize<0){
@@ -61,6 +62,7 @@ public class EasyQueryOption {
         this.shardingOption = shardingOption;
         this.replicaOption = replicaOption;
         this.defaultDataSourceName = defaultDataSourceName;
+        this.queryLargeColumn = queryLargeColumn;
     }
 
     public boolean isDeleteThrowError() {
@@ -113,5 +115,9 @@ public class EasyQueryOption {
 
     public String getDefaultDataSourceName() {
         return defaultDataSourceName;
+    }
+
+    public boolean isQueryLargeColumn() {
+        return queryLargeColumn;
     }
 }

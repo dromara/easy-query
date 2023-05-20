@@ -1,5 +1,6 @@
 package com.easy.query.core.expression.parser.impl;
 
+import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
 import com.easy.query.core.metadata.ColumnMetadata;
@@ -57,6 +58,7 @@ public class DefaultAutoSQLColumnAsSelector<T1, TR> extends AbstractSQLColumnSel
             columnAnonymousAll((AnonymousEntityTableExpressionBuilder) table);
         } else {
             //只查询当前对象返回结果属性名称匹配
+            boolean queryLargeColumn = entityExpressionBuilder.getExpressionContext().getBehavior().hasBehavior(EasyBehaviorEnum.QUERY_LARGE_COLUMN);
             EntityMetadata targetEntityMetadata = entityExpressionBuilder.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(resultClass);
             EntityMetadata sourceEntityMetadata = table.getEntityMetadata();
 
@@ -64,15 +66,23 @@ public class DefaultAutoSQLColumnAsSelector<T1, TR> extends AbstractSQLColumnSel
             for (String property : sourceProperties) {
 
                 ColumnMetadata sourceColumnMetadata = sourceEntityMetadata.getColumnNotNull(property);
+                if(!columnAllQueryLargeColumn(queryLargeColumn,sourceColumnMetadata)){
+                    continue;
+                }
                 String sourceColumnName = sourceColumnMetadata.getName();
                 String targetPropertyName = targetEntityMetadata.getPropertyNameOrNull(sourceColumnName, null);
                 if (targetPropertyName != null) {
 
-                    ColumnMetadata targetColumnMetadata = targetEntityMetadata.getColumnNotNull(targetPropertyName);
+                    ColumnMetadata targetColumnMetadata = targetEntityMetadata.getColumnOrNull(targetPropertyName);
                     if (targetColumnMetadata != null) {
+
+                        if(!columnAllQueryLargeColumn(queryLargeColumn,targetColumnMetadata)){
+                            continue;
+                        }
                         String targetColumnName = targetColumnMetadata.getName();
                         //如果当前属性和查询对象属性一致那么就返回对应的列名，对应的列名如果不一样就返回对应返回结果对象的属性上的列名
-                        sqlSegmentBuilder.append(new ColumnSegmentImpl(table.getEntityTable(), property, entityExpressionBuilder.getRuntimeContext(), Objects.equals(sourceColumnName,targetColumnName)?null: targetColumnName));
+                        String alias = Objects.equals(sourceColumnName, targetColumnName) ? null : targetColumnName;
+                        sqlSegmentBuilder.append(new ColumnSegmentImpl(table.getEntityTable(), property, entityExpressionBuilder.getRuntimeContext(), alias));
                     }
                 }
 

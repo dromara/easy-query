@@ -865,4 +865,14 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
         entityQueryExpressionBuilder.getExpressionContext().setConnectionMode(connectionMode);
         return this;
     }
+
+    @Override
+    public Queryable<T1> queryLargeColumn(boolean queryLarge) {
+        if(queryLarge){
+            entityQueryExpressionBuilder.getExpressionContext().getBehavior().addBehavior(EasyBehaviorEnum.QUERY_LARGE_COLUMN);
+        }else{
+            entityQueryExpressionBuilder.getExpressionContext().getBehavior().removeBehavior(EasyBehaviorEnum.QUERY_LARGE_COLUMN);
+        }
+        return this;
+    }
 }

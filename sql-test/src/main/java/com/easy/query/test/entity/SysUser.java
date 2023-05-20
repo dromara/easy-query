@@ -1,5 +1,6 @@
 package com.easy.query.test.entity;
 
+import com.easy.query.core.annotation.Column;
 import com.easy.query.core.annotation.Encryption;
 import com.easy.query.core.annotation.Table;
 import com.easy.query.test.encryption.DefaultAesEasyEncryptionStrategy;
@@ -20,6 +21,7 @@ public class SysUser extends BaseEntity{
     @Encryption(strategy = DefaultAesEasyEncryptionStrategy.class, supportQueryLike = true)
     private String idCard;
     @Encryption(strategy = DefaultAesEasyEncryptionStrategy.class, supportQueryLike = true)
+    @Column(large = true)
     private String address;
 }
 

@@ -29,6 +29,7 @@ public class ColumnMetadata {
 
     private  Class<? extends EasyEncryptionStrategy> encryptionStrategy;
     private  boolean supportQueryLike =false;
+    private  boolean large =false;
 
     public ColumnMetadata(EntityMetadata entityMetadata, String name) {
         this.entityMetadata = entityMetadata;
@@ -116,5 +117,13 @@ public class ColumnMetadata {
 
     public void setSupportQueryLike(boolean supportQueryLike) {
         this.supportQueryLike = supportQueryLike;
+    }
+
+    public boolean isLarge() {
+        return large;
+    }
+
+    public void setLarge(boolean large) {
+        this.large = large;
     }
 }

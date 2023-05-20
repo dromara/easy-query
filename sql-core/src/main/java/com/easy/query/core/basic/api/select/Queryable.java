@@ -2,6 +2,7 @@ package com.easy.query.core.basic.api.select;
 
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.api.dynamic.sort.ObjectSort;
+import com.easy.query.core.basic.api.internal.QueryStrategy;
 import com.easy.query.core.sharding.manager.SequenceCountLine;
 import com.easy.query.core.basic.api.internal.Interceptable;
 import com.easy.query.core.basic.api.internal.LogicDeletable;
@@ -36,7 +37,11 @@ import java.util.Map;
  * @Description: 文件说明
  * @Date: 2023/2/6 21:28
  */
-public interface Queryable<T1> extends Query<T1>, Interceptable<Queryable<T1>>, LogicDeletable<Queryable<T1>>, TableReNameable<Queryable<T1>> {
+public interface Queryable<T1> extends Query<T1>,
+        Interceptable<Queryable<T1>>,
+        LogicDeletable<Queryable<T1>>,
+        TableReNameable<Queryable<T1>>,
+        QueryStrategy<Queryable<T1>> {
     /**
      * 只clone表达式共享上下文
      *
@@ -401,9 +406,6 @@ public interface Queryable<T1> extends Query<T1>, Interceptable<Queryable<T1>>, 
 
     EasyQuerySQLBuilderProvider<T1> getSQLBuilderProvider1();
 
-//    Queryable<T1> unionAll(Queryable<T1>... otherQueryables);
-
-//    Queryable<T1> logicDelete(boolean use);
 
     /**
      * 自动将查询结果集合全部添加到当前上下文追踪中,如果当前查询结果十分庞大,并且更新数据只有个别条数,建议不要使用

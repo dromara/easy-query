@@ -141,6 +141,7 @@ public class EntityMetadata {
                     }
                     columnMetadata.setIncrement(column.increment());
 
+                    columnMetadata.setLarge(column.large());
 //                    columnMetadata.setSelect(column.select());
 //                    columnMetadata.setNullable(false);//如果为主键那么之前设置的nullable将无效
                 }

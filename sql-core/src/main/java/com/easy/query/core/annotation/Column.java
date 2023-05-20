@@ -43,6 +43,12 @@ public @interface Column {
      */
     int scale() default 0;
 
+    /**
+     * 是否是大字段
+     * @return
+     */
+    boolean large() default false;
+
 //    /**
 //     * 当且仅当查询指定该属性才会查询出来
 //     * columnAll相同对象无法查询出来，如果是不同对象的映射columnAll则可以

@@ -1,5 +1,6 @@
 package com.easy.query.core.expression.sql.builder;
 
+import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.basic.plugin.interceptor.EasyInterceptorEntry;
 import com.easy.query.core.enums.EasyBehaviorEnum;
@@ -40,10 +41,15 @@ public class EasyExpressionContext implements ExpressionContext {
     public EasyExpressionContext(QueryRuntimeContext runtimeContext, String alias) {
 
         this.runtimeContext = runtimeContext;
-        this.deleteThrowException = runtimeContext.getQueryConfiguration().deleteThrow();
+        QueryConfiguration queryConfiguration = runtimeContext.getQueryConfiguration();
+        this.deleteThrowException = queryConfiguration.deleteThrow();
         this.alias = alias;
 //        params = new ArrayList<>();
+        //如果他是不查询大列的就去掉
         this.easyBehavior = new EasyBehavior();
+        if(!queryConfiguration.getEasyQueryOption().isQueryLargeColumn()){
+            easyBehavior.removeBehavior(EasyBehaviorEnum.QUERY_LARGE_COLUMN);
+        }
         this.useInterceptors = new HashSet<>();
         this.noInterceptors = new HashSet<>();
         this.maxShardingQueryLimit = null;

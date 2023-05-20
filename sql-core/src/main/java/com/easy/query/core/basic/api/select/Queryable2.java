@@ -182,6 +182,10 @@ public interface Queryable2<T1, T2> extends Queryable<T1> {
     Queryable2<T1, T2> asTracking();
     @Override
     Queryable2<T1, T2> asNoTracking();
+
+    @Override
+    Queryable2<T1, T2> queryLargeColumn(boolean queryLarge);
+
     @Override
     Queryable2<T1, T2> useShardingConfigure(int maxShardingQueryLimit, ConnectionModeEnum connectionMode);
     @Override
