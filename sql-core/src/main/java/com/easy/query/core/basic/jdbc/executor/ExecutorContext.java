@@ -8,6 +8,7 @@ import com.easy.query.core.basic.jdbc.parameter.SQLLikeParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.basic.plugin.encryption.EasyEncryptionStrategy;
+import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasyStringUtil;
 
 /**
@@ -19,7 +20,6 @@ import com.easy.query.core.util.EasyStringUtil;
 public class ExecutorContext {
 
     private final QueryRuntimeContext runtimeContext;
-    private final QueryConfiguration easyQueryConfiguration;
     private final boolean isQuery;
     private final ExecuteMethodEnum executeMethod;
     private final boolean tracking;
@@ -30,7 +30,6 @@ public class ExecutorContext {
 
     public ExecutorContext(QueryRuntimeContext runtimeContext, boolean isQuery, ExecuteMethodEnum executeMethod, boolean tracking) {
         this.runtimeContext = runtimeContext;
-        this.easyQueryConfiguration = runtimeContext.getQueryConfiguration();
         this.isQuery = isQuery;
         this.executeMethod = executeMethod;
         this.tracking = tracking;
@@ -54,48 +53,52 @@ public class ExecutorContext {
 
     /**
      * 如果当前value存在加密字段那么会自动解密
-     *
+     * 数据库转属性
      * @param columnMetadata
      * @param value
      * @return
      */
-    public Object getDecryptValue(Class<?> entityClass,ColumnMetadata columnMetadata, Object value) {
+    public Object fromValue(Class<?> entityClass, ColumnMetadata columnMetadata, Object value) {
+        Object fromValue = fromValue0(entityClass, columnMetadata, value);
+        return columnMetadata.getValueConverter().deserialize(EasyObjectUtil.typeCast(fromValue));
+    }
+    private Object fromValue0(Class<?> entityClass, ColumnMetadata columnMetadata, Object value){
         if (value != null) {
             if (columnMetadata.isEncryption()) {
-                Class<? extends EasyEncryptionStrategy> encryptionStrategy = columnMetadata.getEncryptionStrategy();
-                EasyEncryptionStrategy easyEncryptionStrategy = easyQueryConfiguration.getEasyEncryptionStrategyNotNull(encryptionStrategy);
+                EasyEncryptionStrategy easyEncryptionStrategy = columnMetadata.getEncryptionStrategy();
                 return easyEncryptionStrategy.decrypt(entityClass,columnMetadata.getProperty().getName(),value);
             }
         }
         return value;
     }
 
-    public Object getEncryptValue(SQLParameter sqlParameter, Object value) {
+    public Object toValue(SQLParameter sqlParameter, Object value) {
         if (value != null&&sqlParameter.getTable()!=null) {
             Class<?> entityClass = sqlParameter.getTable().getEntityClass();
             EntityMetadata entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(entityClass);
             String propertyName = sqlParameter.getPropertyName();
             ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(propertyName);
-            if (columnMetadata.isEncryption()) {
-                if (sqlParameter instanceof SQLLikeParameter) {
-                    if (columnMetadata.isSupportQueryLike()) {
-                        EasyEncryptionStrategy easyEncryptionStrategy = getEncryptionStrategy(columnMetadata);
-                        String likeValue = value.toString();
-                        String encryptValue = EasyStringUtil.endWithRemove(EasyStringUtil.startWithRemove(likeValue, "%"), "%");
-                        return EasyStringUtil.startWithDefault(likeValue, "%", EasyStringUtil.EMPTY) + easyEncryptionStrategy.encrypt(entityClass,propertyName,encryptValue) + EasyStringUtil.endWithDefault(likeValue, "%", EasyStringUtil.EMPTY);
-                    }
-                } else {
-                    EasyEncryptionStrategy easyEncryptionStrategy = getEncryptionStrategy(columnMetadata);
-                    return easyEncryptionStrategy.encrypt(entityClass,propertyName,value);
-                }
-            }
+            Object toValue = toValue(columnMetadata, sqlParameter, value, entityClass, propertyName);
+            return columnMetadata.getValueConverter().serialize(EasyObjectUtil.typeCast(toValue));
         }
         return value;
     }
+    private Object toValue(ColumnMetadata columnMetadata, SQLParameter sqlParameter, Object value, Class<?> entityClass, String propertyName){
 
-    private EasyEncryptionStrategy getEncryptionStrategy(ColumnMetadata columnMetadata) {
-        Class<? extends EasyEncryptionStrategy> encryptionStrategy = columnMetadata.getEncryptionStrategy();
-        return easyQueryConfiguration.getEasyEncryptionStrategyNotNull(encryptionStrategy);
+        if (columnMetadata.isEncryption()) {
+            if (sqlParameter instanceof SQLLikeParameter) {
+                if (columnMetadata.isSupportQueryLike()) {
+                    EasyEncryptionStrategy easyEncryptionStrategy = columnMetadata.getEncryptionStrategy();
+                    String likeValue = value.toString();
+                    String encryptValue = EasyStringUtil.endWithRemove(EasyStringUtil.startWithRemove(likeValue, "%"), "%");
+                    return EasyStringUtil.startWithDefault(likeValue, "%", EasyStringUtil.EMPTY) + easyEncryptionStrategy.encrypt(entityClass,propertyName,encryptValue) + EasyStringUtil.endWithDefault(likeValue, "%", EasyStringUtil.EMPTY);
+                }
+            } else {
+                EasyEncryptionStrategy easyEncryptionStrategy = columnMetadata.getEncryptionStrategy();
+                return easyEncryptionStrategy.encrypt(entityClass,propertyName,value);
+            }
+        }
+        return value;
     }
     public boolean isQuery(){
         return isQuery;

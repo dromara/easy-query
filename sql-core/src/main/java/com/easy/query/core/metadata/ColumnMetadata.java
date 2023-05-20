@@ -1,5 +1,7 @@
 package com.easy.query.core.metadata;
 
+import com.easy.query.core.basic.plugin.conversion.DefaultValueConverter;
+import com.easy.query.core.basic.plugin.conversion.ValueConverter;
 import com.easy.query.core.basic.plugin.encryption.EasyEncryptionStrategy;
 
 import java.beans.PropertyDescriptor;
@@ -16,24 +18,36 @@ public class ColumnMetadata {
     private final String name;
 
 
-    private PropertyDescriptor property;
+    private final PropertyDescriptor property;
 
-    private  boolean primary=false;
-    private  boolean increment=false;
+    private final  boolean primary;
+    private final  boolean increment;
 
 
 //    private  boolean nullable=true;
-    private  boolean version=false;
-    private  boolean insertIgnore=false;
-    private  boolean updateIgnore =false;
+    private final  boolean version;
+    private final  boolean insertIgnore;
+    private final  boolean updateIgnore ;
 
-    private  Class<? extends EasyEncryptionStrategy> encryptionStrategy;
-    private  boolean supportQueryLike =false;
-    private  boolean large =false;
+    private final  EasyEncryptionStrategy encryptionStrategy;
+    private final  boolean supportQueryLike;
+    private final  boolean large;
 
-    public ColumnMetadata(EntityMetadata entityMetadata, String name) {
-        this.entityMetadata = entityMetadata;
-        this.name = name;
+    private final ValueConverter<?,?> valueConverter;
+
+    public ColumnMetadata(ColumnOption columnOption) {
+        this.entityMetadata = columnOption.getEntityMetadata();
+        this.name = columnOption.getName();
+        this.property= columnOption.getProperty();
+        this.primary= columnOption.isPrimary();
+        this.increment= columnOption.isIncrement();
+        this.version= columnOption.isVersion();
+        this.insertIgnore= columnOption.isInsertIgnore();
+        this.updateIgnore= columnOption.isUpdateIgnore();
+        this.encryptionStrategy= columnOption.getEncryptionStrategy();
+        this.supportQueryLike= columnOption.isSupportQueryLike();
+        this.large= columnOption.isLarge();
+        this.valueConverter= columnOption.getValueConverter();
     }
 
     public EntityMetadata getEntityMetadata() {
@@ -48,82 +62,50 @@ public class ColumnMetadata {
         return primary;
     }
 
-    public void setPrimary(boolean primary) {
-        this.primary = primary;
-    }
 
     public boolean isIncrement() {
         return increment;
     }
 
-    public void setIncrement(boolean increment) {
-        this.increment = increment;
-    }
-
-//    public boolean isNullable() {
-//        return nullable;
-//    }
-//
-//    public void setNullable(boolean nullable) {
-//        this.nullable = nullable;
-//    }
 
     public boolean isVersion() {
         return version;
     }
 
-    public void setVersion(boolean version) {
-        this.version = version;
-    }
 
     public boolean isInsertIgnore() {
         return insertIgnore;
     }
 
-    public void setInsertIgnore(boolean insertIgnore) {
-        this.insertIgnore = insertIgnore;
-    }
 
     public boolean isUpdateIgnore() {
         return updateIgnore;
     }
 
-    public void setUpdateIgnore(boolean updateIgnore) {
-        this.updateIgnore = updateIgnore;
-    }
     public PropertyDescriptor getProperty() {
         return property;
     }
 
-    public void setProperty(PropertyDescriptor property) {
-        this.property = property;
-    }
 
     public boolean isEncryption() {
         return encryptionStrategy!=null;
     }
 
-    public Class<? extends EasyEncryptionStrategy> getEncryptionStrategy() {
+    public EasyEncryptionStrategy getEncryptionStrategy() {
         return encryptionStrategy;
-    }
-
-    public void setEncryptionStrategy(Class<? extends EasyEncryptionStrategy> encryptionStrategy) {
-        this.encryptionStrategy = encryptionStrategy;
     }
 
     public boolean isSupportQueryLike() {
         return supportQueryLike;
     }
 
-    public void setSupportQueryLike(boolean supportQueryLike) {
-        this.supportQueryLike = supportQueryLike;
-    }
 
     public boolean isLarge() {
         return large;
     }
 
-    public void setLarge(boolean large) {
-        this.large = large;
+
+    public ValueConverter<?, ?> getValueConverter() {
+        return valueConverter;
     }
 }

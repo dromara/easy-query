@@ -133,7 +133,7 @@ public final class EasyStreamResultUtil {
             Class<?> propertyType = property.getPropertyType();
             easyResultSet.setPropertyType(propertyType);
             JdbcTypeHandler handler = easyJdbcTypeHandler.getHandler(propertyType);
-            Object value = context.getDecryptValue(clazz,columnMetadata, handler.getValue(easyResultSet));
+            Object value = context.fromValue(clazz,columnMetadata, handler.getValue(easyResultSet));
 
             if (value != null) {
                 PropertySetterCaller<Object> beanSetter = beanFastSetter.getBeanSetter(property);

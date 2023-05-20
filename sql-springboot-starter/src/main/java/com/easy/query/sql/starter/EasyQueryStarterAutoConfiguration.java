@@ -28,6 +28,7 @@ import com.easy.query.sql.starter.config.EasyQueryProperties;
 import com.easy.query.sql.starter.logging.Slf4jImpl;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -76,45 +77,53 @@ public class EasyQueryStarterAutoConfiguration {
     }
     @Bean
     @ConditionalOnProperty(name = "easy-query.database", havingValue = "mysql")
+    @ConditionalOnMissingBean
     public DatabaseConfiguration mysqlDatabaseConfiguration() {
         return new MySQLDatabaseConfiguration();
     }
 
     @Bean
     @ConditionalOnProperty(name = "easy-query.database", havingValue = "mssql")
+    @ConditionalOnMissingBean
     public DatabaseConfiguration mssqlDatabaseConfiguration() {
         return new MsSQLDatabaseConfiguration();
     }
     @Bean
     @ConditionalOnProperty(name = "easy-query.database", havingValue = "pgsql")
+    @ConditionalOnMissingBean
     public DatabaseConfiguration pgsqlDatabaseConfiguration() {
         return new PgSQLDatabaseConfiguration();
     }
 
     @Bean
     @ConditionalOnProperty(name = "easy-query.database", havingValue = "default", matchIfMissing = true)
+    @ConditionalOnMissingBean
     public DatabaseConfiguration databaseConfiguration() {
         return new DefaultDatabaseConfiguration();
     }
 
     @Bean
     @ConditionalOnProperty(name = "easy-query.name-conversion", havingValue = "underlined", matchIfMissing = true)
+    @ConditionalOnMissingBean
     public NameConversion underlinedNameConversion() {
         return new UnderlinedNameConversion();
     }
 
     @Bean
     @ConditionalOnProperty(name = "easy-query.name-conversion", havingValue = "default")
+    @ConditionalOnMissingBean
     public NameConversion defaultNameConversion() {
         return new DefaultNameConversion();
     }
 
-    @Bean("easy-query-default-starter-configurer")
+    @Bean
+    @ConditionalOnMissingBean
     public StarterConfigurer starterConfigurer() {
         return new DefaultStarterConfigurer();
     }
 
-    @Bean("easy-query-default")
+    @Bean
+    @ConditionalOnMissingBean
     public EasyQuery easyQuery(DataSource dataSource, DatabaseConfiguration databaseConfiguration, StarterConfigurer starterConfigurer, NameConversion nameConversion, Map<String, EasyInterceptor> easyInterceptorMap, Map<String, EasyVersionStrategy> easyVersionStrategyMap, Map<String, EasyLogicDeleteStrategy> easyLogicDeleteStrategyMap, Map<String, ShardingInitializer> easyShardingInitializerMap, Map<String, EasyEncryptionStrategy> easyEncryptionStrategyMap) {
         EasyQuery easyQuery = EasyQueryBootstrapper.defaultBuilderConfiguration()
                 .setDefaultDataSource(dataSource)

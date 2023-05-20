@@ -124,12 +124,12 @@ public class EasyJdbcExecutorUtil {
         List<SQLParameter> params = new ArrayList<>(sqlParameters.size());
         for (SQLParameter sqlParameter : sqlParameters) {
             if (sqlParameter instanceof ConstSQLParameter) {
-                Object value = executorContext.getEncryptValue(sqlParameter, sqlParameter.getValue());
+                Object value = executorContext.toValue(sqlParameter, sqlParameter.getValue());
                 params.add(new EasyConstSQLParameter(sqlParameter.getTable(), sqlParameter.getPropertyName(), value));
             } else if (sqlParameter instanceof BeanSQLParameter) {
                 BeanSQLParameter beanSQLParameter = (BeanSQLParameter) sqlParameter;
                 beanSQLParameter.setBean(entity);
-                Object value = executorContext.getEncryptValue(beanSQLParameter, beanSQLParameter.getValue());
+                Object value = executorContext.toValue(beanSQLParameter, beanSQLParameter.getValue());
                 params.add(new EasyConstSQLParameter(beanSQLParameter.getTable(), beanSQLParameter.getPropertyName(), value));
             } else {
                 throw new EasyQueryException("current sql parameter:[" + EasyClassUtil.getSimpleName(sqlParameter.getClass()) + "],property name:[" + sqlParameter.getPropertyName() + "] is not implements BeanSQLParameter or ConstSQLParameter");

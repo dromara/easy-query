@@ -112,22 +112,21 @@ public class EntityMetadata {
             Column column = field.getAnnotation(Column.class);
             boolean hasColumnName = column != null && EasyStringUtil.isNotBlank(column.value());
             String columnName = hasColumnName ? column.value() : nameConversion.convert(property);
-            ColumnMetadata columnMetadata = new ColumnMetadata(this, columnName);
+            ColumnOption columnOption = new ColumnOption(this, columnName);
 //            if (column != null) {
 //                columnMetadata.setNullable(column.nullable());
 //            }
-            columnMetadata.setProperty(propertyDescriptor);
-            property2ColumnMap.put(property, columnMetadata);
-            column2PropertyMap.put(columnName, property);
+            columnOption.setProperty(propertyDescriptor);
 
             Encryption encryption = field.getAnnotation(Encryption.class);
             if (encryption != null) {
                 Class<? extends EasyEncryptionStrategy> strategy = encryption.strategy();
-                if (!configuration.containEasyEncryptionStrategy(strategy)) {
+                EasyEncryptionStrategy easyEncryptionStrategy = configuration.getEasyEncryptionStrategy(strategy);
+                if (easyEncryptionStrategy==null) {
                     throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " Encryption strategy unknown");
                 }
-                columnMetadata.setEncryptionStrategy(encryption.strategy());
-                columnMetadata.setSupportQueryLike(encryption.supportQueryLike());
+                columnOption.setEncryptionStrategy(easyEncryptionStrategy);
+                columnOption.setSupportQueryLike(encryption.supportQueryLike());
             }
             if (EasyStringUtil.isNotBlank(tableName)) {
 
@@ -135,24 +134,24 @@ public class EntityMetadata {
                     if (column.primaryKey()) {
                         keyPropertiesMap.put(property, columnName);
                     }
-                    columnMetadata.setPrimary(column.primaryKey());
+                    columnOption.setPrimary(column.primaryKey());
                     if (column.increment()) {
                         incrementColumns.add(columnName);
                     }
-                    columnMetadata.setIncrement(column.increment());
+                    columnOption.setIncrement(column.increment());
 
-                    columnMetadata.setLarge(column.large());
+                    columnOption.setLarge(column.large());
 //                    columnMetadata.setSelect(column.select());
 //                    columnMetadata.setNullable(false);//如果为主键那么之前设置的nullable将无效
                 }
                 InsertIgnore insertIgnore = field.getAnnotation(InsertIgnore.class);
                 if (insertIgnore != null) {
-                    columnMetadata.setInsertIgnore(true);
+                    columnOption.setInsertIgnore(true);
                 }
 
                 UpdateIgnore updateIgnore = field.getAnnotation(UpdateIgnore.class);
                 if (updateIgnore != null) {
-                    columnMetadata.setUpdateIgnore(true);
+                    columnOption.setUpdateIgnore(true);
                 }
                 Version version = field.getAnnotation(Version.class);
                 if (version != null) {
@@ -162,7 +161,7 @@ public class EntityMetadata {
                     if (easyVersionStrategy == null) {
                         throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " Version strategy unknown");
                     }
-                    columnMetadata.setVersion(true);
+                    columnOption.setVersion(true);
 
                     versionMetadata = new VersionMetadata(property, easyVersionStrategy);
 
@@ -204,6 +203,8 @@ public class EntityMetadata {
                     logicDelCount++;
                 }
             }
+            property2ColumnMap.put(property, new ColumnMetadata(columnOption));
+            column2PropertyMap.put(columnName, property);
         }
 
         if (versionCount > 1) {
