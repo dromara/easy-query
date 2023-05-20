@@ -17,16 +17,16 @@ public class ProjectSQLBuilderSegmentImpl extends AbstractSQLBuilderSegment impl
 
     private boolean projectHasAggregate=false;
     @Override
-    public String toSQL(ToSQLContext sqlParameterCollector) {
+    public String toSQL(ToSQLContext toSQLContext) {
         StringBuilder sb = new StringBuilder();
         List<SQLSegment> sqlSegments = getSQLSegments();
         if (!sqlSegments.isEmpty()) {
             Iterator<SQLSegment> iterator = sqlSegments.iterator();
             SQLSegment first = iterator.next();
-            sb.append(first.toSQL(sqlParameterCollector));
+            sb.append(first.toSQL(toSQLContext));
             while (iterator.hasNext()) {
                 SQLSegment sqlSegment = iterator.next();
-                sb.append(SQLKeywordEnum.DOT.toSQL()).append(sqlSegment.toSQL(sqlParameterCollector));
+                sb.append(SQLKeywordEnum.DOT.toSQL()).append(sqlSegment.toSQL(toSQLContext));
             }
         }
         return sb.toString();

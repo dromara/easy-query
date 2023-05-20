@@ -42,11 +42,11 @@ public class ColumnExistsSubQueryPredicate implements SubQueryPredicate {
     }
 
     @Override
-    public String toSQL(ToSQLContext sqlParameterCollector) {
+    public String toSQL(ToSQLContext toSQLContext) {
 
         StringBuilder sql = new StringBuilder();
         sql.append(sqlPredicateCompare.getSQL()).append(" (");
-        String subQueryableSQL = subQueryable.toSQL(sqlParameterCollector);
+        String subQueryableSQL = subQueryable.toSQL(toSQLContext);
         sql.append(subQueryableSQL).append(") ");
         return sql.toString();
     }

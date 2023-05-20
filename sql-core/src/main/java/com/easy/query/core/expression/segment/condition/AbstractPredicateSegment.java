@@ -164,9 +164,9 @@ public abstract class AbstractPredicateSegment implements PredicateSegment,Shard
     }
 
     @Override
-    public String toSQL(ToSQLContext sqlParameterCollector) {
+    public String toSQL(ToSQLContext toSQLContext) {
         if (isPredicate()) {
-            return predicate.toSQL(sqlParameterCollector);
+            return predicate.toSQL(toSQLContext);
         } else {
             if (children != null) {
                 StringBuilder sql = new StringBuilder();
@@ -179,13 +179,13 @@ public abstract class AbstractPredicateSegment implements PredicateSegment,Shard
                         if (sql.length() != 0) {
                             sql.append(AndPredicateSegment.AND);
                         }
-                        sql.append(child.toSQL(sqlParameterCollector));
+                        sql.append(child.toSQL(toSQLContext));
                     } else if (child instanceof OrPredicateSegment) {
                         allAnd = false;
                         if (sql.length() != 0) {
                             sql.append(OrPredicateSegment.OR);
                         }
-                        sql.append(child.toSQL(sqlParameterCollector));
+                        sql.append(child.toSQL(toSQLContext));
                     }
                 }
                 if (sql.length() != 0) {

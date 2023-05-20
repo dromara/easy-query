@@ -4,7 +4,7 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.common.bean.FastBean;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.SQLColumnSetter;
-import com.easy.query.core.expression.parser.factory.QueryLambdaFactory;
+import com.easy.query.core.expression.parser.factory.SQLExpressionInvokeFactory;
 import com.easy.query.core.basic.plugin.version.EasyVersionStrategy;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.exception.EasyQueryException;
@@ -84,7 +84,7 @@ public class DeleteExpressionBuilder extends AbstractPredicateEntityExpressionBu
             SQLExpression1<SQLColumnSetter<Object>> logicDeletedSQLExpression = table.getLogicDeletedSQLExpression();
             if (logicDeletedSQLExpression != null) {
                 UpdateSetSQLBuilderSegment setSQLSegmentBuilder = new UpdateSetSQLBuilderSegment();
-                QueryLambdaFactory easyQueryLambdaFactory = getRuntimeContext().getQueryLambdaFactory();
+                SQLExpressionInvokeFactory easyQueryLambdaFactory = getRuntimeContext().getSQLExpressionInvokeFactory();
                 SQLColumnSetter<Object> sqlColumnSetter = easyQueryLambdaFactory.createSQLColumnSetter(table.getIndex(), this, setSQLSegmentBuilder);
                 logicDeletedSQLExpression.apply(sqlColumnSetter);//获取set的值
                 //todo 非表达式添加行版本信息

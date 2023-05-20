@@ -4,6 +4,7 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.SQLColumnSelector;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 
 /**
  * @Description: 文件说明
@@ -11,8 +12,8 @@ import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
  * @author xuejiaming
  */
 public class DefaultSQLColumnSelector<T1> extends AbstractSQLColumnSelector<T1, SQLColumnSelector<T1>> implements SQLColumnSelector<T1> {
-    public DefaultSQLColumnSelector(int index, EntityExpressionBuilder sqlEntityExpression, SQLBuilderSegment sqlSegmentBuilder) {
-        super(index, sqlEntityExpression,sqlSegmentBuilder);
+    public DefaultSQLColumnSelector(int index, EntityQueryExpressionBuilder entityQueryExpressionBuilder, SQLBuilderSegment sqlSegmentBuilder) {
+        super(index, entityQueryExpressionBuilder,sqlSegmentBuilder);
     }
 
     @Override

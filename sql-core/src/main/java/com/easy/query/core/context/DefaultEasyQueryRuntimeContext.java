@@ -4,7 +4,7 @@ import com.easy.query.core.api.SQLApiFactory;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
 import com.easy.query.core.basic.pagination.EasyPageResultProvider;
 import com.easy.query.core.basic.thread.ShardingExecutorService;
-import com.easy.query.core.expression.parser.factory.QueryLambdaFactory;
+import com.easy.query.core.expression.parser.factory.SQLExpressionInvokeFactory;
 import com.easy.query.core.expression.sql.builder.factory.ExpressionBuilderFactory;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.expression.func.ColumnFunctionFactory;
@@ -29,7 +29,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     private final ServiceProvider serviceProvider;
     private final QueryConfiguration easyQueryConfiguration;
     private final EntityMetadataManager entityMetadataManager;
-    private final QueryLambdaFactory easyQueryLambdaFactory;
+    private final SQLExpressionInvokeFactory easyQueryLambdaFactory;
     private final ConnectionManager easyConnectionManager;
     private final EntityExpressionExecutor entityExpressionExecutor;
     //    private final EasyQueryExecutor easyQueryExecutor;
@@ -48,7 +48,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
 
     public DefaultEasyQueryRuntimeContext(ServiceProvider serviceProvider, QueryConfiguration easyQueryConfiguration,
                                           EntityMetadataManager entityMetadataManager,
-                                          QueryLambdaFactory easyQueryLambdaFactory,
+                                          SQLExpressionInvokeFactory easyQueryLambdaFactory,
                                           ConnectionManager easyConnectionManager,
                                           EntityExpressionExecutor entityExpressionExecutor,
                                           JdbcTypeHandlerManager easyJdbcTypeHandler,
@@ -99,7 +99,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     }
 
     @Override
-    public QueryLambdaFactory getQueryLambdaFactory() {
+    public SQLExpressionInvokeFactory getSQLExpressionInvokeFactory() {
         return easyQueryLambdaFactory;
     }
 

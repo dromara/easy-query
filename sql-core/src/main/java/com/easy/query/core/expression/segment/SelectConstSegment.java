@@ -16,7 +16,7 @@ public class SelectConstSegment implements SQLSegment {
         this.projects = projects;
     }
     @Override
-    public String toSQL(ToSQLContext sqlParameterCollector) {
+    public String toSQL(ToSQLContext toSQLContext) {
         return projects;
     }
 }

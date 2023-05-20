@@ -8,5 +8,5 @@ import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
  * @author xuejiaming
  */
 public interface SQLSegment {
-    String toSQL(ToSQLContext sqlParameterCollector);
+    String toSQL(ToSQLContext toSQLContext);
 }

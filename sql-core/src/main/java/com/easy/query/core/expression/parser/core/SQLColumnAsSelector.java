@@ -1,9 +1,12 @@
 package com.easy.query.core.expression.parser.core;
 
+import com.easy.query.core.basic.api.select.Queryable;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+
+import java.util.function.Function;
 
 /**
  *
@@ -18,6 +21,7 @@ public interface SQLColumnAsSelector<T1,TR>  {
     SQLColumnAsSelector<T1,TR> columnIgnore(Property<T1,?> column);
     SQLColumnAsSelector<T1,TR> columnAll();
     SQLColumnAsSelector<T1,TR> columnAs(Property<T1,?> column, Property<TR, ?> alias);
+   <T2> SQLColumnAsSelector<T1,TR> columnSubQueryAs(Function<SQLWherePredicate<T1>,Queryable<T2>> subQueryableFunc, Property<TR, T2> alias);
    default SQLColumnAsSelector<T1,TR> columnCount(Property<T1,?> column){
        return columnCount(column,null);
    }

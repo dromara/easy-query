@@ -23,7 +23,7 @@ import com.easy.query.core.util.EasyUtil;
  * @Date: 2023/2/7 23:45
  * @author xuejiaming
  */
-public class Select1SQLProvider<T1> implements EasyQuerySQLBuilderProvider<T1> {
+public class Select1SQLProvider<T1> implements EasyQuerySQLBuilderProvider1<T1> {
 
     private final EntityQueryExpressionBuilder sqlEntityExpression;
     private final int index=0;

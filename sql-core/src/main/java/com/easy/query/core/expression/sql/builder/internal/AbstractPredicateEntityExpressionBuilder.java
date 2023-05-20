@@ -1,7 +1,7 @@
 package com.easy.query.core.expression.sql.builder.internal;
 
 import com.easy.query.core.expression.parser.core.SQLWherePredicate;
-import com.easy.query.core.expression.parser.factory.QueryLambdaFactory;
+import com.easy.query.core.expression.parser.factory.SQLExpressionInvokeFactory;
 import com.easy.query.core.common.bean.FastBean;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnPropertyPredicate;
@@ -46,7 +46,7 @@ public abstract class AbstractPredicateEntityExpressionBuilder extends AbstractE
 
             EntityMetadata entityMetadata = table.getEntityMetadata();
             PredicateSegment predicateSegment = new AndPredicateSegment(true);
-            QueryLambdaFactory easyQueryLambdaFactory = getRuntimeContext().getQueryLambdaFactory();
+            SQLExpressionInvokeFactory easyQueryLambdaFactory = getRuntimeContext().getSQLExpressionInvokeFactory();
             SQLWherePredicate<Object> sqlPredicate = easyQueryLambdaFactory.createSQLPredicate(table.getIndex(), this, predicateSegment);
 
             if (useLogicDelete(entityMetadata)) {

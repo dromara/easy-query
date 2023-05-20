@@ -27,8 +27,8 @@ public class ColumnVersionPropertyPredicate extends ColumnPropertyPredicate{
     }
 
     @Override
-    public String toSQL(ToSQLContext sqlParameterCollector) {
-        EasySQLUtil.addParameter(sqlParameterCollector,new VersionPropertySQLParameter(new PropertySQLParameter(table,propertyName),easyVersionStrategy));
+    public String toSQL(ToSQLContext toSQLContext) {
+        EasySQLUtil.addParameter(toSQLContext,new VersionPropertySQLParameter(new PropertySQLParameter(table,propertyName),easyVersionStrategy));
         String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumn(runtimeContext,table,propertyName);
         return sqlColumnSegment + " = ?";
     }

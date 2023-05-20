@@ -39,7 +39,7 @@ public class ColumnCollectionPredicate implements ValuesPredicate,ShardingPredic
     }
 
     @Override
-    public String toSQL(ToSQLContext sqlParameterCollector) {
+    public String toSQL(ToSQLContext toSQLContext) {
         if (EasyCollectionUtil.isEmpty(collection)) {
             if (SQLPredicateCompareEnum.IN.equals(compare)) {
                 return "FALSE";
@@ -54,11 +54,11 @@ public class ColumnCollectionPredicate implements ValuesPredicate,ShardingPredic
             sql.append(sqlColumnSegment).append(" ").append(compare.getSQL()).append(" (");
             Iterator<?> iterator = collection.iterator();
             Object firstVal = iterator.next();
-            EasySQLUtil.addParameter(sqlParameterCollector,new EasyConstSQLParameter(table,propertyName,firstVal));
+            EasySQLUtil.addParameter(toSQLContext,new EasyConstSQLParameter(table,propertyName,firstVal));
             sql.append("?");
             while (iterator.hasNext()){
                 Object val = iterator.next();
-                EasySQLUtil.addParameter(sqlParameterCollector,new EasyConstSQLParameter(table,propertyName,val));
+                EasySQLUtil.addParameter(toSQLContext,new EasyConstSQLParameter(table,propertyName,val));
                 sql.append(",?");
             }
             sql.append(")");

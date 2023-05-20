@@ -30,8 +30,8 @@ public class AnonymousEntityQuerySQLExpressionImpl implements AnonymousEntityQue
         this.tables = Collections.emptyList();
     }
     @Override
-    public String toSQL(ToSQLContext sqlParameterCollector) {
-        EasySQLExpressionUtil.expressionInvokeRoot(sqlParameterCollector);
+    public String toSQL(ToSQLContext toSQLContext) {
+        EasySQLExpressionUtil.expressionInvokeRoot(toSQLContext);
         return sql;
     }
 

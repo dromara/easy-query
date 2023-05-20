@@ -35,12 +35,12 @@ public class AnonymousEntityTableSQLExpressionImpl extends TableSQLExpressionImp
     }
 
     @Override
-    public String toSQL(ToSQLContext sqlParameterCollector) {
-        EasySQLExpressionUtil.expressionInvokeRoot(sqlParameterCollector);
+    public String toSQL(ToSQLContext toSQLContext) {
+        EasySQLExpressionUtil.expressionInvokeRoot(toSQLContext);
 
         StringBuilder sql = new StringBuilder();
 
-        sql.append(getSelectTableSource()).append("(").append(easyQuerySQLExpression.toSQL(sqlParameterCollector)).append(")");
+        sql.append(getSelectTableSource()).append("(").append(easyQuerySQLExpression.toSQL(toSQLContext)).append(")");
         String tableName = getTableName();
         if (tableName != null) {
             sql.append(" ").append(tableName);

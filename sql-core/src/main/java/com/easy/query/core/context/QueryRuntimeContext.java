@@ -5,7 +5,7 @@ import com.easy.query.core.basic.jdbc.con.ConnectionManager;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
 import com.easy.query.core.basic.pagination.EasyPageResultProvider;
 import com.easy.query.core.basic.thread.ShardingExecutorService;
-import com.easy.query.core.expression.parser.factory.QueryLambdaFactory;
+import com.easy.query.core.expression.parser.factory.SQLExpressionInvokeFactory;
 import com.easy.query.core.expression.sql.builder.factory.ExpressionBuilderFactory;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.expression.func.ColumnFunctionFactory;
@@ -28,7 +28,7 @@ public interface QueryRuntimeContext {
     <T> T getService(Class<T> serviceType);
     QueryConfiguration getQueryConfiguration();
     EntityMetadataManager getEntityMetadataManager();
-    QueryLambdaFactory getQueryLambdaFactory();
+    SQLExpressionInvokeFactory getSQLExpressionInvokeFactory();
     ConnectionManager getConnectionManager();
     EntityExpressionExecutor getEntityExpressionExecutor();
     JdbcTypeHandlerManager getJdbcTypeHandlerManager();

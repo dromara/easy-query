@@ -14,7 +14,7 @@ import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
  * @Date: 2023/2/12 10:02
  * @author xuejiaming
  */
-public interface EasyQuerySQLBuilderProvider2<T1,T2> extends EasyQuerySQLBuilderProvider<T1> {
+public interface EasyQuerySQLBuilderProvider2<T1,T2> extends EasyQuerySQLBuilderProvider1<T1> {
     SQLGroupBySelector<T2> getSQLGroupColumnSelector2();
     SQLColumnSelector<T2> getSQLOrderColumnSelector2(boolean asc);
     SQLWherePredicate<T2> getSQLWherePredicate2();

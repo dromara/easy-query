@@ -1,6 +1,7 @@
 package com.easy.query.core.basic.api.select;
 
 import com.easy.query.core.basic.api.select.provider.EasyQuerySQLBuilderProvider4;
+import com.easy.query.core.basic.api.select.provider.SQLExpressionProvider;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression4;
 import com.easy.query.core.expression.parser.core.SQLColumnResultSelector;
@@ -199,5 +200,7 @@ public interface Queryable4<T1,T2,T3,T4> extends Queryable<T1> {
     @Override
     Queryable4<T1, T2, T3,T4> asTable(Function<String,String> tableNameAs);
 
-    EasyQuerySQLBuilderProvider4<T1, T2, T3, T4> getSQLBuilderProvider4();
+    SQLExpressionProvider<T2> getSqlExpressionProvider2();
+    SQLExpressionProvider<T3> getSqlExpressionProvider3();
+    SQLExpressionProvider<T4> getSqlExpressionProvider4();
 }

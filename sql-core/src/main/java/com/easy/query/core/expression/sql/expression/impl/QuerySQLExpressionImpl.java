@@ -143,31 +143,31 @@ public class QuerySQLExpressionImpl implements EntityQuerySQLExpression {
     }
 
     @Override
-    public String toSQL(ToSQLContext sqlParameterCollector) {
-        boolean root = EasySQLExpressionUtil.expressionInvokeRoot(sqlParameterCollector);
+    public String toSQL(ToSQLContext toSQLContext) {
+        boolean root = EasySQLExpressionUtil.expressionInvokeRoot(toSQLContext);
         StringBuilder sql = new StringBuilder("SELECT ");
         if(this.distinct){
             sql.append("DISTINCT ");
         }
 
-        sql.append(this.projects.toSQL(sqlParameterCollector));
+        sql.append(this.projects.toSQL(toSQLContext));
 
         Iterator<EntityTableSQLExpression> iterator = getTables().iterator();
         EntityTableSQLExpression firstTable = iterator.next();
-        sql.append(firstTable.toSQL(sqlParameterCollector));
+        sql.append(firstTable.toSQL(toSQLContext));
         while (iterator.hasNext()) {
             EntityTableSQLExpression table = iterator.next();
-            sql.append(table.toSQL(sqlParameterCollector));// [from table alias] | [left join table alias] 匿名表 应该使用  [left join (table) alias]
+            sql.append(table.toSQL(toSQLContext));// [from table alias] | [left join table alias] 匿名表 应该使用  [left join (table) alias]
 
             PredicateSegment on = table.getOn();
             if (on != null && on.isNotEmpty()) {
-                sql.append(" ON ").append(on.toSQL(sqlParameterCollector));
+                sql.append(" ON ").append(on.toSQL(toSQLContext));
             }
         }
         boolean notExistsSQL = EasySQLSegmentUtil.isNotEmpty(this.allPredicate);
         boolean hasWhere = EasySQLSegmentUtil.isNotEmpty(this.where);
         if (hasWhere) {
-            String whereSQL = this.where.toSQL(sqlParameterCollector);
+            String whereSQL = this.where.toSQL(toSQLContext);
             if(root&&notExistsSQL){
                 sql.append(" WHERE ").append("( ").append(whereSQL).append(" )");
             }else{
@@ -177,15 +177,15 @@ public class QuerySQLExpressionImpl implements EntityQuerySQLExpression {
         boolean onlyWhere=true;
         if (this.group!=null&&this.group.isNotEmpty()) {
             onlyWhere=false;
-            sql.append(" GROUP BY ").append(this.group.toSQL(sqlParameterCollector));
+            sql.append(" GROUP BY ").append(this.group.toSQL(toSQLContext));
         }
         if (this.having!=null&&this.having.isNotEmpty()) {
             onlyWhere=false;
-            sql.append(" HAVING ").append(this.having.toSQL(sqlParameterCollector));
+            sql.append(" HAVING ").append(this.having.toSQL(toSQLContext));
         }
         if (this.order!=null&&this.order.isNotEmpty()) {
             onlyWhere=false;
-            sql.append(" ORDER BY ").append(this.order.toSQL(sqlParameterCollector));
+            sql.append(" ORDER BY ").append(this.order.toSQL(toSQLContext));
         }
         if (this.rows > 0) {
             onlyWhere=false;
@@ -200,10 +200,10 @@ public class QuerySQLExpressionImpl implements EntityQuerySQLExpression {
             StringBuilder notExistsResultSQL = new StringBuilder("SELECT NOT EXISTS ( ");
             if(onlyWhere){
 
-                notExistsResultSQL.append(resultSQL).append(hasWhere?" AND ":" WHERE ").append("( ").append(allPredicate.toSQL(sqlParameterCollector))
+                notExistsResultSQL.append(resultSQL).append(hasWhere?" AND ":" WHERE ").append("( ").append(allPredicate.toSQL(toSQLContext))
                         .append(" )").append(" )");
             }else{
-                notExistsResultSQL.append("SELECT 1 FROM ( ").append(resultSQL).append(" ) t ").append(" WHERE ").append(allPredicate.toSQL(sqlParameterCollector))
+                notExistsResultSQL.append("SELECT 1 FROM ( ").append(resultSQL).append(" ) t ").append(" WHERE ").append(allPredicate.toSQL(toSQLContext))
                         .append(" )");
             }
             return notExistsResultSQL.toString();

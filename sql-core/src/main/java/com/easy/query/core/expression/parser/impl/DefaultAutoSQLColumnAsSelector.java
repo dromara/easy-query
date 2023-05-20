@@ -1,8 +1,11 @@
 package com.easy.query.core.expression.parser.impl;
 
+import com.easy.query.core.basic.api.select.Queryable;
 import com.easy.query.core.enums.EasyBehaviorEnum;
+import com.easy.query.core.expression.parser.core.SQLWherePredicate;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.expression.func.ColumnFunction;
@@ -15,6 +18,7 @@ import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 
 import java.util.Collection;
 import java.util.Objects;
+import java.util.function.Function;
 
 /**
  * @FileName: DefaultSqSelector.java
@@ -26,13 +30,18 @@ public class DefaultAutoSQLColumnAsSelector<T1, TR> extends AbstractSQLColumnSel
 
     protected final Class<TR> resultClass;
 
-    public DefaultAutoSQLColumnAsSelector(int index, EntityExpressionBuilder sqlEntityExpression, SQLBuilderSegment sqlSegment0Builder, Class<TR> resultClass) {
-        super(index, sqlEntityExpression, sqlSegment0Builder);
+    public DefaultAutoSQLColumnAsSelector(int index, EntityQueryExpressionBuilder entityQueryExpressionBuilder, SQLBuilderSegment sqlSegment0Builder, Class<TR> resultClass) {
+        super(index, entityQueryExpressionBuilder, sqlSegment0Builder);
         this.resultClass = resultClass;
     }
 
     @Override
     public SQLColumnAsSelector<T1, TR> columnAs(Property<T1, ?> column, Property<TR, ?> alias) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public <T2> SQLColumnAsSelector<T1, TR> columnSubQueryAs(Function<SQLWherePredicate<T1>,Queryable<T2>> subQueryableFunc, Property<TR, T2> alias) {
         throw new UnsupportedOperationException();
     }
 
@@ -44,7 +53,7 @@ public class DefaultAutoSQLColumnAsSelector<T1, TR> extends AbstractSQLColumnSel
     @Override
     public SQLColumnAsSelector<T1, TR> columnAll() {
 
-        EntityTableExpressionBuilder table = entityExpressionBuilder.getTable(index);
+        EntityTableExpressionBuilder table = entityQueryExpressionBuilder.getTable(index);
         if (table.getEntityClass().equals(resultClass)) {
              super.columnAll();
              return this;
@@ -58,8 +67,8 @@ public class DefaultAutoSQLColumnAsSelector<T1, TR> extends AbstractSQLColumnSel
             columnAnonymousAll((AnonymousEntityTableExpressionBuilder) table);
         } else {
             //只查询当前对象返回结果属性名称匹配
-            boolean queryLargeColumn = entityExpressionBuilder.getExpressionContext().getBehavior().hasBehavior(EasyBehaviorEnum.QUERY_LARGE_COLUMN);
-            EntityMetadata targetEntityMetadata = entityExpressionBuilder.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(resultClass);
+            boolean queryLargeColumn = entityQueryExpressionBuilder.getExpressionContext().getBehavior().hasBehavior(EasyBehaviorEnum.QUERY_LARGE_COLUMN);
+            EntityMetadata targetEntityMetadata = entityQueryExpressionBuilder.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(resultClass);
             EntityMetadata sourceEntityMetadata = table.getEntityMetadata();
 
             Collection<String> sourceProperties = sourceEntityMetadata.getProperties();
@@ -82,7 +91,7 @@ public class DefaultAutoSQLColumnAsSelector<T1, TR> extends AbstractSQLColumnSel
                         String targetColumnName = targetColumnMetadata.getName();
                         //如果当前属性和查询对象属性一致那么就返回对应的列名，对应的列名如果不一样就返回对应返回结果对象的属性上的列名
                         String alias = Objects.equals(sourceColumnName, targetColumnName) ? null : targetColumnName;
-                        sqlSegmentBuilder.append(new ColumnSegmentImpl(table.getEntityTable(), property, entityExpressionBuilder.getRuntimeContext(), alias));
+                        sqlSegmentBuilder.append(new ColumnSegmentImpl(table.getEntityTable(), property, entityQueryExpressionBuilder.getRuntimeContext(), alias));
                     }
                 }
 

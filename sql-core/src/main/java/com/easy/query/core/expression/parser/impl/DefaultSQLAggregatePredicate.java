@@ -84,7 +84,7 @@ public class DefaultSQLAggregatePredicate<T1> implements SQLAggregatePredicate<T
     public SQLAggregatePredicate<T1> and(boolean condition, SQLExpression1<SQLAggregatePredicate<T1>> sqlAggregatePredicateSQLExpression) {
         if (condition) {
             this.rootPredicateSegment.addPredicateSegment(this.nextPredicateSegment);
-            SQLAggregatePredicate<T1> sqlPredicate = entityExpressionBuilder.getRuntimeContext().getQueryLambdaFactory().createSQLAggregatePredicate(index, entityExpressionBuilder, this.nextPredicateSegment);
+            SQLAggregatePredicate<T1> sqlPredicate = entityExpressionBuilder.getRuntimeContext().getSQLExpressionInvokeFactory().createSQLAggregatePredicate(index, entityExpressionBuilder, this.nextPredicateSegment);
             sqlAggregatePredicateSQLExpression.apply(sqlPredicate);
         }
         return this;
@@ -103,7 +103,7 @@ public class DefaultSQLAggregatePredicate<T1> implements SQLAggregatePredicate<T
         if (condition) {
             this.nextPredicateSegment = new OrPredicateSegment();
             this.rootPredicateSegment.addPredicateSegment(this.nextPredicateSegment);
-            SQLAggregatePredicate<T1> sqlPredicate = entityExpressionBuilder.getRuntimeContext().getQueryLambdaFactory().createSQLAggregatePredicate(index, entityExpressionBuilder, this.nextPredicateSegment);
+            SQLAggregatePredicate<T1> sqlPredicate = entityExpressionBuilder.getRuntimeContext().getSQLExpressionInvokeFactory().createSQLAggregatePredicate(index, entityExpressionBuilder, this.nextPredicateSegment);
             sqlAggregatePredicateSQLExpression.apply(sqlPredicate);
         }
         return this;

@@ -31,7 +31,7 @@ public class OrderColumnSegmentImpl extends ColumnSegmentImpl implements OrderBy
     }
 
     @Override
-    public String toSQL(ToSQLContext sqlParameterCollector) {
+    public String toSQL(ToSQLContext toSQLContext) {
 
         String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumn(runtimeContext,table,propertyName);
         StringBuilder sql = new StringBuilder().append(sqlColumnSegment);

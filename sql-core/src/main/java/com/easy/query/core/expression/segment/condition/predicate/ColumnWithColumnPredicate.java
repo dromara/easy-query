@@ -31,7 +31,7 @@ public class ColumnWithColumnPredicate implements Predicate {
     }
 
     @Override
-    public String toSQL(ToSQLContext sqlParameterCollector) {
+    public String toSQL(ToSQLContext toSQLContext) {
 
         String sqlColumnSegment1 =  EasySQLExpressionUtil.getSQLOwnerColumn(runtimeContext,leftTable,leftPropertyName);
         String sqlColumnSegment2 =  EasySQLExpressionUtil.getSQLOwnerColumn(runtimeContext,rightTable,rightPropertyName);

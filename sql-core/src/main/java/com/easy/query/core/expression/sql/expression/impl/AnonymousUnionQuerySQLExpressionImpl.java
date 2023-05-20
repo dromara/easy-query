@@ -37,17 +37,17 @@ public class AnonymousUnionQuerySQLExpressionImpl implements AnonymousUnionEntit
         this.tables = Collections.emptyList();
     }
     @Override
-    public String toSQL(ToSQLContext sqlParameterCollector) {
-        EasySQLExpressionUtil.expressionInvokeRoot(sqlParameterCollector);
+    public String toSQL(ToSQLContext toSQLContext) {
+        EasySQLExpressionUtil.expressionInvokeRoot(toSQLContext);
         Iterator<EntityQuerySQLExpression> iterator = querySQLExpressions.iterator();
         EntityQuerySQLExpression firstQuerySQLExpression = iterator.next();
         String unionSQL = " " + sqlUnion.getSQL() + " ";
         StringBuilder sql = new StringBuilder();
-        sql.append(firstQuerySQLExpression.toSQL(sqlParameterCollector));
+        sql.append(firstQuerySQLExpression.toSQL(toSQLContext));
         while(iterator.hasNext()){
             sql.append(unionSQL);
             EntityQuerySQLExpression querySQLExpression = iterator.next();
-            sql.append(querySQLExpression.toSQL(sqlParameterCollector));
+            sql.append(querySQLExpression.toSQL(toSQLContext));
         }
         return sql.toString();
     }

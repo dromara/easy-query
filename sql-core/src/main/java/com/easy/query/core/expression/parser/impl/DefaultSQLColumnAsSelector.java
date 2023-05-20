@@ -1,7 +1,13 @@
 package com.easy.query.core.expression.parser.impl;
 
+import com.easy.query.core.basic.api.select.Queryable;
+import com.easy.query.core.basic.api.select.provider.SQLExpressionProvider;
+import com.easy.query.core.basic.api.select.provider.Select1SQLProvider;
+import com.easy.query.core.expression.parser.core.SQLWherePredicate;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.segment.SubQueryColumnSegmentImpl;
 import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.expression.func.ColumnFunction;
@@ -16,6 +22,7 @@ import com.easy.query.core.util.EasyLambdaUtil;
 
 import java.util.Collection;
 import java.util.Objects;
+import java.util.function.Function;
 
 /**
  * @FileName: DefaultSqSelector.java
@@ -28,19 +35,38 @@ public class DefaultSQLColumnAsSelector<T1, TR> extends AbstractSQLColumnSelecto
     protected final Class<TR> resultClass;
     protected final EntityMetadata resultEntityMetadata;
 
-    public DefaultSQLColumnAsSelector(int index, EntityExpressionBuilder entityExpressionBuilder, SQLBuilderSegment sqlSegment0Builder, Class<TR> resultClass) {
-        super(index, entityExpressionBuilder, sqlSegment0Builder);
+    public DefaultSQLColumnAsSelector(int index, EntityQueryExpressionBuilder EntityQueryExpressionBuilder, SQLBuilderSegment sqlSegment0Builder, Class<TR> resultClass) {
+        super(index, EntityQueryExpressionBuilder, sqlSegment0Builder);
         this.resultClass = resultClass;
-        this.resultEntityMetadata = entityExpressionBuilder.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(resultClass);
+        this.resultEntityMetadata = EntityQueryExpressionBuilder.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(resultClass);
     }
 
     @Override
     public SQLColumnAsSelector<T1, TR> columnAs(Property<T1, ?> column, Property<TR, ?> alias) {
-        EntityTableExpressionBuilder table = entityExpressionBuilder.getTable(index);
+        EntityTableExpressionBuilder table = entityQueryExpressionBuilder.getTable(index);
         String propertyName = EasyLambdaUtil.getPropertyName(column);
         String aliasColumnName = getResultColumnName(alias);
-        sqlSegmentBuilder.append(new ColumnSegmentImpl(table.getEntityTable(), propertyName, entityExpressionBuilder.getRuntimeContext(), aliasColumnName));
+        sqlSegmentBuilder.append(new ColumnSegmentImpl(table.getEntityTable(), propertyName, entityQueryExpressionBuilder.getRuntimeContext(), aliasColumnName));
         return this;
+    }
+
+    @Override
+    public <T2> SQLColumnAsSelector<T1, TR> columnSubQueryAs(Function<SQLWherePredicate<T1>,Queryable<T2>> subQueryableFunc, Property<TR, T2> alias) {
+        SQLExpressionProvider<T1> sqlExpressionProvider = runtimeContext.getSQLExpressionInvokeFactory().createSQLExpressionProvider(index, entityQueryExpressionBuilder);
+        SQLWherePredicate<T1> sqlWherePredicate = sqlExpressionProvider.getSQLWherePredicate();
+        Queryable<T2> subQueryable = subQueryableFunc.apply(sqlWherePredicate);
+        extract(subQueryable);
+        EntityTableExpressionBuilder table = entityQueryExpressionBuilder.getTable(index);
+        String aliasColumnName = getResultColumnName(alias);
+        SubQueryColumnSegmentImpl subQueryColumnSegment = new SubQueryColumnSegmentImpl(table.getEntityTable(), subQueryable, aliasColumnName, runtimeContext);
+        sqlSegmentBuilder.append(subQueryColumnSegment);
+        return this;
+    }
+
+    public <T2> void extract(Queryable<T2> subQueryable){
+
+        EntityQueryExpressionBuilder subQueryableSQLEntityExpressionBuilder = subQueryable.getSQLEntityExpressionBuilder();
+        entityQueryExpressionBuilder.getExpressionContext().extract(subQueryableSQLEntityExpressionBuilder.getExpressionContext());
     }
 
     protected String getResultColumnName(Property<TR, ?> alias){
@@ -57,7 +83,7 @@ public class DefaultSQLColumnAsSelector<T1, TR> extends AbstractSQLColumnSelecto
     @Override
     public SQLColumnAsSelector<T1, TR> columnAll() {
 
-        EntityTableExpressionBuilder table = entityExpressionBuilder.getTable(index);
+        EntityTableExpressionBuilder table = entityQueryExpressionBuilder.getTable(index);
         if(table.getEntityClass().equals(resultClass)){
               super.columnAll();
             return this;
@@ -79,7 +105,7 @@ public class DefaultSQLColumnAsSelector<T1, TR> extends AbstractSQLColumnSelecto
                     ColumnMetadata resultColumnMetadata = resultEntityMetadata.getColumnNotNull(aliasPropertyName);
                     String aliasColumnName = resultColumnMetadata.getName();
                     String alias = Objects.equals(columnName,aliasColumnName)?null:aliasColumnName;
-                    sqlSegmentBuilder.append(new ColumnSegmentImpl(table.getEntityTable(), property, entityExpressionBuilder.getRuntimeContext(),alias));
+                    sqlSegmentBuilder.append(new ColumnSegmentImpl(table.getEntityTable(), property, entityQueryExpressionBuilder.getRuntimeContext(),alias));
                 }
             }
         }
@@ -88,10 +114,10 @@ public class DefaultSQLColumnAsSelector<T1, TR> extends AbstractSQLColumnSelecto
 
     @Override
     public SQLColumnAsSelector<T1, TR> columnFunc(Property<T1, ?> column, Property<TR, ?> alias, ColumnFunction columnFunction) {
-        EntityTableExpressionBuilder table = entityExpressionBuilder.getTable(index);
+        EntityTableExpressionBuilder table = entityQueryExpressionBuilder.getTable(index);
         String propertyName = EasyLambdaUtil.getPropertyName(column);
         String columnAsName = alias == null ? table.getColumnName(propertyName) : getResultColumnName(alias);
-        sqlSegmentBuilder.append(new FuncColumnSegmentImpl(table.getEntityTable(), propertyName, entityExpressionBuilder.getRuntimeContext(), columnFunction, columnAsName));
+        sqlSegmentBuilder.append(new FuncColumnSegmentImpl(table.getEntityTable(), propertyName, entityQueryExpressionBuilder.getRuntimeContext(), columnFunction, columnAsName));
         return this;
     }
 

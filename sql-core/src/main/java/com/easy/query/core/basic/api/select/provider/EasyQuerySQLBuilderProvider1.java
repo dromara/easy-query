@@ -14,7 +14,7 @@ import com.easy.query.core.expression.parser.core.SQLColumnResultSelector;
  * @Date: 2023/2/12 10:02
  * @author xuejiaming
  */
-public interface EasyQuerySQLBuilderProvider<T1> {
+public interface EasyQuerySQLBuilderProvider1<T1> {
     SQLGroupBySelector<T1> getSQLGroupColumnSelector1();
     SQLColumnSelector<T1> getSQLOrderColumnSelector1(boolean asc);
     SQLWherePredicate<T1> getSQLWherePredicate1();

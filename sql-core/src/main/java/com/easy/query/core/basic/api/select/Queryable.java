@@ -3,11 +3,12 @@ package com.easy.query.core.basic.api.select;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.api.dynamic.sort.ObjectSort;
 import com.easy.query.core.basic.api.internal.QueryStrategy;
+import com.easy.query.core.basic.api.select.provider.SQLExpressionProvider;
 import com.easy.query.core.sharding.manager.SequenceCountLine;
 import com.easy.query.core.basic.api.internal.Interceptable;
 import com.easy.query.core.basic.api.internal.LogicDeletable;
 import com.easy.query.core.basic.api.internal.TableReNameable;
-import com.easy.query.core.basic.api.select.provider.EasyQuerySQLBuilderProvider;
+import com.easy.query.core.basic.api.select.provider.EasyQuerySQLBuilderProvider1;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
 import com.easy.query.core.exception.EasyQueryWhereInvalidOperationException;
@@ -202,7 +203,7 @@ public interface Queryable<T1> extends Query<T1>,
         return toSQL(resultClass, null);
     }
 
-    <TR> String toSQL(Class<TR> resultClass, ToSQLContext sqlParameterCollector);
+    <TR> String toSQL(Class<TR> resultClass, ToSQLContext toSQLContext);
 
     /**
      * 对当前表达式返回自定义select列
@@ -404,9 +405,6 @@ public interface Queryable<T1> extends Query<T1>,
 
     Queryable<T1> unionAll(Collection<Queryable<T1>> unionQueries);
 
-    EasyQuerySQLBuilderProvider<T1> getSQLBuilderProvider1();
-
-
     /**
      * 自动将查询结果集合全部添加到当前上下文追踪中,如果当前查询结果十分庞大,并且更新数据只有个别条数,建议不要使用
      * 追踪查询，可以通过开启追踪后使用普通的查询，然后添加到当前的追踪上下文中{@link com.easy.query.core.api.client.EasyQuery#addTracking(Object)},开始先数据追踪的差异更新
@@ -422,5 +420,7 @@ public interface Queryable<T1> extends Query<T1>,
     Queryable<T1> useMaxShardingQueryLimit(int maxShardingQueryLimit);
 
     Queryable<T1> useConnectionMode(ConnectionModeEnum connectionMode);
+
+    SQLExpressionProvider<T1> getSqlExpressionProvider1();
 
 }

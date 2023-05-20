@@ -314,7 +314,7 @@ public class DefaultSQLPredicate<T1> implements SQLWherePredicate<T1> {
     public SQLWherePredicate<T1> and(boolean condition, SQLExpression1<SQLWherePredicate<T1>> sqlWherePredicateSQLExpression) {
         if (condition) {
             and0();
-             SQLWherePredicate<T1> sqlPredicate = entityExpressionBuilder.getRuntimeContext().getQueryLambdaFactory().createSQLPredicate(index, entityExpressionBuilder, this.nextPredicateSegment);
+             SQLWherePredicate<T1> sqlPredicate = entityExpressionBuilder.getRuntimeContext().getSQLExpressionInvokeFactory().createSQLPredicate(index, entityExpressionBuilder, this.nextPredicateSegment);
             sqlWherePredicateSQLExpression.apply(sqlPredicate);
             next();
         }
@@ -347,7 +347,7 @@ public class DefaultSQLPredicate<T1> implements SQLWherePredicate<T1> {
     public SQLWherePredicate<T1> or(boolean condition, SQLExpression1<SQLWherePredicate<T1>> sqlWherePredicateSQLExpression) {
         if (condition) {
             or0();
-             SQLWherePredicate<T1> sqlPredicate = entityExpressionBuilder.getRuntimeContext().getQueryLambdaFactory().createSQLPredicate(index, entityExpressionBuilder, this.nextPredicateSegment);
+             SQLWherePredicate<T1> sqlPredicate = entityExpressionBuilder.getRuntimeContext().getSQLExpressionInvokeFactory().createSQLPredicate(index, entityExpressionBuilder, this.nextPredicateSegment);
             sqlWherePredicateSQLExpression.apply(sqlPredicate);
             next();
         }

@@ -33,8 +33,8 @@ public class ColumnInsertSegment implements SQLEntityAliasSegment {
     }
 
     @Override
-    public String toSQL(ToSQLContext sqlParameterCollector) {
-        EasySQLUtil.addParameter(sqlParameterCollector,new PropertySQLParameter(table,propertyName));
+    public String toSQL(ToSQLContext toSQLContext) {
+        EasySQLUtil.addParameter(toSQLContext,new PropertySQLParameter(table,propertyName));
         String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumn(runtimeContext,table,propertyName);
         StringBuilder sql = new StringBuilder();
         sql.append(sqlColumnSegment);

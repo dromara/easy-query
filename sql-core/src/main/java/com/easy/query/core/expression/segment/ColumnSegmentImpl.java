@@ -26,7 +26,6 @@ public class ColumnSegmentImpl implements ColumnSegment {
     }
     public ColumnSegmentImpl(TableAvailable table, String propertyName, QueryRuntimeContext runtimeContext, String alias){
         this.table = table;
-
         this.propertyName = propertyName;
         this.runtimeContext = runtimeContext;
         this.alias = alias;
@@ -48,7 +47,7 @@ public class ColumnSegmentImpl implements ColumnSegment {
     }
 
     @Override
-    public String toSQL(ToSQLContext sqlParameterCollector) {
+    public String toSQL(ToSQLContext toSQLContext) {
         String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumn(runtimeContext,table,propertyName);
         StringBuilder sql = new StringBuilder();
         sql.append(sqlColumnSegment);

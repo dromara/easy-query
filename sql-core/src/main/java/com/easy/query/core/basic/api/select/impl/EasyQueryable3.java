@@ -1,6 +1,7 @@
 package com.easy.query.core.basic.api.select.impl;
 
 import com.easy.query.core.basic.api.select.abstraction.AbstractQueryable3;
+import com.easy.query.core.basic.api.select.provider.EasyQuerySQLBuilderProvider3;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 
 /**

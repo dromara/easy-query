@@ -29,8 +29,8 @@ public class ColumnPropertyPredicate implements Predicate,ValuePredicate {
     }
 
     @Override
-    public String toSQL(ToSQLContext sqlParameterCollector) {
-        EasySQLUtil.addParameter(sqlParameterCollector,new PropertySQLParameter(table,propertyName));
+    public String toSQL(ToSQLContext toSQLContext) {
+        EasySQLUtil.addParameter(toSQLContext,new PropertySQLParameter(table,propertyName));
         String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumn(runtimeContext,table,propertyName);
         return sqlColumnSegment + " = ?";
     }

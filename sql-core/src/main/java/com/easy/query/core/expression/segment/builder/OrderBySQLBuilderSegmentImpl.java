@@ -15,7 +15,7 @@ import java.util.List;
 public class OrderBySQLBuilderSegmentImpl extends AbstractSQLBuilderSegment {
 
     @Override
-    public String toSQL(ToSQLContext sqlParameterCollector) {
+    public String toSQL(ToSQLContext toSQLContext) {
 
         StringBuilder sb = new StringBuilder();
         List<SQLSegment> sqlSegments = getSQLSegments();
@@ -28,7 +28,7 @@ public class OrderBySQLBuilderSegmentImpl extends AbstractSQLBuilderSegment {
             if (sb.length() != 0) {
                 sb.insert(0, SQLKeywordEnum.DOT.toSQL());
             }
-            String orderSQL = sqlSegment.toSQL(sqlParameterCollector);
+            String orderSQL = sqlSegment.toSQL(toSQLContext);
             if (sb.length() == 0) {
                 sb.insert(0, orderSQL);
 

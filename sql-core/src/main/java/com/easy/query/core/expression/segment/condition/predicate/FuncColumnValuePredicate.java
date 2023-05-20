@@ -35,8 +35,8 @@ public class FuncColumnValuePredicate implements Predicate {
     }
 
     @Override
-    public String toSQL(ToSQLContext sqlParameterCollector) {
-        EasySQLUtil.addParameter(sqlParameterCollector,new EasyConstSQLParameter(table,propertyName,val));
+    public String toSQL(ToSQLContext toSQLContext) {
+        EasySQLUtil.addParameter(toSQLContext,new EasyConstSQLParameter(table,propertyName,val));
         String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumn(runtimeContext,table,propertyName);
         return func.getFuncColumn(sqlColumnSegment) +" "+ compare.getSQL() + " ?";
     }

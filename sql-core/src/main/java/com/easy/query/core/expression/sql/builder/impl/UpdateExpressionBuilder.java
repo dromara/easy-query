@@ -5,7 +5,7 @@ import com.easy.query.core.enums.SQLPredicateCompareEnum;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.parser.core.SQLColumnSelector;
 import com.easy.query.core.expression.parser.core.SQLColumnSetter;
-import com.easy.query.core.expression.parser.factory.QueryLambdaFactory;
+import com.easy.query.core.expression.parser.factory.SQLExpressionInvokeFactory;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.basic.plugin.version.EasyVersionStrategy;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnValuePredicate;
@@ -133,7 +133,7 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
     protected SQLBuilderSegment buildSetSQLSegment(EntityTableExpressionBuilder table) {
         EntityMetadata entityMetadata = table.getEntityMetadata();
         SQLBuilderSegment updateSet = getSetColumns().cloneSQLBuilder();
-        SQLColumnSetter<Object> sqlColumnSetter = getRuntimeContext().getQueryLambdaFactory().createSQLColumnSetter(0, this, updateSet);
+        SQLColumnSetter<Object> sqlColumnSetter = getRuntimeContext().getSQLExpressionInvokeFactory().createSQLColumnSetter(0, this, updateSet);
 
         //如果更新拦截器不为空
         if (EasyCollectionUtil.isNotEmpty(entityMetadata.getUpdateSetInterceptors())) {
@@ -172,7 +172,7 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
         if (!hasSetColumns()) {
             EntityMetadata entityMetadata = table.getEntityMetadata();
             QueryRuntimeContext runtimeContext = getRuntimeContext();
-            QueryLambdaFactory easyQueryLambdaFactory = runtimeContext.getQueryLambdaFactory();
+            SQLExpressionInvokeFactory easyQueryLambdaFactory = runtimeContext.getSQLExpressionInvokeFactory();
             SQLColumnSelector<?> sqlColumnSetter = easyQueryLambdaFactory.createSQLColumnSetSelector(table.getIndex(), this, updateSet);
             sqlColumnSetter.columnAll();
             clearUpdateSet(sqlWhere, runtimeContext, entityMetadata, entity, updateSet);
