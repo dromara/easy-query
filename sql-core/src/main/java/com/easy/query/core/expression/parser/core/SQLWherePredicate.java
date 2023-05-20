@@ -330,15 +330,15 @@ public interface SQLWherePredicate<T1> {
     }
     <TProperty> SQLWherePredicate<T1> notIn(boolean condition, Property<T1, ?> column, Queryable<TProperty> subQueryable);
 
-   default  <T2> SQLWherePredicate<T1> exists(Queryable<T2> subQueryable, SQLExpression1<SQLWherePredicate<T2>> whereExpression){
-       return exists(true,subQueryable,whereExpression);
+   default  <T2> SQLWherePredicate<T1> exists(Queryable<T2> subQueryable){
+       return exists(true,subQueryable);
    }
-    <T2> SQLWherePredicate<T1> exists(boolean condition, Queryable<T2> subQueryable, SQLExpression1<SQLWherePredicate<T2>> whereExpression);
+    <T2> SQLWherePredicate<T1> exists(boolean condition, Queryable<T2> subQueryable);
 
-   default  <T2> SQLWherePredicate<T1> notExists(Queryable<T2> subQueryable, SQLExpression1<SQLWherePredicate<T2>> whereExpression){
-       return notExists(true,subQueryable,whereExpression);
+   default  <T2> SQLWherePredicate<T1> notExists(Queryable<T2> subQueryable){
+       return notExists(true,subQueryable);
    }
-    <T2> SQLWherePredicate<T1> notExists(boolean condition, Queryable<T2> subQueryable, SQLExpression1<SQLWherePredicate<T2>> whereExpression);
+    <T2> SQLWherePredicate<T1> notExists(boolean condition, Queryable<T2> subQueryable);
 
     /**
      * 区间 (left..right] = {x | left < x <= right}

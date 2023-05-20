@@ -710,13 +710,13 @@ public class QueryTest extends BaseTest {
         Queryable<BlogEntity> where = easyQuery.queryable(BlogEntity.class)
                 .where(o -> o.eq(BlogEntity::getId, "123"));
         String sql = easyQuery
-                .queryable(Topic.class,"x").where(o -> o.exists(where, q -> q.eq(o, BlogEntity::getId, Topic::getId))).toSQL();
+                .queryable(Topic.class,"x").where(o -> o.exists(where.where(q -> q.eq(o, BlogEntity::getId, Topic::getId)))).toSQL();
         Assert.assertEquals("SELECT x.`id`,x.`stars`,x.`title`,x.`create_time` FROM `t_topic` x WHERE EXISTS (SELECT 1 FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? AND t.`id` = x.`id`) ",sql);
 
         Queryable<BlogEntity> where1 = easyQuery.queryable(BlogEntity.class)
                 .where(o -> o.eq(BlogEntity::getId, "1"));
         List<Topic> x = easyQuery
-                .queryable(Topic.class, "x").where(o -> o.exists(where1, q -> q.eq(o, BlogEntity::getId, Topic::getId))).toList();
+                .queryable(Topic.class, "x").where(o -> o.exists(where1.where(q -> q.eq(o, BlogEntity::getId, Topic::getId)))).toList();
         Assert.assertEquals(1,x.size());
         Assert.assertEquals("1",x.get(0).getId());
     }
@@ -725,13 +725,13 @@ public class QueryTest extends BaseTest {
         Queryable<BlogEntity> where = easyQuery.queryable(BlogEntity.class)
                 .where(o -> o.eq(BlogEntity::getId, "123"));
         String sql = easyQuery
-                .queryable(Topic.class,"x").where(o -> o.notExists(where, q -> q.eq(o, BlogEntity::getId, Topic::getId))).toSQL();
+                .queryable(Topic.class,"x").where(o -> o.notExists(where.where(q -> q.eq(o, BlogEntity::getId, Topic::getId)))).toSQL();
         Assert.assertEquals("SELECT x.`id`,x.`stars`,x.`title`,x.`create_time` FROM `t_topic` x WHERE NOT EXISTS (SELECT 1 FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? AND t.`id` = x.`id`) ",sql);
 
         Queryable<BlogEntity> where1 = easyQuery.queryable(BlogEntity.class)
                 .where(o -> o.eq(BlogEntity::getId, "1"));
         List<Topic> x = easyQuery
-                .queryable(Topic.class, "x").where(o -> o.notExists(where1, q -> q.eq(o, BlogEntity::getId, Topic::getId))).toList();
+                .queryable(Topic.class, "x").where(o -> o.notExists(where1.where(q -> q.eq(o, BlogEntity::getId, Topic::getId)))).toList();
         Assert.assertEquals(100,x.size());
         Assert.assertEquals("0",x.get(0).getId());
         Assert.assertEquals("10",x.get(1).getId());

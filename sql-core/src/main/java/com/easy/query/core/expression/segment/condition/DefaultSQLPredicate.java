@@ -221,24 +221,24 @@ public class DefaultSQLPredicate<T1> implements SQLWherePredicate<T1> {
     }
 
     @Override
-    public <T2> SQLWherePredicate<T1> exists(boolean condition, Queryable<T2> subQueryable, SQLExpression1<SQLWherePredicate<T2>> whereExpression) {
+    public <T2> SQLWherePredicate<T1> exists(boolean condition, Queryable<T2> subQueryable) {
         if (condition) {
-            subQueryExists(subQueryable,whereExpression,SQLPredicateCompareEnum.EXISTS);
+            subQueryExists(subQueryable,SQLPredicateCompareEnum.EXISTS);
         }
         return this;
     }
 
     @Override
-    public <T2> SQLWherePredicate<T1> notExists(boolean condition, Queryable<T2> subQueryable, SQLExpression1<SQLWherePredicate<T2>> whereExpression) {
+    public <T2> SQLWherePredicate<T1> notExists(boolean condition, Queryable<T2> subQueryable) {
         if (condition) {
-            subQueryExists(subQueryable,whereExpression,SQLPredicateCompareEnum.NOT_EXISTS);
+            subQueryExists(subQueryable,SQLPredicateCompareEnum.NOT_EXISTS);
         }
         return this;
     }
-    public <T2> void subQueryExists(Queryable<T2> subQueryable, SQLExpression1<SQLWherePredicate<T2>> whereExpression,SQLPredicateCompareEnum sqlPredicateCompare) {
+    public <T2> void subQueryExists(Queryable<T2> subQueryable,SQLPredicateCompareEnum sqlPredicateCompare) {
 
         extract(subQueryable);
-        Queryable<T2> existsQueryable = subQueryable.cloneQueryable().where(whereExpression).select("1");
+        Queryable<T2> existsQueryable = subQueryable.cloneQueryable().select("1");
 
         nextPredicateSegment.setPredicate(new ColumnExistsSubQueryPredicate(getTable(), existsQueryable, getReallyPredicateCompare(sqlPredicateCompare), entityExpressionBuilder.getRuntimeContext()));
         next();

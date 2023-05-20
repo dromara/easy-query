@@ -817,10 +817,13 @@ public class ShardingTest extends BaseTest {
         LocalDateTime endTime = LocalDateTime.of(2022, 5, 1, 1, 1);
 
         Queryable<TopicShardingTime> topicShardingTimeQueryable = easyQuery.queryable(TopicShardingTime.class).where(o -> o.rangeOpen(TopicShardingTime::getCreateTime, beginTime, endTime));
-
-        List<Topic> list1 = easyQuery.queryable(Topic.class)
+        Queryable<Topic> where = easyQuery.queryable(Topic.class)
                 .where(o -> o.eq(Topic::getId, "123")
-                        .exists(topicShardingTimeQueryable, x -> x.eq(o, TopicShardingTime::getId, Topic::getId))).toList();
+                        .exists(topicShardingTimeQueryable.where(x -> x.eq(o, TopicShardingTime::getId, Topic::getId))));
+        String sql = where.toSQL();
+        //tosql是不会对表进行分片的展示
+        Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t WHERE t.`id` = ? AND EXISTS (SELECT 1 FROM `t_topic_sharding_time` t WHERE t.`create_time` > ? AND t.`create_time` < ? AND t.`id` = t.`id`) ",sql);
+        List<Topic> list1 = where.toList();
 
         Assert.assertEquals(0,list1.size());
     }
