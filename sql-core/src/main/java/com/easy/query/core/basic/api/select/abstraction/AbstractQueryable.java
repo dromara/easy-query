@@ -91,7 +91,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
 
 
     @Override
-    public SQLExpressionProvider<T1> getSqlExpressionProvider1(){
+    public SQLExpressionProvider<T1> getSQLExpressionProvider1(){
         if(sqlExpressionProvider1==null){
             sqlExpressionProvider1=runtimeContext.getSQLExpressionInvokeFactory().createSQLExpressionProvider(0,this.entityQueryExpressionBuilder);
         }
@@ -131,7 +131,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     @Override
     public long countDistinct(SQLExpression1<SQLColumnSelector<T1>> selectExpression) {
         ProjectSQLBuilderSegmentImpl sqlSegmentBuilder = new ProjectSQLBuilderSegmentImpl();
-        SQLColumnSelector<T1> sqlColumnSelector = getSqlExpressionProvider1().getSQLColumnSelector(sqlSegmentBuilder);
+        SQLColumnSelector<T1> sqlColumnSelector = getSQLExpressionProvider1().getSQLColumnSelector(sqlSegmentBuilder);
         selectExpression.apply(sqlColumnSelector);
 
         setExecuteMethod(ExecuteMethodEnum.COUNT_DISTINCT);
@@ -331,7 +331,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
      */
     @Override
     public Queryable<T1> select(SQLExpression1<SQLColumnSelector<T1>> selectExpression) {
-        SQLColumnSelector<T1> sqlColumnSelector = getSqlExpressionProvider1().getSQLColumnSelector(entityQueryExpressionBuilder.getProjects());
+        SQLColumnSelector<T1> sqlColumnSelector = getSQLExpressionProvider1().getSQLColumnSelector(entityQueryExpressionBuilder.getProjects());
         selectExpression.apply(sqlColumnSelector);
         if (EasyCollectionUtil.isSingle(entityQueryExpressionBuilder.getTables())) {
             return this;
@@ -341,7 +341,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
 
     @Override
     public <TR> Queryable<TR> select(Class<TR> resultClass, SQLExpression1<SQLColumnAsSelector<T1, TR>> selectExpression) {
-        SQLColumnAsSelector<T1, TR> sqlColumnSelector = getSqlExpressionProvider1().getSQLColumnAsSelector(entityQueryExpressionBuilder.getProjects(), resultClass);
+        SQLColumnAsSelector<T1, TR> sqlColumnSelector = getSQLExpressionProvider1().getSQLColumnAsSelector(entityQueryExpressionBuilder.getProjects(), resultClass);
         selectExpression.apply(sqlColumnSelector);
         return entityQueryExpressionBuilder.getRuntimeContext().getSQLApiFactory().createQueryable(resultClass, entityQueryExpressionBuilder);
     }
@@ -365,7 +365,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     @Override
     public <TR> Queryable<TR> select(Class<TR> resultClass) {
         SQLExpression1<SQLColumnAsSelector<T1, TR>> selectExpression = SQLColumnAsSelector::columnAll;
-        SQLColumnAsSelector<T1, TR> sqlColumnSelector = getSqlExpressionProvider1().getSQLAutoColumnAsSelector(entityQueryExpressionBuilder.getProjects(), resultClass);
+        SQLColumnAsSelector<T1, TR> sqlColumnSelector = getSQLExpressionProvider1().getSQLAutoColumnAsSelector(entityQueryExpressionBuilder.getProjects(), resultClass);
         selectExpression.apply(sqlColumnSelector);
         return entityQueryExpressionBuilder.getRuntimeContext().getSQLApiFactory().createQueryable(resultClass, entityQueryExpressionBuilder);
     }
@@ -373,7 +373,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     @Override
     public Queryable<T1> where(boolean condition, SQLExpression1<SQLWherePredicate<T1>> whereExpression) {
         if (condition) {
-            SQLWherePredicate<T1> sqlPredicate = getSqlExpressionProvider1().getSQLWherePredicate();
+            SQLWherePredicate<T1> sqlPredicate = getSQLExpressionProvider1().getSQLWherePredicate();
             whereExpression.apply(sqlPredicate);
         }
         return this;
@@ -422,14 +422,14 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
      */
     protected SQLWherePredicate<?> matchWhereObjectSQLPredicate(Class<?> entityClass) {
         if (entityClass == t1Class) {
-            return getSqlExpressionProvider1().getSQLWherePredicate();
+            return getSQLExpressionProvider1().getSQLWherePredicate();
         }
         return null;
     }
 
     protected SQLColumnSelector<?> matchOrderBySQLColumnSelector(Class<?> entityClass, boolean asc) {
         if (entityClass == t1Class) {
-            return getSqlExpressionProvider1().getSQLOrderColumnSelector(asc);
+            return getSQLExpressionProvider1().getSQLOrderColumnSelector(asc);
         }
         return null;
     }
@@ -562,7 +562,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     @Override
     public Queryable<T1> groupBy(boolean condition, SQLExpression1<SQLGroupBySelector<T1>> selectExpression) {
         if (condition) {
-            SQLGroupBySelector<T1> sqlPredicate = getSqlExpressionProvider1().getSQLGroupColumnSelector();
+            SQLGroupBySelector<T1> sqlPredicate = getSQLExpressionProvider1().getSQLGroupColumnSelector();
             selectExpression.apply(sqlPredicate);
         }
         return this;
@@ -572,7 +572,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     public Queryable<T1> having(boolean condition, SQLExpression1<SQLAggregatePredicate<T1>> predicateExpression) {
 
         if (condition) {
-            SQLAggregatePredicate<T1> sqlAggregatePredicate = getSqlExpressionProvider1().getSQLAggregatePredicate();
+            SQLAggregatePredicate<T1> sqlAggregatePredicate = getSQLExpressionProvider1().getSQLAggregatePredicate();
             predicateExpression.apply(sqlAggregatePredicate);
         }
         return this;
@@ -581,7 +581,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     @Override
     public Queryable<T1> orderBy(boolean condition, SQLExpression1<SQLColumnSelector<T1>> selectExpression, boolean asc) {
         if (condition) {
-            SQLColumnSelector<T1> sqlPredicate = getSqlExpressionProvider1().getSQLOrderColumnSelector(asc);
+            SQLColumnSelector<T1> sqlPredicate = getSQLExpressionProvider1().getSQLOrderColumnSelector(asc);
             selectExpression.apply(sqlPredicate);
         }
         return this;

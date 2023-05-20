@@ -216,6 +216,6 @@ public interface Queryable3<T1, T2, T3> extends Queryable<T1> {
      */
     @Override
     Queryable3<T1, T2, T3> asTable(Function<String,String> tableNameAs);
-    SQLExpressionProvider<T2> getSqlExpressionProvider2();
-    SQLExpressionProvider<T3> getSqlExpressionProvider3();
+    SQLExpressionProvider<T2> getSQLExpressionProvider2();
+    SQLExpressionProvider<T3> getSQLExpressionProvider3();
 }

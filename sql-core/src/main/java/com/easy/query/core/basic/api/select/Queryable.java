@@ -420,6 +420,6 @@ public interface Queryable<T1> extends Query<T1>,
 
     Queryable<T1> useConnectionMode(ConnectionModeEnum connectionMode);
 
-    SQLExpressionProvider<T1> getSqlExpressionProvider1();
+    SQLExpressionProvider<T1> getSQLExpressionProvider1();
 
 }

@@ -43,7 +43,7 @@ public class EasySQLExpressionUtil {
         if(sqlContext==null){
             return;
         }
-        SQLRewriteUnit sqlRewriteUnit = sqlContext.getSqlRewriteUnit();
+        SQLRewriteUnit sqlRewriteUnit = sqlContext.getSQLRewriteUnit();
         if(sqlRewriteUnit==null){
             return;
         }
@@ -105,24 +105,24 @@ public class EasySQLExpressionUtil {
     }
 
     public static <T1, T2> Queryable2<T1, T2> executeJoinOn(Queryable2<T1, T2> queryable, SQLExpression2<SQLWherePredicate<T1>, SQLWherePredicate<T2>> on) {
-        SQLWherePredicate<T1> sqlOnPredicate1 = queryable.getSqlExpressionProvider1().getSQLOnPredicate();
-        SQLWherePredicate<T2> sqlOnPredicate2 = queryable.getSqlExpressionProvider2().getSQLOnPredicate();
+        SQLWherePredicate<T1> sqlOnPredicate1 = queryable.getSQLExpressionProvider1().getSQLOnPredicate();
+        SQLWherePredicate<T2> sqlOnPredicate2 = queryable.getSQLExpressionProvider2().getSQLOnPredicate();
         on.apply(sqlOnPredicate1, sqlOnPredicate2);
         return queryable;
     }
 
     public static <T1, T2, T3> Queryable3<T1, T2, T3> executeJoinOn(Queryable3<T1, T2, T3> queryable, SQLExpression3<SQLWherePredicate<T1>, SQLWherePredicate<T2>, SQLWherePredicate<T3>> on) {
-        SQLWherePredicate<T1> sqlOnPredicate1 = queryable.getSqlExpressionProvider1().getSQLOnPredicate();
-        SQLWherePredicate<T2> sqlOnPredicate2 = queryable.getSqlExpressionProvider2().getSQLOnPredicate();
-        SQLWherePredicate<T3> sqlOnPredicate3 = queryable.getSqlExpressionProvider3().getSQLOnPredicate();
+        SQLWherePredicate<T1> sqlOnPredicate1 = queryable.getSQLExpressionProvider1().getSQLOnPredicate();
+        SQLWherePredicate<T2> sqlOnPredicate2 = queryable.getSQLExpressionProvider2().getSQLOnPredicate();
+        SQLWherePredicate<T3> sqlOnPredicate3 = queryable.getSQLExpressionProvider3().getSQLOnPredicate();
         on.apply(sqlOnPredicate1, sqlOnPredicate2, sqlOnPredicate3);
         return queryable;
     }
     public static <T1, T2, T3,T4> Queryable4<T1, T2, T3,T4> executeJoinOn(Queryable4<T1, T2, T3,T4> queryable, SQLExpression4<SQLWherePredicate<T1>, SQLWherePredicate<T2>, SQLWherePredicate<T3>, SQLWherePredicate<T4>> on) {
-        SQLWherePredicate<T1> sqlOnPredicate1 = queryable.getSqlExpressionProvider1().getSQLOnPredicate();
-        SQLWherePredicate<T2> sqlOnPredicate2 = queryable.getSqlExpressionProvider2().getSQLOnPredicate();
-        SQLWherePredicate<T3> sqlOnPredicate3 = queryable.getSqlExpressionProvider3().getSQLOnPredicate();
-        SQLWherePredicate<T4> sqlOnPredicate4 = queryable.getSqlExpressionProvider4().getSQLOnPredicate();
+        SQLWherePredicate<T1> sqlOnPredicate1 = queryable.getSQLExpressionProvider1().getSQLOnPredicate();
+        SQLWherePredicate<T2> sqlOnPredicate2 = queryable.getSQLExpressionProvider2().getSQLOnPredicate();
+        SQLWherePredicate<T3> sqlOnPredicate3 = queryable.getSQLExpressionProvider3().getSQLOnPredicate();
+        SQLWherePredicate<T4> sqlOnPredicate4 = queryable.getSQLExpressionProvider4().getSQLOnPredicate();
         on.apply(sqlOnPredicate1, sqlOnPredicate2, sqlOnPredicate3,sqlOnPredicate4);
         return queryable;
     }

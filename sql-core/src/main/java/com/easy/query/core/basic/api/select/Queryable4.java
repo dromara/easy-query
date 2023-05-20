@@ -199,7 +199,7 @@ public interface Queryable4<T1,T2,T3,T4> extends Queryable<T1> {
     @Override
     Queryable4<T1, T2, T3,T4> asTable(Function<String,String> tableNameAs);
 
-    SQLExpressionProvider<T2> getSqlExpressionProvider2();
-    SQLExpressionProvider<T3> getSqlExpressionProvider3();
-    SQLExpressionProvider<T4> getSqlExpressionProvider4();
+    SQLExpressionProvider<T2> getSQLExpressionProvider2();
+    SQLExpressionProvider<T3> getSQLExpressionProvider3();
+    SQLExpressionProvider<T4> getSQLExpressionProvider4();
 }

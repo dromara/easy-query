@@ -14,13 +14,13 @@ public enum MultiTableTypeEnum {
     INNER_JOIN(" INNER JOIN "),
     RIGHT_JOIN(" RIGHT JOIN ");
 
-    private final String appendSql;
+    private final String appendSQL;
 
-    MultiTableTypeEnum(String appendSql) {
-        this.appendSql = appendSql;
+    MultiTableTypeEnum(String appendSQL) {
+        this.appendSQL = appendSQL;
     }
 
-    public String getAppendSql() {
-        return appendSql;
+    public String getAppendSQL() {
+        return appendSQL;
     }
 }

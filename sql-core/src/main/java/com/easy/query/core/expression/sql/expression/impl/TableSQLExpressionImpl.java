@@ -74,7 +74,7 @@ public class TableSQLExpressionImpl implements EntityTableSQLExpression {
     }
 
     public String getSelectTableSource() {
-        return multiTableType.getAppendSql();
+        return multiTableType.getAppendSQL();
     }
     @Override
     public String getTableName() {

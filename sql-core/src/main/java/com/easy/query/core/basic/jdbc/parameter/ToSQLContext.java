@@ -1,7 +1,6 @@
 package com.easy.query.core.basic.jdbc.parameter;
 
 import com.easy.query.core.basic.jdbc.executor.internal.common.SQLRewriteUnit;
-import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
 
 import java.util.List;
 
@@ -25,5 +24,5 @@ public interface ToSQLContext {
 
     List<SQLParameter> getParameters();
 
-    SQLRewriteUnit getSqlRewriteUnit();
+    SQLRewriteUnit getSQLRewriteUnit();
 }

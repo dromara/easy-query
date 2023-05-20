@@ -48,7 +48,7 @@ QQ群:170029046
 
 ```xml
 <properties>
-    <easy-query.version>0.7.5</easy-query.version>
+    <easy-query.version>0.8.1</easy-query.version>
 </properties>
 <dependency>
     <groupId>com.easy-query</groupId>
@@ -60,7 +60,7 @@ QQ群:170029046
 以mysql为例
 ```xml
 <properties>
-    <easy-query.version>0.7.5</easy-query.version>
+    <easy-query.version>0.8.1</easy-query.version>
 </properties>
 <dependency>
     <groupId>com.easy-query</groupId>

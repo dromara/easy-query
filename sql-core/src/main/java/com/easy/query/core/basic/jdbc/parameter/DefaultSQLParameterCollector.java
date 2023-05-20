@@ -50,7 +50,7 @@ public class DefaultSQLParameterCollector implements ToSQLContext {
     }
 
     @Override
-    public SQLRewriteUnit getSqlRewriteUnit() {
+    public SQLRewriteUnit getSQLRewriteUnit() {
         return sqlRewriteUnit;
     }
 

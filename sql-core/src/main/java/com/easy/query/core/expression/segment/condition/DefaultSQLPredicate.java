@@ -25,9 +25,9 @@ import com.easy.query.core.util.EasySQLUtil;
 import java.util.Collection;
 
 /**
+ * @author xuejiaming
  * @Description: 默认的数据库条件比较
  * @Date: 2023/2/7 06:58
- * @author xuejiaming
  */
 public class DefaultSQLPredicate<T1> implements SQLWherePredicate<T1> {
     private final int index;
@@ -38,9 +38,10 @@ public class DefaultSQLPredicate<T1> implements SQLWherePredicate<T1> {
     private PredicateSegment nextPredicateSegment;
 
     public DefaultSQLPredicate(int index, EntityExpressionBuilder entityExpressionBuilder, PredicateSegment predicateSegment) {
-        this(index,entityExpressionBuilder,predicateSegment,false);
+        this(index, entityExpressionBuilder, predicateSegment, false);
 
     }
+
     public DefaultSQLPredicate(int index, EntityExpressionBuilder entityExpressionBuilder, PredicateSegment predicateSegment, boolean reverse) {
         this.index = index;
         this.entityExpressionBuilder = entityExpressionBuilder;
@@ -60,15 +61,17 @@ public class DefaultSQLPredicate<T1> implements SQLWherePredicate<T1> {
         this.rootPredicateSegment.addPredicateSegment(nextPredicateSegment);
         this.nextPredicateSegment = new OrPredicateSegment();
     }
-    protected void next(){
+
+    protected void next() {
         if (reverse) {
             nextOr();
         } else {
             nextAnd();
         }
     }
-    private SQLPredicateCompare getReallyPredicateCompare(SQLPredicateCompare sqlPredicateCompare){
-        return reverse?sqlPredicateCompare.toReverse():sqlPredicateCompare;
+
+    private SQLPredicateCompare getReallyPredicateCompare(SQLPredicateCompare sqlPredicateCompare) {
+        return reverse ? sqlPredicateCompare.toReverse() : sqlPredicateCompare;
     }
 
     protected void appendThisPredicate(Property<T1, ?> column, Object val, SQLPredicateCompare condition) {
@@ -76,10 +79,11 @@ public class DefaultSQLPredicate<T1> implements SQLWherePredicate<T1> {
 
         nextPredicateSegment.setPredicate(new ColumnValuePredicate(getTable(), propertyName, val, getReallyPredicateCompare(condition), entityExpressionBuilder.getRuntimeContext()));
     }
+
     protected void appendThisFuncPredicate(Property<T1, ?> column, ColumnFunction func, SQLPredicateCompare compare, Object val) {
         String propertyName = EasyLambdaUtil.getPropertyName(column);
 
-        nextPredicateSegment.setPredicate(new FuncColumnValuePredicate(getTable(),func, propertyName, val, compare, entityExpressionBuilder.getRuntimeContext()));
+        nextPredicateSegment.setPredicate(new FuncColumnValuePredicate(getTable(), func, propertyName, val, compare, entityExpressionBuilder.getRuntimeContext()));
     }
 
 
@@ -190,7 +194,7 @@ public class DefaultSQLPredicate<T1> implements SQLWherePredicate<T1> {
     @Override
     public <TProperty> SQLWherePredicate<T1> in(boolean condition, Property<T1, TProperty> column, Queryable<TProperty> subQueryable) {
         if (condition) {
-            subQueryIn(column,subQueryable,SQLPredicateCompareEnum.IN);
+            subQueryIn(column, subQueryable, SQLPredicateCompareEnum.IN);
         }
         return this;
     }
@@ -208,12 +212,12 @@ public class DefaultSQLPredicate<T1> implements SQLWherePredicate<T1> {
     @Override
     public <TProperty> SQLWherePredicate<T1> notIn(boolean condition, Property<T1, ?> column, Queryable<TProperty> subQueryable) {
         if (condition) {
-            subQueryIn(column,subQueryable,SQLPredicateCompareEnum.NOT_IN);
+            subQueryIn(column, subQueryable, SQLPredicateCompareEnum.NOT_IN);
         }
         return this;
     }
 
-    public <TProperty> void subQueryIn(Property<T1, ?> column, Queryable<TProperty> subQueryable,SQLPredicateCompareEnum sqlPredicateCompare){
+    public <TProperty> void subQueryIn(Property<T1, ?> column, Queryable<TProperty> subQueryable, SQLPredicateCompareEnum sqlPredicateCompare) {
         extract(subQueryable);
         String propertyName = EasyLambdaUtil.getPropertyName(column);
         nextPredicateSegment.setPredicate(new ColumnInSubQueryPredicate(getTable(), propertyName, subQueryable, getReallyPredicateCompare(sqlPredicateCompare), entityExpressionBuilder.getRuntimeContext()));
@@ -223,7 +227,7 @@ public class DefaultSQLPredicate<T1> implements SQLWherePredicate<T1> {
     @Override
     public <T2> SQLWherePredicate<T1> exists(boolean condition, Queryable<T2> subQueryable) {
         if (condition) {
-            subQueryExists(subQueryable,SQLPredicateCompareEnum.EXISTS);
+            subQueryExists(subQueryable, SQLPredicateCompareEnum.EXISTS);
         }
         return this;
     }
@@ -231,11 +235,12 @@ public class DefaultSQLPredicate<T1> implements SQLWherePredicate<T1> {
     @Override
     public <T2> SQLWherePredicate<T1> notExists(boolean condition, Queryable<T2> subQueryable) {
         if (condition) {
-            subQueryExists(subQueryable,SQLPredicateCompareEnum.NOT_EXISTS);
+            subQueryExists(subQueryable, SQLPredicateCompareEnum.NOT_EXISTS);
         }
         return this;
     }
-    public <T2> void subQueryExists(Queryable<T2> subQueryable,SQLPredicateCompareEnum sqlPredicateCompare) {
+
+    public <T2> void subQueryExists(Queryable<T2> subQueryable, SQLPredicateCompareEnum sqlPredicateCompare) {
 
         extract(subQueryable);
         Queryable<T2> existsQueryable = subQueryable.cloneQueryable().select("1");
@@ -244,7 +249,7 @@ public class DefaultSQLPredicate<T1> implements SQLWherePredicate<T1> {
         next();
     }
 
-    public <T2> void extract(Queryable<T2> subQueryable){
+    public <T2> void extract(Queryable<T2> subQueryable) {
 
         EntityQueryExpressionBuilder subQueryableSQLEntityExpressionBuilder = subQueryable.getSQLEntityExpressionBuilder();
         entityExpressionBuilder.getExpressionContext().extract(subQueryableSQLEntityExpressionBuilder.getExpressionContext());
@@ -271,7 +276,7 @@ public class DefaultSQLPredicate<T1> implements SQLWherePredicate<T1> {
     public SQLWherePredicate<T1> columnFunc(boolean condition, Property<T1, ?> column, ColumnFunction easyFunc, SQLPredicateCompare sqlPredicateCompare, Object val) {
 
         if (condition) {
-            appendThisFuncPredicate(column,easyFunc, getReallyPredicateCompare(sqlPredicateCompare), val);
+            appendThisFuncPredicate(column, easyFunc, getReallyPredicateCompare(sqlPredicateCompare), val);
             next();
         }
         return this;
@@ -314,16 +319,17 @@ public class DefaultSQLPredicate<T1> implements SQLWherePredicate<T1> {
     public SQLWherePredicate<T1> and(boolean condition, SQLExpression1<SQLWherePredicate<T1>> sqlWherePredicateSQLExpression) {
         if (condition) {
             and0();
-             SQLWherePredicate<T1> sqlPredicate = entityExpressionBuilder.getRuntimeContext().getSQLExpressionInvokeFactory().createSQLPredicate(index, entityExpressionBuilder, this.nextPredicateSegment);
+            SQLWherePredicate<T1> sqlPredicate = entityExpressionBuilder.getRuntimeContext().getSQLExpressionInvokeFactory().createSQLPredicate(index, entityExpressionBuilder, this.nextPredicateSegment);
             sqlWherePredicateSQLExpression.apply(sqlPredicate);
             next();
         }
         return this;
     }
-    protected void and0(){
-        if(reverse){
+
+    protected void and0() {
+        if (reverse) {
             this.nextPredicateSegment = new OrPredicateSegment();
-        }else{
+        } else {
             this.nextPredicateSegment = new AndPredicateSegment();
         }
     }
@@ -335,10 +341,11 @@ public class DefaultSQLPredicate<T1> implements SQLWherePredicate<T1> {
         }
         return this;
     }
-    protected void or0(){
-        if(reverse){
+
+    protected void or0() {
+        if (reverse) {
             this.nextPredicateSegment = new AndPredicateSegment();
-        }else{
+        } else {
             this.nextPredicateSegment = new OrPredicateSegment();
         }
     }
@@ -347,7 +354,7 @@ public class DefaultSQLPredicate<T1> implements SQLWherePredicate<T1> {
     public SQLWherePredicate<T1> or(boolean condition, SQLExpression1<SQLWherePredicate<T1>> sqlWherePredicateSQLExpression) {
         if (condition) {
             or0();
-             SQLWherePredicate<T1> sqlPredicate = entityExpressionBuilder.getRuntimeContext().getSQLExpressionInvokeFactory().createSQLPredicate(index, entityExpressionBuilder, this.nextPredicateSegment);
+            SQLWherePredicate<T1> sqlPredicate = entityExpressionBuilder.getRuntimeContext().getSQLExpressionInvokeFactory().createSQLPredicate(index, entityExpressionBuilder, this.nextPredicateSegment);
             sqlWherePredicateSQLExpression.apply(sqlPredicate);
             next();
         }
