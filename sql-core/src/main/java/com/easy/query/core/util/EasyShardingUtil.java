@@ -8,10 +8,10 @@ import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.executor.parser.PrepareParseResult;
 import com.easy.query.core.expression.executor.parser.QueryPrepareParseResult;
 import com.easy.query.core.expression.executor.parser.SequenceParseResult;
-import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.AggregationColumnSegment;
 import com.easy.query.core.expression.segment.ColumnSegmentImpl;
 import com.easy.query.core.expression.segment.GroupByColumnSegment;
+import com.easy.query.core.expression.segment.MaybeAggregateColumnSegment;
 import com.easy.query.core.expression.segment.OrderByColumnSegment;
 import com.easy.query.core.expression.segment.OrderColumnSegmentImpl;
 import com.easy.query.core.expression.segment.SQLSegment;
@@ -91,7 +91,8 @@ public class EasyShardingUtil {
         int selectIndex = -1;
         for (SQLSegment selectColumn : selectColumns) {
             selectIndex++;
-            if (!(selectColumn instanceof AggregationColumnSegment)) {
+            boolean aggregateColumn = EasySQLSegmentUtil.isAggregateColumn(selectColumn);
+            if (!aggregateColumn) {
                 ColumnSegmentImpl selectColumnSegment = (ColumnSegmentImpl) selectColumn;
                 String selectPropertyName = selectColumnSegment.getPropertyName();
                 if (selectColumnSegment.getTable().getIndex() == tableIndex && Objects.equals(selectPropertyName, propertyName)) {

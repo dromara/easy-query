@@ -50,11 +50,10 @@ public class ProjectSQLBuilderSegmentImpl extends AbstractSQLBuilderSegment impl
     public void append(SQLSegment sqlSegment) {
         super.append(sqlSegment);
         if(!projectHasAggregate){
-            if(sqlSegment instanceof AggregationColumnSegment){
+
+            boolean aggregateColumn = EasySQLSegmentUtil.isAggregateColumn(sqlSegment);
+            if(aggregateColumn){
                 projectHasAggregate=true;
-            }else if(sqlSegment instanceof SubQueryColumnSegment){
-                SubQueryColumnSegment subQueryColumnSegment = (SubQueryColumnSegment) sqlSegment;
-                projectHasAggregate= subQueryColumnSegment.isAggregateColumn();
             }
         }
     }

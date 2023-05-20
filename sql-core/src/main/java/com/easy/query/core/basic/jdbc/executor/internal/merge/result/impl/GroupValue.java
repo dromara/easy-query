@@ -8,6 +8,7 @@ import com.easy.query.core.expression.segment.SubQueryColumnSegment;
 import com.easy.query.core.sharding.context.StreamMergeContext;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.segment.PropertyGroup;
 import com.easy.query.core.util.EasyCollectionUtil;
+import com.easy.query.core.util.EasySQLSegmentUtil;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -50,14 +51,9 @@ public final class GroupValue {
             ArrayList<Object> result = new ArrayList<>(streamMergeContext.getSelectColumns().getSQLSegments().size());
             for (SQLSegment sqlSegment : streamMergeContext.getSelectColumns().getSQLSegments()) {
                 columnIndex++;
-                if(sqlSegment instanceof AggregationColumnSegment){
+                boolean aggregateColumn = EasySQLSegmentUtil.isAggregateColumn(sqlSegment);
+                if(aggregateColumn){
                     continue;
-                }
-                if(sqlSegment instanceof SubQueryColumnSegment){
-                    SubQueryColumnSegment subQueryColumnSegment = (SubQueryColumnSegment) sqlSegment;
-                    if(subQueryColumnSegment.isAggregateColumn()){
-                        continue;
-                    }
                 }
                 //因为jdbc的索引是1开始的所以要加1
                 Object groupValue = streamResult.getObject(columnIndex + 1);

@@ -9,10 +9,8 @@ import com.easy.query.core.expression.func.AggregationType;
  *
  * @author xuejiaming
  */
-public interface SubQueryColumnSegment extends ColumnSegment{
+public interface SubQueryColumnSegment extends MaybeAggregateColumnSegment{
     Queryable<?> getSubQueryable();
-    boolean isAggregateColumn();
-    AggregationType getAggregationType();
 
     @Override
     SubQueryColumnSegment cloneSQLEntitySegment();

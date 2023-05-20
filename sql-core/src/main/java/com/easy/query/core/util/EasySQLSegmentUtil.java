@@ -1,5 +1,7 @@
 package com.easy.query.core.util;
 
+import com.easy.query.core.expression.segment.MaybeAggregateColumnSegment;
+import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 
@@ -21,5 +23,12 @@ public class EasySQLSegmentUtil {
     }
     public static boolean isNotEmpty(SQLBuilderSegment sqlBuilderSegment) {
         return !isEmpty(sqlBuilderSegment);
+    }
+
+    public static boolean isAggregateColumn(SQLSegment sqlSegment){
+        if(sqlSegment instanceof MaybeAggregateColumnSegment){
+            return ((MaybeAggregateColumnSegment)sqlSegment).isAggregateColumn();
+        }
+        return false;
     }
 }

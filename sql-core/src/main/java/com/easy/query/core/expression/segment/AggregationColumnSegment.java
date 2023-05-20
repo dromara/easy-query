@@ -1,6 +1,5 @@
 package com.easy.query.core.expression.segment;
 
-import com.easy.query.core.expression.func.AggregationType;
 
 /**
  * create time 2023/4/28 21:33
@@ -8,8 +7,10 @@ import com.easy.query.core.expression.func.AggregationType;
  *
  * @author xuejiaming
  */
-public interface AggregationColumnSegment extends ColumnSegment {
-    AggregationType getAggregationType();
+public interface AggregationColumnSegment extends MaybeAggregateColumnSegment {
+    default boolean isAggregateColumn(){
+        return true;
+    }
     @Override
     AggregationColumnSegment cloneSQLEntitySegment();
 }

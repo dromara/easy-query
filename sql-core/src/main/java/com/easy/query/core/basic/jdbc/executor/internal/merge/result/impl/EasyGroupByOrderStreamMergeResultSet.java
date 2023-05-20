@@ -5,6 +5,7 @@ import com.easy.query.core.basic.jdbc.executor.internal.merge.result.aggregation
 import com.easy.query.core.basic.jdbc.executor.internal.merge.segment.PropertyGroup;
 import com.easy.query.core.exception.EasyQuerySQLException;
 import com.easy.query.core.expression.segment.AggregationColumnSegment;
+import com.easy.query.core.expression.segment.MaybeAggregateColumnSegment;
 import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
@@ -12,6 +13,7 @@ import com.easy.query.core.sharding.context.StreamMergeContext;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.result.ShardingStreamResultSet;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyClassUtil;
+import com.easy.query.core.util.EasySQLSegmentUtil;
 
 import java.math.BigDecimal;
 import java.sql.Blob;
@@ -182,7 +184,8 @@ public class EasyGroupByOrderStreamMergeResultSet implements ShardingStreamResul
             boolean aggregateColumn = selectColumns[i] == 0;
             if (aggregateColumn) {
                 SQLSegment sqlSegment = sqlSegments.get(i);
-                if (!(sqlSegment instanceof AggregationColumnSegment)) {
+                boolean isAggregateColumn = EasySQLSegmentUtil.isAggregateColumn(sqlSegment);
+                if (!isAggregateColumn) {
                     throw new UnsupportedOperationException("unknown aggregate column:" + EasyClassUtil.getInstanceSimpleName(sqlSegment));
                 }
                 AggregationColumnSegment aggregationColumnSegment = (AggregationColumnSegment) sqlSegment;

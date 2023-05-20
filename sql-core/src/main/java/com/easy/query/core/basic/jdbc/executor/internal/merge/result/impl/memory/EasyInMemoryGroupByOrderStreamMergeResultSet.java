@@ -2,6 +2,7 @@ package com.easy.query.core.basic.jdbc.executor.internal.merge.result.impl.memor
 import com.easy.query.core.basic.jdbc.executor.internal.merge.result.impl.memory.row.DefaultMemoryResultSetRow;
 import com.easy.query.core.exception.EasyQuerySQLException;
 import com.easy.query.core.expression.segment.AggregationColumnSegment;
+import com.easy.query.core.expression.segment.MaybeAggregateColumnSegment;
 import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.expression.segment.SubQueryColumnSegment;
 import com.easy.query.core.logging.Log;
@@ -14,6 +15,7 @@ import com.easy.query.core.basic.jdbc.executor.internal.merge.result.impl.GroupB
 import com.easy.query.core.basic.jdbc.executor.internal.merge.result.impl.GroupValue;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.result.impl.memory.row.MemoryResultSetRow;
 import com.easy.query.core.util.EasyCollectionUtil;
+import com.easy.query.core.util.EasySQLSegmentUtil;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -113,14 +115,12 @@ public final class EasyInMemoryGroupByOrderStreamMergeResultSet extends Abstract
         ArrayList<AggregateValue> aggregationUnits = new ArrayList<>(columnCount);
         for (int i = 0; i < sqlSegments.size(); i++) {
             SQLSegment sqlSegment = sqlSegments.get(i);
-            if(sqlSegment instanceof AggregationColumnSegment){
-                AggregationColumnSegment aggregationColumnSegment = (AggregationColumnSegment) sqlSegment;
-                aggregationUnits.add(new AggregateValue(i, AggregationUnitFactory.create(aggregationColumnSegment.getAggregationType())));
-            } else if(sqlSegment instanceof SubQueryColumnSegment){
-                SubQueryColumnSegment subQueryColumnSegment = (SubQueryColumnSegment) sqlSegment;
-                if(subQueryColumnSegment.isAggregateColumn()){
-                    aggregationUnits.add(new AggregateValue(i, AggregationUnitFactory.create(subQueryColumnSegment.getAggregationType())));
-                }
+
+            boolean aggregateColumn = EasySQLSegmentUtil.isAggregateColumn(sqlSegment);
+            if(aggregateColumn){
+                MaybeAggregateColumnSegment maybeAggregateColumnSegment = (MaybeAggregateColumnSegment) sqlSegment;
+                aggregationUnits.add(new AggregateValue(i, AggregationUnitFactory.create(maybeAggregateColumnSegment.getAggregationType())));
+
             }
         }
         return aggregationUnits;
