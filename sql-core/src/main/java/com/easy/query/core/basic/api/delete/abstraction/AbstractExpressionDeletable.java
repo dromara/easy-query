@@ -8,6 +8,7 @@ import com.easy.query.core.expression.parser.core.SQLWherePredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnValuePredicate;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
+import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.basic.api.delete.Deletable;
 import com.easy.query.core.basic.api.delete.ExpressionDeletable;
@@ -33,7 +34,7 @@ import java.util.function.Function;
  */
 public abstract   class AbstractExpressionDeletable<T> extends AbstractSQLExecuteRows<ExpressionDeletable<T>> implements ExpressionDeletable<T> {
     protected final Class<T> clazz;
-    protected final TableExpressionBuilder table;
+    protected final EntityTableExpressionBuilder table;
     protected final EntityDeleteExpressionBuilder entityDeleteExpressionBuilder;
 
     public AbstractExpressionDeletable(Class<T> clazz, EntityDeleteExpressionBuilder entityDeleteExpressionBuilder){
@@ -41,9 +42,10 @@ public abstract   class AbstractExpressionDeletable<T> extends AbstractSQLExecut
         this.entityDeleteExpressionBuilder = entityDeleteExpressionBuilder;
 
         this.clazz = clazz;
-        EntityMetadata entityMetadata = this.entityDeleteExpressionBuilder.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(clazz);
+        QueryRuntimeContext runtimeContext = entityDeleteExpressionBuilder.getRuntimeContext();
+        EntityMetadata entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(clazz);
         entityMetadata.checkTable();
-        table = new TableExpressionBuilder(entityMetadata,  0,null, MultiTableTypeEnum.NONE,entityDeleteExpressionBuilder.getRuntimeContext());
+        table = runtimeContext.getExpressionBuilderFactory().createEntityTableExpressionBuilder(entityMetadata, 0, null, MultiTableTypeEnum.NONE, runtimeContext);
         this.entityDeleteExpressionBuilder.addSQLEntityTableExpression(table);
     }
 

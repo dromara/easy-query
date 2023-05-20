@@ -6,6 +6,7 @@ import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.basic.plugin.interceptor.EasyInterceptorEntry;
 import com.easy.query.core.configuration.QueryConfiguration;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
@@ -46,10 +47,10 @@ public abstract class AbstractEntityUpdatable<T> extends AbstractSQLExecuteRows<
 
         Class<?> clazz = entities.iterator().next().getClass();
         this.entityUpdateExpressionBuilder = entityUpdateExpression;
-
-        entityMetadata = this.entityUpdateExpressionBuilder.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(clazz);
+        QueryRuntimeContext runtimeContext = entityUpdateExpressionBuilder.getRuntimeContext();
+        entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(clazz);
         entityMetadata.checkTable();
-        table = new TableExpressionBuilder(entityMetadata, 0, null, MultiTableTypeEnum.NONE,entityUpdateExpressionBuilder.getRuntimeContext());
+        table = runtimeContext.getExpressionBuilderFactory().createEntityTableExpressionBuilder(entityMetadata, 0, null, MultiTableTypeEnum.NONE, runtimeContext);
         this.entityUpdateExpressionBuilder.addSQLEntityTableExpression(table);
     }
     @Override

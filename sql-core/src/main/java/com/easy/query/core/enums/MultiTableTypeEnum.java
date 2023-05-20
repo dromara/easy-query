@@ -8,19 +8,19 @@ package com.easy.query.core.enums;
  * @author xuejiaming
  */
 public enum MultiTableTypeEnum {
-    NONE(0),
-    FROM(1),
-    LEFT_JOIN(2),
-    INNER_JOIN(3),
-    RIGHT_JOIN(4);
+    NONE(""),
+    FROM(" FROM "),
+    LEFT_JOIN(" LEFT JOIN "),
+    INNER_JOIN(" INNER JOIN "),
+    RIGHT_JOIN(" RIGHT JOIN ");
 
-    private final Integer code;
+    private final String appendSql;
 
-    MultiTableTypeEnum(Integer code) {
-        this.code = code;
+    MultiTableTypeEnum(String appendSql) {
+        this.appendSql = appendSql;
     }
 
-    public Integer getCode() {
-        return code;
+    public String getAppendSql() {
+        return appendSql;
     }
 }

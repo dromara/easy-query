@@ -39,9 +39,10 @@ public abstract class AbstractEntityDeletable<T> extends AbstractSQLExecuteRows<
         this.entityDeleteExpressionBuilder = entityDeleteExpressionBuilder;
 
         Class<?> clazz = entities.iterator().next().getClass();
-        EntityMetadata entityMetadata = entityDeleteExpressionBuilder.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(clazz);
+        QueryRuntimeContext runtimeContext = entityDeleteExpressionBuilder.getRuntimeContext();
+        EntityMetadata entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(clazz);
         entityMetadata.checkTable();
-        table = new TableExpressionBuilder(entityMetadata, 0, null, MultiTableTypeEnum.NONE,entityDeleteExpressionBuilder.getRuntimeContext());
+        table = runtimeContext.getExpressionBuilderFactory().createEntityTableExpressionBuilder(entityMetadata,0,null,MultiTableTypeEnum.NONE,runtimeContext);
         this.entityDeleteExpressionBuilder.addSQLEntityTableExpression(table);
     }
 

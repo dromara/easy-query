@@ -74,16 +74,7 @@ public class TableSQLExpressionImpl implements EntityTableSQLExpression {
     }
 
     public String getSelectTableSource() {
-        if (MultiTableTypeEnum.LEFT_JOIN.equals(multiTableType)) {
-            return " LEFT JOIN ";
-        } else if (MultiTableTypeEnum.INNER_JOIN.equals(multiTableType)) {
-            return " INNER JOIN ";
-        } else if (MultiTableTypeEnum.RIGHT_JOIN.equals(multiTableType)) {
-            return " RIGHT JOIN ";
-        } else if(MultiTableTypeEnum.FROM.equals(multiTableType)){
-            return " FROM ";
-        }
-        return EasyStringUtil.EMPTY;
+        return multiTableType.getAppendSql();
     }
     @Override
     public String getTableName() {
