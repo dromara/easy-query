@@ -934,6 +934,37 @@ public class ShardingTest extends BaseTest {
         Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,(SELECT COUNT(x.`id`) AS `id` FROM `t_topic_sharding_time` x WHERE x.`create_time` >= ? AND x.`create_time` <= ? AND x.`id` = t.`id`) AS `blog_count` FROM `t_topic` t WHERE t.`title` IS NOT NULL", sql);
         //sharding 需要聚合
         List<TopicSubQueryBlog> list = select.toList();
+Assert.assertEquals(99,list.size());
+    }
+    @Test
+    public void sharding47() {
+        LocalDateTime beginTime = LocalDateTime.of(2020, 1, 1, 1, 1);
+        LocalDateTime endTime = LocalDateTime.of(2020, 5, 2, 1, 1);
+        Queryable<TopicShardingTime> queryable = easyQuery.queryable(TopicShardingTime.class,"x")
+                .where(o->o.rangeClosed(TopicShardingTime::getCreateTime,beginTime,endTime));
+        Queryable<TopicSubQueryBlog> select = easyQuery
+                .queryable(Topic.class)
+                .where(t -> t.isNotNull(Topic::getTitle))
+                .select(TopicSubQueryBlog.class, o -> o.columnAll().columnSubQueryAs(t->{
+                    return queryable.where(x -> x.eq(t, TopicShardingTime::getStars, Topic::getStars)).select(Long.class, x->x.columnCount(TopicShardingTime::getId));
+                }, TopicSubQueryBlog::getBlogCount).columnIgnore(Topic::getCreateTime));
+        String sql = select.toSQL();
 
+        Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,(SELECT COUNT(x.`id`) AS `id` FROM `t_topic_sharding_time` x WHERE x.`create_time` >= ? AND x.`create_time` <= ? AND x.`stars` = t.`stars`) AS `blog_count` FROM `t_topic` t WHERE t.`title` IS NOT NULL", sql);
+        //sharding 需要聚合
+        List<TopicSubQueryBlog> list = select.toList();
+Assert.assertEquals(99,list.size());
+
+        Duration between = Duration.between(beginTime, endTime);
+        long days = between.toDays();
+        for (TopicSubQueryBlog topicSubQueryBlog : list) {
+
+            if(topicSubQueryBlog.getStars()<=days){
+                Assert.assertEquals(1,(long)topicSubQueryBlog.getBlogCount());
+            }
+            else{
+                Assert.assertEquals(0,(long)topicSubQueryBlog.getBlogCount());
+            }
+        }
     }
 }

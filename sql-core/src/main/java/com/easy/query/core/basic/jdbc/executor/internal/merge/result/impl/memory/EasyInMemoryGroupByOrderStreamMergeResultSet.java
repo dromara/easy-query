@@ -3,6 +3,7 @@ import com.easy.query.core.basic.jdbc.executor.internal.merge.result.impl.memory
 import com.easy.query.core.exception.EasyQuerySQLException;
 import com.easy.query.core.expression.segment.AggregationColumnSegment;
 import com.easy.query.core.expression.segment.SQLSegment;
+import com.easy.query.core.expression.segment.SubQueryColumnSegment;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.sharding.context.StreamMergeContext;
@@ -78,6 +79,7 @@ public final class EasyInMemoryGroupByOrderStreamMergeResultSet extends Abstract
             dataMap.put(groupValue,new DefaultMemoryResultSetRow(streamResultSet,columnCount));
         }
         if(!aggregationMap.containsKey(groupValue)){
+            //todo 优化是否需要每次创建
             List<AggregateValue> aggregationUnitValues = createAggregationUnitValues();
             aggregationMap.put(groupValue,aggregationUnitValues);
         }
@@ -109,13 +111,16 @@ public final class EasyInMemoryGroupByOrderStreamMergeResultSet extends Abstract
     private List<AggregateValue> createAggregationUnitValues() {
         List<SQLSegment> sqlSegments = streamMergeContext.getSelectColumns().getSQLSegments();
         ArrayList<AggregateValue> aggregationUnits = new ArrayList<>(columnCount);
-        for (SQLSegment sqlSegment : sqlSegments) {
-        }
         for (int i = 0; i < sqlSegments.size(); i++) {
             SQLSegment sqlSegment = sqlSegments.get(i);
             if(sqlSegment instanceof AggregationColumnSegment){
                 AggregationColumnSegment aggregationColumnSegment = (AggregationColumnSegment) sqlSegment;
                 aggregationUnits.add(new AggregateValue(i, AggregationUnitFactory.create(aggregationColumnSegment.getAggregationType())));
+            } else if(sqlSegment instanceof SubQueryColumnSegment){
+                SubQueryColumnSegment subQueryColumnSegment = (SubQueryColumnSegment) sqlSegment;
+                if(subQueryColumnSegment.isAggregateColumn()){
+                    aggregationUnits.add(new AggregateValue(i, AggregationUnitFactory.create(subQueryColumnSegment.getAggregationType())));
+                }
             }
         }
         return aggregationUnits;

@@ -1,5 +1,7 @@
 package com.easy.query.core.basic.jdbc.executor.internal.merge.result.aggregation;
 
+import com.easy.query.core.util.EasyClassUtil;
+
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -11,21 +13,33 @@ import java.util.List;
  */
 public final class AccumulationAggregationUnit implements AggregationUnit {
 
+    private  Class<?> requiredType;
     private BigDecimal result;
 
     @Override
     public void merge(final List<Comparable<?>> values) {
-        if (null == values || null == values.get(0)) {
+        if (null == values) {
+            return;
+        }
+        Comparable<?> firstValue = values.get(0);
+        if(null == firstValue){
             return;
         }
         if (null == result) {
             result = new BigDecimal("0");
         }
-        result = result.add(new BigDecimal(values.get(0).toString()));
+//        if(requiredType==null){
+//            requiredType=firstValue.getClass();
+//        }
+        result = result.add(new BigDecimal(firstValue.toString()));
     }
 
     @Override
     public Comparable<?> getResult() {
         return result;
+//        if(requiredType==null){
+//        }
+//        Object newValue = EasyClassUtil.convertValueToRequiredType(result, requiredType);
+//        return (Comparable<?>) newValue;
     }
 }
