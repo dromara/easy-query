@@ -285,8 +285,6 @@ public class QueryTest extends BaseTest {
                 .groupBy((t, t1) -> t1.column(BlogEntity::getId))
                 .select(BlogEntity.class, (t, t1) -> t1.column(BlogEntity::getId).columnSum(BlogEntity::getScore));
         Queryable<BlogEntity> blogEntityQueryable = sql.cloneQueryable();
-        String countSql1 = sql.toCountSql();
-        Assert.assertEquals("SELECT COUNT(1) FROM (SELECT t1.`id`,SUM(t1.`score`) AS `score` FROM `t_topic` t INNER JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t1.`title` IS NOT NULL GROUP BY t1.`id`) t2", countSql1);
         String countSql = sql.cloneQueryable().select("COUNT(1)").toSQL();
         Assert.assertEquals("SELECT COUNT(1) FROM (SELECT t1.`id`,SUM(t1.`score`) AS `score` FROM `t_topic` t INNER JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t1.`title` IS NOT NULL GROUP BY t1.`id`) t2", countSql);
         String limitSql = sql.limit(2, 2).toSQL();
@@ -980,13 +978,6 @@ public class QueryTest extends BaseTest {
         List<Topic> list = easyQuery
                 .queryable(Topic.class, "x").where(o -> o.notIn(Topic::getId, idQueryable)).toList();
         Assert.assertEquals(count - 1, list.size());
-    }
-
-    @Test
-    public void query61_1() {
-        String countSql = easyQuery
-                .queryable(Topic.class, "x").toCountSql();
-        Assert.assertEquals("SELECT COUNT(1) FROM `t_topic` x", countSql);
     }
 
     @Test
