@@ -8,7 +8,6 @@ import com.easy.query.core.sharding.manager.SequenceCountLine;
 import com.easy.query.core.basic.api.internal.Interceptable;
 import com.easy.query.core.basic.api.internal.LogicDeletable;
 import com.easy.query.core.basic.api.internal.TableReNameable;
-import com.easy.query.core.basic.api.select.provider.EasyQuerySQLBuilderProvider1;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
 import com.easy.query.core.exception.EasyQueryWhereInvalidOperationException;

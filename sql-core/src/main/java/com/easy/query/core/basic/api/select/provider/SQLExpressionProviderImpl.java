@@ -24,7 +24,7 @@ import com.easy.query.core.util.EasyUtil;
  *
  * @author xuejiaming
  */
-public class SelectSQLProviderImpl<TEntity> implements SQLExpressionProvider<TEntity> {
+public class SQLExpressionProviderImpl<TEntity> implements SQLExpressionProvider<TEntity> {
 
     private final EntityQueryExpressionBuilder entityQueryExpressionBuilder;
     private final int index;
@@ -35,7 +35,7 @@ public class SelectSQLProviderImpl<TEntity> implements SQLExpressionProvider<TEn
     private DefaultSQLAggregatePredicate<TEntity> having;
     private DefaultSQLPredicate<TEntity> on;
 
-    public SelectSQLProviderImpl(int index,EntityQueryExpressionBuilder entityQueryExpressionBuilder){
+    public SQLExpressionProviderImpl(int index, EntityQueryExpressionBuilder entityQueryExpressionBuilder){
         this.index = index;
         this.entityQueryExpressionBuilder = entityQueryExpressionBuilder;
     }

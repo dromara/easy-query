@@ -1,6 +1,9 @@
 package com.easy.query.core.expression.executor.query;
 
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
+import com.easy.query.core.configuration.EasyQueryOption;
+import com.easy.query.core.exception.EasyQueryInvalidOperationException;
+import com.easy.query.core.exception.EasyQueryShardingRouteExecuteMoreException;
 import com.easy.query.core.expression.executor.parser.EntityPrepareParseResult;
 import com.easy.query.core.expression.executor.parser.ExecutionContext;
 import com.easy.query.core.expression.executor.parser.InsertPrepareParseResult;
@@ -31,11 +34,13 @@ import java.util.List;
  * @author xuejiaming
  */
 public class DefaultExecutionContextFactory implements ExecutionContextFactory {
+    private final EasyQueryOption easyQueryOption;
     private final RouteContextFactory routeContextFactory;
     private final RewriteContextFactory rewriteContextFactory;
     private final EasyQueryDataSource easyDataSource;
 
-    public DefaultExecutionContextFactory(RouteContextFactory routeContextFactory, RewriteContextFactory rewriteContextFactory, EasyQueryDataSource easyDataSource){
+    public DefaultExecutionContextFactory(EasyQueryOption easyQueryOption, RouteContextFactory routeContextFactory, RewriteContextFactory rewriteContextFactory, EasyQueryDataSource easyDataSource){
+        this.easyQueryOption = easyQueryOption;
         this.routeContextFactory = routeContextFactory;
         this.rewriteContextFactory = rewriteContextFactory;
 
@@ -65,6 +70,9 @@ public class DefaultExecutionContextFactory implements ExecutionContextFactory {
         }
         RouteContext routeContext = routeContextFactory.createRouteContext(prepareParseResult);
         RewriteContext rewriteContext = rewriteContextFactory.rewriteShardingExpression(prepareParseResult, routeContext);
+        if(rewriteContext.getRewriteRouteUnits().size()>=easyQueryOption.getMaxShardingRouteCount()){
+            throw new EasyQueryShardingRouteExecuteMoreException("execute route size:"+rewriteContext.getRewriteRouteUnits().size());
+        }
         if(prepareParseResult instanceof PredicatePrepareParseResult){
             return new ShardingPredicateExecutionCreator(rewriteContext).create();
         }

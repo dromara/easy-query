@@ -24,10 +24,11 @@ public class EasyQueryOption {
     private final EasyQueryShardingOption shardingOption;
     private final String defaultDataSourceName;
     private final boolean queryLargeColumn;
+    private final int maxShardingRouteCount;
 
     public EasyQueryOption(boolean deleteThrowError, SQLExecuteStrategyEnum insertStrategy, SQLExecuteStrategyEnum updateStrategy, ConnectionModeEnum connectionMode, int maxShardingQueryLimit, int executorMaximumPoolSize, int executorCorePoolSize,
                            boolean throwIfNotMatchRoute, long shardingExecuteTimeoutMillis, long shardingGroupExecuteTimeoutMillis,
-                           EasyQueryShardingOption shardingOption, EasyQueryReplicaOption replicaOption, String defaultDataSourceName,boolean queryLargeColumn) {
+                           EasyQueryShardingOption shardingOption, EasyQueryReplicaOption replicaOption, String defaultDataSourceName,boolean queryLargeColumn,int maxShardingRouteCount) {
         this.connectionMode = connectionMode;
 
         if(executorMaximumPoolSize<0){
@@ -63,6 +64,11 @@ public class EasyQueryOption {
         this.replicaOption = replicaOption;
         this.defaultDataSourceName = defaultDataSourceName;
         this.queryLargeColumn = queryLargeColumn;
+        this.maxShardingRouteCount = maxShardingRouteCount;
+    }
+
+    public int getMaxShardingRouteCount() {
+        return maxShardingRouteCount;
     }
 
     public boolean isDeleteThrowError() {

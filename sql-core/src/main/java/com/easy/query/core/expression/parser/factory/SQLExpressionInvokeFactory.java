@@ -1,6 +1,5 @@
 package com.easy.query.core.expression.parser.factory;
 
-import com.easy.query.core.basic.api.select.provider.EasyQuerySQLBuilderProvider1;
 import com.easy.query.core.basic.api.select.provider.SQLExpressionProvider;
 import com.easy.query.core.expression.parser.core.SQLWherePredicate;
 import com.easy.query.core.expression.parser.core.SQLColumnSelector;

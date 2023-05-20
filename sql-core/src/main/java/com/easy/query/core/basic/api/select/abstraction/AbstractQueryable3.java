@@ -1,9 +1,6 @@
 package com.easy.query.core.basic.api.select.abstraction;
 
-import com.easy.query.core.basic.api.select.provider.EasyQuerySQLBuilderProvider1;
-import com.easy.query.core.basic.api.select.provider.EasyQuerySQLBuilderProvider3;
 import com.easy.query.core.basic.api.select.provider.SQLExpressionProvider;
-import com.easy.query.core.basic.api.select.provider.Select3SQLProvider;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.SQLWherePredicate;
 import com.easy.query.core.expression.parser.core.SQLGroupBySelector;

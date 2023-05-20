@@ -2,10 +2,7 @@ package com.easy.query.core.basic.api.select.abstraction;
 
 import com.easy.query.core.basic.api.select.Queryable2;
 import com.easy.query.core.basic.api.select.Queryable3;
-import com.easy.query.core.basic.api.select.provider.EasyQuerySQLBuilderProvider1;
-import com.easy.query.core.basic.api.select.provider.EasyQuerySQLBuilderProvider2;
 import com.easy.query.core.basic.api.select.provider.SQLExpressionProvider;
-import com.easy.query.core.basic.api.select.provider.Select2SQLProvider;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.lambda.SQLExpression1;

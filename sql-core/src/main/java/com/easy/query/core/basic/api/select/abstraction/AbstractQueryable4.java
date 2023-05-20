@@ -8,8 +8,6 @@ import com.easy.query.core.expression.parser.core.SQLColumnSelector;
 import com.easy.query.core.expression.parser.core.SQLColumnAsSelector;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.basic.api.select.Queryable;
-import com.easy.query.core.basic.api.select.provider.EasyQuerySQLBuilderProvider1;
-import com.easy.query.core.basic.api.select.provider.Select4SQLProvider;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.lambda.SQLExpression1;
@@ -21,7 +19,6 @@ import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.basic.api.select.Queryable4;
-import com.easy.query.core.basic.api.select.provider.EasyQuerySQLBuilderProvider4;
 
 import java.math.BigDecimal;
 import java.util.List;

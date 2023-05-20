@@ -6,6 +6,8 @@ import com.easy.query.core.sharding.manager.SequenceCountLine;
 import com.easy.query.core.sharding.manager.SequenceCountNode;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.test.dto.TopicShardingGroup;
+import com.easy.query.test.dto.TopicSubQueryBlog;
+import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.TopicSharding;
 import com.easy.query.test.entity.TopicShardingDataSource;
@@ -914,5 +916,24 @@ public class ShardingTest extends BaseTest {
                 .orderByAsc(o -> o.column(TopicShardingTime::getCreateTime))
                 .toList();
         Assert.assertEquals(days+1,list.size());
+    }
+    @Test
+    public void sharding46() {
+        LocalDateTime beginTime = LocalDateTime.of(2021, 1, 1, 1, 1);
+        LocalDateTime endTime = LocalDateTime.of(2021, 5, 2, 1, 1);
+        Queryable<TopicShardingTime> queryable = easyQuery.queryable(TopicShardingTime.class,"x")
+                .where(o->o.rangeClosed(TopicShardingTime::getCreateTime,beginTime,endTime));
+        Queryable<TopicSubQueryBlog> select = easyQuery
+                .queryable(Topic.class)
+                .where(t -> t.isNotNull(Topic::getTitle))
+                .select(TopicSubQueryBlog.class, o -> o.columnAll().columnSubQueryAs(t->{
+                    return queryable.where(x -> x.eq(t, TopicShardingTime::getId, Topic::getId)).select(Long.class, x->x.columnCount(TopicShardingTime::getId));
+                }, TopicSubQueryBlog::getBlogCount).columnIgnore(Topic::getCreateTime));
+        String sql = select.toSQL();
+
+        Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,(SELECT COUNT(x.`id`) AS `id` FROM `t_topic_sharding_time` x WHERE x.`create_time` >= ? AND x.`create_time` <= ? AND x.`id` = t.`id`) AS `blog_count` FROM `t_topic` t WHERE t.`title` IS NOT NULL", sql);
+        //sharding 需要聚合
+        List<TopicSubQueryBlog> list = select.toList();
+
     }
 }

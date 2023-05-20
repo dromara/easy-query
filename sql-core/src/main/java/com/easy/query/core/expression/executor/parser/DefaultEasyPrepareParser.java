@@ -24,11 +24,20 @@ import java.util.HashMap;
  * @author xuejiaming
  */
 public class DefaultEasyPrepareParser implements EasyPrepareParser {
-    private TablePredicateParseDescriptor parseQueryDescriptor(PredicatePrepareParseContext predicatePrepareParseContext){
+    private TablePredicateParseDescriptor parseQueryDescriptor(QueryPredicateParseContext queryPredicateParseContext){
+        ExpressionContext expressionContext = queryPredicateParseContext.getEntityExpressionBuilder().getExpressionContext();
+        if(expressionContext.isSharding()){
+            TablePredicateParseDescriptor tablePredicateParseDescriptor = new TablePredicateParseDescriptorImpl(new HashMap<>());
+            EasyParseUtil.getTableQueryParseDescriptor(queryPredicateParseContext.getEntityPredicateSQLExpression(), tablePredicateParseDescriptor);
+            return tablePredicateParseDescriptor;
+        }
+        return DefaultEmptyTableParseDescriptorImpl.INSTANCE;
+    }
+    private TablePredicateParseDescriptor parsePredicateDescriptor(PredicatePrepareParseContext predicatePrepareParseContext){
         ExpressionContext expressionContext = predicatePrepareParseContext.getEntityExpressionBuilder().getExpressionContext();
         if(expressionContext.isSharding()){
             TablePredicateParseDescriptor tablePredicateParseDescriptor = new TablePredicateParseDescriptorImpl(new HashMap<>());
-            EasyParseUtil.getTablePredicateParseDescriptor(predicatePrepareParseContext.getEntityPredicateSQLExpression(), tablePredicateParseDescriptor);
+            EasyParseUtil.parseTablePredicateParseDescriptor(predicatePrepareParseContext.getEntityPredicateSQLExpression(), tablePredicateParseDescriptor);
             return tablePredicateParseDescriptor;
         }
         return DefaultEmptyTableParseDescriptorImpl.INSTANCE;
@@ -60,7 +69,7 @@ public class DefaultEasyPrepareParser implements EasyPrepareParser {
         }
         if (prepareParseContext instanceof PredicatePrepareParseContext) {
             PredicatePrepareParseContext predicatePrepareParseContext = (PredicatePrepareParseContext) prepareParseContext;
-            TablePredicateParseDescriptor tablePredicateParseDescriptor = parseQueryDescriptor(predicatePrepareParseContext);
+            TablePredicateParseDescriptor tablePredicateParseDescriptor = parsePredicateDescriptor(predicatePrepareParseContext);
             return predicatePrepareParseResult(predicatePrepareParseContext, tablePredicateParseDescriptor);
         }
         throw new NotImplementedException();

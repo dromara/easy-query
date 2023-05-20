@@ -2,7 +2,6 @@ package com.easy.query.core.expression.parser.impl;
 
 import com.easy.query.core.basic.api.select.Queryable;
 import com.easy.query.core.basic.api.select.provider.SQLExpressionProvider;
-import com.easy.query.core.basic.api.select.provider.Select1SQLProvider;
 import com.easy.query.core.expression.parser.core.SQLWherePredicate;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.SubQueryColumnSegmentImpl;
@@ -16,7 +15,6 @@ import com.easy.query.core.expression.parser.core.SQLColumnAsSelector;
 import com.easy.query.core.expression.segment.ColumnSegmentImpl;
 import com.easy.query.core.expression.segment.FuncColumnSegmentImpl;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
-import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.util.EasyLambdaUtil;
 

@@ -25,6 +25,7 @@ public class EasyQueryOptionBuilder {
     private  EasyQueryShardingOption shardingOption;
     private  String defaultDataSourceName;
     private  boolean queryLargeColumn;
+    private  int maxShardingRouteCount;
 
     public EasyQueryOptionBuilder() {
         this.deleteThrowError = true;
@@ -39,6 +40,7 @@ public class EasyQueryOptionBuilder {
         this.shardingGroupExecuteTimeoutMillis = 20000L;
         this.defaultDataSourceName = "ds0";
         this.queryLargeColumn = true;
+        this.maxShardingRouteCount=Integer.MAX_VALUE;
     }
     public void setDeleteThrowError(boolean deleteThrowError) {
         this.deleteThrowError = deleteThrowError;
@@ -98,8 +100,12 @@ public class EasyQueryOptionBuilder {
         this.queryLargeColumn = queryLargeColumn;
     }
 
+    public void setMaxShardingRouteCount(int maxShardingRouteCount) {
+        this.maxShardingRouteCount = maxShardingRouteCount;
+    }
+
     public EasyQueryOption build(){
         return new EasyQueryOption(this.deleteThrowError,this.insertStrategy,this.updateStrategy,this.connectionMode,this.maxShardingQueryLimit,this.executorMaximumPoolSize,this.executorCorePoolSize,this.throwIfRouteNotMatch,
-                this.shardingExecuteTimeoutMillis,this.shardingGroupExecuteTimeoutMillis,this.shardingOption,this.replicaOption,this.defaultDataSourceName,this.queryLargeColumn);
+                this.shardingExecuteTimeoutMillis,this.shardingGroupExecuteTimeoutMillis,this.shardingOption,this.replicaOption,this.defaultDataSourceName,this.queryLargeColumn,this.maxShardingRouteCount);
     }
 }

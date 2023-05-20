@@ -1,6 +1,5 @@
 package com.easy.query.core.basic.api.select;
 
-import com.easy.query.core.basic.api.select.provider.EasyQuerySQLBuilderProvider2;
 import com.easy.query.core.basic.api.select.provider.SQLExpressionProvider;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression2;

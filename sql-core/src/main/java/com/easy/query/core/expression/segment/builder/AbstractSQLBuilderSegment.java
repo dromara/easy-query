@@ -2,6 +2,7 @@ package com.easy.query.core.expression.segment.builder;
 
 import com.easy.query.core.expression.segment.SQLEntitySegment;
 import com.easy.query.core.expression.segment.SQLSegment;
+import com.easy.query.core.expression.segment.SubQueryColumnSegment;
 
 import java.util.*;
 
@@ -28,7 +29,15 @@ public abstract class AbstractSQLBuilderSegment implements SQLBuilderSegment {
 
     @Override
     public void copyTo(SQLBuilderSegment predicateSegment) {
-        predicateSegment.getSQLSegments().addAll(sqlSegments);
+        for (SQLSegment sqlSegment : sqlSegments) {
+            if(sqlSegment instanceof SubQueryColumnSegment){
+                SubQueryColumnSegment subQueryColumnSegment = (SubQueryColumnSegment) sqlSegment;
+                predicateSegment.getSQLSegments().add(subQueryColumnSegment.cloneSQLEntitySegment());
+
+            }else{
+                predicateSegment.getSQLSegments().add(sqlSegment);
+            }
+        }
     }
 
     @Override

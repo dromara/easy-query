@@ -48,6 +48,7 @@ public class EasyQueryProperties {
     private  long shardingGroupExecuteTimeoutMillis=20000L;
 
     private boolean queryLargeColumn=true;
+    private int maxShardingRouteCount=Integer.MAX_VALUE;
 
     public Boolean getEnable() {
         return enable;
@@ -171,6 +172,14 @@ public class EasyQueryProperties {
 
     public void setQueryLargeColumn(boolean queryLargeColumn) {
         this.queryLargeColumn = queryLargeColumn;
+    }
+
+    public int getMaxShardingRouteCount() {
+        return maxShardingRouteCount;
+    }
+
+    public void setMaxShardingRouteCount(int maxShardingRouteCount) {
+        this.maxShardingRouteCount = maxShardingRouteCount;
     }
 
     public EasyQueryProperties() {

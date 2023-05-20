@@ -1,9 +1,6 @@
 package com.easy.query.core.basic.api.select.abstraction;
 
-import com.easy.query.core.basic.api.select.provider.EasyQuerySQLBuilderProvider1;
-import com.easy.query.core.basic.api.select.provider.SQLExpressionProvider;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
-import com.easy.query.core.basic.api.select.provider.Select1SQLProvider;
 
 /**
  * @FileName: AbstractQueryable1.java
