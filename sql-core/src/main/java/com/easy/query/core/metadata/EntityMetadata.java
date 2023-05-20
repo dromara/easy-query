@@ -15,7 +15,7 @@ import com.easy.query.core.basic.plugin.interceptor.EasyEntityInterceptor;
 import com.easy.query.core.basic.plugin.interceptor.EasyInterceptor;
 import com.easy.query.core.basic.plugin.interceptor.EasyPredicateFilterInterceptor;
 import com.easy.query.core.basic.plugin.interceptor.EasyUpdateSetInterceptor;
-import com.easy.query.core.basic.plugin.logicdel.EasyLogicDeleteStrategy;
+import com.easy.query.core.basic.plugin.logicdel.LogicDeleteStrategy;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.sharding.initializer.ShardingInitializer;
 import com.easy.query.core.sharding.initializer.ShardingInitOption;
@@ -192,11 +192,11 @@ public class EntityMetadata {
                         if (EasyStringUtil.isBlank(strategyName)) {
                             throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " logic delete strategy is empty");
                         }
-                        EasyLogicDeleteStrategy globalLogicDeleteStrategy = configuration.getEasyLogicDeleteStrategyNotNull(strategyName);
+                        LogicDeleteStrategy globalLogicDeleteStrategy = configuration.getLogicDeleteStrategyNotNull(strategyName);
                         LogicDeleteBuilder logicDeleteBuilder = new LogicDeleteBuilder(this, property, field.getType());
                         globalLogicDeleteStrategy.configure(logicDeleteBuilder);
                     } else {//使用系统默认的
-                        EasyLogicDeleteStrategy sysGlobalLogicDeleteStrategy = configuration.getSysEasyLogicDeleteStrategyNotNull(strategy);
+                        LogicDeleteStrategy sysGlobalLogicDeleteStrategy = configuration.getSysLogicDeleteStrategyNotNull(strategy);
                         LogicDeleteBuilder logicDeleteBuilder = new LogicDeleteBuilder(this, property, field.getType());
                         sysGlobalLogicDeleteStrategy.configure(logicDeleteBuilder);
                     }

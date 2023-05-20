@@ -1,6 +1,6 @@
 package com.easy.query.test.logicdel;
 
-import com.easy.query.core.basic.plugin.logicdel.abstraction.AbstractEasyLogicDeleteStrategy;
+import com.easy.query.core.basic.plugin.logicdel.abstraction.AbstractLogicDeleteStrategy;
 import com.easy.query.core.basic.plugin.logicdel.LogicDeleteBuilder;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.SQLExpression1;
@@ -20,7 +20,7 @@ import java.util.Set;
  * @author xuejiaming
  */
 //@Component //如果是spring
-public class MyLogicDelStrategy extends AbstractEasyLogicDeleteStrategy {
+public class MyLogicDelStrategy extends AbstractLogicDeleteStrategy {
     /**
      * 允许datetime类型的属性
      */

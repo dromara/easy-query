@@ -1,6 +1,6 @@
 package com.easy.query.core.basic.plugin.logicdel.abstraction;
 
-import com.easy.query.core.basic.plugin.logicdel.EasyLogicDeleteStrategy;
+import com.easy.query.core.basic.plugin.logicdel.LogicDeleteStrategy;
 import com.easy.query.core.basic.plugin.logicdel.LogicDeleteBuilder;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.lambda.Property;
@@ -13,12 +13,9 @@ import com.easy.query.core.util.EasyClassUtil;
 import java.util.Set;
 
 /**
- * @FileName: AbstractGlobalLogicDeleteStrategy.java
- * @Description: 文件说明
- * @Date: 2023/3/7 08:04
- * @author xuejiaming
+ * 逻辑删除抽象类
  */
-public abstract class AbstractEasyLogicDeleteStrategy implements EasyLogicDeleteStrategy {
+public abstract class AbstractLogicDeleteStrategy implements LogicDeleteStrategy {
 
     @Override
     public void configure(LogicDeleteBuilder builder) {

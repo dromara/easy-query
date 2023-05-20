@@ -1,8 +1,6 @@
 package com.easy.query.core.basic.plugin.logicdel;
 
 
-import com.easy.query.core.metadata.EntityMetadata;
-
 import java.util.Set;
 
 /**
@@ -11,7 +9,7 @@ import java.util.Set;
  * @Date: 2023/3/7 07:59
  * @author xuejiaming
  */
-public interface EasyLogicDeleteStrategy {
+public interface LogicDeleteStrategy {
     /**
      * 逻辑删除策略名称
      * @return

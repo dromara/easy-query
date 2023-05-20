@@ -126,7 +126,7 @@ public abstract class BaseTest {
         configuration.applyEasyEncryptionStrategy(new DefaultAesEasyEncryptionStrategy());
         configuration.applyEasyEncryptionStrategy(new Base64EncryptionStrategy());
         configuration.applyEasyEncryptionStrategy(new MyEncryptionStrategy());
-        configuration.applyEasyLogicDeleteStrategy(new MyLogicDelStrategy());
+        configuration.applyLogicDeleteStrategy(new MyLogicDelStrategy());
         configuration.applyEasyInterceptor(new MyEntityInterceptor());
         configuration.applyEasyInterceptor(new MyTenantInterceptor());
 //        configuration.applyShardingInitializer(new FixShardingInitializer());

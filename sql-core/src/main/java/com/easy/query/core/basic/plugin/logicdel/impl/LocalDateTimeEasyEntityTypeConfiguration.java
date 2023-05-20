@@ -2,7 +2,7 @@ package com.easy.query.core.basic.plugin.logicdel.impl;
 
 import com.easy.query.core.basic.enums.LogicDeleteStrategyEnum;
 import com.easy.query.core.basic.plugin.logicdel.LogicDeleteBuilder;
-import com.easy.query.core.basic.plugin.logicdel.abstraction.AbstractEasyLogicDeleteStrategy;
+import com.easy.query.core.basic.plugin.logicdel.abstraction.AbstractLogicDeleteStrategy;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.SQLWherePredicate;
@@ -19,7 +19,7 @@ import java.util.Set;
  * @Date: 2023/3/6 22:45
  * @author xuejiaming
  */
-public class LocalDateTimeEasyEntityTypeConfiguration extends AbstractEasyLogicDeleteStrategy {
+public class LocalDateTimeEasyEntityTypeConfiguration extends AbstractLogicDeleteStrategy {
     private static final Set<Class<?>> allowedPropertyTypes =new HashSet<>(Collections.singletonList(LocalDateTime.class));
     @Override
     public String getStrategy() {

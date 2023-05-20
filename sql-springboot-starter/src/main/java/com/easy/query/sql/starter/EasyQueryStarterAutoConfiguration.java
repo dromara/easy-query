@@ -4,7 +4,7 @@ import com.easy.query.core.basic.jdbc.con.EasyConnectionFactory;
 import com.easy.query.core.basic.jdbc.con.ConnectionManager;
 import com.easy.query.core.basic.plugin.encryption.EasyEncryptionStrategy;
 import com.easy.query.core.basic.plugin.interceptor.EasyInterceptor;
-import com.easy.query.core.basic.plugin.logicdel.EasyLogicDeleteStrategy;
+import com.easy.query.core.basic.plugin.logicdel.LogicDeleteStrategy;
 import com.easy.query.core.basic.plugin.version.EasyVersionStrategy;
 import com.easy.query.core.bootstrapper.DatabaseConfiguration;
 import com.easy.query.core.bootstrapper.DefaultDatabaseConfiguration;
@@ -124,7 +124,7 @@ public class EasyQueryStarterAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public EasyQuery easyQuery(DataSource dataSource, DatabaseConfiguration databaseConfiguration, StarterConfigurer starterConfigurer, NameConversion nameConversion, Map<String, EasyInterceptor> easyInterceptorMap, Map<String, EasyVersionStrategy> easyVersionStrategyMap, Map<String, EasyLogicDeleteStrategy> easyLogicDeleteStrategyMap, Map<String, ShardingInitializer> easyShardingInitializerMap, Map<String, EasyEncryptionStrategy> easyEncryptionStrategyMap) {
+    public EasyQuery easyQuery(DataSource dataSource, DatabaseConfiguration databaseConfiguration, StarterConfigurer starterConfigurer, NameConversion nameConversion, Map<String, EasyInterceptor> easyInterceptorMap, Map<String, EasyVersionStrategy> easyVersionStrategyMap, Map<String, LogicDeleteStrategy> easyLogicDeleteStrategyMap, Map<String, ShardingInitializer> easyShardingInitializerMap, Map<String, EasyEncryptionStrategy> easyEncryptionStrategyMap) {
         EasyQuery easyQuery = EasyQueryBootstrapper.defaultBuilderConfiguration()
                 .setDefaultDataSource(dataSource)
                 .replaceService(EasyConnectionFactory.class,SpringEasyConnectionFactory.class)
@@ -153,8 +153,8 @@ public class EasyQueryStarterAutoConfiguration {
             configuration.applyEasyInterceptor(easyInterceptorEntry.getValue());
         }
         //逻辑删除
-        for (Map.Entry<String, EasyLogicDeleteStrategy> easyLogicDeleteStrategyEntry : easyLogicDeleteStrategyMap.entrySet()) {
-            configuration.applyEasyLogicDeleteStrategy(easyLogicDeleteStrategyEntry.getValue());
+        for (Map.Entry<String, LogicDeleteStrategy> easyLogicDeleteStrategyEntry : easyLogicDeleteStrategyMap.entrySet()) {
+            configuration.applyLogicDeleteStrategy(easyLogicDeleteStrategyEntry.getValue());
         }
         //分片初始化
         for (Map.Entry<String, ShardingInitializer> easyShardingInitializerEntry : easyShardingInitializerMap.entrySet()) {

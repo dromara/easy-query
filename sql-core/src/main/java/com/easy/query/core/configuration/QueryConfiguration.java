@@ -31,10 +31,10 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author xuejiaming
  */
 public class QueryConfiguration {
-    private static final EasyLogicDeleteStrategy BOOL_LOGIC_DELETE = new BooleanEasyEntityTypeConfiguration();
-    private static final EasyLogicDeleteStrategy TIMESTAMP_LOGIC_DELETE = new DeleteLongTimestampEasyEntityTypeConfiguration();
-    private static final EasyLogicDeleteStrategy LOCAL_DATE_TIME_LOGIC_DELETE = new LocalDateTimeEasyEntityTypeConfiguration();
-    private static final EasyLogicDeleteStrategy LOCAL_DATE_LOGIC_DELETE = new LocalDateEasyLogicDeleteStrategy();
+    private static final LogicDeleteStrategy BOOL_LOGIC_DELETE = new BooleanEasyEntityTypeConfiguration();
+    private static final LogicDeleteStrategy TIMESTAMP_LOGIC_DELETE = new DeleteLongTimestampEasyEntityTypeConfiguration();
+    private static final LogicDeleteStrategy LOCAL_DATE_TIME_LOGIC_DELETE = new LocalDateTimeEasyEntityTypeConfiguration();
+    private static final LogicDeleteStrategy LOCAL_DATE_LOGIC_DELETE = new LocalDateEasyLogicDeleteStrategy();
 
     private final EasyQueryOption easyQueryOption;
 
@@ -43,7 +43,7 @@ public class QueryConfiguration {
     private final Dialect dialect;
 //    private Map<Class<?>, EntityTypeConfiguration<?>> entityTypeConfigurationMap = new HashMap<>();
     private Map<String, EasyInterceptor> interceptorMap =new ConcurrentHashMap<>();
-    private Map<String, EasyLogicDeleteStrategy> globalLogicDeleteStrategyMap = new ConcurrentHashMap<>();
+    private Map<String, LogicDeleteStrategy> globalLogicDeleteStrategyMap = new ConcurrentHashMap<>();
     private Map<Class<? extends EasyEncryptionStrategy>, EasyEncryptionStrategy> easyEncryptionStrategyMap = new ConcurrentHashMap<>();
     private Map<Class<? extends EasyVersionStrategy>, EasyVersionStrategy> easyVersionStrategyMap = new ConcurrentHashMap<>();
     private Map<Class<? extends ShardingInitializer>, ShardingInitializer> shardingInitializerMap = new ConcurrentHashMap<>();
@@ -103,7 +103,7 @@ public class QueryConfiguration {
 //        return entityTypeConfigurationMap.get(entityType);
 //    }
 
-    public void applyEasyLogicDeleteStrategy(EasyLogicDeleteStrategy globalLogicDeleteStrategy) {
+    public void applyLogicDeleteStrategy(LogicDeleteStrategy globalLogicDeleteStrategy) {
         String strategy = globalLogicDeleteStrategy.getStrategy();
         if (globalLogicDeleteStrategyMap.containsKey(strategy)) {
             throw new EasyQueryException("global logic delete strategy:" + strategy + ",repeat");
@@ -117,18 +117,18 @@ public class QueryConfiguration {
      * @param strategy
      * @return
      */
-    public EasyLogicDeleteStrategy getEasyLogicDeleteStrategy(String strategy) {
+    public LogicDeleteStrategy getLogicDeleteStrategy(String strategy) {
         return globalLogicDeleteStrategyMap.get(strategy);
     }
-    public EasyLogicDeleteStrategy getEasyLogicDeleteStrategyNotNull(String strategy) {
-        EasyLogicDeleteStrategy globalLogicDeleteStrategy = getEasyLogicDeleteStrategy(strategy);
+    public LogicDeleteStrategy getLogicDeleteStrategyNotNull(String strategy) {
+        LogicDeleteStrategy globalLogicDeleteStrategy = getLogicDeleteStrategy(strategy);
         if(globalLogicDeleteStrategy==null){
             throw new EasyQueryException("easy logic delete strategy not found. strategy:"+strategy);
         }
         return globalLogicDeleteStrategy;
     }
 
-    public EasyLogicDeleteStrategy getSysEasyLogicDeleteStrategyNotNull(LogicDeleteStrategyEnum strategy) {
+    public LogicDeleteStrategy getSysLogicDeleteStrategyNotNull(LogicDeleteStrategyEnum strategy) {
         if (Objects.equals(LogicDeleteStrategyEnum.BOOLEAN, strategy)) {
             return BOOL_LOGIC_DELETE;
         } else if (Objects.equals(LogicDeleteStrategyEnum.DELETE_LONG_TIMESTAMP, strategy)) {
