@@ -2,19 +2,21 @@ package com.easy.query.core.metadata;
 
 import com.easy.query.core.annotation.*;
 import com.easy.query.core.basic.enums.LogicDeleteStrategyEnum;
-import com.easy.query.core.basic.plugin.interceptor.EasyInterceptorEntry;
+import com.easy.query.core.basic.plugin.conversion.DefaultValueConverter;
+import com.easy.query.core.basic.plugin.conversion.ValueConverter;
+import com.easy.query.core.basic.plugin.interceptor.InterceptorEntry;
 import com.easy.query.core.basic.plugin.logicdel.LogicDeleteBuilder;
-import com.easy.query.core.basic.plugin.version.EasyVersionStrategy;
+import com.easy.query.core.basic.plugin.version.VersionStrategy;
 import com.easy.query.core.inject.ServiceProvider;
 import com.easy.query.core.sharding.initializer.ShardingEntityBuilder;
 import com.easy.query.core.configuration.nameconversion.NameConversion;
 import com.easy.query.core.configuration.QueryConfiguration;
-import com.easy.query.core.basic.plugin.encryption.EasyEncryptionStrategy;
+import com.easy.query.core.basic.plugin.encryption.EncryptionStrategy;
 import com.easy.query.core.exception.EasyQueryException;
-import com.easy.query.core.basic.plugin.interceptor.EasyEntityInterceptor;
-import com.easy.query.core.basic.plugin.interceptor.EasyInterceptor;
-import com.easy.query.core.basic.plugin.interceptor.EasyPredicateFilterInterceptor;
-import com.easy.query.core.basic.plugin.interceptor.EasyUpdateSetInterceptor;
+import com.easy.query.core.basic.plugin.interceptor.EntityInterceptor;
+import com.easy.query.core.basic.plugin.interceptor.Interceptor;
+import com.easy.query.core.basic.plugin.interceptor.PredicateFilterInterceptor;
+import com.easy.query.core.basic.plugin.interceptor.UpdateSetInterceptor;
 import com.easy.query.core.basic.plugin.logicdel.LogicDeleteStrategy;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.sharding.initializer.ShardingInitializer;
@@ -63,9 +65,9 @@ public class EntityMetadata {
     /**
      * 查询过滤器
      */
-    private final List<EasyInterceptorEntry> predicateFilterInterceptors = new ArrayList<>();
-    private final List<EasyInterceptorEntry> entityInterceptors = new ArrayList<>();
-    private final List<EasyInterceptorEntry> updateSetInterceptors = new ArrayList<>();
+    private final List<InterceptorEntry> predicateFilterInterceptors = new ArrayList<>();
+    private final List<InterceptorEntry> entityInterceptors = new ArrayList<>();
+    private final List<InterceptorEntry> updateSetInterceptors = new ArrayList<>();
     private final LinkedHashMap<String, ColumnMetadata> property2ColumnMap = new LinkedHashMap<>();
     private final Map<String/*property name*/, String/*column name*/> keyPropertiesMap = new LinkedHashMap<>();
     private final List<String/*column name*/> incrementColumns = new ArrayList<>(4);
@@ -120,14 +122,25 @@ public class EntityMetadata {
 
             Encryption encryption = field.getAnnotation(Encryption.class);
             if (encryption != null) {
-                Class<? extends EasyEncryptionStrategy> strategy = encryption.strategy();
-                EasyEncryptionStrategy easyEncryptionStrategy = configuration.getEasyEncryptionStrategy(strategy);
+                Class<? extends EncryptionStrategy> strategy = encryption.strategy();
+                EncryptionStrategy easyEncryptionStrategy = configuration.getEasyEncryptionStrategy(strategy);
                 if (easyEncryptionStrategy==null) {
                     throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " Encryption strategy unknown");
                 }
                 columnOption.setEncryptionStrategy(easyEncryptionStrategy);
                 columnOption.setSupportQueryLike(encryption.supportQueryLike());
             }
+            if(column!=null){
+                Class<? extends ValueConverter> conversionClass = column.conversion();
+                if(!Objects.equals(DefaultValueConverter.class,conversionClass)){
+                    ValueConverter<?, ?> valueConverter = configuration.getValueConverter(conversionClass);
+                    if(valueConverter==null){
+                        throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " conversion unknown");
+                    }
+                    columnOption.setValueConverter(valueConverter);
+                }
+            }
+
             if (EasyStringUtil.isNotBlank(tableName)) {
 
                 if (column != null) {
@@ -156,8 +169,8 @@ public class EntityMetadata {
                 Version version = field.getAnnotation(Version.class);
                 if (version != null) {
 
-                    Class<? extends EasyVersionStrategy> strategy = version.strategy();
-                    EasyVersionStrategy easyVersionStrategy = configuration.getEasyVersionStrategyOrNull(strategy);
+                    Class<? extends VersionStrategy> strategy = version.strategy();
+                    VersionStrategy easyVersionStrategy = configuration.getEasyVersionStrategyOrNull(strategy);
                     if (easyVersionStrategy == null) {
                         throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " Version strategy unknown");
                     }
@@ -275,17 +288,17 @@ public class EntityMetadata {
     protected void entityGlobalInterceptorConfigurationInit(QueryConfiguration configuration) {
 
         if (EasyStringUtil.isNotBlank(tableName)) {
-            List<EasyInterceptor> globalInterceptors = configuration.getEasyInterceptors().stream().sorted(Comparator.comparingInt(EasyInterceptor::order)).collect(Collectors.toList());
-            for (EasyInterceptor globalInterceptor : globalInterceptors) {
+            List<Interceptor> globalInterceptors = configuration.getEasyInterceptors().stream().sorted(Comparator.comparingInt(Interceptor::order)).collect(Collectors.toList());
+            for (Interceptor globalInterceptor : globalInterceptors) {
                 if (globalInterceptor.apply(entityClass)) {
-                    EasyInterceptorEntry easyInterceptorEntry = new EasyInterceptorEntry(globalInterceptor.name(), globalInterceptor.defaultEnable());
-                    if (globalInterceptor instanceof EasyPredicateFilterInterceptor) {
+                    InterceptorEntry easyInterceptorEntry = new InterceptorEntry(globalInterceptor.name(), globalInterceptor.defaultEnable());
+                    if (globalInterceptor instanceof PredicateFilterInterceptor) {
                         predicateFilterInterceptors.add(easyInterceptorEntry);
                     }
-                    if (globalInterceptor instanceof EasyEntityInterceptor) {
+                    if (globalInterceptor instanceof EntityInterceptor) {
                         entityInterceptors.add(easyInterceptorEntry);
                     }
-                    if (globalInterceptor instanceof EasyUpdateSetInterceptor) {
+                    if (globalInterceptor instanceof UpdateSetInterceptor) {
                         updateSetInterceptors.add(easyInterceptorEntry);
                     }
                 }
@@ -408,15 +421,15 @@ public class EntityMetadata {
     }
 
 
-    public List<EasyInterceptorEntry> getPredicateFilterInterceptors() {
+    public List<InterceptorEntry> getPredicateFilterInterceptors() {
         return predicateFilterInterceptors;
     }
 
-    public List<EasyInterceptorEntry> getEntityInterceptors() {
+    public List<InterceptorEntry> getEntityInterceptors() {
         return entityInterceptors;
     }
 
-    public List<EasyInterceptorEntry> getUpdateSetInterceptors() {
+    public List<InterceptorEntry> getUpdateSetInterceptors() {
         return updateSetInterceptors;
     }
 

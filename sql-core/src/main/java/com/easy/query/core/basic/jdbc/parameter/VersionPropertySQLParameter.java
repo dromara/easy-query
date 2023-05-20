@@ -1,6 +1,6 @@
 package com.easy.query.core.basic.jdbc.parameter;
 
-import com.easy.query.core.basic.plugin.version.EasyVersionStrategy;
+import com.easy.query.core.basic.plugin.version.VersionStrategy;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 
 /**
@@ -11,9 +11,9 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
  */
 public class VersionPropertySQLParameter implements BeanSQLParameter {
     private final BeanSQLParameter beanSQLParameter;
-    private final EasyVersionStrategy easyVersionStrategy;
+    private final VersionStrategy easyVersionStrategy;
 
-    public VersionPropertySQLParameter(BeanSQLParameter beanSQLParameter, EasyVersionStrategy easyVersionStrategy){
+    public VersionPropertySQLParameter(BeanSQLParameter beanSQLParameter, VersionStrategy easyVersionStrategy){
 
         this.beanSQLParameter = beanSQLParameter;
         this.easyVersionStrategy = easyVersionStrategy;

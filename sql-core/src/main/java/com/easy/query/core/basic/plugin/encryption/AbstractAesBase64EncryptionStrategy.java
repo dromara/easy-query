@@ -13,8 +13,8 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public abstract class AbstractAesBase64EasyEncryptionStrategy implements EasyEncryptionStrategy {
-    private static final Log log = LogFactory.getLog(AbstractAesBase64EasyEncryptionStrategy.class);
+public abstract class AbstractAesBase64EncryptionStrategy implements EncryptionStrategy {
+    private static final Log log = LogFactory.getLog(AbstractAesBase64EncryptionStrategy.class);
 
 //    /**
 //     * AES/CBC/PKCS5Padding

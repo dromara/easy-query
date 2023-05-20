@@ -2,7 +2,7 @@ package com.easy.query.core.metadata;
 
 import com.easy.query.core.basic.plugin.conversion.DefaultValueConverter;
 import com.easy.query.core.basic.plugin.conversion.ValueConverter;
-import com.easy.query.core.basic.plugin.encryption.EasyEncryptionStrategy;
+import com.easy.query.core.basic.plugin.encryption.EncryptionStrategy;
 
 import java.beans.PropertyDescriptor;
 
@@ -29,7 +29,7 @@ public final class ColumnOption {
     private  boolean insertIgnore=false;
     private  boolean updateIgnore =false;
 
-    private  EasyEncryptionStrategy encryptionStrategy;
+    private EncryptionStrategy encryptionStrategy;
     private  boolean supportQueryLike =false;
     private  boolean large =false;
 
@@ -100,11 +100,11 @@ public final class ColumnOption {
         return encryptionStrategy!=null;
     }
 
-    public EasyEncryptionStrategy getEncryptionStrategy() {
+    public EncryptionStrategy getEncryptionStrategy() {
         return encryptionStrategy;
     }
 
-    public void setEncryptionStrategy(EasyEncryptionStrategy encryptionStrategy) {
+    public void setEncryptionStrategy(EncryptionStrategy encryptionStrategy) {
         this.encryptionStrategy = encryptionStrategy;
     }
 

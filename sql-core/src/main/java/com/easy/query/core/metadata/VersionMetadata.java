@@ -1,6 +1,6 @@
 package com.easy.query.core.metadata;
 
-import com.easy.query.core.basic.plugin.version.EasyVersionStrategy;
+import com.easy.query.core.basic.plugin.version.VersionStrategy;
 
 /**
  * create time 2023/3/26 22:22
@@ -10,9 +10,9 @@ import com.easy.query.core.basic.plugin.version.EasyVersionStrategy;
  */
 public final class VersionMetadata {
     private final String propertyName;
-    private final EasyVersionStrategy easyVersionStrategy;
+    private final VersionStrategy easyVersionStrategy;
 
-    public VersionMetadata(String propertyName,EasyVersionStrategy easyVersionStrategy){
+    public VersionMetadata(String propertyName, VersionStrategy easyVersionStrategy){
 
         this.propertyName = propertyName;
         this.easyVersionStrategy = easyVersionStrategy;
@@ -20,7 +20,7 @@ public final class VersionMetadata {
     public String getPropertyName() {
         return propertyName;
     }
-    public EasyVersionStrategy getEasyVersionStrategy() {
+    public VersionStrategy getEasyVersionStrategy() {
         return easyVersionStrategy;
     }
 }

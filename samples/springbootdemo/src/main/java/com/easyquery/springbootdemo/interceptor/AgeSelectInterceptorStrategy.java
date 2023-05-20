@@ -2,7 +2,7 @@ package com.easyquery.springbootdemo.interceptor;
 
 import com.easy.query.core.common.bean.FastBean;
 import com.easy.query.core.expression.lambda.Property;
-import com.easy.query.core.basic.plugin.interceptor.EasyPredicateFilterInterceptor;
+import com.easy.query.core.basic.plugin.interceptor.PredicateFilterInterceptor;
 import com.easy.query.core.expression.parser.core.SQLWherePredicate;
 import com.easy.query.core.expression.sql.builder.LambdaEntityExpressionBuilder;
 import com.easy.query.core.util.EasyBeanUtil;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
  * @author xuejiaming
  */
 @Component
-public class AgeSelectInterceptorStrategy implements EasyPredicateFilterInterceptor {
+public class AgeSelectInterceptorStrategy implements PredicateFilterInterceptor {
 
     @Override
     public String name() {

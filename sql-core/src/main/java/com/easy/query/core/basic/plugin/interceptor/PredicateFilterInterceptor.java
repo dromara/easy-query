@@ -9,7 +9,7 @@ import com.easy.query.core.expression.sql.builder.LambdaEntityExpressionBuilder;
  * @Date: 2023/3/7 22:25
  * @author xuejiaming
  */
-public interface EasyPredicateFilterInterceptor extends EasyInterceptor {
+public interface PredicateFilterInterceptor extends Interceptor {
 
 
     /**

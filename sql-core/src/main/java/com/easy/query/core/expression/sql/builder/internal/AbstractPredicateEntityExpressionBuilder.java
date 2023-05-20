@@ -13,7 +13,7 @@ import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
-import com.easy.query.core.basic.plugin.interceptor.EasyPredicateFilterInterceptor;
+import com.easy.query.core.basic.plugin.interceptor.PredicateFilterInterceptor;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.metadata.VersionMetadata;
@@ -73,7 +73,7 @@ public abstract class AbstractPredicateEntityExpressionBuilder extends AbstractE
                 QueryConfiguration easyQueryConfiguration = getRuntimeContext().getQueryConfiguration();
                 expressionContext.getInterceptorFilter(entityMetadata.getPredicateFilterInterceptors())
                         .forEach(interceptor -> {
-                            EasyPredicateFilterInterceptor globalSelectInterceptorStrategy = (EasyPredicateFilterInterceptor) easyQueryConfiguration.getEasyInterceptor(interceptor.getName());
+                            PredicateFilterInterceptor globalSelectInterceptorStrategy = (PredicateFilterInterceptor) easyQueryConfiguration.getEasyInterceptor(interceptor.getName());
                             if (globalSelectInterceptorStrategy != null) {
                                 globalSelectInterceptorStrategy.configure(entityMetadata.getEntityClass(), this, sqlPredicate);
                             }

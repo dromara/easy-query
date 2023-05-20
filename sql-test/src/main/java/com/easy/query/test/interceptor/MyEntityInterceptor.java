@@ -1,7 +1,7 @@
 package com.easy.query.test.interceptor;
 
-import com.easy.query.core.basic.plugin.interceptor.EasyEntityInterceptor;
-import com.easy.query.core.basic.plugin.interceptor.EasyUpdateSetInterceptor;
+import com.easy.query.core.basic.plugin.interceptor.EntityInterceptor;
+import com.easy.query.core.basic.plugin.interceptor.UpdateSetInterceptor;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.parser.core.SQLColumnSetter;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
  *
  * @author xuejiaming
  */
-public class MyEntityInterceptor implements EasyEntityInterceptor, EasyUpdateSetInterceptor {
+public class MyEntityInterceptor implements EntityInterceptor, UpdateSetInterceptor {
     @Override
     public void configureInsert(Class<?> entityClass, EntityInsertExpressionBuilder entityInsertExpressionBuilder, Object entity) {
         TopicInterceptor topicInterceptor = (TopicInterceptor) entity;

@@ -1,7 +1,7 @@
 package com.easy.query.test.interceptor;
 
-import com.easy.query.core.basic.plugin.interceptor.EasyEntityInterceptor;
-import com.easy.query.core.basic.plugin.interceptor.EasyPredicateFilterInterceptor;
+import com.easy.query.core.basic.plugin.interceptor.EntityInterceptor;
+import com.easy.query.core.basic.plugin.interceptor.PredicateFilterInterceptor;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.parser.core.SQLWherePredicate;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
@@ -17,7 +17,7 @@ import com.easy.query.test.logicdel.CurrentUserHelper;
  *
  * @author xuejiaming
  */
-public class MyTenantInterceptor implements EasyEntityInterceptor,EasyPredicateFilterInterceptor {
+public class MyTenantInterceptor implements EntityInterceptor, PredicateFilterInterceptor {
     @Override
     public String name() {
         return "MyTenantInterceptor";

@@ -5,7 +5,7 @@ import com.easy.query.core.annotation.LogicDelete;
 import com.easy.query.core.annotation.Table;
 import com.easy.query.core.annotation.Version;
 import com.easy.query.core.basic.enums.LogicDeleteStrategyEnum;
-import com.easy.query.core.basic.plugin.version.EasyVersionLongStrategy;
+import com.easy.query.core.basic.plugin.version.VersionLongStrategy;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -29,7 +29,7 @@ public class SysUserVersionLongLogicDel {
      * 创建时间;创建时间
      */
     private LocalDateTime createTime;
-    @Version(strategy = EasyVersionLongStrategy.class)
+    @Version(strategy = VersionLongStrategy.class)
     private Long version;
 
     @LogicDelete(strategy = LogicDeleteStrategyEnum.BOOLEAN)

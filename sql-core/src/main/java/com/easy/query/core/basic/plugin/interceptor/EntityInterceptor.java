@@ -9,7 +9,7 @@ import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
  * @Date: 2023/3/15 13:01
  * @author xuejiaming
  */
-public interface EasyEntityInterceptor extends EasyInterceptor {
+public interface EntityInterceptor extends Interceptor {
     void configureInsert(Class<?> entityClass, EntityInsertExpressionBuilder entityInsertExpressionBuilder, Object entity);
     void configureUpdate(Class<?> entityClass, EntityUpdateExpressionBuilder entityUpdateExpressionBuilder, Object entity);
 }

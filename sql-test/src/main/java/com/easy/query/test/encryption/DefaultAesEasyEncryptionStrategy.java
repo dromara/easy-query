@@ -1,6 +1,6 @@
 package com.easy.query.test.encryption;
 
-import com.easy.query.core.basic.plugin.encryption.AbstractAesBase64EasyEncryptionStrategy;
+import com.easy.query.core.basic.plugin.encryption.AbstractAesBase64EncryptionStrategy;
 
 /**
  * create time 2023/3/25 09:40
@@ -8,7 +8,7 @@ import com.easy.query.core.basic.plugin.encryption.AbstractAesBase64EasyEncrypti
  *
  * @author xuejiaming
  */
-public class DefaultAesEasyEncryptionStrategy extends AbstractAesBase64EasyEncryptionStrategy {
+public class DefaultAesEasyEncryptionStrategy extends AbstractAesBase64EncryptionStrategy {
     @Override
     public String getIv() {
         return "A-16-Byte-String";

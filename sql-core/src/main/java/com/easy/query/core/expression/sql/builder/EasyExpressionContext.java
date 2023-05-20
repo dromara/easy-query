@@ -2,7 +2,7 @@ package com.easy.query.core.expression.sql.builder;
 
 import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.context.QueryRuntimeContext;
-import com.easy.query.core.basic.plugin.interceptor.EasyInterceptorEntry;
+import com.easy.query.core.basic.plugin.interceptor.InterceptorEntry;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
@@ -155,7 +155,7 @@ public class EasyExpressionContext implements ExpressionContext {
     }
 
     @Override
-    public Stream<EasyInterceptorEntry> getInterceptorFilter(List<EasyInterceptorEntry> queryInterceptors) {
+    public Stream<InterceptorEntry> getInterceptorFilter(List<InterceptorEntry> queryInterceptors) {
         boolean interceptorBehavior = getBehavior().hasBehavior(EasyBehaviorEnum.USE_INTERCEPTOR);
         //如果当前操作存在interceptor的behavior那么就不应该在interceptors里面
         //否则应该在interceptors里面

@@ -1,7 +1,7 @@
 package com.easy.query.core.expression.sql.builder;
 
 import com.easy.query.core.context.QueryRuntimeContext;
-import com.easy.query.core.basic.plugin.interceptor.EasyInterceptorEntry;
+import com.easy.query.core.basic.plugin.interceptor.InterceptorEntry;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
@@ -38,7 +38,7 @@ public interface ExpressionContext {
     void noInterceptor(String name);
     void useInterceptor();
     void noInterceptor();
-    Stream<EasyInterceptorEntry> getInterceptorFilter(List<EasyInterceptorEntry> queryInterceptors);
+    Stream<InterceptorEntry> getInterceptorFilter(List<InterceptorEntry> queryInterceptors);
 
    default void executeMethod(ExecuteMethodEnum executeMethod){
        executeMethod(executeMethod,false);

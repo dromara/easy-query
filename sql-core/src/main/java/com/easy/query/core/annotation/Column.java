@@ -1,4 +1,6 @@
 package com.easy.query.core.annotation;
+import com.easy.query.core.basic.plugin.conversion.DefaultValueConverter;
+import com.easy.query.core.basic.plugin.conversion.ValueConverter;
 import com.easy.query.core.util.EasyStringUtil;
 
 import java.lang.annotation.Documented;
@@ -48,6 +50,7 @@ public @interface Column {
      * @return
      */
     boolean large() default false;
+    Class<? extends ValueConverter> conversion() default DefaultValueConverter.class;
 
 //    /**
 //     * 当且仅当查询指定该属性才会查询出来

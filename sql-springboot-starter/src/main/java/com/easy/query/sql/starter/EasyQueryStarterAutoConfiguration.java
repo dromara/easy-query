@@ -2,21 +2,20 @@ package com.easy.query.sql.starter;
 
 import com.easy.query.core.basic.jdbc.con.EasyConnectionFactory;
 import com.easy.query.core.basic.jdbc.con.ConnectionManager;
-import com.easy.query.core.basic.plugin.encryption.EasyEncryptionStrategy;
-import com.easy.query.core.basic.plugin.interceptor.EasyInterceptor;
+import com.easy.query.core.basic.plugin.conversion.ValueConverter;
+import com.easy.query.core.basic.plugin.encryption.EncryptionStrategy;
+import com.easy.query.core.basic.plugin.interceptor.Interceptor;
 import com.easy.query.core.basic.plugin.logicdel.LogicDeleteStrategy;
-import com.easy.query.core.basic.plugin.version.EasyVersionStrategy;
+import com.easy.query.core.basic.plugin.version.VersionStrategy;
 import com.easy.query.core.bootstrapper.DatabaseConfiguration;
 import com.easy.query.core.bootstrapper.DefaultDatabaseConfiguration;
 import com.easy.query.core.bootstrapper.DefaultStarterConfigurer;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
-import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.api.client.EasyQuery;
 import com.easy.query.core.bootstrapper.StarterConfigurer;
 import com.easy.query.core.configuration.nameconversion.NameConversion;
 import com.easy.query.core.configuration.nameconversion.impl.DefaultNameConversion;
 import com.easy.query.core.configuration.nameconversion.impl.UnderlinedNameConversion;
-import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.sharding.initializer.ShardingInitializer;
@@ -24,6 +23,7 @@ import com.easy.query.core.util.EasyStringUtil;
 import com.easy.query.mssql.MsSQLDatabaseConfiguration;
 import com.easy.query.mysql.config.MySQLDatabaseConfiguration;
 import com.easy.query.pgsql.PgSQLDatabaseConfiguration;
+import com.easy.query.sql.starter.config.EasyQueryInitializeOption;
 import com.easy.query.sql.starter.config.EasyQueryProperties;
 import com.easy.query.sql.starter.logging.Slf4jImpl;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -54,9 +54,11 @@ import java.util.Map;
         matchIfMissing = true
 )
 public class EasyQueryStarterAutoConfiguration {
+    private final DataSource dataSource;
     private final EasyQueryProperties easyQueryProperties;
 
-    public EasyQueryStarterAutoConfiguration(EasyQueryProperties easyQueryProperties) {
+    public EasyQueryStarterAutoConfiguration(DataSource dataSource,EasyQueryProperties easyQueryProperties) {
+        this.dataSource = dataSource;
         this.easyQueryProperties = easyQueryProperties;
         if (EasyStringUtil.isBlank(easyQueryProperties.getLogClass())) {
             LogFactory.useCustomLogging(Slf4jImpl.class);
@@ -75,6 +77,7 @@ public class EasyQueryStarterAutoConfiguration {
             }
         }
     }
+
     @Bean
     @ConditionalOnProperty(name = "easy-query.database", havingValue = "mysql")
     @ConditionalOnMissingBean
@@ -88,6 +91,7 @@ public class EasyQueryStarterAutoConfiguration {
     public DatabaseConfiguration mssqlDatabaseConfiguration() {
         return new MsSQLDatabaseConfiguration();
     }
+
     @Bean
     @ConditionalOnProperty(name = "easy-query.database", havingValue = "pgsql")
     @ConditionalOnMissingBean
@@ -124,11 +128,11 @@ public class EasyQueryStarterAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public EasyQuery easyQuery(DataSource dataSource, DatabaseConfiguration databaseConfiguration, StarterConfigurer starterConfigurer, NameConversion nameConversion, Map<String, EasyInterceptor> easyInterceptorMap, Map<String, EasyVersionStrategy> easyVersionStrategyMap, Map<String, LogicDeleteStrategy> easyLogicDeleteStrategyMap, Map<String, ShardingInitializer> easyShardingInitializerMap, Map<String, EasyEncryptionStrategy> easyEncryptionStrategyMap) {
+    public EasyQuery easyQuery(DatabaseConfiguration databaseConfiguration, StarterConfigurer starterConfigurer, NameConversion nameConversion) {
         EasyQuery easyQuery = EasyQueryBootstrapper.defaultBuilderConfiguration()
                 .setDefaultDataSource(dataSource)
-                .replaceService(EasyConnectionFactory.class,SpringEasyConnectionFactory.class)
-                .optionConfigure(builder->{
+                .replaceService(EasyConnectionFactory.class, SpringEasyConnectionFactory.class)
+                .optionConfigure(builder -> {
                     builder.setDeleteThrowError(easyQueryProperties.getDeleteThrow());
                     builder.setInsertStrategy(easyQueryProperties.getInsertStrategy());
                     builder.setUpdateStrategy(easyQueryProperties.getUpdateStrategy());
@@ -146,28 +150,12 @@ public class EasyQueryStarterAutoConfiguration {
                 .useDatabaseConfigure(databaseConfiguration)
                 .useStarterConfigure(starterConfigurer)
                 .build();
-        QueryRuntimeContext runtimeContext = easyQuery.getRuntimeContext();
-        QueryConfiguration configuration = runtimeContext.getQueryConfiguration();
-        //拦截器注册
-        for (Map.Entry<String, EasyInterceptor> easyInterceptorEntry : easyInterceptorMap.entrySet()) {
-            configuration.applyEasyInterceptor(easyInterceptorEntry.getValue());
-        }
-        //逻辑删除
-        for (Map.Entry<String, LogicDeleteStrategy> easyLogicDeleteStrategyEntry : easyLogicDeleteStrategyMap.entrySet()) {
-            configuration.applyLogicDeleteStrategy(easyLogicDeleteStrategyEntry.getValue());
-        }
-        //分片初始化
-        for (Map.Entry<String, ShardingInitializer> easyShardingInitializerEntry : easyShardingInitializerMap.entrySet()) {
-            configuration.applyShardingInitializer(easyShardingInitializerEntry.getValue());
-        }
-        //列加密
-        for (Map.Entry<String, EasyEncryptionStrategy> easyEncryptionStrategyEntry : easyEncryptionStrategyMap.entrySet()) {
-            configuration.applyEasyEncryptionStrategy(easyEncryptionStrategyEntry.getValue());
-        }
-        //数据行版本
-        for (Map.Entry<String, EasyVersionStrategy> easyVersionStrategyEntry : easyVersionStrategyMap.entrySet()) {
-            configuration.applyEasyVersionStrategy(easyVersionStrategyEntry.getValue());
-        }
         return easyQuery;
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public EasyQueryInitializeOption easyQueryInitializeOption(Map<String, Interceptor> interceptorMap, Map<String, VersionStrategy> versionStrategyMap, Map<String, LogicDeleteStrategy> logicDeleteStrategyMap, Map<String, ShardingInitializer> shardingInitializerMap, Map<String, EncryptionStrategy> encryptionStrategyMap, Map<String, ValueConverter<?, ?>> valueConverterMap) {
+        return new EasyQueryInitializeOption(interceptorMap, versionStrategyMap, logicDeleteStrategyMap, shardingInitializerMap, encryptionStrategyMap, valueConverterMap);
     }
 }

@@ -6,7 +6,7 @@ package com.easy.query.core.basic.plugin.interceptor;
  * @Date: 2023/3/9 21:35
  * @author xuejiaming
  */
-public interface EasyInterceptor {
+public interface Interceptor {
     /**
      * 越小越先执行
      * @return

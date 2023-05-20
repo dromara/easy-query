@@ -1,2 +1,3 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.easy.query.sql.starter.EasyQueryStarterAutoConfiguration
+  com.easy.query.sql.starter.EasyQueryStarterAutoConfiguration,\
+  com.easy.query.sql.starter.EasyQueryStarterInitializeAutoConfiguration

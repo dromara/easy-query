@@ -1,6 +1,6 @@
 package com.easy.query.core.annotation;
 
-import com.easy.query.core.basic.plugin.version.EasyVersionStrategy;
+import com.easy.query.core.basic.plugin.version.VersionStrategy;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -20,5 +20,5 @@ public @interface Version {
      * 版本号策略
      * @return
      */
-    Class<? extends EasyVersionStrategy> strategy();
+    Class<? extends VersionStrategy> strategy();
 }

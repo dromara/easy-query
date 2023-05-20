@@ -4,7 +4,7 @@ import com.easy.query.core.basic.api.internal.AbstractSQLExecuteRows;
 import com.easy.query.core.basic.api.update.EntityUpdatable;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
-import com.easy.query.core.basic.plugin.interceptor.EasyInterceptorEntry;
+import com.easy.query.core.basic.plugin.interceptor.InterceptorEntry;
 import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.ExecuteMethodEnum;
@@ -14,8 +14,7 @@ import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.SQLColumnSelector;
 import com.easy.query.core.expression.parser.impl.DefaultSQLColumnSetSelector;
-import com.easy.query.core.basic.plugin.interceptor.EasyEntityInterceptor;
-import com.easy.query.core.expression.sql.builder.impl.TableExpressionBuilder;
+import com.easy.query.core.basic.plugin.interceptor.EntityInterceptor;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
@@ -64,15 +63,15 @@ public abstract class AbstractEntityUpdatable<T> extends AbstractSQLExecuteRows<
     }
 
     protected void updateBefore() {
-        List<EasyInterceptorEntry> updateInterceptors = entityMetadata.getEntityInterceptors();
+        List<InterceptorEntry> updateInterceptors = entityMetadata.getEntityInterceptors();
         if (EasyCollectionUtil.isNotEmpty(updateInterceptors)) {
             QueryConfiguration easyQueryConfiguration = entityUpdateExpressionBuilder.getRuntimeContext().getQueryConfiguration();
-            List<EasyEntityInterceptor> entityInterceptors = entityUpdateExpressionBuilder.getExpressionContext().getInterceptorFilter(updateInterceptors)
-                    .map(interceptor -> (EasyEntityInterceptor) easyQueryConfiguration.getEasyInterceptor(interceptor.getName())).collect(Collectors.toList());
+            List<EntityInterceptor> entityInterceptors = entityUpdateExpressionBuilder.getExpressionContext().getInterceptorFilter(updateInterceptors)
+                    .map(interceptor -> (EntityInterceptor) easyQueryConfiguration.getEasyInterceptor(interceptor.getName())).collect(Collectors.toList());
             if (EasyCollectionUtil.isNotEmpty(entityInterceptors)) {
                 Class<?> entityClass = entityMetadata.getEntityClass();
                 for (T entity : entities) {
-                    for (EasyEntityInterceptor entityInterceptor : entityInterceptors) {
+                    for (EntityInterceptor entityInterceptor : entityInterceptors) {
                         entityInterceptor.configureUpdate(entityClass, entityUpdateExpressionBuilder, entity);
                     }
                 }

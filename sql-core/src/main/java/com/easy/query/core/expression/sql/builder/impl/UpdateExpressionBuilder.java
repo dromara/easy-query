@@ -7,7 +7,7 @@ import com.easy.query.core.expression.parser.core.SQLColumnSelector;
 import com.easy.query.core.expression.parser.core.SQLColumnSetter;
 import com.easy.query.core.expression.parser.factory.SQLExpressionInvokeFactory;
 import com.easy.query.core.context.QueryRuntimeContext;
-import com.easy.query.core.basic.plugin.version.EasyVersionStrategy;
+import com.easy.query.core.basic.plugin.version.VersionStrategy;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnValuePredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnVersionPropertyPredicate;
 import com.easy.query.core.expression.sql.expression.EntityUpdateSQLExpression;
@@ -26,7 +26,7 @@ import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.PredicateIndex;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnPropertyPredicate;
-import com.easy.query.core.basic.plugin.interceptor.EasyUpdateSetInterceptor;
+import com.easy.query.core.basic.plugin.interceptor.UpdateSetInterceptor;
 import com.easy.query.core.basic.plugin.track.EntityState;
 import com.easy.query.core.basic.plugin.track.TrackContext;
 import com.easy.query.core.basic.plugin.track.TrackManager;
@@ -140,7 +140,7 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
             QueryConfiguration easyQueryConfiguration = getRuntimeContext().getQueryConfiguration();
             getExpressionContext().getInterceptorFilter(entityMetadata.getUpdateSetInterceptors())
                     .forEach(interceptor -> {
-                        EasyUpdateSetInterceptor globalInterceptor = (EasyUpdateSetInterceptor) easyQueryConfiguration.getEasyInterceptor(interceptor.getName());
+                        UpdateSetInterceptor globalInterceptor = (UpdateSetInterceptor) easyQueryConfiguration.getEasyInterceptor(interceptor.getName());
                         globalInterceptor.configure(entityMetadata.getEntityClass(), this, sqlColumnSetter);
                     });
         }
@@ -151,7 +151,7 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
                 String propertyName = versionMetadata.getPropertyName();
                 ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(propertyName);
                 FastBean fastBean = EasyBeanUtil.getFastBean(table.getEntityClass());
-                EasyVersionStrategy easyVersionStrategy = versionMetadata.getEasyVersionStrategy();
+                VersionStrategy easyVersionStrategy = versionMetadata.getEasyVersionStrategy();
                 Object newVersionValue = easyVersionStrategy.nextVersion(entityMetadata, propertyName, version);
                 sqlColumnSetter.set(fastBean.getBeanGetter(columnMetadata.getProperty()), newVersionValue);
             }
@@ -179,7 +179,7 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
 
             if (entityMetadata.hasVersionColumn()) {
                 VersionMetadata versionMetadata = entityMetadata.getVersionMetadata();
-                EasyVersionStrategy easyVersionStrategy = versionMetadata.getEasyVersionStrategy();
+                VersionStrategy easyVersionStrategy = versionMetadata.getEasyVersionStrategy();
                 updateSet.append(new ColumnVersionPropertyPredicate(table.getEntityTable(), versionMetadata.getPropertyName(), easyVersionStrategy, this.getRuntimeContext()));
             }
 

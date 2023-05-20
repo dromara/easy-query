@@ -1,6 +1,6 @@
 package com.easy.query.test.encryption;
 
-import com.easy.query.core.basic.plugin.encryption.EasyEncryptionStrategy;
+import com.easy.query.core.basic.plugin.encryption.EncryptionStrategy;
 import com.easy.query.core.util.EasyBase64Util;
 
 import java.nio.charset.StandardCharsets;
@@ -11,7 +11,7 @@ import java.nio.charset.StandardCharsets;
  *
  * @author xuejiaming
  */
-public class Base64EncryptionStrategy implements EasyEncryptionStrategy {
+public class Base64EncryptionStrategy implements EncryptionStrategy {
     @Override
     public Object encrypt(Class<?> entityClass, String propertyName, Object plaintext) {
         if(plaintext==null){

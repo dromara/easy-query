@@ -6,11 +6,11 @@ package com.easy.query.core.basic.plugin.interceptor;
  *
  * @author xuejiaming
  */
-public class EasyInterceptorEntry {
+public class InterceptorEntry {
     private final String name;
     private final boolean defaultEnable;
 
-    public EasyInterceptorEntry(String name, boolean defaultEnable){
+    public InterceptorEntry(String name, boolean defaultEnable){
 
         this.name = name;
         this.defaultEnable = defaultEnable;

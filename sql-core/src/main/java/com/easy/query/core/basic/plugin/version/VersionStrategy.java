@@ -8,7 +8,7 @@ import com.easy.query.core.metadata.EntityMetadata;
  *
  * @author xuejiaming
  */
-public interface EasyVersionStrategy {
+public interface VersionStrategy {
     /**
      * 获取下次版本号值
      * @param entityMetadata

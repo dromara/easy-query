@@ -6,8 +6,7 @@ import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.basic.jdbc.parameter.SQLLikeParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
-import com.easy.query.core.configuration.QueryConfiguration;
-import com.easy.query.core.basic.plugin.encryption.EasyEncryptionStrategy;
+import com.easy.query.core.basic.plugin.encryption.EncryptionStrategy;
 import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasyStringUtil;
 
@@ -65,7 +64,7 @@ public class ExecutorContext {
     private Object fromValue0(Class<?> entityClass, ColumnMetadata columnMetadata, Object value){
         if (value != null) {
             if (columnMetadata.isEncryption()) {
-                EasyEncryptionStrategy easyEncryptionStrategy = columnMetadata.getEncryptionStrategy();
+                EncryptionStrategy easyEncryptionStrategy = columnMetadata.getEncryptionStrategy();
                 return easyEncryptionStrategy.decrypt(entityClass,columnMetadata.getProperty().getName(),value);
             }
         }
@@ -88,13 +87,13 @@ public class ExecutorContext {
         if (columnMetadata.isEncryption()) {
             if (sqlParameter instanceof SQLLikeParameter) {
                 if (columnMetadata.isSupportQueryLike()) {
-                    EasyEncryptionStrategy easyEncryptionStrategy = columnMetadata.getEncryptionStrategy();
+                    EncryptionStrategy easyEncryptionStrategy = columnMetadata.getEncryptionStrategy();
                     String likeValue = value.toString();
                     String encryptValue = EasyStringUtil.endWithRemove(EasyStringUtil.startWithRemove(likeValue, "%"), "%");
                     return EasyStringUtil.startWithDefault(likeValue, "%", EasyStringUtil.EMPTY) + easyEncryptionStrategy.encrypt(entityClass,propertyName,encryptValue) + EasyStringUtil.endWithDefault(likeValue, "%", EasyStringUtil.EMPTY);
                 }
             } else {
-                EasyEncryptionStrategy easyEncryptionStrategy = columnMetadata.getEncryptionStrategy();
+                EncryptionStrategy easyEncryptionStrategy = columnMetadata.getEncryptionStrategy();
                 return easyEncryptionStrategy.encrypt(entityClass,propertyName,value);
             }
         }

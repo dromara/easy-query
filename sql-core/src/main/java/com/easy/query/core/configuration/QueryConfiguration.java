@@ -1,24 +1,26 @@
 package com.easy.query.core.configuration;
 
+import com.easy.query.core.basic.plugin.conversion.ValueConverter;
 import com.easy.query.core.basic.plugin.logicdel.*;
 import com.easy.query.core.basic.plugin.logicdel.impl.BooleanEasyEntityTypeConfiguration;
 import com.easy.query.core.basic.plugin.logicdel.impl.DeleteLongTimestampEasyEntityTypeConfiguration;
 import com.easy.query.core.basic.plugin.logicdel.impl.LocalDateEasyLogicDeleteStrategy;
 import com.easy.query.core.basic.plugin.logicdel.impl.LocalDateTimeEasyEntityTypeConfiguration;
-import com.easy.query.core.basic.plugin.version.EasyVersionIntStrategy;
-import com.easy.query.core.basic.plugin.version.EasyVersionLongStrategy;
-import com.easy.query.core.basic.plugin.version.EasyVersionStrategy;
-import com.easy.query.core.basic.plugin.version.EasyVersionTimestampStrategy;
-import com.easy.query.core.basic.plugin.version.EasyVersionUUIDStrategy;
+import com.easy.query.core.basic.plugin.version.VersionIntStrategy;
+import com.easy.query.core.basic.plugin.version.VersionLongStrategy;
+import com.easy.query.core.basic.plugin.version.VersionStrategy;
+import com.easy.query.core.basic.plugin.version.VersionTimestampStrategy;
+import com.easy.query.core.basic.plugin.version.VersionUUIDStrategy;
 import com.easy.query.core.configuration.dialect.Dialect;
 import com.easy.query.core.configuration.nameconversion.NameConversion;
-import com.easy.query.core.basic.plugin.encryption.EasyEncryptionStrategy;
+import com.easy.query.core.basic.plugin.encryption.EncryptionStrategy;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.basic.enums.LogicDeleteStrategyEnum;
-import com.easy.query.core.basic.plugin.interceptor.EasyInterceptor;
+import com.easy.query.core.basic.plugin.interceptor.Interceptor;
 import com.easy.query.core.sharding.initializer.ShardingInitializer;
 import com.easy.query.core.sharding.initializer.UnShardingInitializer;
 import com.easy.query.core.util.EasyClassUtil;
+import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasyStringUtil;
 
 import java.util.*;
@@ -42,11 +44,12 @@ public class QueryConfiguration {
     private final NameConversion nameConversion;
     private final Dialect dialect;
 //    private Map<Class<?>, EntityTypeConfiguration<?>> entityTypeConfigurationMap = new HashMap<>();
-    private Map<String, EasyInterceptor> interceptorMap =new ConcurrentHashMap<>();
+    private Map<String, Interceptor> interceptorMap =new ConcurrentHashMap<>();
     private Map<String, LogicDeleteStrategy> globalLogicDeleteStrategyMap = new ConcurrentHashMap<>();
-    private Map<Class<? extends EasyEncryptionStrategy>, EasyEncryptionStrategy> easyEncryptionStrategyMap = new ConcurrentHashMap<>();
-    private Map<Class<? extends EasyVersionStrategy>, EasyVersionStrategy> easyVersionStrategyMap = new ConcurrentHashMap<>();
+    private Map<Class<? extends EncryptionStrategy>, EncryptionStrategy> easyEncryptionStrategyMap = new ConcurrentHashMap<>();
+    private Map<Class<? extends VersionStrategy>, VersionStrategy> easyVersionStrategyMap = new ConcurrentHashMap<>();
     private Map<Class<? extends ShardingInitializer>, ShardingInitializer> shardingInitializerMap = new ConcurrentHashMap<>();
+    private Map<Class<? extends ValueConverter>, ValueConverter<?,?>> valueConverterMap = new ConcurrentHashMap<>();
 
 //    public EasyQueryConfiguration(Dialect dialect, NameConversion nameConversion) {
 //       this(EasyQueryOption.defaultEasyQueryOption(),dialect,nameConversion);
@@ -55,10 +58,10 @@ public class QueryConfiguration {
         this.easyQueryOption = easyQueryOption;
         this.dialect = dialect;
         this.nameConversion = nameConversion;
-        easyVersionStrategyMap.put(EasyVersionIntStrategy.class,new EasyVersionIntStrategy());
-        easyVersionStrategyMap.put(EasyVersionLongStrategy.class,new EasyVersionLongStrategy());
-        easyVersionStrategyMap.put(EasyVersionUUIDStrategy.class,new EasyVersionUUIDStrategy());
-        easyVersionStrategyMap.put(EasyVersionTimestampStrategy.class,new EasyVersionTimestampStrategy());
+        easyVersionStrategyMap.put(VersionIntStrategy.class,new VersionIntStrategy());
+        easyVersionStrategyMap.put(VersionLongStrategy.class,new VersionLongStrategy());
+        easyVersionStrategyMap.put(VersionUUIDStrategy.class,new VersionUUIDStrategy());
+        easyVersionStrategyMap.put(VersionTimestampStrategy.class,new VersionTimestampStrategy());
         shardingInitializerMap.put(UnShardingInitializer.class,UnShardingInitializer.INSTANCE);
     }
 
@@ -74,7 +77,7 @@ public class QueryConfiguration {
         return dialect;
     }
 
-    public void applyEasyInterceptor(EasyInterceptor easyInterceptor){
+    public void applyEasyInterceptor(Interceptor easyInterceptor){
         String interceptorName = easyInterceptor.name();
         if(EasyStringUtil.isBlank(interceptorName)){
             throw new EasyQueryException(EasyClassUtil.getInstanceSimpleName(easyInterceptor)+"cant get interceptor name");
@@ -86,13 +89,13 @@ public class QueryConfiguration {
     }
 
 
-    public EasyInterceptor getEasyInterceptor(String name){
+    public Interceptor getEasyInterceptor(String name){
         if(name==null){
             throw new IllegalArgumentException("cant get global interceptor,name is null");
         }
         return interceptorMap.get(name);
     }
-    public Collection<EasyInterceptor> getEasyInterceptors(){
+    public Collection<Interceptor> getEasyInterceptors(){
         return interceptorMap.values();
     }
 //    public void applyEntityTypeConfiguration(EntityTypeConfiguration<?> entityTypeConfiguration) {
@@ -140,22 +143,22 @@ public class QueryConfiguration {
         }
         throw new EasyQueryException("easy logic delete strategy not found. strategy:"+strategy);
     }
-    public void applyEasyEncryptionStrategy(EasyEncryptionStrategy encryptionStrategy) {
-        Class<? extends EasyEncryptionStrategy> strategyClass = encryptionStrategy.getClass();
+    public void applyEasyEncryptionStrategy(EncryptionStrategy encryptionStrategy) {
+        Class<? extends EncryptionStrategy> strategyClass = encryptionStrategy.getClass();
         if (easyEncryptionStrategyMap.containsKey(strategyClass)) {
             throw new EasyQueryException("easy encryption strategy:" + EasyClassUtil.getSimpleName(strategyClass) + ",repeat");
         }
         easyEncryptionStrategyMap.put(strategyClass, encryptionStrategy);
     }
 
-    public EasyEncryptionStrategy getEasyEncryptionStrategy(Class<? extends EasyEncryptionStrategy> strategy){
+    public EncryptionStrategy getEasyEncryptionStrategy(Class<? extends EncryptionStrategy> strategy){
         return easyEncryptionStrategyMap.get(strategy);
     }
-    public boolean containEasyEncryptionStrategy(Class<? extends EasyEncryptionStrategy> strategy){
+    public boolean containEasyEncryptionStrategy(Class<? extends EncryptionStrategy> strategy){
         return getEasyEncryptionStrategy(strategy)!=null;
     }
-    public EasyEncryptionStrategy getEasyEncryptionStrategyNotNull(Class<? extends EasyEncryptionStrategy> strategy){
-        EasyEncryptionStrategy easyEncryptionStrategy = getEasyEncryptionStrategy(strategy);
+    public EncryptionStrategy getEasyEncryptionStrategyNotNull(Class<? extends EncryptionStrategy> strategy){
+        EncryptionStrategy easyEncryptionStrategy = getEasyEncryptionStrategy(strategy);
         if(easyEncryptionStrategy==null){
             throw new EasyQueryException("easy encryption strategy not found. strategy:"+ EasyClassUtil.getSimpleName(strategy));
         }
@@ -163,22 +166,22 @@ public class QueryConfiguration {
     }
     //easyVersionStrategyMap
 
-    public void applyEasyVersionStrategy(EasyVersionStrategy versionStrategy) {
-        Class<? extends EasyVersionStrategy> strategyClass = versionStrategy.getClass();
+    public void applyEasyVersionStrategy(VersionStrategy versionStrategy) {
+        Class<? extends VersionStrategy> strategyClass = versionStrategy.getClass();
         if (easyVersionStrategyMap.containsKey(strategyClass)) {
             throw new EasyQueryException("easy version strategy:" + EasyClassUtil.getSimpleName(strategyClass) + ",repeat");
         }
         easyVersionStrategyMap.put(strategyClass, versionStrategy);
     }
 
-    public EasyVersionStrategy getEasyVersionStrategyOrNull(Class<? extends EasyVersionStrategy> strategy){
+    public VersionStrategy getEasyVersionStrategyOrNull(Class<? extends VersionStrategy> strategy){
         return easyVersionStrategyMap.get(strategy);
     }
-    public boolean containEasyVersionStrategy(Class<? extends EasyVersionStrategy> strategy){
+    public boolean containEasyVersionStrategy(Class<? extends VersionStrategy> strategy){
         return getEasyVersionStrategyOrNull(strategy)!=null;
     }
-    public EasyVersionStrategy getEasyVersionStrategyNotNull(Class<? extends EasyVersionStrategy> strategy){
-        EasyVersionStrategy easyVersionStrategy = getEasyVersionStrategyOrNull(strategy);
+    public VersionStrategy getEasyVersionStrategyNotNull(Class<? extends VersionStrategy> strategy){
+        VersionStrategy easyVersionStrategy = getEasyVersionStrategyOrNull(strategy);
         if(easyVersionStrategy==null){
             throw new EasyQueryException("easy version strategy not found. strategy:"+ EasyClassUtil.getSimpleName(strategy));
         }
@@ -199,5 +202,16 @@ public class QueryConfiguration {
 
     public ShardingInitializer getEasyShardingInitializerOrNull(Class<? extends ShardingInitializer> initializer){
         return shardingInitializerMap.get(initializer);
+    }
+
+    public void applyValueConverter(ValueConverter<?,?> valueConverter){
+        Class<? extends ValueConverter<?,?>> converterClass = EasyObjectUtil.typeCastNullable(valueConverter.getClass());
+        if(valueConverterMap.containsKey(converterClass)){
+            throw new EasyQueryException("value converter:" + EasyClassUtil.getSimpleName(converterClass) + ",repeat");
+        }
+        valueConverterMap.put(converterClass,valueConverter);
+    }
+    public  ValueConverter<?,?> getValueConverter(Class<? extends ValueConverter> converterClass){
+        return valueConverterMap.get(converterClass);
     }
 }

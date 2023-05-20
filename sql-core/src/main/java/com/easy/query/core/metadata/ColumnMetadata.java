@@ -1,8 +1,7 @@
 package com.easy.query.core.metadata;
 
-import com.easy.query.core.basic.plugin.conversion.DefaultValueConverter;
 import com.easy.query.core.basic.plugin.conversion.ValueConverter;
-import com.easy.query.core.basic.plugin.encryption.EasyEncryptionStrategy;
+import com.easy.query.core.basic.plugin.encryption.EncryptionStrategy;
 
 import java.beans.PropertyDescriptor;
 
@@ -29,7 +28,7 @@ public class ColumnMetadata {
     private final  boolean insertIgnore;
     private final  boolean updateIgnore ;
 
-    private final  EasyEncryptionStrategy encryptionStrategy;
+    private final EncryptionStrategy encryptionStrategy;
     private final  boolean supportQueryLike;
     private final  boolean large;
 
@@ -91,7 +90,7 @@ public class ColumnMetadata {
         return encryptionStrategy!=null;
     }
 
-    public EasyEncryptionStrategy getEncryptionStrategy() {
+    public EncryptionStrategy getEncryptionStrategy() {
         return encryptionStrategy;
     }
 

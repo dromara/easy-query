@@ -3,7 +3,7 @@ package com.easy.query.test.entity;
 import com.easy.query.core.annotation.Column;
 import com.easy.query.core.annotation.Table;
 import com.easy.query.core.annotation.Version;
-import com.easy.query.core.basic.plugin.version.EasyVersionLongStrategy;
+import com.easy.query.core.basic.plugin.version.VersionLongStrategy;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -27,7 +27,7 @@ public class SysUserVersionLong {
      * 创建时间;创建时间
      */
     private LocalDateTime createTime;
-    @Version(strategy = EasyVersionLongStrategy.class)
+    @Version(strategy = VersionLongStrategy.class)
     private Long version;
 }
 

@@ -1,6 +1,6 @@
 package com.easy.query.core.annotation;
 
-import com.easy.query.core.basic.plugin.encryption.EasyEncryptionStrategy;
+import com.easy.query.core.basic.plugin.encryption.EncryptionStrategy;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -18,7 +18,7 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.ANNOTATION_TYPE})
 public @interface Encryption {
-    Class<? extends EasyEncryptionStrategy> strategy();
+    Class<? extends EncryptionStrategy> strategy();
 
     /**
      * 是否需要支持模糊查询

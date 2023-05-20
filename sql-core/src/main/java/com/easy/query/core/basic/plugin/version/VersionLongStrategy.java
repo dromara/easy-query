@@ -8,9 +8,9 @@ import com.easy.query.core.metadata.EntityMetadata;
  *
  * @author xuejiaming
  */
-public class EasyVersionIntStrategy implements EasyVersionStrategy{
+public class VersionLongStrategy implements VersionStrategy {
     @Override
     public Object nextVersion(EntityMetadata entityMetadata, String propertyName, Object version) {
-        return (int)version + 1;
+        return (long)version + 1;
     }
 }
