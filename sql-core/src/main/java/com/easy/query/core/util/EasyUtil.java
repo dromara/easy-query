@@ -67,7 +67,7 @@ public class EasyUtil {
     public static String getAnonymousPropertyName(SQLEntityAliasSegment sqlEntityProject, TableAvailable anonymousTable) {
         String alias = sqlEntityProject.getAlias();
         if (EasyStringUtil.isBlank(alias)) {
-            return sqlEntityProject.getPropertyName();
+            alias= sqlEntityProject.getPropertyName();
         }
         return anonymousTable.getEntityMetadata().getPropertyNameOrNull(alias,alias);
     }

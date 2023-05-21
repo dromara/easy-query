@@ -228,6 +228,18 @@ public class QueryTest extends BaseTest {
         Assert.assertNotNull(topics);
         Assert.assertEquals(1, topics.size());
     }
+    @Test
+    public void query11_1() {
+        Queryable<Topic> sql = easyQuery
+                .queryable(Topic.class)
+                .where(o -> o.eq(Topic::getId, "3"));
+        Assert.assertNotNull(sql);
+        String sql1 = easyQuery
+                .queryable(BlogEntity.class)
+                .leftJoin(sql, (a, b) -> a.eq(b, BlogEntity::getId, Topic::getId))
+                .where(o -> o.isNotNull(BlogEntity::getId).eq(BlogEntity::getId, "3")).toSQL();
+        Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`title`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top` FROM `t_blog` t LEFT JOIN (SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t WHERE t.`id` = ?) t1 ON t.`id` = t1.`id` WHERE t.`deleted` = ? AND t.`id` IS NOT NULL AND t.`id` = ?",sql1);
+    }
 
     @Test
     public void query12() {
@@ -1016,6 +1028,28 @@ public class QueryTest extends BaseTest {
         }
     }
     @Test
+    public void query63_1() {
+        Queryable<BlogEntity> queryable = easyQuery.queryable(BlogEntity.class,"x");
+        Queryable<TopicSubQueryBlog> select = easyQuery
+                .queryable(Topic.class)
+                .where(t -> t.isNotNull(Topic::getTitle))
+                .select(TopicSubQueryBlog.class, o -> o.columnAll().columnSubQueryAs(t->{
+                    return queryable.where(x -> x.eq(t, BlogEntity::getId, Topic::getId)).select(Long.class, x->x.columnSum(BlogEntity::getStar));
+                }, TopicSubQueryBlog::getBlogCount));
+        String sql = select.toSQL();
+
+        Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time`,(SELECT SUM(x.`star`) AS `star` FROM `t_blog` x WHERE x.`deleted` = ? AND x.`id` = t.`id`) AS `blog_count` FROM `t_topic` t WHERE t.`title` IS NOT NULL", sql);
+        List<TopicSubQueryBlog> list = select.toList();
+        Assert.assertEquals(99,list.size());
+        for (TopicSubQueryBlog topicSubQueryBlog : list) {
+            if(topicSubQueryBlog.getStars()<200){
+                Assert.assertEquals(Long.parseLong(topicSubQueryBlog.getId()),(long)topicSubQueryBlog.getBlogCount());
+            }else{
+                Assert.assertNull(topicSubQueryBlog.getBlogCount());
+            }
+        }
+    }
+    @Test
     public void query64() {
         Queryable<BlogEntity> queryable = easyQuery.queryable(BlogEntity.class,"x");
         Queryable<TopicSubQueryBlog> select = easyQuery
@@ -1073,6 +1107,25 @@ public class QueryTest extends BaseTest {
 
         String sql = q1.union(q2, q3).where(o -> o.eq(TopicUnion::getId, "123321")).toSQL();
 
-        Assert.assertEquals("SELECT t4.* FROM (SELECT t.`id`,t.`stars`,t.`title` FROM `t_topic` t WHERE t.`id` = ? UNION SELECT t.`id`,t.`stars`,t.`title` FROM `t_topic` t WHERE t.`create_time` >= ? UNION SELECT t.`id`,t.`stars`,t.`title` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t1.`content` IS NOT NULL AND t.`stars` IS NOT NULL) t4 WHERE t4.`id` = ?",sql);
+        Assert.assertEquals("SELECT t4.`id`,t4.`stars`,t4.`title` FROM (SELECT t.`id`,t.`stars`,t.`title` FROM `t_topic` t WHERE t.`id` = ? UNION SELECT t.`id`,t.`stars`,t.`title` FROM `t_topic` t WHERE t.`create_time` >= ? UNION SELECT t.`id`,t.`stars`,t.`title` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t1.`content` IS NOT NULL AND t.`stars` IS NOT NULL) t4 WHERE t4.`id` = ?",sql);
+    }
+    @Test
+    public void query67() {
+        Queryable<TopicUnion> q1 = easyQuery
+                .queryable(Topic.class).where(o->o.eq(Topic::getId,"123")).select(TopicUnion.class);
+        Queryable<TopicUnion> q2 = easyQuery
+                .queryable(BlogEntity.class)
+                .where(o->o.ge(BlogEntity::getCreateTime,LocalDateTime.of(2020,1,1,1,1)))
+                .select(TopicUnion.class,o->o.columnAs(BlogEntity::getId,TopicUnion::getId)
+                        .columnAs(BlogEntity::getStar,TopicUnion::getStars)
+                        .columnAs(BlogEntity::getContent,TopicUnion::getAbc)
+                );
+        List<TopicUnion> list = q1.unionAll(q2).where(o -> o.eq(TopicUnion::getId, "123321")).toList();
+        Assert.assertEquals(0, list.size());
+
+
+        String sql = q1.union(q2).where(o -> o.eq(TopicUnion::getId, "123321")).toSQL();
+
+        Assert.assertEquals("SELECT t4.`id`,t4.`stars`,t4.`title` FROM (SELECT t.`id`,t.`stars`,t.`title` FROM `t_topic` t WHERE t.`id` = ? UNION SELECT t.`id` AS `id`,t.`star` AS `stars`,t.`content` AS `title` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`create_time` >= ?) t4 WHERE t4.`id` = ?",sql);
     }
 }
