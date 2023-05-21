@@ -4,6 +4,7 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.lambda.Property;
+import com.easy.query.core.expression.parser.core.SQLColumnAsSelector;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.ColumnSegmentImpl;
 import com.easy.query.core.expression.segment.SQLEntityAliasSegment;
@@ -14,11 +15,14 @@ import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpression
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.SQLAnonymousEntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.SQLAnonymousUnionEntityQueryExpressionBuilder;
+import com.easy.query.core.expression.sql.expression.AnonymousEntityQuerySQLExpression;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
+import com.easy.query.core.util.EasySQLSegmentUtil;
 import com.easy.query.core.util.EasyUtil;
 import com.easy.query.core.util.EasyLambdaUtil;
 
@@ -93,35 +97,42 @@ public class AbstractSQLColumnSelector<T1, TChain> {
 
     private EntityQueryExpressionBuilder getAnonymousTableQueryExpressionBuilder(AnonymousEntityTableExpressionBuilder table){
         EntityQueryExpressionBuilder entityQueryExpressionBuilder = table.getEntityQueryExpressionBuilder();
+        return getEntityQueryExpressionBuilder(entityQueryExpressionBuilder);
+    }
+    private EntityQueryExpressionBuilder getEntityQueryExpressionBuilder(EntityQueryExpressionBuilder entityQueryExpressionBuilder){
         if(entityQueryExpressionBuilder instanceof SQLAnonymousUnionEntityQueryExpressionBuilder){
             List<EntityQueryExpressionBuilder> entityQueryExpressionBuilders = ((SQLAnonymousUnionEntityQueryExpressionBuilder) entityQueryExpressionBuilder).getEntityQueryExpressionBuilders();
-            return EasyCollectionUtil.first(entityQueryExpressionBuilders);
+            EntityQueryExpressionBuilder first = EasyCollectionUtil.first(entityQueryExpressionBuilders);
+            return getEntityQueryExpressionBuilder(first);
         }
         return entityQueryExpressionBuilder;
     }
     protected TChain columnAnonymousAll(AnonymousEntityTableExpressionBuilder table){
-        EntityQueryExpressionBuilder sqlEntityQueryExpression = getAnonymousTableQueryExpressionBuilder(table);
-        //匿名表内部设定的不查询
-        boolean queryLargeColumn = sqlEntityQueryExpression.getExpressionContext().getBehavior().hasBehavior(EasyBehaviorEnum.QUERY_LARGE_COLUMN);
-        List<SQLSegment> sqlSegments = sqlEntityQueryExpression.getProjects().getSQLSegments();
-        EntityMetadata entityMetadata = table.getEntityMetadata();
-        for (SQLSegment sqlSegment : sqlSegments) {
-            if(sqlSegment instanceof SQLEntitySegment){
-                SQLEntitySegment sqlEntitySegment = (SQLEntitySegment) sqlSegment;
-                ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(sqlEntitySegment.getPropertyName());
-                if(!columnAllQueryLargeColumn(queryLargeColumn,columnMetadata)){
-                    continue;
+        EntityQueryExpressionBuilder queryExpressionBuilder = getAnonymousTableQueryExpressionBuilder(table);
+        if(EasySQLSegmentUtil.isNotEmpty(queryExpressionBuilder.getProjects())){
+
+            List<SQLSegment> sqlSegments = queryExpressionBuilder.getProjects().getSQLSegments();
+            //匿名表内部设定的不查询
+            boolean queryLargeColumn = queryExpressionBuilder.getExpressionContext().getBehavior().hasBehavior(EasyBehaviorEnum.QUERY_LARGE_COLUMN);
+            EntityMetadata entityMetadata = table.getEntityMetadata();
+            for (SQLSegment sqlSegment : sqlSegments) {
+                if(sqlSegment instanceof SQLEntitySegment){
+                    SQLEntitySegment sqlEntitySegment = (SQLEntitySegment) sqlSegment;
+                    ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(sqlEntitySegment.getPropertyName());
+                    if(!columnAllQueryLargeColumn(queryLargeColumn,columnMetadata)){
+                        continue;
+                    }
                 }
-            }
 
-            if (sqlSegment instanceof SQLEntityAliasSegment) {
-                SQLEntityAliasSegment sqlEntityAliasSegment = (SQLEntityAliasSegment) sqlSegment;
+                if (sqlSegment instanceof SQLEntityAliasSegment) {
+                    SQLEntityAliasSegment sqlEntityAliasSegment = (SQLEntityAliasSegment) sqlSegment;
 
-                String propertyName = EasyUtil.getAnonymousPropertyName(sqlEntityAliasSegment,table.getEntityTable());
+                    String propertyName = EasyUtil.getAnonymousPropertyName(sqlEntityAliasSegment,table.getEntityTable());
 
-                sqlSegmentBuilder.append(new ColumnSegmentImpl(table.getEntityTable(),propertyName , entityQueryExpressionBuilder.getRuntimeContext(),sqlEntityAliasSegment.getAlias()));
-            } else {
-                throw new EasyQueryException("columnAll函数无法获取指定列" + EasyClassUtil.getInstanceSimpleName(sqlSegment));
+                    sqlSegmentBuilder.append(new ColumnSegmentImpl(table.getEntityTable(),propertyName , entityQueryExpressionBuilder.getRuntimeContext(),sqlEntityAliasSegment.getAlias()));
+                } else {
+                    throw new EasyQueryException("columnAll函数无法获取指定列" + EasyClassUtil.getInstanceSimpleName(sqlSegment));
+                }
             }
         }
         return (TChain) this;

@@ -3,6 +3,7 @@ package com.easy.query.test;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.api.select.Queryable;
 import com.easy.query.test.dto.TopicSubQueryBlog;
+import com.easy.query.test.dto.TopicUnion;
 import com.easy.query.test.mytest.EasyAggregate;
 import com.easy.query.core.enums.SQLPredicateCompareEnum;
 import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
@@ -1035,5 +1036,43 @@ public class QueryTest extends BaseTest {
                 Assert.assertEquals(0,(long)topicSubQueryBlog.getBlogCount());
             }
         }
+    }
+
+    @Test
+    public void query65() {
+        Queryable<Topic> q1 = easyQuery
+                .queryable(Topic.class).where(o->o.eq(Topic::getId,"123"));
+        Queryable<Topic> q2 = easyQuery
+                .queryable(Topic.class).where(o->o.ge(Topic::getCreateTime,LocalDateTime.of(2020,1,1,1,1)));
+        Queryable<Topic> q3 = easyQuery
+                .queryable(Topic.class).leftJoin(BlogEntity.class,(t,t1)->t.eq(t1,Topic::getId,BlogEntity::getId))
+                .where((t,t1)->t1.isNotNull(BlogEntity::getContent).then(t).isNotNull(Topic::getStars));
+        List<Topic> list = q1.union(q2, q3).where(o -> o.eq(Topic::getId, "123321")).toList();
+        Assert.assertEquals(0, list.size());
+
+
+        String sql = q1.union(q2, q3).where(o -> o.eq(Topic::getId, "123321")).toSQL();
+
+        Assert.assertEquals("SELECT t3.`id`,t3.`stars`,t3.`title`,t3.`create_time` FROM (SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t WHERE t.`id` = ? UNION SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t WHERE t.`create_time` >= ? UNION SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t1.`content` IS NOT NULL AND t.`stars` IS NOT NULL) t3 WHERE t3.`id` = ?",sql);
+    }
+    @Test
+    public void query66() {
+        Queryable<TopicUnion> q1 = easyQuery
+                .queryable(Topic.class).where(o->o.eq(Topic::getId,"123")).select(TopicUnion.class);
+        Queryable<TopicUnion> q2 = easyQuery
+                .queryable(Topic.class)
+                .where(o->o.ge(Topic::getCreateTime,LocalDateTime.of(2020,1,1,1,1)))
+                .select(TopicUnion.class);
+        Queryable<TopicUnion> q3 = easyQuery
+                .queryable(Topic.class).leftJoin(BlogEntity.class,(t,t1)->t.eq(t1,Topic::getId,BlogEntity::getId))
+                .where((t,t1)->t1.isNotNull(BlogEntity::getContent).then(t).isNotNull(Topic::getStars))
+                .select(TopicUnion.class);
+        List<TopicUnion> list = q1.union(q2, q3).where(o -> o.eq(TopicUnion::getId, "123321")).toList();
+        Assert.assertEquals(0, list.size());
+
+
+        String sql = q1.union(q2, q3).where(o -> o.eq(TopicUnion::getId, "123321")).toSQL();
+
+        Assert.assertEquals("SELECT t4.* FROM (SELECT t.`id`,t.`stars`,t.`title` FROM `t_topic` t WHERE t.`id` = ? UNION SELECT t.`id`,t.`stars`,t.`title` FROM `t_topic` t WHERE t.`create_time` >= ? UNION SELECT t.`id`,t.`stars`,t.`title` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t1.`content` IS NOT NULL AND t.`stars` IS NOT NULL) t4 WHERE t4.`id` = ?",sql);
     }
 }

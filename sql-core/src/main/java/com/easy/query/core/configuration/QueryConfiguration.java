@@ -77,7 +77,7 @@ public class QueryConfiguration {
         return dialect;
     }
 
-    public void applyEasyInterceptor(Interceptor easyInterceptor){
+    public void applyInterceptor(Interceptor easyInterceptor){
         String interceptorName = easyInterceptor.name();
         if(EasyStringUtil.isBlank(interceptorName)){
             throw new EasyQueryException(EasyClassUtil.getInstanceSimpleName(easyInterceptor)+"cant get interceptor name");
@@ -143,7 +143,7 @@ public class QueryConfiguration {
         }
         throw new EasyQueryException("easy logic delete strategy not found. strategy:"+strategy);
     }
-    public void applyEasyEncryptionStrategy(EncryptionStrategy encryptionStrategy) {
+    public void applyEncryptionStrategy(EncryptionStrategy encryptionStrategy) {
         Class<? extends EncryptionStrategy> strategyClass = encryptionStrategy.getClass();
         if (easyEncryptionStrategyMap.containsKey(strategyClass)) {
             throw new EasyQueryException("easy encryption strategy:" + EasyClassUtil.getSimpleName(strategyClass) + ",repeat");

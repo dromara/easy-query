@@ -23,7 +23,7 @@ QQ群:170029046
     - [新增](#新增)
     - [修改](#修改)
     - [删除](#删除)
-    - [联结查询](#联结查询)
+    - [联合查询](#联合查询)
     - [子查询](#子查询)
 - [分片](#分片)
     - [分表](#分表)
@@ -331,7 +331,7 @@ long l = easyQuery.deletable(topic).executeRows();
 <== Total: 1
 ```
 
-## 联结查询
+## 联合查询
 ```java
 Queryable<Topic> q1 = easyQuery
                 .queryable(Topic.class);

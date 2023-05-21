@@ -70,12 +70,12 @@ public class PgSqlBaseTest {
                 .build();
         QueryRuntimeContext runtimeContext = easyQuery.getRuntimeContext();
         QueryConfiguration configuration = runtimeContext.getQueryConfiguration();
-        configuration.applyEasyEncryptionStrategy(new DefaultAesEasyEncryptionStrategy());
-        configuration.applyEasyEncryptionStrategy(new Base64EncryptionStrategy());
-        configuration.applyEasyEncryptionStrategy(new MyEncryptionStrategy());
+        configuration.applyEncryptionStrategy(new DefaultAesEasyEncryptionStrategy());
+        configuration.applyEncryptionStrategy(new Base64EncryptionStrategy());
+        configuration.applyEncryptionStrategy(new MyEncryptionStrategy());
         configuration.applyLogicDeleteStrategy(new MyLogicDelStrategy());
-        configuration.applyEasyInterceptor(new MyEntityInterceptor());
-        configuration.applyEasyInterceptor(new MyTenantInterceptor());
+        configuration.applyInterceptor(new MyEntityInterceptor());
+        configuration.applyInterceptor(new MyTenantInterceptor());
         configuration.applyShardingInitializer(new FixShardingInitializer());
 
         TableRouteManager tableRouteManager = runtimeContext.getTableRouteManager();

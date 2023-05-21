@@ -53,7 +53,7 @@ public class EasyQueryStarterInitializeAutoConfiguration {
         QueryConfiguration configuration = runtimeContext.getQueryConfiguration();
         //拦截器注册
         for (Map.Entry<String, Interceptor> easyInterceptorEntry : easyQueryInitializeOption.getInterceptorMap().entrySet()) {
-            configuration.applyEasyInterceptor(easyInterceptorEntry.getValue());
+            configuration.applyInterceptor(easyInterceptorEntry.getValue());
         }
         //逻辑删除
         for (Map.Entry<String, LogicDeleteStrategy> logicDeleteStrategyEntry : easyQueryInitializeOption.getLogicDeleteStrategyMap().entrySet()) {
@@ -65,7 +65,7 @@ public class EasyQueryStarterInitializeAutoConfiguration {
         }
         //列加密
         for (Map.Entry<String, EncryptionStrategy> easyEncryptionStrategyEntry : easyQueryInitializeOption.getEncryptionStrategyMap().entrySet()) {
-            configuration.applyEasyEncryptionStrategy(easyEncryptionStrategyEntry.getValue());
+            configuration.applyEncryptionStrategy(easyEncryptionStrategyEntry.getValue());
         }
         //数据行版本
         for (Map.Entry<String, VersionStrategy> easyVersionStrategyEntry : easyQueryInitializeOption.getVersionStrategyMap().entrySet()) {

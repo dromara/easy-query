@@ -55,8 +55,8 @@ public class DefaultAutoSQLColumnAsSelector<T1, TR> extends AbstractSQLColumnSel
 
         EntityTableExpressionBuilder table = entityQueryExpressionBuilder.getTable(index);
         if (table.getEntityClass().equals(resultClass)) {
-             super.columnAll();
-             return this;
+            super.columnAll();
+            return this;
         } else {
             return columnAll(table);
         }
