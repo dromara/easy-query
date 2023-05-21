@@ -1,6 +1,7 @@
 package com.easy.query.core.sharding.api.initializer.mod;
 
 import com.easy.query.core.configuration.EasyQueryOption;
+import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.sharding.initializer.EntityShardingInitializer;
 import com.easy.query.core.sharding.initializer.ShardingEntityBuilder;
 import com.easy.query.core.util.EasyStringUtil;
@@ -24,21 +25,26 @@ import java.util.stream.IntStream;
  * @author xuejiaming
  */
 public abstract class AbstractShardingModInitializer<TEntity> implements EntityShardingInitializer<TEntity> {
-    protected abstract int getMod();
+    protected abstract int mod();
 
-    protected abstract int getTailLength();
+    protected abstract int tailLength();
 
-    protected char getPaddingWord() {
+    protected char paddingWord() {
         return '0';
     }
-    protected String getTableSeparator() {
+    protected String tableSeparator() {
         return "_";
     }
 
     @Override
     public void configure(ShardingEntityBuilder<TEntity> builder) {
+        EntityMetadata entityMetadata = builder.getEntityMetadata();
+        String tableName = entityMetadata.getTableName();
         EasyQueryOption easyQueryOption = builder.getEasyQueryOption();
-        List<String> actualTableNames = IntStream.range(0, getMod()).mapToObj(o -> EasyStringUtil.leftPad(String.valueOf(o), getTailLength(), getPaddingWord()))
+        List<String> actualTableNames = IntStream.range(0, mod()).mapToObj(o ->{
+                    String tail = EasyStringUtil.leftPad(String.valueOf(o), tailLength(), paddingWord());
+                    return tableName+tableSeparator()+tail;
+                })
                 .collect(Collectors.toList());
         Map<String, Collection<String>> initTables = new LinkedHashMap<String, Collection<String>>() {{
             put(easyQueryOption.getDefaultDataSourceName(), actualTableNames);
