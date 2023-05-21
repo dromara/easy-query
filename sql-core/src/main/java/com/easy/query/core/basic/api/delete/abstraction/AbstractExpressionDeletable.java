@@ -122,7 +122,7 @@ public abstract   class AbstractExpressionDeletable<T> extends AbstractSQLExecut
     public String toSQL() {
         return toSQLWithParam(null);
     }
-    private String toSQLWithParam(ToSQLContext sqlParameterCollector){
-        return entityDeleteExpressionBuilder.toExpression().toSQL(sqlParameterCollector);
+    private String toSQLWithParam(ToSQLContext toSQLContext){
+        return entityDeleteExpressionBuilder.toExpression().toSQL(toSQLContext);
     }
 }

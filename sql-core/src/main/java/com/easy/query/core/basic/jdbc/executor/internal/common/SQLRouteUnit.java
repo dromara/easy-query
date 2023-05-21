@@ -53,9 +53,9 @@ public class SQLRouteUnit {
         if(sqlUnit!=null){
             return sqlUnit;
         }
-        ToSQLContext sqlParameterCollector = DefaultSQLParameterCollector.defaultCollector(sqlRewriteUnit);
+        ToSQLContext toSQLContext = DefaultSQLParameterCollector.defaultCollector(sqlRewriteUnit);
         assert easyEntitySQLExpression != null;
-        String sql = easyEntitySQLExpression.toSQL(sqlParameterCollector);
-        return new SQLUnit(sql,sqlParameterCollector.getParameters(),entities,fillAutoIncrement);
+        String sql = easyEntitySQLExpression.toSQL(toSQLContext);
+        return new SQLUnit(sql,toSQLContext.getParameters(),entities,fillAutoIncrement);
     }
 }

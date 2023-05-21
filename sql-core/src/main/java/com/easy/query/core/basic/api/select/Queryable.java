@@ -187,8 +187,8 @@ public interface Queryable<T1> extends Query<T1>,
         return toSQL(queryClass());
     }
 
-    default String toSQL(ToSQLContext sqlParameterCollector) {
-        return toSQL(queryClass(), sqlParameterCollector);
+    default String toSQL(ToSQLContext toSQLContext) {
+        return toSQL(queryClass(), toSQLContext);
     }
 
     /**

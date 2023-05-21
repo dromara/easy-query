@@ -105,6 +105,6 @@ public interface ExpressionUpdatable<T> extends Updatable<T,ExpressionUpdatable<
    default String toSQL(){
        return toSQL(null);
    }
-    String toSQL(ToSQLContext sqlParameterCollector);
+    String toSQL(ToSQLContext toSQLContext);
 }
 

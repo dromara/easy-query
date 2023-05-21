@@ -3,8 +3,10 @@ package com.easy.query.core.expression.parser.impl;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.exception.EasyQueryException;
+import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.parser.core.SQLColumnAsSelector;
+import com.easy.query.core.expression.parser.core.SQLColumnSelector;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.ColumnSegmentImpl;
 import com.easy.query.core.expression.segment.SQLEntityAliasSegment;
@@ -75,6 +77,7 @@ public class AbstractSQLColumnSelector<T1, TChain> {
         });
         return (TChain) this;
     }
+
 
     public TChain columnAll() {
         EntityTableExpressionBuilder table = entityQueryExpressionBuilder.getTable(index);

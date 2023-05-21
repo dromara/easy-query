@@ -1,9 +1,13 @@
 package com.easy.query.core.expression.parser.impl;
 
+import com.easy.query.core.expression.func.ColumnFunction;
+import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.SQLColumnSelector;
+import com.easy.query.core.expression.segment.FuncColumnSegmentImpl;
 import com.easy.query.core.expression.segment.OrderColumnSegmentImpl;
 import com.easy.query.core.expression.lambda.Property;
+import com.easy.query.core.expression.segment.OrderFuncColumnSegmentImpl;
 import com.easy.query.core.expression.segment.SQLEntitySegment;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
@@ -39,6 +43,16 @@ public  class DefaultSQLOrderColumnSelector<T1> implements SQLColumnSelector<T1>
         EntityTableExpressionBuilder table = entityQueryExpressionBuilder.getTable(index);
         String propertyName = EasyLambdaUtil.getPropertyName(column);
         entityQueryExpressionBuilder.getOrder().append(new OrderColumnSegmentImpl(table.getEntityTable(),propertyName, entityQueryExpressionBuilder.getRuntimeContext(),asc));
+        return this;
+    }
+
+    @Override
+    public SQLColumnSelector<T1> columnFunc(ColumnPropertyFunction columnPropertyFunction) {
+
+        EntityTableExpressionBuilder table = entityQueryExpressionBuilder.getTable(index);
+        String propertyName = columnPropertyFunction.getPropertyName();
+        ColumnFunction columnFunction = columnPropertyFunction.getColumnFunction();
+        entityQueryExpressionBuilder.getOrder().append(new OrderFuncColumnSegmentImpl(table.getEntityTable(), propertyName, entityQueryExpressionBuilder.getRuntimeContext(), columnFunction, asc));
         return this;
     }
 

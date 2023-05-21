@@ -5,6 +5,7 @@ import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.enums.SQLLikeEnum;
 import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.enums.SQLRangeEnum;
+import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
@@ -492,10 +493,10 @@ public interface SQLWherePredicate<T1> {
     SQLWherePredicate<T1> range(boolean condition, Property<T1, ?> column, boolean conditionLeft, Object valLeft, boolean conditionRight, Object valRight, SQLRangeEnum sqlRange);
 
 
-  default SQLWherePredicate<T1> columnFunc(Property<T1, ?> column, ColumnFunction easyFunc, SQLPredicateCompare sqlPredicateCompare, Object val){
-      return columnFunc(true,column,easyFunc,sqlPredicateCompare,val);
+  default SQLWherePredicate<T1> columnFunc(ColumnPropertyFunction columnPropertyFunction, SQLPredicateCompare sqlPredicateCompare, Object val){
+      return columnFunc(true,columnPropertyFunction,sqlPredicateCompare,val);
   }
-    SQLWherePredicate<T1> columnFunc(boolean condition, Property<T1, ?> column, ColumnFunction easyFunc, SQLPredicateCompare sqlPredicateCompare, Object val);
+    SQLWherePredicate<T1> columnFunc(boolean condition, ColumnPropertyFunction columnPropertyFunction, SQLPredicateCompare sqlPredicateCompare, Object val);
     default <T2, TChain2> SQLWherePredicate<T1> eq(SQLWherePredicate<T2> sub, Property<T1, ?> column1, Property<T2, ?> column2) {
         return eq(true, sub, column1, column2);
     }

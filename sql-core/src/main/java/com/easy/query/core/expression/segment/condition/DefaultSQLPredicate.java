@@ -5,6 +5,7 @@ import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.enums.SQLLikeEnum;
 import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.enums.SQLRangeEnum;
+import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.SQLWherePredicate;
@@ -79,10 +80,7 @@ public class DefaultSQLPredicate<T1> implements SQLWherePredicate<T1> {
 
         nextPredicateSegment.setPredicate(new ColumnValuePredicate(getTable(), propertyName, val, getReallyPredicateCompare(condition), entityExpressionBuilder.getRuntimeContext()));
     }
-
-    protected void appendThisFuncPredicate(Property<T1, ?> column, ColumnFunction func, SQLPredicateCompare compare, Object val) {
-        String propertyName = EasyLambdaUtil.getPropertyName(column);
-
+    protected void appendThisFuncPredicate(String propertyName, ColumnFunction func, SQLPredicateCompare compare, Object val) {
         nextPredicateSegment.setPredicate(new FuncColumnValuePredicate(getTable(), func, propertyName, val, compare, entityExpressionBuilder.getRuntimeContext()));
     }
 
@@ -273,10 +271,10 @@ public class DefaultSQLPredicate<T1> implements SQLWherePredicate<T1> {
     }
 
     @Override
-    public SQLWherePredicate<T1> columnFunc(boolean condition, Property<T1, ?> column, ColumnFunction easyFunc, SQLPredicateCompare sqlPredicateCompare, Object val) {
+    public SQLWherePredicate<T1> columnFunc(boolean condition, ColumnPropertyFunction columnPropertyFunction, SQLPredicateCompare sqlPredicateCompare, Object val) {
 
         if (condition) {
-            appendThisFuncPredicate(column, easyFunc, getReallyPredicateCompare(sqlPredicateCompare), val);
+            appendThisFuncPredicate(columnPropertyFunction.getPropertyName(), columnPropertyFunction.getColumnFunction(), getReallyPredicateCompare(sqlPredicateCompare), val);
             next();
         }
         return this;

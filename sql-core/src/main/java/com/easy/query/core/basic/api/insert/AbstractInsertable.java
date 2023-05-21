@@ -118,7 +118,7 @@ public abstract class AbstractInsertable<T> implements Insertable<T> {
     public String toSQL(Object entity) {
         return toSQLWithParam(entity,null);
     }
-    private String toSQLWithParam(Object entity, ToSQLContext sqlParameterCollector){
-        return entityInsertExpression.toExpression(entity).toSQL(sqlParameterCollector);
+    private String toSQLWithParam(Object entity, ToSQLContext toSQLContext){
+        return entityInsertExpression.toExpression(entity).toSQL(toSQLContext);
     }
 }

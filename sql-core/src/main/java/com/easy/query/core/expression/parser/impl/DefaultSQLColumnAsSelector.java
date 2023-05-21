@@ -2,6 +2,7 @@ package com.easy.query.core.expression.parser.impl;
 
 import com.easy.query.core.basic.api.select.Queryable;
 import com.easy.query.core.basic.api.select.provider.SQLExpressionProvider;
+import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.parser.core.SQLWherePredicate;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.SubQueryColumnSegmentImpl;
@@ -111,9 +112,10 @@ public class DefaultSQLColumnAsSelector<T1, TR> extends AbstractSQLColumnSelecto
     }
 
     @Override
-    public SQLColumnAsSelector<T1, TR> columnFunc(Property<T1, ?> column, Property<TR, ?> alias, ColumnFunction columnFunction) {
+    public SQLColumnAsSelector<T1, TR> columnFuncAs(ColumnPropertyFunction columnPropertyFunction, Property<TR, ?> alias) {
         EntityTableExpressionBuilder table = entityQueryExpressionBuilder.getTable(index);
-        String propertyName = EasyLambdaUtil.getPropertyName(column);
+        String propertyName = columnPropertyFunction.getPropertyName();
+        ColumnFunction columnFunction = columnPropertyFunction.getColumnFunction();
         String columnAsName = alias == null ? table.getColumnName(propertyName) : getResultColumnName(alias);
         sqlSegmentBuilder.append(new FuncColumnSegmentImpl(table.getEntityTable(), propertyName, entityQueryExpressionBuilder.getRuntimeContext(), columnFunction, columnAsName));
         return this;

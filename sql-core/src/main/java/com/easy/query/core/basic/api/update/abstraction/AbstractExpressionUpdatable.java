@@ -132,7 +132,7 @@ public abstract class AbstractExpressionUpdatable<T> extends AbstractSQLExecuteR
         return this;
     }
     @Override
-    public String toSQL(ToSQLContext sqlParameterCollector){
-        return entityUpdateExpressionBuilder.toExpression().toSQL(sqlParameterCollector);
+    public String toSQL(ToSQLContext toSQLContext){
+        return entityUpdateExpressionBuilder.toExpression().toSQL(toSQLContext);
     }
 }

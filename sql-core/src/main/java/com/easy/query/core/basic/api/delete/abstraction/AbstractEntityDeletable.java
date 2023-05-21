@@ -82,7 +82,7 @@ public abstract class AbstractEntityDeletable<T> extends AbstractSQLExecuteRows<
         return toSQLWithParam(null);
     }
 
-    private String toSQLWithParam(ToSQLContext sqlParameterCollector) {
-        return entityDeleteExpressionBuilder.toExpression().toSQL(sqlParameterCollector);
+    private String toSQLWithParam(ToSQLContext toSQLContext) {
+        return entityDeleteExpressionBuilder.toExpression().toSQL(toSQLContext);
     }
 }

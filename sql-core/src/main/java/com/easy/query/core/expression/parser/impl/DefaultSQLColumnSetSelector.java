@@ -1,5 +1,6 @@
 package com.easy.query.core.expression.parser.impl;
 
+import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.SQLColumnSelector;
 import com.easy.query.core.expression.segment.SQLEntitySegment;
@@ -34,7 +35,7 @@ public class DefaultSQLColumnSetSelector<T> implements SQLColumnSelector<T> {
 
     @Override
     public TableAvailable getTable() {
-        return null;
+        return table;
     }
 
     @Override
@@ -70,4 +71,8 @@ public class DefaultSQLColumnSetSelector<T> implements SQLColumnSelector<T> {
         return this;
     }
 
+    @Override
+    public SQLColumnSelector<T> columnFunc(ColumnPropertyFunction columnPropertyFunction) {
+        throw new UnsupportedOperationException();
+    }
 }

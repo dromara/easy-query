@@ -2,6 +2,7 @@ package com.easy.query.core.expression.sql.builder.impl;
 
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
+import com.easy.query.core.expression.segment.ColumnInsertSegment;
 import com.easy.query.core.expression.sql.expression.EntityInsertSQLExpression;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.metadata.ColumnMetadata;
@@ -10,7 +11,6 @@ import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.segment.SQLEntitySegment;
 import com.easy.query.core.expression.segment.builder.ProjectSQLBuilderSegmentImpl;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
-import com.easy.query.core.expression.parser.impl.DefaultInsertSQLColumnSelector;
 import com.easy.query.core.expression.sql.builder.internal.AbstractEntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
@@ -19,6 +19,7 @@ import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.util.EasyBeanUtil;
 import com.easy.query.core.util.EasyClassUtil;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -89,8 +90,11 @@ public class InsertExpressionBuilder extends AbstractEntityExpressionBuilder imp
         EntityMetadata entityMetadata = table.getEntityMetadata();
         SQLBuilderSegment insertCloneColumns = getColumns().cloneSQLBuilder();
         if (insertCloneColumns.isEmpty()) {
-            DefaultInsertSQLColumnSelector<?> columnSelector = new DefaultInsertSQLColumnSelector<>(0, this, insertCloneColumns);
-            columnSelector.columnAll();
+
+            Collection<String> properties = table.getEntityMetadata().getProperties();
+            for (String property : properties) {
+                insertCloneColumns.append(new ColumnInsertSegment(table.getEntityTable(), property, runtimeContext));
+            }
 
             Set<String> ignorePropertySet = new HashSet<>(entityMetadata.getProperties().size());
             boolean clearIgnoreProperties = clearIgnoreProperties(ignorePropertySet, getRuntimeContext(), entity);

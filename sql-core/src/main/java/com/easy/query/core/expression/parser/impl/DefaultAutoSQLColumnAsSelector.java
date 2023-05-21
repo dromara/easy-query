@@ -2,6 +2,7 @@ package com.easy.query.core.expression.parser.impl;
 
 import com.easy.query.core.basic.api.select.Queryable;
 import com.easy.query.core.enums.EasyBehaviorEnum;
+import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.parser.core.SQLWherePredicate;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
@@ -99,9 +100,9 @@ public class DefaultAutoSQLColumnAsSelector<T1, TR> extends AbstractSQLColumnSel
         }
         return this;
     }
+
     @Override
-    public SQLColumnAsSelector<T1, TR> columnFunc(Property<T1, ?> column, Property<TR, ?> alias, ColumnFunction columnFunction) {
+    public SQLColumnAsSelector<T1, TR> columnFuncAs(ColumnPropertyFunction columnPropertyFunction, Property<TR, ?> alias) {
         throw new UnsupportedOperationException();
     }
-
 }

@@ -126,7 +126,7 @@ public abstract class AbstractEntityUpdatable<T> extends AbstractSQLExecuteRows<
     public String toSQL(Object entity) {
         return toSQLWithParam(entity,null);
     }
-    private String toSQLWithParam(Object entity, ToSQLContext sqlParameterCollector){
-        return entityUpdateExpressionBuilder.toExpression(entity).toSQL(sqlParameterCollector);
+    private String toSQLWithParam(Object entity, ToSQLContext toSQLContext){
+        return entityUpdateExpressionBuilder.toExpression(entity).toSQL(toSQLContext);
     }
 }

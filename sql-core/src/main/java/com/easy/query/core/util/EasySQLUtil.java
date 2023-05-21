@@ -57,9 +57,9 @@ public class EasySQLUtil {
 
 
 
-    public static void addParameter(ToSQLContext sqlParameterCollector, SQLParameter sqlParameter){
-        if(sqlParameterCollector!=null){
-            sqlParameterCollector.addParameter(sqlParameter);
+    public static void addParameter(ToSQLContext toSQLContext, SQLParameter sqlParameter){
+        if(toSQLContext!=null){
+            toSQLContext.addParameter(sqlParameter);
         }
     }
 }
