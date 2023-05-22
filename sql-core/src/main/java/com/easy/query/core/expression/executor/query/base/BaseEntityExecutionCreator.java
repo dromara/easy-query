@@ -1,6 +1,8 @@
 package com.easy.query.core.expression.executor.query.base;
 
+import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.plugin.track.TrackManager;
+import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
 import com.easy.query.core.expression.sql.expression.EntitySQLExpression;
@@ -11,6 +13,7 @@ import com.easy.query.core.util.EasyStringUtil;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * create time 2023/4/25 21:35
@@ -22,19 +25,23 @@ public abstract class BaseEntityExecutionCreator extends BaseExecutionCreator{
     protected final String dataSource;
     protected final EntityExpressionBuilder entityExpressionBuilder;
     protected final List<Object> entities;
+    private final ExecutorContext executorContext;
 
-    public BaseEntityExecutionCreator(String dataSource, EntityExpressionBuilder entityExpressionBuilder, List<Object> entities) {
+    public BaseEntityExecutionCreator(String dataSource, EntityExpressionBuilder entityExpressionBuilder, List<Object> entities, ExecutorContext executorContext) {
 
         this.dataSource = dataSource;
         this.entityExpressionBuilder = entityExpressionBuilder;
         this.entities = entities;
+        this.executorContext = executorContext;
     }
     @Override
     protected List<ExecutionUnit> createExecutionUnits() {
-        //是否单个对象运行sql
-        boolean isSingleEntityRun = EasySQLExpressionUtil.sqlExecuteStrategyNonDefault(entityExpressionBuilder.getExpressionContext());
-        if (isSingleEntityRun||updateSingleEntityRun()) {
-            return createSingleExecutionUnits();
+        if(!Objects.equals(ExecuteMethodEnum.DELETE,executorContext.getExecuteMethod())){
+            //是否单个对象运行sql
+            boolean isSingleEntityRun = EasySQLExpressionUtil.sqlExecuteStrategyNonDefault(entityExpressionBuilder.getExpressionContext(),executorContext);
+            if (isSingleEntityRun||updateSingleEntityRun()) {
+                return createSingleExecutionUnits();
+            }
         }
 
         return createMultiExecutionUnits();
@@ -52,6 +59,7 @@ public abstract class BaseEntityExecutionCreator extends BaseExecutionCreator{
         List<ExecutionUnit> routeExecutionUnits = new ArrayList<>(entities.size());
         for (Object entity : entities) {
             EntitySQLExpression expression = createEasySQLExpression(entity);
+            //todo 根据sql聚合或者根据sql顺序聚合
             ExecutionUnit executionUnit = createExecutionUnit(dataSource,expression, Collections.singletonList(entity), getFillAutoIncrement(),null);
             //开启追踪的情况下update可能没有可以更新的数据那么就不会生成sql
             if(EasyStringUtil.isNotBlank(executionUnit.getSQLRouteUnit().getSQLUnit().getSQL())){

@@ -1,5 +1,6 @@
 package com.easy.query.core.expression.executor.query.base;
 
+import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.expression.executor.parser.EntityPrepareParseResult;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
@@ -16,10 +17,10 @@ import java.util.List;
 public class EntityExecutionCreator extends BaseEntityExecutionCreator{
 
     public EntityExecutionCreator(String dataSource, EntityPrepareParseResult entityPrepareParseResult) {
-        this(dataSource,entityPrepareParseResult.getEntityExpressionBuilder(),entityPrepareParseResult.getEntities());
+        this(dataSource,entityPrepareParseResult.getEntityExpressionBuilder(),entityPrepareParseResult.getEntities(),entityPrepareParseResult.getExecutorContext());
     }
-    public EntityExecutionCreator(String dataSource, EntityExpressionBuilder entityExpressionBuilder, List<Object> entities) {
-        super(dataSource,entityExpressionBuilder,entities);
+    public EntityExecutionCreator(String dataSource, EntityExpressionBuilder entityExpressionBuilder, List<Object> entities, ExecutorContext executorContext) {
+        super(dataSource,entityExpressionBuilder,entities,executorContext);
     }
     @Override
     protected EntitySQLExpression createEasySQLExpression(Object entity) {

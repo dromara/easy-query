@@ -1,5 +1,6 @@
 package com.easy.query.core.expression.executor.query.base;
 
+import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.expression.executor.parser.InsertPrepareParseResult;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 import com.easy.query.core.expression.sql.expression.EntitySQLExpression;
@@ -17,10 +18,10 @@ public class InsertExecutionCreator extends BaseEntityExecutionCreator {
     private final boolean fillAutoIncrement;
 
     public InsertExecutionCreator(String dataSource,InsertPrepareParseResult insertPrepareParseResult) {
-       this(dataSource,insertPrepareParseResult.getEntityExpressionBuilder(),insertPrepareParseResult.getEntities(),insertPrepareParseResult.isFillAutoIncrement());
+       this(dataSource,insertPrepareParseResult.getEntityExpressionBuilder(),insertPrepareParseResult.getEntities(),insertPrepareParseResult.isFillAutoIncrement(),insertPrepareParseResult.getExecutorContext());
     }
-    public InsertExecutionCreator(String dataSource, EntityInsertExpressionBuilder entityInsertExpressionBuilder, List<Object> entities, boolean fillAutoIncrement) {
-        super(dataSource,entityInsertExpressionBuilder,entities);
+    public InsertExecutionCreator(String dataSource, EntityInsertExpressionBuilder entityInsertExpressionBuilder, List<Object> entities, boolean fillAutoIncrement, ExecutorContext executorContext) {
+        super(dataSource,entityInsertExpressionBuilder,entities,executorContext);
         this.entityInsertExpressionBuilder = entityInsertExpressionBuilder;
         this.fillAutoIncrement = fillAutoIncrement;
     }

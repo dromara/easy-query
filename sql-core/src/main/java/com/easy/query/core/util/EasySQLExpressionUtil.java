@@ -1,5 +1,6 @@
 package com.easy.query.core.util;
 
+import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.executor.internal.common.SQLRewriteUnit;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.basic.api.select.Queryable;
@@ -7,6 +8,7 @@ import com.easy.query.core.basic.api.select.Queryable2;
 import com.easy.query.core.basic.api.select.Queryable3;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.configuration.EasyQueryOption;
+import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.lambda.SQLExpression3;
@@ -22,6 +24,8 @@ import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.builder.impl.AnonymousUnionQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
+
+import java.util.Objects;
 
 
 /**
@@ -159,14 +163,19 @@ public class EasySQLExpressionUtil {
      * @param expressionContext
      * @return
      */
-    public static SQLExecuteStrategyEnum getExecuteStrategy(ExpressionContext expressionContext){
+    public static SQLExecuteStrategyEnum getExecuteStrategy(ExpressionContext expressionContext, ExecutorContext executorContext){
 
         SQLExecuteStrategyEnum sqlStrategy = expressionContext.getSQLStrategy();
         //非默认的那么也不可以是全部
         if (SQLExecuteStrategyEnum.DEFAULT.equals(sqlStrategy)) {
             //如果是默认那么判断全局不是all columns即可
             EasyQueryOption easyQueryOption = expressionContext.getRuntimeContext().getQueryConfiguration().getEasyQueryOption();
-            return easyQueryOption.getUpdateStrategy();
+            if(Objects.equals(ExecuteMethodEnum.INSERT,executorContext.getExecuteMethod())){
+                return easyQueryOption.getInsertStrategy();
+            }else if(Objects.equals(ExecuteMethodEnum.UPDATE,executorContext.getExecuteMethod())){
+                return easyQueryOption.getUpdateStrategy();
+            }
+            throw new UnsupportedOperationException("cant get sql execute strategy");
         } else {
             return sqlStrategy;
         }
@@ -177,8 +186,8 @@ public class EasySQLExpressionUtil {
      * @param expressionContext
      * @return
      */
-    public static boolean sqlExecuteStrategyNonDefault(ExpressionContext expressionContext){
-        SQLExecuteStrategyEnum executeStrategy = getExecuteStrategy(expressionContext);
+    public static boolean sqlExecuteStrategyNonDefault(ExpressionContext expressionContext, ExecutorContext executorContext){
+        SQLExecuteStrategyEnum executeStrategy = getExecuteStrategy(expressionContext,executorContext);
         return SQLExecuteStrategyEnum.ALL_COLUMNS!=executeStrategy;
     }
 

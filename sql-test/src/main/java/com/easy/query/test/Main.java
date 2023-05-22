@@ -89,14 +89,14 @@ public class Main {
 //            System.out.println("耗时：" + (end - start) + "ms");
 //        }
 
-        boolean openFirst1 = SQLRangeEnum.openFirst(SQLRangeEnum.Open);
-        boolean openFirst2 = SQLRangeEnum.openFirst(SQLRangeEnum.Closed);
-        boolean openFirst3 = SQLRangeEnum.openFirst(SQLRangeEnum.closedOpen);
-        boolean openFirst4 = SQLRangeEnum.openFirst(SQLRangeEnum.openClosed);
-        boolean openEnd1 = SQLRangeEnum.openEnd(SQLRangeEnum.Open);
-        boolean openEnd2 = SQLRangeEnum.openEnd(SQLRangeEnum.Closed);
-        boolean openEnd3 = SQLRangeEnum.openEnd(SQLRangeEnum.closedOpen);
-        boolean openEnd4 = SQLRangeEnum.openEnd(SQLRangeEnum.openClosed);
+        boolean openFirst1 = SQLRangeEnum.openFirst(SQLRangeEnum.OPEN);
+        boolean openFirst2 = SQLRangeEnum.openFirst(SQLRangeEnum.CLOSED);
+        boolean openFirst3 = SQLRangeEnum.openFirst(SQLRangeEnum.CLOSED_OPEN);
+        boolean openFirst4 = SQLRangeEnum.openFirst(SQLRangeEnum.OPEN_CLOSED);
+        boolean openEnd1 = SQLRangeEnum.openEnd(SQLRangeEnum.OPEN);
+        boolean openEnd2 = SQLRangeEnum.openEnd(SQLRangeEnum.CLOSED);
+        boolean openEnd3 = SQLRangeEnum.openEnd(SQLRangeEnum.CLOSED_OPEN);
+        boolean openEnd4 = SQLRangeEnum.openEnd(SQLRangeEnum.OPEN_CLOSED);
 
         LogFactory.useStdOutLogging();
 

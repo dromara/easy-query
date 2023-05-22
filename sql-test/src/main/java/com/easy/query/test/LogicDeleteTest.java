@@ -125,4 +125,16 @@ public class LogicDeleteTest extends BaseTest {
         long l = easyQuery.deletable(logicDelTopic).executeRows();
         Assert.assertEquals(0,l);
     }
+    @Test
+    public void Test10(){
+        String logicDeleteSql = easyQuery.queryable(LogicDelTopicCustom.class)
+                .disableLogicDelete()
+                .where(o->o.eq(LogicDelTopicCustom::getId,"1"))
+                .toSQL();
+        Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`deleted_at`,t.`deleted_user`,t.`create_time` FROM `t_logic_del_topic_custom` t WHERE t.`id` = ?",logicDeleteSql);
+        LogicDelTopicCustom logicDelTopic = easyQuery.queryable(LogicDelTopicCustom.class)
+                .disableLogicDelete()
+                .where(o->o.eq(LogicDelTopicCustom::getId,"1")).firstOrNull();
+        Assert.assertNotNull(logicDelTopic);
+    }
 }

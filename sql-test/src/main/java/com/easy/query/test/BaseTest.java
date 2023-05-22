@@ -119,6 +119,7 @@ public abstract class BaseTest {
                     op.setShardingOption(easyQueryShardingOption);
                     op.setDefaultDataSourceName("ds2020");
                     op.setThrowIfRouteNotMatch(false);
+//                    op.setQueryLargeColumn(false);
                 })
                 .useDatabaseConfigure(new MySQLDatabaseConfiguration())
 //                .replaceService(EasyShardingOption.class, new EasyShardingOption(2, 0))

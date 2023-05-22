@@ -58,7 +58,7 @@ public  class InsertSQLExpressionImpl implements EntityInsertSQLExpression {
         for (int i = 0; i < insertColumns - 1; i++) {
             sql.append(",?");
         }
-        sql.append(") ");
+        sql.append(")");
         return sql.toString();
     }
 

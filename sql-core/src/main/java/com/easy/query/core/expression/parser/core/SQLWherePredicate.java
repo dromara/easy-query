@@ -1,7 +1,6 @@
 package com.easy.query.core.expression.parser.core;
 
 import com.easy.query.core.basic.api.select.Queryable;
-import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.enums.SQLLikeEnum;
 import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.enums.SQLRangeEnum;
@@ -367,7 +366,7 @@ public interface SQLWherePredicate<T1> {
      * @return
      */
     default SQLWherePredicate<T1> rangeOpenClosed(boolean condition, Property<T1, ?> column, boolean conditionLeft, Object valLeft, boolean conditionRight, Object valRight) {
-        return range(condition, column, conditionLeft, valLeft, conditionRight, valRight, SQLRangeEnum.openClosed);
+        return range(condition, column, conditionLeft, valLeft, conditionRight, valRight, SQLRangeEnum.OPEN_CLOSED);
     }
 
     /**
@@ -408,7 +407,7 @@ public interface SQLWherePredicate<T1> {
      * @return
      */
     default SQLWherePredicate<T1> rangeOpen(boolean condition, Property<T1, ?> column, boolean conditionLeft, Object valLeft, boolean conditionRight, Object valRight) {
-        return range(condition, column, conditionLeft, valLeft, conditionRight, valRight, SQLRangeEnum.Open);
+        return range(condition, column, conditionLeft, valLeft, conditionRight, valRight, SQLRangeEnum.OPEN);
     }
     /**
      * [left..right) = {x | left <= x < right}
@@ -435,7 +434,7 @@ public interface SQLWherePredicate<T1> {
      * @return
      */
     default SQLWherePredicate<T1> rangeClosedOpen(boolean condition, Property<T1, ?> column, boolean conditionLeft, Object valLeft, boolean conditionRight, Object valRight) {
-        return range(condition, column, conditionLeft, valLeft, conditionRight, valRight, SQLRangeEnum.closedOpen);
+        return range(condition, column, conditionLeft, valLeft, conditionRight, valRight, SQLRangeEnum.CLOSED_OPEN);
     }
 
     /**
@@ -475,7 +474,7 @@ public interface SQLWherePredicate<T1> {
      * @return
      */
     default SQLWherePredicate<T1> rangeClosed(boolean condition, Property<T1, ?> column, boolean conditionLeft, Object valLeft, boolean conditionRight, Object valRight) {
-        return range(condition, column, conditionLeft, valLeft, conditionRight, valRight, SQLRangeEnum.Closed);
+        return range(condition, column, conditionLeft, valLeft, conditionRight, valRight, SQLRangeEnum.CLOSED);
     }
 
     /**
