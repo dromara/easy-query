@@ -1,5 +1,6 @@
 package com.easy.query.test;
 
+import com.easy.query.core.basic.plugin.conversion.DefaultValueConverter;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.api.client.EasyQuery;
@@ -8,6 +9,7 @@ import com.easy.query.core.configuration.EasyQueryShardingOption;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.sharding.route.manager.DataSourceRouteManager;
 import com.easy.query.core.sharding.route.manager.TableRouteManager;
+import com.easy.query.test.conversion.EnumConverter;
 import com.easy.query.test.encryption.Base64EncryptionStrategy;
 import com.easy.query.test.encryption.DefaultAesEasyEncryptionStrategy;
 import com.easy.query.test.encryption.MyEncryptionStrategy;
@@ -134,7 +136,7 @@ public abstract class BaseTest {
         configuration.applyShardingInitializer(new TopicShardingShardingInitializer());
         configuration.applyShardingInitializer(new TopicShardingTimeShardingInitializer());
         configuration.applyShardingInitializer(new DataSourceShardingInitializer());
-
+        configuration.applyValueConverter(new EnumConverter());
         TableRouteManager tableRouteManager = runtimeContext.getTableRouteManager();
         tableRouteManager.addRouteRule(new TopicShardingTableRule());
         tableRouteManager.addRouteRule(new TopicShardingTimeTableRule());

@@ -225,10 +225,10 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
         return EasyCollectionUtil.firstOrDefault(result, def);
     }
 
-    private <TMember> List<TMember> selectAggregateList(Property<T1, ?> column, ColumnFunction easyFunc) {
+    private <TMember> List<TMember> selectAggregateList(Property<T1, ?> column, ColumnFunction columnFunction) {
         EntityTableExpressionBuilder table = entityQueryExpressionBuilder.getTable(0);
         String propertyName = EasyLambdaUtil.getPropertyName(column);
-        FuncColumnSegmentImpl funcColumnSegment = new FuncColumnSegmentImpl(table.getEntityTable(), propertyName, entityQueryExpressionBuilder.getRuntimeContext(), easyFunc);
+        FuncColumnSegmentImpl funcColumnSegment = new FuncColumnSegmentImpl(table.getEntityTable(), propertyName, entityQueryExpressionBuilder.getRuntimeContext(), columnFunction);
         ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(propertyName);
         return cloneQueryable().select(funcColumnSegment, true).toList((Class<TMember>) columnMetadata.getProperty().getPropertyType());
     }

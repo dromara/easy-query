@@ -8,5 +8,5 @@ package com.easy.query.core.basic.plugin.conversion;
  */
 public interface ValueConverter<TProperty,TProvider> {
     TProvider serialize(TProperty property);
-    TProperty deserialize(TProvider provider);
+    TProperty deserialize(Class<TProperty> propertyClass,TProvider provider);
 }

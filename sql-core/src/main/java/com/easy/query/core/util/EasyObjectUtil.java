@@ -2,6 +2,11 @@ package com.easy.query.core.util;
 
 import com.easy.query.core.exception.EasyQueryException;
 
+import java.lang.reflect.Array;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Optional;
+
 /**
  * create time 2023/5/20 22:32
  * 文件说明
@@ -40,5 +45,25 @@ public class EasyObjectUtil {
             return null;
         }
         return typeCast(original);
+    }
+    /**
+     * 判断是否为空
+     * @param obj 所有类型
+     * @return true 为空false不为空
+     */
+    public static boolean isEmpty(Object obj) {
+        if (obj == null) {
+            return true;
+        } else if (obj instanceof Optional) {
+            return !((Optional<?>) obj).isPresent();
+        } else if (obj instanceof CharSequence) {
+            return ((CharSequence) obj).length() == 0;
+        } else if (obj.getClass().isArray()) {
+            return Array.getLength(obj) == 0;
+        } else if (obj instanceof Collection) {
+            return ((Collection<?>) obj).isEmpty();
+        } else {
+            return obj instanceof Map && ((Map<?, ?>) obj).isEmpty();
+        }
     }
 }

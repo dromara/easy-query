@@ -14,7 +14,7 @@ public class DefaultValueConverter implements ValueConverter<Object,Object> {
     }
 
     @Override
-    public Object deserialize(Object o) {
+    public Object deserialize(Class<Object> propertyClass,Object o) {
         return o;
     }
 }
