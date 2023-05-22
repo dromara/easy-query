@@ -144,6 +144,7 @@ public class EasyQueryStarterAutoConfiguration {
                     builder.setShardingGroupExecuteTimeoutMillis(easyQueryProperties.getShardingGroupExecuteTimeoutMillis());
                     builder.setQueryLargeColumn(easyQueryProperties.isQueryLargeColumn());
                     builder.setMaxShardingRouteCount(easyQueryProperties.getMaxShardingRouteCount());
+                    builder.setExecutorQueueSize(easyQueryProperties.getExecutorQueueSize());
                 })
                 .replaceService(NameConversion.class, nameConversion)
                 .replaceService(ConnectionManager.class, SpringConnectionManager.class)

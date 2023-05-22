@@ -14,6 +14,9 @@ public class EasyQueryOption {
     private final SQLExecuteStrategyEnum insertStrategy;
     private final SQLExecuteStrategyEnum updateStrategy;
     private final int maxShardingQueryLimit;
+    /**
+     * 最大分片执行线程数,如果executorMaximumPoolSize<=0 那么将使用Executors.newCachedThreadPool
+     */
     private final int executorMaximumPoolSize;
     private final int executorCorePoolSize;
     private final ConnectionModeEnum connectionMode;
@@ -23,23 +26,36 @@ public class EasyQueryOption {
     private final EasyQueryReplicaOption replicaOption;
     private final EasyQueryShardingOption shardingOption;
     private final String defaultDataSourceName;
+    /**
+     * 默认查询是否查询large column默认true
+     */
     private final boolean queryLargeColumn;
+    /**
+     * 默认最大分片路由数默认1024
+     */
     private final int maxShardingRouteCount;
+    /**
+     * 指定线程池队列数目默认1024长度
+     */
+    private final int executorQueueSize;
 
     public EasyQueryOption(boolean deleteThrowError, SQLExecuteStrategyEnum insertStrategy, SQLExecuteStrategyEnum updateStrategy, ConnectionModeEnum connectionMode, int maxShardingQueryLimit, int executorMaximumPoolSize, int executorCorePoolSize,
                            boolean throwIfNotMatchRoute, long shardingExecuteTimeoutMillis, long shardingGroupExecuteTimeoutMillis,
-                           EasyQueryShardingOption shardingOption, EasyQueryReplicaOption replicaOption, String defaultDataSourceName,boolean queryLargeColumn,int maxShardingRouteCount) {
+                           EasyQueryShardingOption shardingOption, EasyQueryReplicaOption replicaOption, String defaultDataSourceName,boolean queryLargeColumn,int maxShardingRouteCount,int executorQueueSize) {
         this.connectionMode = connectionMode;
 
-        if(executorMaximumPoolSize<0){
-            throw new IllegalArgumentException("executor size less than zero:"+executorMaximumPoolSize);
-        }
         if(executorMaximumPoolSize>0){
-            if(maxShardingQueryLimit>executorMaximumPoolSize){
-                throw new IllegalArgumentException("maxShardingQueryLimit:"+maxShardingQueryLimit+" should less than executorMaximumPoolSize:"+executorMaximumPoolSize);
-            }
             if(executorCorePoolSize>executorMaximumPoolSize){
-                throw new IllegalArgumentException("executorCorePoolSize:"+executorCorePoolSize+" should less than executorMaximumPoolSize:"+executorMaximumPoolSize);
+                throw new IllegalArgumentException("Invalid arguments: executorCorePoolSize > executorMaximumPoolSize");
+            }
+            if(maxShardingQueryLimit>executorMaximumPoolSize){
+                throw new IllegalArgumentException("Invalid arguments: maxShardingQueryLimit > executorMaximumPoolSize");
+            }
+            if(executorQueueSize<=0){
+                throw new IllegalArgumentException("Invalid arguments: executorQueueSize <= 0");
+            }
+            if(executorQueueSize<maxShardingQueryLimit){
+                throw new IllegalArgumentException("Invalid arguments: executorQueueSize < maxShardingQueryLimit");
             }
         }
         if(shardingExecuteTimeoutMillis<=0){
@@ -65,6 +81,7 @@ public class EasyQueryOption {
         this.defaultDataSourceName = defaultDataSourceName;
         this.queryLargeColumn = queryLargeColumn;
         this.maxShardingRouteCount = maxShardingRouteCount;
+        this.executorQueueSize = executorQueueSize;
     }
 
     public int getMaxShardingRouteCount() {
@@ -125,5 +142,9 @@ public class EasyQueryOption {
 
     public boolean isQueryLargeColumn() {
         return queryLargeColumn;
+    }
+
+    public int getExecutorQueueSize() {
+        return executorQueueSize;
     }
 }

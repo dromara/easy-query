@@ -388,7 +388,7 @@ List<Topic> list = easyQuery
 Queryable<BlogEntity> where1 = easyQuery.queryable(BlogEntity.class)
                 .where(o -> o.eq(BlogEntity::getId, "1"));
 List<Topic> x = easyQuery
-        .queryable(Topic.class, "x").where(o -> o.exists(where1, q -> q.eq(o, BlogEntity::getId, Topic::getId))).toList();
+        .queryable(Topic.class, "x").where(o -> o.exists(where1.where(q -> q.eq(o, BlogEntity::getId, Topic::getId)))).toList();
 ```
 ```sql
 ==> Preparing: SELECT x.`id`,x.`stars`,x.`title`,x.`create_time` FROM `t_topic` x WHERE EXISTS (SELECT 1 FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? AND t.`id` = x.`id`) 

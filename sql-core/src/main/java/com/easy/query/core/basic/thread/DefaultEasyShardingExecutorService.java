@@ -2,6 +2,7 @@ package com.easy.query.core.basic.thread;
 
 import com.easy.query.core.configuration.EasyQueryOption;
 
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -28,9 +29,10 @@ public class DefaultEasyShardingExecutorService implements ShardingExecutorServi
             return Executors.newCachedThreadPool(easyShardingThreadFactory);
         }else{
             int executorCorePoolSize = easyQueryOption.getExecutorCorePoolSize();
-           return new ThreadPoolExecutor(executorCorePoolSize, executorMaximumPoolSize,
+            int executorQueueSize = easyQueryOption.getExecutorQueueSize();
+            return new ThreadPoolExecutor(executorCorePoolSize, executorMaximumPoolSize,
                     60000L, TimeUnit.MILLISECONDS,
-                    new LinkedBlockingQueue<Runnable>(),
+                    new ArrayBlockingQueue<>(executorQueueSize),
                    easyShardingThreadFactory);
         }
 
