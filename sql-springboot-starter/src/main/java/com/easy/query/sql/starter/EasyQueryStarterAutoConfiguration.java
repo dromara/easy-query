@@ -20,6 +20,7 @@ import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.sharding.initializer.ShardingInitializer;
 import com.easy.query.core.util.EasyStringUtil;
+import com.easy.query.h2.config.H2DatabaseConfiguration;
 import com.easy.query.mssql.MsSQLDatabaseConfiguration;
 import com.easy.query.mysql.config.MySQLDatabaseConfiguration;
 import com.easy.query.pgsql.PgSQLDatabaseConfiguration;
@@ -83,6 +84,12 @@ public class EasyQueryStarterAutoConfiguration {
     @ConditionalOnMissingBean
     public DatabaseConfiguration mysqlDatabaseConfiguration() {
         return new MySQLDatabaseConfiguration();
+    }
+    @Bean
+    @ConditionalOnProperty(name = "easy-query.database", havingValue = "h2")
+    @ConditionalOnMissingBean
+    public DatabaseConfiguration h2DatabaseConfiguration() {
+        return new H2DatabaseConfiguration();
     }
 
     @Bean

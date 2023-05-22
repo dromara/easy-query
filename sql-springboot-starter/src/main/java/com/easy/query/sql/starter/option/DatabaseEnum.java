@@ -19,5 +19,6 @@ public enum DatabaseEnum {
      * sql server
      */
     MSSQL,
-    PGSQL
+    PGSQL,
+    H2
 }
