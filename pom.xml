@@ -7,7 +7,7 @@
     <groupId>com.easy-query</groupId>
     <artifactId>easy-query-all</artifactId>
     <packaging>pom</packaging>
-    <version>0.8.11</version>
+    <version>0.8.13</version>
     <name>easy-query</name>
     <description>java object query distributed connector</description>
     <url>https://github.com/xuejmnet/easy-query</url>
@@ -23,11 +23,11 @@
         <module>sql-mysql</module>
         <module>sql-mssql</module>
         <module>sql-pgsql</module>
+        <module>sql-h2</module>
         <module>sql-springboot-starter</module>
 <!--        以下是不需要deploy到远程仓库的-->
         <module>sql-test</module>
         <module>samples</module>
-        <module>sql-h2</module>
     </modules>
 
     <properties>

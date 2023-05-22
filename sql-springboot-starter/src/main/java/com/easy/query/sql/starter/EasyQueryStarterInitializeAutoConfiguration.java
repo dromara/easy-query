@@ -46,8 +46,8 @@ public class EasyQueryStarterInitializeAutoConfiguration {
 
         this.easyQuery = easyQuery;
         this.easyQueryInitializeOption = easyQueryInitializeOption;
-    };
-    @PostConstruct
+        initialize();
+    }
     public void initialize() {
         QueryRuntimeContext runtimeContext = easyQuery.getRuntimeContext();
         QueryConfiguration configuration = runtimeContext.getQueryConfiguration();
