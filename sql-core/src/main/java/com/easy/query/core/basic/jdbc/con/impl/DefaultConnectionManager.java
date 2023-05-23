@@ -34,7 +34,8 @@ public class DefaultConnectionManager implements ConnectionManager {
 
     @Override
     public Transaction beginTransaction(Integer isolationLevel) {
-        if(threadTx.get()!=null){
+        //兼容spring 事务
+        if(currentThreadInTransaction()){
             throw new EasyQuerySQLException("repeat begin transaction");
         }
         DefaultTransaction defaultTransaction = new DefaultTransaction(isolationLevel, this);

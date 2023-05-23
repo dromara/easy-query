@@ -15,25 +15,8 @@ public class EasyBase64Util {
     public static byte[] encode(byte[] data) {
         return encoder.encode(data);
     }
-    public static byte[] tryEncode(byte[] data) {
-        try {
-            return encode(data);
-        }catch (Exception exception){
-            return null;
-        }
-    }
 
     public static byte[] decode(byte[] data) {
         return decoder.decode(data);
-    }
-    public static byte[] tryDecode(byte[] data) {
-        if(data==null){
-            return null;
-        }
-        try {
-            return decode(data);
-        }catch (Exception exception){
-            return null;
-        }
     }
 }
