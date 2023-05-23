@@ -107,7 +107,7 @@ public abstract   class AbstractExpressionDeletable<T> extends AbstractSQLExecut
     }
 
     @Override
-    public ExpressionDeletable<T> allowDeleteCommand(boolean allow) {
+    public ExpressionDeletable<T> allowDeleteStatement(boolean allow) {
         entityDeleteExpressionBuilder.getExpressionContext().deleteThrow(!allow);
         return this;
     }
@@ -119,8 +119,8 @@ public abstract   class AbstractExpressionDeletable<T> extends AbstractSQLExecut
     }
 
     @Override
-    public String toSQL() {
-        return toSQLWithParam(null);
+    public String toSQL(ToSQLContext toSQLContext) {
+        return toSQLWithParam(toSQLContext);
     }
     private String toSQLWithParam(ToSQLContext toSQLContext){
         return entityDeleteExpressionBuilder.toExpression().toSQL(toSQLContext);

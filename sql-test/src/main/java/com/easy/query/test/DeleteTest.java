@@ -95,7 +95,7 @@ public class DeleteTest  extends BaseTest {
             Assert.assertEquals(1,l);
         }
         try {
-            long l = easyQuery.deletable(Topic.class).whereById("999").allowDeleteCommand(false).executeRows();
+            long l = easyQuery.deletable(Topic.class).whereById("999").allowDeleteStatement(false).executeRows();
         }catch (Exception e){
             Assert.assertEquals(EasyQueryInvalidOperationException.class,e.getClass());
         }

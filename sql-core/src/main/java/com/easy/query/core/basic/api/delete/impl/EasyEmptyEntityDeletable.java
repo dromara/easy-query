@@ -1,6 +1,7 @@
 package com.easy.query.core.basic.api.delete.impl;
 
 import com.easy.query.core.basic.api.delete.EntityDeletable;
+import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.exception.EasyQueryConcurrentException;
 
 import java.util.function.Function;
@@ -26,7 +27,7 @@ public class EasyEmptyEntityDeletable<T> implements EntityDeletable<T> {
     }
 
     @Override
-    public String toSQL() {
+    public String toSQL(ToSQLContext toSQLContext) {
         return null;
     }
 
@@ -36,7 +37,7 @@ public class EasyEmptyEntityDeletable<T> implements EntityDeletable<T> {
     }
 
     @Override
-    public EntityDeletable<T> allowDeleteCommand(boolean allow) {
+    public EntityDeletable<T> allowDeleteStatement(boolean allow) {
         return this;
     }
 

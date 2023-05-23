@@ -6,7 +6,6 @@ import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.enums.SQLRangeEnum;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
-import com.easy.query.core.exception.EasyQuerySQLException;
 import com.easy.query.core.exception.EasyQuerySQLExecuteException;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 import com.easy.query.core.util.EasyAesUtil;
@@ -289,12 +288,19 @@ public class GenericTest extends BaseTest{
         try {
             QueryLargeColumnTestEntity queryLargeColumnTestEntity = new QueryLargeColumnTestEntity();
             queryLargeColumnTestEntity.setId("123");
-            long l = easyQuery.deletable(queryLargeColumnTestEntity).allowDeleteCommand(false).executeRows();
+            long l = easyQuery.deletable(queryLargeColumnTestEntity).allowDeleteStatement(false).executeRows();
         }catch (Exception ex){
             Assert.assertTrue(ex instanceof EasyQueryException);
             Assert.assertTrue(ex instanceof EasyQueryInvalidOperationException);
             Assert.assertEquals("can't execute delete statement",ex.getMessage());
         }
+    }
+    @Test
+    public void queryLargeColumnTest15(){
+        QueryLargeColumnTestEntity queryLargeColumnTestEntity = new QueryLargeColumnTestEntity();
+        queryLargeColumnTestEntity.setId("123");
+        String sql = easyQuery.deletable(queryLargeColumnTestEntity).toSQL();
+        Assert.assertEquals("DELETE FROM `query_large_column_test` WHERE `id` = ?",sql);
     }
 
 }

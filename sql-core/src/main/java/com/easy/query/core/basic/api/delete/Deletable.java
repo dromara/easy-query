@@ -3,6 +3,7 @@ package com.easy.query.core.basic.api.delete;
 import com.easy.query.core.basic.api.internal.LogicDeletable;
 import com.easy.query.core.basic.api.internal.SQLExecuteExpectRows;
 import com.easy.query.core.basic.api.internal.TableReNameable;
+import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 
 /**
  * @author xuejiaming
@@ -16,7 +17,11 @@ public interface Deletable<T, TChain> extends SQLExecuteExpectRows, LogicDeletab
      *
      * @return
      */
-    String toSQL();
+    default String toSQL() {
+        return toSQL(null);
+    }
+
+    String toSQL(ToSQLContext toSQLContext);
 
     /**
      * 是否允许删除命令
@@ -24,5 +29,5 @@ public interface Deletable<T, TChain> extends SQLExecuteExpectRows, LogicDeletab
      * @param allow
      * @return
      */
-    TChain allowDeleteCommand(boolean allow);
+    TChain allowDeleteStatement(boolean allow);
 }
