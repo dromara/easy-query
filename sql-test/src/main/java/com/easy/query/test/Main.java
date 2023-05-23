@@ -33,6 +33,10 @@ import java.util.*;
 
 @Ignore
 public class Main {
+
+    public static <TR> void action(TR a,TR b){
+
+    }
     private static final String driver = "com.mysql.cj.jdbc.Driver";
     private static final String username = "root";
     private static final String password = "root";
@@ -41,7 +45,6 @@ public class Main {
     private static EasyQuery easyQuery;
 
     public static void main(String[] args) throws SQLException, ClassNotFoundException, InstantiationException, IllegalAccessException {
-
         List<String> list = new ArrayList<>(); // 假设列表为字符串类型的示例
         String name = Main.class.getName();
         Class<?> aClass = Class.forName(name);

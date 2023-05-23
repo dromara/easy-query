@@ -4,6 +4,7 @@ import com.easy.query.core.annotation.Column;
 import com.easy.query.test.conversion.EnumConverter;
 import com.easy.query.test.enums.TopicTypeEnum;
 import lombok.Data;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 
@@ -14,6 +15,7 @@ import java.time.LocalDateTime;
  * @author xuejiaming
  */
 @Data
+@ToString
 public class TopicTypeVO {
 
     private String id;

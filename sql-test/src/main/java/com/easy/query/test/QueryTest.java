@@ -21,6 +21,8 @@ import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.SysUser;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.TopicType;
+import com.easy.query.test.entity.TopicTypeJson;
+import com.easy.query.test.entity.TopicTypeJsonValue;
 import com.easy.query.test.entity.TopicTypeTest1;
 import com.easy.query.test.enums.TopicTypeEnum;
 import com.easy.query.test.func.SQLFunc;
@@ -1218,6 +1220,7 @@ public class QueryTest extends BaseTest {
                 .whereById("123")
                 .select(TopicTypeVO.class)
                 .firstOrNull();
+        System.out.println(topicTypeVO);
         Assert.assertNotNull(topicTypeVO);
 
         Assert.assertEquals(TopicTypeEnum.TEACHER,topicTypeVO.getTopicType1());
@@ -1247,8 +1250,45 @@ public class QueryTest extends BaseTest {
                 .whereById("123")
                 .firstOrNull();
         Assert.assertNotNull(topicTypeVO);
+        System.out.println(topicTypeVO);
 
         Assert.assertEquals(TopicTypeEnum.CLASSER,topicTypeVO.getTopicType());
+
+    }
+    @Test
+    public void query71() {
+        TopicTypeJson topicType = easyQuery.queryable(TopicTypeJson.class)
+                .whereById("1231").firstOrNull();
+        if (topicType != null) {
+            long l = easyQuery.deletable(topicType).executeRows();
+            Assert.assertEquals(1, l);
+        }
+        topicType = easyQuery.queryable(TopicTypeJson.class)
+                .whereById("1231").firstOrNull();
+        Assert.assertNull(topicType);
+        TopicTypeJson topicType1 = new TopicTypeJson();
+        topicType1.setId("1231");
+        topicType1.setStars(123);
+        TopicTypeJsonValue topicTypeJsonValue = new TopicTypeJsonValue();
+        topicTypeJsonValue.setName("123");
+        topicTypeJsonValue.setAge(456);
+        topicType1.setTitle(topicTypeJsonValue);
+        topicType1.setTopicType(TopicTypeEnum.CLASSER.getCode());
+        topicType1.setCreateTime(LocalDateTime.now());
+        long l = easyQuery.insertable(topicType1).executeRows();
+        Assert.assertEquals(1, l);
+
+        TopicTypeJson topicTypeVO = easyQuery.queryable(TopicTypeJson.class)
+                .whereById("1231")
+                .firstOrNull();
+        Assert.assertNotNull(topicTypeVO);
+        System.out.println(topicTypeVO);
+        Assert.assertNotNull(topicTypeVO.getTitle());
+        Assert.assertEquals("123",topicTypeVO.getTitle().getName());
+        Assert.assertEquals(456,(int)topicTypeVO.getTitle().getAge());
+
+
+        Assert.assertEquals(TopicTypeEnum.CLASSER.getCode(),topicTypeVO.getTopicType());
 
     }
 }

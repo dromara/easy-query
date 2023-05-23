@@ -10,6 +10,7 @@ import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.sharding.route.manager.DataSourceRouteManager;
 import com.easy.query.core.sharding.route.manager.TableRouteManager;
 import com.easy.query.test.conversion.EnumConverter;
+import com.easy.query.test.conversion.JsonConverter;
 import com.easy.query.test.encryption.Base64EncryptionStrategy;
 import com.easy.query.test.encryption.DefaultAesEasyEncryptionStrategy;
 import com.easy.query.test.encryption.MyEncryptionStrategy;
@@ -119,6 +120,7 @@ public abstract class BaseTest {
                     op.setShardingOption(easyQueryShardingOption);
                     op.setDefaultDataSourceName("ds2020");
                     op.setThrowIfRouteNotMatch(false);
+                    op.setMaxShardingRouteCount(512);
 //                    op.setQueryLargeColumn(false);
                 })
                 .useDatabaseConfigure(new MySQLDatabaseConfiguration())
@@ -138,6 +140,7 @@ public abstract class BaseTest {
         configuration.applyShardingInitializer(new TopicShardingTimeShardingInitializer());
         configuration.applyShardingInitializer(new DataSourceShardingInitializer());
         configuration.applyValueConverter(new EnumConverter());
+        configuration.applyValueConverter(new JsonConverter());
         TableRouteManager tableRouteManager = runtimeContext.getTableRouteManager();
         tableRouteManager.addRouteRule(new TopicShardingTableRule());
         tableRouteManager.addRouteRule(new TopicShardingTimeTableRule());
