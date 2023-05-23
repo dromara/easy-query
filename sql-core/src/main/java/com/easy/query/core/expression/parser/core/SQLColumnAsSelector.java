@@ -27,6 +27,17 @@ public interface SQLColumnAsSelector<T1,TR>  {
    default SQLColumnAsSelector<T1,TR> columnCount(Property<T1,?> column){
        return columnCountAs(column,null);
    }
+
+    /**
+     * 请使用{@link #columnCountAs}接口来设置别名后续将会废弃
+     * @param column
+     * @param alias
+     * @return
+     */
+   @Deprecated
+   default SQLColumnAsSelector<T1,TR> columnCount(Property<T1,?> column, Property<TR,?> alias){
+       return columnCountAs(column,alias);
+   }
    default SQLColumnAsSelector<T1,TR> columnCountAs(Property<T1,?> column, Property<TR,?> alias){
        ColumnFunction countFunction = getRuntimeContext().getColumnFunctionFactory().createCountFunction(false);
        ColumnPropertyFunction columnPropertyFunction = DefaultColumnPropertyFunction.createDefault(column, countFunction);
@@ -34,6 +45,16 @@ public interface SQLColumnAsSelector<T1,TR>  {
    }
    default SQLColumnAsSelector<T1,TR> columnCountDistinct(Property<T1,?> column){
        return columnCountDistinctAs(column,null);
+   }
+    /**
+     * 请使用{@link #columnCountDistinctAs}接口来设置别名后续将会废弃
+     * @param column
+     * @param alias
+     * @return
+     */
+    @Deprecated
+   default SQLColumnAsSelector<T1,TR> columnCountDistinct(Property<T1,?> column, Property<TR,?> alias){
+       return columnCountDistinctAs(column,alias);
    }
    default SQLColumnAsSelector<T1,TR> columnCountDistinctAs(Property<T1,?> column, Property<TR,?> alias){
        ColumnFunction countFunction = getRuntimeContext().getColumnFunctionFactory().createCountFunction(true);
@@ -43,6 +64,16 @@ public interface SQLColumnAsSelector<T1,TR>  {
    default SQLColumnAsSelector<T1,TR> columnSum(Property<T1,Number> column){
        return columnSumAs(column,null);
    }
+    /**
+     * 请使用{@link #columnSumAs}接口来设置别名后续将会废弃
+     * @param column
+     * @param alias
+     * @return
+     */
+    @Deprecated
+   default SQLColumnAsSelector<T1,TR> columnSum(Property<T1,Number> column, Property<TR,Number> alias){
+       return columnSumAs(column,alias);
+   }
    default SQLColumnAsSelector<T1,TR> columnSumAs(Property<T1,Number> column, Property<TR,Number> alias){
        ColumnFunction countFunction = getRuntimeContext().getColumnFunctionFactory().createSumFunction(false);
        ColumnPropertyFunction columnPropertyFunction = DefaultColumnPropertyFunction.createDefault(column, countFunction);
@@ -50,6 +81,16 @@ public interface SQLColumnAsSelector<T1,TR>  {
    }
    default SQLColumnAsSelector<T1,TR> columnSumDistinct(Property<T1,Number> column){
        return columnSumDistinctAs(column,null);
+   }
+    /**
+     * 请使用{@link #columnSumDistinctAs}接口来设置别名后续将会废弃
+     * @param column
+     * @param alias
+     * @return
+     */
+    @Deprecated
+   default SQLColumnAsSelector<T1,TR> columnSumDistinct(Property<T1,Number> column, Property<TR,Number> alias){
+       return columnSumDistinctAs(column,alias);
    }
    default SQLColumnAsSelector<T1,TR> columnSumDistinctAs(Property<T1,Number> column, Property<TR,Number> alias){
        ColumnFunction countFunction = getRuntimeContext().getColumnFunctionFactory().createSumFunction(true);
@@ -59,6 +100,17 @@ public interface SQLColumnAsSelector<T1,TR>  {
     default SQLColumnAsSelector<T1,TR> columnMax(Property<T1,?> column){
         return columnMaxAs(column,null);
     }
+
+    /**
+     * 请使用{@link #columnMaxAs}接口来设置别名后续将会废弃
+     * @param column
+     * @param alias
+     * @return
+     */
+    @Deprecated
+    default SQLColumnAsSelector<T1,TR> columnMax(Property<T1,?> column, Property<TR,?> alias){
+        return columnMaxAs(column,alias);
+    }
    default SQLColumnAsSelector<T1,TR> columnMaxAs(Property<T1,?> column, Property<TR,?> alias){
        ColumnFunction countFunction = getRuntimeContext().getColumnFunctionFactory().createMaxFunction();
        ColumnPropertyFunction columnPropertyFunction = DefaultColumnPropertyFunction.createDefault(column, countFunction);
@@ -66,6 +118,17 @@ public interface SQLColumnAsSelector<T1,TR>  {
    }
     default SQLColumnAsSelector<T1,TR> columnMin(Property<T1,?> column){
         return columnMinAs(column,null);
+    }
+
+    /**
+     * 请使用{@link #columnMaxAs}接口来设置别名后续将会废弃
+     * @param column
+     * @param alias
+     * @return
+     */
+    @Deprecated
+    default SQLColumnAsSelector<T1,TR> columnMin(Property<T1,?> column, Property<TR,?> alias){
+        return columnMinAs(column,alias);
     }
    default SQLColumnAsSelector<T1,TR> columnMinAs(Property<T1,?> column, Property<TR,?> alias){
        ColumnFunction countFunction = getRuntimeContext().getColumnFunctionFactory().createMinFunction();
@@ -75,6 +138,17 @@ public interface SQLColumnAsSelector<T1,TR>  {
    default SQLColumnAsSelector<T1,TR> columnAvg(Property<T1,Number> column){
        return columnAvgAs(column,null);
    }
+
+    /**
+     * 请使用{@link #columnAvgAs}接口来设置别名后续将会废弃
+     * @param column
+     * @param alias
+     * @return
+     */
+    @Deprecated
+   default SQLColumnAsSelector<T1,TR> columnAvg(Property<T1,Number> column, Property<TR,Number> alias){
+       return columnAvgAs(column,alias);
+   }
    default SQLColumnAsSelector<T1,TR> columnAvgAs(Property<T1,Number> column, Property<TR,Number> alias){
        ColumnFunction countFunction = getRuntimeContext().getColumnFunctionFactory().createAvgFunction(false);
        ColumnPropertyFunction columnPropertyFunction = DefaultColumnPropertyFunction.createDefault(column, countFunction);
@@ -83,6 +157,17 @@ public interface SQLColumnAsSelector<T1,TR>  {
    default SQLColumnAsSelector<T1,TR> columnAvgDistinct(Property<T1,Number> column){
        return columnAvgDistinctAs(column,null);
    }
+
+    /**
+     * 请使用{@link #columnAvgDistinctAs}接口来设置别名后续将会废弃
+     * @param column
+     * @param alias
+     * @return
+     */
+    @Deprecated
+   default SQLColumnAsSelector<T1,TR> columnAvgDistinct(Property<T1,Number> column, Property<TR,Number> alias){
+       return columnAvgDistinctAs(column,alias);
+   }
    default SQLColumnAsSelector<T1,TR> columnAvgDistinctAs(Property<T1,Number> column, Property<TR,Number> alias){
        ColumnFunction countFunction = getRuntimeContext().getColumnFunctionFactory().createAvgFunction(true);
        ColumnPropertyFunction columnPropertyFunction = DefaultColumnPropertyFunction.createDefault(column, countFunction);
@@ -90,6 +175,16 @@ public interface SQLColumnAsSelector<T1,TR>  {
    }
    default SQLColumnAsSelector<T1,TR> columnLen(Property<T1,?> column){
        return columnLenAs(column,null);
+   }
+    /**
+     * 请使用{@link #columnLenAs}接口来设置别名后续将会废弃
+     * @param column
+     * @param alias
+     * @return
+     */
+    @Deprecated
+   default SQLColumnAsSelector<T1,TR> columnLen(Property<T1,?> column, Property<TR,?> alias){
+       return columnLenAs(column,alias);
    }
    default SQLColumnAsSelector<T1,TR> columnLenAs(Property<T1,?> column, Property<TR,?> alias){
        ColumnFunction countFunction = getRuntimeContext().getColumnFunctionFactory().createLenFunction();
