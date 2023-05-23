@@ -11,12 +11,13 @@ spring:
     url: jdbc:mysql://127.0.0.1:3306/dbdbd0?serverTimezone=GMT%2B8&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&rewriteBatchedStatements=true
     username: root
     password: root
-
-logging:
-  level:
-    com.easy.query.core: debug
+#
+#logging:
+#  level:
+#    com.easy.query.core: debug
 
 easy-query:
   enable: true
   name-conversion: underlined
   database: mysql
+  log-class: com.easyquery.springbootdemo.logging.MySysOutLogImpl
