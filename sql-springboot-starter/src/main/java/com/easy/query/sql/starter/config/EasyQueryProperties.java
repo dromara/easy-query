@@ -48,8 +48,8 @@ public class EasyQueryProperties {
     private  long shardingGroupExecuteTimeoutMillis=20000L;
 
     private boolean queryLargeColumn=true;
-    private int maxShardingRouteCount=2014;
-    private int executorQueueSize=2014;
+    private int maxShardingRouteCount=128;
+    private int executorQueueSize=1024;
 
     public Boolean getEnable() {
         return enable;

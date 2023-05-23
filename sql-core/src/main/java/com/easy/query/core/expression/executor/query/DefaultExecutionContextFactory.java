@@ -2,7 +2,6 @@ package com.easy.query.core.expression.executor.query;
 
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.configuration.EasyQueryOption;
-import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.exception.EasyQueryShardingRouteExecuteMoreException;
 import com.easy.query.core.expression.executor.parser.EntityPrepareParseResult;
 import com.easy.query.core.expression.executor.parser.ExecutionContext;
@@ -21,7 +20,6 @@ import com.easy.query.core.sharding.rewrite.RewriteContext;
 import com.easy.query.core.sharding.rewrite.RewriteContextFactory;
 import com.easy.query.core.sharding.route.RouteContext;
 import com.easy.query.core.sharding.route.RouteContextFactory;
-import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyClassUtil;
 
 import java.util.Collections;

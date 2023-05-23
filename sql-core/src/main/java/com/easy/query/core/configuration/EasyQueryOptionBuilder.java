@@ -41,7 +41,7 @@ public class EasyQueryOptionBuilder {
         this.shardingGroupExecuteTimeoutMillis = 20000L;
         this.defaultDataSourceName = "ds0";
         this.queryLargeColumn = true;
-        this.maxShardingRouteCount=1024;
+        this.maxShardingRouteCount=128;
         this.executorQueueSize=1024;
     }
     public void setDeleteThrowError(boolean deleteThrowError) {
