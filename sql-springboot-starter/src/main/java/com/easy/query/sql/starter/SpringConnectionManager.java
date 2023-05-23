@@ -6,6 +6,7 @@ import com.easy.query.core.basic.jdbc.con.impl.DefaultConnectionManager;
 import com.easy.query.core.basic.jdbc.con.EasyConnection;
 import com.easy.query.core.basic.jdbc.con.EasyConnectionFactory;
 import com.easy.query.core.basic.jdbc.con.EasyDataSourceConnectionFactory;
+import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.sharding.EasyQueryDataSource;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
@@ -48,8 +49,14 @@ public class SpringConnectionManager extends DefaultConnectionManager {
             return;
         }
         //当前没开事务,但是easy query手动开启了
-        if(!this.currentThreadInTransaction()&&super.easyCurrentThreadInTransaction()){
-            return;
+        if(!this.currentThreadInTransaction()){
+            if(super.easyCurrentThreadInTransaction()){
+                return;
+            }
+        }else{
+            if(super.easyCurrentThreadInTransaction()){
+                throw new EasyQueryException("repeat transaction can't closed connection");
+            }
         }
         DataSourceUnit dataSourceUnit = easyDataSource.getDataSourceNotNull(easyConnection.getDataSourceName(), ConnectionStrategyEnum.ShareConnection);
         DataSourceUtils.releaseConnection(easyConnection.getConnection(), dataSourceUnit.getDataSource());
