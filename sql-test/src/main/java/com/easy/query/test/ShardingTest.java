@@ -7,7 +7,6 @@ import com.easy.query.core.sharding.manager.SequenceCountNode;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.test.dto.TopicShardingGroup;
 import com.easy.query.test.dto.TopicSubQueryBlog;
-import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.TopicSharding;
 import com.easy.query.test.entity.TopicShardingDataSource;
@@ -163,7 +162,7 @@ public class ShardingTest extends BaseTest {
                 .where(o -> o.ge(TopicSharding::getStars, 20000).le(TopicSharding::getStars, 20100))
                 .groupBy(o -> o.column(TopicSharding::getTitle))
                 .orderByAsc(o->o.column(TopicSharding::getTitle))
-                .select(TopicShardingGroup.class, o -> o.column(TopicSharding::getTitle).columnCount(TopicSharding::getId, TopicShardingGroup::getIdCount))
+                .select(TopicShardingGroup.class, o -> o.column(TopicSharding::getTitle).columnCountAs(TopicSharding::getId, TopicShardingGroup::getIdCount))
                 .toList();
 
         Assert.assertEquals(50,list1.size());
@@ -175,7 +174,7 @@ public class ShardingTest extends BaseTest {
         List<TopicShardingGroup> list2 = easyQuery.queryable(TopicSharding.class)
                 .where(o -> o.ge(TopicSharding::getStars, 20000).le(TopicSharding::getStars, 20100))
                 .groupBy(o -> o.column(TopicSharding::getTitle))
-                .select(TopicShardingGroup.class, o -> o.column(TopicSharding::getTitle).columnCount(TopicSharding::getId, TopicShardingGroup::getIdCount))
+                .select(TopicShardingGroup.class, o -> o.column(TopicSharding::getTitle).columnCountAs(TopicSharding::getId, TopicShardingGroup::getIdCount))
                 .toList();
 
         Assert.assertEquals(50,list2.size());

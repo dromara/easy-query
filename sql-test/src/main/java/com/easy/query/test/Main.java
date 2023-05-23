@@ -385,14 +385,14 @@ public class Main {
                     .where(o -> o.eq(TestUserMysql::getName, "ds0"))
                     .groupBy(o -> o.column(TestUserMysql::getAge))
                     .having(o -> o.count(TestUserMysql::getId, AggregatePredicateCompare.GE, 0))
-                    .select(TestUserMysqlGroup.class, o -> o.column(TestUserMysql::getAge).columnCount(TestUserMysql::getId, TestUserMysqlGroup::getAcount))
+                    .select(TestUserMysqlGroup.class, o -> o.column(TestUserMysql::getAge).columnCountAs(TestUserMysql::getId, TestUserMysqlGroup::getAcount))
                     .firstOrNull();
 
             String ds0z = easyQuery.queryable(TestUserMysql.class)
                     .where(o -> o.eq(TestUserMysql::getName, "ds0"))
                     .groupBy(o -> o.column(TestUserMysql::getAge))
                     .having(o -> o.count(TestUserMysql::getId, AggregatePredicateCompare.GE, 0))
-                    .select(TestUserMysqlGroup.class, o -> o.column(TestUserMysql::getAge).columnCount(TestUserMysql::getId, TestUserMysqlGroup::getAcount))
+                    .select(TestUserMysqlGroup.class, o -> o.column(TestUserMysql::getAge).columnCountAs(TestUserMysql::getId, TestUserMysqlGroup::getAcount))
                     .toSQL();
             System.out.println(ds0z);
 
@@ -495,13 +495,13 @@ public class Main {
                     .where(o -> o.eq(TestUserMysql::getName, "ds0"))
                     .groupBy(o -> o.column(TestUserMysql::getAge))
                     .having(o -> o.count(TestUserMysql::getId, AggregatePredicateCompare.GE, 0))
-                    .select(TestUserMysqlGroup.class, o -> o.column(TestUserMysql::getAge).columnCount(TestUserMysql::getId, TestUserMysqlGroup::getAcount))
+                    .select(TestUserMysqlGroup.class, o -> o.column(TestUserMysql::getAge).columnCountAs(TestUserMysql::getId, TestUserMysqlGroup::getAcount))
                     .toSQL();
             String ds02 = easyQuery.queryable(TestUserMysql.class)
                     .where(o -> o.eq(TestUserMysql::getName, "ds0"))
                     .groupBy(o -> o.column(TestUserMysql::getAge))
                     .having(o -> o.count(TestUserMysql::getId, AggregatePredicateCompare.GE, 0))
-                    .select(TestUserMysqlGroup.class, o -> o.column(TestUserMysql::getAge).columnCount(TestUserMysql::getId, TestUserMysqlGroup::getAcount))
+                    .select(TestUserMysqlGroup.class, o -> o.column(TestUserMysql::getAge).columnCountAs(TestUserMysql::getId, TestUserMysqlGroup::getAcount))
                     .toSQL();
             System.out.println("ds01==ds02:" + ds01.equals(ds02));
             long start = System.currentTimeMillis();
@@ -512,7 +512,7 @@ public class Main {
                         .where(o -> o.eq(TestUserMysql::getName, "ds0"))
                         .groupBy(o -> o.column(TestUserMysql::getAge))
                         .having(o -> o.count(TestUserMysql::getId, AggregatePredicateCompare.GE, 0))
-                        .select(TestUserMysqlGroup.class, o -> o.column(TestUserMysql::getAge).columnCount(TestUserMysql::getId, TestUserMysqlGroup::getAcount))
+                        .select(TestUserMysqlGroup.class, o -> o.column(TestUserMysql::getAge).columnCountAs(TestUserMysql::getId, TestUserMysqlGroup::getAcount))
                         .toSQL();
             }
             long end = System.currentTimeMillis();
@@ -527,7 +527,7 @@ public class Main {
                     .where(o -> o.eq(TestUserMysql::getName, "ds0"))
                     .groupBy(o -> o.column(TestUserMysql::getAge))
                     .having(o -> o.count(TestUserMysql::getId, AggregatePredicateCompare.GE, 0))
-                    .select(TestUserMysqlGroup.class, o -> o.column(TestUserMysql::getAge).columnCount(TestUserMysql::getId, TestUserMysqlGroup::getAcount))
+                    .select(TestUserMysqlGroup.class, o -> o.column(TestUserMysql::getAge).columnCountAs(TestUserMysql::getId, TestUserMysqlGroup::getAcount))
                     .toList();
             List<TestUserMysql> testUserMysqls1 = easyQuery.queryable(TestUserMysql.class)
                     .where(o -> o.eq(TestUserMysql::getName, "123"))

@@ -386,7 +386,7 @@ public class QueryTest extends BaseTest {
                 .queryable(Topic.class)
                 .where(o -> o.eq(Topic::getId, "3"))
                 .groupBy(o -> o.column(Topic::getId))
-                .select(TopicGroupTestDTO.class, o -> o.columnAs(Topic::getId, TopicGroupTestDTO::getId).columnCount(Topic::getId, TopicGroupTestDTO::getIdCount));
+                .select(TopicGroupTestDTO.class, o -> o.columnAs(Topic::getId, TopicGroupTestDTO::getId).columnCountAs(Topic::getId, TopicGroupTestDTO::getIdCount));
         List<BlogEntity> topics = easyQuery
                 .queryable(BlogEntity.class)
                 .leftJoin(sql, (a, b) -> a.eq(b, BlogEntity::getId, TopicGroupTestDTO::getId))
@@ -403,7 +403,7 @@ public class QueryTest extends BaseTest {
                 .queryable(Topic.class)
                 .where(o -> o.eq(Topic::getId, "3"))
                 .groupBy(o -> o.column(Topic::getId))
-                .select(TopicGroupTestDTO.class, o -> o.columnAs(Topic::getId, TopicGroupTestDTO::getId).columnCount(Topic::getId, TopicGroupTestDTO::getIdCount));
+                .select(TopicGroupTestDTO.class, o -> o.columnAs(Topic::getId, TopicGroupTestDTO::getId).columnCountAs(Topic::getId, TopicGroupTestDTO::getIdCount));
         String sqlPrint = easyQuery
                 .queryable(BlogEntity.class)
                 .leftJoin(sql, (a, b) -> a.eq(b, BlogEntity::getId, TopicGroupTestDTO::getId))
@@ -420,7 +420,7 @@ public class QueryTest extends BaseTest {
                 .queryLargeColumn(false)
                 .where(o -> o.eq(Topic::getId, "3"))
                 .groupBy(o -> o.column(Topic::getId))
-                .select(TopicGroupTestDTO.class, o -> o.columnAs(Topic::getId, TopicGroupTestDTO::getId).columnCount(Topic::getId, TopicGroupTestDTO::getIdCount));
+                .select(TopicGroupTestDTO.class, o -> o.columnAs(Topic::getId, TopicGroupTestDTO::getId).columnCountAs(Topic::getId, TopicGroupTestDTO::getIdCount));
         String sqlPrint = easyQuery
                 .queryable(BlogEntity.class)
                 .leftJoin(sql, (a, b) -> a.eq(b, BlogEntity::getId, TopicGroupTestDTO::getId))
@@ -436,7 +436,7 @@ public class QueryTest extends BaseTest {
                 .queryable(Topic.class)
                 .where(o -> o.eq(Topic::getId, "3"))
                 .groupBy(o -> o.column(Topic::getId))
-                .select(TopicGroupTestDTO.class, o -> o.columnAs(Topic::getId, TopicGroupTestDTO::getId).columnCount(Topic::getId, TopicGroupTestDTO::getIdCount));
+                .select(TopicGroupTestDTO.class, o -> o.columnAs(Topic::getId, TopicGroupTestDTO::getId).columnCountAs(Topic::getId, TopicGroupTestDTO::getIdCount));
         String sqlPrint = easyQuery
                 .queryable(BlogEntity.class)
                 .queryLargeColumn(false)
@@ -454,7 +454,7 @@ public class QueryTest extends BaseTest {
                 .where(o -> o.eq(Topic::getId, "3"))
                 .groupBy(o -> o.column(Topic::getId))
                 .select(TopicGroupTestDTO.class, o -> o.columnAs(Topic::getId, TopicGroupTestDTO::getId)
-                        .columnCount(Topic::getId, TopicGroupTestDTO::getIdCount));
+                        .columnCountAs(Topic::getId, TopicGroupTestDTO::getIdCount));
         String s = sql.toSQL();
         Assert.assertEquals("SELECT t.`id` AS `id`,COUNT(t.`id`) AS `id_count` FROM `t_topic` t WHERE t.`id` = ? GROUP BY t.`id`", s);
         List<TopicGroupTestDTO> topicGroupTestDTOS = sql.toList();
@@ -472,7 +472,7 @@ public class QueryTest extends BaseTest {
                 .queryable(Topic.class)
                 .where(o -> o.eq(Topic::getId, "3"))
                 .groupBy(o -> o.column(Topic::getId))
-                .select(TopicGroupTestDTO.class, o -> o.column(Topic::getId).columnCount(Topic::getId, TopicGroupTestDTO::getIdCount));
+                .select(TopicGroupTestDTO.class, o -> o.column(Topic::getId).columnCountAs(Topic::getId, TopicGroupTestDTO::getIdCount));
         String s = sql.toSQL();
         Assert.assertEquals("SELECT t.`id`,COUNT(t.`id`) AS `id_count` FROM `t_topic` t WHERE t.`id` = ? GROUP BY t.`id`", s);
         List<TopicGroupTestDTO> topicGroupTestDTOS = sql.toList();
@@ -776,14 +776,14 @@ public class QueryTest extends BaseTest {
         TopicGroupTestDTO topicGroupTestDTO = easyQuery.queryable(BlogEntity.class)
                 .where(o -> o.eq(BlogEntity::getId, "123"))
                 .groupBy(o -> o.column(BlogEntity::getId))
-                .select(TopicGroupTestDTO.class, o -> o.columnAs(BlogEntity::getId, TopicGroupTestDTO::getId).columnCount(BlogEntity::getId, TopicGroupTestDTO::getIdCount))
+                .select(TopicGroupTestDTO.class, o -> o.columnAs(BlogEntity::getId, TopicGroupTestDTO::getId).columnCountAs(BlogEntity::getId, TopicGroupTestDTO::getIdCount))
                 .orderByAsc(o -> o.column(TopicGroupTestDTO::getId)).firstOrNull();
         Assert.assertNull(topicGroupTestDTO);
         TopicGroupTestDTO topicGroupTestDTO1 = easyQuery.queryable(BlogEntity.class)
                 .where(o -> o.eq(BlogEntity::getId, "123"))
                 .groupBy(o -> o.column(BlogEntity::getId))
                 .orderByAsc(o -> o.column(BlogEntity::getId))
-                .select(TopicGroupTestDTO.class, o -> o.columnAs(BlogEntity::getId, TopicGroupTestDTO::getId).columnCount(BlogEntity::getId, TopicGroupTestDTO::getIdCount))
+                .select(TopicGroupTestDTO.class, o -> o.columnAs(BlogEntity::getId, TopicGroupTestDTO::getId).columnCountAs(BlogEntity::getId, TopicGroupTestDTO::getIdCount))
                 .firstOrNull();
         Assert.assertNull(topicGroupTestDTO1);
     }
@@ -793,7 +793,7 @@ public class QueryTest extends BaseTest {
         Queryable<TopicGroupTestDTO> topicGroupTestDTOQueryable = easyQuery.queryable(BlogEntity.class)
                 .where(o -> o.eq(BlogEntity::getId, "123"))
                 .groupBy(o -> o.column(BlogEntity::getId))
-                .select(TopicGroupTestDTO.class, o -> o.columnAs(BlogEntity::getId, TopicGroupTestDTO::getId).columnCount(BlogEntity::getId, TopicGroupTestDTO::getIdCount))
+                .select(TopicGroupTestDTO.class, o -> o.columnAs(BlogEntity::getId, TopicGroupTestDTO::getId).columnCountAs(BlogEntity::getId, TopicGroupTestDTO::getIdCount))
                 .orderByAsc(o -> o.column(TopicGroupTestDTO::getId));
         String sql = topicGroupTestDTOQueryable.toSQL();
         Assert.assertEquals("SELECT t1.`id` AS `id`,t1.`id_count` AS `id_count` FROM (SELECT t.`id` AS `id`,COUNT(t.`id`) AS `id_count` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? GROUP BY t.`id`) t1 ORDER BY t1.`id` ASC", sql);
@@ -801,7 +801,7 @@ public class QueryTest extends BaseTest {
                 .where(o -> o.eq(BlogEntity::getId, "123"))
                 .groupBy(o -> o.column(BlogEntity::getId))
                 .orderByAsc(o -> o.column(BlogEntity::getId))
-                .select(TopicGroupTestDTO.class, o -> o.columnAs(BlogEntity::getId, TopicGroupTestDTO::getId).columnCount(BlogEntity::getId, TopicGroupTestDTO::getIdCount));
+                .select(TopicGroupTestDTO.class, o -> o.columnAs(BlogEntity::getId, TopicGroupTestDTO::getId).columnCountAs(BlogEntity::getId, TopicGroupTestDTO::getIdCount));
         String sql1 = select.toSQL();
         Assert.assertEquals("SELECT t.`id` AS `id`,COUNT(t.`id`) AS `id_count` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? GROUP BY t.`id` ORDER BY t.`id` ASC", sql1);
     }

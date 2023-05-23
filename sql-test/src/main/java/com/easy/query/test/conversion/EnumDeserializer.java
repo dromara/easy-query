@@ -8,8 +8,9 @@ package com.easy.query.test.conversion;
  */
 public class EnumDeserializer {
     public static <T extends IEnum<T>> T deserialize(Class<T> enumClass, Integer integer) {
-        for (T enumValue : enumClass.getEnumConstants()) {
-            return enumValue.valueOf(integer);
+        T[] enumConstants = enumClass.getEnumConstants();
+        if(enumConstants.length>0){
+            return enumConstants[0].valueOf(integer);
         }
         throw new IllegalArgumentException("Invalid integer value for enum: " + integer);
     }
