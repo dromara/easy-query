@@ -160,7 +160,7 @@ public final class EasyShardingStreamResultSet implements ShardingStreamResultSe
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() throws SQLException {
         if (closed) {
             return;
         }

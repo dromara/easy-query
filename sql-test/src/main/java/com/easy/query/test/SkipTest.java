@@ -5,10 +5,12 @@ import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.exception.EasyQueryInjectCurrentlyInCreationException;
 import com.easy.query.core.exception.EasyQueryNotFoundException;
 import com.easy.query.core.exception.EasyQueryRouteNotMatchException;
+import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import com.easy.query.core.exception.EasyQuerySQLException;
-import com.easy.query.core.exception.EasyQuerySQLExecuteException;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.sql.SQLException;
 
 /**
  * create time 2023/5/11 15:53
@@ -39,12 +41,12 @@ public class SkipTest {
         EasyQueryRouteNotMatchException easyQueryRouteNotMatchException1 = new EasyQueryRouteNotMatchException(a);
         EasyQueryRouteNotMatchException easyQueryRouteNotMatchException2 = new EasyQueryRouteNotMatchException("1", a);
 
-        EasyQuerySQLException asyQuerySQLException = new EasyQuerySQLException("");
-        EasyQuerySQLException asyQuerySQLException1 = new EasyQuerySQLException(a);
-        EasyQuerySQLException asyQuerySQLException2 = new EasyQuerySQLException("1", a);
+        EasyQuerySQLCommandException asyQuerySQLException = new EasyQuerySQLCommandException("");
+        EasyQuerySQLCommandException asyQuerySQLException1 = new EasyQuerySQLCommandException(a);
+        EasyQuerySQLCommandException asyQuerySQLException2 = new EasyQuerySQLCommandException("1", a);
 
-        EasyQuerySQLExecuteException asyQuerySQLExecuteException = new EasyQuerySQLExecuteException("","");
-        EasyQuerySQLExecuteException asyQuerySQLExecuteException1 = new EasyQuerySQLExecuteException("",a);
-        EasyQuerySQLExecuteException asyQuerySQLExecuteException2 = new EasyQuerySQLExecuteException("1", a);
+        EasyQuerySQLException asyQuerySQLExecuteException = new EasyQuerySQLException("",new SQLException("123"));
+        EasyQuerySQLException asyQuerySQLExecuteException1 = new EasyQuerySQLException("",a);
+        EasyQuerySQLException asyQuerySQLExecuteException2 = new EasyQuerySQLException("1", a);
     }
 }

@@ -4,6 +4,8 @@ import com.easy.query.core.basic.jdbc.executor.internal.result.QueryExecuteResul
 import com.easy.query.core.basic.jdbc.executor.internal.merge.result.StreamResultSet;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.result.impl.EmptyStreamResultSet;
 
+import java.sql.SQLException;
+
 /**
  * create time 2023/5/12 23:57
  * 文件说明
@@ -24,7 +26,7 @@ public class DefaultQueryExecuteResult implements QueryExecuteResult {
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() throws SQLException {
         streamResultSet.close();
     }
 }

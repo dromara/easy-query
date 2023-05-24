@@ -4,7 +4,7 @@ import com.easy.query.core.enums.con.ConnectionStrategyEnum;
 import com.easy.query.core.basic.jdbc.con.DataSourceUnit;
 import com.easy.query.core.basic.jdbc.con.EasyConnection;
 import com.easy.query.core.basic.jdbc.con.EasyConnectionFactory;
-import com.easy.query.core.exception.EasyQuerySQLException;
+import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import com.easy.query.core.sharding.EasyQueryDataSource;
 
 import java.sql.Connection;
@@ -30,7 +30,7 @@ public class DefaultEasyConnectionFactory implements EasyConnectionFactory {
             Connection connection = dataSourceUnit.getDataSource().getConnection();
             return new DefaultEasyConnection(dataSourceName,dataSourceUnit.getStrategy(),connection,isolationLevel);
         } catch (SQLException e) {
-            throw new EasyQuerySQLException(e);
+            throw new EasyQuerySQLCommandException(e);
         }
     }
 }

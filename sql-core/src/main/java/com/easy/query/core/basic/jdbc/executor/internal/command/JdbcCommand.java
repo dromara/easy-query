@@ -12,4 +12,7 @@ import java.sql.SQLException;
  */
 public interface JdbcCommand<T extends ExecuteResult> extends AutoCloseable{
     T execute() throws SQLException;
+
+    @Override
+    void close() throws SQLException;
 }

@@ -1,6 +1,6 @@
 package com.easy.query.core.basic.jdbc.executor.internal.common;
 
-import com.easy.query.core.basic.jdbc.parameter.DefaultSQLParameterCollector;
+import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.expression.sql.expression.EntitySQLExpression;
@@ -53,7 +53,7 @@ public class SQLRouteUnit {
         if(sqlUnit!=null){
             return sqlUnit;
         }
-        ToSQLContext toSQLContext = DefaultSQLParameterCollector.defaultCollector(sqlRewriteUnit);
+        ToSQLContext toSQLContext = DefaultToSQLContext.defaultCollector(sqlRewriteUnit);
         assert easyEntitySQLExpression != null;
         String sql = easyEntitySQLExpression.toSQL(toSQLContext);
         return new SQLUnit(sql,toSQLContext.getParameters(),entities,fillAutoIncrement);

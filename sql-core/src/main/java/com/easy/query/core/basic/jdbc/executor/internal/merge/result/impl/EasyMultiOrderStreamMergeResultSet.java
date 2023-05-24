@@ -187,7 +187,7 @@ private static final Log log= LogFactory.getLog(EasyMultiOrderStreamMergeResultS
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() throws SQLException {
         if (closed) {
             return;
         }

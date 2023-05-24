@@ -16,6 +16,7 @@ import com.easy.query.core.basic.jdbc.executor.internal.common.SQLRouteUnit;
 import com.easy.query.core.basic.jdbc.executor.internal.sharding.merger.impl.AffectedRowsShardingMerger;
 import com.easy.query.core.util.EasyJdbcExecutorUtil;
 
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -30,7 +31,7 @@ public class EasyInsertExecutor extends AbstractExecutor<AffectedRowsExecuteResu
     }
 
     @Override
-    protected AffectedRowsExecuteResult executeCommandUnit(CommandExecuteUnit commandExecuteUnit) {
+    protected AffectedRowsExecuteResult executeCommandUnit(CommandExecuteUnit commandExecuteUnit) throws SQLException {
         ExecutorContext executorContext = streamMergeContext.getExecutorContext();
         EasyConnection easyConnection = commandExecuteUnit.getEasyConnection();
         ExecutionUnit executionUnit = commandExecuteUnit.getExecutionUnit();

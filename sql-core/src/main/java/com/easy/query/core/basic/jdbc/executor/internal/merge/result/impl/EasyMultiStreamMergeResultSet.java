@@ -170,7 +170,7 @@ public class EasyMultiStreamMergeResultSet implements ShardingStreamResultSet {
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() throws SQLException {
         if (closed) {
             return;
         }

@@ -2,7 +2,7 @@ package com.easy.query.core.basic.jdbc.con.impl;
 
 import com.easy.query.core.basic.jdbc.con.EasyConnection;
 import com.easy.query.core.basic.jdbc.con.EasyDataSourceConnection;
-import com.easy.query.core.exception.EasyQuerySQLException;
+import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.sharding.EasyQueryDataSource;
@@ -45,7 +45,7 @@ public class DefaultEasyDataSourceConnection implements EasyDataSourceConnection
     public void putIfAbsent(String dataSource, EasyConnection easyConnection) {
         EasyConnection result = connections.put(dataSource, easyConnection);
         if (result != null) {
-            throw new EasyQuerySQLException("repeat add easy connection:" + dataSource);
+            throw new EasyQuerySQLCommandException("repeat add easy connection:" + dataSource);
         }
     }
 
@@ -78,7 +78,7 @@ public class DefaultEasyDataSourceConnection implements EasyDataSourceConnection
             } catch (SQLException ex) {
                 log.error("commit error.", ex);
                 if (i == 0) {
-                    throw new EasyQuerySQLException(ex);
+                    throw new EasyQuerySQLCommandException(ex);
                 } else {
                     assert exceptions != null;
                     exceptions.add(ex);
@@ -94,7 +94,7 @@ public class DefaultEasyDataSourceConnection implements EasyDataSourceConnection
         }
         SQLException ex = new SQLException("");
         exceptions.forEach(ex::setNextException);
-        throw new EasyQuerySQLException(ex);
+        throw new EasyQuerySQLCommandException(ex);
     }
 
     @Override

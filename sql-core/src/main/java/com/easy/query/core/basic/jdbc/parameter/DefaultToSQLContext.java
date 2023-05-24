@@ -11,17 +11,17 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public class DefaultSQLParameterCollector implements ToSQLContext {
+public class DefaultToSQLContext implements ToSQLContext {
     private final List<SQLParameter> parameters;
     private final SQLRewriteUnit sqlRewriteUnit;
     private int invokeCount;
-    public DefaultSQLParameterCollector(){
+    public DefaultToSQLContext(){
         this(10,null);
     }
-    public DefaultSQLParameterCollector(SQLRewriteUnit sqlRewriteUnit){
+    public DefaultToSQLContext(SQLRewriteUnit sqlRewriteUnit){
         this(10,sqlRewriteUnit);
     }
-    public DefaultSQLParameterCollector(int initialCapacity,SQLRewriteUnit sqlRewriteUnit){
+    public DefaultToSQLContext(int initialCapacity, SQLRewriteUnit sqlRewriteUnit){
         this.parameters=new ArrayList<>(initialCapacity);
         this.sqlRewriteUnit = sqlRewriteUnit;
         this.invokeCount=0;
@@ -61,6 +61,6 @@ public class DefaultSQLParameterCollector implements ToSQLContext {
         return defaultCollector(10,sqlRewriteUnit);
     }
     public static ToSQLContext defaultCollector(int initialCapacity,SQLRewriteUnit sqlRewriteUnit){
-        return new DefaultSQLParameterCollector(initialCapacity,sqlRewriteUnit);
+        return new DefaultToSQLContext(initialCapacity,sqlRewriteUnit);
     }
 }

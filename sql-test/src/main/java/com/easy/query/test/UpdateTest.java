@@ -1,13 +1,20 @@
 package com.easy.query.test;
 
+import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
+import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
+import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.exception.EasyQueryConcurrentException;
 import com.easy.query.core.basic.api.update.impl.EasyEntityUpdatable;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.basic.plugin.track.TrackManager;
+import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.entity.Topic;
+import com.easy.query.test.entity.TopicTypeTest1;
+import com.easy.query.test.enums.TopicTypeEnum;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.time.LocalDateTime;
 import java.util.Random;
 import java.util.UUID;
 
@@ -209,5 +216,26 @@ public class UpdateTest extends BaseTest {
         }catch (Exception e){
             Assert.assertEquals(EasyQueryConcurrentException.class,e.getClass());
         }
+    }
+    @Test
+    public void updateTest11() {
+        TopicTypeTest1 topicType = easyQuery.queryable(TopicTypeTest1.class)
+                .whereById("123").firstOrNull();
+        if (topicType != null) {
+            long l = easyQuery.deletable(topicType).executeRows();
+            Assert.assertEquals(1, l);
+        }
+        ToSQLContext toSQLContext = DefaultToSQLContext.defaultCollector();
+        String sql = easyQuery.updatable(TopicTypeTest1.class)
+                .set(TopicTypeTest1::getStars, 234)
+                .where(o -> o.eq(TopicTypeTest1::getTopicType, TopicTypeEnum.CLASSER)).toSQL(toSQLContext);
+        Assert.assertEquals("UPDATE `t_topic_type` SET `stars` = ? WHERE `topic_type` = ?",sql);
+        String parameterToString = EasySQLUtil.sqlParameterToString(toSQLContext.getParameters());
+        Assert.assertEquals("234(Integer),CLASSER(TopicTypeEnum)",parameterToString);
+
+        long l= easyQuery.updatable(TopicTypeTest1.class)
+                .set(TopicTypeTest1::getStars, 234)
+                .where(o -> o.eq(TopicTypeTest1::getTopicType, TopicTypeEnum.CLASSER))
+                .executeRows();
     }
 }

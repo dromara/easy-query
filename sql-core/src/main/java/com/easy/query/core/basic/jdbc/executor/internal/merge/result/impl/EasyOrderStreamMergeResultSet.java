@@ -186,7 +186,7 @@ public class EasyOrderStreamMergeResultSet implements OrderStreamMergeResultSet 
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() throws SQLException {
         if (closed) {
             return;
         }

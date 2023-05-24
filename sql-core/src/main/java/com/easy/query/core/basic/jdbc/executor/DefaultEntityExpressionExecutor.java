@@ -8,7 +8,7 @@ import com.easy.query.core.basic.jdbc.executor.internal.command.impl.DefaultQuer
 import com.easy.query.core.basic.jdbc.executor.internal.result.QueryExecuteResult;
 import com.easy.query.core.basic.jdbc.executor.internal.command.JdbcCommand;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
-import com.easy.query.core.exception.EasyQueryException;
+import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import com.easy.query.core.expression.executor.parser.EasyQueryPrepareParseResult;
 import com.easy.query.core.expression.executor.parser.EasyPrepareParser;
 import com.easy.query.core.expression.executor.parser.ExecutionContext;
@@ -27,6 +27,7 @@ import com.easy.query.core.sharding.context.EntityStreamMergeContext;
 import com.easy.query.core.sharding.context.ShardingQueryEasyStreamMergeContext;
 import com.easy.query.core.util.EasyStreamResultUtil;
 
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -53,8 +54,8 @@ public class DefaultEntityExpressionExecutor implements EntityExpressionExecutor
         try (JdbcCommand<QueryExecuteResult> command = getSQLQueryJdbcCommand(executorContext, executionContext);
              QueryExecuteResult executeResult = command.execute()) {
             return EasyStreamResultUtil.mapTo(executorContext, executeResult.getStreamResultSet(), clazz);
-        } catch (Exception e) {
-            throw new EasyQueryException(e);
+        } catch (SQLException e) {
+            throw new EasyQuerySQLCommandException(e);
         }
     }
 
@@ -66,8 +67,8 @@ public class DefaultEntityExpressionExecutor implements EntityExpressionExecutor
         try (JdbcCommand<AffectedRowsExecuteResult> command = getSQLExecuteUpdateJdbcCommand(executorContext, executionContext);
              AffectedRowsExecuteResult executeResult = command.execute()) {
             return executeResult.getRows();
-        } catch (Exception e) {
-            throw new EasyQueryException(e);
+        } catch (SQLException e) {
+            throw new EasyQuerySQLCommandException(e);
         }
     }
 
@@ -79,8 +80,8 @@ public class DefaultEntityExpressionExecutor implements EntityExpressionExecutor
         try (JdbcCommand<QueryExecuteResult> command = getQueryEntityJdbcCommand(executorContext, executionContext, (EasyQueryPrepareParseResult) prepareParseResult);
              QueryExecuteResult executeResult = command.execute()) {
             return EasyStreamResultUtil.mapTo(executorContext, executeResult.getStreamResultSet(), clazz);
-        } catch (Exception e) {
-            throw new EasyQueryException(e);
+        } catch (SQLException e) {
+            throw new EasyQuerySQLCommandException(e);
         }
     }
 
@@ -92,8 +93,8 @@ public class DefaultEntityExpressionExecutor implements EntityExpressionExecutor
         try (JdbcCommand<AffectedRowsExecuteResult> command = getInsertJdbcCommand(executorContext, executionContext, prepareParseResult);
              AffectedRowsExecuteResult executeResult = command.execute()) {
             return executeResult.getRows();
-        } catch (Exception e) {
-            throw new EasyQueryException(e);
+        } catch (SQLException e) {
+            throw new EasyQuerySQLCommandException(e);
         }
     }
 
@@ -105,8 +106,8 @@ public class DefaultEntityExpressionExecutor implements EntityExpressionExecutor
         try (JdbcCommand<AffectedRowsExecuteResult> command = getExecuteBatchJdbcCommand(executorContext, executionContext, prepareParseResult);
              AffectedRowsExecuteResult executeResult = command.execute()) {
             return executeResult.getRows();
-        } catch (Exception e) {
-            throw new EasyQueryException(e);
+        } catch (SQLException e) {
+            throw new EasyQuerySQLCommandException(e);
         }
     }
 
@@ -118,8 +119,8 @@ public class DefaultEntityExpressionExecutor implements EntityExpressionExecutor
         try (JdbcCommand<AffectedRowsExecuteResult> command = getExecuteUpdateJdbcCommand(executorContext, executionContext, prepareParseResult);
              AffectedRowsExecuteResult executeResult = command.execute()) {
             return executeResult.getRows();
-        } catch (Exception e) {
-            throw new EasyQueryException(e);
+        } catch (SQLException e) {
+            throw new EasyQuerySQLCommandException(e);
         }
     }
 

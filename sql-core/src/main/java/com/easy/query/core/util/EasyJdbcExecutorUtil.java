@@ -12,7 +12,7 @@ import com.easy.query.core.basic.jdbc.types.EasyParameter;
 import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
 import com.easy.query.core.common.bean.FastBean;
 import com.easy.query.core.exception.EasyQueryException;
-import com.easy.query.core.exception.EasyQuerySQLExecuteException;
+import com.easy.query.core.exception.EasyQuerySQLException;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
@@ -137,10 +137,10 @@ public class EasyJdbcExecutorUtil {
         }
         return params;
     }
-    public static StreamResultSet query(ExecutorContext executorContext, EasyConnection easyConnection, String sql, List<SQLParameter> sqlParameters){
+    public static StreamResultSet query(ExecutorContext executorContext, EasyConnection easyConnection, String sql, List<SQLParameter> sqlParameters) throws SQLException {
         return query(executorContext,easyConnection,sql,sqlParameters,false,false);
     }
-    public static StreamResultSet query(ExecutorContext executorContext, EasyConnection easyConnection, String sql, List<SQLParameter> sqlParameters,boolean shardingPrint,boolean replicaPrint) {
+    public static StreamResultSet query(ExecutorContext executorContext, EasyConnection easyConnection, String sql, List<SQLParameter> sqlParameters,boolean shardingPrint,boolean replicaPrint) throws SQLException {
         boolean logDebug = log.isDebugEnabled();
         logSQL(logDebug, sql,easyConnection,shardingPrint,replicaPrint);
         QueryRuntimeContext runtimeContext = executorContext.getRuntimeContext();
@@ -173,12 +173,12 @@ public class EasyJdbcExecutorUtil {
 
         } catch (SQLException e) {
             log.error(sql, e);
-            throw new EasyQuerySQLExecuteException(sql, e);
+            throw new EasyQuerySQLException(sql,e);
         }
         return sr;
     }
 
-    public static <T> int insert(ExecutorContext executorContext, EasyConnection easyConnection, String sql, List<T> entities, List<SQLParameter> sqlParameters, boolean fillAutoIncrement,boolean shardingPrint,boolean replicaPrint) {
+    public static <T> int insert(ExecutorContext executorContext, EasyConnection easyConnection, String sql, List<T> entities, List<SQLParameter> sqlParameters, boolean fillAutoIncrement,boolean shardingPrint,boolean replicaPrint) throws SQLException {
         boolean logDebug = log.isDebugEnabled();
         logSQL(logDebug, sql,easyConnection,shardingPrint,replicaPrint);
         QueryRuntimeContext runtimeContext = executorContext.getRuntimeContext();
@@ -236,7 +236,7 @@ public class EasyJdbcExecutorUtil {
             ps.clearBatch();
         } catch (SQLException e) {
             log.error(sql, e);
-            throw new EasyQuerySQLExecuteException(sql, e);
+            throw new EasyQuerySQLException(sql,e);
         } finally {
             clear(ps);
         }
@@ -253,7 +253,7 @@ public class EasyJdbcExecutorUtil {
         }
     }
 
-    public static <T> int executeRows(ExecutorContext executorContext, EasyConnection easyConnection, String sql, List<T> entities, List<SQLParameter> sqlParameters,boolean shardingPrint,boolean replicaPrint) {
+    public static <T> int executeRows(ExecutorContext executorContext, EasyConnection easyConnection, String sql, List<T> entities, List<SQLParameter> sqlParameters,boolean shardingPrint,boolean replicaPrint) throws SQLException {
         boolean logDebug = log.isDebugEnabled();
         logSQL(logDebug, sql,easyConnection,shardingPrint,replicaPrint);
         QueryRuntimeContext runtimeContext = executorContext.getRuntimeContext();
@@ -283,14 +283,14 @@ public class EasyJdbcExecutorUtil {
             ps.clearBatch();
         } catch (SQLException e) {
             log.error(sql, e);
-            throw new EasyQuerySQLExecuteException(sql, e);
+            throw new EasyQuerySQLException(sql,e);
         } finally {
             clear(ps);
         }
         return r;
     }
 
-    public static <T> int executeRows(ExecutorContext executorContext, EasyConnection easyConnection, String sql, List<SQLParameter> sqlParameters,boolean shardingPrint,boolean replicaPrint) {
+    public static <T> int executeRows(ExecutorContext executorContext, EasyConnection easyConnection, String sql, List<SQLParameter> sqlParameters,boolean shardingPrint,boolean replicaPrint) throws SQLException {
         boolean logDebug = log.isDebugEnabled();
         logSQL(logDebug, sql,easyConnection,shardingPrint,replicaPrint);
         QueryRuntimeContext runtimeContext = executorContext.getRuntimeContext();
@@ -308,7 +308,7 @@ public class EasyJdbcExecutorUtil {
             logResult(logDebug, r,easyConnection,shardingPrint,replicaPrint);
         } catch (SQLException e) {
             log.error(sql, e);
-            throw new EasyQuerySQLExecuteException(sql, e);
+            throw new EasyQuerySQLException(sql,e);
         } finally {
             clear(ps);
         }

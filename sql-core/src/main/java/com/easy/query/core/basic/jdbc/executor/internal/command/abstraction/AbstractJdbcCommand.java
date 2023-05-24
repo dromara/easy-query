@@ -40,7 +40,7 @@ public abstract class AbstractJdbcCommand<T extends ExecuteResult> implements Jd
     protected abstract T defaultResult();
 
     @Override
-    public void close() throws Exception {
+    public void close() throws SQLException {
         streamMergeContext.close();
     }
 }

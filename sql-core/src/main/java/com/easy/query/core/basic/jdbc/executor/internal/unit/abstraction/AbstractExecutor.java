@@ -85,7 +85,7 @@ public abstract class AbstractExecutor<TResult> implements Executor<TResult> {
         return result;
     }
 
-    private Collection<TResult> groupExecute(List<CommandExecuteUnit> commandExecuteUnits) {
+    private Collection<TResult> groupExecute(List<CommandExecuteUnit> commandExecuteUnits) throws SQLException {
         if (EasyCollectionUtil.isEmpty(commandExecuteUnits)) {
             return Collections.emptyList();
         }
@@ -116,7 +116,7 @@ public abstract class AbstractExecutor<TResult> implements Executor<TResult> {
         }
     }
 
-    protected abstract TResult executeCommandUnit(CommandExecuteUnit commandExecuteUnit);
+    protected abstract TResult executeCommandUnit(CommandExecuteUnit commandExecuteUnit) throws SQLException;
 
     protected abstract CircuitBreaker createCircuitBreak();
 }

@@ -12,6 +12,7 @@ import com.easy.query.core.basic.jdbc.executor.internal.common.ExecutionUnit;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.segment.PropertyGroup;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.segment.PropertyOrder;
 
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -73,4 +74,7 @@ public interface StreamMergeContext extends AutoCloseable {
     ExecuteMethodEnum getExecuteMethod();
 
     List<EasyConnection> getEasyConnections(ConnectionModeEnum connectionMode, String dataSourceName, int createDbConnectionCount);
+
+    @Override
+    void close() throws SQLException;
 }

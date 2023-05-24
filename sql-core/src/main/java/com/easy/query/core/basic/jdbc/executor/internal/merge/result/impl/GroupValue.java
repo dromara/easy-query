@@ -1,10 +1,8 @@
 package com.easy.query.core.basic.jdbc.executor.internal.merge.result.impl;
 
 import com.easy.query.core.basic.jdbc.executor.internal.merge.result.StreamResultSet;
-import com.easy.query.core.exception.EasyQuerySQLException;
-import com.easy.query.core.expression.segment.AggregationColumnSegment;
+import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import com.easy.query.core.expression.segment.SQLSegment;
-import com.easy.query.core.expression.segment.SubQueryColumnSegment;
 import com.easy.query.core.sharding.context.StreamMergeContext;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.segment.PropertyGroup;
 import com.easy.query.core.util.EasyCollectionUtil;
@@ -39,7 +37,7 @@ public final class GroupValue {
                 PropertyGroup propertyGroup = groups.get(i);
                 int columnIndex = propertyGroup.columnIndex();
                 if(columnIndex<0){
-                    throw new EasyQuerySQLException("group column not in select:"+propertyGroup.propertyName());
+                    throw new EasyQuerySQLCommandException("group column not in select:"+propertyGroup.propertyName());
                 }
                 //因为jdbc的索引是1开始的所以要加1
                 Object groupValue = streamResult.getObject(columnIndex + 1);

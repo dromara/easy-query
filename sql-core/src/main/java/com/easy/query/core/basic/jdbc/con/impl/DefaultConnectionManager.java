@@ -9,7 +9,7 @@ import com.easy.query.core.basic.jdbc.con.EasyDataSourceConnectionFactory;
 import com.easy.query.core.basic.jdbc.tx.DefaultTransaction;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
 import com.easy.query.core.exception.EasyQueryException;
-import com.easy.query.core.exception.EasyQuerySQLException;
+import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import com.easy.query.core.sharding.EasyQueryDataSource;
 
 /**
@@ -36,7 +36,7 @@ public class DefaultConnectionManager implements ConnectionManager {
     public Transaction beginTransaction(Integer isolationLevel) {
         //兼容spring 事务
         if(currentThreadInTransaction()){
-            throw new EasyQuerySQLException("repeat begin transaction");
+            throw new EasyQuerySQLCommandException("repeat begin transaction");
         }
         DefaultTransaction defaultTransaction = new DefaultTransaction(isolationLevel, this);
         threadTx.set(defaultTransaction);

@@ -23,6 +23,7 @@ import com.easy.query.core.basic.jdbc.executor.internal.sharding.merger.impl.Que
 import com.easy.query.core.basic.jdbc.executor.internal.merge.result.StreamResultSet;
 import com.easy.query.core.util.EasyJdbcExecutorUtil;
 
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -38,7 +39,7 @@ public class EasyQueryExecutor extends AbstractExecutor<QueryExecuteResult> {
     }
 
     @Override
-    protected QueryExecuteResult executeCommandUnit(CommandExecuteUnit commandExecuteUnit) {
+    protected QueryExecuteResult executeCommandUnit(CommandExecuteUnit commandExecuteUnit) throws SQLException {
 
         ExecutorContext executorContext = streamMergeContext.getExecutorContext();
 

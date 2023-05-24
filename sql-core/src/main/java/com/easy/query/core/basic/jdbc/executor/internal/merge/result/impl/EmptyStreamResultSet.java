@@ -139,7 +139,7 @@ public final class EmptyStreamResultSet implements ShardingStreamResultSet {
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() throws SQLException {
 
     }
 }

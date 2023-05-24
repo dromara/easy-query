@@ -1,7 +1,7 @@
 package com.easy.query.core.sharding.manager;
 
 import com.easy.query.core.exception.EasyQueryException;
-import com.easy.query.core.exception.EasyQuerySQLException;
+import com.easy.query.core.exception.EasyQuerySQLCommandException;
 
 import java.util.List;
 
@@ -17,7 +17,7 @@ public class DefaultShardingQueryCountManager implements ShardingQueryCountManag
     @Override
     public void begin() {
         if (context.get() != null) {
-            throw new EasyQuerySQLException("repeat begin sharding query count");
+            throw new EasyQuerySQLCommandException("repeat begin sharding query count");
         }
         QueryCountContext queryCountContext = new QueryCountContext();
         context.set(queryCountContext);

@@ -169,7 +169,7 @@ public class EasyPaginationStreamMergeResultSet implements ShardingStreamResultS
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() throws SQLException {
         if (closed) {
             return;
         }

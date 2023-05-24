@@ -58,4 +58,7 @@ public interface StreamResultSet extends AutoCloseable {
     Blob getBlob(int columnIndex) throws SQLException;
 
     BigDecimal getBigDecimal(int columnIndex) throws SQLException;
+
+    @Override
+    void close() throws SQLException;
 }

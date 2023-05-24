@@ -1,10 +1,8 @@
 package com.easy.query.core.basic.jdbc.executor.internal.merge.result.impl.memory;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.result.impl.memory.row.DefaultMemoryResultSetRow;
-import com.easy.query.core.exception.EasyQuerySQLException;
-import com.easy.query.core.expression.segment.AggregationColumnSegment;
+import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import com.easy.query.core.expression.segment.MaybeAggregateColumnSegment;
 import com.easy.query.core.expression.segment.SQLSegment;
-import com.easy.query.core.expression.segment.SubQueryColumnSegment;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.sharding.context.StreamMergeContext;
@@ -100,7 +98,7 @@ public final class EasyInMemoryGroupByOrderStreamMergeResultSet extends Abstract
         if (null == result || result instanceof Comparable) {
             return (Comparable<?>) result;
         }
-        throw new EasyQuerySQLException("aggregation value must implements comparable");
+        throw new EasyQuerySQLCommandException("aggregation value must implements comparable");
     }
     private void setAggregationValueToMemoryRow(StreamMergeContext streamMergeContext,Map<GroupValue, MemoryResultSetRow> dataMap,Map<GroupValue, List<AggregateValue>> aggregationMap) throws SQLException {
         for (Map.Entry<GroupValue, MemoryResultSetRow> dataKv : dataMap.entrySet()) {

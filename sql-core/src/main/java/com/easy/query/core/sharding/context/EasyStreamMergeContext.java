@@ -20,6 +20,7 @@ import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -226,7 +227,7 @@ public class EasyStreamMergeContext implements StreamMergeContext {
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() throws SQLException {
         for (Collection<CloseableConnection> value : closeableDataSourceConnections.values()) {
             for (CloseableConnection closeableConnection : value) {
                try {
@@ -254,7 +255,7 @@ public class EasyStreamMergeContext implements StreamMergeContext {
         }
 
         @Override
-        public void close() throws Exception {
+        public void close() {
             if (ConnectionStrategyEnum.ShareConnection.equals(connectionStrategy)) {
                 easyConnectionManager.closeEasyConnection(easyConnection);
             } else {

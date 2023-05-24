@@ -1,5 +1,7 @@
 package com.easy.query.core.basic.jdbc.executor.internal.result;
 
+import java.sql.SQLException;
+
 /**
  * create time 2023/4/14 16:37
  * 文件说明
@@ -24,6 +26,6 @@ public class AffectedRowsExecuteResult implements ExecuteResult {
 
 
     @Override
-    public void close() throws Exception {
+    public void close() throws SQLException {
     }
 }
