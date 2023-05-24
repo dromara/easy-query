@@ -47,7 +47,7 @@ import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.basic.api.select.Queryable;
 import com.easy.query.core.enums.SQLPredicateCompareEnum;
-import com.easy.query.core.exception.EasyQueryNotFoundException;
+import com.easy.query.core.exception.EasyQueryFirstOrNotNullException;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
@@ -57,6 +57,7 @@ import com.easy.query.core.util.EasyBeanUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyLambdaUtil;
+import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 import com.easy.query.core.util.EasyStringUtil;
 
@@ -246,7 +247,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     public <TR> TR firstNotNull(Class<TR> resultClass, String msg, String code) {
         TR result = firstOrNull(resultClass);
         if (result == null) {
-            throw new EasyQueryNotFoundException(msg, code);
+            throw new EasyQueryFirstOrNotNullException(msg, code);
         }
         return result;
     }
@@ -258,8 +259,8 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
 
     @Override
     public List<Map<String, Object>> toMaps() {
-        List maps = toQueryMaps();
-        return (List<Map<String, Object>>) maps;
+        List<Map> queryMaps = toQueryMaps();
+        return EasyObjectUtil.typeCastNullable(queryMaps);
     }
 
     private List<Map> toQueryMaps() {
