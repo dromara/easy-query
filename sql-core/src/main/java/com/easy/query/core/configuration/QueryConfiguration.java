@@ -15,7 +15,7 @@ import com.easy.query.core.configuration.dialect.Dialect;
 import com.easy.query.core.configuration.nameconversion.NameConversion;
 import com.easy.query.core.basic.plugin.encryption.EncryptionStrategy;
 import com.easy.query.core.exception.EasyQueryException;
-import com.easy.query.core.basic.enums.LogicDeleteStrategyEnum;
+import com.easy.query.core.basic.plugin.logicdel.LogicDeleteStrategyEnum;
 import com.easy.query.core.basic.plugin.interceptor.Interceptor;
 import com.easy.query.core.sharding.initializer.ShardingInitializer;
 import com.easy.query.core.sharding.initializer.UnShardingInitializer;

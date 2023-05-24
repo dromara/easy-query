@@ -1,7 +1,7 @@
 package com.easy.query.core.metadata;
 
 import com.easy.query.core.annotation.*;
-import com.easy.query.core.basic.enums.LogicDeleteStrategyEnum;
+import com.easy.query.core.basic.plugin.logicdel.LogicDeleteStrategyEnum;
 import com.easy.query.core.basic.plugin.conversion.DefaultValueConverter;
 import com.easy.query.core.basic.plugin.conversion.ValueConverter;
 import com.easy.query.core.basic.plugin.interceptor.InterceptorEntry;

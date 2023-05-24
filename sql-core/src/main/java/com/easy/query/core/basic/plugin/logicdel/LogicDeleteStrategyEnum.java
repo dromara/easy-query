@@ -1,4 +1,4 @@
-package com.easy.query.core.basic.enums;
+package com.easy.query.core.basic.plugin.logicdel;
 
 /**
  * @FileName: LogicDeleteStrategyEnum.java

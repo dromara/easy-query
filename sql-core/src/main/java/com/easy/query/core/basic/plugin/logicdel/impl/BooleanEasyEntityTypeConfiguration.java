@@ -1,6 +1,6 @@
 package com.easy.query.core.basic.plugin.logicdel.impl;
 
-import com.easy.query.core.basic.enums.LogicDeleteStrategyEnum;
+import com.easy.query.core.basic.plugin.logicdel.LogicDeleteStrategyEnum;
 import com.easy.query.core.basic.plugin.logicdel.LogicDeleteBuilder;
 import com.easy.query.core.basic.plugin.logicdel.abstraction.AbstractLogicDeleteStrategy;
 import com.easy.query.core.expression.lambda.Property;

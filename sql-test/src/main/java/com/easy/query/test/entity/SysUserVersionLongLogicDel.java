@@ -4,7 +4,7 @@ import com.easy.query.core.annotation.Column;
 import com.easy.query.core.annotation.LogicDelete;
 import com.easy.query.core.annotation.Table;
 import com.easy.query.core.annotation.Version;
-import com.easy.query.core.basic.enums.LogicDeleteStrategyEnum;
+import com.easy.query.core.basic.plugin.logicdel.LogicDeleteStrategyEnum;
 import com.easy.query.core.basic.plugin.version.VersionLongStrategy;
 import lombok.Data;
 
