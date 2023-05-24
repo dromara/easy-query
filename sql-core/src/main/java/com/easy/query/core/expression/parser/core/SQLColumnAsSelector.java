@@ -21,6 +21,11 @@ public interface SQLColumnAsSelector<T1,TR>  {
     TableAvailable getTable();
     SQLColumnAsSelector<T1,TR> column(Property<T1,?> column);
     SQLColumnAsSelector<T1,TR> columnIgnore(Property<T1,?> column);
+
+    /**
+     * 映射到TR的所有列上,按ColumnName进行映射,如果TR上没有对应的列名那么将不会映射查询列
+     * @return
+     */
     SQLColumnAsSelector<T1,TR> columnAll();
     SQLColumnAsSelector<T1,TR> columnAs(Property<T1,?> column, Property<TR, ?> alias);
    <T2> SQLColumnAsSelector<T1,TR> columnSubQueryAs(Function<SQLWherePredicate<T1>,Queryable<T2>> subQueryableFunc, Property<TR, T2> alias);

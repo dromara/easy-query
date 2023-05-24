@@ -6,6 +6,7 @@ import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.func.DefaultColumnFunction;
 import com.easy.query.core.util.EasyLambdaUtil;
+import com.easy.query.core.util.EasyStringUtil;
 import com.easy.query.test.dto.TopicSubQueryBlog;
 import com.easy.query.test.dto.TopicTypeVO;
 import com.easy.query.test.dto.TopicUnion;
@@ -1144,8 +1145,9 @@ public class QueryTest extends BaseTest {
 
     @Test
     public void query66() {
+        String id="123";
         Queryable<TopicUnion> q1 = easyQuery
-                .queryable(Topic.class).where(o -> o.eq(Topic::getId, "123")).select(TopicUnion.class);
+                .queryable(Topic.class).where(o -> o.eq(EasyStringUtil.isNotBlank(id),Topic::getId, id)).select(TopicUnion.class);
         Queryable<TopicUnion> q2 = easyQuery
                 .queryable(Topic.class)
                 .where(o -> o.ge(Topic::getCreateTime, LocalDateTime.of(2020, 1, 1, 1, 1)))

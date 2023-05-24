@@ -13,33 +13,31 @@ import com.easy.query.core.util.EasyLambdaUtil;
  * @author xuejiaming
  */
 public class SQLFunc {
-    public static <T,R> ColumnPropertyFunction ifNULL(Property<T,R> column){
-        return new ColumnPropertyFunction() {
-            @Override
-            public ColumnFunction getColumnFunction() {
-                return MySQLFunc.IFNULL_EMPTY;
-            }
+    public static <T, R> ColumnPropertyFunction ifNULL(Property<T, R> column) {
+        String propertyName = EasyLambdaUtil.getPropertyName(column);
+        return new MyColumnPropertyFunction(propertyName, MySQLFunc.IFNULL_EMPTY);
+    }
 
-            @Override
-            public String getPropertyName() {
-                return EasyLambdaUtil.getPropertyName(column);
-            }
-        };
+    public static <T, R> ColumnPropertyFunction ifNULLOrDefault(Property<T, R> column, R def) {
+        String propertyName = EasyLambdaUtil.getPropertyName(column);
+        if (def instanceof String) {
+            return new MyColumnPropertyFunction(propertyName, new MySQLFunc("'" + def + "'"));
+        }
+        return new MyColumnPropertyFunction(propertyName, new MySQLFunc(String.valueOf(def)));
     }
-    public static <T> ColumnFunction ifNULL(Object value){
-        return new MySQLFunc(String.valueOf(value));
-    }
-    static class MySQLFunc implements ColumnFunction{
-        public static final ColumnFunction IFNULL_EMPTY=new MySQLFunc("");
+
+    static class MySQLFunc implements ColumnFunction {
+        public static final ColumnFunction IFNULL_EMPTY = new MySQLFunc("''");
         private final String defaulValue;
 
-        MySQLFunc(String defaulValue){
+        MySQLFunc(String defaulValue) {
 
             this.defaulValue = defaulValue;
         }
+
         @Override
         public String getFuncColumn(String column) {
-            return String.format("IFNULL(%s,'%s')",column,defaulValue);
+            return String.format("IFNULL(%s,%s)", column, defaulValue);
         }
 
         @Override
@@ -47,7 +45,8 @@ public class SQLFunc {
             return AggregationType.UNKNOWN;
         }
     }
-    public static String getColumnFunc1(String column){
-        return "ifnull("+column+",'')";
+
+    public static String getColumnFunc1(String column) {
+        return "ifnull(" + column + ",'')";
     }
 }
