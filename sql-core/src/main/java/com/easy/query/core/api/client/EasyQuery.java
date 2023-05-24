@@ -52,7 +52,7 @@ public interface EasyQuery {
      * Connection.TRANSACTION_READ_UNCOMMITTED,
      * Connection.TRANSACTION_READ_COMMITTED,
      * Connection.TRANSACTION_REPEATABLE_READ,
-     * Connection.TRANSACTION_SERIALIZABLE.
+     * Connection.TRANSACTION_SERIALIZABLE
      * @param isolationLevel null表示不使用任何指定隔离级别,使用默认的
      * @return
      */

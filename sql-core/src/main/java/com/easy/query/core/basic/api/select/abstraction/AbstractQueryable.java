@@ -63,6 +63,7 @@ import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyLambdaUtil;
 import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasySQLExpressionUtil;
+import com.easy.query.core.util.EasySQLSegmentUtil;
 import com.easy.query.core.util.EasyStringUtil;
 
 import java.lang.reflect.Field;
@@ -348,6 +349,10 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     public <TR> Queryable<TR> select(Class<TR> resultClass, SQLExpression1<SQLColumnAsSelector<T1, TR>> selectExpression) {
         SQLColumnAsSelector<T1, TR> sqlColumnSelector = getSQLExpressionProvider1().getSQLColumnAsSelector(entityQueryExpressionBuilder.getProjects(), resultClass);
         selectExpression.apply(sqlColumnSelector);
+        if (EasySQLSegmentUtil.isEmpty(entityQueryExpressionBuilder.getProjects())) {
+            SQLExpression1<SQLColumnAsSelector<T1, TR>> selectAllExpression = SQLColumnAsSelector::columnAll;
+            selectAllExpression.apply(sqlColumnSelector);
+        }
         return entityQueryExpressionBuilder.getRuntimeContext().getSQLApiFactory().createQueryable(resultClass, entityQueryExpressionBuilder);
     }
 
@@ -383,6 +388,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
         }
         return this;
     }
+
     @Override
     public Queryable<T1> whereById(boolean condition, Object id) {
         if (condition) {
@@ -399,16 +405,17 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     }
 
 
-    private String getSingleKeyPropertyName(TableAvailable table){
+    private String getSingleKeyPropertyName(TableAvailable table) {
         Collection<String> keyProperties = table.getEntityMetadata().getKeyProperties();
-        if(EasyCollectionUtil.isEmpty(keyProperties)){
-            throw new EasyQueryException("对象:"+ EasyClassUtil.getSimpleName(t1Class)+"未找到主键信息");
+        if (EasyCollectionUtil.isEmpty(keyProperties)) {
+            throw new EasyQueryException("对象:" + EasyClassUtil.getSimpleName(t1Class) + "未找到主键信息");
         }
-        if(EasyCollectionUtil.isNotSingle(keyProperties)){
-            throw new EasyQueryException("对象:"+ EasyClassUtil.getSimpleName(t1Class)+"存在多个主键");
+        if (EasyCollectionUtil.isNotSingle(keyProperties)) {
+            throw new EasyQueryException("对象:" + EasyClassUtil.getSimpleName(t1Class) + "存在多个主键");
         }
         return EasyCollectionUtil.first(keyProperties);
     }
+
     @Override
     public Queryable<T1> whereByIds(boolean condition, Object... ids) {
         if (condition) {

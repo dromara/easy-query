@@ -27,6 +27,8 @@ import com.easy.query.test.entity.TopicTypeJsonValue;
 import com.easy.query.test.entity.TopicTypeTest1;
 import com.easy.query.test.enums.TopicTypeEnum;
 import com.easy.query.test.func.SQLFunc;
+import com.easy.query.test.vo.BlogEntityVO1;
+import com.easy.query.test.vo.BlogEntityVO2;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -1145,9 +1147,9 @@ public class QueryTest extends BaseTest {
 
     @Test
     public void query66() {
-        String id="123";
+        String id = "123";
         Queryable<TopicUnion> q1 = easyQuery
-                .queryable(Topic.class).where(o -> o.eq(EasyStringUtil.isNotBlank(id),Topic::getId, id)).select(TopicUnion.class);
+                .queryable(Topic.class).where(o -> o.eq(EasyStringUtil.isNotBlank(id), Topic::getId, id)).select(TopicUnion.class);
         Queryable<TopicUnion> q2 = easyQuery
                 .queryable(Topic.class)
                 .where(o -> o.ge(Topic::getCreateTime, LocalDateTime.of(2020, 1, 1, 1, 1)))
@@ -1225,9 +1227,10 @@ public class QueryTest extends BaseTest {
         System.out.println(topicTypeVO);
         Assert.assertNotNull(topicTypeVO);
 
-        Assert.assertEquals(TopicTypeEnum.TEACHER,topicTypeVO.getTopicType1());
+        Assert.assertEquals(TopicTypeEnum.TEACHER, topicTypeVO.getTopicType1());
 
     }
+
     @Test
     public void query70() {
         TopicTypeTest1 topicType = easyQuery.queryable(TopicTypeTest1.class)
@@ -1254,9 +1257,10 @@ public class QueryTest extends BaseTest {
         Assert.assertNotNull(topicTypeVO);
         System.out.println(topicTypeVO);
 
-        Assert.assertEquals(TopicTypeEnum.CLASSER,topicTypeVO.getTopicType());
+        Assert.assertEquals(TopicTypeEnum.CLASSER, topicTypeVO.getTopicType());
 
     }
+
     @Test
     public void query71() {
         TopicTypeJson topicType = easyQuery.queryable(TopicTypeJson.class)
@@ -1286,11 +1290,124 @@ public class QueryTest extends BaseTest {
         Assert.assertNotNull(topicTypeVO);
         System.out.println(topicTypeVO);
         Assert.assertNotNull(topicTypeVO.getTitle());
-        Assert.assertEquals("123",topicTypeVO.getTitle().getName());
-        Assert.assertEquals(456,(int)topicTypeVO.getTitle().getAge());
+        Assert.assertEquals("123", topicTypeVO.getTitle().getName());
+        Assert.assertEquals(456, (int) topicTypeVO.getTitle().getAge());
 
 
-        Assert.assertEquals(TopicTypeEnum.CLASSER.getCode(),topicTypeVO.getTopicType());
+        Assert.assertEquals(TopicTypeEnum.CLASSER.getCode(), topicTypeVO.getTopicType());
 
+    }
+
+    @Test
+    public void query72() {
+        BlogEntityVO1 blogEntityVO1 = easyQuery.queryable(BlogEntity.class)
+                .where(o -> o.eq(BlogEntity::getId, "2"))
+                .select(BlogEntityVO1.class).firstOrNull();
+        Assert.assertNotNull(blogEntityVO1);
+        System.out.println(blogEntityVO1);
+        String sql = easyQuery.queryable(BlogEntity.class)
+                .where(o -> o.eq(BlogEntity::getId, "2"))
+                .select(BlogEntityVO1.class).limit(1).toSQL();
+        Assert.assertEquals("SELECT t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? LIMIT 1", sql);
+    }
+
+    @Test
+    public void query73() {
+        BlogEntityVO1 blogEntityVO1 = easyQuery.queryable(BlogEntity.class)
+                .where(o -> o.eq(BlogEntity::getId, "2"))
+                .select(BlogEntityVO1.class, o -> o.columnAll()).firstOrNull();
+        Assert.assertNotNull(blogEntityVO1);
+        System.out.println(blogEntityVO1);
+        String sql = easyQuery.queryable(BlogEntity.class)
+                .where(o -> o.eq(BlogEntity::getId, "2"))
+                .select(BlogEntityVO1.class, o -> o.columnAll()).limit(1).toSQL();
+        Assert.assertEquals("SELECT t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? LIMIT 1", sql);
+    }
+
+    @Test
+    public void query74() {
+        BlogEntityVO1 blogEntityVO1 = easyQuery.queryable(BlogEntity.class)
+                .where(o -> o.eq(BlogEntity::getId, "2"))
+                .select(BlogEntityVO1.class, o -> o.columnIgnore(BlogEntity::getId)).firstOrNull();
+        Assert.assertNotNull(blogEntityVO1);
+        System.out.println(blogEntityVO1);
+        String sql = easyQuery.queryable(BlogEntity.class)
+                .where(o -> o.eq(BlogEntity::getId, "2"))
+                .select(BlogEntityVO1.class, o -> o.columnIgnore(BlogEntity::getId)).limit(1).toSQL();
+        Assert.assertEquals("SELECT t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? LIMIT 1", sql);
+    }
+
+    @Test
+    public void query75() {
+        BlogEntityVO1 blogEntityVO1 = easyQuery.queryable(BlogEntity.class)
+                .where(o -> o.eq(BlogEntity::getId, "2"))
+                .select(BlogEntityVO1.class, o -> o.columnIgnore(BlogEntity::getId).columnAs(BlogEntity::getOrder, BlogEntityVO1::getScore)).firstOrNull();
+        Assert.assertNotNull(blogEntityVO1);
+        System.out.println(blogEntityVO1);
+        String sql = easyQuery.queryable(BlogEntity.class)
+                .where(o -> o.eq(BlogEntity::getId, "2"))
+                .select(BlogEntityVO1.class, o -> o.columnIgnore(BlogEntity::getId).columnAs(BlogEntity::getOrder, BlogEntityVO1::getScore)).limit(1).toSQL();
+        Assert.assertEquals("SELECT t.`order` AS `score` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? LIMIT 1", sql);
+    }
+
+    @Test
+    public void query76() {
+        BlogEntityVO1 blogEntityVO1 = easyQuery.queryable(BlogEntity.class)
+                .where(o -> o.eq(BlogEntity::getId, "2"))
+                .select(BlogEntityVO1.class, o -> o.columnAll().columnIgnore(BlogEntity::getScore)).firstOrNull();
+        Assert.assertNotNull(blogEntityVO1);
+        System.out.println(blogEntityVO1);
+        String sql = easyQuery.queryable(BlogEntity.class)
+                .where(o -> o.eq(BlogEntity::getId, "2"))
+                .select(BlogEntityVO1.class, o -> o.columnAll().columnIgnore(BlogEntity::getScore)).limit(1).toSQL();
+        Assert.assertEquals("SELECT t.`status`,t.`order`,t.`is_top`,t.`top` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? LIMIT 1", sql);
+    }
+
+    @Test
+    public void query78() {
+        BlogEntityVO2 blogEntityVO1 = easyQuery.queryable(Topic.class)
+                .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                .where(o -> o.eq(Topic::getId, "2"))
+                .select(BlogEntityVO2.class, (t, t1) -> t1.columnAll().columnIgnore(BlogEntity::getId).then(t).column(Topic::getId)
+                        //.columnAs(Topic::getId,BlogEntityVO2::getId)//如果属性对应的columnName不一致需要as处理
+                ).firstOrNull();
+        Assert.assertNotNull(blogEntityVO1);
+        System.out.println(blogEntityVO1);
+        String sql = easyQuery.queryable(Topic.class)
+                .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                .where(o -> o.eq(Topic::getId, "2"))
+                .select(BlogEntityVO2.class, (t, t1) -> t1.columnAll().columnIgnore(BlogEntity::getId).then(t).column(Topic::getId)).limit(1).toSQL();
+        Assert.assertEquals("SELECT t1.`title`,t1.`content`,t1.`url`,t1.`star`,t1.`publish_time`,t1.`score`,t1.`status`,t1.`order`,t1.`is_top`,t1.`top`,t.`id` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t.`id` = ? LIMIT 1", sql);
+    }
+
+    @Test
+    public void query79() {
+        BlogEntityVO2 blogEntityVO1 = easyQuery.queryable(Topic.class)
+                .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                .where(o -> o.eq(Topic::getId, "2"))
+                .select(BlogEntityVO2.class, (t, t1) -> t1.columnAll().then(t).column(Topic::getId)//如果不进行忽略两个id都查询,但是默认会把后面的覆盖掉前面的
+                ).firstOrNull();
+        Assert.assertNotNull(blogEntityVO1);
+        System.out.println(blogEntityVO1);
+        String sql = easyQuery.queryable(Topic.class)
+                .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                .where(o -> o.eq(Topic::getId, "2"))
+                .select(BlogEntityVO2.class, (t, t1) -> t1.columnAll().then(t).column(Topic::getId)).limit(1).toSQL();
+        Assert.assertEquals("SELECT t1.`id`,t1.`title`,t1.`content`,t1.`url`,t1.`star`,t1.`publish_time`,t1.`score`,t1.`status`,t1.`order`,t1.`is_top`,t1.`top`,t.`id` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t.`id` = ? LIMIT 1", sql);
+    }
+
+    @Test
+    public void query80() {
+        try {
+
+            Map<String, Object> map = easyQuery.queryable(Topic.class)
+                    .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .where(o -> o.eq(Topic::getId, "2"))
+                    .select(BlogEntityVO2.class, (t, t1) -> t1.columnAll().then(t).column(Topic::getId)//如果不进行忽略两个id都查询,但是默认会把后面的覆盖掉前面的
+                    ).toMap();
+        } catch (Exception ex) {
+            Assert.assertTrue(ex instanceof IllegalStateException);
+            Assert.assertEquals("Duplicate key found: id", ex.getMessage());
+        }
     }
 }
