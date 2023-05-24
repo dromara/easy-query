@@ -9,6 +9,10 @@ import com.easy.query.core.basic.plugin.version.VersionStrategy;
 import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.sharding.initializer.ShardingInitializer;
+import com.easy.query.core.sharding.route.manager.DataSourceRouteManager;
+import com.easy.query.core.sharding.route.manager.TableRouteManager;
+import com.easy.query.core.sharding.rule.datasource.DataSourceRouteRule;
+import com.easy.query.core.sharding.rule.table.TableRouteRule;
 import com.easy.query.sql.starter.config.EasyQueryInitializeOption;
 import com.easy.query.sql.starter.config.EasyQueryProperties;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -74,6 +78,14 @@ public class EasyQueryStarterInitializeAutoConfiguration {
         //列转化
         for (Map.Entry<String, ValueConverter<?, ?>> valueConverterEntry : easyQueryInitializeOption.getValueConverterMap().entrySet()) {
             configuration.applyValueConverter(valueConverterEntry.getValue());
+        }
+        TableRouteManager tableRouteManager = runtimeContext.getTableRouteManager();
+        for (Map.Entry<String, TableRouteRule<?>> tableRouteRuleEntry : easyQueryInitializeOption.getTableRouteRuleMap().entrySet()) {
+            tableRouteManager.addRouteRule(tableRouteRuleEntry.getValue());
+        }
+        DataSourceRouteManager dataSourceRouteManager = runtimeContext.getDataSourceRouteManager();
+        for (Map.Entry<String, DataSourceRouteRule<?>> dataSourceRouteRuleEntry : easyQueryInitializeOption.getDataSourceRouteRuleMap().entrySet()) {
+            dataSourceRouteManager.addRouteRule(dataSourceRouteRuleEntry.getValue());
         }
     }
 }

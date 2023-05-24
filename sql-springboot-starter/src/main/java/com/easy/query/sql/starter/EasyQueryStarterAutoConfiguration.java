@@ -19,6 +19,8 @@ import com.easy.query.core.configuration.nameconversion.impl.UnderlinedNameConve
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.sharding.initializer.ShardingInitializer;
+import com.easy.query.core.sharding.rule.datasource.DataSourceRouteRule;
+import com.easy.query.core.sharding.rule.table.TableRouteRule;
 import com.easy.query.core.util.EasyStringUtil;
 import com.easy.query.h2.config.H2DatabaseConfiguration;
 import com.easy.query.mssql.MsSQLDatabaseConfiguration;
@@ -163,7 +165,14 @@ public class EasyQueryStarterAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public EasyQueryInitializeOption easyQueryInitializeOption(Map<String, Interceptor> interceptorMap, Map<String, VersionStrategy> versionStrategyMap, Map<String, LogicDeleteStrategy> logicDeleteStrategyMap, Map<String, ShardingInitializer> shardingInitializerMap, Map<String, EncryptionStrategy> encryptionStrategyMap, Map<String, ValueConverter<?, ?>> valueConverterMap) {
-        return new EasyQueryInitializeOption(interceptorMap, versionStrategyMap, logicDeleteStrategyMap, shardingInitializerMap, encryptionStrategyMap, valueConverterMap);
+    public EasyQueryInitializeOption easyQueryInitializeOption(Map<String, Interceptor> interceptorMap,
+                                                               Map<String, VersionStrategy> versionStrategyMap,
+                                                               Map<String, LogicDeleteStrategy> logicDeleteStrategyMap,
+                                                               Map<String, ShardingInitializer> shardingInitializerMap,
+                                                               Map<String, EncryptionStrategy> encryptionStrategyMap,
+                                                               Map<String, ValueConverter<?, ?>> valueConverterMap,
+                                                               Map<String, TableRouteRule<?>> tableRouteRuleMap,
+                                                               Map<String, DataSourceRouteRule<?>> dataSourceRouteRuleMap) {
+        return new EasyQueryInitializeOption(interceptorMap, versionStrategyMap, logicDeleteStrategyMap, shardingInitializerMap, encryptionStrategyMap, valueConverterMap,tableRouteRuleMap,dataSourceRouteRuleMap);
     }
 }

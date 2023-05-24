@@ -6,6 +6,8 @@ import com.easy.query.core.basic.plugin.interceptor.Interceptor;
 import com.easy.query.core.basic.plugin.logicdel.LogicDeleteStrategy;
 import com.easy.query.core.basic.plugin.version.VersionStrategy;
 import com.easy.query.core.sharding.initializer.ShardingInitializer;
+import com.easy.query.core.sharding.rule.datasource.DataSourceRouteRule;
+import com.easy.query.core.sharding.rule.table.TableRouteRule;
 
 import java.util.Map;
 
@@ -23,6 +25,8 @@ public final class EasyQueryInitializeOption {
     private final Map<String, ShardingInitializer> shardingInitializerMap;
     private final Map<String, EncryptionStrategy> encryptionStrategyMap;
     private final Map<String, ValueConverter<?, ?>> valueConverterMap;
+    private final Map<String, TableRouteRule<?>> tableRouteRuleMap;
+    private final Map<String, DataSourceRouteRule<?>> dataSourceRouteRuleMap;
 
     public Map<String, Interceptor> getInterceptorMap() {
         return interceptorMap;
@@ -48,7 +52,17 @@ public final class EasyQueryInitializeOption {
         return valueConverterMap;
     }
 
-    public EasyQueryInitializeOption(Map<String, Interceptor> interceptorMap, Map<String, VersionStrategy> versionStrategyMap, Map<String, LogicDeleteStrategy> logicDeleteStrategyMap, Map<String, ShardingInitializer> shardingInitializerMap, Map<String, EncryptionStrategy> encryptionStrategyMap, Map<String, ValueConverter<?,?>> valueConverterMap){
+    public Map<String, TableRouteRule<?>> getTableRouteRuleMap() {
+        return tableRouteRuleMap;
+    }
+
+    public Map<String, DataSourceRouteRule<?>> getDataSourceRouteRuleMap() {
+        return dataSourceRouteRuleMap;
+    }
+
+    public EasyQueryInitializeOption(Map<String, Interceptor> interceptorMap, Map<String, VersionStrategy> versionStrategyMap, Map<String, LogicDeleteStrategy> logicDeleteStrategyMap, Map<String, ShardingInitializer> shardingInitializerMap, Map<String, EncryptionStrategy> encryptionStrategyMap, Map<String, ValueConverter<?,?>> valueConverterMap,
+                                     Map<String, TableRouteRule<?>> tableRouteRuleMap,
+                                     Map<String, DataSourceRouteRule<?>> dataSourceRouteRuleMap){
 
         this.interceptorMap = interceptorMap;
         this.versionStrategyMap = versionStrategyMap;
@@ -56,6 +70,8 @@ public final class EasyQueryInitializeOption {
         this.shardingInitializerMap = shardingInitializerMap;
         this.encryptionStrategyMap = encryptionStrategyMap;
         this.valueConverterMap = valueConverterMap;
+        this.tableRouteRuleMap = tableRouteRuleMap;
+        this.dataSourceRouteRuleMap = dataSourceRouteRuleMap;
     }
 
 }
