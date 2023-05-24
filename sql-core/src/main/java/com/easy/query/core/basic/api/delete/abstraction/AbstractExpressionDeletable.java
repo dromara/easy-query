@@ -24,11 +24,9 @@ import com.easy.query.core.expression.sql.builder.EntityDeleteExpressionBuilder;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.function.Function;
 
 /**
@@ -87,14 +85,16 @@ public abstract   class AbstractExpressionDeletable<T> extends AbstractSQLExecut
     }
 
     @Override
-    public Deletable<T, ExpressionDeletable<T>> whereById(Object id) {
+    public Deletable<T, ExpressionDeletable<T>> whereById(boolean condition,Object id) {
 
-        PredicateSegment where = entityDeleteExpressionBuilder.getWhere();
-        String keyProperty = getSingleKeyPropertyName();
-        AndPredicateSegment andPredicateSegment = new AndPredicateSegment();
-        andPredicateSegment
-                .setPredicate(new ColumnValuePredicate(table.getEntityTable(), keyProperty, id, SQLPredicateCompareEnum.EQ, entityDeleteExpressionBuilder.getRuntimeContext()));
-        where.addPredicateSegment(andPredicateSegment);
+        if(condition){
+            PredicateSegment where = entityDeleteExpressionBuilder.getWhere();
+            String keyProperty = getSingleKeyPropertyName();
+            AndPredicateSegment andPredicateSegment = new AndPredicateSegment();
+            andPredicateSegment
+                    .setPredicate(new ColumnValuePredicate(table.getEntityTable(), keyProperty, id, SQLPredicateCompareEnum.EQ, entityDeleteExpressionBuilder.getRuntimeContext()));
+            where.addPredicateSegment(andPredicateSegment);
+        }
         return this;
     }
     private String getSingleKeyPropertyName(){
@@ -115,20 +115,26 @@ public abstract   class AbstractExpressionDeletable<T> extends AbstractSQLExecut
         return Arrays.asList(ids);
     }
     @Override
-    public Deletable<T, ExpressionDeletable<T>> whereByIds(Object... ids) {
-        Collection<?> extractIds = extractIds(ids);
-        return whereByIds(extractIds);
+    public Deletable<T, ExpressionDeletable<T>> whereByIds(boolean condition,Object... ids) {
+        if(condition){
+
+            Collection<?> extractIds = extractIds(ids);
+            return whereByIdCollection(true,extractIds);
+        }
+        return this;
     }
 
     @Override
-    public Deletable<T, ExpressionDeletable<T>> whereByIds(Collection<?> ids) {
+    public <TProperty> Deletable<T, ExpressionDeletable<T>> whereByIdCollection(boolean condition, Collection<TProperty> ids) {
 
-        PredicateSegment where = entityDeleteExpressionBuilder.getWhere();
-        String keyProperty = getSingleKeyPropertyName();
-        AndPredicateSegment andPredicateSegment = new AndPredicateSegment();
-        andPredicateSegment
-                .setPredicate(new ColumnCollectionPredicate(table.getEntityTable(), keyProperty, ids, SQLPredicateCompareEnum.IN, entityDeleteExpressionBuilder.getRuntimeContext()));
-        where.addPredicateSegment(andPredicateSegment);
+        if(condition){
+            PredicateSegment where = entityDeleteExpressionBuilder.getWhere();
+            String keyProperty = getSingleKeyPropertyName();
+            AndPredicateSegment andPredicateSegment = new AndPredicateSegment();
+            andPredicateSegment
+                    .setPredicate(new ColumnCollectionPredicate(table.getEntityTable(), keyProperty, ids, SQLPredicateCompareEnum.IN, entityDeleteExpressionBuilder.getRuntimeContext()));
+            where.addPredicateSegment(andPredicateSegment);
+        }
         return this;
     }
 

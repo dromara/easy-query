@@ -47,7 +47,9 @@ public class InsertTest extends BaseTest {
         topicAuto.setStars(999);
         topicAuto.setTitle("title" + 999);
         topicAuto.setCreateTime(LocalDateTime.now().plusDays(99));
-        long l = easyQuery.insertable(topicAuto).executeRows();
+        Assert.assertNull(topicAuto.getId());
+        long l = easyQuery.insertable(topicAuto).executeRows(true);
         Assert.assertEquals(1,l);
+        Assert.assertNotNull(topicAuto.getId());
     }
 }

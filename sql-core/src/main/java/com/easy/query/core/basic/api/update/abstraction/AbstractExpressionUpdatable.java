@@ -1,5 +1,6 @@
 package com.easy.query.core.basic.api.update.abstraction;
 
+import com.easy.query.core.basic.api.select.Queryable;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.basic.api.internal.AbstractSQLExecuteRows;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
@@ -12,10 +13,12 @@ import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.SQLWherePredicate;
 import com.easy.query.core.expression.parser.core.SQLColumnSetter;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.impl.DefaultSQLColumnSetter;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.DefaultSQLPredicate;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
+import com.easy.query.core.expression.segment.condition.predicate.ColumnCollectionPredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnValuePredicate;
 import com.easy.query.core.expression.sql.builder.impl.TableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
@@ -24,8 +27,11 @@ import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.api.update.ExpressionUpdatable;
 import com.easy.query.core.metadata.EntityMetadata;
+import com.easy.query.core.util.EasyCollectionUtil;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.function.Function;
 
 /**
@@ -39,6 +45,7 @@ public abstract class AbstractExpressionUpdatable<T> extends AbstractSQLExecuteR
     protected final  EntityMetadata entityMetadata;
     protected final EntityUpdateExpressionBuilder entityUpdateExpressionBuilder;
     protected final SQLColumnSetter<T> sqlColumnSetter;
+    protected final TableAvailable table;
 
     public AbstractExpressionUpdatable(Class<T> clazz, EntityUpdateExpressionBuilder entityUpdateExpressionBuilder) {
         super(entityUpdateExpressionBuilder);
@@ -49,7 +56,7 @@ public abstract class AbstractExpressionUpdatable<T> extends AbstractSQLExecuteR
         entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(clazz);
         entityMetadata.checkTable();
         EntityTableExpressionBuilder table = runtimeContext.getExpressionBuilderFactory().createEntityTableExpressionBuilder(entityMetadata, 0, null, MultiTableTypeEnum.NONE, runtimeContext);
-
+this.table=table.getEntityTable();
         this.entityUpdateExpressionBuilder.addSQLEntityTableExpression(table);
         sqlColumnSetter = new DefaultSQLColumnSetter<>(0, entityUpdateExpressionBuilder, entityUpdateExpressionBuilder.getSetColumns());
     }
@@ -109,21 +116,54 @@ public abstract class AbstractExpressionUpdatable<T> extends AbstractSQLExecuteR
         if(condition){
 
             PredicateSegment where = entityUpdateExpressionBuilder.getWhere();
-            EntityTableExpressionBuilder table = entityUpdateExpressionBuilder.getTable(0);
-            Collection<String> keyProperties = table.getEntityMetadata().getKeyProperties();
-            if(keyProperties.isEmpty()){
-                throw new EasyQueryException("对象:"+ EasyClassUtil.getSimpleName(clazz)+"未找到主键信息");
-            }
-            if(keyProperties.size()>1){
-                throw new EasyQueryException("对象:"+ EasyClassUtil.getSimpleName(clazz)+"存在多个主键");
-            }
-            String keyProperty = keyProperties.iterator().next();
+            String keyProperty = getSingleKeyPropertyName();
             AndPredicateSegment andPredicateSegment = new AndPredicateSegment();
             andPredicateSegment
-                    .setPredicate(new ColumnValuePredicate(table.getEntityTable(), keyProperty, id, SQLPredicateCompareEnum.EQ, entityUpdateExpressionBuilder.getRuntimeContext()));
+                    .setPredicate(new ColumnValuePredicate(table, keyProperty, id, SQLPredicateCompareEnum.EQ, entityUpdateExpressionBuilder.getRuntimeContext()));
             where.addPredicateSegment(andPredicateSegment);
         }
         return this;
+    }
+
+    private String getSingleKeyPropertyName(){
+        Collection<String> keyProperties = table.getEntityMetadata().getKeyProperties();
+        if(EasyCollectionUtil.isEmpty(keyProperties)){
+            throw new EasyQueryException("对象:"+ EasyClassUtil.getSimpleName(clazz)+"未找到主键信息");
+        }
+        if(EasyCollectionUtil.isNotSingle(keyProperties)){
+            throw new EasyQueryException("对象:"+ EasyClassUtil.getSimpleName(clazz)+"存在多个主键");
+        }
+        return EasyCollectionUtil.first(keyProperties);
+    }
+    @Override
+    public ExpressionUpdatable<T> whereByIds(boolean condition, Object... ids) {
+        if (condition) {
+            Collection<?> extractIds = extractIds(ids);
+            return whereByIds(true, extractIds);
+        }
+        return this;
+    }
+
+    @Override
+    public <TProperty> ExpressionUpdatable<T> whereByIds(boolean condition, Collection<TProperty> ids) {
+
+        if (condition) {
+            String keyProperty = getSingleKeyPropertyName();
+            AndPredicateSegment andPredicateSegment = new AndPredicateSegment();
+            PredicateSegment where = entityUpdateExpressionBuilder.getWhere();
+            andPredicateSegment
+                    .setPredicate(new ColumnCollectionPredicate(table, keyProperty, ids, SQLPredicateCompareEnum.IN, entityUpdateExpressionBuilder.getRuntimeContext()));
+            where.addPredicateSegment(andPredicateSegment);
+        }
+        return this;
+    }
+
+
+    private Collection<?> extractIds(Object... ids) {
+        if (ids == null || ids.length == 0) {
+            return Collections.emptyList();
+        }
+        return Arrays.asList(ids);
     }
 
     @Override

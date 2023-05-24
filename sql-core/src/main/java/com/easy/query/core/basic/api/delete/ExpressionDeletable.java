@@ -19,7 +19,16 @@ public interface ExpressionDeletable<T> extends Deletable<T, ExpressionDeletable
     ExpressionDeletable<T> where(boolean condition, SQLExpression1<SQLWherePredicate<T>> whereExpression);
 
 
-    Deletable<T, ExpressionDeletable<T>> whereById(Object id);
-    Deletable<T, ExpressionDeletable<T>> whereByIds(Object ...ids);
-    Deletable<T, ExpressionDeletable<T>> whereByIds(Collection<?> ids);
+   default Deletable<T, ExpressionDeletable<T>> whereById(Object id){
+       return whereById(true,id);
+   }
+    Deletable<T, ExpressionDeletable<T>> whereById(boolean condition,Object id);
+   default Deletable<T, ExpressionDeletable<T>> whereByIds(Object ...ids){
+       return whereByIds(true,ids);
+   }
+    Deletable<T, ExpressionDeletable<T>> whereByIds(boolean condition,Object ...ids);
+   default <TProperty> Deletable<T, ExpressionDeletable<T>> whereByIdCollection(Collection<TProperty> ids){
+       return whereByIdCollection(true,ids);
+   }
+    <TProperty> Deletable<T, ExpressionDeletable<T>> whereByIdCollection(boolean condition, Collection<TProperty> ids);
 }

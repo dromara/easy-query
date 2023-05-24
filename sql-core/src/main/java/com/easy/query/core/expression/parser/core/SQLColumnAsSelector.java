@@ -8,6 +8,7 @@ import com.easy.query.core.expression.func.DefaultColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -28,7 +29,7 @@ public interface SQLColumnAsSelector<T1,TR>  {
      */
     SQLColumnAsSelector<T1,TR> columnAll();
     SQLColumnAsSelector<T1,TR> columnAs(Property<T1,?> column, Property<TR, ?> alias);
-   <T2> SQLColumnAsSelector<T1,TR> columnSubQueryAs(Function<SQLWherePredicate<T1>,Queryable<T2>> subQueryableFunc, Property<TR, T2> alias);
+   <TSubQuery> SQLColumnAsSelector<T1,TR> columnSubQueryAs(Function<SQLWherePredicate<T1>,Queryable<TSubQuery>> subQueryableFunc, Property<TR, TSubQuery> alias);
    default SQLColumnAsSelector<T1,TR> columnCount(Property<T1,?> column){
        return columnCountAs(column,null);
    }

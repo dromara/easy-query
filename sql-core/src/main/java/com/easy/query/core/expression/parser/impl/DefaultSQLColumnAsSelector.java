@@ -21,6 +21,7 @@ import com.easy.query.core.util.EasyLambdaUtil;
 
 import java.util.Collection;
 import java.util.Objects;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -50,10 +51,10 @@ public class DefaultSQLColumnAsSelector<T1, TR> extends AbstractSQLColumnSelecto
     }
 
     @Override
-    public <T2> SQLColumnAsSelector<T1, TR> columnSubQueryAs(Function<SQLWherePredicate<T1>,Queryable<T2>> subQueryableFunc, Property<TR, T2> alias) {
+    public <TSubQuery> SQLColumnAsSelector<T1, TR> columnSubQueryAs(Function<SQLWherePredicate<T1>,Queryable<TSubQuery>> subQueryableFunc, Property<TR, TSubQuery> alias) {
         SQLExpressionProvider<T1> sqlExpressionProvider = runtimeContext.getSQLExpressionInvokeFactory().createSQLExpressionProvider(index, entityQueryExpressionBuilder);
         SQLWherePredicate<T1> sqlWherePredicate = sqlExpressionProvider.getSQLWherePredicate();
-        Queryable<T2> subQueryable = subQueryableFunc.apply(sqlWherePredicate);
+        Queryable<TSubQuery> subQueryable = subQueryableFunc.apply(sqlWherePredicate);
         extract(subQueryable);
         EntityTableExpressionBuilder table = entityQueryExpressionBuilder.getTable(index);
         String aliasColumnName = getResultColumnName(alias);

@@ -1,5 +1,7 @@
 package com.easy.query.core.enums;
 
+import com.easy.query.core.util.EasyBitwiseUtil;
+
 /**
  * @Description: 文件说明
  * @Date: 2023/3/17 22:06
@@ -16,9 +18,9 @@ public enum SQLRangeEnum {
     private static final int OPEN_FIRST= OPEN.code | OPEN_CLOSED.code;
     private static final int OPEN_END= OPEN.code | CLOSED_OPEN.code;
     public static boolean openFirst(SQLRangeEnum sqlRange){
-        return (OPEN_FIRST& sqlRange.code)== sqlRange.code;
+        return EasyBitwiseUtil.hasBit(OPEN_FIRST,sqlRange.code);
     }
     public static boolean openEnd(SQLRangeEnum sqlRange){
-        return (OPEN_END& sqlRange.code)== sqlRange.code;
+        return EasyBitwiseUtil.hasBit(OPEN_END,sqlRange.code);
     }
 }

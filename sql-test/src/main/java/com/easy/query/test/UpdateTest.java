@@ -238,4 +238,13 @@ public class UpdateTest extends BaseTest {
                 .where(o -> o.eq(TopicTypeTest1::getTopicType, TopicTypeEnum.CLASSER))
                 .executeRows();
     }
+    @Test
+    public void updateTest12(){
+        Topic topic = easyQuery.queryable(Topic.class).whereById("15").firstOrNull();
+        Assert.assertNotNull(topic);
+        long rows4 = easyQuery.updatable(topic)
+                .setColumns(o->o.column(Topic::getCreateTime))
+                .whereColumns(o->o.column(Topic::getStars)).executeRows();
+        Assert.assertEquals(1, rows4);
+    }
 }

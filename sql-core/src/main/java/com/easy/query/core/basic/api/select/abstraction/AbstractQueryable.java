@@ -1,8 +1,12 @@
 package com.easy.query.core.basic.api.select.abstraction;
 
+import com.easy.query.core.basic.api.delete.Deletable;
+import com.easy.query.core.basic.api.delete.ExpressionDeletable;
 import com.easy.query.core.basic.api.select.provider.SQLExpressionProvider;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.SQLUnionEnum;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.segment.condition.predicate.ColumnCollectionPredicate;
 import com.easy.query.core.sharding.manager.SequenceCountLine;
 import com.easy.query.core.sharding.manager.SequenceCountNode;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
@@ -77,7 +81,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     protected final Class<T1> t1Class;
     protected final EntityQueryExpressionBuilder entityQueryExpressionBuilder;
     protected final QueryRuntimeContext runtimeContext;
-    protected  SQLExpressionProvider<T1> sqlExpressionProvider1;
+    protected SQLExpressionProvider<T1> sqlExpressionProvider1;
 
     @Override
     public Class<T1> queryClass() {
@@ -92,9 +96,9 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
 
 
     @Override
-    public SQLExpressionProvider<T1> getSQLExpressionProvider1(){
-        if(sqlExpressionProvider1==null){
-            sqlExpressionProvider1=runtimeContext.getSQLExpressionInvokeFactory().createSQLExpressionProvider(0,this.entityQueryExpressionBuilder);
+    public SQLExpressionProvider<T1> getSQLExpressionProvider1() {
+        if (sqlExpressionProvider1 == null) {
+            sqlExpressionProvider1 = runtimeContext.getSQLExpressionInvokeFactory().createSQLExpressionProvider(0, this.entityQueryExpressionBuilder);
         }
         return sqlExpressionProvider1;
     }
@@ -379,27 +383,62 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
         }
         return this;
     }
-
     @Override
     public Queryable<T1> whereById(boolean condition, Object id) {
         if (condition) {
 
             PredicateSegment where = entityQueryExpressionBuilder.getWhere();
-            EntityTableExpressionBuilder table = entityQueryExpressionBuilder.getTable(0);
-            Collection<String> keyProperties = table.getEntityMetadata().getKeyProperties();
-            if (keyProperties.isEmpty()) {
-                throw new EasyQueryException("对象:" + EasyClassUtil.getSimpleName(t1Class) + "未找到主键信息");
-            }
-            if (keyProperties.size() > 1) {
-                throw new EasyQueryException("对象:" + EasyClassUtil.getSimpleName(t1Class) + "存在多个主键");
-            }
-            String keyProperty = keyProperties.iterator().next();
+            TableAvailable table = entityQueryExpressionBuilder.getTable(0).getEntityTable();
+            String keyProperty = getSingleKeyPropertyName(table);
             AndPredicateSegment andPredicateSegment = new AndPredicateSegment();
             andPredicateSegment
-                    .setPredicate(new ColumnValuePredicate(table.getEntityTable(), keyProperty, id, SQLPredicateCompareEnum.EQ, entityQueryExpressionBuilder.getRuntimeContext()));
+                    .setPredicate(new ColumnValuePredicate(table, keyProperty, id, SQLPredicateCompareEnum.EQ, entityQueryExpressionBuilder.getRuntimeContext()));
             where.addPredicateSegment(andPredicateSegment);
         }
         return this;
+    }
+
+
+    private String getSingleKeyPropertyName(TableAvailable table){
+        Collection<String> keyProperties = table.getEntityMetadata().getKeyProperties();
+        if(EasyCollectionUtil.isEmpty(keyProperties)){
+            throw new EasyQueryException("对象:"+ EasyClassUtil.getSimpleName(t1Class)+"未找到主键信息");
+        }
+        if(EasyCollectionUtil.isNotSingle(keyProperties)){
+            throw new EasyQueryException("对象:"+ EasyClassUtil.getSimpleName(t1Class)+"存在多个主键");
+        }
+        return EasyCollectionUtil.first(keyProperties);
+    }
+    @Override
+    public Queryable<T1> whereByIds(boolean condition, Object... ids) {
+        if (condition) {
+            Collection<?> extractIds = extractIds(ids);
+            return whereByIds(true, extractIds);
+        }
+        return this;
+    }
+
+    @Override
+    public <TProperty> Queryable<T1> whereByIds(boolean condition, Collection<TProperty> ids) {
+
+        if (condition) {
+            PredicateSegment where = entityQueryExpressionBuilder.getWhere();
+            TableAvailable table = entityQueryExpressionBuilder.getTable(0).getEntityTable();
+            String keyProperty = getSingleKeyPropertyName(table);
+            AndPredicateSegment andPredicateSegment = new AndPredicateSegment();
+            andPredicateSegment
+                    .setPredicate(new ColumnCollectionPredicate(table, keyProperty, ids, SQLPredicateCompareEnum.IN, entityQueryExpressionBuilder.getRuntimeContext()));
+            where.addPredicateSegment(andPredicateSegment);
+        }
+        return this;
+    }
+
+
+    private Collection<?> extractIds(Object... ids) {
+        if (ids == null || ids.length == 0) {
+            return Collections.emptyList();
+        }
+        return Arrays.asList(ids);
     }
 
     /**

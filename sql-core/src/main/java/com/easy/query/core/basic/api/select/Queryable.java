@@ -256,6 +256,16 @@ public interface Queryable<T1> extends Query<T1>,
 
     Queryable<T1> whereById(boolean condition, Object id);
 
+   default Queryable<T1> whereByIds(Object... ids){
+       return whereByIds(true,ids);
+   }
+    Queryable<T1> whereByIds(boolean condition,Object... ids);
+
+  default <TProperty> Queryable<T1> whereByIds(Collection<TProperty> ids){
+      return whereByIds(true,ids);
+  }
+ <TProperty>  Queryable<T1> whereByIds(boolean condition,Collection<TProperty> ids);
+
     /**
      * @param object
      * @return

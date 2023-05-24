@@ -19,6 +19,7 @@ import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 
 import java.util.Collection;
 import java.util.Objects;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -42,7 +43,7 @@ public class DefaultAutoSQLColumnAsSelector<T1, TR> extends AbstractSQLColumnSel
     }
 
     @Override
-    public <T2> SQLColumnAsSelector<T1, TR> columnSubQueryAs(Function<SQLWherePredicate<T1>,Queryable<T2>> subQueryableFunc, Property<TR, T2> alias) {
+    public <TSubQuery> SQLColumnAsSelector<T1, TR> columnSubQueryAs(Function<SQLWherePredicate<T1>,Queryable<TSubQuery>> subQueryableFunc, Property<TR, TSubQuery> alias) {
         throw new UnsupportedOperationException();
     }
 

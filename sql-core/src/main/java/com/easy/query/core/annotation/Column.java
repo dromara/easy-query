@@ -21,11 +21,12 @@ import java.lang.annotation.RetentionPolicy;
 public @interface Column {
     /**
      * 是否是主键
+     * 主键列用于对象更新、删除操作
      */
     boolean primaryKey() default false;
     /**
      * 是否是自增键
-     * 自增列不会出现在insert语句中,并且会自动回填返回值
+     * 自增列不会出现在insert语句中,并且调用{@link com.easy.query.core.basic.api.insert.Insertable#executeRows(boolean)}传入true参数会自动回填返回值
      */
     boolean increment() default false;
     /**

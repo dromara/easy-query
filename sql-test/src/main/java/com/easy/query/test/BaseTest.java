@@ -6,6 +6,7 @@ import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.api.client.EasyQuery;
 import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.configuration.EasyQueryShardingOption;
+import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.sharding.route.manager.DataSourceRouteManager;
 import com.easy.query.core.sharding.route.manager.TableRouteManager;
@@ -121,10 +122,8 @@ public abstract class BaseTest {
                     op.setDefaultDataSourceName("ds2020");
                     op.setThrowIfRouteNotMatch(false);
                     op.setMaxShardingRouteCount(512);
-//                    op.setQueryLargeColumn(false);
                 })
                 .useDatabaseConfigure(new MySQLDatabaseConfiguration())
-//                .replaceService(EasyShardingOption.class, new EasyShardingOption(2, 0))
                 .build();
         QueryRuntimeContext runtimeContext = easyQuery.getRuntimeContext();
         QueryConfiguration configuration = runtimeContext.getQueryConfiguration();
