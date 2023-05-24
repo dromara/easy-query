@@ -19,12 +19,12 @@ public final class EasyConstSQLParameter implements ConstSQLParameter {
     }
 
     @Override
-    public TableAvailable getTable() {
+    public TableAvailable getTableOrNull() {
         return entityTable;
     }
 
     @Override
-    public String getPropertyName() {
+    public String getPropertyNameOrNull() {
         return propertyName;
     }
 

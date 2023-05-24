@@ -8,7 +8,7 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
  * @author xuejiaming
  */
 public interface SQLParameter {
-    TableAvailable getTable();
-    String getPropertyName();
+    TableAvailable getTableOrNull();
+    String getPropertyNameOrNull();
     Object getValue();
 }

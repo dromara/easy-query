@@ -1,5 +1,6 @@
 package com.easy.query.core.basic.jdbc.executor;
 
+import com.easy.query.core.basic.plugin.conversion.ValueConverter;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.metadata.ColumnMetadata;
@@ -73,13 +74,18 @@ public class ExecutorContext {
     }
 
     public Object toValue(SQLParameter sqlParameter, Object value) {
-        if (value != null&&sqlParameter.getTable()!=null) {
-            Class<?> entityClass = sqlParameter.getTable().getEntityClass();
-            EntityMetadata entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(entityClass);
-            String propertyName = sqlParameter.getPropertyName();
-            ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(propertyName);
-            Object toValue = toValue(columnMetadata, sqlParameter, value, entityClass, propertyName);
-            return columnMetadata.getValueConverter().serialize(EasyObjectUtil.typeCast(toValue));
+        if(sqlParameter.getTableOrNull()!=null){
+            EntityMetadata entityMetadata = sqlParameter.getTableOrNull().getEntityMetadata();
+            String propertyName = sqlParameter.getPropertyNameOrNull();
+            if(propertyName!=null){
+                ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(propertyName);
+                ValueConverter<?, ?> valueConverter = columnMetadata.getValueConverter();
+                if(value!=null){
+                    Object toValue = toValue(columnMetadata, sqlParameter, value, entityMetadata.getEntityClass(), propertyName);
+                    return valueConverter.serialize(EasyObjectUtil.typeCast(toValue));
+                }
+                return valueConverter.serialize(null);
+            }
         }
         return value;
     }

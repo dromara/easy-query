@@ -15,13 +15,13 @@ public final class ConstLikeSQLParameter implements ConstSQLParameter, SQLLikePa
     }
 
     @Override
-    public TableAvailable getTable() {
-        return constSQLParameter.getTable();
+    public TableAvailable getTableOrNull() {
+        return constSQLParameter.getTableOrNull();
     }
 
     @Override
-    public String getPropertyName() {
-        return constSQLParameter.getPropertyName();
+    public String getPropertyNameOrNull() {
+        return constSQLParameter.getPropertyNameOrNull();
     }
 
     @Override

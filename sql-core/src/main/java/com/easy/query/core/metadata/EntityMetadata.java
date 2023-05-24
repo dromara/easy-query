@@ -322,7 +322,7 @@ public class EntityMetadata {
     public String getTableName() {
         return tableName;
     }
-    public String getSchema() {
+    public String getSchemaOrNull() {
         return schema;
     }
 

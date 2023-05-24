@@ -24,18 +24,18 @@ public class VersionPropertySQLParameter implements BeanSQLParameter {
     }
 
     @Override
-    public TableAvailable getTable() {
-        return beanSQLParameter.getTable();
+    public TableAvailable getTableOrNull() {
+        return beanSQLParameter.getTableOrNull();
     }
 
     @Override
-    public String getPropertyName() {
-        return beanSQLParameter.getPropertyName();
+    public String getPropertyNameOrNull() {
+        return beanSQLParameter.getPropertyNameOrNull();
     }
 
     @Override
     public Object getValue() {
         Object value = beanSQLParameter.getValue();
-        return easyVersionStrategy.nextVersion(getTable().getEntityMetadata(),getPropertyName(),value);
+        return easyVersionStrategy.nextVersion(getTableOrNull().getEntityMetadata(), getPropertyNameOrNull(),value);
     }
 }

@@ -20,7 +20,7 @@ public final class EntityTableAvailable implements TableAvailable {
 
         this.tableIndex = tableIndex;
         this.entityMetadata = entityMetadata;
-        this.hasSchema= EasyStringUtil.isNotBlank(entityMetadata.getSchema());
+        this.hasSchema= EasyStringUtil.isNotBlank(entityMetadata.getSchemaOrNull());
         this.alias = alias;
     }
     @Override
@@ -45,7 +45,7 @@ public final class EntityTableAvailable implements TableAvailable {
 
     @Override
     public String getSchema() {
-        return entityMetadata.getSchema();
+        return entityMetadata.getSchemaOrNull();
     }
 
     @Override

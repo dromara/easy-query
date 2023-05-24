@@ -24,7 +24,7 @@ public final class PropertySQLParameter implements BeanSQLParameter {
     }
 
     @Override
-    public TableAvailable getTable() {
+    public TableAvailable getTableOrNull() {
         return table;
     }
 
@@ -46,7 +46,7 @@ public final class PropertySQLParameter implements BeanSQLParameter {
     }
 
     @Override
-    public String getPropertyName() {
+    public String getPropertyNameOrNull() {
         return propertyName;
     }
 }

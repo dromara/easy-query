@@ -43,8 +43,8 @@ public class EasySQLUtil {
                 builder.append(param == null ? "null" : EasyClassUtil.getInstanceSimpleName(param));
                 builder.append(")");
             } else if (sqlParameter instanceof PropertySQLParameter) {
-                String alias = sqlParameter.getTable().getAlias();
-                String propertyName = sqlParameter.getPropertyName();
+                String alias = sqlParameter.getTableOrNull().getAlias();
+                String propertyName = sqlParameter.getPropertyNameOrNull();
                 String param = alias == null ? propertyName : alias + "." + propertyName;
                 if (i++ != 0) {
                     builder.append(",");

@@ -125,14 +125,14 @@ public class EasyJdbcExecutorUtil {
         for (SQLParameter sqlParameter : sqlParameters) {
             if (sqlParameter instanceof ConstSQLParameter) {
                 Object value = executorContext.toValue(sqlParameter, sqlParameter.getValue());
-                params.add(new EasyConstSQLParameter(sqlParameter.getTable(), sqlParameter.getPropertyName(), value));
+                params.add(new EasyConstSQLParameter(sqlParameter.getTableOrNull(), sqlParameter.getPropertyNameOrNull(), value));
             } else if (sqlParameter instanceof BeanSQLParameter) {
                 BeanSQLParameter beanSQLParameter = (BeanSQLParameter) sqlParameter;
                 beanSQLParameter.setBean(entity);
                 Object value = executorContext.toValue(beanSQLParameter, beanSQLParameter.getValue());
-                params.add(new EasyConstSQLParameter(beanSQLParameter.getTable(), beanSQLParameter.getPropertyName(), value));
+                params.add(new EasyConstSQLParameter(beanSQLParameter.getTableOrNull(), beanSQLParameter.getPropertyNameOrNull(), value));
             } else {
-                throw new EasyQueryException("current sql parameter:[" + EasyClassUtil.getSimpleName(sqlParameter.getClass()) + "],property name:[" + sqlParameter.getPropertyName() + "] is not implements BeanSQLParameter or ConstSQLParameter");
+                throw new EasyQueryException("current sql parameter:[" + EasyClassUtil.getSimpleName(sqlParameter.getClass()) + "],property name:[" + sqlParameter.getPropertyNameOrNull() + "] is not implements BeanSQLParameter or ConstSQLParameter");
             }
         }
         return params;
