@@ -45,4 +45,24 @@ public class EasyEmptyEntityDeletable<T> implements EntityDeletable<T> {
     public EntityDeletable<T> asTable(Function<String, String> tableNameAs) {
         return this;
     }
+
+    @Override
+    public EntityDeletable<T> noInterceptor() {
+        return this;
+    }
+
+    @Override
+    public EntityDeletable<T> useInterceptor(String name) {
+        return this;
+    }
+
+    @Override
+    public EntityDeletable<T> noInterceptor(String name) {
+        return this;
+    }
+
+    @Override
+    public EntityDeletable<T> useInterceptor() {
+        return this;
+    }
 }

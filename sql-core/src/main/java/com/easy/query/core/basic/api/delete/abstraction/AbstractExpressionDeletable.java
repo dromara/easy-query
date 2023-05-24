@@ -5,6 +5,7 @@ import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.expression.parser.core.SQLWherePredicate;
+import com.easy.query.core.expression.segment.condition.predicate.ColumnCollectionPredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnValuePredicate;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
@@ -19,11 +20,15 @@ import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.DefaultSQLPredicate;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
-import com.easy.query.core.expression.sql.builder.impl.TableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityDeleteExpressionBuilder;
 import com.easy.query.core.util.EasyClassUtil;
+import com.easy.query.core.util.EasyCollectionUtil;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.Function;
 
 /**
@@ -85,17 +90,44 @@ public abstract   class AbstractExpressionDeletable<T> extends AbstractSQLExecut
     public Deletable<T, ExpressionDeletable<T>> whereById(Object id) {
 
         PredicateSegment where = entityDeleteExpressionBuilder.getWhere();
-        Collection<String> keyProperties = table.getEntityMetadata().getKeyProperties();
-        if(keyProperties.isEmpty()){
-            throw new EasyQueryException("对象:"+ EasyClassUtil.getSimpleName(clazz)+"未找到主键信息");
-        }
-        if(keyProperties.size()>1){
-            throw new EasyQueryException("对象:"+ EasyClassUtil.getSimpleName(clazz)+"存在多个主键");
-        }
-        String keyProperty = keyProperties.iterator().next();
+        String keyProperty = getSingleKeyPropertyName();
         AndPredicateSegment andPredicateSegment = new AndPredicateSegment();
         andPredicateSegment
                 .setPredicate(new ColumnValuePredicate(table.getEntityTable(), keyProperty, id, SQLPredicateCompareEnum.EQ, entityDeleteExpressionBuilder.getRuntimeContext()));
+        where.addPredicateSegment(andPredicateSegment);
+        return this;
+    }
+    private String getSingleKeyPropertyName(){
+        Collection<String> keyProperties = table.getEntityMetadata().getKeyProperties();
+        if(EasyCollectionUtil.isEmpty(keyProperties)){
+            throw new EasyQueryException("对象:"+ EasyClassUtil.getSimpleName(clazz)+"未找到主键信息");
+        }
+        if(EasyCollectionUtil.isNotSingle(keyProperties)){
+            throw new EasyQueryException("对象:"+ EasyClassUtil.getSimpleName(clazz)+"存在多个主键");
+        }
+        return EasyCollectionUtil.first(keyProperties);
+    }
+
+    private Collection<?> extractIds(Object... ids){
+        if(ids==null||ids.length==0){
+            return Collections.emptyList();
+        }
+        return Arrays.asList(ids);
+    }
+    @Override
+    public Deletable<T, ExpressionDeletable<T>> whereByIds(Object... ids) {
+        Collection<?> extractIds = extractIds(ids);
+        return whereByIds(extractIds);
+    }
+
+    @Override
+    public Deletable<T, ExpressionDeletable<T>> whereByIds(Collection<?> ids) {
+
+        PredicateSegment where = entityDeleteExpressionBuilder.getWhere();
+        String keyProperty = getSingleKeyPropertyName();
+        AndPredicateSegment andPredicateSegment = new AndPredicateSegment();
+        andPredicateSegment
+                .setPredicate(new ColumnCollectionPredicate(table.getEntityTable(), keyProperty, ids, SQLPredicateCompareEnum.IN, entityDeleteExpressionBuilder.getRuntimeContext()));
         where.addPredicateSegment(andPredicateSegment);
         return this;
     }
@@ -117,6 +149,7 @@ public abstract   class AbstractExpressionDeletable<T> extends AbstractSQLExecut
         entityDeleteExpressionBuilder.getRecentlyTable().setTableNameAs(tableNameAs);
         return this;
     }
+
 
     @Override
     public String toSQL(ToSQLContext toSQLContext) {
