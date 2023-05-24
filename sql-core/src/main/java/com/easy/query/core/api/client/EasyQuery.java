@@ -46,6 +46,16 @@ public interface EasyQuery {
     default Transaction beginTransaction(){
         return beginTransaction(null);
     }
+
+    /**
+     * 数据库隔离级别:
+     * Connection.TRANSACTION_READ_UNCOMMITTED,
+     * Connection.TRANSACTION_READ_COMMITTED,
+     * Connection.TRANSACTION_REPEATABLE_READ,
+     * Connection.TRANSACTION_SERIALIZABLE.
+     * @param isolationLevel null表示不使用任何指定隔离级别,使用默认的
+     * @return
+     */
     Transaction beginTransaction(Integer isolationLevel);
 
     <T> Insertable<T> insertable(T entity);

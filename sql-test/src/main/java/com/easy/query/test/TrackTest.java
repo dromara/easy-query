@@ -6,6 +6,7 @@ import com.easy.query.test.entity.SysUserTrack;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.sql.Connection;
 import java.time.LocalDateTime;
 
 /**
@@ -18,9 +19,7 @@ public class TrackTest extends BaseTest {
 
     @Test
     public void track1() {
-
         long l = easyQuery.deletable(SysUserTrack.class).whereById("1").executeRows();
-
         SysUserTrack sysUserTrack = new SysUserTrack();
         sysUserTrack.setId("1");
         sysUserTrack.setUsername("Username1");

@@ -15,8 +15,13 @@ public interface ConnectionManager {
     }
 
     /**
-     * todo 枚举
-     * TRANSACTION_READ_UNCOMMITTED ......
+     * Params:
+     * level – one of the following Connection constants:
+     * Connection.TRANSACTION_READ_UNCOMMITTED,
+     * Connection.TRANSACTION_READ_COMMITTED,
+     * Connection.TRANSACTION_REPEATABLE_READ,
+     * Connection.TRANSACTION_SERIALIZABLE.
+     * (Note that Connection.TRANSACTION_NONE cannot be used because it specifies that transactions are not supported.)
      * @param isolationLevel
      * @return
      */

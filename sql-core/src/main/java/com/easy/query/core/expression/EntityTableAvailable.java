@@ -2,6 +2,7 @@ package com.easy.query.core.expression;
 
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.metadata.EntityMetadata;
+import com.easy.query.core.util.EasyStringUtil;
 
 /**
  * create time 2023/5/1 22:24
@@ -13,11 +14,13 @@ public final class EntityTableAvailable implements TableAvailable {
     private final int tableIndex;
     private final EntityMetadata entityMetadata;
     private final String alias;
+    private final boolean hasSchema;
 
     public EntityTableAvailable(int tableIndex, EntityMetadata entityMetadata, String alias){
 
         this.tableIndex = tableIndex;
         this.entityMetadata = entityMetadata;
+        this.hasSchema= EasyStringUtil.isNotBlank(entityMetadata.getSchema());
         this.alias = alias;
     }
     @Override
@@ -28,6 +31,11 @@ public final class EntityTableAvailable implements TableAvailable {
     @Override
     public EntityMetadata getEntityMetadata() {
         return entityMetadata;
+    }
+
+    @Override
+    public boolean hasSchema() {
+        return hasSchema;
     }
 
     @Override

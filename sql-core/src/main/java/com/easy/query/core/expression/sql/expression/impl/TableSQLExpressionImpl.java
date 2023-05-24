@@ -79,8 +79,8 @@ public class TableSQLExpressionImpl implements EntityTableSQLExpression {
     @Override
     public String getTableName() {
         String tableName = dialect.getQuoteName(doGetTableName());
-        String schema = entityTable.getSchema();
-        if(EasyStringUtil.isNotBlank(schema)){
+        if(entityTable.hasSchema()){
+            String schema = entityTable.getSchema();
             return dialect.getQuoteName(schema)+"."+tableName;
         }
         return tableName;
