@@ -181,7 +181,7 @@ public abstract class AbstractQueryable3<T1, T2, T3> extends AbstractQueryable<T
         String propertyName = sqlSegment.getPropertyName();
         ColumnMetadata columnMetadata =table.getEntityMetadata().getColumnNotNull(propertyName);
 
-        return cloneQueryable().select(easyFunc.getFuncColumn(projectSQLBuilderSegment.toSQL(null))).toList((Class<TMember>)columnMetadata.getProperty().getPropertyType());
+        return cloneQueryable().select(easyFunc.getFuncColumn(projectSQLBuilderSegment.toSQL(null))).toList((Class<TMember>)columnMetadata.getPropertyType());
     }
 
     @Override

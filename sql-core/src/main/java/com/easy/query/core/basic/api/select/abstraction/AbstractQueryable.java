@@ -230,7 +230,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
         String propertyName = EasyLambdaUtil.getPropertyName(column);
         FuncColumnSegmentImpl funcColumnSegment = new FuncColumnSegmentImpl(table.getEntityTable(), propertyName, entityQueryExpressionBuilder.getRuntimeContext(), columnFunction);
         ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(propertyName);
-        return cloneQueryable().select(funcColumnSegment, true).toList((Class<TMember>) columnMetadata.getProperty().getPropertyType());
+        return cloneQueryable().select(funcColumnSegment, true).toList((Class<TMember>) columnMetadata.getPropertyType());
     }
 
 
@@ -499,7 +499,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
                         EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(propertyQueryEntityClass);
                         ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(objectPropertyName);
                         FastBean fastBean = EasyBeanUtil.getFastBean(propertyQueryEntityClass);
-                        Property propertyLambda = fastBean.getBeanGetter(objectPropertyName, columnMetadata.getProperty().getPropertyType());
+                        Property propertyLambda = fastBean.getBeanGetter(objectPropertyName, columnMetadata.getPropertyType());
 
                         switch (q.type()) {
                             case EQUAL:

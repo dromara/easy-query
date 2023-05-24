@@ -47,19 +47,19 @@ public class EasyTrackUtil {
             FastBean fastBean = EasyBeanUtil.getFastBean(entity.getClass());
             for (String keyProperty : keyProperties) {
                 ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(keyProperty);
-                Property<Object, ?> lambdaProperty = fastBean.getBeanGetter(columnMetadata.getProperty());
+                Property<Object, ?> lambdaProperty = fastBean.getBeanGetter(columnMetadata.getProperty().getName(),columnMetadata.getPropertyType());
                 propertiesMap.put(keyProperty,lambdaProperty);
             }
             if(multiDataSourceMapping){
                 String propertyName = entityMetadata.getShardingDataSourcePropertyName();
                 ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(propertyName);
-                Property<Object, ?> lambdaProperty = fastBean.getBeanGetter(columnMetadata.getProperty());
+                Property<Object, ?> lambdaProperty = fastBean.getBeanGetter(columnMetadata.getProperty().getName(),columnMetadata.getPropertyType());
                 propertiesMap.put(propertyName,lambdaProperty);
             }
             if(multiTableMapping){
                 String propertyName = entityMetadata.getShardingTablePropertyName();
                 ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(propertyName);
-                Property<Object, ?> lambdaProperty = fastBean.getBeanGetter(columnMetadata.getProperty());
+                Property<Object, ?> lambdaProperty = fastBean.getBeanGetter(columnMetadata.getProperty().getName(),columnMetadata.getPropertyType());
                 propertiesMap.put(propertyName,lambdaProperty);
             }
             return o -> {
@@ -108,7 +108,7 @@ public class EasyTrackUtil {
         FastBean fastBean = EasyBeanUtil.getFastBean(entityClass);
         for (String propertyName : properties) {
             ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(propertyName);
-            Property<Object, ?> propertyGetter = fastBean.getBeanGetter(propertyName, columnMetadata.getProperty().getPropertyType());
+            Property<Object, ?> propertyGetter = fastBean.getBeanGetter(propertyName, columnMetadata.getPropertyType());
 
             Object originalPropertyValue = propertyGetter.apply(entityState.getOriginalValue());
             Object currentPropertyValue = propertyGetter.apply(entityState.getCurrentValue());
@@ -134,7 +134,7 @@ public class EasyTrackUtil {
         FastBean fastBean = EasyBeanUtil.getFastBean(entityClass);
         for (String propertyName : properties) {
             ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(propertyName);
-            Property<Object, ?> propertyGetter = fastBean.getBeanGetter(propertyName, columnMetadata.getProperty().getPropertyType());
+            Property<Object, ?> propertyGetter = fastBean.getBeanGetter(propertyName, columnMetadata.getPropertyType());
 
             Object originalPropertyValue = propertyGetter.apply(entityState.getOriginalValue());
             Object currentPropertyValue = propertyGetter.apply(entityState.getCurrentValue());

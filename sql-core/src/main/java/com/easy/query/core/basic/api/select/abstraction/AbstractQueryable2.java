@@ -166,7 +166,7 @@ public abstract class AbstractQueryable2<T1, T2> extends AbstractQueryable<T1> i
         String propertyName = sqlSegment.getPropertyName();
         ColumnMetadata columnMetadata =table.getEntityMetadata().getColumnNotNull(propertyName);
 
-        return cloneQueryable().select(easyFunc.getFuncColumn(projectSQLBuilderSegment.toSQL(null))).toList((Class<TMember>)columnMetadata.getProperty().getPropertyType());
+        return cloneQueryable().select(easyFunc.getFuncColumn(projectSQLBuilderSegment.toSQL(null))).toList((Class<TMember>)columnMetadata.getPropertyType());
     }
     @Override
     public <TMember extends Number> BigDecimal sumBigDecimalOrDefault(SQLExpression2<SQLColumnResultSelector<T1, TMember>, SQLColumnResultSelector<T2, TMember>> columnSelectorExpression, BigDecimal def) {

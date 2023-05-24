@@ -18,6 +18,10 @@ public class ColumnMetadata {
 
 
     private final PropertyDescriptor property;
+    /**
+     * property.getPropertyType()默认会加锁synchronized所以这边增加一个冗余字段
+     */
+    private final Class<?> propertyType;
 
     private final  boolean primary;
     private final  boolean increment;
@@ -38,6 +42,7 @@ public class ColumnMetadata {
         this.entityMetadata = columnOption.getEntityMetadata();
         this.name = columnOption.getName();
         this.property= columnOption.getProperty();
+        this.propertyType= columnOption.getProperty().getPropertyType();
         this.primary= columnOption.isPrimary();
         this.increment= columnOption.isIncrement();
         this.version= columnOption.isVersion();
@@ -106,5 +111,9 @@ public class ColumnMetadata {
 
     public ValueConverter<?, ?> getValueConverter() {
         return valueConverter;
+    }
+
+    public Class<?> getPropertyType() {
+        return propertyType;
     }
 }
