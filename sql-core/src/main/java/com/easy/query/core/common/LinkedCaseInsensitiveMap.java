@@ -41,7 +41,8 @@ public class LinkedCaseInsensitiveMap<V> extends LinkedHashMap<String, V> {
     public boolean containsKey(Object key) {
 
         if(key instanceof String){
-            String realKey = caseInsensitiveKeys.get(key.toString().toLowerCase(this.locale));
+            String lowerCase = key.toString().toLowerCase(this.locale);
+            String realKey = caseInsensitiveKeys.get(lowerCase);
             return realKey!=null;
         }
         return false;
@@ -88,4 +89,5 @@ public class LinkedCaseInsensitiveMap<V> extends LinkedHashMap<String, V> {
         String realKey = caseInsensitiveKeys.remove(key.toString().toLowerCase(this.locale));
         return super.remove(realKey);
     }
+
 }

@@ -9,7 +9,9 @@ import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.MergeBehaviorEnum;
 import com.easy.query.core.enums.replica.ReplicaBehaviorEnum;
+import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
+import com.easy.query.core.exception.EasyQueryMultiConnectionBusyException;
 import com.easy.query.core.expression.executor.parser.ExecutionContext;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
@@ -18,6 +20,8 @@ import com.easy.query.core.basic.jdbc.executor.internal.merge.segment.PropertyGr
 import com.easy.query.core.basic.jdbc.executor.internal.merge.segment.PropertyOrder;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
+import com.easy.query.core.sharding.limit.MultiConnectionLimit;
+import com.easy.query.core.sharding.limit.SemaphoreReleaseOnlyOnce;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.sql.SQLException;
@@ -26,6 +30,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * create time 2023/4/17 12:32
@@ -34,7 +39,7 @@ import java.util.Map;
  * @author xuejiaming
  */
 public class EasyStreamMergeContext implements StreamMergeContext {
-    private static final Log log= LogFactory.getLog(EasyStreamMergeContext.class);
+    private static final Log log = LogFactory.getLog(EasyStreamMergeContext.class);
     protected final QueryRuntimeContext runtimeContext;
     protected final boolean isQuery;
     protected final Map<String/* data source name*/, Collection<CloseableConnection>> closeableDataSourceConnections = new HashMap<>();
@@ -42,6 +47,7 @@ public class EasyStreamMergeContext implements StreamMergeContext {
     protected final ExecutionContext executionContext;
     protected final ConnectionManager connectionManager;
     protected final EasyQueryOption easyQueryOption;
+    protected final MultiConnectionLimit multiConnectionLimit;
 
     public EasyStreamMergeContext(ExecutorContext executorContext, ExecutionContext executionContext) {
         this.executorContext = executorContext;
@@ -50,6 +56,7 @@ public class EasyStreamMergeContext implements StreamMergeContext {
         this.connectionManager = runtimeContext.getConnectionManager();
         this.isQuery = executorContext.isQuery();
         this.easyQueryOption = runtimeContext.getQueryConfiguration().getEasyQueryOption();
+        this.multiConnectionLimit = runtimeContext.getMultiConnectionLimit();
     }
 
     @Override
@@ -141,16 +148,34 @@ public class EasyStreamMergeContext implements StreamMergeContext {
      * @return
      */
     public List<EasyConnection> getEasyConnections(ConnectionModeEnum connectionMode, String dataSourceName, int createDbConnectionCount) {
+
+        if(createDbConnectionCount==1){
+            return getEasyConnections0(connectionMode, dataSourceName, createDbConnectionCount);
+        }
+        SemaphoreReleaseOnlyOnce semaphoreReleaseOnlyOnce = multiConnectionLimit.tryAcquire(dataSourceName, easyQueryOption.getMultiConnWaitTimeoutMillis(), TimeUnit.MILLISECONDS);
+        if(semaphoreReleaseOnlyOnce==null){
+            throw new EasyQueryMultiConnectionBusyException("dataSourceName:"+dataSourceName);
+        }
+        try {
+            return getEasyConnections0(connectionMode,dataSourceName,createDbConnectionCount);
+        }finally {
+            multiConnectionLimit.release(semaphoreReleaseOnlyOnce);
+        }
+    }
+
+    public List<EasyConnection> getEasyConnections0(ConnectionModeEnum connectionMode, String dataSourceName, int createDbConnectionCount) {
         List<EasyConnection> easyConnections = new ArrayList<>(createDbConnectionCount);
         //当前需要被回收的链接
         Collection<CloseableConnection> closeableConnections = this.closeableDataSourceConnections.computeIfAbsent(dataSourceName, o -> new ArrayList<>());
         ConnectionStrategyEnum connectionStrategy = getConnectionStrategy(createDbConnectionCount);
         for (int i = 0; i < createDbConnectionCount; i++) {
+            //如果createDbConnectionCount>1那么要进行检查连接池
             EasyConnection easyConnection = connectionManager.getEasyConnection(dataSourceName, connectionStrategy);
 
             easyConnections.add(easyConnection);
             closeableConnections.add(new CloseableConnection(connectionStrategy, connectionManager, easyConnection));
         }
+
         return easyConnections;
     }
 
@@ -159,17 +184,17 @@ public class EasyStreamMergeContext implements StreamMergeContext {
             throw new EasyQueryInvalidOperationException("cant get connection strategy");
         }
         //判断是否采用共享链接需要满足当前没有分片或者当前分片了但是是串行或者不是串行
-        if (!isSharding()|| !isQuery()) {
+        if (!isSharding() || !isQuery()) {
             return ConnectionStrategyEnum.ShareConnection;
         }
-        if(easyQueryOption.getReplicaOption()!=null){
+        if (easyQueryOption.getReplicaOption() != null) {
             ReplicaBehaviorEnum replicaBehavior = easyQueryOption.getReplicaOption().getReplicaBehavior();
-            if(ReplicaBehaviorEnum.DefaultEnable.equals(replicaBehavior)||(ReplicaBehaviorEnum.OutTransactionEnable.equals(replicaBehavior)&&!connectionManager.currentThreadInTransaction())){
+            if (ReplicaBehaviorEnum.DefaultEnable.equals(replicaBehavior) || (ReplicaBehaviorEnum.OutTransactionEnable.equals(replicaBehavior) && !connectionManager.currentThreadInTransaction())) {
                 return ConnectionStrategyEnum.IndependentConnectionReplica;
             }
         }
         //那么就执行一条sql一张表就需要没有跨库跨表
-        if(createDbConnectionCount == 1|| (!executionContext.isCrossTable()&&!executionContext.isCrossDataSource())){
+        if (createDbConnectionCount == 1 || (!executionContext.isCrossTable() && !executionContext.isCrossDataSource())) {
             return ConnectionStrategyEnum.ShareConnection;
         }
         return ConnectionStrategyEnum.IndependentConnectionMaster;
@@ -230,11 +255,11 @@ public class EasyStreamMergeContext implements StreamMergeContext {
     public void close() throws SQLException {
         for (Collection<CloseableConnection> value : closeableDataSourceConnections.values()) {
             for (CloseableConnection closeableConnection : value) {
-               try {
-                   closeableConnection.close();
-               }catch (Exception ex){
-                   log.error("close stream merge context error.",ex);
-               }
+                try {
+                    closeableConnection.close();
+                } catch (Exception ex) {
+                    log.error("close stream merge context error.", ex);
+                }
             }
         }
     }

@@ -2,6 +2,7 @@ package com.easy.query.core.configuration;
 
 import javax.sql.DataSource;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * create time 2023/5/12 16:26
@@ -10,14 +11,15 @@ import java.util.Map;
  * @author xuejiaming
  */
 public class EasyQueryShardingOption {
-    private final Map<String, DataSource> shardingConfig;
 
-    public EasyQueryShardingOption(Map<String, DataSource> shardingConfig){
+    private final Set<ShardingDataSource> shardingDataSources;
 
-        this.shardingConfig = shardingConfig;
+    public EasyQueryShardingOption(Set<ShardingDataSource> shardingDataSources){
+
+        this.shardingDataSources = shardingDataSources;
     }
 
-    public Map<String, DataSource> getShardingConfig() {
-        return shardingConfig;
+    public Set<ShardingDataSource> getShardingDataSources() {
+        return shardingDataSources;
     }
 }

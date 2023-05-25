@@ -1,6 +1,7 @@
 package com.easy.query.test;
 
 import com.easy.query.core.basic.plugin.conversion.DefaultValueConverter;
+import com.easy.query.core.configuration.ShardingDataSource;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.api.client.EasyQuery;
@@ -78,7 +79,7 @@ public abstract class BaseTest {
         dataSource.setPassword("root");
         dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
         dataSource.setMaximumPoolSize(20);
-        Map<String, DataSource> shardingConfig=new HashMap<>();
+        Set<ShardingDataSource> shardingDataSources = new HashSet<>();
         {
             HikariDataSource dataSource = new HikariDataSource();
             dataSource.setJdbcUrl("jdbc:mysql://127.0.0.1:3306/easy-query-test2021?serverTimezone=GMT%2B8&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&rewriteBatchedStatements=true");
@@ -86,7 +87,7 @@ public abstract class BaseTest {
             dataSource.setPassword("root");
             dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
             dataSource.setMaximumPoolSize(20);
-            shardingConfig.put("ds2021",dataSource);
+            shardingDataSources.add(new ShardingDataSource("ds2021",dataSource,20));
         }
         {
             HikariDataSource dataSource = new HikariDataSource();
@@ -95,7 +96,7 @@ public abstract class BaseTest {
             dataSource.setPassword("root");
             dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
             dataSource.setMaximumPoolSize(20);
-            shardingConfig.put("ds2022",dataSource);
+            shardingDataSources.add(new ShardingDataSource("ds2022",dataSource,20));
         }
         {
             HikariDataSource dataSource = new HikariDataSource();
@@ -104,9 +105,9 @@ public abstract class BaseTest {
             dataSource.setPassword("root");
             dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
             dataSource.setMaximumPoolSize(20);
-            shardingConfig.put("ds2023",dataSource);
+            shardingDataSources.add(new ShardingDataSource("ds2023",dataSource,20));
         }
-        easyQueryShardingOption=new EasyQueryShardingOption(shardingConfig);
+        easyQueryShardingOption=new EasyQueryShardingOption(shardingDataSources);
 //        postgres://postgres:postgrespw@localhost:55000
     }
 

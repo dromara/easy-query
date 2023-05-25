@@ -16,7 +16,8 @@ public interface Interceptor {
     }
 
     /**
-     * 默认生效
+     * 默认生效每次生成sql都会获取判断当前拦截器是否默认使用
+     * 可以设置为动态值
      * @return
      */
     default boolean defaultEnable(){return true;}

@@ -15,6 +15,7 @@ import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
 import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.basic.plugin.track.TrackManager;
 import com.easy.query.core.sharding.comparer.ShardingComparer;
+import com.easy.query.core.sharding.limit.MultiConnectionLimit;
 import com.easy.query.core.sharding.manager.ShardingQueryCountManager;
 import com.easy.query.core.sharding.route.manager.DataSourceRouteManager;
 import com.easy.query.core.sharding.route.manager.TableRouteManager;
@@ -45,6 +46,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     private final ShardingComparer shardingComparer;
     private final ShardingQueryCountManager shardingQueryCountManager;
     private final ColumnFunctionFactory columnFunctionFactory;
+    private final MultiConnectionLimit multiConnectionLimit;
 
     public DefaultEasyQueryRuntimeContext(ServiceProvider serviceProvider, QueryConfiguration easyQueryConfiguration,
                                           EntityMetadataManager entityMetadataManager,
@@ -62,7 +64,8 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
                                           DataSourceRouteManager dataSourceRouteManager,
                                           ShardingComparer shardingComparer,
                                           ShardingQueryCountManager shardingQueryCountManager,
-                                          ColumnFunctionFactory columnFunctionFactory){
+                                          ColumnFunctionFactory columnFunctionFactory,
+                                          MultiConnectionLimit multiConnectionLimit){
         this.serviceProvider = serviceProvider;
         this.easyQueryConfiguration = easyQueryConfiguration;
         this.entityMetadataManager = entityMetadataManager;
@@ -81,6 +84,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
         this.shardingComparer = shardingComparer;
         this.shardingQueryCountManager = shardingQueryCountManager;
         this.columnFunctionFactory = columnFunctionFactory;
+        this.multiConnectionLimit = multiConnectionLimit;
     }
 
     @Override
@@ -171,5 +175,10 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     @Override
     public ColumnFunctionFactory getColumnFunctionFactory() {
         return columnFunctionFactory;
+    }
+
+    @Override
+    public MultiConnectionLimit getMultiConnectionLimit() {
+        return multiConnectionLimit;
     }
 }

@@ -10,46 +10,58 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import java.util.concurrent.Executors;
 
 /**
+ * @author xuejiaming
  * @FileName: EasyQueryProperties.java
  * @Description: 文件说明
  * @Date: 2023/3/11 14:25
- * @author xuejiaming
  */
 @ConfigurationProperties(prefix = "easy-query")
 public class EasyQueryProperties {
 
-    private Boolean enable =false;
-    private Boolean deleteThrow =true;
+    private Boolean enable = false;
+    private Boolean deleteThrow = true;
     private DatabaseEnum database;
     private NameConversionEnum nameConversion;
-    private SQLExecuteStrategyEnum insertStrategy= SQLExecuteStrategyEnum.DEFAULT;
-    private SQLExecuteStrategyEnum updateStrategy= SQLExecuteStrategyEnum.DEFAULT;
-    private ConnectionModeEnum connectionMode=ConnectionModeEnum.SYSTEM_AUTO;
+    private SQLExecuteStrategyEnum insertStrategy = SQLExecuteStrategyEnum.DEFAULT;
+    private SQLExecuteStrategyEnum updateStrategy = SQLExecuteStrategyEnum.DEFAULT;
+    private ConnectionModeEnum connectionMode = ConnectionModeEnum.SYSTEM_AUTO;
     /**
-     * 仅分片时有效
-     * 最大查询限制链接数默认cpu核心数当小于4取4
+     * 仅分片时有效默认同时5个线程5
      */
-    private int maxShardingQueryLimit =Math.max(Runtime.getRuntime().availableProcessors(), 4);
+    private int maxShardingQueryLimit = 5;
     /**
      * 仅分片时有效默认0如果需要建议大于 maxQueryConnectionsLimit * 分库数目
      * 执行线程数 如果为0那么采用无界线程池{@link Executors#newCachedThreadPool},如果是大于0采用固定线程池{@link Executors#newFixedThreadPool}
      */
-    private int executorMaximumPoolSize =0;
-    private int executorCorePoolSize =Math.min(Runtime.getRuntime().availableProcessors(), 4);
-    private String logClass="com.easy.query.sql.starter.logging.Slf4jImpl";
+    private int executorMaximumPoolSize = 0;
+    private int executorCorePoolSize = Math.min(Runtime.getRuntime().availableProcessors(), 4);
+    private String logClass = "com.easy.query.sql.starter.logging.Slf4jImpl";
     /**
      * 当没有路由匹配的时候查询是否报错
      * true:表示报错
      * false:表示返回默认值
      */
-    private boolean throwIfRouteNotMatch =true;
+    private boolean throwIfRouteNotMatch = true;
 
-    private  long shardingExecuteTimeoutMillis=30000L;
-    private  long shardingGroupExecuteTimeoutMillis=20000L;
+    private long shardingExecuteTimeoutMillis = 30000L;
+    private long shardingGroupExecuteTimeoutMillis = 20000L;
 
-    private boolean queryLargeColumn=true;
-    private int maxShardingRouteCount=128;
-    private int executorQueueSize=1024;
+    private boolean queryLargeColumn = true;
+    private int maxShardingRouteCount = 128;
+    private int executorQueueSize = 1024;
+    /**
+     * 默认数据源分库有效
+     */
+    private String defaultDataSourceName = "ds0";
+    /**
+     * 默认数据源的数据源连接池大小分表有效,一般设置为最少最少 >= maxShardingQueryLimit
+     * 当小于maxShardingQueryLimit后启动会抛出警告
+     */
+    private int defaultDataSourcePoolSize = 0;
+    /**
+     * 分表聚合多链接获取分表插入更新删除同理多个线程间等待获取时间单位毫秒(ms)
+     */
+    private long multiConnWaitTimeoutMillis = 5000;
 
     public Boolean getEnable() {
         return enable;
@@ -189,6 +201,30 @@ public class EasyQueryProperties {
 
     public void setExecutorQueueSize(int executorQueueSize) {
         this.executorQueueSize = executorQueueSize;
+    }
+
+    public String getDefaultDataSourceName() {
+        return defaultDataSourceName;
+    }
+
+    public void setDefaultDataSourceName(String defaultDataSourceName) {
+        this.defaultDataSourceName = defaultDataSourceName;
+    }
+
+    public int getDefaultDataSourcePoolSize() {
+        return defaultDataSourcePoolSize;
+    }
+
+    public void setDefaultDataSourcePoolSize(int defaultDataSourcePoolSize) {
+        this.defaultDataSourcePoolSize = defaultDataSourcePoolSize;
+    }
+
+    public long getMultiConnWaitTimeoutMillis() {
+        return multiConnWaitTimeoutMillis;
+    }
+
+    public void setMultiConnWaitTimeoutMillis(long multiConnWaitTimeoutMillis) {
+        this.multiConnWaitTimeoutMillis = multiConnWaitTimeoutMillis;
     }
 
     public EasyQueryProperties() {

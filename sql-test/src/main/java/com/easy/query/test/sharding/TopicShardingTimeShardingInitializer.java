@@ -50,7 +50,7 @@ public class TopicShardingTimeShardingInitializer extends AbstractShardingMonthI
 
     @Override
     protected LocalDateTime getEndTime() {
-        return LocalDateTime.of(2023, 5, 1, 0, 0);
+        return LocalDateTime.of(2023, 4, 30, 0, 0);
     }
 
 

@@ -1,5 +1,6 @@
 package com.easy.query.test;
 
+import com.easy.query.core.common.LinkedCaseInsensitiveMap;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
@@ -327,6 +328,16 @@ public class GenericTest extends BaseTest{
         queryLargeColumnTestEntity.setId("123");
         String sql = easyQuery.deletable(queryLargeColumnTestEntity).toSQL();
         Assert.assertEquals("DELETE FROM `query_large_column_test` WHERE `id` = ?",sql);
+    }
+
+    @Test
+    public void linkedCaseInsensitiveMapTest1(){
+        LinkedCaseInsensitiveMap<Object> objectLinkedCaseInsensitiveMap = new LinkedCaseInsensitiveMap<>();
+        Object put = objectLinkedCaseInsensitiveMap.put("123","123");
+        Assert.assertNull(put);
+        Object put1 = objectLinkedCaseInsensitiveMap.put("123", "456");
+        Assert.assertNotNull(put1);
+        Assert.assertEquals("123",put1);
     }
 
 }

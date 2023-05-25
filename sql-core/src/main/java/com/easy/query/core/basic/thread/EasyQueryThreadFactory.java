@@ -9,16 +9,16 @@ import java.util.concurrent.atomic.AtomicLong;
  *
  * @author xuejiaming
  */
-public class EasyShardingThreadFactory implements ThreadFactory {
+public class EasyQueryThreadFactory implements ThreadFactory {
     private final AtomicLong threadIndex = new AtomicLong(0);
     private final String threadNamePrefix;
     private final boolean daemon;
 
-    public EasyShardingThreadFactory(final String threadNamePrefix){
+    public EasyQueryThreadFactory(final String threadNamePrefix){
         this(threadNamePrefix,false);
 
     }
-    public EasyShardingThreadFactory(final String threadNamePrefix, boolean daemon){
+    public EasyQueryThreadFactory(final String threadNamePrefix, boolean daemon){
         this.threadNamePrefix = threadNamePrefix;
         this.daemon = daemon;
     }

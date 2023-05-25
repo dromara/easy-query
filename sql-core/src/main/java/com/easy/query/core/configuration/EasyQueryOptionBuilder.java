@@ -19,21 +19,27 @@ public class EasyQueryOptionBuilder {
     private int executorCorePoolSize;
     private ConnectionModeEnum connectionMode;
     private boolean throwIfRouteNotMatch;
-    private  long shardingExecuteTimeoutMillis;
-    private  long shardingGroupExecuteTimeoutMillis;
-    private  EasyQueryReplicaOption replicaOption;
-    private  EasyQueryShardingOption shardingOption;
-    private  String defaultDataSourceName;
-    private  boolean queryLargeColumn;
-    private  int maxShardingRouteCount;
-    private  int executorQueueSize;
+    private long shardingExecuteTimeoutMillis;
+    private long shardingGroupExecuteTimeoutMillis;
+    private EasyQueryReplicaOption replicaOption;
+    private EasyQueryShardingOption shardingOption;
+    private String defaultDataSourceName;
+    private int defaultDataSourcePoolSize;
+    private boolean queryLargeColumn;
+    private int maxShardingRouteCount;
+    private int executorQueueSize;
+    /**
+     * 分片聚合多个connection获取等待超时时间防止分片datasourcePoolSize过小导致假死
+     */
+    private long multiConnWaitTimeoutMillis;
 
     public EasyQueryOptionBuilder() {
         this.deleteThrowError = true;
         this.insertStrategy = SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS;
         this.updateStrategy = SQLExecuteStrategyEnum.ALL_COLUMNS;
-        this.connectionMode=ConnectionModeEnum.SYSTEM_AUTO;
-        this.maxShardingQueryLimit = Math.max(Runtime.getRuntime().availableProcessors(), 4);
+        this.connectionMode = ConnectionModeEnum.SYSTEM_AUTO;
+        this.maxShardingQueryLimit = 5;
+        this.defaultDataSourcePoolSize = 0;
         this.executorMaximumPoolSize = 0;
         this.executorCorePoolSize = Math.min(Runtime.getRuntime().availableProcessors(), 4);
         this.throwIfRouteNotMatch = true;
@@ -41,15 +47,19 @@ public class EasyQueryOptionBuilder {
         this.shardingGroupExecuteTimeoutMillis = 20000L;
         this.defaultDataSourceName = "ds0";
         this.queryLargeColumn = true;
-        this.maxShardingRouteCount=128;
-        this.executorQueueSize=1024;
+        this.maxShardingRouteCount = 128;
+        this.executorQueueSize = 1024;
+        this.multiConnWaitTimeoutMillis = 5000;
     }
+
     public void setDeleteThrowError(boolean deleteThrowError) {
         this.deleteThrowError = deleteThrowError;
     }
+
     public void setInsertStrategy(SQLExecuteStrategyEnum insertStrategy) {
         this.insertStrategy = insertStrategy;
     }
+
     public void setUpdateStrategy(SQLExecuteStrategyEnum updateStrategy) {
         this.updateStrategy = updateStrategy;
     }
@@ -94,8 +104,8 @@ public class EasyQueryOptionBuilder {
         this.shardingOption = shardingOption;
     }
 
-    public boolean isUseReplica(){
-        return replicaOption!=null;
+    public boolean isUseReplica() {
+        return replicaOption != null;
     }
 
     public void setQueryLargeColumn(boolean queryLargeColumn) {
@@ -110,8 +120,32 @@ public class EasyQueryOptionBuilder {
         this.executorQueueSize = executorQueueSize;
     }
 
-    public EasyQueryOption build(){
-        return new EasyQueryOption(this.deleteThrowError,this.insertStrategy,this.updateStrategy,this.connectionMode,this.maxShardingQueryLimit,this.executorMaximumPoolSize,this.executorCorePoolSize,this.throwIfRouteNotMatch,
-                this.shardingExecuteTimeoutMillis,this.shardingGroupExecuteTimeoutMillis,this.shardingOption,this.replicaOption,this.defaultDataSourceName,this.queryLargeColumn,this.maxShardingRouteCount,this.executorQueueSize);
+    public void setDefaultDataSourcePoolSize(int defaultDataSourcePoolSize) {
+        this.defaultDataSourcePoolSize = defaultDataSourcePoolSize;
+    }
+
+    public void setMultiConnWaitTimeoutMillis(long multiConnWaitTimeoutMillis) {
+        this.multiConnWaitTimeoutMillis = multiConnWaitTimeoutMillis;
+    }
+
+    public EasyQueryOption build() {
+        return new EasyQueryOption(this.deleteThrowError,
+                this.insertStrategy,
+                this.updateStrategy,
+                this.connectionMode,
+                this.maxShardingQueryLimit,
+                this.executorMaximumPoolSize,
+                this.executorCorePoolSize,
+                this.throwIfRouteNotMatch,
+                this.shardingExecuteTimeoutMillis,
+                this.shardingGroupExecuteTimeoutMillis,
+                this.shardingOption,
+                this.replicaOption,
+                this.defaultDataSourceName,
+                this.defaultDataSourcePoolSize,
+                this.queryLargeColumn,
+                this.maxShardingRouteCount,
+                this.executorQueueSize,
+                this.multiConnWaitTimeoutMillis);
     }
 }

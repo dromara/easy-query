@@ -43,7 +43,8 @@ public abstract class AbstractShardingTimeInitializer<T> implements EntityShardi
         String tableSeparator = getTableSeparator();
 
         ArrayList<String> actualTableNames = new ArrayList<>();
-        while(beginTime.isBefore(endTime)){
+        //应该是不在endTime后可以等于endTime
+        while(!beginTime.isAfter(endTime)){
             String tail =formatTail(beginTime);
             actualTableNames.add(tableName+tableSeparator+tail);
             beginTime=getNextTime(beginTime);

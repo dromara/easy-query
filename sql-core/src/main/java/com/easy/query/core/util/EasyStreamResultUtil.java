@@ -85,7 +85,7 @@ public final class EasyStreamResultUtil {
             easyResultSet.setPropertyType(propertyType);
             JdbcTypeHandler handler = easyJdbcTypeHandler.getHandler(propertyType);
             Object value = handler.getValue(easyResultSet);
-            Object o = map.putIfAbsent(colName, value);
+            Object o = map.put(colName, value);
             if(o!=null){
                 throw new IllegalStateException("Duplicate key found: " + colName);
             }

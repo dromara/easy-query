@@ -78,13 +78,15 @@ public class DefaultRouteContextFactory implements RouteContextFactory {
             RouteContext routeContext = doCreateRouteContext(entityParseDescriptor,null);
             List<RouteUnit> routeUnits = routeContext.getShardingRouteResult().getRouteUnits();
             if (EasyCollectionUtil.isNotSingle(routeUnits)) {
-                throw new EasyQueryInvalidOperationException("entity route route unit more or empty:"+routeUnits.size());
+                //直接打印对象用于调试,如果用户重写了toString 默认不应该报错
+                throw new EasyQueryInvalidOperationException("entity route route unit more or empty:"+routeUnits.size()+"，"+entity);
             }
             RouteUnit routeUnit = routeUnits.get(0);
             List<TableRouteUnit> tableRouteUnits = routeUnit.getTableRouteUnits();
 
             if (EasyCollectionUtil.isNotSingle(tableRouteUnits)) {
-                throw new EasyQueryInvalidOperationException("entity route table route unit more or empty:"+tableRouteUnits.size());
+                //直接打印对象用于调试,如果用户重写了toString 默认不应该报错
+                throw new EasyQueryInvalidOperationException("entity route table route unit more or empty:"+tableRouteUnits.size()+"，"+entity);
             }
             TableRouteUnit tableRouteUnit = tableRouteUnits.get(0);
             //判断是否存在跨datasource或者跨表的操作

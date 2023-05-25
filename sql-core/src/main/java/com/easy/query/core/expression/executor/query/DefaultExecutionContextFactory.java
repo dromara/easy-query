@@ -68,10 +68,10 @@ public class DefaultExecutionContextFactory implements ExecutionContextFactory {
         }
         RouteContext routeContext = routeContextFactory.createRouteContext(prepareParseResult);
         RewriteContext rewriteContext = rewriteContextFactory.rewriteShardingExpression(prepareParseResult, routeContext);
-        if(rewriteContext.getRewriteRouteUnits().size()>=easyQueryOption.getMaxShardingRouteCount()){
-            throw new EasyQueryShardingRouteExecuteMoreException("execute route size:"+rewriteContext.getRewriteRouteUnits().size());
-        }
         if(prepareParseResult instanceof PredicatePrepareParseResult){
+            if(rewriteContext.getRewriteRouteUnits().size()>=easyQueryOption.getMaxShardingRouteCount()){
+                throw new EasyQueryShardingRouteExecuteMoreException("execute route size:"+rewriteContext.getRewriteRouteUnits().size());
+            }
             return new ShardingPredicateExecutionCreator(rewriteContext).create();
         }
         if(prepareParseResult instanceof EntityPrepareParseResult){
