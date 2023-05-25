@@ -119,7 +119,7 @@ public class ShardingExecutor {
         List<List<ExecutionUnit>> sqlUnitPartitions = EasyCollectionUtil.partition(sqlGroupExecutionUnits, parallelCount);
         //由于分组后除了最后一个元素其余元素都满足parallelCount为最大,第一个元素的分组数将是实际的创建连接数
         int createDbConnectionCount = sqlUnitPartitions.get(0).size();
-        List<EasyConnection> easyConnections = streamMergeContext.getEasyConnections(connectionMode, dataSourceName, createDbConnectionCount);
+        List<EasyConnection> easyConnections = streamMergeContext.getEasyConnections(dataSourceName, createDbConnectionCount);
         //将SQLExecutorUnit进行分区,每个区parallelCount个
         //[1,2,3,4,5,6,7],parallelCount=3,结果就是[[1,2,3],[4,5,6],[7]]
         List<List<CommandExecuteUnit>> sqlExecutorUnitPartitions = EasyCollectionUtil.select(sqlUnitPartitions, (executionUnits, index0) -> {
@@ -143,7 +143,7 @@ public class ShardingExecutor {
 
         ConnectionModeEnum connectionMode = ConnectionModeEnum.MEMORY_STRICTLY;
 
-        List<EasyConnection> easyConnections = streamMergeContext.getEasyConnections(connectionMode, executionUnit.getDataSourceName(), 1);
+        List<EasyConnection> easyConnections = streamMergeContext.getEasyConnections(executionUnit.getDataSourceName(), 1);
         EasyConnection easyConnection = EasyCollectionUtil.first(easyConnections);
         CommandExecuteUnit commandExecuteUnit = new CommandExecuteUnit(executionUnit, easyConnection, connectionMode);
         SQLExecutorGroup<CommandExecuteUnit> sqlExecutorGroup = new SQLExecutorGroup<>(connectionMode, Collections.singletonList(commandExecuteUnit));

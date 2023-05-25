@@ -142,28 +142,27 @@ public class EasyStreamMergeContext implements StreamMergeContext {
      * 如果是非并发顺序操作那么将使用当前共享的connection
      * 并发与否就是是否分表聚合查询
      *
-     * @param connectionMode
      * @param dataSourceName
      * @param createDbConnectionCount
      * @return
      */
-    public List<EasyConnection> getEasyConnections(ConnectionModeEnum connectionMode, String dataSourceName, int createDbConnectionCount) {
+    public List<EasyConnection> getEasyConnections(String dataSourceName, int createDbConnectionCount) {
 
         if(createDbConnectionCount==1){
-            return getEasyConnections0(connectionMode, dataSourceName, createDbConnectionCount);
+            return getEasyConnections0( dataSourceName, createDbConnectionCount);
         }
         SemaphoreReleaseOnlyOnce semaphoreReleaseOnlyOnce = multiConnectionLimit.tryAcquire(dataSourceName, easyQueryOption.getMultiConnWaitTimeoutMillis(), TimeUnit.MILLISECONDS);
         if(semaphoreReleaseOnlyOnce==null){
             throw new EasyQueryMultiConnectionBusyException("dataSourceName:"+dataSourceName);
         }
         try {
-            return getEasyConnections0(connectionMode,dataSourceName,createDbConnectionCount);
+            return getEasyConnections0(dataSourceName,createDbConnectionCount);
         }finally {
             multiConnectionLimit.release(semaphoreReleaseOnlyOnce);
         }
     }
 
-    public List<EasyConnection> getEasyConnections0(ConnectionModeEnum connectionMode, String dataSourceName, int createDbConnectionCount) {
+    public List<EasyConnection> getEasyConnections0(String dataSourceName, int createDbConnectionCount) {
         List<EasyConnection> easyConnections = new ArrayList<>(createDbConnectionCount);
         //当前需要被回收的链接
         Collection<CloseableConnection> closeableConnections = this.closeableDataSourceConnections.computeIfAbsent(dataSourceName, o -> new ArrayList<>());

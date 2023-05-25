@@ -14,6 +14,7 @@ import com.easy.query.core.basic.jdbc.con.ConnectionManager;
 import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
 import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.basic.plugin.track.TrackManager;
+import com.easy.query.core.sharding.EasyQueryDataSource;
 import com.easy.query.core.sharding.comparer.ShardingComparer;
 import com.easy.query.core.sharding.limit.MultiConnectionLimit;
 import com.easy.query.core.sharding.manager.ShardingQueryCountManager;
@@ -21,13 +22,14 @@ import com.easy.query.core.sharding.route.manager.DataSourceRouteManager;
 import com.easy.query.core.sharding.route.manager.TableRouteManager;
 
 /**
+ * @author xuejiaming
  * @FileName: DefaultJQDCRuntimeContext.java
  * @Description: 文件说明
  * @Date: 2023/2/11 13:47
- * @author xuejiaming
  */
 public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     private final ServiceProvider serviceProvider;
+    private final EasyQueryDataSource easyQueryDataSource;
     private final QueryConfiguration easyQueryConfiguration;
     private final EntityMetadataManager entityMetadataManager;
     private final SQLExpressionInvokeFactory easyQueryLambdaFactory;
@@ -48,7 +50,9 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     private final ColumnFunctionFactory columnFunctionFactory;
     private final MultiConnectionLimit multiConnectionLimit;
 
-    public DefaultEasyQueryRuntimeContext(ServiceProvider serviceProvider, QueryConfiguration easyQueryConfiguration,
+    public DefaultEasyQueryRuntimeContext(ServiceProvider serviceProvider,
+                                          EasyQueryDataSource easyQueryDataSource,
+                                          QueryConfiguration easyQueryConfiguration,
                                           EntityMetadataManager entityMetadataManager,
                                           SQLExpressionInvokeFactory easyQueryLambdaFactory,
                                           ConnectionManager easyConnectionManager,
@@ -65,8 +69,9 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
                                           ShardingComparer shardingComparer,
                                           ShardingQueryCountManager shardingQueryCountManager,
                                           ColumnFunctionFactory columnFunctionFactory,
-                                          MultiConnectionLimit multiConnectionLimit){
+                                          MultiConnectionLimit multiConnectionLimit) {
         this.serviceProvider = serviceProvider;
+        this.easyQueryDataSource = easyQueryDataSource;
         this.easyQueryConfiguration = easyQueryConfiguration;
         this.entityMetadataManager = entityMetadataManager;
         this.easyQueryLambdaFactory = easyQueryLambdaFactory;
@@ -90,6 +95,11 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     @Override
     public <T> T getService(Class<T> serviceType) {
         return serviceProvider.getService(serviceType);
+    }
+
+    @Override
+    public EasyQueryDataSource getEasyQueryDataSource() {
+        return easyQueryDataSource;
     }
 
     @Override

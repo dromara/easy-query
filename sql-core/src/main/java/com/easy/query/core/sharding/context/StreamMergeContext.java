@@ -73,7 +73,7 @@ public interface StreamMergeContext extends AutoCloseable {
     SQLBuilderSegment getGroupColumns();
     ExecuteMethodEnum getExecuteMethod();
 
-    List<EasyConnection> getEasyConnections(ConnectionModeEnum connectionMode, String dataSourceName, int createDbConnectionCount);
+    List<EasyConnection> getEasyConnections(String dataSourceName, int createDbConnectionCount);
 
     @Override
     void close() throws SQLException;
