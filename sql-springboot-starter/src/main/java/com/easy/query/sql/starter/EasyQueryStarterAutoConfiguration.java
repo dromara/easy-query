@@ -150,7 +150,6 @@ public class EasyQueryStarterAutoConfiguration {
                     builder.setExecutorCorePoolSize(easyQueryProperties.getExecutorCorePoolSize());
                     builder.setThrowIfRouteNotMatch(easyQueryProperties.isThrowIfRouteNotMatch());
                     builder.setShardingExecuteTimeoutMillis(easyQueryProperties.getShardingExecuteTimeoutMillis());
-                    builder.setShardingGroupExecuteTimeoutMillis(easyQueryProperties.getShardingGroupExecuteTimeoutMillis());
                     builder.setQueryLargeColumn(easyQueryProperties.isQueryLargeColumn());
                     builder.setMaxShardingRouteCount(easyQueryProperties.getMaxShardingRouteCount());
                     builder.setExecutorQueueSize(easyQueryProperties.getExecutorQueueSize());

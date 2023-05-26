@@ -20,7 +20,6 @@ public class EasyQueryOptionBuilder {
     private ConnectionModeEnum connectionMode;
     private boolean throwIfRouteNotMatch;
     private long shardingExecuteTimeoutMillis;
-    private long shardingGroupExecuteTimeoutMillis;
     private EasyQueryReplicaOption replicaOption;
     private EasyQueryShardingOption shardingOption;
     private String defaultDataSourceName;
@@ -44,12 +43,11 @@ public class EasyQueryOptionBuilder {
         this.executorCorePoolSize = Math.min(Runtime.getRuntime().availableProcessors(), 4);
         this.throwIfRouteNotMatch = true;
         this.shardingExecuteTimeoutMillis = 30000L;
-        this.shardingGroupExecuteTimeoutMillis = 20000L;
         this.defaultDataSourceName = "ds0";
         this.queryLargeColumn = true;
         this.maxShardingRouteCount = 128;
         this.executorQueueSize = 1024;
-        this.multiConnWaitTimeoutMillis = 5000;
+        this.multiConnWaitTimeoutMillis = 5000L;
     }
 
     public void setDeleteThrowError(boolean deleteThrowError) {
@@ -86,10 +84,6 @@ public class EasyQueryOptionBuilder {
 
     public void setShardingExecuteTimeoutMillis(long shardingExecuteTimeoutMillis) {
         this.shardingExecuteTimeoutMillis = shardingExecuteTimeoutMillis;
-    }
-
-    public void setShardingGroupExecuteTimeoutMillis(long shardingGroupExecuteTimeoutMillis) {
-        this.shardingGroupExecuteTimeoutMillis = shardingGroupExecuteTimeoutMillis;
     }
 
     public void setReplicaOption(EasyQueryReplicaOption replicaOption) {
@@ -138,7 +132,6 @@ public class EasyQueryOptionBuilder {
                 this.executorCorePoolSize,
                 this.throwIfRouteNotMatch,
                 this.shardingExecuteTimeoutMillis,
-                this.shardingGroupExecuteTimeoutMillis,
                 this.shardingOption,
                 this.replicaOption,
                 this.defaultDataSourceName,
