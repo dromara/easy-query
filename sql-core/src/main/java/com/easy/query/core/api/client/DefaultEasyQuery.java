@@ -1,5 +1,7 @@
 package com.easy.query.core.api.client;
 
+import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
+import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.api.SQLApiFactory;
 import com.easy.query.core.basic.api.delete.EntityDeletable;
@@ -12,6 +14,7 @@ import com.easy.query.core.basic.api.update.EntityUpdatable;
 import com.easy.query.core.basic.api.update.ExpressionUpdatable;
 import com.easy.query.core.basic.plugin.track.TrackContext;
 import com.easy.query.core.basic.plugin.track.TrackManager;
+import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.Collection;
 import java.util.List;
@@ -36,7 +39,7 @@ public class DefaultEasyQuery implements EasyQuery {
     }
 
     @Override
-    public <T> List<T> sqlQuery(String sql, Class<T> clazz, List<Object> parameters) {
+    public <T> List<T> sqlEasyQuery(String sql, Class<T> clazz, List<SQLParameter> parameters) {
         return easySQLApiFactory.createJdbcExecutor(runtimeContext).sqlQuery(sql,clazz,parameters);
     }
 

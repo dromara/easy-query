@@ -16,26 +16,32 @@ import java.util.function.Function;
 
 
 /**
+ * @author xuejiaming
  * @FileName: Select2.java
  * @Description: 文件说明
  * @Date: 2023/2/6 22:42
- * @author xuejiaming
  */
 public interface Queryable2<T1, T2> extends Queryable<T1> {
     <T3> Queryable3<T1, T2, T3> leftJoin(Class<T3> joinClass, SQLExpression3<SQLWherePredicate<T1>, SQLWherePredicate<T2>, SQLWherePredicate<T3>> on);
+
     <T3> Queryable3<T1, T2, T3> leftJoin(Queryable<T3> joinQueryable, SQLExpression3<SQLWherePredicate<T1>, SQLWherePredicate<T2>, SQLWherePredicate<T3>> on);
+
     <T3> Queryable3<T1, T2, T3> rightJoin(Class<T3> joinClass, SQLExpression3<SQLWherePredicate<T1>, SQLWherePredicate<T2>, SQLWherePredicate<T3>> on);
+
     <T3> Queryable3<T1, T2, T3> rightJoin(Queryable<T3> joinQueryable, SQLExpression3<SQLWherePredicate<T1>, SQLWherePredicate<T2>, SQLWherePredicate<T3>> on);
 
     <T3> Queryable3<T1, T2, T3> innerJoin(Class<T3> joinClass, SQLExpression3<SQLWherePredicate<T1>, SQLWherePredicate<T2>, SQLWherePredicate<T3>> on);
+
     <T3> Queryable3<T1, T2, T3> innerJoin(Queryable<T3> joinQueryable, SQLExpression3<SQLWherePredicate<T1>, SQLWherePredicate<T2>, SQLWherePredicate<T3>> on);
 
     //region where
 
-    default Queryable2<T1, T2> whereObject(Object object){
-        return whereObject(true,object);
+    default Queryable2<T1, T2> whereObject(Object object) {
+        return whereObject(true, object);
     }
+
     Queryable2<T1, T2> whereObject(boolean condition, Object object);
+
     @Override
     default Queryable2<T1, T2> where(SQLExpression1<SQLWherePredicate<T1>> whereExpression) {
         return where(true, whereExpression);
@@ -43,6 +49,7 @@ public interface Queryable2<T1, T2> extends Queryable<T1> {
 
     @Override
     Queryable2<T1, T2> where(boolean condition, SQLExpression1<SQLWherePredicate<T1>> whereExpression);
+
     default Queryable2<T1, T2> where(SQLExpression2<SQLWherePredicate<T1>, SQLWherePredicate<T2>> whereExpression) {
         return where(true, whereExpression);
     }
@@ -103,6 +110,7 @@ public interface Queryable2<T1, T2> extends Queryable<T1> {
     }
 
     <TMember extends Number> TMember avgOrDefault(SQLExpression2<SQLColumnResultSelector<T1, TMember>, SQLColumnResultSelector<T2, TMember>> columnSelectorExpression, TMember def);
+
     default Integer lenOrNull(SQLExpression2<SQLColumnResultSelector<T1, ?>, SQLColumnResultSelector<T2, ?>> columnSelectorExpression) {
         return lenOrDefault(columnSelectorExpression, null);
     }
@@ -111,6 +119,14 @@ public interface Queryable2<T1, T2> extends Queryable<T1> {
     //endregion
 
     //region group
+    @Override
+    default Queryable2<T1,T2> groupBy(SQLExpression1<SQLGroupBySelector<T1>> selectExpression) {
+        return groupBy(true, selectExpression);
+    }
+
+    @Override
+    Queryable2<T1,T2> groupBy(boolean condition, SQLExpression1<SQLGroupBySelector<T1>> selectExpression);
+
     default Queryable2<T1, T2> groupBy(SQLExpression2<SQLGroupBySelector<T1>, SQLGroupBySelector<T2>> selectExpression) {
         return groupBy(true, selectExpression);
     }
@@ -119,11 +135,27 @@ public interface Queryable2<T1, T2> extends Queryable<T1> {
 
     //endregion
     //region order
+    @Override
+    default Queryable2<T1, T2> orderByAsc(SQLExpression1<SQLColumnSelector<T1>> selectExpression) {
+        return orderByAsc(true, selectExpression);
+    }
+
+    @Override
+    Queryable2<T1, T2> orderByAsc(boolean condition, SQLExpression1<SQLColumnSelector<T1>> selectExpression);
+
     default Queryable2<T1, T2> orderByAsc(SQLExpression2<SQLColumnSelector<T1>, SQLColumnSelector<T2>> selectExpression) {
         return orderByAsc(true, selectExpression);
     }
 
     Queryable2<T1, T2> orderByAsc(boolean condition, SQLExpression2<SQLColumnSelector<T1>, SQLColumnSelector<T2>> selectExpression);
+
+    @Override
+    default Queryable2<T1, T2> orderByDesc(SQLExpression1<SQLColumnSelector<T1>> selectExpression) {
+        return orderByDesc(true, selectExpression);
+    }
+
+    @Override
+    Queryable2<T1, T2> orderByDesc(boolean condition, SQLExpression1<SQLColumnSelector<T1>> selectExpression);
 
     default Queryable2<T1, T2> orderByDesc(SQLExpression2<SQLColumnSelector<T1>, SQLColumnSelector<T2>> selectExpression) {
         return orderByDesc(true, selectExpression);
@@ -156,30 +188,38 @@ public interface Queryable2<T1, T2> extends Queryable<T1> {
     }
 
     Queryable2<T1, T2> distinct(boolean condition);
+
     //endregion
     @Override
-   Queryable2<T1, T2> disableLogicDelete();
+    Queryable2<T1, T2> disableLogicDelete();
 
     @Override
     Queryable2<T1, T2> enableLogicDelete();
+
     @Override
     Queryable2<T1, T2> useLogicDelete(boolean enable);
 
     @Override
     Queryable2<T1, T2> noInterceptor();
+
     @Override
     Queryable2<T1, T2> useInterceptor(String name);
+
     @Override
     Queryable2<T1, T2> noInterceptor(String name);
+
     @Override
     Queryable2<T1, T2> useInterceptor();
+
     /**
      * 自动将查询结果集合全部添加到当前上下文追踪中,如果当前查询结果十分庞大,并且更新数据只有个别条数,建议不要使用
      * 追踪查询，可以通过开启追踪后使用普通的查询，然后添加到当前的追踪上下文中{@link com.easy.query.core.api.client.EasyQuery#addTracking(Object)},开始先数据追踪的差异更新
+     *
      * @return
      */
     @Override
     Queryable2<T1, T2> asTracking();
+
     @Override
     Queryable2<T1, T2> asNoTracking();
 
@@ -188,8 +228,10 @@ public interface Queryable2<T1, T2> extends Queryable<T1> {
 
     @Override
     Queryable2<T1, T2> useShardingConfigure(int maxShardingQueryLimit, ConnectionModeEnum connectionMode);
+
     @Override
     Queryable2<T1, T2> useMaxShardingQueryLimit(int maxShardingQueryLimit);
+
     @Override
     Queryable2<T1, T2> useConnectionMode(ConnectionModeEnum connectionMode);
 
@@ -197,23 +239,25 @@ public interface Queryable2<T1, T2> extends Queryable<T1> {
      * 将当前表达式最近的一张表的表名修改成 {@param tableName}
      * 如果当前最近的表是正常的数据库表名,那么直接将表名改写
      * 如果当前最近的表是匿名表比如嵌套queryable的表那么将alias改成对应的表名
+     *
      * @param tableName
      * @return
      */
     @Override
-    default Queryable2<T1, T2> asTable(String tableName){
-        return asTable(old->tableName);
+    default Queryable2<T1, T2> asTable(String tableName) {
+        return asTable(old -> tableName);
     }
 
     /**
      * 将当前表达式最近的一张表的表名修改成 {@param tableNameAs}返回的表名
      * 如果当前最近的表是正常的数据库表名,那么直接将表名改写
      * 如果当前最近的表是匿名表比如嵌套queryable的表那么将alias改成对应的表名
+     *
      * @param tableNameAs
      * @return
      */
     @Override
-    Queryable2<T1, T2> asTable(Function<String,String> tableNameAs);
+    Queryable2<T1, T2> asTable(Function<String, String> tableNameAs);
 
     SQLExpressionProvider<T2> getSQLExpressionProvider2();
 }

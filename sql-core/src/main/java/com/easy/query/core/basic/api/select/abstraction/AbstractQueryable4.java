@@ -1,5 +1,6 @@
 package com.easy.query.core.basic.api.select.abstraction;
 
+import com.easy.query.core.basic.api.select.Queryable3;
 import com.easy.query.core.basic.api.select.provider.SQLExpressionProvider;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.SQLWherePredicate;
@@ -211,6 +212,11 @@ public abstract class AbstractQueryable4<T1, T2, T3,T4> extends AbstractQueryabl
         List<Integer> result =  cloneQueryable().select(lenFunction.getFuncColumn(projectSQLBuilderSegment.toSQL(null))).toList(Integer.class);
         return EasyCollectionUtil.firstOrDefault(result,def);
     }
+    @Override
+    public Queryable4<T1, T2, T3,T4> groupBy(boolean condition, SQLExpression1<SQLGroupBySelector<T1>> selectExpression) {
+        super.groupBy(condition, selectExpression);
+        return this;
+    }
 
     @Override
     public Queryable4<T1, T2, T3,T4> groupBy(boolean condition, SQLExpression4<SQLGroupBySelector<T1>, SQLGroupBySelector<T2>, SQLGroupBySelector<T3>, SQLGroupBySelector<T4>> selectExpression) {
@@ -225,6 +231,11 @@ public abstract class AbstractQueryable4<T1, T2, T3,T4> extends AbstractQueryabl
     }
 
     @Override
+    public Queryable4<T1, T2, T3,T4> orderByAsc(boolean condition, SQLExpression1<SQLColumnSelector<T1>> selectExpression) {
+        super.orderByAsc(condition, selectExpression);
+        return this;
+    }
+    @Override
     public Queryable4<T1, T2, T3,T4> orderByAsc(boolean condition, SQLExpression4<SQLColumnSelector<T1>, SQLColumnSelector<T2>, SQLColumnSelector<T3>, SQLColumnSelector<T4>> selectExpression) {
         if (condition) {
             SQLColumnSelector<T1> sqlOrderColumnSelector1 = getSQLExpressionProvider1().getSQLOrderColumnSelector(true);
@@ -233,6 +244,11 @@ public abstract class AbstractQueryable4<T1, T2, T3,T4> extends AbstractQueryabl
             SQLColumnSelector<T4> sqlOrderColumnSelector4 = getSQLExpressionProvider4().getSQLOrderColumnSelector(true);
             selectExpression.apply(sqlOrderColumnSelector1, sqlOrderColumnSelector2,sqlOrderColumnSelector3,sqlOrderColumnSelector4);
         }
+        return this;
+    }
+    @Override
+    public Queryable4<T1, T2, T3,T4> orderByDesc(boolean condition, SQLExpression1<SQLColumnSelector<T1>> selectExpression) {
+        super.orderByAsc(condition,selectExpression);
         return this;
     }
 

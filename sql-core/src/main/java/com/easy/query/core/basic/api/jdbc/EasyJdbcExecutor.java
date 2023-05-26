@@ -25,8 +25,7 @@ public class EasyJdbcExecutor implements JdbcExecutor {
 
 
     @Override
-    public <T> List<T> sqlQuery(String sql, Class<T> clazz, List<Object> parameters) {
-        List<SQLParameter> sqlParameters = EasyCollectionUtil.map(parameters, o -> new EasyConstSQLParameter(null, null, o));
+    public <T> List<T> sqlQuery(String sql, Class<T> clazz, List<SQLParameter> sqlParameters) {
         EntityExpressionExecutor entityExpressionExecutor = runtimeContext.getEntityExpressionExecutor();
         return entityExpressionExecutor.querySQL(ExecutorContext.create(runtimeContext,true, ExecuteMethodEnum.LIST), clazz, sql, sqlParameters);
     }

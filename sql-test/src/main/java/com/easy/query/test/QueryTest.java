@@ -1410,4 +1410,11 @@ public class QueryTest extends BaseTest {
             Assert.assertEquals("Duplicate key found: id", ex.getMessage());
         }
     }
+//
+//    @Test
+//     public void query81(){
+//        easyQuery.queryable()
+////        easyQuery.sqlQuery()
+//        String sql = "WITH RECURSIVE tree AS () SELECT * FROM tree;";
+//    }
 }

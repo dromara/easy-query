@@ -113,6 +113,13 @@ public interface Queryable3<T1, T2, T3> extends Queryable<T1> {
     //endregion
 
     //region group
+    @Override
+    default Queryable3<T1, T2, T3> groupBy(SQLExpression1<SQLGroupBySelector<T1>> selectExpression) {
+        return groupBy(true, selectExpression);
+    }
+
+    @Override
+    Queryable3<T1, T2, T3> groupBy(boolean condition, SQLExpression1<SQLGroupBySelector<T1>> selectExpression);
     default Queryable3<T1, T2, T3> groupBy(SQLExpression3<SQLGroupBySelector<T1>, SQLGroupBySelector<T2>, SQLGroupBySelector<T3>> selectExpression) {
         return groupBy(true, selectExpression);
     }
@@ -121,12 +128,26 @@ public interface Queryable3<T1, T2, T3> extends Queryable<T1> {
 
     //endregion
     //region order
+    @Override
+    default Queryable3<T1, T2, T3> orderByAsc(SQLExpression1<SQLColumnSelector<T1>> selectExpression) {
+        return orderByAsc(true, selectExpression);
+    }
+
+    @Override
+    Queryable3<T1, T2, T3> orderByAsc(boolean condition, SQLExpression1<SQLColumnSelector<T1>> selectExpression);
     default Queryable3<T1, T2, T3> orderByAsc(SQLExpression3<SQLColumnSelector<T1>, SQLColumnSelector<T2>, SQLColumnSelector<T3>> selectExpression) {
         return orderByAsc(true, selectExpression);
     }
 
     Queryable3<T1, T2, T3> orderByAsc(boolean condition, SQLExpression3<SQLColumnSelector<T1>, SQLColumnSelector<T2>, SQLColumnSelector<T3>> selectExpression);
 
+    @Override
+    default Queryable3<T1, T2, T3> orderByDesc(SQLExpression1<SQLColumnSelector<T1>> selectExpression) {
+        return orderByDesc(true, selectExpression);
+    }
+
+    @Override
+    Queryable3<T1, T2, T3> orderByDesc(boolean condition, SQLExpression1<SQLColumnSelector<T1>> selectExpression);
     default Queryable3<T1, T2, T3> orderByDesc(SQLExpression3<SQLColumnSelector<T1>, SQLColumnSelector<T2>, SQLColumnSelector<T3>> selectExpression) {
         return orderByDesc(true, selectExpression);
     }

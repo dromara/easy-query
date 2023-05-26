@@ -225,6 +225,12 @@ public abstract class AbstractQueryable2<T1, T2> extends AbstractQueryable<T1> i
     }
 
     @Override
+    public Queryable2<T1, T2> orderByAsc(boolean condition, SQLExpression1<SQLColumnSelector<T1>> selectExpression) {
+        super.orderByAsc(condition,selectExpression);
+        return this;
+    }
+
+    @Override
     public Queryable2<T1, T2> orderByAsc(boolean condition, SQLExpression2<SQLColumnSelector<T1>, SQLColumnSelector<T2>> selectExpression) {
         if (condition) {
             SQLColumnSelector<T1> sqlOrderColumnSelector1 = getSQLExpressionProvider1().getSQLOrderColumnSelector(true);
@@ -235,12 +241,24 @@ public abstract class AbstractQueryable2<T1, T2> extends AbstractQueryable<T1> i
     }
 
     @Override
+    public Queryable2<T1, T2> orderByDesc(boolean condition, SQLExpression1<SQLColumnSelector<T1>> selectExpression) {
+        super.orderByAsc(condition,selectExpression);
+        return this;
+    }
+
+    @Override
     public Queryable2<T1, T2> orderByDesc(boolean condition, SQLExpression2<SQLColumnSelector<T1>, SQLColumnSelector<T2>> selectExpression) {
         if (condition) {
             SQLColumnSelector<T1> sqlOrderColumnSelector1 = getSQLExpressionProvider1().getSQLOrderColumnSelector(false);
             SQLColumnSelector<T2> sqlOrderColumnSelector2 = getSQLExpressionProvider2().getSQLOrderColumnSelector(false);
             selectExpression.apply(sqlOrderColumnSelector1, sqlOrderColumnSelector2);
         }
+        return this;
+    }
+
+    @Override
+    public Queryable2<T1,T2> groupBy(boolean condition, SQLExpression1<SQLGroupBySelector<T1>> selectExpression){
+        super.groupBy(condition,selectExpression);
         return this;
     }
 

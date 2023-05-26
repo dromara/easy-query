@@ -102,6 +102,13 @@ public interface Queryable4<T1,T2,T3,T4> extends Queryable<T1> {
 
 
     //region group
+    @Override
+    default Queryable4<T1, T2, T3,T4> groupBy(SQLExpression1<SQLGroupBySelector<T1>> selectExpression) {
+        return groupBy(true, selectExpression);
+    }
+
+    @Override
+    Queryable4<T1, T2, T3,T4> groupBy(boolean condition, SQLExpression1<SQLGroupBySelector<T1>> selectExpression);
     default Queryable4<T1, T2, T3,T4> groupBy(SQLExpression4<SQLGroupBySelector<T1>, SQLGroupBySelector<T2>, SQLGroupBySelector<T3>, SQLGroupBySelector<T4>> selectExpression) {
         return groupBy(true, selectExpression);
     }
@@ -110,12 +117,26 @@ public interface Queryable4<T1,T2,T3,T4> extends Queryable<T1> {
 
     //endregion
     //region order
+    @Override
+    default Queryable4<T1, T2, T3,T4> orderByAsc(SQLExpression1<SQLColumnSelector<T1>> selectExpression) {
+        return orderByAsc(true, selectExpression);
+    }
+
+    @Override
+    Queryable4<T1, T2, T3,T4> orderByAsc(boolean condition, SQLExpression1<SQLColumnSelector<T1>> selectExpression);
     default Queryable4<T1, T2, T3,T4> orderByAsc(SQLExpression4<SQLColumnSelector<T1>, SQLColumnSelector<T2>, SQLColumnSelector<T3>, SQLColumnSelector<T4>> selectExpression) {
         return orderByAsc(true, selectExpression);
     }
 
     Queryable4<T1, T2, T3,T4> orderByAsc(boolean condition, SQLExpression4<SQLColumnSelector<T1>, SQLColumnSelector<T2>, SQLColumnSelector<T3>, SQLColumnSelector<T4>> selectExpression);
 
+    @Override
+    default Queryable4<T1, T2, T3,T4> orderByDesc(SQLExpression1<SQLColumnSelector<T1>> selectExpression) {
+        return orderByDesc(true, selectExpression);
+    }
+
+    @Override
+    Queryable4<T1, T2, T3,T4> orderByDesc(boolean condition, SQLExpression1<SQLColumnSelector<T1>> selectExpression);
     default Queryable4<T1, T2, T3,T4> orderByDesc(SQLExpression4<SQLColumnSelector<T1>, SQLColumnSelector<T2>, SQLColumnSelector<T3>, SQLColumnSelector<T4>> selectExpression) {
         return orderByDesc(true, selectExpression);
     }
