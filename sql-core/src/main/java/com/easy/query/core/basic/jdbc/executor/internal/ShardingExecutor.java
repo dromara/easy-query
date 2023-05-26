@@ -1,9 +1,9 @@
 package com.easy.query.core.basic.jdbc.executor.internal;
 
 import com.easy.query.core.basic.jdbc.con.EasyConnection;
+import com.easy.query.core.basic.thread.FuturesInvoker;
 import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.exception.EasyQueryException;
-import com.easy.query.core.exception.EasyQueryTimeoutException;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.sharding.context.StreamMergeContext;
 import com.easy.query.core.basic.jdbc.executor.internal.common.CommandExecuteUnit;
@@ -20,11 +20,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
 /**
@@ -50,8 +47,8 @@ public class ShardingExecutor {
 
     private static <TResult> List<TResult> execute0(StreamMergeContext streamMergeContext, Executor<TResult> executor, List<ExecutionUnit> executionUnits) throws SQLException {
         //如果只有单个执行那么直接创建不需要过多处理
-        if(EasyCollectionUtil.isSingle(executionUnits)){
-            DataSourceSQLExecutorUnit dataSourceSQLExecutorUnit = getSingleSQLExecutorGroups(streamMergeContext,EasyCollectionUtil.first(executionUnits));
+        if (EasyCollectionUtil.isSingle(executionUnits)) {
+            DataSourceSQLExecutorUnit dataSourceSQLExecutorUnit = getSingleSQLExecutorGroups(streamMergeContext, EasyCollectionUtil.first(executionUnits));
             return executor.execute(dataSourceSQLExecutorUnit);
         }
         //将数据以每个数据源进行聚合
@@ -66,20 +63,14 @@ public class ShardingExecutor {
         List<Future<List<TResult>>> futures = executeFuture0(streamMergeContext, executor, dataSourceSQLExecutorUnits);
 
         EasyQueryOption easyQueryOption = streamMergeContext.getEasyQueryOption();
-        int groupSize =!streamMergeContext.isQuery()?1: streamMergeContext.getMaxShardingQueryLimit();
-        List<TResult> results = new ArrayList<>(futures.size() * groupSize);
-        for (Future<List<TResult>> future : futures) {
-            try {
-                results.addAll(future.get(easyQueryOption.getShardingExecuteTimeoutMillis(), TimeUnit.SECONDS));
-            } catch (InterruptedException | ExecutionException e) {
-                throw new EasyQueryException(e);
-            } catch (TimeoutException e) {
-                throw new EasyQueryTimeoutException(e);
-            }
+        long timeoutMillis = easyQueryOption.getShardingExecuteTimeoutMillis();
+
+        try(FuturesInvoker<List<TResult>> invoker = new FuturesInvoker<>(futures)){
+            List<List<TResult>> lists = invoker.get(timeoutMillis);
+            return lists.stream()
+                    .flatMap(List::stream)
+                    .collect(Collectors.toList());
         }
-        return results;
-
-
     }
 
     private static <TResult> List<Future<List<TResult>>> executeFuture0(StreamMergeContext streamMergeContext, Executor<TResult> executor, List<DataSourceSQLExecutorUnit> dataSourceSQLExecutorUnits) {
@@ -95,6 +86,7 @@ public class ShardingExecutor {
     /**
      * 将多个按数据源分组的执行单元进行分组查询每组最大数目就是max query connections limit
      * 如果当前是顺序查询那么则为配置的值
+     *
      * @param streamMergeContext
      * @param sqlGroups
      * @return
@@ -108,7 +100,7 @@ public class ShardingExecutor {
         int groupUnitSize = sqlGroupExecutionUnits.size();
         ConnectionModeEnum useConnectionMode = streamMergeContext.getConnectionMode();
         //串行执行insert update delete或者最大连接数大于每个数据源分库的执行数目
-        ConnectionModeEnum connectionMode = EasyShardingUtil.getActualConnectionMode(isSerialExecute,maxShardingQueryLimit,groupUnitSize,useConnectionMode);
+        ConnectionModeEnum connectionMode = EasyShardingUtil.getActualConnectionMode(isSerialExecute, maxShardingQueryLimit, groupUnitSize, useConnectionMode);
 //        ConnectionModeEnum connectionMode = (isSerialExecute || maxShardingQueryLimit >= groupUnitSize)
 //                ? ConnectionModeEnum.MEMORY_STRICTLY
 //                : ConnectionModeEnum.CONNECTION_STRICTLY;
@@ -118,7 +110,7 @@ public class ShardingExecutor {
 
         List<List<ExecutionUnit>> sqlUnitPartitions = EasyCollectionUtil.partition(sqlGroupExecutionUnits, parallelCount);
         //由于分组后除了最后一个元素其余元素都满足parallelCount为最大,第一个元素的分组数将是实际的创建连接数
-        int createDbConnectionCount = sqlUnitPartitions.get(0).size();
+        int createDbConnectionCount = EasyCollectionUtil.first(sqlUnitPartitions).size();
         List<EasyConnection> easyConnections = streamMergeContext.getEasyConnections(dataSourceName, createDbConnectionCount);
         //将SQLExecutorUnit进行分区,每个区parallelCount个
         //[1,2,3,4,5,6,7],parallelCount=3,结果就是[[1,2,3],[4,5,6],[7]]
@@ -129,12 +121,13 @@ public class ShardingExecutor {
             });
         });
         List<SQLExecutorGroup<CommandExecuteUnit>> sqlExecutorGroups = EasyCollectionUtil.select(sqlExecutorUnitPartitions, (o, i) -> new SQLExecutorGroup<CommandExecuteUnit>(connectionMode, o));
-        return new DataSourceSQLExecutorUnit(connectionMode, sqlExecutorGroups);
+        return new DataSourceSQLExecutorUnit(dataSourceName,connectionMode, sqlExecutorGroups);
 
     }
 
     /**
      * 单条sql执行时创建单个执行单元
+     *
      * @param streamMergeContext
      * @param executionUnit
      * @return
@@ -142,13 +135,13 @@ public class ShardingExecutor {
     private static DataSourceSQLExecutorUnit getSingleSQLExecutorGroups(StreamMergeContext streamMergeContext, ExecutionUnit executionUnit) {
 
         ConnectionModeEnum connectionMode = ConnectionModeEnum.MEMORY_STRICTLY;
-
-        List<EasyConnection> easyConnections = streamMergeContext.getEasyConnections(executionUnit.getDataSourceName(), 1);
+        String dataSourceName = executionUnit.getDataSourceName();
+        List<EasyConnection> easyConnections = streamMergeContext.getEasyConnections(dataSourceName, 1);
         EasyConnection easyConnection = EasyCollectionUtil.first(easyConnections);
         CommandExecuteUnit commandExecuteUnit = new CommandExecuteUnit(executionUnit, easyConnection, connectionMode);
         SQLExecutorGroup<CommandExecuteUnit> sqlExecutorGroup = new SQLExecutorGroup<>(connectionMode, Collections.singletonList(commandExecuteUnit));
 
-        return new DataSourceSQLExecutorUnit(connectionMode, Collections.singletonList(sqlExecutorGroup));
+        return new DataSourceSQLExecutorUnit(dataSourceName,connectionMode, Collections.singletonList(sqlExecutorGroup));
 
     }
 }

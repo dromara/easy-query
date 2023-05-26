@@ -30,25 +30,39 @@ public class EasyQueryProperties {
      */
     private int maxShardingQueryLimit = 5;
     /**
-     * 仅分片时有效默认0如果需要建议大于 maxQueryConnectionsLimit * 分库数目
-     * 执行线程数 如果为0那么采用无界线程池{@link Executors#newCachedThreadPool},如果是大于0采用固定线程池{@link Executors#newFixedThreadPool}
+     * 仅分片时有效默认0如果需要建议大于 {@link com.easy.query.sql.starter.config.EasyQueryProperties#maxShardingQueryLimit} * 分库数目
+     * 执行线程数 如果为0那么采用无界线程池{@link Executors#newCachedThreadPool},如果是大于0采用长度为{@link com.easy.query.sql.starter.config.EasyQueryProperties#executorQueueSize}的有界队列
+     * 核心线程数采用{@link com.easy.query.sql.starter.config.EasyQueryProperties#executorCorePoolSize}并且需要比 {@link com.easy.query.sql.starter.config.EasyQueryProperties#executorCorePoolSize}值大
      */
     private int executorMaximumPoolSize = 0;
+    /**
+     * 当且仅当{@link com.easy.query.sql.starter.config.EasyQueryProperties#executorMaximumPoolSize}>0生效
+     */
     private int executorCorePoolSize = Math.min(Runtime.getRuntime().availableProcessors(), 4);
+    /**
+     * 当且仅当{@link com.easy.query.sql.starter.config.EasyQueryProperties#executorMaximumPoolSize}>0生效
+     */
+    private int executorQueueSize = 1024;
     private String logClass = "com.easy.query.sql.starter.logging.Slf4jImpl";
     /**
-     * 当没有路由匹配的时候查询是否报错
+     * 当查询没有路由匹配的时候查询是否报错
      * true:表示报错
      * false:表示返回默认值
      */
     private boolean throwIfRouteNotMatch = true;
 
+    /**
+     * 分片聚合超时时间默认30秒单位(ms)
+     */
     private long shardingExecuteTimeoutMillis = 30000L;
-    private long shardingGroupExecuteTimeoutMillis = 20000L;
 
     private boolean queryLargeColumn = true;
+    /**
+     * 当出现条件分片大于多少时报错默认128,
+     * 就是比如select where update where delete where路由到过多的表就会报错
+     * entity操作比如update对象，insert，delete对象不会判断这个条件
+     */
     private int maxShardingRouteCount = 128;
-    private int executorQueueSize = 1024;
     /**
      * 默认数据源分库有效
      */
@@ -59,9 +73,9 @@ public class EasyQueryProperties {
      */
     private int defaultDataSourcePoolSize = 0;
     /**
-     * 分表聚合多链接获取分表插入更新删除同理多个线程间等待获取时间单位毫秒(ms)
+     * 默认5秒分表聚合多链接获取分表插入更新删除同理多个线程间等待获取时间单位毫秒(ms)
      */
-    private long multiConnWaitTimeoutMillis = 5000;
+    private long multiConnWaitTimeoutMillis = 5000L;
 
     public Boolean getEnable() {
         return enable;
@@ -169,14 +183,6 @@ public class EasyQueryProperties {
 
     public void setShardingExecuteTimeoutMillis(long shardingExecuteTimeoutMillis) {
         this.shardingExecuteTimeoutMillis = shardingExecuteTimeoutMillis;
-    }
-
-    public long getShardingGroupExecuteTimeoutMillis() {
-        return shardingGroupExecuteTimeoutMillis;
-    }
-
-    public void setShardingGroupExecuteTimeoutMillis(long shardingGroupExecuteTimeoutMillis) {
-        this.shardingGroupExecuteTimeoutMillis = shardingGroupExecuteTimeoutMillis;
     }
 
     public boolean isQueryLargeColumn() {

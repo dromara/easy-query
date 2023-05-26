@@ -11,12 +11,18 @@ import java.util.List;
  * @author xuejiaming
  */
 public class DataSourceSQLExecutorUnit {
+    private final String dataSourceName;
     private final ConnectionModeEnum connectionMode;
     private final List<SQLExecutorGroup<CommandExecuteUnit>> sqlExecutorGroups;
 
-    public DataSourceSQLExecutorUnit(ConnectionModeEnum connectionMode, List<SQLExecutorGroup<CommandExecuteUnit>> sqlExecutorGroups) {
+    public DataSourceSQLExecutorUnit(String dataSourceName,ConnectionModeEnum connectionMode, List<SQLExecutorGroup<CommandExecuteUnit>> sqlExecutorGroups) {
+        this.dataSourceName = dataSourceName;
         this.connectionMode = connectionMode;
         this.sqlExecutorGroups = sqlExecutorGroups;
+    }
+
+    public String getDataSourceName() {
+        return dataSourceName;
     }
 
     public ConnectionModeEnum getConnectionMode() {

@@ -22,7 +22,6 @@ public class EasyQueryOption {
     private final ConnectionModeEnum connectionMode;
     private final boolean throwIfRouteNotMatch;
     private final long shardingExecuteTimeoutMillis;
-    private final long shardingGroupExecuteTimeoutMillis;
     private final EasyQueryReplicaOption replicaOption;
     private final EasyQueryShardingOption shardingOption;
     private final String defaultDataSourceName;
@@ -45,7 +44,7 @@ public class EasyQueryOption {
     private final long multiConnWaitTimeoutMillis;
 
     public EasyQueryOption(boolean deleteThrowError, SQLExecuteStrategyEnum insertStrategy, SQLExecuteStrategyEnum updateStrategy, ConnectionModeEnum connectionMode, int maxShardingQueryLimit, int executorMaximumPoolSize, int executorCorePoolSize,
-                           boolean throwIfNotMatchRoute, long shardingExecuteTimeoutMillis, long shardingGroupExecuteTimeoutMillis,
+                           boolean throwIfNotMatchRoute, long shardingExecuteTimeoutMillis,
                            EasyQueryShardingOption shardingOption, EasyQueryReplicaOption replicaOption, String defaultDataSourceName, int defaultDataSourcePoolSize, boolean queryLargeColumn, int maxShardingRouteCount, int executorQueueSize, long multiConnWaitTimeoutMillis) {
 
         if (executorMaximumPoolSize > 0) {
@@ -61,15 +60,12 @@ public class EasyQueryOption {
             if (executorQueueSize < maxShardingQueryLimit) {
                 throw new IllegalArgumentException("Invalid arguments: executorQueueSize < maxShardingQueryLimit");
             }
+            if((executorMaximumPoolSize+executorQueueSize) < maxShardingQueryLimit){
+                throw new IllegalArgumentException("Invalid arguments: (executorMaximumPoolSize+executorQueueSize) < maxShardingQueryLimit");
+            }
         }
         if (shardingExecuteTimeoutMillis <= 0) {
             throw new IllegalArgumentException("shardingExecuteTimeoutMillis less than zero:" + shardingExecuteTimeoutMillis);
-        }
-        if (shardingGroupExecuteTimeoutMillis <= 0) {
-            throw new IllegalArgumentException("shardingGroupExecuteTimeoutMillis less than zero:" + shardingGroupExecuteTimeoutMillis);
-        }
-        if (shardingExecuteTimeoutMillis < shardingGroupExecuteTimeoutMillis) {
-            throw new IllegalArgumentException("shardingExecuteTimeoutMillis:" + shardingExecuteTimeoutMillis + " should less than shardingGroupExecuteTimeoutMillis:" + shardingGroupExecuteTimeoutMillis);
         }
         if(multiConnWaitTimeoutMillis <= 0){
             throw new IllegalArgumentException("multiConnWaitTimeoutMillis <= 0");
@@ -83,7 +79,6 @@ public class EasyQueryOption {
         this.executorCorePoolSize = executorCorePoolSize;
         this.throwIfRouteNotMatch = throwIfNotMatchRoute;
         this.shardingExecuteTimeoutMillis = shardingExecuteTimeoutMillis;
-        this.shardingGroupExecuteTimeoutMillis = shardingGroupExecuteTimeoutMillis;
         this.shardingOption = shardingOption;
         this.replicaOption = replicaOption;
         this.defaultDataSourceName = defaultDataSourceName;
@@ -132,10 +127,6 @@ public class EasyQueryOption {
 
     public long getShardingExecuteTimeoutMillis() {
         return shardingExecuteTimeoutMillis;
-    }
-
-    public long getShardingGroupExecuteTimeoutMillis() {
-        return shardingGroupExecuteTimeoutMillis;
     }
 
     public EasyQueryShardingOption getShardingOption() {
