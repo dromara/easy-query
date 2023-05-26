@@ -35,8 +35,8 @@ public class EasyQueryPrepareParseResult implements QueryPrepareParseResult {
     private final EntityQuerySQLExpression easyQuerySQLExpression;
     private final boolean sharding;
     private boolean startsWithGroupByInOrderBy;
-    private int maxShardingQueryLimit;
-    private ConnectionModeEnum connectionMode;
+    private final int maxShardingQueryLimit;
+    private final ConnectionModeEnum connectionMode;
     private final long originalOffset;
     private final long originalRows;
     private final SequenceParseResult sequenceParseResult;
