@@ -1,6 +1,6 @@
 package com.easy.query.h2.expression;
 
-import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.expression.sql.expression.impl.EntitySQLExpressionMetadata;
 import com.easy.query.core.expression.sql.expression.impl.QuerySQLExpressionImpl;
 
 /**
@@ -10,7 +10,7 @@ import com.easy.query.core.expression.sql.expression.impl.QuerySQLExpressionImpl
  * @author xuejiaming
  */
 public class H2QuerySQLExpression extends QuerySQLExpressionImpl {
-    public H2QuerySQLExpression(QueryRuntimeContext runtimeContext) {
-        super(runtimeContext);
+    public H2QuerySQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata) {
+        super(entitySQLExpressionMetadata);
     }
 }

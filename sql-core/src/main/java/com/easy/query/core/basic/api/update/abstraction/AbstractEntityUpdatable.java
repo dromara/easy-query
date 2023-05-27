@@ -3,6 +3,7 @@ package com.easy.query.core.basic.api.update.abstraction;
 import com.easy.query.core.basic.api.internal.AbstractSQLExecuteRows;
 import com.easy.query.core.basic.api.update.EntityUpdatable;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
+import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.basic.plugin.interceptor.InterceptorEntry;
 import com.easy.query.core.configuration.QueryConfiguration;
@@ -18,6 +19,7 @@ import com.easy.query.core.basic.plugin.interceptor.EntityInterceptor;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
+import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.util.EasyCollectionUtil;
 
@@ -49,7 +51,7 @@ public abstract class AbstractEntityUpdatable<T> extends AbstractSQLExecuteRows<
         QueryRuntimeContext runtimeContext = entityUpdateExpressionBuilder.getRuntimeContext();
         entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(clazz);
         entityMetadata.checkTable();
-        table = runtimeContext.getExpressionBuilderFactory().createEntityTableExpressionBuilder(entityMetadata, 0, null, MultiTableTypeEnum.NONE, runtimeContext);
+        table = runtimeContext.getExpressionBuilderFactory().createEntityTableExpressionBuilder(entityMetadata, 0, MultiTableTypeEnum.NONE, runtimeContext);
         this.entityUpdateExpressionBuilder.addSQLEntityTableExpression(table);
     }
     @Override
@@ -124,7 +126,7 @@ public abstract class AbstractEntityUpdatable<T> extends AbstractSQLExecuteRows<
     }
 
     public String toSQL(Object entity) {
-        return toSQLWithParam(entity,null);
+        return toSQLWithParam(entity, DefaultToSQLContext.defaultToSQLContext(entityUpdateExpressionBuilder.getExpressionContext().getTableContext()));
     }
     private String toSQLWithParam(Object entity, ToSQLContext toSQLContext){
         return entityUpdateExpressionBuilder.toExpression(entity).toSQL(toSQLContext);

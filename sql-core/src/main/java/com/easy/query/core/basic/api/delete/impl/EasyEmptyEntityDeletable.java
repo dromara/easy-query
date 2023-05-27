@@ -3,6 +3,7 @@ package com.easy.query.core.basic.api.delete.impl;
 import com.easy.query.core.basic.api.delete.EntityDeletable;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.exception.EasyQueryConcurrentException;
+import com.easy.query.core.expression.sql.builder.ExpressionContext;
 
 import java.util.function.Function;
 
@@ -24,6 +25,11 @@ public class EasyEmptyEntityDeletable<T> implements EntityDeletable<T> {
         if(rows!=expectRows){
             throw new EasyQueryConcurrentException(msg,code);
         }
+    }
+
+    @Override
+    public ExpressionContext getExpressionContext() {
+        return null;
     }
 
     @Override

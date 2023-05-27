@@ -22,7 +22,7 @@ public class LogicDeleteTest extends BaseTest {
     public void Test1(){
         String logicDeleteSQL = easyQuery.queryable(LogicDelTopic.class)
                 .toSQL();
-        Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`deleted`,t.`create_time` FROM `t_logic_del_topic` t WHERE t.`deleted` = ?",logicDeleteSQL);
+        Assert.assertEquals("SELECT `id`,`stars`,`title`,`deleted`,`create_time` FROM `t_logic_del_topic` WHERE `deleted` = ?",logicDeleteSQL);
         List<LogicDelTopic> logicDelTopics = easyQuery.queryable(LogicDelTopic.class).toList();
         Assert.assertTrue(EasyCollectionUtil.isNotEmpty(logicDelTopics));
         Assert.assertEquals(100,logicDelTopics.size());
@@ -57,7 +57,7 @@ public class LogicDeleteTest extends BaseTest {
         String logicDeleteSql = easyQuery.queryable(LogicDelTopic.class)
                 .disableLogicDelete()
                 .toSQL();
-        Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`deleted`,t.`create_time` FROM `t_logic_del_topic` t",logicDeleteSql);
+        Assert.assertEquals("SELECT `id`,`stars`,`title`,`deleted`,`create_time` FROM `t_logic_del_topic`",logicDeleteSql);
         List<LogicDelTopic> logicDelTopics = easyQuery.queryable(LogicDelTopic.class).disableLogicDelete().toList();
         Assert.assertTrue(EasyCollectionUtil.isNotEmpty(logicDelTopics));
         Assert.assertEquals(100,logicDelTopics.size());
@@ -94,7 +94,7 @@ public class LogicDeleteTest extends BaseTest {
     public void Test7(){
         String logicDeleteSql = easyQuery.queryable(LogicDelTopicCustom.class)
                 .toSQL();
-        Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`deleted_at`,t.`deleted_user`,t.`create_time` FROM `t_logic_del_topic_custom` t WHERE t.`deleted_at` IS NULL",logicDeleteSql);
+        Assert.assertEquals("SELECT `id`,`stars`,`title`,`deleted_at`,`deleted_user`,`create_time` FROM `t_logic_del_topic_custom` WHERE `deleted_at` IS NULL",logicDeleteSql);
         List<LogicDelTopicCustom> logicDelTopics = easyQuery.queryable(LogicDelTopicCustom.class).toList();
         Assert.assertTrue(EasyCollectionUtil.isNotEmpty(logicDelTopics));
         Assert.assertEquals(100,logicDelTopics.size());
@@ -104,7 +104,7 @@ public class LogicDeleteTest extends BaseTest {
         String logicDeleteSql = easyQuery.queryable(LogicDelTopicCustom.class)
                 .where(o->o.eq(LogicDelTopicCustom::getId,"1"))
                 .toSQL();
-        Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`deleted_at`,t.`deleted_user`,t.`create_time` FROM `t_logic_del_topic_custom` t WHERE t.`deleted_at` IS NULL AND t.`id` = ?",logicDeleteSql);
+        Assert.assertEquals("SELECT `id`,`stars`,`title`,`deleted_at`,`deleted_user`,`create_time` FROM `t_logic_del_topic_custom` WHERE `deleted_at` IS NULL AND `id` = ?",logicDeleteSql);
         LogicDelTopicCustom logicDelTopic = easyQuery.queryable(LogicDelTopicCustom.class)
                 .where(o->o.eq(LogicDelTopicCustom::getId,"1")).firstOrNull();
         Assert.assertNotNull(logicDelTopic);
@@ -116,7 +116,7 @@ public class LogicDeleteTest extends BaseTest {
         String logicDeleteSql = easyQuery.queryable(LogicDelTopicCustom.class)
                 .where(o->o.eq(LogicDelTopicCustom::getId,"1"))
                 .toSQL();
-        Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`deleted_at`,t.`deleted_user`,t.`create_time` FROM `t_logic_del_topic_custom` t WHERE t.`deleted_at` IS NULL AND t.`id` = ?",logicDeleteSql);
+        Assert.assertEquals("SELECT `id`,`stars`,`title`,`deleted_at`,`deleted_user`,`create_time` FROM `t_logic_del_topic_custom` WHERE `deleted_at` IS NULL AND `id` = ?",logicDeleteSql);
         LogicDelTopicCustom logicDelTopic = easyQuery.queryable(LogicDelTopicCustom.class)
                 .where(o->o.eq(LogicDelTopicCustom::getId,"1")).firstOrNull();
         Assert.assertNotNull(logicDelTopic);
@@ -131,7 +131,7 @@ public class LogicDeleteTest extends BaseTest {
                 .disableLogicDelete()
                 .where(o->o.eq(LogicDelTopicCustom::getId,"1"))
                 .toSQL();
-        Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`deleted_at`,t.`deleted_user`,t.`create_time` FROM `t_logic_del_topic_custom` t WHERE t.`id` = ?",logicDeleteSql);
+        Assert.assertEquals("SELECT `id`,`stars`,`title`,`deleted_at`,`deleted_user`,`create_time` FROM `t_logic_del_topic_custom` WHERE `id` = ?",logicDeleteSql);
         LogicDelTopicCustom logicDelTopic = easyQuery.queryable(LogicDelTopicCustom.class)
                 .disableLogicDelete()
                 .where(o->o.eq(LogicDelTopicCustom::getId,"1")).firstOrNull();

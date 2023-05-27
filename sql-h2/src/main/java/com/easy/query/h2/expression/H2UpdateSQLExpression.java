@@ -1,7 +1,7 @@
 package com.easy.query.h2.expression;
 
-import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
+import com.easy.query.core.expression.sql.expression.impl.EntitySQLExpressionMetadata;
 import com.easy.query.core.expression.sql.expression.impl.UpdateSQLExpressionImpl;
 
 /**
@@ -12,7 +12,7 @@ import com.easy.query.core.expression.sql.expression.impl.UpdateSQLExpressionImp
  */
 public class H2UpdateSQLExpression extends UpdateSQLExpressionImpl {
 
-    public H2UpdateSQLExpression(QueryRuntimeContext runtimeContext, EntityTableSQLExpression table) {
-        super(runtimeContext, table);
+    public H2UpdateSQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata, EntityTableSQLExpression table) {
+        super(entitySQLExpressionMetadata, table);
     }
 }

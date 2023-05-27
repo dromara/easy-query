@@ -48,7 +48,7 @@ public class ColumnSegmentImpl implements ColumnSegment {
 
     @Override
     public String toSQL(ToSQLContext toSQLContext) {
-        String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumn(runtimeContext,table,propertyName);
+        String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumn(runtimeContext,table,propertyName,toSQLContext);
         StringBuilder sql = new StringBuilder();
         sql.append(sqlColumnSegment);
         if(alias!=null){

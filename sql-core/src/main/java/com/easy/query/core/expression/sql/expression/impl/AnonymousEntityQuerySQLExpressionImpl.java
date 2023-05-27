@@ -20,12 +20,12 @@ import java.util.List;
  * @author xuejiaming
  */
 public class AnonymousEntityQuerySQLExpressionImpl implements AnonymousEntityQuerySQLExpression {
-    protected final QueryRuntimeContext runtimeContext;
     protected final String sql;
     protected final List<EntityTableSQLExpression> tables;
+    private final EntitySQLExpressionMetadata entitySQLExpressionMetadata;
 
-    public AnonymousEntityQuerySQLExpressionImpl(QueryRuntimeContext runtimeContext, String sql){
-        this.runtimeContext = runtimeContext;
+    public AnonymousEntityQuerySQLExpressionImpl(EntitySQLExpressionMetadata entitySQLExpressionMetadata, String sql){
+        this.entitySQLExpressionMetadata = entitySQLExpressionMetadata;
         this.sql = sql;
         this.tables = Collections.emptyList();
     }
@@ -36,8 +36,13 @@ public class AnonymousEntityQuerySQLExpressionImpl implements AnonymousEntityQue
     }
 
     @Override
+    public EntitySQLExpressionMetadata getExpressionMetadata() {
+        return entitySQLExpressionMetadata;
+    }
+
+    @Override
     public QueryRuntimeContext getRuntimeContext() {
-        return runtimeContext;
+        return entitySQLExpressionMetadata.getRuntimeContext();
     }
 
     @Override
@@ -142,8 +147,8 @@ public class AnonymousEntityQuerySQLExpressionImpl implements AnonymousEntityQue
 
     @Override
     public EntityQuerySQLExpression cloneSQLExpression() {
-        ExpressionFactory expressionFactory = runtimeContext.getExpressionFactory();
-        return expressionFactory.createEasyAnonymousQuerySQLExpression(runtimeContext,sql);
+        ExpressionFactory expressionFactory = entitySQLExpressionMetadata.getRuntimeContext().getExpressionFactory();
+        return expressionFactory.createEasyAnonymousQuerySQLExpression(entitySQLExpressionMetadata,sql);
     }
 
 }

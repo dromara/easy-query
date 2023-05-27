@@ -14,6 +14,7 @@ import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.expression.sql.expression.impl.AnonymousEntityQuerySQLExpressionImpl;
 import com.easy.query.core.expression.sql.expression.impl.AnonymousEntityTableSQLExpressionImpl;
 import com.easy.query.core.expression.sql.expression.impl.AnonymousUnionQuerySQLExpressionImpl;
+import com.easy.query.core.expression.sql.expression.impl.EntitySQLExpressionMetadata;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,23 +27,23 @@ import java.util.List;
  */
 public class MySQLExpressionFactory implements ExpressionFactory {
     @Override
-    public EntityQuerySQLExpression createEasyQuerySQLExpression(QueryRuntimeContext runtimeContext) {
-        return new MySQLQuerySQLExpression(runtimeContext);
+    public EntityQuerySQLExpression createEasyQuerySQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata) {
+        return new MySQLQuerySQLExpression(entitySQLExpressionMetadata);
     }
 
     @Override
-    public EntityInsertSQLExpression createEasyInsertSQLExpression(QueryRuntimeContext runtimeContext, EntityTableSQLExpression entityTableSQLExpression) {
-        return new MySQLInsertSQLExpression(runtimeContext,entityTableSQLExpression);
+    public EntityInsertSQLExpression createEasyInsertSQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata, EntityTableSQLExpression entityTableSQLExpression) {
+        return new MySQLInsertSQLExpression(entitySQLExpressionMetadata,entityTableSQLExpression);
     }
 
     @Override
-    public EntityUpdateSQLExpression createEasyUpdateSQLExpression(QueryRuntimeContext runtimeContext, EntityTableSQLExpression entityTableSQLExpression) {
-        return new MySQLUpdateSQLExpression(runtimeContext,entityTableSQLExpression);
+    public EntityUpdateSQLExpression createEasyUpdateSQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata, EntityTableSQLExpression entityTableSQLExpression) {
+        return new MySQLUpdateSQLExpression(entitySQLExpressionMetadata,entityTableSQLExpression);
     }
 
     @Override
-    public EntityDeleteSQLExpression createEasyDeleteSQLExpression(QueryRuntimeContext runtimeContext, EntityTableSQLExpression entityTableSQLExpression) {
-        return new MySQLDeleteSQLExpression(runtimeContext,entityTableSQLExpression);
+    public EntityDeleteSQLExpression createEasyDeleteSQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata, EntityTableSQLExpression entityTableSQLExpression) {
+        return new MySQLDeleteSQLExpression(entitySQLExpressionMetadata,entityTableSQLExpression);
     }
 
     @Override
@@ -57,12 +58,12 @@ public class MySQLExpressionFactory implements ExpressionFactory {
 
 
     @Override
-    public AnonymousEntityQuerySQLExpression createEasyAnonymousQuerySQLExpression(QueryRuntimeContext runtimeContext, String sql) {
-        return new AnonymousEntityQuerySQLExpressionImpl(runtimeContext, sql);
+    public AnonymousEntityQuerySQLExpression createEasyAnonymousQuerySQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata, String sql) {
+        return new AnonymousEntityQuerySQLExpressionImpl(entitySQLExpressionMetadata, sql);
     }
 
     @Override
-    public AnonymousEntityQuerySQLExpression createEasyAnonymousUnionQuerySQLExpression(QueryRuntimeContext runtimeContext, List<EntityQuerySQLExpression> entityQuerySQLExpressions, SQLUnionEnum sqlUnion) {
-        return new AnonymousUnionQuerySQLExpressionImpl(runtimeContext, new ArrayList<>(entityQuerySQLExpressions), sqlUnion);
+    public AnonymousEntityQuerySQLExpression createEasyAnonymousUnionQuerySQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata, List<EntityQuerySQLExpression> entityQuerySQLExpressions, SQLUnionEnum sqlUnion) {
+        return new AnonymousUnionQuerySQLExpressionImpl(entitySQLExpressionMetadata, new ArrayList<>(entityQuerySQLExpressions), sqlUnion);
     }
 }

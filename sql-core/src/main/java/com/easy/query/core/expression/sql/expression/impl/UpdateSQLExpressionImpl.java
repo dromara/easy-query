@@ -22,13 +22,13 @@ import java.util.List;
  * @author xuejiaming
  */
 public  class UpdateSQLExpressionImpl implements EntityUpdateSQLExpression {
-    protected final QueryRuntimeContext runtimeContext;
     protected final SQLBuilderSegment setColumns;
     protected final PredicateSegment where;
     protected final List<EntityTableSQLExpression> tables=new ArrayList<>(1);
+    private final EntitySQLExpressionMetadata entitySQLExpressionMetadata;
 
-    public UpdateSQLExpressionImpl(QueryRuntimeContext runtimeContext, EntityTableSQLExpression table) {
-        this.runtimeContext = runtimeContext;
+    public UpdateSQLExpressionImpl(EntitySQLExpressionMetadata entitySQLExpressionMetadata, EntityTableSQLExpression table) {
+        this.entitySQLExpressionMetadata = entitySQLExpressionMetadata;
         this.tables.add(table);
         this.setColumns = new UpdateSetSQLBuilderSegment();
         this.where = new AndPredicateSegment(true);
@@ -51,8 +51,13 @@ public  class UpdateSQLExpressionImpl implements EntityUpdateSQLExpression {
     }
 
     @Override
+    public EntitySQLExpressionMetadata getExpressionMetadata() {
+        return entitySQLExpressionMetadata;
+    }
+
+    @Override
     public QueryRuntimeContext getRuntimeContext() {
-        return runtimeContext;
+        return entitySQLExpressionMetadata.getRuntimeContext();
     }
 
 
@@ -71,8 +76,8 @@ public  class UpdateSQLExpressionImpl implements EntityUpdateSQLExpression {
     @Override
     public EntityUpdateSQLExpression cloneSQLExpression() {
 
-        ExpressionFactory expressionFactory = runtimeContext.getExpressionFactory();
-        EntityUpdateSQLExpression easyUpdateSQLExpression = expressionFactory.createEasyUpdateSQLExpression(runtimeContext,tables.get(0).cloneSQLExpression());
+        ExpressionFactory expressionFactory = entitySQLExpressionMetadata.getRuntimeContext().getExpressionFactory();
+        EntityUpdateSQLExpression easyUpdateSQLExpression = expressionFactory.createEasyUpdateSQLExpression(entitySQLExpressionMetadata,tables.get(0).cloneSQLExpression());
         if(EasySQLSegmentUtil.isNotEmpty(where)){
             where.copyTo(easyUpdateSQLExpression.getWhere());
         }if(EasySQLSegmentUtil.isNotEmpty(setColumns)){

@@ -6,6 +6,7 @@ import com.easy.query.core.basic.plugin.interceptor.InterceptorEntry;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
+import com.easy.query.core.expression.sql.TableContext;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 
@@ -23,12 +24,11 @@ import java.util.stream.Stream;
  */
 public class EasyExpressionContext implements ExpressionContext {
     private final QueryRuntimeContext runtimeContext;
-    private final String alias;
     //    protected final List<SQLParameter> params;
     protected final EasyBehavior easyBehavior;
     protected final Set<String> useInterceptors;
     protected final Set<String> noInterceptors;
-    private int aliasSeq = -1;
+    protected final TableContext tableContext;
     private boolean deleteThrowException;
     private Object version;
     private ExecuteMethodEnum executeMethod = ExecuteMethodEnum.UNKNOWN;
@@ -37,13 +37,13 @@ public class EasyExpressionContext implements ExpressionContext {
     private Integer maxShardingQueryLimit;
     private ConnectionModeEnum connectionMode;
     private boolean sharding;
+    private boolean hasSubQuery;
 
-    public EasyExpressionContext(QueryRuntimeContext runtimeContext, String alias) {
+    public EasyExpressionContext(QueryRuntimeContext runtimeContext) {
 
         this.runtimeContext = runtimeContext;
         QueryConfiguration queryConfiguration = runtimeContext.getQueryConfiguration();
         this.deleteThrowException = queryConfiguration.deleteThrow();
-        this.alias = alias;
 //        params = new ArrayList<>();
         //如果他是不查询大列的就去掉
         this.easyBehavior = new EasyBehavior();
@@ -52,6 +52,7 @@ public class EasyExpressionContext implements ExpressionContext {
         }
         this.useInterceptors = new HashSet<>();
         this.noInterceptors = new HashSet<>();
+        this.tableContext = new TableContext();
         this.maxShardingQueryLimit = null;
         this.connectionMode = null;
         this.sharding = false;
@@ -61,18 +62,6 @@ public class EasyExpressionContext implements ExpressionContext {
     public QueryRuntimeContext getRuntimeContext() {
         return runtimeContext;
     }
-
-    @Override
-    public String getAlias() {
-        return alias;
-    }
-
-    @Override
-    public String createTableAlias() {
-        aliasSeq++;
-        return aliasSeq == 0 ? alias : (alias + aliasSeq);
-    }
-
     @Override
     public String getQuoteName(String value) {
         return runtimeContext.getQueryConfiguration().getDialect().getQuoteName(value);
@@ -222,5 +211,17 @@ public class EasyExpressionContext implements ExpressionContext {
         if(otherExpressionContext.isSharding()){
             this.sharding=true;
         }
+        this.hasSubQuery=true;
+        tableContext.extract(otherExpressionContext.getTableContext());
+    }
+
+    @Override
+    public boolean hasSubQuery() {
+        return hasSubQuery;
+    }
+
+    @Override
+    public TableContext getTableContext() {
+        return tableContext;
     }
 }

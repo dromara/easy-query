@@ -278,7 +278,7 @@ public class Main {
             long l12xx = easyQuery.updatable(updates).setSQLStrategy(SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS).executeRows();
         }
         {
-            TestUserMysql testUserMysqlx11 = easyQuery.queryable(TestUserMysql.class, "y")
+            TestUserMysql testUserMysqlx11 = easyQuery.queryable(TestUserMysql.class)
                     .where(o -> o.eq(TestUserMysql::getId, "102").like(TestUserMysql::getName, "1").and(x ->
                             x.like(TestUserMysql::getName, "123").or().eq(TestUserMysql::getAge, 1)
                     )).orderByAsc(o -> o.column(TestUserMysql::getName).column(TestUserMysql::getAge))
@@ -537,14 +537,14 @@ public class Main {
                     .groupBy(o -> o.column(TestUserMysql::getAge))
                     .having(o -> o.countDistinct(TestUserMysql::getId, AggregatePredicateCompare.GT, 5).and(x -> x.countDistinct(TestUserMysql::getId, AggregatePredicateCompare.GT, 5).or().countDistinct(TestUserMysql::getId, AggregatePredicateCompare.GT, 5)))
                     .toList();
-            TestUserMysql testUserMysql = easyQuery.queryable(TestUserMysql.class, "y")
+            TestUserMysql testUserMysql = easyQuery.queryable(TestUserMysql.class)
                     .where(o -> o.eq(TestUserMysql::getId, "102").like(TestUserMysql::getName, "1").and(x ->
                             x.like(TestUserMysql::getName, "123").or().eq(TestUserMysql::getAge, 1)
                     )).orderByAsc(o -> o.column(TestUserMysql::getName).column(TestUserMysql::getAge))
                     .orderByDesc(o -> o.column(TestUserMysql::getName)).firstOrNull();
 
 
-            TestUserMysql testUserMysql1 = easyQuery.queryable(TestUserMysql.class, "y")
+            TestUserMysql testUserMysql1 = easyQuery.queryable(TestUserMysql.class)
                     .where(o -> o.eq(TestUserMysql::getId, "102").like(TestUserMysql::getName, "1%").and(x ->
                             x.like(TestUserMysql::getName, "123").or().eq(TestUserMysql::getAge, 1)
                     ).or(x -> x.eq(TestUserMysql::getName, 456).eq(TestUserMysql::getId, 8989))).firstOrNull();

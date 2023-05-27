@@ -12,6 +12,7 @@ import com.easy.query.core.expression.segment.condition.predicate.ColumnValuePre
 import com.easy.query.core.expression.segment.condition.predicate.ColumnVersionPropertyPredicate;
 import com.easy.query.core.expression.sql.expression.EntityUpdateSQLExpression;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
+import com.easy.query.core.expression.sql.expression.impl.EntitySQLExpressionMetadata;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.configuration.QueryConfiguration;
@@ -366,7 +367,8 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
         }
         QueryRuntimeContext runtimeContext = getRuntimeContext();
         ExpressionFactory expressionFactory = runtimeContext.getExpressionFactory();
-        EntityUpdateSQLExpression easyUpdateSQLExpression = expressionFactory.createEasyUpdateSQLExpression(runtimeContext, table.toExpression());
+        EntitySQLExpressionMetadata entitySQLExpressionMetadata = new EntitySQLExpressionMetadata(expressionContext.getTableContext(), runtimeContext);
+        EntityUpdateSQLExpression easyUpdateSQLExpression = expressionFactory.createEasyUpdateSQLExpression(entitySQLExpressionMetadata, table.toExpression());
         updateSet.copyTo(easyUpdateSQLExpression.getSetColumns());
         sqlWhere.copyTo(easyUpdateSQLExpression.getWhere());
         return easyUpdateSQLExpression;
@@ -389,7 +391,8 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
         SQLBuilderSegment updateSet = buildSetSQLSegment(table);
         QueryRuntimeContext runtimeContext = getRuntimeContext();
         ExpressionFactory expressionFactory = runtimeContext.getExpressionFactory();
-        EntityUpdateSQLExpression easyUpdateSQLExpression = expressionFactory.createEasyUpdateSQLExpression(runtimeContext, table.toExpression());
+        EntitySQLExpressionMetadata entitySQLExpressionMetadata = new EntitySQLExpressionMetadata(expressionContext.getTableContext(), runtimeContext);
+        EntityUpdateSQLExpression easyUpdateSQLExpression = expressionFactory.createEasyUpdateSQLExpression(entitySQLExpressionMetadata, table.toExpression());
         updateSet.copyTo(easyUpdateSQLExpression.getSetColumns());
         sqlWhere.copyTo(easyUpdateSQLExpression.getWhere());
         return easyUpdateSQLExpression;

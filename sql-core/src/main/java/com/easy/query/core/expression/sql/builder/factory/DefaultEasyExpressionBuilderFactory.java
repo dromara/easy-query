@@ -27,8 +27,8 @@ import com.easy.query.core.metadata.EntityMetadata;
  */
 public  class DefaultEasyExpressionBuilderFactory implements ExpressionBuilderFactory {
     @Override
-    public ExpressionContext createExpressionContext(QueryRuntimeContext runtimeContext, String alias) {
-        return new EasyExpressionContext(runtimeContext,alias);
+    public ExpressionContext createExpressionContext(QueryRuntimeContext runtimeContext) {
+        return new EasyExpressionContext(runtimeContext);
     }
 
     @Override

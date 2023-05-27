@@ -1,6 +1,6 @@
 package com.easy.query.mysql.expression;
 
-import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.expression.sql.expression.impl.EntitySQLExpressionMetadata;
 import com.easy.query.core.expression.sql.expression.impl.QuerySQLExpressionImpl;
 
 /**
@@ -10,7 +10,7 @@ import com.easy.query.core.expression.sql.expression.impl.QuerySQLExpressionImpl
  * @author xuejiaming
  */
 public class MySQLQuerySQLExpression extends QuerySQLExpressionImpl {
-    public MySQLQuerySQLExpression(QueryRuntimeContext runtimeContext) {
-        super(runtimeContext);
+    public MySQLQuerySQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata) {
+        super(entitySQLExpressionMetadata);
     }
 }

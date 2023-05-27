@@ -47,7 +47,7 @@ public class ColumnExistsSubQueryPredicate implements SubQueryPredicate {
         StringBuilder sql = new StringBuilder();
         sql.append(sqlPredicateCompare.getSQL()).append(" (");
         String subQueryableSQL = subQueryable.toSQL(toSQLContext);
-        sql.append(subQueryableSQL).append(") ");
+        sql.append(subQueryableSQL).append(")");
         return sql.toString();
     }
 

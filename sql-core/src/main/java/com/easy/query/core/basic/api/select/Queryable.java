@@ -4,6 +4,8 @@ import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.api.dynamic.sort.ObjectSort;
 import com.easy.query.core.basic.api.internal.QueryStrategy;
 import com.easy.query.core.basic.api.select.provider.SQLExpressionProvider;
+import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
+import com.easy.query.core.expression.sql.TableContext;
 import com.easy.query.core.sharding.manager.SequenceCountLine;
 import com.easy.query.core.basic.api.internal.Interceptable;
 import com.easy.query.core.basic.api.internal.LogicDeletable;
@@ -199,7 +201,8 @@ public interface Queryable<T1> extends Query<T1>,
      * @return
      */
     default <TR> String toSQL(Class<TR> resultClass) {
-        return toSQL(resultClass, null);
+        TableContext tableContext = getSQLEntityExpressionBuilder().getExpressionContext().getTableContext();
+        return toSQL(resultClass, DefaultToSQLContext.defaultToSQLContext(tableContext));
     }
 
     <TR> String toSQL(Class<TR> resultClass, ToSQLContext toSQLContext);
@@ -242,7 +245,10 @@ public interface Queryable<T1> extends Query<T1>,
      */
     Queryable<T1> select(String columns);
 
-    Queryable<T1> select(ColumnSegment columnSegment, boolean clearAll);
+   default Queryable<T1> select(ColumnSegment columnSegment, boolean clearAll){
+       return select(Collections.singletonList(columnSegment),clearAll);
+   }
+    Queryable<T1> select(Collection<ColumnSegment> columnSegments, boolean clearAll);
 
     default Queryable<T1> where(SQLExpression1<SQLWherePredicate<T1>> whereExpression) {
         return where(true, whereExpression);

@@ -13,7 +13,6 @@ public interface TableExpressionBuilder extends ExpressionBuilder {
     Class<?> getEntityClass();
     PredicateSegment getOn();
     boolean hasOn();
-    String getAlias();
     int getIndex();
     TableAvailable getEntityTable();
 }

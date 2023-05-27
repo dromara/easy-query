@@ -399,7 +399,7 @@ public class EntityMetadata {
 
     public void checkTable() {
         if (EasyStringUtil.isEmpty(tableName)) {
-            throw new EasyQueryException("当前对象不是数据库对象," + EasyClassUtil.getSimpleName(entityClass));
+            throw new EasyQueryException("current entity not mapping table name," + EasyClassUtil.getSimpleName(entityClass));
         }
     }
 

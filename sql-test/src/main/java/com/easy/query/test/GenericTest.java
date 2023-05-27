@@ -139,12 +139,12 @@ public class GenericTest extends BaseTest{
     @Test
     public void queryLargeColumnTest1(){
         String sql = easyQuery.queryable(QueryLargeColumnTestEntity.class).toSQL();
-        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`content` FROM `query_large_column_test` t",sql);
+        Assert.assertEquals("SELECT `id`,`name`,`content` FROM `query_large_column_test`",sql);
     }
     @Test
     public void queryLargeColumnTest2(){
         String sql = easyQuery.queryable(QueryLargeColumnTestEntity.class).queryLargeColumn(false).toSQL();
-        Assert.assertEquals("SELECT t.`id`,t.`name` FROM `query_large_column_test` t",sql);
+        Assert.assertEquals("SELECT `id`,`name` FROM `query_large_column_test`",sql);
     }
     @Test
     public void queryLargeColumnTest3(){

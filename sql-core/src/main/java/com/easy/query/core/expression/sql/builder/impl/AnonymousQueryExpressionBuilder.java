@@ -1,10 +1,12 @@
 package com.easy.query.core.expression.sql.builder.impl;
 
+import com.easy.query.core.expression.sql.TableContext;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.SQLAnonymousEntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.expression.EntityQuerySQLExpression;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
+import com.easy.query.core.expression.sql.expression.impl.EntitySQLExpressionMetadata;
 
 /**
  * create time 2023/3/31 10:59
@@ -28,7 +30,9 @@ public class AnonymousQueryExpressionBuilder extends QueryExpressionBuilder impl
 
     @Override
     public EntityQuerySQLExpression toExpression() {
-        return runtimeContext.getExpressionFactory().createEasyAnonymousQuerySQLExpression(runtimeContext,sql);
+        TableContext tableContext = expressionContext.getTableContext();
+        EntitySQLExpressionMetadata entitySQLExpressionMetadata = new EntitySQLExpressionMetadata(tableContext, runtimeContext);
+        return runtimeContext.getExpressionFactory().createEasyAnonymousQuerySQLExpression(entitySQLExpressionMetadata,sql);
     }
 
 

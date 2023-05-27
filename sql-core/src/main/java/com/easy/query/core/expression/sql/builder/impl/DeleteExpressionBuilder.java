@@ -21,6 +21,7 @@ import com.easy.query.core.expression.sql.expression.EntityDeleteSQLExpression;
 import com.easy.query.core.expression.sql.expression.EntityPredicateSQLExpression;
 import com.easy.query.core.expression.sql.expression.EntityUpdateSQLExpression;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
+import com.easy.query.core.expression.sql.expression.impl.EntitySQLExpressionMetadata;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
@@ -182,10 +183,11 @@ public class DeleteExpressionBuilder extends AbstractPredicateEntityExpressionBu
         UpdateSetSQLBuilderSegment updateSetSQLBuilderSegment = getUpdateSetSQLBuilderSegment(table);
         QueryRuntimeContext runtimeContext = getRuntimeContext();
         ExpressionFactory expressionFactory = runtimeContext.getExpressionFactory();
+        EntitySQLExpressionMetadata entitySQLExpressionMetadata = new EntitySQLExpressionMetadata(expressionContext.getTableContext(), runtimeContext);
         //逻辑删除
         if (updateSetSQLBuilderSegment != null) {
             PredicateSegment where = buildWherePredicateSegment(table);
-            EntityUpdateSQLExpression easyUpdateSQLExpression = expressionFactory.createEasyUpdateSQLExpression(runtimeContext, table.toExpression());
+            EntityUpdateSQLExpression easyUpdateSQLExpression = expressionFactory.createEasyUpdateSQLExpression(entitySQLExpressionMetadata, table.toExpression());
             updateSetSQLBuilderSegment.copyTo(easyUpdateSQLExpression.getSetColumns());
             where.copyTo(easyUpdateSQLExpression.getWhere());
             return easyUpdateSQLExpression;
@@ -193,7 +195,7 @@ public class DeleteExpressionBuilder extends AbstractPredicateEntityExpressionBu
             if (expressionContext.isDeleteThrow()) {
                 throw new EasyQueryInvalidOperationException("can't execute delete statement");
             }
-            EntityDeleteSQLExpression easyDeleteSQLExpression = expressionFactory.createEasyDeleteSQLExpression(runtimeContext, table.toExpression());
+            EntityDeleteSQLExpression easyDeleteSQLExpression = expressionFactory.createEasyDeleteSQLExpression(entitySQLExpressionMetadata, table.toExpression());
             PredicateSegment where = buildWherePredicateSegment(table);
             where.copyTo(easyDeleteSQLExpression.getWhere());
             return easyDeleteSQLExpression;
@@ -209,9 +211,10 @@ public class DeleteExpressionBuilder extends AbstractPredicateEntityExpressionBu
 
         QueryRuntimeContext runtimeContext = getRuntimeContext();
         ExpressionFactory expressionFactory = runtimeContext.getExpressionFactory();
+        EntitySQLExpressionMetadata entitySQLExpressionMetadata = new EntitySQLExpressionMetadata(expressionContext.getTableContext(), runtimeContext);
         //逻辑删除
         if (updateSetSQLBuilderSegment != null) {
-            EntityUpdateSQLExpression easyUpdateSQLExpression = expressionFactory.createEasyUpdateSQLExpression(runtimeContext, table.toExpression());
+            EntityUpdateSQLExpression easyUpdateSQLExpression = expressionFactory.createEasyUpdateSQLExpression(entitySQLExpressionMetadata, table.toExpression());
             updateSetSQLBuilderSegment.copyTo(easyUpdateSQLExpression.getSetColumns());
             sqlWhere.copyTo(easyUpdateSQLExpression.getWhere());
             return easyUpdateSQLExpression;
@@ -219,7 +222,7 @@ public class DeleteExpressionBuilder extends AbstractPredicateEntityExpressionBu
             if (expressionContext.isDeleteThrow()) {
                 throw new EasyQueryInvalidOperationException("can't execute delete statement");
             }
-            EntityDeleteSQLExpression easyDeleteSQLExpression = expressionFactory.createEasyDeleteSQLExpression(runtimeContext, table.toExpression());
+            EntityDeleteSQLExpression easyDeleteSQLExpression = expressionFactory.createEasyDeleteSQLExpression(entitySQLExpressionMetadata, table.toExpression());
 
             sqlWhere.copyTo(easyDeleteSQLExpression.getWhere());
             return easyDeleteSQLExpression;

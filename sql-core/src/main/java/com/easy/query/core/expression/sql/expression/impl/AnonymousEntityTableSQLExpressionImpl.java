@@ -10,6 +10,9 @@ import com.easy.query.core.expression.sql.expression.EntityQuerySQLExpression;
 import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 import com.easy.query.core.util.EasySQLSegmentUtil;
+import com.easy.query.core.util.EasyStringUtil;
+
+import java.util.function.Function;
 
 /**
  * create time 2023/4/23 16:30
@@ -25,13 +28,14 @@ public class AnonymousEntityTableSQLExpressionImpl extends TableSQLExpressionImp
         this.easyQuerySQLExpression = easyQuerySQLExpression;
     }
 
+    @Override
+    public void setTableNameAs(Function<String, String> tableNameAs) {
+       throw new UnsupportedOperationException();
+    }
 
     @Override
     public String getTableName() {
-        if (tableNameAs != null) {
-            return tableNameAs.apply(getAlias());
-        }
-        return getAlias();
+        return null;
     }
 
     @Override
@@ -41,9 +45,9 @@ public class AnonymousEntityTableSQLExpressionImpl extends TableSQLExpressionImp
         StringBuilder sql = new StringBuilder();
 
         sql.append(getSelectTableSource()).append("(").append(easyQuerySQLExpression.toSQL(toSQLContext)).append(")");
-        String tableName = getTableName();
-        if (tableName != null) {
-            sql.append(" ").append(tableName);
+        String tableAlias = EasySQLExpressionUtil.getTableAlias(toSQLContext, entityTable);
+        if (tableAlias != null) {
+            sql.append(" ").append(tableAlias);
         }
         return sql.toString();
     }

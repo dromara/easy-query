@@ -22,6 +22,7 @@ import java.util.List;
  */
 public class QuerySQLExpressionImpl implements EntityQuerySQLExpression {
 
+    private final EntitySQLExpressionMetadata entitySQLExpressionMetadata;
     protected SQLBuilderSegment projects;
     protected PredicateSegment where;
     protected PredicateSegment allPredicate;
@@ -32,15 +33,19 @@ public class QuerySQLExpressionImpl implements EntityQuerySQLExpression {
     protected long rows;
     protected boolean distinct;
     protected final List<EntityTableSQLExpression> tables=new ArrayList<>();
-    protected final QueryRuntimeContext runtimeContext;
 
-    public QuerySQLExpressionImpl(QueryRuntimeContext runtimeContext) {
-        this.runtimeContext = runtimeContext;
+    public QuerySQLExpressionImpl(EntitySQLExpressionMetadata entitySQLExpressionMetadata) {
+        this.entitySQLExpressionMetadata = entitySQLExpressionMetadata;
+    }
+
+    @Override
+    public EntitySQLExpressionMetadata getExpressionMetadata() {
+        return entitySQLExpressionMetadata;
     }
 
     @Override
     public QueryRuntimeContext getRuntimeContext() {
-        return runtimeContext;
+        return entitySQLExpressionMetadata.getRuntimeContext();
     }
 
     @Override
@@ -216,7 +221,7 @@ public class QuerySQLExpressionImpl implements EntityQuerySQLExpression {
     public EntityQuerySQLExpression cloneSQLExpression() {
 
         ExpressionFactory expressionFactory = getRuntimeContext().getExpressionFactory();
-        EntityQuerySQLExpression easyQuerySQLExpression = expressionFactory.createEasyQuerySQLExpression(getRuntimeContext());
+        EntityQuerySQLExpression easyQuerySQLExpression = expressionFactory.createEasyQuerySQLExpression(entitySQLExpressionMetadata);
 
         if(EasySQLSegmentUtil.isNotEmpty(this.where)){
             easyQuerySQLExpression.setWhere(where.clonePredicateSegment());

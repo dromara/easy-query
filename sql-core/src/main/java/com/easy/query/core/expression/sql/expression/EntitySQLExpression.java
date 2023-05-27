@@ -1,6 +1,7 @@
 package com.easy.query.core.expression.sql.expression;
 
 import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.expression.sql.expression.impl.EntitySQLExpressionMetadata;
 
 import java.util.List;
 
@@ -11,6 +12,7 @@ import java.util.List;
  * @author xuejiaming
  */
 public interface EntitySQLExpression extends SQLExpression {
+    EntitySQLExpressionMetadata getExpressionMetadata();
     QueryRuntimeContext getRuntimeContext();
     List<EntityTableSQLExpression> getTables();
     default EntityTableSQLExpression getTable(int index){

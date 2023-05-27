@@ -4,7 +4,9 @@ import com.easy.query.core.basic.api.internal.Interceptable;
 import com.easy.query.core.basic.api.internal.LogicDeletable;
 import com.easy.query.core.basic.api.internal.SQLExecuteExpectRows;
 import com.easy.query.core.basic.api.internal.TableReNameable;
+import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
+import com.easy.query.core.expression.sql.builder.ExpressionContext;
 
 /**
  * @author xuejiaming
@@ -14,13 +16,14 @@ import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
  */
 public interface Deletable<T, TChain> extends SQLExecuteExpectRows,
         Interceptable<TChain>, LogicDeletable<TChain>, TableReNameable<TChain> {
+    ExpressionContext getExpressionContext();
     /**
      * 语句转成sql
      *
      * @return
      */
     default String toSQL() {
-        return toSQL(null);
+        return toSQL(DefaultToSQLContext.defaultToSQLContext(getExpressionContext().getTableContext()));
     }
 
     String toSQL(ToSQLContext toSQLContext);

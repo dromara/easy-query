@@ -23,13 +23,13 @@ import java.util.List;
  * @author xuejiaming
  */
 public interface ExpressionBuilderFactory {
-    ExpressionContext createExpressionContext(QueryRuntimeContext runtimeContext, String alias);
-   default EntityTableExpressionBuilder createEntityTableExpressionBuilder(EntityMetadata entityMetadata, int index, String alias, MultiTableTypeEnum multiTableType, QueryRuntimeContext runtimeContext){
-       return createEntityTableExpressionBuilder(new EntityTableAvailable(index,entityMetadata,alias),multiTableType,runtimeContext);
+    ExpressionContext createExpressionContext(QueryRuntimeContext runtimeContext);
+   default EntityTableExpressionBuilder createEntityTableExpressionBuilder(EntityMetadata entityMetadata, int index, MultiTableTypeEnum multiTableType, QueryRuntimeContext runtimeContext){
+       return createEntityTableExpressionBuilder(new EntityTableAvailable(index,entityMetadata,false),multiTableType,runtimeContext);
    }
     EntityTableExpressionBuilder createEntityTableExpressionBuilder(TableAvailable tableAvailable, MultiTableTypeEnum multiTableType, QueryRuntimeContext runtimeContext);
-   default EntityTableExpressionBuilder createAnonymousEntityTableExpressionBuilder(EntityMetadata entityMetadata, int index, String alias, MultiTableTypeEnum multiTableType, EntityQueryExpressionBuilder entityQueryExpressionBuilder){
-       return createAnonymousEntityTableExpressionBuilder(new EntityTableAvailable(index,entityMetadata,alias),multiTableType,entityQueryExpressionBuilder);
+   default EntityTableExpressionBuilder createAnonymousEntityTableExpressionBuilder(EntityMetadata entityMetadata, int index, MultiTableTypeEnum multiTableType, EntityQueryExpressionBuilder entityQueryExpressionBuilder){
+       return createAnonymousEntityTableExpressionBuilder(new EntityTableAvailable(index,entityMetadata,true),multiTableType,entityQueryExpressionBuilder);
    }
     EntityTableExpressionBuilder createAnonymousEntityTableExpressionBuilder(TableAvailable tableAvailable, MultiTableTypeEnum multiTableType, EntityQueryExpressionBuilder entityQueryExpressionBuilder);
     EntityQueryExpressionBuilder createEntityQueryExpressionBuilder(ExpressionContext sqlExpressionContext);

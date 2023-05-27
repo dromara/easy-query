@@ -1,7 +1,7 @@
 package com.easy.query.h2.expression;
 
-import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
+import com.easy.query.core.expression.sql.expression.impl.EntitySQLExpressionMetadata;
 import com.easy.query.core.expression.sql.expression.impl.InsertSQLExpressionImpl;
 
 /**
@@ -11,7 +11,7 @@ import com.easy.query.core.expression.sql.expression.impl.InsertSQLExpressionImp
  * @author xuejiaming
  */
 public class H2InsertSQLExpression extends InsertSQLExpressionImpl {
-    public H2InsertSQLExpression(QueryRuntimeContext runtimeContext, EntityTableSQLExpression table) {
-        super(runtimeContext, table);
+    public H2InsertSQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata, EntityTableSQLExpression table) {
+        super(entitySQLExpressionMetadata, table);
     }
 }

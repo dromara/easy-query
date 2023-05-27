@@ -54,10 +54,6 @@ public class TableSQLExpressionImpl implements EntityTableSQLExpression {
         return entityTable;
     }
 
-    @Override
-    public String getAlias() {
-        return entityTable.getAlias();
-    }
 
     public Function<String, String> getTableNameAs() {
         return tableNameAs;
@@ -104,8 +100,9 @@ public class TableSQLExpressionImpl implements EntityTableSQLExpression {
         StringBuilder sql = new StringBuilder();
 
         sql.append(getSelectTableSource()).append(getTableName());
-        if (getAlias() != null) {
-            sql.append(" ").append(getAlias());
+        String tableAlias = EasySQLExpressionUtil.getTableAlias(toSQLContext, entityTable);
+        if (tableAlias != null) {
+            sql.append(" ").append(tableAlias);
         }
         return sql.toString();
     }

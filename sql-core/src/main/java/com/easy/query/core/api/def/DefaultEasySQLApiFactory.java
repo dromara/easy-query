@@ -10,6 +10,8 @@ import com.easy.query.core.basic.api.select.impl.EasyQueryable3;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.SQLUnionEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
+import com.easy.query.core.expression.sql.DefaultSQLContext;
+import com.easy.query.core.expression.sql.SQLContext;
 import com.easy.query.core.expression.sql.builder.factory.ExpressionBuilderFactory;
 import com.easy.query.core.expression.sql.builder.EntityDeleteExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
@@ -63,24 +65,24 @@ public class DefaultEasySQLApiFactory implements SQLApiFactory {
     }
 
     @Override
-    public <T> Queryable<T> createQueryable(Class<T> clazz, QueryRuntimeContext runtimeContext, String alias) {
-        ExpressionContext queryExpressionContext = expressionBuilderFactory.createExpressionContext(runtimeContext,alias);
+    public <T> Queryable<T> createQueryable(Class<T> clazz, QueryRuntimeContext runtimeContext) {
+        ExpressionContext queryExpressionContext = expressionBuilderFactory.createExpressionContext(runtimeContext);
         EntityQueryExpressionBuilder entityQueryExpression = expressionBuilderFactory.createEntityQueryExpressionBuilder(queryExpressionContext);
         EntityMetadata entityMetadata =runtimeContext.getEntityMetadataManager().getEntityMetadata(clazz);
         int tableIndex = EasyUtil.getNextTableIndex(entityQueryExpression);;
-        EntityTableExpressionBuilder sqlTable = expressionBuilderFactory.createEntityTableExpressionBuilder(entityMetadata,  tableIndex,queryExpressionContext.createTableAlias(), MultiTableTypeEnum.FROM,runtimeContext);
+        EntityTableExpressionBuilder sqlTable = expressionBuilderFactory.createEntityTableExpressionBuilder(entityMetadata,  tableIndex, MultiTableTypeEnum.FROM,runtimeContext);
         entityQueryExpression.addSQLEntityTableExpression(sqlTable);
         return new EasyQueryable<>(clazz,entityQueryExpression);
     }
 
     @Override
-    public <T> Queryable<T> createQueryable(String sql, Class<T> clazz, QueryRuntimeContext runtimeContext, String alias) {
+    public <T> Queryable<T> createQueryable(String sql, Class<T> clazz, QueryRuntimeContext runtimeContext) {
 
-        ExpressionContext queryExpressionContext = expressionBuilderFactory.createExpressionContext(runtimeContext,alias);
+        ExpressionContext queryExpressionContext = expressionBuilderFactory.createExpressionContext(runtimeContext);
         EntityQueryExpressionBuilder innerSQLEntityQueryExpression = expressionBuilderFactory.createAnonymousQueryExpressionBuilder(sql,queryExpressionContext);
         EntityMetadata entityMetadata =runtimeContext.getEntityMetadataManager().getEntityMetadata(clazz);
         int tableIndex = EasyUtil.getNextTableIndex(innerSQLEntityQueryExpression);
-        EntityTableExpressionBuilder sqlTable = expressionBuilderFactory.createAnonymousEntityTableExpressionBuilder(entityMetadata,  tableIndex,queryExpressionContext.createTableAlias(), MultiTableTypeEnum.FROM,innerSQLEntityQueryExpression);
+        EntityTableExpressionBuilder sqlTable = expressionBuilderFactory.createAnonymousEntityTableExpressionBuilder(entityMetadata,  tableIndex, MultiTableTypeEnum.FROM,innerSQLEntityQueryExpression);
 //        //todo
 //       innerSqlEntityQueryExpression.addSqlEntityTableExpression(sqlTable);
 
@@ -109,7 +111,7 @@ public class DefaultEasySQLApiFactory implements SQLApiFactory {
         ExpressionContext queryExpressionContext = entityQueryExpressionBuilder.getExpressionContext();
         EntityQueryExpressionBuilder sqlEntityQueryExpression = expressionBuilderFactory.createEntityQueryExpressionBuilder(queryExpressionContext);
         EntityMetadata entityMetadata = queryExpressionContext.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(clazz);
-        EntityTableExpressionBuilder anonymousTable = expressionBuilderFactory.createAnonymousEntityTableExpressionBuilder(entityMetadata, 0, queryExpressionContext.createTableAlias(), MultiTableTypeEnum.FROM, entityQueryExpressionBuilder);
+        EntityTableExpressionBuilder anonymousTable = expressionBuilderFactory.createAnonymousEntityTableExpressionBuilder(entityMetadata, 0, MultiTableTypeEnum.FROM, entityQueryExpressionBuilder);
         sqlEntityQueryExpression.addSQLEntityTableExpression(anonymousTable);
         return new EasyQueryable<>(clazz,sqlEntityQueryExpression);
     }
@@ -139,7 +141,7 @@ public class DefaultEasySQLApiFactory implements SQLApiFactory {
 
 
         int tableIndex = EasyUtil.getNextTableIndex(innerSQLEntityQueryExpression);
-        EntityTableExpressionBuilder sqlTable = expressionBuilderFactory.createAnonymousEntityTableExpressionBuilder(entityMetadata,  tableIndex,queryExpressionContext.createTableAlias(), MultiTableTypeEnum.FROM,innerSQLEntityQueryExpression);
+        EntityTableExpressionBuilder sqlTable = expressionBuilderFactory.createAnonymousEntityTableExpressionBuilder(entityMetadata,  tableIndex, MultiTableTypeEnum.FROM,innerSQLEntityQueryExpression);
 //        //todo
 //       innerSqlEntityQueryExpression.addSqlEntityTableExpression(sqlTable);
 
@@ -156,7 +158,7 @@ public class DefaultEasySQLApiFactory implements SQLApiFactory {
 
         int tableIndex =  EasyUtil.getNextTableIndex(sqlEntityExpression);
         ExpressionContext queryExpressionContext = sqlEntityExpression.getExpressionContext();
-        EntityTableExpressionBuilder sqlTable = expressionBuilderFactory.createEntityTableExpressionBuilder(entityMetadata,  tableIndex,queryExpressionContext.createTableAlias(), selectTableInfoType,queryExpressionContext.getRuntimeContext());
+        EntityTableExpressionBuilder sqlTable = expressionBuilderFactory.createEntityTableExpressionBuilder(entityMetadata,  tableIndex, selectTableInfoType,queryExpressionContext.getRuntimeContext());
         sqlEntityExpression.addSQLEntityTableExpression(sqlTable);
 
         return new EasyQueryable2<>(t1Class,t2Class,sqlEntityExpression);
@@ -181,8 +183,7 @@ public class DefaultEasySQLApiFactory implements SQLApiFactory {
         EntityQueryExpressionBuilder joinQueryableSQLEntityExpression = joinQueryable.getSQLEntityExpressionBuilder();
 
         int tableIndex =  EasyUtil.getNextTableIndex(sqlEntityExpression);
-        ExpressionContext queryExpressionContext = sqlEntityExpression.getExpressionContext();
-        EntityTableExpressionBuilder sqlTable = expressionBuilderFactory.createAnonymousEntityTableExpressionBuilder(entityMetadata,  tableIndex,queryExpressionContext.createTableAlias(), selectTableInfoType,joinQueryableSQLEntityExpression);
+        EntityTableExpressionBuilder sqlTable = expressionBuilderFactory.createAnonymousEntityTableExpressionBuilder(entityMetadata,  tableIndex, selectTableInfoType,joinQueryableSQLEntityExpression);
         sqlEntityExpression.addSQLEntityTableExpression(sqlTable);
 
         return new EasyQueryable2<>(t1Class,t2Class,sqlEntityExpression);
@@ -194,7 +195,7 @@ public class DefaultEasySQLApiFactory implements SQLApiFactory {
         EntityMetadata entityMetadata = sqlEntityExpression.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(t3Class);
         int tableIndex =  EasyUtil.getNextTableIndex(sqlEntityExpression);
         ExpressionContext queryExpressionContext = sqlEntityExpression.getExpressionContext();
-        EntityTableExpressionBuilder sqlTable = expressionBuilderFactory.createEntityTableExpressionBuilder(entityMetadata,  tableIndex,queryExpressionContext.createTableAlias(), selectTableInfoType,queryExpressionContext.getRuntimeContext());
+        EntityTableExpressionBuilder sqlTable = expressionBuilderFactory.createEntityTableExpressionBuilder(entityMetadata,  tableIndex, selectTableInfoType,queryExpressionContext.getRuntimeContext());
         sqlEntityExpression.addSQLEntityTableExpression(sqlTable);
 
         return new EasyQueryable3<>(t1Class,t2Class,t3Class,sqlEntityExpression);
@@ -210,7 +211,7 @@ public class DefaultEasySQLApiFactory implements SQLApiFactory {
 
         int tableIndex =  EasyUtil.getNextTableIndex(sqlEntityExpression);
         ExpressionContext queryExpressionContext = sqlEntityExpression.getExpressionContext();
-        EntityTableExpressionBuilder sqlTable = expressionBuilderFactory.createAnonymousEntityTableExpressionBuilder(entityMetadata,  tableIndex,queryExpressionContext.createTableAlias(), selectTableInfoType,joinQueryableSQLEntityExpression);
+        EntityTableExpressionBuilder sqlTable = expressionBuilderFactory.createAnonymousEntityTableExpressionBuilder(entityMetadata,  tableIndex, selectTableInfoType,joinQueryableSQLEntityExpression);
         sqlEntityExpression.addSQLEntityTableExpression(sqlTable);
 
         return new EasyQueryable3<>(t1Class,t2Class,t3Class,sqlEntityExpression);
@@ -222,7 +223,7 @@ public class DefaultEasySQLApiFactory implements SQLApiFactory {
         EntityMetadata entityMetadata = sqlEntityExpression.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(t4Class);
         int tableIndex =  EasyUtil.getNextTableIndex(sqlEntityExpression);
         ExpressionContext queryExpressionContext = sqlEntityExpression.getExpressionContext();
-        EntityTableExpressionBuilder sqlTable = expressionBuilderFactory.createEntityTableExpressionBuilder(entityMetadata,  tableIndex,queryExpressionContext.createTableAlias(), selectTableInfoType,queryExpressionContext.getRuntimeContext());
+        EntityTableExpressionBuilder sqlTable = expressionBuilderFactory.createEntityTableExpressionBuilder(entityMetadata,  tableIndex, selectTableInfoType,queryExpressionContext.getRuntimeContext());
         sqlEntityExpression.addSQLEntityTableExpression(sqlTable);
 
         return new EasyQueryable4<>(t1Class,t2Class,t3Class,t4Class,sqlEntityExpression);
@@ -238,22 +239,22 @@ public class DefaultEasySQLApiFactory implements SQLApiFactory {
 
         int tableIndex =  EasyUtil.getNextTableIndex(sqlEntityExpression);
         ExpressionContext queryExpressionContext = sqlEntityExpression.getExpressionContext();
-        EntityTableExpressionBuilder sqlTable = expressionBuilderFactory.createAnonymousEntityTableExpressionBuilder(entityMetadata,  tableIndex,queryExpressionContext.createTableAlias(), selectTableInfoType,joinQueryableSQLEntityExpression);
+        EntityTableExpressionBuilder sqlTable = expressionBuilderFactory.createAnonymousEntityTableExpressionBuilder(entityMetadata,  tableIndex, selectTableInfoType,joinQueryableSQLEntityExpression);
         sqlEntityExpression.addSQLEntityTableExpression(sqlTable);
 
         return new EasyQueryable4<>(t1Class,t2Class,t3Class,t4Class,sqlEntityExpression);
     }
 
     @Override
-    public <T> Insertable<T> createInsertable(Class<T> clazz, QueryRuntimeContext runtimeContext, String alias) {
-        ExpressionContext expressionContext = expressionBuilderFactory.createExpressionContext(runtimeContext, alias);
+    public <T> Insertable<T> createInsertable(Class<T> clazz, QueryRuntimeContext runtimeContext) {
+        ExpressionContext expressionContext = expressionBuilderFactory.createExpressionContext(runtimeContext);
         EntityInsertExpressionBuilder entityInsertExpression = expressionBuilderFactory.createEntityInsertExpressionBuilder(expressionContext);
         return createInsertable(clazz,entityInsertExpression);
     }
 
     @Override
-    public <T> Insertable<T> createEmptyInsertable(QueryRuntimeContext runtimeContext, String alias) {
-        ExpressionContext expressionContext = expressionBuilderFactory.createExpressionContext(runtimeContext, alias);
+    public <T> Insertable<T> createEmptyInsertable(QueryRuntimeContext runtimeContext) {
+        ExpressionContext expressionContext = expressionBuilderFactory.createExpressionContext(runtimeContext);
         EntityInsertExpressionBuilder entityInsertExpression = expressionBuilderFactory.createEntityInsertExpressionBuilder(expressionContext);
         return new EasyEmptyInsertable<>(entityInsertExpression);
     }
@@ -269,20 +270,20 @@ public class DefaultEasySQLApiFactory implements SQLApiFactory {
     }
 
     @Override
-    public <T> EntityUpdatable<T> createEntityUpdatable(T entity, QueryRuntimeContext runtimeContext, String alias) {
-        return createEntityUpdatable(Collections.singletonList(entity),runtimeContext,alias);
+    public <T> EntityUpdatable<T> createEntityUpdatable(T entity, QueryRuntimeContext runtimeContext) {
+        return createEntityUpdatable(Collections.singletonList(entity),runtimeContext);
     }
     @Override
-    public <T> EntityUpdatable<T> createEntityUpdatable(Collection<T> entities, QueryRuntimeContext runtimeContext, String alias) {
-        ExpressionContext sqlExpressionContext = expressionBuilderFactory.createExpressionContext(runtimeContext, alias);
+    public <T> EntityUpdatable<T> createEntityUpdatable(Collection<T> entities, QueryRuntimeContext runtimeContext) {
+        ExpressionContext sqlExpressionContext = expressionBuilderFactory.createExpressionContext(runtimeContext);
         EntityUpdateExpressionBuilder entityUpdateExpression = expressionBuilderFactory.createEntityUpdateExpressionBuilder(sqlExpressionContext,false);
         return new EasyEntityUpdatable<>(entities,entityUpdateExpression);
     }
 
 
     @Override
-    public <T> ExpressionUpdatable<T> createExpressionUpdatable(Class<T> entityClass, QueryRuntimeContext runtimeContext, String alias) {
-        ExpressionContext sqlExpressionContext = expressionBuilderFactory.createExpressionContext(runtimeContext, alias);
+    public <T> ExpressionUpdatable<T> createExpressionUpdatable(Class<T> entityClass, QueryRuntimeContext runtimeContext) {
+        ExpressionContext sqlExpressionContext = expressionBuilderFactory.createExpressionContext(runtimeContext);
         EntityUpdateExpressionBuilder entityUpdateExpression = expressionBuilderFactory.createEntityUpdateExpressionBuilder(sqlExpressionContext,true);
         return new EasyExpressionUpdatable<>(entityClass,entityUpdateExpression);
     }
@@ -293,20 +294,20 @@ public class DefaultEasySQLApiFactory implements SQLApiFactory {
     }
 
     @Override
-    public <T> EntityDeletable<T> createEntityDeletable(T entity, QueryRuntimeContext runtimeContext, String alias) {
-        return createEntityDeletable(Collections.singletonList(entity),runtimeContext,alias);
+    public <T> EntityDeletable<T> createEntityDeletable(T entity, QueryRuntimeContext runtimeContext) {
+        return createEntityDeletable(Collections.singletonList(entity),runtimeContext);
     }
 
     @Override
-    public <T> EntityDeletable<T> createEntityDeletable(Collection<T> entities, QueryRuntimeContext runtimeContext, String alias) {
-        ExpressionContext sqlExpressionContext = expressionBuilderFactory.createExpressionContext(runtimeContext, alias);
+    public <T> EntityDeletable<T> createEntityDeletable(Collection<T> entities, QueryRuntimeContext runtimeContext) {
+        ExpressionContext sqlExpressionContext = expressionBuilderFactory.createExpressionContext(runtimeContext);
         EntityDeleteExpressionBuilder entityDeleteExpression = expressionBuilderFactory.createEntityDeleteExpressionBuilder(sqlExpressionContext,false);
         return new EasyEntityDeletable<>(entities,entityDeleteExpression);
     }
 
     @Override
-    public <T> ExpressionDeletable<T> createExpressionDeletable(Class<T> entityClass, QueryRuntimeContext runtimeContext, String alias) {
-        ExpressionContext expressionContext = expressionBuilderFactory.createExpressionContext(runtimeContext, alias);
+    public <T> ExpressionDeletable<T> createExpressionDeletable(Class<T> entityClass, QueryRuntimeContext runtimeContext) {
+        ExpressionContext expressionContext = expressionBuilderFactory.createExpressionContext(runtimeContext);
         EntityDeleteExpressionBuilder entityDeleteExpression = expressionBuilderFactory.createEntityDeleteExpressionBuilder(expressionContext,true);
         return new EasyExpressionDeletable<>(entityClass,entityDeleteExpression);
     }

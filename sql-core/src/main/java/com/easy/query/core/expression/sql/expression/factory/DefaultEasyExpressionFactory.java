@@ -14,12 +14,12 @@ import com.easy.query.core.expression.sql.expression.impl.AnonymousEntityQuerySQ
 import com.easy.query.core.expression.sql.expression.impl.AnonymousEntityTableSQLExpressionImpl;
 import com.easy.query.core.expression.sql.expression.impl.AnonymousUnionQuerySQLExpressionImpl;
 import com.easy.query.core.expression.sql.expression.impl.DeleteSQLExpressionImpl;
+import com.easy.query.core.expression.sql.expression.impl.EntitySQLExpressionMetadata;
 import com.easy.query.core.expression.sql.expression.impl.InsertSQLExpressionImpl;
 import com.easy.query.core.expression.sql.expression.impl.QuerySQLExpressionImpl;
 import com.easy.query.core.expression.sql.expression.impl.TableSQLExpressionImpl;
 import com.easy.query.core.expression.sql.expression.impl.UpdateSQLExpressionImpl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -30,23 +30,23 @@ import java.util.List;
  */
 public class DefaultEasyExpressionFactory implements ExpressionFactory {
     @Override
-    public EntityQuerySQLExpression createEasyQuerySQLExpression(QueryRuntimeContext runtimeContext) {
-        return new QuerySQLExpressionImpl(runtimeContext);
+    public EntityQuerySQLExpression createEasyQuerySQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata) {
+        return new QuerySQLExpressionImpl(entitySQLExpressionMetadata);
     }
 
     @Override
-    public EntityInsertSQLExpression createEasyInsertSQLExpression(QueryRuntimeContext runtimeContext, EntityTableSQLExpression entityTableSQLExpression) {
-        return new InsertSQLExpressionImpl(runtimeContext, entityTableSQLExpression);
+    public EntityInsertSQLExpression createEasyInsertSQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata, EntityTableSQLExpression entityTableSQLExpression) {
+        return new InsertSQLExpressionImpl(entitySQLExpressionMetadata, entityTableSQLExpression);
     }
 
     @Override
-    public EntityUpdateSQLExpression createEasyUpdateSQLExpression(QueryRuntimeContext runtimeContext, EntityTableSQLExpression entityTableSQLExpression) {
-        return new UpdateSQLExpressionImpl(runtimeContext, entityTableSQLExpression);
+    public EntityUpdateSQLExpression createEasyUpdateSQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata, EntityTableSQLExpression entityTableSQLExpression) {
+        return new UpdateSQLExpressionImpl(entitySQLExpressionMetadata, entityTableSQLExpression);
     }
 
     @Override
-    public EntityDeleteSQLExpression createEasyDeleteSQLExpression(QueryRuntimeContext runtimeContext, EntityTableSQLExpression entityTableSQLExpression) {
-        return new DeleteSQLExpressionImpl(runtimeContext, entityTableSQLExpression);
+    public EntityDeleteSQLExpression createEasyDeleteSQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata, EntityTableSQLExpression entityTableSQLExpression) {
+        return new DeleteSQLExpressionImpl(entitySQLExpressionMetadata, entityTableSQLExpression);
     }
 
     @Override
@@ -60,12 +60,12 @@ public class DefaultEasyExpressionFactory implements ExpressionFactory {
     }
 
     @Override
-    public AnonymousEntityQuerySQLExpression createEasyAnonymousQuerySQLExpression(QueryRuntimeContext runtimeContext, String sql) {
-        return new AnonymousEntityQuerySQLExpressionImpl(runtimeContext,sql);
+    public AnonymousEntityQuerySQLExpression createEasyAnonymousQuerySQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata, String sql) {
+        return new AnonymousEntityQuerySQLExpressionImpl(entitySQLExpressionMetadata,sql);
     }
 
     @Override
-    public AnonymousEntityQuerySQLExpression createEasyAnonymousUnionQuerySQLExpression(QueryRuntimeContext runtimeContext, List<EntityQuerySQLExpression> entityQuerySQLExpressions, SQLUnionEnum sqlUnion) {
-        return new AnonymousUnionQuerySQLExpressionImpl(runtimeContext, entityQuerySQLExpressions,sqlUnion);
+    public AnonymousEntityQuerySQLExpression createEasyAnonymousUnionQuerySQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata, List<EntityQuerySQLExpression> entityQuerySQLExpressions, SQLUnionEnum sqlUnion) {
+        return new AnonymousUnionQuerySQLExpressionImpl(entitySQLExpressionMetadata, entityQuerySQLExpressions,sqlUnion);
     }
 }

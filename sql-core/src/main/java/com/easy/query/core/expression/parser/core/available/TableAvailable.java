@@ -14,6 +14,6 @@ public interface TableAvailable extends IndexAvailable{
     boolean hasSchema();
     String getSchema();
     String getTableName();
-    String getAlias();
     String getColumnName(String propertyName);
+    boolean isAnonymous();
 }

@@ -14,6 +14,7 @@ import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.expression.sql.expression.impl.AnonymousEntityQuerySQLExpressionImpl;
 import com.easy.query.core.expression.sql.expression.impl.AnonymousEntityTableSQLExpressionImpl;
 import com.easy.query.core.expression.sql.expression.impl.AnonymousUnionQuerySQLExpressionImpl;
+import com.easy.query.core.expression.sql.expression.impl.EntitySQLExpressionMetadata;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,23 +27,23 @@ import java.util.List;
  */
 public class H2ExpressionFactory implements ExpressionFactory {
     @Override
-    public EntityQuerySQLExpression createEasyQuerySQLExpression(QueryRuntimeContext runtimeContext) {
-        return new H2QuerySQLExpression(runtimeContext);
+    public EntityQuerySQLExpression createEasyQuerySQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata) {
+        return new H2QuerySQLExpression(entitySQLExpressionMetadata);
     }
 
     @Override
-    public EntityInsertSQLExpression createEasyInsertSQLExpression(QueryRuntimeContext runtimeContext, EntityTableSQLExpression entityTableSQLExpression) {
-        return new H2InsertSQLExpression(runtimeContext,entityTableSQLExpression);
+    public EntityInsertSQLExpression createEasyInsertSQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata, EntityTableSQLExpression entityTableSQLExpression) {
+        return new H2InsertSQLExpression(entitySQLExpressionMetadata,entityTableSQLExpression);
     }
 
     @Override
-    public EntityUpdateSQLExpression createEasyUpdateSQLExpression(QueryRuntimeContext runtimeContext, EntityTableSQLExpression entityTableSQLExpression) {
-        return new H2UpdateSQLExpression(runtimeContext,entityTableSQLExpression);
+    public EntityUpdateSQLExpression createEasyUpdateSQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata, EntityTableSQLExpression entityTableSQLExpression) {
+        return new H2UpdateSQLExpression(entitySQLExpressionMetadata,entityTableSQLExpression);
     }
 
     @Override
-    public EntityDeleteSQLExpression createEasyDeleteSQLExpression(QueryRuntimeContext runtimeContext, EntityTableSQLExpression entityTableSQLExpression) {
-        return new H2DeleteSQLExpression(runtimeContext,entityTableSQLExpression);
+    public EntityDeleteSQLExpression createEasyDeleteSQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata, EntityTableSQLExpression entityTableSQLExpression) {
+        return new H2DeleteSQLExpression(entitySQLExpressionMetadata,entityTableSQLExpression);
     }
 
     @Override
@@ -57,13 +58,13 @@ public class H2ExpressionFactory implements ExpressionFactory {
 
 
     @Override
-    public AnonymousEntityQuerySQLExpression createEasyAnonymousQuerySQLExpression(QueryRuntimeContext runtimeContext, String sql) {
-        return new AnonymousEntityQuerySQLExpressionImpl(runtimeContext, sql);
+    public AnonymousEntityQuerySQLExpression createEasyAnonymousQuerySQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata, String sql) {
+        return new AnonymousEntityQuerySQLExpressionImpl(entitySQLExpressionMetadata, sql);
     }
 
     @Override
-    public AnonymousEntityQuerySQLExpression createEasyAnonymousUnionQuerySQLExpression(QueryRuntimeContext runtimeContext, List<EntityQuerySQLExpression> entityQuerySQLExpressions, SQLUnionEnum sqlUnion) {
-        return new AnonymousUnionQuerySQLExpressionImpl(runtimeContext, new ArrayList<>(entityQuerySQLExpressions), sqlUnion);
+    public AnonymousEntityQuerySQLExpression createEasyAnonymousUnionQuerySQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata, List<EntityQuerySQLExpression> entityQuerySQLExpressions, SQLUnionEnum sqlUnion) {
+        return new AnonymousUnionQuerySQLExpressionImpl(entitySQLExpressionMetadata, new ArrayList<>(entityQuerySQLExpressions), sqlUnion);
     }
 }
 

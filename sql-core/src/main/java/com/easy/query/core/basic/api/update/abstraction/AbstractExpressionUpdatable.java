@@ -20,6 +20,7 @@ import com.easy.query.core.expression.segment.condition.DefaultSQLPredicate;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnCollectionPredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnValuePredicate;
+import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.builder.impl.TableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
@@ -35,14 +36,14 @@ import java.util.Collections;
 import java.util.function.Function;
 
 /**
+ * @author xuejiaming
  * @FileName: AbstractExpressionUpdate.java
  * @Description: 文件说明
  * @Date: 2023/2/25 08:24
- * @author xuejiaming
  */
 public abstract class AbstractExpressionUpdatable<T> extends AbstractSQLExecuteRows<ExpressionUpdatable<T>> implements ExpressionUpdatable<T> {
     protected final Class<T> clazz;
-    protected final  EntityMetadata entityMetadata;
+    protected final EntityMetadata entityMetadata;
     protected final EntityUpdateExpressionBuilder entityUpdateExpressionBuilder;
     protected final SQLColumnSetter<T> sqlColumnSetter;
     protected final TableAvailable table;
@@ -55,8 +56,8 @@ public abstract class AbstractExpressionUpdatable<T> extends AbstractSQLExecuteR
         QueryRuntimeContext runtimeContext = entityUpdateExpressionBuilder.getRuntimeContext();
         entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(clazz);
         entityMetadata.checkTable();
-        EntityTableExpressionBuilder table = runtimeContext.getExpressionBuilderFactory().createEntityTableExpressionBuilder(entityMetadata, 0, null, MultiTableTypeEnum.NONE, runtimeContext);
-this.table=table.getEntityTable();
+        EntityTableExpressionBuilder table = runtimeContext.getExpressionBuilderFactory().createEntityTableExpressionBuilder(entityMetadata, 0, MultiTableTypeEnum.NONE, runtimeContext);
+        this.table = table.getEntityTable();
         this.entityUpdateExpressionBuilder.addSQLEntityTableExpression(table);
         sqlColumnSetter = new DefaultSQLColumnSetter<>(0, entityUpdateExpressionBuilder, entityUpdateExpressionBuilder.getSetColumns());
     }
@@ -65,24 +66,24 @@ this.table=table.getEntityTable();
     public long executeRows() {
         QueryRuntimeContext runtimeContext = entityUpdateExpressionBuilder.getRuntimeContext();
         EntityExpressionExecutor entityExpressionExecutor = runtimeContext.getEntityExpressionExecutor();
-        return entityExpressionExecutor.executeRows(ExecutorContext.create(entityUpdateExpressionBuilder.getRuntimeContext(),false, ExecuteMethodEnum.UPDATE), entityUpdateExpressionBuilder);
+        return entityExpressionExecutor.executeRows(ExecutorContext.create(entityUpdateExpressionBuilder.getRuntimeContext(), false, ExecuteMethodEnum.UPDATE), entityUpdateExpressionBuilder);
     }
 
     @Override
     public ExpressionUpdatable<T> set(boolean condition, Property<T, ?> column, Object val) {
-        sqlColumnSetter.set(true,column,val);
+        sqlColumnSetter.set(true, column, val);
         return this;
     }
 
     @Override
-    public  ExpressionUpdatable<T> setSelfColumn(boolean condition, Property<T, ?> column1, Property<T, ?> column2) {
-        sqlColumnSetter.set(true,column1,column2);
+    public ExpressionUpdatable<T> setSelfColumn(boolean condition, Property<T, ?> column1, Property<T, ?> column2) {
+        sqlColumnSetter.set(true, column1, column2);
         return this;
     }
 
     @Override
     public ExpressionUpdatable<T> withVersion(boolean condition, Object versionValue) {
-        if(condition){
+        if (condition) {
             entityUpdateExpressionBuilder.getExpressionContext().setVersion(versionValue);
         }
         return this;
@@ -90,13 +91,13 @@ this.table=table.getEntityTable();
 
     @Override
     public ExpressionUpdatable<T> setIncrementNumber(boolean condition, Property<T, ? extends Number> column, Number val) {
-        sqlColumnSetter.setIncrementNumber(true,column,val);
+        sqlColumnSetter.setIncrementNumber(true, column, val);
         return this;
     }
 
     @Override
     public ExpressionUpdatable<T> setDecrementNumber(boolean condition, Property<T, ? extends Number> column, Number val) {
-        sqlColumnSetter.setDecrementNumber(true,column,val);
+        sqlColumnSetter.setDecrementNumber(true, column, val);
         return this;
     }
 
@@ -113,7 +114,7 @@ this.table=table.getEntityTable();
     @Override
     public ExpressionUpdatable<T> whereById(boolean condition, Object id) {
 
-        if(condition){
+        if (condition) {
 
             PredicateSegment where = entityUpdateExpressionBuilder.getWhere();
             String keyProperty = getSingleKeyPropertyName();
@@ -125,16 +126,17 @@ this.table=table.getEntityTable();
         return this;
     }
 
-    private String getSingleKeyPropertyName(){
+    private String getSingleKeyPropertyName() {
         Collection<String> keyProperties = table.getEntityMetadata().getKeyProperties();
-        if(EasyCollectionUtil.isEmpty(keyProperties)){
-            throw new EasyQueryException("对象:"+ EasyClassUtil.getSimpleName(clazz)+"未找到主键信息");
+        if (EasyCollectionUtil.isEmpty(keyProperties)) {
+            throw new EasyQueryException("对象:" + EasyClassUtil.getSimpleName(clazz) + "未找到主键信息");
         }
-        if(EasyCollectionUtil.isNotSingle(keyProperties)){
-            throw new EasyQueryException("对象:"+ EasyClassUtil.getSimpleName(clazz)+"存在多个主键");
+        if (EasyCollectionUtil.isNotSingle(keyProperties)) {
+            throw new EasyQueryException("对象:" + EasyClassUtil.getSimpleName(clazz) + "存在多个主键");
         }
         return EasyCollectionUtil.first(keyProperties);
     }
+
     @Override
     public ExpressionUpdatable<T> whereByIds(boolean condition, Object... ids) {
         if (condition) {
@@ -167,12 +169,18 @@ this.table=table.getEntityTable();
     }
 
     @Override
+    public ExpressionContext getExpressionContext() {
+        return entityUpdateExpressionBuilder.getExpressionContext();
+    }
+
+    @Override
     public ExpressionUpdatable<T> asTable(Function<String, String> tableNameAs) {
         entityUpdateExpressionBuilder.getRecentlyTable().setTableNameAs(tableNameAs);
         return this;
     }
+
     @Override
-    public String toSQL(ToSQLContext toSQLContext){
+    public String toSQL(ToSQLContext toSQLContext) {
         return entityUpdateExpressionBuilder.toExpression().toSQL(toSQLContext);
     }
 }

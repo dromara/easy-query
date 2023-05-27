@@ -38,21 +38,20 @@ public class EasySQLExpressionUtil {
     }
 
     public static boolean expressionInvokeRoot(ToSQLContext sqlContext){
-        if(sqlContext==null){
-            return false;
-        }
         return sqlContext.expressionInvokeCountGetIncrement()==0;
     }
     public static void tableSQLExpressionRewrite(ToSQLContext sqlContext, EntityTableSQLExpression entityTableSQLExpression){
-        if(sqlContext==null){
-            return;
-        }
         SQLRewriteUnit sqlRewriteUnit = sqlContext.getSQLRewriteUnit();
         if(sqlRewriteUnit==null){
             return;
         }
         sqlRewriteUnit.rewriteTableName(entityTableSQLExpression);
     }
+
+    public static String getTableAlias(ToSQLContext toSQLContext,TableAvailable table){
+        return toSQLContext.getAlias(table);
+    }
+
     public static <TSource> Queryable<TSource> cloneAndSelectAllQueryable(Queryable<TSource> queryable) {
         EntityQueryExpressionBuilder sqlEntityExpressionBuilder = queryable.getSQLEntityExpressionBuilder();
         if (EasySQLExpressionUtil.shouldCloneSQLEntityQueryExpressionBuilder(sqlEntityExpressionBuilder)) {
@@ -191,8 +190,8 @@ public class EasySQLExpressionUtil {
         return SQLExecuteStrategyEnum.ALL_COLUMNS!=executeStrategy;
     }
 
-    public static String getSQLOwnerColumn(QueryRuntimeContext runtimeContext, TableAvailable table, String propertyName){
-        String alias = table.getAlias();
+    public static String getSQLOwnerColumn(QueryRuntimeContext runtimeContext, TableAvailable table, String propertyName,ToSQLContext toSQLContext){
+        String alias = getTableAlias(toSQLContext,table);
         String columnName = table.getColumnName(propertyName);
         String quoteName = getQuoteName(runtimeContext,columnName);
         if (alias == null) {

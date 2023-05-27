@@ -1,7 +1,7 @@
 package com.easy.query.test;
 
+import com.easy.query.core.basic.api.update.ExpressionUpdatable;
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
-import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.exception.EasyQueryConcurrentException;
 import com.easy.query.core.basic.api.update.impl.EasyEntityUpdatable;
@@ -14,7 +14,6 @@ import com.easy.query.test.enums.TopicTypeEnum;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.time.LocalDateTime;
 import java.util.Random;
 import java.util.UUID;
 
@@ -225,10 +224,11 @@ public class UpdateTest extends BaseTest {
             long l = easyQuery.deletable(topicType).executeRows();
             Assert.assertEquals(1, l);
         }
-        ToSQLContext toSQLContext = DefaultToSQLContext.defaultCollector();
-        String sql = easyQuery.updatable(TopicTypeTest1.class)
+        ExpressionUpdatable<TopicTypeTest1> queryable = easyQuery.updatable(TopicTypeTest1.class)
                 .set(TopicTypeTest1::getStars, 234)
-                .where(o -> o.eq(TopicTypeTest1::getTopicType, TopicTypeEnum.CLASSER)).toSQL(toSQLContext);
+                .where(o -> o.eq(TopicTypeTest1::getTopicType, TopicTypeEnum.CLASSER));
+        ToSQLContext toSQLContext = DefaultToSQLContext.defaultToSQLContext(queryable.getExpressionContext().getTableContext());
+        String sql = queryable.toSQL(toSQLContext);
         Assert.assertEquals("UPDATE `t_topic_type` SET `stars` = ? WHERE `topic_type` = ?",sql);
         String parameterToString = EasySQLUtil.sqlParameterToString(toSQLContext.getParameters());
         Assert.assertEquals("234(Integer),CLASSER(TopicTypeEnum)",parameterToString);
@@ -247,4 +247,30 @@ public class UpdateTest extends BaseTest {
                 .whereColumns(o->o.column(Topic::getStars)).executeRows();
         Assert.assertEquals(1, rows4);
     }
+
+
+    @Test
+    public void updateTest13(){
+        long l = easyQuery.updatable(Topic.class)
+                .set(Topic::getTitle, "2123")
+                .where(o -> o.exists(easyQuery.queryable("select * from `t_topic`",Topic.class).where(x -> x.eq(o, Topic::getId, Topic::getId))).isNotNull(Topic::getTitle)).executeRows();
+        Assert.assertEquals(99, l);
+        String sql = easyQuery.updatable(Topic.class)
+                .set(Topic::getTitle, "2123")
+                .where(o -> o.exists(easyQuery.queryable("select * from `t_topic`",Topic.class).where(x -> x.eq(o, Topic::getId, Topic::getId))).isNotNull(Topic::getTitle)).toSQL();
+        Assert.assertEquals("UPDATE `t_topic` t SET t.`title` = ? WHERE EXISTS (SELECT 1 FROM (select * from `t_topic`) t1 WHERE t1.`id` = t.`id`) AND t.`title` IS NOT NULL",sql);
+    }
+    @Test
+    public void updateTest14(){
+        long l = easyQuery.updatable(Topic.class)
+                .set(Topic::getTitle, "2123")
+                .where(o -> o.exists(easyQuery.queryable("select * from `t_topic`",Topic.class).where(x -> x.eq(o, Topic::getId, Topic::getId))).isNull(Topic::getId)).executeRows();
+        Assert.assertEquals(0, l);
+        String sql = easyQuery.updatable(Topic.class)
+                .set(Topic::getTitle, "2123")
+                .where(o -> o.exists(easyQuery.queryable("select * from `t_topic`",Topic.class).where(x -> x.eq(o, Topic::getId, Topic::getId))).isNull(Topic::getId)).toSQL();
+        Assert.assertEquals("UPDATE `t_topic` t SET t.`title` = ? WHERE EXISTS (SELECT 1 FROM (select * from `t_topic`) t1 WHERE t1.`id` = t.`id`) AND t.`id` IS NULL",sql);
+    }
+
+
 }

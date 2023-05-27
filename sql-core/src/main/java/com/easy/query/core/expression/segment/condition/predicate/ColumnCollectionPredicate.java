@@ -49,7 +49,7 @@ public class ColumnCollectionPredicate implements ValuesPredicate,ShardingPredic
                 throw new UnsupportedOperationException();
             }
         } else {
-            String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumn(runtimeContext,table,propertyName);
+            String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumn(runtimeContext,table,propertyName,toSQLContext);
             StringBuilder sql = new StringBuilder();
             sql.append(sqlColumnSegment).append(" ").append(compare.getSQL()).append(" (");
             Iterator<?> iterator = collection.iterator();

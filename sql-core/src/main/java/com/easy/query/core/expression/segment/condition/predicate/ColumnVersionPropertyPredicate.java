@@ -29,7 +29,7 @@ public class ColumnVersionPropertyPredicate extends ColumnPropertyPredicate{
     @Override
     public String toSQL(ToSQLContext toSQLContext) {
         EasySQLUtil.addParameter(toSQLContext,new VersionPropertySQLParameter(new PropertySQLParameter(table,propertyName),easyVersionStrategy));
-        String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumn(runtimeContext,table,propertyName);
+        String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumn(runtimeContext,table,propertyName,toSQLContext);
         return sqlColumnSegment + " = ?";
     }
 

@@ -2,10 +2,13 @@ package com.easy.query.core.basic.api.update;
 
 import com.easy.query.core.basic.api.internal.Versionable;
 import com.easy.query.core.basic.api.select.Queryable;
+import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.SQLWherePredicate;
+import com.easy.query.core.expression.sql.TableContext;
+import com.easy.query.core.expression.sql.builder.ExpressionContext;
 
 import java.util.Collection;
 
@@ -116,8 +119,10 @@ public interface ExpressionUpdatable<T> extends Updatable<T,ExpressionUpdatable<
     }
    <TProperty> ExpressionUpdatable<T> whereByIds(boolean condition,Collection<TProperty> ids);
 
+    ExpressionContext getExpressionContext();
    default String toSQL(){
-       return toSQL(null);
+       TableContext tableContext = getExpressionContext().getTableContext();
+       return toSQL(DefaultToSQLContext.defaultToSQLContext(tableContext));
    }
     String toSQL(ToSQLContext toSQLContext);
 }

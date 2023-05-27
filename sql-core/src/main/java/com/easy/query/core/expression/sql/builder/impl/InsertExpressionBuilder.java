@@ -5,6 +5,7 @@ import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.expression.segment.ColumnInsertSegment;
 import com.easy.query.core.expression.sql.expression.EntityInsertSQLExpression;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
+import com.easy.query.core.expression.sql.expression.impl.EntitySQLExpressionMetadata;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.exception.EasyQueryException;
@@ -86,7 +87,8 @@ public class InsertExpressionBuilder extends AbstractEntityExpressionBuilder imp
         EntityTableExpressionBuilder table = getTable(0);
         QueryRuntimeContext runtimeContext = getRuntimeContext();
         ExpressionFactory expressionFactory = runtimeContext.getExpressionFactory();
-        EntityInsertSQLExpression easyInsertSQLExpression = expressionFactory.createEasyInsertSQLExpression(runtimeContext, table.toExpression());
+        EntitySQLExpressionMetadata entitySQLExpressionMetadata = new EntitySQLExpressionMetadata(expressionContext.getTableContext(), runtimeContext);
+        EntityInsertSQLExpression easyInsertSQLExpression = expressionFactory.createEasyInsertSQLExpression(entitySQLExpressionMetadata, table.toExpression());
         EntityMetadata entityMetadata = table.getEntityMetadata();
         SQLBuilderSegment insertCloneColumns = getColumns().cloneSQLBuilder();
         if (insertCloneColumns.isEmpty()) {

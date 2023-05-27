@@ -19,6 +19,7 @@ import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
+import com.easy.query.core.expression.sql.expression.impl.EntitySQLExpressionMetadata;
 import com.easy.query.core.util.EasySQLSegmentUtil;
 
 import java.util.Iterator;
@@ -178,13 +179,14 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
         }
         QueryRuntimeContext runtimeContext = getRuntimeContext();
         ExpressionFactory expressionFactory = runtimeContext.getExpressionFactory();
-        EntityQuerySQLExpression easyQuerySQLExpression = expressionFactory.createEasyQuerySQLExpression(runtimeContext);
+        EntitySQLExpressionMetadata entitySQLExpressionMetadata = new EntitySQLExpressionMetadata(expressionContext.getTableContext(), runtimeContext);
+        EntityQuerySQLExpression easyQuerySQLExpression = expressionFactory.createEasyQuerySQLExpression(entitySQLExpressionMetadata);
         easyQuerySQLExpression.setDistinct(isDistinct());
 
         if (emptySelect) {
             if (!hasGroup()) {
                 ProjectSQLBuilderSegmentImpl projects = new ProjectSQLBuilderSegmentImpl();
-                projects.append(new SelectConstSegment(firstTable.getAlias() + ".*"));
+                projects.append(new SelectConstSegment("*"));
                 easyQuerySQLExpression.setProjects(projects);
             } else {
                 ProjectSQLBuilderSegmentImpl projects = new ProjectSQLBuilderSegmentImpl();

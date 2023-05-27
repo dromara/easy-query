@@ -4,6 +4,7 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.basic.plugin.interceptor.InterceptorEntry;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
+import com.easy.query.core.expression.sql.TableContext;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 
@@ -19,14 +20,7 @@ import java.util.stream.Stream;
 public interface ExpressionContext {
     QueryRuntimeContext getRuntimeContext();
 
-//     List<SQLParameter> getParameters();
-//     void addParameter(SQLParameter parameter);
-
-     String getAlias();
-     String createTableAlias();
     String getQuoteName(String value);
-//    void extractParameters(ExpressionContext sqlExpressionContext);
-//    void clearParameters();
     void deleteThrow(boolean ifDeleteThrowException);
     boolean isDeleteThrow();
     EasyBehavior getBehavior();
@@ -58,4 +52,8 @@ public interface ExpressionContext {
     void useSharding();
     boolean isSharding();
     void extract(ExpressionContext otherExpressionContext);
+
+    boolean hasSubQuery();
+    TableContext getTableContext();
+
 }

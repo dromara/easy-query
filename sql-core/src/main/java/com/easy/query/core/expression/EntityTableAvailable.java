@@ -13,15 +13,15 @@ import com.easy.query.core.util.EasyStringUtil;
 public final class EntityTableAvailable implements TableAvailable {
     private final int tableIndex;
     private final EntityMetadata entityMetadata;
-    private final String alias;
     private final boolean hasSchema;
+    private final boolean isAnonymous;
 
-    public EntityTableAvailable(int tableIndex, EntityMetadata entityMetadata, String alias){
+    public EntityTableAvailable(int tableIndex, EntityMetadata entityMetadata,boolean isAnonymous){
 
         this.tableIndex = tableIndex;
         this.entityMetadata = entityMetadata;
         this.hasSchema= EasyStringUtil.isNotBlank(entityMetadata.getSchemaOrNull());
-        this.alias = alias;
+        this.isAnonymous = isAnonymous;
     }
     @Override
     public Class<?> getEntityClass() {
@@ -49,13 +49,13 @@ public final class EntityTableAvailable implements TableAvailable {
     }
 
     @Override
-    public String getAlias() {
-        return alias;
+    public String getColumnName(String propertyName) {
+        return entityMetadata.getColumnName(propertyName);
     }
 
     @Override
-    public String getColumnName(String propertyName) {
-        return entityMetadata.getColumnName(propertyName);
+    public boolean isAnonymous() {
+        return isAnonymous;
     }
 
     @Override

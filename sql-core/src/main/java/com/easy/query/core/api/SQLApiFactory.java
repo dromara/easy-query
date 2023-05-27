@@ -28,8 +28,8 @@ public interface SQLApiFactory {
 
     JdbcExecutor createJdbcExecutor(QueryRuntimeContext runtimeContext);
 
-    <T> Queryable<T> createQueryable(Class<T> clazz, QueryRuntimeContext runtimeContext, String alias);
-    <T> Queryable<T> createQueryable(String sql, Class<T> clazz, QueryRuntimeContext runtimeContext, String alias);
+    <T> Queryable<T> createQueryable(Class<T> clazz, QueryRuntimeContext runtimeContext);
+    <T> Queryable<T> createQueryable(String sql, Class<T> clazz, QueryRuntimeContext runtimeContext);
 
     <T> Queryable<T> cloneQueryable(Queryable<T> source);
 
@@ -56,31 +56,30 @@ public interface SQLApiFactory {
 
 
 
-    <T> Insertable<T> createInsertable(Class<T> clazz, QueryRuntimeContext runtimeContext, String alias);
+    <T> Insertable<T> createInsertable(Class<T> clazz, QueryRuntimeContext runtimeContext);
 
     /**
      * 创建一个空的insert接口
      *
      * @param runtimeContext
-     * @param alias
      * @param <T>
      * @return
      */
-    <T> Insertable<T> createEmptyInsertable(QueryRuntimeContext runtimeContext, String alias);
+    <T> Insertable<T> createEmptyInsertable(QueryRuntimeContext runtimeContext);
 
     <T> Insertable<T> createInsertable(Class<T> clazz, EntityInsertExpressionBuilder entityInsertExpression);
 
     <T> EntityUpdatable<T> createEmptyEntityUpdatable();
 
-    <T> EntityUpdatable<T> createEntityUpdatable(T entity, QueryRuntimeContext runtimeContext, String alias);
+    <T> EntityUpdatable<T> createEntityUpdatable(T entity, QueryRuntimeContext runtimeContext);
 
-    <T> EntityUpdatable<T> createEntityUpdatable(Collection<T> entities, QueryRuntimeContext runtimeContext, String alias);
+    <T> EntityUpdatable<T> createEntityUpdatable(Collection<T> entities, QueryRuntimeContext runtimeContext);
 
-    <T> ExpressionUpdatable<T> createExpressionUpdatable(Class<T> entityClass, QueryRuntimeContext runtimeContext, String alias);
+    <T> ExpressionUpdatable<T> createExpressionUpdatable(Class<T> entityClass, QueryRuntimeContext runtimeContext);
 
     <T> EntityDeletable<T> createEmptyEntityDeletable();
-    <T> EntityDeletable<T> createEntityDeletable(T entity, QueryRuntimeContext runtimeContext, String alias);
-    <T> EntityDeletable<T> createEntityDeletable(Collection<T> entities, QueryRuntimeContext runtimeContext, String alias);
+    <T> EntityDeletable<T> createEntityDeletable(T entity, QueryRuntimeContext runtimeContext);
+    <T> EntityDeletable<T> createEntityDeletable(Collection<T> entities, QueryRuntimeContext runtimeContext);
 
-    <T> ExpressionDeletable<T> createExpressionDeletable(Class<T> entityClass, QueryRuntimeContext runtimeContext, String alias);
+    <T> ExpressionDeletable<T> createExpressionDeletable(Class<T> entityClass, QueryRuntimeContext runtimeContext);
 }

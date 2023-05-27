@@ -44,7 +44,7 @@ public class ColumnValuePredicate implements ValuePredicate, ShardingPredicate {
         }else{
             EasySQLUtil.addParameter(toSQLContext,constSQLParameter);
         }
-        String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumn(runtimeContext,table,propertyName);
+        String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumn(runtimeContext,table,propertyName,toSQLContext);
         return sqlColumnSegment + " " + compareSQL + " ?";
     }
 

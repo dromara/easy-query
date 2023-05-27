@@ -38,7 +38,7 @@ public abstract class AbstractInsertable<T> implements Insertable<T> {
         entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(clazz);
         entityMetadata.checkTable();
 
-        EntityTableExpressionBuilder table = runtimeContext.getExpressionBuilderFactory().createEntityTableExpressionBuilder(entityMetadata, 0, null, MultiTableTypeEnum.NONE, runtimeContext);
+        EntityTableExpressionBuilder table = runtimeContext.getExpressionBuilderFactory().createEntityTableExpressionBuilder(entityMetadata, 0, MultiTableTypeEnum.NONE, runtimeContext);
         this.entityInsertExpressionBuilder.addSQLEntityTableExpression(table);
     }
 

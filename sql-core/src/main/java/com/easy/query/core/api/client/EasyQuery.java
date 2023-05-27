@@ -42,14 +42,8 @@ public interface EasyQuery {
         return sqlExecute(sql,Collections.emptyList());
     }
     long sqlExecute(String sql,List<Object> parameters);
-   default  <T> Queryable<T> queryable(Class<T> clazz){
-       return queryable(clazz,"t");
-   }
-    <T> Queryable<T> queryable(Class<T> clazz, String alias);
-   default  <T> Queryable<T> queryable(String sql,Class<T> clazz){
-       return queryable(sql,clazz,"t");
-   }
-    <T> Queryable<T> queryable(String sql,Class<T> clazz, String alias);
+    <T> Queryable<T> queryable(Class<T> clazz);
+    <T> Queryable<T> queryable(String sql,Class<T> clazz);
     default Transaction beginTransaction(){
         return beginTransaction(null);
     }

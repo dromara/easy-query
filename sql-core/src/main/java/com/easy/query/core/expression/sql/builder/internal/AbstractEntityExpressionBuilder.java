@@ -40,6 +40,7 @@ public abstract class AbstractEntityExpressionBuilder implements EntityExpressio
         if(tableExpression.getEntityTable().getEntityMetadata().isSharding()){
             expressionContext.useSharding();
         }
+        expressionContext.getTableContext().addTable(tableExpression.getEntityTable());
         tables.add(tableExpression);
     }
 

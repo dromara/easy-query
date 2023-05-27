@@ -1,12 +1,13 @@
 package com.easy.query.core.expression.sql.builder.impl;
 
 import com.easy.query.core.enums.SQLUnionEnum;
+import com.easy.query.core.expression.sql.TableContext;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.builder.SQLAnonymousUnionEntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.expression.EntityQuerySQLExpression;
-import com.easy.query.core.expression.sql.expression.impl.AnonymousUnionQuerySQLExpressionImpl;
+import com.easy.query.core.expression.sql.expression.impl.EntitySQLExpressionMetadata;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,12 +43,14 @@ public class AnonymousUnionQueryExpressionBuilder extends QueryExpressionBuilder
     @Override
     public EntityQuerySQLExpression toExpression() {
        List<EntityQuerySQLExpression> querySQLExpressions = new ArrayList<>(entityQueryExpressionBuilders.size());
+        TableContext tableContext = new TableContext();
         for (EntityQueryExpressionBuilder entityQueryExpressionBuilder : entityQueryExpressionBuilders) {
-
+            tableContext.extract(entityQueryExpressionBuilder.getExpressionContext().getTableContext());
             EntityQuerySQLExpression expression = entityQueryExpressionBuilder.toExpression();
             querySQLExpressions.add(expression);
         }
-        return runtimeContext.getExpressionFactory().createEasyAnonymousUnionQuerySQLExpression(runtimeContext,new ArrayList<>(querySQLExpressions),sqlUnion);
+        EntitySQLExpressionMetadata entitySQLExpressionMetadata = new EntitySQLExpressionMetadata(tableContext, runtimeContext);
+        return runtimeContext.getExpressionFactory().createEasyAnonymousUnionQuerySQLExpression(entitySQLExpressionMetadata,new ArrayList<>(querySQLExpressions),sqlUnion);
     }
 
 

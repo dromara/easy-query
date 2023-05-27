@@ -22,11 +22,11 @@ import java.util.List;
 public  class InsertSQLExpressionImpl implements EntityInsertSQLExpression {
 
     protected final SQLBuilderSegment columns;
-    protected final QueryRuntimeContext runtimeContext;
     protected final List<EntityTableSQLExpression> tables=new ArrayList<>(1);
+    private final EntitySQLExpressionMetadata entitySQLExpressionMetadata;
 
-    public InsertSQLExpressionImpl(QueryRuntimeContext runtimeContext, EntityTableSQLExpression table) {
-        this.runtimeContext = runtimeContext;
+    public InsertSQLExpressionImpl(EntitySQLExpressionMetadata entitySQLExpressionMetadata, EntityTableSQLExpression table) {
+        this.entitySQLExpressionMetadata = entitySQLExpressionMetadata;
         this.tables.add(table);
         columns=new ProjectSQLBuilderSegmentImpl();
     }
@@ -40,9 +40,15 @@ public  class InsertSQLExpressionImpl implements EntityInsertSQLExpression {
     public SQLBuilderSegment getColumns() {
         return columns;
     }
+
+    @Override
+    public EntitySQLExpressionMetadata getExpressionMetadata() {
+        return entitySQLExpressionMetadata;
+    }
+
     @Override
     public QueryRuntimeContext getRuntimeContext() {
-        return runtimeContext;
+        return entitySQLExpressionMetadata.getRuntimeContext();
     }
 
 
@@ -65,9 +71,9 @@ public  class InsertSQLExpressionImpl implements EntityInsertSQLExpression {
     @Override
     public EntityInsertSQLExpression cloneSQLExpression() {
 
-        ExpressionFactory expressionFactory = runtimeContext.getExpressionFactory();
+        ExpressionFactory expressionFactory = entitySQLExpressionMetadata.getRuntimeContext().getExpressionFactory();
 
-        EntityInsertSQLExpression easyInsertSQLExpression = expressionFactory.createEasyInsertSQLExpression(runtimeContext,tables.get(0).cloneSQLExpression());
+        EntityInsertSQLExpression easyInsertSQLExpression = expressionFactory.createEasyInsertSQLExpression(entitySQLExpressionMetadata,tables.get(0).cloneSQLExpression());
         if(EasySQLSegmentUtil.isNotEmpty(columns)){
             columns.copyTo(easyInsertSQLExpression.getColumns());
         }

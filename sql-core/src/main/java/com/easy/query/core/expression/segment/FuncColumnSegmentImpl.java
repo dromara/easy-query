@@ -36,7 +36,7 @@ public class FuncColumnSegmentImpl implements AggregationColumnSegment {
     @Override
     public String toSQL(ToSQLContext toSQLContext) {
 
-        String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumn(runtimeContext,table,propertyName);
+        String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumn(runtimeContext,table,propertyName,toSQLContext);
         String funcColumn = columnFunction.getFuncColumn(sqlColumnSegment);
         StringBuilder sql = new StringBuilder().append(funcColumn);
         if(alias!=null){

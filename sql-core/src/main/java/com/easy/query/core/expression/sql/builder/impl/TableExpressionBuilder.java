@@ -28,9 +28,6 @@ public class TableExpressionBuilder implements EntityTableExpressionBuilder {
     protected final QueryRuntimeContext runtimeContext;
     protected PredicateSegment on;
     protected Function<String, String> tableNameAs;
-    public TableExpressionBuilder(EntityMetadata entityMetadata, int index, String alias, MultiTableTypeEnum multiTableType, QueryRuntimeContext runtimeContext) {
-        this(new EntityTableAvailable(index,entityMetadata,alias),multiTableType,runtimeContext);
-    }
     public TableExpressionBuilder(TableAvailable entityTable, MultiTableTypeEnum multiTableType, QueryRuntimeContext runtimeContext) {
         this.entityTable = entityTable;
         this.multiTableType = multiTableType;
@@ -101,11 +98,6 @@ public class TableExpressionBuilder implements EntityTableExpressionBuilder {
     @Override
     public boolean hasOn() {
         return on != null && on.isNotEmpty();
-    }
-
-    @Override
-    public String getAlias() {
-        return entityTable.getAlias();
     }
 
     @Override

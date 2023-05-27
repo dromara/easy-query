@@ -8,6 +8,7 @@ import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.exception.EasyQueryException;
+import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.builder.impl.TableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityDeleteExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
@@ -42,8 +43,13 @@ public abstract class AbstractEntityDeletable<T> extends AbstractSQLExecuteRows<
         QueryRuntimeContext runtimeContext = entityDeleteExpressionBuilder.getRuntimeContext();
         EntityMetadata entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(clazz);
         entityMetadata.checkTable();
-        table = runtimeContext.getExpressionBuilderFactory().createEntityTableExpressionBuilder(entityMetadata,0,null,MultiTableTypeEnum.NONE,runtimeContext);
+        table = runtimeContext.getExpressionBuilderFactory().createEntityTableExpressionBuilder(entityMetadata,0,MultiTableTypeEnum.NONE,runtimeContext);
         this.entityDeleteExpressionBuilder.addSQLEntityTableExpression(table);
+    }
+
+    @Override
+    public ExpressionContext getExpressionContext() {
+        return entityDeleteExpressionBuilder.getExpressionContext();
     }
 
     @Override

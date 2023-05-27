@@ -21,20 +21,25 @@ import java.util.List;
  */
 public  class DeleteSQLExpressionImpl implements EntityDeleteSQLExpression {
 
-    protected final QueryRuntimeContext runtimeContext;
     protected final PredicateSegment where;
     protected final List<EntityTableSQLExpression> tables=new ArrayList<>(1);
+    private final EntitySQLExpressionMetadata entitySQLExpressionMetadata;
 
-    public DeleteSQLExpressionImpl(QueryRuntimeContext runtimeContext, EntityTableSQLExpression table) {
-        this.runtimeContext = runtimeContext;
+    public DeleteSQLExpressionImpl(EntitySQLExpressionMetadata entitySQLExpressionMetadata, EntityTableSQLExpression table) {
+        this.entitySQLExpressionMetadata = entitySQLExpressionMetadata;
         this.tables.add(table);
         this.where = new AndPredicateSegment(true);
     }
 
 
     @Override
+    public EntitySQLExpressionMetadata getExpressionMetadata() {
+        return entitySQLExpressionMetadata;
+    }
+
+    @Override
     public QueryRuntimeContext getRuntimeContext() {
-        return runtimeContext;
+        return entitySQLExpressionMetadata.getRuntimeContext();
     }
 
     @Override
@@ -65,8 +70,8 @@ public  class DeleteSQLExpressionImpl implements EntityDeleteSQLExpression {
     @Override
     public EntityDeleteSQLExpression cloneSQLExpression() {
 
-        ExpressionFactory expressionFactory = runtimeContext.getExpressionFactory();
-        EntityDeleteSQLExpression easyDeleteSQLExpression = expressionFactory.createEasyDeleteSQLExpression(runtimeContext, tables.get(0).cloneSQLExpression());
+        ExpressionFactory expressionFactory = entitySQLExpressionMetadata.getRuntimeContext().getExpressionFactory();
+        EntityDeleteSQLExpression easyDeleteSQLExpression = expressionFactory.createEasyDeleteSQLExpression(entitySQLExpressionMetadata, tables.get(0).cloneSQLExpression());
         if(EasySQLSegmentUtil.isNotEmpty(where)){
             where.copyTo(easyDeleteSQLExpression.getWhere());
         }
