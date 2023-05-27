@@ -1,8 +1,5 @@
 package com.easy.query.core.basic.jdbc.tx;
 
-import java.io.Closeable;
-import java.sql.SQLException;
-
 /**
  * @FileName: Transaction.java
  * @Description: 文件说明
@@ -14,4 +11,5 @@ public interface Transaction extends AutoCloseable {
     void commit();
     void rollback();
     void close();
+    void registerListener(TransactionListener transactionBehavior);
 }
