@@ -860,7 +860,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
             entityQueryExpressionBuilder.getExpressionContext().extract(unionQueryable.getSQLEntityExpressionBuilder().getExpressionContext());
             selectUnionQueries.add(unionQueryable);
         }
-        return entityQueryExpressionBuilder.getRuntimeContext().getSQLApiFactory().createUnionQueryable(entityQueryExpressionBuilder.getRuntimeContext(), sqlUnion, selectUnionQueries);
+        return entityQueryExpressionBuilder.getRuntimeContext().getSQLApiFactory().createUnionQueryable(entityQueryExpressionBuilder, sqlUnion, selectUnionQueries);
     }
 
     @Override

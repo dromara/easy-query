@@ -3,6 +3,7 @@ package com.easy.query.core.basic.jdbc.parameter;
 import com.easy.query.core.basic.jdbc.executor.internal.common.SQLRewriteUnit;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.sql.TableContext;
+import com.easy.query.core.expression.sql.ToTableContext;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,8 +19,7 @@ import java.util.Map;
 public class DefaultToSQLContext implements ToSQLContext {
     private final List<SQLParameter> parameters;
     private final SQLRewriteUnit sqlRewriteUnit;
-    private final String alias;
-    private final TableContext tableContext;
+    private final ToTableContext toTableContext;
     private int invokeCount;
 
     public DefaultToSQLContext(TableContext tableContext, String alias) {
@@ -38,10 +38,9 @@ public class DefaultToSQLContext implements ToSQLContext {
         if (tableContext.isEmpty()) {
             throw new IllegalArgumentException("invalid arguments:tableContext is empty");
         }
-        this.tableContext = tableContext;
+        this.toTableContext = tableContext.getToTableContext(alias);
         this.parameters = new ArrayList<>(initialCapacity);
         this.sqlRewriteUnit = sqlRewriteUnit;
-        this.alias = alias;
         this.invokeCount = 0;
     }
 
@@ -74,7 +73,7 @@ public class DefaultToSQLContext implements ToSQLContext {
 
     @Override
     public String getAlias(TableAvailable table) {
-        return tableContext.getTableAlias(table,alias);
+        return toTableContext.getAlias(table);
     }
 
     public static ToSQLContext defaultToSQLContext(TableContext tableContext) {

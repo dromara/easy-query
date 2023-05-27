@@ -38,7 +38,7 @@ public interface SQLApiFactory {
 
 
 
-    <T> Queryable<T> createUnionQueryable(QueryRuntimeContext runtimeContext, SQLUnionEnum sqlUnion, Collection<Queryable<T>> unionQueries);
+    <T> Queryable<T> createUnionQueryable(EntityQueryExpressionBuilder entityQueryExpressionBuilder, SQLUnionEnum sqlUnion, Collection<Queryable<T>> unionQueries);
 
 
 

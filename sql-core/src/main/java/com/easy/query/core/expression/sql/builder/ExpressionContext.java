@@ -55,5 +55,6 @@ public interface ExpressionContext {
 
     boolean hasSubQuery();
     TableContext getTableContext();
+    ExpressionContext cloneExpressionContext();
 
 }

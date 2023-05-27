@@ -47,7 +47,7 @@ public class EasyExpressionContext implements ExpressionContext {
 //        params = new ArrayList<>();
         //如果他是不查询大列的就去掉
         this.easyBehavior = new EasyBehavior();
-        if(!queryConfiguration.getEasyQueryOption().isQueryLargeColumn()){
+        if (!queryConfiguration.getEasyQueryOption().isQueryLargeColumn()) {
             easyBehavior.removeBehavior(EasyBehaviorEnum.QUERY_LARGE_COLUMN);
         }
         this.useInterceptors = new HashSet<>();
@@ -62,6 +62,7 @@ public class EasyExpressionContext implements ExpressionContext {
     public QueryRuntimeContext getRuntimeContext() {
         return runtimeContext;
     }
+
     @Override
     public String getQuoteName(String value) {
         return runtimeContext.getQueryConfiguration().getDialect().getQuoteName(value);
@@ -198,7 +199,7 @@ public class EasyExpressionContext implements ExpressionContext {
 
     @Override
     public void useSharding() {
-        this.sharding=true;
+        this.sharding = true;
     }
 
     @Override
@@ -208,10 +209,10 @@ public class EasyExpressionContext implements ExpressionContext {
 
     @Override
     public void extract(ExpressionContext otherExpressionContext) {
-        if(otherExpressionContext.isSharding()){
-            this.sharding=true;
+        if (otherExpressionContext.isSharding()) {
+            this.sharding = true;
         }
-        this.hasSubQuery=true;
+        this.hasSubQuery = true;
         tableContext.extract(otherExpressionContext.getTableContext());
     }
 
@@ -223,5 +224,24 @@ public class EasyExpressionContext implements ExpressionContext {
     @Override
     public TableContext getTableContext() {
         return tableContext;
+    }
+
+    @Override
+    public ExpressionContext cloneExpressionContext() {
+        EasyExpressionContext easyExpressionContext = new EasyExpressionContext(runtimeContext);
+        this.easyBehavior.copyTo(easyExpressionContext.easyBehavior);
+        easyExpressionContext.useInterceptors.addAll(this.useInterceptors);
+        easyExpressionContext.noInterceptors.addAll(this.noInterceptors);
+        this.tableContext.copyTo(easyExpressionContext.tableContext);
+        easyExpressionContext.deleteThrowException = this.deleteThrowException;
+        easyExpressionContext.version = this.version;
+        easyExpressionContext.executeMethod = this.executeMethod;
+        easyExpressionContext.sqlStrategy = this.sqlStrategy;
+        easyExpressionContext.maxShardingQueryLimit = this.maxShardingQueryLimit;
+        easyExpressionContext.connectionMode = this.connectionMode;
+        easyExpressionContext.sharding = this.sharding;
+        easyExpressionContext.hasSubQuery = this.hasSubQuery;
+
+        return easyExpressionContext;
     }
 }

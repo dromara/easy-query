@@ -243,7 +243,7 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
     @Override
     public EntityQueryExpressionBuilder cloneEntityExpressionBuilder() {
 
-        EntityQueryExpressionBuilder queryExpressionBuilder = runtimeContext.getExpressionBuilderFactory().createEntityQueryExpressionBuilder(expressionContext);
+        EntityQueryExpressionBuilder queryExpressionBuilder = runtimeContext.getExpressionBuilderFactory().createEntityQueryExpressionBuilder(expressionContext.cloneExpressionContext());
         if (hasWhere()) {
             getWhere().copyTo(queryExpressionBuilder.getWhere());
         }

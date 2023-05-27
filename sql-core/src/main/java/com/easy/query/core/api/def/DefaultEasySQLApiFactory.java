@@ -117,7 +117,7 @@ public class DefaultEasySQLApiFactory implements SQLApiFactory {
     }
 
     @Override
-    public <T> Queryable<T> createUnionQueryable(QueryRuntimeContext runtimeContext, SQLUnionEnum sqlUnion, Collection<Queryable<T>> unionQueries) {
+    public <T> Queryable<T> createUnionQueryable(EntityQueryExpressionBuilder entityQueryExpressionBuilder, SQLUnionEnum sqlUnion, Collection<Queryable<T>> unionQueries) {
         if(EasyCollectionUtil.isEmpty(unionQueries)){
             throw new EasyQueryInvalidOperationException("cant create queryable with queryable union or union all");
         }
@@ -125,9 +125,9 @@ public class DefaultEasySQLApiFactory implements SQLApiFactory {
         Iterator<Queryable<T>> queryableIterator = unionQueries.iterator();
         Queryable<T> firstQueryable = queryableIterator.next();
         Class<T> queryClass = firstQueryable.queryClass();
+        QueryRuntimeContext runtimeContext = entityQueryExpressionBuilder.getRuntimeContext();
         EntityMetadata entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(queryClass);
-        EntityQueryExpressionBuilder firstQueryableSQLEntityExpressionBuilder = firstQueryable.getSQLEntityExpressionBuilder();
-        ExpressionContext queryExpressionContext = firstQueryableSQLEntityExpressionBuilder.getExpressionContext();
+        ExpressionContext queryExpressionContext = entityQueryExpressionBuilder.getExpressionContext();
 
 
         EntityQueryExpressionBuilder sqlEntityExpressionBuilder = firstQueryable.getSQLEntityExpressionBuilder();

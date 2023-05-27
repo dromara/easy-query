@@ -46,7 +46,7 @@ public interface Queryable<T1> extends Query<T1>,
         QueryStrategy<Queryable<T1>> {
     /**
      * 只clone表达式共享上下文
-     *
+     * 如果是两个独立的表达式建议重新创建如果是
      * @return
      */
     Queryable<T1> cloneQueryable();

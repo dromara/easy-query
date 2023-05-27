@@ -40,7 +40,7 @@ public class AnonymousQueryExpressionBuilder extends QueryExpressionBuilder impl
     @Override
     public EntityQueryExpressionBuilder cloneEntityExpressionBuilder() {
 
-        EntityQueryExpressionBuilder anonymousQueryExpressionBuilder = runtimeContext.getExpressionBuilderFactory().createAnonymousQueryExpressionBuilder(sql, expressionContext);
+        EntityQueryExpressionBuilder anonymousQueryExpressionBuilder = runtimeContext.getExpressionBuilderFactory().createAnonymousQueryExpressionBuilder(sql, expressionContext.cloneExpressionContext());
 
         for (EntityTableExpressionBuilder table : super.tables) {
             anonymousQueryExpressionBuilder.getTables().add(table.copyEntityTableExpressionBuilder());

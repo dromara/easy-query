@@ -36,4 +36,8 @@ public final class EasyBehavior {
         }
         return false;
     }
+
+    public void copyTo(EasyBehavior easyBehavior){
+        easyBehavior.behavior=this.behavior;
+    }
 }
