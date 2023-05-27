@@ -3,7 +3,7 @@ package com.easy.query.core.basic.jdbc.tx;
 import com.easy.query.core.basic.jdbc.con.ConnectionManager;
 import com.easy.query.core.util.EasyCollectionUtil;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -78,7 +78,8 @@ public class DefaultTransaction implements Transaction {
     @Override
     public void registerListener(TransactionListener transactionBehavior) {
         if(transactionListeners==null){
-            transactionListeners=new ArrayList<>();
+            //一般不需要注册很多个arraylist相对比较浪费内存
+            transactionListeners=new LinkedList<>();
         }
         this.transactionListeners.add(transactionBehavior);
     }
