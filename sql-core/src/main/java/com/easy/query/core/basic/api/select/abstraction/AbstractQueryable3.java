@@ -399,6 +399,13 @@ public abstract class AbstractQueryable3<T1, T2, T3> extends AbstractQueryable<T
         return this;
     }
 
+
+    @Override
+    public Queryable3<T1, T2, T3> asAlias(String alias) {
+        super.asAlias(alias);
+        return this;
+    }
+
     @Override
     public SQLExpressionProvider<T2> getSQLExpressionProvider2() {
         if (sqlExpressionProvider2 == null) {

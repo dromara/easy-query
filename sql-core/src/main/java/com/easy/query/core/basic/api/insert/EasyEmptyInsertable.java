@@ -36,6 +36,11 @@ public class EasyEmptyInsertable<T>implements Insertable<T> {
     }
 
     @Override
+    public Insertable<T> asAlias(String alias) {
+        return this;
+    }
+
+    @Override
     public long executeRows(boolean fillAutoIncrement) {
         return 0;
     }

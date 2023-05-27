@@ -162,6 +162,11 @@ public abstract   class AbstractExpressionDeletable<T> extends AbstractSQLExecut
         return this;
     }
 
+    @Override
+    public ExpressionDeletable<T> asAlias(String alias) {
+        entityDeleteExpressionBuilder.getRecentlyTable().asAlias(alias);
+        return this;
+    }
 
     @Override
     public String toSQL(ToSQLContext toSQLContext) {

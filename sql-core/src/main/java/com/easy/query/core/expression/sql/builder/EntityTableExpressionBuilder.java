@@ -17,7 +17,7 @@ import java.util.function.Function;
 public interface EntityTableExpressionBuilder extends TableExpressionBuilder {
     EntityMetadata getEntityMetadata();
     void setTableNameAs(Function<String,String> tableNameAs);
-    boolean tableNameIsAs();
+    void asAlias(String alias);
     String getColumnName(String propertyName);
 
      SQLExpression1<SQLWherePredicate<Object>> getLogicDeleteQueryFilterExpression();

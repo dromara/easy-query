@@ -76,12 +76,6 @@ public class DefaultToSQLContext implements ToSQLContext {
     public String getAlias(TableAvailable table) {
         return tableContext.getTableAlias(table,alias);
     }
-    private String createAlias(int aliasSeq){
-        if(aliasSeq==0){
-            return alias;
-        }
-        return alias+aliasSeq;
-    }
 
     public static ToSQLContext defaultToSQLContext(TableContext tableContext) {
         return defaultToSQLContext(tableContext, null);

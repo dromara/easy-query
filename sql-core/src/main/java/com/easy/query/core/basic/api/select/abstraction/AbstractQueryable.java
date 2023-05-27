@@ -1,7 +1,5 @@
 package com.easy.query.core.basic.api.select.abstraction;
 
-import com.easy.query.core.basic.api.delete.Deletable;
-import com.easy.query.core.basic.api.delete.ExpressionDeletable;
 import com.easy.query.core.basic.api.select.provider.SQLExpressionProvider;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.SQLUnionEnum;
@@ -914,6 +912,12 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     @Override
     public Queryable<T1> asTable(Function<String, String> tableNameAs) {
         entityQueryExpressionBuilder.getRecentlyTable().setTableNameAs(tableNameAs);
+        return this;
+    }
+
+    @Override
+    public Queryable<T1> asAlias(String alias) {
+        entityQueryExpressionBuilder.getRecentlyTable().asAlias(alias);
         return this;
     }
 

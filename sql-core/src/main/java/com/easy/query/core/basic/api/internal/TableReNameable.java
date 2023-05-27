@@ -28,9 +28,19 @@ public interface TableReNameable<TChain> {
     /**
      * 将当前表达式最近的一张表的表名修改成 {@param tableNameAs}返回的表名
      * 如果当前最近的表是正常的数据库表名,那么直接将表名改写
-     * 如果当前最近的表是匿名表比如嵌套queryable的表那么将alias改成对应的表名
+     * 如果当前最近的表是匿名表则不更改
      * @param tableNameAs
      * @return
      */
     TChain asTable(Function<String,String> tableNameAs);
+
+    /**
+     * 将当前表达式最近的一张表的别名进行指定
+     * 如果当前最近的表是正常的数据库表名,那么直接将表名改写
+     * 如果当前最近的表是匿名表比如嵌套queryable的表那么将alias改成对应的表名
+     *
+     * @param alias 别名
+     * @return
+     */
+    TChain asAlias(String alias);
 }

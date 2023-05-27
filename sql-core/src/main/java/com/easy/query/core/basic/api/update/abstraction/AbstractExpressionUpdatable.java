@@ -178,6 +178,11 @@ public abstract class AbstractExpressionUpdatable<T> extends AbstractSQLExecuteR
         entityUpdateExpressionBuilder.getRecentlyTable().setTableNameAs(tableNameAs);
         return this;
     }
+    @Override
+    public ExpressionUpdatable<T> asAlias(String alias) {
+        entityUpdateExpressionBuilder.getRecentlyTable().asAlias(alias);
+        return this;
+    }
 
     @Override
     public String toSQL(ToSQLContext toSQLContext) {

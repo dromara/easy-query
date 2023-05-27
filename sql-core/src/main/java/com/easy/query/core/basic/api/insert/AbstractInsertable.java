@@ -86,6 +86,12 @@ public abstract class AbstractInsertable<T> implements Insertable<T> {
     }
 
     @Override
+    public Insertable<T> asAlias(String alias) {
+        entityInsertExpressionBuilder.getRecentlyTable().asAlias(alias);
+        return this;
+    }
+
+    @Override
     public Insertable<T> noInterceptor() {
         entityInsertExpressionBuilder.getExpressionContext().noInterceptor();
         return this;

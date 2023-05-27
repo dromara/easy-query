@@ -38,7 +38,7 @@ public final class TableContext {
         }
         if (mappingSize == 1) {
             TableAliasSchema tableAliasSchema = getTableAliasSchema(table);
-            if (tableAliasSchema.getTable().isAnonymous()) {
+            if (tableAliasSchema.getTable().isAnonymous()||tableAliasSchema.getTable().hasAlias()) {
                 return tableAliasSchema.getTableAlias(alias);
             }
             return null;

@@ -54,6 +54,11 @@ public class EasyEmptyEntityUpdatable<T> implements EntityUpdatable<T> {
     }
 
     @Override
+    public EntityUpdatable<T> asAlias(String alias) {
+        return this;
+    }
+
+    @Override
     public EntityUpdatable<T> noInterceptor() {
         return this;
     }

@@ -57,6 +57,16 @@ public class QueryTest extends BaseTest {
         SysUser sysUser = queryable.firstOrNull();
         Assert.assertNull(sysUser);
     }
+    @Test
+    public void query0_1() {
+        Queryable<SysUser> queryable = easyQuery.queryable(SysUser.class)
+                .asAlias("x")
+                .where(o -> o.eq(SysUser::getId, "123xxx"));
+        String sql = queryable.toSQL();
+        Assert.assertEquals("SELECT x.`id`,x.`create_time`,x.`username`,x.`phone`,x.`id_card`,x.`address` FROM `easy-query-test`.`t_sys_user` x WHERE x.`id` = ?", sql);
+        SysUser sysUser = queryable.firstOrNull();
+        Assert.assertNull(sysUser);
+    }
 
     @Test
     public void query1() {
@@ -225,6 +235,19 @@ public class QueryTest extends BaseTest {
                 .where((t, t1) -> t1.isNotNull(BlogEntity::getTitle).then(t).eq(Topic::getId, "3"))
                 .select(BlogEntity.class, (t, t1) -> t1.columnAll().columnIgnore(BlogEntity::getId))
                 .toList();
+    }
+    @Test
+    public void query10_1(){
+
+        String toSql = easyQuery
+                .queryable(Topic.class)
+                .asAlias("y")
+                .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                .asAlias("z")
+                .where(o -> o.eq(Topic::getId, "3"))
+                .toSQL();
+        Assert.assertEquals("SELECT y.`id`,y.`stars`,y.`title`,y.`create_time` FROM `t_topic` y LEFT JOIN `t_blog` z ON z.`deleted` = ? AND y.`id` = z.`id` WHERE y.`id` = ?",
+                toSql);
     }
 
     @Test

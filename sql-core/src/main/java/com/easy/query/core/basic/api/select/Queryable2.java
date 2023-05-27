@@ -258,6 +258,8 @@ public interface Queryable2<T1, T2> extends Queryable<T1> {
      */
     @Override
     Queryable2<T1, T2> asTable(Function<String, String> tableNameAs);
+    @Override
+    Queryable2<T1, T2> asAlias(String alias);
 
     SQLExpressionProvider<T2> getSQLExpressionProvider2();
 }

@@ -28,6 +28,7 @@ public class TableExpressionBuilder implements EntityTableExpressionBuilder {
     protected final QueryRuntimeContext runtimeContext;
     protected PredicateSegment on;
     protected Function<String, String> tableNameAs;
+
     public TableExpressionBuilder(TableAvailable entityTable, MultiTableTypeEnum multiTableType, QueryRuntimeContext runtimeContext) {
         this.entityTable = entityTable;
         this.multiTableType = multiTableType;
@@ -50,8 +51,8 @@ public class TableExpressionBuilder implements EntityTableExpressionBuilder {
     }
 
     @Override
-    public boolean tableNameIsAs() {
-        return tableNameAs != null;
+    public void asAlias(String alias) {
+        this.entityTable.asAlias(alias);
     }
 
     @Override
@@ -74,7 +75,7 @@ public class TableExpressionBuilder implements EntityTableExpressionBuilder {
     public EntityTableExpressionBuilder copyEntityTableExpressionBuilder() {
 
 
-        EntityTableExpressionBuilder tableExpressionBuilder =runtimeContext.getExpressionBuilderFactory().createEntityTableExpressionBuilder(entityTable,multiTableType,runtimeContext);
+        EntityTableExpressionBuilder tableExpressionBuilder = runtimeContext.getExpressionBuilderFactory().createEntityTableExpressionBuilder(entityTable, multiTableType, runtimeContext);
         if (on != null) {
             on.copyTo(tableExpressionBuilder.getOn());
         }
@@ -112,7 +113,7 @@ public class TableExpressionBuilder implements EntityTableExpressionBuilder {
 
     @Override
     public EntityTableSQLExpression toExpression() {
-        EntityTableSQLExpression tableSQLExpression = runtimeContext.getExpressionFactory().createEntityTableSQLExpression(entityTable,multiTableType,runtimeContext);
+        EntityTableSQLExpression tableSQLExpression = runtimeContext.getExpressionFactory().createEntityTableSQLExpression(entityTable, multiTableType, runtimeContext);
         tableSQLExpression.setTableNameAs(tableNameAs);
         return tableSQLExpression;
     }

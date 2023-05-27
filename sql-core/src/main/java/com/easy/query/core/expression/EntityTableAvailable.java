@@ -15,6 +15,7 @@ public final class EntityTableAvailable implements TableAvailable {
     private final EntityMetadata entityMetadata;
     private final boolean hasSchema;
     private final boolean isAnonymous;
+    private String alias;
 
     public EntityTableAvailable(int tableIndex, EntityMetadata entityMetadata,boolean isAnonymous){
 
@@ -56,6 +57,16 @@ public final class EntityTableAvailable implements TableAvailable {
     @Override
     public boolean isAnonymous() {
         return isAnonymous;
+    }
+
+    @Override
+    public void asAlias(String alias) {
+        this.alias=alias;
+    }
+
+    @Override
+    public String getAlias() {
+        return alias;
     }
 
     @Override

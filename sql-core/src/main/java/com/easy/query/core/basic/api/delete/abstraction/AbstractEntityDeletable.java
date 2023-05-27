@@ -82,6 +82,11 @@ public abstract class AbstractEntityDeletable<T> extends AbstractSQLExecuteRows<
         return this;
     }
 
+    @Override
+    public EntityDeletable<T> asAlias(String alias) {
+        entityDeleteExpressionBuilder.getRecentlyTable().asAlias(alias);
+        return this;
+    }
 
     @Override
     public String toSQL(ToSQLContext toSQLContext) {

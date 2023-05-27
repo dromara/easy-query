@@ -22,6 +22,10 @@ public final class TableAliasSchema {
         return table;
     }
     public String getTableAlias(String alias){
+        String tableAlias = table.getAlias();
+        if(tableAlias!=null){
+            return tableAlias;
+        }
         if(alias==null||aliasIndex==0){
             return alias;
         }

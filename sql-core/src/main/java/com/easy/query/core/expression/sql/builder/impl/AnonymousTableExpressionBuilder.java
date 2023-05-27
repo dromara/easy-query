@@ -11,6 +11,8 @@ import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.util.EasySQLSegmentUtil;
 
+import java.util.function.Function;
+
 /**
  * @author xuejiaming
  * @FileName: EasyAnonymousEntityTableExpressionSegment.java
@@ -43,6 +45,11 @@ public class AnonymousTableExpressionBuilder extends TableExpressionBuilder impl
     @Override
     public String getColumnName(String propertyName) {
         return getEntityMetadata().getColumnName(propertyName);
+    }
+
+    @Override
+    public void setTableNameAs(Function<String, String> tableNameAs) {
+
     }
 
     @Override

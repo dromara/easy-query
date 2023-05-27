@@ -118,6 +118,12 @@ public abstract class AbstractEntityUpdatable<T> extends AbstractSQLExecuteRows<
     }
 
     @Override
+    public EntityUpdatable<T> asAlias(String alias) {
+        entityUpdateExpressionBuilder.getRecentlyTable().asAlias(alias);
+        return this;
+    }
+
+    @Override
     public EntityUpdatable<T> setSQLStrategy(boolean condition, SQLExecuteStrategyEnum sqlStrategy) {
         if (condition) {
             entityUpdateExpressionBuilder.getExpressionContext().useSQLStrategy(sqlStrategy);
