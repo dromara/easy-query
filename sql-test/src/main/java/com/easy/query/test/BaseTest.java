@@ -123,6 +123,7 @@ public abstract class BaseTest {
                     op.setDefaultDataSourceName("ds2020");
                     op.setThrowIfRouteNotMatch(false);
                     op.setMaxShardingRouteCount(512);
+                    op.setDefaultDataSourcePoolSize(20);
                 })
                 .useDatabaseConfigure(new MySQLDatabaseConfiguration())
                 .build();

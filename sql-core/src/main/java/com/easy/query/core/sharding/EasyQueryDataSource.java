@@ -1,7 +1,8 @@
 package com.easy.query.core.sharding;
 
+import com.easy.query.core.datasource.DataSourceUnit;
 import com.easy.query.core.enums.con.ConnectionStrategyEnum;
-import com.easy.query.core.basic.jdbc.con.DataSourceUnit;
+import com.easy.query.core.basic.jdbc.con.DataSourceWrapper;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 
 import javax.sql.DataSource;
@@ -31,15 +32,16 @@ public interface EasyQueryDataSource {
      * 添加数据源
      * @param dataSourceName 数据源名称
      * @param dataSource 数据源
+     * @param dataSourcePoolSize 数据源连接池大小
      * @return true表示添加成功,false表示添加失败已经存在对应的 {@param dataSourceName}
      */
-    boolean addDataSource(String dataSourceName,DataSource dataSource);
+    boolean addDataSource(String dataSourceName,DataSource dataSource,int dataSourcePoolSize);
 
     /**
      * 获取所有的数据源包括默认的
      * @return 数据源map
      */
-    Map<String,DataSource> getAllDataSource();
+    Map<String, DataSourceUnit> getAllDataSource();
 
 
     /**
@@ -48,8 +50,8 @@ public interface EasyQueryDataSource {
      * @return 数据源
      * @throws EasyQueryInvalidOperationException 如果数据源名称对应的数据源不存在
      */
-   default DataSourceUnit getDataSourceNotNull(String dataSourceName, ConnectionStrategyEnum connectionStrategy){
-       DataSourceUnit dataSource = getDataSourceOrNull(dataSourceName,connectionStrategy);
+   default DataSourceWrapper getDataSourceNotNull(String dataSourceName, ConnectionStrategyEnum connectionStrategy){
+       DataSourceWrapper dataSource = getDataSourceOrNull(dataSourceName,connectionStrategy);
        if(dataSource==null){
            throw new EasyQueryInvalidOperationException("not found data source :" + dataSourceName);
        }
@@ -61,5 +63,5 @@ public interface EasyQueryDataSource {
      * @param dataSourceName 数据源名称
      * @return 数据源
      */
-    DataSourceUnit getDataSourceOrNull(String dataSourceName, ConnectionStrategyEnum connectionStrategy);
+    DataSourceWrapper getDataSourceOrNull(String dataSourceName, ConnectionStrategyEnum connectionStrategy);
 }

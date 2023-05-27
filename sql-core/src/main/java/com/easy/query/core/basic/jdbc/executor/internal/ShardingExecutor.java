@@ -107,7 +107,7 @@ public class ShardingExecutor {
 //                : ConnectionModeEnum.CONNECTION_STRICTLY;
 
         //如果是串行执行就是说每个组只有1个,如果是不是并行每个组有最大执行个数个
-        int parallelCount = isSerialExecute ? 1 : getQueryParallelCount(groupUnitSize,maxShardingQueryLimit,connectionMode);
+        int parallelCount = isSerialExecute ? 1 : Math.min(groupUnitSize,maxShardingQueryLimit);
 
         List<List<ExecutionUnit>> sqlUnitPartitions = EasyCollectionUtil.partition(sqlGroupExecutionUnits, parallelCount);
         //由于分组后除了最后一个元素其余元素都满足parallelCount为最大,第一个元素的分组数将是实际的创建连接数
@@ -124,14 +124,6 @@ public class ShardingExecutor {
         List<SQLExecutorGroup<CommandExecuteUnit>> sqlExecutorGroups = EasyCollectionUtil.select(sqlExecutorUnitPartitions, (o, i) -> new SQLExecutorGroup<CommandExecuteUnit>(connectionMode, o));
         return new DataSourceSQLExecutorUnit(dataSourceName,connectionMode, sqlExecutorGroups);
 
-    }
-
-    private static int getQueryParallelCount(int groupSize,int maxShardingQueryLimit,ConnectionModeEnum connectionMode){
-        switch (connectionMode){
-            case CONNECTION_STRICTLY:return Math.min(groupSize,maxShardingQueryLimit);
-            case MEMORY_STRICTLY:return groupSize;
-        }
-        return maxShardingQueryLimit;
     }
 
     /**

@@ -1,13 +1,11 @@
 package com.easy.query.core.util;
 
-import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.configuration.ShardingDataSource;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.sharding.EasyQueryDataSource;
-import com.easy.query.core.sharding.limit.MultiConnectionLimit;
 
 import javax.sql.DataSource;
 
@@ -26,13 +24,11 @@ public final class EasyDynamicUtil {
      * @param shardingDataSource
      */
     public static void addDataSource(QueryRuntimeContext runtimeContext, ShardingDataSource shardingDataSource){
-        MultiConnectionLimit multiConnectionLimit = runtimeContext.getMultiConnectionLimit();
-        EasyQueryOption easyQueryOption = runtimeContext.getQueryConfiguration().getEasyQueryOption();
         String dataSourceName = shardingDataSource.getDataSourceName();
         DataSource dataSource = shardingDataSource.getDataSource();
-        multiConnectionLimit.addThrottlers(dataSourceName,easyQueryOption.getMaxShardingQueryLimit(),shardingDataSource.getDataSourcePoolSize());
+        int dataSourcePoolSize = shardingDataSource.getDataSourcePoolSize();
         EasyQueryDataSource easyQueryDataSource = runtimeContext.getEasyQueryDataSource();
-        easyQueryDataSource.addDataSource(dataSourceName,dataSource);
+        easyQueryDataSource.addDataSource(dataSourceName,dataSource,dataSourcePoolSize);
     }
     public static void addShardingEntity(QueryRuntimeContext runtimeContext, Class<?> entityClass, String dataSourceName, String actualTableName){
         EntityMetadataManager entityMetadataManager = runtimeContext.getEntityMetadataManager();

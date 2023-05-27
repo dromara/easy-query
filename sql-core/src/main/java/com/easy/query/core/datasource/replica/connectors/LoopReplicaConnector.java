@@ -1,5 +1,6 @@
 package com.easy.query.core.datasource.replica.connectors;
 
+import com.easy.query.core.datasource.DataSourceUnit;
 import com.easy.query.core.datasource.replica.ReplicaNode;
 
 import javax.sql.DataSource;
@@ -20,15 +21,15 @@ public final class LoopReplicaConnector extends AbstractAliasReplicaConnector {
     }
 
     @Override
-    protected DataSource getDataSourceByAlias(String alias) {
+    protected DataSourceUnit getDataSourceByAlias(String alias) {
         if (length == 1) {
-            return replicaNodes.get(0).getDataSource();
+            return replicaNodes.get(0).getDataSourceUnit();
         }
         long nextSeed = seed.incrementAndGet();
         int next = (int) (nextSeed % length);
         if (next < 0)
-            return replicaNodes.get(Math.abs(next)).getDataSource();
-        return replicaNodes.get(next).getDataSource();
+            return replicaNodes.get(Math.abs(next)).getDataSourceUnit();
+        return replicaNodes.get(next).getDataSourceUnit();
     }
 
 }

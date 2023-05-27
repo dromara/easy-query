@@ -1,10 +1,9 @@
 package com.easy.query.core.datasource.replica.connectors;
 
+import com.easy.query.core.datasource.DataSourceUnit;
 import com.easy.query.core.datasource.replica.ReplicaNode;
-import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.util.EasyCollectionUtil;
 
-import javax.sql.DataSource;
 import java.util.List;
 import java.util.Objects;
 
@@ -20,7 +19,7 @@ public abstract class AbstractAliasReplicaConnector extends AbstractReplicaConne
     }
 
     @Override
-    public DataSource getDataSourceOrNull(String alias) {
+    public DataSourceUnit getDataSourceOrNull(String alias) {
         if(length==0){
             return null;
         }
@@ -31,8 +30,8 @@ public abstract class AbstractAliasReplicaConnector extends AbstractReplicaConne
             if (replicaNode == null) {
                 return null;
             }
-            return replicaNode.getDataSource();
+            return replicaNode.getDataSourceUnit();
         }
     }
-    protected abstract DataSource getDataSourceByAlias(String alias);
+    protected abstract DataSourceUnit getDataSourceByAlias(String alias);
 }

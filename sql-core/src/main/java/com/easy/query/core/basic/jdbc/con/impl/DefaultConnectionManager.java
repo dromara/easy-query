@@ -9,8 +9,13 @@ import com.easy.query.core.basic.jdbc.con.EasyDataSourceConnectionFactory;
 import com.easy.query.core.basic.jdbc.tx.DefaultTransaction;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
 import com.easy.query.core.exception.EasyQueryException;
+import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import com.easy.query.core.sharding.EasyQueryDataSource;
+import com.easy.query.core.util.EasyCollectionUtil;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author xuejiaming
@@ -44,14 +49,12 @@ public class DefaultConnectionManager implements ConnectionManager {
     }
 
     @Override
-    public EasyConnection getEasyConnection() {
-        return getEasyConnection(easyDataSource.getDefaultDataSourceName(), ConnectionStrategyEnum.ShareConnection);
-    }
-
-    @Override
-    public EasyConnection getEasyConnection(String dataSourceName, ConnectionStrategyEnum connectionStrategy) {
+    public List<EasyConnection> getEasyConnections(int count,String dataSourceName, ConnectionStrategyEnum connectionStrategy) {
 
         if (ConnectionStrategyEnum.ShareConnection.equals(connectionStrategy)) {
+            if(count!=1){
+                throw new EasyQueryInvalidOperationException("ConnectionStrategyEnum.ShareConnection get connections should 1");
+            }
             Transaction transaction = threadTx.get();
             if (transaction != null) {
                 EasyDataSourceConnection easyDataSourceConnection = threadDataSourceConnection.get();
@@ -61,14 +64,15 @@ public class DefaultConnectionManager implements ConnectionManager {
                 }
                 EasyConnection easyConnection = easyDataSourceConnection.getEasyConnectionOrNull(dataSourceName);
                 if (easyConnection == null) {
-                    easyConnection = easyConnectionFactory.createEasyConnection(dataSourceName, transaction.getIsolationLevel(),connectionStrategy);
+                    List<EasyConnection> easyConnections = easyConnectionFactory.createEasyConnections(count, dataSourceName, transaction.getIsolationLevel(), connectionStrategy);
+                    easyConnection = EasyCollectionUtil.first(easyConnections);
                     easyConnection.setAutoCommit(false);
                     easyDataSourceConnection.putIfAbsent(dataSourceName, easyConnection);
                 }
-                return easyConnection;
+                return Collections.singletonList(easyConnection);
             }
         }
-        return easyConnectionFactory.createEasyConnection(dataSourceName, null,connectionStrategy);
+        return easyConnectionFactory.createEasyConnections(count,dataSourceName, null,connectionStrategy);
     }
 
     @Override

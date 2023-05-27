@@ -24,7 +24,9 @@ import com.easy.query.core.basic.thread.DefaultEasyShardingExecutorService;
 import com.easy.query.core.basic.thread.ShardingExecutorService;
 import com.easy.query.core.configuration.EasyQueryOptionBuilder;
 import com.easy.query.core.datasource.DataSourceManager;
+import com.easy.query.core.datasource.DataSourceUnitFactory;
 import com.easy.query.core.datasource.DefaultDataSourceManager;
+import com.easy.query.core.datasource.DefaultDataSourceUnitFactory;
 import com.easy.query.core.datasource.replica.DefaultReplicaDataSourceManager;
 import com.easy.query.core.expression.func.ColumnFunctionFactory;
 import com.easy.query.core.expression.func.DefaultColumnFunctionFactory;
@@ -53,8 +55,6 @@ import com.easy.query.core.sharding.DefaultEasyQueryDataSource;
 import com.easy.query.core.sharding.EasyQueryDataSource;
 import com.easy.query.core.sharding.comparer.JavaLanguageShardingComparer;
 import com.easy.query.core.sharding.comparer.ShardingComparer;
-import com.easy.query.core.sharding.limit.DefaultMultiConnectionLimit;
-import com.easy.query.core.sharding.limit.MultiConnectionLimit;
 import com.easy.query.core.sharding.manager.DefaultShardingQueryCountManager;
 import com.easy.query.core.sharding.manager.ShardingQueryCountManager;
 import com.easy.query.core.sharding.rewrite.DefaultRewriteContextFactory;
@@ -123,7 +123,7 @@ public class EasyQueryBuilderConfiguration {
                 .replaceService(ShardingQueryCountManager.class, DefaultShardingQueryCountManager.class)
                 .replaceService(ColumnFunctionFactory.class, DefaultColumnFunctionFactory.class)
                 .replaceService(RouteDescriptorFactory.class, DefaultRouteDescriptorFactor.class)
-                .replaceService(MultiConnectionLimit.class, DefaultMultiConnectionLimit.class)
+                .replaceService(DataSourceUnitFactory.class, DefaultDataSourceUnitFactory.class)
                 .replaceService(EasyQuery.class, DefaultEasyQuery.class);
     }
 

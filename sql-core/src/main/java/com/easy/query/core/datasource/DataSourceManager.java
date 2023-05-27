@@ -2,7 +2,7 @@ package com.easy.query.core.datasource;
 
 
 import com.easy.query.core.enums.con.ConnectionStrategyEnum;
-import com.easy.query.core.basic.jdbc.con.DataSourceUnit;
+import com.easy.query.core.basic.jdbc.con.DataSourceWrapper;
 
 import javax.sql.DataSource;
 import java.util.Map;
@@ -31,20 +31,21 @@ public interface DataSourceManager {
      * 添加数据源
      * @param dataSourceName 数据源名称
      * @param dataSource 数据源
+     * @param dataSourcePoolSize 数据源连接池大小
      * @return true表示添加成功,false表示添加失败已经存在对应的 {@param dataSourceName}
      */
-    boolean addDataSource(String dataSourceName,DataSource dataSource);
+    boolean addDataSource(String dataSourceName,DataSource dataSource,int dataSourcePoolSize);
 
     /**
      * 获取所有的数据源包括默认的
      * @return 数据源map
      */
-    Map<String,DataSource> getAllDataSource();
+    Map<String, DataSourceUnit> getAllDataSource();
 
     /**
      * 返回数据源名称对应的数据源没有返回null
      * @param dataSourceName 数据源名称
      * @return 数据源
      */
-    DataSourceUnit getDataSourceOrNull(String dataSourceName, ConnectionStrategyEnum connectionStrategy);
+    DataSourceWrapper getDataSourceOrNull(String dataSourceName, ConnectionStrategyEnum connectionStrategy);
 }

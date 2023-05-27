@@ -4,6 +4,7 @@ import com.easy.query.core.api.SQLApiFactory;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
 import com.easy.query.core.basic.pagination.EasyPageResultProvider;
 import com.easy.query.core.basic.thread.ShardingExecutorService;
+import com.easy.query.core.datasource.DataSourceUnitFactory;
 import com.easy.query.core.expression.parser.factory.SQLExpressionInvokeFactory;
 import com.easy.query.core.expression.sql.builder.factory.ExpressionBuilderFactory;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
@@ -16,7 +17,6 @@ import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.basic.plugin.track.TrackManager;
 import com.easy.query.core.sharding.EasyQueryDataSource;
 import com.easy.query.core.sharding.comparer.ShardingComparer;
-import com.easy.query.core.sharding.limit.MultiConnectionLimit;
 import com.easy.query.core.sharding.manager.ShardingQueryCountManager;
 import com.easy.query.core.sharding.route.manager.DataSourceRouteManager;
 import com.easy.query.core.sharding.route.manager.TableRouteManager;
@@ -48,7 +48,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     private final ShardingComparer shardingComparer;
     private final ShardingQueryCountManager shardingQueryCountManager;
     private final ColumnFunctionFactory columnFunctionFactory;
-    private final MultiConnectionLimit multiConnectionLimit;
+    private final DataSourceUnitFactory dataSourceUnitFactory;
 
     public DefaultEasyQueryRuntimeContext(ServiceProvider serviceProvider,
                                           EasyQueryDataSource easyQueryDataSource,
@@ -69,7 +69,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
                                           ShardingComparer shardingComparer,
                                           ShardingQueryCountManager shardingQueryCountManager,
                                           ColumnFunctionFactory columnFunctionFactory,
-                                          MultiConnectionLimit multiConnectionLimit) {
+                                          DataSourceUnitFactory dataSourceUnitFactory) {
         this.serviceProvider = serviceProvider;
         this.easyQueryDataSource = easyQueryDataSource;
         this.easyQueryConfiguration = easyQueryConfiguration;
@@ -89,7 +89,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
         this.shardingComparer = shardingComparer;
         this.shardingQueryCountManager = shardingQueryCountManager;
         this.columnFunctionFactory = columnFunctionFactory;
-        this.multiConnectionLimit = multiConnectionLimit;
+        this.dataSourceUnitFactory = dataSourceUnitFactory;
     }
 
     @Override
@@ -187,8 +187,9 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
         return columnFunctionFactory;
     }
 
+
     @Override
-    public MultiConnectionLimit getMultiConnectionLimit() {
-        return multiConnectionLimit;
+    public DataSourceUnitFactory getDataSourceUnitFactory() {
+        return dataSourceUnitFactory;
     }
 }

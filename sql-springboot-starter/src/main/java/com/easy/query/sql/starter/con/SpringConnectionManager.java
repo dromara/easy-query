@@ -1,7 +1,7 @@
-package com.easy.query.sql.starter;
+package com.easy.query.sql.starter.con;
 
 import com.easy.query.core.enums.con.ConnectionStrategyEnum;
-import com.easy.query.core.basic.jdbc.con.DataSourceUnit;
+import com.easy.query.core.basic.jdbc.con.DataSourceWrapper;
 import com.easy.query.core.basic.jdbc.con.impl.DefaultConnectionManager;
 import com.easy.query.core.basic.jdbc.con.EasyConnection;
 import com.easy.query.core.basic.jdbc.con.EasyConnectionFactory;
@@ -58,7 +58,7 @@ public class SpringConnectionManager extends DefaultConnectionManager {
                 throw new EasyQueryException("repeat transaction can't closed connection");
             }
         }
-        DataSourceUnit dataSourceUnit = easyDataSource.getDataSourceNotNull(easyConnection.getDataSourceName(), ConnectionStrategyEnum.ShareConnection);
-        DataSourceUtils.releaseConnection(easyConnection.getConnection(), dataSourceUnit.getDataSource());
+        DataSourceWrapper dataSourceUnit = easyDataSource.getDataSourceNotNull(easyConnection.getDataSourceName(), ConnectionStrategyEnum.ShareConnection);
+        DataSourceUtils.releaseConnection(easyConnection.getConnection(), dataSourceUnit.getDataSourceUnit().getDataSource());
     }
 }

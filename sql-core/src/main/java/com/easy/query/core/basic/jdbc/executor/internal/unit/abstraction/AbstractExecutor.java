@@ -4,7 +4,6 @@ import com.easy.query.core.basic.jdbc.executor.internal.unit.Executor;
 import com.easy.query.core.basic.jdbc.executor.internal.unit.breaker.CircuitBreaker;
 import com.easy.query.core.basic.thread.FuturesInvoker;
 import com.easy.query.core.basic.thread.ShardingExecutorService;
-import com.easy.query.core.exception.EasyQuerySQLException;
 import com.easy.query.core.exception.EasyQueryTimeoutSQLException;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;

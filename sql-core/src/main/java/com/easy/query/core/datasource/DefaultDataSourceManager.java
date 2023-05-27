@@ -2,8 +2,8 @@ package com.easy.query.core.datasource;
 
 import com.easy.query.core.configuration.ShardingDataSource;
 import com.easy.query.core.enums.con.ConnectionStrategyEnum;
-import com.easy.query.core.basic.jdbc.con.DataSourceUnit;
-import com.easy.query.core.basic.jdbc.con.impl.DefaultDataSourceUnit;
+import com.easy.query.core.basic.jdbc.con.DataSourceWrapper;
+import com.easy.query.core.basic.jdbc.con.impl.DefaultDataSourceWrapper;
 import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.configuration.EasyQueryShardingOption;
 
@@ -21,12 +21,14 @@ import java.util.concurrent.ConcurrentHashMap;
 public class DefaultDataSourceManager implements DataSourceManager {
     protected final String defaultDataSourceName;
     protected final DataSource defaultDataSource;
-    protected final Map<String, DataSource> dataSourceMap = new ConcurrentHashMap<>();
+    protected final DataSourceUnitFactory dataSourceUnitFactory;
+    protected final Map<String, DataSourceUnit> dataSourceMap = new ConcurrentHashMap<>();
 
-    public DefaultDataSourceManager(EasyQueryOption easyQueryOption, DataSource defaultDataSource) {
+    public DefaultDataSourceManager(EasyQueryOption easyQueryOption, DataSource defaultDataSource,DataSourceUnitFactory dataSourceUnitFactory) {
         this.defaultDataSourceName = easyQueryOption.getDefaultDataSourceName();
         this.defaultDataSource = defaultDataSource;
-        this.dataSourceMap.putIfAbsent(defaultDataSourceName, defaultDataSource);
+        this.dataSourceUnitFactory = dataSourceUnitFactory;
+        this.dataSourceMap.putIfAbsent(defaultDataSourceName, dataSourceUnitFactory.createDataSourceUnit(defaultDataSourceName,defaultDataSource,easyQueryOption.getDefaultDataSourcePoolSize()));
         initShardingConfig(easyQueryOption);
     }
 
@@ -37,7 +39,7 @@ public class DefaultDataSourceManager implements DataSourceManager {
             Set<ShardingDataSource> shardingDataSources = shardingOption.getShardingDataSources();
             if (shardingDataSources != null) {
                 for (ShardingDataSource shardingDataSource : shardingDataSources) {
-                    this.dataSourceMap.putIfAbsent(shardingDataSource.getDataSourceName(), shardingDataSource.getDataSource());
+                    this.dataSourceMap.putIfAbsent(shardingDataSource.getDataSourceName(), dataSourceUnitFactory.createDataSourceUnit(shardingDataSource.getDataSourceName(),shardingDataSource.getDataSource(),shardingDataSource.getDataSourcePoolSize()));
                 }
             }
         }
@@ -54,21 +56,21 @@ public class DefaultDataSourceManager implements DataSourceManager {
     }
 
     @Override
-    public boolean addDataSource(String dataSourceName, DataSource dataSource) {
-        return dataSourceMap.putIfAbsent(dataSourceName, dataSource) == null;
+    public boolean addDataSource(String dataSourceName, DataSource dataSource,int dataSourcePoolSize) {
+        return dataSourceMap.putIfAbsent(dataSourceName, dataSourceUnitFactory.createDataSourceUnit(dataSourceName,dataSource,dataSourcePoolSize)) == null;
     }
 
     @Override
-    public Map<String, DataSource> getAllDataSource() {
+    public Map<String, DataSourceUnit> getAllDataSource() {
         return dataSourceMap;
     }
 
     @Override
-    public DataSourceUnit getDataSourceOrNull(String dataSourceName, ConnectionStrategyEnum connectionStrategy) {
+    public DataSourceWrapper getDataSourceOrNull(String dataSourceName, ConnectionStrategyEnum connectionStrategy) {
         if (dataSourceName == null) {
             throw new IllegalArgumentException("dataSourceName");
         }
-        DataSource dataSource = dataSourceMap.get(dataSourceName);
-        return new DefaultDataSourceUnit(dataSource, connectionStrategy);
+        DataSourceUnit dataSource = dataSourceMap.get(dataSourceName);
+        return new DefaultDataSourceWrapper(dataSource, connectionStrategy);
     }
 }

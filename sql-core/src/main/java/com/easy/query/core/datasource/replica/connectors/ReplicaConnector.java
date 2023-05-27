@@ -1,5 +1,6 @@
 package com.easy.query.core.datasource.replica.connectors;
 
+import com.easy.query.core.datasource.DataSourceUnit;
 import com.easy.query.core.datasource.replica.ReplicaNode;
 
 import javax.sql.DataSource;
@@ -12,6 +13,6 @@ import javax.sql.DataSource;
  */
 public interface ReplicaConnector {
     String getDataSourceName();
-    DataSource getDataSourceOrNull(String alias);
+    DataSourceUnit getDataSourceOrNull(String alias);
     boolean addReplicaNode(ReplicaNode replicaNode);
 }

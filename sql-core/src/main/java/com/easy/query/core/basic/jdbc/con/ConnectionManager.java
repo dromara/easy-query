@@ -3,6 +3,8 @@ package com.easy.query.core.basic.jdbc.con;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
 import com.easy.query.core.enums.con.ConnectionStrategyEnum;
 
+import java.util.List;
+
 /**
  * @FileName: ConnectionManager.java
  * @Description: 文件说明
@@ -26,8 +28,7 @@ public interface ConnectionManager {
      * @return
      */
     Transaction beginTransaction(Integer isolationLevel);
-    EasyConnection getEasyConnection();
-    EasyConnection getEasyConnection(String dataSourceName, ConnectionStrategyEnum connectionStrategy);
+    List<EasyConnection> getEasyConnections(int count,String dataSourceName, ConnectionStrategyEnum connectionStrategy);
     boolean currentThreadInTransaction();
     void clear();
     void closeEasyConnection(EasyConnection easyConnection);

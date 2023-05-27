@@ -5,6 +5,7 @@ import com.easy.query.core.basic.jdbc.con.ConnectionManager;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
 import com.easy.query.core.basic.pagination.EasyPageResultProvider;
 import com.easy.query.core.basic.thread.ShardingExecutorService;
+import com.easy.query.core.datasource.DataSourceUnitFactory;
 import com.easy.query.core.expression.parser.factory.SQLExpressionInvokeFactory;
 import com.easy.query.core.expression.sql.builder.factory.ExpressionBuilderFactory;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
@@ -15,7 +16,6 @@ import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.basic.plugin.track.TrackManager;
 import com.easy.query.core.sharding.EasyQueryDataSource;
 import com.easy.query.core.sharding.comparer.ShardingComparer;
-import com.easy.query.core.sharding.limit.MultiConnectionLimit;
 import com.easy.query.core.sharding.manager.ShardingQueryCountManager;
 import com.easy.query.core.sharding.route.manager.DataSourceRouteManager;
 import com.easy.query.core.sharding.route.manager.TableRouteManager;
@@ -46,5 +46,5 @@ public interface QueryRuntimeContext {
     ShardingComparer getShardingComparer();
     ShardingQueryCountManager getShardingQueryCountManager();
     ColumnFunctionFactory getColumnFunctionFactory();
-    MultiConnectionLimit getMultiConnectionLimit();
+    DataSourceUnitFactory getDataSourceUnitFactory();
 }

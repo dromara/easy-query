@@ -1,5 +1,6 @@
 package com.easy.query.core.datasource.replica.connectors;
 
+import com.easy.query.core.datasource.DataSourceUnit;
 import com.easy.query.core.datasource.replica.ReplicaNode;
 
 import javax.sql.DataSource;
@@ -17,11 +18,11 @@ public final class RandomReplicaConnector extends AbstractAliasReplicaConnector 
         super(dataSourceName, replicaNodes);
     }
     @Override
-    protected DataSource getDataSourceByAlias(String alias) {
+    protected DataSourceUnit getDataSourceByAlias(String alias) {
         if(length==1){
-            return replicaNodes.get(0).getDataSource();
+            return replicaNodes.get(0).getDataSourceUnit();
         }
         int next = new Random().nextInt(length);
-        return replicaNodes.get(next).getDataSource();
+        return replicaNodes.get(next).getDataSourceUnit();
     }
 }

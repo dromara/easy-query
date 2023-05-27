@@ -2,6 +2,8 @@ package com.easy.query.core.basic.jdbc.con;
 
 import com.easy.query.core.enums.con.ConnectionStrategyEnum;
 
+import java.util.List;
+
 /**
  * create time 2023/5/12 08:50
  * 文件说明
@@ -9,5 +11,5 @@ import com.easy.query.core.enums.con.ConnectionStrategyEnum;
  * @author xuejiaming
  */
 public interface EasyConnectionFactory {
-    EasyConnection createEasyConnection(String dataSourceName, Integer isolationLevel, ConnectionStrategyEnum connectionStrategy);
+    List<EasyConnection> createEasyConnections(int count, String dataSourceName, Integer isolationLevel, ConnectionStrategyEnum connectionStrategy);
 }

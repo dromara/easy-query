@@ -15,9 +15,9 @@ import java.util.Map;
 public class EasyQueryReplicaOption {
     private final ReplicaBehaviorEnum replicaBehavior;
     private final ReplicaUseStrategyEnum replicaUseStrategy;
-    private final Map<String, Map<String, DataSource>> replicaConfig;
+    private final Map<String, Map<String, ShardingDataSource>> replicaConfig;
 
-    public EasyQueryReplicaOption(ReplicaBehaviorEnum replicaBehavior, ReplicaUseStrategyEnum replicaUseStrategy, Map<String,Map<String, DataSource>> replicaConfig){
+    public EasyQueryReplicaOption(ReplicaBehaviorEnum replicaBehavior, ReplicaUseStrategyEnum replicaUseStrategy, Map<String,Map<String, ShardingDataSource>> replicaConfig){
 
         this.replicaBehavior = replicaBehavior;
         this.replicaUseStrategy = replicaUseStrategy;
@@ -32,7 +32,7 @@ public class EasyQueryReplicaOption {
         return replicaUseStrategy;
     }
 
-    public Map<String, Map<String, DataSource>> getReplicaConfig() {
+    public Map<String, Map<String, ShardingDataSource>> getReplicaConfig() {
         return replicaConfig;
     }
 }

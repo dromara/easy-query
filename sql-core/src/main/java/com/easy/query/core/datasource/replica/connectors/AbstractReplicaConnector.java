@@ -35,7 +35,7 @@ public abstract class AbstractReplicaConnector implements ReplicaConnector{
 
     @Override
     public synchronized boolean addReplicaNode(ReplicaNode replicaNode) {
-        boolean any = EasyCollectionUtil.any(replicaNodes, o -> Objects.equals(o.getDataSource(), replicaNode.getDataSource()));
+        boolean any = EasyCollectionUtil.any(replicaNodes, o -> Objects.equals(o.getDataSourceUnit(), replicaNode.getDataSourceUnit()));
         if(any){
             return false;
         }

@@ -1,8 +1,7 @@
 package com.easy.query.core.basic.jdbc.con;
 
+import com.easy.query.core.datasource.DataSourceUnit;
 import com.easy.query.core.enums.con.ConnectionStrategyEnum;
-
-import javax.sql.DataSource;
 
 /**
  * create time 2023/5/14 10:54
@@ -10,7 +9,7 @@ import javax.sql.DataSource;
  *
  * @author xuejiaming
  */
-public interface DataSourceUnit {
-    DataSource getDataSource();
+public interface DataSourceWrapper {
+    DataSourceUnit getDataSourceUnit();
     ConnectionStrategyEnum getStrategy();
 }

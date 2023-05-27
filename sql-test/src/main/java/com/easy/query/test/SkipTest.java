@@ -6,7 +6,7 @@ import com.easy.query.core.exception.EasyQueryInjectCurrentlyInCreationException
 import com.easy.query.core.exception.EasyQueryFirstOrNotNullException;
 import com.easy.query.core.exception.EasyQueryRouteNotMatchException;
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
-import com.easy.query.core.exception.EasyQuerySQLException;
+import com.easy.query.core.exception.EasyQuerySQLInvokeException;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -45,8 +45,8 @@ public class SkipTest {
         EasyQuerySQLCommandException asyQuerySQLException1 = new EasyQuerySQLCommandException(a);
         EasyQuerySQLCommandException asyQuerySQLException2 = new EasyQuerySQLCommandException("1", a);
 
-        EasyQuerySQLException asyQuerySQLExecuteException = new EasyQuerySQLException("",new SQLException("123"));
-        EasyQuerySQLException asyQuerySQLExecuteException1 = new EasyQuerySQLException("",a);
-        EasyQuerySQLException asyQuerySQLExecuteException2 = new EasyQuerySQLException("1", a);
+        EasyQuerySQLInvokeException asyQuerySQLExecuteException = new EasyQuerySQLInvokeException("",new SQLException("123"));
+        EasyQuerySQLInvokeException asyQuerySQLExecuteException1 = new EasyQuerySQLInvokeException("",a);
+        EasyQuerySQLInvokeException asyQuerySQLExecuteException2 = new EasyQuerySQLInvokeException("1", a);
     }
 }

@@ -1,8 +1,11 @@
 package com.easy.query.core.datasource.replica;
 
+import com.easy.query.core.configuration.ShardingDataSource;
+import com.easy.query.core.datasource.DataSourceUnit;
+import com.easy.query.core.datasource.DataSourceUnitFactory;
 import com.easy.query.core.enums.con.ConnectionStrategyEnum;
-import com.easy.query.core.basic.jdbc.con.DataSourceUnit;
-import com.easy.query.core.basic.jdbc.con.impl.DefaultDataSourceUnit;
+import com.easy.query.core.basic.jdbc.con.DataSourceWrapper;
+import com.easy.query.core.basic.jdbc.con.impl.DefaultDataSourceWrapper;
 import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.configuration.EasyQueryReplicaOption;
 import com.easy.query.core.datasource.DefaultDataSourceManager;
@@ -29,8 +32,8 @@ public final class DefaultReplicaDataSourceManager extends DefaultDataSourceMana
     private final Map<String, ReplicaConnector> replicaDataSource = new ConcurrentHashMap<>();
     private final EasyQueryOption easyQueryOption;
 
-    public DefaultReplicaDataSourceManager(EasyQueryOption easyQueryOption, DataSource defaultDataSource) {
-        super(easyQueryOption, defaultDataSource);
+    public DefaultReplicaDataSourceManager(EasyQueryOption easyQueryOption, DataSource defaultDataSource, DataSourceUnitFactory dataSourceUnitFactory) {
+        super(easyQueryOption, defaultDataSource,dataSourceUnitFactory);
         this.easyQueryOption = easyQueryOption;
         EasyQueryReplicaOption replicaOption = easyQueryOption.getReplicaOption();
         if (replicaOption == null) {
@@ -41,13 +44,14 @@ public final class DefaultReplicaDataSourceManager extends DefaultDataSourceMana
 
     private void initReplicaConnector(EasyQueryReplicaOption replicaOption) {
 
-        Map<String, Map<String, DataSource>> replicaConfig = replicaOption.getReplicaConfig();
-        for (Map.Entry<String, Map<String, DataSource>> dataSourceMap : replicaConfig.entrySet()) {
+        Map<String, Map<String, ShardingDataSource>> replicaConfig = replicaOption.getReplicaConfig();
+        for (Map.Entry<String, Map<String, ShardingDataSource>> dataSourceMap : replicaConfig.entrySet()) {
             String dataSource = dataSourceMap.getKey();
-            Set<Map.Entry<String, DataSource>> entries = dataSourceMap.getValue().entrySet();
+            Set<Map.Entry<String, ShardingDataSource>> entries = dataSourceMap.getValue().entrySet();
             ArrayList<ReplicaNode> replicaNodes = new ArrayList<>(entries.size());
-            for (Map.Entry<String, DataSource> replicaKv : entries) {
-                replicaNodes.add(new ReplicaNode(replicaKv.getKey(), replicaKv.getValue()));
+            for (Map.Entry<String, ShardingDataSource> replicaKv : entries) {
+                ShardingDataSource shardingDataSource = replicaKv.getValue();
+                replicaNodes.add(new ReplicaNode(replicaKv.getKey(), dataSourceUnitFactory.createDataSourceUnit(shardingDataSource.getDataSourceName(),shardingDataSource.getDataSource(),shardingDataSource.getDataSourcePoolSize())));
             }
             ReplicaConnector replicaConnector = Objects.equals(ReplicaUseStrategyEnum.Loop, replicaOption.getReplicaUseStrategy()) ? new LoopReplicaConnector(dataSource, replicaNodes) : new RandomReplicaConnector(dataSource, replicaNodes);
             replicaDataSource.put(dataSource, replicaConnector);
@@ -61,13 +65,14 @@ public final class DefaultReplicaDataSourceManager extends DefaultDataSourceMana
     }
 
     @Override
-    public boolean addDataSource(String dataSourceName, String replicaAlias, DataSource dataSource) {
+    public boolean addDataSource(String dataSourceName, String replicaAlias, DataSource dataSource,int dataSourcePoolSize) {
         ReplicaConnector replicaConnector = replicaDataSource.computeIfAbsent(dataSourceName, k -> createEmptyReplicaConnector(dataSourceName));
-        return replicaConnector.addReplicaNode(new ReplicaNode(replicaAlias,dataSource));
+        DataSourceUnit dataSourceUnit = dataSourceUnitFactory.createDataSourceUnit(dataSourceName, dataSource, dataSourcePoolSize);
+        return replicaConnector.addReplicaNode(new ReplicaNode(replicaAlias,dataSourceUnit));
     }
 
     @Override
-    public DataSource getDataSourceOrNull(String dataSourceName, String replicaAlias) {
+    public DataSourceUnit getDataSourceOrNull(String dataSourceName, String replicaAlias) {
         ReplicaConnector replicaConnector = replicaDataSource.get(dataSourceName);
         if(replicaConnector!=null){
             return replicaConnector.getDataSourceOrNull(replicaAlias);
@@ -76,14 +81,14 @@ public final class DefaultReplicaDataSourceManager extends DefaultDataSourceMana
     }
 
     @Override
-    public DataSourceUnit getDataSourceOrNull(String dataSourceName, ConnectionStrategyEnum connectionStrategy) {
+    public DataSourceWrapper getDataSourceOrNull(String dataSourceName, ConnectionStrategyEnum connectionStrategy) {
         if(Objects.equals(ConnectionStrategyEnum.IndependentConnectionReplica,connectionStrategy)){
 
             ReplicaConnector replicaConnector = replicaDataSource.get(dataSourceName);
             if(replicaConnector!=null){
-                DataSource dataSource = replicaConnector.getDataSourceOrNull(null);
-                if(dataSource!=null){
-                    return new DefaultDataSourceUnit(dataSource,connectionStrategy);
+                DataSourceUnit dataSourceUnit = replicaConnector.getDataSourceOrNull(null);
+                if(dataSourceUnit!=null){
+                    return new DefaultDataSourceWrapper(dataSourceUnit,connectionStrategy);
                 }
             }
             return super.getDataSourceOrNull(dataSourceName,ConnectionStrategyEnum.IndependentConnectionMaster);

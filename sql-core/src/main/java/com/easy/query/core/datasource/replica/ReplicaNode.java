@@ -1,6 +1,6 @@
 package com.easy.query.core.datasource.replica;
 
-import javax.sql.DataSource;
+import com.easy.query.core.datasource.DataSourceUnit;
 
 /**
  * create time 2023/5/12 14:08
@@ -10,19 +10,19 @@ import javax.sql.DataSource;
  */
 public class ReplicaNode {
     private final String alias;
-    private final DataSource dataSource;
+    private final DataSourceUnit dataSourceUnit;
 
-    public ReplicaNode(String alias, DataSource dataSource){
+    public ReplicaNode(String alias, DataSourceUnit dataSourceUnit){
         this.alias = alias;
 
-        this.dataSource = dataSource;
+        this.dataSourceUnit = dataSourceUnit;
     }
 
     public String getAlias() {
         return alias;
     }
 
-    public DataSource getDataSource() {
-        return dataSource;
+    public DataSourceUnit getDataSourceUnit() {
+        return dataSourceUnit;
     }
 }

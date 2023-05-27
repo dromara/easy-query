@@ -16,6 +16,7 @@ import com.easy.query.core.bootstrapper.StarterConfigurer;
 import com.easy.query.core.configuration.nameconversion.NameConversion;
 import com.easy.query.core.configuration.nameconversion.impl.DefaultNameConversion;
 import com.easy.query.core.configuration.nameconversion.impl.UnderlinedNameConversion;
+import com.easy.query.core.datasource.DataSourceUnitFactory;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.sharding.initializer.ShardingInitializer;
@@ -26,6 +27,8 @@ import com.easy.query.h2.config.H2DatabaseConfiguration;
 import com.easy.query.mssql.MsSQLDatabaseConfiguration;
 import com.easy.query.mysql.config.MySQLDatabaseConfiguration;
 import com.easy.query.pgsql.PgSQLDatabaseConfiguration;
+import com.easy.query.sql.starter.con.SpringConnectionManager;
+import com.easy.query.sql.starter.con.SpringDataSourceUnitFactory;
 import com.easy.query.sql.starter.config.EasyQueryInitializeOption;
 import com.easy.query.sql.starter.config.EasyQueryProperties;
 import com.easy.query.sql.starter.logging.Slf4jImpl;
@@ -140,7 +143,7 @@ public class EasyQueryStarterAutoConfiguration {
     public EasyQuery easyQuery(DatabaseConfiguration databaseConfiguration, StarterConfigurer starterConfigurer, NameConversion nameConversion) {
         EasyQuery easyQuery = EasyQueryBootstrapper.defaultBuilderConfiguration()
                 .setDefaultDataSource(dataSource)
-                .replaceService(EasyConnectionFactory.class, SpringEasyConnectionFactory.class)
+                .replaceService(DataSourceUnitFactory.class, SpringDataSourceUnitFactory.class)
                 .optionConfigure(builder -> {
                     builder.setDeleteThrowError(easyQueryProperties.getDeleteThrow());
                     builder.setInsertStrategy(easyQueryProperties.getInsertStrategy());
