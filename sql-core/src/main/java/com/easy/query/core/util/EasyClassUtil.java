@@ -105,7 +105,9 @@ public class EasyClassUtil {
         } else {
             return false;
         }
-
+    }
+    public static boolean isEnumType(Class<?> clazz) {
+        return clazz.isEnum();
     }
 
     public static <T> T newInstance(Class<T> clazz) {

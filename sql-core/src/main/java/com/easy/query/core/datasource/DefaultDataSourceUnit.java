@@ -98,14 +98,15 @@ public class DefaultDataSourceUnit implements DataSourceUnit {
     protected SemaphoreReleaseOnlyOnce tryAcquire(int count, long timeout, TimeUnit unit) {
 
         try {
-            long startTime =warningBusy? System.currentTimeMillis():0L;
+            long startTime = warningBusy ? System.currentTimeMillis() : 0L;
             boolean acquire = semaphore.tryAcquire(count, timeout, unit);
             if (acquire) {
                 if (warningBusy) {
                     long endTime = System.currentTimeMillis();
                     long constTime = endTime - startTime;
-                    if (constTime > (unit.toMillis(timeout) * 0.8)) {
-                        log.warn("get connection is busy. you can try increasing the connection pool size or reducing the number of access requests.");
+                    long timeoutMillis = unit.toMillis(timeout);
+                    if (constTime >= (timeoutMillis * 0.8)) {
+                        log.warn("get connection use time:" + constTime + "(ms),timeout:" + timeoutMillis + "(ms). you can try increasing the connection pool size or reducing the number of access requests.");
                     }
                 }
                 return new SemaphoreReleaseOnlyOnce(count, semaphore);

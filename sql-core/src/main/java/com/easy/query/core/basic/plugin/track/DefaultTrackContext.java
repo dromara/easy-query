@@ -112,7 +112,7 @@ public class DefaultTrackContext implements TrackContext {
             Class<?> propertyType = columnMetadata.getPropertyType();
             Property<Object, ?> beanGetter = fastBean.getBeanGetter(property);
             Object value = beanGetter.apply(entity);
-            if(EasyClassUtil.isBasicType(propertyType)){
+            if(EasyClassUtil.isBasicType(propertyType)||EasyClassUtil.isEnumType(propertyType)){
 
                 beanSetter.call(original,value);
             }else{

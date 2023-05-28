@@ -28,35 +28,8 @@ public final class TableContext {
         aliasMapping.put(table, new TableAliasSchema(table, size));
     }
 
-    public String getTableAlias(TableAvailable table, String alias) {
-        if (table == null) {
-            throw new IllegalArgumentException("table is null");
-        }
-        int mappingSize = aliasMapping.size();
-        if (mappingSize == 0) {
-            return null;
-        }
-        if (mappingSize == 1) {
-            TableAliasSchema tableAliasSchema = getTableAliasSchema(table);
-            if (tableAliasSchema.getTable().isAnonymous()||tableAliasSchema.getTable().hasAlias()) {
-                return tableAliasSchema.getTableAlias(alias);
-            }
-            return null;
-        }
-        return getTableAliasSchema(table).getTableAlias(alias);
-    }
-
     public boolean isEmpty() {
         return aliasMapping.isEmpty();
-    }
-
-    public TableAliasSchema getTableAliasSchema(TableAvailable table) {
-
-        TableAliasSchema tableAliasSchema = aliasMapping.get(table);
-        if (tableAliasSchema == null) {
-            throw new EasyQueryInvalidOperationException("unknown table:" + EasyClassUtil.getSimpleName(table.getEntityClass()) + "." + table.getTableName());
-        }
-        return tableAliasSchema;
     }
 
     public void copyTo(TableContext tableContext){
