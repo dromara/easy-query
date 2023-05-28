@@ -42,10 +42,12 @@ public class EasyQueryOption {
      * 分片聚合多个connection获取等待超时时间防止分片datasourcePoolSize过小导致假死
      */
     private final long multiConnWaitTimeoutMillis;
+    private final boolean warningBusy;
 
     public EasyQueryOption(boolean deleteThrowError, SQLExecuteStrategyEnum insertStrategy, SQLExecuteStrategyEnum updateStrategy, ConnectionModeEnum connectionMode, int maxShardingQueryLimit, int executorMaximumPoolSize, int executorCorePoolSize,
                            boolean throwIfNotMatchRoute, long shardingExecuteTimeoutMillis,
-                           EasyQueryShardingOption shardingOption, EasyQueryReplicaOption replicaOption, String defaultDataSourceName, int defaultDataSourcePoolSize, boolean queryLargeColumn, int maxShardingRouteCount, int executorQueueSize, long multiConnWaitTimeoutMillis) {
+                           EasyQueryShardingOption shardingOption, EasyQueryReplicaOption replicaOption, String defaultDataSourceName, int defaultDataSourcePoolSize, boolean queryLargeColumn, int maxShardingRouteCount, int executorQueueSize, long multiConnWaitTimeoutMillis,
+                           boolean warningBusy) {
 
         if (executorMaximumPoolSize > 0) {
             if (executorCorePoolSize > executorMaximumPoolSize) {
@@ -87,6 +89,7 @@ public class EasyQueryOption {
         this.maxShardingRouteCount = maxShardingRouteCount;
         this.executorQueueSize = executorQueueSize;
         this.multiConnWaitTimeoutMillis = multiConnWaitTimeoutMillis;
+        this.warningBusy = warningBusy;
     }
 
     public int getMaxShardingRouteCount() {
@@ -155,5 +158,9 @@ public class EasyQueryOption {
 
     public long getMultiConnWaitTimeoutMillis() {
         return multiConnWaitTimeoutMillis;
+    }
+
+    public boolean isWarningBusy() {
+        return warningBusy;
     }
 }

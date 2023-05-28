@@ -12,6 +12,7 @@ import com.easy.query.core.sharding.EasyQueryDataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -39,12 +40,31 @@ public class DefaultEasyConnectionFactory implements EasyConnectionFactory {
             List<Connection> connections = dataSourceUnit.getConnections(count, multiConnWaitTimeoutMillis, TimeUnit.MILLISECONDS);
             List<EasyConnection> easyConnections = new ArrayList<>(count);
             for (Connection connection : connections) {
-                DefaultEasyConnection easyConnection = new DefaultEasyConnection(dataSourceName, dataSourceWrapper.getStrategy(), connection, isolationLevel);
+                EasyConnection easyConnection = createConnection(connection,dataSourceName,dataSourceWrapper.getStrategy(),isolationLevel);
                 easyConnections.add(easyConnection);
             }
             return easyConnections;
         } catch (SQLException e) {
             throw new EasyQuerySQLCommandException(e);
         }
+    }
+
+    @Override
+    public EasyConnection createEasyConnection(String dataSourceName, Integer isolationLevel, ConnectionStrategyEnum connectionStrategy) {
+        try {
+            DataSourceWrapper dataSourceWrapper = easyQueryDataSource.getDataSourceNotNull(dataSourceName, connectionStrategy);
+            DataSourceUnit dataSourceUnit = dataSourceWrapper.getDataSourceUnit();
+            long multiConnWaitTimeoutMillis = easyQueryOption.getMultiConnWaitTimeoutMillis();
+
+            Connection connection = dataSourceUnit.getConnection(multiConnWaitTimeoutMillis, TimeUnit.MILLISECONDS);
+            return createConnection(connection, dataSourceName, dataSourceWrapper.getStrategy(), isolationLevel);
+
+        } catch (SQLException e) {
+            throw new EasyQuerySQLCommandException(e);
+        }
+    }
+
+    private EasyConnection createConnection(Connection connection,String dataSourceName,ConnectionStrategyEnum connectionStrategy,Integer isolationLevel){
+        return new DefaultEasyConnection(dataSourceName, connectionStrategy, connection, isolationLevel);
     }
 }

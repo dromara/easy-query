@@ -159,6 +159,7 @@ public class EasyQueryStarterAutoConfiguration {
                     builder.setDefaultDataSourceName(easyQueryProperties.getDefaultDataSourceName());
                     builder.setDefaultDataSourcePoolSize(easyQueryProperties.getDefaultDataSourcePoolSize());
                     builder.setMultiConnWaitTimeoutMillis(easyQueryProperties.getMultiConnWaitTimeoutMillis());
+                    builder.setWarningBusy(easyQueryProperties.isWarningBusy());
                 })
                 .replaceService(NameConversion.class, nameConversion)
                 .replaceService(ConnectionManager.class, SpringConnectionManager.class)

@@ -16,4 +16,5 @@ public interface DataSourceUnit {
     String getDataSourceName();
     DataSource getDataSource();
     List<Connection> getConnections(int count,long timeout, TimeUnit unit) throws SQLException;
+    Connection getConnection(long timeout, TimeUnit unit) throws SQLException;
 }

@@ -1,5 +1,7 @@
 package com.easy.query.core.datasource;
 
+import com.easy.query.core.configuration.EasyQueryOption;
+
 import javax.sql.DataSource;
 
 /**
@@ -9,8 +11,14 @@ import javax.sql.DataSource;
  * @author xuejiaming
  */
 public class DefaultDataSourceUnitFactory implements DataSourceUnitFactory{
+    private final EasyQueryOption easyQueryOption;
+
+    public DefaultDataSourceUnitFactory(EasyQueryOption easyQueryOption){
+
+        this.easyQueryOption = easyQueryOption;
+    }
     @Override
     public DataSourceUnit createDataSourceUnit(String dataSourceName, DataSource dataSource, int dataSourcePool) {
-        return new DefaultDataSourceUnit(dataSourceName,dataSource,dataSourcePool);
+        return new DefaultDataSourceUnit(dataSourceName,dataSource,dataSourcePool,easyQueryOption.isWarningBusy());
     }
 }

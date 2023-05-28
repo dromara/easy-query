@@ -31,6 +31,7 @@ public class EasyQueryOptionBuilder {
      * 分片聚合多个connection获取等待超时时间防止分片datasourcePoolSize过小导致假死
      */
     private long multiConnWaitTimeoutMillis;
+    private  boolean warningBusy;;
 
     public EasyQueryOptionBuilder() {
         this.deleteThrowError = true;
@@ -48,6 +49,7 @@ public class EasyQueryOptionBuilder {
         this.maxShardingRouteCount = 128;
         this.executorQueueSize = 1024;
         this.multiConnWaitTimeoutMillis = 5000L;
+        this.warningBusy = true;
     }
 
     public void setDeleteThrowError(boolean deleteThrowError) {
@@ -114,12 +116,24 @@ public class EasyQueryOptionBuilder {
         this.executorQueueSize = executorQueueSize;
     }
 
+    /**
+     * 如果当前没有分表操作建议设置为0
+     * @param defaultDataSourcePoolSize
+     */
     public void setDefaultDataSourcePoolSize(int defaultDataSourcePoolSize) {
         this.defaultDataSourcePoolSize = defaultDataSourcePoolSize;
     }
 
     public void setMultiConnWaitTimeoutMillis(long multiConnWaitTimeoutMillis) {
         this.multiConnWaitTimeoutMillis = multiConnWaitTimeoutMillis;
+    }
+
+    /**
+     *
+     * @param warningBusy
+     */
+    public void setWarningBusy(boolean warningBusy) {
+        this.warningBusy = warningBusy;
     }
 
     public EasyQueryOption build() {
@@ -139,6 +153,7 @@ public class EasyQueryOptionBuilder {
                 this.queryLargeColumn,
                 this.maxShardingRouteCount,
                 this.executorQueueSize,
-                this.multiConnWaitTimeoutMillis);
+                this.multiConnWaitTimeoutMillis,
+                this.warningBusy);
     }
 }

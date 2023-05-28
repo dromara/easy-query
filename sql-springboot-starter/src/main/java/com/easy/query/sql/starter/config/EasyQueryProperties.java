@@ -69,6 +69,7 @@ public class EasyQueryProperties {
     private String defaultDataSourceName = "ds0";
     /**
      * 默认数据源的数据源连接池大小分表有效,一般设置为最少最少 >= maxShardingQueryLimit
+     * 如果当前没有分表操作建议设置为0
      * 当小于maxShardingQueryLimit后启动会抛出警告
      */
     private int defaultDataSourcePoolSize = 0;
@@ -76,6 +77,7 @@ public class EasyQueryProperties {
      * 默认5秒分表聚合多链接获取分表插入更新删除同理多个线程间等待获取时间单位毫秒(ms)
      */
     private long multiConnWaitTimeoutMillis = 5000L;
+    private boolean warningBusy = true;
 
     public Boolean getEnable() {
         return enable;
@@ -231,6 +233,14 @@ public class EasyQueryProperties {
 
     public void setMultiConnWaitTimeoutMillis(long multiConnWaitTimeoutMillis) {
         this.multiConnWaitTimeoutMillis = multiConnWaitTimeoutMillis;
+    }
+
+    public boolean isWarningBusy() {
+        return warningBusy;
+    }
+
+    public void setWarningBusy(boolean warningBusy) {
+        this.warningBusy = warningBusy;
     }
 
     public EasyQueryProperties() {

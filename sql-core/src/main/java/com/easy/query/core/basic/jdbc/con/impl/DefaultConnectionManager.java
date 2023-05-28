@@ -64,8 +64,7 @@ public class DefaultConnectionManager implements ConnectionManager {
                 }
                 EasyConnection easyConnection = easyDataSourceConnection.getEasyConnectionOrNull(dataSourceName);
                 if (easyConnection == null) {
-                    List<EasyConnection> easyConnections = easyConnectionFactory.createEasyConnections(count, dataSourceName, transaction.getIsolationLevel(), connectionStrategy);
-                    easyConnection = EasyCollectionUtil.first(easyConnections);
+                    easyConnection = easyConnectionFactory.createEasyConnection(dataSourceName, transaction.getIsolationLevel(), connectionStrategy);
                     easyConnection.setAutoCommit(false);
                     easyDataSourceConnection.putIfAbsent(dataSourceName, easyConnection);
                 }

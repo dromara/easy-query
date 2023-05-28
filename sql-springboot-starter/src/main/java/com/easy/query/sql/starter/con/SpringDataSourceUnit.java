@@ -6,8 +6,6 @@ import org.springframework.jdbc.datasource.DataSourceUtils;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * create time 2023/5/27 23:18
@@ -16,17 +14,12 @@ import java.util.List;
  * @author xuejiaming
  */
 public class SpringDataSourceUnit extends DefaultDataSourceUnit {
-    public SpringDataSourceUnit(String dataSourceName, DataSource dataSource, int dataSourcePool) {
-        super(dataSourceName,dataSource,dataSourcePool);
+    public SpringDataSourceUnit(String dataSourceName, DataSource dataSource, int dataSourcePool, boolean warningBusy) {
+        super(dataSourceName,dataSource,dataSourcePool,warningBusy);
     }
 
     @Override
-    protected List<Connection> getConnections(int count) throws SQLException {
-        ArrayList<Connection> result = new ArrayList<>(count);
-        for (int i = 0; i < count; i++) {
-            Connection connection = DataSourceUtils.getConnection(dataSource);
-            result.add(connection);
-        }
-        return result;
+    protected Connection getConnection() throws SQLException {
+        return DataSourceUtils.getConnection(dataSource);
     }
 }

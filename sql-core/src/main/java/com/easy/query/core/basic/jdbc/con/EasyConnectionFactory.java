@@ -12,4 +12,5 @@ import java.util.List;
  */
 public interface EasyConnectionFactory {
     List<EasyConnection> createEasyConnections(int count, String dataSourceName, Integer isolationLevel, ConnectionStrategyEnum connectionStrategy);
+    EasyConnection createEasyConnection(String dataSourceName, Integer isolationLevel, ConnectionStrategyEnum connectionStrategy);
 }
