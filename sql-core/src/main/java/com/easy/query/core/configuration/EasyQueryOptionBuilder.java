@@ -23,7 +23,7 @@ public class EasyQueryOptionBuilder {
     private EasyQueryReplicaOption replicaOption;
     private EasyQueryShardingOption shardingOption;
     private String defaultDataSourceName;
-    private int defaultDataSourcePoolSize;
+    private int defaultDataSourceMergePoolSize;
     private boolean queryLargeColumn;
     private int maxShardingRouteCount;
     private int executorQueueSize;
@@ -39,7 +39,7 @@ public class EasyQueryOptionBuilder {
         this.updateStrategy = SQLExecuteStrategyEnum.ALL_COLUMNS;
         this.connectionMode = ConnectionModeEnum.SYSTEM_AUTO;
         this.maxShardingQueryLimit = 5;
-        this.defaultDataSourcePoolSize = 0;
+        this.defaultDataSourceMergePoolSize = 0;
         this.executorMaximumPoolSize = 0;
         this.executorCorePoolSize = Math.min(Runtime.getRuntime().availableProcessors(), 4);
         this.throwIfRouteNotMatch = true;
@@ -118,10 +118,10 @@ public class EasyQueryOptionBuilder {
 
     /**
      * 如果当前没有分表操作建议设置为0
-     * @param defaultDataSourcePoolSize
+     * @param defaultDataSourceMergePoolSize
      */
-    public void setDefaultDataSourcePoolSize(int defaultDataSourcePoolSize) {
-        this.defaultDataSourcePoolSize = defaultDataSourcePoolSize;
+    public void setDefaultDataSourceMergePoolSize(int defaultDataSourceMergePoolSize) {
+        this.defaultDataSourceMergePoolSize = defaultDataSourceMergePoolSize;
     }
 
     public void setMultiConnWaitTimeoutMillis(long multiConnWaitTimeoutMillis) {
@@ -149,7 +149,7 @@ public class EasyQueryOptionBuilder {
                 this.shardingOption,
                 this.replicaOption,
                 this.defaultDataSourceName,
-                this.defaultDataSourcePoolSize,
+                this.defaultDataSourceMergePoolSize,
                 this.queryLargeColumn,
                 this.maxShardingRouteCount,
                 this.executorQueueSize,

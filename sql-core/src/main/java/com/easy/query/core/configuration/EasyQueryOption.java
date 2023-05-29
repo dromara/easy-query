@@ -25,7 +25,7 @@ public class EasyQueryOption {
     private final EasyQueryReplicaOption replicaOption;
     private final EasyQueryShardingOption shardingOption;
     private final String defaultDataSourceName;
-    private final int defaultDataSourcePoolSize;
+    private final int defaultDataSourceMergePoolSize;
     /**
      * 默认查询是否查询large column默认true
      */
@@ -46,7 +46,7 @@ public class EasyQueryOption {
 
     public EasyQueryOption(boolean deleteThrowError, SQLExecuteStrategyEnum insertStrategy, SQLExecuteStrategyEnum updateStrategy, ConnectionModeEnum connectionMode, int maxShardingQueryLimit, int executorMaximumPoolSize, int executorCorePoolSize,
                            boolean throwIfNotMatchRoute, long shardingExecuteTimeoutMillis,
-                           EasyQueryShardingOption shardingOption, EasyQueryReplicaOption replicaOption, String defaultDataSourceName, int defaultDataSourcePoolSize, boolean queryLargeColumn, int maxShardingRouteCount, int executorQueueSize, long multiConnWaitTimeoutMillis,
+                           EasyQueryShardingOption shardingOption, EasyQueryReplicaOption replicaOption, String defaultDataSourceName, int defaultDataSourceMergePoolSize, boolean queryLargeColumn, int maxShardingRouteCount, int executorQueueSize, long multiConnWaitTimeoutMillis,
                            boolean warningBusy) {
 
         if (executorMaximumPoolSize > 0) {
@@ -62,15 +62,18 @@ public class EasyQueryOption {
             if (executorQueueSize < maxShardingQueryLimit) {
                 throw new IllegalArgumentException("Invalid arguments: executorQueueSize < maxShardingQueryLimit");
             }
-            if((executorMaximumPoolSize+executorQueueSize) < maxShardingQueryLimit){
+            if ((executorMaximumPoolSize + executorQueueSize) < maxShardingQueryLimit) {
                 throw new IllegalArgumentException("Invalid arguments: (executorMaximumPoolSize+executorQueueSize) < maxShardingQueryLimit");
             }
         }
         if (shardingExecuteTimeoutMillis <= 0) {
             throw new IllegalArgumentException("shardingExecuteTimeoutMillis less than zero:" + shardingExecuteTimeoutMillis);
         }
-        if(multiConnWaitTimeoutMillis <= 0){
+        if (multiConnWaitTimeoutMillis <= 0) {
             throw new IllegalArgumentException("multiConnWaitTimeoutMillis <= 0");
+        }
+        if (defaultDataSourceMergePoolSize > 0 && defaultDataSourceMergePoolSize < maxShardingQueryLimit) {
+            throw new IllegalArgumentException("invalid arguments: defaultDataSourceMergePoolSize > 0 && defaultDataSourceMergePoolSize < maxShardingQueryLimit.");
         }
         this.deleteThrowError = deleteThrowError;
         this.insertStrategy = SQLExecuteStrategyEnum.getDefaultStrategy(insertStrategy, SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS);
@@ -84,7 +87,7 @@ public class EasyQueryOption {
         this.shardingOption = shardingOption;
         this.replicaOption = replicaOption;
         this.defaultDataSourceName = defaultDataSourceName;
-        this.defaultDataSourcePoolSize = defaultDataSourcePoolSize;
+        this.defaultDataSourceMergePoolSize = defaultDataSourceMergePoolSize;
         this.queryLargeColumn = queryLargeColumn;
         this.maxShardingRouteCount = maxShardingRouteCount;
         this.executorQueueSize = executorQueueSize;
@@ -152,8 +155,8 @@ public class EasyQueryOption {
         return executorQueueSize;
     }
 
-    public int getDefaultDataSourcePoolSize() {
-        return defaultDataSourcePoolSize;
+    public int getDefaultDataSourceMergePoolSize() {
+        return defaultDataSourceMergePoolSize;
     }
 
     public long getMultiConnWaitTimeoutMillis() {

@@ -72,7 +72,7 @@ public class EasyQueryProperties {
      * 如果当前没有分表操作建议设置为0
      * 当小于maxShardingQueryLimit后启动会抛出警告
      */
-    private int defaultDataSourcePoolSize = 0;
+    private int defaultDataSourceMergePoolSize = 0;
     /**
      * 默认5秒分表聚合多链接获取分表插入更新删除同理多个线程间等待获取时间单位毫秒(ms)
      */
@@ -219,12 +219,12 @@ public class EasyQueryProperties {
         this.defaultDataSourceName = defaultDataSourceName;
     }
 
-    public int getDefaultDataSourcePoolSize() {
-        return defaultDataSourcePoolSize;
+    public int getDefaultDataSourceMergePoolSize() {
+        return defaultDataSourceMergePoolSize;
     }
 
-    public void setDefaultDataSourcePoolSize(int defaultDataSourcePoolSize) {
-        this.defaultDataSourcePoolSize = defaultDataSourcePoolSize;
+    public void setDefaultDataSourceMergePoolSize(int defaultDataSourceMergePoolSize) {
+        this.defaultDataSourceMergePoolSize = defaultDataSourceMergePoolSize;
     }
 
     public long getMultiConnWaitTimeoutMillis() {

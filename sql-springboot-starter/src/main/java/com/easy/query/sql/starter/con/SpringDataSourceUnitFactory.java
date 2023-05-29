@@ -20,7 +20,7 @@ public class SpringDataSourceUnitFactory implements DataSourceUnitFactory {
         this.easyQueryOption = easyQueryOption;
     }
     @Override
-    public DataSourceUnit createDataSourceUnit(String dataSourceName, DataSource dataSource, int dataSourcePool) {
-        return new SpringDataSourceUnit(dataSourceName,dataSource,dataSourcePool,easyQueryOption.isWarningBusy());
+    public DataSourceUnit createDataSourceUnit(String dataSourceName, DataSource dataSource, int mergePoolSize) {
+        return new SpringDataSourceUnit(dataSourceName,dataSource,mergePoolSize,easyQueryOption.isWarningBusy());
     }
 }

@@ -30,11 +30,11 @@ public class DefaultDataSourceUnit implements DataSourceUnit {
     protected final Semaphore semaphore;
     private final boolean warningBusy;
 
-    public DefaultDataSourceUnit(String dataSourceName, DataSource dataSource, int dataSourcePool, boolean warningBusy) {
+    public DefaultDataSourceUnit(String dataSourceName, DataSource dataSource, int mergePoolSize, boolean warningBusy) {
 
         this.dataSourceName = dataSourceName;
         this.dataSource = dataSource;
-        this.semaphore = dataSourcePool <= 0 ? null : new Semaphore(dataSourcePool, true);
+        this.semaphore = mergePoolSize <= 0 ? null : new Semaphore(mergePoolSize, true);
         this.warningBusy = warningBusy;
     }
 
@@ -50,25 +50,27 @@ public class DefaultDataSourceUnit implements DataSourceUnit {
 
     @Override
     public List<Connection> getConnections(int count, long timeout, TimeUnit unit) throws SQLException {
-        if (semaphore == null) {
-            if (count > 1) {
-                throw new EasyQueryInvalidOperationException("sharding table should set dataSourceName:[" + dataSourceName + "] dataSourcePool,current value <= 0.");
-            }
+        if (count <= 1) {
             Connection connection = getConnection();
             return Collections.singletonList(connection);
         }
-        return tryGetConnection(count, timeout, unit, () -> getConnections(count));
+
+        if (semaphore == null) {
+            throw new EasyQueryInvalidOperationException("sharding table should set dataSourceName:[" + dataSourceName + "] dataSourcePool,current value <= 0.");
+        }
+        return getMergeConnections(count, timeout, unit);
     }
 
     @Override
     public Connection getConnection(long timeout, TimeUnit unit) throws SQLException {
-        if (semaphore == null) {
-            return getConnection();
-        }
-        return tryGetConnection(1, timeout, unit, this::getConnection);
+        return getConnection();
     }
 
-    protected <TR> TR tryGetConnection(int count, long timeout, TimeUnit unit, SQLSupplier<TR> supplier) throws SQLException {
+    protected Connection getConnection() throws SQLException {
+        return dataSource.getConnection();
+    }
+
+    protected List<Connection> getMergeConnections(int count, long timeout, TimeUnit unit) throws SQLException {
 
         SemaphoreReleaseOnlyOnce semaphoreReleaseOnlyOnce = tryAcquire(count, timeout, unit);
 
@@ -76,23 +78,15 @@ public class DefaultDataSourceUnit implements DataSourceUnit {
             throw new EasyQuerySQLException("dataSourceName:" + dataSourceName + " get connections:" + 1 + " busy.");
         }
         try {
-            return supplier.get();
+            ArrayList<Connection> result = new ArrayList<>(count);
+            for (int i = 0; i < count; i++) {
+                Connection connection = getConnection();
+                result.add(connection);
+            }
+            return result;
         } finally {
             semaphoreReleaseOnlyOnce.release();
         }
-    }
-
-    protected Connection getConnection() throws SQLException {
-        return dataSource.getConnection();
-    }
-
-    protected List<Connection> getConnections(int count) throws SQLException {
-        ArrayList<Connection> result = new ArrayList<>(count);
-        for (int i = 0; i < count; i++) {
-            Connection connection = getConnection();
-            result.add(connection);
-        }
-        return result;
     }
 
     protected SemaphoreReleaseOnlyOnce tryAcquire(int count, long timeout, TimeUnit unit) {

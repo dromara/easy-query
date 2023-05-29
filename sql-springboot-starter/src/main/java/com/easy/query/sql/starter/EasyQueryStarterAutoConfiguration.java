@@ -1,6 +1,5 @@
 package com.easy.query.sql.starter;
 
-import com.easy.query.core.basic.jdbc.con.EasyConnectionFactory;
 import com.easy.query.core.basic.jdbc.con.ConnectionManager;
 import com.easy.query.core.basic.plugin.conversion.ValueConverter;
 import com.easy.query.core.basic.plugin.encryption.EncryptionStrategy;
@@ -157,7 +156,7 @@ public class EasyQueryStarterAutoConfiguration {
                     builder.setMaxShardingRouteCount(easyQueryProperties.getMaxShardingRouteCount());
                     builder.setExecutorQueueSize(easyQueryProperties.getExecutorQueueSize());
                     builder.setDefaultDataSourceName(easyQueryProperties.getDefaultDataSourceName());
-                    builder.setDefaultDataSourcePoolSize(easyQueryProperties.getDefaultDataSourcePoolSize());
+                    builder.setDefaultDataSourceMergePoolSize(easyQueryProperties.getDefaultDataSourceMergePoolSize());
                     builder.setMultiConnWaitTimeoutMillis(easyQueryProperties.getMultiConnWaitTimeoutMillis());
                     builder.setWarningBusy(easyQueryProperties.isWarningBusy());
                 })

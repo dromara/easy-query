@@ -1,13 +1,11 @@
 package com.easy.query.test;
 
-import com.easy.query.core.basic.plugin.conversion.DefaultValueConverter;
 import com.easy.query.core.configuration.ShardingDataSource;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.api.client.EasyQuery;
 import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.configuration.EasyQueryShardingOption;
-import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.sharding.route.manager.DataSourceRouteManager;
 import com.easy.query.core.sharding.route.manager.TableRouteManager;
@@ -42,7 +40,6 @@ import com.easy.query.test.sharding.TopicShardingTimeShardingInitializer;
 import com.easy.query.test.sharding.TopicShardingTimeTableRule;
 import com.zaxxer.hikari.HikariDataSource;
 
-import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -123,7 +120,7 @@ public abstract class BaseTest {
                     op.setDefaultDataSourceName("ds2020");
                     op.setThrowIfRouteNotMatch(false);
                     op.setMaxShardingRouteCount(512);
-                    op.setDefaultDataSourcePoolSize(20);
+                    op.setDefaultDataSourceMergePoolSize(20);
                 })
                 .useDatabaseConfigure(new MySQLDatabaseConfiguration())
                 .build();

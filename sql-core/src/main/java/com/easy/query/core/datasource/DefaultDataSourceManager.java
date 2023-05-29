@@ -28,7 +28,7 @@ public class DefaultDataSourceManager implements DataSourceManager {
         this.defaultDataSourceName = easyQueryOption.getDefaultDataSourceName();
         this.defaultDataSource = defaultDataSource;
         this.dataSourceUnitFactory = dataSourceUnitFactory;
-        this.dataSourceMap.putIfAbsent(defaultDataSourceName, dataSourceUnitFactory.createDataSourceUnit(defaultDataSourceName,defaultDataSource,easyQueryOption.getDefaultDataSourcePoolSize()));
+        this.dataSourceMap.putIfAbsent(defaultDataSourceName, dataSourceUnitFactory.createDataSourceUnit(defaultDataSourceName,defaultDataSource,easyQueryOption.getDefaultDataSourceMergePoolSize()));
         initShardingConfig(easyQueryOption);
     }
 
@@ -39,7 +39,7 @@ public class DefaultDataSourceManager implements DataSourceManager {
             Set<ShardingDataSource> shardingDataSources = shardingOption.getShardingDataSources();
             if (shardingDataSources != null) {
                 for (ShardingDataSource shardingDataSource : shardingDataSources) {
-                    this.dataSourceMap.putIfAbsent(shardingDataSource.getDataSourceName(), dataSourceUnitFactory.createDataSourceUnit(shardingDataSource.getDataSourceName(),shardingDataSource.getDataSource(),shardingDataSource.getDataSourcePoolSize()));
+                    this.dataSourceMap.putIfAbsent(shardingDataSource.getDataSourceName(), dataSourceUnitFactory.createDataSourceUnit(shardingDataSource.getDataSourceName(),shardingDataSource.getDataSource(),shardingDataSource.getDataSourceMergePoolSize()));
                 }
             }
         }

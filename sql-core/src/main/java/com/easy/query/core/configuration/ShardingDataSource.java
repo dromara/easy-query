@@ -14,18 +14,18 @@ import java.util.Objects;
 public final class ShardingDataSource {
     private final String dataSourceName;
     private final DataSource dataSource;
-    private final int dataSourcePoolSize;
+    private final int dataSourceMergePoolSize;
 
-    public ShardingDataSource(String dataSourceName, DataSource dataSource, int dataSourcePoolSize) {
+    public ShardingDataSource(String dataSourceName, DataSource dataSource, int dataSourceMergePoolSize) {
         if (EasyStringUtil.isBlank(dataSourceName)) {
             throw new IllegalArgumentException("dataSourceName is empty");
         }
-        if (dataSourcePoolSize <= 0) {
-            throw new IllegalArgumentException("dataSourcePoolSize <= 0");
+        if (dataSourceMergePoolSize <= 0) {
+            throw new IllegalArgumentException("dataSourceMergePoolSize <= 0");
         }
         this.dataSourceName = dataSourceName;
         this.dataSource = dataSource;
-        this.dataSourcePoolSize = dataSourcePoolSize;
+        this.dataSourceMergePoolSize = dataSourceMergePoolSize;
     }
 
     public String getDataSourceName() {
@@ -36,8 +36,8 @@ public final class ShardingDataSource {
         return dataSource;
     }
 
-    public int getDataSourcePoolSize() {
-        return dataSourcePoolSize;
+    public int getDataSourceMergePoolSize() {
+        return dataSourceMergePoolSize;
     }
 
     @Override

@@ -14,8 +14,8 @@ import java.sql.SQLException;
  * @author xuejiaming
  */
 public class SpringDataSourceUnit extends DefaultDataSourceUnit {
-    public SpringDataSourceUnit(String dataSourceName, DataSource dataSource, int dataSourcePool, boolean warningBusy) {
-        super(dataSourceName,dataSource,dataSourcePool,warningBusy);
+    public SpringDataSourceUnit(String dataSourceName, DataSource dataSource, int mergePoolSize, boolean warningBusy) {
+        super(dataSourceName,dataSource,mergePoolSize,warningBusy);
     }
 
     @Override

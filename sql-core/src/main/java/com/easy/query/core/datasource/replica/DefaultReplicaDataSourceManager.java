@@ -51,7 +51,7 @@ public final class DefaultReplicaDataSourceManager extends DefaultDataSourceMana
             ArrayList<ReplicaNode> replicaNodes = new ArrayList<>(entries.size());
             for (Map.Entry<String, ShardingDataSource> replicaKv : entries) {
                 ShardingDataSource shardingDataSource = replicaKv.getValue();
-                replicaNodes.add(new ReplicaNode(replicaKv.getKey(), dataSourceUnitFactory.createDataSourceUnit(shardingDataSource.getDataSourceName(),shardingDataSource.getDataSource(),shardingDataSource.getDataSourcePoolSize())));
+                replicaNodes.add(new ReplicaNode(replicaKv.getKey(), dataSourceUnitFactory.createDataSourceUnit(shardingDataSource.getDataSourceName(),shardingDataSource.getDataSource(),shardingDataSource.getDataSourceMergePoolSize())));
             }
             ReplicaConnector replicaConnector = Objects.equals(ReplicaUseStrategyEnum.Loop, replicaOption.getReplicaUseStrategy()) ? new LoopReplicaConnector(dataSource, replicaNodes) : new RandomReplicaConnector(dataSource, replicaNodes);
             replicaDataSource.put(dataSource, replicaConnector);

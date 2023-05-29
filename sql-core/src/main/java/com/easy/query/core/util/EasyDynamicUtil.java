@@ -26,7 +26,7 @@ public final class EasyDynamicUtil {
     public static void addDataSource(QueryRuntimeContext runtimeContext, ShardingDataSource shardingDataSource){
         String dataSourceName = shardingDataSource.getDataSourceName();
         DataSource dataSource = shardingDataSource.getDataSource();
-        int dataSourcePoolSize = shardingDataSource.getDataSourcePoolSize();
+        int dataSourcePoolSize = shardingDataSource.getDataSourceMergePoolSize();
         EasyQueryDataSource easyQueryDataSource = runtimeContext.getEasyQueryDataSource();
         easyQueryDataSource.addDataSource(dataSourceName,dataSource,dataSourcePoolSize);
     }
