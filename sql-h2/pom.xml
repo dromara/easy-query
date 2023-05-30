@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.easy-query</groupId>
         <artifactId>easy-query-all</artifactId>
-        <version>0.9.10</version>
+        <version>0.9.11</version>
     </parent>
 
     <artifactId>sql-h2</artifactId>

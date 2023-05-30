@@ -50,11 +50,11 @@ public class SpringConnectionManager extends DefaultConnectionManager {
         }
         //当前没开事务,但是easy query手动开启了
         if(!this.currentThreadInTransaction()){
-            if(super.easyCurrentThreadInTransaction()){
+            if(super.isOpenTransaction()){
                 return;
             }
         }else{
-            if(super.easyCurrentThreadInTransaction()){
+            if(super.isOpenTransaction()){
                 throw new EasyQueryException("repeat transaction can't closed connection");
             }
         }

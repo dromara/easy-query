@@ -75,12 +75,13 @@ public class DefaultConnectionManager implements ConnectionManager {
     }
 
     @Override
-    public boolean currentThreadInTransaction() {
-        return easyCurrentThreadInTransaction();
+    public Transaction getTransactionOrNull() {
+        return threadTx.get();
     }
 
-    protected boolean easyCurrentThreadInTransaction() {
-        return threadTx.get() != null;
+    @Override
+    public boolean currentThreadInTransaction() {
+        return isOpenTransaction();
     }
 
     @Override
@@ -95,7 +96,7 @@ public class DefaultConnectionManager implements ConnectionManager {
         if (easyConnection == null) {
             return;
         }
-        if (!this.easyCurrentThreadInTransaction()) {
+        if (!this.isOpenTransaction()) {
             try {
                 easyConnection.close();
             } catch (Exception e) {

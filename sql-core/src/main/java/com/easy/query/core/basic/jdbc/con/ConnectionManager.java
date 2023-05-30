@@ -29,6 +29,10 @@ public interface ConnectionManager {
      */
     Transaction beginTransaction(Integer isolationLevel);
     List<EasyConnection> getEasyConnections(int count,String dataSourceName, ConnectionStrategyEnum connectionStrategy);
+    default boolean isOpenTransaction(){
+        return getTransactionOrNull()!=null;
+    }
+    Transaction getTransactionOrNull();
     boolean currentThreadInTransaction();
     void clear();
     void closeEasyConnection(EasyConnection easyConnection);
