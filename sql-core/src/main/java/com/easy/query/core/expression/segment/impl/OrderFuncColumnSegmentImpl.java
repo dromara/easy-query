@@ -1,4 +1,4 @@
-package com.easy.query.core.expression.segment;
+package com.easy.query.core.expression.segment.impl;
 
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.context.QueryRuntimeContext;
@@ -6,6 +6,10 @@ import com.easy.query.core.enums.SQLKeywordEnum;
 import com.easy.query.core.expression.func.AggregationType;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.segment.FuncColumnSegment;
+import com.easy.query.core.expression.segment.GroupByColumnSegment;
+import com.easy.query.core.expression.segment.OrderFuncColumnSegment;
+import com.easy.query.core.expression.segment.impl.GroupColumnSegmentImpl;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 
 /**
@@ -14,7 +18,7 @@ import com.easy.query.core.util.EasySQLExpressionUtil;
  * @Date: 2023/2/19 22:17
  * @author xuejiaming
  */
-public class OrderFuncColumnSegmentImpl implements AggregationColumnSegment,OrderByColumnSegment {
+public class OrderFuncColumnSegmentImpl implements OrderFuncColumnSegment {
 
 
     protected final TableAvailable table;
@@ -56,7 +60,7 @@ public class OrderFuncColumnSegmentImpl implements AggregationColumnSegment,Orde
     }
 
     @Override
-    public AggregationColumnSegment cloneSQLEntitySegment() {
+    public FuncColumnSegment cloneSQLEntitySegment() {
         throw new UnsupportedOperationException();
     }
 
@@ -71,10 +75,6 @@ public class OrderFuncColumnSegmentImpl implements AggregationColumnSegment,Orde
         return columnFunction.getAggregationType();
     }
 
-    @Override
-    public GroupByColumnSegment createGroupByColumnSegment() {
-        return new GroupColumnSegmentImpl(table,propertyName,runtimeContext);
-    }
 
     @Override
     public boolean isAsc() {

@@ -6,6 +6,7 @@ import com.easy.query.core.basic.pagination.EasyPageResultProvider;
 import com.easy.query.core.basic.thread.ShardingExecutorService;
 import com.easy.query.core.datasource.DataSourceUnitFactory;
 import com.easy.query.core.expression.parser.factory.SQLExpressionInvokeFactory;
+import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
 import com.easy.query.core.expression.sql.builder.factory.ExpressionBuilderFactory;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.expression.func.ColumnFunctionFactory;
@@ -49,6 +50,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     private final ShardingQueryCountManager shardingQueryCountManager;
     private final ColumnFunctionFactory columnFunctionFactory;
     private final DataSourceUnitFactory dataSourceUnitFactory;
+    private final SQLSegmentFactory sqlSegmentFactory;
 
     public DefaultEasyQueryRuntimeContext(ServiceProvider serviceProvider,
                                           EasyQueryDataSource easyQueryDataSource,
@@ -69,7 +71,8 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
                                           ShardingComparer shardingComparer,
                                           ShardingQueryCountManager shardingQueryCountManager,
                                           ColumnFunctionFactory columnFunctionFactory,
-                                          DataSourceUnitFactory dataSourceUnitFactory) {
+                                          DataSourceUnitFactory dataSourceUnitFactory,
+                                          SQLSegmentFactory sqlSegmentFactory) {
         this.serviceProvider = serviceProvider;
         this.easyQueryDataSource = easyQueryDataSource;
         this.easyQueryConfiguration = easyQueryConfiguration;
@@ -90,6 +93,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
         this.shardingQueryCountManager = shardingQueryCountManager;
         this.columnFunctionFactory = columnFunctionFactory;
         this.dataSourceUnitFactory = dataSourceUnitFactory;
+        this.sqlSegmentFactory = sqlSegmentFactory;
     }
 
     @Override
@@ -191,5 +195,10 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     @Override
     public DataSourceUnitFactory getDataSourceUnitFactory() {
         return dataSourceUnitFactory;
+    }
+
+    @Override
+    public SQLSegmentFactory getSQLSegmentFactory() {
+        return sqlSegmentFactory;
     }
 }

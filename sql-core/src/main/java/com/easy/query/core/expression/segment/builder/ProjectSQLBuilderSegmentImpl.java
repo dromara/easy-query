@@ -2,13 +2,7 @@ package com.easy.query.core.expression.segment.builder;
 
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.enums.SQLKeywordEnum;
-import com.easy.query.core.expression.segment.AggregationColumnSegment;
 import com.easy.query.core.expression.segment.SQLSegment;
-import com.easy.query.core.expression.segment.SubQueryColumnSegment;
-import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
-import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
-import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
-import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasySQLSegmentUtil;
 
 import java.util.Iterator;

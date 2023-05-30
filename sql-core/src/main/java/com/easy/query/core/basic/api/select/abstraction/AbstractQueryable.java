@@ -4,7 +4,10 @@ import com.easy.query.core.basic.api.select.provider.SQLExpressionProvider;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.SQLUnionEnum;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.segment.FuncColumnSegment;
+import com.easy.query.core.expression.segment.SelectConstSegment;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnCollectionPredicate;
+import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
 import com.easy.query.core.sharding.manager.SequenceCountLine;
 import com.easy.query.core.sharding.manager.SequenceCountNode;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
@@ -19,7 +22,6 @@ import com.easy.query.core.expression.parser.core.SQLGroupBySelector;
 import com.easy.query.core.expression.parser.core.SQLColumnAsSelector;
 import com.easy.query.core.expression.parser.core.SQLAggregatePredicate;
 import com.easy.query.core.expression.segment.ColumnSegment;
-import com.easy.query.core.expression.segment.FuncColumnSegmentImpl;
 import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.metadata.EntityMetadata;
@@ -41,7 +43,7 @@ import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.parser.core.SQLColumnSelector;
-import com.easy.query.core.expression.segment.SelectConstSegment;
+import com.easy.query.core.expression.segment.impl.SelectConstSegmentImpl;
 import com.easy.query.core.expression.segment.builder.ProjectSQLBuilderSegmentImpl;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnValuePredicate;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
@@ -66,7 +68,13 @@ import com.easy.query.core.util.EasyStringUtil;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -80,6 +88,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     protected final Class<T1> t1Class;
     protected final EntityQueryExpressionBuilder entityQueryExpressionBuilder;
     protected final QueryRuntimeContext runtimeContext;
+    protected final SQLSegmentFactory sqlSegmentFactory;
     protected SQLExpressionProvider<T1> sqlExpressionProvider1;
 
     @Override
@@ -91,6 +100,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
         this.t1Class = t1Class;
         this.entityQueryExpressionBuilder = entityQueryExpressionBuilder;
         this.runtimeContext = entityQueryExpressionBuilder.getRuntimeContext();
+        this.sqlSegmentFactory=this.runtimeContext.getSQLSegmentFactory();
     }
 
 
@@ -224,7 +234,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
         String propertyName = EasyLambdaUtil.getPropertyName(column);
 
         ColumnFunction lenFunction = runtimeContext.getColumnFunctionFactory().createLenFunction();
-        FuncColumnSegmentImpl funcColumnSegment = new FuncColumnSegmentImpl(table.getEntityTable(), propertyName, entityQueryExpressionBuilder.getRuntimeContext(), lenFunction);
+        FuncColumnSegment funcColumnSegment = sqlSegmentFactory.createFuncColumnSegment(table.getEntityTable(), propertyName, entityQueryExpressionBuilder.getRuntimeContext(), lenFunction,null);
 
         List<Integer> result = cloneQueryable().select(funcColumnSegment,true).toList(Integer.class);
         return EasyCollectionUtil.firstOrDefault(result, def);
@@ -233,7 +243,8 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     private <TMember> List<TMember> selectAggregateList(Property<T1, ?> column, ColumnFunction columnFunction) {
         EntityTableExpressionBuilder table = entityQueryExpressionBuilder.getTable(0);
         String propertyName = EasyLambdaUtil.getPropertyName(column);
-        FuncColumnSegmentImpl funcColumnSegment = new FuncColumnSegmentImpl(table.getEntityTable(), propertyName, entityQueryExpressionBuilder.getRuntimeContext(), columnFunction);
+
+        FuncColumnSegment funcColumnSegment =sqlSegmentFactory.createFuncColumnSegment(table.getEntityTable(), propertyName, entityQueryExpressionBuilder.getRuntimeContext(), columnFunction,null);
         ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(propertyName);
         return cloneQueryable().select(funcColumnSegment, true).toList((Class<TMember>) columnMetadata.getPropertyType());
     }
@@ -358,7 +369,8 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     @Override
     public Queryable<T1> select(String columns) {
         entityQueryExpressionBuilder.getProjects().getSQLSegments().clear();
-        entityQueryExpressionBuilder.getProjects().append(new SelectConstSegment(columns));
+        SelectConstSegment selectConstSegment = sqlSegmentFactory.createSelectConstSegment(columns);
+        entityQueryExpressionBuilder.getProjects().append(selectConstSegment);
         return this;
     }
 

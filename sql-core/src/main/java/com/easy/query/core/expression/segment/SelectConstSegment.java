@@ -1,22 +1,10 @@
 package com.easy.query.core.expression.segment;
 
-import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
-
 /**
- * @FileName: SelectCountSegment.java
- * @Description: 文件说明
- * @Date: 2023/3/3 12:52
+ * create time 2023/5/30 12:40
+ * 文件说明
+ *
  * @author xuejiaming
  */
-public class SelectConstSegment implements SQLSegment {
-    private final String projects;
-
-    public SelectConstSegment(String projects){
-
-        this.projects = projects;
-    }
-    @Override
-    public String toSQL(ToSQLContext toSQLContext) {
-        return projects;
-    }
+public interface SelectConstSegment extends SQLSegment{
 }

@@ -1,8 +1,9 @@
-package com.easy.query.core.expression.segment;
+package com.easy.query.core.expression.segment.impl;
 
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 
 /**

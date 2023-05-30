@@ -4,9 +4,9 @@ import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.SQLColumnSelector;
-import com.easy.query.core.expression.segment.FuncColumnSegmentImpl;
+import com.easy.query.core.expression.segment.FuncColumnSegment;
+import com.easy.query.core.expression.segment.impl.FuncColumnSegmentImpl;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
-import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 
@@ -31,7 +31,8 @@ public class DefaultSQLColumnSelector<T1> extends AbstractSQLColumnSelector<T1, 
         String propertyName = columnPropertyFunction.getPropertyName();
         ColumnFunction columnFunction = columnPropertyFunction.getColumnFunction();
         String columnAsName = table.getColumnName(propertyName);
-        sqlSegmentBuilder.append(new FuncColumnSegmentImpl(table.getEntityTable(), propertyName, entityQueryExpressionBuilder.getRuntimeContext(), columnFunction, columnAsName));
+        FuncColumnSegment funcColumnSegment = sqlSegmentFactory.createFuncColumnSegment(table.getEntityTable(), propertyName, entityQueryExpressionBuilder.getRuntimeContext(), columnFunction, columnAsName);
+        sqlSegmentBuilder.append(funcColumnSegment);
         return this;
     }
 }

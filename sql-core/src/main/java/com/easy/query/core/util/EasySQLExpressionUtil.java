@@ -16,6 +16,8 @@ import com.easy.query.core.expression.parser.core.SQLColumnSelector;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.SQLWherePredicate;
 import com.easy.query.core.expression.segment.SelectConstSegment;
+import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
+import com.easy.query.core.expression.segment.impl.SelectConstSegmentImpl;
 import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.basic.api.select.Queryable4;
@@ -131,17 +133,17 @@ public class EasySQLExpressionUtil {
     }
 
 
-    public static EntityQueryExpressionBuilder getCountEntityQueryExpression(EntityQueryExpressionBuilder countSQLEntityExpression){
-        if(countSQLEntityExpression.hasOrder()){
-            countSQLEntityExpression.getOrder().clear();
+    public static EntityQueryExpressionBuilder getCountEntityQueryExpression(EntityQueryExpressionBuilder entityQueryExpressionBuilder){
+        if(entityQueryExpressionBuilder.hasOrder()){
+            entityQueryExpressionBuilder.getOrder().clear();
         }
-        if(EasySQLExpressionUtil.hasAnyOperateWithoutWhereAndOrder(countSQLEntityExpression)){
+        if(EasySQLExpressionUtil.hasAnyOperateWithoutWhereAndOrder(entityQueryExpressionBuilder)){
             return null;
         }
 
         //如果他只是匿名表那么就使用匿名表的内部表
-        if(!EasySQLExpressionUtil.moreTableExpressionOrNoAnonymous(countSQLEntityExpression)){
-            AnonymousEntityTableExpressionBuilder table = (AnonymousEntityTableExpressionBuilder) countSQLEntityExpression.getTable(0);
+        if(!EasySQLExpressionUtil.moreTableExpressionOrNoAnonymous(entityQueryExpressionBuilder)){
+            AnonymousEntityTableExpressionBuilder table = (AnonymousEntityTableExpressionBuilder) entityQueryExpressionBuilder.getTable(0);
             EntityQueryExpressionBuilder entityQueryExpression = table.getEntityQueryExpressionBuilder().cloneEntityExpressionBuilder();
             //存在操作那么就返回父类
             if(!EasySQLExpressionUtil.hasAnyOperateWithoutWhereAndOrder(entityQueryExpression)){
@@ -151,9 +153,11 @@ public class EasySQLExpressionUtil {
                 }
             }
         }
-        countSQLEntityExpression.getProjects().getSQLSegments().clear();
-        countSQLEntityExpression.getProjects().append(new SelectConstSegment("COUNT(1)"));
-        return countSQLEntityExpression;
+        entityQueryExpressionBuilder.getProjects().getSQLSegments().clear();
+        SQLSegmentFactory sqlSegmentFactory = entityQueryExpressionBuilder.getRuntimeContext().getSQLSegmentFactory();
+        SelectConstSegment selectCountSegment = sqlSegmentFactory.createSelectConstSegment("COUNT(1)");
+        entityQueryExpressionBuilder.getProjects().append(selectCountSegment);
+        return entityQueryExpressionBuilder;
     }
 
 

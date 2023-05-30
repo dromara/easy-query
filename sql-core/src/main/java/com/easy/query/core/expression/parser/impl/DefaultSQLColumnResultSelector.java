@@ -2,7 +2,9 @@ package com.easy.query.core.expression.parser.impl;
 
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.segment.ColumnSegmentImpl;
+import com.easy.query.core.expression.segment.ColumnSegment;
+import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
+import com.easy.query.core.expression.segment.impl.ColumnSegmentImpl;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.parser.core.SQLColumnResultSelector;
@@ -20,11 +22,13 @@ public class DefaultSQLColumnResultSelector<T1,TR> implements SQLColumnResultSel
     protected final EntityExpressionBuilder entityExpressionBuilder;
     protected final SQLBuilderSegment sqlBuilderSegment;
     protected final TableAvailable table;
+    protected final SQLSegmentFactory sqlSegmentFactory;
 
     public DefaultSQLColumnResultSelector(int index, EntityExpressionBuilder entityExpressionBuilder, SQLBuilderSegment sqlBuilderSegment){
 
         this.index = index;
         this.entityExpressionBuilder = entityExpressionBuilder;
+        this.sqlSegmentFactory = entityExpressionBuilder.getRuntimeContext().getSQLSegmentFactory();
         this.table = entityExpressionBuilder.getTable(index).getEntityTable();
         this.sqlBuilderSegment = sqlBuilderSegment;
     }
@@ -41,7 +45,8 @@ public class DefaultSQLColumnResultSelector<T1,TR> implements SQLColumnResultSel
         }
         EntityTableExpressionBuilder table = entityExpressionBuilder.getTable(index);
         String propertyName = EasyLambdaUtil.getPropertyName(column);
-        sqlBuilderSegment.append(new ColumnSegmentImpl(table.getEntityTable(),propertyName, entityExpressionBuilder.getRuntimeContext()));
+        ColumnSegment columnSegment = sqlSegmentFactory.createColumnSegment(table.getEntityTable(), propertyName, entityExpressionBuilder.getRuntimeContext(), null);
+        sqlBuilderSegment.append(columnSegment);
 
     }
 }

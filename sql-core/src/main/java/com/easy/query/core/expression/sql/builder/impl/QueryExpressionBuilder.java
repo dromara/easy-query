@@ -3,6 +3,8 @@ package com.easy.query.core.expression.sql.builder.impl;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.segment.SelectConstSegment;
+import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
+import com.easy.query.core.expression.segment.impl.SelectConstSegmentImpl;
 import com.easy.query.core.expression.segment.builder.GroupBySQLBuilderSegmentImpl;
 import com.easy.query.core.expression.segment.builder.OrderBySQLBuilderSegmentImpl;
 import com.easy.query.core.expression.segment.builder.ProjectSQLBuilderSegmentImpl;
@@ -179,6 +181,7 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
         }
         QueryRuntimeContext runtimeContext = getRuntimeContext();
         ExpressionFactory expressionFactory = runtimeContext.getExpressionFactory();
+        SQLSegmentFactory sqlSegmentFactory = runtimeContext.getSQLSegmentFactory();
         EntitySQLExpressionMetadata entitySQLExpressionMetadata = new EntitySQLExpressionMetadata(expressionContext.getTableContext(), runtimeContext);
         EntityQuerySQLExpression easyQuerySQLExpression = expressionFactory.createEasyQuerySQLExpression(entitySQLExpressionMetadata);
         easyQuerySQLExpression.setDistinct(isDistinct());
@@ -186,7 +189,8 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
         if (emptySelect) {
             if (!hasGroup()) {
                 ProjectSQLBuilderSegmentImpl projects = new ProjectSQLBuilderSegmentImpl();
-                projects.append(new SelectConstSegment("*"));
+                SelectConstSegment selectAllSegment = sqlSegmentFactory.createSelectConstSegment("*");
+                projects.append(selectAllSegment);
                 easyQuerySQLExpression.setProjects(projects);
             } else {
                 ProjectSQLBuilderSegmentImpl projects = new ProjectSQLBuilderSegmentImpl();

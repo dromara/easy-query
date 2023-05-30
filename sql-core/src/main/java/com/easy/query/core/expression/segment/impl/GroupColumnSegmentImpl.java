@@ -1,7 +1,9 @@
-package com.easy.query.core.expression.segment;
+package com.easy.query.core.expression.segment.impl;
 
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.segment.GroupByColumnSegment;
+import com.easy.query.core.expression.segment.OrderByColumnSegment;
 
 /**
  * create time 2023/4/30 21:45
@@ -9,13 +11,13 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
  *
  * @author xuejiaming
  */
-public class GroupColumnSegmentImpl extends ColumnSegmentImpl implements GroupByColumnSegment{
+public class GroupColumnSegmentImpl extends ColumnSegmentImpl implements GroupByColumnSegment {
     public GroupColumnSegmentImpl(TableAvailable table, String propertyName, QueryRuntimeContext runtimeContext) {
         super(table, propertyName, runtimeContext);
     }
 
     @Override
     public OrderByColumnSegment createOrderByColumnSegment(boolean asc) {
-        return new OrderColumnSegmentImpl(table,propertyName,runtimeContext,asc);
+        return runtimeContext.getSQLSegmentFactory().createOrderByColumnSegment(table,propertyName,runtimeContext,asc);
     }
 }

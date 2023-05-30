@@ -1,4 +1,4 @@
-package com.easy.query.core.expression.segment;
+package com.easy.query.core.expression.segment.parse;
 
 import com.easy.query.core.expression.func.AggregationType;
 

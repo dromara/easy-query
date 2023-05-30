@@ -7,10 +7,10 @@ package com.easy.query.core.expression.segment;
  *
  * @author xuejiaming
  */
-public interface AggregationColumnSegment extends MaybeAggregateColumnSegment {
+public interface FuncColumnSegment extends MaybeAggregateColumnSegment {
     default boolean isAggregateColumn(){
         return true;
     }
     @Override
-    AggregationColumnSegment cloneSQLEntitySegment();
+    FuncColumnSegment cloneSQLEntitySegment();
 }

@@ -1,10 +1,11 @@
-package com.easy.query.core.expression.segment;
+package com.easy.query.core.expression.segment.impl;
 
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.func.AggregationType;
+import com.easy.query.core.expression.segment.FuncColumnSegment;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 
 /**
@@ -13,7 +14,7 @@ import com.easy.query.core.util.EasySQLExpressionUtil;
  * @Date: 2023/2/19 22:17
  * @author xuejiaming
  */
-public class FuncColumnSegmentImpl implements AggregationColumnSegment {
+public class FuncColumnSegmentImpl implements FuncColumnSegment {
 
 
     protected final TableAvailable table;
@@ -22,9 +23,6 @@ public class FuncColumnSegmentImpl implements AggregationColumnSegment {
     protected final ColumnFunction columnFunction;
     protected String alias;
 
-    public FuncColumnSegmentImpl(TableAvailable table, String propertyName, QueryRuntimeContext runtimeContext, ColumnFunction columnFunction){
-        this(table,propertyName,runtimeContext,columnFunction,null);
-    }
     public FuncColumnSegmentImpl(TableAvailable table, String propertyName, QueryRuntimeContext runtimeContext, ColumnFunction columnFunction, String alias){
         this.table = table;
         this.propertyName = propertyName;
@@ -56,7 +54,7 @@ public class FuncColumnSegmentImpl implements AggregationColumnSegment {
     }
 
     @Override
-    public AggregationColumnSegment cloneSQLEntitySegment() {
+    public FuncColumnSegment cloneSQLEntitySegment() {
         throw new UnsupportedOperationException();
     }
 

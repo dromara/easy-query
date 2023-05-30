@@ -1,10 +1,14 @@
-package com.easy.query.core.expression.segment;
+package com.easy.query.core.expression.segment.impl;
 
 import com.easy.query.core.basic.api.select.Queryable;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.func.AggregationType;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.segment.FuncColumnSegment;
+import com.easy.query.core.expression.segment.SQLSegment;
+import com.easy.query.core.expression.segment.parse.SubQueryColumnParseResult;
+import com.easy.query.core.expression.segment.SubQueryColumnSegment;
 import com.easy.query.core.expression.segment.builder.ProjectSQLBuilderSegment;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
@@ -20,7 +24,7 @@ import com.easy.query.core.util.EasySQLSegmentUtil;
  *
  * @author xuejiaming
  */
-public class SubQueryColumnSegmentImpl implements SubQueryColumnSegment{
+public class SubQueryColumnSegmentImpl implements SubQueryColumnSegment {
     private final TableAvailable table;
     private final Queryable<?> subQueryable;
     private final String alias;
@@ -49,8 +53,8 @@ public class SubQueryColumnSegmentImpl implements SubQueryColumnSegment{
             if(projects instanceof ProjectSQLBuilderSegment){
                 ProjectSQLBuilderSegment projectSQLBuilderSegment = (ProjectSQLBuilderSegment) projects;
                 SQLSegment sqlSegment = projectSQLBuilderSegment.getSQLSegments().get(0);
-                if(sqlSegment instanceof  AggregationColumnSegment){
-                    AggregationColumnSegment aggregationColumnSegment = (AggregationColumnSegment) sqlSegment;
+                if(sqlSegment instanceof FuncColumnSegment){
+                    FuncColumnSegment aggregationColumnSegment = (FuncColumnSegment) sqlSegment;
                     return new SubQueryColumnParseResult(true,aggregationColumnSegment.getAggregationType());
                 }
             }

@@ -7,6 +7,5 @@ package com.easy.query.core.expression.segment;
  * @author xuejiaming
  */
 public interface OrderByColumnSegment extends ColumnSegment{
-    GroupByColumnSegment createGroupByColumnSegment();
     boolean isAsc();
 }

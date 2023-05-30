@@ -4,7 +4,7 @@ import com.easy.query.core.basic.jdbc.executor.internal.merge.result.StreamResul
 import com.easy.query.core.basic.jdbc.executor.internal.merge.result.aggregation.AggregationUnitFactory;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.segment.PropertyGroup;
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
-import com.easy.query.core.expression.segment.AggregationColumnSegment;
+import com.easy.query.core.expression.segment.FuncColumnSegment;
 import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
@@ -187,7 +187,7 @@ public class EasyGroupByOrderStreamMergeResultSet implements ShardingStreamResul
                 if (!isAggregateColumn) {
                     throw new UnsupportedOperationException("unknown aggregate column:" + EasyClassUtil.getInstanceSimpleName(sqlSegment));
                 }
-                AggregationColumnSegment aggregationColumnSegment = (AggregationColumnSegment) sqlSegment;
+                FuncColumnSegment aggregationColumnSegment = (FuncColumnSegment) sqlSegment;
                 aggregationUnits.add(new AggregateValue(i, AggregationUnitFactory.create(aggregationColumnSegment.getAggregationType())));
             }
         }

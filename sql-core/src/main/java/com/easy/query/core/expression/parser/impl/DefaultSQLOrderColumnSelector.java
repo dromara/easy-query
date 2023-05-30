@@ -4,10 +4,12 @@ import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.SQLColumnSelector;
-import com.easy.query.core.expression.segment.FuncColumnSegmentImpl;
-import com.easy.query.core.expression.segment.OrderColumnSegmentImpl;
+import com.easy.query.core.expression.segment.OrderByColumnSegment;
+import com.easy.query.core.expression.segment.OrderFuncColumnSegment;
+import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
+import com.easy.query.core.expression.segment.impl.OrderColumnSegmentImpl;
 import com.easy.query.core.expression.lambda.Property;
-import com.easy.query.core.expression.segment.OrderFuncColumnSegmentImpl;
+import com.easy.query.core.expression.segment.impl.OrderFuncColumnSegmentImpl;
 import com.easy.query.core.expression.segment.SQLEntitySegment;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
@@ -25,11 +27,13 @@ public  class DefaultSQLOrderColumnSelector<T1> implements SQLColumnSelector<T1>
     protected final int index;
     protected final EntityQueryExpressionBuilder entityQueryExpressionBuilder;
     protected final TableAvailable table;
+    protected final SQLSegmentFactory sqlSegmentFactory;
     protected boolean asc;
 
     public DefaultSQLOrderColumnSelector(int index, EntityQueryExpressionBuilder entityQueryExpressionBuilder){
         this.index = index;
         this.entityQueryExpressionBuilder = entityQueryExpressionBuilder;
+        this.sqlSegmentFactory = entityQueryExpressionBuilder.getRuntimeContext().getSQLSegmentFactory();
         this.table = entityQueryExpressionBuilder.getTable(index).getEntityTable();
     }
 
@@ -42,7 +46,8 @@ public  class DefaultSQLOrderColumnSelector<T1> implements SQLColumnSelector<T1>
     public SQLColumnSelector<T1> column(Property<T1, ?> column) {
         EntityTableExpressionBuilder table = entityQueryExpressionBuilder.getTable(index);
         String propertyName = EasyLambdaUtil.getPropertyName(column);
-        entityQueryExpressionBuilder.getOrder().append(new OrderColumnSegmentImpl(table.getEntityTable(),propertyName, entityQueryExpressionBuilder.getRuntimeContext(),asc));
+        OrderByColumnSegment orderByColumnSegment = sqlSegmentFactory.createOrderByColumnSegment(table.getEntityTable(), propertyName, entityQueryExpressionBuilder.getRuntimeContext(), asc);
+        entityQueryExpressionBuilder.getOrder().append(orderByColumnSegment);
         return this;
     }
 
@@ -52,7 +57,8 @@ public  class DefaultSQLOrderColumnSelector<T1> implements SQLColumnSelector<T1>
         EntityTableExpressionBuilder table = entityQueryExpressionBuilder.getTable(index);
         String propertyName = columnPropertyFunction.getPropertyName();
         ColumnFunction columnFunction = columnPropertyFunction.getColumnFunction();
-        entityQueryExpressionBuilder.getOrder().append(new OrderFuncColumnSegmentImpl(table.getEntityTable(), propertyName, entityQueryExpressionBuilder.getRuntimeContext(), columnFunction, asc));
+        OrderFuncColumnSegment orderFuncColumnSegment = sqlSegmentFactory.createOrderFuncColumnSegment(table.getEntityTable(), propertyName, entityQueryExpressionBuilder.getRuntimeContext(), columnFunction, asc);
+        entityQueryExpressionBuilder.getOrder().append(orderFuncColumnSegment);
         return this;
     }
 
@@ -76,7 +82,8 @@ public  class DefaultSQLOrderColumnSelector<T1> implements SQLColumnSelector<T1>
         EntityTableExpressionBuilder table = entityQueryExpressionBuilder.getTable(index);
         Collection<String> properties = table.getEntityMetadata().getProperties();
         for (String property : properties) {
-            entityQueryExpressionBuilder.getOrder().append(new OrderColumnSegmentImpl(table.getEntityTable(), property, entityQueryExpressionBuilder.getRuntimeContext(),asc));
+            OrderByColumnSegment orderByColumnSegment = sqlSegmentFactory.createOrderByColumnSegment(table.getEntityTable(), property, entityQueryExpressionBuilder.getRuntimeContext(), asc);
+            entityQueryExpressionBuilder.getOrder().append(orderByColumnSegment);
         }
         return this;
     }

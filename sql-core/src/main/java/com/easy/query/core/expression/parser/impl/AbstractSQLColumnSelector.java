@@ -3,12 +3,11 @@ package com.easy.query.core.expression.parser.impl;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.exception.EasyQueryException;
-import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.Property;
-import com.easy.query.core.expression.parser.core.SQLColumnAsSelector;
-import com.easy.query.core.expression.parser.core.SQLColumnSelector;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.segment.ColumnSegmentImpl;
+import com.easy.query.core.expression.segment.ColumnSegment;
+import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
+import com.easy.query.core.expression.segment.impl.ColumnSegmentImpl;
 import com.easy.query.core.expression.segment.SQLEntityAliasSegment;
 import com.easy.query.core.expression.segment.SQLEntitySegment;
 import com.easy.query.core.expression.segment.SQLSegment;
@@ -17,9 +16,7 @@ import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpression
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
-import com.easy.query.core.expression.sql.builder.SQLAnonymousEntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.SQLAnonymousUnionEntityQueryExpressionBuilder;
-import com.easy.query.core.expression.sql.expression.AnonymousEntityQuerySQLExpression;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.util.EasyClassUtil;
@@ -43,11 +40,13 @@ public class AbstractSQLColumnSelector<T1, TChain> {
     protected final TableAvailable table;
     protected final SQLBuilderSegment sqlSegmentBuilder;
     protected final QueryRuntimeContext runtimeContext;
+    protected final SQLSegmentFactory sqlSegmentFactory;
 
     public AbstractSQLColumnSelector(int index, EntityQueryExpressionBuilder entityQueryExpressionBuilder, SQLBuilderSegment sqlSegmentBuilder) {
         this.index = index;
         this.entityQueryExpressionBuilder = entityQueryExpressionBuilder;
         this.runtimeContext = entityQueryExpressionBuilder.getRuntimeContext();
+        this.sqlSegmentFactory = runtimeContext.getSQLSegmentFactory();
         this.table = entityQueryExpressionBuilder.getTable(index).getEntityTable();
         this.sqlSegmentBuilder = sqlSegmentBuilder;
     }
@@ -60,7 +59,8 @@ public class AbstractSQLColumnSelector<T1, TChain> {
     public TChain column(Property<T1, ?> column) {
         EntityTableExpressionBuilder table = entityQueryExpressionBuilder.getTable(index);
         String propertyName = EasyLambdaUtil.getPropertyName(column);
-        sqlSegmentBuilder.append(new ColumnSegmentImpl(table.getEntityTable(), propertyName, entityQueryExpressionBuilder.getRuntimeContext()));
+        ColumnSegment columnSegment = sqlSegmentFactory.createColumnSegment(table.getEntityTable(), propertyName, entityQueryExpressionBuilder.getRuntimeContext(), null);
+        sqlSegmentBuilder.append(columnSegment);
         return (TChain) this;
     }
 
@@ -92,7 +92,8 @@ public class AbstractSQLColumnSelector<T1, TChain> {
                 if (!columnAllQueryLargeColumn(queryLargeColumn, columnMetadata)) {
                     continue;
                 }
-                sqlSegmentBuilder.append(new ColumnSegmentImpl(table.getEntityTable(), property, entityQueryExpressionBuilder.getRuntimeContext()));
+                ColumnSegment columnSegment = sqlSegmentFactory.createColumnSegment(table.getEntityTable(), property, entityQueryExpressionBuilder.getRuntimeContext(),null);
+                sqlSegmentBuilder.append(columnSegment);
             }
         }
         return (TChain) this;
@@ -141,8 +142,8 @@ public class AbstractSQLColumnSelector<T1, TChain> {
                     SQLEntityAliasSegment sqlEntityAliasSegment = (SQLEntityAliasSegment) sqlSegment;
 
                     String propertyName = EasyUtil.getAnonymousPropertyName(sqlEntityAliasSegment, table.getEntityTable());
-
-                    sqlSegmentBuilder.append(new ColumnSegmentImpl(table.getEntityTable(), propertyName, entityQueryExpressionBuilder.getRuntimeContext(), sqlEntityAliasSegment.getAlias()));
+                    ColumnSegment columnSegment = sqlSegmentFactory.createColumnSegment(table.getEntityTable(), propertyName, entityQueryExpressionBuilder.getRuntimeContext(), sqlEntityAliasSegment.getAlias());
+                    sqlSegmentBuilder.append(columnSegment);
                 } else {
                     throw new EasyQueryException("columnAll函数无法获取指定列" + EasyClassUtil.getInstanceSimpleName(sqlSegment));
                 }

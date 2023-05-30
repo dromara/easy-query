@@ -7,7 +7,7 @@ import com.easy.query.core.expression.executor.parser.context.QueryPredicatePars
 import com.easy.query.core.expression.executor.parser.descriptor.TableParseDescriptor;
 import com.easy.query.core.expression.executor.parser.descriptor.TablePredicateParseDescriptor;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.segment.AggregationColumnSegment;
+import com.easy.query.core.expression.segment.FuncColumnSegment;
 import com.easy.query.core.expression.segment.OrderByColumnSegment;
 import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
@@ -78,8 +78,8 @@ public class EasyQueryPrepareParseResult implements QueryPrepareParseResult {
 
                 if (Objects.equals(ExecuteMethodEnum.MAX, executorContext.getExecuteMethod())) {
                     SQLSegment firstMax = EasyCollectionUtil.first(easyQuerySQLExpression.getProjects().getSQLSegments());
-                    if (firstMax instanceof AggregationColumnSegment) {
-                        AggregationColumnSegment firstMaxColumn = (AggregationColumnSegment) firstMax;
+                    if (firstMax instanceof FuncColumnSegment) {
+                        FuncColumnSegment firstMaxColumn = (FuncColumnSegment) firstMax;
 
                         TableAvailable table = firstMaxColumn.getTable();
                         ShardingInitConfig shardingInitConfig = table.getEntityMetadata().getShardingInitConfig();
@@ -95,8 +95,8 @@ public class EasyQueryPrepareParseResult implements QueryPrepareParseResult {
 
                 } else if (Objects.equals(ExecuteMethodEnum.MIN, executorContext.getExecuteMethod())) {
                     SQLSegment firstMin = EasyCollectionUtil.first(easyQuerySQLExpression.getProjects().getSQLSegments());
-                    if (firstMin instanceof AggregationColumnSegment) {
-                        AggregationColumnSegment firstMinColumn = (AggregationColumnSegment) firstMin;
+                    if (firstMin instanceof FuncColumnSegment) {
+                        FuncColumnSegment firstMinColumn = (FuncColumnSegment) firstMin;
 
                         TableAvailable table = firstMinColumn.getTable();
                         ShardingInitConfig shardingInitConfig = table.getEntityMetadata().getShardingInitConfig();

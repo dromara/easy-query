@@ -3,6 +3,8 @@ package com.easy.query.core.expression.sql.builder.impl;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.expression.segment.ColumnInsertSegment;
+import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
+import com.easy.query.core.expression.segment.impl.ColumnInsertSegmentImpl;
 import com.easy.query.core.expression.sql.expression.EntityInsertSQLExpression;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.expression.sql.expression.impl.EntitySQLExpressionMetadata;
@@ -92,10 +94,12 @@ public class InsertExpressionBuilder extends AbstractEntityExpressionBuilder imp
         EntityMetadata entityMetadata = table.getEntityMetadata();
         SQLBuilderSegment insertCloneColumns = getColumns().cloneSQLBuilder();
         if (insertCloneColumns.isEmpty()) {
+            SQLSegmentFactory sqlSegmentFactory = runtimeContext.getSQLSegmentFactory();
 
             Collection<String> properties = table.getEntityMetadata().getProperties();
             for (String property : properties) {
-                insertCloneColumns.append(new ColumnInsertSegment(table.getEntityTable(), property, runtimeContext));
+                ColumnInsertSegment columnInsertSegment = sqlSegmentFactory.createColumnInsertSegment(table.getEntityTable(), property, runtimeContext);
+                insertCloneColumns.append(columnInsertSegment);
             }
 
             Set<String> ignorePropertySet = new HashSet<>(entityMetadata.getProperties().size());

@@ -7,12 +7,11 @@ import com.easy.query.core.expression.executor.parser.PrepareParseResult;
 import com.easy.query.core.expression.executor.parser.QueryPrepareParseResult;
 import com.easy.query.core.expression.executor.parser.SequenceParseResult;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.segment.AggregationColumnSegment;
+import com.easy.query.core.expression.segment.FuncColumnSegment;
 import com.easy.query.core.expression.segment.ColumnSegment;
-import com.easy.query.core.expression.segment.ColumnSegmentImpl;
-import com.easy.query.core.expression.segment.FuncColumnSegmentImpl;
+import com.easy.query.core.expression.segment.OrderByColumnSegment;
+import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
 import com.easy.query.core.expression.segment.GroupByColumnSegment;
-import com.easy.query.core.expression.segment.OrderColumnSegmentImpl;
 import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.expression.segment.builder.ProjectSQLBuilderSegment;
 import com.easy.query.core.expression.sql.expression.EntityQuerySQLExpression;
@@ -46,6 +45,12 @@ import java.util.Objects;
  * @author xuejiaming
  */
 public class DefaultRewriteContextFactory implements RewriteContextFactory {
+    private final SQLSegmentFactory sqlSegmentFactory;
+
+    public DefaultRewriteContextFactory(SQLSegmentFactory sqlSegmentFactory){
+
+        this.sqlSegmentFactory = sqlSegmentFactory;
+    }
     @Override
     public RewriteContext rewriteShardingExpression(PrepareParseResult prepareParseResult, RouteContext routeContext) {
         if (prepareParseResult instanceof QueryPrepareParseResult) {
@@ -71,10 +76,12 @@ public class DefaultRewriteContextFactory implements RewriteContextFactory {
                         boolean reverse = sequenceParseResult.isReverse();
                         String firstSequenceProperty = shardingSequenceConfig.getFirstSequencePropertyOrNull();
                         if(firstSequenceProperty!=null){
-                            OrderColumnSegmentImpl orderColumnSegment = new OrderColumnSegmentImpl(table, firstSequenceProperty, runtimeContext, !reverse);
-                            easyEntityPredicateSQLExpression.getOrder().append(orderColumnSegment);
+
+                            OrderByColumnSegment orderByColumnSegment = sqlSegmentFactory.createOrderByColumnSegment(table, firstSequenceProperty, runtimeContext, !reverse);
+                            easyEntityPredicateSQLExpression.getOrder().append(orderByColumnSegment);
                             if(!easyEntityPredicateSQLExpression.getProjects().containsOnce(entityMetadata.getEntityClass(),firstSequenceProperty)){
-                                ColumnSegmentImpl columnSegment = new ColumnSegmentImpl(table, firstSequenceProperty, runtimeContext);
+
+                                ColumnSegment columnSegment = sqlSegmentFactory.createColumnSegment(table, firstSequenceProperty, runtimeContext,null);
                                 easyEntityPredicateSQLExpression.getProjects().append(columnSegment);
                             }
                         }
@@ -98,8 +105,8 @@ public class DefaultRewriteContextFactory implements RewriteContextFactory {
 
                 boolean addToProjection = true;
                 for (SQLSegment sqlSegment : easyEntityPredicateSQLExpression.getProjects().getSQLSegments()) {
-                    if (sqlSegment instanceof AggregationColumnSegment) {
-                        AggregationColumnSegment aggregationColumnSegment = (AggregationColumnSegment) sqlSegment;
+                    if (sqlSegment instanceof FuncColumnSegment) {
+                        FuncColumnSegment aggregationColumnSegment = (FuncColumnSegment) sqlSegment;
                         //是否存在avg
                         if(!hasAvg){
                             hasAvg=Objects.equals(AggregationType.AVG,aggregationColumnSegment.getAggregationType());
@@ -160,7 +167,9 @@ public class DefaultRewriteContextFactory implements RewriteContextFactory {
                     if(rewriteStatusKvKey.hasBehavior(GroupAvgBehaviorEnum.COUNT)&&rewriteStatusKvKey.hasBehavior(GroupAvgBehaviorEnum.SUM)){
                         EntityTableSQLExpression table = easyEntityPredicateSQLExpression.getTable(rewriteStatusKvKey.getTableIndex());
                         ColumnFunctionFactory columnFunctionFactory = runtimeContext.getColumnFunctionFactory();
-                        easyEntityPredicateSQLExpression.getProjects().append(new FuncColumnSegmentImpl(table.getEntityTable(),rewriteStatusKvKey.getPropertyName(), runtimeContext, columnFunctionFactory.createCountFunction(false),rewriteStatusKvKey.getPropertyName()+"RewriteCount"));
+                        SQLSegmentFactory sqlSegmentFactory = runtimeContext.getSQLSegmentFactory();
+                        FuncColumnSegment funcColumnSegment = sqlSegmentFactory.createFuncColumnSegment(table.getEntityTable(), rewriteStatusKvKey.getPropertyName(), runtimeContext, columnFunctionFactory.createCountFunction(false), rewriteStatusKvKey.getPropertyName() + "RewriteCount");
+                        easyEntityPredicateSQLExpression.getProjects().append(funcColumnSegment);
                     }
                 }
             }
