@@ -34,6 +34,7 @@ public abstract class AbstractPredicateEntityExpressionBuilder extends AbstractE
     protected boolean useLogicDelete(EntityMetadata entityMetadata) {
         return expressionContext.getBehavior().hasBehavior(EasyBehaviorEnum.LOGIC_DELETE) && entityMetadata.enableLogicDelete();
     }
+
     /**
      * 存在问题 update必须要总的predicate但是如果在这边导致我手动指定where也会有这个version
      *
@@ -73,8 +74,8 @@ public abstract class AbstractPredicateEntityExpressionBuilder extends AbstractE
                 QueryConfiguration easyQueryConfiguration = getRuntimeContext().getQueryConfiguration();
                 expressionContext.getInterceptorFilter(entityMetadata.getPredicateFilterInterceptors())
                         .forEach(interceptor -> {
-                            PredicateFilterInterceptor globalSelectInterceptorStrategy = (PredicateFilterInterceptor) easyQueryConfiguration.getEasyInterceptor(interceptor.getName());
-                            if (globalSelectInterceptorStrategy != null) {
+                            PredicateFilterInterceptor globalSelectInterceptorStrategy = (PredicateFilterInterceptor) easyQueryConfiguration.getEasyInterceptor(interceptor);
+                            if (globalSelectInterceptorStrategy != null && globalSelectInterceptorStrategy.enable()) {
                                 globalSelectInterceptorStrategy.configure(entityMetadata.getEntityClass(), this, sqlPredicate);
                             }
                         });

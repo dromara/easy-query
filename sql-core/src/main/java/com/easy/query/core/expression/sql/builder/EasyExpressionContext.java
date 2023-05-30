@@ -145,7 +145,7 @@ public class EasyExpressionContext implements ExpressionContext {
     }
 
     @Override
-    public Stream<InterceptorEntry> getInterceptorFilter(List<InterceptorEntry> queryInterceptors) {
+    public Stream<String> getInterceptorFilter(List<String> queryInterceptors) {
         boolean interceptorBehavior = getBehavior().hasBehavior(EasyBehaviorEnum.USE_INTERCEPTOR);
         //如果当前操作存在interceptor的behavior那么就不应该在interceptors里面
         //否则应该在interceptors里面
@@ -153,10 +153,10 @@ public class EasyExpressionContext implements ExpressionContext {
             //如果是启用了的
             if (interceptorBehavior) {
                 //拦截器手动指定使用的或者默认要用的并且没有说不用的
-                return useInterceptors.contains(o.getName()) || (o.isDefaultEnable() && !noInterceptors.contains(o.getName()));
+                return useInterceptors.contains(o) || !noInterceptors.contains(o);
             } else {
                 //手动指定要用的并且不在不使用里面
-                return useInterceptors.contains(o.getName()) && !noInterceptors.contains(o.getName());
+                return useInterceptors.contains(o) && !noInterceptors.contains(o);
             }
         });
     }

@@ -141,8 +141,10 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
             QueryConfiguration easyQueryConfiguration = getRuntimeContext().getQueryConfiguration();
             getExpressionContext().getInterceptorFilter(entityMetadata.getUpdateSetInterceptors())
                     .forEach(interceptor -> {
-                        UpdateSetInterceptor globalInterceptor = (UpdateSetInterceptor) easyQueryConfiguration.getEasyInterceptor(interceptor.getName());
-                        globalInterceptor.configure(entityMetadata.getEntityClass(), this, sqlColumnSetter);
+                        UpdateSetInterceptor globalInterceptor = (UpdateSetInterceptor) easyQueryConfiguration.getEasyInterceptor(interceptor);
+                        if(globalInterceptor.enable()){
+                            globalInterceptor.configure(entityMetadata.getEntityClass(), this, sqlColumnSetter);
+                        }
                     });
         }
         if (entityMetadata.hasVersionColumn()) {

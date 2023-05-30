@@ -32,7 +32,7 @@ public interface ExpressionContext {
     void noInterceptor(String name);
     void useInterceptor();
     void noInterceptor();
-    Stream<InterceptorEntry> getInterceptorFilter(List<InterceptorEntry> queryInterceptors);
+    Stream<String> getInterceptorFilter(List<String> queryInterceptors);
 
    default void executeMethod(ExecuteMethodEnum executeMethod){
        executeMethod(executeMethod,false);

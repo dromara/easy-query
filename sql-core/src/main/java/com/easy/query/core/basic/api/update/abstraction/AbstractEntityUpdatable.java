@@ -5,7 +5,7 @@ import com.easy.query.core.basic.api.update.EntityUpdatable;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
-import com.easy.query.core.basic.plugin.interceptor.InterceptorEntry;
+import com.easy.query.core.basic.plugin.interceptor.Interceptor;
 import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.ExecuteMethodEnum;
@@ -19,7 +19,6 @@ import com.easy.query.core.basic.plugin.interceptor.EntityInterceptor;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
-import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.util.EasyCollectionUtil;
 
@@ -65,11 +64,11 @@ public abstract class AbstractEntityUpdatable<T> extends AbstractSQLExecuteRows<
     }
 
     protected void updateBefore() {
-        List<InterceptorEntry> updateInterceptors = entityMetadata.getEntityInterceptors();
+        List<String> updateInterceptors = entityMetadata.getEntityInterceptors();
         if (EasyCollectionUtil.isNotEmpty(updateInterceptors)) {
             QueryConfiguration easyQueryConfiguration = entityUpdateExpressionBuilder.getRuntimeContext().getQueryConfiguration();
             List<EntityInterceptor> entityInterceptors = entityUpdateExpressionBuilder.getExpressionContext().getInterceptorFilter(updateInterceptors)
-                    .map(interceptor -> (EntityInterceptor) easyQueryConfiguration.getEasyInterceptor(interceptor.getName())).collect(Collectors.toList());
+                    .map(interceptor -> (EntityInterceptor) easyQueryConfiguration.getEasyInterceptor(interceptor)).filter(Interceptor::enable).collect(Collectors.toList());
             if (EasyCollectionUtil.isNotEmpty(entityInterceptors)) {
                 Class<?> entityClass = entityMetadata.getEntityClass();
                 for (T entity : entities) {

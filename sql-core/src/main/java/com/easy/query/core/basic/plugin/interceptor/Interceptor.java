@@ -20,7 +20,7 @@ public interface Interceptor {
      * 可以设置为动态值
      * @return
      */
-    default boolean defaultEnable(){return true;}
+    default boolean enable(){return true;}
     /**
      * 拦截器名称
      * @return

@@ -65,9 +65,9 @@ public class EntityMetadata {
     /**
      * 查询过滤器
      */
-    private final List<InterceptorEntry> predicateFilterInterceptors = new ArrayList<>();
-    private final List<InterceptorEntry> entityInterceptors = new ArrayList<>();
-    private final List<InterceptorEntry> updateSetInterceptors = new ArrayList<>();
+    private final List<String> predicateFilterInterceptors = new ArrayList<>();
+    private final List<String> entityInterceptors = new ArrayList<>();
+    private final List<String> updateSetInterceptors = new ArrayList<>();
     private final LinkedHashMap<String, ColumnMetadata> property2ColumnMap = new LinkedHashMap<>();
     private final Map<String/*property name*/, String/*column name*/> keyPropertiesMap = new LinkedHashMap<>();
     private final List<String/*column name*/> incrementColumns = new ArrayList<>(4);
@@ -291,15 +291,14 @@ public class EntityMetadata {
             List<Interceptor> globalInterceptors = configuration.getEasyInterceptors().stream().sorted(Comparator.comparingInt(Interceptor::order)).collect(Collectors.toList());
             for (Interceptor globalInterceptor : globalInterceptors) {
                 if (globalInterceptor.apply(entityClass)) {
-                    InterceptorEntry easyInterceptorEntry = new InterceptorEntry(globalInterceptor.name(), globalInterceptor.defaultEnable());
                     if (globalInterceptor instanceof PredicateFilterInterceptor) {
-                        predicateFilterInterceptors.add(easyInterceptorEntry);
+                        predicateFilterInterceptors.add(globalInterceptor.name());
                     }
                     if (globalInterceptor instanceof EntityInterceptor) {
-                        entityInterceptors.add(easyInterceptorEntry);
+                        entityInterceptors.add(globalInterceptor.name());
                     }
                     if (globalInterceptor instanceof UpdateSetInterceptor) {
-                        updateSetInterceptors.add(easyInterceptorEntry);
+                        updateSetInterceptors.add(globalInterceptor.name());
                     }
                 }
             }
@@ -421,15 +420,15 @@ public class EntityMetadata {
     }
 
 
-    public List<InterceptorEntry> getPredicateFilterInterceptors() {
+    public List<String> getPredicateFilterInterceptors() {
         return predicateFilterInterceptors;
     }
 
-    public List<InterceptorEntry> getEntityInterceptors() {
+    public List<String> getEntityInterceptors() {
         return entityInterceptors;
     }
 
-    public List<InterceptorEntry> getUpdateSetInterceptors() {
+    public List<String> getUpdateSetInterceptors() {
         return updateSetInterceptors;
     }
 
