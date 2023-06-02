@@ -2,10 +2,10 @@ package com.easy.query.api4j.client;
 
 import com.easy.query.api4j.delete.EntityDeletable;
 import com.easy.query.api4j.delete.ExpressionDeletable;
+import com.easy.query.api4j.insert.EntityInsertable;
 import com.easy.query.api4j.select.Queryable;
 import com.easy.query.api4j.update.EntityUpdatable;
 import com.easy.query.api4j.update.ExpressionUpdatable;
-import com.easy.query.core.basic.api.insert.Insertable;
 import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
@@ -69,9 +69,9 @@ public interface EasyQuery {
      */
     Transaction beginTransaction(Integer isolationLevel);
 
-    <T> Insertable<T> insertable(T entity);
+    <T> EntityInsertable<T> insertable(T entity);
 
-    <T> Insertable<T> insertable(Collection<T> entities);
+    <T> EntityInsertable<T> insertable(Collection<T> entities);
 
     <T> ExpressionUpdatable<T> updatable(Class<T> entityClass);
 

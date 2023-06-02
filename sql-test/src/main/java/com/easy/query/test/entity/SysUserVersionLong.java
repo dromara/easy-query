@@ -3,7 +3,7 @@ package com.easy.query.test.entity;
 import com.easy.query.core.annotation.Column;
 import com.easy.query.core.annotation.Table;
 import com.easy.query.core.annotation.Version;
-import com.easy.query.core.basic.plugin.version.VersionLongStrategy;
+import com.easy.query.core.basic.extension.version.VersionLongStrategy;
 import lombok.Data;
 
 import java.time.LocalDateTime;

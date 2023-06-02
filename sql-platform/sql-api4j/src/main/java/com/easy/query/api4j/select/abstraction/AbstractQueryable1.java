@@ -1,6 +1,6 @@
 package com.easy.query.api4j.select.abstraction;
 
-import com.easy.query.core.basic.api.select.ObjectQueryable;
+import com.easy.query.core.basic.api.select.ClientQueryable;
 
 /**
  * @author xuejiaming
@@ -9,7 +9,7 @@ import com.easy.query.core.basic.api.select.ObjectQueryable;
  * @Date: 2023/3/4 14:12
  */
 public abstract class AbstractQueryable1<T> extends AbstractQueryable<T> {
-    public AbstractQueryable1(ObjectQueryable<T> entityQueryable) {
+    public AbstractQueryable1(ClientQueryable<T> entityQueryable) {
         super(entityQueryable);
     }
 

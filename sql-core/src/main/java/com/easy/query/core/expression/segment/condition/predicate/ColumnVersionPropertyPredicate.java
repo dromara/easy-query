@@ -5,7 +5,7 @@ import com.easy.query.core.basic.jdbc.parameter.PropertySQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.VersionPropertySQLParameter;
-import com.easy.query.core.basic.plugin.version.VersionStrategy;
+import com.easy.query.core.basic.extension.version.VersionStrategy;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.core.util.EasySQLExpressionUtil;

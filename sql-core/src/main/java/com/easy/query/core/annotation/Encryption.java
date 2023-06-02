@@ -1,6 +1,6 @@
 package com.easy.query.core.annotation;
 
-import com.easy.query.core.basic.plugin.encryption.EncryptionStrategy;
+import com.easy.query.core.basic.extension.encryption.EncryptionStrategy;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

@@ -1,6 +1,6 @@
 package com.easy.query.test.conversion;
 
-import com.easy.query.core.basic.plugin.conversion.ValueConverter;
+import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.util.EasyObjectUtil;
 
 /**

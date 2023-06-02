@@ -15,9 +15,9 @@ import com.easy.query.api4j.sql.impl.SQLColumnResultSelectorImpl;
 import com.easy.query.api4j.sql.impl.SQLColumnSelectorImpl;
 import com.easy.query.api4j.sql.impl.SQLGroupBySelectorImpl;
 import com.easy.query.api4j.sql.impl.SQLWherePredicateImpl;
-import com.easy.query.core.basic.api.select.ObjectQueryable;
-import com.easy.query.core.basic.api.select.ObjectQueryable3;
-import com.easy.query.core.basic.api.select.ObjectQueryable4;
+import com.easy.query.core.basic.api.select.ClientQueryable;
+import com.easy.query.core.basic.api.select.ClientQueryable3;
+import com.easy.query.core.basic.api.select.ClientQueryable4;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression3;
@@ -35,16 +35,16 @@ import java.util.function.Function;
 public abstract class AbstractQueryable3<T1, T2, T3> extends AbstractQueryable<T1> implements Queryable3<T1, T2, T3> {
 
 
-    protected final ObjectQueryable3<T1, T2, T3> entityQueryable3;
+    protected final ClientQueryable3<T1, T2, T3> entityQueryable3;
 
-    public AbstractQueryable3(ObjectQueryable3<T1, T2, T3> entityQueryable3) {
+    public AbstractQueryable3(ClientQueryable3<T1, T2, T3> entityQueryable3) {
         super(entityQueryable3);
         this.entityQueryable3 = entityQueryable3;
     }
 
     @Override
     public <T4> Queryable4<T1, T2, T3, T4> leftJoin(Class<T4> joinClass, SQLExpression4<SQLWherePredicate<T1>, SQLWherePredicate<T2>, SQLWherePredicate<T3>, SQLWherePredicate<T4>> on) {
-        ObjectQueryable4<T1, T2, T3, T4> entityQueryable4 = entityQueryable3.leftJoin(joinClass, (where1, where2, where3, where4) -> {
+        ClientQueryable4<T1, T2, T3, T4> entityQueryable4 = entityQueryable3.leftJoin(joinClass, (where1, where2, where3, where4) -> {
             on.apply(new SQLWherePredicateImpl<>(where1), new SQLWherePredicateImpl<>(where2), new SQLWherePredicateImpl<>(where3), new SQLWherePredicateImpl<>(where4));
         });
         return new EasyQueryable4<>(entityQueryable4);
@@ -52,7 +52,7 @@ public abstract class AbstractQueryable3<T1, T2, T3> extends AbstractQueryable<T
 
     @Override
     public <T4> Queryable4<T1, T2, T3, T4> leftJoin(Queryable<T4> joinQueryable, SQLExpression4<SQLWherePredicate<T1>, SQLWherePredicate<T2>, SQLWherePredicate<T3>, SQLWherePredicate<T4>> on) {
-        ObjectQueryable4<T1, T2, T3, T4> entityQueryable4 = entityQueryable3.leftJoin(joinQueryable.getEntityQueryable(), (where1, where2, where3, where4) -> {
+        ClientQueryable4<T1, T2, T3, T4> entityQueryable4 = entityQueryable3.leftJoin(joinQueryable.getEntityQueryable(), (where1, where2, where3, where4) -> {
             on.apply(new SQLWherePredicateImpl<>(where1), new SQLWherePredicateImpl<>(where2), new SQLWherePredicateImpl<>(where3), new SQLWherePredicateImpl<>(where4));
         });
         return new EasyQueryable4<>(entityQueryable4);
@@ -60,7 +60,7 @@ public abstract class AbstractQueryable3<T1, T2, T3> extends AbstractQueryable<T
 
     @Override
     public <T4> Queryable4<T1, T2, T3, T4> rightJoin(Class<T4> joinClass, SQLExpression4<SQLWherePredicate<T1>, SQLWherePredicate<T2>, SQLWherePredicate<T3>, SQLWherePredicate<T4>> on) {
-        ObjectQueryable4<T1, T2, T3, T4> entityQueryable4 = entityQueryable3.rightJoin(joinClass, (where1, where2, where3, where4) -> {
+        ClientQueryable4<T1, T2, T3, T4> entityQueryable4 = entityQueryable3.rightJoin(joinClass, (where1, where2, where3, where4) -> {
             on.apply(new SQLWherePredicateImpl<>(where1), new SQLWherePredicateImpl<>(where2), new SQLWherePredicateImpl<>(where3), new SQLWherePredicateImpl<>(where4));
         });
         return new EasyQueryable4<>(entityQueryable4);
@@ -68,7 +68,7 @@ public abstract class AbstractQueryable3<T1, T2, T3> extends AbstractQueryable<T
 
     @Override
     public <T4> Queryable4<T1, T2, T3, T4> rightJoin(Queryable<T4> joinQueryable, SQLExpression4<SQLWherePredicate<T1>, SQLWherePredicate<T2>, SQLWherePredicate<T3>, SQLWherePredicate<T4>> on) {
-        ObjectQueryable4<T1, T2, T3, T4> entityQueryable4 = entityQueryable3.rightJoin(joinQueryable.getEntityQueryable(), (where1, where2, where3, where4) -> {
+        ClientQueryable4<T1, T2, T3, T4> entityQueryable4 = entityQueryable3.rightJoin(joinQueryable.getEntityQueryable(), (where1, where2, where3, where4) -> {
             on.apply(new SQLWherePredicateImpl<>(where1), new SQLWherePredicateImpl<>(where2), new SQLWherePredicateImpl<>(where3), new SQLWherePredicateImpl<>(where4));
         });
         return new EasyQueryable4<>(entityQueryable4);
@@ -76,7 +76,7 @@ public abstract class AbstractQueryable3<T1, T2, T3> extends AbstractQueryable<T
 
     @Override
     public <T4> Queryable4<T1, T2, T3, T4> innerJoin(Class<T4> joinClass, SQLExpression4<SQLWherePredicate<T1>, SQLWherePredicate<T2>, SQLWherePredicate<T3>, SQLWherePredicate<T4>> on) {
-        ObjectQueryable4<T1, T2, T3, T4> entityQueryable4 = entityQueryable3.innerJoin(joinClass, (where1, where2, where3, where4) -> {
+        ClientQueryable4<T1, T2, T3, T4> entityQueryable4 = entityQueryable3.innerJoin(joinClass, (where1, where2, where3, where4) -> {
             on.apply(new SQLWherePredicateImpl<>(where1), new SQLWherePredicateImpl<>(where2), new SQLWherePredicateImpl<>(where3), new SQLWherePredicateImpl<>(where4));
         });
         return new EasyQueryable4<>(entityQueryable4);
@@ -84,7 +84,7 @@ public abstract class AbstractQueryable3<T1, T2, T3> extends AbstractQueryable<T
 
     @Override
     public <T4> Queryable4<T1, T2, T3, T4> innerJoin(Queryable<T4> joinQueryable, SQLExpression4<SQLWherePredicate<T1>, SQLWherePredicate<T2>, SQLWherePredicate<T3>, SQLWherePredicate<T4>> on) {
-        ObjectQueryable4<T1, T2, T3, T4> entityQueryable4 = entityQueryable3.innerJoin(joinQueryable.getEntityQueryable(), (where1, where2, where3, where4) -> {
+        ClientQueryable4<T1, T2, T3, T4> entityQueryable4 = entityQueryable3.innerJoin(joinQueryable.getEntityQueryable(), (where1, where2, where3, where4) -> {
             on.apply(new SQLWherePredicateImpl<>(where1), new SQLWherePredicateImpl<>(where2), new SQLWherePredicateImpl<>(where3), new SQLWherePredicateImpl<>(where4));
         });
         return new EasyQueryable4<>(entityQueryable4);
@@ -114,7 +114,7 @@ public abstract class AbstractQueryable3<T1, T2, T3> extends AbstractQueryable<T
 
     @Override
     public <TR> Queryable<TR> select(Class<TR> resultClass, SQLExpression3<SQLColumnAsSelector<T1, TR>, SQLColumnAsSelector<T2, TR>, SQLColumnAsSelector<T3, TR>> selectExpression) {
-        ObjectQueryable<TR> select = entityQueryable3.select(resultClass, (selector1, selector2, selector3) -> {
+        ClientQueryable<TR> select = entityQueryable3.select(resultClass, (selector1, selector2, selector3) -> {
             selectExpression.apply(new SQLColumnAsSelectorImpl<>(selector1), new SQLColumnAsSelectorImpl<>(selector2), new SQLColumnAsSelectorImpl<>(selector3));
         });
         return new EasyQueryable<>(select);

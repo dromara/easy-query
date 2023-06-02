@@ -1,7 +1,7 @@
 package com.easy.query.api4j.update.impl;
 
 import com.easy.query.api4j.update.abstraction.AbstractEntityUpdatable;
-import com.easy.query.core.basic.api.update.EntityObjectUpdatable;
+import com.easy.query.core.basic.api.update.ClientEntityUpdatable;
 
 /**
  * @author xuejiaming
@@ -11,7 +11,7 @@ import com.easy.query.core.basic.api.update.EntityObjectUpdatable;
  */
 public class EasyEntityUpdatable<T> extends AbstractEntityUpdatable<T> {
 
-    public EasyEntityUpdatable(EntityObjectUpdatable<T> entityObjectUpdatable) {
+    public EasyEntityUpdatable(ClientEntityUpdatable<T> entityObjectUpdatable) {
         super(entityObjectUpdatable);
     }
 }

@@ -1,6 +1,6 @@
 package com.easy.query.core.annotation;
-import com.easy.query.core.basic.plugin.conversion.DefaultValueConverter;
-import com.easy.query.core.basic.plugin.conversion.ValueConverter;
+import com.easy.query.core.basic.extension.conversion.DefaultValueConverter;
+import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.util.EasyStringUtil;
 
 import java.lang.annotation.Documented;

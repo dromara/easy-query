@@ -1,6 +1,6 @@
 package com.easy.query.core.annotation;
 
-import com.easy.query.core.basic.plugin.logicdel.LogicDeleteStrategyEnum;
+import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategyEnum;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

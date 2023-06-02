@@ -1,8 +1,8 @@
 package com.easy.query.core.util;
 
-import com.easy.query.core.basic.plugin.track.EntityState;
-import com.easy.query.core.basic.plugin.track.EntityTrackProperty;
-import com.easy.query.core.basic.plugin.track.TrackDiffEntry;
+import com.easy.query.core.basic.extension.track.EntityState;
+import com.easy.query.core.basic.extension.track.EntityTrackProperty;
+import com.easy.query.core.basic.extension.track.TrackDiffEntry;
 import com.easy.query.core.common.bean.FastBean;
 import com.easy.query.core.exception.EasyQueryTrackInvalidOperationException;
 import com.easy.query.core.expression.lambda.Property;

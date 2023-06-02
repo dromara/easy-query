@@ -1,12 +1,12 @@
 package com.easy.query.core.expression.sql.builder.impl;
 
-import com.easy.query.core.basic.plugin.interceptor.UpdateSetInterceptor;
-import com.easy.query.core.basic.plugin.track.EntityState;
-import com.easy.query.core.basic.plugin.track.EntityTrackProperty;
-import com.easy.query.core.basic.plugin.track.TrackContext;
-import com.easy.query.core.basic.plugin.track.TrackDiffEntry;
-import com.easy.query.core.basic.plugin.track.TrackManager;
-import com.easy.query.core.basic.plugin.version.VersionStrategy;
+import com.easy.query.core.basic.extension.interceptor.UpdateSetInterceptor;
+import com.easy.query.core.basic.extension.track.EntityState;
+import com.easy.query.core.basic.extension.track.EntityTrackProperty;
+import com.easy.query.core.basic.extension.track.TrackContext;
+import com.easy.query.core.basic.extension.track.TrackDiffEntry;
+import com.easy.query.core.basic.extension.track.TrackManager;
+import com.easy.query.core.basic.extension.version.VersionStrategy;
 import com.easy.query.core.common.bean.FastBean;
 import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.enums.SQLPredicateCompareEnum;

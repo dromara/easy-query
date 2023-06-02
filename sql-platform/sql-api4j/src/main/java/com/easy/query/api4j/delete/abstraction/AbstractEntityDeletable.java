@@ -1,7 +1,7 @@
 package com.easy.query.api4j.delete.abstraction;
 
 import com.easy.query.api4j.delete.EntityDeletable;
-import com.easy.query.core.basic.api.delete.EntityObjectDeletable;
+import com.easy.query.core.basic.api.delete.ClientEntityDeletable;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 
@@ -14,9 +14,9 @@ import java.util.function.Function;
  * @Date: 2023/2/28 12:33
  */
 public abstract class AbstractEntityDeletable<T> implements EntityDeletable<T> {
-    private final EntityObjectDeletable<T> entityObjectDeletable;
+    private final ClientEntityDeletable<T> entityObjectDeletable;
 
-    public AbstractEntityDeletable(EntityObjectDeletable<T> entityObjectDeletable) {
+    public AbstractEntityDeletable(ClientEntityDeletable<T> entityObjectDeletable) {
         this.entityObjectDeletable = entityObjectDeletable;
     }
 

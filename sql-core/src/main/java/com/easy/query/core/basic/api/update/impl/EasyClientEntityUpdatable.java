@@ -1,0 +1,19 @@
+package com.easy.query.core.basic.api.update.impl;
+
+import com.easy.query.core.basic.api.update.abstraction.AbstractClientEntityUpdatable;
+import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
+
+import java.util.Collection;
+
+/**
+ * @author xuejiaming
+ * @FileName: EasyEntityUpdate.java
+ * @Description: 文件说明
+ * @Date: 2023/3/6 12:20
+ */
+public class EasyClientEntityUpdatable<T> extends AbstractClientEntityUpdatable<T> {
+
+    public EasyClientEntityUpdatable(Collection<T> entities, EntityUpdateExpressionBuilder entityUpdateExpression) {
+        super(entities, entityUpdateExpression);
+    }
+}

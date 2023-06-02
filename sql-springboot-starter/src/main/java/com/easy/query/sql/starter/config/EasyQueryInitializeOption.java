@@ -1,10 +1,10 @@
 package com.easy.query.sql.starter.config;
 
-import com.easy.query.core.basic.plugin.conversion.ValueConverter;
-import com.easy.query.core.basic.plugin.encryption.EncryptionStrategy;
-import com.easy.query.core.basic.plugin.interceptor.Interceptor;
-import com.easy.query.core.basic.plugin.logicdel.LogicDeleteStrategy;
-import com.easy.query.core.basic.plugin.version.VersionStrategy;
+import com.easy.query.core.basic.extension.conversion.ValueConverter;
+import com.easy.query.core.basic.extension.encryption.EncryptionStrategy;
+import com.easy.query.core.basic.extension.interceptor.Interceptor;
+import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategy;
+import com.easy.query.core.basic.extension.version.VersionStrategy;
 import com.easy.query.core.sharding.initializer.ShardingInitializer;
 import com.easy.query.core.sharding.rule.datasource.DataSourceRouteRule;
 import com.easy.query.core.sharding.rule.table.TableRouteRule;

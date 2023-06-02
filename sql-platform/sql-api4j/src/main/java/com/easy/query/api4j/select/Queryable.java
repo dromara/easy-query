@@ -5,13 +5,13 @@ import com.easy.query.api4j.sql.SQLColumnSelector;
 import com.easy.query.api4j.sql.SQLGroupBySelector;
 import com.easy.query.api4j.sql.SQLWhereAggregatePredicate;
 import com.easy.query.api4j.sql.SQLWherePredicate;
-import com.easy.query.core.api.client.EasyObjectQuery;
+import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.api.dynamic.sort.ObjectSort;
 import com.easy.query.core.basic.api.internal.Interceptable;
 import com.easy.query.core.basic.api.internal.LogicDeletable;
 import com.easy.query.core.basic.api.internal.QueryStrategy;
 import com.easy.query.core.basic.api.internal.TableReNameable;
-import com.easy.query.core.basic.api.select.ObjectQueryable;
+import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
@@ -37,7 +37,7 @@ public interface Queryable<T1> extends Query<T1>,
         LogicDeletable<Queryable<T1>>,
         TableReNameable<Queryable<T1>>,
         QueryStrategy<Queryable<T1>> {
-    ObjectQueryable<T1> getEntityQueryable();
+    ClientQueryable<T1> getEntityQueryable();
 
     /**
      * 只clone表达式共享上下文
@@ -316,7 +316,7 @@ public interface Queryable<T1> extends Query<T1>,
 
     /**
      * 自动将查询结果集合全部添加到当前上下文追踪中,如果当前查询结果十分庞大,并且更新数据只有个别条数,建议不要使用
-     * 追踪查询，可以通过开启追踪后使用普通的查询，然后添加到当前的追踪上下文中{@link EasyObjectQuery#addTracking(Object)},开始先数据追踪的差异更新
+     * 追踪查询，可以通过开启追踪后使用普通的查询，然后添加到当前的追踪上下文中{@link EasyQueryClient#addTracking(Object)},开始先数据追踪的差异更新
      *
      * @return
      */

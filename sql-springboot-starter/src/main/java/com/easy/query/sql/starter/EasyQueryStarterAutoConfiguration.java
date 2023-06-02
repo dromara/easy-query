@@ -1,16 +1,18 @@
 package com.easy.query.sql.starter;
 
+import com.easy.query.api4j.client.DefaultEasyQuery;
+import com.easy.query.api4j.client.EasyQuery;
 import com.easy.query.core.basic.jdbc.con.ConnectionManager;
-import com.easy.query.core.basic.plugin.conversion.ValueConverter;
-import com.easy.query.core.basic.plugin.encryption.EncryptionStrategy;
-import com.easy.query.core.basic.plugin.interceptor.Interceptor;
-import com.easy.query.core.basic.plugin.logicdel.LogicDeleteStrategy;
-import com.easy.query.core.basic.plugin.version.VersionStrategy;
+import com.easy.query.core.basic.extension.conversion.ValueConverter;
+import com.easy.query.core.basic.extension.encryption.EncryptionStrategy;
+import com.easy.query.core.basic.extension.interceptor.Interceptor;
+import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategy;
+import com.easy.query.core.basic.extension.version.VersionStrategy;
 import com.easy.query.core.bootstrapper.DatabaseConfiguration;
 import com.easy.query.core.bootstrapper.DefaultDatabaseConfiguration;
 import com.easy.query.core.bootstrapper.DefaultStarterConfigurer;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
-import com.easy.query.core.api.client.EasyObjectQuery;
+import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.bootstrapper.StarterConfigurer;
 import com.easy.query.core.configuration.nameconversion.NameConversion;
 import com.easy.query.core.configuration.nameconversion.impl.DefaultNameConversion;
@@ -139,8 +141,8 @@ public class EasyQueryStarterAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public EasyObjectQuery easyQuery(DatabaseConfiguration databaseConfiguration, StarterConfigurer starterConfigurer, NameConversion nameConversion) {
-        EasyObjectQuery easyQuery = EasyQueryBootstrapper.defaultBuilderConfiguration()
+    public EasyQueryClient easyQuery(DatabaseConfiguration databaseConfiguration, StarterConfigurer starterConfigurer, NameConversion nameConversion) {
+        EasyQueryClient easyQuery = EasyQueryBootstrapper.defaultBuilderConfiguration()
                 .setDefaultDataSource(dataSource)
                 .replaceService(DataSourceUnitFactory.class, SpringDataSourceUnitFactory.class)
                 .optionConfigure(builder -> {
@@ -166,6 +168,12 @@ public class EasyQueryStarterAutoConfiguration {
                 .useStarterConfigure(starterConfigurer)
                 .build();
         return easyQuery;
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public EasyQuery easyQuery(EasyQueryClient easyQueryClient) {
+        return new DefaultEasyQuery(easyQueryClient);
     }
 
     @Bean

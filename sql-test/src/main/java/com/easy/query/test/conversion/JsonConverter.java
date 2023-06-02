@@ -2,7 +2,7 @@ package com.easy.query.test.conversion;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.easy.query.core.basic.plugin.conversion.ValueConverter;
+import com.easy.query.core.basic.extension.conversion.ValueConverter;
 
 /**
  * create time 2023/5/23 22:33

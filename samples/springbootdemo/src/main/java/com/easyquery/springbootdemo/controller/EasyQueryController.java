@@ -1,7 +1,7 @@
 package com.easyquery.springbootdemo.controller;
 
 import com.easy.query.core.annotation.EasyQueryTrack;
-import com.easy.query.core.api.client.EasyObjectQuery;
+import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
 import com.easyquery.springbootdemo.domain.BlogEntity;
 import com.easyquery.springbootdemo.domain.TestUserMysql0;
@@ -23,7 +23,7 @@ import java.util.Arrays;
 @RequestMapping("/easy-query")
 public class EasyQueryController {
     @Autowired
-    private EasyObjectQuery easyQuery;
+    private EasyQueryClient easyQuery;
 
     @GetMapping("/sayHello")
     @EasyQueryTrack

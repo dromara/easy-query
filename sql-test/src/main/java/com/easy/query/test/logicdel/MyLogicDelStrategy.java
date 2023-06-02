@@ -1,7 +1,7 @@
 package com.easy.query.test.logicdel;
 
-import com.easy.query.core.basic.plugin.logicdel.LogicDeleteBuilder;
-import com.easy.query.core.basic.plugin.logicdel.abstraction.AbstractLogicDeleteStrategy;
+import com.easy.query.core.basic.extension.logicdel.LogicDeleteBuilder;
+import com.easy.query.core.basic.extension.logicdel.abstraction.AbstractLogicDeleteStrategy;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.base.ColumnSetter;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;

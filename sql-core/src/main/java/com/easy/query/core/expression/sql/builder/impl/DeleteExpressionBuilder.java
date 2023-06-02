@@ -1,7 +1,6 @@
 package com.easy.query.core.expression.sql.builder.impl;
 
-import com.easy.query.core.basic.plugin.version.VersionStrategy;
-import com.easy.query.core.common.bean.FastBean;
+import com.easy.query.core.basic.extension.version.VersionStrategy;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.exception.EasyQueryException;
@@ -27,10 +26,8 @@ import com.easy.query.core.expression.sql.expression.EntityPredicateSQLExpressio
 import com.easy.query.core.expression.sql.expression.EntityUpdateSQLExpression;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.expression.sql.expression.impl.EntitySQLExpressionMetadata;
-import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.VersionMetadata;
-import com.easy.query.core.util.EasyBeanUtil;
 import com.easy.query.core.util.EasyClassUtil;
 
 import java.util.Collection;

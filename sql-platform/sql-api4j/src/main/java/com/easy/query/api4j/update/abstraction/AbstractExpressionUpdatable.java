@@ -3,7 +3,7 @@ package com.easy.query.api4j.update.abstraction;
 import com.easy.query.api4j.sql.SQLWherePredicate;
 import com.easy.query.api4j.sql.impl.SQLWherePredicateImpl;
 import com.easy.query.api4j.update.ExpressionUpdatable;
-import com.easy.query.core.basic.api.update.ExpressionObjectUpdatable;
+import com.easy.query.core.basic.api.update.ClientExpressionUpdatable;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.SQLExpression1;
@@ -20,9 +20,9 @@ import java.util.function.Function;
  * @Date: 2023/2/25 08:24
  */
 public abstract class AbstractExpressionUpdatable<T> implements ExpressionUpdatable<T> {
-    protected final ExpressionObjectUpdatable<T> expressionObjectUpdatable;
+    protected final ClientExpressionUpdatable<T> expressionObjectUpdatable;
 
-    public AbstractExpressionUpdatable(ExpressionObjectUpdatable<T> expressionObjectUpdatable) {
+    public AbstractExpressionUpdatable(ClientExpressionUpdatable<T> expressionObjectUpdatable) {
         this.expressionObjectUpdatable = expressionObjectUpdatable;
     }
 

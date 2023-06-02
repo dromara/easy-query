@@ -1,9 +1,9 @@
 package com.easy.query.core.bootstrapper;
 
-import com.easy.query.core.api.SQLObjectApiFactory;
-import com.easy.query.core.api.client.DefaultEasyObjectQuery;
-import com.easy.query.core.api.client.EasyObjectQuery;
-import com.easy.query.core.api.def.DefaultSQLObjectApiFactory;
+import com.easy.query.core.api.SQLClientApiFactory;
+import com.easy.query.core.api.client.DefaultEasyQueryClient;
+import com.easy.query.core.api.client.EasyQueryClient;
+import com.easy.query.core.api.def.DefaultSQLClientApiFactory;
 import com.easy.query.core.basic.jdbc.con.ConnectionManager;
 import com.easy.query.core.basic.jdbc.con.EasyConnectionFactory;
 import com.easy.query.core.basic.jdbc.con.EasyDataSourceConnectionFactory;
@@ -16,8 +16,8 @@ import com.easy.query.core.basic.jdbc.types.EasyJdbcTypeHandlerManager;
 import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
 import com.easy.query.core.basic.pagination.DefaultEasyPageResultProvider;
 import com.easy.query.core.basic.pagination.EasyPageResultProvider;
-import com.easy.query.core.basic.plugin.track.DefaultTrackManager;
-import com.easy.query.core.basic.plugin.track.TrackManager;
+import com.easy.query.core.basic.extension.track.DefaultTrackManager;
+import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.basic.thread.DefaultEasyShardingExecutorService;
 import com.easy.query.core.basic.thread.ShardingExecutorService;
 import com.easy.query.core.configuration.EasyQueryOption;
@@ -101,7 +101,7 @@ public class EasyQueryBuilderConfiguration {
                 .replaceService(EntityMetadataManager.class, DefaultEntityMetadataManager.class)
                 .replaceService(SQLExpressionInvokeFactory.class, DefaultSQLExpressionInvokeFactory.class)
                 .replaceService(ExpressionBuilderFactory.class, DefaultEasyExpressionBuilderFactory.class)
-                .replaceService(SQLObjectApiFactory.class, DefaultSQLObjectApiFactory.class)
+                .replaceService(SQLClientApiFactory.class, DefaultSQLClientApiFactory.class)
                 .replaceService(TrackManager.class, DefaultTrackManager.class)
                 .replaceService(EasyPageResultProvider.class, DefaultEasyPageResultProvider.class)
                 .replaceService(EasyPrepareParser.class, DefaultEasyPrepareParser.class)
@@ -127,7 +127,7 @@ public class EasyQueryBuilderConfiguration {
                 .replaceService(RouteDescriptorFactory.class, DefaultRouteDescriptorFactor.class)
                 .replaceService(DataSourceUnitFactory.class, DefaultDataSourceUnitFactory.class)
                 .replaceService(SQLSegmentFactory.class, DefaultSQLSegmentFactory.class)
-                .replaceService(EasyObjectQuery.class, DefaultEasyObjectQuery.class);
+                .replaceService(EasyQueryClient.class, DefaultEasyQueryClient.class);
     }
 
     public EasyQueryBuilderConfiguration setDefaultDataSource(DataSource dataSource) {
@@ -225,7 +225,7 @@ public class EasyQueryBuilderConfiguration {
      *
      * @return EasyQuery实例
      */
-    public EasyObjectQuery build() {
+    public EasyQueryClient build() {
         if (this.dataSource == null) {
             throw new IllegalArgumentException("data source null");
         }
@@ -233,7 +233,7 @@ public class EasyQueryBuilderConfiguration {
         EasyQueryOption easyQueryOption = easyQueryOptionBuilder.build();
         replaceService(easyQueryOption);
         ServiceProvider serviceProvider = serviceCollection.build();
-        return serviceProvider.getService(EasyObjectQuery.class);
+        return serviceProvider.getService(EasyQueryClient.class);
     }
 
 }

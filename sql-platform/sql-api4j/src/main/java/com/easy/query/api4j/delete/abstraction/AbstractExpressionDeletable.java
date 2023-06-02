@@ -4,7 +4,7 @@ import com.easy.query.api4j.delete.ExpressionDeletable;
 import com.easy.query.api4j.sql.SQLWherePredicate;
 import com.easy.query.api4j.sql.impl.SQLWherePredicateImpl;
 import com.easy.query.core.basic.api.delete.Deletable;
-import com.easy.query.core.basic.api.delete.ExpressionObjectDeletable;
+import com.easy.query.core.basic.api.delete.ClientExpressionDeletable;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
@@ -19,9 +19,9 @@ import java.util.function.Function;
  * @Date: 2023/3/1 22:30
  */
 public abstract class AbstractExpressionDeletable<T> implements ExpressionDeletable<T> {
-    private final ExpressionObjectDeletable<T> expressionObjectDeletable;
+    private final ClientExpressionDeletable<T> expressionObjectDeletable;
 
-    public AbstractExpressionDeletable(ExpressionObjectDeletable<T> expressionObjectDeletable) {
+    public AbstractExpressionDeletable(ClientExpressionDeletable<T> expressionObjectDeletable) {
         this.expressionObjectDeletable = expressionObjectDeletable;
     }
 

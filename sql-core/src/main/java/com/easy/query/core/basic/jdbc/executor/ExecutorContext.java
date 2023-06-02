@@ -1,13 +1,13 @@
 package com.easy.query.core.basic.jdbc.executor;
 
-import com.easy.query.core.basic.plugin.conversion.ValueConverter;
+import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.basic.jdbc.parameter.SQLLikeParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
-import com.easy.query.core.basic.plugin.encryption.EncryptionStrategy;
+import com.easy.query.core.basic.extension.encryption.EncryptionStrategy;
 import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasyStringUtil;
 

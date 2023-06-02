@@ -1,6 +1,6 @@
 package com.easy.query.test.encryption;
 
-import com.easy.query.core.basic.plugin.encryption.EncryptionStrategy;
+import com.easy.query.core.basic.extension.encryption.EncryptionStrategy;
 import com.easy.query.core.util.EasyBase64Util;
 
 import java.nio.charset.StandardCharsets;

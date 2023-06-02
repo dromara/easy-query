@@ -2,7 +2,6 @@ package com.easy.query.core.expression.sql.builder;
 
 import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.context.QueryRuntimeContext;
-import com.easy.query.core.basic.plugin.interceptor.InterceptorEntry;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;

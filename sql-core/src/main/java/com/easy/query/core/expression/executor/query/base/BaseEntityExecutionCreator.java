@@ -1,7 +1,7 @@
 package com.easy.query.core.expression.executor.query.base;
 
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
-import com.easy.query.core.basic.plugin.track.TrackManager;
+import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;

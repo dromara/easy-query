@@ -8,23 +8,15 @@ import com.easy.query.core.basic.api.internal.TableReNameable;
 import java.util.Collection;
 
 /**
+ * @author xuejiaming
  * @FileName: Insertable.java
  * @Description: 文件说明
  * @Date: 2023/2/20 08:48
- * @author xuejiaming
  */
-public interface Insertable<T> extends SQLExecuteRows, Interceptable<Insertable<T>>, TableReNameable<Insertable<T>>, SQLExecuteStrategy<Insertable<T>> {
-    Insertable<T> insert(T entity);
+public interface Insertable<T, TChain> extends SQLExecuteRows, Interceptable<TChain>, TableReNameable<TChain>, SQLExecuteStrategy<TChain> {
+    TChain insert(T entity);
 
-    default Insertable<T> insert(Collection<T> entities) {
-        if(entities==null){
-            return this;
-        }
-        for (T entity : entities) {
-            insert(entity);
-        }
-        return this;
-    }
+    TChain insert(Collection<T> entities);
 
     /**
      *

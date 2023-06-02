@@ -1,7 +1,7 @@
 package com.easy.query.test.interceptor;
 
-import com.easy.query.core.basic.plugin.interceptor.EntityInterceptor;
-import com.easy.query.core.basic.plugin.interceptor.PredicateFilterInterceptor;
+import com.easy.query.core.basic.extension.interceptor.EntityInterceptor;
+import com.easy.query.core.basic.extension.interceptor.PredicateFilterInterceptor;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
@@ -27,10 +27,10 @@ public class MyTenantInterceptor implements EntityInterceptor, PredicateFilterIn
     }
 
     @Override
-    public void configure(Class<?> entityClass, LambdaEntityExpressionBuilder lambdaEntityExpressionBuilder, WherePredicate<Object> sqlWherePredicate) {
+    public void configure(Class<?> entityClass, LambdaEntityExpressionBuilder lambdaEntityExpressionBuilder, WherePredicate<Object> wherePredicate) {
         if (CurrentUserHelper.getUserId() != null) {
             //获取租户id的lambda表达式
-            sqlWherePredicate.eq("tenantId", CurrentUserHelper.getTenantId());
+            wherePredicate.eq("tenantId", CurrentUserHelper.getTenantId());
         }
     }
 

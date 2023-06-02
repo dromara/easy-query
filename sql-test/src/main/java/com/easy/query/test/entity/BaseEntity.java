@@ -2,7 +2,7 @@ package com.easy.query.test.entity;
 
 import com.easy.query.core.annotation.Column;
 import com.easy.query.core.annotation.LogicDelete;
-import com.easy.query.core.basic.plugin.logicdel.LogicDeleteStrategyEnum;
+import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategyEnum;
 import lombok.Data;
 
 import java.io.Serializable;

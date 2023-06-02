@@ -13,8 +13,8 @@ import com.easy.query.api4j.sql.impl.SQLColumnResultSelectorImpl;
 import com.easy.query.api4j.sql.impl.SQLColumnSelectorImpl;
 import com.easy.query.api4j.sql.impl.SQLGroupBySelectorImpl;
 import com.easy.query.api4j.sql.impl.SQLWherePredicateImpl;
-import com.easy.query.core.basic.api.select.ObjectQueryable;
-import com.easy.query.core.basic.api.select.ObjectQueryable4;
+import com.easy.query.core.basic.api.select.ClientQueryable;
+import com.easy.query.core.basic.api.select.ClientQueryable4;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression4;
@@ -29,10 +29,10 @@ import java.util.function.Function;
  * @Date: 2023/3/9 12:38
  */
 public abstract class AbstractQueryable4<T1, T2, T3, T4> extends AbstractQueryable<T1> implements Queryable4<T1, T2, T3, T4> {
-    protected final ObjectQueryable4<T1, T2, T3, T4> entityQueryable4;
+    protected final ClientQueryable4<T1, T2, T3, T4> entityQueryable4;
 
 
-    public AbstractQueryable4(ObjectQueryable4<T1, T2, T3, T4> entityQueryable4) {
+    public AbstractQueryable4(ClientQueryable4<T1, T2, T3, T4> entityQueryable4) {
         super(entityQueryable4);
         this.entityQueryable4 = entityQueryable4;
     }
@@ -61,7 +61,7 @@ public abstract class AbstractQueryable4<T1, T2, T3, T4> extends AbstractQueryab
 
     @Override
     public <TR> Queryable<TR> select(Class<TR> resultClass, SQLExpression4<SQLColumnAsSelector<T1, TR>, SQLColumnAsSelector<T2, TR>, SQLColumnAsSelector<T3, TR>, SQLColumnAsSelector<T4, TR>> selectExpression) {
-        ObjectQueryable<TR> select = entityQueryable4.select(resultClass, (selector1, selector2, selector3, selector4) -> {
+        ClientQueryable<TR> select = entityQueryable4.select(resultClass, (selector1, selector2, selector3, selector4) -> {
             selectExpression.apply(new SQLColumnAsSelectorImpl<>(selector1), new SQLColumnAsSelectorImpl<>(selector2), new SQLColumnAsSelectorImpl<>(selector3), new SQLColumnAsSelectorImpl<>(selector4));
         });
         return new EasyQueryable<>(select);

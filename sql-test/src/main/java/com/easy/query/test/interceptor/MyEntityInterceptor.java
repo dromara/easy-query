@@ -1,7 +1,7 @@
 package com.easy.query.test.interceptor;
 
-import com.easy.query.core.basic.plugin.interceptor.EntityInterceptor;
-import com.easy.query.core.basic.plugin.interceptor.UpdateSetInterceptor;
+import com.easy.query.core.basic.extension.interceptor.EntityInterceptor;
+import com.easy.query.core.basic.extension.interceptor.UpdateSetInterceptor;
 import com.easy.query.core.expression.parser.core.base.ColumnSetter;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
@@ -53,7 +53,7 @@ public class MyEntityInterceptor implements EntityInterceptor, UpdateSetIntercep
     }
 
     @Override
-    public void configure(Class<?> entityClass, EntityUpdateExpressionBuilder entityUpdateExpressionBuilder, ColumnSetter<Object> sqlColumnSetter) {
+    public void configure(Class<?> entityClass, EntityUpdateExpressionBuilder entityUpdateExpressionBuilder, ColumnSetter<Object> columnSetter) {
         String updateBy = "updateBy";//属性名用来动态创建lambda
         String updateTime = "updateTime";//属性名用来动态创建lambda
         //是否已经set了
@@ -61,12 +61,12 @@ public class MyEntityInterceptor implements EntityInterceptor, UpdateSetIntercep
             String userId = CurrentUserHelper.getUserId();
             //获取updateBy属性的lambda表达式
 //            Property<Object, ?> propertyLambda = EasyBeanUtil.getPropertyGetterLambda(entityClass, updateBy, String.class);
-            sqlColumnSetter.set("updateBy", userId);
+            columnSetter.set("updateBy", userId);
         }
         if (!entityUpdateExpressionBuilder.getSetColumns().containsOnce(entityClass, updateTime)) {
             //获取updateTime属性的lambda表达式
 //            Property<Object, ?> propertyLambda = EasyBeanUtil.getPropertyGetterLambda(entityClass, updateTime, LocalDateTime.class);
-            sqlColumnSetter.set("updateTime", LocalDateTime.now());
+            columnSetter.set("updateTime", LocalDateTime.now());
         }
     }
 }

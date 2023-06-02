@@ -1,6 +1,6 @@
 package com.easyquery.springbootdemo.interceptor;
 
-import com.easy.query.core.basic.plugin.interceptor.PredicateFilterInterceptor;
+import com.easy.query.core.basic.extension.interceptor.PredicateFilterInterceptor;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.sql.builder.LambdaEntityExpressionBuilder;
 import com.easyquery.springbootdemo.domain.BlogEntity;
@@ -26,7 +26,7 @@ public class AgeSelectInterceptorStrategy implements PredicateFilterInterceptor 
     }
 
     @Override
-    public void configure(Class<?> entityClass, LambdaEntityExpressionBuilder lambdaEntityExpressionBuilder, WherePredicate<Object> sqlPredicate) {
-        sqlPredicate.isNotNull("name");
+    public void configure(Class<?> entityClass, LambdaEntityExpressionBuilder lambdaEntityExpressionBuilder, WherePredicate<Object> wherePredicate) {
+        wherePredicate.isNotNull("name");
     }
 }

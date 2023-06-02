@@ -3,7 +3,7 @@ package com.easy.query.test.pgsql;
 import com.easy.query.api4j.client.DefaultEasyQuery;
 import com.easy.query.api4j.client.EasyQuery;
 import com.easy.query.core.context.QueryRuntimeContext;
-import com.easy.query.core.api.client.EasyObjectQuery;
+import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.logging.LogFactory;
@@ -59,7 +59,7 @@ public class PgSqlBaseTest {
     }
 
     public static void initEasyQuery() {
-        EasyObjectQuery easyObjectQuery = EasyQueryBootstrapper.defaultBuilderConfiguration()
+        EasyQueryClient easyObjectQuery = EasyQueryBootstrapper.defaultBuilderConfiguration()
                 .setDefaultDataSource(dataSource)
                 .optionConfigure(op -> {
                     op.setDeleteThrowError(false);

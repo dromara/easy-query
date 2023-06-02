@@ -1,6 +1,6 @@
 package com.easy.query.core.metadata;
 
-import com.easy.query.core.basic.plugin.version.VersionStrategy;
+import com.easy.query.core.basic.extension.version.VersionStrategy;
 
 /**
  * create time 2023/3/26 22:22

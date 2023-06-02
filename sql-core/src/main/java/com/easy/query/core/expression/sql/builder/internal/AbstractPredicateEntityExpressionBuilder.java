@@ -1,6 +1,6 @@
 package com.easy.query.core.expression.sql.builder.internal;
 
-import com.easy.query.core.basic.plugin.interceptor.PredicateFilterInterceptor;
+import com.easy.query.core.basic.extension.interceptor.PredicateFilterInterceptor;
 import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.expression.lambda.SQLExpression1;
@@ -13,7 +13,6 @@ import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpression
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.builder.LambdaEntityExpressionBuilder;
-import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.VersionMetadata;
 import com.easy.query.core.util.EasyCollectionUtil;

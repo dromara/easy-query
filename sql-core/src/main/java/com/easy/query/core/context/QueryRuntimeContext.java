@@ -1,11 +1,11 @@
 package com.easy.query.core.context;
 
-import com.easy.query.core.api.SQLObjectApiFactory;
+import com.easy.query.core.api.SQLClientApiFactory;
 import com.easy.query.core.basic.jdbc.con.ConnectionManager;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
 import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
 import com.easy.query.core.basic.pagination.EasyPageResultProvider;
-import com.easy.query.core.basic.plugin.track.TrackManager;
+import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.basic.thread.ShardingExecutorService;
 import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.datasource.DataSourceUnitFactory;
@@ -39,7 +39,7 @@ public interface QueryRuntimeContext {
     JdbcTypeHandlerManager getJdbcTypeHandlerManager();
 
     //    SQLApiFactory getSQLApiFactory();
-    SQLObjectApiFactory getSQLObjectApiFactory();
+    SQLClientApiFactory getSQLObjectApiFactory();
 
     ExpressionBuilderFactory getExpressionBuilderFactory();
     ExpressionFactory getExpressionFactory();

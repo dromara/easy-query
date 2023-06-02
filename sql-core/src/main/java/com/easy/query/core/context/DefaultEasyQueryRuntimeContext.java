@@ -2,12 +2,12 @@ package com.easy.query.core.context;
 
 //import com.easy.query.core.api.SQLApiFactory;
 
-import com.easy.query.core.api.SQLObjectApiFactory;
+import com.easy.query.core.api.SQLClientApiFactory;
 import com.easy.query.core.basic.jdbc.con.ConnectionManager;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
 import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
 import com.easy.query.core.basic.pagination.EasyPageResultProvider;
-import com.easy.query.core.basic.plugin.track.TrackManager;
+import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.basic.thread.ShardingExecutorService;
 import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.datasource.DataSourceUnitFactory;
@@ -53,7 +53,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     private final ColumnFunctionFactory columnFunctionFactory;
     private final DataSourceUnitFactory dataSourceUnitFactory;
     private final SQLSegmentFactory sqlSegmentFactory;
-    private final SQLObjectApiFactory sqlEntityApiFactory;
+    private final SQLClientApiFactory sqlEntityApiFactory;
 
     public DefaultEasyQueryRuntimeContext(ServiceProvider serviceProvider,
                                           EasyQueryDataSource easyQueryDataSource,
@@ -76,7 +76,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
                                           ColumnFunctionFactory columnFunctionFactory,
                                           DataSourceUnitFactory dataSourceUnitFactory,
                                           SQLSegmentFactory sqlSegmentFactory,
-                                          SQLObjectApiFactory sqlEntityApiFactory) {
+                                          SQLClientApiFactory sqlEntityApiFactory) {
         this.serviceProvider = serviceProvider;
         this.easyQueryDataSource = easyQueryDataSource;
         this.easyQueryConfiguration = easyQueryConfiguration;
@@ -147,7 +147,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
 //    }
 
     @Override
-    public SQLObjectApiFactory getSQLObjectApiFactory() {
+    public SQLClientApiFactory getSQLObjectApiFactory() {
         return sqlEntityApiFactory;
     }
 

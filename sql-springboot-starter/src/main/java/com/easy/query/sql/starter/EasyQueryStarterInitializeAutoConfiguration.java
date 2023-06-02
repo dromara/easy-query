@@ -1,11 +1,11 @@
 package com.easy.query.sql.starter;
 
-import com.easy.query.core.api.client.EasyObjectQuery;
-import com.easy.query.core.basic.plugin.conversion.ValueConverter;
-import com.easy.query.core.basic.plugin.encryption.EncryptionStrategy;
-import com.easy.query.core.basic.plugin.interceptor.Interceptor;
-import com.easy.query.core.basic.plugin.logicdel.LogicDeleteStrategy;
-import com.easy.query.core.basic.plugin.version.VersionStrategy;
+import com.easy.query.core.api.client.EasyQueryClient;
+import com.easy.query.core.basic.extension.conversion.ValueConverter;
+import com.easy.query.core.basic.extension.encryption.EncryptionStrategy;
+import com.easy.query.core.basic.extension.interceptor.Interceptor;
+import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategy;
+import com.easy.query.core.basic.extension.version.VersionStrategy;
 import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.sharding.initializer.ShardingInitializer;
@@ -42,10 +42,10 @@ import java.util.Map;
 )
 public class EasyQueryStarterInitializeAutoConfiguration {
 
-    private final EasyObjectQuery easyQuery;
+    private final EasyQueryClient easyQuery;
     private final EasyQueryInitializeOption easyQueryInitializeOption;
 
-    public EasyQueryStarterInitializeAutoConfiguration(EasyObjectQuery easyQuery, EasyQueryInitializeOption easyQueryInitializeOption) {
+    public EasyQueryStarterInitializeAutoConfiguration(EasyQueryClient easyQuery, EasyQueryInitializeOption easyQueryInitializeOption) {
 
         this.easyQuery = easyQuery;
         this.easyQueryInitializeOption = easyQueryInitializeOption;

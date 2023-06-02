@@ -1,7 +1,7 @@
 package com.easy.query.core.metadata;
 
-import com.easy.query.core.basic.plugin.conversion.ValueConverter;
-import com.easy.query.core.basic.plugin.encryption.EncryptionStrategy;
+import com.easy.query.core.basic.extension.conversion.ValueConverter;
+import com.easy.query.core.basic.extension.encryption.EncryptionStrategy;
 
 import java.beans.PropertyDescriptor;
 

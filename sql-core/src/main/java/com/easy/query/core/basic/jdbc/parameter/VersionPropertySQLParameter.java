@@ -1,6 +1,6 @@
 package com.easy.query.core.basic.jdbc.parameter;
 
-import com.easy.query.core.basic.plugin.version.VersionStrategy;
+import com.easy.query.core.basic.extension.version.VersionStrategy;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 
 /**

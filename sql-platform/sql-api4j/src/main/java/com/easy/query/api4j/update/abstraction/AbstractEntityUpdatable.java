@@ -3,7 +3,7 @@ package com.easy.query.api4j.update.abstraction;
 import com.easy.query.api4j.sql.SQLColumnSelector;
 import com.easy.query.api4j.sql.impl.SQLColumnSelectorImpl;
 import com.easy.query.api4j.update.EntityUpdatable;
-import com.easy.query.core.basic.api.update.EntityObjectUpdatable;
+import com.easy.query.core.basic.api.update.ClientEntityUpdatable;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 
@@ -17,9 +17,9 @@ import java.util.function.Function;
  */
 public abstract class AbstractEntityUpdatable<T> implements EntityUpdatable<T> {
 
-    protected final EntityObjectUpdatable<T> entityObjectUpdatable;
+    protected final ClientEntityUpdatable<T> entityObjectUpdatable;
 
-    public AbstractEntityUpdatable(EntityObjectUpdatable<T> entityObjectUpdatable) {
+    public AbstractEntityUpdatable(ClientEntityUpdatable<T> entityObjectUpdatable) {
         this.entityObjectUpdatable = entityObjectUpdatable;
     }
 

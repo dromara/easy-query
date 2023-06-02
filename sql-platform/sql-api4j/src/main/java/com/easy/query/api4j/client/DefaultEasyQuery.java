@@ -4,14 +4,15 @@ import com.easy.query.api4j.delete.EntityDeletable;
 import com.easy.query.api4j.delete.ExpressionDeletable;
 import com.easy.query.api4j.delete.impl.EasyEntityDeletable;
 import com.easy.query.api4j.delete.impl.EasyExpressionDeletable;
+import com.easy.query.api4j.insert.EasyEntityInsertable;
+import com.easy.query.api4j.insert.EntityInsertable;
 import com.easy.query.api4j.select.Queryable;
 import com.easy.query.api4j.select.impl.EasyQueryable;
 import com.easy.query.api4j.update.EntityUpdatable;
 import com.easy.query.api4j.update.ExpressionUpdatable;
 import com.easy.query.api4j.update.impl.EasyEntityUpdatable;
 import com.easy.query.api4j.update.impl.EasyExpressionUpdatable;
-import com.easy.query.core.api.client.EasyObjectQuery;
-import com.easy.query.core.basic.api.insert.Insertable;
+import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
 import com.easy.query.core.context.QueryRuntimeContext;
@@ -25,9 +26,9 @@ import java.util.Map;
  * @Date: 2023/3/6 13:30
  */
 public class DefaultEasyQuery implements EasyQuery {
-    private final EasyObjectQuery easyObjectQuery;
+    private final EasyQueryClient easyObjectQuery;
 
-    public DefaultEasyQuery(EasyObjectQuery easyObjectQuery) {
+    public DefaultEasyQuery(EasyQueryClient easyObjectQuery) {
         this.easyObjectQuery = easyObjectQuery;
     }
 
@@ -72,13 +73,13 @@ public class DefaultEasyQuery implements EasyQuery {
 //    }
 
     @Override
-    public <T> Insertable<T> insertable(T entity) {
-        return easyObjectQuery.insertable(entity);
+    public <T> EntityInsertable<T> insertable(T entity) {
+        return new EasyEntityInsertable<>(easyObjectQuery.insertable(entity));
     }
 
     @Override
-    public <T> Insertable<T> insertable(Collection<T> entities) {
-        return easyObjectQuery.insertable(entities);
+    public <T> EntityInsertable<T> insertable(Collection<T> entities) {
+        return new EasyEntityInsertable<>(easyObjectQuery.insertable(entities));
     }
 
     @Override

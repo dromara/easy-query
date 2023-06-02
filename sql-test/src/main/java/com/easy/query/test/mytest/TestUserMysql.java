@@ -3,7 +3,7 @@ package com.easy.query.test.mytest;
 import com.easy.query.core.annotation.Column;
 import com.easy.query.core.annotation.LogicDelete;
 import com.easy.query.core.annotation.Table;
-import com.easy.query.core.basic.plugin.logicdel.LogicDeleteStrategyEnum;
+import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategyEnum;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
