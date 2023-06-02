@@ -1,8 +1,8 @@
 package com.easy.query.core.expression.segment.condition.predicate;
 
-import com.easy.query.core.context.QueryRuntimeContext;
-import com.easy.query.core.basic.api.select.Queryable;
+import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.SQLEntitySegment;
@@ -17,11 +17,11 @@ public class ColumnExistsSubQueryPredicate implements SubQueryPredicate {
     private final SQLPredicateCompare sqlPredicateCompare;
     private final QueryRuntimeContext runtimeContext;
     private final TableAvailable table;
-    private final Queryable<?> subQueryable;
+    private final Query<?> subQuery;
 
-    public ColumnExistsSubQueryPredicate(TableAvailable table, Queryable<?> subQueryable, SQLPredicateCompare sqlPredicateCompare, QueryRuntimeContext runtimeContext) {
+    public ColumnExistsSubQueryPredicate(TableAvailable table, Query<?> subQuery, SQLPredicateCompare sqlPredicateCompare, QueryRuntimeContext runtimeContext) {
         this.table = table;
-        this.subQueryable = subQueryable;
+        this.subQuery = subQuery;
         this.sqlPredicateCompare = sqlPredicateCompare;
         this.runtimeContext = runtimeContext;
     }
@@ -46,7 +46,7 @@ public class ColumnExistsSubQueryPredicate implements SubQueryPredicate {
 
         StringBuilder sql = new StringBuilder();
         sql.append(sqlPredicateCompare.getSQL()).append(" (");
-        String subQueryableSQL = subQueryable.toSQL(toSQLContext);
+        String subQueryableSQL = subQuery.toSQL(toSQLContext);
         sql.append(subQueryableSQL).append(")");
         return sql.toString();
     }
@@ -57,13 +57,13 @@ public class ColumnExistsSubQueryPredicate implements SubQueryPredicate {
     }
 
     @Override
-    public Queryable<?> getSubQueryable() {
-        return subQueryable;
+    public Query<?> getSubQuery() {
+        return subQuery;
     }
 
     @Override
     public SubQueryPredicate cloneSubQueryPredicate() {
 
-        return new ColumnExistsSubQueryPredicate(table, subQueryable.cloneQueryable(), sqlPredicateCompare, runtimeContext);
+        return new ColumnExistsSubQueryPredicate(table, subQuery.cloneQueryable(), sqlPredicateCompare, runtimeContext);
     }
 }

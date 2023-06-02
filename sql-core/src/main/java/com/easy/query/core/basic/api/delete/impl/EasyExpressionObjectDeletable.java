@@ -1,0 +1,16 @@
+package com.easy.query.core.basic.api.delete.impl;
+
+import com.easy.query.core.basic.api.delete.abstraction.AbstractExpressionObjectDeletable;
+import com.easy.query.core.expression.sql.builder.EntityDeleteExpressionBuilder;
+
+/**
+ * @author xuejiaming
+ * @FileName: EasyExpressionDeletable.java
+ * @Description: 文件说明
+ * @Date: 2023/3/6 13:21
+ */
+public class EasyExpressionObjectDeletable<T> extends AbstractExpressionObjectDeletable<T> {
+    public EasyExpressionObjectDeletable(Class<T> clazz, EntityDeleteExpressionBuilder entityDeleteExpression) {
+        super(clazz, entityDeleteExpression);
+    }
+}

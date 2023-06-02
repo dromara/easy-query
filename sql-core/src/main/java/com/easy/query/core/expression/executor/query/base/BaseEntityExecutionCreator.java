@@ -38,8 +38,8 @@ public abstract class BaseEntityExecutionCreator extends BaseExecutionCreator{
     protected List<ExecutionUnit> createExecutionUnits() {
         if(!Objects.equals(ExecuteMethodEnum.DELETE,executorContext.getExecuteMethod())){
             //是否单个对象运行sql
-            boolean isSingleEntityRun = EasySQLExpressionUtil.sqlExecuteStrategyNonDefault(entityExpressionBuilder.getExpressionContext(),executorContext);
-            if (isSingleEntityRun||updateSingleEntityRun()) {
+            boolean allColumns = EasySQLExpressionUtil.sqlExecuteStrategyIsAllColumns(entityExpressionBuilder.getExpressionContext(), executorContext);
+            if (!allColumns || updateSingleEntityRun()) {
                 return createSingleExecutionUnits();
             }
         }

@@ -1,6 +1,6 @@
 package com.easy.query.test.pgsql;
 
-import com.easy.query.core.basic.api.select.Queryable;
+import com.easy.query.api4j.select.Queryable;
 import com.easy.query.test.entity.BlogEntity;
 import org.junit.Assert;
 import org.junit.Test;

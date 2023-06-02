@@ -1,27 +1,26 @@
 package com.easy.query.core.util;
 
+import com.easy.query.core.basic.api.select.ObjectQueryable;
+import com.easy.query.core.basic.api.select.ObjectQueryable2;
+import com.easy.query.core.basic.api.select.ObjectQueryable3;
+import com.easy.query.core.basic.api.select.ObjectQueryable4;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.executor.internal.common.SQLRewriteUnit;
-import com.easy.query.core.context.QueryRuntimeContext;
-import com.easy.query.core.basic.api.select.Queryable;
-import com.easy.query.core.basic.api.select.Queryable2;
-import com.easy.query.core.basic.api.select.Queryable3;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.configuration.EasyQueryOption;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.lambda.SQLExpression3;
-import com.easy.query.core.expression.parser.core.SQLColumnSelector;
+import com.easy.query.core.expression.lambda.SQLExpression4;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.parser.core.SQLWherePredicate;
+import com.easy.query.core.expression.parser.core.base.ColumnSelector;
+import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.segment.SelectConstSegment;
 import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
-import com.easy.query.core.expression.segment.impl.SelectConstSegmentImpl;
 import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
-import com.easy.query.core.basic.api.select.Queryable4;
-import com.easy.query.core.expression.lambda.SQLExpression4;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.builder.impl.AnonymousUnionQueryExpressionBuilder;
@@ -54,10 +53,10 @@ public class EasySQLExpressionUtil {
         return toSQLContext.getAlias(table);
     }
 
-    public static <TSource> Queryable<TSource> cloneAndSelectAllQueryable(Queryable<TSource> queryable) {
+    public static <TSource> ObjectQueryable<TSource> cloneAndSelectAllQueryable(ObjectQueryable<TSource> queryable) {
         EntityQueryExpressionBuilder sqlEntityExpressionBuilder = queryable.getSQLEntityExpressionBuilder();
         if (EasySQLExpressionUtil.shouldCloneSQLEntityQueryExpressionBuilder(sqlEntityExpressionBuilder)) {
-            return queryable.cloneQueryable().select(SQLColumnSelector::columnAll);
+            return queryable.cloneQueryable().select(ColumnSelector::columnAll);
         }
         return queryable.cloneQueryable();
     }
@@ -102,42 +101,45 @@ public class EasySQLExpressionUtil {
         return false;
 //     return sqlEntityExpression.getTables().size() != 1 || !(sqlEntityExpression.getTables().get(0) instanceof AnonymousEntityTableExpressionBuilder);
     }
-    public static boolean hasAnyOperate(EntityQueryExpressionBuilder sqlEntityExpression){
-        return sqlEntityExpression.hasLimit() || sqlEntityExpression.hasWhere() || sqlEntityExpression.hasOrder() || sqlEntityExpression.hasHaving()|| sqlEntityExpression.isDistinct() || sqlEntityExpression.hasGroup();
-    }
-    public static boolean hasAnyOperateWithoutWhereAndOrder(EntityQueryExpressionBuilder sqlEntityExpression){
-        return sqlEntityExpression.hasLimit() || sqlEntityExpression.hasHaving()|| sqlEntityExpression.isDistinct() || sqlEntityExpression.hasGroup();
+
+    public static boolean hasAnyOperate(EntityQueryExpressionBuilder sqlEntityExpression) {
+        return sqlEntityExpression.hasLimit() || sqlEntityExpression.hasWhere() || sqlEntityExpression.hasOrder() || sqlEntityExpression.hasHaving() || sqlEntityExpression.isDistinct() || sqlEntityExpression.hasGroup();
     }
 
-    public static <T1, T2> Queryable2<T1, T2> executeJoinOn(Queryable2<T1, T2> queryable, SQLExpression2<SQLWherePredicate<T1>, SQLWherePredicate<T2>> on) {
-        SQLWherePredicate<T1> sqlOnPredicate1 = queryable.getSQLExpressionProvider1().getSQLOnPredicate();
-        SQLWherePredicate<T2> sqlOnPredicate2 = queryable.getSQLExpressionProvider2().getSQLOnPredicate();
+    public static boolean hasAnyOperateWithoutWhereAndOrder(EntityQueryExpressionBuilder sqlEntityExpression) {
+        return sqlEntityExpression.hasLimit() || sqlEntityExpression.hasHaving() || sqlEntityExpression.isDistinct() || sqlEntityExpression.hasGroup();
+    }
+
+    public static <T1, T2> ObjectQueryable2<T1, T2> executeJoinOn(ObjectQueryable2<T1, T2> queryable, SQLExpression2<WherePredicate<T1>, WherePredicate<T2>> on) {
+        WherePredicate<T1> sqlOnPredicate1 = queryable.getSQLExpressionProvider1().getOnPredicate();
+        WherePredicate<T2> sqlOnPredicate2 = queryable.getSQLExpressionProvider2().getOnPredicate();
         on.apply(sqlOnPredicate1, sqlOnPredicate2);
         return queryable;
     }
 
-    public static <T1, T2, T3> Queryable3<T1, T2, T3> executeJoinOn(Queryable3<T1, T2, T3> queryable, SQLExpression3<SQLWherePredicate<T1>, SQLWherePredicate<T2>, SQLWherePredicate<T3>> on) {
-        SQLWherePredicate<T1> sqlOnPredicate1 = queryable.getSQLExpressionProvider1().getSQLOnPredicate();
-        SQLWherePredicate<T2> sqlOnPredicate2 = queryable.getSQLExpressionProvider2().getSQLOnPredicate();
-        SQLWherePredicate<T3> sqlOnPredicate3 = queryable.getSQLExpressionProvider3().getSQLOnPredicate();
+    public static <T1, T2, T3> ObjectQueryable3<T1, T2, T3> executeJoinOn(ObjectQueryable3<T1, T2, T3> queryable, SQLExpression3<WherePredicate<T1>, WherePredicate<T2>, WherePredicate<T3>> on) {
+        WherePredicate<T1> sqlOnPredicate1 = queryable.getSQLExpressionProvider1().getOnPredicate();
+        WherePredicate<T2> sqlOnPredicate2 = queryable.getSQLExpressionProvider2().getOnPredicate();
+        WherePredicate<T3> sqlOnPredicate3 = queryable.getSQLExpressionProvider3().getOnPredicate();
         on.apply(sqlOnPredicate1, sqlOnPredicate2, sqlOnPredicate3);
         return queryable;
     }
-    public static <T1, T2, T3,T4> Queryable4<T1, T2, T3,T4> executeJoinOn(Queryable4<T1, T2, T3,T4> queryable, SQLExpression4<SQLWherePredicate<T1>, SQLWherePredicate<T2>, SQLWherePredicate<T3>, SQLWherePredicate<T4>> on) {
-        SQLWherePredicate<T1> sqlOnPredicate1 = queryable.getSQLExpressionProvider1().getSQLOnPredicate();
-        SQLWherePredicate<T2> sqlOnPredicate2 = queryable.getSQLExpressionProvider2().getSQLOnPredicate();
-        SQLWherePredicate<T3> sqlOnPredicate3 = queryable.getSQLExpressionProvider3().getSQLOnPredicate();
-        SQLWherePredicate<T4> sqlOnPredicate4 = queryable.getSQLExpressionProvider4().getSQLOnPredicate();
-        on.apply(sqlOnPredicate1, sqlOnPredicate2, sqlOnPredicate3,sqlOnPredicate4);
+
+    public static <T1, T2, T3, T4> ObjectQueryable4<T1, T2, T3, T4> executeJoinOn(ObjectQueryable4<T1, T2, T3, T4> queryable, SQLExpression4<WherePredicate<T1>, WherePredicate<T2>, WherePredicate<T3>, WherePredicate<T4>> on) {
+        WherePredicate<T1> sqlOnPredicate1 = queryable.getSQLExpressionProvider1().getOnPredicate();
+        WherePredicate<T2> sqlOnPredicate2 = queryable.getSQLExpressionProvider2().getOnPredicate();
+        WherePredicate<T3> sqlOnPredicate3 = queryable.getSQLExpressionProvider3().getOnPredicate();
+        WherePredicate<T4> sqlOnPredicate4 = queryable.getSQLExpressionProvider4().getOnPredicate();
+        on.apply(sqlOnPredicate1, sqlOnPredicate2, sqlOnPredicate3, sqlOnPredicate4);
         return queryable;
     }
 
 
-    public static EntityQueryExpressionBuilder getCountEntityQueryExpression(EntityQueryExpressionBuilder entityQueryExpressionBuilder){
-        if(entityQueryExpressionBuilder.hasOrder()){
+    public static EntityQueryExpressionBuilder getCountEntityQueryExpression(EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
+        if (entityQueryExpressionBuilder.hasOrder()) {
             entityQueryExpressionBuilder.getOrder().clear();
         }
-        if(EasySQLExpressionUtil.hasAnyOperateWithoutWhereAndOrder(entityQueryExpressionBuilder)){
+        if (EasySQLExpressionUtil.hasAnyOperateWithoutWhereAndOrder(entityQueryExpressionBuilder)) {
             return null;
         }
 
@@ -166,32 +168,32 @@ public class EasySQLExpressionUtil {
      * @param expressionContext
      * @return
      */
-    public static SQLExecuteStrategyEnum getExecuteStrategy(ExpressionContext expressionContext, ExecutorContext executorContext){
+    public static SQLExecuteStrategyEnum getExecuteStrategy(ExpressionContext expressionContext, ExecutorContext executorContext) {
 
         SQLExecuteStrategyEnum sqlStrategy = expressionContext.getSQLStrategy();
         //非默认的那么也不可以是全部
-        if (SQLExecuteStrategyEnum.DEFAULT.equals(sqlStrategy)) {
-            //如果是默认那么判断全局不是all columns即可
-            EasyQueryOption easyQueryOption = expressionContext.getRuntimeContext().getQueryConfiguration().getEasyQueryOption();
-            if(Objects.equals(ExecuteMethodEnum.INSERT,executorContext.getExecuteMethod())){
-                return easyQueryOption.getInsertStrategy();
-            }else if(Objects.equals(ExecuteMethodEnum.UPDATE,executorContext.getExecuteMethod())){
-                return easyQueryOption.getUpdateStrategy();
-            }
-            throw new UnsupportedOperationException("cant get sql execute strategy");
-        } else {
+        if (!SQLExecuteStrategyEnum.DEFAULT.equals(sqlStrategy)) {
             return sqlStrategy;
         }
+        //如果是默认那么判断全局不是all columns即可
+        EasyQueryOption easyQueryOption = expressionContext.getRuntimeContext().getQueryConfiguration().getEasyQueryOption();
+        if (Objects.equals(ExecuteMethodEnum.INSERT, executorContext.getExecuteMethod())) {
+            return easyQueryOption.getInsertStrategy();
+        } else if (Objects.equals(ExecuteMethodEnum.UPDATE, executorContext.getExecuteMethod())) {
+            return easyQueryOption.getUpdateStrategy();
+        }
+        throw new UnsupportedOperationException("cant get sql execute strategy");
     }
 
     /**
      * 是否个性化执行sql eg. null列更新,非null列更新等
+     *
      * @param expressionContext
      * @return
      */
-    public static boolean sqlExecuteStrategyNonDefault(ExpressionContext expressionContext, ExecutorContext executorContext){
-        SQLExecuteStrategyEnum executeStrategy = getExecuteStrategy(expressionContext,executorContext);
-        return SQLExecuteStrategyEnum.ALL_COLUMNS!=executeStrategy;
+    public static boolean sqlExecuteStrategyIsAllColumns(ExpressionContext expressionContext, ExecutorContext executorContext) {
+        SQLExecuteStrategyEnum executeStrategy = getExecuteStrategy(expressionContext, executorContext);
+        return SQLExecuteStrategyEnum.ALL_COLUMNS == executeStrategy;
     }
 
     public static String getSQLOwnerColumn(QueryRuntimeContext runtimeContext, TableAvailable table, String propertyName,ToSQLContext toSQLContext){

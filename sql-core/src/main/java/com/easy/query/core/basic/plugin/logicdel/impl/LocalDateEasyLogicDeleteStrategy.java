@@ -1,12 +1,11 @@
 package com.easy.query.core.basic.plugin.logicdel.impl;
 
-import com.easy.query.core.basic.plugin.logicdel.LogicDeleteStrategyEnum;
 import com.easy.query.core.basic.plugin.logicdel.LogicDeleteBuilder;
+import com.easy.query.core.basic.plugin.logicdel.LogicDeleteStrategyEnum;
 import com.easy.query.core.basic.plugin.logicdel.abstraction.AbstractLogicDeleteStrategy;
-import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.SQLExpression1;
-import com.easy.query.core.expression.parser.core.SQLWherePredicate;
-import com.easy.query.core.expression.parser.core.SQLColumnSetter;
+import com.easy.query.core.expression.parser.core.base.ColumnSetter;
+import com.easy.query.core.expression.parser.core.base.WherePredicate;
 
 import java.time.LocalDate;
 import java.util.Collections;
@@ -33,12 +32,12 @@ public  class LocalDateEasyLogicDeleteStrategy extends AbstractLogicDeleteStrate
 
 
     @Override
-    protected SQLExpression1<SQLWherePredicate<Object>> getPredicateFilterExpression(LogicDeleteBuilder builder, Property<Object,?> lambdaProperty) {
-        return o->o.isNull(lambdaProperty);
+    protected SQLExpression1<WherePredicate<Object>> getPredicateFilterExpression(LogicDeleteBuilder builder, String propertyName) {
+        return o -> o.isNull(propertyName);
     }
 
     @Override
-    protected SQLExpression1<SQLColumnSetter<Object>> getDeletedSQLExpression(LogicDeleteBuilder builder, Property<Object,?> lambdaProperty) {
+    protected SQLExpression1<ColumnSetter<Object>> getDeletedSQLExpression(LogicDeleteBuilder builder, String propertyName) {
         //错误的用法因为now已经获取是个定值所以每次都是这个值应该在表达式内部如果表达式内部需要的操作复杂可以通过{}展开编写
 //        long now = LocalDate.now();
 //        return o->o.set(lambdaProperty, now);
@@ -48,6 +47,6 @@ public  class LocalDateEasyLogicDeleteStrategy extends AbstractLogicDeleteStrate
 //            long now = LocalDate.now();//这边可以提取参数因为在lambda表达式内部所以会在需要时执行
 //            o.set(lambdaProperty, now);
 //        };
-        return o->o.set(lambdaProperty,LocalDate.now());
+        return o -> o.set(propertyName, LocalDate.now());
     }
 }

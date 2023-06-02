@@ -1,6 +1,6 @@
 package com.easy.query.core.expression.segment.factory;
 
-import com.easy.query.core.basic.api.select.Queryable;
+import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.expression.func.ColumnFunction;
@@ -29,6 +29,8 @@ public interface SQLSegmentFactory {
     FuncColumnSegment createFuncColumnSegment(TableAvailable table, String propertyName, QueryRuntimeContext runtimeContext, ColumnFunction columnFunction, String alias);
     GroupByColumnSegment createGroupByColumnSegment(TableAvailable table, String propertyName, QueryRuntimeContext runtimeContext);
     OrderByColumnSegment createOrderByColumnSegment(TableAvailable table, String propertyName, QueryRuntimeContext runtimeContext, boolean asc);
+
     OrderFuncColumnSegment createOrderFuncColumnSegment(TableAvailable table, String propertyName, QueryRuntimeContext runtimeContext, ColumnFunction columnFunction, boolean asc);
-    SubQueryColumnSegment createSubQueryColumnSegment(TableAvailable table, Queryable<?> subQueryable, String alias, QueryRuntimeContext runtimeContext);
+
+    SubQueryColumnSegment createSubQueryColumnSegment(TableAvailable table, Query<?> subQuery, String alias, QueryRuntimeContext runtimeContext);
 }

@@ -1,17 +1,15 @@
 package com.easy.query.core.bootstrapper;
 
-import com.easy.query.core.context.DefaultEasyQueryRuntimeContext;
-import com.easy.query.core.context.QueryRuntimeContext;
-import com.easy.query.core.api.SQLApiFactory;
-import com.easy.query.core.api.client.DefaultEasyQuery;
-import com.easy.query.core.api.client.EasyQuery;
-import com.easy.query.core.api.def.DefaultEasySQLApiFactory;
+import com.easy.query.core.api.SQLObjectApiFactory;
+import com.easy.query.core.api.client.DefaultEasyObjectQuery;
+import com.easy.query.core.api.client.EasyObjectQuery;
+import com.easy.query.core.api.def.DefaultSQLObjectApiFactory;
+import com.easy.query.core.basic.jdbc.con.ConnectionManager;
+import com.easy.query.core.basic.jdbc.con.EasyConnectionFactory;
+import com.easy.query.core.basic.jdbc.con.EasyDataSourceConnectionFactory;
 import com.easy.query.core.basic.jdbc.con.impl.DefaultConnectionManager;
 import com.easy.query.core.basic.jdbc.con.impl.DefaultEasyConnectionFactory;
 import com.easy.query.core.basic.jdbc.con.impl.DefaultEasyDataSourceConnectionFactory;
-import com.easy.query.core.basic.jdbc.con.EasyConnectionFactory;
-import com.easy.query.core.basic.jdbc.con.ConnectionManager;
-import com.easy.query.core.basic.jdbc.con.EasyDataSourceConnectionFactory;
 import com.easy.query.core.basic.jdbc.executor.DefaultEntityExpressionExecutor;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
 import com.easy.query.core.basic.jdbc.types.EasyJdbcTypeHandlerManager;
@@ -22,35 +20,37 @@ import com.easy.query.core.basic.plugin.track.DefaultTrackManager;
 import com.easy.query.core.basic.plugin.track.TrackManager;
 import com.easy.query.core.basic.thread.DefaultEasyShardingExecutorService;
 import com.easy.query.core.basic.thread.ShardingExecutorService;
+import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.configuration.EasyQueryOptionBuilder;
+import com.easy.query.core.configuration.QueryConfiguration;
+import com.easy.query.core.configuration.dialect.DefaultDialect;
+import com.easy.query.core.configuration.dialect.Dialect;
+import com.easy.query.core.configuration.nameconversion.NameConversion;
+import com.easy.query.core.configuration.nameconversion.impl.UnderlinedNameConversion;
+import com.easy.query.core.context.DefaultEasyQueryRuntimeContext;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.datasource.DataSourceManager;
 import com.easy.query.core.datasource.DataSourceUnitFactory;
 import com.easy.query.core.datasource.DefaultDataSourceManager;
 import com.easy.query.core.datasource.DefaultDataSourceUnitFactory;
 import com.easy.query.core.datasource.replica.DefaultReplicaDataSourceManager;
-import com.easy.query.core.expression.func.ColumnFunctionFactory;
-import com.easy.query.core.expression.func.DefaultColumnFunctionFactory;
-import com.easy.query.core.expression.segment.factory.DefaultSQLSegmentFactory;
-import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
-import com.easy.query.core.inject.ServiceCollection;
-import com.easy.query.core.inject.ServiceProvider;
-import com.easy.query.core.inject.impl.ServiceCollectionImpl;
-import com.easy.query.core.configuration.dialect.Dialect;
-import com.easy.query.core.configuration.nameconversion.NameConversion;
-import com.easy.query.core.configuration.dialect.DefaultDialect;
-import com.easy.query.core.configuration.nameconversion.impl.UnderlinedNameConversion;
-import com.easy.query.core.configuration.QueryConfiguration;
-import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.expression.executor.parser.DefaultEasyPrepareParser;
 import com.easy.query.core.expression.executor.parser.EasyPrepareParser;
 import com.easy.query.core.expression.executor.query.DefaultExecutionContextFactory;
 import com.easy.query.core.expression.executor.query.ExecutionContextFactory;
+import com.easy.query.core.expression.func.ColumnFunctionFactory;
+import com.easy.query.core.expression.func.DefaultColumnFunctionFactory;
 import com.easy.query.core.expression.parser.factory.DefaultSQLExpressionInvokeFactory;
 import com.easy.query.core.expression.parser.factory.SQLExpressionInvokeFactory;
+import com.easy.query.core.expression.segment.factory.DefaultSQLSegmentFactory;
+import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
 import com.easy.query.core.expression.sql.builder.factory.DefaultEasyExpressionBuilderFactory;
 import com.easy.query.core.expression.sql.builder.factory.ExpressionBuilderFactory;
 import com.easy.query.core.expression.sql.expression.factory.DefaultEasyExpressionFactory;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
+import com.easy.query.core.inject.ServiceCollection;
+import com.easy.query.core.inject.ServiceProvider;
+import com.easy.query.core.inject.impl.ServiceCollectionImpl;
 import com.easy.query.core.metadata.DefaultEntityMetadataManager;
 import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.sharding.DefaultEasyQueryDataSource;
@@ -63,14 +63,14 @@ import com.easy.query.core.sharding.rewrite.DefaultRewriteContextFactory;
 import com.easy.query.core.sharding.rewrite.RewriteContextFactory;
 import com.easy.query.core.sharding.route.DefaultRouteContextFactory;
 import com.easy.query.core.sharding.route.RouteContextFactory;
+import com.easy.query.core.sharding.route.datasource.engine.DataSourceRouteEngine;
+import com.easy.query.core.sharding.route.datasource.engine.DefaultDataSourceRouteEngine;
 import com.easy.query.core.sharding.route.descriptor.DefaultRouteDescriptorFactor;
 import com.easy.query.core.sharding.route.descriptor.RouteDescriptorFactory;
 import com.easy.query.core.sharding.route.manager.DataSourceRouteManager;
+import com.easy.query.core.sharding.route.manager.TableRouteManager;
 import com.easy.query.core.sharding.route.manager.impl.DefaultDataSourceRouteManager;
 import com.easy.query.core.sharding.route.manager.impl.DefaultTableRouteManager;
-import com.easy.query.core.sharding.route.manager.TableRouteManager;
-import com.easy.query.core.sharding.route.datasource.engine.DataSourceRouteEngine;
-import com.easy.query.core.sharding.route.datasource.engine.DefaultDataSourceRouteEngine;
 import com.easy.query.core.sharding.route.table.engine.DefaultTableRouteEngine;
 import com.easy.query.core.sharding.route.table.engine.TableRouteEngine;
 
@@ -101,7 +101,7 @@ public class EasyQueryBuilderConfiguration {
                 .replaceService(EntityMetadataManager.class, DefaultEntityMetadataManager.class)
                 .replaceService(SQLExpressionInvokeFactory.class, DefaultSQLExpressionInvokeFactory.class)
                 .replaceService(ExpressionBuilderFactory.class, DefaultEasyExpressionBuilderFactory.class)
-                .replaceService(SQLApiFactory.class, DefaultEasySQLApiFactory.class)
+                .replaceService(SQLObjectApiFactory.class, DefaultSQLObjectApiFactory.class)
                 .replaceService(TrackManager.class, DefaultTrackManager.class)
                 .replaceService(EasyPageResultProvider.class, DefaultEasyPageResultProvider.class)
                 .replaceService(EasyPrepareParser.class, DefaultEasyPrepareParser.class)
@@ -127,7 +127,7 @@ public class EasyQueryBuilderConfiguration {
                 .replaceService(RouteDescriptorFactory.class, DefaultRouteDescriptorFactor.class)
                 .replaceService(DataSourceUnitFactory.class, DefaultDataSourceUnitFactory.class)
                 .replaceService(SQLSegmentFactory.class, DefaultSQLSegmentFactory.class)
-                .replaceService(EasyQuery.class, DefaultEasyQuery.class);
+                .replaceService(EasyObjectQuery.class, DefaultEasyObjectQuery.class);
     }
 
     public EasyQueryBuilderConfiguration setDefaultDataSource(DataSource dataSource) {
@@ -225,7 +225,7 @@ public class EasyQueryBuilderConfiguration {
      *
      * @return EasyQuery实例
      */
-    public EasyQuery build() {
+    public EasyObjectQuery build() {
         if (this.dataSource == null) {
             throw new IllegalArgumentException("data source null");
         }
@@ -233,7 +233,7 @@ public class EasyQueryBuilderConfiguration {
         EasyQueryOption easyQueryOption = easyQueryOptionBuilder.build();
         replaceService(easyQueryOption);
         ServiceProvider serviceProvider = serviceCollection.build();
-        return serviceProvider.getService(EasyQuery.class);
+        return serviceProvider.getService(EasyObjectQuery.class);
     }
 
 }

@@ -1,6 +1,6 @@
 package com.easy.query.core.basic.plugin.interceptor;
 
-import com.easy.query.core.expression.parser.core.SQLWherePredicate;
+import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.sql.builder.LambdaEntityExpressionBuilder;
 
 /**
@@ -14,9 +14,10 @@ public interface PredicateFilterInterceptor extends Interceptor {
 
     /**
      * 配置
+     *
      * @param entityClass
      * @param lambdaEntityExpressionBuilder
      * @param sqlWherePredicate
      */
-    void configure(Class<?> entityClass, LambdaEntityExpressionBuilder lambdaEntityExpressionBuilder, SQLWherePredicate<Object> sqlWherePredicate);
+    void configure(Class<?> entityClass, LambdaEntityExpressionBuilder lambdaEntityExpressionBuilder, WherePredicate<Object> sqlWherePredicate);
 }

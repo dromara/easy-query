@@ -1,17 +1,16 @@
 package com.easy.query.core.expression.sql.builder.impl;
 
 import com.easy.query.core.context.QueryRuntimeContext;
-import com.easy.query.core.expression.parser.core.SQLWherePredicate;
-import com.easy.query.core.expression.parser.core.SQLColumnSetter;
 import com.easy.query.core.enums.MultiTableTypeEnum;
-import com.easy.query.core.expression.EntityTableAvailable;
-import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
-import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.parser.core.base.ColumnSetter;
+import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
+import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
+import com.easy.query.core.metadata.EntityMetadata;
 
 import java.util.function.Function;
 
@@ -56,7 +55,7 @@ public class TableExpressionBuilder implements EntityTableExpressionBuilder {
     }
 
     @Override
-    public SQLExpression1<SQLWherePredicate<Object>> getLogicDeleteQueryFilterExpression() {
+    public SQLExpression1<WherePredicate<Object>> getLogicDeleteQueryFilterExpression() {
         if (getEntityMetadata().enableLogicDelete()) {
             return getEntityMetadata().getLogicDeleteMetadata().getLogicDeletePredicateFilterExpression();
         }
@@ -64,7 +63,7 @@ public class TableExpressionBuilder implements EntityTableExpressionBuilder {
     }
 
     @Override
-    public SQLExpression1<SQLColumnSetter<Object>> getLogicDeletedSQLExpression() {
+    public SQLExpression1<ColumnSetter<Object>> getLogicDeletedSQLExpression() {
         if (getEntityMetadata().enableLogicDelete()) {
             return getEntityMetadata().getLogicDeleteMetadata().getLogicDeletedSQLExpression();
         }

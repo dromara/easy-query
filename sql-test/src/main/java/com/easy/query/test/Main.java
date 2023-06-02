@@ -2,20 +2,21 @@ package com.easy.query.test;
 
 
 import com.alibaba.druid.pool.DruidDataSourceFactory;
-import com.easy.query.core.context.QueryRuntimeContext;
-import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
-import com.easy.query.core.enums.SQLRangeEnum;
-import com.easy.query.core.enums.SQLExecuteStrategyEnum;
-import com.easy.query.test.dto.TopicRequest;
-import com.easy.query.test.entity.Topic;
-import com.easy.query.mysql.config.MySQLDatabaseConfiguration;
+import com.easy.query.api4j.client.DefaultEasyQuery;
+import com.easy.query.api4j.client.EasyQuery;
+import com.easy.query.api4j.select.Queryable;
 import com.easy.query.core.api.pagination.EasyPageResult;
-import com.easy.query.core.api.client.EasyQuery;
-import com.easy.query.core.basic.api.select.Queryable;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
+import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.AggregatePredicateCompare;
+import com.easy.query.core.enums.SQLExecuteStrategyEnum;
+import com.easy.query.core.enums.SQLRangeEnum;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.logging.LogFactory;
+import com.easy.query.mysql.config.MySQLDatabaseConfiguration;
+import com.easy.query.test.dto.TopicRequest;
+import com.easy.query.test.entity.Topic;
 import com.easy.query.test.mytest.SysUserLogbyMonth;
 import com.easy.query.test.mytest.TestUserMysql;
 import com.easy.query.test.mytest.TestUserMysqlGroup;
@@ -29,7 +30,13 @@ import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Properties;
+import java.util.Random;
+import java.util.UUID;
 
 @Ignore
 public class Main {
@@ -122,10 +129,10 @@ public class Main {
             throw new EasyQueryException(e);
         }
 
-        easyQuery =  EasyQueryBootstrapper.defaultBuilderConfiguration()
+        easyQuery = new DefaultEasyQuery(EasyQueryBootstrapper.defaultBuilderConfiguration()
                 .setDefaultDataSource(dataSource)
                 .useDatabaseConfigure(new MySQLDatabaseConfiguration())
-                .build();
+                .build());
         QueryRuntimeContext runtimeContext = easyQuery.getRuntimeContext();
 //        jqdcRuntimeContext.getEasyQueryConfiguration().applyEntityTypeConfiguration(new TestUserMySqlConfiguration());
 //        configuration.applyGlobalInterceptor(new NameQueryFilter());

@@ -10,7 +10,7 @@ import com.easy.query.core.bootstrapper.DatabaseConfiguration;
 import com.easy.query.core.bootstrapper.DefaultDatabaseConfiguration;
 import com.easy.query.core.bootstrapper.DefaultStarterConfigurer;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
-import com.easy.query.core.api.client.EasyQuery;
+import com.easy.query.core.api.client.EasyObjectQuery;
 import com.easy.query.core.bootstrapper.StarterConfigurer;
 import com.easy.query.core.configuration.nameconversion.NameConversion;
 import com.easy.query.core.configuration.nameconversion.impl.DefaultNameConversion;
@@ -139,8 +139,8 @@ public class EasyQueryStarterAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public EasyQuery easyQuery(DatabaseConfiguration databaseConfiguration, StarterConfigurer starterConfigurer, NameConversion nameConversion) {
-        EasyQuery easyQuery = EasyQueryBootstrapper.defaultBuilderConfiguration()
+    public EasyObjectQuery easyQuery(DatabaseConfiguration databaseConfiguration, StarterConfigurer starterConfigurer, NameConversion nameConversion) {
+        EasyObjectQuery easyQuery = EasyQueryBootstrapper.defaultBuilderConfiguration()
                 .setDefaultDataSource(dataSource)
                 .replaceService(DataSourceUnitFactory.class, SpringDataSourceUnitFactory.class)
                 .optionConfigure(builder -> {

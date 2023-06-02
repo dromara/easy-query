@@ -19,8 +19,6 @@ public interface EntityUpdateExpressionBuilder extends EntityPredicateExpression
      SQLBuilderSegment getSetIgnoreColumns();
      boolean hasSetIgnoreColumns();
      SQLBuilderSegment getWhereColumns();
-     boolean hasWhereColumns();
-
      @Override
      EntityUpdateExpressionBuilder cloneEntityExpressionBuilder();
      @Override

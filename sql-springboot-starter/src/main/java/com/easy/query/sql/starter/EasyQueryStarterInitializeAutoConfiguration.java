@@ -1,6 +1,6 @@
 package com.easy.query.sql.starter;
 
-import com.easy.query.core.api.client.EasyQuery;
+import com.easy.query.core.api.client.EasyObjectQuery;
 import com.easy.query.core.basic.plugin.conversion.ValueConverter;
 import com.easy.query.core.basic.plugin.encryption.EncryptionStrategy;
 import com.easy.query.core.basic.plugin.interceptor.Interceptor;
@@ -22,7 +22,6 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
-import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 import java.util.Map;
 
@@ -43,15 +42,16 @@ import java.util.Map;
 )
 public class EasyQueryStarterInitializeAutoConfiguration {
 
-    private final EasyQuery easyQuery;
+    private final EasyObjectQuery easyQuery;
     private final EasyQueryInitializeOption easyQueryInitializeOption;
 
-    public EasyQueryStarterInitializeAutoConfiguration(EasyQuery easyQuery, EasyQueryInitializeOption easyQueryInitializeOption){
+    public EasyQueryStarterInitializeAutoConfiguration(EasyObjectQuery easyQuery, EasyQueryInitializeOption easyQueryInitializeOption) {
 
         this.easyQuery = easyQuery;
         this.easyQueryInitializeOption = easyQueryInitializeOption;
         initialize();
     }
+
     public void initialize() {
         QueryRuntimeContext runtimeContext = easyQuery.getRuntimeContext();
         QueryConfiguration configuration = runtimeContext.getQueryConfiguration();

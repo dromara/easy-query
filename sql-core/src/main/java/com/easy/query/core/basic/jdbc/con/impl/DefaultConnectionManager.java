@@ -12,7 +12,6 @@ import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import com.easy.query.core.sharding.EasyQueryDataSource;
-import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.Collections;
 import java.util.List;

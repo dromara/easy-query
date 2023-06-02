@@ -1,9 +1,11 @@
 package com.easy.query.test;
 
+import com.easy.query.api4j.client.DefaultEasyQuery;
+import com.easy.query.api4j.client.EasyQuery;
 import com.easy.query.core.configuration.ShardingDataSource;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
-import com.easy.query.core.api.client.EasyQuery;
+import com.easy.query.core.api.client.EasyObjectQuery;
 import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.configuration.EasyQueryShardingOption;
 import com.easy.query.core.logging.LogFactory;
@@ -47,10 +49,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /**
+ * @author xuejiaming
  * @FileName: BaseTest.java
  * @Description: 基础单元测试类用于构建easy-query
  * @Date: 2023/3/16 16:47
- * @author xuejiaming
  */
 public abstract class BaseTest {
     public static HikariDataSource dataSource;
@@ -84,7 +86,7 @@ public abstract class BaseTest {
             dataSource.setPassword("root");
             dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
             dataSource.setMaximumPoolSize(20);
-            shardingDataSources.add(new ShardingDataSource("ds2021",dataSource,20));
+            shardingDataSources.add(new ShardingDataSource("ds2021", dataSource, 20));
         }
         {
             HikariDataSource dataSource = new HikariDataSource();
@@ -93,7 +95,7 @@ public abstract class BaseTest {
             dataSource.setPassword("root");
             dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
             dataSource.setMaximumPoolSize(20);
-            shardingDataSources.add(new ShardingDataSource("ds2022",dataSource,20));
+            shardingDataSources.add(new ShardingDataSource("ds2022", dataSource, 20));
         }
         {
             HikariDataSource dataSource = new HikariDataSource();
@@ -102,16 +104,16 @@ public abstract class BaseTest {
             dataSource.setPassword("root");
             dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
             dataSource.setMaximumPoolSize(20);
-            shardingDataSources.add(new ShardingDataSource("ds2023",dataSource,20));
+            shardingDataSources.add(new ShardingDataSource("ds2023", dataSource, 20));
         }
-        easyQueryShardingOption=new EasyQueryShardingOption(shardingDataSources);
+        easyQueryShardingOption = new EasyQueryShardingOption(shardingDataSources);
 //        postgres://postgres:postgrespw@localhost:55000
     }
 
     public static void initEasyQuery() {
-        easyQuery = EasyQueryBootstrapper.defaultBuilderConfiguration()
+        EasyObjectQuery easyObjectQuery = EasyQueryBootstrapper.defaultBuilderConfiguration()
                 .setDefaultDataSource(dataSource)
-                .optionConfigure(op->{
+                .optionConfigure(op -> {
                     op.setDeleteThrowError(false);
                     op.setExecutorCorePoolSize(1);
                     op.setExecutorMaximumPoolSize(0);
@@ -124,6 +126,7 @@ public abstract class BaseTest {
                 })
                 .useDatabaseConfigure(new MySQLDatabaseConfiguration())
                 .build();
+        easyQuery = new DefaultEasyQuery(easyObjectQuery);
         QueryRuntimeContext runtimeContext = easyQuery.getRuntimeContext();
         QueryConfiguration configuration = runtimeContext.getQueryConfiguration();
         configuration.applyEncryptionStrategy(new DefaultAesEasyEncryptionStrategy());
@@ -195,7 +198,7 @@ public abstract class BaseTest {
 
 
         boolean topicAny = easyQuery.queryable(Topic.class).any();
-        if(!topicAny){
+        if (!topicAny) {
             List<Topic> topics = new ArrayList<>();
             for (int i = 0; i < 100; i++) {
                 Topic topic = new Topic();
@@ -209,22 +212,22 @@ public abstract class BaseTest {
         }
 
         boolean sysUserAny = easyQuery.queryable(SysUser.class).any();
-        if(!sysUserAny){
+        if (!sysUserAny) {
             List<SysUser> sysUsers = new ArrayList<>();
             for (int i = 0; i < 100; i++) {
                 SysUser sysUser = new SysUser();
                 sysUser.setId(String.valueOf(i));
-                sysUser.setUsername("username"+String.valueOf(i));
+                sysUser.setUsername("username" + String.valueOf(i));
                 sysUser.setCreateTime(LocalDateTime.now().plusDays(i));
-                sysUser.setPhone("18888888"+String.valueOf(i)+String.valueOf(i));
-                sysUser.setIdCard("333333333333333"+String.valueOf(i)+String.valueOf(i));
-                sysUser.setAddress(sysUser.getPhone()+sysUser.getIdCard());
+                sysUser.setPhone("18888888" + String.valueOf(i) + String.valueOf(i));
+                sysUser.setIdCard("333333333333333" + String.valueOf(i) + String.valueOf(i));
+                sysUser.setAddress(sysUser.getPhone() + sysUser.getIdCard());
                 sysUsers.add(sysUser);
             }
             long l = easyQuery.insertable(sysUsers).executeRows();
         }
         boolean logicDeleteAny = easyQuery.queryable(LogicDelTopic.class).any();
-        if(!logicDeleteAny){
+        if (!logicDeleteAny) {
             List<LogicDelTopic> logicDelTopics = new ArrayList<>();
             for (int i = 0; i < 100; i++) {
                 LogicDelTopic logicDelTopic = new LogicDelTopic();
@@ -238,7 +241,7 @@ public abstract class BaseTest {
             long l = easyQuery.insertable(logicDelTopics).executeRows();
         }
         boolean logicDeleteCusAny = easyQuery.queryable(LogicDelTopicCustom.class).any();
-        if(!logicDeleteCusAny){
+        if (!logicDeleteCusAny) {
             List<LogicDelTopicCustom> logicDelTopics = new ArrayList<>();
             for (int i = 0; i < 100; i++) {
                 LogicDelTopicCustom logicDelTopic = new LogicDelTopicCustom();
@@ -251,7 +254,7 @@ public abstract class BaseTest {
             long l = easyQuery.insertable(logicDelTopics).executeRows();
         }
         boolean topicInterceptorAny = easyQuery.queryable(TopicInterceptor.class).any();
-        if(!topicInterceptorAny){
+        if (!topicInterceptorAny) {
             List<TopicInterceptor> topicInterceptors = new ArrayList<>();
             for (int i = 0; i < 100; i++) {
                 TopicInterceptor topicInterceptor = new TopicInterceptor();
@@ -267,89 +270,89 @@ public abstract class BaseTest {
             }
             long l = easyQuery.insertable(topicInterceptors).executeRows();
         }
-        boolean topicShardingAny = easyQuery.queryable(TopicSharding.class).where(o->o.le(TopicSharding::getStars,1000)).any();
-       if(!topicShardingAny){
+        boolean topicShardingAny = easyQuery.queryable(TopicSharding.class).where(o -> o.le(TopicSharding::getStars, 1000)).any();
+        if (!topicShardingAny) {
 
-           ArrayList<TopicSharding> topicShardings = new ArrayList<>(500);
-           for (int i = 0; i < 500; i++) {
-               TopicSharding topicSharding = new TopicSharding();
-               topicSharding.setId(String.valueOf(i));
-               topicSharding.setTitle("title" + i);
-               topicSharding.setStars(i);
-               topicSharding.setCreateTime(LocalDateTime.now().plusMinutes(i));
-               topicShardings.add(topicSharding);
-           }
+            ArrayList<TopicSharding> topicShardings = new ArrayList<>(500);
+            for (int i = 0; i < 500; i++) {
+                TopicSharding topicSharding = new TopicSharding();
+                topicSharding.setId(String.valueOf(i));
+                topicSharding.setTitle("title" + i);
+                topicSharding.setStars(i);
+                topicSharding.setCreateTime(LocalDateTime.now().plusMinutes(i));
+                topicShardings.add(topicSharding);
+            }
 
-           long l = easyQuery.insertable(topicShardings).executeRows();
-       }
+            long l = easyQuery.insertable(topicShardings).executeRows();
+        }
         boolean shardingTimeExists = easyQuery.queryable(TopicShardingTime.class).any();
-       if(!shardingTimeExists){
+        if (!shardingTimeExists) {
 
-           LocalDateTime beginTime = LocalDateTime.of(2020, 1, 1, 1, 1);
-           LocalDateTime endTime = LocalDateTime.of(2023, 5, 1, 1, 1);
-           Duration between = Duration.between(beginTime, endTime);
-           long days = between.toDays();
-           ArrayList<TopicShardingTime> topicShardingTimes = new ArrayList<>(500);
-           for (int i = 0; i < days; i++) {
-               LocalDateTime now = beginTime.plusDays(i);
-               String month = now.format(DateTimeFormatter.ofPattern("yyyyMM"));
-               TopicShardingTime topicShardingTime = new TopicShardingTime();
-               topicShardingTime.setId(UUID.randomUUID().toString().replaceAll("-","")+month);
-               topicShardingTime.setTitle("title" + month);
-               topicShardingTime.setStars(i);
-               topicShardingTime.setCreateTime(now);
-               topicShardingTimes.add(topicShardingTime);
-           }
+            LocalDateTime beginTime = LocalDateTime.of(2020, 1, 1, 1, 1);
+            LocalDateTime endTime = LocalDateTime.of(2023, 5, 1, 1, 1);
+            Duration between = Duration.between(beginTime, endTime);
+            long days = between.toDays();
+            ArrayList<TopicShardingTime> topicShardingTimes = new ArrayList<>(500);
+            for (int i = 0; i < days; i++) {
+                LocalDateTime now = beginTime.plusDays(i);
+                String month = now.format(DateTimeFormatter.ofPattern("yyyyMM"));
+                TopicShardingTime topicShardingTime = new TopicShardingTime();
+                topicShardingTime.setId(UUID.randomUUID().toString().replaceAll("-", "") + month);
+                topicShardingTime.setTitle("title" + month);
+                topicShardingTime.setStars(i);
+                topicShardingTime.setCreateTime(now);
+                topicShardingTimes.add(topicShardingTime);
+            }
 
-           long l = easyQuery.insertable(topicShardingTimes).executeRows();
-           System.out.println("插入时间条数:"+l);
-       }
+            long l = easyQuery.insertable(topicShardingTimes).executeRows();
+            System.out.println("插入时间条数:" + l);
+        }
         boolean shardingDataSourceTimeExists = easyQuery.queryable(TopicShardingDataSourceTime.class).any();
         System.out.println(shardingDataSourceTimeExists);
-       if(!shardingDataSourceTimeExists){
+        if (!shardingDataSourceTimeExists) {
 
-           LocalDateTime beginTime = LocalDateTime.of(2020, 1, 1, 1, 1);
-           LocalDateTime endTime = LocalDateTime.of(2023, 5, 1, 1, 1);
-           Duration between = Duration.between(beginTime, endTime);
-           long days = between.toDays();
-           ArrayList<TopicShardingDataSourceTime> topicShardingDataSourceTimes = new ArrayList<>(500);
-           for (int i = 0; i < days; i++) {
-               LocalDateTime now = beginTime.plusDays(i);
-               String month = now.format(DateTimeFormatter.ofPattern("yyyyMM"));
-               TopicShardingDataSourceTime topicShardingDataSourceTime = new TopicShardingDataSourceTime();
-               topicShardingDataSourceTime.setId(UUID.randomUUID().toString().replaceAll("-","")+month);
-               topicShardingDataSourceTime.setTitle("title" + month);
-               topicShardingDataSourceTime.setStars(i);
-               topicShardingDataSourceTime.setCreateTime(now);
-               topicShardingDataSourceTimes.add(topicShardingDataSourceTime);
-           }
+            LocalDateTime beginTime = LocalDateTime.of(2020, 1, 1, 1, 1);
+            LocalDateTime endTime = LocalDateTime.of(2023, 5, 1, 1, 1);
+            Duration between = Duration.between(beginTime, endTime);
+            long days = between.toDays();
+            ArrayList<TopicShardingDataSourceTime> topicShardingDataSourceTimes = new ArrayList<>(500);
+            for (int i = 0; i < days; i++) {
+                LocalDateTime now = beginTime.plusDays(i);
+                String month = now.format(DateTimeFormatter.ofPattern("yyyyMM"));
+                TopicShardingDataSourceTime topicShardingDataSourceTime = new TopicShardingDataSourceTime();
+                topicShardingDataSourceTime.setId(UUID.randomUUID().toString().replaceAll("-", "") + month);
+                topicShardingDataSourceTime.setTitle("title" + month);
+                topicShardingDataSourceTime.setStars(i);
+                topicShardingDataSourceTime.setCreateTime(now);
+                topicShardingDataSourceTimes.add(topicShardingDataSourceTime);
+            }
 
-           long l = easyQuery.insertable(topicShardingDataSourceTimes).executeRows();
-           System.out.println("插入时间条数:"+l);
-       }
+            long l = easyQuery.insertable(topicShardingDataSourceTimes).executeRows();
+            System.out.println("插入时间条数:" + l);
+        }
 
         boolean any1 = easyQuery.queryable(TopicShardingDataSource.class)
                 .any();
-       if(!any1){
+        if (!any1) {
 
-           LocalDateTime beginTime = LocalDateTime.of(2020, 1, 1, 1, 1);
-           LocalDateTime endTime = LocalDateTime.of(2023, 5, 1, 1, 1);
-           Duration between = Duration.between(beginTime, endTime);
-           long days = between.toDays();
-           ArrayList<TopicShardingDataSource> topicShardingDataSources = new ArrayList<>(500);
-           for (int i = 0; i < days; i++) {
-               LocalDateTime now = beginTime.plusDays(i);
-               String month = now.format(DateTimeFormatter.ofPattern("yyyyMM"));
-               TopicShardingDataSource topicShardingDataSource = new TopicShardingDataSource();
-               topicShardingDataSource.setId(UUID.randomUUID().toString().replaceAll("-","")+month);
-               topicShardingDataSource.setTitle("title" + month);
-               topicShardingDataSource.setStars(i);
-               topicShardingDataSource.setCreateTime(now);
-               topicShardingDataSources.add(topicShardingDataSource);
-           }
+            LocalDateTime beginTime = LocalDateTime.of(2020, 1, 1, 1, 1);
+            LocalDateTime endTime = LocalDateTime.of(2023, 5, 1, 1, 1);
+            Duration between = Duration.between(beginTime, endTime);
+            long days = between.toDays();
+            ArrayList<TopicShardingDataSource> topicShardingDataSources = new ArrayList<>(500);
+            for (int i = 0; i < days; i++) {
+                LocalDateTime now = beginTime.plusDays(i);
+                String month = now.format(DateTimeFormatter.ofPattern("yyyyMM"));
+                TopicShardingDataSource topicShardingDataSource = new TopicShardingDataSource();
+                topicShardingDataSource.setId(UUID.randomUUID().toString().replaceAll("-", "") + month);
+                topicShardingDataSource.setTitle("title" + month);
+                topicShardingDataSource.setStars(i);
+                topicShardingDataSource.setCreateTime(now);
+                topicShardingDataSources.add(topicShardingDataSource);
+            }
 
-           long l = easyQuery.insertable(topicShardingDataSources).executeRows();
-       }
+            long l = easyQuery.insertable(topicShardingDataSources).executeRows();
+        }
     }
 
 

@@ -1,7 +1,6 @@
 package com.easy.query.core.expression.segment;
 
-import com.easy.query.core.basic.api.select.Queryable;
-import com.easy.query.core.expression.func.AggregationType;
+import com.easy.query.core.basic.api.select.Query;
 
 /**
  * create time 2023/5/20 10:07
@@ -10,7 +9,7 @@ import com.easy.query.core.expression.func.AggregationType;
  * @author xuejiaming
  */
 public interface SubQueryColumnSegment extends MaybeAggregateColumnSegment{
-    Queryable<?> getSubQueryable();
+    Query<?> getSubQuery();
 
     @Override
     SubQueryColumnSegment cloneSQLEntitySegment();

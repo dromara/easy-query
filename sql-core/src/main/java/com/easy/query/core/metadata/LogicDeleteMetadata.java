@@ -1,8 +1,8 @@
 package com.easy.query.core.metadata;
 
 import com.easy.query.core.expression.lambda.SQLExpression1;
-import com.easy.query.core.expression.parser.core.SQLWherePredicate;
-import com.easy.query.core.expression.parser.core.SQLColumnSetter;
+import com.easy.query.core.expression.parser.core.base.ColumnSetter;
+import com.easy.query.core.expression.parser.core.base.WherePredicate;
 
 /**
  * @FileName: LogicDeleteMetadata.java
@@ -12,7 +12,7 @@ import com.easy.query.core.expression.parser.core.SQLColumnSetter;
  */
 public final class LogicDeleteMetadata {
 
-    public LogicDeleteMetadata(String propertyName, SQLExpression1<SQLWherePredicate<Object>> logicDeletePredicateFilterExpression, SQLExpression1<SQLColumnSetter<Object>> logicDeletedSQLExpression) {
+    public LogicDeleteMetadata(String propertyName, SQLExpression1<WherePredicate<Object>> logicDeletePredicateFilterExpression, SQLExpression1<ColumnSetter<Object>> logicDeletedSQLExpression) {
         this.propertyName = propertyName;
         this.logicDeletePredicateFilterExpression = logicDeletePredicateFilterExpression;
         this.logicDeletedSQLExpression = logicDeletedSQLExpression;
@@ -22,17 +22,17 @@ public final class LogicDeleteMetadata {
     /**
      * where
      */
-    private final SQLExpression1<SQLWherePredicate<Object>> logicDeletePredicateFilterExpression;
+    private final SQLExpression1<WherePredicate<Object>> logicDeletePredicateFilterExpression;
     /**
      * update set
      */
-    private final SQLExpression1<SQLColumnSetter<Object>> logicDeletedSQLExpression;
+    private final SQLExpression1<ColumnSetter<Object>> logicDeletedSQLExpression;
 
-    public SQLExpression1<SQLWherePredicate<Object>> getLogicDeletePredicateFilterExpression() {
+    public SQLExpression1<WherePredicate<Object>> getLogicDeletePredicateFilterExpression() {
         return logicDeletePredicateFilterExpression;
     }
 
-    public SQLExpression1<SQLColumnSetter<Object>> getLogicDeletedSQLExpression() {
+    public SQLExpression1<ColumnSetter<Object>> getLogicDeletedSQLExpression() {
         return logicDeletedSQLExpression;
     }
 

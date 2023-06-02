@@ -1,7 +1,5 @@
 package com.easy.query.core.basic.api.internal;
 
-import com.easy.query.core.basic.api.select.Queryable;
-
 /**
  * create time 2023/4/1 22:02
  * 文件说明

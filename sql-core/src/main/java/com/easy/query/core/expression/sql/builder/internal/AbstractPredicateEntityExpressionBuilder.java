@@ -1,23 +1,21 @@
 package com.easy.query.core.expression.sql.builder.internal;
 
-import com.easy.query.core.expression.parser.core.SQLWherePredicate;
-import com.easy.query.core.expression.parser.factory.SQLExpressionInvokeFactory;
-import com.easy.query.core.common.bean.FastBean;
+import com.easy.query.core.basic.plugin.interceptor.PredicateFilterInterceptor;
+import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.enums.EasyBehaviorEnum;
+import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.parser.core.base.WherePredicate;
+import com.easy.query.core.expression.parser.factory.SQLExpressionInvokeFactory;
+import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
+import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnPropertyPredicate;
 import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.builder.LambdaEntityExpressionBuilder;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
-import com.easy.query.core.configuration.QueryConfiguration;
-import com.easy.query.core.expression.lambda.SQLExpression1;
-import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
-import com.easy.query.core.expression.segment.condition.PredicateSegment;
-import com.easy.query.core.basic.plugin.interceptor.PredicateFilterInterceptor;
-import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
-import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.metadata.VersionMetadata;
-import com.easy.query.core.util.EasyBeanUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.Objects;
@@ -48,21 +46,19 @@ public abstract class AbstractPredicateEntityExpressionBuilder extends AbstractE
             EntityMetadata entityMetadata = table.getEntityMetadata();
             PredicateSegment predicateSegment = new AndPredicateSegment(true);
             SQLExpressionInvokeFactory easyQueryLambdaFactory = getRuntimeContext().getSQLExpressionInvokeFactory();
-            SQLWherePredicate<Object> sqlPredicate = easyQueryLambdaFactory.createSQLPredicate(table.getIndex(), this, predicateSegment);
+            WherePredicate<Object> sqlPredicate = easyQueryLambdaFactory.createSQLPredicate(table.getIndex(), this, predicateSegment);
 
             if (useLogicDelete(entityMetadata)) {
-                SQLExpression1<SQLWherePredicate<Object>> logicDeleteQueryFilterExpression = table.getLogicDeleteQueryFilterExpression();
+                SQLExpression1<WherePredicate<Object>> logicDeleteQueryFilterExpression = table.getLogicDeleteQueryFilterExpression();
                 logicDeleteQueryFilterExpression.apply(sqlPredicate);
             }
 
             if (entityMetadata.hasVersionColumn()) {
                 VersionMetadata versionMetadata = entityMetadata.getVersionMetadata();
-                ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(versionMetadata.getPropertyName());
                 if (isExpression()) {
                     Object version = expressionContext.getVersion();
                     if (Objects.nonNull(version)) {
-                        FastBean fastBean = EasyBeanUtil.getFastBean(table.getEntityClass());
-                        sqlPredicate.eq(fastBean.getBeanGetter(columnMetadata.getProperty()), version);
+                        sqlPredicate.eq(versionMetadata.getPropertyName(), version);
                     }
                 } else {
                     AndPredicateSegment versionPredicateSegment = new AndPredicateSegment(new ColumnPropertyPredicate(table.getEntityTable(), versionMetadata.getPropertyName(), this.getRuntimeContext()));

@@ -16,6 +16,9 @@ public class EasyLambdaUtil {
 
     private EasyLambdaUtil(){}
     public static <T> String getPropertyName(Property<T, ?> property) {
+        if (property == null) {
+            return null;
+        }
         try {
             //添加缓存
             Method declaredMethod = property.getClass().getDeclaredMethod("writeReplace");

@@ -2,12 +2,10 @@ package com.easy.query.test.interceptor;
 
 import com.easy.query.core.basic.plugin.interceptor.EntityInterceptor;
 import com.easy.query.core.basic.plugin.interceptor.PredicateFilterInterceptor;
-import com.easy.query.core.expression.lambda.Property;
-import com.easy.query.core.expression.parser.core.SQLWherePredicate;
+import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.LambdaEntityExpressionBuilder;
-import com.easy.query.core.util.EasyBeanUtil;
 import com.easy.query.test.entity.TopicInterceptor;
 import com.easy.query.test.logicdel.CurrentUserHelper;
 
@@ -29,11 +27,10 @@ public class MyTenantInterceptor implements EntityInterceptor, PredicateFilterIn
     }
 
     @Override
-    public void configure(Class<?> entityClass, LambdaEntityExpressionBuilder lambdaEntityExpressionBuilder, SQLWherePredicate<Object> sqlWherePredicate) {
-        if(CurrentUserHelper.getUserId()!=null){
+    public void configure(Class<?> entityClass, LambdaEntityExpressionBuilder lambdaEntityExpressionBuilder, WherePredicate<Object> sqlWherePredicate) {
+        if (CurrentUserHelper.getUserId() != null) {
             //获取租户id的lambda表达式
-            Property<Object, ?> tenantId = EasyBeanUtil.getPropertyGetterLambda(entityClass, "tenantId", String.class);
-            sqlWherePredicate.eq(tenantId, CurrentUserHelper.getTenantId());
+            sqlWherePredicate.eq("tenantId", CurrentUserHelper.getTenantId());
         }
     }
 

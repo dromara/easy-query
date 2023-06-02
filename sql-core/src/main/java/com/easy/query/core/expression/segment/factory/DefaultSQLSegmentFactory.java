@@ -1,11 +1,12 @@
 package com.easy.query.core.expression.segment.factory;
 
-import com.easy.query.core.basic.api.select.Queryable;
+import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.ColumnInsertSegment;
+import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.segment.ColumnWithSelfSegment;
 import com.easy.query.core.expression.segment.FuncColumnSegment;
 import com.easy.query.core.expression.segment.GroupByColumnSegment;
@@ -13,10 +14,9 @@ import com.easy.query.core.expression.segment.OrderByColumnSegment;
 import com.easy.query.core.expression.segment.OrderFuncColumnSegment;
 import com.easy.query.core.expression.segment.SelectConstSegment;
 import com.easy.query.core.expression.segment.SubQueryColumnSegment;
-import com.easy.query.core.expression.segment.impl.ColumnWithSelfSegmentImpl;
 import com.easy.query.core.expression.segment.impl.ColumnInsertSegmentImpl;
-import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.segment.impl.ColumnSegmentImpl;
+import com.easy.query.core.expression.segment.impl.ColumnWithSelfSegmentImpl;
 import com.easy.query.core.expression.segment.impl.FuncColumnSegmentImpl;
 import com.easy.query.core.expression.segment.impl.GroupColumnSegmentImpl;
 import com.easy.query.core.expression.segment.impl.OrderColumnSegmentImpl;
@@ -72,7 +72,7 @@ public class DefaultSQLSegmentFactory implements SQLSegmentFactory{
     }
 
     @Override
-    public SubQueryColumnSegment createSubQueryColumnSegment(TableAvailable table, Queryable<?> subQueryable, String alias, QueryRuntimeContext runtimeContext) {
-        return new SubQueryColumnSegmentImpl(table,subQueryable,alias,runtimeContext);
+    public SubQueryColumnSegment createSubQueryColumnSegment(TableAvailable table, Query<?> subQuery, String alias, QueryRuntimeContext runtimeContext) {
+        return new SubQueryColumnSegmentImpl(table, subQuery, alias, runtimeContext);
     }
 }

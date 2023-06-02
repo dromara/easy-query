@@ -1,6 +1,6 @@
 package com.easy.query.test;
 
-import com.easy.query.core.basic.api.update.ExpressionUpdatable;
+import com.easy.query.api4j.update.ExpressionUpdatable;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.test.entity.LogicDelTopic;
 import com.easy.query.test.entity.LogicDelTopicCustom;

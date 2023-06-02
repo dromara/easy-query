@@ -1,11 +1,8 @@
 package com.easyquery.springbootdemo.interceptor;
 
-import com.easy.query.core.common.bean.FastBean;
-import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.basic.plugin.interceptor.PredicateFilterInterceptor;
-import com.easy.query.core.expression.parser.core.SQLWherePredicate;
+import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.sql.builder.LambdaEntityExpressionBuilder;
-import com.easy.query.core.util.EasyBeanUtil;
 import com.easyquery.springbootdemo.domain.BlogEntity;
 import org.springframework.stereotype.Component;
 
@@ -29,9 +26,7 @@ public class AgeSelectInterceptorStrategy implements PredicateFilterInterceptor 
     }
 
     @Override
-    public void configure(Class<?> entityClass, LambdaEntityExpressionBuilder lambdaEntityExpressionBuilder, SQLWherePredicate<Object> sqlPredicate) {
-        FastBean fastBean = EasyBeanUtil.getFastBean(entityClass);
-        Property<Object,?> name = fastBean.getBeanGetter("name", String.class);
-        sqlPredicate.isNotNull(name);
+    public void configure(Class<?> entityClass, LambdaEntityExpressionBuilder lambdaEntityExpressionBuilder, WherePredicate<Object> sqlPredicate) {
+        sqlPredicate.isNotNull("name");
     }
 }

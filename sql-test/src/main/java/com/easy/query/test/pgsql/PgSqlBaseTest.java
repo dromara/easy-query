@@ -1,7 +1,9 @@
 package com.easy.query.test.pgsql;
 
+import com.easy.query.api4j.client.DefaultEasyQuery;
+import com.easy.query.api4j.client.EasyQuery;
 import com.easy.query.core.context.QueryRuntimeContext;
-import com.easy.query.core.api.client.EasyQuery;
+import com.easy.query.core.api.client.EasyObjectQuery;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.logging.LogFactory;
@@ -57,9 +59,9 @@ public class PgSqlBaseTest {
     }
 
     public static void initEasyQuery() {
-        easyQuery = EasyQueryBootstrapper.defaultBuilderConfiguration()
+        EasyObjectQuery easyObjectQuery = EasyQueryBootstrapper.defaultBuilderConfiguration()
                 .setDefaultDataSource(dataSource)
-                .optionConfigure(op->{
+                .optionConfigure(op -> {
                     op.setDeleteThrowError(false);
                     op.setExecutorCorePoolSize(1);
                     op.setExecutorMaximumPoolSize(2);
@@ -68,6 +70,7 @@ public class PgSqlBaseTest {
                 .useDatabaseConfigure(new PgSQLDatabaseConfiguration())
 //                .replaceService(EasyShardingOption.class, new EasyShardingOption(2, 0))
                 .build();
+        easyQuery = new DefaultEasyQuery(easyObjectQuery);
         QueryRuntimeContext runtimeContext = easyQuery.getRuntimeContext();
         QueryConfiguration configuration = runtimeContext.getQueryConfiguration();
         configuration.applyEncryptionStrategy(new DefaultAesEasyEncryptionStrategy());

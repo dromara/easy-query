@@ -1,16 +1,16 @@
 package com.easy.query.core.expression.segment.impl;
 
-import com.easy.query.core.basic.api.select.Queryable;
+import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.func.AggregationType;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.FuncColumnSegment;
 import com.easy.query.core.expression.segment.SQLSegment;
-import com.easy.query.core.expression.segment.parse.SubQueryColumnParseResult;
 import com.easy.query.core.expression.segment.SubQueryColumnSegment;
 import com.easy.query.core.expression.segment.builder.ProjectSQLBuilderSegment;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
+import com.easy.query.core.expression.segment.parse.SubQueryColumnParseResult;
 import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
@@ -20,40 +20,41 @@ import com.easy.query.core.util.EasySQLSegmentUtil;
 
 /**
  * create time 2023/5/20 10:08
- * 文件说明
+ * 子查询片段实现
  *
  * @author xuejiaming
  */
 public class SubQueryColumnSegmentImpl implements SubQueryColumnSegment {
     private final TableAvailable table;
-    private final Queryable<?> subQueryable;
+    private final Query<?> subQuery;
     private final String alias;
     private final QueryRuntimeContext runtimeContext;
     private final boolean isAggregateColumn;
     private final AggregationType aggregationType;
 
-    public SubQueryColumnSegmentImpl(TableAvailable table, Queryable<?> subQueryable, String alias, QueryRuntimeContext runtimeContext){
+    public SubQueryColumnSegmentImpl(TableAvailable table, Query<?> subQuery, String alias, QueryRuntimeContext runtimeContext) {
 
         this.table = table;
-        this.subQueryable = subQueryable;
+        this.subQuery = subQuery;
         this.alias = alias;
         this.runtimeContext = runtimeContext;
-        SubQueryColumnParseResult subQueryColumnParseResult = parseSubQueryAggregate(subQueryable);
-        this.isAggregateColumn=subQueryColumnParseResult.isAggregateColumn();
-        this.aggregationType=subQueryColumnParseResult.getAggregationType();
+        SubQueryColumnParseResult subQueryColumnParseResult = parseSubQueryAggregate(subQuery);
+        this.isAggregateColumn = subQueryColumnParseResult.isAggregateColumn();
+        this.aggregationType = subQueryColumnParseResult.getAggregationType();
     }
 
-    private SubQueryColumnParseResult parseSubQueryAggregate(Queryable<?> subQueryable){
-        EntityQueryExpressionBuilder sqlEntityExpressionBuilder = subQueryable.getSQLEntityExpressionBuilder();
+    private SubQueryColumnParseResult parseSubQueryAggregate(Query<?> subQuery) {
+        EntityQueryExpressionBuilder sqlEntityExpressionBuilder = subQuery.getSQLEntityExpressionBuilder();
         return parseEasyQueryExpressionBuilder(sqlEntityExpressionBuilder);
     }
-    private SubQueryColumnParseResult parseEasyQueryExpressionBuilder(EntityQueryExpressionBuilder entityQueryExpressionBuilder){
+
+    private SubQueryColumnParseResult parseEasyQueryExpressionBuilder(EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
         SQLBuilderSegment projects = entityQueryExpressionBuilder.getProjects();
-        if(EasySQLSegmentUtil.isNotEmpty(projects)){
-            if(projects instanceof ProjectSQLBuilderSegment){
+        if (EasySQLSegmentUtil.isNotEmpty(projects)) {
+            if (projects instanceof ProjectSQLBuilderSegment) {
                 ProjectSQLBuilderSegment projectSQLBuilderSegment = (ProjectSQLBuilderSegment) projects;
                 SQLSegment sqlSegment = projectSQLBuilderSegment.getSQLSegments().get(0);
-                if(sqlSegment instanceof FuncColumnSegment){
+                if (sqlSegment instanceof FuncColumnSegment) {
                     FuncColumnSegment aggregationColumnSegment = (FuncColumnSegment) sqlSegment;
                     return new SubQueryColumnParseResult(true,aggregationColumnSegment.getAggregationType());
                 }
@@ -84,7 +85,7 @@ public class SubQueryColumnSegmentImpl implements SubQueryColumnSegment {
 
     @Override
     public String toSQL(ToSQLContext toSQLContext) {
-        String queryableSQL = subQueryable.toSQL(toSQLContext);
+        String queryableSQL = subQuery.toSQL(toSQLContext);
         StringBuilder sql = new StringBuilder();
         sql.append("(");
         sql.append(queryableSQL);
@@ -96,8 +97,8 @@ public class SubQueryColumnSegmentImpl implements SubQueryColumnSegment {
     }
 
     @Override
-    public Queryable<?> getSubQueryable() {
-        return subQueryable;
+    public Query<?> getSubQuery() {
+        return subQuery;
     }
 
     @Override
@@ -112,6 +113,6 @@ public class SubQueryColumnSegmentImpl implements SubQueryColumnSegment {
 
     @Override
     public SubQueryColumnSegment cloneSQLEntitySegment() {
-        return new SubQueryColumnSegmentImpl(table,subQueryable.cloneQueryable(),alias,runtimeContext);
+        return new SubQueryColumnSegmentImpl(table, subQuery.cloneQueryable(), alias, runtimeContext);
     }
 }

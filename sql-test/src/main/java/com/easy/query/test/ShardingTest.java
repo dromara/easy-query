@@ -1,10 +1,10 @@
 package com.easy.query.test;
 
+import com.easy.query.api4j.select.Queryable;
+import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.api.pagination.EasyShardingPageResult;
-import com.easy.query.core.basic.api.select.Queryable;
 import com.easy.query.core.sharding.manager.SequenceCountLine;
 import com.easy.query.core.sharding.manager.SequenceCountNode;
-import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.test.dto.TopicShardingGroup;
 import com.easy.query.test.dto.TopicSubQueryBlog;
 import com.easy.query.test.entity.Topic;

@@ -1,12 +1,12 @@
 package com.easy.query.test;
 
-import com.easy.query.core.basic.api.update.ExpressionUpdatable;
+import com.easy.query.api4j.update.ExpressionUpdatable;
+import com.easy.query.api4j.update.impl.EasyEntityUpdatable;
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
-import com.easy.query.core.exception.EasyQueryConcurrentException;
-import com.easy.query.core.basic.api.update.impl.EasyEntityUpdatable;
-import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.basic.plugin.track.TrackManager;
+import com.easy.query.core.enums.SQLExecuteStrategyEnum;
+import com.easy.query.core.exception.EasyQueryConcurrentException;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.TopicTypeTest1;

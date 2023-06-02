@@ -1,8 +1,5 @@
 package com.easy.query.core.expression.func;
 
-import com.easy.query.core.expression.lambda.Property;
-import com.easy.query.core.util.EasyLambdaUtil;
-
 /**
  * create time 2023/5/21 22:37
  * 文件说明
@@ -18,6 +15,7 @@ public final class DefaultColumnPropertyFunction implements ColumnPropertyFuncti
         this.propertyName = propertyName;
         this.columnFunction = columnFunction;
     }
+
     @Override
     public ColumnFunction getColumnFunction() {
         return columnFunction;
@@ -28,8 +26,7 @@ public final class DefaultColumnPropertyFunction implements ColumnPropertyFuncti
         return propertyName;
     }
 
-    public static <T1,TR> ColumnPropertyFunction createDefault(Property<T1,TR> column,ColumnFunction columnFunction){
-        String propertyName = EasyLambdaUtil.getPropertyName(column);
-        return new DefaultColumnPropertyFunction(propertyName,columnFunction);
+    public static <T1, TR> ColumnPropertyFunction createDefault(String property, ColumnFunction columnFunction) {
+        return new DefaultColumnPropertyFunction(property, columnFunction);
     }
 }

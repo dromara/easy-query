@@ -29,7 +29,7 @@ public class EasyParseUtil {
             predicateSegment.forEach(predicate -> {
                 if(predicate instanceof SubQueryPredicate){
                     SubQueryPredicate subQueryPredicate = (SubQueryPredicate) predicate;
-                    EntityQuerySQLExpression entityQuerySQLExpression = subQueryPredicate.getSubQueryable().getSQLEntityExpressionBuilder().toExpression();
+                    EntityQuerySQLExpression entityQuerySQLExpression = subQueryPredicate.getSubQuery().getSQLEntityExpressionBuilder().toExpression();
                     parseTablePredicateParseDescriptor(entityQuerySQLExpression,tablePredicateParseDescriptor);
                 }
                 if (tablePredicateParseDescriptor.isShardingTable(predicate.getTable())) {
@@ -50,7 +50,7 @@ public class EasyParseUtil {
             for (SQLSegment sqlSegment : projects.getSQLSegments()) {
                 if(sqlSegment instanceof SubQueryColumnSegment){
                     SubQueryColumnSegment subQueryColumnSegment = (SubQueryColumnSegment) sqlSegment;
-                    EntityQuerySQLExpression subEntityQuerySQLExpression = subQueryColumnSegment.getSubQueryable().getSQLEntityExpressionBuilder().toExpression();
+                    EntityQuerySQLExpression subEntityQuerySQLExpression = subQueryColumnSegment.getSubQuery().getSQLEntityExpressionBuilder().toExpression();
                     parseTablePredicateParseDescriptor(subEntityQuerySQLExpression,tablePredicateParseDescriptor);
                 }
             }

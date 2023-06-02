@@ -1,22 +1,27 @@
 package com.easy.query.core.expression.sql.builder.impl;
 
-import com.easy.query.core.context.QueryRuntimeContext;
-import com.easy.query.core.common.bean.FastBean;
-import com.easy.query.core.expression.lambda.SQLExpression1;
-import com.easy.query.core.expression.parser.core.SQLColumnSetter;
-import com.easy.query.core.expression.parser.factory.SQLExpressionInvokeFactory;
 import com.easy.query.core.basic.plugin.version.VersionStrategy;
+import com.easy.query.core.common.bean.FastBean;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
+import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.parser.core.base.ColumnSetter;
+import com.easy.query.core.expression.parser.factory.SQLExpressionInvokeFactory;
 import com.easy.query.core.expression.segment.SQLEntitySegment;
 import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.expression.segment.builder.ProjectSQLBuilderSegmentImpl;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.segment.builder.UpdateSetSQLBuilderSegment;
+import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnPropertyPredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnVersionPropertyPredicate;
+import com.easy.query.core.expression.sql.builder.EntityDeleteExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.ExpressionContext;
+import com.easy.query.core.expression.sql.builder.internal.AbstractPredicateEntityExpressionBuilder;
 import com.easy.query.core.expression.sql.expression.EntityDeleteSQLExpression;
 import com.easy.query.core.expression.sql.expression.EntityPredicateSQLExpression;
 import com.easy.query.core.expression.sql.expression.EntityUpdateSQLExpression;
@@ -24,11 +29,6 @@ import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.expression.sql.expression.impl.EntitySQLExpressionMetadata;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
-import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
-import com.easy.query.core.expression.sql.builder.internal.AbstractPredicateEntityExpressionBuilder;
-import com.easy.query.core.expression.sql.builder.EntityDeleteExpressionBuilder;
-import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
-import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.metadata.VersionMetadata;
 import com.easy.query.core.util.EasyBeanUtil;
 import com.easy.query.core.util.EasyClassUtil;
@@ -82,11 +82,11 @@ public class DeleteExpressionBuilder extends AbstractPredicateEntityExpressionBu
         EntityMetadata entityMetadata = table.getEntityMetadata();
         boolean useLogicDelete = entityMetadata.enableLogicDelete() && expressionContext.getBehavior().hasBehavior(EasyBehaviorEnum.LOGIC_DELETE);
         if (useLogicDelete) {
-            SQLExpression1<SQLColumnSetter<Object>> logicDeletedSQLExpression = table.getLogicDeletedSQLExpression();
+            SQLExpression1<ColumnSetter<Object>> logicDeletedSQLExpression = table.getLogicDeletedSQLExpression();
             if (logicDeletedSQLExpression != null) {
                 UpdateSetSQLBuilderSegment setSQLSegmentBuilder = new UpdateSetSQLBuilderSegment();
                 SQLExpressionInvokeFactory easyQueryLambdaFactory = getRuntimeContext().getSQLExpressionInvokeFactory();
-                SQLColumnSetter<Object> sqlColumnSetter = easyQueryLambdaFactory.createSQLColumnSetter(table.getIndex(), this, setSQLSegmentBuilder);
+                ColumnSetter<Object> sqlColumnSetter = easyQueryLambdaFactory.createColumnSetter(table.getIndex(), this, setSQLSegmentBuilder);
                 logicDeletedSQLExpression.apply(sqlColumnSetter);//获取set的值
                 //todo 非表达式添加行版本信息
                 if(entityMetadata.hasVersionColumn()){
@@ -99,10 +99,8 @@ public class DeleteExpressionBuilder extends AbstractPredicateEntityExpressionBu
                     }else{
                         Object version = getExpressionContext().getVersion();
                         if(Objects.nonNull(version)){
-                            ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(propertyName);
-                            FastBean fastBean = EasyBeanUtil.getFastBean(entityMetadata.getEntityClass());
                             Object nextVersion = easyVersionStrategy.nextVersion(entityMetadata, propertyName, version);
-                            sqlColumnSetter.set(fastBean.getBeanGetter(columnMetadata.getProperty()),nextVersion);
+                            sqlColumnSetter.set(propertyName, nextVersion);
                         }
                     }
                 }

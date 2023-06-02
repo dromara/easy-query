@@ -20,6 +20,9 @@ public final class ServiceProviderImpl implements ServiceProvider {
     private final Map<Class<?>/*interface*/, ServiceDescriptor> servicesMapping;
     private final Map<Class<?>/*interface*/, Object> services;
 
+    /**
+     * 循环依赖检查标记同一线程下
+     */
     private final BeanCurrentlyInjectMarker beanCurrentlyInjectMarker;
 
     public ServiceProviderImpl(Map<Class<?>/*interface*/, ServiceDescriptor> servicesMapping) {

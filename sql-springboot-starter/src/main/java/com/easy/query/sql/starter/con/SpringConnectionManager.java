@@ -25,8 +25,9 @@ public class SpringConnectionManager extends DefaultConnectionManager {
 
     @Override
     public boolean currentThreadInTransaction() {
-        return TransactionSynchronizationManager.isActualTransactionActive();
+        return TransactionSynchronizationManager.isActualTransactionActive() || isOpenTransaction();
     }
+
 
 //    @Override
 //    public EasyConnection getEasyConnection(String dataSourceName) {
@@ -49,12 +50,12 @@ public class SpringConnectionManager extends DefaultConnectionManager {
             return;
         }
         //当前没开事务,但是easy query手动开启了
-        if(!this.currentThreadInTransaction()){
-            if(super.isOpenTransaction()){
+        if (!TransactionSynchronizationManager.isActualTransactionActive()) {
+            if (super.isOpenTransaction()) {
                 return;
             }
-        }else{
-            if(super.isOpenTransaction()){
+        } else {
+            if (super.isOpenTransaction()) {
                 throw new EasyQueryException("repeat transaction can't closed connection");
             }
         }

@@ -1,12 +1,11 @@
 package com.easy.query.core.basic.plugin.logicdel.impl;
 
-import com.easy.query.core.basic.plugin.logicdel.LogicDeleteStrategyEnum;
 import com.easy.query.core.basic.plugin.logicdel.LogicDeleteBuilder;
+import com.easy.query.core.basic.plugin.logicdel.LogicDeleteStrategyEnum;
 import com.easy.query.core.basic.plugin.logicdel.abstraction.AbstractLogicDeleteStrategy;
-import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.SQLExpression1;
-import com.easy.query.core.expression.parser.core.SQLWherePredicate;
-import com.easy.query.core.expression.parser.core.SQLColumnSetter;
+import com.easy.query.core.expression.parser.core.base.ColumnSetter;
+import com.easy.query.core.expression.parser.core.base.WherePredicate;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -32,12 +31,12 @@ public class BooleanEasyEntityTypeConfiguration extends AbstractLogicDeleteStrat
 
 
     @Override
-    protected SQLExpression1<SQLWherePredicate<Object>> getPredicateFilterExpression(LogicDeleteBuilder builder, Property<Object,?> lambdaProperty) {
-        return o->o.eq(lambdaProperty,false);
+    protected SQLExpression1<WherePredicate<Object>> getPredicateFilterExpression(LogicDeleteBuilder builder, String propertyName) {
+        return o -> o.eq(propertyName, false);
     }
 
     @Override
-    protected SQLExpression1<SQLColumnSetter<Object>> getDeletedSQLExpression(LogicDeleteBuilder builder, Property<Object,?> lambdaProperty) {
-        return o->o.set(lambdaProperty, true);
+    protected SQLExpression1<ColumnSetter<Object>> getDeletedSQLExpression(LogicDeleteBuilder builder, String propertyName) {
+        return o -> o.set(propertyName, true);
     }
 }

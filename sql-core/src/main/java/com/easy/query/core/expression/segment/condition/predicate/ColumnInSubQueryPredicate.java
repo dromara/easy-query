@@ -1,8 +1,8 @@
 package com.easy.query.core.expression.segment.condition.predicate;
 
-import com.easy.query.core.context.QueryRuntimeContext;
-import com.easy.query.core.basic.api.select.Queryable;
+import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.SQLEntitySegment;
@@ -19,15 +19,16 @@ public class ColumnInSubQueryPredicate implements SubQueryPredicate{
     private final QueryRuntimeContext runtimeContext;
     private final TableAvailable table;
     private final String propertyName;
-    private final Queryable<?> subQueryable;
+    private final Query<?> subQuery;
 
-    public ColumnInSubQueryPredicate(TableAvailable table, String propertyName, Queryable<?> subQueryable, SQLPredicateCompare compare, QueryRuntimeContext runtimeContext) {
+    public ColumnInSubQueryPredicate(TableAvailable table, String propertyName, Query<?> subQuery, SQLPredicateCompare compare, QueryRuntimeContext runtimeContext) {
         this.table = table;
         this.propertyName = propertyName;
-        this.subQueryable = subQueryable;
+        this.subQuery = subQuery;
         this.compare = compare;
         this.runtimeContext = runtimeContext;
     }
+
     @Override
     public TableAvailable getTable() {
         return table;
@@ -49,7 +50,7 @@ public class ColumnInSubQueryPredicate implements SubQueryPredicate{
         String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumn(runtimeContext,table,propertyName,toSQLContext);
         StringBuilder sql = new StringBuilder();
         sql.append(sqlColumnSegment).append(" ").append(compare.getSQL()).append(" (");
-        String subQueryableSQL = subQueryable.toSQL(toSQLContext);
+        String subQueryableSQL = subQuery.toSQL(toSQLContext);
         sql.append(subQueryableSQL).append(")");
         return sql.toString();
     }
@@ -60,12 +61,12 @@ public class ColumnInSubQueryPredicate implements SubQueryPredicate{
     }
 
     @Override
-    public Queryable<?> getSubQueryable() {
-        return subQueryable;
+    public Query<?> getSubQuery() {
+        return subQuery;
     }
 
     @Override
     public SubQueryPredicate cloneSubQueryPredicate() {
-        return new ColumnInSubQueryPredicate(table,propertyName,subQueryable.cloneQueryable(),compare,runtimeContext);
+        return new ColumnInSubQueryPredicate(table, propertyName, subQuery.cloneQueryable(), compare, runtimeContext);
     }
 }
