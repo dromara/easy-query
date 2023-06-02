@@ -10,7 +10,6 @@ import com.easy.query.core.expression.parser.core.base.WherePredicate;
  * @author xuejiaming
  */
 public class DefaultTrackValueUpdate implements TrackValueUpdate<Object> {
-    public static final TrackValueUpdate<Object> INSTANCE = new DefaultTrackValueUpdate();
 
     @Override
     public void configureSet(String propertyName, Object originalValue, Object currentValue, ColumnSetter<Object> sqlColumnSetter) {

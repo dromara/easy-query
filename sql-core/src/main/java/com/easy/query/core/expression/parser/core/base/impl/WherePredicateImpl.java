@@ -310,7 +310,7 @@ public class WherePredicateImpl<T1> implements WherePredicate<T1> {
     public WherePredicate<T1> and(boolean condition, SQLExpression1<WherePredicate<T1>> sqlWherePredicateSQLExpression) {
         if (condition) {
             and0();
-            WherePredicate<T1> sqlPredicate = entityExpressionBuilder.getRuntimeContext().getSQLExpressionInvokeFactory().createSQLPredicate(index, entityExpressionBuilder, this.nextPredicateSegment);
+            WherePredicate<T1> sqlPredicate = entityExpressionBuilder.getRuntimeContext().getSQLExpressionInvokeFactory().createWherePredicate(index, entityExpressionBuilder, this.nextPredicateSegment);
             sqlWherePredicateSQLExpression.apply(sqlPredicate);
             next();
         }
@@ -345,7 +345,7 @@ public class WherePredicateImpl<T1> implements WherePredicate<T1> {
     public WherePredicate<T1> or(boolean condition, SQLExpression1<WherePredicate<T1>> sqlWherePredicateSQLExpression) {
         if (condition) {
             or0();
-            WherePredicate<T1> sqlPredicate = entityExpressionBuilder.getRuntimeContext().getSQLExpressionInvokeFactory().createSQLPredicate(index, entityExpressionBuilder, this.nextPredicateSegment);
+            WherePredicate<T1> sqlPredicate = entityExpressionBuilder.getRuntimeContext().getSQLExpressionInvokeFactory().createWherePredicate(index, entityExpressionBuilder, this.nextPredicateSegment);
             sqlWherePredicateSQLExpression.apply(sqlPredicate);
             next();
         }

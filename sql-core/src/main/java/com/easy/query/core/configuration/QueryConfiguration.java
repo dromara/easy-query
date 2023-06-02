@@ -1,11 +1,15 @@
 package com.easy.query.core.configuration;
 
 import com.easy.query.core.basic.extension.conversion.ValueConverter;
-import com.easy.query.core.basic.extension.logicdel.*;
+import com.easy.query.core.basic.extension.encryption.EncryptionStrategy;
+import com.easy.query.core.basic.extension.interceptor.Interceptor;
+import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategy;
+import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategyEnum;
 import com.easy.query.core.basic.extension.logicdel.impl.BooleanEasyEntityTypeConfiguration;
 import com.easy.query.core.basic.extension.logicdel.impl.DeleteLongTimestampEasyEntityTypeConfiguration;
 import com.easy.query.core.basic.extension.logicdel.impl.LocalDateEasyLogicDeleteStrategy;
 import com.easy.query.core.basic.extension.logicdel.impl.LocalDateTimeEasyEntityTypeConfiguration;
+import com.easy.query.core.basic.extension.track.update.TrackValueUpdate;
 import com.easy.query.core.basic.extension.version.VersionIntStrategy;
 import com.easy.query.core.basic.extension.version.VersionLongStrategy;
 import com.easy.query.core.basic.extension.version.VersionStrategy;
@@ -13,17 +17,16 @@ import com.easy.query.core.basic.extension.version.VersionTimestampStrategy;
 import com.easy.query.core.basic.extension.version.VersionUUIDStrategy;
 import com.easy.query.core.configuration.dialect.Dialect;
 import com.easy.query.core.configuration.nameconversion.NameConversion;
-import com.easy.query.core.basic.extension.encryption.EncryptionStrategy;
 import com.easy.query.core.exception.EasyQueryException;
-import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategyEnum;
-import com.easy.query.core.basic.extension.interceptor.Interceptor;
 import com.easy.query.core.sharding.initializer.ShardingInitializer;
 import com.easy.query.core.sharding.initializer.UnShardingInitializer;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasyStringUtil;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -49,7 +52,8 @@ public class QueryConfiguration {
     private Map<Class<? extends EncryptionStrategy>, EncryptionStrategy> easyEncryptionStrategyMap = new ConcurrentHashMap<>();
     private Map<Class<? extends VersionStrategy>, VersionStrategy> easyVersionStrategyMap = new ConcurrentHashMap<>();
     private Map<Class<? extends ShardingInitializer>, ShardingInitializer> shardingInitializerMap = new ConcurrentHashMap<>();
-    private Map<Class<? extends ValueConverter>, ValueConverter<?,?>> valueConverterMap = new ConcurrentHashMap<>();
+    private Map<Class<? extends ValueConverter>, ValueConverter<?, ?>> valueConverterMap = new ConcurrentHashMap<>();
+    private Map<Class<? extends TrackValueUpdate>, TrackValueUpdate<?>> trackValueUpdateMap = new ConcurrentHashMap<>();
 
 //    public EasyQueryConfiguration(Dialect dialect, NameConversion nameConversion) {
 //       this(EasyQueryOption.defaultEasyQueryOption(),dialect,nameConversion);
@@ -204,14 +208,27 @@ public class QueryConfiguration {
         return shardingInitializerMap.get(initializer);
     }
 
-    public void applyValueConverter(ValueConverter<?,?> valueConverter){
-        Class<? extends ValueConverter<?,?>> converterClass = EasyObjectUtil.typeCastNullable(valueConverter.getClass());
-        if(valueConverterMap.containsKey(converterClass)){
+    public void applyValueConverter(ValueConverter<?, ?> valueConverter) {
+        Class<? extends ValueConverter<?, ?>> converterClass = EasyObjectUtil.typeCastNullable(valueConverter.getClass());
+        if (valueConverterMap.containsKey(converterClass)) {
             throw new EasyQueryException("value converter:" + EasyClassUtil.getSimpleName(converterClass) + ",repeat");
         }
-        valueConverterMap.put(converterClass,valueConverter);
+        valueConverterMap.put(converterClass, valueConverter);
     }
-    public  ValueConverter<?,?> getValueConverter(Class<? extends ValueConverter> converterClass){
+
+    public ValueConverter<?, ?> getValueConverter(Class<? extends ValueConverter> converterClass) {
         return valueConverterMap.get(converterClass);
+    }
+
+    public void applyTrackValueUpdate(TrackValueUpdate<?> trackValueUpdate) {
+        Class<? extends TrackValueUpdate<?>> trackValueUpdateClass = EasyObjectUtil.typeCastNullable(trackValueUpdate.getClass());
+        if (trackValueUpdateMap.containsKey(trackValueUpdateClass)) {
+            throw new EasyQueryException("track value update:" + EasyClassUtil.getSimpleName(trackValueUpdateClass) + ",repeat");
+        }
+        trackValueUpdateMap.put(trackValueUpdateClass, trackValueUpdate);
+    }
+
+    public TrackValueUpdate<?> getTrackValueUpdate(Class<? extends TrackValueUpdate> trackValueUpdateClass) {
+        return trackValueUpdateMap.get(trackValueUpdateClass);
     }
 }

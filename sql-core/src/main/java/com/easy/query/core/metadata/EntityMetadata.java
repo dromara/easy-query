@@ -5,6 +5,8 @@ import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategyEnum;
 import com.easy.query.core.basic.extension.conversion.DefaultValueConverter;
 import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.basic.extension.logicdel.LogicDeleteBuilder;
+import com.easy.query.core.basic.extension.track.update.DefaultTrackValueUpdate;
+import com.easy.query.core.basic.extension.track.update.TrackValueUpdate;
 import com.easy.query.core.basic.extension.version.VersionStrategy;
 import com.easy.query.core.inject.ServiceProvider;
 import com.easy.query.core.sharding.initializer.ShardingEntityBuilder;
@@ -22,6 +24,7 @@ import com.easy.query.core.sharding.initializer.ShardingInitializer;
 import com.easy.query.core.sharding.initializer.ShardingInitOption;
 import com.easy.query.core.sharding.route.table.TableUnit;
 import com.easy.query.core.util.EasyCollectionUtil;
+import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasyStringUtil;
 import com.easy.query.core.common.LinkedCaseInsensitiveMap;
 import com.easy.query.core.util.EasyClassUtil;
@@ -129,15 +132,24 @@ public class EntityMetadata {
                 columnOption.setEncryptionStrategy(easyEncryptionStrategy);
                 columnOption.setSupportQueryLike(encryption.supportQueryLike());
             }
-            if(column!=null){
+            if(column!=null) {
                 Class<? extends ValueConverter> conversionClass = column.conversion();
-                if(!Objects.equals(DefaultValueConverter.class,conversionClass)){
+                if (!Objects.equals(DefaultValueConverter.class, conversionClass)) {
                     ValueConverter<?, ?> valueConverter = configuration.getValueConverter(conversionClass);
-                    if(valueConverter==null){
+                    if (valueConverter == null) {
                         throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " conversion unknown");
                     }
                     columnOption.setValueConverter(valueConverter);
                 }
+                Class<? extends TrackValueUpdate> trackValueUpdateClass = column.trackValueUpdate();
+                if (!Objects.equals(DefaultTrackValueUpdate.class, trackValueUpdateClass)) {
+                    TrackValueUpdate<?> trackValueUpdate = configuration.getTrackValueUpdate(trackValueUpdateClass);
+                    if (trackValueUpdate == null) {
+                        throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " trackValueUpdate unknown");
+                    }
+                    columnOption.setTrackValueUpdate(EasyObjectUtil.typeCastNullable(trackValueUpdate));
+                }
+
             }
 
             if (EasyStringUtil.isNotBlank(tableName)) {

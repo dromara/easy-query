@@ -18,7 +18,7 @@ import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
  * @Date: 2023/2/14 08:33
  */
 public interface SQLExpressionInvokeFactory {
-    <T1> WherePredicate<T1> createSQLPredicate(int index, EntityExpressionBuilder sqlEntityExpression, PredicateSegment predicateSegment);
+    <T1> WherePredicate<T1> createWherePredicate(int index, EntityExpressionBuilder sqlEntityExpression, PredicateSegment predicateSegment);
 
     <T1> WhereAggregatePredicate<T1> createWhereAggregatePredicate(int index, EntityExpressionBuilder sqlEntityExpression, PredicateSegment predicateSegment);
 

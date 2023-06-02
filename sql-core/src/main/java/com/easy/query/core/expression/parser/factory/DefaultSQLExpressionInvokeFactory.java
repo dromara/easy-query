@@ -25,7 +25,7 @@ import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
  */
 public class DefaultSQLExpressionInvokeFactory implements SQLExpressionInvokeFactory {
     @Override
-    public <T1> WherePredicate<T1> createSQLPredicate(int index, EntityExpressionBuilder sqlEntityExpression, PredicateSegment predicateSegment) {
+    public <T1> WherePredicate<T1> createWherePredicate(int index, EntityExpressionBuilder sqlEntityExpression, PredicateSegment predicateSegment) {
         return new WherePredicateImpl<>(index, sqlEntityExpression, predicateSegment);
 //        return new SQLWherePredicateImpl<>(index,sqlEntityExpression,predicateSegment);
     }
