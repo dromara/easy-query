@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.easy.query.sql.kt.starter.EasyQueryKtStarterAutoConfiguration

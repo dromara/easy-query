@@ -24,13 +24,15 @@
         <module>sql-pgsql</module>
         <module>sql-mssql</module>
         <module>sql-h2</module>
-        <module>sql-springboot-starter</module>
         <!--        以下是不需要deploy到远程仓库的-->
         <module>sql-test</module>
         <module>samples</module>
         <module>sql-platform</module>
         <module>sql-platform/sql-api4j</module>
         <module>sql-platform/sql-api4kt</module>
+        <module>sql-extension</module>
+        <module>sql-extension/sql-kt-springboot-starter</module>
+        <module>sql-extension/sql-springboot-starter</module>
     </modules>
 
     <properties>

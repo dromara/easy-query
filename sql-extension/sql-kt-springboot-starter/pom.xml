@@ -10,7 +10,7 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
-    <artifactId>sql-api4kt</artifactId>
+    <artifactId>sql-kt-springboot-starter</artifactId>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
@@ -20,15 +20,13 @@
     <dependencies>
         <dependency>
             <groupId>com.easy-query</groupId>
-            <artifactId>sql-core</artifactId>
+            <artifactId>sql-api4kt</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-reflect</artifactId>
-            <version>1.8.0</version> <!-- 替换为你使用的 Kotlin 版本 -->
-            <scope>provided</scope>
+            <groupId>com.easy-query</groupId>
+            <artifactId>sql-springboot-starter</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
-
 </project>

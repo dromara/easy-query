@@ -7,28 +7,14 @@
         <groupId>com.easy-query</groupId>
         <artifactId>easy-query-all</artifactId>
         <version>0.9.12</version>
-        <relativePath>../../pom.xml</relativePath>
     </parent>
 
-    <artifactId>sql-api4kt</artifactId>
+    <artifactId>sql-extension</artifactId>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-    <dependencies>
-        <dependency>
-            <groupId>com.easy-query</groupId>
-            <artifactId>sql-core</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-reflect</artifactId>
-            <version>1.8.0</version> <!-- 替换为你使用的 Kotlin 版本 -->
-            <scope>provided</scope>
-        </dependency>
-    </dependencies>
 
 </project>
