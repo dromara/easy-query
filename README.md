@@ -32,10 +32,13 @@ QQ群:170029046
 
 
 # 使用介绍
-`easy-query` 🚀 一款高性能、轻量级、多功能的Java对象查询ORM框架支持分库分表读写分离
+`easy-query` 🚀 一款高性能、轻量级、多功能的Java/Kotlin对象查询ORM框架支持分库分表读写分离
 
 ## 简介
-`easy-query`是一款无任何依赖的JAVA ORM 框架，十分轻量，拥有非常高的性能，支持单表查询、多表查询、union、子查询、分页、动态表名、VO对象查询返回、逻辑删、全局拦截、数据库列加密(支持高性能like查询)、数据追踪差异更新、乐观锁、多租户、自动分库、自动分表、读写分离，支持框架全功能外部扩展定制，拥有强类型表达式。
+
+`easy-query`是一款无任何依赖的JAVA/Kotlin ORM
+框架，十分轻量，拥有非常高的性能，支持单表查询、多表查询、union、子查询、分页、动态表名、VO对象查询返回、逻辑删、全局拦截、数据库列加密(
+支持高性能like查询)、数据追踪差异更新、乐观锁、多租户、自动分库、自动分表、读写分离，支持框架全功能外部扩展定制，拥有强类型表达式。
 
 
 ## 如何获取最新版本
@@ -47,8 +50,9 @@ QQ群:170029046
 ### spring-boot
 
 ```xml
+
 <properties>
-  <easy-query.version>0.9.3</easy-query.version>
+  <easy-query.version>0.9.30</easy-query.version>
 </properties>
 <dependency>
     <groupId>com.easy-query</groupId>
@@ -59,8 +63,9 @@ QQ群:170029046
 ### console
 以mysql为例
 ```xml
+
 <properties>
-  <easy-query.version>0.9.3</easy-query.version>
+  <easy-query.version>0.9.30</easy-query.version>
 </properties>
 <dependency>
     <groupId>com.easy-query</groupId>
