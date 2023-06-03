@@ -7,22 +7,14 @@
         <groupId>com.easy-query</groupId>
         <artifactId>easy-query-all</artifactId>
         <version>0.9.20</version>
-        <relativePath>../../pom.xml</relativePath>
     </parent>
 
-    <artifactId>sql-api4j</artifactId>
+    <artifactId>sql-db-support</artifactId>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-    <dependencies>
-        <dependency>
-            <groupId>com.easy-query</groupId>
-            <artifactId>sql-core</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-    </dependencies>
 
 </project>

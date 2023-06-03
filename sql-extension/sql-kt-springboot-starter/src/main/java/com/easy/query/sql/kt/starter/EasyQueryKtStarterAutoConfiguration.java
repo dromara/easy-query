@@ -1,7 +1,7 @@
 package com.easy.query.sql.kt.starter;
 
-import com.easy.query.api4j.client.DefaultEasyQuery;
-import com.easy.query.api4j.client.EasyQuery;
+import com.easy.query.api4kt.client.DefaultEasyKtQuery;
+import com.easy.query.api4kt.client.EasyKtQuery;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.sql.starter.EasyQueryStarterAutoConfiguration;
 import com.easy.query.sql.starter.config.EasyQueryProperties;
@@ -34,8 +34,8 @@ public class EasyQueryKtStarterAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public EasyQuery easyQuery(EasyQueryClient easyQueryClient) {
-        return new DefaultEasyQuery(easyQueryClient);
+    public EasyKtQuery easyKtQuery(EasyQueryClient easyQueryClient) {
+        return new DefaultEasyKtQuery(easyQueryClient);
     }
 
 }

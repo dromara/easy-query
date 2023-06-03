@@ -45,9 +45,15 @@
         <dependency>
             <groupId>com.easy-query</groupId>
             <artifactId>sql-springboot-starter</artifactId>
-            <version>0.9.12</version>
+            <version>0.9.20</version>
             <scope>compile</scope>
         </dependency>
+        <!--        <dependency>-->
+        <!--            <groupId>com.easy-query</groupId>-->
+        <!--            <artifactId>sql-kt-springboot-starter</artifactId>-->
+        <!--            <version>0.9.12</version>-->
+        <!--            <scope>compile</scope>-->
+        <!--        </dependency>-->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>

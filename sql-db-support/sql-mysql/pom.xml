@@ -10,7 +10,7 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
-    <artifactId>sql-kt-springboot-starter</artifactId>
+    <artifactId>sql-mysql</artifactId>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
@@ -20,18 +20,11 @@
     <dependencies>
         <dependency>
             <groupId>com.easy-query</groupId>
-            <artifactId>sql-api4kt</artifactId>
+            <artifactId>sql-core</artifactId>
             <version>${project.version}</version>
+            <scope>compile</scope>
         </dependency>
-        <!--        <dependency>-->
-        <!--            <groupId>com.easy-query</groupId>-->
-        <!--            <artifactId>sql-springboot-starter</artifactId>-->
-        <!--            <version>${project.version}</version>-->
-        <!--        </dependency>-->
-        <dependency>
-            <groupId>com.easy-query</groupId>
-            <artifactId>sql-springboot-starter</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+
     </dependencies>
+
 </project>
