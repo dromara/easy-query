@@ -9,7 +9,7 @@ import com.easy.query.core.basic.extension.logicdel.impl.BooleanEasyEntityTypeCo
 import com.easy.query.core.basic.extension.logicdel.impl.DeleteLongTimestampEasyEntityTypeConfiguration;
 import com.easy.query.core.basic.extension.logicdel.impl.LocalDateEasyLogicDeleteStrategy;
 import com.easy.query.core.basic.extension.logicdel.impl.LocalDateTimeEasyEntityTypeConfiguration;
-import com.easy.query.core.basic.extension.track.update.TrackValueUpdate;
+import com.easy.query.core.basic.extension.track.update.ValueUpdateAtomicTrack;
 import com.easy.query.core.basic.extension.version.VersionIntStrategy;
 import com.easy.query.core.basic.extension.version.VersionLongStrategy;
 import com.easy.query.core.basic.extension.version.VersionStrategy;
@@ -46,24 +46,24 @@ public class QueryConfiguration {
 
     private final NameConversion nameConversion;
     private final Dialect dialect;
-//    private Map<Class<?>, EntityTypeConfiguration<?>> entityTypeConfigurationMap = new HashMap<>();
-    private Map<String, Interceptor> interceptorMap =new ConcurrentHashMap<>();
+    //    private Map<Class<?>, EntityTypeConfiguration<?>> entityTypeConfigurationMap = new HashMap<>();
+    private Map<String, Interceptor> interceptorMap = new ConcurrentHashMap<>();
     private Map<String, LogicDeleteStrategy> globalLogicDeleteStrategyMap = new ConcurrentHashMap<>();
     private Map<Class<? extends EncryptionStrategy>, EncryptionStrategy> easyEncryptionStrategyMap = new ConcurrentHashMap<>();
     private Map<Class<? extends VersionStrategy>, VersionStrategy> easyVersionStrategyMap = new ConcurrentHashMap<>();
     private Map<Class<? extends ShardingInitializer>, ShardingInitializer> shardingInitializerMap = new ConcurrentHashMap<>();
-    private Map<Class<? extends ValueConverter>, ValueConverter<?, ?>> valueConverterMap = new ConcurrentHashMap<>();
-    private Map<Class<? extends TrackValueUpdate>, TrackValueUpdate<?>> trackValueUpdateMap = new ConcurrentHashMap<>();
+    private Map<Class<? extends ValueConverter<?, ?>>, ValueConverter<?, ?>> valueConverterMap = new ConcurrentHashMap<>();
+    private Map<Class<? extends ValueUpdateAtomicTrack<?>>, ValueUpdateAtomicTrack<?>> valueUpdateAtomicTrackMap = new ConcurrentHashMap<>();
 
-//    public EasyQueryConfiguration(Dialect dialect, NameConversion nameConversion) {
+    //    public EasyQueryConfiguration(Dialect dialect, NameConversion nameConversion) {
 //       this(EasyQueryOption.defaultEasyQueryOption(),dialect,nameConversion);
 //    }
     public QueryConfiguration(EasyQueryOption easyQueryOption, Dialect dialect, NameConversion nameConversion) {
         this.easyQueryOption = easyQueryOption;
         this.dialect = dialect;
         this.nameConversion = nameConversion;
-        easyVersionStrategyMap.put(VersionIntStrategy.class,new VersionIntStrategy());
-        easyVersionStrategyMap.put(VersionLongStrategy.class,new VersionLongStrategy());
+        easyVersionStrategyMap.put(VersionIntStrategy.class, new VersionIntStrategy());
+        easyVersionStrategyMap.put(VersionLongStrategy.class, new VersionLongStrategy());
         easyVersionStrategyMap.put(VersionUUIDStrategy.class,new VersionUUIDStrategy());
         easyVersionStrategyMap.put(VersionTimestampStrategy.class,new VersionTimestampStrategy());
         shardingInitializerMap.put(UnShardingInitializer.class,UnShardingInitializer.INSTANCE);
@@ -216,19 +216,19 @@ public class QueryConfiguration {
         valueConverterMap.put(converterClass, valueConverter);
     }
 
-    public ValueConverter<?, ?> getValueConverter(Class<? extends ValueConverter> converterClass) {
+    public ValueConverter<?, ?> getValueConverter(Class<? extends ValueConverter<?, ?>> converterClass) {
         return valueConverterMap.get(converterClass);
     }
 
-    public void applyTrackValueUpdate(TrackValueUpdate<?> trackValueUpdate) {
-        Class<? extends TrackValueUpdate<?>> trackValueUpdateClass = EasyObjectUtil.typeCastNullable(trackValueUpdate.getClass());
-        if (trackValueUpdateMap.containsKey(trackValueUpdateClass)) {
+    public void applyValueUpdateAtomicTrack(ValueUpdateAtomicTrack<?> trackValueUpdate) {
+        Class<? extends ValueUpdateAtomicTrack<?>> trackValueUpdateClass = EasyObjectUtil.typeCastNullable(trackValueUpdate.getClass());
+        if (valueUpdateAtomicTrackMap.containsKey(trackValueUpdateClass)) {
             throw new EasyQueryException("track value update:" + EasyClassUtil.getSimpleName(trackValueUpdateClass) + ",repeat");
         }
-        trackValueUpdateMap.put(trackValueUpdateClass, trackValueUpdate);
+        valueUpdateAtomicTrackMap.put(trackValueUpdateClass, trackValueUpdate);
     }
 
-    public TrackValueUpdate<?> getTrackValueUpdate(Class<? extends TrackValueUpdate> trackValueUpdateClass) {
-        return trackValueUpdateMap.get(trackValueUpdateClass);
+    public ValueUpdateAtomicTrack<?> getValueUpdateAtomicTrack(Class<? extends ValueUpdateAtomicTrack<?>> trackValueUpdateClass) {
+        return valueUpdateAtomicTrackMap.get(trackValueUpdateClass);
     }
 }

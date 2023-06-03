@@ -6,7 +6,7 @@ import com.easy.query.core.basic.extension.track.EntityTrackProperty;
 import com.easy.query.core.basic.extension.track.TrackContext;
 import com.easy.query.core.basic.extension.track.TrackDiffEntry;
 import com.easy.query.core.basic.extension.track.TrackManager;
-import com.easy.query.core.basic.extension.track.update.TrackValueUpdate;
+import com.easy.query.core.basic.extension.track.update.ValueUpdateAtomicTrack;
 import com.easy.query.core.basic.extension.version.VersionStrategy;
 import com.easy.query.core.common.bean.FastBean;
 import com.easy.query.core.configuration.QueryConfiguration;
@@ -216,7 +216,7 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
                 for (Map.Entry<String, TrackDiffEntry> propertyTrackDiff : entityTrackProperty.getDiffProperties().entrySet()) {
                     String propertyName = propertyTrackDiff.getKey();
                     ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(propertyName);
-                    TrackValueUpdate<Object> trackValueUpdate = columnMetadata.getTrackValueUpdate();
+                    ValueUpdateAtomicTrack<Object> trackValueUpdate = columnMetadata.getValueUpdateAtomicTrack();
                     if (trackValueUpdate != null) {
                         TrackDiffEntry diffValue = propertyTrackDiff.getValue();
                         trackValueUpdate.configureWhere(propertyName, diffValue.getOriginal(), diffValue.getCurrent(), wherePredicate);
@@ -262,7 +262,9 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
             if (entityUpdateSetProcessor.shouldRemove(property)) {
                 continue;
             }
-            if (predicateIndex.contains(entityClass, property)) {
+            ValueUpdateAtomicTrack<Object> valueUpdateAtomicTrack = columnMetadata.getValueUpdateAtomicTrack();
+
+            if (valueUpdateAtomicTrack == null && predicateIndex.contains(entityClass, property)) {
                 continue;
             }
             if (hasSetIgnoreColumns && setIgnoreColumns.containsOnce(entityClass, property)) {
@@ -270,13 +272,12 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
             }
             //如果是 track value
 
-            TrackValueUpdate<Object> trackValueUpdate = columnMetadata.getTrackValueUpdate();
-            if (trackValueUpdate != null) {
+            if (valueUpdateAtomicTrack != null) {
 
                 TrackDiffEntry trackDiffEntry = entityUpdateSetProcessor.trackValue(property);
                 if (trackDiffEntry != null) {
                     //设置set
-                    trackValueUpdate.configureSet(property, trackDiffEntry.getOriginal(), trackDiffEntry.getCurrent(), columnSetter);
+                    valueUpdateAtomicTrack.configureSet(property, trackDiffEntry.getOriginal(), trackDiffEntry.getCurrent(), columnSetter);
                     continue;
                 }
             }

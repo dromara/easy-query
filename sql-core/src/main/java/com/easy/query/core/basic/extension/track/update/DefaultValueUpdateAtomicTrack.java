@@ -9,7 +9,7 @@ import com.easy.query.core.expression.parser.core.base.WherePredicate;
  *
  * @author xuejiaming
  */
-public class DefaultTrackValueUpdate implements TrackValueUpdate<Object> {
+public class DefaultValueUpdateAtomicTrack implements ValueUpdateAtomicTrack<Object> {
 
     @Override
     public void configureSet(String propertyName, Object originalValue, Object currentValue, ColumnSetter<Object> sqlColumnSetter) {

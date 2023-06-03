@@ -30,7 +30,6 @@ public class DefaultTrackContext implements TrackContext {
     private final ConcurrentHashMap<Class<?>, ConcurrentHashMap<String, EntityState>> trackEntityMap = new ConcurrentHashMap<>();
 
     public DefaultTrackContext(EntityMetadataManager entityMetadataManager) {
-
         this.entityMetadataManager = entityMetadataManager;
     }
 

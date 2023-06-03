@@ -5,8 +5,8 @@ import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategyEnum;
 import com.easy.query.core.basic.extension.conversion.DefaultValueConverter;
 import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.basic.extension.logicdel.LogicDeleteBuilder;
-import com.easy.query.core.basic.extension.track.update.DefaultTrackValueUpdate;
-import com.easy.query.core.basic.extension.track.update.TrackValueUpdate;
+import com.easy.query.core.basic.extension.track.update.DefaultValueUpdateAtomicTrack;
+import com.easy.query.core.basic.extension.track.update.ValueUpdateAtomicTrack;
 import com.easy.query.core.basic.extension.version.VersionStrategy;
 import com.easy.query.core.inject.ServiceProvider;
 import com.easy.query.core.sharding.initializer.ShardingEntityBuilder;
@@ -133,7 +133,7 @@ public class EntityMetadata {
                 columnOption.setSupportQueryLike(encryption.supportQueryLike());
             }
             if(column!=null) {
-                Class<? extends ValueConverter> conversionClass = column.conversion();
+                Class<? extends ValueConverter<?, ?>> conversionClass = column.conversion();
                 if (!Objects.equals(DefaultValueConverter.class, conversionClass)) {
                     ValueConverter<?, ?> valueConverter = configuration.getValueConverter(conversionClass);
                     if (valueConverter == null) {
@@ -141,13 +141,13 @@ public class EntityMetadata {
                     }
                     columnOption.setValueConverter(valueConverter);
                 }
-                Class<? extends TrackValueUpdate> trackValueUpdateClass = column.trackValueUpdate();
-                if (!Objects.equals(DefaultTrackValueUpdate.class, trackValueUpdateClass)) {
-                    TrackValueUpdate<?> trackValueUpdate = configuration.getTrackValueUpdate(trackValueUpdateClass);
+                Class<? extends ValueUpdateAtomicTrack<?>> trackValueUpdateClass = column.valueUpdateAtomicTrack();
+                if (!Objects.equals(DefaultValueUpdateAtomicTrack.class, trackValueUpdateClass)) {
+                    ValueUpdateAtomicTrack<?> trackValueUpdate = configuration.getValueUpdateAtomicTrack(trackValueUpdateClass);
                     if (trackValueUpdate == null) {
                         throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " trackValueUpdate unknown");
                     }
-                    columnOption.setTrackValueUpdate(EasyObjectUtil.typeCastNullable(trackValueUpdate));
+                    columnOption.setValueUpdateAtomicTrack(EasyObjectUtil.typeCastNullable(trackValueUpdate));
                 }
 
             }

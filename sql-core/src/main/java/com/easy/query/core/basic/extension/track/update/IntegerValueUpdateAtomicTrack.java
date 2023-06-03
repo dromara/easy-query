@@ -9,7 +9,7 @@ import com.easy.query.core.expression.parser.core.base.WherePredicate;
  *
  * @author xuejiaming
  */
-public class IntegerTrackValueUpdate implements TrackValueUpdate<Integer> {
+public class IntegerValueUpdateAtomicTrack implements ValueUpdateAtomicTrack<Integer> {
     @Override
     public void configureSet(String propertyName, Integer originalValue, Integer currentValue, ColumnSetter<Object> sqlColumnSetter) {
         //扣库存

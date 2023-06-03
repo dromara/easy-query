@@ -2,14 +2,17 @@ package com.easy.query.test;
 
 import com.easy.query.api4j.update.ExpressionUpdatable;
 import com.easy.query.api4j.update.impl.EasyEntityUpdatable;
+import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
-import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.exception.EasyQueryConcurrentException;
+import com.easy.query.core.exception.EasyQuerySQLCommandException;
+import com.easy.query.core.exception.EasyQuerySQLInvokeException;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.TopicTypeTest1;
+import com.easy.query.test.entity.TopicValueUpdateAtomicTrack;
 import com.easy.query.test.enums.TopicTypeEnum;
 import org.junit.Assert;
 import org.junit.Test;
@@ -261,15 +264,38 @@ public class UpdateTest extends BaseTest {
         Assert.assertEquals("UPDATE `t_topic` t SET t.`title` = ? WHERE EXISTS (SELECT 1 FROM (select * from `t_topic`) t1 WHERE t1.`id` = t.`id`) AND t.`title` IS NOT NULL",sql);
     }
     @Test
-    public void updateTest14(){
+    public void updateTest14() {
         long l = easyQuery.updatable(Topic.class)
                 .set(Topic::getTitle, "2123")
-                .where(o -> o.exists(easyQuery.queryable("select * from `t_topic`",Topic.class).where(x -> x.eq(o, Topic::getId, Topic::getId))).isNull(Topic::getId)).executeRows();
+                .where(o -> o.exists(easyQuery.queryable("select * from `t_topic`", Topic.class).where(x -> x.eq(o, Topic::getId, Topic::getId))).isNull(Topic::getId)).executeRows();
         Assert.assertEquals(0, l);
         String sql = easyQuery.updatable(Topic.class)
                 .set(Topic::getTitle, "2123")
-                .where(o -> o.exists(easyQuery.queryable("select * from `t_topic`",Topic.class).where(x -> x.eq(o, Topic::getId, Topic::getId))).isNull(Topic::getId)).toSQL();
-        Assert.assertEquals("UPDATE `t_topic` t SET t.`title` = ? WHERE EXISTS (SELECT 1 FROM (select * from `t_topic`) t1 WHERE t1.`id` = t.`id`) AND t.`id` IS NULL",sql);
+                .where(o -> o.exists(easyQuery.queryable("select * from `t_topic`", Topic.class).where(x -> x.eq(o, Topic::getId, Topic::getId))).isNull(Topic::getId)).toSQL();
+        Assert.assertEquals("UPDATE `t_topic` t SET t.`title` = ? WHERE EXISTS (SELECT 1 FROM (select * from `t_topic`) t1 WHERE t1.`id` = t.`id`) AND t.`id` IS NULL", sql);
+    }
+
+    @Test
+    public void updateTest15() {
+        TopicValueUpdateAtomicTrack topicValueUpdateAtomicTrack = new TopicValueUpdateAtomicTrack();
+        topicValueUpdateAtomicTrack.setId("123");
+        topicValueUpdateAtomicTrack.setStars(99);
+        TrackManager trackManager = easyQuery.getRuntimeContext().getTrackManager();
+        try {
+            trackManager.begin();
+            easyQuery.addTracking(topicValueUpdateAtomicTrack);
+            topicValueUpdateAtomicTrack.setStars(98);
+            long l = easyQuery.updatable(topicValueUpdateAtomicTrack).executeRows();
+            System.out.println(l);
+        } catch (Exception ex) {
+            Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
+            EasyQuerySQLCommandException ex1 = (EasyQuerySQLCommandException) ex;
+            Assert.assertTrue(ex1.getCause() instanceof EasyQuerySQLInvokeException);
+            String sql = ((EasyQuerySQLInvokeException) ex1.getCause()).getSQL();
+            Assert.assertEquals("UPDATE `t_topic_value_atomic` SET `stars` = `stars`- ? WHERE `id` = ? AND `stars` >= ?", sql);
+        } finally {
+            trackManager.release();
+        }
     }
 
 

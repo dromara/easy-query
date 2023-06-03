@@ -3,7 +3,7 @@ package com.easy.query.core.metadata;
 import com.easy.query.core.basic.extension.conversion.DefaultValueConverter;
 import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.basic.extension.encryption.EncryptionStrategy;
-import com.easy.query.core.basic.extension.track.update.TrackValueUpdate;
+import com.easy.query.core.basic.extension.track.update.ValueUpdateAtomicTrack;
 
 import java.beans.PropertyDescriptor;
 
@@ -35,13 +35,13 @@ public final class ColumnOption {
     private  boolean large =false;
 
     private ValueConverter<?, ?> valueConverter;
-    private TrackValueUpdate<Object> trackValueUpdate;
+    private ValueUpdateAtomicTrack<Object> valueUpdateAtomicTrack;
 
     public ColumnOption(EntityMetadata entityMetadata, String name) {
         this.entityMetadata = entityMetadata;
         this.name = name;
         this.valueConverter = DefaultValueConverter.INSTANCE;
-        this.trackValueUpdate = null;
+        this.valueUpdateAtomicTrack = null;
     }
 
     public EntityMetadata getEntityMetadata() {
@@ -135,11 +135,11 @@ public final class ColumnOption {
         this.valueConverter = valueConverter;
     }
 
-    public TrackValueUpdate<Object> getTrackValueUpdate() {
-        return trackValueUpdate;
+    public ValueUpdateAtomicTrack<Object> getValueUpdateAtomicTrack() {
+        return valueUpdateAtomicTrack;
     }
 
-    public void setTrackValueUpdate(TrackValueUpdate<Object> trackValueUpdate) {
-        this.trackValueUpdate = trackValueUpdate;
+    public void setValueUpdateAtomicTrack(ValueUpdateAtomicTrack<Object> valueUpdateAtomicTrack) {
+        this.valueUpdateAtomicTrack = valueUpdateAtomicTrack;
     }
 }

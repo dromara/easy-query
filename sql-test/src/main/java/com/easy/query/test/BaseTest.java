@@ -2,6 +2,7 @@ package com.easy.query.test;
 
 import com.easy.query.api4j.client.DefaultEasyQuery;
 import com.easy.query.api4j.client.EasyQuery;
+import com.easy.query.core.basic.extension.track.update.IntegerValueUpdateAtomicTrack;
 import com.easy.query.core.configuration.ShardingDataSource;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
@@ -142,6 +143,7 @@ public abstract class BaseTest {
         configuration.applyShardingInitializer(new DataSourceShardingInitializer());
         configuration.applyValueConverter(new EnumConverter());
         configuration.applyValueConverter(new JsonConverter());
+        configuration.applyValueUpdateAtomicTrack(new IntegerValueUpdateAtomicTrack());
         TableRouteManager tableRouteManager = runtimeContext.getTableRouteManager();
         tableRouteManager.addRouteRule(new TopicShardingTableRule());
         tableRouteManager.addRouteRule(new TopicShardingTimeTableRule());

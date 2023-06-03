@@ -11,14 +11,14 @@ import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 
 /**
+ * @author xuejiaming
  * @FileName: ColumnValuePredicate.java
  * @Description: 文件说明
  * @Date: 2023/2/14 23:34
- * @author xuejiaming
  */
 public class ColumnWithSelfSegmentImpl implements ColumnWithSelfSegment {
-    private static final String INCREMENT="+?";
-    private static final String DECREMENT="-?";
+    private static final String INCREMENT = "+ ?";
+    private static final String DECREMENT = "- ?";
     private final String propertyName;
     private final Object val;
     private final SQLPredicateCompare compare;
@@ -27,7 +27,7 @@ public class ColumnWithSelfSegmentImpl implements ColumnWithSelfSegment {
     private final TableAvailable entityTable;
 
     public ColumnWithSelfSegmentImpl(boolean increment, TableAvailable entityTable, String propertyName, Object val, SQLPredicateCompare compare, QueryRuntimeContext runtimeContext) {
-        this.selfLink=increment?INCREMENT:DECREMENT;
+        this.selfLink = increment ? INCREMENT : DECREMENT;
         this.entityTable = entityTable;
         this.propertyName = propertyName;
         this.val = val;

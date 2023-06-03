@@ -2,7 +2,7 @@ package com.easy.query.core.metadata;
 
 import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.basic.extension.encryption.EncryptionStrategy;
-import com.easy.query.core.basic.extension.track.update.TrackValueUpdate;
+import com.easy.query.core.basic.extension.track.update.ValueUpdateAtomicTrack;
 
 import java.beans.PropertyDescriptor;
 
@@ -38,7 +38,7 @@ public class ColumnMetadata {
     private final  boolean large;
 
     private final ValueConverter<?, ?> valueConverter;
-    private final TrackValueUpdate<Object> trackValueUpdate;
+    private final ValueUpdateAtomicTrack<Object> valueUpdateAtomicTrack;
 
     public ColumnMetadata(ColumnOption columnOption) {
         this.entityMetadata = columnOption.getEntityMetadata();
@@ -54,7 +54,7 @@ public class ColumnMetadata {
         this.supportQueryLike= columnOption.isSupportQueryLike();
         this.large= columnOption.isLarge();
         this.valueConverter = columnOption.getValueConverter();
-        this.trackValueUpdate = columnOption.getTrackValueUpdate();
+        this.valueUpdateAtomicTrack = columnOption.getValueUpdateAtomicTrack();
     }
 
     public EntityMetadata getEntityMetadata() {
@@ -116,8 +116,8 @@ public class ColumnMetadata {
         return valueConverter;
     }
 
-    public TrackValueUpdate<Object> getTrackValueUpdate() {
-        return trackValueUpdate;
+    public ValueUpdateAtomicTrack<Object> getValueUpdateAtomicTrack() {
+        return valueUpdateAtomicTrack;
     }
 
     public Class<?> getPropertyType() {

@@ -17,5 +17,13 @@
         <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+    <dependencies>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-reflect</artifactId>
+            <version>1.8.0</version> <!-- 替换为你使用的 Kotlin 版本 -->
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
 
 </project>

@@ -1,8 +1,8 @@
 package com.easy.query.core.annotation;
 import com.easy.query.core.basic.extension.conversion.DefaultValueConverter;
 import com.easy.query.core.basic.extension.conversion.ValueConverter;
-import com.easy.query.core.basic.extension.track.update.DefaultTrackValueUpdate;
-import com.easy.query.core.basic.extension.track.update.TrackValueUpdate;
+import com.easy.query.core.basic.extension.track.update.DefaultValueUpdateAtomicTrack;
+import com.easy.query.core.basic.extension.track.update.ValueUpdateAtomicTrack;
 import com.easy.query.core.util.EasyStringUtil;
 
 import java.lang.annotation.Documented;
@@ -54,9 +54,9 @@ public @interface Column {
      */
     boolean large() default false;
 
-    Class<? extends ValueConverter> conversion() default DefaultValueConverter.class;
+    Class<? extends ValueConverter<?, ?>> conversion() default DefaultValueConverter.class;
 
-    Class<? extends TrackValueUpdate> trackValueUpdate() default DefaultTrackValueUpdate.class;
+    Class<? extends ValueUpdateAtomicTrack<?>> valueUpdateAtomicTrack() default DefaultValueUpdateAtomicTrack.class;
 
 //    /**
 //     * 当且仅当查询指定该属性才会查询出来
