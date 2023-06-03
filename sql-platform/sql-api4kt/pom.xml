@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.easy-query</groupId>
         <artifactId>easy-query-all</artifactId>
-        <version>0.9.20</version>
+        <version>0.9.30</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -16,6 +16,7 @@
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <kotlin.version>1.8.0</kotlin.version>
     </properties>
     <dependencies>
         <dependency>
@@ -26,9 +27,14 @@
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-reflect</artifactId>
-            <version>1.8.0</version> <!-- 替换为你使用的 Kotlin 版本 -->
+            <version>${kotlin.version}</version> <!-- 替换为你使用的 Kotlin 版本 -->
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-stdlib-jdk8</artifactId>
+            <version>${kotlin.version}</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
-
 </project>

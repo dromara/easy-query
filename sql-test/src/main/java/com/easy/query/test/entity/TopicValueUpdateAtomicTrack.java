@@ -2,7 +2,7 @@ package com.easy.query.test.entity;
 
 import com.easy.query.core.annotation.Column;
 import com.easy.query.core.annotation.Table;
-import com.easy.query.core.basic.extension.track.update.IntegerValueUpdateAtomicTrack;
+import com.easy.query.core.basic.extension.track.update.IntegerNotValueUpdateAtomicTrack;
 import lombok.Data;
 import lombok.ToString;
 
@@ -21,7 +21,7 @@ public class TopicValueUpdateAtomicTrack {
 
     @Column(primaryKey = true)
     private String id;
-    @Column(valueUpdateAtomicTrack = IntegerValueUpdateAtomicTrack.class)
+    @Column(valueUpdateAtomicTrack = IntegerNotValueUpdateAtomicTrack.class)
     private Integer stars;
     private String title;
     private Integer topicType;

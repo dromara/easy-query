@@ -7,7 +7,7 @@
     <groupId>com.easy-query</groupId>
     <artifactId>easy-query-all</artifactId>
     <packaging>pom</packaging>
-    <version>0.9.20</version>
+    <version>0.9.30</version>
     <name>easy-query</name>
     <description>java object query distributed connector</description>
     <url>https://github.com/xuejmnet/easy-query</url>
@@ -24,8 +24,8 @@
         <module>sql-platform/sql-api4j</module>
         <module>sql-platform/sql-api4kt</module>
         <module>sql-extension</module>
-        <module>sql-extension/sql-kt-springboot-starter</module>
         <module>sql-extension/sql-springboot-starter</module>
+        <module>sql-extension/sql-kt-springboot-starter</module>
         <module>sql-db-support</module>
         <module>sql-db-support/sql-mysql</module>
         <module>sql-db-support/sql-mssql</module>
@@ -33,8 +33,8 @@
         <module>sql-db-support/sql-pgsql</module>
         <module>sql-db-support/sql-sqlite</module>
         <!--        以下是不需要deploy到远程仓库的-->
-        <!--        <module>sql-test</module>-->
-        <!--        <module>samples</module>-->
+        <module>sql-test</module>
+        <module>samples</module>
     </modules>
 
     <properties>

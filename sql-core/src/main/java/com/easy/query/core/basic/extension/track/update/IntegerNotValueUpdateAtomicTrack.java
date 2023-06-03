@@ -9,9 +9,12 @@ import com.easy.query.core.expression.parser.core.base.WherePredicate;
  *
  * @author xuejiaming
  */
-public class IntegerValueUpdateAtomicTrack implements ValueUpdateAtomicTrack<Integer> {
+public class IntegerNotValueUpdateAtomicTrack implements ValueUpdateAtomicTrack<Integer> {
     @Override
     public void configureSet(String propertyName, Integer originalValue, Integer currentValue, ColumnSetter<Object> sqlColumnSetter) {
+        if (originalValue == null || currentValue == null) {
+            throw new IllegalArgumentException(propertyName + ":originalValue==null||currentValue==null");
+        }
         //扣库存
         if (originalValue > currentValue) {
             int decrement = originalValue - currentValue;

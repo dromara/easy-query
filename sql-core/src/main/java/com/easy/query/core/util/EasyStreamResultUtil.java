@@ -1,5 +1,6 @@
 package com.easy.query.core.util;
 
+import com.easy.query.core.basic.extension.track.EntityState;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
@@ -146,7 +147,12 @@ public final class EasyStreamResultUtil {
 //            callSetter(bean,setter, property, value);
         }
         if (trackBean) {
-            trackManager.getCurrentTrackContext().addTracking(bean, true);
+            EntityState entityState = trackManager.getCurrentTrackContext().addQueryTracking(bean);
+            Object entityStateCurrentValue = entityState.getCurrentValue();
+            if (entityStateCurrentValue != bean) {//没有附加成功应该返回之前被追加的数据而不是最新查询的数据
+                log.warn("current object tracked,return the traced object instead of the current querying object,track key:" + entityState.getTrackKey());
+                return EasyObjectUtil.typeCastNullable(entityStateCurrentValue);
+            }
         }
         return bean;
     }

@@ -88,6 +88,7 @@ public interface EasyQuery {
     /**
      * 添加到当前环境的追踪里面
      * 如果当前线程未开启追踪那么添加直接忽略无效
+     * 相同对象多次追踪结果还是true
      *
      * @param entity
      * @return true:添加成功,false:已经存在相同对象 或者未开启追踪

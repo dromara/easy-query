@@ -33,7 +33,7 @@ public class TrackTest extends BaseTest {
             SysUserTrack sysUserTrack1 = easyQuery.queryable(SysUserTrack.class).asTracking()
                     .whereById("1").firstOrNull();
             boolean b = easyQuery.addTracking(sysUserTrack1);
-            Assert.assertFalse(b);
+            Assert.assertTrue(b);
             sysUserTrack1.setPhone("9876543210");
             long l2 = easyQuery.updatable(sysUserTrack1).executeRows();
             Assert.assertEquals(1, l2);
@@ -120,7 +120,7 @@ public class TrackTest extends BaseTest {
             SysUserTrack sysUserTrack1 = easyQuery.queryable(SysUserTrack.class).asTracking()
                     .whereById(id).firstOrNull();
             boolean b = easyQuery.addTracking(sysUserTrack1);
-            Assert.assertFalse(b);
+            Assert.assertTrue(b);
             long l2 = easyQuery.updatable(sysUserTrack1).executeRows();
             Assert.assertEquals(0, l2);
 

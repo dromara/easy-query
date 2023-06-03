@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.easy-query</groupId>
         <artifactId>easy-query-all</artifactId>
-        <version>0.9.20</version>
+        <version>0.9.30</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -23,15 +23,11 @@
             <artifactId>sql-api4kt</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!--        <dependency>-->
-        <!--            <groupId>com.easy-query</groupId>-->
-        <!--            <artifactId>sql-springboot-starter</artifactId>-->
-        <!--            <version>${project.version}</version>-->
-        <!--        </dependency>-->
         <dependency>
             <groupId>com.easy-query</groupId>
             <artifactId>sql-springboot-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>
+
 </project>

@@ -56,6 +56,8 @@ public class EntityMetadata {
         return shardingDataSourcePropertyName != null;
     }
 
+    private boolean columnValueUpdateAtomicTrack = false;
+
     private LogicDeleteMetadata logicDeleteMetadata;
     private VersionMetadata versionMetadata;
     private String shardingDataSourcePropertyName;
@@ -141,14 +143,6 @@ public class EntityMetadata {
                     }
                     columnOption.setValueConverter(valueConverter);
                 }
-                Class<? extends ValueUpdateAtomicTrack<?>> trackValueUpdateClass = column.valueUpdateAtomicTrack();
-                if (!Objects.equals(DefaultValueUpdateAtomicTrack.class, trackValueUpdateClass)) {
-                    ValueUpdateAtomicTrack<?> trackValueUpdate = configuration.getValueUpdateAtomicTrack(trackValueUpdateClass);
-                    if (trackValueUpdate == null) {
-                        throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " trackValueUpdate unknown");
-                    }
-                    columnOption.setValueUpdateAtomicTrack(EasyObjectUtil.typeCastNullable(trackValueUpdate));
-                }
 
             }
 
@@ -167,6 +161,17 @@ public class EntityMetadata {
                     columnOption.setLarge(column.large());
 //                    columnMetadata.setSelect(column.select());
 //                    columnMetadata.setNullable(false);//如果为主键那么之前设置的nullable将无效
+
+
+                    Class<? extends ValueUpdateAtomicTrack<?>> trackValueUpdateClass = column.valueUpdateAtomicTrack();
+                    if (!Objects.equals(DefaultValueUpdateAtomicTrack.class, trackValueUpdateClass)) {
+                        ValueUpdateAtomicTrack<?> trackValueUpdate = configuration.getValueUpdateAtomicTrack(trackValueUpdateClass);
+                        if (trackValueUpdate == null) {
+                            throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " trackValueUpdate unknown");
+                        }
+                        columnOption.setValueUpdateAtomicTrack(EasyObjectUtil.typeCastNullable(trackValueUpdate));
+                        columnValueUpdateAtomicTrack = true;
+                    }
                 }
                 InsertIgnore insertIgnore = field.getAnnotation(InsertIgnore.class);
                 if (insertIgnore != null) {
@@ -528,5 +533,9 @@ public class EntityMetadata {
 
     public ShardingInitConfig getShardingInitConfig() {
         return shardingInitConfig;
+    }
+
+    public boolean isColumnValueUpdateAtomicTrack() {
+        return columnValueUpdateAtomicTrack;
     }
 }

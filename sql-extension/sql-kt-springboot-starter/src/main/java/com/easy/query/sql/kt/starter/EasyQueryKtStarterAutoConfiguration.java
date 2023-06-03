@@ -16,10 +16,10 @@ import org.springframework.context.annotation.Configuration;
 import javax.sql.DataSource;
 
 /**
+ * create time 2023/6/3 21:30
+ * 文件说明
+ *
  * @author xuejiaming
- * @FileName: EasyQueryStarter.java
- * @Description: 文件说明
- * @Date: 2023/3/11 12:47
  */
 @Configuration
 @EnableConfigurationProperties(EasyQueryProperties.class)

@@ -2,6 +2,8 @@ package com.easy.query.core.basic.api.update.abstraction;
 
 import com.easy.query.core.basic.api.internal.AbstractSQLExecuteRows;
 import com.easy.query.core.basic.api.update.ClientEntityUpdatable;
+import com.easy.query.core.basic.extension.track.TrackContext;
+import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
@@ -24,6 +26,8 @@ import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -55,38 +59,70 @@ public abstract class AbstractClientEntityUpdatable<T> extends AbstractSQLExecut
         table = runtimeContext.getExpressionBuilderFactory().createEntityTableExpressionBuilder(entityMetadata, 0, MultiTableTypeEnum.NONE, runtimeContext);
         this.entityUpdateExpressionBuilder.addSQLEntityTableExpression(table);
     }
+
     @Override
     public long executeRows() {
         if (EasyCollectionUtil.isNotEmpty(entities)) {
-            updateBefore();
+            List<Object> trackEntities = configureUpdateAndGetTrackEntities();
             EntityExpressionExecutor entityExpressionExecutor = entityUpdateExpressionBuilder.getRuntimeContext().getEntityExpressionExecutor();
-            return entityExpressionExecutor.executeRows(ExecutorContext.create(entityUpdateExpressionBuilder.getRuntimeContext(), false, ExecuteMethodEnum.UPDATE), entityUpdateExpressionBuilder, entities);
+            long executeRows = entityExpressionExecutor.executeRows(ExecutorContext.create(entityUpdateExpressionBuilder.getRuntimeContext(), false, ExecuteMethodEnum.UPDATE), entityUpdateExpressionBuilder, entities);
+            removeTrackEntities(trackEntities);
+            return executeRows;
         }
         return 0;
     }
 
-    protected void updateBefore() {
-        List<String> updateInterceptors = entityMetadata.getEntityInterceptors();
-        if (EasyCollectionUtil.isNotEmpty(updateInterceptors)) {
-            QueryConfiguration easyQueryConfiguration = entityUpdateExpressionBuilder.getRuntimeContext().getQueryConfiguration();
-            List<EntityInterceptor> entityInterceptors = entityUpdateExpressionBuilder.getExpressionContext().getInterceptorFilter(updateInterceptors)
-                    .map(interceptor -> (EntityInterceptor) easyQueryConfiguration.getEasyInterceptor(interceptor)).filter(Interceptor::enable).collect(Collectors.toList());
-            if (EasyCollectionUtil.isNotEmpty(entityInterceptors)) {
-                Class<?> entityClass = entityMetadata.getEntityClass();
-                for (T entity : entities) {
-                    for (EntityInterceptor entityInterceptor : entityInterceptors) {
-                        entityInterceptor.configureUpdate(entityClass, entityUpdateExpressionBuilder, entity);
-                    }
+    protected void removeTrackEntities(List<Object> trackEntities) {
+        if (EasyCollectionUtil.isNotEmpty(trackEntities)) {
+            TrackContext trackContext = getTrackContextOrNull();
+            if (trackContext != null) {
+                for (Object trackEntity : trackEntities) {
+                    trackContext.removeTracking(trackEntity);
                 }
             }
         }
+    }
+
+    protected TrackContext getTrackContextOrNull() {
+
+        QueryRuntimeContext runtimeContext = entityUpdateExpressionBuilder.getRuntimeContext();
+        TrackManager trackManager = runtimeContext.getTrackManager();
+        return trackManager.currentThreadTracking() ? trackManager.getCurrentTrackContext() : null;
+    }
+
+    protected List<Object> configureUpdateAndGetTrackEntities() {
+        List<EntityInterceptor> entityInterceptors = getEntityInterceptors();
+        Class<?> entityClass = entityMetadata.getEntityClass();
+        TrackContext trackContext = getTrackContextOrNull();
+        List<Object> trackEntities = new LinkedList<>();
+        for (T entity : entities) {
+            for (EntityInterceptor entityInterceptor : entityInterceptors) {
+                entityInterceptor.configureUpdate(entityClass, entityUpdateExpressionBuilder, entity);
+            }
+            if (trackContext != null) {
+                if (trackContext.isTrack(entity)) {
+                    trackEntities.add(entity);
+                }
+            }
+        }
+        return trackEntities;
+    }
+
+    protected List<EntityInterceptor> getEntityInterceptors() {
+        List<String> updateInterceptors = entityMetadata.getEntityInterceptors();
+        if (EasyCollectionUtil.isNotEmpty(updateInterceptors)) {
+            QueryConfiguration easyQueryConfiguration = entityUpdateExpressionBuilder.getRuntimeContext().getQueryConfiguration();
+            return entityUpdateExpressionBuilder.getExpressionContext().getInterceptorFilter(updateInterceptors)
+                    .map(interceptor -> (EntityInterceptor) easyQueryConfiguration.getEasyInterceptor(interceptor)).filter(Interceptor::enable).collect(Collectors.toList());
+        }
+        return Collections.emptyList();
     }
 
     @Override
     public ClientEntityUpdatable<T> setColumns(boolean condition, SQLExpression1<ColumnSelector<T>>
             columnSelectorExpression) {
         if (condition) {
-            ColumnSetSelectorImpl<T> columnSelector = new ColumnSetSelectorImpl<>(0, entityUpdateExpressionBuilder, entityUpdateExpressionBuilder.getSetColumns());
+            ColumnSetSelectorImpl<T> columnSelector = new ColumnSetSelectorImpl<>(table.getIndex(), entityUpdateExpressionBuilder, entityUpdateExpressionBuilder.getSetColumns());
             columnSelectorExpression.apply(columnSelector);
         }
         return this;
@@ -96,7 +132,7 @@ public abstract class AbstractClientEntityUpdatable<T> extends AbstractSQLExecut
     public ClientEntityUpdatable<T> setIgnoreColumns(boolean condition, SQLExpression1<ColumnSelector<T>>
             columnSelectorExpression) {
         if (condition) {
-            ColumnSetSelectorImpl<T> columnSelector = new ColumnSetSelectorImpl<>(0, entityUpdateExpressionBuilder, entityUpdateExpressionBuilder.getSetIgnoreColumns());
+            ColumnSetSelectorImpl<T> columnSelector = new ColumnSetSelectorImpl<>(table.getIndex(), entityUpdateExpressionBuilder, entityUpdateExpressionBuilder.getSetIgnoreColumns());
             columnSelectorExpression.apply(columnSelector);
         }
         return this;
@@ -106,7 +142,7 @@ public abstract class AbstractClientEntityUpdatable<T> extends AbstractSQLExecut
     public ClientEntityUpdatable<T> whereColumns(boolean condition, SQLExpression1<ColumnSelector<T>>
             columnSelectorExpression) {
         if (condition) {
-            ColumnSetSelectorImpl<T> columnSelector = new ColumnSetSelectorImpl<>(0, entityUpdateExpressionBuilder, entityUpdateExpressionBuilder.getWhereColumns());
+            ColumnSetSelectorImpl<T> columnSelector = new ColumnSetSelectorImpl<>(table.getIndex(), entityUpdateExpressionBuilder, entityUpdateExpressionBuilder.getWhereColumns());
             columnSelectorExpression.apply(columnSelector);
         }
         return this;
@@ -136,7 +172,8 @@ public abstract class AbstractClientEntityUpdatable<T> extends AbstractSQLExecut
     public String toSQL(Object entity) {
         return toSQLWithParam(entity, DefaultToSQLContext.defaultToSQLContext(entityUpdateExpressionBuilder.getExpressionContext().getTableContext()));
     }
-    private String toSQLWithParam(Object entity, ToSQLContext toSQLContext){
+
+    private String toSQLWithParam(Object entity, ToSQLContext toSQLContext) {
         return entityUpdateExpressionBuilder.toExpression(entity).toSQL(toSQLContext);
     }
 }

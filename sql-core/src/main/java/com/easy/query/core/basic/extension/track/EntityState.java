@@ -10,11 +10,13 @@ public class EntityState {
     private final Class<?> entityClass;
     private final Object originalValue;
     private final Object currentValue;
+    private final String trackKey;
 
-    public EntityState(Class<?> entityClass, Object originalValue, Object currentValue) {
-        assert entityClass !=null;
-        assert originalValue !=null;
-        assert currentValue !=null;
+    public EntityState(Class<?> entityClass, String trackKey, Object originalValue, Object currentValue) {
+        this.trackKey = trackKey;
+        assert entityClass != null;
+        assert originalValue != null;
+        assert currentValue != null;
         this.entityClass = entityClass;
         this.originalValue = originalValue;
         this.currentValue = currentValue;
@@ -22,6 +24,10 @@ public class EntityState {
 
     public Class<?> getEntityClass() {
         return entityClass;
+    }
+
+    public String getTrackKey() {
+        return trackKey;
     }
 
     public Object getOriginalValue() {
