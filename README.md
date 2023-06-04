@@ -52,7 +52,7 @@ QQ群:170029046
 ```xml
 
 <properties>
-  <easy-query.version>0.9.30</easy-query.version>
+  <easy-query.version>0.9.31</easy-query.version>
 </properties>
 <dependency>
     <groupId>com.easy-query</groupId>
@@ -65,7 +65,7 @@ QQ群:170029046
 ```xml
 
 <properties>
-  <easy-query.version>0.9.30</easy-query.version>
+  <easy-query.version>0.9.31</easy-query.version>
 </properties>
 <dependency>
     <groupId>com.easy-query</groupId>
