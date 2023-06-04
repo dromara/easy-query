@@ -92,7 +92,10 @@ public class TableSQLExpressionImpl implements EntityTableSQLExpression {
     protected String doGetSchema() {
         if (entityTable.hasSchema() || schemaAs != null) {
             String schema = entityTable.getSchema();
-            return schemaAs.apply(schema);
+            if (schemaAs != null) {
+                return schemaAs.apply(schema);
+            }
+            return schema;
         }
         return null;
     }

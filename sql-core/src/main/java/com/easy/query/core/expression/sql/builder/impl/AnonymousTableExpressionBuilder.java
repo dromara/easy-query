@@ -49,12 +49,10 @@ public class AnonymousTableExpressionBuilder extends TableExpressionBuilder impl
 
     @Override
     public void setTableNameAs(Function<String, String> tableNameAs) {
-        throw new UnsupportedOperationException();
     }
 
     @Override
     public void setSchemaAs(Function<String, String> schemaAs) {
-        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -65,8 +63,8 @@ public class AnonymousTableExpressionBuilder extends TableExpressionBuilder impl
         if (on != null) {
             on.copyTo(anonymousTableExpressionBuilder.getOn());
         }
-        anonymousTableExpressionBuilder.setTableNameAs(this.tableNameAs);
-        anonymousTableExpressionBuilder.setSchemaAs(this.schemaAs);
+//        anonymousTableExpressionBuilder.setTableNameAs(this.tableNameAs);
+//        anonymousTableExpressionBuilder.setSchemaAs(this.schemaAs);
         return anonymousTableExpressionBuilder;
     }
 

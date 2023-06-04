@@ -29,12 +29,10 @@ public class AnonymousEntityTableSQLExpressionImpl extends TableSQLExpressionImp
 
     @Override
     public void setTableNameAs(Function<String, String> tableNameAs) {
-        throw new UnsupportedOperationException();
     }
 
     @Override
     public void setSchemaAs(Function<String, String> schemaAs) {
-        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -64,11 +62,13 @@ public class AnonymousEntityTableSQLExpressionImpl extends TableSQLExpressionImp
     @Override
     public EntityTableSQLExpression cloneSQLExpression() {
 
-        EntityTableSQLExpression tableSQLExpression = runtimeContext.getExpressionFactory().createAnonymousEntityTableSQLExpression(entityTable,multiTableType,easyQuerySQLExpression.cloneSQLExpression(),runtimeContext);
-        if(EasySQLSegmentUtil.isNotEmpty(on)){
+        EntityTableSQLExpression tableSQLExpression = runtimeContext.getExpressionFactory().createAnonymousEntityTableSQLExpression(entityTable, multiTableType, easyQuerySQLExpression.cloneSQLExpression(), runtimeContext);
+        if (EasySQLSegmentUtil.isNotEmpty(on)) {
             PredicateSegment predicateSegment = on.clonePredicateSegment();
             tableSQLExpression.setOn(predicateSegment);
         }
+        tableSQLExpression.setTableNameAs(tableNameAs);
+        tableSQLExpression.setSchemaAs(schemaAs);
         return tableSQLExpression;
     }
 }
