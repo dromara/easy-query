@@ -415,6 +415,12 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     }
 
     @Override
+    public Queryable<T1> asSchema(Function<String, String> schemaAs) {
+        entityQueryable.asSchema(schemaAs);
+        return this;
+    }
+
+    @Override
     public Queryable<T1> asAlias(String alias) {
         entityQueryable.asAlias(alias);
         return this;

@@ -310,6 +310,12 @@ public abstract class AbstractKtQueryable3<T1, T2, T3> extends AbstractKtQueryab
         return this;
     }
 
+    @Override
+    public KtQueryable3<T1, T2, T3> asSchema(Function<String, String> schemaAs) {
+        super.asSchema(schemaAs);
+        return this;
+    }
+
 
     @Override
     public KtQueryable3<T1, T2, T3> asAlias(String alias) {

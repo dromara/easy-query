@@ -52,7 +52,7 @@ public class UpdateTest extends BaseTest {
         Assert.assertNotNull(topic);
         Assert.assertEquals("3", topic.getId());
         long rows = easyQuery.updatable(Topic.class)
-                .setSelfColumn(Topic::getTitle, Topic::getStars)
+                .setWithColumn(Topic::getTitle, Topic::getStars)
                 .where(o -> o.eq(Topic::getId, topic.getId()))
                 .executeRows();
         Assert.assertEquals(1, rows);

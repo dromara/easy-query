@@ -15,7 +15,10 @@ import java.util.function.Function;
 public interface EntityTableSQLExpression extends SQLExpression {
     EntityMetadata getEntityMetadata();
     String getTableName();
-    void setTableNameAs(Function<String,String> tableNameAs);
+    void setTableNameAs(Function<String, String> tableNameAs);
+
+    void setSchemaAs(Function<String, String> schemaAs);
+
     boolean tableNameIsAs();
     PredicateSegment getOn();
     void setOn(PredicateSegment predicateSegment);

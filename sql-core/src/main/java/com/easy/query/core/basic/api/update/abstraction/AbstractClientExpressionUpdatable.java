@@ -12,6 +12,7 @@ import com.easy.query.core.enums.SQLPredicateCompareEnum;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.parser.core.base.ColumnSetter;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.parser.core.base.impl.ColumnSetterImpl;
 import com.easy.query.core.expression.parser.core.base.impl.WherePredicateImpl;
@@ -41,7 +42,7 @@ public abstract class AbstractClientExpressionUpdatable<T> extends AbstractSQLEx
     protected final Class<T> clazz;
     protected final EntityMetadata entityMetadata;
     protected final EntityUpdateExpressionBuilder entityUpdateExpressionBuilder;
-    protected final ColumnSetterImpl<T> columnSetter;
+    protected final ColumnSetter<T> columnSetter;
     protected final TableAvailable table;
 
     public AbstractClientExpressionUpdatable(Class<T> clazz, EntityUpdateExpressionBuilder entityUpdateExpressionBuilder) {
@@ -72,7 +73,7 @@ public abstract class AbstractClientExpressionUpdatable<T> extends AbstractSQLEx
     }
 
     @Override
-    public ClientExpressionUpdatable<T> setSelfColumn(boolean condition, String property1, String property2) {
+    public ClientExpressionUpdatable<T> setWithColumn(boolean condition, String property1, String property2) {
         columnSetter.setWithColumn(true, property1, property2);
         return this;
     }
@@ -172,6 +173,12 @@ public abstract class AbstractClientExpressionUpdatable<T> extends AbstractSQLEx
     @Override
     public ClientExpressionUpdatable<T> asTable(Function<String, String> tableNameAs) {
         entityUpdateExpressionBuilder.getRecentlyTable().setTableNameAs(tableNameAs);
+        return this;
+    }
+
+    @Override
+    public ClientExpressionUpdatable<T> asSchema(Function<String, String> schemaAs) {
+        entityUpdateExpressionBuilder.getRecentlyTable().setSchemaAs(schemaAs);
         return this;
     }
 

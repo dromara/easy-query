@@ -37,6 +37,11 @@ public class EasyEmptyClientInsertable<T> implements ClientInsertable<T> {
     }
 
     @Override
+    public ClientInsertable<T> asSchema(Function<String, String> schemaAs) {
+        return this;
+    }
+
+    @Override
     public ClientInsertable<T> asAlias(String alias) {
         return this;
     }

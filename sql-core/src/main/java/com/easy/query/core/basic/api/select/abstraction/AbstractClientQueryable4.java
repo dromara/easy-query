@@ -367,6 +367,12 @@ public abstract class AbstractClientQueryable4<T1, T2, T3, T4> extends AbstractO
     }
 
     @Override
+    public ClientQueryable4<T1, T2, T3, T4> asSchema(Function<String, String> schemaAs) {
+        super.asSchema(schemaAs);
+        return this;
+    }
+
+    @Override
     public ClientQueryable4<T1, T2, T3, T4> asAlias(String alias) {
         super.asAlias(alias);
         return this;

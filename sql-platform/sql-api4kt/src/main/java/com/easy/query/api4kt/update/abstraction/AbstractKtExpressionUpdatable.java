@@ -38,8 +38,8 @@ public abstract class AbstractKtExpressionUpdatable<T> implements KtExpressionUp
     }
 
     @Override
-    public KtExpressionUpdatable<T> setSelfColumn(boolean condition, Property<T, ?> column1, Property<T, ?> column2) {
-        expressionObjectUpdatable.setSelfColumn(true, EasyLambdaUtil.getPropertyName(column1), EasyLambdaUtil.getPropertyName(column2));
+    public KtExpressionUpdatable<T> setWithColumn(boolean condition, Property<T, ?> column1, Property<T, ?> column2) {
+        expressionObjectUpdatable.setWithColumn(true, EasyLambdaUtil.getPropertyName(column1), EasyLambdaUtil.getPropertyName(column2));
         return this;
     }
 
@@ -108,6 +108,12 @@ public abstract class AbstractKtExpressionUpdatable<T> implements KtExpressionUp
     @Override
     public KtExpressionUpdatable<T> asTable(Function<String, String> tableNameAs) {
         expressionObjectUpdatable.asTable(tableNameAs);
+        return this;
+    }
+
+    @Override
+    public KtExpressionUpdatable<T> asSchema(Function<String, String> schemaAs) {
+        expressionObjectUpdatable.asSchema(schemaAs);
         return this;
     }
 

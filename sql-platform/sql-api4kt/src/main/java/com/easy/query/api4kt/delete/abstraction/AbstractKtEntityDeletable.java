@@ -50,6 +50,12 @@ public abstract class AbstractKtEntityDeletable<T> implements KtEntityDeletable<
     }
 
     @Override
+    public KtEntityDeletable<T> asSchema(Function<String, String> schemaAs) {
+        entityObjectDeletable.asSchema(schemaAs);
+        return this;
+    }
+
+    @Override
     public KtEntityDeletable<T> asAlias(String alias) {
         entityObjectDeletable.asAlias(alias);
         return this;

@@ -164,6 +164,12 @@ public abstract class AbstractClientExpressionDeletable<T> extends AbstractSQLEx
     }
 
     @Override
+    public ClientExpressionDeletable<T> asSchema(Function<String, String> schemaAs) {
+        entityDeleteExpressionBuilder.getRecentlyTable().setSchemaAs(schemaAs);
+        return this;
+    }
+
+    @Override
     public ClientExpressionDeletable<T> asAlias(String alias) {
         entityDeleteExpressionBuilder.getRecentlyTable().asAlias(alias);
         return this;

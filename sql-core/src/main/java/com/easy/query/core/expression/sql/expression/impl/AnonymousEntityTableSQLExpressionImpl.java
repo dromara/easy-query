@@ -1,7 +1,7 @@
 package com.easy.query.core.expression.sql.expression.impl;
 
-import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
@@ -10,7 +10,6 @@ import com.easy.query.core.expression.sql.expression.EntityQuerySQLExpression;
 import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 import com.easy.query.core.util.EasySQLSegmentUtil;
-import com.easy.query.core.util.EasyStringUtil;
 
 import java.util.function.Function;
 
@@ -30,7 +29,12 @@ public class AnonymousEntityTableSQLExpressionImpl extends TableSQLExpressionImp
 
     @Override
     public void setTableNameAs(Function<String, String> tableNameAs) {
-       throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setSchemaAs(Function<String, String> schemaAs) {
+        throw new UnsupportedOperationException();
     }
 
     @Override

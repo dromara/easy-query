@@ -212,15 +212,26 @@ public interface Queryable4<T1,T2,T3,T4> extends Queryable<T1> {
     default Queryable4<T1, T2, T3,T4> asTable(String tableName){
         return asTable(old->tableName);
     }
+
     /**
      * 将当前表达式最近的一张表的表名修改成 {@param tableNameAs}返回的表名
      * 如果当前最近的表是正常的数据库表名,那么直接将表名改写
      * 如果当前最近的表是匿名表比如嵌套queryable的表那么将alias改成对应的表名
+     *
      * @param tableNameAs
      * @return
      */
     @Override
-    Queryable4<T1, T2, T3,T4> asTable(Function<String,String> tableNameAs);
+    Queryable4<T1, T2, T3, T4> asTable(Function<String, String> tableNameAs);
+
     @Override
-    Queryable4<T1, T2, T3,T4> asAlias(String alias);
+    default Queryable4<T1, T2, T3, T4> asSchema(String tableName) {
+        return asSchema(old -> tableName);
+    }
+
+    @Override
+    Queryable4<T1, T2, T3, T4> asSchema(Function<String, String> schemaAs);
+
+    @Override
+    Queryable4<T1, T2, T3, T4> asAlias(String alias);
 }

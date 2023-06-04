@@ -25,14 +25,22 @@ public interface TableReNameable<TChain> {
         }
         return asTable(old->tableName);
     }
+
     /**
      * 将当前表达式最近的一张表的表名修改成 {@param tableNameAs}返回的表名
      * 如果当前最近的表是正常的数据库表名,那么直接将表名改写
      * 如果当前最近的表是匿名表则不更改
+     *
      * @param tableNameAs
      * @return
      */
-    TChain asTable(Function<String,String> tableNameAs);
+    TChain asTable(Function<String, String> tableNameAs);
+
+    default TChain asSchema(String schema) {
+        return asSchema(old -> schema);
+    }
+
+    TChain asSchema(Function<String, String> schemaAs);
 
     /**
      * 将当前表达式最近的一张表的别名进行指定

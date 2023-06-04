@@ -59,6 +59,11 @@ public class EasyEmptyKtEntityUpdatable<T> implements KtEntityUpdatable<T> {
     }
 
     @Override
+    public KtEntityUpdatable<T> asSchema(Function<String, String> schemaAs) {
+        return this;
+    }
+
+    @Override
     public KtEntityUpdatable<T> asAlias(String alias) {
         return this;
     }

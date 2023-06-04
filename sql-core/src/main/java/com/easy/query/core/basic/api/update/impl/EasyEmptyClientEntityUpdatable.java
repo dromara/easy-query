@@ -65,6 +65,11 @@ public class EasyEmptyClientEntityUpdatable<T> implements ClientEntityUpdatable<
     }
 
     @Override
+    public ClientEntityUpdatable<T> asSchema(Function<String, String> schemaAs) {
+        return this;
+    }
+
+    @Override
     public ClientEntityUpdatable<T> asAlias(String alias) {
         return this;
     }

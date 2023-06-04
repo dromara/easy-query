@@ -25,11 +25,11 @@ public interface KtExpressionUpdatable<T> extends Updatable<T, KtExpressionUpdat
 
     KtExpressionUpdatable<T> set(boolean condition, Property<T, ?> column, Object val);
 
-    default KtExpressionUpdatable<T> setSelfColumn(Property<T, ?> column1, Property<T, ?> column2) {
-        return setSelfColumn(true, column1, column2);
+    default KtExpressionUpdatable<T> setWithColumn(Property<T, ?> column1, Property<T, ?> column2) {
+        return setWithColumn(true, column1, column2);
     }
 
-    KtExpressionUpdatable<T> setSelfColumn(boolean condition, Property<T, ?> column1, Property<T, ?> column2);
+    KtExpressionUpdatable<T> setWithColumn(boolean condition, Property<T, ?> column1, Property<T, ?> column2);
     // region 列++ --
 
 

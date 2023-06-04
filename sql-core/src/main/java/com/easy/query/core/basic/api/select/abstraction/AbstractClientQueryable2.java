@@ -374,13 +374,20 @@ public abstract class AbstractClientQueryable2<T1, T2> extends AbstractObjectQue
     }
 
     @Override
+    public ClientQueryable2<T1, T2> asSchema(Function<String, String> schemaAs) {
+        super.asSchema(schemaAs);
+        return this;
+    }
+
+
+    @Override
     public ClientQueryable2<T1, T2> asAlias(String alias) {
         super.asAlias(alias);
         return this;
     }
 
     @Override
-    public SQLExpressionProvider<T2> getSQLExpressionProvider2(){
+    public SQLExpressionProvider<T2> getSQLExpressionProvider2() {
         if(sqlExpressionProvider2==null){
             sqlExpressionProvider2=runtimeContext.getSQLExpressionInvokeFactory().createSQLExpressionProvider(1,this.entityQueryExpressionBuilder);
         }

@@ -95,13 +95,15 @@ public abstract class AbstractClientEntityUpdatable<T> extends AbstractSQLExecut
         Class<?> entityClass = entityMetadata.getEntityClass();
         TrackContext trackContext = getTrackContextOrNull();
         List<Object> trackEntities = new LinkedList<>();
-        for (T entity : entities) {
-            for (EntityInterceptor entityInterceptor : entityInterceptors) {
-                entityInterceptor.configureUpdate(entityClass, entityUpdateExpressionBuilder, entity);
-            }
-            if (trackContext != null) {
-                if (trackContext.isTrack(entity)) {
-                    trackEntities.add(entity);
+        if (EasyCollectionUtil.isNotEmpty(entityInterceptors) || trackContext != null) {
+            for (T entity : entities) {
+                for (EntityInterceptor entityInterceptor : entityInterceptors) {
+                    entityInterceptor.configureUpdate(entityClass, entityUpdateExpressionBuilder, entity);
+                }
+                if (trackContext != null) {
+                    if (trackContext.isTrack(entity)) {
+                        trackEntities.add(entity);
+                    }
                 }
             }
         }
@@ -151,6 +153,12 @@ public abstract class AbstractClientEntityUpdatable<T> extends AbstractSQLExecut
     @Override
     public ClientEntityUpdatable<T> asTable(Function<String, String> tableNameAs) {
         entityUpdateExpressionBuilder.getRecentlyTable().setTableNameAs(tableNameAs);
+        return this;
+    }
+
+    @Override
+    public ClientEntityUpdatable<T> asSchema(Function<String, String> schemaAs) {
+        entityUpdateExpressionBuilder.getRecentlyTable().setSchemaAs(schemaAs);
         return this;
     }
 

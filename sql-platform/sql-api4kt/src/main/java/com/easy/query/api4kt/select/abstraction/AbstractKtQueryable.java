@@ -415,6 +415,12 @@ public abstract class AbstractKtQueryable<T1> implements KtQueryable<T1> {
     }
 
     @Override
+    public KtQueryable<T1> asSchema(Function<String, String> schemaAs) {
+        entityQueryable.asSchema(schemaAs);
+        return this;
+    }
+
+    @Override
     public KtQueryable<T1> asAlias(String alias) {
         entityQueryable.asAlias(alias);
         return this;

@@ -65,6 +65,12 @@ public abstract class AbstractEntityUpdatable<T> implements EntityUpdatable<T> {
     }
 
     @Override
+    public EntityUpdatable<T> asSchema(Function<String, String> schemaAs) {
+        entityObjectUpdatable.asSchema(schemaAs);
+        return this;
+    }
+
+    @Override
     public EntityUpdatable<T> asAlias(String alias) {
         entityObjectUpdatable.asAlias(alias);
         return this;

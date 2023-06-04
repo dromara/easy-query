@@ -86,6 +86,12 @@ public abstract class AbstractClientInsertable<T> implements ClientInsertable<T>
     }
 
     @Override
+    public ClientInsertable<T> asSchema(Function<String, String> schemaAs) {
+        entityInsertExpressionBuilder.getRecentlyTable().setSchemaAs(schemaAs);
+        return this;
+    }
+
+    @Override
     public ClientInsertable<T> asAlias(String alias) {
         entityInsertExpressionBuilder.getRecentlyTable().asAlias(alias);
         return this;

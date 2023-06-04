@@ -38,8 +38,8 @@ public abstract class AbstractExpressionUpdatable<T> implements ExpressionUpdata
     }
 
     @Override
-    public ExpressionUpdatable<T> setSelfColumn(boolean condition, Property<T, ?> column1, Property<T, ?> column2) {
-        expressionObjectUpdatable.setSelfColumn(true, EasyLambdaUtil.getPropertyName(column1), EasyLambdaUtil.getPropertyName(column2));
+    public ExpressionUpdatable<T> setWithColumn(boolean condition, Property<T, ?> column1, Property<T, ?> column2) {
+        expressionObjectUpdatable.setWithColumn(true, EasyLambdaUtil.getPropertyName(column1), EasyLambdaUtil.getPropertyName(column2));
         return this;
     }
 
@@ -108,6 +108,12 @@ public abstract class AbstractExpressionUpdatable<T> implements ExpressionUpdata
     @Override
     public ExpressionUpdatable<T> asTable(Function<String, String> tableNameAs) {
         expressionObjectUpdatable.asTable(tableNameAs);
+        return this;
+    }
+
+    @Override
+    public ExpressionUpdatable<T> asSchema(Function<String, String> schemaAs) {
+        expressionObjectUpdatable.asSchema(schemaAs);
         return this;
     }
 

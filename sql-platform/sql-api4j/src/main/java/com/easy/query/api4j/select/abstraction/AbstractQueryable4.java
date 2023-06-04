@@ -254,6 +254,12 @@ public abstract class AbstractQueryable4<T1, T2, T3, T4> extends AbstractQueryab
     }
 
     @Override
+    public Queryable4<T1, T2, T3, T4> asSchema(Function<String, String> schemaAs) {
+        super.asSchema(schemaAs);
+        return this;
+    }
+
+    @Override
     public Queryable4<T1, T2, T3, T4> asAlias(String alias) {
         super.asAlias(alias);
         return this;

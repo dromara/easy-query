@@ -49,12 +49,17 @@ public class EasyEmptyEntityUpdatable<T> implements EntityUpdatable<T> {
     public void executeRows(long expectRows, String msg,String code) {
         long rows = executeRows();
         if(rows!=expectRows){
-            throw new EasyQueryConcurrentException(msg,code);
+            throw new EasyQueryConcurrentException(msg, code);
         }
     }
 
     @Override
     public EntityUpdatable<T> asTable(Function<String, String> tableNameAs) {
+        return this;
+    }
+
+    @Override
+    public EntityUpdatable<T> asSchema(Function<String, String> schemaAs) {
         return this;
     }
 
@@ -67,6 +72,7 @@ public class EasyEmptyEntityUpdatable<T> implements EntityUpdatable<T> {
     public EntityUpdatable<T> noInterceptor() {
         return this;
     }
+
     @Override
     public EntityUpdatable<T> useInterceptor(String name) {
         return this;

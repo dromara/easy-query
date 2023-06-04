@@ -74,6 +74,12 @@ public abstract class AbstractEntityInsertable<T> implements EntityInsertable<T>
     }
 
     @Override
+    public EntityInsertable<T> asSchema(Function<String, String> schemaAs) {
+        clientInsertable.asSchema(schemaAs);
+        return this;
+    }
+
+    @Override
     public EntityInsertable<T> asAlias(String alias) {
         clientInsertable.asAlias(alias);
         return this;

@@ -260,5 +260,13 @@ public interface KtQueryable2<T1, T2> extends KtQueryable<T1> {
     KtQueryable2<T1, T2> asTable(Function<String, String> tableNameAs);
 
     @Override
+    default KtQueryable2<T1, T2> asSchema(String tableName) {
+        return asSchema(old -> tableName);
+    }
+
+    @Override
+    KtQueryable2<T1, T2> asSchema(Function<String, String> schemaAs);
+
+    @Override
     KtQueryable2<T1, T2> asAlias(String alias);
 }

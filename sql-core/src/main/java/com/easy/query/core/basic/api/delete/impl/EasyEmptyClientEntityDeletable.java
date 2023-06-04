@@ -73,6 +73,11 @@ public class EasyEmptyClientEntityDeletable<T> implements ClientEntityDeletable<
     }
 
     @Override
+    public ClientEntityDeletable<T> asSchema(Function<String, String> schemaAs) {
+        return this;
+    }
+
+    @Override
     public ClientEntityDeletable<T> asAlias(String alias) {
         return this;
     }

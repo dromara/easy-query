@@ -6,7 +6,7 @@ import com.easy.query.core.expression.parser.core.base.ColumnSelector;
 import com.easy.query.core.expression.parser.core.base.GroupBySelector;
 import com.easy.query.core.expression.parser.core.base.WhereAggregatePredicate;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
-import com.easy.query.core.expression.parser.core.base.impl.AutoColumnAsSelectorImpl;
+import com.easy.query.core.expression.parser.core.base.impl.ColumnAutoAsSelectorImpl;
 import com.easy.query.core.expression.parser.core.base.impl.ColumnAsSelectorImpl;
 import com.easy.query.core.expression.parser.core.base.impl.ColumnResultSelectorImpl;
 import com.easy.query.core.expression.parser.core.base.impl.ColumnSelectorImpl;
@@ -101,7 +101,7 @@ public class SQLExpressionProviderImpl<TEntity> implements SQLExpressionProvider
 
     @Override
     public <TR> ColumnAsSelector<TEntity, TR> getAutoColumnAsSelector(SQLBuilderSegment sqlSegment0Builder, Class<TR> resultClass) {
-        return new AutoColumnAsSelectorImpl<>(index, entityQueryExpressionBuilder, sqlSegment0Builder, resultClass);
+        return new ColumnAutoAsSelectorImpl<>(index, entityQueryExpressionBuilder, sqlSegment0Builder, resultClass);
     }
 
     @Override

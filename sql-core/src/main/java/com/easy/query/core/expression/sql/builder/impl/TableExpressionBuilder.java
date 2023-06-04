@@ -27,6 +27,7 @@ public class TableExpressionBuilder implements EntityTableExpressionBuilder {
     protected final QueryRuntimeContext runtimeContext;
     protected PredicateSegment on;
     protected Function<String, String> tableNameAs;
+    protected Function<String, String> schemaAs;
 
     public TableExpressionBuilder(TableAvailable entityTable, MultiTableTypeEnum multiTableType, QueryRuntimeContext runtimeContext) {
         this.entityTable = entityTable;
@@ -47,6 +48,11 @@ public class TableExpressionBuilder implements EntityTableExpressionBuilder {
     @Override
     public void setTableNameAs(Function<String, String> tableNameAs) {
         this.tableNameAs = tableNameAs;
+    }
+
+    @Override
+    public void setSchemaAs(Function<String, String> schemaAs) {
+        this.schemaAs = schemaAs;
     }
 
     @Override
@@ -79,6 +85,7 @@ public class TableExpressionBuilder implements EntityTableExpressionBuilder {
             on.copyTo(tableExpressionBuilder.getOn());
         }
         tableExpressionBuilder.setTableNameAs(this.tableNameAs);
+        tableExpressionBuilder.setSchemaAs(this.schemaAs);
         return tableExpressionBuilder;
     }
 
@@ -114,6 +121,7 @@ public class TableExpressionBuilder implements EntityTableExpressionBuilder {
     public EntityTableSQLExpression toExpression() {
         EntityTableSQLExpression tableSQLExpression = runtimeContext.getExpressionFactory().createEntityTableSQLExpression(entityTable, multiTableType, runtimeContext);
         tableSQLExpression.setTableNameAs(tableNameAs);
+        tableSQLExpression.setSchemaAs(schemaAs);
         return tableSQLExpression;
     }
 }

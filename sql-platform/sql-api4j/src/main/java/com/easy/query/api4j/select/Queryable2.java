@@ -258,6 +258,15 @@ public interface Queryable2<T1, T2> extends Queryable<T1> {
      */
     @Override
     Queryable2<T1, T2> asTable(Function<String, String> tableNameAs);
+
+    @Override
+    default Queryable2<T1, T2> asSchema(String tableName) {
+        return asSchema(old -> tableName);
+    }
+
+    @Override
+    Queryable2<T1, T2> asSchema(Function<String, String> schemaAs);
+
     @Override
     Queryable2<T1, T2> asAlias(String alias);
 }

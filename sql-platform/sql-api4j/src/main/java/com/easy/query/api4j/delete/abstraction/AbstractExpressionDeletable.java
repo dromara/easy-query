@@ -106,6 +106,12 @@ public abstract class AbstractExpressionDeletable<T> implements ExpressionDeleta
     }
 
     @Override
+    public ExpressionDeletable<T> asSchema(Function<String, String> schemaAs) {
+        expressionObjectDeletable.asSchema(schemaAs);
+        return this;
+    }
+
+    @Override
     public ExpressionDeletable<T> asAlias(String alias) {
         expressionObjectDeletable.asAlias(alias);
         return this;

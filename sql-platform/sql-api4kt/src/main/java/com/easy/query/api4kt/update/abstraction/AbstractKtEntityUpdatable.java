@@ -65,6 +65,12 @@ public abstract class AbstractKtEntityUpdatable<T> implements KtEntityUpdatable<
     }
 
     @Override
+    public KtEntityUpdatable<T> asSchema(Function<String, String> schemaAs) {
+        entityObjectUpdatable.asSchema(schemaAs);
+        return this;
+    }
+
+    @Override
     public KtEntityUpdatable<T> asAlias(String alias) {
         entityObjectUpdatable.asAlias(alias);
         return this;

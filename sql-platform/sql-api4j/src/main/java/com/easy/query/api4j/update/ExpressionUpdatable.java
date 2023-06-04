@@ -18,18 +18,18 @@ import java.util.Collection;
  * @Date: 2023/2/24 23:21
  * @author xuejiaming
  */
-public interface ExpressionUpdatable<T> extends Updatable<T,ExpressionUpdatable<T>>, Versionable<ExpressionUpdatable<T>> {
+public interface ExpressionUpdatable<T> extends Updatable<T, ExpressionUpdatable<T>>, Versionable<ExpressionUpdatable<T>> {
     default ExpressionUpdatable<T> set(Property<T, ?> column, Object val) {
         return set(true, column, val);
     }
 
     ExpressionUpdatable<T> set(boolean condition, Property<T, ?> column, Object val);
 
-    default ExpressionUpdatable<T> setSelfColumn(Property<T, ?> column1, Property<T, ?> column2) {
-        return setSelfColumn(true, column1, column2);
+    default ExpressionUpdatable<T> setWithColumn(Property<T, ?> column1, Property<T, ?> column2) {
+        return setWithColumn(true, column1, column2);
     }
 
-    ExpressionUpdatable<T> setSelfColumn(boolean condition, Property<T, ?> column1, Property<T, ?> column2);
+    ExpressionUpdatable<T> setWithColumn(boolean condition, Property<T, ?> column1, Property<T, ?> column2);
     // region 列++ --
 
 

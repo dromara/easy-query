@@ -19,6 +19,8 @@ public interface EntityTableExpressionBuilder extends TableExpressionBuilder {
 
     void setTableNameAs(Function<String, String> tableNameAs);
 
+    void setSchemaAs(Function<String, String> schemaAs);
+
     void asAlias(String alias);
 
     String getColumnName(String propertyName);

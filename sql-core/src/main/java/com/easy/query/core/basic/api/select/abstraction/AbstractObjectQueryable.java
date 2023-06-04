@@ -917,6 +917,12 @@ public abstract class AbstractObjectQueryable<T1> implements ClientQueryable<T1>
     }
 
     @Override
+    public ClientQueryable<T1> asSchema(Function<String, String> schemaAs) {
+        entityQueryExpressionBuilder.getRecentlyTable().setSchemaAs(schemaAs);
+        return this;
+    }
+
+    @Override
     public ClientQueryable<T1> asAlias(String alias) {
         entityQueryExpressionBuilder.getRecentlyTable().asAlias(alias);
         return this;

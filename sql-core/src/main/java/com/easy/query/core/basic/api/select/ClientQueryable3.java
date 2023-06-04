@@ -262,6 +262,14 @@ public interface ClientQueryable3<T1, T2, T3> extends ClientQueryable<T1> {
     ClientQueryable3<T1, T2, T3> asTable(Function<String, String> tableNameAs);
 
     @Override
+    default ClientQueryable3<T1, T2, T3> asSchema(String schema) {
+        return asSchema(old -> schema);
+    }
+
+    @Override
+    ClientQueryable3<T1, T2, T3> asSchema(Function<String, String> schemaAs);
+
+    @Override
     ClientQueryable3<T1, T2, T3> asAlias(String alias);
 
     SQLExpressionProvider<T2> getSQLExpressionProvider2();

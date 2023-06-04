@@ -24,11 +24,11 @@ import java.util.function.Function;
  * @Description: 文件说明
  * @Date: 2023/2/8 00:10
  */
-public class AutoColumnAsSelectorImpl<T1, TR> extends AbstractColumnSelector<T1, ColumnAsSelector<T1, TR>> implements ColumnAsSelector<T1, TR> {
+public class ColumnAutoAsSelectorImpl<T1, TR> extends AbstractColumnSelector<T1, ColumnAsSelector<T1, TR>> implements ColumnAsSelector<T1, TR> {
 
     protected final Class<TR> resultClass;
 
-    public AutoColumnAsSelectorImpl(int index, EntityQueryExpressionBuilder entityQueryExpressionBuilder, SQLBuilderSegment sqlSegment0Builder, Class<TR> resultClass) {
+    public ColumnAutoAsSelectorImpl(int index, EntityQueryExpressionBuilder entityQueryExpressionBuilder, SQLBuilderSegment sqlSegment0Builder, Class<TR> resultClass) {
         super(index, entityQueryExpressionBuilder, sqlSegment0Builder);
         this.resultClass = resultClass;
     }

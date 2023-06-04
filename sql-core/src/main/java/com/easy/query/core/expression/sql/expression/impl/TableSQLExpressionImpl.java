@@ -1,8 +1,8 @@
 package com.easy.query.core.expression.sql.expression.impl;
 
-import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.configuration.dialect.Dialect;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
@@ -31,6 +31,7 @@ public class TableSQLExpressionImpl implements EntityTableSQLExpression {
     protected final TableAvailable entityTable;
     protected PredicateSegment on;
     protected Function<String, String> tableNameAs;
+    protected Function<String, String> schemaAs;
 
     public TableSQLExpressionImpl(TableAvailable entityTable, MultiTableTypeEnum multiTableType, QueryRuntimeContext runtimeContext) {
         this.entityTable = entityTable;
@@ -65,28 +66,43 @@ public class TableSQLExpressionImpl implements EntityTableSQLExpression {
     }
 
     @Override
+    public void setSchemaAs(Function<String, String> schemaAs) {
+        this.schemaAs = schemaAs;
+    }
+
+    @Override
     public boolean tableNameIsAs() {
-        return this.tableNameAs!=null;
+        return this.tableNameAs != null;
     }
 
     public String getSelectTableSource() {
         return multiTableType.getAppendSQL();
     }
+
     @Override
     public String getTableName() {
         String tableName = dialect.getQuoteName(doGetTableName());
-        if(entityTable.hasSchema()){
-            String schema = entityTable.getSchema();
-            return dialect.getQuoteName(schema)+"."+tableName;
+        String schema = doGetSchema();
+        if (EasyStringUtil.isNotBlank(schema)) {
+            return dialect.getQuoteName(schema) + "." + tableName;
         }
         return tableName;
     }
-    public String doGetTableName() {
+
+    protected String doGetSchema() {
+        if (entityTable.hasSchema() || schemaAs != null) {
+            String schema = entityTable.getSchema();
+            return schemaAs.apply(schema);
+        }
+        return null;
+    }
+
+    protected String doGetTableName() {
         String tableName = entityTable.getTableName();
         if (tableName == null) {
             throw new EasyQueryException("table " + EasyClassUtil.getSimpleName(entityTable.getEntityClass()) + " cant found mapping table name");
         }
-        if(tableNameAs!=null){
+        if (tableNameAs != null) {
             return tableNameAs.apply(tableName);
         }
         return tableName;

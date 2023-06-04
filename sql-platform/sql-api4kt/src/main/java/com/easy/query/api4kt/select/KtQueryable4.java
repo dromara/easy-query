@@ -239,6 +239,15 @@ public interface KtQueryable4<T1, T2, T3, T4> extends KtQueryable<T1> {
     @Override
     KtQueryable4<T1, T2, T3, T4> asTable(Function<String, String> tableNameAs);
 
+
+    @Override
+    default KtQueryable4<T1, T2, T3, T4> asSchema(String tableName) {
+        return asSchema(old -> tableName);
+    }
+
+    @Override
+    KtQueryable4<T1, T2, T3, T4> asSchema(Function<String, String> schemaAs);
+
     @Override
     KtQueryable4<T1, T2, T3, T4> asAlias(String alias);
 }

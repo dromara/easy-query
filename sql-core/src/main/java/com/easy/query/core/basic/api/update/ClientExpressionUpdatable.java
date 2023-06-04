@@ -23,11 +23,11 @@ public interface ClientExpressionUpdatable<T> extends Updatable<T, ClientExpress
 
     ClientExpressionUpdatable<T> set(boolean condition, String property, Object val);
 
-    default ClientExpressionUpdatable<T> setSelfColumn(String property1, String property2) {
-        return setSelfColumn(true, property1, property2);
+    default ClientExpressionUpdatable<T> setWithColumn(String property1, String property2) {
+        return setWithColumn(true, property1, property2);
     }
 
-    ClientExpressionUpdatable<T> setSelfColumn(boolean condition, String property1, String property2);
+    ClientExpressionUpdatable<T> setWithColumn(boolean condition, String property1, String property2);
     // region 列++ --
 
 

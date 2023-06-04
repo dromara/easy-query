@@ -23,7 +23,7 @@ public class AnonymousTableExpressionBuilder extends TableExpressionBuilder impl
     private final EntityQueryExpressionBuilder entityQueryExpressionBuilder;
 
     public AnonymousTableExpressionBuilder(TableAvailable entityTable, MultiTableTypeEnum multiTableType, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
-        super(entityTable, multiTableType,entityQueryExpressionBuilder.getRuntimeContext());
+        super(entityTable, multiTableType, entityQueryExpressionBuilder.getRuntimeContext());
         this.entityQueryExpressionBuilder = entityQueryExpressionBuilder;
     }
 
@@ -49,7 +49,12 @@ public class AnonymousTableExpressionBuilder extends TableExpressionBuilder impl
 
     @Override
     public void setTableNameAs(Function<String, String> tableNameAs) {
+        throw new UnsupportedOperationException();
+    }
 
+    @Override
+    public void setSchemaAs(Function<String, String> schemaAs) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -61,16 +66,19 @@ public class AnonymousTableExpressionBuilder extends TableExpressionBuilder impl
             on.copyTo(anonymousTableExpressionBuilder.getOn());
         }
         anonymousTableExpressionBuilder.setTableNameAs(this.tableNameAs);
+        anonymousTableExpressionBuilder.setSchemaAs(this.schemaAs);
         return anonymousTableExpressionBuilder;
     }
 
     @Override
     public EntityTableSQLExpression toExpression() {
 
-        EntityTableSQLExpression anonymousTableSQLExpression = runtimeContext.getExpressionFactory().createAnonymousEntityTableSQLExpression(entityTable,multiTableType,entityQueryExpressionBuilder.toExpression(),runtimeContext);
-        if(EasySQLSegmentUtil.isNotEmpty(on)){
+        EntityTableSQLExpression anonymousTableSQLExpression = runtimeContext.getExpressionFactory().createAnonymousEntityTableSQLExpression(entityTable, multiTableType, entityQueryExpressionBuilder.toExpression(), runtimeContext);
+        if (EasySQLSegmentUtil.isNotEmpty(on)) {
             anonymousTableSQLExpression.setOn(on.clonePredicateSegment());
         }
+        anonymousTableSQLExpression.setTableNameAs(tableNameAs);
+        anonymousTableSQLExpression.setSchemaAs(schemaAs);
         return anonymousTableSQLExpression;
     }
 }

@@ -53,6 +53,11 @@ public class EasyEmptyKtEntityDeletable<T> implements KtEntityDeletable<T> {
     }
 
     @Override
+    public KtEntityDeletable<T> asSchema(Function<String, String> schemaAs) {
+        return this;
+    }
+
+    @Override
     public KtEntityDeletable<T> asAlias(String alias) {
         return this;
     }

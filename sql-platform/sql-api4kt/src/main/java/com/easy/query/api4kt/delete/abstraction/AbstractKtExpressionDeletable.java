@@ -106,6 +106,12 @@ public abstract class AbstractKtExpressionDeletable<T> implements KtExpressionDe
     }
 
     @Override
+    public KtExpressionDeletable<T> asSchema(Function<String, String> schemaAs) {
+        expressionObjectDeletable.asSchema(schemaAs);
+        return this;
+    }
+
+    @Override
     public KtExpressionDeletable<T> asAlias(String alias) {
         expressionObjectDeletable.asAlias(alias);
         return this;
