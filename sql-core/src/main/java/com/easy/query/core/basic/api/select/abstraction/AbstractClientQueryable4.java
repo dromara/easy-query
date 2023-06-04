@@ -31,7 +31,7 @@ import java.util.function.Function;
  * @Description: 文件说明
  * @Date: 2023/3/9 12:38
  */
-public abstract class AbstractClientQueryable4<T1, T2, T3, T4> extends AbstractObjectQueryable<T1> implements ClientQueryable4<T1, T2, T3, T4> {
+public abstract class AbstractClientQueryable4<T1, T2, T3, T4> extends AbstractClientQueryable<T1> implements ClientQueryable4<T1, T2, T3, T4> {
     private final Class<T2> t2Class;
     private final Class<T3> t3Class;
     private final Class<T4> t4Class;

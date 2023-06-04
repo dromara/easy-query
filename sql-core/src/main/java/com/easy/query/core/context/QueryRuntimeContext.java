@@ -8,6 +8,7 @@ import com.easy.query.core.basic.pagination.EasyPageResultProvider;
 import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.basic.thread.ShardingExecutorService;
 import com.easy.query.core.configuration.QueryConfiguration;
+import com.easy.query.core.datasource.DataSourceManager;
 import com.easy.query.core.datasource.DataSourceUnitFactory;
 import com.easy.query.core.expression.func.ColumnFunctionFactory;
 import com.easy.query.core.expression.parser.factory.SQLExpressionInvokeFactory;
@@ -52,5 +53,8 @@ public interface QueryRuntimeContext {
     ShardingQueryCountManager getShardingQueryCountManager();
     ColumnFunctionFactory getColumnFunctionFactory();
     DataSourceUnitFactory getDataSourceUnitFactory();
+
     SQLSegmentFactory getSQLSegmentFactory();
+
+    DataSourceManager getDataSourceManager();
 }

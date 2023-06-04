@@ -3,7 +3,7 @@ package com.easyquery.springbootdemo.interceptor;
 import com.easy.query.core.basic.extension.interceptor.PredicateFilterInterceptor;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.sql.builder.LambdaEntityExpressionBuilder;
-import com.easyquery.springbootdemo.domain.BlogEntity;
+import com.easyquery.springbootdemo.domain.TestUserMysql0;
 import org.springframework.stereotype.Component;
 
 /**
@@ -22,7 +22,7 @@ public class AgeSelectInterceptorStrategy implements PredicateFilterInterceptor 
 
     @Override
     public boolean apply(Class<?> entityClass) {
-        return !BlogEntity.class.isAssignableFrom(entityClass);
+        return TestUserMysql0.class.isAssignableFrom(entityClass);
     }
 
     @Override

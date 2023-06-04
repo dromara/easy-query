@@ -78,7 +78,7 @@ import java.util.function.Function;
  * @Description: 文件说明
  * @Date: 2023/2/6 23:44
  */
-public abstract class AbstractObjectQueryable<T1> implements ClientQueryable<T1> {
+public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1> {
     protected final Class<T1> t1Class;
     protected final EntityQueryExpressionBuilder entityQueryExpressionBuilder;
     protected final QueryRuntimeContext runtimeContext;
@@ -90,7 +90,7 @@ public abstract class AbstractObjectQueryable<T1> implements ClientQueryable<T1>
         return t1Class;
     }
 
-    public AbstractObjectQueryable(Class<T1> t1Class, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
+    public AbstractClientQueryable(Class<T1> t1Class, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
         this.t1Class = t1Class;
         this.entityQueryExpressionBuilder = entityQueryExpressionBuilder;
         this.runtimeContext = entityQueryExpressionBuilder.getRuntimeContext();

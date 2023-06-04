@@ -5,6 +5,7 @@ import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.basic.extension.encryption.EncryptionStrategy;
 import com.easy.query.core.basic.extension.interceptor.Interceptor;
 import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategy;
+import com.easy.query.core.basic.extension.track.update.ValueUpdateAtomicTrack;
 import com.easy.query.core.basic.extension.version.VersionStrategy;
 import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.context.QueryRuntimeContext;
@@ -78,6 +79,9 @@ public class EasyQueryStarterInitializeAutoConfiguration {
         //列转化
         for (Map.Entry<String, ValueConverter<?, ?>> valueConverterEntry : easyQueryInitializeOption.getValueConverterMap().entrySet()) {
             configuration.applyValueConverter(valueConverterEntry.getValue());
+        }
+        for (Map.Entry<String, ValueUpdateAtomicTrack<?>> valueUpdateAtomicTrackEntry : easyQueryInitializeOption.getValueUpdateAtomicTrackMap().entrySet()) {
+            configuration.applyValueUpdateAtomicTrack(valueUpdateAtomicTrackEntry.getValue());
         }
         TableRouteManager tableRouteManager = runtimeContext.getTableRouteManager();
         for (Map.Entry<String, TableRouteRule<?>> tableRouteRuleEntry : easyQueryInitializeOption.getTableRouteRuleMap().entrySet()) {

@@ -24,7 +24,7 @@ import java.util.stream.IntStream;
  *
  * @author xuejiaming
  */
-public abstract class AbstractShardingModInitializer<TEntity> implements EntityShardingInitializer<TEntity> {
+public abstract class AbstractShardingTableModInitializer<TEntity> implements EntityShardingInitializer<TEntity> {
     protected abstract int mod();
 
     protected abstract int tailLength();
@@ -32,6 +32,7 @@ public abstract class AbstractShardingModInitializer<TEntity> implements EntityS
     protected char paddingWord() {
         return '0';
     }
+
     protected String tableSeparator() {
         return "_";
     }

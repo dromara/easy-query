@@ -7,6 +7,7 @@ import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.basic.extension.encryption.EncryptionStrategy;
 import com.easy.query.core.basic.extension.interceptor.Interceptor;
 import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategy;
+import com.easy.query.core.basic.extension.track.update.ValueUpdateAtomicTrack;
 import com.easy.query.core.basic.extension.version.VersionStrategy;
 import com.easy.query.core.basic.jdbc.con.ConnectionManager;
 import com.easy.query.core.bootstrapper.DatabaseConfiguration;
@@ -141,8 +142,8 @@ public class EasyQueryStarterAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public EasyQueryClient easyQuery(DatabaseConfiguration databaseConfiguration, StarterConfigurer starterConfigurer, NameConversion nameConversion) {
-        EasyQueryClient easyQuery = EasyQueryBootstrapper.defaultBuilderConfiguration()
+    public EasyQueryClient easyQueryClient(DatabaseConfiguration databaseConfiguration, StarterConfigurer starterConfigurer, NameConversion nameConversion) {
+        EasyQueryClient easyQueryClient = EasyQueryBootstrapper.defaultBuilderConfiguration()
                 .setDefaultDataSource(dataSource)
                 .replaceService(DataSourceUnitFactory.class, SpringDataSourceUnitFactory.class)
                 .optionConfigure(builder -> {
@@ -167,7 +168,7 @@ public class EasyQueryStarterAutoConfiguration {
                 .useDatabaseConfigure(databaseConfiguration)
                 .useStarterConfigure(starterConfigurer)
                 .build();
-        return easyQuery;
+        return easyQueryClient;
     }
 
     @Bean
@@ -185,7 +186,16 @@ public class EasyQueryStarterAutoConfiguration {
                                                                Map<String, EncryptionStrategy> encryptionStrategyMap,
                                                                Map<String, ValueConverter<?, ?>> valueConverterMap,
                                                                Map<String, TableRouteRule<?>> tableRouteRuleMap,
-                                                               Map<String, DataSourceRouteRule<?>> dataSourceRouteRuleMap) {
-        return new EasyQueryInitializeOption(interceptorMap, versionStrategyMap, logicDeleteStrategyMap, shardingInitializerMap, encryptionStrategyMap, valueConverterMap,tableRouteRuleMap,dataSourceRouteRuleMap);
+                                                               Map<String, DataSourceRouteRule<?>> dataSourceRouteRuleMap,
+                                                               Map<String, ValueUpdateAtomicTrack<?>> valueUpdateAtomicTrackMap) {
+        return new EasyQueryInitializeOption(interceptorMap,
+                versionStrategyMap,
+                logicDeleteStrategyMap,
+                shardingInitializerMap,
+                encryptionStrategyMap,
+                valueConverterMap,
+                tableRouteRuleMap,
+                dataSourceRouteRuleMap,
+                valueUpdateAtomicTrackMap);
     }
 }

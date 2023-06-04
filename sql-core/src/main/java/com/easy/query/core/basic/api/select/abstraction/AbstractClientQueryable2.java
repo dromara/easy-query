@@ -35,7 +35,7 @@ import java.util.function.Function;
  * @Description: 文件说明
  * @Date: 2023/2/6 23:43
  */
-public abstract class AbstractClientQueryable2<T1, T2> extends AbstractObjectQueryable<T1> implements ClientQueryable2<T1, T2> {
+public abstract class AbstractClientQueryable2<T1, T2> extends AbstractClientQueryable<T1> implements ClientQueryable2<T1, T2> {
 
     protected final Class<T2> t2Class;
     protected SQLExpressionProvider<T2> sqlExpressionProvider2;
