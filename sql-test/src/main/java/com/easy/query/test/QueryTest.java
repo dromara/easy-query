@@ -5,6 +5,8 @@ import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.enums.SQLPredicateCompareEnum;
 import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
+import com.easy.query.core.exception.EasyQuerySQLCommandException;
+import com.easy.query.core.exception.EasyQuerySQLStatementException;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.func.DefaultColumnFunction;
@@ -1434,11 +1436,23 @@ public class QueryTest extends BaseTest {
             Assert.assertEquals("Duplicate key found: id", ex.getMessage());
         }
     }
-//
-//    @Test
-//     public void query81(){
-//        easyQuery.queryable()
-////        easyQuery.sqlQuery()
-//        String sql = "WITH RECURSIVE tree AS () SELECT * FROM tree;";
-//    }
+
+    @Test
+    public void query81() {
+        try {
+            long i = easyQuery.queryable(BlogEntity.class)
+                    .asTable("t_12345")
+                    .where(o -> o.eq(BlogEntity::getId, "2"))
+                    .select(BlogEntity.class)
+                    .distinct()
+                    .select(BlogEntity.class)
+                    .count();
+        } catch (Exception ex) {
+            Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
+            EasyQuerySQLCommandException ex1 = (EasyQuerySQLCommandException) ex;
+            Assert.assertTrue(ex1.getCause() instanceof EasyQuerySQLStatementException);
+            String sql = ((EasyQuerySQLStatementException) ex1.getCause()).getSQL();
+            Assert.assertEquals("SELECT COUNT(1) FROM (SELECT DISTINCT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`title`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top` FROM `t_12345` t WHERE t.`deleted` = ? AND t.`id` = ?) t1", sql);
+        }
+    }
 }

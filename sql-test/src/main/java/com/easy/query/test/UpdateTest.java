@@ -8,7 +8,7 @@ import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.exception.EasyQueryConcurrentException;
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
-import com.easy.query.core.exception.EasyQuerySQLInvokeException;
+import com.easy.query.core.exception.EasyQuerySQLStatementException;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.TopicTypeTest1;
@@ -290,8 +290,8 @@ public class UpdateTest extends BaseTest {
         } catch (Exception ex) {
             Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
             EasyQuerySQLCommandException ex1 = (EasyQuerySQLCommandException) ex;
-            Assert.assertTrue(ex1.getCause() instanceof EasyQuerySQLInvokeException);
-            String sql = ((EasyQuerySQLInvokeException) ex1.getCause()).getSQL();
+            Assert.assertTrue(ex1.getCause() instanceof EasyQuerySQLStatementException);
+            String sql = ((EasyQuerySQLStatementException) ex1.getCause()).getSQL();
             Assert.assertEquals("UPDATE `t_topic_value_atomic` SET `stars` = `stars`- ? WHERE `id` = ? AND `stars` >= ?", sql);
         } finally {
             trackManager.release();

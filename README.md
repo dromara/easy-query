@@ -67,26 +67,36 @@ QQ群:170029046
 <properties>
   <easy-query.version>0.9.31</easy-query.version>
 </properties>
+        <!--  提供了以java语法强类型,如果不引用也可以使用只是无法使用lambda表达式来表示属性只能用字符串 -->
 <dependency>
-    <groupId>com.easy-query</groupId>
-    <artifactId>sql-mysql</artifactId>
-    <version>${easy-query.version}</version>
+<groupId>com.easy-query</groupId>
+<artifactId>sql-api4j</artifactId>
+<version>${easy-query.version}</version>
 </dependency>
+        <!--  这边以mysql为例 其实不需要添加下面的包也可以运行,指示默认的个别数据库行为语句没办法生成 -->
+<dependency>
+<groupId>com.easy-query</groupId>
+<artifactId>sql-mysql</artifactId>
+<version>${easy-query.version}</version>
+</dependency>
+
 ```
 
 ```java
 //初始化连接池
- HikariDataSource dataSource = new HikariDataSource();
+ HikariDataSource dataSource=new HikariDataSource();
          dataSource.setJdbcUrl("jdbc:mysql://127.0.0.1:3306/easy-query-test?serverTimezone=GMT%2B8&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&rewriteBatchedStatements=true");
          dataSource.setUsername("root");
          dataSource.setPassword("root");
          dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
          dataSource.setMaximumPoolSize(20);
-//创建easy-query
-         EasyQuery easyQuery = EasyQueryBootstrapper.defaultBuilderConfiguration()
-         .setDefaultDataSource(dataSource)
+//非强类型api
+         EasyQueryClient easyQueryClient=EasyQueryBootstrapper.defaultBuilderConfiguration()
+         .setDataSource(dataSource)
          .useDatabaseConfigure(new MySQLDatabaseConfiguration())
          .build();
+//强类型api
+         EasyQuery easyQuery=new DefaultEasyQuery(easyQueryClient);
 ```
 
 
