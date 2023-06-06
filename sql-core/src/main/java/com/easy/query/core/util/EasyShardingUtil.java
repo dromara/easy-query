@@ -1,32 +1,31 @@
 package com.easy.query.core.util;
 
-import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
-import com.easy.query.core.enums.ExecuteMethodEnum;
-import com.easy.query.core.enums.MergeBehaviorEnum;
-import com.easy.query.core.exception.EasyQueryInvalidOperationException;
-import com.easy.query.core.expression.executor.parser.PrepareParseResult;
-import com.easy.query.core.expression.executor.parser.QueryPrepareParseResult;
-import com.easy.query.core.expression.executor.parser.SequenceParseResult;
-import com.easy.query.core.expression.segment.impl.ColumnSegmentImpl;
-import com.easy.query.core.expression.segment.GroupByColumnSegment;
-import com.easy.query.core.expression.segment.OrderByColumnSegment;
-import com.easy.query.core.expression.segment.impl.OrderColumnSegmentImpl;
-import com.easy.query.core.expression.segment.SQLSegment;
-import com.easy.query.core.expression.segment.builder.ProjectSQLBuilderSegment;
-import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
-import com.easy.query.core.expression.sql.builder.ExpressionContext;
-import com.easy.query.core.expression.sql.expression.EntitySQLExpression;
-import com.easy.query.core.expression.sql.expression.EntityQuerySQLExpression;
-import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
-import com.easy.query.core.enums.sharding.ConnectionModeEnum;
-import com.easy.query.core.metadata.ShardingInitConfig;
-import com.easy.query.core.sharding.manager.SequenceCountNode;
-import com.easy.query.core.sharding.manager.ShardingQueryCountManager;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.segment.EntityPropertyGroup;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.segment.EntityPropertyOrder;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.segment.PropertyGroup;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.segment.PropertyOrder;
+import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.enums.ExecuteMethodEnum;
+import com.easy.query.core.enums.MergeBehaviorEnum;
+import com.easy.query.core.enums.sharding.ConnectionModeEnum;
+import com.easy.query.core.exception.EasyQueryInvalidOperationException;
+import com.easy.query.core.expression.executor.parser.PrepareParseResult;
+import com.easy.query.core.expression.executor.parser.QueryPrepareParseResult;
+import com.easy.query.core.expression.executor.parser.SequenceParseResult;
+import com.easy.query.core.expression.segment.GroupByColumnSegment;
+import com.easy.query.core.expression.segment.OrderByColumnSegment;
+import com.easy.query.core.expression.segment.SQLSegment;
+import com.easy.query.core.expression.segment.builder.ProjectSQLBuilderSegment;
+import com.easy.query.core.expression.segment.impl.ColumnSegmentImpl;
+import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.ExpressionContext;
+import com.easy.query.core.expression.sql.expression.EntityQuerySQLExpression;
+import com.easy.query.core.expression.sql.expression.EntitySQLExpression;
+import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
+import com.easy.query.core.metadata.ShardingInitConfig;
+import com.easy.query.core.sharding.manager.SequenceCountNode;
+import com.easy.query.core.sharding.manager.ShardingQueryCountManager;
 import com.easy.query.core.sharding.rewrite.DefaultRewriteRouteUnit;
 import com.easy.query.core.sharding.rewrite.RewriteRouteUnit;
 import com.easy.query.core.sharding.rewrite.SequencePaginationRewriteRouteUnit;
@@ -56,7 +55,7 @@ public class EasyShardingUtil {
         return routePredicateDiscover.getRouteParseExpression();
     }
 
-    public static PropertyOrder findFirstPropertyOrderNotNull(List<SQLSegment> selectColumns, OrderColumnSegmentImpl orderColumnSegment, EntityQuerySQLExpression easyQuerySQLExpression) {
+    public static PropertyOrder findFirstPropertyOrderNotNull(List<SQLSegment> selectColumns, OrderByColumnSegment orderColumnSegment, EntityQuerySQLExpression easyQuerySQLExpression) {
         int tableIndex = orderColumnSegment.getTable().getIndex();
         String propertyName = orderColumnSegment.getPropertyName();
         boolean asc = orderColumnSegment.isAsc();

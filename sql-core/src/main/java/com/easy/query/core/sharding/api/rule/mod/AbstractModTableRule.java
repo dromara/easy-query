@@ -6,13 +6,10 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.metadata.ActualTable;
 import com.easy.query.core.sharding.rule.table.abstraction.AbstractTableRouteRule;
 import com.easy.query.core.util.EasyStringUtil;
-import com.easy.query.core.util.EasyUtil;
-
-import java.time.LocalDateTime;
 
 /**
  * create time 2023/5/21 14:48
- * 文件说明
+ * 分片键字符串hashcode进行路由
  *
  * @author xuejiaming
  */

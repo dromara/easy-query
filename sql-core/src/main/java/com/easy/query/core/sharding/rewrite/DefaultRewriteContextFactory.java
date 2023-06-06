@@ -64,24 +64,28 @@ public class DefaultRewriteContextFactory implements RewriteContextFactory {
         EntityQuerySQLExpression easyEntityPredicateSQLExpression = queryPrepareParseResult.getEntityPredicateSQLExpression();
         QueryRuntimeContext runtimeContext = easyEntityPredicateSQLExpression.getRuntimeContext();
         //添加默认排序字段,并且添加默认排序字段到select 如果不添加那么streamResultSet将无法进行order排序获取
-        if(EasySQLSegmentUtil.isEmpty(easyEntityPredicateSQLExpression.getOrder())&&Objects.equals(ExecuteMethodEnum.LIST,queryPrepareParseResult.getExecutorContext().getExecuteMethod())){
+        if (EasySQLSegmentUtil.isEmpty(easyEntityPredicateSQLExpression.getOrder())
+                &&
+                (Objects.equals(ExecuteMethodEnum.LIST, queryPrepareParseResult.getExecutorContext().getExecuteMethod())
+                        ||
+                        Objects.equals(ExecuteMethodEnum.FIRST, queryPrepareParseResult.getExecutorContext().getExecuteMethod()))) {
             SequenceParseResult sequenceParseResult = queryPrepareParseResult.getSequenceParseResult();
-            if(sequenceParseResult!=null){
+            if (sequenceParseResult != null) {
                 TableAvailable table = sequenceParseResult.getTable();
-                if(EasyCollectionUtil.any(easyEntityPredicateSQLExpression.getTables(),t->Objects.equals(t.getEntityTable(),table))){
+                if (EasyCollectionUtil.any(easyEntityPredicateSQLExpression.getTables(), t -> Objects.equals(t.getEntityTable(), table))) {
                     EntityMetadata entityMetadata = table.getEntityMetadata();
                     ShardingInitConfig shardingInitConfig = entityMetadata.getShardingInitConfig();
                     ShardingSequenceConfig shardingSequenceConfig = shardingInitConfig.getShardingSequenceConfig();
-                    if(shardingSequenceConfig!=null){
+                    if (shardingSequenceConfig != null) {
                         boolean reverse = sequenceParseResult.isReverse();
                         String firstSequenceProperty = shardingSequenceConfig.getFirstSequencePropertyOrNull();
-                        if(firstSequenceProperty!=null){
+                        if (firstSequenceProperty != null) {
 
                             OrderByColumnSegment orderByColumnSegment = sqlSegmentFactory.createOrderByColumnSegment(table, firstSequenceProperty, runtimeContext, !reverse);
                             easyEntityPredicateSQLExpression.getOrder().append(orderByColumnSegment);
-                            if(!easyEntityPredicateSQLExpression.getProjects().containsOnce(entityMetadata.getEntityClass(),firstSequenceProperty)){
+                            if (!easyEntityPredicateSQLExpression.getProjects().containsOnce(entityMetadata.getEntityClass(), firstSequenceProperty)) {
 
-                                ColumnSegment columnSegment = sqlSegmentFactory.createColumnSegment(table, firstSequenceProperty, runtimeContext,null);
+                                ColumnSegment columnSegment = sqlSegmentFactory.createColumnSegment(table, firstSequenceProperty, runtimeContext, null);
                                 easyEntityPredicateSQLExpression.getProjects().append(columnSegment);
                             }
                         }
