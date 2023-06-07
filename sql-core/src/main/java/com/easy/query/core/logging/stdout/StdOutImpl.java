@@ -23,6 +23,11 @@ public class StdOutImpl implements Log {
     }
 
     @Override
+    public boolean isInfoEnabled() {
+        return true;
+    }
+
+    @Override
     public void error(String s, Throwable e) {
         System.err.println(s);
         e.printStackTrace(System.err);
@@ -40,6 +45,11 @@ public class StdOutImpl implements Log {
 
     @Override
     public void trace(String s) {
+        System.out.println(s);
+    }
+
+    @Override
+    public void info(String s) {
         System.out.println(s);
     }
 

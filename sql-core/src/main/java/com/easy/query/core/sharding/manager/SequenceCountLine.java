@@ -10,6 +10,7 @@ import java.util.List;
  * @author xuejiaming
  */
 public interface SequenceCountLine {
-    List<SequenceCountNode> getCountNodes();
-    void addCountResult(long total,boolean init);
+    List<Long> getTotalLines();
+
+    void addCountResult(long total, boolean init);
 }

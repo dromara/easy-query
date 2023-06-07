@@ -162,6 +162,9 @@ public class EasyQueryStarterAutoConfiguration {
                     builder.setDefaultDataSourceMergePoolSize(easyQueryProperties.getDefaultDataSourceMergePoolSize());
                     builder.setMultiConnWaitTimeoutMillis(easyQueryProperties.getMultiConnWaitTimeoutMillis());
                     builder.setWarningBusy(easyQueryProperties.isWarningBusy());
+                    builder.setInsertBatchGroup(easyQueryProperties.getInsertBatchGroup());
+                    builder.setUpdateBatchGroup(easyQueryProperties.getUpdateBatchGroup());
+                    builder.setPrintSql(easyQueryProperties.isPrintSql());
                 })
                 .replaceService(NameConversion.class, nameConversion)
                 .replaceService(ConnectionManager.class, SpringConnectionManager.class)

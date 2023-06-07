@@ -49,8 +49,9 @@ public final class EasyStreamResultUtil {
         } else {
             resultList = mapToBeans(context, streamResult, clazz);
         }
-        if(log.isDebugEnabled()){
-            log.debug("<== "+"Total: " + resultList.size());
+        boolean printSql = context.getEasyQueryOption().isPrintSql();
+        if (printSql) {
+            log.info("<== " + "Total: " + resultList.size());
         }
         return resultList;
     }

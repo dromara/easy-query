@@ -31,7 +31,10 @@ public class EasyQueryOptionBuilder {
      * 分片聚合多个connection获取等待超时时间防止分片datasourcePoolSize过小导致假死
      */
     private long multiConnWaitTimeoutMillis;
-    private  boolean warningBusy;;
+    private boolean warningBusy;
+    private int insertBatchGroup;
+    private int updateBatchGroup;
+    private boolean printSql;
 
     public EasyQueryOptionBuilder() {
         this.deleteThrowError = true;
@@ -50,6 +53,9 @@ public class EasyQueryOptionBuilder {
         this.executorQueueSize = 1024;
         this.multiConnWaitTimeoutMillis = 5000L;
         this.warningBusy = true;
+        this.insertBatchGroup = 1000;
+        this.updateBatchGroup = 1000;
+        this.printSql = true;
     }
 
     public void setDeleteThrowError(boolean deleteThrowError) {
@@ -129,11 +135,22 @@ public class EasyQueryOptionBuilder {
     }
 
     /**
-     *
      * @param warningBusy
      */
     public void setWarningBusy(boolean warningBusy) {
         this.warningBusy = warningBusy;
+    }
+
+    public void setInsertBatchGroup(int insertBatchGroup) {
+        this.insertBatchGroup = insertBatchGroup;
+    }
+
+    public void setUpdateBatchGroup(int updateBatchGroup) {
+        this.updateBatchGroup = updateBatchGroup;
+    }
+
+    public void setPrintSql(boolean printSql) {
+        this.printSql = printSql;
     }
 
     public EasyQueryOption build() {
@@ -154,6 +171,9 @@ public class EasyQueryOptionBuilder {
                 this.maxShardingRouteCount,
                 this.executorQueueSize,
                 this.multiConnWaitTimeoutMillis,
-                this.warningBusy);
+                this.warningBusy,
+                this.insertBatchGroup,
+                this.updateBatchGroup,
+                this.printSql);
     }
 }

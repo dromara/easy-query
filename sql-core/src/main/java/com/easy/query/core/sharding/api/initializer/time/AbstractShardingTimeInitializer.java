@@ -45,9 +45,9 @@ public abstract class AbstractShardingTimeInitializer<T> implements EntityShardi
         ArrayList<String> actualTableNames = new ArrayList<>();
         //应该是不在endTime后可以等于endTime
         while(!beginTime.isAfter(endTime)){
-            String tail =formatTail(beginTime);
-            actualTableNames.add(tableName+tableSeparator+tail);
-            beginTime=getNextTime(beginTime);
+            String tail = formatTail(beginTime);
+            actualTableNames.add(tableName + tableSeparator + tail);
+            beginTime = getNextTime(beginTime);
         }
         Map<String, Collection<String>> initTables = new LinkedHashMap<String, Collection<String>>() {{
             put(easyQueryOption.getDefaultDataSourceName(), actualTableNames);
@@ -55,5 +55,19 @@ public abstract class AbstractShardingTimeInitializer<T> implements EntityShardi
         builder.actualTableNameInit(initTables);
         configure0(builder);
     }
+
+    /**
+     * <blockquote><pre>
+     *     {@code
+     * builder.paginationReverse(0.5,100)
+     *                 .ascSequenceConfigure(new TableNameStringComparator())
+     *                 .addPropertyDefaultUseDesc(BhzShardingTransportEntity::getEventTime)
+     *                 .defaultAffectedMethod(false, ExecuteMethodEnum.LIST,ExecuteMethodEnum.ANY,ExecuteMethodEnum.COUNT,ExecuteMethodEnum.FIRST)
+     *                 .useMaxShardingQueryLimit(5,ExecuteMethodEnum.LIST,ExecuteMethodEnum.ANY,ExecuteMethodEnum.FIRST);
+     *     }
+     * </pre></blockquote>
+     *
+     * @param builder
+     */
     public abstract void configure0(ShardingEntityBuilder<T> builder);
 }

@@ -15,7 +15,7 @@ public interface ShardingQueryCountManager {
 
     void addCountResult(long total,boolean init);
 
-    List<SequenceCountNode> getCountResult();
+    List<Long> getCountResult();
 
     SequenceCountLine getSequenceCountLine();
 

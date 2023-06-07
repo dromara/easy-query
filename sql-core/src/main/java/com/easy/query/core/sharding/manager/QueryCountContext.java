@@ -11,12 +11,12 @@ import java.util.List;
 public class QueryCountContext {
     private final SequenceCountLine sequenceCountLine = new DefaultSequenceCountLine();
 
-    public void addCountResult(long total,boolean init) {
-        sequenceCountLine.addCountResult(total,init);
+    public void addCountResult(long total, boolean init) {
+        sequenceCountLine.addCountResult(total, init);
     }
 
-    public List<SequenceCountNode> getCountResult() {
-        return sequenceCountLine.getCountNodes();
+    public List<Long> getCountResult() {
+        return sequenceCountLine.getTotalLines();
     }
 
     public SequenceCountLine getSequenceCountLine() {

@@ -4,16 +4,8 @@ import com.easy.query.api4j.select.Queryable;
 import com.easy.query.api4j.select.Queryable2;
 import com.easy.query.api4j.select.impl.EasyQueryable;
 import com.easy.query.api4j.select.impl.EasyQueryable2;
-import com.easy.query.api4j.sql.SQLColumnAsSelector;
-import com.easy.query.api4j.sql.SQLColumnSelector;
-import com.easy.query.api4j.sql.SQLGroupBySelector;
-import com.easy.query.api4j.sql.SQLWhereAggregatePredicate;
-import com.easy.query.api4j.sql.SQLWherePredicate;
-import com.easy.query.api4j.sql.impl.SQLColumnAsSelectorImpl;
-import com.easy.query.api4j.sql.impl.SQLColumnSelectorImpl;
-import com.easy.query.api4j.sql.impl.SQLGroupBySelectorImpl;
-import com.easy.query.api4j.sql.impl.SQLWhereAggregatePredicateImpl;
-import com.easy.query.api4j.sql.impl.SQLWherePredicateImpl;
+import com.easy.query.api4j.sql.*;
+import com.easy.query.api4j.sql.impl.*;
 import com.easy.query.core.api.dynamic.sort.ObjectSort;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.api.select.ClientQueryable;
@@ -25,7 +17,6 @@ import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
-import com.easy.query.core.sharding.manager.SequenceCountLine;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyLambdaUtil;
 
@@ -290,8 +281,8 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     }
 
     @Override
-    public EasyPageResult<T1> toShardingPageResult(long pageIndex, long pageSize, SequenceCountLine sequenceCountLine) {
-        return entityQueryable.toShardingPageResult(pageIndex, pageSize, sequenceCountLine);
+    public EasyPageResult<T1> toShardingPageResult(long pageIndex, long pageSize, List<Long> totalLines) {
+        return entityQueryable.toShardingPageResult(pageIndex, pageSize, totalLines);
     }
 
 

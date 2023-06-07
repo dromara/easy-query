@@ -43,11 +43,15 @@ public class EasyQueryOption {
      */
     private final long multiConnWaitTimeoutMillis;
     private final boolean warningBusy;
+    private final int insertBatchGroup;
+    private final int updateBatchGroup;
+    private final boolean printSql;
 
     public EasyQueryOption(boolean deleteThrowError, SQLExecuteStrategyEnum insertStrategy, SQLExecuteStrategyEnum updateStrategy, ConnectionModeEnum connectionMode, int maxShardingQueryLimit, int executorMaximumPoolSize, int executorCorePoolSize,
                            boolean throwIfNotMatchRoute, long shardingExecuteTimeoutMillis,
                            EasyQueryShardingOption shardingOption, EasyQueryReplicaOption replicaOption, String defaultDataSourceName, int defaultDataSourceMergePoolSize, boolean queryLargeColumn, int maxShardingRouteCount, int executorQueueSize, long multiConnWaitTimeoutMillis,
-                           boolean warningBusy) {
+                           boolean warningBusy, int insertBatchGroup, int updateBatchGroup, boolean printSql) {
+
 
         if (executorMaximumPoolSize > 0) {
             if (executorCorePoolSize > executorMaximumPoolSize) {
@@ -75,6 +79,12 @@ public class EasyQueryOption {
         if (defaultDataSourceMergePoolSize > 0 && defaultDataSourceMergePoolSize < maxShardingQueryLimit) {
             throw new IllegalArgumentException("invalid arguments: defaultDataSourceMergePoolSize > 0 && defaultDataSourceMergePoolSize < maxShardingQueryLimit.");
         }
+        if (insertBatchGroup <= 2) {
+            throw new IllegalArgumentException("invalid arguments: insertBatchGroup <= 2.");
+        }
+        if (updateBatchGroup <= 2) {
+            throw new IllegalArgumentException("invalid arguments: updateBatchGroup <= 2.");
+        }
         this.deleteThrowError = deleteThrowError;
         this.insertStrategy = SQLExecuteStrategyEnum.getDefaultStrategy(insertStrategy, SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS);
         this.updateStrategy = SQLExecuteStrategyEnum.getDefaultStrategy(updateStrategy, SQLExecuteStrategyEnum.ALL_COLUMNS);
@@ -93,6 +103,9 @@ public class EasyQueryOption {
         this.executorQueueSize = executorQueueSize;
         this.multiConnWaitTimeoutMillis = multiConnWaitTimeoutMillis;
         this.warningBusy = warningBusy;
+        this.insertBatchGroup = insertBatchGroup;
+        this.updateBatchGroup = updateBatchGroup;
+        this.printSql = printSql;
     }
 
     public int getMaxShardingRouteCount() {
@@ -165,5 +178,17 @@ public class EasyQueryOption {
 
     public boolean isWarningBusy() {
         return warningBusy;
+    }
+
+    public int getInsertBatchGroup() {
+        return insertBatchGroup;
+    }
+
+    public int getUpdateBatchGroup() {
+        return updateBatchGroup;
+    }
+
+    public boolean isPrintSql() {
+        return printSql;
     }
 }

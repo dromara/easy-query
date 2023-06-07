@@ -120,7 +120,7 @@ public class DefaultRewriteContextFactory implements RewriteContextFactory {
 
                         GroupAvgBehaviorEnum groupAvgBehavior = GroupAvgBehaviorEnum.getGroupAvgBehavior(aggregationColumnSegment.getAggregationType());
                         if(groupAvgBehavior!=null){
-                            groupRewriteStatus.removeBehavior(groupAvgBehavior);
+                            groupRewriteStatus.removeBehavior(groupAvgBehavior);//有count了把count移除,有sum了吧sum移除有avg把avg移除
                         }
 
                         continue;
@@ -197,7 +197,7 @@ public class DefaultRewriteContextFactory implements RewriteContextFactory {
         }
         if(EasyBitwiseUtil.hasBit(mergeBehavior,MergeBehaviorEnum.SEQUENCE_COUNT.getCode())){
             ShardingQueryCountManager shardingQueryCountManager = runtimeContext.getShardingQueryCountManager();
-            List<SequenceCountNode> countResult = shardingQueryCountManager.getCountResult();
+            List<Long> countResult = shardingQueryCountManager.getCountResult();
             List<RewriteRouteUnit> sequenceCountRewriteRouteUnits = EasyShardingUtil.getSequenceCountRewriteRouteUnits(queryPrepareParseResult, routeContext, countResult);
             ShardingRouteResult shardingRouteResult = routeContext.getShardingRouteResult();
             return new RewriteContext(mergeBehavior,queryPrepareParseResult,sequenceCountRewriteRouteUnits,shardingRouteResult.isCrossDataSource(),shardingRouteResult.isCrossTable(),shardingRouteResult.isSequenceQuery(),false);
@@ -266,15 +266,15 @@ public class DefaultRewriteContextFactory implements RewriteContextFactory {
         QueryRuntimeContext runtimeContext = queryPrepareParseResult.getExecutorContext().getRuntimeContext();
         if(EasyBitwiseUtil.hasBit(mergeBehavior, MergeBehaviorEnum.SEQUENCE_PAGINATION.getCode())){
             ShardingQueryCountManager shardingQueryCountManager = runtimeContext.getShardingQueryCountManager();
-            List<SequenceCountNode> countResult = shardingQueryCountManager.getCountResult();
+            List<Long> countResult = shardingQueryCountManager.getCountResult();
             List<RewriteRouteUnit> rewriteRouteUnits = EasyShardingUtil.getSequencePaginationRewriteRouteUnits(queryPrepareParseResult, routeContext, countResult);
             rewritePagination(easyQuerySQLExpression);
             return rewriteRouteUnits;
         }
-        if(EasyBitwiseUtil.hasBit(mergeBehavior, MergeBehaviorEnum.REVERSE_PAGINATION.getCode())){
+        if(EasyBitwiseUtil.hasBit(mergeBehavior, MergeBehaviorEnum.REVERSE_PAGINATION.getCode())) {
             ShardingQueryCountManager shardingQueryCountManager = runtimeContext.getShardingQueryCountManager();
-            List<SequenceCountNode> countResult = shardingQueryCountManager.getCountResult();
-            long total = EasyCollectionUtil.sumLong(countResult, SequenceCountNode::getTotal);
+            List<Long> countResult = shardingQueryCountManager.getCountResult();
+            long total = EasyCollectionUtil.sumLong(countResult, o -> o);
             long originalOffset = queryPrepareParseResult.getOriginalOffset();
             long originalRows = queryPrepareParseResult.getOriginalRows();
             long realOffset = total - originalOffset - originalRows;
@@ -283,7 +283,7 @@ public class DefaultRewriteContextFactory implements RewriteContextFactory {
             List<RouteUnit> routeUnits = shardingRouteResult.getRouteUnits();
             ArrayList<RewriteRouteUnit> rewriteRouteUnits = new ArrayList<>(routeUnits.size());
             for (RouteUnit routeUnit : routeUnits) {
-                rewriteRouteUnits.add(new ReversePaginationRewriteRouteUnit(0L,realRows,routeUnit));
+                rewriteRouteUnits.add(new ReversePaginationRewriteRouteUnit(0L, realRows, routeUnit));
             }
             rewriteReversePagination(easyQuerySQLExpression,realOffset);
             return rewriteRouteUnits;

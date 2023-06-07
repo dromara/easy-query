@@ -1,6 +1,6 @@
 package com.easy.query.core.api.pagination;
 
-import com.easy.query.core.sharding.manager.SequenceCountLine;
+import java.util.List;
 
 /**
  * create time 2023/5/15 10:32
@@ -9,5 +9,5 @@ import com.easy.query.core.sharding.manager.SequenceCountLine;
  * @author xuejiaming
  */
 public interface EasyShardingPageResult<T> extends EasyPageResult<T>{
-    SequenceCountLine getSequenceCountLine();
+    List<Long> getTotalLines();
 }

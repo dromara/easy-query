@@ -6,7 +6,6 @@ import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.exception.EasyQueryConcurrentException;
 import com.easy.query.core.expression.sql.TableContext;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
-import com.easy.query.core.sharding.manager.SequenceCountLine;
 import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.List;
@@ -154,7 +153,7 @@ public interface Query<T> {
         return toShardingPageResult(pageIndex, pageSize, null);
     }
 
-    EasyPageResult<T> toShardingPageResult(long pageIndex, long pageSize, SequenceCountLine sequenceCountLine);
+    EasyPageResult<T> toShardingPageResult(long pageIndex, long pageSize, List<Long> totalLines);
 
 
     default Query<T> limit(long rows) {

@@ -1,6 +1,7 @@
 package com.easy.query.core.basic.jdbc.executor;
 
 import com.easy.query.core.basic.extension.conversion.ValueConverter;
+import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.metadata.ColumnMetadata;
@@ -23,6 +24,7 @@ public class ExecutorContext {
     private final boolean isQuery;
     private final ExecuteMethodEnum executeMethod;
     private final boolean tracking;
+    private final EasyQueryOption easyQueryOption;
 
     public ExecutorContext(QueryRuntimeContext runtimeContext, boolean isQuery, ExecuteMethodEnum executeMethod) {
         this(runtimeContext,isQuery,executeMethod, false);
@@ -30,6 +32,7 @@ public class ExecutorContext {
 
     public ExecutorContext(QueryRuntimeContext runtimeContext, boolean isQuery, ExecuteMethodEnum executeMethod, boolean tracking) {
         this.runtimeContext = runtimeContext;
+        this.easyQueryOption = runtimeContext.getQueryConfiguration().getEasyQueryOption();
         this.isQuery = isQuery;
         this.executeMethod = executeMethod;
         this.tracking = tracking;
@@ -106,11 +109,16 @@ public class ExecutorContext {
         }
         return value;
     }
-    public boolean isQuery(){
+
+    public boolean isQuery() {
         return isQuery;
     }
 
     public ExecuteMethodEnum getExecuteMethod() {
         return executeMethod;
+    }
+
+    public EasyQueryOption getEasyQueryOption() {
+        return easyQueryOption;
     }
 }

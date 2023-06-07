@@ -1,7 +1,5 @@
 package com.easy.query.core.sharding.manager;
 
-import com.easy.query.core.util.EasyCollectionUtil;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,22 +10,32 @@ import java.util.List;
  * @author xuejiaming
  */
 public class DefaultSequenceCountLine implements SequenceCountLine{
-    private final List<SequenceCountNode> results = new ArrayList<>();
+    private final List<Long> results = new ArrayList<>();
+
     @Override
-    public List<SequenceCountNode> getCountNodes() {
+    public List<Long> getTotalLines() {
         return results;
     }
 
     @Override
     public void addCountResult(long total,boolean init) {
         if(init){
-            results.add(new DefaultSequenceCountNode(total));
-        }else{
-            SequenceCountNode firstFillResult = EasyCollectionUtil.firstOrDefault(results, o -> o.getTotal() < 0, null);
-            if (firstFillResult != null) {
-                firstFillResult.setTotal(total);
-            } else {
-                results.add(new DefaultSequenceCountNode(total));
+            results.add(total);
+        }else {
+            int size = results.size();
+            boolean setOld = false;
+            //获取旧值里面的total按顺序给第一个小于0就赋值
+            for (int i = 0; i < size; i++) {
+                Long value = results.get(i);
+                if (value == null || value < 0) {
+                    results.set(i, total);
+                    setOld = true;
+                    break;
+                }
+            }
+            //如果旧的没有设置就添加
+            if (!setOld) {
+                results.add(total);
             }
         }
     }

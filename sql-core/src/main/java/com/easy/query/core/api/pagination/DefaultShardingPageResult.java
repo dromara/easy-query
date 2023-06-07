@@ -1,6 +1,7 @@
 package com.easy.query.core.api.pagination;
 
 import com.easy.query.core.sharding.manager.SequenceCountLine;
+import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.List;
 
@@ -31,7 +32,7 @@ public class DefaultShardingPageResult<T> implements EasyShardingPageResult<T> {
     }
 
     @Override
-    public SequenceCountLine getSequenceCountLine() {
-        return sequenceCountLine;
+    public List<Long> getTotalLines() {
+        return sequenceCountLine.getTotalLines();
     }
 }

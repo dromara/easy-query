@@ -43,7 +43,7 @@ public class DefaultShardingQueryCountManager implements ShardingQueryCountManag
     }
 
     @Override
-    public List<SequenceCountNode> getCountResult() {
+    public List<Long> getCountResult() {
         QueryCountContext queryCountContext = getQueryCountContextNotNull();
         return queryCountContext.getCountResult();
     }

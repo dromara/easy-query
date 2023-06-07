@@ -4,16 +4,8 @@ import com.easy.query.api4kt.select.KtQueryable;
 import com.easy.query.api4kt.select.KtQueryable2;
 import com.easy.query.api4kt.select.impl.EasyKtQueryable;
 import com.easy.query.api4kt.select.impl.EasyKtQueryable2;
-import com.easy.query.api4kt.sql.SQLKtColumnAsSelector;
-import com.easy.query.api4kt.sql.SQLKtColumnSelector;
-import com.easy.query.api4kt.sql.SQLKtGroupBySelector;
-import com.easy.query.api4kt.sql.SQLKtWhereAggregatePredicate;
-import com.easy.query.api4kt.sql.SQLKtWherePredicate;
-import com.easy.query.api4kt.sql.impl.SQLKtColumnAsSelectorImpl;
-import com.easy.query.api4kt.sql.impl.SQLKtColumnSelectorImpl;
-import com.easy.query.api4kt.sql.impl.SQLKtGroupBySelectorImpl;
-import com.easy.query.api4kt.sql.impl.SQLKtWhereAggregatePredicateImpl;
-import com.easy.query.api4kt.sql.impl.SQLKtWherePredicateImpl;
+import com.easy.query.api4kt.sql.*;
+import com.easy.query.api4kt.sql.impl.*;
 import com.easy.query.core.api.dynamic.sort.ObjectSort;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.api.select.ClientQueryable;
@@ -25,7 +17,6 @@ import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
-import com.easy.query.core.sharding.manager.SequenceCountLine;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyLambdaUtil;
 
@@ -290,8 +281,8 @@ public abstract class AbstractKtQueryable<T1> implements KtQueryable<T1> {
     }
 
     @Override
-    public EasyPageResult<T1> toShardingPageResult(long pageIndex, long pageSize, SequenceCountLine sequenceCountLine) {
-        return entityQueryable.toShardingPageResult(pageIndex, pageSize, sequenceCountLine);
+    public EasyPageResult<T1> toShardingPageResult(long pageIndex, long pageSize, List<Long> totalLines) {
+        return entityQueryable.toShardingPageResult(pageIndex, pageSize, totalLines);
     }
 
 

@@ -15,6 +15,7 @@ public class MySysOutLogImpl implements Log {
      */
     public MySysOutLogImpl(String clazz){
     }
+
     @Override
     public boolean isDebugEnabled() {
         return true;
@@ -22,6 +23,11 @@ public class MySysOutLogImpl implements Log {
 
     @Override
     public boolean isTraceEnabled() {
+        return true;
+    }
+
+    @Override
+    public boolean isInfoEnabled() {
         return true;
     }
 
@@ -49,6 +55,13 @@ public class MySysOutLogImpl implements Log {
 
     @Override
     public void trace(String s) {
+        System.out.println("----开始----");
+        System.out.println(s);
+        System.out.println("----结束----");
+    }
+
+    @Override
+    public void info(String s) {
         System.out.println("----开始----");
         System.out.println(s);
         System.out.println("----结束----");

@@ -79,6 +79,11 @@ public class EasyQueryProperties {
     private long multiConnWaitTimeoutMillis = 5000L;
     private boolean warningBusy = true;
 
+
+    private int insertBatchGroup = 1000;
+    private int updateBatchGroup = 1000;
+    private boolean printSql = true;
+
     public Boolean getEnable() {
         return enable;
     }
@@ -241,6 +246,30 @@ public class EasyQueryProperties {
 
     public void setWarningBusy(boolean warningBusy) {
         this.warningBusy = warningBusy;
+    }
+
+    public int getInsertBatchGroup() {
+        return insertBatchGroup;
+    }
+
+    public void setInsertBatchGroup(int insertBatchGroup) {
+        this.insertBatchGroup = insertBatchGroup;
+    }
+
+    public int getUpdateBatchGroup() {
+        return updateBatchGroup;
+    }
+
+    public void setUpdateBatchGroup(int updateBatchGroup) {
+        this.updateBatchGroup = updateBatchGroup;
+    }
+
+    public boolean isPrintSql() {
+        return printSql;
+    }
+
+    public void setPrintSql(boolean printSql) {
+        this.printSql = printSql;
     }
 
     public EasyQueryProperties() {

@@ -187,7 +187,8 @@ public class EasyShardingUtil {
         QueryRuntimeContext runtimeContext = expressionContext.getRuntimeContext();
         return runtimeContext.getQueryConfiguration().getEasyQueryOption().getConnectionMode();
     }
-    public static List<RewriteRouteUnit> getSequenceCountRewriteRouteUnits(QueryPrepareParseResult queryPrepareParseResult, RouteContext routeContext, List<SequenceCountNode> countResult){
+
+    public static List<RewriteRouteUnit> getSequenceCountRewriteRouteUnits(QueryPrepareParseResult queryPrepareParseResult, RouteContext routeContext, List<Long> countResult) {
 
         SequenceParseResult sequenceParseResult = queryPrepareParseResult.getSequenceParseResult();
         boolean reverse = sequenceParseResult.isReverse();
@@ -195,16 +196,16 @@ public class EasyShardingUtil {
         boolean countResultReverse = reverse == asc;
         List<RouteUnit> routeUnits = routeContext.getShardingRouteResult().getRouteUnits();
         ArrayList<RewriteRouteUnit> rewriteRouteUnits = new ArrayList<>(routeUnits.size());
-        int routeUnitsSize =routeUnits.size();
+        int routeUnitsSize = routeUnits.size();
         int countSize = countResult.size();
         for (int i = 0; i < routeUnitsSize; i++) {
             RouteUnit routeUnit = routeUnits.get(i);
             int countResultIndex = countResultReverse ? countSize - 1 - i : i;
-            SequenceCountNode SequenceCountNode =countResult.size()>countResultIndex? countResult.get(countResultIndex):null;
-            if(SequenceCountNode==null){
+            Long total = countResult.size() > countResultIndex ? countResult.get(countResultIndex) : null;
+            if (total == null) {
                 rewriteRouteUnits.add(new DefaultRewriteRouteUnit(routeUnit));
-            }else{
-                if(SequenceCountNode.getTotal()<0L){
+            } else {
+                if (total < 0L) {
                     rewriteRouteUnits.add(new DefaultRewriteRouteUnit(routeUnit));
                 }
             }
@@ -212,7 +213,7 @@ public class EasyShardingUtil {
         return rewriteRouteUnits;
     }
 
-    public static List<RewriteRouteUnit> getSequencePaginationRewriteRouteUnits(QueryPrepareParseResult queryPrepareParseResult, RouteContext routeContext, List<SequenceCountNode> countResult) {
+    public static List<RewriteRouteUnit> getSequencePaginationRewriteRouteUnits(QueryPrepareParseResult queryPrepareParseResult, RouteContext routeContext, List<Long> countResult) {
 
         SequenceParseResult sequenceParseResult = queryPrepareParseResult.getSequenceParseResult();
         boolean reverse = sequenceParseResult.isReverse();
@@ -229,18 +230,18 @@ public class EasyShardingUtil {
         int countSize = countResult.size();
         for (int i = 0; i < countSize; i++) {
             int countResultIndex = countResultReverse ? countSize - 1 - i : i;
-            SequenceCountNode SequenceCountNode = countResult.get(countResultIndex);
+            Long total = countResult.get(countResultIndex);
             RouteUnit routeUnit = routeUnits.get(i);
             if (!stopSkip) {
-                if (SequenceCountNode.getTotal() > currentOffset) {
+                if (total > currentOffset) {
                     stopSkip = true;
                 } else {
-                    currentOffset = currentOffset - SequenceCountNode.getTotal();
+                    currentOffset = currentOffset - total;
                     continue;
                 }
             }
             long currentRealOffset = currentOffset;
-            long currentRealRows = SequenceCountNode.getTotal() - currentOffset;
+            long currentRealRows = total - currentOffset;
             if (currentOffset != 0L)
                 currentOffset = 0;
 
@@ -361,8 +362,8 @@ public class EasyShardingUtil {
                         OrderByColumnSegment firstOrder = (OrderByColumnSegment) EasyCollectionUtil.first(easyQuerySQLExpression.getOrder().getSQLSegments());
                         ShardingInitConfig shardingInitConfig = firstOrder.getTable().getEntityMetadata().getShardingInitConfig();
                         if (shardingInitConfig.isReverse()) {
-                            List<SequenceCountNode> countResult = shardingQueryCountManager.getCountResult();
-                            long total = EasyCollectionUtil.sumLong(countResult, SequenceCountNode::getTotal);
+                            List<Long> countResult = shardingQueryCountManager.getCountResult();
+                            long total = EasyCollectionUtil.sumLong(countResult, o -> o);
                             if (shardingInitConfig.getReverseFactor() * total > shardingInitConfig.getMinReverseTotal()) {
                                 mergeBehavior = EasyBitwiseUtil.addBit(mergeBehavior, MergeBehaviorEnum.REVERSE_PAGINATION.getCode());
                             }

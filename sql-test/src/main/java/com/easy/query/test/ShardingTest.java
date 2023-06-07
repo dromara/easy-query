@@ -3,15 +3,9 @@ package com.easy.query.test;
 import com.easy.query.api4j.select.Queryable;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.api.pagination.EasyShardingPageResult;
-import com.easy.query.core.sharding.manager.SequenceCountLine;
-import com.easy.query.core.sharding.manager.SequenceCountNode;
 import com.easy.query.test.dto.TopicShardingGroup;
 import com.easy.query.test.dto.TopicSubQueryBlog;
-import com.easy.query.test.entity.Topic;
-import com.easy.query.test.entity.TopicSharding;
-import com.easy.query.test.entity.TopicShardingDataSource;
-import com.easy.query.test.entity.TopicShardingDataSourceTime;
-import com.easy.query.test.entity.TopicShardingTime;
+import com.easy.query.test.entity.*;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -724,26 +718,25 @@ public class ShardingTest extends BaseTest {
         EasyPageResult<TopicShardingTime> pageResult = easyQuery.queryable(TopicShardingTime.class)
                 .orderByAsc(o -> o.column(TopicShardingTime::getCreateTime))
                 .toShardingPageResult(30, 33);
-        Assert.assertEquals(days,pageResult.getTotal());
-        beginTime=beginTime.plusDays(957);
+        Assert.assertEquals(days, pageResult.getTotal());
+        beginTime = beginTime.plusDays(957);
         for (int i = 0; i < 33; i++) {
             TopicShardingTime topicShardingTime = pageResult.getData().get(i);
-            Assert.assertEquals(beginTime.plusDays(i),topicShardingTime.getCreateTime());
+            Assert.assertEquals(beginTime.plusDays(i), topicShardingTime.getCreateTime());
         }
         EasyShardingPageResult<TopicShardingTime> pageResult1 = (EasyShardingPageResult<TopicShardingTime>) pageResult;
-        SequenceCountLine sequenceCountLine = pageResult1.getSequenceCountLine();
-        System.out.println(sequenceCountLine.getCountNodes());
-        SequenceCountNode sequenceCountNode = sequenceCountLine.getCountNodes().get(0);
-        sequenceCountNode.setTotal(-1);
-        System.out.println(sequenceCountLine.getCountNodes());
+        List<Long> totalLines = pageResult1.getTotalLines();
+        System.out.println(totalLines);
+        totalLines.set(0, -1L);
+        System.out.println(totalLines);
         EasyPageResult<TopicShardingTime> pageResult2 = easyQuery.queryable(TopicShardingTime.class)
                 .orderByAsc(o -> o.column(TopicShardingTime::getCreateTime))
-                .toShardingPageResult(30, 33,sequenceCountLine);
+                .toShardingPageResult(30, 33, totalLines);
         EasyShardingPageResult<TopicShardingTime> pageResult13 = (EasyShardingPageResult<TopicShardingTime>) pageResult2;
 
-        System.out.println(pageResult13.getSequenceCountLine().getCountNodes());
-        Assert.assertEquals(days,pageResult2.getTotal());
-        beginTime= LocalDateTime.of(2020, 1, 1, 1, 1).plusDays(957);
+        System.out.println(pageResult13.getTotalLines());
+        Assert.assertEquals(days, pageResult2.getTotal());
+        beginTime = LocalDateTime.of(2020, 1, 1, 1, 1).plusDays(957);
         for (int i = 0; i < 33; i++) {
             TopicShardingTime topicShardingTime = pageResult2.getData().get(i);
             Assert.assertEquals(beginTime.plusDays(i),topicShardingTime.getCreateTime());
@@ -759,24 +752,25 @@ public class ShardingTest extends BaseTest {
         EasyPageResult<TopicShardingTime> pageResult = easyQuery.queryable(TopicShardingTime.class)
                 .orderByAsc(o -> o.column(TopicShardingTime::getCreateTime))
                 .toShardingPageResult(3, 33);
-        Assert.assertEquals(days,pageResult.getTotal());
-        beginTime=beginTime.plusDays(66);
+        Assert.assertEquals(days, pageResult.getTotal());
+        beginTime = beginTime.plusDays(66);
         for (int i = 0; i < 33; i++) {
             TopicShardingTime topicShardingTime = pageResult.getData().get(i);
-            Assert.assertEquals(beginTime.plusDays(i),topicShardingTime.getCreateTime());
+            Assert.assertEquals(beginTime.plusDays(i), topicShardingTime.getCreateTime());
         }
         EasyShardingPageResult<TopicShardingTime> pageResult1 = (EasyShardingPageResult<TopicShardingTime>) pageResult;
-        SequenceCountLine sequenceCountLine = pageResult1.getSequenceCountLine();
-        int size = sequenceCountLine.getCountNodes().size();
+        List<Long> totalLines = pageResult1.getTotalLines();
+        int size = totalLines.size();
         for (int i = 0; i < size; i++) {
-            if(i%2==0){
-                sequenceCountLine.getCountNodes().get(i).setTotal(-1);
+            if (i % 2 == 0) {
+                totalLines.set(i, -1L);
             }
         }
+        System.out.println("----------");
         EasyPageResult<TopicShardingTime> pageResult2 = easyQuery.queryable(TopicShardingTime.class)
                 .orderByAsc(o -> o.column(TopicShardingTime::getCreateTime))
-                .toShardingPageResult(3, 33,sequenceCountLine);
-        Assert.assertEquals(days,pageResult2.getTotal());
+                .toShardingPageResult(3, 33, totalLines);
+        Assert.assertEquals(days, pageResult2.getTotal());
         beginTime=LocalDateTime.of(2020, 1, 1, 1, 1).plusDays(66);
         for (int i = 0; i < 33; i++) {
             TopicShardingTime topicShardingTime = pageResult2.getData().get(i);

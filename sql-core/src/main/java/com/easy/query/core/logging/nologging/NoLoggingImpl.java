@@ -25,6 +25,11 @@ public class NoLoggingImpl implements Log {
     }
 
     @Override
+    public boolean isInfoEnabled() {
+        return false;
+    }
+
+    @Override
     public void error(String s, Throwable e) {
         // Do Nothing
     }
@@ -41,6 +46,11 @@ public class NoLoggingImpl implements Log {
 
     @Override
     public void trace(String s) {
+        // Do Nothing
+    }
+
+    @Override
+    public void info(String s) {
         // Do Nothing
     }
 

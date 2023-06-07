@@ -4,10 +4,10 @@ import com.easy.query.core.logging.Log;
 import org.slf4j.Logger;
 
 /**
+ * @author xuejiaming
  * @FileName: Slf4jLoggerImpl.java
  * @Description: 文件说明
  * @Date: 2023/3/11 14:05
- * @author xuejiaming
  */
 public class Slf4jLoggerImpl implements Log {
 
@@ -28,6 +28,11 @@ public class Slf4jLoggerImpl implements Log {
     }
 
     @Override
+    public boolean isInfoEnabled() {
+        return log.isInfoEnabled();
+    }
+
+    @Override
     public void error(String s, Throwable e) {
         log.error(s, e);
     }
@@ -45,6 +50,11 @@ public class Slf4jLoggerImpl implements Log {
     @Override
     public void trace(String s) {
         log.trace(s);
+    }
+
+    @Override
+    public void info(String s) {
+        log.info(s);
     }
 
     @Override

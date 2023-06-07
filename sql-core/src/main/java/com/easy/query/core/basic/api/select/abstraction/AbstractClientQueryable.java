@@ -16,11 +16,7 @@ import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.basic.pagination.EasyPageResultProvider;
 import com.easy.query.core.context.QueryRuntimeContext;
-import com.easy.query.core.enums.EasyBehaviorEnum;
-import com.easy.query.core.enums.ExecuteMethodEnum;
-import com.easy.query.core.enums.MultiTableTypeEnum;
-import com.easy.query.core.enums.SQLPredicateCompareEnum;
-import com.easy.query.core.enums.SQLUnionEnum;
+import com.easy.query.core.enums.*;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.exception.EasyQueryFirstOrNotNullException;
@@ -30,11 +26,7 @@ import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
-import com.easy.query.core.expression.parser.core.base.ColumnSelector;
-import com.easy.query.core.expression.parser.core.base.GroupBySelector;
-import com.easy.query.core.expression.parser.core.base.WhereAggregatePredicate;
-import com.easy.query.core.expression.parser.core.base.WherePredicate;
+import com.easy.query.core.expression.parser.core.base.*;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.segment.FuncColumnSegment;
 import com.easy.query.core.expression.segment.SelectConstSegment;
@@ -50,25 +42,12 @@ import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
-import com.easy.query.core.sharding.manager.SequenceCountLine;
-import com.easy.query.core.sharding.manager.SequenceCountNode;
 import com.easy.query.core.sharding.manager.ShardingQueryCountManager;
-import com.easy.query.core.util.EasyClassUtil;
-import com.easy.query.core.util.EasyCollectionUtil;
-import com.easy.query.core.util.EasyObjectUtil;
-import com.easy.query.core.util.EasySQLExpressionUtil;
-import com.easy.query.core.util.EasySQLSegmentUtil;
-import com.easy.query.core.util.EasyStringUtil;
+import com.easy.query.core.util.*;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -740,11 +719,11 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     }
 
     @Override
-    public EasyPageResult<T1> toShardingPageResult(long pageIndex, long pageSize, SequenceCountLine sequenceCountLine) {
-        return doShardingPageResult(pageIndex, pageSize, t1Class, sequenceCountLine);
+    public EasyPageResult<T1> toShardingPageResult(long pageIndex, long pageSize, List<Long> totalLines) {
+        return doShardingPageResult(pageIndex, pageSize, t1Class, totalLines);
     }
 
-    protected <TR> EasyPageResult<TR> doShardingPageResult(long pageIndex, long pageSize, Class<TR> clazz, SequenceCountLine sequenceCountLine) {
+    protected <TR> EasyPageResult<TR> doShardingPageResult(long pageIndex, long pageSize, Class<TR> clazz, List<Long> totalLines) {
         //设置每次获取多少条
         long take = pageSize <= 0 ? 1 : pageSize;
         //设置当前页码最小1
@@ -755,15 +734,15 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         ShardingQueryCountManager shardingQueryCountManager = runtimeContext.getShardingQueryCountManager();
         try {
             shardingQueryCountManager.begin();
-            if (sequenceCountLine != null) {
-                List<SequenceCountNode> countNodes = sequenceCountLine.getCountNodes();
-                for (SequenceCountNode countNode : countNodes) {
-                    shardingQueryCountManager.addCountResult(countNode.getTotal(), true);
+            boolean totalLineNotEmpty = EasyCollectionUtil.isNotEmpty(totalLines);
+            if (totalLineNotEmpty) {
+                for (Long totalLine : totalLines) {
+                    shardingQueryCountManager.addCountResult(totalLine, true);
                 }
             }
             long total = this.count();
-            if (sequenceCountLine != null) {
-                total = EasyCollectionUtil.sumLong(shardingQueryCountManager.getCountResult(), SequenceCountNode::getTotal);
+            if (totalLineNotEmpty) {
+                total = EasyCollectionUtil.sumLong(shardingQueryCountManager.getCountResult(), o -> o);
             }
             EasyPageResultProvider easyPageResultProvider = runtimeContext.getEasyPageResultProvider();
             if (total <= offset) {
