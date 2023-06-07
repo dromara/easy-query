@@ -20,7 +20,6 @@ import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.util.EasyCollectionUtil;
 import kotlin.reflect.KProperty1;
 
-import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -73,27 +72,6 @@ public abstract class AbstractKtQueryable<T1> implements KtQueryable<T1> {
             whereExpression.apply(new SQLKtWherePredicateImpl<>(wherePredicate));
         });
     }
-
-    @Override
-    public <TMember extends Number> BigDecimal sumBigDecimalOrDefault(KProperty1<T1, TMember> column, BigDecimal def) {
-        return entityQueryable.sumBigDecimalOrDefault(EasyKtLambdaUtil.getPropertyName(column), def);
-    }
-
-    @Override
-    public <TMember extends Number> TMember sumOrDefault(KProperty1<T1, TMember> column, TMember def) {
-        return entityQueryable.sumOrDefault(EasyKtLambdaUtil.getPropertyName(column), def);
-    }
-
-    @Override
-    public <TMember extends Comparable<?>> TMember maxOrDefault(KProperty1<T1, TMember> column, TMember def) {
-        return entityQueryable.maxOrDefault(EasyKtLambdaUtil.getPropertyName(column), def);
-    }
-
-    @Override
-    public <TMember> TMember minOrDefault(KProperty1<T1, TMember> column, TMember def) {
-        return entityQueryable.minOrDefault(EasyKtLambdaUtil.getPropertyName(column), def);
-    }
-
     @Override
     public Integer lenOrDefault(KProperty1<T1, ?> column, Integer def) {
         return entityQueryable.lenOrDefault(EasyKtLambdaUtil.getPropertyName(column), def);

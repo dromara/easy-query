@@ -67,7 +67,7 @@ public interface KtQueryable<T1> extends Query<T1>,
      * @return
      */
     default <TMember extends Number> BigDecimal sumBigDecimalOrNull(KProperty1<T1, TMember> column) {
-        return sumBigDecimalOrDefault(column, null);
+        return getEntityQueryable().sumBigDecimalOrNull(EasyKtLambdaUtil.getPropertyName(column));
     }
 
     /**
@@ -78,28 +78,36 @@ public interface KtQueryable<T1> extends Query<T1>,
      * @return
      */
     default <TMember extends Number> BigDecimal sumBigDecimalNotNull(KProperty1<T1, TMember> column) {
-        return sumBigDecimalOrDefault(column, BigDecimal.ZERO);
+        return getEntityQueryable().sumBigDecimalNotNull(EasyKtLambdaUtil.getPropertyName(column));
     }
 
-    <TMember extends Number> BigDecimal sumBigDecimalOrDefault(KProperty1<T1, TMember> column, BigDecimal def);
+    default <TMember extends Number> BigDecimal sumBigDecimalOrDefault(KProperty1<T1, TMember> column, BigDecimal def) {
+        return getEntityQueryable().sumBigDecimalOrDefault(EasyKtLambdaUtil.getPropertyName(column), def);
+    }
 
     default <TMember extends Number> TMember sumOrNull(KProperty1<T1, TMember> column) {
-        return sumOrDefault(column, null);
+        return getEntityQueryable().sumOrNull(EasyKtLambdaUtil.getPropertyName(column));
     }
 
-    <TMember extends Number> TMember sumOrDefault(KProperty1<T1, TMember> column, TMember def);
+    default <TMember extends Number> TMember sumOrDefault(KProperty1<T1, TMember> column, TMember def) {
+        return getEntityQueryable().sumOrDefault(EasyKtLambdaUtil.getPropertyName(column), def);
+    }
 
     default <TMember extends Comparable<?>> TMember maxOrNull(KProperty1<T1, TMember> column) {
-        return maxOrDefault(column, null);
+        return getEntityQueryable().maxOrNull(EasyKtLambdaUtil.getPropertyName(column));
     }
 
-    <TMember extends Comparable<?>> TMember maxOrDefault(KProperty1<T1, TMember> column, TMember def);
+    default <TMember extends Comparable<?>> TMember maxOrDefault(KProperty1<T1, TMember> column, TMember def) {
+        return getEntityQueryable().maxOrDefault(EasyKtLambdaUtil.getPropertyName(column), def);
+    }
 
     default <TMember> TMember minOrNull(KProperty1<T1, TMember> column) {
-        return minOrDefault(column, null);
+        return getEntityQueryable().minOrNull(EasyKtLambdaUtil.getPropertyName(column));
     }
 
-    <TMember> TMember minOrDefault(KProperty1<T1, TMember> column, TMember def);
+    default <TMember> TMember minOrDefault(KProperty1<T1, TMember> column, TMember def) {
+        return getEntityQueryable().minOrDefault(EasyKtLambdaUtil.getPropertyName(column), def);
+    }
 
     default <TMember extends Number> Double avgOrNull(KProperty1<T1, TMember> column) {
         return getEntityQueryable().avgOrNull(EasyKtLambdaUtil.getPropertyName(column));

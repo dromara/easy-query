@@ -20,7 +20,6 @@ import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyLambdaUtil;
 
-import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -72,26 +71,6 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
         return entityQueryable.all(wherePredicate -> {
             whereExpression.apply(new SQLWherePredicateImpl<>(wherePredicate));
         });
-    }
-
-    @Override
-    public <TMember extends Number> BigDecimal sumBigDecimalOrDefault(Property<T1, TMember> column, BigDecimal def) {
-        return entityQueryable.sumBigDecimalOrDefault(EasyLambdaUtil.getPropertyName(column), def);
-    }
-
-    @Override
-    public <TMember extends Number> TMember sumOrDefault(Property<T1, TMember> column, TMember def) {
-        return entityQueryable.sumOrDefault(EasyLambdaUtil.getPropertyName(column), def);
-    }
-
-    @Override
-    public <TMember extends Comparable<?>> TMember maxOrDefault(Property<T1, TMember> column, TMember def) {
-        return entityQueryable.maxOrDefault(EasyLambdaUtil.getPropertyName(column), def);
-    }
-
-    @Override
-    public <TMember> TMember minOrDefault(Property<T1, TMember> column, TMember def) {
-        return entityQueryable.minOrDefault(EasyLambdaUtil.getPropertyName(column), def);
     }
 
     @Override

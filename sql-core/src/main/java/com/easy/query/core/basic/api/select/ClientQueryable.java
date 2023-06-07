@@ -250,7 +250,7 @@ public interface ClientQueryable<T1> extends Query<T1>,
     /**
      * @param configuration
      * @return
-     * @throws EasyQueryOrderByInvalidOperationException 当配置{@link ObjectSort} 为{@code  DynamicModeEnum.STRICT}排序设置的属性不存在当前排序对象里面或者当前查询对象无法获取 {@link SQLColumnSelector}
+     * @throws EasyQueryOrderByInvalidOperationException 当配置{@link ObjectSort} 为{@code  DynamicModeEnum.STRICT}排序设置的属性不存在当前排序对象里面或者当前查询对象无法获取 {@link ColumnSelector}
      */
     default ClientQueryable<T1> orderByDynamic(ObjectSort configuration) {
         return orderByDynamic(true, configuration);
@@ -260,7 +260,7 @@ public interface ClientQueryable<T1> extends Query<T1>,
      * @param condition
      * @param configuration
      * @return
-     * @throws EasyQueryOrderByInvalidOperationException 当配置{@link ObjectSort} 为{@code  DynamicModeEnum.STRICT}排序设置的属性不存在当前排序对象里面或者当前查询对象无法获取 {@link SQLColumnSelector}
+     * @throws EasyQueryOrderByInvalidOperationException 当配置{@link ObjectSort} 为{@code  DynamicModeEnum.STRICT}排序设置的属性不存在当前排序对象里面或者当前查询对象无法获取 {@link ColumnSelector}
      */
     ClientQueryable<T1> orderByDynamic(boolean condition, ObjectSort configuration);
 

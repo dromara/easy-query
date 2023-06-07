@@ -72,7 +72,7 @@ public interface Queryable<T1> extends Query<T1>,
      * @return
      */
     default <TMember extends Number> BigDecimal sumBigDecimalOrNull(Property<T1, TMember> column) {
-        return sumBigDecimalOrDefault(column, null);
+        return getEntityQueryable().sumBigDecimalOrNull(EasyLambdaUtil.getPropertyName(column));
     }
 
     /**
@@ -83,28 +83,36 @@ public interface Queryable<T1> extends Query<T1>,
      * @return
      */
     default <TMember extends Number> BigDecimal sumBigDecimalNotNull(Property<T1, TMember> column) {
-        return sumBigDecimalOrDefault(column, BigDecimal.ZERO);
+        return getEntityQueryable().sumBigDecimalNotNull(EasyLambdaUtil.getPropertyName(column));
     }
 
-    <TMember extends Number> BigDecimal sumBigDecimalOrDefault(Property<T1, TMember> column, BigDecimal def);
+    default <TMember extends Number> BigDecimal sumBigDecimalOrDefault(Property<T1, TMember> column, BigDecimal def) {
+        return getEntityQueryable().sumBigDecimalOrDefault(EasyLambdaUtil.getPropertyName(column), def);
+    }
 
     default <TMember extends Number> TMember sumOrNull(Property<T1, TMember> column) {
-        return sumOrDefault(column, null);
+        return getEntityQueryable().sumOrNull(EasyLambdaUtil.getPropertyName(column));
     }
 
-    <TMember extends Number> TMember sumOrDefault(Property<T1, TMember> column, TMember def);
+    default <TMember extends Number> TMember sumOrDefault(Property<T1, TMember> column, TMember def) {
+        return getEntityQueryable().sumOrDefault(EasyLambdaUtil.getPropertyName(column), def);
+    }
 
     default <TMember extends Comparable<?>> TMember maxOrNull(Property<T1, TMember> column) {
-        return maxOrDefault(column, null);
+        return getEntityQueryable().maxOrNull(EasyLambdaUtil.getPropertyName(column));
     }
 
-    <TMember extends Comparable<?>> TMember maxOrDefault(Property<T1, TMember> column, TMember def);
+    default <TMember extends Comparable<?>> TMember maxOrDefault(Property<T1, TMember> column, TMember def) {
+        return getEntityQueryable().maxOrDefault(EasyLambdaUtil.getPropertyName(column), def);
+    }
 
     default <TMember> TMember minOrNull(Property<T1, TMember> column) {
-        return minOrDefault(column, null);
+        return getEntityQueryable().minOrNull(EasyLambdaUtil.getPropertyName(column));
     }
 
-    <TMember> TMember minOrDefault(Property<T1, TMember> column, TMember def);
+    default <TMember> TMember minOrDefault(Property<T1, TMember> column, TMember def) {
+        return getEntityQueryable().minOrDefault(EasyLambdaUtil.getPropertyName(column), def);
+    }
 
     default <TMember extends Number> Double avgOrNull(Property<T1, TMember> column) {
         return getEntityQueryable().avgOrNull(EasyLambdaUtil.getPropertyName(column));
