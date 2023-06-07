@@ -20,6 +20,7 @@ import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.segment.ColumnSegment;
+import com.easy.query.core.util.EasyLambdaUtil;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -105,11 +106,34 @@ public interface Queryable<T1> extends Query<T1>,
 
     <TMember> TMember minOrDefault(Property<T1, TMember> column, TMember def);
 
-    default <TMember extends Number> TMember avgOrNull(Property<T1, TMember> column) {
-        return avgOrDefault(column, null);
+    default <TMember extends Number> Double avgOrNull(Property<T1, TMember> column) {
+        return getEntityQueryable().avgOrNull(EasyLambdaUtil.getPropertyName(column));
     }
 
-    <TMember extends Number> TMember avgOrDefault(Property<T1, TMember> column, TMember def);
+    default <TMember extends Number> BigDecimal avgBigDecimalOrNull(Property<T1, TMember> column) {
+        return getEntityQueryable().avgBigDecimalOrNull(EasyLambdaUtil.getPropertyName(column));
+    }
+
+    default <TMember extends Number> Float avgFloatOrNull(Property<T1, TMember> column) {
+        return getEntityQueryable().avgFloatOrNull(EasyLambdaUtil.getPropertyName(column));
+    }
+
+    default <TMember extends Number> Double avgOrDefault(Property<T1, TMember> column, Double def) {
+        return getEntityQueryable().avgOrDefault(EasyLambdaUtil.getPropertyName(column), def);
+    }
+
+    default BigDecimal avgOrDefault(Property<T1, BigDecimal> column, BigDecimal def) {
+        return getEntityQueryable().avgOrDefault(EasyLambdaUtil.getPropertyName(column), def);
+    }
+
+    default Float avgOrDefault(Property<T1, Float> column, Float def) {
+        return getEntityQueryable().avgOrDefault(EasyLambdaUtil.getPropertyName(column), def);
+    }
+
+    default <TMember extends Number, TResult extends Number> TResult avgOrDefault(Property<T1, TMember> column, TResult def, Class<TResult> resultClass) {
+        return getEntityQueryable().avgOrDefault(EasyLambdaUtil.getPropertyName(column), def, resultClass);
+    }
+
 
     default Integer lenOrNull(Property<T1, ?> column) {
         return lenOrDefault(column, null);

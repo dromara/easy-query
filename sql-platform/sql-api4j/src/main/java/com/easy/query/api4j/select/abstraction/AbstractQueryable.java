@@ -95,11 +95,6 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     }
 
     @Override
-    public <TMember extends Number> TMember avgOrDefault(Property<T1, TMember> column, TMember def) {
-        return entityQueryable.avgOrDefault(EasyLambdaUtil.getPropertyName(column), def);
-    }
-
-    @Override
     public Integer lenOrDefault(Property<T1, ?> column, Integer def) {
         return entityQueryable.lenOrDefault(EasyLambdaUtil.getPropertyName(column), def);
     }

@@ -58,6 +58,7 @@ import java.util.*;
 public abstract class BaseTest {
     public static HikariDataSource dataSource;
     public static EasyQueryShardingOption easyQueryShardingOption;
+    public static EasyQueryClient easyQueryClient;
     public static EasyQuery easyQuery;
 
     static {
@@ -112,7 +113,7 @@ public abstract class BaseTest {
     }
 
     public static void initEasyQuery() {
-        EasyQueryClient easyObjectQuery = EasyQueryBootstrapper.defaultBuilderConfiguration()
+        easyQueryClient = EasyQueryBootstrapper.defaultBuilderConfiguration()
                 .setDefaultDataSource(dataSource)
                 .optionConfigure(op -> {
                     op.setDeleteThrowError(false);
@@ -127,7 +128,7 @@ public abstract class BaseTest {
                 })
                 .useDatabaseConfigure(new MySQLDatabaseConfiguration())
                 .build();
-        easyQuery = new DefaultEasyQuery(easyObjectQuery);
+        easyQuery = new DefaultEasyQuery(easyQueryClient);
         QueryRuntimeContext runtimeContext = easyQuery.getRuntimeContext();
         QueryConfiguration configuration = runtimeContext.getQueryConfiguration();
         configuration.applyEncryptionStrategy(new DefaultAesEasyEncryptionStrategy());

@@ -6,19 +6,19 @@ import com.easy.query.api4kt.select.impl.EasyKtQueryable;
 import com.easy.query.api4kt.select.impl.EasyKtQueryable2;
 import com.easy.query.api4kt.sql.*;
 import com.easy.query.api4kt.sql.impl.*;
+import com.easy.query.api4kt.util.EasyKtLambdaUtil;
 import com.easy.query.core.api.dynamic.sort.ObjectSort;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.select.ClientQueryable2;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
-import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.util.EasyCollectionUtil;
-import com.easy.query.core.util.EasyLambdaUtil;
+import kotlin.reflect.KProperty1;
 
 import java.math.BigDecimal;
 import java.util.Collection;
@@ -75,33 +75,28 @@ public abstract class AbstractKtQueryable<T1> implements KtQueryable<T1> {
     }
 
     @Override
-    public <TMember extends Number> BigDecimal sumBigDecimalOrDefault(Property<T1, TMember> column, BigDecimal def) {
-        return entityQueryable.sumBigDecimalOrDefault(EasyLambdaUtil.getPropertyName(column), def);
+    public <TMember extends Number> BigDecimal sumBigDecimalOrDefault(KProperty1<T1, TMember> column, BigDecimal def) {
+        return entityQueryable.sumBigDecimalOrDefault(EasyKtLambdaUtil.getPropertyName(column), def);
     }
 
     @Override
-    public <TMember extends Number> TMember sumOrDefault(Property<T1, TMember> column, TMember def) {
-        return entityQueryable.sumOrDefault(EasyLambdaUtil.getPropertyName(column), def);
+    public <TMember extends Number> TMember sumOrDefault(KProperty1<T1, TMember> column, TMember def) {
+        return entityQueryable.sumOrDefault(EasyKtLambdaUtil.getPropertyName(column), def);
     }
 
     @Override
-    public <TMember extends Comparable<?>> TMember maxOrDefault(Property<T1, TMember> column, TMember def) {
-        return entityQueryable.maxOrDefault(EasyLambdaUtil.getPropertyName(column), def);
+    public <TMember extends Comparable<?>> TMember maxOrDefault(KProperty1<T1, TMember> column, TMember def) {
+        return entityQueryable.maxOrDefault(EasyKtLambdaUtil.getPropertyName(column), def);
     }
 
     @Override
-    public <TMember> TMember minOrDefault(Property<T1, TMember> column, TMember def) {
-        return entityQueryable.minOrDefault(EasyLambdaUtil.getPropertyName(column), def);
+    public <TMember> TMember minOrDefault(KProperty1<T1, TMember> column, TMember def) {
+        return entityQueryable.minOrDefault(EasyKtLambdaUtil.getPropertyName(column), def);
     }
 
     @Override
-    public <TMember extends Number> TMember avgOrDefault(Property<T1, TMember> column, TMember def) {
-        return entityQueryable.avgOrDefault(EasyLambdaUtil.getPropertyName(column), def);
-    }
-
-    @Override
-    public Integer lenOrDefault(Property<T1, ?> column, Integer def) {
-        return entityQueryable.lenOrDefault(EasyLambdaUtil.getPropertyName(column), def);
+    public Integer lenOrDefault(KProperty1<T1, ?> column, Integer def) {
+        return entityQueryable.lenOrDefault(EasyKtLambdaUtil.getPropertyName(column), def);
     }
 
 

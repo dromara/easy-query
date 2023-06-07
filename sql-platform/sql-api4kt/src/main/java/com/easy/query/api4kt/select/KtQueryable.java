@@ -1,10 +1,7 @@
 package com.easy.query.api4kt.select;
 
-import com.easy.query.api4kt.sql.SQLKtColumnAsSelector;
-import com.easy.query.api4kt.sql.SQLKtColumnSelector;
-import com.easy.query.api4kt.sql.SQLKtGroupBySelector;
-import com.easy.query.api4kt.sql.SQLKtWhereAggregatePredicate;
-import com.easy.query.api4kt.sql.SQLKtWherePredicate;
+import com.easy.query.api4kt.sql.*;
+import com.easy.query.api4kt.util.EasyKtLambdaUtil;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.api.dynamic.sort.ObjectSort;
 import com.easy.query.core.basic.api.internal.Interceptable;
@@ -16,10 +13,10 @@ import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
 import com.easy.query.core.exception.EasyQueryWhereInvalidOperationException;
-import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.segment.ColumnSegment;
+import kotlin.reflect.KProperty1;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -69,7 +66,7 @@ public interface KtQueryable<T1> extends Query<T1>,
      * @param <TMember>
      * @return
      */
-    default <TMember extends Number> BigDecimal sumBigDecimalOrNull(Property<T1, TMember> column) {
+    default <TMember extends Number> BigDecimal sumBigDecimalOrNull(KProperty1<T1, TMember> column) {
         return sumBigDecimalOrDefault(column, null);
     }
 
@@ -80,41 +77,64 @@ public interface KtQueryable<T1> extends Query<T1>,
      * @param <TMember>
      * @return
      */
-    default <TMember extends Number> BigDecimal sumBigDecimalNotNull(Property<T1, TMember> column) {
+    default <TMember extends Number> BigDecimal sumBigDecimalNotNull(KProperty1<T1, TMember> column) {
         return sumBigDecimalOrDefault(column, BigDecimal.ZERO);
     }
 
-    <TMember extends Number> BigDecimal sumBigDecimalOrDefault(Property<T1, TMember> column, BigDecimal def);
+    <TMember extends Number> BigDecimal sumBigDecimalOrDefault(KProperty1<T1, TMember> column, BigDecimal def);
 
-    default <TMember extends Number> TMember sumOrNull(Property<T1, TMember> column) {
+    default <TMember extends Number> TMember sumOrNull(KProperty1<T1, TMember> column) {
         return sumOrDefault(column, null);
     }
 
-    <TMember extends Number> TMember sumOrDefault(Property<T1, TMember> column, TMember def);
+    <TMember extends Number> TMember sumOrDefault(KProperty1<T1, TMember> column, TMember def);
 
-    default <TMember extends Comparable<?>> TMember maxOrNull(Property<T1, TMember> column) {
+    default <TMember extends Comparable<?>> TMember maxOrNull(KProperty1<T1, TMember> column) {
         return maxOrDefault(column, null);
     }
 
-    <TMember extends Comparable<?>> TMember maxOrDefault(Property<T1, TMember> column, TMember def);
+    <TMember extends Comparable<?>> TMember maxOrDefault(KProperty1<T1, TMember> column, TMember def);
 
-    default <TMember> TMember minOrNull(Property<T1, TMember> column) {
+    default <TMember> TMember minOrNull(KProperty1<T1, TMember> column) {
         return minOrDefault(column, null);
     }
 
-    <TMember> TMember minOrDefault(Property<T1, TMember> column, TMember def);
+    <TMember> TMember minOrDefault(KProperty1<T1, TMember> column, TMember def);
 
-    default <TMember extends Number> TMember avgOrNull(Property<T1, TMember> column) {
-        return avgOrDefault(column, null);
+    default <TMember extends Number> Double avgOrNull(KProperty1<T1, TMember> column) {
+        return getEntityQueryable().avgOrNull(EasyKtLambdaUtil.getPropertyName(column));
     }
 
-    <TMember extends Number> TMember avgOrDefault(Property<T1, TMember> column, TMember def);
+    default <TMember extends Number> BigDecimal avgBigDecimalOrNull(KProperty1<T1, TMember> column) {
+        return getEntityQueryable().avgBigDecimalOrNull(EasyKtLambdaUtil.getPropertyName(column));
+    }
 
-    default Integer lenOrNull(Property<T1, ?> column) {
+    default <TMember extends Number> Float avgFloatOrNull(KProperty1<T1, TMember> column) {
+        return getEntityQueryable().avgFloatOrNull(EasyKtLambdaUtil.getPropertyName(column));
+    }
+
+    default <TMember extends Number> Double avgOrDefault(KProperty1<T1, TMember> column, Double def) {
+        return getEntityQueryable().avgOrDefault(EasyKtLambdaUtil.getPropertyName(column), def);
+    }
+
+    default BigDecimal avgOrDefault(KProperty1<T1, BigDecimal> column, BigDecimal def) {
+        return getEntityQueryable().avgOrDefault(EasyKtLambdaUtil.getPropertyName(column), def);
+    }
+
+    default Float avgOrDefault(KProperty1<T1, Float> column, Float def) {
+        return getEntityQueryable().avgOrDefault(EasyKtLambdaUtil.getPropertyName(column), def);
+    }
+
+    default <TMember extends Number, TResult extends Number> TResult avgOrDefault(KProperty1<T1, TMember> column, TResult def, Class<TResult> resultClass) {
+        return getEntityQueryable().avgOrDefault(EasyKtLambdaUtil.getPropertyName(column), def, resultClass);
+    }
+
+
+    default Integer lenOrNull(KProperty1<T1, ?> column) {
         return lenOrDefault(column, null);
     }
 
-    Integer lenOrDefault(Property<T1, ?> column, Integer def);
+    Integer lenOrDefault(KProperty1<T1, ?> column, Integer def);
 
     /**
      * 对当前表达式返回自定义select列

@@ -2,6 +2,7 @@ package com.easy.query.test;
 
 import com.easy.query.api4j.select.Queryable;
 import com.easy.query.core.api.pagination.EasyPageResult;
+import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.enums.SQLPredicateCompareEnum;
 import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
@@ -14,20 +15,8 @@ import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.util.EasyLambdaUtil;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 import com.easy.query.core.util.EasyStringUtil;
-import com.easy.query.test.dto.BlogEntityTest;
-import com.easy.query.test.dto.BlogEntityTest2;
-import com.easy.query.test.dto.TopicGroupTestDTO;
-import com.easy.query.test.dto.TopicRequest;
-import com.easy.query.test.dto.TopicSubQueryBlog;
-import com.easy.query.test.dto.TopicTypeVO;
-import com.easy.query.test.dto.TopicUnion;
-import com.easy.query.test.entity.BlogEntity;
-import com.easy.query.test.entity.SysUser;
-import com.easy.query.test.entity.Topic;
-import com.easy.query.test.entity.TopicType;
-import com.easy.query.test.entity.TopicTypeJson;
-import com.easy.query.test.entity.TopicTypeJsonValue;
-import com.easy.query.test.entity.TopicTypeTest1;
+import com.easy.query.test.dto.*;
+import com.easy.query.test.entity.*;
 import com.easy.query.test.enums.TopicTypeEnum;
 import com.easy.query.test.func.SQLFunc;
 import com.easy.query.test.vo.BlogEntityVO1;
@@ -37,11 +26,7 @@ import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * @author xuejiaming
@@ -946,6 +931,38 @@ public class QueryTest extends BaseTest {
 
     @Test
     public void query52() {
+        ClientQueryable<Topic> q1 = easyQueryClient
+                .queryable(Topic.class)
+                .where(o -> o.isNotNull("id"));
+        ClientQueryable<Topic> q2 = easyQueryClient
+                .queryable(Topic.class)
+                .where(o -> o.isNull("id"));
+        ClientQueryable<Topic> q3 = easyQueryClient
+                .queryable(Topic.class)
+                .where(o -> o.eq("id", "123"));
+
+        String sql = q1.union(q2, q3).toSQL();
+        Assert.assertEquals("SELECT t3.`id`,t3.`stars`,t3.`title`,t3.`create_time` FROM (SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t WHERE t.`id` IS NOT NULL UNION SELECT t1.`id`,t1.`stars`,t1.`title`,t1.`create_time` FROM `t_topic` t1 WHERE t1.`id` IS NULL UNION SELECT t2.`id`,t2.`stars`,t2.`title`,t2.`create_time` FROM `t_topic` t2 WHERE t2.`id` = ?) t3", sql);
+    }
+
+    @Test
+    public void query52_1_1() {
+        ClientQueryable<Topic> q1 = easyQueryClient
+                .queryable(Topic.class)
+                .where(o -> o.isNotNull("id"));
+        ClientQueryable<Topic> q2 = easyQueryClient
+                .queryable(Topic.class)
+                .where(o -> o.isNull("id"));
+        ClientQueryable<Topic> q3 = easyQueryClient
+                .queryable(Topic.class)
+                .where(o -> o.eq("id", "123"));
+
+        String sql = q1.unionAll(q2, q3).toSQL();
+        Assert.assertEquals("SELECT t3.`id`,t3.`stars`,t3.`title`,t3.`create_time` FROM (SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t WHERE t.`id` IS NOT NULL UNION ALL SELECT t1.`id`,t1.`stars`,t1.`title`,t1.`create_time` FROM `t_topic` t1 WHERE t1.`id` IS NULL UNION ALL SELECT t2.`id`,t2.`stars`,t2.`title`,t2.`create_time` FROM `t_topic` t2 WHERE t2.`id` = ?) t3", sql);
+    }
+
+    @Test
+    public void query52_1() {
         Queryable<Topic> q1 = easyQuery
                 .queryable(Topic.class)
                 .where(o -> o.isNotNull(Topic::getId));
@@ -958,6 +975,61 @@ public class QueryTest extends BaseTest {
 
         String sql = q1.union(q2, q3).toSQL();
         Assert.assertEquals("SELECT t3.`id`,t3.`stars`,t3.`title`,t3.`create_time` FROM (SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t WHERE t.`id` IS NOT NULL UNION SELECT t1.`id`,t1.`stars`,t1.`title`,t1.`create_time` FROM `t_topic` t1 WHERE t1.`id` IS NULL UNION SELECT t2.`id`,t2.`stars`,t2.`title`,t2.`create_time` FROM `t_topic` t2 WHERE t2.`id` = ?) t3", sql);
+    }
+
+    @Test
+    public void query52_1_2() {
+        Queryable<Topic> q1 = easyQuery
+                .queryable(Topic.class)
+                .where(o -> o.isNotNull(Topic::getId));
+        Queryable<Topic> q2 = easyQuery
+                .queryable(Topic.class)
+                .where(o -> o.isNull(Topic::getId));
+        Queryable<Topic> q3 = easyQuery
+                .queryable(Topic.class)
+                .where(o -> o.eq(Topic::getId, "123"));
+
+        String sql = q1.unionAll(q2, q3).toSQL();
+        Assert.assertEquals("SELECT t3.`id`,t3.`stars`,t3.`title`,t3.`create_time` FROM (SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t WHERE t.`id` IS NOT NULL UNION ALL SELECT t1.`id`,t1.`stars`,t1.`title`,t1.`create_time` FROM `t_topic` t1 WHERE t1.`id` IS NULL UNION ALL SELECT t2.`id`,t2.`stars`,t2.`title`,t2.`create_time` FROM `t_topic` t2 WHERE t2.`id` = ?) t3", sql);
+    }
+
+    @Test
+    public void query52_2() {
+        ClientQueryable<Topic> q1 = easyQueryClient
+                .queryable(Topic.class)
+                .where(o -> o.isNotNull("id"));
+        ClientQueryable<Topic> q3 = easyQueryClient
+                .queryable(Topic.class)
+                .where(o -> o.eq("id", "123"));
+
+        String sql = q1.union(q3).toSQL();
+        Assert.assertEquals("SELECT t2.`id`,t2.`stars`,t2.`title`,t2.`create_time` FROM (SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t WHERE t.`id` IS NOT NULL UNION SELECT t1.`id`,t1.`stars`,t1.`title`,t1.`create_time` FROM `t_topic` t1 WHERE t1.`id` = ?) t2", sql);
+    }
+
+    @Test
+    public void query52_3() {
+        Queryable<Topic> q1 = easyQuery
+                .queryable(Topic.class)
+                .where(o -> o.isNotNull(Topic::getId));
+        Queryable<Topic> q3 = easyQuery
+                .queryable(Topic.class)
+                .where(o -> o.eq(Topic::getId, "123"));
+
+        String sql = q1.union(q3).toSQL();
+        Assert.assertEquals("SELECT t2.`id`,t2.`stars`,t2.`title`,t2.`create_time` FROM (SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t WHERE t.`id` IS NOT NULL UNION SELECT t1.`id`,t1.`stars`,t1.`title`,t1.`create_time` FROM `t_topic` t1 WHERE t1.`id` = ?) t2", sql);
+    }
+
+    @Test
+    public void query52_3_1() {
+        Queryable<Topic> q1 = easyQuery
+                .queryable(Topic.class)
+                .where(o -> o.isNotNull(Topic::getId));
+        Queryable<Topic> q3 = easyQuery
+                .queryable(Topic.class)
+                .where(o -> o.eq(Topic::getId, "123"));
+
+        String sql = q1.unionAll(q3).toSQL();
+        Assert.assertEquals("SELECT t2.`id`,t2.`stars`,t2.`title`,t2.`create_time` FROM (SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t WHERE t.`id` IS NOT NULL UNION ALL SELECT t1.`id`,t1.`stars`,t1.`title`,t1.`create_time` FROM `t_topic` t1 WHERE t1.`id` = ?) t2", sql);
     }
 
     @Test
@@ -1465,5 +1537,251 @@ public class QueryTest extends BaseTest {
         Assert.assertEquals("SELECT `id`,`create_time`,`username`,`phone`,`id_card`,`address` FROM `easy-query-test`.`t_sys_user` WHERE `id` = ? ORDER BY `id` DESC,`id_card` DESC", sql);
         SysUser sysUser = queryable.firstOrNull();
         Assert.assertNull(sysUser);
+    }
+
+    @Test
+    public void query83() {
+        Queryable<SysUser> queryable = easyQuery.queryable(SysUser.class)
+                .where(o -> o.eq(SysUser::getId, "123xxx"))
+                .orderByAsc(o -> o.column(SysUser::getId).column(SysUser::getIdCard));
+        String sql = queryable.toSQL();
+        Assert.assertEquals("SELECT `id`,`create_time`,`username`,`phone`,`id_card`,`address` FROM `easy-query-test`.`t_sys_user` WHERE `id` = ? ORDER BY `id` ASC,`id_card` ASC", sql);
+        SysUser sysUser = queryable.firstOrNull();
+        Assert.assertNull(sysUser);
+    }
+
+    @Test
+    public void query84() {
+        Queryable<SysUser> queryable = easyQuery.queryable(SysUser.class)
+                .where(o -> o.eq(SysUser::getId, "123xxx"))
+                .orderByDesc(false, o -> o.column(SysUser::getId).column(SysUser::getIdCard))
+                .orderByDesc(true, o -> o.column(SysUser::getIdCard).column(SysUser::getId));
+        String sql = queryable.toSQL();
+        Assert.assertEquals("SELECT `id`,`create_time`,`username`,`phone`,`id_card`,`address` FROM `easy-query-test`.`t_sys_user` WHERE `id` = ? ORDER BY `id_card` DESC,`id` DESC", sql);
+        SysUser sysUser = queryable.firstOrNull();
+        Assert.assertNull(sysUser);
+    }
+
+    @Test
+    public void query85() {
+        ClientQueryable<SysUser> queryable = easyQueryClient.queryable(SysUser.class)
+                .where(o -> o.eq("id", "123xxx"))
+                .orderByDesc(false, o -> o.column("id").column("idCard"))
+                .orderByDesc(true, o -> o.column("idCard").column("id"));
+        String sql = queryable.toSQL();
+        Assert.assertEquals("SELECT `id`,`create_time`,`username`,`phone`,`id_card`,`address` FROM `easy-query-test`.`t_sys_user` WHERE `id` = ? ORDER BY `id_card` DESC,`id` DESC", sql);
+        SysUser sysUser = queryable.firstOrNull();
+        Assert.assertNull(sysUser);
+    }
+
+    @Test
+    public void query86() {
+        ClientQueryable<SysUser> queryable = easyQueryClient.queryable(SysUser.class)
+                .where(o -> o.eq("id", "123xxx"))
+                .orderByAsc(false, o -> o.column("id").column("idCard"))
+                .orderByAsc(true, o -> o.column("idCard").column("id"));
+        String sql = queryable.toSQL();
+        Assert.assertEquals("SELECT `id`,`create_time`,`username`,`phone`,`id_card`,`address` FROM `easy-query-test`.`t_sys_user` WHERE `id` = ? ORDER BY `id_card` ASC,`id` ASC", sql);
+        SysUser sysUser = queryable.firstOrNull();
+        Assert.assertNull(sysUser);
+    }
+
+    @Test
+    public void query87() {
+        ClientQueryable<SysUser> queryable = easyQueryClient.queryable(SysUser.class)
+                .where(o -> o.eq("id", "123xxx"))
+                .orderByAsc(false, o -> o.column("id").column("idCard"))
+                .orderByAsc(o -> o.column("idCard").column("id"));
+        String sql = queryable.toSQL();
+        Assert.assertEquals("SELECT `id`,`create_time`,`username`,`phone`,`id_card`,`address` FROM `easy-query-test`.`t_sys_user` WHERE `id` = ? ORDER BY `id_card` ASC,`id` ASC", sql);
+        SysUser sysUser = queryable.firstOrNull();
+        Assert.assertNull(sysUser);
+    }
+
+    @Test
+    public void query88() {
+        ClientQueryable<SysUser> queryable = easyQueryClient.queryable(SysUser.class)
+                .where(o -> o.eq("id", "123xxx"))
+                .orderByDesc(false, o -> o.column("id").column("idCard"))
+                .orderByDesc(o -> o.column("idCard").column("id"));
+        String sql = queryable.toSQL();
+        Assert.assertEquals("SELECT `id`,`create_time`,`username`,`phone`,`id_card`,`address` FROM `easy-query-test`.`t_sys_user` WHERE `id` = ? ORDER BY `id_card` DESC,`id` DESC", sql);
+        SysUser sysUser = queryable.firstOrNull();
+        Assert.assertNull(sysUser);
+    }
+
+    @Test
+    public void query89() {
+        BigDecimal bigDecimal = easyQuery.queryable(BlogEntity.class)
+                .where(o -> o.in(BlogEntity::getId, Arrays.asList("1", "2")))
+                .sumOrDefault(BlogEntity::getScore, BigDecimal.ZERO);
+
+        Assert.assertTrue(new BigDecimal("2.40").compareTo(bigDecimal) == 0);
+        Assert.assertTrue(new BigDecimal("2.4").compareTo(bigDecimal) == 0);
+    }
+
+    @Test
+    public void query89_1() {
+        BigDecimal bigDecimal = easyQuery.queryable(BlogEntity.class)
+                .where(o -> o.in(BlogEntity::getId, Arrays.asList("1x", "2x")))
+                .sumOrDefault(BlogEntity::getScore, BigDecimal.ZERO);
+
+        Assert.assertTrue(BigDecimal.ZERO.compareTo(bigDecimal) == 0);
+    }
+
+    @Test
+    public void query90() {
+        BigDecimal bigDecimal = easyQuery.queryable(BlogEntity.class)
+                .where(o -> o.in(BlogEntity::getId, Arrays.asList("1", "2")))
+                .sumBigDecimalOrNull(BlogEntity::getScore);
+
+        Assert.assertTrue(new BigDecimal("2.40").compareTo(bigDecimal) == 0);
+        Assert.assertTrue(new BigDecimal("2.4").compareTo(bigDecimal) == 0);
+    }
+
+    @Test
+    public void query90_1() {
+        BigDecimal bigDecimal = easyQuery.queryable(BlogEntity.class)
+                .where(o -> o.in(BlogEntity::getId, Arrays.asList("1x", "2x")))
+                .sumBigDecimalOrNull(BlogEntity::getScore);
+
+        Assert.assertTrue(bigDecimal == null);
+    }
+
+    @Test
+    public void query91() {
+        BigDecimal bigDecimal = easyQuery.queryable(BlogEntity.class)
+                .where(o -> o.in(BlogEntity::getId, Arrays.asList("1", "2")))
+                .sumBigDecimalNotNull(BlogEntity::getScore);
+
+        Assert.assertTrue(new BigDecimal("2.40").compareTo(bigDecimal) == 0);
+        Assert.assertTrue(new BigDecimal("2.4").compareTo(bigDecimal) == 0);
+    }
+
+    @Test
+    public void query92() {
+        Integer integer = easyQuery.queryable(BlogEntity.class)
+                .where(o -> o.in(BlogEntity::getId, Arrays.asList("1", "2")))
+                .maxOrDefault(BlogEntity::getStar, 0);
+
+        Assert.assertTrue(integer == 2);
+    }
+
+    @Test
+    public void query93() {
+        Integer integer = easyQuery.queryable(BlogEntity.class)
+                .where(o -> o.in(BlogEntity::getId, Arrays.asList("1x", "2x")))
+                .maxOrDefault(BlogEntity::getStar, -1);
+
+        Assert.assertTrue(integer == -1);
+    }
+
+    @Test
+    public void query94() {
+        Integer integer = easyQuery.queryable(BlogEntity.class)
+                .where(o -> o.in(BlogEntity::getId, Arrays.asList("1x", "2x")))
+                .maxOrNull(BlogEntity::getStar);
+
+        Assert.assertTrue(integer == null);
+    }
+
+    @Test
+    public void query95() {
+        Integer integer = easyQuery.queryable(BlogEntity.class)
+                .where(o -> o.in(BlogEntity::getId, Arrays.asList("1x", "9")))
+                .maxOrNull(BlogEntity::getStar);
+
+        Assert.assertTrue(integer == 9);
+    }
+
+    @Test
+    public void query96() {
+        Double number = easyQuery.queryable(BlogEntity.class)
+                .where(o -> o.in(BlogEntity::getId, Arrays.asList("1", "2")))
+                .avgOrDefault(BlogEntity::getStar, 0d);
+
+        Assert.assertTrue(number == 1.5d);
+    }
+
+    @Test
+    public void query97() {
+        Double number = easyQuery.queryable(BlogEntity.class)
+                .where(o -> o.in(BlogEntity::getId, Arrays.asList("1", "2")))
+                .avgOrNull(BlogEntity::getStar);
+
+        Assert.assertTrue(number == 1.5d);
+    }
+
+    @Test
+    public void query98() {
+        Double number = easyQuery.queryable(BlogEntity.class)
+                .where(o -> o.in(BlogEntity::getId, Arrays.asList("1x", "2x")))
+                .avgOrNull(BlogEntity::getStar);
+
+        Assert.assertTrue(number == null);
+    }
+
+    @Test
+    public void query99() {
+        BigDecimal number = easyQuery.queryable(BlogEntity.class)
+                .where(o -> o.in(BlogEntity::getId, Arrays.asList("1", "2")))
+                .avgBigDecimalOrNull(BlogEntity::getStar);
+
+        Assert.assertTrue(new BigDecimal("1.5").compareTo(number) == 0);
+        Assert.assertTrue(new BigDecimal("1.5000").equals(number));
+    }
+
+    @Test
+    public void query100() {
+        Float number = easyQuery.queryable(BlogEntity.class)
+                .where(o -> o.in(BlogEntity::getId, Arrays.asList("1", "2")))
+                .avgFloatOrNull(BlogEntity::getStar);
+
+        Assert.assertTrue(number == 1.5f);
+    }
+
+    @Test
+    public void query101() {
+        Double number = easyQuery.queryable(BlogEntity.class)
+                .where(o -> o.in(BlogEntity::getId, Arrays.asList("1", "2")))
+                .avgOrDefault(BlogEntity::getStar, 1d);
+
+        Assert.assertTrue(number == 1.5d);
+    }
+
+    @Test
+    public void query101_1() {
+        Double number = easyQuery.queryable(BlogEntity.class)
+                .where(o -> o.in(BlogEntity::getId, Arrays.asList("1", "2")))
+                .avgOrNull(BlogEntity::getStar);
+
+        Assert.assertTrue(number == 1.5d);
+    }
+
+    @Test
+    public void query102() {
+        Double number = easyQuery.queryable(BlogEntity.class)
+                .where(o -> o.in(BlogEntity::getId, Arrays.asList("1x", "2x")))
+                .avgOrDefault(BlogEntity::getStar, -1d);
+
+        Assert.assertTrue(number == -1d);
+    }
+
+    @Test
+    public void query103() {
+        BigDecimal number = easyQuery.queryable(BlogEntity.class)
+                .where(o -> o.in(BlogEntity::getId, Arrays.asList("1x", "2x")))
+                .avgOrDefault(BlogEntity::getStar, BigDecimal.ZERO, BigDecimal.class);
+
+        Assert.assertTrue(number.compareTo(BigDecimal.ZERO) == 0);
+    }
+
+    @Test
+    public void query104() {
+        BigDecimal number = easyQuery.queryable(BlogEntity.class)
+                .where(o -> o.in(BlogEntity::getId, Arrays.asList("1", "2")))
+                .avgOrDefault(BlogEntity::getStar, BigDecimal.ZERO, BigDecimal.class);
+
+        Assert.assertTrue(number.compareTo(new BigDecimal("1.5")) == 0);
     }
 }

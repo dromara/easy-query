@@ -40,7 +40,6 @@ import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpression
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
-import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.sharding.manager.ShardingQueryCountManager;
 import com.easy.query.core.util.*;
@@ -159,7 +158,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     public <TMember extends Number> BigDecimal sumBigDecimalOrDefault(String property, BigDecimal def) {
         setExecuteMethod(ExecuteMethodEnum.SUM);
         ColumnFunction sumFunction = runtimeContext.getColumnFunctionFactory().createSumFunction(false);
-        List<TMember> result = selectAggregateList(property, sumFunction);
+        List<TMember> result = selectAggregateList(property, sumFunction, null);
         TMember resultMember = EasyCollectionUtil.firstOrNull(result);
         if (resultMember == null) {
             return def;
@@ -171,7 +170,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     public <TMember extends Number> TMember sumOrDefault(String property, TMember def) {
         setExecuteMethod(ExecuteMethodEnum.SUM);
         ColumnFunction sumFunction = runtimeContext.getColumnFunctionFactory().createSumFunction(false);
-        List<TMember> result = selectAggregateList(property, sumFunction);
+        List<TMember> result = selectAggregateList(property, sumFunction, null);
         return EasyCollectionUtil.firstOrDefault(result, def);
     }
 
@@ -180,7 +179,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
 
         setExecuteMethod(ExecuteMethodEnum.MAX);
         ColumnFunction maxFunction = runtimeContext.getColumnFunctionFactory().createMaxFunction();
-        List<TMember> result = selectAggregateList(property, maxFunction);
+        List<TMember> result = selectAggregateList(property, maxFunction, null);
         return EasyCollectionUtil.firstOrDefault(result, def);
     }
 
@@ -188,15 +187,15 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     public <TMember> TMember minOrDefault(String property, TMember def) {
         setExecuteMethod(ExecuteMethodEnum.MIN);
         ColumnFunction minFunction = runtimeContext.getColumnFunctionFactory().createMinFunction();
-        List<TMember> result = selectAggregateList(property, minFunction);
+        List<TMember> result = selectAggregateList(property, minFunction, null);
         return EasyCollectionUtil.firstOrDefault(result, def);
     }
 
     @Override
-    public <TMember extends Number> TMember avgOrDefault(String property, TMember def) {
+    public <TMember extends Number, TResult extends Number> TResult avgOrDefault(String property, TResult def, Class<TResult> resultClass) {
         setExecuteMethod(ExecuteMethodEnum.AVG);
         ColumnFunction avgFunction = runtimeContext.getColumnFunctionFactory().createAvgFunction(false);
-        List<TMember> result = selectAggregateList(property, avgFunction);
+        List<TResult> result = selectAggregateList(property, avgFunction, resultClass);
         return EasyCollectionUtil.firstOrDefault(result, def);
     }
 
@@ -212,12 +211,11 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         return EasyCollectionUtil.firstOrDefault(result, def);
     }
 
-    private <TMember> List<TMember> selectAggregateList(String property, ColumnFunction columnFunction) {
+    private <TMember> List<TMember> selectAggregateList(String property, ColumnFunction columnFunction, Class<TMember> resultClass) {
         EntityTableExpressionBuilder table = entityQueryExpressionBuilder.getTable(0);
-
+        Class<TMember> tMemberClass = resultClass == null ? (Class<TMember>) table.getEntityMetadata().getColumnNotNull(property).getPropertyType() : resultClass;
         FuncColumnSegment funcColumnSegment = sqlSegmentFactory.createFuncColumnSegment(table.getEntityTable(), property, entityQueryExpressionBuilder.getRuntimeContext(), columnFunction, null);
-        ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(property);
-        return cloneQueryable().select(funcColumnSegment, true).toList((Class<TMember>) columnMetadata.getPropertyType());
+        return cloneQueryable().select(funcColumnSegment, true).toList(tMemberClass);
     }
 
 

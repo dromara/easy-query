@@ -12,11 +12,7 @@ import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
 import com.easy.query.core.exception.EasyQueryWhereInvalidOperationException;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression2;
-import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
-import com.easy.query.core.expression.parser.core.base.ColumnSelector;
-import com.easy.query.core.expression.parser.core.base.GroupBySelector;
-import com.easy.query.core.expression.parser.core.base.WhereAggregatePredicate;
-import com.easy.query.core.expression.parser.core.base.WherePredicate;
+import com.easy.query.core.expression.parser.core.base.*;
 import com.easy.query.core.expression.segment.ColumnSegment;
 
 import java.math.BigDecimal;
@@ -98,11 +94,31 @@ public interface ClientQueryable<T1> extends Query<T1>,
 
     <TMember> TMember minOrDefault(String property, TMember def);
 
-    default <TMember extends Number> TMember avgOrNull(String property) {
-        return avgOrDefault(property, null);
+    default <TMember extends Number> Double avgOrNull(String property) {
+        return avgOrDefault(property, null, Double.class);
     }
 
-    <TMember extends Number> TMember avgOrDefault(String property, TMember def);
+    default <TMember extends Number> BigDecimal avgBigDecimalOrNull(String property) {
+        return avgOrDefault(property, null, BigDecimal.class);
+    }
+
+    default <TMember extends Number> Float avgFloatOrNull(String property) {
+        return avgOrDefault(property, null, Float.class);
+    }
+
+    default <TMember extends Number> Double avgOrDefault(String property, Double def) {
+        return avgOrDefault(property, def, Double.class);
+    }
+
+    default <TMember extends Number> BigDecimal avgOrDefault(String property, BigDecimal def) {
+        return avgOrDefault(property, def, BigDecimal.class);
+    }
+
+    default <TMember extends Number> Float avgOrDefault(String property, Float def) {
+        return avgOrDefault(property, def, Float.class);
+    }
+
+    <TMember extends Number, TResult extends Number> TResult avgOrDefault(String property, TResult def, Class<TResult> resultClass);
 
     default Integer lenOrNull(String property) {
         return lenOrDefault(property, null);
