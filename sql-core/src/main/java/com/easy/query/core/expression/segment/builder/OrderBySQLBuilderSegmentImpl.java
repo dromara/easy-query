@@ -19,7 +19,6 @@ public class OrderBySQLBuilderSegmentImpl extends AbstractSQLBuilderSegment {
 
         StringBuilder sb = new StringBuilder();
         List<SQLSegment> sqlSegments = getSQLSegments();
-        boolean asc = false;
         //从后往前追加
         for (int i = sqlSegments.size() - 1; i >= 0; i--) {
             SQLSegment sqlSegment = sqlSegments.get(i);
@@ -33,13 +32,8 @@ public class OrderBySQLBuilderSegmentImpl extends AbstractSQLBuilderSegment {
                 sb.insert(0, orderSQL);
 
             } else {
-                if (asc == orderColumnSegment.isAsc()) {
-                    sb.insert(0, orderSQL.substring(0,orderSQL.length()-(asc?4:5)));//4=asc.length+1,5=desc.length+1
-                }else{
-                    sb.insert(0, orderSQL);
-                }
+                sb.insert(0, orderSQL);
             }
-            asc = orderColumnSegment.isAsc();
         }
         return sb.toString();
     }
