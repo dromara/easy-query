@@ -68,7 +68,6 @@ public class DefaultSQLClientApiFactory implements SQLClientApiFactory {
         EntityQueryExpressionBuilder entityQueryExpressionBuilder = expressionBuilderFactory.createEntityQueryExpressionBuilder(queryExpressionContext);
         EntityMetadata entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(clazz);
         int tableIndex = EasyUtil.getNextTableIndex(entityQueryExpressionBuilder);
-        ;
         EntityTableExpressionBuilder sqlTable = expressionBuilderFactory.createEntityTableExpressionBuilder(entityMetadata, tableIndex, MultiTableTypeEnum.FROM, runtimeContext);
         entityQueryExpressionBuilder.addSQLEntityTableExpression(sqlTable);
         return new EasyClientQueryable<>(clazz, entityQueryExpressionBuilder);

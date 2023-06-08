@@ -1,11 +1,10 @@
 package com.easy.query.api4kt.select;
 
-import com.easy.query.api4kt.sql.SQLKtColumnAsSelector;
-import com.easy.query.api4kt.sql.SQLKtColumnResultSelector;
-import com.easy.query.api4kt.sql.SQLKtColumnSelector;
-import com.easy.query.api4kt.sql.SQLKtGroupBySelector;
-import com.easy.query.api4kt.sql.SQLKtWherePredicate;
+import com.easy.query.api4kt.sql.*;
+import com.easy.query.api4kt.sql.impl.SQLKtColumnResultSelectorImpl;
+import com.easy.query.api4kt.sql.impl.SQLKtWhereAggregatePredicateImpl;
 import com.easy.query.core.api.client.EasyQueryClient;
+import com.easy.query.core.basic.api.select.ClientQueryable3;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression3;
@@ -22,6 +21,7 @@ import java.util.function.Function;
  * @Date: 2023/2/6 22:44
  */
 public interface KtQueryable3<T1, T2, T3> extends KtQueryable<T1> {
+    ClientQueryable3<T1, T2, T3> getClientQueryable3();
 
     <T4> KtQueryable4<T1, T2, T3, T4> leftJoin(Class<T4> joinClass, SQLExpression4<SQLKtWherePredicate<T1>, SQLKtWherePredicate<T2>, SQLKtWherePredicate<T3>, SQLKtWherePredicate<T4>> on);
 
@@ -72,51 +72,95 @@ public interface KtQueryable3<T1, T2, T3> extends KtQueryable<T1> {
      * @return
      */
     default <TMember extends Number> BigDecimal sumBigDecimalOrNull(SQLExpression3<SQLKtColumnResultSelector<T1, TMember>, SQLKtColumnResultSelector<T2, TMember>, SQLKtColumnResultSelector<T3, TMember>> columnSelectorExpression) {
-        return sumBigDecimalOrDefault(columnSelectorExpression, null);
+        return getClientQueryable3().sumBigDecimalOrNull((selector1, selector2, selector3) -> {
+            columnSelectorExpression.apply(new SQLKtColumnResultSelectorImpl<>(selector1), new SQLKtColumnResultSelectorImpl<>(selector2), new SQLKtColumnResultSelectorImpl<>(selector3));
+        });
     }
 
-    /**
-     * 防止溢出
-     *
-     * @param columnSelectorExpression
-     * @param <TMember>
-     * @return
-     */
-    default <TMember extends Number> BigDecimal sumBigDecimalNotNull(SQLExpression3<SQLKtColumnResultSelector<T1, TMember>, SQLKtColumnResultSelector<T2, TMember>, SQLKtColumnResultSelector<T3, TMember>> columnSelectorExpression) {
-        return sumBigDecimalOrDefault(columnSelectorExpression, BigDecimal.ZERO);
-    }
 
-    <TMember extends Number> BigDecimal sumBigDecimalOrDefault(SQLExpression3<SQLKtColumnResultSelector<T1, TMember>, SQLKtColumnResultSelector<T2, TMember>, SQLKtColumnResultSelector<T3, TMember>> columnSelectorExpression, BigDecimal def);
+    default <TMember extends Number> BigDecimal sumBigDecimalOrDefault(SQLExpression3<SQLKtColumnResultSelector<T1, TMember>, SQLKtColumnResultSelector<T2, TMember>, SQLKtColumnResultSelector<T3, TMember>> columnSelectorExpression, BigDecimal def) {
+        return getClientQueryable3().sumBigDecimalOrDefault((selector1, selector2, selector3) -> {
+            columnSelectorExpression.apply(new SQLKtColumnResultSelectorImpl<>(selector1), new SQLKtColumnResultSelectorImpl<>(selector2), new SQLKtColumnResultSelectorImpl<>(selector3));
+        }, def);
+    }
 
     default <TMember extends Number> TMember sumOrNull(SQLExpression3<SQLKtColumnResultSelector<T1, TMember>, SQLKtColumnResultSelector<T2, TMember>, SQLKtColumnResultSelector<T3, TMember>> columnSelectorExpression) {
-        return sumOrDefault(columnSelectorExpression, null);
+        return getClientQueryable3().sumOrNull((selector1, selector2, selector3) -> {
+            columnSelectorExpression.apply(new SQLKtColumnResultSelectorImpl<>(selector1), new SQLKtColumnResultSelectorImpl<>(selector2), new SQLKtColumnResultSelectorImpl<>(selector3));
+        });
     }
 
-    <TMember extends Number> TMember sumOrDefault(SQLExpression3<SQLKtColumnResultSelector<T1, TMember>, SQLKtColumnResultSelector<T2, TMember>, SQLKtColumnResultSelector<T3, TMember>> columnSelectorExpression, TMember def);
+    default <TMember extends Number> TMember sumOrDefault(SQLExpression3<SQLKtColumnResultSelector<T1, TMember>, SQLKtColumnResultSelector<T2, TMember>, SQLKtColumnResultSelector<T3, TMember>> columnSelectorExpression, TMember def) {
+        return getClientQueryable3().sumOrDefault((selector1, selector2, selector3) -> {
+            columnSelectorExpression.apply(new SQLKtColumnResultSelectorImpl<>(selector1), new SQLKtColumnResultSelectorImpl<>(selector2), new SQLKtColumnResultSelectorImpl<>(selector3));
+        }, def);
+    }
 
     default <TMember> TMember maxOrNull(SQLExpression3<SQLKtColumnResultSelector<T1, TMember>, SQLKtColumnResultSelector<T2, TMember>, SQLKtColumnResultSelector<T3, TMember>> columnSelectorExpression) {
-        return maxOrDefault(columnSelectorExpression, null);
+        return getClientQueryable3().maxOrNull((selector1, selector2, selector3) -> {
+            columnSelectorExpression.apply(new SQLKtColumnResultSelectorImpl<>(selector1), new SQLKtColumnResultSelectorImpl<>(selector2), new SQLKtColumnResultSelectorImpl<>(selector3));
+        });
     }
 
-    <TMember> TMember maxOrDefault(SQLExpression3<SQLKtColumnResultSelector<T1, TMember>, SQLKtColumnResultSelector<T2, TMember>, SQLKtColumnResultSelector<T3, TMember>> columnSelectorExpression, TMember def);
+    default <TMember> TMember maxOrDefault(SQLExpression3<SQLKtColumnResultSelector<T1, TMember>, SQLKtColumnResultSelector<T2, TMember>, SQLKtColumnResultSelector<T3, TMember>> columnSelectorExpression, TMember def) {
+        return getClientQueryable3().maxOrDefault((selector1, selector2, selector3) -> {
+            columnSelectorExpression.apply(new SQLKtColumnResultSelectorImpl<>(selector1), new SQLKtColumnResultSelectorImpl<>(selector2), new SQLKtColumnResultSelectorImpl<>(selector3));
+        }, def);
+    }
 
     default <TMember> TMember minOrNull(SQLExpression3<SQLKtColumnResultSelector<T1, TMember>, SQLKtColumnResultSelector<T2, TMember>, SQLKtColumnResultSelector<T3, TMember>> columnSelectorExpression) {
-        return minOrDefault(columnSelectorExpression, null);
+        return getClientQueryable3().minOrNull((selector1, selector2, selector3) -> {
+            columnSelectorExpression.apply(new SQLKtColumnResultSelectorImpl<>(selector1), new SQLKtColumnResultSelectorImpl<>(selector2), new SQLKtColumnResultSelectorImpl<>(selector3));
+        });
     }
 
-    <TMember> TMember minOrDefault(SQLExpression3<SQLKtColumnResultSelector<T1, TMember>, SQLKtColumnResultSelector<T2, TMember>, SQLKtColumnResultSelector<T3, TMember>> columnSelectorExpression, TMember def);
-
-    default <TMember> TMember avgOrNull(SQLExpression3<SQLKtColumnResultSelector<T1, TMember>, SQLKtColumnResultSelector<T2, TMember>, SQLKtColumnResultSelector<T3, TMember>> columnSelectorExpression) {
-        return avgOrDefault(columnSelectorExpression, null);
+    default <TMember> TMember minOrDefault(SQLExpression3<SQLKtColumnResultSelector<T1, TMember>, SQLKtColumnResultSelector<T2, TMember>, SQLKtColumnResultSelector<T3, TMember>> columnSelectorExpression, TMember def) {
+        return getClientQueryable3().minOrDefault((selector1, selector2, selector3) -> {
+            columnSelectorExpression.apply(new SQLKtColumnResultSelectorImpl<>(selector1), new SQLKtColumnResultSelectorImpl<>(selector2), new SQLKtColumnResultSelectorImpl<>(selector3));
+        }, def);
     }
 
-    <TMember> TMember avgOrDefault(SQLExpression3<SQLKtColumnResultSelector<T1, TMember>, SQLKtColumnResultSelector<T2, TMember>, SQLKtColumnResultSelector<T3, TMember>> columnSelectorExpression, TMember def);
-
-    default Integer lenOrNull(SQLExpression3<SQLKtColumnResultSelector<T1, ?>, SQLKtColumnResultSelector<T2, ?>, SQLKtColumnResultSelector<T3, ?>> columnSelectorExpression) {
-        return lenOrDefault(columnSelectorExpression, null);
+    default <TMember extends Number> Double avgOrNull(SQLExpression3<SQLKtColumnResultSelector<T1, TMember>, SQLKtColumnResultSelector<T2, TMember>, SQLKtColumnResultSelector<T3, TMember>> columnSelectorExpression) {
+        return getClientQueryable3().avgOrNull((selector1, selector2, selector3) -> {
+            columnSelectorExpression.apply(new SQLKtColumnResultSelectorImpl<>(selector1), new SQLKtColumnResultSelectorImpl<>(selector2), new SQLKtColumnResultSelectorImpl<>(selector3));
+        });
     }
 
-    Integer lenOrDefault(SQLExpression3<SQLKtColumnResultSelector<T1, ?>, SQLKtColumnResultSelector<T2, ?>, SQLKtColumnResultSelector<T3, ?>> columnSelectorExpression, Integer def);
+    default <TMember extends Number> BigDecimal avgBigDecimalOrNull(SQLExpression3<SQLKtColumnResultSelector<T1, TMember>, SQLKtColumnResultSelector<T2, TMember>, SQLKtColumnResultSelector<T3, TMember>> columnSelectorExpression) {
+        return getClientQueryable3().avgBigDecimalOrNull((selector1, selector2, selector3) -> {
+            columnSelectorExpression.apply(new SQLKtColumnResultSelectorImpl<>(selector1), new SQLKtColumnResultSelectorImpl<>(selector2), new SQLKtColumnResultSelectorImpl<>(selector3));
+        });
+    }
+
+    default <TMember extends Number> Float avgFloatOrNull(SQLExpression3<SQLKtColumnResultSelector<T1, TMember>, SQLKtColumnResultSelector<T2, TMember>, SQLKtColumnResultSelector<T3, TMember>> columnSelectorExpression) {
+        return getClientQueryable3().avgFloatOrNull((selector1, selector2, selector3) -> {
+            columnSelectorExpression.apply(new SQLKtColumnResultSelectorImpl<>(selector1), new SQLKtColumnResultSelectorImpl<>(selector2), new SQLKtColumnResultSelectorImpl<>(selector3));
+        });
+    }
+
+    default <TMember extends Number> Double avgOrDefault(SQLExpression3<SQLKtColumnResultSelector<T1, TMember>, SQLKtColumnResultSelector<T2, TMember>, SQLKtColumnResultSelector<T3, TMember>> columnSelectorExpression, Double def) {
+        return getClientQueryable3().avgOrDefault((selector1, selector2, selector3) -> {
+            columnSelectorExpression.apply(new SQLKtColumnResultSelectorImpl<>(selector1), new SQLKtColumnResultSelectorImpl<>(selector2), new SQLKtColumnResultSelectorImpl<>(selector3));
+        }, def);
+    }
+
+    default <TMember extends Number> BigDecimal avgBigDecimalOrDefault(SQLExpression3<SQLKtColumnResultSelector<T1, TMember>, SQLKtColumnResultSelector<T2, TMember>, SQLKtColumnResultSelector<T3, TMember>> columnSelectorExpression, BigDecimal def) {
+        return getClientQueryable3().avgBigDecimalOrDefault((selector1, selector2, selector3) -> {
+            columnSelectorExpression.apply(new SQLKtColumnResultSelectorImpl<>(selector1), new SQLKtColumnResultSelectorImpl<>(selector2), new SQLKtColumnResultSelectorImpl<>(selector3));
+        }, def);
+    }
+
+    default <TMember extends Number> Float avgFloatOrDefault(SQLExpression3<SQLKtColumnResultSelector<T1, TMember>, SQLKtColumnResultSelector<T2, TMember>, SQLKtColumnResultSelector<T3, TMember>> columnSelectorExpression, Float def) {
+        return getClientQueryable3().avgFloatOrDefault((selector1, selector2, selector3) -> {
+            columnSelectorExpression.apply(new SQLKtColumnResultSelectorImpl<>(selector1), new SQLKtColumnResultSelectorImpl<>(selector2), new SQLKtColumnResultSelectorImpl<>(selector3));
+        }, def);
+    }
+
+    default <TMember extends Number, TResult extends Number> TResult avgOrDefault(SQLExpression3<SQLKtColumnResultSelector<T1, TMember>, SQLKtColumnResultSelector<T2, TMember>, SQLKtColumnResultSelector<T3, TMember>> columnSelectorExpression, TResult def, Class<TResult> resultClass) {
+        return getClientQueryable3().avgOrDefault((selector1, selector2, selector3) -> {
+            columnSelectorExpression.apply(new SQLKtColumnResultSelectorImpl<>(selector1), new SQLKtColumnResultSelectorImpl<>(selector2), new SQLKtColumnResultSelectorImpl<>(selector3));
+        }, def, resultClass);
+    }
     //endregion
 
     //region group
@@ -133,6 +177,29 @@ public interface KtQueryable3<T1, T2, T3> extends KtQueryable<T1> {
     }
 
     KtQueryable3<T1, T2, T3> groupBy(boolean condition, SQLExpression3<SQLKtGroupBySelector<T1>, SQLKtGroupBySelector<T2>, SQLKtGroupBySelector<T3>> selectExpression);
+
+
+    @Override
+    default KtQueryable3<T1, T2, T3> having(SQLExpression1<SQLKtWhereAggregatePredicate<T1>> predicateExpression) {
+        return having(true, predicateExpression);
+    }
+
+    @Override
+    KtQueryable3<T1, T2, T3> having(boolean condition, SQLExpression1<SQLKtWhereAggregatePredicate<T1>> predicateExpression);
+
+    default KtQueryable3<T1, T2, T3> having(SQLExpression3<SQLKtWhereAggregatePredicate<T1>, SQLKtWhereAggregatePredicate<T2>, SQLKtWhereAggregatePredicate<T3>> predicateExpression) {
+        getClientQueryable3().having((predicate1, predicate2, predicate3) -> {
+            predicateExpression.apply(new SQLKtWhereAggregatePredicateImpl<>(predicate1), new SQLKtWhereAggregatePredicateImpl<>(predicate2), new SQLKtWhereAggregatePredicateImpl<>(predicate3));
+        });
+        return this;
+    }
+
+    default KtQueryable3<T1, T2, T3> having(boolean condition, SQLExpression3<SQLKtWhereAggregatePredicate<T1>, SQLKtWhereAggregatePredicate<T2>, SQLKtWhereAggregatePredicate<T3>> predicateExpression) {
+        getClientQueryable3().having(condition, (predicate1, predicate2, predicate3) -> {
+            predicateExpression.apply(new SQLKtWhereAggregatePredicateImpl<>(predicate1), new SQLKtWhereAggregatePredicateImpl<>(predicate2), new SQLKtWhereAggregatePredicateImpl<>(predicate3));
+        });
+        return this;
+    }
 
     //endregion
     //region order

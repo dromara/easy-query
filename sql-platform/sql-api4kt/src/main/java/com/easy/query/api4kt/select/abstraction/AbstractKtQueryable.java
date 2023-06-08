@@ -72,10 +72,6 @@ public abstract class AbstractKtQueryable<T1> implements KtQueryable<T1> {
             whereExpression.apply(new SQLKtWherePredicateImpl<>(wherePredicate));
         });
     }
-    @Override
-    public Integer lenOrDefault(KProperty1<T1, ?> column, Integer def) {
-        return entityQueryable.lenOrDefault(EasyKtLambdaUtil.getPropertyName(column), def);
-    }
 
 
     @Override

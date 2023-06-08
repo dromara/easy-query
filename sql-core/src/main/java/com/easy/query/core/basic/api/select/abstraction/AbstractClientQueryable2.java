@@ -12,16 +12,11 @@ import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.lambda.SQLExpression3;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
-import com.easy.query.core.expression.parser.core.base.ColumnResultSelector;
-import com.easy.query.core.expression.parser.core.base.ColumnSelector;
-import com.easy.query.core.expression.parser.core.base.GroupBySelector;
-import com.easy.query.core.expression.parser.core.base.WherePredicate;
+import com.easy.query.core.expression.parser.core.base.*;
 import com.easy.query.core.expression.segment.FuncColumnSegment;
 import com.easy.query.core.expression.segment.SQLEntitySegment;
 import com.easy.query.core.expression.segment.builder.ProjectSQLBuilderSegmentImpl;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
-import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 
@@ -155,7 +150,7 @@ public abstract class AbstractClientQueryable2<T1, T2> extends AbstractClientQue
         return entityQueryExpressionBuilder.getRuntimeContext().getSQLObjectApiFactory().createQueryable(resultClass, entityQueryExpressionBuilder);
     }
 
-    private <TMember> List<TMember> selectAggregateList(SQLExpression2<ColumnResultSelector<T1>, ColumnResultSelector<T2>> columnSelectorExpression, ColumnFunction columnFunction) {
+    private <TMember> List<TMember> selectAggregateList(SQLExpression2<ColumnResultSelector<T1>, ColumnResultSelector<T2>> columnSelectorExpression, ColumnFunction columnFunction, Class<TMember> resultClass) {
 
         ProjectSQLBuilderSegmentImpl projectSQLBuilderSegment = new ProjectSQLBuilderSegmentImpl();
 
@@ -169,17 +164,16 @@ public abstract class AbstractClientQueryable2<T1, T2> extends AbstractClientQue
 
         TableAvailable table = sqlSegment.getTable();
         String propertyName = sqlSegment.getPropertyName();
-        ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(propertyName);
-
+        Class<TMember> tMemberClass = resultClass == null ? (Class<TMember>) table.getEntityMetadata().getColumnNotNull(propertyName).getPropertyType() : resultClass;
         FuncColumnSegment funcColumnSegment = sqlSegmentFactory.createFuncColumnSegment(table, propertyName, entityQueryExpressionBuilder.getRuntimeContext(), columnFunction, null);
-        return cloneQueryable().select(funcColumnSegment, true).toList((Class<TMember>) columnMetadata.getPropertyType());
+        return cloneQueryable().select(funcColumnSegment, true).toList(tMemberClass);
     }
 
     @Override
     public <TMember extends Number> BigDecimal sumBigDecimalOrDefault(SQLExpression2<ColumnResultSelector<T1>, ColumnResultSelector<T2>> columnSelectorExpression, BigDecimal def) {
 
         ColumnFunction sumFunction = runtimeContext.getColumnFunctionFactory().createSumFunction(false);
-        List<TMember> result = selectAggregateList(columnSelectorExpression, sumFunction);
+        List<TMember> result = selectAggregateList(columnSelectorExpression, sumFunction, null);
         TMember resultMember = EasyCollectionUtil.firstOrNull(result);
         if (resultMember == null) {
             return def;
@@ -190,44 +184,28 @@ public abstract class AbstractClientQueryable2<T1, T2> extends AbstractClientQue
     @Override
     public <TMember extends Number> TMember sumOrDefault(SQLExpression2<ColumnResultSelector<T1>, ColumnResultSelector<T2>> columnSelectorExpression, TMember def) {
         ColumnFunction sumFunction = runtimeContext.getColumnFunctionFactory().createSumFunction(false);
-        List<TMember> result = selectAggregateList(columnSelectorExpression, sumFunction);
+        List<TMember> result = selectAggregateList(columnSelectorExpression, sumFunction, null);
         return EasyCollectionUtil.firstOrDefault(result, def);
     }
 
     @Override
     public <TMember> TMember maxOrDefault(SQLExpression2<ColumnResultSelector<T1>, ColumnResultSelector<T2>> columnSelectorExpression, TMember def) {
         ColumnFunction maxFunction = runtimeContext.getColumnFunctionFactory().createMaxFunction();
-        List<TMember> result = selectAggregateList(columnSelectorExpression, maxFunction);
+        List<TMember> result = selectAggregateList(columnSelectorExpression, maxFunction, null);
         return EasyCollectionUtil.firstOrDefault(result, def);
     }
 
     @Override
     public <TMember> TMember minOrDefault(SQLExpression2<ColumnResultSelector<T1>, ColumnResultSelector<T2>> columnSelectorExpression, TMember def) {
         ColumnFunction minFunction = runtimeContext.getColumnFunctionFactory().createMinFunction();
-        List<TMember> result = selectAggregateList(columnSelectorExpression, minFunction);
+        List<TMember> result = selectAggregateList(columnSelectorExpression, minFunction, null);
         return EasyCollectionUtil.firstOrDefault(result, def);
     }
 
     @Override
-    public <TMember extends Number> TMember avgOrDefault(SQLExpression2<ColumnResultSelector<T1>, ColumnResultSelector<T2>> columnSelectorExpression, TMember def) {
+    public <TMember extends Number, TResult extends Number> TResult avgOrDefault(SQLExpression2<ColumnResultSelector<T1>, ColumnResultSelector<T2>> columnSelectorExpression, TResult def, Class<TResult> resultClass) {
         ColumnFunction avgFunction = runtimeContext.getColumnFunctionFactory().createAvgFunction(false);
-        List<TMember> result = selectAggregateList(columnSelectorExpression, avgFunction);
-        return EasyCollectionUtil.firstOrDefault(result, def);
-    }
-
-    @Override
-    public Integer lenOrDefault(SQLExpression2<ColumnResultSelector<T1>, ColumnResultSelector<T2>> columnSelectorExpression, Integer def) {
-
-        ProjectSQLBuilderSegmentImpl projectSQLBuilderSegment = new ProjectSQLBuilderSegmentImpl();
-
-        ColumnResultSelector<T1> sqlColumnResultSelector1 = getSQLExpressionProvider1().getColumnResultSelector(projectSQLBuilderSegment);
-        ColumnResultSelector<T2> sqlColumnResultSelector2 = getSQLExpressionProvider2().getColumnResultSelector(projectSQLBuilderSegment);
-        columnSelectorExpression.apply(sqlColumnResultSelector1, sqlColumnResultSelector2);
-        if (projectSQLBuilderSegment.isEmpty()) {
-            throw new EasyQueryException("aggreagate query not found column");
-        }
-        ColumnFunction lenFunction = runtimeContext.getColumnFunctionFactory().createLenFunction();
-        List<Integer> result = cloneQueryable().select(lenFunction.getFuncColumn(projectSQLBuilderSegment.toSQL(null))).toList(Integer.class);
+        List<TResult> result = selectAggregateList(columnSelectorExpression, avgFunction, resultClass);
         return EasyCollectionUtil.firstOrDefault(result, def);
     }
 
@@ -275,6 +253,22 @@ public abstract class AbstractClientQueryable2<T1, T2> extends AbstractClientQue
             GroupBySelector<T1> sqlGroupSelector1 = getSQLExpressionProvider1().getGroupColumnSelector();
             GroupBySelector<T2> sqlGroupSelector2 = getSQLExpressionProvider2().getGroupColumnSelector();
             selectExpression.apply(sqlGroupSelector1, sqlGroupSelector2);
+        }
+        return this;
+    }
+
+    @Override
+    public ClientQueryable2<T1, T2> having(boolean condition, SQLExpression1<WhereAggregatePredicate<T1>> predicateExpression) {
+        super.having(condition, predicateExpression);
+        return this;
+    }
+
+    @Override
+    public ClientQueryable2<T1, T2> having(boolean condition, SQLExpression2<WhereAggregatePredicate<T1>, WhereAggregatePredicate<T2>> predicateExpression) {
+        if (condition) {
+            WhereAggregatePredicate<T1> sqlGroupSelector1 = getSQLExpressionProvider1().getAggregatePredicate();
+            WhereAggregatePredicate<T2> sqlGroupSelector2 = getSQLExpressionProvider2().getAggregatePredicate();
+            predicateExpression.apply(sqlGroupSelector1, sqlGroupSelector2);
         }
         return this;
     }

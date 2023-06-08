@@ -64,16 +64,6 @@ public interface ClientQueryable<T1> extends Query<T1>,
         return sumBigDecimalOrDefault(property, null);
     }
 
-    /**
-     * 防止溢出
-     *
-     * @param property
-     * @return
-     */
-    default <TMember extends Number> BigDecimal sumBigDecimalNotNull(String property) {
-        return sumBigDecimalOrDefault(property, BigDecimal.ZERO);
-    }
-
     <TMember extends Number> BigDecimal sumBigDecimalOrDefault(String property, BigDecimal def);
 
     default <TMember extends Number> TMember sumOrNull(String property) {
@@ -119,13 +109,6 @@ public interface ClientQueryable<T1> extends Query<T1>,
     }
 
     <TMember extends Number, TResult extends Number> TResult avgOrDefault(String property, TResult def, Class<TResult> resultClass);
-
-    default Integer lenOrNull(String property) {
-        return lenOrDefault(property, null);
-    }
-
-    Integer lenOrDefault(String property, Integer def);
-
 
     /**
      * 对当前表达式返回自定义select列

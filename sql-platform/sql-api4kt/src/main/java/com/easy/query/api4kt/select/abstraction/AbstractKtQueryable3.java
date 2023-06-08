@@ -5,13 +5,8 @@ import com.easy.query.api4kt.select.KtQueryable3;
 import com.easy.query.api4kt.select.KtQueryable4;
 import com.easy.query.api4kt.select.impl.EasyKtQueryable;
 import com.easy.query.api4kt.select.impl.EasyKtQueryable4;
-import com.easy.query.api4kt.sql.SQLKtColumnAsSelector;
-import com.easy.query.api4kt.sql.SQLKtColumnResultSelector;
-import com.easy.query.api4kt.sql.SQLKtColumnSelector;
-import com.easy.query.api4kt.sql.SQLKtGroupBySelector;
-import com.easy.query.api4kt.sql.SQLKtWherePredicate;
+import com.easy.query.api4kt.sql.*;
 import com.easy.query.api4kt.sql.impl.SQLKtColumnAsSelectorImpl;
-import com.easy.query.api4kt.sql.impl.SQLKtColumnResultSelectorImpl;
 import com.easy.query.api4kt.sql.impl.SQLKtColumnSelectorImpl;
 import com.easy.query.api4kt.sql.impl.SQLKtGroupBySelectorImpl;
 import com.easy.query.api4kt.sql.impl.SQLKtWherePredicateImpl;
@@ -23,7 +18,6 @@ import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression3;
 import com.easy.query.core.expression.lambda.SQLExpression4;
 
-import java.math.BigDecimal;
 import java.util.function.Function;
 
 /**
@@ -40,6 +34,11 @@ public abstract class AbstractKtQueryable3<T1, T2, T3> extends AbstractKtQueryab
     public AbstractKtQueryable3(ClientQueryable3<T1, T2, T3> entityQueryable3) {
         super(entityQueryable3);
         this.entityQueryable3 = entityQueryable3;
+    }
+
+    @Override
+    public ClientQueryable3<T1, T2, T3> getClientQueryable3() {
+        return entityQueryable3;
     }
 
     @Override
@@ -119,53 +118,6 @@ public abstract class AbstractKtQueryable3<T1, T2, T3> extends AbstractKtQueryab
         });
         return new EasyKtQueryable<>(select);
     }
-
-    @Override
-    public <TMember extends Number> BigDecimal sumBigDecimalOrDefault(SQLExpression3<SQLKtColumnResultSelector<T1, TMember>, SQLKtColumnResultSelector<T2, TMember>, SQLKtColumnResultSelector<T3, TMember>> columnSelectorExpression, BigDecimal def) {
-        return entityQueryable3.sumBigDecimalOrDefault((selector1, selector2, selector3) -> {
-            columnSelectorExpression.apply(new SQLKtColumnResultSelectorImpl<>(selector1), new SQLKtColumnResultSelectorImpl<>(selector2), new SQLKtColumnResultSelectorImpl<>(selector3));
-        }, def);
-    }
-
-    @Override
-    public <TMember extends Number> TMember sumOrDefault(SQLExpression3<SQLKtColumnResultSelector<T1, TMember>, SQLKtColumnResultSelector<T2, TMember>, SQLKtColumnResultSelector<T3, TMember>> columnSelectorExpression, TMember def) {
-
-        return entityQueryable3.sumOrDefault((selector1, selector2, selector3) -> {
-            columnSelectorExpression.apply(new SQLKtColumnResultSelectorImpl<>(selector1), new SQLKtColumnResultSelectorImpl<>(selector2), new SQLKtColumnResultSelectorImpl<>(selector3));
-        }, def);
-    }
-
-    @Override
-    public <TMember> TMember maxOrDefault(SQLExpression3<SQLKtColumnResultSelector<T1, TMember>, SQLKtColumnResultSelector<T2, TMember>, SQLKtColumnResultSelector<T3, TMember>> columnSelectorExpression, TMember def) {
-
-        return entityQueryable3.maxOrDefault((selector1, selector2, selector3) -> {
-            columnSelectorExpression.apply(new SQLKtColumnResultSelectorImpl<>(selector1), new SQLKtColumnResultSelectorImpl<>(selector2), new SQLKtColumnResultSelectorImpl<>(selector3));
-        }, def);
-    }
-
-    @Override
-    public <TMember> TMember minOrDefault(SQLExpression3<SQLKtColumnResultSelector<T1, TMember>, SQLKtColumnResultSelector<T2, TMember>, SQLKtColumnResultSelector<T3, TMember>> columnSelectorExpression, TMember def) {
-
-        return entityQueryable3.minOrDefault((selector1, selector2, selector3) -> {
-            columnSelectorExpression.apply(new SQLKtColumnResultSelectorImpl<>(selector1), new SQLKtColumnResultSelectorImpl<>(selector2), new SQLKtColumnResultSelectorImpl<>(selector3));
-        }, def);
-    }
-
-    @Override
-    public <TMember> TMember avgOrDefault(SQLExpression3<SQLKtColumnResultSelector<T1, TMember>, SQLKtColumnResultSelector<T2, TMember>, SQLKtColumnResultSelector<T3, TMember>> columnSelectorExpression, TMember def) {
-
-        return entityQueryable3.avgOrDefault((selector1, selector2, selector3) -> {
-            columnSelectorExpression.apply(new SQLKtColumnResultSelectorImpl<>(selector1), new SQLKtColumnResultSelectorImpl<>(selector2), new SQLKtColumnResultSelectorImpl<>(selector3));
-        }, def);
-    }
-
-    @Override
-    public Integer lenOrDefault(SQLExpression3<SQLKtColumnResultSelector<T1, ?>, SQLKtColumnResultSelector<T2, ?>, SQLKtColumnResultSelector<T3, ?>> columnSelectorExpression, Integer def) {
-        return entityQueryable3.lenOrDefault((selector1, selector2, selector3) -> {
-            columnSelectorExpression.apply(new SQLKtColumnResultSelectorImpl<>(selector1), new SQLKtColumnResultSelectorImpl<>(selector2), new SQLKtColumnResultSelectorImpl<>(selector3));
-        }, def);
-    }
-
     @Override
     public KtQueryable3<T1, T2, T3> groupBy(boolean condition, SQLExpression1<SQLKtGroupBySelector<T1>> selectExpression) {
         super.groupBy(condition, selectExpression);
@@ -179,6 +131,12 @@ public abstract class AbstractKtQueryable3<T1, T2, T3> extends AbstractKtQueryab
                 selectExpression.apply(new SQLKtGroupBySelectorImpl<>(selector1), new SQLKtGroupBySelectorImpl<>(selector2), new SQLKtGroupBySelectorImpl<>(selector3));
             });
         }
+        return this;
+    }
+
+    @Override
+    public KtQueryable3<T1, T2, T3> having(boolean condition, SQLExpression1<SQLKtWhereAggregatePredicate<T1>> predicateExpression) {
+        super.having(condition, predicateExpression);
         return this;
     }
 
@@ -200,14 +158,14 @@ public abstract class AbstractKtQueryable3<T1, T2, T3> extends AbstractKtQueryab
 
     @Override
     public KtQueryable3<T1, T2, T3> orderByDesc(boolean condition, SQLExpression1<SQLKtColumnSelector<T1>> selectExpression) {
-        super.orderByAsc(condition, selectExpression);
+        super.orderByDesc(condition, selectExpression);
         return this;
     }
 
     @Override
     public KtQueryable3<T1, T2, T3> orderByDesc(boolean condition, SQLExpression3<SQLKtColumnSelector<T1>, SQLKtColumnSelector<T2>, SQLKtColumnSelector<T3>> selectExpression) {
         if (condition) {
-            entityQueryable3.orderByAsc((selector1, selector2, selector3) -> {
+            entityQueryable3.orderByDesc((selector1, selector2, selector3) -> {
                 selectExpression.apply(new SQLKtColumnSelectorImpl<>(selector1), new SQLKtColumnSelectorImpl<>(selector2), new SQLKtColumnSelectorImpl<>(selector3));
             });
         }

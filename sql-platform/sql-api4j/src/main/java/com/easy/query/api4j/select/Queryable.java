@@ -75,17 +75,6 @@ public interface Queryable<T1> extends Query<T1>,
         return getEntityQueryable().sumBigDecimalOrNull(EasyLambdaUtil.getPropertyName(column));
     }
 
-    /**
-     * 防止溢出
-     *
-     * @param column
-     * @param <TMember>
-     * @return
-     */
-    default <TMember extends Number> BigDecimal sumBigDecimalNotNull(Property<T1, TMember> column) {
-        return getEntityQueryable().sumBigDecimalNotNull(EasyLambdaUtil.getPropertyName(column));
-    }
-
     default <TMember extends Number> BigDecimal sumBigDecimalOrDefault(Property<T1, TMember> column, BigDecimal def) {
         return getEntityQueryable().sumBigDecimalOrDefault(EasyLambdaUtil.getPropertyName(column), def);
     }
@@ -142,13 +131,6 @@ public interface Queryable<T1> extends Query<T1>,
         return getEntityQueryable().avgOrDefault(EasyLambdaUtil.getPropertyName(column), def, resultClass);
     }
 
-
-    default Integer lenOrNull(Property<T1, ?> column) {
-        return lenOrDefault(column, null);
-    }
-
-    Integer lenOrDefault(Property<T1, ?> column, Integer def);
-
     /**
      * 对当前表达式返回自定义select列
      *
@@ -171,6 +153,7 @@ public interface Queryable<T1> extends Query<T1>,
 
     /**
      * 设置返回对象，返回对象会根据selectExpression映射相同列名
+     * 多次select会在前一次基础上进行对上次结果进行匿名表处理
      *
      * @param resultClass
      * @param selectExpression

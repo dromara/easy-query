@@ -5,11 +5,7 @@ import com.easy.query.core.basic.api.select.provider.SQLExpressionProvider;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression4;
-import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
-import com.easy.query.core.expression.parser.core.base.ColumnResultSelector;
-import com.easy.query.core.expression.parser.core.base.ColumnSelector;
-import com.easy.query.core.expression.parser.core.base.GroupBySelector;
-import com.easy.query.core.expression.parser.core.base.WherePredicate;
+import com.easy.query.core.expression.parser.core.base.*;
 
 import java.math.BigDecimal;
 import java.util.function.Function;
@@ -60,17 +56,6 @@ public interface ClientQueryable4<T1, T2, T3, T4> extends ClientQueryable<T1> {
         return sumBigDecimalOrDefault(columnSelectorExpression, null);
     }
 
-    /**
-     * 防止溢出
-     *
-     * @param columnSelectorExpression
-     * @param <TMember>
-     * @return
-     */
-    default <TMember extends Number> BigDecimal sumBigDecimalNotNull(SQLExpression4<ColumnResultSelector<T1>, ColumnResultSelector<T2>, ColumnResultSelector<T3>, ColumnResultSelector<T4>> columnSelectorExpression) {
-        return sumBigDecimalOrDefault(columnSelectorExpression, BigDecimal.ZERO);
-    }
-
     <TMember extends Number> BigDecimal sumBigDecimalOrDefault(SQLExpression4<ColumnResultSelector<T1>, ColumnResultSelector<T2>, ColumnResultSelector<T3>, ColumnResultSelector<T4>> columnSelectorExpression, BigDecimal def);
 
     default <TMember extends Number> TMember sumOrNull(SQLExpression4<ColumnResultSelector<T1>, ColumnResultSelector<T2>, ColumnResultSelector<T3>, ColumnResultSelector<T4>> columnSelectorExpression) {
@@ -91,17 +76,32 @@ public interface ClientQueryable4<T1, T2, T3, T4> extends ClientQueryable<T1> {
 
     <TMember> TMember minOrDefault(SQLExpression4<ColumnResultSelector<T1>, ColumnResultSelector<T2>, ColumnResultSelector<T3>, ColumnResultSelector<T4>> columnSelectorExpression, TMember def);
 
-    default <TMember> TMember avgOrNull(SQLExpression4<ColumnResultSelector<T1>, ColumnResultSelector<T2>, ColumnResultSelector<T3>, ColumnResultSelector<T4>> columnSelectorExpression) {
-        return avgOrDefault(columnSelectorExpression, null);
+    default <TMember extends Number> Double avgOrNull(SQLExpression4<ColumnResultSelector<T1>, ColumnResultSelector<T2>, ColumnResultSelector<T3>, ColumnResultSelector<T4>> columnSelectorExpression) {
+        return avgOrDefault(columnSelectorExpression, null, Double.class);
     }
 
-    <TMember> TMember avgOrDefault(SQLExpression4<ColumnResultSelector<T1>, ColumnResultSelector<T2>, ColumnResultSelector<T3>, ColumnResultSelector<T4>> columnSelectorExpression, TMember def);
-
-    default Integer lenOrNull(SQLExpression4<ColumnResultSelector<T1>, ColumnResultSelector<T2>, ColumnResultSelector<T3>, ColumnResultSelector<T4>> columnSelectorExpression) {
-        return lenOrDefault(columnSelectorExpression, null);
+    default <TMember extends Number> BigDecimal avgBigDecimalOrNull(SQLExpression4<ColumnResultSelector<T1>, ColumnResultSelector<T2>, ColumnResultSelector<T3>, ColumnResultSelector<T4>> columnSelectorExpression) {
+        return avgOrDefault(columnSelectorExpression, null, BigDecimal.class);
     }
 
-    Integer lenOrDefault(SQLExpression4<ColumnResultSelector<T1>, ColumnResultSelector<T2>, ColumnResultSelector<T3>, ColumnResultSelector<T4>> columnSelectorExpression, Integer def);
+    default <TMember extends Number> Float avgFloatOrNull(SQLExpression4<ColumnResultSelector<T1>, ColumnResultSelector<T2>, ColumnResultSelector<T3>, ColumnResultSelector<T4>> columnSelectorExpression) {
+        return avgOrDefault(columnSelectorExpression, null, Float.class);
+    }
+
+    default <TMember extends Number> Double avgOrDefault(SQLExpression4<ColumnResultSelector<T1>, ColumnResultSelector<T2>, ColumnResultSelector<T3>, ColumnResultSelector<T4>> columnSelectorExpression, Double def) {
+        return avgOrDefault(columnSelectorExpression, def, Double.class);
+    }
+
+    default <TMember extends Number> BigDecimal avgBigDecimalOrDefault(SQLExpression4<ColumnResultSelector<T1>, ColumnResultSelector<T2>, ColumnResultSelector<T3>, ColumnResultSelector<T4>> columnSelectorExpression, BigDecimal def) {
+        return avgOrDefault(columnSelectorExpression, def, BigDecimal.class);
+    }
+
+    default <TMember extends Number> Float avgFloatOrDefault(SQLExpression4<ColumnResultSelector<T1>, ColumnResultSelector<T2>, ColumnResultSelector<T3>, ColumnResultSelector<T4>> columnSelectorExpression, Float def) {
+        return avgOrDefault(columnSelectorExpression, def, Float.class);
+    }
+
+    <TMember extends Number, TResult extends Number> TResult avgOrDefault(SQLExpression4<ColumnResultSelector<T1>, ColumnResultSelector<T2>, ColumnResultSelector<T3>, ColumnResultSelector<T4>> columnSelectorExpression, TResult def, Class<TResult> resultClass);
+
     //endregion
 
 
@@ -119,6 +119,20 @@ public interface ClientQueryable4<T1, T2, T3, T4> extends ClientQueryable<T1> {
     }
 
     ClientQueryable4<T1, T2, T3, T4> groupBy(boolean condition, SQLExpression4<GroupBySelector<T1>, GroupBySelector<T2>, GroupBySelector<T3>, GroupBySelector<T4>> selectExpression);
+
+    @Override
+    default ClientQueryable4<T1, T2, T3, T4> having(SQLExpression1<WhereAggregatePredicate<T1>> predicateExpression) {
+        return having(true, predicateExpression);
+    }
+
+    @Override
+    ClientQueryable4<T1, T2, T3, T4> having(boolean condition, SQLExpression1<WhereAggregatePredicate<T1>> predicateExpression);
+
+    default ClientQueryable4<T1, T2, T3, T4> having(SQLExpression4<WhereAggregatePredicate<T1>, WhereAggregatePredicate<T2>, WhereAggregatePredicate<T3>, WhereAggregatePredicate<T4>> predicateExpression) {
+        return having(true, predicateExpression);
+    }
+
+    ClientQueryable4<T1, T2, T3, T4> having(boolean condition, SQLExpression4<WhereAggregatePredicate<T1>, WhereAggregatePredicate<T2>, WhereAggregatePredicate<T3>, WhereAggregatePredicate<T4>> predicateExpression);
 
     //endregion
     //region order

@@ -5,13 +5,8 @@ import com.easy.query.api4j.select.Queryable3;
 import com.easy.query.api4j.select.Queryable4;
 import com.easy.query.api4j.select.impl.EasyQueryable;
 import com.easy.query.api4j.select.impl.EasyQueryable4;
-import com.easy.query.api4j.sql.SQLColumnAsSelector;
-import com.easy.query.api4j.sql.SQLColumnResultSelector;
-import com.easy.query.api4j.sql.SQLColumnSelector;
-import com.easy.query.api4j.sql.SQLGroupBySelector;
-import com.easy.query.api4j.sql.SQLWherePredicate;
+import com.easy.query.api4j.sql.*;
 import com.easy.query.api4j.sql.impl.SQLColumnAsSelectorImpl;
-import com.easy.query.api4j.sql.impl.SQLColumnResultSelectorImpl;
 import com.easy.query.api4j.sql.impl.SQLColumnSelectorImpl;
 import com.easy.query.api4j.sql.impl.SQLGroupBySelectorImpl;
 import com.easy.query.api4j.sql.impl.SQLWherePredicateImpl;
@@ -23,7 +18,6 @@ import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression3;
 import com.easy.query.core.expression.lambda.SQLExpression4;
 
-import java.math.BigDecimal;
 import java.util.function.Function;
 
 /**
@@ -40,6 +34,11 @@ public abstract class AbstractQueryable3<T1, T2, T3> extends AbstractQueryable<T
     public AbstractQueryable3(ClientQueryable3<T1, T2, T3> entityQueryable3) {
         super(entityQueryable3);
         this.entityQueryable3 = entityQueryable3;
+    }
+
+    @Override
+    public ClientQueryable3<T1, T2, T3> getClientQueryable3() {
+        return entityQueryable3;
     }
 
     @Override
@@ -121,52 +120,6 @@ public abstract class AbstractQueryable3<T1, T2, T3> extends AbstractQueryable<T
     }
 
     @Override
-    public <TMember extends Number> BigDecimal sumBigDecimalOrDefault(SQLExpression3<SQLColumnResultSelector<T1, TMember>, SQLColumnResultSelector<T2, TMember>, SQLColumnResultSelector<T3, TMember>> columnSelectorExpression, BigDecimal def) {
-        return entityQueryable3.sumBigDecimalOrDefault((selector1, selector2, selector3) -> {
-            columnSelectorExpression.apply(new SQLColumnResultSelectorImpl<>(selector1), new SQLColumnResultSelectorImpl<>(selector2), new SQLColumnResultSelectorImpl<>(selector3));
-        }, def);
-    }
-
-    @Override
-    public <TMember extends Number> TMember sumOrDefault(SQLExpression3<SQLColumnResultSelector<T1, TMember>, SQLColumnResultSelector<T2, TMember>, SQLColumnResultSelector<T3, TMember>> columnSelectorExpression, TMember def) {
-
-        return entityQueryable3.sumOrDefault((selector1, selector2, selector3) -> {
-            columnSelectorExpression.apply(new SQLColumnResultSelectorImpl<>(selector1), new SQLColumnResultSelectorImpl<>(selector2), new SQLColumnResultSelectorImpl<>(selector3));
-        }, def);
-    }
-
-    @Override
-    public <TMember> TMember maxOrDefault(SQLExpression3<SQLColumnResultSelector<T1, TMember>, SQLColumnResultSelector<T2, TMember>, SQLColumnResultSelector<T3, TMember>> columnSelectorExpression, TMember def) {
-
-        return entityQueryable3.maxOrDefault((selector1, selector2, selector3) -> {
-            columnSelectorExpression.apply(new SQLColumnResultSelectorImpl<>(selector1), new SQLColumnResultSelectorImpl<>(selector2), new SQLColumnResultSelectorImpl<>(selector3));
-        }, def);
-    }
-
-    @Override
-    public <TMember> TMember minOrDefault(SQLExpression3<SQLColumnResultSelector<T1, TMember>, SQLColumnResultSelector<T2, TMember>, SQLColumnResultSelector<T3, TMember>> columnSelectorExpression, TMember def) {
-
-        return entityQueryable3.minOrDefault((selector1, selector2, selector3) -> {
-            columnSelectorExpression.apply(new SQLColumnResultSelectorImpl<>(selector1), new SQLColumnResultSelectorImpl<>(selector2), new SQLColumnResultSelectorImpl<>(selector3));
-        }, def);
-    }
-
-    @Override
-    public <TMember> TMember avgOrDefault(SQLExpression3<SQLColumnResultSelector<T1, TMember>, SQLColumnResultSelector<T2, TMember>, SQLColumnResultSelector<T3, TMember>> columnSelectorExpression, TMember def) {
-
-        return entityQueryable3.avgOrDefault((selector1, selector2, selector3) -> {
-            columnSelectorExpression.apply(new SQLColumnResultSelectorImpl<>(selector1), new SQLColumnResultSelectorImpl<>(selector2), new SQLColumnResultSelectorImpl<>(selector3));
-        }, def);
-    }
-
-    @Override
-    public Integer lenOrDefault(SQLExpression3<SQLColumnResultSelector<T1, ?>, SQLColumnResultSelector<T2, ?>, SQLColumnResultSelector<T3, ?>> columnSelectorExpression, Integer def) {
-        return entityQueryable3.lenOrDefault((selector1, selector2, selector3) -> {
-            columnSelectorExpression.apply(new SQLColumnResultSelectorImpl<>(selector1), new SQLColumnResultSelectorImpl<>(selector2), new SQLColumnResultSelectorImpl<>(selector3));
-        }, def);
-    }
-
-    @Override
     public Queryable3<T1, T2, T3> groupBy(boolean condition, SQLExpression1<SQLGroupBySelector<T1>> selectExpression) {
         super.groupBy(condition, selectExpression);
         return this;
@@ -179,6 +132,12 @@ public abstract class AbstractQueryable3<T1, T2, T3> extends AbstractQueryable<T
                 selectExpression.apply(new SQLGroupBySelectorImpl<>(selector1), new SQLGroupBySelectorImpl<>(selector2), new SQLGroupBySelectorImpl<>(selector3));
             });
         }
+        return this;
+    }
+
+    @Override
+    public Queryable3<T1, T2, T3> having(boolean condition, SQLExpression1<SQLWhereAggregatePredicate<T1>> predicateExpression) {
+        super.having(condition, predicateExpression);
         return this;
     }
 
@@ -200,14 +159,14 @@ public abstract class AbstractQueryable3<T1, T2, T3> extends AbstractQueryable<T
 
     @Override
     public Queryable3<T1, T2, T3> orderByDesc(boolean condition, SQLExpression1<SQLColumnSelector<T1>> selectExpression) {
-        super.orderByAsc(condition, selectExpression);
+        super.orderByDesc(condition, selectExpression);
         return this;
     }
 
     @Override
     public Queryable3<T1, T2, T3> orderByDesc(boolean condition, SQLExpression3<SQLColumnSelector<T1>, SQLColumnSelector<T2>, SQLColumnSelector<T3>> selectExpression) {
         if (condition) {
-            entityQueryable3.orderByAsc((selector1, selector2, selector3) -> {
+            entityQueryable3.orderByDesc((selector1, selector2, selector3) -> {
                 selectExpression.apply(new SQLColumnSelectorImpl<>(selector1), new SQLColumnSelectorImpl<>(selector2), new SQLColumnSelectorImpl<>(selector3));
             });
         }

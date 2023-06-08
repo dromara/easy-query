@@ -12,13 +12,11 @@ import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.select.ClientQueryable2;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
-import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.util.EasyCollectionUtil;
-import com.easy.query.core.util.EasyLambdaUtil;
 
 import java.util.Collection;
 import java.util.List;
@@ -71,11 +69,6 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
         return entityQueryable.all(wherePredicate -> {
             whereExpression.apply(new SQLWherePredicateImpl<>(wherePredicate));
         });
-    }
-
-    @Override
-    public Integer lenOrDefault(Property<T1, ?> column, Integer def) {
-        return entityQueryable.lenOrDefault(EasyLambdaUtil.getPropertyName(column), def);
     }
 
 

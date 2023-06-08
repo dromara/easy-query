@@ -3,13 +3,8 @@ package com.easy.query.api4j.select.abstraction;
 import com.easy.query.api4j.select.Queryable;
 import com.easy.query.api4j.select.Queryable4;
 import com.easy.query.api4j.select.impl.EasyQueryable;
-import com.easy.query.api4j.sql.SQLColumnAsSelector;
-import com.easy.query.api4j.sql.SQLColumnResultSelector;
-import com.easy.query.api4j.sql.SQLColumnSelector;
-import com.easy.query.api4j.sql.SQLGroupBySelector;
-import com.easy.query.api4j.sql.SQLWherePredicate;
+import com.easy.query.api4j.sql.*;
 import com.easy.query.api4j.sql.impl.SQLColumnAsSelectorImpl;
-import com.easy.query.api4j.sql.impl.SQLColumnResultSelectorImpl;
 import com.easy.query.api4j.sql.impl.SQLColumnSelectorImpl;
 import com.easy.query.api4j.sql.impl.SQLGroupBySelectorImpl;
 import com.easy.query.api4j.sql.impl.SQLWherePredicateImpl;
@@ -19,7 +14,6 @@ import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression4;
 
-import java.math.BigDecimal;
 import java.util.function.Function;
 
 /**
@@ -35,6 +29,11 @@ public abstract class AbstractQueryable4<T1, T2, T3, T4> extends AbstractQueryab
     public AbstractQueryable4(ClientQueryable4<T1, T2, T3, T4> entityQueryable4) {
         super(entityQueryable4);
         this.entityQueryable4 = entityQueryable4;
+    }
+
+    @Override
+    public ClientQueryable4<T1, T2, T3, T4> getClientQueryable4() {
+        return entityQueryable4;
     }
 
     @Override
@@ -68,48 +67,6 @@ public abstract class AbstractQueryable4<T1, T2, T3, T4> extends AbstractQueryab
     }
 
     @Override
-    public <TMember extends Number> BigDecimal sumBigDecimalOrDefault(SQLExpression4<SQLColumnResultSelector<T1, TMember>, SQLColumnResultSelector<T2, TMember>, SQLColumnResultSelector<T3, TMember>, SQLColumnResultSelector<T4, TMember>> columnSelectorExpression, BigDecimal def) {
-        return entityQueryable4.sumBigDecimalOrDefault((selector1, selector2, selector3, selector4) -> {
-            columnSelectorExpression.apply(new SQLColumnResultSelectorImpl<>(selector1), new SQLColumnResultSelectorImpl<>(selector2), new SQLColumnResultSelectorImpl<>(selector3), new SQLColumnResultSelectorImpl<>(selector4));
-        }, def);
-    }
-
-    @Override
-    public <TMember extends Number> TMember sumOrDefault(SQLExpression4<SQLColumnResultSelector<T1, TMember>, SQLColumnResultSelector<T2, TMember>, SQLColumnResultSelector<T3, TMember>, SQLColumnResultSelector<T4, TMember>> columnSelectorExpression, TMember def) {
-        return entityQueryable4.sumOrDefault((selector1, selector2, selector3, selector4) -> {
-            columnSelectorExpression.apply(new SQLColumnResultSelectorImpl<>(selector1), new SQLColumnResultSelectorImpl<>(selector2), new SQLColumnResultSelectorImpl<>(selector3), new SQLColumnResultSelectorImpl<>(selector4));
-        }, def);
-    }
-
-    @Override
-    public <TMember> TMember maxOrDefault(SQLExpression4<SQLColumnResultSelector<T1, TMember>, SQLColumnResultSelector<T2, TMember>, SQLColumnResultSelector<T3, TMember>, SQLColumnResultSelector<T4, TMember>> columnSelectorExpression, TMember def) {
-        return entityQueryable4.maxOrDefault((selector1, selector2, selector3, selector4) -> {
-            columnSelectorExpression.apply(new SQLColumnResultSelectorImpl<>(selector1), new SQLColumnResultSelectorImpl<>(selector2), new SQLColumnResultSelectorImpl<>(selector3), new SQLColumnResultSelectorImpl<>(selector4));
-        }, def);
-    }
-
-    @Override
-    public <TMember> TMember minOrDefault(SQLExpression4<SQLColumnResultSelector<T1, TMember>, SQLColumnResultSelector<T2, TMember>, SQLColumnResultSelector<T3, TMember>, SQLColumnResultSelector<T4, TMember>> columnSelectorExpression, TMember def) {
-        return entityQueryable4.minOrDefault((selector1, selector2, selector3, selector4) -> {
-            columnSelectorExpression.apply(new SQLColumnResultSelectorImpl<>(selector1), new SQLColumnResultSelectorImpl<>(selector2), new SQLColumnResultSelectorImpl<>(selector3), new SQLColumnResultSelectorImpl<>(selector4));
-        }, def);
-    }
-
-    @Override
-    public <TMember> TMember avgOrDefault(SQLExpression4<SQLColumnResultSelector<T1, TMember>, SQLColumnResultSelector<T2, TMember>, SQLColumnResultSelector<T3, TMember>, SQLColumnResultSelector<T4, TMember>> columnSelectorExpression, TMember def) {
-        return entityQueryable4.avgOrDefault((selector1, selector2, selector3, selector4) -> {
-            columnSelectorExpression.apply(new SQLColumnResultSelectorImpl<>(selector1), new SQLColumnResultSelectorImpl<>(selector2), new SQLColumnResultSelectorImpl<>(selector3), new SQLColumnResultSelectorImpl<>(selector4));
-        }, def);
-    }
-
-    @Override
-    public Integer lenOrDefault(SQLExpression4<SQLColumnResultSelector<T1, ?>, SQLColumnResultSelector<T2, ?>, SQLColumnResultSelector<T3, ?>, SQLColumnResultSelector<T4, ?>> columnSelectorExpression, Integer def) {
-        return entityQueryable4.lenOrDefault((selector1, selector2, selector3, selector4) -> {
-            columnSelectorExpression.apply(new SQLColumnResultSelectorImpl<>(selector1), new SQLColumnResultSelectorImpl<>(selector2), new SQLColumnResultSelectorImpl<>(selector3), new SQLColumnResultSelectorImpl<>(selector4));
-        }, def);
-    }
-
-    @Override
     public Queryable4<T1, T2, T3, T4> groupBy(boolean condition, SQLExpression1<SQLGroupBySelector<T1>> selectExpression) {
         super.groupBy(condition, selectExpression);
         return this;
@@ -122,6 +79,12 @@ public abstract class AbstractQueryable4<T1, T2, T3, T4> extends AbstractQueryab
                 selectExpression.apply(new SQLGroupBySelectorImpl<>(selector1), new SQLGroupBySelectorImpl<>(selector2), new SQLGroupBySelectorImpl<>(selector3), new SQLGroupBySelectorImpl<>(selector4));
             });
         }
+        return this;
+    }
+
+    @Override
+    public Queryable4<T1, T2, T3, T4> having(boolean condition, SQLExpression1<SQLWhereAggregatePredicate<T1>> predicateExpression) {
+        super.having(condition, predicateExpression);
         return this;
     }
 
@@ -143,7 +106,7 @@ public abstract class AbstractQueryable4<T1, T2, T3, T4> extends AbstractQueryab
 
     @Override
     public Queryable4<T1, T2, T3, T4> orderByDesc(boolean condition, SQLExpression1<SQLColumnSelector<T1>> selectExpression) {
-        super.orderByAsc(condition, selectExpression);
+        super.orderByDesc(condition, selectExpression);
         return this;
     }
 

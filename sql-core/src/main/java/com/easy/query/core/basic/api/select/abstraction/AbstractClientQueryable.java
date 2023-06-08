@@ -199,18 +199,6 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         return EasyCollectionUtil.firstOrDefault(result, def);
     }
 
-    @Override
-    public Integer lenOrDefault(String property, Integer def) {
-        setExecuteMethod(ExecuteMethodEnum.LEN);
-        EntityTableExpressionBuilder table = entityQueryExpressionBuilder.getTable(0);
-
-        ColumnFunction lenFunction = runtimeContext.getColumnFunctionFactory().createLenFunction();
-        FuncColumnSegment funcColumnSegment = sqlSegmentFactory.createFuncColumnSegment(table.getEntityTable(), property, entityQueryExpressionBuilder.getRuntimeContext(), lenFunction, null);
-
-        List<Integer> result = cloneQueryable().select(funcColumnSegment, true).toList(Integer.class);
-        return EasyCollectionUtil.firstOrDefault(result, def);
-    }
-
     private <TMember> List<TMember> selectAggregateList(String property, ColumnFunction columnFunction, Class<TMember> resultClass) {
         EntityTableExpressionBuilder table = entityQueryExpressionBuilder.getTable(0);
         Class<TMember> tMemberClass = resultClass == null ? (Class<TMember>) table.getEntityMetadata().getColumnNotNull(property).getPropertyType() : resultClass;

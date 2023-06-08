@@ -1,11 +1,9 @@
 package com.easy.query.api4j.select;
 
-import com.easy.query.api4j.sql.SQLColumnAsSelector;
-import com.easy.query.api4j.sql.SQLColumnResultSelector;
-import com.easy.query.api4j.sql.SQLColumnSelector;
-import com.easy.query.api4j.sql.SQLGroupBySelector;
-import com.easy.query.api4j.sql.SQLWherePredicate;
+import com.easy.query.api4j.sql.*;
+import com.easy.query.api4j.sql.impl.*;
 import com.easy.query.core.api.client.EasyQueryClient;
+import com.easy.query.core.basic.api.select.ClientQueryable2;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression2;
@@ -22,6 +20,8 @@ import java.util.function.Function;
  * @Date: 2023/2/6 22:42
  */
 public interface Queryable2<T1, T2> extends Queryable<T1> {
+    ClientQueryable2<T1, T2> getClientQueryable2();
+
     <T3> Queryable3<T1, T2, T3> leftJoin(Class<T3> joinClass, SQLExpression3<SQLWherePredicate<T1>, SQLWherePredicate<T2>, SQLWherePredicate<T3>> on);
 
     <T3> Queryable3<T1, T2, T3> leftJoin(Queryable<T3> joinQueryable, SQLExpression3<SQLWherePredicate<T1>, SQLWherePredicate<T2>, SQLWherePredicate<T3>> on);
@@ -51,10 +51,18 @@ public interface Queryable2<T1, T2> extends Queryable<T1> {
     Queryable2<T1, T2> where(boolean condition, SQLExpression1<SQLWherePredicate<T1>> whereExpression);
 
     default Queryable2<T1, T2> where(SQLExpression2<SQLWherePredicate<T1>, SQLWherePredicate<T2>> whereExpression) {
-        return where(true, whereExpression);
+        getClientQueryable2().where((wherePredicate1, wherePredicate2) -> {
+            whereExpression.apply(new SQLWherePredicateImpl<>(wherePredicate1), new SQLWherePredicateImpl<>(wherePredicate2));
+        });
+        return this;
     }
 
-    Queryable2<T1, T2> where(boolean condition, SQLExpression2<SQLWherePredicate<T1>, SQLWherePredicate<T2>> whereExpression);
+    default Queryable2<T1, T2> where(boolean condition, SQLExpression2<SQLWherePredicate<T1>, SQLWherePredicate<T2>> whereExpression) {
+        getClientQueryable2().where(condition, (wherePredicate1, wherePredicate2) -> {
+            whereExpression.apply(new SQLWherePredicateImpl<>(wherePredicate1), new SQLWherePredicateImpl<>(wherePredicate2));
+        });
+        return this;
+    }
 
     //endregion
 
@@ -71,67 +79,142 @@ public interface Queryable2<T1, T2> extends Queryable<T1> {
      * @return
      */
     default <TMember extends Number> BigDecimal sumBigDecimalOrNull(SQLExpression2<SQLColumnResultSelector<T1, TMember>, SQLColumnResultSelector<T2, TMember>> columnSelectorExpression) {
-        return sumBigDecimalOrDefault(columnSelectorExpression, null);
+        return getClientQueryable2().sumBigDecimalOrNull((selector1, selector2) -> {
+            columnSelectorExpression.apply(new SQLColumnResultSelectorImpl<>(selector1), new SQLColumnResultSelectorImpl<>(selector2));
+        });
     }
 
-    /**
-     * 防止溢出
-     *
-     * @param columnSelectorExpression
-     * @param <TMember>
-     * @return
-     */
-    default <TMember extends Number> BigDecimal sumBigDecimalNotNull(SQLExpression2<SQLColumnResultSelector<T1, TMember>, SQLColumnResultSelector<T2, TMember>> columnSelectorExpression) {
-        return sumBigDecimalOrDefault(columnSelectorExpression, BigDecimal.ZERO);
-    }
 
-    <TMember extends Number> BigDecimal sumBigDecimalOrDefault(SQLExpression2<SQLColumnResultSelector<T1, TMember>, SQLColumnResultSelector<T2, TMember>> columnSelectorExpression, BigDecimal def);
+    default <TMember extends Number> BigDecimal sumBigDecimalOrDefault(SQLExpression2<SQLColumnResultSelector<T1, TMember>, SQLColumnResultSelector<T2, TMember>> columnSelectorExpression, BigDecimal def) {
+        return getClientQueryable2().sumBigDecimalOrDefault((selector1, selector2) -> {
+            columnSelectorExpression.apply(new SQLColumnResultSelectorImpl<>(selector1), new SQLColumnResultSelectorImpl<>(selector2));
+        }, def);
+    }
 
     default <TMember extends Number> TMember sumOrNull(SQLExpression2<SQLColumnResultSelector<T1, TMember>, SQLColumnResultSelector<T2, TMember>> columnSelectorExpression) {
-        return sumOrDefault(columnSelectorExpression, null);
+        return getClientQueryable2().sumOrNull((selector1, selector2) -> {
+            columnSelectorExpression.apply(new SQLColumnResultSelectorImpl<>(selector1), new SQLColumnResultSelectorImpl<>(selector2));
+        });
     }
 
-    <TMember extends Number> TMember sumOrDefault(SQLExpression2<SQLColumnResultSelector<T1, TMember>, SQLColumnResultSelector<T2, TMember>> columnSelectorExpression, TMember def);
+    default <TMember extends Number> TMember sumOrDefault(SQLExpression2<SQLColumnResultSelector<T1, TMember>, SQLColumnResultSelector<T2, TMember>> columnSelectorExpression, TMember def) {
+        return getClientQueryable2().sumOrDefault((selector1, selector2) -> {
+            columnSelectorExpression.apply(new SQLColumnResultSelectorImpl<>(selector1), new SQLColumnResultSelectorImpl<>(selector2));
+        }, def);
+    }
 
     default <TMember> TMember maxOrNull(SQLExpression2<SQLColumnResultSelector<T1, TMember>, SQLColumnResultSelector<T2, TMember>> columnSelectorExpression) {
-        return maxOrDefault(columnSelectorExpression, null);
+        return getClientQueryable2().maxOrNull((selector1, selector2) -> {
+            columnSelectorExpression.apply(new SQLColumnResultSelectorImpl<>(selector1), new SQLColumnResultSelectorImpl<>(selector2));
+        });
     }
 
-    <TMember> TMember maxOrDefault(SQLExpression2<SQLColumnResultSelector<T1, TMember>, SQLColumnResultSelector<T2, TMember>> columnSelectorExpression, TMember def);
+    default <TMember> TMember maxOrDefault(SQLExpression2<SQLColumnResultSelector<T1, TMember>, SQLColumnResultSelector<T2, TMember>> columnSelectorExpression, TMember def) {
+        return getClientQueryable2().maxOrDefault((selector1, selector2) -> {
+            columnSelectorExpression.apply(new SQLColumnResultSelectorImpl<>(selector1), new SQLColumnResultSelectorImpl<>(selector2));
+        }, def);
+    }
 
     default <TMember> TMember minOrNull(SQLExpression2<SQLColumnResultSelector<T1, TMember>, SQLColumnResultSelector<T2, TMember>> columnSelectorExpression) {
-        return minOrDefault(columnSelectorExpression, null);
+        return getClientQueryable2().minOrNull((selector1, selector2) -> {
+            columnSelectorExpression.apply(new SQLColumnResultSelectorImpl<>(selector1), new SQLColumnResultSelectorImpl<>(selector2));
+        });
     }
 
-    <TMember> TMember minOrDefault(SQLExpression2<SQLColumnResultSelector<T1, TMember>, SQLColumnResultSelector<T2, TMember>> columnSelectorExpression, TMember def);
-
-    default <TMember extends Number> TMember avgOrNull(SQLExpression2<SQLColumnResultSelector<T1, TMember>, SQLColumnResultSelector<T2, TMember>> columnSelectorExpression) {
-        return avgOrDefault(columnSelectorExpression, null);
+    default <TMember> TMember minOrDefault(SQLExpression2<SQLColumnResultSelector<T1, TMember>, SQLColumnResultSelector<T2, TMember>> columnSelectorExpression, TMember def) {
+        return getClientQueryable2().minOrDefault((selector1, selector2) -> {
+            columnSelectorExpression.apply(new SQLColumnResultSelectorImpl<>(selector1), new SQLColumnResultSelectorImpl<>(selector2));
+        }, def);
     }
 
-    <TMember extends Number> TMember avgOrDefault(SQLExpression2<SQLColumnResultSelector<T1, TMember>, SQLColumnResultSelector<T2, TMember>> columnSelectorExpression, TMember def);
-
-    default Integer lenOrNull(SQLExpression2<SQLColumnResultSelector<T1, ?>, SQLColumnResultSelector<T2, ?>> columnSelectorExpression) {
-        return lenOrDefault(columnSelectorExpression, null);
+    default <TMember extends Number> Double avgOrNull(SQLExpression2<SQLColumnResultSelector<T1, TMember>, SQLColumnResultSelector<T2, TMember>> columnSelectorExpression) {
+        return getClientQueryable2().avgOrNull((selector1, selector2) -> {
+            columnSelectorExpression.apply(new SQLColumnResultSelectorImpl<>(selector1), new SQLColumnResultSelectorImpl<>(selector2));
+        });
     }
 
-    Integer lenOrDefault(SQLExpression2<SQLColumnResultSelector<T1, ?>, SQLColumnResultSelector<T2, ?>> columnSelectorExpression, Integer def);
+    default <TMember extends Number> BigDecimal avgBigDecimalOrNull(SQLExpression2<SQLColumnResultSelector<T1, TMember>, SQLColumnResultSelector<T2, TMember>> columnSelectorExpression) {
+        return getClientQueryable2().avgBigDecimalOrNull((selector1, selector2) -> {
+            columnSelectorExpression.apply(new SQLColumnResultSelectorImpl<>(selector1), new SQLColumnResultSelectorImpl<>(selector2));
+        });
+    }
+
+    default <TMember extends Number> Float avgFloatOrNull(SQLExpression2<SQLColumnResultSelector<T1, TMember>, SQLColumnResultSelector<T2, TMember>> columnSelectorExpression) {
+        return getClientQueryable2().avgFloatOrNull((selector1, selector2) -> {
+            columnSelectorExpression.apply(new SQLColumnResultSelectorImpl<>(selector1), new SQLColumnResultSelectorImpl<>(selector2));
+        });
+    }
+
+    default <TMember extends Number> Double avgOrDefault(SQLExpression2<SQLColumnResultSelector<T1, TMember>, SQLColumnResultSelector<T2, TMember>> columnSelectorExpression, Double def) {
+        return getClientQueryable2().avgOrDefault((selector1, selector2) -> {
+            columnSelectorExpression.apply(new SQLColumnResultSelectorImpl<>(selector1), new SQLColumnResultSelectorImpl<>(selector2));
+        }, def);
+    }
+
+    default <TMember extends Number> BigDecimal avgBigDecimalOrDefault(SQLExpression2<SQLColumnResultSelector<T1, TMember>, SQLColumnResultSelector<T2, TMember>> columnSelectorExpression, BigDecimal def) {
+        return getClientQueryable2().avgBigDecimalOrDefault((selector1, selector2) -> {
+            columnSelectorExpression.apply(new SQLColumnResultSelectorImpl<>(selector1), new SQLColumnResultSelectorImpl<>(selector2));
+        }, def);
+    }
+
+    default <TMember extends Number> Float avgFloatOrDefault(SQLExpression2<SQLColumnResultSelector<T1, TMember>, SQLColumnResultSelector<T2, TMember>> columnSelectorExpression, Float def) {
+        return getClientQueryable2().avgFloatOrDefault((selector1, selector2) -> {
+            columnSelectorExpression.apply(new SQLColumnResultSelectorImpl<>(selector1), new SQLColumnResultSelectorImpl<>(selector2));
+        }, def);
+    }
+
+    default <TMember extends Number, TResult extends Number> TResult avgOrDefault(SQLExpression2<SQLColumnResultSelector<T1, TMember>, SQLColumnResultSelector<T2, TMember>> columnSelectorExpression, TResult def, Class<TResult> resultClass) {
+        return getClientQueryable2().avgOrDefault((selector1, selector2) -> {
+            columnSelectorExpression.apply(new SQLColumnResultSelectorImpl<>(selector1), new SQLColumnResultSelectorImpl<>(selector2));
+        }, def, resultClass);
+    }
+
     //endregion
 
     //region group
     @Override
-    default Queryable2<T1,T2> groupBy(SQLExpression1<SQLGroupBySelector<T1>> selectExpression) {
+    default Queryable2<T1, T2> groupBy(SQLExpression1<SQLGroupBySelector<T1>> selectExpression) {
         return groupBy(true, selectExpression);
     }
 
     @Override
-    Queryable2<T1,T2> groupBy(boolean condition, SQLExpression1<SQLGroupBySelector<T1>> selectExpression);
+    Queryable2<T1, T2> groupBy(boolean condition, SQLExpression1<SQLGroupBySelector<T1>> selectExpression);
 
     default Queryable2<T1, T2> groupBy(SQLExpression2<SQLGroupBySelector<T1>, SQLGroupBySelector<T2>> selectExpression) {
-        return groupBy(true, selectExpression);
+        getClientQueryable2().groupBy((selector1, selector2) -> {
+            selectExpression.apply(new SQLGroupBySelectorImpl<>(selector1), new SQLGroupBySelectorImpl<>(selector2));
+        });
+        return this;
     }
 
-    Queryable2<T1, T2> groupBy(boolean condition, SQLExpression2<SQLGroupBySelector<T1>, SQLGroupBySelector<T2>> selectExpression);
+    default Queryable2<T1, T2> groupBy(boolean condition, SQLExpression2<SQLGroupBySelector<T1>, SQLGroupBySelector<T2>> selectExpression) {
+        getClientQueryable2().groupBy(condition, (selector1, selector2) -> {
+            selectExpression.apply(new SQLGroupBySelectorImpl<>(selector1), new SQLGroupBySelectorImpl<>(selector2));
+        });
+        return this;
+    }
+
+    @Override
+    default Queryable2<T1, T2> having(SQLExpression1<SQLWhereAggregatePredicate<T1>> predicateExpression) {
+        return having(true, predicateExpression);
+    }
+
+    @Override
+    Queryable2<T1, T2> having(boolean condition, SQLExpression1<SQLWhereAggregatePredicate<T1>> predicateExpression);
+
+    default Queryable2<T1, T2> having(SQLExpression2<SQLWhereAggregatePredicate<T1>, SQLWhereAggregatePredicate<T2>> predicateExpression) {
+        getClientQueryable2().having((predicate1, predicate2) -> {
+            predicateExpression.apply(new SQLWhereAggregatePredicateImpl<>(predicate1), new SQLWhereAggregatePredicateImpl<>(predicate2));
+        });
+        return this;
+    }
+
+    default Queryable2<T1, T2> having(boolean condition, SQLExpression2<SQLWhereAggregatePredicate<T1>, SQLWhereAggregatePredicate<T2>> predicateExpression) {
+        getClientQueryable2().having(condition, (predicate1, predicate2) -> {
+            predicateExpression.apply(new SQLWhereAggregatePredicateImpl<>(predicate1), new SQLWhereAggregatePredicateImpl<>(predicate2));
+        });
+        return this;
+    }
 
     //endregion
     //region order
@@ -144,10 +227,18 @@ public interface Queryable2<T1, T2> extends Queryable<T1> {
     Queryable2<T1, T2> orderByAsc(boolean condition, SQLExpression1<SQLColumnSelector<T1>> selectExpression);
 
     default Queryable2<T1, T2> orderByAsc(SQLExpression2<SQLColumnSelector<T1>, SQLColumnSelector<T2>> selectExpression) {
-        return orderByAsc(true, selectExpression);
+        getClientQueryable2().orderByAsc((selector1, selector2) -> {
+            selectExpression.apply(new SQLColumnSelectorImpl<>(selector1), new SQLColumnSelectorImpl<>(selector2));
+        });
+        return this;
     }
 
-    Queryable2<T1, T2> orderByAsc(boolean condition, SQLExpression2<SQLColumnSelector<T1>, SQLColumnSelector<T2>> selectExpression);
+    default Queryable2<T1, T2> orderByAsc(boolean condition, SQLExpression2<SQLColumnSelector<T1>, SQLColumnSelector<T2>> selectExpression) {
+        getClientQueryable2().orderByAsc(condition, (selector1, selector2) -> {
+            selectExpression.apply(new SQLColumnSelectorImpl<>(selector1), new SQLColumnSelectorImpl<>(selector2));
+        });
+        return this;
+    }
 
     @Override
     default Queryable2<T1, T2> orderByDesc(SQLExpression1<SQLColumnSelector<T1>> selectExpression) {
@@ -158,10 +249,18 @@ public interface Queryable2<T1, T2> extends Queryable<T1> {
     Queryable2<T1, T2> orderByDesc(boolean condition, SQLExpression1<SQLColumnSelector<T1>> selectExpression);
 
     default Queryable2<T1, T2> orderByDesc(SQLExpression2<SQLColumnSelector<T1>, SQLColumnSelector<T2>> selectExpression) {
-        return orderByDesc(true, selectExpression);
+        getClientQueryable2().orderByDesc((selector1, selector2) -> {
+            selectExpression.apply(new SQLColumnSelectorImpl<>(selector1), new SQLColumnSelectorImpl<>(selector2));
+        });
+        return this;
     }
 
-    Queryable2<T1, T2> orderByDesc(boolean condition, SQLExpression2<SQLColumnSelector<T1>, SQLColumnSelector<T2>> selectExpression);
+    default Queryable2<T1, T2> orderByDesc(boolean condition, SQLExpression2<SQLColumnSelector<T1>, SQLColumnSelector<T2>> selectExpression) {
+        getClientQueryable2().orderByDesc(condition, (selector1, selector2) -> {
+            selectExpression.apply(new SQLColumnSelectorImpl<>(selector1), new SQLColumnSelectorImpl<>(selector2));
+        });
+        return this;
+    }
     //endregion
     //region limit
 

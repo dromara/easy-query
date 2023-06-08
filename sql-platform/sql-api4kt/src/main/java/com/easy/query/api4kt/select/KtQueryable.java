@@ -70,17 +70,6 @@ public interface KtQueryable<T1> extends Query<T1>,
         return getEntityQueryable().sumBigDecimalOrNull(EasyKtLambdaUtil.getPropertyName(column));
     }
 
-    /**
-     * 防止溢出
-     *
-     * @param column
-     * @param <TMember>
-     * @return
-     */
-    default <TMember extends Number> BigDecimal sumBigDecimalNotNull(KProperty1<T1, TMember> column) {
-        return getEntityQueryable().sumBigDecimalNotNull(EasyKtLambdaUtil.getPropertyName(column));
-    }
-
     default <TMember extends Number> BigDecimal sumBigDecimalOrDefault(KProperty1<T1, TMember> column, BigDecimal def) {
         return getEntityQueryable().sumBigDecimalOrDefault(EasyKtLambdaUtil.getPropertyName(column), def);
     }
@@ -136,13 +125,6 @@ public interface KtQueryable<T1> extends Query<T1>,
     default <TMember extends Number, TResult extends Number> TResult avgOrDefault(KProperty1<T1, TMember> column, TResult def, Class<TResult> resultClass) {
         return getEntityQueryable().avgOrDefault(EasyKtLambdaUtil.getPropertyName(column), def, resultClass);
     }
-
-
-    default Integer lenOrNull(KProperty1<T1, ?> column) {
-        return lenOrDefault(column, null);
-    }
-
-    Integer lenOrDefault(KProperty1<T1, ?> column, Integer def);
 
     /**
      * 对当前表达式返回自定义select列
