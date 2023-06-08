@@ -55,7 +55,7 @@
         <dependency>
             <groupId>com.easy-query</groupId>
             <artifactId>sql-springboot-starter</artifactId>
-            <version>0.9.35</version>
+            <version>0.9.36</version>
             <scope>compile</scope>
         </dependency>
         <!--        <dependency>-->

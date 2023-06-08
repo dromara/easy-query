@@ -482,7 +482,6 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     public ClientQueryable<T1> whereObject(boolean condition, Object object) {
         if (condition) {
             if (object != null) {
-                EntityMetadataManager entityMetadataManager = entityQueryExpressionBuilder.getRuntimeContext().getEntityMetadataManager();
 
                 List<Field> allFields = EasyClassUtil.getAllFields(object.getClass());
 

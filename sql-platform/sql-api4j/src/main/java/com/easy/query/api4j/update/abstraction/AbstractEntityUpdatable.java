@@ -1,11 +1,8 @@
 package com.easy.query.api4j.update.abstraction;
 
-import com.easy.query.api4j.sql.SQLColumnSelector;
-import com.easy.query.api4j.sql.impl.SQLColumnSelectorImpl;
 import com.easy.query.api4j.update.EntityUpdatable;
 import com.easy.query.core.basic.api.update.ClientEntityUpdatable;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
-import com.easy.query.core.expression.lambda.SQLExpression1;
 
 import java.util.function.Function;
 
@@ -24,38 +21,13 @@ public abstract class AbstractEntityUpdatable<T> implements EntityUpdatable<T> {
     }
 
     @Override
+    public ClientEntityUpdatable<T> getClientUpdate() {
+        return entityObjectUpdatable;
+    }
+
+    @Override
     public long executeRows() {
         return entityObjectUpdatable.executeRows();
-    }
-
-    @Override
-    public EntityUpdatable<T> setColumns(boolean condition, SQLExpression1<SQLColumnSelector<T>> columnSelectorExpression) {
-        if (condition) {
-            entityObjectUpdatable.setColumns(selector -> {
-                columnSelectorExpression.apply(new SQLColumnSelectorImpl<>(selector));
-            });
-        }
-        return this;
-    }
-
-    @Override
-    public EntityUpdatable<T> setIgnoreColumns(boolean condition, SQLExpression1<SQLColumnSelector<T>> columnSelectorExpression) {
-        if (condition) {
-            entityObjectUpdatable.setColumns(selector -> {
-                columnSelectorExpression.apply(new SQLColumnSelectorImpl<>(selector));
-            });
-        }
-        return this;
-    }
-
-    @Override
-    public EntityUpdatable<T> whereColumns(boolean condition, SQLExpression1<SQLColumnSelector<T>> columnSelectorExpression) {
-        if (condition) {
-            entityObjectUpdatable.setColumns(selector -> {
-                columnSelectorExpression.apply(new SQLColumnSelectorImpl<>(selector));
-            });
-        }
-        return this;
     }
 
     @Override
@@ -82,11 +54,6 @@ public abstract class AbstractEntityUpdatable<T> implements EntityUpdatable<T> {
             entityObjectUpdatable.setSQLStrategy(sqlStrategy);
         }
         return this;
-    }
-
-    @Override
-    public String toSQL(Object entity) {
-        return entityObjectUpdatable.toSQL(entity);
     }
 
     @Override

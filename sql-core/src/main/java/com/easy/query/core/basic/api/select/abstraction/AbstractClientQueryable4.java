@@ -14,6 +14,7 @@ import com.easy.query.core.expression.parser.core.base.ColumnResultSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnSelector;
 import com.easy.query.core.expression.parser.core.base.GroupBySelector;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
+import com.easy.query.core.expression.segment.FuncColumnSegment;
 import com.easy.query.core.expression.segment.SQLEntitySegment;
 import com.easy.query.core.expression.segment.builder.ProjectSQLBuilderSegmentImpl;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
@@ -137,7 +138,7 @@ public abstract class AbstractClientQueryable4<T1, T2, T3, T4> extends AbstractC
         return entityQueryExpressionBuilder.getRuntimeContext().getSQLObjectApiFactory().createQueryable(resultClass, entityQueryExpressionBuilder);
     }
 
-    private <TMember> List<TMember> selectAggregateList(SQLExpression4<ColumnResultSelector<T1>, ColumnResultSelector<T2>, ColumnResultSelector<T3>, ColumnResultSelector<T4>> columnSelectorExpression, ColumnFunction easyFunc) {
+    private <TMember> List<TMember> selectAggregateList(SQLExpression4<ColumnResultSelector<T1>, ColumnResultSelector<T2>, ColumnResultSelector<T3>, ColumnResultSelector<T4>> columnSelectorExpression, ColumnFunction columnFunction) {
 
         ProjectSQLBuilderSegmentImpl projectSQLBuilderSegment = new ProjectSQLBuilderSegmentImpl();
 
@@ -154,8 +155,9 @@ public abstract class AbstractClientQueryable4<T1, T2, T3, T4> extends AbstractC
         TableAvailable table = sqlSegment.getTable();
         String propertyName = sqlSegment.getPropertyName();
         ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(propertyName);
+        FuncColumnSegment funcColumnSegment = sqlSegmentFactory.createFuncColumnSegment(table, propertyName, entityQueryExpressionBuilder.getRuntimeContext(), columnFunction, null);
 
-        return cloneQueryable().select(easyFunc.getFuncColumn(projectSQLBuilderSegment.toSQL(null))).toList((Class<TMember>) columnMetadata.getPropertyType());
+        return cloneQueryable().select(funcColumnSegment, true).toList((Class<TMember>) columnMetadata.getPropertyType());
     }
 
     @Override

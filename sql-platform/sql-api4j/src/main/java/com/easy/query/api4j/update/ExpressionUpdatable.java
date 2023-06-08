@@ -1,129 +1,187 @@
 package com.easy.query.api4j.update;
 
 import com.easy.query.api4j.sql.SQLWherePredicate;
+import com.easy.query.api4j.sql.impl.SQLWherePredicateImpl;
 import com.easy.query.core.basic.api.internal.Versionable;
+import com.easy.query.core.basic.api.update.ClientExpressionUpdatable;
 import com.easy.query.core.basic.api.update.Updatable;
-import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.SQLExpression1;
-import com.easy.query.core.expression.sql.TableContext;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
+import com.easy.query.core.util.EasyLambdaUtil;
 
 import java.util.Collection;
 
 /**
+ * @author xuejiaming
  * @FileName: ExpressionUpdatable.java
  * @Description: 文件说明
  * @Date: 2023/2/24 23:21
- * @author xuejiaming
  */
 public interface ExpressionUpdatable<T> extends Updatable<T, ExpressionUpdatable<T>>, Versionable<ExpressionUpdatable<T>> {
+    ClientExpressionUpdatable<T> getClientUpdate();
+
     default ExpressionUpdatable<T> set(Property<T, ?> column, Object val) {
-        return set(true, column, val);
+        getClientUpdate().set(true, EasyLambdaUtil.getPropertyName(column), val);
+        return this;
     }
 
-    ExpressionUpdatable<T> set(boolean condition, Property<T, ?> column, Object val);
+    default ExpressionUpdatable<T> set(boolean condition, Property<T, ?> column, Object val) {
+        getClientUpdate().set(condition, EasyLambdaUtil.getPropertyName(column), val);
+        return this;
+    }
 
     default ExpressionUpdatable<T> setWithColumn(Property<T, ?> column1, Property<T, ?> column2) {
-        return setWithColumn(true, column1, column2);
+        getClientUpdate().setWithColumn(EasyLambdaUtil.getPropertyName(column1), EasyLambdaUtil.getPropertyName(column2));
+        return this;
     }
 
-    ExpressionUpdatable<T> setWithColumn(boolean condition, Property<T, ?> column1, Property<T, ?> column2);
+    default ExpressionUpdatable<T> setWithColumn(boolean condition, Property<T, ?> column1, Property<T, ?> column2) {
+        getClientUpdate().setWithColumn(condition, EasyLambdaUtil.getPropertyName(column1), EasyLambdaUtil.getPropertyName(column2));
+        return this;
+    }
     // region 列++ --
 
 
     default ExpressionUpdatable<T> setIncrement(Property<T, Integer> column) {
-        return setIncrement(true, column);
+        getClientUpdate().setIncrement(EasyLambdaUtil.getPropertyName(column));
+        return this;
     }
 
     default ExpressionUpdatable<T> setIncrement(boolean condition, Property<T, Integer> column) {
-        return setIncrementNumber(condition, column, 1);
+        getClientUpdate().setIncrement(condition, EasyLambdaUtil.getPropertyName(column));
+        return this;
     }
 
     default ExpressionUpdatable<T> setIncrement(Property<T, Integer> column, int val) {
-        return setIncrementNumber(true, column, val);
+        getClientUpdate().setIncrement(EasyLambdaUtil.getPropertyName(column), val);
+        return this;
     }
 
     default ExpressionUpdatable<T> setIncrement(boolean condition, Property<T, Integer> column, int val) {
-        return setIncrementNumber(condition, column, val);
+        getClientUpdate().setIncrement(condition, EasyLambdaUtil.getPropertyName(column), val);
+        return this;
     }
 
     default ExpressionUpdatable<T> setIncrement(Property<T, Long> column, long val) {
-        return setIncrementNumber(true, column, val);
+        getClientUpdate().setIncrement(EasyLambdaUtil.getPropertyName(column), val);
+        return this;
     }
 
     default ExpressionUpdatable<T> setIncrement(boolean condition, Property<T, Long> column, long val) {
-        return setIncrementNumber(condition, column, val);
+        getClientUpdate().setIncrement(condition, EasyLambdaUtil.getPropertyName(column), val);
+        return this;
     }
 
 
     default ExpressionUpdatable<T> setIncrement(Property<T, ? extends Number> column, Number val) {
-        return setIncrementNumber(true, column, val);
+        getClientUpdate().setIncrement(EasyLambdaUtil.getPropertyName(column), val);
+        return this;
     }
 
-    ExpressionUpdatable<T> setIncrementNumber(boolean condition, Property<T, ? extends Number> column, Number val);
+    default ExpressionUpdatable<T> setIncrementNumber(boolean condition, Property<T, ? extends Number> column, Number val) {
+        getClientUpdate().setIncrementNumber(condition, EasyLambdaUtil.getPropertyName(column), val);
+        return this;
+    }
 
     default ExpressionUpdatable<T> setDecrement(Property<T, Integer> column) {
-        return setDecrement(true, column);
+        getClientUpdate().setDecrement(EasyLambdaUtil.getPropertyName(column));
+        return this;
     }
 
     default ExpressionUpdatable<T> setDecrement(boolean condition, Property<T, Integer> column) {
-        return setDecrementNumber(condition, column, 1);
+        getClientUpdate().setDecrement(condition, EasyLambdaUtil.getPropertyName(column));
+        return this;
     }
 
     default ExpressionUpdatable<T> setDecrement(Property<T, Integer> column, int val) {
-        return setDecrementNumber(true, column, val);
+        getClientUpdate().setDecrement(EasyLambdaUtil.getPropertyName(column), val);
+        return this;
     }
 
     default ExpressionUpdatable<T> setDecrement(boolean condition, Property<T, Integer> column, int val) {
-        return setDecrementNumber(condition, column, val);
+        getClientUpdate().setDecrement(condition, EasyLambdaUtil.getPropertyName(column), val);
+        return this;
     }
 
     default ExpressionUpdatable<T> setDecrement(Property<T, Long> column, long val) {
-        return setDecrementNumber(true, column, val);
+        getClientUpdate().setDecrement(EasyLambdaUtil.getPropertyName(column), val);
+        return this;
     }
 
     default ExpressionUpdatable<T> setDecrement(boolean condition, Property<T, Long> column, long val) {
-        return setDecrementNumber(condition, column, val);
+        getClientUpdate().setDecrement(condition, EasyLambdaUtil.getPropertyName(column), val);
+        return this;
     }
 
 
     default ExpressionUpdatable<T> setDecrement(Property<T, ? extends Number> column, Number val) {
-        return setDecrementNumber(true, column, val);
+        getClientUpdate().setDecrement(EasyLambdaUtil.getPropertyName(column), val);
+        return this;
     }
 
-    ExpressionUpdatable<T> setDecrementNumber(boolean condition, Property<T, ? extends Number> column, Number val);
+    default ExpressionUpdatable<T> setDecrementNumber(boolean condition, Property<T, ? extends Number> column, Number val) {
+        getClientUpdate().setDecrementNumber(condition, EasyLambdaUtil.getPropertyName(column), val);
+        return this;
+    }
     // endregion
 
     default ExpressionUpdatable<T> where(SQLExpression1<SQLWherePredicate<T>> whereExpression) {
-        return where(true, whereExpression);
+        getClientUpdate().where(where -> {
+            whereExpression.apply(new SQLWherePredicateImpl<>(where));
+        });
+        return this;
     }
 
-    ExpressionUpdatable<T> where(boolean condition, SQLExpression1<SQLWherePredicate<T>> whereExpression);
+    default ExpressionUpdatable<T> where(boolean condition, SQLExpression1<SQLWherePredicate<T>> whereExpression) {
+        getClientUpdate().where(condition, where -> {
+            whereExpression.apply(new SQLWherePredicateImpl<>(where));
+        });
+        return this;
+    }
 
     default ExpressionUpdatable<T> whereById(Object id) {
-        return whereById(true, id);
+        getClientUpdate().whereById(id);
+        return this;
     }
 
-    ExpressionUpdatable<T> whereById(boolean condition, Object id);
-
-
-    default ExpressionUpdatable<T> whereByIds(Object... ids){
-        return whereByIds(true,ids);
+    default ExpressionUpdatable<T> whereById(boolean condition, Object id) {
+        getClientUpdate().whereById(condition, id);
+        return this;
     }
-    ExpressionUpdatable<T> whereByIds(boolean condition,Object... ids);
 
-    default <TProperty> ExpressionUpdatable<T> whereByIds(Collection<TProperty> ids){
-        return whereByIds(true,ids);
+
+    default ExpressionUpdatable<T> whereByIds(Object... ids) {
+        getClientUpdate().whereByIds(ids);
+        return this;
     }
-   <TProperty> ExpressionUpdatable<T> whereByIds(boolean condition,Collection<TProperty> ids);
 
-    ExpressionContext getExpressionContext();
-   default String toSQL(){
-       TableContext tableContext = getExpressionContext().getTableContext();
-       return toSQL(DefaultToSQLContext.defaultToSQLContext(tableContext));
-   }
-    String toSQL(ToSQLContext toSQLContext);
+    default ExpressionUpdatable<T> whereByIds(boolean condition, Object... ids) {
+        getClientUpdate().whereByIds(condition, ids);
+        return this;
+    }
+
+    default <TProperty> ExpressionUpdatable<T> whereByIds(Collection<TProperty> ids) {
+        getClientUpdate().whereByIds(ids);
+        return this;
+    }
+
+    default <TProperty> ExpressionUpdatable<T> whereByIds(boolean condition, Collection<TProperty> ids) {
+        getClientUpdate().whereByIds(condition, ids);
+        return this;
+    }
+
+    default ExpressionContext getExpressionContext() {
+        return getClientUpdate().getExpressionContext();
+    }
+
+    default String toSQL() {
+        return getClientUpdate().toSQL();
+    }
+
+    default String toSQL(ToSQLContext toSQLContext) {
+        return getClientUpdate().toSQL(toSQLContext);
+    }
 }
 
