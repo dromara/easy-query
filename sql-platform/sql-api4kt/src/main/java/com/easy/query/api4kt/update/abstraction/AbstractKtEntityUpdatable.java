@@ -21,6 +21,11 @@ public abstract class AbstractKtEntityUpdatable<T> implements KtEntityUpdatable<
     }
 
     @Override
+    public ClientEntityUpdatable<T> getClientUpdate() {
+        return entityObjectUpdatable;
+    }
+
+    @Override
     public long executeRows() {
         return entityObjectUpdatable.executeRows();
     }
