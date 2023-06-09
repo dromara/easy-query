@@ -11,6 +11,8 @@ import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
+import com.easy.query.core.exception.EasyQueryMultiPrimaryKeyException;
+import com.easy.query.core.exception.EasyQueryNoPrimaryKeyException;
 import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.lambda.SQLExpression3;
 import com.easy.query.core.expression.lambda.SQLExpression4;
@@ -26,6 +28,7 @@ import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.builder.impl.AnonymousUnionQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
 
+import java.util.Collection;
 import java.util.Objects;
 
 
@@ -199,13 +202,26 @@ public class EasySQLExpressionUtil {
     public static String getSQLOwnerColumn(QueryRuntimeContext runtimeContext, TableAvailable table, String propertyName,ToSQLContext toSQLContext){
         String alias = getTableAlias(toSQLContext,table);
         String columnName = table.getColumnName(propertyName);
-        String quoteName = getQuoteName(runtimeContext,columnName);
+        String quoteName = getQuoteName(runtimeContext, columnName);
         if (alias == null) {
             return quoteName;
         }
         return alias + "." + quoteName;
     }
+
     public static String getQuoteName(QueryRuntimeContext runtimeContext, String value) {
         return runtimeContext.getQueryConfiguration().getDialect().getQuoteName(value);
+    }
+
+
+    public static String getSingleKeyPropertyName(TableAvailable table) {
+        Collection<String> keyProperties = table.getEntityMetadata().getKeyProperties();
+        if (EasyCollectionUtil.isEmpty(keyProperties)) {
+            throw new EasyQueryNoPrimaryKeyException("entity:" + EasyClassUtil.getSimpleName(table.getEntityMetadata().getEntityClass()) + " no primary key");
+        }
+        if (EasyCollectionUtil.isNotSingle(keyProperties)) {
+            throw new EasyQueryMultiPrimaryKeyException("entity:" + EasyClassUtil.getSimpleName(table.getEntityMetadata().getEntityClass()) + " has multi primary key");
+        }
+        return EasyCollectionUtil.first(keyProperties);
     }
 }

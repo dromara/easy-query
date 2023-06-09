@@ -101,7 +101,7 @@ public class EasyQueryController {
     @GetMapping("/sayHello7")
     public Object sayHello7() {
         long l = easyQuery.deletable(TestUserMysql0.class)
-                .whereByIds("123321123321xxx3", "123321123321xxx2").allowDeleteStatement(true).disableLogicDelete()
+                .whereByIds(Arrays.asList("123321123321xxx3", "123321123321xxx2")).allowDeleteStatement(true).disableLogicDelete()
                 .noInterceptor().executeRows();
 
         try(Transaction transaction = easyQuery.beginTransaction()){

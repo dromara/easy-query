@@ -14,6 +14,8 @@ import com.easy.query.core.basic.api.internal.TableReNameable;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
+import com.easy.query.core.exception.EasyQueryMultiPrimaryKeyException;
+import com.easy.query.core.exception.EasyQueryNoPrimaryKeyException;
 import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
 import com.easy.query.core.exception.EasyQueryWhereInvalidOperationException;
 import com.easy.query.core.expression.lambda.Property;
@@ -172,8 +174,9 @@ public interface Queryable<T1> extends Query<T1>,
     Queryable<T1> select(String columns);
 
    default Queryable<T1> select(ColumnSegment columnSegment, boolean clearAll){
-       return select(Collections.singletonList(columnSegment),clearAll);
+       return select(Collections.singletonList(columnSegment), clearAll);
    }
+
     Queryable<T1> select(Collection<ColumnSegment> columnSegments, boolean clearAll);
 
     default Queryable<T1> where(SQLExpression1<SQLWherePredicate<T1>> whereExpression) {
@@ -182,21 +185,48 @@ public interface Queryable<T1> extends Query<T1>,
 
     Queryable<T1> where(boolean condition, SQLExpression1<SQLWherePredicate<T1>> whereExpression);
 
+    /**
+     * 根据id主键查询
+     *
+     * @param id 主键
+     * @return 链式表达式
+     * @throws EasyQueryNoPrimaryKeyException,EasyQueryMultiPrimaryKeyException @description 无主键或者多主键报错
+     */
+
     default Queryable<T1> whereById(Object id) {
         return whereById(true, id);
     }
 
+    /**
+     * @param condition
+     * @param id
+     * @return
+     * @throws EasyQueryNoPrimaryKeyException,EasyQueryMultiPrimaryKeyException @description 无主键或者多主键报错
+     */
+
     Queryable<T1> whereById(boolean condition, Object id);
 
-   default Queryable<T1> whereByIds(Object... ids){
-       return whereByIds(true,ids);
-   }
-    Queryable<T1> whereByIds(boolean condition,Object... ids);
+    /**
+     * @param ids
+     * @param <TProperty>
+     * @return
+     * @throws EasyQueryNoPrimaryKeyException,EasyQueryMultiPrimaryKeyException
+     */
 
-  default <TProperty> Queryable<T1> whereByIds(Collection<TProperty> ids){
-      return whereByIds(true,ids);
-  }
- <TProperty>  Queryable<T1> whereByIds(boolean condition,Collection<TProperty> ids);
+    default <TProperty> Queryable<T1> whereByIds(Collection<TProperty> ids) {
+        return whereByIds(true, ids);
+    }
+
+    /**
+     * 根据主键id集合查询
+     *
+     * @param condition   是否添加该条件
+     * @param ids         主键集合
+     * @param <TProperty> 主键类型
+     * @return 当前链式表达式
+     * @throws EasyQueryNoPrimaryKeyException,EasyQueryMultiPrimaryKeyException
+     */
+    <TProperty> Queryable<T1> whereByIds(boolean condition, Collection<TProperty> ids);
 
     /**
      * @param object

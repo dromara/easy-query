@@ -20,21 +20,16 @@ public interface ClientExpressionDeletable<T> extends Deletable<T, ClientExpress
     ClientExpressionDeletable<T> where(boolean condition, SQLExpression1<WherePredicate<T>> whereExpression);
 
 
-    default Deletable<T, ClientExpressionDeletable<T>> whereById(Object id) {
+    default ClientExpressionDeletable<T> whereById(Object id) {
         return whereById(true, id);
     }
 
-    Deletable<T, ClientExpressionDeletable<T>> whereById(boolean condition, Object id);
+    ClientExpressionDeletable<T> whereById(boolean condition, Object id);
 
-    default Deletable<T, ClientExpressionDeletable<T>> whereByIds(Object... ids) {
+
+    default <TProperty> ClientExpressionDeletable<T> whereByIds(Collection<TProperty> ids) {
         return whereByIds(true, ids);
     }
 
-    Deletable<T, ClientExpressionDeletable<T>> whereByIds(boolean condition, Object... ids);
-
-    default <TProperty> Deletable<T, ClientExpressionDeletable<T>> whereByIdCollection(Collection<TProperty> ids) {
-        return whereByIdCollection(true, ids);
-    }
-
-    <TProperty> Deletable<T, ClientExpressionDeletable<T>> whereByIdCollection(boolean condition, Collection<TProperty> ids);
+    <TProperty> ClientExpressionDeletable<T> whereByIds(boolean condition, Collection<TProperty> ids);
 }

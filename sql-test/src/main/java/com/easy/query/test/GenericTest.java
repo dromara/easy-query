@@ -15,6 +15,7 @@ import com.easy.query.core.util.EasyBase64Util;
 import com.easy.query.core.util.EasyBitwiseUtil;
 import com.easy.query.core.util.EasyStringUtil;
 import com.easy.query.test.encryption.DefaultAesEasyEncryptionStrategy;
+import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.notable.QueryLargeColumnTestEntity;
 import org.junit.Assert;
 import org.junit.Test;
@@ -331,13 +332,212 @@ public class GenericTest extends BaseTest{
     }
 
     @Test
-    public void linkedCaseInsensitiveMapTest1(){
+    public void linkedCaseInsensitiveMapTest1() {
         LinkedCaseInsensitiveMap<Object> objectLinkedCaseInsensitiveMap = new LinkedCaseInsensitiveMap<>();
-        Object put = objectLinkedCaseInsensitiveMap.put("123","123");
+        Object put = objectLinkedCaseInsensitiveMap.put("123", "123");
         Assert.assertNull(put);
         Object put1 = objectLinkedCaseInsensitiveMap.put("123", "456");
         Assert.assertNotNull(put1);
-        Assert.assertEquals("123",put1);
+        Assert.assertEquals("123", put1);
+    }
+
+    @Test
+    public void queryLargeColumnTest19() {
+        try {
+
+            QueryLargeColumnTestEntity queryLargeColumnTestEntity = new QueryLargeColumnTestEntity();
+            queryLargeColumnTestEntity.setId("123");
+            queryLargeColumnTestEntity.setName("123");
+            long l = easyQuery.updatable(queryLargeColumnTestEntity)
+                    .asTable("abc")
+                    .asSchema("xxx").setSQLStrategy(SQLExecuteStrategyEnum.ONLY_NULL_COLUMNS).executeRows();
+        } catch (Exception ex) {
+            Assert.assertTrue(ex instanceof EasyQueryException);
+            Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
+            Assert.assertTrue(ex.getCause() instanceof SQLException);
+            Assert.assertTrue(ex.getCause() instanceof EasyQuerySQLStatementException);
+            EasyQuerySQLStatementException ex1 = ((EasyQuerySQLStatementException) ex.getCause());
+            Assert.assertEquals("UPDATE `xxx`.`abc` SET `content` = ? WHERE `id` = ?", ex1.getSQL());
+            Assert.assertEquals("java.sql.BatchUpdateException: Table 'xxx.abc' doesn't exist", ex1.getMessage());
+        }
+    }
+
+    @Test
+    public void queryLargeColumnTest20() {
+        try {
+
+            QueryLargeColumnTestEntity queryLargeColumnTestEntity = new QueryLargeColumnTestEntity();
+            queryLargeColumnTestEntity.setId("123");
+            queryLargeColumnTestEntity.setName("123");
+            long l = easyQuery.updatable(queryLargeColumnTestEntity)
+                    .asTable(o -> o + "abc")
+                    .asSchema("xcv").setSQLStrategy(SQLExecuteStrategyEnum.ONLY_NULL_COLUMNS).executeRows();
+        } catch (Exception ex) {
+            Assert.assertTrue(ex instanceof EasyQueryException);
+            Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
+            Assert.assertTrue(ex.getCause() instanceof SQLException);
+            Assert.assertTrue(ex.getCause() instanceof EasyQuerySQLStatementException);
+            EasyQuerySQLStatementException ex1 = ((EasyQuerySQLStatementException) ex.getCause());
+            Assert.assertEquals("UPDATE `xcv`.`query_large_column_testabc` SET `content` = ? WHERE `id` = ?", ex1.getSQL());
+            Assert.assertEquals("java.sql.BatchUpdateException: Table 'xcv.query_large_column_testabc' doesn't exist", ex1.getMessage());
+        }
+    }
+
+    @Test
+    public void queryLargeColumnTest21() {
+        try {
+
+            QueryLargeColumnTestEntity queryLargeColumnTestEntity = new QueryLargeColumnTestEntity();
+            queryLargeColumnTestEntity.setId("123");
+            queryLargeColumnTestEntity.setName("123");
+            long l = easyQuery.updatable(queryLargeColumnTestEntity)
+                    .asTable("")
+                    .asSchema("xcv").setSQLStrategy(SQLExecuteStrategyEnum.ONLY_NULL_COLUMNS).executeRows();
+        } catch (Exception ex) {
+            Assert.assertTrue(ex instanceof IllegalArgumentException);
+            Assert.assertEquals("tableName is empty", ex.getMessage());
+        }
+    }
+
+    @Test
+    public void queryLargeColumnTest22() {
+        try {
+
+            long l = easyQuery.updatable(QueryLargeColumnTestEntity.class)
+                    .asTable(o -> o + "abc")
+                    .asSchema("xcv")
+                    .set(QueryLargeColumnTestEntity::getId, "123")
+                    .set(QueryLargeColumnTestEntity::getName, "123")
+                    .set(QueryLargeColumnTestEntity::getContent, "123")
+                    .executeRows();
+        } catch (Exception ex) {
+            Assert.assertTrue(ex instanceof EasyQueryException);
+            String message = ex.getMessage();
+            Assert.assertEquals("'UPDATE' statement without 'WHERE'", message);
+        }
+    }
+
+    @Test
+    public void queryLargeColumnTest23() {
+        try {
+
+            long l = easyQuery.updatable(QueryLargeColumnTestEntity.class)
+                    .set(QueryLargeColumnTestEntity::getId, "123")
+                    .set(QueryLargeColumnTestEntity::getName, "123")
+                    .set(QueryLargeColumnTestEntity::getContent, "123")
+                    .whereById("123")
+                    .executeRows();
+        } catch (Exception ex) {
+            Assert.assertTrue(ex instanceof EasyQueryException);
+            Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
+            Assert.assertTrue(ex.getCause() instanceof SQLException);
+            Assert.assertTrue(ex.getCause() instanceof EasyQuerySQLStatementException);
+            EasyQuerySQLStatementException ex1 = ((EasyQuerySQLStatementException) ex.getCause());
+            Assert.assertEquals("UPDATE `query_large_column_test` SET `id` = ?,`name` = ?,`content` = ? WHERE `id` = ?", ex1.getSQL());
+            Assert.assertEquals("java.sql.SQLSyntaxErrorException: Table 'easy-query-test.query_large_column_test' doesn't exist", ex1.getMessage());
+        }
+    }
+
+    @Test
+    public void updateTest24() {
+        try {
+
+            long l = easyQuery.updatable(BlogEntity.class)
+                    .asTable("x_t_blog")
+                    .setIncrement(BlogEntity::getStar)
+                    .whereById("123")
+                    .executeRows();
+        } catch (Exception ex) {
+            Assert.assertTrue(ex instanceof EasyQueryException);
+            Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
+            Assert.assertTrue(ex.getCause() instanceof SQLException);
+            Assert.assertTrue(ex.getCause() instanceof EasyQuerySQLStatementException);
+            EasyQuerySQLStatementException ex1 = ((EasyQuerySQLStatementException) ex.getCause());
+            Assert.assertEquals("UPDATE `x_t_blog` SET `star` = `star`+ ? WHERE `deleted` = ? AND `id` = ?", ex1.getSQL());
+            Assert.assertEquals("java.sql.SQLSyntaxErrorException: Table 'easy-query-test.x_t_blog' doesn't exist", ex1.getMessage());
+        }
+    }
+
+    @Test
+    public void updateTest25() {
+        try {
+
+            long l = easyQuery.updatable(BlogEntity.class)
+                    .asTable("x_t_blog")
+                    .setIncrement(BlogEntity::getStar, 2)
+                    .whereById("123")
+                    .executeRows();
+        } catch (Exception ex) {
+            Assert.assertTrue(ex instanceof EasyQueryException);
+            Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
+            Assert.assertTrue(ex.getCause() instanceof SQLException);
+            Assert.assertTrue(ex.getCause() instanceof EasyQuerySQLStatementException);
+            EasyQuerySQLStatementException ex1 = ((EasyQuerySQLStatementException) ex.getCause());
+            Assert.assertEquals("UPDATE `x_t_blog` SET `star` = `star`+ ? WHERE `deleted` = ? AND `id` = ?", ex1.getSQL());
+            Assert.assertEquals("java.sql.SQLSyntaxErrorException: Table 'easy-query-test.x_t_blog' doesn't exist", ex1.getMessage());
+        }
+    }
+
+    @Test
+    public void updateTest26() {
+        try {
+
+            long l = easyQuery.updatable(BlogEntity.class)
+                    .asTable("x_t_blog")
+                    .setIncrement(false, BlogEntity::getStar, 2)
+                    .setIncrement(BlogEntity::getScore, 2)
+                    .whereById("123")
+                    .executeRows();
+        } catch (Exception ex) {
+            Assert.assertTrue(ex instanceof EasyQueryException);
+            Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
+            Assert.assertTrue(ex.getCause() instanceof SQLException);
+            Assert.assertTrue(ex.getCause() instanceof EasyQuerySQLStatementException);
+            EasyQuerySQLStatementException ex1 = ((EasyQuerySQLStatementException) ex.getCause());
+            Assert.assertEquals("UPDATE `x_t_blog` SET `score` = `score`+ ? WHERE `deleted` = ? AND `id` = ?", ex1.getSQL());
+            Assert.assertEquals("java.sql.SQLSyntaxErrorException: Table 'easy-query-test.x_t_blog' doesn't exist", ex1.getMessage());
+        }
+    }
+
+    @Test
+    public void updateTest27() {
+        try {
+
+            long l = easyQuery.updatable(BlogEntity.class)
+                    .asTable("x_t_blog")
+                    .setDecrement(BlogEntity::getStar, 2)
+                    .whereById("123")
+                    .executeRows();
+        } catch (Exception ex) {
+            Assert.assertTrue(ex instanceof EasyQueryException);
+            Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
+            Assert.assertTrue(ex.getCause() instanceof SQLException);
+            Assert.assertTrue(ex.getCause() instanceof EasyQuerySQLStatementException);
+            EasyQuerySQLStatementException ex1 = ((EasyQuerySQLStatementException) ex.getCause());
+            Assert.assertEquals("UPDATE `x_t_blog` SET `star` = `star`- ? WHERE `deleted` = ? AND `id` = ?", ex1.getSQL());
+            Assert.assertEquals("java.sql.SQLSyntaxErrorException: Table 'easy-query-test.x_t_blog' doesn't exist", ex1.getMessage());
+        }
+    }
+
+    @Test
+    public void updateTest28() {
+        try {
+
+            long l = easyQuery.updatable(BlogEntity.class)
+                    .asTable("x_t_blog")
+                    .setIncrement(false, BlogEntity::getStatus, 1)
+                    .setIncrement(true, BlogEntity::getStar, 2)
+                    .whereById("123")
+                    .executeRows();
+        } catch (Exception ex) {
+            Assert.assertTrue(ex instanceof EasyQueryException);
+            Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
+            Assert.assertTrue(ex.getCause() instanceof SQLException);
+            Assert.assertTrue(ex.getCause() instanceof EasyQuerySQLStatementException);
+            EasyQuerySQLStatementException ex1 = ((EasyQuerySQLStatementException) ex.getCause());
+            Assert.assertEquals("UPDATE `x_t_blog` SET `star` = `star`+ ? WHERE `deleted` = ? AND `id` = ?", ex1.getSQL());
+            Assert.assertEquals("java.sql.SQLSyntaxErrorException: Table 'easy-query-test.x_t_blog' doesn't exist", ex1.getMessage());
+        }
     }
 
 }

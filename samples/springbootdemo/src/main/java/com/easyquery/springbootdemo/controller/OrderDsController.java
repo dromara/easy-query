@@ -63,7 +63,7 @@ public class OrderDsController {
     @GetMapping("/getTrans")
     public Object getTrans() {
         List<OrderDsEntity> list = easyQuery.queryable(OrderDsEntity.class)
-                .whereByIds("1", "2").toList();
+                .whereByIds(Arrays.asList("1", "2")).toList();
 
         return list;
     }

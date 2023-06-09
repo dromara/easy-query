@@ -21,21 +21,15 @@ public interface KtExpressionDeletable<T> extends Deletable<T, KtExpressionDelet
     KtExpressionDeletable<T> where(boolean condition, SQLExpression1<SQLKtWherePredicate<T>> whereExpression);
 
 
-    default Deletable<T, KtExpressionDeletable<T>> whereById(Object id) {
+    default KtExpressionDeletable<T> whereById(Object id) {
         return whereById(true, id);
     }
 
-    Deletable<T, KtExpressionDeletable<T>> whereById(boolean condition, Object id);
+    KtExpressionDeletable<T> whereById(boolean condition, Object id);
 
-    default Deletable<T, KtExpressionDeletable<T>> whereByIds(Object... ids) {
+    default <TProperty> KtExpressionDeletable<T> whereByIds(Collection<TProperty> ids) {
         return whereByIds(true, ids);
     }
 
-    Deletable<T, KtExpressionDeletable<T>> whereByIds(boolean condition, Object... ids);
-
-    default <TProperty> Deletable<T, KtExpressionDeletable<T>> whereByIdCollection(Collection<TProperty> ids) {
-        return whereByIdCollection(true, ids);
-    }
-
-    <TProperty> Deletable<T, KtExpressionDeletable<T>> whereByIdCollection(boolean condition, Collection<TProperty> ids);
+    <TProperty> KtExpressionDeletable<T> whereByIds(boolean condition, Collection<TProperty> ids);
 }

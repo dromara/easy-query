@@ -14,22 +14,22 @@ import java.util.Collection;
  * @author xuejiaming
  */
 public interface ExpressionDeletable<T> extends Deletable<T, ExpressionDeletable<T>>, Versionable<ExpressionDeletable<T>> {
-    default ExpressionDeletable<T> where(SQLExpression1<SQLWherePredicate<T>> whereExpression){
-        return where(true,whereExpression);
+    default ExpressionDeletable<T> where(SQLExpression1<SQLWherePredicate<T>> whereExpression) {
+        return where(true, whereExpression);
     }
+
     ExpressionDeletable<T> where(boolean condition, SQLExpression1<SQLWherePredicate<T>> whereExpression);
 
 
-   default Deletable<T, ExpressionDeletable<T>> whereById(Object id){
-       return whereById(true,id);
-   }
-    Deletable<T, ExpressionDeletable<T>> whereById(boolean condition,Object id);
-   default Deletable<T, ExpressionDeletable<T>> whereByIds(Object ...ids){
-       return whereByIds(true,ids);
-   }
-    Deletable<T, ExpressionDeletable<T>> whereByIds(boolean condition,Object ...ids);
-   default <TProperty> Deletable<T, ExpressionDeletable<T>> whereByIdCollection(Collection<TProperty> ids){
-       return whereByIdCollection(true,ids);
-   }
-    <TProperty> Deletable<T, ExpressionDeletable<T>> whereByIdCollection(boolean condition, Collection<TProperty> ids);
+    default ExpressionDeletable<T> whereById(Object id) {
+        return whereById(true, id);
+    }
+
+    ExpressionDeletable<T> whereById(boolean condition, Object id);
+
+    default <TProperty> ExpressionDeletable<T> whereByIds(Collection<TProperty> ids) {
+        return whereByIds(true, ids);
+    }
+
+    <TProperty> ExpressionDeletable<T> whereByIds(boolean condition, Collection<TProperty> ids);
 }

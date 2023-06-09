@@ -106,13 +106,6 @@ public interface ClientExpressionUpdatable<T> extends Updatable<T, ClientExpress
 
     ClientExpressionUpdatable<T> whereById(boolean condition, Object id);
 
-
-    default ClientExpressionUpdatable<T> whereByIds(Object... ids) {
-        return whereByIds(true, ids);
-    }
-
-    ClientExpressionUpdatable<T> whereByIds(boolean condition, Object... ids);
-
     default <TProperty> ClientExpressionUpdatable<T> whereByIds(Collection<TProperty> ids) {
         return whereByIds(true, ids);
     }

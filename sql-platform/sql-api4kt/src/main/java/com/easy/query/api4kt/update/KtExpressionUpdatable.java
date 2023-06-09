@@ -152,17 +152,6 @@ public interface KtExpressionUpdatable<T> extends Updatable<T, KtExpressionUpdat
         return this;
     }
 
-
-    default KtExpressionUpdatable<T> whereByIds(Object... ids) {
-        getClientUpdate().whereByIds(ids);
-        return this;
-    }
-
-    default KtExpressionUpdatable<T> whereByIds(boolean condition, Object... ids) {
-        getClientUpdate().whereByIds(condition, ids);
-        return this;
-    }
-
     default <TProperty> KtExpressionUpdatable<T> whereByIds(Collection<TProperty> ids) {
         getClientUpdate().whereByIds(ids);
         return this;

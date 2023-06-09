@@ -1,11 +1,15 @@
 package com.easy.query.test;
 
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
+import com.easy.query.core.exception.EasyQuerySQLCommandException;
+import com.easy.query.core.exception.EasyQuerySQLStatementException;
 import com.easy.query.test.entity.Topic;
+import com.easy.query.test.entity.TopicValueUpdateAtomicTrack;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 
 /**
  * @FileName: DeleteTest.java
@@ -92,13 +96,101 @@ public class DeleteTest  extends BaseTest {
             topic.setCreateTime(LocalDateTime.now());
             topic.setStars(995);
             long l = easyQuery.insertable(topic).executeRows();
-            Assert.assertEquals(1,l);
+            Assert.assertEquals(1, l);
         }
         try {
             long l = easyQuery.deletable(Topic.class).whereById("999").allowDeleteStatement(false).executeRows();
-        }catch (Exception e){
-            Assert.assertEquals(EasyQueryInvalidOperationException.class,e.getClass());
+        } catch (Exception e) {
+            Assert.assertEquals(EasyQueryInvalidOperationException.class, e.getClass());
         }
 
+    }
+
+    @Test
+    public void deleteTest7() {
+
+        try {
+            long l = easyQuery.deletable(TopicValueUpdateAtomicTrack.class).whereByIds(Arrays.asList("1", "2")).executeRows();
+        } catch (Exception ex) {
+            Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
+            EasyQuerySQLCommandException ex1 = (EasyQuerySQLCommandException) ex;
+            Assert.assertTrue(ex1.getCause() instanceof EasyQuerySQLStatementException);
+            String sql = ((EasyQuerySQLStatementException) ex1.getCause()).getSQL();
+            Assert.assertEquals("DELETE FROM `t_topic_value_atomic` WHERE `id` IN (?,?)", sql);
+        }
+    }
+
+    @Test
+    public void deleteTest8() {
+
+        try {
+            long l = easyQuery.deletable(TopicValueUpdateAtomicTrack.class).whereByIds(Arrays.asList("1", "2")).executeRows();
+        } catch (Exception ex) {
+            Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
+            EasyQuerySQLCommandException ex1 = (EasyQuerySQLCommandException) ex;
+            Assert.assertTrue(ex1.getCause() instanceof EasyQuerySQLStatementException);
+            String sql = ((EasyQuerySQLStatementException) ex1.getCause()).getSQL();
+            Assert.assertEquals("DELETE FROM `t_topic_value_atomic` WHERE `id` IN (?,?)", sql);
+        }
+    }
+
+    @Test
+    public void deleteTest9() {
+
+        try {
+            long l = easyQuery.deletable(TopicValueUpdateAtomicTrack.class).whereByIds(true, Arrays.asList("1", "2")).executeRows();
+        } catch (Exception ex) {
+            Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
+            EasyQuerySQLCommandException ex1 = (EasyQuerySQLCommandException) ex;
+            Assert.assertTrue(ex1.getCause() instanceof EasyQuerySQLStatementException);
+            String sql = ((EasyQuerySQLStatementException) ex1.getCause()).getSQL();
+            Assert.assertEquals("DELETE FROM `t_topic_value_atomic` WHERE `id` IN (?,?)", sql);
+        }
+    }
+
+    @Test
+    public void deleteTest10() {
+
+        try {
+            long l = easyQuery.deletable(TopicValueUpdateAtomicTrack.class).whereByIds(true, Arrays.asList("1", "2")).executeRows();
+        } catch (Exception ex) {
+            Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
+            EasyQuerySQLCommandException ex1 = (EasyQuerySQLCommandException) ex;
+            Assert.assertTrue(ex1.getCause() instanceof EasyQuerySQLStatementException);
+            String sql = ((EasyQuerySQLStatementException) ex1.getCause()).getSQL();
+            Assert.assertEquals("DELETE FROM `t_topic_value_atomic` WHERE `id` IN (?,?)", sql);
+        }
+    }
+
+    @Test
+    public void deleteTest11() {
+        try {
+            long l = easyQuery.deletable(TopicValueUpdateAtomicTrack.class)
+                    .asSchema("abc")
+                    .asTable("aaa")
+                    .noInterceptor().whereByIds(false, Arrays.asList("1", "2")).whereByIds(true, Arrays.asList("1", "2", "3")).executeRows();
+        } catch (Exception ex) {
+            Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
+            EasyQuerySQLCommandException ex1 = (EasyQuerySQLCommandException) ex;
+            Assert.assertTrue(ex1.getCause() instanceof EasyQuerySQLStatementException);
+            String sql = ((EasyQuerySQLStatementException) ex1.getCause()).getSQL();
+            Assert.assertEquals("DELETE FROM `abc`.`aaa` WHERE `id` IN (?,?,?)", sql);
+        }
+    }
+
+    @Test
+    public void deleteTest12() {
+        try {
+            long l = easyQuery.deletable(TopicValueUpdateAtomicTrack.class)
+                    .asSchema(o -> "abc")
+                    .asTable(o -> o + "aaa")
+                    .noInterceptor().whereByIds(false, Arrays.asList("1", "2")).whereByIds(true, Arrays.asList("1", "2", "3")).executeRows();
+        } catch (Exception ex) {
+            Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
+            EasyQuerySQLCommandException ex1 = (EasyQuerySQLCommandException) ex;
+            Assert.assertTrue(ex1.getCause() instanceof EasyQuerySQLStatementException);
+            String sql = ((EasyQuerySQLStatementException) ex1.getCause()).getSQL();
+            Assert.assertEquals("DELETE FROM `abc`.`t_topic_value_atomicaaa` WHERE `id` IN (?,?,?)", sql);
+        }
     }
 }

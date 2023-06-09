@@ -162,14 +162,6 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     }
 
     @Override
-    public Queryable<T1> whereByIds(boolean condition, Object... ids) {
-        if (condition) {
-            entityQueryable.whereByIds(ids);
-        }
-        return this;
-    }
-
-    @Override
     public <TProperty> Queryable<T1> whereByIds(boolean condition, Collection<TProperty> ids) {
 
         if (condition) {

@@ -152,16 +152,6 @@ public interface ExpressionUpdatable<T> extends Updatable<T, ExpressionUpdatable
     }
 
 
-    default ExpressionUpdatable<T> whereByIds(Object... ids) {
-        getClientUpdate().whereByIds(ids);
-        return this;
-    }
-
-    default ExpressionUpdatable<T> whereByIds(boolean condition, Object... ids) {
-        getClientUpdate().whereByIds(condition, ids);
-        return this;
-    }
-
     default <TProperty> ExpressionUpdatable<T> whereByIds(Collection<TProperty> ids) {
         getClientUpdate().whereByIds(ids);
         return this;

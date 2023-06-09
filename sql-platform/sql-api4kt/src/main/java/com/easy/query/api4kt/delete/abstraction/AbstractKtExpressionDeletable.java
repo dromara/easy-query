@@ -4,7 +4,6 @@ import com.easy.query.api4kt.delete.KtExpressionDeletable;
 import com.easy.query.api4kt.sql.SQLKtWherePredicate;
 import com.easy.query.api4kt.sql.impl.SQLKtWherePredicateImpl;
 import com.easy.query.core.basic.api.delete.ClientExpressionDeletable;
-import com.easy.query.core.basic.api.delete.Deletable;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
@@ -62,7 +61,7 @@ public abstract class AbstractKtExpressionDeletable<T> implements KtExpressionDe
     }
 
     @Override
-    public Deletable<T, KtExpressionDeletable<T>> whereById(boolean condition, Object id) {
+    public KtExpressionDeletable<T> whereById(boolean condition, Object id) {
 
         if (condition) {
             expressionObjectDeletable.whereById(id);
@@ -71,18 +70,10 @@ public abstract class AbstractKtExpressionDeletable<T> implements KtExpressionDe
     }
 
     @Override
-    public Deletable<T, KtExpressionDeletable<T>> whereByIds(boolean condition, Object... ids) {
+    public <TProperty> KtExpressionDeletable<T> whereByIds(boolean condition, Collection<TProperty> ids) {
+
         if (condition) {
             expressionObjectDeletable.whereByIds(ids);
-        }
-        return this;
-    }
-
-    @Override
-    public <TProperty> Deletable<T, KtExpressionDeletable<T>> whereByIdCollection(boolean condition, Collection<TProperty> ids) {
-
-        if (condition) {
-            expressionObjectDeletable.whereByIdCollection(ids);
         }
         return this;
     }

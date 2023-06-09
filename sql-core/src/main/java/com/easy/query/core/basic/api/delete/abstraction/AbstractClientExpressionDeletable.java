@@ -1,6 +1,5 @@
 package com.easy.query.core.basic.api.delete.abstraction;
 
-import com.easy.query.core.basic.api.delete.Deletable;
 import com.easy.query.core.basic.api.delete.ClientExpressionDeletable;
 import com.easy.query.core.basic.api.internal.AbstractSQLExecuteRows;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
@@ -10,7 +9,6 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.enums.SQLPredicateCompareEnum;
-import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.parser.core.base.impl.WherePredicateImpl;
@@ -22,12 +20,9 @@ import com.easy.query.core.expression.sql.builder.EntityDeleteExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.metadata.EntityMetadata;
-import com.easy.query.core.util.EasyClassUtil;
-import com.easy.query.core.util.EasyCollectionUtil;
+import com.easy.query.core.util.EasySQLExpressionUtil;
 
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.function.Function;
 
 /**
@@ -91,11 +86,11 @@ public abstract class AbstractClientExpressionDeletable<T> extends AbstractSQLEx
     }
 
     @Override
-    public Deletable<T, ClientExpressionDeletable<T>> whereById(boolean condition, Object id) {
+    public ClientExpressionDeletable<T> whereById(boolean condition, Object id) {
 
         if (condition) {
             PredicateSegment where = entityDeleteExpressionBuilder.getWhere();
-            String keyProperty = getSingleKeyPropertyName();
+            String keyProperty = EasySQLExpressionUtil.getSingleKeyPropertyName(table.getEntityTable());
             AndPredicateSegment andPredicateSegment = new AndPredicateSegment();
             andPredicateSegment
                     .setPredicate(new ColumnValuePredicate(table.getEntityTable(), keyProperty, id, SQLPredicateCompareEnum.EQ, entityDeleteExpressionBuilder.getRuntimeContext()));
@@ -103,40 +98,13 @@ public abstract class AbstractClientExpressionDeletable<T> extends AbstractSQLEx
         }
         return this;
     }
-    private String getSingleKeyPropertyName(){
-        Collection<String> keyProperties = table.getEntityMetadata().getKeyProperties();
-        if(EasyCollectionUtil.isEmpty(keyProperties)){
-            throw new EasyQueryException("对象:"+ EasyClassUtil.getSimpleName(clazz)+"未找到主键信息");
-        }
-        if(EasyCollectionUtil.isNotSingle(keyProperties)){
-            throw new EasyQueryException("对象:"+ EasyClassUtil.getSimpleName(clazz)+"存在多个主键");
-        }
-        return EasyCollectionUtil.first(keyProperties);
-    }
-
-    private Collection<?> extractIds(Object... ids) {
-        if (ids == null || ids.length == 0) {
-            return Collections.emptyList();
-        }
-        return Arrays.asList(ids);
-    }
 
     @Override
-    public Deletable<T, ClientExpressionDeletable<T>> whereByIds(boolean condition, Object... ids) {
-        if (condition) {
-
-            Collection<?> extractIds = extractIds(ids);
-            return whereByIdCollection(true, extractIds);
-        }
-        return this;
-    }
-
-    @Override
-    public <TProperty> Deletable<T, ClientExpressionDeletable<T>> whereByIdCollection(boolean condition, Collection<TProperty> ids) {
+    public <TProperty> ClientExpressionDeletable<T> whereByIds(boolean condition, Collection<TProperty> ids) {
 
         if (condition) {
             PredicateSegment where = entityDeleteExpressionBuilder.getWhere();
-            String keyProperty = getSingleKeyPropertyName();
+            String keyProperty = EasySQLExpressionUtil.getSingleKeyPropertyName(table.getEntityTable());
             AndPredicateSegment andPredicateSegment = new AndPredicateSegment();
             andPredicateSegment
                     .setPredicate(new ColumnCollectionPredicate(table.getEntityTable(), keyProperty, ids, SQLPredicateCompareEnum.IN, entityDeleteExpressionBuilder.getRuntimeContext()));

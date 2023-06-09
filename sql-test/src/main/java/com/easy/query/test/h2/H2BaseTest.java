@@ -9,7 +9,7 @@ import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.sharding.route.manager.TableRouteManager;
-import com.easy.query.mysql.config.MySQLDatabaseConfiguration;
+import com.easy.query.h2.config.H2DatabaseConfiguration;
 import com.easy.query.test.h2.domain.*;
 import com.easy.query.test.h2.sharding.H2OrderRule;
 import com.easy.query.test.h2.sharding.H2OrderShardingInitializer;
@@ -98,7 +98,7 @@ public class H2BaseTest {
                     op.setMaxShardingRouteCount(512);
                     op.setDefaultDataSourceMergePoolSize(20);
                 })
-                .useDatabaseConfigure(new MySQLDatabaseConfiguration())
+                .useDatabaseConfigure(new H2DatabaseConfiguration())
                 .build();
         easyQuery = new DefaultEasyQuery(easyObjectQuery);
         EasyQueryClient easyQueryClientOrder = EasyQueryBootstrapper.defaultBuilderConfiguration()

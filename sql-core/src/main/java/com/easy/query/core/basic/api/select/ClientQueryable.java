@@ -8,6 +8,8 @@ import com.easy.query.core.basic.api.internal.QueryStrategy;
 import com.easy.query.core.basic.api.internal.TableReNameable;
 import com.easy.query.core.basic.api.select.provider.SQLExpressionProvider;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
+import com.easy.query.core.exception.EasyQueryMultiPrimaryKeyException;
+import com.easy.query.core.exception.EasyQueryNoPrimaryKeyException;
 import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
 import com.easy.query.core.exception.EasyQueryWhereInvalidOperationException;
 import com.easy.query.core.expression.lambda.SQLExpression1;
@@ -161,17 +163,35 @@ public interface ClientQueryable<T1> extends Query<T1>,
 
     ClientQueryable<T1> where(boolean condition, SQLExpression1<WherePredicate<T1>> whereExpression);
 
+    /**
+     * 根据id查询
+     *
+     * @param id
+     * @return
+     * @throws EasyQueryNoPrimaryKeyException,EasyQueryMultiPrimaryKeyException
+     */
     default ClientQueryable<T1> whereById(Object id) {
         return whereById(true, id);
     }
 
+    /**
+     * 根据id进行查询
+     *
+     * @param condition 是否追加条件
+     * @param id        主键
+     * @return
+     * @throws EasyQueryNoPrimaryKeyException,EasyQueryMultiPrimaryKeyException
+     */
     ClientQueryable<T1> whereById(boolean condition, Object id);
 
-    default ClientQueryable<T1> whereByIds(Object... ids) {
-        return whereByIds(true, ids);
-    }
-
-    ClientQueryable<T1> whereByIds(boolean condition, Object... ids);
+    /**
+     * 根据id集合进行查询
+     *
+     * @param ids
+     * @param <TProperty>
+     * @return
+     * @throws EasyQueryNoPrimaryKeyException,EasyQueryMultiPrimaryKeyException
+     */
 
     default <TProperty> ClientQueryable<T1> whereByIds(Collection<TProperty> ids) {
         return whereByIds(true, ids);

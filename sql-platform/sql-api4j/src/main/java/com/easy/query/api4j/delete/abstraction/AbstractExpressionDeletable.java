@@ -3,7 +3,6 @@ package com.easy.query.api4j.delete.abstraction;
 import com.easy.query.api4j.delete.ExpressionDeletable;
 import com.easy.query.api4j.sql.SQLWherePredicate;
 import com.easy.query.api4j.sql.impl.SQLWherePredicateImpl;
-import com.easy.query.core.basic.api.delete.Deletable;
 import com.easy.query.core.basic.api.delete.ClientExpressionDeletable;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.expression.lambda.SQLExpression1;
@@ -62,7 +61,7 @@ public abstract class AbstractExpressionDeletable<T> implements ExpressionDeleta
     }
 
     @Override
-    public Deletable<T, ExpressionDeletable<T>> whereById(boolean condition, Object id) {
+    public ExpressionDeletable<T> whereById(boolean condition, Object id) {
 
         if (condition) {
             expressionObjectDeletable.whereById(id);
@@ -71,18 +70,10 @@ public abstract class AbstractExpressionDeletable<T> implements ExpressionDeleta
     }
 
     @Override
-    public Deletable<T, ExpressionDeletable<T>> whereByIds(boolean condition, Object... ids) {
+    public <TProperty> ExpressionDeletable<T> whereByIds(boolean condition, Collection<TProperty> ids) {
+
         if (condition) {
             expressionObjectDeletable.whereByIds(ids);
-        }
-        return this;
-    }
-
-    @Override
-    public <TProperty> Deletable<T, ExpressionDeletable<T>> whereByIdCollection(boolean condition, Collection<TProperty> ids) {
-
-        if (condition) {
-            expressionObjectDeletable.whereByIdCollection(ids);
         }
         return this;
     }

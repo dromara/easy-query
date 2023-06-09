@@ -18,10 +18,7 @@ import com.easy.query.core.basic.pagination.EasyPageResultProvider;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.*;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
-import com.easy.query.core.exception.EasyQueryException;
-import com.easy.query.core.exception.EasyQueryFirstOrNotNullException;
-import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
-import com.easy.query.core.exception.EasyQueryWhereInvalidOperationException;
+import com.easy.query.core.exception.*;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression2;
@@ -370,32 +367,11 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
 
             PredicateSegment where = entityQueryExpressionBuilder.getWhere();
             TableAvailable table = entityQueryExpressionBuilder.getTable(0).getEntityTable();
-            String keyProperty = getSingleKeyPropertyName(table);
+            String keyProperty = EasySQLExpressionUtil.getSingleKeyPropertyName(table);
             AndPredicateSegment andPredicateSegment = new AndPredicateSegment();
             andPredicateSegment
                     .setPredicate(new ColumnValuePredicate(table, keyProperty, id, SQLPredicateCompareEnum.EQ, entityQueryExpressionBuilder.getRuntimeContext()));
             where.addPredicateSegment(andPredicateSegment);
-        }
-        return this;
-    }
-
-
-    private String getSingleKeyPropertyName(TableAvailable table) {
-        Collection<String> keyProperties = table.getEntityMetadata().getKeyProperties();
-        if (EasyCollectionUtil.isEmpty(keyProperties)) {
-            throw new EasyQueryException("对象:" + EasyClassUtil.getSimpleName(t1Class) + "未找到主键信息");
-        }
-        if (EasyCollectionUtil.isNotSingle(keyProperties)) {
-            throw new EasyQueryException("对象:" + EasyClassUtil.getSimpleName(t1Class) + "存在多个主键");
-        }
-        return EasyCollectionUtil.first(keyProperties);
-    }
-
-    @Override
-    public ClientQueryable<T1> whereByIds(boolean condition, Object... ids) {
-        if (condition) {
-            Collection<?> extractIds = extractIds(ids);
-            return whereByIds(true, extractIds);
         }
         return this;
     }
@@ -406,21 +382,13 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         if (condition) {
             PredicateSegment where = entityQueryExpressionBuilder.getWhere();
             TableAvailable table = entityQueryExpressionBuilder.getTable(0).getEntityTable();
-            String keyProperty = getSingleKeyPropertyName(table);
+            String keyProperty = EasySQLExpressionUtil.getSingleKeyPropertyName(table);
             AndPredicateSegment andPredicateSegment = new AndPredicateSegment();
             andPredicateSegment
                     .setPredicate(new ColumnCollectionPredicate(table, keyProperty, ids, SQLPredicateCompareEnum.IN, entityQueryExpressionBuilder.getRuntimeContext()));
             where.addPredicateSegment(andPredicateSegment);
         }
         return this;
-    }
-
-
-    private Collection<?> extractIds(Object... ids) {
-        if (ids == null || ids.length == 0) {
-            return Collections.emptyList();
-        }
-        return Arrays.asList(ids);
     }
 
     /**

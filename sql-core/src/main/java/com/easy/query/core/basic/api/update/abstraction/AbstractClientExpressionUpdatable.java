@@ -9,7 +9,6 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.enums.SQLPredicateCompareEnum;
-import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnSetter;
@@ -24,12 +23,9 @@ import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.metadata.EntityMetadata;
-import com.easy.query.core.util.EasyClassUtil;
-import com.easy.query.core.util.EasyCollectionUtil;
+import com.easy.query.core.util.EasySQLExpressionUtil;
 
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.function.Function;
 
 /**
@@ -68,13 +64,13 @@ public abstract class AbstractClientExpressionUpdatable<T> extends AbstractSQLEx
 
     @Override
     public ClientExpressionUpdatable<T> set(boolean condition, String property, Object val) {
-        columnSetter.set(true, property, val);
+        columnSetter.set(condition, property, val);
         return this;
     }
 
     @Override
     public ClientExpressionUpdatable<T> setWithColumn(boolean condition, String property1, String property2) {
-        columnSetter.setWithColumn(true, property1, property2);
+        columnSetter.setWithColumn(condition, property1, property2);
         return this;
     }
 
@@ -88,13 +84,13 @@ public abstract class AbstractClientExpressionUpdatable<T> extends AbstractSQLEx
 
     @Override
     public ClientExpressionUpdatable<T> setIncrementNumber(boolean condition, String property, Number val) {
-        columnSetter.setIncrementNumber(true, property, val);
+        columnSetter.setIncrementNumber(condition, property, val);
         return this;
     }
 
     @Override
     public ClientExpressionUpdatable<T> setDecrementNumber(boolean condition, String property, Number val) {
-        columnSetter.setDecrementNumber(true, property, val);
+        columnSetter.setDecrementNumber(condition, property, val);
         return this;
     }
 
@@ -114,7 +110,8 @@ public abstract class AbstractClientExpressionUpdatable<T> extends AbstractSQLEx
         if (condition) {
 
             PredicateSegment where = entityUpdateExpressionBuilder.getWhere();
-            String keyProperty = getSingleKeyPropertyName();
+
+            String keyProperty = EasySQLExpressionUtil.getSingleKeyPropertyName(table);
             AndPredicateSegment andPredicateSegment = new AndPredicateSegment();
             andPredicateSegment
                     .setPredicate(new ColumnValuePredicate(table, keyProperty, id, SQLPredicateCompareEnum.EQ, entityUpdateExpressionBuilder.getRuntimeContext()));
@@ -123,31 +120,11 @@ public abstract class AbstractClientExpressionUpdatable<T> extends AbstractSQLEx
         return this;
     }
 
-    private String getSingleKeyPropertyName() {
-        Collection<String> keyProperties = table.getEntityMetadata().getKeyProperties();
-        if (EasyCollectionUtil.isEmpty(keyProperties)) {
-            throw new EasyQueryException("对象:" + EasyClassUtil.getSimpleName(clazz) + "未找到主键信息");
-        }
-        if (EasyCollectionUtil.isNotSingle(keyProperties)) {
-            throw new EasyQueryException("对象:" + EasyClassUtil.getSimpleName(clazz) + "存在多个主键");
-        }
-        return EasyCollectionUtil.first(keyProperties);
-    }
-
-    @Override
-    public ClientExpressionUpdatable<T> whereByIds(boolean condition, Object... ids) {
-        if (condition) {
-            Collection<?> extractIds = extractIds(ids);
-            return whereByIds(true, extractIds);
-        }
-        return this;
-    }
-
     @Override
     public <TProperty> ClientExpressionUpdatable<T> whereByIds(boolean condition, Collection<TProperty> ids) {
 
         if (condition) {
-            String keyProperty = getSingleKeyPropertyName();
+            String keyProperty = EasySQLExpressionUtil.getSingleKeyPropertyName(table);
             AndPredicateSegment andPredicateSegment = new AndPredicateSegment();
             PredicateSegment where = entityUpdateExpressionBuilder.getWhere();
             andPredicateSegment
@@ -155,14 +132,6 @@ public abstract class AbstractClientExpressionUpdatable<T> extends AbstractSQLEx
             where.addPredicateSegment(andPredicateSegment);
         }
         return this;
-    }
-
-
-    private Collection<?> extractIds(Object... ids) {
-        if (ids == null || ids.length == 0) {
-            return Collections.emptyList();
-        }
-        return Arrays.asList(ids);
     }
 
     @Override

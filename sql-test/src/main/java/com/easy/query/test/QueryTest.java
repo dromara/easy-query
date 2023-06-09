@@ -1834,7 +1834,7 @@ public class QueryTest extends BaseTest {
 
         Assert.assertTrue(integer == 33);
         Integer integer1 = easyQuery.queryable(BlogEntity.class)
-                .whereByIds("11", "22")
+                .whereByIds(Arrays.asList("11", "22"))
                 .sumOrNull(BlogEntity::getStar);
 
         Assert.assertTrue(integer1 == 33);

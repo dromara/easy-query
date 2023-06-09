@@ -183,12 +183,6 @@ public interface KtQueryable<T1> extends Query<T1>,
 
     KtQueryable<T1> whereById(boolean condition, Object id);
 
-    default KtQueryable<T1> whereByIds(Object... ids) {
-        return whereByIds(true, ids);
-    }
-
-    KtQueryable<T1> whereByIds(boolean condition, Object... ids);
-
     default <TProperty> KtQueryable<T1> whereByIds(Collection<TProperty> ids) {
         return whereByIds(true, ids);
     }

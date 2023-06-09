@@ -28,7 +28,7 @@ public class H2QueryTest extends H2BaseTest {
                 .toList();
         Assert.assertEquals(1, list.size());
         String sql = where.cloneQueryable().toSQL();
-        Assert.assertEquals("SELECT t.`id`,t.`user_name`,t.`nickname`,t.`enable`,t.`score`,t.`mobile`,t.`avatar`,t.`number`,t.`status`,t.`created`,t.`options` FROM `t_def_table` t LEFT JOIN `t_def_table_left1` t1 ON t.`id` = t1.`def_id` WHERE t.`id` = ? AND t1.`id` = ?", sql);
+        Assert.assertEquals("SELECT t.id,t.user_name,t.nickname,t.enable,t.score,t.mobile,t.avatar,t.number,t.status,t.created,t.options FROM t_def_table t LEFT JOIN t_def_table_left1 t1 ON t.id = t1.def_id WHERE t.id = ? AND t1.id = ?", sql);
     }
 
     @Test
@@ -40,7 +40,7 @@ public class H2QueryTest extends H2BaseTest {
                 .toList();
         Assert.assertEquals(1, list.size());
         String sql = where.cloneQueryable().toSQL();
-        Assert.assertEquals("SELECT t.`id`,t.`user_name`,t.`nickname`,t.`enable`,t.`score`,t.`mobile`,t.`avatar`,t.`number`,t.`status`,t.`created`,t.`options` FROM `t_def_table` t LEFT JOIN `t_def_table_left1` t1 ON t.`id` = t1.`def_id` WHERE t.`id` = ?", sql);
+        Assert.assertEquals("SELECT t.id,t.user_name,t.nickname,t.enable,t.score,t.mobile,t.avatar,t.number,t.status,t.created,t.options FROM t_def_table t LEFT JOIN t_def_table_left1 t1 ON t.id = t1.def_id WHERE t.id = ?", sql);
     }
 
     @Test
@@ -54,7 +54,7 @@ public class H2QueryTest extends H2BaseTest {
                 .toList();
         Assert.assertEquals(1, list.size());
         String sql = where.cloneQueryable().toSQL();
-        Assert.assertEquals("SELECT t.`id`,t.`user_name`,t.`nickname`,t.`enable`,t.`score`,t.`mobile`,t.`avatar`,t.`number`,t.`status`,t.`created`,t.`options` FROM `t_def_table` t LEFT JOIN `t_def_table_left1` t1 ON t.`id` = t1.`def_id` LEFT JOIN `t_def_table_left2` t2 ON t.`id` = t2.`def1_id` WHERE t.`id` = ? AND t1.`id` = ? AND t2.`id` = ?", sql);
+        Assert.assertEquals("SELECT t.id,t.user_name,t.nickname,t.enable,t.score,t.mobile,t.avatar,t.number,t.status,t.created,t.options FROM t_def_table t LEFT JOIN t_def_table_left1 t1 ON t.id = t1.def_id LEFT JOIN t_def_table_left2 t2 ON t.id = t2.def1_id WHERE t.id = ? AND t1.id = ? AND t2.id = ?", sql);
     }
 
     @Test
@@ -67,7 +67,7 @@ public class H2QueryTest extends H2BaseTest {
                 .toList();
         Assert.assertEquals(1, list.size());
         String sql = where.cloneQueryable().toSQL();
-        Assert.assertEquals("SELECT t.`id`,t.`user_name`,t.`nickname`,t.`enable`,t.`score`,t.`mobile`,t.`avatar`,t.`number`,t.`status`,t.`created`,t.`options` FROM `t_def_table` t LEFT JOIN `t_def_table_left1` t1 ON t.`id` = t1.`def_id` LEFT JOIN `t_def_table_left2` t2 ON t.`id` = t2.`def1_id` WHERE t.`id` = ?", sql);
+        Assert.assertEquals("SELECT t.id,t.user_name,t.nickname,t.enable,t.score,t.mobile,t.avatar,t.number,t.status,t.created,t.options FROM t_def_table t LEFT JOIN t_def_table_left1 t1 ON t.id = t1.def_id LEFT JOIN t_def_table_left2 t2 ON t.id = t2.def1_id WHERE t.id = ?", sql);
     }
 
     @Test
@@ -81,7 +81,7 @@ public class H2QueryTest extends H2BaseTest {
                 .toList();
         Assert.assertEquals(1, list.size());
         String sql = where.cloneQueryable().toSQL();
-        Assert.assertEquals("SELECT t.`id`,t.`user_name`,t.`nickname`,t.`enable`,t.`score`,t.`mobile`,t.`avatar`,t.`number`,t.`status`,t.`created`,t.`options` FROM `t_def_table` t LEFT JOIN `t_def_table_left1` t1 ON t.`id` = t1.`def_id` LEFT JOIN `t_def_table_left3` t2 ON t.`id` = t2.`def2_id` WHERE t.`id` = ? AND t1.`id` = ? AND t2.`id` = ?", sql);
+        Assert.assertEquals("SELECT t.id,t.user_name,t.nickname,t.enable,t.score,t.mobile,t.avatar,t.number,t.status,t.created,t.options FROM t_def_table t LEFT JOIN t_def_table_left1 t1 ON t.id = t1.def_id LEFT JOIN t_def_table_left3 t2 ON t.id = t2.def2_id WHERE t.id = ? AND t1.id = ? AND t2.id = ?", sql);
     }
 
     @Test
@@ -94,7 +94,7 @@ public class H2QueryTest extends H2BaseTest {
                 .toList();
         Assert.assertEquals(1, list.size());
         String sql = where.cloneQueryable().toSQL();
-        Assert.assertEquals("SELECT t.`id`,t.`user_name`,t.`nickname`,t.`enable`,t.`score`,t.`mobile`,t.`avatar`,t.`number`,t.`status`,t.`created`,t.`options` FROM `t_def_table` t LEFT JOIN `t_def_table_left1` t1 ON t.`id` = t1.`def_id` LEFT JOIN `t_def_table_left3` t2 ON t.`id` = t2.`def2_id` WHERE t.`id` = ?", sql);
+        Assert.assertEquals("SELECT t.id,t.user_name,t.nickname,t.enable,t.score,t.mobile,t.avatar,t.number,t.status,t.created,t.options FROM t_def_table t LEFT JOIN t_def_table_left1 t1 ON t.id = t1.def_id LEFT JOIN t_def_table_left3 t2 ON t.id = t2.def2_id WHERE t.id = ?", sql);
     }
 
     @Test
@@ -109,7 +109,7 @@ public class H2QueryTest extends H2BaseTest {
                 .toList();
         Assert.assertEquals(1, list.size());
         String sql = where.cloneQueryable().toSQL();
-        Assert.assertEquals("SELECT t.`id`,t.`user_name`,t.`nickname`,t.`enable`,t.`score`,t.`mobile`,t.`avatar`,t.`number`,t.`status`,t.`created`,t.`options` FROM `t_def_table` t LEFT JOIN `t_def_table_left1` t1 ON t.`id` = t1.`def_id` LEFT JOIN `t_def_table_left2` t2 ON t.`id` = t2.`def1_id` LEFT JOIN `t_def_table_left3` t3 ON t.`id` = t3.`def2_id` WHERE t.`id` = ? AND t1.`id` = ? AND t2.`id` = ? AND t3.`id` = ?", sql);
+        Assert.assertEquals("SELECT t.id,t.user_name,t.nickname,t.enable,t.score,t.mobile,t.avatar,t.number,t.status,t.created,t.options FROM t_def_table t LEFT JOIN t_def_table_left1 t1 ON t.id = t1.def_id LEFT JOIN t_def_table_left2 t2 ON t.id = t2.def1_id LEFT JOIN t_def_table_left3 t3 ON t.id = t3.def2_id WHERE t.id = ? AND t1.id = ? AND t2.id = ? AND t3.id = ?", sql);
     }
 
     @Test
@@ -123,6 +123,6 @@ public class H2QueryTest extends H2BaseTest {
                 .toList();
         Assert.assertEquals(1, list.size());
         String sql = where.cloneQueryable().toSQL();
-        Assert.assertEquals("SELECT t.`id`,t.`user_name`,t.`nickname`,t.`enable`,t.`score`,t.`mobile`,t.`avatar`,t.`number`,t.`status`,t.`created`,t.`options` FROM `t_def_table` t LEFT JOIN `t_def_table_left1` t1 ON t.`id` = t1.`def_id` LEFT JOIN `t_def_table_left2` t2 ON t.`id` = t2.`def1_id` LEFT JOIN `t_def_table_left3` t3 ON t.`id` = t3.`def2_id` WHERE t.`id` = ?", sql);
+        Assert.assertEquals("SELECT t.id,t.user_name,t.nickname,t.enable,t.score,t.mobile,t.avatar,t.number,t.status,t.created,t.options FROM t_def_table t LEFT JOIN t_def_table_left1 t1 ON t.id = t1.def_id LEFT JOIN t_def_table_left2 t2 ON t.id = t2.def1_id LEFT JOIN t_def_table_left3 t3 ON t.id = t3.def2_id WHERE t.id = ?", sql);
     }
 }

@@ -6,7 +6,6 @@ import com.easy.query.api4kt.select.impl.EasyKtQueryable;
 import com.easy.query.api4kt.select.impl.EasyKtQueryable2;
 import com.easy.query.api4kt.sql.*;
 import com.easy.query.api4kt.sql.impl.*;
-import com.easy.query.api4kt.util.EasyKtLambdaUtil;
 import com.easy.query.core.api.dynamic.sort.ObjectSort;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.api.select.ClientQueryable;
@@ -18,7 +17,6 @@ import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.util.EasyCollectionUtil;
-import kotlin.reflect.KProperty1;
 
 import java.util.Collection;
 import java.util.List;
@@ -159,14 +157,6 @@ public abstract class AbstractKtQueryable<T1> implements KtQueryable<T1> {
         if (condition) {
 
             entityQueryable.whereById(id);
-        }
-        return this;
-    }
-
-    @Override
-    public KtQueryable<T1> whereByIds(boolean condition, Object... ids) {
-        if (condition) {
-            entityQueryable.whereByIds(ids);
         }
         return this;
     }
