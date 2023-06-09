@@ -252,7 +252,7 @@ public interface SQLWherePredicate<T1> {
      * @return
      */
     default SQLWherePredicate<T1> notLikeMatchLeft(boolean condition, Property<T1, ?> column, Object val) {
-        return notLike(condition, column, val, SQLLikeEnum.LIKE_ALL);
+        return notLike(condition, column, val, SQLLikeEnum.LIKE_START);
     }
 
     /**

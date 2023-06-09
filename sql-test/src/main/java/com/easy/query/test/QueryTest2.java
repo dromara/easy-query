@@ -1,5 +1,8 @@
 package com.easy.query.test;
 
+import com.easy.query.api4j.select.Queryable;
+import com.easy.query.core.basic.jdbc.parameter.*;
+import com.easy.query.test.dto.BlogEntityGroup;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.Topic;
 import org.junit.Assert;
@@ -427,4 +430,222 @@ public class QueryTest2 extends BaseTest {
             Assert.assertEquals("SELECT count(1) FROM (SELECT DISTINCT t.`id` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` LEFT JOIN `t_blog` t2 ON t2.`deleted` = ? AND t.`id` = t2.`id` WHERE t.`id` IN (?,?,?) GROUP BY t.`id` ORDER BY t.`stars` ASC) t3", sql);
         }
     }
+
+    @Test
+    public void groupTest() {
+        String sql = easyQuery.queryable(BlogEntity.class)
+                .groupBy(o -> o.column(BlogEntity::getId))
+                .select(BlogEntityGroup.class, o -> o
+                        .columnAs(BlogEntity::getId, BlogEntityGroup::getId)
+                        .columnSumAs(BlogEntity::getScore, BlogEntityGroup::getScoreSum)
+                        .columnCountAs(BlogEntity::getId, BlogEntityGroup::getIdCount)
+                        .columnLenAs(BlogEntity::getTitle, BlogEntityGroup::getTitleLength)
+                        .columnMaxAs(BlogEntity::getPublishTime, BlogEntityGroup::getPublishTimeMax)
+                        .columnMinAs(BlogEntity::getOrder, BlogEntityGroup::getOrderMin)
+                        .columnAvgAs(BlogEntity::getStatus, BlogEntityGroup::getStatusAvg)
+                ).toSQL();
+        Assert.assertEquals("SELECT t.`id` AS `id`,SUM(t.`score`) AS `score_sum`,COUNT(t.`id`) AS `id_count`,LENGTH(t.`title`) AS `title_length`,MAX(t.`publish_time`) AS `publish_time_max`,MIN(t.`order`) AS `order_min`,AVG(t.`status`) AS `status_avg` FROM `t_blog` t WHERE t.`deleted` = ? GROUP BY t.`id`", sql);
+    }
+
+    @Test
+    public void groupTest1() {
+        String sql = easyQuery.queryable(BlogEntity.class)
+                .groupBy(o -> o.column(BlogEntity::getId))
+                .select(BlogEntity.class, o -> o
+                        .columnAs(BlogEntity::getId, BlogEntity::getId)
+                        .columnSum(BlogEntity::getScore)
+                        .columnLen(BlogEntity::getTitle)
+                        .columnMax(BlogEntity::getPublishTime)
+                        .columnMin(BlogEntity::getOrder)
+                        .columnAvg(BlogEntity::getStatus)
+                ).toSQL();
+        Assert.assertEquals("SELECT t.`id` AS `id`,SUM(t.`score`) AS `score`,LENGTH(t.`title`) AS `title`,MAX(t.`publish_time`) AS `publish_time`,MIN(t.`order`) AS `order`,AVG(t.`status`) AS `status` FROM `t_blog` t WHERE t.`deleted` = ? GROUP BY t.`id`", sql);
+    }
+
+    @Test
+    public void groupTest2() {
+        String sql = easyQuery.queryable(BlogEntity.class)
+                .groupBy(o -> o.column(BlogEntity::getId))
+                .select(BlogEntityGroup.class, o -> o
+                        .columnAs(BlogEntity::getId, BlogEntityGroup::getId)
+                        .columnSumDistinctAs(BlogEntity::getScore, BlogEntityGroup::getScoreSum)
+                        .columnCountDistinctAs(BlogEntity::getId, BlogEntityGroup::getIdCount)
+                        .columnAvgDistinctAs(BlogEntity::getStatus, BlogEntityGroup::getStatusAvg)
+                ).toSQL();
+        Assert.assertEquals("SELECT t.`id` AS `id`,SUM(DISTINCT t.`score`) AS `score_sum`,COUNT(DISTINCT t.`id`) AS `id_count`,AVG(DISTINCT t.`status`) AS `status_avg` FROM `t_blog` t WHERE t.`deleted` = ? GROUP BY t.`id`", sql);
+    }
+
+    @Test
+    public void groupTest3() {
+        String sql = easyQuery.queryable(BlogEntity.class)
+                .groupBy(o -> o.column(BlogEntity::getId))
+                .select(BlogEntity.class, o -> o
+                        .columnAs(BlogEntity::getId, BlogEntity::getId)
+                        .columnSumDistinct(BlogEntity::getScore)
+                        .columnCountDistinct(BlogEntity::getOrder)
+                        .columnAvgDistinct(BlogEntity::getStatus)
+                ).toSQL();
+        Assert.assertEquals("SELECT t.`id` AS `id`,SUM(DISTINCT t.`score`) AS `score`,COUNT(DISTINCT t.`order`) AS `order`,AVG(DISTINCT t.`status`) AS `status` FROM `t_blog` t WHERE t.`deleted` = ? GROUP BY t.`id`", sql);
+    }
+
+    @Test
+    public void groupTest4() {
+        String sql = easyQuery.queryable(BlogEntity.class)
+                .groupBy(o -> o.column(BlogEntity::getId))
+                .select(BlogEntity.class, o -> o
+                        .columnAs(BlogEntity::getId, BlogEntity::getId)
+                        .columnSumDistinct(BlogEntity::getScore)
+                        .columnCountDistinct(BlogEntity::getOrder)
+                        .columnAvgDistinct(BlogEntity::getStatus)
+                ).toSQL();
+        Assert.assertEquals("SELECT t.`id` AS `id`,SUM(DISTINCT t.`score`) AS `score`,COUNT(DISTINCT t.`order`) AS `order`,AVG(DISTINCT t.`status`) AS `status` FROM `t_blog` t WHERE t.`deleted` = ? GROUP BY t.`id`", sql);
+    }
+
+    @Test
+    public void groupTest9() {
+        String sql = easyQuery.queryable(BlogEntity.class)
+                .where(o -> o.ne(BlogEntity::getId, "1").ne(true, BlogEntity::getStar, 1).ne(false, BlogEntity::getTitle, "x")).toSQL();
+        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `id` <> ? AND `star` <> ?", sql);
+    }
+
+    @Test
+    public void groupTest10() {
+        Queryable<BlogEntity> queryable = easyQuery.queryable(BlogEntity.class)
+                .where(o -> o.notLikeMatchLeft(BlogEntity::getId, "id").notLikeMatchLeft(true, BlogEntity::getContent, "content").notLikeMatchLeft(false, BlogEntity::getTitle, "title"));
+        ToSQLContext toSQLContext = DefaultToSQLContext.defaultToSQLContext(queryable.getSQLEntityExpressionBuilder().getExpressionContext().getTableContext());
+        String sql = queryable.toSQL(toSQLContext);
+        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `id` NOT LIKE ? AND `content` NOT LIKE ?", sql);
+        List<SQLParameter> parameters = toSQLContext.getParameters();
+        Assert.assertEquals(3, parameters.size());
+        {
+
+            SQLParameter sqlParameter1 = parameters.get(0);
+            Assert.assertTrue(sqlParameter1 instanceof EasyConstSQLParameter);
+            EasyConstSQLParameter sqlParameter11 = (EasyConstSQLParameter) sqlParameter1;
+            Assert.assertEquals("deleted", sqlParameter11.getPropertyNameOrNull());
+            Assert.assertEquals(false, sqlParameter11.getValue());
+        }
+        {
+
+            SQLParameter sqlParameter1 = parameters.get(1);
+            Assert.assertTrue(sqlParameter1 instanceof ConstLikeSQLParameter);
+            ConstLikeSQLParameter sqlParameter11 = (ConstLikeSQLParameter) sqlParameter1;
+            Assert.assertEquals("id", sqlParameter11.getPropertyNameOrNull());
+            Assert.assertEquals("id%", sqlParameter11.getValue());
+        }
+        {
+
+            SQLParameter sqlParameter1 = parameters.get(2);
+            Assert.assertTrue(sqlParameter1 instanceof ConstLikeSQLParameter);
+            ConstLikeSQLParameter sqlParameter11 = (ConstLikeSQLParameter) sqlParameter1;
+            Assert.assertEquals("content", sqlParameter11.getPropertyNameOrNull());
+            Assert.assertEquals("content%", sqlParameter11.getValue());
+        }
+    }
+
+    @Test
+    public void groupTest11() {
+        Queryable<BlogEntity> queryable = easyQuery.queryable(BlogEntity.class)
+                .where(o -> o.like(BlogEntity::getId, "id").like(true, BlogEntity::getContent, "content").like(false, BlogEntity::getTitle, "title"));
+        ToSQLContext toSQLContext = DefaultToSQLContext.defaultToSQLContext(queryable.getSQLEntityExpressionBuilder().getExpressionContext().getTableContext());
+        String sql = queryable.toSQL(toSQLContext);
+        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `id` LIKE ? AND `content` LIKE ?", sql);
+        List<SQLParameter> parameters = toSQLContext.getParameters();
+        Assert.assertEquals(3, parameters.size());
+        {
+
+            SQLParameter sqlParameter1 = parameters.get(0);
+            Assert.assertTrue(sqlParameter1 instanceof EasyConstSQLParameter);
+            EasyConstSQLParameter sqlParameter11 = (EasyConstSQLParameter) sqlParameter1;
+            Assert.assertEquals("deleted", sqlParameter11.getPropertyNameOrNull());
+            Assert.assertEquals(false, sqlParameter11.getValue());
+        }
+        {
+
+            SQLParameter sqlParameter1 = parameters.get(1);
+            Assert.assertTrue(sqlParameter1 instanceof ConstLikeSQLParameter);
+            ConstLikeSQLParameter sqlParameter11 = (ConstLikeSQLParameter) sqlParameter1;
+            Assert.assertEquals("id", sqlParameter11.getPropertyNameOrNull());
+            Assert.assertEquals("%id%", sqlParameter11.getValue());
+        }
+        {
+
+            SQLParameter sqlParameter1 = parameters.get(2);
+            Assert.assertTrue(sqlParameter1 instanceof ConstLikeSQLParameter);
+            ConstLikeSQLParameter sqlParameter11 = (ConstLikeSQLParameter) sqlParameter1;
+            Assert.assertEquals("content", sqlParameter11.getPropertyNameOrNull());
+            Assert.assertEquals("%content%", sqlParameter11.getValue());
+        }
+    }
+
+    @Test
+    public void groupTest12() {
+        Queryable<BlogEntity> queryable = easyQuery.queryable(BlogEntity.class)
+                .where(o -> o.notLikeMatchRight(BlogEntity::getId, "id").notLikeMatchRight(true, BlogEntity::getContent, "content").notLikeMatchRight(false, BlogEntity::getTitle, "title"));
+        ToSQLContext toSQLContext = DefaultToSQLContext.defaultToSQLContext(queryable.getSQLEntityExpressionBuilder().getExpressionContext().getTableContext());
+        String sql = queryable.toSQL(toSQLContext);
+        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `id` NOT LIKE ? AND `content` NOT LIKE ?", sql);
+        List<SQLParameter> parameters = toSQLContext.getParameters();
+        Assert.assertEquals(3, parameters.size());
+        {
+
+            SQLParameter sqlParameter1 = parameters.get(0);
+            Assert.assertTrue(sqlParameter1 instanceof EasyConstSQLParameter);
+            EasyConstSQLParameter sqlParameter11 = (EasyConstSQLParameter) sqlParameter1;
+            Assert.assertEquals("deleted", sqlParameter11.getPropertyNameOrNull());
+            Assert.assertEquals(false, sqlParameter11.getValue());
+        }
+        {
+
+            SQLParameter sqlParameter1 = parameters.get(1);
+            Assert.assertTrue(sqlParameter1 instanceof ConstLikeSQLParameter);
+            ConstLikeSQLParameter sqlParameter11 = (ConstLikeSQLParameter) sqlParameter1;
+            Assert.assertEquals("id", sqlParameter11.getPropertyNameOrNull());
+            Assert.assertEquals("%id", sqlParameter11.getValue());
+        }
+        {
+
+            SQLParameter sqlParameter1 = parameters.get(2);
+            Assert.assertTrue(sqlParameter1 instanceof ConstLikeSQLParameter);
+            ConstLikeSQLParameter sqlParameter11 = (ConstLikeSQLParameter) sqlParameter1;
+            Assert.assertEquals("content", sqlParameter11.getPropertyNameOrNull());
+            Assert.assertEquals("%content", sqlParameter11.getValue());
+        }
+    }
+
+    @Test
+    public void groupTest13() {
+        Queryable<BlogEntity> queryable = easyQuery.queryable(BlogEntity.class)
+                .where(o -> o.notLike(BlogEntity::getId, "id").notLike(true, BlogEntity::getContent, "content").notLike(false, BlogEntity::getTitle, "title"));
+        ToSQLContext toSQLContext = DefaultToSQLContext.defaultToSQLContext(queryable.getSQLEntityExpressionBuilder().getExpressionContext().getTableContext());
+        String sql = queryable.toSQL(toSQLContext);
+        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `id` NOT LIKE ? AND `content` NOT LIKE ?", sql);
+        List<SQLParameter> parameters = toSQLContext.getParameters();
+        Assert.assertEquals(3, parameters.size());
+        {
+
+            SQLParameter sqlParameter1 = parameters.get(0);
+            Assert.assertTrue(sqlParameter1 instanceof EasyConstSQLParameter);
+            EasyConstSQLParameter sqlParameter11 = (EasyConstSQLParameter) sqlParameter1;
+            Assert.assertEquals("deleted", sqlParameter11.getPropertyNameOrNull());
+            Assert.assertEquals(false, sqlParameter11.getValue());
+        }
+        {
+
+            SQLParameter sqlParameter1 = parameters.get(1);
+            Assert.assertTrue(sqlParameter1 instanceof ConstLikeSQLParameter);
+            ConstLikeSQLParameter sqlParameter11 = (ConstLikeSQLParameter) sqlParameter1;
+            Assert.assertEquals("id", sqlParameter11.getPropertyNameOrNull());
+            Assert.assertEquals("%id%", sqlParameter11.getValue());
+        }
+        {
+
+            SQLParameter sqlParameter1 = parameters.get(2);
+            Assert.assertTrue(sqlParameter1 instanceof ConstLikeSQLParameter);
+            ConstLikeSQLParameter sqlParameter11 = (ConstLikeSQLParameter) sqlParameter1;
+            Assert.assertEquals("content", sqlParameter11.getPropertyNameOrNull());
+            Assert.assertEquals("%content%", sqlParameter11.getValue());
+        }
+    }
+
 }

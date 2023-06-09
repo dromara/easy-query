@@ -133,7 +133,7 @@ public class WherePredicateImpl<T1> implements WherePredicate<T1> {
     @Override
     public WherePredicate<T1> notLike(boolean condition, String property, Object val, SQLLikeEnum sqlLike) {
         if (condition) {
-            appendThisPredicate(property, val, SQLPredicateCompareEnum.NOT_LIKE);
+            appendThisPredicate(property, EasySQLUtil.getLikeParameter(val, sqlLike), SQLPredicateCompareEnum.NOT_LIKE);
             next();
         }
         return this;
