@@ -1,6 +1,7 @@
 package com.easy.query.api4j.sql;
 
 import com.easy.query.api4j.select.Queryable;
+import com.easy.query.api4j.sql.impl.SQLWherePredicateImpl;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.Property;
@@ -47,19 +48,37 @@ public interface SQLColumnAsSelector<T1, TR> {
     }
 
     default SQLColumnAsSelector<T1, TR> columnAs(Property<T1, ?> column, Property<TR, ?> alias) {
-        getColumnAsSelector().columnAs(EasyLambdaUtil.getPropertyName(column), EasyLambdaUtil.getPropertyName(alias));
+        return columnAs(column, EasyLambdaUtil.getPropertyName(alias));
+    }
+
+    default SQLColumnAsSelector<T1, TR> columnAs(Property<T1, ?> column, String alias) {
+        getColumnAsSelector().columnAs(EasyLambdaUtil.getPropertyName(column), alias);
         return this;
     }
 
-    <TSubQuery> SQLColumnAsSelector<T1, TR> columnSubQueryAs(Function<SQLWherePredicate<T1>, Queryable<TSubQuery>> subQueryableFunc, Property<TR, TSubQuery> alias);
+    default <TSubQuery> SQLColumnAsSelector<T1, TR> columnSubQueryAs(Function<SQLWherePredicate<T1>, Queryable<TSubQuery>> subQueryableFunc, String alias) {
+        getColumnAsSelector().columnSubQueryAs(wherePredicate -> {
+            return subQueryableFunc.apply(new SQLWherePredicateImpl<>(wherePredicate));
+        }, alias);
+        return this;
+    }
+
+    default <TSubQuery> SQLColumnAsSelector<T1, TR> columnSubQueryAs(Function<SQLWherePredicate<T1>, Queryable<TSubQuery>> subQueryableFunc, Property<TR, TSubQuery> alias) {
+        return columnSubQueryAs(subQueryableFunc, EasyLambdaUtil.getPropertyName(alias));
+    }
 
     default SQLColumnAsSelector<T1, TR> columnCount(Property<T1, ?> column) {
-        return columnCountAs(column, null);
+        getColumnAsSelector().columnCount(EasyLambdaUtil.getPropertyName(column));
+        return this;
+    }
+
+    default SQLColumnAsSelector<T1, TR> columnCountAs(Property<T1, ?> column, String alias) {
+        getColumnAsSelector().columnCountAs(EasyLambdaUtil.getPropertyName(column), alias);
+        return this;
     }
 
     default SQLColumnAsSelector<T1, TR> columnCountAs(Property<T1, ?> column, Property<TR, ?> alias) {
-        getColumnAsSelector().columnCountAs(EasyLambdaUtil.getPropertyName(column), EasyLambdaUtil.getPropertyName(alias));
-        return this;
+        return columnCountAs(column, EasyLambdaUtil.getPropertyName(alias));
     }
 
     default SQLColumnAsSelector<T1, TR> columnCountDistinct(Property<T1, ?> column) {
@@ -67,76 +86,119 @@ public interface SQLColumnAsSelector<T1, TR> {
         return this;
     }
 
-    default SQLColumnAsSelector<T1, TR> columnCountDistinctAs(Property<T1, ?> column, Property<TR, ?> alias) {
-        getColumnAsSelector().columnCountDistinctAs(EasyLambdaUtil.getPropertyName(column), EasyLambdaUtil.getPropertyName(alias));
+    default SQLColumnAsSelector<T1, TR> columnCountDistinctAs(Property<T1, ?> column, String alias) {
+        getColumnAsSelector().columnCountDistinctAs(EasyLambdaUtil.getPropertyName(column), alias);
         return this;
     }
 
+    default SQLColumnAsSelector<T1, TR> columnCountDistinctAs(Property<T1, ?> column, Property<TR, ?> alias) {
+        return columnCountDistinctAs(column, EasyLambdaUtil.getPropertyName(alias));
+    }
+
     default SQLColumnAsSelector<T1, TR> columnSum(Property<T1, Number> column) {
-        return columnSumAs(column, null);
+        getColumnAsSelector().columnSum(EasyLambdaUtil.getPropertyName(column));
+        return this;
     }
 
     default SQLColumnAsSelector<T1, TR> columnSumAs(Property<T1, Number> column, Property<TR, Number> alias) {
-        getColumnAsSelector().columnSumAs(EasyLambdaUtil.getPropertyName(column), EasyLambdaUtil.getPropertyName(alias));
+        return columnSumAs(column, EasyLambdaUtil.getPropertyName(alias));
+    }
+
+    default SQLColumnAsSelector<T1, TR> columnSumAs(Property<T1, Number> column, String alias) {
+        getColumnAsSelector().columnSumAs(EasyLambdaUtil.getPropertyName(column), alias);
         return this;
     }
 
     default SQLColumnAsSelector<T1, TR> columnSumDistinct(Property<T1, Number> column) {
-        return columnSumDistinctAs(column, null);
+        getColumnAsSelector().columnSumDistinct(EasyLambdaUtil.getPropertyName(column));
+        return this;
     }
 
     default SQLColumnAsSelector<T1, TR> columnSumDistinctAs(Property<T1, Number> column, Property<TR, Number> alias) {
-        getColumnAsSelector().columnSumDistinctAs(EasyLambdaUtil.getPropertyName(column), EasyLambdaUtil.getPropertyName(alias));
+        return columnSumDistinctAs(column, EasyLambdaUtil.getPropertyName(alias));
+    }
+
+    default SQLColumnAsSelector<T1, TR> columnSumDistinctAs(Property<T1, Number> column, String alias) {
+        getColumnAsSelector().columnSumDistinctAs(EasyLambdaUtil.getPropertyName(column), alias);
         return this;
     }
 
     default SQLColumnAsSelector<T1, TR> columnMax(Property<T1, ?> column) {
-        return columnMaxAs(column, null);
+        getColumnAsSelector().columnMax(EasyLambdaUtil.getPropertyName(column));
+        return this;
     }
 
     default SQLColumnAsSelector<T1, TR> columnMaxAs(Property<T1, ?> column, Property<TR, ?> alias) {
-        getColumnAsSelector().columnMaxAs(EasyLambdaUtil.getPropertyName(column), EasyLambdaUtil.getPropertyName(alias));
+        return columnMaxAs(column, EasyLambdaUtil.getPropertyName(alias));
+    }
+
+    default SQLColumnAsSelector<T1, TR> columnMaxAs(Property<T1, ?> column, String alias) {
+        getColumnAsSelector().columnMaxAs(EasyLambdaUtil.getPropertyName(column), alias);
         return this;
     }
 
     default SQLColumnAsSelector<T1, TR> columnMin(Property<T1, ?> column) {
-        return columnMinAs(column, null);
+        getColumnAsSelector().columnMin(EasyLambdaUtil.getPropertyName(column));
+        return this;
     }
 
     default SQLColumnAsSelector<T1, TR> columnMinAs(Property<T1, ?> column, Property<TR, ?> alias) {
-        getColumnAsSelector().columnMinAs(EasyLambdaUtil.getPropertyName(column), EasyLambdaUtil.getPropertyName(alias));
+        return columnMinAs(column, EasyLambdaUtil.getPropertyName(alias));
+    }
+
+    default SQLColumnAsSelector<T1, TR> columnMinAs(Property<T1, ?> column, String alias) {
+        getColumnAsSelector().columnMinAs(EasyLambdaUtil.getPropertyName(column), alias);
         return this;
     }
 
     default SQLColumnAsSelector<T1, TR> columnAvg(Property<T1, Number> column) {
-        return columnAvgAs(column, null);
+        getColumnAsSelector().columnAvg(EasyLambdaUtil.getPropertyName(column));
+        return this;
     }
 
     default SQLColumnAsSelector<T1, TR> columnAvgAs(Property<T1, Number> column, Property<TR, Number> alias) {
-        getColumnAsSelector().columnAvgAs(EasyLambdaUtil.getPropertyName(column), EasyLambdaUtil.getPropertyName(alias));
+        return columnAvgAs(column, EasyLambdaUtil.getPropertyName(alias));
+    }
+
+    default SQLColumnAsSelector<T1, TR> columnAvgAs(Property<T1, Number> column, String alias) {
+        getColumnAsSelector().columnAvgAs(EasyLambdaUtil.getPropertyName(column), alias);
         return this;
     }
 
     default SQLColumnAsSelector<T1, TR> columnAvgDistinct(Property<T1, Number> column) {
-        return columnAvgDistinctAs(column, null);
+        getColumnAsSelector().columnAvgDistinct(EasyLambdaUtil.getPropertyName(column));
+        return this;
     }
 
     default SQLColumnAsSelector<T1, TR> columnAvgDistinctAs(Property<T1, Number> column, Property<TR, Number> alias) {
-        getColumnAsSelector().columnAvgDistinctAs(EasyLambdaUtil.getPropertyName(column), EasyLambdaUtil.getPropertyName(alias));
+        return columnAvgDistinctAs(column, EasyLambdaUtil.getPropertyName(alias));
+    }
+
+    default SQLColumnAsSelector<T1, TR> columnAvgDistinctAs(Property<T1, Number> column, String alias) {
+        getColumnAsSelector().columnAvgDistinctAs(EasyLambdaUtil.getPropertyName(column), alias);
         return this;
     }
 
     default SQLColumnAsSelector<T1, TR> columnLen(Property<T1, ?> column) {
-        return columnLenAs(column, null);
+        getColumnAsSelector().columnLen(EasyLambdaUtil.getPropertyName(column));
+        return this;
     }
 
     default SQLColumnAsSelector<T1, TR> columnLenAs(Property<T1, ?> column, Property<TR, ?> alias) {
-        getColumnAsSelector().columnLenAs(EasyLambdaUtil.getPropertyName(column), EasyLambdaUtil.getPropertyName(alias));
+        return columnLenAs(column, EasyLambdaUtil.getPropertyName(alias));
+    }
+
+    default SQLColumnAsSelector<T1, TR> columnLenAs(Property<T1, ?> column, String alias) {
+        getColumnAsSelector().columnLenAs(EasyLambdaUtil.getPropertyName(column), alias);
         return this;
     }
 
     default SQLColumnAsSelector<T1, TR> columnFuncAs(ColumnPropertyFunction columnPropertyFunction, Property<TR, ?> alias) {
-        getColumnAsSelector().columnFuncAs(columnPropertyFunction, EasyLambdaUtil.getPropertyName(alias));
+        return columnFuncAs(columnPropertyFunction, EasyLambdaUtil.getPropertyName(alias));
+    }
+
+    default SQLColumnAsSelector<T1, TR> columnFuncAs(ColumnPropertyFunction columnPropertyFunction, String alias) {
+        getColumnAsSelector().columnFuncAs(columnPropertyFunction, alias);
         return this;
     }
 

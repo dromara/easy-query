@@ -27,12 +27,4 @@ public class SQLColumnAsSelectorImpl<T1, TR> implements SQLColumnAsSelector<T1, 
         return columnAsSelector;
     }
 
-    @Override
-    public <TSubQuery> SQLColumnAsSelector<T1, TR> columnSubQueryAs(Function<SQLWherePredicate<T1>, Queryable<TSubQuery>> subQueryableFunc, Property<TR, TSubQuery> alias) {
-
-        getColumnAsSelector().columnSubQueryAs(wherePredicate -> {
-            return subQueryableFunc.apply(new SQLWherePredicateImpl<>(wherePredicate));
-        }, EasyLambdaUtil.getPropertyName(alias));
-        return this;
-    }
 }

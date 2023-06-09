@@ -27,12 +27,4 @@ public class SQLKtColumnAsSelectorImpl<T1, TR> implements SQLKtColumnAsSelector<
         return columnAsSelector;
     }
 
-    @Override
-    public <TSubQuery> SQLKtColumnAsSelector<T1, TR> columnSubQueryAs(Function<SQLKtWherePredicate<T1>, KtQueryable<TSubQuery>> subQueryableFunc, KProperty1<TR, TSubQuery> alias) {
-
-        getColumnAsSelector().columnSubQueryAs(wherePredicate -> {
-            return subQueryableFunc.apply(new SQLKtWherePredicateImpl<>(wherePredicate));
-        }, EasyKtLambdaUtil.getPropertyName(alias));
-        return this;
-    }
 }
