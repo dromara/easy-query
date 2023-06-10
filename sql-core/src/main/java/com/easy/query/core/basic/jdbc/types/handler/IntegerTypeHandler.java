@@ -38,9 +38,4 @@ public class IntegerTypeHandler implements JdbcTypeHandler {
     public void setParameter(EasyParameter parameter) throws SQLException {
         parameter.getPs().setInt(parameter.getIndex(), (Integer) parameter.getValue());
     }
-
-    @Override
-    public int getJdbcType() {
-        return Types.INTEGER;
-    }
 }

@@ -30,9 +30,4 @@ public class LocalDateTimeTypeHandler implements JdbcTypeHandler {
         Timestamp timestamp = Timestamp.valueOf(localDateTime);
         parameter.getPs().setTimestamp(parameter.getIndex(),timestamp);
     }
-
-    @Override
-    public int getJdbcType() {
-        return Types.TIMESTAMP_WITH_TIMEZONE;
-    }
 }

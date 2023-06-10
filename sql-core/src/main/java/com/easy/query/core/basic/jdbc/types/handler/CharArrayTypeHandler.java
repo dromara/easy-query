@@ -23,9 +23,4 @@ public class CharArrayTypeHandler implements JdbcTypeHandler {
         String str = new String((char[]) parameter.getValue());
         parameter.getPs().setString(parameter.getIndex(),str);
     }
-
-    @Override
-    public int getJdbcType() {
-        return Types.CLOB;
-    }
 }

@@ -23,9 +23,4 @@ public class BigDecimalTypeHandler implements JdbcTypeHandler {
     public void setParameter(EasyParameter parameter) throws SQLException {
         parameter.getPs().setBigDecimal(parameter.getIndex(),(BigDecimal)parameter.getValue());
     }
-
-    @Override
-    public int getJdbcType() {
-        return Types.DECIMAL;
-    }
 }

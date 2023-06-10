@@ -37,9 +37,4 @@ public class FloatTypeHandler implements JdbcTypeHandler {
     public void setParameter(EasyParameter parameter) throws SQLException {
 parameter.getPs().setFloat(parameter.getIndex(),(Float) parameter.getValue());
     }
-
-    @Override
-    public int getJdbcType() {
-        return Types.FLOAT;
-    }
 }

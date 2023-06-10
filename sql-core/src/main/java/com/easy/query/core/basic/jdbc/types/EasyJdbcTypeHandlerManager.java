@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.HashMap;
 
 /**
@@ -27,6 +28,7 @@ public class EasyJdbcTypeHandlerManager implements JdbcTypeHandlerManager {
     private static final FloatTypeHandler floatTypeHandler = new FloatTypeHandler();
     private static final IntegerTypeHandler integerTypeHandler = new IntegerTypeHandler();
     private static final LocalDateTimeTypeHandler localDateTimeHandler = new LocalDateTimeTypeHandler();
+    private static final LocalTimeTypeHandler localTimeTypeHandler = new LocalTimeTypeHandler();
     private static final LocalDateTypeHandler localDateHandler = new LocalDateTypeHandler();
     private static final LongTypeHandler longTypeHandler = new LongTypeHandler();
     private static final ShortTypeHandler shortTypeHandler = new ShortTypeHandler();
@@ -66,7 +68,8 @@ public class EasyJdbcTypeHandlerManager implements JdbcTypeHandlerManager {
         handlers.put(Clob.class, clobTypeHandler);
         handlers.put(Blob.class, blobTypeHandler);
         handlers.put(LocalDateTime.class,localDateTimeHandler);
-        handlers.put(LocalDate.class,localDateHandler);
+        handlers.put(LocalDate.class, localDateHandler);
+        handlers.put(LocalTime.class, localTimeTypeHandler);
     }
     @Override
     public void appendHandler(Class<?> type, JdbcTypeHandler typeHandler, boolean replace) {

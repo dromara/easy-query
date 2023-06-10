@@ -21,9 +21,4 @@ public class SQLDateTypeHandler implements JdbcTypeHandler {
     public void setParameter(EasyParameter parameter) throws SQLException {
         parameter.getPs().setDate(parameter.getIndex(), (java.sql.Date) parameter.getValue());
     }
-
-    @Override
-    public int getJdbcType() {
-        return Types.DATE;
-    }
 }

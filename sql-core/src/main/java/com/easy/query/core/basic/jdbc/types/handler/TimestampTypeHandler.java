@@ -23,9 +23,4 @@ public class TimestampTypeHandler implements JdbcTypeHandler {
     public void setParameter(EasyParameter parameter) throws SQLException {
         parameter.getPs().setTimestamp(parameter.getIndex(), (Timestamp) parameter.getValue());
     }
-
-    @Override
-    public int getJdbcType() {
-        return Types.TIMESTAMP;
-    }
 }

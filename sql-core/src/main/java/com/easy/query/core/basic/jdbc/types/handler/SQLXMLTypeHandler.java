@@ -22,9 +22,4 @@ public class SQLXMLTypeHandler implements JdbcTypeHandler {
     public void setParameter(EasyParameter parameter) throws SQLException {
         parameter.setDefaultParameter();
     }
-
-    @Override
-    public int getJdbcType() {
-        return Types.SQLXML;
-    }
 }

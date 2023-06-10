@@ -24,9 +24,4 @@ public class CLobTypeHandler implements JdbcTypeHandler {
         parameter.getPs().setClob(parameter.getIndex(),(Clob) parameter.getValue());
     }
 
-    @Override
-    public int getJdbcType() {
-        return Types.CLOB;
-    }
-
 }

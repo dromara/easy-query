@@ -34,9 +34,4 @@ public class BooleanTypeHandler implements JdbcTypeHandler {
     public void setParameter(EasyParameter parameter) throws SQLException {
         parameter.getPs().setBoolean(parameter.getIndex(),(Boolean) parameter.getValue());
     }
-
-    @Override
-    public int getJdbcType() {
-        return Types.BOOLEAN;
-    }
 }

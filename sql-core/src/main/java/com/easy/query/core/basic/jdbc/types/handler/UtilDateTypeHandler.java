@@ -30,9 +30,4 @@ public class UtilDateTypeHandler implements JdbcTypeHandler {
         Timestamp timestamp =  date==null?null:new Timestamp(date.getTime());
         parameter.getPs().setTimestamp(parameter.getIndex(),timestamp);
     }
-
-    @Override
-    public int getJdbcType() {
-        return Types.DATE;
-    }
 }

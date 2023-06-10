@@ -23,9 +23,4 @@ public class TimeTypeHandler implements JdbcTypeHandler {
     public void setParameter(EasyParameter parameter) throws SQLException {
         parameter.getPs().setTime(parameter.getIndex(),(Time)parameter.getValue());
     }
-
-    @Override
-    public int getJdbcType() {
-        return Types.TIME;
-    }
 }

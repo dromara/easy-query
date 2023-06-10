@@ -38,9 +38,4 @@ public class ShortTypeHandler implements JdbcTypeHandler {
     public void setParameter(EasyParameter parameter) throws SQLException {
         parameter.getPs().setShort(parameter.getIndex(), (Short) parameter.getValue());
     }
-
-    @Override
-    public int getJdbcType() {
-        return Types.SMALLINT;
-    }
 }

@@ -38,9 +38,4 @@ public class LongTypeHandler implements JdbcTypeHandler {
     public void setParameter(EasyParameter parameter) throws SQLException {
         parameter.getPs().setLong(parameter.getIndex(), (Long) parameter.getValue());
     }
-
-    @Override
-    public int getJdbcType() {
-        return Types.BIGINT;
-    }
 }

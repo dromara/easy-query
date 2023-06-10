@@ -34,6 +34,7 @@ CREATE TABLE IF NOT EXISTS `t_def_table`
     2048
 )
     );
+
 CREATE TABLE IF NOT EXISTS `t_def_table_left1`
 (
     `id` VARCHAR
@@ -74,6 +75,7 @@ CREATE TABLE IF NOT EXISTS `t_def_table_left1`
     2048
 )
     );
+
 CREATE TABLE IF NOT EXISTS `t_def_table_left2`
 (
     `id` VARCHAR
@@ -118,6 +120,7 @@ CREATE TABLE IF NOT EXISTS `t_def_table_left2`
     2048
 )
     );
+
 CREATE TABLE IF NOT EXISTS `t_def_table_left3`
 (
     `id` VARCHAR
@@ -165,4 +168,125 @@ CREATE TABLE IF NOT EXISTS `t_def_table_left3`
 (
     2048
 )
+    );
+
+
+
+CREATE TABLE IF NOT EXISTS `t_all_type`
+(
+    `id` VARCHAR
+(
+    100
+) PRIMARY KEY,
+    `number_decimal` DECIMAL
+(
+    20,
+    2
+),
+    `number_float` FLOAT
+(
+    20
+),
+    `number_double` DOUBLE
+(
+    20
+),
+    `number_short` SMALLINT,
+    `number_integer` INT,
+    `number_long` BIGINT,
+    `number_byte` TINYINT,
+    `time_local_date_time` DATETIME,
+    `time_local_date` DATE,
+    `time_local_time` TIME,
+    `sql_date` DATETIME,
+    `only_date` DATETIME,
+    `only_time` TIME,
+    `enable` BOOLEAN,
+    `j_blob` BLOB,
+    `j_clob` CLOB,
+    `value` VARCHAR
+(
+    2048
+),
+    `uid` UUID
+    );
+
+
+CREATE TABLE IF NOT EXISTS `t_all_type_sharding_0`
+(
+    `id` VARCHAR
+(
+    100
+) PRIMARY KEY,
+    `number_decimal` DECIMAL
+(
+    20,
+    2
+),
+    `number_float` FLOAT
+(
+    20
+),
+    `number_double` DOUBLE
+(
+    20
+),
+    `number_short` SMALLINT,
+    `number_integer` INT,
+    `number_long` BIGINT,
+    `number_byte` TINYINT,
+    `time_local_date_time` DATETIME,
+    `time_local_date` DATE,
+    `time_local_time` TIME,
+    `sql_date` DATETIME,
+    `only_date` DATETIME,
+    `only_time` TIME,
+    `enable` BOOLEAN,
+    `j_blob` BLOB,
+    `j_clob` CLOB,
+    `value` VARCHAR
+(
+    2048
+),
+    `uid` UUID
+    );
+
+
+CREATE TABLE IF NOT EXISTS `t_all_type_sharding_1`
+(
+    `id` VARCHAR
+(
+    100
+) PRIMARY KEY,
+    `number_decimal` DECIMAL
+(
+    20,
+    2
+),
+    `number_float` FLOAT
+(
+    20
+),
+    `number_double` DOUBLE
+(
+    20
+),
+    `number_short` SMALLINT,
+    `number_integer` INT,
+    `number_long` BIGINT,
+    `number_byte` TINYINT,
+    `time_local_date_time` DATETIME,
+    `time_local_date` DATE,
+    `time_local_time` TIME,
+    `sql_date` DATETIME,
+    `only_date` DATETIME,
+    `only_time` TIME,
+    `enable` BOOLEAN,
+    `j_blob` BLOB,
+    `j_clob` CLOB,
+    `value` VARCHAR
+(
+    2048
+),
+    `uid` UUID
     );

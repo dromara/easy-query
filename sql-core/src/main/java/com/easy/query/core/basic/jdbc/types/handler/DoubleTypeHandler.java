@@ -38,9 +38,4 @@ public class DoubleTypeHandler implements JdbcTypeHandler {
     public void setParameter(EasyParameter parameter) throws SQLException {
         parameter.getPs().setDouble(parameter.getIndex(), (Double) parameter.getValue());
     }
-
-    @Override
-    public int getJdbcType() {
-        return Types.DOUBLE;
-    }
 }

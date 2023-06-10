@@ -32,9 +32,4 @@ public class LocalDateTypeHandler implements JdbcTypeHandler {
         Timestamp timestamp = new Timestamp(ts);
         parameter.getPs().setTimestamp(parameter.getIndex(),timestamp);
     }
-
-    @Override
-    public int getJdbcType() {
-        return Types.DATE;
-    }
 }

@@ -24,8 +24,4 @@ public class BlobTypeHandler implements JdbcTypeHandler {
         parameter.getPs().setBlob(parameter.getIndex(),(Blob) parameter.getValue());
     }
 
-    @Override
-    public int getJdbcType() {
-        return Types.BLOB;
-    }
 }

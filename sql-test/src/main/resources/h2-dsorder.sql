@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS `t_order_0`
     100
 )
     );
+
 CREATE TABLE IF NOT EXISTS `t_order_1`
 (
     `id`
@@ -26,6 +27,7 @@ CREATE TABLE IF NOT EXISTS `t_order_1`
     100
 )
     );
+
 CREATE TABLE IF NOT EXISTS `t_order_2`
 (
     `id`
@@ -40,6 +42,7 @@ CREATE TABLE IF NOT EXISTS `t_order_2`
     100
 )
     );
+
 CREATE TABLE IF NOT EXISTS `t_order_3`
 (
     `id`
@@ -54,6 +57,7 @@ CREATE TABLE IF NOT EXISTS `t_order_3`
     100
 )
     );
+
 CREATE TABLE IF NOT EXISTS `t_order_4`
 (
     `id`

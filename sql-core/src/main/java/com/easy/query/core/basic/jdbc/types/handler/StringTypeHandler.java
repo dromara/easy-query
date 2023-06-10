@@ -22,9 +22,4 @@ public class StringTypeHandler implements JdbcTypeHandler {
     public void setParameter(EasyParameter parameter) throws SQLException {
         parameter.getPs().setString(parameter.getIndex(),(String) parameter.getValue());
     }
-
-    @Override
-    public int getJdbcType() {
-        return Types.VARCHAR;
-    }
 }

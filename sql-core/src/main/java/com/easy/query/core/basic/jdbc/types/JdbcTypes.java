@@ -2,10 +2,10 @@ package com.easy.query.core.basic.jdbc.types;
 
 import java.math.BigDecimal;
 import java.sql.SQLXML;
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.sql.Types;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,75 +28,75 @@ public class JdbcTypes {
     static {
         // 初始化jdbcJavaTypes：
         // -16
-        jdbcJavaTypes.put(Integer.valueOf(Types.LONGNVARCHAR), String.class);
+        jdbcJavaTypes.put(Types.LONGNVARCHAR, String.class);
         // -15 字符串
-        jdbcJavaTypes.put(Integer.valueOf(Types.NCHAR), String.class);
+        jdbcJavaTypes.put(Types.NCHAR, String.class);
         // -9 字符串
-        jdbcJavaTypes.put(Integer.valueOf(Types.NVARCHAR), String.class);
+        jdbcJavaTypes.put(Types.NVARCHAR, String.class);
         // -8 字符串
-        jdbcJavaTypes.put(Integer.valueOf(Types.ROWID), String.class);
+        jdbcJavaTypes.put(Types.ROWID, String.class);
         // -7 布尔
-        jdbcJavaTypes.put(Integer.valueOf(Types.BIT), Boolean.class);
+        jdbcJavaTypes.put(Types.BIT, Boolean.class);
         // -6 数字
-        jdbcJavaTypes.put(Integer.valueOf(Types.TINYINT), Integer.class);
+        jdbcJavaTypes.put(Types.TINYINT, Integer.class);
         // -5 数字
-        jdbcJavaTypes.put(Integer.valueOf(Types.BIGINT), Long.class);
+        jdbcJavaTypes.put(Types.BIGINT, Long.class);
         // -4
-        jdbcJavaTypes.put(Integer.valueOf(Types.LONGVARBINARY), byte[].class);
+        jdbcJavaTypes.put(Types.LONGVARBINARY, byte[].class);
         // -3 二进制
-        jdbcJavaTypes.put(Integer.valueOf(Types.VARBINARY), byte[].class);
+        jdbcJavaTypes.put(Types.VARBINARY, byte[].class);
         // -2 二进制
-        jdbcJavaTypes.put(Integer.valueOf(Types.BINARY), byte[].class);
+        jdbcJavaTypes.put(Types.BINARY, byte[].class);
         // -1
-        jdbcJavaTypes.put(Integer.valueOf(Types.LONGVARCHAR), String.class);
+        jdbcJavaTypes.put(Types.LONGVARCHAR, String.class);
         // 字符串
         // jdbcJavaTypes.put(new Integer(Types.NULL), String.class); // 0
         // 1 字符串
-        jdbcJavaTypes.put(Integer.valueOf(Types.CHAR), String.class);
+        jdbcJavaTypes.put(Types.CHAR, String.class);
         // 2 数字
-        jdbcJavaTypes.put(Integer.valueOf(Types.NUMERIC), BigDecimal.class);
+        jdbcJavaTypes.put(Types.NUMERIC, BigDecimal.class);
         // 3 数字
-        jdbcJavaTypes.put(Integer.valueOf(Types.DECIMAL), BigDecimal.class);
+        jdbcJavaTypes.put(Types.DECIMAL, BigDecimal.class);
         // 4 数字
-        jdbcJavaTypes.put(Integer.valueOf(Types.INTEGER), Integer.class);
+        jdbcJavaTypes.put(Types.INTEGER, Integer.class);
         // 5 数字
-        jdbcJavaTypes.put(Integer.valueOf(Types.SMALLINT), Integer.class);
+        jdbcJavaTypes.put(Types.SMALLINT, Integer.class);
         // 6 数字
-        jdbcJavaTypes.put(Integer.valueOf(Types.FLOAT), BigDecimal.class);
+        jdbcJavaTypes.put(Types.FLOAT, BigDecimal.class);
         // 7 数字
-        jdbcJavaTypes.put(Integer.valueOf(Types.REAL), BigDecimal.class);
+        jdbcJavaTypes.put(Types.REAL, BigDecimal.class);
         // 8 数字
-        jdbcJavaTypes.put(Integer.valueOf(Types.DOUBLE), BigDecimal.class);
+        jdbcJavaTypes.put(Types.DOUBLE, BigDecimal.class);
         // 12 字符串
-        jdbcJavaTypes.put(Integer.valueOf(Types.VARCHAR), String.class);
+        jdbcJavaTypes.put(Types.VARCHAR, String.class);
         // 16 布尔
-        jdbcJavaTypes.put(Integer.valueOf(Types.BOOLEAN), Boolean.class);
+        jdbcJavaTypes.put(Types.BOOLEAN, Boolean.class);
         // jdbcJavaTypes.put(new Integer(Types.DATALINK), String.class); // 70
         // 91 日期
-        jdbcJavaTypes.put(Integer.valueOf(Types.DATE), Date.class);
+        jdbcJavaTypes.put(Types.DATE, LocalDateTime.class);
         // 92 日期
-        jdbcJavaTypes.put(Integer.valueOf(Types.TIME), Time.class);
+        jdbcJavaTypes.put(Types.TIME, LocalTime.class);
         // 93 日期
-        jdbcJavaTypes.put(Integer.valueOf(Types.TIMESTAMP), Timestamp.class);
+        jdbcJavaTypes.put(Types.TIMESTAMP, Timestamp.class);
         //
         //		jdbcJavaTypes.put(Types.TIMESTAMP_WITH_TIMEZONE, Timestamp.class);
         //		jdbcJavaTypes.put(Types.TIME_WITH_TIMEZONE, Time.class);
         // 1111 其他类型？
-        jdbcJavaTypes.put(Integer.valueOf(Types.OTHER), Object.class);
+        jdbcJavaTypes.put(Types.OTHER, Object.class);
         // jdbcJavaTypes.put(new Integer(Types.JAVA_OBJECT), Object.class); //
         // 2000
         // jdbcJavaTypes.put(new Integer(Types.DISTINCT), String.class); // 2001
         // jdbcJavaTypes.put(new Integer(Types.STRUCT), String.class); // 2002
         // jdbcJavaTypes.put(new Integer(Types.ARRAY), String.class); // 2003
         // 2004 二进制
-        jdbcJavaTypes.put(Integer.valueOf(Types.BLOB), byte[].class);
+        jdbcJavaTypes.put(Types.BLOB, byte[].class);
         // 2005 大文本
-        jdbcJavaTypes.put(Integer.valueOf(Types.CLOB), String.class);
+        jdbcJavaTypes.put(Types.CLOB, String.class);
         // jdbcJavaTypes.put(new Integer(Types.REF), String.class); // 2006
         // 2009
-        jdbcJavaTypes.put(Integer.valueOf(Types.SQLXML), SQLXML.class);
+        jdbcJavaTypes.put(Types.SQLXML, SQLXML.class);
         // 2011 大文本
-        jdbcJavaTypes.put(Integer.valueOf(Types.NCLOB), String.class);
+        jdbcJavaTypes.put(Types.NCLOB, String.class);
 
         //保留java类型可能对应的sql类型
         for (Map.Entry<Integer, Class<?>> entry : jdbcJavaTypes.entrySet()) {

@@ -35,9 +35,4 @@ public class ByteTypeHandler implements JdbcTypeHandler {
         parameter.getPs().setByte(parameter.getIndex(),(byte)parameter.getValue());
     }
 
-    @Override
-    public int getJdbcType() {
-        return Types.BIT;
-    }
-
 }
