@@ -13,58 +13,45 @@ import com.easy.query.api4j.update.ExpressionUpdatable;
 import com.easy.query.api4j.update.impl.EasyEntityUpdatable;
 import com.easy.query.api4j.update.impl.EasyExpressionUpdatable;
 import com.easy.query.core.api.client.EasyQueryClient;
-import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
 import com.easy.query.core.context.QueryRuntimeContext;
 
 import java.util.Collection;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author xuejiaming
  * @Date: 2023/3/6 13:30
  */
 public class DefaultEasyQuery implements EasyQuery {
-    private final EasyQueryClient easyObjectQuery;
+    private final EasyQueryClient easyQueryClient;
 
-    public DefaultEasyQuery(EasyQueryClient easyObjectQuery) {
-        this.easyObjectQuery = easyObjectQuery;
+    public DefaultEasyQuery(EasyQueryClient easyQueryClient) {
+        this.easyQueryClient = easyQueryClient;
+    }
+
+    @Override
+    public EasyQueryClient getEasyQueryClient() {
+        return easyQueryClient;
     }
 
     @Override
     public QueryRuntimeContext getRuntimeContext() {
-        return easyObjectQuery.getRuntimeContext();
-    }
-
-    @Override
-    public <T> List<T> sqlEasyQuery(String sql, Class<T> clazz, List<SQLParameter> parameters) {
-        return easyObjectQuery.sqlEasyQuery(sql, clazz, parameters);
-    }
-
-    @Override
-    public List<Map<String, Object>> sqlQueryMap(String sql, List<Object> parameters) {
-        return easyObjectQuery.sqlQueryMap(sql, parameters);
-    }
-
-    @Override
-    public long sqlExecute(String sql, List<Object> parameters) {
-        return easyObjectQuery.sqlExecute(sql, parameters);
+        return easyQueryClient.getRuntimeContext();
     }
 
     @Override
     public <T> Queryable<T> queryable(Class<T> clazz) {
-        return new EasyQueryable<>(easyObjectQuery.queryable(clazz));
+        return new EasyQueryable<>(easyQueryClient.queryable(clazz));
     }
 
     @Override
     public <T> Queryable<T> queryable(String sql, Class<T> clazz) {
-        return new EasyQueryable<>(easyObjectQuery.queryable(sql, clazz));
+        return new EasyQueryable<>(easyQueryClient.queryable(sql, clazz));
     }
 
     @Override
     public Transaction beginTransaction(Integer isolationLevel) {
-        return easyObjectQuery.beginTransaction(isolationLevel);
+        return easyQueryClient.beginTransaction(isolationLevel);
     }
 
 //    @Override
@@ -74,46 +61,46 @@ public class DefaultEasyQuery implements EasyQuery {
 
     @Override
     public <T> EntityInsertable<T> insertable(T entity) {
-        return new EasyEntityInsertable<>(easyObjectQuery.insertable(entity));
+        return new EasyEntityInsertable<>(easyQueryClient.insertable(entity));
     }
 
     @Override
     public <T> EntityInsertable<T> insertable(Collection<T> entities) {
-        return new EasyEntityInsertable<>(easyObjectQuery.insertable(entities));
+        return new EasyEntityInsertable<>(easyQueryClient.insertable(entities));
     }
 
     @Override
     public <T> ExpressionUpdatable<T> updatable(Class<T> entityClass) {
-        return new EasyExpressionUpdatable<>(easyObjectQuery.updatable(entityClass));
+        return new EasyExpressionUpdatable<>(easyQueryClient.updatable(entityClass));
     }
 
     @Override
     public <T> EntityUpdatable<T> updatable(T entity) {
-        return new EasyEntityUpdatable<>(easyObjectQuery.updatable(entity));
+        return new EasyEntityUpdatable<>(easyQueryClient.updatable(entity));
     }
 
     @Override
     public <T> EntityUpdatable<T> updatable(Collection<T> entities) {
-        return new EasyEntityUpdatable<>(easyObjectQuery.updatable(entities));
+        return new EasyEntityUpdatable<>(easyQueryClient.updatable(entities));
     }
 
     @Override
     public <T> EntityDeletable<T> deletable(T entity) {
-        return new EasyEntityDeletable<>(easyObjectQuery.deletable(entity));
+        return new EasyEntityDeletable<>(easyQueryClient.deletable(entity));
     }
     @Override
     public <T> EntityDeletable<T> deletable(Collection<T> entities) {
-        return new EasyEntityDeletable<>(easyObjectQuery.deletable(entities));
+        return new EasyEntityDeletable<>(easyQueryClient.deletable(entities));
     }
 
 
     @Override
     public <T> ExpressionDeletable<T> deletable(Class<T> entityClass) {
-        return new EasyExpressionDeletable<>(easyObjectQuery.deletable(entityClass));
+        return new EasyExpressionDeletable<>(easyQueryClient.deletable(entityClass));
     }
 
     @Override
     public boolean addTracking(Object entity) {
-        return easyObjectQuery.addTracking(entity);
+        return easyQueryClient.addTracking(entity);
     }
 }
