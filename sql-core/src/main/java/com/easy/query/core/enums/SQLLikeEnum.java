@@ -7,5 +7,5 @@ package com.easy.query.core.enums;
  * @author xuejiaming
  */
 public enum SQLLikeEnum {
-    LIKE_START, LIKE_END, LIKE_ALL
+    LIKE_PERCENT_RIGHT, LIKE_PERCENT_LEFT, LIKE_PERCENT_ALL
 }

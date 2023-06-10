@@ -9,6 +9,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -646,6 +647,23 @@ public class QueryTest2 extends BaseTest {
             Assert.assertEquals("content", sqlParameter11.getPropertyNameOrNull());
             Assert.assertEquals("%content%", sqlParameter11.getValue());
         }
+    }
+    @Test
+    public void queryTest16(){
+        LocalDateTime now = LocalDateTime.now();
+        Queryable<BlogEntity> queryable = easyQuery.queryable(BlogEntity.class)
+                .where(o -> o.lt(BlogEntity::getStar, 9).lt(true, BlogEntity::getPublishTime, now).lt(false, BlogEntity::getOrder, 4));
+
+        ToSQLContext toSQLContext = DefaultToSQLContext.defaultToSQLContext(queryable.getSQLEntityExpressionBuilder().getExpressionContext().getTableContext());
+        String sql = queryable.toSQL(toSQLContext);
+        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `star` < ? AND `publish_time` < ?",sql);
+        List<SQLParameter> parameters = toSQLContext.getParameters();
+        Assert.assertEquals(3,parameters.size());
+
+        Assert.assertEquals(false,parameters.get(0).getValue());
+        Assert.assertEquals("deleted",parameters.get(0).getPropertyNameOrNull());
+        Assert.assertEquals(9,parameters.get(1).getValue());
+        Assert.assertEquals(now,parameters.get(2).getValue());
     }
 
 }

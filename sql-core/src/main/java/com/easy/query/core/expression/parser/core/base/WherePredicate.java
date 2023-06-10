@@ -141,7 +141,7 @@ public interface WherePredicate<T1> {
      * @return
      */
     default WherePredicate<T1> likeMatchLeft(boolean condition, String property, Object val) {
-        return like(condition, property, val, SQLLikeEnum.LIKE_START);
+        return like(condition, property, val, SQLLikeEnum.LIKE_PERCENT_RIGHT);
     }
 
     /**
@@ -164,7 +164,7 @@ public interface WherePredicate<T1> {
      * @return
      */
     default WherePredicate<T1> likeMatchRight(boolean condition, String property, Object val) {
-        return like(condition, property, val, SQLLikeEnum.LIKE_END);
+        return like(condition, property, val, SQLLikeEnum.LIKE_PERCENT_LEFT);
     }
 
     /**
@@ -185,7 +185,7 @@ public interface WherePredicate<T1> {
      * @return children
      */
     default WherePredicate<T1> like(boolean condition, String property, Object val) {
-        return like(condition, property, val, SQLLikeEnum.LIKE_ALL);
+        return like(condition, property, val, SQLLikeEnum.LIKE_PERCENT_ALL);
     }
 
     /**
@@ -217,7 +217,7 @@ public interface WherePredicate<T1> {
      * @return
      */
     default WherePredicate<T1> notLikeMatchLeft(boolean condition, String property, Object val) {
-        return notLike(condition, property, val, SQLLikeEnum.LIKE_ALL);
+        return notLike(condition, property, val, SQLLikeEnum.LIKE_PERCENT_RIGHT);
     }
 
     /**
@@ -238,7 +238,7 @@ public interface WherePredicate<T1> {
      * @return
      */
     default WherePredicate<T1> notLikeMatchRight(boolean condition, String property, Object val) {
-        return notLike(condition, property, val, SQLLikeEnum.LIKE_END);
+        return notLike(condition, property, val, SQLLikeEnum.LIKE_PERCENT_LEFT);
     }
 
     /**
@@ -257,7 +257,7 @@ public interface WherePredicate<T1> {
      * @return children
      */
     default WherePredicate<T1> notLike(boolean condition, String property, Object val) {
-        return notLike(condition, property, val, SQLLikeEnum.LIKE_ALL);
+        return notLike(condition, property, val, SQLLikeEnum.LIKE_PERCENT_ALL);
     }
 
     WherePredicate<T1> notLike(boolean condition, String property, Object val, SQLLikeEnum sqlLike);

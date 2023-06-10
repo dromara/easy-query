@@ -20,8 +20,8 @@ public class EasySQLUtil {
 
     public static String getLikeParameter(Object val, SQLLikeEnum sqlLike) {
        switch (sqlLike){
-           case LIKE_START:return val+"%";
-           case LIKE_END:return "%"+val;
+           case LIKE_PERCENT_RIGHT:return val+"%";
+           case LIKE_PERCENT_LEFT:return "%"+val;
            default:return "%"+val+"%";
        }
     }

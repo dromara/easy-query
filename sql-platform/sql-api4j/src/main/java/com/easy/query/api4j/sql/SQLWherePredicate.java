@@ -30,7 +30,8 @@ public interface SQLWherePredicate<T1> {
      * 大于 column > val
      */
     default SQLWherePredicate<T1> gt(Property<T1, ?> column, Object val) {
-        return gt(true, column, val);
+        getWherePredicate().gt(true, EasyLambdaUtil.getPropertyName(column), val);
+        return this;
     }
 
     /**
@@ -50,7 +51,8 @@ public interface SQLWherePredicate<T1> {
      * 等于 column >= val
      */
     default SQLWherePredicate<T1> ge(Property<T1, ?> column, Object val) {
-        return ge(true, column, val);
+        getWherePredicate().ge(EasyLambdaUtil.getPropertyName(column), val);
+        return this;
     }
 
     /**
@@ -70,7 +72,8 @@ public interface SQLWherePredicate<T1> {
      * 等于 column = val
      */
     default SQLWherePredicate<T1> eq(Property<T1, ?> column, Object val) {
-        return eq(true, column, val);
+        getWherePredicate().eq(EasyLambdaUtil.getPropertyName(column), val);
+        return this;
     }
 
     /**
@@ -90,7 +93,8 @@ public interface SQLWherePredicate<T1> {
      * 不等于 column <> val
      */
     default SQLWherePredicate<T1> ne(Property<T1, ?> column, Object val) {
-        return ne(true, column, val);
+        getWherePredicate().ne(EasyLambdaUtil.getPropertyName(column), val);
+        return this;
     }
 
     /**
@@ -110,7 +114,8 @@ public interface SQLWherePredicate<T1> {
      * 小于等于 column <= val
      */
     default SQLWherePredicate<T1> le(Property<T1, ?> column, Object val) {
-        return le(true, column, val);
+        getWherePredicate().le(EasyLambdaUtil.getPropertyName(column), val);
+        return this;
     }
 
     /**
@@ -130,7 +135,8 @@ public interface SQLWherePredicate<T1> {
      * 小于 column < val
      */
     default SQLWherePredicate<T1> lt(Property<T1, ?> column, Object val) {
-        return lt(true, column, val);
+        getWherePredicate().lt(EasyLambdaUtil.getPropertyName(column), val);
+        return this;
     }
 
     /**
@@ -155,7 +161,8 @@ public interface SQLWherePredicate<T1> {
      * @return
      */
     default SQLWherePredicate<T1> likeMatchLeft(Property<T1, ?> column, Object val) {
-        return likeMatchLeft(true, column, val);
+        getWherePredicate().likeMatchLeft(EasyLambdaUtil.getPropertyName(column), val);
+        return this;
     }
 
     /**
@@ -168,7 +175,8 @@ public interface SQLWherePredicate<T1> {
      * @return
      */
     default SQLWherePredicate<T1> likeMatchLeft(boolean condition, Property<T1, ?> column, Object val) {
-        return like(condition, column, val, SQLLikeEnum.LIKE_START);
+        getWherePredicate().likeMatchLeft(condition, EasyLambdaUtil.getPropertyName(column), val);
+        return this;
     }
 
     /**
@@ -180,7 +188,8 @@ public interface SQLWherePredicate<T1> {
      * @return
      */
     default SQLWherePredicate<T1> likeMatchRight(Property<T1, ?> column, Object val) {
-        return likeMatchRight(true, column, val);
+        getWherePredicate().likeMatchRight(EasyLambdaUtil.getPropertyName(column), val);
+        return this;
     }
 
     /**
@@ -193,7 +202,8 @@ public interface SQLWherePredicate<T1> {
      * @return
      */
     default SQLWherePredicate<T1> likeMatchRight(boolean condition, Property<T1, ?> column, Object val) {
-        return like(condition, column, val, SQLLikeEnum.LIKE_END);
+        getWherePredicate().likeMatchRight(condition, EasyLambdaUtil.getPropertyName(column), val);
+        return this;
     }
 
     /**
@@ -201,7 +211,8 @@ public interface SQLWherePredicate<T1> {
      * 列全匹配
      */
     default SQLWherePredicate<T1> like(Property<T1, ?> column, Object val) {
-        return like(true, column, val);
+        getWherePredicate().like(EasyLambdaUtil.getPropertyName(column), val);
+        return this;
     }
 
     /**
@@ -214,7 +225,8 @@ public interface SQLWherePredicate<T1> {
      * @return children
      */
     default SQLWherePredicate<T1> like(boolean condition, Property<T1, ?> column, Object val) {
-        return like(condition, column, val, SQLLikeEnum.LIKE_ALL);
+        getWherePredicate().like(condition, EasyLambdaUtil.getPropertyName(column), val);
+        return this;
     }
 
     /**
@@ -240,7 +252,8 @@ public interface SQLWherePredicate<T1> {
      * @return
      */
     default SQLWherePredicate<T1> notLikeMatchLeft(Property<T1, ?> column, Object val) {
-        return notLikeMatchLeft(true, column, val);
+        getWherePredicate().notLikeMatchLeft(EasyLambdaUtil.getPropertyName(column), val);
+        return this;
     }
 
     /**
@@ -252,7 +265,8 @@ public interface SQLWherePredicate<T1> {
      * @return
      */
     default SQLWherePredicate<T1> notLikeMatchLeft(boolean condition, Property<T1, ?> column, Object val) {
-        return notLike(condition, column, val, SQLLikeEnum.LIKE_START);
+        getWherePredicate().notLikeMatchLeft(condition, EasyLambdaUtil.getPropertyName(column), val);
+        return this;
     }
 
     /**
@@ -263,7 +277,8 @@ public interface SQLWherePredicate<T1> {
      * @return
      */
     default SQLWherePredicate<T1> notLikeMatchRight(Property<T1, ?> column, Object val) {
-        return notLikeMatchRight(true, column, val);
+        getWherePredicate().notLikeMatchRight(EasyLambdaUtil.getPropertyName(column), val);
+        return this;
     }
 
     /**
@@ -275,14 +290,16 @@ public interface SQLWherePredicate<T1> {
      * @return
      */
     default SQLWherePredicate<T1> notLikeMatchRight(boolean condition, Property<T1, ?> column, Object val) {
-        return notLike(condition, column, val, SQLLikeEnum.LIKE_END);
+        getWherePredicate().notLikeMatchRight(condition, EasyLambdaUtil.getPropertyName(column), val);
+        return this;
     }
 
     /**
      * column not like %val%
      */
     default SQLWherePredicate<T1> notLike(Property<T1, ?> column, Object val) {
-        return notLike(true, column, val);
+        getWherePredicate().notLike(EasyLambdaUtil.getPropertyName(column), val);
+        return this;
     }
 
     /**
@@ -294,7 +311,8 @@ public interface SQLWherePredicate<T1> {
      * @return children
      */
     default SQLWherePredicate<T1> notLike(boolean condition, Property<T1, ?> column, Object val) {
-        return notLike(condition, column, val, SQLLikeEnum.LIKE_ALL);
+        getWherePredicate().notLike(condition, EasyLambdaUtil.getPropertyName(column), val);
+        return this;
     }
 
     default SQLWherePredicate<T1> notLike(boolean condition, Property<T1, ?> column, Object val, SQLLikeEnum sqlLike) {
@@ -306,7 +324,8 @@ public interface SQLWherePredicate<T1> {
      * column is null
      */
     default SQLWherePredicate<T1> isNull(Property<T1, ?> column) {
-        return isNull(true, column);
+        getWherePredicate().isNull(EasyLambdaUtil.getPropertyName(column));
+        return this;
     }
 
     /**
@@ -325,7 +344,8 @@ public interface SQLWherePredicate<T1> {
      * column is not null
      */
     default SQLWherePredicate<T1> isNotNull(Property<T1, ?> column) {
-        return isNotNull(true, column);
+        getWherePredicate().isNotNull(EasyLambdaUtil.getPropertyName(column));
+        return this;
     }
 
     /**
@@ -345,7 +365,8 @@ public interface SQLWherePredicate<T1> {
      * 集合为空返回False
      */
     default SQLWherePredicate<T1> in(Property<T1, ?> column, Collection<?> collection) {
-        return in(true, column, collection);
+        getWherePredicate().in(EasyLambdaUtil.getPropertyName(column), collection);
+        return this;
     }
 
     /**
@@ -358,7 +379,8 @@ public interface SQLWherePredicate<T1> {
     }
 
     default <TProperty> SQLWherePredicate<T1> in(Property<T1, TProperty> column, Queryable<TProperty> subQueryable) {
-        return in(true, column, subQueryable);
+        getWherePredicate().in(EasyLambdaUtil.getPropertyName(column), subQueryable);
+        return this;
     }
 
     default <TProperty> SQLWherePredicate<T1> in(boolean condition, Property<T1, TProperty> column, Queryable<TProperty> subQueryable) {
@@ -371,7 +393,8 @@ public interface SQLWherePredicate<T1> {
      * 集合为空返回True
      */
     default SQLWherePredicate<T1> notIn(Property<T1, ?> column, Collection<?> collection) {
-        return notIn(true, column, collection);
+        getWherePredicate().notIn(EasyLambdaUtil.getPropertyName(column), collection);
+        return this;
     }
 
     /**
@@ -384,7 +407,8 @@ public interface SQLWherePredicate<T1> {
     }
 
     default <TProperty> SQLWherePredicate<T1> notIn(Property<T1, ?> column, Queryable<TProperty> subQueryable) {
-        return notIn(true, column, subQueryable);
+        getWherePredicate().notIn(EasyLambdaUtil.getPropertyName(column), subQueryable);
+        return this;
     }
 
     default <TProperty> SQLWherePredicate<T1> notIn(boolean condition, Property<T1, ?> column, Queryable<TProperty> subQueryable) {
@@ -393,7 +417,8 @@ public interface SQLWherePredicate<T1> {
     }
 
     default <T2> SQLWherePredicate<T1> exists(Queryable<T2> subQueryable) {
-        return exists(true, subQueryable);
+        getWherePredicate().exists(subQueryable);
+        return this;
     }
 
     default <T2> SQLWherePredicate<T1> exists(boolean condition, Queryable<T2> subQueryable) {
@@ -402,7 +427,8 @@ public interface SQLWherePredicate<T1> {
     }
 
     default <T2> SQLWherePredicate<T1> notExists(Queryable<T2> subQueryable) {
-        return notExists(true, subQueryable);
+        getWherePredicate().notExists(subQueryable);
+        return this;
     }
 
     default <T2> SQLWherePredicate<T1> notExists(boolean condition, Queryable<T2> subQueryable) {
