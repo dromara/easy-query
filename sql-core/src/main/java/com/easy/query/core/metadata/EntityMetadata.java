@@ -92,9 +92,9 @@ public class EntityMetadata {
     /**
      * 查询过滤器
      */
-    private final List<String> predicateFilterInterceptors = new ArrayList<>();
-    private final List<String> entityInterceptors = new ArrayList<>();
-    private final List<String> updateSetInterceptors = new ArrayList<>();
+    private final List<PredicateFilterInterceptor> predicateFilterInterceptors = new ArrayList<>();
+    private final List<EntityInterceptor> entityInterceptors = new ArrayList<>();
+    private final List<UpdateSetInterceptor> updateSetInterceptors = new ArrayList<>();
     private final LinkedHashMap<String, ColumnMetadata> property2ColumnMap = new LinkedHashMap<>();
     private final Map<String/*property name*/, String/*column name*/> keyPropertiesMap = new LinkedHashMap<>();
     private final List<String/*column name*/> incrementColumns = new ArrayList<>(4);
@@ -331,13 +331,13 @@ public class EntityMetadata {
             for (Interceptor globalInterceptor : globalInterceptors) {
                 if (globalInterceptor.apply(entityClass)) {
                     if (globalInterceptor instanceof PredicateFilterInterceptor) {
-                        predicateFilterInterceptors.add(globalInterceptor.name());
+                        predicateFilterInterceptors.add((PredicateFilterInterceptor)globalInterceptor);
                     }
                     if (globalInterceptor instanceof EntityInterceptor) {
-                        entityInterceptors.add(globalInterceptor.name());
+                        entityInterceptors.add((EntityInterceptor)globalInterceptor);
                     }
                     if (globalInterceptor instanceof UpdateSetInterceptor) {
-                        updateSetInterceptors.add(globalInterceptor.name());
+                        updateSetInterceptors.add((UpdateSetInterceptor)globalInterceptor);
                     }
                 }
             }
@@ -459,15 +459,15 @@ public class EntityMetadata {
     }
 
 
-    public List<String> getPredicateFilterInterceptors() {
+    public List<PredicateFilterInterceptor> getPredicateFilterInterceptors() {
         return predicateFilterInterceptors;
     }
 
-    public List<String> getEntityInterceptors() {
+    public List<EntityInterceptor> getEntityInterceptors() {
         return entityInterceptors;
     }
 
-    public List<String> getUpdateSetInterceptors() {
+    public List<UpdateSetInterceptor> getUpdateSetInterceptors() {
         return updateSetInterceptors;
     }
 

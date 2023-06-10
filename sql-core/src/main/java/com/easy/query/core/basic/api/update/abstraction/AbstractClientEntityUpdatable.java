@@ -30,6 +30,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -111,11 +112,10 @@ public abstract class AbstractClientEntityUpdatable<T> extends AbstractSQLExecut
     }
 
     protected List<EntityInterceptor> getEntityInterceptors() {
-        List<String> updateInterceptors = entityMetadata.getEntityInterceptors();
-        if (EasyCollectionUtil.isNotEmpty(updateInterceptors)) {
-            QueryConfiguration easyQueryConfiguration = entityUpdateExpressionBuilder.getRuntimeContext().getQueryConfiguration();
-            return entityUpdateExpressionBuilder.getExpressionContext().getInterceptorFilter(updateInterceptors)
-                    .map(interceptor -> (EntityInterceptor) easyQueryConfiguration.getEasyInterceptor(interceptor)).filter(Interceptor::enable).collect(Collectors.toList());
+        List<EntityInterceptor> entityInterceptors = entityMetadata.getEntityInterceptors();
+        if (EasyCollectionUtil.isNotEmpty(entityInterceptors)) {
+            Predicate<Interceptor> interceptorFilter = entityUpdateExpressionBuilder.getExpressionContext().getInterceptorFilter();
+            return EasyCollectionUtil.filter(entityInterceptors, interceptorFilter::test);
         }
         return Collections.emptyList();
     }

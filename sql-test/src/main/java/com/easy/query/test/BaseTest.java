@@ -31,6 +31,7 @@ import com.easy.query.test.entity.TopicShardingDataSourceTime;
 import com.easy.query.test.entity.TopicShardingTime;
 import com.easy.query.test.interceptor.MyEntityInterceptor;
 import com.easy.query.test.interceptor.MyTenantInterceptor;
+import com.easy.query.test.interceptor.Topic1Interceptor;
 import com.easy.query.test.logicdel.MyLogicDelStrategy;
 import com.easy.query.test.sharding.DataSourceAndTableShardingInitializer;
 import com.easy.query.test.sharding.DataSourceShardingInitializer;
@@ -140,6 +141,7 @@ public abstract class BaseTest {
         configuration.applyEncryptionStrategy(new MyEncryptionStrategy());
         configuration.applyLogicDeleteStrategy(new MyLogicDelStrategy());
         configuration.applyInterceptor(new MyEntityInterceptor());
+        configuration.applyInterceptor(new Topic1Interceptor());
         configuration.applyInterceptor(new MyTenantInterceptor());
 //        configuration.applyShardingInitializer(new FixShardingInitializer());
         configuration.applyShardingInitializer(new DataSourceAndTableShardingInitializer());

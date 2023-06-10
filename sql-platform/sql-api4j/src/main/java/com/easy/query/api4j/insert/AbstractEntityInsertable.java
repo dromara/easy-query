@@ -84,4 +84,9 @@ public abstract class AbstractEntityInsertable<T> implements EntityInsertable<T>
         clientInsertable.asAlias(alias);
         return this;
     }
+
+    @Override
+    public String toSQL(Object entity) {
+        return clientInsertable.toSQL(entity);
+    }
 }

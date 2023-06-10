@@ -29,4 +29,5 @@ public interface Insertable<T, TChain> extends SQLExecuteRows, Interceptable<TCh
     default long executeRows(){
         return executeRows(false);
     }
+    String toSQL(Object entity);
 }

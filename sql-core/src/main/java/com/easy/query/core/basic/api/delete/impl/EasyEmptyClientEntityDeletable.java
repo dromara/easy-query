@@ -20,6 +20,11 @@ public class EasyEmptyClientEntityDeletable<T> implements ClientEntityDeletable<
     }
 
     @Override
+    public String toSQL()  {
+        return null;
+    }
+
+    @Override
     public String toSQL(ToSQLContext toSQLContext) {
         return null;
     }

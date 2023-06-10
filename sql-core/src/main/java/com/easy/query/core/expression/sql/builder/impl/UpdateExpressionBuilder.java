@@ -1,5 +1,6 @@
 package com.easy.query.core.expression.sql.builder.impl;
 
+import com.easy.query.core.basic.extension.interceptor.Interceptor;
 import com.easy.query.core.basic.extension.interceptor.UpdateSetInterceptor;
 import com.easy.query.core.basic.extension.track.EntityState;
 import com.easy.query.core.basic.extension.track.EntityTrackProperty;
@@ -9,7 +10,6 @@ import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.basic.extension.track.update.ValueUpdateAtomicTrack;
 import com.easy.query.core.basic.extension.version.VersionStrategy;
 import com.easy.query.core.common.bean.FastBean;
-import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.enums.EntityUpdateTypeEnum;
 import com.easy.query.core.enums.SQLPredicateCompareEnum;
 import com.easy.query.core.exception.EasyQueryException;
@@ -48,8 +48,10 @@ import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasySQLSegmentUtil;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Predicate;
 
 /**
  * @author xuejiaming
@@ -177,15 +179,15 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
         ColumnSetter<Object> sqlColumnSetter = getRuntimeContext().getSQLExpressionInvokeFactory().createColumnSetter(0, this, updateSet);
 
         //如果更新拦截器不为空
-        if (EasyCollectionUtil.isNotEmpty(entityMetadata.getUpdateSetInterceptors())) {
-            QueryConfiguration easyQueryConfiguration = getRuntimeContext().getQueryConfiguration();
-            getExpressionContext().getInterceptorFilter(entityMetadata.getUpdateSetInterceptors())
-                    .forEach(interceptor -> {
-                        UpdateSetInterceptor globalInterceptor = (UpdateSetInterceptor) easyQueryConfiguration.getEasyInterceptor(interceptor);
-                        if (globalInterceptor.enable()) {
-                            globalInterceptor.configure(entityMetadata.getEntityClass(), this, sqlColumnSetter);
-                        }
-                    });
+        List<UpdateSetInterceptor> updateSetInterceptors = entityMetadata.getUpdateSetInterceptors();
+        if (EasyCollectionUtil.isNotEmpty(updateSetInterceptors)) {
+
+            Predicate<Interceptor> interceptorFilter = getExpressionContext().getInterceptorFilter();
+            for (UpdateSetInterceptor updateSetInterceptor : updateSetInterceptors) {
+                if(interceptorFilter.test(updateSetInterceptor)){
+                    updateSetInterceptor.configure(entityMetadata.getEntityClass(), this, sqlColumnSetter);
+                }
+            }
         }
         if (entityMetadata.hasVersionColumn()) {
             Object version = expressionContext.getVersion();

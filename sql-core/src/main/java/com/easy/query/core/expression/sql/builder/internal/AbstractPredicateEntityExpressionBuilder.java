@@ -1,7 +1,7 @@
 package com.easy.query.core.expression.sql.builder.internal;
 
+import com.easy.query.core.basic.extension.interceptor.Interceptor;
 import com.easy.query.core.basic.extension.interceptor.PredicateFilterInterceptor;
-import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
@@ -17,7 +17,9 @@ import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.VersionMetadata;
 import com.easy.query.core.util.EasyCollectionUtil;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.function.Predicate;
 
 /**
  * @author xuejiaming
@@ -65,15 +67,14 @@ public abstract class AbstractPredicateEntityExpressionBuilder extends AbstractE
                 }
             }
             //如果当前对象是存在拦截器的那么就通过stream获取剩余的拦截器
-            if (EasyCollectionUtil.isNotEmpty(entityMetadata.getPredicateFilterInterceptors())) {
-                QueryConfiguration easyQueryConfiguration = getRuntimeContext().getQueryConfiguration();
-                expressionContext.getInterceptorFilter(entityMetadata.getPredicateFilterInterceptors())
-                        .forEach(interceptor -> {
-                            PredicateFilterInterceptor globalSelectInterceptorStrategy = (PredicateFilterInterceptor) easyQueryConfiguration.getEasyInterceptor(interceptor);
-                            if (globalSelectInterceptorStrategy != null && globalSelectInterceptorStrategy.enable()) {
-                                globalSelectInterceptorStrategy.configure(entityMetadata.getEntityClass(), this, sqlPredicate);
-                            }
-                        });
+            List<PredicateFilterInterceptor> predicateFilterInterceptors = entityMetadata.getPredicateFilterInterceptors();
+            if (EasyCollectionUtil.isNotEmpty(predicateFilterInterceptors)) {
+                Predicate<Interceptor> interceptorFilter = expressionContext.getInterceptorFilter();
+                for (PredicateFilterInterceptor predicateFilterInterceptor : predicateFilterInterceptors) {
+                    if(interceptorFilter.test(predicateFilterInterceptor)){
+                        predicateFilterInterceptor.configure(entityMetadata.getEntityClass(), this, sqlPredicate);
+                    }
+                }
             }
 
             if (predicateSegment.isNotEmpty()) {

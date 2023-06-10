@@ -1,8 +1,11 @@
 package com.easy.query.test;
 
+import com.easy.query.api4j.delete.ExpressionDeletable;
+import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import com.easy.query.core.exception.EasyQuerySQLStatementException;
+import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.TopicValueUpdateAtomicTrack;
 import org.junit.Assert;
@@ -12,85 +15,89 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 
 /**
+ * @author xuejiaming
  * @FileName: DeleteTest.java
  * @Description: 文件说明
  * @Date: 2023/3/21 12:54
- * @author xuejiaming
  */
-public class DeleteTest  extends BaseTest {
+public class DeleteTest extends BaseTest {
     @Test
-    public void deleteTest1(){
+    public void deleteTest1() {
         Topic topic = easyQuery.queryable(Topic.class).whereById("999").firstOrNull();
-        if(topic==null){
-            topic=new Topic();
+        if (topic == null) {
+            topic = new Topic();
             topic.setId("999");
             topic.setTitle("title999");
             topic.setCreateTime(LocalDateTime.now());
             topic.setStars(999);
             long l = easyQuery.insertable(topic).executeRows();
-            Assert.assertEquals(1,l);
+            Assert.assertEquals(1, l);
         }
         String deleteSQL = easyQuery.deletable(Topic.class).whereById("999").toSQL();
-        Assert.assertEquals("DELETE FROM `t_topic` WHERE `id` = ?",deleteSQL);
+        Assert.assertEquals("DELETE FROM `t_topic` WHERE `id` = ?", deleteSQL);
         long l = easyQuery.deletable(Topic.class).whereById("999").executeRows();
-        Assert.assertEquals(1,l);
+        Assert.assertEquals(1, l);
     }
+
     @Test
-    public void deleteTest2(){
+    public void deleteTest2() {
         Topic topic = easyQuery.queryable(Topic.class).whereById("998").firstOrNull();
-        if(topic==null){
-            topic=new Topic();
+        if (topic == null) {
+            topic = new Topic();
             topic.setId("998");
             topic.setTitle("title998");
             topic.setCreateTime(LocalDateTime.now());
             topic.setStars(998);
             long l = easyQuery.insertable(topic).executeRows();
-            Assert.assertEquals(1,l);
+            Assert.assertEquals(1, l);
         }
-        String deleteSql = easyQuery.deletable(Topic.class).where(o->o.eq(Topic::getTitle,"title998")).toSQL();
-        Assert.assertEquals("DELETE FROM `t_topic` WHERE `title` = ?",deleteSql);
-        long l = easyQuery.deletable(Topic.class).where(o->o.eq(Topic::getTitle,"title998")).executeRows();
-        Assert.assertEquals(1,l);
+        String deleteSql = easyQuery.deletable(Topic.class).where(o -> o.eq(Topic::getTitle, "title998")).toSQL();
+        Assert.assertEquals("DELETE FROM `t_topic` WHERE `title` = ?", deleteSql);
+        long l = easyQuery.deletable(Topic.class).where(o -> o.eq(Topic::getTitle, "title998")).executeRows();
+        Assert.assertEquals(1, l);
     }
+
     @Test
-    public void deleteTest3(){
+    public void deleteTest3() {
         Topic topic = easyQuery.queryable(Topic.class).whereById("997").firstOrNull();
-        if(topic==null){
-            topic=new Topic();
+        if (topic == null) {
+            topic = new Topic();
             topic.setId("997");
             topic.setTitle("title997");
             topic.setCreateTime(LocalDateTime.now());
             topic.setStars(997);
             long l = easyQuery.insertable(topic).executeRows();
-            Assert.assertEquals(1,l);
+            Assert.assertEquals(1, l);
         }
         String deleteSql = easyQuery.deletable(topic).toSQL();
-        Assert.assertEquals("DELETE FROM `t_topic` WHERE `id` = ?",deleteSql);
+        Assert.assertEquals("DELETE FROM `t_topic` WHERE `id` = ?", deleteSql);
         long l = easyQuery.deletable(topic).executeRows();
-        Assert.assertEquals(1,l);
+        Assert.assertEquals(1, l);
     }
+
     @Test
-    public void deleteTest4(){
+    public void deleteTest4() {
         Topic topic = easyQuery.queryable(Topic.class).whereById("996").firstOrNull();
-        if(topic==null){
-            topic=new Topic();
+        if (topic == null) {
+            topic = new Topic();
             topic.setId("996");
             topic.setTitle("title996");
             topic.setCreateTime(LocalDateTime.now());
             topic.setStars(996);
             long l = easyQuery.insertable(topic).executeRows();
-            Assert.assertEquals(1,l);
+            Assert.assertEquals(1, l);
         }
         String deleteSql = easyQuery.deletable(topic).toSQL();
-        Assert.assertEquals("DELETE FROM `t_topic` WHERE `id` = ?",deleteSql);
+        Assert.assertEquals("DELETE FROM `t_topic` WHERE `id` = ?", deleteSql);
         long l = easyQuery.deletable(topic).executeRows();
-        Assert.assertEquals(1,l);
+        Assert.assertEquals(1, l);
     }
+
     @Test
-    public void deleteTest6(){
+    public void deleteTest6() {
         Topic topic = easyQuery.queryable(Topic.class).whereById("995").firstOrNull();
-        if(topic==null){
-            topic=new Topic();
+        if (topic == null) {
+            topic = new Topic();
             topic.setId("995");
             topic.setTitle("title995");
             topic.setCreateTime(LocalDateTime.now());
@@ -192,5 +199,52 @@ public class DeleteTest  extends BaseTest {
             String sql = ((EasyQuerySQLStatementException) ex1.getCause()).getSQL();
             Assert.assertEquals("DELETE FROM `abc`.`t_topic_value_atomicaaa` WHERE `id` IN (?,?,?)", sql);
         }
+    }
+
+    @Test
+    public void deleteTest13() {
+//        Topic topic = easyQuery.queryable(Topic.class).whereById("996").firstOrNull();
+//        if(topic==null){
+//            topic=new Topic();
+//            topic.setId("996");
+//            topic.setTitle("title996");
+//            topic.setCreateTime(LocalDateTime.now());
+//            topic.setStars(996);
+//            long l = easyQuery.insertable(topic).executeRows();
+//            Assert.assertEquals(1,l);
+//        }
+        ExpressionDeletable<Topic> topicExpressionDeletable1 = easyQuery.deletable(Topic.class).enableLogicDelete();
+        boolean b1 = topicExpressionDeletable1.getExpressionContext().getBehavior().hasBehavior(EasyBehaviorEnum.LOGIC_DELETE);
+        Assert.assertTrue(b1);
+        ExpressionDeletable<Topic> topicExpressionDeletable = easyQuery.deletable(Topic.class).disableLogicDelete();
+        boolean b = topicExpressionDeletable.getExpressionContext().getBehavior().hasBehavior(EasyBehaviorEnum.LOGIC_DELETE);
+        Assert.assertFalse(b);
+        ExpressionDeletable<Topic> topicExpressionDeletable2 = easyQuery.deletable(Topic.class).allowDeleteStatement(true);
+        boolean b2 = topicExpressionDeletable2.getExpressionContext().isDeleteThrow();
+        Assert.assertFalse(b2);
+        ExpressionDeletable<Topic> topicExpressionDeletable3 = easyQuery.deletable(Topic.class).allowDeleteStatement(false);
+        boolean b3 = topicExpressionDeletable3.getExpressionContext().isDeleteThrow();
+        Assert.assertTrue(b3);
+    }
+
+    @Test
+    public void deleteTest14() {
+        Topic topic = null;
+        String sql = easyQuery.deletable(topic).toSQL();
+        Assert.assertNull(sql);
+        String sql1 = easyQuery.deletable(topic).useLogicDelete(false)
+                .noInterceptor().noInterceptor("1")
+                .useInterceptor().useInterceptor("1")
+                .allowDeleteStatement(true).toSQL();
+        Assert.assertNull(sql1);
+        ExpressionContext expressionContext = easyQuery.deletable(topic).getExpressionContext();
+        Assert.assertNull(expressionContext);
+        long l = easyQuery.deletable(topic).executeRows();
+        Assert.assertEquals(0, l);
+        easyQuery.deletable(topic).executeRows(0, "123");
+        String sql2 = easyQueryClient.deletable(topic).toSQL();
+        Assert.assertNull(sql2);
+        String sql3 = easyQueryClient.deletable(topic).toSQL(null);
+        Assert.assertNull(sql3);
     }
 }

@@ -1,12 +1,11 @@
 package com.easy.query.core.basic.api.insert;
 
+import com.easy.query.core.basic.extension.interceptor.EntityInterceptor;
+import com.easy.query.core.basic.extension.interceptor.Interceptor;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
-import com.easy.query.core.basic.extension.interceptor.EntityInterceptor;
-import com.easy.query.core.basic.extension.interceptor.Interceptor;
-import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.MultiTableTypeEnum;
@@ -19,7 +18,7 @@ import com.easy.query.core.util.EasyCollectionUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
-import java.util.stream.Collectors;
+import java.util.function.Predicate;
 
 /**
  * @author xuejiaming
@@ -53,11 +52,10 @@ public abstract class AbstractClientInsertable<T> implements ClientInsertable<T>
 
     protected void insertBefore() {
         //是否使用自定义插入策略
-        List<String> insertInterceptors = entityMetadata.getEntityInterceptors();
+        List<EntityInterceptor> insertInterceptors = entityMetadata.getEntityInterceptors();
         if (EasyCollectionUtil.isNotEmpty(insertInterceptors)) {
-            QueryConfiguration easyQueryConfiguration = entityInsertExpressionBuilder.getRuntimeContext().getQueryConfiguration();
-            List<EntityInterceptor> entityInterceptors = entityInsertExpressionBuilder.getExpressionContext().getInterceptorFilter(insertInterceptors)
-                    .map(interceptor -> (EntityInterceptor) easyQueryConfiguration.getEasyInterceptor(interceptor)).filter(Interceptor::enable).collect(Collectors.toList());
+            Predicate<Interceptor> interceptorFilter = entityInsertExpressionBuilder.getExpressionContext().getInterceptorFilter();
+            List<EntityInterceptor> entityInterceptors = EasyCollectionUtil.filter(insertInterceptors, interceptorFilter::test);
             if (EasyCollectionUtil.isNotEmpty(entityInterceptors)) {
                 Class<?> entityClass = entityMetadata.getEntityClass();
                 for (T entity : entities) {
@@ -130,6 +128,7 @@ public abstract class AbstractClientInsertable<T> implements ClientInsertable<T>
         return this;
     }
 
+    @Override
     public String toSQL(Object entity) {
         return toSQLWithParam(entity, DefaultToSQLContext.defaultToSQLContext(entityInsertExpressionBuilder.getExpressionContext().getTableContext()));
     }

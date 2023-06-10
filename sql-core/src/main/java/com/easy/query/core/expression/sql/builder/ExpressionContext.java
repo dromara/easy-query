@@ -1,14 +1,14 @@
 package com.easy.query.core.expression.sql.builder;
 
+import com.easy.query.core.basic.extension.interceptor.Interceptor;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
+import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.expression.sql.TableContext;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
-import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 
-import java.util.List;
-import java.util.stream.Stream;
+import java.util.function.Predicate;
 
 /**
  * @FileName: QueryExpressionContext.java
@@ -31,7 +31,7 @@ public interface ExpressionContext {
     void noInterceptor(String name);
     void useInterceptor();
     void noInterceptor();
-    Stream<String> getInterceptorFilter(List<String> queryInterceptors);
+    Predicate<Interceptor> getInterceptorFilter();
 
    default void executeMethod(ExecuteMethodEnum executeMethod){
        executeMethod(executeMethod,false);

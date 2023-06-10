@@ -26,6 +26,11 @@ public abstract class AbstractKtEntityDeletable<T> implements KtEntityDeletable<
     }
 
     @Override
+    public String toSQL() {
+        return entityObjectDeletable.toSQL();
+    }
+
+    @Override
     public long executeRows() {
         return entityObjectDeletable.executeRows();
     }

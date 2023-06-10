@@ -84,4 +84,9 @@ public abstract class AbstractKtEntityInsertable<T> implements KtEntityInsertabl
         clientInsertable.asAlias(alias);
         return this;
     }
+
+    @Override
+    public String toSQL(Object entity) {
+        return clientInsertable.toSQL(entity);
+    }
 }

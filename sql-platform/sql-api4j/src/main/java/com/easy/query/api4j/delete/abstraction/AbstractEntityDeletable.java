@@ -26,6 +26,11 @@ public abstract class AbstractEntityDeletable<T> implements EntityDeletable<T> {
     }
 
     @Override
+    public String toSQL() {
+        return entityObjectDeletable.toSQL();
+    }
+
+    @Override
     public long executeRows() {
         return entityObjectDeletable.executeRows();
     }

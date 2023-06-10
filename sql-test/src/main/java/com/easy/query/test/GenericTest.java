@@ -28,15 +28,15 @@ import java.sql.SQLException;
 import java.util.UUID;
 
 /**
+ * @author xuejiaming
  * @FileName: GenericTest.java
  * @Description: 文件说明
  * @Date: 2023/3/17 22:22
- * @author xuejiaming
  */
-public class GenericTest extends BaseTest{
+public class GenericTest extends BaseTest {
 
     @Test
-    public void SqlRangeTest1(){
+    public void SqlRangeTest1() {
         boolean openFirst1 = SQLRangeEnum.openFirst(SQLRangeEnum.OPEN);
         Assert.assertTrue(openFirst1);
         boolean openFirst2 = SQLRangeEnum.openFirst(SQLRangeEnum.CLOSED);
@@ -54,55 +54,60 @@ public class GenericTest extends BaseTest{
         boolean openEnd4 = SQLRangeEnum.openEnd(SQLRangeEnum.OPEN_CLOSED);
         Assert.assertFalse(openEnd4);
     }
+
     @Test
-    public void base64Test(){
+    public void base64Test() {
         String uuid = UUID.randomUUID().toString();
         byte[] bytes = uuid.getBytes(StandardCharsets.UTF_8);
         byte[] encode = EasyBase64Util.encode(bytes);
         byte[] decode = EasyBase64Util.decode(encode);
-        Assert.assertArrayEquals(bytes,decode);
-        Assert.assertEquals(uuid,new String(decode,StandardCharsets.UTF_8));
+        Assert.assertArrayEquals(bytes, decode);
+        Assert.assertEquals(uuid, new String(decode, StandardCharsets.UTF_8));
     }
-    private final String key="abcdef1234567890";//16位的秘钥
-    private final String iv="A-16-Byte-String";//16位的iv
+
+    private final String key = "abcdef1234567890";//16位的秘钥
+    private final String iv = "A-16-Byte-String";//16位的iv
 
     @Test
-    public void aesTest2(){
+    public void aesTest2() {
         String uuid = UUID.randomUUID().toString();
-        String encryptToString = EasyAesUtil.encrypt(uuid,key , iv,StandardCharsets.UTF_8);
-        String decryptToString = EasyAesUtil.decrypt(encryptToString, key, iv,StandardCharsets.UTF_8);
+        String encryptToString = EasyAesUtil.encrypt(uuid, key, iv, StandardCharsets.UTF_8);
+        String decryptToString = EasyAesUtil.decrypt(encryptToString, key, iv, StandardCharsets.UTF_8);
 
-        Assert.assertEquals(uuid,decryptToString);
+        Assert.assertEquals(uuid, decryptToString);
 
     }
+
     @Test
-    public void easyEncryptionTest(){
+    public void easyEncryptionTest() {
 
         DefaultAesEasyEncryptionStrategy aesEasyEncryptionStrategy = new DefaultAesEasyEncryptionStrategy();
         String xx = "❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️垚垚垚垚垚垚";
 
-        Object encryptValue = aesEasyEncryptionStrategy.encrypt(null,null,xx);
-        Object decryptValue = aesEasyEncryptionStrategy.decrypt(null,null,encryptValue);
-        Assert.assertEquals(xx,decryptValue);
+        Object encryptValue = aesEasyEncryptionStrategy.encrypt(null, null, xx);
+        Object decryptValue = aesEasyEncryptionStrategy.decrypt(null, null, encryptValue);
+        Assert.assertEquals(xx, decryptValue);
 
-        String phone="18888888888";
-        Object encrypt = aesEasyEncryptionStrategy.encrypt(null,null,phone);
-        Object decrypt = aesEasyEncryptionStrategy.decrypt(null,null,encrypt);
-        Assert.assertEquals(phone,decrypt);
+        String phone = "18888888888";
+        Object encrypt = aesEasyEncryptionStrategy.encrypt(null, null, phone);
+        Object decrypt = aesEasyEncryptionStrategy.decrypt(null, null, encrypt);
+        Assert.assertEquals(phone, decrypt);
     }
+
     @Test
-    public void easyEncryptionTest1(){
+    public void easyEncryptionTest1() {
         DefaultAesEasyEncryptionStrategy aesEasyEncryptionStrategy = new DefaultAesEasyEncryptionStrategy();
         String xx = "188888881212";
 
-        Object encryptValue = aesEasyEncryptionStrategy.encrypt(null,null,xx);
-        Object decryptValue = aesEasyEncryptionStrategy.decrypt(null,null,encryptValue);
-        Assert.assertEquals(xx,decryptValue);
-        Object encryptValue1 = aesEasyEncryptionStrategy.encrypt(null,null,"1888888812");
-        Assert.assertTrue(EasyStringUtil.startsWith(encryptValue.toString(),encryptValue1.toString()));
+        Object encryptValue = aesEasyEncryptionStrategy.encrypt(null, null, xx);
+        Object decryptValue = aesEasyEncryptionStrategy.decrypt(null, null, encryptValue);
+        Assert.assertEquals(xx, decryptValue);
+        Object encryptValue1 = aesEasyEncryptionStrategy.encrypt(null, null, "1888888812");
+        Assert.assertTrue(EasyStringUtil.startsWith(encryptValue.toString(), encryptValue1.toString()));
     }
+
     @Test
-    public void behavior(){
+    public void behavior() {
         EasyBehavior easyBehavior = new EasyBehavior();
         Assert.assertFalse(easyBehavior.isDefaultBehavior());
         Assert.assertTrue(easyBehavior.hasBehavior(EasyBehaviorEnum.LOGIC_DELETE));
@@ -127,48 +132,52 @@ public class GenericTest extends BaseTest{
     }
 
     @Test
-    public void executeMethodBehaviorTest1(){
+    public void executeMethodBehaviorTest1() {
         int code = ExecuteMethodEnum.UNKNOWN.getCode();
         code = EasyBitwiseUtil.addBit(code, ExecuteMethodEnum.ANY.getCode());
-        Assert.assertNotEquals(code,ExecuteMethodEnum.UNKNOWN.getCode());
+        Assert.assertNotEquals(code, ExecuteMethodEnum.UNKNOWN.getCode());
         Assert.assertTrue(EasyBitwiseUtil.hasBit(code, ExecuteMethodEnum.ANY.getCode()));
         Assert.assertFalse(EasyBitwiseUtil.hasBit(code, ExecuteMethodEnum.ALL.getCode()));
         code = EasyBitwiseUtil.removeBit(code, ExecuteMethodEnum.ALL.getCode());
-        Assert.assertNotEquals(code,ExecuteMethodEnum.UNKNOWN.getCode());
+        Assert.assertNotEquals(code, ExecuteMethodEnum.UNKNOWN.getCode());
         Assert.assertTrue(EasyBitwiseUtil.hasBit(code, ExecuteMethodEnum.ANY.getCode()));
         code = EasyBitwiseUtil.removeBit(code, ExecuteMethodEnum.ANY.getCode());
         Assert.assertFalse(EasyBitwiseUtil.hasBit(code, ExecuteMethodEnum.ANY.getCode()));
-        Assert.assertEquals(code,ExecuteMethodEnum.UNKNOWN.getCode());
+        Assert.assertEquals(code, ExecuteMethodEnum.UNKNOWN.getCode());
     }
+
     @Test
-    public void queryLargeColumnTest1(){
+    public void queryLargeColumnTest1() {
         String sql = easyQuery.queryable(QueryLargeColumnTestEntity.class).toSQL();
-        Assert.assertEquals("SELECT `id`,`name`,`content` FROM `query_large_column_test`",sql);
+        Assert.assertEquals("SELECT `id`,`name`,`content` FROM `query_large_column_test`", sql);
     }
+
     @Test
-    public void queryLargeColumnTest2(){
+    public void queryLargeColumnTest2() {
         String sql = easyQuery.queryable(QueryLargeColumnTestEntity.class).queryLargeColumn(false).toSQL();
-        Assert.assertEquals("SELECT `id`,`name` FROM `query_large_column_test`",sql);
+        Assert.assertEquals("SELECT `id`,`name` FROM `query_large_column_test`", sql);
     }
+
     @Test
-    public void queryLargeColumnTest3(){
-        try{
+    public void queryLargeColumnTest3() {
+        try {
 
             QueryLargeColumnTestEntity queryLargeColumnTestEntity = new QueryLargeColumnTestEntity();
             long l = easyQuery.insertable(queryLargeColumnTestEntity).executeRows();
-        }catch (Exception ex){
+        } catch (Exception ex) {
             Assert.assertTrue(ex instanceof EasyQueryException);
             Assert.assertTrue(ex.getMessage().startsWith("not found insert columns :"));
         }
     }
+
     @Test
-    public void queryLargeColumnTest4(){
-        try{
+    public void queryLargeColumnTest4() {
+        try {
 
             QueryLargeColumnTestEntity queryLargeColumnTestEntity = new QueryLargeColumnTestEntity();
             queryLargeColumnTestEntity.setId("123");
             long l = easyQuery.insertable(queryLargeColumnTestEntity).executeRows();
-        }catch (Exception ex) {
+        } catch (Exception ex) {
             Assert.assertTrue(ex instanceof EasyQueryException);
             Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
             Assert.assertTrue(ex.getCause() instanceof SQLException);
@@ -178,14 +187,15 @@ public class GenericTest extends BaseTest{
             Assert.assertEquals("java.sql.BatchUpdateException: Table 'easy-query-test.query_large_column_test' doesn't exist", ex1.getMessage());
         }
     }
+
     @Test
-    public void queryLargeColumnTest5(){
-        try{
+    public void queryLargeColumnTest5() {
+        try {
 
             QueryLargeColumnTestEntity queryLargeColumnTestEntity = new QueryLargeColumnTestEntity();
             queryLargeColumnTestEntity.setId("123");
             long l = easyQuery.insertable(queryLargeColumnTestEntity).setSQLStrategy(SQLExecuteStrategyEnum.DEFAULT).executeRows();
-        }catch (Exception ex) {
+        } catch (Exception ex) {
             Assert.assertTrue(ex instanceof EasyQueryException);
             Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
             Assert.assertTrue(ex.getCause() instanceof SQLException);
@@ -195,14 +205,15 @@ public class GenericTest extends BaseTest{
             Assert.assertEquals("java.sql.BatchUpdateException: Table 'easy-query-test.query_large_column_test' doesn't exist", ex1.getMessage());
         }
     }
+
     @Test
-    public void queryLargeColumnTest6(){
-        try{
+    public void queryLargeColumnTest6() {
+        try {
 
             QueryLargeColumnTestEntity queryLargeColumnTestEntity = new QueryLargeColumnTestEntity();
             queryLargeColumnTestEntity.setId("123");
             long l = easyQuery.insertable(queryLargeColumnTestEntity).setSQLStrategy(SQLExecuteStrategyEnum.ALL_COLUMNS).executeRows();
-        }catch (Exception ex) {
+        } catch (Exception ex) {
             Assert.assertTrue(ex instanceof EasyQueryException);
             Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
             Assert.assertTrue(ex.getCause() instanceof SQLException);
@@ -212,14 +223,15 @@ public class GenericTest extends BaseTest{
             Assert.assertEquals("java.sql.BatchUpdateException: Table 'easy-query-test.query_large_column_test' doesn't exist", ex1.getMessage());
         }
     }
+
     @Test
-    public void queryLargeColumnTest7(){
-        try{
+    public void queryLargeColumnTest7() {
+        try {
 
             QueryLargeColumnTestEntity queryLargeColumnTestEntity = new QueryLargeColumnTestEntity();
             queryLargeColumnTestEntity.setId("123");
             long l = easyQuery.insertable(queryLargeColumnTestEntity).setSQLStrategy(SQLExecuteStrategyEnum.ONLY_NULL_COLUMNS).executeRows();
-        }catch (Exception ex) {
+        } catch (Exception ex) {
             Assert.assertTrue(ex instanceof EasyQueryException);
             Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
             Assert.assertTrue(ex.getCause() instanceof SQLException);
@@ -229,14 +241,15 @@ public class GenericTest extends BaseTest{
             Assert.assertEquals("java.sql.BatchUpdateException: Table 'easy-query-test.query_large_column_test' doesn't exist", ex1.getMessage());
         }
     }
+
     @Test
-    public void queryLargeColumnTest8(){
-        try{
+    public void queryLargeColumnTest8() {
+        try {
 
             QueryLargeColumnTestEntity queryLargeColumnTestEntity = new QueryLargeColumnTestEntity();
             queryLargeColumnTestEntity.setId("123");
             long l = easyQuery.updatable(queryLargeColumnTestEntity).executeRows();
-        }catch (Exception ex) {
+        } catch (Exception ex) {
             Assert.assertTrue(ex instanceof EasyQueryException);
             Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
             Assert.assertTrue(ex.getCause() instanceof SQLException);
@@ -246,22 +259,24 @@ public class GenericTest extends BaseTest{
             Assert.assertEquals("java.sql.BatchUpdateException: Table 'easy-query-test.query_large_column_test' doesn't exist", ex1.getMessage());
         }
     }
+
     @Test
-    public void queryLargeColumnTest9(){
+    public void queryLargeColumnTest9() {
         QueryLargeColumnTestEntity queryLargeColumnTestEntity = new QueryLargeColumnTestEntity();
         queryLargeColumnTestEntity.setId("123");
         long l = easyQuery.updatable(queryLargeColumnTestEntity).setSQLStrategy(SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS).executeRows();
-        Assert.assertEquals(0,l);
+        Assert.assertEquals(0, l);
     }
+
     @Test
-    public void queryLargeColumnTest10(){
-        try{
+    public void queryLargeColumnTest10() {
+        try {
 
             QueryLargeColumnTestEntity queryLargeColumnTestEntity = new QueryLargeColumnTestEntity();
             queryLargeColumnTestEntity.setId("123");
             queryLargeColumnTestEntity.setName("123");
             long l = easyQuery.updatable(queryLargeColumnTestEntity).setSQLStrategy(SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS).executeRows();
-        }catch (Exception ex) {
+        } catch (Exception ex) {
             Assert.assertTrue(ex instanceof EasyQueryException);
             Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
             Assert.assertTrue(ex.getCause() instanceof SQLException);
@@ -271,15 +286,16 @@ public class GenericTest extends BaseTest{
             Assert.assertEquals("java.sql.BatchUpdateException: Table 'easy-query-test.query_large_column_test' doesn't exist", ex1.getMessage());
         }
     }
+
     @Test
-    public void queryLargeColumnTest11(){
-        try{
+    public void queryLargeColumnTest11() {
+        try {
 
             QueryLargeColumnTestEntity queryLargeColumnTestEntity = new QueryLargeColumnTestEntity();
             queryLargeColumnTestEntity.setId("123");
             queryLargeColumnTestEntity.setName("123");
             long l = easyQuery.updatable(queryLargeColumnTestEntity).setSQLStrategy(SQLExecuteStrategyEnum.ONLY_NULL_COLUMNS).executeRows();
-        }catch (Exception ex) {
+        } catch (Exception ex) {
             Assert.assertTrue(ex instanceof EasyQueryException);
             Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
             Assert.assertTrue(ex.getCause() instanceof SQLException);
@@ -289,22 +305,24 @@ public class GenericTest extends BaseTest{
             Assert.assertEquals("java.sql.BatchUpdateException: Table 'easy-query-test.query_large_column_test' doesn't exist", ex1.getMessage());
         }
     }
+
     @Test
-    public void queryLargeColumnTest12(){
+    public void queryLargeColumnTest12() {
         QueryLargeColumnTestEntity queryLargeColumnTestEntity = new QueryLargeColumnTestEntity();
         queryLargeColumnTestEntity.setId("123");
         queryLargeColumnTestEntity.setName("123");
         queryLargeColumnTestEntity.setContent("123");
         long l = easyQuery.updatable(queryLargeColumnTestEntity).setSQLStrategy(SQLExecuteStrategyEnum.ONLY_NULL_COLUMNS).executeRows();
-        Assert.assertEquals(0,l);
+        Assert.assertEquals(0, l);
     }
+
     @Test
-    public void queryLargeColumnTest13(){
+    public void deleteTest13() {
         try {
             QueryLargeColumnTestEntity queryLargeColumnTestEntity = new QueryLargeColumnTestEntity();
             queryLargeColumnTestEntity.setId("123");
             long l = easyQuery.deletable(queryLargeColumnTestEntity).executeRows();
-        }catch (Exception ex) {
+        } catch (Exception ex) {
             Assert.assertTrue(ex instanceof EasyQueryException);
             Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
             Assert.assertTrue(ex.getCause() instanceof SQLException);
@@ -314,24 +332,77 @@ public class GenericTest extends BaseTest{
             Assert.assertEquals("java.sql.BatchUpdateException: Table 'easy-query-test.query_large_column_test' doesn't exist", ex1.getMessage());
         }
     }
+
     @Test
-    public void queryLargeColumnTest14(){
+    public void deleteTest14() {
+        try {
+            QueryLargeColumnTestEntity queryLargeColumnTestEntity = new QueryLargeColumnTestEntity();
+            queryLargeColumnTestEntity.setId("123");
+            long l = easyQuery.deletable(queryLargeColumnTestEntity).asTable("aaa").executeRows();
+        } catch (Exception ex) {
+            Assert.assertTrue(ex instanceof EasyQueryException);
+            Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
+            Assert.assertTrue(ex.getCause() instanceof SQLException);
+            Assert.assertTrue(ex.getCause() instanceof EasyQuerySQLStatementException);
+            EasyQuerySQLStatementException ex1 = ((EasyQuerySQLStatementException) ex.getCause());
+            Assert.assertEquals("DELETE FROM `aaa` WHERE `id` = ?", ex1.getSQL());
+            Assert.assertEquals("java.sql.BatchUpdateException: Table 'easy-query-test.aaa' doesn't exist", ex1.getMessage());
+        }
+    }
+
+    @Test
+    public void deleteTest15() {
+        try {
+            QueryLargeColumnTestEntity queryLargeColumnTestEntity = new QueryLargeColumnTestEntity();
+            queryLargeColumnTestEntity.setId("123");
+            long l = easyQuery.deletable(queryLargeColumnTestEntity).asTable(o -> o + "aaa").asSchema("xxx").executeRows();
+        } catch (Exception ex) {
+            Assert.assertTrue(ex instanceof EasyQueryException);
+            Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
+            Assert.assertTrue(ex.getCause() instanceof SQLException);
+            Assert.assertTrue(ex.getCause() instanceof EasyQuerySQLStatementException);
+            EasyQuerySQLStatementException ex1 = ((EasyQuerySQLStatementException) ex.getCause());
+            Assert.assertEquals("DELETE FROM `xxx`.`query_large_column_testaaa` WHERE `id` = ?", ex1.getSQL());
+            Assert.assertEquals("java.sql.BatchUpdateException: Table 'xxx.query_large_column_testaaa' doesn't exist", ex1.getMessage());
+        }
+    }
+
+    @Test
+    public void deleteTest16() {
+        try {
+            QueryLargeColumnTestEntity queryLargeColumnTestEntity = new QueryLargeColumnTestEntity();
+            queryLargeColumnTestEntity.setId("123");
+            long l = easyQuery.deletable(queryLargeColumnTestEntity).asTable(o -> o + "aaa").asSchema(o -> "xxx").executeRows();
+        } catch (Exception ex) {
+            Assert.assertTrue(ex instanceof EasyQueryException);
+            Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
+            Assert.assertTrue(ex.getCause() instanceof SQLException);
+            Assert.assertTrue(ex.getCause() instanceof EasyQuerySQLStatementException);
+            EasyQuerySQLStatementException ex1 = ((EasyQuerySQLStatementException) ex.getCause());
+            Assert.assertEquals("DELETE FROM `xxx`.`query_large_column_testaaa` WHERE `id` = ?", ex1.getSQL());
+            Assert.assertEquals("java.sql.BatchUpdateException: Table 'xxx.query_large_column_testaaa' doesn't exist", ex1.getMessage());
+        }
+    }
+
+    @Test
+    public void queryLargeColumnTest14() {
         try {
             QueryLargeColumnTestEntity queryLargeColumnTestEntity = new QueryLargeColumnTestEntity();
             queryLargeColumnTestEntity.setId("123");
             long l = easyQuery.deletable(queryLargeColumnTestEntity).allowDeleteStatement(false).executeRows();
-        }catch (Exception ex){
+        } catch (Exception ex) {
             Assert.assertTrue(ex instanceof EasyQueryException);
             Assert.assertTrue(ex instanceof EasyQueryInvalidOperationException);
-            Assert.assertEquals("can't execute delete statement",ex.getMessage());
+            Assert.assertEquals("can't execute delete statement", ex.getMessage());
         }
     }
+
     @Test
-    public void queryLargeColumnTest15(){
+    public void queryLargeColumnTest15() {
         QueryLargeColumnTestEntity queryLargeColumnTestEntity = new QueryLargeColumnTestEntity();
         queryLargeColumnTestEntity.setId("123");
         String sql = easyQuery.deletable(queryLargeColumnTestEntity).toSQL();
-        Assert.assertEquals("DELETE FROM `query_large_column_test` WHERE `id` = ?",sql);
+        Assert.assertEquals("DELETE FROM `query_large_column_test` WHERE `id` = ?", sql);
     }
 
     @Test

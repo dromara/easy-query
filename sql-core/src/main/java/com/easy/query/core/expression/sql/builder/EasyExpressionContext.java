@@ -1,19 +1,19 @@
 package com.easy.query.core.expression.sql.builder;
 
+import com.easy.query.core.basic.extension.interceptor.Interceptor;
 import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
+import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.expression.sql.TableContext;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
-import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Stream;
+import java.util.function.Predicate;
 
 /**
  * @author xuejiaming
@@ -144,20 +144,20 @@ public class EasyExpressionContext implements ExpressionContext {
     }
 
     @Override
-    public Stream<String> getInterceptorFilter(List<String> queryInterceptors) {
+    public Predicate<Interceptor> getInterceptorFilter() {
         boolean interceptorBehavior = getBehavior().hasBehavior(EasyBehaviorEnum.USE_INTERCEPTOR);
         //如果当前操作存在interceptor的behavior那么就不应该在interceptors里面
         //否则应该在interceptors里面
-        return queryInterceptors.stream().filter(o -> {
+        return o -> {
             //如果是启用了的
             if (interceptorBehavior) {
                 //拦截器手动指定使用的或者默认要用的并且没有说不用的
-                return useInterceptors.contains(o) || !noInterceptors.contains(o);
+                return useInterceptors.contains(o.name()) || (!noInterceptors.contains(o.name())&&o.enable());
             } else {
                 //手动指定要用的并且不在不使用里面
-                return useInterceptors.contains(o) && !noInterceptors.contains(o);
+                return useInterceptors.contains(o.name()) && !noInterceptors.contains(o.name());
             }
-        });
+        };
     }
 
     @Override

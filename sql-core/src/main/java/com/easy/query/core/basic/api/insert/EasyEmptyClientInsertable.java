@@ -52,6 +52,11 @@ public class EasyEmptyClientInsertable<T> implements ClientInsertable<T> {
     }
 
     @Override
+    public String toSQL(Object entity) {
+        return null;
+    }
+
+    @Override
     public ClientInsertable<T> noInterceptor() {
         return this;
     }

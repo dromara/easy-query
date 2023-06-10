@@ -27,6 +27,7 @@ public class EasyCollectionUtil {
     public static <TSource> boolean isNotSingle(Collection<TSource> sources) {
         return !isSingle(sources);
     }
+
     public static <TSource> boolean isSingle(Collection<TSource> sources) {
         if (sources == null) {
             return false;
@@ -45,23 +46,25 @@ public class EasyCollectionUtil {
         }
         return result;
     }
-    public static <TSource> boolean any(Collection<TSource> sources, Predicate<TSource> predicate){
-        if(isEmpty(sources)){
+
+    public static <TSource> boolean any(Collection<TSource> sources, Predicate<TSource> predicate) {
+        if (isEmpty(sources)) {
             return false;
         }
         for (TSource source : sources) {
-            if(predicate.test(source)){
+            if (predicate.test(source)) {
                 return true;
             }
         }
         return false;
     }
-    public static <TSource> boolean all(Collection<TSource> sources, Predicate<TSource> predicate){
-        if(isEmpty(sources)){
+
+    public static <TSource> boolean all(Collection<TSource> sources, Predicate<TSource> predicate) {
+        if (isEmpty(sources)) {
             return false;
         }
         for (TSource source : sources) {
-            if(!predicate.test(source)){
+            if (!predicate.test(source)) {
                 return false;
             }
         }
@@ -105,6 +108,7 @@ public class EasyCollectionUtil {
         }
         return 0;
     }
+
     public static <TSource> long sumLong(Collection<TSource> arrays, Function<TSource, Long> selector) {
         int length = arrays.size();
         if (length > 0) {
@@ -116,6 +120,7 @@ public class EasyCollectionUtil {
         }
         return 0L;
     }
+
     public static long sum(Collection<Long> arrays) {
         int length = arrays.size();
         if (length > 0) {
@@ -177,6 +182,18 @@ public class EasyCollectionUtil {
         return false;
     }
 
+    public static <TSource> List<TSource> filter(List<TSource> source, java.util.function.Predicate<TSource> predicate) {
+        if (isEmpty(source)) {
+            return Collections.emptyList();
+        }
+        ArrayList<TSource> result = new ArrayList<>(source.size());
+        for (TSource tSource : source) {
+            if (predicate.test(tSource)) {
+                result.add(tSource);
+            }
+        }
+        return result;
+    }
 
     public static <TSource> TSource firstOrDefault(List<TSource> source, java.util.function.Predicate<TSource> predicate, TSource def) {
         if (source == null) {
@@ -208,20 +225,21 @@ public class EasyCollectionUtil {
         if (source.isEmpty()) {
             return null;
         }
-        if(source instanceof List){
-            return ((List<TSource>)source).get(0);
+        if (source instanceof List) {
+            return ((List<TSource>) source).get(0);
         }
         return source.iterator().next();
     }
+
     public static <TSource> TSource first(Collection<TSource> source) {
         if (source == null) {
-           throw new NoSuchElementException();
+            throw new NoSuchElementException();
         }
         if (source.isEmpty()) {
             throw new NoSuchElementException();
         }
-        if(source instanceof List){
-            return ((List<TSource>)source).get(0);
+        if (source instanceof List) {
+            return ((List<TSource>) source).get(0);
         }
         return source.iterator().next();
     }
@@ -301,7 +319,7 @@ public class EasyCollectionUtil {
         }
     }
 
-    public static <K, V,R> Map<K, R> listToMap(List<V> list, Function<V, K> keyExtractor, Function<V,R> valueExtractor) {
+    public static <K, V, R> Map<K, R> listToMap(List<V> list, Function<V, K> keyExtractor, Function<V, R> valueExtractor) {
         Map<K, R> map = new HashMap<>();
         for (V element : list) {
             K key = keyExtractor.apply(element);
