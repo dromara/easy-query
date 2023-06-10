@@ -11,7 +11,12 @@ import com.easy.query.core.basic.jdbc.executor.internal.result.impl.DefaultQuery
 import com.easy.query.core.basic.jdbc.executor.internal.sharding.merger.ShardingMerger;
 import com.easy.query.core.basic.jdbc.executor.internal.sharding.merger.impl.QueryStreamShardingMerger;
 import com.easy.query.core.basic.jdbc.executor.internal.unit.abstraction.AbstractExecutor;
-import com.easy.query.core.basic.jdbc.executor.internal.unit.breaker.*;
+import com.easy.query.core.basic.jdbc.executor.internal.unit.breaker.AllCircuitBreaker;
+import com.easy.query.core.basic.jdbc.executor.internal.unit.breaker.AnyCircuitBreaker;
+import com.easy.query.core.basic.jdbc.executor.internal.unit.breaker.AnyElementCircuitBreaker;
+import com.easy.query.core.basic.jdbc.executor.internal.unit.breaker.CircuitBreaker;
+import com.easy.query.core.basic.jdbc.executor.internal.unit.breaker.ListCircuitBreaker;
+import com.easy.query.core.basic.jdbc.executor.internal.unit.breaker.NoCircuitBreaker;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.sharding.context.StreamMergeContext;

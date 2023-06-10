@@ -3,7 +3,12 @@ package com.easy.query.test.h2;
 import com.easy.query.api4j.select.Queryable2;
 import com.easy.query.api4j.select.Queryable3;
 import com.easy.query.api4j.select.Queryable4;
-import com.easy.query.test.h2.domain.*;
+import com.easy.query.test.h2.domain.ALLTYPE;
+import com.easy.query.test.h2.domain.ALLTYPESharding;
+import com.easy.query.test.h2.domain.DefTable;
+import com.easy.query.test.h2.domain.DefTableLeft1;
+import com.easy.query.test.h2.domain.DefTableLeft2;
+import com.easy.query.test.h2.domain.DefTableLeft3;
 import org.junit.Assert;
 import org.junit.Test;
 

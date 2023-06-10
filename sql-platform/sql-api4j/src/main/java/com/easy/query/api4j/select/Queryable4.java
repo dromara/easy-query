@@ -1,6 +1,11 @@
 package com.easy.query.api4j.select;
 
-import com.easy.query.api4j.sql.*;
+import com.easy.query.api4j.sql.SQLColumnAsSelector;
+import com.easy.query.api4j.sql.SQLColumnResultSelector;
+import com.easy.query.api4j.sql.SQLColumnSelector;
+import com.easy.query.api4j.sql.SQLGroupBySelector;
+import com.easy.query.api4j.sql.SQLWhereAggregatePredicate;
+import com.easy.query.api4j.sql.SQLWherePredicate;
 import com.easy.query.api4j.sql.impl.SQLColumnResultSelectorImpl;
 import com.easy.query.api4j.sql.impl.SQLWhereAggregatePredicateImpl;
 import com.easy.query.core.api.client.EasyQueryClient;

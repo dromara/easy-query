@@ -6,14 +6,12 @@ import com.easy.query.api4kt.insert.KtEntityInsertable;
 import com.easy.query.api4kt.select.KtQueryable;
 import com.easy.query.api4kt.update.KtEntityUpdatable;
 import com.easy.query.api4kt.update.KtExpressionUpdatable;
-import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
+import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
 import com.easy.query.core.context.QueryRuntimeContext;
-import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -24,30 +22,36 @@ import java.util.Map;
  * @Date: 2023/2/5 21:27
  */
 public interface EasyKtQuery {
+    EasyQueryClient getEasyQueryClient();
     QueryRuntimeContext getRuntimeContext();
 
     default <T> List<T> sqlQuery(String sql, Class<T> clazz) {
-        return sqlQuery(sql, clazz, Collections.emptyList());
+        return getEasyQueryClient().sqlQuery(sql, clazz);
     }
 
     default <T> List<T> sqlQuery(String sql, Class<T> clazz, List<Object> parameters) {
-        List<SQLParameter> sqlParameters = EasyCollectionUtil.map(parameters, o -> new EasyConstSQLParameter(null, null, o));
-        return sqlEasyQuery(sql, clazz, sqlParameters);
+        return getEasyQueryClient().sqlQuery(sql,clazz,parameters);
     }
 
-    <T> List<T> sqlEasyQuery(String sql, Class<T> clazz, List<SQLParameter> parameters);
+   default  <T> List<T> sqlEasyQuery(String sql, Class<T> clazz, List<SQLParameter> parameters){
+        return getEasyQueryClient().sqlEasyQuery(sql,clazz,parameters);
+   }
 
     default List<Map<String, Object>> sqlQueryMap(String sql) {
-        return sqlQueryMap(sql, Collections.emptyList());
+        return getEasyQueryClient().sqlQueryMap(sql);
     }
 
-    List<Map<String, Object>> sqlQueryMap(String sql, List<Object> parameters);
+   default List<Map<String, Object>> sqlQueryMap(String sql, List<Object> parameters){
+        return getEasyQueryClient().sqlQueryMap(sql,parameters);
+   }
 
     default long sqlExecute(String sql) {
-        return sqlExecute(sql, Collections.emptyList());
+        return getEasyQueryClient().sqlExecute(sql);
     }
 
-    long sqlExecute(String sql, List<Object> parameters);
+   default long sqlExecute(String sql, List<Object> parameters){
+        return getEasyQueryClient().sqlExecute(sql,parameters);
+   }
 
     <T> KtQueryable<T> queryable(Class<T> clazz);
 

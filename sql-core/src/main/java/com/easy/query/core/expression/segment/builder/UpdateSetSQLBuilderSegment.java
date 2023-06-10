@@ -4,7 +4,9 @@ import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.enums.SQLKeywordEnum;
 import com.easy.query.core.expression.segment.SQLSegment;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.List;
+
 
 /**
  * @Description: 文件说明

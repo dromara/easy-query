@@ -1,7 +1,11 @@
 package com.easy.query.test;
 
 import com.easy.query.api4j.select.Queryable;
-import com.easy.query.core.basic.jdbc.parameter.*;
+import com.easy.query.core.basic.jdbc.parameter.ConstLikeSQLParameter;
+import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
+import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
+import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
+import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.test.dto.BlogEntityGroup;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.Topic;

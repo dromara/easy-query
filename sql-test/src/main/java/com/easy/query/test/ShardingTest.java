@@ -5,7 +5,11 @@ import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.api.pagination.EasyShardingPageResult;
 import com.easy.query.test.dto.TopicShardingGroup;
 import com.easy.query.test.dto.TopicSubQueryBlog;
-import com.easy.query.test.entity.*;
+import com.easy.query.test.entity.Topic;
+import com.easy.query.test.entity.TopicSharding;
+import com.easy.query.test.entity.TopicShardingDataSource;
+import com.easy.query.test.entity.TopicShardingDataSourceTime;
+import com.easy.query.test.entity.TopicShardingTime;
 import org.junit.Assert;
 import org.junit.Test;
 

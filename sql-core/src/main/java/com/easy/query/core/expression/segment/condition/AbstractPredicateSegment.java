@@ -7,7 +7,10 @@ import com.easy.query.core.expression.segment.condition.predicate.Predicate;
 import com.easy.query.core.expression.segment.condition.predicate.SubQueryPredicate;
 import com.easy.query.core.util.EasyStringUtil;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
 
 /**
  * @author xuejiaming

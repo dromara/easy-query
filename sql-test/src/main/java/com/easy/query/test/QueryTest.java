@@ -16,8 +16,10 @@ import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.util.EasyLambdaUtil;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 import com.easy.query.core.util.EasyStringUtil;
-import com.easy.query.test.dto.*;
-import com.easy.query.test.entity.*;
+import com.easy.query.test.dto.TopicRequest;
+import com.easy.query.test.entity.BlogEntity;
+import com.easy.query.test.entity.SysUser;
+import com.easy.query.test.entity.Topic;
 import com.easy.query.test.enums.TopicTypeEnum;
 import com.easy.query.test.func.SQLFunc;
 import com.easy.query.test.vo.BlogEntityVO1;
@@ -27,7 +29,11 @@ import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * @author xuejiaming

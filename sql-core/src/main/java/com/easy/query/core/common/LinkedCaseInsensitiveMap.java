@@ -1,10 +1,11 @@
 package com.easy.query.core.common;
 
 
-import java.io.Serializable;
-import java.util.*;
-import java.util.function.Consumer;
-import java.util.function.Function;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * key为字符串且忽略大小写的有序集合
