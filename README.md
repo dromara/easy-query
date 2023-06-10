@@ -52,7 +52,7 @@ QQ群:170029046
 ```xml
 
 <properties>
-  <easy-query.version>0.9.39</easy-query.version>
+  <easy-query.version>0.9.40</easy-query.version>
 </properties>
 <dependency>
     <groupId>com.easy-query</groupId>
@@ -65,7 +65,7 @@ QQ群:170029046
 ```xml
 
 <properties>
-  <easy-query.version>0.9.39</easy-query.version>
+  <easy-query.version>0.9.40</easy-query.version>
 </properties>
         <!--  提供了以java语法强类型,如果不引用也可以使用只是无法使用lambda表达式来表示属性只能用字符串 -->
 <dependency>
