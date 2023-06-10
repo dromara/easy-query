@@ -11,13 +11,7 @@ import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -54,19 +48,19 @@ public class EasyTrackUtil {
             FastBean fastBean = EasyBeanUtil.getFastBean(entity.getClass());
             for (String keyProperty : keyProperties) {
                 ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(keyProperty);
-                Property<Object, ?> lambdaProperty = fastBean.getBeanGetter(columnMetadata.getProperty().getName(), columnMetadata.getPropertyType());
+                Property<Object, ?> lambdaProperty = fastBean.getBeanGetter(columnMetadata.getProperty());
                 propertiesMap.put(keyProperty, lambdaProperty);
             }
             if (multiDataSourceMapping) {
                 String propertyName = entityMetadata.getShardingDataSourcePropertyName();
                 ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(propertyName);
-                Property<Object, ?> lambdaProperty = fastBean.getBeanGetter(columnMetadata.getProperty().getName(), columnMetadata.getPropertyType());
+                Property<Object, ?> lambdaProperty = fastBean.getBeanGetter(columnMetadata.getProperty());
                 propertiesMap.put(propertyName, lambdaProperty);
             }
             if (multiTableMapping) {
                 String propertyName = entityMetadata.getShardingTablePropertyName();
                 ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(propertyName);
-                Property<Object, ?> lambdaProperty = fastBean.getBeanGetter(columnMetadata.getProperty().getName(), columnMetadata.getPropertyType());
+                Property<Object, ?> lambdaProperty = fastBean.getBeanGetter(columnMetadata.getProperty());
                 propertiesMap.put(propertyName, lambdaProperty);
             }
             return o -> {
@@ -119,7 +113,7 @@ public class EasyTrackUtil {
             if (columnMetadata.isPrimary()) {
                 continue;
             }
-            Property<Object, ?> propertyGetter = fastBean.getBeanGetter(propertyName, columnMetadata.getPropertyType());
+            Property<Object, ?> propertyGetter = fastBean.getBeanGetter(columnMetadata.getProperty());
 
             Object originalPropertyValue = propertyGetter.apply(entityState.getOriginalValue());
             Object currentPropertyValue = propertyGetter.apply(entityState.getCurrentValue());
@@ -133,26 +127,26 @@ public class EasyTrackUtil {
         return entityTrackProperty;
     }
 
-    public static Set<String> getTrackIgnoreProperties(EntityMetadataManager entityMetadataManager, EntityState entityState) {
-        Class<?> entityClass = entityState.getEntityClass();
-        EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(entityClass);
-
-        Set<String> ignoreSets = new HashSet<>();
-        Collection<String> properties = entityMetadata.getProperties();
-        FastBean fastBean = EasyBeanUtil.getFastBean(entityClass);
-        for (String propertyName : properties) {
-            ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(propertyName);
-            if (columnMetadata.isPrimary()) {
-                continue;
-            }
-            Property<Object, ?> propertyGetter = fastBean.getBeanGetter(propertyName, columnMetadata.getPropertyType());
-
-            Object originalPropertyValue = propertyGetter.apply(entityState.getOriginalValue());
-            Object currentPropertyValue = propertyGetter.apply(entityState.getCurrentValue());
-            if ((originalPropertyValue == null && currentPropertyValue == null) || Objects.equals(originalPropertyValue, currentPropertyValue)) {
-                ignoreSets.add(propertyName);
-            }
-        }
-        return ignoreSets;
-    }
+//    public static Set<String> getTrackIgnoreProperties(EntityMetadataManager entityMetadataManager, EntityState entityState) {
+//        Class<?> entityClass = entityState.getEntityClass();
+//        EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(entityClass);
+//
+//        Set<String> ignoreSets = new HashSet<>();
+//        Collection<String> properties = entityMetadata.getProperties();
+//        FastBean fastBean = EasyBeanUtil.getFastBean(entityClass);
+//        for (String propertyName : properties) {
+//            ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(propertyName);
+//            if (columnMetadata.isPrimary()) {
+//                continue;
+//            }
+//            Property<Object, ?> propertyGetter = fastBean.getBeanGetter(columnMetadata.getProperty());
+//
+//            Object originalPropertyValue = propertyGetter.apply(entityState.getOriginalValue());
+//            Object currentPropertyValue = propertyGetter.apply(entityState.getCurrentValue());
+//            if ((originalPropertyValue == null && currentPropertyValue == null) || Objects.equals(originalPropertyValue, currentPropertyValue)) {
+//                ignoreSets.add(propertyName);
+//            }
+//        }
+//        return ignoreSets;
+//    }
 }

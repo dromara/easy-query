@@ -44,4 +44,11 @@ public class ALLTYPESharding {
 //    private Clob jClob;
     private String value;
     private UUID uid;
+    private float numberFloatBasic;
+    private double numberDoubleBasic;
+    private short numberShortBasic;
+    private int numberIntegerBasic;
+    private long numberLongBasic;
+    private byte numberByteBasic;
+    private boolean enableBasic;
 }

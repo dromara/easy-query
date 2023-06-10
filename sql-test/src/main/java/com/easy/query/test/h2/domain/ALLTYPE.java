@@ -3,6 +3,7 @@ package com.easy.query.test.h2.domain;
 import com.easy.query.core.annotation.Column;
 import com.easy.query.core.annotation.Table;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 import java.math.BigDecimal;
 import java.sql.Time;
@@ -20,6 +21,7 @@ import java.util.UUID;
  */
 @Data
 @Table("t_all_type")
+@Accessors(chain = true)
 public class ALLTYPE {
     @Column(primaryKey = true)
     private String id;
@@ -41,4 +43,11 @@ public class ALLTYPE {
 //    private Clob jClob;
     private String value;
     private UUID uid;
+    private float numberFloatBasic;
+    private double numberDoubleBasic;
+    private short numberShortBasic;
+    private int numberIntegerBasic;
+    private long numberLongBasic;
+    private byte numberByteBasic;
+    private boolean enableBasic;
 }

@@ -1,21 +1,19 @@
 package com.easy.query.core.util;
 
 import com.easy.query.core.common.bean.FastBean;
+import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
+import com.easy.query.core.logging.Log;
+import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
-import com.easy.query.core.expression.lambda.Property;
-import com.easy.query.core.logging.Log;
-import com.easy.query.core.logging.LogFactory;
 
 import java.beans.PropertyDescriptor;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 
@@ -163,11 +161,5 @@ public class EasyBeanUtil {
 
     public static FastBean getFastBean(Class<?> entityClass) {
         return CLASS_PROPERTY_FAST_BEAN_CACHE.computeIfAbsent(entityClass, key -> new FastBean(entityClass));
-    }
-    public static Property<Object, ?> getPropertyGetterLambda(Class<?> entityClass, String propertyName, Class<?> fieldType) {
-        return getFastBean(entityClass).getBeanGetter(propertyName, fieldType);
-    }
-    public static PropertySetterCaller<Object> getPropertySetterLambda(Class<?> entityClass, PropertyDescriptor prop) {
-        return getFastBean(entityClass).getBeanSetter(prop);
     }
 }

@@ -10,7 +10,7 @@ import java.io.Serializable;
  * @author xuejiaming
  */
 @FunctionalInterface
-public interface PropertyVoidSetter<T> extends Serializable {
-    void apply(T t,Object value);
+public interface PropertyVoidSetter<T1,T2> extends Serializable {
+    void apply(T1 t,T2 value);
 }
 

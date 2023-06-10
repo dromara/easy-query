@@ -2,18 +2,12 @@ package com.easy.query.core.common.bean;
 
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.lambda.Property;
-import com.easy.query.core.expression.lambda.PropertySetter;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
 import com.easy.query.core.expression.lambda.PropertyVoidSetter;
 import com.easy.query.core.util.EasyClassUtil;
-import com.easy.query.core.util.EasyStringUtil;
 
 import java.beans.PropertyDescriptor;
-import java.lang.invoke.CallSite;
-import java.lang.invoke.LambdaMetafactory;
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodType;
+import java.lang.invoke.*;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -42,26 +36,29 @@ public class FastBean {
         return beanClass;
     }
 
+//    public Property<Object, ?> getBeanGetter(PropertyDescriptor prop) {
+//        return getBeanGetter(prop.getName(),prop.getPropertyType());
+//    }
+
     public Property<Object, ?> getBeanGetter(PropertyDescriptor prop) {
-        return getBeanGetter(prop.getName(),prop.getPropertyType());
+        return propertyGetterCache.computeIfAbsent(prop.getName(), k -> getLambdaProperty(prop));
     }
 
-    public Property<Object, ?> getBeanGetter(String propertyName, Class<?> propertyType) {
-        return propertyGetterCache.computeIfAbsent(propertyName, k -> getLambdaProperty(propertyName, propertyType));
-    }
-
-    private Property<Object, ?> getLambdaProperty(String propertyName, Class<?> fieldType) {
+    private Property<Object, ?> getLambdaProperty(PropertyDescriptor prop) {
+        Class<?> propertyType = prop.getPropertyType();
+        Method readMethod = prop.getReadMethod();
+        String getFunName = readMethod.getName();
         final MethodHandles.Lookup caller = MethodHandles.lookup();
-        MethodType methodType = MethodType.methodType(fieldType, beanClass);
+        MethodType methodType = MethodType.methodType(propertyType, beanClass);
         final CallSite site;
 
-        String getFunName = "get" + EasyStringUtil.toUpperCaseFirstOne(propertyName);
+//        String getFunName = (Objects.equals(boolean.class,fieldType)?"is": "get") + EasyStringUtil.toUpperCaseFirstOne(propertyName);
         try {
             site = LambdaMetafactory.altMetafactory(caller,
                     "apply",
                     MethodType.methodType(Property.class),
-                    methodType.erase(),
-                    caller.findVirtual(beanClass, getFunName, MethodType.methodType(fieldType)),
+                    methodType.erase().generic(),
+                    caller.findVirtual(beanClass, getFunName, MethodType.methodType(propertyType)),
                     methodType, FLAG_SERIALIZABLE);
             return (Property<Object, ?>) site.getTarget().invokeExact();
         } catch (Throwable e) {
@@ -86,39 +83,25 @@ public class FastBean {
         Method writeMethod = EasyClassUtil.getWriteMethodNotNull(prop, beanClass);
         MethodType setter = MethodType.methodType(writeMethod.getReturnType(), propertyType);
 
-        String getFunName = "set" + EasyStringUtil.toUpperCaseFirstOne(propertyName);
+//        String getFunName = "set" + EasyStringUtil.toUpperCaseFirstOne(propertyName);
+        String getFunName = writeMethod.getName();
         try {
 
-
+            //()->{bean.setxxx(propertyType)}
+            MethodType instantiatedMethodType = MethodType.methodType(void.class,beanClass, propertyType);
             MethodHandle target = caller.findVirtual(beanClass, getFunName, setter);
-            MethodType func = target.type();
-            if (void.class.equals(writeMethod.getReturnType())) {
-                CallSite site = LambdaMetafactory.metafactory(
-                        caller,
-                        "apply",
-                        MethodType.methodType(PropertyVoidSetter.class),
-                        func.erase(),
-                        target,
-                        func
-                );
+            MethodType samMethodType = MethodType.methodType(void.class, Object.class, Object.class);
+            CallSite site = LambdaMetafactory.metafactory(
+                    caller,
+                    "apply",
+                    MethodType.methodType(PropertyVoidSetter.class),
+                    samMethodType,
+                    target,
+                    instantiatedMethodType
+            );
 
-                PropertyVoidSetter<Object> objectPropertyVoidSetter = (PropertyVoidSetter<Object>) site.getTarget().invokeExact();
-                return objectPropertyVoidSetter::apply;
-
-            } else {
-                CallSite site = LambdaMetafactory.metafactory(
-                        caller,
-                        "apply",
-                        MethodType.methodType(PropertySetter.class),
-                        func.erase(),
-                        target,
-                        func
-                );
-
-                PropertySetter<Object, ?> objectPropertySetter = (PropertySetter<Object, ?>) site.getTarget().invokeExact();
-                return objectPropertySetter::apply;
-            }
-
+            PropertyVoidSetter<Object,Object> objectPropertyVoidSetter = (PropertyVoidSetter<Object,Object>) site.getTarget().invokeExact();
+            return objectPropertyVoidSetter::apply;
         } catch (Throwable e) {
             throw new EasyQueryException(e);
         }

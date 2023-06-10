@@ -36,10 +36,6 @@ public class LogicDeleteBuilder {
         entityMetadata.setLogicDeleteMetadata(new LogicDeleteMetadata(propertyName, sqlWherePredicateSQLExpression, sqlColumnSetterSQLExpression));
     }
 
-    public Property<Object, ?> getPropertyLambda() {
-        return EasyBeanUtil.getFastBean(entityMetadata.getEntityClass()).getBeanGetter(propertyName, propertyType);
-    }
-
     public EntityMetadata getEntityMetadata() {
         return entityMetadata;
     }

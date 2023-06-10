@@ -144,6 +144,7 @@ public class H2QueryTest extends H2BaseTest {
         alltype.setNumberInteger(33);
         alltype.setNumberLong(12345678911L);
         alltype.setNumberByte(new Byte("-1"));
+        alltype.setEnable(true);
         alltype.setTimeLocalDateTime(LocalDateTime.of(2021, 1, 1, 0, 0));
         alltype.setTimeLocalDate(LocalDate.of(2121, 1, 2));
         alltype.setTimeLocalTime(LocalTime.of(21, 1, 9));
@@ -153,9 +154,16 @@ public class H2QueryTest extends H2BaseTest {
         java.sql.Date date = new java.sql.Date(epochMilli);
         alltype.setSqlDate(date);
         alltype.setOnlyTime(Time.valueOf("12:09:10"));
-        alltype.setEnable(true);
         alltype.setValue("3322");
         alltype.setUid(UUID.randomUUID());
+
+        alltype.setNumberFloatBasic(12.3f);
+        alltype.setNumberDoubleBasic(22.1d);
+        alltype.setNumberShortBasic(new Short("12"));
+        alltype.setNumberIntegerBasic(33);
+        alltype.setNumberLongBasic(12345678911L);
+        alltype.setNumberByteBasic(new Byte("-1"));
+        alltype.setEnableBasic(true);
         long l = easyQuery.insertable(alltype).executeRows();
         Assert.assertEquals(1, l);
         ALLTYPE alltype1 = easyQuery.queryable(ALLTYPE.class)
@@ -178,6 +186,13 @@ public class H2QueryTest extends H2BaseTest {
         Assert.assertEquals(alltype1.getSqlDate(), alltype.getSqlDate());
         Assert.assertEquals(alltype1.getOnlyDate(), alltype.getOnlyDate());
         Assert.assertEquals(alltype1.getOnlyTime(), alltype.getOnlyTime());
+        Assert.assertTrue(alltype1.getNumberFloatBasic() == alltype.getNumberFloatBasic());
+        Assert.assertTrue(alltype1.getNumberDoubleBasic() == alltype.getNumberDoubleBasic());
+        Assert.assertEquals(alltype1.getNumberShortBasic(), alltype.getNumberShortBasic());
+        Assert.assertEquals(alltype1.getNumberIntegerBasic(), alltype.getNumberIntegerBasic());
+        Assert.assertEquals(alltype1.getNumberLongBasic(), alltype.getNumberLongBasic());
+        Assert.assertEquals(alltype1.getNumberByteBasic(), alltype.getNumberByteBasic());
+        Assert.assertEquals(alltype1.isEnableBasic(), alltype.isEnableBasic());
     }
 
     @Test
@@ -207,6 +222,13 @@ public class H2QueryTest extends H2BaseTest {
             alltypeSharding.setEnable(true);
             alltypeSharding.setValue("3322");
             alltypeSharding.setUid(UUID.randomUUID());
+            alltypeSharding.setNumberFloatBasic(12.3f);
+            alltypeSharding.setNumberDoubleBasic(22.1d);
+            alltypeSharding.setNumberShortBasic(new Short("12"));
+            alltypeSharding.setNumberIntegerBasic(33);
+            alltypeSharding.setNumberLongBasic(12345678911L);
+            alltypeSharding.setNumberByteBasic(new Byte("-1"));
+            alltypeSharding.setEnableBasic(true);
             alltypeShardings.add(alltypeSharding);
         }
         long l = easyQuery.insertable(alltypeShardings).executeRows();
@@ -235,6 +257,13 @@ public class H2QueryTest extends H2BaseTest {
             Assert.assertEquals(alltype.getSqlDate(), alltypeSharding.getSqlDate());
             Assert.assertEquals(alltype.getOnlyDate(), alltypeSharding.getOnlyDate());
             Assert.assertEquals(alltype.getOnlyTime(), alltypeSharding.getOnlyTime());
+            Assert.assertTrue(alltype.getNumberFloatBasic() == alltypeSharding.getNumberFloatBasic());
+            Assert.assertTrue(alltype.getNumberDoubleBasic() == alltypeSharding.getNumberDoubleBasic());
+            Assert.assertEquals(alltype.getNumberShortBasic(), alltypeSharding.getNumberShortBasic());
+            Assert.assertEquals(alltype.getNumberIntegerBasic(), alltypeSharding.getNumberIntegerBasic());
+            Assert.assertEquals(alltype.getNumberLongBasic(), alltypeSharding.getNumberLongBasic());
+            Assert.assertEquals(alltype.getNumberByteBasic(), alltypeSharding.getNumberByteBasic());
+            Assert.assertEquals(alltype.isEnableBasic(), alltypeSharding.isEnableBasic());
         }
         {
 
@@ -262,6 +291,13 @@ public class H2QueryTest extends H2BaseTest {
                 Assert.assertEquals(alltype.getSqlDate(), alltypeSharding.getSqlDate());
                 Assert.assertEquals(alltype.getOnlyDate(), alltypeSharding.getOnlyDate());
                 Assert.assertEquals(alltype.getOnlyTime(), alltypeSharding.getOnlyTime());
+                Assert.assertTrue(alltype.getNumberFloatBasic() == alltypeSharding.getNumberFloatBasic());
+                Assert.assertTrue(alltype.getNumberDoubleBasic() == alltypeSharding.getNumberDoubleBasic());
+                Assert.assertEquals(alltype.getNumberShortBasic(), alltypeSharding.getNumberShortBasic());
+                Assert.assertEquals(alltype.getNumberIntegerBasic(), alltypeSharding.getNumberIntegerBasic());
+                Assert.assertEquals(alltype.getNumberLongBasic(), alltypeSharding.getNumberLongBasic());
+                Assert.assertEquals(alltype.getNumberByteBasic(), alltypeSharding.getNumberByteBasic());
+                Assert.assertEquals(alltype.isEnableBasic(), alltypeSharding.isEnableBasic());
                 i--;
             }
         }
@@ -291,6 +327,13 @@ public class H2QueryTest extends H2BaseTest {
                 Assert.assertEquals(alltype.getSqlDate(), alltypeSharding.getSqlDate());
                 Assert.assertEquals(alltype.getOnlyDate(), alltypeSharding.getOnlyDate());
                 Assert.assertEquals(alltype.getOnlyTime(), alltypeSharding.getOnlyTime());
+                Assert.assertTrue(alltype.getNumberFloatBasic() == alltypeSharding.getNumberFloatBasic());
+                Assert.assertTrue(alltype.getNumberDoubleBasic() == alltypeSharding.getNumberDoubleBasic());
+                Assert.assertEquals(alltype.getNumberShortBasic(), alltypeSharding.getNumberShortBasic());
+                Assert.assertEquals(alltype.getNumberIntegerBasic(), alltypeSharding.getNumberIntegerBasic());
+                Assert.assertEquals(alltype.getNumberLongBasic(), alltypeSharding.getNumberLongBasic());
+                Assert.assertEquals(alltype.getNumberByteBasic(), alltypeSharding.getNumberByteBasic());
+                Assert.assertEquals(alltype.isEnableBasic(), alltypeSharding.isEnableBasic());
                 i--;
             }
         }
