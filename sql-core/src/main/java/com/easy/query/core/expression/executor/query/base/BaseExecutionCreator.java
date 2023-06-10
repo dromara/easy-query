@@ -1,14 +1,14 @@
 package com.easy.query.core.expression.executor.query.base;
 
+import com.easy.query.core.basic.jdbc.executor.internal.common.ExecutionUnit;
 import com.easy.query.core.basic.jdbc.executor.internal.common.SQLRewriteUnit;
+import com.easy.query.core.basic.jdbc.executor.internal.common.SQLRouteUnit;
 import com.easy.query.core.enums.MergeBehaviorEnum;
 import com.easy.query.core.expression.executor.parser.ExecutionContext;
-import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.sql.expression.EntitySQLExpression;
-import com.easy.query.core.basic.jdbc.executor.internal.common.ExecutionUnit;
-import com.easy.query.core.basic.jdbc.executor.internal.common.SQLRouteUnit;
-import com.easy.query.core.sharding.route.table.TableRouteUnit;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -55,4 +55,44 @@ public abstract class BaseExecutionCreator implements ExecutionCreator{
         return createExecutionContext(executionUnits);
     }
     protected abstract List<ExecutionUnit> createExecutionUnits();
+
+
+    protected boolean useEntityBatch(){
+        return false;
+    }
+
+    /**
+     * 将独立的sql进行批处理执行
+     * @param executionUnits
+     * @return
+     */
+    protected List<ExecutionUnit> createBatchExecutionUnits(List<ExecutionUnit> executionUnits){
+        boolean useBatch = useEntityBatch();
+        if(useBatch){
+            List<ExecutionUnit> batchExecutionUnits = new ArrayList<>(executionUnits.size());
+            HashMap<String/*data source name*/, Map<String/*sql*/,ExecutionUnit>> lastUnitMap = new HashMap<>();
+            for (ExecutionUnit executionUnit : executionUnits) {
+                String dataSourceName = executionUnit.getDataSourceName();
+                SQLRouteUnit sqlRouteUnit = executionUnit.getSQLRouteUnit();
+                String sql = sqlRouteUnit.getSQL();
+                Map<String, ExecutionUnit> sqlExecutionUnitMap = lastUnitMap.computeIfAbsent(dataSourceName,o->new HashMap<>());
+                ExecutionUnit lastUnit = sqlExecutionUnitMap.get(sql);
+                if(lastUnit==null||!lastUnit.isSame(executionUnit)){
+                   List<Object> entities = new ArrayList<>();
+                    entities.addAll(sqlRouteUnit.getEntities());
+                    //不使用下面的方法是因为下面的方法会从1开始扩容
+                    //ArrayList<Object> entities = new ArrayList<>(sqlRouteUnit.getEntities());
+                    lastUnit=new ExecutionUnit(dataSourceName,new SQLRouteUnit(sql,sqlRouteUnit.getParameters(),entities,sqlRouteUnit.isFillAutoIncrement()));
+                    batchExecutionUnits.add(lastUnit);
+                    sqlExecutionUnitMap.put(sql,lastUnit);
+                }else{
+                    List<Object> entities = executionUnit.getSQLRouteUnit().getEntities();
+                    lastUnit.getSQLRouteUnit().getEntities().addAll(entities);
+                }
+            }
+            lastUnitMap.clear();
+            return batchExecutionUnits;
+        }
+        return executionUnits;
+    }
 }

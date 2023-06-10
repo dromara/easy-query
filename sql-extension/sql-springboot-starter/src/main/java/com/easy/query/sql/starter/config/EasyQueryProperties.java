@@ -80,8 +80,14 @@ public class EasyQueryProperties {
     private boolean warningBusy = true;
 
 
-    private int insertBatchGroup = 1000;
-    private int updateBatchGroup = 1000;
+    /**
+     * 对象插入数量到达多少后使用批处理
+     */
+    private int insertBatchThreshold = 512;
+    /**
+     * 对象修改数量达到多少后使用批量处理
+     */
+    private int updateBatchThreshold = 512;
     private boolean printSql = true;
 
     public Boolean getEnable() {
@@ -248,20 +254,20 @@ public class EasyQueryProperties {
         this.warningBusy = warningBusy;
     }
 
-    public int getInsertBatchGroup() {
-        return insertBatchGroup;
+    public int getInsertBatchThreshold() {
+        return insertBatchThreshold;
     }
 
-    public void setInsertBatchGroup(int insertBatchGroup) {
-        this.insertBatchGroup = insertBatchGroup;
+    public void setInsertBatchThreshold(int insertBatchThreshold) {
+        this.insertBatchThreshold = insertBatchThreshold;
     }
 
-    public int getUpdateBatchGroup() {
-        return updateBatchGroup;
+    public int getUpdateBatchThreshold() {
+        return updateBatchThreshold;
     }
 
-    public void setUpdateBatchGroup(int updateBatchGroup) {
-        this.updateBatchGroup = updateBatchGroup;
+    public void setUpdateBatchThreshold(int updateBatchThreshold) {
+        this.updateBatchThreshold = updateBatchThreshold;
     }
 
     public boolean isPrintSql() {

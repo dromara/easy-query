@@ -43,14 +43,14 @@ public class EasyQueryOption {
      */
     private final long multiConnWaitTimeoutMillis;
     private final boolean warningBusy;
-    private final int insertBatchGroup;
-    private final int updateBatchGroup;
+    private final int insertBatchThreshold;
+    private final int updateBatchThreshold;
     private final boolean printSql;
 
     public EasyQueryOption(boolean deleteThrowError, SQLExecuteStrategyEnum insertStrategy, SQLExecuteStrategyEnum updateStrategy, ConnectionModeEnum connectionMode, int maxShardingQueryLimit, int executorMaximumPoolSize, int executorCorePoolSize,
                            boolean throwIfNotMatchRoute, long shardingExecuteTimeoutMillis,
                            EasyQueryShardingOption shardingOption, EasyQueryReplicaOption replicaOption, String defaultDataSourceName, int defaultDataSourceMergePoolSize, boolean queryLargeColumn, int maxShardingRouteCount, int executorQueueSize, long multiConnWaitTimeoutMillis,
-                           boolean warningBusy, int insertBatchGroup, int updateBatchGroup, boolean printSql) {
+                           boolean warningBusy, int insertBatchThreshold, int updateBatchThreshold, boolean printSql) {
 
 
         if (executorMaximumPoolSize > 0) {
@@ -79,11 +79,11 @@ public class EasyQueryOption {
         if (defaultDataSourceMergePoolSize > 0 && defaultDataSourceMergePoolSize < maxShardingQueryLimit) {
             throw new IllegalArgumentException("invalid arguments: defaultDataSourceMergePoolSize > 0 && defaultDataSourceMergePoolSize < maxShardingQueryLimit.");
         }
-        if (insertBatchGroup <= 2) {
-            throw new IllegalArgumentException("invalid arguments: insertBatchGroup <= 2.");
+        if (insertBatchThreshold <= 2) {
+            throw new IllegalArgumentException("invalid arguments: insertBatchThreshold <= 2.");
         }
-        if (updateBatchGroup <= 2) {
-            throw new IllegalArgumentException("invalid arguments: updateBatchGroup <= 2.");
+        if (updateBatchThreshold <= 2) {
+            throw new IllegalArgumentException("invalid arguments: updateBatchThreshold <= 2.");
         }
         this.deleteThrowError = deleteThrowError;
         this.insertStrategy = SQLExecuteStrategyEnum.getDefaultStrategy(insertStrategy, SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS);
@@ -103,8 +103,8 @@ public class EasyQueryOption {
         this.executorQueueSize = executorQueueSize;
         this.multiConnWaitTimeoutMillis = multiConnWaitTimeoutMillis;
         this.warningBusy = warningBusy;
-        this.insertBatchGroup = insertBatchGroup;
-        this.updateBatchGroup = updateBatchGroup;
+        this.insertBatchThreshold = insertBatchThreshold;
+        this.updateBatchThreshold = updateBatchThreshold;
         this.printSql = printSql;
     }
 
@@ -180,12 +180,12 @@ public class EasyQueryOption {
         return warningBusy;
     }
 
-    public int getInsertBatchGroup() {
-        return insertBatchGroup;
+    public int getInsertBatchThreshold() {
+        return insertBatchThreshold;
     }
 
-    public int getUpdateBatchGroup() {
-        return updateBatchGroup;
+    public int getUpdateBatchThreshold() {
+        return updateBatchThreshold;
     }
 
     public boolean isPrintSql() {

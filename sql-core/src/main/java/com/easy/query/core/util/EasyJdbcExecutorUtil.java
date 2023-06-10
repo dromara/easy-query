@@ -37,8 +37,10 @@ import java.util.List;
  */
 public class EasyJdbcExecutorUtil {
 
+    private static final int BATCH_GROUP_COUNT = 1000;
     private static final Log log = LogFactory.getLog(EasyJdbcExecutorUtil.class);
-    private static void printShardingSQLFormat(final StringBuilder printSQL, final EasyConnection easyConnection){
+
+    private static void printShardingSQLFormat(final StringBuilder printSQL, final EasyConnection easyConnection) {
         printSQL.append(Thread.currentThread().getName());
         printSQL.append(", name:");
         printSQL.append(easyConnection.getDataSourceName());
@@ -139,10 +141,12 @@ public class EasyJdbcExecutorUtil {
         }
         return params;
     }
+
     public static StreamResultSet query(ExecutorContext executorContext, EasyConnection easyConnection, String sql, List<SQLParameter> sqlParameters) throws SQLException {
-        return query(executorContext,easyConnection,sql,sqlParameters,false,false);
+        return query(executorContext, easyConnection, sql, sqlParameters, false, false);
     }
-    public static StreamResultSet query(ExecutorContext executorContext, EasyConnection easyConnection, String sql, List<SQLParameter> sqlParameters,boolean shardingPrint,boolean replicaPrint) throws SQLException {
+
+    public static StreamResultSet query(ExecutorContext executorContext, EasyConnection easyConnection, String sql, List<SQLParameter> sqlParameters, boolean shardingPrint, boolean replicaPrint) throws SQLException {
         boolean printSql = executorContext.getEasyQueryOption().isPrintSql();
         logSQL(printSql, sql, easyConnection, shardingPrint, replicaPrint);
         QueryRuntimeContext runtimeContext = executorContext.getRuntimeContext();
@@ -166,11 +170,11 @@ public class EasyJdbcExecutorUtil {
                 rs = ps.executeQuery();
             }
             //如果是分片查询那么需要提前next
-            if(shardingPrint){
+            if (shardingPrint) {
                 boolean next = rs.next();
-                sr=new EasyShardingStreamResultSet(rs,ps,next);
-            }else{
-                sr=new EasyStreamResultSet(rs,ps);
+                sr = new EasyShardingStreamResultSet(rs, ps, next);
+            } else {
+                sr = new EasyStreamResultSet(rs, ps);
             }
 
         } catch (SQLException e) {
@@ -180,7 +184,7 @@ public class EasyJdbcExecutorUtil {
         return sr;
     }
 
-    public static <T> int insert(ExecutorContext executorContext, EasyConnection easyConnection, String sql, List<T> entities, List<SQLParameter> sqlParameters, boolean fillAutoIncrement,boolean shardingPrint,boolean replicaPrint) throws SQLException {
+    public static <T> int insert(ExecutorContext executorContext, EasyConnection easyConnection, String sql, List<T> entities, List<SQLParameter> sqlParameters, boolean fillAutoIncrement, boolean shardingPrint, boolean replicaPrint) throws SQLException {
         boolean printSql = executorContext.getEasyQueryOption().isPrintSql();
         logSQL(printSql, sql, easyConnection, shardingPrint, replicaPrint);
         QueryRuntimeContext runtimeContext = executorContext.getRuntimeContext();
@@ -192,7 +196,9 @@ public class EasyJdbcExecutorUtil {
         int r = 0;
         boolean hasParameter = !sqlParameters.isEmpty();
         try {
+            int batchSize = 0;
             for (T entity : entities) {
+                batchSize++;
                 List<SQLParameter> parameters = extractParameters(executorContext, entity, sqlParameters);
                 if (printSql && hasParameter) {
                     logParameter(true, parameters, easyConnection, shardingPrint, replicaPrint);
@@ -203,10 +209,17 @@ public class EasyJdbcExecutorUtil {
                     setPreparedStatement(ps, parameters, easyJdbcTypeHandler);
                 }
                 ps.addBatch();
+                if ((batchSize % BATCH_GROUP_COUNT) == 0) {
+                    int[] ints = ps.executeBatch();
+                    r += ints.length;
+                    ps.clearBatch();
+                }
             }
-            assert ps != null;
-            int[] rs = ps.executeBatch();
-            r = rs.length;
+            if ((batchSize % BATCH_GROUP_COUNT) != 0) {
+                int[] ints = ps.executeBatch();
+                r += ints.length;
+                ps.clearBatch();
+            }
             logResult(printSql, r, easyConnection, shardingPrint, replicaPrint);
             //如果需要自动填充并且存在自动填充列
             if (fillAutoIncrement && EasyCollectionUtil.isNotEmpty(incrementColumns)) {
@@ -235,7 +248,6 @@ public class EasyJdbcExecutorUtil {
                     index++;
                 }
             }
-            ps.clearBatch();
         } catch (SQLException e) {
             log.error(sql, e);
             throw new EasyQuerySQLStatementException(sql, e);
@@ -255,7 +267,7 @@ public class EasyJdbcExecutorUtil {
         }
     }
 
-    public static <T> int executeRows(ExecutorContext executorContext, EasyConnection easyConnection, String sql, List<T> entities, List<SQLParameter> sqlParameters,boolean shardingPrint,boolean replicaPrint) throws SQLException {
+    public static <T> int executeRows(ExecutorContext executorContext, EasyConnection easyConnection, String sql, List<T> entities, List<SQLParameter> sqlParameters, boolean shardingPrint, boolean replicaPrint) throws SQLException {
         boolean printSql = executorContext.getEasyQueryOption().isPrintSql();
         logSQL(printSql, sql, easyConnection, shardingPrint, replicaPrint);
         QueryRuntimeContext runtimeContext = executorContext.getRuntimeContext();
@@ -264,8 +276,9 @@ public class EasyJdbcExecutorUtil {
         int r = 0;
         boolean hasParameter = EasyCollectionUtil.isNotEmpty(sqlParameters);
         try {
+            int batchSize = 0;
             for (T entity : entities) {
-
+                batchSize++;
                 List<SQLParameter> parameters = extractParameters(executorContext, entity, sqlParameters);
 
                 if (printSql && hasParameter) {
@@ -277,12 +290,18 @@ public class EasyJdbcExecutorUtil {
                     setPreparedStatement(ps, parameters, easyJdbcTypeHandlerManager);
                 }
                 ps.addBatch();
+                if((batchSize%BATCH_GROUP_COUNT)==0){
+                    int[] ints = ps.executeBatch();
+                    r+=EasyCollectionUtil.sum(ints);
+                    ps.clearBatch();
+                }
             }
-            assert ps != null;
-            int[] rs = ps.executeBatch();
-            r = EasyCollectionUtil.sum(rs);
+            if((batchSize%BATCH_GROUP_COUNT)!=0){
+                int[] ints = ps.executeBatch();
+                r+=EasyCollectionUtil.sum(ints);
+                ps.clearBatch();
+            }
             logResult(printSql, r, easyConnection, shardingPrint, replicaPrint);
-            ps.clearBatch();
         } catch (SQLException e) {
             log.error(sql, e);
             throw new EasyQuerySQLStatementException(sql, e);
@@ -292,7 +311,7 @@ public class EasyJdbcExecutorUtil {
         return r;
     }
 
-    public static <T> int executeRows(ExecutorContext executorContext, EasyConnection easyConnection, String sql, List<SQLParameter> sqlParameters,boolean shardingPrint,boolean replicaPrint) throws SQLException {
+    public static <T> int executeRows(ExecutorContext executorContext, EasyConnection easyConnection, String sql, List<SQLParameter> sqlParameters, boolean shardingPrint, boolean replicaPrint) throws SQLException {
         boolean printSql = executorContext.getEasyQueryOption().isPrintSql();
         logSQL(printSql, sql, easyConnection, shardingPrint, replicaPrint);
         QueryRuntimeContext runtimeContext = executorContext.getRuntimeContext();

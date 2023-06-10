@@ -22,4 +22,7 @@ public final class ExecutionUnit {
     public SQLRouteUnit getSQLRouteUnit() {
         return sqlRouteUnit;
     }
+    public boolean isSame(ExecutionUnit unit){
+        return dataSourceName.equals(unit.dataSourceName)&&sqlRouteUnit.getSQL().equals(unit.sqlRouteUnit.getSQL())&&sqlRouteUnit.isFillAutoIncrement()==unit.sqlRouteUnit.isFillAutoIncrement();
+    }
 }

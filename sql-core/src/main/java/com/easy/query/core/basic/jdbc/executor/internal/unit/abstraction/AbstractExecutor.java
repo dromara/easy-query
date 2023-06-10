@@ -69,7 +69,7 @@ public abstract class AbstractExecutor<TResult> implements Executor<TResult> {
         Iterator<SQLExecutorGroup<CommandExecuteUnit>> iterator = executorGroups.iterator();
         while (iterator.hasNext()) {
             if (timeoutMillis < constTime) {
-                throw new EasyQueryTimeoutSQLException("sharding query time out:"+dataSourceSQLExecutorUnit.getDataSourceName());
+                throw new EasyQueryTimeoutSQLException("sharding execute time out:"+dataSourceSQLExecutorUnit.getDataSourceName());
             }
             SQLExecutorGroup<CommandExecuteUnit> executorGroup = iterator.next();
             Collection<TResult> results = groupExecute(executorGroup.getGroups(),timeoutMillis-constTime);

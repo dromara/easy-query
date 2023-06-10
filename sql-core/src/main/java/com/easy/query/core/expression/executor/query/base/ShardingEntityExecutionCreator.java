@@ -1,5 +1,7 @@
 package com.easy.query.core.expression.executor.query.base;
 
+import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
+import com.easy.query.core.basic.jdbc.executor.internal.common.ExecutionUnit;
 import com.easy.query.core.expression.executor.parser.EntityPrepareParseResult;
 import com.easy.query.core.expression.executor.parser.InsertPrepareParseResult;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
@@ -9,6 +11,7 @@ import com.easy.query.core.sharding.rewrite.RewriteContext;
 import com.easy.query.core.sharding.rewrite.RewriteRouteUnit;
 import com.easy.query.core.sharding.route.RouteUnit;
 import com.easy.query.core.sharding.route.table.EntityTableRouteUnit;
+import com.easy.query.core.util.EasySQLExpressionUtil;
 
 import java.util.Collections;
 import java.util.List;
@@ -53,5 +56,17 @@ public class ShardingEntityExecutionCreator extends ShardingBaseExecutionCreator
             return entityToExpressionBuilder.toExpression(entity);
         }
         return entityExpressionBuilder.toExpression();
+    }
+    @Override
+    protected boolean useEntityBatch(){
+        int entitySize = entityPrepareParseResult.getEntities().size();
+        ExecutorContext executorContext = entityPrepareParseResult.getExecutorContext();
+        return EasySQLExpressionUtil.entityExecuteBatch(entitySize,executorContext);
+    }
+
+    @Override
+    protected List<ExecutionUnit> createExecutionUnits() {
+        List<ExecutionUnit> executionUnits = super.createExecutionUnits();
+        return createBatchExecutionUnits(executionUnits);
     }
 }

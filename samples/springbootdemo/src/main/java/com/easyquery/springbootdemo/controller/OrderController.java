@@ -29,10 +29,10 @@ public class OrderController {
 
     @GetMapping("/init")
     public Object init() {
-        ArrayList<OrderEntity> orderEntities = new ArrayList<>(100);
+        ArrayList<OrderEntity> orderEntities = new ArrayList<>(10000);
         List<String> users = Arrays.asList("xiaoming", "xiaohong", "xiaolan");
 
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 10001; i++) {
             OrderEntity orderEntity = new OrderEntity();
             orderEntity.setId(String.valueOf(i));
             int i1 = i % 3;

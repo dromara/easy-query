@@ -1,12 +1,13 @@
 package com.easy.query.core.expression.executor.query.base;
 
-import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.extension.track.TrackManager;
+import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
+import com.easy.query.core.basic.jdbc.executor.internal.common.ExecutionUnit;
+import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
 import com.easy.query.core.expression.sql.expression.EntitySQLExpression;
-import com.easy.query.core.basic.jdbc.executor.internal.common.ExecutionUnit;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 import com.easy.query.core.util.EasyStringUtil;
 
@@ -55,19 +56,26 @@ public abstract class BaseEntityExecutionCreator extends BaseExecutionCreator{
         return false;
     }
 
-    private List<ExecutionUnit> createSingleExecutionUnits() {
+    protected List<ExecutionUnit> createSingleExecutionUnits() {
         List<ExecutionUnit> routeExecutionUnits = new ArrayList<>(entities.size());
         for (Object entity : entities) {
             EntitySQLExpression expression = createEasySQLExpression(entity);
             //todo 根据sql聚合或者根据sql顺序聚合
             ExecutionUnit executionUnit = createExecutionUnit(dataSource,expression, Collections.singletonList(entity), getFillAutoIncrement(),null);
             //开启追踪的情况下update可能没有可以更新的数据那么就不会生成sql
-            if(EasyStringUtil.isNotBlank(executionUnit.getSQLRouteUnit().getSQLUnit().getSQL())){
+            if(EasyStringUtil.isNotBlank(executionUnit.getSQLRouteUnit().getSQL())){
                 routeExecutionUnits.add(executionUnit);
             }
         }
-        return routeExecutionUnits;
+        return createBatchExecutionUnits(routeExecutionUnits);
     }
+
+    @Override
+    protected boolean useEntityBatch(){
+        int entitySize =entities.size();
+        return EasySQLExpressionUtil.entityExecuteBatch(entitySize,executorContext);
+    }
+
     private List<ExecutionUnit> createMultiExecutionUnits() {
         EntitySQLExpression expression = entityExpressionBuilder.toExpression();
         ExecutionUnit executionUnit = createExecutionUnit(dataSource,expression, entities, getFillAutoIncrement(),null);

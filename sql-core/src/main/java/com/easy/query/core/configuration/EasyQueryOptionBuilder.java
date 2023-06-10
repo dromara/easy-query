@@ -32,8 +32,8 @@ public class EasyQueryOptionBuilder {
      */
     private long multiConnWaitTimeoutMillis;
     private boolean warningBusy;
-    private int insertBatchGroup;
-    private int updateBatchGroup;
+    private int insertBatchThreshold;
+    private int updateBatchThreshold;
     private boolean printSql;
 
     public EasyQueryOptionBuilder() {
@@ -46,15 +46,15 @@ public class EasyQueryOptionBuilder {
         this.executorMaximumPoolSize = 0;
         this.executorCorePoolSize = Math.min(Runtime.getRuntime().availableProcessors(), 4);
         this.throwIfRouteNotMatch = true;
-        this.shardingExecuteTimeoutMillis = 30000L;
+        this.shardingExecuteTimeoutMillis = 60000L;
         this.defaultDataSourceName = "ds0";
         this.queryLargeColumn = true;
         this.maxShardingRouteCount = 128;
         this.executorQueueSize = 1024;
         this.multiConnWaitTimeoutMillis = 5000L;
         this.warningBusy = true;
-        this.insertBatchGroup = 1000;
-        this.updateBatchGroup = 1000;
+        this.insertBatchThreshold = 1000;
+        this.updateBatchThreshold = 1000;
         this.printSql = true;
     }
 
@@ -141,12 +141,12 @@ public class EasyQueryOptionBuilder {
         this.warningBusy = warningBusy;
     }
 
-    public void setInsertBatchGroup(int insertBatchGroup) {
-        this.insertBatchGroup = insertBatchGroup;
+    public void setInsertBatchThreshold(int insertBatchThreshold) {
+        this.insertBatchThreshold = insertBatchThreshold;
     }
 
-    public void setUpdateBatchGroup(int updateBatchGroup) {
-        this.updateBatchGroup = updateBatchGroup;
+    public void setUpdateBatchThreshold(int updateBatchThreshold) {
+        this.updateBatchThreshold = updateBatchThreshold;
     }
 
     public void setPrintSql(boolean printSql) {
@@ -172,8 +172,8 @@ public class EasyQueryOptionBuilder {
                 this.executorQueueSize,
                 this.multiConnWaitTimeoutMillis,
                 this.warningBusy,
-                this.insertBatchGroup,
-                this.updateBatchGroup,
+                this.insertBatchThreshold,
+                this.updateBatchThreshold,
                 this.printSql);
     }
 }

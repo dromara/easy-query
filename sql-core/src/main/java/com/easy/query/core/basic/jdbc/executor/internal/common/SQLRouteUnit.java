@@ -20,9 +20,6 @@ public class SQLRouteUnit {
     private final List<SQLParameter> parameters;
     private final List<Object> entities;
     private final boolean fillAutoIncrement;
-    private final SQLRewriteUnit sqlRewriteUnit;
-    private final EntitySQLExpression easyEntitySQLExpression;
-    private final SQLUnit sqlUnit;
 
     public SQLRouteUnit(String sql, List<SQLParameter> parameters){
         this(sql,parameters,null,false);
@@ -32,32 +29,31 @@ public class SQLRouteUnit {
         this.parameters = parameters;
         this.entities = entities;
         this.fillAutoIncrement = fillAutoIncrement;
-        this.sqlRewriteUnit = null;
-        this.easyEntitySQLExpression = null;
-        this.sqlUnit=new SQLUnit(sql,parameters,entities,fillAutoIncrement);
     }
 
     public SQLRouteUnit(EntitySQLExpression easyEntitySQLExpression,List<Object> entities, boolean fillAutoIncrement,SQLRewriteUnit sqlRewriteUnit){
-        this.easyEntitySQLExpression = easyEntitySQLExpression;
-        this.entities = entities;
-        this.fillAutoIncrement = fillAutoIncrement;
-        this.sqlRewriteUnit = sqlRewriteUnit;
-        this.sql = null;
-        this.parameters = null;
-        this.sqlUnit = null;
-    }
-
-    public EntitySQLExpression getEasyEntitySQLExpression() {
-        return easyEntitySQLExpression;
-    }
-    public SQLUnit getSQLUnit(){
-        if(sqlUnit!=null){
-            return sqlUnit;
-        }
-        assert easyEntitySQLExpression != null;
         TableContext tableContext = easyEntitySQLExpression.getExpressionMetadata().getTableContext();
         ToSQLContext toSQLContext = DefaultToSQLContext.defaultToSQLContext(tableContext,sqlRewriteUnit);
         String sql = easyEntitySQLExpression.toSQL(toSQLContext);
-        return new SQLUnit(sql,toSQLContext.getParameters(),entities,fillAutoIncrement);
+        this.entities = entities;
+        this.fillAutoIncrement = fillAutoIncrement;
+        this.sql = sql;
+        this.parameters = toSQLContext.getParameters();
+    }
+
+    public String getSQL() {
+        return sql;
+    }
+
+    public List<SQLParameter> getParameters() {
+        return parameters;
+    }
+
+    public List<Object> getEntities() {
+        return entities;
+    }
+
+    public boolean isFillAutoIncrement() {
+        return fillAutoIncrement;
     }
 }
