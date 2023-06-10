@@ -2,6 +2,7 @@ package com.easy.query.core.basic.api.insert;
 
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
+import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.basic.extension.interceptor.EntityInterceptor;
 import com.easy.query.core.basic.extension.interceptor.Interceptor;
@@ -130,7 +131,7 @@ public abstract class AbstractClientInsertable<T> implements ClientInsertable<T>
     }
 
     public String toSQL(Object entity) {
-        return toSQLWithParam(entity,null);
+        return toSQLWithParam(entity, DefaultToSQLContext.defaultToSQLContext(entityInsertExpressionBuilder.getExpressionContext().getTableContext()));
     }
     private String toSQLWithParam(Object entity, ToSQLContext toSQLContext){
         return entityInsertExpressionBuilder.toExpression(entity).toSQL(toSQLContext);
