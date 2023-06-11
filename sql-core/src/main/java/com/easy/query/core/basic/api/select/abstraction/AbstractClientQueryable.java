@@ -3,10 +3,8 @@ package com.easy.query.core.basic.api.select.abstraction;
 import com.easy.query.core.annotation.EasyWhereCondition;
 import com.easy.query.core.api.dynamic.condition.ObjectQuery;
 import com.easy.query.core.api.dynamic.condition.internal.ObjectQueryBuilderImpl;
-import com.easy.query.core.api.dynamic.condition.internal.ObjectQueryPropertyNode;
 import com.easy.query.core.api.dynamic.sort.ObjectSort;
 import com.easy.query.core.api.dynamic.sort.internal.ObjectSortBuilderImpl;
-import com.easy.query.core.api.dynamic.sort.internal.ObjectSortPropertyNode;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.select.ClientQueryable2;
@@ -48,6 +46,8 @@ import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpression
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
+import com.easy.query.core.metadata.ColumnMetadata;
+import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.sharding.manager.ShardingQueryCountManager;
 import com.easy.query.core.util.EasyClassUtil;
@@ -412,49 +412,6 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         return this;
     }
 
-    /**
-     * 匹配
-     *
-     * @param propertyQueryEntityClass
-     * @return
-     */
-    protected Class<?> matchQueryEntityClass(Class<?> propertyQueryEntityClass) {
-        if (Objects.equals(t1Class, propertyQueryEntityClass)) {
-            return t1Class;
-        }
-        return null;
-    }
-
-    /**
-     * 匹配查询表达式
-     *
-     * @param entityClass
-     * @return
-     */
-    protected WherePredicate<?> matchWhereObjectSQLPredicate(Class<?> entityClass) {
-        if (entityClass == t1Class) {
-            return getSQLExpressionProvider1().getWherePredicate();
-        }
-        return null;
-    }
-
-    protected ColumnSelector<?> matchOrderBySQLColumnSelector(Class<?> entityClass, boolean asc) {
-        if (entityClass == t1Class) {
-            return getSQLExpressionProvider1().getOrderColumnSelector(asc);
-        }
-        return null;
-    }
-
-    private String getObjectPropertyMappingPropertyName(ObjectQueryPropertyNode entityPropertyNode, EasyWhereCondition easyWhereCondition, String fieldName) {
-        String configureMapProperty = entityPropertyNode != null ? entityPropertyNode.getProperty() : null;
-        if (configureMapProperty != null) {
-            return configureMapProperty;
-        }
-        String propName = easyWhereCondition.propName();
-        return EasyStringUtil.isBlank(propName) ? fieldName : propName;
-    }
-
-
     @Override
     public ClientQueryable<T1> whereObject(boolean condition, Object object) {
         if (condition) {
@@ -463,13 +420,16 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                 List<Field> allFields = EasyClassUtil.getAllFields(object.getClass());
 
 
-                ObjectQueryBuilderImpl<Object> objectObjectQueryBuilder = new ObjectQueryBuilderImpl<>();
+                ObjectQueryBuilderImpl objectObjectQueryBuilder = new ObjectQueryBuilderImpl();
                 boolean strictMode = true;
-                if (ObjectQuery.class.isAssignableFrom(object.getClass())) {
-                    ObjectQuery<Object> configuration = (ObjectQuery<Object>) object;
+                if (object instanceof ObjectQuery) {
+                    ObjectQuery configuration = (ObjectQuery) object;
                     configuration.configure(objectObjectQueryBuilder);
                     strictMode = configuration.useStrictMode();
                 }
+                Map<String, String> propertyQueryMapping = objectObjectQueryBuilder.build();
+                EntityMetadataManager entityMetadataManager = entityQueryExpressionBuilder.getRuntimeContext().getEntityMetadataManager();
+                EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(queryClass());
                 for (Field field : allFields) {
                     boolean accessible = field.isAccessible();
 
@@ -479,21 +439,22 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                         if (q == null) {
                             continue;
                         }
-                        ObjectQueryPropertyNode entityPropertyNode = objectObjectQueryBuilder.getPropertyMapping(field.getName());
-                        Class<?> property2Class = entityPropertyNode != null ? entityPropertyNode.getEntityClass() : q.entityClass();
-                        Class<?> propertyQueryEntityClass = Objects.equals(Object.class, property2Class) ? t1Class : matchQueryEntityClass(property2Class);
-                        if (propertyQueryEntityClass == null) {
-                            if (!strictMode) {
-                                continue;
+                        //获取映射的对象名称
+                        String entityPropertyName = propertyQueryMapping.get(field.getName());
+                        String objectPropertyName = EasyStringUtil.isNotBlank(q.propName()) ? q.propName() : field.getName();
+                        String queryPropertyName = entityPropertyName != null ? entityPropertyName : objectPropertyName;
+
+                        ColumnMetadata columnMetadata = entityMetadata.getColumnOrNull(queryPropertyName);
+                        if (columnMetadata == null) {
+                            if (strictMode) {
+                                throw new EasyQueryWhereInvalidOperationException("property name:" + field.getName() + " not found query entity class:" + EasyClassUtil.getSimpleName(queryClass()));
                             }
-                            throw new EasyQueryWhereInvalidOperationException(EasyClassUtil.getSimpleName(property2Class) + " not found query entity class");
+                            continue;
                         }
-                        WherePredicate<?> sqlPredicate = matchWhereObjectSQLPredicate(propertyQueryEntityClass);
+
+                        WherePredicate<?> sqlPredicate = getSQLExpressionProvider1().getWherePredicate();
                         if (sqlPredicate == null) {
-                            if (!strictMode) {
-                                continue;
-                            }
-                            throw new EasyQueryWhereInvalidOperationException("not found sql predicate,entity class:" + EasyClassUtil.getSimpleName(propertyQueryEntityClass));
+                            throw new EasyQueryWhereInvalidOperationException("not found sql predicate,entity class:" + EasyClassUtil.getSimpleName(queryClass()));
                         }
                         Object val = field.get(object);
 
@@ -505,49 +466,48 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                                 continue;
                             }
                         }
-                        String objectPropertyName = getObjectPropertyMappingPropertyName(entityPropertyNode, q, field.getName());
 
                         switch (q.type()) {
                             case EQUAL:
-                                sqlPredicate.eq(objectPropertyName, val);
+                                sqlPredicate.eq(queryPropertyName, val);
                                 break;
                             case GREATER_THAN:
                             case RANGE_LEFT_OPEN:
-                                sqlPredicate.gt(objectPropertyName, val);
+                                sqlPredicate.gt(queryPropertyName, val);
                                 break;
                             case LESS_THAN:
                             case RANGE_RIGHT_OPEN:
-                                sqlPredicate.lt(objectPropertyName, val);
+                                sqlPredicate.lt(queryPropertyName, val);
                                 break;
                             case LIKE:
-                                sqlPredicate.like(objectPropertyName, val);
+                                sqlPredicate.like(queryPropertyName, val);
                                 break;
                             case LIKE_MATCH_LEFT:
-                                sqlPredicate.likeMatchLeft(objectPropertyName, val);
+                                sqlPredicate.likeMatchLeft(queryPropertyName, val);
                                 break;
                             case LIKE_MATCH_RIGHT:
-                                sqlPredicate.likeMatchRight(objectPropertyName, val);
+                                sqlPredicate.likeMatchRight(queryPropertyName, val);
                                 break;
                             case GREATER_THAN_EQUAL:
                             case RANGE_LEFT_CLOSED:
-                                sqlPredicate.ge(objectPropertyName, val);
+                                sqlPredicate.ge(queryPropertyName, val);
                                 break;
                             case LESS_THAN_EQUAL:
                             case RANGE_RIGHT_CLOSED:
-                                sqlPredicate.le(objectPropertyName, val);
+                                sqlPredicate.le(queryPropertyName, val);
                                 break;
                             case IN:
                                 if (EasyCollectionUtil.isNotEmpty((Collection<?>) val)) {
-                                    sqlPredicate.in(objectPropertyName, (Collection<?>) val);
+                                    sqlPredicate.in(queryPropertyName, (Collection<?>) val);
                                 }
                                 break;
                             case NOT_IN:
                                 if (EasyCollectionUtil.isNotEmpty((Collection<?>) val)) {
-                                    sqlPredicate.notIn(objectPropertyName, (Collection<?>) val);
+                                    sqlPredicate.notIn(queryPropertyName, (Collection<?>) val);
                                 }
                                 break;
                             case NOT_EQUAL:
-                                sqlPredicate.ne(objectPropertyName, val);
+                                sqlPredicate.ne(queryPropertyName, val);
                                 break;
                             default:
                                 break;
@@ -594,38 +554,35 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     }
 
     @Override
-    public ClientQueryable<T1> orderByDynamic(boolean condition, ObjectSort configuration) {
+    public ClientQueryable<T1> orderByObject(boolean condition, ObjectSort configuration) {
 
         if (condition) {
             if (configuration != null) {
                 boolean strictMode = configuration.useStrictMode();
-                EntityMetadataManager entityMetadataManager = entityQueryExpressionBuilder.getRuntimeContext().getEntityMetadataManager();
 
-                ObjectSortBuilderImpl orderByBuilder = new ObjectSortBuilderImpl(configuration.dynamicMode());
+                ObjectSortBuilderImpl orderByBuilder = new ObjectSortBuilderImpl();
                 configuration.configure(orderByBuilder);
-                Map<String, ObjectSortPropertyNode> orderProperties = orderByBuilder.getProperties();
-                for (String property : orderProperties.keySet()) {
-                    ObjectSortPropertyNode orderByPropertyNode = orderProperties.get(property);
+                Map<String, Boolean> orderProperties = orderByBuilder.build();
+                if (!orderProperties.isEmpty()) {
 
-                    Class<?> orderByEntityClass = matchQueryEntityClass(orderByPropertyNode.getEntityClass());
-                    if (orderByEntityClass == null) {
-                        if (!strictMode) {
+                    EntityMetadataManager entityMetadataManager = entityQueryExpressionBuilder.getRuntimeContext().getEntityMetadataManager();
+                    EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(queryClass());
+                    for (String property : orderProperties.keySet()) {
+                        Boolean asc = orderProperties.getOrDefault(property, true);
+
+                        ColumnMetadata columnMetadata = entityMetadata.getColumnOrNull(property);
+                        if (columnMetadata == null) {
+                            if (strictMode) {
+                                throw new EasyQueryOrderByInvalidOperationException(property, EasyClassUtil.getSimpleName(queryClass()) + " not found query entity class");
+                            }
                             continue;
                         }
-                        throw new EasyQueryOrderByInvalidOperationException(property, EasyClassUtil.getSimpleName(orderByPropertyNode.getEntityClass()) + " not found query entity class");
-                    }
-//                    EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(orderByEntityClass);
-//                    ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(property);
-//                    FastBean fastBean = EasyBeanUtil.getFastBean(orderByEntityClass);
-//                    Property propertyLambda = fastBean.getBeanGetter(columnMetadata.getProperty());
-                    ColumnSelector<?> sqlColumnSelector = matchOrderBySQLColumnSelector(orderByEntityClass, orderByPropertyNode.isAsc());
-                    if (sqlColumnSelector == null) {
-                        if (!strictMode) {
-                            continue;
+                        ColumnSelector<T1> sqlColumnSelector = getSQLExpressionProvider1().getOrderColumnSelector(asc);
+                        if (sqlColumnSelector == null) {
+                            throw new EasyQueryOrderByInvalidOperationException(property, "not found sql column selector,entity class:" + EasyClassUtil.getSimpleName(queryClass()));
                         }
-                        throw new EasyQueryOrderByInvalidOperationException(property, "not found sql column selector,entity class:" + EasyClassUtil.getSimpleName(orderByEntityClass));
+                        sqlColumnSelector.column(property);
                     }
-                    sqlColumnSelector.column(property);
                 }
             }
         }

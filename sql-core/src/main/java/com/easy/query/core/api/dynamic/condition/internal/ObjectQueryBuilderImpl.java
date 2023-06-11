@@ -1,7 +1,6 @@
 package com.easy.query.core.api.dynamic.condition.internal;
 
 import com.easy.query.core.api.dynamic.condition.ObjectQueryBuilder;
-import com.easy.query.core.api.dynamic.condition.ObjectQueryPropertyBuilder;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,13 +11,24 @@ import java.util.Map;
  * @Date: 2023/3/22 22:15
  * @author xuejiaming
  */
-public class ObjectQueryBuilderImpl<TObject> implements ObjectQueryBuilder<TObject> {
-    private final Map<String, ObjectQueryPropertyNode> propertyMap=new HashMap<>();
-    public <TEntity> ObjectQueryPropertyBuilder<TEntity,TObject> mapTo(Class<TEntity> entityClass){
-        return new ObjectQueryPropertyBuilderImpl<>(entityClass,propertyMap);
+public class ObjectQueryBuilderImpl implements ObjectQueryBuilder {
+    private final Map<String/*query property*/, String/*entity property*/> propertyMap=new HashMap<>();
+
+    @Override
+    public ObjectQueryBuilder property(String entityPropertyName, String propertyName) {
+        propertyMap.put(propertyName,entityPropertyName);
+        return this;
     }
 
-    public ObjectQueryPropertyNode getPropertyMapping(String propertyName){
-        return propertyMap.get(propertyName);
+    @Override
+    public ObjectQueryBuilder property(String entityPropertyName, String propertyName1, String propertyName2) {
+        propertyMap.put(propertyName1,entityPropertyName);
+        propertyMap.put(propertyName2,entityPropertyName);
+        return this;
+    }
+
+    @Override
+    public Map<String, String> build() {
+        return propertyMap;
     }
 }

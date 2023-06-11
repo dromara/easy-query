@@ -23,7 +23,7 @@ public interface ExpressionUpdatable<T> extends Updatable<T, ExpressionUpdatable
     ClientExpressionUpdatable<T> getClientUpdate();
 
     default ExpressionUpdatable<T> set(Property<T, ?> column, Object val) {
-        getClientUpdate().set(true, EasyLambdaUtil.getPropertyName(column), val);
+        getClientUpdate().set(EasyLambdaUtil.getPropertyName(column), val);
         return this;
     }
 

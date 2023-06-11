@@ -218,10 +218,10 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     }
 
     @Override
-    public Queryable<T1> orderByDynamic(boolean condition, ObjectSort objectSort) {
+    public Queryable<T1> orderByObject(boolean condition, ObjectSort objectSort) {
 
         if (condition) {
-            entityQueryable.orderByDynamic(objectSort);
+            entityQueryable.orderByObject(objectSort);
         }
         return this;
     }

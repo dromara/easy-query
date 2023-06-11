@@ -424,17 +424,17 @@ public class QueryTest extends BaseTest {
         topicRequest.getOrders().add("id");
         try {
             Topic topic = easyQuery
-                    .queryable(Topic.class).whereObject(topicRequest).orderByDynamic(topicRequest).firstOrNull();
+                    .queryable(Topic.class).whereObject(topicRequest).orderByObject(topicRequest).firstOrNull();
         } catch (Exception e) {
             Assert.assertTrue(e instanceof EasyQueryOrderByInvalidOperationException);
         }
         topicRequest.getOrders().clear();
         topicRequest.getOrders().add("createTime");
         String orderSql = easyQuery
-                .queryable(Topic.class).whereObject(topicRequest).orderByDynamic(topicRequest).limit(1).toSQL();
+                .queryable(Topic.class).whereObject(topicRequest).orderByObject(topicRequest).limit(1).toSQL();
         Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE `create_time` > ? ORDER BY `create_time` ASC LIMIT 1", orderSql);
         Topic topic = easyQuery
-                .queryable(Topic.class).whereObject(topicRequest).orderByDynamic(topicRequest).firstOrNull();
+                .queryable(Topic.class).whereObject(topicRequest).orderByObject(topicRequest).firstOrNull();
         Assert.assertNotNull(topic);
     }
 

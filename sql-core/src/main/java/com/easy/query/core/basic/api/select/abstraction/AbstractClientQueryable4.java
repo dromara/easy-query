@@ -49,61 +49,6 @@ public abstract class AbstractClientQueryable4<T1, T2, T3, T4> extends AbstractC
     }
 
     @Override
-    protected Class<?> matchQueryEntityClass(Class<?> propertyQueryEntityClass) {
-
-        Class<?> queryEntityClass = super.matchQueryEntityClass(propertyQueryEntityClass);
-        if (queryEntityClass != null) {
-            return queryEntityClass;
-        }
-        if (Objects.equals(t2Class, propertyQueryEntityClass)) {
-            return t2Class;
-        }
-        if (Objects.equals(t3Class, propertyQueryEntityClass)) {
-            return t3Class;
-        }
-        if (Objects.equals(t4Class, propertyQueryEntityClass)) {
-            return t4Class;
-        }
-        return null;
-    }
-
-    @Override
-    protected WherePredicate<?> matchWhereObjectSQLPredicate(Class<?> entityClass) {
-        if (entityClass == t1Class) {
-            return getSQLExpressionProvider1().getWherePredicate();
-        }
-        if (entityClass == t2Class) {
-            return getSQLExpressionProvider2().getWherePredicate();
-        }
-        if (entityClass == t3Class) {
-            return getSQLExpressionProvider3().getWherePredicate();
-        }
-        if (entityClass == t4Class) {
-            return getSQLExpressionProvider4().getWherePredicate();
-        }
-        return null;
-    }
-
-    @Override
-    protected ColumnSelector<?> matchOrderBySQLColumnSelector(Class<?> entityClass, boolean asc) {
-
-        ColumnSelector<?> sqlColumnSelector = super.matchOrderBySQLColumnSelector(entityClass, asc);
-        if (sqlColumnSelector != null) {
-            return sqlColumnSelector;
-        }
-        if (entityClass == t2Class) {
-            return getSQLExpressionProvider2().getOrderColumnSelector(asc);
-        }
-        if (entityClass == t3Class) {
-            return getSQLExpressionProvider3().getOrderColumnSelector(asc);
-        }
-        if (entityClass == t4Class) {
-            return getSQLExpressionProvider4().getOrderColumnSelector(asc);
-        }
-        return null;
-    }
-
-    @Override
     public ClientQueryable4<T1, T2, T3, T4> whereObject(boolean condition, Object object) {
         super.whereObject(condition, object);
         return this;

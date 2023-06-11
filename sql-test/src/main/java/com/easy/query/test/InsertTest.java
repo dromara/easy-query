@@ -98,4 +98,58 @@ public class InsertTest extends BaseTest {
             Assert.assertEquals("INSERT INTO `xxx`.`t_topic_autoaaa` (`stars`,`create_time`) VALUES (?,?)", sql);
         }
     }
+    @Test
+    public void insertTest7(){
+
+        try {
+
+            TopicAuto topicAuto = new TopicAuto();
+            topicAuto.setStars(999);
+            topicAuto.setTitle("title" + 999);
+            topicAuto.setCreateTime(LocalDateTime.now().plusDays(99));
+            Assert.assertNull(topicAuto.getId());
+            EntityInsertable<TopicAuto> insertable = easyQuery.insertable(topicAuto).useInterceptor("Topic1Interceptor").noInterceptor().asTable(o->o+"aaa").asSchema("xxx");
+            long l = insertable.executeRows();
+        }catch (Exception ex){
+            Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
+            EasyQuerySQLCommandException ex1 = (EasyQuerySQLCommandException) ex;
+            Assert.assertTrue(ex1.getCause() instanceof EasyQuerySQLStatementException);
+            String sql = ((EasyQuerySQLStatementException) ex1.getCause()).getSQL();
+            Assert.assertEquals("INSERT INTO `xxx`.`t_topic_autoaaa` (`stars`,`title`,`create_time`) VALUES (?,?,?)", sql);
+        }
+    }
+    @Test
+    public void insertTest8(){
+
+        try {
+
+            TopicAuto topicAuto = new TopicAuto();
+            topicAuto.setStars(999);
+            topicAuto.setTitle("title" + 999);
+            topicAuto.setCreateTime(LocalDateTime.now().plusDays(99));
+            Assert.assertNull(topicAuto.getId());
+            EntityInsertable<TopicAuto> insertable = easyQuery.insertable(topicAuto).noInterceptor().useInterceptor("Topic1Interceptor").asTable(o->o+"aaa").asSchema("xxx");
+            long l = insertable.executeRows();
+        }catch (Exception ex){
+            Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
+            EasyQuerySQLCommandException ex1 = (EasyQuerySQLCommandException) ex;
+            Assert.assertTrue(ex1.getCause() instanceof EasyQuerySQLStatementException);
+            String sql = ((EasyQuerySQLStatementException) ex1.getCause()).getSQL();
+            Assert.assertEquals("INSERT INTO `xxx`.`t_topic_autoaaa` (`stars`,`create_time`) VALUES (?,?)", sql);
+        }
+    }
+    @Test
+    public void insertTest9(){
+        TopicAuto topicAuto=null;
+        long l = easyQuery.insertable(topicAuto)
+                .noInterceptor().useInterceptor("11")
+                .useInterceptor("11").useInterceptor()
+                .asAlias("a")
+                .asSchema("b")
+                .asTable("c")
+                .asSchema(o -> o + "ab")
+                .asTable(o -> o + "bb")
+                .executeRows();
+        Assert.assertEquals(0,l);
+    }
 }

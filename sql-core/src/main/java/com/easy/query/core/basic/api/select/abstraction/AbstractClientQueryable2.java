@@ -88,42 +88,6 @@ public abstract class AbstractClientQueryable2<T1, T2> extends AbstractClientQue
         return EasySQLExpressionUtil.executeJoinOn(queryable3, on);
     }
 
-
-    @Override
-    protected Class<?> matchQueryEntityClass(Class<?> propertyQueryEntityClass) {
-        Class<?> queryEntityClass = super.matchQueryEntityClass(propertyQueryEntityClass);
-        if(queryEntityClass!=null){
-            return queryEntityClass;
-        }
-        if(Objects.equals(t2Class,propertyQueryEntityClass)){
-            return t2Class;
-        }
-        return null;
-    }
-
-    @Override
-    protected WherePredicate<?> matchWhereObjectSQLPredicate(Class<?> entityClass) {
-        if (entityClass == t1Class) {
-            return getSQLExpressionProvider1().getWherePredicate();
-        }
-        if (entityClass == t2Class) {
-            return getSQLExpressionProvider2().getWherePredicate();
-        }
-        return null;
-    }
-
-    @Override
-    protected ColumnSelector<?> matchOrderBySQLColumnSelector(Class<?> entityClass, boolean asc) {
-        ColumnSelector<?> sqlColumnSelector = super.matchOrderBySQLColumnSelector(entityClass, asc);
-        if (sqlColumnSelector != null) {
-            return sqlColumnSelector;
-        }
-        if (entityClass == t2Class) {
-            return getSQLExpressionProvider2().getOrderColumnSelector(asc);
-        }
-        return null;
-    }
-
     @Override
     public ClientQueryable2<T1, T2> whereObject(boolean condition, Object object) {
         super.whereObject(condition, object);
@@ -163,7 +127,7 @@ public abstract class AbstractClientQueryable2<T1, T2> extends AbstractClientQue
         ColumnResultSelector<T2> sqlColumnResultSelector2 = getSQLExpressionProvider2().getColumnResultSelector(projectSQLBuilderSegment);
         columnSelectorExpression.apply(sqlColumnResultSelector1, sqlColumnResultSelector2);
         if (projectSQLBuilderSegment.isEmpty()) {
-            throw new EasyQueryException("aggreagate query not found column");
+            throw new EasyQueryException("aggregate query not found column");
         }
         SQLEntitySegment sqlSegment = (SQLEntitySegment) projectSQLBuilderSegment.getSQLSegments().get(0);
 

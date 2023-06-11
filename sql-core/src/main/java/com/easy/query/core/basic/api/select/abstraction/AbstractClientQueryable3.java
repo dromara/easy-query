@@ -91,53 +91,6 @@ public abstract class AbstractClientQueryable3<T1, T2, T3> extends AbstractClien
         return EasySQLExpressionUtil.executeJoinOn(queryable, on);
     }
 
-
-    @Override
-    protected Class<?> matchQueryEntityClass(Class<?> propertyQueryEntityClass) {
-
-        Class<?> queryEntityClass = super.matchQueryEntityClass(propertyQueryEntityClass);
-        if (queryEntityClass != null) {
-            return queryEntityClass;
-        }
-        if (Objects.equals(t2Class, propertyQueryEntityClass)) {
-            return t2Class;
-        }
-        if (Objects.equals(t3Class, propertyQueryEntityClass)) {
-            return t3Class;
-        }
-        return null;
-    }
-
-    @Override
-    protected WherePredicate<?> matchWhereObjectSQLPredicate(Class<?> entityClass) {
-        if (entityClass == t1Class) {
-            return getSQLExpressionProvider1().getWherePredicate();
-        }
-        if (entityClass == t2Class) {
-            return getSQLExpressionProvider2().getWherePredicate();
-        }
-        if (entityClass == t3Class) {
-            return getSQLExpressionProvider3().getWherePredicate();
-        }
-        return null;
-    }
-
-    @Override
-    protected ColumnSelector<?> matchOrderBySQLColumnSelector(Class<?> entityClass, boolean asc) {
-
-        ColumnSelector<?> sqlColumnSelector = super.matchOrderBySQLColumnSelector(entityClass, asc);
-        if (sqlColumnSelector != null) {
-            return sqlColumnSelector;
-        }
-        if (entityClass == t2Class) {
-            return getSQLExpressionProvider2().getOrderColumnSelector(asc);
-        }
-        if (entityClass == t3Class) {
-            return getSQLExpressionProvider3().getOrderColumnSelector(asc);
-        }
-        return null;
-    }
-
     @Override
     public ClientQueryable3<T1, T2, T3> whereObject(boolean condition, Object object) {
         super.whereObject(condition, object);

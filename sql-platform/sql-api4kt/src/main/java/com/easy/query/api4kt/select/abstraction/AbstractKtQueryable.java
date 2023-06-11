@@ -218,10 +218,10 @@ public abstract class AbstractKtQueryable<T1> implements KtQueryable<T1> {
     }
 
     @Override
-    public KtQueryable<T1> orderByDynamic(boolean condition, ObjectSort objectSort) {
+    public KtQueryable<T1> orderByObject(boolean condition, ObjectSort objectSort) {
 
         if (condition) {
-            entityQueryable.orderByDynamic(objectSort);
+            entityQueryable.orderByObject(objectSort);
         }
         return this;
     }

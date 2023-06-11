@@ -249,8 +249,8 @@ public interface KtQueryable<T1> extends Query<T1>,
      * @return
      * @throws EasyQueryOrderByInvalidOperationException 当配置{@link ObjectSort} 为{@code  DynamicModeEnum.STRICT}排序设置的属性不存在当前排序对象里面或者当前查询对象无法获取 {@link SQLKtColumnSelector}
      */
-    default KtQueryable<T1> orderByDynamic(ObjectSort configuration) {
-        return orderByDynamic(true, configuration);
+    default KtQueryable<T1> orderByObject(ObjectSort configuration) {
+        return orderByObject(true, configuration);
     }
 
     /**
@@ -259,7 +259,7 @@ public interface KtQueryable<T1> extends Query<T1>,
      * @return
      * @throws EasyQueryOrderByInvalidOperationException 当配置{@link ObjectSort} 为{@code  DynamicModeEnum.STRICT}排序设置的属性不存在当前排序对象里面或者当前查询对象无法获取 {@link SQLKtColumnSelector}
      */
-    KtQueryable<T1> orderByDynamic(boolean condition, ObjectSort configuration);
+    KtQueryable<T1> orderByObject(boolean condition, ObjectSort configuration);
 
     default KtQueryable<T1> distinct() {
         return distinct(true);

@@ -28,7 +28,7 @@ import java.util.Collections;
 
 /**
  * create time 2023/6/1 17:26
- * 文件说明
+ * 属性可查询链式接口
  *
  * @author xuejiaming
  */
@@ -46,6 +46,11 @@ public interface ClientQueryable<T1> extends Query<T1>,
     @Override
     ClientQueryable<T1> cloneQueryable();
 
+    /**
+     * select count(distinct column) from table
+     * @param selectExpression 指定去重列名
+     * @return 具体长度
+     */
     long countDistinct(SQLExpression1<ColumnSelector<T1>> selectExpression);
 
 
@@ -204,8 +209,9 @@ public interface ClientQueryable<T1> extends Query<T1>,
     <TProperty> ClientQueryable<T1> whereByIds(boolean condition, Collection<TProperty> ids);
 
     /**
-     * @param object
-     * @return
+     * 仅支持主表的动态对象查询
+     * @param object 对象查询的对象
+     * @return 当前链式表达式
      * @throws EasyQueryWhereInvalidOperationException 当object的where属性和查询对象不匹配或者查询对象属性不匹配
      */
     default ClientQueryable<T1> whereObject(Object object) {
@@ -213,9 +219,10 @@ public interface ClientQueryable<T1> extends Query<T1>,
     }
 
     /**
-     * @param condition
-     * @param object
-     * @return
+     * 仅支持主表的动态对象查询
+     * @param condition 是否使用对象查询
+     * @param object 对象查询的对象
+     * @return 当前链式表达式
      * @throws EasyQueryWhereInvalidOperationException 当object的where属性和查询对象不匹配或者查询对象属性不匹配,无法获取 {@link WherePredicate}
      */
     ClientQueryable<T1> whereObject(boolean condition, Object object);
@@ -259,8 +266,8 @@ public interface ClientQueryable<T1> extends Query<T1>,
      * @return
      * @throws EasyQueryOrderByInvalidOperationException 当配置{@link ObjectSort} 为{@code  DynamicModeEnum.STRICT}排序设置的属性不存在当前排序对象里面或者当前查询对象无法获取 {@link ColumnSelector}
      */
-    default ClientQueryable<T1> orderByDynamic(ObjectSort configuration) {
-        return orderByDynamic(true, configuration);
+    default ClientQueryable<T1> orderByObject(ObjectSort configuration) {
+        return orderByObject(true, configuration);
     }
 
     /**
@@ -269,7 +276,7 @@ public interface ClientQueryable<T1> extends Query<T1>,
      * @return
      * @throws EasyQueryOrderByInvalidOperationException 当配置{@link ObjectSort} 为{@code  DynamicModeEnum.STRICT}排序设置的属性不存在当前排序对象里面或者当前查询对象无法获取 {@link ColumnSelector}
      */
-    ClientQueryable<T1> orderByDynamic(boolean condition, ObjectSort configuration);
+    ClientQueryable<T1> orderByObject(boolean condition, ObjectSort configuration);
 
     default ClientQueryable<T1> distinct() {
         return distinct(true);

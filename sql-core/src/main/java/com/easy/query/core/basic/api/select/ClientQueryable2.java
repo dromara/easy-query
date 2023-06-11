@@ -38,10 +38,21 @@ public interface ClientQueryable2<T1, T2> extends ClientQueryable<T1> {
 
     //region where
 
+    /**
+     * 仅支持主表的动态对象查询
+     * @param object 对象查询的对象
+     * @return
+     */
     default ClientQueryable2<T1, T2> whereObject(Object object) {
         return whereObject(true, object);
     }
 
+    /**
+     * 仅支持主表的动态对象查询
+     * @param condition 是否使用对象查询
+     * @param object 对象查询的对象
+     * @return
+     */
     ClientQueryable2<T1, T2> whereObject(boolean condition, Object object);
 
     @Override

@@ -11,6 +11,7 @@ import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import com.easy.query.core.exception.EasyQuerySQLStatementException;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.entity.Topic;
+import com.easy.query.test.entity.TopicAuto;
 import com.easy.query.test.entity.TopicTypeTest1;
 import com.easy.query.test.entity.TopicValueUpdateAtomicTrack;
 import com.easy.query.test.enums.TopicTypeEnum;
@@ -296,6 +297,24 @@ public class UpdateTest extends BaseTest {
         } finally {
             trackManager.release();
         }
+    }
+    @Test
+    public void updateTest16(){
+        TopicAuto topicAuto=null;
+        long l = easyQuery.updatable(topicAuto)
+                .noInterceptor().noInterceptor("11")
+                .useInterceptor("11").useInterceptor()
+                .disableLogicDelete()
+                .enableLogicDelete()
+                .useLogicDelete(true)
+                .setSQLStrategy(true,SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS)
+                .asAlias("a")
+                .asSchema("b")
+                .asTable("c")
+                .asSchema(o -> o + "ab")
+                .asTable(o -> o + "bb")
+                .executeRows();
+        Assert.assertEquals(0,l);
     }
 
 

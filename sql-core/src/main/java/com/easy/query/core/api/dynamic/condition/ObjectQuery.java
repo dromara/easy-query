@@ -8,6 +8,6 @@ import com.easy.query.core.api.dynamic.DynamicQueryStrategy;
  *
  * @author xuejiaming
  */
-public interface ObjectQuery<TObject> extends DynamicQueryStrategy {
-   void configure(ObjectQueryBuilder<TObject> builder);
+public interface ObjectQuery extends DynamicQueryStrategy {
+   void configure(ObjectQueryBuilder builder);
 }

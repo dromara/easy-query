@@ -2,6 +2,8 @@ package com.easy.query.core.api.dynamic.sort;
 
 import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
 
+import java.util.Map;
+
 /**
  * @FileName: EasyOrderBuilder.java
  * @Description: 文件说明
@@ -9,7 +11,6 @@ import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
  * @author xuejiaming
  */
 public interface ObjectSortBuilder {
-    <TEntity> ObjectSortPropertyBuilder<TEntity> mapTo(Class<TEntity> entityClass);
 
     /**
      * 添加字段属性排序
@@ -19,4 +20,7 @@ public interface ObjectSortBuilder {
      * @return
      */
     ObjectSortBuilder orderBy(String propertyName, boolean asc);
+    ObjectSortBuilder allowed(String propertyName);
+    ObjectSortBuilder notAllowed(String propertyName);
+    Map<String, Boolean> build();
 }
