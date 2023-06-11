@@ -265,7 +265,7 @@ public class EntityMetadata {
         if (logicDelCount > 1) {
             throw new EasyQueryException("multi logic delete not support");
         }
-        //初始化烂机器
+        //初始化拦截器
         entityGlobalInterceptorConfigurationInit(configuration);
 
         if (table != null && isSharding()) {

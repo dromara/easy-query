@@ -2,14 +2,23 @@
   <img height="340" src="./imgs/logo.png">
 </p>
 
-- [GITEE](https://gitee.com/xuejm/easy-query)  国内镜像
+- [GITEE](https://gitee.com/xuejm/easy-query)  国内镜像地址
 
 ## 📚 文档
-[GITHUB地址](https://xuejmnet.github.io/easy-query-doc/) | [GITEE地址](https://xuejm.gitee.io/easy-query-doc/)
+<div align="center">
+
+[GITHUB文档地址](https://xuejmnet.github.io/easy-query-doc/) | [GITEE文档地址](https://xuejm.gitee.io/easy-query-doc/)
+
+</div>
+
+## 🐧 QQ群:170029046
+<div align="center">
 
 <img src="./imgs/qrcode.jpg" title="JetBrains" width=122 />
-QQ群:170029046
 
+</div>
+
+## 🚀 介绍
 
 - [使用介绍](#使用介绍)
     - [简介](#简介)
@@ -52,7 +61,7 @@ QQ群:170029046
 ```xml
 
 <properties>
-  <easy-query.version>0.9.51</easy-query.version>
+  <easy-query.version>0.9.52</easy-query.version>
 </properties>
 <dependency>
     <groupId>com.easy-query</groupId>
@@ -65,7 +74,7 @@ QQ群:170029046
 ```xml
 
 <properties>
-  <easy-query.version>0.9.51</easy-query.version>
+  <easy-query.version>0.9.52</easy-query.version>
 </properties>
         <!--  提供了以java语法强类型,如果不引用也可以使用只是无法使用lambda表达式来表示属性只能用字符串 -->
 <dependency>

@@ -20,10 +20,10 @@ public class EasyQueryProperties {
 
     private Boolean enable = false;
     private Boolean deleteThrow = true;
-    private DatabaseEnum database;
+    private DatabaseEnum database = DatabaseEnum.MYSQL;
     private NameConversionEnum nameConversion;
-    private SQLExecuteStrategyEnum insertStrategy = SQLExecuteStrategyEnum.DEFAULT;
-    private SQLExecuteStrategyEnum updateStrategy = SQLExecuteStrategyEnum.DEFAULT;
+    private SQLExecuteStrategyEnum insertStrategy = SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS;
+    private SQLExecuteStrategyEnum updateStrategy = SQLExecuteStrategyEnum.ALL_COLUMNS;
     private ConnectionModeEnum connectionMode = ConnectionModeEnum.SYSTEM_AUTO;
     /**
      * 仅分片时有效默认同时5个线程5
@@ -52,9 +52,9 @@ public class EasyQueryProperties {
     private boolean throwIfRouteNotMatch = true;
 
     /**
-     * 分片聚合超时时间默认30秒单位(ms)
+     * 分片聚合超时时间默认60秒单位(ms)
      */
-    private long shardingExecuteTimeoutMillis = 30000L;
+    private long shardingExecuteTimeoutMillis = 60000L;
 
     private boolean queryLargeColumn = true;
     /**
