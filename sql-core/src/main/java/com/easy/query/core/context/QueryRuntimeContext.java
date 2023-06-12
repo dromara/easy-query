@@ -1,7 +1,7 @@
 package com.easy.query.core.context;
 
 import com.easy.query.core.api.SQLClientApiFactory;
-import com.easy.query.core.basic.jdbc.con.ConnectionManager;
+import com.easy.query.core.basic.jdbc.conn.ConnectionManager;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
 import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
 import com.easy.query.core.basic.pagination.EasyPageResultProvider;

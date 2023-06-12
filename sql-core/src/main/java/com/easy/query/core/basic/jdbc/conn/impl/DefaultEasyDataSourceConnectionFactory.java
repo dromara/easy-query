@@ -1,7 +1,7 @@
-package com.easy.query.core.basic.jdbc.con.impl;
+package com.easy.query.core.basic.jdbc.conn.impl;
 
-import com.easy.query.core.basic.jdbc.con.EasyDataSourceConnection;
-import com.easy.query.core.basic.jdbc.con.EasyDataSourceConnectionFactory;
+import com.easy.query.core.basic.jdbc.conn.EasyDataSourceConnection;
+import com.easy.query.core.basic.jdbc.conn.EasyDataSourceConnectionFactory;
 import com.easy.query.core.sharding.EasyQueryDataSource;
 
 /**

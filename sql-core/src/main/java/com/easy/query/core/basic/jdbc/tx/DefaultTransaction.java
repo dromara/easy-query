@@ -1,10 +1,9 @@
 package com.easy.query.core.basic.jdbc.tx;
 
-import com.easy.query.core.basic.jdbc.con.ConnectionManager;
+import com.easy.query.core.basic.jdbc.conn.ConnectionManager;
 import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Consumer;
 

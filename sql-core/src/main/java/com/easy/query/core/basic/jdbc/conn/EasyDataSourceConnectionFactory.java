@@ -1,4 +1,4 @@
-package com.easy.query.core.basic.jdbc.con;
+package com.easy.query.core.basic.jdbc.conn;
 
 /**
  * create time 2023/5/12 08:47

@@ -1,6 +1,6 @@
 package com.easy.query.core.basic.api.internal;
 
-import com.easy.query.core.basic.jdbc.con.ConnectionManager;
+import com.easy.query.core.basic.jdbc.conn.ConnectionManager;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.exception.EasyQueryConcurrentException;

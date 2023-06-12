@@ -1,4 +1,4 @@
-package com.easy.query.core.basic.jdbc.con;
+package com.easy.query.core.basic.jdbc.conn;
 
 import java.util.Collection;
 

@@ -1,6 +1,6 @@
 package com.easy.query.core.basic.jdbc.executor.internal.unit.impl;
 
-import com.easy.query.core.basic.jdbc.con.EasyConnection;
+import com.easy.query.core.basic.jdbc.conn.EasyConnection;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.executor.internal.common.ExecutionUnit;
 import com.easy.query.core.basic.jdbc.executor.internal.result.AffectedRowsExecuteResult;

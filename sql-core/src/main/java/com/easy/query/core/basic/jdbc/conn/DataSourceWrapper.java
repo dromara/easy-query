@@ -1,4 +1,4 @@
-package com.easy.query.core.basic.jdbc.con;
+package com.easy.query.core.basic.jdbc.conn;
 
 import com.easy.query.core.datasource.DataSourceUnit;
 import com.easy.query.core.enums.con.ConnectionStrategyEnum;

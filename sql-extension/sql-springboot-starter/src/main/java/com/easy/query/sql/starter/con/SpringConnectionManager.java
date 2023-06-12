@@ -1,10 +1,10 @@
 package com.easy.query.sql.starter.con;
 
-import com.easy.query.core.basic.jdbc.con.DataSourceWrapper;
-import com.easy.query.core.basic.jdbc.con.EasyConnection;
-import com.easy.query.core.basic.jdbc.con.EasyConnectionFactory;
-import com.easy.query.core.basic.jdbc.con.EasyDataSourceConnectionFactory;
-import com.easy.query.core.basic.jdbc.con.impl.DefaultConnectionManager;
+import com.easy.query.core.basic.jdbc.conn.DataSourceWrapper;
+import com.easy.query.core.basic.jdbc.conn.EasyConnection;
+import com.easy.query.core.basic.jdbc.conn.EasyConnectionFactory;
+import com.easy.query.core.basic.jdbc.conn.EasyDataSourceConnectionFactory;
+import com.easy.query.core.basic.jdbc.conn.impl.DefaultConnectionManager;
 import com.easy.query.core.enums.con.ConnectionStrategyEnum;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.sharding.EasyQueryDataSource;

@@ -1,18 +1,17 @@
-package com.easy.query.core.basic.jdbc.con.impl;
+package com.easy.query.core.basic.jdbc.conn.impl;
 
 import com.easy.query.core.datasource.DataSourceUnit;
 import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.enums.con.ConnectionStrategyEnum;
-import com.easy.query.core.basic.jdbc.con.DataSourceWrapper;
-import com.easy.query.core.basic.jdbc.con.EasyConnection;
-import com.easy.query.core.basic.jdbc.con.EasyConnectionFactory;
+import com.easy.query.core.basic.jdbc.conn.DataSourceWrapper;
+import com.easy.query.core.basic.jdbc.conn.EasyConnection;
+import com.easy.query.core.basic.jdbc.conn.EasyConnectionFactory;
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import com.easy.query.core.sharding.EasyQueryDataSource;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 

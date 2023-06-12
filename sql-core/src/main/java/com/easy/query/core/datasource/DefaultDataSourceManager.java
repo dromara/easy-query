@@ -2,8 +2,8 @@ package com.easy.query.core.datasource;
 
 import com.easy.query.core.configuration.ShardingDataSource;
 import com.easy.query.core.enums.con.ConnectionStrategyEnum;
-import com.easy.query.core.basic.jdbc.con.DataSourceWrapper;
-import com.easy.query.core.basic.jdbc.con.impl.DefaultDataSourceWrapper;
+import com.easy.query.core.basic.jdbc.conn.DataSourceWrapper;
+import com.easy.query.core.basic.jdbc.conn.impl.DefaultDataSourceWrapper;
 import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.configuration.EasyQueryShardingOption;
 

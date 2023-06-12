@@ -2,8 +2,8 @@ package com.easy.query.core.sharding.context;
 
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.con.ConnectionStrategyEnum;
-import com.easy.query.core.basic.jdbc.con.EasyConnection;
-import com.easy.query.core.basic.jdbc.con.ConnectionManager;
+import com.easy.query.core.basic.jdbc.conn.EasyConnection;
+import com.easy.query.core.basic.jdbc.conn.ConnectionManager;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.enums.ExecuteMethodEnum;

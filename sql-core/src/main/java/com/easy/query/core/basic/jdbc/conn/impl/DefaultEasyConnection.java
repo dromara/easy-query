@@ -1,7 +1,7 @@
-package com.easy.query.core.basic.jdbc.con.impl;
+package com.easy.query.core.basic.jdbc.conn.impl;
 
 import com.easy.query.core.enums.con.ConnectionStrategyEnum;
-import com.easy.query.core.basic.jdbc.con.EasyConnection;
+import com.easy.query.core.basic.jdbc.conn.EasyConnection;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;

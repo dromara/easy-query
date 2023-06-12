@@ -1,11 +1,11 @@
-package com.easy.query.core.basic.jdbc.con.impl;
+package com.easy.query.core.basic.jdbc.conn.impl;
 
 import com.easy.query.core.enums.con.ConnectionStrategyEnum;
-import com.easy.query.core.basic.jdbc.con.EasyConnection;
-import com.easy.query.core.basic.jdbc.con.EasyConnectionFactory;
-import com.easy.query.core.basic.jdbc.con.ConnectionManager;
-import com.easy.query.core.basic.jdbc.con.EasyDataSourceConnection;
-import com.easy.query.core.basic.jdbc.con.EasyDataSourceConnectionFactory;
+import com.easy.query.core.basic.jdbc.conn.EasyConnection;
+import com.easy.query.core.basic.jdbc.conn.EasyConnectionFactory;
+import com.easy.query.core.basic.jdbc.conn.ConnectionManager;
+import com.easy.query.core.basic.jdbc.conn.EasyDataSourceConnection;
+import com.easy.query.core.basic.jdbc.conn.EasyDataSourceConnectionFactory;
 import com.easy.query.core.basic.jdbc.tx.DefaultTransaction;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
 import com.easy.query.core.exception.EasyQueryException;
