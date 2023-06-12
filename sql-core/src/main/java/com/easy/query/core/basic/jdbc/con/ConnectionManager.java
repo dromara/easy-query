@@ -7,14 +7,14 @@ import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import java.util.List;
 
 /**
- * @FileName: ConnectionManager.java
- * @Description: 文件说明
- * @Date: 2023/2/21 08:56
+ * create time 2023/6/12 12:54
+ * 文件说明
+ *
  * @author xuejiaming
  */
 public interface ConnectionManager {
-    default Transaction beginTransaction(){
-       return beginTransaction(null);
+    default Transaction beginTransaction() {
+        return beginTransaction(null);
     }
 
     /**
@@ -25,13 +25,14 @@ public interface ConnectionManager {
      * Connection.TRANSACTION_REPEATABLE_READ,
      * Connection.TRANSACTION_SERIALIZABLE.
      * (Note that Connection.TRANSACTION_NONE cannot be used because it specifies that transactions are not supported.)
+     *
      * @param isolationLevel
      * @return
      * @throws EasyQuerySQLCommandException repeat begin transaction
      */
     Transaction beginTransaction(Integer isolationLevel);
 
-    default Transaction tryBeginTransaction(Integer isolationLevel){
+    default Transaction tryBeginTransaction(Integer isolationLevel) {
         Transaction transaction = getTransactionOrNull();
         if (transaction != null) {
             return transaction;
