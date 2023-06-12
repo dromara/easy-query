@@ -132,6 +132,7 @@ public abstract class BaseTest {
                     op.setDefaultDataSourceMergePoolSize(20);
                 })
                 .useDatabaseConfigure(new MySQLDatabaseConfiguration())
+//                .replaceService(BeanValueCaller.class, ReflectBeanValueCaller.class)
                 .build();
         easyQuery = new DefaultEasyQuery(easyQueryClient);
         QueryRuntimeContext runtimeContext = easyQuery.getRuntimeContext();

@@ -4,6 +4,8 @@ import com.easy.query.core.api.SQLClientApiFactory;
 import com.easy.query.core.api.client.DefaultEasyQueryClient;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.api.def.DefaultSQLClientApiFactory;
+import com.easy.query.core.basic.extension.track.DefaultTrackManager;
+import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.basic.jdbc.conn.ConnectionManager;
 import com.easy.query.core.basic.jdbc.conn.EasyConnectionFactory;
 import com.easy.query.core.basic.jdbc.conn.EasyDataSourceConnectionFactory;
@@ -16,10 +18,10 @@ import com.easy.query.core.basic.jdbc.types.EasyJdbcTypeHandlerManager;
 import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
 import com.easy.query.core.basic.pagination.DefaultEasyPageResultProvider;
 import com.easy.query.core.basic.pagination.EasyPageResultProvider;
-import com.easy.query.core.basic.extension.track.DefaultTrackManager;
-import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.basic.thread.DefaultEasyShardingExecutorService;
 import com.easy.query.core.basic.thread.ShardingExecutorService;
+import com.easy.query.core.bean.BeanValueCaller;
+import com.easy.query.core.bean.lambda.LambdaBeanValueCaller;
 import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.configuration.EasyQueryOptionBuilder;
 import com.easy.query.core.configuration.QueryConfiguration;
@@ -51,6 +53,8 @@ import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.inject.ServiceCollection;
 import com.easy.query.core.inject.ServiceProvider;
 import com.easy.query.core.inject.impl.ServiceCollectionImpl;
+import com.easy.query.core.job.DefaultEasyTimeJobManager;
+import com.easy.query.core.job.EasyTimeJobManager;
 import com.easy.query.core.metadata.DefaultEntityMetadataManager;
 import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.sharding.DefaultEasyQueryDataSource;
@@ -127,6 +131,8 @@ public class EasyQueryBuilderConfiguration {
                 .replaceService(RouteDescriptorFactory.class, DefaultRouteDescriptorFactor.class)
                 .replaceService(DataSourceUnitFactory.class, DefaultDataSourceUnitFactory.class)
                 .replaceService(SQLSegmentFactory.class, DefaultSQLSegmentFactory.class)
+                .replaceService(EasyTimeJobManager.class, DefaultEasyTimeJobManager.class)
+                .replaceService(BeanValueCaller.class, LambdaBeanValueCaller.class)
                 .replaceService(EasyQueryClient.class, DefaultEasyQueryClient.class);
     }
 

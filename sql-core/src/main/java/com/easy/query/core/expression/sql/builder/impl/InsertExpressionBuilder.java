@@ -2,22 +2,21 @@ package com.easy.query.core.expression.sql.builder.impl;
 
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
+import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.segment.ColumnInsertSegment;
+import com.easy.query.core.expression.segment.SQLEntitySegment;
+import com.easy.query.core.expression.segment.builder.ProjectSQLBuilderSegmentImpl;
+import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
-import com.easy.query.core.expression.segment.impl.ColumnInsertSegmentImpl;
+import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.ExpressionContext;
+import com.easy.query.core.expression.sql.builder.internal.AbstractEntityExpressionBuilder;
 import com.easy.query.core.expression.sql.expression.EntityInsertSQLExpression;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.expression.sql.expression.impl.EntitySQLExpressionMetadata;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
-import com.easy.query.core.exception.EasyQueryException;
-import com.easy.query.core.expression.segment.SQLEntitySegment;
-import com.easy.query.core.expression.segment.builder.ProjectSQLBuilderSegmentImpl;
-import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
-import com.easy.query.core.expression.sql.builder.internal.AbstractEntityExpressionBuilder;
-import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
-import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
-import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.util.EasyBeanUtil;
 import com.easy.query.core.util.EasyClassUtil;
@@ -76,7 +75,7 @@ public class InsertExpressionBuilder extends AbstractEntityExpressionBuilder imp
     private void getCustomIgnoreProperties(Set<String> ignoreUpdateSet, SQLExecuteStrategyEnum updateStrategy, EntityMetadataManager entityMetadataManager, Object entity) {
 
         if (Objects.equals(SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS, updateStrategy) || Objects.equals(SQLExecuteStrategyEnum.ONLY_NULL_COLUMNS, updateStrategy)) {
-            Set<String> beanMatchProperties = EasyBeanUtil.getBeanMatchProperties(entityMetadataManager, entity, Objects.equals(SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS, updateStrategy) ? Objects::isNull : Objects::nonNull);
+            Set<String> beanMatchProperties = EasyBeanUtil.getBeanMatchProperties(runtimeContext.getBeanValueCaller(), entityMetadataManager, entity, Objects.equals(SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS, updateStrategy) ? Objects::isNull : Objects::nonNull);
             ignoreUpdateSet.addAll(beanMatchProperties);
         }
     }

@@ -1,12 +1,13 @@
 package com.easy.query.core.context;
 
 import com.easy.query.core.api.SQLClientApiFactory;
+import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.basic.jdbc.conn.ConnectionManager;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
 import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
 import com.easy.query.core.basic.pagination.EasyPageResultProvider;
-import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.basic.thread.ShardingExecutorService;
+import com.easy.query.core.bean.BeanValueCaller;
 import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.datasource.DataSourceManager;
 import com.easy.query.core.datasource.DataSourceUnitFactory;
@@ -15,6 +16,7 @@ import com.easy.query.core.expression.parser.factory.SQLExpressionInvokeFactory;
 import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
 import com.easy.query.core.expression.sql.builder.factory.ExpressionBuilderFactory;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
+import com.easy.query.core.job.EasyTimeJobManager;
 import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.sharding.EasyQueryDataSource;
 import com.easy.query.core.sharding.comparer.ShardingComparer;
@@ -57,4 +59,6 @@ public interface QueryRuntimeContext {
     SQLSegmentFactory getSQLSegmentFactory();
 
     DataSourceManager getDataSourceManager();
+    EasyTimeJobManager getEasyTimeJobManager();
+    BeanValueCaller getBeanValueCaller();
 }

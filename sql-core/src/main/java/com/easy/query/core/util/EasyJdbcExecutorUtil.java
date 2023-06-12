@@ -1,25 +1,26 @@
 package com.easy.query.core.util;
 
-import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.conn.EasyConnection;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
+import com.easy.query.core.basic.jdbc.executor.internal.merge.result.StreamResultSet;
+import com.easy.query.core.basic.jdbc.executor.internal.merge.result.impl.EasyShardingStreamResultSet;
+import com.easy.query.core.basic.jdbc.executor.internal.merge.result.impl.EasyStreamResultSet;
 import com.easy.query.core.basic.jdbc.parameter.BeanSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.ConstSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
-import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
 import com.easy.query.core.basic.jdbc.types.EasyParameter;
+import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
 import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
-import com.easy.query.core.common.bean.FastBean;
+import com.easy.query.core.bean.BeanCaller;
+import com.easy.query.core.bean.BeanValueCaller;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.exception.EasyQuerySQLStatementException;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.metadata.EntityMetadata;
-import com.easy.query.core.basic.jdbc.executor.internal.merge.result.StreamResultSet;
-import com.easy.query.core.basic.jdbc.executor.internal.merge.result.impl.EasyShardingStreamResultSet;
-import com.easy.query.core.basic.jdbc.executor.internal.merge.result.impl.EasyStreamResultSet;
 
 import java.beans.PropertyDescriptor;
 import java.sql.Connection;
@@ -132,7 +133,7 @@ public class EasyJdbcExecutorUtil {
                 params.add(new EasyConstSQLParameter(sqlParameter.getTableOrNull(), sqlParameter.getPropertyNameOrNull(), value));
             } else if (sqlParameter instanceof BeanSQLParameter) {
                 BeanSQLParameter beanSQLParameter = (BeanSQLParameter) sqlParameter;
-                beanSQLParameter.setBean(entity);
+                beanSQLParameter.setBean(entity,executorContext.getRuntimeContext().getBeanValueCaller());
                 Object value = executorContext.toValue(beanSQLParameter, beanSQLParameter.getValue());
                 params.add(new EasyConstSQLParameter(beanSQLParameter.getTableOrNull(), beanSQLParameter.getPropertyNameOrNull(), value));
             } else {
@@ -224,9 +225,10 @@ public class EasyJdbcExecutorUtil {
             //如果需要自动填充并且存在自动填充列
             if (fillAutoIncrement && EasyCollectionUtil.isNotEmpty(incrementColumns)) {
                 ResultSet keysSet = ps.getGeneratedKeys();
+                BeanValueCaller beanValueCaller = runtimeContext.getBeanValueCaller();
+                BeanCaller beanCaller = beanValueCaller.getBeanCaller(entityClass);
                 int index = 0;
                 PropertyDescriptor[] incrementProperty = new PropertyDescriptor[incrementColumns.size()];
-                FastBean beanFastSetter = EasyBeanUtil.getFastBean(entityClass);
                 while (keysSet.next()) {
                     T entity = entities.get(index);
                     for (int i = 0; i < incrementColumns.size(); i++) {
@@ -240,7 +242,7 @@ public class EasyJdbcExecutorUtil {
 
                         Object value = keysSet.getObject(i + 1);
                         Object newValue = EasyClassUtil.convertValueToRequiredType(value, property.getPropertyType());
-                        PropertySetterCaller<Object> beanSetter = beanFastSetter.getBeanSetter(property);
+                        PropertySetterCaller<Object> beanSetter = beanCaller.getBeanSetter(property);
                         beanSetter.call(entity, newValue);
 //                        Method setter = getSetter(property, entityClass);
 //                        callSetter(entity,setter, property, newValue);

@@ -64,6 +64,17 @@ public class OrderController {
         EasyPageResult<OrderEntity> pageResult = easyQuery.queryable(OrderEntity.class)
                 .orderByAsc(o -> o.column(OrderEntity::getOrderNo))
                 .toPageResult(pageIndex, pageSize);
+//        {
+//            long start = System.currentTimeMillis();
+//            for (int i = 0; i < 1000; i++) {
+//
+//                List<OrderEntity> list = easyQuery.queryable(OrderEntity.class)
+//                        .orderByAsc(o -> o.column(OrderEntity::getOrderNo))
+//                        .toList();
+//            }
+//            long end = System.currentTimeMillis();
+//            System.out.println("耗时:"+(end-start)+"(ms)");
+//        }
         return pageResult;
     }
 }

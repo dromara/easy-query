@@ -1,10 +1,17 @@
 package com.easy.query.core.sharding.api.initializer.time;
 
 import com.easy.query.core.configuration.EasyQueryOption;
+import com.easy.query.core.inject.ServiceProvider;
+import com.easy.query.core.job.TimeJob;
 import com.easy.query.core.metadata.EntityMetadata;
+import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.sharding.initializer.EntityShardingInitializer;
 import com.easy.query.core.sharding.initializer.ShardingEntityBuilder;
+import com.easy.query.core.util.EasyClassUtil;
+import com.easy.query.core.util.EasyDynamicUtil;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -17,7 +24,16 @@ import java.util.Map;
  *
  * @author xuejiaming
  */
-public abstract class AbstractShardingTimeInitializer<T> implements EntityShardingInitializer<T> {
+public abstract class AbstractShardingTimeInitializer<T> implements EntityShardingInitializer<T>, TimeJob {
+    public AbstractShardingTimeInitializer(){
+        Type superClass = this.getClass().getGenericSuperclass();
+        if (superClass instanceof Class) {
+            throw new IllegalArgumentException("Internal error: TypeReference constructed without actual type information");
+        } else {
+            this.entityClass = (Class<?>) ((ParameterizedType)superClass).getActualTypeArguments()[0];
+        }
+    }
+    protected final Class<?> entityClass;
     protected abstract LocalDateTime getBeginTime();
     protected  LocalDateTime getEndTime(){
         return LocalDateTime.now();
@@ -70,4 +86,21 @@ public abstract class AbstractShardingTimeInitializer<T> implements EntityShardi
      * @param builder
      */
     public abstract void configure0(ShardingEntityBuilder<T> builder);
+
+    @Override
+    public String jobName() {
+        return EasyClassUtil.getSimpleName(getClass());
+    }
+    @Override
+    public void execute(ServiceProvider serviceProvider) {
+        EntityMetadataManager entityMetadataManager = serviceProvider.getService(EntityMetadataManager.class);
+        EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(entityClass);
+        String tableName = entityMetadata.getTableName();
+        LocalDateTime after5minutes = LocalDateTime.now().plusMinutes(5);
+        String tail = formatTail(after5minutes);
+        String actualTableName = tableName + getTableSeparator() + tail;
+        for (String dataSource : entityMetadata.getDataSources()) {
+            EasyDynamicUtil.addShardingEntity(entityMetadataManager,entityClass,dataSource,actualTableName);
+        }
+    }
 }

@@ -1,8 +1,7 @@
 package com.easy.query.core.sharding.route.manager.impl;
 
+import com.easy.query.core.bean.BeanValueCaller;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
-import com.easy.query.core.expression.executor.parser.PrepareParseResult;
-import com.easy.query.core.expression.executor.parser.descriptor.TableParseDescriptor;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.sharding.EasyQueryDataSource;
@@ -29,10 +28,10 @@ public class DefaultDataSourceRouteManager implements DataSourceRouteManager {
     private final DataSourceRoute dataSourceRoute;
     private final EasyQueryDataSource easyDataSource;
 
-    public DefaultDataSourceRouteManager(EasyQueryDataSource easyDataSource){
+    public DefaultDataSourceRouteManager(EasyQueryDataSource easyDataSource, BeanValueCaller beanValueCaller){
 
         this.easyDataSource = easyDataSource;
-        dataSourceRoute=new ShardingDataSourceRoute();
+        dataSourceRoute=new ShardingDataSourceRoute(beanValueCaller);
     }
     @Override
     public Collection<String> routeTo(RouteDescriptor routeDescriptor) {

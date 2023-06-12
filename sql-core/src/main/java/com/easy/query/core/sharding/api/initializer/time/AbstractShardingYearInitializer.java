@@ -3,6 +3,7 @@ package com.easy.query.core.sharding.api.initializer.time;
 import com.easy.query.core.util.EasyUtil;
 
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 
 /**
@@ -26,5 +27,12 @@ public abstract class AbstractShardingYearInitializer<T> extends AbstractShardin
     @Override
     protected String formatTail(LocalDateTime time) {
         return time.format(DateTimeFormatter.ofPattern("yyyy"));
+    }
+
+    @Override
+    public long calcNextTime() {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime yearStart =  EasyUtil.getYearStart(now.plusYears(1));
+        return yearStart.toEpochSecond(ZoneOffset.ofHours(8)) * 1000;
     }
 }

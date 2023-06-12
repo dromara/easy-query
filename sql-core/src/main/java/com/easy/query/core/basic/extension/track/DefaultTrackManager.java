@@ -1,5 +1,6 @@
 package com.easy.query.core.basic.extension.track;
 
+import com.easy.query.core.bean.BeanValueCaller;
 import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.exception.EasyQueryException;
 
@@ -12,17 +13,19 @@ import com.easy.query.core.exception.EasyQueryException;
 public class DefaultTrackManager implements TrackManager{
     private final ThreadLocal<TrackContext> threadTC = ThreadLocal.withInitial(() -> null);
     private final EntityMetadataManager entityMetadataManager;
+    private final BeanValueCaller beanValueCaller;
 
-    public DefaultTrackManager(EntityMetadataManager entityMetadataManager){
+    public DefaultTrackManager(EntityMetadataManager entityMetadataManager, BeanValueCaller beanValueCaller){
 
         this.entityMetadataManager = entityMetadataManager;
+        this.beanValueCaller = beanValueCaller;
     }
 
     @Override
     public void begin() {
         TrackContext trackContext = threadTC.get();
         if(trackContext==null){
-            trackContext = new DefaultTrackContext(entityMetadataManager);
+            trackContext = new DefaultTrackContext(entityMetadataManager,beanValueCaller);
             threadTC.set(trackContext);
         }
         trackContext.begin();

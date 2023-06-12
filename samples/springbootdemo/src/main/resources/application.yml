@@ -26,3 +26,5 @@ easy-query:
   database: mysql
   default-data-source-merge-pool-size: 60
   default-data-source-name: ds0
+  bean-caller-type: reflect
+#  print-sql: false

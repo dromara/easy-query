@@ -32,6 +32,9 @@ public final class EasyDynamicUtil {
     }
     public static void addShardingEntity(QueryRuntimeContext runtimeContext, Class<?> entityClass, String dataSourceName, String actualTableName){
         EntityMetadataManager entityMetadataManager = runtimeContext.getEntityMetadataManager();
+        addShardingEntity(entityMetadataManager,entityClass,dataSourceName,actualTableName);
+    }
+    public static void addShardingEntity( EntityMetadataManager entityMetadataManager, Class<?> entityClass, String dataSourceName, String actualTableName){
         EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(entityClass);
         if(EasyStringUtil.isBlank(entityMetadata.getTableName())){
             throw new EasyQueryInvalidOperationException(EasyClassUtil.getSimpleName(entityClass)+" is not table entity");

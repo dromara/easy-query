@@ -3,6 +3,7 @@ package com.easy.query.core.sharding.api.initializer.time;
 import com.easy.query.core.util.EasyUtil;
 
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 
 /**
@@ -28,5 +29,13 @@ public abstract class AbstractShardingWeekInitializer<T> extends AbstractShardin
         LocalDateTime weekEnd = EasyUtil.getWeekEnd(time);
         String dd = weekEnd.format(DateTimeFormatter.ofPattern("dd"));
         return EasyUtil.getWeekStart(time).format(DateTimeFormatter.ofPattern("yyyyMMdd"))+"_"+dd;
+    }
+
+    @Override
+    public long calcNextTime() {
+        LocalDateTime now = LocalDateTime.now();
+
+        LocalDateTime weekStart =  EasyUtil.getWeekStart(now.plusWeeks(1));
+        return weekStart.toEpochSecond(ZoneOffset.ofHours(8)) * 1000;
     }
 }

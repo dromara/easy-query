@@ -1,14 +1,14 @@
 package com.easy.query.core.basic.extension.track;
 
 import com.easy.query.core.basic.extension.conversion.ValueConverter;
-import com.easy.query.core.common.bean.FastBean;
+import com.easy.query.core.bean.BeanCaller;
+import com.easy.query.core.bean.BeanValueCaller;
+import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
-import com.easy.query.core.exception.EasyQueryException;
-import com.easy.query.core.util.EasyBeanUtil;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasyStringUtil;
@@ -26,11 +26,13 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class DefaultTrackContext implements TrackContext {
     private final EntityMetadataManager entityMetadataManager;
+    private final BeanValueCaller beanValueCaller;
     private int beginCount = 0;
     private final ConcurrentHashMap<Class<?>, ConcurrentHashMap<String, EntityState>> trackEntityMap = new ConcurrentHashMap<>();
 
-    public DefaultTrackContext(EntityMetadataManager entityMetadataManager) {
+    public DefaultTrackContext(EntityMetadataManager entityMetadataManager, BeanValueCaller beanValueCaller) {
         this.entityMetadataManager = entityMetadataManager;
+        this.beanValueCaller = beanValueCaller;
     }
 
     @Override
@@ -53,7 +55,7 @@ public class DefaultTrackContext implements TrackContext {
             return null;
         }
         EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(entity.getClass());
-        String trackKey = EasyTrackUtil.getTrackKey(entityMetadata, entity);
+        String trackKey = EasyTrackUtil.getTrackKey(beanValueCaller,entityMetadata, entity);
         if (trackKey == null) {
             return null;
         }
@@ -81,7 +83,7 @@ public class DefaultTrackContext implements TrackContext {
         if (EasyStringUtil.isBlank(entityMetadata.getTableName())) {
             throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + ": is not table entity,not allowed track");
         }
-        String trackKey = EasyTrackUtil.getTrackKey(entityMetadata, entity);
+        String trackKey = EasyTrackUtil.getTrackKey(beanValueCaller,entityMetadata, entity);
         if (trackKey == null) {
             throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + ": current entity cant get track key,primary maybe null");
         }
@@ -113,7 +115,7 @@ public class DefaultTrackContext implements TrackContext {
         if (EasyStringUtil.isBlank(entityMetadata.getTableName())) {
             throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + ": is not table entity,cant tracking");
         }
-        String trackKey = EasyTrackUtil.getTrackKey(entityMetadata, entity);
+        String trackKey = EasyTrackUtil.getTrackKey(beanValueCaller,entityMetadata, entity);
         if (trackKey == null) {
             throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + ": current entity cant get track key,primary maybe null");
         }
@@ -132,13 +134,13 @@ public class DefaultTrackContext implements TrackContext {
     private Object createAndCopyValue(Object entity, EntityMetadata entityMetadata) {
 
         Object original = EasyClassUtil.newInstance(entity.getClass());
-        FastBean fastBean = EasyBeanUtil.getFastBean(entity.getClass());
+        BeanCaller beanCaller = beanValueCaller.getBeanCaller(entity.getClass());
         for (Map.Entry<String, ColumnMetadata> columnMetadataEntry : entityMetadata.getProperty2ColumnMap().entrySet()) {
             ColumnMetadata columnMetadata = columnMetadataEntry.getValue();
             PropertyDescriptor property = columnMetadata.getProperty();
-            PropertySetterCaller<Object> beanSetter = fastBean.getBeanSetter(property);
+            PropertySetterCaller<Object> beanSetter = beanCaller.getBeanSetter(property);
             Class<?> propertyType = columnMetadata.getPropertyType();
-            Property<Object, ?> beanGetter = fastBean.getBeanGetter(property);
+            Property<Object, ?> beanGetter = beanCaller.getBeanGetter(property);
             Object value = beanGetter.apply(entity);
             if (EasyClassUtil.isBasicType(propertyType) || EasyClassUtil.isEnumType(propertyType)) {
 

@@ -30,6 +30,7 @@ import com.easy.query.test.entity.TopicType;
 import com.easy.query.test.entity.TopicTypeJson;
 import com.easy.query.test.entity.TopicTypeJsonValue;
 import com.easy.query.test.entity.TopicTypeTest1;
+import com.easy.query.test.entity.Topicx;
 import com.easy.query.test.enums.TopicTypeEnum;
 import com.easy.query.test.func.SQLFunc;
 import com.easy.query.test.vo.BlogEntityVO1;
@@ -2260,6 +2261,13 @@ public class QueryTest extends BaseTest {
                     .select("count(1)").toSQL();
             Assert.assertEquals("SELECT count(1) FROM (SELECT DISTINCT t.`id` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t.`id` IN (?,?,?) GROUP BY t.`id` ORDER BY t.`stars` ASC) t2", sql);
         }
+    }
+
+    @Test
+    public void query124(){
+        EasyPageResult<Topicx> pageResult = easyQuery.queryable(Topic.class).where(o -> o.isNotNull(Topic::getCreateTime))
+                .select(Topicx.class).toPageResult(1, 20);
+        System.out.println(pageResult);
     }
 
 

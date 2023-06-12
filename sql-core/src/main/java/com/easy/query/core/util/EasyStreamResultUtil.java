@@ -1,14 +1,16 @@
 package com.easy.query.core.util;
 
 import com.easy.query.core.basic.extension.track.EntityState;
-import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
-import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
+import com.easy.query.core.basic.jdbc.executor.internal.merge.result.StreamResultSet;
 import com.easy.query.core.basic.jdbc.types.EasyResultSet;
+import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
 import com.easy.query.core.basic.jdbc.types.JdbcTypes;
 import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
-import com.easy.query.core.basic.extension.track.TrackManager;
-import com.easy.query.core.common.bean.FastBean;
+import com.easy.query.core.bean.BeanCaller;
+import com.easy.query.core.bean.BeanValueCaller;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
@@ -16,7 +18,6 @@ import com.easy.query.core.metadata.BeanMapToColumnMetadata;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
-import com.easy.query.core.basic.jdbc.executor.internal.merge.result.StreamResultSet;
 
 import java.beans.PropertyDescriptor;
 import java.sql.ResultSetMetaData;
@@ -122,12 +123,14 @@ public final class EasyStreamResultUtil {
     }
     private static  <TResult> TResult mapToBean(ExecutorContext context, StreamResultSet streamResult, Class<TResult> clazz, BeanMapToColumnMetadata[] beanMapToColumnMetadatas) throws SQLException {
 
-        TrackManager trackManager = context.getRuntimeContext().getTrackManager();
+        QueryRuntimeContext runtimeContext = context.getRuntimeContext();
+        TrackManager trackManager = runtimeContext.getTrackManager();
+        BeanValueCaller beanValueCaller = runtimeContext.getBeanValueCaller();
         boolean trackBean = trackBean(context, clazz);
         EasyResultSet easyResultSet = new EasyResultSet(streamResult);
         TResult bean = EasyClassUtil.newInstance(clazz);
-
-        FastBean beanFastSetter = EasyBeanUtil.getFastBean(clazz);
+        BeanCaller beanFastSetter = beanValueCaller.getBeanCaller(clazz);
+//        FastBean beanFastSetter = EasyBeanUtil.getFastBean(clazz);
         for (int i = 0; i < beanMapToColumnMetadatas.length; i++) {
             BeanMapToColumnMetadata beanMapToColumnMetadata = beanMapToColumnMetadatas[i];
             if (beanMapToColumnMetadata == null) {

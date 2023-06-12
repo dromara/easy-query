@@ -1,5 +1,6 @@
 package com.easy.query.core.expression.executor.parser.descriptor;
 
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 
 import java.util.Set;

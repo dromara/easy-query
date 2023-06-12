@@ -5,6 +5,7 @@ import com.easy.query.core.basic.jdbc.executor.internal.merge.segment.EntityProp
 import com.easy.query.core.basic.jdbc.executor.internal.merge.segment.EntityPropertyOrder;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.segment.PropertyGroup;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.segment.PropertyOrder;
+import com.easy.query.core.bean.BeanValueCaller;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.MergeBehaviorEnum;
@@ -24,7 +25,6 @@ import com.easy.query.core.expression.sql.expression.EntityQuerySQLExpression;
 import com.easy.query.core.expression.sql.expression.EntitySQLExpression;
 import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
 import com.easy.query.core.metadata.ShardingInitConfig;
-import com.easy.query.core.sharding.manager.SequenceCountNode;
 import com.easy.query.core.sharding.manager.ShardingQueryCountManager;
 import com.easy.query.core.sharding.rewrite.DefaultRewriteRouteUnit;
 import com.easy.query.core.sharding.rewrite.RewriteRouteUnit;
@@ -48,10 +48,10 @@ import java.util.Objects;
  */
 public class EasyShardingUtil {
 
-    public static <T> RoutePredicateExpression<T> getRoutePredicateExpression(RouteDescriptor routeDescriptor,
+    public static <T> RoutePredicateExpression<T> getRoutePredicateExpression(BeanValueCaller beanValueCaller, RouteDescriptor routeDescriptor,
                                                                               RouteRuleFilter<T> routeRuleFilter, boolean shardingTableRoute) {
 
-        RoutePredicateDiscover<T> routePredicateDiscover = new RoutePredicateDiscover<T>(routeDescriptor, routeRuleFilter, shardingTableRoute);
+        RoutePredicateDiscover<T> routePredicateDiscover = new RoutePredicateDiscover<T>(beanValueCaller,routeDescriptor, routeRuleFilter, shardingTableRoute);
         return routePredicateDiscover.getRouteParseExpression();
     }
 

@@ -1,12 +1,10 @@
 package com.easy.query.core.expression.executor.parser.descriptor.impl;
 
 import com.easy.query.core.expression.executor.parser.descriptor.TableEntityParseDescriptor;
-import com.easy.query.core.expression.executor.parser.descriptor.TableParseDescriptor;
 import com.easy.query.core.expression.executor.parser.descriptor.TablePredicateParseDescriptor;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 

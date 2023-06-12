@@ -2,6 +2,7 @@ package com.easy.query.core.sharding.route;
 
 import com.easy.query.core.basic.jdbc.parameter.ConstSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
+import com.easy.query.core.bean.BeanValueCaller;
 import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.enums.SQLPredicateCompareEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
@@ -91,13 +92,15 @@ public class RoutePredicateDiscover<T> {
         return ShardingOperatorEnum.UN_KNOWN;
     }
 
+    private final BeanValueCaller beanValueCaller;
     private final RouteDescriptor routeDescriptor;
     private final EntityMetadata entityMetadata;
     private final RouteRuleFilter<T> routeRuleFilter;
     private final Set<String> shardingProperties;
     private final String mainShardingProperty;
 
-    public RoutePredicateDiscover(RouteDescriptor routeDescriptor, RouteRuleFilter<T> routeRuleFilter, boolean shardingTableRoute) {
+    public RoutePredicateDiscover(BeanValueCaller beanValueCaller, RouteDescriptor routeDescriptor, RouteRuleFilter<T> routeRuleFilter, boolean shardingTableRoute) {
+        this.beanValueCaller = beanValueCaller;
         this.routeDescriptor = routeDescriptor;
 
         this.entityMetadata = routeDescriptor.getTable().getEntityMetadata();
@@ -222,7 +225,8 @@ public class RoutePredicateDiscover<T> {
 
     private RoutePredicateExpression<T> getEntitySQLRouteParseExpression(Object entity) {
         ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(mainShardingProperty);
-        Property<Object, ?> shardingKeyPropertyGetter = EasyBeanUtil.getFastBean(entityMetadata.getEntityClass()).getBeanGetter(columnMetadata.getProperty());
+
+        Property<Object, ?> shardingKeyPropertyGetter = beanValueCaller.getBeanCaller(entityMetadata.getEntityClass()).getBeanGetter(columnMetadata.getProperty());
         Object shardingValue = shardingKeyPropertyGetter.apply(entity);
         RouteFunction<T> routePredicate = routeRuleFilter.routeFilter(routeDescriptor.getTable(),shardingValue, ShardingOperatorEnum.EQUAL, mainShardingProperty, true,true);
         return new RoutePredicateExpression<T>(routePredicate);

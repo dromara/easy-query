@@ -44,6 +44,7 @@ public @interface Column {
 
     /**
      * 仅decimal有效小数位用于db获取后补0
+     * 暂时未用到该属性
      * @return
      */
     int scale() default 0;
