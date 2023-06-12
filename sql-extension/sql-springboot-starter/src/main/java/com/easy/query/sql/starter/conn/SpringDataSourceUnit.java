@@ -1,4 +1,4 @@
-package com.easy.query.sql.starter.con;
+package com.easy.query.sql.starter.conn;
 
 import com.easy.query.core.datasource.DefaultDataSourceUnit;
 import org.springframework.jdbc.datasource.DataSourceUtils;

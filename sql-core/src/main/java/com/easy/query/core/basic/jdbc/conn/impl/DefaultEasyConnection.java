@@ -1,6 +1,6 @@
 package com.easy.query.core.basic.jdbc.conn.impl;
 
-import com.easy.query.core.enums.con.ConnectionStrategyEnum;
+import com.easy.query.core.enums.conn.ConnectionStrategyEnum;
 import com.easy.query.core.basic.jdbc.conn.EasyConnection;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.logging.Log;

@@ -1,4 +1,4 @@
-package com.easy.query.sql.starter.con;
+package com.easy.query.sql.starter.conn;
 
 import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.datasource.DataSourceUnit;

@@ -1,11 +1,11 @@
-package com.easy.query.sql.starter.con;
+package com.easy.query.sql.starter.conn;
 
 import com.easy.query.core.basic.jdbc.conn.DataSourceWrapper;
 import com.easy.query.core.basic.jdbc.conn.EasyConnection;
 import com.easy.query.core.basic.jdbc.conn.EasyConnectionFactory;
 import com.easy.query.core.basic.jdbc.conn.EasyDataSourceConnectionFactory;
 import com.easy.query.core.basic.jdbc.conn.impl.DefaultConnectionManager;
-import com.easy.query.core.enums.con.ConnectionStrategyEnum;
+import com.easy.query.core.enums.conn.ConnectionStrategyEnum;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.sharding.EasyQueryDataSource;
 import org.springframework.jdbc.datasource.DataSourceUtils;

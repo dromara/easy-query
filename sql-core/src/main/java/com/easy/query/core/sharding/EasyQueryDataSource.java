@@ -1,7 +1,7 @@
 package com.easy.query.core.sharding;
 
 import com.easy.query.core.datasource.DataSourceUnit;
-import com.easy.query.core.enums.con.ConnectionStrategyEnum;
+import com.easy.query.core.enums.conn.ConnectionStrategyEnum;
 import com.easy.query.core.basic.jdbc.conn.DataSourceWrapper;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 

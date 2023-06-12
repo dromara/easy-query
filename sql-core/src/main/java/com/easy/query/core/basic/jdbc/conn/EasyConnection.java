@@ -1,6 +1,6 @@
 package com.easy.query.core.basic.jdbc.conn;
 
-import com.easy.query.core.enums.con.ConnectionStrategyEnum;
+import com.easy.query.core.enums.conn.ConnectionStrategyEnum;
 
 import java.sql.Connection;
 import java.sql.SQLException;

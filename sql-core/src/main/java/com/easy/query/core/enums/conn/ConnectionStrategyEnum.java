@@ -1,4 +1,4 @@
-package com.easy.query.core.enums.con;
+package com.easy.query.core.enums.conn;
 
 /**
  * create time 2023/4/13 10:53
