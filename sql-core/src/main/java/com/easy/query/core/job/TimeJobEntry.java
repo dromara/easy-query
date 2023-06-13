@@ -15,7 +15,7 @@ public class TimeJobEntry {
     public TimeJobEntry(TimeJob timeJob) {
 
         this.timeJob = timeJob;
-        nextTime = timeJob.calcNextTime();
+        nextTime = timeJob.calcNextTime()-120*1000;
     }
 
     public void calcNextTime() {

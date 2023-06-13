@@ -38,4 +38,12 @@ public class ActualTable {
     public int hashCode() {
         return Objects.hash(dataSourceName, actualTableName);
     }
+
+    @Override
+    public String toString() {
+        return "{" +
+                "dataSourceName='" + dataSourceName + '\'' +
+                ", actualTableName='" + actualTableName + '\'' +
+                '}';
+    }
 }
