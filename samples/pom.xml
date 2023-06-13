@@ -13,6 +13,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>springbootdemo</module>
+        <module>dto</module>
     </modules>
 
     <properties>
@@ -35,6 +36,12 @@
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>8.0.17</version>
+        </dependency>
+        <dependency>
+            <groupId>com.easy-query</groupId>
+            <artifactId>sql-springboot-starter</artifactId>
+            <version>0.9.53</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 </project>

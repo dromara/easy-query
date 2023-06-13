@@ -4,7 +4,7 @@ import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.sharding.common.DataSourceThenTableNameStringComparator;
 import com.easy.query.core.sharding.common.TableNameStringComparator;
-import com.easy.query.core.sharding.route.table.TableUnit;
+import com.easy.query.core.sharding.router.table.TableUnit;
 
 import java.util.Collection;
 import java.util.Comparator;

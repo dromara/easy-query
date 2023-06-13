@@ -1,6 +1,6 @@
 package com.easy.query.test.sharding;
 
-import com.easy.query.core.sharding.route.table.TableUnit;
+import com.easy.query.core.sharding.router.table.TableUnit;
 
 import java.util.Comparator;
 

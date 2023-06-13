@@ -4,6 +4,7 @@ import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.exception.EasyQueryConcurrentException;
+import com.easy.query.core.exception.EasyQueryFirstOrNotNullException;
 import com.easy.query.core.expression.sql.TableContext;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.util.EasyCollectionUtil;
@@ -106,7 +107,7 @@ public interface Query<T> {
     }
 
     /**
-     * 当未查询到结果 将会抛出 {@link EasyQueryConcurrentException}
+     * 当未查询到结果 将会抛出 {@link EasyQueryFirstOrNotNullException}
      *
      * @param msg
      * @param code
@@ -116,10 +117,26 @@ public interface Query<T> {
         return firstNotNull(queryClass(), msg, code);
     }
 
+    /**
+     * 当未查询到结果 将会抛出 {@link EasyQueryFirstOrNotNullException}
+     * @param resultClass
+     * @param msg
+     * @return
+     * @param <TR>
+     */
+
     default <TR> TR firstNotNull(Class<TR> resultClass, String msg) {
         return firstNotNull(resultClass, msg, null);
     }
 
+    /**
+     * 当未查询到结果 将会抛出 {@link EasyQueryFirstOrNotNullException}
+     * @param resultClass
+     * @param msg
+     * @param code
+     * @return
+     * @param <TR>
+     */
     <TR> TR firstNotNull(Class<TR> resultClass, String msg, String code);
 
     List<T> toList();

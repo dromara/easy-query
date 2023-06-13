@@ -24,8 +24,8 @@ import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.sharding.EasyQueryDataSource;
 import com.easy.query.core.sharding.comparer.ShardingComparer;
 import com.easy.query.core.sharding.manager.ShardingQueryCountManager;
-import com.easy.query.core.sharding.route.manager.DataSourceRouteManager;
-import com.easy.query.core.sharding.route.manager.TableRouteManager;
+import com.easy.query.core.sharding.router.manager.DataSourceRouteManager;
+import com.easy.query.core.sharding.router.manager.TableRouteManager;
 
 /**
  * @author xuejiaming

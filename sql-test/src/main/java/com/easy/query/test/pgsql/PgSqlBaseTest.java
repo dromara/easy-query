@@ -9,7 +9,7 @@ import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.logging.LogFactory;
-import com.easy.query.core.sharding.route.manager.TableRouteManager;
+import com.easy.query.core.sharding.router.manager.TableRouteManager;
 import com.easy.query.test.encryption.Base64EncryptionStrategy;
 import com.easy.query.test.encryption.DefaultAesEasyEncryptionStrategy;
 import com.easy.query.test.encryption.MyEncryptionStrategy;
@@ -19,8 +19,8 @@ import com.easy.query.test.interceptor.MyEntityInterceptor;
 import com.easy.query.test.interceptor.MyTenantInterceptor;
 import com.easy.query.test.logicdel.MyLogicDelStrategy;
 import com.easy.query.test.sharding.FixShardingInitializer;
-import com.easy.query.test.sharding.TopicShardingTableRule;
-import com.easy.query.test.sharding.TopicShardingTimeTableRule;
+import com.easy.query.test.sharding.TopicShardingTableRoute;
+import com.easy.query.test.sharding.TopicShardingTimeTableRoute;
 import com.zaxxer.hikari.HikariDataSource;
 
 import java.math.BigDecimal;
@@ -84,8 +84,8 @@ public class PgSqlBaseTest {
         configuration.applyShardingInitializer(new FixShardingInitializer());
 
         TableRouteManager tableRouteManager = runtimeContext.getTableRouteManager();
-        tableRouteManager.addRouteRule(new TopicShardingTableRule());
-        tableRouteManager.addRouteRule(new TopicShardingTimeTableRule());
+        tableRouteManager.addRoute(new TopicShardingTableRoute());
+        tableRouteManager.addRoute(new TopicShardingTimeTableRoute());
 
     }
 

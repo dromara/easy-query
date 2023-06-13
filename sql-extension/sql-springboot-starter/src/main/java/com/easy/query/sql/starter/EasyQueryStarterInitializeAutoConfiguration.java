@@ -10,10 +10,10 @@ import com.easy.query.core.basic.extension.version.VersionStrategy;
 import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.sharding.initializer.ShardingInitializer;
-import com.easy.query.core.sharding.route.manager.DataSourceRouteManager;
-import com.easy.query.core.sharding.route.manager.TableRouteManager;
-import com.easy.query.core.sharding.rule.datasource.DataSourceRouteRule;
-import com.easy.query.core.sharding.rule.table.TableRouteRule;
+import com.easy.query.core.sharding.router.manager.DataSourceRouteManager;
+import com.easy.query.core.sharding.router.manager.TableRouteManager;
+import com.easy.query.core.sharding.route.datasource.DataSourceRoute;
+import com.easy.query.core.sharding.route.table.TableRoute;
 import com.easy.query.sql.starter.config.EasyQueryInitializeOption;
 import com.easy.query.sql.starter.config.EasyQueryProperties;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -84,12 +84,12 @@ public class EasyQueryStarterInitializeAutoConfiguration {
             configuration.applyValueUpdateAtomicTrack(valueUpdateAtomicTrackEntry.getValue());
         }
         TableRouteManager tableRouteManager = runtimeContext.getTableRouteManager();
-        for (Map.Entry<String, TableRouteRule<?>> tableRouteRuleEntry : easyQueryInitializeOption.getTableRouteRuleMap().entrySet()) {
-            tableRouteManager.addRouteRule(tableRouteRuleEntry.getValue());
+        for (Map.Entry<String, TableRoute<?>> tableRouteEntry : easyQueryInitializeOption.getTableRouteMap().entrySet()) {
+            tableRouteManager.addRoute(tableRouteEntry.getValue());
         }
         DataSourceRouteManager dataSourceRouteManager = runtimeContext.getDataSourceRouteManager();
-        for (Map.Entry<String, DataSourceRouteRule<?>> dataSourceRouteRuleEntry : easyQueryInitializeOption.getDataSourceRouteRuleMap().entrySet()) {
-            dataSourceRouteManager.addRouteRule(dataSourceRouteRuleEntry.getValue());
+        for (Map.Entry<String, DataSourceRoute<?>> dataSourceRouteEntry : easyQueryInitializeOption.getDataSourceRouteMap().entrySet()) {
+            dataSourceRouteManager.addRoute(dataSourceRouteEntry.getValue());
         }
     }
 }

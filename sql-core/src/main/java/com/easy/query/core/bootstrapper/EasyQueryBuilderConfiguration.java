@@ -65,18 +65,22 @@ import com.easy.query.core.sharding.manager.DefaultShardingQueryCountManager;
 import com.easy.query.core.sharding.manager.ShardingQueryCountManager;
 import com.easy.query.core.sharding.rewrite.DefaultRewriteContextFactory;
 import com.easy.query.core.sharding.rewrite.RewriteContextFactory;
-import com.easy.query.core.sharding.route.DefaultRouteContextFactory;
-import com.easy.query.core.sharding.route.RouteContextFactory;
-import com.easy.query.core.sharding.route.datasource.engine.DataSourceRouteEngine;
-import com.easy.query.core.sharding.route.datasource.engine.DefaultDataSourceRouteEngine;
-import com.easy.query.core.sharding.route.descriptor.DefaultRouteDescriptorFactor;
-import com.easy.query.core.sharding.route.descriptor.RouteDescriptorFactory;
-import com.easy.query.core.sharding.route.manager.DataSourceRouteManager;
-import com.easy.query.core.sharding.route.manager.TableRouteManager;
-import com.easy.query.core.sharding.route.manager.impl.DefaultDataSourceRouteManager;
-import com.easy.query.core.sharding.route.manager.impl.DefaultTableRouteManager;
-import com.easy.query.core.sharding.route.table.engine.DefaultTableRouteEngine;
-import com.easy.query.core.sharding.route.table.engine.TableRouteEngine;
+import com.easy.query.core.sharding.router.DefaultRouteContextFactory;
+import com.easy.query.core.sharding.router.RouteContextFactory;
+import com.easy.query.core.sharding.router.datasource.DataSourceRouter;
+import com.easy.query.core.sharding.router.datasource.ShardingDataSourceRouter;
+import com.easy.query.core.sharding.router.datasource.engine.DataSourceRouteEngine;
+import com.easy.query.core.sharding.router.datasource.engine.DefaultDataSourceRouteEngine;
+import com.easy.query.core.sharding.router.descriptor.DefaultRouteDescriptorFactor;
+import com.easy.query.core.sharding.router.descriptor.RouteDescriptorFactory;
+import com.easy.query.core.sharding.router.manager.DataSourceRouteManager;
+import com.easy.query.core.sharding.router.manager.TableRouteManager;
+import com.easy.query.core.sharding.router.manager.impl.DefaultDataSourceRouteManager;
+import com.easy.query.core.sharding.router.manager.impl.DefaultTableRouteManager;
+import com.easy.query.core.sharding.router.table.ShardingTableRouter;
+import com.easy.query.core.sharding.router.table.TableRouter;
+import com.easy.query.core.sharding.router.table.engine.DefaultTableRouteEngine;
+import com.easy.query.core.sharding.router.table.engine.TableRouteEngine;
 
 import javax.sql.DataSource;
 import java.util.function.Consumer;
@@ -111,8 +115,10 @@ public class EasyQueryBuilderConfiguration {
                 .replaceService(EasyPrepareParser.class, DefaultEasyPrepareParser.class)
                 .replaceService(ConnectionManager.class, DefaultConnectionManager.class)
                 .replaceService(DataSourceRouteManager.class, DefaultDataSourceRouteManager.class)
+                .replaceService(DataSourceRouter.class, ShardingDataSourceRouter.class)
                 .replaceService(DataSourceRouteEngine.class, DefaultDataSourceRouteEngine.class)
                 .replaceService(TableRouteManager.class, DefaultTableRouteManager.class)
+                .replaceService(TableRouter.class, ShardingTableRouter.class)
                 .replaceService(TableRouteEngine.class, DefaultTableRouteEngine.class)
                 .replaceService(RouteContextFactory.class, DefaultRouteContextFactory.class)
                 .replaceService(RewriteContextFactory.class, DefaultRewriteContextFactory.class)

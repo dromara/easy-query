@@ -25,8 +25,8 @@ import com.easy.query.core.datasource.DataSourceUnitFactory;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.sharding.initializer.ShardingInitializer;
-import com.easy.query.core.sharding.rule.datasource.DataSourceRouteRule;
-import com.easy.query.core.sharding.rule.table.TableRouteRule;
+import com.easy.query.core.sharding.route.datasource.DataSourceRoute;
+import com.easy.query.core.sharding.route.table.TableRoute;
 import com.easy.query.core.util.EasyStringUtil;
 import com.easy.query.h2.config.H2DatabaseConfiguration;
 import com.easy.query.mssql.MsSQLDatabaseConfiguration;
@@ -204,8 +204,8 @@ public class EasyQueryStarterAutoConfiguration {
                                                                Map<String, ShardingInitializer> shardingInitializerMap,
                                                                Map<String, EncryptionStrategy> encryptionStrategyMap,
                                                                Map<String, ValueConverter<?, ?>> valueConverterMap,
-                                                               Map<String, TableRouteRule<?>> tableRouteRuleMap,
-                                                               Map<String, DataSourceRouteRule<?>> dataSourceRouteRuleMap,
+                                                               Map<String, TableRoute<?>> tableRouteMap,
+                                                               Map<String, DataSourceRoute<?>> dataSourceRouteMap,
                                                                Map<String, ValueUpdateAtomicTrack<?>> valueUpdateAtomicTrackMap) {
         return new EasyQueryInitializeOption(interceptorMap,
                 versionStrategyMap,
@@ -213,8 +213,8 @@ public class EasyQueryStarterAutoConfiguration {
                 shardingInitializerMap,
                 encryptionStrategyMap,
                 valueConverterMap,
-                tableRouteRuleMap,
-                dataSourceRouteRuleMap,
+                tableRouteMap,
+                dataSourceRouteMap,
                 valueUpdateAtomicTrackMap);
     }
 }

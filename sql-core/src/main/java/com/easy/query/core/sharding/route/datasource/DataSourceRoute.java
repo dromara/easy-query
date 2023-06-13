@@ -1,19 +1,18 @@
 package com.easy.query.core.sharding.route.datasource;
 
-import com.easy.query.core.expression.executor.parser.PrepareParseResult;
-import com.easy.query.core.expression.executor.parser.descriptor.TableParseDescriptor;
-import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.sharding.route.descriptor.RouteDescriptor;
-import com.easy.query.core.sharding.rule.datasource.DataSourceRouteRule;
+import com.easy.query.core.sharding.route.Route;
+import com.easy.query.core.sharding.route.RouteFilter;
 
 import java.util.Collection;
 
 /**
- * create time 2023/4/12 12:48
+ * create time 2023/4/19 13:00
  * 文件说明
  *
  * @author xuejiaming
  */
-public interface DataSourceRoute {
-    <T> Collection<String> route(DataSourceRouteRule<T> dataSourceRouteRule, RouteDescriptor routeDescriptor);
+public interface DataSourceRoute<T> extends Route, RouteFilter<String> {
+    Collection<String> beforeFilterDataSource(Collection<String> allDataSources);
+    Collection<String> afterFilterDataSource(Collection<String> allDataSources, Collection<String> beforeDataSources, Collection<String> filterDataSources);
+
 }

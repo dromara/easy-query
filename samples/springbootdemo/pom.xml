@@ -21,10 +21,19 @@
     </properties>
     <dependencies>
         <dependency>
+            <groupId>com.easy-query</groupId>
+            <artifactId>dto</artifactId>
+            <version>0.9.53</version>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <optional>true</optional>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -68,6 +77,12 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.18.18</version>
+        </dependency>
+        <dependency>
+            <groupId>com.easy-query</groupId>
+            <artifactId>sql-core</artifactId>
+            <version>0.9.53</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
     <build>

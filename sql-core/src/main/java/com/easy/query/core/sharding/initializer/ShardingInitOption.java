@@ -1,7 +1,7 @@
 package com.easy.query.core.sharding.initializer;
 
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
-import com.easy.query.core.sharding.route.table.TableUnit;
+import com.easy.query.core.sharding.router.table.TableUnit;
 
 import java.util.Collection;
 import java.util.Comparator;

@@ -465,7 +465,7 @@ public class TopicShardingTimeShardingInitializer extends AbstractShardingMonthI
     }
 }
 //分片时间路由规则按月然后bean分片属性就是LocalDateTime也可以自定义实现
-public class TopicShardingTimeTableRule extends AbstractMonthTableRule<TopicShardingTime> {
+public class TopicShardingTimeTableRoute extends AbstractMonthTableRoute<TopicShardingTime> {
 
     @Override
     protected LocalDateTime convertLocalDateTime(Object shardingValue) {
@@ -547,7 +547,7 @@ public class DataSourceShardingInitializer implements EntityShardingInitializer<
     }
 }
 //分库数据源路由规则
-public class TopicShardingDataSourceRule extends AbstractDataSourceRouteRule<TopicShardingDataSource> {
+public class TopicShardingDataSourceRoute extends AbstractDataSourceRoute<TopicShardingDataSource> {
     @Override
     protected RouteFunction<String> getRouteFilter(TableAvailable table, Object shardingValue, ShardingOperatorEnum shardingOperator, boolean withEntity) {
         LocalDateTime createTime = (LocalDateTime) shardingValue;

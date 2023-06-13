@@ -3,11 +3,10 @@ package com.easy.query.core.sharding.rewrite;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.segment.OrderByColumnSegment;
 import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
-import com.easy.query.core.expression.segment.impl.OrderColumnSegmentImpl;
 import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.expression.sql.expression.EntitySQLExpression;
 import com.easy.query.core.expression.sql.expression.EntityQuerySQLExpression;
-import com.easy.query.core.sharding.route.RouteUnit;
+import com.easy.query.core.sharding.router.RouteUnit;
 
 import java.util.List;
 

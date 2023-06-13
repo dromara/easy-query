@@ -8,7 +8,7 @@ import com.easy.query.core.configuration.EasyQueryShardingOption;
 import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.logging.LogFactory;
-import com.easy.query.core.sharding.route.manager.TableRouteManager;
+import com.easy.query.core.sharding.router.manager.TableRouteManager;
 import com.easy.query.h2.config.H2DatabaseConfiguration;
 import com.easy.query.test.h2.domain.DefTable;
 import com.easy.query.test.h2.domain.DefTableLeft1;
@@ -16,8 +16,8 @@ import com.easy.query.test.h2.domain.DefTableLeft2;
 import com.easy.query.test.h2.domain.DefTableLeft3;
 import com.easy.query.test.h2.domain.H2Order;
 import com.easy.query.test.h2.sharding.AllTYPEShardingInitializer;
-import com.easy.query.test.h2.sharding.AllTypeRule;
-import com.easy.query.test.h2.sharding.H2OrderRule;
+import com.easy.query.test.h2.sharding.AllTypeRoute;
+import com.easy.query.test.h2.sharding.H2OrderRoute;
 import com.easy.query.test.h2.sharding.H2OrderShardingInitializer;
 
 import javax.sql.DataSource;
@@ -113,7 +113,7 @@ public class H2BaseTest {
         queryConfiguration1.applyShardingInitializer(new AllTYPEShardingInitializer());
 
         TableRouteManager tableRouteManager1 = runtimeContext1.getTableRouteManager();
-        tableRouteManager1.addRouteRule(new AllTypeRule());
+        tableRouteManager1.addRoute(new AllTypeRoute());
         EasyQueryClient easyQueryClientOrder = EasyQueryBootstrapper.defaultBuilderConfiguration()
                 .setDefaultDataSource(orderShardingDataSource)
                 .optionConfigure(op -> {
@@ -133,7 +133,7 @@ public class H2BaseTest {
         QueryConfiguration queryConfiguration = runtimeContext.getQueryConfiguration();
         queryConfiguration.applyShardingInitializer(new H2OrderShardingInitializer());
         TableRouteManager tableRouteManager = runtimeContext.getTableRouteManager();
-        tableRouteManager.addRouteRule(new H2OrderRule());
+        tableRouteManager.addRoute(new H2OrderRoute());
     }
 
     public static void initData() {

@@ -1,36 +1,50 @@
 package com.easy.query.core.sharding.route.table.abstraction;
 
-import com.easy.query.core.expression.executor.parser.PrepareParseResult;
+import com.easy.query.core.expression.lambda.RouteFunction;
+import com.easy.query.core.enums.sharding.ShardingOperatorEnum;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.metadata.ActualTable;
-import com.easy.query.core.metadata.EntityMetadata;
-import com.easy.query.core.sharding.route.datasource.engine.DataSourceRouteResult;
-import com.easy.query.core.sharding.route.descriptor.RouteDescriptor;
+import com.easy.query.core.sharding.router.table.TableRouteUnit;
 import com.easy.query.core.sharding.route.table.TableRoute;
-import com.easy.query.core.sharding.route.table.TableRouteUnit;
-import com.easy.query.core.sharding.rule.table.TableRouteRule;
 
+import java.lang.reflect.ParameterizedType;
 import java.util.Collection;
 
 /**
- * create time 2023/4/18 23:08
+ * create time 2023/4/19 09:41
  * 文件说明
  *
  * @author xuejiaming
  */
-public abstract class AbstractTableRoute implements TableRoute {
-
+public abstract class AbstractTableRoute<T> implements TableRoute<T> {
+    private final Class<T> clazz;
+    public AbstractTableRoute(){
+        this.clazz=(Class<T>)((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+    }
+    @Override
+    public Class<?> entityClass() {
+        return clazz;
+    }
 
     @Override
-    public <T> Collection<TableRouteUnit> route(TableRouteRule<T> tableRouteRule, DataSourceRouteResult dataSourceRouteResult, RouteDescriptor routeDescriptor) {
-        TableAvailable table = routeDescriptor.getTable();
-        EntityMetadata entityMetadata = table.getEntityMetadata();
-        Collection<ActualTable> actualTables = entityMetadata.getActualTables();
-        Collection<ActualTable> beforeFilterTableNames = tableRouteRule.beforeFilterTableName(actualTables);
-        Collection<TableRouteUnit> tableRouteUnits = route0(tableRouteRule,dataSourceRouteResult, beforeFilterTableNames, routeDescriptor);
-        return  tableRouteRule.afterFilterTableName(actualTables,beforeFilterTableNames,tableRouteUnits);
-
+    public RouteFunction<ActualTable> routeFilter(TableAvailable table, Object shardingValue, ShardingOperatorEnum shardingOperator, String propertyName, boolean isMainShardingProperty, boolean withEntity) {
+       if(isMainShardingProperty){
+           return getRouteFilter(table,shardingValue,shardingOperator,withEntity);
+       }
+       return getExtraRouteFilter(table,shardingValue,shardingOperator,propertyName);
     }
-    public abstract <T> Collection<TableRouteUnit> route0(TableRouteRule<T> tableRouteRule, DataSourceRouteResult dataSourceRouteResult, Collection<ActualTable> beforeTableNames, RouteDescriptor routeDescriptor);
 
+    protected abstract RouteFunction<ActualTable> getRouteFilter(TableAvailable table, Object shardingValue,ShardingOperatorEnum shardingOperator,boolean withEntity);
+    protected  RouteFunction<ActualTable> getExtraRouteFilter(TableAvailable table, Object shardingValue,ShardingOperatorEnum shardingOperator,String propertyName){
+        throw new UnsupportedOperationException(propertyName+" sharding route filter");
+    }
+    @Override
+    public Collection<ActualTable> beforeFilterTableName(Collection<ActualTable> allActualTables) {
+        return allActualTables;
+    }
+
+    @Override
+    public Collection<TableRouteUnit> afterFilterTableName(Collection<ActualTable> allActualTables, Collection<ActualTable> beforeActualTables, Collection<TableRouteUnit> filterRouteUnits) {
+        return filterRouteUnits;
+    }
 }

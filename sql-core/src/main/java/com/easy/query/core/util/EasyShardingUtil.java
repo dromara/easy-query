@@ -29,12 +29,12 @@ import com.easy.query.core.sharding.manager.ShardingQueryCountManager;
 import com.easy.query.core.sharding.rewrite.DefaultRewriteRouteUnit;
 import com.easy.query.core.sharding.rewrite.RewriteRouteUnit;
 import com.easy.query.core.sharding.rewrite.SequencePaginationRewriteRouteUnit;
-import com.easy.query.core.sharding.route.RouteContext;
-import com.easy.query.core.sharding.route.RoutePredicateDiscover;
-import com.easy.query.core.sharding.route.RoutePredicateExpression;
-import com.easy.query.core.sharding.route.RouteUnit;
-import com.easy.query.core.sharding.route.descriptor.RouteDescriptor;
-import com.easy.query.core.sharding.rule.RouteRuleFilter;
+import com.easy.query.core.sharding.router.RouteContext;
+import com.easy.query.core.sharding.router.RoutePredicateDiscover;
+import com.easy.query.core.sharding.router.RoutePredicateExpression;
+import com.easy.query.core.sharding.router.RouteUnit;
+import com.easy.query.core.sharding.router.descriptor.RouteDescriptor;
+import com.easy.query.core.sharding.route.RouteFilter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,9 +49,9 @@ import java.util.Objects;
 public class EasyShardingUtil {
 
     public static <T> RoutePredicateExpression<T> getRoutePredicateExpression(BeanValueCaller beanValueCaller, RouteDescriptor routeDescriptor,
-                                                                              RouteRuleFilter<T> routeRuleFilter, boolean shardingTableRoute) {
+                                                                              RouteFilter<T> routeFilter, boolean shardingTableRoute) {
 
-        RoutePredicateDiscover<T> routePredicateDiscover = new RoutePredicateDiscover<T>(beanValueCaller,routeDescriptor, routeRuleFilter, shardingTableRoute);
+        RoutePredicateDiscover<T> routePredicateDiscover = new RoutePredicateDiscover<T>(beanValueCaller,routeDescriptor, routeFilter, shardingTableRoute);
         return routePredicateDiscover.getRouteParseExpression();
     }
 

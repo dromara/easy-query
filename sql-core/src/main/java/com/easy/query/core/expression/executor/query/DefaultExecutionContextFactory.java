@@ -18,8 +18,8 @@ import com.easy.query.core.basic.jdbc.executor.internal.common.ExecutionUnit;
 import com.easy.query.core.basic.jdbc.executor.internal.common.SQLRouteUnit;
 import com.easy.query.core.sharding.rewrite.RewriteContext;
 import com.easy.query.core.sharding.rewrite.RewriteContextFactory;
-import com.easy.query.core.sharding.route.RouteContext;
-import com.easy.query.core.sharding.route.RouteContextFactory;
+import com.easy.query.core.sharding.router.RouteContext;
+import com.easy.query.core.sharding.router.RouteContextFactory;
 import com.easy.query.core.util.EasyClassUtil;
 
 import java.util.Collections;

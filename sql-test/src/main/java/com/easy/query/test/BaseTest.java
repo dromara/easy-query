@@ -10,8 +10,8 @@ import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.configuration.ShardingDataSource;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.logging.LogFactory;
-import com.easy.query.core.sharding.route.manager.DataSourceRouteManager;
-import com.easy.query.core.sharding.route.manager.TableRouteManager;
+import com.easy.query.core.sharding.router.manager.DataSourceRouteManager;
+import com.easy.query.core.sharding.router.manager.TableRouteManager;
 import com.easy.query.mysql.config.MySQLDatabaseConfiguration;
 import com.easy.query.test.conversion.EnumConverter;
 import com.easy.query.test.conversion.JsonConverter;
@@ -35,13 +35,13 @@ import com.easy.query.test.interceptor.Topic1Interceptor;
 import com.easy.query.test.logicdel.MyLogicDelStrategy;
 import com.easy.query.test.sharding.DataSourceAndTableShardingInitializer;
 import com.easy.query.test.sharding.DataSourceShardingInitializer;
-import com.easy.query.test.sharding.TopicShardingDataSourceRule;
-import com.easy.query.test.sharding.TopicShardingDataSourceTimeDataSourceRule;
-import com.easy.query.test.sharding.TopicShardingDataSourceTimeTableRule;
+import com.easy.query.test.sharding.TopicShardingDataSourceRoute;
+import com.easy.query.test.sharding.TopicShardingDataSourceTimeDataSourceRoute;
+import com.easy.query.test.sharding.TopicShardingDataSourceTimeTableRoute;
 import com.easy.query.test.sharding.TopicShardingShardingInitializer;
-import com.easy.query.test.sharding.TopicShardingTableRule;
+import com.easy.query.test.sharding.TopicShardingTableRoute;
 import com.easy.query.test.sharding.TopicShardingTimeShardingInitializer;
-import com.easy.query.test.sharding.TopicShardingTimeTableRule;
+import com.easy.query.test.sharding.TopicShardingTimeTableRoute;
 import com.zaxxer.hikari.HikariDataSource;
 
 import java.math.BigDecimal;
@@ -153,12 +153,12 @@ public abstract class BaseTest {
         configuration.applyValueConverter(new JsonConverter());
         configuration.applyValueUpdateAtomicTrack(new IntegerNotValueUpdateAtomicTrack());
         TableRouteManager tableRouteManager = runtimeContext.getTableRouteManager();
-        tableRouteManager.addRouteRule(new TopicShardingTableRule());
-        tableRouteManager.addRouteRule(new TopicShardingTimeTableRule());
-        tableRouteManager.addRouteRule(new TopicShardingDataSourceTimeTableRule());
+        tableRouteManager.addRoute(new TopicShardingTableRoute());
+        tableRouteManager.addRoute(new TopicShardingTimeTableRoute());
+        tableRouteManager.addRoute(new TopicShardingDataSourceTimeTableRoute());
         DataSourceRouteManager dataSourceRouteManager = runtimeContext.getDataSourceRouteManager();
-        dataSourceRouteManager.addRouteRule(new TopicShardingDataSourceTimeDataSourceRule());
-        dataSourceRouteManager.addRouteRule(new TopicShardingDataSourceRule());
+        dataSourceRouteManager.addRoute(new TopicShardingDataSourceTimeDataSourceRoute());
+        dataSourceRouteManager.addRoute(new TopicShardingDataSourceRoute());
 
     }
 

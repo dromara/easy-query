@@ -2,7 +2,7 @@ package com.easy.query.core.metadata;
 
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
-import com.easy.query.core.sharding.route.table.TableUnit;
+import com.easy.query.core.sharding.router.table.TableUnit;
 import com.easy.query.core.util.EasyBitwiseUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 
