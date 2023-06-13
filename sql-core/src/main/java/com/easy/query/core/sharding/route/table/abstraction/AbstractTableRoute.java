@@ -26,6 +26,14 @@ public abstract class AbstractTableRoute<T> implements TableRoute<T> {
         return clazz;
     }
 
+    /**
+     * 表连接符比如order_1,返回就是"_";
+     * @return
+     */
+    protected String tableSeparator(){
+        return "_";
+    }
+
     @Override
     public RouteFunction<ActualTable> routeFilter(TableAvailable table, Object shardingValue, ShardingOperatorEnum shardingOperator, String propertyName, boolean isMainShardingProperty, boolean withEntity) {
        if(isMainShardingProperty){
