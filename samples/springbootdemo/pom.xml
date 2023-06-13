@@ -21,11 +21,6 @@
     </properties>
     <dependencies>
         <dependency>
-            <groupId>com.easy-query</groupId>
-            <artifactId>dto</artifactId>
-            <version>0.9.53</version>
-        </dependency>
-        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
@@ -64,7 +59,7 @@
         <dependency>
             <groupId>com.easy-query</groupId>
             <artifactId>sql-springboot-starter</artifactId>
-            <version>0.9.53</version>
+            <version>0.9.54</version>
             <scope>compile</scope>
         </dependency>
         <!--        <dependency>-->
@@ -81,7 +76,7 @@
         <dependency>
             <groupId>com.easy-query</groupId>
             <artifactId>sql-core</artifactId>
-            <version>0.9.53</version>
+            <version>0.9.54</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

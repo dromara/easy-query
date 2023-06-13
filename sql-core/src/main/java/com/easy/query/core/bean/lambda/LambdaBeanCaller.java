@@ -79,7 +79,7 @@ public class LambdaBeanCaller implements BeanCaller {
         String getFunName = writeMethod.getName();
         try {
 
-            //()->{bean.setxxx(propertyType)}
+            //(bean,value)->{bean.set(value)}
             MethodType instantiatedMethodType = MethodType.methodType(void.class,beanClass, propertyType);
             MethodHandle target = caller.findVirtual(beanClass, getFunName, setter);
             MethodType samMethodType = MethodType.methodType(void.class, Object.class, Object.class);

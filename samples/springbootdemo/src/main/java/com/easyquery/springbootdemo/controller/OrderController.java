@@ -1,6 +1,5 @@
 package com.easyquery.springbootdemo.controller;
 
-import com.easy.query.TestUser;
 import com.easy.query.api4j.client.EasyQuery;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easyquery.springbootdemo.domain.OrderEntity;
@@ -64,7 +63,6 @@ public class OrderController {
     @GetMapping("/page")
     public Object page(@RequestParam("pageIndex") Integer pageIndex, @RequestParam("pageSize") Integer pageSize) {
 
-        TestUser testUser = easyQuery.queryable(TestUser.class).firstOrNull();
 
         EasyPageResult<OrderEntity> pageResult = easyQuery.queryable(OrderEntity.class)
                 .orderByAsc(o -> o.column(OrderEntity::getOrderNo))
