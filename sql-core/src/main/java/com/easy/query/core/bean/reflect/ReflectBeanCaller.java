@@ -9,8 +9,6 @@ import com.easy.query.core.util.EasyClassUtil;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * create time 2023/6/12 20:55
@@ -20,14 +18,10 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ReflectBeanCaller implements BeanCaller {
     private final Class<?> beanClass;
-    private final Map<String, PropertySetterCaller<Object>> propertySetterCache;
-    private final Map<String, Property<Object, ?>> propertyGetterCache;
 
     public ReflectBeanCaller(Class<?> beanClass){
 
         this.beanClass = beanClass;
-        this.propertySetterCache = new ConcurrentHashMap<>();
-        this.propertyGetterCache = new ConcurrentHashMap<>();
     }
 
     @Override
@@ -37,7 +31,7 @@ public class ReflectBeanCaller implements BeanCaller {
 
     @Override
     public Property<Object, ?> getBeanGetter(PropertyDescriptor prop) {
-        return propertyGetterCache.computeIfAbsent(prop.getName(), k -> getReflectGetProperty(prop));
+        return  getReflectGetProperty(prop);
 //        return bean->null;
     }
     public Property<Object, ?> getReflectGetProperty(PropertyDescriptor prop) {
@@ -54,7 +48,7 @@ public class ReflectBeanCaller implements BeanCaller {
 
     @Override
     public PropertySetterCaller<Object> getBeanSetter(PropertyDescriptor prop) {
-        return propertySetterCache.computeIfAbsent(prop.getName(), key -> getReflectSetProperty(prop));
+        return getReflectSetProperty(prop);
     }
     public PropertySetterCaller<Object> getReflectSetProperty(PropertyDescriptor prop) {
         Method setter = EasyClassUtil.getWriteMethodOrNull(prop, beanClass);

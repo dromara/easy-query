@@ -99,7 +99,8 @@ public abstract class AbstractShardingTimeInitializer<T> implements EntityShardi
         EasyQueryOption easyQueryOption = builder.getEasyQueryOption();
         String defaultDataSourceName = easyQueryOption.getDefaultDataSourceName();
         String tableName = entityMetadata.getTableName();
-        LocalDateTime setBeginTime = getBeginTime();
+        //防止系统在凌晨发布定时任务刚好在23:59:00-00:00:00时间点运行过,导致下次运行会在00:00:01-59,会缺几秒导致没有加到内存中所以需要加5分钟
+        LocalDateTime setBeginTime = getBeginTime().plusMinutes(5);
 
         LocalDateTime beginTime = getBeginTimeToStart(setBeginTime);
         LocalDateTime endTime = getEndTime();

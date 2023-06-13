@@ -130,7 +130,6 @@ public final class EasyStreamResultUtil {
         EasyResultSet easyResultSet = new EasyResultSet(streamResult);
         TResult bean = EasyClassUtil.newInstance(clazz);
         BeanCaller beanFastSetter = beanValueCaller.getBeanCaller(clazz);
-//        FastBean beanFastSetter = EasyBeanUtil.getFastBean(clazz);
         for (int i = 0; i < beanMapToColumnMetadatas.length; i++) {
             BeanMapToColumnMetadata beanMapToColumnMetadata = beanMapToColumnMetadatas[i];
             if (beanMapToColumnMetadata == null) {
@@ -147,8 +146,6 @@ public final class EasyStreamResultUtil {
             PropertyDescriptor property = columnMetadata.getProperty();
             PropertySetterCaller<Object> beanSetter = beanFastSetter.getBeanSetter(property);
             beanSetter.call(bean, value);
-//            Method setter = getSetter(property, clazz);
-//            callSetter(bean,setter, property, value);
         }
         if (trackBean) {
             EntityState entityState = trackManager.getCurrentTrackContext().addQueryTracking(bean);
