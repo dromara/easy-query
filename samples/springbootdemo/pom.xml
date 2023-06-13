@@ -70,7 +70,7 @@
         <dependency>
             <groupId>com.easy-query</groupId>
             <artifactId>sql-core</artifactId>
-            <version>0.9.55</version>
+            <version>0.9.56</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
