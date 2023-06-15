@@ -240,7 +240,7 @@ public class EasyJdbcExecutorUtil {
 
                         Object value = keysSet.getObject(i + 1);
                         Object newValue = EasyClassUtil.convertValueToRequiredType(value, property.getPropertyType());
-                        PropertySetterCaller<Object> beanSetter = fastBean.getBeanSetter(property.getName());
+                        PropertySetterCaller<Object> beanSetter = fastBean.getBeanSetter(property);
                         beanSetter.call(entity, newValue);
 //                        Method setter = getSetter(property, entityClass);
 //                        callSetter(entity,setter, property, newValue);

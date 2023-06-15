@@ -4,8 +4,6 @@ import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
 import com.easy.query.core.expression.lambda.PropertyVoidSetter;
-import com.easy.query.core.metadata.bean.BasicEntityMetadata;
-import com.easy.query.core.metadata.bean.PropertyMetadata;
 import com.easy.query.core.util.EasyClassUtil;
 
 import java.beans.PropertyDescriptor;
@@ -28,14 +26,12 @@ import java.util.concurrent.ConcurrentHashMap;
 public class FastBean {
     private static final int FLAG_SERIALIZABLE = 1;
     private final Class<?> beanClass;
-    private final BasicEntityMetadata basicEntityMetadata;
     private final Map<String, PropertySetterCaller<Object>> propertySetterCache;
     private final Map<String, Property<Object, ?>> propertyGetterCache;
 
-    public FastBean(BasicEntityMetadata basicEntityMetadata) {
+    public FastBean(Class<?> beanClass) {
 
-        this.beanClass = basicEntityMetadata.getEntityClass();
-        this.basicEntityMetadata = basicEntityMetadata;
+        this.beanClass = beanClass;
         this.propertySetterCache = new ConcurrentHashMap<>();
         this.propertyGetterCache = new ConcurrentHashMap<>();
     }
@@ -48,19 +44,11 @@ public class FastBean {
 //        return getBeanGetter(prop.getName(),prop.getPropertyType());
 //    }
 
-    public Property<Object, ?> getBeanGetter(String propertyName) {
-        Property<Object,?> propertyGetterCaller = propertyGetterCache.get(propertyName);
-        if(propertyGetterCaller!=null){
-            return propertyGetterCaller;
-        }
-        Property<Object,?> lambdaPropertyGetter = getLambdaProperty(propertyName);
-        propertyGetterCache.putIfAbsent(propertyName,lambdaPropertyGetter);
-        return lambdaPropertyGetter;
+    public Property<Object, ?> getBeanGetter(PropertyDescriptor prop) {
+        return propertyGetterCache.computeIfAbsent(prop.getName(), k -> getLambdaProperty(prop));
     }
 
-    private Property<Object, ?> getLambdaProperty(String propertyName) {
-        PropertyMetadata propertyMetadata =getPropertyMetadata(propertyName);
-        PropertyDescriptor prop = propertyMetadata.getPropertyDescriptor();
+    private Property<Object, ?> getLambdaProperty(PropertyDescriptor prop) {
         Class<?> propertyType = prop.getPropertyType();
         Method readMethod = prop.getReadMethod();
         String getFunName = readMethod.getName();
@@ -81,30 +69,10 @@ public class FastBean {
         }
     }
 
-    public PropertySetterCaller<Object> getBeanSetter(String propertyName) {
-        PropertySetterCaller<Object> objectPropertySetterCaller = propertySetterCache.get(propertyName);
-        if(objectPropertySetterCaller!=null){
-            return objectPropertySetterCaller;
-        }
-        PropertySetterCaller<Object> lambdaPropertySetter = getLambdaPropertySetter(propertyName);
-        propertySetterCache.putIfAbsent(propertyName,lambdaPropertySetter);
-        return lambdaPropertySetter;
+    public PropertySetterCaller<Object> getBeanSetter(PropertyDescriptor prop) {
+        return propertySetterCache.computeIfAbsent(prop.getName(), key -> getLambdaPropertySetter(prop));
     }
-
-    private PropertyMetadata getPropertyMetadata(String propertyName){
-
-        PropertyMetadata propertyMetadata = basicEntityMetadata.getProperties().get(propertyName);
-        if(propertyMetadata==null){
-            throw new IllegalArgumentException("not found property:"+propertyName+" from "+EasyClassUtil.getSimpleName(beanClass));
-        }
-        if(propertyMetadata.getColumnIgnoreAnnotation()!=null){
-            throw new IllegalArgumentException("column ignore property:"+propertyName+" from "+EasyClassUtil.getSimpleName(beanClass));
-        }
-        return propertyMetadata;
-    }
-    private PropertySetterCaller<Object> getLambdaPropertySetter(String propertyName) {
-        PropertyMetadata propertyMetadata =getPropertyMetadata(propertyName);
-        PropertyDescriptor prop = propertyMetadata.getPropertyDescriptor();
+    private PropertySetterCaller<Object> getLambdaPropertySetter(PropertyDescriptor prop) {
         Class<?> propertyType = prop.getPropertyType();
         MethodHandles.Lookup caller = MethodHandles.lookup();
         Method writeMethod = EasyClassUtil.getWriteMethodNotNull(prop, beanClass);
@@ -113,7 +81,7 @@ public class FastBean {
         String getFunName = writeMethod.getName();
         try {
 
-            //(bean,value)->{bean.set(value)}
+            //()->{bean.setxxx(propertyType)}
             MethodType instantiatedMethodType = MethodType.methodType(void.class,beanClass, propertyType);
             MethodHandle target = caller.findVirtual(beanClass, getFunName, setter);
             MethodType samMethodType = MethodType.methodType(void.class, Object.class, Object.class);

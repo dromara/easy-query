@@ -52,17 +52,20 @@ public class EasyTrackUtil {
 
             FastBean fastBean = EasyBeanUtil.getFastBean(entity.getClass());
             for (String keyProperty : keyProperties) {
-                Property<Object, ?> lambdaProperty = fastBean.getBeanGetter(keyProperty);
+                ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(keyProperty);
+                Property<Object, ?> lambdaProperty = fastBean.getBeanGetter(columnMetadata.getProperty());
                 propertiesMap.put(keyProperty, lambdaProperty);
             }
             if (multiDataSourceMapping) {
                 String propertyName = entityMetadata.getShardingDataSourcePropertyName();
-                Property<Object, ?> lambdaProperty = fastBean.getBeanGetter(propertyName);
+                ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(propertyName);
+                Property<Object, ?> lambdaProperty = fastBean.getBeanGetter(columnMetadata.getProperty());
                 propertiesMap.put(propertyName, lambdaProperty);
             }
             if (multiTableMapping) {
                 String propertyName = entityMetadata.getShardingTablePropertyName();
-                Property<Object, ?> lambdaProperty = fastBean.getBeanGetter(propertyName);
+                ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(propertyName);
+                Property<Object, ?> lambdaProperty = fastBean.getBeanGetter(columnMetadata.getProperty());
                 propertiesMap.put(propertyName, lambdaProperty);
             }
             return o -> {
@@ -115,7 +118,7 @@ public class EasyTrackUtil {
             if (columnMetadata.isPrimary()) {
                 continue;
             }
-            Property<Object, ?> propertyGetter = fastBean.getBeanGetter(propertyName);
+            Property<Object, ?> propertyGetter = fastBean.getBeanGetter(columnMetadata.getProperty());
 
             Object originalPropertyValue = propertyGetter.apply(entityState.getOriginalValue());
             Object currentPropertyValue = propertyGetter.apply(entityState.getCurrentValue());

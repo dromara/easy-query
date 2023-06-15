@@ -2,10 +2,9 @@ package com.easy.query.core.util;
 
 import com.easy.query.core.common.bean.FastBean;
 import com.easy.query.core.expression.lambda.Property;
+import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
-import com.easy.query.core.metadata.bean.BasicEntityMetadata;
-import com.easy.query.core.metadata.bean.BasicEntityMetadataManager;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -32,7 +31,8 @@ public class EasyBeanUtil {
         LinkedHashSet<String> matchProperties = new LinkedHashSet<>(properties.size());
         FastBean fastBean = EasyBeanUtil.getFastBean(entityClass);
         for (String propertyName : properties) {
-            Property<Object, ?> propertyGetter = fastBean.getBeanGetter(propertyName);
+            ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(propertyName);
+            Property<Object, ?> propertyGetter = fastBean.getBeanGetter(columnMetadata.getProperty());
 
             Object value = propertyGetter.apply(entity);
             if(propertyPredicate.test(value)){
@@ -48,8 +48,7 @@ public class EasyBeanUtil {
         if(fastBean!=null){
             return fastBean;
         }
-        BasicEntityMetadata basicEntityMetadata = BasicEntityMetadataManager.getBasicEntityMetadata(entityClass);
-        FastBean fastBeanResult = new FastBean(basicEntityMetadata);
+        FastBean fastBeanResult = new FastBean(entityClass);
         CLASS_PROPERTY_FAST_BEAN_CACHE.putIfAbsent(entityClass,fastBeanResult);
         return fastBeanResult;
     }

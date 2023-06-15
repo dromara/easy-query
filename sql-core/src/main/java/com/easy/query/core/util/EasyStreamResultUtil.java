@@ -142,7 +142,7 @@ public final class EasyStreamResultUtil {
 
             //可能存在value为null但是bean默认有初始值,所以必须还是要调用set方法将其设置为null而不是默认值
             PropertyDescriptor property = columnMetadata.getProperty();
-            PropertySetterCaller<Object> beanSetter = fastBean.getBeanSetter(property.getName());
+            PropertySetterCaller<Object> beanSetter = fastBean.getBeanSetter(property);
             beanSetter.call(bean, value);
         }
         if (trackBean) {

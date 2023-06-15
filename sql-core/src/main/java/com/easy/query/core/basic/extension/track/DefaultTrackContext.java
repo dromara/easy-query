@@ -137,9 +137,9 @@ public class DefaultTrackContext implements TrackContext {
         for (Map.Entry<String, ColumnMetadata> columnMetadataEntry : entityMetadata.getProperty2ColumnMap().entrySet()) {
             ColumnMetadata columnMetadata = columnMetadataEntry.getValue();
             PropertyDescriptor property = columnMetadata.getProperty();
-            PropertySetterCaller<Object> beanSetter = fastBean.getBeanSetter(property.getName());
+            PropertySetterCaller<Object> beanSetter = fastBean.getBeanSetter(property);
             Class<?> propertyType = columnMetadata.getPropertyType();
-            Property<Object, ?> beanGetter = fastBean.getBeanGetter(property.getName());
+            Property<Object, ?> beanGetter = fastBean.getBeanGetter(property);
             Object value = beanGetter.apply(entity);
             if (EasyClassUtil.isBasicType(propertyType) || EasyClassUtil.isEnumType(propertyType)) {
 

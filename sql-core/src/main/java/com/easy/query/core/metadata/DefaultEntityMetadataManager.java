@@ -3,8 +3,6 @@ package com.easy.query.core.metadata;
 import com.easy.query.core.common.cache.Cache;
 import com.easy.query.core.common.cache.DefaultMemoryCache;
 import com.easy.query.core.inject.ServiceProvider;
-import com.easy.query.core.metadata.bean.BasicEntityMetadata;
-import com.easy.query.core.metadata.bean.BasicEntityMetadataManager;
 
 /**
  * @FileName: DefaultMetadataManager.java
@@ -33,10 +31,9 @@ public class DefaultEntityMetadataManager implements EntityMetadataManager {
 //        if(tableName==null){
 //            throw new JDQCException(String.format("当前对象不是数据库对象:[%s]",entityClass.getSimpleName()));
 //        }
-        BasicEntityMetadata basicEntityMetadata = BasicEntityMetadataManager.getBasicEntityMetadata(entityClass);
 
         EntityMetadata entityMetadata = new EntityMetadata(entityClass);
-        entityMetadata.init(serviceProvider,basicEntityMetadata);
+        entityMetadata.init(serviceProvider);
         return entityMetadataCache.computeIfAbsent(entityClass,key->{
             return entityMetadata;
         });

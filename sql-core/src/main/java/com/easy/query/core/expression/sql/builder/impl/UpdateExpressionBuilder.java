@@ -357,7 +357,8 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
 
     protected Object getPredicateValue(Object entity, TrackContext trackContext, String propertyName, EntityMetadata entityMetadata) {
         FastBean fastBean = EasyBeanUtil.getFastBean(entityMetadata.getEntityClass());
-        Property<Object, ?> beanGetter = fastBean.getBeanGetter(propertyName);
+        ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(propertyName);
+        Property<Object, ?> beanGetter = fastBean.getBeanGetter(columnMetadata.getProperty());
         if (trackContext != null) {
             EntityState trackEntityState = trackContext.getTrackEntityState(entity);
             if (trackEntityState != null) {
