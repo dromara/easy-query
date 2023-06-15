@@ -61,7 +61,7 @@
 ```xml
 
 <properties>
-  <easy-query.version>0.9.53</easy-query.version>
+  <easy-query.version>0.9.59</easy-query.version>
 </properties>
 <dependency>
     <groupId>com.easy-query</groupId>
@@ -74,7 +74,7 @@
 ```xml
 
 <properties>
-  <easy-query.version>0.9.53</easy-query.version>
+  <easy-query.version>0.9.59</easy-query.version>
 </properties>
         <!--  提供了以java语法强类型,如果不引用也可以使用只是无法使用lambda表达式来表示属性只能用字符串 -->
 <dependency>
