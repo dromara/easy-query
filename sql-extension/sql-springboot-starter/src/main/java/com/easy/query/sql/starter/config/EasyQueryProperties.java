@@ -3,7 +3,6 @@ package com.easy.query.sql.starter.config;
 
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
-import com.easy.query.sql.starter.option.BeanCallerTypeEnum;
 import com.easy.query.sql.starter.option.DatabaseEnum;
 import com.easy.query.sql.starter.option.NameConversionEnum;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -22,7 +21,6 @@ public class EasyQueryProperties {
     private Boolean enable = false;
     private Boolean deleteThrow = true;
     private DatabaseEnum database = DatabaseEnum.MYSQL;
-    private BeanCallerTypeEnum beanCallerType = BeanCallerTypeEnum.LAMBDA;
     private NameConversionEnum nameConversion;
     private SQLExecuteStrategyEnum insertStrategy = SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS;
     private SQLExecuteStrategyEnum updateStrategy = SQLExecuteStrategyEnum.ALL_COLUMNS;
@@ -278,14 +276,6 @@ public class EasyQueryProperties {
 
     public void setPrintSql(boolean printSql) {
         this.printSql = printSql;
-    }
-
-    public BeanCallerTypeEnum getBeanCallerType() {
-        return beanCallerType;
-    }
-
-    public void setBeanCallerType(BeanCallerTypeEnum beanCallerType) {
-        this.beanCallerType = beanCallerType;
     }
 
     public EasyQueryProperties() {

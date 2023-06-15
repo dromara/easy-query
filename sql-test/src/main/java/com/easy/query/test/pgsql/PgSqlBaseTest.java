@@ -2,8 +2,6 @@ package com.easy.query.test.pgsql;
 
 import com.easy.query.api4j.client.DefaultEasyQuery;
 import com.easy.query.api4j.client.EasyQuery;
-import com.easy.query.core.bean.BeanValueCaller;
-import com.easy.query.core.bean.reflect.ReflectBeanValueCaller;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
@@ -70,7 +68,6 @@ public class PgSqlBaseTest {
                     op.setMaxShardingQueryLimit(1);
                 })
                 .useDatabaseConfigure(new PgSQLDatabaseConfiguration())
-                .replaceService(BeanValueCaller.class, ReflectBeanValueCaller.class)
                 .build();
         easyQuery = new DefaultEasyQuery(easyObjectQuery);
         QueryRuntimeContext runtimeContext = easyQuery.getRuntimeContext();

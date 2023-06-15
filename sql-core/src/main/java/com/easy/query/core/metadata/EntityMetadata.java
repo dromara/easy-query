@@ -1,7 +1,6 @@
 package com.easy.query.core.metadata;
 
 import com.easy.query.core.annotation.Column;
-import com.easy.query.core.annotation.ColumnIgnore;
 import com.easy.query.core.annotation.Encryption;
 import com.easy.query.core.annotation.InsertIgnore;
 import com.easy.query.core.annotation.LogicDelete;
@@ -31,6 +30,8 @@ import com.easy.query.core.configuration.nameconversion.NameConversion;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.inject.ServiceProvider;
+import com.easy.query.core.metadata.bean.BasicEntityMetadata;
+import com.easy.query.core.metadata.bean.PropertyMetadata;
 import com.easy.query.core.sharding.initializer.ShardingEntityBuilder;
 import com.easy.query.core.sharding.initializer.ShardingInitOption;
 import com.easy.query.core.sharding.initializer.ShardingInitializer;
@@ -40,15 +41,10 @@ import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasyStringUtil;
 
-import java.beans.IntrospectionException;
-import java.beans.PropertyDescriptor;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -57,7 +53,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -107,47 +102,34 @@ public class EntityMetadata {
         this.entityClass = entityClass;
     }
 
-    public void init(ServiceProvider serviceProvider) {
+    public void init(ServiceProvider serviceProvider, BasicEntityMetadata basicEntityMetadata) {
 
         QueryConfiguration configuration = serviceProvider.getService(QueryConfiguration.class);
         NameConversion nameConversion = configuration.getNameConversion();
 
-        Table table = EasyClassUtil.getAnnotation(entityClass, Table.class);
+        Table table = basicEntityMetadata.getTableAnnotation();
         if (table != null) {
             this.tableName = nameConversion.convert(EasyStringUtil.defaultIfBank(table.value(), EasyClassUtil.getSimpleName(entityClass)));
             this.schema=table.schema();
         }
-        HashSet<String> ignoreProperties = table != null ? new HashSet<>(Arrays.asList(table.ignoreProperties())) : new HashSet<>();
-
-        List<Field> allFields = EasyClassUtil.getAllFields(this.entityClass);
-        PropertyDescriptor[] ps = getPropertyDescriptor();
         int versionCount = 0;
         int logicDelCount = 0;
-        for (Field field : allFields) {
-            String property = field.getName();
-            if (ignoreProperties.contains(property)) {
-                continue;
-            }
-            //未找到bean属性就直接忽略
-            PropertyDescriptor propertyDescriptor = firstOrNull(ps, o -> Objects.equals(o.getName(), property));
-            if (propertyDescriptor == null) {
-                continue;
-            }
-            ColumnIgnore columnIgnore = field.getAnnotation(ColumnIgnore.class);
-            if (columnIgnore != null) {
-                continue;
-            }
+        Map<String, PropertyMetadata> propertieMetadatas = basicEntityMetadata.getProperties();
 
-            Column column = field.getAnnotation(Column.class);
+        for (Map.Entry<String, PropertyMetadata> propertyMetadataEntry : propertieMetadatas.entrySet()) {
+            String property = propertyMetadataEntry.getKey();
+            PropertyMetadata propertyMetadata = propertyMetadataEntry.getValue();
+            Class<?> propertyType = propertyMetadata.getPropertyDescriptor().getPropertyType();
+            Column column = propertyMetadata.getColumnAnnotation();
             boolean hasColumnName = column != null && EasyStringUtil.isNotBlank(column.value());
             String columnName = hasColumnName ? column.value() : nameConversion.convert(property);
             ColumnOption columnOption = new ColumnOption(this, columnName);
 //            if (column != null) {
 //                columnMetadata.setNullable(column.nullable());
 //            }
-            columnOption.setProperty(propertyDescriptor);
+            columnOption.setProperty(propertyMetadata.getPropertyDescriptor());
 
-            Encryption encryption = field.getAnnotation(Encryption.class);
+            Encryption encryption = propertyMetadata.getEncryptionAnnotation();
             if (encryption != null) {
                 Class<? extends EncryptionStrategy> strategy = encryption.strategy();
                 EncryptionStrategy easyEncryptionStrategy = configuration.getEasyEncryptionStrategy(strategy);
@@ -196,16 +178,16 @@ public class EntityMetadata {
                         columnValueUpdateAtomicTrack = true;
                     }
                 }
-                InsertIgnore insertIgnore = field.getAnnotation(InsertIgnore.class);
+                InsertIgnore insertIgnore = propertyMetadata.getInsertIgnoreAnnotation();
                 if (insertIgnore != null) {
                     columnOption.setInsertIgnore(true);
                 }
 
-                UpdateIgnore updateIgnore = field.getAnnotation(UpdateIgnore.class);
+                UpdateIgnore updateIgnore = propertyMetadata.getUpdateIgnoreAnnotation();
                 if (updateIgnore != null) {
                     columnOption.setUpdateIgnore(true);
                 }
-                Version version = field.getAnnotation(Version.class);
+                Version version = propertyMetadata.getVersionAnnotation();
                 if (version != null) {
 
                     Class<? extends VersionStrategy> strategy = version.strategy();
@@ -219,24 +201,24 @@ public class EntityMetadata {
 
                     versionCount++;
                 }
-                ShardingDataSourceKey shardingDataSourceKey = field.getAnnotation(ShardingDataSourceKey.class);
+                ShardingDataSourceKey shardingDataSourceKey = propertyMetadata.getShardingDataSourceKeyAnnotation();
                 if (shardingDataSourceKey != null) {
                     this.setShardingDataSourcePropertyName(property);
                 }
-                ShardingExtraDataSourceKey shardingExtraDataSourceKey = field.getAnnotation(ShardingExtraDataSourceKey.class);
+                ShardingExtraDataSourceKey shardingExtraDataSourceKey = propertyMetadata.getShardingExtraDataSourceKeyAnnotation();
                 if (shardingExtraDataSourceKey != null) {
                     this.addExtraShardingDataSourcePropertyName(property);
                 }
-                ShardingTableKey shardingTableKey = field.getAnnotation(ShardingTableKey.class);
+                ShardingTableKey shardingTableKey =propertyMetadata.getShardingTableKeyAnnotation();
                 if (shardingTableKey != null) {
                     this.setShardingTablePropertyName(property);
                 }
-                ShardingExtraTableKey shardingExtraTableKey = field.getAnnotation(ShardingExtraTableKey.class);
+                ShardingExtraTableKey shardingExtraTableKey = propertyMetadata.getShardingExtraTableKeyAnnotation();
                 if (shardingExtraTableKey != null) {
                     this.addExtraShardingTablePropertyName(property);
                 }
 
-                LogicDelete logicDelete = field.getAnnotation(LogicDelete.class);
+                LogicDelete logicDelete = propertyMetadata.getLogicDeleteAnnotation();
                 if (logicDelete != null) {
                     LogicDeleteStrategyEnum strategy = logicDelete.strategy();
                     if (Objects.equals(LogicDeleteStrategyEnum.CUSTOM, strategy)) {//使用自定义
@@ -245,11 +227,11 @@ public class EntityMetadata {
                             throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " logic delete strategy is empty");
                         }
                         LogicDeleteStrategy globalLogicDeleteStrategy = configuration.getLogicDeleteStrategyNotNull(strategyName);
-                        LogicDeleteBuilder logicDeleteBuilder = new LogicDeleteBuilder(this, property, field.getType());
+                        LogicDeleteBuilder logicDeleteBuilder = new LogicDeleteBuilder(this, property,propertyType );
                         globalLogicDeleteStrategy.configure(logicDeleteBuilder);
                     } else {//使用系统默认的
                         LogicDeleteStrategy sysGlobalLogicDeleteStrategy = configuration.getSysLogicDeleteStrategyNotNull(strategy);
-                        LogicDeleteBuilder logicDeleteBuilder = new LogicDeleteBuilder(this, property, field.getType());
+                        LogicDeleteBuilder logicDeleteBuilder = new LogicDeleteBuilder(this, property, propertyType);
                         sysGlobalLogicDeleteStrategy.configure(logicDeleteBuilder);
                     }
                     logicDelCount++;
@@ -272,15 +254,6 @@ public class EntityMetadata {
             Class<? extends ShardingInitializer> initializer = table.shardingInitializer();
             initSharding(configuration, initializer);
         }
-    }
-
-    private PropertyDescriptor firstOrNull(PropertyDescriptor[] ps, Predicate<PropertyDescriptor> predicate) {
-        for (PropertyDescriptor p : ps) {
-            if (predicate.test(p)) {
-                return p;
-            }
-        }
-        return null;
     }
 
     private void initSharding(QueryConfiguration configuration, Class<? extends ShardingInitializer> initializer) {
@@ -343,15 +316,6 @@ public class EntityMetadata {
             }
         }
     }
-
-    private PropertyDescriptor[] getPropertyDescriptor() {
-        try {
-            return EasyClassUtil.propertyDescriptors(entityClass);
-        } catch (IntrospectionException e) {
-            throw new EasyQueryException(e);
-        }
-    }
-
 
     public Class<?> getEntityClass() {
         return entityClass;

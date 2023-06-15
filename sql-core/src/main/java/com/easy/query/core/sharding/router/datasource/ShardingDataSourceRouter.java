@@ -1,6 +1,5 @@
 package com.easy.query.core.sharding.router.datasource;
 
-import com.easy.query.core.bean.BeanValueCaller;
 import com.easy.query.core.expression.lambda.RouteFunction;
 import com.easy.query.core.sharding.router.RoutePredicateExpression;
 import com.easy.query.core.sharding.router.datasource.abstraction.AbstractDataSourceRouter;
@@ -18,16 +17,10 @@ import java.util.stream.Collectors;
  * @author xuejiaming
  */
 public class ShardingDataSourceRouter extends AbstractDataSourceRouter {
-    private final BeanValueCaller beanValueCaller;
-
-    public ShardingDataSourceRouter(BeanValueCaller beanValueCaller){
-
-        this.beanValueCaller = beanValueCaller;
-    }
 
     @Override
     public <T> Collection<String> route0(DataSourceRoute<T> dataSourceRoute, Collection<String> beforeTableNames, RouteDescriptor routeDescriptor) {
-        RoutePredicateExpression<String> routePredicateExpression = EasyShardingUtil.getRoutePredicateExpression(beanValueCaller,routeDescriptor, dataSourceRoute, false);
+        RoutePredicateExpression<String> routePredicateExpression = EasyShardingUtil.getRoutePredicateExpression(routeDescriptor, dataSourceRoute, false);
         RouteFunction<String> routePredicate = routePredicateExpression.getRoutePredicate();
         return beforeTableNames.stream()
                 .filter(routePredicate::apply)

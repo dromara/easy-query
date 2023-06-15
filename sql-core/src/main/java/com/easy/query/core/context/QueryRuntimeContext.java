@@ -7,7 +7,6 @@ import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
 import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
 import com.easy.query.core.basic.pagination.EasyPageResultProvider;
 import com.easy.query.core.basic.thread.ShardingExecutorService;
-import com.easy.query.core.bean.BeanValueCaller;
 import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.datasource.DataSourceManager;
 import com.easy.query.core.datasource.DataSourceUnitFactory;
@@ -60,5 +59,4 @@ public interface QueryRuntimeContext {
 
     DataSourceManager getDataSourceManager();
     EasyTimeJobManager getEasyTimeJobManager();
-    BeanValueCaller getBeanValueCaller();
 }

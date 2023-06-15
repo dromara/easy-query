@@ -1,15 +1,17 @@
 package com.easy.query.core.util;
 
-import com.easy.query.core.bean.BeanCaller;
-import com.easy.query.core.bean.BeanValueCaller;
+import com.easy.query.core.common.bean.FastBean;
 import com.easy.query.core.expression.lambda.Property;
-import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
+import com.easy.query.core.metadata.bean.BasicEntityMetadata;
+import com.easy.query.core.metadata.bean.BasicEntityMetadataManager;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 
 /**
@@ -21,17 +23,16 @@ import java.util.function.Predicate;
 public class EasyBeanUtil {
 
 
-    public static Set<String> getBeanMatchProperties(BeanValueCaller beanValueCaller, EntityMetadataManager entityMetadataManager, Object entity, Predicate<Object> propertyPredicate){
+    public static Set<String> getBeanMatchProperties(EntityMetadataManager entityMetadataManager, Object entity, Predicate<Object> propertyPredicate){
 
         Class<?> entityClass = entity.getClass();
         EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(entityClass);
 
         Collection<String> properties = entityMetadata.getProperties();
         LinkedHashSet<String> matchProperties = new LinkedHashSet<>(properties.size());
-        BeanCaller beanCaller = beanValueCaller.getBeanCaller(entityClass);
+        FastBean fastBean = EasyBeanUtil.getFastBean(entityClass);
         for (String propertyName : properties) {
-            ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(propertyName);
-            Property<Object, ?> propertyGetter = beanCaller.getBeanGetter(columnMetadata.getProperty());
+            Property<Object, ?> propertyGetter = fastBean.getBeanGetter(propertyName);
 
             Object value = propertyGetter.apply(entity);
             if(propertyPredicate.test(value)){
@@ -40,9 +41,16 @@ public class EasyBeanUtil {
         }
         return matchProperties;
     }
-//    private static final Map<Class<?>, FastBean> CLASS_PROPERTY_FAST_BEAN_CACHE = new ConcurrentHashMap<>();
+    private static final Map<Class<?>, FastBean> CLASS_PROPERTY_FAST_BEAN_CACHE = new ConcurrentHashMap<>();
 
-//    public static FastBean getFastBean(Class<?> entityClass) {
-//        return CLASS_PROPERTY_FAST_BEAN_CACHE.computeIfAbsent(entityClass, key -> new FastBean(entityClass));
-//    }
+    public static FastBean getFastBean(Class<?> entityClass) {
+        FastBean fastBean = CLASS_PROPERTY_FAST_BEAN_CACHE.get(entityClass);
+        if(fastBean!=null){
+            return fastBean;
+        }
+        BasicEntityMetadata basicEntityMetadata = BasicEntityMetadataManager.getBasicEntityMetadata(entityClass);
+        FastBean fastBeanResult = new FastBean(basicEntityMetadata);
+        CLASS_PROPERTY_FAST_BEAN_CACHE.putIfAbsent(entityClass,fastBeanResult);
+        return fastBeanResult;
+    }
 }

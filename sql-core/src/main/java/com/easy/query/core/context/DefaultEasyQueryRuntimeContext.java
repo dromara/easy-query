@@ -3,13 +3,12 @@ package com.easy.query.core.context;
 //import com.easy.query.core.api.SQLApiFactory;
 
 import com.easy.query.core.api.SQLClientApiFactory;
+import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.basic.jdbc.conn.ConnectionManager;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
 import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
 import com.easy.query.core.basic.pagination.EasyPageResultProvider;
-import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.basic.thread.ShardingExecutorService;
-import com.easy.query.core.bean.BeanValueCaller;
 import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.datasource.DataSourceManager;
 import com.easy.query.core.datasource.DataSourceUnitFactory;
@@ -59,7 +58,6 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     private final SQLClientApiFactory sqlEntityApiFactory;
     private final DataSourceManager dataSourceManager;
     private final EasyTimeJobManager easyTimeJobManager;
-    private final BeanValueCaller beanValueCaller;
 
     public DefaultEasyQueryRuntimeContext(ServiceProvider serviceProvider,
                                           EasyQueryDataSource easyQueryDataSource,
@@ -84,8 +82,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
                                           SQLSegmentFactory sqlSegmentFactory,
                                           SQLClientApiFactory sqlEntityApiFactory,
                                           DataSourceManager dataSourceManager,
-                                          EasyTimeJobManager easyTimeJobManager,
-                                          BeanValueCaller beanValueCaller) {
+                                          EasyTimeJobManager easyTimeJobManager) {
         this.serviceProvider = serviceProvider;
         this.easyQueryDataSource = easyQueryDataSource;
         this.easyQueryConfiguration = easyQueryConfiguration;
@@ -110,7 +107,6 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
         this.sqlEntityApiFactory = sqlEntityApiFactory;
         this.dataSourceManager = dataSourceManager;
         this.easyTimeJobManager = easyTimeJobManager;
-        this.beanValueCaller = beanValueCaller;
     }
 
     @Override
@@ -232,10 +228,5 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     @Override
     public EasyTimeJobManager getEasyTimeJobManager() {
         return easyTimeJobManager;
-    }
-
-    @Override
-    public BeanValueCaller getBeanValueCaller() {
-        return beanValueCaller;
     }
 }

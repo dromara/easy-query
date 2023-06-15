@@ -2,9 +2,10 @@ package com.easy.query.core.sharding.router;
 
 import com.easy.query.core.basic.jdbc.parameter.ConstSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
-import com.easy.query.core.bean.BeanValueCaller;
+import com.easy.query.core.common.bean.FastBean;
 import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.enums.SQLPredicateCompareEnum;
+import com.easy.query.core.enums.sharding.ShardingOperatorEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.RouteFunction;
@@ -17,15 +18,14 @@ import com.easy.query.core.expression.segment.condition.predicate.Predicate;
 import com.easy.query.core.expression.segment.condition.predicate.ShardingPredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ValuePredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ValuesPredicate;
-import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
-import com.easy.query.core.enums.sharding.ShardingOperatorEnum;
+import com.easy.query.core.sharding.route.RouteFilter;
 import com.easy.query.core.sharding.router.descriptor.EntityRouteDescriptor;
 import com.easy.query.core.sharding.router.descriptor.PredicateRouteDescriptor;
 import com.easy.query.core.sharding.router.descriptor.RouteDescriptor;
-import com.easy.query.core.sharding.route.RouteFilter;
-import com.easy.query.core.util.EasyCollectionUtil;
+import com.easy.query.core.util.EasyBeanUtil;
 import com.easy.query.core.util.EasyClassUtil;
+import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyStringUtil;
 
 import java.util.Collection;
@@ -90,16 +90,13 @@ public class RoutePredicateDiscover<T> {
         }
         return ShardingOperatorEnum.UN_KNOWN;
     }
-
-    private final BeanValueCaller beanValueCaller;
     private final RouteDescriptor routeDescriptor;
     private final EntityMetadata entityMetadata;
     private final RouteFilter<T> routeFilter;
     private final Set<String> shardingProperties;
     private final String mainShardingProperty;
 
-    public RoutePredicateDiscover(BeanValueCaller beanValueCaller, RouteDescriptor routeDescriptor, RouteFilter<T> routeFilter, boolean shardingTableRoute) {
-        this.beanValueCaller = beanValueCaller;
+    public RoutePredicateDiscover(RouteDescriptor routeDescriptor, RouteFilter<T> routeFilter, boolean shardingTableRoute) {
         this.routeDescriptor = routeDescriptor;
 
         this.entityMetadata = routeDescriptor.getTable().getEntityMetadata();
@@ -223,9 +220,9 @@ public class RoutePredicateDiscover<T> {
     }
 
     private RoutePredicateExpression<T> getEntitySQLRouteParseExpression(Object entity) {
-        ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(mainShardingProperty);
 
-        Property<Object, ?> shardingKeyPropertyGetter = beanValueCaller.getBeanCaller(entityMetadata.getEntityClass()).getBeanGetter(columnMetadata.getProperty());
+        FastBean fastBean = EasyBeanUtil.getFastBean(entityMetadata.getEntityClass());
+        Property<Object, ?> shardingKeyPropertyGetter = fastBean.getBeanGetter(mainShardingProperty);
         Object shardingValue = shardingKeyPropertyGetter.apply(entity);
         RouteFunction<T> routePredicate = routeFilter.routeFilter(routeDescriptor.getTable(),shardingValue, ShardingOperatorEnum.EQUAL, mainShardingProperty, true,true);
         return new RoutePredicateExpression<T>(routePredicate);

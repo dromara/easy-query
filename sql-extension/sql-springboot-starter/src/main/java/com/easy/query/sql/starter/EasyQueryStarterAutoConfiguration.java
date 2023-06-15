@@ -10,9 +10,6 @@ import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategy;
 import com.easy.query.core.basic.extension.track.update.ValueUpdateAtomicTrack;
 import com.easy.query.core.basic.extension.version.VersionStrategy;
 import com.easy.query.core.basic.jdbc.conn.ConnectionManager;
-import com.easy.query.core.bean.BeanValueCaller;
-import com.easy.query.core.bean.lambda.LambdaBeanValueCaller;
-import com.easy.query.core.bean.reflect.ReflectBeanValueCaller;
 import com.easy.query.core.bootstrapper.DatabaseConfiguration;
 import com.easy.query.core.bootstrapper.DefaultDatabaseConfiguration;
 import com.easy.query.core.bootstrapper.DefaultStarterConfigurer;
@@ -124,18 +121,6 @@ public class EasyQueryStarterAutoConfiguration {
     }
 
     @Bean
-    @ConditionalOnProperty(name = "easy-query.bean-caller-type", havingValue = "lambda", matchIfMissing = true)
-    @ConditionalOnMissingBean
-    public BeanValueCaller lambdaBeanValueCaller() {
-        return new LambdaBeanValueCaller();
-    }
-    @Bean
-    @ConditionalOnProperty(name = "easy-query.bean-caller-type", havingValue = "reflect")
-    @ConditionalOnMissingBean
-    public BeanValueCaller reflectBeanValueCaller() {
-        return new ReflectBeanValueCaller();
-    }
-    @Bean
     @ConditionalOnProperty(name = "easy-query.name-conversion", havingValue = "underlined", matchIfMissing = true)
     @ConditionalOnMissingBean
     public NameConversion underlinedNameConversion() {
@@ -157,11 +142,10 @@ public class EasyQueryStarterAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public EasyQueryClient easyQueryClient(DatabaseConfiguration databaseConfiguration,BeanValueCaller beanValueCaller, StarterConfigurer starterConfigurer, NameConversion nameConversion) {
+    public EasyQueryClient easyQueryClient(DatabaseConfiguration databaseConfiguration,StarterConfigurer starterConfigurer, NameConversion nameConversion) {
         EasyQueryClient easyQueryClient = EasyQueryBootstrapper.defaultBuilderConfiguration()
                 .setDefaultDataSource(dataSource)
                 .replaceService(DataSourceUnitFactory.class, SpringDataSourceUnitFactory.class)
-                .replaceService(BeanValueCaller.class, beanValueCaller)
                 .optionConfigure(builder -> {
                     builder.setDeleteThrowError(easyQueryProperties.getDeleteThrow());
                     builder.setInsertStrategy(easyQueryProperties.getInsertStrategy());

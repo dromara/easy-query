@@ -9,8 +9,7 @@ import com.easy.query.core.basic.extension.track.TrackDiffEntry;
 import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.basic.extension.track.update.ValueUpdateAtomicTrack;
 import com.easy.query.core.basic.extension.version.VersionStrategy;
-import com.easy.query.core.bean.BeanCaller;
-import com.easy.query.core.bean.BeanValueCaller;
+import com.easy.query.core.common.bean.FastBean;
 import com.easy.query.core.enums.EntityUpdateTypeEnum;
 import com.easy.query.core.enums.SQLPredicateCompareEnum;
 import com.easy.query.core.exception.EasyQueryException;
@@ -43,6 +42,7 @@ import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.VersionMetadata;
+import com.easy.query.core.util.EasyBeanUtil;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasySQLSegmentUtil;
@@ -356,10 +356,8 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
     }
 
     protected Object getPredicateValue(Object entity, TrackContext trackContext, String propertyName, EntityMetadata entityMetadata) {
-        BeanValueCaller beanValueCaller = runtimeContext.getBeanValueCaller();
-        BeanCaller beanCaller = beanValueCaller.getBeanCaller(entityMetadata.getEntityClass());
-        ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(propertyName);
-        Property<Object, ?> beanGetter = beanCaller.getBeanGetter(columnMetadata.getProperty());
+        FastBean fastBean = EasyBeanUtil.getFastBean(entityMetadata.getEntityClass());
+        Property<Object, ?> beanGetter = fastBean.getBeanGetter(propertyName);
         if (trackContext != null) {
             EntityState trackEntityState = trackContext.getTrackEntityState(entity);
             if (trackEntityState != null) {

@@ -1,14 +1,13 @@
 package com.easy.query.core.sharding.router.table;
 
-import com.easy.query.core.bean.BeanValueCaller;
 import com.easy.query.core.expression.lambda.RouteFunction;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.metadata.ActualTable;
+import com.easy.query.core.sharding.route.table.TableRoute;
 import com.easy.query.core.sharding.router.RoutePredicateExpression;
 import com.easy.query.core.sharding.router.datasource.engine.DataSourceRouteResult;
 import com.easy.query.core.sharding.router.descriptor.RouteDescriptor;
 import com.easy.query.core.sharding.router.table.abstraction.AbstractTableRouter;
-import com.easy.query.core.sharding.route.table.TableRoute;
 import com.easy.query.core.util.EasyShardingUtil;
 
 import java.util.Collection;
@@ -22,16 +21,9 @@ import java.util.stream.Stream;
  * @author xuejiaming
  */
 public class ShardingTableRouter extends AbstractTableRouter {
-
-    private final BeanValueCaller beanValueCaller;
-
-    public ShardingTableRouter(BeanValueCaller beanValueCaller){
-
-        this.beanValueCaller = beanValueCaller;
-    }
     @Override
     public <T> Collection<TableRouteUnit> route0(TableRoute<T> tableRoute, DataSourceRouteResult dataSourceRouteResult, Collection<ActualTable> beforeTableNames, RouteDescriptor routeDescriptor) {
-        RoutePredicateExpression<ActualTable> routePredicateExpression = EasyShardingUtil.getRoutePredicateExpression(beanValueCaller,routeDescriptor, tableRoute, true);
+        RoutePredicateExpression<ActualTable> routePredicateExpression = EasyShardingUtil.getRoutePredicateExpression(routeDescriptor, tableRoute, true);
         RouteFunction<ActualTable> routePredicate = routePredicateExpression.getRoutePredicate();
         TableAvailable table = routeDescriptor.getTable();
         return filterTableNameWithDataSourceResult(dataSourceRouteResult, beforeTableNames)

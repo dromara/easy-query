@@ -8,8 +8,7 @@ import com.easy.query.core.basic.jdbc.types.EasyResultSet;
 import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
 import com.easy.query.core.basic.jdbc.types.JdbcTypes;
 import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
-import com.easy.query.core.bean.BeanCaller;
-import com.easy.query.core.bean.BeanValueCaller;
+import com.easy.query.core.common.bean.FastBean;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
 import com.easy.query.core.logging.Log;
@@ -125,11 +124,10 @@ public final class EasyStreamResultUtil {
 
         QueryRuntimeContext runtimeContext = context.getRuntimeContext();
         TrackManager trackManager = runtimeContext.getTrackManager();
-        BeanValueCaller beanValueCaller = runtimeContext.getBeanValueCaller();
         boolean trackBean = trackBean(context, clazz);
         EasyResultSet easyResultSet = new EasyResultSet(streamResult);
         TResult bean = EasyClassUtil.newInstance(clazz);
-        BeanCaller beanFastSetter = beanValueCaller.getBeanCaller(clazz);
+        FastBean fastBean = EasyBeanUtil.getFastBean(bean.getClass());
         for (int i = 0; i < beanMapToColumnMetadatas.length; i++) {
             BeanMapToColumnMetadata beanMapToColumnMetadata = beanMapToColumnMetadatas[i];
             if (beanMapToColumnMetadata == null) {
@@ -144,7 +142,7 @@ public final class EasyStreamResultUtil {
 
             //可能存在value为null但是bean默认有初始值,所以必须还是要调用set方法将其设置为null而不是默认值
             PropertyDescriptor property = columnMetadata.getProperty();
-            PropertySetterCaller<Object> beanSetter = beanFastSetter.getBeanSetter(property);
+            PropertySetterCaller<Object> beanSetter = fastBean.getBeanSetter(property.getName());
             beanSetter.call(bean, value);
         }
         if (trackBean) {

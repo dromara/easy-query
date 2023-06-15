@@ -54,7 +54,7 @@ public class EntityUpdateSetProcessor {
                     EntityState trackEntityState = trackContext.getTrackEntityState(entity);
                     if (trackEntityState != null) {
                         entityUpdateType = EntityUpdateTypeEnum.TRACK;
-                        this.entityTrackProperty = EasyTrackUtil.getTrackDiffProperty(runtimeContext.getBeanValueCaller(),runtimeContext.getEntityMetadataManager(), trackEntityState);
+                        this.entityTrackProperty = EasyTrackUtil.getTrackDiffProperty(runtimeContext.getEntityMetadataManager(), trackEntityState);
                         entityPropertiesIgnore.addAll(entityTrackProperty.getSameProperties());
                     }
                 } else {
@@ -68,7 +68,7 @@ public class EntityUpdateSetProcessor {
 
     private void getCustomIgnoreProperties(SQLExecuteStrategyEnum updateStrategy, EntityMetadataManager entityMetadataManager) {
         if (Objects.equals(SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS, updateStrategy) || Objects.equals(SQLExecuteStrategyEnum.ONLY_NULL_COLUMNS, updateStrategy)) {
-            Set<String> beanMatchProperties = EasyBeanUtil.getBeanMatchProperties(runtimeContext.getBeanValueCaller(), entityMetadataManager, entity, Objects.equals(SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS, updateStrategy) ? Objects::isNull : Objects::nonNull);
+            Set<String> beanMatchProperties = EasyBeanUtil.getBeanMatchProperties(entityMetadataManager, entity, Objects.equals(SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS, updateStrategy) ? Objects::isNull : Objects::nonNull);
             entityPropertiesIgnore.addAll(beanMatchProperties);
         }
     }

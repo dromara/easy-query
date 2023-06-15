@@ -12,8 +12,7 @@ import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.types.EasyParameter;
 import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
 import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
-import com.easy.query.core.bean.BeanCaller;
-import com.easy.query.core.bean.BeanValueCaller;
+import com.easy.query.core.common.bean.FastBean;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.exception.EasyQuerySQLStatementException;
@@ -133,7 +132,7 @@ public class EasyJdbcExecutorUtil {
                 params.add(new EasyConstSQLParameter(sqlParameter.getTableOrNull(), sqlParameter.getPropertyNameOrNull(), value));
             } else if (sqlParameter instanceof BeanSQLParameter) {
                 BeanSQLParameter beanSQLParameter = (BeanSQLParameter) sqlParameter;
-                beanSQLParameter.setBean(entity,executorContext.getRuntimeContext().getBeanValueCaller());
+                beanSQLParameter.setBean(entity);
                 Object value = executorContext.toValue(beanSQLParameter, beanSQLParameter.getValue());
                 params.add(new EasyConstSQLParameter(beanSQLParameter.getTableOrNull(), beanSQLParameter.getPropertyNameOrNull(), value));
             } else {
@@ -225,8 +224,7 @@ public class EasyJdbcExecutorUtil {
             //如果需要自动填充并且存在自动填充列
             if (fillAutoIncrement && EasyCollectionUtil.isNotEmpty(incrementColumns)) {
                 ResultSet keysSet = ps.getGeneratedKeys();
-                BeanValueCaller beanValueCaller = runtimeContext.getBeanValueCaller();
-                BeanCaller beanCaller = beanValueCaller.getBeanCaller(entityClass);
+                FastBean fastBean = EasyBeanUtil.getFastBean(entityClass);
                 int index = 0;
                 PropertyDescriptor[] incrementProperty = new PropertyDescriptor[incrementColumns.size()];
                 while (keysSet.next()) {
@@ -242,7 +240,7 @@ public class EasyJdbcExecutorUtil {
 
                         Object value = keysSet.getObject(i + 1);
                         Object newValue = EasyClassUtil.convertValueToRequiredType(value, property.getPropertyType());
-                        PropertySetterCaller<Object> beanSetter = beanCaller.getBeanSetter(property);
+                        PropertySetterCaller<Object> beanSetter = fastBean.getBeanSetter(property.getName());
                         beanSetter.call(entity, newValue);
 //                        Method setter = getSetter(property, entityClass);
 //                        callSetter(entity,setter, property, newValue);

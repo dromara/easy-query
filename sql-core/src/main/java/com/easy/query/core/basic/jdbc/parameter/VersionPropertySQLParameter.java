@@ -1,7 +1,6 @@
 package com.easy.query.core.basic.jdbc.parameter;
 
 import com.easy.query.core.basic.extension.version.VersionStrategy;
-import com.easy.query.core.bean.BeanValueCaller;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 
 /**
@@ -20,8 +19,8 @@ public class VersionPropertySQLParameter implements BeanSQLParameter {
         this.easyVersionStrategy = easyVersionStrategy;
     }
     @Override
-    public void setBean(Object bean, BeanValueCaller beanValueCaller) {
-        beanSQLParameter.setBean(bean,beanValueCaller);
+    public void setBean(Object bean) {
+        beanSQLParameter.setBean(bean);
     }
 
     @Override

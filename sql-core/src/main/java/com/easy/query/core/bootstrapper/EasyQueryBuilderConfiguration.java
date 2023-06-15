@@ -20,8 +20,6 @@ import com.easy.query.core.basic.pagination.DefaultEasyPageResultProvider;
 import com.easy.query.core.basic.pagination.EasyPageResultProvider;
 import com.easy.query.core.basic.thread.DefaultEasyShardingExecutorService;
 import com.easy.query.core.basic.thread.ShardingExecutorService;
-import com.easy.query.core.bean.BeanValueCaller;
-import com.easy.query.core.bean.lambda.LambdaBeanValueCaller;
 import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.configuration.EasyQueryOptionBuilder;
 import com.easy.query.core.configuration.QueryConfiguration;
@@ -138,7 +136,6 @@ public class EasyQueryBuilderConfiguration {
                 .replaceService(DataSourceUnitFactory.class, DefaultDataSourceUnitFactory.class)
                 .replaceService(SQLSegmentFactory.class, DefaultSQLSegmentFactory.class)
                 .replaceService(EasyTimeJobManager.class, DefaultEasyTimeJobManager.class)
-                .replaceService(BeanValueCaller.class, LambdaBeanValueCaller.class)
                 .replaceService(EasyQueryClient.class, DefaultEasyQueryClient.class);
     }
 
