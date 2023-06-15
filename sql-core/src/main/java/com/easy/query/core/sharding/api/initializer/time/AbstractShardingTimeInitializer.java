@@ -9,6 +9,7 @@ import com.easy.query.core.sharding.initializer.EntityShardingInitializer;
 import com.easy.query.core.sharding.initializer.ShardingEntityBuilder;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyDynamicUtil;
+import com.easy.query.core.util.EasyMapUtil;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -114,7 +115,7 @@ public abstract class AbstractShardingTimeInitializer<T> implements EntityShardi
         while (!beginTime.isAfter(endTime)) {
             String dataSource = formatDataSource(beginTime, defaultDataSourceName);
             String tail = formatTail(beginTime);
-            Collection<String> actualTableNames = initTables.computeIfAbsent(dataSource, key -> new ArrayList<>());
+            Collection<String> actualTableNames = EasyMapUtil.computeIfAbsent(initTables,dataSource, key -> new ArrayList<>());
             actualTableNames.add(tableName + tableSeparator + tail);
             beginTime = getNextTime(beginTime);
         }

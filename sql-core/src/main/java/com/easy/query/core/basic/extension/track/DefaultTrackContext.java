@@ -10,6 +10,7 @@ import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.util.EasyBeanUtil;
 import com.easy.query.core.util.EasyClassUtil;
+import com.easy.query.core.util.EasyMapUtil;
 import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasyStringUtil;
 import com.easy.query.core.util.EasyTrackUtil;
@@ -85,7 +86,7 @@ public class DefaultTrackContext implements TrackContext {
         if (trackKey == null) {
             throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + ": current entity cant get track key,primary maybe null");
         }
-        ConcurrentHashMap<String, EntityState> entityStateMap = trackEntityMap.computeIfAbsent(entityClass, o -> new ConcurrentHashMap<>());
+        ConcurrentHashMap<String, EntityState> entityStateMap = EasyMapUtil.computeIfAbsent(trackEntityMap,entityClass, o -> new ConcurrentHashMap<>());
         EntityState originalEntityState = entityStateMap.get(trackKey);
         if (originalEntityState != null) {
             //查询的情况下直接使用追踪后的数据
@@ -117,7 +118,7 @@ public class DefaultTrackContext implements TrackContext {
         if (trackKey == null) {
             throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + ": current entity cant get track key,primary maybe null");
         }
-        ConcurrentHashMap<String, EntityState> entityStateMap = trackEntityMap.computeIfAbsent(entityClass, o -> new ConcurrentHashMap<>());
+        ConcurrentHashMap<String, EntityState> entityStateMap = EasyMapUtil.computeIfAbsent(trackEntityMap,entityClass, o -> new ConcurrentHashMap<>());
 
         return entityStateMap.remove(trackKey) != null;
     }

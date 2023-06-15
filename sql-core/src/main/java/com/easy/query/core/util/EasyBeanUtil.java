@@ -44,12 +44,6 @@ public class EasyBeanUtil {
     private static final Map<Class<?>, FastBean> CLASS_PROPERTY_FAST_BEAN_CACHE = new ConcurrentHashMap<>();
 
     public static FastBean getFastBean(Class<?> entityClass) {
-        FastBean fastBean = CLASS_PROPERTY_FAST_BEAN_CACHE.get(entityClass);
-        if(fastBean!=null){
-            return fastBean;
-        }
-        FastBean fastBeanResult = new FastBean(entityClass);
-        CLASS_PROPERTY_FAST_BEAN_CACHE.putIfAbsent(entityClass,fastBeanResult);
-        return fastBeanResult;
+        return EasyMapUtil.computeIfAbsent(CLASS_PROPERTY_FAST_BEAN_CACHE,entityClass, key->new FastBean(entityClass));
     }
 }

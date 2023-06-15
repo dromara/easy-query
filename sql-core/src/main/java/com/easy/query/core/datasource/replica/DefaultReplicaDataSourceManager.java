@@ -13,6 +13,7 @@ import com.easy.query.core.datasource.replica.connectors.LoopReplicaConnector;
 import com.easy.query.core.datasource.replica.connectors.RandomReplicaConnector;
 import com.easy.query.core.datasource.replica.connectors.ReplicaConnector;
 import com.easy.query.core.enums.replica.ReplicaUseStrategyEnum;
+import com.easy.query.core.util.EasyMapUtil;
 
 import javax.sql.DataSource;
 import java.util.ArrayList;
@@ -66,7 +67,7 @@ public final class DefaultReplicaDataSourceManager extends DefaultDataSourceMana
 
     @Override
     public boolean addDataSource(String dataSourceName, String replicaAlias, DataSource dataSource,int dataSourcePoolSize) {
-        ReplicaConnector replicaConnector = replicaDataSource.computeIfAbsent(dataSourceName, k -> createEmptyReplicaConnector(dataSourceName));
+        ReplicaConnector replicaConnector = EasyMapUtil.computeIfAbsent(replicaDataSource,dataSourceName, k -> createEmptyReplicaConnector(dataSourceName));
         DataSourceUnit dataSourceUnit = dataSourceUnitFactory.createDataSourceUnit(dataSourceName, dataSource, dataSourcePoolSize);
         return replicaConnector.addReplicaNode(new ReplicaNode(replicaAlias,dataSourceUnit));
     }

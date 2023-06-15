@@ -37,7 +37,7 @@ public class EasyTrackUtil {
      */
     public static String getTrackKey(EntityMetadata entityMetadata, Object entity) {
         //构建获取对象追踪key表达式缓存
-        TrackKeyFunc<Object> entityTrackKeyFunc = trackKeyFuncMap.computeIfAbsent(entity.getClass(), k -> {
+        TrackKeyFunc<Object> entityTrackKeyFunc =EasyMapUtil.computeIfAbsent(trackKeyFuncMap,entity.getClass(), k -> {
             Collection<String> keyProperties = entityMetadata.getKeyProperties();
             int shardingCapacity = 0;
             boolean multiDataSourceMapping = entityMetadata.isMultiDataSourceMapping();

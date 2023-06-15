@@ -5,6 +5,7 @@ import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
 import com.easy.query.core.expression.lambda.PropertyVoidSetter;
 import com.easy.query.core.util.EasyClassUtil;
+import com.easy.query.core.util.EasyMapUtil;
 
 import java.beans.PropertyDescriptor;
 import java.lang.invoke.CallSite;
@@ -21,6 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * 用来快速实现bean对象的get和set方法，
  * 直接获取get方法的lambda基本是零开销调用
  * set也是零开销调用，除了第一次需要构建lambda和缓存
+ *
  * @author xuejiaming
  */
 public class FastBean {
@@ -45,7 +47,7 @@ public class FastBean {
 //    }
 
     public Property<Object, ?> getBeanGetter(PropertyDescriptor prop) {
-        return propertyGetterCache.computeIfAbsent(prop.getName(), k -> getLambdaProperty(prop));
+        return EasyMapUtil.computeIfAbsent(propertyGetterCache, prop.getName(), k -> getLambdaProperty(prop));
     }
 
     private Property<Object, ?> getLambdaProperty(PropertyDescriptor prop) {
@@ -70,8 +72,9 @@ public class FastBean {
     }
 
     public PropertySetterCaller<Object> getBeanSetter(PropertyDescriptor prop) {
-        return propertySetterCache.computeIfAbsent(prop.getName(), key -> getLambdaPropertySetter(prop));
+        return EasyMapUtil.computeIfAbsent(propertySetterCache,prop.getName(), key -> getLambdaPropertySetter(prop));
     }
+
     private PropertySetterCaller<Object> getLambdaPropertySetter(PropertyDescriptor prop) {
         Class<?> propertyType = prop.getPropertyType();
         MethodHandles.Lookup caller = MethodHandles.lookup();
@@ -82,7 +85,7 @@ public class FastBean {
         try {
 
             //()->{bean.setxxx(propertyType)}
-            MethodType instantiatedMethodType = MethodType.methodType(void.class,beanClass, propertyType);
+            MethodType instantiatedMethodType = MethodType.methodType(void.class, beanClass, propertyType);
             MethodHandle target = caller.findVirtual(beanClass, getFunName, setter);
             MethodType samMethodType = MethodType.methodType(void.class, Object.class, Object.class);
             CallSite site = LambdaMetafactory.metafactory(
@@ -94,7 +97,7 @@ public class FastBean {
                     instantiatedMethodType
             );
 
-            PropertyVoidSetter<Object,Object> objectPropertyVoidSetter = (PropertyVoidSetter<Object,Object>) site.getTarget().invokeExact();
+            PropertyVoidSetter<Object, Object> objectPropertyVoidSetter = (PropertyVoidSetter<Object, Object>) site.getTarget().invokeExact();
             return objectPropertyVoidSetter::apply;
         } catch (Throwable e) {
             throw new EasyQueryException(e);

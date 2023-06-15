@@ -3,6 +3,7 @@ package com.easy.query.core.expression.executor.parser.descriptor.impl;
 import com.easy.query.core.expression.executor.parser.descriptor.TablePredicateParseDescriptor;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
+import com.easy.query.core.util.EasyMapUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,7 +36,7 @@ public class TablePredicateParseDescriptorImpl implements TablePredicateParseDes
 
     @Override
     public void addTablePredicate(TableAvailable table, PredicateSegment predicateSegment) {
-        List<PredicateSegment> predicateSegments = tablePredicates.computeIfAbsent(table, o -> new ArrayList<>());
+        List<PredicateSegment> predicateSegments = EasyMapUtil.computeIfAbsent(tablePredicates,table, o -> new ArrayList<>());
         predicateSegments.add(predicateSegment);
     }
 

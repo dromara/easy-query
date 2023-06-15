@@ -6,6 +6,7 @@ import com.easy.query.core.basic.jdbc.executor.internal.common.SQLRouteUnit;
 import com.easy.query.core.enums.MergeBehaviorEnum;
 import com.easy.query.core.expression.executor.parser.ExecutionContext;
 import com.easy.query.core.expression.sql.expression.EntitySQLExpression;
+import com.easy.query.core.util.EasyMapUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -75,7 +76,7 @@ public abstract class BaseExecutionCreator implements ExecutionCreator{
                 String dataSourceName = executionUnit.getDataSourceName();
                 SQLRouteUnit sqlRouteUnit = executionUnit.getSQLRouteUnit();
                 String sql = sqlRouteUnit.getSQL();
-                Map<String, ExecutionUnit> sqlExecutionUnitMap = lastUnitMap.computeIfAbsent(dataSourceName,o->new HashMap<>());
+                Map<String, ExecutionUnit> sqlExecutionUnitMap = EasyMapUtil.computeIfAbsent(lastUnitMap,dataSourceName, o->new HashMap<>());
                 ExecutionUnit lastUnit = sqlExecutionUnitMap.get(sql);
                 if(lastUnit==null||!lastUnit.isSame(executionUnit)){
                    List<Object> entities = new ArrayList<>();

@@ -14,6 +14,7 @@ import com.easy.query.core.sharding.router.table.BaseTableRouteUnit;
 import com.easy.query.core.sharding.router.table.TableRouteUnit;
 import com.easy.query.core.sharding.router.table.TableUnit;
 import com.easy.query.core.util.EasyCollectionUtil;
+import com.easy.query.core.util.EasyMapUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -61,8 +62,8 @@ public class DefaultTableRouteEngine implements TableRouteEngine {
 //                    continue;
 //                }
                 String dataSource = shardingRouteUnit.getDataSourceName();
-                Map<TableAvailable, Set<TableRouteUnit>> tableNamMaps = routeMaps.computeIfAbsent(dataSource, o -> new HashMap<>());
-                Set<TableRouteUnit> tableRouteUnits = tableNamMaps.computeIfAbsent(shardingTable, o -> new HashSet<>());
+                Map<TableAvailable, Set<TableRouteUnit>> tableNamMaps = EasyMapUtil.computeIfAbsent(routeMaps,dataSource, o -> new HashMap<>());
+                Set<TableRouteUnit> tableRouteUnits = EasyMapUtil.computeIfAbsent(tableNamMaps,shardingTable, o -> new HashSet<>());
                 tableRouteUnits.add(shardingRouteUnit);
                 tableRouteUnitSize++;
             }

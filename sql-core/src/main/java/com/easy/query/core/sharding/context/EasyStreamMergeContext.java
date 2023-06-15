@@ -18,6 +18,7 @@ import com.easy.query.core.basic.jdbc.executor.internal.merge.segment.PropertyGr
 import com.easy.query.core.basic.jdbc.executor.internal.merge.segment.PropertyOrder;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
+import com.easy.query.core.util.EasyMapUtil;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.sql.SQLException;
@@ -141,7 +142,7 @@ public class EasyStreamMergeContext implements StreamMergeContext {
     public List<EasyConnection> getEasyConnections(String dataSourceName, int createDbConnectionCount) {
 
         //当前需要被回收的链接
-        Collection<CloseableConnection> closeableConnections = this.closeableDataSourceConnections.computeIfAbsent(dataSourceName, o -> new ArrayList<>());
+        Collection<CloseableConnection> closeableConnections = EasyMapUtil.computeIfAbsent(this.closeableDataSourceConnections,dataSourceName, o -> new ArrayList<>());
         ConnectionStrategyEnum connectionStrategy = getConnectionStrategy(createDbConnectionCount);
         List<EasyConnection> easyConnections = connectionManager.getEasyConnections(createDbConnectionCount, dataSourceName, connectionStrategy);
         for (EasyConnection easyConnection : easyConnections) {

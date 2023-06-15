@@ -28,6 +28,7 @@ import com.easy.query.core.sharding.router.ShardingRouteResult;
 import com.easy.query.core.util.EasyBitwiseUtil;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
+import com.easy.query.core.util.EasyMapUtil;
 import com.easy.query.core.util.EasyShardingUtil;
 import com.easy.query.core.util.EasySQLSegmentUtil;
 
@@ -115,7 +116,7 @@ public class DefaultRewriteContextFactory implements RewriteContextFactory {
                             hasAvg=Objects.equals(AggregationType.AVG,aggregationColumnSegment.getAggregationType());
                         }
                         GroupRewriteStatus groupRewriteStatusKey = new GroupRewriteStatus(aggregationColumnSegment.getTable().getIndex(), aggregationColumnSegment.getPropertyName());
-                        GroupRewriteStatus groupRewriteStatus = groupRewriteStatusMap.computeIfAbsent(groupRewriteStatusKey, k->groupRewriteStatusKey);
+                        GroupRewriteStatus groupRewriteStatus = EasyMapUtil.computeIfAbsent(groupRewriteStatusMap,groupRewriteStatusKey, k->groupRewriteStatusKey);
 
                         GroupAvgBehaviorEnum groupAvgBehavior = GroupAvgBehaviorEnum.getGroupAvgBehavior(aggregationColumnSegment.getAggregationType());
                         if(groupAvgBehavior!=null){

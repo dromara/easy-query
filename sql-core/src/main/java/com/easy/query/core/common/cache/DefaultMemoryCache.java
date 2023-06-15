@@ -1,15 +1,17 @@
 package com.easy.query.core.common.cache;
 
+import com.easy.query.core.util.EasyMapUtil;
+
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 /**
+ * @author xuejiaming
  * @FileName: DefaultMemoryCache.java
  * @Description: 文件说明
  * @Date: 2023/2/11 10:14
- * @author xuejiaming
  */
-public class DefaultMemoryCache<K,V> implements Cache<K,V> {
+public class DefaultMemoryCache<K, V> implements Cache<K, V> {
     private final ConcurrentHashMap<K, V> map = new ConcurrentHashMap<K, V>();
 
     @Override
@@ -39,6 +41,6 @@ public class DefaultMemoryCache<K,V> implements Cache<K,V> {
 
     @Override
     public V computeIfAbsent(K key, Function<? super K, ? extends V> mappingFunction) {
-        return map.computeIfAbsent(key,mappingFunction);
+        return EasyMapUtil.computeIfAbsent(map, key, mappingFunction);
     }
 }
