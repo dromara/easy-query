@@ -6,13 +6,13 @@ import com.easy.query.api4kt.select.KtQueryable3;
 import com.easy.query.api4kt.select.impl.EasyKtQueryable;
 import com.easy.query.api4kt.select.impl.EasyKtQueryable3;
 import com.easy.query.api4kt.sql.SQLKtColumnAsSelector;
-import com.easy.query.api4kt.sql.SQLKtColumnSelector;
 import com.easy.query.api4kt.sql.SQLKtGroupBySelector;
+import com.easy.query.api4kt.sql.SQLKtOrderBySelector;
 import com.easy.query.api4kt.sql.SQLKtWhereAggregatePredicate;
 import com.easy.query.api4kt.sql.SQLKtWherePredicate;
 import com.easy.query.api4kt.sql.impl.SQLKtColumnAsSelectorImpl;
-import com.easy.query.api4kt.sql.impl.SQLKtColumnSelectorImpl;
 import com.easy.query.api4kt.sql.impl.SQLKtGroupBySelectorImpl;
+import com.easy.query.api4kt.sql.impl.SQLKtOrderByColumnSelectorImpl;
 import com.easy.query.api4kt.sql.impl.SQLKtWherePredicateImpl;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.select.ClientQueryable2;
@@ -131,32 +131,32 @@ public abstract class AbstractKtQueryable2<T1, T2> extends AbstractKtQueryable<T
     }
 
     @Override
-    public KtQueryable2<T1, T2> orderByAsc(boolean condition, SQLExpression1<SQLKtColumnSelector<T1>> selectExpression) {
+    public KtQueryable2<T1, T2> orderByAsc(boolean condition, SQLExpression1<SQLKtOrderBySelector<T1>> selectExpression) {
         super.orderByAsc(condition, selectExpression);
         return this;
     }
 
     @Override
-    public KtQueryable2<T1, T2> orderByAsc(boolean condition, SQLExpression2<SQLKtColumnSelector<T1>, SQLKtColumnSelector<T2>> selectExpression) {
+    public KtQueryable2<T1, T2> orderByAsc(boolean condition, SQLExpression2<SQLKtOrderBySelector<T1>, SQLKtOrderBySelector<T2>> selectExpression) {
         if (condition) {
             entityQueryable2.orderByAsc((selector1, selector2) -> {
-                selectExpression.apply(new SQLKtColumnSelectorImpl<>(selector1), new SQLKtColumnSelectorImpl<>(selector2));
+                selectExpression.apply(new SQLKtOrderByColumnSelectorImpl<>(selector1), new SQLKtOrderByColumnSelectorImpl<>(selector2));
             });
         }
         return this;
     }
 
     @Override
-    public KtQueryable2<T1, T2> orderByDesc(boolean condition, SQLExpression1<SQLKtColumnSelector<T1>> selectExpression) {
+    public KtQueryable2<T1, T2> orderByDesc(boolean condition, SQLExpression1<SQLKtOrderBySelector<T1>> selectExpression) {
         super.orderByDesc(condition, selectExpression);
         return this;
     }
 
     @Override
-    public KtQueryable2<T1, T2> orderByDesc(boolean condition, SQLExpression2<SQLKtColumnSelector<T1>, SQLKtColumnSelector<T2>> selectExpression) {
+    public KtQueryable2<T1, T2> orderByDesc(boolean condition, SQLExpression2<SQLKtOrderBySelector<T1>, SQLKtOrderBySelector<T2>> selectExpression) {
         if (condition) {
             entityQueryable2.orderByDesc((selector1, selector2) -> {
-                selectExpression.apply(new SQLKtColumnSelectorImpl<>(selector1), new SQLKtColumnSelectorImpl<>(selector2));
+                selectExpression.apply(new SQLKtOrderByColumnSelectorImpl<>(selector1), new SQLKtOrderByColumnSelectorImpl<>(selector2));
             });
         }
         return this;

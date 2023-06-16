@@ -20,6 +20,7 @@ public interface ColumnAsSelector<T1, TR> {
     TableAvailable getTable();
 
     ColumnAsSelector<T1, TR> column(String property);
+    ColumnAsSelector<T1, TR> columnConstAs(String columnConst, String alias);
 
     ColumnAsSelector<T1, TR> columnIgnore(String property);
 

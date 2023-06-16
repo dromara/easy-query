@@ -7,9 +7,7 @@ import com.easy.query.core.expression.func.AggregationType;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.FuncColumnSegment;
-import com.easy.query.core.expression.segment.GroupByColumnSegment;
 import com.easy.query.core.expression.segment.OrderFuncColumnSegment;
-import com.easy.query.core.expression.segment.impl.GroupColumnSegmentImpl;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 
 /**
@@ -37,8 +35,7 @@ public class OrderFuncColumnSegmentImpl implements OrderFuncColumnSegment {
 
     @Override
     public String toSQL(ToSQLContext toSQLContext) {
-
-        String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumn(runtimeContext,table,propertyName,toSQLContext);
+        String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumnByProperty(runtimeContext,table,propertyName,toSQLContext);
         String funcColumn = columnFunction.getFuncColumn(sqlColumnSegment);
         StringBuilder sql = new StringBuilder().append(funcColumn);
         if(asc){

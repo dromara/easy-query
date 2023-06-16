@@ -39,7 +39,6 @@ public interface SQLColumnSelector<T1> {
     }
 
     default <T2> SQLColumnSelector<T2> then(SQLColumnSelector<T2> sub) {
-        getColumnSelector().then(sub.getColumnSelector());
         return sub;
     }
 }

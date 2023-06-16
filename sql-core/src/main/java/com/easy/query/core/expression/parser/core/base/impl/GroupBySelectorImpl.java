@@ -48,6 +48,14 @@ public class GroupBySelectorImpl<T1> implements GroupBySelector<T1> {
     }
 
     @Override
+    public GroupBySelector<T1> columnConst(String columnConst) {
+        EntityTableExpressionBuilder table = entityQueryExpressionBuilder.getTable(index);
+        GroupByColumnSegment groupByColumnSegment = sqlSegmentFactory.createGroupByConstSegment(table.getEntityTable(), entityQueryExpressionBuilder.getRuntimeContext(),columnConst);
+        sqlSegmentBuilder.append(groupByColumnSegment);
+        return this;
+    }
+
+    @Override
     public GroupBySelector<T1> columnFunc(ColumnPropertyFunction columnPropertyFunction) {
         EntityTableExpressionBuilder table = entityQueryExpressionBuilder.getTable(index);
         String propertyName = columnPropertyFunction.getPropertyName();

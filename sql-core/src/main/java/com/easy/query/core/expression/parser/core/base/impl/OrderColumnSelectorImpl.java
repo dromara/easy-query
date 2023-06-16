@@ -3,8 +3,8 @@ package com.easy.query.core.expression.parser.core.base.impl;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.parser.core.base.ColumnSelector;
-import com.easy.query.core.expression.segment.OrderByColumnSegment;
+import com.easy.query.core.expression.parser.core.base.OrderBySelector;
+import com.easy.query.core.expression.segment.OrderBySegment;
 import com.easy.query.core.expression.segment.OrderFuncColumnSegment;
 import com.easy.query.core.expression.segment.SQLEntitySegment;
 import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
@@ -19,7 +19,7 @@ import java.util.Objects;
  * @Description: 文件说明
  * @Date: 2023/2/8 12:26
  */
-public class OrderColumnSelectorImpl<T1> implements ColumnSelector<T1> {
+public class OrderColumnSelectorImpl<T1> implements OrderBySelector<T1> {
     protected final int index;
     protected final EntityQueryExpressionBuilder entityQueryExpressionBuilder;
     protected final TableAvailable table;
@@ -39,15 +39,15 @@ public class OrderColumnSelectorImpl<T1> implements ColumnSelector<T1> {
     }
 
     @Override
-    public ColumnSelector<T1> column(String property) {
+    public OrderBySelector<T1> column(String property) {
         EntityTableExpressionBuilder table = entityQueryExpressionBuilder.getTable(index);
-        OrderByColumnSegment orderByColumnSegment = sqlSegmentFactory.createOrderByColumnSegment(table.getEntityTable(), property, entityQueryExpressionBuilder.getRuntimeContext(), asc);
+        OrderBySegment orderByColumnSegment = sqlSegmentFactory.createOrderByColumnSegment(table.getEntityTable(), property, entityQueryExpressionBuilder.getRuntimeContext(), asc);
         entityQueryExpressionBuilder.getOrder().append(orderByColumnSegment);
         return this;
     }
 
     @Override
-    public ColumnSelector<T1> columnFunc(ColumnPropertyFunction columnPropertyFunction) {
+    public OrderBySelector<T1> columnFunc(ColumnPropertyFunction columnPropertyFunction) {
 
         EntityTableExpressionBuilder table = entityQueryExpressionBuilder.getTable(index);
         String propertyName = columnPropertyFunction.getPropertyName();
@@ -58,7 +58,15 @@ public class OrderColumnSelectorImpl<T1> implements ColumnSelector<T1> {
     }
 
     @Override
-    public ColumnSelector<T1> columnIgnore(String property) {
+    public OrderBySelector<T1> columnConst(String columnConst) {
+        EntityTableExpressionBuilder table = entityQueryExpressionBuilder.getTable(index);
+        OrderBySegment orderFuncColumnSegment = sqlSegmentFactory.createOrderByConstSegment(table.getEntityTable(), entityQueryExpressionBuilder.getRuntimeContext(), columnConst, asc);
+        entityQueryExpressionBuilder.getOrder().append(orderFuncColumnSegment);
+        return this;
+    }
+
+    @Override
+    public OrderBySelector<T1> columnIgnore(String property) {
 
         EntityTableExpressionBuilder table = entityQueryExpressionBuilder.getTable(index);
         entityQueryExpressionBuilder.getOrder().getSQLSegments().removeIf(sqlSegment -> {
@@ -72,11 +80,11 @@ public class OrderColumnSelectorImpl<T1> implements ColumnSelector<T1> {
     }
 
     @Override
-    public ColumnSelector<T1> columnAll() {
+    public OrderBySelector<T1> columnAll() {
         EntityTableExpressionBuilder table = entityQueryExpressionBuilder.getTable(index);
         Collection<String> properties = table.getEntityMetadata().getProperties();
         for (String property : properties) {
-            OrderByColumnSegment orderByColumnSegment = sqlSegmentFactory.createOrderByColumnSegment(table.getEntityTable(), property, entityQueryExpressionBuilder.getRuntimeContext(), asc);
+            OrderBySegment orderByColumnSegment = sqlSegmentFactory.createOrderByColumnSegment(table.getEntityTable(), property, entityQueryExpressionBuilder.getRuntimeContext(), asc);
             entityQueryExpressionBuilder.getOrder().append(orderByColumnSegment);
         }
         return this;

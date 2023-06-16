@@ -38,7 +38,7 @@ public class ColumnWithSelfSegmentImpl implements ColumnWithSelfSegment {
     @Override
     public String toSQL(ToSQLContext toSQLContext) {
         EasySQLUtil.addParameter(toSQLContext,new EasyConstSQLParameter(entityTable,propertyName,val));
-        String sqlColumnSegment1 = EasySQLExpressionUtil.getSQLOwnerColumn(runtimeContext,entityTable,propertyName,toSQLContext);
+        String sqlColumnSegment1 = EasySQLExpressionUtil.getSQLOwnerColumnByProperty(runtimeContext,entityTable,propertyName,toSQLContext);
         return sqlColumnSegment1 +" "+ compare.getSQL() + " "+sqlColumnSegment1+selfLink;
     }
 

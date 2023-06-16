@@ -3,6 +3,7 @@ package com.easy.query.api4kt.select;
 import com.easy.query.api4kt.sql.SQLKtColumnAsSelector;
 import com.easy.query.api4kt.sql.SQLKtColumnSelector;
 import com.easy.query.api4kt.sql.SQLKtGroupBySelector;
+import com.easy.query.api4kt.sql.SQLKtOrderBySelector;
 import com.easy.query.api4kt.sql.SQLKtWhereAggregatePredicate;
 import com.easy.query.api4kt.sql.SQLKtWherePredicate;
 import com.easy.query.api4kt.util.EasyKtLambdaUtil;
@@ -222,27 +223,27 @@ public interface KtQueryable<T1> extends Query<T1>,
 
     KtQueryable<T1> having(boolean condition, SQLExpression1<SQLKtWhereAggregatePredicate<T1>> predicateExpression);
 
-    default KtQueryable<T1> orderByAsc(SQLExpression1<SQLKtColumnSelector<T1>> selectExpression) {
+    default KtQueryable<T1> orderByAsc(SQLExpression1<SQLKtOrderBySelector<T1>> selectExpression) {
         return orderByAsc(true, selectExpression);
     }
 
-    default KtQueryable<T1> orderByAsc(boolean condition, SQLExpression1<SQLKtColumnSelector<T1>> selectExpression) {
+    default KtQueryable<T1> orderByAsc(boolean condition, SQLExpression1<SQLKtOrderBySelector<T1>> selectExpression) {
         return orderBy(condition, selectExpression, true);
     }
 
-    default KtQueryable<T1> orderByDesc(SQLExpression1<SQLKtColumnSelector<T1>> selectExpression) {
+    default KtQueryable<T1> orderByDesc(SQLExpression1<SQLKtOrderBySelector<T1>> selectExpression) {
         return orderByDesc(true, selectExpression);
     }
 
-    default KtQueryable<T1> orderByDesc(boolean condition, SQLExpression1<SQLKtColumnSelector<T1>> selectExpression) {
+    default KtQueryable<T1> orderByDesc(boolean condition, SQLExpression1<SQLKtOrderBySelector<T1>> selectExpression) {
         return orderBy(condition, selectExpression, false);
     }
 
-    default KtQueryable<T1> orderBy(SQLExpression1<SQLKtColumnSelector<T1>> selectExpression, boolean asc) {
+    default KtQueryable<T1> orderBy(SQLExpression1<SQLKtOrderBySelector<T1>> selectExpression, boolean asc) {
         return orderBy(true, selectExpression, asc);
     }
 
-    KtQueryable<T1> orderBy(boolean condition, SQLExpression1<SQLKtColumnSelector<T1>> selectExpression, boolean asc);
+    KtQueryable<T1> orderBy(boolean condition, SQLExpression1<SQLKtOrderBySelector<T1>> selectExpression, boolean asc);
 
     /**
      * @param configuration

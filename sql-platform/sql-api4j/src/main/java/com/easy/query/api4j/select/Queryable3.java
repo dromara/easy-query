@@ -2,8 +2,8 @@ package com.easy.query.api4j.select;
 
 import com.easy.query.api4j.sql.SQLColumnAsSelector;
 import com.easy.query.api4j.sql.SQLColumnResultSelector;
-import com.easy.query.api4j.sql.SQLColumnSelector;
 import com.easy.query.api4j.sql.SQLGroupBySelector;
+import com.easy.query.api4j.sql.SQLOrderBySelector;
 import com.easy.query.api4j.sql.SQLWhereAggregatePredicate;
 import com.easy.query.api4j.sql.SQLWherePredicate;
 import com.easy.query.api4j.sql.impl.SQLColumnResultSelectorImpl;
@@ -207,31 +207,31 @@ public interface Queryable3<T1, T2, T3> extends Queryable<T1> {
     //endregion
     //region order
     @Override
-    default Queryable3<T1, T2, T3> orderByAsc(SQLExpression1<SQLColumnSelector<T1>> selectExpression) {
+    default Queryable3<T1, T2, T3> orderByAsc(SQLExpression1<SQLOrderBySelector<T1>> selectExpression) {
         return orderByAsc(true, selectExpression);
     }
 
     @Override
-    Queryable3<T1, T2, T3> orderByAsc(boolean condition, SQLExpression1<SQLColumnSelector<T1>> selectExpression);
+    Queryable3<T1, T2, T3> orderByAsc(boolean condition, SQLExpression1<SQLOrderBySelector<T1>> selectExpression);
 
-    default Queryable3<T1, T2, T3> orderByAsc(SQLExpression3<SQLColumnSelector<T1>, SQLColumnSelector<T2>, SQLColumnSelector<T3>> selectExpression) {
+    default Queryable3<T1, T2, T3> orderByAsc(SQLExpression3<SQLOrderBySelector<T1>, SQLOrderBySelector<T2>, SQLOrderBySelector<T3>> selectExpression) {
         return orderByAsc(true, selectExpression);
     }
 
-    Queryable3<T1, T2, T3> orderByAsc(boolean condition, SQLExpression3<SQLColumnSelector<T1>, SQLColumnSelector<T2>, SQLColumnSelector<T3>> selectExpression);
+    Queryable3<T1, T2, T3> orderByAsc(boolean condition, SQLExpression3<SQLOrderBySelector<T1>, SQLOrderBySelector<T2>, SQLOrderBySelector<T3>> selectExpression);
 
     @Override
-    default Queryable3<T1, T2, T3> orderByDesc(SQLExpression1<SQLColumnSelector<T1>> selectExpression) {
+    default Queryable3<T1, T2, T3> orderByDesc(SQLExpression1<SQLOrderBySelector<T1>> selectExpression) {
         return orderByDesc(true, selectExpression);
     }
 
     @Override
-    Queryable3<T1, T2, T3> orderByDesc(boolean condition, SQLExpression1<SQLColumnSelector<T1>> selectExpression);
-    default Queryable3<T1, T2, T3> orderByDesc(SQLExpression3<SQLColumnSelector<T1>, SQLColumnSelector<T2>, SQLColumnSelector<T3>> selectExpression) {
+    Queryable3<T1, T2, T3> orderByDesc(boolean condition, SQLExpression1<SQLOrderBySelector<T1>> selectExpression);
+    default Queryable3<T1, T2, T3> orderByDesc(SQLExpression3<SQLOrderBySelector<T1>, SQLOrderBySelector<T2>, SQLOrderBySelector<T3>> selectExpression) {
         return orderByDesc(true, selectExpression);
     }
 
-    Queryable3<T1, T2, T3> orderByDesc(boolean condition, SQLExpression3<SQLColumnSelector<T1>, SQLColumnSelector<T2>, SQLColumnSelector<T3>> selectExpression);
+    Queryable3<T1, T2, T3> orderByDesc(boolean condition, SQLExpression3<SQLOrderBySelector<T1>, SQLOrderBySelector<T2>, SQLOrderBySelector<T3>> selectExpression);
     //endregion
     //region limit
 

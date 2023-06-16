@@ -23,14 +23,17 @@ public interface SQLKtGroupBySelector<T1> {
         getGroupBySelector().column(EasyKtLambdaUtil.getPropertyName(column));
         return this;
     }
+    default SQLKtGroupBySelector<T1> columnConst(String columnConst) {
+        getGroupBySelector().columnConst(columnConst);
+        return this;
+    }
 
     default SQLKtGroupBySelector<T1> columnFunc(ColumnPropertyFunction columnPropertyFunction) {
         getGroupBySelector().columnFunc(columnPropertyFunction);
         return this;
     }
 
-    default <T2> SQLKtGroupBySelector<T2> and(SQLKtGroupBySelector<T2> sub) {
-        getGroupBySelector().and(sub.getGroupBySelector());
+    default <T2> SQLKtGroupBySelector<T2> then(SQLKtGroupBySelector<T2> sub) {
         return sub;
     }
 }

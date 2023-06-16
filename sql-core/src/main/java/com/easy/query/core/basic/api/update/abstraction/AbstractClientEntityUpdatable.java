@@ -2,22 +2,21 @@ package com.easy.query.core.basic.api.update.abstraction;
 
 import com.easy.query.core.basic.api.internal.AbstractSQLExecuteRows;
 import com.easy.query.core.basic.api.update.ClientEntityUpdatable;
+import com.easy.query.core.basic.extension.interceptor.EntityInterceptor;
+import com.easy.query.core.basic.extension.interceptor.Interceptor;
 import com.easy.query.core.basic.extension.track.TrackContext;
 import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
-import com.easy.query.core.basic.extension.interceptor.EntityInterceptor;
-import com.easy.query.core.basic.extension.interceptor.Interceptor;
-import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.lambda.SQLExpression1;
-import com.easy.query.core.expression.parser.core.base.ColumnSelector;
+import com.easy.query.core.expression.parser.core.base.ColumnSetSelector;
 import com.easy.query.core.expression.parser.core.base.impl.ColumnSetSelectorImpl;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
@@ -31,7 +30,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 /**
  * @author xuejiaming
@@ -121,7 +119,7 @@ public abstract class AbstractClientEntityUpdatable<T> extends AbstractSQLExecut
     }
 
     @Override
-    public ClientEntityUpdatable<T> setColumns(boolean condition, SQLExpression1<ColumnSelector<T>>
+    public ClientEntityUpdatable<T> setColumns(boolean condition, SQLExpression1<ColumnSetSelector<T>>
             columnSelectorExpression) {
         if (condition) {
             ColumnSetSelectorImpl<T> columnSelector = new ColumnSetSelectorImpl<>(table.getIndex(), entityUpdateExpressionBuilder, entityUpdateExpressionBuilder.getSetColumns());
@@ -131,7 +129,7 @@ public abstract class AbstractClientEntityUpdatable<T> extends AbstractSQLExecut
     }
 
     @Override
-    public ClientEntityUpdatable<T> setIgnoreColumns(boolean condition, SQLExpression1<ColumnSelector<T>>
+    public ClientEntityUpdatable<T> setIgnoreColumns(boolean condition, SQLExpression1<ColumnSetSelector<T>>
             columnSelectorExpression) {
         if (condition) {
             ColumnSetSelectorImpl<T> columnSelector = new ColumnSetSelectorImpl<>(table.getIndex(), entityUpdateExpressionBuilder, entityUpdateExpressionBuilder.getSetIgnoreColumns());
@@ -141,7 +139,7 @@ public abstract class AbstractClientEntityUpdatable<T> extends AbstractSQLExecut
     }
 
     @Override
-    public ClientEntityUpdatable<T> whereColumns(boolean condition, SQLExpression1<ColumnSelector<T>>
+    public ClientEntityUpdatable<T> whereColumns(boolean condition, SQLExpression1<ColumnSetSelector<T>>
             columnSelectorExpression) {
         if (condition) {
             ColumnSetSelectorImpl<T> columnSelector = new ColumnSetSelectorImpl<>(table.getIndex(), entityUpdateExpressionBuilder, entityUpdateExpressionBuilder.getWhereColumns());

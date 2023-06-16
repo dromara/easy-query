@@ -14,8 +14,8 @@ import com.easy.query.core.expression.lambda.SQLExpression3;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnResultSelector;
-import com.easy.query.core.expression.parser.core.base.ColumnSelector;
 import com.easy.query.core.expression.parser.core.base.GroupBySelector;
+import com.easy.query.core.expression.parser.core.base.OrderBySelector;
 import com.easy.query.core.expression.parser.core.base.WhereAggregatePredicate;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.segment.FuncColumnSegment;
@@ -184,32 +184,32 @@ public abstract class AbstractClientQueryable2<T1, T2> extends AbstractClientQue
     }
 
     @Override
-    public ClientQueryable2<T1, T2> orderByAsc(boolean condition, SQLExpression1<ColumnSelector<T1>> selectExpression) {
+    public ClientQueryable2<T1, T2> orderByAsc(boolean condition, SQLExpression1<OrderBySelector<T1>> selectExpression) {
         super.orderByAsc(condition, selectExpression);
         return this;
     }
 
     @Override
-    public ClientQueryable2<T1, T2> orderByAsc(boolean condition, SQLExpression2<ColumnSelector<T1>, ColumnSelector<T2>> selectExpression) {
+    public ClientQueryable2<T1, T2> orderByAsc(boolean condition, SQLExpression2<OrderBySelector<T1>, OrderBySelector<T2>> selectExpression) {
         if (condition) {
-            ColumnSelector<T1> sqlOrderColumnSelector1 = getSQLExpressionProvider1().getOrderColumnSelector(true);
-            ColumnSelector<T2> sqlOrderColumnSelector2 = getSQLExpressionProvider2().getOrderColumnSelector(true);
+            OrderBySelector<T1> sqlOrderColumnSelector1 = getSQLExpressionProvider1().getOrderColumnSelector(true);
+            OrderBySelector<T2> sqlOrderColumnSelector2 = getSQLExpressionProvider2().getOrderColumnSelector(true);
             selectExpression.apply(sqlOrderColumnSelector1, sqlOrderColumnSelector2);
         }
         return this;
     }
 
     @Override
-    public ClientQueryable2<T1, T2> orderByDesc(boolean condition, SQLExpression1<ColumnSelector<T1>> selectExpression) {
+    public ClientQueryable2<T1, T2> orderByDesc(boolean condition, SQLExpression1<OrderBySelector<T1>> selectExpression) {
         super.orderByAsc(condition, selectExpression);
         return this;
     }
 
     @Override
-    public ClientQueryable2<T1, T2> orderByDesc(boolean condition, SQLExpression2<ColumnSelector<T1>, ColumnSelector<T2>> selectExpression) {
+    public ClientQueryable2<T1, T2> orderByDesc(boolean condition, SQLExpression2<OrderBySelector<T1>, OrderBySelector<T2>> selectExpression) {
         if (condition) {
-            ColumnSelector<T1> sqlOrderColumnSelector1 = getSQLExpressionProvider1().getOrderColumnSelector(false);
-            ColumnSelector<T2> sqlOrderColumnSelector2 = getSQLExpressionProvider2().getOrderColumnSelector(false);
+            OrderBySelector<T1> sqlOrderColumnSelector1 = getSQLExpressionProvider1().getOrderColumnSelector(false);
+            OrderBySelector<T2> sqlOrderColumnSelector2 = getSQLExpressionProvider2().getOrderColumnSelector(false);
             selectExpression.apply(sqlOrderColumnSelector1, sqlOrderColumnSelector2);
         }
         return this;

@@ -32,7 +32,7 @@ public class ColumnInsertSegmentImpl implements ColumnInsertSegment {
     @Override
     public String toSQL(ToSQLContext toSQLContext) {
         EasySQLUtil.addParameter(toSQLContext,new PropertySQLParameter(table,propertyName));
-        String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumn(runtimeContext,table,propertyName,toSQLContext);
+        String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumnByProperty(runtimeContext,table,propertyName,toSQLContext);
         StringBuilder sql = new StringBuilder();
         sql.append(sqlColumnSegment);
         return sql.toString();

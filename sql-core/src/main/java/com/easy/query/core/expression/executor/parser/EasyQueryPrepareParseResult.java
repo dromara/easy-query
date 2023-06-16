@@ -8,7 +8,7 @@ import com.easy.query.core.expression.executor.parser.descriptor.TableParseDescr
 import com.easy.query.core.expression.executor.parser.descriptor.TablePredicateParseDescriptor;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.FuncColumnSegment;
-import com.easy.query.core.expression.segment.OrderByColumnSegment;
+import com.easy.query.core.expression.segment.OrderBySegment;
 import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
@@ -62,7 +62,7 @@ public class EasyQueryPrepareParseResult implements QueryPrepareParseResult {
             SQLBuilderSegment order = easyQuerySQLExpression.getOrder();
             if (EasySQLSegmentUtil.isNotEmpty(order)) {
                 SQLSegment firstOrder = EasyCollectionUtil.first(order.getSQLSegments());
-                OrderByColumnSegment firstOrderColumn = (OrderByColumnSegment) firstOrder;
+                OrderBySegment firstOrderColumn = (OrderBySegment) firstOrder;
                 TableAvailable table = firstOrderColumn.getTable();
                 ShardingInitConfig shardingInitConfig = table.getEntityMetadata().getShardingInitConfig();
                 ShardingSequenceConfig shardingSequenceConfig = shardingInitConfig.getShardingSequenceConfig();

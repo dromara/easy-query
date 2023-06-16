@@ -3,7 +3,7 @@ package com.easy.query.core.expression.segment.impl;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.GroupByColumnSegment;
-import com.easy.query.core.expression.segment.OrderByColumnSegment;
+import com.easy.query.core.expression.segment.OrderBySegment;
 
 /**
  * create time 2023/4/30 21:45
@@ -17,7 +17,7 @@ public class GroupColumnSegmentImpl extends ColumnSegmentImpl implements GroupBy
     }
 
     @Override
-    public OrderByColumnSegment createOrderByColumnSegment(boolean asc) {
+    public OrderBySegment createOrderByColumnSegment(boolean asc) {
         return runtimeContext.getSQLSegmentFactory().createOrderByColumnSegment(table,propertyName,runtimeContext,asc);
     }
 }

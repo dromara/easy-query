@@ -9,7 +9,7 @@ import com.easy.query.core.expression.executor.parser.SequenceParseResult;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.FuncColumnSegment;
 import com.easy.query.core.expression.segment.ColumnSegment;
-import com.easy.query.core.expression.segment.OrderByColumnSegment;
+import com.easy.query.core.expression.segment.OrderBySegment;
 import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
 import com.easy.query.core.expression.segment.GroupByColumnSegment;
 import com.easy.query.core.expression.segment.SQLSegment;
@@ -81,7 +81,7 @@ public class DefaultRewriteContextFactory implements RewriteContextFactory {
                         String firstSequenceProperty = shardingSequenceConfig.getFirstSequencePropertyOrNull();
                         if (firstSequenceProperty != null) {
 
-                            OrderByColumnSegment orderByColumnSegment = sqlSegmentFactory.createOrderByColumnSegment(table, firstSequenceProperty, runtimeContext, !reverse);
+                            OrderBySegment orderByColumnSegment = sqlSegmentFactory.createOrderByColumnSegment(table, firstSequenceProperty, runtimeContext, !reverse);
                             easyEntityPredicateSQLExpression.getOrder().append(orderByColumnSegment);
                             if (!easyEntityPredicateSQLExpression.getProjects().containsOnce(entityMetadata.getEntityClass(), firstSequenceProperty)) {
 

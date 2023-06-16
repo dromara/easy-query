@@ -13,10 +13,11 @@ public interface GroupBySelector<T1> {
     TableAvailable getTable();
 
     GroupBySelector<T1> column(String property);
+    GroupBySelector<T1> columnConst(String columnConst);
 
     GroupBySelector<T1> columnFunc(ColumnPropertyFunction columnPropertyFunction);
 
-    default <T2> GroupBySelector<T2> and(GroupBySelector<T2> sub) {
+    default <T2> GroupBySelector<T2> then(GroupBySelector<T2> sub) {
         return sub;
     }
 }

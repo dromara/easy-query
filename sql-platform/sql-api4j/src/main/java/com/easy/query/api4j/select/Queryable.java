@@ -3,6 +3,7 @@ package com.easy.query.api4j.select;
 import com.easy.query.api4j.sql.SQLColumnAsSelector;
 import com.easy.query.api4j.sql.SQLColumnSelector;
 import com.easy.query.api4j.sql.SQLGroupBySelector;
+import com.easy.query.api4j.sql.SQLOrderBySelector;
 import com.easy.query.api4j.sql.SQLWhereAggregatePredicate;
 import com.easy.query.api4j.sql.SQLWherePredicate;
 import com.easy.query.core.api.client.EasyQueryClient;
@@ -257,27 +258,27 @@ public interface Queryable<T1> extends Query<T1>,
 
     Queryable<T1> having(boolean condition, SQLExpression1<SQLWhereAggregatePredicate<T1>> predicateExpression);
 
-    default Queryable<T1> orderByAsc(SQLExpression1<SQLColumnSelector<T1>> selectExpression) {
+    default Queryable<T1> orderByAsc(SQLExpression1<SQLOrderBySelector<T1>> selectExpression) {
         return orderByAsc(true, selectExpression);
     }
 
-    default Queryable<T1> orderByAsc(boolean condition, SQLExpression1<SQLColumnSelector<T1>> selectExpression) {
+    default Queryable<T1> orderByAsc(boolean condition, SQLExpression1<SQLOrderBySelector<T1>> selectExpression) {
         return orderBy(condition, selectExpression, true);
     }
 
-    default Queryable<T1> orderByDesc(SQLExpression1<SQLColumnSelector<T1>> selectExpression) {
+    default Queryable<T1> orderByDesc(SQLExpression1<SQLOrderBySelector<T1>> selectExpression) {
         return orderByDesc(true, selectExpression);
     }
 
-    default Queryable<T1> orderByDesc(boolean condition, SQLExpression1<SQLColumnSelector<T1>> selectExpression) {
+    default Queryable<T1> orderByDesc(boolean condition, SQLExpression1<SQLOrderBySelector<T1>> selectExpression) {
         return orderBy(condition, selectExpression, false);
     }
 
-    default Queryable<T1> orderBy(SQLExpression1<SQLColumnSelector<T1>> selectExpression, boolean asc) {
+    default Queryable<T1> orderBy(SQLExpression1<SQLOrderBySelector<T1>> selectExpression, boolean asc) {
         return orderBy(true, selectExpression, asc);
     }
 
-    Queryable<T1> orderBy(boolean condition, SQLExpression1<SQLColumnSelector<T1>> selectExpression, boolean asc);
+    Queryable<T1> orderBy(boolean condition, SQLExpression1<SQLOrderBySelector<T1>> selectExpression, boolean asc);
 
     /**
      * @param configuration

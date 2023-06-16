@@ -23,14 +23,17 @@ public interface SQLGroupBySelector<T1> {
         getGroupBySelector().column(EasyLambdaUtil.getPropertyName(column));
         return this;
     }
+    default SQLGroupBySelector<T1> columnConst(String columnConst) {
+        getGroupBySelector().columnConst(columnConst);
+        return this;
+    }
 
     default SQLGroupBySelector<T1> columnFunc(ColumnPropertyFunction columnPropertyFunction) {
         getGroupBySelector().columnFunc(columnPropertyFunction);
         return this;
     }
 
-    default <T2> SQLGroupBySelector<T2> and(SQLGroupBySelector<T2> sub) {
-        getGroupBySelector().and(sub.getGroupBySelector());
+    default <T2> SQLGroupBySelector<T2> then(SQLGroupBySelector<T2> sub) {
         return sub;
     }
 }

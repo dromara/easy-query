@@ -33,26 +33,27 @@ import java.util.Objects;
 
 
 /**
+ * @author xuejiaming
  * @Description: 文件说明
  * @Date: 2023/3/7 12:32
- * @author xuejiaming
  */
 public class EasySQLExpressionUtil {
     private EasySQLExpressionUtil() {
     }
 
-    public static boolean expressionInvokeRoot(ToSQLContext sqlContext){
-        return sqlContext.expressionInvokeCountGetIncrement()==0;
+    public static boolean expressionInvokeRoot(ToSQLContext sqlContext) {
+        return sqlContext.expressionInvokeCountGetIncrement() == 0;
     }
-    public static void tableSQLExpressionRewrite(ToSQLContext sqlContext, EntityTableSQLExpression entityTableSQLExpression){
+
+    public static void tableSQLExpressionRewrite(ToSQLContext sqlContext, EntityTableSQLExpression entityTableSQLExpression) {
         SQLRewriteUnit sqlRewriteUnit = sqlContext.getSQLRewriteUnit();
-        if(sqlRewriteUnit==null){
+        if (sqlRewriteUnit == null) {
             return;
         }
         sqlRewriteUnit.rewriteTableName(entityTableSQLExpression);
     }
 
-    public static String getTableAlias(ToSQLContext toSQLContext,TableAvailable table){
+    public static String getTableAlias(ToSQLContext toSQLContext, TableAvailable table) {
         return toSQLContext.getAlias(table);
     }
 
@@ -79,26 +80,28 @@ public class EasySQLExpressionUtil {
 //            return hasAnyOperate(sqlEntityExpression);
 //        }
 //        return false;
-        return noSelectAndGroup(sqlEntityExpression) && (moreTableExpressionOrNoAnonymous(sqlEntityExpression)||hasAnyOperate(sqlEntityExpression));
+        return noSelectAndGroup(sqlEntityExpression) && (moreTableExpressionOrNoAnonymous(sqlEntityExpression) || hasAnyOperate(sqlEntityExpression));
     }
-    public static boolean limitAndOrderNotSetCurrent(EntityQueryExpressionBuilder sqlEntityExpression){
-        return noSelectAndGroup(sqlEntityExpression)&&!moreTableExpressionOrNoAnonymous(sqlEntityExpression)&&!hasAnyOperate(sqlEntityExpression);
+
+    public static boolean limitAndOrderNotSetCurrent(EntityQueryExpressionBuilder sqlEntityExpression) {
+        return noSelectAndGroup(sqlEntityExpression) && !moreTableExpressionOrNoAnonymous(sqlEntityExpression) && !hasAnyOperate(sqlEntityExpression);
     }
-    public static boolean noSelectAndGroup(EntityQueryExpressionBuilder sqlEntityExpression){
+
+    public static boolean noSelectAndGroup(EntityQueryExpressionBuilder sqlEntityExpression) {
         return sqlEntityExpression.getProjects().isEmpty() && !sqlEntityExpression.hasGroup();
     }
 
     public static boolean moreTableExpressionOrNoAnonymous(EntityQueryExpressionBuilder sqlEntityExpression) {
-       if(EasyCollectionUtil.isNotSingle(sqlEntityExpression.getTables())){
-           return true;
-       }
+        if (EasyCollectionUtil.isNotSingle(sqlEntityExpression.getTables())) {
+            return true;
+        }
         EntityTableExpressionBuilder entityTableExpressionBuilder = EasyCollectionUtil.first(sqlEntityExpression.getTables());
-       if(!(entityTableExpressionBuilder instanceof  AnonymousEntityTableExpressionBuilder)){
-           return true;
-       }
+        if (!(entityTableExpressionBuilder instanceof AnonymousEntityTableExpressionBuilder)) {
+            return true;
+        }
         AnonymousEntityTableExpressionBuilder anonymousEntityTableExpressionBuilder = (AnonymousEntityTableExpressionBuilder) entityTableExpressionBuilder;
         EntityQueryExpressionBuilder entityQueryExpressionBuilder = anonymousEntityTableExpressionBuilder.getEntityQueryExpressionBuilder();
-        if(entityQueryExpressionBuilder instanceof AnonymousUnionQueryExpressionBuilder){
+        if (entityQueryExpressionBuilder instanceof AnonymousUnionQueryExpressionBuilder) {
             return true;
         }
         return false;
@@ -147,13 +150,13 @@ public class EasySQLExpressionUtil {
         }
 
         //如果他只是匿名表那么就使用匿名表的内部表
-        if(!EasySQLExpressionUtil.moreTableExpressionOrNoAnonymous(entityQueryExpressionBuilder)){
+        if (!EasySQLExpressionUtil.moreTableExpressionOrNoAnonymous(entityQueryExpressionBuilder)) {
             AnonymousEntityTableExpressionBuilder table = (AnonymousEntityTableExpressionBuilder) entityQueryExpressionBuilder.getTable(0);
             EntityQueryExpressionBuilder entityQueryExpression = table.getEntityQueryExpressionBuilder().cloneEntityExpressionBuilder();
             //存在操作那么就返回父类
-            if(!EasySQLExpressionUtil.hasAnyOperateWithoutWhereAndOrder(entityQueryExpression)){
+            if (!EasySQLExpressionUtil.hasAnyOperateWithoutWhereAndOrder(entityQueryExpression)) {
                 EntityQueryExpressionBuilder countEntityQueryExpression = getCountEntityQueryExpression(entityQueryExpression);
-                if(countEntityQueryExpression!=null){
+                if (countEntityQueryExpression != null) {
                     return countEntityQueryExpression;
                 }
             }
@@ -168,6 +171,7 @@ public class EasySQLExpressionUtil {
 
     /**
      * 返回当前sql执行策略默认也会有一个指定的
+     *
      * @param expressionContext
      * @return
      */
@@ -199,15 +203,20 @@ public class EasySQLExpressionUtil {
         return SQLExecuteStrategyEnum.ALL_COLUMNS == executeStrategy;
     }
 
-    public static String getSQLOwnerColumn(QueryRuntimeContext runtimeContext, TableAvailable table, String propertyName,ToSQLContext toSQLContext){
-        String alias = getTableAlias(toSQLContext,table);
+    public static String getSQLOwnerColumnByProperty(QueryRuntimeContext runtimeContext, TableAvailable table, String propertyName, ToSQLContext toSQLContext) {
         String columnName = table.getColumnName(propertyName);
+        return getSQLOwnerColumn(runtimeContext,table,columnName,toSQLContext);
+    }
+
+    public static String getSQLOwnerColumn(QueryRuntimeContext runtimeContext, TableAvailable table, String columnName, ToSQLContext toSQLContext) {
+        String tableAlias = getTableAlias(toSQLContext, table);
         String quoteName = getQuoteName(runtimeContext, columnName);
-        if (alias == null) {
+        if (tableAlias == null) {
             return quoteName;
         }
-        return alias + "." + quoteName;
+        return tableAlias + "." + quoteName;
     }
+
 
     public static String getQuoteName(QueryRuntimeContext runtimeContext, String value) {
         return runtimeContext.getQueryConfiguration().getDialect().getQuoteName(value);
@@ -225,14 +234,14 @@ public class EasySQLExpressionUtil {
         return EasyCollectionUtil.first(keyProperties);
     }
 
-    public static boolean entityExecuteBatch(int entitySize,ExecutorContext executorContext){
+    public static boolean entityExecuteBatch(int entitySize, ExecutorContext executorContext) {
         EasyQueryOption easyQueryOption = executorContext.getEasyQueryOption();
         ExecuteMethodEnum executeMethod = executorContext.getExecuteMethod();
-        if(Objects.equals(ExecuteMethodEnum.INSERT,executeMethod)){
-            return entitySize>=easyQueryOption.getInsertBatchThreshold();
+        if (Objects.equals(ExecuteMethodEnum.INSERT, executeMethod)) {
+            return entitySize >= easyQueryOption.getInsertBatchThreshold();
         }
-        if(Objects.equals(ExecuteMethodEnum.UPDATE,executeMethod)){
-            return entitySize>=easyQueryOption.getUpdateBatchThreshold();
+        if (Objects.equals(ExecuteMethodEnum.UPDATE, executeMethod)) {
+            return entitySize >= easyQueryOption.getUpdateBatchThreshold();
         }
         return false;
     }

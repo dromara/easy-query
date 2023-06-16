@@ -2,7 +2,7 @@ package com.easy.query.core.expression.parser.factory;
 
 import com.easy.query.core.basic.api.select.provider.SQLExpressionProvider;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
-import com.easy.query.core.expression.parser.core.base.ColumnSelector;
+import com.easy.query.core.expression.parser.core.base.ColumnSetSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnSetter;
 import com.easy.query.core.expression.parser.core.base.WhereAggregatePredicate;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
@@ -30,7 +30,7 @@ public interface SQLExpressionInvokeFactory {
 
     <T1> ColumnSetter<T1> createColumnSetter(int index, EntityExpressionBuilder sqlEntityExpression, SQLBuilderSegment sqlSegmentBuilder);
 
-    <T1> ColumnSelector<T1> createColumnSetSelector(int index, EntityExpressionBuilder sqlEntityExpression, SQLBuilderSegment sqlSegmentBuilder);
+    <T1> ColumnSetSelector<T1> createColumnSetSelector(int index, EntityExpressionBuilder sqlEntityExpression, SQLBuilderSegment sqlSegmentBuilder);
 
     <T1> SQLExpressionProvider<T1> createSQLExpressionProvider(int index, EntityQueryExpressionBuilder entityQueryExpressionBuilder);
 }

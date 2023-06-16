@@ -6,8 +6,8 @@ import com.easy.query.api4j.select.Queryable3;
 import com.easy.query.api4j.select.impl.EasyQueryable;
 import com.easy.query.api4j.select.impl.EasyQueryable3;
 import com.easy.query.api4j.sql.SQLColumnAsSelector;
-import com.easy.query.api4j.sql.SQLColumnSelector;
 import com.easy.query.api4j.sql.SQLGroupBySelector;
+import com.easy.query.api4j.sql.SQLOrderBySelector;
 import com.easy.query.api4j.sql.SQLWhereAggregatePredicate;
 import com.easy.query.api4j.sql.SQLWherePredicate;
 import com.easy.query.api4j.sql.impl.SQLColumnAsSelectorImpl;
@@ -119,13 +119,13 @@ public abstract class AbstractQueryable2<T1, T2> extends AbstractQueryable<T1> i
     }
 
     @Override
-    public Queryable2<T1, T2> orderByAsc(boolean condition, SQLExpression1<SQLColumnSelector<T1>> selectExpression) {
+    public Queryable2<T1, T2> orderByAsc(boolean condition, SQLExpression1<SQLOrderBySelector<T1>> selectExpression) {
         super.orderByAsc(condition, selectExpression);
         return this;
     }
 
     @Override
-    public Queryable2<T1, T2> orderByDesc(boolean condition, SQLExpression1<SQLColumnSelector<T1>> selectExpression) {
+    public Queryable2<T1, T2> orderByDesc(boolean condition, SQLExpression1<SQLOrderBySelector<T1>> selectExpression) {
         super.orderByDesc(condition, selectExpression);
         return this;
     }

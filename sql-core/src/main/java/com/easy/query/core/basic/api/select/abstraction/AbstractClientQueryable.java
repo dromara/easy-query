@@ -31,6 +31,7 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnSelector;
 import com.easy.query.core.expression.parser.core.base.GroupBySelector;
+import com.easy.query.core.expression.parser.core.base.OrderBySelector;
 import com.easy.query.core.expression.parser.core.base.WhereAggregatePredicate;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.segment.ColumnSegment;
@@ -545,9 +546,9 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     }
 
     @Override
-    public ClientQueryable<T1> orderBy(boolean condition, SQLExpression1<ColumnSelector<T1>> selectExpression, boolean asc) {
+    public ClientQueryable<T1> orderBy(boolean condition, SQLExpression1<OrderBySelector<T1>> selectExpression, boolean asc) {
         if (condition) {
-            ColumnSelector<T1> sqlPredicate = getSQLExpressionProvider1().getOrderColumnSelector(asc);
+            OrderBySelector<T1> sqlPredicate = getSQLExpressionProvider1().getOrderColumnSelector(asc);
             selectExpression.apply(sqlPredicate);
         }
         return this;
@@ -577,11 +578,11 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                             }
                             continue;
                         }
-                        ColumnSelector<T1> sqlColumnSelector = getSQLExpressionProvider1().getOrderColumnSelector(asc);
-                        if (sqlColumnSelector == null) {
+                        OrderBySelector<T1> orderColumnSelector = getSQLExpressionProvider1().getOrderColumnSelector(asc);
+                        if (orderColumnSelector == null) {
                             throw new EasyQueryOrderByInvalidOperationException(property, "not found sql column selector,entity class:" + EasyClassUtil.getSimpleName(queryClass()));
                         }
-                        sqlColumnSelector.column(property);
+                        orderColumnSelector.column(property);
                     }
                 }
             }

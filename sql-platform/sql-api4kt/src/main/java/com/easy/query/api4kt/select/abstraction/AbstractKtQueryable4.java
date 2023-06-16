@@ -4,13 +4,13 @@ import com.easy.query.api4kt.select.KtQueryable;
 import com.easy.query.api4kt.select.KtQueryable4;
 import com.easy.query.api4kt.select.impl.EasyKtQueryable;
 import com.easy.query.api4kt.sql.SQLKtColumnAsSelector;
-import com.easy.query.api4kt.sql.SQLKtColumnSelector;
 import com.easy.query.api4kt.sql.SQLKtGroupBySelector;
+import com.easy.query.api4kt.sql.SQLKtOrderBySelector;
 import com.easy.query.api4kt.sql.SQLKtWhereAggregatePredicate;
 import com.easy.query.api4kt.sql.SQLKtWherePredicate;
 import com.easy.query.api4kt.sql.impl.SQLKtColumnAsSelectorImpl;
-import com.easy.query.api4kt.sql.impl.SQLKtColumnSelectorImpl;
 import com.easy.query.api4kt.sql.impl.SQLKtGroupBySelectorImpl;
+import com.easy.query.api4kt.sql.impl.SQLKtOrderByColumnSelectorImpl;
 import com.easy.query.api4kt.sql.impl.SQLKtWherePredicateImpl;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.select.ClientQueryable4;
@@ -99,32 +99,32 @@ public abstract class AbstractKtQueryable4<T1, T2, T3, T4> extends AbstractKtQue
     }
 
     @Override
-    public KtQueryable4<T1, T2, T3, T4> orderByAsc(boolean condition, SQLExpression1<SQLKtColumnSelector<T1>> selectExpression) {
+    public KtQueryable4<T1, T2, T3, T4> orderByAsc(boolean condition, SQLExpression1<SQLKtOrderBySelector<T1>> selectExpression) {
         super.orderByAsc(condition, selectExpression);
         return this;
     }
 
     @Override
-    public KtQueryable4<T1, T2, T3, T4> orderByAsc(boolean condition, SQLExpression4<SQLKtColumnSelector<T1>, SQLKtColumnSelector<T2>, SQLKtColumnSelector<T3>, SQLKtColumnSelector<T4>> selectExpression) {
+    public KtQueryable4<T1, T2, T3, T4> orderByAsc(boolean condition, SQLExpression4<SQLKtOrderBySelector<T1>, SQLKtOrderBySelector<T2>, SQLKtOrderBySelector<T3>, SQLKtOrderBySelector<T4>> selectExpression) {
         if (condition) {
             entityQueryable4.orderByAsc((selector1, selector2, selector3, selector4) -> {
-                selectExpression.apply(new SQLKtColumnSelectorImpl<>(selector1), new SQLKtColumnSelectorImpl<>(selector2), new SQLKtColumnSelectorImpl<>(selector3), new SQLKtColumnSelectorImpl<>(selector4));
+                selectExpression.apply(new SQLKtOrderByColumnSelectorImpl<>(selector1), new SQLKtOrderByColumnSelectorImpl<>(selector2), new SQLKtOrderByColumnSelectorImpl<>(selector3), new SQLKtOrderByColumnSelectorImpl<>(selector4));
             });
         }
         return this;
     }
 
     @Override
-    public KtQueryable4<T1, T2, T3, T4> orderByDesc(boolean condition, SQLExpression1<SQLKtColumnSelector<T1>> selectExpression) {
+    public KtQueryable4<T1, T2, T3, T4> orderByDesc(boolean condition, SQLExpression1<SQLKtOrderBySelector<T1>> selectExpression) {
         super.orderByDesc(condition, selectExpression);
         return this;
     }
 
     @Override
-    public KtQueryable4<T1, T2, T3, T4> orderByDesc(boolean condition, SQLExpression4<SQLKtColumnSelector<T1>, SQLKtColumnSelector<T2>, SQLKtColumnSelector<T3>, SQLKtColumnSelector<T4>> selectExpression) {
+    public KtQueryable4<T1, T2, T3, T4> orderByDesc(boolean condition, SQLExpression4<SQLKtOrderBySelector<T1>, SQLKtOrderBySelector<T2>, SQLKtOrderBySelector<T3>, SQLKtOrderBySelector<T4>> selectExpression) {
         if (condition) {
             entityQueryable4.orderByDesc((selector1, selector2, selector3, selector4) -> {
-                selectExpression.apply(new SQLKtColumnSelectorImpl<>(selector1), new SQLKtColumnSelectorImpl<>(selector2), new SQLKtColumnSelectorImpl<>(selector3), new SQLKtColumnSelectorImpl<>(selector4));
+                selectExpression.apply(new SQLKtOrderByColumnSelectorImpl<>(selector1), new SQLKtOrderByColumnSelectorImpl<>(selector2), new SQLKtOrderByColumnSelectorImpl<>(selector3), new SQLKtOrderByColumnSelectorImpl<>(selector4));
             });
         }
         return this;

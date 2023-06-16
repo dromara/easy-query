@@ -2,7 +2,7 @@ package com.easy.query.core.expression.segment.builder;
 
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.enums.SQLKeywordEnum;
-import com.easy.query.core.expression.segment.OrderByColumnSegment;
+import com.easy.query.core.expression.segment.OrderBySegment;
 import com.easy.query.core.expression.segment.SQLSegment;
 
 import java.util.List;
@@ -22,7 +22,7 @@ public class OrderBySQLBuilderSegmentImpl extends AbstractSQLBuilderSegment {
         //从后往前追加
         for (int i = sqlSegments.size() - 1; i >= 0; i--) {
             SQLSegment sqlSegment = sqlSegments.get(i);
-            OrderByColumnSegment orderColumnSegment = (OrderByColumnSegment) sqlSegment;
+            OrderBySegment orderColumnSegment = (OrderBySegment) sqlSegment;
 
             if (sb.length() != 0) {
                 sb.insert(0, SQLKeywordEnum.DOT.toSQL());

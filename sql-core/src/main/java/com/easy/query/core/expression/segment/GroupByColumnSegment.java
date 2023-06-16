@@ -7,5 +7,5 @@ package com.easy.query.core.expression.segment;
  * @author xuejiaming
  */
 public interface GroupByColumnSegment extends ColumnSegment{
-    OrderByColumnSegment createOrderByColumnSegment(boolean asc);
+    OrderBySegment createOrderByColumnSegment(boolean asc);
 }
