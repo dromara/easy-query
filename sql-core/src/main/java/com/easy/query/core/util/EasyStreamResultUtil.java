@@ -127,7 +127,7 @@ public final class EasyStreamResultUtil {
         boolean trackBean = trackBean(context, clazz);
         EasyResultSet easyResultSet = new EasyResultSet(streamResult);
         TResult bean = EasyClassUtil.newInstance(clazz);
-        FastBean fastBean = EasyBeanUtil.getFastBean(bean.getClass());
+        FastBean fastBean = EasyBeanUtil.getFastBean(clazz);
         for (int i = 0; i < beanMapToColumnMetadatas.length; i++) {
             BeanMapToColumnMetadata beanMapToColumnMetadata = beanMapToColumnMetadatas[i];
             if (beanMapToColumnMetadata == null) {

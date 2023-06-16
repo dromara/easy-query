@@ -4,10 +4,7 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.enums.SQLKeywordEnum;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.segment.GroupByColumnSegment;
-import com.easy.query.core.expression.segment.OrderByColumnSegment;
-import com.easy.query.core.expression.segment.impl.ColumnSegmentImpl;
-import com.easy.query.core.expression.segment.impl.GroupColumnSegmentImpl;
+import com.easy.query.core.expression.segment.OrderBySegment;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 
 /**
@@ -16,7 +13,7 @@ import com.easy.query.core.util.EasySQLExpressionUtil;
  * @Description: 文件说明
  * @Date: 2023/2/13 22:18
  */
-public class OrderColumnSegmentImpl extends ColumnSegmentImpl implements OrderByColumnSegment {
+public class OrderColumnSegmentImpl extends ColumnSegmentImpl implements OrderBySegment {
 
     private final boolean asc;
 

@@ -4,6 +4,7 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.segment.ColumnConstSegment;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.segment.SQLEntityAliasSegment;
 import com.easy.query.core.expression.segment.SQLEntitySegment;
@@ -59,7 +60,6 @@ public class AbstractColumnSelector<T1, TChain> {
         sqlSegmentBuilder.append(columnSegment);
         return (TChain) this;
     }
-
 
     public TChain columnIgnore(String property) {
         EntityTableExpressionBuilder table = entityQueryExpressionBuilder.getTable(index);
@@ -139,7 +139,8 @@ public class AbstractColumnSelector<T1, TChain> {
                     String propertyName = EasyUtil.getAnonymousPropertyName(sqlEntityAliasSegment, table.getEntityTable());
                     ColumnSegment columnSegment = sqlSegmentFactory.createColumnSegment(table.getEntityTable(), propertyName, entityQueryExpressionBuilder.getRuntimeContext(), sqlEntityAliasSegment.getAlias());
                     sqlSegmentBuilder.append(columnSegment);
-                } else {
+                }
+                else {
                     throw new EasyQueryException("columnAll函数无法获取指定列" + EasyClassUtil.getInstanceSimpleName(sqlSegment));
                 }
             }

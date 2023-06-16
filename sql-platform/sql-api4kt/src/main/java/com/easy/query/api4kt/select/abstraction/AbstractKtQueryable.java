@@ -7,11 +7,13 @@ import com.easy.query.api4kt.select.impl.EasyKtQueryable2;
 import com.easy.query.api4kt.sql.SQLKtColumnAsSelector;
 import com.easy.query.api4kt.sql.SQLKtColumnSelector;
 import com.easy.query.api4kt.sql.SQLKtGroupBySelector;
+import com.easy.query.api4kt.sql.SQLKtOrderBySelector;
 import com.easy.query.api4kt.sql.SQLKtWhereAggregatePredicate;
 import com.easy.query.api4kt.sql.SQLKtWherePredicate;
 import com.easy.query.api4kt.sql.impl.SQLKtColumnAsSelectorImpl;
 import com.easy.query.api4kt.sql.impl.SQLKtColumnSelectorImpl;
 import com.easy.query.api4kt.sql.impl.SQLKtGroupBySelectorImpl;
+import com.easy.query.api4kt.sql.impl.SQLKtOrderByColumnSelectorImpl;
 import com.easy.query.api4kt.sql.impl.SQLKtWhereAggregatePredicateImpl;
 import com.easy.query.api4kt.sql.impl.SQLKtWherePredicateImpl;
 import com.easy.query.core.api.dynamic.sort.ObjectSort;
@@ -208,10 +210,10 @@ public abstract class AbstractKtQueryable<T1> implements KtQueryable<T1> {
     }
 
     @Override
-    public KtQueryable<T1> orderBy(boolean condition, SQLExpression1<SQLKtColumnSelector<T1>> selectExpression, boolean asc) {
+    public KtQueryable<T1> orderBy(boolean condition, SQLExpression1<SQLKtOrderBySelector<T1>> selectExpression, boolean asc) {
         if (condition) {
             entityQueryable.orderBy(columnSelector -> {
-                selectExpression.apply(new SQLKtColumnSelectorImpl<>(columnSelector));
+                selectExpression.apply(new SQLKtOrderByColumnSelectorImpl<>(columnSelector));
             }, asc);
         }
         return this;

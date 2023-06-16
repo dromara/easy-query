@@ -8,6 +8,7 @@ import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.test.dto.BlogEntityGroup;
 import com.easy.query.test.dto.BlogQueryRequest;
+import com.easy.query.test.dto.TopicGroupTestDTO;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.Topic;
 import org.junit.Assert;
@@ -753,6 +754,30 @@ public class QueryTest2 extends BaseTest {
                 .orderByObject(blogQueryRequest)
                 .toSQL();
         Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `title` LIKE ? AND `url` LIKE ? AND `star` = ? AND `publish_time` >= ? AND `publish_time` <= ? AND `score` >= ? AND `status` <= ? AND `order` > ? AND `is_top` <> ? AND `status` IN (?) AND `status` NOT IN (?,?) ORDER BY `status` ASC,`score` ASC",sql);
+    }
+    @Test
+    public void query22() {
+        Queryable<TopicGroupTestDTO> topicGroupTestDTOQueryable = easyQuery.queryable(BlogEntity.class)
+                .where(o -> o.eq(BlogEntity::getId, "1"))
+                .groupBy(o -> o.column(BlogEntity::getId))
+                .select(TopicGroupTestDTO.class, o -> o.columnAs(BlogEntity::getId, TopicGroupTestDTO::getId).columnCountAs(BlogEntity::getId, TopicGroupTestDTO::getIdCount))
+                .orderByAsc(o -> o.columnConst("RAND()"));
+        String sql = topicGroupTestDTOQueryable.toSQL();
+        Assert.assertEquals("SELECT t1.`id` AS `id`,t1.`id_count` AS `id_count` FROM (SELECT t.`id` AS `id`,COUNT(t.`id`) AS `id_count` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? GROUP BY t.`id`) t1 ORDER BY RAND() ASC", sql);
+        List<TopicGroupTestDTO> list = topicGroupTestDTOQueryable.toList();
+        Assert.assertEquals(1,list.size());
+    }
+    @Test
+    public void query23() {
+        Queryable<TopicGroupTestDTO> topicGroupTestDTOQueryable = easyQuery.queryable(BlogEntity.class)
+                .where(o -> o.eq(BlogEntity::getId, "1"))
+                .groupBy(o -> o.columnConst("RAND()"))
+                .select(TopicGroupTestDTO.class, o -> o.columnAs(BlogEntity::getId, TopicGroupTestDTO::getId).columnCountAs(BlogEntity::getId, TopicGroupTestDTO::getIdCount))
+                .orderByAsc(o -> o.columnConst("RAND()"));
+        String sql = topicGroupTestDTOQueryable.toSQL();
+        Assert.assertEquals("SELECT t1.`id` AS `id`,t1.`id_count` AS `id_count` FROM (SELECT t.`id` AS `id`,COUNT(t.`id`) AS `id_count` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? GROUP BY RAND()) t1 ORDER BY RAND() ASC", sql);
+        List<TopicGroupTestDTO> list = topicGroupTestDTOQueryable.toList();
+        Assert.assertEquals(1,list.size());
     }
 
 }

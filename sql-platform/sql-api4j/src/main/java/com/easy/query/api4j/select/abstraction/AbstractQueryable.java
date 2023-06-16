@@ -7,11 +7,13 @@ import com.easy.query.api4j.select.impl.EasyQueryable2;
 import com.easy.query.api4j.sql.SQLColumnAsSelector;
 import com.easy.query.api4j.sql.SQLColumnSelector;
 import com.easy.query.api4j.sql.SQLGroupBySelector;
+import com.easy.query.api4j.sql.SQLOrderBySelector;
 import com.easy.query.api4j.sql.SQLWhereAggregatePredicate;
 import com.easy.query.api4j.sql.SQLWherePredicate;
 import com.easy.query.api4j.sql.impl.SQLColumnAsSelectorImpl;
 import com.easy.query.api4j.sql.impl.SQLColumnSelectorImpl;
 import com.easy.query.api4j.sql.impl.SQLGroupBySelectorImpl;
+import com.easy.query.api4j.sql.impl.SQLOrderByColumnSelectorImpl;
 import com.easy.query.api4j.sql.impl.SQLWhereAggregatePredicateImpl;
 import com.easy.query.api4j.sql.impl.SQLWherePredicateImpl;
 import com.easy.query.core.api.dynamic.sort.ObjectSort;
@@ -208,10 +210,10 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     }
 
     @Override
-    public Queryable<T1> orderBy(boolean condition, SQLExpression1<SQLColumnSelector<T1>> selectExpression, boolean asc) {
+    public Queryable<T1> orderBy(boolean condition, SQLExpression1<SQLOrderBySelector<T1>> selectExpression, boolean asc) {
         if (condition) {
             entityQueryable.orderBy(columnSelector -> {
-                selectExpression.apply(new SQLColumnSelectorImpl<>(columnSelector));
+                selectExpression.apply(new SQLOrderByColumnSelectorImpl<>(columnSelector));
             }, asc);
         }
         return this;

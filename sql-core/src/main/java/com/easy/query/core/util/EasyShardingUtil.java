@@ -14,7 +14,7 @@ import com.easy.query.core.expression.executor.parser.PrepareParseResult;
 import com.easy.query.core.expression.executor.parser.QueryPrepareParseResult;
 import com.easy.query.core.expression.executor.parser.SequenceParseResult;
 import com.easy.query.core.expression.segment.GroupByColumnSegment;
-import com.easy.query.core.expression.segment.OrderByColumnSegment;
+import com.easy.query.core.expression.segment.OrderBySegment;
 import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.expression.segment.builder.ProjectSQLBuilderSegment;
 import com.easy.query.core.expression.segment.impl.ColumnSegmentImpl;
@@ -54,7 +54,7 @@ public class EasyShardingUtil {
         return routePredicateDiscover.getRouteParseExpression();
     }
 
-    public static PropertyOrder findFirstPropertyOrderNotNull(List<SQLSegment> selectColumns, OrderByColumnSegment orderColumnSegment, EntityQuerySQLExpression easyQuerySQLExpression) {
+    public static PropertyOrder findFirstPropertyOrderNotNull(List<SQLSegment> selectColumns, OrderBySegment orderColumnSegment, EntityQuerySQLExpression easyQuerySQLExpression) {
         int tableIndex = orderColumnSegment.getTable().getIndex();
         String propertyName = orderColumnSegment.getPropertyName();
         boolean asc = orderColumnSegment.isAsc();
@@ -117,11 +117,11 @@ public class EasyShardingUtil {
                 return false;
             }
             SQLSegment orderSQLSegment = orderBy.get(i);
-            if (!(orderSQLSegment instanceof OrderByColumnSegment)) {
+            if (!(orderSQLSegment instanceof OrderBySegment)) {
                 return false;
             }
             GroupByColumnSegment groupColumnSegment = (GroupByColumnSegment) groupSQLSegment;
-            OrderByColumnSegment orderColumnSegment = (OrderByColumnSegment) orderSQLSegment;
+            OrderBySegment orderColumnSegment = (OrderBySegment) orderSQLSegment;
             if (groupColumnSegment.getTable().getIndex() != orderColumnSegment.getTable().getIndex()) {
                 return false;
             }
@@ -358,7 +358,7 @@ public class EasyShardingUtil {
                         mergeBehavior = EasyBitwiseUtil.addBit(mergeBehavior, MergeBehaviorEnum.SEQUENCE_PAGINATION.getCode());
                     }
                     if (EasyBitwiseUtil.hasBit(mergeBehavior, MergeBehaviorEnum.ORDER.getCode())) {
-                        OrderByColumnSegment firstOrder = (OrderByColumnSegment) EasyCollectionUtil.first(easyQuerySQLExpression.getOrder().getSQLSegments());
+                        OrderBySegment firstOrder = (OrderBySegment) EasyCollectionUtil.first(easyQuerySQLExpression.getOrder().getSQLSegments());
                         ShardingInitConfig shardingInitConfig = firstOrder.getTable().getEntityMetadata().getShardingInitConfig();
                         if (shardingInitConfig.isReverse()) {
                             List<Long> countResult = shardingQueryCountManager.getCountResult();

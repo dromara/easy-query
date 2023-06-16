@@ -4,9 +4,8 @@ import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.enums.MergeBehaviorEnum;
 import com.easy.query.core.expression.executor.parser.EasyQueryPrepareParseResult;
 import com.easy.query.core.expression.executor.parser.ExecutionContext;
-import com.easy.query.core.expression.segment.OrderByColumnSegment;
+import com.easy.query.core.expression.segment.OrderBySegment;
 import com.easy.query.core.expression.segment.impl.ColumnSegmentImpl;
-import com.easy.query.core.expression.segment.impl.OrderColumnSegmentImpl;
 import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.sql.expression.EntityQuerySQLExpression;
@@ -49,8 +48,8 @@ public class ShardingQueryEasyStreamMergeContext extends EntityStreamMergeContex
             List<PropertyOrder> orders = new ArrayList<>();
             SQLBuilderSegment projects = querySQLExpression.getProjects();
             for (SQLSegment sqlSegment : querySQLExpression.getOrder().getSQLSegments()) {
-                if (sqlSegment instanceof OrderByColumnSegment) {
-                    OrderByColumnSegment orderColumnSegment = (OrderByColumnSegment) sqlSegment;
+                if (sqlSegment instanceof OrderBySegment) {
+                    OrderBySegment orderColumnSegment = (OrderBySegment) sqlSegment;
 
                     PropertyOrder propertyOrder = EasyShardingUtil.findFirstPropertyOrderNotNull(projects.getSQLSegments(), orderColumnSegment, querySQLExpression);
                     orders.add(propertyOrder);

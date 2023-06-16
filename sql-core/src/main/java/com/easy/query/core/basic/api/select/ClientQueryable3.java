@@ -8,8 +8,8 @@ import com.easy.query.core.expression.lambda.SQLExpression3;
 import com.easy.query.core.expression.lambda.SQLExpression4;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnResultSelector;
-import com.easy.query.core.expression.parser.core.base.ColumnSelector;
 import com.easy.query.core.expression.parser.core.base.GroupBySelector;
+import com.easy.query.core.expression.parser.core.base.OrderBySelector;
 import com.easy.query.core.expression.parser.core.base.WhereAggregatePredicate;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 
@@ -162,32 +162,32 @@ public interface ClientQueryable3<T1, T2, T3> extends ClientQueryable<T1> {
     //endregion
     //region order
     @Override
-    default ClientQueryable3<T1, T2, T3> orderByAsc(SQLExpression1<ColumnSelector<T1>> selectExpression) {
+    default ClientQueryable3<T1, T2, T3> orderByAsc(SQLExpression1<OrderBySelector<T1>> selectExpression) {
         return orderByAsc(true, selectExpression);
     }
 
     @Override
-    ClientQueryable3<T1, T2, T3> orderByAsc(boolean condition, SQLExpression1<ColumnSelector<T1>> selectExpression);
+    ClientQueryable3<T1, T2, T3> orderByAsc(boolean condition, SQLExpression1<OrderBySelector<T1>> selectExpression);
 
-    default ClientQueryable3<T1, T2, T3> orderByAsc(SQLExpression3<ColumnSelector<T1>, ColumnSelector<T2>, ColumnSelector<T3>> selectExpression) {
+    default ClientQueryable3<T1, T2, T3> orderByAsc(SQLExpression3<OrderBySelector<T1>, OrderBySelector<T2>, OrderBySelector<T3>> selectExpression) {
         return orderByAsc(true, selectExpression);
     }
 
-    ClientQueryable3<T1, T2, T3> orderByAsc(boolean condition, SQLExpression3<ColumnSelector<T1>, ColumnSelector<T2>, ColumnSelector<T3>> selectExpression);
+    ClientQueryable3<T1, T2, T3> orderByAsc(boolean condition, SQLExpression3<OrderBySelector<T1>, OrderBySelector<T2>, OrderBySelector<T3>> selectExpression);
 
     @Override
-    default ClientQueryable3<T1, T2, T3> orderByDesc(SQLExpression1<ColumnSelector<T1>> selectExpression) {
+    default ClientQueryable3<T1, T2, T3> orderByDesc(SQLExpression1<OrderBySelector<T1>> selectExpression) {
         return orderByDesc(true, selectExpression);
     }
 
     @Override
-    ClientQueryable3<T1, T2, T3> orderByDesc(boolean condition, SQLExpression1<ColumnSelector<T1>> selectExpression);
+    ClientQueryable3<T1, T2, T3> orderByDesc(boolean condition, SQLExpression1<OrderBySelector<T1>> selectExpression);
 
-    default ClientQueryable3<T1, T2, T3> orderByDesc(SQLExpression3<ColumnSelector<T1>, ColumnSelector<T2>, ColumnSelector<T3>> selectExpression) {
+    default ClientQueryable3<T1, T2, T3> orderByDesc(SQLExpression3<OrderBySelector<T1>, OrderBySelector<T2>, OrderBySelector<T3>> selectExpression) {
         return orderByDesc(true, selectExpression);
     }
 
-    ClientQueryable3<T1, T2, T3> orderByDesc(boolean condition, SQLExpression3<ColumnSelector<T1>, ColumnSelector<T2>, ColumnSelector<T3>> selectExpression);
+    ClientQueryable3<T1, T2, T3> orderByDesc(boolean condition, SQLExpression3<OrderBySelector<T1>, OrderBySelector<T2>, OrderBySelector<T3>> selectExpression);
     //endregion
     //region limit
 

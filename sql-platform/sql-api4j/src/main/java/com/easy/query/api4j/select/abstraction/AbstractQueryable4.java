@@ -4,13 +4,13 @@ import com.easy.query.api4j.select.Queryable;
 import com.easy.query.api4j.select.Queryable4;
 import com.easy.query.api4j.select.impl.EasyQueryable;
 import com.easy.query.api4j.sql.SQLColumnAsSelector;
-import com.easy.query.api4j.sql.SQLColumnSelector;
 import com.easy.query.api4j.sql.SQLGroupBySelector;
+import com.easy.query.api4j.sql.SQLOrderBySelector;
 import com.easy.query.api4j.sql.SQLWhereAggregatePredicate;
 import com.easy.query.api4j.sql.SQLWherePredicate;
 import com.easy.query.api4j.sql.impl.SQLColumnAsSelectorImpl;
-import com.easy.query.api4j.sql.impl.SQLColumnSelectorImpl;
 import com.easy.query.api4j.sql.impl.SQLGroupBySelectorImpl;
+import com.easy.query.api4j.sql.impl.SQLOrderByColumnSelectorImpl;
 import com.easy.query.api4j.sql.impl.SQLWherePredicateImpl;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.select.ClientQueryable4;
@@ -99,32 +99,32 @@ public abstract class AbstractQueryable4<T1, T2, T3, T4> extends AbstractQueryab
     }
 
     @Override
-    public Queryable4<T1, T2, T3, T4> orderByAsc(boolean condition, SQLExpression1<SQLColumnSelector<T1>> selectExpression) {
+    public Queryable4<T1, T2, T3, T4> orderByAsc(boolean condition, SQLExpression1<SQLOrderBySelector<T1>> selectExpression) {
         super.orderByAsc(condition, selectExpression);
         return this;
     }
 
     @Override
-    public Queryable4<T1, T2, T3, T4> orderByAsc(boolean condition, SQLExpression4<SQLColumnSelector<T1>, SQLColumnSelector<T2>, SQLColumnSelector<T3>, SQLColumnSelector<T4>> selectExpression) {
+    public Queryable4<T1, T2, T3, T4> orderByAsc(boolean condition, SQLExpression4<SQLOrderBySelector<T1>, SQLOrderBySelector<T2>, SQLOrderBySelector<T3>, SQLOrderBySelector<T4>> selectExpression) {
         if (condition) {
             entityQueryable4.orderByAsc((selector1, selector2, selector3, selector4) -> {
-                selectExpression.apply(new SQLColumnSelectorImpl<>(selector1), new SQLColumnSelectorImpl<>(selector2), new SQLColumnSelectorImpl<>(selector3), new SQLColumnSelectorImpl<>(selector4));
+                selectExpression.apply(new SQLOrderByColumnSelectorImpl<>(selector1), new SQLOrderByColumnSelectorImpl<>(selector2), new SQLOrderByColumnSelectorImpl<>(selector3), new SQLOrderByColumnSelectorImpl<>(selector4));
             });
         }
         return this;
     }
 
     @Override
-    public Queryable4<T1, T2, T3, T4> orderByDesc(boolean condition, SQLExpression1<SQLColumnSelector<T1>> selectExpression) {
+    public Queryable4<T1, T2, T3, T4> orderByDesc(boolean condition, SQLExpression1<SQLOrderBySelector<T1>> selectExpression) {
         super.orderByDesc(condition, selectExpression);
         return this;
     }
 
     @Override
-    public Queryable4<T1, T2, T3, T4> orderByDesc(boolean condition, SQLExpression4<SQLColumnSelector<T1>, SQLColumnSelector<T2>, SQLColumnSelector<T3>, SQLColumnSelector<T4>> selectExpression) {
+    public Queryable4<T1, T2, T3, T4> orderByDesc(boolean condition, SQLExpression4<SQLOrderBySelector<T1>, SQLOrderBySelector<T2>, SQLOrderBySelector<T3>, SQLOrderBySelector<T4>> selectExpression) {
         if (condition) {
             entityQueryable4.orderByDesc((selector1, selector2, selector3, selector4) -> {
-                selectExpression.apply(new SQLColumnSelectorImpl<>(selector1), new SQLColumnSelectorImpl<>(selector2), new SQLColumnSelectorImpl<>(selector3), new SQLColumnSelectorImpl<>(selector4));
+                selectExpression.apply(new SQLOrderByColumnSelectorImpl<>(selector1), new SQLOrderByColumnSelectorImpl<>(selector2), new SQLOrderByColumnSelectorImpl<>(selector3), new SQLOrderByColumnSelectorImpl<>(selector4));
             });
         }
         return this;

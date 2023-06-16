@@ -2,8 +2,8 @@ package com.easy.query.api4kt.select;
 
 import com.easy.query.api4kt.sql.SQLKtColumnAsSelector;
 import com.easy.query.api4kt.sql.SQLKtColumnResultSelector;
-import com.easy.query.api4kt.sql.SQLKtColumnSelector;
 import com.easy.query.api4kt.sql.SQLKtGroupBySelector;
+import com.easy.query.api4kt.sql.SQLKtOrderBySelector;
 import com.easy.query.api4kt.sql.SQLKtWhereAggregatePredicate;
 import com.easy.query.api4kt.sql.SQLKtWherePredicate;
 import com.easy.query.api4kt.sql.impl.SQLKtColumnResultSelectorImpl;
@@ -212,32 +212,32 @@ public interface KtQueryable2<T1, T2> extends KtQueryable<T1> {
     //endregion
     //region order
     @Override
-    default KtQueryable2<T1, T2> orderByAsc(SQLExpression1<SQLKtColumnSelector<T1>> selectExpression) {
+    default KtQueryable2<T1, T2> orderByAsc(SQLExpression1<SQLKtOrderBySelector<T1>> selectExpression) {
         return orderByAsc(true, selectExpression);
     }
 
     @Override
-    KtQueryable2<T1, T2> orderByAsc(boolean condition, SQLExpression1<SQLKtColumnSelector<T1>> selectExpression);
+    KtQueryable2<T1, T2> orderByAsc(boolean condition, SQLExpression1<SQLKtOrderBySelector<T1>> selectExpression);
 
-    default KtQueryable2<T1, T2> orderByAsc(SQLExpression2<SQLKtColumnSelector<T1>, SQLKtColumnSelector<T2>> selectExpression) {
+    default KtQueryable2<T1, T2> orderByAsc(SQLExpression2<SQLKtOrderBySelector<T1>, SQLKtOrderBySelector<T2>> selectExpression) {
         return orderByAsc(true, selectExpression);
     }
 
-    KtQueryable2<T1, T2> orderByAsc(boolean condition, SQLExpression2<SQLKtColumnSelector<T1>, SQLKtColumnSelector<T2>> selectExpression);
+    KtQueryable2<T1, T2> orderByAsc(boolean condition, SQLExpression2<SQLKtOrderBySelector<T1>, SQLKtOrderBySelector<T2>> selectExpression);
 
     @Override
-    default KtQueryable2<T1, T2> orderByDesc(SQLExpression1<SQLKtColumnSelector<T1>> selectExpression) {
+    default KtQueryable2<T1, T2> orderByDesc(SQLExpression1<SQLKtOrderBySelector<T1>> selectExpression) {
         return orderByDesc(true, selectExpression);
     }
 
     @Override
-    KtQueryable2<T1, T2> orderByDesc(boolean condition, SQLExpression1<SQLKtColumnSelector<T1>> selectExpression);
+    KtQueryable2<T1, T2> orderByDesc(boolean condition, SQLExpression1<SQLKtOrderBySelector<T1>> selectExpression);
 
-    default KtQueryable2<T1, T2> orderByDesc(SQLExpression2<SQLKtColumnSelector<T1>, SQLKtColumnSelector<T2>> selectExpression) {
+    default KtQueryable2<T1, T2> orderByDesc(SQLExpression2<SQLKtOrderBySelector<T1>, SQLKtOrderBySelector<T2>> selectExpression) {
         return orderByDesc(true, selectExpression);
     }
 
-    KtQueryable2<T1, T2> orderByDesc(boolean condition, SQLExpression2<SQLKtColumnSelector<T1>, SQLKtColumnSelector<T2>> selectExpression);
+    KtQueryable2<T1, T2> orderByDesc(boolean condition, SQLExpression2<SQLKtOrderBySelector<T1>, SQLKtOrderBySelector<T2>> selectExpression);
     //endregion
     //region limit
 

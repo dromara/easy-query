@@ -4,7 +4,7 @@ import com.easy.query.core.basic.api.update.ClientEntityUpdatable;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.exception.EasyQueryConcurrentException;
 import com.easy.query.core.expression.lambda.SQLExpression1;
-import com.easy.query.core.expression.parser.core.base.ColumnSelector;
+import com.easy.query.core.expression.parser.core.base.ColumnSetSelector;
 
 import java.util.function.Function;
 
@@ -75,17 +75,17 @@ public class EasyEmptyClientEntityUpdatable<T> implements ClientEntityUpdatable<
     }
 
     @Override
-    public ClientEntityUpdatable<T> setColumns(boolean condition, SQLExpression1<ColumnSelector<T>> columnSelectorExpression) {
+    public ClientEntityUpdatable<T> setColumns(boolean condition, SQLExpression1<ColumnSetSelector<T>> columnSelectorExpression) {
         return this;
     }
 
     @Override
-    public ClientEntityUpdatable<T> setIgnoreColumns(boolean condition, SQLExpression1<ColumnSelector<T>> columnSelectorExpression) {
+    public ClientEntityUpdatable<T> setIgnoreColumns(boolean condition, SQLExpression1<ColumnSetSelector<T>> columnSelectorExpression) {
         return this;
     }
 
     @Override
-    public ClientEntityUpdatable<T> whereColumns(boolean condition, SQLExpression1<ColumnSelector<T>> columnSelectorExpression) {
+    public ClientEntityUpdatable<T> whereColumns(boolean condition, SQLExpression1<ColumnSetSelector<T>> columnSelectorExpression) {
         return this;
     }
 

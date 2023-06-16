@@ -2,13 +2,13 @@ package com.easy.query.api4j.select;
 
 import com.easy.query.api4j.sql.SQLColumnAsSelector;
 import com.easy.query.api4j.sql.SQLColumnResultSelector;
-import com.easy.query.api4j.sql.SQLColumnSelector;
 import com.easy.query.api4j.sql.SQLGroupBySelector;
+import com.easy.query.api4j.sql.SQLOrderBySelector;
 import com.easy.query.api4j.sql.SQLWhereAggregatePredicate;
 import com.easy.query.api4j.sql.SQLWherePredicate;
 import com.easy.query.api4j.sql.impl.SQLColumnResultSelectorImpl;
-import com.easy.query.api4j.sql.impl.SQLColumnSelectorImpl;
 import com.easy.query.api4j.sql.impl.SQLGroupBySelectorImpl;
+import com.easy.query.api4j.sql.impl.SQLOrderByColumnSelectorImpl;
 import com.easy.query.api4j.sql.impl.SQLWhereAggregatePredicateImpl;
 import com.easy.query.api4j.sql.impl.SQLWherePredicateImpl;
 import com.easy.query.core.api.client.EasyQueryClient;
@@ -232,45 +232,45 @@ public interface Queryable2<T1, T2> extends Queryable<T1> {
     //endregion
     //region order
     @Override
-    default Queryable2<T1, T2> orderByAsc(SQLExpression1<SQLColumnSelector<T1>> selectExpression) {
+    default Queryable2<T1, T2> orderByAsc(SQLExpression1<SQLOrderBySelector<T1>> selectExpression) {
         return orderByAsc(true, selectExpression);
     }
 
     @Override
-    Queryable2<T1, T2> orderByAsc(boolean condition, SQLExpression1<SQLColumnSelector<T1>> selectExpression);
+    Queryable2<T1, T2> orderByAsc(boolean condition, SQLExpression1<SQLOrderBySelector<T1>> selectExpression);
 
-    default Queryable2<T1, T2> orderByAsc(SQLExpression2<SQLColumnSelector<T1>, SQLColumnSelector<T2>> selectExpression) {
+    default Queryable2<T1, T2> orderByAsc(SQLExpression2<SQLOrderBySelector<T1>, SQLOrderBySelector<T2>> selectExpression) {
         getClientQueryable2().orderByAsc((selector1, selector2) -> {
-            selectExpression.apply(new SQLColumnSelectorImpl<>(selector1), new SQLColumnSelectorImpl<>(selector2));
+            selectExpression.apply(new SQLOrderByColumnSelectorImpl<>(selector1), new SQLOrderByColumnSelectorImpl<>(selector2));
         });
         return this;
     }
 
-    default Queryable2<T1, T2> orderByAsc(boolean condition, SQLExpression2<SQLColumnSelector<T1>, SQLColumnSelector<T2>> selectExpression) {
+    default Queryable2<T1, T2> orderByAsc(boolean condition, SQLExpression2<SQLOrderBySelector<T1>, SQLOrderBySelector<T2>> selectExpression) {
         getClientQueryable2().orderByAsc(condition, (selector1, selector2) -> {
-            selectExpression.apply(new SQLColumnSelectorImpl<>(selector1), new SQLColumnSelectorImpl<>(selector2));
+            selectExpression.apply(new SQLOrderByColumnSelectorImpl<>(selector1), new SQLOrderByColumnSelectorImpl<>(selector2));
         });
         return this;
     }
 
     @Override
-    default Queryable2<T1, T2> orderByDesc(SQLExpression1<SQLColumnSelector<T1>> selectExpression) {
+    default Queryable2<T1, T2> orderByDesc(SQLExpression1<SQLOrderBySelector<T1>> selectExpression) {
         return orderByDesc(true, selectExpression);
     }
 
     @Override
-    Queryable2<T1, T2> orderByDesc(boolean condition, SQLExpression1<SQLColumnSelector<T1>> selectExpression);
+    Queryable2<T1, T2> orderByDesc(boolean condition, SQLExpression1<SQLOrderBySelector<T1>> selectExpression);
 
-    default Queryable2<T1, T2> orderByDesc(SQLExpression2<SQLColumnSelector<T1>, SQLColumnSelector<T2>> selectExpression) {
+    default Queryable2<T1, T2> orderByDesc(SQLExpression2<SQLOrderBySelector<T1>, SQLOrderBySelector<T2>> selectExpression) {
         getClientQueryable2().orderByDesc((selector1, selector2) -> {
-            selectExpression.apply(new SQLColumnSelectorImpl<>(selector1), new SQLColumnSelectorImpl<>(selector2));
+            selectExpression.apply(new SQLOrderByColumnSelectorImpl<>(selector1), new SQLOrderByColumnSelectorImpl<>(selector2));
         });
         return this;
     }
 
-    default Queryable2<T1, T2> orderByDesc(boolean condition, SQLExpression2<SQLColumnSelector<T1>, SQLColumnSelector<T2>> selectExpression) {
+    default Queryable2<T1, T2> orderByDesc(boolean condition, SQLExpression2<SQLOrderBySelector<T1>, SQLOrderBySelector<T2>> selectExpression) {
         getClientQueryable2().orderByDesc(condition, (selector1, selector2) -> {
-            selectExpression.apply(new SQLColumnSelectorImpl<>(selector1), new SQLColumnSelectorImpl<>(selector2));
+            selectExpression.apply(new SQLOrderByColumnSelectorImpl<>(selector1), new SQLOrderByColumnSelectorImpl<>(selector2));
         });
         return this;
     }

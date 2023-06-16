@@ -1,8 +1,7 @@
 package com.easy.query.core.expression.parser.core.base.impl;
 
-import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.parser.core.base.ColumnSelector;
+import com.easy.query.core.expression.parser.core.base.ColumnSetSelector;
 import com.easy.query.core.expression.segment.SQLEntitySegment;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnPropertyPredicate;
@@ -17,7 +16,7 @@ import java.util.Objects;
  * @Description: 文件说明
  * @Date: 2023/2/25 21:31
  */
-public class ColumnSetSelectorImpl<T> implements ColumnSelector<T> {
+public class ColumnSetSelectorImpl<T> implements ColumnSetSelector<T> {
     protected final int index;
     protected final EntityExpressionBuilder entityExpressionBuilder;
     protected final TableAvailable table;
@@ -37,14 +36,14 @@ public class ColumnSetSelectorImpl<T> implements ColumnSelector<T> {
     }
 
     @Override
-    public ColumnSelector<T> column(String property) {
+    public ColumnSetSelector<T> column(String property) {
         EntityTableExpressionBuilder table = entityExpressionBuilder.getTable(index);
         sqlSegmentBuilder.append(new ColumnPropertyPredicate(table.getEntityTable(), property, entityExpressionBuilder.getRuntimeContext()));
         return this;
     }
 
     @Override
-    public ColumnSelector<T> columnIgnore(String property) {
+    public ColumnSetSelector<T> columnIgnore(String property) {
 
         EntityTableExpressionBuilder table = entityExpressionBuilder.getTable(index);
         sqlSegmentBuilder.getSQLSegments().removeIf(sqlSegment -> {
@@ -58,17 +57,12 @@ public class ColumnSetSelectorImpl<T> implements ColumnSelector<T> {
     }
 
     @Override
-    public ColumnSelector<T> columnAll() {
+    public ColumnSetSelector<T> columnAll() {
         EntityTableExpressionBuilder table = entityExpressionBuilder.getTable(index);
         Collection<String> properties = table.getEntityMetadata().getProperties();
         for (String property : properties) {
             sqlSegmentBuilder.append(new ColumnPropertyPredicate(table.getEntityTable(), property, entityExpressionBuilder.getRuntimeContext()));
         }
         return this;
-    }
-
-    @Override
-    public ColumnSelector<T> columnFunc(ColumnPropertyFunction columnPropertyFunction) {
-        throw new UnsupportedOperationException();
     }
 }
