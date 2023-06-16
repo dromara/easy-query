@@ -31,8 +31,8 @@ public interface SQLColumnAsSelector<T1, TR> {
         getColumnAsSelector().column(EasyLambdaUtil.getPropertyName(column));
         return this;
     }
-    default SQLColumnAsSelector<T1, TR> columnConst(String columnConst,String alias) {
-        getColumnAsSelector().columnConst(columnConst,alias);
+    default SQLColumnAsSelector<T1, TR> columnConstAs(String columnConst, String alias) {
+        getColumnAsSelector().columnConstAs(columnConst,alias);
         return this;
     }
 

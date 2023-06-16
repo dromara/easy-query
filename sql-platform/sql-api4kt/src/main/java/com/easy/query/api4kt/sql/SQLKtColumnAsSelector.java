@@ -31,8 +31,8 @@ public interface SQLKtColumnAsSelector<T1, TR> {
         getColumnAsSelector().column(EasyKtLambdaUtil.getPropertyName(column));
         return this;
     }
-    default SQLKtColumnAsSelector<T1, TR> columnConst(String columnConst,String alias) {
-        getColumnAsSelector().columnConst(columnConst,alias);
+    default SQLKtColumnAsSelector<T1, TR> columnConstAs(String columnConst,String alias) {
+        getColumnAsSelector().columnConstAs(columnConst,alias);
         return this;
     }
 

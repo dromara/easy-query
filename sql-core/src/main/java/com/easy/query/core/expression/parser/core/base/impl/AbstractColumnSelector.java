@@ -61,7 +61,7 @@ public class AbstractColumnSelector<T1, TChain> {
         return (TChain) this;
     }
 
-    public TChain columnConst(String columnConst, String alias) {
+    public TChain columnConstAs(String columnConst, String alias) {
         EntityTableExpressionBuilder table = entityQueryExpressionBuilder.getTable(index);
         ColumnAsConstSegment columnSegment = sqlSegmentFactory.createColumnAsConstSegment(table.getEntityTable(), entityQueryExpressionBuilder.getRuntimeContext(), columnConst, alias);
         sqlSegmentBuilder.append(columnSegment);
