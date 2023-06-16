@@ -27,6 +27,10 @@ public interface KtQueryable4<T1, T2, T3, T4> extends KtQueryable<T1> {
     ClientQueryable4<T1, T2, T3, T4> getClientQueryable4();
 
     //region where
+    default KtQueryable4<T1, T2, T3, T4> whereById(Object id){
+        return whereById(true,id);
+    }
+    KtQueryable4<T1, T2, T3, T4> whereById(boolean condition, Object id);
     default KtQueryable4<T1, T2, T3, T4> whereObject(Object object) {
         return whereObject(true, object);
     }

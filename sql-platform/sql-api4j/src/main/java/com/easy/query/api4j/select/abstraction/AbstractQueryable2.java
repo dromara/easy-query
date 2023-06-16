@@ -92,6 +92,12 @@ public abstract class AbstractQueryable2<T1, T2> extends AbstractQueryable<T1> i
     }
 
     @Override
+    public Queryable2<T1, T2> whereById(boolean condition, Object id) {
+        super.whereById(condition, id);
+        return this;
+    }
+
+    @Override
     public Queryable2<T1, T2> whereObject(boolean condition, Object object) {
         super.whereObject(condition, object);
         return this;
@@ -117,6 +123,7 @@ public abstract class AbstractQueryable2<T1, T2> extends AbstractQueryable<T1> i
         super.orderByAsc(condition, selectExpression);
         return this;
     }
+
     @Override
     public Queryable2<T1, T2> orderByDesc(boolean condition, SQLExpression1<SQLColumnSelector<T1>> selectExpression) {
         super.orderByDesc(condition, selectExpression);

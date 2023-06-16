@@ -94,6 +94,12 @@ public abstract class AbstractKtQueryable3<T1, T2, T3> extends AbstractKtQueryab
     }
 
     @Override
+    public KtQueryable3<T1, T2, T3> whereById(boolean condition, Object id) {
+        super.whereById(condition, id);
+        return this;
+    }
+
+    @Override
     public KtQueryable3<T1, T2, T3> whereObject(boolean condition, Object object) {
         super.whereObject(condition, object);
         return this;
@@ -122,6 +128,7 @@ public abstract class AbstractKtQueryable3<T1, T2, T3> extends AbstractKtQueryab
         });
         return new EasyKtQueryable<>(select);
     }
+
     @Override
     public KtQueryable3<T1, T2, T3> groupBy(boolean condition, SQLExpression1<SQLKtGroupBySelector<T1>> selectExpression) {
         super.groupBy(condition, selectExpression);

@@ -23,6 +23,12 @@ import java.util.function.Function;
  */
 public interface ClientQueryable4<T1, T2, T3, T4> extends ClientQueryable<T1> {
     //region where
+    default ClientQueryable4<T1, T2, T3, T4> whereById(Object id) {
+        return whereById(true, id);
+    }
+
+    ClientQueryable4<T1, T2, T3, T4> whereById(boolean condition, Object id);
+
     default ClientQueryable4<T1, T2, T3, T4> whereObject(Object object) {
         return whereObject(true, object);
     }

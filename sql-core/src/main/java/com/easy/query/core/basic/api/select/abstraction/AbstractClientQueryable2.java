@@ -27,7 +27,6 @@ import com.easy.query.core.util.EasySQLExpressionUtil;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.Function;
 
 /**
@@ -86,6 +85,12 @@ public abstract class AbstractClientQueryable2<T1, T2> extends AbstractClientQue
         entityQueryExpressionBuilder.getExpressionContext().extract(selectAllT2Queryable.getSQLEntityExpressionBuilder().getExpressionContext());
         ClientQueryable3<T1, T2, T3> queryable3 = entityQueryExpressionBuilder.getRuntimeContext().getSQLObjectApiFactory().createQueryable3(t1Class, t2Class, selectAllT2Queryable, MultiTableTypeEnum.INNER_JOIN, entityQueryExpressionBuilder);
         return EasySQLExpressionUtil.executeJoinOn(queryable3, on);
+    }
+
+    @Override
+    public ClientQueryable2<T1, T2> whereById(boolean condition, Object id) {
+        super.whereById(condition, id);
+        return this;
     }
 
     @Override
@@ -353,8 +358,8 @@ public abstract class AbstractClientQueryable2<T1, T2> extends AbstractClientQue
 
     @Override
     public SQLExpressionProvider<T2> getSQLExpressionProvider2() {
-        if(sqlExpressionProvider2==null){
-            sqlExpressionProvider2=runtimeContext.getSQLExpressionInvokeFactory().createSQLExpressionProvider(1,this.entityQueryExpressionBuilder);
+        if (sqlExpressionProvider2 == null) {
+            sqlExpressionProvider2 = runtimeContext.getSQLExpressionInvokeFactory().createSQLExpressionProvider(1, this.entityQueryExpressionBuilder);
         }
         return sqlExpressionProvider2;
     }

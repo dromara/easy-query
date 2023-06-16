@@ -27,6 +27,10 @@ public interface Queryable4<T1, T2, T3, T4> extends Queryable<T1> {
     ClientQueryable4<T1, T2, T3, T4> getClientQueryable4();
 
     //region where
+    default Queryable4<T1, T2, T3, T4> whereById(Object id){
+        return whereById(true,id);
+    }
+    Queryable4<T1, T2, T3, T4> whereById(boolean condition, Object id);
     default Queryable4<T1, T2, T3, T4> whereObject(Object object) {
         return whereObject(true, object);
     }

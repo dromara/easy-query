@@ -38,6 +38,10 @@ public interface ClientQueryable3<T1, T2, T3> extends ClientQueryable<T1> {
     <T4> ClientQueryable4<T1, T2, T3, T4> innerJoin(ClientQueryable<T4> joinQueryable, SQLExpression4<WherePredicate<T1>, WherePredicate<T2>, WherePredicate<T3>, WherePredicate<T4>> on);
 
     //region where
+    default  ClientQueryable3<T1, T2, T3> whereById(Object id){
+        return whereById(true,id);
+    }
+    ClientQueryable3<T1, T2, T3> whereById(boolean condition, Object id);
     default ClientQueryable3<T1, T2, T3> whereObject(Object object) {
         return whereObject(true, object);
     }

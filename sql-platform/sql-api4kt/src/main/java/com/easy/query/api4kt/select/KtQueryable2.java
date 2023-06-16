@@ -41,6 +41,10 @@ public interface KtQueryable2<T1, T2> extends KtQueryable<T1> {
     <T3> KtQueryable3<T1, T2, T3> innerJoin(KtQueryable<T3> joinQueryable, SQLExpression3<SQLKtWherePredicate<T1>, SQLKtWherePredicate<T2>, SQLKtWherePredicate<T3>> on);
 
     //region where
+    default KtQueryable2<T1, T2> whereById(Object id){
+        return whereById(true,id);
+    }
+    KtQueryable2<T1, T2> whereById(boolean condition, Object id);
 
     default KtQueryable2<T1, T2> whereObject(Object object) {
         return whereObject(true, object);

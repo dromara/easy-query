@@ -23,7 +23,6 @@ import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.Function;
 
 /**
@@ -46,6 +45,12 @@ public abstract class AbstractClientQueryable4<T1, T2, T3, T4> extends AbstractC
         this.t2Class = t2Class;
         this.t3Class = t3Class;
         this.t4Class = t4Class;
+    }
+
+    @Override
+    public ClientQueryable4<T1, T2, T3, T4> whereById(boolean condition, Object id) {
+        super.whereById(condition, id);
+        return this;
     }
 
     @Override

@@ -41,6 +41,12 @@ public abstract class AbstractQueryable4<T1, T2, T3, T4> extends AbstractQueryab
     }
 
     @Override
+    public Queryable4<T1, T2, T3, T4> whereById(boolean condition, Object id) {
+        super.whereById(condition, id);
+        return this;
+    }
+
+    @Override
     public Queryable4<T1, T2, T3, T4> whereObject(boolean condition, Object object) {
         super.whereObject(condition, object);
         return this;

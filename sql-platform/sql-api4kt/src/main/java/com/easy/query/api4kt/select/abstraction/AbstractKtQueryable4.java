@@ -41,6 +41,12 @@ public abstract class AbstractKtQueryable4<T1, T2, T3, T4> extends AbstractKtQue
     }
 
     @Override
+    public KtQueryable4<T1, T2, T3, T4> whereById(boolean condition, Object id) {
+        super.whereById(condition, id);
+        return this;
+    }
+
+    @Override
     public KtQueryable4<T1, T2, T3, T4> whereObject(boolean condition, Object object) {
         super.whereObject(condition, object);
         return this;

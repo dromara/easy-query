@@ -38,6 +38,10 @@ public interface ClientQueryable2<T1, T2> extends ClientQueryable<T1> {
 
     //region where
 
+   default ClientQueryable2<T1, T2> whereById(Object id){
+       return whereById(true,id);
+   }
+    ClientQueryable2<T1, T2> whereById(boolean condition, Object id);
     /**
      * 仅支持主表的动态对象查询
      * @param object 对象查询的对象
