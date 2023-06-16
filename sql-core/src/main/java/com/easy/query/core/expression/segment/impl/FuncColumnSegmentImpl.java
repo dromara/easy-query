@@ -34,7 +34,7 @@ public class FuncColumnSegmentImpl implements FuncColumnSegment {
     @Override
     public String toSQL(ToSQLContext toSQLContext) {
 
-        String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumn(runtimeContext,table,propertyName,toSQLContext);
+        String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumnByProperty(runtimeContext,table,propertyName,toSQLContext);
         String funcColumn = columnFunction.getFuncColumn(sqlColumnSegment);
         StringBuilder sql = new StringBuilder().append(funcColumn);
         if(alias!=null){

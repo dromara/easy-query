@@ -28,7 +28,7 @@ public class ColumnPredicate implements Predicate {
 
     @Override
     public String toSQL(ToSQLContext toSQLContext) {
-        String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumn(runtimeContext,table,propertyName,toSQLContext);
+        String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumnByProperty(runtimeContext,table,propertyName,toSQLContext);
         return sqlColumnSegment +" "+ compare.getSQL();
     }
 

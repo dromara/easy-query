@@ -5,6 +5,7 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.segment.ColumnAsConstSegment;
 import com.easy.query.core.expression.segment.ColumnInsertSegment;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.segment.ColumnWithSelfSegment;
@@ -14,6 +15,8 @@ import com.easy.query.core.expression.segment.OrderBySegment;
 import com.easy.query.core.expression.segment.OrderFuncColumnSegment;
 import com.easy.query.core.expression.segment.SelectConstSegment;
 import com.easy.query.core.expression.segment.SubQueryColumnSegment;
+import com.easy.query.core.expression.segment.impl.AnonymousColumnSegmentImpl;
+import com.easy.query.core.expression.segment.impl.ColumnAsConstSegmentImpl;
 import com.easy.query.core.expression.segment.impl.ColumnInsertSegmentImpl;
 import com.easy.query.core.expression.segment.impl.ColumnSegmentImpl;
 import com.easy.query.core.expression.segment.impl.ColumnWithSelfSegmentImpl;
@@ -32,7 +35,7 @@ import com.easy.query.core.expression.segment.impl.SubQueryColumnSegmentImpl;
  *
  * @author xuejiaming
  */
-public class DefaultSQLSegmentFactory implements SQLSegmentFactory{
+public class DefaultSQLSegmentFactory implements SQLSegmentFactory {
     @Override
     public SelectConstSegment createSelectConstSegment(String projects) {
         return new SelectConstSegmentImpl(projects);
@@ -40,47 +43,57 @@ public class DefaultSQLSegmentFactory implements SQLSegmentFactory{
 
     @Override
     public ColumnSegment createColumnSegment(TableAvailable table, String propertyName, QueryRuntimeContext runtimeContext, String alias) {
-        return new ColumnSegmentImpl(table,propertyName,runtimeContext,alias);
+        return new ColumnSegmentImpl(table, propertyName, runtimeContext, alias);
+    }
+
+    @Override
+    public ColumnSegment createAnonymousColumnSegment(TableAvailable table, QueryRuntimeContext runtimeContext, String alias) {
+        return new AnonymousColumnSegmentImpl(table, runtimeContext, alias);
+    }
+
+    @Override
+    public ColumnAsConstSegment createColumnAsConstSegment(TableAvailable table, QueryRuntimeContext runtimeContext, String columnConst, String alias) {
+        return new ColumnAsConstSegmentImpl(table, runtimeContext, columnConst, alias);
     }
 
     @Override
     public ColumnInsertSegment createColumnInsertSegment(TableAvailable table, String propertyName, QueryRuntimeContext runtimeContext) {
-        return new ColumnInsertSegmentImpl(table,propertyName,runtimeContext);
+        return new ColumnInsertSegmentImpl(table, propertyName, runtimeContext);
     }
 
     @Override
     public ColumnWithSelfSegment createColumnWithSelfSegment(boolean increment, TableAvailable table, String propertyName, Object val, SQLPredicateCompare compare, QueryRuntimeContext runtimeContext) {
-        return new ColumnWithSelfSegmentImpl(increment,table,propertyName,val,compare,runtimeContext);
+        return new ColumnWithSelfSegmentImpl(increment, table, propertyName, val, compare, runtimeContext);
     }
 
     @Override
     public FuncColumnSegment createFuncColumnSegment(TableAvailable table, String propertyName, QueryRuntimeContext runtimeContext, ColumnFunction columnFunction, String alias) {
-        return new FuncColumnSegmentImpl(table,propertyName,runtimeContext,columnFunction,alias);
+        return new FuncColumnSegmentImpl(table, propertyName, runtimeContext, columnFunction, alias);
     }
 
     @Override
     public GroupByColumnSegment createGroupByColumnSegment(TableAvailable table, String propertyName, QueryRuntimeContext runtimeContext) {
-        return new GroupColumnSegmentImpl(table,propertyName,runtimeContext);
+        return new GroupColumnSegmentImpl(table, propertyName, runtimeContext);
     }
 
     @Override
     public OrderBySegment createOrderByColumnSegment(TableAvailable table, String propertyName, QueryRuntimeContext runtimeContext, boolean asc) {
-        return new OrderColumnSegmentImpl(table,propertyName,runtimeContext,asc);
+        return new OrderColumnSegmentImpl(table, propertyName, runtimeContext, asc);
     }
 
     @Override
     public OrderFuncColumnSegment createOrderFuncColumnSegment(TableAvailable table, String propertyName, QueryRuntimeContext runtimeContext, ColumnFunction columnFunction, boolean asc) {
-        return new OrderFuncColumnSegmentImpl(table,propertyName,runtimeContext,columnFunction,asc);
+        return new OrderFuncColumnSegmentImpl(table, propertyName, runtimeContext, columnFunction, asc);
     }
 
     @Override
     public OrderBySegment createOrderByConstSegment(TableAvailable table, QueryRuntimeContext runtimeContext, String columnConst, boolean asc) {
-        return new OrderByConstSegmentImpl(table,runtimeContext,columnConst,asc);
+        return new OrderByConstSegmentImpl(table, runtimeContext, columnConst, asc);
     }
 
     @Override
     public GroupByColumnSegment createGroupByConstSegment(TableAvailable table, QueryRuntimeContext runtimeContext, String columnConst) {
-        return new GroupByConstSegmentImpl(table,runtimeContext,columnConst);
+        return new GroupByConstSegmentImpl(table, runtimeContext, columnConst);
     }
 
     @Override

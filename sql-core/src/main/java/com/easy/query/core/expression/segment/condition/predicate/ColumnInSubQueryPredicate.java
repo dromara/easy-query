@@ -47,7 +47,7 @@ public class ColumnInSubQueryPredicate implements SubQueryPredicate{
     @Override
     public String toSQL(ToSQLContext toSQLContext) {
 
-        String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumn(runtimeContext,table,propertyName,toSQLContext);
+        String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumnByProperty(runtimeContext,table,propertyName,toSQLContext);
         StringBuilder sql = new StringBuilder();
         sql.append(sqlColumnSegment).append(" ").append(compare.getSQL()).append(" (");
         String subQueryableSQL = subQuery.toSQL(toSQLContext);
