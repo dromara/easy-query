@@ -11,6 +11,7 @@ import com.easy.query.test.dto.BlogQueryRequest;
 import com.easy.query.test.dto.TopicGroupTestDTO;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.Topic;
+import com.easy.query.test.entity.TopicY;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -790,6 +791,14 @@ public class QueryTest2 extends BaseTest {
         Assert.assertEquals("SELECT t1.`rad` AS `rad`,t1.`id` AS `id`,t1.`id_count` AS `id_count` FROM (SELECT RAND() AS rad,t.`id` AS `id`,COUNT(t.`id`) AS `id_count` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? GROUP BY RAND()) t1 ORDER BY RAND() ASC", sql);
         List<TopicGroupTestDTO> list = topicGroupTestDTOQueryable.toList();
         Assert.assertEquals(1,list.size());
+    }
+
+    @Test
+    public void query25(){
+
+        easyQuery.queryable(TopicY.class)
+                .includes(TopicY::getTopicxList, q->q)
+                .include(TopicY::getTopic,q->q.where(x->x.eq(Topic::getId,1)));
     }
 
 }

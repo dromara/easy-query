@@ -128,6 +128,20 @@ public class EntityMetadata {
             if (ignoreProperties.contains(property)) {
                 continue;
             }
+//            Type genericType = field.getGenericType();
+//
+//            if (genericType instanceof ParameterizedType) {
+//                ParameterizedType parameterizedType = (ParameterizedType) genericType;
+//                Type[] typeArguments = parameterizedType.getActualTypeArguments();
+//
+//                if (typeArguments.length > 0) {
+//                    Type elementType = typeArguments[0];
+//                    if (elementType instanceof Class) {
+//                        Class<?> elementClass = (Class<?>) elementType;
+//                        System.out.println("List element class: " + elementClass.getName());
+//                    }
+//                }
+//            }
             //未找到bean属性就直接忽略
             PropertyDescriptor propertyDescriptor = firstOrNull(ps, o -> Objects.equals(o.getName(), property));
             if (propertyDescriptor == null) {

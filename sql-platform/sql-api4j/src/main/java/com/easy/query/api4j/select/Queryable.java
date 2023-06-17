@@ -1,5 +1,6 @@
 package com.easy.query.api4j.select;
 
+import com.easy.query.api4j.select.impl.EasyQueryable;
 import com.easy.query.api4j.sql.SQLColumnAsSelector;
 import com.easy.query.api4j.sql.SQLColumnSelector;
 import com.easy.query.api4j.sql.SQLGroupBySelector;
@@ -29,6 +30,7 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.function.Function;
 
 /**
  * @author xuejiaming
@@ -359,6 +361,14 @@ public interface Queryable<T1> extends Query<T1>,
     }
 
     Queryable<T1> unionAll(Collection<Queryable<T1>> unionQueries);
+   default  <TProperty> Queryable<T1> includes(Property<T1,Collection<TProperty>> navigate, Function<Queryable<TProperty>,Queryable<TProperty>> func){
+       getEntityQueryable().<TProperty>include(EasyLambdaUtil.getPropertyName(navigate), q->func.apply(new EasyQueryable<>(q)).getEntityQueryable());
+       return this;
+   }
+   default  <TProperty> Queryable<T1> include(Property<T1,TProperty> navigate, Function<Queryable<TProperty>,Queryable<TProperty>> func){
+       getEntityQueryable().<TProperty>include(EasyLambdaUtil.getPropertyName(navigate), q->func.apply(new EasyQueryable<>(q)).getEntityQueryable());
+       return this;
+   }
 
     /**
      * 自动将查询结果集合全部添加到当前上下文追踪中,如果当前查询结果十分庞大,并且更新数据只有个别条数,建议不要使用
