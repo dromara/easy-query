@@ -180,6 +180,7 @@ public final class EasyStreamResultUtil {
         EntityMetadataManager entityMetadataManager = runtimeContext.getEntityMetadataManager();
         JdbcTypeHandlerManager easyJdbcTypeHandler = runtimeContext.getJdbcTypeHandlerManager();
         EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(clazz);
+        boolean mapToBeanStrict = context.isMapToBeanStrict();
         //需要返回的结果集映射到bean实体上
         //int[] 索引代表数据库返回的索引，数组索引所在的值代表属性数组的对应属性
         int columnCount = rsmd.getColumnCount();//有多少列
@@ -188,17 +189,29 @@ public final class EasyStreamResultUtil {
 
             String colName = getColName(rsmd, i + 1);//数据库查询出来的列名
 
-            String propertyName = entityMetadata.getPropertyNameOrNull(colName);
-            if (propertyName == null) {
+//            String propertyName = entityMetadata.getPropertyNameOrNull(colName);
+//            if (propertyName == null) {
+//                continue;
+//            }
+            ColumnMetadata column = getMapColumnMetadata(entityMetadata,colName,mapToBeanStrict);
+            if(column==null){
                 continue;
             }
-            ColumnMetadata column = entityMetadata.getColumnOrNull(propertyName);
             Class<?> propertyType = column.getPropertyType();
             JdbcTypeHandler jdbcTypeHandler = easyJdbcTypeHandler.getHandler(propertyType);
             BeanMapToColumnMetadata beanMapToColumnMetadata = new BeanMapToColumnMetadata(column, jdbcTypeHandler);
             beanMapToColumnMetadatas[i] = beanMapToColumnMetadata;
         }
         return beanMapToColumnMetadatas;
+    }
+    private static ColumnMetadata getMapColumnMetadata(EntityMetadata entityMetadata,String columnName,boolean mapToBeanStrict){
+        String propertyName = entityMetadata.getPropertyNameOrNull(columnName);
+        if(propertyName!=null){
+            return entityMetadata.getColumnNotNull(propertyName);
+        }else if(!mapToBeanStrict){
+           return entityMetadata.getColumnOrNull(columnName);
+        }
+        return null;
     }
     private static String getColName(ResultSetMetaData rsmd, int col) throws SQLException {
         String columnName = rsmd.getColumnLabel(col);
