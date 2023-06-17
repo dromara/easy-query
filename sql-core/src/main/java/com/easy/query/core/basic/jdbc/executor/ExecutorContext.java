@@ -22,6 +22,7 @@ public class ExecutorContext {
 
     private final QueryRuntimeContext runtimeContext;
     private final boolean isQuery;
+    private boolean mapToBeanStrict=true;
     private final ExecuteMethodEnum executeMethod;
     private final boolean tracking;
     private final EasyQueryOption easyQueryOption;
@@ -114,11 +115,20 @@ public class ExecutorContext {
         return isQuery;
     }
 
+
     public ExecuteMethodEnum getExecuteMethod() {
         return executeMethod;
     }
 
     public EasyQueryOption getEasyQueryOption() {
         return easyQueryOption;
+    }
+
+    public boolean isMapToBeanStrict() {
+        return mapToBeanStrict;
+    }
+
+    public void setMapToBeanStrict(boolean mapToBeanStrict) {
+        this.mapToBeanStrict = mapToBeanStrict;
     }
 }

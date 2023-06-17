@@ -198,6 +198,32 @@ public class QueryTest extends BaseTest {
     }
 
     @Test
+    public void query7_2() {
+        String sql = "SELECT `id`,`create_time` AS createTime,`update_time` AS updateTime,`create_by` AS createBy,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time` AS publishTime,`score`,`status`,`order`,`is_top`  AS isTop,`top` FROM `t_blog` WHERE `deleted` = ? ORDER BY `create_time` ASC";
+        List<BlogEntity> blogEntities =easyQuery.sqlQuery(sql, BlogEntity.class,Arrays.asList(false));
+        LocalDateTime begin = LocalDateTime.of(2020, 1, 1, 1, 1, 1);
+        int i = 0;
+        for (BlogEntity blog : blogEntities) {
+            String indexStr = String.valueOf(i);
+            Assert.assertEquals(indexStr, blog.getId());
+            Assert.assertEquals(indexStr, blog.getCreateBy());
+            Assert.assertEquals(begin.plusDays(i), blog.getCreateTime());
+            Assert.assertEquals(indexStr, blog.getUpdateBy());
+            Assert.assertEquals(begin.plusDays(i), blog.getUpdateTime());
+            Assert.assertEquals("title" + indexStr, blog.getTitle());
+//            Assert.assertEquals("content" + indexStr, blog.getContent());
+            Assert.assertEquals("http://blog.easy-query.com/" + indexStr, blog.getUrl());
+            Assert.assertEquals(i, (int) blog.getStar());
+            Assert.assertEquals(0, new BigDecimal("1.2").compareTo(blog.getScore()));
+            Assert.assertEquals(i % 3 == 0 ? 0 : 1, (int) blog.getStatus());
+            Assert.assertEquals(0, new BigDecimal("1.2").multiply(BigDecimal.valueOf(i)).compareTo(blog.getOrder()));
+            Assert.assertEquals(i % 2 == 0, blog.getIsTop());
+            Assert.assertEquals(i % 2 == 0, blog.getTop());
+            Assert.assertEquals(false, blog.getDeleted());
+            i++;
+        }
+    }
+    @Test
     public void query8() {
         String sql = easyQuery
                 .queryable(Topic.class)
