@@ -81,11 +81,12 @@ public class FastBean {
         Method writeMethod = EasyClassUtil.getWriteMethodNotNull(prop, beanClass);
         MethodType setter = MethodType.methodType(writeMethod.getReturnType(), propertyType);
 
+        Class<?> lambdaPropertyType = EasyClassUtil.getObjectTypeWhenPrimitive(propertyType);
         String getFunName = writeMethod.getName();
         try {
 
             //()->{bean.setxxx(propertyType)}
-            MethodType instantiatedMethodType = MethodType.methodType(void.class, beanClass, propertyType);
+            MethodType instantiatedMethodType = MethodType.methodType(void.class, beanClass,lambdaPropertyType);
             MethodHandle target = caller.findVirtual(beanClass, getFunName, setter);
             MethodType samMethodType = MethodType.methodType(void.class, Object.class, Object.class);
             CallSite site = LambdaMetafactory.metafactory(
