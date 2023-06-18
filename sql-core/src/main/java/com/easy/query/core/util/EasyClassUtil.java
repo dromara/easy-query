@@ -110,6 +110,28 @@ public class EasyClassUtil {
             return false;
         }
     }
+    public static  Class<?> getObjectTypeWhenPrimitive(Class<?> propertyType){
+        if(propertyType.isPrimitive()){
+            if (propertyType == boolean.class) {
+                return (Class<?>) Boolean.class;
+            } else if (propertyType == byte.class) {
+                return (Class<?>) Byte.class;
+            } else if (propertyType == short.class) {
+                return (Class<?>) Short.class;
+            } else if (propertyType == int.class) {
+                return (Class<?>) Integer.class;
+            } else if (propertyType == long.class) {
+                return (Class<?>) Long.class;
+            } else if (propertyType == float.class) {
+                return (Class<?>) Float.class;
+            } else if (propertyType == double.class) {
+                return (Class<?>) Double.class;
+            } else if (propertyType == char.class) {
+                return (Class<?>) Character.class;
+            }
+        }
+        return propertyType;
+    }
     public static boolean isEnumType(Class<?> clazz) {
         return clazz.isEnum();
     }
