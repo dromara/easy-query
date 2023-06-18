@@ -4,6 +4,7 @@ import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnResultSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnSelector;
 import com.easy.query.core.expression.parser.core.base.GroupBySelector;
+import com.easy.query.core.expression.parser.core.base.NavigateInclude;
 import com.easy.query.core.expression.parser.core.base.OrderBySelector;
 import com.easy.query.core.expression.parser.core.base.WhereAggregatePredicate;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
@@ -21,6 +22,8 @@ public interface SQLExpressionProvider<TEntity> {
     OrderBySelector<TEntity> getOrderColumnSelector(boolean asc);
 
     WherePredicate<TEntity> getWherePredicate();
+
+    NavigateInclude<TEntity> getNavigateInclude();
 
     WherePredicate<TEntity> getAllWherePredicate();
 

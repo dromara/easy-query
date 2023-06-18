@@ -4,6 +4,8 @@ import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.sql.expression.EntityQuerySQLExpression;
 
+import java.util.List;
+
 /**
  * @Description: 文件说明
  * @Date: 2023/3/3 22:17
@@ -44,6 +46,8 @@ public interface EntityQueryExpressionBuilder extends EntityPredicateExpressionB
      SQLBuilderSegment getOrder() ;
 
      boolean hasOrder();
+     List<EntityQueryExpressionBuilder> getIncludes();
+     boolean hasIncludes();
     @Override
     EntityQueryExpressionBuilder cloneEntityExpressionBuilder();
 

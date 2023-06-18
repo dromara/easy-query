@@ -17,6 +17,7 @@ import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnSelector;
 import com.easy.query.core.expression.parser.core.base.GroupBySelector;
+import com.easy.query.core.expression.parser.core.base.NavigateInclude;
 import com.easy.query.core.expression.parser.core.base.OrderBySelector;
 import com.easy.query.core.expression.parser.core.base.WhereAggregatePredicate;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
@@ -26,7 +27,6 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.function.Function;
 
 /**
  * create time 2023/6/1 17:26
@@ -350,7 +350,7 @@ public interface ClientQueryable<T1> extends Query<T1>,
 
     ClientQueryable<T1> unionAll(Collection<ClientQueryable<T1>> unionQueries);
 
-    <TProperty> ClientQueryable<T1> include(String property, Function<ClientQueryable<TProperty>,ClientQueryable<TProperty>> func);
+    <TProperty> ClientQueryable<T1> include(SQLExpression1<NavigateInclude<T1>> navigateIncludeSQLExpression);
 
     /**
      * 自动将查询结果集合全部添加到当前上下文追踪中,如果当前查询结果十分庞大,并且更新数据只有个别条数,建议不要使用

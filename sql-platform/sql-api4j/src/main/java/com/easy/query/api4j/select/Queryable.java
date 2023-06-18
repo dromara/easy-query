@@ -1,12 +1,13 @@
 package com.easy.query.api4j.select;
 
-import com.easy.query.api4j.select.impl.EasyQueryable;
 import com.easy.query.api4j.sql.SQLColumnAsSelector;
 import com.easy.query.api4j.sql.SQLColumnSelector;
 import com.easy.query.api4j.sql.SQLGroupBySelector;
+import com.easy.query.api4j.sql.SQLNavigateInclude;
 import com.easy.query.api4j.sql.SQLOrderBySelector;
 import com.easy.query.api4j.sql.SQLWhereAggregatePredicate;
 import com.easy.query.api4j.sql.SQLWherePredicate;
+import com.easy.query.api4j.sql.impl.SQLNavigateIncludeImpl;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.api.dynamic.sort.ObjectSort;
 import com.easy.query.core.basic.api.internal.Interceptable;
@@ -30,7 +31,6 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.function.Function;
 
 /**
  * @author xuejiaming
@@ -361,12 +361,16 @@ public interface Queryable<T1> extends Query<T1>,
     }
 
     Queryable<T1> unionAll(Collection<Queryable<T1>> unionQueries);
-   default  <TProperty> Queryable<T1> includes(Property<T1,Collection<TProperty>> navigate, Function<Queryable<TProperty>,Queryable<TProperty>> func){
-       getEntityQueryable().<TProperty>include(EasyLambdaUtil.getPropertyName(navigate), q->func.apply(new EasyQueryable<>(q)).getEntityQueryable());
-       return this;
-   }
-   default  <TProperty> Queryable<T1> include(Property<T1,TProperty> navigate, Function<Queryable<TProperty>,Queryable<TProperty>> func){
-       getEntityQueryable().<TProperty>include(EasyLambdaUtil.getPropertyName(navigate), q->func.apply(new EasyQueryable<>(q)).getEntityQueryable());
+//   default  <TProperty> Queryable<T1> includes(Property<T1,Collection<TProperty>> navigate, Function<Queryable<TProperty>,Queryable<TProperty>> func){
+//       getEntityQueryable().<TProperty>include(EasyLambdaUtil.getPropertyName(navigate), q->func.apply(new EasyQueryable<>(q)).getEntityQueryable());
+//       return this;
+//   }
+//   default  <TProperty> Queryable<T1> include(Property<T1,TProperty> navigate, Function<Queryable<TProperty>,Queryable<TProperty>> func){
+//       getEntityQueryable().<TProperty>include(EasyLambdaUtil.getPropertyName(navigate), q->func.apply(new EasyQueryable<>(q)).getEntityQueryable());
+//       return this;
+//   }
+   default  <TProperty> Queryable<T1> include(SQLExpression1<SQLNavigateInclude<T1>> navigateIncludeSQLExpression){
+       getEntityQueryable().<TProperty>include(navigateInclude->navigateIncludeSQLExpression.apply(new SQLNavigateIncludeImpl<>(navigateInclude)));
        return this;
    }
 

@@ -4,13 +4,15 @@ import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnResultSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnSelector;
 import com.easy.query.core.expression.parser.core.base.GroupBySelector;
+import com.easy.query.core.expression.parser.core.base.NavigateInclude;
 import com.easy.query.core.expression.parser.core.base.WhereAggregatePredicate;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
-import com.easy.query.core.expression.parser.core.base.impl.ColumnAutoAsSelectorImpl;
 import com.easy.query.core.expression.parser.core.base.impl.ColumnAsSelectorImpl;
+import com.easy.query.core.expression.parser.core.base.impl.ColumnAutoAsSelectorImpl;
 import com.easy.query.core.expression.parser.core.base.impl.ColumnResultSelectorImpl;
 import com.easy.query.core.expression.parser.core.base.impl.ColumnSelectorImpl;
 import com.easy.query.core.expression.parser.core.base.impl.GroupBySelectorImpl;
+import com.easy.query.core.expression.parser.core.base.impl.NavigateIncludeImpl;
 import com.easy.query.core.expression.parser.core.base.impl.OrderColumnSelectorImpl;
 import com.easy.query.core.expression.parser.core.base.impl.WhereAggregatePredicateImpl;
 import com.easy.query.core.expression.parser.core.base.impl.WherePredicateImpl;
@@ -31,6 +33,7 @@ public class SQLExpressionProviderImpl<TEntity> implements SQLExpressionProvider
     private GroupBySelectorImpl<TEntity> group;
     private OrderColumnSelectorImpl<TEntity> order;
     private WherePredicateImpl<TEntity> where;
+    private NavigateIncludeImpl<TEntity> navigateInclude;
     private WherePredicateImpl<TEntity> allPredicate;
     private WhereAggregatePredicateImpl<TEntity> having;
     private WherePredicateImpl<TEntity> on;
@@ -63,6 +66,14 @@ public class SQLExpressionProviderImpl<TEntity> implements SQLExpressionProvider
             where = new WherePredicateImpl<>(index, entityQueryExpressionBuilder, entityQueryExpressionBuilder.getWhere());
         }
         return where;
+    }
+
+    @Override
+    public NavigateInclude<TEntity> getNavigateInclude() {
+        if(navigateInclude==null){
+            navigateInclude=new NavigateIncludeImpl<>(index,entityQueryExpressionBuilder);
+        }
+        return navigateInclude;
     }
 
     @Override

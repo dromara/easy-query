@@ -1,6 +1,8 @@
 package com.easy.query.test.entity;
 
+import com.easy.query.core.annotation.Navigate;
 import com.easy.query.core.annotation.Table;
+import com.easy.query.core.enums.RelationTypeEnum;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -17,7 +19,9 @@ public class TopicY {
     private Integer stars;
     private String title;
     private LocalDateTime createTime;
+    @Navigate(relationType = RelationTypeEnum.OneToMany,value = "title")
     private List<Topicx> topicxList;
+    @Navigate(relationType = RelationTypeEnum.OneToOne,value = "id")
     private Topic topic;
 
     public String getId() {

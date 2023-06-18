@@ -17,7 +17,6 @@ import com.easy.query.core.logging.LogFactory;
 import com.easy.query.mysql.config.MySQLDatabaseConfiguration;
 import com.easy.query.test.dto.TopicRequest;
 import com.easy.query.test.entity.Topic;
-import com.easy.query.test.entity.TopicY;
 import com.easy.query.test.mytest.SysUserLogbyMonth;
 import com.easy.query.test.mytest.TestUserMysql;
 import com.easy.query.test.mytest.TestUserMysqlGroup;
@@ -177,8 +176,8 @@ public class Main {
 //        }
         {
 
-            easyQuery.queryable(TopicY.class)
-                    .includes(TopicY::getTopicxList, q->q);
+//            easyQuery.queryable(TopicY.class)
+//                    .includes(TopicY::getTopicxList, q->q);
         }
         {
             Queryable<String> nameSubQuery = easyQuery.queryable(TestUserMysql.class).where(o->o.eq(TestUserMysql::getName,"xhn")).select(String.class, o -> o.column(TestUserMysql::getName));

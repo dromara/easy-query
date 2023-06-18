@@ -31,6 +31,7 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnSelector;
 import com.easy.query.core.expression.parser.core.base.GroupBySelector;
+import com.easy.query.core.expression.parser.core.base.NavigateInclude;
 import com.easy.query.core.expression.parser.core.base.OrderBySelector;
 import com.easy.query.core.expression.parser.core.base.WhereAggregatePredicate;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
@@ -58,10 +59,7 @@ import com.easy.query.core.util.EasySQLExpressionUtil;
 import com.easy.query.core.util.EasySQLSegmentUtil;
 import com.easy.query.core.util.EasyStringUtil;
 
-import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -779,29 +777,9 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     }
 
     @Override
-    public <TProperty> ClientQueryable<T1> include(String property, Function<ClientQueryable<TProperty>, ClientQueryable<TProperty>> func) {
-        EntityTableExpressionBuilder table = entityQueryExpressionBuilder.getTable(0);
-        EntityMetadata entityMetadata = table.getEntityTable().getEntityMetadata();
-        ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(property);
-        PropertyDescriptor propertyDescriptor = columnMetadata.getProperty();
-        Class<?> propertyType = columnMetadata.getPropertyType();
-        if (Collection.class.isAssignableFrom(propertyType)) {
-            Type genericType = propertyDescriptor.getReadMethod().getGenericReturnType();
-
-            if (genericType instanceof ParameterizedType) {
-                ParameterizedType parameterizedType = (ParameterizedType) genericType;
-                Type[] typeArguments = parameterizedType.getActualTypeArguments();
-
-                if (typeArguments.length > 0) {
-                    Type elementType = typeArguments[0];
-                    if (elementType instanceof Class) {
-                        Class<?> elementClass = (Class<?>) elementType;
-                        System.out.println("List element class: " + elementClass.getName());
-                    }
-                }
-            }
-        }
-        System.out.println(propertyType);
+    public <TProperty> ClientQueryable<T1> include(SQLExpression1<NavigateInclude<T1>> navigateIncludeSQLExpression) {
+        NavigateInclude<T1> navigateInclude = sqlExpressionProvider1.getNavigateInclude();
+        navigateIncludeSQLExpression.apply(navigateInclude);
         return this;
     }
 

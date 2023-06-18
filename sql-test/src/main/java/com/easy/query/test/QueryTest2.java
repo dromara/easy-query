@@ -796,9 +796,14 @@ public class QueryTest2 extends BaseTest {
     @Test
     public void query25(){
 
-        easyQuery.queryable(TopicY.class)
-                .includes(TopicY::getTopicxList, q->q)
-                .include(TopicY::getTopic,q->q.where(x->x.eq(Topic::getId,1)));
+        List<TopicY> list = easyQuery.queryable(TopicY.class)
+                .include(t->t.withMany(TopicY::getTopicxList))
+                .toList();
+        List<TopicY> list1 = easyQuery.queryable(TopicY.class)
+                .include(t->t.withOne(TopicY::getTopic, q -> q.where(x -> x.eq(Topic::getId, "1"))))
+                .toList();
+
+//                .include(TopicY::getTopic,q->q.where(x->x.eq(Topic::getId,1)));
     }
 
 }

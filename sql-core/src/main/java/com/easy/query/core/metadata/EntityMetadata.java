@@ -5,6 +5,7 @@ import com.easy.query.core.annotation.ColumnIgnore;
 import com.easy.query.core.annotation.Encryption;
 import com.easy.query.core.annotation.InsertIgnore;
 import com.easy.query.core.annotation.LogicDelete;
+import com.easy.query.core.annotation.Navigate;
 import com.easy.query.core.annotation.ShardingDataSourceKey;
 import com.easy.query.core.annotation.ShardingExtraDataSourceKey;
 import com.easy.query.core.annotation.ShardingExtraTableKey;
@@ -28,6 +29,7 @@ import com.easy.query.core.basic.extension.version.VersionStrategy;
 import com.easy.query.core.common.LinkedCaseInsensitiveMap;
 import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.configuration.nameconversion.NameConversion;
+import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.inject.ServiceProvider;
@@ -43,6 +45,8 @@ import com.easy.query.core.util.EasyStringUtil;
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -96,12 +100,13 @@ public class EntityMetadata {
     private final List<EntityInterceptor> entityInterceptors = new ArrayList<>();
     private final List<UpdateSetInterceptor> updateSetInterceptors = new ArrayList<>();
     private final LinkedHashMap<String, ColumnMetadata> property2ColumnMap = new LinkedHashMap<>();
+    private final LinkedHashMap<String, NavigateMetadata> property2NavigateMap = new LinkedHashMap<>();
     private final Map<String/*property name*/, String/*column name*/> keyPropertiesMap = new LinkedHashMap<>();
     private final List<String/*column name*/> incrementColumns = new ArrayList<>(4);
     private final LinkedCaseInsensitiveMap<String> column2PropertyMap = new LinkedCaseInsensitiveMap<>(Locale.ENGLISH);
 
     private final Set<ActualTable> actualTables = new CopyOnWriteArraySet<>();
-    private final Set<String> dataSources =new CopyOnWriteArraySet<>();
+    private final Set<String> dataSources = new CopyOnWriteArraySet<>();
 
     public EntityMetadata(Class<?> entityClass) {
         this.entityClass = entityClass;
@@ -115,7 +120,7 @@ public class EntityMetadata {
         Table table = EasyClassUtil.getAnnotation(entityClass, Table.class);
         if (table != null) {
             this.tableName = nameConversion.convert(EasyStringUtil.defaultIfBank(table.value(), EasyClassUtil.getSimpleName(entityClass)));
-            this.schema=table.schema();
+            this.schema = table.schema();
         }
         HashSet<String> ignoreProperties = table != null ? new HashSet<>(Arrays.asList(table.ignoreProperties())) : new HashSet<>();
 
@@ -147,6 +152,19 @@ public class EntityMetadata {
             if (propertyDescriptor == null) {
                 continue;
             }
+            Navigate navigate = field.getAnnotation(Navigate.class);
+            if (navigate != null) {
+                String relationKey = navigate.value();
+                RelationTypeEnum relationType = navigate.relationType();
+                Class<?> navigateType = getNavigateType(relationType, field, propertyDescriptor);
+                if(navigateType==null){
+                    throw new EasyQueryInvalidOperationException("not found navigate type, property:["+property+"]");
+                }
+                NavigateMetadata navigateMetadata = new NavigateMetadata(this, property, navigateType, relationType, relationKey);
+                property2NavigateMap.put(property,navigateMetadata);
+                continue;
+            }
+
             ColumnIgnore columnIgnore = field.getAnnotation(ColumnIgnore.class);
             if (columnIgnore != null) {
                 continue;
@@ -165,13 +183,13 @@ public class EntityMetadata {
             if (encryption != null) {
                 Class<? extends EncryptionStrategy> strategy = encryption.strategy();
                 EncryptionStrategy easyEncryptionStrategy = configuration.getEasyEncryptionStrategy(strategy);
-                if (easyEncryptionStrategy==null) {
+                if (easyEncryptionStrategy == null) {
                     throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " Encryption strategy unknown");
                 }
                 columnOption.setEncryptionStrategy(easyEncryptionStrategy);
                 columnOption.setSupportQueryLike(encryption.supportQueryLike());
             }
-            if(column!=null) {
+            if (column != null) {
                 Class<? extends ValueConverter<?, ?>> conversionClass = column.conversion();
                 if (!Objects.equals(DefaultValueConverter.class, conversionClass)) {
                     ValueConverter<?, ?> valueConverter = configuration.getValueConverter(conversionClass);
@@ -288,6 +306,28 @@ public class EntityMetadata {
         }
     }
 
+    private Class<?> getNavigateType(RelationTypeEnum relationType,Field field,PropertyDescriptor propertyDescriptor){
+
+        if(relationType.equals(RelationTypeEnum.OneToMany)||relationType.equals(RelationTypeEnum.ManyToMany)){
+
+            Type genericType = field.getGenericType();
+
+            if (genericType instanceof ParameterizedType) {
+                ParameterizedType parameterizedType = (ParameterizedType) genericType;
+                Type[] typeArguments = parameterizedType.getActualTypeArguments();
+
+                if (typeArguments.length > 0) {
+                    Type elementType = typeArguments[0];
+                    if (elementType instanceof Class) {
+                        return (Class<?>) elementType;
+                    }
+                }
+            }
+            return null;
+        }
+        return propertyDescriptor.getPropertyType();
+    }
+
     private PropertyDescriptor firstOrNull(PropertyDescriptor[] ps, Predicate<PropertyDescriptor> predicate) {
         for (PropertyDescriptor p : ps) {
             if (predicate.test(p)) {
@@ -303,7 +343,7 @@ public class EntityMetadata {
         if (easyShardingInitializer == null) {
             throw new EasyQueryInvalidOperationException("not found sharding initializer:" + EasyClassUtil.getSimpleName(initializer));
         }
-        ShardingEntityBuilder<Object> shardingInitializerBuilder = new ShardingEntityBuilder<Object>(this,configuration.getEasyQueryOption());
+        ShardingEntityBuilder<Object> shardingInitializerBuilder = new ShardingEntityBuilder<Object>(this, configuration.getEasyQueryOption());
         easyShardingInitializer.initialize(shardingInitializerBuilder);
         ShardingInitOption shardingInitOption = shardingInitializerBuilder.build();
         Map<String, Collection<String>> initializeTables = shardingInitOption.getActualTableNames();
@@ -320,22 +360,22 @@ public class EntityMetadata {
                 }
             }
         }
-        ShardingSequenceConfig shardingSequenceConfig=null;
+        ShardingSequenceConfig shardingSequenceConfig = null;
         //如果有配置
         Comparator<TableUnit> defaultTableNameComparator = shardingInitOption.getDefaultTableNameComparator();
         if (defaultTableNameComparator != null) {
 
-            shardingSequenceConfig=new ShardingSequenceConfig(defaultTableNameComparator
-                    ,shardingInitOption.getSequenceProperties()
-                    ,shardingInitOption.getMaxShardingQueryLimit()
-                    ,shardingInitOption.getSequenceCompareMethods()
-                    ,shardingInitOption.getSequenceCompareAscMethods()
-                    ,shardingInitOption.getSequenceLimitMethods()
-                    ,shardingInitOption.getSequenceConnectionModeMethods()
-                    ,shardingInitOption.getConnectionMode());
+            shardingSequenceConfig = new ShardingSequenceConfig(defaultTableNameComparator
+                    , shardingInitOption.getSequenceProperties()
+                    , shardingInitOption.getMaxShardingQueryLimit()
+                    , shardingInitOption.getSequenceCompareMethods()
+                    , shardingInitOption.getSequenceCompareAscMethods()
+                    , shardingInitOption.getSequenceLimitMethods()
+                    , shardingInitOption.getSequenceConnectionModeMethods()
+                    , shardingInitOption.getConnectionMode());
 
         }
-        this.shardingInitConfig = new ShardingInitConfig(shardingInitOption.getReverseFactor(),shardingInitOption.getMinReverseTotal(),shardingSequenceConfig);
+        this.shardingInitConfig = new ShardingInitConfig(shardingInitOption.getReverseFactor(), shardingInitOption.getMinReverseTotal(), shardingSequenceConfig);
     }
 
     protected void entityGlobalInterceptorConfigurationInit(QueryConfiguration configuration) {
@@ -345,13 +385,13 @@ public class EntityMetadata {
             for (Interceptor globalInterceptor : globalInterceptors) {
                 if (globalInterceptor.apply(entityClass)) {
                     if (globalInterceptor instanceof PredicateFilterInterceptor) {
-                        predicateFilterInterceptors.add((PredicateFilterInterceptor)globalInterceptor);
+                        predicateFilterInterceptors.add((PredicateFilterInterceptor) globalInterceptor);
                     }
                     if (globalInterceptor instanceof EntityInterceptor) {
-                        entityInterceptors.add((EntityInterceptor)globalInterceptor);
+                        entityInterceptors.add((EntityInterceptor) globalInterceptor);
                     }
                     if (globalInterceptor instanceof UpdateSetInterceptor) {
-                        updateSetInterceptors.add((UpdateSetInterceptor)globalInterceptor);
+                        updateSetInterceptors.add((UpdateSetInterceptor) globalInterceptor);
                     }
                 }
             }
@@ -374,6 +414,7 @@ public class EntityMetadata {
     public String getTableName() {
         return tableName;
     }
+
     public String getSchemaOrNull() {
         return schema;
     }
@@ -437,10 +478,22 @@ public class EntityMetadata {
         return keyPropertiesMap.containsKey(propertyName);
     }
 
+    public NavigateMetadata getNavigateNotNull(String propertyName) {
+        NavigateMetadata navigateMetadata = getNavigateOrNull(propertyName);
+        if (navigateMetadata == null) {
+            throw new EasyQueryException(String.format("not found property:[%s] mapping navigate", propertyName));
+        }
+        return navigateMetadata;
+    }
+
+    public NavigateMetadata getNavigateOrNull(String propertyName) {
+        return property2NavigateMap.get(propertyName);
+    }
+
     public ColumnMetadata getColumnNotNull(String propertyName) {
         ColumnMetadata columnMetadata = getColumnOrNull(propertyName);
         if (columnMetadata == null) {
-            throw new EasyQueryException(String.format("未找到属性:[%s]对应的列名", propertyName));
+            throw new EasyQueryException(String.format("not found property:[%s] mapping column name", propertyName));
         }
         return columnMetadata;
     }
@@ -553,7 +606,7 @@ public class EntityMetadata {
             throw new IllegalArgumentException("actual table name");
         }
         dataSources.add(dataSource);
-        actualTables.add(new ActualTable(dataSource,actualTableName));
+        actualTables.add(new ActualTable(dataSource, actualTableName));
     }
 
     public Collection<String> getDataSources() {
