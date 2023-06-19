@@ -8,4 +8,5 @@ package com.easy.query.core.job;
  */
 public interface EasyTimeJobManager {
     void add(TimeJob job);
+    void shutdown();
 }

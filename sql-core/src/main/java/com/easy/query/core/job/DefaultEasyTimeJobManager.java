@@ -27,7 +27,7 @@ public class DefaultEasyTimeJobManager implements EasyTimeJobManager {
 
         this.serviceProvider = serviceProvider;
         this.logDebug = log.isDebugEnabled();
-        scheduledExecutorService.scheduleAtFixedRate(() -> {
+        this.scheduledExecutorService.scheduleAtFixedRate(() -> {
             try {
                 long now = System.currentTimeMillis();
                 for (TimeJobEntry job : jobs) {
@@ -54,5 +54,10 @@ public class DefaultEasyTimeJobManager implements EasyTimeJobManager {
     @Override
     public void add(TimeJob job) {
         jobs.add(new TimeJobEntry(job));
+    }
+
+    @Override
+    public void shutdown() {
+        this.scheduledExecutorService.shutdown();
     }
 }
