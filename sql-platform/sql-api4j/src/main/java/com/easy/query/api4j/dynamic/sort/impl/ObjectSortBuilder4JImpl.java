@@ -3,7 +3,7 @@ package com.easy.query.api4j.dynamic.sort.impl;
 import com.easy.query.api4j.dynamic.sort.ObjectSortBuilder4J;
 import com.easy.query.core.api.dynamic.sort.ObjectSortBuilder;
 import com.easy.query.core.expression.lambda.Property;
-import com.easy.query.core.util.EasyLambdaUtil;
+import com.easy.query.api4j.util.EasyLambdaUtil;
 
 /**
  * create time 2023/6/11 11:16
