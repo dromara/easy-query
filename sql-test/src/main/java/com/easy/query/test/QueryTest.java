@@ -130,6 +130,32 @@ public class QueryTest extends BaseTest {
         Assert.assertEquals(true, blogs.get(1).getIsTop());
         Assert.assertEquals(true, blogs.get(1).getTop());
     }
+    @Test
+    public void query5_1() {
+        String[] ids={"97", "98"};
+        Queryable<BlogEntity> queryable = easyQuery.queryable(BlogEntity.class)
+                .where(o -> o.in(BlogEntity::getId, ids));
+        String sql = queryable.toSQL();
+        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `id` IN (?,?)", sql);
+        List<BlogEntity> blogs = queryable.toList();
+        Assert.assertNotNull(blogs);
+        Assert.assertEquals(2, blogs.size());
+        Assert.assertEquals(false, blogs.get(0).getIsTop());
+        Assert.assertEquals(false, blogs.get(0).getTop());
+        Assert.assertEquals(true, blogs.get(1).getIsTop());
+        Assert.assertEquals(true, blogs.get(1).getTop());
+    }
+    @Test
+    public void query5_2() {
+        String[] ids={"97", "98"};
+        Queryable<BlogEntity> queryable = easyQuery.queryable(BlogEntity.class)
+                .where(o -> o.notIn(BlogEntity::getId, ids));
+        String sql = queryable.toSQL();
+        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `id` NOT IN (?,?)", sql);
+        List<BlogEntity> blogs = queryable.toList();
+        Assert.assertNotNull(blogs);
+        Assert.assertEquals(98, blogs.size());
+    }
 
     @Test
     public void query6() {

@@ -378,6 +378,15 @@ public interface SQLWherePredicate<T1> {
         return this;
     }
 
+    default <TProperty> SQLWherePredicate<T1> in(Property<T1, ?> column, TProperty[] collection) {
+        getWherePredicate().in(EasyLambdaUtil.getPropertyName(column), collection);
+        return this;
+    }
+    default <TProperty> SQLWherePredicate<T1> in(boolean condition, Property<T1, ?> column, TProperty[] collection) {
+        getWherePredicate().in(condition, EasyLambdaUtil.getPropertyName(column), collection);
+        return this;
+    }
+
     default <TProperty> SQLWherePredicate<T1> in(Property<T1, TProperty> column, Queryable<TProperty> subQueryable) {
         getWherePredicate().in(EasyLambdaUtil.getPropertyName(column), subQueryable);
         return this;
@@ -402,6 +411,14 @@ public interface SQLWherePredicate<T1> {
      * 集合为空返回True
      */
     default SQLWherePredicate<T1> notIn(boolean condition, Property<T1, ?> column, Collection<?> collection) {
+        getWherePredicate().notIn(condition, EasyLambdaUtil.getPropertyName(column), collection);
+        return this;
+    }
+    default <TProperty> SQLWherePredicate<T1> notIn(Property<T1, ?> column, TProperty[] collection) {
+        getWherePredicate().notIn(EasyLambdaUtil.getPropertyName(column), collection);
+        return this;
+    }
+    default <TProperty> SQLWherePredicate<T1> notIn(boolean condition, Property<T1, ?> column, TProperty[] collection) {
         getWherePredicate().notIn(condition, EasyLambdaUtil.getPropertyName(column), collection);
         return this;
     }
