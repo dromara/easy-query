@@ -124,7 +124,6 @@ public final class EasyStreamResultUtil {
 
         QueryRuntimeContext runtimeContext = context.getRuntimeContext();
         TrackManager trackManager = runtimeContext.getTrackManager();
-        boolean trackBean = trackBean(context, clazz);
         EasyResultSet easyResultSet = new EasyResultSet(streamResult);
         TResult bean = EasyClassUtil.newInstance(clazz);
         FastBean fastBean = EasyBeanUtil.getFastBean(clazz);
@@ -145,6 +144,7 @@ public final class EasyStreamResultUtil {
             PropertySetterCaller<Object> beanSetter = fastBean.getBeanSetter(property);
             beanSetter.call(bean, value);
         }
+        boolean trackBean = trackBean(context, clazz);
         if (trackBean) {
             EntityState entityState = trackManager.getCurrentTrackContext().addQueryTracking(bean);
             Object entityStateCurrentValue = entityState.getCurrentValue();

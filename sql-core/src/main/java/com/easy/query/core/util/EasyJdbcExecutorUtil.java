@@ -27,6 +27,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -125,21 +126,25 @@ public class EasyJdbcExecutorUtil {
     }
 
     public static <T> List<SQLParameter> extractParameters(ExecutorContext executorContext, T entity, List<SQLParameter> sqlParameters) {
-        List<SQLParameter> params = new ArrayList<>(sqlParameters.size());
-        for (SQLParameter sqlParameter : sqlParameters) {
-            if (sqlParameter instanceof ConstSQLParameter) {
-                Object value = executorContext.toValue(sqlParameter, sqlParameter.getValue());
-                params.add(new EasyConstSQLParameter(sqlParameter.getTableOrNull(), sqlParameter.getPropertyNameOrNull(), value));
-            } else if (sqlParameter instanceof BeanSQLParameter) {
-                BeanSQLParameter beanSQLParameter = (BeanSQLParameter) sqlParameter;
-                beanSQLParameter.setBean(entity);
-                Object value = executorContext.toValue(beanSQLParameter, beanSQLParameter.getValue());
-                params.add(new EasyConstSQLParameter(beanSQLParameter.getTableOrNull(), beanSQLParameter.getPropertyNameOrNull(), value));
-            } else {
-                throw new EasyQueryException("current sql parameter:[" + EasyClassUtil.getSimpleName(sqlParameter.getClass()) + "],property name:[" + sqlParameter.getPropertyNameOrNull() + "] is not implements BeanSQLParameter or ConstSQLParameter");
+        if (EasyCollectionUtil.isNotEmpty(sqlParameters)) {
+
+            List<SQLParameter> params = new ArrayList<>(sqlParameters.size());
+            for (SQLParameter sqlParameter : sqlParameters) {
+                if (sqlParameter instanceof ConstSQLParameter) {
+                    Object value = executorContext.toValue(sqlParameter, sqlParameter.getValue());
+                    params.add(new EasyConstSQLParameter(sqlParameter.getTableOrNull(), sqlParameter.getPropertyNameOrNull(), value));
+                } else if (sqlParameter instanceof BeanSQLParameter) {
+                    BeanSQLParameter beanSQLParameter = (BeanSQLParameter) sqlParameter;
+                    beanSQLParameter.setBean(entity);
+                    Object value = executorContext.toValue(beanSQLParameter, beanSQLParameter.getValue());
+                    params.add(new EasyConstSQLParameter(beanSQLParameter.getTableOrNull(), beanSQLParameter.getPropertyNameOrNull(), value));
+                } else {
+                    throw new EasyQueryException("current sql parameter:[" + EasyClassUtil.getSimpleName(sqlParameter.getClass()) + "],property name:[" + sqlParameter.getPropertyNameOrNull() + "] is not implements BeanSQLParameter or ConstSQLParameter");
+                }
             }
+            return params;
         }
-        return params;
+        return Collections.emptyList();
     }
 
     public static StreamResultSet query(ExecutorContext executorContext, EasyConnection easyConnection, String sql, List<SQLParameter> sqlParameters) throws SQLException {
@@ -161,13 +166,12 @@ public class EasyJdbcExecutorUtil {
         StreamResultSet sr = null;
         try {
             ps = createPreparedStatement(easyConnection.getConnection(), sql, parameters, easyJdbcTypeHandler);
+
+            long start = printSql ? System.currentTimeMillis() : 0L;
+            rs = ps.executeQuery();
+            long end = printSql ? System.currentTimeMillis() : 0L;
             if (printSql) {
-                long start = System.currentTimeMillis();
-                rs = ps.executeQuery();
-                long end = System.currentTimeMillis();
                 logUse(true, start, end, easyConnection, shardingPrint, replicaPrint);
-            } else {
-                rs = ps.executeQuery();
             }
             //如果是分片查询那么需要提前next
             if (shardingPrint) {
@@ -290,15 +294,15 @@ public class EasyJdbcExecutorUtil {
                     setPreparedStatement(ps, parameters, easyJdbcTypeHandlerManager);
                 }
                 ps.addBatch();
-                if((batchSize%BATCH_GROUP_COUNT)==0){
+                if ((batchSize % BATCH_GROUP_COUNT) == 0) {
                     int[] ints = ps.executeBatch();
-                    r+=EasyCollectionUtil.sum(ints);
+                    r += EasyCollectionUtil.sum(ints);
                     ps.clearBatch();
                 }
             }
-            if((batchSize%BATCH_GROUP_COUNT)!=0){
+            if ((batchSize % BATCH_GROUP_COUNT) != 0) {
                 int[] ints = ps.executeBatch();
-                r+=EasyCollectionUtil.sum(ints);
+                r += EasyCollectionUtil.sum(ints);
                 ps.clearBatch();
             }
             logResult(printSql, r, easyConnection, shardingPrint, replicaPrint);
