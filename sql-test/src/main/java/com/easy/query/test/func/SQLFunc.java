@@ -4,7 +4,7 @@ import com.easy.query.core.expression.func.AggregationType;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.Property;
-import com.easy.query.core.util.EasyLambdaUtil;
+import com.easy.query.api4j.util.EasyLambdaUtil;
 
 /**
  * create time 2023/5/21 21:41

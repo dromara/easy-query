@@ -1,12 +1,10 @@
 package com.easy.query.core.sharding.initializer;
 
 import com.easy.query.core.enums.ExecuteMethodEnum;
-import com.easy.query.core.exception.EasyQueryInvalidOperationException;
-import com.easy.query.core.expression.lambda.Property;
-import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
+import com.easy.query.core.exception.EasyQueryInvalidOperationException;
+import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.util.EasyBitwiseUtil;
-import com.easy.query.core.util.EasyLambdaUtil;
 
 /**
  * create time 2023/5/7 23:52
@@ -26,18 +24,12 @@ public class ShardingSequenceBuilder<T> {
         this.entityMetadata = entityMetadata;
     }
 
-
     /**
      * 当前属性asc的时候采用 defaultTableComparator的defaultTableNameComparator
      *
-     * @param orderProperty
+     * @param propertyName
      * @return
      */
-    public ShardingSequenceBuilder<T> addPropertyDefaultUseAsc(Property<T, ?> orderProperty) {
-        String propertyName = EasyLambdaUtil.getPropertyName(orderProperty);
-        return addPropertyDefaultUseAsc(propertyName);
-    }
-
     public ShardingSequenceBuilder<T> addPropertyDefaultUseAsc(String propertyName) {
         if (entityMetadata.getColumnOrNull(propertyName) == null) {
             throw new EasyQueryInvalidOperationException("sharding initializer add asc unknown property:" + propertyName);
@@ -49,14 +41,9 @@ public class ShardingSequenceBuilder<T> {
     /**
      * 当前属性desc的时候采用 defaultTableComparator的defaultTableNameComparator
      *
-     * @param orderProperty
+     * @param propertyName
      * @return
      */
-    public ShardingSequenceBuilder<T> addPropertyDefaultUseDesc(Property<T, ?> orderProperty) {
-        String propertyName = EasyLambdaUtil.getPropertyName(orderProperty);
-        return addPropertyDefaultUseDesc(propertyName);
-    }
-
     public ShardingSequenceBuilder<T> addPropertyDefaultUseDesc(String propertyName) {
         if (entityMetadata.getColumnOrNull(propertyName) == null) {
             throw new EasyQueryInvalidOperationException("sharding initializer add desc unknown property:" + propertyName);

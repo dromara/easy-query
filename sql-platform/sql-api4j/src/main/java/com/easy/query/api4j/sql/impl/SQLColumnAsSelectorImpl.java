@@ -1,13 +1,7 @@
 package com.easy.query.api4j.sql.impl;
 
-import com.easy.query.api4j.select.Queryable;
 import com.easy.query.api4j.sql.SQLColumnAsSelector;
-import com.easy.query.api4j.sql.SQLWherePredicate;
-import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
-import com.easy.query.core.util.EasyLambdaUtil;
-
-import java.util.function.Function;
 
 /**
  * @author xuejiaming

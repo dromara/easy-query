@@ -1,10 +1,10 @@
 package com.easy.query.api4kt.sql;
 
+import com.easy.query.api4kt.util.EasyKtLambdaUtil;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
-import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.OrderBySelector;
-import com.easy.query.core.util.EasyLambdaUtil;
+import kotlin.reflect.KProperty1;
 
 /**
  * create time 2023/6/16 21:54
@@ -19,8 +19,8 @@ public interface SQLKtOrderBySelector<T1> {
         return getOrderBySelector().getTable();
     }
 
-    default SQLKtOrderBySelector<T1> column(Property<T1, ?> column) {
-        getOrderBySelector().column(EasyLambdaUtil.getPropertyName(column));
+    default SQLKtOrderBySelector<T1> column(KProperty1<T1, ?> column) {
+        getOrderBySelector().column(EasyKtLambdaUtil.getPropertyName(column));
         return this;
     }
 
@@ -33,8 +33,8 @@ public interface SQLKtOrderBySelector<T1> {
         return this;
     }
 
-    default SQLKtOrderBySelector<T1> columnIgnore(Property<T1, ?> column) {
-        getOrderBySelector().columnIgnore(EasyLambdaUtil.getPropertyName(column));
+    default SQLKtOrderBySelector<T1> columnIgnore(KProperty1<T1, ?> column) {
+        getOrderBySelector().columnIgnore(EasyKtLambdaUtil.getPropertyName(column));
         return this;
     }
 
