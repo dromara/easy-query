@@ -1,17 +1,17 @@
 package com.easy.query.core.basic.jdbc.executor.internal.unit.abstraction;
 
+import com.easy.query.core.basic.jdbc.executor.internal.common.CommandExecuteUnit;
+import com.easy.query.core.basic.jdbc.executor.internal.common.DataSourceSQLExecutorUnit;
+import com.easy.query.core.basic.jdbc.executor.internal.common.SQLExecutorGroup;
 import com.easy.query.core.basic.jdbc.executor.internal.unit.Executor;
 import com.easy.query.core.basic.jdbc.executor.internal.unit.breaker.CircuitBreaker;
 import com.easy.query.core.basic.thread.FuturesInvoker;
 import com.easy.query.core.basic.thread.ShardingExecutorService;
+import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.exception.EasyQueryTimeoutSQLException;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
-import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.sharding.context.StreamMergeContext;
-import com.easy.query.core.basic.jdbc.executor.internal.common.CommandExecuteUnit;
-import com.easy.query.core.basic.jdbc.executor.internal.common.DataSourceSQLExecutorUnit;
-import com.easy.query.core.basic.jdbc.executor.internal.common.SQLExecutorGroup;
 import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.sql.SQLException;
@@ -59,20 +59,40 @@ public abstract class AbstractExecutor<TResult> implements Executor<TResult> {
 
     private List<TResult> execute0(DataSourceSQLExecutorUnit dataSourceSQLExecutorUnit) throws SQLException {
         List<SQLExecutorGroup<CommandExecuteUnit>> executorGroups = dataSourceSQLExecutorUnit.getSQLExecutorGroups();
+
+        long timeoutMillis = streamMergeContext.getEasyQueryOption().getShardingExecuteTimeoutMillis();
+        if(EasyCollectionUtil.isSingle(executorGroups)){
+            SQLExecutorGroup<CommandExecuteUnit> first = EasyCollectionUtil.first(executorGroups);
+            if(EasyCollectionUtil.isSingle(first.getGroups())){
+                return executeSingle0(first,timeoutMillis);
+            }
+        }
+        return executeMulti0(dataSourceSQLExecutorUnit,timeoutMillis);
+    }
+
+    private List<TResult> executeSingle0(SQLExecutorGroup<CommandExecuteUnit> executorGroup, long timeoutMillis) throws SQLException {
+        List<CommandExecuteUnit> groups = executorGroup.getGroups();
+        Collection<TResult> tResults = groupExecute(groups, timeoutMillis);
+        return new ArrayList<>(tResults);
+
+    }
+    private List<TResult> executeMulti0(DataSourceSQLExecutorUnit dataSourceSQLExecutorUnit,long timeoutMillis) throws SQLException {
+
+        List<SQLExecutorGroup<CommandExecuteUnit>> executorGroups = dataSourceSQLExecutorUnit.getSQLExecutorGroups();
         int count = EasyCollectionUtil.sum(executorGroups, o -> o.getGroups().size());
         CircuitBreaker circuitBreak = createCircuitBreak();
         List<TResult> result = new ArrayList<>(count);
+        //性能提升防止每次都获取当前时间
         long start = System.currentTimeMillis();
-        long constTime=0L;
-        long timeoutMillis=streamMergeContext.getEasyQueryOption().getShardingExecuteTimeoutMillis();
+        long constTime = 0L;
         //同数据库下多组数据间采用串行
         Iterator<SQLExecutorGroup<CommandExecuteUnit>> iterator = executorGroups.iterator();
         while (iterator.hasNext()) {
             if (timeoutMillis < constTime) {
-                throw new EasyQueryTimeoutSQLException("sharding execute time out:"+dataSourceSQLExecutorUnit.getDataSourceName());
+                throw new EasyQueryTimeoutSQLException("sharding execute time out:" + dataSourceSQLExecutorUnit.getDataSourceName());
             }
             SQLExecutorGroup<CommandExecuteUnit> executorGroup = iterator.next();
-            Collection<TResult> results = groupExecute(executorGroup.getGroups(),timeoutMillis-constTime);
+            Collection<TResult> results = groupExecute(executorGroup.getGroups(), timeoutMillis - constTime);
             if (Objects.equals(ConnectionModeEnum.CONNECTION_STRICTLY, dataSourceSQLExecutorUnit.getConnectionMode())) {
                 getShardingMerger().inMemoryMerge(streamMergeContext, result, results);
             } else {
@@ -83,13 +103,13 @@ public abstract class AbstractExecutor<TResult> implements Executor<TResult> {
                 if (isStopped() || circuitBreak.terminated(streamMergeContext, result)) {
                     break;
                 }
+                constTime = System.currentTimeMillis() - start;
             }
-            constTime=System.currentTimeMillis()-start;
         }
         return result;
     }
 
-    private Collection<TResult> groupExecute(List<CommandExecuteUnit> commandExecuteUnits,long timeoutMillis) throws SQLException {
+    private Collection<TResult> groupExecute(List<CommandExecuteUnit> commandExecuteUnits, long timeoutMillis) throws SQLException {
         if (EasyCollectionUtil.isEmpty(commandExecuteUnits)) {
             return Collections.emptyList();
         }
@@ -105,7 +125,7 @@ public abstract class AbstractExecutor<TResult> implements Executor<TResult> {
                 tasks.add(task);
             }
 
-            try(FuturesInvoker<TResult> invoker = new FuturesInvoker<>(tasks)){
+            try (FuturesInvoker<TResult> invoker = new FuturesInvoker<>(tasks)) {
                 return invoker.get(timeoutMillis);
             }
         }

@@ -3,7 +3,6 @@ package com.easy.query.core.basic.api.select;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
-import com.easy.query.core.exception.EasyQueryConcurrentException;
 import com.easy.query.core.exception.EasyQueryFirstOrNotNullException;
 import com.easy.query.core.expression.sql.TableContext;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
@@ -76,7 +75,16 @@ public interface Query<T> {
 
     <TR> String toSQL(Class<TR> resultClass, ToSQLContext toSQLContext);
 
+    /**
+     * 返回long类型的数量结果
+     * @return
+     */
     long count();
+
+    /**
+     * 返回int类型的数量结果
+     * @return
+     */
 
     default int intCount() {
         return (int) count();
@@ -90,15 +98,29 @@ public interface Query<T> {
      */
     boolean any();
 
+    /**
+     * 返回第一条,如果第一条没有就返回null
+     * eg. SELECT  projects  FROM table t [WHERE t.`columns` = ?] LIMIT 1
+     * @return
+     */
+
     default T firstOrNull() {
         return firstOrNull(queryClass());
     }
 
+    /**
+     * 返回第一条,如果第一条没有就返回null,并且select并不是表的全部而是映射到 {@code resultClass} 上
+     * eg. SELECT  projects  FROM table t [WHERE t.`columns` = ?] LIMIT 1
+     * @param resultClass
+     * @return
+     * @param <TR>
+     */
+
     <TR> TR firstOrNull(Class<TR> resultClass);
 
     /**
-     * 当未查询到结果 将会抛出 {@link EasyQueryConcurrentException}
-     *
+     * 当未查询到结果 将会抛出 {@link EasyQueryFirstOrNotNullException}
+     * eg. SELECT  projects  FROM table t [WHERE t.`columns` = ?] LIMIT 1
      * @param msg
      * @return
      */
@@ -108,7 +130,7 @@ public interface Query<T> {
 
     /**
      * 当未查询到结果 将会抛出 {@link EasyQueryFirstOrNotNullException}
-     *
+     * eg. SELECT  projects  FROM table t [WHERE t.`columns` = ?] LIMIT 1
      * @param msg
      * @param code
      * @return
