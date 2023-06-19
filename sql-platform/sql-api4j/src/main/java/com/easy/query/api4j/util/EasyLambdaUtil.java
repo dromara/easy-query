@@ -1,6 +1,7 @@
-package com.easy.query.core.util;
+package com.easy.query.api4j.util;
 
 import com.easy.query.core.expression.lambda.Property;
+import com.easy.query.core.util.EasyStringUtil;
 
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Method;

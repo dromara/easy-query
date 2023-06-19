@@ -26,15 +26,19 @@ import com.easy.query.core.basic.extension.track.update.DefaultValueUpdateAtomic
 import com.easy.query.core.basic.extension.track.update.ValueUpdateAtomicTrack;
 import com.easy.query.core.basic.extension.version.VersionStrategy;
 import com.easy.query.core.common.LinkedCaseInsensitiveMap;
+import com.easy.query.core.common.bean.FastBean;
 import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.configuration.nameconversion.NameConversion;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
+import com.easy.query.core.expression.lambda.Property;
+import com.easy.query.core.expression.lambda.PropertySetterCaller;
 import com.easy.query.core.inject.ServiceProvider;
 import com.easy.query.core.sharding.initializer.ShardingEntityBuilder;
 import com.easy.query.core.sharding.initializer.ShardingInitOption;
 import com.easy.query.core.sharding.initializer.ShardingInitializer;
 import com.easy.query.core.sharding.router.table.TableUnit;
+import com.easy.query.core.util.EasyBeanUtil;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyObjectUtil;
@@ -123,6 +127,7 @@ public class EntityMetadata {
         PropertyDescriptor[] ps = getPropertyDescriptor();
         int versionCount = 0;
         int logicDelCount = 0;
+        FastBean fastBean = EasyBeanUtil.getFastBean(entityClass);
         for (Field field : allFields) {
             String property = field.getName();
             if (ignoreProperties.contains(property)) {
@@ -255,6 +260,10 @@ public class EntityMetadata {
                     logicDelCount++;
                 }
             }
+            Property<Object, ?> beanGetter = fastBean.getBeanGetter(propertyDescriptor);
+            columnOption.setGetterCaller(beanGetter);
+            PropertySetterCaller<Object> beanSetter = fastBean.getBeanSetter(propertyDescriptor);
+            columnOption.setSetterCaller(beanSetter);
             property2ColumnMap.put(property, new ColumnMetadata(columnOption));
             column2PropertyMap.put(columnName, property);
         }
@@ -367,13 +376,21 @@ public class EntityMetadata {
     public String getColumnName(String propertyName) {
         ColumnMetadata columnMetadata = property2ColumnMap.get(propertyName);
         if (columnMetadata == null) {
-            throw new EasyQueryException(String.format("未找到属性:[%s]对应的列名", propertyName));
+            throw new EasyQueryException(String.format("not found property:[%s] mapping column", propertyName));
         }
         return columnMetadata.getName();
     }
 
     public String getPropertyNameOrNull(String columnName) {
         return getPropertyNameOrNull(columnName, null);
+    }
+    public String getPropertyNameNotNull(String columnName) {
+        String propertyName = getPropertyNameOrNull(columnName, null);
+
+        if (propertyName == null) {
+            throw new EasyQueryException(String.format("not found column:[%s] mapping property", columnName));
+        }
+        return propertyName;
     }
 
     /**

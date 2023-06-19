@@ -3,7 +3,7 @@ package com.easy.query.api4j.dynamic.condition.impl;
 import com.easy.query.api4j.dynamic.condition.ObjectQueryBuilder4J;
 import com.easy.query.core.api.dynamic.condition.ObjectQueryBuilder;
 import com.easy.query.core.expression.lambda.Property;
-import com.easy.query.core.util.EasyLambdaUtil;
+import com.easy.query.api4j.util.EasyLambdaUtil;
 
 /**
  * create time 2023/6/11 09:53

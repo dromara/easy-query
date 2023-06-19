@@ -1,21 +1,18 @@
 package com.easy.query.core.basic.extension.track;
 
 import com.easy.query.core.basic.extension.conversion.ValueConverter;
-import com.easy.query.core.common.bean.FastBean;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
-import com.easy.query.core.util.EasyBeanUtil;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyMapUtil;
 import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasyStringUtil;
 import com.easy.query.core.util.EasyTrackUtil;
 
-import java.beans.PropertyDescriptor;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -134,13 +131,11 @@ public class DefaultTrackContext implements TrackContext {
 
         Class<?> entityClass = entity.getClass();
         Object original = EasyClassUtil.newInstance(entityClass);
-        FastBean fastBean = EasyBeanUtil.getFastBean(original.getClass());
         for (Map.Entry<String, ColumnMetadata> columnMetadataEntry : entityMetadata.getProperty2ColumnMap().entrySet()) {
             ColumnMetadata columnMetadata = columnMetadataEntry.getValue();
-            PropertyDescriptor property = columnMetadata.getProperty();
-            PropertySetterCaller<Object> beanSetter = fastBean.getBeanSetter(property);
+            PropertySetterCaller<Object> beanSetter = columnMetadata.getSetterCaller();
             Class<?> propertyType = columnMetadata.getPropertyType();
-            Property<Object, ?> beanGetter = fastBean.getBeanGetter(property);
+            Property<Object, ?> beanGetter = columnMetadata.getGetterCaller();
             Object value = beanGetter.apply(entity);
             if (EasyClassUtil.isBasicType(propertyType) || EasyClassUtil.isEnumType(propertyType)) {
 

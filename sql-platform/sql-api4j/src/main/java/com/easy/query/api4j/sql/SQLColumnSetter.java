@@ -3,7 +3,7 @@ package com.easy.query.api4j.sql;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnSetter;
-import com.easy.query.core.util.EasyLambdaUtil;
+import com.easy.query.api4j.util.EasyLambdaUtil;
 
 /**
  * create time 2023/6/1 08:40

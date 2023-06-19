@@ -9,7 +9,7 @@ import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
-import com.easy.query.core.util.EasyLambdaUtil;
+import com.easy.query.api4j.util.EasyLambdaUtil;
 
 import java.util.Collection;
 

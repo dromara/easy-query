@@ -4,6 +4,8 @@ import com.easy.query.core.basic.extension.conversion.DefaultValueConverter;
 import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.basic.extension.encryption.EncryptionStrategy;
 import com.easy.query.core.basic.extension.track.update.ValueUpdateAtomicTrack;
+import com.easy.query.core.expression.lambda.Property;
+import com.easy.query.core.expression.lambda.PropertySetterCaller;
 
 import java.beans.PropertyDescriptor;
 
@@ -36,6 +38,9 @@ public final class ColumnOption {
 
     private ValueConverter<?, ?> valueConverter;
     private ValueUpdateAtomicTrack<Object> valueUpdateAtomicTrack;
+    ;
+    private  PropertySetterCaller<Object> setterCaller;
+    private  Property<Object,?> getterCaller;
 
     public ColumnOption(EntityMetadata entityMetadata, String name) {
         this.entityMetadata = entityMetadata;
@@ -141,5 +146,21 @@ public final class ColumnOption {
 
     public void setValueUpdateAtomicTrack(ValueUpdateAtomicTrack<Object> valueUpdateAtomicTrack) {
         this.valueUpdateAtomicTrack = valueUpdateAtomicTrack;
+    }
+
+    public PropertySetterCaller<Object> getSetterCaller() {
+        return setterCaller;
+    }
+
+    public void setSetterCaller(PropertySetterCaller<Object> setterCaller) {
+        this.setterCaller = setterCaller;
+    }
+
+    public Property<Object, ?> getGetterCaller() {
+        return getterCaller;
+    }
+
+    public void setGetterCaller(Property<Object, ?> getterCaller) {
+        this.getterCaller = getterCaller;
     }
 }

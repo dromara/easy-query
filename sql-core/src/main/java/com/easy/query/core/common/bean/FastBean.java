@@ -5,7 +5,6 @@ import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
 import com.easy.query.core.expression.lambda.PropertyVoidSetter;
 import com.easy.query.core.util.EasyClassUtil;
-import com.easy.query.core.util.EasyMapUtil;
 
 import java.beans.PropertyDescriptor;
 import java.lang.invoke.CallSite;
@@ -47,7 +46,8 @@ public class FastBean {
 //    }
 
     public Property<Object, ?> getBeanGetter(PropertyDescriptor prop) {
-        return EasyMapUtil.computeIfAbsent(propertyGetterCache, prop.getName(), k -> getLambdaProperty(prop));
+        return  getLambdaProperty(prop);
+//        return EasyMapUtil.computeIfAbsent(propertyGetterCache, prop.getName(), k -> getLambdaProperty(prop));
     }
 
     private Property<Object, ?> getLambdaProperty(PropertyDescriptor prop) {
@@ -72,7 +72,8 @@ public class FastBean {
     }
 
     public PropertySetterCaller<Object> getBeanSetter(PropertyDescriptor prop) {
-        return EasyMapUtil.computeIfAbsent(propertySetterCache,prop.getName(), key -> getLambdaPropertySetter(prop));
+        return getLambdaPropertySetter(prop);
+//        return EasyMapUtil.computeIfAbsent(propertySetterCache,prop.getName(), key -> getLambdaPropertySetter(prop));
     }
 
     private PropertySetterCaller<Object> getLambdaPropertySetter(PropertyDescriptor prop) {

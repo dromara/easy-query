@@ -3,6 +3,9 @@ package com.easy.query.core.metadata;
 import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.basic.extension.encryption.EncryptionStrategy;
 import com.easy.query.core.basic.extension.track.update.ValueUpdateAtomicTrack;
+import com.easy.query.core.expression.lambda.Property;
+import com.easy.query.core.expression.lambda.PropertySetterCaller;
+import com.easy.query.core.util.EasyClassUtil;
 
 import java.beans.PropertyDescriptor;
 
@@ -40,6 +43,8 @@ public class ColumnMetadata {
 
     private final ValueConverter<?, ?> valueConverter;
     private final ValueUpdateAtomicTrack<Object> valueUpdateAtomicTrack;
+    private final PropertySetterCaller<Object> setterCaller;
+    private final Property<Object,?> getterCaller;
 
     public ColumnMetadata(ColumnOption columnOption) {
         this.entityMetadata = columnOption.getEntityMetadata();
@@ -57,6 +62,15 @@ public class ColumnMetadata {
         this.large= columnOption.isLarge();
         this.valueConverter = columnOption.getValueConverter();
         this.valueUpdateAtomicTrack = columnOption.getValueUpdateAtomicTrack();
+
+        if(columnOption.getGetterCaller()==null){
+            throw new IllegalArgumentException("not found "+ EasyClassUtil.getSimpleName(columnOption.getEntityMetadata().getEntityClass()) +"."+propertyName+" getter caller");
+        }
+        if(columnOption.getSetterCaller()==null){
+            throw new IllegalArgumentException("not found "+ EasyClassUtil.getSimpleName(columnOption.getEntityMetadata().getEntityClass()) +"."+propertyName+" setter caller");
+        }
+        this.getterCaller = columnOption.getGetterCaller();
+        this.setterCaller = columnOption.getSetterCaller();
     }
 
     public EntityMetadata getEntityMetadata() {
@@ -128,5 +142,13 @@ public class ColumnMetadata {
 
     public String getPropertyName() {
         return propertyName;
+    }
+
+    public PropertySetterCaller<Object> getSetterCaller() {
+        return setterCaller;
+    }
+
+    public Property<Object, ?> getGetterCaller() {
+        return getterCaller;
     }
 }

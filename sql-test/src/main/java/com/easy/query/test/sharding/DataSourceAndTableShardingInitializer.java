@@ -3,7 +3,6 @@ package com.easy.query.test.sharding;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.sharding.initializer.EntityShardingInitializer;
-import com.easy.query.core.sharding.initializer.ShardingInitializer;
 import com.easy.query.core.sharding.initializer.ShardingEntityBuilder;
 import com.easy.query.test.entity.TopicShardingDataSourceTime;
 
@@ -81,7 +80,7 @@ public class DataSourceAndTableShardingInitializer implements EntityShardingInit
         builder.actualTableNameInit(initTables)
                 .paginationReverse(0.5,100L)
                 .ascSequenceConfigure(new DataSourceAndTableComparator())
-                .addPropertyDefaultUseDesc(TopicShardingDataSourceTime::getCreateTime)
+                .addPropertyDefaultUseDesc("createTime")
                 .defaultAffectedMethod(false, ExecuteMethodEnum.LIST,ExecuteMethodEnum.ANY,ExecuteMethodEnum.FIRST,ExecuteMethodEnum.COUNT)
                 .useMaxShardingQueryLimit(2,ExecuteMethodEnum.FIRST);
     }

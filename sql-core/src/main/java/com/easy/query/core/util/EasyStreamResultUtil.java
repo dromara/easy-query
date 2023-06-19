@@ -8,7 +8,6 @@ import com.easy.query.core.basic.jdbc.types.EasyResultSet;
 import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
 import com.easy.query.core.basic.jdbc.types.JdbcTypes;
 import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
-import com.easy.query.core.common.bean.FastBean;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
 import com.easy.query.core.logging.Log;
@@ -18,7 +17,6 @@ import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
 
-import java.beans.PropertyDescriptor;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -126,7 +124,6 @@ public final class EasyStreamResultUtil {
         TrackManager trackManager = runtimeContext.getTrackManager();
         EasyResultSet easyResultSet = new EasyResultSet(streamResult);
         TResult bean = EasyClassUtil.newInstance(clazz);
-        FastBean fastBean = EasyBeanUtil.getFastBean(clazz);
         for (int i = 0; i < beanMapToColumnMetadatas.length; i++) {
             BeanMapToColumnMetadata beanMapToColumnMetadata = beanMapToColumnMetadatas[i];
             if (beanMapToColumnMetadata == null) {
@@ -140,8 +137,8 @@ public final class EasyStreamResultUtil {
             Object value = context.fromValue(clazz,columnMetadata, handler.getValue(easyResultSet));
 
             //可能存在value为null但是bean默认有初始值,所以必须还是要调用set方法将其设置为null而不是默认值
-            PropertyDescriptor property = columnMetadata.getProperty();
-            PropertySetterCaller<Object> beanSetter = fastBean.getBeanSetter(property);
+//            PropertyDescriptor property = columnMetadata.getProperty();
+            PropertySetterCaller<Object> beanSetter = columnMetadata.getSetterCaller();
             beanSetter.call(bean, value);
         }
         boolean trackBean = trackBean(context, clazz);
@@ -189,10 +186,6 @@ public final class EasyStreamResultUtil {
 
             String colName = getColName(rsmd, i + 1);//数据库查询出来的列名
 
-//            String propertyName = entityMetadata.getPropertyNameOrNull(colName);
-//            if (propertyName == null) {
-//                continue;
-//            }
             ColumnMetadata column = getMapColumnMetadata(entityMetadata,colName,mapToBeanStrict);
             if(column==null){
                 continue;

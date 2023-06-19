@@ -12,16 +12,15 @@ import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.types.EasyParameter;
 import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
 import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
-import com.easy.query.core.common.bean.FastBean;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.exception.EasyQuerySQLStatementException;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
+import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 
-import java.beans.PropertyDescriptor;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -228,23 +227,22 @@ public class EasyJdbcExecutorUtil {
             //如果需要自动填充并且存在自动填充列
             if (fillAutoIncrement && EasyCollectionUtil.isNotEmpty(incrementColumns)) {
                 ResultSet keysSet = ps.getGeneratedKeys();
-                FastBean fastBean = EasyBeanUtil.getFastBean(entityClass);
                 int index = 0;
-                PropertyDescriptor[] incrementProperty = new PropertyDescriptor[incrementColumns.size()];
+                ColumnMetadata[] columnMetadatas = new ColumnMetadata[incrementColumns.size()];
                 while (keysSet.next()) {
                     T entity = entities.get(index);
                     for (int i = 0; i < incrementColumns.size(); i++) {
-                        PropertyDescriptor property = incrementProperty[i];
-                        if (property == null) {
+                        ColumnMetadata columnMetadata = columnMetadatas[i];
+                        if (columnMetadata == null) {
                             String columnName = incrementColumns.get(i);
-                            String propertyName = entityMetadata.getPropertyNameOrNull(columnName);
-                            property = entityMetadata.getColumnNotNull(propertyName).getProperty();
-                            incrementProperty[i] = property;
+                            String propertyName = entityMetadata.getPropertyNameNotNull(columnName);
+                            columnMetadata = entityMetadata.getColumnNotNull(propertyName);
+                            columnMetadatas[i] = columnMetadata;
                         }
 
                         Object value = keysSet.getObject(i + 1);
-                        Object newValue = EasyClassUtil.convertValueToRequiredType(value, property.getPropertyType());
-                        PropertySetterCaller<Object> beanSetter = fastBean.getBeanSetter(property);
+                        Object newValue = EasyClassUtil.convertValueToRequiredType(value, columnMetadata.getPropertyType());
+                        PropertySetterCaller<Object> beanSetter = columnMetadata.getSetterCaller();
                         beanSetter.call(entity, newValue);
 //                        Method setter = getSetter(property, entityClass);
 //                        callSetter(entity,setter, property, newValue);
@@ -351,13 +349,15 @@ public class EasyJdbcExecutorUtil {
     }
 
     private static PreparedStatement setPreparedStatement(PreparedStatement preparedStatement, List<SQLParameter> sqlParameters, JdbcTypeHandlerManager easyJdbcTypeHandlerManager) throws SQLException {
+        if (EasyCollectionUtil.isNotEmpty(sqlParameters)) {
 
-        EasyParameter easyParameter = new EasyParameter(preparedStatement, sqlParameters);
-        int paramSize = sqlParameters.size();
-        for (int i = 0; i < paramSize; i++) {
-            easyParameter.setIndex(i);
-            JdbcTypeHandler handler = easyJdbcTypeHandlerManager.getHandler(easyParameter.getValueType());
-            handler.setParameter(easyParameter);
+            EasyParameter easyParameter = new EasyParameter(preparedStatement, sqlParameters);
+            int paramSize = sqlParameters.size();
+            for (int i = 0; i < paramSize; i++) {
+                easyParameter.setIndex(i);
+                JdbcTypeHandler handler = easyJdbcTypeHandlerManager.getHandler(easyParameter.getValueType());
+                handler.setParameter(easyParameter);
+            }
         }
         return preparedStatement;
     }
