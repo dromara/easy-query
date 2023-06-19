@@ -24,6 +24,7 @@ import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.util.EasySQLUtil;
 
+import java.util.Arrays;
 import java.util.Collection;
 
 /**
@@ -185,6 +186,14 @@ public class WherePredicateImpl<T1> implements WherePredicate<T1> {
         }
         return this;
     }
+    @Override
+    public <TProperty> WherePredicate<T1> in(boolean condition, String property, TProperty[] collection) {
+        if(condition){
+            nextPredicateSegment.setPredicate(new ColumnCollectionPredicate(getTable(), property, Arrays.asList(collection), getReallyPredicateCompare(SQLPredicateCompareEnum.IN), entityExpressionBuilder.getRuntimeContext()));
+            next();
+        }
+        return this;
+    }
 
     @Override
     public <TProperty> WherePredicate<T1> in(boolean condition, String property, Query<TProperty> subQuery) {
@@ -198,6 +207,15 @@ public class WherePredicateImpl<T1> implements WherePredicate<T1> {
     public WherePredicate<T1> notIn(boolean condition, String property, Collection<?> collection) {
         if (condition) {
             nextPredicateSegment.setPredicate(new ColumnCollectionPredicate(getTable(), property, collection, getReallyPredicateCompare(SQLPredicateCompareEnum.NOT_IN), entityExpressionBuilder.getRuntimeContext()));
+            next();
+        }
+        return this;
+    }
+
+    @Override
+    public <TProperty> WherePredicate<T1> notIn(boolean condition, String property, TProperty[] collection) {
+        if(condition){
+            nextPredicateSegment.setPredicate(new ColumnCollectionPredicate(getTable(), property, Arrays.asList(collection), getReallyPredicateCompare(SQLPredicateCompareEnum.NOT_IN), entityExpressionBuilder.getRuntimeContext()));
             next();
         }
         return this;

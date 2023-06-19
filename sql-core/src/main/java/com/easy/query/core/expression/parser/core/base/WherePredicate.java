@@ -308,6 +308,13 @@ public interface WherePredicate<T1> {
      */
     WherePredicate<T1> in(boolean condition, String property, Collection<?> collection);
 
+    default <TProperty> WherePredicate<T1> in(String property, TProperty[] collection) {
+        return in(true, property, collection);
+    }
+    <TProperty> WherePredicate<T1> in(boolean condition, String property, TProperty[] collection);
+
+
+
     default <TProperty> WherePredicate<T1> in(String property, Query<TProperty> subQuery) {
         return in(true, property, subQuery);
     }
@@ -327,6 +334,12 @@ public interface WherePredicate<T1> {
      * 集合为空返回True
      */
     WherePredicate<T1> notIn(boolean condition, String property, Collection<?> collection);
+
+
+    default <TProperty> WherePredicate<T1> notIn(String property, TProperty[] collection) {
+        return notIn(true, property, collection);
+    }
+    <TProperty> WherePredicate<T1> notIn(boolean condition, String property, TProperty[] collection);
 
     default <TProperty> WherePredicate<T1> notIn(String property, Query<TProperty> subQuery) {
         return notIn(true, property, subQuery);

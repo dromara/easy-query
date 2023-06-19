@@ -792,9 +792,25 @@ public class QueryTest2 extends BaseTest {
         List<TopicGroupTestDTO> list = topicGroupTestDTOQueryable.toList();
         Assert.assertEquals(1,list.size());
     }
-
     @Test
-    public void query25(){
+    public void query25() {
+        String[] id1s={"97", "98"};
+        String[] id2s={"99", "100"};
+        String[] id3s={"101", "102"};
+        Queryable<BlogEntity> queryable = easyQuery.queryable(BlogEntity.class)
+                .where(o -> o.and(x->x
+                        .in(BlogEntity::getId,id1s)
+                        .or()
+                        .in(BlogEntity::getId,id2s)
+                        .or()
+                        .in(BlogEntity::getId,id3s)
+                ));
+        String sql = queryable.toSQL();
+        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND (`id` IN (?,?) OR `id` IN (?,?) OR `id` IN (?,?))", sql);
+
+    }
+    @Test
+    public void query26(){
 
         List<TopicY> list = easyQuery.queryable(TopicY.class)
                 .include(t->t.withMany(TopicY::getTopicxList))
@@ -805,5 +821,6 @@ public class QueryTest2 extends BaseTest {
 
 //                .include(TopicY::getTopic,q->q.where(x->x.eq(Topic::getId,1)));
     }
+
 
 }
