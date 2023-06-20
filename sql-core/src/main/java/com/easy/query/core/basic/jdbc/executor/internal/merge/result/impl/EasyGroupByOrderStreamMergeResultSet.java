@@ -12,6 +12,7 @@ import com.easy.query.core.sharding.context.StreamMergeContext;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.result.ShardingStreamResultSet;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyClassUtil;
+import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasySQLSegmentUtil;
 
 import java.math.BigDecimal;
@@ -220,6 +221,13 @@ public class EasyGroupByOrderStreamMergeResultSet implements ShardingStreamResul
         Object value = currentRow.get(columnIndex - 1);
         setWasNull(value == null);
         return value;
+    }
+
+    @Override
+    public <T> T getObject(int columnIndex, Class<T> type) throws SQLException {
+        Object value = currentRow.get(columnIndex - 1);
+        setWasNull(value == null);
+        return EasyObjectUtil.typeCastNullable(value);
     }
 
     @Override

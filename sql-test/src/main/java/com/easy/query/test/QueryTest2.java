@@ -807,6 +807,5 @@ public class QueryTest2 extends BaseTest {
                 ));
         String sql = queryable.toSQL();
         Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND (`id` IN (?,?) OR `id` IN (?,?) OR `id` IN (?,?))", sql);
-
     }
 }

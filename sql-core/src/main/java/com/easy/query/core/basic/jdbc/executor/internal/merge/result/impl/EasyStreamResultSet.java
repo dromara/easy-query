@@ -55,6 +55,11 @@ public final class EasyStreamResultSet implements StreamResultSet {
     }
 
     @Override
+    public <T> T getObject(int columnIndex, Class<T> type) throws SQLException {
+        return resultSet.getObject(columnIndex,type);
+    }
+
+    @Override
     public boolean wasNull() throws SQLException {
         return resultSet.wasNull();
     }

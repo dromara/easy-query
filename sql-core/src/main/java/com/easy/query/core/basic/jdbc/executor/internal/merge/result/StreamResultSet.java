@@ -21,6 +21,7 @@ public interface StreamResultSet extends AutoCloseable {
     boolean next() throws SQLException;
 
     Object getObject(int columnIndex) throws SQLException;
+    <T> T getObject(int columnIndex,Class<T> type) throws SQLException;
 
     boolean wasNull() throws SQLException;
 

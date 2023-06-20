@@ -56,6 +56,7 @@ public class EasyOrderStreamMergeResultSet implements OrderStreamMergeResultSet 
         }
         ArrayList<Comparable<?>> orders = new ArrayList<>(streamMergeContext.getOrders().size());
         for (PropertyOrder order : streamMergeContext.getOrders()) {
+            // local date time等之类的
             Object value = this.streamResultSet.getObject(order.columnIndex()+1);
             if (value==null||value instanceof Comparable<?>) {
                 orders.add((Comparable<?>) value);
@@ -86,6 +87,11 @@ public class EasyOrderStreamMergeResultSet implements OrderStreamMergeResultSet 
     @Override
     public Object getObject(int columnIndex) throws SQLException {
         return streamResultSet.getObject(columnIndex);
+    }
+
+    @Override
+    public <T> T getObject(int columnIndex, Class<T> type) throws SQLException {
+        return streamResultSet.getObject(columnIndex,type);
     }
 
     @Override

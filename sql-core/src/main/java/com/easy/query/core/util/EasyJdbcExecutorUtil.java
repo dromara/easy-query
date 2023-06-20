@@ -13,6 +13,7 @@ import com.easy.query.core.basic.jdbc.types.EasyParameter;
 import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
 import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
 import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.enums.PropertyHandlerTypeEnum;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.exception.EasyQuerySQLStatementException;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
@@ -355,7 +356,7 @@ public class EasyJdbcExecutorUtil {
             int paramSize = sqlParameters.size();
             for (int i = 0; i < paramSize; i++) {
                 easyParameter.setIndex(i);
-                JdbcTypeHandler handler = easyJdbcTypeHandlerManager.getHandler(easyParameter.getValueType());
+                JdbcTypeHandler handler = easyJdbcTypeHandlerManager.getHandler(PropertyHandlerTypeEnum.getByProperty(easyParameter.getValueType()));
                 handler.setParameter(easyParameter);
             }
         }

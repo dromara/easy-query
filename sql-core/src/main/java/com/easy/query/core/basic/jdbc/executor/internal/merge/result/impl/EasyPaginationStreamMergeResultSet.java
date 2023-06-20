@@ -79,6 +79,11 @@ public class EasyPaginationStreamMergeResultSet implements ShardingStreamResultS
     }
 
     @Override
+    public <T> T getObject(int columnIndex, Class<T> type) throws SQLException {
+        return streamResultSet.getObject(columnIndex,type);
+    }
+
+    @Override
     public boolean wasNull() throws SQLException {
         return streamResultSet.wasNull();
     }
