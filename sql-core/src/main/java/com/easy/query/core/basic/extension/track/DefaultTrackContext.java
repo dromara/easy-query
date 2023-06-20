@@ -129,8 +129,8 @@ public class DefaultTrackContext implements TrackContext {
      */
     private Object createAndCopyValue(Object entity, EntityMetadata entityMetadata) {
 
-        Class<?> entityClass = entity.getClass();
-        Object original = EasyClassUtil.newInstance(entityClass);
+//        Class<?> entityClass = entity.getClass();
+        Object original = entityMetadata.getBeanConstructorCreator().get();
         for (Map.Entry<String, ColumnMetadata> columnMetadataEntry : entityMetadata.getProperty2ColumnMap().entrySet()) {
             ColumnMetadata columnMetadata = columnMetadataEntry.getValue();
             PropertySetterCaller<Object> beanSetter = columnMetadata.getSetterCaller();
