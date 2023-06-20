@@ -15,6 +15,8 @@ import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 import com.easy.query.core.util.EasyAesUtil;
 import com.easy.query.core.util.EasyBase64Util;
 import com.easy.query.core.util.EasyBitwiseUtil;
+import com.easy.query.core.util.EasyClassUtil;
+import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasyStringUtil;
 import com.easy.query.test.encryption.DefaultAesEasyEncryptionStrategy;
 import com.easy.query.test.entity.BlogEntity;
@@ -713,7 +715,7 @@ public class GenericTest extends BaseTest {
         }
     }
     @Test
-    public void createTest1() throws InstantiationException, IllegalAccessException {
+    public void createTest1() {
         FastBean fastBean = new FastBean(BlogEntity.class);
         Supplier<Object> lambdaCreate = fastBean.getBeanConstructorCreator();
         Object o = lambdaCreate.get();
@@ -723,20 +725,23 @@ public class GenericTest extends BaseTest {
         Assert.assertNotNull(blogEntity);
         {
             long start = System.currentTimeMillis();
-            for (int i = 0; i < 10000; i++) {
-                BlogEntity.class.newInstance();
+            for (int i = 0; i < 100000; i++) {
+                BlogEntity blogEntity1 = EasyClassUtil.newInstance(BlogEntity.class);
             }
             long end = System.currentTimeMillis();
             System.out.println((end-start)+"(ms)");
         }
         {
             long start = System.currentTimeMillis();
-            for (int i = 0; i < 10000; i++) {
-                BlogEntity blogEntity1 = (BlogEntity) lambdaCreate.get();
+            for (int i = 0; i < 100000; i++) {
+                BlogEntity blogEntity1 = EasyObjectUtil.typeCastNullable(lambdaCreate.get());
             }
             long end = System.currentTimeMillis();
             System.out.println((end-start)+"(ms)");
         }
+        Object o1 = lambdaCreate.get();
+        Object o2 = lambdaCreate.get();
+        Assert.assertFalse(o1==o2);
     }
 
 }

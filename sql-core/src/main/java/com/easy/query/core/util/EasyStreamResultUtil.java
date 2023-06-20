@@ -30,29 +30,49 @@ import java.util.Map;
  */
 public final class EasyStreamResultUtil {
 
-    private static final Log log= LogFactory.getLog(EasyStreamResultUtil.class);
-    private EasyStreamResultUtil(){}
+    private static final Log log = LogFactory.getLog(EasyStreamResultUtil.class);
 
-    public static  <TResult> List<TResult> mapTo(ExecutorContext context, StreamResultSet streamResult, Class<TResult> clazz) throws SQLException{
+    private EasyStreamResultUtil() {
+    }
+
+    public static <TResult> List<TResult> mapTo(ExecutorContext context, StreamResultSet streamResult, Class<TResult> clazz) throws SQLException {
         List<TResult> resultList = null;
-        if (Map.class.isAssignableFrom(clazz)) {
-            resultList = mapToMaps(context, streamResult, clazz);
-        } else if (EasyClassUtil.isBasicType(clazz)) {//如果返回的是基本类型
-            resultList = new ArrayList<>();
-            while (streamResult.next()) {
-                Object value = mapToBasic(context, streamResult, clazz);
-                resultList.add((TResult) value);
+        EntityMetadata entityMetadata = context.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(clazz);
+        switch (entityMetadata.getEntityMetadataType()) {
+            case MAP:
+                resultList = mapToMaps(context, streamResult, entityMetadata);
+                break;
+            case BASIC_TYPE: {
+                resultList = new ArrayList<>();
+                while (streamResult.next()) {
+                    Object value = mapToBasic(context, streamResult, entityMetadata);
+                    resultList.add((TResult) value);
+                }
             }
-        } else {
-            resultList = mapToBeans(context, streamResult, clazz);
+            break;
+            default:
+                resultList = mapToBeans(context, streamResult, entityMetadata);
+                break;
         }
+//        if (Map.class.isAssignableFrom(clazz)) {
+//            resultList = mapToMaps(context, streamResult, clazz);
+//        } else if (EasyClassUtil.isBasicType(clazz)) {//如果返回的是基本类型
+//            resultList = new ArrayList<>();
+//            while (streamResult.next()) {
+//                Object value = mapToBasic(context, streamResult, clazz);
+//                resultList.add((TResult) value);
+//            }
+//        } else {
+//            resultList = mapToBeans(context, streamResult, clazz);
+//        }
         boolean printSql = context.getEasyQueryOption().isPrintSql();
         if (printSql) {
             log.info("<== " + "Total: " + resultList.size());
         }
         return resultList;
     }
-    private static <T> List<T> mapToMaps(ExecutorContext context, StreamResultSet streamResult, Class<T> clazz) throws SQLException {
+
+    private static <T> List<T> mapToMaps(ExecutorContext context, StreamResultSet streamResult, EntityMetadata entityMetadata) throws SQLException {
 
         if (!streamResult.next()) {
             return new ArrayList<>(0);
@@ -60,7 +80,7 @@ public final class EasyStreamResultUtil {
         List<T> resultList = new ArrayList<>();
         ResultSetMetaData rsmd = streamResult.getMetaData();
         do {
-            Map bean = mapToMap(context, streamResult, clazz, rsmd);
+            Map bean = mapToMap(context, streamResult, entityMetadata.getEntityClass(), rsmd);
             resultList.add((T) bean);
         } while (streamResult.next());
         return resultList;
@@ -84,41 +104,42 @@ public final class EasyStreamResultUtil {
             JdbcTypeHandler handler = easyJdbcTypeHandler.getHandler(propertyType);
             Object value = handler.getValue(easyResultSet);
             Object o = map.put(colName, value);
-            if(o!=null){
+            if (o != null) {
                 throw new IllegalStateException("Duplicate key found: " + colName);
             }
         }
         return map;
     }
 
-    private static  <T> Object mapToBasic(ExecutorContext context, StreamResultSet streamResult, Class<T> clazz) throws SQLException {
+    private static <T> Object mapToBasic(ExecutorContext context, StreamResultSet streamResult,  EntityMetadata entityMetadata) throws SQLException {
         ResultSetMetaData rsmd = streamResult.getMetaData();
         int columnCount = rsmd.getColumnCount();
         if (columnCount != 1) {
-            throw new SQLException("返回类型:" + clazz + ",期望返回一列");
+            throw new SQLException("返回类型:" + entityMetadata.getEntityClass() + ",期望返回一列");
         }
         EasyResultSet easyResultSet = new EasyResultSet(streamResult);
         easyResultSet.setIndex(0);
         JdbcTypeHandlerManager easyJdbcTypeHandler = context.getRuntimeContext().getJdbcTypeHandlerManager();
-        JdbcTypeHandler handler = easyJdbcTypeHandler.getHandler(clazz);
+        JdbcTypeHandler handler = easyJdbcTypeHandler.getHandler(entityMetadata.getEntityClass());
         return handler.getValue(easyResultSet);
 
     }
-    private static  <TResult> List<TResult> mapToBeans(ExecutorContext context, StreamResultSet streamResult, Class<TResult> clazz) throws SQLException {
+
+    private static <TResult> List<TResult> mapToBeans(ExecutorContext context, StreamResultSet streamResult,EntityMetadata entityMetadata) throws SQLException {
         if (!streamResult.next()) {
             return new ArrayList<>(0);
         }
         List<TResult> resultList = new ArrayList<>();
         ResultSetMetaData rsmd = streamResult.getMetaData();
-        EntityMetadata entityMetadata = context.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(clazz);
-        BeanMapToColumnMetadata[] propertyDescriptors = columnsToProperties(context,entityMetadata,rsmd);
+        BeanMapToColumnMetadata[] propertyDescriptors = columnsToProperties(context, entityMetadata, rsmd);
         do {
-            TResult bean = mapToBean(context, streamResult,entityMetadata,propertyDescriptors);
+            TResult bean = mapToBean(context, streamResult, entityMetadata, propertyDescriptors);
             resultList.add(bean);
         } while (streamResult.next());
         return resultList;
     }
-    private static  <TResult> TResult mapToBean(ExecutorContext context, StreamResultSet streamResult,EntityMetadata entityMetadata,BeanMapToColumnMetadata[] beanMapToColumnMetadatas) throws SQLException {
+
+    private static <TResult> TResult mapToBean(ExecutorContext context, StreamResultSet streamResult, EntityMetadata entityMetadata, BeanMapToColumnMetadata[] beanMapToColumnMetadatas) throws SQLException {
 
         QueryRuntimeContext runtimeContext = context.getRuntimeContext();
         TrackManager trackManager = runtimeContext.getTrackManager();
@@ -135,7 +156,7 @@ public final class EasyStreamResultUtil {
             JdbcTypeHandler handler = beanMapToColumnMetadata.getJdbcTypeHandler();
             Class<?> propertyType = columnMetadata.getPropertyType();
             easyResultSet.setPropertyType(propertyType);
-            Object value = context.fromValue(entityClass,columnMetadata, handler.getValue(easyResultSet));
+            Object value = context.fromValue(entityClass, columnMetadata, handler.getValue(easyResultSet));
 
             //可能存在value为null但是bean默认有初始值,所以必须还是要调用set方法将其设置为null而不是默认值
 //            PropertyDescriptor property = columnMetadata.getProperty();
@@ -173,7 +194,7 @@ public final class EasyStreamResultUtil {
         return false;
     }
 
-    public static BeanMapToColumnMetadata[] columnsToProperties(ExecutorContext context,EntityMetadata entityMetadata,ResultSetMetaData rsmd) throws SQLException {
+    public static BeanMapToColumnMetadata[] columnsToProperties(ExecutorContext context, EntityMetadata entityMetadata, ResultSetMetaData rsmd) throws SQLException {
         QueryRuntimeContext runtimeContext = context.getRuntimeContext();
         JdbcTypeHandlerManager easyJdbcTypeHandler = runtimeContext.getJdbcTypeHandlerManager();
         boolean mapToBeanStrict = context.isMapToBeanStrict();
@@ -185,8 +206,8 @@ public final class EasyStreamResultUtil {
 
             String colName = getColName(rsmd, i + 1);//数据库查询出来的列名
 
-            ColumnMetadata column = getMapColumnMetadata(entityMetadata,colName,mapToBeanStrict);
-            if(column==null){
+            ColumnMetadata column = getMapColumnMetadata(entityMetadata, colName, mapToBeanStrict);
+            if (column == null) {
                 continue;
             }
             Class<?> propertyType = column.getPropertyType();
@@ -196,15 +217,17 @@ public final class EasyStreamResultUtil {
         }
         return beanMapToColumnMetadatas;
     }
-    private static ColumnMetadata getMapColumnMetadata(EntityMetadata entityMetadata,String columnName,boolean mapToBeanStrict){
+
+    private static ColumnMetadata getMapColumnMetadata(EntityMetadata entityMetadata, String columnName, boolean mapToBeanStrict) {
         String propertyName = entityMetadata.getPropertyNameOrNull(columnName);
-        if(propertyName!=null){
+        if (propertyName != null) {
             return entityMetadata.getColumnNotNull(propertyName);
-        }else if(!mapToBeanStrict){
-           return entityMetadata.getColumnOrNull(columnName);
+        } else if (!mapToBeanStrict) {
+            return entityMetadata.getColumnOrNull(columnName);
         }
         return null;
     }
+
     private static String getColName(ResultSetMetaData rsmd, int col) throws SQLException {
         String columnName = rsmd.getColumnLabel(col);
         if (EasyStringUtil.isEmpty(columnName)) {

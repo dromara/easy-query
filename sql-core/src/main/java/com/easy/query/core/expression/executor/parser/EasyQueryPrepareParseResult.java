@@ -56,9 +56,9 @@ public class EasyQueryPrepareParseResult implements QueryPrepareParseResult {
     }
 
     private SequenceParseResult initSequenceOrderPrepareParseResult(ExecutorContext executorContext) {
-        EasyQueryOption easyQueryOption = executorContext.getRuntimeContext().getQueryConfiguration().getEasyQueryOption();
         //存在分片对象的情况下
         if (this.sharding) {
+            EasyQueryOption easyQueryOption = executorContext.getRuntimeContext().getQueryConfiguration().getEasyQueryOption();
             SQLBuilderSegment order = easyQuerySQLExpression.getOrder();
             if (EasySQLSegmentUtil.isNotEmpty(order)) {
                 SQLSegment firstOrder = EasyCollectionUtil.first(order.getSQLSegments());

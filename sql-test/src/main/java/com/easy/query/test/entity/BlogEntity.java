@@ -2,8 +2,8 @@ package com.easy.query.test.entity;
 
 import com.easy.query.core.annotation.Column;
 import com.easy.query.core.annotation.Table;
-import lombok.Data;
-import lombok.experimental.Accessors;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -15,9 +15,9 @@ import java.time.LocalDateTime;
  * @author xuejiaming
  */
 
-@Data
+@Getter
+@Setter
 @Table("t_blog")
-@Accessors(chain = true)
 public class BlogEntity extends BaseEntity{
 
     /**

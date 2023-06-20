@@ -29,6 +29,7 @@ import com.easy.query.core.common.LinkedCaseInsensitiveMap;
 import com.easy.query.core.common.bean.FastBean;
 import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.configuration.nameconversion.NameConversion;
+import com.easy.query.core.enums.EntityMetadataTypeEnum;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.lambda.Property;
@@ -108,15 +109,19 @@ public class EntityMetadata {
 
     private final Set<ActualTable> actualTables = new CopyOnWriteArraySet<>();
     private final Set<String> dataSources =new CopyOnWriteArraySet<>();
-    private boolean basicType;
+    private EntityMetadataTypeEnum entityMetadataType=EntityMetadataTypeEnum.BEAN;
     public EntityMetadata(Class<?> entityClass) {
         this.entityClass = entityClass;
     }
 
     public void init(ServiceProvider serviceProvider) {
 
+        if(Map.class.isAssignableFrom(entityClass)){
+            entityMetadataType=EntityMetadataTypeEnum.MAP;
+            return;
+        }
         if(EasyClassUtil.isBasicType(entityClass)){
-            basicType=true;
+            entityMetadataType=EntityMetadataTypeEnum.BASIC_TYPE;
             return;
         }
 
@@ -591,7 +596,7 @@ public class EntityMetadata {
         return beanConstructorCreator;
     }
 
-    public boolean isBasicType() {
-        return basicType;
+    public EntityMetadataTypeEnum getEntityMetadataType() {
+        return entityMetadataType;
     }
 }
