@@ -67,6 +67,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
@@ -105,6 +106,7 @@ public class EntityMetadata {
     private final List<EntityInterceptor> entityInterceptors = new ArrayList<>();
     private final List<UpdateSetInterceptor> updateSetInterceptors = new ArrayList<>();
     private final LinkedHashMap<String, ColumnMetadata> property2ColumnMap = new LinkedHashMap<>();
+    private final LinkedHashMap<String, NavigateMetadata> property2NavigateMap = new LinkedHashMap<>();
     private final Map<String/*property name*/, String/*column name*/> keyPropertiesMap = new LinkedHashMap<>();
     private final List<String/*column name*/> incrementColumns = new ArrayList<>(4);
     private final LinkedCaseInsensitiveMap<String> column2PropertyMap = new LinkedCaseInsensitiveMap<>(Locale.ENGLISH);
@@ -112,6 +114,7 @@ public class EntityMetadata {
     private final Set<ActualTable> actualTables = new CopyOnWriteArraySet<>();
     private final Set<String> dataSources =new CopyOnWriteArraySet<>();
     private EntityMetadataTypeEnum entityMetadataType=EntityMetadataTypeEnum.BEAN;
+    private Supplier<Object> beanConstructorCreator;
     public EntityMetadata(Class<?> entityClass) {
         this.entityClass = entityClass;
     }
