@@ -1,6 +1,7 @@
 package com.easy.query.test;
 
 import com.easy.query.core.common.LinkedCaseInsensitiveMap;
+import com.easy.query.core.common.bean.FastBean;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
@@ -26,6 +27,7 @@ import org.junit.Test;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 /**
  * @author xuejiaming
@@ -708,6 +710,32 @@ public class GenericTest extends BaseTest {
             EasyQuerySQLStatementException ex1 = ((EasyQuerySQLStatementException) ex.getCause());
             Assert.assertEquals("UPDATE `x_t_blog` SET `star` = `star`- ? WHERE `deleted` = ? AND `id` = ?", ex1.getSQL());
             Assert.assertEquals("java.sql.SQLSyntaxErrorException: Table 'easy-query-test.x_t_blog' doesn't exist", ex1.getMessage());
+        }
+    }
+    @Test
+    public void createTest1() throws InstantiationException, IllegalAccessException {
+        FastBean fastBean = new FastBean(BlogEntity.class);
+        Supplier<Object> lambdaCreate = fastBean.getBeanConstructorCreator();
+        Object o = lambdaCreate.get();
+        Assert.assertNotNull(o);
+        Assert.assertTrue(o instanceof  BlogEntity);
+        BlogEntity blogEntity = (BlogEntity)o;
+        Assert.assertNotNull(blogEntity);
+        {
+            long start = System.currentTimeMillis();
+            for (int i = 0; i < 10000; i++) {
+                BlogEntity.class.newInstance();
+            }
+            long end = System.currentTimeMillis();
+            System.out.println((end-start)+"(ms)");
+        }
+        {
+            long start = System.currentTimeMillis();
+            for (int i = 0; i < 10000; i++) {
+                BlogEntity blogEntity1 = (BlogEntity) lambdaCreate.get();
+            }
+            long end = System.currentTimeMillis();
+            System.out.println((end-start)+"(ms)");
         }
     }
 

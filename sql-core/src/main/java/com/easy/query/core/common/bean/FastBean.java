@@ -15,6 +15,7 @@ import java.lang.invoke.MethodType;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
 
 /**
  * create time 2023/3/28 17:20
@@ -46,7 +47,7 @@ public class FastBean {
 //    }
 
     public Property<Object, ?> getBeanGetter(PropertyDescriptor prop) {
-        return  getLambdaProperty(prop);
+        return getLambdaProperty(prop);
 //        return EasyMapUtil.computeIfAbsent(propertyGetterCache, prop.getName(), k -> getLambdaProperty(prop));
     }
 
@@ -87,7 +88,7 @@ public class FastBean {
         try {
 
             //()->{bean.setxxx(propertyType)}
-            MethodType instantiatedMethodType = MethodType.methodType(void.class, beanClass,lambdaPropertyType);
+            MethodType instantiatedMethodType = MethodType.methodType(void.class, beanClass, lambdaPropertyType);
             MethodHandle target = caller.findVirtual(beanClass, getFunName, setter);
             MethodType samMethodType = MethodType.methodType(void.class, Object.class, Object.class);
             CallSite site = LambdaMetafactory.metafactory(
@@ -101,6 +102,28 @@ public class FastBean {
 
             PropertyVoidSetter<Object, Object> objectPropertyVoidSetter = (PropertyVoidSetter<Object, Object>) site.getTarget().invokeExact();
             return objectPropertyVoidSetter::apply;
+        } catch (Throwable e) {
+            throw new EasyQueryException(e);
+        }
+    }
+
+    public Supplier<Object> getBeanConstructorCreator(){
+        return getLambdaCreate();
+    }
+
+    private Supplier<Object> getLambdaCreate() {
+        try {
+            MethodType constructorType = MethodType.methodType(void.class);
+            MethodHandles.Lookup caller = MethodHandles.lookup();
+            MethodHandle constructorHandle = caller.findConstructor(beanClass, constructorType);
+
+            CallSite site = LambdaMetafactory.altMetafactory(caller,
+                    "get",
+                    MethodType.methodType(Supplier.class),
+                    constructorHandle.type().generic(),
+                    constructorHandle,
+                    constructorHandle.type(),FLAG_SERIALIZABLE);
+            return (Supplier<Object>) site.getTarget().invokeExact();
         } catch (Throwable e) {
             throw new EasyQueryException(e);
         }

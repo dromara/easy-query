@@ -28,6 +28,9 @@ public class DefaultEntityMetadataManager implements EntityMetadataManager {
         if(cacheItem!=null){
             return cacheItem;
         }
+//        if(EasyClassUtil.isBasicType(entityClass)){
+//            return new EntityMetadata(entityClass);
+//        }
 //        if(tableName==null){
 //            throw new JDQCException(String.format("当前对象不是数据库对象:[%s]",entityClass.getSimpleName()));
 //        }

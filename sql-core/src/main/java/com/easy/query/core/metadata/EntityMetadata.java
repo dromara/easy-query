@@ -62,6 +62,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
@@ -92,6 +93,7 @@ public class EntityMetadata {
     private String shardingTablePropertyName;
     private final Set<String> shardingTablePropertyNames = new LinkedHashSet<>();
     private ShardingInitConfig shardingInitConfig;
+    private Supplier<Object> beanConstructorCreator;
 
     /**
      * 查询过滤器
@@ -106,12 +108,17 @@ public class EntityMetadata {
 
     private final Set<ActualTable> actualTables = new CopyOnWriteArraySet<>();
     private final Set<String> dataSources =new CopyOnWriteArraySet<>();
-
+    private boolean basicType;
     public EntityMetadata(Class<?> entityClass) {
         this.entityClass = entityClass;
     }
 
     public void init(ServiceProvider serviceProvider) {
+
+        if(EasyClassUtil.isBasicType(entityClass)){
+            basicType=true;
+            return;
+        }
 
         QueryConfiguration configuration = serviceProvider.getService(QueryConfiguration.class);
         NameConversion nameConversion = configuration.getNameConversion();
@@ -128,6 +135,7 @@ public class EntityMetadata {
         int versionCount = 0;
         int logicDelCount = 0;
         FastBean fastBean = EasyBeanUtil.getFastBean(entityClass);
+        this.beanConstructorCreator = fastBean.getBeanConstructorCreator();
         for (Field field : allFields) {
             String property = field.getName();
             if (ignoreProperties.contains(property)) {
@@ -577,5 +585,13 @@ public class EntityMetadata {
 
     public boolean isColumnValueUpdateAtomicTrack() {
         return columnValueUpdateAtomicTrack;
+    }
+
+    public Supplier<Object> getBeanConstructorCreator() {
+        return beanConstructorCreator;
+    }
+
+    public boolean isBasicType() {
+        return basicType;
     }
 }
