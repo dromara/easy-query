@@ -2,9 +2,9 @@ package com.easy.query.core.sharding.router;
 
 import com.easy.query.core.basic.jdbc.parameter.ConstSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
-import com.easy.query.core.common.bean.FastBean;
 import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.enums.SQLPredicateCompareEnum;
+import com.easy.query.core.enums.sharding.ShardingOperatorEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.RouteFunction;
@@ -19,14 +19,12 @@ import com.easy.query.core.expression.segment.condition.predicate.ValuePredicate
 import com.easy.query.core.expression.segment.condition.predicate.ValuesPredicate;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
-import com.easy.query.core.enums.sharding.ShardingOperatorEnum;
+import com.easy.query.core.sharding.route.RouteFilter;
 import com.easy.query.core.sharding.router.descriptor.EntityRouteDescriptor;
 import com.easy.query.core.sharding.router.descriptor.PredicateRouteDescriptor;
 import com.easy.query.core.sharding.router.descriptor.RouteDescriptor;
-import com.easy.query.core.sharding.route.RouteFilter;
-import com.easy.query.core.util.EasyBeanUtil;
-import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyClassUtil;
+import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyStringUtil;
 
 import java.util.Collection;
@@ -223,8 +221,7 @@ public class RoutePredicateDiscover<T> {
     private RoutePredicateExpression<T> getEntitySQLRouteParseExpression(Object entity) {
         ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(mainShardingProperty);
 
-        FastBean fastBean = EasyBeanUtil.getFastBean(entityMetadata.getEntityClass());
-        Property<Object, ?> shardingKeyPropertyGetter = fastBean.getBeanGetter(columnMetadata.getProperty());
+        Property<Object, ?> shardingKeyPropertyGetter = columnMetadata.getGetterCaller();
         Object shardingValue = shardingKeyPropertyGetter.apply(entity);
         RouteFunction<T> routePredicate = routeFilter.routeFilter(routeDescriptor.getTable(),shardingValue, ShardingOperatorEnum.EQUAL, mainShardingProperty, true,true);
         return new RoutePredicateExpression<T>(routePredicate);

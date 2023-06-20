@@ -70,19 +70,19 @@
         <dependency>
             <groupId>com.easy-query</groupId>
             <artifactId>sql-core</artifactId>
-            <version>1.0.7</version>
+            <version>1.0.9</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.easy-query</groupId>
             <artifactId>sql-api4j</artifactId>
-            <version>1.0.7</version>
+            <version>1.0.9</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.easy-query</groupId>
             <artifactId>sql-springboot-starter</artifactId>
-            <version>1.0.7</version>
+            <version>1.0.9</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

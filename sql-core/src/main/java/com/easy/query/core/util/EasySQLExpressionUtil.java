@@ -72,14 +72,6 @@ public class EasySQLExpressionUtil {
      * @return
      */
     public static boolean shouldCloneSQLEntityQueryExpressionBuilder(EntityQueryExpressionBuilder sqlEntityExpression) {
-//        if(noSelectAndGroup(sqlEntityExpression)){
-//            boolean onlyOneAnonymousTable = sqlEntityExpression.getTables().size() == 1 && sqlEntityExpression.getTables().get(0) instanceof AnonymousEntityTableExpression;
-//            if(onlyOneAnonymousTable){
-//                return true;
-//            }
-//            return hasAnyOperate(sqlEntityExpression);
-//        }
-//        return false;
         return noSelectAndGroup(sqlEntityExpression) && (moreTableExpressionOrNoAnonymous(sqlEntityExpression) || hasAnyOperate(sqlEntityExpression));
     }
 
@@ -108,6 +100,11 @@ public class EasySQLExpressionUtil {
 //     return sqlEntityExpression.getTables().size() != 1 || !(sqlEntityExpression.getTables().get(0) instanceof AnonymousEntityTableExpressionBuilder);
     }
 
+    /**
+     * 后续是否要判断include
+     * @param sqlEntityExpression
+     * @return
+     */
     public static boolean hasAnyOperate(EntityQueryExpressionBuilder sqlEntityExpression) {
         return sqlEntityExpression.hasLimit() || sqlEntityExpression.hasWhere() || sqlEntityExpression.hasOrder() || sqlEntityExpression.hasHaving() || sqlEntityExpression.isDistinct() || sqlEntityExpression.hasGroup();
     }

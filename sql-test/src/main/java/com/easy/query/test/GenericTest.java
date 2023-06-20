@@ -1,6 +1,7 @@
 package com.easy.query.test;
 
 import com.easy.query.core.common.LinkedCaseInsensitiveMap;
+import com.easy.query.core.common.bean.FastBean;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
@@ -14,6 +15,8 @@ import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 import com.easy.query.core.util.EasyAesUtil;
 import com.easy.query.core.util.EasyBase64Util;
 import com.easy.query.core.util.EasyBitwiseUtil;
+import com.easy.query.core.util.EasyClassUtil;
+import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasyStringUtil;
 import com.easy.query.test.encryption.DefaultAesEasyEncryptionStrategy;
 import com.easy.query.test.entity.BlogEntity;
@@ -26,6 +29,7 @@ import org.junit.Test;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 /**
  * @author xuejiaming
@@ -709,6 +713,35 @@ public class GenericTest extends BaseTest {
             Assert.assertEquals("UPDATE `x_t_blog` SET `star` = `star`- ? WHERE `deleted` = ? AND `id` = ?", ex1.getSQL());
             Assert.assertEquals("java.sql.SQLSyntaxErrorException: Table 'easy-query-test.x_t_blog' doesn't exist", ex1.getMessage());
         }
+    }
+    @Test
+    public void createTest1() {
+        FastBean fastBean = new FastBean(BlogEntity.class);
+        Supplier<Object> lambdaCreate = fastBean.getBeanConstructorCreator();
+        Object o = lambdaCreate.get();
+        Assert.assertNotNull(o);
+        Assert.assertTrue(o instanceof  BlogEntity);
+        BlogEntity blogEntity = (BlogEntity)o;
+        Assert.assertNotNull(blogEntity);
+        {
+            long start = System.currentTimeMillis();
+            for (int i = 0; i < 100000; i++) {
+                BlogEntity blogEntity1 = EasyClassUtil.newInstance(BlogEntity.class);
+            }
+            long end = System.currentTimeMillis();
+            System.out.println((end-start)+"(ms)");
+        }
+        {
+            long start = System.currentTimeMillis();
+            for (int i = 0; i < 100000; i++) {
+                BlogEntity blogEntity1 = EasyObjectUtil.typeCastNullable(lambdaCreate.get());
+            }
+            long end = System.currentTimeMillis();
+            System.out.println((end-start)+"(ms)");
+        }
+        Object o1 = lambdaCreate.get();
+        Object o2 = lambdaCreate.get();
+        Assert.assertFalse(o1==o2);
     }
 
 }

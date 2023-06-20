@@ -8,7 +8,6 @@ import com.easy.query.core.basic.jdbc.types.EasyResultSet;
 import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
 import com.easy.query.core.basic.jdbc.types.JdbcTypes;
 import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
-import com.easy.query.core.common.bean.FastBean;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
 import com.easy.query.core.logging.Log;
@@ -16,9 +15,7 @@ import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.metadata.BeanMapToColumnMetadata;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
-import com.easy.query.core.metadata.EntityMetadataManager;
 
-import java.beans.PropertyDescriptor;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -33,29 +30,49 @@ import java.util.Map;
  */
 public final class EasyStreamResultUtil {
 
-    private static final Log log= LogFactory.getLog(EasyStreamResultUtil.class);
-    private EasyStreamResultUtil(){}
+    private static final Log log = LogFactory.getLog(EasyStreamResultUtil.class);
 
-    public static  <TResult> List<TResult> mapTo(ExecutorContext context, StreamResultSet streamResult, Class<TResult> clazz) throws SQLException{
+    private EasyStreamResultUtil() {
+    }
+
+    public static <TResult> List<TResult> mapTo(ExecutorContext context, StreamResultSet streamResult, Class<TResult> clazz) throws SQLException {
         List<TResult> resultList = null;
-        if (Map.class.isAssignableFrom(clazz)) {
-            resultList = mapToMaps(context, streamResult, clazz);
-        } else if (EasyClassUtil.isBasicType(clazz)) {//如果返回的是基本类型
-            resultList = new ArrayList<>();
-            while (streamResult.next()) {
-                Object value = mapToBasic(context, streamResult, clazz);
-                resultList.add((TResult) value);
+        EntityMetadata entityMetadata = context.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(clazz);
+        switch (entityMetadata.getEntityMetadataType()) {
+            case MAP:
+                resultList = mapToMaps(context, streamResult, entityMetadata);
+                break;
+            case BASIC_TYPE: {
+                resultList = new ArrayList<>();
+                while (streamResult.next()) {
+                    Object value = mapToBasic(context, streamResult, entityMetadata);
+                    resultList.add((TResult) value);
+                }
             }
-        } else {
-            resultList = mapToBeans(context, streamResult, clazz);
+            break;
+            default:
+                resultList = mapToBeans(context, streamResult, entityMetadata);
+                break;
         }
+//        if (Map.class.isAssignableFrom(clazz)) {
+//            resultList = mapToMaps(context, streamResult, clazz);
+//        } else if (EasyClassUtil.isBasicType(clazz)) {//如果返回的是基本类型
+//            resultList = new ArrayList<>();
+//            while (streamResult.next()) {
+//                Object value = mapToBasic(context, streamResult, clazz);
+//                resultList.add((TResult) value);
+//            }
+//        } else {
+//            resultList = mapToBeans(context, streamResult, clazz);
+//        }
         boolean printSql = context.getEasyQueryOption().isPrintSql();
         if (printSql) {
             log.info("<== " + "Total: " + resultList.size());
         }
         return resultList;
     }
-    private static <T> List<T> mapToMaps(ExecutorContext context, StreamResultSet streamResult, Class<T> clazz) throws SQLException {
+
+    private static <T> List<T> mapToMaps(ExecutorContext context, StreamResultSet streamResult, EntityMetadata entityMetadata) throws SQLException {
 
         if (!streamResult.next()) {
             return new ArrayList<>(0);
@@ -63,7 +80,7 @@ public final class EasyStreamResultUtil {
         List<T> resultList = new ArrayList<>();
         ResultSetMetaData rsmd = streamResult.getMetaData();
         do {
-            Map bean = mapToMap(context, streamResult, clazz, rsmd);
+            Map bean = mapToMap(context, streamResult, entityMetadata.getEntityClass(), rsmd);
             resultList.add((T) bean);
         } while (streamResult.next());
         return resultList;
@@ -87,46 +104,48 @@ public final class EasyStreamResultUtil {
             JdbcTypeHandler handler = easyJdbcTypeHandler.getHandler(propertyType);
             Object value = handler.getValue(easyResultSet);
             Object o = map.put(colName, value);
-            if(o!=null){
+            if (o != null) {
                 throw new IllegalStateException("Duplicate key found: " + colName);
             }
         }
         return map;
     }
 
-    private static  <T> Object mapToBasic(ExecutorContext context, StreamResultSet streamResult, Class<T> clazz) throws SQLException {
+    private static <T> Object mapToBasic(ExecutorContext context, StreamResultSet streamResult,  EntityMetadata entityMetadata) throws SQLException {
         ResultSetMetaData rsmd = streamResult.getMetaData();
         int columnCount = rsmd.getColumnCount();
         if (columnCount != 1) {
-            throw new SQLException("返回类型:" + clazz + ",期望返回一列");
+            throw new SQLException("返回类型:" + entityMetadata.getEntityClass() + ",期望返回一列");
         }
         EasyResultSet easyResultSet = new EasyResultSet(streamResult);
         easyResultSet.setIndex(0);
         JdbcTypeHandlerManager easyJdbcTypeHandler = context.getRuntimeContext().getJdbcTypeHandlerManager();
-        JdbcTypeHandler handler = easyJdbcTypeHandler.getHandler(clazz);
+        JdbcTypeHandler handler = easyJdbcTypeHandler.getHandler(entityMetadata.getEntityClass());
         return handler.getValue(easyResultSet);
 
     }
-    private static  <TResult> List<TResult> mapToBeans(ExecutorContext context, StreamResultSet streamResult, Class<TResult> clazz) throws SQLException {
+
+    private static <TResult> List<TResult> mapToBeans(ExecutorContext context, StreamResultSet streamResult,EntityMetadata entityMetadata) throws SQLException {
         if (!streamResult.next()) {
             return new ArrayList<>(0);
         }
         List<TResult> resultList = new ArrayList<>();
         ResultSetMetaData rsmd = streamResult.getMetaData();
-        BeanMapToColumnMetadata[] propertyDescriptors = columnsToProperties(context,rsmd, clazz);
+        BeanMapToColumnMetadata[] propertyDescriptors = columnsToProperties(context, entityMetadata, rsmd);
         do {
-            TResult bean = mapToBean(context, streamResult, clazz, propertyDescriptors);
+            TResult bean = mapToBean(context, streamResult, entityMetadata, propertyDescriptors);
             resultList.add(bean);
         } while (streamResult.next());
         return resultList;
     }
-    private static  <TResult> TResult mapToBean(ExecutorContext context, StreamResultSet streamResult, Class<TResult> clazz, BeanMapToColumnMetadata[] beanMapToColumnMetadatas) throws SQLException {
+
+    private static <TResult> TResult mapToBean(ExecutorContext context, StreamResultSet streamResult, EntityMetadata entityMetadata, BeanMapToColumnMetadata[] beanMapToColumnMetadatas) throws SQLException {
 
         QueryRuntimeContext runtimeContext = context.getRuntimeContext();
         TrackManager trackManager = runtimeContext.getTrackManager();
         EasyResultSet easyResultSet = new EasyResultSet(streamResult);
-        TResult bean = EasyClassUtil.newInstance(clazz);
-        FastBean fastBean = EasyBeanUtil.getFastBean(clazz);
+        TResult bean = EasyObjectUtil.typeCastNullable(entityMetadata.getBeanConstructorCreator().get());
+        Class<?> entityClass = entityMetadata.getEntityClass();
         for (int i = 0; i < beanMapToColumnMetadatas.length; i++) {
             BeanMapToColumnMetadata beanMapToColumnMetadata = beanMapToColumnMetadatas[i];
             if (beanMapToColumnMetadata == null) {
@@ -137,14 +156,14 @@ public final class EasyStreamResultUtil {
             JdbcTypeHandler handler = beanMapToColumnMetadata.getJdbcTypeHandler();
             Class<?> propertyType = columnMetadata.getPropertyType();
             easyResultSet.setPropertyType(propertyType);
-            Object value = context.fromValue(clazz,columnMetadata, handler.getValue(easyResultSet));
+            Object value = context.fromValue(entityClass, columnMetadata, handler.getValue(easyResultSet));
 
             //可能存在value为null但是bean默认有初始值,所以必须还是要调用set方法将其设置为null而不是默认值
-            PropertyDescriptor property = columnMetadata.getProperty();
-            PropertySetterCaller<Object> beanSetter = fastBean.getBeanSetter(property);
+//            PropertyDescriptor property = columnMetadata.getProperty();
+            PropertySetterCaller<Object> beanSetter = columnMetadata.getSetterCaller();
             beanSetter.call(bean, value);
         }
-        boolean trackBean = trackBean(context, clazz);
+        boolean trackBean = trackBean(context, entityClass);
         if (trackBean) {
             EntityState entityState = trackManager.getCurrentTrackContext().addQueryTracking(bean);
             Object entityStateCurrentValue = entityState.getCurrentValue();
@@ -175,11 +194,9 @@ public final class EasyStreamResultUtil {
         return false;
     }
 
-    public static  <TResult> BeanMapToColumnMetadata[] columnsToProperties(ExecutorContext context,ResultSetMetaData rsmd, Class<TResult> clazz) throws SQLException {
+    public static BeanMapToColumnMetadata[] columnsToProperties(ExecutorContext context, EntityMetadata entityMetadata, ResultSetMetaData rsmd) throws SQLException {
         QueryRuntimeContext runtimeContext = context.getRuntimeContext();
-        EntityMetadataManager entityMetadataManager = runtimeContext.getEntityMetadataManager();
         JdbcTypeHandlerManager easyJdbcTypeHandler = runtimeContext.getJdbcTypeHandlerManager();
-        EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(clazz);
         boolean mapToBeanStrict = context.isMapToBeanStrict();
         //需要返回的结果集映射到bean实体上
         //int[] 索引代表数据库返回的索引，数组索引所在的值代表属性数组的对应属性
@@ -189,12 +206,8 @@ public final class EasyStreamResultUtil {
 
             String colName = getColName(rsmd, i + 1);//数据库查询出来的列名
 
-//            String propertyName = entityMetadata.getPropertyNameOrNull(colName);
-//            if (propertyName == null) {
-//                continue;
-//            }
-            ColumnMetadata column = getMapColumnMetadata(entityMetadata,colName,mapToBeanStrict);
-            if(column==null){
+            ColumnMetadata column = getMapColumnMetadata(entityMetadata, colName, mapToBeanStrict);
+            if (column == null) {
                 continue;
             }
             Class<?> propertyType = column.getPropertyType();
@@ -204,15 +217,17 @@ public final class EasyStreamResultUtil {
         }
         return beanMapToColumnMetadatas;
     }
-    private static ColumnMetadata getMapColumnMetadata(EntityMetadata entityMetadata,String columnName,boolean mapToBeanStrict){
+
+    private static ColumnMetadata getMapColumnMetadata(EntityMetadata entityMetadata, String columnName, boolean mapToBeanStrict) {
         String propertyName = entityMetadata.getPropertyNameOrNull(columnName);
-        if(propertyName!=null){
+        if (propertyName != null) {
             return entityMetadata.getColumnNotNull(propertyName);
-        }else if(!mapToBeanStrict){
-           return entityMetadata.getColumnOrNull(columnName);
+        } else if (!mapToBeanStrict) {
+            return entityMetadata.getColumnOrNull(columnName);
         }
         return null;
     }
+
     private static String getColName(ResultSetMetaData rsmd, int col) throws SQLException {
         String columnName = rsmd.getColumnLabel(col);
         if (EasyStringUtil.isEmpty(columnName)) {

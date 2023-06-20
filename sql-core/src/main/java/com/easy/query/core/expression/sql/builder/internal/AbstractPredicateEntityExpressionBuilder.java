@@ -31,7 +31,7 @@ public abstract class AbstractPredicateEntityExpressionBuilder extends AbstractE
     }
 
     protected boolean useLogicDelete(EntityMetadata entityMetadata) {
-        return expressionContext.getBehavior().hasBehavior(EasyBehaviorEnum.LOGIC_DELETE) && entityMetadata.enableLogicDelete();
+        return entityMetadata.enableLogicDelete() && expressionContext.getBehavior().hasBehavior(EasyBehaviorEnum.LOGIC_DELETE);
     }
 
     /**
@@ -71,7 +71,7 @@ public abstract class AbstractPredicateEntityExpressionBuilder extends AbstractE
             if (EasyCollectionUtil.isNotEmpty(predicateFilterInterceptors)) {
                 Predicate<Interceptor> interceptorFilter = expressionContext.getInterceptorFilter();
                 for (PredicateFilterInterceptor predicateFilterInterceptor : predicateFilterInterceptors) {
-                    if(interceptorFilter.test(predicateFilterInterceptor)){
+                    if (interceptorFilter.test(predicateFilterInterceptor)) {
                         predicateFilterInterceptor.configure(entityMetadata.getEntityClass(), this, sqlPredicate);
                     }
                 }

@@ -27,16 +27,21 @@ import com.easy.query.core.basic.extension.track.update.DefaultValueUpdateAtomic
 import com.easy.query.core.basic.extension.track.update.ValueUpdateAtomicTrack;
 import com.easy.query.core.basic.extension.version.VersionStrategy;
 import com.easy.query.core.common.LinkedCaseInsensitiveMap;
+import com.easy.query.core.common.bean.FastBean;
 import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.configuration.nameconversion.NameConversion;
+import com.easy.query.core.enums.EntityMetadataTypeEnum;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
+import com.easy.query.core.expression.lambda.Property;
+import com.easy.query.core.expression.lambda.PropertySetterCaller;
 import com.easy.query.core.inject.ServiceProvider;
 import com.easy.query.core.sharding.initializer.ShardingEntityBuilder;
 import com.easy.query.core.sharding.initializer.ShardingInitOption;
 import com.easy.query.core.sharding.initializer.ShardingInitializer;
 import com.easy.query.core.sharding.router.table.TableUnit;
+import com.easy.query.core.util.EasyBeanUtil;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyObjectUtil;
@@ -100,19 +105,27 @@ public class EntityMetadata {
     private final List<EntityInterceptor> entityInterceptors = new ArrayList<>();
     private final List<UpdateSetInterceptor> updateSetInterceptors = new ArrayList<>();
     private final LinkedHashMap<String, ColumnMetadata> property2ColumnMap = new LinkedHashMap<>();
-    private final LinkedHashMap<String, NavigateMetadata> property2NavigateMap = new LinkedHashMap<>();
     private final Map<String/*property name*/, String/*column name*/> keyPropertiesMap = new LinkedHashMap<>();
     private final List<String/*column name*/> incrementColumns = new ArrayList<>(4);
     private final LinkedCaseInsensitiveMap<String> column2PropertyMap = new LinkedCaseInsensitiveMap<>(Locale.ENGLISH);
 
     private final Set<ActualTable> actualTables = new CopyOnWriteArraySet<>();
-    private final Set<String> dataSources = new CopyOnWriteArraySet<>();
-
+    private final Set<String> dataSources =new CopyOnWriteArraySet<>();
+    private EntityMetadataTypeEnum entityMetadataType=EntityMetadataTypeEnum.BEAN;
     public EntityMetadata(Class<?> entityClass) {
         this.entityClass = entityClass;
     }
 
     public void init(ServiceProvider serviceProvider) {
+
+        if(Map.class.isAssignableFrom(entityClass)){
+            entityMetadataType=EntityMetadataTypeEnum.MAP;
+            return;
+        }
+        if(EasyClassUtil.isBasicType(entityClass)){
+            entityMetadataType=EntityMetadataTypeEnum.BASIC_TYPE;
+            return;
+        }
 
         QueryConfiguration configuration = serviceProvider.getService(QueryConfiguration.class);
         NameConversion nameConversion = configuration.getNameConversion();
@@ -128,25 +141,13 @@ public class EntityMetadata {
         PropertyDescriptor[] ps = getPropertyDescriptor();
         int versionCount = 0;
         int logicDelCount = 0;
+        FastBean fastBean = EasyBeanUtil.getFastBean(entityClass);
+        this.beanConstructorCreator = fastBean.getBeanConstructorCreator();
         for (Field field : allFields) {
             String property = field.getName();
             if (ignoreProperties.contains(property)) {
                 continue;
             }
-//            Type genericType = field.getGenericType();
-//
-//            if (genericType instanceof ParameterizedType) {
-//                ParameterizedType parameterizedType = (ParameterizedType) genericType;
-//                Type[] typeArguments = parameterizedType.getActualTypeArguments();
-//
-//                if (typeArguments.length > 0) {
-//                    Type elementType = typeArguments[0];
-//                    if (elementType instanceof Class) {
-//                        Class<?> elementClass = (Class<?>) elementType;
-//                        System.out.println("List element class: " + elementClass.getName());
-//                    }
-//                }
-//            }
             //未找到bean属性就直接忽略
             PropertyDescriptor propertyDescriptor = firstOrNull(ps, o -> Objects.equals(o.getName(), property));
             if (propertyDescriptor == null) {
@@ -287,6 +288,10 @@ public class EntityMetadata {
                     logicDelCount++;
                 }
             }
+            Property<Object, ?> beanGetter = fastBean.getBeanGetter(propertyDescriptor);
+            columnOption.setGetterCaller(beanGetter);
+            PropertySetterCaller<Object> beanSetter = fastBean.getBeanSetter(propertyDescriptor);
+            columnOption.setSetterCaller(beanSetter);
             property2ColumnMap.put(property, new ColumnMetadata(columnOption));
             column2PropertyMap.put(columnName, property);
         }
@@ -422,13 +427,21 @@ public class EntityMetadata {
     public String getColumnName(String propertyName) {
         ColumnMetadata columnMetadata = property2ColumnMap.get(propertyName);
         if (columnMetadata == null) {
-            throw new EasyQueryException(String.format("未找到属性:[%s]对应的列名", propertyName));
+            throw new EasyQueryException(String.format("not found property:[%s] mapping column", propertyName));
         }
         return columnMetadata.getName();
     }
 
     public String getPropertyNameOrNull(String columnName) {
         return getPropertyNameOrNull(columnName, null);
+    }
+    public String getPropertyNameNotNull(String columnName) {
+        String propertyName = getPropertyNameOrNull(columnName, null);
+
+        if (propertyName == null) {
+            throw new EasyQueryException(String.format("not found column:[%s] mapping property", columnName));
+        }
+        return propertyName;
     }
 
     /**
@@ -606,7 +619,7 @@ public class EntityMetadata {
             throw new IllegalArgumentException("actual table name");
         }
         dataSources.add(dataSource);
-        actualTables.add(new ActualTable(dataSource, actualTableName));
+        actualTables.add(new ActualTable(dataSource,actualTableName));
     }
 
     public Collection<String> getDataSources() {
@@ -627,5 +640,13 @@ public class EntityMetadata {
 
     public boolean isColumnValueUpdateAtomicTrack() {
         return columnValueUpdateAtomicTrack;
+    }
+
+    public Supplier<Object> getBeanConstructorCreator() {
+        return beanConstructorCreator;
+    }
+
+    public EntityMetadataTypeEnum getEntityMetadataType() {
+        return entityMetadataType;
     }
 }

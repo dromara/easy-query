@@ -1,12 +1,10 @@
 package com.easy.query.core.basic.extension.logicdel;
 
-import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.base.ColumnSetter;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.LogicDeleteMetadata;
-import com.easy.query.core.util.EasyBeanUtil;
 
 /**
  * create time 2023/3/28 09:28

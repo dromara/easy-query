@@ -29,10 +29,9 @@ public class EasyBeanUtil {
 
         Collection<String> properties = entityMetadata.getProperties();
         LinkedHashSet<String> matchProperties = new LinkedHashSet<>(properties.size());
-        FastBean fastBean = EasyBeanUtil.getFastBean(entityClass);
         for (String propertyName : properties) {
             ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(propertyName);
-            Property<Object, ?> propertyGetter = fastBean.getBeanGetter(columnMetadata.getProperty());
+            Property<Object, ?> propertyGetter = columnMetadata.getGetterCaller();
 
             Object value = propertyGetter.apply(entity);
             if(propertyPredicate.test(value)){
@@ -44,6 +43,7 @@ public class EasyBeanUtil {
     private static final Map<Class<?>, FastBean> CLASS_PROPERTY_FAST_BEAN_CACHE = new ConcurrentHashMap<>();
 
     public static FastBean getFastBean(Class<?> entityClass) {
-        return EasyMapUtil.computeIfAbsent(CLASS_PROPERTY_FAST_BEAN_CACHE,entityClass, key->new FastBean(entityClass));
+        return new FastBean(entityClass);
+//        return EasyMapUtil.computeIfAbsent(CLASS_PROPERTY_FAST_BEAN_CACHE,entityClass, key->new FastBean(entityClass));
     }
 }

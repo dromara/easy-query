@@ -167,7 +167,6 @@ public class AbstractColumnSelector<T1, TChain> {
 
     protected boolean columnAllQueryLargeColumn(boolean queryLargeColumn, ColumnMetadata columnMetadata) {
         //如果不查询的情况下当列是非大列才可以查询
-
         if (!queryLargeColumn) {
             return !columnMetadata.isLarge();
         }
