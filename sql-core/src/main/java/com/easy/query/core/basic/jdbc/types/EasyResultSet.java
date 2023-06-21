@@ -2,6 +2,8 @@ package com.easy.query.core.basic.jdbc.types;
 
 import com.easy.query.core.basic.jdbc.executor.internal.merge.result.StreamResultSet;
 
+import java.sql.SQLException;
+
 /**
  * @FileName: EasyResultSet.java
  * @Description: 文件说明
@@ -39,5 +41,15 @@ public class EasyResultSet {
 
     public boolean isPrimitive() {
         return propertyType != null && propertyType.isPrimitive();
+    }
+    private void reset(){
+        index=0;
+        propertyType=null;
+    }
+
+    public boolean nextAndReset() throws SQLException {
+        boolean next = streamResult.next();
+        reset();
+        return next;
     }
 }

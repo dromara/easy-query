@@ -1,9 +1,10 @@
 package com.easy.query.core.basic.jdbc.executor.internal.merge.result.impl.memory;
 
 import com.easy.query.core.basic.jdbc.executor.internal.merge.result.InMemoryStreamMergeResultSet;
+import com.easy.query.core.basic.jdbc.executor.internal.merge.result.StreamResultSet;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.result.impl.memory.row.MemoryResultSetRow;
 import com.easy.query.core.sharding.context.StreamMergeContext;
-import com.easy.query.core.basic.jdbc.executor.internal.merge.result.StreamResultSet;
+import com.easy.query.core.util.EasyObjectUtil;
 
 import java.math.BigDecimal;
 import java.sql.Blob;
@@ -92,6 +93,13 @@ public abstract class AbstractInMemoryStreamMergeResultSet implements InMemorySt
         Object value = currentResultSetRow.getValue(columnIndex);
         setWasNull(value == null);
         return value;
+    }
+
+    @Override
+    public <T> T getObject(int columnIndex, Class<T> type) throws SQLException {
+        Object value = currentResultSetRow.getValue(columnIndex);
+        setWasNull(value == null);
+        return EasyObjectUtil.typeCastNullable(value);
     }
 
     @Override

@@ -98,6 +98,11 @@ private static final Log log= LogFactory.getLog(EasyMultiOrderStreamMergeResultS
     }
 
     @Override
+    public <T> T getObject(int columnIndex, Class<T> type) throws SQLException {
+        return currentStreamResult.getObject(columnIndex,type);
+    }
+
+    @Override
     public boolean wasNull() throws SQLException {
         return currentStreamResult.wasNull();
     }

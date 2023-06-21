@@ -113,8 +113,8 @@ public abstract class AbstractExecutor<TResult> implements Executor<TResult> {
         if (EasyCollectionUtil.isEmpty(commandExecuteUnits)) {
             return Collections.emptyList();
         }
-        if (commandExecuteUnits.size() == 1) {
-            TResult result = executeCommandUnit(commandExecuteUnits.get(0));
+        if (EasyCollectionUtil.isSingle(commandExecuteUnits)) {
+            TResult result = executeCommandUnit(EasyCollectionUtil.first(commandExecuteUnits));
             return Collections.singletonList(result);
         } else {
             ShardingExecutorService easyShardingExecutorService = streamMergeContext.getRuntimeContext().getShardingExecutorService();

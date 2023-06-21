@@ -20,12 +20,11 @@ public class AnonymousColumnSegmentImpl extends ColumnSegmentImpl{
     @Override
     public String toSQL(ToSQLContext toSQLContext) {
         String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumn(runtimeContext,table,alias,toSQLContext);
-        StringBuilder sql = new StringBuilder();
-        sql.append(sqlColumnSegment);
-        if(alias!=null){
-            sql.append(" AS ").append(EasySQLExpressionUtil.getQuoteName(runtimeContext,alias));
+        if(alias==null){
+            return sqlColumnSegment;
         }
-        return sql.toString();
+        return sqlColumnSegment +
+                " AS " + EasySQLExpressionUtil.getQuoteName(runtimeContext, alias);
     }
 
     @Override

@@ -5,7 +5,6 @@ import com.easy.query.core.basic.jdbc.types.EasyResultSet;
 
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.sql.Types;
 import java.time.LocalDate;
 import java.time.ZoneId;
 

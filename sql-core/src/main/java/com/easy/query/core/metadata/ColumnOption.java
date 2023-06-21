@@ -4,6 +4,7 @@ import com.easy.query.core.basic.extension.conversion.DefaultValueConverter;
 import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.basic.extension.encryption.EncryptionStrategy;
 import com.easy.query.core.basic.extension.track.update.ValueUpdateAtomicTrack;
+import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
 
@@ -23,24 +24,25 @@ public final class ColumnOption {
 
     private PropertyDescriptor property;
 
-    private  boolean primary=false;
-    private  boolean increment=false;
+    private boolean primary = false;
+    private boolean increment = false;
 
 
     //    private  boolean nullable=true;
-    private  boolean version=false;
-    private  boolean insertIgnore=false;
-    private  boolean updateIgnore =false;
+    private boolean version = false;
+    private boolean insertIgnore = false;
+    private boolean updateIgnore = false;
 
     private EncryptionStrategy encryptionStrategy;
-    private  boolean supportQueryLike =false;
-    private  boolean large =false;
+    private boolean supportQueryLike = false;
+    private boolean large = false;
 
     private ValueConverter<?, ?> valueConverter;
     private ValueUpdateAtomicTrack<Object> valueUpdateAtomicTrack;
     ;
-    private  PropertySetterCaller<Object> setterCaller;
-    private  Property<Object,?> getterCaller;
+    private PropertySetterCaller<Object> setterCaller;
+    private Property<Object, ?> getterCaller;
+    private JdbcTypeHandler jdbcTypeHandler;
 
     public ColumnOption(EntityMetadata entityMetadata, String name) {
         this.entityMetadata = entityMetadata;
@@ -96,6 +98,7 @@ public final class ColumnOption {
     public void setUpdateIgnore(boolean updateIgnore) {
         this.updateIgnore = updateIgnore;
     }
+
     public PropertyDescriptor getProperty() {
         return property;
     }
@@ -105,7 +108,7 @@ public final class ColumnOption {
     }
 
     public boolean isEncryption() {
-        return encryptionStrategy!=null;
+        return encryptionStrategy != null;
     }
 
     public EncryptionStrategy getEncryptionStrategy() {
@@ -162,5 +165,13 @@ public final class ColumnOption {
 
     public void setGetterCaller(Property<Object, ?> getterCaller) {
         this.getterCaller = getterCaller;
+    }
+
+    public JdbcTypeHandler getJdbcTypeHandler() {
+        return jdbcTypeHandler;
+    }
+
+    public void setJdbcTypeHandler(JdbcTypeHandler jdbcTypeHandler) {
+        this.jdbcTypeHandler = jdbcTypeHandler;
     }
 }

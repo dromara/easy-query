@@ -12,7 +12,6 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
-import com.easy.query.core.metadata.BeanMapToColumnMetadata;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 
@@ -54,17 +53,6 @@ public final class EasyStreamResultUtil {
                 resultList = mapToBeans(context, streamResult, entityMetadata);
                 break;
         }
-//        if (Map.class.isAssignableFrom(clazz)) {
-//            resultList = mapToMaps(context, streamResult, clazz);
-//        } else if (EasyClassUtil.isBasicType(clazz)) {//如果返回的是基本类型
-//            resultList = new ArrayList<>();
-//            while (streamResult.next()) {
-//                Object value = mapToBasic(context, streamResult, clazz);
-//                resultList.add((TResult) value);
-//            }
-//        } else {
-//            resultList = mapToBeans(context, streamResult, clazz);
-//        }
         boolean printSql = context.getEasyQueryOption().isPrintSql();
         if (printSql) {
             log.info("<== " + "Total: " + resultList.size());
@@ -111,7 +99,7 @@ public final class EasyStreamResultUtil {
         return map;
     }
 
-    private static <T> Object mapToBasic(ExecutorContext context, StreamResultSet streamResult,  EntityMetadata entityMetadata) throws SQLException {
+    private static <T> Object mapToBasic(ExecutorContext context, StreamResultSet streamResult, EntityMetadata entityMetadata) throws SQLException {
         ResultSetMetaData rsmd = streamResult.getMetaData();
         int columnCount = rsmd.getColumnCount();
         if (columnCount != 1) {
@@ -125,52 +113,51 @@ public final class EasyStreamResultUtil {
 
     }
 
-    private static <TResult> List<TResult> mapToBeans(ExecutorContext context, StreamResultSet streamResult,EntityMetadata entityMetadata) throws SQLException {
+    private static <TResult> List<TResult> mapToBeans(ExecutorContext context, StreamResultSet streamResult, EntityMetadata entityMetadata) throws SQLException {
         if (!streamResult.next()) {
             return new ArrayList<>(0);
         }
         List<TResult> resultList = new ArrayList<>();
         ResultSetMetaData rsmd = streamResult.getMetaData();
-        BeanMapToColumnMetadata[] propertyDescriptors = columnsToProperties(context, entityMetadata, rsmd);
+        ColumnMetadata[] columnMetadatas = columnsToColumnMetadatas(context, entityMetadata, rsmd);
+
+        boolean trackBean = trackBean(context, entityMetadata.getEntityClass());
+        TrackManager trackManager = trackBean ? context.getRuntimeContext().getTrackManager() : null;
+
+        EasyResultSet easyResultSet = new EasyResultSet(streamResult);
         do {
-            TResult bean = mapToBean(context, streamResult, entityMetadata, propertyDescriptors);
+            TResult bean = mapToBean(context, easyResultSet, entityMetadata, columnMetadatas);
             resultList.add(bean);
-        } while (streamResult.next());
+            if (trackBean) {
+                EntityState entityState = trackManager.getCurrentTrackContext().addQueryTracking(bean);
+                Object entityStateCurrentValue = entityState.getCurrentValue();
+                if (entityStateCurrentValue != bean) {//没有附加成功应该返回之前被追加的数据而不是最新查询的数据
+                    log.warn("current object tracked,return the traced object instead of the current querying object,track key:" + entityState.getTrackKey());
+                    return EasyObjectUtil.typeCastNullable(entityStateCurrentValue);
+                }
+            }
+        } while (easyResultSet.nextAndReset());
         return resultList;
     }
 
-    private static <TResult> TResult mapToBean(ExecutorContext context, StreamResultSet streamResult, EntityMetadata entityMetadata, BeanMapToColumnMetadata[] beanMapToColumnMetadatas) throws SQLException {
+    private static <TResult> TResult mapToBean(ExecutorContext context, EasyResultSet easyResultSet, EntityMetadata entityMetadata, ColumnMetadata[] columnMetadatas) throws SQLException {
 
-        QueryRuntimeContext runtimeContext = context.getRuntimeContext();
-        TrackManager trackManager = runtimeContext.getTrackManager();
-        EasyResultSet easyResultSet = new EasyResultSet(streamResult);
         TResult bean = EasyObjectUtil.typeCastNullable(entityMetadata.getBeanConstructorCreator().get());
         Class<?> entityClass = entityMetadata.getEntityClass();
-        for (int i = 0; i < beanMapToColumnMetadatas.length; i++) {
-            BeanMapToColumnMetadata beanMapToColumnMetadata = beanMapToColumnMetadatas[i];
-            if (beanMapToColumnMetadata == null) {
+        for (int i = 0; i < columnMetadatas.length; i++) {
+            ColumnMetadata columnMetadata = columnMetadatas[i];
+            if (columnMetadata == null) {
                 continue;
             }
             easyResultSet.setIndex(i);
-            ColumnMetadata columnMetadata = beanMapToColumnMetadata.getColumnMetadata();
-            JdbcTypeHandler handler = beanMapToColumnMetadata.getJdbcTypeHandler();
+            JdbcTypeHandler handler = columnMetadata.getJdbcTypeHandler();
             Class<?> propertyType = columnMetadata.getPropertyType();
             easyResultSet.setPropertyType(propertyType);
             Object value = context.fromValue(entityClass, columnMetadata, handler.getValue(easyResultSet));
 
             //可能存在value为null但是bean默认有初始值,所以必须还是要调用set方法将其设置为null而不是默认值
-//            PropertyDescriptor property = columnMetadata.getProperty();
             PropertySetterCaller<Object> beanSetter = columnMetadata.getSetterCaller();
             beanSetter.call(bean, value);
-        }
-        boolean trackBean = trackBean(context, entityClass);
-        if (trackBean) {
-            EntityState entityState = trackManager.getCurrentTrackContext().addQueryTracking(bean);
-            Object entityStateCurrentValue = entityState.getCurrentValue();
-            if (entityStateCurrentValue != bean) {//没有附加成功应该返回之前被追加的数据而不是最新查询的数据
-                log.warn("current object tracked,return the traced object instead of the current querying object,track key:" + entityState.getTrackKey());
-                return EasyObjectUtil.typeCastNullable(entityStateCurrentValue);
-            }
         }
         return bean;
     }
@@ -194,34 +181,27 @@ public final class EasyStreamResultUtil {
         return false;
     }
 
-    public static BeanMapToColumnMetadata[] columnsToProperties(ExecutorContext context, EntityMetadata entityMetadata, ResultSetMetaData rsmd) throws SQLException {
-        QueryRuntimeContext runtimeContext = context.getRuntimeContext();
-        JdbcTypeHandlerManager easyJdbcTypeHandler = runtimeContext.getJdbcTypeHandlerManager();
+    public static ColumnMetadata[] columnsToColumnMetadatas(ExecutorContext context, EntityMetadata entityMetadata, ResultSetMetaData rsmd) throws SQLException {
         boolean mapToBeanStrict = context.isMapToBeanStrict();
         //需要返回的结果集映射到bean实体上
         //int[] 索引代表数据库返回的索引，数组索引所在的值代表属性数组的对应属性
         int columnCount = rsmd.getColumnCount();//有多少列
-        BeanMapToColumnMetadata[] beanMapToColumnMetadatas = new BeanMapToColumnMetadata[columnCount];
+        ColumnMetadata[] columnMetadatas = new ColumnMetadata[columnCount];
         for (int i = 0; i < columnCount; i++) {
-
             String colName = getColName(rsmd, i + 1);//数据库查询出来的列名
-
             ColumnMetadata column = getMapColumnMetadata(entityMetadata, colName, mapToBeanStrict);
             if (column == null) {
                 continue;
             }
-            Class<?> propertyType = column.getPropertyType();
-            JdbcTypeHandler jdbcTypeHandler = easyJdbcTypeHandler.getHandler(propertyType);
-            BeanMapToColumnMetadata beanMapToColumnMetadata = new BeanMapToColumnMetadata(column, jdbcTypeHandler);
-            beanMapToColumnMetadatas[i] = beanMapToColumnMetadata;
+            columnMetadatas[i] = column;
         }
-        return beanMapToColumnMetadatas;
+        return columnMetadatas;
     }
 
     private static ColumnMetadata getMapColumnMetadata(EntityMetadata entityMetadata, String columnName, boolean mapToBeanStrict) {
-        String propertyName = entityMetadata.getPropertyNameOrNull(columnName);
-        if (propertyName != null) {
-            return entityMetadata.getColumnNotNull(propertyName);
+        ColumnMetadata columnMetadata = entityMetadata.getColumnMetadataOrNull(columnName);
+        if (columnMetadata != null) {
+            return columnMetadata;
         } else if (!mapToBeanStrict) {
             return entityMetadata.getColumnOrNull(columnName);
         }

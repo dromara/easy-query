@@ -75,7 +75,6 @@ public class EasyJdbcTypeHandlerManager implements JdbcTypeHandlerManager {
         handlers.put(byte.class, byteTypeHandler);
         handlers.put(Byte.class, byteTypeHandler);
         handlers.put(char[].class, charArrayTypeHandler);
-//        handlers.put(java.util.Date.class, dateTypeHandler);
         handlers.put(Double.class, doubleTypeHandler);
         handlers.put(double.class, doubleTypeHandler);
         handlers.put(Float.class, floatTypeHandler);
@@ -98,17 +97,6 @@ public class EasyJdbcTypeHandlerManager implements JdbcTypeHandlerManager {
         handlers.put(LocalDate.class, localDateHandler);
         handlers.put(LocalTime.class, localTimeTypeHandler);
     }
-    @Override
-    public void appendHandler(Class<?> type, JdbcTypeHandler typeHandler, boolean replace) {
-        if(handlers.containsKey(type)){
-             if(replace){
-                 handlers.put(type,typeHandler);
-             }
-        }else{
-            handlers.put(type,typeHandler);
-        }
-    }
-
     @Override
     public JdbcTypeHandler getHandler(Class<?> type) {
         if(type==null){

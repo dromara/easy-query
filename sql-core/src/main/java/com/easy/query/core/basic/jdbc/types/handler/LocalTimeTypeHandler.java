@@ -5,7 +5,6 @@ import com.easy.query.core.basic.jdbc.types.EasyResultSet;
 
 import java.sql.SQLException;
 import java.sql.Time;
-import java.sql.Types;
 import java.time.LocalTime;
 
 /**
@@ -22,6 +21,7 @@ public class LocalTimeTypeHandler implements JdbcTypeHandler {
             return time.toLocalTime();
         }
         return null;
+
     }
 
     @Override

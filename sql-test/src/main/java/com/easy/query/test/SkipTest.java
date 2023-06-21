@@ -11,6 +11,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.sql.SQLException;
+import java.util.HashMap;
 
 /**
  * create time 2023/5/11 15:53
@@ -48,5 +49,56 @@ public class SkipTest {
         EasyQuerySQLStatementException asyQuerySQLExecuteException = new EasyQuerySQLStatementException("", new SQLException("123"));
         EasyQuerySQLStatementException asyQuerySQLExecuteException1 = new EasyQuerySQLStatementException("", a);
         EasyQuerySQLStatementException asyQuerySQLExecuteException2 = new EasyQuerySQLStatementException("1", a);
+    }
+    @Test
+
+    public void test11(){
+        String[] strings = new String[20];
+        strings[0]="you";
+        HashMap<String, String> stringStringHashMap = new HashMap<>();
+        String you = stringStringHashMap.put("you", "11");
+        {
+            long start = System.currentTimeMillis();
+            for (int i = 0; i < 2000000; i++) {
+                String string = strings[0];
+            }
+            long end = System.currentTimeMillis();
+            System.out.println((end-start)+"(ms)");
+        }
+        {
+            long start = System.currentTimeMillis();
+            for (int i = 0; i < 2000000; i++) {
+                String string1 = strings[0];
+                String string2 = strings[0];
+            }
+            long end = System.currentTimeMillis();
+            System.out.println((end-start)+"(ms)");
+        }
+        {
+            long start = System.currentTimeMillis();
+            for (int i = 0; i < 2000000; i++) {
+                String string1 = strings[0];
+                String string2 = strings[0];
+                String string3 = strings[0];
+            }
+            long end = System.currentTimeMillis();
+            System.out.println((end-start)+"(ms)");
+        }
+        {
+            long start = System.currentTimeMillis();
+            for (int i = 0; i < 2000000; i++) {
+                String you1 = stringStringHashMap.get("you");
+            }
+            long end = System.currentTimeMillis();
+            System.out.println((end-start)+"(ms)");
+        }
+        {
+            long start = System.currentTimeMillis();
+            for (int i = 0; i < 2000000; i++) {
+                String you1 = stringStringHashMap.get("you".toLowerCase());
+            }
+            long end = System.currentTimeMillis();
+            System.out.println((end-start)+"(ms)");
+        }
     }
 }
