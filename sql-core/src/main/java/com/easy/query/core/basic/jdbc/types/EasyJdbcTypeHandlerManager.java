@@ -24,7 +24,17 @@ import com.easy.query.core.basic.jdbc.types.handler.StringTypeHandler;
 import com.easy.query.core.basic.jdbc.types.handler.TimeTypeHandler;
 import com.easy.query.core.basic.jdbc.types.handler.TimestampTypeHandler;
 import com.easy.query.core.basic.jdbc.types.handler.UtilDateTypeHandler;
-import com.easy.query.core.enums.PropertyHandlerTypeEnum;
+
+import java.math.BigDecimal;
+import java.sql.Blob;
+import java.sql.Clob;
+import java.sql.SQLXML;
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.HashMap;
 
 /**
  * @FileName: DefaultJdbcTypeHandler.java
@@ -56,32 +66,42 @@ public class EasyJdbcTypeHandlerManager implements JdbcTypeHandlerManager {
     private static final TimestampTypeHandler timestampTypeHandler = new TimestampTypeHandler();
     private static final TimeTypeHandler timeTypeHandler = new TimeTypeHandler();
     private static final JdbcTypeHandler DEFAULT_HANDLER=new ObjectTypeHandler();
-
+    private static final HashMap<Class<?>, JdbcTypeHandler> handlers=new HashMap<>();
+    static{
+        handlers.put(BigDecimal.class, bigDecimalHandler);
+        handlers.put(Boolean.class, booleanDecimalHandler);
+        handlers.put(boolean.class, booleanDecimalHandler);
+        handlers.put(byte[].class, byteArrayTypeHandler);
+        handlers.put(byte.class, byteTypeHandler);
+        handlers.put(Byte.class, byteTypeHandler);
+        handlers.put(char[].class, charArrayTypeHandler);
+        handlers.put(Double.class, doubleTypeHandler);
+        handlers.put(double.class, doubleTypeHandler);
+        handlers.put(Float.class, floatTypeHandler);
+        handlers.put(float.class, floatTypeHandler);
+        handlers.put(Integer.class, integerTypeHandler);
+        handlers.put(int.class, integerTypeHandler);
+        handlers.put(Long.class, longTypeHandler);
+        handlers.put(long.class, longTypeHandler);
+        handlers.put(Short.class, shortTypeHandler);
+        handlers.put(short.class, shortTypeHandler);
+        handlers.put(java.sql.Date.class, sqlDateTypeHandler);
+        handlers.put(java.util.Date.class, utilDateTypeHandler);
+        handlers.put(SQLXML.class, sqlXMLTypeHandler);
+        handlers.put(String.class, stringTypeHandler);
+        handlers.put(Timestamp.class, timestampTypeHandler);
+        handlers.put(Time.class, timeTypeHandler);
+        handlers.put(Clob.class, clobTypeHandler);
+        handlers.put(Blob.class, blobTypeHandler);
+        handlers.put(LocalDateTime.class,localDateTimeHandler);
+        handlers.put(LocalDate.class, localDateHandler);
+        handlers.put(LocalTime.class, localTimeTypeHandler);
+    }
     @Override
-    public JdbcTypeHandler getHandler(PropertyHandlerTypeEnum propertyHandlerType) {
-        switch (propertyHandlerType){
-            case BIG_DECIMAL:return bigDecimalHandler;
-            case BOOLEAN:return booleanDecimalHandler;
-            case BYTE_ARRAY:return byteArrayTypeHandler;
-            case BYTE:return byteTypeHandler;
-            case CHAR_ARRAY:return charArrayTypeHandler;
-            case DOUBLE:return doubleTypeHandler;
-            case FLOAT:return floatTypeHandler;
-            case INTEGER:return integerTypeHandler;
-            case LONG:return longTypeHandler;
-            case SHORT:return shortTypeHandler;
-            case SQL_DATE:return sqlDateTypeHandler;
-            case UTIL_DATE:return utilDateTypeHandler;
-            case SQLXML:return sqlXMLTypeHandler;
-            case STRING:return stringTypeHandler;
-            case TIMESTAMP:return timestampTypeHandler;
-            case TIME:return timeTypeHandler;
-            case CLOB:return clobTypeHandler;
-            case BLOB:return blobTypeHandler;
-            case LOCAL_DATE_TIME:return localDateTimeHandler;
-            case LOCAL_DATE:return localDateHandler;
-            case LOCAL_TIME:return localTimeTypeHandler;
+    public JdbcTypeHandler getHandler(Class<?> type) {
+        if(type==null){
+            return DEFAULT_HANDLER;
         }
-        return DEFAULT_HANDLER;
+        return handlers.getOrDefault(type,DEFAULT_HANDLER);
     }
 }

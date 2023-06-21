@@ -3,7 +3,7 @@ package com.easy.query.core.metadata;
 import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.basic.extension.encryption.EncryptionStrategy;
 import com.easy.query.core.basic.extension.track.update.ValueUpdateAtomicTrack;
-import com.easy.query.core.enums.PropertyHandlerTypeEnum;
+import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
 import com.easy.query.core.util.EasyClassUtil;
@@ -46,7 +46,7 @@ public class ColumnMetadata {
     private final ValueUpdateAtomicTrack<Object> valueUpdateAtomicTrack;
     private final PropertySetterCaller<Object> setterCaller;
     private final Property<Object,?> getterCaller;
-    private final PropertyHandlerTypeEnum propertyHandlerType;
+    private final JdbcTypeHandler jdbcTypeHandler;
 
     public ColumnMetadata(ColumnOption columnOption) {
         this.entityMetadata = columnOption.getEntityMetadata();
@@ -73,7 +73,7 @@ public class ColumnMetadata {
         }
         this.getterCaller = columnOption.getGetterCaller();
         this.setterCaller = columnOption.getSetterCaller();
-        this.propertyHandlerType=PropertyHandlerTypeEnum.getByProperty(propertyType);
+        this.jdbcTypeHandler=columnOption.getJdbcTypeHandler();
     }
 
     public EntityMetadata getEntityMetadata() {
@@ -155,7 +155,7 @@ public class ColumnMetadata {
         return getterCaller;
     }
 
-    public PropertyHandlerTypeEnum getPropertyHandlerType() {
-        return propertyHandlerType;
+    public JdbcTypeHandler getJdbcTypeHandler() {
+        return jdbcTypeHandler;
     }
 }

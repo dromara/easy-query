@@ -1,7 +1,6 @@
 package com.easy.query.core.basic.jdbc.types;
 
 import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
-import com.easy.query.core.enums.PropertyHandlerTypeEnum;
 
 /**
  * @FileName: EasyJdbcTypeHandler.java
@@ -11,5 +10,5 @@ import com.easy.query.core.enums.PropertyHandlerTypeEnum;
  */
 public interface JdbcTypeHandlerManager {
 //    void appendHandler(Class<?> type, JdbcTypeHandler typeHandler, boolean replace);
-    JdbcTypeHandler getHandler(PropertyHandlerTypeEnum propertyHandlerType);
+    JdbcTypeHandler getHandler(Class<?> type);
 }

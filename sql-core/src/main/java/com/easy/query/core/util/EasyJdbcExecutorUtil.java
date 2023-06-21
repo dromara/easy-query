@@ -348,7 +348,7 @@ public class EasyJdbcExecutorUtil {
             int paramSize = sqlParameters.size();
             for (int i = 0; i < paramSize; i++) {
                 easyParameter.setIndex(i);
-                JdbcTypeHandler handler = easyJdbcTypeHandlerManager.getHandler(PropertyHandlerTypeEnum.getByProperty(easyParameter.getValueType()));
+                JdbcTypeHandler handler = easyJdbcTypeHandlerManager.getHandler(easyParameter.getValueType());
                 handler.setParameter(easyParameter);
             }
         }

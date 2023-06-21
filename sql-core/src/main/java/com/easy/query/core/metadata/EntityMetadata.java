@@ -25,6 +25,8 @@ import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategyEnum;
 import com.easy.query.core.basic.extension.track.update.DefaultValueUpdateAtomicTrack;
 import com.easy.query.core.basic.extension.track.update.ValueUpdateAtomicTrack;
 import com.easy.query.core.basic.extension.version.VersionStrategy;
+import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
+import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
 import com.easy.query.core.common.bean.FastBean;
 import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.configuration.nameconversion.NameConversion;
@@ -126,6 +128,7 @@ public class EntityMetadata {
         }
 
         QueryConfiguration configuration = serviceProvider.getService(QueryConfiguration.class);
+        JdbcTypeHandlerManager jdbcTypeHandlerManager = serviceProvider.getService(JdbcTypeHandlerManager.class);
         NameConversion nameConversion = configuration.getNameConversion();
 
         Table table = EasyClassUtil.getAnnotation(entityClass, Table.class);
@@ -277,9 +280,11 @@ public class EntityMetadata {
             columnOption.setGetterCaller(beanGetter);
             PropertySetterCaller<Object> beanSetter = fastBean.getBeanSetter(propertyDescriptor);
             columnOption.setSetterCaller(beanSetter);
+            JdbcTypeHandler jdbcTypeHandler = jdbcTypeHandlerManager.getHandler(columnOption.getProperty().getPropertyType());
+            columnOption.setJdbcTypeHandler(jdbcTypeHandler);
             ColumnMetadata columnMetadata = new ColumnMetadata(columnOption);
             property2ColumnMap.put(property, columnMetadata);
-            column2PropertyMap.put(columnName.toLowerCase(), columnMetadata);
+            column2PropertyMap.put(columnName, columnMetadata);
         }
 
         if (versionCount > 1) {
