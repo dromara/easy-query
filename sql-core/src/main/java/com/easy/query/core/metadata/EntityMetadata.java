@@ -422,7 +422,12 @@ public class EntityMetadata {
         return columnMetadata.getPropertyName();
     }
     public ColumnMetadata getColumnMetadataOrNull(String columnName) {
-        return column2PropertyMap.get(columnName.toLowerCase(Locale.ENGLISH));
+        ColumnMetadata columnMetadata=null;
+        if(null==(columnMetadata=column2PropertyMap.get(columnName))){
+            columnMetadata=column2PropertyMap.get(columnName.toLowerCase(Locale.ENGLISH));
+        }
+        return columnMetadata;
+
     }
 
     public Collection<ColumnMetadata> getColumns() {
