@@ -125,7 +125,7 @@ public class EasyJdbcExecutorUtil {
         }
     }
 
-    public static <T> List<SQLParameter> extractParameters(ExecutorContext executorContext, T entity, List<SQLParameter> sqlParameters) {
+    public static <T> List<SQLParameter> extractParameters(ExecutorContext executorContext, T entity, List<SQLParameter> sqlParameters,boolean printSql,EasyConnection easyConnection,boolean shardingPrint,boolean replicaPrint) {
         if (EasyCollectionUtil.isNotEmpty(sqlParameters)) {
 
             List<SQLParameter> params = new ArrayList<>(sqlParameters.size());
@@ -141,6 +141,10 @@ public class EasyJdbcExecutorUtil {
                 } else {
                     throw new EasyQueryException("current sql parameter:[" + EasyClassUtil.getSimpleName(sqlParameter.getClass()) + "],property name:[" + sqlParameter.getPropertyNameOrNull() + "] is not implements BeanSQLParameter or ConstSQLParameter");
                 }
+            }
+
+            if (printSql) {
+                logParameter(true, params, easyConnection, shardingPrint, replicaPrint);
             }
             return params;
         }
@@ -159,10 +163,7 @@ public class EasyJdbcExecutorUtil {
 
         PreparedStatement ps = null;
         ResultSet rs = null;
-        List<SQLParameter> parameters = extractParameters(executorContext, null, sqlParameters);
-        if (printSql && EasyCollectionUtil.isNotEmpty(parameters)) {
-            logParameter(true, parameters, easyConnection, shardingPrint, replicaPrint);
-        }
+        List<SQLParameter> parameters = extractParameters(executorContext, null, sqlParameters,printSql,easyConnection,shardingPrint,replicaPrint);
         StreamResultSet sr = null;
         try {
             ps = createPreparedStatement(easyConnection.getConnection(), sql, parameters, easyJdbcTypeHandler);
@@ -198,15 +199,12 @@ public class EasyJdbcExecutorUtil {
         List<String> incrementColumns = fillAutoIncrement ? entityMetadata.getIncrementColumns() : null;
         PreparedStatement ps = null;
         int r = 0;
-        boolean hasParameter = !sqlParameters.isEmpty();
         try {
             int batchSize = 0;
             for (T entity : entities) {
                 batchSize++;
-                List<SQLParameter> parameters = extractParameters(executorContext, entity, sqlParameters);
-                if (printSql && hasParameter) {
-                    logParameter(true, parameters, easyConnection, shardingPrint, replicaPrint);
-                }
+                List<SQLParameter> parameters = extractParameters(executorContext, entity, sqlParameters,printSql,easyConnection,shardingPrint,replicaPrint);
+
                 if (ps == null) {
                     ps = createPreparedStatement(easyConnection.getConnection(), sql, parameters, easyJdbcTypeHandler, incrementColumns);
                 } else {
@@ -277,16 +275,12 @@ public class EasyJdbcExecutorUtil {
         JdbcTypeHandlerManager easyJdbcTypeHandlerManager = runtimeContext.getJdbcTypeHandlerManager();
         PreparedStatement ps = null;
         int r = 0;
-        boolean hasParameter = EasyCollectionUtil.isNotEmpty(sqlParameters);
         try {
             int batchSize = 0;
             for (T entity : entities) {
                 batchSize++;
-                List<SQLParameter> parameters = extractParameters(executorContext, entity, sqlParameters);
+                List<SQLParameter> parameters = extractParameters(executorContext, entity, sqlParameters,printSql,easyConnection,shardingPrint,replicaPrint);
 
-                if (printSql && hasParameter) {
-                    logParameter(true, parameters, easyConnection, shardingPrint, replicaPrint);
-                }
                 if (ps == null) {
                     ps = createPreparedStatement(easyConnection.getConnection(), sql, parameters, easyJdbcTypeHandlerManager);
                 } else {
@@ -322,10 +316,8 @@ public class EasyJdbcExecutorUtil {
         PreparedStatement ps = null;
         int r = 0;
 
-        List<SQLParameter> parameters = extractParameters(executorContext, null, sqlParameters);
-        if (printSql && !parameters.isEmpty()) {
-            logParameter(true, parameters, easyConnection, shardingPrint, replicaPrint);
-        }
+        List<SQLParameter> parameters = extractParameters(executorContext, null, sqlParameters,printSql,easyConnection,shardingPrint,replicaPrint);
+
         try {
             ps = createPreparedStatement(easyConnection.getConnection(), sql, parameters, easyJdbcTypeHandlerManager);
             r = ps.executeUpdate();

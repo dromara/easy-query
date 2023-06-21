@@ -25,7 +25,6 @@ import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategyEnum;
 import com.easy.query.core.basic.extension.track.update.DefaultValueUpdateAtomicTrack;
 import com.easy.query.core.basic.extension.track.update.ValueUpdateAtomicTrack;
 import com.easy.query.core.basic.extension.version.VersionStrategy;
-import com.easy.query.core.common.LinkedCaseInsensitiveMap;
 import com.easy.query.core.common.bean.FastBean;
 import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.configuration.nameconversion.NameConversion;
@@ -53,6 +52,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -105,7 +105,7 @@ public class EntityMetadata {
     private final LinkedHashMap<String, ColumnMetadata> property2ColumnMap = new LinkedHashMap<>();
     private final Map<String/*property name*/, String/*column name*/> keyPropertiesMap = new LinkedHashMap<>();
     private final List<String/*column name*/> incrementColumns = new ArrayList<>(4);
-    private final LinkedCaseInsensitiveMap<String> column2PropertyMap = new LinkedCaseInsensitiveMap<>(Locale.ENGLISH);
+    private final Map<String/*column name*/, ColumnMetadata> column2PropertyMap = new HashMap<>();
 
     private final Set<ActualTable> actualTables = new CopyOnWriteArraySet<>();
     private final Set<String> dataSources =new CopyOnWriteArraySet<>();
@@ -277,8 +277,9 @@ public class EntityMetadata {
             columnOption.setGetterCaller(beanGetter);
             PropertySetterCaller<Object> beanSetter = fastBean.getBeanSetter(propertyDescriptor);
             columnOption.setSetterCaller(beanSetter);
-            property2ColumnMap.put(property, new ColumnMetadata(columnOption));
-            column2PropertyMap.put(columnName, property);
+            ColumnMetadata columnMetadata = new ColumnMetadata(columnOption);
+            property2ColumnMap.put(property, columnMetadata);
+            column2PropertyMap.put(columnName.toLowerCase(), columnMetadata);
         }
 
         if (versionCount > 1) {
@@ -414,15 +415,14 @@ public class EntityMetadata {
      * @return
      */
     public String getPropertyNameOrNull(String columnName, String def) {
-        String propertyName = column2PropertyMap.get(columnName);
-        if (propertyName == null) {
+        ColumnMetadata columnMetadata = getColumnMetadataOrNull(columnName);
+        if (columnMetadata == null) {
             return def;
         }
-        return propertyName;
+        return columnMetadata.getPropertyName();
     }
-
-    public boolean containsColumnName(String columnName) {
-        return column2PropertyMap.containsKey(columnName);
+    public ColumnMetadata getColumnMetadataOrNull(String columnName) {
+        return column2PropertyMap.get(columnName.toLowerCase(Locale.ENGLISH));
     }
 
     public Collection<ColumnMetadata> getColumns() {

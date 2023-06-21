@@ -220,9 +220,9 @@ public final class EasyStreamResultUtil {
     }
 
     private static ColumnMetadata getMapColumnMetadata(EntityMetadata entityMetadata, String columnName, boolean mapToBeanStrict) {
-        String propertyName = entityMetadata.getPropertyNameOrNull(columnName);
-        if (propertyName != null) {
-            return entityMetadata.getColumnNotNull(propertyName);
+        ColumnMetadata columnMetadata = entityMetadata.getColumnMetadataOrNull(columnName);
+        if (columnMetadata != null) {
+            return columnMetadata;
         } else if (!mapToBeanStrict) {
             return entityMetadata.getColumnOrNull(columnName);
         }
