@@ -53,17 +53,6 @@ public final class EasyStreamResultUtil {
                 resultList = mapToBeans(context, streamResult, entityMetadata);
                 break;
         }
-//        if (Map.class.isAssignableFrom(clazz)) {
-//            resultList = mapToMaps(context, streamResult, clazz);
-//        } else if (EasyClassUtil.isBasicType(clazz)) {//如果返回的是基本类型
-//            resultList = new ArrayList<>();
-//            while (streamResult.next()) {
-//                Object value = mapToBasic(context, streamResult, clazz);
-//                resultList.add((TResult) value);
-//            }
-//        } else {
-//            resultList = mapToBeans(context, streamResult, clazz);
-//        }
         boolean printSql = context.getEasyQueryOption().isPrintSql();
         if (printSql) {
             log.info("<== " + "Total: " + resultList.size());
@@ -167,7 +156,6 @@ public final class EasyStreamResultUtil {
             Object value = context.fromValue(entityClass, columnMetadata, handler.getValue(easyResultSet));
 
             //可能存在value为null但是bean默认有初始值,所以必须还是要调用set方法将其设置为null而不是默认值
-//            PropertyDescriptor property = columnMetadata.getProperty();
             PropertySetterCaller<Object> beanSetter = columnMetadata.getSetterCaller();
             beanSetter.call(bean, value);
         }
@@ -200,9 +188,7 @@ public final class EasyStreamResultUtil {
         int columnCount = rsmd.getColumnCount();//有多少列
         ColumnMetadata[] columnMetadatas = new ColumnMetadata[columnCount];
         for (int i = 0; i < columnCount; i++) {
-
             String colName = getColName(rsmd, i + 1);//数据库查询出来的列名
-
             ColumnMetadata column = getMapColumnMetadata(entityMetadata, colName, mapToBeanStrict);
             if (column == null) {
                 continue;
