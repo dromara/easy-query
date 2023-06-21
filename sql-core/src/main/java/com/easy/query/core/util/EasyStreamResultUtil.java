@@ -194,8 +194,6 @@ public final class EasyStreamResultUtil {
     }
 
     public static ColumnMetadata[] columnsToColumnMetadatas(ExecutorContext context, EntityMetadata entityMetadata, ResultSetMetaData rsmd) throws SQLException {
-        QueryRuntimeContext runtimeContext = context.getRuntimeContext();
-        JdbcTypeHandlerManager easyJdbcTypeHandler = runtimeContext.getJdbcTypeHandlerManager();
         boolean mapToBeanStrict = context.isMapToBeanStrict();
         //需要返回的结果集映射到bean实体上
         //int[] 索引代表数据库返回的索引，数组索引所在的值代表属性数组的对应属性
