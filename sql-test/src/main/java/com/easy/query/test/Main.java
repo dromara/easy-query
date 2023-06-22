@@ -2,6 +2,7 @@ package com.easy.query.test;
 
 
 import com.alibaba.druid.pool.DruidDataSourceFactory;
+import com.easy.query.api.proxy.client.EasySQLQuery;
 import com.easy.query.api4j.client.DefaultEasyQuery;
 import com.easy.query.api4j.client.EasyQuery;
 import com.easy.query.api4j.select.Queryable;
@@ -17,6 +18,7 @@ import com.easy.query.core.logging.LogFactory;
 import com.easy.query.mysql.config.MySQLDatabaseConfiguration;
 import com.easy.query.test.dto.TopicRequest;
 import com.easy.query.test.entity.Topic;
+import com.easy.query.test.entity.base.TopicSQL;
 import com.easy.query.test.mytest.SysUserLogbyMonth;
 import com.easy.query.test.mytest.TestUserMysql;
 import com.easy.query.test.mytest.TestUserMysqlGroup;
@@ -41,15 +43,17 @@ import java.util.UUID;
 @Ignore
 public class Main {
 
-    public static <TR> void action(TR a,TR b){
+    public static <TR> void action(TR a, TR b) {
 
     }
+
     private static final String driver = "com.mysql.cj.jdbc.Driver";
     private static final String username = "root";
     private static final String password = "root";
     //    private static final String url = "jdbc:mysql://127.0.0.1:3306/dbdbd0?serverTimezone=GMT%2B8&characterEncoding=utf-8&useSSL=false";
     private static final String url = "jdbc:mysql://127.0.0.1:3306/dbdbd0?serverTimezone=GMT%2B8&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&rewriteBatchedStatements=true";
     private static EasyQuery easyQuery;
+    private static EasySQLQuery easyProxyQuery;
 
     public static void main(String[] args) throws SQLException, ClassNotFoundException, InstantiationException, IllegalAccessException {
         List<String> list = new ArrayList<>(); // 假设列表为字符串类型的示例
@@ -175,7 +179,19 @@ public class Main {
 //
 //        }
         {
-            Queryable<String> nameSubQuery = easyQuery.queryable(TestUserMysql.class).where(o->o.eq(TestUserMysql::getName,"xhn")).select(String.class, o -> o.column(TestUserMysql::getName));
+            List<Topic> list1 = easyProxyQuery
+                    .queryable(TopicSQL.DEFAULT)
+                    .where(t -> t.id.eq("123").name.like("111").id.isNotNull().or(x->x.name.isNotNull().or().name.isNull()))
+                    .select(t -> t.columns(t.id))
+                    .toList();
+//            List<Topic> list2 = easyProxyQuery
+//                    .queryable(TopicSQL.DEFAULT)
+//                    .where(t -> t.id().eq("123").name().like("111").id().isNull())
+//                    .select(TopicSQL.DEFAULT, (t, tr) -> t.columns(t.ID,t.NAME).as(t.ID,tr.NAME))
+//                    .toList();
+
+
+            Queryable<String> nameSubQuery = easyQuery.queryable(TestUserMysql.class).where(o -> o.eq(TestUserMysql::getName, "xhn")).select(String.class, o -> o.column(TestUserMysql::getName));
             TestUserMysql testUserMysql = easyQuery.queryable(TestUserMysql.class)
                     .where(o -> o.eq(TestUserMysql::getAge, 12).in(TestUserMysql::getName, nameSubQuery))
                     .firstOrNull();
@@ -188,7 +204,7 @@ public class Main {
                             ));
 //            sql.where(o->o.isNotNull(TestUserMysql::getId));
             long count31 = easyQuery.queryable(SysUserLogbyMonth.class)
-                    .innerJoin(sql,(a,b)->a.eq(b,SysUserLogbyMonth::getId,TestUserMysql::getId))
+                    .innerJoin(sql, (a, b) -> a.eq(b, SysUserLogbyMonth::getId, TestUserMysql::getId))
                     .where(o -> o.eq(SysUserLogbyMonth::getId, "119")).select(o -> o.column(SysUserLogbyMonth::getId)).count();
 
 
@@ -201,12 +217,12 @@ public class Main {
         {
             long start = System.currentTimeMillis();
             String s1 = easyQuery
-                    .queryable(Topic.class).where(o->o.gt(Topic::getCreateTime,now)).toSQL();
+                    .queryable(Topic.class).where(o -> o.gt(Topic::getCreateTime, now)).toSQL();
 
             for (int i = 0; i < 100000; i++) {
 
                 String s = easyQuery
-                        .queryable(Topic.class).where(o->o.gt(Topic::getCreateTime,now)).toSQL();
+                        .queryable(Topic.class).where(o -> o.gt(Topic::getCreateTime, now)).toSQL();
             }
             long end = System.currentTimeMillis();
             System.out.println("耗时：" + (end - start) + "ms");
@@ -267,7 +283,7 @@ public class Main {
         {
             runtimeContext.getTrackManager().begin();
             TestUserMysql testUserMysql = easyQuery.queryable(TestUserMysql.class).asTracking().firstOrNull();
-            testUserMysql.setName("444444"+new Random().nextInt(100));
+            testUserMysql.setName("444444" + new Random().nextInt(100));
             long l = easyQuery.updatable(testUserMysql).executeRows();
             runtimeContext.getTrackManager().release();
 
@@ -292,12 +308,12 @@ public class Main {
                     .orderByDesc(o -> o.column(TestUserMysql::getName)).firstOrNull();
             TestUserMysqlx testUserMysqlx = easyQuery.queryable(SysUserLogbyMonth.class).select(TestUserMysqlx.class).leftJoin(TestUserMysql.class, (a, b) -> a.eq(b, TestUserMysqlx::getId, TestUserMysql::getId))
                     .where(o -> o.eq(TestUserMysqlx::getId, "123")).firstOrNull();
-            long testUserMysqlxascaa= easyQuery.queryable(TestUserMysql.class)
-                .leftJoin(SysUserLogbyMonth.class, (a, b) -> a.eq(b, TestUserMysql::getName, SysUserLogbyMonth::getId).then(b).eq(SysUserLogbyMonth::getTime, LocalDateTime.now()))
-                .where(o -> o.eq(TestUserMysql::getId, "102")
-                        .like(TestUserMysql::getName, "1%")
-                        .and(x -> x.like(TestUserMysql::getName, "123").or().eq(TestUserMysql::getAge, 1)
-                        )).select(o->o.column(TestUserMysql::getName)).count();
+            long testUserMysqlxascaa = easyQuery.queryable(TestUserMysql.class)
+                    .leftJoin(SysUserLogbyMonth.class, (a, b) -> a.eq(b, TestUserMysql::getName, SysUserLogbyMonth::getId).then(b).eq(SysUserLogbyMonth::getTime, LocalDateTime.now()))
+                    .where(o -> o.eq(TestUserMysql::getId, "102")
+                            .like(TestUserMysql::getName, "1%")
+                            .and(x -> x.like(TestUserMysql::getName, "123").or().eq(TestUserMysql::getAge, 1)
+                            )).select(o -> o.column(TestUserMysql::getName)).count();
             long xhn = easyQuery.updatable(TestUserMysql.class).set(TestUserMysql::getAge, 12)
                     .set(TestUserMysql::getName, "xhn").where(o -> o.like(TestUserMysql::getId, "123")).executeRows();
             List<SysUserLogbyMonth> sysUserLogbyMonths = easyQuery.sqlQuery("select * from sys_user_logby_month_202103 limit 1", SysUserLogbyMonth.class);
@@ -309,8 +325,8 @@ public class Main {
             List<TestUserMysqlx> testUserMysqls = easyQuery.queryable(SysUserLogbyMonth.class).toList(TestUserMysqlx.class);
             List<TestUserMysqlx> testUserMysqlsa = easyQuery.queryable(TestUserMysql.class).toList(TestUserMysqlx.class);
             List<TestUserMysqlx> testUserMysqls0 = easyQuery.queryable(SysUserLogbyMonth.class).select(TestUserMysqlx.class).toList();
-            List<TestUserMysqlx> testUserMysqls1 = easyQuery.queryable(SysUserLogbyMonth.class).select(o->o.column(SysUserLogbyMonth::getId)).select(TestUserMysqlx.class).toList();
-            List<TestUserMysqlx> testUserMysqls2 = easyQuery.queryable(SysUserLogbyMonth.class).select(TestUserMysqlx.class, o->o.column(SysUserLogbyMonth::getId)).toList();
+            List<TestUserMysqlx> testUserMysqls1 = easyQuery.queryable(SysUserLogbyMonth.class).select(o -> o.column(SysUserLogbyMonth::getId)).select(TestUserMysqlx.class).toList();
+            List<TestUserMysqlx> testUserMysqls2 = easyQuery.queryable(SysUserLogbyMonth.class).select(TestUserMysqlx.class, o -> o.column(SysUserLogbyMonth::getId)).toList();
 
 
             String s = easyQuery.queryable(TestUserMysql.class)
@@ -319,7 +335,7 @@ public class Main {
                             .like(TestUserMysql::getName, "1%")
                             .and(x -> x.like(TestUserMysql::getName, "123").or().eq(TestUserMysql::getAge, 1)
                             )).toSQL();
-            System.out.println("---------:"+s);
+            System.out.println("---------:" + s);
 
             TestUserMysql testUserMysqlxa = easyQuery.queryable(TestUserMysql.class)
                     .leftJoin(SysUserLogbyMonth.class, (a, b) -> a.eq(b, TestUserMysql::getName, SysUserLogbyMonth::getId).then(b).eq(SysUserLogbyMonth::getTime, LocalDateTime.now()))
@@ -327,25 +343,24 @@ public class Main {
                             .like(TestUserMysql::getName, "1%")
                             .and(x -> x.like(TestUserMysql::getName, "123").or().eq(TestUserMysql::getAge, 1)
                             )).firstOrNull();
-            long testUserMysqlxac= easyQuery.queryable(TestUserMysql.class)
+            long testUserMysqlxac = easyQuery.queryable(TestUserMysql.class)
                     .leftJoin(SysUserLogbyMonth.class, (a, b) -> a.eq(b, TestUserMysql::getName, SysUserLogbyMonth::getId).then(b).eq(SysUserLogbyMonth::getTime, LocalDateTime.now()))
                     .where(o -> o.eq(TestUserMysql::getId, "102")
                             .like(TestUserMysql::getName, "1%")
                             .and(x -> x.like(TestUserMysql::getName, "123").or().eq(TestUserMysql::getAge, 1)
                             )).count();
-            long testUserMysqlxasc= easyQuery.queryable(TestUserMysql.class)
+            long testUserMysqlxasc = easyQuery.queryable(TestUserMysql.class)
                     .leftJoin(SysUserLogbyMonth.class, (a, b) -> a.eq(b, TestUserMysql::getName, SysUserLogbyMonth::getId).then(b).eq(SysUserLogbyMonth::getTime, LocalDateTime.now()))
                     .where(o -> o.eq(TestUserMysql::getId, "102")
                             .like(TestUserMysql::getName, "1%")
                             .and(x -> x.like(TestUserMysql::getName, "123").or().eq(TestUserMysql::getAge, 1)
-                            )).select(o->o.column(TestUserMysql::getName)).count();
+                            )).select(o -> o.column(TestUserMysql::getName)).count();
             TestUserMysql testUserMysql = easyQuery.queryable(TestUserMysql.class)
                     .leftJoin(SysUserLogbyMonth.class, (a, b) -> a.eq(b, TestUserMysql::getName, SysUserLogbyMonth::getId).then(b).eq(SysUserLogbyMonth::getTime, LocalDateTime.now()))
                     .where(o -> o.eq(TestUserMysql::getId, "102")
                             .like(TestUserMysql::getName, "1%")
                             .and(x -> x.like(TestUserMysql::getName, "123").or().eq(TestUserMysql::getAge, 1)
-                            )).select(o->o.column(TestUserMysql::getName)).firstOrNull();
-
+                            )).select(o -> o.column(TestUserMysql::getName)).firstOrNull();
 
 
             Queryable<TestUserMysql> sql = easyQuery.queryable(TestUserMysql.class)
@@ -356,7 +371,7 @@ public class Main {
                             ));
 //            sql.where(o->o.isNotNull(TestUserMysql::getId));
             long count31 = easyQuery.queryable(SysUserLogbyMonth.class)
-                    .innerJoin(sql,(a,b)->a.eq(b,SysUserLogbyMonth::getId,TestUserMysql::getId))
+                    .innerJoin(sql, (a, b) -> a.eq(b, SysUserLogbyMonth::getId, TestUserMysql::getId))
                     .where(o -> o.eq(SysUserLogbyMonth::getId, "119")).select(o -> o.column(SysUserLogbyMonth::getId)).count();
 
         }
@@ -475,7 +490,7 @@ public class Main {
             SysUserLogbyMonth sysUserLogbyMonth2xx = easyQuery.queryable(SysUserLogbyMonth.class)
                     .where(o -> o.notIn(SysUserLogbyMonth::getId, Collections.emptyList())).firstOrNull();
             EasyPageResult<SysUserLogbyMonth> page = easyQuery.queryable(SysUserLogbyMonth.class)
-                    .where(o -> o.notIn(SysUserLogbyMonth::getId, Collections.emptyList())).select( SysUserLogbyMonth.class).toPageResult(2, 20);
+                    .where(o -> o.notIn(SysUserLogbyMonth::getId, Collections.emptyList())).select(SysUserLogbyMonth.class).toPageResult(2, 20);
 //        long start = System.currentTimeMillis();
 //        for (int j = 0; j < 1000; j++) {
 //
@@ -578,7 +593,8 @@ public class Main {
             System.out.println("Hello world!");
         }
     }
-    public static void callSetter(Object target,Method setter, PropertyDescriptor prop, Object value) throws SQLException {
+
+    public static void callSetter(Object target, Method setter, PropertyDescriptor prop, Object value) throws SQLException {
         try {
             setter.invoke(target, value);
         } catch (IllegalArgumentException | IllegalAccessException | InvocationTargetException e) {

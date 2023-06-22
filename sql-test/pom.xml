@@ -44,6 +44,12 @@
             <version>1.0.14</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>com.easy-query</groupId>
+            <artifactId>sql-api-proxy</artifactId>
+            <version>1.0.14</version>
+            <scope>compile</scope>
+        </dependency>
         <!-- mysql驱动 -->
         <dependency>
             <groupId>mysql</groupId>
