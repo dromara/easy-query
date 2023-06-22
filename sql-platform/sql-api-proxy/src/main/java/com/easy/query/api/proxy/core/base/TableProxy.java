@@ -12,10 +12,16 @@ import java.util.function.Function;
  *
  * @author xuejiaming
  */
-public interface TableProxy<T extends TableProxy<T,TClass>,TClass> extends Serializable {
+public interface TableProxy<TProxy extends TableProxy<TProxy, TEntity>, TEntity> extends Serializable {
+
+    default boolean isDefault() {
+        return getTable() == null;
+    }
 
     TableAvailable getTable();
 
-    T create(Function<Class<TClass>,T> creator);
+    Class<TEntity> getEntityClass();
+
+    TProxy create(Function<Class<TEntity>, TProxy> creator);
 
 }

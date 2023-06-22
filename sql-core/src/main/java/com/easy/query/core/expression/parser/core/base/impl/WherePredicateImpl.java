@@ -300,7 +300,6 @@ public class WherePredicateImpl<T1> implements WherePredicate<T1> {
             TableAvailable rightTable = sub.getTable();
             nextPredicateSegment.setPredicate(new ColumnWithColumnPredicate(leftTable, property1, rightTable, property2, getReallyPredicateCompare(SQLPredicateCompareEnum.EQ), entityExpressionBuilder.getRuntimeContext()));
             next();
-
         }
         return this;
     }

@@ -17,8 +17,8 @@ import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.mysql.config.MySQLDatabaseConfiguration;
 import com.easy.query.test.dto.TopicRequest;
+import com.easy.query.test.entity.SysUser;
 import com.easy.query.test.entity.Topic;
-import com.easy.query.test.entity.base.TopicSQL;
 import com.easy.query.test.mytest.SysUserLogbyMonth;
 import com.easy.query.test.mytest.TestUserMysql;
 import com.easy.query.test.mytest.TestUserMysqlGroup;
@@ -29,6 +29,7 @@ import javax.sql.DataSource;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -39,6 +40,9 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Random;
 import java.util.UUID;
+
+import static com.easy.query.test.entity.base.SysUserProxy.SYS_USER_PROXY;
+import static com.easy.query.test.entity.base.TopicProxy.TOPIC_PROXY;
 
 @Ignore
 public class Main {
@@ -180,10 +184,25 @@ public class Main {
 //        }
         {
             List<Topic> list1 = easyProxyQuery
-                    .queryable(TopicSQL.DEFAULT)
-                    .where(t -> t.id.eq("123").name.like("111").id.isNotNull().or(x->x.name.isNotNull().or().name.isNull()))
-                    .select(t -> t.columns(t.id))
+                    .queryable(TOPIC_PROXY)
+                    .where((t, filter) -> filter.eq(t.id, "123").like(t.name, "xxx"))
+                    .where((t, filter) -> filter.eq(t.id, "123").like(t.name, "xxx"))
+                    .select((t, selector) -> selector.columns(t.id, t.name))
                     .toList();
+            List<SysUser> sysUsers = easyProxyQuery
+                    .queryable(TOPIC_PROXY)
+                    .where((t, filter) -> filter.eq(t.id, "123").like(t.name, "xxx"))
+                    .select(SYS_USER_PROXY, (t, tr, selector) -> selector.columns(t.id, t.name).columnAs(t.name, tr.username))
+                    .toList();
+            List<SysUser> sysUsers1 = easyProxyQuery
+                    .queryable(TOPIC_PROXY)
+                    .where((t, filter) -> filter.eq(t.id, "123").like(t.name, "xxx"))
+                    .select(SYS_USER_PROXY)
+                    .toList();
+            String bigDecimal = easyProxyQuery
+                    .queryable(TOPIC_PROXY)
+                    .where((t, filter) -> filter.eq(t.id, "123").like(t.name, "xxx"))
+                    .maxOrNull(o -> o.id);
 //            List<Topic> list2 = easyProxyQuery
 //                    .queryable(TopicSQL.DEFAULT)
 //                    .where(t -> t.id().eq("123").name().like("111").id().isNull())
@@ -193,7 +212,7 @@ public class Main {
 
             Queryable<String> nameSubQuery = easyQuery.queryable(TestUserMysql.class).where(o -> o.eq(TestUserMysql::getName, "xhn")).select(String.class, o -> o.column(TestUserMysql::getName));
             TestUserMysql testUserMysql = easyQuery.queryable(TestUserMysql.class)
-                    .where(o -> o.eq(TestUserMysql::getAge, 12).in(TestUserMysql::getName, nameSubQuery))
+                    .where(o -> o.eq(o.column.name, 12).in(TestUserMysql::getName, nameSubQuery))
                     .firstOrNull();
 
             Queryable<TestUserMysql> sql = easyQuery.queryable(TestUserMysql.class)

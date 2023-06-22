@@ -1,6 +1,7 @@
 package com.easy.query.api.proxy.core.base.impl;
 
 import com.easy.query.api.proxy.core.base.SQLColumn;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 
 /**
  * create time 2023/6/22 13:15
@@ -8,13 +9,21 @@ import com.easy.query.api.proxy.core.base.SQLColumn;
  *
  * @author xuejiaming
  */
-public class SQLColumnImpl implements SQLColumn {
+public class SQLColumnImpl<TProperty> implements SQLColumn<TProperty> {
+    private final TableAvailable table;
     private final String property;
 
-    public SQLColumnImpl(String property){
+    public SQLColumnImpl(TableAvailable table, String property){
+        this.table = table;
 
         this.property = property;
     }
+
+    @Override
+    public TableAvailable getTable() {
+        return table;
+    }
+
     @Override
     public String value() {
         return property;
