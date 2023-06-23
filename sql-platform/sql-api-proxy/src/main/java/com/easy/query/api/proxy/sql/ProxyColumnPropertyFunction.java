@@ -9,7 +9,7 @@ import com.easy.query.core.expression.func.ColumnFunction;
  *
  * @author xuejiaming
  */
-public interface SQLColumnPropertyFunction {
+public interface ProxyColumnPropertyFunction {
     ColumnFunction getColumnFunction();
     SQLColumn<?> getColumn();
 }

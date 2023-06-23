@@ -6,8 +6,6 @@ import com.easy.query.api.proxy.core.base.impl.SQLColumnImpl;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.test.entity.Topic;
 
-import java.util.function.Function;
-
 /**
  * create time 2023/6/21 17:03
  * 文件说明
@@ -46,7 +44,7 @@ public class TopicProxy implements ProxyQuery<TopicProxy, Topic> {
     }
 
     @Override
-    public TopicProxy create(Function<Class<Topic>, TopicProxy> creator) {
-        return creator.apply(entityClass);
+    public TopicProxy create(TableAvailable table) {
+        return new TopicProxy(table);
     }
 }

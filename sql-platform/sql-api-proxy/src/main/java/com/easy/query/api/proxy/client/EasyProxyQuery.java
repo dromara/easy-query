@@ -9,6 +9,6 @@ import com.easy.query.api.proxy.select.ProxyQueryable;
  *
  * @author xuejiaming
  */
-public interface EasySQLQuery {
+public interface EasyProxyQuery {
     <TProxy extends ProxyQuery<TProxy, TEntity>,TEntity> ProxyQueryable<TProxy,TEntity> queryable(TProxy table);
 }

@@ -3,15 +3,15 @@ package com.easy.query.core.basic.api.select.provider;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnResultSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnSelector;
-import com.easy.query.core.expression.parser.core.base.GroupBySelector;
+import com.easy.query.core.expression.parser.core.base.ColumnGroupSelector;
 import com.easy.query.core.expression.parser.core.base.WhereAggregatePredicate;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.parser.core.base.impl.ColumnAutoAsSelectorImpl;
 import com.easy.query.core.expression.parser.core.base.impl.ColumnAsSelectorImpl;
 import com.easy.query.core.expression.parser.core.base.impl.ColumnResultSelectorImpl;
 import com.easy.query.core.expression.parser.core.base.impl.ColumnSelectorImpl;
-import com.easy.query.core.expression.parser.core.base.impl.GroupBySelectorImpl;
-import com.easy.query.core.expression.parser.core.base.impl.OrderColumnSelectorImpl;
+import com.easy.query.core.expression.parser.core.base.impl.ColumnGroupSelectorImpl;
+import com.easy.query.core.expression.parser.core.base.impl.ColumnOrderSelectorImpl;
 import com.easy.query.core.expression.parser.core.base.impl.WhereAggregatePredicateImpl;
 import com.easy.query.core.expression.parser.core.base.impl.WherePredicateImpl;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
@@ -28,8 +28,8 @@ public class SQLExpressionProviderImpl<TEntity> implements SQLExpressionProvider
 
     private final EntityQueryExpressionBuilder entityQueryExpressionBuilder;
     private final int index;
-    private GroupBySelectorImpl<TEntity> group;
-    private OrderColumnSelectorImpl<TEntity> order;
+    private ColumnGroupSelectorImpl<TEntity> group;
+    private ColumnOrderSelectorImpl<TEntity> order;
     private WherePredicateImpl<TEntity> where;
     private WherePredicateImpl<TEntity> allPredicate;
     private WhereAggregatePredicateImpl<TEntity> having;
@@ -41,17 +41,17 @@ public class SQLExpressionProviderImpl<TEntity> implements SQLExpressionProvider
     }
 
     @Override
-    public GroupBySelector<TEntity> getGroupColumnSelector() {
+    public ColumnGroupSelector<TEntity> getGroupColumnSelector() {
         if (group == null) {
-            group = new GroupBySelectorImpl<>(index, entityQueryExpressionBuilder);
+            group = new ColumnGroupSelectorImpl<>(index, entityQueryExpressionBuilder);
         }
         return group;
     }
 
     @Override
-    public OrderColumnSelectorImpl<TEntity> getOrderColumnSelector(boolean asc) {
+    public ColumnOrderSelectorImpl<TEntity> getOrderColumnSelector(boolean asc) {
         if (order == null) {
-            order = new OrderColumnSelectorImpl<>(index, entityQueryExpressionBuilder);
+            order = new ColumnOrderSelectorImpl<>(index, entityQueryExpressionBuilder);
         }
         order.setAsc(asc);
         return order;

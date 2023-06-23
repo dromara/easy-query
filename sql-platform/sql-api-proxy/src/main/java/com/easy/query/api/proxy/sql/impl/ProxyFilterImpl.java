@@ -1,6 +1,6 @@
 package com.easy.query.api.proxy.sql.impl;
 
-import com.easy.query.api.proxy.sql.SQLFilter;
+import com.easy.query.api.proxy.sql.ProxyFilter;
 import com.easy.query.core.expression.builder.Filter;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 
@@ -10,10 +10,10 @@ import com.easy.query.core.expression.lambda.SQLExpression1;
  *
  * @author xuejiaming
  */
-public class SQLFilterImpl implements SQLFilter {
+public class ProxyFilterImpl implements ProxyFilter {
     private final Filter filter;
 
-    public SQLFilterImpl(Filter filter){
+    public ProxyFilterImpl(Filter filter){
 
         this.filter = filter;
     }
@@ -23,12 +23,12 @@ public class SQLFilterImpl implements SQLFilter {
     }
 
     @Override
-    public SQLFilter and(boolean condition, SQLExpression1<SQLFilter> sqlWherePredicateSQLExpression) {
+    public ProxyFilter and(boolean condition, SQLExpression1<ProxyFilter> sqlWherePredicateSQLExpression) {
         return null;
     }
 
     @Override
-    public SQLFilter or(boolean condition, SQLExpression1<SQLFilter> sqlWherePredicateSQLExpression) {
+    public ProxyFilter or(boolean condition, SQLExpression1<ProxyFilter> sqlWherePredicateSQLExpression) {
         return null;
     }
 }

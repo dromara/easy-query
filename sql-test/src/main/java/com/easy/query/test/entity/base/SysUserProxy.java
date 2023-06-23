@@ -6,8 +6,6 @@ import com.easy.query.api.proxy.core.base.impl.SQLColumnImpl;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.test.entity.SysUser;
 
-import java.util.function.Function;
-
 /**
  * create time 2023/6/21 17:03
  * 文件说明
@@ -49,7 +47,7 @@ public class SysUserProxy implements ProxyQuery<SysUserProxy, SysUser> {
     }
 
     @Override
-    public SysUserProxy create(Function<Class<SysUser>, SysUserProxy> creator) {
-        return creator.apply(entityClass);
+    public SysUserProxy create(TableAvailable table) {
+        return new SysUserProxy(table);
     }
 }

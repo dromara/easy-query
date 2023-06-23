@@ -1,7 +1,7 @@
 package com.easy.query.api4kt.sql.impl;
 
 import com.easy.query.api4kt.sql.SQLKtOrderBySelector;
-import com.easy.query.core.expression.parser.core.base.OrderBySelector;
+import com.easy.query.core.expression.parser.core.base.ColumnOrderSelector;
 
 /**
  * create time 2023/6/16 22:26
@@ -10,14 +10,14 @@ import com.easy.query.core.expression.parser.core.base.OrderBySelector;
  * @author xuejiaming
  */
 public class SQLKtOrderByColumnSelectorImpl<T> implements SQLKtOrderBySelector<T> {
-    private final OrderBySelector<T> orderByColumnSelector;
+    private final ColumnOrderSelector<T> orderByColumnSelector;
 
-    public SQLKtOrderByColumnSelectorImpl(OrderBySelector<T> orderByColumnSelector){
+    public SQLKtOrderByColumnSelectorImpl(ColumnOrderSelector<T> orderByColumnSelector){
 
         this.orderByColumnSelector = orderByColumnSelector;
     }
     @Override
-    public OrderBySelector<T> getOrderBySelector() {
+    public ColumnOrderSelector<T> getOrderBySelector() {
         return orderByColumnSelector;
     }
 }

@@ -4,7 +4,6 @@ package com.easy.query.api.proxy.core.base;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 
 import java.io.Serializable;
-import java.util.function.Function;
 
 /**
  * create time 2023/6/21 16:41
@@ -22,6 +21,6 @@ public interface TableProxy<TProxy extends TableProxy<TProxy, TEntity>, TEntity>
 
     Class<TEntity> getEntityClass();
 
-    TProxy create(Function<Class<TEntity>, TProxy> creator);
+    TProxy create(TableAvailable table);
 
 }

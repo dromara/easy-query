@@ -10,15 +10,15 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
  *
  * @author xuejiaming
  */
-public interface SQLSelector {
+public interface ProxySelector {
     Selector getSelector();
 
-    SQLSelector columns(SQLColumn<?>... column);
-    SQLSelector column(SQLColumn<?> column);
+    ProxySelector columns(SQLColumn<?>... column);
+    ProxySelector column(SQLColumn<?> column);
 
-    SQLSelector columnFunc(SQLColumnPropertyFunction sqlColumnPropertyFunction);
+    ProxySelector columnFunc(ProxyColumnPropertyFunction proxyColumnPropertyFunction);
 
-    SQLSelector columnIgnore(SQLColumn<?> column);
+    ProxySelector columnIgnore(SQLColumn<?> column);
 
-    SQLSelector columnAll(TableAvailable table);
+    ProxySelector columnAll(TableAvailable table);
 }

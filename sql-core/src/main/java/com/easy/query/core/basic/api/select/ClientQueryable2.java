@@ -8,12 +8,13 @@ import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.lambda.SQLExpression3;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnResultSelector;
-import com.easy.query.core.expression.parser.core.base.GroupBySelector;
-import com.easy.query.core.expression.parser.core.base.OrderBySelector;
+import com.easy.query.core.expression.parser.core.base.ColumnGroupSelector;
+import com.easy.query.core.expression.parser.core.base.ColumnOrderSelector;
 import com.easy.query.core.expression.parser.core.base.WhereAggregatePredicate;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.function.Function;
 
 
@@ -42,6 +43,7 @@ public interface ClientQueryable2<T1, T2> extends ClientQueryable<T1> {
        return whereById(true,id);
    }
     ClientQueryable2<T1, T2> whereById(boolean condition, Object id);
+    <TProperty> ClientQueryable2<T1, T2> whereByIds(boolean condition, Collection<TProperty> ids);
     /**
      * 仅支持主表的动态对象查询
      * @param object 对象查询的对象
@@ -140,18 +142,18 @@ public interface ClientQueryable2<T1, T2> extends ClientQueryable<T1> {
 
     //region group
     @Override
-    default ClientQueryable2<T1, T2> groupBy(SQLExpression1<GroupBySelector<T1>> selectExpression) {
+    default ClientQueryable2<T1, T2> groupBy(SQLExpression1<ColumnGroupSelector<T1>> selectExpression) {
         return groupBy(true, selectExpression);
     }
 
     @Override
-    ClientQueryable2<T1, T2> groupBy(boolean condition, SQLExpression1<GroupBySelector<T1>> selectExpression);
+    ClientQueryable2<T1, T2> groupBy(boolean condition, SQLExpression1<ColumnGroupSelector<T1>> selectExpression);
 
-    default ClientQueryable2<T1, T2> groupBy(SQLExpression2<GroupBySelector<T1>, GroupBySelector<T2>> selectExpression) {
+    default ClientQueryable2<T1, T2> groupBy(SQLExpression2<ColumnGroupSelector<T1>, ColumnGroupSelector<T2>> selectExpression) {
         return groupBy(true, selectExpression);
     }
 
-    ClientQueryable2<T1, T2> groupBy(boolean condition, SQLExpression2<GroupBySelector<T1>, GroupBySelector<T2>> selectExpression);
+    ClientQueryable2<T1, T2> groupBy(boolean condition, SQLExpression2<ColumnGroupSelector<T1>, ColumnGroupSelector<T2>> selectExpression);
 
     @Override
     default ClientQueryable2<T1, T2> having(SQLExpression1<WhereAggregatePredicate<T1>> predicateExpression) {
@@ -170,32 +172,32 @@ public interface ClientQueryable2<T1, T2> extends ClientQueryable<T1> {
     //endregion
     //region order
     @Override
-    default ClientQueryable2<T1, T2> orderByAsc(SQLExpression1<OrderBySelector<T1>> selectExpression) {
+    default ClientQueryable2<T1, T2> orderByAsc(SQLExpression1<ColumnOrderSelector<T1>> selectExpression) {
         return orderByAsc(true, selectExpression);
     }
 
     @Override
-    ClientQueryable2<T1, T2> orderByAsc(boolean condition, SQLExpression1<OrderBySelector<T1>> selectExpression);
+    ClientQueryable2<T1, T2> orderByAsc(boolean condition, SQLExpression1<ColumnOrderSelector<T1>> selectExpression);
 
-    default ClientQueryable2<T1, T2> orderByAsc(SQLExpression2<OrderBySelector<T1>, OrderBySelector<T2>> selectExpression) {
+    default ClientQueryable2<T1, T2> orderByAsc(SQLExpression2<ColumnOrderSelector<T1>, ColumnOrderSelector<T2>> selectExpression) {
         return orderByAsc(true, selectExpression);
     }
 
-    ClientQueryable2<T1, T2> orderByAsc(boolean condition, SQLExpression2<OrderBySelector<T1>, OrderBySelector<T2>> selectExpression);
+    ClientQueryable2<T1, T2> orderByAsc(boolean condition, SQLExpression2<ColumnOrderSelector<T1>, ColumnOrderSelector<T2>> selectExpression);
 
     @Override
-    default ClientQueryable2<T1, T2> orderByDesc(SQLExpression1<OrderBySelector<T1>> selectExpression) {
+    default ClientQueryable2<T1, T2> orderByDesc(SQLExpression1<ColumnOrderSelector<T1>> selectExpression) {
         return orderByDesc(true, selectExpression);
     }
 
     @Override
-    ClientQueryable2<T1, T2> orderByDesc(boolean condition, SQLExpression1<OrderBySelector<T1>> selectExpression);
+    ClientQueryable2<T1, T2> orderByDesc(boolean condition, SQLExpression1<ColumnOrderSelector<T1>> selectExpression);
 
-    default ClientQueryable2<T1, T2> orderByDesc(SQLExpression2<OrderBySelector<T1>, OrderBySelector<T2>> selectExpression) {
+    default ClientQueryable2<T1, T2> orderByDesc(SQLExpression2<ColumnOrderSelector<T1>, ColumnOrderSelector<T2>> selectExpression) {
         return orderByDesc(true, selectExpression);
     }
 
-    ClientQueryable2<T1, T2> orderByDesc(boolean condition, SQLExpression2<OrderBySelector<T1>, OrderBySelector<T2>> selectExpression);
+    ClientQueryable2<T1, T2> orderByDesc(boolean condition, SQLExpression2<ColumnOrderSelector<T1>, ColumnOrderSelector<T2>> selectExpression);
     //endregion
     //region limit
 

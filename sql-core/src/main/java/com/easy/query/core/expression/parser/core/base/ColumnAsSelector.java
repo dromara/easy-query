@@ -2,6 +2,7 @@ package com.easy.query.core.expression.parser.core.base;
 
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.expression.builder.AsSelector;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.func.DefaultColumnPropertyFunction;
@@ -15,6 +16,7 @@ import java.util.function.Function;
  * @Date: 2023/2/6 22:58
  */
 public interface ColumnAsSelector<T1, TR> {
+    AsSelector getAsSelector();
     QueryRuntimeContext getRuntimeContext();
 
     TableAvailable getTable();

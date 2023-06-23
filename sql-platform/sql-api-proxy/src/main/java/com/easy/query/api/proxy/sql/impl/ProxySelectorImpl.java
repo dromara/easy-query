@@ -1,8 +1,8 @@
 package com.easy.query.api.proxy.sql.impl;
 
 import com.easy.query.api.proxy.core.base.SQLColumn;
-import com.easy.query.api.proxy.sql.SQLColumnPropertyFunction;
-import com.easy.query.api.proxy.sql.SQLSelector;
+import com.easy.query.api.proxy.sql.ProxyColumnPropertyFunction;
+import com.easy.query.api.proxy.sql.ProxySelector;
 import com.easy.query.core.expression.builder.Selector;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 
@@ -12,10 +12,10 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
  *
  * @author xuejiaming
  */
-public class SQLSelectorImpl implements SQLSelector {
+public class ProxySelectorImpl implements ProxySelector {
     private final Selector selector;
 
-    public SQLSelectorImpl(Selector selector){
+    public ProxySelectorImpl(Selector selector){
 
         this.selector = selector;
     }
@@ -25,27 +25,27 @@ public class SQLSelectorImpl implements SQLSelector {
     }
 
     @Override
-    public SQLSelector columns(SQLColumn<?>... column) {
+    public ProxySelector columns(SQLColumn<?>... column) {
         return null;
     }
 
     @Override
-    public SQLSelector column(SQLColumn<?> column) {
+    public ProxySelector column(SQLColumn<?> column) {
         return null;
     }
 
     @Override
-    public SQLSelector columnFunc(SQLColumnPropertyFunction sqlColumnPropertyFunction) {
+    public ProxySelector columnFunc(ProxyColumnPropertyFunction proxyColumnPropertyFunction) {
         return null;
     }
 
     @Override
-    public SQLSelector columnIgnore(SQLColumn<?> column) {
+    public ProxySelector columnIgnore(SQLColumn<?> column) {
         return null;
     }
 
     @Override
-    public SQLSelector columnAll(TableAvailable table) {
+    public ProxySelector columnAll(TableAvailable table) {
         return null;
     }
 }

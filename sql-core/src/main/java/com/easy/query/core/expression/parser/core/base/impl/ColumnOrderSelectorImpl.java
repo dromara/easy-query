@@ -3,7 +3,7 @@ package com.easy.query.core.expression.parser.core.base.impl;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.parser.core.base.OrderBySelector;
+import com.easy.query.core.expression.parser.core.base.ColumnOrderSelector;
 import com.easy.query.core.expression.segment.OrderBySegment;
 import com.easy.query.core.expression.segment.OrderFuncColumnSegment;
 import com.easy.query.core.expression.segment.SQLEntitySegment;
@@ -19,14 +19,14 @@ import java.util.Objects;
  * @Description: 文件说明
  * @Date: 2023/2/8 12:26
  */
-public class OrderColumnSelectorImpl<T1> implements OrderBySelector<T1> {
+public class ColumnOrderSelectorImpl<T1> implements ColumnOrderSelector<T1> {
     protected final int index;
     protected final EntityQueryExpressionBuilder entityQueryExpressionBuilder;
     protected final TableAvailable table;
     protected final SQLSegmentFactory sqlSegmentFactory;
     protected boolean asc;
 
-    public OrderColumnSelectorImpl(int index, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
+    public ColumnOrderSelectorImpl(int index, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
         this.index = index;
         this.entityQueryExpressionBuilder = entityQueryExpressionBuilder;
         this.sqlSegmentFactory = entityQueryExpressionBuilder.getRuntimeContext().getSQLSegmentFactory();
@@ -39,7 +39,7 @@ public class OrderColumnSelectorImpl<T1> implements OrderBySelector<T1> {
     }
 
     @Override
-    public OrderBySelector<T1> column(String property) {
+    public ColumnOrderSelector<T1> column(String property) {
         EntityTableExpressionBuilder table = entityQueryExpressionBuilder.getTable(index);
         OrderBySegment orderByColumnSegment = sqlSegmentFactory.createOrderByColumnSegment(table.getEntityTable(), property, entityQueryExpressionBuilder.getRuntimeContext(), asc);
         entityQueryExpressionBuilder.getOrder().append(orderByColumnSegment);
@@ -47,7 +47,7 @@ public class OrderColumnSelectorImpl<T1> implements OrderBySelector<T1> {
     }
 
     @Override
-    public OrderBySelector<T1> columnFunc(ColumnPropertyFunction columnPropertyFunction) {
+    public ColumnOrderSelector<T1> columnFunc(ColumnPropertyFunction columnPropertyFunction) {
 
         EntityTableExpressionBuilder table = entityQueryExpressionBuilder.getTable(index);
         String propertyName = columnPropertyFunction.getPropertyName();
@@ -58,7 +58,7 @@ public class OrderColumnSelectorImpl<T1> implements OrderBySelector<T1> {
     }
 
     @Override
-    public OrderBySelector<T1> columnConst(String columnConst) {
+    public ColumnOrderSelector<T1> columnConst(String columnConst) {
         EntityTableExpressionBuilder table = entityQueryExpressionBuilder.getTable(index);
         OrderBySegment orderFuncColumnSegment = sqlSegmentFactory.createOrderByConstSegment(table.getEntityTable(), entityQueryExpressionBuilder.getRuntimeContext(), columnConst, asc);
         entityQueryExpressionBuilder.getOrder().append(orderFuncColumnSegment);
@@ -66,7 +66,7 @@ public class OrderColumnSelectorImpl<T1> implements OrderBySelector<T1> {
     }
 
     @Override
-    public OrderBySelector<T1> columnIgnore(String property) {
+    public ColumnOrderSelector<T1> columnIgnore(String property) {
 
         EntityTableExpressionBuilder table = entityQueryExpressionBuilder.getTable(index);
         entityQueryExpressionBuilder.getOrder().getSQLSegments().removeIf(sqlSegment -> {
@@ -80,7 +80,7 @@ public class OrderColumnSelectorImpl<T1> implements OrderBySelector<T1> {
     }
 
     @Override
-    public OrderBySelector<T1> columnAll() {
+    public ColumnOrderSelector<T1> columnAll() {
         EntityTableExpressionBuilder table = entityQueryExpressionBuilder.getTable(index);
         Collection<String> properties = table.getEntityMetadata().getProperties();
         for (String property : properties) {

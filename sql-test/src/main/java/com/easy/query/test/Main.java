@@ -2,7 +2,7 @@ package com.easy.query.test;
 
 
 import com.alibaba.druid.pool.DruidDataSourceFactory;
-import com.easy.query.api.proxy.client.EasySQLQuery;
+import com.easy.query.api.proxy.client.EasyProxyQuery;
 import com.easy.query.api4j.client.DefaultEasyQuery;
 import com.easy.query.api4j.client.EasyQuery;
 import com.easy.query.api4j.select.Queryable;
@@ -29,7 +29,6 @@ import javax.sql.DataSource;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -57,7 +56,7 @@ public class Main {
     //    private static final String url = "jdbc:mysql://127.0.0.1:3306/dbdbd0?serverTimezone=GMT%2B8&characterEncoding=utf-8&useSSL=false";
     private static final String url = "jdbc:mysql://127.0.0.1:3306/dbdbd0?serverTimezone=GMT%2B8&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&rewriteBatchedStatements=true";
     private static EasyQuery easyQuery;
-    private static EasySQLQuery easyProxyQuery;
+    private static EasyProxyQuery easyProxyQuery;
 
     public static void main(String[] args) throws SQLException, ClassNotFoundException, InstantiationException, IllegalAccessException {
         List<String> list = new ArrayList<>(); // 假设列表为字符串类型的示例
@@ -192,17 +191,29 @@ public class Main {
             List<SysUser> sysUsers = easyProxyQuery
                     .queryable(TOPIC_PROXY)
                     .where((t, filter) -> filter.eq(t.id, "123").like(t.name, "xxx"))
-                    .select(SYS_USER_PROXY, (t, tr, selector) -> selector.columns(t.id, t.name).columnAs(t.name, tr.username))
+                    .select(SYS_USER_PROXY, (t,selector) -> selector.columns(t.id, t.name).columnAs(t.name, tr->tr.username))
                     .toList();
             List<SysUser> sysUsers1 = easyProxyQuery
                     .queryable(TOPIC_PROXY)
                     .where((t, filter) -> filter.eq(t.id, "123").like(t.name, "xxx"))
                     .select(SYS_USER_PROXY)
+                    .groupBy((t,g)->g.columnConst(t,"").column(t.idCard))
+                    .orderByAsc((t,order)->order.columns(t.idCard,t.phone))
                     .toList();
             String bigDecimal = easyProxyQuery
                     .queryable(TOPIC_PROXY)
                     .where((t, filter) -> filter.eq(t.id, "123").like(t.name, "xxx"))
                     .maxOrNull(o -> o.id);
+
+            List<Topic> list2 = easyProxyQuery.queryable(TOPIC_PROXY)
+                    .leftJoin(SYS_USER_PROXY, (t, t1, filter) -> filter.eq(t.name, t1.idCard))
+                    .toList();
+            List<SysUser> sysUsers2 = easyProxyQuery.queryable(TOPIC_PROXY)
+                    .leftJoin(SYS_USER_PROXY, (t, t1, filter) -> filter.eq(t.name, t1.phone))
+                    .innerJoin(SYS_USER_PROXY, (t, t1, t2, filter) -> filter.eq(t1.phone, t2.phone).like(t2.idCard, "123"))
+                    .where((t, t1, t2, filter) -> filter.like(t1.username, "111").eq(t2.idCard, "111"))
+                    .select(SYS_USER_PROXY, (t, t1, t2, selector) -> selector.columns(t1.idCard, t2.username, t.id).columnAs(t2.phone, r -> r.phone))
+                    .toList();
 //            List<Topic> list2 = easyProxyQuery
 //                    .queryable(TopicSQL.DEFAULT)
 //                    .where(t -> t.id().eq("123").name().like("111").id().isNull())

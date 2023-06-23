@@ -3,7 +3,7 @@ package com.easy.query.api4j.sql;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.parser.core.base.OrderBySelector;
+import com.easy.query.core.expression.parser.core.base.ColumnOrderSelector;
 import com.easy.query.api4j.util.EasyLambdaUtil;
 
 /**
@@ -13,7 +13,7 @@ import com.easy.query.api4j.util.EasyLambdaUtil;
  * @author xuejiaming
  */
 public interface SQLOrderBySelector<T1> {
-    OrderBySelector<T1> getOrderBySelector();
+    ColumnOrderSelector<T1> getOrderBySelector();
 
     default TableAvailable getTable() {
         return getOrderBySelector().getTable();
