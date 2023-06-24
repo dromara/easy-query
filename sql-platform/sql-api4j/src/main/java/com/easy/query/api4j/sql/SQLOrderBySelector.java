@@ -33,16 +33,6 @@ public interface SQLOrderBySelector<T1> {
         return this;
     }
 
-    default SQLOrderBySelector<T1> columnIgnore(Property<T1, ?> column) {
-        getOrderBySelector().columnIgnore(EasyLambdaUtil.getPropertyName(column));
-        return this;
-    }
-
-    default SQLOrderBySelector<T1> columnAll() {
-        getOrderBySelector().columnAll();
-        return this;
-    }
-
     default <T2> SQLOrderBySelector<T2> then(SQLOrderBySelector<T2> sub) {
         return sub;
     }

@@ -1,13 +1,13 @@
 package com.easy.query.core.expression.builder;
 
 import com.easy.query.core.basic.api.select.Query;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.SQLLikeEnum;
 import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.enums.SQLRangeEnum;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.parser.core.base.WherePredicate;
 
 import java.util.Collection;
 
@@ -18,6 +18,8 @@ import java.util.Collection;
  * @author xuejiaming
  */
 public interface Filter {
+    boolean getReverse();
+    QueryRuntimeContext getRuntimeContext();
 
     /**
      * 大于 column > val
@@ -119,10 +121,10 @@ public interface Filter {
 
     <TProperty> Filter notIn(TableAvailable table, String property, Query<TProperty> subQuery);
 
-    <T2> Filter exists(Query<T2> subQuery);
+    <T2> Filter exists(TableAvailable table,Query<T2> subQuery);
 
 
-    <T2> Filter notExists(Query<T2> subQuery);
+    <T2> Filter notExists(TableAvailable table,Query<T2> subQuery);
 
     /**
      * 自定义范围
@@ -141,7 +143,7 @@ public interface Filter {
 
     Filter columnFunc(TableAvailable table,ColumnPropertyFunction columnPropertyFunction, SQLPredicateCompare sqlPredicateCompare, Object val);
 
-    <T2> Filter eq(WherePredicate<T2> sub,TableAvailable table1, String property1,TableAvailable table2, String property2);
+    <T2> Filter eq(TableAvailable leftTable, String property1,TableAvailable rightTable, String property2);
 
     Filter and();
 

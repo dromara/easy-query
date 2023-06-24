@@ -2,6 +2,7 @@ package com.easy.query.api.proxy.sql;
 
 import com.easy.query.api.proxy.core.base.SQLColumn;
 import com.easy.query.core.expression.func.ColumnFunction;
+import com.easy.query.core.expression.func.ColumnPropertyFunction;
 
 /**
  * create time 2023/6/22 21:26
@@ -10,6 +11,6 @@ import com.easy.query.core.expression.func.ColumnFunction;
  * @author xuejiaming
  */
 public interface ProxyColumnPropertyFunction {
-    ColumnFunction getColumnFunction();
+    ColumnPropertyFunction getColumnPropertyFunction();
     SQLColumn<?> getColumn();
 }

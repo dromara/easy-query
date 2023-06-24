@@ -49,7 +49,7 @@ public interface ProxyQueryable<T1Proxy extends ProxyQuery<T1Proxy, T1>, T1> ext
     @Override
     ProxyQueryable<T1Proxy, T1> cloneQueryable();
 
-    long countDistinct(SQLExpression2<T1Proxy, ProxySelector> selectExpression);
+    long countDistinct(SQLExpression2<ProxySelector, T1Proxy> selectExpression);
 
     /**
      * SELECT NOT EXISTS (
@@ -60,7 +60,7 @@ public interface ProxyQueryable<T1Proxy extends ProxyQuery<T1Proxy, T1>, T1> ext
      * @param whereExpression 表达式最后一个是取反
      * @return
      */
-    boolean all(SQLExpression2<T1Proxy, ProxyFilter> whereExpression);
+    boolean all(SQLExpression2<ProxyFilter, T1Proxy> whereExpression);
 
     /**
      * 防止溢出
@@ -135,7 +135,7 @@ public interface ProxyQueryable<T1Proxy extends ProxyQuery<T1Proxy, T1>, T1> ext
      * @param selectExpression
      * @return
      */
-    ProxyQueryable<T1Proxy, T1> select(SQLExpression2<T1Proxy, ProxySelector> selectExpression);
+    ProxyQueryable<T1Proxy, T1> select(SQLExpression2<ProxySelector, T1Proxy> selectExpression);
 
     /**
      * 将当前T1对象转成TR对象，select会将T1属性所对应的列名映射到TR对象的列名上(忽略大小写)
@@ -159,7 +159,7 @@ public interface ProxyQueryable<T1Proxy extends ProxyQuery<T1Proxy, T1>, T1> ext
      * @param <TR>
      * @return
      */
-    <TRProxy extends ProxyQuery<TRProxy, TR>, TR> ProxyQueryable<TRProxy, TR> select(TRProxy trProxy, SQLExpression2<T1Proxy, ProxyAsSelector<TRProxy, TR>> selectExpression);
+    <TRProxy extends ProxyQuery<TRProxy, TR>, TR> ProxyQueryable<TRProxy, TR> select(TRProxy trProxy, SQLExpression2<ProxyAsSelector<TRProxy, TR>, T1Proxy> selectExpression);
 
     /**
      * 设置column所有join表都会生效
@@ -176,11 +176,11 @@ public interface ProxyQueryable<T1Proxy extends ProxyQuery<T1Proxy, T1>, T1> ext
 
     ProxyQueryable<T1Proxy, T1> select(Collection<ColumnSegment> columnSegments, boolean clearAll);
 
-    default ProxyQueryable<T1Proxy, T1> where(SQLExpression2<T1Proxy, ProxyFilter> whereExpression) {
+    default ProxyQueryable<T1Proxy, T1> where(SQLExpression2<ProxyFilter, T1Proxy> whereExpression) {
         return where(true, whereExpression);
     }
 
-    ProxyQueryable<T1Proxy, T1> where(boolean condition, SQLExpression2<T1Proxy, ProxyFilter> whereExpression);
+    ProxyQueryable<T1Proxy, T1> where(boolean condition, SQLExpression2<ProxyFilter, T1Proxy> whereExpression);
 
     /**
      * 根据id主键查询
@@ -242,39 +242,39 @@ public interface ProxyQueryable<T1Proxy extends ProxyQuery<T1Proxy, T1>, T1> ext
      */
     ProxyQueryable<T1Proxy, T1> whereObject(boolean condition, Object object);
 
-    default ProxyQueryable<T1Proxy, T1> groupBy(SQLExpression2<T1Proxy, ProxyGroupSelector> selectExpression) {
+    default ProxyQueryable<T1Proxy, T1> groupBy(SQLExpression2<ProxyGroupSelector, T1Proxy> selectExpression) {
         return groupBy(true, selectExpression);
     }
 
-    ProxyQueryable<T1Proxy, T1> groupBy(boolean condition, SQLExpression2<T1Proxy, ProxyGroupSelector> selectExpression);
+    ProxyQueryable<T1Proxy, T1> groupBy(boolean condition, SQLExpression2<ProxyGroupSelector, T1Proxy> selectExpression);
 
-    default ProxyQueryable<T1Proxy, T1> having(SQLExpression2<T1Proxy, ProxyAggregateFilter> aggregateFilterSQLExpression) {
+    default ProxyQueryable<T1Proxy, T1> having(SQLExpression2<ProxyAggregateFilter, T1Proxy> aggregateFilterSQLExpression) {
         return having(true, aggregateFilterSQLExpression);
     }
 
-    ProxyQueryable<T1Proxy, T1> having(boolean condition, SQLExpression2<T1Proxy, ProxyAggregateFilter> aggregateFilterSQLExpression);
+    ProxyQueryable<T1Proxy, T1> having(boolean condition, SQLExpression2<ProxyAggregateFilter, T1Proxy> aggregateFilterSQLExpression);
 
-    default ProxyQueryable<T1Proxy, T1> orderByAsc(SQLExpression2<T1Proxy, ProxyOrderSelector> selectExpression) {
+    default ProxyQueryable<T1Proxy, T1> orderByAsc(SQLExpression2<ProxyOrderSelector, T1Proxy> selectExpression) {
         return orderByAsc(true, selectExpression);
     }
 
-    default ProxyQueryable<T1Proxy, T1> orderByAsc(boolean condition, SQLExpression2<T1Proxy, ProxyOrderSelector> selectExpression) {
+    default ProxyQueryable<T1Proxy, T1> orderByAsc(boolean condition, SQLExpression2<ProxyOrderSelector, T1Proxy> selectExpression) {
         return orderBy(condition, selectExpression, true);
     }
 
-    default ProxyQueryable<T1Proxy, T1> orderByDesc(SQLExpression2<T1Proxy, ProxyOrderSelector> selectExpression) {
+    default ProxyQueryable<T1Proxy, T1> orderByDesc(SQLExpression2<ProxyOrderSelector, T1Proxy> selectExpression) {
         return orderByDesc(true, selectExpression);
     }
 
-    default ProxyQueryable<T1Proxy, T1> orderByDesc(boolean condition, SQLExpression2<T1Proxy, ProxyOrderSelector> selectExpression) {
+    default ProxyQueryable<T1Proxy, T1> orderByDesc(boolean condition, SQLExpression2<ProxyOrderSelector, T1Proxy> selectExpression) {
         return orderBy(condition, selectExpression, false);
     }
 
-    default ProxyQueryable<T1Proxy, T1> orderBy(SQLExpression2<T1Proxy, ProxyOrderSelector> selectExpression, boolean asc) {
+    default ProxyQueryable<T1Proxy, T1> orderBy(SQLExpression2<ProxyOrderSelector, T1Proxy> selectExpression, boolean asc) {
         return orderBy(true, selectExpression, asc);
     }
 
-    ProxyQueryable<T1Proxy, T1> orderBy(boolean condition, SQLExpression2<T1Proxy, ProxyOrderSelector> selectExpression, boolean asc);
+    ProxyQueryable<T1Proxy, T1> orderBy(boolean condition, SQLExpression2<ProxyOrderSelector, T1Proxy> selectExpression, boolean asc);
 
     /**
      * @param configuration
@@ -318,17 +318,17 @@ public interface ProxyQueryable<T1Proxy extends ProxyQuery<T1Proxy, T1>, T1> ext
     @Override
     ProxyQueryable<T1Proxy, T1> limit(boolean condition, long offset, long rows);
 
-    <T2Proxy extends ProxyQuery<T2Proxy, T2>, T2> ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> leftJoin(T2Proxy joinProxy, SQLExpression3<T1Proxy, T2Proxy, ProxyFilter> on);
+    <T2Proxy extends ProxyQuery<T2Proxy, T2>, T2> ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> leftJoin(T2Proxy joinProxy, SQLExpression3<ProxyFilter, T1Proxy, T2Proxy> on);
 
-    <T2Proxy extends ProxyQuery<T2Proxy, T2>, T2> ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> leftJoin(ProxyQueryable<T2Proxy, T2> joinQueryable, SQLExpression3<T1Proxy, T2Proxy, ProxyFilter> on);
+    <T2Proxy extends ProxyQuery<T2Proxy, T2>, T2> ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> leftJoin(ProxyQueryable<T2Proxy, T2> joinQueryable, SQLExpression3<ProxyFilter, T1Proxy, T2Proxy> on);
 
-    <T2Proxy extends ProxyQuery<T2Proxy, T2>, T2> ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> rightJoin(T2Proxy joinProxy, SQLExpression3<T1Proxy, T2Proxy, ProxyFilter> on);
+    <T2Proxy extends ProxyQuery<T2Proxy, T2>, T2> ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> rightJoin(T2Proxy joinProxy, SQLExpression3<ProxyFilter, T1Proxy, T2Proxy> on);
 
-    <T2Proxy extends ProxyQuery<T2Proxy, T2>, T2> ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> rightJoin(ProxyQueryable<T2Proxy, T2> joinQueryable, SQLExpression3<T1Proxy, T2Proxy, ProxyFilter> on);
+    <T2Proxy extends ProxyQuery<T2Proxy, T2>, T2> ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> rightJoin(ProxyQueryable<T2Proxy, T2> joinQueryable, SQLExpression3<ProxyFilter, T1Proxy, T2Proxy> on);
 
-    <T2Proxy extends ProxyQuery<T2Proxy, T2>, T2> ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> innerJoin(T2Proxy joinProxy, SQLExpression3<T1Proxy, T2Proxy, ProxyFilter> on);
+    <T2Proxy extends ProxyQuery<T2Proxy, T2>, T2> ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> innerJoin(T2Proxy joinProxy, SQLExpression3<ProxyFilter, T1Proxy, T2Proxy> on);
 
-    <T2Proxy extends ProxyQuery<T2Proxy, T2>, T2> ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> innerJoin(ProxyQueryable<T2Proxy, T2> joinQueryable, SQLExpression3<T1Proxy, T2Proxy, ProxyFilter> on);
+    <T2Proxy extends ProxyQuery<T2Proxy, T2>, T2> ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> innerJoin(ProxyQueryable<T2Proxy, T2> joinQueryable, SQLExpression3<ProxyFilter, T1Proxy, T2Proxy> on);
 
     default ProxyQueryable<T1Proxy, T1> union(ProxyQueryable<T1Proxy, T1> unionQueryable) {
         return union(Collections.singletonList(unionQueryable));

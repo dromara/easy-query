@@ -10,13 +10,9 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
  * @author xuejiaming
  */
 public interface OrderSelector {
-
+    void setAsc(boolean asc);
     OrderSelector column(TableAvailable table, String property);
 
     OrderSelector columnFunc(TableAvailable table,ColumnPropertyFunction columnPropertyFunction);
-    OrderSelector columnConst(TableAvailable table,String columnConst);
-
-    OrderSelector columnIgnore(TableAvailable table,String property);
-
-    OrderSelector columnAll(TableAvailable table);
+    OrderSelector columnConst(String columnConst);
 }

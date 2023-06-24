@@ -1,5 +1,6 @@
 package com.easy.query.test;
 
+import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.Topic;
 import org.junit.Assert;
@@ -8,6 +9,8 @@ import org.junit.Test;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
+
+import static com.easy.query.test.entity.base.TopicProxy.TOPIC_PROXY;
 
 /**
  * create time 2023/6/8 21:38
@@ -438,5 +441,24 @@ public class QueryTest3 extends BaseTest {
                     .select("count(1)").toSQL();
             Assert.assertEquals("SELECT count(1) FROM (SELECT DISTINCT t.`id` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` LEFT JOIN `t_blog` t2 ON t2.`deleted` = ? AND t.`id` = t2.`id` RIGHT JOIN `t_blog` t3 ON t3.`deleted` = ? AND t.`id` = t3.`id` WHERE t.`id` IN (?,?,?) GROUP BY t.`id` ORDER BY t.`stars` ASC) t4", sql);
         }
+    }
+
+    @Test
+    public void testProxy1() {
+
+        List<Topic> list1 = easyProxyQuery
+                .queryable(TOPIC_PROXY)
+                .where((filter, t) -> filter.eq(t.id, "123").like(t.title, "xxx"))
+                .where((filter, t) -> filter.eq(t.id, "123").like(t.title, "xxx"))
+                .select((selector, t) -> selector.columns(t.id, t.title))
+                .toList();
+
+
+        EasyPageResult<Topic> topicPageResult = easyProxyQuery
+                .queryable(TOPIC_PROXY)
+                .where((filter, o) -> filter.isNotNull(o.id))
+                .toPageResult(3, 10);
+        List<Topic> data = topicPageResult.getData();
+        Assert.assertEquals(10, data.size());
     }
 }

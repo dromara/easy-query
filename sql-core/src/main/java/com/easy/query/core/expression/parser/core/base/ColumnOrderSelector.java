@@ -19,10 +19,6 @@ public interface ColumnOrderSelector<T1> {
     ColumnOrderSelector<T1> columnFunc(ColumnPropertyFunction columnPropertyFunction);
     ColumnOrderSelector<T1> columnConst(String columnConst);
 
-    ColumnOrderSelector<T1> columnIgnore(String property);
-
-    ColumnOrderSelector<T1> columnAll();
-
     default <T2> ColumnOrderSelector<T2> then(ColumnOrderSelector<T2> sub) {
         return sub;
     }

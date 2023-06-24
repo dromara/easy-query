@@ -35,8 +35,8 @@ public class GroupSelectorImpl implements GroupSelector {
     }
 
     @Override
-    public GroupSelector columnConst(TableAvailable table,String columnConst) {
-        GroupByColumnSegment groupByColumnSegment = sqlSegmentFactory.createGroupByConstSegment(table, entityQueryExpressionBuilder.getRuntimeContext(),columnConst);
+    public GroupSelector columnConst(String columnConst) {
+        GroupByColumnSegment groupByColumnSegment = sqlSegmentFactory.createGroupByConstSegment(null, entityQueryExpressionBuilder.getRuntimeContext(),columnConst);
         sqlSegmentBuilder.append(groupByColumnSegment);
         return this;
     }

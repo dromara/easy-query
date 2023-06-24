@@ -3,12 +3,11 @@ package com.easy.query.api.proxy.sql;
 import com.easy.query.api.proxy.core.ProxyQuery;
 import com.easy.query.api.proxy.core.base.SQLColumn;
 import com.easy.query.api.proxy.select.ProxyQueryable;
+import com.easy.query.api.proxy.sql.impl.ProxyFilterImpl;
 import com.easy.query.core.enums.SQLLikeEnum;
 import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.enums.SQLRangeEnum;
 import com.easy.query.core.expression.builder.Filter;
-import com.easy.query.core.expression.func.ColumnPropertyFunction;
-import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 
 import java.util.Collection;
@@ -339,7 +338,7 @@ public interface ProxyFilter {
      * column is not null
      */
     default ProxyFilter isNotNull(SQLColumn<?> column) {
-        return isNotNull(true,column);
+        return isNotNull(true, column);
     }
 
     /**
@@ -350,8 +349,8 @@ public interface ProxyFilter {
      * @return children
      */
     default ProxyFilter isNotNull(boolean condition, SQLColumn<?> column) {
-        if(condition){
-            getFilter().isNotNull(column.getTable(),column.value());
+        if (condition) {
+            getFilter().isNotNull(column.getTable(), column.value());
         }
         return this;
     }
@@ -361,7 +360,7 @@ public interface ProxyFilter {
      * 集合为空返回False
      */
     default ProxyFilter in(SQLColumn<?> column, Collection<?> collection) {
-        return in(true,column,collection);
+        return in(true, column, collection);
     }
 
     /**
@@ -369,30 +368,30 @@ public interface ProxyFilter {
      * 集合为空返回False
      */
     default ProxyFilter in(boolean condition, SQLColumn<?> column, Collection<?> collection) {
-        if(condition){
-            getFilter().in(column.getTable(), column.value(),collection);
+        if (condition) {
+            getFilter().in(column.getTable(), column.value(), collection);
         }
         return this;
     }
 
     default <TProperty> ProxyFilter in(SQLColumn<?> column, TProperty[] collection) {
-        return in(true,column,collection);
+        return in(true, column, collection);
     }
 
     default <TProperty> ProxyFilter in(boolean condition, SQLColumn<?> column, TProperty[] collection) {
-        if(condition){
-            getFilter().in(column.getTable(),column.value(),collection);
+        if (condition) {
+            getFilter().in(column.getTable(), column.value(), collection);
         }
         return this;
     }
 
-    default <TProxy extends ProxyQuery<TProxy,TProperty>,TProperty> ProxyFilter in(SQLColumn<TProperty> column, ProxyQueryable<TProxy,TProperty> subQueryable) {
-        return in(true,column,subQueryable);
+    default <TProxy extends ProxyQuery<TProxy, TProperty>, TProperty> ProxyFilter in(SQLColumn<TProperty> column, ProxyQueryable<TProxy, TProperty> subQueryable) {
+        return in(true, column, subQueryable);
     }
 
-    default  <TProxy extends ProxyQuery<TProxy,TProperty>,TProperty> ProxyFilter in(boolean condition, SQLColumn<TProperty> column, ProxyQueryable<TProxy,TProperty> subQueryable) {
-        if(condition){
-            getFilter().in(column.getTable(),column.value(),subQueryable);
+    default <TProxy extends ProxyQuery<TProxy, TProperty>, TProperty> ProxyFilter in(boolean condition, SQLColumn<TProperty> column, ProxyQueryable<TProxy, TProperty> subQueryable) {
+        if (condition) {
+            getFilter().in(column.getTable(), column.value(), subQueryable);
         }
         return this;
     }
@@ -402,7 +401,7 @@ public interface ProxyFilter {
      * 集合为空返回True
      */
     default ProxyFilter notIn(SQLColumn<?> column, Collection<?> collection) {
-        return notIn(true,column,collection);
+        return notIn(true, column, collection);
     }
 
     /**
@@ -410,48 +409,53 @@ public interface ProxyFilter {
      * 集合为空返回True
      */
     default ProxyFilter notIn(boolean condition, SQLColumn<?> column, Collection<?> collection) {
-        if(condition){
-            getFilter().notIn(column.getTable(), column.value(),collection);
+        if (condition) {
+            getFilter().notIn(column.getTable(), column.value(), collection);
         }
         return this;
     }
 
     default <TProperty> ProxyFilter notIn(SQLColumn<?> column, TProperty[] collection) {
-        return notIn(true,column,collection);
+        return notIn(true, column, collection);
     }
 
     default <TProperty> ProxyFilter notIn(boolean condition, SQLColumn<?> column, TProperty[] collection) {
-        getWherePredicate().notIn(condition, EasyLambdaUtil.getPropertyName(column), collection);
+        if(condition){
+            getFilter().notIn(column.getTable(),column.value(),collection);
+        }
         return this;
     }
 
-    default <TProperty> ProxyFilter notIn(SQLColumn<?> column, Queryable<TProperty> subQueryable) {
-        getWherePredicate().notIn(EasyLambdaUtil.getPropertyName(column), subQueryable);
+    default <TPropertyProxy extends ProxyQuery<TPropertyProxy,TProperty>,TProperty> ProxyFilter notIn(SQLColumn<?> column,ProxyQueryable<TPropertyProxy,TProperty> subQueryable) {
+        return notIn(true,column,subQueryable);
+    }
+
+    default <TPropertyProxy extends ProxyQuery<TPropertyProxy,TProperty>,TProperty> ProxyFilter notIn(boolean condition, SQLColumn<?> column, ProxyQueryable<TPropertyProxy,TProperty> subQueryable) {
+        if(condition){
+            getFilter().notIn(column.getTable(),column.value(),subQueryable);
+        }
         return this;
     }
 
-    default <TProperty> ProxyFilter notIn(boolean condition, SQLColumn<?> column, Queryable<TProperty> subQueryable) {
-        getWherePredicate().notIn(condition, EasyLambdaUtil.getPropertyName(column), subQueryable);
+    default <T1Proxy extends ProxyQuery<T1Proxy,T1>,T1,T2Proxy extends ProxyQuery<T2Proxy,T2>,T2> ProxyFilter exists(T1Proxy tableProxy,ProxyQueryable<T2Proxy,T2> subQueryable) {
+        return exists(true,tableProxy,subQueryable);
+    }
+
+    default <T1Proxy extends ProxyQuery<T1Proxy,T1>,T1,T2Proxy extends ProxyQuery<T2Proxy,T2>,T2> ProxyFilter exists(boolean condition,T1Proxy tableProxy, ProxyQueryable<T2Proxy,T2> subQueryable) {
+        if(condition){
+            getFilter().exists(tableProxy.getTable(),subQueryable);
+        }
         return this;
     }
 
-    default <T2> ProxyFilter exists(Queryable<T2> subQueryable) {
-        getWherePredicate().exists(subQueryable);
-        return this;
+    default <T1Proxy extends ProxyQuery<T1Proxy,T1>,T1,T2Proxy extends ProxyQuery<T2Proxy,T2>,T2> ProxyFilter notExists(T1Proxy tableProxy,ProxyQueryable<T2Proxy,T2> subQueryable) {
+        return notExists(true,tableProxy,subQueryable);
     }
 
-    default <T2> ProxyFilter exists(boolean condition, Queryable<T2> subQueryable) {
-        getWherePredicate().exists(condition, subQueryable);
-        return this;
-    }
-
-    default <T2> ProxyFilter notExists(Queryable<T2> subQueryable) {
-        getWherePredicate().notExists(subQueryable);
-        return this;
-    }
-
-    default <T2> ProxyFilter notExists(boolean condition, Queryable<T2> subQueryable) {
-        getWherePredicate().notExists(condition, subQueryable);
+    default <T1Proxy extends ProxyQuery<T1Proxy,T1>,T1,T2Proxy extends ProxyQuery<T2Proxy,T2>,T2> ProxyFilter notExists(boolean condition,T1Proxy tableProxy, ProxyQueryable<T2Proxy,T2> subQueryable) {
+        if(condition){
+            getFilter().notExists(tableProxy.getTable(),subQueryable);
+        }
         return this;
     }
 
@@ -619,32 +623,33 @@ public interface ProxyFilter {
      * @return
      */
     default ProxyFilter range(boolean condition, SQLColumn<?> column, boolean conditionLeft, Object valLeft, boolean conditionRight, Object valRight, SQLRangeEnum sqlRange) {
-        getWherePredicate().range(condition, EasyLambdaUtil.getPropertyName(column), conditionLeft, valLeft, conditionRight, valRight, sqlRange);
+        if (condition) {
+            getFilter().range(column.getTable(), column.value(), conditionLeft, valLeft, conditionRight, valRight, sqlRange);
+        }
         return this;
     }
 
 
-    default ProxyFilter columnFunc(ColumnPropertyFunction columnPropertyFunction, SQLPredicateCompare sqlPredicateCompare, Object val) {
+    default ProxyFilter columnFunc(ProxyColumnPropertyFunction columnPropertyFunction, SQLPredicateCompare sqlPredicateCompare, Object val) {
         return columnFunc(true, columnPropertyFunction, sqlPredicateCompare, val);
     }
 
-    default ProxyFilter columnFunc(boolean condition, ColumnPropertyFunction columnPropertyFunction, SQLPredicateCompare sqlPredicateCompare, Object val) {
-        getWherePredicate().columnFunc(condition, columnPropertyFunction, sqlPredicateCompare, val);
+    default ProxyFilter columnFunc(boolean condition, ProxyColumnPropertyFunction columnPropertyFunction, SQLPredicateCompare sqlPredicateCompare, Object val) {
+        if (condition) {
+            getFilter().columnFunc(columnPropertyFunction.getColumn().getTable(), columnPropertyFunction.getColumnPropertyFunction(), sqlPredicateCompare, val);
+        }
         return this;
     }
 
     default <T2Proxy extends ProxyQuery<T2Proxy, T2>, T2> ProxyFilter eq(SQLColumn<?> column1, SQLColumn<?> column2) {
-        return eq(true, sub, column1, column2);
+        return eq(true, column1, column2);
     }
 
-    default <T2> ProxyFilter eq(boolean condition, SQLWherePredicate<T2> sub, SQLColumn<?> column1, Property<T2, ?> column2) {
-        getWherePredicate().eq(condition, sub.getWherePredicate(), EasyLambdaUtil.getPropertyName(column1), EasyLambdaUtil.getPropertyName(column2));
+    default <T2> ProxyFilter eq(boolean condition, SQLColumn<?> column1, SQLColumn<?> column2) {
+        if (condition) {
+            getFilter().eq(column1.getTable(), column1.value(), column2.getTable(), column2.value());
+        }
         return this;
-    }
-
-    default <T2> SQLWherePredicate<T2> then(SQLWherePredicate<T2> sub) {
-        getWherePredicate().then(sub.getWherePredicate());
-        return sub;
     }
 
     default ProxyFilter and() {
@@ -652,22 +657,33 @@ public interface ProxyFilter {
     }
 
     default ProxyFilter and(boolean condition) {
-        getWherePredicate().and(condition);
+        if (condition) {
+            getFilter().and();
+        }
         return this;
     }
 
-    default ProxyFilter and(SQLExpression1<ProxyFilter> sqlWherePredicateSQLExpression) {
-        return and(true, sqlWherePredicateSQLExpression);
+    default ProxyFilter and(SQLExpression1<ProxyFilter> proxyFilterExpression) {
+        return and(true, proxyFilterExpression);
     }
 
-    ProxyFilter and(boolean condition, SQLExpression1<ProxyFilter> sqlWherePredicateSQLExpression);
+    default ProxyFilter and(boolean condition, SQLExpression1<ProxyFilter> proxyFilterExpression) {
+        if (condition) {
+            getFilter().and(filter -> {
+                proxyFilterExpression.apply(new ProxyFilterImpl(filter));
+            });
+        }
+        return this;
+    }
 
     default ProxyFilter or() {
         return or(true);
     }
 
     default ProxyFilter or(boolean condition) {
-        getWherePredicate().or(condition);
+        if (condition) {
+            getFilter().or();
+        }
         return this;
     }
 
@@ -675,5 +691,12 @@ public interface ProxyFilter {
         return or(true, sqlWherePredicateSQLExpression);
     }
 
-    ProxyFilter or(boolean condition, SQLExpression1<ProxyFilter> sqlWherePredicateSQLExpression);
+    default ProxyFilter or(boolean condition, SQLExpression1<ProxyFilter> proxyFilterExpression) {
+        if (condition) {
+            getFilter().or(filter -> {
+                proxyFilterExpression.apply(new ProxyFilterImpl(filter));
+            });
+        }
+        return this;
+    }
 }

@@ -1,9 +1,11 @@
 package com.easy.query.core.expression.builder;
 
+import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.func.DefaultColumnPropertyFunction;
+import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 
 /**
@@ -17,7 +19,7 @@ public interface AsSelector {
 
     AsSelector column(TableAvailable table, String property);
 
-    AsSelector columnConstAs(TableAvailable table,String columnConst, String alias);
+    AsSelector columnConstAs(String columnConst, String alias);
 
     AsSelector columnIgnore(TableAvailable table, String property);
 
@@ -30,7 +32,7 @@ public interface AsSelector {
 
     AsSelector columnAs(TableAvailable table, String property, String propertyAlias);
 
-//    <TSubQuery> AsSelector columnSubQueryAs(Function<WherePredicate<T1>, Query<TSubQuery>> subQueryableFunc, String propertyAlias);
+    <TSubQuery> AsSelector columnSubQueryAs(SQLFuncExpression<Query<TSubQuery>> subQueryableFunc, String propertyAlias);
 
     default AsSelector columnCount(TableAvailable table, String property) {
         return columnCountAs(table,property, null);

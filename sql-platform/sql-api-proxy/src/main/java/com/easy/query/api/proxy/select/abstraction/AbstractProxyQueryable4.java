@@ -31,7 +31,7 @@ import java.util.function.Function;
  *
  * @author xuejiaming
  */
-public abstract   class AbstractProxyQueryable4<T1Proxy extends ProxyQuery<T1Proxy, T1>, T1, T2Proxy extends ProxyQuery<T2Proxy, T2>, T2, T3Proxy extends ProxyQuery<T3Proxy, T3>, T3, T4Proxy extends ProxyQuery<T4Proxy, T4>, T4>
+public abstract class AbstractProxyQueryable4<T1Proxy extends ProxyQuery<T1Proxy, T1>, T1, T2Proxy extends ProxyQuery<T2Proxy, T2>, T2, T3Proxy extends ProxyQuery<T3Proxy, T3>, T3, T4Proxy extends ProxyQuery<T4Proxy, T4>, T4>
         extends AbstractProxyQueryable<T1Proxy, T1>
         implements ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> {
 
@@ -39,15 +39,16 @@ public abstract   class AbstractProxyQueryable4<T1Proxy extends ProxyQuery<T1Pro
     protected final T2Proxy t2Proxy;
     protected final T3Proxy t3Proxy;
     protected final T4Proxy t4Proxy;
-    protected final ClientQueryable4<T1, T2,T3,T4> entityQueryable4;
+    protected final ClientQueryable4<T1, T2, T3, T4> entityQueryable4;
 
-    public AbstractProxyQueryable4(T1Proxy t1Proxy, T2Proxy t2Proxy, T3Proxy t3Proxy,T4Proxy t4Proxy, ClientQueryable4<T1, T2,T3,T4> entityQueryable) {
+    public AbstractProxyQueryable4(T1Proxy t1Proxy, T2Proxy t2Proxy, T3Proxy t3Proxy, T4Proxy t4Proxy, ClientQueryable4<T1, T2, T3, T4> entityQueryable) {
         super(t1Proxy, entityQueryable);
         this.t2Proxy = t2Proxy.create(entityQueryable.getSQLEntityExpressionBuilder().getTable(1).getEntityTable());
         this.t3Proxy = t3Proxy.create(entityQueryable.getSQLEntityExpressionBuilder().getTable(2).getEntityTable());
         this.t4Proxy = t4Proxy.create(entityQueryable.getSQLEntityExpressionBuilder().getTable(3).getEntityTable());
         this.entityQueryable4 = entityQueryable;
     }
+
     @Override
     public T2Proxy get2Proxy() {
         return t2Proxy;
@@ -57,51 +58,52 @@ public abstract   class AbstractProxyQueryable4<T1Proxy extends ProxyQuery<T1Pro
     public T3Proxy get3Proxy() {
         return t3Proxy;
     }
+
     @Override
     public T4Proxy get4Proxy() {
         return t4Proxy;
     }
 
     @Override
-    public ClientQueryable4<T1, T2, T3,T4> getClientQueryable4() {
+    public ClientQueryable4<T1, T2, T3, T4> getClientQueryable4() {
         return entityQueryable4;
     }
 
     @Override
-    public ProxyQueryable4<T1Proxy, T1, T2Proxy, T2,T3Proxy,T3,T4Proxy,T4>where(boolean condition, SQLExpression2<T1Proxy, ProxyFilter> whereExpression) {
+    public ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> where(boolean condition, SQLExpression2<ProxyFilter, T1Proxy> whereExpression) {
         super.where(condition, whereExpression);
         return this;
     }
 
     @Override
-    public ProxyQueryable4<T1Proxy, T1, T2Proxy, T2,T3Proxy,T3,T4Proxy,T4>whereById(boolean condition, Object id) {
+    public ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> whereById(boolean condition, Object id) {
         super.whereById(condition, id);
         return this;
     }
 
     @Override
-    public <TProperty> ProxyQueryable4<T1Proxy, T1, T2Proxy, T2,T3Proxy,T3,T4Proxy,T4>whereByIds(boolean condition, Collection<TProperty> ids) {
+    public <TProperty> ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> whereByIds(boolean condition, Collection<TProperty> ids) {
         super.whereByIds(condition, ids);
         return this;
     }
 
     @Override
-    public ProxyQueryable4<T1Proxy, T1, T2Proxy, T2,T3Proxy,T3,T4Proxy,T4>whereObject(boolean condition, Object object) {
+    public ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> whereObject(boolean condition, Object object) {
         super.whereObject(condition, object);
         return this;
     }
 
     @Override
-    public <TRProxy extends ProxyQuery<TRProxy, TR>, TR> ProxyQueryable<TRProxy, TR> select(TRProxy trProxy, SQLExpression5<T1Proxy, T2Proxy,T3Proxy,T4Proxy, ProxyAsSelector<TRProxy, TR>> selectExpression) {
+    public <TRProxy extends ProxyQuery<TRProxy, TR>, TR> ProxyQueryable<TRProxy, TR> select(TRProxy trProxy, SQLExpression5<ProxyAsSelector<TRProxy, TR>, T1Proxy, T2Proxy, T3Proxy, T4Proxy> selectExpression) {
         ClientQueryable<TR> select = entityQueryable4.select(trProxy.getEntityClass(), (selector1, selector2, selector3, selector4) -> {
-            selectExpression.apply(get1Proxy(), get2Proxy(),get3Proxy(),get4Proxy(), new ProxyAsSelectorImpl<>(selector4.getAsSelector()));
+            selectExpression.apply(new ProxyAsSelectorImpl<>(trProxy, selector4.getAsSelector()), get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy());
         });
         return new EasyProxyQueryable<>(trProxy, select);
     }
 
     @Override
-    public <TMember extends Number> BigDecimal sumBigDecimalOrDefault(SQLFuncExpression4<T1Proxy, T2Proxy, T3Proxy,  T4Proxy, SQLColumn<TMember>> columnSelectorExpression, BigDecimal def) {
-        SQLColumn<TMember> memberSQLColumn = columnSelectorExpression.apply(get1Proxy(), get2Proxy(), get3Proxy(),get4Proxy());
+    public <TMember extends Number> BigDecimal sumBigDecimalOrDefault(SQLFuncExpression4<T1Proxy, T2Proxy, T3Proxy, T4Proxy, SQLColumn<TMember>> columnSelectorExpression, BigDecimal def) {
+        SQLColumn<TMember> memberSQLColumn = columnSelectorExpression.apply(get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy());
         ColumnFunction sumFunction = runtimeContext.getColumnFunctionFactory().createSumFunction(false);
         List<TMember> result = entityQueryable4.selectAggregateList(memberSQLColumn.getTable(), sumFunction, memberSQLColumn.value(), null);
         TMember resultMember = EasyCollectionUtil.firstOrNull(result);
@@ -112,165 +114,165 @@ public abstract   class AbstractProxyQueryable4<T1Proxy extends ProxyQuery<T1Pro
     }
 
     @Override
-    public <TMember extends Number> TMember sumOrDefault(SQLFuncExpression4<T1Proxy, T2Proxy, T3Proxy,  T4Proxy, SQLColumn<TMember>> columnSelectorExpression, TMember def) {
-        SQLColumn<TMember> memberSQLColumn = columnSelectorExpression.apply(get1Proxy(), get2Proxy(), get3Proxy(),get4Proxy());
+    public <TMember extends Number> TMember sumOrDefault(SQLFuncExpression4<T1Proxy, T2Proxy, T3Proxy, T4Proxy, SQLColumn<TMember>> columnSelectorExpression, TMember def) {
+        SQLColumn<TMember> memberSQLColumn = columnSelectorExpression.apply(get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy());
         ColumnFunction sumFunction = runtimeContext.getColumnFunctionFactory().createSumFunction(false);
         List<TMember> result = entityQueryable4.selectAggregateList(memberSQLColumn.getTable(), sumFunction, memberSQLColumn.value(), null);
         return EasyCollectionUtil.firstOrDefault(result, def);
     }
 
     @Override
-    public <TMember> TMember maxOrDefault(SQLFuncExpression4<T1Proxy, T2Proxy, T3Proxy,  T4Proxy, SQLColumn<TMember>> columnSelectorExpression, TMember def) {
-        SQLColumn<TMember> memberSQLColumn = columnSelectorExpression.apply(get1Proxy(), get2Proxy(), get3Proxy(),get4Proxy());
+    public <TMember> TMember maxOrDefault(SQLFuncExpression4<T1Proxy, T2Proxy, T3Proxy, T4Proxy, SQLColumn<TMember>> columnSelectorExpression, TMember def) {
+        SQLColumn<TMember> memberSQLColumn = columnSelectorExpression.apply(get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy());
         ColumnFunction maxFunction = runtimeContext.getColumnFunctionFactory().createMaxFunction();
         List<TMember> result = entityQueryable4.selectAggregateList(memberSQLColumn.getTable(), maxFunction, memberSQLColumn.value(), null);
         return EasyCollectionUtil.firstOrDefault(result, def);
     }
 
     @Override
-    public <TMember> TMember minOrDefault(SQLFuncExpression4<T1Proxy, T2Proxy, T3Proxy,  T4Proxy, SQLColumn<TMember>> columnSelectorExpression, TMember def) {
-        SQLColumn<TMember> memberSQLColumn = columnSelectorExpression.apply(get1Proxy(), get2Proxy(), get3Proxy(),get4Proxy());
+    public <TMember> TMember minOrDefault(SQLFuncExpression4<T1Proxy, T2Proxy, T3Proxy, T4Proxy, SQLColumn<TMember>> columnSelectorExpression, TMember def) {
+        SQLColumn<TMember> memberSQLColumn = columnSelectorExpression.apply(get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy());
         ColumnFunction minFunction = runtimeContext.getColumnFunctionFactory().createMinFunction();
         List<TMember> result = entityQueryable4.selectAggregateList(memberSQLColumn.getTable(), minFunction, memberSQLColumn.value(), null);
         return EasyCollectionUtil.firstOrDefault(result, def);
     }
 
     @Override
-    public <TMember extends Number, TResult extends Number> TResult avgOrDefault(SQLFuncExpression4<T1Proxy, T2Proxy, T3Proxy,  T4Proxy, SQLColumn<TMember>> columnSelectorExpression, TResult def, Class<TResult> resultClass) {
-        SQLColumn<TMember> memberSQLColumn = columnSelectorExpression.apply(get1Proxy(), get2Proxy(), get3Proxy(),get4Proxy());
+    public <TMember extends Number, TResult extends Number> TResult avgOrDefault(SQLFuncExpression4<T1Proxy, T2Proxy, T3Proxy, T4Proxy, SQLColumn<TMember>> columnSelectorExpression, TResult def, Class<TResult> resultClass) {
+        SQLColumn<TMember> memberSQLColumn = columnSelectorExpression.apply(get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy());
         ColumnFunction avgFunction = runtimeContext.getColumnFunctionFactory().createAvgFunction(false);
         List<TResult> result = entityQueryable4.selectAggregateList(memberSQLColumn.getTable(), avgFunction, memberSQLColumn.value(), resultClass);
         return EasyCollectionUtil.firstOrDefault(result, def);
     }
 
     @Override
-    public ProxyQueryable4<T1Proxy, T1, T2Proxy, T2,T3Proxy,T3,T4Proxy,T4>orderByAsc(boolean condition, SQLExpression2<T1Proxy, ProxyOrderSelector> selectExpression) {
+    public ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> orderByAsc(boolean condition, SQLExpression2<ProxyOrderSelector, T1Proxy> selectExpression) {
         super.orderByAsc(condition, selectExpression);
         return this;
     }
 
     @Override
-    public ProxyQueryable4<T1Proxy, T1, T2Proxy, T2,T3Proxy,T3,T4Proxy,T4>orderByDesc(boolean condition, SQLExpression2<T1Proxy, ProxyOrderSelector> selectExpression) {
+    public ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> orderByDesc(boolean condition, SQLExpression2<ProxyOrderSelector, T1Proxy> selectExpression) {
         super.orderByDesc(condition, selectExpression);
         return this;
     }
 
     @Override
-    public ProxyQueryable4<T1Proxy, T1, T2Proxy, T2,T3Proxy,T3,T4Proxy,T4>groupBy(boolean condition, SQLExpression2<T1Proxy, ProxyGroupSelector> selectExpression) {
+    public ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> groupBy(boolean condition, SQLExpression2<ProxyGroupSelector, T1Proxy> selectExpression) {
         super.groupBy(condition, selectExpression);
         return this;
     }
 
     @Override
-    public ProxyQueryable4<T1Proxy, T1, T2Proxy, T2,T3Proxy,T3,T4Proxy,T4>having(boolean condition, SQLExpression2<T1Proxy, ProxyAggregateFilter> aggregateFilterSQLExpression) {
+    public ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> having(boolean condition, SQLExpression2<ProxyAggregateFilter, T1Proxy> aggregateFilterSQLExpression) {
         super.having(condition, aggregateFilterSQLExpression);
         return this;
     }
 
     @Override
-    public ProxyQueryable4<T1Proxy, T1, T2Proxy, T2,T3Proxy,T3,T4Proxy,T4>limit(boolean condition, long offset, long rows) {
+    public ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> limit(boolean condition, long offset, long rows) {
         super.limit(condition, offset, rows);
         return this;
     }
 
     @Override
-    public ProxyQueryable4<T1Proxy, T1, T2Proxy, T2,T3Proxy,T3,T4Proxy,T4>distinct(boolean condition) {
+    public ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> distinct(boolean condition) {
         super.distinct(condition);
         return this;
     }
 
     @Override
-    public ProxyQueryable4<T1Proxy, T1, T2Proxy, T2,T3Proxy,T3,T4Proxy,T4>disableLogicDelete() {
+    public ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> disableLogicDelete() {
         super.disableLogicDelete();
         return this;
     }
 
     @Override
-    public ProxyQueryable4<T1Proxy, T1, T2Proxy, T2,T3Proxy,T3,T4Proxy,T4>enableLogicDelete() {
+    public ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> enableLogicDelete() {
         super.enableLogicDelete();
         return this;
     }
 
     @Override
-    public ProxyQueryable4<T1Proxy, T1, T2Proxy, T2,T3Proxy,T3,T4Proxy,T4>useLogicDelete(boolean enable) {
+    public ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> useLogicDelete(boolean enable) {
         super.useLogicDelete(enable);
         return this;
     }
 
     @Override
-    public ProxyQueryable4<T1Proxy, T1, T2Proxy, T2,T3Proxy,T3,T4Proxy,T4>noInterceptor() {
+    public ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> noInterceptor() {
         super.noInterceptor();
         return this;
     }
 
     @Override
-    public ProxyQueryable4<T1Proxy, T1, T2Proxy, T2,T3Proxy,T3,T4Proxy,T4>useInterceptor(String name) {
+    public ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> useInterceptor(String name) {
         super.useInterceptor(name);
         return this;
     }
 
     @Override
-    public ProxyQueryable4<T1Proxy, T1, T2Proxy, T2,T3Proxy,T3,T4Proxy,T4>noInterceptor(String name) {
+    public ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> noInterceptor(String name) {
         super.noInterceptor(name);
         return this;
     }
 
     @Override
-    public ProxyQueryable4<T1Proxy, T1, T2Proxy, T2,T3Proxy,T3,T4Proxy,T4>useInterceptor() {
+    public ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> useInterceptor() {
         super.useInterceptor();
         return this;
     }
 
     @Override
-    public ProxyQueryable4<T1Proxy, T1, T2Proxy, T2,T3Proxy,T3,T4Proxy,T4>asTracking() {
+    public ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> asTracking() {
         super.asTracking();
         return this;
     }
 
     @Override
-    public ProxyQueryable4<T1Proxy, T1, T2Proxy, T2,T3Proxy,T3,T4Proxy,T4>asNoTracking() {
+    public ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> asNoTracking() {
         super.asNoTracking();
         return this;
     }
 
     @Override
-    public ProxyQueryable4<T1Proxy, T1, T2Proxy, T2,T3Proxy,T3,T4Proxy,T4>queryLargeColumn(boolean queryLarge) {
+    public ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> queryLargeColumn(boolean queryLarge) {
         super.queryLargeColumn(queryLarge);
         return this;
     }
 
     @Override
-    public ProxyQueryable4<T1Proxy, T1, T2Proxy, T2,T3Proxy,T3,T4Proxy,T4>useShardingConfigure(int maxShardingQueryLimit, ConnectionModeEnum connectionMode) {
+    public ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> useShardingConfigure(int maxShardingQueryLimit, ConnectionModeEnum connectionMode) {
         super.useShardingConfigure(maxShardingQueryLimit, connectionMode);
         return this;
     }
 
     @Override
-    public ProxyQueryable4<T1Proxy, T1, T2Proxy, T2,T3Proxy,T3,T4Proxy,T4>useMaxShardingQueryLimit(int maxShardingQueryLimit) {
+    public ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> useMaxShardingQueryLimit(int maxShardingQueryLimit) {
         super.useMaxShardingQueryLimit(maxShardingQueryLimit);
         return this;
     }
 
     @Override
-    public ProxyQueryable4<T1Proxy, T1, T2Proxy, T2,T3Proxy,T3,T4Proxy,T4>useConnectionMode(ConnectionModeEnum connectionMode) {
+    public ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> useConnectionMode(ConnectionModeEnum connectionMode) {
         super.useConnectionMode(connectionMode);
         return this;
     }
 
     @Override
-    public ProxyQueryable4<T1Proxy, T1, T2Proxy, T2,T3Proxy,T3,T4Proxy,T4> asTable(Function<String, String> tableNameAs) {
+    public ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> asTable(Function<String, String> tableNameAs) {
         super.asTable(tableNameAs);
         return this;
     }
 
     @Override
-    public ProxyQueryable4<T1Proxy, T1, T2Proxy, T2,T3Proxy,T3,T4Proxy,T4>asSchema(Function<String, String> schemaAs) {
+    public ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> asSchema(Function<String, String> schemaAs) {
         super.asSchema(schemaAs);
         return this;
     }
 
     @Override
-    public ProxyQueryable4<T1Proxy, T1, T2Proxy, T2,T3Proxy,T3,T4Proxy,T4>asAlias(String alias) {
+    public ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> asAlias(String alias) {
         super.asAlias(alias);
         return this;
     }

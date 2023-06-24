@@ -1,6 +1,5 @@
 package com.easy.query.api.proxy.sql;
 
-import com.easy.query.api.proxy.core.ProxyQuery;
 import com.easy.query.api.proxy.core.base.SQLColumn;
 import com.easy.query.core.expression.builder.OrderSelector;
 
@@ -14,14 +13,28 @@ public interface ProxyOrderSelector {
     OrderSelector getOrderSelector();
 
 
-    OrderSelector columns(SQLColumn<?>... column);
-    OrderSelector column(SQLColumn<?> column);
+    default ProxyOrderSelector columns(SQLColumn<?>... columns) {
+        if (columns != null) {
+            for (SQLColumn<?> sqlColumn : columns) {
+                column(sqlColumn);
+            }
+        }
+        return this;
+    }
 
-    OrderSelector columnFunc(ProxyColumnPropertyFunction proxyColumnPropertyFunction);
 
-    <TProxy extends ProxyQuery<TProxy, TEntity>, TEntity> OrderSelector columnConst(TProxy proxy, String columnConst);
+   default ProxyOrderSelector column(SQLColumn<?> column){
+       getOrderSelector().column(column.getTable(), column.value());
+       return this;
+   }
 
-    OrderSelector columnIgnore(SQLColumn<?> column);
+   default ProxyOrderSelector columnConst(String columnConst){
+       getOrderSelector().columnConst(columnConst);
+       return this;
+   }
 
-    <TProxy extends ProxyQuery<TProxy, TEntity>, TEntity> OrderSelector columnAll(TProxy proxy);
+   default ProxyOrderSelector columnFunc(ProxyColumnPropertyFunction proxyColumnPropertyFunction){
+       getOrderSelector().columnFunc(proxyColumnPropertyFunction.getColumn().getTable(), proxyColumnPropertyFunction.getColumnPropertyFunction());
+       return this;
+   }
 }

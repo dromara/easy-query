@@ -1,8 +1,5 @@
 package com.easy.query.api.proxy.sql.impl;
 
-import com.easy.query.api.proxy.core.ProxyQuery;
-import com.easy.query.api.proxy.core.base.SQLColumn;
-import com.easy.query.api.proxy.sql.ProxyColumnPropertyFunction;
 import com.easy.query.api.proxy.sql.ProxyGroupSelector;
 import com.easy.query.core.expression.builder.GroupSelector;
 

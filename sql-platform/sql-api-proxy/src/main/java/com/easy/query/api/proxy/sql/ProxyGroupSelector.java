@@ -1,6 +1,5 @@
 package com.easy.query.api.proxy.sql;
 
-import com.easy.query.api.proxy.core.ProxyQuery;
 import com.easy.query.api.proxy.core.base.SQLColumn;
 import com.easy.query.core.expression.builder.GroupSelector;
 
@@ -12,9 +11,28 @@ import com.easy.query.core.expression.builder.GroupSelector;
  */
 public interface ProxyGroupSelector {
     GroupSelector getGroupSelector();
-    ProxyGroupSelector columns(SQLColumn<?>... column);
-    ProxyGroupSelector column(SQLColumn<?> column);
-   <TProxy extends ProxyQuery<TProxy,TEntity>,TEntity> ProxyGroupSelector columnConst(TProxy proxy, String columnConst);
 
-    ProxyGroupSelector columnFunc(ProxyColumnPropertyFunction proxyColumnPropertyFunction);
+    default ProxyGroupSelector columns(SQLColumn<?>... columns) {
+        if (columns != null) {
+            for (SQLColumn<?> sqlColumn : columns) {
+                column(sqlColumn);
+            }
+        }
+        return this;
+    }
+
+    default ProxyGroupSelector column(SQLColumn<?> column) {
+        getGroupSelector().column(column.getTable(), column.value());
+        return this;
+    }
+
+    default ProxyGroupSelector columnConst(String columnConst) {
+        getGroupSelector().columnConst(columnConst);
+        return this;
+    }
+
+    default ProxyGroupSelector columnFunc(ProxyColumnPropertyFunction proxyColumnPropertyFunction) {
+        getGroupSelector().columnFunc(proxyColumnPropertyFunction.getColumn().getTable(), proxyColumnPropertyFunction.getColumnPropertyFunction());
+        return this;
+    }
 }

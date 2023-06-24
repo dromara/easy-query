@@ -1,5 +1,7 @@
 package com.easy.query.test;
 
+import com.easy.query.api.proxy.client.DefaultEasyProxyQuery;
+import com.easy.query.api.proxy.client.EasyProxyQuery;
 import com.easy.query.api4j.client.DefaultEasyQuery;
 import com.easy.query.api4j.client.EasyQuery;
 import com.easy.query.core.api.client.EasyQueryClient;
@@ -65,6 +67,7 @@ public abstract class BaseTest {
     public static EasyQueryShardingOption easyQueryShardingOption;
     public static EasyQueryClient easyQueryClient;
     public static EasyQuery easyQuery;
+    public static EasyProxyQuery easyProxyQuery;
 
     static {
         LogFactory.useStdOutLogging();
@@ -135,6 +138,7 @@ public abstract class BaseTest {
 //                .replaceService(BeanValueCaller.class, ReflectBeanValueCaller.class)
                 .build();
         easyQuery = new DefaultEasyQuery(easyQueryClient);
+        easyProxyQuery=new DefaultEasyProxyQuery(easyQueryClient);
         QueryRuntimeContext runtimeContext = easyQuery.getRuntimeContext();
         QueryConfiguration configuration = runtimeContext.getQueryConfiguration();
         configuration.applyEncryptionStrategy(new DefaultAesEasyEncryptionStrategy());

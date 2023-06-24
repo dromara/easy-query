@@ -34,17 +34,17 @@ public interface ProxyQueryable2<T1Proxy extends ProxyQuery<T1Proxy, T1>, T1, T2
 
     ClientQueryable2<T1, T2> getClientQueryable2();
 
-    <T3Proxy extends ProxyQuery<T3Proxy, T3>, T3> ProxyQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> leftJoin(T3Proxy t3Proxy, SQLExpression4<T1Proxy, T2Proxy, T3Proxy, ProxyFilter> on);
+    <T3Proxy extends ProxyQuery<T3Proxy, T3>, T3> ProxyQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> leftJoin(T3Proxy joinProxy, SQLExpression4<ProxyFilter, T1Proxy, T2Proxy, T3Proxy> on);
 
-    <T3Proxy extends ProxyQuery<T3Proxy, T3>, T3> ProxyQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> leftJoin(ProxyQueryable<T3Proxy, T3> joinQueryable, SQLExpression4<T1Proxy, T2Proxy, T3Proxy, ProxyFilter> on);
+    <T3Proxy extends ProxyQuery<T3Proxy, T3>, T3> ProxyQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> leftJoin(ProxyQueryable<T3Proxy, T3> joinQueryable, SQLExpression4<ProxyFilter, T1Proxy, T2Proxy, T3Proxy> on);
 
-    <T3Proxy extends ProxyQuery<T3Proxy, T3>, T3> ProxyQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> rightJoin(T3Proxy t3Proxy, SQLExpression4<T1Proxy, T2Proxy, T3Proxy, ProxyFilter> on);
+    <T3Proxy extends ProxyQuery<T3Proxy, T3>, T3> ProxyQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> rightJoin(T3Proxy joinProxy, SQLExpression4<ProxyFilter, T1Proxy, T2Proxy, T3Proxy> on);
 
-    <T3Proxy extends ProxyQuery<T3Proxy, T3>, T3> ProxyQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> rightJoin(ProxyQueryable<T3Proxy, T3> joinQueryable, SQLExpression4<T1Proxy, T2Proxy, T3Proxy, ProxyFilter> on);
+    <T3Proxy extends ProxyQuery<T3Proxy, T3>, T3> ProxyQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> rightJoin(ProxyQueryable<T3Proxy, T3> joinQueryable, SQLExpression4<ProxyFilter, T1Proxy, T2Proxy, T3Proxy> on);
 
-    <T3Proxy extends ProxyQuery<T3Proxy, T3>, T3> ProxyQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> innerJoin(T3Proxy t3Proxy, SQLExpression4<T1Proxy, T2Proxy, T3Proxy, ProxyFilter> on);
+    <T3Proxy extends ProxyQuery<T3Proxy, T3>, T3> ProxyQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> innerJoin(T3Proxy joinProxy, SQLExpression4<ProxyFilter, T1Proxy, T2Proxy, T3Proxy> on);
 
-    <T3Proxy extends ProxyQuery<T3Proxy, T3>, T3> ProxyQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> innerJoin(ProxyQueryable<T3Proxy, T3> joinQueryable, SQLExpression4<T1Proxy, T2Proxy, T3Proxy, ProxyFilter> on);
+    <T3Proxy extends ProxyQuery<T3Proxy, T3>, T3> ProxyQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> innerJoin(ProxyQueryable<T3Proxy, T3> joinQueryable, SQLExpression4<ProxyFilter, T1Proxy, T2Proxy, T3Proxy> on);
 
     //region where
     default ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> whereById(Object id) {
@@ -60,21 +60,21 @@ public interface ProxyQueryable2<T1Proxy extends ProxyQuery<T1Proxy, T1>, T1, T2
     ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> whereObject(boolean condition, Object object);
 
     @Override
-    default ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> where(SQLExpression2<T1Proxy, ProxyFilter> whereExpression) {
+    default ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> where(SQLExpression2<ProxyFilter, T1Proxy> whereExpression) {
         return where(true, whereExpression);
     }
 
     @Override
-    ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> where(boolean condition, SQLExpression2<T1Proxy, ProxyFilter> whereExpression);
+    ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> where(boolean condition, SQLExpression2<ProxyFilter, T1Proxy> whereExpression);
 
-    default ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> where(SQLExpression3<T1Proxy, T2Proxy, ProxyFilter> whereExpression) {
-        return where(true,whereExpression);
+    default ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> where(SQLExpression3<ProxyFilter, T1Proxy, T2Proxy> whereExpression) {
+        return where(true, whereExpression);
     }
 
-    default ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> where(boolean condition, SQLExpression3<T1Proxy, T2Proxy, ProxyFilter> whereExpression) {
-        if(condition){
-            getClientQueryable2().where( (wherePredicate1, wherePredicate2) -> {
-                whereExpression.apply(get1Proxy(), get2Proxy(), new ProxyFilterImpl(wherePredicate2.getFilter()));
+    default ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> where(boolean condition, SQLExpression3<ProxyFilter, T1Proxy, T2Proxy> whereExpression) {
+        if (condition) {
+            getClientQueryable2().where((wherePredicate1, wherePredicate2) -> {
+                whereExpression.apply(new ProxyFilterImpl(wherePredicate2.getFilter()), get1Proxy(), get2Proxy());
             });
         }
         return this;
@@ -83,7 +83,7 @@ public interface ProxyQueryable2<T1Proxy extends ProxyQuery<T1Proxy, T1>, T1, T2
     //endregion
 
     //region select
-    <TRProxy extends ProxyQuery<TRProxy, TR>, TR> ProxyQueryable<TRProxy, TR> select(TRProxy trProxy, SQLExpression3<T1Proxy, T2Proxy, ProxyAsSelector<TRProxy, TR>> selectExpression);
+    <TRProxy extends ProxyQuery<TRProxy, TR>, TR> ProxyQueryable<TRProxy, TR> select(TRProxy trProxy, SQLExpression3<ProxyAsSelector<TRProxy, TR>, T1Proxy, T2Proxy> selectExpression);
     //endregion
     //region aggregate
 
@@ -132,7 +132,7 @@ public interface ProxyQueryable2<T1Proxy extends ProxyQuery<T1Proxy, T1>, T1, T2
         return avgFloatOrDefault(columnSelectorExpression, null);
     }
 
-    default <TMember extends Number> Double avgOrDefault(SQLFuncExpression2<T1Proxy, T2Proxy, SQLColumn<TMember>> columnSelectorExpression, Double def){
+    default <TMember extends Number> Double avgOrDefault(SQLFuncExpression2<T1Proxy, T2Proxy, SQLColumn<TMember>> columnSelectorExpression, Double def) {
         return avgOrDefault(columnSelectorExpression, def, Double.class);
     }
 
@@ -150,42 +150,42 @@ public interface ProxyQueryable2<T1Proxy extends ProxyQuery<T1Proxy, T1>, T1, T2
 
     //region
     @Override
-    default ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> groupBy(SQLExpression2<T1Proxy, ProxyGroupSelector> selectExpression) {
+    default ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> groupBy(SQLExpression2<ProxyGroupSelector, T1Proxy> selectExpression) {
         return groupBy(true, selectExpression);
     }
 
     @Override
-    ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> groupBy(boolean condition, SQLExpression2<T1Proxy, ProxyGroupSelector> selectExpression);
+    ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> groupBy(boolean condition, SQLExpression2<ProxyGroupSelector, T1Proxy> selectExpression);
 
-    default ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> groupBy(SQLExpression3<T1Proxy, T2Proxy, ProxyGroupSelector> selectExpression) {
+    default ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> groupBy(SQLExpression3<ProxyGroupSelector, T1Proxy, T2Proxy> selectExpression) {
         return groupBy(true, selectExpression);
     }
 
-    default ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> groupBy(boolean condition, SQLExpression3<T1Proxy, T2Proxy, ProxyGroupSelector> selectExpression) {
+    default ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> groupBy(boolean condition, SQLExpression3<ProxyGroupSelector, T1Proxy, T2Proxy> selectExpression) {
         if (condition) {
             getClientQueryable2().groupBy((selector1, selector2) -> {
-                selectExpression.apply(get1Proxy(), get2Proxy(), new ProxyGroupSelectorImpl(selector2.getGroupSelector()));
+                selectExpression.apply(new ProxyGroupSelectorImpl(selector2.getGroupSelector()), get1Proxy(), get2Proxy());
             });
         }
         return this;
     }
 
     @Override
-    default ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> having(SQLExpression2<T1Proxy, ProxyAggregateFilter> aggregateFilterExpression) {
+    default ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> having(SQLExpression2<ProxyAggregateFilter, T1Proxy> aggregateFilterExpression) {
         return having(true, aggregateFilterExpression);
     }
 
     @Override
-    ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> having(boolean condition, SQLExpression2<T1Proxy, ProxyAggregateFilter> aggregateFilterExpression);
+    ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> having(boolean condition, SQLExpression2<ProxyAggregateFilter, T1Proxy> aggregateFilterExpression);
 
-    default ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> having(SQLExpression3<T1Proxy, T2Proxy, ProxyAggregateFilter> aggregateFilterExpression) {
-        return having(true,aggregateFilterExpression);
+    default ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> having(SQLExpression3<ProxyAggregateFilter, T1Proxy, T2Proxy> aggregateFilterExpression) {
+        return having(true, aggregateFilterExpression);
     }
 
-    default ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> having(boolean condition, SQLExpression3<T1Proxy, T2Proxy, ProxyAggregateFilter> aggregateFilterExpression) {
-        if(condition){
+    default ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> having(boolean condition, SQLExpression3<ProxyAggregateFilter, T1Proxy, T2Proxy> aggregateFilterExpression) {
+        if (condition) {
             getClientQueryable2().having((predicate1, predicate2) -> {
-                aggregateFilterExpression.apply(get1Proxy(),get2Proxy(),new ProxyAggregateFilterImpl(predicate2.getAggregateFilter()));
+                aggregateFilterExpression.apply(new ProxyAggregateFilterImpl(predicate2.getAggregateFilter()), get1Proxy(), get2Proxy());
             });
         }
         return this;
@@ -194,43 +194,43 @@ public interface ProxyQueryable2<T1Proxy extends ProxyQuery<T1Proxy, T1>, T1, T2
     //endregion
     //region order
     @Override
-    default ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> orderByAsc(SQLExpression2<T1Proxy, ProxyOrderSelector> selectExpression) {
+    default ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> orderByAsc(SQLExpression2<ProxyOrderSelector, T1Proxy> selectExpression) {
         return orderByAsc(true, selectExpression);
     }
 
     @Override
-    ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> orderByAsc(boolean condition, SQLExpression2<T1Proxy, ProxyOrderSelector> selectExpression);
+    ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> orderByAsc(boolean condition, SQLExpression2<ProxyOrderSelector, T1Proxy> selectExpression);
 
-    default ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> orderByAsc(SQLExpression3<T1Proxy, T2Proxy, ProxyOrderSelector> selectExpression) {
-        return orderByAsc(true,selectExpression);
+    default ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> orderByAsc(SQLExpression3<ProxyOrderSelector, T1Proxy, T2Proxy> selectExpression) {
+        return orderByAsc(true, selectExpression);
     }
 
-    default ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> orderByAsc(boolean condition, SQLExpression3<T1Proxy, T2Proxy, ProxyOrderSelector> selectExpression) {
-        if(condition){
+    default ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> orderByAsc(boolean condition, SQLExpression3<ProxyOrderSelector, T1Proxy, T2Proxy> selectExpression) {
+        if (condition) {
 
             getClientQueryable2().orderByAsc((selector1, selector2) -> {
-                selectExpression.apply(get1Proxy(),get2Proxy(),new ProxyOrderSelectorImpl(selector2.getOrderSelector()));
+                selectExpression.apply(new ProxyOrderSelectorImpl(selector2.getOrderSelector()), get1Proxy(), get2Proxy());
             });
         }
         return this;
     }
 
     @Override
-    default ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> orderByDesc(SQLExpression2<T1Proxy, ProxyOrderSelector> selectExpression) {
+    default ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> orderByDesc(SQLExpression2<ProxyOrderSelector, T1Proxy> selectExpression) {
         return orderByDesc(true, selectExpression);
     }
 
     @Override
-    ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> orderByDesc(boolean condition, SQLExpression2<T1Proxy, ProxyOrderSelector> selectExpression);
+    ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> orderByDesc(boolean condition, SQLExpression2<ProxyOrderSelector, T1Proxy> selectExpression);
 
-    default ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> orderByDesc(SQLExpression3<T1Proxy, T2Proxy, ProxyOrderSelector> selectExpression) {
-        return orderByDesc(true,selectExpression);
+    default ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> orderByDesc(SQLExpression3<ProxyOrderSelector, T1Proxy, T2Proxy> selectExpression) {
+        return orderByDesc(true, selectExpression);
     }
 
-    default ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> orderByDesc(boolean condition, SQLExpression3<T1Proxy, T2Proxy, ProxyOrderSelector> selectExpression) {
-        if(condition){
+    default ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> orderByDesc(boolean condition, SQLExpression3<ProxyOrderSelector, T1Proxy, T2Proxy> selectExpression) {
+        if (condition) {
             getClientQueryable2().orderByDesc((selector1, selector2) -> {
-                selectExpression.apply(get1Proxy(),get2Proxy(),new ProxyOrderSelectorImpl(selector2.getOrderSelector()));
+                selectExpression.apply(new ProxyOrderSelectorImpl(selector2.getOrderSelector()), get1Proxy(), get2Proxy());
             });
         }
         return this;

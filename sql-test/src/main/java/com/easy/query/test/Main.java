@@ -184,35 +184,35 @@ public class Main {
         {
             List<Topic> list1 = easyProxyQuery
                     .queryable(TOPIC_PROXY)
-                    .where((t, filter) -> filter.eq(t.id, "123").like(t.name, "xxx"))
-                    .where((t, filter) -> filter.eq(t.id, "123").like(t.name, "xxx"))
-                    .select((t, selector) -> selector.columns(t.id, t.name))
+                    .where((filter, t) -> filter.eq(t.id, "123").like(t.title, "xxx"))
+                    .where((filter, t) -> filter.eq(t.id, "123").like(t.title, "xxx"))
+                    .select((selector, t) -> selector.columns(t.id, t.title))
                     .toList();
             List<SysUser> sysUsers = easyProxyQuery
                     .queryable(TOPIC_PROXY)
-                    .where((t, filter) -> filter.eq(t.id, "123").like(t.name, "xxx"))
-                    .select(SYS_USER_PROXY, (t,selector) -> selector.columns(t.id, t.name).columnAs(t.name, tr->tr.username))
+                    .where((filter, t) -> filter.eq(t.id, "123").like(t.title, "xxx"))
+                    .select(SYS_USER_PROXY, (selector, t) -> selector.columns(t.id, t.title).columnAs(t.title, tr -> tr.username))
                     .toList();
             List<SysUser> sysUsers1 = easyProxyQuery
                     .queryable(TOPIC_PROXY)
-                    .where((t, filter) -> filter.eq(t.id, "123").like(t.name, "xxx"))
+                    .where((filter, t) -> filter.eq(t.id, "123").like(t.title, "xxx"))
                     .select(SYS_USER_PROXY)
-                    .groupBy((t,g)->g.columnConst(t,"").column(t.idCard))
-                    .orderByAsc((t,order)->order.columns(t.idCard,t.phone))
+                    .groupBy((g, t) -> g.columnConst("").column(t.idCard))
+                    .orderByAsc((order, t) -> order.columns(t.idCard, t.phone))
                     .toList();
             String bigDecimal = easyProxyQuery
                     .queryable(TOPIC_PROXY)
-                    .where((t, filter) -> filter.eq(t.id, "123").like(t.name, "xxx"))
+                    .where((filter, t) -> filter.eq(t.id, "123").like(t.title, "xxx"))
                     .maxOrNull(o -> o.id);
 
             List<Topic> list2 = easyProxyQuery.queryable(TOPIC_PROXY)
-                    .leftJoin(SYS_USER_PROXY, (t, t1, filter) -> filter.eq(t.name, t1.idCard))
+                    .leftJoin(SYS_USER_PROXY, (filter, t, t1) -> filter.eq(t.title, t1.idCard))
                     .toList();
             List<SysUser> sysUsers2 = easyProxyQuery.queryable(TOPIC_PROXY)
-                    .leftJoin(SYS_USER_PROXY, (t, t1, filter) -> filter.eq(t.name, t1.phone))
-                    .innerJoin(SYS_USER_PROXY, (t, t1, t2, filter) -> filter.eq(t1.phone, t2.phone).like(t2.idCard, "123"))
-                    .where((t, t1, t2, filter) -> filter.like(t1.username, "111").eq(t2.idCard, "111"))
-                    .select(SYS_USER_PROXY, (t, t1, t2, selector) -> selector.columns(t1.idCard, t2.username, t.id).columnAs(t2.phone, r -> r.phone))
+                    .leftJoin(SYS_USER_PROXY, (filter, t, t1) -> filter.eq(t.title, t1.phone))
+                    .innerJoin(SYS_USER_PROXY, (filter, t, t1, t2) -> filter.eq(t1.phone, t2.phone).like(t2.idCard, "123"))
+                    .where((filter, t, t1, t2) -> filter.like(t1.username, "111").eq(t2.idCard, "111"))
+                    .select(SYS_USER_PROXY, (selector, t, t1, t2) -> selector.columns(t1.idCard, t2.username, t.id).columnAs(t2.phone, r -> r.phone))
                     .toList();
 //            List<Topic> list2 = easyProxyQuery
 //                    .queryable(TopicSQL.DEFAULT)
@@ -223,7 +223,7 @@ public class Main {
 
             Queryable<String> nameSubQuery = easyQuery.queryable(TestUserMysql.class).where(o -> o.eq(TestUserMysql::getName, "xhn")).select(String.class, o -> o.column(TestUserMysql::getName));
             TestUserMysql testUserMysql = easyQuery.queryable(TestUserMysql.class)
-                    .where(o -> o.eq(o.column.name, 12).in(TestUserMysql::getName, nameSubQuery))
+                    .where(o -> o.eq(TestUserMysql::getName, 12).in(TestUserMysql::getName, nameSubQuery))
                     .firstOrNull();
 
             Queryable<TestUserMysql> sql = easyQuery.queryable(TestUserMysql.class)

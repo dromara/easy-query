@@ -18,19 +18,19 @@ public class TopicProxy implements ProxyQuery<TopicProxy, Topic> {
     private static final Class<Topic> entityClass = Topic.class;
 
     public final SQLColumn<String> id;
-    public final SQLColumn<String> name;
+    public final SQLColumn<String> title;
     private final TableAvailable table;
 
     private TopicProxy() {
         this.table = null;
         this.id = null;
-        this.name = null;
+        this.title = null;
     }
 
     public TopicProxy(TableAvailable table) {
         this.table = table;
         this.id = new SQLColumnImpl<>(table, "id");
-        this.name = new SQLColumnImpl<>(table, "name");
+        this.title = new SQLColumnImpl<>(table, "title");
     }
 
     @Override

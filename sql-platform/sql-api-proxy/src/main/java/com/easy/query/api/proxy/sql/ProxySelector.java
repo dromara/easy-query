@@ -13,12 +13,32 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 public interface ProxySelector {
     Selector getSelector();
 
-    ProxySelector columns(SQLColumn<?>... column);
-    ProxySelector column(SQLColumn<?> column);
+   default ProxySelector columns(SQLColumn<?>... columns){
+       if(columns != null){
+           for (SQLColumn<?> sqlColumn : columns) {
+               column(sqlColumn);
+           }
+       }
+       return this;
+   }
+   default ProxySelector column(SQLColumn<?> column){
+       Selector selector = getSelector();
+       selector.column(column.getTable(),column.value());
+       return this;
+   }
 
-    ProxySelector columnFunc(ProxyColumnPropertyFunction proxyColumnPropertyFunction);
+   default ProxySelector columnFunc(ProxyColumnPropertyFunction proxyColumnPropertyFunction){
+       getSelector().columnFunc(proxyColumnPropertyFunction.getColumn().getTable(), proxyColumnPropertyFunction.getColumnPropertyFunction());
+       return this;
+   }
 
-    ProxySelector columnIgnore(SQLColumn<?> column);
+   default ProxySelector columnIgnore(SQLColumn<?> column){
+       getSelector().columnIgnore(column.getTable(),column.value());
+       return this;
+   }
 
-    ProxySelector columnAll(TableAvailable table);
+   default ProxySelector columnAll(TableAvailable table){
+       getSelector().columnAll(table);
+       return this;
+   }
 }

@@ -12,7 +12,7 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 public interface GroupSelector {
 
     GroupSelector column(TableAvailable table,String property);
-    GroupSelector columnConst(TableAvailable table,String columnConst);
+    GroupSelector columnConst(String columnConst);
 
     GroupSelector columnFunc(TableAvailable table,ColumnPropertyFunction columnPropertyFunction);
 }

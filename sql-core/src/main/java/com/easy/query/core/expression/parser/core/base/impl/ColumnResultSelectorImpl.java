@@ -6,7 +6,6 @@ import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
-import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 
 /**
  * @author xuejiaming
@@ -15,18 +14,16 @@ import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
  * @Date: 2023/3/8 21:35
  */
 public class ColumnResultSelectorImpl<T1> implements ColumnResultSelector<T1> {
-    protected final int index;
     protected final EntityExpressionBuilder entityExpressionBuilder;
     protected final SQLBuilderSegment sqlBuilderSegment;
     protected final TableAvailable table;
     protected final SQLSegmentFactory sqlSegmentFactory;
 
-    public ColumnResultSelectorImpl(int index, EntityExpressionBuilder entityExpressionBuilder, SQLBuilderSegment sqlBuilderSegment) {
+    public ColumnResultSelectorImpl(TableAvailable table, EntityExpressionBuilder entityExpressionBuilder, SQLBuilderSegment sqlBuilderSegment) {
 
-        this.index = index;
         this.entityExpressionBuilder = entityExpressionBuilder;
         this.sqlSegmentFactory = entityExpressionBuilder.getRuntimeContext().getSQLSegmentFactory();
-        this.table = entityExpressionBuilder.getTable(index).getEntityTable();
+        this.table = table;
         this.sqlBuilderSegment = sqlBuilderSegment;
     }
 
@@ -40,8 +37,7 @@ public class ColumnResultSelectorImpl<T1> implements ColumnResultSelector<T1> {
         if (sqlBuilderSegment.isNotEmpty()) {
             sqlBuilderSegment.getSQLSegments().clear();
         }
-        EntityTableExpressionBuilder table = entityExpressionBuilder.getTable(index);
-        ColumnSegment columnSegment = sqlSegmentFactory.createColumnSegment(table.getEntityTable(), property, entityExpressionBuilder.getRuntimeContext(), null);
+        ColumnSegment columnSegment = sqlSegmentFactory.createColumnSegment(table, property, entityExpressionBuilder.getRuntimeContext(), null);
         sqlBuilderSegment.append(columnSegment);
 
     }

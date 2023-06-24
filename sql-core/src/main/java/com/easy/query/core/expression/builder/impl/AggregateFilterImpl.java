@@ -22,12 +22,13 @@ public class AggregateFilterImpl implements AggregateFilter {
     protected final PredicateSegment rootPredicateSegment;
     protected PredicateSegment nextPredicateSegment;
 
-    public AggregateFilterImpl(QueryRuntimeContext runtimeContext, PredicateSegment predicateSegment){
+    public AggregateFilterImpl(QueryRuntimeContext runtimeContext, PredicateSegment predicateSegment) {
 
         this.runtimeContext = runtimeContext;
         this.rootPredicateSegment = predicateSegment;
         this.nextPredicateSegment = new AndPredicateSegment();
     }
+
     protected void nextAnd() {
         this.rootPredicateSegment.addPredicateSegment(nextPredicateSegment);
         this.nextPredicateSegment = new AndPredicateSegment();

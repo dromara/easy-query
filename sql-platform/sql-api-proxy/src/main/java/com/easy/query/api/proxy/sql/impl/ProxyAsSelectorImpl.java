@@ -11,12 +11,20 @@ import com.easy.query.core.expression.builder.AsSelector;
  * @author xuejiaming
  */
 public class ProxyAsSelectorImpl<TRProxy extends ProxyQuery<TRProxy, TR>, TR> implements ProxyAsSelector<TRProxy,TR> {
+    private final TRProxy trProxy;
     private final AsSelector asSelector;
 
-    public ProxyAsSelectorImpl(AsSelector asSelector){
+    public ProxyAsSelectorImpl(TRProxy trProxy,AsSelector asSelector){
+        this.trProxy = trProxy;
 
         this.asSelector = asSelector;
     }
+
+    @Override
+    public TRProxy getTRProxy() {
+        return trProxy;
+    }
+
     @Override
     public AsSelector getAsSelector() {
         return asSelector;

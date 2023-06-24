@@ -1,21 +1,30 @@
 package com.easy.query.core.basic.api.select.provider;
 
+import com.easy.query.core.expression.builder.impl.AggregateFilterImpl;
+import com.easy.query.core.expression.builder.impl.AsSelectorImpl;
+import com.easy.query.core.expression.builder.impl.AutoAsSelectorImpl;
+import com.easy.query.core.expression.builder.impl.FilterImpl;
+import com.easy.query.core.expression.builder.impl.GroupSelectorImpl;
+import com.easy.query.core.expression.builder.impl.OrderSelectorImpl;
+import com.easy.query.core.expression.builder.impl.SelectorImpl;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
+import com.easy.query.core.expression.parser.core.base.ColumnGroupSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnResultSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnSelector;
-import com.easy.query.core.expression.parser.core.base.ColumnGroupSelector;
 import com.easy.query.core.expression.parser.core.base.WhereAggregatePredicate;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
-import com.easy.query.core.expression.parser.core.base.impl.ColumnAutoAsSelectorImpl;
 import com.easy.query.core.expression.parser.core.base.impl.ColumnAsSelectorImpl;
-import com.easy.query.core.expression.parser.core.base.impl.ColumnResultSelectorImpl;
-import com.easy.query.core.expression.parser.core.base.impl.ColumnSelectorImpl;
+import com.easy.query.core.expression.parser.core.base.impl.ColumnAutoAsSelectorImpl;
 import com.easy.query.core.expression.parser.core.base.impl.ColumnGroupSelectorImpl;
 import com.easy.query.core.expression.parser.core.base.impl.ColumnOrderSelectorImpl;
+import com.easy.query.core.expression.parser.core.base.impl.ColumnResultSelectorImpl;
+import com.easy.query.core.expression.parser.core.base.impl.ColumnSelectorImpl;
 import com.easy.query.core.expression.parser.core.base.impl.WhereAggregatePredicateImpl;
 import com.easy.query.core.expression.parser.core.base.impl.WherePredicateImpl;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.util.EasyUtil;
 
 /**
@@ -27,7 +36,7 @@ import com.easy.query.core.util.EasyUtil;
 public class SQLExpressionProviderImpl<TEntity> implements SQLExpressionProvider<TEntity> {
 
     private final EntityQueryExpressionBuilder entityQueryExpressionBuilder;
-    private final int index;
+    private final TableAvailable table;
     private ColumnGroupSelectorImpl<TEntity> group;
     private ColumnOrderSelectorImpl<TEntity> order;
     private WherePredicateImpl<TEntity> where;
@@ -36,14 +45,15 @@ public class SQLExpressionProviderImpl<TEntity> implements SQLExpressionProvider
     private WherePredicateImpl<TEntity> on;
 
     public SQLExpressionProviderImpl(int index, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
-        this.index = index;
+        EntityTableExpressionBuilder tableExpressionBuilder = entityQueryExpressionBuilder.getTable(index);
+        this.table = tableExpressionBuilder.getEntityTable();
         this.entityQueryExpressionBuilder = entityQueryExpressionBuilder;
     }
 
     @Override
     public ColumnGroupSelector<TEntity> getGroupColumnSelector() {
         if (group == null) {
-            group = new ColumnGroupSelectorImpl<>(index, entityQueryExpressionBuilder);
+            group = new ColumnGroupSelectorImpl<>(table, new GroupSelectorImpl(entityQueryExpressionBuilder));
         }
         return group;
     }
@@ -51,7 +61,7 @@ public class SQLExpressionProviderImpl<TEntity> implements SQLExpressionProvider
     @Override
     public ColumnOrderSelectorImpl<TEntity> getOrderColumnSelector(boolean asc) {
         if (order == null) {
-            order = new ColumnOrderSelectorImpl<>(index, entityQueryExpressionBuilder);
+            order = new ColumnOrderSelectorImpl<>(table, new OrderSelectorImpl(entityQueryExpressionBuilder, entityQueryExpressionBuilder.getOrder()));
         }
         order.setAsc(asc);
         return order;
@@ -60,7 +70,7 @@ public class SQLExpressionProviderImpl<TEntity> implements SQLExpressionProvider
     @Override
     public WherePredicate<TEntity> getWherePredicate() {
         if (where == null) {
-            where = new WherePredicateImpl<>(index, entityQueryExpressionBuilder, entityQueryExpressionBuilder.getWhere());
+            where = new WherePredicateImpl<>(table, new FilterImpl(entityQueryExpressionBuilder.getRuntimeContext(), entityQueryExpressionBuilder.getExpressionContext(), entityQueryExpressionBuilder.getWhere(), false));
         }
         return where;
     }
@@ -68,7 +78,7 @@ public class SQLExpressionProviderImpl<TEntity> implements SQLExpressionProvider
     @Override
     public WherePredicate<TEntity> getAllWherePredicate() {
         if (allPredicate == null) {
-            allPredicate = new WherePredicateImpl<>(index, entityQueryExpressionBuilder, entityQueryExpressionBuilder.getAllPredicate(), true);
+            allPredicate = new WherePredicateImpl<>(table, new FilterImpl(entityQueryExpressionBuilder.getRuntimeContext(), entityQueryExpressionBuilder.getExpressionContext(), entityQueryExpressionBuilder.getAllPredicate(), true));
         }
         return allPredicate;
     }
@@ -76,7 +86,7 @@ public class SQLExpressionProviderImpl<TEntity> implements SQLExpressionProvider
     @Override
     public WhereAggregatePredicate<TEntity> getAggregatePredicate() {
         if (having == null) {
-            having = new WhereAggregatePredicateImpl<>(index, entityQueryExpressionBuilder, entityQueryExpressionBuilder.getHaving());
+            having = new WhereAggregatePredicateImpl<>(table, new AggregateFilterImpl(entityQueryExpressionBuilder.getRuntimeContext(), entityQueryExpressionBuilder.getHaving()));
         }
         return having;
     }
@@ -84,28 +94,29 @@ public class SQLExpressionProviderImpl<TEntity> implements SQLExpressionProvider
     @Override
     public WherePredicate<TEntity> getOnPredicate() {
         if (on == null) {
-            on = new WherePredicateImpl<>(index, entityQueryExpressionBuilder, EasyUtil.getCurrentPredicateTable(entityQueryExpressionBuilder).getOn());
+            on = new WherePredicateImpl<>(table, new FilterImpl(entityQueryExpressionBuilder.getRuntimeContext(), entityQueryExpressionBuilder.getExpressionContext(), EasyUtil.getCurrentPredicateTable(entityQueryExpressionBuilder).getOn(), false));
         }
         return on;
     }
 
     @Override
-    public ColumnSelector<TEntity> getColumnSelector(SQLBuilderSegment sqlSegment0Builder) {
-        return new ColumnSelectorImpl<>(index, entityQueryExpressionBuilder, sqlSegment0Builder);
+    public ColumnSelector<TEntity> getColumnSelector(SQLBuilderSegment sqlSegmentBuilder) {
+        return new ColumnSelectorImpl<>(table, new SelectorImpl(entityQueryExpressionBuilder, sqlSegmentBuilder));
     }
 
     @Override
     public <TR> ColumnAsSelector<TEntity, TR> getColumnAsSelector(SQLBuilderSegment sqlSegment0Builder, Class<TR> resultClass) {
-        return new ColumnAsSelectorImpl<>(index, entityQueryExpressionBuilder, sqlSegment0Builder, resultClass);
+        return new ColumnAsSelectorImpl<>(entityQueryExpressionBuilder,table, new AsSelectorImpl(entityQueryExpressionBuilder, sqlSegment0Builder, resultClass));
     }
 
     @Override
     public <TR> ColumnAsSelector<TEntity, TR> getAutoColumnAsSelector(SQLBuilderSegment sqlSegment0Builder, Class<TR> resultClass) {
-        return new ColumnAutoAsSelectorImpl<>(index, entityQueryExpressionBuilder, sqlSegment0Builder, resultClass);
+        return new ColumnAutoAsSelectorImpl<>(table, new AutoAsSelectorImpl(entityQueryExpressionBuilder, sqlSegment0Builder, resultClass));
+
     }
 
     @Override
     public <TR> ColumnResultSelector<TEntity> getColumnResultSelector(SQLBuilderSegment sqlSegment0Builder) {
-        return new ColumnResultSelectorImpl<TEntity>(index, entityQueryExpressionBuilder, sqlSegment0Builder);
+        return new ColumnResultSelectorImpl<TEntity>(table, entityQueryExpressionBuilder, sqlSegment0Builder);
     }
 }

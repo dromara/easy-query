@@ -54,21 +54,21 @@ public interface ProxyQueryable4<T1Proxy extends ProxyQuery<T1Proxy, T1>,
     ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> whereObject(boolean condition, Object object);
 
     @Override
-    default ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> where(SQLExpression2<T1Proxy, ProxyFilter> whereExpression) {
+    default ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> where(SQLExpression2<ProxyFilter, T1Proxy> whereExpression) {
         return where(true, whereExpression);
     }
 
     @Override
-    ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> where(boolean condition, SQLExpression2<T1Proxy, ProxyFilter> whereExpression);
+    ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> where(boolean condition, SQLExpression2<ProxyFilter, T1Proxy> whereExpression);
 
-    default ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> where(SQLExpression5<T1Proxy,T2Proxy,T3Proxy,T4Proxy,ProxyFilter> whereExpression) {
+    default ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> where(SQLExpression5<ProxyFilter, T1Proxy, T2Proxy, T3Proxy, T4Proxy> whereExpression) {
         return where(true, whereExpression);
     }
 
-    default ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> where(boolean condition, SQLExpression5<T1Proxy,T2Proxy,T3Proxy,T4Proxy,ProxyFilter> whereExpression){
-        if(condition){
-            getClientQueryable4().where( (wherePredicate1, wherePredicate2, wherePredicate3, wherePredicate4) -> {
-                whereExpression.apply(get1Proxy(), get2Proxy(),get3Proxy(),get4Proxy(), new ProxyFilterImpl(wherePredicate2.getFilter()));
+    default ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> where(boolean condition, SQLExpression5<ProxyFilter, T1Proxy, T2Proxy, T3Proxy, T4Proxy> whereExpression) {
+        if (condition) {
+            getClientQueryable4().where((wherePredicate1, wherePredicate2, wherePredicate3, wherePredicate4) -> {
+                whereExpression.apply(new ProxyFilterImpl(wherePredicate2.getFilter()), get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy());
             });
         }
         return this;
@@ -76,7 +76,7 @@ public interface ProxyQueryable4<T1Proxy extends ProxyQuery<T1Proxy, T1>,
 
     //endregion
     //region select
-    <TRProxy extends ProxyQuery<TRProxy, TR>, TR> ProxyQueryable<TRProxy, TR> select(TRProxy trProxy, SQLExpression5<T1Proxy,T2Proxy,T3Proxy,T4Proxy, ProxyAsSelector<TRProxy,TR>> selectExpression);
+    <TRProxy extends ProxyQuery<TRProxy, TR>, TR> ProxyQueryable<TRProxy, TR> select(TRProxy trProxy, SQLExpression5<ProxyAsSelector<TRProxy, TR>, T1Proxy, T2Proxy, T3Proxy, T4Proxy> selectExpression);
     //endregion
 
     //region aggregate
@@ -88,97 +88,98 @@ public interface ProxyQueryable4<T1Proxy extends ProxyQuery<T1Proxy, T1>,
      * @param <TMember>
      * @return
      */
-    default <TMember extends Number> BigDecimal sumBigDecimalOrNull(SQLFuncExpression4<T1Proxy,T2Proxy,T3Proxy,T4Proxy, SQLColumn<TMember>> columnSelectorExpression) {
+    default <TMember extends Number> BigDecimal sumBigDecimalOrNull(SQLFuncExpression4<T1Proxy, T2Proxy, T3Proxy, T4Proxy, SQLColumn<TMember>> columnSelectorExpression) {
         return sumBigDecimalOrDefault(columnSelectorExpression, null);
     }
 
 
-    <TMember extends Number> BigDecimal sumBigDecimalOrDefault(SQLFuncExpression4<T1Proxy,T2Proxy,T3Proxy,T4Proxy, SQLColumn<TMember>> columnSelectorExpression, BigDecimal def);
-    default <TMember extends Number> TMember sumOrNull(SQLFuncExpression4<T1Proxy,T2Proxy,T3Proxy,T4Proxy, SQLColumn<TMember>> columnSelectorExpression) {
+    <TMember extends Number> BigDecimal sumBigDecimalOrDefault(SQLFuncExpression4<T1Proxy, T2Proxy, T3Proxy, T4Proxy, SQLColumn<TMember>> columnSelectorExpression, BigDecimal def);
+
+    default <TMember extends Number> TMember sumOrNull(SQLFuncExpression4<T1Proxy, T2Proxy, T3Proxy, T4Proxy, SQLColumn<TMember>> columnSelectorExpression) {
         return sumOrDefault(columnSelectorExpression, null);
     }
 
-    <TMember extends Number> TMember sumOrDefault(SQLFuncExpression4<T1Proxy,T2Proxy,T3Proxy,T4Proxy, SQLColumn<TMember>> columnSelectorExpression, TMember def) ;
+    <TMember extends Number> TMember sumOrDefault(SQLFuncExpression4<T1Proxy, T2Proxy, T3Proxy, T4Proxy, SQLColumn<TMember>> columnSelectorExpression, TMember def);
 
-    default <TMember> TMember maxOrNull(SQLFuncExpression4<T1Proxy,T2Proxy,T3Proxy,T4Proxy, SQLColumn<TMember>> columnSelectorExpression) {
+    default <TMember> TMember maxOrNull(SQLFuncExpression4<T1Proxy, T2Proxy, T3Proxy, T4Proxy, SQLColumn<TMember>> columnSelectorExpression) {
         return maxOrDefault(columnSelectorExpression, null);
     }
 
-    <TMember> TMember maxOrDefault(SQLFuncExpression4<T1Proxy,T2Proxy,T3Proxy,T4Proxy, SQLColumn<TMember>> columnSelectorExpression, TMember def);
+    <TMember> TMember maxOrDefault(SQLFuncExpression4<T1Proxy, T2Proxy, T3Proxy, T4Proxy, SQLColumn<TMember>> columnSelectorExpression, TMember def);
 
-    default <TMember> TMember minOrNull(SQLFuncExpression4<T1Proxy,T2Proxy,T3Proxy,T4Proxy, SQLColumn<TMember>> columnSelectorExpression) {
-        return minOrDefault(columnSelectorExpression,null);
+    default <TMember> TMember minOrNull(SQLFuncExpression4<T1Proxy, T2Proxy, T3Proxy, T4Proxy, SQLColumn<TMember>> columnSelectorExpression) {
+        return minOrDefault(columnSelectorExpression, null);
     }
 
-     <TMember> TMember minOrDefault(SQLFuncExpression4<T1Proxy,T2Proxy,T3Proxy,T4Proxy, SQLColumn<TMember>> columnSelectorExpression, TMember def);
+    <TMember> TMember minOrDefault(SQLFuncExpression4<T1Proxy, T2Proxy, T3Proxy, T4Proxy, SQLColumn<TMember>> columnSelectorExpression, TMember def);
 
-    default <TMember extends Number> Double avgOrNull(SQLFuncExpression4<T1Proxy,T2Proxy,T3Proxy,T4Proxy, SQLColumn<TMember>> columnSelectorExpression) {
+    default <TMember extends Number> Double avgOrNull(SQLFuncExpression4<T1Proxy, T2Proxy, T3Proxy, T4Proxy, SQLColumn<TMember>> columnSelectorExpression) {
         return avgOrDefault(columnSelectorExpression, null, Double.class);
     }
 
-    default <TMember extends Number> BigDecimal avgBigDecimalOrNull(SQLFuncExpression4<T1Proxy,T2Proxy,T3Proxy,T4Proxy, SQLColumn<TMember>> columnSelectorExpression) {
+    default <TMember extends Number> BigDecimal avgBigDecimalOrNull(SQLFuncExpression4<T1Proxy, T2Proxy, T3Proxy, T4Proxy, SQLColumn<TMember>> columnSelectorExpression) {
         return avgBigDecimalOrDefault(columnSelectorExpression, null);
     }
 
-    default <TMember extends Number> Float avgFloatOrNull(SQLFuncExpression4<T1Proxy,T2Proxy,T3Proxy,T4Proxy, SQLColumn<TMember>> columnSelectorExpression) {
+    default <TMember extends Number> Float avgFloatOrNull(SQLFuncExpression4<T1Proxy, T2Proxy, T3Proxy, T4Proxy, SQLColumn<TMember>> columnSelectorExpression) {
         return avgFloatOrDefault(columnSelectorExpression, null);
     }
 
-    default <TMember extends Number> Double avgOrDefault(SQLFuncExpression4<T1Proxy,T2Proxy,T3Proxy,T4Proxy, SQLColumn<TMember>> columnSelectorExpression, Double def) {
+    default <TMember extends Number> Double avgOrDefault(SQLFuncExpression4<T1Proxy, T2Proxy, T3Proxy, T4Proxy, SQLColumn<TMember>> columnSelectorExpression, Double def) {
         return avgOrDefault(columnSelectorExpression, def, Double.class);
     }
 
-    default <TMember extends Number> BigDecimal avgBigDecimalOrDefault(SQLFuncExpression4<T1Proxy,T2Proxy,T3Proxy,T4Proxy, SQLColumn<TMember>> columnSelectorExpression, BigDecimal def) {
+    default <TMember extends Number> BigDecimal avgBigDecimalOrDefault(SQLFuncExpression4<T1Proxy, T2Proxy, T3Proxy, T4Proxy, SQLColumn<TMember>> columnSelectorExpression, BigDecimal def) {
         return avgOrDefault(columnSelectorExpression, def, BigDecimal.class);
     }
 
-    default <TMember extends Number> Float avgFloatOrDefault(SQLFuncExpression4<T1Proxy,T2Proxy,T3Proxy,T4Proxy, SQLColumn<TMember>> columnSelectorExpression, Float def) {
+    default <TMember extends Number> Float avgFloatOrDefault(SQLFuncExpression4<T1Proxy, T2Proxy, T3Proxy, T4Proxy, SQLColumn<TMember>> columnSelectorExpression, Float def) {
         return avgOrDefault(columnSelectorExpression, def, Float.class);
     }
 
-     <TMember extends Number, TResult extends Number> TResult avgOrDefault(SQLFuncExpression4<T1Proxy,T2Proxy,T3Proxy,T4Proxy, SQLColumn<TMember>> columnSelectorExpression, TResult def, Class<TResult> resultClass);
+    <TMember extends Number, TResult extends Number> TResult avgOrDefault(SQLFuncExpression4<T1Proxy, T2Proxy, T3Proxy, T4Proxy, SQLColumn<TMember>> columnSelectorExpression, TResult def, Class<TResult> resultClass);
     //endregion
 
 
     //region group
     @Override
-    default ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> groupBy(SQLExpression2<T1Proxy, ProxyGroupSelector> selectExpression) {
+    default ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> groupBy(SQLExpression2<ProxyGroupSelector, T1Proxy> selectExpression) {
         return groupBy(true, selectExpression);
     }
 
     @Override
-    ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> groupBy(boolean condition, SQLExpression2<T1Proxy, ProxyGroupSelector> selectExpression);
+    ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> groupBy(boolean condition, SQLExpression2<ProxyGroupSelector, T1Proxy> selectExpression);
 
-    default ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> groupBy(SQLExpression5<T1Proxy,T2Proxy,T3Proxy,T4Proxy,ProxyGroupSelector> selectExpression) {
+    default ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> groupBy(SQLExpression5<ProxyGroupSelector, T1Proxy, T2Proxy, T3Proxy, T4Proxy> selectExpression) {
         return groupBy(true, selectExpression);
     }
 
-   default ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> groupBy(boolean condition, SQLExpression5<T1Proxy,T2Proxy,T3Proxy,T4Proxy,ProxyGroupSelector> selectExpression){
-       if (condition) {
-           getClientQueryable4().groupBy((selector1, selector2, selector3, selector4) -> {
-               selectExpression.apply(get1Proxy(), get2Proxy(),get3Proxy(),get4Proxy(), new ProxyGroupSelectorImpl(selector4.getGroupSelector()));
-           });
-       }
-       return this;
+    default ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> groupBy(boolean condition, SQLExpression5<ProxyGroupSelector, T1Proxy, T2Proxy, T3Proxy, T4Proxy> selectExpression) {
+        if (condition) {
+            getClientQueryable4().groupBy((selector1, selector2, selector3, selector4) -> {
+                selectExpression.apply(new ProxyGroupSelectorImpl(selector4.getGroupSelector()), get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy());
+            });
+        }
+        return this;
     }
 
 
     @Override
-    default ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> having(SQLExpression2<T1Proxy, ProxyAggregateFilter> predicateExpression) {
+    default ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> having(SQLExpression2<ProxyAggregateFilter, T1Proxy> predicateExpression) {
         return having(true, predicateExpression);
     }
 
     @Override
-    ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> having(boolean condition, SQLExpression2<T1Proxy, ProxyAggregateFilter> predicateExpression);
+    ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> having(boolean condition, SQLExpression2<ProxyAggregateFilter, T1Proxy> predicateExpression);
 
-    default ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> having(SQLExpression5<T1Proxy,T2Proxy,T3Proxy,T4Proxy,ProxyAggregateFilter> aggregateFilterExpression) {
-        return having(true,aggregateFilterExpression);
+    default ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> having(SQLExpression5<ProxyAggregateFilter, T1Proxy, T2Proxy, T3Proxy, T4Proxy> aggregateFilterExpression) {
+        return having(true, aggregateFilterExpression);
     }
 
-    default ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> having(boolean condition, SQLExpression5<T1Proxy,T2Proxy,T3Proxy,T4Proxy,ProxyAggregateFilter> aggregateFilterExpression) {
-        if(condition){
+    default ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> having(boolean condition, SQLExpression5<ProxyAggregateFilter, T1Proxy, T2Proxy, T3Proxy, T4Proxy> aggregateFilterExpression) {
+        if (condition) {
             getClientQueryable4().having((predicate1, predicate2, predicate3, predicate4) -> {
-                aggregateFilterExpression.apply(get1Proxy(),get2Proxy(),get3Proxy(),get4Proxy(),new ProxyAggregateFilterImpl(predicate4.getAggregateFilter()));
+                aggregateFilterExpression.apply(new ProxyAggregateFilterImpl(predicate4.getAggregateFilter()), get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy());
             });
         }
         return this;
@@ -187,43 +188,43 @@ public interface ProxyQueryable4<T1Proxy extends ProxyQuery<T1Proxy, T1>,
     //endregion
     //region order
     @Override
-    default ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> orderByAsc(SQLExpression2<T1Proxy, ProxyOrderSelector> selectExpression) {
+    default ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> orderByAsc(SQLExpression2<ProxyOrderSelector, T1Proxy> selectExpression) {
         return orderByAsc(true, selectExpression);
     }
 
     @Override
-    ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> orderByAsc(boolean condition, SQLExpression2<T1Proxy, ProxyOrderSelector> selectExpression);
+    ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> orderByAsc(boolean condition, SQLExpression2<ProxyOrderSelector, T1Proxy> selectExpression);
 
-    default ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> orderByAsc(SQLExpression5<T1Proxy,T2Proxy,T3Proxy,T4Proxy,ProxyOrderSelector> selectExpression) {
+    default ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> orderByAsc(SQLExpression5<ProxyOrderSelector, T1Proxy, T2Proxy, T3Proxy, T4Proxy> selectExpression) {
         return orderByAsc(true, selectExpression);
     }
 
-    default ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> orderByAsc(boolean condition, SQLExpression5<T1Proxy,T2Proxy,T3Proxy,T4Proxy,ProxyOrderSelector> selectExpression){
+    default ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> orderByAsc(boolean condition, SQLExpression5<ProxyOrderSelector, T1Proxy, T2Proxy, T3Proxy, T4Proxy> selectExpression) {
 
-        if(condition){
+        if (condition) {
             getClientQueryable4().orderByAsc((selector1, selector2, selector3, selector4) -> {
-                selectExpression.apply(get1Proxy(),get2Proxy(),get3Proxy(),get4Proxy(),new ProxyOrderSelectorImpl(selector4.getOrderSelector()));
+                selectExpression.apply(new ProxyOrderSelectorImpl(selector4.getOrderSelector()), get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy());
             });
         }
         return this;
     }
 
     @Override
-    default ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> orderByDesc(SQLExpression2<T1Proxy, ProxyOrderSelector> selectExpression) {
+    default ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> orderByDesc(SQLExpression2<ProxyOrderSelector, T1Proxy> selectExpression) {
         return orderByDesc(true, selectExpression);
     }
 
     @Override
-    ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> orderByDesc(boolean condition, SQLExpression2<T1Proxy, ProxyOrderSelector> selectExpression);
+    ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> orderByDesc(boolean condition, SQLExpression2<ProxyOrderSelector, T1Proxy> selectExpression);
 
-    default ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> orderByDesc(SQLExpression5<T1Proxy,T2Proxy,T3Proxy,T4Proxy,ProxyOrderSelector> selectExpression) {
+    default ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> orderByDesc(SQLExpression5<ProxyOrderSelector, T1Proxy, T2Proxy, T3Proxy, T4Proxy> selectExpression) {
         return orderByDesc(true, selectExpression);
     }
 
-    default ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> orderByDesc(boolean condition, SQLExpression5<T1Proxy,T2Proxy,T3Proxy,T4Proxy,ProxyOrderSelector> selectExpression){
-        if(condition){
+    default ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> orderByDesc(boolean condition, SQLExpression5<ProxyOrderSelector, T1Proxy, T2Proxy, T3Proxy, T4Proxy> selectExpression) {
+        if (condition) {
             getClientQueryable4().orderByDesc((selector1, selector2, selector3, selector4) -> {
-                selectExpression.apply(get1Proxy(),get2Proxy(),get3Proxy(),get4Proxy(),new ProxyOrderSelectorImpl(selector4.getOrderSelector()));
+                selectExpression.apply(new ProxyOrderSelectorImpl(selector4.getOrderSelector()), get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy());
             });
         }
         return this;

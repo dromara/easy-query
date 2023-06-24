@@ -14,6 +14,7 @@ import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
 import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.builder.SQLAnonymousUnionEntityQueryExpressionBuilder;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
@@ -36,19 +37,22 @@ public abstract class AbstractSelector<TChain> {
     protected final QueryRuntimeContext runtimeContext;
     protected final SQLSegmentFactory sqlSegmentFactory;
     protected final SQLBuilderSegment sqlBuilderSegment;
-    protected final EntityQueryExpressionBuilder entityQueryExpressionBuilder;
+    private final EntityQueryExpressionBuilder entityQueryExpressionBuilder;
+    protected final ExpressionContext expressionContext;
 
     public AbstractSelector(EntityQueryExpressionBuilder entityQueryExpressionBuilder, SQLBuilderSegment sqlBuilderSegment) {
         this.entityQueryExpressionBuilder = entityQueryExpressionBuilder;
 
-        this.runtimeContext = entityQueryExpressionBuilder.getRuntimeContext();
+        this.expressionContext = entityQueryExpressionBuilder.getExpressionContext();
+        this.runtimeContext = expressionContext.getRuntimeContext();
         this.sqlSegmentFactory = runtimeContext.getSQLSegmentFactory();
         this.sqlBuilderSegment = sqlBuilderSegment;
     }
+
     public TChain column(TableAvailable table, String property) {
         ColumnSegment columnSegment = sqlSegmentFactory.createColumnSegment(table, property, runtimeContext, null);
         sqlBuilderSegment.append(columnSegment);
-        return (TChain)this;
+        return (TChain) this;
     }
 
     public TChain columnIgnore(TableAvailable table, String property) {
@@ -59,27 +63,29 @@ public abstract class AbstractSelector<TChain> {
             }
             return false;
         });
-        return (TChain)this;
+        return (TChain) this;
     }
 
     public TChain columnAll(TableAvailable table) {
-        if (table instanceof AnonymousEntityTableExpressionBuilder) {
-            columnAnonymousAll((AnonymousEntityTableExpressionBuilder) table);
+        EntityTableExpressionBuilder tableExpressionBuilder = entityQueryExpressionBuilder.getTable(table.getIndex());
+        if (tableExpressionBuilder instanceof AnonymousEntityTableExpressionBuilder) {
+            columnAnonymousAll((AnonymousEntityTableExpressionBuilder) tableExpressionBuilder);
         } else {
-            boolean queryLargeColumn = entityQueryExpressionBuilder.getExpressionContext().getBehavior().hasBehavior(EasyBehaviorEnum.QUERY_LARGE_COLUMN);
-            EntityMetadata entityMetadata = table.getEntityMetadata();
+            boolean queryLargeColumn = expressionContext.getBehavior().hasBehavior(EasyBehaviorEnum.QUERY_LARGE_COLUMN);
+            EntityMetadata entityMetadata = tableExpressionBuilder.getEntityMetadata();
             Collection<String> properties = entityMetadata.getProperties();
             for (String property : properties) {
                 ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(property);
                 if (!columnAllQueryLargeColumn(queryLargeColumn, columnMetadata)) {
                     continue;
                 }
-                ColumnSegment columnSegment = sqlSegmentFactory.createColumnSegment(table, property, entityQueryExpressionBuilder.getRuntimeContext(), null);
+                ColumnSegment columnSegment = sqlSegmentFactory.createColumnSegment(table, property, runtimeContext, null);
                 sqlBuilderSegment.append(columnSegment);
             }
         }
-        return (TChain)this;
+        return (TChain) this;
     }
+
     private EntityQueryExpressionBuilder getEntityQueryExpressionBuilder(EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
 
         if (entityQueryExpressionBuilder instanceof SQLAnonymousUnionEntityQueryExpressionBuilder) {
@@ -96,10 +102,12 @@ public abstract class AbstractSelector<TChain> {
         }
         return entityQueryExpressionBuilder;
     }
+
     private EntityQueryExpressionBuilder getAnonymousTableQueryExpressionBuilder(AnonymousEntityTableExpressionBuilder table) {
         EntityQueryExpressionBuilder entityQueryExpressionBuilder = table.getEntityQueryExpressionBuilder();
         return getEntityQueryExpressionBuilder(entityQueryExpressionBuilder);
     }
+
     protected TChain columnAnonymousAll(AnonymousEntityTableExpressionBuilder table) {
         EntityQueryExpressionBuilder queryExpressionBuilder = getAnonymousTableQueryExpressionBuilder(table);
         if (EasySQLSegmentUtil.isNotEmpty(queryExpressionBuilder.getProjects())) {
@@ -113,10 +121,10 @@ public abstract class AbstractSelector<TChain> {
 
                     String propertyName = EasyUtil.getAnonymousPropertyName(sqlEntityAliasSegment, table.getEntityTable());
                     if (propertyName != null) {
-                        ColumnSegment columnSegment = sqlSegmentFactory.createColumnSegment(table.getEntityTable(), propertyName, entityQueryExpressionBuilder.getRuntimeContext(), sqlEntityAliasSegment.getAlias());
+                        ColumnSegment columnSegment = sqlSegmentFactory.createColumnSegment(table.getEntityTable(), propertyName, runtimeContext, sqlEntityAliasSegment.getAlias());
                         sqlBuilderSegment.append(columnSegment);
                     } else {
-                        ColumnSegment columnSegment = sqlSegmentFactory.createAnonymousColumnSegment(table.getEntityTable(), entityQueryExpressionBuilder.getRuntimeContext(), sqlEntityAliasSegment.getAlias());
+                        ColumnSegment columnSegment = sqlSegmentFactory.createAnonymousColumnSegment(table.getEntityTable(), runtimeContext, sqlEntityAliasSegment.getAlias());
                         sqlBuilderSegment.append(columnSegment);
                     }
                 } else {
@@ -124,8 +132,9 @@ public abstract class AbstractSelector<TChain> {
                 }
             }
         }
-        return (TChain)this;
+        return (TChain) this;
     }
+
     protected boolean columnAllQueryLargeColumn(boolean queryLargeColumn, ColumnMetadata columnMetadata) {
         //如果不查询的情况下当列是非大列才可以查询
         if (!queryLargeColumn) {
@@ -133,8 +142,9 @@ public abstract class AbstractSelector<TChain> {
         }
         return true;
     }
-    public TChain columnConstAs(TableAvailable table,String columnConst, String alias) {
-        ColumnAsConstSegment columnSegment = sqlSegmentFactory.createColumnAsConstSegment(table, entityQueryExpressionBuilder.getRuntimeContext(), columnConst, alias);
+
+    public TChain columnConstAs(String columnConst, String alias) {
+        ColumnAsConstSegment columnSegment = sqlSegmentFactory.createColumnAsConstSegment(null, runtimeContext, columnConst, alias);
         sqlBuilderSegment.append(columnSegment);
         return (TChain) this;
     }

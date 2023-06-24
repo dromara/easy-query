@@ -1,5 +1,6 @@
 package com.easy.query.core.expression.parser.core.base.impl;
 
+import com.easy.query.core.expression.builder.GroupSelector;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
@@ -18,21 +19,19 @@ import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
  * @Date: 2023/2/12 21:36
  */
 public class ColumnGroupSelectorImpl<T1> implements ColumnGroupSelector<T1> {
-    protected final int index;
-    protected final EntityExpressionBuilder entityQueryExpressionBuilder;
-    protected final TableAvailable table;
-    protected final SQLBuilderSegment sqlSegmentBuilder;
-    protected final SQLSegmentFactory sqlSegmentFactory;
+    private final TableAvailable table;
+    private final GroupSelector groupSelector;
 
-    public ColumnGroupSelectorImpl(int index, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
-        this.index = index;
-
-        this.entityQueryExpressionBuilder = entityQueryExpressionBuilder;
-        this.table = entityQueryExpressionBuilder.getTable(index).getEntityTable();
-        this.sqlSegmentBuilder = entityQueryExpressionBuilder.getGroup();
-        this.sqlSegmentFactory = entityQueryExpressionBuilder.getRuntimeContext().getSQLSegmentFactory();
+    public ColumnGroupSelectorImpl(TableAvailable table, GroupSelector groupSelector) {
+        this.groupSelector = groupSelector;
+        this.table = table;
     }
 
+
+    @Override
+    public GroupSelector getGroupSelector() {
+        return groupSelector;
+    }
 
     @Override
     public TableAvailable getTable() {
@@ -41,27 +40,19 @@ public class ColumnGroupSelectorImpl<T1> implements ColumnGroupSelector<T1> {
 
     @Override
     public ColumnGroupSelector<T1> column(String property) {
-        EntityTableExpressionBuilder table = entityQueryExpressionBuilder.getTable(index);
-        GroupByColumnSegment groupByColumnSegment = sqlSegmentFactory.createGroupByColumnSegment(table.getEntityTable(), property, entityQueryExpressionBuilder.getRuntimeContext());
-        sqlSegmentBuilder.append(groupByColumnSegment);
+        groupSelector.column(table,property);
         return this;
     }
 
     @Override
     public ColumnGroupSelector<T1> columnConst(String columnConst) {
-        EntityTableExpressionBuilder table = entityQueryExpressionBuilder.getTable(index);
-        GroupByColumnSegment groupByColumnSegment = sqlSegmentFactory.createGroupByConstSegment(table.getEntityTable(), entityQueryExpressionBuilder.getRuntimeContext(),columnConst);
-        sqlSegmentBuilder.append(groupByColumnSegment);
+        groupSelector.columnConst(columnConst);
         return this;
     }
 
     @Override
     public ColumnGroupSelector<T1> columnFunc(ColumnPropertyFunction columnPropertyFunction) {
-        EntityTableExpressionBuilder table = entityQueryExpressionBuilder.getTable(index);
-        String propertyName = columnPropertyFunction.getPropertyName();
-        ColumnFunction columnFunction = columnPropertyFunction.getColumnFunction();
-        FuncColumnSegment funcColumnSegment = sqlSegmentFactory.createFuncColumnSegment(table.getEntityTable(), propertyName, entityQueryExpressionBuilder.getRuntimeContext(), columnFunction, null);
-        sqlSegmentBuilder.append(funcColumnSegment);
+        groupSelector.columnFunc(table,columnPropertyFunction);
         return this;
     }
 }
