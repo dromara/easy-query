@@ -1,6 +1,7 @@
 package com.easy.query.test.entity;
 
 import com.easy.query.core.annotation.Column;
+import com.easy.query.core.annotation.EntityProxy;
 import com.easy.query.core.annotation.Table;
 import lombok.Data;
 
@@ -14,6 +15,7 @@ import java.time.LocalDateTime;
  */
 @Data
 @Table("t_topic_auto")
+@EntityProxy
 public class TopicAuto {
 
     @Column(primaryKey = true,increment = true)

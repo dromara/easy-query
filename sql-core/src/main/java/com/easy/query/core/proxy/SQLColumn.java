@@ -1,4 +1,4 @@
-package com.easy.query.api.proxy.core.base;
+package com.easy.query.core.proxy;
 
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 

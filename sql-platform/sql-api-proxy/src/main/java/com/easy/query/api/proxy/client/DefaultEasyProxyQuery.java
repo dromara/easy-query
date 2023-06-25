@@ -1,9 +1,9 @@
 package com.easy.query.api.proxy.client;
 
-import com.easy.query.api.proxy.core.ProxyQuery;
 import com.easy.query.api.proxy.select.ProxyQueryable;
 import com.easy.query.api.proxy.select.impl.EasyProxyQueryable;
 import com.easy.query.core.api.client.EasyQueryClient;
+import com.easy.query.core.proxy.ProxyQuery;
 
 /**
  * create time 2023/6/24 11:45

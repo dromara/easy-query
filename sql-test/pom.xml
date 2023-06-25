@@ -28,6 +28,12 @@
         </dependency>
         <dependency>
             <groupId>com.easy-query</groupId>
+            <artifactId>sql-processor</artifactId>
+            <version>1.0.14</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.easy-query</groupId>
             <artifactId>sql-pgsql</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>

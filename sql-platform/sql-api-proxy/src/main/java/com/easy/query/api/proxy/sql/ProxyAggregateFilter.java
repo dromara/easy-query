@@ -1,6 +1,5 @@
 package com.easy.query.api.proxy.sql;
 
-import com.easy.query.api.proxy.core.base.SQLColumn;
 import com.easy.query.api.proxy.sql.impl.ProxyAggregateFilterImpl;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.AggregatePredicateCompare;
@@ -8,6 +7,7 @@ import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.expression.builder.AggregateFilter;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.proxy.SQLColumn;
 
 /**
  * create time 2023/6/23 14:21

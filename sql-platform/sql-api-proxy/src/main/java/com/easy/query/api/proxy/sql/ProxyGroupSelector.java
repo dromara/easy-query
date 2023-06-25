@@ -1,7 +1,7 @@
 package com.easy.query.api.proxy.sql;
 
-import com.easy.query.api.proxy.core.base.SQLColumn;
 import com.easy.query.core.expression.builder.GroupSelector;
+import com.easy.query.core.proxy.SQLColumn;
 
 /**
  * create time 2023/6/23 13:21

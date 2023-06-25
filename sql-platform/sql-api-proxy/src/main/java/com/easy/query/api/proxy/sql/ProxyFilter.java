@@ -1,7 +1,5 @@
 package com.easy.query.api.proxy.sql;
 
-import com.easy.query.api.proxy.core.ProxyQuery;
-import com.easy.query.api.proxy.core.base.SQLColumn;
 import com.easy.query.api.proxy.select.ProxyQueryable;
 import com.easy.query.api.proxy.sql.impl.ProxyFilterImpl;
 import com.easy.query.core.enums.SQLLikeEnum;
@@ -9,6 +7,8 @@ import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.enums.SQLRangeEnum;
 import com.easy.query.core.expression.builder.Filter;
 import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.proxy.ProxyQuery;
+import com.easy.query.core.proxy.SQLColumn;
 
 import java.util.Collection;
 

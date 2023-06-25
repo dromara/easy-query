@@ -3,6 +3,8 @@ package com.easy.query.test;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.Topic;
+import com.easy.query.test.entity.TopicAuto;
+import com.easy.query.test.entity.proxy.TopicAutoProxy;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -11,6 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static com.easy.query.test.entity.base.TopicProxy.TOPIC_PROXY;
+import static com.easy.query.test.entity.base.TopicTestProxy.TOPIC_TEST_PROXY;
 
 /**
  * create time 2023/6/8 21:38
@@ -460,5 +463,19 @@ public class QueryTest3 extends BaseTest {
                 .toPageResult(3, 10);
         List<Topic> data = topicPageResult.getData();
         Assert.assertEquals(10, data.size());
+    }
+    @Test
+    public void testProxy2() {
+
+        List<Topic> list1 = easyProxyQuery
+                .queryable(TOPIC_TEST_PROXY)
+                .where((filter, t) -> filter.eq(t.id(), "123").like(t.title(), "xxx"))
+                .where((filter, t) -> filter.eq(t.id(), "123").like(t.title(), "xxx"))
+                .select((selector, t) -> selector.columns(t.id(), t.title()))
+                .toList();
+        TopicAuto topicAuto = easyProxyQuery.queryable(TopicAutoProxy.TABLE)
+                .where((filter, t) -> filter.eq(t.title(), "123"))
+                .firstOrNull();
+//        List<TopicAuto> topicAutos = easyQuery.queryable(TopicAuto.class).where(o->o.lt(TopicAuto::getStars,999)).toList();
     }
 }

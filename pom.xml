@@ -35,6 +35,7 @@
         <!--        以下是不需要deploy到远程仓库的-->
         <module>sql-test</module>
         <module>samples</module>
+        <module>sql-processor</module>
     </modules>
 
     <properties>

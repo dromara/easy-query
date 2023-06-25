@@ -1,9 +1,8 @@
 package com.easy.query.test.entity.base;
 
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.proxy.ProxyQuery;
+import com.easy.query.core.proxy.AbstractProxyQuery;
 import com.easy.query.core.proxy.SQLColumn;
-import com.easy.query.core.proxy.impl.SQLColumnImpl;
 import com.easy.query.test.entity.Topic;
 
 /**
@@ -11,25 +10,25 @@ import com.easy.query.test.entity.Topic;
  *
  * @author xuejiaming
  */
-public class TopicProxy implements ProxyQuery<TopicProxy, Topic> {
+public class TopicTestProxy extends AbstractProxyQuery<TopicTestProxy, Topic> {
 
-    public static final TopicProxy TOPIC_PROXY = new TopicProxy();
+    public static final TopicTestProxy TOPIC_TEST_PROXY = new TopicTestProxy();
     private static final Class<Topic> entityClass = Topic.class;
-
-    public final SQLColumn<String> id;
-    public final SQLColumn<String> title;
     private final TableAvailable table;
 
-    private TopicProxy() {
+    private TopicTestProxy() {
         this.table = null;
-        this.id = null;
-        this.title = null;
     }
 
-    public TopicProxy(TableAvailable table) {
+    public TopicTestProxy(TableAvailable table) {
         this.table = table;
-        this.id = new SQLColumnImpl<>(table, "id");
-        this.title = new SQLColumnImpl<>(table, "title");
+    }
+
+    public SQLColumn<String> id(){
+        return get("id");
+    }
+    public SQLColumn<String> title(){
+        return get("title");
     }
 
     @Override
@@ -43,7 +42,7 @@ public class TopicProxy implements ProxyQuery<TopicProxy, Topic> {
     }
 
     @Override
-    public TopicProxy create(TableAvailable table) {
-        return new TopicProxy(table);
+    public TopicTestProxy create(TableAvailable table) {
+        return new TopicTestProxy(table);
     }
 }

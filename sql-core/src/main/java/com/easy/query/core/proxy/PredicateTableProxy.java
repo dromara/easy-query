@@ -1,6 +1,4 @@
-package com.easy.query.api.proxy.core;
-
-import com.easy.query.api.proxy.core.base.TableProxy;
+package com.easy.query.core.proxy;
 
 /**
  * create time 2023/6/21 21:56

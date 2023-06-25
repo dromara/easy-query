@@ -1,9 +1,9 @@
 package com.easy.query.test.entity.base;
 
-import com.easy.query.api.proxy.core.ProxyQuery;
-import com.easy.query.api.proxy.core.base.SQLColumn;
-import com.easy.query.api.proxy.core.base.impl.SQLColumnImpl;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.proxy.ProxyQuery;
+import com.easy.query.core.proxy.SQLColumn;
+import com.easy.query.core.proxy.impl.SQLColumnImpl;
 import com.easy.query.test.entity.SysUser;
 
 /**

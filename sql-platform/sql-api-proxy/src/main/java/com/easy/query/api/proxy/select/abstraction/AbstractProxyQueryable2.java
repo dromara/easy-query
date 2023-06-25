@@ -1,7 +1,5 @@
 package com.easy.query.api.proxy.select.abstraction;
 
-import com.easy.query.api.proxy.core.ProxyQuery;
-import com.easy.query.api.proxy.core.base.SQLColumn;
 import com.easy.query.api.proxy.select.ProxyQueryable;
 import com.easy.query.api.proxy.select.ProxyQueryable2;
 import com.easy.query.api.proxy.select.ProxyQueryable3;
@@ -23,6 +21,8 @@ import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.lambda.SQLExpression3;
 import com.easy.query.core.expression.lambda.SQLExpression4;
 import com.easy.query.core.expression.lambda.SQLFuncExpression2;
+import com.easy.query.core.proxy.ProxyQuery;
+import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.math.BigDecimal;

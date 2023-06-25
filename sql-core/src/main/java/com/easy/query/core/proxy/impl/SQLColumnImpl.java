@@ -1,7 +1,7 @@
-package com.easy.query.api.proxy.core.base.impl;
+package com.easy.query.core.proxy.impl;
 
-import com.easy.query.api.proxy.core.base.SQLColumn;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.proxy.SQLColumn;
 
 /**
  * create time 2023/6/22 13:15

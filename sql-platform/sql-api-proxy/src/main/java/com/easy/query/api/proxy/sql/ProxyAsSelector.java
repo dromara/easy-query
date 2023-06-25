@@ -1,11 +1,11 @@
 package com.easy.query.api.proxy.sql;
 
-import com.easy.query.api.proxy.core.ProxyQuery;
-import com.easy.query.api.proxy.core.base.SQLColumn;
 import com.easy.query.api.proxy.select.ProxyQueryable;
 import com.easy.query.core.expression.builder.AsSelector;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.proxy.ProxyQuery;
+import com.easy.query.core.proxy.SQLColumn;
 
 import java.util.function.Function;
 
