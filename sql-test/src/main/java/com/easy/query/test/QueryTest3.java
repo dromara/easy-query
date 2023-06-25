@@ -8,6 +8,7 @@ import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.TopicAuto;
 import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import com.easy.query.test.entity.proxy.TopicAutoProxy;
+import com.easy.query.test.entity.proxy.TopicProxy;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -502,5 +503,26 @@ public class QueryTest3 extends BaseTest {
                         .columnAs(t.isTop(), r -> r.isTop())).toSQL();
         Assert.assertEquals("SELECT t.`title`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top`,t.`id`,t1.`title`,t.`content` AS `content`,t.`is_top` AS `is_top` FROM `t_blog` t LEFT JOIN `t_topic_auto` t1 ON t.`id` = t1.`id` WHERE t.`deleted` = ? AND t1.`title` = ? AND t.`id` LIKE ?",sql1);
 //        List<TopicAuto> topicAutos = easyQuery.queryable(TopicAuto.class).where(o->o.lt(TopicAuto::getStars,999)).toList();
+    }
+    @Test
+    public void testProxy3(){
+        Topic topic = easyProxyQuery.queryable(TopicProxy.DEFAULT)
+                .where((filter, t) -> filter.eq(t.id(), "3").or().like(t.title(), "你好"))
+                .firstOrNull();
+        Assert.assertNotNull(topic);
+    }
+    @Test
+    public void testLambda3(){
+        Topic topic = easyQuery.queryable(Topic.class)
+                .where(t -> t.eq(Topic::getId,"3").or().like(Topic::getTitle,"你好"))
+                .firstOrNull();
+        Assert.assertNotNull(topic);
+    }
+    @Test
+    public void testProperty3(){
+        Topic topic =  easyQueryClient.queryable(Topic.class)
+                .where(t->t.eq("id","3").or().like("title","你好"))
+                .firstOrNull();
+        Assert.assertNotNull(topic);
     }
 }
