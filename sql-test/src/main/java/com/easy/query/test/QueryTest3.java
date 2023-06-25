@@ -1,9 +1,12 @@
 package com.easy.query.test;
 
 import com.easy.query.core.api.pagination.EasyPageResult;
+import com.easy.query.test.dto.BlogEntityTest;
+import com.easy.query.test.dto.proxy.BlogEntityTestProxy;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.TopicAuto;
+import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import com.easy.query.test.entity.proxy.TopicAutoProxy;
 import org.junit.Assert;
 import org.junit.Test;
@@ -476,6 +479,21 @@ public class QueryTest3 extends BaseTest {
         TopicAuto topicAuto = easyProxyQuery.queryable(TopicAutoProxy.TABLE)
                 .where((filter, t) -> filter.eq(t.title(), "123"))
                 .firstOrNull();
+        List<BlogEntityTest> list = easyProxyQuery.queryable(BlogEntityProxy.TABLE)
+                .leftJoin(TopicAutoProxy.TABLE, (filter, t, t1) -> filter.eq(t.id(), t1.id()))
+                .where((filter, t, t1) -> filter.eq(t1.title(), "123").like(t.id(), "22"))
+                .select(BlogEntityTestProxy.TABLE, (selector, t, t1) ->
+                        selector.columns(t.id(), t1.title())
+                        .columnAs(t.content(), r -> r.content())
+                        .columnAs(t.isTop(), r -> r.isTop())
+                ).toList();
+
+        String sql = easyProxyQuery.queryable(BlogEntityProxy.TABLE)
+                .leftJoin(TopicAutoProxy.TABLE, (filter, t, t1) -> filter.eq(t.id(), t1.id()))
+                .where((filter, t, t1) -> filter.eq(t1.title(), "123").like(t.id(), "22"))
+                .select(BlogEntityTestProxy.TABLE, (selector, t, t1) -> selector.columns(t.id(), t1.title()).columnAs(t.content(), r -> r.content())
+                        .columnAs(t.isTop(), r -> r.isTop())).toSQL();
+        Assert.assertEquals("SELECT t.`id`,t1.`title`,t.`content` AS `content`,t.`is_top` AS `is_top` FROM `t_blog` t LEFT JOIN `t_topic_auto` t1 ON t.`id` = t1.`id` WHERE t.`deleted` = ? AND t1.`title` = ? AND t.`id` LIKE ?",sql);
 //        List<TopicAuto> topicAutos = easyQuery.queryable(TopicAuto.class).where(o->o.lt(TopicAuto::getStars,999)).toList();
     }
 }

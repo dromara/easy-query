@@ -64,7 +64,7 @@ public abstract class AbstractProxyQueryable2<T1Proxy extends ProxyQuery<T1Proxy
     @Override
     public <T3Proxy extends ProxyQuery<T3Proxy, T3>, T3> ProxyQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> leftJoin(T3Proxy joinProxy, SQLExpression4<ProxyFilter, T1Proxy, T2Proxy, T3Proxy> on) {
         ClientQueryable3<T1, T2, T3> entityQueryable3 = entityQueryable2.leftJoin(joinProxy.getEntityClass(), (wherePredicate1, wherePredicate2, wherePredicate3) -> {
-            on.apply(new ProxyFilterImpl(wherePredicate3.getFilter()), get1Proxy(), get2Proxy(), joinProxy);
+            on.apply(new ProxyFilterImpl(wherePredicate3.getFilter()), get1Proxy(), get2Proxy(), joinProxy.create(wherePredicate3.getTable()));
         });
         return new EasyProxyQueryable3<>(get1Proxy(), get2Proxy(), joinProxy, entityQueryable3);
     }
@@ -80,7 +80,7 @@ public abstract class AbstractProxyQueryable2<T1Proxy extends ProxyQuery<T1Proxy
     @Override
     public <T3Proxy extends ProxyQuery<T3Proxy, T3>, T3> ProxyQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> rightJoin(T3Proxy joinProxy, SQLExpression4<ProxyFilter, T1Proxy, T2Proxy, T3Proxy> on) {
         ClientQueryable3<T1, T2, T3> entityQueryable3 = entityQueryable2.rightJoin(joinProxy.getEntityClass(), (wherePredicate1, wherePredicate2, wherePredicate3) -> {
-            on.apply(new ProxyFilterImpl(wherePredicate3.getFilter()), get1Proxy(), get2Proxy(), joinProxy);
+            on.apply(new ProxyFilterImpl(wherePredicate3.getFilter()), get1Proxy(), get2Proxy(), joinProxy.create(wherePredicate3.getTable()));
         });
         return new EasyProxyQueryable3<>(get1Proxy(), get2Proxy(), joinProxy, entityQueryable3);
     }
@@ -96,7 +96,7 @@ public abstract class AbstractProxyQueryable2<T1Proxy extends ProxyQuery<T1Proxy
     @Override
     public <T3Proxy extends ProxyQuery<T3Proxy, T3>, T3> ProxyQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> innerJoin(T3Proxy joinProxy, SQLExpression4<ProxyFilter, T1Proxy, T2Proxy, T3Proxy> on) {
         ClientQueryable3<T1, T2, T3> entityQueryable3 = entityQueryable2.innerJoin(joinProxy.getEntityClass(), (wherePredicate1, wherePredicate2, wherePredicate3) -> {
-            on.apply(new ProxyFilterImpl(wherePredicate3.getFilter()), get1Proxy(), get2Proxy(), joinProxy);
+            on.apply(new ProxyFilterImpl(wherePredicate3.getFilter()), get1Proxy(), get2Proxy(), joinProxy.create(wherePredicate3.getTable()));
         });
         return new EasyProxyQueryable3<>(get1Proxy(), get2Proxy(), joinProxy, entityQueryable3);
     }
