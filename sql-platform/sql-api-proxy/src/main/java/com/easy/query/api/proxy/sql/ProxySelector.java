@@ -1,7 +1,7 @@
 package com.easy.query.api.proxy.sql;
 
 import com.easy.query.core.expression.builder.Selector;
-import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.proxy.ProxyQuery;
 import com.easy.query.core.proxy.SQLColumn;
 
 /**
@@ -37,8 +37,8 @@ public interface ProxySelector {
        return this;
    }
 
-   default ProxySelector columnAll(TableAvailable table){
-       getSelector().columnAll(table);
+   default <TProxy extends ProxyQuery<TProxy,TEntity>,TEntity> ProxySelector columnAll(TProxy tableProxy){
+       getSelector().columnAll(tableProxy.getTable());
        return this;
    }
 }

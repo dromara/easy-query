@@ -476,24 +476,30 @@ public class QueryTest3 extends BaseTest {
                 .where((filter, t) -> filter.eq(t.id(), "123").like(t.title(), "xxx"))
                 .select((selector, t) -> selector.columns(t.id(), t.title()))
                 .toList();
-        TopicAuto topicAuto = easyProxyQuery.queryable(TopicAutoProxy.TABLE)
+        TopicAuto topicAuto = easyProxyQuery.queryable(TopicAutoProxy.DEFAULT)
                 .where((filter, t) -> filter.eq(t.title(), "123"))
                 .firstOrNull();
-        List<BlogEntityTest> list = easyProxyQuery.queryable(BlogEntityProxy.TABLE)
-                .leftJoin(TopicAutoProxy.TABLE, (filter, t, t1) -> filter.eq(t.id(), t1.id()))
+        List<BlogEntityTest> list = easyProxyQuery.queryable(BlogEntityProxy.DEFAULT)
+                .leftJoin(TopicAutoProxy.DEFAULT, (filter, t, t1) -> filter.eq(t.id(), t1.id()))
                 .where((filter, t, t1) -> filter.eq(t1.title(), "123").like(t.id(), "22"))
-                .select(BlogEntityTestProxy.TABLE, (selector, t, t1) ->
+                .select(BlogEntityTestProxy.DEFAULT, (selector, t, t1) ->
                         selector.columns(t.id(), t1.title())
                         .columnAs(t.content(), r -> r.content())
                         .columnAs(t.isTop(), r -> r.isTop())
                 ).toList();
 
-        String sql = easyProxyQuery.queryable(BlogEntityProxy.TABLE)
-                .leftJoin(TopicAutoProxy.TABLE, (filter, t, t1) -> filter.eq(t.id(), t1.id()))
+        String sql = easyProxyQuery.queryable(BlogEntityProxy.DEFAULT)
+                .leftJoin(TopicAutoProxy.DEFAULT, (filter, t, t1) -> filter.eq(t.id(), t1.id()))
                 .where((filter, t, t1) -> filter.eq(t1.title(), "123").like(t.id(), "22"))
-                .select(BlogEntityTestProxy.TABLE, (selector, t, t1) -> selector.columns(t.id(), t1.title()).columnAs(t.content(), r -> r.content())
+                .select(BlogEntityTestProxy.DEFAULT, (selector, t, t1) -> selector.columns(t.id(), t1.title()).columnAs(t.content(), r -> r.content())
                         .columnAs(t.isTop(), r -> r.isTop())).toSQL();
         Assert.assertEquals("SELECT t.`id`,t1.`title`,t.`content` AS `content`,t.`is_top` AS `is_top` FROM `t_blog` t LEFT JOIN `t_topic_auto` t1 ON t.`id` = t1.`id` WHERE t.`deleted` = ? AND t1.`title` = ? AND t.`id` LIKE ?",sql);
+
+        String sql1 = easyProxyQuery.queryable(BlogEntityProxy.DEFAULT)
+                .leftJoin(TopicAutoProxy.DEFAULT, (filter, t, t1) -> filter.eq(t.id(), t1.id()))
+                .where((filter, t, t1) -> filter.eq(t1.title(), "123").like(t.id(), "22"))
+                .select(BlogEntityTestProxy.DEFAULT, (selector, t, t1) -> selector.columnAll(t).columns(t.id(), t1.title()).columnAs(t.content(), r -> r.content())
+                        .columnAs(t.isTop(), r -> r.isTop())).toSQL();
 //        List<TopicAuto> topicAutos = easyQuery.queryable(TopicAuto.class).where(o->o.lt(TopicAuto::getStars,999)).toList();
     }
 }

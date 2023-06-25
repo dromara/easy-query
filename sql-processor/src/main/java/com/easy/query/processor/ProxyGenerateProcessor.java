@@ -121,7 +121,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
 
             //代理类后缀
             String proxyClassSuffix = props.getProperties().getProperty("processor.proxyClassSuffix", "Proxy");
-            String defaultProxyInstanceName = props.getProperties().getProperty("processor.proxyInstanceName", "TABLE");
+            String defaultProxyInstanceName = props.getProperties().getProperty("processor.proxyInstanceName", "DEFAULT");
 
             //待忽略对象后缀
             String[] entityIgnoreSuffixes = props.getProperties().getProperty("processor.entity.ignoreSuffixes", "").split(",");
