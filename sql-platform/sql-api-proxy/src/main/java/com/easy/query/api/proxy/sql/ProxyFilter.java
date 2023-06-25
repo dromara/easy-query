@@ -7,7 +7,7 @@ import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.enums.SQLRangeEnum;
 import com.easy.query.core.expression.builder.Filter;
 import com.easy.query.core.expression.lambda.SQLExpression1;
-import com.easy.query.core.proxy.ProxyQuery;
+import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
 
 import java.util.Collection;
@@ -385,11 +385,11 @@ public interface ProxyFilter {
         return this;
     }
 
-    default <TProxy extends ProxyQuery<TProxy, TProperty>, TProperty> ProxyFilter in(SQLColumn<TProperty> column, ProxyQueryable<TProxy, TProperty> subQueryable) {
+    default <TProxy extends ProxyEntity<TProxy, TProperty>, TProperty> ProxyFilter in(SQLColumn<TProperty> column, ProxyQueryable<TProxy, TProperty> subQueryable) {
         return in(true, column, subQueryable);
     }
 
-    default <TProxy extends ProxyQuery<TProxy, TProperty>, TProperty> ProxyFilter in(boolean condition, SQLColumn<TProperty> column, ProxyQueryable<TProxy, TProperty> subQueryable) {
+    default <TProxy extends ProxyEntity<TProxy, TProperty>, TProperty> ProxyFilter in(boolean condition, SQLColumn<TProperty> column, ProxyQueryable<TProxy, TProperty> subQueryable) {
         if (condition) {
             getFilter().in(column.getTable(), column.value(), subQueryable);
         }
@@ -426,33 +426,33 @@ public interface ProxyFilter {
         return this;
     }
 
-    default <TPropertyProxy extends ProxyQuery<TPropertyProxy,TProperty>,TProperty> ProxyFilter notIn(SQLColumn<?> column,ProxyQueryable<TPropertyProxy,TProperty> subQueryable) {
+    default <TPropertyProxy extends ProxyEntity<TPropertyProxy,TProperty>,TProperty> ProxyFilter notIn(SQLColumn<?> column, ProxyQueryable<TPropertyProxy,TProperty> subQueryable) {
         return notIn(true,column,subQueryable);
     }
 
-    default <TPropertyProxy extends ProxyQuery<TPropertyProxy,TProperty>,TProperty> ProxyFilter notIn(boolean condition, SQLColumn<?> column, ProxyQueryable<TPropertyProxy,TProperty> subQueryable) {
+    default <TPropertyProxy extends ProxyEntity<TPropertyProxy,TProperty>,TProperty> ProxyFilter notIn(boolean condition, SQLColumn<?> column, ProxyQueryable<TPropertyProxy,TProperty> subQueryable) {
         if(condition){
             getFilter().notIn(column.getTable(),column.value(),subQueryable);
         }
         return this;
     }
 
-    default <T1Proxy extends ProxyQuery<T1Proxy,T1>,T1,T2Proxy extends ProxyQuery<T2Proxy,T2>,T2> ProxyFilter exists(T1Proxy tableProxy,ProxyQueryable<T2Proxy,T2> subQueryable) {
+    default <T1Proxy extends ProxyEntity<T1Proxy,T1>,T1,T2Proxy extends ProxyEntity<T2Proxy,T2>,T2> ProxyFilter exists(T1Proxy tableProxy, ProxyQueryable<T2Proxy,T2> subQueryable) {
         return exists(true,tableProxy,subQueryable);
     }
 
-    default <T1Proxy extends ProxyQuery<T1Proxy,T1>,T1,T2Proxy extends ProxyQuery<T2Proxy,T2>,T2> ProxyFilter exists(boolean condition,T1Proxy tableProxy, ProxyQueryable<T2Proxy,T2> subQueryable) {
+    default <T1Proxy extends ProxyEntity<T1Proxy,T1>,T1,T2Proxy extends ProxyEntity<T2Proxy,T2>,T2> ProxyFilter exists(boolean condition, T1Proxy tableProxy, ProxyQueryable<T2Proxy,T2> subQueryable) {
         if(condition){
             getFilter().exists(tableProxy.getTable(),subQueryable);
         }
         return this;
     }
 
-    default <T1Proxy extends ProxyQuery<T1Proxy,T1>,T1,T2Proxy extends ProxyQuery<T2Proxy,T2>,T2> ProxyFilter notExists(T1Proxy tableProxy,ProxyQueryable<T2Proxy,T2> subQueryable) {
+    default <T1Proxy extends ProxyEntity<T1Proxy,T1>,T1,T2Proxy extends ProxyEntity<T2Proxy,T2>,T2> ProxyFilter notExists(T1Proxy tableProxy, ProxyQueryable<T2Proxy,T2> subQueryable) {
         return notExists(true,tableProxy,subQueryable);
     }
 
-    default <T1Proxy extends ProxyQuery<T1Proxy,T1>,T1,T2Proxy extends ProxyQuery<T2Proxy,T2>,T2> ProxyFilter notExists(boolean condition,T1Proxy tableProxy, ProxyQueryable<T2Proxy,T2> subQueryable) {
+    default <T1Proxy extends ProxyEntity<T1Proxy,T1>,T1,T2Proxy extends ProxyEntity<T2Proxy,T2>,T2> ProxyFilter notExists(boolean condition, T1Proxy tableProxy, ProxyQueryable<T2Proxy,T2> subQueryable) {
         if(condition){
             getFilter().notExists(tableProxy.getTable(),subQueryable);
         }
@@ -641,7 +641,7 @@ public interface ProxyFilter {
         return this;
     }
 
-    default <T2Proxy extends ProxyQuery<T2Proxy, T2>, T2> ProxyFilter eq(SQLColumn<?> column1, SQLColumn<?> column2) {
+    default <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> ProxyFilter eq(SQLColumn<?> column1, SQLColumn<?> column2) {
         return eq(true, column1, column2);
     }
 

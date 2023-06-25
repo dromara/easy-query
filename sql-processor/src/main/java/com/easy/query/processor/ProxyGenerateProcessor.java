@@ -26,7 +26,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
@@ -40,10 +42,20 @@ import java.util.function.Consumer;
 @SupportedAnnotationTypes({"com.easy.query.core.annotation.EntityProxy"})
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
 public class ProxyGenerateProcessor extends AbstractProcessor {
+    private static final Map<String,String> TYPE_MAPPING=new HashMap<>();
+    static{
+        TYPE_MAPPING.put("float","java.lang.Float");
+        TYPE_MAPPING.put("double","java.lang.Double");
+        TYPE_MAPPING.put("short","java.lang.Short");
+        TYPE_MAPPING.put("int","java.lang.Integer");
+        TYPE_MAPPING.put("long","java.lang.Long");
+        TYPE_MAPPING.put("byte","java.lang.Byte");
+        TYPE_MAPPING.put("boolean","java.lang.Boolean");
+    }
     private static final String PROXY_TEMPLATE = "package @package;\n" +
             "\n" +
             "import com.easy.query.core.expression.parser.core.available.TableAvailable;\n" +
-            "import com.easy.query.core.proxy.AbstractProxyQuery;\n" +
+            "import com.easy.query.core.proxy.AbstractProxyEntity;\n" +
             "import com.easy.query.core.proxy.SQLColumn;\n" +
             "import @entityFullClass;\n" +
             "\n" +
@@ -52,7 +64,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
             " *\n" +
             " * @author xuejiaming\n" +
             " */\n" +
-            "public class @entityClassProxy extends AbstractProxyQuery<@entityClassProxy, @entityClass> {\n" +
+            "public class @entityClassProxy extends AbstractProxyEntity<@entityClassProxy, @entityClass> {\n" +
             "\n" +
             "    public static final @entityClassProxy @proxyInstanceName = new @entityClassProxy();\n" +
             "    private static final Class<@entityClass> entityClass = @entityClass.class;\n" +
@@ -355,12 +367,13 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                 }
 
                 String typeString =typeMirror.toString().trim();
+                String fieldGenericType = TYPE_MAPPING.getOrDefault(typeString, typeString);
 
                 String docComment = elementUtils.getDocComment(fieldElement);
                 String fieldComment = getFiledComment(docComment);
                 String fieldString = FIELD_TEMPLATE
                         .replace("@comment", fieldComment)
-                        .replace("@propertyType", typeString)
+                        .replace("@propertyType", fieldGenericType)
                         .replace("@property", propertyName);
                 filedContent.append(fieldString);
             }

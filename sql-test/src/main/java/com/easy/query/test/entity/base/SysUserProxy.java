@@ -1,7 +1,7 @@
 package com.easy.query.test.entity.base;
 
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.proxy.ProxyQuery;
+import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.proxy.impl.SQLColumnImpl;
 import com.easy.query.test.entity.SysUser;
@@ -12,7 +12,7 @@ import com.easy.query.test.entity.SysUser;
  *
  * @author xuejiaming
  */
-public class SysUserProxy implements ProxyQuery<SysUserProxy, SysUser> {
+public class SysUserProxy implements ProxyEntity<SysUserProxy, SysUser> {
 
     public static final SysUserProxy SYS_USER_PROXY = new SysUserProxy();
     private static final Class<SysUser> entityClass = SysUser.class;

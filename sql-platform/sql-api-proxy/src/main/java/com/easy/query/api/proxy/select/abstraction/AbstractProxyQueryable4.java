@@ -16,7 +16,7 @@ import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.lambda.SQLExpression5;
 import com.easy.query.core.expression.lambda.SQLFuncExpression4;
-import com.easy.query.core.proxy.ProxyQuery;
+import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.util.EasyCollectionUtil;
 
@@ -31,7 +31,7 @@ import java.util.function.Function;
  *
  * @author xuejiaming
  */
-public abstract class AbstractProxyQueryable4<T1Proxy extends ProxyQuery<T1Proxy, T1>, T1, T2Proxy extends ProxyQuery<T2Proxy, T2>, T2, T3Proxy extends ProxyQuery<T3Proxy, T3>, T3, T4Proxy extends ProxyQuery<T4Proxy, T4>, T4>
+public abstract class AbstractProxyQueryable4<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1, T2Proxy extends ProxyEntity<T2Proxy, T2>, T2, T3Proxy extends ProxyEntity<T3Proxy, T3>, T3, T4Proxy extends ProxyEntity<T4Proxy, T4>, T4>
         extends AbstractProxyQueryable<T1Proxy, T1>
         implements ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> {
 
@@ -94,7 +94,7 @@ public abstract class AbstractProxyQueryable4<T1Proxy extends ProxyQuery<T1Proxy
     }
 
     @Override
-    public <TRProxy extends ProxyQuery<TRProxy, TR>, TR> ProxyQueryable<TRProxy, TR> select(TRProxy trProxy, SQLExpression5<ProxyAsSelector<TRProxy, TR>, T1Proxy, T2Proxy, T3Proxy, T4Proxy> selectExpression) {
+    public <TRProxy extends ProxyEntity<TRProxy, TR>, TR> ProxyQueryable<TRProxy, TR> select(TRProxy trProxy, SQLExpression5<ProxyAsSelector<TRProxy, TR>, T1Proxy, T2Proxy, T3Proxy, T4Proxy> selectExpression) {
         ClientQueryable<TR> select = entityQueryable4.select(trProxy.getEntityClass(), (selector1, selector2, selector3, selector4) -> {
             selectExpression.apply(new ProxyAsSelectorImpl<>(trProxy, selector4.getAsSelector()), get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy());
         });

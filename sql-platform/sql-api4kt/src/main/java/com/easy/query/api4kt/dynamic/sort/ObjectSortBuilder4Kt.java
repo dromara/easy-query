@@ -20,6 +20,14 @@ public interface ObjectSortBuilder4Kt<TEntity> {
      */
     ObjectSortBuilder4Kt<TEntity> orderBy(String propertyName, boolean asc);
 
+    default ObjectSortBuilder4Kt<TEntity> allowedProperties(KProperty1<TEntity, ?>... properties){
+        if(properties!=null){
+            for (KProperty1<TEntity, ?> property : properties) {
+                allowed(property);
+            }
+        }
+        return this;
+    }
     ObjectSortBuilder4Kt<TEntity> allowed(KProperty1<TEntity, ?> property);
 
     ObjectSortBuilder4Kt<TEntity> notAllowed(KProperty1<TEntity, ?> property);

@@ -1,7 +1,7 @@
 package com.easy.query.api.proxy.select.abstraction;
 
 import com.easy.query.core.basic.api.select.ClientQueryable;
-import com.easy.query.core.proxy.ProxyQuery;
+import com.easy.query.core.proxy.ProxyEntity;
 
 /**
  * create time 2023/6/23 22:08
@@ -9,7 +9,7 @@ import com.easy.query.core.proxy.ProxyQuery;
  *
  * @author xuejiaming
  */
-public abstract class AbstractProxyQueryable1<T1Proxy extends ProxyQuery<T1Proxy, T1>, T1> extends AbstractProxyQueryable<T1Proxy,T1> {
+public abstract class AbstractProxyQueryable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> extends AbstractProxyQueryable<T1Proxy,T1> {
 
 
     public AbstractProxyQueryable1(T1Proxy t1Proxy, ClientQueryable<T1> entityQueryable) {

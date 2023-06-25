@@ -8,7 +8,7 @@ import com.easy.query.core.proxy.impl.SQLColumnImpl;
  *
  * @author xuejiaming
  */
-public abstract class AbstractProxyQuery<TProxy extends ProxyQuery<TProxy, TEntity>, TEntity> implements ProxyQuery<TProxy,TEntity>{
+public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEntity>, TEntity> implements ProxyEntity<TProxy,TEntity> {
     public <TProperty> SQLColumn<TProperty> get(String property){
         return new SQLColumnImpl<>(getTable(),property);
     }

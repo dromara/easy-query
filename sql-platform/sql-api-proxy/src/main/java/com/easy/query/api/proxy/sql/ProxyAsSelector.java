@@ -3,7 +3,7 @@ package com.easy.query.api.proxy.sql;
 import com.easy.query.api.proxy.select.ProxyQueryable;
 import com.easy.query.core.expression.builder.AsSelector;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
-import com.easy.query.core.proxy.ProxyQuery;
+import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
 
 import java.util.function.Function;
@@ -14,7 +14,7 @@ import java.util.function.Function;
  *
  * @author xuejiaming
  */
-public interface ProxyAsSelector<TRProxy extends ProxyQuery<TRProxy, TR>, TR> {
+public interface ProxyAsSelector<TRProxy extends ProxyEntity<TRProxy, TR>, TR> {
 
     TRProxy getTRProxy();
 
@@ -49,7 +49,7 @@ public interface ProxyAsSelector<TRProxy extends ProxyQuery<TRProxy, TR>, TR> {
      *
      * @return
      */
-    default <TProxy extends ProxyQuery<TProxy,TEntity>,TEntity> ProxyAsSelector<TRProxy, TR> columnAll(TProxy tableProxy) {
+    default <TProxy extends ProxyEntity<TProxy,TEntity>,TEntity> ProxyAsSelector<TRProxy, TR> columnAll(TProxy tableProxy) {
         getAsSelector().columnAll(tableProxy.getTable());
         return this;
     }
@@ -64,12 +64,12 @@ public interface ProxyAsSelector<TRProxy extends ProxyQuery<TRProxy, TR>, TR> {
         return this;
     }
 
-    default <TSubQueryProxy extends ProxyQuery<TSubQueryProxy, TSubQuery>, TSubQuery> ProxyAsSelector<TRProxy, TR> columnSubQueryAs(SQLFuncExpression<ProxyQueryable<TSubQueryProxy, TSubQuery>> subQueryableFunc, Function<TRProxy, SQLColumn<?>> mapAlias) {
+    default <TSubQueryProxy extends ProxyEntity<TSubQueryProxy, TSubQuery>, TSubQuery> ProxyAsSelector<TRProxy, TR> columnSubQueryAs(SQLFuncExpression<ProxyQueryable<TSubQueryProxy, TSubQuery>> subQueryableFunc, Function<TRProxy, SQLColumn<?>> mapAlias) {
         SQLColumn<?> sqlColumn = mapAlias.apply(getTRProxy());
         return columnSubQueryAs(subQueryableFunc, sqlColumn.value());
     }
 
-    default <TSubQueryProxy extends ProxyQuery<TSubQueryProxy, TSubQuery>, TSubQuery> ProxyAsSelector<TRProxy, TR> columnSubQueryAs(SQLFuncExpression<ProxyQueryable<TSubQueryProxy, TSubQuery>> subQueryableFunc, String alias) {
+    default <TSubQueryProxy extends ProxyEntity<TSubQueryProxy, TSubQuery>, TSubQuery> ProxyAsSelector<TRProxy, TR> columnSubQueryAs(SQLFuncExpression<ProxyQueryable<TSubQueryProxy, TSubQuery>> subQueryableFunc, String alias) {
         getAsSelector().columnSubQueryAs(subQueryableFunc::apply, alias);
         return this;
     }

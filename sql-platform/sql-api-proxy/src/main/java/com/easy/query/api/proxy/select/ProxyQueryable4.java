@@ -15,7 +15,7 @@ import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.lambda.SQLExpression5;
 import com.easy.query.core.expression.lambda.SQLFuncExpression4;
-import com.easy.query.core.proxy.ProxyQuery;
+import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
 
 import java.math.BigDecimal;
@@ -27,10 +27,10 @@ import java.util.function.Function;
  *
  * @author xuejiaming
  */
-public interface ProxyQueryable4<T1Proxy extends ProxyQuery<T1Proxy, T1>,
-        T1, T2Proxy extends ProxyQuery<T2Proxy, T2>, T2,
-        T3Proxy extends ProxyQuery<T3Proxy, T3>, T3,
-        T4Proxy extends ProxyQuery<T4Proxy, T4>, T4> extends ProxyQueryable<T1Proxy, T1> {
+public interface ProxyQueryable4<T1Proxy extends ProxyEntity<T1Proxy, T1>,
+        T1, T2Proxy extends ProxyEntity<T2Proxy, T2>, T2,
+        T3Proxy extends ProxyEntity<T3Proxy, T3>, T3,
+        T4Proxy extends ProxyEntity<T4Proxy, T4>, T4> extends ProxyQueryable<T1Proxy, T1> {
 
     T2Proxy get2Proxy();
 
@@ -76,7 +76,7 @@ public interface ProxyQueryable4<T1Proxy extends ProxyQuery<T1Proxy, T1>,
 
     //endregion
     //region select
-    <TRProxy extends ProxyQuery<TRProxy, TR>, TR> ProxyQueryable<TRProxy, TR> select(TRProxy trProxy, SQLExpression5<ProxyAsSelector<TRProxy, TR>, T1Proxy, T2Proxy, T3Proxy, T4Proxy> selectExpression);
+    <TRProxy extends ProxyEntity<TRProxy, TR>, TR> ProxyQueryable<TRProxy, TR> select(TRProxy trProxy, SQLExpression5<ProxyAsSelector<TRProxy, TR>, T1Proxy, T2Proxy, T3Proxy, T4Proxy> selectExpression);
     //endregion
 
     //region aggregate

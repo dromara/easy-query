@@ -10,7 +10,10 @@ import com.easy.query.test.h2.domain.DefTable;
 import com.easy.query.test.h2.domain.DefTableLeft1;
 import com.easy.query.test.h2.domain.DefTableLeft2;
 import com.easy.query.test.h2.domain.DefTableLeft3;
+import com.easy.query.test.h2.domain.proxy.ALLTYPE1Proxy;
+import com.easy.query.test.h2.domain.proxy.ALLTYPEProxy;
 import com.easy.query.test.h2.vo.ALLTYPEVO1;
+import com.easy.query.test.h2.vo.proxy.ALLTYPEVO1Proxy;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -300,30 +303,30 @@ public class H2QueryTest extends H2BaseTest {
         ALLTYPEVO1 alltype1 = easyQuery.queryable(ALLTYPE1.class)
                 .whereById("1235").select(ALLTYPEVO1.class).firstOrNull();
         Assert.assertNotNull(alltype1);
-//        Assert.assertEquals(alltype1.getId(), alltype.getId());
-//        Assert.assertEquals(alltype1.getNumberDecimal(), alltype.getNumberDecimal());
-//        Assert.assertEquals(alltype1.getNumberFloat(), alltype.getNumberFloat());
-//        Assert.assertEquals(alltype1.getNumberDouble(), alltype.getNumberDouble());
-//        Assert.assertEquals(alltype1.getNumberShort(), alltype.getNumberShort());
-//        Assert.assertEquals(alltype1.getNumberInteger(), alltype.getNumberInteger());
-//        Assert.assertEquals(alltype1.getNumberLong(), alltype.getNumberLong());
-//        Assert.assertEquals(alltype1.getNumberByte(), alltype.getNumberByte());
-//        Assert.assertEquals(alltype1.getTimeLocalDateTime(), alltype.getTimeLocalDateTime());
-//        Assert.assertEquals(alltype1.getTimeLocalDate(), alltype.getTimeLocalDate());
-//        Assert.assertEquals(alltype1.getTimeLocalTime(), alltype.getTimeLocalTime());
-//        Assert.assertEquals(alltype1.getEnable(), alltype.getEnable());
-//        Assert.assertEquals(alltype1.getValue(), alltype.getValue());
-//        Assert.assertEquals(alltype1.getUid(), alltype.getUid());
-//        Assert.assertEquals(alltype1.getSqlDate(), alltype.getSqlDate());
-//        Assert.assertEquals(alltype1.getOnlyDate(), alltype.getOnlyDate());
-//        Assert.assertEquals(alltype1.getOnlyTime(), alltype.getOnlyTime());
+        Assert.assertEquals(alltype1.getId(), alltype.getId());
+        Assert.assertEquals(alltype1.getNumberDecimal(), alltype.getNumberDecimal());
+        Assert.assertEquals(alltype1.getNumberFloat(), alltype.getNumberFloat());
+        Assert.assertEquals(alltype1.getNumberDouble(), alltype.getNumberDouble());
+        Assert.assertEquals(alltype1.getNumberShort(), alltype.getNumberShort());
+        Assert.assertEquals(alltype1.getNumberInteger(), alltype.getNumberInteger());
+        Assert.assertEquals(alltype1.getNumberLong(), alltype.getNumberLong());
+        Assert.assertEquals(alltype1.getNumberByte(), alltype.getNumberByte());
+        Assert.assertEquals(alltype1.getTimeLocalDateTime(), alltype.getTimeLocalDateTime());
+        Assert.assertEquals(alltype1.getTimeLocalDate(), alltype.getTimeLocalDate());
+        Assert.assertEquals(alltype1.getTimeLocalTime(), alltype.getTimeLocalTime());
+        Assert.assertEquals(alltype1.getEnable(), alltype.getEnable());
+        Assert.assertEquals(alltype1.getValue(), alltype.getValue());
+        Assert.assertEquals(alltype1.getUid(), alltype.getUid());
+        Assert.assertEquals(alltype1.getSqlDate(), alltype.getSqlDate());
+        Assert.assertEquals(alltype1.getOnlyDate(), alltype.getOnlyDate());
+        Assert.assertEquals(alltype1.getOnlyTime(), alltype.getOnlyTime());
         Assert.assertTrue(alltype1.getNumberFloatBasic() == alltype.getNumberFloatBasic());
-//        Assert.assertTrue(alltype1.getNumberDoubleBasic() == alltype.getNumberDoubleBasic());
-//        Assert.assertEquals(alltype1.getNumberShortBasic(), alltype.getNumberShortBasic());
-//        Assert.assertEquals(alltype1.getNumberIntegerBasic(), alltype.getNumberIntegerBasic());
-//        Assert.assertEquals(alltype1.getNumberLongBasic(), alltype.getNumberLongBasic());
-//        Assert.assertEquals(alltype1.getNumberByteBasic(), alltype.getNumberByteBasic());
-//        Assert.assertEquals(alltype1.isEnableBasic(), alltype.isEnableBasic());
+        Assert.assertTrue(alltype1.getNumberDoubleBasic() == alltype.getNumberDoubleBasic());
+        Assert.assertEquals(alltype1.getNumberShortBasic(), alltype.getNumberShortBasic());
+        Assert.assertEquals(alltype1.getNumberIntegerBasic(), alltype.getNumberIntegerBasic());
+        Assert.assertEquals(alltype1.getNumberLongBasic(), alltype.getNumberLongBasic());
+        Assert.assertEquals(alltype1.getNumberByteBasic(), alltype.getNumberByteBasic());
+        Assert.assertEquals(alltype1.isEnableBasic(), alltype.isEnableBasic());
     }
     @Test
     public void allTypeTestSharding1() {
@@ -485,5 +488,197 @@ public class H2QueryTest extends H2BaseTest {
             Assert.assertEquals(alltype.getNumberFloat(), (Float) (12.3f * 13));
             Assert.assertEquals(alltype.getNumberDouble(), (Double) (22.1d * 13));
         }
+    }
+
+
+
+
+
+
+    @Test
+    public void allTypeTest1_proxy() {
+        ALLTYPE alltype = new ALLTYPE();
+        alltype.setId("123456");
+
+        alltype.setNumberDecimal(new BigDecimal("12.33"));
+        alltype.setNumberFloat(12.3f);
+        alltype.setNumberDouble(22.1d);
+        alltype.setNumberShort(new Short("12"));
+        alltype.setNumberInteger(33);
+        alltype.setNumberLong(12345678911L);
+        alltype.setNumberByte(new Byte("-1"));
+        alltype.setEnable(true);
+        alltype.setTimeLocalDateTime(LocalDateTime.of(2021, 1, 1, 0, 0));
+        alltype.setTimeLocalDate(LocalDate.of(2121, 1, 2));
+        alltype.setTimeLocalTime(LocalTime.of(21, 1, 9));
+        alltype.setOnlyDate(new Date());
+        long epochMilli = LocalDateTime.now().toLocalDate().atStartOfDay()
+                .toInstant(ZoneOffset.ofHours(8)).toEpochMilli();
+        java.sql.Date date = new java.sql.Date(epochMilli);
+        alltype.setSqlDate(date);
+        alltype.setOnlyTime(Time.valueOf("12:09:10"));
+        alltype.setValue("3322");
+        alltype.setUid(UUID.randomUUID());
+        alltype.setNumberFloatBasic(12.3f);
+        alltype.setNumberDoubleBasic(22.1d);
+        alltype.setNumberShortBasic(new Short("12"));
+        alltype.setNumberIntegerBasic(33);
+        alltype.setNumberLongBasic(12345678911L);
+        alltype.setNumberByteBasic(new Byte("-1"));
+        alltype.setEnableBasic(true);
+        long l = easyProxyQuery.insertable(alltype).executeRows();
+        Assert.assertEquals(1, l);
+        ALLTYPE alltype1 = easyProxyQuery.queryable(ALLTYPEProxy.DEFAULT)
+                .whereById("123456").firstOrNull();
+        Assert.assertNotNull(alltype1);
+        Assert.assertEquals(alltype1.getId(), alltype.getId());
+        Assert.assertEquals(alltype1.getNumberDecimal(), alltype.getNumberDecimal());
+        Assert.assertEquals(alltype1.getNumberFloat(), alltype.getNumberFloat());
+        Assert.assertEquals(alltype1.getNumberDouble(), alltype.getNumberDouble());
+        Assert.assertEquals(alltype1.getNumberShort(), alltype.getNumberShort());
+        Assert.assertEquals(alltype1.getNumberInteger(), alltype.getNumberInteger());
+        Assert.assertEquals(alltype1.getNumberLong(), alltype.getNumberLong());
+        Assert.assertEquals(alltype1.getNumberByte(), alltype.getNumberByte());
+        Assert.assertEquals(alltype1.getTimeLocalDateTime(), alltype.getTimeLocalDateTime());
+        Assert.assertEquals(alltype1.getTimeLocalDate(), alltype.getTimeLocalDate());
+        Assert.assertEquals(alltype1.getTimeLocalTime(), alltype.getTimeLocalTime());
+        Assert.assertEquals(alltype1.getEnable(), alltype.getEnable());
+        Assert.assertEquals(alltype1.getValue(), alltype.getValue());
+        Assert.assertEquals(alltype1.getUid(), alltype.getUid());
+        Assert.assertEquals(alltype1.getSqlDate(), alltype.getSqlDate());
+        Assert.assertEquals(alltype1.getOnlyDate(), alltype.getOnlyDate());
+        Assert.assertEquals(alltype1.getOnlyTime(), alltype.getOnlyTime());
+        Assert.assertTrue(alltype1.getNumberFloatBasic() == alltype.getNumberFloatBasic());
+        Assert.assertTrue(alltype1.getNumberDoubleBasic() == alltype.getNumberDoubleBasic());
+        Assert.assertEquals(alltype1.getNumberShortBasic(), alltype.getNumberShortBasic());
+        Assert.assertEquals(alltype1.getNumberIntegerBasic(), alltype.getNumberIntegerBasic());
+        Assert.assertEquals(alltype1.getNumberLongBasic(), alltype.getNumberLongBasic());
+        Assert.assertEquals(alltype1.getNumberByteBasic(), alltype.getNumberByteBasic());
+        Assert.assertEquals(alltype1.isEnableBasic(), alltype.isEnableBasic());
+    }
+
+    @Test
+    public void allTypeTest1_1_proxy() {
+        ALLTYPE1 alltype = new ALLTYPE1();
+        alltype.setId("1234567");
+
+        alltype.setNumberDecimal(new BigDecimal("12.33"));
+        alltype.setNumberFloat(12.3f);
+        alltype.setNumberDouble(22.1d);
+        alltype.setNumberShort(new Short("12"));
+        alltype.setNumberInteger(33);
+        alltype.setNumberLong(12345678911L);
+        alltype.setNumberByte(new Byte("-1"));
+        alltype.setEnable(true);
+        alltype.setTimeLocalDateTime(LocalDateTime.of(2021, 1, 1, 0, 0));
+        alltype.setTimeLocalDate(LocalDate.of(2121, 1, 2));
+        alltype.setTimeLocalTime(LocalTime.of(21, 1, 9));
+        alltype.setOnlyDate(new Date());
+        long epochMilli = LocalDateTime.now().toLocalDate().atStartOfDay()
+                .toInstant(ZoneOffset.ofHours(8)).toEpochMilli();
+        java.sql.Date date = new java.sql.Date(epochMilli);
+        alltype.setSqlDate(date);
+        alltype.setOnlyTime(Time.valueOf("12:09:10"));
+        alltype.setValue("3322");
+        alltype.setUid(UUID.randomUUID());
+
+        alltype.setNumberFloatBasic(12.3f);
+        alltype.setNumberDoubleBasic(22.1d);
+        alltype.setNumberShortBasic(new Short("12"));
+        alltype.setNumberIntegerBasic(33);
+        alltype.setNumberLongBasic(12345678911L);
+        alltype.setNumberByteBasic(new Byte("-1"));
+        alltype.setEnableBasic(true);
+        long l = easyProxyQuery.insertable(alltype).executeRows();
+        Assert.assertEquals(1, l);
+        ALLTYPE1 alltype1 = easyProxyQuery.queryable(ALLTYPE1Proxy.DEFAULT)
+                .whereById("1234567").firstOrNull();
+        Assert.assertNotNull(alltype1);
+        Assert.assertEquals(alltype1.getId(), alltype.getId());
+        Assert.assertEquals(alltype1.getNumberDecimal(), alltype.getNumberDecimal());
+        Assert.assertEquals(alltype1.getNumberFloat(), alltype.getNumberFloat());
+        Assert.assertEquals(alltype1.getNumberDouble(), alltype.getNumberDouble());
+        Assert.assertEquals(alltype1.getNumberShort(), alltype.getNumberShort());
+        Assert.assertEquals(alltype1.getNumberInteger(), alltype.getNumberInteger());
+        Assert.assertEquals(alltype1.getNumberLong(), alltype.getNumberLong());
+        Assert.assertEquals(alltype1.getNumberByte(), alltype.getNumberByte());
+        Assert.assertEquals(alltype1.getTimeLocalDateTime(), alltype.getTimeLocalDateTime());
+        Assert.assertEquals(alltype1.getTimeLocalDate(), alltype.getTimeLocalDate());
+        Assert.assertEquals(alltype1.getTimeLocalTime(), alltype.getTimeLocalTime());
+        Assert.assertEquals(alltype1.getEnable(), alltype.getEnable());
+        Assert.assertEquals(alltype1.getValue(), alltype.getValue());
+        Assert.assertEquals(alltype1.getUid(), alltype.getUid());
+        Assert.assertEquals(alltype1.getSqlDate(), alltype.getSqlDate());
+        Assert.assertEquals(alltype1.getOnlyDate(), alltype.getOnlyDate());
+        Assert.assertEquals(alltype1.getOnlyTime(), alltype.getOnlyTime());
+        Assert.assertTrue(alltype1.getNumberFloatBasic() == alltype.getNumberFloatBasic());
+        Assert.assertTrue(alltype1.getNumberDoubleBasic() == alltype.getNumberDoubleBasic());
+        Assert.assertEquals(alltype1.getNumberShortBasic(), alltype.getNumberShortBasic());
+        Assert.assertEquals(alltype1.getNumberIntegerBasic(), alltype.getNumberIntegerBasic());
+        Assert.assertEquals(alltype1.getNumberLongBasic(), alltype.getNumberLongBasic());
+        Assert.assertEquals(alltype1.getNumberByteBasic(), alltype.getNumberByteBasic());
+        Assert.assertEquals(alltype1.isEnableBasic(), alltype.isEnableBasic());
+    }
+    @Test
+    public void allTypeTest1_2_proxy() {
+        ALLTYPE1 alltype = new ALLTYPE1();
+        alltype.setId("1235678");
+
+        alltype.setNumberDecimal(new BigDecimal("12.33"));
+        alltype.setNumberFloat(12.3f);
+        alltype.setNumberDouble(22.1d);
+        alltype.setNumberShort(new Short("12"));
+        alltype.setNumberInteger(33);
+        alltype.setNumberLong(12345678911L);
+        alltype.setNumberByte(new Byte("-1"));
+        alltype.setEnable(true);
+        alltype.setTimeLocalDateTime(LocalDateTime.of(2021, 1, 1, 0, 0));
+        alltype.setTimeLocalDate(LocalDate.of(2121, 1, 2));
+        alltype.setTimeLocalTime(LocalTime.of(21, 1, 9));
+        alltype.setOnlyDate(new Date());
+        long epochMilli = LocalDateTime.now().toLocalDate().atStartOfDay()
+                .toInstant(ZoneOffset.ofHours(8)).toEpochMilli();
+        java.sql.Date date = new java.sql.Date(epochMilli);
+        alltype.setSqlDate(date);
+        alltype.setOnlyTime(Time.valueOf("12:09:10"));
+        alltype.setValue("3322");
+        alltype.setUid(UUID.randomUUID());
+
+        alltype.setNumberFloatBasic(12.3f);
+        alltype.setNumberDoubleBasic(22.1d);
+        alltype.setNumberShortBasic(new Short("12"));
+        alltype.setNumberIntegerBasic(33);
+        alltype.setNumberLongBasic(12345678911L);
+        alltype.setNumberByteBasic(new Byte("-1"));
+        alltype.setEnableBasic(true);
+        long l = easyProxyQuery.insertable(alltype).executeRows();
+        Assert.assertEquals(1, l);
+        ALLTYPEVO1 alltype1 = easyProxyQuery.queryable(ALLTYPE1Proxy.DEFAULT)
+                .whereById("1235678").select(ALLTYPEVO1Proxy.DEFAULT).firstOrNull();
+        Assert.assertNotNull(alltype1);
+        Assert.assertEquals(alltype1.getId(), alltype.getId());
+        Assert.assertEquals(alltype1.getNumberDecimal(), alltype.getNumberDecimal());
+        Assert.assertEquals(alltype1.getNumberFloat(), alltype.getNumberFloat());
+        Assert.assertEquals(alltype1.getNumberDouble(), alltype.getNumberDouble());
+        Assert.assertEquals(alltype1.getNumberShort(), alltype.getNumberShort());
+        Assert.assertEquals(alltype1.getNumberInteger(), alltype.getNumberInteger());
+        Assert.assertEquals(alltype1.getNumberLong(), alltype.getNumberLong());
+        Assert.assertEquals(alltype1.getNumberByte(), alltype.getNumberByte());
+        Assert.assertEquals(alltype1.getTimeLocalDateTime(), alltype.getTimeLocalDateTime());
+        Assert.assertEquals(alltype1.getTimeLocalDate(), alltype.getTimeLocalDate());
+        Assert.assertEquals(alltype1.getTimeLocalTime(), alltype.getTimeLocalTime());
+        Assert.assertEquals(alltype1.getEnable(), alltype.getEnable());
+        Assert.assertEquals(alltype1.getValue(), alltype.getValue());
+        Assert.assertEquals(alltype1.getUid(), alltype.getUid());
+        Assert.assertEquals(alltype1.getSqlDate(), alltype.getSqlDate());
+        Assert.assertEquals(alltype1.getOnlyDate(), alltype.getOnlyDate());
+        Assert.assertEquals(alltype1.getOnlyTime(), alltype.getOnlyTime());
+        Assert.assertTrue(alltype1.getNumberFloatBasic() == alltype.getNumberFloatBasic());
+        Assert.assertTrue(alltype1.getNumberDoubleBasic() == alltype.getNumberDoubleBasic());
+        Assert.assertEquals(alltype1.getNumberShortBasic(), alltype.getNumberShortBasic());
+        Assert.assertEquals(alltype1.getNumberIntegerBasic(), alltype.getNumberIntegerBasic());
+        Assert.assertEquals(alltype1.getNumberLongBasic(), alltype.getNumberLongBasic());
+        Assert.assertEquals(alltype1.getNumberByteBasic(), alltype.getNumberByteBasic());
+        Assert.assertEquals(alltype1.isEnableBasic(), alltype.isEnableBasic());
     }
 }

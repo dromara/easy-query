@@ -2,7 +2,7 @@ package com.easy.query.api.proxy.sql.impl;
 
 import com.easy.query.api.proxy.sql.ProxyAsSelector;
 import com.easy.query.core.expression.builder.AsSelector;
-import com.easy.query.core.proxy.ProxyQuery;
+import com.easy.query.core.proxy.ProxyEntity;
 
 /**
  * create time 2023/6/23 23:00
@@ -10,7 +10,7 @@ import com.easy.query.core.proxy.ProxyQuery;
  *
  * @author xuejiaming
  */
-public class ProxyAsSelectorImpl<TRProxy extends ProxyQuery<TRProxy, TR>, TR> implements ProxyAsSelector<TRProxy,TR> {
+public class ProxyAsSelectorImpl<TRProxy extends ProxyEntity<TRProxy, TR>, TR> implements ProxyAsSelector<TRProxy,TR> {
     private final TRProxy trProxy;
     private final AsSelector asSelector;
 

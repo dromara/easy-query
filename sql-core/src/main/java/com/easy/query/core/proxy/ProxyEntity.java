@@ -6,6 +6,6 @@ package com.easy.query.core.proxy;
  *
  * @author xuejiaming
  */
-public interface ProxyQuery<TProxy extends ProxyQuery<TProxy, TEntity>, TEntity>
+public interface ProxyEntity<TProxy extends ProxyEntity<TProxy, TEntity>, TEntity>
         extends TableProxy<TProxy, TEntity> {
 }

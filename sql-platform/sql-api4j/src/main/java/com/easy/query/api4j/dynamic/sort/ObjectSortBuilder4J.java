@@ -18,6 +18,14 @@ public interface ObjectSortBuilder4J<TEntity> {
      * @return
      */
   ObjectSortBuilder4J<TEntity> orderBy(String propertyName, boolean asc);
+    default ObjectSortBuilder4J<TEntity> allowedProperties(Property <TEntity,?>... properties){
+        if(properties!=null){
+            for (Property<TEntity, ?> property : properties) {
+                allowed(property);
+            }
+        }
+        return this;
+    }
     ObjectSortBuilder4J<TEntity> allowed(Property <TEntity,?> property);
     ObjectSortBuilder4J<TEntity> notAllowed(Property <TEntity,?> property);
 

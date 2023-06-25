@@ -1,7 +1,7 @@
 package com.easy.query.test.entity.base;
 
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.proxy.AbstractProxyQuery;
+import com.easy.query.core.proxy.AbstractProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.test.entity.Topic;
 
@@ -10,7 +10,7 @@ import com.easy.query.test.entity.Topic;
  *
  * @author xuejiaming
  */
-public class TopicTestProxy extends AbstractProxyQuery<TopicTestProxy, Topic> {
+public class TopicTestProxy extends AbstractProxyEntity<TopicTestProxy, Topic> {
 
     public static final TopicTestProxy TOPIC_TEST_PROXY = new TopicTestProxy();
     private static final Class<Topic> entityClass = Topic.class;

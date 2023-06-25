@@ -3,10 +3,8 @@ package com.easy.query.core.expression.parser.factory;
 import com.easy.query.core.basic.api.select.provider.SQLExpressionProvider;
 import com.easy.query.core.basic.api.select.provider.SQLExpressionProviderImpl;
 import com.easy.query.core.expression.builder.impl.FilterImpl;
-import com.easy.query.core.expression.parser.core.base.ColumnSetSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnSetter;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
-import com.easy.query.core.expression.parser.core.base.impl.ColumnSetSelectorImpl;
 import com.easy.query.core.expression.parser.core.base.impl.ColumnSetterImpl;
 import com.easy.query.core.expression.parser.core.base.impl.WherePredicateImpl;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
@@ -53,10 +51,10 @@ public class DefaultSQLExpressionInvokeFactory implements SQLExpressionInvokeFac
 //        return new SQLColumnSetterImpl<T1>(index,sqlEntityExpression,sqlSegmentBuilder);
     }
 
-    @Override
-    public <T1> ColumnSetSelector<T1> createColumnSetSelector(int index, EntityExpressionBuilder sqlEntityExpression, SQLBuilderSegment sqlSegmentBuilder) {
-        return new ColumnSetSelectorImpl<T1>(index, sqlEntityExpression, sqlSegmentBuilder);
-    }
+//    @Override
+//    public <T1> ColumnUpdateSetSelector<T1> createColumnSetSelector(int index, EntityExpressionBuilder sqlEntityExpression, SQLBuilderSegment sqlSegmentBuilder) {
+//        return new ColumnUpdateSetSelectorImpl<T1>(sqlEntityExpression.getTable(index).getEntityTable(), sqlEntityExpression, sqlSegmentBuilder);
+//    }
 
     @Override
     public <T1> SQLExpressionProvider<T1> createSQLExpressionProvider(int index, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {

@@ -1,7 +1,7 @@
 package com.easy.query.test.entity.base;
 
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.proxy.ProxyQuery;
+import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.proxy.impl.SQLColumnImpl;
 import com.easy.query.test.entity.Topic;
@@ -11,7 +11,7 @@ import com.easy.query.test.entity.Topic;
  *
  * @author xuejiaming
  */
-public class TopicProxy implements ProxyQuery<TopicProxy, Topic> {
+public class TopicProxy implements ProxyEntity<TopicProxy, Topic> {
 
     public static final TopicProxy TOPIC_PROXY = new TopicProxy();
     private static final Class<Topic> entityClass = Topic.class;

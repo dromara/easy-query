@@ -22,6 +22,12 @@
     <dependencies>
         <dependency>
             <groupId>com.easy-query</groupId>
+            <artifactId>sql-api-proxy</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.easy-query</groupId>
             <artifactId>sql-mysql</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
