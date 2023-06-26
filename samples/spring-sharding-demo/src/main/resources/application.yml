@@ -1,0 +1,25 @@
+server:
+  port: 8081
+
+spring:
+  profiles:
+    active: dev
+
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/sharding-order?serverTimezone=GMT%2B8&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&rewriteBatchedStatements=true
+    username: root
+    password: root
+    druid:
+      initial-size: 10
+      max-active: 100
+
+
+easy-query:
+  enable: true
+  name-conversion: underlined
+  database: mysql
+  default-data-source-merge-pool-size: 60
+  default-data-source-name: ds0
+  print-sql: false

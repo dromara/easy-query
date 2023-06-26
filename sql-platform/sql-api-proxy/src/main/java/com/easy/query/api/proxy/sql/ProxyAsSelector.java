@@ -106,32 +106,32 @@ public interface ProxyAsSelector<TRProxy extends ProxyEntity<TRProxy, TR>, TR> {
         return columnCountDistinctAs(column,sqlColumn.value());
     }
 
-    default ProxyAsSelector<TRProxy, TR> columnSum(SQLColumn<Number> column) {
+    default ProxyAsSelector<TRProxy, TR> columnSum(SQLColumn<? extends Number> column) {
         getAsSelector().columnSum(column.getTable(), column.value());
         return this;
     }
 
-    default ProxyAsSelector<TRProxy, TR> columnSumAs(SQLColumn<Number> column, Function<TRProxy, SQLColumn<Number>> mapAlias) {
-        SQLColumn<Number> sqlColumn = mapAlias.apply(getTRProxy());
+    default ProxyAsSelector<TRProxy, TR> columnSumAs(SQLColumn<? extends Number> column, Function<TRProxy, SQLColumn<? extends Number>> mapAlias) {
+        SQLColumn<?> sqlColumn = mapAlias.apply(getTRProxy());
         return columnSumAs(column,sqlColumn.value());
     }
 
-    default ProxyAsSelector<TRProxy, TR> columnSumAs(SQLColumn<Number> column, String alias) {
+    default ProxyAsSelector<TRProxy, TR> columnSumAs(SQLColumn<? extends Number> column, String alias) {
         getAsSelector().columnSumAs(column.getTable(), column.value(), alias);
         return this;
     }
 
-    default ProxyAsSelector<TRProxy, TR> columnSumDistinct(SQLColumn<Number> column) {
+    default ProxyAsSelector<TRProxy, TR> columnSumDistinct(SQLColumn<? extends Number> column) {
         getAsSelector().columnSumDistinct(column.getTable(), column.value());
         return this;
     }
 
-    default ProxyAsSelector<TRProxy, TR> columnSumDistinctAs(SQLColumn<Number> column, Function<TRProxy, SQLColumn<Number>> mapAlias) {
-        SQLColumn<Number> sqlColumn = mapAlias.apply(getTRProxy());
+    default ProxyAsSelector<TRProxy, TR> columnSumDistinctAs(SQLColumn<? extends Number> column, Function<TRProxy, SQLColumn<? extends Number>> mapAlias) {
+        SQLColumn<?> sqlColumn = mapAlias.apply(getTRProxy());
         return columnSumDistinctAs(column,sqlColumn.value());
     }
 
-    default ProxyAsSelector<TRProxy, TR> columnSumDistinctAs(SQLColumn<Number> column, String alias) {
+    default ProxyAsSelector<TRProxy, TR> columnSumDistinctAs(SQLColumn<? extends Number> column, String alias) {
         getAsSelector().columnSumDistinctAs(column.getTable(), column.value(), alias);
         return this;
     }
@@ -166,32 +166,32 @@ public interface ProxyAsSelector<TRProxy extends ProxyEntity<TRProxy, TR>, TR> {
         return this;
     }
 
-    default ProxyAsSelector<TRProxy, TR> columnAvg(SQLColumn<Number> column) {
+    default ProxyAsSelector<TRProxy, TR> columnAvg(SQLColumn<? extends Number> column) {
         getAsSelector().columnAvg(column.getTable(), column.value());
         return this;
     }
 
-    default ProxyAsSelector<TRProxy, TR> columnAvgAs(SQLColumn<Number> column, Function<TRProxy, SQLColumn<Number>> mapAlias) {
-        SQLColumn<Number> sqlColumn = mapAlias.apply(getTRProxy());
+    default ProxyAsSelector<TRProxy, TR> columnAvgAs(SQLColumn<? extends Number> column, Function<TRProxy, SQLColumn<? extends Number>> mapAlias) {
+        SQLColumn<?> sqlColumn = mapAlias.apply(getTRProxy());
         return columnAvgAs(column,sqlColumn.value());
     }
 
-    default ProxyAsSelector<TRProxy, TR> columnAvgAs(SQLColumn<Number> column, String alias) {
+    default ProxyAsSelector<TRProxy, TR> columnAvgAs(SQLColumn<? extends Number> column, String alias) {
         getAsSelector().columnAvgAs(column.getTable(), column.value(), alias);
         return this;
     }
 
-    default ProxyAsSelector<TRProxy, TR> columnAvgDistinct(SQLColumn<Number> column) {
+    default ProxyAsSelector<TRProxy, TR> columnAvgDistinct(SQLColumn<? extends Number> column) {
         getAsSelector().columnAvgDistinct(column.getTable(), column.value());
         return this;
     }
 
-    default ProxyAsSelector<TRProxy, TR> columnAvgDistinctAs(SQLColumn<Number> column, Function<TRProxy, SQLColumn<Number>> mapAlias) {
-        SQLColumn<Number> sqlColumn = mapAlias.apply(getTRProxy());
+    default ProxyAsSelector<TRProxy, TR> columnAvgDistinctAs(SQLColumn<? extends Number> column, Function<TRProxy, SQLColumn<? extends Number>> mapAlias) {
+        SQLColumn<?> sqlColumn = mapAlias.apply(getTRProxy());
         return columnAvgDistinctAs(column,sqlColumn.value());
     }
 
-    default ProxyAsSelector<TRProxy, TR> columnAvgDistinctAs(SQLColumn<Number> column, String alias) {
+    default ProxyAsSelector<TRProxy, TR> columnAvgDistinctAs(SQLColumn<? extends Number> column, String alias) {
         getAsSelector().columnAvgDistinctAs(column.getTable(), column.value(),alias);
         return this;
     }
