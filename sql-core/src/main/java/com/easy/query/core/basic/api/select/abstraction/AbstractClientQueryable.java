@@ -7,6 +7,7 @@ import com.easy.query.core.api.dynamic.sort.ObjectSort;
 import com.easy.query.core.api.dynamic.sort.internal.ObjectSortBuilderImpl;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.api.select.ClientQueryable;
+import com.easy.query.core.basic.api.select.ClientQueryable2;
 import com.easy.query.core.basic.api.select.provider.SQLExpressionProvider;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
