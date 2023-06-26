@@ -107,6 +107,10 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
             "     * {@link @entityClass#@property}\n" +
             "     @comment\n" +
             "     */";
+    private static final String FIELD_EMPTY_DOC_COMMENT_TEMPLATE="\n" +
+            "    /**\n" +
+            "     * {@link @entityClass#@property}\n" +
+            "     */";
     private Filer filer;
     private Elements elementUtils;
     private Types typeUtils;
@@ -381,7 +385,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
     }
     private String getFiledComment(String docComment){
         if(docComment == null){
-            return "";
+            return FIELD_EMPTY_DOC_COMMENT_TEMPLATE;
         }
         String[] commentLines = docComment.trim().split("\n");
         StringBuilder fieldComment=new StringBuilder();
