@@ -15,15 +15,13 @@ import java.util.function.Function;
  * @author xuejiaming
  */
 public class NavigateIncludeImpl<TEntity> implements NavigateInclude<TEntity> {
-    private final int index;
     private final EntityQueryExpressionBuilder entityQueryExpressionBuilder;
     private final TableAvailable entityTable;
 
-    public NavigateIncludeImpl(int index, EntityQueryExpressionBuilder entityQueryExpressionBuilder){
+    public NavigateIncludeImpl(TableAvailable table, EntityQueryExpressionBuilder entityQueryExpressionBuilder){
 
-        this.index = index;
         this.entityQueryExpressionBuilder = entityQueryExpressionBuilder;
-        this.entityTable = entityQueryExpressionBuilder.getTable(index).getEntityTable();
+        this.entityTable = table;
     }
     @Override
     public <TProperty> NavigateInclude<TEntity> with(String property, Function<ClientQueryable<TProperty>, ClientQueryable<TProperty>> func) {
