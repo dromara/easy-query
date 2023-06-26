@@ -4,6 +4,7 @@ import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.enums.SQLLikeEnum;
 import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.enums.SQLRangeEnum;
+import com.easy.query.core.expression.builder.Filter;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
@@ -17,6 +18,7 @@ import java.util.Collection;
  * @Date: 2023/2/5 09:09
  */
 public interface WherePredicate<T1> {
+    Filter getFilter();
     TableAvailable getTable();
 
     /**

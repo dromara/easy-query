@@ -13,12 +13,11 @@ import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.lambda.SQLExpression3;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
+import com.easy.query.core.expression.parser.core.base.ColumnGroupSelector;
+import com.easy.query.core.expression.parser.core.base.ColumnOrderSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnResultSelector;
-import com.easy.query.core.expression.parser.core.base.GroupBySelector;
-import com.easy.query.core.expression.parser.core.base.OrderBySelector;
 import com.easy.query.core.expression.parser.core.base.WhereAggregatePredicate;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
-import com.easy.query.core.expression.segment.FuncColumnSegment;
 import com.easy.query.core.expression.segment.SQLEntitySegment;
 import com.easy.query.core.expression.segment.builder.ProjectSQLBuilderSegmentImpl;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
@@ -26,6 +25,7 @@ import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 
@@ -94,6 +94,12 @@ public abstract class AbstractClientQueryable2<T1, T2> extends AbstractClientQue
     }
 
     @Override
+    public <TProperty> ClientQueryable2<T1, T2> whereByIds(boolean condition, Collection<TProperty> ids) {
+        super.whereByIds(condition, ids);
+        return this;
+    }
+
+    @Override
     public ClientQueryable2<T1, T2> whereObject(boolean condition, Object object) {
         super.whereObject(condition, object);
         return this;
@@ -138,9 +144,7 @@ public abstract class AbstractClientQueryable2<T1, T2> extends AbstractClientQue
 
         TableAvailable table = sqlSegment.getTable();
         String propertyName = sqlSegment.getPropertyName();
-        Class<TMember> tMemberClass = resultClass == null ? (Class<TMember>) table.getEntityMetadata().getColumnNotNull(propertyName).getPropertyType() : resultClass;
-        FuncColumnSegment funcColumnSegment = sqlSegmentFactory.createFuncColumnSegment(table, propertyName, entityQueryExpressionBuilder.getRuntimeContext(), columnFunction, null);
-        return cloneQueryable().select(funcColumnSegment, true).toList(tMemberClass);
+        return selectAggregateList(table,columnFunction,propertyName,resultClass);
     }
 
     @Override
@@ -184,48 +188,48 @@ public abstract class AbstractClientQueryable2<T1, T2> extends AbstractClientQue
     }
 
     @Override
-    public ClientQueryable2<T1, T2> orderByAsc(boolean condition, SQLExpression1<OrderBySelector<T1>> selectExpression) {
+    public ClientQueryable2<T1, T2> orderByAsc(boolean condition, SQLExpression1<ColumnOrderSelector<T1>> selectExpression) {
         super.orderByAsc(condition, selectExpression);
         return this;
     }
 
     @Override
-    public ClientQueryable2<T1, T2> orderByAsc(boolean condition, SQLExpression2<OrderBySelector<T1>, OrderBySelector<T2>> selectExpression) {
+    public ClientQueryable2<T1, T2> orderByAsc(boolean condition, SQLExpression2<ColumnOrderSelector<T1>, ColumnOrderSelector<T2>> selectExpression) {
         if (condition) {
-            OrderBySelector<T1> sqlOrderColumnSelector1 = getSQLExpressionProvider1().getOrderColumnSelector(true);
-            OrderBySelector<T2> sqlOrderColumnSelector2 = getSQLExpressionProvider2().getOrderColumnSelector(true);
+            ColumnOrderSelector<T1> sqlOrderColumnSelector1 = getSQLExpressionProvider1().getOrderColumnSelector(true);
+            ColumnOrderSelector<T2> sqlOrderColumnSelector2 = getSQLExpressionProvider2().getOrderColumnSelector(true);
             selectExpression.apply(sqlOrderColumnSelector1, sqlOrderColumnSelector2);
         }
         return this;
     }
 
     @Override
-    public ClientQueryable2<T1, T2> orderByDesc(boolean condition, SQLExpression1<OrderBySelector<T1>> selectExpression) {
+    public ClientQueryable2<T1, T2> orderByDesc(boolean condition, SQLExpression1<ColumnOrderSelector<T1>> selectExpression) {
         super.orderByAsc(condition, selectExpression);
         return this;
     }
 
     @Override
-    public ClientQueryable2<T1, T2> orderByDesc(boolean condition, SQLExpression2<OrderBySelector<T1>, OrderBySelector<T2>> selectExpression) {
+    public ClientQueryable2<T1, T2> orderByDesc(boolean condition, SQLExpression2<ColumnOrderSelector<T1>, ColumnOrderSelector<T2>> selectExpression) {
         if (condition) {
-            OrderBySelector<T1> sqlOrderColumnSelector1 = getSQLExpressionProvider1().getOrderColumnSelector(false);
-            OrderBySelector<T2> sqlOrderColumnSelector2 = getSQLExpressionProvider2().getOrderColumnSelector(false);
+            ColumnOrderSelector<T1> sqlOrderColumnSelector1 = getSQLExpressionProvider1().getOrderColumnSelector(false);
+            ColumnOrderSelector<T2> sqlOrderColumnSelector2 = getSQLExpressionProvider2().getOrderColumnSelector(false);
             selectExpression.apply(sqlOrderColumnSelector1, sqlOrderColumnSelector2);
         }
         return this;
     }
 
     @Override
-    public ClientQueryable2<T1, T2> groupBy(boolean condition, SQLExpression1<GroupBySelector<T1>> selectExpression) {
+    public ClientQueryable2<T1, T2> groupBy(boolean condition, SQLExpression1<ColumnGroupSelector<T1>> selectExpression) {
         super.groupBy(condition, selectExpression);
         return this;
     }
 
     @Override
-    public ClientQueryable2<T1, T2> groupBy(boolean condition, SQLExpression2<GroupBySelector<T1>, GroupBySelector<T2>> selectExpression) {
+    public ClientQueryable2<T1, T2> groupBy(boolean condition, SQLExpression2<ColumnGroupSelector<T1>, ColumnGroupSelector<T2>> selectExpression) {
         if (condition) {
-            GroupBySelector<T1> sqlGroupSelector1 = getSQLExpressionProvider1().getGroupColumnSelector();
-            GroupBySelector<T2> sqlGroupSelector2 = getSQLExpressionProvider2().getGroupColumnSelector();
+            ColumnGroupSelector<T1> sqlGroupSelector1 = getSQLExpressionProvider1().getGroupColumnSelector();
+            ColumnGroupSelector<T2> sqlGroupSelector2 = getSQLExpressionProvider2().getGroupColumnSelector();
             selectExpression.apply(sqlGroupSelector1, sqlGroupSelector2);
         }
         return this;

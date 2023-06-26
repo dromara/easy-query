@@ -12,13 +12,17 @@ import com.easy.query.core.exception.EasyQueryMultiPrimaryKeyException;
 import com.easy.query.core.exception.EasyQueryNoPrimaryKeyException;
 import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
 import com.easy.query.core.exception.EasyQueryWhereInvalidOperationException;
+import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression2;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnSelector;
 import com.easy.query.core.expression.parser.core.base.GroupBySelector;
 import com.easy.query.core.expression.parser.core.base.NavigateInclude;
 import com.easy.query.core.expression.parser.core.base.OrderBySelector;
+import com.easy.query.core.expression.parser.core.base.ColumnGroupSelector;
+import com.easy.query.core.expression.parser.core.base.ColumnOrderSelector;
 import com.easy.query.core.expression.parser.core.base.WhereAggregatePredicate;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.segment.ColumnSegment;
@@ -27,6 +31,7 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * create time 2023/6/1 17:26
@@ -122,7 +127,7 @@ public interface ClientQueryable<T1> extends Query<T1>,
     }
 
     <TMember extends Number, TResult extends Number> TResult avgOrDefault(String property, TResult def, Class<TResult> resultClass);
-
+    <TMember> List<TMember> selectAggregateList(TableAvailable table, ColumnFunction columnFunction, String property, Class<TMember> resultClass);
     /**
      * 对当前表达式返回自定义select列
      *
@@ -229,11 +234,11 @@ public interface ClientQueryable<T1> extends Query<T1>,
      */
     ClientQueryable<T1> whereObject(boolean condition, Object object);
 
-    default ClientQueryable<T1> groupBy(SQLExpression1<GroupBySelector<T1>> selectExpression) {
+    default ClientQueryable<T1> groupBy(SQLExpression1<ColumnGroupSelector<T1>> selectExpression) {
         return groupBy(true, selectExpression);
     }
 
-    ClientQueryable<T1> groupBy(boolean condition, SQLExpression1<GroupBySelector<T1>> selectExpression);
+    ClientQueryable<T1> groupBy(boolean condition, SQLExpression1<ColumnGroupSelector<T1>> selectExpression);
 
     default ClientQueryable<T1> having(SQLExpression1<WhereAggregatePredicate<T1>> predicateExpression) {
         return having(true, predicateExpression);
@@ -241,27 +246,27 @@ public interface ClientQueryable<T1> extends Query<T1>,
 
     ClientQueryable<T1> having(boolean condition, SQLExpression1<WhereAggregatePredicate<T1>> predicateExpression);
 
-    default ClientQueryable<T1> orderByAsc(SQLExpression1<OrderBySelector<T1>> selectExpression) {
+    default ClientQueryable<T1> orderByAsc(SQLExpression1<ColumnOrderSelector<T1>> selectExpression) {
         return orderByAsc(true, selectExpression);
     }
 
-    default ClientQueryable<T1> orderByAsc(boolean condition, SQLExpression1<OrderBySelector<T1>> selectExpression) {
+    default ClientQueryable<T1> orderByAsc(boolean condition, SQLExpression1<ColumnOrderSelector<T1>> selectExpression) {
         return orderBy(condition, selectExpression, true);
     }
 
-    default ClientQueryable<T1> orderByDesc(SQLExpression1<OrderBySelector<T1>> selectExpression) {
+    default ClientQueryable<T1> orderByDesc(SQLExpression1<ColumnOrderSelector<T1>> selectExpression) {
         return orderByDesc(true, selectExpression);
     }
 
-    default ClientQueryable<T1> orderByDesc(boolean condition, SQLExpression1<OrderBySelector<T1>> selectExpression) {
+    default ClientQueryable<T1> orderByDesc(boolean condition, SQLExpression1<ColumnOrderSelector<T1>> selectExpression) {
         return orderBy(condition, selectExpression, false);
     }
 
-    default ClientQueryable<T1> orderBy(SQLExpression1<OrderBySelector<T1>> selectExpression, boolean asc) {
+    default ClientQueryable<T1> orderBy(SQLExpression1<ColumnOrderSelector<T1>> selectExpression, boolean asc) {
         return orderBy(true, selectExpression, asc);
     }
 
-    ClientQueryable<T1> orderBy(boolean condition, SQLExpression1<OrderBySelector<T1>> selectExpression, boolean asc);
+    ClientQueryable<T1> orderBy(boolean condition, SQLExpression1<ColumnOrderSelector<T1>> selectExpression, boolean asc);
 
     /**
      * @param configuration

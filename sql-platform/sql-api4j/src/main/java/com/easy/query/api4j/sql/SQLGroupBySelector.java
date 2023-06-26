@@ -3,7 +3,7 @@ package com.easy.query.api4j.sql;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.parser.core.base.GroupBySelector;
+import com.easy.query.core.expression.parser.core.base.ColumnGroupSelector;
 import com.easy.query.api4j.util.EasyLambdaUtil;
 
 /**
@@ -13,7 +13,7 @@ import com.easy.query.api4j.util.EasyLambdaUtil;
  * @author xuejiaming
  */
 public interface SQLGroupBySelector<T1> {
-    GroupBySelector<T1> getGroupBySelector();
+    ColumnGroupSelector<T1> getGroupBySelector();
 
     default TableAvailable getTable() {
         return getGroupBySelector().getTable();

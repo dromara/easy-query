@@ -1,6 +1,6 @@
 package com.easy.query.test.dto;
 
-import com.easy.query.core.annotation.Column;
+import com.easy.query.core.annotation.EntityProxy;
 import lombok.Data;
 import org.junit.Ignore;
 
@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
  */
 @Ignore
 @Data
+@EntityProxy
 public class BlogEntityTest {
 
     /**

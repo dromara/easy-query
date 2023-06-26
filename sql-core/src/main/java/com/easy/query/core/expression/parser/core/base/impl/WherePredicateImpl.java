@@ -3,28 +3,13 @@ package com.easy.query.core.expression.parser.core.base.impl;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.enums.SQLLikeEnum;
 import com.easy.query.core.enums.SQLPredicateCompare;
-import com.easy.query.core.enums.SQLPredicateCompareEnum;
 import com.easy.query.core.enums.SQLRangeEnum;
-import com.easy.query.core.expression.func.ColumnFunction;
+import com.easy.query.core.expression.builder.Filter;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
-import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
-import com.easy.query.core.expression.segment.condition.OrPredicateSegment;
-import com.easy.query.core.expression.segment.condition.PredicateSegment;
-import com.easy.query.core.expression.segment.condition.predicate.ColumnCollectionPredicate;
-import com.easy.query.core.expression.segment.condition.predicate.ColumnExistsSubQueryPredicate;
-import com.easy.query.core.expression.segment.condition.predicate.ColumnInSubQueryPredicate;
-import com.easy.query.core.expression.segment.condition.predicate.ColumnPredicate;
-import com.easy.query.core.expression.segment.condition.predicate.ColumnValuePredicate;
-import com.easy.query.core.expression.segment.condition.predicate.ColumnWithColumnPredicate;
-import com.easy.query.core.expression.segment.condition.predicate.FuncColumnValuePredicate;
-import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
-import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
-import com.easy.query.core.util.EasySQLUtil;
 
-import java.util.Arrays;
 import java.util.Collection;
 
 /**
@@ -33,64 +18,23 @@ import java.util.Collection;
  * @Date: 2023/2/7 06:58
  */
 public class WherePredicateImpl<T1> implements WherePredicate<T1> {
-    private final int index;
-    private final EntityExpressionBuilder entityExpressionBuilder;
-    private final boolean reverse;
-    private final PredicateSegment rootPredicateSegment;
-    private final TableAvailable entityTable;
-    private PredicateSegment nextPredicateSegment;
-
-    public WherePredicateImpl(int index, EntityExpressionBuilder entityExpressionBuilder, PredicateSegment predicateSegment) {
-        this(index, entityExpressionBuilder, predicateSegment, false);
+    private final Filter filter;
+    private final TableAvailable table;
+    public WherePredicateImpl(TableAvailable table, Filter filter) {
+        this.filter = filter;
+        this.table = table;
 
     }
 
-    public WherePredicateImpl(int index, EntityExpressionBuilder entityExpressionBuilder, PredicateSegment predicateSegment, boolean reverse) {
-        this.index = index;
-        this.entityExpressionBuilder = entityExpressionBuilder;
-        this.reverse = reverse;
-        this.entityTable = entityExpressionBuilder.getTable(index).getEntityTable();
-        this.rootPredicateSegment = predicateSegment;
-        this.nextPredicateSegment = new AndPredicateSegment();
-    }
-
-
-    protected void nextAnd() {
-        this.rootPredicateSegment.addPredicateSegment(nextPredicateSegment);
-        this.nextPredicateSegment = new AndPredicateSegment();
-    }
-
-    protected void nextOr() {
-        this.rootPredicateSegment.addPredicateSegment(nextPredicateSegment);
-        this.nextPredicateSegment = new OrPredicateSegment();
-    }
-
-    protected void next() {
-        if (reverse) {
-            nextOr();
-        } else {
-            nextAnd();
-        }
-    }
-
-    protected SQLPredicateCompare getReallyPredicateCompare(SQLPredicateCompare sqlPredicateCompare) {
-        return reverse ? sqlPredicateCompare.toReverse() : sqlPredicateCompare;
-    }
-
-    protected void appendThisPredicate(String property, Object val, SQLPredicateCompare condition) {
-
-        nextPredicateSegment.setPredicate(new ColumnValuePredicate(getTable(), property, val, getReallyPredicateCompare(condition), entityExpressionBuilder.getRuntimeContext()));
-    }
-
-    protected void appendThisFuncPredicate(String propertyName, ColumnFunction func, SQLPredicateCompare compare, Object val) {
-        nextPredicateSegment.setPredicate(new FuncColumnValuePredicate(getTable(), func, propertyName, val, compare, entityExpressionBuilder.getRuntimeContext()));
+    @Override
+    public Filter getFilter() {
+        return filter;
     }
 
     @Override
     public WherePredicate<T1> eq(boolean condition, String property, Object val) {
         if (condition) {
-            appendThisPredicate(property, val, SQLPredicateCompareEnum.EQ);
-            next();
+            filter.eq(table, property, val);
         }
         return this;
     }
@@ -98,8 +42,7 @@ public class WherePredicateImpl<T1> implements WherePredicate<T1> {
     @Override
     public WherePredicate<T1> ne(boolean condition, String property, Object val) {
         if (condition) {
-            appendThisPredicate(property, val, SQLPredicateCompareEnum.NE);
-            next();
+            filter.ne(table, property, val);
         }
         return this;
     }
@@ -107,8 +50,7 @@ public class WherePredicateImpl<T1> implements WherePredicate<T1> {
     @Override
     public WherePredicate<T1> gt(boolean condition, String property, Object val) {
         if (condition) {
-            appendThisPredicate(property, val, SQLPredicateCompareEnum.GT);
-            next();
+            filter.gt(table, property, val);
         }
         return this;
     }
@@ -116,8 +58,7 @@ public class WherePredicateImpl<T1> implements WherePredicate<T1> {
     @Override
     public WherePredicate<T1> ge(boolean condition, String property, Object val) {
         if (condition) {
-            appendThisPredicate(property, val, SQLPredicateCompareEnum.GE);
-            next();
+            filter.ge(table, property, val);
         }
         return this;
     }
@@ -125,8 +66,7 @@ public class WherePredicateImpl<T1> implements WherePredicate<T1> {
     @Override
     public WherePredicate<T1> like(boolean condition, String property, Object val, SQLLikeEnum sqlLike) {
         if (condition) {
-            appendThisPredicate(property, EasySQLUtil.getLikeParameter(val, sqlLike), SQLPredicateCompareEnum.LIKE);
-            next();
+            filter.like(table, property, val, sqlLike);
         }
         return this;
     }
@@ -134,8 +74,7 @@ public class WherePredicateImpl<T1> implements WherePredicate<T1> {
     @Override
     public WherePredicate<T1> notLike(boolean condition, String property, Object val, SQLLikeEnum sqlLike) {
         if (condition) {
-            appendThisPredicate(property, EasySQLUtil.getLikeParameter(val, sqlLike), SQLPredicateCompareEnum.NOT_LIKE);
-            next();
+            filter.notLike(table, property, val, sqlLike);
         }
         return this;
     }
@@ -143,8 +82,7 @@ public class WherePredicateImpl<T1> implements WherePredicate<T1> {
     @Override
     public WherePredicate<T1> le(boolean condition, String property, Object val) {
         if (condition) {
-            appendThisPredicate(property, val, SQLPredicateCompareEnum.LE);
-            next();
+            filter.le(table, property, val);
         }
         return this;
     }
@@ -152,8 +90,7 @@ public class WherePredicateImpl<T1> implements WherePredicate<T1> {
     @Override
     public WherePredicate<T1> lt(boolean condition, String property, Object val) {
         if (condition) {
-            appendThisPredicate(property, val, SQLPredicateCompareEnum.LT);
-            next();
+            filter.lt(table, property, val);
         }
         return this;
     }
@@ -162,8 +99,7 @@ public class WherePredicateImpl<T1> implements WherePredicate<T1> {
     @Override
     public WherePredicate<T1> isNull(boolean condition, String property) {
         if (condition) {
-            nextPredicateSegment.setPredicate(new ColumnPredicate(getTable(), property, getReallyPredicateCompare(SQLPredicateCompareEnum.IS_NULL), entityExpressionBuilder.getRuntimeContext()));
-            next();
+            filter.isNull(table, property);
         }
         return this;
     }
@@ -171,8 +107,7 @@ public class WherePredicateImpl<T1> implements WherePredicate<T1> {
     @Override
     public WherePredicate<T1> isNotNull(boolean condition, String property) {
         if (condition) {
-            nextPredicateSegment.setPredicate(new ColumnPredicate(getTable(), property, getReallyPredicateCompare(SQLPredicateCompareEnum.IS_NOT_NULL), entityExpressionBuilder.getRuntimeContext()));
-            next();
+            filter.isNotNull(table, property);
         }
         return this;
     }
@@ -181,16 +116,15 @@ public class WherePredicateImpl<T1> implements WherePredicate<T1> {
     @Override
     public WherePredicate<T1> in(boolean condition, String property, Collection<?> collection) {
         if (condition) {
-            nextPredicateSegment.setPredicate(new ColumnCollectionPredicate(getTable(), property, collection, getReallyPredicateCompare(SQLPredicateCompareEnum.IN), entityExpressionBuilder.getRuntimeContext()));
-            next();
+            filter.in(table, property, collection);
         }
         return this;
     }
+
     @Override
     public <TProperty> WherePredicate<T1> in(boolean condition, String property, TProperty[] collection) {
-        if(condition){
-            nextPredicateSegment.setPredicate(new ColumnCollectionPredicate(getTable(), property, Arrays.asList(collection), getReallyPredicateCompare(SQLPredicateCompareEnum.IN), entityExpressionBuilder.getRuntimeContext()));
-            next();
+        if (condition) {
+            filter.in(table, property, collection);
         }
         return this;
     }
@@ -198,7 +132,7 @@ public class WherePredicateImpl<T1> implements WherePredicate<T1> {
     @Override
     public <TProperty> WherePredicate<T1> in(boolean condition, String property, Query<TProperty> subQuery) {
         if (condition) {
-            subQueryIn(property, subQuery, SQLPredicateCompareEnum.IN);
+            filter.in(table, property, subQuery);
         }
         return this;
     }
@@ -206,39 +140,31 @@ public class WherePredicateImpl<T1> implements WherePredicate<T1> {
     @Override
     public WherePredicate<T1> notIn(boolean condition, String property, Collection<?> collection) {
         if (condition) {
-            nextPredicateSegment.setPredicate(new ColumnCollectionPredicate(getTable(), property, collection, getReallyPredicateCompare(SQLPredicateCompareEnum.NOT_IN), entityExpressionBuilder.getRuntimeContext()));
-            next();
+            filter.notIn(table, property, collection);
         }
         return this;
     }
 
     @Override
     public <TProperty> WherePredicate<T1> notIn(boolean condition, String property, TProperty[] collection) {
-        if(condition){
-            nextPredicateSegment.setPredicate(new ColumnCollectionPredicate(getTable(), property, Arrays.asList(collection), getReallyPredicateCompare(SQLPredicateCompareEnum.NOT_IN), entityExpressionBuilder.getRuntimeContext()));
-            next();
+        if (condition) {
+            filter.notIn(table, property, collection);
         }
         return this;
     }
 
     @Override
-    public <TProperty> WherePredicate<T1> notIn(boolean condition, String property, Query<TProperty> subQueryable) {
+    public <TProperty> WherePredicate<T1> notIn(boolean condition, String property, Query<TProperty> subQuery) {
         if (condition) {
-            subQueryIn(property, subQueryable, SQLPredicateCompareEnum.NOT_IN);
+            filter.notIn(table, property, subQuery);
         }
         return this;
     }
 
-    public <TProperty> void subQueryIn(String property, Query<TProperty> subQueryable, SQLPredicateCompareEnum sqlPredicateCompare) {
-        extract(subQueryable);
-        nextPredicateSegment.setPredicate(new ColumnInSubQueryPredicate(getTable(), property, subQueryable, getReallyPredicateCompare(sqlPredicateCompare), entityExpressionBuilder.getRuntimeContext()));
-        next();
-    }
-
     @Override
-    public <T2> WherePredicate<T1> exists(boolean condition, Query<T2> subQueryable) {
+    public <T2> WherePredicate<T1> exists(boolean condition, Query<T2> subQuery) {
         if (condition) {
-            subQueryExists(subQueryable, SQLPredicateCompareEnum.EXISTS);
+            filter.exists(table, subQuery);
         }
         return this;
     }
@@ -246,49 +172,23 @@ public class WherePredicateImpl<T1> implements WherePredicate<T1> {
     @Override
     public <T2> WherePredicate<T1> notExists(boolean condition, Query<T2> subQuery) {
         if (condition) {
-            subQueryExists(subQuery, SQLPredicateCompareEnum.NOT_EXISTS);
+            filter.notExists(table, subQuery);
         }
         return this;
-    }
-
-    public <T2> void subQueryExists(Query<T2> subQuery, SQLPredicateCompareEnum sqlPredicateCompare) {
-
-        extract(subQuery);
-        Query<T2> existsQuery = subQuery.cloneQueryable().select("1");
-
-        nextPredicateSegment.setPredicate(new ColumnExistsSubQueryPredicate(getTable(), existsQuery, getReallyPredicateCompare(sqlPredicateCompare), entityExpressionBuilder.getRuntimeContext()));
-        next();
-    }
-
-    public <T2> void extract(Query<T2> subQuery) {
-
-        EntityQueryExpressionBuilder subQueryableSQLEntityExpressionBuilder = subQuery.getSQLEntityExpressionBuilder();
-        entityExpressionBuilder.getExpressionContext().extract(subQueryableSQLEntityExpressionBuilder.getExpressionContext());
     }
 
     @Override
     public WherePredicate<T1> range(boolean condition, String property, boolean conditionLeft, Object valLeft, boolean conditionRight, Object valRight, SQLRangeEnum sqlRange) {
         if (condition) {
-            if (conditionLeft) {
-                boolean openFirst = SQLRangeEnum.openFirst(sqlRange);
-                appendThisPredicate(property, valLeft, getReallyPredicateCompare(openFirst ? SQLPredicateCompareEnum.GT : SQLPredicateCompareEnum.GE));
-                next();
-            }
-            if (conditionRight) {
-                boolean openEnd = SQLRangeEnum.openEnd(sqlRange);
-                appendThisPredicate(property, valRight, getReallyPredicateCompare(openEnd ? SQLPredicateCompareEnum.LT : SQLPredicateCompareEnum.LE));
-                next();
-            }
+            filter.range(table, property, conditionLeft, valLeft, conditionRight, valRight, sqlRange);
         }
         return this;
     }
 
     @Override
     public WherePredicate<T1> columnFunc(boolean condition, ColumnPropertyFunction columnPropertyFunction, SQLPredicateCompare sqlPredicateCompare, Object val) {
-
         if (condition) {
-            appendThisFuncPredicate(columnPropertyFunction.getPropertyName(), columnPropertyFunction.getColumnFunction(), getReallyPredicateCompare(sqlPredicateCompare), val);
-            next();
+            filter.columnFunc(table, columnPropertyFunction, sqlPredicateCompare, val);
         }
         return this;
     }
@@ -296,30 +196,21 @@ public class WherePredicateImpl<T1> implements WherePredicate<T1> {
     @Override
     public <T2> WherePredicate<T1> eq(boolean condition, WherePredicate<T2> sub, String property1, String property2) {
         if (condition) {
-            TableAvailable leftTable = getTable();
             TableAvailable rightTable = sub.getTable();
-            nextPredicateSegment.setPredicate(new ColumnWithColumnPredicate(leftTable, property1, rightTable, property2, getReallyPredicateCompare(SQLPredicateCompareEnum.EQ), entityExpressionBuilder.getRuntimeContext()));
-            next();
-
+            filter.eq(table, property1, rightTable, property2);
         }
         return this;
     }
 
     @Override
     public <T2> WherePredicate<T2> then(WherePredicate<T2> sub) {
-        if (this.nextPredicateSegment instanceof AndPredicateSegment) {
-            sub.and();
-        } else if (this.nextPredicateSegment instanceof OrPredicateSegment) {
-            sub.or();
-            and0();
-        }
         return sub;
     }
 
     @Override
     public WherePredicate<T1> and(boolean condition) {
         if (condition) {
-            and0();
+            filter.and();
         }
         return this;
     }
@@ -327,51 +218,34 @@ public class WherePredicateImpl<T1> implements WherePredicate<T1> {
     @Override
     public WherePredicate<T1> and(boolean condition, SQLExpression1<WherePredicate<T1>> sqlWherePredicateSQLExpression) {
         if (condition) {
-            and0();
-            WherePredicate<T1> sqlPredicate = entityExpressionBuilder.getRuntimeContext().getSQLExpressionInvokeFactory().createWherePredicate(index, entityExpressionBuilder, this.nextPredicateSegment);
-            sqlWherePredicateSQLExpression.apply(sqlPredicate);
-            next();
+            filter.and(f->{
+                sqlWherePredicateSQLExpression.apply(new WherePredicateImpl<>(table,f));
+            });
         }
         return this;
-    }
-
-    protected void and0() {
-        if (reverse) {
-            this.nextPredicateSegment = new OrPredicateSegment();
-        } else {
-            this.nextPredicateSegment = new AndPredicateSegment();
-        }
     }
 
     @Override
     public WherePredicate<T1> or(boolean condition) {
         if (condition) {
-            or0();
+            filter.or();
         }
         return this;
-    }
-
-    protected void or0() {
-        if (reverse) {
-            this.nextPredicateSegment = new AndPredicateSegment();
-        } else {
-            this.nextPredicateSegment = new OrPredicateSegment();
-        }
     }
 
     @Override
     public WherePredicate<T1> or(boolean condition, SQLExpression1<WherePredicate<T1>> sqlWherePredicateSQLExpression) {
         if (condition) {
-            or0();
-            WherePredicate<T1> sqlPredicate = entityExpressionBuilder.getRuntimeContext().getSQLExpressionInvokeFactory().createWherePredicate(index, entityExpressionBuilder, this.nextPredicateSegment);
-            sqlWherePredicateSQLExpression.apply(sqlPredicate);
-            next();
+            filter.or(f->{
+                sqlWherePredicateSQLExpression.apply(new WherePredicateImpl<>(table,f));
+            });
         }
         return this;
     }
 
+
     @Override
     public TableAvailable getTable() {
-        return entityTable;
+        return table;
     }
 }

@@ -11,8 +11,8 @@ import com.easy.query.core.expression.lambda.SQLExpression4;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnResultSelector;
-import com.easy.query.core.expression.parser.core.base.GroupBySelector;
-import com.easy.query.core.expression.parser.core.base.OrderBySelector;
+import com.easy.query.core.expression.parser.core.base.ColumnGroupSelector;
+import com.easy.query.core.expression.parser.core.base.ColumnOrderSelector;
 import com.easy.query.core.expression.parser.core.base.WhereAggregatePredicate;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.segment.FuncColumnSegment;
@@ -151,18 +151,18 @@ public abstract class AbstractClientQueryable4<T1, T2, T3, T4> extends AbstractC
     }
 
     @Override
-    public ClientQueryable4<T1, T2, T3, T4> groupBy(boolean condition, SQLExpression1<GroupBySelector<T1>> selectExpression) {
+    public ClientQueryable4<T1, T2, T3, T4> groupBy(boolean condition, SQLExpression1<ColumnGroupSelector<T1>> selectExpression) {
         super.groupBy(condition, selectExpression);
         return this;
     }
 
     @Override
-    public ClientQueryable4<T1, T2, T3, T4> groupBy(boolean condition, SQLExpression4<GroupBySelector<T1>, GroupBySelector<T2>, GroupBySelector<T3>, GroupBySelector<T4>> selectExpression) {
+    public ClientQueryable4<T1, T2, T3, T4> groupBy(boolean condition, SQLExpression4<ColumnGroupSelector<T1>, ColumnGroupSelector<T2>, ColumnGroupSelector<T3>, ColumnGroupSelector<T4>> selectExpression) {
         if (condition) {
-            GroupBySelector<T1> sqlGroupSelector1 = getSQLExpressionProvider1().getGroupColumnSelector();
-            GroupBySelector<T2> sqlGroupSelector2 = getSQLExpressionProvider2().getGroupColumnSelector();
-            GroupBySelector<T3> sqlGroupSelector3 = getSQLExpressionProvider3().getGroupColumnSelector();
-            GroupBySelector<T4> sqlGroupSelector4 = getSQLExpressionProvider4().getGroupColumnSelector();
+            ColumnGroupSelector<T1> sqlGroupSelector1 = getSQLExpressionProvider1().getGroupColumnSelector();
+            ColumnGroupSelector<T2> sqlGroupSelector2 = getSQLExpressionProvider2().getGroupColumnSelector();
+            ColumnGroupSelector<T3> sqlGroupSelector3 = getSQLExpressionProvider3().getGroupColumnSelector();
+            ColumnGroupSelector<T4> sqlGroupSelector4 = getSQLExpressionProvider4().getGroupColumnSelector();
             selectExpression.apply(sqlGroupSelector1, sqlGroupSelector2, sqlGroupSelector3, sqlGroupSelector4);
         }
         return this;
@@ -187,36 +187,36 @@ public abstract class AbstractClientQueryable4<T1, T2, T3, T4> extends AbstractC
     }
 
     @Override
-    public ClientQueryable4<T1, T2, T3, T4> orderByAsc(boolean condition, SQLExpression1<OrderBySelector<T1>> selectExpression) {
+    public ClientQueryable4<T1, T2, T3, T4> orderByAsc(boolean condition, SQLExpression1<ColumnOrderSelector<T1>> selectExpression) {
         super.orderByAsc(condition, selectExpression);
         return this;
     }
 
     @Override
-    public ClientQueryable4<T1, T2, T3, T4> orderByAsc(boolean condition, SQLExpression4<OrderBySelector<T1>, OrderBySelector<T2>, OrderBySelector<T3>, OrderBySelector<T4>> selectExpression) {
+    public ClientQueryable4<T1, T2, T3, T4> orderByAsc(boolean condition, SQLExpression4<ColumnOrderSelector<T1>, ColumnOrderSelector<T2>, ColumnOrderSelector<T3>, ColumnOrderSelector<T4>> selectExpression) {
         if (condition) {
-            OrderBySelector<T1> sqlOrderColumnSelector1 = getSQLExpressionProvider1().getOrderColumnSelector(true);
-            OrderBySelector<T2> sqlOrderColumnSelector2 = getSQLExpressionProvider2().getOrderColumnSelector(true);
-            OrderBySelector<T3> sqlOrderColumnSelector3 = getSQLExpressionProvider3().getOrderColumnSelector(true);
-            OrderBySelector<T4> sqlOrderColumnSelector4 = getSQLExpressionProvider4().getOrderColumnSelector(true);
+            ColumnOrderSelector<T1> sqlOrderColumnSelector1 = getSQLExpressionProvider1().getOrderColumnSelector(true);
+            ColumnOrderSelector<T2> sqlOrderColumnSelector2 = getSQLExpressionProvider2().getOrderColumnSelector(true);
+            ColumnOrderSelector<T3> sqlOrderColumnSelector3 = getSQLExpressionProvider3().getOrderColumnSelector(true);
+            ColumnOrderSelector<T4> sqlOrderColumnSelector4 = getSQLExpressionProvider4().getOrderColumnSelector(true);
             selectExpression.apply(sqlOrderColumnSelector1, sqlOrderColumnSelector2, sqlOrderColumnSelector3, sqlOrderColumnSelector4);
         }
         return this;
     }
 
     @Override
-    public ClientQueryable4<T1, T2, T3, T4> orderByDesc(boolean condition, SQLExpression1<OrderBySelector<T1>> selectExpression) {
+    public ClientQueryable4<T1, T2, T3, T4> orderByDesc(boolean condition, SQLExpression1<ColumnOrderSelector<T1>> selectExpression) {
         super.orderByAsc(condition, selectExpression);
         return this;
     }
 
     @Override
-    public ClientQueryable4<T1, T2, T3, T4> orderByDesc(boolean condition, SQLExpression4<OrderBySelector<T1>, OrderBySelector<T2>, OrderBySelector<T3>, OrderBySelector<T4>> selectExpression) {
+    public ClientQueryable4<T1, T2, T3, T4> orderByDesc(boolean condition, SQLExpression4<ColumnOrderSelector<T1>, ColumnOrderSelector<T2>, ColumnOrderSelector<T3>, ColumnOrderSelector<T4>> selectExpression) {
         if (condition) {
-            OrderBySelector<T1> sqlOrderColumnSelector1 = getSQLExpressionProvider1().getOrderColumnSelector(false);
-            OrderBySelector<T2> sqlOrderColumnSelector2 = getSQLExpressionProvider2().getOrderColumnSelector(false);
-            OrderBySelector<T3> sqlOrderColumnSelector3 = getSQLExpressionProvider3().getOrderColumnSelector(false);
-            OrderBySelector<T4> sqlOrderColumnSelector4 = getSQLExpressionProvider4().getOrderColumnSelector(false);
+            ColumnOrderSelector<T1> sqlOrderColumnSelector1 = getSQLExpressionProvider1().getOrderColumnSelector(false);
+            ColumnOrderSelector<T2> sqlOrderColumnSelector2 = getSQLExpressionProvider2().getOrderColumnSelector(false);
+            ColumnOrderSelector<T3> sqlOrderColumnSelector3 = getSQLExpressionProvider3().getOrderColumnSelector(false);
+            ColumnOrderSelector<T4> sqlOrderColumnSelector4 = getSQLExpressionProvider4().getOrderColumnSelector(false);
             selectExpression.apply(sqlOrderColumnSelector1, sqlOrderColumnSelector2, sqlOrderColumnSelector3, sqlOrderColumnSelector4);
         }
         return this;

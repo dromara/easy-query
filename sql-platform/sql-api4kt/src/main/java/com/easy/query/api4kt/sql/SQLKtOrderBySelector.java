@@ -3,7 +3,7 @@ package com.easy.query.api4kt.sql;
 import com.easy.query.api4kt.util.EasyKtLambdaUtil;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.parser.core.base.OrderBySelector;
+import com.easy.query.core.expression.parser.core.base.ColumnOrderSelector;
 import kotlin.reflect.KProperty1;
 
 /**
@@ -13,7 +13,7 @@ import kotlin.reflect.KProperty1;
  * @author xuejiaming
  */
 public interface SQLKtOrderBySelector<T1> {
-    OrderBySelector<T1> getOrderBySelector();
+    ColumnOrderSelector<T1> getOrderBySelector();
 
     default TableAvailable getTable() {
         return getOrderBySelector().getTable();
@@ -30,16 +30,6 @@ public interface SQLKtOrderBySelector<T1> {
     }
     default SQLKtOrderBySelector<T1> columnConst(String columnConst) {
         getOrderBySelector().columnConst(columnConst);
-        return this;
-    }
-
-    default SQLKtOrderBySelector<T1> columnIgnore(KProperty1<T1, ?> column) {
-        getOrderBySelector().columnIgnore(EasyKtLambdaUtil.getPropertyName(column));
-        return this;
-    }
-
-    default SQLKtOrderBySelector<T1> columnAll() {
-        getOrderBySelector().columnAll();
         return this;
     }
 

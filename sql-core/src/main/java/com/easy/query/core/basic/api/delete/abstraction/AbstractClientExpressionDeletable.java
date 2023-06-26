@@ -9,6 +9,7 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.enums.SQLPredicateCompareEnum;
+import com.easy.query.core.expression.builder.impl.FilterImpl;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.parser.core.base.impl.WherePredicateImpl;
@@ -71,7 +72,7 @@ public abstract class AbstractClientExpressionDeletable<T> extends AbstractSQLEx
     @Override
     public ClientExpressionDeletable<T> where(boolean condition, SQLExpression1<WherePredicate<T>> whereExpression) {
         if (condition) {
-            WherePredicateImpl<T> sqlPredicate = new WherePredicateImpl<>(0, entityDeleteExpressionBuilder, entityDeleteExpressionBuilder.getWhere());
+            WherePredicateImpl<T> sqlPredicate = new WherePredicateImpl<>(table.getEntityTable(), new FilterImpl(entityDeleteExpressionBuilder.getRuntimeContext(), entityDeleteExpressionBuilder.getExpressionContext(), entityDeleteExpressionBuilder.getWhere(), false));
             whereExpression.apply(sqlPredicate);
         }
         return this;

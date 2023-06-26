@@ -1,6 +1,7 @@
 package com.easy.query.test.h2.domain;
 
 import com.easy.query.core.annotation.Column;
+import com.easy.query.core.annotation.EntityProxy;
 import com.easy.query.core.annotation.Table;
 import lombok.Data;
 
@@ -20,6 +21,7 @@ import java.util.UUID;
  */
 @Data
 @Table("t_all_type")
+@EntityProxy
 //@Accessors(chain = true)
 public class ALLTYPE {
     @Column(primaryKey = true)

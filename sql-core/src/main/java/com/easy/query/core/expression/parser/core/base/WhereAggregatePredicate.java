@@ -3,6 +3,7 @@ package com.easy.query.core.expression.parser.core.base;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.AggregatePredicateCompare;
 import com.easy.query.core.enums.SQLPredicateCompare;
+import com.easy.query.core.expression.builder.AggregateFilter;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
@@ -14,6 +15,7 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
  * @Date: 2023/2/18 22:17
  */
 public interface WhereAggregatePredicate<T1> {
+    AggregateFilter getAggregateFilter();
     TableAvailable getTable();
 
     QueryRuntimeContext getRuntimeContext();

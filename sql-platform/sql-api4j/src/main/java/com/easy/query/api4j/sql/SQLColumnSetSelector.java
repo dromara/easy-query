@@ -2,7 +2,7 @@ package com.easy.query.api4j.sql;
 
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.parser.core.base.ColumnSetSelector;
+import com.easy.query.core.expression.parser.core.base.ColumnUpdateSetSelector;
 import com.easy.query.api4j.util.EasyLambdaUtil;
 
 /**
@@ -12,7 +12,7 @@ import com.easy.query.api4j.util.EasyLambdaUtil;
  * @author xuejiaming
  */
 public interface SQLColumnSetSelector<T1> {
-    ColumnSetSelector<T1> getColumnSetSelector();
+    ColumnUpdateSetSelector<T1> getColumnSetSelector();
 
     default TableAvailable getTable() {
         return getColumnSetSelector().getTable();

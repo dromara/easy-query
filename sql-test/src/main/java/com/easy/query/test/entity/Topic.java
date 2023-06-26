@@ -1,9 +1,9 @@
 package com.easy.query.test.entity;
 
 import com.easy.query.core.annotation.Column;
+import com.easy.query.core.annotation.EntityProxy;
 import com.easy.query.core.annotation.Table;
 import lombok.Data;
-import lombok.ToString;
 
 import java.time.LocalDateTime;
 
@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
  */
 @Data
 @Table("t_topic")
-@ToString
+@EntityProxy //添加这个属性那么Topic对象会代理生成TopicProxy (需要idea build一下当前项目)
 public class Topic {
 
     @Column(primaryKey = true)

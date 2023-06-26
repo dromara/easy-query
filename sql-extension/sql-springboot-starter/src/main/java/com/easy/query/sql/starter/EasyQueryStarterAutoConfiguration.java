@@ -1,5 +1,7 @@
 package com.easy.query.sql.starter;
 
+import com.easy.query.api.proxy.client.DefaultEasyProxyQuery;
+import com.easy.query.api.proxy.client.EasyProxyQuery;
 import com.easy.query.api4j.client.DefaultEasyQuery;
 import com.easy.query.api4j.client.EasyQuery;
 import com.easy.query.core.api.client.EasyQueryClient;
@@ -178,6 +180,11 @@ public class EasyQueryStarterAutoConfiguration {
     @ConditionalOnMissingBean
     public EasyQuery easyQuery(EasyQueryClient easyQueryClient) {
         return new DefaultEasyQuery(easyQueryClient);
+    }
+    @Bean
+    @ConditionalOnMissingBean
+    public EasyProxyQuery easyProxyQuery(EasyQueryClient easyQueryClient) {
+        return new DefaultEasyProxyQuery(easyQueryClient);
     }
 
     @Bean

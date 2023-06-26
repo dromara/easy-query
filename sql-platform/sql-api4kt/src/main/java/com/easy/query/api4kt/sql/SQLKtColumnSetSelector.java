@@ -2,7 +2,7 @@ package com.easy.query.api4kt.sql;
 
 import com.easy.query.api4kt.util.EasyKtLambdaUtil;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.parser.core.base.ColumnSetSelector;
+import com.easy.query.core.expression.parser.core.base.ColumnUpdateSetSelector;
 import kotlin.reflect.KProperty1;
 
 /**
@@ -12,7 +12,7 @@ import kotlin.reflect.KProperty1;
  * @author xuejiaming
  */
 public interface SQLKtColumnSetSelector<T1> {
-    ColumnSetSelector<T1> getColumnSetSelector();
+    ColumnUpdateSetSelector<T1> getColumnSetSelector();
 
     default TableAvailable getTable() {
         return getColumnSetSelector().getTable();

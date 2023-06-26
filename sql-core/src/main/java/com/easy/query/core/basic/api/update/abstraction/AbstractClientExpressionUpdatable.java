@@ -9,6 +9,7 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.enums.SQLPredicateCompareEnum;
+import com.easy.query.core.expression.builder.impl.FilterImpl;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnSetter;
@@ -98,7 +99,7 @@ public abstract class AbstractClientExpressionUpdatable<T> extends AbstractSQLEx
     @Override
     public ClientExpressionUpdatable<T> where(boolean condition, SQLExpression1<WherePredicate<T>> whereExpression) {
         if (condition) {
-            WherePredicateImpl<T> sqlPredicate = new WherePredicateImpl<>(0, entityUpdateExpressionBuilder, entityUpdateExpressionBuilder.getWhere());
+            WherePredicateImpl<T> sqlPredicate = new WherePredicateImpl<>(table, new FilterImpl(entityUpdateExpressionBuilder.getRuntimeContext(),entityUpdateExpressionBuilder.getExpressionContext(), entityUpdateExpressionBuilder.getWhere(),false));
             whereExpression.apply(sqlPredicate);
         }
         return this;

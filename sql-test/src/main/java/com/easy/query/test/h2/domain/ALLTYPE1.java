@@ -1,6 +1,7 @@
 package com.easy.query.test.h2.domain;
 
 import com.easy.query.core.annotation.Column;
+import com.easy.query.core.annotation.EntityProxy;
 import com.easy.query.core.annotation.Table;
 
 import java.math.BigDecimal;
@@ -18,6 +19,7 @@ import java.util.UUID;
  * @author xuejiaming
  */
 @Table("t_all_type")
+@EntityProxy
 public class ALLTYPE1 {
     @Column(primaryKey = true)
     private String id;

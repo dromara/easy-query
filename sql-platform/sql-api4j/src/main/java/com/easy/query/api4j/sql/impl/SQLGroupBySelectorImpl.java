@@ -1,7 +1,7 @@
 package com.easy.query.api4j.sql.impl;
 
 import com.easy.query.api4j.sql.SQLGroupBySelector;
-import com.easy.query.core.expression.parser.core.base.GroupBySelector;
+import com.easy.query.core.expression.parser.core.base.ColumnGroupSelector;
 
 /**
  * @author xuejiaming
@@ -10,15 +10,15 @@ import com.easy.query.core.expression.parser.core.base.GroupBySelector;
  */
 public class SQLGroupBySelectorImpl<T1> implements SQLGroupBySelector<T1> {
 
-    private final GroupBySelector<T1> groupBySelector;
+    private final ColumnGroupSelector<T1> groupBySelector;
 
-    public SQLGroupBySelectorImpl(GroupBySelector<T1> groupBySelector) {
+    public SQLGroupBySelectorImpl(ColumnGroupSelector<T1> groupBySelector) {
         this.groupBySelector = groupBySelector;
     }
 
 
     @Override
-    public GroupBySelector<T1> getGroupBySelector() {
+    public ColumnGroupSelector<T1> getGroupBySelector() {
         return groupBySelector;
     }
 }
