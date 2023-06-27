@@ -153,6 +153,13 @@ public class EasyCollectionUtil {
         return !isEmpty(collection);
     }
 
+    public static <T>boolean isEmptyArray(T[] arrays){
+       return arrays==null||arrays.length==0;
+    }
+    public static <T>boolean isNotEmptyArray(T[] arrays){
+       return !isEmptyArray(arrays);
+    }
+
     /**
      * 是否存在不一样的元素,当元素个数大于等于2个的时候
      *

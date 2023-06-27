@@ -503,13 +503,25 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                                 sqlPredicate.le(queryPropertyName, val);
                                 break;
                             case IN:
-                                if (EasyCollectionUtil.isNotEmpty((Collection<?>) val)) {
-                                    sqlPredicate.in(queryPropertyName, (Collection<?>) val);
+                                if (val.getClass().isArray()) {
+                                    if (EasyCollectionUtil.isNotEmptyArray((Object[]) val)) {
+                                        sqlPredicate.in(queryPropertyName, (Object[]) val);
+                                    }
+                                } else {
+                                    if (EasyCollectionUtil.isNotEmpty((Collection<?>) val)) {
+                                        sqlPredicate.in(queryPropertyName, (Collection<?>) val);
+                                    }
                                 }
                                 break;
                             case NOT_IN:
-                                if (EasyCollectionUtil.isNotEmpty((Collection<?>) val)) {
-                                    sqlPredicate.notIn(queryPropertyName, (Collection<?>) val);
+                                if (val.getClass().isArray()) {
+                                    if (EasyCollectionUtil.isNotEmptyArray((Object[]) val)) {
+                                        sqlPredicate.notIn(queryPropertyName, (Object[]) val);
+                                    }
+                                } else {
+                                    if (EasyCollectionUtil.isNotEmpty((Collection<?>) val)) {
+                                        sqlPredicate.notIn(queryPropertyName, (Collection<?>) val);
+                                    }
                                 }
                                 break;
                             case NOT_EQUAL:

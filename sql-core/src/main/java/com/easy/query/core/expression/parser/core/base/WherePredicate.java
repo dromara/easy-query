@@ -539,7 +539,7 @@ public interface WherePredicate<T1> {
 
     <T2> WherePredicate<T1> gt(boolean condition, WherePredicate<T2> sub, String property1, String property2);
     default <T2> WherePredicate<T1> ge(WherePredicate<T2> sub, String property1, String property2) {
-        return gt(true, sub, property1, property2);
+        return ge(true, sub, property1, property2);
     }
 
     <T2> WherePredicate<T1> ge(boolean condition, WherePredicate<T2> sub, String property1, String property2);
@@ -559,7 +559,7 @@ public interface WherePredicate<T1> {
 
     <T2> WherePredicate<T1> le(boolean condition, WherePredicate<T2> sub, String property1, String property2);
     default <T2> WherePredicate<T1> lt(WherePredicate<T2> sub, String property1, String property2) {
-        return le(true, sub, property1, property2);
+        return lt(true, sub, property1, property2);
     }
 
     <T2> WherePredicate<T1> lt(boolean condition, WherePredicate<T2> sub, String property1, String property2);
