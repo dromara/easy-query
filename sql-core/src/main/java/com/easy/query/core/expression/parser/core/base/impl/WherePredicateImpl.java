@@ -3,6 +3,7 @@ package com.easy.query.core.expression.parser.core.base.impl;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.enums.SQLLikeEnum;
 import com.easy.query.core.enums.SQLPredicateCompare;
+import com.easy.query.core.enums.SQLPredicateCompareEnum;
 import com.easy.query.core.enums.SQLRangeEnum;
 import com.easy.query.core.expression.builder.Filter;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
@@ -20,6 +21,7 @@ import java.util.Collection;
 public class WherePredicateImpl<T1> implements WherePredicate<T1> {
     private final Filter filter;
     private final TableAvailable table;
+
     public WherePredicateImpl(TableAvailable table, Filter filter) {
         this.filter = filter;
         this.table = table;
@@ -193,13 +195,42 @@ public class WherePredicateImpl<T1> implements WherePredicate<T1> {
         return this;
     }
 
-    @Override
-    public <T2> WherePredicate<T1> eq(boolean condition, WherePredicate<T2> sub, String property1, String property2) {
+    private <T2> WherePredicate<T1> compareSelf(boolean condition, WherePredicate<T2> sub, String property1, String property2, SQLPredicateCompare sqlPredicateCompare) {
         if (condition) {
             TableAvailable rightTable = sub.getTable();
-            filter.eq(table, property1, rightTable, property2);
+            filter.compareSelf(table, property1, rightTable, property2, sqlPredicateCompare);
         }
         return this;
+    }
+
+    @Override
+    public <T2> WherePredicate<T1> eq(boolean condition, WherePredicate<T2> sub, String property1, String property2) {
+        return compareSelf(condition,sub,property1,property2, SQLPredicateCompareEnum.EQ);
+    }
+
+    @Override
+    public <T2> WherePredicate<T1> ne(boolean condition, WherePredicate<T2> sub, String property1, String property2) {
+        return compareSelf(condition,sub,property1,property2, SQLPredicateCompareEnum.NE);
+    }
+
+    @Override
+    public <T2> WherePredicate<T1> gt(boolean condition, WherePredicate<T2> sub, String property1, String property2) {
+        return compareSelf(condition,sub,property1,property2, SQLPredicateCompareEnum.GT);
+    }
+
+    @Override
+    public <T2> WherePredicate<T1> ge(boolean condition, WherePredicate<T2> sub, String property1, String property2) {
+        return compareSelf(condition,sub,property1,property2, SQLPredicateCompareEnum.GE);
+    }
+
+    @Override
+    public <T2> WherePredicate<T1> le(boolean condition, WherePredicate<T2> sub, String property1, String property2) {
+        return compareSelf(condition,sub,property1,property2, SQLPredicateCompareEnum.LE);
+    }
+
+    @Override
+    public <T2> WherePredicate<T1> lt(boolean condition, WherePredicate<T2> sub, String property1, String property2) {
+        return compareSelf(condition,sub,property1,property2, SQLPredicateCompareEnum.LT);
     }
 
     @Override
@@ -218,8 +249,8 @@ public class WherePredicateImpl<T1> implements WherePredicate<T1> {
     @Override
     public WherePredicate<T1> and(boolean condition, SQLExpression1<WherePredicate<T1>> sqlWherePredicateSQLExpression) {
         if (condition) {
-            filter.and(f->{
-                sqlWherePredicateSQLExpression.apply(new WherePredicateImpl<>(table,f));
+            filter.and(f -> {
+                sqlWherePredicateSQLExpression.apply(new WherePredicateImpl<>(table, f));
             });
         }
         return this;
@@ -236,8 +267,8 @@ public class WherePredicateImpl<T1> implements WherePredicate<T1> {
     @Override
     public WherePredicate<T1> or(boolean condition, SQLExpression1<WherePredicate<T1>> sqlWherePredicateSQLExpression) {
         if (condition) {
-            filter.or(f->{
-                sqlWherePredicateSQLExpression.apply(new WherePredicateImpl<>(table,f));
+            filter.or(f -> {
+                sqlWherePredicateSQLExpression.apply(new WherePredicateImpl<>(table, f));
             });
         }
         return this;

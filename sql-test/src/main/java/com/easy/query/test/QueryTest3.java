@@ -525,4 +525,45 @@ public class QueryTest3 extends BaseTest {
                 .firstOrNull();
         Assert.assertNotNull(topic);
     }
+
+    @Test
+    public void testSelfPredicate1(){
+        {
+            String sql = easyQueryClient.queryable(BlogEntity.class)
+                    .where(t -> t.eq("score", "3").eq(t, "score", "order"))
+                    .toSQL();
+            Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `score` = ? AND `score` = `order`",sql);
+        }
+        {
+            String sql = easyQueryClient.queryable(BlogEntity.class)
+                    .where(t -> t.eq("score", "3").gt(t, "score", "order"))
+                    .toSQL();
+            Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `score` = ? AND `score` > `order`",sql);
+        }
+        {
+
+            String sql1 = easyQuery.queryable(BlogEntity.class)
+                    .where(t -> t.eq(BlogEntity::getScore, "3").eq(t, BlogEntity::getScore, BlogEntity::getOrder))
+                    .toSQL();
+            Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `score` = ? AND `score` = `order`",sql1);
+        }
+        {
+
+            String sql1 = easyQuery.queryable(BlogEntity.class)
+                    .where(t -> t.eq(BlogEntity::getScore, "3").le(t, BlogEntity::getScore, BlogEntity::getOrder))
+                    .toSQL();
+            Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `score` = ? AND `score` <= `order`",sql1);
+        }
+        {
+            String sql2 = easyProxyQuery.queryable(BlogEntityProxy.DEFAULT)
+                    .where((filter,t) -> filter.eq(t.score(), "3").eq(t.score(), t.order()))
+                    .toSQL();
+            Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `score` = ? AND `score` = `order`",sql2);
+        } {
+            String sql2 = easyProxyQuery.queryable(BlogEntityProxy.DEFAULT)
+                    .where((filter,t) -> filter.eq(t.score(), "3").ge(t.score(), t.order()))
+                    .toSQL();
+            Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `score` = ? AND `score` >= `order`",sql2);
+        }
+    }
 }

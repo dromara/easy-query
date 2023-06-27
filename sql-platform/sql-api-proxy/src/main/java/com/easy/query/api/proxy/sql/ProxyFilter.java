@@ -640,6 +640,26 @@ public interface ProxyFilter {
         }
         return this;
     }
+    default <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> ProxyFilter gt(SQLColumn<?> column1, SQLColumn<?> column2) {
+        return gt(true, column1, column2);
+    }
+
+    default <T2> ProxyFilter gt(boolean condition, SQLColumn<?> column1, SQLColumn<?> column2) {
+        if (condition) {
+            getFilter().gt(column1.getTable(), column1.value(), column2.getTable(), column2.value());
+        }
+        return this;
+    }
+    default <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> ProxyFilter ge(SQLColumn<?> column1, SQLColumn<?> column2) {
+        return ge(true, column1, column2);
+    }
+
+    default <T2> ProxyFilter ge(boolean condition, SQLColumn<?> column1, SQLColumn<?> column2) {
+        if (condition) {
+            getFilter().ge(column1.getTable(), column1.value(), column2.getTable(), column2.value());
+        }
+        return this;
+    }
 
     default <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> ProxyFilter eq(SQLColumn<?> column1, SQLColumn<?> column2) {
         return eq(true, column1, column2);
@@ -648,6 +668,36 @@ public interface ProxyFilter {
     default <T2> ProxyFilter eq(boolean condition, SQLColumn<?> column1, SQLColumn<?> column2) {
         if (condition) {
             getFilter().eq(column1.getTable(), column1.value(), column2.getTable(), column2.value());
+        }
+        return this;
+    }
+    default <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> ProxyFilter ne(SQLColumn<?> column1, SQLColumn<?> column2) {
+        return ne(true, column1, column2);
+    }
+
+    default <T2> ProxyFilter ne(boolean condition, SQLColumn<?> column1, SQLColumn<?> column2) {
+        if (condition) {
+            getFilter().ne(column1.getTable(), column1.value(), column2.getTable(), column2.value());
+        }
+        return this;
+    }
+    default <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> ProxyFilter le(SQLColumn<?> column1, SQLColumn<?> column2) {
+        return le(true, column1, column2);
+    }
+
+    default <T2> ProxyFilter le(boolean condition, SQLColumn<?> column1, SQLColumn<?> column2) {
+        if (condition) {
+            getFilter().le(column1.getTable(), column1.value(), column2.getTable(), column2.value());
+        }
+        return this;
+    }
+    default <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> ProxyFilter lt(SQLColumn<?> column1, SQLColumn<?> column2) {
+        return lt(true, column1, column2);
+    }
+
+    default <T2> ProxyFilter lt(boolean condition, SQLColumn<?> column1, SQLColumn<?> column2) {
+        if (condition) {
+            getFilter().lt(column1.getTable(), column1.value(), column2.getTable(), column2.value());
         }
         return this;
     }

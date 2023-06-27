@@ -533,11 +533,36 @@ public interface WherePredicate<T1> {
 
     WherePredicate<T1> columnFunc(boolean condition, ColumnPropertyFunction columnPropertyFunction, SQLPredicateCompare sqlPredicateCompare, Object val);
 
+    default <T2> WherePredicate<T1> gt(WherePredicate<T2> sub, String property1, String property2) {
+        return gt(true, sub, property1, property2);
+    }
+
+    <T2> WherePredicate<T1> gt(boolean condition, WherePredicate<T2> sub, String property1, String property2);
+    default <T2> WherePredicate<T1> ge(WherePredicate<T2> sub, String property1, String property2) {
+        return gt(true, sub, property1, property2);
+    }
+
+    <T2> WherePredicate<T1> ge(boolean condition, WherePredicate<T2> sub, String property1, String property2);
     default <T2> WherePredicate<T1> eq(WherePredicate<T2> sub, String property1, String property2) {
         return eq(true, sub, property1, property2);
     }
 
     <T2> WherePredicate<T1> eq(boolean condition, WherePredicate<T2> sub, String property1, String property2);
+    default <T2> WherePredicate<T1> ne(WherePredicate<T2> sub, String property1, String property2) {
+        return ne(true, sub, property1, property2);
+    }
+
+    <T2> WherePredicate<T1> ne(boolean condition, WherePredicate<T2> sub, String property1, String property2);
+    default <T2> WherePredicate<T1> le(WherePredicate<T2> sub, String property1, String property2) {
+        return le(true, sub, property1, property2);
+    }
+
+    <T2> WherePredicate<T1> le(boolean condition, WherePredicate<T2> sub, String property1, String property2);
+    default <T2> WherePredicate<T1> lt(WherePredicate<T2> sub, String property1, String property2) {
+        return le(true, sub, property1, property2);
+    }
+
+    <T2> WherePredicate<T1> lt(boolean condition, WherePredicate<T2> sub, String property1, String property2);
 
     <T2> WherePredicate<T2> then(WherePredicate<T2> sub);
 

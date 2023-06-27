@@ -631,12 +631,54 @@ public interface SQLWherePredicate<T1> {
         return this;
     }
 
+    default <T2> SQLWherePredicate<T1> gt(SQLWherePredicate<T2> sub, Property<T1, ?> column1, Property<T2, ?> column2) {
+        return gt(true, sub, column1, column2);
+    }
+
+    default <T2> SQLWherePredicate<T1> gt(boolean condition, SQLWherePredicate<T2> sub, Property<T1, ?> column1, Property<T2, ?> column2) {
+        getWherePredicate().gt(condition, sub.getWherePredicate(), EasyLambdaUtil.getPropertyName(column1), EasyLambdaUtil.getPropertyName(column2));
+        return this;
+    }
+    default <T2> SQLWherePredicate<T1> ge(SQLWherePredicate<T2> sub, Property<T1, ?> column1, Property<T2, ?> column2) {
+        return ge(true, sub, column1, column2);
+    }
+
+    default <T2> SQLWherePredicate<T1> ge(boolean condition, SQLWherePredicate<T2> sub, Property<T1, ?> column1, Property<T2, ?> column2) {
+        getWherePredicate().ge(condition, sub.getWherePredicate(), EasyLambdaUtil.getPropertyName(column1), EasyLambdaUtil.getPropertyName(column2));
+        return this;
+    }
+
     default <T2> SQLWherePredicate<T1> eq(SQLWherePredicate<T2> sub, Property<T1, ?> column1, Property<T2, ?> column2) {
         return eq(true, sub, column1, column2);
     }
 
     default <T2> SQLWherePredicate<T1> eq(boolean condition, SQLWherePredicate<T2> sub, Property<T1, ?> column1, Property<T2, ?> column2) {
         getWherePredicate().eq(condition, sub.getWherePredicate(), EasyLambdaUtil.getPropertyName(column1), EasyLambdaUtil.getPropertyName(column2));
+        return this;
+    }
+
+    default <T2> SQLWherePredicate<T1> ne(SQLWherePredicate<T2> sub, Property<T1, ?> column1, Property<T2, ?> column2) {
+        return ne(true, sub, column1, column2);
+    }
+
+    default <T2> SQLWherePredicate<T1> ne(boolean condition, SQLWherePredicate<T2> sub, Property<T1, ?> column1, Property<T2, ?> column2) {
+        getWherePredicate().ne(condition, sub.getWherePredicate(), EasyLambdaUtil.getPropertyName(column1), EasyLambdaUtil.getPropertyName(column2));
+        return this;
+    }
+    default <T2> SQLWherePredicate<T1> le(SQLWherePredicate<T2> sub, Property<T1, ?> column1, Property<T2, ?> column2) {
+        return le(true, sub, column1, column2);
+    }
+
+    default <T2> SQLWherePredicate<T1> le(boolean condition, SQLWherePredicate<T2> sub, Property<T1, ?> column1, Property<T2, ?> column2) {
+        getWherePredicate().le(condition, sub.getWherePredicate(), EasyLambdaUtil.getPropertyName(column1), EasyLambdaUtil.getPropertyName(column2));
+        return this;
+    }
+    default <T2> SQLWherePredicate<T1> lt(SQLWherePredicate<T2> sub, Property<T1, ?> column1, Property<T2, ?> column2) {
+        return lt(true, sub, column1, column2);
+    }
+
+    default <T2> SQLWherePredicate<T1> lt(boolean condition, SQLWherePredicate<T2> sub, Property<T1, ?> column1, Property<T2, ?> column2) {
+        getWherePredicate().lt(condition, sub.getWherePredicate(), EasyLambdaUtil.getPropertyName(column1), EasyLambdaUtil.getPropertyName(column2));
         return this;
     }
 
