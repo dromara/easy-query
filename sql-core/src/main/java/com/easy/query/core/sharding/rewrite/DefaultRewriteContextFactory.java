@@ -93,9 +93,8 @@ public class DefaultRewriteContextFactory implements RewriteContextFactory {
                 }
             }
         }
-        //如果当前表达式存在group 并且
+        //如果当前表达式存在group 并且不为空
         if (EasySQLSegmentUtil.isNotEmpty(easyEntityPredicateSQLExpression.getGroup())) {
-
             boolean hasAvg=false;
             //分组重写的如果存在count avg sum那么就会存储
             Map<GroupRewriteStatus,GroupRewriteStatus> groupRewriteStatusMap = new LinkedHashMap<>(easyEntityPredicateSQLExpression.getProjects().getSQLSegments().size());
@@ -168,11 +167,18 @@ public class DefaultRewriteContextFactory implements RewriteContextFactory {
                         continue;
                     }
                     //如果存在avg那么分片必须要存在count或者sum不然无法计算avg
-                    if(rewriteStatusKvKey.hasBehavior(GroupAvgBehaviorEnum.COUNT)&&rewriteStatusKvKey.hasBehavior(GroupAvgBehaviorEnum.SUM)){
+                    if(rewriteStatusKvKey.hasBehavior(GroupAvgBehaviorEnum.COUNT)){
                         EntityTableSQLExpression table = easyEntityPredicateSQLExpression.getTable(rewriteStatusKvKey.getTableIndex());
                         ColumnFunctionFactory columnFunctionFactory = runtimeContext.getColumnFunctionFactory();
                         SQLSegmentFactory sqlSegmentFactory = runtimeContext.getSQLSegmentFactory();
                         FuncColumnSegment funcColumnSegment = sqlSegmentFactory.createFuncColumnSegment(table.getEntityTable(), rewriteStatusKvKey.getPropertyName(), runtimeContext, columnFunctionFactory.createCountFunction(false), rewriteStatusKvKey.getPropertyName() + "RewriteCount");
+                        easyEntityPredicateSQLExpression.getProjects().append(funcColumnSegment);
+                    }
+                    if(rewriteStatusKvKey.hasBehavior(GroupAvgBehaviorEnum.SUM)){
+                        EntityTableSQLExpression table = easyEntityPredicateSQLExpression.getTable(rewriteStatusKvKey.getTableIndex());
+                        ColumnFunctionFactory columnFunctionFactory = runtimeContext.getColumnFunctionFactory();
+                        SQLSegmentFactory sqlSegmentFactory = runtimeContext.getSQLSegmentFactory();
+                        FuncColumnSegment funcColumnSegment = sqlSegmentFactory.createFuncColumnSegment(table.getEntityTable(), rewriteStatusKvKey.getPropertyName(), runtimeContext, columnFunctionFactory.createSumFunction(false), rewriteStatusKvKey.getPropertyName() + "RewriteSum");
                         easyEntityPredicateSQLExpression.getProjects().append(funcColumnSegment);
                     }
                 }

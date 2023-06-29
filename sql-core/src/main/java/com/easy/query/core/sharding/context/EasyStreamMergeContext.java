@@ -218,6 +218,11 @@ public class EasyStreamMergeContext implements StreamMergeContext {
     }
 
     @Override
+    public GroupMergeContext getGroupMergeContext() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public ExecuteMethodEnum getExecuteMethod() {
         return executorContext.getExecuteMethod();
     }

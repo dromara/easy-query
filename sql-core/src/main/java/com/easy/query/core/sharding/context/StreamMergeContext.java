@@ -72,6 +72,7 @@ public interface StreamMergeContext extends AutoCloseable {
     SQLBuilderSegment getSelectColumns();
     SQLBuilderSegment getGroupColumns();
     ExecuteMethodEnum getExecuteMethod();
+    GroupMergeContext getGroupMergeContext();
 
     List<EasyConnection> getEasyConnections(String dataSourceName, int createDbConnectionCount);
 

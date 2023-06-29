@@ -4,10 +4,12 @@ import com.easy.query.core.basic.jdbc.executor.internal.merge.result.StreamResul
 import com.easy.query.core.basic.jdbc.executor.internal.merge.result.aggregation.AggregationUnitFactory;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.segment.PropertyGroup;
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
+import com.easy.query.core.expression.func.AggregationType;
 import com.easy.query.core.expression.segment.FuncColumnSegment;
 import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
+import com.easy.query.core.sharding.context.ColumnIndexFuncColumnSegment;
 import com.easy.query.core.sharding.context.StreamMergeContext;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.result.ShardingStreamResultSet;
 import com.easy.query.core.util.EasyCollectionUtil;
@@ -27,6 +29,8 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
@@ -164,8 +168,18 @@ public class EasyGroupByOrderStreamMergeResultSet implements ShardingStreamResul
 
     private void aggregate(List<AggregateValue> aggregationValues) throws SQLException {
         for (AggregateValue aggregationValue : aggregationValues) {
-            Comparable<?> value = getAggregationValue(aggregationValue.getColumnIndex());
-            aggregationValue.getAggregationUnit().merge(Collections.singletonList(value));
+            ArrayList<Comparable<?>> comparables = new ArrayList<>(2);
+            if(EasyCollectionUtil.isEmpty(aggregationValue.getAggregateValues())){
+
+                Comparable<?> value = getAggregationValue(aggregationValue.getColumnIndex());
+                comparables.add(value);
+            }else{
+                for (AggregateValue aggregateValue : aggregationValue.getAggregateValues()) {
+                    Comparable<?> value = getAggregationValue(aggregateValue.getColumnIndex());
+                    comparables.add(value);
+                }
+            }
+            aggregationValue.getAggregationUnit().merge(comparables);//判断如果是avg应该要获取对应的count和sum
         }
     }
 
@@ -189,7 +203,26 @@ public class EasyGroupByOrderStreamMergeResultSet implements ShardingStreamResul
                     throw new UnsupportedOperationException("unknown aggregate column:" + EasyClassUtil.getInstanceSimpleName(sqlSegment));
                 }
                 FuncColumnSegment aggregationColumnSegment = (FuncColumnSegment) sqlSegment;
-                aggregationUnits.add(new AggregateValue(i, AggregationUnitFactory.create(aggregationColumnSegment.getAggregationType())));
+                AggregateValue aggregateValue = new AggregateValue(i, AggregationUnitFactory.create(aggregationColumnSegment.getAggregationType()));
+                if(Objects.equals(AggregationType.AVG,aggregationColumnSegment.getAggregationType())){
+                    Map<AggregationType, ColumnIndexFuncColumnSegment> aggregationTypeFuncColumnSegmentMap = streamMergeContext.getGroupMergeContext().getColumnMapping().get(aggregationColumnSegment);
+                    if(aggregationTypeFuncColumnSegmentMap==null){
+                        throw new UnsupportedOperationException("not found sum or count projects, avg column:" + EasyClassUtil.getInstanceSimpleName(sqlSegment));
+                    }
+                    ColumnIndexFuncColumnSegment countAvgColumnSegment = aggregationTypeFuncColumnSegmentMap.get(AggregationType.COUNT);
+                    if(countAvgColumnSegment==null){
+                        throw new UnsupportedOperationException("not found count projects, avg column:" + EasyClassUtil.getInstanceSimpleName(sqlSegment));
+                    }
+                    AggregateValue avgCountAggregateValue = new AggregateValue(countAvgColumnSegment.getColumnIndex(), AggregationUnitFactory.create(countAvgColumnSegment.getFuncColumnSegment().getAggregationType()));
+                    aggregateValue.addAggregateValue(avgCountAggregateValue);
+                    ColumnIndexFuncColumnSegment sumAvgColumnSegment = aggregationTypeFuncColumnSegmentMap.get(AggregationType.SUM);
+                    if(sumAvgColumnSegment==null){
+                        throw new UnsupportedOperationException("not found sum projects, avg column:" + EasyClassUtil.getInstanceSimpleName(sqlSegment));
+                    }
+                    AggregateValue sumCountAggregateValue = new AggregateValue(sumAvgColumnSegment.getColumnIndex(), AggregationUnitFactory.create(sumAvgColumnSegment.getFuncColumnSegment().getAggregationType()));
+                    aggregateValue.addAggregateValue(sumCountAggregateValue);
+                }
+                aggregationUnits.add(aggregateValue);
             }
         }
         return aggregationUnits;

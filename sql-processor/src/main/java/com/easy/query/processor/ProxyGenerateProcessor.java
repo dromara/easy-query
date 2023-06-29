@@ -354,12 +354,12 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                     continue;
                 }
 
-                ColumnIgnore column = fieldElement.getAnnotation(ColumnIgnore.class);
-                if (column != null) {
-                    continue;
-                }
                 String propertyName = fieldElement.toString();
                 if(ignoreProperties.contains(propertyName)){
+                    continue;
+                }
+                ColumnIgnore column = fieldElement.getAnnotation(ColumnIgnore.class);
+                if (column != null) {
                     continue;
                 }
 
