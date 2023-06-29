@@ -1,5 +1,6 @@
 package com.easy.query.test;
 
+import com.easy.query.api.proxy.base.MapProxy;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.test.dto.BlogEntityTest;
 import com.easy.query.test.dto.proxy.BlogEntityTestProxy;
@@ -15,6 +16,7 @@ import org.junit.Test;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import static com.easy.query.test.entity.base.TopicProxy.TOPIC_PROXY;
 import static com.easy.query.test.entity.base.TopicTestProxy.TOPIC_TEST_PROXY;
@@ -642,5 +644,20 @@ public class QueryTest3 extends BaseTest {
                     .toSQL();
             Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `score` = ? AND `score` <= `order`",sql2);
         }
+    }
+    @Test
+    public void testProxy6(){
+
+        List<Map<String,Object>> list = easyProxyQuery
+                .queryable(TOPIC_PROXY)
+                .select(MapProxy.DEFAULT, (selector, t) -> selector.columns(t.id, t.title))
+                .toList();
+        for (Map<?, ?> map : list) {
+            for (Map.Entry<?, ?> entry : map.entrySet()) {
+                System.out.println(entry.getKey());
+                System.out.println(entry.getValue());
+            }
+        }
+
     }
 }
