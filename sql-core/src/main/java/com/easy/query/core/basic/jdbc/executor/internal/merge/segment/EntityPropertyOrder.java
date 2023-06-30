@@ -1,6 +1,6 @@
 package com.easy.query.core.basic.jdbc.executor.internal.merge.segment;
 
-import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 
 /**
  * create time 2023/4/27 12:57
@@ -10,20 +10,20 @@ import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
  */
 public class EntityPropertyOrder implements PropertyOrder {
 
-    private final EntityTableSQLExpression tableSQLExpression;
+    private final TableAvailable table;
     private final String propertyName;
     private final int columnIndex;
     private final boolean asc;
 
-    public EntityPropertyOrder(EntityTableSQLExpression tableSQLExpression, String propertyName, int columnIndex, boolean asc){
+    public EntityPropertyOrder(TableAvailable table, String propertyName, int columnIndex, boolean asc){
 
-        this.tableSQLExpression = tableSQLExpression;
+        this.table = table;
         this.propertyName = propertyName;
         this.columnIndex = columnIndex;
         this.asc = asc;
     }
-    public EntityTableSQLExpression getTable(){
-        return tableSQLExpression;
+    public TableAvailable getTable(){
+        return table;
     }
     public String propertyName(){
         return propertyName;

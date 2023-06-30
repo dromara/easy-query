@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -154,7 +155,7 @@ public class DefaultTableRouteEngine implements TableRouteEngine {
         int i = -1;
         for (TableRouteUnit tableRouteUnit : routeUnit.getTableRouteUnits()) {
             i++;
-            if (tableRouteUnit.getTable().getIndex() == table.getIndex()) {
+            if (Objects.equals(tableRouteUnit.getTable(),table)) {
                 return i;
             }
         }

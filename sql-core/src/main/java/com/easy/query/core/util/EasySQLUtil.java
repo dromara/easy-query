@@ -5,25 +5,29 @@ import com.easy.query.core.basic.jdbc.parameter.PropertySQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.enums.SQLLikeEnum;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 
 import java.util.List;
 
 /**
+ * @author xuejiaming
  * @FileName: SQLUtil.java
  * @Description: 文件说明
  * @Date: 2023/3/9 22:40
- * @author xuejiaming
  */
 public class EasySQLUtil {
     private EasySQLUtil() {
     }
 
     public static String getLikeParameter(Object val, SQLLikeEnum sqlLike) {
-       switch (sqlLike){
-           case LIKE_PERCENT_RIGHT:return val+"%";
-           case LIKE_PERCENT_LEFT:return "%"+val;
-           default:return "%"+val+"%";
-       }
+        switch (sqlLike) {
+            case LIKE_PERCENT_RIGHT:
+                return val + "%";
+            case LIKE_PERCENT_LEFT:
+                return "%" + val;
+            default:
+                return "%" + val + "%";
+        }
     }
 
     public static String sqlParameterToString(List<SQLParameter> sqlParameters) {
@@ -43,9 +47,8 @@ public class EasySQLUtil {
                 builder.append(param == null ? "null" : EasyClassUtil.getInstanceSimpleName(param));
                 builder.append(")");
             } else if (sqlParameter instanceof PropertySQLParameter) {
-                int index = sqlParameter.getTableOrNull().getIndex();
                 String propertyName = sqlParameter.getPropertyNameOrNull();
-                String param = index + "." + propertyName;
+                String param ="[unknown](propertyName:" + propertyName+")";
                 if (i++ != 0) {
                     builder.append(",");
                 }
@@ -56,9 +59,8 @@ public class EasySQLUtil {
     }
 
 
-
-    public static void addParameter(ToSQLContext toSQLContext, SQLParameter sqlParameter){
-        if(toSQLContext!=null){
+    public static void addParameter(ToSQLContext toSQLContext, SQLParameter sqlParameter) {
+        if (toSQLContext != null) {
             toSQLContext.addParameter(sqlParameter);
         }
     }

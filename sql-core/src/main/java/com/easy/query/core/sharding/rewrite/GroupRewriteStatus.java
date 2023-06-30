@@ -1,6 +1,8 @@
 package com.easy.query.core.sharding.rewrite;
 
 
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
+
 import java.util.Objects;
 
 /**
@@ -11,17 +13,17 @@ import java.util.Objects;
  */
 public class GroupRewriteStatus {
     public static int DEFAULT_GROUP_BEHAVIOR=GroupAvgBehaviorEnum.AVG.getCode()|GroupAvgBehaviorEnum.COUNT.getCode()|GroupAvgBehaviorEnum.SUM.getCode();
-    private final int tableIndex;
+    private final TableAvailable table;
     private final String propertyName;
     public int behavior=DEFAULT_GROUP_BEHAVIOR;
-    public GroupRewriteStatus(int tableIndex,String propertyName){
+    public GroupRewriteStatus(TableAvailable table, String propertyName){
 
-        this.tableIndex = tableIndex;
+        this.table = table;
         this.propertyName = propertyName;
     }
 
-    public int getTableIndex() {
-        return tableIndex;
+    public TableAvailable getTable() {
+        return table;
     }
 
     public String getPropertyName() {
@@ -53,11 +55,11 @@ public class GroupRewriteStatus {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         GroupRewriteStatus that = (GroupRewriteStatus) o;
-        return tableIndex == that.tableIndex && Objects.equals(propertyName, that.propertyName);
+        return Objects.equals(getTable(),that.getTable()) && Objects.equals(propertyName, that.propertyName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(tableIndex, propertyName);
+        return Objects.hash(table, propertyName);
     }
 }

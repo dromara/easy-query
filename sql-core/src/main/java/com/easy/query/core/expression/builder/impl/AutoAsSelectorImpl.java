@@ -56,13 +56,13 @@ public class AutoAsSelectorImpl  extends AbstractSelector<AsSelector> implements
     }
 
     @Override
-    public AsSelector columnAll(TableAvailable tableExpressionbUILDER) {
+    public AsSelector columnAll(TableAvailable table) {
 
-        if (tableExpressionbUILDER.getEntityClass().equals(resultClass)) {
-            super.columnAll(tableExpressionbUILDER);
+        if (table.getEntityClass().equals(resultClass)) {
+            super.columnAll(table);
             return this;
         } else {
-            EntityTableExpressionBuilder tableExpressionBuilder = entityQueryExpressionBuilder.getTable(tableExpressionbUILDER.getIndex());
+            EntityTableExpressionBuilder tableExpressionBuilder = entityQueryExpressionBuilder.getTable(table.getIndex());
             return columnAll(tableExpressionBuilder);
         }
     }
