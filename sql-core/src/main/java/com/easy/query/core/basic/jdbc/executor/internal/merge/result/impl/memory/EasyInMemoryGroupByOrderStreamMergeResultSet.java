@@ -10,6 +10,7 @@ import com.easy.query.core.basic.jdbc.executor.internal.merge.result.impl.memory
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import com.easy.query.core.expression.func.AggregationType;
 import com.easy.query.core.expression.segment.FuncColumnSegment;
+import com.easy.query.core.expression.segment.MaybeAggregateColumnSegment;
 import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
@@ -131,9 +132,9 @@ public final class EasyInMemoryGroupByOrderStreamMergeResultSet extends Abstract
 
             boolean aggregateColumn = EasySQLSegmentUtil.isAggregateColumn(sqlSegment);
             if(aggregateColumn){
-                FuncColumnSegment maybeAggregateColumnSegment = (FuncColumnSegment) sqlSegment;
+                MaybeAggregateColumnSegment maybeAggregateColumnSegment = (MaybeAggregateColumnSegment) sqlSegment;
                 AggregateValue aggregateValue = new AggregateValue(i, AggregationUnitFactory.create(maybeAggregateColumnSegment.getAggregationType()));
-                if(Objects.equals(AggregationType.AVG,maybeAggregateColumnSegment.getAggregationType())){
+                if(maybeAggregateColumnSegment instanceof FuncColumnSegment &&Objects.equals(AggregationType.AVG,maybeAggregateColumnSegment.getAggregationType())){
                     Map<AggregationType, ColumnIndexFuncColumnSegment> aggregationTypeFuncColumnSegmentMap = streamMergeContext.getGroupMergeContext().getColumnMapping().get(maybeAggregateColumnSegment);
                     if(aggregationTypeFuncColumnSegmentMap==null){
                         throw new UnsupportedOperationException("not found sum or count projects, avg column:" + EasyClassUtil.getInstanceSimpleName(sqlSegment));

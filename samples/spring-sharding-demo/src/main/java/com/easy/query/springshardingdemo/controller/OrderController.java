@@ -1,6 +1,7 @@
 package com.easy.query.springshardingdemo.controller;
 
 import com.easy.query.api.proxy.client.EasyProxyQuery;
+import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.springshardingdemo.domain.OrderEntity;
 import com.easy.query.springshardingdemo.domain.proxy.OrderEntityProxy;
 import com.easy.query.springshardingdemo.dto.OrderGroupWithAvgOrderNoVO;
@@ -11,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
@@ -143,5 +145,16 @@ public class OrderController {
                 .toList();
         long end = System.currentTimeMillis();
         return Arrays.asList(list, (end - start) + "(ms)");
+    }
+    @GetMapping("/page")
+    public Object page(@RequestParam("pageIndex") Integer pageIndex,@RequestParam("pageSize") Integer pageSize) {
+        long start = System.currentTimeMillis();
+        List<String> userIds = Arrays.asList("小明", "小绿");
+        EasyPageResult<OrderEntity> pageResult = easyProxyQuery.queryable(OrderEntityProxy.DEFAULT)
+                .where((filter, t) -> filter.in(t.userId(), userIds))
+                .orderByAsc((order, t) -> order.column(t.userId()))
+                .toPageResult(pageIndex, pageSize);
+        long end = System.currentTimeMillis();
+        return Arrays.asList(pageResult, (end - start) + "(ms)");
     }
 }

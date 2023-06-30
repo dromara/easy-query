@@ -15,6 +15,10 @@ import java.sql.SQLException;
 import java.sql.SQLXML;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Function;
@@ -123,6 +127,22 @@ public abstract class AbstractInMemoryStreamMergeResultSet implements InMemorySt
     public Timestamp getTimestamp(int columnIndex) throws SQLException {
         Object value = currentResultSetRow.getValue(columnIndex);
         setWasNull(value == null);
+        if(this.wasNull){
+            return null;
+        }
+        if(value instanceof Timestamp){
+            return (Timestamp) value;
+        }
+        if(value instanceof LocalDateTime){
+            return Timestamp.valueOf((LocalDateTime)value);
+        }
+        if(value instanceof LocalDate){
+            long ts = ((LocalDate)value).atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli();
+            return new Timestamp(ts);
+        }
+        if(value instanceof java.util.Date){
+            return new Timestamp(((java.util.Date)value).getTime());
+        }
         return (Timestamp) value;
     }
 
@@ -130,6 +150,15 @@ public abstract class AbstractInMemoryStreamMergeResultSet implements InMemorySt
     public Time getTime(int columnIndex) throws SQLException {
         Object value = currentResultSetRow.getValue(columnIndex);
         setWasNull(value == null);
+        if(this.wasNull){
+            return null;
+        }
+        if(value instanceof Time){
+            return (Time) value;
+        }
+        if(value instanceof LocalTime){
+            return Time.valueOf((LocalTime)value);
+        }
         return (Time) value;
     }
 
