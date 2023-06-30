@@ -11,7 +11,7 @@ import java.io.Serializable;
  *
  * @author xuejiaming
  */
-public interface TableProxy<TProxy extends TableProxy<TProxy, TEntity>, TEntity> extends Serializable {
+public interface TableProxy<TProxy extends TableProxy<TProxy, TEntity>, TEntity> extends BeanProxy, Serializable {
 
     default boolean isDefault() {
         return getTable() == null;
@@ -22,5 +22,9 @@ public interface TableProxy<TProxy extends TableProxy<TProxy, TEntity>, TEntity>
     Class<TEntity> getEntityClass();
 
     TProxy create(TableAvailable table);
+
+    default TEntity createEntity() {
+        return null;
+    }
 
 }

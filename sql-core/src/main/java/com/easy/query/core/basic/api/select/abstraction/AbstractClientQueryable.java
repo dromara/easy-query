@@ -10,6 +10,7 @@ import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.select.ClientQueryable2;
 import com.easy.query.core.basic.api.select.provider.SQLExpressionProvider;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
+import com.easy.query.core.basic.jdbc.executor.impl.def.EntityResultMetadata;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.basic.pagination.EasyPageResultProvider;
@@ -314,7 +315,8 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         boolean tracking = expressionContext.getBehavior().hasBehavior(EasyBehaviorEnum.USE_TRACKING);
         ExecuteMethodEnum executeMethod = expressionContext.getExecuteMethod();
         EntityExpressionExecutor entityExpressionExecutor = this.entityQueryExpressionBuilder.getRuntimeContext().getEntityExpressionExecutor();
-        List<TR> result = entityExpressionExecutor.query(ExecutorContext.create(this.entityQueryExpressionBuilder.getRuntimeContext(), true, executeMethod, tracking), resultClass, entityQueryExpressionBuilder);
+        EntityMetadata entityMetadata = this.entityQueryExpressionBuilder.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(resultClass);
+        List<TR> result = entityExpressionExecutor.query(ExecutorContext.create(this.entityQueryExpressionBuilder.getRuntimeContext(), true, executeMethod, tracking), new EntityResultMetadata<>(entityMetadata), entityQueryExpressionBuilder);
         //将当前方法设置为unknown
         setExecuteMethod(ExecuteMethodEnum.UNKNOWN);
         return result;

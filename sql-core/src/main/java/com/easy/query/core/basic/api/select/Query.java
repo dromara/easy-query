@@ -172,7 +172,6 @@ public interface Query<T> {
     List<Map<String, Object>> toMaps();
 
 
-    <TR> List<TR> toList(Class<TR> resultClass);
 
     default EasyPageResult<T> toPageResult(long pageIndex, long pageSize) {
         return toPageResult(pageIndex, pageSize, -1);

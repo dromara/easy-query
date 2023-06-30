@@ -1,5 +1,6 @@
 package com.easy.query.test.entity.base;
 
+import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
@@ -46,4 +47,44 @@ public class TopicProxy implements ProxyEntity<TopicProxy, Topic> {
     public TopicProxy create(TableAvailable table) {
         return new TopicProxy(table);
     }
+
+    @Override
+    public Topic createEntity() {
+        return new Topic();
+    }
+
+    @Override
+    public void setValue(Object bean, String property, Object value) {
+        Topic topic = (Topic) bean;
+        switch (property) {
+            case "id":
+                topic.setId((String) value);
+                break;
+            case "title":
+                topic.setTitle((String) value);
+                break;
+        }
+        throw new EasyQueryInvalidOperationException("not found property:" + property);
+    }
+
+    @Override
+    public Object getValue(Object bean, String property) {
+        Topic topic = (Topic) bean;
+        switch (property) {
+            case "id":
+                return topic.getId();
+            case "title":
+                return topic.getTitle();
+        }
+        throw new EasyQueryInvalidOperationException("not found property:" + property);
+    }
+
+//    @Override
+//    public PropertyProxy getPropertyProxy(String property) {
+//        switch (property){
+//            case "id":return new PropertyProxyImpl(this,"id",String.class, StringTypeHandler.INSTANCE,false,null, DefaultValueConverter.INSTANCE);
+//            case "title":return new PropertyProxyImpl(this,"title",String.class, StringTypeHandler.INSTANCE,false,null, DefaultValueConverter.INSTANCE);
+//        }
+//        throw new EasyQueryInvalidOperationException("not found property:"+property);
+//    }
 }

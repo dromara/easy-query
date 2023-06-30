@@ -4,7 +4,6 @@ import com.easy.query.core.basic.jdbc.types.EasyParameter;
 import com.easy.query.core.basic.jdbc.types.EasyResultSet;
 
 import java.sql.SQLException;
-import java.sql.Types;
 
 /**
  * @FileName: BigDecimalTypeHandler.java
@@ -13,6 +12,7 @@ import java.sql.Types;
  * @author xuejiaming
  */
 public class StringTypeHandler implements JdbcTypeHandler {
+    public static final StringTypeHandler INSTANCE=new StringTypeHandler();
     @Override
     public Object getValue(EasyResultSet resultSet) throws SQLException {
         return resultSet.getStreamResult().getString(resultSet.getIndex());

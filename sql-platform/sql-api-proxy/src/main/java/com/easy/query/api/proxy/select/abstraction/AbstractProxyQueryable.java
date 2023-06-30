@@ -20,16 +20,26 @@ import com.easy.query.core.api.dynamic.sort.ObjectSort;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.select.ClientQueryable2;
+import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
+import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
+import com.easy.query.core.basic.jdbc.executor.impl.proxy.ProxyEntityResultMetadata;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.enums.EasyBehaviorEnum;
+import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
+import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.lambda.SQLExpression3;
+import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.ExpressionContext;
+import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyObjectUtil;
+import com.easy.query.core.util.EasySQLExpressionUtil;
 
 import java.util.Collection;
 import java.util.List;
@@ -108,7 +118,7 @@ public abstract class AbstractProxyQueryable<T1Proxy extends ProxyEntity<T1Proxy
 
     @Override
     public List<T1> toList() {
-        return entityQueryable.toList();
+        return toList(get1Proxy());
     }
 
     @Override
@@ -117,9 +127,59 @@ public abstract class AbstractProxyQueryable<T1Proxy extends ProxyEntity<T1Proxy
     }
 
     @Override
-    public <TR> List<TR> toList(Class<TR> resultClass) {
-        return entityQueryable.toList(resultClass);
+    public <TRProxy extends ProxyEntity<TRProxy, TR>, TR> List<TR> toList(TRProxy trProxy) {
+
+        entityQueryable.getSQLEntityExpressionBuilder().getExpressionContext().executeMethod(ExecuteMethodEnum.LIST, true);
+        return toInternalList(trProxy);
     }
+    /**
+     * 子类实现方法
+     *
+     * @return
+     */
+    protected <TRProxy extends ProxyEntity<TRProxy, TR>, TR> List<TR> toInternalList(TRProxy trProxy) {
+        compensateSelect(trProxy.getEntityClass());
+        return toInternalListWithExpression(entityQueryable.getSQLEntityExpressionBuilder(), trProxy);
+//        //todo 检查是否存在分片对象的查询
+//        boolean shardingQuery = EasyShardingUtil.isShardingQuery(sqlEntityExpression);
+//        if(shardingQuery){
+//            compensateSelect(resultClass);
+//            //解析sql where 和join on的表达式返回datasource+sql的组合可以利用强制tableNameAs来实现
+//            sqlEntityExpression.getRuntimeContext()
+//        }else{
+//        }
+    }
+
+    protected <TRProxy extends ProxyEntity<TRProxy, TR>, TR> List<TR> toInternalListWithExpression(EntityQueryExpressionBuilder entityQueryExpressionBuilder, TRProxy trProxy) {
+        ExpressionContext expressionContext = entityQueryable.getSQLEntityExpressionBuilder().getExpressionContext();
+        boolean tracking = expressionContext.getBehavior().hasBehavior(EasyBehaviorEnum.USE_TRACKING);
+        ExecuteMethodEnum executeMethod = expressionContext.getExecuteMethod();
+        EntityExpressionExecutor entityExpressionExecutor = entityQueryable.getSQLEntityExpressionBuilder().getRuntimeContext().getEntityExpressionExecutor();
+        EntityMetadata entityMetadata = entityQueryable.getSQLEntityExpressionBuilder().getRuntimeContext().getEntityMetadataManager().getEntityMetadata(trProxy.getEntityClass());
+        List<TR> result = entityExpressionExecutor.query(ExecutorContext.create(entityQueryable.getSQLEntityExpressionBuilder().getRuntimeContext(), true, executeMethod, tracking), new ProxyEntityResultMetadata<>(trProxy,entityMetadata), entityQueryExpressionBuilder);
+        //将当前方法设置为unknown
+        entityQueryable.getSQLEntityExpressionBuilder().getExpressionContext().executeMethod(ExecuteMethodEnum.UNKNOWN, false);
+        return result;
+    }
+
+    /**
+     * 补齐select操作
+     *
+     * @param resultClass
+     */
+    protected void compensateSelect(Class<?> resultClass) {
+
+        if (EasySQLExpressionUtil.shouldCloneSQLEntityQueryExpressionBuilder(entityQueryable.getSQLEntityExpressionBuilder())) {
+            selectOnly(resultClass);
+        }
+    }
+    private <TR> void selectOnly(Class<TR> resultClass) {
+
+        SQLExpression1<ColumnAsSelector<T1, TR>> selectExpression = ColumnAsSelector::columnAll;
+        ColumnAsSelector<T1, TR> sqlColumnSelector = entityQueryable.getSQLExpressionProvider1().getAutoColumnAsSelector(entityQueryable.getSQLEntityExpressionBuilder().getProjects(), resultClass);
+        selectExpression.apply(sqlColumnSelector);
+    }
+
 
     @Override
     public <TR> String toSQL(Class<TR> resultClass, ToSQLContext toSQLContext) {

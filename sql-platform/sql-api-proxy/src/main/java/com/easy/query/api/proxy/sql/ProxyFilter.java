@@ -374,10 +374,29 @@ public interface ProxyFilter {
         return this;
     }
 
+    /**
+     *
+     * column in collection
+     * 数组为空返回False
+     * @param column
+     * @param collection
+     * @return
+     * @param <TProperty>
+     */
     default <TProperty> ProxyFilter in(SQLColumn<?> column, TProperty[] collection) {
         return in(true, column, collection);
     }
 
+    /**
+     *
+     * column in collection
+     * 数组为空返回False
+     * @param condition
+     * @param column
+     * @param collection
+     * @return
+     * @param <TProperty>
+     */
     default <TProperty> ProxyFilter in(boolean condition, SQLColumn<?> column, TProperty[] collection) {
         if (condition) {
             getFilter().in(column.getTable(), column.value(), collection);
@@ -385,10 +404,31 @@ public interface ProxyFilter {
         return this;
     }
 
+    /**
+     *
+     * column in (select column from table)
+     *
+     * @param column
+     * @param subQueryable
+     * @return
+     * @param <TProxy>
+     * @param <TProperty>
+     */
     default <TProxy extends ProxyEntity<TProxy, TProperty>, TProperty> ProxyFilter in(SQLColumn<TProperty> column, ProxyQueryable<TProxy, TProperty> subQueryable) {
         return in(true, column, subQueryable);
     }
 
+    /**
+     *
+     * column in (select column from table)
+     *
+     * @param condition
+     * @param column
+     * @param subQueryable
+     * @return
+     * @param <TProxy>
+     * @param <TProperty>
+     */
     default <TProxy extends ProxyEntity<TProxy, TProperty>, TProperty> ProxyFilter in(boolean condition, SQLColumn<TProperty> column, ProxyQueryable<TProxy, TProperty> subQueryable) {
         if (condition) {
             getFilter().in(column.getTable(), column.value(), subQueryable);
@@ -397,16 +437,26 @@ public interface ProxyFilter {
     }
 
     /**
+     *
      * column not in collection
      * 集合为空返回True
+     * @param column
+     * @param collection
+     * @return
      */
     default ProxyFilter notIn(SQLColumn<?> column, Collection<?> collection) {
         return notIn(true, column, collection);
     }
 
+
     /**
+     *
      * column not in collection
      * 集合为空返回True
+     * @param condition
+     * @param column
+     * @param collection
+     * @return
      */
     default ProxyFilter notIn(boolean condition, SQLColumn<?> column, Collection<?> collection) {
         if (condition) {
@@ -640,20 +690,54 @@ public interface ProxyFilter {
         }
         return this;
     }
+
+    /**
+     * 小于等于 column1 > column2
+     * @param column1
+     * @param column2
+     * @return
+     * @param <T2Proxy>
+     * @param <T2>
+     */
     default <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> ProxyFilter gt(SQLColumn<?> column1, SQLColumn<?> column2) {
         return gt(true, column1, column2);
     }
 
+    /**
+     * 小于等于 column1 > column2
+     * @param condition
+     * @param column1
+     * @param column2
+     * @return
+     * @param <T2>
+     */
     default <T2> ProxyFilter gt(boolean condition, SQLColumn<?> column1, SQLColumn<?> column2) {
         if (condition) {
             getFilter().gt(column1.getTable(), column1.value(), column2.getTable(), column2.value());
         }
         return this;
     }
+
+    /**
+     * 小于等于 column1 >= column2
+     * @param column1
+     * @param column2
+     * @return
+     * @param <T2Proxy>
+     * @param <T2>
+     */
     default <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> ProxyFilter ge(SQLColumn<?> column1, SQLColumn<?> column2) {
         return ge(true, column1, column2);
     }
 
+    /**
+     * 小于等于 column1 >= column2
+     * @param condition
+     * @param column1
+     * @param column2
+     * @return
+     * @param <T2>
+     */
     default <T2> ProxyFilter ge(boolean condition, SQLColumn<?> column1, SQLColumn<?> column2) {
         if (condition) {
             getFilter().ge(column1.getTable(), column1.value(), column2.getTable(), column2.value());
@@ -661,40 +745,107 @@ public interface ProxyFilter {
         return this;
     }
 
+    /**
+     * 小于等于 column1 = column2
+     * @param column1
+     * @param column2
+     * @return
+     * @param <T2Proxy>
+     * @param <T2>
+     */
     default <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> ProxyFilter eq(SQLColumn<?> column1, SQLColumn<?> column2) {
         return eq(true, column1, column2);
     }
 
+    /**
+     * 小于等于 column1 = column2
+     * @param condition
+     * @param column1
+     * @param column2
+     * @return
+     * @param <T2>
+     */
     default <T2> ProxyFilter eq(boolean condition, SQLColumn<?> column1, SQLColumn<?> column2) {
         if (condition) {
             getFilter().eq(column1.getTable(), column1.value(), column2.getTable(), column2.value());
         }
         return this;
     }
+
+    /**
+     * 小于等于 column1 <> column2
+     * @param column1
+     * @param column2
+     * @return
+     * @param <T2Proxy>
+     * @param <T2>
+     */
     default <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> ProxyFilter ne(SQLColumn<?> column1, SQLColumn<?> column2) {
         return ne(true, column1, column2);
     }
 
+    /**
+     * 小于等于 column1 <> column2
+     * @param condition
+     * @param column1
+     * @param column2
+     * @return
+     * @param <T2>
+     */
     default <T2> ProxyFilter ne(boolean condition, SQLColumn<?> column1, SQLColumn<?> column2) {
         if (condition) {
             getFilter().ne(column1.getTable(), column1.value(), column2.getTable(), column2.value());
         }
         return this;
     }
+
+    /**
+     * 小于等于 column1 <= column2
+     * @param column1
+     * @param column2
+     * @return
+     * @param <T2Proxy>
+     * @param <T2>
+     */
     default <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> ProxyFilter le(SQLColumn<?> column1, SQLColumn<?> column2) {
         return le(true, column1, column2);
     }
 
+    /**
+     * 小于等于 column1 <= column2
+     * @param condition
+     * @param column1
+     * @param column2
+     * @return
+     * @param <T2>
+     */
     default <T2> ProxyFilter le(boolean condition, SQLColumn<?> column1, SQLColumn<?> column2) {
         if (condition) {
             getFilter().le(column1.getTable(), column1.value(), column2.getTable(), column2.value());
         }
         return this;
     }
+
+    /**
+     * 小于 column < val
+     * @param column1
+     * @param column2
+     * @return
+     * @param <T2Proxy>
+     * @param <T2>
+     */
     default <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> ProxyFilter lt(SQLColumn<?> column1, SQLColumn<?> column2) {
         return lt(true, column1, column2);
     }
 
+    /**
+     * 小于 column < val
+     * @param condition
+     * @param column1
+     * @param column2
+     * @return
+     * @param <T2>
+     */
     default <T2> ProxyFilter lt(boolean condition, SQLColumn<?> column1, SQLColumn<?> column2) {
         if (condition) {
             getFilter().lt(column1.getTable(), column1.value(), column2.getTable(), column2.value());

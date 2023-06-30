@@ -47,13 +47,14 @@ public class DefaultEntityExpressionExecutor implements EntityExpressionExecutor
     }
 
     @Override
-    public <TR> List<TR> querySQL(ExecutorContext executorContext, Class<TR> clazz, String sql, List<SQLParameter> sqlParameters) {
+    public <TR> List<TR> querySQL(ExecutorContext executorContext, ResultMetadata<TR> resultMetadata, String sql, List<SQLParameter> sqlParameters) {
 
         ExecutionContext executionContext = executionContextFactory.createJdbcExecutionContext(sql, sqlParameters);
 
         try (JdbcCommand<QueryExecuteResult> command = getSQLQueryJdbcCommand(executorContext, executionContext);
              QueryExecuteResult executeResult = command.execute()) {
-            return EasyStreamResultUtil.mapTo(executorContext, executeResult.getStreamResultSet(), clazz);
+            //todo null
+            return EasyStreamResultUtil.mapTo(executorContext, executeResult.getStreamResultSet(), resultMetadata);
         } catch (SQLException e) {
             throw new EasyQuerySQLCommandException(e);
         }
@@ -73,13 +74,13 @@ public class DefaultEntityExpressionExecutor implements EntityExpressionExecutor
     }
 
     @Override
-    public <TR> List<TR> query(ExecutorContext executorContext, Class<TR> clazz, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
+    public <TR> List<TR> query(ExecutorContext executorContext, ResultMetadata<TR> resultMetadata, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
         PrepareParseResult prepareParseResult = easyPrepareParser.parse(new QueryPredicateParseContextImpl(executorContext, entityQueryExpressionBuilder));
         ExecutionContext executionContext = executionContextFactory.createEntityExecutionContext(prepareParseResult);
 
         try (JdbcCommand<QueryExecuteResult> command = getQueryEntityJdbcCommand(executorContext, executionContext, (EasyQueryPrepareParseResult) prepareParseResult);
              QueryExecuteResult executeResult = command.execute()) {
-            return EasyStreamResultUtil.mapTo(executorContext, executeResult.getStreamResultSet(), clazz);
+            return EasyStreamResultUtil.mapTo(executorContext, executeResult.getStreamResultSet(), resultMetadata);
         } catch (SQLException e) {
             throw new EasyQuerySQLCommandException(e);
         }

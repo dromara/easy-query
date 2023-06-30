@@ -30,6 +30,7 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * create time 2023/6/21 17:11
@@ -44,7 +45,9 @@ public interface ProxyQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> ex
         QueryStrategy<ProxyQueryable<T1Proxy, T1>> {
     T1Proxy get1Proxy();
 
+
     ClientQueryable<T1> getEntityQueryable();
+    <TRProxy extends ProxyEntity<TRProxy, TR>, TR> List<TR> toList(TRProxy trProxy);
 
     @Override
     ProxyQueryable<T1Proxy, T1> cloneQueryable();

@@ -1,11 +1,13 @@
 package com.easy.query.core.basic.api.jdbc;
 
+import com.easy.query.core.basic.jdbc.executor.impl.def.EntityResultMetadata;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.enums.ExecuteMethodEnum;
+import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.List;
@@ -29,7 +31,8 @@ public class EasyJdbcExecutor implements JdbcExecutor {
         EntityExpressionExecutor entityExpressionExecutor = runtimeContext.getEntityExpressionExecutor();
         ExecutorContext executorContext = ExecutorContext.create(runtimeContext, true, ExecuteMethodEnum.LIST);
         executorContext.setMapToBeanStrict(false);
-        return entityExpressionExecutor.querySQL(executorContext, clazz, sql, sqlParameters);
+        EntityMetadata entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(clazz);
+        return entityExpressionExecutor.querySQL(executorContext, new EntityResultMetadata<>(entityMetadata), sql, sqlParameters);
     }
 
     @Override
