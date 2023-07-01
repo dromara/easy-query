@@ -660,4 +660,22 @@ public class QueryTest3 extends BaseTest {
         }
 
     }
+    @Test
+    public void testSample(){
+        List<Topic> list = easyQueryClient.queryable(Topic.class)
+                .where(o -> o.like("title", "someTitle"))
+                .orderByAsc(o -> o.column("createTime").column("id"))
+                .toList();
+        Assert.assertEquals(0,list.size());
+        List<Topic> list1 = easyQuery.queryable(Topic.class)
+                .where(o -> o.like(Topic::getTitle, "someTitle"))
+                .orderByAsc(o -> o.column(Topic::getCreateTime).column(Topic::getId))
+                .toList();
+        Assert.assertEquals(0,list1.size());
+        List<Topic> list2 = easyProxyQuery.queryable(TopicProxy.DEFAULT)
+                .where((filter,t) -> filter.like(t.title(), "someTitle"))
+                .orderByAsc((order,t) -> order.columns(t.createTime(),t.id()))
+                .toList();
+        Assert.assertEquals(0,list2.size());
+    }
 }

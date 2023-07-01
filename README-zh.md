@@ -4,23 +4,24 @@
 
 - [GITEE](https://gitee.com/xuejm/easy-query)  国内镜像地址
 
-## 📚 documentation
+## 📚 文档
 <div align="center">
 
-[GITHUB Documentation](https://xuejmnet.github.io/easy-query-doc/) | [GITEE Documentation](https://xuejm.gitee.io/easy-query-doc/)
+[GITHUB文档地址](https://xuejmnet.github.io/easy-query-doc/) | [GITEE文档地址](https://xuejm.gitee.io/easy-query-doc/)
 
 </div>
 
-## 🐧 QQGroup:170029046
+## 🐧 QQ群:170029046
 <div align="center">
 
 <img src="./imgs/qrcode.jpg" title="JetBrains" width=122 />
 
 </div>
 
-## multi mode
 
-### property mode
+## 多模式api
+
+### 属性api
 ```java
 List<Topic> list = easyQueryClient.queryable(Topic.class)
                 .where(o -> o.like("title", "someTitle"))
@@ -32,7 +33,7 @@ List<Topic> list = easyQueryClient.queryable(Topic.class)
         <== Time Elapsed: 3(ms)
         <== Total: 0
 ```
-### lambda mode
+### 表达式api
 
 ```java
 List<Topic> list = easyQuery.queryable(Topic.class)
@@ -46,7 +47,7 @@ List<Topic> list = easyQuery.queryable(Topic.class)
         <== Total: 0
 ```
 
-### proxy mode
+### 代理对象api
 
 ```java
 List<Topic> list1 = easyProxyQuery.queryable(TopicProxy.DEFAULT)
@@ -59,8 +60,10 @@ List<Topic> list1 = easyProxyQuery.queryable(TopicProxy.DEFAULT)
         <== Time Elapsed: 3(ms)
         <== Total: 0
 ```
-## Dependency
-### use property
+
+
+## 依赖
+### 使用属性
 ```xml
 
 <properties>
@@ -78,7 +81,7 @@ List<Topic> list1 = easyProxyQuery.queryable(TopicProxy.DEFAULT)
 <version>${easy-query.version}</version>
 </dependency>
 ```
-### use lambda
+### 使用表达式
 ```xml
 
 <properties>
@@ -95,8 +98,8 @@ List<Topic> list1 = easyProxyQuery.queryable(TopicProxy.DEFAULT)
 <version>${easy-query.version}</version>
 </dependency>
 ```
-### use proxy
-entity use `@EntityProxy` annotation then build project apt will auto generate java code for proxy
+### 使用代理
+entity对象添加注解 `@EntityProxy` 然后build project apt 将会自动生成代理对象的java代码
 ```xml
 
 <properties>
@@ -113,7 +116,6 @@ entity use `@EntityProxy` annotation then build project apt will auto generate j
 <version>${easy-query.version}</version>
 </dependency>
 ```
-
 ## 🚀 介绍
 
 - [使用介绍](#使用介绍)
