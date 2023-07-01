@@ -23,8 +23,8 @@ public interface TableProxy<TProxy extends TableProxy<TProxy, TEntity>, TEntity>
 
     TProxy create(TableAvailable table);
 
-    default TEntity createEntity() {
-        return null;
-    }
+//    default TEntity createEntity() {
+//        return null;
+//    }
 
 }

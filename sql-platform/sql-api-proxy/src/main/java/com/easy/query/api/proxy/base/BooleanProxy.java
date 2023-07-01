@@ -39,8 +39,8 @@ public class BooleanProxy implements ProxyEntity<BooleanProxy, Boolean> {
         return new BooleanProxy(table);
     }
 
-    @Override
-    public Boolean createEntity() {
-        return null;
-    }
+//    @Override
+//    public Boolean createEntity() {
+//        return null;
+//    }
 }

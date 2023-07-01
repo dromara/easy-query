@@ -8,8 +8,8 @@ package com.easy.query.core.proxy;
  */
 public interface BeanProxy {
 
-    default void setValue(Object bean,String property,Object value){}
-    default Object getValue(Object bean,String property){return null;}
+//    default void setValue(Object bean,String property,Object value){}
+//    default Object getValue(Object bean,String property){return null;}
 
 //    PropertyProxy getPropertyProxy(String property);
 }
