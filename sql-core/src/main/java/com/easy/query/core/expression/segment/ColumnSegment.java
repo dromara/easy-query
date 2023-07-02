@@ -8,5 +8,5 @@ package com.easy.query.core.expression.segment;
  */
 public interface ColumnSegment extends SQLEntityAliasSegment {
     @Override
-    ColumnSegment cloneSQLEntitySegment();
+    ColumnSegment cloneSQLColumnSegment();
 }

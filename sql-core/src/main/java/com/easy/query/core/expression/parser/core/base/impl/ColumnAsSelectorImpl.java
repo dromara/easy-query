@@ -9,7 +9,9 @@ import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
+import com.easy.query.core.expression.segment.SQLColumnSegment;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.ExpressionContext;
 
 /**
  * @author xuejiaming
@@ -39,6 +41,11 @@ public class ColumnAsSelectorImpl<T1, TR> implements ColumnAsSelector<T1, TR> {
     @Override
     public QueryRuntimeContext getRuntimeContext() {
         return asSelector.getRuntimeContext();
+    }
+
+    @Override
+    public ExpressionContext getExpressionContext() {
+        return asSelector.getExpressionContext();
     }
 
     @Override
@@ -87,6 +94,12 @@ public class ColumnAsSelectorImpl<T1, TR> implements ColumnAsSelector<T1, TR> {
     @Override
     public ColumnAsSelector<T1, TR> columnFuncAs(ColumnPropertyFunction columnPropertyFunction, String propertyAlias) {
         asSelector.columnFuncAs(table,columnPropertyFunction,propertyAlias);
+        return this;
+    }
+
+    @Override
+    public ColumnAsSelector<T1, TR> sqlColumnAs(SQLColumnSegment sqlColumnSegment, String propertyAlias) {
+        asSelector.sqlColumnAs(sqlColumnSegment,propertyAlias);
         return this;
     }
 }

@@ -59,7 +59,7 @@ public class ColumnValuePredicate implements ValuePredicate, ShardingPredicate {
     }
 
     @Override
-    public SQLEntitySegment cloneSQLEntitySegment() {
+    public SQLEntitySegment cloneSQLColumnSegment() {
         throw new UnsupportedOperationException();
     }
 

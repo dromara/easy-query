@@ -8,6 +8,7 @@ import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.ColumnSegment;
+import com.easy.query.core.expression.segment.SQLColumnSegment;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
@@ -52,6 +53,11 @@ public class AutoAsSelectorImpl  extends AbstractSelector<AsSelector> implements
 
     @Override
     public AsSelector columnFuncAs(TableAvailable table, ColumnPropertyFunction columnPropertyFunction, String propertyAlias) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public AsSelector sqlColumnAs(SQLColumnSegment sqlColumnSegment, String propertyAlias) {
         throw new UnsupportedOperationException();
     }
 

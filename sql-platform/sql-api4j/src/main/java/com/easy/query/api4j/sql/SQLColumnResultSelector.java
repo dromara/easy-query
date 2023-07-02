@@ -1,5 +1,6 @@
 package com.easy.query.api4j.sql;
 
+import com.easy.query.core.expression.SQLTableOwner;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnResultSelector;
@@ -10,7 +11,7 @@ import com.easy.query.api4j.util.EasyLambdaUtil;
  * @Description: 文件说明
  * @Date: 2023/2/6 23:20
  */
-public interface SQLColumnResultSelector<T1, TMember> {
+public interface SQLColumnResultSelector<T1, TMember> extends SQLTableOwner {
     ColumnResultSelector<T1> getColumnResultSelector();
 
     default TableAvailable getTable() {

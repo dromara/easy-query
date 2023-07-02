@@ -57,7 +57,7 @@ public class OrderFuncColumnSegmentImpl implements OrderFuncColumnSegment {
     }
 
     @Override
-    public FuncColumnSegment cloneSQLEntitySegment() {
+    public FuncColumnSegment cloneSQLColumnSegment() {
         throw new UnsupportedOperationException();
     }
 

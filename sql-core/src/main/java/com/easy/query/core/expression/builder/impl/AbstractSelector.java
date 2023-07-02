@@ -49,6 +49,9 @@ public abstract class AbstractSelector<TChain> {
         this.sqlBuilderSegment = sqlBuilderSegment;
     }
 
+    public ExpressionContext getExpressionContext(){
+        return expressionContext;
+    }
     public TChain column(TableAvailable table, String property) {
         ColumnSegment columnSegment = sqlSegmentFactory.createColumnSegment(table, property, runtimeContext, null);
         sqlBuilderSegment.append(columnSegment);

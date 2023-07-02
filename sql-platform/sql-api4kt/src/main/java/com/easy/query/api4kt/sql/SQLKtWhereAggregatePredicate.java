@@ -4,6 +4,7 @@ import com.easy.query.api4kt.util.EasyKtLambdaUtil;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.AggregatePredicateCompare;
 import com.easy.query.core.enums.SQLPredicateCompare;
+import com.easy.query.core.expression.SQLTableOwner;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
@@ -16,7 +17,7 @@ import kotlin.reflect.KProperty1;
  * @Description: 文件说明
  * @Date: 2023/2/18 22:17
  */
-public interface SQLKtWhereAggregatePredicate<T1> {
+public interface SQLKtWhereAggregatePredicate<T1> extends SQLTableOwner {
     WhereAggregatePredicate<T1> getWhereAggregatePredicate();
 
     default TableAvailable getTable() {

@@ -54,7 +54,7 @@ public class FuncColumnSegmentImpl implements FuncColumnSegment {
     }
 
     @Override
-    public FuncColumnSegment cloneSQLEntitySegment() {
+    public FuncColumnSegment cloneSQLColumnSegment() {
         throw new UnsupportedOperationException();
     }
 

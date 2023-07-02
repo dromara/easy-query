@@ -1,6 +1,7 @@
 package com.easy.query.api4kt.sql;
 
 import com.easy.query.api4kt.util.EasyKtLambdaUtil;
+import com.easy.query.core.expression.SQLTableOwner;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnSelector;
@@ -11,7 +12,7 @@ import kotlin.reflect.KProperty1;
  * @Description: 文件说明
  * @Date: 2023/2/6 23:20
  */
-public interface SQLKtColumnSelector<T1> {
+public interface SQLKtColumnSelector<T1> extends SQLTableOwner {
     ColumnSelector<T1> getColumnSelector();
 
     default TableAvailable getTable() {

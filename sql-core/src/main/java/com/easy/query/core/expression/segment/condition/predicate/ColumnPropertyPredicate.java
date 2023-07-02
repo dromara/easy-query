@@ -45,7 +45,7 @@ public class ColumnPropertyPredicate implements Predicate,ValuePredicate {
     }
 
     @Override
-    public SQLEntitySegment cloneSQLEntitySegment() {
+    public SQLEntitySegment cloneSQLColumnSegment() {
         throw new UnsupportedOperationException();
     }
 

@@ -5,6 +5,7 @@ import com.easy.query.api4kt.util.EasyKtLambdaUtil;
 import com.easy.query.core.enums.SQLLikeEnum;
 import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.enums.SQLRangeEnum;
+import com.easy.query.core.expression.SQLTableOwner;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
@@ -19,7 +20,7 @@ import java.util.Collection;
  * @Description: 文件说明
  * @Date: 2023/2/5 09:09
  */
-public interface SQLKtWherePredicate<T1> {
+public interface SQLKtWherePredicate<T1> extends SQLTableOwner {
     WherePredicate<T1> getWherePredicate();
 
     default TableAvailable getTable() {

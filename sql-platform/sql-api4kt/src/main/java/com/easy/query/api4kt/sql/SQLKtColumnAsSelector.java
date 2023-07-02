@@ -4,9 +4,11 @@ import com.easy.query.api4kt.select.KtQueryable;
 import com.easy.query.api4kt.sql.impl.SQLKtWherePredicateImpl;
 import com.easy.query.api4kt.util.EasyKtLambdaUtil;
 import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.expression.SQLTableOwner;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
+import com.easy.query.core.expression.segment.SQLColumnSegment;
 import kotlin.reflect.KProperty1;
 
 import java.util.function.Function;
@@ -16,7 +18,7 @@ import java.util.function.Function;
  * @Description: 文件说明
  * @Date: 2023/2/6 22:58
  */
-public interface SQLKtColumnAsSelector<T1, TR> {
+public interface SQLKtColumnAsSelector<T1, TR> extends SQLTableOwner {
     ColumnAsSelector<T1, TR> getColumnAsSelector();
 
     default QueryRuntimeContext getRuntimeContext() {
@@ -202,6 +204,10 @@ public interface SQLKtColumnAsSelector<T1, TR> {
         return this;
     }
 
+    default SQLKtColumnAsSelector<T1,TR> sqlColumnAs(SQLColumnSegment sqlColumnSegment, KProperty1<TR, ?> alias){
+        getColumnAsSelector().sqlColumnAs(sqlColumnSegment,EasyKtLambdaUtil.getPropertyName(alias));
+        return this;
+    }
     default <T2> SQLKtColumnAsSelector<T2, TR> then(SQLKtColumnAsSelector<T2, TR> sub) {
         getColumnAsSelector().then(sub.getColumnAsSelector());
         return sub;

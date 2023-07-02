@@ -1,5 +1,6 @@
 package com.easy.query.api4j.sql;
 
+import com.easy.query.core.expression.SQLTableOwner;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnSetter;
@@ -11,7 +12,7 @@ import com.easy.query.api4j.util.EasyLambdaUtil;
  *
  * @author xuejiaming
  */
-public interface SQLColumnSetter<T1> {
+public interface SQLColumnSetter<T1> extends SQLTableOwner {
     default TableAvailable getTable() {
         return getColumnSetter().getTable();
     }

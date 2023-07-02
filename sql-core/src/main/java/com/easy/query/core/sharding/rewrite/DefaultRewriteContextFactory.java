@@ -15,7 +15,6 @@ import com.easy.query.core.expression.segment.GroupByColumnSegment;
 import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.expression.segment.builder.ProjectSQLBuilderSegment;
 import com.easy.query.core.expression.sql.expression.EntityQuerySQLExpression;
-import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
 import com.easy.query.core.expression.func.ColumnFunctionFactory;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.ShardingInitConfig;
@@ -138,7 +137,7 @@ public class DefaultRewriteContextFactory implements RewriteContextFactory {
                     }
                 }
                 if (addToProjection) {
-                    easyEntityPredicateSQLExpression.getProjects().append(groupColumnSegment.cloneSQLEntitySegment());
+                    easyEntityPredicateSQLExpression.getProjects().append(groupColumnSegment.cloneSQLColumnSegment());
                 }
             }
 

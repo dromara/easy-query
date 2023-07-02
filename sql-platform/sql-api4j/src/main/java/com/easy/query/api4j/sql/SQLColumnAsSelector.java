@@ -4,23 +4,29 @@ import com.easy.query.api4j.select.Queryable;
 import com.easy.query.api4j.sql.impl.SQLWherePredicateImpl;
 import com.easy.query.api4j.util.EasyLambdaUtil;
 import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.expression.SQLTableOwner;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
+import com.easy.query.core.expression.segment.SQLColumnSegment;
+import com.easy.query.core.expression.sql.builder.ExpressionContext;
 
 /**
  * @author xuejiaming
  * @Description: 文件说明
  * @Date: 2023/2/6 22:58
  */
-public interface SQLColumnAsSelector<T1, TR> {
+public interface SQLColumnAsSelector<T1, TR> extends SQLTableOwner {
     ColumnAsSelector<T1, TR> getColumnAsSelector();
 
     default QueryRuntimeContext getRuntimeContext() {
         return getColumnAsSelector().getRuntimeContext();
     }
+   default ExpressionContext getExpressionContext(){
+        return getColumnAsSelector().getExpressionContext();
+   }
 
     default TableAvailable getTable() {
         return getColumnAsSelector().getTable();
@@ -53,6 +59,7 @@ public interface SQLColumnAsSelector<T1, TR> {
     default SQLColumnAsSelector<T1, TR> columnAs(Property<T1, ?> column, Property<TR, ?> alias) {
         return columnAs(column, EasyLambdaUtil.getPropertyName(alias));
     }
+
 
     default SQLColumnAsSelector<T1, TR> columnAs(Property<T1, ?> column, String alias) {
         getColumnAsSelector().columnAs(EasyLambdaUtil.getPropertyName(column), alias);
@@ -202,6 +209,10 @@ public interface SQLColumnAsSelector<T1, TR> {
 
     default SQLColumnAsSelector<T1, TR> columnFuncAs(ColumnPropertyFunction columnPropertyFunction, String alias) {
         getColumnAsSelector().columnFuncAs(columnPropertyFunction, alias);
+        return this;
+    }
+    default SQLColumnAsSelector<T1,TR> sqlColumnAs(SQLColumnSegment sqlColumnSegment, Property<TR, ?> alias){
+        getColumnAsSelector().sqlColumnAs(sqlColumnSegment,EasyLambdaUtil.getPropertyName(alias));
         return this;
     }
 

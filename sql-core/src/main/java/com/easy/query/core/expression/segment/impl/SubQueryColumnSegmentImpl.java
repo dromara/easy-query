@@ -112,7 +112,7 @@ public class SubQueryColumnSegmentImpl implements SubQueryColumnSegment {
     }
 
     @Override
-    public SubQueryColumnSegment cloneSQLEntitySegment() {
+    public SubQueryColumnSegment cloneSQLColumnSegment() {
         return new SubQueryColumnSegmentImpl(table, subQuery.cloneQueryable(), alias, runtimeContext);
     }
 }

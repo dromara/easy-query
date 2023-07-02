@@ -26,7 +26,7 @@ public class ColumnAsConstSegmentImpl extends ColumnConstSegmentImpl implements 
     }
 
     @Override
-    public SQLEntitySegment cloneSQLEntitySegment() {
+    public SQLEntitySegment cloneSQLColumnSegment() {
         return new ColumnAsConstSegmentImpl(table,runtimeContext,columnConst,alias);
     }
 

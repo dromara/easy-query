@@ -7,10 +7,9 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
  * @Description: 文件说明
  * @Date: 2023/3/4 23:48
  */
-public interface SQLEntitySegment extends SQLSegment {
+public interface SQLEntitySegment extends SQLColumnSegment {
     TableAvailable getTable();
 
     String getPropertyName();
 
-    SQLEntitySegment cloneSQLEntitySegment();
 }

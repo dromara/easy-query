@@ -8,6 +8,8 @@ import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
+import com.easy.query.core.expression.segment.SQLColumnSegment;
+import com.easy.query.core.expression.sql.builder.ExpressionContext;
 
 /**
  * @author xuejiaming
@@ -47,6 +49,11 @@ public class ColumnAutoAsSelectorImpl<T1, TR> implements ColumnAsSelector<T1, TR
     }
 
     @Override
+    public ExpressionContext getExpressionContext() {
+        return asSelector.getExpressionContext();
+    }
+
+    @Override
     public TableAvailable getTable() {
         return table;
     }
@@ -73,6 +80,11 @@ public class ColumnAutoAsSelectorImpl<T1, TR> implements ColumnAsSelector<T1, TR
     }
     @Override
     public ColumnAsSelector<T1, TR> columnFuncAs(ColumnPropertyFunction columnPropertyFunction, String propertyAlias) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public ColumnAsSelector<T1, TR> sqlColumnAs(SQLColumnSegment sqlColumnSegment, String propertyAlias) {
         throw new UnsupportedOperationException();
     }
 }

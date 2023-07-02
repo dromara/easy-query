@@ -1,6 +1,7 @@
 package com.easy.query.api4kt.sql;
 
 import com.easy.query.api4kt.util.EasyKtLambdaUtil;
+import com.easy.query.core.expression.SQLTableOwner;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnGroupSelector;
@@ -12,7 +13,7 @@ import kotlin.reflect.KProperty1;
  *
  * @author xuejiaming
  */
-public interface SQLKtGroupBySelector<T1> {
+public interface SQLKtGroupBySelector<T1> extends SQLTableOwner {
     ColumnGroupSelector<T1> getGroupBySelector();
 
     default TableAvailable getTable() {

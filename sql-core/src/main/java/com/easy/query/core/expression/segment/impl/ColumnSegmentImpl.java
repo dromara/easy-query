@@ -57,7 +57,7 @@ public class ColumnSegmentImpl implements ColumnSegment {
     }
 
     @Override
-    public ColumnSegment cloneSQLEntitySegment() {
+    public ColumnSegment cloneSQLColumnSegment() {
         return new ColumnSegmentImpl(table,propertyName, runtimeContext,alias);
     }
 

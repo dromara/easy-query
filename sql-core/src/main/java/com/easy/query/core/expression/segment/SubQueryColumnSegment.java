@@ -12,5 +12,5 @@ public interface SubQueryColumnSegment extends MaybeAggregateColumnSegment{
     Query<?> getSubQuery();
 
     @Override
-    SubQueryColumnSegment cloneSQLEntitySegment();
+    SubQueryColumnSegment cloneSQLColumnSegment();
 }

@@ -9,12 +9,12 @@ import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.segment.FuncColumnSegment;
+import com.easy.query.core.expression.segment.SQLColumnSegment;
 import com.easy.query.core.expression.segment.SubQueryColumnSegment;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
-import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 
@@ -112,6 +112,14 @@ public class AsSelectorImpl extends AbstractSelector<AsSelector> implements AsSe
         String columnAsName = propertyAlias == null ? table.getColumnName(propertyName) : getResultColumnName(propertyAlias);
         FuncColumnSegment funcColumnSegment = sqlSegmentFactory.createFuncColumnSegment(table, propertyName, runtimeContext, columnFunction, columnAsName);
         sqlBuilderSegment.append(funcColumnSegment);
+        return this;
+    }
+
+    @Override
+    public AsSelector sqlColumnAs(SQLColumnSegment sqlColumnSegment, String propertyAlias) {
+        String columnAsName = propertyAlias == null ? null :getResultColumnName(propertyAlias);
+        SQLColumnSegment sqlColumnAsSegment = sqlSegmentFactory.createSQLColumnAsSegment(sqlColumnSegment, columnAsName,runtimeContext);
+        sqlBuilderSegment.append(sqlColumnAsSegment);
         return this;
     }
 }

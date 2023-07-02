@@ -53,7 +53,7 @@ public class ColumnWithSelfSegmentImpl implements ColumnWithSelfSegment {
     }
 
     @Override
-    public SQLEntitySegment cloneSQLEntitySegment() {
+    public SQLEntitySegment cloneSQLColumnSegment() {
         throw new UnsupportedOperationException();
     }
 }

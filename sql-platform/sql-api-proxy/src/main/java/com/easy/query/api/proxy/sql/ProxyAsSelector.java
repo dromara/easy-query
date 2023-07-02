@@ -3,6 +3,7 @@ package com.easy.query.api.proxy.sql;
 import com.easy.query.api.proxy.select.ProxyQueryable;
 import com.easy.query.core.expression.builder.AsSelector;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
+import com.easy.query.core.expression.segment.SQLColumnSegment;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
 
@@ -28,7 +29,6 @@ public interface ProxyAsSelector<TRProxy extends ProxyEntity<TRProxy, TR>, TR> {
         }
         return this;
     }
-
     default ProxyAsSelector<TRProxy, TR> column(SQLColumn<?> column) {
         getAsSelector().column(column.getTable(), column.value());
         return this;
@@ -218,6 +218,11 @@ public interface ProxyAsSelector<TRProxy extends ProxyEntity<TRProxy, TR>, TR> {
 
     default ProxyAsSelector<TRProxy, TR> columnFuncAs(ProxyColumnPropertyFunction proxyColumnPropertyFunction, String alias) {
         getAsSelector().columnFuncAs(proxyColumnPropertyFunction.getColumn().getTable(), proxyColumnPropertyFunction.getColumnPropertyFunction(),alias);
+        return this;
+    }
+    default ProxyAsSelector<TRProxy,TR> sqlColumnAs(SQLColumnSegment sqlColumnSegment,Function<TRProxy, SQLColumn<?>> mapAlias){
+        SQLColumn<?> sqlColumn = mapAlias.apply(getTRProxy());
+        getAsSelector().sqlColumnAs(sqlColumnSegment, sqlColumn.value());
         return this;
     }
 }
