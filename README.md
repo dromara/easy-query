@@ -64,7 +64,7 @@ List<Topic> list1 = easyProxyQuery.queryable(TopicProxy.DEFAULT)
 ```xml
 
 <properties>
-  <easy-query.version>1.1.10</easy-query.version>
+  <easy-query.version>last-version</easy-query.version>
 </properties>
 <!--<dependency>-->
 <!--  <groupId>com.easy-query</groupId>-->
@@ -82,7 +82,7 @@ List<Topic> list1 = easyProxyQuery.queryable(TopicProxy.DEFAULT)
 ```xml
 
 <properties>
-  <easy-query.version>1.1.10</easy-query.version>
+  <easy-query.version>last-version</easy-query.version>
 </properties>
 <dependency>
 <groupId>com.easy-query</groupId>
@@ -100,7 +100,7 @@ entity use `@EntityProxy` annotation then build project apt will auto generate j
 ```xml
 
 <properties>
-  <easy-query.version>1.1.10</easy-query.version>
+  <easy-query.version>last-version</easy-query.version>
 </properties>
 <dependency>
 <groupId>com.easy-query</groupId>

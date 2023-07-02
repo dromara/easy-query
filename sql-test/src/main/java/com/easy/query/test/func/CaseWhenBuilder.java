@@ -18,7 +18,6 @@ import java.util.List;
 public class CaseWhenBuilder<T1,TR> {
     private final SQLColumnAsSelector<T1, TR> sqlColumnAsSelector;
     private List<Tuple2<SQLExpression1<SQLWherePredicate<T1>>,Object>> whens;
-    private Object elseValue;
 
     public CaseWhenBuilder(SQLColumnAsSelector<T1, TR> sqlColumnAsSelector){
         this.sqlColumnAsSelector = sqlColumnAsSelector;
@@ -29,7 +28,6 @@ public class CaseWhenBuilder<T1,TR> {
         return this;
     }
     public SQLColumnSegment elseEnd(Object elseValue){
-        this.elseValue=elseValue;
         return new CaseWhenSQLColumnSegment(sqlColumnAsSelector.getRuntimeContext(),sqlColumnAsSelector.getExpressionContext(), sqlColumnAsSelector.getTable(), EasyObjectUtil.typeCastNullable(whens),elseValue);
     }
 }
