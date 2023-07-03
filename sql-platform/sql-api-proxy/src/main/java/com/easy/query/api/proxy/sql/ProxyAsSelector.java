@@ -1,9 +1,11 @@
 package com.easy.query.api.proxy.sql;
 
 import com.easy.query.api.proxy.select.ProxyQueryable;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.builder.AsSelector;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.expression.segment.SQLColumnSegment;
+import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
 
@@ -20,6 +22,13 @@ public interface ProxyAsSelector<TRProxy extends ProxyEntity<TRProxy, TR>, TR> {
     TRProxy getTRProxy();
 
     AsSelector getAsSelector();
+
+   default QueryRuntimeContext getRuntimeContext(){
+       return getAsSelector().getRuntimeContext();
+   }
+   default ExpressionContext getExpressionContext(){
+       return getAsSelector().getExpressionContext();
+   }
 
     default ProxyAsSelector<TRProxy, TR> columns(SQLColumn<?>... columns) {
         if (columns != null) {

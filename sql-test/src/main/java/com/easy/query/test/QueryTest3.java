@@ -1,12 +1,14 @@
 package com.easy.query.test;
 
 import com.easy.query.api.proxy.base.MapProxy;
+import com.easy.query.api.proxy.extension.SQLProxyFunc;
 import com.easy.query.api4j.extension.SQL4JFunc;
 import com.easy.query.api4j.select.Queryable;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
+import com.easy.query.core.extension.SQLClientFunc;
 import com.easy.query.test.dto.BlogEntityTest;
 import com.easy.query.test.dto.proxy.BlogEntityTestProxy;
 import com.easy.query.test.entity.BlogEntity;
@@ -717,5 +719,93 @@ public class QueryTest3 extends BaseTest {
         Assert.assertEquals("first3",toSQLContext.getParameters().get(6).getValue());
         Assert.assertEquals("firstEnd",toSQLContext.getParameters().get(7).getValue());
         Assert.assertEquals("%someTitle%",toSQLContext.getParameters().get(8).getValue());
+    }
+    @Test
+    public void proxyCaseWhen(){
+
+        String sql = easyProxyQuery.queryable(TopicProxy.DEFAULT)
+                .where((filter, t) -> filter.like(t.title(), "someTitle"))
+                .select(TopicProxy.DEFAULT, (selector, t) -> selector
+                        .sqlColumnAs(
+                                SQLProxyFunc.caseWhenBuilder(selector)
+                                        .caseWhen(f -> f.eq(t.title(), "123"), "111")
+                                        .caseWhen(f -> f.eq(t.title(), "456"), "222")
+                                        .elseEnd("222")
+                                , TopicProxy::title)
+                        .column(t.id())
+                )
+                .toSQL();
+        Assert.assertEquals("SELECT CASE WHEN t.`title` = ? THEN ? WHEN t.`title` = ? THEN ? ELSE ? END AS `title`,t.`id` FROM `t_topic` t WHERE t.`title` LIKE ?",sql);
+
+        List<Topic> list = easyProxyQuery.queryable(TopicProxy.DEFAULT)
+                .where((filter, t) -> filter.like(t.title(), "someTitle"))
+                .select(TopicProxy.DEFAULT, (selector, t) -> selector
+                        .sqlColumnAs(
+                                SQLProxyFunc.caseWhenBuilder(selector)
+                                        .caseWhen(f -> f.eq(t.title(), "123"), "111")
+                                        .caseWhen(f -> f.eq(t.title(), "456"), "222")
+                                        .elseEnd("222")
+                                , TopicProxy::title)
+                        .column(t.id())
+                ).toList();
+        Assert.assertEquals(0,list.size());
+    }
+    @Test
+    public void propertyCaseWhen(){
+
+        String sql = easyQueryClient.queryable(Topic.class)
+                .where(t -> t.like("title", "someTitle"))
+                .select(Topic.class, t -> t
+                        .sqlColumnAs(
+                                SQLClientFunc.caseWhenBuilder(t)
+                                        .caseWhen(f -> f.eq("title", "123"), "111")
+                                        .caseWhen(f -> f.eq("title", "456"), "222")
+                                        .elseEnd("222")
+                                , "title")
+                        .column("id")
+                )
+                .toSQL();
+        Assert.assertEquals("SELECT CASE WHEN t.`title` = ? THEN ? WHEN t.`title` = ? THEN ? ELSE ? END AS `title`,t.`id` FROM `t_topic` t WHERE t.`title` LIKE ?",sql);
+        List<Topic> list = easyQueryClient.queryable(Topic.class)
+                .where(t -> t.like("title", "someTitle"))
+                .select(Topic.class, t -> t
+                        .sqlColumnAs(
+                                SQLClientFunc.caseWhenBuilder(t)
+                                        .caseWhen(f -> f.eq("title", "123"), "111")
+                                        .caseWhen(f -> f.eq("title", "456"), "222")
+                                        .elseEnd("222")
+                                , "title")
+                        .column("id")
+                ).toList();
+        Assert.assertEquals(0,list.size());
+    }
+    @Test
+    public void lambdaCaseWhen(){
+
+        String sql = easyQuery.queryable(Topic.class)
+                .where(t -> t.like(Topic::getTitle, "someTitle"))
+                .select(Topic.class, t -> t
+                        .sqlColumnAs(
+                                SQL4JFunc.caseWhenBuilder(t)
+                                        .caseWhen(f -> f.eq(Topic::getTitle, "123"), "111")
+                                        .caseWhen(f -> f.eq(Topic::getTitle, "456"), "222")
+                                        .elseEnd("222")
+                                , Topic::getTitle)
+                        .column(Topic::getId)
+                )
+                .toSQL();
+        Assert.assertEquals("SELECT CASE WHEN t.`title` = ? THEN ? WHEN t.`title` = ? THEN ? ELSE ? END AS `title`,t.`id` FROM `t_topic` t WHERE t.`title` LIKE ?",sql);
+        List<Topic> list = easyQuery.queryable(Topic.class)
+                .where(t -> t.like(Topic::getTitle, "someTitle"))
+                .select(Topic.class, t -> t
+                        .sqlColumnAs(
+                                SQL4JFunc.caseWhenBuilder(t)
+                                        .caseWhen(f -> f.eq(Topic::getTitle, "123"), "111")
+                                        .caseWhen(f -> f.eq(Topic::getTitle, "456"), "222")
+                                        .elseEnd("222")
+                                , Topic::getTitle)
+                        .column(Topic::getId)
+                ).toList();
+        Assert.assertEquals(0,list.size());
     }
 }
