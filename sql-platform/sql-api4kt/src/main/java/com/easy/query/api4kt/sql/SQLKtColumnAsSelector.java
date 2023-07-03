@@ -9,6 +9,7 @@ import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
 import com.easy.query.core.expression.segment.SQLColumnSegment;
+import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import kotlin.reflect.KProperty1;
 
 import java.util.function.Function;
@@ -23,6 +24,9 @@ public interface SQLKtColumnAsSelector<T1, TR> extends SQLTableOwner {
 
     default QueryRuntimeContext getRuntimeContext() {
         return getColumnAsSelector().getRuntimeContext();
+    }
+    default ExpressionContext getExpressionContext() {
+        return getColumnAsSelector().getExpressionContext();
     }
 
     default TableAvailable getTable() {

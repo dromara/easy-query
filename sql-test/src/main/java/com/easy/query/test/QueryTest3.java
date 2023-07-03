@@ -1,6 +1,7 @@
 package com.easy.query.test;
 
 import com.easy.query.api.proxy.base.MapProxy;
+import com.easy.query.api4j.extension.SQL4JFunc;
 import com.easy.query.api4j.select.Queryable;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
@@ -14,7 +15,6 @@ import com.easy.query.test.entity.TopicAuto;
 import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import com.easy.query.test.entity.proxy.TopicAutoProxy;
 import com.easy.query.test.entity.proxy.TopicProxy;
-import com.easy.query.test.func.SQLFunc;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -698,7 +698,7 @@ public class QueryTest3 extends BaseTest {
         Queryable<Topic> select = easyQuery.queryable(Topic.class)
                 .where(o -> o.like(Topic::getTitle, "someTitle"))
                 .orderByAsc(o -> o.column(Topic::getCreateTime).column(Topic::getId))
-                .select(Topic.class, o -> o.sqlColumnAs(SQLFunc.caseWhenBuilder(o)
+                .select(Topic.class, o -> o.sqlColumnAs(SQL4JFunc.caseWhenBuilder(o)
                         .caseWhen(f -> f.eq(Topic::getTitle, "123").ge(Topic::getStars, 1), "first1")
                         .caseWhen(f -> f.eq(Topic::getTitle, "456"), "first2")
                         .caseWhen(f -> f.eq(Topic::getTitle, "789"), "first3")

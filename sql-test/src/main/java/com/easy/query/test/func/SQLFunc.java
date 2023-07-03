@@ -1,6 +1,5 @@
 package com.easy.query.test.func;
 
-import com.easy.query.api4j.sql.SQLColumnAsSelector;
 import com.easy.query.api4j.util.EasyLambdaUtil;
 import com.easy.query.core.expression.func.AggregationType;
 import com.easy.query.core.expression.func.ColumnFunction;
@@ -14,10 +13,10 @@ import com.easy.query.core.expression.lambda.Property;
  * @author xuejiaming
  */
 public class SQLFunc {
-
-    public static <T1,TR> CaseWhenBuilder<T1,TR> caseWhenBuilder(SQLColumnAsSelector<T1, TR> sqlColumnAsSelector){
-        return new CaseWhenBuilder<>(sqlColumnAsSelector);
-    }
+//
+//    public static <T1,TR> CaseWhenBuilder<T1,TR> caseWhenBuilder(SQLColumnAsSelector<T1, TR> sqlColumnAsSelector){
+//        return new CaseWhenBuilder<>(sqlColumnAsSelector);
+//    }
     public static <T, R> ColumnPropertyFunction ifNULL(Property<T, R> column) {
         String propertyName = EasyLambdaUtil.getPropertyName(column);
         return new MyColumnPropertyFunction(propertyName, MySQLFunc.IFNULL_EMPTY);

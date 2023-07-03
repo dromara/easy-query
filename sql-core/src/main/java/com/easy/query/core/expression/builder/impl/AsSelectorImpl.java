@@ -40,6 +40,10 @@ public class AsSelectorImpl extends AbstractSelector<AsSelector> implements AsSe
     }
 
     protected String getResultColumnName(String propertyAlias) {
+        switch (resultEntityMetadata.getEntityMetadataType()){
+            case MAP:
+            case BASIC_TYPE:return propertyAlias;
+        }
         ColumnMetadata columnMetadata = resultEntityMetadata.getColumnNotNull(propertyAlias);
         return columnMetadata.getName();
     }
