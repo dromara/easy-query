@@ -133,6 +133,7 @@ public abstract class BaseTest {
                     op.setThrowIfRouteNotMatch(false);
                     op.setMaxShardingRouteCount(512);
                     op.setDefaultDataSourceMergePoolSize(20);
+                    op.setStartTimeJob(true);
                 })
                 .useDatabaseConfigure(new MySQLDatabaseConfiguration())
 //                .replaceService(BeanValueCaller.class, ReflectBeanValueCaller.class)

@@ -21,6 +21,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -807,5 +808,97 @@ public class QueryTest3 extends BaseTest {
                         .column(Topic::getId)
                 ).toList();
         Assert.assertEquals(0,list.size());
+    }
+
+    @Test
+    public void testAndOr1(){
+        Topic topic = easyQuery.queryable(Topic.class)
+                .where(o -> o.eq(Topic::getId, "1").and(
+                        x -> x.like(Topic::getTitle, "你好")
+                                .or()
+                                .eq(Topic::getTitle, "我是title")
+                                .or()
+                                .le(Topic::getCreateTime, LocalDateTime.now())
+                )).firstOrNull();
+        Assert.assertNotNull(topic);
+        String sql = easyQuery.queryable(Topic.class)
+                .where(o -> o.eq(Topic::getId, "1").and(
+                        x -> x.like(Topic::getTitle, "你好")
+                                .or()
+                                .eq(Topic::getTitle, "我是title")
+                                .or()
+                                .le(Topic::getCreateTime, LocalDateTime.now())
+                )).toSQL();
+        Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE `id` = ? AND (`title` LIKE ? OR `title` = ? OR `create_time` <= ?)",sql);
+
+        List<Topic> topic2 = easyQuery.queryable(Topic.class)
+                .where(o -> o.like(Topic::getTitle, "你好")
+                        .or()
+                        .eq(Topic::getTitle, "我是title")
+                        .or()
+                        .le(Topic::getCreateTime, LocalDateTime.now())).toList();
+        Assert.assertNotNull(topic2);
+        Assert.assertTrue(topic2.size()>1);
+
+        String sql2 = easyQuery.queryable(Topic.class)
+                .where(o -> o.like(Topic::getTitle, "你好")
+                        .or()
+                        .eq(Topic::getTitle, "我是title")
+                        .or()
+                        .le(Topic::getCreateTime, LocalDateTime.now())).toSQL();
+        Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE (`title` LIKE ? OR `title` = ? OR `create_time` <= ?)",sql2);
+
+
+        Topic topic3 = easyQuery.queryable(Topic.class)
+                .where(o -> o.eq(Topic::getId, "1").or(
+                        x -> x.like(Topic::getTitle, "你好")
+                                .eq(Topic::getTitle, "我是title")
+                                .le(Topic::getCreateTime, LocalDateTime.now())
+                )).firstOrNull();
+        Assert.assertNotNull(topic3);
+        String sql3 = easyQuery.queryable(Topic.class)
+                .where(o -> o.eq(Topic::getId, "1").or(
+                        x -> x.like(Topic::getTitle, "你好")
+                                .eq(Topic::getTitle, "我是title")
+                                .le(Topic::getCreateTime, LocalDateTime.now())
+                )).toSQL();
+        Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE (`id` = ? OR (`title` LIKE ? AND `title` = ? AND `create_time` <= ?))",sql3);
+    }
+    @Test
+    public void testAndOr2(){
+        BlogEntity blog = easyQuery.queryable(BlogEntity.class)
+                .where(o -> o.eq(BlogEntity::getId, "1").and(
+                        x -> x.like(BlogEntity::getTitle, "你好")
+                                .or()
+                                .eq(BlogEntity::getTitle, "我是title")
+                                .or()
+                                .le(BlogEntity::getCreateTime, LocalDateTime.now())
+                )).firstOrNull();
+        Assert.assertNotNull(blog);
+        String sql = easyQuery.queryable(BlogEntity.class)
+                .where(o -> o.eq(BlogEntity::getId, "1").and(
+                        x -> x.like(BlogEntity::getTitle, "你好")
+                                .or()
+                                .eq(BlogEntity::getTitle, "我是title")
+                                .or()
+                                .le(BlogEntity::getCreateTime, LocalDateTime.now())
+                )).toSQL();
+        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `id` = ? AND (`title` LIKE ? OR `title` = ? OR `create_time` <= ?)",sql);
+
+        BlogEntity blog1 = easyQuery.queryable(BlogEntity.class)
+                .where(o -> o.like(BlogEntity::getTitle, "你好")
+                        .or()
+                        .eq(BlogEntity::getTitle, "我是title")
+                        .or()
+                        .le(BlogEntity::getCreateTime, LocalDateTime.now())).firstOrNull();
+        Assert.assertNotNull(blog1);
+
+        String sql1 = easyQuery.queryable(BlogEntity.class)
+                .where(o -> o.like(BlogEntity::getTitle, "你好")
+                        .or()
+                        .eq(BlogEntity::getTitle, "我是title")
+                        .or()
+                        .le(BlogEntity::getCreateTime, LocalDateTime.now())).toSQL();
+        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND (`title` LIKE ? OR `title` = ? OR `create_time` <= ?)",sql1);
     }
 }
