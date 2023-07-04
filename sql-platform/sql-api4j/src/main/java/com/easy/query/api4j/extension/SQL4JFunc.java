@@ -1,6 +1,7 @@
 package com.easy.query.api4j.extension;
 
 import com.easy.query.api4j.extension.casewhen.CaseWhen4JBuilder;
+import com.easy.query.api4j.extension.casewhen.CaseWhen4JBuilder2;
 import com.easy.query.api4j.sql.SQLColumnAsSelector;
 
 /**
@@ -12,5 +13,8 @@ import com.easy.query.api4j.sql.SQLColumnAsSelector;
 public class SQL4JFunc {
     public static <T1,TR> CaseWhen4JBuilder<T1,TR> caseWhenBuilder(SQLColumnAsSelector<T1, TR> sqlColumnAsSelector){
         return new CaseWhen4JBuilder<>(sqlColumnAsSelector);
+    }
+    public static <T1,T2,TR> CaseWhen4JBuilder2<T1,T2,TR> caseWhenBuilder(SQLColumnAsSelector<T1, TR> sqlColumnAsSelector1,SQLColumnAsSelector<T2, TR> sqlColumnAsSelector2){
+        return new CaseWhen4JBuilder2<>(sqlColumnAsSelector1,sqlColumnAsSelector2);
     }
 }

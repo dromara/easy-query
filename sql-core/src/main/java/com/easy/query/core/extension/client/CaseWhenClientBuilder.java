@@ -1,4 +1,4 @@
-package com.easy.query.core.extension;
+package com.easy.query.core.extension.client;
 
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;

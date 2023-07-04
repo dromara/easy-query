@@ -8,7 +8,7 @@ import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
-import com.easy.query.core.extension.SQLClientFunc;
+import com.easy.query.core.extension.client.SQLClientFunc;
 import com.easy.query.test.dto.BlogEntityTest;
 import com.easy.query.test.dto.proxy.BlogEntityTestProxy;
 import com.easy.query.test.entity.BlogEntity;
