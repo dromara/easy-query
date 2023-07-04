@@ -89,6 +89,7 @@ public class EasyQueryProperties {
      */
     private int updateBatchThreshold = 512;
     private boolean printSql = true;
+    private boolean startTimeJob = false;
 
     public Boolean getEnable() {
         return enable;
@@ -276,6 +277,14 @@ public class EasyQueryProperties {
 
     public void setPrintSql(boolean printSql) {
         this.printSql = printSql;
+    }
+
+    public boolean isStartTimeJob() {
+        return startTimeJob;
+    }
+
+    public void setStartTimeJob(boolean startTimeJob) {
+        this.startTimeJob = startTimeJob;
     }
 
     public EasyQueryProperties() {
