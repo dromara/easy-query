@@ -25,6 +25,7 @@ import com.easy.query.core.expression.segment.builder.UpdateSetSQLBuilderSegment
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.PredicateIndex;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
+import com.easy.query.core.expression.segment.condition.predicate.ColumnPredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnPropertyPredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnValuePredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnVersionPropertyPredicate;
@@ -279,8 +280,12 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
             }
             ValueUpdateAtomicTrack<Object> valueUpdateAtomicTrack = columnMetadata.getValueUpdateAtomicTrack();
 
+            //如果不是原子更新的话如果出现在where了的属性不应该出现在set中,除非手动指定,但是如果是需要更新的那么应该也需要添加到set中
             if (valueUpdateAtomicTrack == null && predicateIndex.contains(entityClass, property)) {
-                continue;
+                EntityTrackProperty entityTrackProperty = entityUpdateSetProcessor.getEntityTrackProperty();
+                if(entityTrackProperty==null||!entityTrackProperty.getDiffProperties().containsKey(property)){
+                    continue;
+                }
             }
             if (hasSetIgnoreColumns && setIgnoreColumns.containsOnce(entityClass, property)) {
                 continue;
@@ -343,9 +348,15 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
     protected void buildWhereByProperty(PredicateSegment where, TrackContext trackContext, String propertyName, Object entity, EntityTableExpressionBuilder tableExpressionBuilder) {
         if (entity != null) {
             Object predicateValue = getPredicateValue(entity, trackContext, propertyName, tableExpressionBuilder.getEntityMetadata());
-            ColumnValuePredicate columnValuePredicate = new ColumnValuePredicate(tableExpressionBuilder.getEntityTable(), propertyName, predicateValue, SQLPredicateCompareEnum.EQ, runtimeContext);
-            AndPredicateSegment andPredicateSegment = new AndPredicateSegment(columnValuePredicate);
-            where.addPredicateSegment(andPredicateSegment);
+            if(predicateValue!=null){
+                ColumnValuePredicate columnValuePredicate = new ColumnValuePredicate(tableExpressionBuilder.getEntityTable(), propertyName, predicateValue, SQLPredicateCompareEnum.EQ, runtimeContext);
+                AndPredicateSegment andPredicateSegment = new AndPredicateSegment(columnValuePredicate);
+                where.addPredicateSegment(andPredicateSegment);
+            }else{
+                ColumnPredicate columnPredicate = new ColumnPredicate(tableExpressionBuilder.getEntityTable(), propertyName, SQLPredicateCompareEnum.IS_NULL, runtimeContext);
+                AndPredicateSegment andPredicateSegment = new AndPredicateSegment(columnPredicate);
+                where.addPredicateSegment(andPredicateSegment);
+            }
         } else {
             ColumnPropertyPredicate columnPropertyPredicate = new ColumnPropertyPredicate(tableExpressionBuilder.getEntityTable(), propertyName, runtimeContext);
             AndPredicateSegment andPredicateSegment = new AndPredicateSegment(columnPropertyPredicate);
