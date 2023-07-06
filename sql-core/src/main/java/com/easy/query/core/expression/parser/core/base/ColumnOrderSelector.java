@@ -1,8 +1,8 @@
 package com.easy.query.core.expression.parser.core.base;
 
-import com.easy.query.core.expression.SQLTableOwner;
 import com.easy.query.core.expression.builder.OrderSelector;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
+import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 
 /**
  * create time 2023/6/16 21:19
@@ -10,7 +10,7 @@ import com.easy.query.core.expression.func.ColumnPropertyFunction;
  *
  * @author xuejiaming
  */
-public interface ColumnOrderSelector<T1> extends SQLTableOwner {
+public interface ColumnOrderSelector<T1> extends EntitySQLTableOwner<T1> {
     OrderSelector getOrderSelector();
 
     ColumnOrderSelector<T1> column(String property);

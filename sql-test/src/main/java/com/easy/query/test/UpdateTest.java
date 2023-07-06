@@ -350,7 +350,6 @@ public class UpdateTest extends BaseTest {
             easyQuery.addTracking(topic);
             String newTitle = "test123" + new Random().nextInt(100000);
             topic.setTitle(newTitle);
-
             String sql = ((EasyEntityUpdatable<Topic>) easyQuery.updatable(topic))
                     .whereColumns(o->o.column(Topic::getId).column(Topic::getTitle))
                     .toSQL(topic);

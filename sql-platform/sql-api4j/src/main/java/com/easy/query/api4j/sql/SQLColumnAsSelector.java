@@ -1,13 +1,12 @@
 package com.easy.query.api4j.sql;
 
 import com.easy.query.api4j.select.Queryable;
-import com.easy.query.api4j.sql.impl.SQLWherePredicateImpl;
 import com.easy.query.api4j.util.EasyLambdaUtil;
 import com.easy.query.core.context.QueryRuntimeContext;
-import com.easy.query.core.expression.SQLTableOwner;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.Property;
-import com.easy.query.core.expression.lambda.SQLFuncExpression1;
+import com.easy.query.core.expression.lambda.SQLFuncExpression;
+import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
 import com.easy.query.core.expression.segment.SQLColumnSegment;
@@ -18,7 +17,7 @@ import com.easy.query.core.expression.sql.builder.ExpressionContext;
  * @Description: 文件说明
  * @Date: 2023/2/6 22:58
  */
-public interface SQLColumnAsSelector<T1, TR> extends SQLTableOwner {
+public interface SQLColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1> {
     ColumnAsSelector<T1, TR> getColumnAsSelector();
 
     default QueryRuntimeContext getRuntimeContext() {
@@ -66,16 +65,18 @@ public interface SQLColumnAsSelector<T1, TR> extends SQLTableOwner {
         return this;
     }
 
-    default <TSubQuery> SQLColumnAsSelector<T1, TR> columnSubQueryAs(SQLFuncExpression1<SQLWherePredicate<T1>, Queryable<TSubQuery>> subQueryableFunc, String alias) {
-        getColumnAsSelector().columnSubQueryAs(wherePredicate -> {
-            return subQueryableFunc.apply(new SQLWherePredicateImpl<>(wherePredicate));
-        }, alias);
+    default <TSubQuery> SQLColumnAsSelector<T1, TR> columnSubQueryAs(SQLFuncExpression<Queryable<TSubQuery>> subQueryableFunc, String alias) {
+        getColumnAsSelector().columnSubQueryAs(subQueryableFunc::apply, alias);
         return this;
     }
 
-    default <TSubQuery> SQLColumnAsSelector<T1, TR> columnSubQueryAs(SQLFuncExpression1<SQLWherePredicate<T1>, Queryable<TSubQuery>> subQueryableFunc, Property<TR, TSubQuery> alias) {
+    default <TSubQuery> SQLColumnAsSelector<T1, TR> columnSubQueryAs(SQLFuncExpression<Queryable<TSubQuery>> subQueryableFunc, Property<TR, TSubQuery> alias) {
         return columnSubQueryAs(subQueryableFunc, EasyLambdaUtil.getPropertyName(alias));
     }
+
+//    default <T2,TSubQuery> SQLColumnAsSelector<T1, TR> columnSubQueryAs(SQLFuncExpression2<SQLWherePredicate<T1>,SQLWherePredicate<T2>, Queryable<TSubQuery>> subQueryableFunc, Property<TR, TSubQuery> alias) {
+//        return columnSubQueryAs(subQueryableFunc, EasyLambdaUtil.getPropertyName(alias));
+//    }
 
     default SQLColumnAsSelector<T1, TR> columnCount(Property<T1, ?> column) {
         getColumnAsSelector().columnCount(EasyLambdaUtil.getPropertyName(column));

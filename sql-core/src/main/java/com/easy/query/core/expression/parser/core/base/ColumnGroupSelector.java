@@ -1,8 +1,8 @@
 package com.easy.query.core.expression.parser.core.base;
 
-import com.easy.query.core.expression.SQLTableOwner;
 import com.easy.query.core.expression.builder.GroupSelector;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
+import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 
 /**
  * create time 2023/4/30 21:49
@@ -10,7 +10,7 @@ import com.easy.query.core.expression.func.ColumnPropertyFunction;
  *
  * @author xuejiaming
  */
-public interface ColumnGroupSelector<T1> extends SQLTableOwner {
+public interface ColumnGroupSelector<T1> extends EntitySQLTableOwner<T1> {
     GroupSelector getGroupSelector();
     ColumnGroupSelector<T1> column(String property);
     ColumnGroupSelector<T1> columnConst(String columnConst);

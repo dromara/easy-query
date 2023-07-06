@@ -1,15 +1,15 @@
 package com.easy.query.api4j.sql;
 
+import com.easy.query.api4j.util.EasyLambdaUtil;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.AggregatePredicateCompare;
 import com.easy.query.core.enums.SQLPredicateCompare;
-import com.easy.query.core.expression.SQLTableOwner;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.WhereAggregatePredicate;
-import com.easy.query.api4j.util.EasyLambdaUtil;
 
 /**
  * @author xuejiaming
@@ -17,7 +17,7 @@ import com.easy.query.api4j.util.EasyLambdaUtil;
  * @Description: 文件说明
  * @Date: 2023/2/18 22:17
  */
-public interface SQLWhereAggregatePredicate<T1> extends SQLTableOwner {
+public interface SQLWhereAggregatePredicate<T1> extends EntitySQLTableOwner<T1> {
     WhereAggregatePredicate<T1> getWhereAggregatePredicate();
 
     default TableAvailable getTable() {

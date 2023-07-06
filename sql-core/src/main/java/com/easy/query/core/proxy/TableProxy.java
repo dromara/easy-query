@@ -1,7 +1,7 @@
 package com.easy.query.core.proxy;
 
 
-import com.easy.query.core.expression.SQLTableOwner;
+import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 
 import java.io.Serializable;
@@ -12,7 +12,7 @@ import java.io.Serializable;
  *
  * @author xuejiaming
  */
-public interface TableProxy<TProxy extends TableProxy<TProxy, TEntity>, TEntity> extends BeanProxy, SQLTableOwner, Serializable {
+public interface TableProxy<TProxy extends TableProxy<TProxy, TEntity>, TEntity> extends BeanProxy, EntitySQLTableOwner<TEntity>, Serializable {
 
     default boolean isDefault() {
         return getTable() == null;

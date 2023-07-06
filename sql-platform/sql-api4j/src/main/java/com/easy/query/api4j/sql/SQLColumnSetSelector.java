@@ -1,10 +1,10 @@
 package com.easy.query.api4j.sql;
 
-import com.easy.query.core.expression.SQLTableOwner;
+import com.easy.query.api4j.util.EasyLambdaUtil;
 import com.easy.query.core.expression.lambda.Property;
+import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnUpdateSetSelector;
-import com.easy.query.api4j.util.EasyLambdaUtil;
 
 /**
  * create time 2023/6/16 22:57
@@ -12,7 +12,7 @@ import com.easy.query.api4j.util.EasyLambdaUtil;
  *
  * @author xuejiaming
  */
-public interface SQLColumnSetSelector<T1> extends SQLTableOwner {
+public interface SQLColumnSetSelector<T1> extends EntitySQLTableOwner<T1> {
     ColumnUpdateSetSelector<T1> getColumnSetSelector();
 
     default TableAvailable getTable() {

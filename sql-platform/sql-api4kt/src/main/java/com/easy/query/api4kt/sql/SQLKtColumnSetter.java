@@ -1,7 +1,7 @@
 package com.easy.query.api4kt.sql;
 
 import com.easy.query.api4kt.util.EasyKtLambdaUtil;
-import com.easy.query.core.expression.SQLTableOwner;
+import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnSetter;
 import kotlin.reflect.KProperty1;
@@ -12,7 +12,7 @@ import kotlin.reflect.KProperty1;
  *
  * @author xuejiaming
  */
-public interface SQLKtColumnSetter<T1> extends SQLTableOwner {
+public interface SQLKtColumnSetter<T1> extends EntitySQLTableOwner<T1> {
     default TableAvailable getTable() {
         return getColumnSetter().getTable();
     }

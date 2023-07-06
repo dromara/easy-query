@@ -1,4 +1,4 @@
-package com.easy.query.core.expression;
+package com.easy.query.core.expression.parser.core;
 
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 

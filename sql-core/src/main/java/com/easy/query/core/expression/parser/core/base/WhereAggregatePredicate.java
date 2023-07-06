@@ -3,10 +3,10 @@ package com.easy.query.core.expression.parser.core.base;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.AggregatePredicateCompare;
 import com.easy.query.core.enums.SQLPredicateCompare;
-import com.easy.query.core.expression.SQLTableOwner;
 import com.easy.query.core.expression.builder.AggregateFilter;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 
 /**
  * @author xuejiaming
@@ -14,7 +14,7 @@ import com.easy.query.core.expression.lambda.SQLExpression1;
  * @Description: 文件说明
  * @Date: 2023/2/18 22:17
  */
-public interface WhereAggregatePredicate<T1> extends SQLTableOwner {
+public interface WhereAggregatePredicate<T1> extends EntitySQLTableOwner<T1> {
     AggregateFilter getAggregateFilter();
 
     QueryRuntimeContext getRuntimeContext();
