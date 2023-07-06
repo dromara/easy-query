@@ -26,11 +26,8 @@ public class MySQLInsertSQLExpression extends InsertSQLExpressionImpl {
         String tableName = easyTableSQLExpression.toSQL(toSQLContext);
         int insertColumns = columns.getSQLSegments().size();
         ExpressionContext expressionContext = entitySQLExpressionMetadata.getExpressionContext();
-        StringBuilder sql = new StringBuilder("INSERT ");
-        if(expressionContext.getBehavior().hasBehavior(EasyBehaviorEnum.ON_DUPLICATE_KEY_IGNORE)){
-            sql.append("IGNORE ");
-        }
-        sql.append("INTO ");
+        boolean hasIgnore = expressionContext.getBehavior().hasBehavior(EasyBehaviorEnum.ON_DUPLICATE_KEY_IGNORE);
+        StringBuilder sql = new StringBuilder(hasIgnore?"INSERT IGNORE INTO ":"INSERT INTO ");
         sql.append(tableName).append(" (").append(columns.toSQL(toSQLContext)).append(") VALUES (");
         sql.append("?");
         for (int i = 0; i < insertColumns - 1; i++) {
