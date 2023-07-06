@@ -16,7 +16,7 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public class QueryTest extends PgSqlBaseTest{
+public class QueryTest extends PgSQLBaseTest {
 
     @Test
     public void query1() {

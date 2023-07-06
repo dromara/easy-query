@@ -11,7 +11,7 @@ import com.easy.query.core.sharding.router.manager.TableRouteManager;
 import com.easy.query.test.encryption.Base64EncryptionStrategy;
 import com.easy.query.test.encryption.DefaultAesEasyEncryptionStrategy;
 import com.easy.query.test.encryption.MyEncryptionStrategy;
-import com.easy.query.pgsql.PgSQLDatabaseConfiguration;
+import com.easy.query.pgsql.config.PgSQLDatabaseConfiguration;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.interceptor.MyEntityInterceptor;
 import com.easy.query.test.interceptor.MyTenantInterceptor;
@@ -32,7 +32,7 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public class PgSqlBaseTest {
+public class PgSQLBaseTest {
     public static HikariDataSource dataSource;
     public static EasyQuery easyQuery;
 

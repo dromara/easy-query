@@ -1,4 +1,4 @@
-package com.easy.query.pgsql;
+package com.easy.query.pgsql.config;
 
 
 import com.easy.query.core.configuration.dialect.AbstractDialect;

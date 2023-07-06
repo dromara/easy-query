@@ -1,8 +1,10 @@
-package com.easy.query.pgsql;
+package com.easy.query.pgsql.config;
 
 import com.easy.query.core.bootstrapper.DatabaseConfiguration;
 import com.easy.query.core.configuration.dialect.Dialect;
+import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.inject.ServiceCollection;
+import com.easy.query.pgsql.expression.PostgresSQLExpressionFactory;
 
 /**
  * create time 2023/5/10 13:40
@@ -14,5 +16,6 @@ public class PgSQLDatabaseConfiguration implements DatabaseConfiguration {
     @Override
     public void configure(ServiceCollection services) {
         services.addService(Dialect.class, PgSQLDialect.class);
+        services.addService(ExpressionFactory.class, PostgresSQLExpressionFactory.class);
     }
 }
