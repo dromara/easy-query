@@ -2,6 +2,7 @@ package com.easy.query.core.expression.builder.impl;
 
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.enums.EntityMetadataTypeEnum;
 import com.easy.query.core.expression.builder.AsSelector;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
@@ -79,7 +80,7 @@ public class AsSelectorImpl extends AbstractSelector<AsSelector> implements AsSe
     @Override
     public AsSelector columnAll(TableAvailable table) {
 
-        if (table.getEntityClass().equals(resultClass)) {
+        if (table.getEntityClass().equals(resultClass)||resultEntityMetadata.getEntityMetadataType()== EntityMetadataTypeEnum.MAP) {
             super.columnAll(table);
             return this;
         } else {

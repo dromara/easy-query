@@ -1,6 +1,8 @@
 package com.easy.query.test;
 
+import com.easy.query.api.proxy.base.IntegerProxy;
 import com.easy.query.api.proxy.base.MapProxy;
+import com.easy.query.api.proxy.base.StringProxy;
 import com.easy.query.api.proxy.extension.SQLProxyFunc;
 import com.easy.query.api4j.extension.SQL4JFunc;
 import com.easy.query.api4j.select.Queryable;
@@ -9,6 +11,7 @@ import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.extension.client.SQLClientFunc;
+import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.test.dto.BlogEntityTest;
 import com.easy.query.test.dto.proxy.BlogEntityTestProxy;
 import com.easy.query.test.entity.BlogEntity;
@@ -900,5 +903,170 @@ public class QueryTest3 extends BaseTest {
                         .or()
                         .le(BlogEntity::getCreateTime, LocalDateTime.now())).toSQL();
         Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND (`title` LIKE ? OR `title` = ? OR `create_time` <= ?)",sql1);
+    }
+
+    @Test
+    public void queryBasic1(){
+        List<String> list = easyQuery.queryable(Topic.class)
+                .where(o -> o.eq(Topic::getId, "1"))
+                .select(String.class, o -> o.column(Topic::getId))
+                .toList();
+        Assert.assertEquals(1,list.size());
+        Assert.assertEquals("1",list.get(0));
+        String sql = easyQuery.queryable(Topic.class)
+                .where(o -> o.eq(Topic::getId, "1"))
+                .select(String.class, o -> o.column(Topic::getId))
+                .toSQL();
+        Assert.assertEquals("SELECT t.`id` FROM `t_topic` t WHERE t.`id` = ?",sql);
+
+
+        List<String> list1 = easyQueryClient.queryable(Topic.class)
+                .where(o -> o.eq("id", "1"))
+                .select(String.class, o -> o.column("id"))
+                .toList();
+        Assert.assertEquals(1,list1.size());
+        Assert.assertEquals("1",list1.get(0));
+
+        String sql1 = easyQueryClient.queryable(Topic.class)
+                .where(o -> o.eq("id", "1"))
+                .select(String.class, o -> o.column("id")).toSQL();
+        Assert.assertEquals("SELECT t.`id` FROM `t_topic` t WHERE t.`id` = ?",sql1);
+
+        List<String> list2 = easyProxyQuery.queryable(TopicProxy.DEFAULT)
+                .where((f, t) -> f.eq(t.id(), "1"))
+                .select(StringProxy.DEFAULT, (s, t) -> s.column(t.id()))
+                .toList();
+        Assert.assertEquals(1,list2.size());
+        Assert.assertEquals("1",list2.get(0));
+
+        String sql2 = easyProxyQuery.queryable(TopicProxy.DEFAULT)
+                .where((f, t) -> f.eq(t.id(), "1"))
+                .select(StringProxy.DEFAULT, (s, t) -> s.column(t.id())).toSQL();
+        Assert.assertEquals("SELECT t.`id` FROM `t_topic` t WHERE t.`id` = ?",sql2);
+
+    }
+    @Test
+    public void queryBasic2(){
+        List<Integer> list = easyQuery.queryable(Topic.class)
+                .where(o -> o.eq(Topic::getId, "1"))
+                .select(Integer.class, o -> o.column(Topic::getStars))
+                .toList();
+        Assert.assertEquals(1,list.size());
+        Assert.assertEquals(101,(int)list.get(0));
+        String sql = easyQuery.queryable(Topic.class)
+                .where(o -> o.eq(Topic::getId, "1"))
+                .select(Integer.class, o -> o.column(Topic::getStars))
+                .toSQL();
+        Assert.assertEquals("SELECT t.`stars` FROM `t_topic` t WHERE t.`id` = ?",sql);
+
+
+        List<Integer> list1 = easyQueryClient.queryable(Topic.class)
+                .where(o -> o.eq("id", "1"))
+                .select(Integer.class, o -> o.column("stars"))
+                .toList();
+        Assert.assertEquals(1,list1.size());
+        Assert.assertEquals(101,(int)list1.get(0));
+
+        String sql1 = easyQueryClient.queryable(Topic.class)
+                .where(o -> o.eq("id", "1"))
+                .select(Integer.class, o -> o.column("stars")).toSQL();
+        Assert.assertEquals("SELECT t.`stars` FROM `t_topic` t WHERE t.`id` = ?",sql1);
+
+        List<Integer> list2 = easyProxyQuery.queryable(TopicProxy.DEFAULT)
+                .where((f, t) -> f.eq(t.id(), "1"))
+                .select(IntegerProxy.DEFAULT, (s, t) -> s.column(t.stars()))
+                .toList();
+        Assert.assertEquals(1,list2.size());
+        Assert.assertEquals(101,(int)list2.get(0));
+
+        String sql2 = easyProxyQuery.queryable(TopicProxy.DEFAULT)
+                .where((f, t) -> f.eq(t.id(), "1"))
+                .select(IntegerProxy.DEFAULT, (s, t) -> s.column(t.stars())).toSQL();
+        Assert.assertEquals("SELECT t.`stars` FROM `t_topic` t WHERE t.`id` = ?",sql2);
+
+    }
+    @Test
+    public void queryBasic3(){
+        Class<Map<String,Object>> mapClass= EasyObjectUtil.typeCastNullable(Map.class);
+        {
+
+            List<Map<String,Object>> list = easyQuery.queryable(Topic.class)
+                    .where(o -> o.eq(Topic::getId, "1"))
+                    .select(mapClass, o -> o.columnAll())
+                    .toList();
+            Assert.assertEquals(1,list.size());
+            String sql = easyQuery.queryable(Topic.class)
+                    .where(o -> o.eq(Topic::getId, "1"))
+                    .select(mapClass, o -> o.columnAll())
+                    .toSQL();
+            Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t WHERE t.`id` = ?",sql);
+        }
+        {
+
+            List<Map<String,Object>> list = easyQuery.queryable(Topic.class)
+                    .where(o -> o.eq(Topic::getId, "1"))
+                    .select(mapClass)
+                    .toList();
+            Assert.assertEquals(1,list.size());
+            String sql = easyQuery.queryable(Topic.class)
+                    .where(o -> o.eq(Topic::getId, "1"))
+                    .select(mapClass)
+                    .toSQL();
+            Assert.assertEquals("SELECT * FROM `t_topic` t WHERE t.`id` = ?",sql);
+        }
+
+
+        {
+            List<Map<String,Object>> list1 = easyQueryClient.queryable(Topic.class)
+                    .where(o -> o.eq("id", "1"))
+                    .select(mapClass, o -> o.columnAll())
+                    .toList();
+            Assert.assertEquals(1,list1.size());
+
+            String sql1 = easyQueryClient.queryable(Topic.class)
+                    .where(o -> o.eq("id", "1"))
+                    .select(mapClass, o -> o.columnAll()).toSQL();
+            Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t WHERE t.`id` = ?",sql1);
+        }
+
+        {
+            List<Map<String,Object>> list1 = easyQueryClient.queryable(Topic.class)
+                    .where(o -> o.eq("id", "1"))
+                    .select(mapClass)
+                    .toList();
+            Assert.assertEquals(1,list1.size());
+
+            String sql1 = easyQueryClient.queryable(Topic.class)
+                    .where(o -> o.eq("id", "1"))
+                    .select(mapClass).toSQL();
+            Assert.assertEquals("SELECT * FROM `t_topic` t WHERE t.`id` = ?",sql1);
+        }
+
+        {
+            List<Map<String,Object>> list2 = easyProxyQuery.queryable(TopicProxy.DEFAULT)
+                    .where((f, t) -> f.eq(t.id(), "1"))
+                    .select(MapProxy.DEFAULT, (s, t) -> s.columnAll(t))
+                    .toList();
+            Assert.assertEquals(1,list2.size());
+
+            String sql2 = easyProxyQuery.queryable(TopicProxy.DEFAULT)
+                    .where((f, t) -> f.eq(t.id(), "1"))
+                    .select(MapProxy.DEFAULT, (s, t) -> s.columnAll(t)).toSQL();
+            Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t WHERE t.`id` = ?",sql2);
+        }
+
+        {
+            List<Map<String,Object>> list2 = easyProxyQuery.queryable(TopicProxy.DEFAULT)
+                    .where((f, t) -> f.eq(t.id(), "1"))
+                    .select(MapProxy.DEFAULT)
+                    .toList();
+            Assert.assertEquals(1,list2.size());
+
+            String sql2 = easyProxyQuery.queryable(TopicProxy.DEFAULT)
+                    .where((f, t) -> f.eq(t.id(), "1"))
+                    .select(MapProxy.DEFAULT).toSQL();
+            Assert.assertEquals("SELECT * FROM `t_topic` t WHERE t.`id` = ?",sql2);
+        }
+
     }
 }
