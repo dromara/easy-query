@@ -12,4 +12,7 @@ public interface SQLOnDuplicateKeyIgnore<TChain> {
      * @return
      */
     TChain onDuplicateKeyIgnore();
+    default TChain onConflictDoNothing(){
+        return onDuplicateKeyIgnore();
+    }
 }

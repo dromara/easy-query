@@ -24,7 +24,7 @@ public class InsertTest extends PgSQLBaseTest {
             topicAuto.setTitle("title" + 999);
             topicAuto.setCreateTime(LocalDateTime.now().plusDays(99));
             Assert.assertNull(topicAuto.getId());
-            EntityInsertable<TopicAuto> insertable = easyQuery.insertable(topicAuto).onDuplicateKeyIgnore().noInterceptor().asTable(o->o+"aaa").asSchema("xxx");
+            EntityInsertable<TopicAuto> insertable = easyQuery.insertable(topicAuto).onConflictDoNothing().noInterceptor().asTable(o->o+"aaa").asSchema("xxx");
             long l = insertable.executeRows();
         }catch (Exception ex){
             Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
