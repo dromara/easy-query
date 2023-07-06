@@ -165,7 +165,7 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
         //逻辑删除
         PredicateSegment sqlWhere = sqlPredicateFilter(tableExpressionBuilder, where);
         ExpressionFactory expressionFactory = runtimeContext.getExpressionFactory();
-        EntitySQLExpressionMetadata entitySQLExpressionMetadata = new EntitySQLExpressionMetadata(expressionContext.getTableContext(), runtimeContext);
+        EntitySQLExpressionMetadata entitySQLExpressionMetadata = new EntitySQLExpressionMetadata(expressionContext, runtimeContext);
         EntityUpdateSQLExpression easyUpdateSQLExpression = expressionFactory.createEasyUpdateSQLExpression(entitySQLExpressionMetadata, tableExpressionBuilder.toExpression());
         updateSetSQLSegment.copyTo(easyUpdateSQLExpression.getSetColumns());
         sqlWhere.copyTo(easyUpdateSQLExpression.getWhere());
@@ -244,7 +244,7 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
         SQLBuilderSegment updateSet = getUpdateSetSegment(sqlWhere, entity, tableExpressionBuilder, entityUpdateSetProcessor);
 
         ExpressionFactory expressionFactory = runtimeContext.getExpressionFactory();
-        EntitySQLExpressionMetadata entitySQLExpressionMetadata = new EntitySQLExpressionMetadata(expressionContext.getTableContext(), runtimeContext);
+        EntitySQLExpressionMetadata entitySQLExpressionMetadata = new EntitySQLExpressionMetadata(expressionContext, runtimeContext);
         EntityUpdateSQLExpression easyUpdateSQLExpression = expressionFactory.createEasyUpdateSQLExpression(entitySQLExpressionMetadata, tableExpressionBuilder.toExpression());
         updateSet.copyTo(easyUpdateSQLExpression.getSetColumns());
         sqlWhere.copyTo(easyUpdateSQLExpression.getWhere());

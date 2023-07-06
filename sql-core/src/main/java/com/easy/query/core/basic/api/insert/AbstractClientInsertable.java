@@ -7,6 +7,7 @@ import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
@@ -125,6 +126,12 @@ public abstract class AbstractClientInsertable<T> implements ClientInsertable<T>
         if (condition) {
             entityInsertExpressionBuilder.getExpressionContext().useSQLStrategy(sqlStrategy);
         }
+        return this;
+    }
+
+    @Override
+    public ClientInsertable<T> onDuplicateKeyIgnore() {
+        entityInsertExpressionBuilder.getExpressionContext().getBehavior().addBehavior(EasyBehaviorEnum.ON_DUPLICATE_KEY_IGNORE);
         return this;
     }
 

@@ -80,4 +80,9 @@ public class EasyEmptyClientInsertable<T> implements ClientInsertable<T> {
     public ClientInsertable<T> setSQLStrategy(boolean condition, SQLExecuteStrategyEnum sqlStrategy) {
         return this;
     }
+
+    @Override
+    public ClientInsertable<T> onDuplicateKeyIgnore() {
+        return this;
+    }
 }

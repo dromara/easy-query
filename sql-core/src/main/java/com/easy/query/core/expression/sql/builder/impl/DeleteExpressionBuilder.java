@@ -178,7 +178,7 @@ public class DeleteExpressionBuilder extends AbstractPredicateEntityExpressionBu
         UpdateSetSQLBuilderSegment updateSetSQLBuilderSegment = getUpdateSetSQLBuilderSegment(table);
         QueryRuntimeContext runtimeContext = getRuntimeContext();
         ExpressionFactory expressionFactory = runtimeContext.getExpressionFactory();
-        EntitySQLExpressionMetadata entitySQLExpressionMetadata = new EntitySQLExpressionMetadata(expressionContext.getTableContext(), runtimeContext);
+        EntitySQLExpressionMetadata entitySQLExpressionMetadata = new EntitySQLExpressionMetadata(expressionContext, runtimeContext);
         //逻辑删除
         if (updateSetSQLBuilderSegment != null) {
             PredicateSegment where = buildWherePredicateSegment(table);
@@ -206,7 +206,7 @@ public class DeleteExpressionBuilder extends AbstractPredicateEntityExpressionBu
 
         QueryRuntimeContext runtimeContext = getRuntimeContext();
         ExpressionFactory expressionFactory = runtimeContext.getExpressionFactory();
-        EntitySQLExpressionMetadata entitySQLExpressionMetadata = new EntitySQLExpressionMetadata(expressionContext.getTableContext(), runtimeContext);
+        EntitySQLExpressionMetadata entitySQLExpressionMetadata = new EntitySQLExpressionMetadata(expressionContext, runtimeContext);
         //逻辑删除
         if (updateSetSQLBuilderSegment != null) {
             EntityUpdateSQLExpression easyUpdateSQLExpression = expressionFactory.createEasyUpdateSQLExpression(entitySQLExpressionMetadata, table.toExpression());

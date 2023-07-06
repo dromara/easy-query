@@ -30,8 +30,7 @@ public class AnonymousQueryExpressionBuilder extends QueryExpressionBuilder impl
 
     @Override
     public EntityQuerySQLExpression toExpression() {
-        TableContext tableContext = expressionContext.getTableContext();
-        EntitySQLExpressionMetadata entitySQLExpressionMetadata = new EntitySQLExpressionMetadata(tableContext, runtimeContext);
+        EntitySQLExpressionMetadata entitySQLExpressionMetadata = new EntitySQLExpressionMetadata(expressionContext, runtimeContext);
         return runtimeContext.getExpressionFactory().createEasyAnonymousQuerySQLExpression(entitySQLExpressionMetadata,sql);
     }
 

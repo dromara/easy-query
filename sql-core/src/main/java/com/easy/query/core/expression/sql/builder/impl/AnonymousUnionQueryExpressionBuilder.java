@@ -49,7 +49,7 @@ public class AnonymousUnionQueryExpressionBuilder extends QueryExpressionBuilder
             EntityQuerySQLExpression expression = entityQueryExpressionBuilder.toExpression();
             querySQLExpressions.add(expression);
         }
-        EntitySQLExpressionMetadata entitySQLExpressionMetadata = new EntitySQLExpressionMetadata(tableContext, runtimeContext);
+        EntitySQLExpressionMetadata entitySQLExpressionMetadata = new EntitySQLExpressionMetadata(expressionContext,tableContext, runtimeContext);
         return runtimeContext.getExpressionFactory().createEasyAnonymousUnionQuerySQLExpression(entitySQLExpressionMetadata,new ArrayList<>(querySQLExpressions),sqlUnion);
     }
 

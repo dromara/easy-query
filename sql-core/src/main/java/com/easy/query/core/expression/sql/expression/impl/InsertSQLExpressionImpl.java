@@ -23,7 +23,7 @@ public  class InsertSQLExpressionImpl implements EntityInsertSQLExpression {
 
     protected final SQLBuilderSegment columns;
     protected final List<EntityTableSQLExpression> tables=new ArrayList<>(1);
-    private final EntitySQLExpressionMetadata entitySQLExpressionMetadata;
+    protected final EntitySQLExpressionMetadata entitySQLExpressionMetadata;
 
     public InsertSQLExpressionImpl(EntitySQLExpressionMetadata entitySQLExpressionMetadata, EntityTableSQLExpression table) {
         this.entitySQLExpressionMetadata = entitySQLExpressionMetadata;

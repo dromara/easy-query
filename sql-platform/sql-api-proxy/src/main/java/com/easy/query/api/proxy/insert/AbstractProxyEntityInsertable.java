@@ -86,6 +86,12 @@ public abstract class AbstractProxyEntityInsertable<T> implements ProxyEntityIns
     }
 
     @Override
+    public ProxyEntityInsertable<T> onDuplicateKeyIgnore() {
+        clientInsertable.onDuplicateKeyIgnore();
+        return this;
+    }
+
+    @Override
     public String toSQL(Object entity) {
         return clientInsertable.toSQL(entity);
     }

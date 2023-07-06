@@ -88,7 +88,7 @@ public class InsertExpressionBuilder extends AbstractEntityExpressionBuilder imp
         EntityTableExpressionBuilder table = getTable(0);
         QueryRuntimeContext runtimeContext = getRuntimeContext();
         ExpressionFactory expressionFactory = runtimeContext.getExpressionFactory();
-        EntitySQLExpressionMetadata entitySQLExpressionMetadata = new EntitySQLExpressionMetadata(expressionContext.getTableContext(), runtimeContext);
+        EntitySQLExpressionMetadata entitySQLExpressionMetadata = new EntitySQLExpressionMetadata(expressionContext, runtimeContext);
         EntityInsertSQLExpression easyInsertSQLExpression = expressionFactory.createEasyInsertSQLExpression(entitySQLExpressionMetadata, table.toExpression());
         EntityMetadata entityMetadata = table.getEntityMetadata();
         SQLBuilderSegment insertCloneColumns = getColumns().cloneSQLBuilder();

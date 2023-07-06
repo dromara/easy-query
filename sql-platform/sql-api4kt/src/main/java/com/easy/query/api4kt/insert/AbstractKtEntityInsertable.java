@@ -86,6 +86,12 @@ public abstract class AbstractKtEntityInsertable<T> implements KtEntityInsertabl
     }
 
     @Override
+    public KtEntityInsertable<T> onDuplicateKeyIgnore() {
+        clientInsertable.onDuplicateKeyIgnore();
+        return this;
+    }
+
+    @Override
     public String toSQL(Object entity) {
         return clientInsertable.toSQL(entity);
     }

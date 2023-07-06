@@ -181,7 +181,7 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
         QueryRuntimeContext runtimeContext = getRuntimeContext();
         ExpressionFactory expressionFactory = runtimeContext.getExpressionFactory();
         SQLSegmentFactory sqlSegmentFactory = runtimeContext.getSQLSegmentFactory();
-        EntitySQLExpressionMetadata entitySQLExpressionMetadata = new EntitySQLExpressionMetadata(expressionContext.getTableContext(), runtimeContext);
+        EntitySQLExpressionMetadata entitySQLExpressionMetadata = new EntitySQLExpressionMetadata(expressionContext, runtimeContext);
         EntityQuerySQLExpression easyQuerySQLExpression = expressionFactory.createEasyQuerySQLExpression(entitySQLExpressionMetadata);
         easyQuerySQLExpression.setDistinct(isDistinct());
 
