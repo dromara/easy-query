@@ -131,14 +131,28 @@ public abstract class AbstractClientInsertable<T> implements ClientInsertable<T>
 
     @Override
     public ClientInsertable<T> onDuplicateKeyIgnore() {
+        entityInsertExpressionBuilder.getExpressionContext().getBehavior().removeBehavior(EasyBehaviorEnum.ON_DUPLICATE_KEY_UPDATE);
         entityInsertExpressionBuilder.getExpressionContext().getBehavior().addBehavior(EasyBehaviorEnum.ON_DUPLICATE_KEY_IGNORE);
         return this;
     }
 
     @Override
-    public String toSQL(Object entity) {
-        return toSQLWithParam(entity, DefaultToSQLContext.defaultToSQLContext(entityInsertExpressionBuilder.getExpressionContext().getTableContext()));
+    public ClientInsertable<T> onDuplicateKeyUpdate() {
+        entityInsertExpressionBuilder.getExpressionContext().getBehavior().removeBehavior(EasyBehaviorEnum.ON_DUPLICATE_KEY_IGNORE);
+        entityInsertExpressionBuilder.getExpressionContext().getBehavior().addBehavior(EasyBehaviorEnum.ON_DUPLICATE_KEY_UPDATE);
+        return this;
     }
+
+    @Override
+    public String toSQL(Object entity) {
+        return toSQL(entity, DefaultToSQLContext.defaultToSQLContext(entityInsertExpressionBuilder.getExpressionContext().getTableContext()));
+    }
+
+    @Override
+    public String toSQL(Object entity, ToSQLContext toSQLContext) {
+        return toSQLWithParam(entity, toSQLContext);
+    }
+
     private String toSQLWithParam(Object entity, ToSQLContext toSQLContext){
         return entityInsertExpressionBuilder.toExpression(entity).toSQL(toSQLContext);
     }

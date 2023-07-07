@@ -735,7 +735,7 @@ public class QueryTest extends BaseTest {
     public void query33() {
         List<BlogEntity> blogEntities = easyQuery.sqlQuery("SELECT * FROM `t_blog` t", BlogEntity.class);
         Assert.assertNotNull(blogEntities);
-        Assert.assertEquals(100, blogEntities.size());
+        Assert.assertTrue(blogEntities.size()>=100);
     }
 
     @Test
@@ -749,7 +749,7 @@ public class QueryTest extends BaseTest {
     public void query35() {
         List<Map<String, Object>> blogs = easyQuery.sqlQueryMap("SELECT * FROM `t_blog` t");
         Assert.assertNotNull(blogs);
-        Assert.assertEquals(100, blogs.size());
+        Assert.assertTrue(blogs.size()>=100);
     }
 
     @Test

@@ -1,6 +1,7 @@
 package com.easy.query.core.basic.api.insert;
 
 import com.easy.query.core.api.SQLClientApiFactory;
+import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 
@@ -55,6 +56,10 @@ public class EasyEmptyClientInsertable<T> implements ClientInsertable<T> {
     public String toSQL(Object entity) {
         return null;
     }
+    @Override
+    public String toSQL(Object entity, ToSQLContext toSQLContext) {
+        return null;
+    }
 
     @Override
     public ClientInsertable<T> noInterceptor() {
@@ -85,4 +90,10 @@ public class EasyEmptyClientInsertable<T> implements ClientInsertable<T> {
     public ClientInsertable<T> onDuplicateKeyIgnore() {
         return this;
     }
+
+    @Override
+    public ClientInsertable<T> onDuplicateKeyUpdate() {
+        return this;
+    }
+
 }

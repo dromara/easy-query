@@ -1,6 +1,7 @@
 package com.easy.query.api.proxy.insert;
 
 import com.easy.query.core.basic.api.insert.ClientInsertable;
+import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 
 import java.util.Collection;
@@ -90,9 +91,20 @@ public abstract class AbstractProxyEntityInsertable<T> implements ProxyEntityIns
         clientInsertable.onDuplicateKeyIgnore();
         return this;
     }
+    @Override
+    public ProxyEntityInsertable<T> onDuplicateKeyUpdate() {
+        clientInsertable.onDuplicateKeyUpdate();
+        return this;
+    }
 
     @Override
     public String toSQL(Object entity) {
         return clientInsertable.toSQL(entity);
     }
+
+    @Override
+    public String toSQL(Object entity, ToSQLContext toSQLContext) {
+        return clientInsertable.toSQL(entity,toSQLContext);
+    }
+
 }

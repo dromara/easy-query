@@ -1,6 +1,7 @@
 package com.easy.query.api4kt.insert;
 
 import com.easy.query.core.basic.api.insert.ClientInsertable;
+import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 
 import java.util.Collection;
@@ -92,7 +93,18 @@ public abstract class AbstractKtEntityInsertable<T> implements KtEntityInsertabl
     }
 
     @Override
+    public KtEntityInsertable<T> onDuplicateKeyUpdate() {
+        clientInsertable.onDuplicateKeyUpdate();
+        return this;
+    }
+
+    @Override
     public String toSQL(Object entity) {
         return clientInsertable.toSQL(entity);
+    }
+
+    @Override
+    public String toSQL(Object entity, ToSQLContext toSQLContext) {
+        return clientInsertable.toSQL(entity,toSQLContext);
     }
 }
