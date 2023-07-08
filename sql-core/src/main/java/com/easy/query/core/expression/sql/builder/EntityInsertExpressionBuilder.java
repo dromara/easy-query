@@ -10,6 +10,9 @@ import com.easy.query.core.expression.sql.expression.EntityInsertSQLExpression;
  */
 public interface EntityInsertExpressionBuilder extends EntityExpressionBuilder, EntityToExpressionBuilder {
     SQLBuilderSegment getColumns();
+    SQLBuilderSegment getDuplicateKeyUpdateColumns();
+    String getDuplicateKey();
+    void setDuplicateKey(String duplicateKey);
 
     @Override
     default EntityInsertSQLExpression toExpression() {

@@ -1,8 +1,13 @@
 package com.easy.query.api4kt.insert;
 
+import com.easy.query.api4kt.sql.SQLKtColumnSetSelector;
+import com.easy.query.api4kt.sql.impl.SQLKtColumnSetSelectorImpl;
+import com.easy.query.api4kt.util.EasyKtLambdaUtil;
 import com.easy.query.core.basic.api.insert.ClientInsertable;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
+import com.easy.query.core.expression.lambda.SQLExpression1;
+import kotlin.reflect.KProperty1;
 
 import java.util.Collection;
 import java.util.function.Function;
@@ -106,5 +111,33 @@ public abstract class AbstractKtEntityInsertable<T> implements KtEntityInsertabl
     @Override
     public String toSQL(Object entity, ToSQLContext toSQLContext) {
         return clientInsertable.toSQL(entity,toSQLContext);
+    }
+    @Override
+    public KtEntityInsertable<T> onConflictDoUpdate() {
+        clientInsertable.onConflictDoUpdate();
+        return this;
+    }
+
+    @Override
+    public KtEntityInsertable<T> onConflictDoUpdate(KProperty1<T, ?> constraintProperty) {
+        clientInsertable.onConflictDoUpdate(EasyKtLambdaUtil.getPropertyName(constraintProperty));
+        return this;
+    }
+
+    @Override
+    public KtEntityInsertable<T> onConflictDoUpdate(KProperty1<T, ?> constraintProperty, SQLExpression1<SQLKtColumnSetSelector<T>> setColumnSelector) {
+        clientInsertable.onConflictDoUpdate(EasyKtLambdaUtil.getPropertyName(constraintProperty),setSelector->{
+            setColumnSelector.apply(new SQLKtColumnSetSelectorImpl<>(setSelector));
+        });
+        return this;
+    }
+
+
+    @Override
+    public KtEntityInsertable<T> onDuplicateKeyUpdate(SQLExpression1<SQLKtColumnSetSelector<T>> setColumnSelector) {
+        clientInsertable.onDuplicateKeyUpdate(setSelector->{
+            setColumnSelector.apply(new SQLKtColumnSetSelectorImpl<>(setSelector));
+        });
+        return this;
     }
 }

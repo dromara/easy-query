@@ -1,5 +1,6 @@
 package com.easy.query.api.proxy.insert;
 
+import com.easy.query.api.proxy.internal.ProxyOnDuplicateKeyUpdate;
 import com.easy.query.core.basic.api.insert.Insertable;
 
 import java.util.Collection;
@@ -10,7 +11,7 @@ import java.util.Collection;
  *
  * @author xuejiaming
  */
-public interface ProxyEntityInsertable<T> extends Insertable<T, ProxyEntityInsertable<T>> {
+public interface ProxyEntityInsertable<T> extends Insertable<T, ProxyEntityInsertable<T>>, ProxyOnDuplicateKeyUpdate<T, ProxyEntityInsertable<T>> {
     @Override
     ProxyEntityInsertable<T> insert(T entity);
 

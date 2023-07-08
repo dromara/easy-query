@@ -7,6 +7,7 @@ import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.SQLEntitySegment;
 import com.easy.query.core.expression.segment.SQLSegment;
+import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
 import com.easy.query.core.expression.sql.expression.impl.EntitySQLExpressionMetadata;
@@ -15,10 +16,12 @@ import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasySQLExpressionUtil;
+import com.easy.query.core.util.EasyStringUtil;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * create time 2023/5/17 22:36
@@ -54,19 +57,20 @@ public class PostgresSQLInsertSQLExpression extends InsertSQLExpressionImpl {
             EntityMetadata entityMetadata = easyTableSQLExpression.getEntityMetadata();
             TableAvailable entityTable = easyTableSQLExpression.getEntityTable();
             Collection<String> keyProperties = entityMetadata.getKeyProperties();
-            if(EasyCollectionUtil.isNotSingle(keyProperties)){
-                throw new EasyQueryInvalidOperationException("not found single key, cant use:"+EasyBehaviorEnum.ON_DUPLICATE_KEY_UPDATE.name()+",entity :"+ EasyClassUtil.getSimpleName(entityMetadata.getEntityClass()));
-            }
-            String keyPropertyName = EasyCollectionUtil.first(keyProperties);
+
+            String constraintPropertyName =  getConstraintPropertyName(keyProperties);
 
             StringBuilder duplicateKeyUpdateSql = new StringBuilder();
-            for (SQLSegment sqlSegment : sqlSegments) {
+            SQLBuilderSegment realDuplicateKeyUpdateColumns = getRealDuplicateKeyUpdateColumns();
+            List<SQLSegment> realDuplicateKeyUpdateColumnsSQLSegments = realDuplicateKeyUpdateColumns.getSQLSegments();
+            Set<String> duplicateKeyUpdateColumnsSet = getColumnsSet(columns);
+            for (SQLSegment sqlSegment : realDuplicateKeyUpdateColumnsSQLSegments) {
                 if (!(sqlSegment instanceof SQLEntitySegment)) {
                     throw new EasyQueryInvalidOperationException("insert not support:" + EasyBehaviorEnum.ON_DUPLICATE_KEY_UPDATE.name()+",column type:"+ EasyClassUtil.getSimpleName(sqlSegment.getClass()));
                 }
                 SQLEntitySegment sqlEntitySegment = (SQLEntitySegment) sqlSegment;
                 String propertyName = sqlEntitySegment.getPropertyName();
-                if(Objects.equals(propertyName,keyPropertyName)){
+                if(Objects.equals(propertyName,constraintPropertyName)||keyProperties.contains(propertyName)||!duplicateKeyUpdateColumnsSet.contains(propertyName)){
                     continue;
                 }
                 if(duplicateKeyUpdateSql.length()!=0){
@@ -77,7 +81,7 @@ public class PostgresSQLInsertSQLExpression extends InsertSQLExpressionImpl {
                 duplicateKeyUpdateSql.append(quoteName).append(" = ").append("EXCLUDED.").append(quoteName);
             }
             if(duplicateKeyUpdateSql.length()>0){
-                String keyColumnName = entityTable.getColumnName(keyPropertyName);
+                String keyColumnName = entityTable.getColumnName(constraintPropertyName);
                 String quoteKeyName = EasySQLExpressionUtil.getQuoteName(runtimeContext, keyColumnName);
                 sql.append(" ON CONFLICT (").append(quoteKeyName).append(") DO UPDATE SET ")
                         .append(duplicateKeyUpdateSql);
@@ -85,5 +89,17 @@ public class PostgresSQLInsertSQLExpression extends InsertSQLExpressionImpl {
         }
         //SET column1 = EXCLUDED.column1, column2 = EXCLUDED.column2
         return sql.toString();
+    }
+
+    protected String getConstraintPropertyName(Collection<String> keyProperties){
+
+        boolean noDuplicateKey = EasyStringUtil.isBlank(duplicateKey);
+        if(noDuplicateKey){
+            if(EasyCollectionUtil.isNotSingle(keyProperties)){
+                throw new EasyQueryInvalidOperationException("not found single key, cant use:"+EasyBehaviorEnum.ON_DUPLICATE_KEY_UPDATE.name());
+            }
+            return EasyCollectionUtil.first(keyProperties);
+        }
+        return duplicateKey;
     }
 }

@@ -3,6 +3,8 @@ package com.easy.query.core.basic.api.insert;
 import com.easy.query.core.api.SQLClientApiFactory;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
+import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.parser.core.base.ColumnUpdateSetSelector;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 
 import java.util.function.Function;
@@ -92,7 +94,32 @@ public class EasyEmptyClientInsertable<T> implements ClientInsertable<T> {
     }
 
     @Override
+    public ClientInsertable<T> onConflictDoUpdate() {
+        return this;
+    }
+
+    @Override
+    public ClientInsertable<T> onConflictDoUpdate(String constraintProperty) {
+        return this;
+    }
+
+    @Override
+    public ClientInsertable<T> onConflictDoUpdate(String constraintProperty, SQLExpression1<ColumnUpdateSetSelector<T>> setColumnSelector) {
+        return this;
+    }
+
+    @Override
+    public ClientInsertable<T> onConflictDoUpdate(SQLExpression1<ColumnUpdateSetSelector<T>> setColumnSelector) {
+        return this;
+    }
+
+    @Override
     public ClientInsertable<T> onDuplicateKeyUpdate() {
+        return this;
+    }
+
+    @Override
+    public ClientInsertable<T> onDuplicateKeyUpdate(SQLExpression1<ColumnUpdateSetSelector<T>> setColumnSelector) {
         return this;
     }
 

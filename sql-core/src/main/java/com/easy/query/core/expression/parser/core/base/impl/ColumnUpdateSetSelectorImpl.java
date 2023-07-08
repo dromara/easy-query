@@ -40,7 +40,6 @@ public class ColumnUpdateSetSelectorImpl<T> implements ColumnUpdateSetSelector<T
         updateSetSelector.columnIgnore(table,property);
         return this;
     }
-
     @Override
     public ColumnUpdateSetSelector<T> columnAll() {
         updateSetSelector.columnAll(table);

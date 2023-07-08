@@ -1,5 +1,6 @@
 package com.easy.query.api4kt.insert;
 
+import com.easy.query.api4kt.internal.SQLKtOnDuplicateKeyUpdate;
 import com.easy.query.core.basic.api.insert.Insertable;
 
 import java.util.Collection;
@@ -10,7 +11,7 @@ import java.util.Collection;
  *
  * @author xuejiaming
  */
-public interface KtEntityInsertable<T> extends Insertable<T, KtEntityInsertable<T>> {
+public interface KtEntityInsertable<T> extends Insertable<T, KtEntityInsertable<T>>, SQLKtOnDuplicateKeyUpdate<T,KtEntityInsertable<T>> {
     @Override
     KtEntityInsertable<T> insert(T entity);
 

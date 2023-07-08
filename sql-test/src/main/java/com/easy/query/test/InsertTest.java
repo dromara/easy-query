@@ -176,7 +176,7 @@ public class InsertTest extends BaseTest {
     }
 
     @Test
-    public void insertDuplicateKeyIgnore1(){
+    public void insertDuplicateKeyUpdate1(){
 
         TopicAuto topicAuto = new TopicAuto();
         topicAuto.setStars(999);
@@ -186,6 +186,18 @@ public class InsertTest extends BaseTest {
         EntityInsertable<TopicAuto> insertable = easyQuery.insertable(topicAuto).onDuplicateKeyUpdate();
         String sql = insertable.toSQL(topicAuto);
         Assert.assertEquals("INSERT INTO `t_topic_auto` (`stars`,`title`,`create_time`) VALUES (?,?,?) ON DUPLICATE KEY UPDATE `stars` = VALUES(`stars`), `title` = VALUES(`title`), `create_time` = VALUES(`create_time`)",sql);
+    }
+    @Test
+    public void insertDuplicateKeyUpdate2(){
+
+        TopicAuto topicAuto = new TopicAuto();
+        topicAuto.setStars(999);
+        topicAuto.setTitle("title" + 999);
+        topicAuto.setCreateTime(LocalDateTime.now().plusDays(99));
+        Assert.assertNull(topicAuto.getId());
+        EntityInsertable<TopicAuto> insertable = easyQuery.insertable(topicAuto).onDuplicateKeyUpdate(t->t.column(TopicAuto::getStars).column(TopicAuto::getTitle));
+        String sql = insertable.toSQL(topicAuto);
+        Assert.assertEquals("INSERT INTO `t_topic_auto` (`stars`,`title`,`create_time`) VALUES (?,?,?) ON DUPLICATE KEY UPDATE `stars` = VALUES(`stars`), `title` = VALUES(`title`)",sql);
     }
 
 
