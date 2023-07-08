@@ -11,6 +11,7 @@ import com.easy.query.core.basic.extension.track.update.ValueUpdateAtomicTrack;
 import com.easy.query.core.basic.extension.version.VersionStrategy;
 import com.easy.query.core.enums.EntityUpdateTypeEnum;
 import com.easy.query.core.enums.SQLPredicateCompareEnum;
+import com.easy.query.core.exception.EasyQueryColumnValueUpdateAtomicTrackException;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
@@ -201,9 +202,9 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
         return updateSet;
     }
 
-    protected void warningValueUpdateAtomicTrack(EntityMetadata entityMetadata) {
+    protected void throwValueUpdateAtomicTrack(EntityMetadata entityMetadata) {
         if (entityMetadata.isColumnValueUpdateAtomicTrack()) {
-            log.warn("entity:" + EasyClassUtil.getSimpleName(entityMetadata.getEntityClass()) + " property has configure value update atomic track，but current update not use track update.");
+            throw new EasyQueryColumnValueUpdateAtomicTrackException("entity:" + EasyClassUtil.getSimpleName(entityMetadata.getEntityClass()) + " property has configure value update atomic track，but current update not use track update.");
         }
     }
 
@@ -218,8 +219,8 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
 
         EntityUpdateSetProcessor entityUpdateSetProcessor = EasySQLSegmentUtil.isEmpty(setColumns) ? new EntityUpdateSetProcessor(entity, expressionContext) : null;
         if (entityUpdateSetProcessor != null) {
-            if (!Objects.equals(EntityUpdateTypeEnum.CUSTOM, entityUpdateSetProcessor.getEntityUpdateType())) {
-                warningValueUpdateAtomicTrack(entityMetadata);
+            if (!Objects.equals(EntityUpdateTypeEnum.TRACK, entityUpdateSetProcessor.getEntityUpdateType())) {
+                throwValueUpdateAtomicTrack(entityMetadata);
             }
             EntityTrackProperty entityTrackProperty = entityUpdateSetProcessor.getEntityTrackProperty();
             if (entityTrackProperty != null) {
@@ -238,7 +239,7 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
                 }
             }
         } else {
-            warningValueUpdateAtomicTrack(entityMetadata);
+            throwValueUpdateAtomicTrack(entityMetadata);
         }
         PredicateSegment sqlWhere = sqlPredicateFilter(tableExpressionBuilder, where);
         SQLBuilderSegment updateSet = getUpdateSetSegment(sqlWhere, entity, tableExpressionBuilder, entityUpdateSetProcessor);
