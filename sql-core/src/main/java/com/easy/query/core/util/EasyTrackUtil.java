@@ -3,6 +3,9 @@ package com.easy.query.core.util;
 import com.easy.query.core.basic.extension.track.EntityState;
 import com.easy.query.core.basic.extension.track.EntityTrackProperty;
 import com.easy.query.core.basic.extension.track.TrackDiffEntry;
+import com.easy.query.core.basic.extension.track.TrackManager;
+import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.exception.EasyQueryTrackInvalidOperationException;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.TrackKeyFunc;
@@ -127,6 +130,25 @@ public class EasyTrackUtil {
             }
         }
         return entityTrackProperty;
+    }
+
+    public static boolean trackBean(ExecutorContext context, Class<?> clazz) {
+        //当前查询是否使用了追踪如果没有就直接不使用追踪
+        if (context.isTracking()) {
+            QueryRuntimeContext runtimeContext = context.getRuntimeContext();
+            TrackManager trackManager = runtimeContext.getTrackManager();
+            //当前是否开启追踪
+            if (!trackManager.currentThreadTracking()) {
+                return false;
+            }
+            //如果当前返回结果不是数据库实体就直接选择不追踪
+            EntityMetadata entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(clazz);
+            if (EasyStringUtil.isBlank(entityMetadata.getTableName())) {
+                return false;
+            }
+            return true;
+        }
+        return false;
     }
 
 //    public static Set<String> getTrackIgnoreProperties(EntityMetadataManager entityMetadataManager, EntityState entityState) {

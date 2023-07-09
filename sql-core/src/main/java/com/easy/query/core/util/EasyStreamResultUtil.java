@@ -10,10 +10,8 @@ import com.easy.query.core.basic.jdbc.types.EasyResultSet;
 import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
 import com.easy.query.core.basic.jdbc.types.JdbcTypes;
 import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
-import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
-import com.easy.query.core.metadata.EntityMetadata;
 
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -120,7 +118,7 @@ public final class EasyStreamResultUtil {
         ResultSetMetaData rsmd = streamResult.getMetaData();
         ResultColumnMetadata[] columnMetadatas = columnsToColumnMetadatas(context, resultMetadata, rsmd);
 
-        boolean trackBean = trackBean(context, resultMetadata.getResultClass());
+        boolean trackBean = EasyTrackUtil.trackBean(context, resultMetadata.getResultClass());
         TrackManager trackManager = trackBean ? context.getRuntimeContext().getTrackManager() : null;
 
         EasyResultSet easyResultSet = new EasyResultSet(streamResult);
@@ -160,25 +158,6 @@ public final class EasyStreamResultUtil {
 //            beanSetter.call(bean, value);
         }
         return bean;
-    }
-
-    private static boolean trackBean(ExecutorContext context, Class<?> clazz) {
-        //当前查询是否使用了追踪如果没有就直接不使用追踪
-        if (context.isTracking()) {
-            QueryRuntimeContext runtimeContext = context.getRuntimeContext();
-            TrackManager trackManager = runtimeContext.getTrackManager();
-            //当前是否开启追踪
-            if (!trackManager.currentThreadTracking()) {
-                return false;
-            }
-            //如果当前返回结果不是数据库实体就直接选择不追踪
-            EntityMetadata entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(clazz);
-            if (EasyStringUtil.isBlank(entityMetadata.getTableName())) {
-                return false;
-            }
-            return true;
-        }
-        return false;
     }
 
     public static <TResult> ResultColumnMetadata[] columnsToColumnMetadatas(ExecutorContext context, ResultMetadata<TResult> resultMetadata, ResultSetMetaData rsmd) throws SQLException {

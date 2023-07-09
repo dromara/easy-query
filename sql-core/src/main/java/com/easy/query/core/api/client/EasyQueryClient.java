@@ -95,4 +95,5 @@ public interface EasyQueryClient {
      * @return true:添加成功,false:已经存在相同对象 或者未开启追踪
      */
     boolean addTracking(Object entity);
+    boolean removeTracking(Object entity);
 }

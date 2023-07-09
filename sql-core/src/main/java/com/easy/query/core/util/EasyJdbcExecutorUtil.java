@@ -1,5 +1,6 @@
 package com.easy.query.core.util;
 
+import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.basic.jdbc.conn.EasyConnection;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.result.StreamResultSet;
@@ -306,6 +307,18 @@ public class EasyJdbcExecutorUtil {
             throw new EasyQuerySQLStatementException(sql, e);
         } finally {
             clear(ps);
+
+            if(EasyCollectionUtil.isNotEmpty(entities)){
+                Class<?> entityClass = entities.get(0).getClass();
+
+                boolean trackBean = EasyTrackUtil.trackBean(executorContext, entityClass);
+                if(trackBean){
+                    TrackManager trackManager = executorContext.getRuntimeContext().getTrackManager();
+                    for (T entity : entities) {
+                        trackManager.getCurrentTrackContext().removeTracking(entity);
+                    }
+                }
+            }
         }
         return r;
     }
