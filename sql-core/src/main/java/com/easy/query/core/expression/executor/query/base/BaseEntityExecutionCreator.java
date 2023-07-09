@@ -3,7 +3,7 @@ package com.easy.query.core.expression.executor.query.base;
 import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.executor.internal.common.ExecutionUnit;
-import com.easy.query.core.configuration.EasyQueryOption;
+import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
@@ -73,7 +73,9 @@ public abstract class BaseEntityExecutionCreator extends BaseExecutionCreator{
     @Override
     protected boolean useEntityBatch(){
         int entitySize =entities.size();
-        return EasySQLExpressionUtil.entityExecuteBatch(entitySize,executorContext);
+        return entityExpressionBuilder.getExpressionContext().getBehavior().hasBehavior(EasyBehaviorEnum.EXECUTE_BATCH)
+                ||
+                EasySQLExpressionUtil.entityExecuteBatch(entitySize,executorContext);
     }
 
     private List<ExecutionUnit> createMultiExecutionUnits() {

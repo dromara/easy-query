@@ -114,6 +114,11 @@ public class EasyEmptyClientInsertable<T> implements ClientInsertable<T> {
     }
 
     @Override
+    public ClientInsertable<T> batch(boolean use) {
+        return this;
+    }
+
+    @Override
     public ClientInsertable<T> onDuplicateKeyUpdate() {
         return this;
     }

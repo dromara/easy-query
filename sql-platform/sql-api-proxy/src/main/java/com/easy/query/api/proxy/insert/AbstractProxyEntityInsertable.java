@@ -146,4 +146,10 @@ public abstract class AbstractProxyEntityInsertable<T> implements ProxyEntityIns
         });
         return this;
     }
+
+    @Override
+    public ProxyEntityInsertable<T> batch(boolean use) {
+        clientInsertable.batch(use);
+        return this;
+    }
 }

@@ -10,6 +10,8 @@ import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -205,6 +207,8 @@ public class InsertTest extends BaseTest {
     @Test
     public void insertTestx() {
         easyQuery.deletable(BlogEntity.class)
+                .disableLogicDelete()
+                .allowDeleteStatement(true)
                 .whereById("200")
                 .executeRows();
         LocalDateTime begin = LocalDateTime.of(2000, 1, 1, 1, 1, 1);
@@ -220,20 +224,26 @@ public class InsertTest extends BaseTest {
         blog.setUrl("http://blog.easy-query.com/" + indexStr);
         blog.setStar(1);
         blog.setScore(new BigDecimal("1.2"));
-        blog.setStatus(1 % 3 == 0 ? 0 : 1);
+        blog.setStatus(1);
         blog.setOrder(new BigDecimal("1.2").multiply(BigDecimal.valueOf(1)));
-        blog.setIsTop(1 % 2 == 0);
-        blog.setTop(1 % 2 == 0);
+        blog.setIsTop(false);
+        blog.setTop(false);
         blog.setDeleted(false);
         long l = easyQuery.insertable(blog)
-                .onConflictDoUpdate()
+                .onDuplicateKeyUpdate()
                 .executeRows();
         Assert.assertEquals(1,l);
+
+        long l1 = easyQuery.insertable(blog)
+                .onDuplicateKeyIgnore()
+                .executeRows();
+        Assert.assertEquals(0,l1);
+
         blog.setContent("abc");
         long l2 = easyQuery.insertable(blog)
-                .onConflictDoUpdate()
+                .onDuplicateKeyUpdate()
                 .executeRows();
-        Assert.assertEquals(1,l2);
+        Assert.assertEquals(2,l2);
         BlogEntity blogEntity = easyQuery.queryable(BlogEntity.class)
                 .whereById("200")
                 .firstNotNull("xxx");
@@ -241,5 +251,82 @@ public class InsertTest extends BaseTest {
         easyQuery.deletable(BlogEntity.class)
                 .whereById("200")
                 .executeRows();
+    }
+
+    @Test
+    public void insertBatch(){
+
+        easyQuery.deletable(BlogEntity.class)
+                .disableLogicDelete()
+                .allowDeleteStatement(true)
+                .whereByIds(Arrays.asList("500","300","400")).executeRows();
+        String indexStr = "500";
+        LocalDateTime begin = LocalDateTime.of(2000, 1, 1, 1, 1, 1);
+        List<BlogEntity> r=new ArrayList<>(2);
+        {
+            BlogEntity blog = new BlogEntity();
+            blog.setId(indexStr);
+            blog.setCreateBy(indexStr);
+            blog.setCreateTime(begin.plusDays(1));
+            blog.setUpdateBy(indexStr);
+            blog.setUpdateTime(begin.plusDays(1));
+            blog.setTitle("title" + indexStr);
+            blog.setContent("content" + indexStr);
+            blog.setUrl("http://blog.easy-query.com/" + indexStr);
+            blog.setStar(500);
+            blog.setScore(new BigDecimal("1.2"));
+            blog.setStatus(1);
+            blog.setOrder(new BigDecimal("1.2").multiply(BigDecimal.valueOf(1)));
+            blog.setIsTop(false);
+            blog.setTop(false);
+            blog.setDeleted(false);
+            r.add(blog);
+        }
+        indexStr="300";
+        {
+            BlogEntity blog = new BlogEntity();
+            blog.setId(indexStr);
+            blog.setCreateBy(indexStr);
+            blog.setCreateTime(begin.plusDays(1));
+            blog.setUpdateBy(indexStr);
+            blog.setUpdateTime(begin.plusDays(1));
+            blog.setTitle("title" + indexStr);
+            blog.setContent("content" + indexStr);
+            blog.setUrl("http://blog.easy-query.com/" + indexStr);
+            blog.setStar(300);
+            blog.setScore(new BigDecimal("1.2"));
+            blog.setStatus(1);
+            blog.setOrder(new BigDecimal("1.2").multiply(BigDecimal.valueOf(1)));
+            blog.setIsTop(false);
+            blog.setTop(false);
+            blog.setDeleted(false);
+            r.add(blog);
+        }
+        indexStr="400";
+        {
+            BlogEntity blog = new BlogEntity();
+            blog.setId(indexStr);
+            blog.setCreateBy(indexStr);
+            blog.setCreateTime(begin.plusDays(1));
+            blog.setUpdateBy(indexStr);
+            blog.setUpdateTime(begin.plusDays(1));
+            blog.setTitle("title" + indexStr);
+            blog.setContent("content" + indexStr);
+            blog.setUrl("http://blog.easy-query.com/" + indexStr);
+            blog.setStar(400);
+            blog.setScore(new BigDecimal("1.2"));
+            blog.setStatus(1);
+            blog.setOrder(new BigDecimal("1.2").multiply(BigDecimal.valueOf(1)));
+            blog.setIsTop(false);
+            blog.setTop(false);
+            blog.setDeleted(false);
+            r.add(blog);
+        }
+        long l = easyQuery.insertable(r).executeRows();
+        Assert.assertEquals(3,l);
+        easyQuery.deletable(BlogEntity.class)
+                .disableLogicDelete()
+                .allowDeleteStatement(true)
+                .whereByIds(Arrays.asList("200","300","400")).executeRows();
     }
 }

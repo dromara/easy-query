@@ -54,8 +54,8 @@ public class EasyQueryOptionBuilder {
         this.executorQueueSize = 1024;
         this.multiConnWaitTimeoutMillis = 5000L;
         this.warningBusy = true;
-        this.insertBatchThreshold = 1000;
-        this.updateBatchThreshold = 1000;
+        this.insertBatchThreshold = 1024;
+        this.updateBatchThreshold = 1024;
         this.printSql = true;
         this.startTimeJob = false;
     }

@@ -13,7 +13,6 @@ import com.easy.query.core.basic.jdbc.types.EasyParameter;
 import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
 import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
 import com.easy.query.core.context.QueryRuntimeContext;
-import com.easy.query.core.enums.PropertyHandlerTypeEnum;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.exception.EasyQuerySQLStatementException;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
@@ -213,18 +212,21 @@ public class EasyJdbcExecutorUtil {
                 ps.addBatch();
                 if ((batchSize % BATCH_GROUP_COUNT) == 0) {
                     int[] ints = ps.executeBatch();
-                    r += ints.length;
+//                    r += ints.length;
+                    r += EasyCollectionUtil.sum(ints);
                     ps.clearBatch();
                 }
             }
             if ((batchSize % BATCH_GROUP_COUNT) != 0) {
                 int[] ints = ps.executeBatch();
-                r += ints.length;
+//                r += ints.length;
+                r += EasyCollectionUtil.sum(ints);
                 ps.clearBatch();
             }
             logResult(printSql, r, easyConnection, shardingPrint, replicaPrint);
             //如果需要自动填充并且存在自动填充列
             if (fillAutoIncrement && EasyCollectionUtil.isNotEmpty(incrementColumns)) {
+                assert ps != null;
                 ResultSet keysSet = ps.getGeneratedKeys();
                 int index = 0;
                 ColumnMetadata[] columnMetadatas = new ColumnMetadata[incrementColumns.size()];

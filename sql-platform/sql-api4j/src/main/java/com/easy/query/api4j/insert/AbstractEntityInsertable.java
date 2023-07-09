@@ -141,4 +141,10 @@ public abstract class AbstractEntityInsertable<T> implements EntityInsertable<T>
         });
         return this;
     }
+
+    @Override
+    public EntityInsertable<T> batch(boolean use) {
+        clientInsertable.batch(use);
+        return this;
+    }
 }

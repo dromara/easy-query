@@ -198,6 +198,18 @@ public abstract class AbstractClientInsertable<T> implements ClientInsertable<T>
     }
 
     @Override
+    public ClientInsertable<T> batch(boolean use) {
+        if(use){
+            entityInsertExpressionBuilder.getExpressionContext().getBehavior().removeBehavior(EasyBehaviorEnum.EXECUTE_NO_BATCH);
+            entityInsertExpressionBuilder.getExpressionContext().getBehavior().addBehavior(EasyBehaviorEnum.EXECUTE_BATCH);
+        }else{
+            entityInsertExpressionBuilder.getExpressionContext().getBehavior().removeBehavior(EasyBehaviorEnum.EXECUTE_BATCH);
+            entityInsertExpressionBuilder.getExpressionContext().getBehavior().addBehavior(EasyBehaviorEnum.EXECUTE_NO_BATCH);
+        }
+        return this;
+    }
+
+    @Override
     public String toSQL(Object entity) {
         return toSQL(entity, DefaultToSQLContext.defaultToSQLContext(entityInsertExpressionBuilder.getExpressionContext().getTableContext()));
     }

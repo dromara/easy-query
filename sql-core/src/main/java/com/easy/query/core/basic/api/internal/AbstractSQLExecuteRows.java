@@ -77,4 +77,14 @@ public abstract class AbstractSQLExecuteRows<TChain>  implements SQLExecuteExpec
         }
         return (TChain) this;
     }
+    public TChain batch(boolean use) {
+        if(use){
+            entityExpressionBuilder.getExpressionContext().getBehavior().removeBehavior(EasyBehaviorEnum.EXECUTE_NO_BATCH);
+            entityExpressionBuilder.getExpressionContext().getBehavior().addBehavior(EasyBehaviorEnum.EXECUTE_BATCH);
+        }else{
+            entityExpressionBuilder.getExpressionContext().getBehavior().removeBehavior(EasyBehaviorEnum.EXECUTE_BATCH);
+            entityExpressionBuilder.getExpressionContext().getBehavior().addBehavior(EasyBehaviorEnum.EXECUTE_NO_BATCH);
+        }
+        return (TChain) this;
+    }
 }

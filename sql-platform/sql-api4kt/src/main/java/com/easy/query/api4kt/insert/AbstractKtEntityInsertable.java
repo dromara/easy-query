@@ -140,4 +140,10 @@ public abstract class AbstractKtEntityInsertable<T> implements KtEntityInsertabl
         });
         return this;
     }
+
+    @Override
+    public KtEntityInsertable<T> batch(boolean use) {
+        clientInsertable.batch(use);
+        return this;
+    }
 }

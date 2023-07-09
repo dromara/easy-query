@@ -14,11 +14,11 @@ import java.util.function.Function;
  */
 public abstract class AbstractProxyExpressionUpdatable<TProxy extends ProxyEntity<TProxy, T>, T> implements ProxyExpressionUpdatable<TProxy, T> {
     private final TProxy proxy;
-    protected final ClientExpressionUpdatable<T> expressionObjectUpdatable;
+    protected final ClientExpressionUpdatable<T> clientExpressionUpdatable;
 
     public AbstractProxyExpressionUpdatable(TProxy proxy, ClientExpressionUpdatable<T> expressionObjectUpdatable) {
         this.proxy = proxy;
-        this.expressionObjectUpdatable = expressionObjectUpdatable;
+        this.clientExpressionUpdatable = expressionObjectUpdatable;
     }
 
     @Override
@@ -28,72 +28,78 @@ public abstract class AbstractProxyExpressionUpdatable<TProxy extends ProxyEntit
 
     @Override
     public ClientExpressionUpdatable<T> getClientUpdate() {
-        return expressionObjectUpdatable;
+        return clientExpressionUpdatable;
     }
 
     @Override
     public long executeRows() {
-        return expressionObjectUpdatable.executeRows();
+        return clientExpressionUpdatable.executeRows();
     }
 
     @Override
     public ProxyExpressionUpdatable<TProxy, T> withVersion(boolean condition, Object versionValue) {
         if (condition) {
-            expressionObjectUpdatable.withVersion(versionValue);
+            clientExpressionUpdatable.withVersion(versionValue);
         }
         return this;
     }
 
     @Override
     public ProxyExpressionUpdatable<TProxy, T> asTable(Function<String, String> tableNameAs) {
-        expressionObjectUpdatable.asTable(tableNameAs);
+        clientExpressionUpdatable.asTable(tableNameAs);
         return this;
     }
 
     @Override
     public ProxyExpressionUpdatable<TProxy, T> asSchema(Function<String, String> schemaAs) {
-        expressionObjectUpdatable.asSchema(schemaAs);
+        clientExpressionUpdatable.asSchema(schemaAs);
         return this;
     }
 
     @Override
     public ProxyExpressionUpdatable<TProxy, T> asAlias(String alias) {
-        expressionObjectUpdatable.asAlias(alias);
+        clientExpressionUpdatable.asAlias(alias);
         return this;
     }
 
     @Override
     public ProxyExpressionUpdatable<TProxy, T> noInterceptor() {
-        expressionObjectUpdatable.noInterceptor();
+        clientExpressionUpdatable.noInterceptor();
         return this;
     }
 
     @Override
     public ProxyExpressionUpdatable<TProxy, T> useInterceptor(String name) {
-        expressionObjectUpdatable.useInterceptor(name);
+        clientExpressionUpdatable.useInterceptor(name);
         return this;
     }
 
     @Override
     public ProxyExpressionUpdatable<TProxy, T> noInterceptor(String name) {
-        expressionObjectUpdatable.noInterceptor(name);
+        clientExpressionUpdatable.noInterceptor(name);
         return this;
     }
 
     @Override
     public ProxyExpressionUpdatable<TProxy, T> useInterceptor() {
-        expressionObjectUpdatable.useInterceptor();
+        clientExpressionUpdatable.useInterceptor();
         return this;
     }
 
     @Override
     public ProxyExpressionUpdatable<TProxy, T> useLogicDelete(boolean enable) {
-        expressionObjectUpdatable.useLogicDelete(enable);
+        clientExpressionUpdatable.useLogicDelete(enable);
         return this;
     }
 
     @Override
     public void executeRows(long expectRows, String msg, String code) {
-        expressionObjectUpdatable.executeRows(expectRows, msg, code);
+        clientExpressionUpdatable.executeRows(expectRows, msg, code);
+    }
+
+    @Override
+    public ProxyExpressionUpdatable<TProxy, T> batch(boolean use) {
+        clientExpressionUpdatable.batch(use);
+        return this;
     }
 }

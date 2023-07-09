@@ -90,4 +90,10 @@ public abstract class AbstractEntityUpdatable<T> implements EntityUpdatable<T> {
     public void executeRows(long expectRows, String msg, String code) {
         entityObjectUpdatable.executeRows(expectRows, msg, code);
     }
+
+    @Override
+    public EntityUpdatable<T> batch(boolean use) {
+        entityObjectUpdatable.batch(use);
+        return this;
+    }
 }
