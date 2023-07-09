@@ -313,9 +313,13 @@ public class EasyJdbcExecutorUtil {
 
                 boolean trackBean = EasyTrackUtil.trackBean(executorContext, entityClass);
                 if(trackBean){
+
                     TrackManager trackManager = executorContext.getRuntimeContext().getTrackManager();
-                    for (T entity : entities) {
-                        trackManager.getCurrentTrackContext().removeTracking(entity);
+                    boolean hasTracked = trackManager.getCurrentTrackContext().hasTracked(entityClass);
+                    if(hasTracked){
+                        for (T entity : entities) {
+                            trackManager.getCurrentTrackContext().removeTracking(entity);
+                        }
                     }
                 }
             }

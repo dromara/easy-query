@@ -114,4 +114,9 @@ public class DefaultEasyProxyQuery implements EasyProxyQuery{
     public boolean addTracking(Object entity) {
         return easyQueryClient.addTracking(entity);
     }
+
+    @Override
+    public boolean removeTracking(Object entity) {
+        return easyQueryClient.removeTracking(entity);
+    }
 }

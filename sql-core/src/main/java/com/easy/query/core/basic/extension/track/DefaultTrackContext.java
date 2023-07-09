@@ -83,7 +83,7 @@ public class DefaultTrackContext implements TrackContext {
         if (trackKey == null) {
             throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + ": current entity cant get track key,primary maybe null");
         }
-        ConcurrentHashMap<String, EntityState> entityStateMap = EasyMapUtil.computeIfAbsent(trackEntityMap,entityClass, o -> new ConcurrentHashMap<>());
+        ConcurrentHashMap<String, EntityState> entityStateMap = EasyMapUtil.computeIfAbsent(trackEntityMap, entityClass, o -> new ConcurrentHashMap<>());
         EntityState originalEntityState = entityStateMap.get(trackKey);
         if (originalEntityState != null) {
             //查询的情况下直接使用追踪后的数据
@@ -106,18 +106,35 @@ public class DefaultTrackContext implements TrackContext {
             throw new EasyQueryException("cant track null entity");
         }
 
+        if (trackEntityMap.isEmpty()) {
+            return true;
+        }
         Class<?> entityClass = entity.getClass();
+        ConcurrentHashMap<String, EntityState> entityStateMap = EasyMapUtil.computeIfAbsent(trackEntityMap, entityClass, o -> new ConcurrentHashMap<>());
+        if (entityStateMap.isEmpty()) {
+            return true;
+        }
         EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(entityClass);
         if (EasyStringUtil.isBlank(entityMetadata.getTableName())) {
             throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + ": is not table entity,cant tracking");
         }
+
         String trackKey = EasyTrackUtil.getTrackKey(entityMetadata, entity);
         if (trackKey == null) {
             throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + ": current entity cant get track key,primary maybe null");
         }
-        ConcurrentHashMap<String, EntityState> entityStateMap = EasyMapUtil.computeIfAbsent(trackEntityMap,entityClass, o -> new ConcurrentHashMap<>());
+        entityStateMap.remove(trackKey);
+        return  true;
+    }
 
-        return entityStateMap.remove(trackKey) != null;
+
+    @Override
+    public boolean hasTracked(Class<?> entityClass) {
+        ConcurrentHashMap<String, EntityState> entityStateMap = trackEntityMap.get(entityClass);
+        if (entityStateMap == null) {
+            return false;
+        }
+        return !entityStateMap.isEmpty();
     }
 
     /**
@@ -160,5 +177,4 @@ public class DefaultTrackContext implements TrackContext {
         }
 
     }
-
 }
