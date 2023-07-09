@@ -72,6 +72,10 @@ public abstract class BaseEntityExecutionCreator extends BaseExecutionCreator{
 
     @Override
     protected boolean useEntityBatch(){
+
+        if(entityExpressionBuilder.getExpressionContext().getBehavior().hasBehavior(EasyBehaviorEnum.EXECUTE_NO_BATCH)){
+            return false;
+        }
         int entitySize =entities.size();
         return entityExpressionBuilder.getExpressionContext().getBehavior().hasBehavior(EasyBehaviorEnum.EXECUTE_BATCH)
                 ||

@@ -327,6 +327,12 @@ public class InsertTest extends BaseTest {
         easyQuery.deletable(BlogEntity.class)
                 .disableLogicDelete()
                 .allowDeleteStatement(true)
-                .whereByIds(Arrays.asList("200","300","400")).executeRows();
+                .whereByIds(Arrays.asList("500","300","400")).executeRows();
+        long l2 = easyQuery.insertable(r).batch().executeRows();
+        Assert.assertEquals(-6,l2);
+        easyQuery.deletable(BlogEntity.class)
+                .disableLogicDelete()
+                .allowDeleteStatement(true)
+                .whereByIds(Arrays.asList("500","300","400")).executeRows();
     }
 }
