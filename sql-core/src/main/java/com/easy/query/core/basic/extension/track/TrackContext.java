@@ -31,6 +31,11 @@ public interface TrackContext {
 
     EntityState addQueryTracking(Object entity);
 
+    /**
+     * 只要不在当前上下文那么就是返回true
+     * @param entity
+     * @return
+     */
     boolean removeTracking(Object entity);
 
     void release();
