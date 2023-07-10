@@ -3,6 +3,7 @@ package com.easy.query.core.expression.builder.impl;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.EntityMetadataTypeEnum;
+import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.builder.AsSelector;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
@@ -18,6 +19,8 @@ import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
+import com.easy.query.core.util.EasyClassUtil;
+import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.Collection;
 import java.util.Objects;
@@ -84,7 +87,11 @@ public class AsSelectorImpl extends AbstractSelector<AsSelector> implements AsSe
             super.columnAll(table);
             return this;
         } else {
-            EntityTableExpressionBuilder tableBuilder = entityQueryExpressionBuilder.getTable(table.getIndex());
+
+            EntityTableExpressionBuilder tableBuilder = EasyCollectionUtil.firstOrDefault(entityQueryExpressionBuilder.getTables(), t -> Objects.equals(table, t.getEntityTable()), null);
+            if(tableBuilder==null){
+                throw new EasyQueryInvalidOperationException("not found table in expression context:"+ EasyClassUtil.getSimpleName(table.getEntityClass()));
+            }
             return columnAll(tableBuilder);
         }
     }
@@ -94,16 +101,16 @@ public class AsSelectorImpl extends AbstractSelector<AsSelector> implements AsSe
             columnAnonymousAll((AnonymousEntityTableExpressionBuilder) tableBuilder);
         } else {
             EntityMetadata entityMetadata = tableBuilder.getEntityMetadata();
-            Collection<String> properties = entityMetadata.getProperties();
-            for (String property : properties) {
-                ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(property);
+            Collection<ColumnMetadata> columns = entityMetadata.getColumns();
+            for (ColumnMetadata columnMetadata : columns) {
+
                 String columnName = columnMetadata.getName();
                 String aliasPropertyName = resultEntityMetadata.getPropertyNameOrNull(columnName);
                 if (aliasPropertyName != null) {
                     ColumnMetadata resultColumnMetadata = resultEntityMetadata.getColumnNotNull(aliasPropertyName);
                     String aliasColumnName = resultColumnMetadata.getName();
                     String alias = Objects.equals(columnName,aliasColumnName)?null:aliasColumnName;
-                    ColumnSegment columnSegment = sqlSegmentFactory.createColumnSegment(tableBuilder.getEntityTable(), property, runtimeContext, alias);
+                    ColumnSegment columnSegment = sqlSegmentFactory.createColumnSegment(tableBuilder.getEntityTable(), columnMetadata.getPropertyName(), runtimeContext, alias);
                     sqlBuilderSegment.append(columnSegment);
                 }
             }

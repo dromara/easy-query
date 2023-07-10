@@ -3,6 +3,7 @@ package com.easy.query.core.expression.builder.impl;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.exception.EasyQueryException;
+import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.ColumnAsConstSegment;
 import com.easy.query.core.expression.segment.ColumnSegment;
@@ -70,19 +71,24 @@ public abstract class AbstractSelector<TChain> {
     }
 
     public TChain columnAll(TableAvailable table) {
-        EntityTableExpressionBuilder tableExpressionBuilder = entityQueryExpressionBuilder.getTable(table.getIndex());
-        if (tableExpressionBuilder instanceof AnonymousEntityTableExpressionBuilder) {
-            columnAnonymousAll((AnonymousEntityTableExpressionBuilder) tableExpressionBuilder);
+        if (table.isAnonymous()) {
+            EntityTableExpressionBuilder entityTableExpressionBuilder = EasyCollectionUtil.firstOrDefault(entityQueryExpressionBuilder.getTables(), t -> Objects.equals(table, t.getEntityTable()), null);
+            if(entityTableExpressionBuilder==null){
+                throw new EasyQueryInvalidOperationException("not found table in expression context:"+EasyClassUtil.getSimpleName(table.getEntityClass()));
+            }
+            if(!(entityTableExpressionBuilder instanceof AnonymousEntityTableExpressionBuilder)){
+                throw new EasyQueryInvalidOperationException("anonymous table is not AnonymousEntityTableExpressionBuilder:"+EasyClassUtil.getSimpleName(table.getEntityClass()));
+            }
+            columnAnonymousAll((AnonymousEntityTableExpressionBuilder) entityTableExpressionBuilder);
         } else {
             boolean queryLargeColumn = expressionContext.getBehavior().hasBehavior(EasyBehaviorEnum.QUERY_LARGE_COLUMN);
-            EntityMetadata entityMetadata = tableExpressionBuilder.getEntityMetadata();
-            Collection<String> properties = entityMetadata.getProperties();
-            for (String property : properties) {
-                ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(property);
+            EntityMetadata entityMetadata = table.getEntityMetadata();
+            Collection<ColumnMetadata> columns = entityMetadata.getColumns();
+            for (ColumnMetadata columnMetadata : columns) {
                 if (!columnAllQueryLargeColumn(queryLargeColumn, columnMetadata)) {
                     continue;
                 }
-                ColumnSegment columnSegment = sqlSegmentFactory.createColumnSegment(table, property, runtimeContext, null);
+                ColumnSegment columnSegment = sqlSegmentFactory.createColumnSegment(table, columnMetadata.getPropertyName(), runtimeContext, null);
                 sqlBuilderSegment.append(columnSegment);
             }
         }

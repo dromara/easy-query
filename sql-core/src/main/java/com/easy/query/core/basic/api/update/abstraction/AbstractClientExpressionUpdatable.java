@@ -50,10 +50,10 @@ public abstract class AbstractClientExpressionUpdatable<T> extends AbstractSQLEx
         QueryRuntimeContext runtimeContext = entityUpdateExpressionBuilder.getRuntimeContext();
         entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(clazz);
         entityMetadata.checkTable();
-        EntityTableExpressionBuilder table = runtimeContext.getExpressionBuilderFactory().createEntityTableExpressionBuilder(entityMetadata, 0, MultiTableTypeEnum.NONE, runtimeContext);
+        EntityTableExpressionBuilder table = runtimeContext.getExpressionBuilderFactory().createEntityTableExpressionBuilder(entityMetadata, MultiTableTypeEnum.NONE, runtimeContext);
         this.table = table.getEntityTable();
         this.entityUpdateExpressionBuilder.addSQLEntityTableExpression(table);
-        columnSetter = new ColumnSetterImpl<>(0, entityUpdateExpressionBuilder, entityUpdateExpressionBuilder.getSetColumns());
+        columnSetter = new ColumnSetterImpl<>(this.table, entityUpdateExpressionBuilder, entityUpdateExpressionBuilder.getSetColumns());
     }
 
     @Override
@@ -99,7 +99,7 @@ public abstract class AbstractClientExpressionUpdatable<T> extends AbstractSQLEx
     @Override
     public ClientExpressionUpdatable<T> where(boolean condition, SQLExpression1<WherePredicate<T>> whereExpression) {
         if (condition) {
-            WherePredicateImpl<T> sqlPredicate = new WherePredicateImpl<>(table, new FilterImpl(entityUpdateExpressionBuilder.getRuntimeContext(),entityUpdateExpressionBuilder.getExpressionContext(), entityUpdateExpressionBuilder.getWhere(),false));
+            WherePredicateImpl<T> sqlPredicate = new WherePredicateImpl<>(table, new FilterImpl(entityUpdateExpressionBuilder.getRuntimeContext(), entityUpdateExpressionBuilder.getExpressionContext(), entityUpdateExpressionBuilder.getWhere(), false));
             whereExpression.apply(sqlPredicate);
         }
         return this;

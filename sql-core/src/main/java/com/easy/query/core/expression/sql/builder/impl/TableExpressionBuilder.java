@@ -108,11 +108,6 @@ public class TableExpressionBuilder implements EntityTableExpressionBuilder {
     }
 
     @Override
-    public int getIndex() {
-        return entityTable.getIndex();
-    }
-
-    @Override
     public TableAvailable getEntityTable() {
         return entityTable;
     }

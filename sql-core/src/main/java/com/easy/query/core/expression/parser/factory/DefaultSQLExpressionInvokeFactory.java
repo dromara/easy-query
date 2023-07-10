@@ -3,6 +3,7 @@ package com.easy.query.core.expression.parser.factory;
 import com.easy.query.core.basic.api.select.provider.SQLExpressionProvider;
 import com.easy.query.core.basic.api.select.provider.SQLExpressionProviderImpl;
 import com.easy.query.core.expression.builder.impl.FilterImpl;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnSetter;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.parser.core.base.impl.ColumnSetterImpl;
@@ -20,8 +21,8 @@ import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
  */
 public class DefaultSQLExpressionInvokeFactory implements SQLExpressionInvokeFactory {
     @Override
-    public <T1> WherePredicate<T1> createWherePredicate(int index, EntityExpressionBuilder sqlEntityExpression, PredicateSegment predicateSegment) {
-        return new WherePredicateImpl<>(sqlEntityExpression.getTable(index).getEntityTable(), new FilterImpl(sqlEntityExpression.getRuntimeContext(), sqlEntityExpression.getExpressionContext(), predicateSegment, false));
+    public <T1> WherePredicate<T1> createWherePredicate(TableAvailable table, EntityExpressionBuilder sqlEntityExpression, PredicateSegment predicateSegment) {
+        return new WherePredicateImpl<>(table, new FilterImpl(sqlEntityExpression.getRuntimeContext(), sqlEntityExpression.getExpressionContext(), predicateSegment, false));
 //        return new SQLWherePredicateImpl<>(index,sqlEntityExpression,predicateSegment);
     }
 
@@ -46,8 +47,8 @@ public class DefaultSQLExpressionInvokeFactory implements SQLExpressionInvokeFac
 //    }
 
     @Override
-    public <T1> ColumnSetter<T1> createColumnSetter(int index, EntityExpressionBuilder sqlEntityExpression, SQLBuilderSegment sqlSegmentBuilder) {
-        return new ColumnSetterImpl<T1>(index, sqlEntityExpression, sqlSegmentBuilder);
+    public <T1> ColumnSetter<T1> createColumnSetter(TableAvailable table, EntityExpressionBuilder sqlEntityExpression, SQLBuilderSegment sqlSegmentBuilder) {
+        return new ColumnSetterImpl<T1>(table, sqlEntityExpression, sqlSegmentBuilder);
 //        return new SQLColumnSetterImpl<T1>(index,sqlEntityExpression,sqlSegmentBuilder);
     }
 

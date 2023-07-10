@@ -176,7 +176,7 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
     protected SQLBuilderSegment buildSetSQLSegment(EntityTableExpressionBuilder table) {
         EntityMetadata entityMetadata = table.getEntityMetadata();
         SQLBuilderSegment updateSet = getSetColumns().cloneSQLBuilder();
-        ColumnSetter<Object> sqlColumnSetter = getRuntimeContext().getSQLExpressionInvokeFactory().createColumnSetter(0, this, updateSet);
+        ColumnSetter<Object> sqlColumnSetter = getRuntimeContext().getSQLExpressionInvokeFactory().createColumnSetter(table.getEntityTable(), this, updateSet);
 
         //如果更新拦截器不为空
         List<UpdateSetInterceptor> updateSetInterceptors = entityMetadata.getUpdateSetInterceptors();
@@ -226,7 +226,7 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
             if (entityTrackProperty != null) {
 
                 SQLExpressionInvokeFactory sqlExpressionInvokeFactory = runtimeContext.getSQLExpressionInvokeFactory();
-                WherePredicate<Object> wherePredicate = sqlExpressionInvokeFactory.createWherePredicate(tableExpressionBuilder.getIndex(), this, where);
+                WherePredicate<Object> wherePredicate = sqlExpressionInvokeFactory.createWherePredicate(tableExpressionBuilder.getEntityTable(), this, where);
                 //设置where
                 for (Map.Entry<String, TrackDiffEntry> propertyTrackDiff : entityTrackProperty.getDiffProperties().entrySet()) {
                     String propertyName = propertyTrackDiff.getKey();
@@ -270,7 +270,7 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
         //查询其他所有列除了在where里面的
         Collection<String> properties = entityMetadata.getProperties();
         boolean hasSetIgnoreColumns = EasySQLSegmentUtil.isNotEmpty(setIgnoreColumns);
-        ColumnSetter<Object> columnSetter = runtimeContext.getSQLExpressionInvokeFactory().createColumnSetter(tableExpressionBuilder.getIndex(), this, updateSetSQLBuilderSegment);
+        ColumnSetter<Object> columnSetter = runtimeContext.getSQLExpressionInvokeFactory().createColumnSetter(tableExpressionBuilder.getEntityTable(), this, updateSetSQLBuilderSegment);
         for (String property : properties) {
             ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(property);
             if (columnMetadata.isPrimary() || columnMetadata.isUpdateIgnore() || columnMetadata.isVersion()) {

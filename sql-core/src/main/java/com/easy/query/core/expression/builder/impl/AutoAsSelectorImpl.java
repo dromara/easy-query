@@ -3,6 +3,7 @@ package com.easy.query.core.expression.builder.impl;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.EasyBehaviorEnum;
+import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.builder.AsSelector;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
@@ -15,6 +16,8 @@ import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
+import com.easy.query.core.util.EasyClassUtil;
+import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.Collection;
 import java.util.Objects;
@@ -68,7 +71,11 @@ public class AutoAsSelectorImpl  extends AbstractSelector<AsSelector> implements
             super.columnAll(table);
             return this;
         } else {
-            EntityTableExpressionBuilder tableExpressionBuilder = entityQueryExpressionBuilder.getTable(table.getIndex());
+
+            EntityTableExpressionBuilder tableExpressionBuilder = EasyCollectionUtil.firstOrDefault(entityQueryExpressionBuilder.getTables(), t -> Objects.equals(table, t.getEntityTable()), null);
+            if(tableExpressionBuilder==null){
+                throw new EasyQueryInvalidOperationException("not found table in expression context:"+ EasyClassUtil.getSimpleName(table.getEntityClass()));
+            }
             return columnAll(tableExpressionBuilder);
         }
     }

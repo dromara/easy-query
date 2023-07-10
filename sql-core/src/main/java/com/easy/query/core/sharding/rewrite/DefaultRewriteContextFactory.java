@@ -128,7 +128,7 @@ public class DefaultRewriteContextFactory implements RewriteContextFactory {
                     }
                     ColumnSegment columnSegment = (ColumnSegment) sqlSegment;
                     //
-                    if (groupColumnSegment.getTable().getIndex() == columnSegment.getTable().getIndex()) {
+                    if (Objects.equals(groupColumnSegment.getTable(),columnSegment.getTable())) {
                         if (Objects.equals(groupColumnSegment.getPropertyName(), columnSegment.getPropertyName())) {
                             if(addToProjection){
                                 addToProjection = false;

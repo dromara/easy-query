@@ -24,12 +24,12 @@ import java.util.List;
  */
 public interface ExpressionBuilderFactory {
     ExpressionContext createExpressionContext(QueryRuntimeContext runtimeContext);
-   default EntityTableExpressionBuilder createEntityTableExpressionBuilder(EntityMetadata entityMetadata, int index, MultiTableTypeEnum multiTableType, QueryRuntimeContext runtimeContext){
-       return createEntityTableExpressionBuilder(new EntityTableAvailable(index,entityMetadata,false),multiTableType,runtimeContext);
+   default EntityTableExpressionBuilder createEntityTableExpressionBuilder(EntityMetadata entityMetadata, MultiTableTypeEnum multiTableType, QueryRuntimeContext runtimeContext){
+       return createEntityTableExpressionBuilder(new EntityTableAvailable(entityMetadata,false),multiTableType,runtimeContext);
    }
     EntityTableExpressionBuilder createEntityTableExpressionBuilder(TableAvailable tableAvailable, MultiTableTypeEnum multiTableType, QueryRuntimeContext runtimeContext);
-   default EntityTableExpressionBuilder createAnonymousEntityTableExpressionBuilder(EntityMetadata entityMetadata, int index, MultiTableTypeEnum multiTableType, EntityQueryExpressionBuilder entityQueryExpressionBuilder){
-       return createAnonymousEntityTableExpressionBuilder(new EntityTableAvailable(index,entityMetadata,true),multiTableType,entityQueryExpressionBuilder);
+   default EntityTableExpressionBuilder createAnonymousEntityTableExpressionBuilder(EntityMetadata entityMetadata,MultiTableTypeEnum multiTableType, EntityQueryExpressionBuilder entityQueryExpressionBuilder){
+       return createAnonymousEntityTableExpressionBuilder(new EntityTableAvailable(entityMetadata,true),multiTableType,entityQueryExpressionBuilder);
    }
     EntityTableExpressionBuilder createAnonymousEntityTableExpressionBuilder(TableAvailable tableAvailable, MultiTableTypeEnum multiTableType, EntityQueryExpressionBuilder entityQueryExpressionBuilder);
     EntityQueryExpressionBuilder createEntityQueryExpressionBuilder(ExpressionContext sqlExpressionContext);

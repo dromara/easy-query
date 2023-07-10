@@ -46,11 +46,6 @@ public class TableSQLExpressionImpl implements EntityTableSQLExpression {
     }
 
     @Override
-    public int getIndex() {
-        return entityTable.getIndex();
-    }
-
-    @Override
     public TableAvailable getEntityTable() {
         return entityTable;
     }

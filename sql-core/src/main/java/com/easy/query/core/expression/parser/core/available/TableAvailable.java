@@ -8,7 +8,7 @@ import com.easy.query.core.metadata.EntityMetadata;
  *
  * @author xuejiaming
  */
-public interface TableAvailable extends IndexAvailable{
+public interface TableAvailable{
     Class<?> getEntityClass();
     EntityMetadata getEntityMetadata();
     boolean hasSchema();

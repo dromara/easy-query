@@ -83,7 +83,7 @@ public class DeleteExpressionBuilder extends AbstractPredicateEntityExpressionBu
             if (logicDeletedSQLExpression != null) {
                 UpdateSetSQLBuilderSegment setSQLSegmentBuilder = new UpdateSetSQLBuilderSegment();
                 SQLExpressionInvokeFactory easyQueryLambdaFactory = getRuntimeContext().getSQLExpressionInvokeFactory();
-                ColumnSetter<Object> sqlColumnSetter = easyQueryLambdaFactory.createColumnSetter(table.getIndex(), this, setSQLSegmentBuilder);
+                ColumnSetter<Object> sqlColumnSetter = easyQueryLambdaFactory.createColumnSetter(table.getEntityTable(), this, setSQLSegmentBuilder);
                 logicDeletedSQLExpression.apply(sqlColumnSetter);//获取set的值
                 //todo 非表达式添加行版本信息
                 if(entityMetadata.hasVersionColumn()){
