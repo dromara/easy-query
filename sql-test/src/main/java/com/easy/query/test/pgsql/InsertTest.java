@@ -79,6 +79,18 @@ public class InsertTest extends PgSQLBaseTest {
     }
 
     @Test
+    public void insertDuplicateKeyIgnore2(){
+
+        TopicAuto topicAuto = new TopicAuto();
+        topicAuto.setStars(999);
+        topicAuto.setTitle("title" + 999);
+        topicAuto.setCreateTime(LocalDateTime.now().plusDays(99));
+        Assert.assertNull(topicAuto.getId());
+        EntityInsertable<TopicAuto> insertable = easyQuery.insertable(topicAuto).onConflictDoNothing();
+        String sql = insertable.toSQL(topicAuto);
+        Assert.assertEquals("INSERT INTO \"t_topic_auto\" (\"stars\",\"title\",\"create_time\") VALUES (?,?,?) ON CONFLICT DO NOTHING",sql);
+    }
+    @Test
     public void insertDuplicateKeyUpdate2(){
 
         TopicAuto topicAuto = new TopicAuto();

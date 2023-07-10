@@ -36,6 +36,10 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jdbc</artifactId>
         </dependency>
         <!--druid依赖-->
@@ -70,19 +74,19 @@
         <dependency>
             <groupId>com.easy-query</groupId>
             <artifactId>sql-core</artifactId>
-            <version>1.1.22</version>
+            <version>1.1.23</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.easy-query</groupId>
             <artifactId>sql-api4j</artifactId>
-            <version>1.1.22</version>
+            <version>1.1.23</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.easy-query</groupId>
             <artifactId>sql-springboot-starter</artifactId>
-            <version>1.1.22</version>
+            <version>1.1.23</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

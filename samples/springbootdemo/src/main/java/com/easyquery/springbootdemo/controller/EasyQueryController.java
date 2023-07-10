@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Arrays;
@@ -27,7 +28,7 @@ public class EasyQueryController {
 
     @GetMapping("/sayHello")
     @EasyQueryTrack
-    public Object sayHello() {
+    public Object sayHello(@RequestParam(value = "aa",required = false) String aa) {
         TestUserMysql0 testUserMysql = easyQuery.queryable(TestUserMysql0.class)
                 .firstOrNull();
         return testUserMysql;

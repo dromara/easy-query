@@ -1,2 +1,3 @@
 com.easy.query.sql.starter.EasyQueryStarterAutoConfiguration
 com.easy.query.sql.starter.EasyQueryStarterInitializeAutoConfiguration
+com.easy.query.sql.starter.EasyQueryTrackAopConfiguration

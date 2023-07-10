@@ -233,7 +233,17 @@ public class InsertTest extends BaseTest {
                 .onDuplicateKeyUpdate()
                 .executeRows();
         Assert.assertEquals(1,l);
+        long l3 = easyQuery.insertable(blog)
+                .onDuplicateKeyUpdate(t->t.column(BlogEntity::getStar).column(BlogEntity::getContent))
+                .executeRows();
 
+        Assert.assertEquals(1,l3);
+        blog.setContent("xxx");
+        long l4 = easyQuery.insertable(blog)
+                .onDuplicateKeyUpdate(t->t.column(BlogEntity::getStar).column(BlogEntity::getContent))
+                .executeRows();
+
+        Assert.assertEquals(2,l4);
         long l1 = easyQuery.insertable(blog)
                 .onDuplicateKeyIgnore()
                 .executeRows();
