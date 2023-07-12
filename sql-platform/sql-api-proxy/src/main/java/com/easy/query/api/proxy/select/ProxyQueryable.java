@@ -185,6 +185,9 @@ public interface ProxyQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> ex
     }
 
     ProxyQueryable<T1Proxy, T1> where(boolean condition, SQLExpression2<ProxyFilter, T1Proxy> whereExpression);
+//    default ProxyQueryable<T1Proxy, T1> where1(SQLFuncExpression1<T1Proxy, SQLPredicate> whereExpression){
+//        return this;
+//    }
 
     /**
      * 根据id主键查询

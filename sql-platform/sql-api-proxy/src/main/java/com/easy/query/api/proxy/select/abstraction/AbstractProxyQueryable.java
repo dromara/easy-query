@@ -175,6 +175,15 @@ public abstract class AbstractProxyQueryable<T1Proxy extends ProxyEntity<T1Proxy
         return this;
     }
 
+//    @Override
+//    public ProxyQueryable<T1Proxy, T1> where1(SQLFuncExpression1<T1Proxy, SQLPredicate> whereExpression) {
+//        SQLPredicate sqlPredicate = whereExpression.apply(get1Proxy());
+//        entityQueryable.where(wherePredicate -> {
+//            sqlPredicate.accept(wherePredicate.getFilter());
+//        });
+//        return this;
+//    }
+
     @Override
     public ProxyQueryable<T1Proxy, T1> whereById(boolean condition, Object id) {
         if (condition) {

@@ -484,6 +484,24 @@ public class QueryTest3 extends BaseTest {
 
     @Test
     public void testProxy2() {
+//        String sqlz= easyProxyQuery
+//                .queryable(TOPIC_TEST_PROXY)
+//                .where1(t->t.id().eq("123").and(t.title().ge("432")).and(t.id().ge("432")))
+//                .orderByAsc((c,t)->c.column(t.id()))
+//                .select((selector, t) -> selector.columns(t.id(), t.title()))
+//                .toSQL();
+//        String sqlz1= easyProxyQuery
+//                .queryable(TOPIC_TEST_PROXY)
+//                .where1(t->t.id().eq("123").and(t.title().ge("432").or(t.id().ge("432")).or(t.id().eq(t.title()).and(t.id().eq("666")))))
+//                .orderByAsc((c,t)->c.column(t.id()))
+//                .select((selector, t) -> selector.columns(t.id(), t.title()))
+//                .toSQL();
+//        String sqlz2= easyProxyQuery
+//                .queryable(TOPIC_TEST_PROXY)
+//                .where1(t->t.id().eq(false,"123").and(t.title().ge("432").or(t.id().eq(false,"432")).or(t.id().eq(t.title()).and(t.id().eq(false,"666")))))
+//                .orderByAsc((c,t)->c.column(t.id()))
+//                .select((selector, t) -> selector.columns(t.id(), t.title()))
+//                .toSQL();
 
         String sqlx= easyProxyQuery
                 .queryable(TOPIC_TEST_PROXY)
