@@ -197,7 +197,7 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
                 easyQuerySQLExpression.setProjects(projects);
             }
         } else {
-            easyQuerySQLExpression.setProjects(getProjects());
+            easyQuerySQLExpression.setProjects(getProjects().cloneSQLBuilder());
         }
         easyQuerySQLExpression.getTables().add((EntityTableSQLExpression) toTableExpressionSQL(firstTable, false));
         while (iterator.hasNext()) {
@@ -213,12 +213,12 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
         if (where != null && where.isNotEmpty()) {
             easyQuerySQLExpression.setWhere(where);
         }
-        easyQuerySQLExpression.setGroup(getGroup());
-        easyQuerySQLExpression.setHaving(getHaving());
-        easyQuerySQLExpression.setOrder(getOrder());
+        easyQuerySQLExpression.setGroup(getGroup().cloneSQLBuilder());
+        easyQuerySQLExpression.setHaving(getHaving().clonePredicateSegment());
+        easyQuerySQLExpression.setOrder(getOrder().cloneSQLBuilder());
         easyQuerySQLExpression.setOffset(getOffset());
         easyQuerySQLExpression.setRows(getRows());
-        easyQuerySQLExpression.setAllPredicate(getAllPredicate());
+        easyQuerySQLExpression.setAllPredicate(getAllPredicate().clonePredicateSegment());
         return easyQuerySQLExpression;
     }
 

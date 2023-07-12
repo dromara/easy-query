@@ -100,7 +100,7 @@ public final class EasyStreamResultUtil {
         ResultSetMetaData rsmd = streamResult.getMetaData();
         int columnCount = rsmd.getColumnCount();
         if (columnCount != 1) {
-            throw new SQLException("返回类型:" + resultMetadata.getResultClass() + ",期望返回一列");
+            throw new SQLException("result set column count:" + EasyClassUtil.getSimpleName(resultMetadata.getResultClass()) + ",expect one column");
         }
         EasyResultSet easyResultSet = new EasyResultSet(streamResult);
         easyResultSet.setIndex(0);

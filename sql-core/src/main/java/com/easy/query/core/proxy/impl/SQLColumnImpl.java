@@ -1,7 +1,6 @@
 package com.easy.query.core.proxy.impl;
 
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.proxy.BeanProxy;
 import com.easy.query.core.proxy.SQLColumn;
 
 /**

@@ -47,6 +47,7 @@ public interface ProxyQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> ex
 
 
     ClientQueryable<T1> getEntityQueryable();
+
     <TRProxy extends ProxyEntity<TRProxy, TR>, TR> List<TR> toList(TRProxy trProxy);
 
     @Override
@@ -279,6 +280,25 @@ public interface ProxyQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> ex
 
     ProxyQueryable<T1Proxy, T1> orderBy(boolean condition, SQLExpression2<ProxyOrderSelector, T1Proxy> selectExpression, boolean asc);
 
+    // region single order
+    default ProxyQueryable<T1Proxy, T1> orderByAsc(SQLFuncExpression1<T1Proxy, SQLColumn<?>> selectExpression) {
+        return orderByAsc(true, selectExpression);
+    }
+
+    default ProxyQueryable<T1Proxy, T1> orderByAsc(boolean condition, SQLFuncExpression1<T1Proxy, SQLColumn<?>> selectExpression) {
+        return orderBy(true, selectExpression, true);
+    }
+    default ProxyQueryable<T1Proxy, T1> orderByDesc(SQLFuncExpression1<T1Proxy, SQLColumn<?>> selectExpression) {
+        return orderByDesc(true, selectExpression);
+    }
+
+    default ProxyQueryable<T1Proxy, T1> orderByDesc(boolean condition, SQLFuncExpression1<T1Proxy, SQLColumn<?>> selectExpression) {
+        return orderBy(true, selectExpression, false);
+    }
+
+    ProxyQueryable<T1Proxy, T1> orderBy(boolean condition, SQLFuncExpression1<T1Proxy, SQLColumn<?>> selectExpression, boolean asc);
+// endregion
+
     /**
      * @param configuration
      * @return
@@ -290,7 +310,7 @@ public interface ProxyQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> ex
 
     /**
      * @param condition
-     * @param configuration
+     * @param objectSort
      * @return
      * @throws EasyQueryOrderByInvalidOperationException 当配置{@link ObjectSort} 为{@code  DynamicModeEnum.STRICT}排序设置的属性不存在当前排序对象里面或者当前查询对象无法获取
      */
