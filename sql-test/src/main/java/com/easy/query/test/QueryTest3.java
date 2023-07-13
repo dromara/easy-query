@@ -498,7 +498,17 @@ public class QueryTest3 extends BaseTest {
 //                .toSQL();
 //        String sqlz2= easyProxyQuery
 //                .queryable(TOPIC_TEST_PROXY)
-//                .where1(t->t.id().eq(false,"123").and(t.title().ge("432").or(t.id().eq(false,"432")).or(t.id().eq(t.title()).and(t.id().eq(false,"666")))))
+//                .where1(t->t.id().eq(false,"123")
+//                        .and(
+//                                t.title().ge("432")
+//                                .or(t.id().eq(false,"432"))
+//
+//                                .or(
+//                                        t.id().eq(t.title())
+//                                                .and(t.id().eq(false,"666"))
+//                                )
+//                        )
+//                )
 //                .orderByAsc((c,t)->c.column(t.id()))
 //                .select((selector, t) -> selector.columns(t.id(), t.title()))
 //                .toSQL();

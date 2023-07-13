@@ -12,5 +12,4 @@
 //    SQLPredicate and(SQLPredicate predicate);
 //    SQLPredicate or(SQLPredicate predicate);
 //    void accept(Filter f);
-//
 //}

@@ -10,5 +10,4 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
  */
 public interface TableColumn {
     TableAvailable getTable();
-    String value();
 }
