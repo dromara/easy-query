@@ -90,6 +90,7 @@ public class EasyQueryProperties {
     private int updateBatchThreshold = 1024;
     private boolean printSql = true;
     private boolean startTimeJob = false;
+    private boolean defaultTrack = false;
 
     public Boolean getEnable() {
         return enable;
@@ -285,6 +286,14 @@ public class EasyQueryProperties {
 
     public void setStartTimeJob(boolean startTimeJob) {
         this.startTimeJob = startTimeJob;
+    }
+
+    public boolean isDefaultTrack() {
+        return defaultTrack;
+    }
+
+    public void setDefaultTrack(boolean defaultTrack) {
+        this.defaultTrack = defaultTrack;
     }
 
     public EasyQueryProperties() {

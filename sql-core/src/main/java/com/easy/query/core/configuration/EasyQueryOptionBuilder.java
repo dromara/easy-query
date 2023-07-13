@@ -36,6 +36,7 @@ public class EasyQueryOptionBuilder {
     private int updateBatchThreshold;
     private boolean printSql;
     private boolean startTimeJob;
+    private boolean defaultTrack;
 
     public EasyQueryOptionBuilder() {
         this.deleteThrowError = true;
@@ -58,6 +59,7 @@ public class EasyQueryOptionBuilder {
         this.updateBatchThreshold = 1024;
         this.printSql = true;
         this.startTimeJob = false;
+        this.defaultTrack = false;
     }
 
     public void setDeleteThrowError(boolean deleteThrowError) {
@@ -159,6 +161,10 @@ public class EasyQueryOptionBuilder {
         this.startTimeJob = startTimeJob;
     }
 
+    public void setDefaultTrack(boolean defaultTrack) {
+        this.defaultTrack = defaultTrack;
+    }
+
     public EasyQueryOption build() {
         return new EasyQueryOption(this.deleteThrowError,
                 this.insertStrategy,
@@ -181,6 +187,7 @@ public class EasyQueryOptionBuilder {
                 this.insertBatchThreshold,
                 this.updateBatchThreshold,
                 this.printSql,
-                this.startTimeJob);
+                this.startTimeJob,
+                this.defaultTrack);
     }
 }

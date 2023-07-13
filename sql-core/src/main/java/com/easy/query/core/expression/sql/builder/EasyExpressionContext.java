@@ -1,6 +1,7 @@
 package com.easy.query.core.expression.sql.builder;
 
 import com.easy.query.core.basic.extension.interceptor.Interceptor;
+import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.EasyBehaviorEnum;
@@ -44,8 +45,12 @@ public class EasyExpressionContext implements ExpressionContext {
 //        params = new ArrayList<>();
         //如果他是不查询大列的就去掉
         this.easyBehavior = new EasyBehavior();
-        if (!queryConfiguration.getEasyQueryOption().isQueryLargeColumn()) {
+        EasyQueryOption easyQueryOption = queryConfiguration.getEasyQueryOption();
+        if (!easyQueryOption.isQueryLargeColumn()) {
             easyBehavior.removeBehavior(EasyBehaviorEnum.QUERY_LARGE_COLUMN);
+        }
+        if(easyQueryOption.isDefaultTrack()){
+            easyBehavior.addBehavior(EasyBehaviorEnum.USE_TRACKING);
         }
         this.expressionContextInterceptor=new ExpressionContextInterceptor();
         this.tableContext = new TableContext();

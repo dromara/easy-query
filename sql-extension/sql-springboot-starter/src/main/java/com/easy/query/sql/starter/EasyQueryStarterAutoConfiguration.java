@@ -168,6 +168,7 @@ public class EasyQueryStarterAutoConfiguration {
                     builder.setUpdateBatchThreshold(easyQueryProperties.getUpdateBatchThreshold());
                     builder.setPrintSql(easyQueryProperties.isPrintSql());
                     builder.setStartTimeJob(easyQueryProperties.isStartTimeJob());
+                    builder.setDefaultTrack(easyQueryProperties.isDefaultTrack());
                 })
                 .replaceService(NameConversion.class, nameConversion)
                 .replaceService(ConnectionManager.class, SpringConnectionManager.class)
