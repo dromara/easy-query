@@ -1,8 +1,6 @@
 package com.easy.query.core.basic.api.select.abstraction;
 
 import com.easy.query.core.annotation.EasyWhereCondition;
-import com.easy.query.core.api.dynamic.condition.ObjectQuery;
-import com.easy.query.core.api.dynamic.condition.internal.ObjectQueryBuilderImpl;
 import com.easy.query.core.api.dynamic.sort.ObjectSort;
 import com.easy.query.core.api.dynamic.sort.internal.ObjectSortBuilderImpl;
 import com.easy.query.core.api.pagination.EasyPageResult;
@@ -10,14 +8,15 @@ import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.select.ClientQueryable2;
 import com.easy.query.core.basic.api.select.provider.SQLExpressionProvider;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
-import com.easy.query.core.basic.jdbc.executor.impl.def.EntityResultMetadata;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
+import com.easy.query.core.basic.jdbc.executor.impl.def.EntityResultMetadata;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.basic.pagination.EasyPageResultProvider;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.MultiTableTypeEnum;
+import com.easy.query.core.enums.SQLLikeEnum;
 import com.easy.query.core.enums.SQLPredicateCompareEnum;
 import com.easy.query.core.enums.SQLUnionEnum;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
@@ -25,6 +24,7 @@ import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.exception.EasyQueryFirstOrNotNullException;
 import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
 import com.easy.query.core.exception.EasyQueryWhereInvalidOperationException;
+import com.easy.query.core.expression.builder.impl.FilterImpl;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression2;
@@ -427,17 +427,6 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
 
                 List<Field> allFields = EasyClassUtil.getAllFields(object.getClass());
 
-
-                ObjectQueryBuilderImpl objectObjectQueryBuilder = new ObjectQueryBuilderImpl();
-                boolean strictMode = true;
-                if (object instanceof ObjectQuery) {
-                    ObjectQuery configuration = (ObjectQuery) object;
-                    configuration.configure(objectObjectQueryBuilder);
-                    strictMode = configuration.useStrictMode();
-                }
-                Map<String, String> propertyQueryMapping = objectObjectQueryBuilder.build();
-                EntityMetadataManager entityMetadataManager = entityQueryExpressionBuilder.getRuntimeContext().getEntityMetadataManager();
-                EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(queryClass());
                 for (Field field : allFields) {
                     boolean accessible = field.isAccessible();
 
@@ -447,10 +436,19 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                         if (q == null) {
                             continue;
                         }
+                        boolean strictMode = q.strict();
+                        int tableIndex = q.tableIndex();
+                        if(tableIndex<0||tableIndex>entityQueryExpressionBuilder.getTables().size()-1){
+                            if(strictMode){
+                                throw new EasyQueryWhereInvalidOperationException("table index:" + tableIndex + " not found in query context");
+                            }
+                            continue;
+                        }
+                        TableAvailable entityTable = entityQueryExpressionBuilder.getTable(tableIndex).getEntityTable();
+                        EntityMetadata entityMetadata = entityTable.getEntityMetadata();
+
                         //获取映射的对象名称
-                        String entityPropertyName = propertyQueryMapping.get(field.getName());
-                        String objectPropertyName = EasyStringUtil.isNotBlank(q.propName()) ? q.propName() : field.getName();
-                        String queryPropertyName = entityPropertyName != null ? entityPropertyName : objectPropertyName;
+                        String queryPropertyName = EasyStringUtil.isNotBlank(q.propName()) ? q.propName() : field.getName();
 
                         ColumnMetadata columnMetadata = entityMetadata.getColumnOrNull(queryPropertyName);
                         if (columnMetadata == null) {
@@ -460,10 +458,8 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                             continue;
                         }
 
-                        WherePredicate<?> sqlPredicate = getSQLExpressionProvider1().getWherePredicate();
-                        if (sqlPredicate == null) {
-                            throw new EasyQueryWhereInvalidOperationException("not found sql predicate,entity class:" + EasyClassUtil.getSimpleName(queryClass()));
-                        }
+                        FilterImpl filter = new FilterImpl(entityQueryExpressionBuilder.getRuntimeContext(), entityQueryExpressionBuilder.getExpressionContext(), entityQueryExpressionBuilder.getWhere(), false);
+
                         Object val = field.get(object);
 
                         if (Objects.isNull(val)) {
@@ -477,57 +473,57 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
 
                         switch (q.type()) {
                             case EQUAL:
-                                sqlPredicate.eq(queryPropertyName, val);
+                                filter.eq(entityTable,queryPropertyName, val);
                                 break;
                             case GREATER_THAN:
                             case RANGE_LEFT_OPEN:
-                                sqlPredicate.gt(queryPropertyName, val);
+                                filter.gt(entityTable,queryPropertyName, val);
                                 break;
                             case LESS_THAN:
                             case RANGE_RIGHT_OPEN:
-                                sqlPredicate.lt(queryPropertyName, val);
+                                filter.lt(entityTable,queryPropertyName, val);
                                 break;
                             case LIKE:
-                                sqlPredicate.like(queryPropertyName, val);
+                                filter.like(entityTable,queryPropertyName, val, SQLLikeEnum.LIKE_PERCENT_ALL);
                                 break;
                             case LIKE_MATCH_LEFT:
-                                sqlPredicate.likeMatchLeft(queryPropertyName, val);
+                                filter.like(entityTable,queryPropertyName, val, SQLLikeEnum.LIKE_PERCENT_RIGHT);
                                 break;
                             case LIKE_MATCH_RIGHT:
-                                sqlPredicate.likeMatchRight(queryPropertyName, val);
+                                filter.like(entityTable,queryPropertyName, val, SQLLikeEnum.LIKE_PERCENT_LEFT);
                                 break;
                             case GREATER_THAN_EQUAL:
                             case RANGE_LEFT_CLOSED:
-                                sqlPredicate.ge(queryPropertyName, val);
+                                filter.ge(entityTable,queryPropertyName, val);
                                 break;
                             case LESS_THAN_EQUAL:
                             case RANGE_RIGHT_CLOSED:
-                                sqlPredicate.le(queryPropertyName, val);
+                                filter.le(entityTable,queryPropertyName, val);
                                 break;
                             case IN:
                                 if (val.getClass().isArray()) {
                                     if (EasyCollectionUtil.isNotEmptyArray((Object[]) val)) {
-                                        sqlPredicate.in(queryPropertyName, (Object[]) val);
+                                        filter.in(entityTable,queryPropertyName, (Object[]) val);
                                     }
                                 } else {
                                     if (EasyCollectionUtil.isNotEmpty((Collection<?>) val)) {
-                                        sqlPredicate.in(queryPropertyName, (Collection<?>) val);
+                                        filter.in(entityTable,queryPropertyName, (Collection<?>) val);
                                     }
                                 }
                                 break;
                             case NOT_IN:
                                 if (val.getClass().isArray()) {
                                     if (EasyCollectionUtil.isNotEmptyArray((Object[]) val)) {
-                                        sqlPredicate.notIn(queryPropertyName, (Object[]) val);
+                                        filter.notIn(entityTable,queryPropertyName, (Object[]) val);
                                     }
                                 } else {
                                     if (EasyCollectionUtil.isNotEmpty((Collection<?>) val)) {
-                                        sqlPredicate.notIn(queryPropertyName, (Collection<?>) val);
+                                        filter.notIn(entityTable,queryPropertyName, (Collection<?>) val);
                                     }
                                 }
                                 break;
                             case NOT_EQUAL:
-                                sqlPredicate.ne(queryPropertyName, val);
+                                filter.ne(entityTable,queryPropertyName, val);
                                 break;
                             default:
                                 break;

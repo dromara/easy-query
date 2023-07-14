@@ -1,9 +1,6 @@
 package com.easy.query.test.dto;
 
-import com.easy.query.api4j.dynamic.ObjectSort4J;
-import com.easy.query.api4j.dynamic.sort.ObjectSortBuilder4J;
 import com.easy.query.core.annotation.EasyWhereCondition;
-import com.easy.query.test.entity.BlogEntity;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -12,13 +9,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * create time 2023/6/11 13:44
- * @see com.easy.query.test.entity.BlogEntity
+ * create time 2023/7/14 21:57
+ * 文件说明
  *
  * @author xuejiaming
  */
 @Data
-public class BlogQueryRequest implements  ObjectSort4J<BlogEntity> {
+public class BlogQuery2Request {
 
     /**
      * 标题
@@ -28,7 +25,7 @@ public class BlogQueryRequest implements  ObjectSort4J<BlogEntity> {
     /**
      * 内容
      */
-    @EasyWhereCondition(propName = "url")
+    @EasyWhereCondition
     private String content;
     /**
      * 点赞数
@@ -55,7 +52,7 @@ public class BlogQueryRequest implements  ObjectSort4J<BlogEntity> {
     /**
      * 排序
      */
-    @EasyWhereCondition(type = EasyWhereCondition.Condition.GREATER_THAN)
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private BigDecimal order;
     /**
      * 是否置顶
@@ -66,13 +63,4 @@ public class BlogQueryRequest implements  ObjectSort4J<BlogEntity> {
     private List<Integer> statusList=new ArrayList<>();
     @EasyWhereCondition(type = EasyWhereCondition.Condition.NOT_IN,propName = "status")
     private List<Integer> statusNotList=new ArrayList<>();
-
-
-    private List<String> orders=new ArrayList<>();
-    @Override
-    public void configure(ObjectSortBuilder4J<BlogEntity> builder) {
-        for (String order : orders) {
-            builder.orderBy(order,true);
-        }
-    }
 }

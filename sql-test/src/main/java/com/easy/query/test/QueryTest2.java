@@ -12,6 +12,7 @@ import com.easy.query.test.dto.BlogEntityGroup;
 import com.easy.query.test.dto.BlogQueryRequest;
 import com.easy.query.test.dto.TopicGroupTestDTO;
 import com.easy.query.test.entity.BlogEntity;
+import com.easy.query.test.entity.SysUser;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.Topicx;
 import org.junit.Assert;
@@ -21,6 +22,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  * create time 2023/6/8 21:38
@@ -980,5 +982,44 @@ public class QueryTest2 extends BaseTest {
         EasyPageResult<Topicx> pageResult = easyQuery.queryable(Topic.class).where(o -> o.isNotNull(Topic::getCreateTime))
                 .select(Topicx.class).toPageResult(1, 20);
         System.out.println(pageResult);
+    }
+    @Test
+    public void query13x() {
+        Queryable<SysUser> queryable = easyQuery.queryable(SysUser.class)
+                .where(o -> o.eq(SysUser::getId, "123xxx")
+                        .like(false,SysUser::getPhone,"133"));
+        String sql = queryable.toSQL();
+        Assert.assertEquals("SELECT `id`,`create_time`,`username`,`phone`,`id_card`,`address` FROM `easy-query-test`.`t_sys_user` WHERE `id` = ?", sql);
+        SysUser sysUser = queryable.firstOrNull();
+        Assert.assertNull(sysUser);
+    }
+    @Test
+    public void query14x() {
+        try {
+
+            Map<String,String> phone=null;
+            Queryable<SysUser> queryable = easyQuery.queryable(SysUser.class)
+                    .where(o -> o.eq(SysUser::getId, "123xxx")
+                            .like(phone!=null&&phone.containsKey("phone"),SysUser::getPhone,phone.get("phone")));
+            String sql = queryable.toSQL();
+            Assert.assertEquals("SELECT `id`,`create_time`,`username`,`phone`,`id_card`,`address` FROM `easy-query-test`.`t_sys_user` WHERE `id` = ?", sql);
+            SysUser sysUser = queryable.firstOrNull();
+            Assert.assertNull(sysUser);
+        }catch (Exception exception){
+            Assert.assertTrue(exception instanceof  NullPointerException);
+        }
+    }
+    @Test
+    public void query143x() {
+
+            Map<String,String> phone=null;
+            Queryable<SysUser> queryable = easyQuery.queryable(SysUser.class)
+                    .where(o -> o.eq(SysUser::getId, "123xxx"))
+                    .where(phone!=null&&phone.containsKey("phone"),o -> o.like(SysUser::getPhone,phone.get("phone")));
+            String sql = queryable.toSQL();
+            Assert.assertEquals("SELECT `id`,`create_time`,`username`,`phone`,`id_card`,`address` FROM `easy-query-test`.`t_sys_user` WHERE `id` = ?", sql);
+            SysUser sysUser = queryable.firstOrNull();
+            Assert.assertNull(sysUser);
+
     }
 }

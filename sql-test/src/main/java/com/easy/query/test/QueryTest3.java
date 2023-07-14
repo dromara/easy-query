@@ -11,8 +11,12 @@ import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.extension.client.SQLClientFunc;
+import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyObjectUtil;
+import com.easy.query.core.util.EasyStringUtil;
 import com.easy.query.test.dto.BlogEntityTest;
+import com.easy.query.test.dto.BlogQuery1Request;
+import com.easy.query.test.dto.BlogQuery2Request;
 import com.easy.query.test.dto.proxy.BlogEntityTestProxy;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.Topic;
@@ -512,10 +516,11 @@ public class QueryTest3 extends BaseTest {
 //                .orderByAsc((c,t)->c.column(t.id()))
 //                .select((selector, t) -> selector.columns(t.id(), t.title()))
 //                .toSQL();
-
         String sqlx= easyProxyQuery
                 .queryable(TOPIC_TEST_PROXY)
-                .where((filter, t) -> filter.eq(t.id(), "123").like(t.title(), "xxx"))
+                .where((filter, t) -> filter.eq(t.id(), "123").like(t.title(), "xxx").and(
+                        x->x.eq(t.id(),"123").or().like(t.title(),11)
+                ))
                 .where((filter, t) -> filter.eq(t.id(), "123").like(t.title(), "xxx"))
                 .orderByAsc((c,t)->c.column(t.id()))
                 .select((selector, t) -> selector.columns(t.id(), t.title()))
@@ -527,7 +532,8 @@ public class QueryTest3 extends BaseTest {
                 .orderByAsc(t->t.id())
                 .select((selector, t) -> selector.columns(t.id(), t.title()))
                 .toSQL();
-        Assert.assertEquals(sqlx,sqly);
+        Assert.assertEquals("SELECT `id`,`title` FROM `t_topic` WHERE `id` = ? AND `title` LIKE ? AND (`id` = ? OR `title` LIKE ?) AND `id` = ? AND `title` LIKE ? ORDER BY `id` ASC",sqlx);
+        Assert.assertEquals("SELECT `id`,`title` FROM `t_topic` WHERE `id` = ? AND `title` LIKE ? AND `id` = ? AND `title` LIKE ? ORDER BY `id` ASC",sqly);
         TopicAuto topicAuto = easyProxyQuery.queryable(TopicAutoProxy.DEFAULT)
                 .where((filter, t) -> filter.eq(t.title(), "123"))
                 .firstOrNull();
@@ -1111,5 +1117,92 @@ public class QueryTest3 extends BaseTest {
             Assert.assertEquals("SELECT * FROM `t_topic` t WHERE t.`id` = ?", sql2);
         }
 
+    }
+
+
+    @Test
+    public void dynamicWhere(){
+        {
+            BlogQuery1Request query = new BlogQuery1Request();
+            query.setOrder(BigDecimal.valueOf(1));
+            query.setContent("标题");
+            query.setPublishTimeBegin(LocalDateTime.now());
+            query.setPublishTimeEnd(LocalDateTime.now());
+            query.setStatusList(Arrays.asList(1,2));
+
+            Queryable<BlogEntity> queryable = easyQuery.queryable(BlogEntity.class)
+                    .where(o -> o
+                            //当query.getContext不为空是添加查询条件 content like query.getContext
+                            .like(EasyStringUtil.isNotBlank(query.getContent()), BlogEntity::getContent, query.getContent())
+                            //当query.getOrder不为null是添加查询条件 content = query.getContext
+                            .eq(query.getOrder() != null, BlogEntity::getOrder, query.getOrder())
+                            //当query.getPublishTimeBegin()不为null添加左闭区间,右侧同理 publishTimeBegin <= publishTime <= publishTimeEnd
+                            .rangeClosed(BlogEntity::getPublishTime, query.getPublishTimeBegin() != null, query.getPublishTimeBegin(), query.getPublishTimeEnd() != null, query.getPublishTimeEnd())
+                            //添加in条件
+                            .in(EasyCollectionUtil.isNotEmpty(query.getStatusList()), BlogEntity::getStatus, query.getStatusList())
+                    );
+
+            String sql = queryable.cloneQueryable().toSQL();
+            Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `content` LIKE ? AND `order` = ? AND `publish_time` >= ? AND `publish_time` <= ? AND `status` IN (?,?)",sql);
+            List<BlogEntity> list = queryable.cloneQueryable().toList();
+            Assert.assertEquals(0,list.size());
+        }
+        {
+            BlogQuery1Request query = new BlogQuery1Request();
+            query.setContent("标题");
+            query.setPublishTimeBegin(LocalDateTime.now());
+            query.setPublishTimeEnd(LocalDateTime.now());
+            query.setStatusList(Arrays.asList(1,2));
+
+            Queryable<BlogEntity> queryable = easyQuery.queryable(BlogEntity.class)
+                    .where(o -> o
+                            //当query.getContext不为空是添加查询条件 content like query.getContext
+                            .like(EasyStringUtil.isNotBlank(query.getContent()), BlogEntity::getContent, query.getContent())
+                            //当query.getOrder不为null是添加查询条件 content = query.getContext
+                            .eq(query.getOrder() != null, BlogEntity::getOrder, query.getOrder())
+                            //当query.getPublishTimeBegin()不为null添加左闭区间,右侧同理 publishTimeBegin <= publishTime <= publishTimeEnd
+                            .rangeClosed(BlogEntity::getPublishTime, query.getPublishTimeBegin() != null, query.getPublishTimeBegin(), query.getPublishTimeEnd() != null, query.getPublishTimeEnd())
+                            //添加in条件
+                            .in(EasyCollectionUtil.isNotEmpty(query.getStatusList()), BlogEntity::getStatus, query.getStatusList())
+                    );
+
+            String sql = queryable.cloneQueryable().toSQL();
+            Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `content` LIKE ? AND `publish_time` >= ? AND `publish_time` <= ? AND `status` IN (?,?)",sql);
+            List<BlogEntity> list = queryable.cloneQueryable().toList();
+            Assert.assertEquals(0,list.size());
+        }
+    }
+    @Test
+    public void dynamicWhere1(){
+        {
+            BlogQuery2Request query = new BlogQuery2Request();
+            query.setOrder(BigDecimal.valueOf(1));
+            query.setContent("标题");
+            query.setPublishTimeBegin(LocalDateTime.now());
+            query.setPublishTimeEnd(LocalDateTime.now());
+            query.setStatusList(Arrays.asList(1,2));
+
+            Queryable<BlogEntity> queryable = easyQuery.queryable(BlogEntity.class)
+                    .whereObject(query);
+
+            String sql = queryable.cloneQueryable().toSQL();
+            Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `content` LIKE ? AND `publish_time` >= ? AND `publish_time` <= ? AND `order` = ? AND `status` IN (?,?)",sql);
+            List<BlogEntity> list = queryable.cloneQueryable().toList();
+            Assert.assertEquals(0,list.size());
+        }
+        {
+            BlogQuery2Request query = new BlogQuery2Request();
+            query.setContent("标题");
+            query.setPublishTimeEnd(LocalDateTime.now());
+            query.setStatusList(Arrays.asList(1,2));
+
+            Queryable<BlogEntity> queryable = easyQuery.queryable(BlogEntity.class)
+                    .whereObject(query);
+
+            String sql = queryable.cloneQueryable().toSQL();
+            Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `content` LIKE ? AND `publish_time` <= ? AND `status` IN (?,?)",sql);
+            List<BlogEntity> list = queryable.cloneQueryable().toList();
+            Assert.assertEquals(0,list.size());
+        }
     }
 }

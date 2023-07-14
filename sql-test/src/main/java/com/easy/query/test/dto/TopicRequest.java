@@ -1,8 +1,6 @@
 package com.easy.query.test.dto;
 
 import com.easy.query.core.annotation.EasyWhereCondition;
-import com.easy.query.core.api.dynamic.condition.ObjectQuery;
-import com.easy.query.core.api.dynamic.condition.ObjectQueryBuilder;
 import com.easy.query.core.api.dynamic.sort.ObjectSort;
 import com.easy.query.core.api.dynamic.sort.ObjectSortBuilder;
 import lombok.Data;
@@ -18,16 +16,12 @@ import java.util.List;
  * @author xuejiaming
  */
 @Data
-public class TopicRequest implements ObjectQuery, ObjectSort {
+public class TopicRequest implements ObjectSort {
 
-    @EasyWhereCondition(type = EasyWhereCondition.Condition.RANGE_LEFT_OPEN)
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.RANGE_LEFT_OPEN,propName = "createTime")
     private LocalDateTime createTimeBegin;
     private List<String> orders=new ArrayList<>();
 
-    @Override
-    public void configure(ObjectQueryBuilder builder) {
-        builder.property("createTime","createTimeBegin");
-    }
 
     @Override
     public void configure(ObjectSortBuilder builder) {
