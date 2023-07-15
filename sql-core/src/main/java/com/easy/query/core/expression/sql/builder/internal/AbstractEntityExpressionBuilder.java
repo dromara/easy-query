@@ -17,12 +17,19 @@ import java.util.List;
 public abstract class AbstractEntityExpressionBuilder implements EntityExpressionBuilder {
     protected final ExpressionContext expressionContext;
     protected final QueryRuntimeContext runtimeContext;
+    protected final Class<?> queryClass;
     protected final List<EntityTableExpressionBuilder> tables;
 
-    public AbstractEntityExpressionBuilder(ExpressionContext expressionContext){
+    public AbstractEntityExpressionBuilder(ExpressionContext expressionContext,Class<?> queryClass){
         this.expressionContext = expressionContext;
         this.runtimeContext = expressionContext.getRuntimeContext();
+        this.queryClass = queryClass;
         this.tables = new ArrayList<>();
+    }
+
+    @Override
+    public Class<?> getQueryClass() {
+        return queryClass;
     }
 
     @Override

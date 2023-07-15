@@ -155,7 +155,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
 //    }
 
     @Override
-    public SQLClientApiFactory getSQLObjectApiFactory() {
+    public SQLClientApiFactory getSQLClientApiFactory() {
         return sqlEntityApiFactory;
     }
 

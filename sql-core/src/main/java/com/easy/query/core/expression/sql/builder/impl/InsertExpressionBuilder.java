@@ -37,8 +37,8 @@ public class InsertExpressionBuilder extends AbstractEntityExpressionBuilder imp
     protected String duplicateKey;
     protected SQLBuilderSegment duplicateKeyUpdateColumns;
 
-    public InsertExpressionBuilder(ExpressionContext expressionContext) {
-        super(expressionContext);
+    public InsertExpressionBuilder(ExpressionContext expressionContext,Class<?> queryClass) {
+        super(expressionContext,queryClass);
         this.columns = new ProjectSQLBuilderSegmentImpl();
     }
 
@@ -158,7 +158,7 @@ public class InsertExpressionBuilder extends AbstractEntityExpressionBuilder imp
     public EntityInsertExpressionBuilder cloneEntityExpressionBuilder() {
 
 
-        EntityInsertExpressionBuilder insertExpressionBuilder = runtimeContext.getExpressionBuilderFactory().createEntityInsertExpressionBuilder(expressionContext);
+        EntityInsertExpressionBuilder insertExpressionBuilder = runtimeContext.getExpressionBuilderFactory().createEntityInsertExpressionBuilder(expressionContext,queryClass);
 
         if (EasySQLSegmentUtil.isNotEmpty(getColumns())) {
             getColumns().copyTo(insertExpressionBuilder.getColumns());

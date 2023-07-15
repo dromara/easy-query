@@ -28,7 +28,7 @@ public class EasyEmptyClientInsertable<T> implements ClientInsertable<T> {
         if (entity == null) {
             return this;
         }
-        SQLClientApiFactory sqlApiFactory = entityInsertExpression.getRuntimeContext().getSQLObjectApiFactory();
+        SQLClientApiFactory sqlApiFactory = entityInsertExpression.getRuntimeContext().getSQLClientApiFactory();
         ClientInsertable<T> insertable = sqlApiFactory.createInsertable((Class<T>) entity.getClass(), entityInsertExpression);
         insertable.insert(entity);
         return insertable;

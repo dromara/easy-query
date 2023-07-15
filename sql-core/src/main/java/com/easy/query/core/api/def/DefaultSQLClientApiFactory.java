@@ -37,6 +37,7 @@ import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.builder.factory.ExpressionBuilderFactory;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.util.EasyCollectionUtil;
+import com.easy.query.core.util.EasyObjectUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -64,7 +65,7 @@ public class DefaultSQLClientApiFactory implements SQLClientApiFactory {
     @Override
     public <T> ClientQueryable<T> createQueryable(Class<T> clazz, QueryRuntimeContext runtimeContext) {
         ExpressionContext queryExpressionContext = expressionBuilderFactory.createExpressionContext(runtimeContext);
-        EntityQueryExpressionBuilder entityQueryExpressionBuilder = expressionBuilderFactory.createEntityQueryExpressionBuilder(queryExpressionContext);
+        EntityQueryExpressionBuilder entityQueryExpressionBuilder = expressionBuilderFactory.createEntityQueryExpressionBuilder(queryExpressionContext,clazz);
         EntityMetadata entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(clazz);
         EntityTableExpressionBuilder sqlTable = expressionBuilderFactory.createEntityTableExpressionBuilder(entityMetadata, MultiTableTypeEnum.FROM, runtimeContext);
         entityQueryExpressionBuilder.addSQLEntityTableExpression(sqlTable);
@@ -82,7 +83,7 @@ public class DefaultSQLClientApiFactory implements SQLClientApiFactory {
 //       innerSqlEntityQueryExpression.addSqlEntityTableExpression(sqlTable);
 
 
-        EntityQueryExpressionBuilder entityQueryExpressionBuilder = expressionBuilderFactory.createEntityQueryExpressionBuilder(queryExpressionContext);
+        EntityQueryExpressionBuilder entityQueryExpressionBuilder = expressionBuilderFactory.createEntityQueryExpressionBuilder(queryExpressionContext,clazz);
         entityQueryExpressionBuilder.addSQLEntityTableExpression(sqlTable);
         return new EasyClientQueryable<>(clazz, entityQueryExpressionBuilder);
     }
@@ -105,7 +106,7 @@ public class DefaultSQLClientApiFactory implements SQLClientApiFactory {
     @Override
     public <T> ClientQueryable<T> createQueryable(Class<T> clazz, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
         ExpressionContext queryExpressionContext = entityQueryExpressionBuilder.getExpressionContext();
-        EntityQueryExpressionBuilder queryExpressionBuilder = expressionBuilderFactory.createEntityQueryExpressionBuilder(queryExpressionContext);
+        EntityQueryExpressionBuilder queryExpressionBuilder = expressionBuilderFactory.createEntityQueryExpressionBuilder(queryExpressionContext,clazz);
         EntityMetadata entityMetadata = queryExpressionContext.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(clazz);
         EntityTableExpressionBuilder anonymousTable = expressionBuilderFactory.createAnonymousEntityTableExpressionBuilder(entityMetadata, MultiTableTypeEnum.FROM, entityQueryExpressionBuilder);
         queryExpressionBuilder.addSQLEntityTableExpression(anonymousTable);
@@ -141,7 +142,7 @@ public class DefaultSQLClientApiFactory implements SQLClientApiFactory {
 //       innerSqlEntityQueryExpression.addSqlEntityTableExpression(sqlTable);
 
 
-        EntityQueryExpressionBuilder sqlEntityQueryExpressionBuilder = expressionBuilderFactory.createEntityQueryExpressionBuilder(queryExpressionContext);
+        EntityQueryExpressionBuilder sqlEntityQueryExpressionBuilder = expressionBuilderFactory.createEntityQueryExpressionBuilder(queryExpressionContext,queryClass);
         sqlEntityQueryExpressionBuilder.addSQLEntityTableExpression(sqlTable);
         return new EasyClientQueryable<>(queryClass, sqlEntityQueryExpressionBuilder);
     }
@@ -236,14 +237,14 @@ public class DefaultSQLClientApiFactory implements SQLClientApiFactory {
     @Override
     public <T> ClientInsertable<T> createInsertable(Class<T> clazz, QueryRuntimeContext runtimeContext) {
         ExpressionContext expressionContext = expressionBuilderFactory.createExpressionContext(runtimeContext);
-        EntityInsertExpressionBuilder entityInsertExpressionBuilder = expressionBuilderFactory.createEntityInsertExpressionBuilder(expressionContext);
+        EntityInsertExpressionBuilder entityInsertExpressionBuilder = expressionBuilderFactory.createEntityInsertExpressionBuilder(expressionContext,clazz);
         return createInsertable(clazz, entityInsertExpressionBuilder);
     }
 
     @Override
     public <T> ClientInsertable<T> createEmptyInsertable(QueryRuntimeContext runtimeContext) {
         ExpressionContext expressionContext = expressionBuilderFactory.createExpressionContext(runtimeContext);
-        EntityInsertExpressionBuilder entityInsertExpressionBuilder = expressionBuilderFactory.createEntityInsertExpressionBuilder(expressionContext);
+        EntityInsertExpressionBuilder entityInsertExpressionBuilder = expressionBuilderFactory.createEntityInsertExpressionBuilder(expressionContext,null);
         return new EasyEmptyClientInsertable<>(entityInsertExpressionBuilder);
     }
 
@@ -265,15 +266,16 @@ public class DefaultSQLClientApiFactory implements SQLClientApiFactory {
     @Override
     public <T> ClientEntityUpdatable<T> createEntityUpdatable(Collection<T> entities, QueryRuntimeContext runtimeContext) {
         ExpressionContext sqlExpressionContext = expressionBuilderFactory.createExpressionContext(runtimeContext);
-        EntityUpdateExpressionBuilder entityUpdateExpression = expressionBuilderFactory.createEntityUpdateExpressionBuilder(sqlExpressionContext, false);
-        return new EasyClientEntityUpdatable<>(entities, entityUpdateExpression);
+        Class<T> clazz = EasyObjectUtil.typeCastNullable(EasyCollectionUtil.first(entities).getClass());
+        EntityUpdateExpressionBuilder entityUpdateExpression = expressionBuilderFactory.createEntityUpdateExpressionBuilder(sqlExpressionContext,clazz, false);
+        return new EasyClientEntityUpdatable<>(clazz,entities, entityUpdateExpression);
     }
 
 
     @Override
     public <T> ClientExpressionUpdatable<T> createExpressionUpdatable(Class<T> entityClass, QueryRuntimeContext runtimeContext) {
         ExpressionContext sqlExpressionContext = expressionBuilderFactory.createExpressionContext(runtimeContext);
-        EntityUpdateExpressionBuilder entityUpdateExpressionBuilder = expressionBuilderFactory.createEntityUpdateExpressionBuilder(sqlExpressionContext, true);
+        EntityUpdateExpressionBuilder entityUpdateExpressionBuilder = expressionBuilderFactory.createEntityUpdateExpressionBuilder(sqlExpressionContext,entityClass, true);
         return new EasyClientExpressionUpdatable<>(entityClass, entityUpdateExpressionBuilder);
     }
 
@@ -290,8 +292,9 @@ public class DefaultSQLClientApiFactory implements SQLClientApiFactory {
     @Override
     public <T> ClientEntityDeletable<T> createEntityDeletable(Collection<T> entities, QueryRuntimeContext runtimeContext) {
         ExpressionContext sqlExpressionContext = expressionBuilderFactory.createExpressionContext(runtimeContext);
-        EntityDeleteExpressionBuilder entityDeleteExpressionBuilder = expressionBuilderFactory.createEntityDeleteExpressionBuilder(sqlExpressionContext, false);
-        return new EasyClientEntityDeletable<>(entities, entityDeleteExpressionBuilder);
+        Class<T> clazz = EasyObjectUtil.typeCastNullable(EasyCollectionUtil.first(entities).getClass());
+        EntityDeleteExpressionBuilder entityDeleteExpressionBuilder = expressionBuilderFactory.createEntityDeleteExpressionBuilder(sqlExpressionContext,clazz, false);
+        return new EasyClientEntityDeletable<>(clazz,entities, entityDeleteExpressionBuilder);
     }
 
     @Override

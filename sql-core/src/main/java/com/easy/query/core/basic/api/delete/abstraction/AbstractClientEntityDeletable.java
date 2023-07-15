@@ -30,7 +30,7 @@ public abstract class AbstractClientEntityDeletable<T> extends AbstractSQLExecut
     protected final EntityTableExpressionBuilder table;
     protected final EntityDeleteExpressionBuilder entityDeleteExpressionBuilder;
 
-    public AbstractClientEntityDeletable(Collection<T> entities, EntityDeleteExpressionBuilder entityDeleteExpressionBuilder) {
+    public AbstractClientEntityDeletable(Class<T> clazz,Collection<T> entities, EntityDeleteExpressionBuilder entityDeleteExpressionBuilder) {
         super(entityDeleteExpressionBuilder);
         if (entities == null || entities.isEmpty()) {
             throw new EasyQueryException("不支持空对象的delete");
@@ -38,7 +38,6 @@ public abstract class AbstractClientEntityDeletable<T> extends AbstractSQLExecut
         this.entities.addAll(entities);
         this.entityDeleteExpressionBuilder = entityDeleteExpressionBuilder;
 
-        Class<?> clazz = entities.iterator().next().getClass();
         QueryRuntimeContext runtimeContext = entityDeleteExpressionBuilder.getRuntimeContext();
         EntityMetadata entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(clazz);
         entityMetadata.checkTable();

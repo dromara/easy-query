@@ -43,8 +43,8 @@ public class DeleteExpressionBuilder extends AbstractPredicateEntityExpressionBu
     protected final boolean expressionDelete;
     protected SQLBuilderSegment whereColumns;
 
-    public DeleteExpressionBuilder(ExpressionContext sqlExpressionContext, boolean expressionDelete) {
-        super(sqlExpressionContext);
+    public DeleteExpressionBuilder(ExpressionContext sqlExpressionContext,Class<?> queryClass, boolean expressionDelete) {
+        super(sqlExpressionContext,queryClass);
         this.expressionDelete = expressionDelete;
         this.where = new AndPredicateSegment(true);
     }
@@ -228,7 +228,7 @@ public class DeleteExpressionBuilder extends AbstractPredicateEntityExpressionBu
     public EntityDeleteExpressionBuilder cloneEntityExpressionBuilder() {
 
 
-        EntityDeleteExpressionBuilder deleteExpressionBuilder = runtimeContext.getExpressionBuilderFactory().createEntityDeleteExpressionBuilder(expressionContext,expressionDelete);
+        EntityDeleteExpressionBuilder deleteExpressionBuilder = runtimeContext.getExpressionBuilderFactory().createEntityDeleteExpressionBuilder(expressionContext,queryClass,expressionDelete);
 
         if(hasWhere()){
             getWhere().copyTo(deleteExpressionBuilder.getWhere());

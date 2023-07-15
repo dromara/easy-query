@@ -141,6 +141,16 @@ public class AnonymousEntityQuerySQLExpressionImpl implements AnonymousEntityQue
     }
 
     @Override
+    public List<EntityQuerySQLExpression> getIncludes() {
+        return null;
+    }
+
+    @Override
+    public void setIncludes(List<EntityQuerySQLExpression> includes) {
+
+    }
+
+    @Override
     public List<EntityTableSQLExpression> getTables() {
         return tables;
     }

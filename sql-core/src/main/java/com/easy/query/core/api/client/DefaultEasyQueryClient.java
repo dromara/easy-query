@@ -29,7 +29,7 @@ public class DefaultEasyQueryClient implements EasyQueryClient {
     public DefaultEasyQueryClient(QueryRuntimeContext runtimeContext) {
 
         this.runtimeContext = runtimeContext;
-        easySQLApiFactory = runtimeContext.getSQLObjectApiFactory();
+        easySQLApiFactory = runtimeContext.getSQLClientApiFactory();
     }
 
     @Override

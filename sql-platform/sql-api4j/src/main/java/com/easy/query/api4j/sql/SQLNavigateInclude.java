@@ -2,12 +2,12 @@ package com.easy.query.api4j.sql;
 
 import com.easy.query.api4j.select.Queryable;
 import com.easy.query.api4j.select.impl.EasyQueryable;
+import com.easy.query.api4j.util.EasyLambdaUtil;
+import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.parser.core.base.NavigateInclude;
-import com.easy.query.core.util.EasyLambdaUtil;
 
 import java.util.Collection;
-import java.util.function.Function;
 
 /**
  * create time 2023/6/18 11:14
@@ -17,17 +17,13 @@ import java.util.function.Function;
  */
 public interface SQLNavigateInclude<T1> {
     NavigateInclude<T1> getNavigateInclude();
-   default  <TProperty> SQLNavigateInclude<T1> withOne(Property<T1,TProperty> navigate, Function<Queryable<TProperty>,Queryable<TProperty>> func){
-       getNavigateInclude().<TProperty>with(EasyLambdaUtil.getPropertyName(navigate), q->func.apply(new EasyQueryable<>(q)).getEntityQueryable());
-       return this;
+   default  <TProperty> Queryable<TProperty> one(Property<T1,TProperty> navigate){
+       ClientQueryable<TProperty> clientQueryable = getNavigateInclude().<TProperty>with(EasyLambdaUtil.getPropertyName(navigate));
+       return new EasyQueryable<>(clientQueryable);
    }
-   default  <TProperty> SQLNavigateInclude<T1> withMany(Property<T1, Collection<TProperty>> navigate){
-       getNavigateInclude().<TProperty>with(EasyLambdaUtil.getPropertyName(navigate));
-       return this;
-   }
-   default  <TProperty> SQLNavigateInclude<T1> withMany(Property<T1, Collection<TProperty>> navigate, Function<Queryable<TProperty>,Queryable<TProperty>> func){
-       getNavigateInclude().<TProperty>with(EasyLambdaUtil.getPropertyName(navigate), q->func.apply(new EasyQueryable<>(q)).getEntityQueryable());
-       return this;
+   default  <TProperty> Queryable<TProperty> many(Property<T1, Collection<TProperty>> navigate){
+       ClientQueryable<TProperty> clientQueryable = getNavigateInclude().<TProperty>with(EasyLambdaUtil.getPropertyName(navigate));
+       return new EasyQueryable<>(clientQueryable);
    }
 
     default  <T2> SQLNavigateInclude<T2> then(SQLNavigateInclude<T2> sub) {

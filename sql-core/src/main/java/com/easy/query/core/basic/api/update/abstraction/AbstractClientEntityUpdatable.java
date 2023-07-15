@@ -44,14 +44,13 @@ public abstract class AbstractClientEntityUpdatable<T> extends AbstractSQLExecut
     protected final EntityMetadata entityMetadata;
     protected final EntityUpdateExpressionBuilder entityUpdateExpressionBuilder;
 
-    public AbstractClientEntityUpdatable(Collection<T> entities, EntityUpdateExpressionBuilder entityUpdateExpression) {
+    public AbstractClientEntityUpdatable(Class<T> clazz,Collection<T> entities, EntityUpdateExpressionBuilder entityUpdateExpression) {
         super(entityUpdateExpression);
         if (entities == null || entities.isEmpty()) {
             throw new EasyQueryException("不支持空对象的update");
         }
         this.entities.addAll(entities);
 
-        Class<?> clazz = entities.iterator().next().getClass();
         this.entityUpdateExpressionBuilder = entityUpdateExpression;
         QueryRuntimeContext runtimeContext = entityUpdateExpressionBuilder.getRuntimeContext();
         entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(clazz);

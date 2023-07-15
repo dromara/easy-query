@@ -149,12 +149,22 @@ public class AnonymousUnionQuerySQLExpressionImpl implements AnonymousUnionEntit
 
     @Override
     public void setAllPredicate(PredicateSegment allPredicate) {
-
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public PredicateSegment getAllPredicate() {
-        return null;
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public List<EntityQuerySQLExpression> getIncludes() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setIncludes(List<EntityQuerySQLExpression> includes) {
+        throw new UnsupportedOperationException();
     }
 
     @Override

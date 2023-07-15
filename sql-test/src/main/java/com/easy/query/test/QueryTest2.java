@@ -1026,10 +1026,10 @@ public class QueryTest2 extends BaseTest {
     public void query26(){
 
         List<TopicY> list = easyQuery.queryable(TopicY.class)
-                .include(t->t.withMany(TopicY::getTopicxList))
+                .include(t->t.many(TopicY::getTopicxList))
                 .toList();
         List<TopicY> list1 = easyQuery.queryable(TopicY.class)
-                .include(t->t.withOne(TopicY::getTopic, q -> q.where(x -> x.eq(Topic::getId, "1"))))
+                .include(t->t.one(TopicY::getTopic).where(x -> x.eq(Topic::getId, "1")))
                 .toList();
 
 //                .include(TopicY::getTopic,q->q.where(x->x.eq(Topic::getId,1)));

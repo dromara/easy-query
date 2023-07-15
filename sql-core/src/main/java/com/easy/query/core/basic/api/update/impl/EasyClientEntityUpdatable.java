@@ -13,7 +13,7 @@ import java.util.Collection;
  */
 public class EasyClientEntityUpdatable<T> extends AbstractClientEntityUpdatable<T> {
 
-    public EasyClientEntityUpdatable(Collection<T> entities, EntityUpdateExpressionBuilder entityUpdateExpression) {
-        super(entities, entityUpdateExpression);
+    public EasyClientEntityUpdatable(Class<T> clazz,Collection<T> entities, EntityUpdateExpressionBuilder entityUpdateExpression) {
+        super(clazz,entities, entityUpdateExpression);
     }
 }

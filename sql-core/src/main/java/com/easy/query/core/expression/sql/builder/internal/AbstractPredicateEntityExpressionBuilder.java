@@ -26,8 +26,8 @@ import java.util.function.Predicate;
  * @Date: 2023/3/15 21:58
  */
 public abstract class AbstractPredicateEntityExpressionBuilder extends AbstractEntityExpressionBuilder implements LambdaEntityExpressionBuilder {
-    public AbstractPredicateEntityExpressionBuilder(ExpressionContext expressionContext) {
-        super(expressionContext);
+    public AbstractPredicateEntityExpressionBuilder(ExpressionContext expressionContext,Class<?> queryClass) {
+        super(expressionContext,queryClass);
     }
 
     protected boolean useLogicDelete(EntityMetadata entityMetadata) {

@@ -12,6 +12,7 @@ import java.util.List;
  * @author xuejiaming
  */
 public interface EntityExpressionBuilder extends ExpressionBuilder {
+    Class<?> getQueryClass();
     ExpressionContext getExpressionContext();
     QueryRuntimeContext getRuntimeContext();
     void addSQLEntityTableExpression(EntityTableExpressionBuilder tableExpression);

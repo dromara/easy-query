@@ -67,8 +67,8 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
     private SQLBuilderSegment setIgnoreColumns;
     private SQLBuilderSegment whereColumns;
 
-    public UpdateExpressionBuilder(ExpressionContext queryExpressionContext, boolean isExpressionUpdate) {
-        super(queryExpressionContext);
+    public UpdateExpressionBuilder(ExpressionContext queryExpressionContext,Class<?> queryClass, boolean isExpressionUpdate) {
+        super(queryExpressionContext,queryClass);
         this.isExpressionUpdate = isExpressionUpdate;
     }
 
@@ -383,7 +383,7 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
     @Override
     public EntityUpdateExpressionBuilder cloneEntityExpressionBuilder() {
 
-        EntityUpdateExpressionBuilder updateExpressionBuilder = runtimeContext.getExpressionBuilderFactory().createEntityUpdateExpressionBuilder(expressionContext, isExpressionUpdate);
+        EntityUpdateExpressionBuilder updateExpressionBuilder = runtimeContext.getExpressionBuilderFactory().createEntityUpdateExpressionBuilder(expressionContext,queryClass, isExpressionUpdate);
 
         if (hasSetColumns()) {
             getSetColumns().copyTo(updateExpressionBuilder.getSetColumns());

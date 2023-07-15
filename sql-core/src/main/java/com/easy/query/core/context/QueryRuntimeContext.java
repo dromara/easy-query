@@ -41,7 +41,7 @@ public interface QueryRuntimeContext {
     JdbcTypeHandlerManager getJdbcTypeHandlerManager();
 
     //    SQLApiFactory getSQLApiFactory();
-    SQLClientApiFactory getSQLObjectApiFactory();
+    SQLClientApiFactory getSQLClientApiFactory();
 
     ExpressionBuilderFactory getExpressionBuilderFactory();
     ExpressionFactory getExpressionFactory();

@@ -12,7 +12,7 @@ import java.util.Collection;
  * @Date: 2023/3/6 13:20
  */
 public class EasyClientEntityDeletable<T> extends AbstractClientEntityDeletable<T> {
-    public EasyClientEntityDeletable(Collection<T> entities, EntityDeleteExpressionBuilder entityDeleteExpression) {
-        super(entities, entityDeleteExpression);
+    public EasyClientEntityDeletable(Class<T> clazz,Collection<T> entities, EntityDeleteExpressionBuilder entityDeleteExpression) {
+        super(clazz,entities, entityDeleteExpression);
     }
 }

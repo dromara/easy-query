@@ -15,6 +15,7 @@ import com.easy.query.core.exception.EasyQueryWhereInvalidOperationException;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression2;
+import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnSelector;
@@ -354,7 +355,7 @@ public interface ClientQueryable<T1> extends Query<T1>,
 
     ClientQueryable<T1> unionAll(Collection<ClientQueryable<T1>> unionQueries);
 
-    <TProperty> ClientQueryable<T1> include(SQLExpression1<NavigateInclude<T1>> navigateIncludeSQLExpression);
+    <TProperty> ClientQueryable<T1> include(SQLFuncExpression1<NavigateInclude<T1>,ClientQueryable<TProperty>> navigateIncludeSQLExpression);
 
     /**
      * 自动将查询结果集合全部添加到当前上下文追踪中,如果当前查询结果十分庞大,并且更新数据只有个别条数,建议不要使用

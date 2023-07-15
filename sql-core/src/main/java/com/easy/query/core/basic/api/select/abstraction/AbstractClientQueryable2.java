@@ -47,7 +47,7 @@ public abstract class AbstractClientQueryable2<T1, T2> extends AbstractClientQue
 
     @Override
     public <T3> ClientQueryable3<T1, T2, T3> leftJoin(Class<T3> joinClass, SQLExpression3<WherePredicate<T1>, WherePredicate<T2>, WherePredicate<T3>> on) {
-        ClientQueryable3<T1, T2, T3> queryable3 = entityQueryExpressionBuilder.getRuntimeContext().getSQLObjectApiFactory().createQueryable3(t1Class, t2Class, joinClass, MultiTableTypeEnum.LEFT_JOIN, entityQueryExpressionBuilder);
+        ClientQueryable3<T1, T2, T3> queryable3 = entityQueryExpressionBuilder.getRuntimeContext().getSQLClientApiFactory().createQueryable3(t1Class, t2Class, joinClass, MultiTableTypeEnum.LEFT_JOIN, entityQueryExpressionBuilder);
         return EasySQLExpressionUtil.executeJoinOn(queryable3, on);
     }
 
@@ -55,13 +55,13 @@ public abstract class AbstractClientQueryable2<T1, T2> extends AbstractClientQue
     public <T3> ClientQueryable3<T1, T2, T3> leftJoin(ClientQueryable<T3> joinQueryable, SQLExpression3<WherePredicate<T1>, WherePredicate<T2>, WherePredicate<T3>> on) {
         ClientQueryable<T3> selectAllT2Queryable = EasySQLExpressionUtil.cloneAndSelectAllQueryable(joinQueryable);
         entityQueryExpressionBuilder.getExpressionContext().extract(selectAllT2Queryable.getSQLEntityExpressionBuilder().getExpressionContext());
-        ClientQueryable3<T1, T2, T3> queryable3 = entityQueryExpressionBuilder.getRuntimeContext().getSQLObjectApiFactory().createQueryable3(t1Class, t2Class, selectAllT2Queryable, MultiTableTypeEnum.LEFT_JOIN, entityQueryExpressionBuilder);
+        ClientQueryable3<T1, T2, T3> queryable3 = entityQueryExpressionBuilder.getRuntimeContext().getSQLClientApiFactory().createQueryable3(t1Class, t2Class, selectAllT2Queryable, MultiTableTypeEnum.LEFT_JOIN, entityQueryExpressionBuilder);
         return EasySQLExpressionUtil.executeJoinOn(queryable3, on);
     }
 
     @Override
     public <T3> ClientQueryable3<T1, T2, T3> rightJoin(Class<T3> joinClass, SQLExpression3<WherePredicate<T1>, WherePredicate<T2>, WherePredicate<T3>> on) {
-        ClientQueryable3<T1, T2, T3> queryable3 = entityQueryExpressionBuilder.getRuntimeContext().getSQLObjectApiFactory().createQueryable3(t1Class, t2Class, joinClass, MultiTableTypeEnum.RIGHT_JOIN, entityQueryExpressionBuilder);
+        ClientQueryable3<T1, T2, T3> queryable3 = entityQueryExpressionBuilder.getRuntimeContext().getSQLClientApiFactory().createQueryable3(t1Class, t2Class, joinClass, MultiTableTypeEnum.RIGHT_JOIN, entityQueryExpressionBuilder);
         return EasySQLExpressionUtil.executeJoinOn(queryable3, on);
     }
 
@@ -69,13 +69,13 @@ public abstract class AbstractClientQueryable2<T1, T2> extends AbstractClientQue
     public <T3> ClientQueryable3<T1, T2, T3> rightJoin(ClientQueryable<T3> joinQueryable, SQLExpression3<WherePredicate<T1>, WherePredicate<T2>, WherePredicate<T3>> on) {
         ClientQueryable<T3> selectAllT2Queryable = EasySQLExpressionUtil.cloneAndSelectAllQueryable(joinQueryable);
         entityQueryExpressionBuilder.getExpressionContext().extract(selectAllT2Queryable.getSQLEntityExpressionBuilder().getExpressionContext());
-        ClientQueryable3<T1, T2, T3> queryable3 = entityQueryExpressionBuilder.getRuntimeContext().getSQLObjectApiFactory().createQueryable3(t1Class, t2Class, selectAllT2Queryable, MultiTableTypeEnum.RIGHT_JOIN, entityQueryExpressionBuilder);
+        ClientQueryable3<T1, T2, T3> queryable3 = entityQueryExpressionBuilder.getRuntimeContext().getSQLClientApiFactory().createQueryable3(t1Class, t2Class, selectAllT2Queryable, MultiTableTypeEnum.RIGHT_JOIN, entityQueryExpressionBuilder);
         return EasySQLExpressionUtil.executeJoinOn(queryable3, on);
     }
 
     @Override
     public <T3> ClientQueryable3<T1, T2, T3> innerJoin(Class<T3> joinClass, SQLExpression3<WherePredicate<T1>, WherePredicate<T2>, WherePredicate<T3>> on) {
-        ClientQueryable3<T1, T2, T3> queryable3 = entityQueryExpressionBuilder.getRuntimeContext().getSQLObjectApiFactory().createQueryable3(t1Class, t2Class, joinClass, MultiTableTypeEnum.INNER_JOIN, entityQueryExpressionBuilder);
+        ClientQueryable3<T1, T2, T3> queryable3 = entityQueryExpressionBuilder.getRuntimeContext().getSQLClientApiFactory().createQueryable3(t1Class, t2Class, joinClass, MultiTableTypeEnum.INNER_JOIN, entityQueryExpressionBuilder);
         return EasySQLExpressionUtil.executeJoinOn(queryable3, on);
     }
 
@@ -83,7 +83,7 @@ public abstract class AbstractClientQueryable2<T1, T2> extends AbstractClientQue
     public <T3> ClientQueryable3<T1, T2, T3> innerJoin(ClientQueryable<T3> joinQueryable, SQLExpression3<WherePredicate<T1>, WherePredicate<T2>, WherePredicate<T3>> on) {
         ClientQueryable<T3> selectAllT2Queryable = EasySQLExpressionUtil.cloneAndSelectAllQueryable(joinQueryable);
         entityQueryExpressionBuilder.getExpressionContext().extract(selectAllT2Queryable.getSQLEntityExpressionBuilder().getExpressionContext());
-        ClientQueryable3<T1, T2, T3> queryable3 = entityQueryExpressionBuilder.getRuntimeContext().getSQLObjectApiFactory().createQueryable3(t1Class, t2Class, selectAllT2Queryable, MultiTableTypeEnum.INNER_JOIN, entityQueryExpressionBuilder);
+        ClientQueryable3<T1, T2, T3> queryable3 = entityQueryExpressionBuilder.getRuntimeContext().getSQLClientApiFactory().createQueryable3(t1Class, t2Class, selectAllT2Queryable, MultiTableTypeEnum.INNER_JOIN, entityQueryExpressionBuilder);
         return EasySQLExpressionUtil.executeJoinOn(queryable3, on);
     }
 
@@ -127,7 +127,7 @@ public abstract class AbstractClientQueryable2<T1, T2> extends AbstractClientQue
         ColumnAsSelector<T1, TR> sqlColumnAsSelector1 = getSQLExpressionProvider1().getColumnAsSelector(entityQueryExpressionBuilder.getProjects(), resultClass);
         ColumnAsSelector<T2, TR> sqlColumnAsSelector2 = getSQLExpressionProvider2().getColumnAsSelector(entityQueryExpressionBuilder.getProjects(), resultClass);
         selectExpression.apply(sqlColumnAsSelector1, sqlColumnAsSelector2);
-        return entityQueryExpressionBuilder.getRuntimeContext().getSQLObjectApiFactory().createQueryable(resultClass, entityQueryExpressionBuilder);
+        return entityQueryExpressionBuilder.getRuntimeContext().getSQLClientApiFactory().createQueryable(resultClass, entityQueryExpressionBuilder);
     }
 
     private <TMember> List<TMember> selectAggregateList(SQLExpression2<ColumnResultSelector<T1>, ColumnResultSelector<T2>> columnSelectorExpression, ColumnFunction columnFunction, Class<TMember> resultClass) {

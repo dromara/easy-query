@@ -47,8 +47,8 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
 
     protected final SQLBuilderSegment projects;
 
-    public QueryExpressionBuilder(ExpressionContext expressionContext) {
-        super(expressionContext);
+    public QueryExpressionBuilder(ExpressionContext expressionContext,Class<?> queryClass) {
+        super(expressionContext,queryClass);
         this.projects = new ProjectSQLBuilderSegmentImpl();
     }
 

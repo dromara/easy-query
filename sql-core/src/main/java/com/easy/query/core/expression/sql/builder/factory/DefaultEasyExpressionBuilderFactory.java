@@ -2,8 +2,8 @@ package com.easy.query.core.expression.sql.builder.factory;
 
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.MultiTableTypeEnum;
-import com.easy.query.core.expression.EntityTableAvailable;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.sql.builder.EasyExpressionContext;
 import com.easy.query.core.expression.sql.builder.EntityDeleteExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
@@ -15,9 +15,7 @@ import com.easy.query.core.expression.sql.builder.impl.DeleteExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.impl.InsertExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.impl.QueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.impl.TableExpressionBuilder;
-import com.easy.query.core.expression.sql.builder.EasyExpressionContext;
 import com.easy.query.core.expression.sql.builder.impl.UpdateExpressionBuilder;
-import com.easy.query.core.metadata.EntityMetadata;
 
 /**
  * create time 2023/4/2 22:09
@@ -42,22 +40,22 @@ public  class DefaultEasyExpressionBuilderFactory implements ExpressionBuilderFa
     }
 
     @Override
-    public EntityQueryExpressionBuilder createEntityQueryExpressionBuilder(ExpressionContext sqlExpressionContext) {
-        return new QueryExpressionBuilder(sqlExpressionContext);
+    public EntityQueryExpressionBuilder createEntityQueryExpressionBuilder(ExpressionContext sqlExpressionContext,Class<?> queryClass) {
+        return new QueryExpressionBuilder(sqlExpressionContext,queryClass);
     }
 
     @Override
-    public EntityInsertExpressionBuilder createEntityInsertExpressionBuilder(ExpressionContext sqlExpressionContext) {
-        return new InsertExpressionBuilder(sqlExpressionContext);
+    public EntityInsertExpressionBuilder createEntityInsertExpressionBuilder(ExpressionContext sqlExpressionContext,Class<?> queryClass) {
+        return new InsertExpressionBuilder(sqlExpressionContext,queryClass);
     }
 
     @Override
-    public EntityUpdateExpressionBuilder createEntityUpdateExpressionBuilder(ExpressionContext sqlExpressionContext, boolean expression) {
-        return new UpdateExpressionBuilder(sqlExpressionContext,expression);
+    public EntityUpdateExpressionBuilder createEntityUpdateExpressionBuilder(ExpressionContext sqlExpressionContext,Class<?> queryClass, boolean expression) {
+        return new UpdateExpressionBuilder(sqlExpressionContext,queryClass,expression);
     }
 
     @Override
-    public EntityDeleteExpressionBuilder createEntityDeleteExpressionBuilder(ExpressionContext sqlExpressionContext, boolean expression) {
-        return new DeleteExpressionBuilder(sqlExpressionContext,expression);
+    public EntityDeleteExpressionBuilder createEntityDeleteExpressionBuilder(ExpressionContext sqlExpressionContext,Class<?> queryClass, boolean expression) {
+        return new DeleteExpressionBuilder(sqlExpressionContext,queryClass,expression);
     }
 }

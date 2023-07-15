@@ -81,7 +81,7 @@ public class SQLExpressionProviderImpl<TEntity> implements SQLExpressionProvider
     @Override
     public NavigateInclude<TEntity> getNavigateInclude() {
         if(navigateInclude==null){
-            navigateInclude=new NavigateIncludeImpl<>(table,entityQueryExpressionBuilder);
+            navigateInclude=new NavigateIncludeImpl<>(table,entityQueryExpressionBuilder.getRuntimeContext());
         }
         return navigateInclude;
     }

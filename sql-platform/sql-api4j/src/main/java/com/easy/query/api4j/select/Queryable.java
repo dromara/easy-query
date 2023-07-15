@@ -24,6 +24,7 @@ import com.easy.query.core.exception.EasyQueryWhereInvalidOperationException;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression2;
+import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.api4j.util.EasyLambdaUtil;
 
@@ -44,7 +45,7 @@ public interface Queryable<T1> extends Query<T1>,
         LogicDeletable<Queryable<T1>>,
         TableReNameable<Queryable<T1>>,
         QueryStrategy<Queryable<T1>> {
-    ClientQueryable<T1> getEntityQueryable();
+    ClientQueryable<T1> getClientQueryable();
 
     /**
      * 只clone表达式共享上下文
@@ -79,63 +80,63 @@ public interface Queryable<T1> extends Query<T1>,
      * @return
      */
     default <TMember extends Number> BigDecimal sumBigDecimalOrNull(Property<T1, TMember> column) {
-        return getEntityQueryable().sumBigDecimalOrNull(EasyLambdaUtil.getPropertyName(column));
+        return getClientQueryable().sumBigDecimalOrNull(EasyLambdaUtil.getPropertyName(column));
     }
 
     default <TMember extends Number> BigDecimal sumBigDecimalOrDefault(Property<T1, TMember> column, BigDecimal def) {
-        return getEntityQueryable().sumBigDecimalOrDefault(EasyLambdaUtil.getPropertyName(column), def);
+        return getClientQueryable().sumBigDecimalOrDefault(EasyLambdaUtil.getPropertyName(column), def);
     }
 
     default <TMember extends Number> TMember sumOrNull(Property<T1, TMember> column) {
-        return getEntityQueryable().sumOrNull(EasyLambdaUtil.getPropertyName(column));
+        return getClientQueryable().sumOrNull(EasyLambdaUtil.getPropertyName(column));
     }
 
     default <TMember extends Number> TMember sumOrDefault(Property<T1, TMember> column, TMember def) {
-        return getEntityQueryable().sumOrDefault(EasyLambdaUtil.getPropertyName(column), def);
+        return getClientQueryable().sumOrDefault(EasyLambdaUtil.getPropertyName(column), def);
     }
 
     default <TMember extends Comparable<?>> TMember maxOrNull(Property<T1, TMember> column) {
-        return getEntityQueryable().maxOrNull(EasyLambdaUtil.getPropertyName(column));
+        return getClientQueryable().maxOrNull(EasyLambdaUtil.getPropertyName(column));
     }
 
     default <TMember extends Comparable<?>> TMember maxOrDefault(Property<T1, TMember> column, TMember def) {
-        return getEntityQueryable().maxOrDefault(EasyLambdaUtil.getPropertyName(column), def);
+        return getClientQueryable().maxOrDefault(EasyLambdaUtil.getPropertyName(column), def);
     }
 
     default <TMember> TMember minOrNull(Property<T1, TMember> column) {
-        return getEntityQueryable().minOrNull(EasyLambdaUtil.getPropertyName(column));
+        return getClientQueryable().minOrNull(EasyLambdaUtil.getPropertyName(column));
     }
 
     default <TMember> TMember minOrDefault(Property<T1, TMember> column, TMember def) {
-        return getEntityQueryable().minOrDefault(EasyLambdaUtil.getPropertyName(column), def);
+        return getClientQueryable().minOrDefault(EasyLambdaUtil.getPropertyName(column), def);
     }
 
     default <TMember extends Number> Double avgOrNull(Property<T1, TMember> column) {
-        return getEntityQueryable().avgOrNull(EasyLambdaUtil.getPropertyName(column));
+        return getClientQueryable().avgOrNull(EasyLambdaUtil.getPropertyName(column));
     }
 
     default <TMember extends Number> BigDecimal avgBigDecimalOrNull(Property<T1, TMember> column) {
-        return getEntityQueryable().avgBigDecimalOrNull(EasyLambdaUtil.getPropertyName(column));
+        return getClientQueryable().avgBigDecimalOrNull(EasyLambdaUtil.getPropertyName(column));
     }
 
     default <TMember extends Number> Float avgFloatOrNull(Property<T1, TMember> column) {
-        return getEntityQueryable().avgFloatOrNull(EasyLambdaUtil.getPropertyName(column));
+        return getClientQueryable().avgFloatOrNull(EasyLambdaUtil.getPropertyName(column));
     }
 
     default <TMember extends Number> Double avgOrDefault(Property<T1, TMember> column, Double def) {
-        return getEntityQueryable().avgOrDefault(EasyLambdaUtil.getPropertyName(column), def);
+        return getClientQueryable().avgOrDefault(EasyLambdaUtil.getPropertyName(column), def);
     }
 
     default BigDecimal avgOrDefault(Property<T1, BigDecimal> column, BigDecimal def) {
-        return getEntityQueryable().avgOrDefault(EasyLambdaUtil.getPropertyName(column), def);
+        return getClientQueryable().avgOrDefault(EasyLambdaUtil.getPropertyName(column), def);
     }
 
     default Float avgOrDefault(Property<T1, Float> column, Float def) {
-        return getEntityQueryable().avgOrDefault(EasyLambdaUtil.getPropertyName(column), def);
+        return getClientQueryable().avgOrDefault(EasyLambdaUtil.getPropertyName(column), def);
     }
 
     default <TMember extends Number, TResult extends Number> TResult avgOrDefault(Property<T1, TMember> column, TResult def, Class<TResult> resultClass) {
-        return getEntityQueryable().avgOrDefault(EasyLambdaUtil.getPropertyName(column), def, resultClass);
+        return getClientQueryable().avgOrDefault(EasyLambdaUtil.getPropertyName(column), def, resultClass);
     }
 
     /**
@@ -371,8 +372,8 @@ public interface Queryable<T1> extends Query<T1>,
 //       getEntityQueryable().<TProperty>include(EasyLambdaUtil.getPropertyName(navigate), q->func.apply(new EasyQueryable<>(q)).getEntityQueryable());
 //       return this;
 //   }
-   default  <TProperty> Queryable<T1> include(SQLExpression1<SQLNavigateInclude<T1>> navigateIncludeSQLExpression){
-       getEntityQueryable().<TProperty>include(navigateInclude->navigateIncludeSQLExpression.apply(new SQLNavigateIncludeImpl<>(navigateInclude)));
+   default  <TProperty> Queryable<T1> include(SQLFuncExpression1<SQLNavigateInclude<T1>,Queryable<TProperty>> navigateIncludeSQLExpression){
+       getClientQueryable().<TProperty>include(navigateInclude->navigateIncludeSQLExpression.apply(new SQLNavigateIncludeImpl<>(navigateInclude)).getClientQueryable());
        return this;
    }
 
