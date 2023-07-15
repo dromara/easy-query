@@ -1,6 +1,6 @@
 package com.easy.query.core.expression.parser.core.base;
 
-import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 
 /**
  * create time 2023/6/1 08:40
@@ -8,8 +8,7 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
  *
  * @author xuejiaming
  */
-public interface ColumnSetter<T1> {
-    TableAvailable getTable();
+public interface ColumnSetter<T1> extends EntitySQLTableOwner<T1> {
 
     /**
      * set column=val

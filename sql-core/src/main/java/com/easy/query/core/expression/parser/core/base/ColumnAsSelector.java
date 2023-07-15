@@ -6,19 +6,20 @@ import com.easy.query.core.expression.builder.AsSelector;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.func.DefaultColumnPropertyFunction;
-import com.easy.query.core.expression.lambda.SQLFuncExpression1;
-import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.lambda.SQLFuncExpression;
+import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
+import com.easy.query.core.expression.segment.SQLColumnSegment;
+import com.easy.query.core.expression.sql.builder.ExpressionContext;
 
 /**
  * @author xuejiaming
  * @Description: 文件说明
  * @Date: 2023/2/6 22:58
  */
-public interface ColumnAsSelector<T1, TR> {
+public interface ColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1> {
     AsSelector getAsSelector();
     QueryRuntimeContext getRuntimeContext();
-
-    TableAvailable getTable();
+    ExpressionContext getExpressionContext();
 
     ColumnAsSelector<T1, TR> column(String property);
     ColumnAsSelector<T1, TR> columnConstAs(String columnConst, String alias);
@@ -34,8 +35,7 @@ public interface ColumnAsSelector<T1, TR> {
 
     ColumnAsSelector<T1, TR> columnAs(String property, String propertyAlias);
 
-    <TSubQuery> ColumnAsSelector<T1, TR> columnSubQueryAs(SQLFuncExpression1<WherePredicate<T1>,Query<TSubQuery>> subQueryableFunc, String propertyAlias);
-
+    <TSubQuery> ColumnAsSelector<T1, TR> columnSubQueryAs(SQLFuncExpression<Query<TSubQuery>> subQueryableFunc, String propertyAlias);
     default ColumnAsSelector<T1, TR> columnCount(String property) {
         return columnCountAs(property, null);
     }
@@ -128,6 +128,7 @@ public interface ColumnAsSelector<T1, TR> {
 
     ColumnAsSelector<T1, TR> columnFuncAs(ColumnPropertyFunction columnPropertyFunction, String propertyAlias);
 
+    ColumnAsSelector<T1,TR> sqlColumnAs(SQLColumnSegment sqlColumnSegment, String propertyAlias);
     default <T2> ColumnAsSelector<T2, TR> then(ColumnAsSelector<T2, TR> sub) {
         return sub;
     }

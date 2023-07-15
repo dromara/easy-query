@@ -1,7 +1,13 @@
 package com.easy.query.api4j.insert;
 
+import com.easy.query.api4j.sql.SQLColumnSetSelector;
+import com.easy.query.api4j.sql.impl.SQLColumnSetSelectorImpl;
+import com.easy.query.api4j.util.EasyLambdaUtil;
 import com.easy.query.core.basic.api.insert.ClientInsertable;
+import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
+import com.easy.query.core.expression.lambda.Property;
+import com.easy.query.core.expression.lambda.SQLExpression1;
 
 import java.util.Collection;
 import java.util.function.Function;
@@ -86,7 +92,59 @@ public abstract class AbstractEntityInsertable<T> implements EntityInsertable<T>
     }
 
     @Override
+    public EntityInsertable<T> onDuplicateKeyIgnore() {
+        clientInsertable.onDuplicateKeyIgnore();
+        return this;
+    }
+
+    @Override
+    public EntityInsertable<T> onDuplicateKeyUpdate() {
+        clientInsertable.onDuplicateKeyUpdate();
+        return this;
+    }
+
+    @Override
     public String toSQL(Object entity) {
         return clientInsertable.toSQL(entity);
+    }
+
+    @Override
+    public String toSQL(Object entity, ToSQLContext toSQLContext) {
+        return clientInsertable.toSQL(entity,toSQLContext);
+    }
+
+    @Override
+    public EntityInsertable<T> onConflictDoUpdate() {
+        clientInsertable.onConflictDoUpdate();
+        return this;
+    }
+
+    @Override
+    public EntityInsertable<T> onConflictDoUpdate(Property<T, ?> constraintProperty) {
+        clientInsertable.onConflictDoUpdate(EasyLambdaUtil.getPropertyName(constraintProperty));
+        return this;
+    }
+
+    @Override
+    public EntityInsertable<T> onConflictDoUpdate(Property<T, ?> constraintProperty, SQLExpression1<SQLColumnSetSelector<T>> setColumnSelector) {
+        clientInsertable.onConflictDoUpdate(EasyLambdaUtil.getPropertyName(constraintProperty),setSelector->{
+            setColumnSelector.apply(new SQLColumnSetSelectorImpl<>(setSelector));
+        });
+        return this;
+    }
+
+
+    @Override
+    public EntityInsertable<T> onDuplicateKeyUpdate(SQLExpression1<SQLColumnSetSelector<T>> setColumnSelector) {
+        clientInsertable.onDuplicateKeyUpdate(setSelector->{
+            setColumnSelector.apply(new SQLColumnSetSelectorImpl<>(setSelector));
+        });
+        return this;
+    }
+
+    @Override
+    public EntityInsertable<T> batch(boolean use) {
+        clientInsertable.batch(use);
+        return this;
     }
 }

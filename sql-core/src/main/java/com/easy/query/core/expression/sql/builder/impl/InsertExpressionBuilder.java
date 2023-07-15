@@ -20,6 +20,7 @@ import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.util.EasyBeanUtil;
 import com.easy.query.core.util.EasyClassUtil;
+import com.easy.query.core.util.EasySQLSegmentUtil;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -33,6 +34,8 @@ import java.util.Set;
  */
 public class InsertExpressionBuilder extends AbstractEntityExpressionBuilder implements EntityInsertExpressionBuilder {
     protected final SQLBuilderSegment columns;
+    protected String duplicateKey;
+    protected SQLBuilderSegment duplicateKeyUpdateColumns;
 
     public InsertExpressionBuilder(ExpressionContext expressionContext) {
         super(expressionContext);
@@ -42,6 +45,24 @@ public class InsertExpressionBuilder extends AbstractEntityExpressionBuilder imp
     @Override
     public SQLBuilderSegment getColumns() {
         return columns;
+    }
+
+    @Override
+    public SQLBuilderSegment getDuplicateKeyUpdateColumns() {
+        if(duplicateKeyUpdateColumns==null){
+            duplicateKeyUpdateColumns=new ProjectSQLBuilderSegmentImpl();
+        }
+        return duplicateKeyUpdateColumns;
+    }
+
+    @Override
+    public String getDuplicateKey() {
+        return duplicateKey;
+    }
+
+    @Override
+    public void setDuplicateKey(String duplicateKey) {
+        this.duplicateKey=duplicateKey;
     }
 
     private void checkTable() {
@@ -88,7 +109,7 @@ public class InsertExpressionBuilder extends AbstractEntityExpressionBuilder imp
         EntityTableExpressionBuilder table = getTable(0);
         QueryRuntimeContext runtimeContext = getRuntimeContext();
         ExpressionFactory expressionFactory = runtimeContext.getExpressionFactory();
-        EntitySQLExpressionMetadata entitySQLExpressionMetadata = new EntitySQLExpressionMetadata(expressionContext.getTableContext(), runtimeContext);
+        EntitySQLExpressionMetadata entitySQLExpressionMetadata = new EntitySQLExpressionMetadata(expressionContext, runtimeContext);
         EntityInsertSQLExpression easyInsertSQLExpression = expressionFactory.createEasyInsertSQLExpression(entitySQLExpressionMetadata, table.toExpression());
         EntityMetadata entityMetadata = table.getEntityMetadata();
         SQLBuilderSegment insertCloneColumns = getColumns().cloneSQLBuilder();
@@ -126,6 +147,10 @@ public class InsertExpressionBuilder extends AbstractEntityExpressionBuilder imp
             throw new EasyQueryException("not found insert columns :" + EasyClassUtil.getSimpleName(table.getEntityClass()));
         }
         insertCloneColumns.copyTo(easyInsertSQLExpression.getColumns());
+        easyInsertSQLExpression.setDuplicateKey(duplicateKey);
+        if(EasySQLSegmentUtil.isNotEmpty(duplicateKeyUpdateColumns)){
+            duplicateKeyUpdateColumns.copyTo(easyInsertSQLExpression.getDuplicateKeyUpdateColumns());
+        }
         return easyInsertSQLExpression;
     }
 
@@ -135,8 +160,12 @@ public class InsertExpressionBuilder extends AbstractEntityExpressionBuilder imp
 
         EntityInsertExpressionBuilder insertExpressionBuilder = runtimeContext.getExpressionBuilderFactory().createEntityInsertExpressionBuilder(expressionContext);
 
-        if (getColumns().isNotEmpty()) {
+        if (EasySQLSegmentUtil.isNotEmpty(getColumns())) {
             getColumns().copyTo(insertExpressionBuilder.getColumns());
+        }
+        insertExpressionBuilder.setDuplicateKey(duplicateKey);
+        if(EasySQLSegmentUtil.isNotEmpty(duplicateKeyUpdateColumns)){
+            duplicateKeyUpdateColumns.copyTo(insertExpressionBuilder.getDuplicateKeyUpdateColumns());
         }
         for (EntityTableExpressionBuilder table : super.tables) {
             insertExpressionBuilder.getTables().add(table.copyEntityTableExpressionBuilder());

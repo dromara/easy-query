@@ -7,6 +7,8 @@ import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.func.DefaultColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.segment.SQLColumnSegment;
+import com.easy.query.core.expression.sql.builder.ExpressionContext;
 
 /**
  * create time 2023/6/22 20:47
@@ -16,6 +18,7 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
  */
 public interface AsSelector {
     QueryRuntimeContext getRuntimeContext();
+    ExpressionContext getExpressionContext();
 
     AsSelector column(TableAvailable table, String property);
 
@@ -125,4 +128,5 @@ public interface AsSelector {
     }
 
     AsSelector columnFuncAs(TableAvailable table,ColumnPropertyFunction columnPropertyFunction, String propertyAlias);
+    AsSelector sqlColumnAs(SQLColumnSegment sqlColumnSegment, String propertyAlias);
 }

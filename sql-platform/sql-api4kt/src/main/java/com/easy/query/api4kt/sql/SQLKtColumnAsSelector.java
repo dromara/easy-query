@@ -1,26 +1,30 @@
 package com.easy.query.api4kt.sql;
 
 import com.easy.query.api4kt.select.KtQueryable;
-import com.easy.query.api4kt.sql.impl.SQLKtWherePredicateImpl;
 import com.easy.query.api4kt.util.EasyKtLambdaUtil;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
+import com.easy.query.core.expression.lambda.SQLFuncExpression;
+import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
+import com.easy.query.core.expression.segment.SQLColumnSegment;
+import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import kotlin.reflect.KProperty1;
-
-import java.util.function.Function;
 
 /**
  * @author xuejiaming
  * @Description: 文件说明
  * @Date: 2023/2/6 22:58
  */
-public interface SQLKtColumnAsSelector<T1, TR> {
+public interface SQLKtColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1> {
     ColumnAsSelector<T1, TR> getColumnAsSelector();
 
     default QueryRuntimeContext getRuntimeContext() {
         return getColumnAsSelector().getRuntimeContext();
+    }
+    default ExpressionContext getExpressionContext() {
+        return getColumnAsSelector().getExpressionContext();
     }
 
     default TableAvailable getTable() {
@@ -56,14 +60,12 @@ public interface SQLKtColumnAsSelector<T1, TR> {
         return this;
     }
 
-    default <TSubQuery> SQLKtColumnAsSelector<T1, TR> columnSubQueryAs(Function<SQLKtWherePredicate<T1>, KtQueryable<TSubQuery>> subQueryableFunc, KProperty1<TR, TSubQuery> alias) {
+    default <TSubQuery> SQLKtColumnAsSelector<T1, TR> columnSubQueryAs(SQLFuncExpression<KtQueryable<TSubQuery>> subQueryableFunc, KProperty1<TR, TSubQuery> alias) {
         return columnSubQueryAs(subQueryableFunc, EasyKtLambdaUtil.getPropertyName(alias));
     }
 
-    default <TSubQuery> SQLKtColumnAsSelector<T1, TR> columnSubQueryAs(Function<SQLKtWherePredicate<T1>, KtQueryable<TSubQuery>> subQueryableFunc, String alias) {
-        getColumnAsSelector().columnSubQueryAs(wherePredicate -> {
-            return subQueryableFunc.apply(new SQLKtWherePredicateImpl<>(wherePredicate));
-        }, alias);
+    default <TSubQuery> SQLKtColumnAsSelector<T1, TR> columnSubQueryAs(SQLFuncExpression<KtQueryable<TSubQuery>> subQueryableFunc, String alias) {
+        getColumnAsSelector().columnSubQueryAs(subQueryableFunc::apply, alias);
         return this;
     }
 
@@ -202,6 +204,10 @@ public interface SQLKtColumnAsSelector<T1, TR> {
         return this;
     }
 
+    default SQLKtColumnAsSelector<T1,TR> sqlColumnAs(SQLColumnSegment sqlColumnSegment, KProperty1<TR, ?> alias){
+        getColumnAsSelector().sqlColumnAs(sqlColumnSegment,EasyKtLambdaUtil.getPropertyName(alias));
+        return this;
+    }
     default <T2> SQLKtColumnAsSelector<T2, TR> then(SQLKtColumnAsSelector<T2, TR> sub) {
         getColumnAsSelector().then(sub.getColumnAsSelector());
         return sub;

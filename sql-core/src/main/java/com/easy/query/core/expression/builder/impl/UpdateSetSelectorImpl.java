@@ -33,6 +33,15 @@ public class UpdateSetSelectorImpl implements UpdateSetSelector {
     }
 
     @Override
+    public UpdateSetSelector columnAll(TableAvailable table) {
+        Collection<String> properties = table.getEntityMetadata().getProperties();
+        for (String property : properties) {
+            sqlSegmentBuilder.append(new ColumnPropertyPredicate(table, property, runtimeContext));
+        }
+        return this;
+    }
+
+    @Override
     public UpdateSetSelector columnIgnore(TableAvailable table, String property) {
         sqlSegmentBuilder.getSQLSegments().removeIf(sqlSegment -> {
             if (sqlSegment instanceof SQLEntitySegment) {
@@ -41,15 +50,6 @@ public class UpdateSetSelectorImpl implements UpdateSetSelector {
             }
             return false;
         });
-        return this;
-    }
-
-    @Override
-    public UpdateSetSelector columnAll(TableAvailable table) {
-        Collection<String> properties = table.getEntityMetadata().getProperties();
-        for (String property : properties) {
-            sqlSegmentBuilder.append(new ColumnPropertyPredicate(table, property, runtimeContext));
-        }
         return this;
     }
 }

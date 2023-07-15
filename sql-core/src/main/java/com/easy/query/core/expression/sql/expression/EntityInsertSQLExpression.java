@@ -10,6 +10,9 @@ import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
  */
 public interface EntityInsertSQLExpression extends EntitySQLExpression {
     SQLBuilderSegment getColumns();
+    SQLBuilderSegment getDuplicateKeyUpdateColumns();
+    String getDuplicateKey();
+    void setDuplicateKey(String duplicateKey);
 
     @Override
     EntityInsertSQLExpression cloneSQLExpression();

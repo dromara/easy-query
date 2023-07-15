@@ -2,7 +2,6 @@ package com.easy.query.test.dto;
 
 import com.easy.query.core.annotation.Column;
 import lombok.Data;
-import org.junit.Ignore;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -13,7 +12,6 @@ import java.time.LocalDateTime;
  *
  * @author xuejiaming
  */
-@Ignore
 @Data
 public class BlogEntityTest2 {
 

@@ -18,20 +18,18 @@ import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
  * @Date: 2023/2/25 17:39
  */
 public class ColumnSetterImpl<T> implements ColumnSetter<T> {
-    protected final int index;
     protected final EntityExpressionBuilder entityExpressionBuilder;
     protected final TableAvailable table;
     protected final SQLBuilderSegment sqlBuilderSegment;
     protected final QueryRuntimeContext runtimeContext;
     protected final SQLSegmentFactory sqlSegmentFactory;
 
-    public ColumnSetterImpl(int index, EntityExpressionBuilder entityExpressionBuilder, SQLBuilderSegment sqlBuilderSegment) {
+    public ColumnSetterImpl(TableAvailable table, EntityExpressionBuilder entityExpressionBuilder, SQLBuilderSegment sqlBuilderSegment) {
 
-        this.index = index;
         this.entityExpressionBuilder = entityExpressionBuilder;
         this.runtimeContext = entityExpressionBuilder.getRuntimeContext();
         this.sqlSegmentFactory = runtimeContext.getSQLSegmentFactory();
-        this.table = entityExpressionBuilder.getTable(index).getEntityTable();
+        this.table = table;
         this.sqlBuilderSegment = sqlBuilderSegment;
     }
 
@@ -43,8 +41,7 @@ public class ColumnSetterImpl<T> implements ColumnSetter<T> {
     @Override
     public ColumnSetter<T> set(boolean condition, String property, Object val) {
         if (condition) {
-            EntityTableExpressionBuilder table = entityExpressionBuilder.getTable(index);
-            sqlBuilderSegment.append(new ColumnValuePredicate(table.getEntityTable(), property, val, SQLPredicateCompareEnum.EQ, entityExpressionBuilder.getRuntimeContext()));
+            sqlBuilderSegment.append(new ColumnValuePredicate(table, property, val, SQLPredicateCompareEnum.EQ, entityExpressionBuilder.getRuntimeContext()));
         }
         return this;
     }
@@ -52,9 +49,7 @@ public class ColumnSetterImpl<T> implements ColumnSetter<T> {
     @Override
     public ColumnSetter<T> setWithColumn(boolean condition, String property1, String property2) {
         if (condition) {
-            EntityTableExpressionBuilder table1 = entityExpressionBuilder.getTable(index);
-            EntityTableExpressionBuilder table2 = entityExpressionBuilder.getTable(index);
-            sqlBuilderSegment.append(new ColumnWithColumnPredicate(table1.getEntityTable(), property1, table2.getEntityTable(), property2, SQLPredicateCompareEnum.EQ, entityExpressionBuilder.getRuntimeContext()));
+            sqlBuilderSegment.append(new ColumnWithColumnPredicate(table, property1, table, property2, SQLPredicateCompareEnum.EQ, entityExpressionBuilder.getRuntimeContext()));
         }
         return this;
     }
@@ -70,8 +65,7 @@ public class ColumnSetterImpl<T> implements ColumnSetter<T> {
 
     private void setSelf(boolean increment, String property, Number val) {
 
-        EntityTableExpressionBuilder table = entityExpressionBuilder.getTable(index);
-        ColumnWithSelfSegment columnWithSelfSegment = sqlSegmentFactory.createColumnWithSelfSegment(increment, table.getEntityTable(), property, val, SQLPredicateCompareEnum.EQ, entityExpressionBuilder.getRuntimeContext());
+        ColumnWithSelfSegment columnWithSelfSegment = sqlSegmentFactory.createColumnWithSelfSegment(increment, table, property, val, SQLPredicateCompareEnum.EQ, entityExpressionBuilder.getRuntimeContext());
         sqlBuilderSegment.append(columnWithSelfSegment);
     }
 

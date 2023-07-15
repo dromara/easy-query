@@ -77,7 +77,7 @@ public class ColumnCollectionPredicate implements ValuesPredicate,ShardingPredic
     }
 
     @Override
-    public SQLEntitySegment cloneSQLEntitySegment() {
+    public SQLEntitySegment cloneSQLColumnSegment() {
 
         throw new UnsupportedOperationException();
     }

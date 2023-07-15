@@ -90,4 +90,10 @@ public abstract class AbstractKtEntityUpdatable<T> implements KtEntityUpdatable<
     public void executeRows(long expectRows, String msg, String code) {
         entityObjectUpdatable.executeRows(expectRows, msg, code);
     }
+
+    @Override
+    public KtEntityUpdatable<T> batch(boolean use) {
+        entityObjectUpdatable.batch(use);
+        return this;
+    }
 }

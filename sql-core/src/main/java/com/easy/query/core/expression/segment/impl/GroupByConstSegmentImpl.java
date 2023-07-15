@@ -20,7 +20,7 @@ public class GroupByConstSegmentImpl extends ColumnConstSegmentImpl implements G
     }
 
     @Override
-    public ColumnSegment cloneSQLEntitySegment() {
+    public ColumnSegment cloneSQLColumnSegment() {
         return new GroupByConstSegmentImpl(table,runtimeContext,columnConst);
     }
 

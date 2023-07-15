@@ -923,8 +923,8 @@ public class ShardingTest extends BaseTest {
         Queryable<TopicSubQueryBlog> select = easyQuery
                 .queryable(Topic.class)
                 .where(t -> t.isNotNull(Topic::getTitle))
-                .select(TopicSubQueryBlog.class, o -> o.columnAll().columnSubQueryAs(t->{
-                    return queryable.where(x -> x.eq(t, TopicShardingTime::getId, Topic::getId)).select(Long.class, x->x.columnCount(TopicShardingTime::getId));
+                .select(TopicSubQueryBlog.class, o -> o.columnAll().columnSubQueryAs(()->{
+                    return queryable.where(x -> x.eq(o, TopicShardingTime::getId, Topic::getId)).select(Long.class, x->x.columnCount(TopicShardingTime::getId));
                 }, TopicSubQueryBlog::getBlogCount).columnIgnore(Topic::getCreateTime));
         String sql = select.toSQL();
 
@@ -942,8 +942,8 @@ Assert.assertEquals(99,list.size());
         Queryable<TopicSubQueryBlog> select = easyQuery
                 .queryable(Topic.class)
                 .where(t -> t.isNotNull(Topic::getTitle))
-                .select(TopicSubQueryBlog.class, o -> o.columnAll().columnSubQueryAs(t->{
-                    return queryable.where(x -> x.eq(t, TopicShardingTime::getStars, Topic::getStars)).select(Long.class, x->x.columnCount(TopicShardingTime::getId));
+                .select(TopicSubQueryBlog.class, o -> o.columnAll().columnSubQueryAs(()->{
+                    return queryable.where(x -> x.eq(o, TopicShardingTime::getStars, Topic::getStars)).select(Long.class, x->x.columnCount(TopicShardingTime::getId));
                 }, TopicSubQueryBlog::getBlogCount).columnIgnore(Topic::getCreateTime));
         String sql = select.toSQL();
 

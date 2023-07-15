@@ -58,20 +58,20 @@ public class ExecutorContext {
     /**
      * 如果当前value存在加密字段那么会自动解密
      * 数据库转属性
-     * @param columnMetadata
+     * @param resultColumnMetadata
      * @param value
      * @return
      */
-    public Object fromValue(Class<?> entityClass, ColumnMetadata columnMetadata, Object value) {
-        Object fromValue = fromValue0(entityClass, columnMetadata, value);
-        Class<?> propertyType = columnMetadata.getPropertyType();
-        return columnMetadata.getValueConverter().deserialize(EasyObjectUtil.typeCast(propertyType),EasyObjectUtil.typeCast(fromValue));
+    public Object fromValue(Class<?> entityClass, ResultColumnMetadata resultColumnMetadata, Object value) {
+        Object fromValue = fromValue0(entityClass, resultColumnMetadata, value);
+        Class<?> propertyType = resultColumnMetadata.getPropertyType();
+        return resultColumnMetadata.getValueConverter().deserialize(EasyObjectUtil.typeCast(propertyType),EasyObjectUtil.typeCast(fromValue));
     }
-    private Object fromValue0(Class<?> entityClass, ColumnMetadata columnMetadata, Object value){
+    private Object fromValue0(Class<?> entityClass, ResultColumnMetadata resultColumnMetadata, Object value){
         if (value != null) {
-            if (columnMetadata.isEncryption()) {
-                EncryptionStrategy easyEncryptionStrategy = columnMetadata.getEncryptionStrategy();
-                return easyEncryptionStrategy.decrypt(entityClass,columnMetadata.getProperty().getName(),value);
+            if (resultColumnMetadata.isEncryption()) {
+                EncryptionStrategy easyEncryptionStrategy = resultColumnMetadata.getEncryptionStrategy();
+                return easyEncryptionStrategy.decrypt(entityClass,resultColumnMetadata.getPropertyName(),value);
             }
         }
         return value;

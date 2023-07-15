@@ -7,6 +7,7 @@ import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.enums.SQLRangeEnum;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import kotlin.reflect.KProperty1;
@@ -19,7 +20,7 @@ import java.util.Collection;
  * @Description: 文件说明
  * @Date: 2023/2/5 09:09
  */
-public interface SQLKtWherePredicate<T1> {
+public interface SQLKtWherePredicate<T1> extends EntitySQLTableOwner<T1> {
     WherePredicate<T1> getWherePredicate();
 
     default TableAvailable getTable() {
@@ -630,6 +631,22 @@ public interface SQLKtWherePredicate<T1> {
         getWherePredicate().columnFunc(condition, columnPropertyFunction, sqlPredicateCompare, val);
         return this;
     }
+    default <T2> SQLKtWherePredicate<T1> gt(SQLKtWherePredicate<T2> sub, KProperty1<T1, ?> column1, KProperty1<T2, ?> column2) {
+        return gt(true, sub, column1, column2);
+    }
+
+    default <T2> SQLKtWherePredicate<T1> gt(boolean condition, SQLKtWherePredicate<T2> sub, KProperty1<T1, ?> column1, KProperty1<T2, ?> column2) {
+        getWherePredicate().gt(condition, sub.getWherePredicate(), EasyKtLambdaUtil.getPropertyName(column1), EasyKtLambdaUtil.getPropertyName(column2));
+        return this;
+    }
+    default <T2> SQLKtWherePredicate<T1> ge(SQLKtWherePredicate<T2> sub, KProperty1<T1, ?> column1, KProperty1<T2, ?> column2) {
+        return ge(true, sub, column1, column2);
+    }
+
+    default <T2> SQLKtWherePredicate<T1> ge(boolean condition, SQLKtWherePredicate<T2> sub, KProperty1<T1, ?> column1, KProperty1<T2, ?> column2) {
+        getWherePredicate().ge(condition, sub.getWherePredicate(), EasyKtLambdaUtil.getPropertyName(column1), EasyKtLambdaUtil.getPropertyName(column2));
+        return this;
+    }
 
     default <T2> SQLKtWherePredicate<T1> eq(SQLKtWherePredicate<T2> sub, KProperty1<T1, ?> column1, KProperty1<T2, ?> column2) {
         return eq(true, sub, column1, column2);
@@ -637,6 +654,30 @@ public interface SQLKtWherePredicate<T1> {
 
     default <T2> SQLKtWherePredicate<T1> eq(boolean condition, SQLKtWherePredicate<T2> sub, KProperty1<T1, ?> column1, KProperty1<T2, ?> column2) {
         getWherePredicate().eq(condition, sub.getWherePredicate(), EasyKtLambdaUtil.getPropertyName(column1), EasyKtLambdaUtil.getPropertyName(column2));
+        return this;
+    }
+    default <T2> SQLKtWherePredicate<T1> ne(SQLKtWherePredicate<T2> sub, KProperty1<T1, ?> column1, KProperty1<T2, ?> column2) {
+        return ne(true, sub, column1, column2);
+    }
+
+    default <T2> SQLKtWherePredicate<T1> ne(boolean condition, SQLKtWherePredicate<T2> sub, KProperty1<T1, ?> column1, KProperty1<T2, ?> column2) {
+        getWherePredicate().ne(condition, sub.getWherePredicate(), EasyKtLambdaUtil.getPropertyName(column1), EasyKtLambdaUtil.getPropertyName(column2));
+        return this;
+    }
+    default <T2> SQLKtWherePredicate<T1> le(SQLKtWherePredicate<T2> sub, KProperty1<T1, ?> column1, KProperty1<T2, ?> column2) {
+        return le(true, sub, column1, column2);
+    }
+
+    default <T2> SQLKtWherePredicate<T1> le(boolean condition, SQLKtWherePredicate<T2> sub, KProperty1<T1, ?> column1, KProperty1<T2, ?> column2) {
+        getWherePredicate().le(condition, sub.getWherePredicate(), EasyKtLambdaUtil.getPropertyName(column1), EasyKtLambdaUtil.getPropertyName(column2));
+        return this;
+    }
+    default <T2> SQLKtWherePredicate<T1> lt(SQLKtWherePredicate<T2> sub, KProperty1<T1, ?> column1, KProperty1<T2, ?> column2) {
+        return lt(true, sub, column1, column2);
+    }
+
+    default <T2> SQLKtWherePredicate<T1> lt(boolean condition, SQLKtWherePredicate<T2> sub, KProperty1<T1, ?> column1, KProperty1<T2, ?> column2) {
+        getWherePredicate().lt(condition, sub.getWherePredicate(), EasyKtLambdaUtil.getPropertyName(column1), EasyKtLambdaUtil.getPropertyName(column2));
         return this;
     }
 

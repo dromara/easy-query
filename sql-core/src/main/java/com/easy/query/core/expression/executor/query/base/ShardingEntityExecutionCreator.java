@@ -2,10 +2,12 @@ package com.easy.query.core.expression.executor.query.base;
 
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.executor.internal.common.ExecutionUnit;
+import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.expression.executor.parser.EntityPrepareParseResult;
 import com.easy.query.core.expression.executor.parser.InsertPrepareParseResult;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityToExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.expression.EntitySQLExpression;
 import com.easy.query.core.sharding.rewrite.RewriteContext;
 import com.easy.query.core.sharding.rewrite.RewriteRouteUnit;
@@ -59,9 +61,14 @@ public class ShardingEntityExecutionCreator extends ShardingBaseExecutionCreator
     }
     @Override
     protected boolean useEntityBatch(){
+        ExpressionContext expressionContext = entityPrepareParseResult.getEntityExpressionBuilder().getExpressionContext();
+        if(expressionContext.getBehavior().hasBehavior(EasyBehaviorEnum.EXECUTE_NO_BATCH)){
+            return false;
+        }
         int entitySize = entityPrepareParseResult.getEntities().size();
         ExecutorContext executorContext = entityPrepareParseResult.getExecutorContext();
-        return EasySQLExpressionUtil.entityExecuteBatch(entitySize,executorContext);
+        return expressionContext.getBehavior().hasBehavior(EasyBehaviorEnum.EXECUTE_BATCH)
+                ||EasySQLExpressionUtil.entityExecuteBatch(entitySize,executorContext);
     }
 
     @Override

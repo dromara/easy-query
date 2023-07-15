@@ -198,7 +198,7 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
         QueryRuntimeContext runtimeContext = getRuntimeContext();
         ExpressionFactory expressionFactory = runtimeContext.getExpressionFactory();
         SQLSegmentFactory sqlSegmentFactory = runtimeContext.getSQLSegmentFactory();
-        EntitySQLExpressionMetadata entitySQLExpressionMetadata = new EntitySQLExpressionMetadata(expressionContext.getTableContext(), runtimeContext);
+        EntitySQLExpressionMetadata entitySQLExpressionMetadata = new EntitySQLExpressionMetadata(expressionContext, runtimeContext);
         EntityQuerySQLExpression easyQuerySQLExpression = expressionFactory.createEasyQuerySQLExpression(entitySQLExpressionMetadata);
         easyQuerySQLExpression.setDistinct(isDistinct());
 
@@ -214,7 +214,7 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
                 easyQuerySQLExpression.setProjects(projects);
             }
         } else {
-            easyQuerySQLExpression.setProjects(getProjects());
+            easyQuerySQLExpression.setProjects(getProjects().cloneSQLBuilder());
         }
         easyQuerySQLExpression.getTables().add((EntityTableSQLExpression) toTableExpressionSQL(firstTable, false));
         while (iterator.hasNext()) {
@@ -230,12 +230,12 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
         if (where != null && where.isNotEmpty()) {
             easyQuerySQLExpression.setWhere(where);
         }
-        easyQuerySQLExpression.setGroup(getGroup());
-        easyQuerySQLExpression.setHaving(getHaving());
-        easyQuerySQLExpression.setOrder(getOrder());
+        easyQuerySQLExpression.setGroup(getGroup().cloneSQLBuilder());
+        easyQuerySQLExpression.setHaving(getHaving().clonePredicateSegment());
+        easyQuerySQLExpression.setOrder(getOrder().cloneSQLBuilder());
         easyQuerySQLExpression.setOffset(getOffset());
         easyQuerySQLExpression.setRows(getRows());
-        easyQuerySQLExpression.setAllPredicate(getAllPredicate());
+        easyQuerySQLExpression.setAllPredicate(getAllPredicate().clonePredicateSegment());
         if(hasIncludes()){
             List<EntityQueryExpressionBuilder> includeList = getIncludes();
             ArrayList<EntityQuerySQLExpression> includeExpressions = new ArrayList<>(includeList.size());

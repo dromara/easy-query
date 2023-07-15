@@ -1,6 +1,7 @@
 package com.easy.query.sql.starter;
 
 import com.easy.query.core.annotation.EasyQueryTrack;
+import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.extension.track.TrackManager;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -11,27 +12,26 @@ import org.springframework.context.annotation.Configuration;
 import java.lang.reflect.Method;
 
 /**
+ * @author xuejiaming
  * @FileName: EasyQueryTrackAopConfiguration.java
  * @Description: 文件说明
  * @Date: 2023/3/20 20:58
- * @author xuejiaming
  */
 @Aspect
 @Configuration
 public class EasyQueryTrackAopConfiguration {
-    private final TrackManager trackManager;
-
-    public EasyQueryTrackAopConfiguration(TrackManager trackManager) {
-
-        this.trackManager = trackManager;
+    private final EasyQueryClient easyQueryClient;
+    public EasyQueryTrackAopConfiguration(EasyQueryClient easyQueryClient){
+        this.easyQueryClient=easyQueryClient;
     }
 
-    @Around("execution(public * *(..)) && @within(com.easy.query.core.annotation.EasyQueryTrack)")
+    @Around("execution(public * *(..)) && @annotation(com.easy.query.core.annotation.EasyQueryTrack)")
     public Object easyQueryTrack(ProceedingJoinPoint pjp) throws Throwable {
         MethodSignature signature = (MethodSignature) pjp.getSignature();
         Method method = signature.getMethod();
         EasyQueryTrack easyQueryTrack = method.getAnnotation(EasyQueryTrack.class); //通过反射拿到注解对象
         if (easyQueryTrack.enable()) {
+            TrackManager trackManager = easyQueryClient.getRuntimeContext().getTrackManager();
             try {
                 trackManager.begin();
                 return pjp.proceed();

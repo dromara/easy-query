@@ -1,15 +1,16 @@
 package com.easy.query.api4j.sql;
 
 import com.easy.query.api4j.select.Queryable;
+import com.easy.query.api4j.util.EasyLambdaUtil;
 import com.easy.query.core.enums.SQLLikeEnum;
 import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.enums.SQLRangeEnum;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
-import com.easy.query.api4j.util.EasyLambdaUtil;
 
 import java.util.Collection;
 
@@ -19,7 +20,7 @@ import java.util.Collection;
  * @Description: 文件说明
  * @Date: 2023/2/5 09:09
  */
-public interface SQLWherePredicate<T1> {
+public interface SQLWherePredicate<T1> extends EntitySQLTableOwner<T1> {
     WherePredicate<T1> getWherePredicate();
 
     default TableAvailable getTable() {
@@ -631,12 +632,53 @@ public interface SQLWherePredicate<T1> {
         return this;
     }
 
-    default <T2> SQLWherePredicate<T1> eq(SQLWherePredicate<T2> sub, Property<T1, ?> column1, Property<T2, ?> column2) {
+    default <T2> SQLWherePredicate<T1> gt(EntitySQLTableOwner<T2> sub, Property<T1, ?> column1, Property<T2, ?> column2) {
+        return gt(true, sub, column1, column2);
+    }
+
+    default <T2> SQLWherePredicate<T1> gt(boolean condition, EntitySQLTableOwner<T2> sub, Property<T1, ?> column1, Property<T2, ?> column2) {
+        getWherePredicate().gt(condition, sub, EasyLambdaUtil.getPropertyName(column1), EasyLambdaUtil.getPropertyName(column2));
+        return this;
+    }
+    default <T2> SQLWherePredicate<T1> ge(EntitySQLTableOwner<T2> sub, Property<T1, ?> column1, Property<T2, ?> column2) {
+        return ge(true, sub, column1, column2);
+    }
+
+    default <T2> SQLWherePredicate<T1> ge(boolean condition, EntitySQLTableOwner<T2> sub, Property<T1, ?> column1, Property<T2, ?> column2) {
+        getWherePredicate().ge(condition, sub, EasyLambdaUtil.getPropertyName(column1), EasyLambdaUtil.getPropertyName(column2));
+        return this;
+    }
+    default <T2> SQLWherePredicate<T1> eq(EntitySQLTableOwner<T2> sub, Property<T1, ?> column1, Property<T2, ?> column2) {
         return eq(true, sub, column1, column2);
     }
 
-    default <T2> SQLWherePredicate<T1> eq(boolean condition, SQLWherePredicate<T2> sub, Property<T1, ?> column1, Property<T2, ?> column2) {
-        getWherePredicate().eq(condition, sub.getWherePredicate(), EasyLambdaUtil.getPropertyName(column1), EasyLambdaUtil.getPropertyName(column2));
+    default <T2> SQLWherePredicate<T1> eq(boolean condition, EntitySQLTableOwner<T2> sub, Property<T1, ?> column1, Property<T2, ?> column2) {
+        getWherePredicate().eq(condition, sub, EasyLambdaUtil.getPropertyName(column1), EasyLambdaUtil.getPropertyName(column2));
+        return this;
+    }
+
+    default <T2> SQLWherePredicate<T1> ne(EntitySQLTableOwner<T2> sub, Property<T1, ?> column1, Property<T2, ?> column2) {
+        return ne(true, sub, column1, column2);
+    }
+
+    default <T2> SQLWherePredicate<T1> ne(boolean condition, EntitySQLTableOwner<T2> sub, Property<T1, ?> column1, Property<T2, ?> column2) {
+        getWherePredicate().ne(condition, sub, EasyLambdaUtil.getPropertyName(column1), EasyLambdaUtil.getPropertyName(column2));
+        return this;
+    }
+    default <T2> SQLWherePredicate<T1> le(EntitySQLTableOwner<T2> sub, Property<T1, ?> column1, Property<T2, ?> column2) {
+        return le(true, sub, column1, column2);
+    }
+
+    default <T2> SQLWherePredicate<T1> le(boolean condition, EntitySQLTableOwner<T2> sub, Property<T1, ?> column1, Property<T2, ?> column2) {
+        getWherePredicate().le(condition, sub, EasyLambdaUtil.getPropertyName(column1), EasyLambdaUtil.getPropertyName(column2));
+        return this;
+    }
+    default <T2> SQLWherePredicate<T1> lt(EntitySQLTableOwner<T2> sub, Property<T1, ?> column1, Property<T2, ?> column2) {
+        return lt(true, sub, column1, column2);
+    }
+
+    default <T2> SQLWherePredicate<T1> lt(boolean condition, EntitySQLTableOwner<T2> sub, Property<T1, ?> column1, Property<T2, ?> column2) {
+        getWherePredicate().lt(condition, sub, EasyLambdaUtil.getPropertyName(column1), EasyLambdaUtil.getPropertyName(column2));
         return this;
     }
 

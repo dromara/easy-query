@@ -49,7 +49,7 @@ public class ColumnWithColumnPredicate implements Predicate {
     }
 
     @Override
-    public SQLEntitySegment cloneSQLEntitySegment() {
+    public SQLEntitySegment cloneSQLColumnSegment() {
         throw new UnsupportedOperationException();
     }
 

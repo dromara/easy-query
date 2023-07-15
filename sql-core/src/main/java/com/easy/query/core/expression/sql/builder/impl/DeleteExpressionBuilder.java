@@ -83,7 +83,7 @@ public class DeleteExpressionBuilder extends AbstractPredicateEntityExpressionBu
             if (logicDeletedSQLExpression != null) {
                 UpdateSetSQLBuilderSegment setSQLSegmentBuilder = new UpdateSetSQLBuilderSegment();
                 SQLExpressionInvokeFactory easyQueryLambdaFactory = getRuntimeContext().getSQLExpressionInvokeFactory();
-                ColumnSetter<Object> sqlColumnSetter = easyQueryLambdaFactory.createColumnSetter(table.getIndex(), this, setSQLSegmentBuilder);
+                ColumnSetter<Object> sqlColumnSetter = easyQueryLambdaFactory.createColumnSetter(table.getEntityTable(), this, setSQLSegmentBuilder);
                 logicDeletedSQLExpression.apply(sqlColumnSetter);//获取set的值
                 //todo 非表达式添加行版本信息
                 if(entityMetadata.hasVersionColumn()){
@@ -178,7 +178,7 @@ public class DeleteExpressionBuilder extends AbstractPredicateEntityExpressionBu
         UpdateSetSQLBuilderSegment updateSetSQLBuilderSegment = getUpdateSetSQLBuilderSegment(table);
         QueryRuntimeContext runtimeContext = getRuntimeContext();
         ExpressionFactory expressionFactory = runtimeContext.getExpressionFactory();
-        EntitySQLExpressionMetadata entitySQLExpressionMetadata = new EntitySQLExpressionMetadata(expressionContext.getTableContext(), runtimeContext);
+        EntitySQLExpressionMetadata entitySQLExpressionMetadata = new EntitySQLExpressionMetadata(expressionContext, runtimeContext);
         //逻辑删除
         if (updateSetSQLBuilderSegment != null) {
             PredicateSegment where = buildWherePredicateSegment(table);
@@ -206,7 +206,7 @@ public class DeleteExpressionBuilder extends AbstractPredicateEntityExpressionBu
 
         QueryRuntimeContext runtimeContext = getRuntimeContext();
         ExpressionFactory expressionFactory = runtimeContext.getExpressionFactory();
-        EntitySQLExpressionMetadata entitySQLExpressionMetadata = new EntitySQLExpressionMetadata(expressionContext.getTableContext(), runtimeContext);
+        EntitySQLExpressionMetadata entitySQLExpressionMetadata = new EntitySQLExpressionMetadata(expressionContext, runtimeContext);
         //逻辑删除
         if (updateSetSQLBuilderSegment != null) {
             EntityUpdateSQLExpression easyUpdateSQLExpression = expressionFactory.createEasyUpdateSQLExpression(entitySQLExpressionMetadata, table.toExpression());

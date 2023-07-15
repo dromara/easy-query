@@ -4,19 +4,115 @@
 
 - [GITEE](https://gitee.com/xuejm/easy-query)  国内镜像地址
 
-## 📚 文档
+## 📚 documentation
 <div align="center">
 
-[GITHUB文档地址](https://xuejmnet.github.io/easy-query-doc/) | [GITEE文档地址](https://xuejm.gitee.io/easy-query-doc/)
+[GITHUB Documentation](https://xuejmnet.github.io/easy-query-doc/) | [GITEE Documentation](https://xuejm.gitee.io/easy-query-doc/)
 
 </div>
 
-## 🐧 QQ群:170029046
+## 🐧 QQGroup:170029046
 <div align="center">
 
 <img src="./imgs/qrcode.jpg" title="JetBrains" width=122 />
 
 </div>
+
+## multi mode
+
+### property mode
+```java
+List<Topic> list = easyQueryClient.queryable(Topic.class)
+                .where(o -> o.like("title", "someTitle"))
+                .orderByAsc(o -> o.column("createTime").column("id"))
+                .toList();
+
+        ==> Preparing: SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE `title` LIKE ? ORDER BY `create_time` ASC,`id` ASC
+        ==> Parameters: %someTitle%(String)
+        <== Time Elapsed: 3(ms)
+        <== Total: 0
+```
+### lambda mode
+
+```java
+List<Topic> list = easyQuery.queryable(Topic.class)
+      .where(o -> o.like(Topic::getTitle, "someTitle"))
+      .orderByAsc(o -> o.column(Topic::getCreateTime).column(Topic::getId))
+      .toList();
+
+        ==> Preparing: SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE `title` LIKE ? ORDER BY `create_time` ASC,`id` ASC
+        ==> Parameters: %someTitle%(String)
+        <== Time Elapsed: 3(ms)
+        <== Total: 0
+```
+
+### proxy mode
+
+```java
+List<Topic> list1 = easyProxyQuery.queryable(TopicProxy.DEFAULT)
+        .where((filter,t) -> filter.like(t.title(), "someTitle"))
+        .orderByAsc((order,t) -> order.columns(t.createTime(),t.id()))
+        .toList();
+
+        ==> Preparing: SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE `title` LIKE ? ORDER BY `create_time` ASC,`id` ASC
+        ==> Parameters: %someTitle%(String)
+        <== Time Elapsed: 3(ms)
+        <== Total: 0
+```
+## Dependency
+### use property
+```xml
+
+<properties>
+  <easy-query.version>last-version</easy-query.version>
+</properties>
+<!--<dependency>-->
+<!--  <groupId>com.easy-query</groupId>-->
+<!--  <artifactId>sql-core</artifactId>-->
+<!--  <version>${easy-query.version}</version>-->
+<!--</dependency>-->
+<!--sql-mysql已经包含sql-core-->
+<dependency>
+<groupId>com.easy-query</groupId>
+<artifactId>sql-mysql</artifactId>
+<version>${easy-query.version}</version>
+</dependency>
+```
+### use lambda
+```xml
+
+<properties>
+  <easy-query.version>last-version</easy-query.version>
+</properties>
+<dependency>
+<groupId>com.easy-query</groupId>
+<artifactId>sql-api4j</artifactId>
+<version>${easy-query.version}</version>
+</dependency>
+<dependency>
+<groupId>com.easy-query</groupId>
+<artifactId>sql-mysql</artifactId>
+<version>${easy-query.version}</version>
+</dependency>
+```
+### use proxy
+entity use `@EntityProxy` annotation then build project apt will auto generate java code for proxy
+```xml
+
+<properties>
+  <easy-query.version>last-version</easy-query.version>
+</properties>
+<dependency>
+<groupId>com.easy-query</groupId>
+<artifactId>sql-api-proxy</artifactId>
+<version>${easy-query.version}</version>
+</dependency>
+<dependency>
+<groupId>com.easy-query</groupId>
+<artifactId>sql-mysql</artifactId>
+<version>${easy-query.version}</version>
+</dependency>
+```
 
 ## 🚀 介绍
 
@@ -61,7 +157,7 @@
 ```xml
 
 <properties>
-  <easy-query.version>1.1.0</easy-query.version>
+  <easy-query.version>1.1.10</easy-query.version>
 </properties>
 <dependency>
     <groupId>com.easy-query</groupId>
@@ -74,15 +170,21 @@
 ```xml
 
 <properties>
-  <easy-query.version>1.1.0</easy-query.version>
+  <easy-query.version>1.1.10</easy-query.version>
 </properties>
-        <!--  提供了以java语法强类型,如果不引用也可以使用只是无法使用lambda表达式来表示属性只能用字符串 -->
+        <!--  not required support proxy 非必须  提供了代理模式支持apt模式以非lambda形式的强类型sql语法 -->
+<dependency>
+<groupId>com.easy-query</groupId>
+<artifactId>sql-api-proxy</artifactId>
+<version>${easy-query.version}</version>
+</dependency>
+        <!--  not required support labda  提供了以java语法强类型,如果不引用也可以使用只是无法使用lambda表达式来表示属性只能用字符串 -->
 <dependency>
 <groupId>com.easy-query</groupId>
 <artifactId>sql-api4j</artifactId>
 <version>${easy-query.version}</version>
 </dependency>
-        <!--  这边以mysql为例 其实不需要添加下面的包也可以运行,指示默认的个别数据库行为语句没办法生成 -->
+        <!-- required databaase sql  这边以mysql为例 其实不需要添加下面的包也可以运行,指示默认的个别数据库行为语句没办法生成 -->
 <dependency>
 <groupId>com.easy-query</groupId>
 <artifactId>sql-mysql</artifactId>

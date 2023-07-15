@@ -15,7 +15,6 @@ import com.easy.query.core.expression.segment.GroupByColumnSegment;
 import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.expression.segment.builder.ProjectSQLBuilderSegment;
 import com.easy.query.core.expression.sql.expression.EntityQuerySQLExpression;
-import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
 import com.easy.query.core.expression.func.ColumnFunctionFactory;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.ShardingInitConfig;
@@ -93,9 +92,8 @@ public class DefaultRewriteContextFactory implements RewriteContextFactory {
                 }
             }
         }
-        //如果当前表达式存在group 并且
+        //如果当前表达式存在group 并且不为空
         if (EasySQLSegmentUtil.isNotEmpty(easyEntityPredicateSQLExpression.getGroup())) {
-
             boolean hasAvg=false;
             //分组重写的如果存在count avg sum那么就会存储
             Map<GroupRewriteStatus,GroupRewriteStatus> groupRewriteStatusMap = new LinkedHashMap<>(easyEntityPredicateSQLExpression.getProjects().getSQLSegments().size());
@@ -115,7 +113,7 @@ public class DefaultRewriteContextFactory implements RewriteContextFactory {
                         if(!hasAvg){
                             hasAvg=Objects.equals(AggregationType.AVG,aggregationColumnSegment.getAggregationType());
                         }
-                        GroupRewriteStatus groupRewriteStatusKey = new GroupRewriteStatus(aggregationColumnSegment.getTable().getIndex(), aggregationColumnSegment.getPropertyName());
+                        GroupRewriteStatus groupRewriteStatusKey = new GroupRewriteStatus(aggregationColumnSegment.getTable(), aggregationColumnSegment.getPropertyName());
                         GroupRewriteStatus groupRewriteStatus = EasyMapUtil.computeIfAbsent(groupRewriteStatusMap,groupRewriteStatusKey, k->groupRewriteStatusKey);
 
                         GroupAvgBehaviorEnum groupAvgBehavior = GroupAvgBehaviorEnum.getGroupAvgBehavior(aggregationColumnSegment.getAggregationType());
@@ -130,7 +128,7 @@ public class DefaultRewriteContextFactory implements RewriteContextFactory {
                     }
                     ColumnSegment columnSegment = (ColumnSegment) sqlSegment;
                     //
-                    if (groupColumnSegment.getTable().getIndex() == columnSegment.getTable().getIndex()) {
+                    if (Objects.equals(groupColumnSegment.getTable(),columnSegment.getTable())) {
                         if (Objects.equals(groupColumnSegment.getPropertyName(), columnSegment.getPropertyName())) {
                             if(addToProjection){
                                 addToProjection = false;
@@ -139,7 +137,7 @@ public class DefaultRewriteContextFactory implements RewriteContextFactory {
                     }
                 }
                 if (addToProjection) {
-                    easyEntityPredicateSQLExpression.getProjects().append(groupColumnSegment.cloneSQLEntitySegment());
+                    easyEntityPredicateSQLExpression.getProjects().append(groupColumnSegment.cloneSQLColumnSegment());
                 }
             }
 
@@ -168,11 +166,16 @@ public class DefaultRewriteContextFactory implements RewriteContextFactory {
                         continue;
                     }
                     //如果存在avg那么分片必须要存在count或者sum不然无法计算avg
-                    if(rewriteStatusKvKey.hasBehavior(GroupAvgBehaviorEnum.COUNT)&&rewriteStatusKvKey.hasBehavior(GroupAvgBehaviorEnum.SUM)){
-                        EntityTableSQLExpression table = easyEntityPredicateSQLExpression.getTable(rewriteStatusKvKey.getTableIndex());
+                    if(rewriteStatusKvKey.hasBehavior(GroupAvgBehaviorEnum.COUNT)){
                         ColumnFunctionFactory columnFunctionFactory = runtimeContext.getColumnFunctionFactory();
                         SQLSegmentFactory sqlSegmentFactory = runtimeContext.getSQLSegmentFactory();
-                        FuncColumnSegment funcColumnSegment = sqlSegmentFactory.createFuncColumnSegment(table.getEntityTable(), rewriteStatusKvKey.getPropertyName(), runtimeContext, columnFunctionFactory.createCountFunction(false), rewriteStatusKvKey.getPropertyName() + "RewriteCount");
+                        FuncColumnSegment funcColumnSegment = sqlSegmentFactory.createFuncColumnSegment(rewriteStatusKvKey.getTable(), rewriteStatusKvKey.getPropertyName(), runtimeContext, columnFunctionFactory.createCountFunction(false), rewriteStatusKvKey.getPropertyName() + "RewriteCount");
+                        easyEntityPredicateSQLExpression.getProjects().append(funcColumnSegment);
+                    }
+                    if(rewriteStatusKvKey.hasBehavior(GroupAvgBehaviorEnum.SUM)){
+                        ColumnFunctionFactory columnFunctionFactory = runtimeContext.getColumnFunctionFactory();
+                        SQLSegmentFactory sqlSegmentFactory = runtimeContext.getSQLSegmentFactory();
+                        FuncColumnSegment funcColumnSegment = sqlSegmentFactory.createFuncColumnSegment(rewriteStatusKvKey.getTable(), rewriteStatusKvKey.getPropertyName(), runtimeContext, columnFunctionFactory.createSumFunction(false), rewriteStatusKvKey.getPropertyName() + "RewriteSum");
                         easyEntityPredicateSQLExpression.getProjects().append(funcColumnSegment);
                     }
                 }

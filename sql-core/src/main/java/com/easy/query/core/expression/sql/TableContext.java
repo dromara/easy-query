@@ -1,8 +1,6 @@
 package com.easy.query.core.expression.sql;
 
-import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.util.EasyClassUtil;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -40,7 +38,7 @@ public final class TableContext {
 
     public ToTableContext getToTableContext(String alias){
         int mappingSize = aliasMapping.size();
-        HashMap<TableAvailable, String> result = new HashMap<>();
+        HashMap<TableAvailable, String> result = new HashMap<>(mappingSize);
         int i=0;
         boolean firstHasAlias=false;
         for (Map.Entry<TableAvailable, TableAliasSchema> aliasSchemaEntry : aliasMapping.entrySet()) {

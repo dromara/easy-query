@@ -21,7 +21,6 @@ public class LocalTimeTypeHandler implements JdbcTypeHandler {
             return time.toLocalTime();
         }
         return null;
-
     }
 
     @Override

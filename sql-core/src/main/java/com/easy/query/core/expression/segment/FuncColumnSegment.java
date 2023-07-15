@@ -12,5 +12,5 @@ public interface FuncColumnSegment extends MaybeAggregateColumnSegment {
         return true;
     }
     @Override
-    FuncColumnSegment cloneSQLEntitySegment();
+    FuncColumnSegment cloneSQLColumnSegment();
 }

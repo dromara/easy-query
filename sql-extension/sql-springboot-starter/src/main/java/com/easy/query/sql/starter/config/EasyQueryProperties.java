@@ -83,12 +83,14 @@ public class EasyQueryProperties {
     /**
      * 对象插入数量到达多少后使用批处理
      */
-    private int insertBatchThreshold = 512;
+    private int insertBatchThreshold = 1024;
     /**
      * 对象修改数量达到多少后使用批量处理
      */
-    private int updateBatchThreshold = 512;
+    private int updateBatchThreshold = 1024;
     private boolean printSql = true;
+    private boolean startTimeJob = false;
+    private boolean defaultTrack = false;
 
     public Boolean getEnable() {
         return enable;
@@ -276,6 +278,22 @@ public class EasyQueryProperties {
 
     public void setPrintSql(boolean printSql) {
         this.printSql = printSql;
+    }
+
+    public boolean isStartTimeJob() {
+        return startTimeJob;
+    }
+
+    public void setStartTimeJob(boolean startTimeJob) {
+        this.startTimeJob = startTimeJob;
+    }
+
+    public boolean isDefaultTrack() {
+        return defaultTrack;
+    }
+
+    public void setDefaultTrack(boolean defaultTrack) {
+        this.defaultTrack = defaultTrack;
     }
 
     public EasyQueryProperties() {

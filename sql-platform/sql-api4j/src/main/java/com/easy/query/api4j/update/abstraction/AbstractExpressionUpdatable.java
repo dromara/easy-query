@@ -2,7 +2,6 @@ package com.easy.query.api4j.update.abstraction;
 
 import com.easy.query.api4j.update.ExpressionUpdatable;
 import com.easy.query.core.basic.api.update.ClientExpressionUpdatable;
-import com.easy.query.core.expression.sql.builder.ExpressionContext;
 
 import java.util.function.Function;
 
@@ -13,78 +12,84 @@ import java.util.function.Function;
  * @Date: 2023/2/25 08:24
  */
 public abstract class AbstractExpressionUpdatable<T> implements ExpressionUpdatable<T> {
-    protected final ClientExpressionUpdatable<T> expressionObjectUpdatable;
+    protected final ClientExpressionUpdatable<T> clientExpressionUpdatable;
 
     public AbstractExpressionUpdatable(ClientExpressionUpdatable<T> expressionObjectUpdatable) {
-        this.expressionObjectUpdatable = expressionObjectUpdatable;
+        this.clientExpressionUpdatable = expressionObjectUpdatable;
     }
 
     @Override
     public ClientExpressionUpdatable<T> getClientUpdate() {
-        return expressionObjectUpdatable;
+        return clientExpressionUpdatable;
     }
 
     @Override
     public long executeRows() {
-        return expressionObjectUpdatable.executeRows();
+        return clientExpressionUpdatable.executeRows();
     }
 
     @Override
     public ExpressionUpdatable<T> withVersion(boolean condition, Object versionValue) {
         if (condition) {
-            expressionObjectUpdatable.withVersion(versionValue);
+            clientExpressionUpdatable.withVersion(versionValue);
         }
         return this;
     }
     @Override
     public ExpressionUpdatable<T> asTable(Function<String, String> tableNameAs) {
-        expressionObjectUpdatable.asTable(tableNameAs);
+        clientExpressionUpdatable.asTable(tableNameAs);
         return this;
     }
 
     @Override
     public ExpressionUpdatable<T> asSchema(Function<String, String> schemaAs) {
-        expressionObjectUpdatable.asSchema(schemaAs);
+        clientExpressionUpdatable.asSchema(schemaAs);
         return this;
     }
 
     @Override
     public ExpressionUpdatable<T> asAlias(String alias) {
-        expressionObjectUpdatable.asAlias(alias);
+        clientExpressionUpdatable.asAlias(alias);
         return this;
     }
     @Override
     public ExpressionUpdatable<T> noInterceptor() {
-        expressionObjectUpdatable.noInterceptor();
+        clientExpressionUpdatable.noInterceptor();
         return this;
     }
 
     @Override
     public ExpressionUpdatable<T> useInterceptor(String name) {
-        expressionObjectUpdatable.useInterceptor(name);
+        clientExpressionUpdatable.useInterceptor(name);
         return this;
     }
 
     @Override
     public ExpressionUpdatable<T> noInterceptor(String name) {
-        expressionObjectUpdatable.noInterceptor(name);
+        clientExpressionUpdatable.noInterceptor(name);
         return this;
     }
 
     @Override
     public ExpressionUpdatable<T> useInterceptor() {
-        expressionObjectUpdatable.useInterceptor();
+        clientExpressionUpdatable.useInterceptor();
         return this;
     }
 
     @Override
     public ExpressionUpdatable<T> useLogicDelete(boolean enable) {
-        expressionObjectUpdatable.useLogicDelete(enable);
+        clientExpressionUpdatable.useLogicDelete(enable);
         return this;
     }
 
     @Override
     public void executeRows(long expectRows, String msg, String code) {
-        expressionObjectUpdatable.executeRows(expectRows, msg, code);
+        clientExpressionUpdatable.executeRows(expectRows, msg, code);
+    }
+
+    @Override
+    public ExpressionUpdatable<T> batch(boolean use) {
+        clientExpressionUpdatable.batch(use);
+        return this;
     }
 }

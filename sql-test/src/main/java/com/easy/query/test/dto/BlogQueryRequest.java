@@ -1,8 +1,6 @@
 package com.easy.query.test.dto;
 
-import com.easy.query.api4j.dynamic.ObjectQuery4J;
 import com.easy.query.api4j.dynamic.ObjectSort4J;
-import com.easy.query.api4j.dynamic.condition.ObjectQueryBuilder4J;
 import com.easy.query.api4j.dynamic.sort.ObjectSortBuilder4J;
 import com.easy.query.core.annotation.EasyWhereCondition;
 import com.easy.query.test.entity.BlogEntity;
@@ -20,7 +18,7 @@ import java.util.List;
  * @author xuejiaming
  */
 @Data
-public class BlogQueryRequest implements ObjectQuery4J<BlogQueryRequest,BlogEntity>, ObjectSort4J<BlogEntity> {
+public class BlogQueryRequest implements  ObjectSort4J<BlogEntity> {
 
     /**
      * 标题
@@ -30,7 +28,7 @@ public class BlogQueryRequest implements ObjectQuery4J<BlogQueryRequest,BlogEnti
     /**
      * 内容
      */
-    @EasyWhereCondition
+    @EasyWhereCondition(propName = "url")
     private String content;
     /**
      * 点赞数
@@ -40,9 +38,9 @@ public class BlogQueryRequest implements ObjectQuery4J<BlogQueryRequest,BlogEnti
     /**
      * 发布时间
      */
-    @EasyWhereCondition(type = EasyWhereCondition.Condition.RANGE_LEFT_CLOSED)
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.RANGE_LEFT_CLOSED,propName = "publishTime")
     private LocalDateTime publishTimeBegin;
-    @EasyWhereCondition(type = EasyWhereCondition.Condition.RANGE_RIGHT_CLOSED)
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.RANGE_RIGHT_CLOSED,propName = "publishTime")
     private LocalDateTime publishTimeEnd;
     /**
      * 评分
@@ -64,19 +62,11 @@ public class BlogQueryRequest implements ObjectQuery4J<BlogQueryRequest,BlogEnti
      */
     @EasyWhereCondition(type = EasyWhereCondition.Condition.NOT_EQUAL)
     private Boolean isTop;
-    @EasyWhereCondition(type = EasyWhereCondition.Condition.IN)
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.IN,propName = "status")
     private List<Integer> statusList=new ArrayList<>();
-    @EasyWhereCondition(type = EasyWhereCondition.Condition.NOT_IN)
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.NOT_IN,propName = "status")
     private List<Integer> statusNotList=new ArrayList<>();
 
-    @Override
-    public void configure(ObjectQueryBuilder4J<BlogQueryRequest,BlogEntity> builder) {
-        builder.property(BlogEntity::getUrl,BlogQueryRequest::getContent)
-                .property(BlogEntity::getPublishTime,BlogQueryRequest::getPublishTimeBegin)
-                .property(BlogEntity::getPublishTime,BlogQueryRequest::getPublishTimeEnd)
-                .property(BlogEntity::getStatus,BlogQueryRequest::getStatusList)
-                .property(BlogEntity::getStatus,BlogQueryRequest::getStatusNotList);
-    }
 
     private List<String> orders=new ArrayList<>();
     @Override

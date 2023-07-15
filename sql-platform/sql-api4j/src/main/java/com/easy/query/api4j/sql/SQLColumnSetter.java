@@ -1,9 +1,10 @@
 package com.easy.query.api4j.sql;
 
+import com.easy.query.api4j.util.EasyLambdaUtil;
 import com.easy.query.core.expression.lambda.Property;
+import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnSetter;
-import com.easy.query.api4j.util.EasyLambdaUtil;
 
 /**
  * create time 2023/6/1 08:40
@@ -11,7 +12,7 @@ import com.easy.query.api4j.util.EasyLambdaUtil;
  *
  * @author xuejiaming
  */
-public interface SQLColumnSetter<T1> {
+public interface SQLColumnSetter<T1> extends EntitySQLTableOwner<T1> {
     default TableAvailable getTable() {
         return getColumnSetter().getTable();
     }

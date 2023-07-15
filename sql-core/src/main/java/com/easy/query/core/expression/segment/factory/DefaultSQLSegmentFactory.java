@@ -13,6 +13,7 @@ import com.easy.query.core.expression.segment.FuncColumnSegment;
 import com.easy.query.core.expression.segment.GroupByColumnSegment;
 import com.easy.query.core.expression.segment.OrderBySegment;
 import com.easy.query.core.expression.segment.OrderFuncColumnSegment;
+import com.easy.query.core.expression.segment.SQLColumnSegment;
 import com.easy.query.core.expression.segment.SelectConstSegment;
 import com.easy.query.core.expression.segment.SubQueryColumnSegment;
 import com.easy.query.core.expression.segment.impl.AnonymousColumnSegmentImpl;
@@ -26,6 +27,7 @@ import com.easy.query.core.expression.segment.impl.GroupColumnSegmentImpl;
 import com.easy.query.core.expression.segment.impl.OrderByConstSegmentImpl;
 import com.easy.query.core.expression.segment.impl.OrderColumnSegmentImpl;
 import com.easy.query.core.expression.segment.impl.OrderFuncColumnSegmentImpl;
+import com.easy.query.core.expression.segment.impl.SQLColumnAsSegmentImpl;
 import com.easy.query.core.expression.segment.impl.SelectConstSegmentImpl;
 import com.easy.query.core.expression.segment.impl.SubQueryColumnSegmentImpl;
 
@@ -99,5 +101,10 @@ public class DefaultSQLSegmentFactory implements SQLSegmentFactory {
     @Override
     public SubQueryColumnSegment createSubQueryColumnSegment(TableAvailable table, Query<?> subQuery, String alias, QueryRuntimeContext runtimeContext) {
         return new SubQueryColumnSegmentImpl(table, subQuery, alias, runtimeContext);
+    }
+
+    @Override
+    public SQLColumnSegment createSQLColumnAsSegment(SQLColumnSegment sqlColumnSegment, String alias,QueryRuntimeContext runtimeContext) {
+        return new SQLColumnAsSegmentImpl(sqlColumnSegment,alias,runtimeContext);
     }
 }

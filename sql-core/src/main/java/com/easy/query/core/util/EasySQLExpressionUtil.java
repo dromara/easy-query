@@ -235,7 +235,7 @@ public class EasySQLExpressionUtil {
         EasyQueryOption easyQueryOption = executorContext.getEasyQueryOption();
         ExecuteMethodEnum executeMethod = executorContext.getExecuteMethod();
         if (Objects.equals(ExecuteMethodEnum.INSERT, executeMethod)) {
-            return entitySize >= easyQueryOption.getInsertBatchThreshold();
+            return  entitySize >= easyQueryOption.getInsertBatchThreshold();
         }
         if (Objects.equals(ExecuteMethodEnum.UPDATE, executeMethod)) {
             return entitySize >= easyQueryOption.getUpdateBatchThreshold();

@@ -28,7 +28,7 @@ public class AnonymousColumnSegmentImpl extends ColumnSegmentImpl{
     }
 
     @Override
-    public ColumnSegment cloneSQLEntitySegment() {
+    public ColumnSegment cloneSQLColumnSegment() {
         return new AnonymousColumnSegmentImpl(table,runtimeContext,alias);
     }
 }

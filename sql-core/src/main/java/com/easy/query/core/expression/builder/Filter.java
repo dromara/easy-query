@@ -4,6 +4,7 @@ import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.SQLLikeEnum;
 import com.easy.query.core.enums.SQLPredicateCompare;
+import com.easy.query.core.enums.SQLPredicateCompareEnum;
 import com.easy.query.core.enums.SQLRangeEnum;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.SQLExpression1;
@@ -142,8 +143,35 @@ public interface Filter {
 
 
     Filter columnFunc(TableAvailable table,ColumnPropertyFunction columnPropertyFunction, SQLPredicateCompare sqlPredicateCompare, Object val);
+   default Filter gt(TableAvailable leftTable, String property1, TableAvailable rightTable, String property2){
+       return compareSelf(leftTable,property1,rightTable,property2,SQLPredicateCompareEnum.GT);
+   }
+   default Filter ge(TableAvailable leftTable, String property1, TableAvailable rightTable, String property2){
+       return compareSelf(leftTable,property1,rightTable,property2,SQLPredicateCompareEnum.GE);
+   }
+   default Filter eq(TableAvailable leftTable, String property1, TableAvailable rightTable, String property2){
+       return compareSelf(leftTable,property1,rightTable,property2,SQLPredicateCompareEnum.EQ);
+   }
+   default Filter ne(TableAvailable leftTable, String property1, TableAvailable rightTable, String property2){
+       return compareSelf(leftTable,property1,rightTable,property2,SQLPredicateCompareEnum.NE);
+   }
+   default Filter le(TableAvailable leftTable, String property1, TableAvailable rightTable, String property2){
+       return compareSelf(leftTable,property1,rightTable,property2,SQLPredicateCompareEnum.LE);
+   }
+   default Filter lt(TableAvailable leftTable, String property1, TableAvailable rightTable, String property2){
+       return compareSelf(leftTable,property1,rightTable,property2,SQLPredicateCompareEnum.LT);
+   }
 
-    <T2> Filter eq(TableAvailable leftTable, String property1,TableAvailable rightTable, String property2);
+    /**
+     *
+     * @param leftTable
+     * @param property1
+     * @param rightTable
+     * @param property2
+     * @param sqlPredicateCompare eg.SQLPredicateCompareEnum.EQ
+     * @return
+     */
+    Filter compareSelf(TableAvailable leftTable, String property1,TableAvailable rightTable, String property2,SQLPredicateCompare sqlPredicateCompare);
 
     Filter and();
 

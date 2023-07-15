@@ -7,9 +7,14 @@ import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
+import com.easy.query.core.expression.builder.impl.UpdateSetSelectorImpl;
+import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.parser.core.base.ColumnUpdateSetSelector;
+import com.easy.query.core.expression.parser.core.base.impl.ColumnUpdateSetSelectorImpl;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.metadata.EntityMetadata;
@@ -30,6 +35,7 @@ public abstract class AbstractClientInsertable<T> implements ClientInsertable<T>
     protected final List<T> entities;
     protected final EntityMetadata entityMetadata;
     protected final EntityInsertExpressionBuilder entityInsertExpressionBuilder;
+    protected final EntityTableExpressionBuilder entityTableExpressionBuilder;
 
     public AbstractClientInsertable(Class<T> clazz, EntityInsertExpressionBuilder entityInsertExpressionBuilder) {
         this.entityInsertExpressionBuilder = entityInsertExpressionBuilder;
@@ -38,8 +44,8 @@ public abstract class AbstractClientInsertable<T> implements ClientInsertable<T>
         entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(clazz);
         entityMetadata.checkTable();
 
-        EntityTableExpressionBuilder table = runtimeContext.getExpressionBuilderFactory().createEntityTableExpressionBuilder(entityMetadata, 0, MultiTableTypeEnum.NONE, runtimeContext);
-        this.entityInsertExpressionBuilder.addSQLEntityTableExpression(table);
+        this.entityTableExpressionBuilder = runtimeContext.getExpressionBuilderFactory().createEntityTableExpressionBuilder(entityMetadata, MultiTableTypeEnum.NONE, runtimeContext);
+        this.entityInsertExpressionBuilder.addSQLEntityTableExpression(entityTableExpressionBuilder);
     }
 
     @Override
@@ -72,7 +78,7 @@ public abstract class AbstractClientInsertable<T> implements ClientInsertable<T>
         if (!entities.isEmpty()) {
             insertBefore();
             EntityExpressionExecutor entityExpressionExecutor = entityInsertExpressionBuilder.getRuntimeContext().getEntityExpressionExecutor();
-            return entityExpressionExecutor.insert(ExecutorContext.create(entityInsertExpressionBuilder.getRuntimeContext(),false, ExecuteMethodEnum.INSERT),entities, entityInsertExpressionBuilder,fillAutoIncrement);
+            return entityExpressionExecutor.insert(ExecutorContext.create(entityInsertExpressionBuilder.getRuntimeContext(), false, ExecuteMethodEnum.INSERT), entities, entityInsertExpressionBuilder, fillAutoIncrement);
         }
 
         return 0;
@@ -129,10 +135,91 @@ public abstract class AbstractClientInsertable<T> implements ClientInsertable<T>
     }
 
     @Override
-    public String toSQL(Object entity) {
-        return toSQLWithParam(entity, DefaultToSQLContext.defaultToSQLContext(entityInsertExpressionBuilder.getExpressionContext().getTableContext()));
+    public ClientInsertable<T> onDuplicateKeyIgnore() {
+        insertOrIgnoreBehavior();
+        return this;
     }
-    private String toSQLWithParam(Object entity, ToSQLContext toSQLContext){
+
+    private void insertOrIgnoreBehavior() {
+        entityInsertExpressionBuilder.getExpressionContext().getBehavior().removeBehavior(EasyBehaviorEnum.ON_DUPLICATE_KEY_UPDATE);
+        entityInsertExpressionBuilder.getExpressionContext().getBehavior().addBehavior(EasyBehaviorEnum.ON_DUPLICATE_KEY_IGNORE);
+    }
+
+    private void insertOrUpdateBehavior() {
+        entityInsertExpressionBuilder.getExpressionContext().getBehavior().removeBehavior(EasyBehaviorEnum.ON_DUPLICATE_KEY_IGNORE);
+        entityInsertExpressionBuilder.getExpressionContext().getBehavior().addBehavior(EasyBehaviorEnum.ON_DUPLICATE_KEY_UPDATE);
+    }
+
+    @Override
+    public ClientInsertable<T> onConflictDoUpdate() {
+        doOnDuplicateKeyUpdate(null,null);
+        return this;
+    }
+
+    @Override
+    public ClientInsertable<T> onConflictDoUpdate(String constraintProperty) {
+        doOnDuplicateKeyUpdate(constraintProperty,null);
+        return this;
+    }
+
+    @Override
+    public ClientInsertable<T> onConflictDoUpdate(String constraintProperty, SQLExpression1<ColumnUpdateSetSelector<T>> setColumnSelector) {
+        doOnDuplicateKeyUpdate(constraintProperty,setColumnSelector);
+        return this;
+    }
+
+    @Override
+    public ClientInsertable<T> onConflictDoUpdate(SQLExpression1<ColumnUpdateSetSelector<T>> setColumnSelector) {
+        doOnDuplicateKeyUpdate(null,setColumnSelector);
+        return this;
+    }
+
+    @Override
+    public ClientInsertable<T> onDuplicateKeyUpdate() {
+        doOnDuplicateKeyUpdate(null,null);
+        return this;
+    }
+
+    @Override
+    public ClientInsertable<T> onDuplicateKeyUpdate(SQLExpression1<ColumnUpdateSetSelector<T>> setColumnSelector) {
+        doOnDuplicateKeyUpdate(null,setColumnSelector);
+        return this;
+    }
+
+    private void doOnDuplicateKeyUpdate(String constraintProperty, SQLExpression1<ColumnUpdateSetSelector<T>> setColumnSelector){
+        insertOrUpdateBehavior();
+        entityInsertExpressionBuilder.setDuplicateKey(constraintProperty);
+        entityInsertExpressionBuilder.getDuplicateKeyUpdateColumns().clear();
+        if(setColumnSelector!=null){
+            ColumnUpdateSetSelectorImpl<T> columnUpdateSetSelector = new ColumnUpdateSetSelectorImpl<>(entityTableExpressionBuilder.getEntityTable(), new UpdateSetSelectorImpl(entityInsertExpressionBuilder.getRuntimeContext(), entityInsertExpressionBuilder.getDuplicateKeyUpdateColumns()));
+            setColumnSelector.apply(columnUpdateSetSelector);
+        }
+
+    }
+
+    @Override
+    public ClientInsertable<T> batch(boolean use) {
+        if(use){
+            entityInsertExpressionBuilder.getExpressionContext().getBehavior().removeBehavior(EasyBehaviorEnum.EXECUTE_NO_BATCH);
+            entityInsertExpressionBuilder.getExpressionContext().getBehavior().addBehavior(EasyBehaviorEnum.EXECUTE_BATCH);
+        }else{
+            entityInsertExpressionBuilder.getExpressionContext().getBehavior().removeBehavior(EasyBehaviorEnum.EXECUTE_BATCH);
+            entityInsertExpressionBuilder.getExpressionContext().getBehavior().addBehavior(EasyBehaviorEnum.EXECUTE_NO_BATCH);
+        }
+        return this;
+    }
+
+    @Override
+    public String toSQL(Object entity) {
+        return toSQL(entity, DefaultToSQLContext.defaultToSQLContext(entityInsertExpressionBuilder.getExpressionContext().getTableContext()));
+    }
+
+    @Override
+    public String toSQL(Object entity, ToSQLContext toSQLContext) {
+        return toSQLWithParam(entity, toSQLContext);
+    }
+
+    private String toSQLWithParam(Object entity, ToSQLContext toSQLContext) {
         return entityInsertExpressionBuilder.toExpression(entity).toSQL(toSQLContext);
     }
 }

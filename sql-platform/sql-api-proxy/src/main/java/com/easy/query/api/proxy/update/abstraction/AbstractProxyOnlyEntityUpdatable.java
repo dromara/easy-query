@@ -91,4 +91,9 @@ public abstract class AbstractProxyOnlyEntityUpdatable<T> implements ProxyOnlyEn
         clientEntityUpdatable.executeRows(expectRows, msg, code);
     }
 
+    @Override
+    public ProxyOnlyEntityUpdatable<T> batch(boolean use) {
+        clientEntityUpdatable.batch(use);
+        return this;
+    }
 }

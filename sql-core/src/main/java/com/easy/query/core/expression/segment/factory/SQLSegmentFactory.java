@@ -13,6 +13,7 @@ import com.easy.query.core.expression.segment.FuncColumnSegment;
 import com.easy.query.core.expression.segment.GroupByColumnSegment;
 import com.easy.query.core.expression.segment.OrderBySegment;
 import com.easy.query.core.expression.segment.OrderFuncColumnSegment;
+import com.easy.query.core.expression.segment.SQLColumnSegment;
 import com.easy.query.core.expression.segment.SelectConstSegment;
 import com.easy.query.core.expression.segment.SubQueryColumnSegment;
 
@@ -38,4 +39,5 @@ public interface SQLSegmentFactory {
     GroupByColumnSegment createGroupByConstSegment(TableAvailable table, QueryRuntimeContext runtimeContext, String columnConst);
 
     SubQueryColumnSegment createSubQueryColumnSegment(TableAvailable table, Query<?> subQuery, String alias, QueryRuntimeContext runtimeContext);
+    SQLColumnSegment createSQLColumnAsSegment(SQLColumnSegment sqlColumnSegment,String alias,QueryRuntimeContext runtimeContext);
 }

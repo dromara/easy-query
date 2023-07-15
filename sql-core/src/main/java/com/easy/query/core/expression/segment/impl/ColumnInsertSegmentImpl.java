@@ -49,7 +49,7 @@ public class ColumnInsertSegmentImpl implements ColumnInsertSegment {
     }
 
     @Override
-    public SQLEntitySegment cloneSQLEntitySegment() {
+    public SQLEntitySegment cloneSQLColumnSegment() {
 
         throw new UnsupportedOperationException();
     }

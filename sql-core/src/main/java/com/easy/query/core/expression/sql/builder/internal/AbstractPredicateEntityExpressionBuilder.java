@@ -47,7 +47,7 @@ public abstract class AbstractPredicateEntityExpressionBuilder extends AbstractE
             EntityMetadata entityMetadata = table.getEntityMetadata();
             PredicateSegment predicateSegment = new AndPredicateSegment(true);
             SQLExpressionInvokeFactory easyQueryLambdaFactory = getRuntimeContext().getSQLExpressionInvokeFactory();
-            WherePredicate<Object> sqlPredicate = easyQueryLambdaFactory.createWherePredicate(table.getIndex(), this, predicateSegment);
+            WherePredicate<Object> sqlPredicate = easyQueryLambdaFactory.createWherePredicate(table.getEntityTable(), this, predicateSegment);
 
             if (useLogicDelete(entityMetadata)) {
                 SQLExpression1<WherePredicate<Object>> logicDeleteQueryFilterExpression = table.getLogicDeleteQueryFilterExpression();

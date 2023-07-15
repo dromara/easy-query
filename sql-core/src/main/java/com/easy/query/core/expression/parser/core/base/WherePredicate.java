@@ -7,7 +7,7 @@ import com.easy.query.core.enums.SQLRangeEnum;
 import com.easy.query.core.expression.builder.Filter;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.SQLExpression1;
-import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 
 import java.util.Collection;
 
@@ -17,9 +17,8 @@ import java.util.Collection;
  * @Description: 文件说明
  * @Date: 2023/2/5 09:09
  */
-public interface WherePredicate<T1> {
+public interface WherePredicate<T1> extends EntitySQLTableOwner<T1> {
     Filter getFilter();
-    TableAvailable getTable();
 
     /**
      * 大于 column > val
@@ -496,9 +495,9 @@ public interface WherePredicate<T1> {
     }
 
     /**
+     *
      * [left..right] = {x | left <= x <= right}
      * 一般用于范围比如时间,小的时间在前大的时间在后
-     *
      * @param condition
      * @param property
      * @param conditionLeft
@@ -533,11 +532,36 @@ public interface WherePredicate<T1> {
 
     WherePredicate<T1> columnFunc(boolean condition, ColumnPropertyFunction columnPropertyFunction, SQLPredicateCompare sqlPredicateCompare, Object val);
 
-    default <T2> WherePredicate<T1> eq(WherePredicate<T2> sub, String property1, String property2) {
+    default <T2> WherePredicate<T1> gt(EntitySQLTableOwner<T2> sub, String property1, String property2) {
+        return gt(true, sub, property1, property2);
+    }
+
+    <T2> WherePredicate<T1> gt(boolean condition, EntitySQLTableOwner<T2> sub, String property1, String property2);
+    default <T2> WherePredicate<T1> ge(EntitySQLTableOwner<T2> sub, String property1, String property2) {
+        return ge(true, sub, property1, property2);
+    }
+
+    <T2> WherePredicate<T1> ge(boolean condition, EntitySQLTableOwner<T2> sub, String property1, String property2);
+    default <T2> WherePredicate<T1> eq(EntitySQLTableOwner<T2> sub, String property1, String property2) {
         return eq(true, sub, property1, property2);
     }
 
-    <T2> WherePredicate<T1> eq(boolean condition, WherePredicate<T2> sub, String property1, String property2);
+    <T2> WherePredicate<T1> eq(boolean condition, EntitySQLTableOwner<T2> sub, String property1, String property2);
+    default <T2> WherePredicate<T1> ne(EntitySQLTableOwner<T2> sub, String property1, String property2) {
+        return ne(true, sub, property1, property2);
+    }
+
+    <T2> WherePredicate<T1> ne(boolean condition, EntitySQLTableOwner<T2> sub, String property1, String property2);
+    default <T2> WherePredicate<T1> le(EntitySQLTableOwner<T2> sub, String property1, String property2) {
+        return le(true, sub, property1, property2);
+    }
+
+    <T2> WherePredicate<T1> le(boolean condition, EntitySQLTableOwner<T2> sub, String property1, String property2);
+    default <T2> WherePredicate<T1> lt(EntitySQLTableOwner<T2> sub, String property1, String property2) {
+        return lt(true, sub, property1, property2);
+    }
+
+    <T2> WherePredicate<T1> lt(boolean condition, EntitySQLTableOwner<T2> sub, String property1, String property2);
 
     <T2> WherePredicate<T2> then(WherePredicate<T2> sub);
 

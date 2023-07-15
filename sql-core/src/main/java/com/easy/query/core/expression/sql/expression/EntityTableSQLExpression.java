@@ -22,7 +22,6 @@ public interface EntityTableSQLExpression extends SQLExpression {
     boolean tableNameIsAs();
     PredicateSegment getOn();
     void setOn(PredicateSegment predicateSegment);
-    int getIndex();
     TableAvailable getEntityTable();
 
     @Override

@@ -19,7 +19,6 @@ import com.easy.query.core.basic.jdbc.executor.internal.merge.segment.PropertyOr
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.util.EasyMapUtil;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -94,12 +93,12 @@ public class EasyStreamMergeContext implements StreamMergeContext {
 
     @Override
     public List<PropertyOrder> getOrders() {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public List<PropertyGroup> getGroups() {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     public List<ExecutionUnit> getExecutionUnits() {
@@ -175,47 +174,52 @@ public class EasyStreamMergeContext implements StreamMergeContext {
 
     @Override
     public boolean isPaginationQuery() {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public long getOriginalOffset() {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public long getOriginalRows() {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public long getMergeOffset() {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public long getMergeRows() {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public long getRewriteOffset() {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public long getRewriteRows() {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public SQLBuilderSegment getSelectColumns() {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public SQLBuilderSegment getGroupColumns() {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public GroupMergeContext getGroupMergeContext() {
+        throw new UnsupportedOperationException();
     }
 
     @Override

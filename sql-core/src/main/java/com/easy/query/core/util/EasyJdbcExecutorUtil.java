@@ -1,5 +1,6 @@
 package com.easy.query.core.util;
 
+import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.basic.jdbc.conn.EasyConnection;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.result.StreamResultSet;
@@ -13,7 +14,6 @@ import com.easy.query.core.basic.jdbc.types.EasyParameter;
 import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
 import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
 import com.easy.query.core.context.QueryRuntimeContext;
-import com.easy.query.core.enums.PropertyHandlerTypeEnum;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.exception.EasyQuerySQLStatementException;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
@@ -213,18 +213,21 @@ public class EasyJdbcExecutorUtil {
                 ps.addBatch();
                 if ((batchSize % BATCH_GROUP_COUNT) == 0) {
                     int[] ints = ps.executeBatch();
-                    r += ints.length;
+//                    r += ints.length;
+                    r += EasyCollectionUtil.sum(ints);
                     ps.clearBatch();
                 }
             }
             if ((batchSize % BATCH_GROUP_COUNT) != 0) {
                 int[] ints = ps.executeBatch();
-                r += ints.length;
+//                r += ints.length;
+                r += EasyCollectionUtil.sum(ints);
                 ps.clearBatch();
             }
             logResult(printSql, r, easyConnection, shardingPrint, replicaPrint);
             //如果需要自动填充并且存在自动填充列
             if (fillAutoIncrement && EasyCollectionUtil.isNotEmpty(incrementColumns)) {
+                assert ps != null;
                 ResultSet keysSet = ps.getGeneratedKeys();
                 int index = 0;
                 ColumnMetadata[] columnMetadatas = new ColumnMetadata[incrementColumns.size()];
@@ -304,6 +307,22 @@ public class EasyJdbcExecutorUtil {
             throw new EasyQuerySQLStatementException(sql, e);
         } finally {
             clear(ps);
+
+            if(EasyCollectionUtil.isNotEmpty(entities)){
+                Class<?> entityClass = entities.get(0).getClass();
+
+                boolean trackBean = EasyTrackUtil.trackBean(executorContext, entityClass);
+                if(trackBean){
+
+                    TrackManager trackManager = executorContext.getRuntimeContext().getTrackManager();
+                    boolean hasTracked = trackManager.getCurrentTrackContext().hasTracked(entityClass);
+                    if(hasTracked){
+                        for (T entity : entities) {
+                            trackManager.getCurrentTrackContext().removeTracking(entity);
+                        }
+                    }
+                }
+            }
         }
         return r;
     }

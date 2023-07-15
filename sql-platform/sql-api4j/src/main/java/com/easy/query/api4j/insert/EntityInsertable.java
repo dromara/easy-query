@@ -1,5 +1,6 @@
 package com.easy.query.api4j.insert;
 
+import com.easy.query.api4j.internal.SQL4JOnDuplicateKeyUpdate;
 import com.easy.query.core.basic.api.insert.Insertable;
 
 import java.util.Collection;
@@ -10,7 +11,7 @@ import java.util.Collection;
  *
  * @author xuejiaming
  */
-public interface EntityInsertable<T> extends Insertable<T, EntityInsertable<T>> {
+public interface EntityInsertable<T> extends Insertable<T, EntityInsertable<T>>, SQL4JOnDuplicateKeyUpdate<T, EntityInsertable<T>> {
     @Override
     EntityInsertable<T> insert(T entity);
 

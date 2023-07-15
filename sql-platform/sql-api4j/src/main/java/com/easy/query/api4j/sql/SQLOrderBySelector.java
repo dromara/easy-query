@@ -1,10 +1,11 @@
 package com.easy.query.api4j.sql;
 
+import com.easy.query.api4j.util.EasyLambdaUtil;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.Property;
+import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnOrderSelector;
-import com.easy.query.api4j.util.EasyLambdaUtil;
 
 /**
  * create time 2023/6/16 21:54
@@ -12,7 +13,7 @@ import com.easy.query.api4j.util.EasyLambdaUtil;
  *
  * @author xuejiaming
  */
-public interface SQLOrderBySelector<T1> {
+public interface SQLOrderBySelector<T1> extends EntitySQLTableOwner<T1> {
     ColumnOrderSelector<T1> getOrderBySelector();
 
     default TableAvailable getTable() {

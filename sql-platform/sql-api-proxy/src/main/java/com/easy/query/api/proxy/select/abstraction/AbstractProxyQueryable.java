@@ -25,9 +25,11 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.lambda.SQLExpression3;
+import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.proxy.ProxyEntity;
+import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyObjectUtil;
 
@@ -108,7 +110,7 @@ public abstract class AbstractProxyQueryable<T1Proxy extends ProxyEntity<T1Proxy
 
     @Override
     public List<T1> toList() {
-        return entityQueryable.toList();
+        return toList(get1Proxy());
     }
 
     @Override
@@ -117,9 +119,10 @@ public abstract class AbstractProxyQueryable<T1Proxy extends ProxyEntity<T1Proxy
     }
 
     @Override
-    public <TR> List<TR> toList(Class<TR> resultClass) {
-        return entityQueryable.toList(resultClass);
+    public <TRProxy extends ProxyEntity<TRProxy, TR>, TR> List<TR> toList(TRProxy trProxy) {
+        return entityQueryable.toList(trProxy.getEntityClass());
     }
+
 
     @Override
     public <TR> String toSQL(Class<TR> resultClass, ToSQLContext toSQLContext) {
@@ -171,6 +174,15 @@ public abstract class AbstractProxyQueryable<T1Proxy extends ProxyEntity<T1Proxy
         }
         return this;
     }
+
+//    @Override
+//    public ProxyQueryable<T1Proxy, T1> where1(SQLFuncExpression1<T1Proxy, SQLPredicate> whereExpression) {
+//        SQLPredicate sqlPredicate = whereExpression.apply(get1Proxy());
+//        entityQueryable.where(wherePredicate -> {
+//            sqlPredicate.accept(wherePredicate.getFilter());
+//        });
+//        return this;
+//    }
 
     @Override
     public ProxyQueryable<T1Proxy, T1> whereById(boolean condition, Object id) {
@@ -224,6 +236,17 @@ public abstract class AbstractProxyQueryable<T1Proxy extends ProxyEntity<T1Proxy
             entityQueryable.orderBy(columnSelector -> {
                 selectExpression.apply(new ProxyOrderSelectorImpl(columnSelector.getOrderSelector()), get1Proxy());
             }, asc);
+        }
+        return this;
+    }
+
+    @Override
+    public ProxyQueryable<T1Proxy, T1> orderBy(boolean condition, SQLFuncExpression1<T1Proxy, SQLColumn<?>> selectExpression, boolean asc) {
+        if(condition){
+            SQLColumn<?> sqlColumn = selectExpression.apply(get1Proxy());
+            entityQueryable.orderBy(columnSelector->{
+                columnSelector.column(sqlColumn.value());
+            },asc);
         }
         return this;
     }

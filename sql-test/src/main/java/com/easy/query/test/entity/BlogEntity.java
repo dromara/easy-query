@@ -5,6 +5,7 @@ import com.easy.query.core.annotation.EntityProxy;
 import com.easy.query.core.annotation.Table;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -20,6 +21,7 @@ import java.time.LocalDateTime;
 @Setter
 @Table("t_blog")
 @EntityProxy
+@ToString
 public class BlogEntity extends BaseEntity{
 
     /**

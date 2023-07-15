@@ -28,4 +28,78 @@ public class SQLColumnImpl<TProperty> implements SQLColumn<TProperty> {
     public String value() {
         return property;
     }
+//
+//    @Override
+//    public SQLPredicate ge(PredicateColumn<TProperty> column) {
+//        return null;
+//    }
+//
+//    @Override
+//    public SQLPredicate ge(TProperty val) {
+//        return new SQLPredicateImpl(f->f.ge(this.table,this.property,val));
+//    }
+//
+//    @Override
+//    public SQLPredicate gt(PredicateColumn<TProperty> column) {
+//        return null;
+//    }
+//
+//    @Override
+//    public SQLPredicate gt(TProperty val) {
+//        return new SQLPredicateImpl(f->f.gt(this.table,this.property,val));
+//    }
+//
+//    @Override
+//    public SQLPredicate eq(PredicateColumn<TProperty> column) {
+//        return new SQLPredicateImpl(f->f.eq(this.table,this.property,column.getTable(),column.value()));
+//    }
+//
+//    @Override
+//    public SQLPredicate eq(boolean condition,TProperty val) {
+//        return new SQLPredicateImpl(f->{
+//            if(condition){
+//                f.eq(this.table,this.property,val);
+//            }
+//        });
+//    }
+//
+//    @Override
+//    public SQLPredicate ne(PredicateColumn<TProperty> column) {
+//        return new SQLPredicateImpl(f->f.ne(this.table,this.property,column.getTable(),column.value()));
+//    }
+//
+//    @Override
+//    public SQLPredicate ne(TProperty val) {
+//        return null;
+//    }
+//
+//    @Override
+//    public SQLPredicate le(PredicateColumn<TProperty> column) {
+//        return null;
+//    }
+//
+//    @Override
+//    public SQLPredicate le(TProperty val) {
+//        return null;
+//    }
+//
+//    @Override
+//    public SQLPredicate lt(PredicateColumn<TProperty> column) {
+//        return null;
+//    }
+//
+//    @Override
+//    public SQLPredicate lt(TProperty val) {
+//        return null;
+//    }
+//
+//    @Override
+//    public SQLPredicate isNull() {
+//        return null;
+//    }
+//
+//    @Override
+//    public SQLPredicate isNotNull() {
+//        return null;
+//    }
 }

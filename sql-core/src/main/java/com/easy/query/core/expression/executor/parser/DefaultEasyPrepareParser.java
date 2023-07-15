@@ -13,7 +13,6 @@ import com.easy.query.core.expression.executor.parser.descriptor.impl.TablePredi
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.util.EasyParseUtil;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.HashMap;
 
@@ -72,7 +71,7 @@ public class DefaultEasyPrepareParser implements EasyPrepareParser {
             TablePredicateParseDescriptor tablePredicateParseDescriptor = parsePredicateDescriptor(predicatePrepareParseContext);
             return predicatePrepareParseResult(predicatePrepareParseContext, tablePredicateParseDescriptor);
         }
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     private QueryPrepareParseResult queryParseResult(QueryPredicateParseContext queryPredicatePrepareParseContext, TablePredicateParseDescriptor tablePredicateParseDescriptor) {

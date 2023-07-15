@@ -46,11 +46,15 @@ public class EasyQueryOption {
     private final int insertBatchThreshold;
     private final int updateBatchThreshold;
     private final boolean printSql;
+    private final boolean startTimeJob;
+
+    private final boolean defaultTrack;
 
     public EasyQueryOption(boolean deleteThrowError, SQLExecuteStrategyEnum insertStrategy, SQLExecuteStrategyEnum updateStrategy, ConnectionModeEnum connectionMode, int maxShardingQueryLimit, int executorMaximumPoolSize, int executorCorePoolSize,
                            boolean throwIfNotMatchRoute, long shardingExecuteTimeoutMillis,
                            EasyQueryShardingOption shardingOption, EasyQueryReplicaOption replicaOption, String defaultDataSourceName, int defaultDataSourceMergePoolSize, boolean queryLargeColumn, int maxShardingRouteCount, int executorQueueSize, long multiConnWaitTimeoutMillis,
-                           boolean warningBusy, int insertBatchThreshold, int updateBatchThreshold, boolean printSql) {
+                           boolean warningBusy, int insertBatchThreshold, int updateBatchThreshold, boolean printSql,boolean startTimeJob,boolean defaultTrack) {
+
 
 
         if (executorMaximumPoolSize > 0) {
@@ -106,6 +110,8 @@ public class EasyQueryOption {
         this.insertBatchThreshold = insertBatchThreshold;
         this.updateBatchThreshold = updateBatchThreshold;
         this.printSql = printSql;
+        this.startTimeJob = startTimeJob;
+        this.defaultTrack = defaultTrack;
     }
 
     public int getMaxShardingRouteCount() {
@@ -190,5 +196,13 @@ public class EasyQueryOption {
 
     public boolean isPrintSql() {
         return printSql;
+    }
+
+    public boolean isStartTimeJob() {
+        return startTimeJob;
+    }
+
+    public boolean isDefaultTrack() {
+        return defaultTrack;
     }
 }

@@ -30,7 +30,7 @@ import com.easy.query.core.util.EasyStringUtil;
 import com.easy.query.h2.config.H2DatabaseConfiguration;
 import com.easy.query.mssql.MsSQLDatabaseConfiguration;
 import com.easy.query.mysql.config.MySQLDatabaseConfiguration;
-import com.easy.query.pgsql.PgSQLDatabaseConfiguration;
+import com.easy.query.pgsql.config.PgSQLDatabaseConfiguration;
 import com.easy.query.sql.starter.conn.SpringConnectionManager;
 import com.easy.query.sql.starter.conn.SpringDataSourceUnitFactory;
 import com.easy.query.sql.starter.config.EasyQueryInitializeOption;
@@ -167,6 +167,8 @@ public class EasyQueryStarterAutoConfiguration {
                     builder.setInsertBatchThreshold(easyQueryProperties.getInsertBatchThreshold());
                     builder.setUpdateBatchThreshold(easyQueryProperties.getUpdateBatchThreshold());
                     builder.setPrintSql(easyQueryProperties.isPrintSql());
+                    builder.setStartTimeJob(easyQueryProperties.isStartTimeJob());
+                    builder.setDefaultTrack(easyQueryProperties.isDefaultTrack());
                 })
                 .replaceService(NameConversion.class, nameConversion)
                 .replaceService(ConnectionManager.class, SpringConnectionManager.class)

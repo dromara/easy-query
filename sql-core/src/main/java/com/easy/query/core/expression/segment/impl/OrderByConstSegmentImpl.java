@@ -23,7 +23,7 @@ public class OrderByConstSegmentImpl extends ColumnConstSegmentImpl implements O
     }
 
     @Override
-    public ColumnSegment cloneSQLEntitySegment() {
+    public ColumnSegment cloneSQLColumnSegment() {
         return new OrderByConstSegmentImpl(table,runtimeContext,columnConst,asc);
     }
 

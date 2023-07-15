@@ -56,7 +56,7 @@ public abstract class AbstractClientEntityUpdatable<T> extends AbstractSQLExecut
         QueryRuntimeContext runtimeContext = entityUpdateExpressionBuilder.getRuntimeContext();
         entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(clazz);
         entityMetadata.checkTable();
-        table = runtimeContext.getExpressionBuilderFactory().createEntityTableExpressionBuilder(entityMetadata, 0, MultiTableTypeEnum.NONE, runtimeContext);
+        table = runtimeContext.getExpressionBuilderFactory().createEntityTableExpressionBuilder(entityMetadata, MultiTableTypeEnum.NONE, runtimeContext);
         this.entityUpdateExpressionBuilder.addSQLEntityTableExpression(table);
     }
 
@@ -123,7 +123,7 @@ public abstract class AbstractClientEntityUpdatable<T> extends AbstractSQLExecut
     public ClientEntityUpdatable<T> setColumns(boolean condition, SQLExpression1<ColumnUpdateSetSelector<T>>
             columnSelectorExpression) {
         if (condition) {
-            ColumnUpdateSetSelectorImpl<T> columnSelector = new ColumnUpdateSetSelectorImpl<>(table.getEntityTable(),new UpdateSetSelectorImpl(entityUpdateExpressionBuilder.getRuntimeContext(), entityUpdateExpressionBuilder.getSetColumns()));
+            ColumnUpdateSetSelectorImpl<T> columnSelector = new ColumnUpdateSetSelectorImpl<>(table.getEntityTable(), new UpdateSetSelectorImpl(entityUpdateExpressionBuilder.getRuntimeContext(), entityUpdateExpressionBuilder.getSetColumns()));
             columnSelectorExpression.apply(columnSelector);
         }
         return this;

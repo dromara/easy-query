@@ -37,7 +37,7 @@ public class ColumnExistsSubQueryPredicate implements SubQueryPredicate {
     }
 
     @Override
-    public SQLEntitySegment cloneSQLEntitySegment() {
+    public SQLEntitySegment cloneSQLColumnSegment() {
         throw new UnsupportedOperationException();
     }
 

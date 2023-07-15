@@ -177,25 +177,31 @@ public abstract class AbstractPredicateSegment implements PredicateSegment,Shard
                 boolean allOr = true;
 
                 for (PredicateSegment child : children) {
-                    if (child instanceof AndPredicateSegment) {
-                        allOr = false;
-                        if (sql.length() != 0) {
-                            sql.append(AndPredicateSegment.AND);
+                    if(child.isNotEmpty()){
+                        if (child instanceof AndPredicateSegment) {
+                            allOr = false;
+                            if (sql.length() != 0) {
+                                sql.append(AndPredicateSegment.AND);
+                            }
+                            sql.append(child.toSQL(toSQLContext));
+                        } else if (child instanceof OrPredicateSegment) {
+                            allAnd = false;
+                            if (sql.length() != 0) {
+                                sql.append(OrPredicateSegment.OR);
+                            }
+                            sql.append(child.toSQL(toSQLContext));
                         }
-                        sql.append(child.toSQL(toSQLContext));
-                    } else if (child instanceof OrPredicateSegment) {
-                        allAnd = false;
-                        if (sql.length() != 0) {
-                            sql.append(OrPredicateSegment.OR);
-                        }
-                        sql.append(child.toSQL(toSQLContext));
                     }
                 }
                 if (sql.length() != 0) {
                     if (root && (allAnd || allOr)) {
                         return sql.toString();
                     } else {
-                        return "(" + sql + ")";
+                        if(children.size()==1){
+                            return sql.toString();
+                        }else{
+                            return "(" + sql + ")";
+                        }
                     }
                 }
             }

@@ -6,7 +6,7 @@ import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.expression.builder.AggregateFilter;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.lambda.SQLExpression1;
-import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 
 /**
  * @author xuejiaming
@@ -14,9 +14,8 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
  * @Description: 文件说明
  * @Date: 2023/2/18 22:17
  */
-public interface WhereAggregatePredicate<T1> {
+public interface WhereAggregatePredicate<T1> extends EntitySQLTableOwner<T1> {
     AggregateFilter getAggregateFilter();
-    TableAvailable getTable();
 
     QueryRuntimeContext getRuntimeContext();
 

@@ -35,7 +35,7 @@ public abstract class AbstractSQLBuilderSegment implements SQLBuilderSegment {
         for (SQLSegment sqlSegment : sqlSegments) {
             if(sqlSegment instanceof SubQueryColumnSegment){
                 SubQueryColumnSegment subQueryColumnSegment = (SubQueryColumnSegment) sqlSegment;
-                predicateSegment.getSQLSegments().add(subQueryColumnSegment.cloneSQLEntitySegment());
+                predicateSegment.getSQLSegments().add(subQueryColumnSegment.cloneSQLColumnSegment());
 
             }else{
                 predicateSegment.getSQLSegments().add(sqlSegment);

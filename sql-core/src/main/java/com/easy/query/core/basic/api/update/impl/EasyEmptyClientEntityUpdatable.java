@@ -93,4 +93,9 @@ public class EasyEmptyClientEntityUpdatable<T> implements ClientEntityUpdatable<
     public String toSQL(Object entity) {
         return null;
     }
+
+    @Override
+    public ClientEntityUpdatable<T> batch(boolean use) {
+        return this;
+    }
 }

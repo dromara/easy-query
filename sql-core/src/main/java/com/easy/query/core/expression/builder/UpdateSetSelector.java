@@ -11,7 +11,7 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 public interface UpdateSetSelector {
     UpdateSetSelector column(TableAvailable table, String property);
 
-    UpdateSetSelector columnIgnore(TableAvailable table, String property);
-
     UpdateSetSelector columnAll(TableAvailable table);
+
+    UpdateSetSelector columnIgnore(TableAvailable table, String property);
 }

@@ -1,17 +1,21 @@
 package com.easy.query.test;
 
 import com.easy.query.api4j.select.Queryable;
+import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.jdbc.parameter.ConstLikeSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
+import com.easy.query.core.enums.AggregatePredicateCompare;
 import com.easy.query.test.dto.BlogEntityGroup;
 import com.easy.query.test.dto.BlogQueryRequest;
 import com.easy.query.test.dto.TopicGroupTestDTO;
 import com.easy.query.test.entity.BlogEntity;
+import com.easy.query.test.entity.SysUser;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.TopicY;
+import com.easy.query.test.entity.Topicx;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -19,6 +23,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  * create time 2023/6/8 21:38
@@ -30,6 +35,17 @@ public class QueryTest2 extends BaseTest {
 
     @Test
     public void query124() {
+        String toSql = easyQuery
+                .queryable(Topic.class)
+                .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId,BlogEntity::getId))
+                .leftJoin(BlogEntity.class, (t, t1, t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
+                .where(o -> o.eq(Topic::getId, "3"))
+                .limit(1, 2)
+                .toSQL();
+        Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` LEFT JOIN `t_blog` t2 ON t2.`deleted` = ? AND t.`id` = t2.`id` WHERE t.`id` = ? LIMIT 2 OFFSET 1", toSql);
+    }
+    @Test
+    public void query124_1() {
         String toSql = easyQuery
                 .queryable(Topic.class)
                 .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
@@ -807,6 +823,204 @@ public class QueryTest2 extends BaseTest {
                 ));
         String sql = queryable.toSQL();
         Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND (`id` IN (?,?) OR `id` IN (?,?) OR `id` IN (?,?))", sql);
+    }
+
+    @Test
+    public void query122x() {
+        {
+            String sql = easyQuery
+                    .queryable(Topic.class)
+                    .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .where(o -> o.in(Topic::getId, Arrays.asList("3", "2", "5")))
+                    .groupBy(o -> o.column(Topic::getId))
+                    .orderByAsc((t, t1) -> t1.column(BlogEntity::getOrder)).toSQL();
+            Assert.assertEquals("SELECT t.`id` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t.`id` IN (?,?,?) GROUP BY t.`id` ORDER BY t1.`order` ASC", sql);
+        }
+        {
+            String sql = easyQuery
+                    .queryable(Topic.class)
+                    .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .where(o -> o.in(Topic::getId, Arrays.asList("3", "2", "5")))
+                    .groupBy((t, t1) -> t.column(Topic::getId))
+                    .orderByAsc((t, t1) -> t1.column(BlogEntity::getOrder)).toSQL();
+            Assert.assertEquals("SELECT t.`id` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t.`id` IN (?,?,?) GROUP BY t.`id` ORDER BY t1.`order` ASC", sql);
+        }
+        {
+            String sql = easyQuery
+                    .queryable(Topic.class)
+                    .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .where(o -> o.in(Topic::getId, Arrays.asList("3", "2", "5")))
+                    .groupBy(false, (t, t1) -> t.column(Topic::getStars))
+                    .groupBy(true, (t, t1) -> t.column(Topic::getId))
+                    .orderByAsc((t, t1) -> t1.column(BlogEntity::getOrder)).toSQL();
+            Assert.assertEquals("SELECT t.`id` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t.`id` IN (?,?,?) GROUP BY t.`id` ORDER BY t1.`order` ASC", sql);
+        }
+        {
+            String sql = easyQuery
+                    .queryable(Topic.class)
+                    .innerJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .where(o -> o.in(Topic::getId, Arrays.asList("3", "2", "5")))
+                    .groupBy(false, (t, t1) -> t.column(Topic::getStars))
+                    .groupBy(true, (t, t1) -> t.column(Topic::getId))
+                    .orderByAsc((t, t1) -> t1.column(BlogEntity::getOrder)).toSQL();
+            Assert.assertEquals("SELECT t.`id` FROM `t_topic` t INNER JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t.`id` IN (?,?,?) GROUP BY t.`id` ORDER BY t1.`order` ASC", sql);
+        }
+        {
+            List<Topic> list = easyQuery
+                    .queryable(Topic.class)
+                    .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .where(o -> o.in(Topic::getId, Arrays.asList("3", "2", "5")))
+                    .groupBy((t, t1) -> t.column(Topic::getId))
+                    .orderByAsc((t, t1) -> t1.column(BlogEntity::getOrder))
+                    .toList();
+            Assert.assertEquals(3, list.size());
+            for (Topic topic : list) {
+                Assert.assertNotNull(topic.getId());
+                Assert.assertNull(topic.getStars());
+                Assert.assertNull(topic.getTitle());
+            }
+        }
+        {
+            String sql = easyQuery
+                    .queryable(Topic.class)
+                    .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .where(o -> o.in(Topic::getId, Arrays.asList("3", "2", "5")))
+                    .groupBy(o -> o.column(Topic::getId))
+                    .having(o -> o.count(Topic::getId, AggregatePredicateCompare.GE, 1))
+                    .orderByAsc((t, t1) -> t1.column(BlogEntity::getOrder)).toSQL();
+            Assert.assertEquals("SELECT t.`id` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t.`id` IN (?,?,?) GROUP BY t.`id` HAVING COUNT(t.`id`) >= ? ORDER BY t1.`order` ASC", sql);
+        }
+        {
+            String sql = easyQuery
+                    .queryable(Topic.class)
+                    .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .where(o -> o.in(Topic::getId, Arrays.asList("3", "2", "5")))
+                    .groupBy(o -> o.column(Topic::getId))
+                    .having(false, (t, t1) -> t1.count(BlogEntity::getId, AggregatePredicateCompare.GE, 1))
+                    .having(true, (t, t1) -> t.count(Topic::getId, AggregatePredicateCompare.GE, 1))
+                    .orderByAsc((t, t1) -> t1.column(BlogEntity::getOrder)).toSQL();
+            Assert.assertEquals("SELECT t.`id` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t.`id` IN (?,?,?) GROUP BY t.`id` HAVING COUNT(t.`id`) >= ? ORDER BY t1.`order` ASC", sql);
+        }
+        {
+            String sql = easyQuery
+                    .queryable(Topic.class)
+                    .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .where(o -> o.in(Topic::getId, Arrays.asList("3", "2", "5")))
+                    .groupBy(o -> o.column(Topic::getId))
+                    .having(false, (t, t1) -> t1.count(BlogEntity::getId, AggregatePredicateCompare.GE, 1))
+                    .having((t, t1) -> t.count(Topic::getId, AggregatePredicateCompare.GE, 1))
+                    .orderByAsc((t, t1) -> t1.column(BlogEntity::getOrder)).toSQL();
+            Assert.assertEquals("SELECT t.`id` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t.`id` IN (?,?,?) GROUP BY t.`id` HAVING COUNT(t.`id`) >= ? ORDER BY t1.`order` ASC", sql);
+        }
+    }
+
+    @Test
+    public void query123x() {
+        {
+            String sql = easyQuery
+                    .queryable(Topic.class)
+                    .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .where(o -> o.in(Topic::getId, Arrays.asList("3", "2", "5")))
+                    .groupBy(o -> o.column(Topic::getId))
+                    .distinct()
+                    .orderByAsc((t, t1) -> t1.column(BlogEntity::getOrder))
+                    .limit(10).toSQL();
+            Assert.assertEquals("SELECT DISTINCT t.`id` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t.`id` IN (?,?,?) GROUP BY t.`id` ORDER BY t1.`order` ASC LIMIT 10", sql);
+        }
+        {
+            String sql = easyQuery
+                    .queryable(Topic.class)
+                    .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .where(o -> o.in(Topic::getId, Arrays.asList("3", "2", "5")))
+                    .groupBy(o -> o.column(Topic::getId))
+                    .orderByAsc((t, t1) -> t1.column(BlogEntity::getOrder))
+                    .distinct()
+                    .select(Topic.class, o -> o.column(Topic::getId))
+                    .select(Long.class, o -> o.columnCount(Topic::getId)).toSQL();
+            Assert.assertEquals("SELECT COUNT(t2.`id`) AS `id` FROM (SELECT DISTINCT t.`id` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t.`id` IN (?,?,?) GROUP BY t.`id` ORDER BY t1.`order` ASC) t2", sql);
+        }
+        {
+            String sql = easyQuery
+                    .queryable(Topic.class)
+                    .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .where(o -> o.in(Topic::getId, Arrays.asList("3", "2", "5")))
+                    .groupBy(o -> o.column(Topic::getId))
+                    .orderByAsc((t, t1) -> t1.column(BlogEntity::getOrder))
+                    .distinct()
+                    .select(Topic.class, o -> o.column(Topic::getId))
+                    .select("count(1)").toSQL();
+            Assert.assertEquals("SELECT count(1) FROM (SELECT DISTINCT t.`id` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t.`id` IN (?,?,?) GROUP BY t.`id` ORDER BY t1.`order` ASC) t2", sql);
+        }
+        {
+            String sql = easyQuery
+                    .queryable(Topic.class)
+                    .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .where(o -> o.in(Topic::getId, Arrays.asList("3", "2", "5")))
+                    .groupBy(o -> o.column(Topic::getId))
+                    .orderByDesc((t) -> t.column(Topic::getStars))
+                    .distinct()
+                    .select(Topic.class, o -> o.column(Topic::getId))
+                    .select("count(1)").toSQL();
+            Assert.assertEquals("SELECT count(1) FROM (SELECT DISTINCT t.`id` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t.`id` IN (?,?,?) GROUP BY t.`id` ORDER BY t.`stars` DESC) t2", sql);
+        }
+        {
+            String sql = easyQuery
+                    .queryable(Topic.class)
+                    .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .where(o -> o.in(Topic::getId, Arrays.asList("3", "2", "5")))
+                    .groupBy(o -> o.column(Topic::getId))
+                    .orderByAsc((t) -> t.column(Topic::getStars))
+                    .distinct()
+                    .select(Topic.class, o -> o.column(Topic::getId))
+                    .select("count(1)").toSQL();
+            Assert.assertEquals("SELECT count(1) FROM (SELECT DISTINCT t.`id` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t.`id` IN (?,?,?) GROUP BY t.`id` ORDER BY t.`stars` ASC) t2", sql);
+        }
+    }
+
+    @Test
+    public void query12x(){
+        EasyPageResult<Topicx> pageResult = easyQuery.queryable(Topic.class).where(o -> o.isNotNull(Topic::getCreateTime))
+                .select(Topicx.class).toPageResult(1, 20);
+        System.out.println(pageResult);
+    }
+    @Test
+    public void query13x() {
+        Queryable<SysUser> queryable = easyQuery.queryable(SysUser.class)
+                .where(o -> o.eq(SysUser::getId, "123xxx")
+                        .like(false,SysUser::getPhone,"133"));
+        String sql = queryable.toSQL();
+        Assert.assertEquals("SELECT `id`,`create_time`,`username`,`phone`,`id_card`,`address` FROM `easy-query-test`.`t_sys_user` WHERE `id` = ?", sql);
+        SysUser sysUser = queryable.firstOrNull();
+        Assert.assertNull(sysUser);
+    }
+    @Test
+    public void query14x() {
+        try {
+
+            Map<String,String> phone=null;
+            Queryable<SysUser> queryable = easyQuery.queryable(SysUser.class)
+                    .where(o -> o.eq(SysUser::getId, "123xxx")
+                            .like(phone!=null&&phone.containsKey("phone"),SysUser::getPhone,phone.get("phone")));
+            String sql = queryable.toSQL();
+            Assert.assertEquals("SELECT `id`,`create_time`,`username`,`phone`,`id_card`,`address` FROM `easy-query-test`.`t_sys_user` WHERE `id` = ?", sql);
+            SysUser sysUser = queryable.firstOrNull();
+            Assert.assertNull(sysUser);
+        }catch (Exception exception){
+            Assert.assertTrue(exception instanceof  NullPointerException);
+        }
+    }
+    @Test
+    public void query143x() {
+
+            Map<String,String> phone=null;
+            Queryable<SysUser> queryable = easyQuery.queryable(SysUser.class)
+                    .where(o -> o.eq(SysUser::getId, "123xxx"))
+                    .where(phone!=null&&phone.containsKey("phone"),o -> o.like(SysUser::getPhone,phone.get("phone")));
+            String sql = queryable.toSQL();
+            Assert.assertEquals("SELECT `id`,`create_time`,`username`,`phone`,`id_card`,`address` FROM `easy-query-test`.`t_sys_user` WHERE `id` = ?", sql);
+            SysUser sysUser = queryable.firstOrNull();
+            Assert.assertNull(sysUser);
+
     }
     @Test
     public void query26(){

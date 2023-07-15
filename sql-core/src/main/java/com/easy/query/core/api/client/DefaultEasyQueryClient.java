@@ -146,4 +146,14 @@ public class DefaultEasyQueryClient implements EasyQueryClient {
         }
         return false;
     }
+
+    @Override
+    public boolean removeTracking(Object entity) {
+        TrackManager trackManager = runtimeContext.getTrackManager();
+        TrackContext currentTrackContext = trackManager.getCurrentTrackContext();
+        if (currentTrackContext != null) {
+            return currentTrackContext.removeTracking(entity);
+        }
+        return false;
+    }
 }

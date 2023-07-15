@@ -40,7 +40,7 @@ public class ColumnInSubQueryPredicate implements SubQueryPredicate{
     }
 
     @Override
-    public SQLEntitySegment cloneSQLEntitySegment() {
+    public SQLEntitySegment cloneSQLColumnSegment() {
         throw new UnsupportedOperationException();
     }
 

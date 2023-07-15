@@ -1,17 +1,18 @@
 package com.easy.query.api4j.sql;
 
+import com.easy.query.api4j.util.EasyLambdaUtil;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.Property;
+import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnSelector;
-import com.easy.query.api4j.util.EasyLambdaUtil;
 
 /**
  * @author xuejiaming
  * @Description: 文件说明
  * @Date: 2023/2/6 23:20
  */
-public interface SQLColumnSelector<T1> {
+public interface SQLColumnSelector<T1> extends EntitySQLTableOwner<T1> {
     ColumnSelector<T1> getColumnSelector();
 
     default TableAvailable getTable() {

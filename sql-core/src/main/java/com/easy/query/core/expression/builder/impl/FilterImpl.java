@@ -258,8 +258,8 @@ public class FilterImpl implements Filter {
     }
 
     @Override
-    public <T2> Filter eq(TableAvailable leftTable, String property1, TableAvailable rightTable, String property2) {
-        nextPredicateSegment.setPredicate(new ColumnWithColumnPredicate(leftTable, property1, rightTable, property2, getReallyPredicateCompare(SQLPredicateCompareEnum.EQ), runtimeContext));
+    public Filter compareSelf(TableAvailable leftTable, String property1, TableAvailable rightTable, String property2,SQLPredicateCompare sqlPredicateCompare) {
+        nextPredicateSegment.setPredicate(new ColumnWithColumnPredicate(leftTable, property1, rightTable, property2, getReallyPredicateCompare(sqlPredicateCompare), runtimeContext));
         next();
         return this;
     }

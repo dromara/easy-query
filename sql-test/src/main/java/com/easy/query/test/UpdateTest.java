@@ -316,6 +316,51 @@ public class UpdateTest extends BaseTest {
                 .executeRows();
         Assert.assertEquals(0,l);
     }
+//    @Test
+//    public void updateTest17() {
+//        TopicValueUpdateAtomicTrack topicValueUpdateAtomicTrack = new TopicValueUpdateAtomicTrack();
+//        topicValueUpdateAtomicTrack.setId("123");
+//        topicValueUpdateAtomicTrack.setStars(99);
+//        TrackManager trackManager = easyQuery.getRuntimeContext().getTrackManager();
+//        try {
+//            trackManager.begin();
+//            easyQuery.addTracking(topicValueUpdateAtomicTrack);
+//            topicValueUpdateAtomicTrack.setStars(98);
+//            long l = easyQuery.updatable(topicValueUpdateAtomicTrack).executeRows();
+//            System.out.println(l);
+//        } catch (Exception ex) {
+//            Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
+//            EasyQuerySQLCommandException ex1 = (EasyQuerySQLCommandException) ex;
+//            Assert.assertTrue(ex1.getCause() instanceof EasyQuerySQLStatementException);
+//            String sql = ((EasyQuerySQLStatementException) ex1.getCause()).getSQL();
+//            Assert.assertEquals("UPDATE `t_topic_value_atomic` SET `stars` = `stars`- ? WHERE `id` = ? AND `stars` >= ?", sql);
+//        } finally {
+//            trackManager.release();
+//        }
+//    }
 
+    @Test
+    public void updateTest17() {
+        TrackManager trackManager = easyQuery.getRuntimeContext().getTrackManager();
+        try{
+
+            trackManager.begin();
+            Topic topic = new Topic();
+            topic.setId("123xx");
+            easyQuery.addTracking(topic);
+            String newTitle = "test123" + new Random().nextInt(100000);
+            topic.setTitle(newTitle);
+            String sql = ((EasyEntityUpdatable<Topic>) easyQuery.updatable(topic))
+                    .whereColumns(o->o.column(Topic::getId).column(Topic::getTitle))
+                    .toSQL(topic);
+            Assert.assertEquals("UPDATE `t_topic` SET `title` = ? WHERE `id` = ? AND `title` IS NULL", sql);
+            long l = easyQuery.updatable(topic).executeRows();
+            Assert.assertEquals(0,l);
+        }finally {
+
+            trackManager.release();
+        }
+        Assert.assertFalse(trackManager.currentThreadTracking());
+    }
 
 }

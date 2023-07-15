@@ -1,6 +1,7 @@
 package com.easy.query.core.expression.sql.builder;
 
 import com.easy.query.core.basic.extension.interceptor.Interceptor;
+import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.EasyBehaviorEnum;
@@ -9,10 +10,9 @@ import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.expression.sql.TableContext;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
+import com.easy.query.core.expression.sql.builder.internal.ExpressionContextInterceptor;
 
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
 import java.util.function.Predicate;
 
 /**
@@ -25,8 +25,7 @@ public class EasyExpressionContext implements ExpressionContext {
     private final QueryRuntimeContext runtimeContext;
     //    protected final List<SQLParameter> params;
     protected final EasyBehavior easyBehavior;
-    protected final Set<String> useInterceptors;
-    protected final Set<String> noInterceptors;
+    protected final ExpressionContextInterceptor expressionContextInterceptor;
     protected final TableContext tableContext;
     private boolean deleteThrowException;
     private Object version;
@@ -46,11 +45,14 @@ public class EasyExpressionContext implements ExpressionContext {
 //        params = new ArrayList<>();
         //如果他是不查询大列的就去掉
         this.easyBehavior = new EasyBehavior();
-        if (!queryConfiguration.getEasyQueryOption().isQueryLargeColumn()) {
+        EasyQueryOption easyQueryOption = queryConfiguration.getEasyQueryOption();
+        if (!easyQueryOption.isQueryLargeColumn()) {
             easyBehavior.removeBehavior(EasyBehaviorEnum.QUERY_LARGE_COLUMN);
         }
-        this.useInterceptors = new HashSet<>();
-        this.noInterceptors = new HashSet<>();
+        if(easyQueryOption.isDefaultTrack()){
+            easyBehavior.addBehavior(EasyBehaviorEnum.USE_TRACKING);
+        }
+        this.expressionContextInterceptor=new ExpressionContextInterceptor();
         this.tableContext = new TableContext();
         this.maxShardingQueryLimit = null;
         this.connectionMode = null;
@@ -119,27 +121,23 @@ public class EasyExpressionContext implements ExpressionContext {
 
     @Override
     public void useInterceptor(String name) {
-        noInterceptors.remove(name);
-        useInterceptors.add(name);
+        expressionContextInterceptor.useInterceptor(name);
     }
 
     @Override
     public void noInterceptor(String name) {
-        useInterceptors.remove(name);
-        noInterceptors.add(name);
+        expressionContextInterceptor.noInterceptor(name);
     }
 
     @Override
     public void useInterceptor() {
-        useInterceptors.clear();
-        noInterceptors.clear();
+        expressionContextInterceptor.useInterceptor();
         getBehavior().addBehavior(EasyBehaviorEnum.USE_INTERCEPTOR);
     }
 
     @Override
     public void noInterceptor() {
-        useInterceptors.clear();
-        noInterceptors.clear();
+        expressionContextInterceptor.noInterceptor();
         getBehavior().removeBehavior(EasyBehaviorEnum.USE_INTERCEPTOR);
     }
 
@@ -152,10 +150,10 @@ public class EasyExpressionContext implements ExpressionContext {
             //如果是启用了的
             if (interceptorBehavior) {
                 //拦截器手动指定使用的或者默认要用的并且没有说不用的
-                return useInterceptors.contains(o.name()) || (!noInterceptors.contains(o.name())&&o.enable());
+                return expressionContextInterceptor.useContains(o.name()) || (!expressionContextInterceptor.noContains(o.name())&&o.enable());
             } else {
                 //手动指定要用的并且不在不使用里面
-                return useInterceptors.contains(o.name()) && !noInterceptors.contains(o.name());
+                return expressionContextInterceptor.useContains(o.name()) && !expressionContextInterceptor.noContains(o.name());
             }
         };
     }
@@ -229,8 +227,7 @@ public class EasyExpressionContext implements ExpressionContext {
     public ExpressionContext cloneExpressionContext() {
         EasyExpressionContext easyExpressionContext = new EasyExpressionContext(runtimeContext);
         this.easyBehavior.copyTo(easyExpressionContext.easyBehavior);
-        easyExpressionContext.useInterceptors.addAll(this.useInterceptors);
-        easyExpressionContext.noInterceptors.addAll(this.noInterceptors);
+        expressionContextInterceptor.copyTo(easyExpressionContext.expressionContextInterceptor);
         this.tableContext.copyTo(easyExpressionContext.tableContext);
         easyExpressionContext.deleteThrowException = this.deleteThrowException;
         easyExpressionContext.version = this.version;

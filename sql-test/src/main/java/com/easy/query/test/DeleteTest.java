@@ -6,6 +6,7 @@ import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import com.easy.query.core.exception.EasyQuerySQLStatementException;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
+import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.TopicValueUpdateAtomicTrack;
 import org.junit.Assert;
@@ -246,5 +247,31 @@ public class DeleteTest extends BaseTest {
         Assert.assertNull(sql2);
         String sql3 = easyQueryClient.deletable(topic).toSQL(null);
         Assert.assertNull(sql3);
+    }
+
+    @Test
+    public void deleteTest5(){
+
+        String sql = easyQuery.deletable(BlogEntity.class)
+                .where(o -> o.eq(BlogEntity::getId, "id123456"))
+                .toSQL();
+        Assert.assertEquals("UPDATE `t_blog` SET `deleted` = ? WHERE `deleted` = ? AND `id` = ?",sql);
+        String sql1 = easyQuery.deletable(BlogEntity.class)
+                .where(o -> o.eq(BlogEntity::getId, "id123456"))
+                .disableLogicDelete()
+                .allowDeleteStatement(true)
+                .toSQL();
+        Assert.assertEquals("DELETE FROM `t_blog` WHERE `id` = ?",sql1);
+
+        long l1 = easyQuery.deletable(BlogEntity.class)
+                .where(o -> o.eq(BlogEntity::getId, "id123456")).executeRows();
+        Assert.assertEquals(0,l1);
+
+        long l = easyQuery.deletable(BlogEntity.class)
+                .where(o->o.eq(BlogEntity::getId,"id123456"))
+                .disableLogicDelete()
+                .allowDeleteStatement(true)
+                .executeRows();
+        Assert.assertEquals(0,l);
     }
 }

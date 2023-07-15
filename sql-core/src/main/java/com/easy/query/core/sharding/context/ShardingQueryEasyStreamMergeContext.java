@@ -1,24 +1,27 @@
 package com.easy.query.core.sharding.context;
 
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
-import com.easy.query.core.enums.MergeBehaviorEnum;
-import com.easy.query.core.expression.executor.parser.EasyQueryPrepareParseResult;
-import com.easy.query.core.expression.executor.parser.ExecutionContext;
-import com.easy.query.core.expression.segment.OrderBySegment;
-import com.easy.query.core.expression.segment.impl.ColumnSegmentImpl;
-import com.easy.query.core.expression.segment.SQLSegment;
-import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
-import com.easy.query.core.expression.sql.expression.EntityQuerySQLExpression;
-import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.segment.PropertyGroup;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.segment.PropertyOrder;
+import com.easy.query.core.enums.MergeBehaviorEnum;
+import com.easy.query.core.enums.sharding.ConnectionModeEnum;
+import com.easy.query.core.expression.executor.parser.EasyQueryPrepareParseResult;
+import com.easy.query.core.expression.executor.parser.ExecutionContext;
+import com.easy.query.core.expression.func.AggregationType;
+import com.easy.query.core.expression.segment.FuncColumnSegment;
+import com.easy.query.core.expression.segment.OrderBySegment;
+import com.easy.query.core.expression.segment.SQLSegment;
+import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
+import com.easy.query.core.expression.segment.impl.ColumnSegmentImpl;
+import com.easy.query.core.expression.sql.expression.EntityQuerySQLExpression;
 import com.easy.query.core.util.EasyBitwiseUtil;
-import com.easy.query.core.util.EasyShardingUtil;
 import com.easy.query.core.util.EasySQLSegmentUtil;
+import com.easy.query.core.util.EasyShardingUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * create time 2023/4/27 15:22
@@ -33,6 +36,7 @@ public class ShardingQueryEasyStreamMergeContext extends EntityStreamMergeContex
     protected final List<PropertyOrder> orders;
     protected final List<PropertyGroup> groups;
     protected final EntityQuerySQLExpression querySQLExpression;
+    protected final GroupMergeContext groupMergeContext;
     protected volatile boolean terminated = false;
 
     public ShardingQueryEasyStreamMergeContext(ExecutorContext executorContext, ExecutionContext executionContext, EasyQueryPrepareParseResult easyQueryPrepareParseResult) {
@@ -41,7 +45,37 @@ public class ShardingQueryEasyStreamMergeContext extends EntityStreamMergeContex
         this.querySQLExpression = easyQueryPrepareParseResult.getEntityPredicateSQLExpression();
         this.orders = getOrders(querySQLExpression);
         this.groups = getGroups(querySQLExpression);
+        this.groupMergeContext=new GroupMergeContext();
+        initGroupMergeContext();
     }
+
+    private void initGroupMergeContext(){
+        SQLBuilderSegment projects = querySQLExpression.getProjects();
+        List<SQLSegment> sqlSegments = projects.getSQLSegments();
+        for (SQLSegment sqlSegment : sqlSegments) {
+            if(sqlSegment instanceof FuncColumnSegment){
+                FuncColumnSegment funcColumnSegment = (FuncColumnSegment) sqlSegment;
+                AggregationType aggregationType = funcColumnSegment.getAggregationType();
+                if(AggregationType.containsAvg(aggregationType)){
+                    this.groupMergeContext.addAvgColumn(funcColumnSegment);
+                }
+            }
+        }
+        if(groupMergeContext.hasAvgColumn()){
+            int columnIndex=0;
+            for (SQLSegment sqlSegment : sqlSegments) {
+                if(sqlSegment instanceof FuncColumnSegment){
+                    FuncColumnSegment funcColumnSegment = (FuncColumnSegment) sqlSegment;
+                    AggregationType aggregationType = funcColumnSegment.getAggregationType();
+                    if(Objects.equals(AggregationType.SUM,aggregationType)||Objects.equals(AggregationType.COUNT,aggregationType)){
+                        this.groupMergeContext.addCountOrSum(funcColumnSegment,columnIndex);
+                    }
+                }
+                columnIndex++;
+            }
+        }
+    }
+
 
     private List<PropertyOrder> getOrders(EntityQuerySQLExpression querySQLExpression) {
         if (isShardingMerge() && EasySQLSegmentUtil.isNotEmpty(querySQLExpression.getOrder())) {
@@ -140,6 +174,10 @@ public class ShardingQueryEasyStreamMergeContext extends EntityStreamMergeContex
     @Override
     public SQLBuilderSegment getGroupColumns() {
         return querySQLExpression.getGroup();
+    }
+    @Override
+    public GroupMergeContext getGroupMergeContext() {
+       return this.groupMergeContext;
     }
 
 

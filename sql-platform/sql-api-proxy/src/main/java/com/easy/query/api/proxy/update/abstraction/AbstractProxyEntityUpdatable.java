@@ -98,4 +98,10 @@ public abstract class AbstractProxyEntityUpdatable<TProxy extends ProxyEntity<TP
     public void executeRows(long expectRows, String msg, String code) {
         clientEntityUpdatable.executeRows(expectRows, msg, code);
     }
+
+    @Override
+    public ProxyEntityUpdatable<TProxy, T> batch(boolean use) {
+        clientEntityUpdatable.batch(use);
+        return this;
+    }
 }

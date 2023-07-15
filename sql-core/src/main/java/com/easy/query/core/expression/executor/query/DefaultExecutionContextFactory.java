@@ -37,7 +37,7 @@ public class DefaultExecutionContextFactory implements ExecutionContextFactory {
     private final RewriteContextFactory rewriteContextFactory;
     private final EasyQueryDataSource easyDataSource;
 
-    public DefaultExecutionContextFactory(EasyQueryOption easyQueryOption, RouteContextFactory routeContextFactory, RewriteContextFactory rewriteContextFactory, EasyQueryDataSource easyDataSource){
+    public DefaultExecutionContextFactory(EasyQueryOption easyQueryOption, RouteContextFactory routeContextFactory, RewriteContextFactory rewriteContextFactory, EasyQueryDataSource easyDataSource) {
         this.easyQueryOption = easyQueryOption;
         this.routeContextFactory = routeContextFactory;
         this.rewriteContextFactory = rewriteContextFactory;
@@ -47,34 +47,35 @@ public class DefaultExecutionContextFactory implements ExecutionContextFactory {
 
     @Override
     public ExecutionContext createJdbcExecutionContext(String sql, List<SQLParameter> parameters) {
-        ExecutionUnit executionUnit = new ExecutionUnit(easyDataSource.getDefaultDataSourceName(),new SQLRouteUnit( sql,parameters));
-        return new ExecutionContext(Collections.singletonList(executionUnit),false,false,false,false);
+        ExecutionUnit executionUnit = new ExecutionUnit(easyDataSource.getDefaultDataSourceName(), new SQLRouteUnit(sql, parameters));
+        return new ExecutionContext(Collections.singletonList(executionUnit), false, false, false, false);
     }
+
     @Override
     public ExecutionContext createEntityExecutionContext(PrepareParseResult prepareParseResult) {
 //        NativeSqlQueryCompilerContext nativeSqlQueryCompilerContext = new NativeSqlQueryCompilerContext(prepareParseResult);
         //无需分片的情况下
-        if(!prepareParseResult.isSharding()){
-            if(prepareParseResult instanceof PredicatePrepareParseResult){
+        if (!prepareParseResult.isSharding()) {
+            if (prepareParseResult instanceof PredicatePrepareParseResult) {
                 return new PredicateExecutionCreator(easyDataSource.getDefaultDataSourceName(), prepareParseResult.getEntityExpressionBuilder().toExpression()).create();
             }
-            if(prepareParseResult instanceof InsertPrepareParseResult){
+            if (prepareParseResult instanceof InsertPrepareParseResult) {
                 return new InsertExecutionCreator(easyDataSource.getDefaultDataSourceName(), (InsertPrepareParseResult) prepareParseResult).create();
             }
-            if(prepareParseResult instanceof EntityPrepareParseResult){
-                return new EntityExecutionCreator(easyDataSource.getDefaultDataSourceName(),(EntityPrepareParseResult)prepareParseResult).create();
+            if (prepareParseResult instanceof EntityPrepareParseResult) {
+                return new EntityExecutionCreator(easyDataSource.getDefaultDataSourceName(), (EntityPrepareParseResult) prepareParseResult).create();
             }
             throw new UnsupportedOperationException(EasyClassUtil.getInstanceSimpleName(prepareParseResult));
         }
         RouteContext routeContext = routeContextFactory.createRouteContext(prepareParseResult);
         RewriteContext rewriteContext = rewriteContextFactory.rewriteShardingExpression(prepareParseResult, routeContext);
-        if(prepareParseResult instanceof PredicatePrepareParseResult){
-            if(rewriteContext.getRewriteRouteUnits().size()>=easyQueryOption.getMaxShardingRouteCount()){
-                throw new EasyQueryShardingRouteExecuteMoreException("execute route size:"+rewriteContext.getRewriteRouteUnits().size());
+        if (prepareParseResult instanceof PredicatePrepareParseResult) {
+            if (rewriteContext.getRewriteRouteUnits().size() >= easyQueryOption.getMaxShardingRouteCount()) {
+                throw new EasyQueryShardingRouteExecuteMoreException("execute route size:" + rewriteContext.getRewriteRouteUnits().size());
             }
             return new ShardingPredicateExecutionCreator(rewriteContext).create();
         }
-        if(prepareParseResult instanceof EntityPrepareParseResult){
+        if (prepareParseResult instanceof EntityPrepareParseResult) {
             return new ShardingEntityExecutionCreator(rewriteContext).create();
         }
         throw new UnsupportedOperationException();

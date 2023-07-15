@@ -2,6 +2,7 @@ package com.easy.query.api4kt.sql;
 
 import com.easy.query.api4kt.util.EasyKtLambdaUtil;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
+import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnOrderSelector;
 import kotlin.reflect.KProperty1;
@@ -12,7 +13,7 @@ import kotlin.reflect.KProperty1;
  *
  * @author xuejiaming
  */
-public interface SQLKtOrderBySelector<T1> {
+public interface SQLKtOrderBySelector<T1> extends EntitySQLTableOwner<T1> {
     ColumnOrderSelector<T1> getOrderBySelector();
 
     default TableAvailable getTable() {
