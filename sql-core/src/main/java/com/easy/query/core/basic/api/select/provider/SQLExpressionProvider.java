@@ -1,14 +1,15 @@
 package com.easy.query.core.basic.api.select.provider;
 
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
-import com.easy.query.core.expression.parser.core.base.ColumnResultSelector;
-import com.easy.query.core.expression.parser.core.base.ColumnSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnGroupSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnOrderSelector;
+import com.easy.query.core.expression.parser.core.base.ColumnResultSelector;
+import com.easy.query.core.expression.parser.core.base.ColumnSelector;
 import com.easy.query.core.expression.parser.core.base.NavigateInclude;
 import com.easy.query.core.expression.parser.core.base.WhereAggregatePredicate;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
+import com.easy.query.core.metadata.IncludeNavigateParams;
 
 /**
  * create time 2023/5/20 11:18
@@ -23,7 +24,7 @@ public interface SQLExpressionProvider<TEntity> {
 
     WherePredicate<TEntity> getWherePredicate();
 
-    NavigateInclude<TEntity> getNavigateInclude();
+   <TR> NavigateInclude<TEntity> getNavigateInclude(IncludeNavigateParams includeNavigateParams);
 
     WherePredicate<TEntity> getAllWherePredicate();
 

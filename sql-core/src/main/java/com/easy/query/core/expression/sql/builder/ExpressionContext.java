@@ -1,13 +1,17 @@
 package com.easy.query.core.expression.sql.builder;
 
+import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.extension.interceptor.Interceptor;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
+import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.sql.TableContext;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
+import com.easy.query.core.metadata.IncludeNavigateParams;
 
+import java.util.List;
 import java.util.function.Predicate;
 
 /**
@@ -55,5 +59,10 @@ public interface ExpressionContext {
     boolean hasSubQuery();
     TableContext getTableContext();
     ExpressionContext cloneExpressionContext();
+
+
+    //todo inculde expression
+    List<SQLFuncExpression1<IncludeNavigateParams, ClientQueryable<?>>> getIncludes();
+    boolean hasIncludes();
 
 }

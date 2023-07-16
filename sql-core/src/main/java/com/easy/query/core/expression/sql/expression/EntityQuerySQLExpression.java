@@ -3,8 +3,6 @@ package com.easy.query.core.expression.sql.expression;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 
-import java.util.List;
-
 /**
  * create time 2023/4/22 21:35
  * 文件说明
@@ -42,8 +40,8 @@ public interface EntityQuerySQLExpression extends EntityPredicateSQLExpression {
     boolean hasLimit();
     void setAllPredicate(PredicateSegment allPredicate);
     PredicateSegment getAllPredicate();
-    List<EntityQuerySQLExpression> getIncludes();
-    void setIncludes(List<EntityQuerySQLExpression> includes);
+//    List<EntityQuerySQLExpression> getIncludes();
+//    void setIncludes(List<EntityQuerySQLExpression> includes);
 
     @Override
     EntityQuerySQLExpression cloneSQLExpression();

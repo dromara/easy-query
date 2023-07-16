@@ -1,5 +1,6 @@
 package com.easy.query.core.basic.api.select.provider;
 
+import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.expression.builder.impl.AggregateFilterImpl;
 import com.easy.query.core.expression.builder.impl.AsSelectorImpl;
 import com.easy.query.core.expression.builder.impl.AutoAsSelectorImpl;
@@ -7,6 +8,7 @@ import com.easy.query.core.expression.builder.impl.FilterImpl;
 import com.easy.query.core.expression.builder.impl.GroupSelectorImpl;
 import com.easy.query.core.expression.builder.impl.OrderSelectorImpl;
 import com.easy.query.core.expression.builder.impl.SelectorImpl;
+import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnGroupSelector;
@@ -27,6 +29,8 @@ import com.easy.query.core.expression.parser.core.base.impl.WherePredicateImpl;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
+import com.easy.query.core.metadata.IncludeNavigateParams;
+import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasyUtil;
 
 /**
@@ -42,7 +46,6 @@ public class SQLExpressionProviderImpl<TEntity> implements SQLExpressionProvider
     private ColumnGroupSelectorImpl<TEntity> group;
     private ColumnOrderSelectorImpl<TEntity> order;
     private WherePredicateImpl<TEntity> where;
-    private NavigateIncludeImpl<TEntity> navigateInclude;
     private WherePredicateImpl<TEntity> allPredicate;
     private WhereAggregatePredicateImpl<TEntity> having;
     private WherePredicateImpl<TEntity> on;
@@ -79,11 +82,8 @@ public class SQLExpressionProviderImpl<TEntity> implements SQLExpressionProvider
     }
 
     @Override
-    public NavigateInclude<TEntity> getNavigateInclude() {
-        if(navigateInclude==null){
-            navigateInclude=new NavigateIncludeImpl<>(table,entityQueryExpressionBuilder.getRuntimeContext());
-        }
-        return navigateInclude;
+    public <TR> NavigateInclude<TEntity> getNavigateInclude(IncludeNavigateParams includeNavigateParams) {
+        return new NavigateIncludeImpl<>(table,entityQueryExpressionBuilder.getRuntimeContext(),includeNavigateParams);
     }
 
     @Override

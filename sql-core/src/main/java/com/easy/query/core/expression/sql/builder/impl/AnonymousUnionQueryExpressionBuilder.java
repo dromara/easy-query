@@ -23,8 +23,8 @@ public class AnonymousUnionQueryExpressionBuilder extends QueryExpressionBuilder
     private final List<EntityQueryExpressionBuilder> entityQueryExpressionBuilders;
     private final SQLUnionEnum sqlUnion;
 
-    public AnonymousUnionQueryExpressionBuilder(List<EntityQueryExpressionBuilder> entityQueryExpressionBuilders, ExpressionContext queryExpressionContext, SQLUnionEnum sqlUnion) {
-        super(queryExpressionContext);
+    public AnonymousUnionQueryExpressionBuilder(List<EntityQueryExpressionBuilder> entityQueryExpressionBuilders, ExpressionContext queryExpressionContext,Class<?> queryClass, SQLUnionEnum sqlUnion) {
+        super(queryExpressionContext,queryClass);
         this.entityQueryExpressionBuilders = entityQueryExpressionBuilders;
         this.sqlUnion = sqlUnion;
     }
@@ -61,7 +61,7 @@ public class AnonymousUnionQueryExpressionBuilder extends QueryExpressionBuilder
             entityQueryExpressionBuilderCopies.add(entityQueryExpressionBuilder.cloneEntityExpressionBuilder());
         }
 
-        EntityQueryExpressionBuilder anonymousQueryExpressionBuilder =runtimeContext.getExpressionBuilderFactory().createAnonymousUnionQueryExpressionBuilder(entityQueryExpressionBuilderCopies,expressionContext.cloneExpressionContext(),sqlUnion);
+        EntityQueryExpressionBuilder anonymousQueryExpressionBuilder =runtimeContext.getExpressionBuilderFactory().createAnonymousUnionQueryExpressionBuilder(entityQueryExpressionBuilderCopies,expressionContext.cloneExpressionContext(),queryClass,sqlUnion);
 
         for (EntityTableExpressionBuilder table : super.tables) {
             anonymousQueryExpressionBuilder.getTables().add(table.copyEntityTableExpressionBuilder());

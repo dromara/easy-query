@@ -1,5 +1,6 @@
 package com.easy.query.core.expression.sql.builder;
 
+import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.extension.interceptor.Interceptor;
 import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.configuration.QueryConfiguration;
@@ -8,10 +9,15 @@ import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
+import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.sql.TableContext;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 import com.easy.query.core.expression.sql.builder.internal.ExpressionContextInterceptor;
+import com.easy.query.core.metadata.IncludeNavigateParams;
+import com.easy.query.core.util.EasyCollectionUtil;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
 
@@ -36,6 +42,7 @@ public class EasyExpressionContext implements ExpressionContext {
     private ConnectionModeEnum connectionMode;
     private boolean sharding;
     private boolean hasSubQuery;
+    private List<SQLFuncExpression1<IncludeNavigateParams, ClientQueryable<?>>> includes;
 
     public EasyExpressionContext(QueryRuntimeContext runtimeContext) {
 
@@ -218,6 +225,19 @@ public class EasyExpressionContext implements ExpressionContext {
         return hasSubQuery;
     }
 
+
+    @Override
+    public List<SQLFuncExpression1<IncludeNavigateParams, ClientQueryable<?>>> getIncludes() {
+        if (includes == null) {
+            includes = new ArrayList<>();
+        }
+        return includes;
+    }
+
+    @Override
+    public boolean hasIncludes() {
+        return EasyCollectionUtil.isNotEmpty(includes);
+    }
     @Override
     public TableContext getTableContext() {
         return tableContext;
@@ -237,7 +257,9 @@ public class EasyExpressionContext implements ExpressionContext {
         easyExpressionContext.connectionMode = this.connectionMode;
         easyExpressionContext.sharding = this.sharding;
         easyExpressionContext.hasSubQuery = this.hasSubQuery;
-
+        if(hasIncludes()){
+            easyExpressionContext.getIncludes().addAll(this.includes);
+        }
         return easyExpressionContext;
     }
 }

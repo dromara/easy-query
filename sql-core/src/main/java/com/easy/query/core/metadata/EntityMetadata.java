@@ -167,7 +167,10 @@ public class EntityMetadata {
                 if(navigateType==null){
                     throw new EasyQueryInvalidOperationException("not found navigate type, property:["+property+"]");
                 }
-                NavigateMetadata navigateMetadata = new NavigateMetadata(this, property, navigateType, relationType, relationKey);
+
+                Property<Object, ?> beanGetter = fastBean.getBeanGetter(propertyDescriptor);
+                PropertySetterCaller<Object> beanSetter = fastBean.getBeanSetter(propertyDescriptor);
+                NavigateMetadata navigateMetadata = new NavigateMetadata(this, property, navigateType, relationType, relationKey,beanGetter,beanSetter);
                 property2NavigateMap.put(property,navigateMetadata);
                 continue;
             }

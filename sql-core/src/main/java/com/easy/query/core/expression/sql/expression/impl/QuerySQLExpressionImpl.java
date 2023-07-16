@@ -7,7 +7,6 @@ import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.sql.expression.EntityQuerySQLExpression;
 import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
-import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 import com.easy.query.core.util.EasySQLSegmentUtil;
 
@@ -33,7 +32,7 @@ public class QuerySQLExpressionImpl implements EntityQuerySQLExpression {
     protected long offset;
     protected long rows;
     protected boolean distinct;
-    protected List<EntityQuerySQLExpression> includes;
+//    protected List<EntityQuerySQLExpression> includes;
     protected final List<EntityTableSQLExpression> tables = new ArrayList<>();
 
     public QuerySQLExpressionImpl(EntitySQLExpressionMetadata entitySQLExpressionMetadata) {
@@ -135,15 +134,15 @@ public class QuerySQLExpressionImpl implements EntityQuerySQLExpression {
         return allPredicate;
     }
 
-    @Override
-    public List<EntityQuerySQLExpression> getIncludes() {
-        return includes;
-    }
-
-    @Override
-    public void setIncludes(List<EntityQuerySQLExpression> includes) {
-        this.includes = includes;
-    }
+//    @Override
+//    public List<EntityQuerySQLExpression> getIncludes() {
+//        return includes;
+//    }
+//
+//    @Override
+//    public void setIncludes(List<EntityQuerySQLExpression> includes) {
+//        this.includes = includes;
+//    }
 
     @Override
     public boolean isDistinct() {
@@ -254,13 +253,13 @@ public class QuerySQLExpressionImpl implements EntityQuerySQLExpression {
         if (EasySQLSegmentUtil.isNotEmpty(this.allPredicate)) {
             easyQuerySQLExpression.setAllPredicate(allPredicate.clonePredicateSegment());
         }
-        if(EasyCollectionUtil.isNotEmpty(this.includes)){
-            ArrayList<EntityQuerySQLExpression> entityQuerySQLExpressions = new ArrayList<>(this.includes.size());
-            for (EntityQuerySQLExpression include : this.includes) {
-                entityQuerySQLExpressions.add(include.cloneSQLExpression());
-            }
-            easyQuerySQLExpression.setIncludes(entityQuerySQLExpressions);
-        }
+//        if(EasyCollectionUtil.isNotEmpty(this.includes)){
+//            ArrayList<EntityQuerySQLExpression> entityQuerySQLExpressions = new ArrayList<>(this.includes.size());
+//            for (EntityQuerySQLExpression include : this.includes) {
+//                entityQuerySQLExpressions.add(include.cloneSQLExpression());
+//            }
+//            easyQuerySQLExpression.setIncludes(entityQuerySQLExpressions);
+//        }
         easyQuerySQLExpression.setOffset(this.offset);
         easyQuerySQLExpression.setRows(this.rows);
         for (EntityTableSQLExpression table : this.tables) {

@@ -1,11 +1,10 @@
 package com.easy.query.core.expression.sql.builder.impl;
 
-import com.easy.query.core.expression.sql.TableContext;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.builder.SQLAnonymousEntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.expression.EntityQuerySQLExpression;
-import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.expression.impl.EntitySQLExpressionMetadata;
 
 /**
@@ -17,8 +16,8 @@ import com.easy.query.core.expression.sql.expression.impl.EntitySQLExpressionMet
 public class AnonymousQueryExpressionBuilder extends QueryExpressionBuilder implements SQLAnonymousEntityQueryExpressionBuilder {
     private final String sql;
 
-    public AnonymousQueryExpressionBuilder(String sql, ExpressionContext queryExpressionContext) {
-        super(queryExpressionContext);
+    public AnonymousQueryExpressionBuilder(String sql, ExpressionContext queryExpressionContext,Class<?> queryClass) {
+        super(queryExpressionContext,queryClass);
         this.sql = sql;
     }
 
@@ -39,7 +38,7 @@ public class AnonymousQueryExpressionBuilder extends QueryExpressionBuilder impl
     @Override
     public EntityQueryExpressionBuilder cloneEntityExpressionBuilder() {
 
-        EntityQueryExpressionBuilder anonymousQueryExpressionBuilder = runtimeContext.getExpressionBuilderFactory().createAnonymousQueryExpressionBuilder(sql, expressionContext.cloneExpressionContext());
+        EntityQueryExpressionBuilder anonymousQueryExpressionBuilder = runtimeContext.getExpressionBuilderFactory().createAnonymousQueryExpressionBuilder(sql, expressionContext.cloneExpressionContext(),queryClass);
 
         for (EntityTableExpressionBuilder table : super.tables) {
             anonymousQueryExpressionBuilder.getTables().add(table.copyEntityTableExpressionBuilder());

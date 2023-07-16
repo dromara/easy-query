@@ -157,15 +157,15 @@ public class AnonymousUnionQuerySQLExpressionImpl implements AnonymousUnionEntit
         throw new UnsupportedOperationException();
     }
 
-    @Override
-    public List<EntityQuerySQLExpression> getIncludes() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setIncludes(List<EntityQuerySQLExpression> includes) {
-        throw new UnsupportedOperationException();
-    }
+//    @Override
+//    public List<EntityQuerySQLExpression> getIncludes() {
+//        throw new UnsupportedOperationException();
+//    }
+//
+//    @Override
+//    public void setIncludes(List<EntityQuerySQLExpression> includes) {
+//        throw new UnsupportedOperationException();
+//    }
 
     @Override
     public List<EntityTableSQLExpression> getTables() {

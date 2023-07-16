@@ -33,11 +33,11 @@ public interface ExpressionBuilderFactory {
    }
     EntityTableExpressionBuilder createAnonymousEntityTableExpressionBuilder(TableAvailable tableAvailable, MultiTableTypeEnum multiTableType, EntityQueryExpressionBuilder entityQueryExpressionBuilder);
     EntityQueryExpressionBuilder createEntityQueryExpressionBuilder(ExpressionContext sqlExpressionContext,Class<?> queryClass);
-    default EntityQueryExpressionBuilder createAnonymousQueryExpressionBuilder(String sql, ExpressionContext sqlExpressionContext){
-        return new AnonymousQueryExpressionBuilder(sql,sqlExpressionContext);
+    default EntityQueryExpressionBuilder createAnonymousQueryExpressionBuilder(String sql, ExpressionContext sqlExpressionContext,Class<?> queryClass){
+        return new AnonymousQueryExpressionBuilder(sql,sqlExpressionContext,queryClass);
     }
-    default EntityQueryExpressionBuilder createAnonymousUnionQueryExpressionBuilder(List<EntityQueryExpressionBuilder> entityQueryExpressionBuilders, ExpressionContext sqlExpressionContext, SQLUnionEnum sqlUnion){
-        return new AnonymousUnionQueryExpressionBuilder(entityQueryExpressionBuilders,sqlExpressionContext,sqlUnion);
+    default EntityQueryExpressionBuilder createAnonymousUnionQueryExpressionBuilder(List<EntityQueryExpressionBuilder> entityQueryExpressionBuilders, ExpressionContext sqlExpressionContext,Class<?> queryClass, SQLUnionEnum sqlUnion){
+        return new AnonymousUnionQueryExpressionBuilder(entityQueryExpressionBuilders,sqlExpressionContext,queryClass,sqlUnion);
     }
     EntityInsertExpressionBuilder createEntityInsertExpressionBuilder(ExpressionContext sqlExpressionContext,Class<?> queryClass);
     EntityUpdateExpressionBuilder createEntityUpdateExpressionBuilder(ExpressionContext sqlExpressionContext,Class<?> queryClass, boolean expression);

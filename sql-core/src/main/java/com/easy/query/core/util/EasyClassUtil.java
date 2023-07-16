@@ -14,14 +14,18 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @FileName: ClassUtil.java
@@ -320,5 +324,26 @@ public class EasyClassUtil {
 
 
         throw new IllegalArgumentException("无法转化成期望类型:" + requiredType);
+    }
+
+
+
+    public static boolean canInstance(int mod) {
+        return !Modifier.isAbstract(mod) || !Modifier.isInterface(mod);
+    }
+    public static Class<? extends Collection> getCollectionImplType(Class<?> type) {
+        if (canInstance(type.getModifiers())) {
+            return (Class<? extends Collection>) type;
+        }
+
+        if (List.class.isAssignableFrom(type)) {
+            return ArrayList.class;
+        }
+
+        if (Set.class.isAssignableFrom(type)) {
+            return HashSet.class;
+        }
+
+        throw new IllegalStateException("navigate not support type:"+getSimpleName(type));
     }
 }

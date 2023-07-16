@@ -16,16 +16,19 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.MultiTableTypeEnum;
+import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.enums.SQLLikeEnum;
 import com.easy.query.core.enums.SQLPredicateCompareEnum;
 import com.easy.query.core.enums.SQLUnionEnum;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.exception.EasyQueryFirstOrNotNullException;
+import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
 import com.easy.query.core.exception.EasyQueryWhereInvalidOperationException;
 import com.easy.query.core.expression.builder.impl.FilterImpl;
 import com.easy.query.core.expression.func.ColumnFunction;
+import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
@@ -52,6 +55,8 @@ import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
+import com.easy.query.core.metadata.IncludeNavigateParams;
+import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.sharding.manager.ShardingQueryCountManager;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
@@ -59,15 +64,18 @@ import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 import com.easy.query.core.util.EasySQLSegmentUtil;
 import com.easy.query.core.util.EasyStringUtil;
+import com.sun.org.apache.bcel.internal.generic.NEW;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -319,9 +327,79 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         EntityExpressionExecutor entityExpressionExecutor = this.entityQueryExpressionBuilder.getRuntimeContext().getEntityExpressionExecutor();
         EntityMetadata entityMetadata = this.entityQueryExpressionBuilder.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(resultClass);
         List<TR> result = entityExpressionExecutor.query(ExecutorContext.create(this.entityQueryExpressionBuilder.getRuntimeContext(), true, executeMethod, tracking), new EntityResultMetadata<>(entityMetadata), entityQueryExpressionBuilder);
+        if (expressionContext.hasIncludes() && EasyCollectionUtil.isNotEmpty(result)) {
+            Collection<String> keyProperties = entityMetadata.getKeyProperties();
+            if (EasyCollectionUtil.isNotSingle(keyProperties)) {
+                throw new EasyQueryInvalidOperationException(EasyClassUtil.getSimpleName(queryClass()) + "multi key not support include");
+            }
+            String keyProperty = EasyCollectionUtil.first(keyProperties);
+            ColumnMetadata keyColumnMetadata = entityMetadata.getColumnNotNull(keyProperty);
+            Property<Object, ?> keyGetter = keyColumnMetadata.getGetterCaller();
+            Map<?, TR> trMap = EasyCollectionUtil.listToMap(result, keyGetter::apply, o -> o);
+            for (SQLFuncExpression1<IncludeNavigateParams, ClientQueryable<?>> include : expressionContext.getIncludes()) {
+
+                IncludeNavigateParams includeNavigateParams = new IncludeNavigateParams();
+                ClientQueryable<?> clientQueryable = include.apply(includeNavigateParams);
+                NavigateMetadata navigateMetadata = includeNavigateParams.getNavigateMetadata();
+                if (navigateMetadata == null) {
+                    throw new EasyQueryInvalidOperationException("navigateMetadata is null");
+                }
+                if (!Objects.equals(entityMetadata, navigateMetadata.getEntityMetadata())) {
+                    throw new EasyQueryInvalidOperationException("only support entity");
+                }
+                NavigateMetadata mainNavigateMetadata = entityMetadata.getNavigateNotNull(navigateMetadata.getPropertyName());
+                Set<?> keys = trMap.keySet();
+                includeNavigateParams.getRelationKeys().addAll(keys);
+                List<?> includeResult = clientQueryable.toList();
+                EntityMetadata navigateEntityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(navigateMetadata.getNavigatePropertyType());
+                ColumnMetadata columnMetadata = navigateEntityMetadata.getColumnNotNull(navigateMetadata.getRelationKey());
+                Property<Object, ?> relationGetter = columnMetadata.getGetterCaller();
+
+                RelationTypeEnum relationType = navigateMetadata.getRelationType();
+                if (RelationTypeEnum.OneToOne == relationType || RelationTypeEnum.ManyToOne == relationType) {
+                    for (Object subEntity : includeResult) {
+                        Object subRelationKey = relationGetter.apply(subEntity);
+                        TR tr = trMap.get(subRelationKey);
+                        if(tr!=null){
+                            mainNavigateMetadata.getSetter().call(tr, subEntity);
+                        }
+                    }
+                } else if (RelationTypeEnum.OneToMany == relationType || RelationTypeEnum.ManyToMany == relationType) {
+
+                    Map<Object, Collection<Object>> toManyMap = getToManyMap(EasyObjectUtil.typeCastNullable(includeResult), relationGetter, navigateMetadata);
+                    Set<Map.Entry<Object, Collection<Object>>> entries = toManyMap.entrySet();
+                    for (Map.Entry<Object, Collection<Object>> entry : entries) {
+                        Object subRelationKey = entry.getKey();
+                        Collection<Object> subValues = entry.getValue();
+                        TR tr = trMap.get(subRelationKey);
+                        if(tr!=null){
+                            mainNavigateMetadata.getSetter().call(tr, subValues);
+                        }
+                    }
+                } else {
+                    throw new UnsupportedOperationException("relation type+" + relationType);
+                }
+            }
+        }
         //将当前方法设置为unknown
         setExecuteMethod(ExecuteMethodEnum.UNKNOWN);
         return result;
+    }
+
+    private <TNavigateEntity> Map<Object, Collection<TNavigateEntity>> getToManyMap(List<TNavigateEntity> includeResult, Property<TNavigateEntity, ?> relationGetter, NavigateMetadata navigateMetadata) {
+        if (EasyCollectionUtil.isSingle(includeResult)) {
+            TNavigateEntity first = EasyCollectionUtil.first(includeResult);
+            Object subRelationKey = relationGetter.apply(first);
+            return Collections.singletonMap(subRelationKey, Collections.singleton(first));
+        }
+        Class<?> collectionType = EasyClassUtil.getCollectionImplType(navigateMetadata.getNavigatePropertyType());
+        Map<Object, Collection<TNavigateEntity>> resultMap = new HashMap<>();
+        for (TNavigateEntity tNavigateEntity : includeResult) {
+            Object subRelationKey = relationGetter.apply(tNavigateEntity);
+            Collection<TNavigateEntity> objects = resultMap.computeIfAbsent(subRelationKey, k -> (Collection<TNavigateEntity>) EasyClassUtil.newInstance(collectionType));
+            objects.add(tNavigateEntity);
+        }
+        return resultMap;
     }
 
     /**
@@ -440,8 +518,8 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                         }
                         boolean strictMode = q.strict();
                         int tableIndex = q.tableIndex();
-                        if(tableIndex<0||tableIndex>entityQueryExpressionBuilder.getTables().size()-1){
-                            if(strictMode){
+                        if (tableIndex < 0 || tableIndex > entityQueryExpressionBuilder.getTables().size() - 1) {
+                            if (strictMode) {
                                 throw new EasyQueryWhereInvalidOperationException("table index:" + tableIndex + " not found in query context");
                             }
                             continue;
@@ -475,57 +553,57 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
 
                         switch (q.type()) {
                             case EQUAL:
-                                filter.eq(entityTable,queryPropertyName, val);
+                                filter.eq(entityTable, queryPropertyName, val);
                                 break;
                             case GREATER_THAN:
                             case RANGE_LEFT_OPEN:
-                                filter.gt(entityTable,queryPropertyName, val);
+                                filter.gt(entityTable, queryPropertyName, val);
                                 break;
                             case LESS_THAN:
                             case RANGE_RIGHT_OPEN:
-                                filter.lt(entityTable,queryPropertyName, val);
+                                filter.lt(entityTable, queryPropertyName, val);
                                 break;
                             case LIKE:
-                                filter.like(entityTable,queryPropertyName, val, SQLLikeEnum.LIKE_PERCENT_ALL);
+                                filter.like(entityTable, queryPropertyName, val, SQLLikeEnum.LIKE_PERCENT_ALL);
                                 break;
                             case LIKE_MATCH_LEFT:
-                                filter.like(entityTable,queryPropertyName, val, SQLLikeEnum.LIKE_PERCENT_RIGHT);
+                                filter.like(entityTable, queryPropertyName, val, SQLLikeEnum.LIKE_PERCENT_RIGHT);
                                 break;
                             case LIKE_MATCH_RIGHT:
-                                filter.like(entityTable,queryPropertyName, val, SQLLikeEnum.LIKE_PERCENT_LEFT);
+                                filter.like(entityTable, queryPropertyName, val, SQLLikeEnum.LIKE_PERCENT_LEFT);
                                 break;
                             case GREATER_THAN_EQUAL:
                             case RANGE_LEFT_CLOSED:
-                                filter.ge(entityTable,queryPropertyName, val);
+                                filter.ge(entityTable, queryPropertyName, val);
                                 break;
                             case LESS_THAN_EQUAL:
                             case RANGE_RIGHT_CLOSED:
-                                filter.le(entityTable,queryPropertyName, val);
+                                filter.le(entityTable, queryPropertyName, val);
                                 break;
                             case IN:
                                 if (val.getClass().isArray()) {
                                     if (EasyCollectionUtil.isNotEmptyArray((Object[]) val)) {
-                                        filter.in(entityTable,queryPropertyName, (Object[]) val);
+                                        filter.in(entityTable, queryPropertyName, (Object[]) val);
                                     }
                                 } else {
                                     if (EasyCollectionUtil.isNotEmpty((Collection<?>) val)) {
-                                        filter.in(entityTable,queryPropertyName, (Collection<?>) val);
+                                        filter.in(entityTable, queryPropertyName, (Collection<?>) val);
                                     }
                                 }
                                 break;
                             case NOT_IN:
                                 if (val.getClass().isArray()) {
                                     if (EasyCollectionUtil.isNotEmptyArray((Object[]) val)) {
-                                        filter.notIn(entityTable,queryPropertyName, (Object[]) val);
+                                        filter.notIn(entityTable, queryPropertyName, (Object[]) val);
                                     }
                                 } else {
                                     if (EasyCollectionUtil.isNotEmpty((Collection<?>) val)) {
-                                        filter.notIn(entityTable,queryPropertyName, (Collection<?>) val);
+                                        filter.notIn(entityTable, queryPropertyName, (Collection<?>) val);
                                     }
                                 }
                                 break;
                             case NOT_EQUAL:
-                                filter.ne(entityTable,queryPropertyName, val);
+                                filter.ne(entityTable, queryPropertyName, val);
                                 break;
                             default:
                                 break;
@@ -793,11 +871,16 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     }
 
     @Override
-    public <TProperty> ClientQueryable<T1> include(SQLFuncExpression1<NavigateInclude<T1>,ClientQueryable<TProperty>> navigateIncludeSQLExpression) {
-        NavigateInclude<T1> navigateInclude = sqlExpressionProvider1.getNavigateInclude();
-        ClientQueryable<TProperty> clientQueryable = navigateIncludeSQLExpression.apply(navigateInclude);
-        Class<TProperty> tPropertyClass = clientQueryable.queryClass();
-        entityQueryExpressionBuilder.getIncludes().add(clientQueryable.getSQLEntityExpressionBuilder());
+    public <TProperty> ClientQueryable<T1> include(SQLFuncExpression1<NavigateInclude<T1>, ClientQueryable<TProperty>> navigateIncludeSQLExpression) {
+//        IncludeNavigateParams includeNavigateParams = new IncludeNavigateParams();
+//        NavigateInclude<T1> navigateInclude = sqlExpressionProvider1.getNavigateInclude(includeNavigateParams);
+//        ClientQueryable<TProperty> clientQueryable = navigateIncludeSQLExpression.apply(navigateInclude);
+
+        SQLFuncExpression1<IncludeNavigateParams, ClientQueryable<?>> includeQueryableExpression = includeNavigateParams -> {
+            NavigateInclude<T1> navigateInclude = sqlExpressionProvider1.getNavigateInclude(includeNavigateParams);
+            return navigateIncludeSQLExpression.apply(navigateInclude);
+        };
+        entityQueryExpressionBuilder.getExpressionContext().getIncludes().add(includeQueryableExpression);
         return this;
     }
 

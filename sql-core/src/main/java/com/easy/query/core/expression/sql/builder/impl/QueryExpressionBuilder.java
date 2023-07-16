@@ -21,12 +21,9 @@ import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
 import com.easy.query.core.expression.sql.expression.SQLExpression;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.expression.sql.expression.impl.EntitySQLExpressionMetadata;
-import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasySQLSegmentUtil;
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 /**
  * @author xuejiaming
@@ -40,15 +37,14 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
     protected SQLBuilderSegment group;
     protected PredicateSegment having;
     protected SQLBuilderSegment order;
-    protected List<EntityQueryExpressionBuilder> includes;
     protected long offset;
     protected long rows;
     protected boolean distinct;
 
     protected final SQLBuilderSegment projects;
 
-    public QueryExpressionBuilder(ExpressionContext expressionContext,Class<?> queryClass) {
-        super(expressionContext,queryClass);
+    public QueryExpressionBuilder(ExpressionContext expressionContext, Class<?> queryClass) {
+        super(expressionContext, queryClass);
         this.projects = new ProjectSQLBuilderSegmentImpl();
     }
 
@@ -170,19 +166,6 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
     }
 
     @Override
-    public List<EntityQueryExpressionBuilder> getIncludes() {
-        if(includes==null){
-            includes=new ArrayList<>();
-        }
-        return includes;
-    }
-
-    @Override
-    public boolean hasIncludes() {
-        return EasyCollectionUtil.isNotEmpty(includes);
-    }
-
-    @Override
     public EntityQuerySQLExpression toExpression() {
         int tableCount = getTables().size();
         if (tableCount == 0) {
@@ -236,15 +219,15 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
         easyQuerySQLExpression.setOffset(getOffset());
         easyQuerySQLExpression.setRows(getRows());
         easyQuerySQLExpression.setAllPredicate(getAllPredicate().clonePredicateSegment());
-        if(hasIncludes()){
-            List<EntityQueryExpressionBuilder> includeList = getIncludes();
-            ArrayList<EntityQuerySQLExpression> includeExpressions = new ArrayList<>(includeList.size());
-            for (EntityQueryExpressionBuilder entityQueryExpressionBuilder : includeList) {
-                EntityQuerySQLExpression entityQuerySQLExpression = entityQueryExpressionBuilder.toExpression();
-                includeExpressions.add(entityQuerySQLExpression);
-            }
-            easyQuerySQLExpression.setIncludes(includeExpressions);
-        }
+//        if(hasIncludes()){
+//            List<EntityQueryExpressionBuilder> includeList = getIncludes();
+//            ArrayList<EntityQuerySQLExpression> includeExpressions = new ArrayList<>(includeList.size());
+//            for (EntityQueryExpressionBuilder entityQueryExpressionBuilder : includeList) {
+//                EntityQuerySQLExpression entityQuerySQLExpression = entityQueryExpressionBuilder.toExpression();
+//                includeExpressions.add(entityQuerySQLExpression);
+//            }
+//            easyQuerySQLExpression.setIncludes(includeExpressions);
+//        }
         return easyQuerySQLExpression;
     }
 
@@ -272,7 +255,7 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
     @Override
     public EntityQueryExpressionBuilder cloneEntityExpressionBuilder() {
 
-        EntityQueryExpressionBuilder queryExpressionBuilder = runtimeContext.getExpressionBuilderFactory().createEntityQueryExpressionBuilder(expressionContext.cloneExpressionContext());
+        EntityQueryExpressionBuilder queryExpressionBuilder = runtimeContext.getExpressionBuilderFactory().createEntityQueryExpressionBuilder(expressionContext.cloneExpressionContext(), queryClass);
         if (hasWhere()) {
             getWhere().copyTo(queryExpressionBuilder.getWhere());
         }
@@ -285,13 +268,8 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
         if (hasOrder()) {
             getOrder().copyTo(queryExpressionBuilder.getOrder());
         }
-        if(hasAllPredicate()){
+        if (hasAllPredicate()) {
             getAllPredicate().copyTo(queryExpressionBuilder.getAllPredicate());
-        }
-        if(hasIncludes()){
-            for (EntityQueryExpressionBuilder include : getIncludes()) {
-                queryExpressionBuilder.getIncludes().add(include.cloneEntityExpressionBuilder());
-            }
         }
         getProjects().copyTo(queryExpressionBuilder.getProjects());
         queryExpressionBuilder.setOffset(this.offset);
