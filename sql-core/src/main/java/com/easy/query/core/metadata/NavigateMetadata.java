@@ -24,6 +24,7 @@ public class NavigateMetadata {
      */
     private final String propertyName;
 
+    private final Class<?> navigateOriginalPropertyType;
     /**
      * 主表的属性类型
      */
@@ -37,12 +38,16 @@ public class NavigateMetadata {
      * 导航属性关联字段
      */
     private final String targetProperty;
+    private Class<?> mappingClass;
     private final Property<Object, ?> getter;
     private final PropertySetterCaller<Object> setter;
+    private  String selfMappingProperty;
+    private  String targetMappingProperty;
 
-    public NavigateMetadata(EntityMetadata entityMetadata, String propertyName, Class<?> navigatePropertyType, RelationTypeEnum relationType,String selfProperty, String targetProperty, Property<Object, ?> getter, PropertySetterCaller<Object> setter) {
+    public NavigateMetadata(EntityMetadata entityMetadata, String propertyName,Class<?> navigateOriginalPropertyType, Class<?> navigatePropertyType, RelationTypeEnum relationType,String selfProperty, String targetProperty, Property<Object, ?> getter, PropertySetterCaller<Object> setter) {
         this.entityMetadata = entityMetadata;
         this.propertyName = propertyName;
+        this.navigateOriginalPropertyType = navigateOriginalPropertyType;
         this.navigatePropertyType = navigatePropertyType;
         this.relationType = relationType;
         this.selfProperty = selfProperty;
@@ -63,6 +68,10 @@ public class NavigateMetadata {
         return navigatePropertyType;
     }
 
+    public Class<?> getNavigateOriginalPropertyType() {
+        return navigateOriginalPropertyType;
+    }
+
     public RelationTypeEnum getRelationType() {
         return relationType;
     }
@@ -73,6 +82,30 @@ public class NavigateMetadata {
 
     public String getTargetProperty() {
         return targetProperty;
+    }
+
+    public Class<?> getMappingClass() {
+        return mappingClass;
+    }
+
+    public void setMappingClass(Class<?> mappingClass) {
+        this.mappingClass = mappingClass;
+    }
+
+    public String getSelfMappingProperty() {
+        return selfMappingProperty;
+    }
+
+    public void setSelfMappingProperty(String selfMappingProperty) {
+        this.selfMappingProperty = selfMappingProperty;
+    }
+
+    public String getTargetMappingProperty() {
+        return targetMappingProperty;
+    }
+
+    public void setTargetMappingProperty(String targetMappingProperty) {
+        this.targetMappingProperty = targetMappingProperty;
     }
 
     public Property<Object, ?> getGetter() {

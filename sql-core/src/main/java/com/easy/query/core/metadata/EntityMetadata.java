@@ -171,7 +171,21 @@ public class EntityMetadata {
 
                 Property<Object, ?> beanGetter = fastBean.getBeanGetter(propertyDescriptor);
                 PropertySetterCaller<Object> beanSetter = fastBean.getBeanSetter(propertyDescriptor);
-                NavigateMetadata navigateMetadata = new NavigateMetadata(this, property, navigateType, relationType,selfProperty, targetProperty,beanGetter,beanSetter);
+                NavigateMetadata navigateMetadata = new NavigateMetadata(this, property,propertyDescriptor.getPropertyType(), navigateType, relationType,selfProperty, targetProperty,beanGetter,beanSetter);
+                if(RelationTypeEnum.ManyToMany==relationType){
+                    if(Objects.equals(Object.class,navigate.mappingClass())){
+                        throw new IllegalArgumentException("relation type many to many map class not default");
+                    }
+                    if(EasyStringUtil.isBlank(navigate.selfMappingProperty())){
+                        throw new IllegalArgumentException("relation type many to many self mapping property is empty");
+                    }
+                    if(EasyStringUtil.isBlank(navigate.targetMappingProperty())){
+                        throw new IllegalArgumentException("relation type many to many target mapping property is empty");
+                    }
+                    navigateMetadata.setMappingClass(navigate.mappingClass());
+                    navigateMetadata.setSelfMappingProperty(navigate.selfMappingProperty());
+                    navigateMetadata.setTargetMappingProperty(navigate.targetMappingProperty());
+                }
                 property2NavigateMap.put(property,navigateMetadata);
                 continue;
             }

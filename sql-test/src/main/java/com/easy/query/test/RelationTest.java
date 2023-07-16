@@ -1,8 +1,10 @@
 package com.easy.query.test;
 
 import com.easy.query.test.entity.school.SchoolClass;
+import com.easy.query.test.entity.school.SchoolClassTeacher;
 import com.easy.query.test.entity.school.SchoolStudent;
 import com.easy.query.test.entity.school.SchoolStudentAddress;
+import com.easy.query.test.entity.school.SchoolTeacher;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -26,9 +28,17 @@ public class RelationTest extends BaseTest{
                  .where(o->o.in(SchoolStudentAddress::getStudentId,ids)).executeRows();
          easyQuery.deletable(SchoolClass.class)
                  .where(o->o.in(SchoolClass::getId,Arrays.asList("class1","class2"))).executeRows();
+         easyQuery.deletable(SchoolTeacher.class)
+                 .where(o->o.in(SchoolTeacher::getId,Arrays.asList("teacher1","teacher2"))).executeRows();
+         easyQuery.deletable(SchoolClassTeacher.class)
+                 .where(o->o.in(SchoolClassTeacher::getClassId,Arrays.asList("class1","class2"))).executeRows();
+         easyQuery.deletable(SchoolClassTeacher.class)
+                 .where(o->o.in(SchoolClassTeacher::getTeacherId,Arrays.asList("teacher1","teacher2"))).executeRows();
          ArrayList<SchoolStudent> schoolStudents = new ArrayList<>();
          ArrayList<SchoolClass> schoolClasses = new ArrayList<>();
          ArrayList<SchoolStudentAddress> schoolStudentAddresses = new ArrayList<>();
+         ArrayList<SchoolTeacher> schoolTeachers = new ArrayList<>();
+         ArrayList<SchoolClassTeacher> schoolClassTeachers = new ArrayList<>();
          int i=0;
          for (String id : ids) {
              int i1 = i % 2;
@@ -58,11 +68,45 @@ public class RelationTest extends BaseTest{
              schoolClass.setName("班级2");
              schoolClasses.add(schoolClass);
          }
+         {
+
+             SchoolTeacher schoolTeacher = new SchoolTeacher();
+             schoolTeacher.setId("teacher1");
+             schoolTeacher.setName("老师1");
+             schoolTeachers.add(schoolTeacher);
+         }
+         {
+
+             SchoolTeacher schoolTeacher = new SchoolTeacher();
+             schoolTeacher.setId("teacher2");
+             schoolTeacher.setName("老师2");
+             schoolTeachers.add(schoolTeacher);
+         }
+         {
+             SchoolClassTeacher schoolClassTeacher = new SchoolClassTeacher();
+             schoolClassTeacher.setClassId("class1");
+             schoolClassTeacher.setTeacherId("teacher1");
+             schoolClassTeachers.add(schoolClassTeacher);
+         }
+         {
+             SchoolClassTeacher schoolClassTeacher = new SchoolClassTeacher();
+             schoolClassTeacher.setClassId("class1");
+             schoolClassTeacher.setTeacherId("teacher2");
+             schoolClassTeachers.add(schoolClassTeacher);
+         }
+         {
+             SchoolClassTeacher schoolClassTeacher = new SchoolClassTeacher();
+             schoolClassTeacher.setClassId("class2");
+             schoolClassTeacher.setTeacherId("teacher2");
+             schoolClassTeachers.add(schoolClassTeacher);
+         }
 
 
          easyQuery.insertable(schoolStudents).executeRows();
          easyQuery.insertable(schoolClasses).executeRows();
          easyQuery.insertable(schoolStudentAddresses).executeRows();
+         easyQuery.insertable(schoolTeachers).executeRows();
+         easyQuery.insertable(schoolClassTeachers).executeRows();
      }
      public void relationRemove(List<String> ids){
          easyQuery.deletable(SchoolStudent.class)
@@ -71,6 +115,12 @@ public class RelationTest extends BaseTest{
                  .where(o->o.in(SchoolStudentAddress::getStudentId,ids)).executeRows();
          easyQuery.deletable(SchoolClass.class)
                  .where(o->o.in(SchoolClass::getId,Arrays.asList("class1","class2"))).executeRows();
+         easyQuery.deletable(SchoolTeacher.class)
+                 .where(o->o.in(SchoolTeacher::getId,Arrays.asList("teacher1","teacher2"))).executeRows();
+         easyQuery.deletable(SchoolClassTeacher.class)
+                 .where(o->o.in(SchoolClassTeacher::getClassId,Arrays.asList("class1","class2"))).executeRows();
+         easyQuery.deletable(SchoolClassTeacher.class)
+                 .where(o->o.in(SchoolClassTeacher::getTeacherId,Arrays.asList("teacher1","teacher2"))).executeRows();
      }
     @Test
     public void testOneToOne(){
@@ -91,6 +141,37 @@ public class RelationTest extends BaseTest{
                 Assert.assertNotNull(schoolStudent.getSchoolClass());
                 Assert.assertNotNull(schoolStudent.getSchoolStudentAddress());
                 Assert.assertEquals(schoolStudent.getId(),schoolStudent.getSchoolStudentAddress().getStudentId());
+            }
+
+            List<SchoolClass> list2 = easyQuery.queryable(SchoolClass.class)
+                    .include(o -> o.many(SchoolClass::getSchoolTeachers))
+                    .toList();
+            Assert.assertEquals(2,list2.size());
+
+            for (SchoolClass schoolClass : list2) {
+                if("class1".equals(schoolClass.getId())){
+                    Assert.assertNotNull(schoolClass.getSchoolTeachers());
+                    Assert.assertEquals(2,schoolClass.getSchoolTeachers().size());
+                }
+                if("class2".equals(schoolClass.getId())){
+                    Assert.assertNotNull(schoolClass.getSchoolTeachers());
+                    Assert.assertEquals(1,schoolClass.getSchoolTeachers().size());
+                }
+            }
+
+            List<SchoolTeacher> list3 = easyQuery.queryable(SchoolTeacher.class)
+                    .include(o -> o.many(SchoolTeacher::getSchoolClasses))
+                    .toList();
+            Assert.assertEquals(3,list3.size());
+            for (SchoolTeacher schoolTeacher : list3) {
+                if("teacher1".equals(schoolTeacher.getId())){
+                    Assert.assertNotNull(schoolTeacher.getSchoolClasses());
+                    Assert.assertEquals(1,schoolTeacher.getSchoolClasses().size());
+                }
+                if("teacher2".equals(schoolTeacher.getId())){
+                    Assert.assertNotNull(schoolTeacher.getSchoolClasses());
+                    Assert.assertEquals(2,schoolTeacher.getSchoolClasses().size());
+                }
             }
 
         }finally {

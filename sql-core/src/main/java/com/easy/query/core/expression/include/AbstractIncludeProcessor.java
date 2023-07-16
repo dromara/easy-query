@@ -61,7 +61,7 @@ public abstract class AbstractIncludeProcessor implements IncludeProcessor {
      * @param <TNavigateEntity>
      */
     protected <TNavigateEntity> Map<Object, Collection<TNavigateEntity>> getTargetToManyMap(List<TNavigateEntity> includes) {
-        Class<?> collectionType = EasyClassUtil.getCollectionImplType(selfNavigateMetadata.getNavigatePropertyType());
+        Class<?> collectionType = EasyClassUtil.getCollectionImplType(selfNavigateMetadata.getNavigateOriginalPropertyType());
         Map<Object, Collection<TNavigateEntity>> resultMap = new HashMap<>();
         for (TNavigateEntity tNavigateEntity : includes) {
             Object subRelationKey = targetColumnMetadata.getGetterCaller().apply(tNavigateEntity);

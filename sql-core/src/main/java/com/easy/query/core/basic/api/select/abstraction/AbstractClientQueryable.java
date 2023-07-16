@@ -71,7 +71,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -341,12 +340,15 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                 if (!Objects.equals(entityMetadata, navigateMetadata.getEntityMetadata())) {
                     throw new EasyQueryInvalidOperationException("only support entity");
                 }
+                if (!Objects.equals(navigateMetadata.getNavigatePropertyType(), clientQueryable.queryClass())) {
+                    throw new EasyQueryInvalidOperationException("only support entity:"+EasyClassUtil.getSimpleName(navigateMetadata.getNavigatePropertyType())+",now :"+EasyClassUtil.getSimpleName(clientQueryable.queryClass()));
+                }
                 ColumnMetadata selfRelationColumn = navigateMetadata.getSelfRelationColumn();
                 Property<Object, ?> relationPropertyGetter = selfRelationColumn.getGetterCaller();
                 Set<?> relationIds = result.stream().map(relationPropertyGetter::apply)
                         .collect(Collectors.toSet());
 
-                includeNavigateParams.getRelationKeys().addAll(relationIds);
+                includeNavigateParams.getRelationIds().addAll(relationIds);
                 List<?> includeResult = clientQueryable.toList();
 
                 IncludeProcessor includeProcess = includeProcessorFactory.createIncludeProcess(result, navigateMetadata, runtimeContext);
@@ -356,22 +358,6 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         //将当前方法设置为unknown
         setExecuteMethod(ExecuteMethodEnum.UNKNOWN);
         return result;
-    }
-
-    private <TNavigateEntity> Map<Object, Collection<TNavigateEntity>> getToManyMap(List<TNavigateEntity> includeResult, Property<TNavigateEntity, ?> relationGetter, NavigateMetadata navigateMetadata) {
-        if (EasyCollectionUtil.isSingle(includeResult)) {
-            TNavigateEntity first = EasyCollectionUtil.first(includeResult);
-            Object subRelationKey = relationGetter.apply(first);
-            return Collections.singletonMap(subRelationKey, Collections.singleton(first));
-        }
-        Class<?> collectionType = EasyClassUtil.getCollectionImplType(navigateMetadata.getNavigatePropertyType());
-        Map<Object, Collection<TNavigateEntity>> resultMap = new HashMap<>();
-        for (TNavigateEntity tNavigateEntity : includeResult) {
-            Object subRelationKey = relationGetter.apply(tNavigateEntity);
-            Collection<TNavigateEntity> objects = resultMap.computeIfAbsent(subRelationKey, k -> (Collection<TNavigateEntity>) EasyClassUtil.newInstance(collectionType));
-            objects.add(tNavigateEntity);
-        }
-        return resultMap;
     }
 
     /**

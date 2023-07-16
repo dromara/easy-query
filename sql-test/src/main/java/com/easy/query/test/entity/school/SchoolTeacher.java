@@ -6,6 +6,8 @@ import com.easy.query.core.annotation.Table;
 import com.easy.query.core.enums.RelationTypeEnum;
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * create time 2023/7/16 21:37
  * 文件说明
@@ -18,9 +20,12 @@ public class SchoolTeacher {
     @Column(primaryKey = true)
     private String id;
     private String name;
-    @Navigate(value = RelationTypeEnum.ManyToOne,selfProperty = "classId",targetProperty = "id")
-    private SchoolClass schoolClass;
-    @Navigate(value = RelationTypeEnum.OneToOne,targetProperty = "studentId")
-    private SchoolStudentAddress schoolStudentAddress;
+    @Navigate(value = RelationTypeEnum.ManyToMany
+            , mappingClass = SchoolClassTeacher.class
+            , selfProperty = "id"
+            , selfMappingProperty = "teacherId"
+            , targetProperty = "id"
+            , targetMappingProperty = "classId")
+    private List<SchoolClass> schoolClasses;
 
 }

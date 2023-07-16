@@ -20,6 +20,14 @@ public class SchoolClass {
     @Column(primaryKey = true)
     private String id;
     private String name;
-    @Navigate(value = RelationTypeEnum.OneToMany,targetProperty = "classId")
+    @Navigate(value = RelationTypeEnum.OneToMany, targetProperty = "classId")
     private List<SchoolStudent> schoolStudents;
+
+    @Navigate(value = RelationTypeEnum.ManyToMany
+            , mappingClass = SchoolClassTeacher.class
+            , selfProperty = "id"
+            , selfMappingProperty = "classId"
+            , targetProperty = "id"
+            , targetMappingProperty = "teacherId")
+    private List<SchoolTeacher> schoolTeachers;
 }

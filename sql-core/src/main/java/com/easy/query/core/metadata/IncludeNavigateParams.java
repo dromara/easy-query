@@ -12,14 +12,14 @@ import java.util.List;
  * @author xuejiaming
  */
 public class IncludeNavigateParams {
-    private final List<Object> relationKeys;
+    private final List<Object> relationIds;
     private NavigateMetadata navigateMetadata;
     public IncludeNavigateParams(){
-        relationKeys=new ArrayList<>();
+        relationIds =new ArrayList<>();
     }
 
-    public List<Object> getRelationKeys() {
-        return relationKeys;
+    public List<Object> getRelationIds() {
+        return relationIds;
     }
 
     public NavigateMetadata getNavigateMetadata() {
@@ -28,13 +28,5 @@ public class IncludeNavigateParams {
 
     public void setNavigateMetadata(NavigateMetadata navigateMetadata) {
         this.navigateMetadata = navigateMetadata;
-    }
-    public IncludeNavigateParams cloneParams(){
-        IncludeNavigateParams includeNavigateParams = new IncludeNavigateParams();
-        if(EasyCollectionUtil.isNotEmpty(relationKeys)){
-            includeNavigateParams.getRelationKeys().addAll(relationKeys);
-        }
-        includeNavigateParams.setNavigateMetadata(navigateMetadata);
-        return includeNavigateParams;
     }
 }

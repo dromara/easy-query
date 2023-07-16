@@ -33,4 +33,12 @@ public @interface Navigate {
      * 空为主键
      */
     String targetProperty();
+
+    /**
+     * 多对多中间表
+     * @return
+     */
+    Class<?> mappingClass() default Object.class;
+    String selfMappingProperty() default "";
+    String targetMappingProperty() default "";
 }
