@@ -22,7 +22,7 @@ public class TopicY {
     private LocalDateTime createTime;
 //    @Navigate(relationType = RelationTypeEnum.OneToMany,value = "title")
 //    private List<Topicx> topicxList;
-    @Navigate(relationType = RelationTypeEnum.OneToOne,value = "id")
+    @Navigate(value = RelationTypeEnum.OneToOne,targetProperty = "id")
     private Topic topic;
 
     public String getId() {

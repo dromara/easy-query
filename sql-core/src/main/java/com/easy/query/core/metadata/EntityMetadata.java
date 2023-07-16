@@ -161,8 +161,9 @@ public class EntityMetadata {
             }
             Navigate navigate = field.getAnnotation(Navigate.class);
             if (navigate != null) {
-                String relationKey = navigate.value();
-                RelationTypeEnum relationType = navigate.relationType();
+                String selfProperty = navigate.selfProperty();
+                String targetProperty = navigate.targetProperty();
+                RelationTypeEnum relationType = navigate.value();
                 Class<?> navigateType = getNavigateType(relationType, field, propertyDescriptor);
                 if(navigateType==null){
                     throw new EasyQueryInvalidOperationException("not found navigate type, property:["+property+"]");
@@ -170,7 +171,7 @@ public class EntityMetadata {
 
                 Property<Object, ?> beanGetter = fastBean.getBeanGetter(propertyDescriptor);
                 PropertySetterCaller<Object> beanSetter = fastBean.getBeanSetter(propertyDescriptor);
-                NavigateMetadata navigateMetadata = new NavigateMetadata(this, property, navigateType, relationType, relationKey,beanGetter,beanSetter);
+                NavigateMetadata navigateMetadata = new NavigateMetadata(this, property, navigateType, relationType,selfProperty, targetProperty,beanGetter,beanSetter);
                 property2NavigateMap.put(property,navigateMetadata);
                 continue;
             }

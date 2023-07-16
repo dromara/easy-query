@@ -1029,11 +1029,13 @@ public class QueryTest2 extends BaseTest {
 //                .include(t->t.many(TopicY::getTopicxList))
 //                .toList();
         List<TopicY> list1 = easyQuery.queryable(TopicY.class)
-                .include(t->t.one(TopicY::getTopic)
-                        //.where(x -> x.eq(Topic::getId, "1"))
-                )
+                .include(t->t.one(TopicY::getTopic))
                 .toList();
-        System.out.println("123");
+        Assert.assertTrue(list1.size()>0);
+        for (TopicY topicY : list1) {
+            Topic topic = topicY.getTopic();
+            Assert.assertEquals(topicY.getId(),topic.getId());
+        }
 //                .include(TopicY::getTopic,q->q.where(x->x.eq(Topic::getId,1)));
     }
 

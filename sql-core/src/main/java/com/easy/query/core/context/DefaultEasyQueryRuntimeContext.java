@@ -13,6 +13,7 @@ import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.datasource.DataSourceManager;
 import com.easy.query.core.datasource.DataSourceUnitFactory;
 import com.easy.query.core.expression.func.ColumnFunctionFactory;
+import com.easy.query.core.expression.include.IncludeProcessorFactory;
 import com.easy.query.core.expression.parser.factory.SQLExpressionInvokeFactory;
 import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
 import com.easy.query.core.expression.sql.builder.factory.ExpressionBuilderFactory;
@@ -58,6 +59,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     private final SQLClientApiFactory sqlEntityApiFactory;
     private final DataSourceManager dataSourceManager;
     private final EasyTimeJobManager easyTimeJobManager;
+    private final IncludeProcessorFactory includeProcessorFactory;
 
     public DefaultEasyQueryRuntimeContext(ServiceProvider serviceProvider,
                                           EasyQueryDataSource easyQueryDataSource,
@@ -82,7 +84,8 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
                                           SQLSegmentFactory sqlSegmentFactory,
                                           SQLClientApiFactory sqlEntityApiFactory,
                                           DataSourceManager dataSourceManager,
-                                          EasyTimeJobManager easyTimeJobManager) {
+                                          EasyTimeJobManager easyTimeJobManager,
+                                          IncludeProcessorFactory includeProcessorFactory) {
         this.serviceProvider = serviceProvider;
         this.easyQueryDataSource = easyQueryDataSource;
         this.easyQueryConfiguration = easyQueryConfiguration;
@@ -107,6 +110,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
         this.sqlEntityApiFactory = sqlEntityApiFactory;
         this.dataSourceManager = dataSourceManager;
         this.easyTimeJobManager = easyTimeJobManager;
+        this.includeProcessorFactory = includeProcessorFactory;
     }
 
     @Override
@@ -228,5 +232,10 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     @Override
     public EasyTimeJobManager getEasyTimeJobManager() {
         return easyTimeJobManager;
+    }
+
+    @Override
+    public IncludeProcessorFactory getIncludeProcessorFactory() {
+        return includeProcessorFactory;
     }
 }

@@ -19,11 +19,18 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD, ElementType.ANNOTATION_TYPE})
 public @interface Navigate {
     /**
+     * 关联属性
+     * 空为主键
+     * @return
+     */
+    String selfProperty() default "";
+    /**
      * 关联关系
      */
-    RelationTypeEnum relationType();
+    RelationTypeEnum value();
     /**
-     * 关联属性名
+     * 目标关联属性
+     * 空为主键
      */
-    String value();
+    String targetProperty();
 }

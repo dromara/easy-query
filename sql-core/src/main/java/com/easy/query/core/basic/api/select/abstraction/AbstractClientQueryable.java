@@ -16,7 +16,6 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.MultiTableTypeEnum;
-import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.enums.SQLLikeEnum;
 import com.easy.query.core.enums.SQLPredicateCompareEnum;
 import com.easy.query.core.enums.SQLUnionEnum;
@@ -28,6 +27,8 @@ import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
 import com.easy.query.core.exception.EasyQueryWhereInvalidOperationException;
 import com.easy.query.core.expression.builder.impl.FilterImpl;
 import com.easy.query.core.expression.func.ColumnFunction;
+import com.easy.query.core.expression.include.IncludeProcessor;
+import com.easy.query.core.expression.include.IncludeProcessorFactory;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression2;
@@ -64,7 +65,6 @@ import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 import com.easy.query.core.util.EasySQLSegmentUtil;
 import com.easy.query.core.util.EasyStringUtil;
-import com.sun.org.apache.bcel.internal.generic.NEW;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
@@ -78,6 +78,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * @author xuejiaming
@@ -328,14 +329,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         EntityMetadata entityMetadata = this.entityQueryExpressionBuilder.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(resultClass);
         List<TR> result = entityExpressionExecutor.query(ExecutorContext.create(this.entityQueryExpressionBuilder.getRuntimeContext(), true, executeMethod, tracking), new EntityResultMetadata<>(entityMetadata), entityQueryExpressionBuilder);
         if (expressionContext.hasIncludes() && EasyCollectionUtil.isNotEmpty(result)) {
-            Collection<String> keyProperties = entityMetadata.getKeyProperties();
-            if (EasyCollectionUtil.isNotSingle(keyProperties)) {
-                throw new EasyQueryInvalidOperationException(EasyClassUtil.getSimpleName(queryClass()) + "multi key not support include");
-            }
-            String keyProperty = EasyCollectionUtil.first(keyProperties);
-            ColumnMetadata keyColumnMetadata = entityMetadata.getColumnNotNull(keyProperty);
-            Property<Object, ?> keyGetter = keyColumnMetadata.getGetterCaller();
-            Map<?, TR> trMap = EasyCollectionUtil.listToMap(result, keyGetter::apply, o -> o);
+            IncludeProcessorFactory includeProcessorFactory = runtimeContext.getIncludeProcessorFactory();
             for (SQLFuncExpression1<IncludeNavigateParams, ClientQueryable<?>> include : expressionContext.getIncludes()) {
 
                 IncludeNavigateParams includeNavigateParams = new IncludeNavigateParams();
@@ -347,38 +341,16 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                 if (!Objects.equals(entityMetadata, navigateMetadata.getEntityMetadata())) {
                     throw new EasyQueryInvalidOperationException("only support entity");
                 }
-                NavigateMetadata mainNavigateMetadata = entityMetadata.getNavigateNotNull(navigateMetadata.getPropertyName());
-                Set<?> keys = trMap.keySet();
-                includeNavigateParams.getRelationKeys().addAll(keys);
+                ColumnMetadata selfRelationColumn = navigateMetadata.getSelfRelationColumn();
+                Property<Object, ?> relationPropertyGetter = selfRelationColumn.getGetterCaller();
+                Set<?> relationIds = result.stream().map(relationPropertyGetter::apply)
+                        .collect(Collectors.toSet());
+
+                includeNavigateParams.getRelationKeys().addAll(relationIds);
                 List<?> includeResult = clientQueryable.toList();
-                EntityMetadata navigateEntityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(navigateMetadata.getNavigatePropertyType());
-                ColumnMetadata columnMetadata = navigateEntityMetadata.getColumnNotNull(navigateMetadata.getRelationKey());
-                Property<Object, ?> relationGetter = columnMetadata.getGetterCaller();
 
-                RelationTypeEnum relationType = navigateMetadata.getRelationType();
-                if (RelationTypeEnum.OneToOne == relationType || RelationTypeEnum.ManyToOne == relationType) {
-                    for (Object subEntity : includeResult) {
-                        Object subRelationKey = relationGetter.apply(subEntity);
-                        TR tr = trMap.get(subRelationKey);
-                        if(tr!=null){
-                            mainNavigateMetadata.getSetter().call(tr, subEntity);
-                        }
-                    }
-                } else if (RelationTypeEnum.OneToMany == relationType || RelationTypeEnum.ManyToMany == relationType) {
-
-                    Map<Object, Collection<Object>> toManyMap = getToManyMap(EasyObjectUtil.typeCastNullable(includeResult), relationGetter, navigateMetadata);
-                    Set<Map.Entry<Object, Collection<Object>>> entries = toManyMap.entrySet();
-                    for (Map.Entry<Object, Collection<Object>> entry : entries) {
-                        Object subRelationKey = entry.getKey();
-                        Collection<Object> subValues = entry.getValue();
-                        TR tr = trMap.get(subRelationKey);
-                        if(tr!=null){
-                            mainNavigateMetadata.getSetter().call(tr, subValues);
-                        }
-                    }
-                } else {
-                    throw new UnsupportedOperationException("relation type+" + relationType);
-                }
+                IncludeProcessor includeProcess = includeProcessorFactory.createIncludeProcess(result, navigateMetadata, runtimeContext);
+                includeProcess.process(includeResult);
             }
         }
         //将当前方法设置为unknown

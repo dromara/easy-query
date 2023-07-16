@@ -326,7 +326,7 @@ public class EasyCollectionUtil {
         }
     }
 
-    public static <K, V, R> Map<K, R> listToMap(List<V> list, Function<V, K> keyExtractor, Function<V, R> valueExtractor) {
+    public static <K, V, R> Map<K, R> collectionToMap(Collection<V> list, Function<V, K> keyExtractor, Function<V, R> valueExtractor) {
         Map<K, R> map = new HashMap<>();
         for (V element : list) {
             K key = keyExtractor.apply(element);

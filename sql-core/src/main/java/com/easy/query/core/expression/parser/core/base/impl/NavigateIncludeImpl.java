@@ -33,6 +33,6 @@ public class NavigateIncludeImpl<TEntity> implements NavigateInclude<TEntity> {
         Class<?> navigatePropertyType = navigateMetadata.getNavigatePropertyType();
         ClientQueryable<TProperty> queryable = runtimeContext.getSQLClientApiFactory().createQueryable(EasyObjectUtil.typeCastNullable(navigatePropertyType), runtimeContext);
 
-        return queryable.where(o->o.in(navigateMetadata.getRelationKey(),includeNavigateParams.getRelationKeys()));
+        return queryable.where(o->o.in(navigateMetadata.getTargetProperty(),includeNavigateParams.getRelationKeys()));
     }
 }

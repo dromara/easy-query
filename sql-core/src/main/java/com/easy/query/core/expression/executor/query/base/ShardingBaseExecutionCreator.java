@@ -66,7 +66,7 @@ public abstract class ShardingBaseExecutionCreator extends BaseExecutionCreator{
             RouteUnit routeUnit = rewriteRouteUnit.getRouteUnit();
             String dataSource = routeUnit.getDataSource();
             List<TableRouteUnit> tableRouteUnits = routeUnit.getTableRouteUnits();
-            Map<TableAvailable, String> tableNameRewriteMap = EasyCollectionUtil.listToMap(tableRouteUnits, TableRouteUnit::getTable,TableRouteUnit::getActualTableName);
+            Map<TableAvailable, String> tableNameRewriteMap = EasyCollectionUtil.collectionToMap(tableRouteUnits, TableRouteUnit::getTable,TableRouteUnit::getActualTableName);
             SQLRewriteUnit sqlRewriteUnit = new SQLRewriteUnitImpl(tableNameRewriteMap);
             EntitySQLExpression entitySQLExpression = createEntitySQLExpression(rewriteRouteUnit);
             List<Object> entities = getEntitiesByTableRouteUnits(tableRouteUnits);
