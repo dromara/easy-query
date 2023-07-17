@@ -149,6 +149,26 @@ public class RelationTest extends BaseTest{
                 Assert.assertNotNull(schoolStudent.getSchoolStudentAddress());
                 Assert.assertEquals(schoolStudent.getId(),schoolStudent.getSchoolStudentAddress().getStudentId());
             }
+            {
+
+                SchoolStudent schoolStudent = easyQuery.queryable(SchoolStudent.class)
+                        .include(o -> o.one(SchoolStudent::getSchoolStudentAddress).include(x->x.one(SchoolStudentAddress::getSchoolStudent)))
+                        .include(o -> o.one(SchoolStudent::getSchoolClass))
+                        .where(o->o.eq(SchoolStudent::getId,"3")).firstOrNull();
+                Assert.assertNotNull(schoolStudent);
+                Assert.assertNotNull(schoolStudent.getSchoolStudentAddress());
+                Assert.assertNotNull(schoolStudent.getSchoolStudentAddress().getSchoolStudent());
+            }
+            {
+
+                SchoolStudent schoolStudent = easyQuery.queryable(SchoolStudent.class)
+                        .include(o -> o.one(SchoolStudent::getSchoolStudentAddress).where(x->x.eq(SchoolStudentAddress::getId,"x")))
+                        .include(o -> o.one(SchoolStudent::getSchoolClass))
+                        .where(o->o.eq(SchoolStudent::getId,"3")).firstOrNull();
+                Assert.assertNotNull(schoolStudent);
+                Assert.assertNull(schoolStudent.getSchoolStudentAddress());
+            }
+
 
             List<SchoolClass> list2 = easyQuery.queryable(SchoolClass.class)
                     .include(o -> o.many(SchoolClass::getSchoolTeachers))

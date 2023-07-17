@@ -328,6 +328,8 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         EntityExpressionExecutor entityExpressionExecutor = this.entityQueryExpressionBuilder.getRuntimeContext().getEntityExpressionExecutor();
         EntityMetadata entityMetadata = this.entityQueryExpressionBuilder.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(resultClass);
         List<TR> result = entityExpressionExecutor.query(ExecutorContext.create(this.entityQueryExpressionBuilder.getRuntimeContext(), true, executeMethod, tracking), new EntityResultMetadata<>(entityMetadata), entityQueryExpressionBuilder);
+        //将当前方法设置为unknown
+        setExecuteMethod(ExecuteMethodEnum.UNKNOWN);
         if (expressionContext.hasIncludes() && EasyCollectionUtil.isNotEmpty(result)) {
             IncludeProcessorFactory includeProcessorFactory = runtimeContext.getIncludeProcessorFactory();
             for (SQLFuncExpression1<IncludeNavigateParams, ClientQueryable<?>> include : expressionContext.getIncludes()) {
@@ -365,14 +367,13 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                             .collect(Collectors.toSet());
                     includeNavigateParams.getRelationIds().addAll(targetIds);
                 }
-                List<?> includeResult = clientQueryable.toList();
+                //导航属性追踪与否
+                List<?> includeResult = tracking ? clientQueryable.asTracking().toList() : clientQueryable.asNoTracking().toList();
 
                 IncludeProcessor includeProcess = includeProcessorFactory.createIncludeProcess(result, navigateMetadata, runtimeContext);
                 includeProcess.process(includeResult, maps);
             }
         }
-        //将当前方法设置为unknown
-        setExecuteMethod(ExecuteMethodEnum.UNKNOWN);
         return result;
     }
 
