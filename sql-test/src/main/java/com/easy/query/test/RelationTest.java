@@ -31,7 +31,7 @@ public class RelationTest extends BaseTest{
          easyQuery.deletable(SchoolTeacher.class)
                  .where(o->o.in(SchoolTeacher::getId,Arrays.asList("teacher1","teacher2"))).executeRows();
          easyQuery.deletable(SchoolClassTeacher.class)
-                 .where(o->o.in(SchoolClassTeacher::getClassId,Arrays.asList("class1","class2"))).executeRows();
+                 .where(o->o.in(SchoolClassTeacher::getClassId,Arrays.asList("class1","class2","class3"))).executeRows();
          easyQuery.deletable(SchoolClassTeacher.class)
                  .where(o->o.in(SchoolClassTeacher::getTeacherId,Arrays.asList("teacher1","teacher2"))).executeRows();
          ArrayList<SchoolStudent> schoolStudents = new ArrayList<>();
@@ -66,6 +66,13 @@ public class RelationTest extends BaseTest{
              SchoolClass schoolClass = new SchoolClass();
              schoolClass.setId("class2");
              schoolClass.setName("班级2");
+             schoolClasses.add(schoolClass);
+         }
+         {
+
+             SchoolClass schoolClass = new SchoolClass();
+             schoolClass.setId("class3");
+             schoolClass.setName("班级3");
              schoolClasses.add(schoolClass);
          }
          {
@@ -114,7 +121,7 @@ public class RelationTest extends BaseTest{
          easyQuery.deletable(SchoolStudentAddress.class)
                  .where(o->o.in(SchoolStudentAddress::getStudentId,ids)).executeRows();
          easyQuery.deletable(SchoolClass.class)
-                 .where(o->o.in(SchoolClass::getId,Arrays.asList("class1","class2"))).executeRows();
+                 .where(o->o.in(SchoolClass::getId,Arrays.asList("class1","class2","class3"))).executeRows();
          easyQuery.deletable(SchoolTeacher.class)
                  .where(o->o.in(SchoolTeacher::getId,Arrays.asList("teacher1","teacher2"))).executeRows();
          easyQuery.deletable(SchoolClassTeacher.class)
@@ -146,7 +153,7 @@ public class RelationTest extends BaseTest{
             List<SchoolClass> list2 = easyQuery.queryable(SchoolClass.class)
                     .include(o -> o.many(SchoolClass::getSchoolTeachers))
                     .toList();
-            Assert.assertEquals(2,list2.size());
+            Assert.assertEquals(3,list2.size());
 
             for (SchoolClass schoolClass : list2) {
                 if("class1".equals(schoolClass.getId())){
@@ -156,6 +163,10 @@ public class RelationTest extends BaseTest{
                 if("class2".equals(schoolClass.getId())){
                     Assert.assertNotNull(schoolClass.getSchoolTeachers());
                     Assert.assertEquals(1,schoolClass.getSchoolTeachers().size());
+                }
+                if("class3".equals(schoolClass.getId())){
+                    Assert.assertNotNull(schoolClass.getSchoolTeachers());
+                    Assert.assertEquals(0,schoolClass.getSchoolTeachers().size());
                 }
             }
 
