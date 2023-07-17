@@ -41,10 +41,11 @@ public class NavigateMetadata {
     private Class<?> mappingClass;
     private final Property<Object, ?> getter;
     private final PropertySetterCaller<Object> setter;
-    private  String selfMappingProperty;
-    private  String targetMappingProperty;
+    private String selfMappingProperty;
+    private String targetMappingProperty;
+    private ColumnMetadata selfColumn;
 
-    public NavigateMetadata(EntityMetadata entityMetadata, String propertyName,Class<?> navigateOriginalPropertyType, Class<?> navigatePropertyType, RelationTypeEnum relationType,String selfProperty, String targetProperty, Property<Object, ?> getter, PropertySetterCaller<Object> setter) {
+    public NavigateMetadata(EntityMetadata entityMetadata, String propertyName, Class<?> navigateOriginalPropertyType, Class<?> navigatePropertyType, RelationTypeEnum relationType, String selfProperty, String targetProperty, Property<Object, ?> getter, PropertySetterCaller<Object> setter) {
         this.entityMetadata = entityMetadata;
         this.propertyName = propertyName;
         this.navigateOriginalPropertyType = navigateOriginalPropertyType;
@@ -117,11 +118,16 @@ public class NavigateMetadata {
     }
 
 
-    public ColumnMetadata getSelfRelationColumn(){
-        String selfPropertyName = EasyStringUtil.isBlank(selfProperty) ? getSelfSingleKeyProperty() : selfProperty;
-        return entityMetadata.getColumnNotNull(selfPropertyName);
+    public ColumnMetadata getSelfRelationColumn() {
+        if (this.selfColumn == null) {
+
+            String selfPropertyName = EasyStringUtil.isBlank(selfProperty) ? getSelfSingleKeyProperty() : selfProperty;
+            this.selfColumn = entityMetadata.getColumnNotNull(selfPropertyName);
+        }
+        return this.selfColumn;
     }
-    private String getSelfSingleKeyProperty(){
+
+    private String getSelfSingleKeyProperty() {
         Collection<String> keyProperties = entityMetadata.getKeyProperties();
 
         if (EasyCollectionUtil.isNotSingle(keyProperties)) {

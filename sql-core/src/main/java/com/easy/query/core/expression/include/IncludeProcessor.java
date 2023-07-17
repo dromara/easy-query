@@ -1,6 +1,7 @@
 package com.easy.query.core.expression.include;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * create time 2023/7/16 18:26
@@ -10,5 +11,5 @@ import java.util.List;
  */
 public interface IncludeProcessor {
 
-    <TEntityInclude> void process(List<TEntityInclude> includes);
+    <TEntityInclude> void process(List<TEntityInclude> includes, List<Map<String, Object>> mappingRows);
 }

@@ -1,6 +1,6 @@
 package com.easy.query.core.metadata;
 
-import com.easy.query.core.util.EasyCollectionUtil;
+import com.easy.query.core.basic.api.select.ClientQueryable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +14,7 @@ import java.util.List;
 public class IncludeNavigateParams {
     private final List<Object> relationIds;
     private NavigateMetadata navigateMetadata;
+    private ClientQueryable<?> mappingQueryable;
     public IncludeNavigateParams(){
         relationIds =new ArrayList<>();
     }
@@ -28,5 +29,13 @@ public class IncludeNavigateParams {
 
     public void setNavigateMetadata(NavigateMetadata navigateMetadata) {
         this.navigateMetadata = navigateMetadata;
+    }
+
+    public ClientQueryable<?> getMappingQueryable() {
+        return mappingQueryable;
+    }
+
+    public void setMappingQueryable(ClientQueryable<?> mappingQueryable) {
+        this.mappingQueryable = mappingQueryable;
     }
 }

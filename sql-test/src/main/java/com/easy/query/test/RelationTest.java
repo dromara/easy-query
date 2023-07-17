@@ -162,7 +162,7 @@ public class RelationTest extends BaseTest{
             List<SchoolTeacher> list3 = easyQuery.queryable(SchoolTeacher.class)
                     .include(o -> o.many(SchoolTeacher::getSchoolClasses))
                     .toList();
-            Assert.assertEquals(3,list3.size());
+            Assert.assertEquals(2,list3.size());
             for (SchoolTeacher schoolTeacher : list3) {
                 if("teacher1".equals(schoolTeacher.getId())){
                     Assert.assertNotNull(schoolTeacher.getSchoolClasses());

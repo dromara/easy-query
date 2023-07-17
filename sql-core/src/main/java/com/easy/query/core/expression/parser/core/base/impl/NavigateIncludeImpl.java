@@ -34,11 +34,12 @@ public class NavigateIncludeImpl<TEntity> implements NavigateInclude<TEntity> {
         Class<?> navigatePropertyType = navigateMetadata.getNavigatePropertyType();
         ClientQueryable<TProperty> queryable = runtimeContext.getSQLClientApiFactory().createQueryable(EasyObjectUtil.typeCastNullable(navigatePropertyType), runtimeContext);
         RelationTypeEnum relationType = navigateMetadata.getRelationType();
+        //添加多对多中间表
         if(RelationTypeEnum.ManyToMany==relationType){
-            return queryable
-                    .innerJoin(navigateMetadata.getMappingClass()
-                            ,(t,t1)->t.eq(t1,navigateMetadata.getTargetProperty(),navigateMetadata.getTargetMappingProperty()))
-                    .where((t,t1)->t1.in(navigateMetadata.getSelfMappingProperty(),includeNavigateParams.getRelationIds()));
+            ClientQueryable<?> mappingQuery = runtimeContext.getSQLClientApiFactory().createQueryable(navigateMetadata.getMappingClass(), runtimeContext);
+            ClientQueryable<?> mappingQueryable = mappingQuery.where(t -> t.in(navigateMetadata.getSelfMappingProperty(), includeNavigateParams.getRelationIds()))
+                    .select(o -> o.column(navigateMetadata.getSelfMappingProperty()).column(navigateMetadata.getTargetMappingProperty()));
+            includeNavigateParams.setMappingQueryable(mappingQueryable);
         }
         return queryable.where(o->o.in(navigateMetadata.getTargetProperty(),includeNavigateParams.getRelationIds()));
     }

@@ -16,6 +16,7 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.MultiTableTypeEnum;
+import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.enums.SQLLikeEnum;
 import com.easy.query.core.enums.SQLPredicateCompareEnum;
 import com.easy.query.core.enums.SQLUnionEnum;
@@ -349,10 +350,25 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                         .collect(Collectors.toSet());
 
                 includeNavigateParams.getRelationIds().addAll(relationIds);
+                List<Map<String, Object>> maps=null;
+                if(RelationTypeEnum.ManyToMany==navigateMetadata.getRelationType()){
+                    ClientQueryable<?> mappingQueryable = includeNavigateParams.getMappingQueryable();
+                    if(mappingQueryable==null){
+                        throw new EasyQueryInvalidOperationException("relation many to many mapping queryable is null");
+                    }
+                    maps = mappingQueryable.toMaps();
+                    includeNavigateParams.getRelationIds().clear();
+                    EntityMetadata mappingEntityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(navigateMetadata.getMappingClass());
+                    ColumnMetadata mappingTargetColumnMetadata = mappingEntityMetadata.getColumnNotNull(navigateMetadata.getTargetMappingProperty());
+                    String targetColumnName = mappingTargetColumnMetadata.getName();
+                    Set<Object> targetIds = maps.stream().map(o -> o.get(targetColumnName)).filter(Objects::nonNull)
+                            .collect(Collectors.toSet());
+                    includeNavigateParams.getRelationIds().addAll(targetIds);
+                }
                 List<?> includeResult = clientQueryable.toList();
 
                 IncludeProcessor includeProcess = includeProcessorFactory.createIncludeProcess(result, navigateMetadata, runtimeContext);
-                includeProcess.process(includeResult);
+                includeProcess.process(includeResult,maps);
             }
         }
         //将当前方法设置为unknown

@@ -537,7 +537,7 @@ public class EntityMetadata {
     public ColumnMetadata getColumnNotNull(String propertyName) {
         ColumnMetadata columnMetadata = getColumnOrNull(propertyName);
         if (columnMetadata == null) {
-            throw new EasyQueryException(String.format("not found property:[%s] mapping column name", propertyName));
+            throw new EasyQueryException(String.format("%s not found property:[%s] mapping column name",EasyClassUtil.getSimpleName(entityClass), propertyName));
         }
         return columnMetadata;
     }

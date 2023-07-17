@@ -7,6 +7,7 @@ import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
+import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasyStringUtil;
 
 import java.util.ArrayList;
@@ -28,6 +29,8 @@ public abstract class AbstractIncludeProcessor implements IncludeProcessor {
     protected final QueryRuntimeContext runtimeContext;
     protected final EntityMetadata targetEntityMetadata;
     protected final ColumnMetadata targetColumnMetadata;
+
+    protected Class<?> collectionType;
 
     public AbstractIncludeProcessor(Collection<?> entities, NavigateMetadata selfNavigateMetadata, QueryRuntimeContext runtimeContext) {
 
@@ -63,10 +66,41 @@ public abstract class AbstractIncludeProcessor implements IncludeProcessor {
     protected <TNavigateEntity> Map<Object, Collection<TNavigateEntity>> getTargetToManyMap(List<TNavigateEntity> includes) {
         Class<?> collectionType = EasyClassUtil.getCollectionImplType(selfNavigateMetadata.getNavigateOriginalPropertyType());
         Map<Object, Collection<TNavigateEntity>> resultMap = new HashMap<>();
-        for (TNavigateEntity tNavigateEntity : includes) {
-            Object subRelationKey = targetColumnMetadata.getGetterCaller().apply(tNavigateEntity);
-            Collection<TNavigateEntity> objects = resultMap.computeIfAbsent(subRelationKey, k -> (Collection<TNavigateEntity>) EasyClassUtil.newInstance(collectionType));
-            objects.add(tNavigateEntity);
+        for (TNavigateEntity target : includes) {
+            Object targetRelationId = targetColumnMetadata.getGetterCaller().apply(target);
+            Collection<TNavigateEntity> objects = resultMap.computeIfAbsent(targetRelationId, k -> (Collection<TNavigateEntity>) EasyClassUtil.newInstance(collectionType));
+            objects.add(target);
+        }
+        return resultMap;
+    }
+
+    protected Class<?> getCollectionType(){
+        if(collectionType==null){
+            collectionType = EasyClassUtil.getCollectionImplType(selfNavigateMetadata.getNavigateOriginalPropertyType());
+        }
+        return collectionType;
+    }
+    protected <TNavigateEntity> Collection<TNavigateEntity> createManyCollection(){
+        Class<?> collectionType = getCollectionType();
+        return EasyObjectUtil.typeCastNullable(EasyClassUtil.newInstance(collectionType));
+    }
+    protected <TNavigateEntity> Map<Object, Collection<TNavigateEntity>> getTargetToManyMap(List<TNavigateEntity> includes, List<Map<String, Object>> mappingRows) {
+
+        Map<Object, Collection<TNavigateEntity>> resultMap = new HashMap<>();
+
+        EntityMetadata entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(selfNavigateMetadata.getMappingClass());
+        ColumnMetadata selfRelationColumn = entityMetadata.getColumnNotNull(selfNavigateMetadata.getSelfMappingProperty());
+        String selfColumnName = selfRelationColumn.getName();
+        ColumnMetadata targetRelationColumn = entityMetadata.getColumnNotNull(selfNavigateMetadata.getTargetMappingProperty());
+        String targetColumnName = targetRelationColumn.getName();
+
+        Map<Object, Collection<TNavigateEntity>> targetToManyMap = getTargetToManyMap(includes);
+        for (Map<String, Object> mappingRow : mappingRows) {
+            Object selfRelationId = mappingRow.get(selfColumnName);
+            Object targetRelationId = mappingRow.get(targetColumnName);
+            Collection<TNavigateEntity> targetEntities = resultMap.computeIfAbsent(selfRelationId, k -> createManyCollection());
+            Collection<TNavigateEntity> targets = targetToManyMap.get(targetRelationId);
+            targetEntities.addAll(targets);
         }
         return resultMap;
     }
@@ -82,7 +116,7 @@ public abstract class AbstractIncludeProcessor implements IncludeProcessor {
     }
 
     @Override
-    public <TEntityInclude> void process(List<TEntityInclude> includes) {
+    public <TEntityInclude> void process(List<TEntityInclude> includes, List<Map<String, Object>> mappingRows) {
         if(EasyCollectionUtil.isEmpty(includes)){
             return;
         }
@@ -97,7 +131,7 @@ public abstract class AbstractIncludeProcessor implements IncludeProcessor {
                 ManyToOneProcess(includes);
                 return;
             case ManyToMany:
-                ManyToManyProcess(includes);
+                ManyToManyProcess(includes,mappingRows);
                 return;
         }
         throw new UnsupportedOperationException("not support include relation type:" + selfNavigateMetadata.getRelationType());
@@ -109,5 +143,5 @@ public abstract class AbstractIncludeProcessor implements IncludeProcessor {
 
     protected abstract <TEntityInclude> void OneToManyProcess(List<TEntityInclude> includes);
 
-    protected abstract<TEntityInclude> void ManyToManyProcess(List<TEntityInclude> includes);
+    protected abstract<TEntityInclude> void ManyToManyProcess(List<TEntityInclude> includes, List<Map<String, Object>> mappingRows);
 }
