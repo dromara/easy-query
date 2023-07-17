@@ -29,6 +29,7 @@ public abstract class AbstractIncludeProcessor implements IncludeProcessor {
     protected final QueryRuntimeContext runtimeContext;
     protected final EntityMetadata targetEntityMetadata;
     protected final ColumnMetadata targetColumnMetadata;
+    protected  ColumnMetadata selfColumn;
 
     protected Class<?> collectionType;
 
@@ -144,4 +145,12 @@ public abstract class AbstractIncludeProcessor implements IncludeProcessor {
     protected abstract <TEntityInclude> void OneToManyProcess(List<TEntityInclude> includes);
 
     protected abstract<TEntityInclude> void ManyToManyProcess(List<TEntityInclude> includes, List<Map<String, Object>> mappingRows);
+
+
+    public ColumnMetadata getSelfRelationColumn() {
+        if (this.selfColumn == null) {
+            this.selfColumn = selfNavigateMetadata.getSelfRelationColumn();
+        }
+        return this.selfColumn;
+    }
 }

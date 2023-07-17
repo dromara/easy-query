@@ -25,7 +25,7 @@ public class EasyIncludeProcess extends AbstractIncludeProcessor {
     @Override
     protected <TEntityInclude> void OneToOneProcess(List<TEntityInclude> includes) {
         //获取关联关系列的元信息
-        ColumnMetadata selfRelationColumn = selfNavigateMetadata.getSelfRelationColumn();
+        ColumnMetadata selfRelationColumn = getSelfRelationColumn();
         Property<Object, ?> keyGetter = selfRelationColumn.getGetterCaller();
         //因为是一对一所以获取关联数据key为主键的map
         Map<?, ?> entityMap = EasyCollectionUtil.collectionToMap(entities, keyGetter::apply, o -> o);
@@ -42,7 +42,7 @@ public class EasyIncludeProcess extends AbstractIncludeProcessor {
         Property<Object, ?> getterCaller = targetColumnMetadata.getGetterCaller();
         //因为是一对一所以获取关联数据key为主键的map
         Map<Object, TEntityInclude> includeMap = EasyCollectionUtil.collectionToMap(includes, getterCaller::apply, o -> o);
-        ColumnMetadata selfRelationColumn = selfNavigateMetadata.getSelfRelationColumn();
+        ColumnMetadata selfRelationColumn = getSelfRelationColumn();
         for (Object entity : entities) {
             Object relationId = selfRelationColumn.getGetterCaller().apply(entity);
             TEntityInclude entityInclude = includeMap.get(relationId);
@@ -56,7 +56,7 @@ public class EasyIncludeProcess extends AbstractIncludeProcessor {
     protected <TEntityInclude> void OneToManyProcess(List<TEntityInclude> includes) {
 
         //获取关联关系列的元信息
-        ColumnMetadata selfRelationColumn = selfNavigateMetadata.getSelfRelationColumn();
+        ColumnMetadata selfRelationColumn = getSelfRelationColumn();
         //因为是一对多所以获取关联数据key为主键的map
 //        Map<?, ?> entityMap = EasyCollectionUtil.collectionToMap(entities, keyGetter::apply, o -> o);
 
@@ -83,7 +83,7 @@ public class EasyIncludeProcess extends AbstractIncludeProcessor {
     protected <TEntityInclude> void ManyToManyProcess(List<TEntityInclude> includes, List<Map<String, Object>> mappingRows) {
 
         Map<Object, Collection<TEntityInclude>> targetToManyMap = getTargetToManyMap(includes,mappingRows);
-        ColumnMetadata selfRelationColumn = selfNavigateMetadata.getSelfRelationColumn();
+        ColumnMetadata selfRelationColumn = getSelfRelationColumn();
         for (Object entity : entities) {
             Object selfRelationId = selfRelationColumn.getGetterCaller().apply(entity);
             Collection<TEntityInclude> targetEntities = targetToManyMap.computeIfAbsent(selfRelationId,k->createManyCollection());

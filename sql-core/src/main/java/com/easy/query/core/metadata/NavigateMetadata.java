@@ -1,14 +1,10 @@
 package com.easy.query.core.metadata;
 
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.RelationTypeEnum;
-import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
-import com.easy.query.core.util.EasyClassUtil;
-import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyStringUtil;
-
-import java.util.Collection;
 
 /**
  * create time 2023/6/17 19:13
@@ -43,7 +39,6 @@ public class NavigateMetadata {
     private final PropertySetterCaller<Object> setter;
     private String selfMappingProperty;
     private String targetMappingProperty;
-    private ColumnMetadata selfColumn;
 
     public NavigateMetadata(EntityMetadata entityMetadata, String propertyName, Class<?> navigateOriginalPropertyType, Class<?> navigatePropertyType, RelationTypeEnum relationType, String selfProperty, String targetProperty, Property<Object, ?> getter, PropertySetterCaller<Object> setter) {
         this.entityMetadata = entityMetadata;
@@ -81,8 +76,24 @@ public class NavigateMetadata {
         return selfProperty;
     }
 
+    public String getSelfPropertyOrPrimary(){
+
+        if(EasyStringUtil.isNotBlank(selfProperty)){
+            return selfProperty;
+        }
+        return entityMetadata.getSingleKeyProperty();
+    }
+
     public String getTargetProperty() {
         return targetProperty;
+    }
+
+    public String getTargetPropertyOrPrimary(QueryRuntimeContext runtimeContext){
+        if(EasyStringUtil.isNotBlank(targetProperty)){
+            return targetProperty;
+        }
+        EntityMetadata targetEntityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(navigatePropertyType);
+        return targetEntityMetadata.getSingleKeyProperty();
     }
 
     public Class<?> getMappingClass() {
@@ -119,20 +130,7 @@ public class NavigateMetadata {
 
 
     public ColumnMetadata getSelfRelationColumn() {
-        if (this.selfColumn == null) {
-
-            String selfPropertyName = EasyStringUtil.isBlank(selfProperty) ? getSelfSingleKeyProperty() : selfProperty;
-            this.selfColumn = entityMetadata.getColumnNotNull(selfPropertyName);
-        }
-        return this.selfColumn;
-    }
-
-    private String getSelfSingleKeyProperty() {
-        Collection<String> keyProperties = entityMetadata.getKeyProperties();
-
-        if (EasyCollectionUtil.isNotSingle(keyProperties)) {
-            throw new EasyQueryInvalidOperationException(EasyClassUtil.getSimpleName(entityMetadata.getEntityClass()) + "multi key not support include");
-        }
-        return EasyCollectionUtil.first(keyProperties);
+        String selfPropertyName = getSelfPropertyOrPrimary();
+        return entityMetadata.getColumnNotNull(selfPropertyName);
     }
 }

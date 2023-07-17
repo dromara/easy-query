@@ -680,4 +680,12 @@ public class EntityMetadata {
     public EntityMetadataTypeEnum getEntityMetadataType() {
         return entityMetadataType;
     }
+
+    public String getSingleKeyProperty(){
+        Collection<String> keyProperties = getKeyProperties();
+        if(EasyCollectionUtil.isNotSingle(keyProperties)){
+            throw new EasyQueryInvalidOperationException("entity :"+EasyClassUtil.getSimpleName(entityClass)+" not single key size :"+keyProperties.size());
+        }
+        return EasyCollectionUtil.first(keyProperties);
+    }
 }

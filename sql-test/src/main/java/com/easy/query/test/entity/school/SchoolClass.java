@@ -25,9 +25,7 @@ public class SchoolClass {
 
     @Navigate(value = RelationTypeEnum.ManyToMany
             , mappingClass = SchoolClassTeacher.class
-            , selfProperty = "id"
             , selfMappingProperty = "classId"
-            , targetProperty = "id"
             , targetMappingProperty = "teacherId")
     private List<SchoolTeacher> schoolTeachers;
 }

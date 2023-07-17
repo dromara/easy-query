@@ -41,6 +41,6 @@ public class NavigateIncludeImpl<TEntity> implements NavigateInclude<TEntity> {
                     .select(o -> o.column(navigateMetadata.getSelfMappingProperty()).column(navigateMetadata.getTargetMappingProperty()));
             includeNavigateParams.setMappingQueryable(mappingQueryable);
         }
-        return queryable.where(o->o.in(navigateMetadata.getTargetProperty(),includeNavigateParams.getRelationIds()));
+        return queryable.where(o->o.in(navigateMetadata.getTargetPropertyOrPrimary(runtimeContext),includeNavigateParams.getRelationIds()));
     }
 }
