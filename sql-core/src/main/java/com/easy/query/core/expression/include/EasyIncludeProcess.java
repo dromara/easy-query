@@ -73,7 +73,7 @@ public class EasyIncludeProcess extends AbstractIncludeProcessor {
         for (Object entity : entities) {
             Object selfRelationId = selfRelationColumn.getGetterCaller().apply(entity);
             Collection<TEntityInclude> targetEntities = targetToManyMap.computeIfAbsent(selfRelationId, k -> createManyCollection());
-            selfRelationColumn.getSetterCaller().call(entity,targetEntities);
+            selfNavigateMetadata.getSetter().call(entity,targetEntities);
         }
     }
 

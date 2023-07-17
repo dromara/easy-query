@@ -27,7 +27,7 @@ public class RelationTest extends BaseTest{
          easyQuery.deletable(SchoolStudentAddress.class)
                  .where(o->o.in(SchoolStudentAddress::getStudentId,ids)).executeRows();
          easyQuery.deletable(SchoolClass.class)
-                 .where(o->o.in(SchoolClass::getId,Arrays.asList("class1","class2"))).executeRows();
+                 .where(o->o.in(SchoolClass::getId,Arrays.asList("class1","class2","class3"))).executeRows();
          easyQuery.deletable(SchoolTeacher.class)
                  .where(o->o.in(SchoolTeacher::getId,Arrays.asList("teacher1","teacher2"))).executeRows();
          easyQuery.deletable(SchoolClassTeacher.class)
@@ -125,7 +125,7 @@ public class RelationTest extends BaseTest{
          easyQuery.deletable(SchoolTeacher.class)
                  .where(o->o.in(SchoolTeacher::getId,Arrays.asList("teacher1","teacher2"))).executeRows();
          easyQuery.deletable(SchoolClassTeacher.class)
-                 .where(o->o.in(SchoolClassTeacher::getClassId,Arrays.asList("class1","class2"))).executeRows();
+                 .where(o->o.in(SchoolClassTeacher::getClassId,Arrays.asList("class1","class2","class3"))).executeRows();
          easyQuery.deletable(SchoolClassTeacher.class)
                  .where(o->o.in(SchoolClassTeacher::getTeacherId,Arrays.asList("teacher1","teacher2"))).executeRows();
      }
@@ -158,6 +158,7 @@ public class RelationTest extends BaseTest{
                 Assert.assertNotNull(schoolStudent);
                 Assert.assertNotNull(schoolStudent.getSchoolStudentAddress());
                 Assert.assertNotNull(schoolStudent.getSchoolStudentAddress().getSchoolStudent());
+                Assert.assertNotNull(schoolStudent.getSchoolClass());
             }
             {
 
@@ -172,10 +173,12 @@ public class RelationTest extends BaseTest{
 
             List<SchoolClass> list2 = easyQuery.queryable(SchoolClass.class)
                     .include(o -> o.many(SchoolClass::getSchoolTeachers))
+                    .include(o -> o.many(SchoolClass::getSchoolStudents))
                     .toList();
             Assert.assertEquals(3,list2.size());
 
             for (SchoolClass schoolClass : list2) {
+                Assert.assertNotNull(schoolClass.getSchoolStudents());
                 if("class1".equals(schoolClass.getId())){
                     Assert.assertNotNull(schoolClass.getSchoolTeachers());
                     Assert.assertEquals(2,schoolClass.getSchoolTeachers().size());
