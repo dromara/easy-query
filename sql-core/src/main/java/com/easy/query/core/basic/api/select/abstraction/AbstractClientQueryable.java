@@ -368,7 +368,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                     includeNavigateParams.getRelationIds().addAll(targetIds);
                 }
                 //导航属性追踪与否
-                List<?> includeResult = tracking ? clientQueryable.asTracking().toList() : clientQueryable.asNoTracking().toList();
+                List<?> includeResult = clientQueryable.asTracking().toList();
 
                 IncludeProcessor includeProcess = includeProcessorFactory.createIncludeProcess(result, navigateMetadata, runtimeContext);
                 includeProcess.process(includeResult, maps);
