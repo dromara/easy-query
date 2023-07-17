@@ -364,16 +364,13 @@ public interface Queryable<T1> extends Query<T1>,
     }
 
     Queryable<T1> unionAll(Collection<Queryable<T1>> unionQueries);
-//   default  <TProperty> Queryable<T1> includes(Property<T1,Collection<TProperty>> navigate, Function<Queryable<TProperty>,Queryable<TProperty>> func){
-//       getEntityQueryable().<TProperty>include(EasyLambdaUtil.getPropertyName(navigate), q->func.apply(new EasyQueryable<>(q)).getEntityQueryable());
-//       return this;
-//   }
-//   default  <TProperty> Queryable<T1> include(Property<T1,TProperty> navigate, Function<Queryable<TProperty>,Queryable<TProperty>> func){
-//       getEntityQueryable().<TProperty>include(EasyLambdaUtil.getPropertyName(navigate), q->func.apply(new EasyQueryable<>(q)).getEntityQueryable());
-//       return this;
-//   }
-   default  <TProperty> Queryable<T1> include(SQLFuncExpression1<SQLNavigateInclude<T1>,Queryable<TProperty>> navigateIncludeSQLExpression){
-       getClientQueryable().<TProperty>include(navigateInclude->navigateIncludeSQLExpression.apply(new SQLNavigateIncludeImpl<>(navigateInclude)).getClientQueryable());
+  default   <TProperty> Queryable<T1> include(SQLFuncExpression1<SQLNavigateInclude<T1>,Queryable<TProperty>> navigateIncludeSQLExpression){
+      return include(true,navigateIncludeSQLExpression);
+  }
+   default  <TProperty> Queryable<T1> include(boolean condition,SQLFuncExpression1<SQLNavigateInclude<T1>,Queryable<TProperty>> navigateIncludeSQLExpression){
+       if(condition){
+           getClientQueryable().<TProperty>include(navigateInclude->navigateIncludeSQLExpression.apply(new SQLNavigateIncludeImpl<>(navigateInclude)).getClientQueryable());
+       }
        return this;
    }
 

@@ -46,7 +46,7 @@ public interface ProxyQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> ex
     T1Proxy get1Proxy();
 
 
-    ClientQueryable<T1> getEntityQueryable();
+    ClientQueryable<T1> getClientQueryable();
 
     <TRProxy extends ProxyEntity<TRProxy, TR>, TR> List<TR> toList(TRProxy trProxy);
 
@@ -77,59 +77,59 @@ public interface ProxyQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> ex
     }
 
     default <TMember extends Number> BigDecimal sumBigDecimalOrDefault(SQLFuncExpression1<T1Proxy, SQLColumn<TMember>> columnSelector, BigDecimal def) {
-        return getEntityQueryable().sumBigDecimalOrDefault(columnSelector.apply(get1Proxy()).value(), def);
+        return getClientQueryable().sumBigDecimalOrDefault(columnSelector.apply(get1Proxy()).value(), def);
     }
 
     default <TMember extends Number> TMember sumOrNull(SQLFuncExpression1<T1Proxy, SQLColumn<TMember>> columnSelector) {
-        return getEntityQueryable().sumOrNull(columnSelector.apply(get1Proxy()).value());
+        return getClientQueryable().sumOrNull(columnSelector.apply(get1Proxy()).value());
     }
 
     default <TMember extends Number> TMember sumOrDefault(SQLFuncExpression1<T1Proxy, SQLColumn<TMember>> columnSelector, TMember def) {
-        return getEntityQueryable().sumOrDefault(columnSelector.apply(get1Proxy()).value(), def);
+        return getClientQueryable().sumOrDefault(columnSelector.apply(get1Proxy()).value(), def);
     }
 
     default <TMember extends Comparable<?>> TMember maxOrNull(SQLFuncExpression1<T1Proxy, SQLColumn<TMember>> columnSelector) {
-        return getEntityQueryable().maxOrNull(columnSelector.apply(get1Proxy()).value());
+        return getClientQueryable().maxOrNull(columnSelector.apply(get1Proxy()).value());
     }
 
     default <TMember extends Comparable<?>> TMember maxOrDefault(SQLFuncExpression1<T1Proxy, SQLColumn<TMember>> columnSelector, TMember def) {
-        return getEntityQueryable().maxOrDefault(columnSelector.apply(get1Proxy()).value(), def);
+        return getClientQueryable().maxOrDefault(columnSelector.apply(get1Proxy()).value(), def);
     }
 
     default <TMember> TMember minOrNull(SQLFuncExpression1<T1Proxy, SQLColumn<TMember>> columnSelector) {
-        return getEntityQueryable().minOrNull(columnSelector.apply(get1Proxy()).value());
+        return getClientQueryable().minOrNull(columnSelector.apply(get1Proxy()).value());
     }
 
     default <TMember> TMember minOrDefault(SQLFuncExpression1<T1Proxy, SQLColumn<TMember>> columnSelector, TMember def) {
-        return getEntityQueryable().minOrDefault(columnSelector.apply(get1Proxy()).value(), def);
+        return getClientQueryable().minOrDefault(columnSelector.apply(get1Proxy()).value(), def);
     }
 
     default <TMember extends Number> Double avgOrNull(SQLFuncExpression1<T1Proxy, SQLColumn<TMember>> columnSelector) {
-        return getEntityQueryable().avgOrNull(columnSelector.apply(get1Proxy()).value());
+        return getClientQueryable().avgOrNull(columnSelector.apply(get1Proxy()).value());
     }
 
     default <TMember extends Number> BigDecimal avgBigDecimalOrNull(SQLFuncExpression1<T1Proxy, SQLColumn<TMember>> columnSelector) {
-        return getEntityQueryable().avgBigDecimalOrNull(columnSelector.apply(get1Proxy()).value());
+        return getClientQueryable().avgBigDecimalOrNull(columnSelector.apply(get1Proxy()).value());
     }
 
     default <TMember extends Number> Float avgFloatOrNull(SQLFuncExpression1<T1Proxy, SQLColumn<TMember>> columnSelector) {
-        return getEntityQueryable().avgFloatOrNull(columnSelector.apply(get1Proxy()).value());
+        return getClientQueryable().avgFloatOrNull(columnSelector.apply(get1Proxy()).value());
     }
 
     default <TMember extends Number> Double avgOrDefault(SQLFuncExpression1<T1Proxy, SQLColumn<TMember>> columnSelector, Double def) {
-        return getEntityQueryable().avgOrDefault(columnSelector.apply(get1Proxy()).value(), def);
+        return getClientQueryable().avgOrDefault(columnSelector.apply(get1Proxy()).value(), def);
     }
 
     default BigDecimal avgOrDefault(SQLFuncExpression1<T1Proxy, SQLColumn<BigDecimal>> columnSelector, BigDecimal def) {
-        return getEntityQueryable().avgOrDefault(columnSelector.apply(get1Proxy()).value(), def);
+        return getClientQueryable().avgOrDefault(columnSelector.apply(get1Proxy()).value(), def);
     }
 
     default Float avgOrDefault(SQLFuncExpression1<T1Proxy, SQLColumn<Float>> columnSelector, Float def) {
-        return getEntityQueryable().avgOrDefault(columnSelector.apply(get1Proxy()).value(), def);
+        return getClientQueryable().avgOrDefault(columnSelector.apply(get1Proxy()).value(), def);
     }
 
     default <TMember extends Number, TResult extends Number> TResult avgOrDefault(SQLFuncExpression1<T1Proxy, SQLColumn<TMember>> columnSelector, TResult def, Class<TResult> resultClass) {
-        return getEntityQueryable().avgOrDefault(columnSelector.apply(get1Proxy()).value(), def, resultClass);
+        return getClientQueryable().avgOrDefault(columnSelector.apply(get1Proxy()).value(), def, resultClass);
     }
 
 
@@ -291,6 +291,7 @@ public interface ProxyQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> ex
     default ProxyQueryable<T1Proxy, T1> orderByAsc(boolean condition, SQLFuncExpression1<T1Proxy, SQLColumn<?>> selectExpression) {
         return orderBy(true, selectExpression, true);
     }
+
     default ProxyQueryable<T1Proxy, T1> orderByDesc(SQLFuncExpression1<T1Proxy, SQLColumn<?>> selectExpression) {
         return orderByDesc(true, selectExpression);
     }
@@ -383,6 +384,18 @@ public interface ProxyQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> ex
     }
 
     ProxyQueryable<T1Proxy, T1> unionAll(Collection<ProxyQueryable<T1Proxy, T1>> unionQueries);
+
+
+//    default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> ProxyQueryable<T1Proxy, T1> include(SQLFuncExpression1<SQLKtNavigateIncludeImpl<T1>, ProxyQueryable<TPropertyProxy, TProperty>> navigateIncludeSQLExpression) {
+//        return include(true, navigateIncludeSQLExpression);
+//    }
+//
+//    default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> ProxyQueryable<T1Proxy, T1> include(boolean condition, SQLFuncExpression1<SQLKtNavigateIncludeImpl<T1>, ProxyQueryable<TPropertyProxy, TProperty>> navigateIncludeSQLExpression) {
+//        if (condition) {
+//            getClientQueryable().<TProperty>include(navigateInclude -> navigateIncludeSQLExpression.apply(new SQLKtNavigateIncludeImpl<>(navigateInclude)).getClientQueryable());
+//        }
+//        return this;
+//    }
 
     /**
      * 自动将查询结果集合全部添加到当前上下文追踪中,如果当前查询结果十分庞大,并且更新数据只有个别条数,建议不要使用

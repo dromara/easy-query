@@ -26,7 +26,4 @@ public interface SQLNavigateInclude<T1> {
        return new EasyQueryable<>(clientQueryable);
    }
 
-    default  <T2> SQLNavigateInclude<T2> then(SQLNavigateInclude<T2> sub) {
-        return sub;
-    }
 }

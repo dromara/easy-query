@@ -3,10 +3,12 @@ package com.easy.query.api4kt.select;
 import com.easy.query.api4kt.sql.SQLKtColumnAsSelector;
 import com.easy.query.api4kt.sql.SQLKtColumnResultSelector;
 import com.easy.query.api4kt.sql.SQLKtGroupBySelector;
+import com.easy.query.api4kt.sql.SQLKtNavigateInclude;
 import com.easy.query.api4kt.sql.SQLKtOrderBySelector;
 import com.easy.query.api4kt.sql.SQLKtWhereAggregatePredicate;
 import com.easy.query.api4kt.sql.SQLKtWherePredicate;
 import com.easy.query.api4kt.sql.impl.SQLKtColumnResultSelectorImpl;
+import com.easy.query.api4kt.sql.impl.SQLKtNavigateIncludeImpl;
 import com.easy.query.api4kt.sql.impl.SQLKtWhereAggregatePredicateImpl;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.api.select.ClientQueryable3;
@@ -14,6 +16,7 @@ import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression3;
 import com.easy.query.core.expression.lambda.SQLExpression4;
+import com.easy.query.core.expression.lambda.SQLFuncExpression3;
 
 import java.math.BigDecimal;
 import java.util.function.Function;
@@ -239,6 +242,22 @@ public interface KtQueryable3<T1, T2, T3> extends KtQueryable<T1> {
     }
 
     KtQueryable3<T1, T2, T3> orderByDesc(boolean condition, SQLExpression3<SQLKtOrderBySelector<T1>, SQLKtOrderBySelector<T2>, SQLKtOrderBySelector<T3>> selectExpression);
+    //endregion
+
+
+    //region include
+
+    default <TProperty> KtQueryable3<T1, T2, T3> include(SQLFuncExpression3<SQLKtNavigateInclude<T1>, SQLKtNavigateInclude<T2>, SQLKtNavigateInclude<T3>, KtQueryable<TProperty>> navigateIncludeSQLExpression) {
+        return include(true, navigateIncludeSQLExpression);
+    }
+
+    default <TProperty> KtQueryable3<T1, T2, T3> include(boolean condition, SQLFuncExpression3<SQLKtNavigateInclude<T1>, SQLKtNavigateInclude<T2>, SQLKtNavigateInclude<T3>, KtQueryable<TProperty>> navigateIncludeSQLExpression) {
+        getClientQueryable3().include(condition, (include1, include2, include3) -> {
+            return navigateIncludeSQLExpression.apply(new SQLKtNavigateIncludeImpl<>(include1), new SQLKtNavigateIncludeImpl<>(include2), new SQLKtNavigateIncludeImpl<>(include3)).getClientQueryable();
+        });
+        return this;
+    }
+
     //endregion
     //region limit
 

@@ -55,7 +55,7 @@ public abstract class AbstractKtQueryable3<T1, T2, T3> extends AbstractKtQueryab
 
     @Override
     public <T4> KtQueryable4<T1, T2, T3, T4> leftJoin(KtQueryable<T4> joinQueryable, SQLExpression4<SQLKtWherePredicate<T1>, SQLKtWherePredicate<T2>, SQLKtWherePredicate<T3>, SQLKtWherePredicate<T4>> on) {
-        ClientQueryable4<T1, T2, T3, T4> entityQueryable4 = entityQueryable3.leftJoin(joinQueryable.getEntityQueryable(), (where1, where2, where3, where4) -> {
+        ClientQueryable4<T1, T2, T3, T4> entityQueryable4 = entityQueryable3.leftJoin(joinQueryable.getClientQueryable(), (where1, where2, where3, where4) -> {
             on.apply(new SQLKtWherePredicateImpl<>(where1), new SQLKtWherePredicateImpl<>(where2), new SQLKtWherePredicateImpl<>(where3), new SQLKtWherePredicateImpl<>(where4));
         });
         return new EasyKtQueryable4<>(entityQueryable4);
@@ -71,7 +71,7 @@ public abstract class AbstractKtQueryable3<T1, T2, T3> extends AbstractKtQueryab
 
     @Override
     public <T4> KtQueryable4<T1, T2, T3, T4> rightJoin(KtQueryable<T4> joinQueryable, SQLExpression4<SQLKtWherePredicate<T1>, SQLKtWherePredicate<T2>, SQLKtWherePredicate<T3>, SQLKtWherePredicate<T4>> on) {
-        ClientQueryable4<T1, T2, T3, T4> entityQueryable4 = entityQueryable3.rightJoin(joinQueryable.getEntityQueryable(), (where1, where2, where3, where4) -> {
+        ClientQueryable4<T1, T2, T3, T4> entityQueryable4 = entityQueryable3.rightJoin(joinQueryable.getClientQueryable(), (where1, where2, where3, where4) -> {
             on.apply(new SQLKtWherePredicateImpl<>(where1), new SQLKtWherePredicateImpl<>(where2), new SQLKtWherePredicateImpl<>(where3), new SQLKtWherePredicateImpl<>(where4));
         });
         return new EasyKtQueryable4<>(entityQueryable4);
@@ -87,7 +87,7 @@ public abstract class AbstractKtQueryable3<T1, T2, T3> extends AbstractKtQueryab
 
     @Override
     public <T4> KtQueryable4<T1, T2, T3, T4> innerJoin(KtQueryable<T4> joinQueryable, SQLExpression4<SQLKtWherePredicate<T1>, SQLKtWherePredicate<T2>, SQLKtWherePredicate<T3>, SQLKtWherePredicate<T4>> on) {
-        ClientQueryable4<T1, T2, T3, T4> entityQueryable4 = entityQueryable3.innerJoin(joinQueryable.getEntityQueryable(), (where1, where2, where3, where4) -> {
+        ClientQueryable4<T1, T2, T3, T4> entityQueryable4 = entityQueryable3.innerJoin(joinQueryable.getClientQueryable(), (where1, where2, where3, where4) -> {
             on.apply(new SQLKtWherePredicateImpl<>(where1), new SQLKtWherePredicateImpl<>(where2), new SQLKtWherePredicateImpl<>(where3), new SQLKtWherePredicateImpl<>(where4));
         });
         return new EasyKtQueryable4<>(entityQueryable4);

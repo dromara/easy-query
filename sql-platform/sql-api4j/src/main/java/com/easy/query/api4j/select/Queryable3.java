@@ -3,10 +3,12 @@ package com.easy.query.api4j.select;
 import com.easy.query.api4j.sql.SQLColumnAsSelector;
 import com.easy.query.api4j.sql.SQLColumnResultSelector;
 import com.easy.query.api4j.sql.SQLGroupBySelector;
+import com.easy.query.api4j.sql.SQLNavigateInclude;
 import com.easy.query.api4j.sql.SQLOrderBySelector;
 import com.easy.query.api4j.sql.SQLWhereAggregatePredicate;
 import com.easy.query.api4j.sql.SQLWherePredicate;
 import com.easy.query.api4j.sql.impl.SQLColumnResultSelectorImpl;
+import com.easy.query.api4j.sql.impl.SQLNavigateIncludeImpl;
 import com.easy.query.api4j.sql.impl.SQLWhereAggregatePredicateImpl;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.api.select.ClientQueryable3;
@@ -14,38 +16,47 @@ import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression3;
 import com.easy.query.core.expression.lambda.SQLExpression4;
+import com.easy.query.core.expression.lambda.SQLFuncExpression3;
 
 import java.math.BigDecimal;
 import java.util.function.Function;
 
 
 /**
+ * @author xuejiaming
  * @FileName: Select3.java
  * @Description: 文件说明
  * @Date: 2023/2/6 22:44
- * @author xuejiaming
  */
 public interface Queryable3<T1, T2, T3> extends Queryable<T1> {
 
     ClientQueryable3<T1, T2, T3> getClientQueryable3();
 
     <T4> Queryable4<T1, T2, T3, T4> leftJoin(Class<T4> joinClass, SQLExpression4<SQLWherePredicate<T1>, SQLWherePredicate<T2>, SQLWherePredicate<T3>, SQLWherePredicate<T4>> on);
-    <T4> Queryable4<T1, T2, T3,T4> leftJoin(Queryable<T4> joinQueryable, SQLExpression4<SQLWherePredicate<T1>, SQLWherePredicate<T2>, SQLWherePredicate<T3>, SQLWherePredicate<T4>> on);
-    <T4> Queryable4<T1, T2, T3,T4> rightJoin(Class<T4> joinClass, SQLExpression4<SQLWherePredicate<T1>, SQLWherePredicate<T2>, SQLWherePredicate<T3>, SQLWherePredicate<T4>> on);
-    <T4> Queryable4<T1, T2, T3,T4> rightJoin(Queryable<T4> joinQueryable, SQLExpression4<SQLWherePredicate<T1>, SQLWherePredicate<T2>, SQLWherePredicate<T3>, SQLWherePredicate<T4>> on);
 
-    <T4> Queryable4<T1, T2, T3,T4> innerJoin(Class<T4> joinClass, SQLExpression4<SQLWherePredicate<T1>, SQLWherePredicate<T2>, SQLWherePredicate<T3>, SQLWherePredicate<T4>> on);
-    <T4> Queryable4<T1, T2, T3,T4> innerJoin(Queryable<T4> joinQueryable, SQLExpression4<SQLWherePredicate<T1>, SQLWherePredicate<T2>, SQLWherePredicate<T3>, SQLWherePredicate<T4>> on);
+    <T4> Queryable4<T1, T2, T3, T4> leftJoin(Queryable<T4> joinQueryable, SQLExpression4<SQLWherePredicate<T1>, SQLWherePredicate<T2>, SQLWherePredicate<T3>, SQLWherePredicate<T4>> on);
+
+    <T4> Queryable4<T1, T2, T3, T4> rightJoin(Class<T4> joinClass, SQLExpression4<SQLWherePredicate<T1>, SQLWherePredicate<T2>, SQLWherePredicate<T3>, SQLWherePredicate<T4>> on);
+
+    <T4> Queryable4<T1, T2, T3, T4> rightJoin(Queryable<T4> joinQueryable, SQLExpression4<SQLWherePredicate<T1>, SQLWherePredicate<T2>, SQLWherePredicate<T3>, SQLWherePredicate<T4>> on);
+
+    <T4> Queryable4<T1, T2, T3, T4> innerJoin(Class<T4> joinClass, SQLExpression4<SQLWherePredicate<T1>, SQLWherePredicate<T2>, SQLWherePredicate<T3>, SQLWherePredicate<T4>> on);
+
+    <T4> Queryable4<T1, T2, T3, T4> innerJoin(Queryable<T4> joinQueryable, SQLExpression4<SQLWherePredicate<T1>, SQLWherePredicate<T2>, SQLWherePredicate<T3>, SQLWherePredicate<T4>> on);
 
     //region where
-    default Queryable3<T1, T2, T3> whereById(Object id){
-        return whereById(true,id);
+    default Queryable3<T1, T2, T3> whereById(Object id) {
+        return whereById(true, id);
     }
+
     Queryable3<T1, T2, T3> whereById(boolean condition, Object id);
-    default Queryable3<T1, T2, T3> whereObject(Object object){
-        return whereObject(true,object);
+
+    default Queryable3<T1, T2, T3> whereObject(Object object) {
+        return whereObject(true, object);
     }
+
     Queryable3<T1, T2, T3> whereObject(boolean condition, Object object);
+
     @Override
     default Queryable3<T1, T2, T3> where(SQLExpression1<SQLWherePredicate<T1>> whereExpression) {
         return where(true, whereExpression);
@@ -53,6 +64,7 @@ public interface Queryable3<T1, T2, T3> extends Queryable<T1> {
 
     @Override
     Queryable3<T1, T2, T3> where(boolean condition, SQLExpression1<SQLWherePredicate<T1>> whereExpression);
+
     default Queryable3<T1, T2, T3> where(SQLExpression3<SQLWherePredicate<T1>, SQLWherePredicate<T2>, SQLWherePredicate<T3>> whereExpression) {
         return where(true, whereExpression);
     }
@@ -227,12 +239,30 @@ public interface Queryable3<T1, T2, T3> extends Queryable<T1> {
 
     @Override
     Queryable3<T1, T2, T3> orderByDesc(boolean condition, SQLExpression1<SQLOrderBySelector<T1>> selectExpression);
+
     default Queryable3<T1, T2, T3> orderByDesc(SQLExpression3<SQLOrderBySelector<T1>, SQLOrderBySelector<T2>, SQLOrderBySelector<T3>> selectExpression) {
         return orderByDesc(true, selectExpression);
     }
 
     Queryable3<T1, T2, T3> orderByDesc(boolean condition, SQLExpression3<SQLOrderBySelector<T1>, SQLOrderBySelector<T2>, SQLOrderBySelector<T3>> selectExpression);
     //endregion
+
+
+    //region include
+
+    default <TProperty> Queryable3<T1, T2, T3> include(SQLFuncExpression3<SQLNavigateInclude<T1>, SQLNavigateInclude<T2>, SQLNavigateInclude<T3>, Queryable<TProperty>> navigateIncludeSQLExpression) {
+        return include(true, navigateIncludeSQLExpression);
+    }
+
+    default <TProperty> Queryable3<T1, T2, T3> include(boolean condition, SQLFuncExpression3<SQLNavigateInclude<T1>, SQLNavigateInclude<T2>, SQLNavigateInclude<T3>, Queryable<TProperty>> navigateIncludeSQLExpression) {
+        getClientQueryable3().include(condition, (include1, include2, include3) -> {
+            return navigateIncludeSQLExpression.apply(new SQLNavigateIncludeImpl<>(include1), new SQLNavigateIncludeImpl<>(include2), new SQLNavigateIncludeImpl<>(include3)).getClientQueryable();
+        });
+        return this;
+    }
+
+    //endregion
+
     //region limit
 
     @Override
@@ -265,15 +295,19 @@ public interface Queryable3<T1, T2, T3> extends Queryable<T1> {
 
     @Override
     Queryable3<T1, T2, T3> enableLogicDelete();
+
     @Override
     Queryable3<T1, T2, T3> useLogicDelete(boolean enable);
 
     @Override
     Queryable3<T1, T2, T3> noInterceptor();
+
     @Override
     Queryable3<T1, T2, T3> useInterceptor(String name);
+
     @Override
     Queryable3<T1, T2, T3> noInterceptor(String name);
+
     @Override
     Queryable3<T1, T2, T3> useInterceptor();
 
@@ -285,27 +319,33 @@ public interface Queryable3<T1, T2, T3> extends Queryable<T1> {
      */
     @Override
     Queryable3<T1, T2, T3> asTracking();
+
     @Override
     Queryable3<T1, T2, T3> asNoTracking();
+
     @Override
     Queryable3<T1, T2, T3> queryLargeColumn(boolean queryLarge);
 
     @Override
     Queryable3<T1, T2, T3> useShardingConfigure(int maxShardingQueryLimit, ConnectionModeEnum connectionMode);
+
     @Override
     Queryable3<T1, T2, T3> useMaxShardingQueryLimit(int maxShardingQueryLimit);
+
     @Override
     Queryable3<T1, T2, T3> useConnectionMode(ConnectionModeEnum connectionMode);
+
     /**
      * 将当前表达式最近的一张表的表名修改成 {@param tableName}
      * 如果当前最近的表是正常的数据库表名,那么直接将表名改写
      * 如果当前最近的表是匿名表比如嵌套queryable的表那么将alias改成对应的表名
+     *
      * @param tableName
      * @return
      */
     @Override
-    default Queryable3<T1, T2, T3> asTable(String tableName){
-        return asTable(old->tableName);
+    default Queryable3<T1, T2, T3> asTable(String tableName) {
+        return asTable(old -> tableName);
     }
 
     /**

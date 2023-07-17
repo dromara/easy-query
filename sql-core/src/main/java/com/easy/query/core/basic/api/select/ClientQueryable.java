@@ -355,7 +355,10 @@ public interface ClientQueryable<T1> extends Query<T1>,
 
     ClientQueryable<T1> unionAll(Collection<ClientQueryable<T1>> unionQueries);
 
-    <TProperty> ClientQueryable<T1> include(SQLFuncExpression1<NavigateInclude<T1>,ClientQueryable<TProperty>> navigateIncludeSQLExpression);
+   default  <TProperty> ClientQueryable<T1> include(SQLFuncExpression1<NavigateInclude<T1>,ClientQueryable<TProperty>> navigateIncludeSQLExpression){
+       return include(true,navigateIncludeSQLExpression);
+   }
+    <TProperty> ClientQueryable<T1> include(boolean condition,SQLFuncExpression1<NavigateInclude<T1>,ClientQueryable<TProperty>> navigateIncludeSQLExpression);
 
     /**
      * 自动将查询结果集合全部添加到当前上下文追踪中,如果当前查询结果十分庞大,并且更新数据只有个别条数,建议不要使用

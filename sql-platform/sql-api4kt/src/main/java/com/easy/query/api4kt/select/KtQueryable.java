@@ -6,6 +6,7 @@ import com.easy.query.api4kt.sql.SQLKtGroupBySelector;
 import com.easy.query.api4kt.sql.SQLKtOrderBySelector;
 import com.easy.query.api4kt.sql.SQLKtWhereAggregatePredicate;
 import com.easy.query.api4kt.sql.SQLKtWherePredicate;
+import com.easy.query.api4kt.sql.impl.SQLKtNavigateIncludeImpl;
 import com.easy.query.api4kt.util.EasyKtLambdaUtil;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.api.dynamic.sort.ObjectSort;
@@ -20,6 +21,7 @@ import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
 import com.easy.query.core.exception.EasyQueryWhereInvalidOperationException;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression2;
+import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import kotlin.reflect.KProperty1;
 
@@ -40,7 +42,7 @@ public interface KtQueryable<T1> extends Query<T1>,
         LogicDeletable<KtQueryable<T1>>,
         TableReNameable<KtQueryable<T1>>,
         QueryStrategy<KtQueryable<T1>> {
-    ClientQueryable<T1> getEntityQueryable();
+    ClientQueryable<T1> getClientQueryable();
 
     /**
      * 只clone表达式共享上下文
@@ -74,63 +76,63 @@ public interface KtQueryable<T1> extends Query<T1>,
      * @return
      */
     default <TMember extends Number> BigDecimal sumBigDecimalOrNull(KProperty1<T1, TMember> column) {
-        return getEntityQueryable().sumBigDecimalOrNull(EasyKtLambdaUtil.getPropertyName(column));
+        return getClientQueryable().sumBigDecimalOrNull(EasyKtLambdaUtil.getPropertyName(column));
     }
 
     default <TMember extends Number> BigDecimal sumBigDecimalOrDefault(KProperty1<T1, TMember> column, BigDecimal def) {
-        return getEntityQueryable().sumBigDecimalOrDefault(EasyKtLambdaUtil.getPropertyName(column), def);
+        return getClientQueryable().sumBigDecimalOrDefault(EasyKtLambdaUtil.getPropertyName(column), def);
     }
 
     default <TMember extends Number> TMember sumOrNull(KProperty1<T1, TMember> column) {
-        return getEntityQueryable().sumOrNull(EasyKtLambdaUtil.getPropertyName(column));
+        return getClientQueryable().sumOrNull(EasyKtLambdaUtil.getPropertyName(column));
     }
 
     default <TMember extends Number> TMember sumOrDefault(KProperty1<T1, TMember> column, TMember def) {
-        return getEntityQueryable().sumOrDefault(EasyKtLambdaUtil.getPropertyName(column), def);
+        return getClientQueryable().sumOrDefault(EasyKtLambdaUtil.getPropertyName(column), def);
     }
 
     default <TMember extends Comparable<?>> TMember maxOrNull(KProperty1<T1, TMember> column) {
-        return getEntityQueryable().maxOrNull(EasyKtLambdaUtil.getPropertyName(column));
+        return getClientQueryable().maxOrNull(EasyKtLambdaUtil.getPropertyName(column));
     }
 
     default <TMember extends Comparable<?>> TMember maxOrDefault(KProperty1<T1, TMember> column, TMember def) {
-        return getEntityQueryable().maxOrDefault(EasyKtLambdaUtil.getPropertyName(column), def);
+        return getClientQueryable().maxOrDefault(EasyKtLambdaUtil.getPropertyName(column), def);
     }
 
     default <TMember> TMember minOrNull(KProperty1<T1, TMember> column) {
-        return getEntityQueryable().minOrNull(EasyKtLambdaUtil.getPropertyName(column));
+        return getClientQueryable().minOrNull(EasyKtLambdaUtil.getPropertyName(column));
     }
 
     default <TMember> TMember minOrDefault(KProperty1<T1, TMember> column, TMember def) {
-        return getEntityQueryable().minOrDefault(EasyKtLambdaUtil.getPropertyName(column), def);
+        return getClientQueryable().minOrDefault(EasyKtLambdaUtil.getPropertyName(column), def);
     }
 
     default <TMember extends Number> Double avgOrNull(KProperty1<T1, TMember> column) {
-        return getEntityQueryable().avgOrNull(EasyKtLambdaUtil.getPropertyName(column));
+        return getClientQueryable().avgOrNull(EasyKtLambdaUtil.getPropertyName(column));
     }
 
     default <TMember extends Number> BigDecimal avgBigDecimalOrNull(KProperty1<T1, TMember> column) {
-        return getEntityQueryable().avgBigDecimalOrNull(EasyKtLambdaUtil.getPropertyName(column));
+        return getClientQueryable().avgBigDecimalOrNull(EasyKtLambdaUtil.getPropertyName(column));
     }
 
     default <TMember extends Number> Float avgFloatOrNull(KProperty1<T1, TMember> column) {
-        return getEntityQueryable().avgFloatOrNull(EasyKtLambdaUtil.getPropertyName(column));
+        return getClientQueryable().avgFloatOrNull(EasyKtLambdaUtil.getPropertyName(column));
     }
 
     default <TMember extends Number> Double avgOrDefault(KProperty1<T1, TMember> column, Double def) {
-        return getEntityQueryable().avgOrDefault(EasyKtLambdaUtil.getPropertyName(column), def);
+        return getClientQueryable().avgOrDefault(EasyKtLambdaUtil.getPropertyName(column), def);
     }
 
     default BigDecimal avgOrDefault(KProperty1<T1, BigDecimal> column, BigDecimal def) {
-        return getEntityQueryable().avgOrDefault(EasyKtLambdaUtil.getPropertyName(column), def);
+        return getClientQueryable().avgOrDefault(EasyKtLambdaUtil.getPropertyName(column), def);
     }
 
     default Float avgOrDefault(KProperty1<T1, Float> column, Float def) {
-        return getEntityQueryable().avgOrDefault(EasyKtLambdaUtil.getPropertyName(column), def);
+        return getClientQueryable().avgOrDefault(EasyKtLambdaUtil.getPropertyName(column), def);
     }
 
     default <TMember extends Number, TResult extends Number> TResult avgOrDefault(KProperty1<T1, TMember> column, TResult def, Class<TResult> resultClass) {
-        return getEntityQueryable().avgOrDefault(EasyKtLambdaUtil.getPropertyName(column), def, resultClass);
+        return getClientQueryable().avgOrDefault(EasyKtLambdaUtil.getPropertyName(column), def, resultClass);
     }
 
     /**
@@ -327,6 +329,18 @@ public interface KtQueryable<T1> extends Query<T1>,
     }
 
     KtQueryable<T1> unionAll(Collection<KtQueryable<T1>> unionQueries);
+
+
+    default   <TProperty> KtQueryable<T1> include(SQLFuncExpression1<SQLKtNavigateIncludeImpl<T1>,KtQueryable<TProperty>> navigateIncludeSQLExpression){
+        return include(true,navigateIncludeSQLExpression);
+    }
+    default  <TProperty> KtQueryable<T1> include(boolean condition,SQLFuncExpression1<SQLKtNavigateIncludeImpl<T1>,KtQueryable<TProperty>> navigateIncludeSQLExpression){
+        if(condition){
+            getClientQueryable().<TProperty>include(navigateInclude->navigateIncludeSQLExpression.apply(new SQLKtNavigateIncludeImpl<>(navigateInclude)).getClientQueryable());
+        }
+        return this;
+    }
+
 
     /**
      * 自动将查询结果集合全部添加到当前上下文追踪中,如果当前查询结果十分庞大,并且更新数据只有个别条数,建议不要使用

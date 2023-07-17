@@ -11,16 +11,20 @@ import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.lambda.SQLExpression3;
+import com.easy.query.core.expression.lambda.SQLFuncExpression1;
+import com.easy.query.core.expression.lambda.SQLFuncExpression2;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnGroupSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnOrderSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnResultSelector;
+import com.easy.query.core.expression.parser.core.base.NavigateInclude;
 import com.easy.query.core.expression.parser.core.base.WhereAggregatePredicate;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.segment.SQLEntitySegment;
 import com.easy.query.core.expression.segment.builder.ProjectSQLBuilderSegmentImpl;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
+import com.easy.query.core.metadata.IncludeNavigateParams;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 
@@ -144,7 +148,7 @@ public abstract class AbstractClientQueryable2<T1, T2> extends AbstractClientQue
 
         TableAvailable table = sqlSegment.getTable();
         String propertyName = sqlSegment.getPropertyName();
-        return selectAggregateList(table,columnFunction,propertyName,resultClass);
+        return selectAggregateList(table, columnFunction, propertyName, resultClass);
     }
 
     @Override
@@ -215,6 +219,19 @@ public abstract class AbstractClientQueryable2<T1, T2> extends AbstractClientQue
             ColumnOrderSelector<T1> sqlOrderColumnSelector1 = getSQLExpressionProvider1().getOrderColumnSelector(false);
             ColumnOrderSelector<T2> sqlOrderColumnSelector2 = getSQLExpressionProvider2().getOrderColumnSelector(false);
             selectExpression.apply(sqlOrderColumnSelector1, sqlOrderColumnSelector2);
+        }
+        return this;
+    }
+
+    @Override
+    public <TProperty> ClientQueryable2<T1, T2> include(boolean condition, SQLFuncExpression2<NavigateInclude<T1>, NavigateInclude<T2>, ClientQueryable<TProperty>> navigateIncludeSQLExpression) {
+        if (condition) {
+            SQLFuncExpression1<IncludeNavigateParams, ClientQueryable<?>> includeQueryableExpression = includeNavigateParams -> {
+                NavigateInclude<T1> navigateInclude1 = sqlExpressionProvider1.getNavigateInclude(includeNavigateParams);
+                NavigateInclude<T2> navigateInclude2 = sqlExpressionProvider2.getNavigateInclude(includeNavigateParams);
+                return navigateIncludeSQLExpression.apply(navigateInclude1, navigateInclude2);
+            };
+            entityQueryExpressionBuilder.getExpressionContext().getIncludes().add(includeQueryableExpression);
         }
         return this;
     }

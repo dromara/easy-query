@@ -8,17 +8,21 @@ import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression4;
+import com.easy.query.core.expression.lambda.SQLFuncExpression1;
+import com.easy.query.core.expression.lambda.SQLFuncExpression4;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnResultSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnGroupSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnOrderSelector;
+import com.easy.query.core.expression.parser.core.base.NavigateInclude;
 import com.easy.query.core.expression.parser.core.base.WhereAggregatePredicate;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.segment.FuncColumnSegment;
 import com.easy.query.core.expression.segment.SQLEntitySegment;
 import com.easy.query.core.expression.segment.builder.ProjectSQLBuilderSegmentImpl;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
+import com.easy.query.core.metadata.IncludeNavigateParams;
 import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.math.BigDecimal;
@@ -218,6 +222,21 @@ public abstract class AbstractClientQueryable4<T1, T2, T3, T4> extends AbstractC
             ColumnOrderSelector<T3> sqlOrderColumnSelector3 = getSQLExpressionProvider3().getOrderColumnSelector(false);
             ColumnOrderSelector<T4> sqlOrderColumnSelector4 = getSQLExpressionProvider4().getOrderColumnSelector(false);
             selectExpression.apply(sqlOrderColumnSelector1, sqlOrderColumnSelector2, sqlOrderColumnSelector3, sqlOrderColumnSelector4);
+        }
+        return this;
+    }
+
+    @Override
+    public <TProperty> ClientQueryable4<T1, T2, T3, T4> include(boolean condition, SQLFuncExpression4<NavigateInclude<T1>, NavigateInclude<T2>, NavigateInclude<T3>, NavigateInclude<T4>, ClientQueryable<TProperty>> navigateIncludeSQLExpression) {
+        if (condition) {
+            SQLFuncExpression1<IncludeNavigateParams, ClientQueryable<?>> includeQueryableExpression = includeNavigateParams -> {
+                NavigateInclude<T1> navigateInclude1 = sqlExpressionProvider1.getNavigateInclude(includeNavigateParams);
+                NavigateInclude<T2> navigateInclude2 = sqlExpressionProvider2.getNavigateInclude(includeNavigateParams);
+                NavigateInclude<T3> navigateInclude3 = sqlExpressionProvider3.getNavigateInclude(includeNavigateParams);
+                NavigateInclude<T4> navigateInclude4 = sqlExpressionProvider4.getNavigateInclude(includeNavigateParams);
+                return navigateIncludeSQLExpression.apply(navigateInclude1, navigateInclude2, navigateInclude3, navigateInclude4);
+            };
+            entityQueryExpressionBuilder.getExpressionContext().getIncludes().add(includeQueryableExpression);
         }
         return this;
     }

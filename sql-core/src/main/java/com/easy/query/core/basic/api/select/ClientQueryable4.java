@@ -5,10 +5,12 @@ import com.easy.query.core.basic.api.select.provider.SQLExpressionProvider;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression4;
+import com.easy.query.core.expression.lambda.SQLFuncExpression4;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
-import com.easy.query.core.expression.parser.core.base.ColumnResultSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnGroupSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnOrderSelector;
+import com.easy.query.core.expression.parser.core.base.ColumnResultSelector;
+import com.easy.query.core.expression.parser.core.base.NavigateInclude;
 import com.easy.query.core.expression.parser.core.base.WhereAggregatePredicate;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 
@@ -175,6 +177,18 @@ public interface ClientQueryable4<T1, T2, T3, T4> extends ClientQueryable<T1> {
 
     ClientQueryable4<T1, T2, T3, T4> orderByDesc(boolean condition, SQLExpression4<ColumnOrderSelector<T1>, ColumnOrderSelector<T2>, ColumnOrderSelector<T3>, ColumnOrderSelector<T4>> selectExpression);
     //endregion
+
+
+    //region include
+
+    default <TProperty> ClientQueryable4<T1, T2, T3, T4> include(SQLFuncExpression4<NavigateInclude<T1>, NavigateInclude<T2>, NavigateInclude<T3>, NavigateInclude<T4>, ClientQueryable<TProperty>> navigateIncludeSQLExpression) {
+        return include(true, navigateIncludeSQLExpression);
+    }
+
+    <TProperty> ClientQueryable4<T1, T2, T3, T4> include(boolean condition, SQLFuncExpression4<NavigateInclude<T1>, NavigateInclude<T2>, NavigateInclude<T3>, NavigateInclude<T4>, ClientQueryable<TProperty>> navigateIncludeSQLExpression);
+
+    //endregion
+
     //region limit
 
     @Override

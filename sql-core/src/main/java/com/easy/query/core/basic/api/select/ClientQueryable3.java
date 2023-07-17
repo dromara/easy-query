@@ -6,10 +6,12 @@ import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression3;
 import com.easy.query.core.expression.lambda.SQLExpression4;
+import com.easy.query.core.expression.lambda.SQLFuncExpression3;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
-import com.easy.query.core.expression.parser.core.base.ColumnResultSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnGroupSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnOrderSelector;
+import com.easy.query.core.expression.parser.core.base.ColumnResultSelector;
+import com.easy.query.core.expression.parser.core.base.NavigateInclude;
 import com.easy.query.core.expression.parser.core.base.WhereAggregatePredicate;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 
@@ -38,10 +40,12 @@ public interface ClientQueryable3<T1, T2, T3> extends ClientQueryable<T1> {
     <T4> ClientQueryable4<T1, T2, T3, T4> innerJoin(ClientQueryable<T4> joinQueryable, SQLExpression4<WherePredicate<T1>, WherePredicate<T2>, WherePredicate<T3>, WherePredicate<T4>> on);
 
     //region where
-    default  ClientQueryable3<T1, T2, T3> whereById(Object id){
-        return whereById(true,id);
+    default ClientQueryable3<T1, T2, T3> whereById(Object id) {
+        return whereById(true, id);
     }
+
     ClientQueryable3<T1, T2, T3> whereById(boolean condition, Object id);
+
     default ClientQueryable3<T1, T2, T3> whereObject(Object object) {
         return whereObject(true, object);
     }
@@ -189,6 +193,17 @@ public interface ClientQueryable3<T1, T2, T3> extends ClientQueryable<T1> {
 
     ClientQueryable3<T1, T2, T3> orderByDesc(boolean condition, SQLExpression3<ColumnOrderSelector<T1>, ColumnOrderSelector<T2>, ColumnOrderSelector<T3>> selectExpression);
     //endregion
+
+    //region include
+
+    default <TProperty> ClientQueryable3<T1, T2, T3> include(SQLFuncExpression3<NavigateInclude<T1>, NavigateInclude<T2>, NavigateInclude<T3>, ClientQueryable<TProperty>> navigateIncludeSQLExpression) {
+        return include(true, navigateIncludeSQLExpression);
+    }
+
+    <TProperty> ClientQueryable3<T1, T2, T3> include(boolean condition, SQLFuncExpression3<NavigateInclude<T1>, NavigateInclude<T2>, NavigateInclude<T3>, ClientQueryable<TProperty>> navigateIncludeSQLExpression);
+
+    //endregion
+
     //region limit
 
     @Override

@@ -77,7 +77,7 @@ public abstract class AbstractProxyQueryable3<T1Proxy extends ProxyEntity<T1Prox
 
     @Override
     public <T4Proxy extends ProxyEntity<T4Proxy, T4>, T4> ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> leftJoin(ProxyQueryable<T4Proxy, T4> joinQueryable, SQLExpression5<ProxyFilter, T1Proxy, T2Proxy, T3Proxy, T4Proxy> on) {
-        ClientQueryable4<T1, T2, T3, T4> entityQueryable4 = entityQueryable3.leftJoin(joinQueryable.getEntityQueryable(), (wherePredicate1, wherePredicate2, wherePredicate3, wherePredicate4) -> {
+        ClientQueryable4<T1, T2, T3, T4> entityQueryable4 = entityQueryable3.leftJoin(joinQueryable.getClientQueryable(), (wherePredicate1, wherePredicate2, wherePredicate3, wherePredicate4) -> {
             on.apply(new ProxyFilterImpl(wherePredicate4.getFilter()), get1Proxy(), get2Proxy(), get3Proxy(), joinQueryable.get1Proxy());
         });
         return new EasyProxyQueryable4<>(get1Proxy(), get2Proxy(), get3Proxy(), joinQueryable.get1Proxy(), entityQueryable4);
@@ -93,7 +93,7 @@ public abstract class AbstractProxyQueryable3<T1Proxy extends ProxyEntity<T1Prox
 
     @Override
     public <T4Proxy extends ProxyEntity<T4Proxy, T4>, T4> ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> rightJoin(ProxyQueryable<T4Proxy, T4> joinQueryable, SQLExpression5<ProxyFilter, T1Proxy, T2Proxy, T3Proxy, T4Proxy> on) {
-        ClientQueryable4<T1, T2, T3, T4> entityQueryable4 = entityQueryable3.rightJoin(joinQueryable.getEntityQueryable(), (wherePredicate1, wherePredicate2, wherePredicate3, wherePredicate4) -> {
+        ClientQueryable4<T1, T2, T3, T4> entityQueryable4 = entityQueryable3.rightJoin(joinQueryable.getClientQueryable(), (wherePredicate1, wherePredicate2, wherePredicate3, wherePredicate4) -> {
             on.apply(new ProxyFilterImpl(wherePredicate4.getFilter()), get1Proxy(), get2Proxy(), get3Proxy(), joinQueryable.get1Proxy());
         });
         return new EasyProxyQueryable4<>(get1Proxy(), get2Proxy(), get3Proxy(), joinQueryable.get1Proxy(), entityQueryable4);
@@ -109,7 +109,7 @@ public abstract class AbstractProxyQueryable3<T1Proxy extends ProxyEntity<T1Prox
 
     @Override
     public <T4Proxy extends ProxyEntity<T4Proxy, T4>, T4> ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> innerJoin(ProxyQueryable<T4Proxy, T4> joinQueryable, SQLExpression5<ProxyFilter, T1Proxy, T2Proxy, T3Proxy, T4Proxy> on) {
-        ClientQueryable4<T1, T2, T3, T4> entityQueryable4 = entityQueryable3.innerJoin(joinQueryable.getEntityQueryable(), (wherePredicate1, wherePredicate2, wherePredicate3, wherePredicate4) -> {
+        ClientQueryable4<T1, T2, T3, T4> entityQueryable4 = entityQueryable3.innerJoin(joinQueryable.getClientQueryable(), (wherePredicate1, wherePredicate2, wherePredicate3, wherePredicate4) -> {
             on.apply(new ProxyFilterImpl(wherePredicate4.getFilter()), get1Proxy(), get2Proxy(), get3Proxy(), joinQueryable.get1Proxy());
         });
         return new EasyProxyQueryable4<>(get1Proxy(), get2Proxy(), get3Proxy(), joinQueryable.get1Proxy(), entityQueryable4);

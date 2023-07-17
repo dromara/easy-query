@@ -342,7 +342,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                     throw new EasyQueryInvalidOperationException("only support entity");
                 }
                 if (!Objects.equals(navigateMetadata.getNavigatePropertyType(), clientQueryable.queryClass())) {
-                    throw new EasyQueryInvalidOperationException("only support entity:"+EasyClassUtil.getSimpleName(navigateMetadata.getNavigatePropertyType())+",now :"+EasyClassUtil.getSimpleName(clientQueryable.queryClass()));
+                    throw new EasyQueryInvalidOperationException("only support entity:" + EasyClassUtil.getSimpleName(navigateMetadata.getNavigatePropertyType()) + ",now :" + EasyClassUtil.getSimpleName(clientQueryable.queryClass()));
                 }
                 ColumnMetadata selfRelationColumn = navigateMetadata.getSelfRelationColumn();
                 Property<Object, ?> relationPropertyGetter = selfRelationColumn.getGetterCaller();
@@ -350,10 +350,10 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                         .collect(Collectors.toSet());
 
                 includeNavigateParams.getRelationIds().addAll(relationIds);
-                List<Map<String, Object>> maps=null;
-                if(RelationTypeEnum.ManyToMany==navigateMetadata.getRelationType()){
+                List<Map<String, Object>> maps = null;
+                if (RelationTypeEnum.ManyToMany == navigateMetadata.getRelationType()) {
                     ClientQueryable<?> mappingQueryable = includeNavigateParams.getMappingQueryable();
-                    if(mappingQueryable==null){
+                    if (mappingQueryable == null) {
                         throw new EasyQueryInvalidOperationException("relation many to many mapping queryable is null");
                     }
                     maps = mappingQueryable.toMaps();
@@ -368,7 +368,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                 List<?> includeResult = clientQueryable.toList();
 
                 IncludeProcessor includeProcess = includeProcessorFactory.createIncludeProcess(result, navigateMetadata, runtimeContext);
-                includeProcess.process(includeResult,maps);
+                includeProcess.process(includeResult, maps);
             }
         }
         //将当前方法设置为unknown
@@ -845,16 +845,15 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     }
 
     @Override
-    public <TProperty> ClientQueryable<T1> include(SQLFuncExpression1<NavigateInclude<T1>, ClientQueryable<TProperty>> navigateIncludeSQLExpression) {
-//        IncludeNavigateParams includeNavigateParams = new IncludeNavigateParams();
-//        NavigateInclude<T1> navigateInclude = sqlExpressionProvider1.getNavigateInclude(includeNavigateParams);
-//        ClientQueryable<TProperty> clientQueryable = navigateIncludeSQLExpression.apply(navigateInclude);
+    public <TProperty> ClientQueryable<T1> include(boolean condition, SQLFuncExpression1<NavigateInclude<T1>, ClientQueryable<TProperty>> navigateIncludeSQLExpression) {
+        if (condition) {
 
-        SQLFuncExpression1<IncludeNavigateParams, ClientQueryable<?>> includeQueryableExpression = includeNavigateParams -> {
-            NavigateInclude<T1> navigateInclude = sqlExpressionProvider1.getNavigateInclude(includeNavigateParams);
-            return navigateIncludeSQLExpression.apply(navigateInclude);
-        };
-        entityQueryExpressionBuilder.getExpressionContext().getIncludes().add(includeQueryableExpression);
+            SQLFuncExpression1<IncludeNavigateParams, ClientQueryable<?>> includeQueryableExpression = includeNavigateParams -> {
+                NavigateInclude<T1> navigateInclude = sqlExpressionProvider1.getNavigateInclude(includeNavigateParams);
+                return navigateIncludeSQLExpression.apply(navigateInclude);
+            };
+            entityQueryExpressionBuilder.getExpressionContext().getIncludes().add(includeQueryableExpression);
+        }
         return this;
     }
 

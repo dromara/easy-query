@@ -3,16 +3,19 @@ package com.easy.query.api4j.select;
 import com.easy.query.api4j.sql.SQLColumnAsSelector;
 import com.easy.query.api4j.sql.SQLColumnResultSelector;
 import com.easy.query.api4j.sql.SQLGroupBySelector;
+import com.easy.query.api4j.sql.SQLNavigateInclude;
 import com.easy.query.api4j.sql.SQLOrderBySelector;
 import com.easy.query.api4j.sql.SQLWhereAggregatePredicate;
 import com.easy.query.api4j.sql.SQLWherePredicate;
 import com.easy.query.api4j.sql.impl.SQLColumnResultSelectorImpl;
+import com.easy.query.api4j.sql.impl.SQLNavigateIncludeImpl;
 import com.easy.query.api4j.sql.impl.SQLWhereAggregatePredicateImpl;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.api.select.ClientQueryable4;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression4;
+import com.easy.query.core.expression.lambda.SQLFuncExpression4;
 
 import java.math.BigDecimal;
 import java.util.function.Function;
@@ -226,6 +229,23 @@ public interface Queryable4<T1, T2, T3, T4> extends Queryable<T1> {
 
     Queryable4<T1, T2, T3, T4> orderByDesc(boolean condition, SQLExpression4<SQLOrderBySelector<T1>, SQLOrderBySelector<T2>, SQLOrderBySelector<T3>, SQLOrderBySelector<T4>> selectExpression);
     //endregion
+
+
+    //region include
+
+    default <TProperty> Queryable4<T1, T2, T3, T4> include(SQLFuncExpression4<SQLNavigateInclude<T1>, SQLNavigateInclude<T2>, SQLNavigateInclude<T3>, SQLNavigateInclude<T4>, Queryable<TProperty>> navigateIncludeSQLExpression) {
+        return include(true, navigateIncludeSQLExpression);
+    }
+
+    default <TProperty> Queryable4<T1, T2, T3, T4> include(boolean condition, SQLFuncExpression4<SQLNavigateInclude<T1>, SQLNavigateInclude<T2>, SQLNavigateInclude<T3>, SQLNavigateInclude<T4>, Queryable<TProperty>> navigateIncludeSQLExpression) {
+        getClientQueryable4().include(condition, (include1, include2, include3, include4) -> {
+            return navigateIncludeSQLExpression.apply(new SQLNavigateIncludeImpl<>(include1), new SQLNavigateIncludeImpl<>(include2), new SQLNavigateIncludeImpl<>(include3), new SQLNavigateIncludeImpl<>(include4)).getClientQueryable();
+        });
+        return this;
+    }
+
+    //endregion
+
     //region limit
 
     @Override

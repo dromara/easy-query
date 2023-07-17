@@ -3,11 +3,13 @@ package com.easy.query.api4j.select;
 import com.easy.query.api4j.sql.SQLColumnAsSelector;
 import com.easy.query.api4j.sql.SQLColumnResultSelector;
 import com.easy.query.api4j.sql.SQLGroupBySelector;
+import com.easy.query.api4j.sql.SQLNavigateInclude;
 import com.easy.query.api4j.sql.SQLOrderBySelector;
 import com.easy.query.api4j.sql.SQLWhereAggregatePredicate;
 import com.easy.query.api4j.sql.SQLWherePredicate;
 import com.easy.query.api4j.sql.impl.SQLColumnResultSelectorImpl;
 import com.easy.query.api4j.sql.impl.SQLGroupBySelectorImpl;
+import com.easy.query.api4j.sql.impl.SQLNavigateIncludeImpl;
 import com.easy.query.api4j.sql.impl.SQLOrderByColumnSelectorImpl;
 import com.easy.query.api4j.sql.impl.SQLWhereAggregatePredicateImpl;
 import com.easy.query.api4j.sql.impl.SQLWherePredicateImpl;
@@ -17,6 +19,7 @@ import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.lambda.SQLExpression3;
+import com.easy.query.core.expression.lambda.SQLFuncExpression2;
 
 import java.math.BigDecimal;
 import java.util.function.Function;
@@ -275,6 +278,22 @@ public interface Queryable2<T1, T2> extends Queryable<T1> {
         return this;
     }
     //endregion
+
+
+    //region include
+
+    default  <TProperty> Queryable2<T1, T2> include(SQLFuncExpression2<SQLNavigateInclude<T1>,SQLNavigateInclude<T2>, Queryable<TProperty>> navigateIncludeSQLExpression){
+        return include(true,navigateIncludeSQLExpression);
+    }
+   default  <TProperty> Queryable2<T1, T2> include(boolean condition,SQLFuncExpression2<SQLNavigateInclude<T1>,SQLNavigateInclude<T2>,Queryable<TProperty>> navigateIncludeSQLExpression){
+        getClientQueryable2().include(condition,(include1,include2)->{
+            return navigateIncludeSQLExpression.apply(new SQLNavigateIncludeImpl<>(include1),new SQLNavigateIncludeImpl<>(include2)).getClientQueryable();
+        });
+        return this;
+   }
+
+    //endregion
+
     //region limit
 
     @Override
