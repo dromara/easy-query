@@ -34,21 +34,21 @@ public @interface Navigate {
 
     /**
      * 多对多填写
-     * 多对多中间表 中间表必须是表对象
+     * 多对多中间表 中间表必须是表对象 多对多不能为空
      * @return
      */
     Class<?> mappingClass() default Object.class;
 
     /**
      * 多对多填写
-     * 当前对象的{@param selfProperty}属性对应中间表的哪个属性,不能为空
+     * 当前对象的{@param selfProperty}属性对应中间表的哪个属性,多对多不能为空
      * @return
      */
     String selfMappingProperty() default "";
 
     /**
      * 多对多填写
-     * 目标对象的{@param targetProperty}属性对应中间表的哪个属性,不能为空
+     * 目标对象的{@param targetProperty}属性对应中间表的哪个属性,多对多不能为空
      * @return
      */
     String targetMappingProperty() default "";

@@ -5,6 +5,7 @@ import com.easy.query.core.annotation.Navigate;
 import com.easy.query.core.annotation.Table;
 import com.easy.query.core.enums.RelationTypeEnum;
 import lombok.Data;
+import lombok.ToString;
 
 import java.util.List;
 
@@ -16,6 +17,7 @@ import java.util.List;
  */
 @Table("school_teacher")
 @Data
+@ToString
 public class SchoolTeacher {
     @Column(primaryKey = true)
     private String id;
@@ -27,5 +29,4 @@ public class SchoolTeacher {
             , targetProperty = "id"
             , targetMappingProperty = "classId")
     private List<SchoolClass> schoolClasses;
-
 }

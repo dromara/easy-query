@@ -1,5 +1,8 @@
 package com.easy.query.test;
 
+import com.easy.query.test.entity.base.Area;
+import com.easy.query.test.entity.base.City;
+import com.easy.query.test.entity.base.Province;
 import com.easy.query.test.entity.school.SchoolClass;
 import com.easy.query.test.entity.school.SchoolClassTeacher;
 import com.easy.query.test.entity.school.SchoolStudent;
@@ -140,6 +143,35 @@ public class RelationTest extends BaseTest{
             for (SchoolStudent schoolStudent : list) {
                 Assert.assertNull(schoolStudent.getSchoolStudentAddress());
             }
+
+            {
+                List<SchoolStudent> list1 = easyQuery.queryable(SchoolStudent.class)
+                        .include(o -> o.one(SchoolStudent::getSchoolClass))
+                        .toList();
+                for (SchoolStudent schoolStudent : list1) {
+                    Assert.assertNotNull(schoolStudent.getSchoolClass());
+                    Assert.assertEquals(schoolStudent.getClassId(),schoolStudent.getSchoolClass().getId());
+                }
+            }
+            {
+                List<SchoolStudent> list1 = easyQuery.queryable(SchoolStudent.class)
+                        .include(o -> o.one(SchoolStudent::getSchoolStudentAddress).asTracking().disableLogicDelete())
+                        .toList();
+                for (SchoolStudent schoolStudent : list1) {
+                    Assert.assertNotNull(schoolStudent.getSchoolStudentAddress());
+                }
+            }
+
+            {
+                List<SchoolClass> list1 = easyQuery.queryable(SchoolClass.class)
+                        .include(o -> o.many(SchoolClass::getSchoolStudents))
+                        .toList();
+                for (SchoolClass schoolClass : list1) {
+                    Assert.assertNotNull(schoolClass.getSchoolStudents());
+                    Assert.assertTrue(schoolClass.getSchoolStudents().size()>=0);
+                }
+            }
+
             List<SchoolStudent> list1 = easyQuery.queryable(SchoolStudent.class)
                     .include(o -> o.one(SchoolStudent::getSchoolStudentAddress))
                     .include(o -> o.one(SchoolStudent::getSchoolClass)).toList();
@@ -169,7 +201,27 @@ public class RelationTest extends BaseTest{
                 Assert.assertNotNull(schoolStudent);
                 Assert.assertNull(schoolStudent.getSchoolStudentAddress());
             }
+            {
+                List<SchoolStudent> list2 = easyQuery.queryable(SchoolStudent.class)
+                        .innerJoin(SchoolClass.class, (t, t1) -> t.eq(t1, SchoolStudent::getClassId, SchoolClass::getId))
+                        .include((t, t1) -> t.one(SchoolStudent::getSchoolStudentAddress))
+                        .toList();
+                Assert.assertEquals(3,list2.size());
+                for (SchoolStudent schoolStudent : list2) {
+                    Assert.assertNotNull(schoolStudent.getSchoolStudentAddress());
+                    Assert.assertEquals(schoolStudent.getId(),schoolStudent.getSchoolStudentAddress().getStudentId());
+                }
+            }
 
+            {
+
+                List<SchoolClass> list2 = easyQuery.queryable(SchoolClass.class)
+                        .include(o -> o.many(SchoolClass::getSchoolTeachers))
+                        .toList();
+                for (SchoolClass schoolClass : list2) {
+                    Assert.assertNotNull(schoolClass.getSchoolTeachers());
+                }
+            }
 
             List<SchoolClass> list2 = easyQuery.queryable(SchoolClass.class)
                     .include(o -> o.many(SchoolClass::getSchoolTeachers))
@@ -211,5 +263,49 @@ public class RelationTest extends BaseTest{
         }finally {
             relationRemove(ids);
         }
+    }
+
+    @Test
+    public void provinceTest(){
+        List<Province> list = easyQuery.queryable(Province.class)
+                .include(o -> o.many(Province::getCities).include(x -> x.many(City::getAreas)))
+                .toList();
+        Assert.assertEquals(2,list.size());
+        for (Province province : list) {
+            Assert.assertNotNull(province.getCities());
+            for (City city : province.getCities()) {
+                Assert.assertEquals(province.getCode(),city.getProvinceCode());
+                Assert.assertNotNull(city.getAreas());
+                for (Area area : city.getAreas()) {
+                    Assert.assertEquals(city.getCode(),area.getCityCode());
+                    Assert.assertEquals(province.getCode(),area.getProvinceCode());
+                }
+            }
+        }
+    }
+
+    @Test
+    public void provinceTest1(){
+
+        List<Province> list = easyQuery.queryable(Province.class)
+                .include(o -> o.many(Province::getCities).where(x->x.eq(City::getCode,"3306"))
+                        .include(x -> x.many(City::getAreas).where(y->y.eq(Area::getCode,"330602"))))
+                .toList();
+
+        Assert.assertEquals(2,list.size());
+        for (Province province : list) {
+            Assert.assertNotNull(province.getCities());
+            for (City city : province.getCities()) {
+                Assert.assertEquals("绍兴市",city.getName());
+                Assert.assertEquals(province.getCode(),city.getProvinceCode());
+                Assert.assertNotNull(city.getAreas());
+                for (Area area : city.getAreas()) {
+                    Assert.assertEquals("越城区",area.getName());
+                    Assert.assertEquals(city.getCode(),area.getCityCode());
+                    Assert.assertEquals(province.getCode(),area.getProvinceCode());
+                }
+            }
+        }
+        System.out.println(list);
     }
 }

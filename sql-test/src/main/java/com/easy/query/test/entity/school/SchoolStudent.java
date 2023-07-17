@@ -5,6 +5,7 @@ import com.easy.query.core.annotation.Navigate;
 import com.easy.query.core.annotation.Table;
 import com.easy.query.core.enums.RelationTypeEnum;
 import lombok.Data;
+import lombok.ToString;
 
 /**
  * create time 2023/7/16 11:28
@@ -14,6 +15,7 @@ import lombok.Data;
  */
 @Table("school_student")
 @Data
+@ToString
 public class SchoolStudent {
     @Column(primaryKey = true)
     private String id;
