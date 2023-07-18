@@ -51,6 +51,7 @@ import com.easy.query.core.util.EasyStringUtil;
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -145,17 +146,18 @@ public class EntityMetadata {
 
         List<Field> allFields = EasyClassUtil.getAllFields(this.entityClass);
         PropertyDescriptor[] ps = getPropertyDescriptor();
+        PropertyDescriptorFinder propertyDescriptorFinder = new PropertyDescriptorFinder(ps);
         int versionCount = 0;
         int logicDelCount = 0;
         FastBean fastBean = EasyBeanUtil.getFastBean(entityClass);
         this.beanConstructorCreator = fastBean.getBeanConstructorCreator();
         for (Field field : allFields) {
             String property = field.getName();
-            if (ignoreProperties.contains(property)) {
+            if (Modifier.isStatic(field.getModifiers()) || ignoreProperties.contains(property)) {
                 continue;
             }
             //未找到bean属性就直接忽略
-            PropertyDescriptor propertyDescriptor = firstOrNull(ps, o -> Objects.equals(o.getName(), property));
+            PropertyDescriptor propertyDescriptor = propertyDescriptorFinder.find(property);
             if (propertyDescriptor == null) {
                 continue;
             }
