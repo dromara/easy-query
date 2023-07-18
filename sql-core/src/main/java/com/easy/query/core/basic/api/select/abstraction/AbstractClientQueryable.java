@@ -495,7 +495,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                         int tableIndex = q.tableIndex();
                         if (tableIndex < 0 || tableIndex > entityQueryExpressionBuilder.getTables().size() - 1) {
                             if (strictMode) {
-                                throw new EasyQueryWhereInvalidOperationException("table index:" + tableIndex + " not found in query context");
+                                throw new EasyQueryWhereInvalidOperationException("table index:[" + tableIndex + "] not found in query context");
                             }
                             continue;
                         }
@@ -508,7 +508,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                         ColumnMetadata columnMetadata = entityMetadata.getColumnOrNull(queryPropertyName);
                         if (columnMetadata == null) {
                             if (strictMode) {
-                                throw new EasyQueryWhereInvalidOperationException("property name:" + field.getName() + " not found query entity class:" + EasyClassUtil.getSimpleName(queryClass()));
+                                throw new EasyQueryWhereInvalidOperationException("property name:[" + queryPropertyName + "] not found query entity class:" + EasyClassUtil.getSimpleName(entityMetadata.getEntityClass()));
                             }
                             continue;
                         }
