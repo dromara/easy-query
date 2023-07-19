@@ -9,7 +9,6 @@ import com.easy.query.api4j.sql.SQLWhereAggregatePredicate;
 import com.easy.query.api4j.sql.SQLWherePredicate;
 import com.easy.query.api4j.sql.impl.SQLColumnResultSelectorImpl;
 import com.easy.query.api4j.sql.impl.SQLGroupBySelectorImpl;
-import com.easy.query.api4j.sql.impl.SQLNavigateIncludeImpl;
 import com.easy.query.api4j.sql.impl.SQLOrderByColumnSelectorImpl;
 import com.easy.query.api4j.sql.impl.SQLWhereAggregatePredicateImpl;
 import com.easy.query.api4j.sql.impl.SQLWherePredicateImpl;
@@ -19,7 +18,7 @@ import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.lambda.SQLExpression3;
-import com.easy.query.core.expression.lambda.SQLFuncExpression2;
+import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 
 import java.math.BigDecimal;
 import java.util.function.Function;
@@ -47,9 +46,10 @@ public interface Queryable2<T1, T2> extends Queryable<T1> {
     <T3> Queryable3<T1, T2, T3> innerJoin(Queryable<T3> joinQueryable, SQLExpression3<SQLWherePredicate<T1>, SQLWherePredicate<T2>, SQLWherePredicate<T3>> on);
 
     //region where
-    default Queryable2<T1, T2> whereById(Object id){
-        return whereById(true,id);
+    default Queryable2<T1, T2> whereById(Object id) {
+        return whereById(true, id);
     }
+
     Queryable2<T1, T2> whereById(boolean condition, Object id);
 
     default Queryable2<T1, T2> whereObject(Object object) {
@@ -282,15 +282,13 @@ public interface Queryable2<T1, T2> extends Queryable<T1> {
 
     //region include
 
-    default  <TProperty> Queryable2<T1, T2> include(SQLFuncExpression2<SQLNavigateInclude<T1>,SQLNavigateInclude<T2>, Queryable<TProperty>> navigateIncludeSQLExpression){
-        return include(true,navigateIncludeSQLExpression);
+    @Override
+    default <TProperty> Queryable2<T1, T2> include(SQLFuncExpression1<SQLNavigateInclude<T1>, Queryable<TProperty>> navigateIncludeSQLExpression) {
+        return include(true, navigateIncludeSQLExpression);
     }
-   default  <TProperty> Queryable2<T1, T2> include(boolean condition,SQLFuncExpression2<SQLNavigateInclude<T1>,SQLNavigateInclude<T2>,Queryable<TProperty>> navigateIncludeSQLExpression){
-        getClientQueryable2().include(condition,(include1,include2)->{
-            return navigateIncludeSQLExpression.apply(new SQLNavigateIncludeImpl<>(include1),new SQLNavigateIncludeImpl<>(include2)).getClientQueryable();
-        });
-        return this;
-   }
+
+    @Override
+    <TProperty> Queryable2<T1, T2> include(boolean condition, SQLFuncExpression1<SQLNavigateInclude<T1>, Queryable<TProperty>> navigateIncludeSQLExpression);
 
     //endregion
 

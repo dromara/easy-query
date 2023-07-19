@@ -8,7 +8,6 @@ import com.easy.query.api4j.sql.SQLOrderBySelector;
 import com.easy.query.api4j.sql.SQLWhereAggregatePredicate;
 import com.easy.query.api4j.sql.SQLWherePredicate;
 import com.easy.query.api4j.sql.impl.SQLColumnResultSelectorImpl;
-import com.easy.query.api4j.sql.impl.SQLNavigateIncludeImpl;
 import com.easy.query.api4j.sql.impl.SQLWhereAggregatePredicateImpl;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.api.select.ClientQueryable3;
@@ -16,7 +15,7 @@ import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression3;
 import com.easy.query.core.expression.lambda.SQLExpression4;
-import com.easy.query.core.expression.lambda.SQLFuncExpression3;
+import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 
 import java.math.BigDecimal;
 import java.util.function.Function;
@@ -250,16 +249,13 @@ public interface Queryable3<T1, T2, T3> extends Queryable<T1> {
 
     //region include
 
-    default <TProperty> Queryable3<T1, T2, T3> include(SQLFuncExpression3<SQLNavigateInclude<T1>, SQLNavigateInclude<T2>, SQLNavigateInclude<T3>, Queryable<TProperty>> navigateIncludeSQLExpression) {
+    @Override
+    default <TProperty> Queryable3<T1, T2, T3> include(SQLFuncExpression1<SQLNavigateInclude<T1>, Queryable<TProperty>> navigateIncludeSQLExpression) {
         return include(true, navigateIncludeSQLExpression);
     }
 
-    default <TProperty> Queryable3<T1, T2, T3> include(boolean condition, SQLFuncExpression3<SQLNavigateInclude<T1>, SQLNavigateInclude<T2>, SQLNavigateInclude<T3>, Queryable<TProperty>> navigateIncludeSQLExpression) {
-        getClientQueryable3().include(condition, (include1, include2, include3) -> {
-            return navigateIncludeSQLExpression.apply(new SQLNavigateIncludeImpl<>(include1), new SQLNavigateIncludeImpl<>(include2), new SQLNavigateIncludeImpl<>(include3)).getClientQueryable();
-        });
-        return this;
-    }
+    @Override
+    <TProperty> Queryable3<T1, T2, T3> include(boolean condition, SQLFuncExpression1<SQLNavigateInclude<T1>, Queryable<TProperty>> navigateIncludeSQLExpression);
 
     //endregion
 

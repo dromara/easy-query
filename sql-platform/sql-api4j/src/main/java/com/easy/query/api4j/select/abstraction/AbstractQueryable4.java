@@ -5,6 +5,7 @@ import com.easy.query.api4j.select.Queryable4;
 import com.easy.query.api4j.select.impl.EasyQueryable;
 import com.easy.query.api4j.sql.SQLColumnAsSelector;
 import com.easy.query.api4j.sql.SQLGroupBySelector;
+import com.easy.query.api4j.sql.SQLNavigateInclude;
 import com.easy.query.api4j.sql.SQLOrderBySelector;
 import com.easy.query.api4j.sql.SQLWhereAggregatePredicate;
 import com.easy.query.api4j.sql.SQLWherePredicate;
@@ -17,6 +18,7 @@ import com.easy.query.core.basic.api.select.ClientQueryable4;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression4;
+import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 
 import java.util.function.Function;
 
@@ -127,6 +129,12 @@ public abstract class AbstractQueryable4<T1, T2, T3, T4> extends AbstractQueryab
                 selectExpression.apply(new SQLOrderByColumnSelectorImpl<>(selector1), new SQLOrderByColumnSelectorImpl<>(selector2), new SQLOrderByColumnSelectorImpl<>(selector3), new SQLOrderByColumnSelectorImpl<>(selector4));
             });
         }
+        return this;
+    }
+
+    @Override
+    public <TProperty> Queryable4<T1, T2, T3, T4> include(boolean condition, SQLFuncExpression1<SQLNavigateInclude<T1>, Queryable<TProperty>> navigateIncludeSQLExpression) {
+        super.include(condition, navigateIncludeSQLExpression);
         return this;
     }
 
