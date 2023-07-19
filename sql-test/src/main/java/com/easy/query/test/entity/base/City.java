@@ -1,6 +1,7 @@
 package com.easy.query.test.entity.base;
 
 import com.easy.query.core.annotation.Column;
+import com.easy.query.core.annotation.ColumnIgnore;
 import com.easy.query.core.annotation.Navigate;
 import com.easy.query.core.annotation.Table;
 import com.easy.query.core.enums.RelationTypeEnum;
@@ -25,4 +26,7 @@ public class City {
     private String name;
     @Navigate(value = RelationTypeEnum.OneToMany,targetProperty = "cityCode")
     private List<Area> areas;
+
+    @ColumnIgnore
+    private Province province;
 }

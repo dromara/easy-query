@@ -13,15 +13,17 @@ import com.easy.query.core.exception.EasyQueryNoPrimaryKeyException;
 import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
 import com.easy.query.core.exception.EasyQueryWhereInvalidOperationException;
 import com.easy.query.core.expression.func.ColumnFunction;
+import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
-import com.easy.query.core.expression.parser.core.base.ColumnSelector;
-import com.easy.query.core.expression.parser.core.base.NavigateInclude;
 import com.easy.query.core.expression.parser.core.base.ColumnGroupSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnOrderSelector;
+import com.easy.query.core.expression.parser.core.base.ColumnSelector;
+import com.easy.query.core.expression.parser.core.base.FillSelector;
+import com.easy.query.core.expression.parser.core.base.NavigateInclude;
 import com.easy.query.core.expression.parser.core.base.WhereAggregatePredicate;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.segment.ColumnSegment;
@@ -31,6 +33,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.BiConsumer;
 
 /**
  * create time 2023/6/1 17:26
@@ -51,10 +54,12 @@ public interface ClientQueryable<T1> extends Query<T1>,
      */
     @Override
     ClientQueryable<T1> cloneQueryable();
+
     <TR> List<TR> toList(Class<TR> resultClass);
 
     /**
      * select count(distinct column) from table
+     *
      * @param selectExpression 指定去重列名
      * @return 具体长度
      */
@@ -127,7 +132,9 @@ public interface ClientQueryable<T1> extends Query<T1>,
     }
 
     <TMember extends Number, TResult extends Number> TResult avgOrDefault(String property, TResult def, Class<TResult> resultClass);
+
     <TMember> List<TMember> selectAggregateList(TableAvailable table, ColumnFunction columnFunction, String property, Class<TMember> resultClass);
+
     /**
      * 对当前表达式返回自定义select列
      *
@@ -217,6 +224,7 @@ public interface ClientQueryable<T1> extends Query<T1>,
 
     /**
      * 仅支持主表的动态对象查询
+     *
      * @param object 对象查询的对象
      * @return 当前链式表达式
      * @throws EasyQueryWhereInvalidOperationException 当object的where属性和查询对象不匹配或者查询对象属性不匹配
@@ -227,8 +235,9 @@ public interface ClientQueryable<T1> extends Query<T1>,
 
     /**
      * 仅支持主表的动态对象查询
+     *
      * @param condition 是否使用对象查询
-     * @param object 对象查询的对象
+     * @param object    对象查询的对象
      * @return 当前链式表达式
      * @throws EasyQueryWhereInvalidOperationException 当object的where属性和查询对象不匹配或者查询对象属性不匹配,无法获取 {@link WherePredicate}
      */
@@ -355,10 +364,36 @@ public interface ClientQueryable<T1> extends Query<T1>,
 
     ClientQueryable<T1> unionAll(Collection<ClientQueryable<T1>> unionQueries);
 
-   default  <TProperty> ClientQueryable<T1> include(SQLFuncExpression1<NavigateInclude<T1>,ClientQueryable<TProperty>> navigateIncludeSQLExpression){
-       return include(true,navigateIncludeSQLExpression);
-   }
-    <TProperty> ClientQueryable<T1> include(boolean condition,SQLFuncExpression1<NavigateInclude<T1>,ClientQueryable<TProperty>> navigateIncludeSQLExpression);
+    default <TREntity> ClientQueryable<T1> include(SQLFuncExpression1<NavigateInclude<T1>, ClientQueryable<TREntity>> navigateIncludeSQLExpression) {
+        return include(true, navigateIncludeSQLExpression);
+    }
+
+    <TREntity> ClientQueryable<T1> include(boolean condition, SQLFuncExpression1<NavigateInclude<T1>, ClientQueryable<TREntity>> navigateIncludeSQLExpression);
+
+    default <TREntity> ClientQueryable<T1> fillMany(SQLFuncExpression1<FillSelector, ClientQueryable<TREntity>> fillSetterExpression, String targetProperty, Property<T1,?> selfProperty, BiConsumer<T1, Collection<TREntity>> produce) {
+        return fillMany(true,fillSetterExpression, targetProperty, selfProperty, produce, false);
+    }
+    default <TREntity> ClientQueryable<T1> fillMany(boolean condition,SQLFuncExpression1<FillSelector, ClientQueryable<TREntity>> fillSetterExpression, String targetProperty, Property<T1,?> selfProperty, BiConsumer<T1, Collection<TREntity>> produce) {
+        return fillMany(condition,fillSetterExpression, targetProperty, selfProperty, produce, false);
+    }
+    default <TREntity> ClientQueryable<T1> fillMany(SQLFuncExpression1<FillSelector, ClientQueryable<TREntity>> fillSetterExpression, String targetProperty, Property<T1,?> selfProperty, BiConsumer<T1, Collection<TREntity>> produce, boolean consumeNull) {
+        return fillMany(true,fillSetterExpression, targetProperty, selfProperty, produce, consumeNull);
+    }
+
+     <TREntity> ClientQueryable<T1> fillMany(boolean condition,SQLFuncExpression1<FillSelector, ClientQueryable<TREntity>> fillSetterExpression, String targetProperty, Property<T1,?> selfProperty, BiConsumer<T1, Collection<TREntity>> produce, boolean consumeNull);
+
+    default <TREntity> ClientQueryable<T1> fillOne(SQLFuncExpression1<FillSelector, ClientQueryable<TREntity>> fillSetterExpression, String targetProperty, Property<T1,?> selfProperty, BiConsumer<T1, TREntity> produce) {
+        return fillOne(true,fillSetterExpression, targetProperty, selfProperty, produce);
+    }
+
+    default <TREntity> ClientQueryable<T1> fillOne(boolean condition,SQLFuncExpression1<FillSelector, ClientQueryable<TREntity>> fillSetterExpression, String targetProperty, Property<T1,?> selfProperty, BiConsumer<T1, TREntity> produce) {
+        return fillOne(condition,fillSetterExpression, targetProperty, selfProperty, produce, false);
+    }
+    default <TREntity> ClientQueryable<T1> fillOne(SQLFuncExpression1<FillSelector, ClientQueryable<TREntity>> fillSetterExpression, String targetProperty, Property<T1,?> selfProperty, BiConsumer<T1, TREntity> produce, boolean consumeNull) {
+        return fillOne(true,fillSetterExpression, targetProperty, selfProperty, produce, consumeNull);
+    }
+
+    <TREntity> ClientQueryable<T1> fillOne(boolean condition,SQLFuncExpression1<FillSelector, ClientQueryable<TREntity>> fillSetterExpression, String targetProperty, Property<T1,?> selfProperty, BiConsumer<T1, TREntity> produce, boolean consumeNull);
 
     /**
      * 自动将查询结果集合全部添加到当前上下文追踪中,如果当前查询结果十分庞大,并且更新数据只有个别条数,建议不要使用

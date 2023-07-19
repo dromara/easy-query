@@ -2,12 +2,15 @@ package com.easy.query.api4j.select;
 
 import com.easy.query.api4j.sql.SQLColumnAsSelector;
 import com.easy.query.api4j.sql.SQLColumnSelector;
+import com.easy.query.api4j.sql.SQLFillSelector;
 import com.easy.query.api4j.sql.SQLGroupBySelector;
 import com.easy.query.api4j.sql.SQLNavigateInclude;
 import com.easy.query.api4j.sql.SQLOrderBySelector;
 import com.easy.query.api4j.sql.SQLWhereAggregatePredicate;
 import com.easy.query.api4j.sql.SQLWherePredicate;
+import com.easy.query.api4j.sql.impl.SQLFillSelectorImpl;
 import com.easy.query.api4j.sql.impl.SQLNavigateIncludeImpl;
+import com.easy.query.api4j.util.EasyLambdaUtil;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.api.dynamic.sort.ObjectSort;
 import com.easy.query.core.basic.api.internal.Interceptable;
@@ -26,13 +29,13 @@ import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.segment.ColumnSegment;
-import com.easy.query.api4j.util.EasyLambdaUtil;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.BiConsumer;
 
 /**
  * @author xuejiaming
@@ -55,10 +58,10 @@ public interface Queryable<T1> extends Query<T1>,
      */
     @Override
     Queryable<T1> cloneQueryable();
+
     <TR> List<TR> toList(Class<TR> resultClass);
 
     long countDistinct(SQLExpression1<SQLColumnSelector<T1>> selectExpression);
-
 
 
     /**
@@ -179,9 +182,9 @@ public interface Queryable<T1> extends Query<T1>,
     @Override
     Queryable<T1> select(String columns);
 
-   default Queryable<T1> select(ColumnSegment columnSegment, boolean clearAll){
-       return select(Collections.singletonList(columnSegment), clearAll);
-   }
+    default Queryable<T1> select(ColumnSegment columnSegment, boolean clearAll) {
+        return select(Collections.singletonList(columnSegment), clearAll);
+    }
 
     Queryable<T1> select(Collection<ColumnSegment> columnSegments, boolean clearAll);
 
@@ -325,6 +328,7 @@ public interface Queryable<T1> extends Query<T1>,
 
     @Override
     Queryable<T1> limit(boolean condition, long offset, long rows);
+
     <T2> Queryable2<T1, T2> leftJoin(Class<T2> joinClass, SQLExpression2<SQLWherePredicate<T1>, SQLWherePredicate<T2>> on);
 
     <T2> Queryable2<T1, T2> leftJoin(Queryable<T2> joinQueryable, SQLExpression2<SQLWherePredicate<T1>, SQLWherePredicate<T2>> on);
@@ -364,15 +368,63 @@ public interface Queryable<T1> extends Query<T1>,
     }
 
     Queryable<T1> unionAll(Collection<Queryable<T1>> unionQueries);
-  default   <TProperty> Queryable<T1> include(SQLFuncExpression1<SQLNavigateInclude<T1>,Queryable<TProperty>> navigateIncludeSQLExpression){
-      return include(true,navigateIncludeSQLExpression);
-  }
-   default  <TProperty> Queryable<T1> include(boolean condition,SQLFuncExpression1<SQLNavigateInclude<T1>,Queryable<TProperty>> navigateIncludeSQLExpression){
-       if(condition){
-           getClientQueryable().<TProperty>include(navigateInclude->navigateIncludeSQLExpression.apply(new SQLNavigateIncludeImpl<>(navigateInclude)).getClientQueryable());
-       }
-       return this;
-   }
+
+    default <TProperty> Queryable<T1> include(SQLFuncExpression1<SQLNavigateInclude<T1>, Queryable<TProperty>> navigateIncludeSQLExpression) {
+        return include(true, navigateIncludeSQLExpression);
+    }
+
+    default <TProperty> Queryable<T1> include(boolean condition, SQLFuncExpression1<SQLNavigateInclude<T1>, Queryable<TProperty>> navigateIncludeSQLExpression) {
+        if (condition) {
+            getClientQueryable().<TProperty>include(navigateInclude -> navigateIncludeSQLExpression.apply(new SQLNavigateIncludeImpl<>(navigateInclude)).getClientQueryable());
+        }
+        return this;
+    }
+
+    //region fill
+
+    default <TREntity> Queryable<T1> fillMany(SQLFuncExpression1<SQLFillSelector, Queryable<TREntity>> fillSetterExpression, Property<TREntity, ?> targetProperty, Property<T1, ?> selfProperty, BiConsumer<T1, Collection<TREntity>> produce) {
+        return fillMany(true, fillSetterExpression, targetProperty, selfProperty, produce, false);
+    }
+
+    default <TREntity> Queryable<T1> fillMany(boolean condition, SQLFuncExpression1<SQLFillSelector, Queryable<TREntity>> fillSetterExpression, Property<TREntity, ?> targetProperty, Property<T1, ?> selfProperty, BiConsumer<T1, Collection<TREntity>> produce) {
+        return fillMany(condition, fillSetterExpression, targetProperty, selfProperty, produce, false);
+    }
+
+    default <TREntity> Queryable<T1> fillMany(SQLFuncExpression1<SQLFillSelector, Queryable<TREntity>> fillSetterExpression, Property<TREntity, ?> targetProperty, Property<T1, ?> selfProperty, BiConsumer<T1, Collection<TREntity>> produce, boolean consumeNull) {
+        return fillMany(true, fillSetterExpression, targetProperty, selfProperty, produce, consumeNull);
+    }
+
+    default <TREntity> Queryable<T1> fillMany(boolean condition, SQLFuncExpression1<SQLFillSelector, Queryable<TREntity>> fillSetterExpression, Property<TREntity, ?> targetProperty, Property<T1, ?> selfProperty, BiConsumer<T1, Collection<TREntity>> produce, boolean consumeNull) {
+        if (condition) {
+            getClientQueryable().fillMany(true, fillSelector -> {
+                return fillSetterExpression.apply(new SQLFillSelectorImpl(fillSelector)).getClientQueryable();
+            }, EasyLambdaUtil.getPropertyName(targetProperty), selfProperty, produce, consumeNull);
+        }
+        return this;
+    }
+
+    default <TREntity> Queryable<T1> fillOne(SQLFuncExpression1<SQLFillSelector, Queryable<TREntity>> fillSetterExpression, Property<TREntity, ?> targetProperty, Property<T1, ?> selfProperty, BiConsumer<T1, TREntity> produce) {
+        return fillOne(true,fillSetterExpression, targetProperty, selfProperty, produce);
+    }
+
+    default <TREntity> Queryable<T1> fillOne(boolean condition,SQLFuncExpression1<SQLFillSelector, Queryable<TREntity>> fillSetterExpression, Property<TREntity, ?> targetProperty, Property<T1, ?> selfProperty, BiConsumer<T1, TREntity> produce) {
+        return fillOne(condition,fillSetterExpression, targetProperty, selfProperty, produce, false);
+    }
+    default <TREntity> Queryable<T1> fillOne(SQLFuncExpression1<SQLFillSelector, Queryable<TREntity>> fillSetterExpression, Property<TREntity, ?> targetProperty, Property<T1, ?> selfProperty, BiConsumer<T1, TREntity> produce, boolean consumeNull) {
+        return fillOne(true,fillSetterExpression, targetProperty, selfProperty, produce, consumeNull);
+    }
+
+    default <TREntity> Queryable<T1> fillOne(boolean condition,SQLFuncExpression1<SQLFillSelector, Queryable<TREntity>> fillSetterExpression, Property<TREntity, ?> targetProperty, Property<T1, ?> selfProperty, BiConsumer<T1, TREntity> produce, boolean consumeNull){
+        if (condition) {
+            getClientQueryable().fillOne(true, fillSelector -> {
+                return fillSetterExpression.apply(new SQLFillSelectorImpl(fillSelector)).getClientQueryable();
+            }, EasyLambdaUtil.getPropertyName(targetProperty), selfProperty, produce, consumeNull);
+        }
+        return this;
+    }
+    //endregion
+
+
 
     /**
      * 自动将查询结果集合全部添加到当前上下文追踪中,如果当前查询结果十分庞大,并且更新数据只有个别条数,建议不要使用

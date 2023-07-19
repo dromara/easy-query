@@ -3,12 +3,12 @@ package com.easy.query.core.expression.parser.core.base;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 
 /**
- * create time 2023/6/18 10:43
+ * create time 2023/7/18 17:16
  * 文件说明
  *
  * @author xuejiaming
  */
-public interface NavigateInclude<T1> {
-    <TREntity> ClientQueryable<TREntity> with(String property);
+public interface FillSelector {
 
+    <TREntity> ClientQueryable<TREntity> with(Class<TREntity> entityClass);
 }

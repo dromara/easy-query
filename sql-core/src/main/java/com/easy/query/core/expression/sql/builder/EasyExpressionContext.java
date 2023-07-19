@@ -13,6 +13,7 @@ import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.sql.TableContext;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 import com.easy.query.core.expression.sql.builder.internal.ExpressionContextInterceptor;
+import com.easy.query.core.expression.sql.fill.FillExpression;
 import com.easy.query.core.metadata.IncludeNavigateParams;
 import com.easy.query.core.util.EasyCollectionUtil;
 
@@ -43,6 +44,7 @@ public class EasyExpressionContext implements ExpressionContext {
     private boolean sharding;
     private boolean hasSubQuery;
     private List<SQLFuncExpression1<IncludeNavigateParams, ClientQueryable<?>>> includes;
+    private List<FillExpression> fills;
 
     public EasyExpressionContext(QueryRuntimeContext runtimeContext) {
 
@@ -238,6 +240,20 @@ public class EasyExpressionContext implements ExpressionContext {
     public boolean hasIncludes() {
         return EasyCollectionUtil.isNotEmpty(includes);
     }
+
+    @Override
+    public List<FillExpression> getFills() {
+        if (fills == null) {
+            fills = new ArrayList<>();
+        }
+        return fills;
+    }
+
+    @Override
+    public boolean hasFills() {
+        return EasyCollectionUtil.isNotEmpty(fills);
+    }
+
     @Override
     public TableContext getTableContext() {
         return tableContext;
@@ -259,6 +275,9 @@ public class EasyExpressionContext implements ExpressionContext {
         easyExpressionContext.hasSubQuery = this.hasSubQuery;
         if(hasIncludes()){
             easyExpressionContext.getIncludes().addAll(this.includes);
+        }
+        if(hasFills()){
+            easyExpressionContext.getFills().addAll(this.fills);
         }
         return easyExpressionContext;
     }

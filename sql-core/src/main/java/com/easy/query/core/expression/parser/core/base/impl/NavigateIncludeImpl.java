@@ -28,11 +28,11 @@ public class NavigateIncludeImpl<TEntity> implements NavigateInclude<TEntity> {
     }
 
     @Override
-    public <TProperty> ClientQueryable<TProperty> with(String property) {
+    public <TREntity> ClientQueryable<TREntity> with(String property) {
         NavigateMetadata navigateMetadata = entityTable.getEntityMetadata().getNavigateNotNull(property);
         includeNavigateParams.setNavigateMetadata(navigateMetadata);
         Class<?> navigatePropertyType = navigateMetadata.getNavigatePropertyType();
-        ClientQueryable<TProperty> queryable = runtimeContext.getSQLClientApiFactory().createQueryable(EasyObjectUtil.typeCastNullable(navigatePropertyType), runtimeContext);
+        ClientQueryable<TREntity> queryable = runtimeContext.getSQLClientApiFactory().createQueryable(EasyObjectUtil.typeCastNullable(navigatePropertyType), runtimeContext);
         RelationTypeEnum relationType = navigateMetadata.getRelationType();
         //添加多对多中间表
         if(RelationTypeEnum.ManyToMany==relationType){

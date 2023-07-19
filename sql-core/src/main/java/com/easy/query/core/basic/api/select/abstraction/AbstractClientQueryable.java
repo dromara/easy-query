@@ -39,9 +39,11 @@ import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnGroupSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnOrderSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnSelector;
+import com.easy.query.core.expression.parser.core.base.FillSelector;
 import com.easy.query.core.expression.parser.core.base.NavigateInclude;
 import com.easy.query.core.expression.parser.core.base.WhereAggregatePredicate;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
+import com.easy.query.core.expression.parser.core.base.impl.FillSelectorImpl;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.segment.FuncColumnSegment;
 import com.easy.query.core.expression.segment.SelectConstSegment;
@@ -54,9 +56,11 @@ import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
 import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
+import com.easy.query.core.expression.sql.fill.FillExpression;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
+import com.easy.query.core.metadata.FillParams;
 import com.easy.query.core.metadata.IncludeNavigateParams;
 import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.sharding.manager.ShardingQueryCountManager;
@@ -72,10 +76,12 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -328,9 +334,20 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         EntityExpressionExecutor entityExpressionExecutor = this.entityQueryExpressionBuilder.getRuntimeContext().getEntityExpressionExecutor();
         EntityMetadata entityMetadata = this.entityQueryExpressionBuilder.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(resultClass);
         List<TR> result = entityExpressionExecutor.query(ExecutorContext.create(this.entityQueryExpressionBuilder.getRuntimeContext(), true, executeMethod, tracking), new EntityResultMetadata<>(entityMetadata), entityQueryExpressionBuilder);
-        //将当前方法设置为unknown
+        if (ExecuteMethodEnum.LIST == executeMethod || ExecuteMethodEnum.FIRST == executeMethod) {
+            if (EasyCollectionUtil.isNotEmpty(result)) {
+
+                doIncludes(expressionContext, entityMetadata, result);
+                doFills(expressionContext, result);
+            }
+        }//将当前方法设置为unknown
         setExecuteMethod(ExecuteMethodEnum.UNKNOWN);
-        if (expressionContext.hasIncludes() && EasyCollectionUtil.isNotEmpty(result)) {
+        return result;
+    }
+
+    private <TR> void doIncludes(ExpressionContext expressionContext, EntityMetadata entityMetadata, List<TR> result) {
+
+        if (expressionContext.hasIncludes()) {
             IncludeProcessorFactory includeProcessorFactory = runtimeContext.getIncludeProcessorFactory();
             for (SQLFuncExpression1<IncludeNavigateParams, ClientQueryable<?>> include : expressionContext.getIncludes()) {
 
@@ -374,8 +391,64 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                 includeProcess.process(includeResult, maps);
             }
         }
-        return result;
     }
+
+    private <TR> void doFills(ExpressionContext expressionContext, List<TR> result) {
+
+        if (expressionContext.hasFills()) {
+            for (FillExpression fill : expressionContext.getFills()) {
+                if (!Objects.equals(queryClass(), fill.getFillFromEntityClass())) {
+                    throw new EasyQueryInvalidOperationException("fill expression should from entity class:" + EasyClassUtil.getSimpleName(fill.getFillFromEntityClass()) + ",now:" + EasyClassUtil.getSimpleName(queryClass()));
+                }
+                FillParams fillParams = new FillParams(fill.getTargetProperty());
+                ClientQueryable<?> fillQueryable = fill.getFillSQLFuncExpression().apply(fillParams);
+                if (!Objects.equals(fillQueryable.queryClass(), fillParams.getOriginalEntityClass())) {
+                    throw new EasyQueryInvalidOperationException("fill expression should select original entity class:" + EasyClassUtil.getSimpleName(fillParams.getOriginalEntityClass()) + ",now:" + EasyClassUtil.getSimpleName(fillQueryable.queryClass()));
+                }
+                Set<?> relationIds = result.stream().map(o -> fill.getSelfProperty().apply(o)).filter(Objects::nonNull)
+                        .collect(Collectors.toSet());
+                fillParams.getRelationIds().addAll(relationIds);
+                List<?> list = fillQueryable.toList();
+
+                EntityMetadata targetEntityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(fillQueryable.queryClass());
+                ColumnMetadata targetColumnMetadata = targetEntityMetadata.getColumnNotNull(fill.getTargetProperty());
+
+                if (fill.isMany()) {
+                    HashMap<Object, List<Object>> map = new HashMap<>();
+                    for (Object o : list) {
+                        Object relationId = targetColumnMetadata.getGetterCaller().apply(o);
+                        List<Object> objects = map.computeIfAbsent(relationId, k -> new ArrayList<>());
+                        objects.add(o);
+                    }
+                    BiConsumer<Object, Collection<?>> produceMany = fill.getProduceMany();
+                    for (TR tr : result) {
+                        Object relationId = fill.getSelfProperty().apply(tr);
+                        List<Object> objects = map.get(relationId);
+                        if (fill.isConsumeNull() || objects != null) {
+                            produceMany.accept(tr, objects);
+                        }
+                    }
+                } else {
+
+                    HashMap<Object, Object> map = new HashMap<>();
+                    for (Object o : list) {
+                        Object relationId = targetColumnMetadata.getGetterCaller().apply(o);
+                        map.put(relationId, o);
+                    }
+                    BiConsumer<Object, ?> produceOne = fill.getProduceOne();
+                    for (TR tr : result) {
+                        Object relationId = fill.getSelfProperty().apply(tr);
+                        Object object = map.get(relationId);
+                        if (fill.isConsumeNull() || object != null) {
+                            produceOne.accept(tr, EasyObjectUtil.typeCastNullable(object));
+                        }
+                    }
+                }
+
+            }
+        }
+    }
+
 
     /**
      * 只有select操作运行操作当前projects
@@ -716,7 +789,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
             return easyPageResultProvider.createPageResult(pageIndex, pageSize, total, Collections.emptyList());
         }
         this.limit(offset, realTake);
-        List<TR> data = this.toInternalList(clazz);
+        List<TR> data = this.toList(clazz);
         return easyPageResultProvider.createPageResult(pageIndex, pageSize, total, data);
     }
 
@@ -758,7 +831,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                 return easyPageResultProvider.createShardingPageResult(pageIndex, pageSize, total, Collections.emptyList(), shardingQueryCountManager.getSequenceCountLine());
             }
             this.limit(offset, realTake);
-            List<TR> data = this.toInternalList(clazz);
+            List<TR> data = this.toList(clazz);
             return easyPageResultProvider.createShardingPageResult(pageIndex, pageSize, total, data, shardingQueryCountManager.getSequenceCountLine());
         } finally {
             shardingQueryCountManager.clear();
@@ -854,6 +927,34 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                 return navigateIncludeSQLExpression.apply(navigateInclude);
             };
             entityQueryExpressionBuilder.getExpressionContext().getIncludes().add(includeQueryableExpression);
+        }
+        return this;
+    }
+
+    @Override
+    public <TREntity> ClientQueryable<T1> fillMany(boolean condition, SQLFuncExpression1<FillSelector, ClientQueryable<TREntity>> fillSetterExpression, String targetProperty, Property<T1, ?> selfProperty, BiConsumer<T1, Collection<TREntity>> produce, boolean consumeNull) {
+        if (condition) {
+            SQLFuncExpression1<FillParams, ClientQueryable<?>> fillQueryableExpression = fillParams -> {
+                FillSelectorImpl fillSelector = new FillSelectorImpl(runtimeContext, fillParams);
+                return fillSetterExpression.apply(fillSelector);
+            };
+            FillExpression fillExpression = new FillExpression(queryClass(), true, targetProperty, EasyObjectUtil.typeCastNullable(selfProperty), consumeNull, fillQueryableExpression);
+            fillExpression.setProduceMany(EasyObjectUtil.typeCastNullable(produce));
+            entityQueryExpressionBuilder.getExpressionContext().getFills().add(fillExpression);
+        }
+        return this;
+    }
+
+    @Override
+    public <TREntity> ClientQueryable<T1> fillOne(boolean condition, SQLFuncExpression1<FillSelector, ClientQueryable<TREntity>> fillSetterExpression, String targetProperty, Property<T1, ?> selfProperty, BiConsumer<T1, TREntity> produce, boolean consumeNull) {
+        if (condition) {
+            SQLFuncExpression1<FillParams, ClientQueryable<?>> fillQueryableExpression = fillParams -> {
+                FillSelectorImpl fillSelector = new FillSelectorImpl(runtimeContext, fillParams);
+                return fillSetterExpression.apply(fillSelector);
+            };
+            FillExpression fillExpression = new FillExpression(queryClass(), false, targetProperty, EasyObjectUtil.typeCastNullable(selfProperty), consumeNull, fillQueryableExpression);
+            fillExpression.setProduceOne(EasyObjectUtil.typeCastNullable(produce));
+            entityQueryExpressionBuilder.getExpressionContext().getFills().add(fillExpression);
         }
         return this;
     }

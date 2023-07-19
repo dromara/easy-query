@@ -9,6 +9,7 @@ import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.sql.TableContext;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
+import com.easy.query.core.expression.sql.fill.FillExpression;
 import com.easy.query.core.metadata.IncludeNavigateParams;
 
 import java.util.List;
@@ -61,8 +62,11 @@ public interface ExpressionContext {
     ExpressionContext cloneExpressionContext();
 
 
-    //todo inculde expression
+    //todo inculde expression repeart
     List<SQLFuncExpression1<IncludeNavigateParams, ClientQueryable<?>>> getIncludes();
     boolean hasIncludes();
+
+    List<FillExpression> getFills();
+    boolean hasFills();
 
 }

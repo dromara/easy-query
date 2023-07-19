@@ -2,10 +2,12 @@ package com.easy.query.api4kt.select;
 
 import com.easy.query.api4kt.sql.SQLKtColumnAsSelector;
 import com.easy.query.api4kt.sql.SQLKtColumnSelector;
+import com.easy.query.api4kt.sql.SQLKtFillSelector;
 import com.easy.query.api4kt.sql.SQLKtGroupBySelector;
 import com.easy.query.api4kt.sql.SQLKtOrderBySelector;
 import com.easy.query.api4kt.sql.SQLKtWhereAggregatePredicate;
 import com.easy.query.api4kt.sql.SQLKtWherePredicate;
+import com.easy.query.api4kt.sql.impl.SQLKtFillSelectorImpl;
 import com.easy.query.api4kt.sql.impl.SQLKtNavigateIncludeImpl;
 import com.easy.query.api4kt.util.EasyKtLambdaUtil;
 import com.easy.query.core.api.client.EasyQueryClient;
@@ -19,6 +21,7 @@ import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
 import com.easy.query.core.exception.EasyQueryWhereInvalidOperationException;
+import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
@@ -30,6 +33,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.BiConsumer;
 
 /**
  * @author xuejiaming
@@ -340,6 +344,52 @@ public interface KtQueryable<T1> extends Query<T1>,
         }
         return this;
     }
+
+
+
+    //region fill
+
+    default <TREntity> KtQueryable<T1> fillMany(SQLFuncExpression1<SQLKtFillSelector, KtQueryable<TREntity>> fillSetterExpression, KProperty1<TREntity, ?> targetProperty, Property<T1, ?> selfProperty, BiConsumer<T1, Collection<TREntity>> produce) {
+        return fillMany(true, fillSetterExpression, targetProperty, selfProperty, produce, false);
+    }
+
+    default <TREntity> KtQueryable<T1> fillMany(boolean condition, SQLFuncExpression1<SQLKtFillSelector, KtQueryable<TREntity>> fillSetterExpression, KProperty1<TREntity, ?> targetProperty, Property<T1, ?> selfProperty, BiConsumer<T1, Collection<TREntity>> produce) {
+        return fillMany(condition, fillSetterExpression, targetProperty, selfProperty, produce, false);
+    }
+
+    default <TREntity> KtQueryable<T1> fillMany(SQLFuncExpression1<SQLKtFillSelector, KtQueryable<TREntity>> fillSetterExpression, KProperty1<TREntity, ?> targetProperty, Property<T1, ?> selfProperty, BiConsumer<T1, Collection<TREntity>> produce, boolean consumeNull) {
+        return fillMany(true, fillSetterExpression, targetProperty, selfProperty, produce, consumeNull);
+    }
+
+    default <TREntity> KtQueryable<T1> fillMany(boolean condition, SQLFuncExpression1<SQLKtFillSelector, KtQueryable<TREntity>> fillSetterExpression, KProperty1<TREntity, ?> targetProperty, Property<T1, ?> selfProperty, BiConsumer<T1, Collection<TREntity>> produce, boolean consumeNull) {
+        if (condition) {
+            getClientQueryable().fillMany(true, fillSelector -> {
+                return fillSetterExpression.apply(new SQLKtFillSelectorImpl(fillSelector)).getClientQueryable();
+            }, EasyKtLambdaUtil.getPropertyName(targetProperty), selfProperty, produce, consumeNull);
+        }
+        return this;
+    }
+
+    default <TREntity> KtQueryable<T1> fillOne(SQLFuncExpression1<SQLKtFillSelector, KtQueryable<TREntity>> fillSetterExpression, KProperty1<TREntity, ?> targetProperty, Property<T1, ?> selfProperty, BiConsumer<T1, TREntity> produce) {
+        return fillOne(true,fillSetterExpression, targetProperty, selfProperty, produce);
+    }
+
+    default <TREntity> KtQueryable<T1> fillOne(boolean condition,SQLFuncExpression1<SQLKtFillSelector, KtQueryable<TREntity>> fillSetterExpression, KProperty1<TREntity, ?> targetProperty, Property<T1, ?> selfProperty, BiConsumer<T1, TREntity> produce) {
+        return fillOne(condition,fillSetterExpression, targetProperty, selfProperty, produce, false);
+    }
+    default <TREntity> KtQueryable<T1> fillOne(SQLFuncExpression1<SQLKtFillSelector, KtQueryable<TREntity>> fillSetterExpression, KProperty1<TREntity, ?> targetProperty, Property<T1, ?> selfProperty, BiConsumer<T1, TREntity> produce, boolean consumeNull) {
+        return fillOne(true,fillSetterExpression, targetProperty, selfProperty, produce, consumeNull);
+    }
+
+    default <TREntity> KtQueryable<T1> fillOne(boolean condition,SQLFuncExpression1<SQLKtFillSelector, KtQueryable<TREntity>> fillSetterExpression, KProperty1<TREntity, ?> targetProperty, Property<T1, ?> selfProperty, BiConsumer<T1, TREntity> produce, boolean consumeNull){
+        if (condition) {
+            getClientQueryable().fillOne(true, fillSelector -> {
+                return fillSetterExpression.apply(new SQLKtFillSelectorImpl(fillSelector)).getClientQueryable();
+            }, EasyKtLambdaUtil.getPropertyName(targetProperty), selfProperty, produce, consumeNull);
+        }
+        return this;
+    }
+    //endregion
 
 
     /**
