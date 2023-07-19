@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.easy-query</groupId>
+        <artifactId>easy-query-all</artifactId>
+        <version>1.2.2</version>
+        <relativePath>../../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>sql-solon-plugin</artifactId>
+
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <solon.version>2.3.1</solon.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.easy-query</groupId>
+            <artifactId>sql-api-proxy</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.easy-query</groupId>
+            <artifactId>sql-mysql</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.easy-query</groupId>
+            <artifactId>sql-mssql</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.easy-query</groupId>
+            <artifactId>sql-pgsql</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.easy-query</groupId>
+            <artifactId>sql-h2</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.easy-query</groupId>
+            <artifactId>sql-sqlite</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.easy-query</groupId>
+            <artifactId>sql-api4j</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.noear</groupId>
+            <artifactId>solon.data</artifactId>
+            <version>${solon.version}</version>
+        </dependency>
+
+    </dependencies>
+</project>
