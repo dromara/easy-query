@@ -1,6 +1,7 @@
 package com.easy.query.core.metadata;
 
 import com.easy.query.core.basic.api.select.ClientQueryable;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +16,7 @@ public class IncludeNavigateParams {
     private final List<Object> relationIds;
     private NavigateMetadata navigateMetadata;
     private ClientQueryable<?> mappingQueryable;
+    private TableAvailable table;
     public IncludeNavigateParams(){
         relationIds =new ArrayList<>();
     }
@@ -37,5 +39,13 @@ public class IncludeNavigateParams {
 
     public void setMappingQueryable(ClientQueryable<?> mappingQueryable) {
         this.mappingQueryable = mappingQueryable;
+    }
+
+    public TableAvailable getTable() {
+        return table;
+    }
+
+    public void setTable(TableAvailable table) {
+        this.table = table;
     }
 }

@@ -115,21 +115,22 @@ public class EntityMetadata {
     private final Map<String/*column name*/, ColumnMetadata> column2PropertyMap = new HashMap<>();
 
     private final Set<ActualTable> actualTables = new CopyOnWriteArraySet<>();
-    private final Set<String> dataSources =new CopyOnWriteArraySet<>();
-    private EntityMetadataTypeEnum entityMetadataType=EntityMetadataTypeEnum.BEAN;
+    private final Set<String> dataSources = new CopyOnWriteArraySet<>();
+    private EntityMetadataTypeEnum entityMetadataType = EntityMetadataTypeEnum.BEAN;
     private Supplier<Object> beanConstructorCreator;
+
     public EntityMetadata(Class<?> entityClass) {
         this.entityClass = entityClass;
     }
 
     public void init(ServiceProvider serviceProvider) {
 
-        if(Map.class.isAssignableFrom(entityClass)){
-            entityMetadataType=EntityMetadataTypeEnum.MAP;
+        if (Map.class.isAssignableFrom(entityClass)) {
+            entityMetadataType = EntityMetadataTypeEnum.MAP;
             return;
         }
-        if(EasyClassUtil.isBasicType(entityClass)){
-            entityMetadataType=EntityMetadataTypeEnum.BASIC_TYPE;
+        if (EasyClassUtil.isBasicType(entityClass)) {
+            entityMetadataType = EntityMetadataTypeEnum.BASIC_TYPE;
             return;
         }
 
@@ -151,6 +152,7 @@ public class EntityMetadata {
         int logicDelCount = 0;
         FastBean fastBean = EasyBeanUtil.getFastBean(entityClass);
         this.beanConstructorCreator = fastBean.getBeanConstructorCreator();
+        boolean tableEntity = EasyStringUtil.isNotBlank(tableName);
         for (Field field : allFields) {
             String property = field.getName();
             if (Modifier.isStatic(field.getModifiers()) || ignoreProperties.contains(property)) {
@@ -161,39 +163,42 @@ public class EntityMetadata {
             if (propertyDescriptor == null) {
                 continue;
             }
+
+            ColumnIgnore columnIgnore = field.getAnnotation(ColumnIgnore.class);
+            if (columnIgnore != null) {
+                continue;
+            }
             Navigate navigate = field.getAnnotation(Navigate.class);
             if (navigate != null) {
                 String selfProperty = navigate.selfProperty();
                 String targetProperty = navigate.targetProperty();
                 RelationTypeEnum relationType = navigate.value();
                 Class<?> navigateType = getNavigateType(relationType, field, propertyDescriptor);
-                if(navigateType==null){
-                    throw new EasyQueryInvalidOperationException("not found navigate type, property:["+property+"]");
+                if (navigateType == null) {
+                    throw new EasyQueryInvalidOperationException("not found navigate type, property:[" + property + "]");
                 }
 
                 Property<Object, ?> beanGetter = fastBean.getBeanGetter(propertyDescriptor);
                 PropertySetterCaller<Object> beanSetter = fastBean.getBeanSetter(propertyDescriptor);
-                NavigateMetadata navigateMetadata = new NavigateMetadata(this, property,propertyDescriptor.getPropertyType(), navigateType, relationType,selfProperty, targetProperty,beanGetter,beanSetter);
-                if(RelationTypeEnum.ManyToMany==relationType){
-                    if(Objects.equals(Object.class,navigate.mappingClass())){
-                        throw new IllegalArgumentException("relation type many to many map class not default");
-                    }
-                    if(EasyStringUtil.isBlank(navigate.selfMappingProperty())){
-                        throw new IllegalArgumentException("relation type many to many self mapping property is empty");
-                    }
-                    if(EasyStringUtil.isBlank(navigate.targetMappingProperty())){
-                        throw new IllegalArgumentException("relation type many to many target mapping property is empty");
-                    }
-                    navigateMetadata.setMappingClass(navigate.mappingClass());
-                    navigateMetadata.setSelfMappingProperty(navigate.selfMappingProperty());
-                    navigateMetadata.setTargetMappingProperty(navigate.targetMappingProperty());
-                }
-                property2NavigateMap.put(property,navigateMetadata);
-                continue;
-            }
+                NavigateMetadata navigateMetadata = new NavigateMetadata(this, property, propertyDescriptor.getPropertyType(), navigateType, relationType, selfProperty, targetProperty, beanGetter, beanSetter);
 
-            ColumnIgnore columnIgnore = field.getAnnotation(ColumnIgnore.class);
-            if (columnIgnore != null) {
+                if (tableEntity) {
+                    if (RelationTypeEnum.ManyToMany == relationType) {
+                        if (Objects.equals(Object.class, navigate.mappingClass())) {
+                            throw new IllegalArgumentException("relation type many to many map class not default");
+                        }
+                        if (EasyStringUtil.isBlank(navigate.selfMappingProperty())) {
+                            throw new IllegalArgumentException("relation type many to many self mapping property is empty");
+                        }
+                        if (EasyStringUtil.isBlank(navigate.targetMappingProperty())) {
+                            throw new IllegalArgumentException("relation type many to many target mapping property is empty");
+                        }
+                        navigateMetadata.setMappingClass(navigate.mappingClass());
+                        navigateMetadata.setSelfMappingProperty(navigate.selfMappingProperty());
+                        navigateMetadata.setTargetMappingProperty(navigate.targetMappingProperty());
+                    }
+                }
+                property2NavigateMap.put(property, navigateMetadata);
                 continue;
             }
 
@@ -228,7 +233,7 @@ public class EntityMetadata {
 
             }
 
-            if (EasyStringUtil.isNotBlank(tableName)) {
+            if (tableEntity) {
 
                 if (column != null) {
                     if (column.primaryKey()) {
@@ -340,10 +345,9 @@ public class EntityMetadata {
         }
     }
 
-    private Class<?> getNavigateType(RelationTypeEnum relationType,Field field,PropertyDescriptor propertyDescriptor){
+    private Class<?> getNavigateType(RelationTypeEnum relationType, Field field, PropertyDescriptor propertyDescriptor) {
 
-        if(relationType.equals(RelationTypeEnum.OneToMany)||relationType.equals(RelationTypeEnum.ManyToMany)){
-
+        if (relationType.equals(RelationTypeEnum.OneToMany) || relationType.equals(RelationTypeEnum.ManyToMany)) {
             Type genericType = field.getGenericType();
 
             if (genericType instanceof ParameterizedType) {
@@ -464,6 +468,7 @@ public class EntityMetadata {
     public String getPropertyNameOrNull(String columnName) {
         return getPropertyNameOrNull(columnName, null);
     }
+
     public String getPropertyNameNotNull(String columnName) {
         String propertyName = getPropertyNameOrNull(columnName, null);
 
@@ -487,10 +492,11 @@ public class EntityMetadata {
         }
         return columnMetadata.getPropertyName();
     }
+
     public ColumnMetadata getColumnMetadataOrNull(String columnName) {
-        ColumnMetadata columnMetadata=null;
-        if(null==(columnMetadata=column2PropertyMap.get(columnName))){
-            columnMetadata=column2PropertyMap.get(columnName.toLowerCase(Locale.ENGLISH));
+        ColumnMetadata columnMetadata = null;
+        if (null == (columnMetadata = column2PropertyMap.get(columnName))) {
+            columnMetadata = column2PropertyMap.get(columnName.toLowerCase(Locale.ENGLISH));
         }
         return columnMetadata;
 
@@ -539,7 +545,7 @@ public class EntityMetadata {
     public ColumnMetadata getColumnNotNull(String propertyName) {
         ColumnMetadata columnMetadata = getColumnOrNull(propertyName);
         if (columnMetadata == null) {
-            throw new EasyQueryException(String.format("%s not found property:[%s] mapping column name",EasyClassUtil.getSimpleName(entityClass), propertyName));
+            throw new EasyQueryException(String.format("%s not found property:[%s] mapping column name", EasyClassUtil.getSimpleName(entityClass), propertyName));
         }
         return columnMetadata;
     }
@@ -652,7 +658,7 @@ public class EntityMetadata {
             throw new IllegalArgumentException("actual table name");
         }
         dataSources.add(dataSource);
-        actualTables.add(new ActualTable(dataSource,actualTableName));
+        actualTables.add(new ActualTable(dataSource, actualTableName));
     }
 
     public Collection<String> getDataSources() {
@@ -683,10 +689,10 @@ public class EntityMetadata {
         return entityMetadataType;
     }
 
-    public String getSingleKeyProperty(){
+    public String getSingleKeyProperty() {
         Collection<String> keyProperties = getKeyProperties();
-        if(EasyCollectionUtil.isNotSingle(keyProperties)){
-            throw new EasyQueryInvalidOperationException("entity :"+EasyClassUtil.getSimpleName(entityClass)+" not single key size :"+keyProperties.size());
+        if (EasyCollectionUtil.isNotSingle(keyProperties)) {
+            throw new EasyQueryInvalidOperationException("entity :" + EasyClassUtil.getSimpleName(entityClass) + " not single key size :" + keyProperties.size());
         }
         return EasyCollectionUtil.first(keyProperties);
     }

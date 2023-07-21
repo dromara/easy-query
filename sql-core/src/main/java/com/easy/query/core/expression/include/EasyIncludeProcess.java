@@ -2,8 +2,8 @@ package com.easy.query.core.expression.include;
 
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.lambda.Property;
+import com.easy.query.core.expression.sql.include.IncludeParserResult;
 import com.easy.query.core.metadata.ColumnMetadata;
-import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.Collection;
@@ -18,8 +18,8 @@ import java.util.Map;
  */
 public class EasyIncludeProcess extends AbstractIncludeProcessor {
 
-    public EasyIncludeProcess(Collection<?> entities, NavigateMetadata selfNavigateMetadata, QueryRuntimeContext runtimeContext) {
-        super(entities, selfNavigateMetadata, runtimeContext);
+    public EasyIncludeProcess(Collection<?> entities, IncludeParserResult includeParserResult, QueryRuntimeContext runtimeContext) {
+        super(entities, includeParserResult, runtimeContext);
     }
 
     @Override
@@ -33,7 +33,7 @@ public class EasyIncludeProcess extends AbstractIncludeProcessor {
             Object subRelationKey = targetColumnMetadata.getGetterCaller().apply(includeEntity);
             Object entity = entityMap.get(subRelationKey);
             if (entity != null) {
-                selfNavigateMetadata.getSetter().call(entity, includeEntity);
+                includeParserResult.getSetter().call(entity, includeEntity);
             }
         }
     }
@@ -47,7 +47,7 @@ public class EasyIncludeProcess extends AbstractIncludeProcessor {
             Object relationId = selfRelationColumn.getGetterCaller().apply(entity);
             TEntityInclude entityInclude = includeMap.get(relationId);
             if (entityInclude != null) {
-                selfNavigateMetadata.getSetter().call(entity, entityInclude);
+                includeParserResult.getSetter().call(entity, entityInclude);
             }
         }
     }
@@ -73,7 +73,7 @@ public class EasyIncludeProcess extends AbstractIncludeProcessor {
         for (Object entity : entities) {
             Object selfRelationId = selfRelationColumn.getGetterCaller().apply(entity);
             Collection<TEntityInclude> targetEntities = targetToManyMap.computeIfAbsent(selfRelationId, k -> createManyCollection());
-            selfNavigateMetadata.getSetter().call(entity,targetEntities);
+            includeParserResult.getSetter().call(entity,targetEntities);
         }
     }
 
@@ -87,7 +87,7 @@ public class EasyIncludeProcess extends AbstractIncludeProcessor {
         for (Object entity : entities) {
             Object selfRelationId = selfRelationColumn.getGetterCaller().apply(entity);
             Collection<TEntityInclude> targetEntities = targetToManyMap.computeIfAbsent(selfRelationId,k->createManyCollection());
-            selfNavigateMetadata.getSetter().call(entity, targetEntities);
+            includeParserResult.getSetter().call(entity, targetEntities);
         }
     }
 

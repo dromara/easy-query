@@ -5,9 +5,11 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.func.DefaultColumnPropertyFunction;
+import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.SQLColumnSegment;
+import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 
 /**
@@ -19,8 +21,19 @@ import com.easy.query.core.expression.sql.builder.ExpressionContext;
 public interface AsSelector {
     QueryRuntimeContext getRuntimeContext();
     ExpressionContext getExpressionContext();
+    EntityQueryExpressionBuilder getEntityQueryExpressionBuilder();
 
     AsSelector column(TableAvailable table, String property);
+
+    /**
+     * 哪张表的目标属性
+     * @param table
+     * @param selfProperty
+     * @param aliasProperty
+     * @param includeSelectorExpression
+     * @return
+     */
+    AsSelector columnInclude(TableAvailable table, String selfProperty, String aliasProperty, SQLExpression1<AsSelector> includeSelectorExpression);
 
     AsSelector columnConstAs(String columnConst, String alias);
 

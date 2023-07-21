@@ -4,6 +4,7 @@ import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.builder.AsSelector;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
+import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
@@ -59,12 +60,17 @@ public class ColumnAutoAsSelectorImpl<T1, TR> implements ColumnAsSelector<T1, TR
 
     @Override
     public ColumnAsSelector<T1, TR> column(String property) {
-        return null;
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public <TIncludeSource, TIncludeResult> ColumnAsSelector<T1, TR> columnInclude(String property, String aliasProperty, SQLExpression1<ColumnAsSelector<TIncludeSource, TIncludeResult>> includeSelectorExpression) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public ColumnAsSelector<T1, TR> columnConstAs(String columnConst, String alias) {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override

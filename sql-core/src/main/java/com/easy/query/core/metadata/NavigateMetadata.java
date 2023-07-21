@@ -34,13 +34,21 @@ public class NavigateMetadata {
      * 导航属性关联字段
      */
     private final String targetProperty;
-    private Class<?> mappingClass;
     private final Property<Object, ?> getter;
     private final PropertySetterCaller<Object> setter;
+    private Class<?> mappingClass;
     private String selfMappingProperty;
     private String targetMappingProperty;
 
-    public NavigateMetadata(EntityMetadata entityMetadata, String propertyName, Class<?> navigateOriginalPropertyType, Class<?> navigatePropertyType, RelationTypeEnum relationType, String selfProperty, String targetProperty, Property<Object, ?> getter, PropertySetterCaller<Object> setter) {
+    public NavigateMetadata(EntityMetadata entityMetadata,
+                            String propertyName,
+                            Class<?> navigateOriginalPropertyType,
+                            Class<?> navigatePropertyType,
+                            RelationTypeEnum relationType,
+                            String selfProperty,
+                            String targetProperty,
+                            Property<Object, ?> getter,
+                            PropertySetterCaller<Object> setter) {
         this.entityMetadata = entityMetadata;
         this.propertyName = propertyName;
         this.navigateOriginalPropertyType = navigateOriginalPropertyType;

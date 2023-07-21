@@ -4,6 +4,8 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
+import com.easy.query.core.expression.builder.AsSelector;
+import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.ColumnAsConstSegment;
 import com.easy.query.core.expression.segment.ColumnSegment;
@@ -17,15 +19,19 @@ import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.builder.SQLAnonymousUnionEntityQueryExpressionBuilder;
+import com.easy.query.core.expression.sql.include.ColumnIncludeExpression;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
+import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasySQLSegmentUtil;
 import com.easy.query.core.util.EasyUtil;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -38,7 +44,7 @@ public abstract class AbstractSelector<TChain> {
     protected final QueryRuntimeContext runtimeContext;
     protected final SQLSegmentFactory sqlSegmentFactory;
     protected final SQLBuilderSegment sqlBuilderSegment;
-    private final EntityQueryExpressionBuilder entityQueryExpressionBuilder;
+    protected final EntityQueryExpressionBuilder entityQueryExpressionBuilder;
     protected final ExpressionContext expressionContext;
 
     public AbstractSelector(EntityQueryExpressionBuilder entityQueryExpressionBuilder, SQLBuilderSegment sqlBuilderSegment) {
@@ -53,9 +59,18 @@ public abstract class AbstractSelector<TChain> {
     public ExpressionContext getExpressionContext(){
         return expressionContext;
     }
+    public EntityQueryExpressionBuilder getEntityQueryExpressionBuilder(){
+        return entityQueryExpressionBuilder;
+    }
     public TChain column(TableAvailable table, String property) {
         ColumnSegment columnSegment = sqlSegmentFactory.createColumnSegment(table, property, runtimeContext, null);
         sqlBuilderSegment.append(columnSegment);
+        return (TChain) this;
+    }
+    public TChain columnInclude(TableAvailable table, String selfProperty, String aliasProperty, SQLExpression1<AsSelector> includeSelectorExpression) {
+        NavigateMetadata navigateMetadata = table.getEntityMetadata().getNavigateNotNull(selfProperty);
+        Map<String, ColumnIncludeExpression> propertyColumnIncludeExpressionMap = expressionContext.getColumnIncludeMaps().computeIfAbsent(table, k -> new HashMap<>());
+        propertyColumnIncludeExpressionMap.put(navigateMetadata.getSelfProperty(),new ColumnIncludeExpression(table,selfProperty,aliasProperty,includeSelectorExpression));
         return (TChain) this;
     }
 
@@ -88,8 +103,9 @@ public abstract class AbstractSelector<TChain> {
                 if (!columnAllQueryLargeColumn(queryLargeColumn, columnMetadata)) {
                     continue;
                 }
-                ColumnSegment columnSegment = sqlSegmentFactory.createColumnSegment(table, columnMetadata.getPropertyName(), runtimeContext, null);
-                sqlBuilderSegment.append(columnSegment);
+                column(table,columnMetadata.getPropertyName());
+//                ColumnSegment columnSegment = sqlSegmentFactory.createColumnSegment(table, columnMetadata.getPropertyName(), runtimeContext, null);
+//                sqlBuilderSegment.append(columnSegment);
             }
         }
         return (TChain) this;

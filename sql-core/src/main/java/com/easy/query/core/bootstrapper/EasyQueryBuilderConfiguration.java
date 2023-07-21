@@ -50,6 +50,8 @@ import com.easy.query.core.expression.sql.builder.factory.DefaultEasyExpressionB
 import com.easy.query.core.expression.sql.builder.factory.ExpressionBuilderFactory;
 import com.easy.query.core.expression.sql.expression.factory.DefaultEasyExpressionFactory;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
+import com.easy.query.core.expression.sql.include.DefaultIncludeParserEngine;
+import com.easy.query.core.expression.sql.include.IncludeParserEngine;
 import com.easy.query.core.inject.ServiceCollection;
 import com.easy.query.core.inject.ServiceProvider;
 import com.easy.query.core.inject.impl.ServiceCollectionImpl;
@@ -139,6 +141,7 @@ public class EasyQueryBuilderConfiguration {
                 .replaceService(SQLSegmentFactory.class, DefaultSQLSegmentFactory.class)
                 .replaceService(EasyTimeJobManager.class, DefaultEasyTimeJobManager.class)
                 .replaceService(IncludeProcessorFactory.class, EasyIncludeProcessorFactory.class)
+                .replaceService(IncludeParserEngine.class, DefaultIncludeParserEngine.class)
                 .replaceService(EasyQueryClient.class, DefaultEasyQueryClient.class);
     }
 

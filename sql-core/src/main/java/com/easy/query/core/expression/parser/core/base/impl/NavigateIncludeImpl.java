@@ -31,6 +31,7 @@ public class NavigateIncludeImpl<TEntity> implements NavigateInclude<TEntity> {
     public <TREntity> ClientQueryable<TREntity> with(String property) {
         NavigateMetadata navigateMetadata = entityTable.getEntityMetadata().getNavigateNotNull(property);
         includeNavigateParams.setNavigateMetadata(navigateMetadata);
+        includeNavigateParams.setTable(this.entityTable);
         Class<?> navigatePropertyType = navigateMetadata.getNavigatePropertyType();
         ClientQueryable<TREntity> queryable = runtimeContext.getSQLClientApiFactory().createQueryable(EasyObjectUtil.typeCastNullable(navigatePropertyType), runtimeContext);
         RelationTypeEnum relationType = navigateMetadata.getRelationType();

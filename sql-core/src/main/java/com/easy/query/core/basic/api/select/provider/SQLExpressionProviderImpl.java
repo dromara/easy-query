@@ -117,7 +117,7 @@ public class SQLExpressionProviderImpl<TEntity> implements SQLExpressionProvider
 
     @Override
     public <TR> ColumnAsSelector<TEntity, TR> getColumnAsSelector(SQLBuilderSegment sqlSegment0Builder, Class<TR> resultClass) {
-        return new ColumnAsSelectorImpl<>(entityQueryExpressionBuilder,table, new AsSelectorImpl(entityQueryExpressionBuilder, sqlSegment0Builder, resultClass));
+        return new ColumnAsSelectorImpl<>(table, new AsSelectorImpl(entityQueryExpressionBuilder, sqlSegment0Builder, resultClass));
     }
 
     @Override

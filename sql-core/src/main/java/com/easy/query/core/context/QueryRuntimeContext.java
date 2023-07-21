@@ -16,6 +16,7 @@ import com.easy.query.core.expression.parser.factory.SQLExpressionInvokeFactory;
 import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
 import com.easy.query.core.expression.sql.builder.factory.ExpressionBuilderFactory;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
+import com.easy.query.core.expression.sql.include.IncludeParserEngine;
 import com.easy.query.core.job.EasyTimeJobManager;
 import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.sharding.EasyQueryDataSource;
@@ -61,4 +62,5 @@ public interface QueryRuntimeContext {
     DataSourceManager getDataSourceManager();
     EasyTimeJobManager getEasyTimeJobManager();
     IncludeProcessorFactory getIncludeProcessorFactory();
+    IncludeParserEngine getIncludeParserEngine();
 }

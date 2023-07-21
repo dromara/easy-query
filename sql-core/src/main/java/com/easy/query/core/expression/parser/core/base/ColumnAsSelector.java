@@ -6,6 +6,7 @@ import com.easy.query.core.expression.builder.AsSelector;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.func.DefaultColumnPropertyFunction;
+import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 import com.easy.query.core.expression.segment.SQLColumnSegment;
@@ -22,6 +23,10 @@ public interface ColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1> {
     ExpressionContext getExpressionContext();
 
     ColumnAsSelector<T1, TR> column(String property);
+    default ColumnAsSelector<T1, TR> columnInclude(String property, String aliasProperty){
+        return columnInclude(property,aliasProperty, ColumnAsSelector::columnAll);
+    }
+    <TIncludeSource,TIncludeResult> ColumnAsSelector<T1, TR> columnInclude(String property, String aliasProperty, SQLExpression1<ColumnAsSelector<TIncludeSource,TIncludeResult>> includeSelectorExpression);
     ColumnAsSelector<T1, TR> columnConstAs(String columnConst, String alias);
 
     ColumnAsSelector<T1, TR> columnIgnore(String property);

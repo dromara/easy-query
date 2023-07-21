@@ -1,7 +1,7 @@
 package com.easy.query.core.expression.include;
 
 import com.easy.query.core.context.QueryRuntimeContext;
-import com.easy.query.core.metadata.NavigateMetadata;
+import com.easy.query.core.expression.sql.include.IncludeParserResult;
 
 import java.util.Collection;
 
@@ -12,5 +12,5 @@ import java.util.Collection;
  * @author xuejiaming
  */
 public interface IncludeProcessorFactory {
-    <TEntity> IncludeProcessor createIncludeProcess(Collection<TEntity> entities, NavigateMetadata selfNavigateMetadata, QueryRuntimeContext runtimeContext);
+    <TEntity> IncludeProcessor createIncludeProcess(Collection<TEntity> entities, IncludeParserResult includeParserResult, QueryRuntimeContext runtimeContext);
 }

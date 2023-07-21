@@ -10,15 +10,19 @@ import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.sql.TableContext;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 import com.easy.query.core.expression.sql.builder.internal.ExpressionContextInterceptor;
 import com.easy.query.core.expression.sql.fill.FillExpression;
+import com.easy.query.core.expression.sql.include.ColumnIncludeExpression;
 import com.easy.query.core.metadata.IncludeNavigateParams;
 import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.Predicate;
 
@@ -45,6 +49,8 @@ public class EasyExpressionContext implements ExpressionContext {
     private boolean hasSubQuery;
     private List<SQLFuncExpression1<IncludeNavigateParams, ClientQueryable<?>>> includes;
     private List<FillExpression> fills;
+
+    private Map<TableAvailable, Map<String,ColumnIncludeExpression>> columnIncludeMaps;
 
     public EasyExpressionContext(QueryRuntimeContext runtimeContext) {
 
@@ -255,6 +261,19 @@ public class EasyExpressionContext implements ExpressionContext {
     }
 
     @Override
+    public Map<TableAvailable, Map<String,ColumnIncludeExpression>> getColumnIncludeMaps() {
+        if(columnIncludeMaps==null){
+            this.columnIncludeMaps=new HashMap<>();
+        }
+        return columnIncludeMaps;
+    }
+
+    @Override
+    public boolean hasColumnIncludeMaps() {
+        return columnIncludeMaps!=null&&!columnIncludeMaps.isEmpty();
+    }
+
+    @Override
     public TableContext getTableContext() {
         return tableContext;
     }
@@ -278,6 +297,9 @@ public class EasyExpressionContext implements ExpressionContext {
         }
         if(hasFills()){
             easyExpressionContext.getFills().addAll(this.fills);
+        }
+        if(hasColumnIncludeMaps()){
+            easyExpressionContext.getColumnIncludeMaps().putAll(this.columnIncludeMaps);
         }
         return easyExpressionContext;
     }

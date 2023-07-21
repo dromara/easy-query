@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author xuejiaming
  */
 
-class DbManager {
+public class DbManager {
     private static DbManager _global = new DbManager();
 
     public static DbManager global() {

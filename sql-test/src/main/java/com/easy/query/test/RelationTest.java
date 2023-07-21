@@ -9,6 +9,7 @@ import com.easy.query.test.entity.school.SchoolClassTeacher;
 import com.easy.query.test.entity.school.SchoolStudent;
 import com.easy.query.test.entity.school.SchoolStudentAddress;
 import com.easy.query.test.entity.school.SchoolTeacher;
+import com.easy.query.test.entity.school.dto.SchoolStudentVO;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -152,6 +153,20 @@ public class RelationTest extends BaseTest {
                         .include(o -> o.one(SchoolStudent::getSchoolClass))
                         .toList();
                 for (SchoolStudent schoolStudent : list1) {
+                    Assert.assertNotNull(schoolStudent.getSchoolClass());
+                    Assert.assertEquals(schoolStudent.getClassId(), schoolStudent.getSchoolClass().getId());
+                }
+            }
+            {
+                //todo alias
+                List<SchoolStudentVO> list1 = easyQuery.queryable(SchoolStudent.class)
+                        .include(o -> o.one(SchoolStudent::getSchoolClass))
+                        .select(SchoolStudentVO.class,o->o
+                                .columnAll()
+                                .columnInclude(SchoolStudent::getSchoolClass,SchoolStudentVO::getSchoolClass)
+                        )
+                        .toList();
+                for (SchoolStudentVO schoolStudent : list1) {
                     Assert.assertNotNull(schoolStudent.getSchoolClass());
                     Assert.assertEquals(schoolStudent.getClassId(), schoolStudent.getSchoolClass().getId());
                 }

@@ -1,10 +1,12 @@
 package com.easy.query.api4j.sql;
 
 import com.easy.query.api4j.select.Queryable;
+import com.easy.query.api4j.sql.impl.SQLColumnAsSelectorImpl;
 import com.easy.query.api4j.util.EasyLambdaUtil;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.Property;
+import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
@@ -35,6 +37,20 @@ public interface SQLColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1> {
         getColumnAsSelector().column(EasyLambdaUtil.getPropertyName(column));
         return this;
     }
+
+    default <TIncludeSource,TIncludeResult> SQLColumnAsSelector<T1, TR> columnInclude(Property<T1, TIncludeSource> column, Property<TR, TIncludeResult> aliasProperty){
+        return columnInclude(column,aliasProperty, SQLColumnAsSelector::columnAll);
+    }
+    default <TIncludeSource,TIncludeResult> SQLColumnAsSelector<T1, TR> columnInclude(Property<T1, TIncludeSource> column, Property<TR, TIncludeResult> aliasProperty, SQLExpression1<SQLColumnAsSelector<TIncludeSource,TIncludeResult>> includeSelectorExpression){
+        getColumnAsSelector().<TIncludeSource,TIncludeResult>columnInclude(EasyLambdaUtil.getPropertyName(column),EasyLambdaUtil.getPropertyName(aliasProperty),columnAsSelect->{
+            includeSelectorExpression.apply(new SQLColumnAsSelectorImpl<>(columnAsSelect));
+        });
+        return this;
+    }
+//    default <TIncludeSource,TIncludeResult> SQLColumnAsSelector<T1, TR> columnIncludeMany(Property<T1, Collection<TIncludeSource>> column, Property<TR, Collection<TIncludeResult>> aliasProperty){
+//        getColumnAsSelector().columnInclude(EasyLambdaUtil.getPropertyName(column),EasyLambdaUtil.getPropertyName(aliasProperty));
+//        return this;
+//    }
     default SQLColumnAsSelector<T1, TR> columnConstAs(String columnConst, String alias) {
         getColumnAsSelector().columnConstAs(columnConst,alias);
         return this;

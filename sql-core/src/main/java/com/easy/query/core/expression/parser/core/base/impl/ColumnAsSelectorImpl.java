@@ -4,11 +4,11 @@ import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.builder.AsSelector;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
+import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
 import com.easy.query.core.expression.segment.SQLColumnSegment;
-import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 
 /**
@@ -19,13 +19,10 @@ import com.easy.query.core.expression.sql.builder.ExpressionContext;
  */
 public class ColumnAsSelectorImpl<T1, TR> implements ColumnAsSelector<T1, TR> {
 
-
-    private final EntityQueryExpressionBuilder entityQueryExpressionBuilder;
     private final TableAvailable table;
     private final AsSelector asSelector;
 
-    public ColumnAsSelectorImpl(EntityQueryExpressionBuilder entityQueryExpressionBuilder, TableAvailable table, AsSelector asSelector) {
-        this.entityQueryExpressionBuilder = entityQueryExpressionBuilder;
+    public ColumnAsSelectorImpl(TableAvailable table, AsSelector asSelector) {
         this.table = table;
         this.asSelector = asSelector;
     }
@@ -54,6 +51,15 @@ public class ColumnAsSelectorImpl<T1, TR> implements ColumnAsSelector<T1, TR> {
     @Override
     public ColumnAsSelector<T1, TR> column(String property) {
         asSelector.column(table,property);
+        return this;
+    }
+
+    @Override
+    public <TIncludeSource, TIncludeResult> ColumnAsSelector<T1, TR> columnInclude(String property, String aliasProperty, SQLExpression1<ColumnAsSelector<TIncludeSource, TIncludeResult>> includeSelectorExpression) {
+        asSelector.columnInclude(table,property,aliasProperty,asSelector->{
+            TableAvailable entityTable = asSelector.getEntityQueryExpressionBuilder().getTable(0).getEntityTable();
+            includeSelectorExpression.apply(new ColumnAsSelectorImpl<>(entityTable,asSelector));
+        });
         return this;
     }
 

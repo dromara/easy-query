@@ -16,7 +16,6 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.MultiTableTypeEnum;
-import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.enums.SQLLikeEnum;
 import com.easy.query.core.enums.SQLPredicateCompareEnum;
 import com.easy.query.core.enums.SQLUnionEnum;
@@ -57,12 +56,13 @@ import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpression
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.fill.FillExpression;
+import com.easy.query.core.expression.sql.include.IncludeParserEngine;
+import com.easy.query.core.expression.sql.include.IncludeParserResult;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.metadata.FillParams;
 import com.easy.query.core.metadata.IncludeNavigateParams;
-import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.sharding.manager.ShardingQueryCountManager;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
@@ -336,7 +336,6 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         List<TR> result = entityExpressionExecutor.query(ExecutorContext.create(this.entityQueryExpressionBuilder.getRuntimeContext(), true, executeMethod, tracking), new EntityResultMetadata<>(entityMetadata), entityQueryExpressionBuilder);
         if (ExecuteMethodEnum.LIST == executeMethod || ExecuteMethodEnum.FIRST == executeMethod) {
             if (EasyCollectionUtil.isNotEmpty(result)) {
-
                 doIncludes(expressionContext, entityMetadata, result);
                 doFills(expressionContext, result);
             }
@@ -345,50 +344,18 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         return result;
     }
 
+
     private <TR> void doIncludes(ExpressionContext expressionContext, EntityMetadata entityMetadata, List<TR> result) {
 
         if (expressionContext.hasIncludes()) {
             IncludeProcessorFactory includeProcessorFactory = runtimeContext.getIncludeProcessorFactory();
+            IncludeParserEngine includeParserEngine = runtimeContext.getIncludeParserEngine();
             for (SQLFuncExpression1<IncludeNavigateParams, ClientQueryable<?>> include : expressionContext.getIncludes()) {
 
-                IncludeNavigateParams includeNavigateParams = new IncludeNavigateParams();
-                ClientQueryable<?> clientQueryable = include.apply(includeNavigateParams);
-                NavigateMetadata navigateMetadata = includeNavigateParams.getNavigateMetadata();
-                if (navigateMetadata == null) {
-                    throw new EasyQueryInvalidOperationException("navigateMetadata is null");
-                }
-                if (!Objects.equals(entityMetadata, navigateMetadata.getEntityMetadata())) {
-                    throw new EasyQueryInvalidOperationException("only support entity");
-                }
-                if (!Objects.equals(navigateMetadata.getNavigatePropertyType(), clientQueryable.queryClass())) {
-                    throw new EasyQueryInvalidOperationException("only support entity:" + EasyClassUtil.getSimpleName(navigateMetadata.getNavigatePropertyType()) + ",now :" + EasyClassUtil.getSimpleName(clientQueryable.queryClass()));
-                }
-                ColumnMetadata selfRelationColumn = navigateMetadata.getSelfRelationColumn();
-                Property<Object, ?> relationPropertyGetter = selfRelationColumn.getGetterCaller();
-                Set<?> relationIds = result.stream().map(relationPropertyGetter::apply)
-                        .collect(Collectors.toSet());
+                IncludeParserResult includeParserResult = includeParserEngine.process(this.entityQueryExpressionBuilder, entityMetadata, result, include);
 
-                includeNavigateParams.getRelationIds().addAll(relationIds);
-                List<Map<String, Object>> maps = null;
-                if (RelationTypeEnum.ManyToMany == navigateMetadata.getRelationType()) {
-                    ClientQueryable<?> mappingQueryable = includeNavigateParams.getMappingQueryable();
-                    if (mappingQueryable == null) {
-                        throw new EasyQueryInvalidOperationException("relation many to many mapping queryable is null");
-                    }
-                    maps = mappingQueryable.toMaps();
-                    includeNavigateParams.getRelationIds().clear();
-                    EntityMetadata mappingEntityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(navigateMetadata.getMappingClass());
-                    ColumnMetadata mappingTargetColumnMetadata = mappingEntityMetadata.getColumnNotNull(navigateMetadata.getTargetMappingProperty());
-                    String targetColumnName = mappingTargetColumnMetadata.getName();
-                    Set<Object> targetIds = maps.stream().map(o -> o.get(targetColumnName)).filter(Objects::nonNull)
-                            .collect(Collectors.toSet());
-                    includeNavigateParams.getRelationIds().addAll(targetIds);
-                }
-                //导航属性追踪与否
-                List<?> includeResult = clientQueryable.asTracking().toList();
-
-                IncludeProcessor includeProcess = includeProcessorFactory.createIncludeProcess(result, navigateMetadata, runtimeContext);
-                includeProcess.process(includeResult, maps);
+                IncludeProcessor includeProcess = includeProcessorFactory.createIncludeProcess(result, includeParserResult, runtimeContext);
+                includeProcess.process();
             }
         }
     }

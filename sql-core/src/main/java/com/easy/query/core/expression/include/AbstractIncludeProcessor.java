@@ -2,9 +2,9 @@ package com.easy.query.core.expression.include;
 
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
+import com.easy.query.core.expression.sql.include.IncludeParserResult;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
-import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyObjectUtil;
@@ -25,7 +25,7 @@ import java.util.Map;
 public abstract class AbstractIncludeProcessor implements IncludeProcessor {
     protected final Collection<?> entities;
     protected final EntityMetadata selfEntityMetadata;
-    protected final NavigateMetadata selfNavigateMetadata;
+    protected final IncludeParserResult includeParserResult;
     protected final QueryRuntimeContext runtimeContext;
     protected final EntityMetadata targetEntityMetadata;
     protected final ColumnMetadata targetColumnMetadata;
@@ -33,20 +33,20 @@ public abstract class AbstractIncludeProcessor implements IncludeProcessor {
 
     protected Class<?> collectionType;
 
-    public AbstractIncludeProcessor(Collection<?> entities, NavigateMetadata selfNavigateMetadata, QueryRuntimeContext runtimeContext) {
+    public AbstractIncludeProcessor(Collection<?> entities, IncludeParserResult includeParserResult, QueryRuntimeContext runtimeContext) {
 
         this.entities = entities;
-        this.selfNavigateMetadata = selfNavigateMetadata;
-        this.selfEntityMetadata = selfNavigateMetadata.getEntityMetadata();
+        this.includeParserResult = includeParserResult;
+        this.selfEntityMetadata = includeParserResult.getEntityMetadata();
         this.runtimeContext = runtimeContext;
-        this.targetEntityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(selfNavigateMetadata.getNavigatePropertyType());
+        this.targetEntityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(includeParserResult.getNavigatePropertyType());
         this.targetColumnMetadata = getTargetRelationColumn();
     }
 
 
 
     private ColumnMetadata getTargetRelationColumn(){
-        String selfPropertyName = EasyStringUtil.isBlank(selfNavigateMetadata.getTargetProperty()) ? getTargetSingleKeyProperty() : selfNavigateMetadata.getTargetProperty();
+        String selfPropertyName = EasyStringUtil.isBlank(includeParserResult.getTargetProperty()) ? getTargetSingleKeyProperty() : includeParserResult.getTargetProperty();
         return targetEntityMetadata.getColumnNotNull(selfPropertyName);
     }
     private String getTargetSingleKeyProperty(){
@@ -65,7 +65,7 @@ public abstract class AbstractIncludeProcessor implements IncludeProcessor {
      * @param <TNavigateEntity>
      */
     protected <TNavigateEntity> Map<Object, Collection<TNavigateEntity>> getTargetToManyMap(List<TNavigateEntity> includes) {
-        Class<?> collectionType = EasyClassUtil.getCollectionImplType(selfNavigateMetadata.getNavigateOriginalPropertyType());
+        Class<?> collectionType = EasyClassUtil.getCollectionImplType(includeParserResult.getNavigateOriginalPropertyType());
         Map<Object, Collection<TNavigateEntity>> resultMap = new HashMap<>();
         for (TNavigateEntity target : includes) {
             Object targetRelationId = targetColumnMetadata.getGetterCaller().apply(target);
@@ -77,7 +77,7 @@ public abstract class AbstractIncludeProcessor implements IncludeProcessor {
 
     protected Class<?> getCollectionType(){
         if(collectionType==null){
-            collectionType = EasyClassUtil.getCollectionImplType(selfNavigateMetadata.getNavigateOriginalPropertyType());
+            collectionType = EasyClassUtil.getCollectionImplType(includeParserResult.getNavigateOriginalPropertyType());
         }
         return collectionType;
     }
@@ -89,10 +89,10 @@ public abstract class AbstractIncludeProcessor implements IncludeProcessor {
 
         Map<Object, Collection<TNavigateEntity>> resultMap = new HashMap<>();
 
-        EntityMetadata entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(selfNavigateMetadata.getMappingClass());
-        ColumnMetadata selfRelationColumn = entityMetadata.getColumnNotNull(selfNavigateMetadata.getSelfMappingProperty());
+        EntityMetadata entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(includeParserResult.getMappingClass());
+        ColumnMetadata selfRelationColumn = entityMetadata.getColumnNotNull(includeParserResult.getSelfMappingProperty());
         String selfColumnName = selfRelationColumn.getName();
-        ColumnMetadata targetRelationColumn = entityMetadata.getColumnNotNull(selfNavigateMetadata.getTargetMappingProperty());
+        ColumnMetadata targetRelationColumn = entityMetadata.getColumnNotNull(includeParserResult.getTargetMappingProperty());
         String targetColumnName = targetRelationColumn.getName();
 
         Map<Object, Collection<TNavigateEntity>> targetToManyMap = getTargetToManyMap(includes);
@@ -107,7 +107,7 @@ public abstract class AbstractIncludeProcessor implements IncludeProcessor {
     }
     protected Map<Object, Collection<Object>> getSelfToManyMap() {
         Map<Object, Collection<Object>> resultMap = new HashMap<>();
-        ColumnMetadata selfRelationColumn = selfNavigateMetadata.getSelfRelationColumn();
+        ColumnMetadata selfRelationColumn = includeParserResult.getEntityMetadata().getColumnNotNull(includeParserResult.getSelfProperty());
         for (Object entity : entities) {
             Object relationId = selfRelationColumn.getGetterCaller().apply(entity);
             Collection<Object> objects = resultMap.computeIfAbsent(relationId, k -> new ArrayList<>());
@@ -117,25 +117,22 @@ public abstract class AbstractIncludeProcessor implements IncludeProcessor {
     }
 
     @Override
-    public <TEntityInclude> void process(List<TEntityInclude> includes, List<Map<String, Object>> mappingRows) {
-        if(EasyCollectionUtil.isEmpty(includes)){
-            return;
-        }
-        switch (selfNavigateMetadata.getRelationType()) {
+    public void process() {
+        switch (includeParserResult.getRelationType()) {
             case OneToOne:
-                OneToOneProcess(includes);
+                OneToOneProcess(includeParserResult.getIncludeResult());
                 return;
             case OneToMany:
-                OneToManyProcess(includes);
+                OneToManyProcess(includeParserResult.getIncludeResult());
                 return;
             case ManyToOne:
-                ManyToOneProcess(includes);
+                ManyToOneProcess(includeParserResult.getIncludeResult());
                 return;
             case ManyToMany:
-                ManyToManyProcess(includes,mappingRows);
+                ManyToManyProcess(includeParserResult.getIncludeResult(),includeParserResult.getMappingRows());
                 return;
         }
-        throw new UnsupportedOperationException("not support include relation type:" + selfNavigateMetadata.getRelationType());
+        throw new UnsupportedOperationException("not support include relation type:" + includeParserResult.getRelationType());
     }
 
     protected abstract <TEntityInclude> void OneToOneProcess(List<TEntityInclude> includes);
@@ -149,7 +146,7 @@ public abstract class AbstractIncludeProcessor implements IncludeProcessor {
 
     public ColumnMetadata getSelfRelationColumn() {
         if (this.selfColumn == null) {
-            this.selfColumn = selfNavigateMetadata.getSelfRelationColumn();
+            this.selfColumn = includeParserResult.getEntityMetadata().getColumnNotNull(includeParserResult.getSelfProperty());
         }
         return this.selfColumn;
     }
