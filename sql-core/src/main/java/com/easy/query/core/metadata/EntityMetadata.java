@@ -170,8 +170,8 @@ public class EntityMetadata {
             }
             Navigate navigate = field.getAnnotation(Navigate.class);
             if (navigate != null) {
-                String selfProperty = navigate.selfProperty();
-                String targetProperty = navigate.targetProperty();
+                String selfProperty = tableEntity ? navigate.selfProperty() : null;
+                String targetProperty = tableEntity ? navigate.targetProperty() : null;
                 RelationTypeEnum relationType = navigate.value();
                 Class<?> navigateType = getNavigateType(relationType, field, propertyDescriptor);
                 if (navigateType == null) {

@@ -41,7 +41,7 @@ public interface SQLColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1> {
     default <TIncludeSource,TIncludeResult> SQLColumnAsSelector<T1, TR> columnInclude(Property<T1, TIncludeSource> column, Property<TR, TIncludeResult> aliasProperty){
         return columnInclude(column,aliasProperty, SQLColumnAsSelector::columnAll);
     }
-    default <TIncludeSource,TIncludeResult> SQLColumnAsSelector<T1, TR> columnInclude(Property<T1, TIncludeSource> column, Property<TR, TIncludeResult> aliasProperty, SQLExpression1<SQLColumnAsSelector<TIncludeSource,TIncludeResult>> includeSelectorExpression){
+    default <TIncludeSource,TIncludeResult> SQLColumnAsSelector<T1, TR> columnInclude(Property<T1, TIncludeSource> column, Property<TR, TIncludeResult> aliasProperty, SQLExpression1<SQLColumnAsSelector<TIncludeResult,TIncludeResult>> includeSelectorExpression){
         getColumnAsSelector().<TIncludeSource,TIncludeResult>columnInclude(EasyLambdaUtil.getPropertyName(column),EasyLambdaUtil.getPropertyName(aliasProperty),columnAsSelect->{
             includeSelectorExpression.apply(new SQLColumnAsSelectorImpl<>(columnAsSelect));
         });

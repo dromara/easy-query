@@ -26,7 +26,7 @@ public interface ColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1> {
     default ColumnAsSelector<T1, TR> columnInclude(String property, String aliasProperty){
         return columnInclude(property,aliasProperty, ColumnAsSelector::columnAll);
     }
-    <TIncludeSource,TIncludeResult> ColumnAsSelector<T1, TR> columnInclude(String property, String aliasProperty, SQLExpression1<ColumnAsSelector<TIncludeSource,TIncludeResult>> includeSelectorExpression);
+    <TIncludeSource,TIncludeResult> ColumnAsSelector<T1, TR> columnInclude(String property, String aliasProperty, SQLExpression1<ColumnAsSelector<TIncludeResult,TIncludeResult>> includeSelectorExpression);
     ColumnAsSelector<T1, TR> columnConstAs(String columnConst, String alias);
 
     ColumnAsSelector<T1, TR> columnIgnore(String property);
