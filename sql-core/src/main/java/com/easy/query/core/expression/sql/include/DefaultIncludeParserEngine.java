@@ -1,6 +1,7 @@
 package com.easy.query.core.expression.sql.include;
 
 import com.easy.query.core.basic.api.select.ClientQueryable;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.lambda.Property;
@@ -47,17 +48,14 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
 
         boolean aliasEntity = !Objects.equals(entityMetadata.getEntityClass(), navigateMetadata.getEntityMetadata().getEntityClass());
         if (aliasEntity) {
-            String columnName = getColumnNameByQueryExpressionBuilder(mainEntityQueryExpressionBuilder, includeNavigateParams.getTable(), navigateMetadata.getSelfProperty());
+            String selfPropertyOrPrimary = navigateMetadata.getSelfPropertyOrPrimary();
+            String columnName = getColumnNameByQueryExpressionBuilder(mainEntityQueryExpressionBuilder, includeNavigateParams.getTable(), navigateMetadata.getSelfPropertyOrPrimary());
             if (columnName == null) {
-                throw new EasyQueryInvalidOperationException("not found relation self property:[" + navigateMetadata.getSelfProperty() + "] in result");
+                throw new EasyQueryInvalidOperationException("not found relation self property:[" +selfPropertyOrPrimary + "] in result");
             }
             includeParseContext.setSelfProperty(entityMetadata.getPropertyNameNotNull(columnName));
         } else {
-            if (EasyStringUtil.isNotBlank(navigateMetadata.getSelfProperty())) {
-                includeParseContext.setSelfProperty(navigateMetadata.getSelfProperty());
-            } else {
-                includeParseContext.setSelfProperty(entityMetadata.getSingleKeyProperty());
-            }
+            includeParseContext.setSelfProperty(navigateMetadata.getSelfPropertyOrPrimary());
         }
         ExpressionContext expressionContext = mainEntityQueryExpressionBuilder.getExpressionContext();
         //映射到目标哪个属性值上
@@ -75,9 +73,10 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
 
         includeNavigateParams.getRelationIds().addAll(relationIds);
 
+        QueryRuntimeContext runtimeContext = expressionContext.getRuntimeContext();
         if (RelationTypeEnum.ManyToMany == navigateMetadata.getRelationType()) {
             confirmMappingRows(includeParseContext);
-            EntityMetadata mappingEntityMetadata = expressionContext.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(navigateMetadata.getMappingClass());
+            EntityMetadata mappingEntityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(navigateMetadata.getMappingClass());
             ColumnMetadata mappingTargetColumnMetadata = mappingEntityMetadata.getColumnNotNull(navigateMetadata.getTargetMappingProperty());
             String targetColumnName = mappingTargetColumnMetadata.getName();
             Set<Object> targetIds = includeParseContext.getMappingRows().stream().map(o -> o.get(targetColumnName)).filter(Objects::nonNull)
@@ -93,9 +92,10 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
             if(aliasTable==null){
                 throw new EasyQueryInvalidOperationException("not found relation target table:[" + EasyClassUtil.getSimpleName(includeParseContext.getIncludeQueryable().queryClass()) + "] in result");
             }
-            String aliasColumnName = getColumnNameByQueryExpressionBuilder(sqlEntityExpressionBuilder, aliasTable, navigateMetadata.getTargetProperty());
+            String targetPropertyOrPrimary = navigateMetadata.getTargetPropertyOrPrimary(runtimeContext);
+            String aliasColumnName = getColumnNameByQueryExpressionBuilder(sqlEntityExpressionBuilder, aliasTable, targetPropertyOrPrimary);
             if (EasyStringUtil.isBlank(aliasColumnName)) {
-                throw new EasyQueryInvalidOperationException("not found relation target property:[" + navigateMetadata.getTargetProperty() + "] in result");
+                throw new EasyQueryInvalidOperationException("not found relation target property:[" + targetPropertyOrPrimary + "] in result");
             }
             String targetProperty = aliasTable.getEntityMetadata().getPropertyNameNotNull(aliasColumnName);
             includeParseContext.setTargetProperty(targetProperty);

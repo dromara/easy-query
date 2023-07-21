@@ -70,7 +70,7 @@ public abstract class AbstractSelector<TChain> {
     public TChain columnInclude(TableAvailable table, String selfProperty, String aliasProperty, SQLExpression1<AsSelector> includeSelectorExpression) {
         NavigateMetadata navigateMetadata = table.getEntityMetadata().getNavigateNotNull(selfProperty);
         Map<String, ColumnIncludeExpression> propertyColumnIncludeExpressionMap = expressionContext.getColumnIncludeMaps().computeIfAbsent(table, k -> new HashMap<>());
-        propertyColumnIncludeExpressionMap.put(navigateMetadata.getSelfProperty(),new ColumnIncludeExpression(table,selfProperty,aliasProperty,includeSelectorExpression));
+        propertyColumnIncludeExpressionMap.put(navigateMetadata.getSelfPropertyOrPrimary(),new ColumnIncludeExpression(table,selfProperty,aliasProperty,includeSelectorExpression));
         return (TChain) this;
     }
 

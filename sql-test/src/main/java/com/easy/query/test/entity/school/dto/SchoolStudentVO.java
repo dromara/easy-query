@@ -17,4 +17,6 @@ public class SchoolStudentVO {
     private String name;
     @Navigate(RelationTypeEnum.ManyToOne)
     private SchoolClassVO schoolClass;
+    @Navigate(RelationTypeEnum.OneToOne)
+    private SchoolStudentAddressVO schoolStudentAddress;
 }

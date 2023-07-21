@@ -14,6 +14,8 @@ import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
 import com.easy.query.core.expression.segment.SQLColumnSegment;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 
+import java.util.Collection;
+
 /**
  * @author xuejiaming
  * @Description: 文件说明
@@ -39,12 +41,37 @@ public interface SQLColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1> {
     }
 
     default <TIncludeSource,TIncludeResult> SQLColumnAsSelector<T1, TR> columnInclude(Property<T1, TIncludeSource> column, Property<TR, TIncludeResult> aliasProperty){
-        return columnInclude(column,aliasProperty, SQLColumnAsSelector::columnAll);
+        return columnInclude(true,column,aliasProperty, SQLColumnAsSelector::columnAll);
+    }
+    default <TIncludeSource,TIncludeResult> SQLColumnAsSelector<T1, TR> columnInclude(boolean condition,Property<T1, TIncludeSource> column, Property<TR, TIncludeResult> aliasProperty){
+        return columnInclude(condition,column,aliasProperty, SQLColumnAsSelector::columnAll);
     }
     default <TIncludeSource,TIncludeResult> SQLColumnAsSelector<T1, TR> columnInclude(Property<T1, TIncludeSource> column, Property<TR, TIncludeResult> aliasProperty, SQLExpression1<SQLColumnAsSelector<TIncludeResult,TIncludeResult>> includeSelectorExpression){
-        getColumnAsSelector().<TIncludeSource,TIncludeResult>columnInclude(EasyLambdaUtil.getPropertyName(column),EasyLambdaUtil.getPropertyName(aliasProperty),columnAsSelect->{
-            includeSelectorExpression.apply(new SQLColumnAsSelectorImpl<>(columnAsSelect));
-        });
+        return columnInclude(true,column,aliasProperty,includeSelectorExpression);
+    }
+    default <TIncludeSource,TIncludeResult> SQLColumnAsSelector<T1, TR> columnInclude(boolean condition,Property<T1, TIncludeSource> column, Property<TR, TIncludeResult> aliasProperty, SQLExpression1<SQLColumnAsSelector<TIncludeResult,TIncludeResult>> includeSelectorExpression){
+        if(condition){
+            getColumnAsSelector().<TIncludeSource,TIncludeResult>columnInclude(EasyLambdaUtil.getPropertyName(column),EasyLambdaUtil.getPropertyName(aliasProperty),columnAsSelect->{
+                includeSelectorExpression.apply(new SQLColumnAsSelectorImpl<>(columnAsSelect));
+            });
+        }
+        return this;
+    }
+    default <TIncludeSource,TIncludeResult> SQLColumnAsSelector<T1, TR> columnIncludeMany(Property<T1, Collection<TIncludeSource>> column, Property<TR, Collection<TIncludeResult>> aliasProperty){
+        return columnIncludeMany(true,column,aliasProperty, SQLColumnAsSelector::columnAll);
+    }
+    default <TIncludeSource,TIncludeResult> SQLColumnAsSelector<T1, TR> columnIncludeMany(boolean condition,Property<T1, Collection<TIncludeSource>> column, Property<TR, Collection<TIncludeResult>> aliasProperty){
+        return columnIncludeMany(condition,column,aliasProperty, SQLColumnAsSelector::columnAll);
+    }
+    default <TIncludeSource,TIncludeResult> SQLColumnAsSelector<T1, TR> columnIncludeMany(Property<T1, Collection<TIncludeSource>> column, Property<TR, Collection<TIncludeResult>> aliasProperty, SQLExpression1<SQLColumnAsSelector<TIncludeResult,TIncludeResult>> includeSelectorExpression){
+        return columnIncludeMany(true,column,aliasProperty,includeSelectorExpression);
+    }
+    default <TIncludeSource,TIncludeResult> SQLColumnAsSelector<T1, TR> columnIncludeMany(boolean condition,Property<T1, Collection<TIncludeSource>> column, Property<TR, Collection<TIncludeResult>> aliasProperty, SQLExpression1<SQLColumnAsSelector<TIncludeResult,TIncludeResult>> includeSelectorExpression){
+        if(condition){
+            getColumnAsSelector().<TIncludeSource,TIncludeResult>columnInclude(EasyLambdaUtil.getPropertyName(column),EasyLambdaUtil.getPropertyName(aliasProperty),columnAsSelect->{
+                includeSelectorExpression.apply(new SQLColumnAsSelectorImpl<>(columnAsSelect));
+            });
+        }
         return this;
     }
 //    default <TIncludeSource,TIncludeResult> SQLColumnAsSelector<T1, TR> columnIncludeMany(Property<T1, Collection<TIncludeSource>> column, Property<TR, Collection<TIncludeResult>> aliasProperty){

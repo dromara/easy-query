@@ -1,9 +1,11 @@
 package com.easy.query.api4kt.sql;
 
 import com.easy.query.api4kt.select.KtQueryable;
+import com.easy.query.api4kt.sql.impl.SQLKtColumnAsSelectorImpl;
 import com.easy.query.api4kt.util.EasyKtLambdaUtil;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
+import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
@@ -11,6 +13,8 @@ import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
 import com.easy.query.core.expression.segment.SQLColumnSegment;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import kotlin.reflect.KProperty1;
+
+import java.util.Collection;
 
 /**
  * @author xuejiaming
@@ -35,6 +39,42 @@ public interface SQLKtColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1> {
         getColumnAsSelector().column(EasyKtLambdaUtil.getPropertyName(column));
         return this;
     }
+
+    default <TIncludeSource,TIncludeResult> SQLKtColumnAsSelector<T1, TR> columnInclude(KProperty1<T1, TIncludeSource> column, KProperty1<TR, TIncludeResult> aliasProperty){
+        return columnInclude(true,column,aliasProperty, SQLKtColumnAsSelector::columnAll);
+    }
+    default <TIncludeSource,TIncludeResult> SQLKtColumnAsSelector<T1, TR> columnInclude(boolean condition,KProperty1<T1, TIncludeSource> column, KProperty1<TR, TIncludeResult> aliasProperty){
+        return columnInclude(condition,column,aliasProperty, SQLKtColumnAsSelector::columnAll);
+    }
+    default <TIncludeSource,TIncludeResult> SQLKtColumnAsSelector<T1, TR> columnInclude(KProperty1<T1, TIncludeSource> column, KProperty1<TR, TIncludeResult> aliasProperty, SQLExpression1<SQLKtColumnAsSelector<TIncludeResult,TIncludeResult>> includeSelectorExpression){
+        return columnInclude(true,column,aliasProperty,includeSelectorExpression);
+    }
+    default <TIncludeSource,TIncludeResult> SQLKtColumnAsSelector<T1, TR> columnInclude(boolean condition,KProperty1<T1, TIncludeSource> column, KProperty1<TR, TIncludeResult> aliasProperty, SQLExpression1<SQLKtColumnAsSelector<TIncludeResult,TIncludeResult>> includeSelectorExpression){
+        if(condition){
+            getColumnAsSelector().<TIncludeSource,TIncludeResult>columnInclude(EasyKtLambdaUtil.getPropertyName(column),EasyKtLambdaUtil.getPropertyName(aliasProperty),columnAsSelect->{
+                includeSelectorExpression.apply(new SQLKtColumnAsSelectorImpl<>(columnAsSelect));
+            });
+        }
+        return this;
+    }
+    default <TIncludeSource,TIncludeResult> SQLKtColumnAsSelector<T1, TR> columnIncludeMany(KProperty1<T1, Collection<TIncludeSource>> column, KProperty1<TR, Collection<TIncludeResult>> aliasProperty){
+        return columnIncludeMany(true,column,aliasProperty, SQLKtColumnAsSelector::columnAll);
+    }
+    default <TIncludeSource,TIncludeResult> SQLKtColumnAsSelector<T1, TR> columnIncludeMany(boolean condition,KProperty1<T1, Collection<TIncludeSource>> column, KProperty1<TR, Collection<TIncludeResult>> aliasProperty){
+        return columnIncludeMany(condition,column,aliasProperty, SQLKtColumnAsSelector::columnAll);
+    }
+    default <TIncludeSource,TIncludeResult> SQLKtColumnAsSelector<T1, TR> columnIncludeMany(KProperty1<T1, Collection<TIncludeSource>> column, KProperty1<TR, Collection<TIncludeResult>> aliasProperty, SQLExpression1<SQLKtColumnAsSelector<TIncludeResult,TIncludeResult>> includeSelectorExpression){
+        return columnIncludeMany(true,column,aliasProperty,includeSelectorExpression);
+    }
+    default <TIncludeSource,TIncludeResult> SQLKtColumnAsSelector<T1, TR> columnIncludeMany(boolean condition,KProperty1<T1, Collection<TIncludeSource>> column, KProperty1<TR, Collection<TIncludeResult>> aliasProperty, SQLExpression1<SQLKtColumnAsSelector<TIncludeResult,TIncludeResult>> includeSelectorExpression){
+        if(condition){
+            getColumnAsSelector().<TIncludeSource,TIncludeResult>columnInclude(EasyKtLambdaUtil.getPropertyName(column),EasyKtLambdaUtil.getPropertyName(aliasProperty),columnAsSelect->{
+                includeSelectorExpression.apply(new SQLKtColumnAsSelectorImpl<>(columnAsSelect));
+            });
+        }
+        return this;
+    }
+    
     default SQLKtColumnAsSelector<T1, TR> columnConstAs(String columnConst,String alias) {
         getColumnAsSelector().columnConstAs(columnConst,alias);
         return this;

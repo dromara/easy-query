@@ -11,6 +11,7 @@ import com.easy.query.test.entity.school.SchoolStudentAddress;
 import com.easy.query.test.entity.school.SchoolTeacher;
 import com.easy.query.test.entity.school.dto.SchoolClassVO;
 import com.easy.query.test.entity.school.dto.SchoolStudentVO;
+import com.easy.query.test.entity.school.dto.SchoolTeacherVO;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -196,12 +197,35 @@ public class RelationTest extends BaseTest {
                     Assert.assertNotNull(schoolStudent.getSchoolStudentAddress());
                 }
             }
+            {
+                //todo alias
+                List<SchoolStudentVO> list1 = easyQuery.queryable(SchoolStudent.class)
+                        .include(o -> o.one(SchoolStudent::getSchoolStudentAddress).asTracking().disableLogicDelete())
+                        .select(SchoolStudentVO.class,o->o.columnAll()
+                                .columnInclude(SchoolStudent::getSchoolStudentAddress,SchoolStudentVO::getSchoolStudentAddress))
+                        .toList();
+                for (SchoolStudentVO schoolStudent : list1) {
+                    Assert.assertNotNull(schoolStudent.getSchoolStudentAddress());
+                }
+            }
 
             {
                 List<SchoolClass> list1 = easyQuery.queryable(SchoolClass.class)
                         .include(o -> o.many(SchoolClass::getSchoolStudents))
                         .toList();
                 for (SchoolClass schoolClass : list1) {
+                    Assert.assertNotNull(schoolClass.getSchoolStudents());
+                    Assert.assertTrue(schoolClass.getSchoolStudents().size() >= 0);
+                }
+            }
+            {
+                //todo alias
+                List<SchoolClassVO> list1 = easyQuery.queryable(SchoolClass.class)
+                        .include(o -> o.many(SchoolClass::getSchoolStudents))
+                        .select(SchoolClassVO.class,o->o.columnAll()
+                                .columnIncludeMany(SchoolClass::getSchoolStudents,SchoolClassVO::getSchoolStudents))
+                        .toList();
+                for (SchoolClassVO schoolClass : list1) {
                     Assert.assertNotNull(schoolClass.getSchoolStudents());
                     Assert.assertTrue(schoolClass.getSchoolStudents().size() >= 0);
                 }
@@ -255,6 +279,30 @@ public class RelationTest extends BaseTest {
                         .toList();
                 for (SchoolClass schoolClass : list2) {
                     Assert.assertNotNull(schoolClass.getSchoolTeachers());
+                }
+            }
+
+            {
+                //todo alias
+                List<SchoolClassVO> list2 = easyQuery.queryable(SchoolClass.class)
+                        .include(o -> o.many(SchoolClass::getSchoolTeachers))
+                        .select(SchoolClassVO.class,o->o.columnAll()
+                                .columnIncludeMany(SchoolClass::getSchoolTeachers,SchoolClassVO::getSchoolTeachers))
+                        .toList();
+                for (SchoolClassVO schoolClass : list2) {
+                    Assert.assertNotNull(schoolClass.getSchoolTeachers());
+                    if("class1".equals(schoolClass.getId())){
+                        Assert.assertEquals(2, schoolClass.getSchoolTeachers().size());
+                        for (SchoolTeacherVO schoolTeacher : schoolClass.getSchoolTeachers()) {
+                            Assert.assertTrue("teacher1".equals(schoolTeacher.getId())||"teacher2".equals(schoolTeacher.getId()));
+                        }
+                    }
+                    if("class2".equals(schoolClass.getId())){
+                        Assert.assertEquals(1, schoolClass.getSchoolTeachers().size());
+                        for (SchoolTeacherVO schoolTeacher : schoolClass.getSchoolTeachers()) {
+                            Assert.assertEquals("teacher2", schoolTeacher.getId());
+                        }
+                    }
                 }
             }
 

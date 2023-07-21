@@ -23,10 +23,16 @@ public interface ColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1> {
     ExpressionContext getExpressionContext();
 
     ColumnAsSelector<T1, TR> column(String property);
-    default ColumnAsSelector<T1, TR> columnInclude(String property, String aliasProperty){
-        return columnInclude(property,aliasProperty, ColumnAsSelector::columnAll);
+   default   ColumnAsSelector<T1, TR> columnInclude(String property, String aliasProperty){
+        return columnInclude(true,property,aliasProperty);
+   }
+    default ColumnAsSelector<T1, TR> columnInclude(boolean condition,String property, String aliasProperty){
+        return columnInclude(condition,property,aliasProperty,ColumnAsSelector::columnAll);
     }
-    <TIncludeSource,TIncludeResult> ColumnAsSelector<T1, TR> columnInclude(String property, String aliasProperty, SQLExpression1<ColumnAsSelector<TIncludeResult,TIncludeResult>> includeSelectorExpression);
+    default <TIncludeSource,TIncludeResult> ColumnAsSelector<T1, TR> columnInclude(String property, String aliasProperty, SQLExpression1<ColumnAsSelector<TIncludeResult,TIncludeResult>> includeSelectorExpression){
+        return columnInclude(true,property,aliasProperty,includeSelectorExpression);
+    }
+    <TIncludeSource,TIncludeResult> ColumnAsSelector<T1, TR> columnInclude(boolean condition,String property, String aliasProperty, SQLExpression1<ColumnAsSelector<TIncludeResult,TIncludeResult>> includeSelectorExpression);
     ColumnAsSelector<T1, TR> columnConstAs(String columnConst, String alias);
 
     ColumnAsSelector<T1, TR> columnIgnore(String property);

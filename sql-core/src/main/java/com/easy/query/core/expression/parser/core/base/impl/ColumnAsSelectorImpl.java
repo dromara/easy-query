@@ -55,11 +55,13 @@ public class ColumnAsSelectorImpl<T1, TR> implements ColumnAsSelector<T1, TR> {
     }
 
     @Override
-    public <TIncludeSource, TIncludeResult> ColumnAsSelector<T1, TR> columnInclude(String property, String aliasProperty, SQLExpression1<ColumnAsSelector<TIncludeResult, TIncludeResult>> includeSelectorExpression) {
-        asSelector.columnInclude(table,property,aliasProperty,asSelector->{
-            TableAvailable entityTable = asSelector.getEntityQueryExpressionBuilder().getTable(0).getEntityTable();
-            includeSelectorExpression.apply(new ColumnAsSelectorImpl<>(entityTable,asSelector));
-        });
+    public <TIncludeSource, TIncludeResult> ColumnAsSelector<T1, TR> columnInclude(boolean condition,String property, String aliasProperty, SQLExpression1<ColumnAsSelector<TIncludeResult, TIncludeResult>> includeSelectorExpression) {
+        if(condition){
+            asSelector.columnInclude(table,property,aliasProperty,asSelector->{
+                TableAvailable entityTable = asSelector.getEntityQueryExpressionBuilder().getTable(0).getEntityTable();
+                includeSelectorExpression.apply(new ColumnAsSelectorImpl<>(entityTable,asSelector));
+            });
+        }
         return this;
     }
 
