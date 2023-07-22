@@ -3,6 +3,7 @@ package com.easy.query.core.basic.api.select.abstraction;
 import com.easy.query.core.annotation.EasyWhereCondition;
 import com.easy.query.core.api.dynamic.sort.ObjectSort;
 import com.easy.query.core.api.dynamic.sort.internal.ObjectSortBuilderImpl;
+import com.easy.query.core.api.dynamic.sort.internal.ObjectSortEntry;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.select.ClientQueryable2;
@@ -26,6 +27,7 @@ import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
 import com.easy.query.core.exception.EasyQueryWhereInvalidOperationException;
 import com.easy.query.core.expression.builder.impl.FilterImpl;
+import com.easy.query.core.expression.builder.impl.OrderSelectorImpl;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.include.IncludeProcessor;
 import com.easy.query.core.expression.include.IncludeProcessorFactory;
@@ -673,28 +675,35 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
 
                 ObjectSortBuilderImpl orderByBuilder = new ObjectSortBuilderImpl();
                 configuration.configure(orderByBuilder);
-                Map<String, Boolean> orderProperties = orderByBuilder.build();
+                Map<String, ObjectSortEntry> orderProperties = orderByBuilder.build();
                 if (!orderProperties.isEmpty()) {
 
-                    EntityMetadataManager entityMetadataManager = entityQueryExpressionBuilder.getRuntimeContext().getEntityMetadataManager();
-                    EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(queryClass());
-                    for (String property : orderProperties.keySet()) {
-                        Boolean asc = orderProperties.getOrDefault(property, true);
-
-                        ColumnMetadata columnMetadata = entityMetadata.getColumnOrNull(property);
+                    for (Map.Entry<String, ObjectSortEntry> sortKv : orderProperties.entrySet()) {
+                        String property = sortKv.getKey();
+                        ObjectSortEntry objectSortEntry = sortKv.getValue();
+                        int tableIndex = objectSortEntry.getTableIndex();
+                        if (tableIndex < 0 || tableIndex > entityQueryExpressionBuilder.getTables().size() - 1) {
+                            if (strictMode) {
+                                throw new EasyQueryOrderByInvalidOperationException(property,"table index:[" + tableIndex + "] not found in query context");
+                            }
+                            continue;
+                        }
+                        TableAvailable entityTable = entityQueryExpressionBuilder.getTable(tableIndex).getEntityTable();
+                        ColumnMetadata columnMetadata = entityTable.getEntityMetadata().getColumnOrNull(property);
                         if (columnMetadata == null) {
                             if (strictMode) {
                                 throw new EasyQueryOrderByInvalidOperationException(property, EasyClassUtil.getSimpleName(queryClass()) + " not found query entity class");
                             }
                             continue;
                         }
-                        ColumnOrderSelector<T1> orderColumnSelector = getSQLExpressionProvider1().getOrderColumnSelector(asc);
-                        if (orderColumnSelector == null) {
-                            throw new EasyQueryOrderByInvalidOperationException(property, "not found sql column selector,entity class:" + EasyClassUtil.getSimpleName(queryClass()));
-                        }
-                        orderColumnSelector.column(property);
+
+                        OrderSelectorImpl orderSelector = new OrderSelectorImpl(entityQueryExpressionBuilder, entityQueryExpressionBuilder.getOrder());
+                        orderSelector.setAsc(objectSortEntry.isAsc());
+                        orderSelector.column(entityTable,property);
                     }
+
                 }
+                orderByBuilder.clear();
             }
         }
         return this;

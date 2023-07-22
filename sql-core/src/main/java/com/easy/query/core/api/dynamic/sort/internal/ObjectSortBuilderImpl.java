@@ -14,13 +14,13 @@ import java.util.Set;
  * @Date: 2023/3/23 17:24
  */
 public class ObjectSortBuilderImpl implements ObjectSortBuilder {
-    private final Map<String, Boolean> orderPropertyMap = new LinkedHashMap<>();
+    private final Map<String, ObjectSortEntry> orderPropertyMap = new LinkedHashMap<>();
     private final Set<String> allowedProperties = new HashSet<>();
     private final Set<String> notAllowedProperties = new HashSet<>();
 
     @Override
-    public ObjectSortBuilder orderBy(String propertyName, boolean asc) {
-        orderPropertyMap.put(propertyName, asc);
+    public ObjectSortBuilder orderBy(String propertyName, boolean asc,int tableIndex) {
+        orderPropertyMap.put(propertyName, new ObjectSortEntry(asc,tableIndex));
         return this;
     }
 
@@ -37,10 +37,10 @@ public class ObjectSortBuilderImpl implements ObjectSortBuilder {
     }
 
     @Override
-    public Map<String, Boolean> build() {
-        LinkedHashMap<String, Boolean> result = new LinkedHashMap<>();
+    public Map<String, ObjectSortEntry> build() {
+        LinkedHashMap<String, ObjectSortEntry> result = new LinkedHashMap<>();
         boolean allowedLimit = !allowedProperties.isEmpty();
-        for (Map.Entry<String, Boolean> orderProperty : orderPropertyMap.entrySet()) {
+        for (Map.Entry<String, ObjectSortEntry> orderProperty : orderPropertyMap.entrySet()) {
             if(!notAllowedProperties.contains(orderProperty.getKey())){
                 if(allowedLimit){
                     if (allowedProperties.contains(orderProperty.getKey())) {
@@ -52,5 +52,11 @@ public class ObjectSortBuilderImpl implements ObjectSortBuilder {
             }
         }
         return result;
+    }
+
+    public void clear(){
+        orderPropertyMap.clear();
+        allowedProperties.clear();
+        notAllowedProperties.clear();
     }
 }

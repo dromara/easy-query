@@ -1,5 +1,6 @@
 package com.easy.query.core.api.dynamic.sort;
 
+import com.easy.query.core.api.dynamic.sort.internal.ObjectSortEntry;
 import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
 
 import java.util.Map;
@@ -19,8 +20,25 @@ public interface ObjectSortBuilder {
      * @param asc
      * @return
      */
-    ObjectSortBuilder orderBy(String propertyName, boolean asc);
+   default ObjectSortBuilder orderBy(String propertyName, boolean asc){
+       return orderBy(propertyName,asc,0);
+   }
+
+    /**
+     * 添加字段属性排序
+     * @param propertyName
+     * @param asc
+     * @param tableIndex 第几个表,默认0表就是主表
+     * @return
+     */
+    ObjectSortBuilder orderBy(String propertyName, boolean asc,int tableIndex);
+
+    /**
+     * 如果调用过一次 allowed 那么所有的属性都必须在allowed里面才会生效
+     * @param propertyName
+     * @return
+     */
     ObjectSortBuilder allowed(String propertyName);
     ObjectSortBuilder notAllowed(String propertyName);
-    Map<String, Boolean> build();
+    Map<String, ObjectSortEntry> build();
 }
