@@ -15,6 +15,7 @@ import com.easy.query.api4j.sql.impl.SQLColumnAsSelectorImpl;
 import com.easy.query.api4j.sql.impl.SQLGroupBySelectorImpl;
 import com.easy.query.api4j.sql.impl.SQLOrderByColumnSelectorImpl;
 import com.easy.query.api4j.sql.impl.SQLWherePredicateImpl;
+import com.easy.query.core.api.dynamic.sort.ObjectSort;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.select.ClientQueryable3;
 import com.easy.query.core.basic.api.select.ClientQueryable4;
@@ -186,8 +187,14 @@ public abstract class AbstractQueryable3<T1, T2, T3> extends AbstractQueryable<T
     }
 
     @Override
+    public Queryable3<T1, T2, T3> orderByObject(boolean condition, ObjectSort configuration) {
+        super.orderByObject(condition, configuration);
+        return this;
+    }
+
+    @Override
     public <TProperty> Queryable3<T1, T2, T3> include(boolean condition, SQLFuncExpression1<SQLNavigateInclude<T1>, Queryable<TProperty>> navigateIncludeSQLExpression) {
-        super.include(condition,navigateIncludeSQLExpression);
+        super.include(condition, navigateIncludeSQLExpression);
         return this;
     }
 

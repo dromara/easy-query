@@ -12,6 +12,7 @@ import com.easy.query.api4kt.sql.impl.SQLKtColumnAsSelectorImpl;
 import com.easy.query.api4kt.sql.impl.SQLKtGroupBySelectorImpl;
 import com.easy.query.api4kt.sql.impl.SQLKtOrderByColumnSelectorImpl;
 import com.easy.query.api4kt.sql.impl.SQLKtWherePredicateImpl;
+import com.easy.query.core.api.dynamic.sort.ObjectSort;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.select.ClientQueryable4;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
@@ -127,6 +128,12 @@ public abstract class AbstractKtQueryable4<T1, T2, T3, T4> extends AbstractKtQue
                 selectExpression.apply(new SQLKtOrderByColumnSelectorImpl<>(selector1), new SQLKtOrderByColumnSelectorImpl<>(selector2), new SQLKtOrderByColumnSelectorImpl<>(selector3), new SQLKtOrderByColumnSelectorImpl<>(selector4));
             });
         }
+        return this;
+    }
+
+    @Override
+    public KtQueryable4<T1, T2, T3, T4> orderByObject(boolean condition, ObjectSort configuration) {
+        super.orderByObject(condition, configuration);
         return this;
     }
 

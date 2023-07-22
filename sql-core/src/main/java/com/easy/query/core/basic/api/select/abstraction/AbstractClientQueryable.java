@@ -62,7 +62,6 @@ import com.easy.query.core.expression.sql.include.IncludeParserEngine;
 import com.easy.query.core.expression.sql.include.IncludeParserResult;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
-import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.metadata.FillParams;
 import com.easy.query.core.metadata.IncludeNavigateParams;
 import com.easy.query.core.sharding.manager.ShardingQueryCountManager;

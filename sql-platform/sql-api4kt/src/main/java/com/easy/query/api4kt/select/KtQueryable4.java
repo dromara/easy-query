@@ -2,6 +2,7 @@ package com.easy.query.api4kt.select;
 
 import com.easy.query.api4kt.sql.SQLKtColumnAsSelector;
 import com.easy.query.api4kt.sql.SQLKtColumnResultSelector;
+import com.easy.query.api4kt.sql.SQLKtColumnSelector;
 import com.easy.query.api4kt.sql.SQLKtGroupBySelector;
 import com.easy.query.api4kt.sql.SQLKtNavigateInclude;
 import com.easy.query.api4kt.sql.SQLKtOrderBySelector;
@@ -11,8 +12,10 @@ import com.easy.query.api4kt.sql.impl.SQLKtColumnResultSelectorImpl;
 import com.easy.query.api4kt.sql.impl.SQLKtNavigateIncludeImpl;
 import com.easy.query.api4kt.sql.impl.SQLKtWhereAggregatePredicateImpl;
 import com.easy.query.core.api.client.EasyQueryClient;
+import com.easy.query.core.api.dynamic.sort.ObjectSort;
 import com.easy.query.core.basic.api.select.ClientQueryable4;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
+import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression4;
 import com.easy.query.core.expression.lambda.SQLFuncExpression4;
@@ -34,10 +37,12 @@ public interface KtQueryable4<T1, T2, T3, T4> extends KtQueryable<T1> {
         return whereById(true,id);
     }
     KtQueryable4<T1, T2, T3, T4> whereById(boolean condition, Object id);
+    @Override
     default KtQueryable4<T1, T2, T3, T4> whereObject(Object object) {
         return whereObject(true, object);
     }
 
+    @Override
     KtQueryable4<T1, T2, T3, T4> whereObject(boolean condition, Object object);
 
     @Override
@@ -227,6 +232,27 @@ public interface KtQueryable4<T1, T2, T3, T4> extends KtQueryable<T1> {
     }
 
     KtQueryable4<T1, T2, T3, T4> orderByDesc(boolean condition, SQLExpression4<SQLKtOrderBySelector<T1>, SQLKtOrderBySelector<T2>, SQLKtOrderBySelector<T3>, SQLKtOrderBySelector<T4>> selectExpression);
+
+
+
+    /**
+     * @param configuration
+     * @return
+     * @throws EasyQueryOrderByInvalidOperationException 当配置{@link ObjectSort} 为{@code  DynamicModeEnum.STRICT}排序设置的属性不存在当前排序对象里面或者当前查询对象无法获取 {@link SQLKtColumnSelector}
+     */
+    @Override
+    default KtQueryable4<T1, T2, T3, T4> orderByObject(ObjectSort configuration) {
+        return orderByObject(true, configuration);
+    }
+
+    /**
+     * @param condition
+     * @param configuration
+     * @return
+     * @throws EasyQueryOrderByInvalidOperationException 当配置{@link ObjectSort} 为{@code  DynamicModeEnum.STRICT}排序设置的属性不存在当前排序对象里面或者当前查询对象无法获取 {@link SQLKtColumnSelector}
+     */
+    @Override
+    KtQueryable4<T1, T2, T3, T4> orderByObject(boolean condition, ObjectSort configuration);
     //endregion
 
 

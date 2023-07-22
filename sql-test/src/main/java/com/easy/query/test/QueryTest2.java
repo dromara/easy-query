@@ -10,6 +10,9 @@ import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.enums.AggregatePredicateCompare;
 import com.easy.query.test.dto.BlogEntityGroup;
 import com.easy.query.test.dto.BlogQueryRequest;
+import com.easy.query.test.dto.BlogSortJoinRequest;
+import com.easy.query.test.dto.BlogSortMultiRequest;
+import com.easy.query.test.dto.BlogSortRequest;
 import com.easy.query.test.dto.TopicGroupTestDTO;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.SysUser;
@@ -37,13 +40,14 @@ public class QueryTest2 extends BaseTest {
     public void query124() {
         String toSql = easyQuery
                 .queryable(Topic.class)
-                .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId,BlogEntity::getId))
+                .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
                 .leftJoin(BlogEntity.class, (t, t1, t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
                 .where(o -> o.eq(Topic::getId, "3"))
                 .limit(1, 2)
                 .toSQL();
         Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` LEFT JOIN `t_blog` t2 ON t2.`deleted` = ? AND t.`id` = t2.`id` WHERE t.`id` = ? LIMIT 2 OFFSET 1", toSql);
     }
+
     @Test
     public void query124_1() {
         String toSql = easyQuery
@@ -671,26 +675,27 @@ public class QueryTest2 extends BaseTest {
             Assert.assertEquals("%content%", sqlParameter11.getValue());
         }
     }
+
     @Test
-    public void queryTest16(){
+    public void queryTest16() {
         LocalDateTime now = LocalDateTime.now();
         Queryable<BlogEntity> queryable = easyQuery.queryable(BlogEntity.class)
                 .where(o -> o.lt(BlogEntity::getStar, 9).lt(true, BlogEntity::getPublishTime, now).lt(false, BlogEntity::getOrder, 4));
 
         ToSQLContext toSQLContext = DefaultToSQLContext.defaultToSQLContext(queryable.getSQLEntityExpressionBuilder().getExpressionContext().getTableContext());
         String sql = queryable.toSQL(toSQLContext);
-        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `star` < ? AND `publish_time` < ?",sql);
+        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `star` < ? AND `publish_time` < ?", sql);
         List<SQLParameter> parameters = toSQLContext.getParameters();
-        Assert.assertEquals(3,parameters.size());
+        Assert.assertEquals(3, parameters.size());
 
-        Assert.assertEquals(false,parameters.get(0).getValue());
-        Assert.assertEquals("deleted",parameters.get(0).getPropertyNameOrNull());
-        Assert.assertEquals(9,parameters.get(1).getValue());
-        Assert.assertEquals(now,parameters.get(2).getValue());
+        Assert.assertEquals(false, parameters.get(0).getValue());
+        Assert.assertEquals("deleted", parameters.get(0).getPropertyNameOrNull());
+        Assert.assertEquals(9, parameters.get(1).getValue());
+        Assert.assertEquals(now, parameters.get(2).getValue());
     }
 
     @Test
-    public void queryTest17(){
+    public void queryTest17() {
         BlogQueryRequest blogQueryRequest = new BlogQueryRequest();
         blogQueryRequest.setTitle("123");
         blogQueryRequest.setContent("123");
@@ -707,10 +712,11 @@ public class QueryTest2 extends BaseTest {
                 .whereObject(blogQueryRequest)
                 .orderByObject(blogQueryRequest)
                 .toSQL();
-        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `title` LIKE ? AND `url` LIKE ? AND `star` = ? AND `publish_time` >= ? AND `publish_time` <= ? AND `score` >= ? AND `status` <= ? AND `order` > ? AND `is_top` <> ? ORDER BY `status` ASC,`score` ASC",sql);
+        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `title` LIKE ? AND `url` LIKE ? AND `star` = ? AND `publish_time` >= ? AND `publish_time` <= ? AND `score` >= ? AND `status` <= ? AND `order` > ? AND `is_top` <> ? ORDER BY `status` ASC,`score` ASC", sql);
     }
+
     @Test
-    public void queryTest18(){
+    public void queryTest18() {
         BlogQueryRequest blogQueryRequest = new BlogQueryRequest();
         blogQueryRequest.setTitle("123");
         blogQueryRequest.setContent("123");
@@ -724,13 +730,14 @@ public class QueryTest2 extends BaseTest {
         blogQueryRequest.getOrders().add("status");
         blogQueryRequest.getOrders().add("score");
         String sql = easyQuery.queryable(BlogEntity.class)
-                .whereObject(true,blogQueryRequest)
-                .orderByObject(true,blogQueryRequest)
+                .whereObject(true, blogQueryRequest)
+                .orderByObject(true, blogQueryRequest)
                 .toSQL();
-        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `title` LIKE ? AND `url` LIKE ? AND `star` = ? AND `publish_time` >= ? AND `publish_time` <= ? AND `score` >= ? AND `status` <= ? AND `order` > ? AND `is_top` <> ? ORDER BY `status` ASC,`score` ASC",sql);
+        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `title` LIKE ? AND `url` LIKE ? AND `star` = ? AND `publish_time` >= ? AND `publish_time` <= ? AND `score` >= ? AND `status` <= ? AND `order` > ? AND `is_top` <> ? ORDER BY `status` ASC,`score` ASC", sql);
     }
+
     @Test
-    public void queryTest19(){
+    public void queryTest19() {
         BlogQueryRequest blogQueryRequest = new BlogQueryRequest();
         blogQueryRequest.setTitle("123");
         blogQueryRequest.setContent("123");
@@ -744,13 +751,14 @@ public class QueryTest2 extends BaseTest {
         blogQueryRequest.getOrders().add("status");
         blogQueryRequest.getOrders().add("score");
         String sql = easyQuery.queryable(BlogEntity.class)
-                .whereObject(false,blogQueryRequest)
-                .orderByObject(false,blogQueryRequest)
+                .whereObject(false, blogQueryRequest)
+                .orderByObject(false, blogQueryRequest)
                 .toSQL();
-        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ?",sql);
+        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ?", sql);
     }
+
     @Test
-    public void queryTest20(){
+    public void queryTest20() {
         BlogQueryRequest blogQueryRequest = new BlogQueryRequest();
         blogQueryRequest.setTitle("123");
         blogQueryRequest.setContent("123");
@@ -770,8 +778,9 @@ public class QueryTest2 extends BaseTest {
                 .whereObject(blogQueryRequest)
                 .orderByObject(blogQueryRequest)
                 .toSQL();
-        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `title` LIKE ? AND `url` LIKE ? AND `star` = ? AND `publish_time` >= ? AND `publish_time` <= ? AND `score` >= ? AND `status` <= ? AND `order` > ? AND `is_top` <> ? AND `status` IN (?) AND `status` NOT IN (?,?) ORDER BY `status` ASC,`score` ASC",sql);
+        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `title` LIKE ? AND `url` LIKE ? AND `star` = ? AND `publish_time` >= ? AND `publish_time` <= ? AND `score` >= ? AND `status` <= ? AND `order` > ? AND `is_top` <> ? AND `status` IN (?) AND `status` NOT IN (?,?) ORDER BY `status` ASC,`score` ASC", sql);
     }
+
     @Test
     public void query22() {
         Queryable<TopicGroupTestDTO> topicGroupTestDTOQueryable = easyQuery.queryable(BlogEntity.class)
@@ -782,8 +791,9 @@ public class QueryTest2 extends BaseTest {
         String sql = topicGroupTestDTOQueryable.toSQL();
         Assert.assertEquals("SELECT t1.`id` AS `id`,t1.`id_count` AS `id_count` FROM (SELECT t.`id` AS `id`,COUNT(t.`id`) AS `id_count` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? GROUP BY t.`id`) t1 ORDER BY RAND() ASC", sql);
         List<TopicGroupTestDTO> list = topicGroupTestDTOQueryable.toList();
-        Assert.assertEquals(1,list.size());
+        Assert.assertEquals(1, list.size());
     }
+
     @Test
     public void query23() {
         Queryable<TopicGroupTestDTO> topicGroupTestDTOQueryable = easyQuery.queryable(BlogEntity.class)
@@ -794,32 +804,34 @@ public class QueryTest2 extends BaseTest {
         String sql = topicGroupTestDTOQueryable.toSQL();
         Assert.assertEquals("SELECT t1.`id` AS `id`,t1.`id_count` AS `id_count` FROM (SELECT t.`id` AS `id`,COUNT(t.`id`) AS `id_count` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? GROUP BY RAND()) t1 ORDER BY RAND() ASC", sql);
         List<TopicGroupTestDTO> list = topicGroupTestDTOQueryable.toList();
-        Assert.assertEquals(1,list.size());
+        Assert.assertEquals(1, list.size());
     }
+
     @Test
     public void query24() {
         Queryable<TopicGroupTestDTO> topicGroupTestDTOQueryable = easyQuery.queryable(BlogEntity.class)
                 .where(o -> o.eq(BlogEntity::getId, "1"))
                 .groupBy(o -> o.columnConst("RAND()"))
-                .select(TopicGroupTestDTO.class, o -> o.columnConstAs("RAND()","rad").columnAs(BlogEntity::getId, TopicGroupTestDTO::getId).columnCountAs(BlogEntity::getId, TopicGroupTestDTO::getIdCount))
+                .select(TopicGroupTestDTO.class, o -> o.columnConstAs("RAND()", "rad").columnAs(BlogEntity::getId, TopicGroupTestDTO::getId).columnCountAs(BlogEntity::getId, TopicGroupTestDTO::getIdCount))
                 .orderByAsc(o -> o.columnConst("RAND()"));
         String sql = topicGroupTestDTOQueryable.toSQL();
         Assert.assertEquals("SELECT t1.`rad` AS `rad`,t1.`id` AS `id`,t1.`id_count` AS `id_count` FROM (SELECT RAND() AS rad,t.`id` AS `id`,COUNT(t.`id`) AS `id_count` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? GROUP BY RAND()) t1 ORDER BY RAND() ASC", sql);
         List<TopicGroupTestDTO> list = topicGroupTestDTOQueryable.toList();
-        Assert.assertEquals(1,list.size());
+        Assert.assertEquals(1, list.size());
     }
+
     @Test
     public void query25() {
-        String[] id1s={"97", "98"};
-        String[] id2s={"99", "100"};
-        String[] id3s={"101", "102"};
+        String[] id1s = {"97", "98"};
+        String[] id2s = {"99", "100"};
+        String[] id3s = {"101", "102"};
         Queryable<BlogEntity> queryable = easyQuery.queryable(BlogEntity.class)
-                .where(o -> o.and(x->x
-                        .in(BlogEntity::getId,id1s)
+                .where(o -> o.and(x -> x
+                        .in(BlogEntity::getId, id1s)
                         .or()
-                        .in(BlogEntity::getId,id2s)
+                        .in(BlogEntity::getId, id2s)
                         .or()
-                        .in(BlogEntity::getId,id3s)
+                        .in(BlogEntity::getId, id3s)
                 ));
         String sql = queryable.toSQL();
         Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND (`id` IN (?,?) OR `id` IN (?,?) OR `id` IN (?,?))", sql);
@@ -978,66 +990,165 @@ public class QueryTest2 extends BaseTest {
     }
 
     @Test
-    public void query12x(){
+    public void query12x() {
         EasyPageResult<Topicx> pageResult = easyQuery.queryable(Topic.class).where(o -> o.isNotNull(Topic::getCreateTime))
                 .select(Topicx.class).toPageResult(1, 20);
         System.out.println(pageResult);
     }
+
     @Test
     public void query13x() {
         Queryable<SysUser> queryable = easyQuery.queryable(SysUser.class)
                 .where(o -> o.eq(SysUser::getId, "123xxx")
-                        .like(false,SysUser::getPhone,"133"));
+                        .like(false, SysUser::getPhone, "133"));
         String sql = queryable.toSQL();
         Assert.assertEquals("SELECT `id`,`create_time`,`username`,`phone`,`id_card`,`address` FROM `easy-query-test`.`t_sys_user` WHERE `id` = ?", sql);
         SysUser sysUser = queryable.firstOrNull();
         Assert.assertNull(sysUser);
     }
+
     @Test
     public void query14x() {
         try {
 
-            Map<String,String> phone=null;
+            Map<String, String> phone = null;
             Queryable<SysUser> queryable = easyQuery.queryable(SysUser.class)
                     .where(o -> o.eq(SysUser::getId, "123xxx")
-                            .like(phone!=null&&phone.containsKey("phone"),SysUser::getPhone,phone.get("phone")));
+                            .like(phone != null && phone.containsKey("phone"), SysUser::getPhone, phone.get("phone")));
             String sql = queryable.toSQL();
             Assert.assertEquals("SELECT `id`,`create_time`,`username`,`phone`,`id_card`,`address` FROM `easy-query-test`.`t_sys_user` WHERE `id` = ?", sql);
             SysUser sysUser = queryable.firstOrNull();
             Assert.assertNull(sysUser);
-        }catch (Exception exception){
-            Assert.assertTrue(exception instanceof  NullPointerException);
+        } catch (Exception exception) {
+            Assert.assertTrue(exception instanceof NullPointerException);
         }
     }
+
     @Test
     public void query143x() {
 
-            Map<String,String> phone=null;
-            Queryable<SysUser> queryable = easyQuery.queryable(SysUser.class)
-                    .where(o -> o.eq(SysUser::getId, "123xxx"))
-                    .where(phone!=null&&phone.containsKey("phone"),o -> o.like(SysUser::getPhone,phone.get("phone")));
-            String sql = queryable.toSQL();
-            Assert.assertEquals("SELECT `id`,`create_time`,`username`,`phone`,`id_card`,`address` FROM `easy-query-test`.`t_sys_user` WHERE `id` = ?", sql);
-            SysUser sysUser = queryable.firstOrNull();
-            Assert.assertNull(sysUser);
+        Map<String, String> phone = null;
+        Queryable<SysUser> queryable = easyQuery.queryable(SysUser.class)
+                .where(o -> o.eq(SysUser::getId, "123xxx"))
+                .where(phone != null && phone.containsKey("phone"), o -> o.like(SysUser::getPhone, phone.get("phone")));
+        String sql = queryable.toSQL();
+        Assert.assertEquals("SELECT `id`,`create_time`,`username`,`phone`,`id_card`,`address` FROM `easy-query-test`.`t_sys_user` WHERE `id` = ?", sql);
+        SysUser sysUser = queryable.firstOrNull();
+        Assert.assertNull(sysUser);
 
     }
+
     @Test
-    public void query26(){
+    public void query26() {
 
 //        List<TopicY> list = easyQuery.queryable(TopicY.class)
 //                .include(t->t.many(TopicY::getTopicxList))
 //                .toList();
         List<TopicY> list1 = easyQuery.queryable(TopicY.class)
-                .include(t->t.one(TopicY::getTopic))
+                .include(t -> t.one(TopicY::getTopic))
                 .toList();
-        Assert.assertTrue(list1.size()>0);
+        Assert.assertTrue(list1.size() > 0);
         for (TopicY topicY : list1) {
             Topic topic = topicY.getTopic();
-            Assert.assertEquals(topicY.getId(),topic.getId());
+            Assert.assertEquals(topicY.getId(), topic.getId());
         }
 //                .include(TopicY::getTopic,q->q.where(x->x.eq(Topic::getId,1)));
     }
 
+    @Test
+    public void dynamicSort() {
+        {
+
+            BlogSortRequest blogSortRequest = new BlogSortRequest();
+            blogSortRequest.setSort("title");
+            blogSortRequest.setAsc(true);
+            String sql = easyQuery.queryable(BlogEntity.class)
+                    .orderByObject(blogSortRequest)
+                    .select(o->o.column(BlogEntity::getId).column(BlogEntity::getTitle)
+                            .column(BlogEntity::getContent))
+                    .toSQL();
+            Assert.assertEquals("SELECT `id`,`title`,`content` FROM `t_blog` WHERE `deleted` = ? ORDER BY `title` ASC",sql);
+        }
+        {
+
+            BlogSortRequest blogSortRequest = new BlogSortRequest();
+            blogSortRequest.setSort("title");
+            blogSortRequest.setAsc(false);
+            String sql = easyQuery.queryable(BlogEntity.class)
+                    .orderByObject(blogSortRequest)
+                    .select(o->o.column(BlogEntity::getId).column(BlogEntity::getTitle)
+                            .column(BlogEntity::getContent))
+                    .toSQL();
+            Assert.assertEquals("SELECT `id`,`title`,`content` FROM `t_blog` WHERE `deleted` = ? ORDER BY `title` DESC",sql);
+        }
+        {
+
+            BlogSortRequest blogSortRequest = new BlogSortRequest();
+            blogSortRequest.setSort("title");
+            String sql = easyQuery.queryable(BlogEntity.class)
+                    .orderByObject(blogSortRequest)
+                    .select(o->o.column(BlogEntity::getId).column(BlogEntity::getTitle)
+                            .column(BlogEntity::getContent))
+                    .toSQL();
+            Assert.assertEquals("SELECT `id`,`title`,`content` FROM `t_blog` WHERE `deleted` = ?",sql);
+        }
+        {
+
+            BlogSortRequest blogSortRequest = new BlogSortRequest();
+            blogSortRequest.setAsc(true);
+            String sql = easyQuery.queryable(BlogEntity.class)
+                    .orderByObject(blogSortRequest)
+                    .select(o->o.column(BlogEntity::getId).column(BlogEntity::getTitle)
+                            .column(BlogEntity::getContent))
+                    .toSQL();
+            Assert.assertEquals("SELECT `id`,`title`,`content` FROM `t_blog` WHERE `deleted` = ?",sql);
+        }
+    }
+
+    @Test
+    public void dynamicSort2(){
+
+        {
+
+            BlogSortMultiRequest blogSortRequest = new BlogSortMultiRequest();
+            BlogSortMultiRequest.SortConfig sortConfig = new BlogSortMultiRequest.SortConfig();
+            sortConfig.setProperty("title");
+            sortConfig.setAsc(true);
+            blogSortRequest.getOrders().add(sortConfig);
+            BlogSortMultiRequest.SortConfig sortConfig1 = new BlogSortMultiRequest.SortConfig();
+            sortConfig1.setProperty("star");
+            sortConfig1.setAsc(false);
+            blogSortRequest.getOrders().add(sortConfig1);
+            String sql = easyQuery.queryable(BlogEntity.class)
+                    .orderByObject(blogSortRequest)
+                    .select(o->o.column(BlogEntity::getId).column(BlogEntity::getTitle)
+                            .column(BlogEntity::getContent))
+                    .toSQL();
+            Assert.assertEquals("SELECT `id`,`title`,`content` FROM `t_blog` WHERE `deleted` = ? ORDER BY `title` ASC,`star` DESC",sql);
+        }
+    }
+    @Test
+    public void dynamicSort3(){
+
+        {
+
+            BlogSortJoinRequest blogSortRequest = new BlogSortJoinRequest();
+            BlogSortJoinRequest.SortConfig sortConfig = new BlogSortJoinRequest.SortConfig();
+            sortConfig.setProperty("title");
+            sortConfig.setAsc(true);
+            blogSortRequest.getOrders().add(sortConfig);
+            BlogSortJoinRequest.SortConfig sortConfig1 = new BlogSortJoinRequest.SortConfig();
+            sortConfig1.setProperty("createTime");
+            sortConfig1.setAsc(false);
+            blogSortRequest.getOrders().add(sortConfig1);
+            String sql = easyQuery.queryable(BlogEntity.class)
+                    .innerJoin(Topic.class,(t,t1)->t.eq(t1,BlogEntity::getId, Topic::getId))
+                    .orderByObject(blogSortRequest)
+                    .select(o->o.column(BlogEntity::getId).column(BlogEntity::getTitle)
+                            .column(BlogEntity::getContent))
+                    .toSQL();
+            Assert.assertEquals("SELECT t.`id`,t.`title`,t.`content` FROM `t_blog` t INNER JOIN `t_topic` t1 ON t.`id` = t1.`id` WHERE t.`deleted` = ? ORDER BY t.`title` ASC,t1.`create_time` DESC",sql);
+        }
+    }
 
 }

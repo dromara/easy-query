@@ -1,9 +1,8 @@
 package com.easy.query.test.dto;
 
-import com.easy.query.api4j.dynamic.ObjectSort4J;
-import com.easy.query.api4j.dynamic.sort.ObjectSortBuilder4J;
 import com.easy.query.core.annotation.EasyWhereCondition;
-import com.easy.query.test.entity.BlogEntity;
+import com.easy.query.core.api.dynamic.sort.ObjectSort;
+import com.easy.query.core.api.dynamic.sort.ObjectSortBuilder;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -18,7 +17,7 @@ import java.util.List;
  * @author xuejiaming
  */
 @Data
-public class BlogQueryRequest implements  ObjectSort4J<BlogEntity> {
+public class BlogQueryRequest implements ObjectSort {
 
     /**
      * 标题
@@ -70,7 +69,7 @@ public class BlogQueryRequest implements  ObjectSort4J<BlogEntity> {
 
     private List<String> orders=new ArrayList<>();
     @Override
-    public void configure(ObjectSortBuilder4J<BlogEntity> builder) {
+    public void configure(ObjectSortBuilder builder) {
         for (String order : orders) {
             builder.orderBy(order,true);
         }

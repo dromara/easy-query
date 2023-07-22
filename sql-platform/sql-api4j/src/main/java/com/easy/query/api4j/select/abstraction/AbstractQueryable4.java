@@ -13,6 +13,7 @@ import com.easy.query.api4j.sql.impl.SQLColumnAsSelectorImpl;
 import com.easy.query.api4j.sql.impl.SQLGroupBySelectorImpl;
 import com.easy.query.api4j.sql.impl.SQLOrderByColumnSelectorImpl;
 import com.easy.query.api4j.sql.impl.SQLWherePredicateImpl;
+import com.easy.query.core.api.dynamic.sort.ObjectSort;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.select.ClientQueryable4;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
@@ -129,6 +130,12 @@ public abstract class AbstractQueryable4<T1, T2, T3, T4> extends AbstractQueryab
                 selectExpression.apply(new SQLOrderByColumnSelectorImpl<>(selector1), new SQLOrderByColumnSelectorImpl<>(selector2), new SQLOrderByColumnSelectorImpl<>(selector3), new SQLOrderByColumnSelectorImpl<>(selector4));
             });
         }
+        return this;
+    }
+
+    @Override
+    public Queryable4<T1, T2, T3, T4> orderByObject(boolean condition, ObjectSort configuration) {
+        super.orderByObject(condition,configuration);
         return this;
     }
 

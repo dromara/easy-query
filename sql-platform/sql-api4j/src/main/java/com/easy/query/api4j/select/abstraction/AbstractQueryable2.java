@@ -13,6 +13,7 @@ import com.easy.query.api4j.sql.SQLWhereAggregatePredicate;
 import com.easy.query.api4j.sql.SQLWherePredicate;
 import com.easy.query.api4j.sql.impl.SQLColumnAsSelectorImpl;
 import com.easy.query.api4j.sql.impl.SQLWherePredicateImpl;
+import com.easy.query.core.api.dynamic.sort.ObjectSort;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.select.ClientQueryable2;
 import com.easy.query.core.basic.api.select.ClientQueryable3;
@@ -129,6 +130,12 @@ public abstract class AbstractQueryable2<T1, T2> extends AbstractQueryable<T1> i
     @Override
     public Queryable2<T1, T2> orderByDesc(boolean condition, SQLExpression1<SQLOrderBySelector<T1>> selectExpression) {
         super.orderByDesc(condition, selectExpression);
+        return this;
+    }
+
+    @Override
+    public Queryable2<T1, T2> orderByObject(boolean condition,ObjectSort configuration) {
+        super.orderByObject(condition,configuration);
         return this;
     }
 
