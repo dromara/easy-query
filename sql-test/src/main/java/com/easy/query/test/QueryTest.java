@@ -660,7 +660,8 @@ public class QueryTest extends BaseTest {
         {
 
             Queryable<BlogEntityTest> queryable = easyQuery.queryable(BlogEntity.class)
-                    .select(BlogEntityTest.class, o -> o.columnIgnore(BlogEntity::getUrl).columnFuncAs(SQLFunc.ifNULL(BlogEntity::getUrl), BlogEntityTest::getUrl));
+                    .select(BlogEntityTest.class, o -> o.columnIgnore(BlogEntity::getUrl)
+                            .columnFuncAs(SQLFunc.ifNULL(BlogEntity::getUrl), BlogEntityTest::getUrl));
             String sql = queryable.toSQL();
             Assert.assertEquals("SELECT IFNULL(t.`url`,'') AS `url` FROM `t_blog` t WHERE t.`deleted` = ?", sql);
         }

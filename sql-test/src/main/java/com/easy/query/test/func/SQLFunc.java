@@ -19,7 +19,7 @@ public class SQLFunc {
 //    }
     public static <T, R> ColumnPropertyFunction ifNULL(Property<T, R> column) {
         String propertyName = EasyLambdaUtil.getPropertyName(column);
-        return new MyColumnPropertyFunction(propertyName, MySQLFunc.IFNULL_EMPTY);
+        return new MyColumnPropertyFunction(propertyName, new IFNULLColumnFunction(""));
     }
 
     public static <T, R> ColumnPropertyFunction ifNULLOrDefault(Property<T, R> column, R def) {

@@ -831,32 +831,64 @@ public class QueryTest3 extends BaseTest {
 
     @Test
     public void lambdaCaseWhen() {
+        {
 
-        String sql = easyQuery.queryable(Topic.class)
-                .where(t -> t.like(Topic::getTitle, "someTitle"))
-                .select(Topic.class, t -> t
-                        .sqlColumnAs(
-                                SQL4JFunc.caseWhenBuilder(t)
-                                        .caseWhen(f -> f.eq(Topic::getTitle, "123"), "111")
-                                        .caseWhen(f -> f.eq(Topic::getTitle, "456"), "222")
-                                        .elseEnd("222")
-                                , Topic::getTitle)
-                        .column(Topic::getId)
-                )
-                .toSQL();
-        Assert.assertEquals("SELECT CASE WHEN t.`title` = ? THEN ? WHEN t.`title` = ? THEN ? ELSE ? END AS `title`,t.`id` FROM `t_topic` t WHERE t.`title` LIKE ?", sql);
-        List<Topic> list = easyQuery.queryable(Topic.class)
-                .where(t -> t.like(Topic::getTitle, "someTitle"))
-                .select(Topic.class, t -> t
-                        .sqlColumnAs(
-                                SQL4JFunc.caseWhenBuilder(t)
-                                        .caseWhen(f -> f.eq(Topic::getTitle, "123"), "111")
-                                        .caseWhen(f -> f.eq(Topic::getTitle, "456"), "222")
-                                        .elseEnd("222")
-                                , Topic::getTitle)
-                        .column(Topic::getId)
-                ).toList();
-        Assert.assertEquals(0, list.size());
+            String sql = easyQuery.queryable(Topic.class)
+                    .where(t -> t.like(Topic::getTitle, "someTitle"))
+                    .select(Topic.class, t -> t
+                            .sqlColumnAs(
+                                    SQL4JFunc.caseWhenBuilder(t)
+                                            .caseWhen(f -> f.eq(Topic::getTitle, "123"), "111")
+                                            .caseWhen(f -> f.eq(Topic::getTitle, "456"), "222")
+                                            .elseEnd("222")
+                                    , Topic::getTitle)
+                            .column(Topic::getId)
+                    )
+                    .toSQL();
+            Assert.assertEquals("SELECT CASE WHEN t.`title` = ? THEN ? WHEN t.`title` = ? THEN ? ELSE ? END AS `title`,t.`id` FROM `t_topic` t WHERE t.`title` LIKE ?", sql);
+            List<Topic> list = easyQuery.queryable(Topic.class)
+                    .where(t -> t.like(Topic::getTitle, "someTitle"))
+                    .select(Topic.class, t -> t
+                            .sqlColumnAs(
+                                    SQL4JFunc.caseWhenBuilder(t)
+                                            .caseWhen(f -> f.eq(Topic::getTitle, "123"), "111")
+                                            .caseWhen(f -> f.eq(Topic::getTitle, "456"), "222")
+                                            .elseEnd("222")
+                                    , Topic::getTitle)
+                            .column(Topic::getId)
+                    ).toList();
+            Assert.assertEquals(0, list.size());
+        }
+        {
+
+            String sql = easyQuery.queryable(Topic.class)
+                    .innerJoin(BlogEntity.class,(t,t1)->t.eq(t1,Topic::getId,BlogEntity::getId))
+                    .where(t -> t.like(Topic::getTitle, "someTitle"))
+                    .select(Topic.class, (t,t1) -> t
+                            .sqlColumnAs(
+                                    SQL4JFunc.caseWhenBuilder(t,t1)
+                                            .caseWhen((f,f1) -> f.eq(Topic::getTitle, "123").then(f1).le(BlogEntity::getStar,100), "111")
+                                            .caseWhen((f,f1) -> f.eq(Topic::getTitle, "456").then(f1).ge(BlogEntity::getStar,200), "222")
+                                            .elseEnd("222")
+                                    , Topic::getTitle)
+                            .column(Topic::getId)
+                    )
+                    .toSQL();
+            Assert.assertEquals("SELECT CASE WHEN t.`title` = ? AND t1.`star` <= ? THEN ? WHEN t.`title` = ? AND t1.`star` >= ? THEN ? ELSE ? END AS `title`,t.`id` FROM `t_topic` t INNER JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t.`title` LIKE ?", sql);
+            List<Topic> list = easyQuery.queryable(Topic.class)
+                    .innerJoin(BlogEntity.class,(t,t1)->t.eq(t1,Topic::getId,BlogEntity::getId))
+                    .where(t -> t.like(Topic::getTitle, "someTitle"))
+                    .select(Topic.class, (t,t1) -> t
+                            .sqlColumnAs(
+                                    SQL4JFunc.caseWhenBuilder(t,t1)
+                                            .caseWhen((f,f1) -> f.eq(Topic::getTitle, "123").then(f1).le(BlogEntity::getStar,100), "111")
+                                            .caseWhen((f,f1) -> f.eq(Topic::getTitle, "456").then(f1).ge(BlogEntity::getStar,200), "222")
+                                            .elseEnd("222")
+                                    , Topic::getTitle)
+                            .column(Topic::getId)
+                    ).toList();
+            Assert.assertEquals(0, list.size());
+        }
     }
 
     @Test
