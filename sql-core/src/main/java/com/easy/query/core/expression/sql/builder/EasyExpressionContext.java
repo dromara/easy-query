@@ -244,7 +244,7 @@ public class EasyExpressionContext implements ExpressionContext {
 
     @Override
     public boolean hasIncludes() {
-        return EasyCollectionUtil.isNotEmpty(includes);
+        return includes!=null&&!includes.isEmpty();
     }
 
     @Override

@@ -9,6 +9,10 @@ import com.easy.query.core.basic.api.select.ClientQueryable;
  * @author xuejiaming
  */
 public interface NavigateInclude<T1> {
-    <TREntity> ClientQueryable<TREntity> with(String property);
+
+    default <TREntity> ClientQueryable<TREntity> with(String property){
+        return with(property,null);
+    }
+    <TREntity> ClientQueryable<TREntity> with(String property,Integer groupSize);
 
 }

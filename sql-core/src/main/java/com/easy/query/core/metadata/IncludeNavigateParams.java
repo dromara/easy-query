@@ -17,6 +17,7 @@ public class IncludeNavigateParams {
     private NavigateMetadata navigateMetadata;
     private ClientQueryable<?> mappingQueryable;
     private TableAvailable table;
+    private Integer relationGroupSize;
     public IncludeNavigateParams(){
         relationIds =new ArrayList<>();
     }
@@ -47,5 +48,16 @@ public class IncludeNavigateParams {
 
     public void setTable(TableAvailable table) {
         this.table = table;
+    }
+
+    public void setRelationGroupSize(Integer relationGroupSize) {
+        this.relationGroupSize = relationGroupSize;
+    }
+
+    public int getQueryRelationGroupSize(int defGroupSize){
+        if(this.relationGroupSize==null){
+            return defGroupSize;
+        }
+        return this.relationGroupSize;
     }
 }

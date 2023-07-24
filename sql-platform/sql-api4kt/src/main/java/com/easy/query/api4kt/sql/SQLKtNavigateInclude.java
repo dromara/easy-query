@@ -18,11 +18,17 @@ import java.util.Collection;
 public interface SQLKtNavigateInclude<T1> {
     NavigateInclude<T1> getNavigateInclude();
    default  <TProperty> KtQueryable<TProperty> one(KProperty1<T1,TProperty> navigate){
-       ClientQueryable<TProperty> clientQueryable = getNavigateInclude().<TProperty>with(EasyKtLambdaUtil.getPropertyName(navigate));
+       return one(navigate,null);
+   }
+   default  <TProperty> KtQueryable<TProperty> one(KProperty1<T1,TProperty> navigate,Integer groupSize){
+       ClientQueryable<TProperty> clientQueryable = getNavigateInclude().<TProperty>with(EasyKtLambdaUtil.getPropertyName(navigate),groupSize);
        return new EasyKtQueryable<>(clientQueryable);
    }
    default  <TProperty> KtQueryable<TProperty> many(KProperty1<T1, Collection<TProperty>> navigate){
-       ClientQueryable<TProperty> clientQueryable = getNavigateInclude().<TProperty>with(EasyKtLambdaUtil.getPropertyName(navigate));
+       return many(navigate,null);
+   }
+   default  <TProperty> KtQueryable<TProperty> many(KProperty1<T1, Collection<TProperty>> navigate,Integer groupSize){
+       ClientQueryable<TProperty> clientQueryable = getNavigateInclude().<TProperty>with(EasyKtLambdaUtil.getPropertyName(navigate),groupSize);
        return new EasyKtQueryable<>(clientQueryable);
    }
 }

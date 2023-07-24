@@ -32,11 +32,30 @@ public class EasyQueryOptionBuilder {
      */
     private long multiConnWaitTimeoutMillis;
     private boolean warningBusy;
+    /**
+     * 插入批处理阈值
+     */
     private int insertBatchThreshold;
+    /**
+     * update批处理阈值
+     */
     private int updateBatchThreshold;
+    /**
+     * 是否打印sql
+     */
     private boolean printSql;
+    /**
+     * 按时间分表启动定时器
+     */
     private boolean startTimeJob;
+    /**
+     * 默认是否使用追踪模式
+     */
     private boolean defaultTrack;
+    /**
+     * 关联查询每次分组数量
+     */
+    private int relationGroupSize;
 
     public EasyQueryOptionBuilder() {
         this.deleteThrowError = true;
@@ -60,6 +79,7 @@ public class EasyQueryOptionBuilder {
         this.printSql = true;
         this.startTimeJob = false;
         this.defaultTrack = false;
+        this.relationGroupSize = 512;
     }
 
     public void setDeleteThrowError(boolean deleteThrowError) {
@@ -128,6 +148,7 @@ public class EasyQueryOptionBuilder {
 
     /**
      * 如果当前没有分表操作建议设置为0
+     *
      * @param defaultDataSourceMergePoolSize
      */
     public void setDefaultDataSourceMergePoolSize(int defaultDataSourceMergePoolSize) {
@@ -165,6 +186,10 @@ public class EasyQueryOptionBuilder {
         this.defaultTrack = defaultTrack;
     }
 
+    public void setRelationGroupSize(int relationGroupSize) {
+        this.relationGroupSize = relationGroupSize;
+    }
+
     public EasyQueryOption build() {
         return new EasyQueryOption(this.deleteThrowError,
                 this.insertStrategy,
@@ -188,6 +213,7 @@ public class EasyQueryOptionBuilder {
                 this.updateBatchThreshold,
                 this.printSql,
                 this.startTimeJob,
-                this.defaultTrack);
+                this.defaultTrack,
+                this.relationGroupSize);
     }
 }

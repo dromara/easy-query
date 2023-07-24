@@ -81,7 +81,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -373,8 +372,9 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                 if (!Objects.equals(fillQueryable.queryClass(), fillParams.getOriginalEntityClass())) {
                     throw new EasyQueryInvalidOperationException("fill expression should select original entity class:" + EasyClassUtil.getSimpleName(fillParams.getOriginalEntityClass()) + ",now:" + EasyClassUtil.getSimpleName(fillQueryable.queryClass()));
                 }
-                Set<?> relationIds = result.stream().map(o -> fill.getSelfProperty().apply(o)).filter(Objects::nonNull)
-                        .collect(Collectors.toSet());
+                List<?> relationIds = result.stream().map(o -> fill.getSelfProperty().apply(o)).filter(Objects::nonNull)
+                        .distinct()
+                        .collect(Collectors.toList());
                 fillParams.getRelationIds().addAll(relationIds);
                 List<?> list = fillQueryable.toList();
 

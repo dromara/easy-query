@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 /**
  * create time 2023/6/17 19:21
  * 导航属性 关联查询
- *
+ * 如果用到非数据库对象譬如VO对象上面,那么只需要定义RelationType即可,其余属性定义了也会被忽略
  * @author xuejiaming
  */
 @Documented

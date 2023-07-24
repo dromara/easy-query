@@ -77,6 +77,9 @@ public class EasyQueryProperties {
      * 默认5秒分表聚合多链接获取分表插入更新删除同理多个线程间等待获取时间单位毫秒(ms)
      */
     private long multiConnWaitTimeoutMillis = 5000L;
+    /**
+     * 分片获取连接数繁忙是否打印 获取耗时大于{@param multiConnWaitTimeoutMillis}的80%视为繁忙
+     */
     private boolean warningBusy = true;
 
 
@@ -88,9 +91,22 @@ public class EasyQueryProperties {
      * 对象修改数量达到多少后使用批量处理
      */
     private int updateBatchThreshold = 1024;
+    /**
+     * 是否打印sql
+     */
     private boolean printSql = true;
+    /**
+     * 分片按时间分表的时候需要开启
+     */
     private boolean startTimeJob = false;
+    /**
+     * 默认是否启用追踪
+     */
     private boolean defaultTrack = false;
+    /**
+     * 关联查询每组多少关联id
+     */
+    private int relationGroupSize = 512;
 
     public Boolean getEnable() {
         return enable;
@@ -294,6 +310,14 @@ public class EasyQueryProperties {
 
     public void setDefaultTrack(boolean defaultTrack) {
         this.defaultTrack = defaultTrack;
+    }
+
+    public int getRelationGroupSize() {
+        return relationGroupSize;
+    }
+
+    public void setRelationGroupSize(int relationGroupSize) {
+        this.relationGroupSize = relationGroupSize;
     }
 
     public EasyQueryProperties() {

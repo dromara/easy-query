@@ -1,6 +1,8 @@
 package com.easy.query.core.expression.sql.include;
 
 import com.easy.query.core.basic.api.select.ClientQueryable;
+import com.easy.query.core.basic.api.select.Query;
+import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
@@ -18,13 +20,14 @@ import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.IncludeNavigateParams;
 import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.util.EasyClassUtil;
+import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasyStringUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -51,7 +54,7 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
             String selfPropertyOrPrimary = navigateMetadata.getSelfPropertyOrPrimary();
             String columnName = getColumnNameByQueryExpressionBuilder(mainEntityQueryExpressionBuilder, includeNavigateParams.getTable(), navigateMetadata.getSelfPropertyOrPrimary());
             if (columnName == null) {
-                throw new EasyQueryInvalidOperationException("not found relation self property:[" +selfPropertyOrPrimary + "] in result");
+                throw new EasyQueryInvalidOperationException("not found relation self property:[" + selfPropertyOrPrimary + "] in result");
             }
             includeParseContext.setSelfProperty(entityMetadata.getPropertyNameNotNull(columnName));
         } else {
@@ -65,31 +68,35 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
             throw new EasyQueryInvalidOperationException("not found relation navigate property");
         }
 
-
+        //获取当前对象的关联id集合
         ColumnMetadata selfRelationColumn = entityMetadata.getColumnNotNull(includeParseContext.getSelfProperty());
         Property<Object, ?> relationPropertyGetter = selfRelationColumn.getGetterCaller();
-        Set<?> relationIds = result.stream().map(relationPropertyGetter::apply)
-                .collect(Collectors.toSet());
+        List<Object> relationIds = result.stream().map(relationPropertyGetter::apply)
+                .distinct()
+                .collect(Collectors.toList());
 
-        includeNavigateParams.getRelationIds().addAll(relationIds);
 
         QueryRuntimeContext runtimeContext = expressionContext.getRuntimeContext();
+        EasyQueryOption easyQueryOption = runtimeContext.getQueryConfiguration().getEasyQueryOption();
         if (RelationTypeEnum.ManyToMany == navigateMetadata.getRelationType()) {
-            confirmMappingRows(includeParseContext);
+            confirmMappingRows(easyQueryOption, includeParseContext, relationIds);
             EntityMetadata mappingEntityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(navigateMetadata.getMappingClass());
             ColumnMetadata mappingTargetColumnMetadata = mappingEntityMetadata.getColumnNotNull(navigateMetadata.getTargetMappingProperty());
             String targetColumnName = mappingTargetColumnMetadata.getName();
-            Set<Object> targetIds = includeParseContext.getMappingRows().stream().map(o -> o.get(targetColumnName)).filter(Objects::nonNull)
-                    .collect(Collectors.toSet());
-            includeNavigateParams.getRelationIds().addAll(targetIds);
+            List<Object> targetIds = includeParseContext.getMappingRows().stream()
+                    .map(o -> o.get(targetColumnName)).filter(Objects::nonNull)
+                    .distinct()
+                    .collect(Collectors.toList());
+            relationIds.clear();
+            relationIds.addAll(targetIds);
         }
 
         //导航属性追踪与否
-        List<?> includeResult = includeParseContext.getIncludeQueryable().asTracking().toList();
+        List<?> includeResult = queryableGroupExecute(easyQueryOption,includeParseContext.getIncludeQueryable(),includeNavigateParams,relationIds, Query::toList);
         if (aliasEntity) {
             EntityQueryExpressionBuilder sqlEntityExpressionBuilder = includeParseContext.getIncludeQueryable().getSQLEntityExpressionBuilder();
             TableAvailable aliasTable = getTableByEntityClass(sqlEntityExpressionBuilder, includeParseContext.getIncludeNavigateParams().getNavigateMetadata().getNavigatePropertyType());
-            if(aliasTable==null){
+            if (aliasTable == null) {
                 throw new EasyQueryInvalidOperationException("not found relation target table:[" + EasyClassUtil.getSimpleName(includeParseContext.getIncludeQueryable().queryClass()) + "] in result");
             }
             String targetPropertyOrPrimary = navigateMetadata.getTargetPropertyOrPrimary(runtimeContext);
@@ -136,14 +143,42 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
 
     }
 
-    private void confirmMappingRows(IncludeParseContext includeParseContext) {
+    private <T> void confirmMappingRows(EasyQueryOption easyQueryOption, IncludeParseContext includeParseContext, List<T> relationIds) {
+
         IncludeNavigateParams includeNavigateParams = includeParseContext.getIncludeNavigateParams();
-        ClientQueryable<?> mappingQueryable = includeNavigateParams.getMappingQueryable();
-        if (mappingQueryable == null) {
-            throw new EasyQueryInvalidOperationException("relation many to many mapping queryable is null");
+        List<Map<String, Object>> mappingRows = queryableGroupExecute(easyQueryOption, includeNavigateParams.getMappingQueryable(), includeNavigateParams, relationIds, Query::toMaps);
+        includeParseContext.setMappingRows(mappingRows);
+    }
+
+    private <TR,TProperty> List<TR> queryableGroupExecute(EasyQueryOption easyQueryOption, ClientQueryable<?> includeQueryable, IncludeNavigateParams includeNavigateParams, List<TProperty> relationIds, SQLFuncExpression1<ClientQueryable<?>,List<TR>> produce){
+        int queryRelationGroupSize = includeNavigateParams.getQueryRelationGroupSize(easyQueryOption.getRelationGroupSize());
+
+        if (relationIds.size() <= queryRelationGroupSize) {
+            includeNavigateParams.getRelationIds().addAll(relationIds);
+            return executeQueryableAndClearParams(includeQueryable,includeNavigateParams,produce);
+        } else {
+            ArrayList<TR> result = new ArrayList<>(relationIds.size());
+            int i = 0;
+            for (TProperty relationId : relationIds) {
+                i++;
+                includeNavigateParams.getRelationIds().add(relationId);
+                if ((i % queryRelationGroupSize) == 0) {
+                    List<TR> r = executeQueryableAndClearParams(includeQueryable,includeNavigateParams,produce);
+                    result.addAll(r);
+                }
+            }
+            if (EasyCollectionUtil.isNotEmpty(includeNavigateParams.getRelationIds())) {
+                List<TR> r = executeQueryableAndClearParams(includeQueryable,includeNavigateParams,produce);
+                result.addAll(r);
+            }
+            return result;
         }
-        includeParseContext.setMappingRows(mappingQueryable.toMaps());
+    }
+
+    private <T> List<T> executeQueryableAndClearParams(ClientQueryable<?> mappingQueryable, IncludeNavigateParams includeNavigateParams, SQLFuncExpression1<ClientQueryable<?>,List<T>> produce) {
+        List<T> result = produce.apply(mappingQueryable);
         includeNavigateParams.getRelationIds().clear();
+        return result;
     }
 
     private void confirmNavigateProperty(boolean aliasEntity, ExpressionContext expressionContext, EntityMetadata entityMetadata, IncludeNavigateParams includeNavigateParams, IncludeParseContext includeParseContext) {

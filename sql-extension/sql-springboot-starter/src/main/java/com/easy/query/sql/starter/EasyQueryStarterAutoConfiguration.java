@@ -169,6 +169,7 @@ public class EasyQueryStarterAutoConfiguration {
                     builder.setPrintSql(easyQueryProperties.isPrintSql());
                     builder.setStartTimeJob(easyQueryProperties.isStartTimeJob());
                     builder.setDefaultTrack(easyQueryProperties.isDefaultTrack());
+                    builder.setRelationGroupSize(easyQueryProperties.getRelationGroupSize());
                 })
                 .replaceService(NameConversion.class, nameConversion)
                 .replaceService(ConnectionManager.class, SpringConnectionManager.class)

@@ -10,21 +10,57 @@ import com.easy.query.core.enums.sharding.ConnectionModeEnum;
  * @author xuejiaming
  */
 public class EasyQueryOption {
+    /**
+     * 物理删除是否抛出错误
+     */
     private final boolean deleteThrowError;
+    /**
+     * 默认的插入策略
+     */
     private final SQLExecuteStrategyEnum insertStrategy;
+    /**
+     * 默认的更新策略
+     */
     private final SQLExecuteStrategyEnum updateStrategy;
+    /**
+     * 默认的分片同库单次最大查询使用连接数
+     */
     private final int maxShardingQueryLimit;
     /**
      * 最大分片执行线程数,如果executorMaximumPoolSize<=0 那么将使用Executors.newCachedThreadPool
      */
     private final int executorMaximumPoolSize;
+    /**
+     * 分片并行执行线程池核心数
+     */
     private final int executorCorePoolSize;
+    /**
+     * 链接默认 会影响数据聚合是内存还是stream
+     */
     private final ConnectionModeEnum connectionMode;
+    /**
+     * 如果路由没有匹配到是否报错
+     */
     private final boolean throwIfRouteNotMatch;
+    /**
+     * 分片执行超时时间
+     */
     private final long shardingExecuteTimeoutMillis;
+    /**
+     * 读写分离配置
+     */
     private final EasyQueryReplicaOption replicaOption;
+    /**
+     * 分片分库配置
+     */
     private final EasyQueryShardingOption shardingOption;
+    /**
+     * 默认数据源名称
+     */
     private final String defaultDataSourceName;
+    /**
+     * 默认数据源合并可用连接数大小
+     */
     private final int defaultDataSourceMergePoolSize;
     /**
      * 默认查询是否查询large column默认true
@@ -42,19 +78,42 @@ public class EasyQueryOption {
      * 分片聚合多个connection获取等待超时时间防止分片datasourcePoolSize过小导致假死
      */
     private final long multiConnWaitTimeoutMillis;
+    /**
+     * 如果分片连接数获取是繁忙的是否需要warning日志输出
+     */
     private final boolean warningBusy;
+    /**
+     * 当插入对象达到多少阈值启用batch
+     */
     private final int insertBatchThreshold;
+    /**
+     * 当更新对象达到多少阈值启用batch
+     */
     private final int updateBatchThreshold;
+    /**
+     * 是否需要打印sql，以log.info打印
+     */
     private final boolean printSql;
+    /**
+     * 如果使用按时间分表的路由需要开启定时任务
+     */
     private final boolean startTimeJob;
 
+    /**
+     * 默认是否启用追踪模式
+     */
     private final boolean defaultTrack;
+    /**
+     * include的关联查询每次用多少关联id去关联查询也就是in里面最多多少个关联id
+     * 如果超出部分则另起一个查询
+     */
+    private final int relationGroupSize;
 
     public EasyQueryOption(boolean deleteThrowError, SQLExecuteStrategyEnum insertStrategy, SQLExecuteStrategyEnum updateStrategy, ConnectionModeEnum connectionMode, int maxShardingQueryLimit, int executorMaximumPoolSize, int executorCorePoolSize,
                            boolean throwIfNotMatchRoute, long shardingExecuteTimeoutMillis,
                            EasyQueryShardingOption shardingOption, EasyQueryReplicaOption replicaOption, String defaultDataSourceName, int defaultDataSourceMergePoolSize, boolean queryLargeColumn, int maxShardingRouteCount, int executorQueueSize, long multiConnWaitTimeoutMillis,
-                           boolean warningBusy, int insertBatchThreshold, int updateBatchThreshold, boolean printSql,boolean startTimeJob,boolean defaultTrack) {
-
+                           boolean warningBusy, int insertBatchThreshold, int updateBatchThreshold, boolean printSql, boolean startTimeJob, boolean defaultTrack,
+                           int relationGroupSize) {
 
 
         if (executorMaximumPoolSize > 0) {
@@ -89,6 +148,9 @@ public class EasyQueryOption {
         if (updateBatchThreshold <= 2) {
             throw new IllegalArgumentException("invalid arguments: updateBatchThreshold <= 2.");
         }
+        if (relationGroupSize < 1) {
+            throw new IllegalArgumentException("invalid arguments: relationGroupSize < 1.");
+        }
         this.deleteThrowError = deleteThrowError;
         this.insertStrategy = SQLExecuteStrategyEnum.getDefaultStrategy(insertStrategy, SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS);
         this.updateStrategy = SQLExecuteStrategyEnum.getDefaultStrategy(updateStrategy, SQLExecuteStrategyEnum.ALL_COLUMNS);
@@ -112,6 +174,7 @@ public class EasyQueryOption {
         this.printSql = printSql;
         this.startTimeJob = startTimeJob;
         this.defaultTrack = defaultTrack;
+        this.relationGroupSize = relationGroupSize;
     }
 
     public int getMaxShardingRouteCount() {
@@ -204,5 +267,9 @@ public class EasyQueryOption {
 
     public boolean isDefaultTrack() {
         return defaultTrack;
+    }
+
+    public int getRelationGroupSize() {
+        return relationGroupSize;
     }
 }

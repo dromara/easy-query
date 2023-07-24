@@ -152,7 +152,7 @@ public class RelationTest extends BaseTest {
 
             {
                 List<SchoolStudent> list1 = easyQuery.queryable(SchoolStudent.class)
-                        .include(o -> o.one(SchoolStudent::getSchoolClass))
+                        .include(o -> o.one(SchoolStudent::getSchoolClass,1))
                         .toList();
                 for (SchoolStudent schoolStudent : list1) {
                     Assert.assertNotNull(schoolStudent.getSchoolClass());
@@ -163,6 +163,21 @@ public class RelationTest extends BaseTest {
                 //todo alias
                 List<SchoolStudentVO> list1 = easyQuery.queryable(SchoolStudent.class)
                         .include(o -> o.one(SchoolStudent::getSchoolClass))
+                        .select(SchoolStudentVO.class,o->o
+                                .columnAll()
+                                .columnInclude(SchoolStudent::getSchoolClass,SchoolStudentVO::getSchoolClass)
+                        )
+                        .toList();
+                for (SchoolStudentVO schoolStudent : list1) {
+                    Assert.assertNotNull(schoolStudent.getSchoolClass());
+                    Assert.assertEquals(schoolStudent.getClassId(), schoolStudent.getSchoolClass().getId());
+                    Assert.assertNotNull(schoolStudent.getSchoolClass().getName());
+                }
+            }
+            {
+                //todo alias
+                List<SchoolStudentVO> list1 = easyQuery.queryable(SchoolStudent.class)
+                        .include(o -> o.one(SchoolStudent::getSchoolClass,1))
                         .select(SchoolStudentVO.class,o->o
                                 .columnAll()
                                 .columnInclude(SchoolStudent::getSchoolClass,SchoolStudentVO::getSchoolClass)
@@ -211,7 +226,7 @@ public class RelationTest extends BaseTest {
 
             {
                 List<SchoolClass> list1 = easyQuery.queryable(SchoolClass.class)
-                        .include(o -> o.many(SchoolClass::getSchoolStudents))
+                        .include(o -> o.many(SchoolClass::getSchoolStudents,1))
                         .toList();
                 for (SchoolClass schoolClass : list1) {
                     Assert.assertNotNull(schoolClass.getSchoolStudents());
@@ -275,7 +290,7 @@ public class RelationTest extends BaseTest {
             {
 
                 List<SchoolClass> list2 = easyQuery.queryable(SchoolClass.class)
-                        .include(o -> o.many(SchoolClass::getSchoolTeachers))
+                        .include(o -> o.many(SchoolClass::getSchoolTeachers,1))
                         .toList();
                 for (SchoolClass schoolClass : list2) {
                     Assert.assertNotNull(schoolClass.getSchoolTeachers());
