@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.easy-query</groupId>
         <artifactId>easy-query-all</artifactId>
-        <version>1.2.7</version>
+        <version>1.2.6</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -72,16 +72,17 @@
             <artifactId>solon.logging</artifactId>
             <version>${solon.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.noear</groupId>
-            <artifactId>solon-lib</artifactId>
-            <version>${solon.version}</version>
-        </dependency>
 
         <!-- test -->
         <dependency>
             <groupId>org.noear</groupId>
             <artifactId>solon.logging.simple</artifactId>
+            <version>${solon.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.noear</groupId>
+            <artifactId>solon-lib</artifactId>
             <version>${solon.version}</version>
             <scope>test</scope>
         </dependency>
