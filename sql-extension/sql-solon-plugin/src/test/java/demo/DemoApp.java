@@ -14,7 +14,7 @@ public class DemoApp {
     public static void main(String[] args) {
         Solon.start(DemoApp.class,args,(app)->{
             app.cfg().loadAdd("application.yml");
-            app.context().beanAroundAdd(EasyQueryTrack.class,new QueryTrackInterceptor(app.context()));
+            app.context().beanAroundAdd(EasyQueryTrack.class,new QueryTrackInterceptor());
         });
     }
 }

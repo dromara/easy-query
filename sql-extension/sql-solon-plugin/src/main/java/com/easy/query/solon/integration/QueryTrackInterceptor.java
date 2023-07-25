@@ -15,11 +15,8 @@ import org.noear.solon.core.aspect.Invocation;
  * @author xuejiaming
  */
 public class QueryTrackInterceptor implements Interceptor {
-    private final AopContext aopContext;
 
-    public QueryTrackInterceptor(AopContext aopContext){
-
-        this.aopContext = aopContext;
+    public QueryTrackInterceptor(){
     }
     @Override
     public Object doIntercept(Invocation inv) throws Throwable {
