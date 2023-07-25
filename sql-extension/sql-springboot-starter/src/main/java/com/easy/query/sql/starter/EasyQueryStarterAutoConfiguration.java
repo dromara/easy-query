@@ -148,6 +148,8 @@ public class EasyQueryStarterAutoConfiguration {
         EasyQueryClient easyQueryClient = EasyQueryBootstrapper.defaultBuilderConfiguration()
                 .setDefaultDataSource(dataSource)
                 .replaceService(DataSourceUnitFactory.class, SpringDataSourceUnitFactory.class)
+                .replaceService(NameConversion.class, nameConversion)
+                .replaceService(ConnectionManager.class, SpringConnectionManager.class)
                 .optionConfigure(builder -> {
                     builder.setDeleteThrowError(easyQueryProperties.getDeleteThrow());
                     builder.setInsertStrategy(easyQueryProperties.getInsertStrategy());
@@ -171,8 +173,6 @@ public class EasyQueryStarterAutoConfiguration {
                     builder.setDefaultTrack(easyQueryProperties.isDefaultTrack());
                     builder.setRelationGroupSize(easyQueryProperties.getRelationGroupSize());
                 })
-                .replaceService(NameConversion.class, nameConversion)
-                .replaceService(ConnectionManager.class, SpringConnectionManager.class)
                 .useDatabaseConfigure(databaseConfiguration)
                 .useStarterConfigure(starterConfigurer)
                 .build();

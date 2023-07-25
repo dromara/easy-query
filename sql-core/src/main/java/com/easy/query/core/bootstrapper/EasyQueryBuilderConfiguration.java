@@ -96,11 +96,21 @@ import java.util.function.Function;
  */
 public class EasyQueryBuilderConfiguration {
     protected DataSource dataSource;
+    private String name;
     protected final EasyQueryOptionBuilder easyQueryOptionBuilder = new EasyQueryOptionBuilder();
     private final ServiceCollection serviceCollection = new ServiceCollectionImpl();
 
     public EasyQueryBuilderConfiguration() {
         defaultConfiguration();
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public EasyQueryBuilderConfiguration setName(String name) {
+        this.name = name;
+        return this;
     }
 
     private void defaultConfiguration() {
@@ -220,6 +230,7 @@ public class EasyQueryBuilderConfiguration {
         databaseConfiguration.configure(serviceCollection);
         return this;
     }
+
     public EasyQueryBuilderConfiguration useStarterConfigure(StarterConfigurer starterConfigurer) {
         starterConfigurer.configure(serviceCollection);
         return this;
@@ -227,9 +238,9 @@ public class EasyQueryBuilderConfiguration {
 
     public EasyQueryBuilderConfiguration optionConfigure(Consumer<EasyQueryOptionBuilder> configure) {
         configure.accept(this.easyQueryOptionBuilder);
-        if(this.easyQueryOptionBuilder.isUseReplica()){
+        if (this.easyQueryOptionBuilder.isUseReplica()) {
             replaceService(DataSourceManager.class, DefaultReplicaDataSourceManager.class);
-        }else{
+        } else {
             replaceService(DataSourceManager.class, DefaultDataSourceManager.class);
         }
         return this;

@@ -24,4 +24,5 @@ public @interface EasyQueryTrack {
      * @return
      */
     boolean enable() default true;
+    String tag() default "";
 }
