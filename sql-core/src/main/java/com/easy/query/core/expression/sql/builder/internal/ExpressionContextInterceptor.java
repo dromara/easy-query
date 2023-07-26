@@ -63,10 +63,14 @@ public class ExpressionContextInterceptor {
 
     public void copyTo(ExpressionContextInterceptor expressionContextInterceptor){
         if(useInterceptors!=null){
-            expressionContextInterceptor.useInterceptors.addAll(useInterceptors);
+            for (String useInterceptor : useInterceptors) {
+                expressionContextInterceptor.useContains(useInterceptor);
+            }
         }
         if(noInterceptors!=null){
-            expressionContextInterceptor.noInterceptors.addAll(noInterceptors);
+            for (String noInterceptor : noInterceptors) {
+                expressionContextInterceptor.noInterceptor(noInterceptor);
+            }
         }
     }
 }
