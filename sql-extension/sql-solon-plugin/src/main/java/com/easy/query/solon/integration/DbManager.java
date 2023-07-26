@@ -9,9 +9,11 @@ import com.easy.query.core.basic.jdbc.conn.ConnectionManager;
 import com.easy.query.core.bootstrapper.DatabaseConfiguration;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.bootstrapper.EasyQueryBuilderConfiguration;
+import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.configuration.nameconversion.NameConversion;
 import com.easy.query.core.configuration.nameconversion.impl.DefaultNameConversion;
 import com.easy.query.core.configuration.nameconversion.impl.UnderlinedNameConversion;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.datasource.DataSourceUnitFactory;
 import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.h2.config.H2DatabaseConfiguration;
@@ -165,6 +167,12 @@ public class DbManager {
         }
         if(EasyProxyQuery.class.isAssignableFrom(clazz)){
             return EasyObjectUtil.typeCastNullable(holder.getEasyProxyQuery());
+        }
+        if(QueryConfiguration.class.isAssignableFrom(clazz)){
+            return EasyObjectUtil.typeCastNullable(holder.getEasyQueryClient().getRuntimeContext().getQueryConfiguration());
+        }
+        if(QueryRuntimeContext.class.isAssignableFrom(clazz)){
+            return EasyObjectUtil.typeCastNullable(holder.getEasyQueryClient().getRuntimeContext());
         }
         return null;
     }

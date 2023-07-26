@@ -3,6 +3,8 @@ package com.easy.query.solon.integration;
 import com.easy.query.api.proxy.client.EasyProxyQuery;
 import com.easy.query.api4j.client.EasyQuery;
 import com.easy.query.core.api.client.EasyQueryClient;
+import com.easy.query.core.configuration.QueryConfiguration;
+import com.easy.query.core.context.QueryRuntimeContext;
 import org.noear.solon.core.VarHolder;
 
 /**
@@ -55,6 +57,12 @@ public class DefaultEasyQueryHolder implements EasyQueryHolder{
         if (EasyProxyQuery.class.isAssignableFrom(varH.getType())) {
             varH.setValue(this.easyProxyQuery);
             return;
+        }
+        if(QueryConfiguration.class.isAssignableFrom(varH.getType())){
+            varH.setValue(this.easyQueryClient.getRuntimeContext().getQueryConfiguration());
+        }
+        if(QueryRuntimeContext.class.isAssignableFrom(varH.getType())){
+            varH.setValue(this.easyQueryClient.getRuntimeContext());
         }
 
     }
