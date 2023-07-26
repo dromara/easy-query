@@ -300,10 +300,10 @@ public class RelationTest extends BaseTest {
             {
                 //todo alias
                 List<SchoolClassVO> list2 = easyQuery.queryable(SchoolClass.class)
-                        .include(o -> o.many(SchoolClass::getSchoolTeachers))
-                        .select(SchoolClassVO.class,o->o.columnAll()
-                                .columnIncludeMany(SchoolClass::getSchoolTeachers,SchoolClassVO::getSchoolTeachers))
-                        .toList();
+                    .include(o -> o.many(SchoolClass::getSchoolTeachers))
+                    .select(SchoolClassVO.class,o->o.columnAll()
+                            .columnIncludeMany(SchoolClass::getSchoolTeachers,SchoolClassVO::getSchoolTeachers))
+                    .toList();
                 for (SchoolClassVO schoolClass : list2) {
                     Assert.assertNotNull(schoolClass.getSchoolTeachers());
                     if("class1".equals(schoolClass.getId())){
