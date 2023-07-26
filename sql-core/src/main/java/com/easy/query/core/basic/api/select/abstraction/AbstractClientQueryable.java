@@ -10,6 +10,8 @@ import com.easy.query.core.basic.api.select.ClientQueryable2;
 import com.easy.query.core.basic.api.select.provider.SQLExpressionProvider;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
+import com.easy.query.core.basic.jdbc.executor.ResultColumnMetadata;
+import com.easy.query.core.basic.jdbc.executor.impl.def.EntityResultColumnMetadata;
 import com.easy.query.core.basic.jdbc.executor.impl.def.EntityResultMetadata;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.basic.pagination.EasyPageResultProvider;
@@ -47,6 +49,7 @@ import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.parser.core.base.impl.FillSelectorImpl;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.segment.FuncColumnSegment;
+import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.expression.segment.SelectConstSegment;
 import com.easy.query.core.expression.segment.builder.ProjectSQLBuilderSegmentImpl;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
@@ -56,7 +59,9 @@ import com.easy.query.core.expression.segment.condition.predicate.ColumnValuePre
 import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
 import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
+import com.easy.query.core.expression.sql.builder.SQLEntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.fill.FillExpression;
 import com.easy.query.core.expression.sql.include.IncludeParserEngine;
 import com.easy.query.core.expression.sql.include.IncludeParserResult;
@@ -333,7 +338,9 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         ExecuteMethodEnum executeMethod = expressionContext.getExecuteMethod();
         EntityExpressionExecutor entityExpressionExecutor = this.entityQueryExpressionBuilder.getRuntimeContext().getEntityExpressionExecutor();
         EntityMetadata entityMetadata = this.entityQueryExpressionBuilder.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(resultClass);
-        List<TR> result = entityExpressionExecutor.query(ExecutorContext.create(this.entityQueryExpressionBuilder.getRuntimeContext(), true, executeMethod, tracking), new EntityResultMetadata<>(entityMetadata), entityQueryExpressionBuilder);
+        ExecutorContext executorContext = ExecutorContext.create(this.entityQueryExpressionBuilder.getRuntimeContext(), true, executeMethod, tracking);
+        confirmSelectProjects(executorContext, resultClass);
+        List<TR> result = entityExpressionExecutor.query(executorContext, new EntityResultMetadata<>(entityMetadata), entityQueryExpressionBuilder);
         if (ExecuteMethodEnum.LIST == executeMethod || ExecuteMethodEnum.FIRST == executeMethod) {
             if (EasyCollectionUtil.isNotEmpty(result)) {
                 doIncludes(expressionContext, entityMetadata, result);
@@ -342,6 +349,48 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         }//将当前方法设置为unknown
         setExecuteMethod(ExecuteMethodEnum.UNKNOWN);
         return result;
+    }
+
+    private <TR> void confirmSelectProjects(ExecutorContext executorContext, Class<TR> resultClass) {
+
+        EntityQueryExpressionBuilder sqlEntityQueryExpressionBuilder = getSqlEntityQueryExpressionBuilder(this.entityQueryExpressionBuilder);
+        if (sqlEntityQueryExpressionBuilder != null) {
+            List<SQLSegment> sqlSegments = sqlEntityQueryExpressionBuilder.getProjects().getSQLSegments();
+
+            ResultColumnMetadata[] resultColumnMetadatas = new ResultColumnMetadata[sqlSegments.size()];
+            int i = 0;
+            for (SQLSegment sqlSegment : sqlSegments) {
+
+                if (!(sqlSegment instanceof ColumnSegment)) {
+                    return;
+                }
+                ColumnSegment columnSegment = (ColumnSegment) sqlSegment;
+                if (columnSegment.getAlias() != null || columnSegment.getPropertyName() == null || columnSegment.getTable() == null || !Objects.equals(resultClass, columnSegment.getTable().getEntityClass())) {
+                    return;
+                }
+                ColumnMetadata columnMetadata = columnSegment.getTable().getEntityMetadata().getColumnNotNull(columnSegment.getPropertyName());
+                resultColumnMetadatas[i] = new EntityResultColumnMetadata(columnMetadata);
+                i++;
+            }
+            executorContext.setResultColumnMetadata(resultColumnMetadatas);
+        }
+    }
+
+    private EntityQueryExpressionBuilder getSqlEntityQueryExpressionBuilder(EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
+
+        List<SQLSegment> sqlSegments = entityQueryExpressionBuilder.getProjects().getSQLSegments();
+        boolean emptySelect = EasyCollectionUtil.isEmpty(sqlSegments);
+        if (emptySelect && entityQueryExpressionBuilder.getTables().size() == 1) {
+            EntityTableExpressionBuilder firstTable = EasyCollectionUtil.first(entityQueryExpressionBuilder.getTables());
+            if ((firstTable instanceof AnonymousEntityTableExpressionBuilder && !(((AnonymousEntityTableExpressionBuilder) firstTable).getEntityQueryExpressionBuilder() instanceof SQLEntityQueryExpressionBuilder))) {
+                EntityQueryExpressionBuilder sqlEntityQueryExpression = ((AnonymousEntityTableExpressionBuilder) firstTable).getEntityQueryExpressionBuilder();
+                return getSqlEntityQueryExpressionBuilder(sqlEntityQueryExpression);
+            }
+        }
+        if (emptySelect) {
+            return null;
+        }
+        return entityQueryExpressionBuilder;
     }
 
 
@@ -683,7 +732,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                         int tableIndex = objectSortEntry.getTableIndex();
                         if (tableIndex < 0 || tableIndex > entityQueryExpressionBuilder.getTables().size() - 1) {
                             if (strictMode) {
-                                throw new EasyQueryOrderByInvalidOperationException(property,"table index:[" + tableIndex + "] not found in query context");
+                                throw new EasyQueryOrderByInvalidOperationException(property, "table index:[" + tableIndex + "] not found in query context");
                             }
                             continue;
                         }
@@ -698,7 +747,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
 
                         OrderSelectorImpl orderSelector = new OrderSelectorImpl(entityQueryExpressionBuilder, entityQueryExpressionBuilder.getOrder());
                         orderSelector.setAsc(objectSortEntry.isAsc());
-                        orderSelector.column(entityTable,property);
+                        orderSelector.column(entityTable, property);
                     }
 
                 }
