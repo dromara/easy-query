@@ -157,6 +157,8 @@ public class SolonEasyQueryProperties {
             switch (v){
                 case "default":return NameConversionEnum.DEFAULT;
                 case "underlined":return NameConversionEnum.UNDERLINED;
+                case "lower_camel_case":return NameConversionEnum.LOWER_CAMEL_CASE;
+                case "upper_camel_case":return NameConversionEnum.UPPER_CAMEL_CASE;
             }
             return null;
         });

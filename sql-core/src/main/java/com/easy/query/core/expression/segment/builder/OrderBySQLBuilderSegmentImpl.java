@@ -22,7 +22,6 @@ public class OrderBySQLBuilderSegmentImpl extends AbstractSQLBuilderSegment {
         //从后往前追加
         for (int i = sqlSegments.size() - 1; i >= 0; i--) {
             SQLSegment sqlSegment = sqlSegments.get(i);
-            OrderBySegment orderColumnSegment = (OrderBySegment) sqlSegment;
 
             if (sb.length() != 0) {
                 sb.insert(0, SQLKeywordEnum.DOT.toSQL());

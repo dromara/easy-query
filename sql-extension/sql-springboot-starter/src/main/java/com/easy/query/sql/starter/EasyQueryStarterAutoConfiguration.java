@@ -19,7 +19,9 @@ import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.bootstrapper.StarterConfigurer;
 import com.easy.query.core.configuration.nameconversion.NameConversion;
 import com.easy.query.core.configuration.nameconversion.impl.DefaultNameConversion;
+import com.easy.query.core.configuration.nameconversion.impl.LowerCamelCaseNameConversion;
 import com.easy.query.core.configuration.nameconversion.impl.UnderlinedNameConversion;
+import com.easy.query.core.configuration.nameconversion.impl.UpperCamelCaseNameConversion;
 import com.easy.query.core.datasource.DataSourceUnitFactory;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
@@ -28,13 +30,13 @@ import com.easy.query.core.sharding.route.datasource.DataSourceRoute;
 import com.easy.query.core.sharding.route.table.TableRoute;
 import com.easy.query.core.util.EasyStringUtil;
 import com.easy.query.h2.config.H2DatabaseConfiguration;
-import com.easy.query.mssql.MsSQLDatabaseConfiguration;
+import com.easy.query.mssql.config.MsSQLDatabaseConfiguration;
 import com.easy.query.mysql.config.MySQLDatabaseConfiguration;
 import com.easy.query.pgsql.config.PgSQLDatabaseConfiguration;
-import com.easy.query.sql.starter.conn.SpringConnectionManager;
-import com.easy.query.sql.starter.conn.SpringDataSourceUnitFactory;
 import com.easy.query.sql.starter.config.EasyQueryInitializeOption;
 import com.easy.query.sql.starter.config.EasyQueryProperties;
+import com.easy.query.sql.starter.conn.SpringConnectionManager;
+import com.easy.query.sql.starter.conn.SpringDataSourceUnitFactory;
 import com.easy.query.sql.starter.logging.Slf4jImpl;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -127,6 +129,18 @@ public class EasyQueryStarterAutoConfiguration {
     @ConditionalOnMissingBean
     public NameConversion underlinedNameConversion() {
         return new UnderlinedNameConversion();
+    }
+    @Bean
+    @ConditionalOnProperty(name = "easy-query.name-conversion", havingValue = "lower_camel_case", matchIfMissing = true)
+    @ConditionalOnMissingBean
+    public NameConversion lowerCamelCaseNameConversion() {
+        return new LowerCamelCaseNameConversion();
+    }
+    @Bean
+    @ConditionalOnProperty(name = "easy-query.name-conversion", havingValue = "upper_camel_case", matchIfMissing = true)
+    @ConditionalOnMissingBean
+    public NameConversion upperCamelCaseNameConversion() {
+        return new UpperCamelCaseNameConversion();
     }
 
     @Bean

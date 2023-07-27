@@ -1,22 +1,21 @@
-package com.easy.query.mssql;
-
+package com.easy.query.dameng.config;
 
 import com.easy.query.core.configuration.dialect.AbstractDialect;
 
 /**
- * create time 2023/5/4 08:30
- * sql server 方言
+ * create time 2023/7/27 10:48
+ * 文件说明
  *
  * @author xuejiaming
  */
-public final class MsSQLDialect extends AbstractDialect {
+public final class DamengDialect extends AbstractDialect {
     @Override
     protected String getQuoteStart() {
-        return "[";
+        return "\"";
     }
 
     @Override
     protected String getQuoteEnd() {
-        return "]";
+        return "\"";
     }
 }

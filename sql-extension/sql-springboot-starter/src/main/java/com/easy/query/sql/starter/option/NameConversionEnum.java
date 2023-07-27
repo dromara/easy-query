@@ -14,5 +14,13 @@ public enum NameConversionEnum {
     /**
      * 下划线转换
      */
-    UNDERLINED
+    UNDERLINED,
+    /**
+     * 小驼峰
+     */
+    LOWER_CAMEL_CASE,
+    /**
+     * 大驼峰
+     */
+    UPPER_CAMEL_CASE
 }

@@ -7,8 +7,8 @@ import com.easy.query.core.util.EasyStringUtil;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  *
@@ -46,4 +46,5 @@ public @interface Table {
      * @return
      */
     Class<? extends ShardingInitializer> shardingInitializer() default UnShardingInitializer.class;
+
 }

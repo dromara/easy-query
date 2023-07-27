@@ -12,7 +12,9 @@ import com.easy.query.core.bootstrapper.EasyQueryBuilderConfiguration;
 import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.configuration.nameconversion.NameConversion;
 import com.easy.query.core.configuration.nameconversion.impl.DefaultNameConversion;
+import com.easy.query.core.configuration.nameconversion.impl.LowerCamelCaseNameConversion;
 import com.easy.query.core.configuration.nameconversion.impl.UnderlinedNameConversion;
+import com.easy.query.core.configuration.nameconversion.impl.UpperCamelCaseNameConversion;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.datasource.DataSourceUnitFactory;
 import com.easy.query.core.util.EasyObjectUtil;
@@ -138,6 +140,8 @@ public class DbManager {
         switch (nameConversion){
             case DEFAULT:easyQueryBuilderConfiguration.replaceService(NameConversion.class, new DefaultNameConversion());break;
             case UNDERLINED:easyQueryBuilderConfiguration.replaceService(NameConversion.class, new UnderlinedNameConversion());break;
+            case LOWER_CAMEL_CASE:easyQueryBuilderConfiguration.replaceService(NameConversion.class, new LowerCamelCaseNameConversion());break;
+            case UPPER_CAMEL_CASE:easyQueryBuilderConfiguration.replaceService(NameConversion.class, new UpperCamelCaseNameConversion());break;
         }
     }
     private static DatabaseConfiguration getDatabaseConfigure(SolonEasyQueryProperties solonEasyQueryProperties){

@@ -69,7 +69,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
-import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -140,7 +139,7 @@ public class EntityMetadata {
 
         Table table = EasyClassUtil.getAnnotation(entityClass, Table.class);
         if (table != null) {
-            this.tableName = nameConversion.convert(EasyStringUtil.defaultIfBank(table.value(), EasyClassUtil.getSimpleName(entityClass)));
+            this.tableName = EasyStringUtil.defaultIfBank(table.value(), nameConversion.convert(EasyClassUtil.getSimpleName(entityClass)));
             this.schema = table.schema();
         }
         HashSet<String> ignoreProperties = table != null ? new HashSet<>(Arrays.asList(table.ignoreProperties())) : new HashSet<>();
@@ -154,7 +153,7 @@ public class EntityMetadata {
         this.beanConstructorCreator = fastBean.getBeanConstructorCreator();
         boolean tableEntity = EasyStringUtil.isNotBlank(tableName);
         for (Field field : allFields) {
-            String property = field.getName();
+            String property = EasyStringUtil.toLowerCaseFirstOne(field.getName());
             if (Modifier.isStatic(field.getModifiers()) || ignoreProperties.contains(property)) {
                 continue;
             }
@@ -364,15 +363,6 @@ public class EntityMetadata {
             return null;
         }
         return propertyDescriptor.getPropertyType();
-    }
-
-    private PropertyDescriptor firstOrNull(PropertyDescriptor[] ps, Predicate<PropertyDescriptor> predicate) {
-        for (PropertyDescriptor p : ps) {
-            if (predicate.test(p)) {
-                return p;
-            }
-        }
-        return null;
     }
 
     private void initSharding(QueryConfiguration configuration, Class<? extends ShardingInitializer> initializer) {

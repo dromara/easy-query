@@ -33,6 +33,7 @@
         <module>sql-db-support/sql-h2</module>
         <module>sql-db-support/sql-pgsql</module>
         <module>sql-db-support/sql-sqlite</module>
+        <module>sql-db-support/sql-dameng</module>
         <module>sql-processor</module>
         <!--        以下是不需要deploy到远程仓库的-->
         <module>sql-test</module>
