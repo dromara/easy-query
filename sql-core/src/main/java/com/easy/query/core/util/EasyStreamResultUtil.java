@@ -161,10 +161,6 @@ public final class EasyStreamResultUtil {
     }
 
     public static <TResult> ResultColumnMetadata[] columnsToColumnMetadatas(ExecutorContext context, ResultMetadata<TResult> resultMetadata, ResultSetMetaData rsmd) throws SQLException {
-        ResultColumnMetadata[] resultColumnMetadata = context.getResultColumnMetadata();
-        if(resultColumnMetadata!=null){
-            return resultColumnMetadata;
-        }
         boolean mapToBeanStrict = context.isMapToBeanStrict();
         //需要返回的结果集映射到bean实体上
         //int[] 索引代表数据库返回的索引，数组索引所在的值代表属性数组的对应属性

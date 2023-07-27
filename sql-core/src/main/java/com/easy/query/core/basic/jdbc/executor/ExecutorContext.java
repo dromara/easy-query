@@ -26,7 +26,6 @@ public class ExecutorContext {
     private final ExecuteMethodEnum executeMethod;
     private final boolean tracking;
     private final EasyQueryOption easyQueryOption;
-    private ResultColumnMetadata[] resultColumnMetadata;
 
     public ExecutorContext(QueryRuntimeContext runtimeContext, boolean isQuery, ExecuteMethodEnum executeMethod) {
         this(runtimeContext,isQuery,executeMethod, false);
@@ -133,11 +132,4 @@ public class ExecutorContext {
         this.mapToBeanStrict = mapToBeanStrict;
     }
 
-    public ResultColumnMetadata[] getResultColumnMetadata() {
-        return resultColumnMetadata;
-    }
-
-    public void setResultColumnMetadata(ResultColumnMetadata[] resultColumnMetadata) {
-        this.resultColumnMetadata = resultColumnMetadata;
-    }
 }
