@@ -21,6 +21,7 @@ import com.easy.query.core.datasource.DataSourceUnitFactory;
 import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.dameng.config.DamengDatabaseConfiguration;
 import com.easy.query.h2.config.H2DatabaseConfiguration;
+import com.easy.query.kingbase.es.config.KingbaseESDatabaseConfiguration;
 import com.easy.query.mssql.config.MsSQLDatabaseConfiguration;
 import com.easy.query.mysql.config.MySQLDatabaseConfiguration;
 import com.easy.query.pgsql.config.PgSQLDatabaseConfiguration;
@@ -156,6 +157,7 @@ public class DbManager {
             case MSSQL:return new MsSQLDatabaseConfiguration();
             case H2:return new H2DatabaseConfiguration();
             case DAMENG:return new DamengDatabaseConfiguration();
+            case KINGBASE_ES:return new KingbaseESDatabaseConfiguration();
         }
         return null;
     }

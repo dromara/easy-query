@@ -21,5 +21,6 @@ public enum DatabaseEnum {
     MSSQL,
     PGSQL,
     H2,
-    DAMENG
+    DAMENG,
+    KINGBASE_ES
 }

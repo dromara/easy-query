@@ -30,5 +30,9 @@ public enum DatabaseEnum {
     /**
      * 达梦数据库
      */
-    DAMENG
+    DAMENG,
+    /**
+     * 人大金仓
+     */
+    KINGBASE_ES
 }

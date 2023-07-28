@@ -32,6 +32,7 @@ import com.easy.query.core.sharding.route.table.TableRoute;
 import com.easy.query.core.util.EasyStringUtil;
 import com.easy.query.dameng.config.DamengDatabaseConfiguration;
 import com.easy.query.h2.config.H2DatabaseConfiguration;
+import com.easy.query.kingbase.es.config.KingbaseESDatabaseConfiguration;
 import com.easy.query.mssql.config.MsSQLDatabaseConfiguration;
 import com.easy.query.mysql.config.MySQLDatabaseConfiguration;
 import com.easy.query.pgsql.config.PgSQLDatabaseConfiguration;
@@ -123,6 +124,12 @@ public class EasyQueryStarterAutoConfiguration {
     @ConditionalOnMissingBean
     public DatabaseConfiguration damengDatabaseConfiguration() {
         return new DamengDatabaseConfiguration();
+    }
+    @Bean
+    @ConditionalOnProperty(name = "easy-query.database", havingValue = "kingbase_es")
+    @ConditionalOnMissingBean
+    public DatabaseConfiguration kingbaseESDatabaseConfiguration() {
+        return new KingbaseESDatabaseConfiguration();
     }
 
     @Bean

@@ -27,8 +27,5 @@ logging:
 
 easy-query:
   enable: true
+  database: pgsql
   name-conversion: underlined
-  database: mysql
-  default-data-source-merge-pool-size: 60
-  default-data-source-name: ds0
-  start-time-job: true
