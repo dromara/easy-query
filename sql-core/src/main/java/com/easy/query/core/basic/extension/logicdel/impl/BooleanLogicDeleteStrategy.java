@@ -17,7 +17,7 @@ import java.util.Set;
  * @Date: 2023/3/6 22:45
  * @author xuejiaming
  */
-public class BooleanEasyEntityTypeConfiguration extends AbstractLogicDeleteStrategy {
+public class BooleanLogicDeleteStrategy extends AbstractLogicDeleteStrategy {
     private static final Set<Class<?>> allowedPropertyTypes =new HashSet<>(Arrays.asList(Boolean.class,boolean.class));
     @Override
     public String getStrategy() {

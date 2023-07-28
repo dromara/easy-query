@@ -5,10 +5,10 @@ import com.easy.query.core.basic.extension.encryption.EncryptionStrategy;
 import com.easy.query.core.basic.extension.interceptor.Interceptor;
 import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategy;
 import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategyEnum;
-import com.easy.query.core.basic.extension.logicdel.impl.BooleanEasyEntityTypeConfiguration;
-import com.easy.query.core.basic.extension.logicdel.impl.DeleteLongTimestampEasyEntityTypeConfiguration;
-import com.easy.query.core.basic.extension.logicdel.impl.LocalDateEasyLogicDeleteStrategy;
-import com.easy.query.core.basic.extension.logicdel.impl.LocalDateTimeEasyEntityTypeConfiguration;
+import com.easy.query.core.basic.extension.logicdel.impl.BooleanLogicDeleteStrategy;
+import com.easy.query.core.basic.extension.logicdel.impl.LongTimestampLogicDeleteStrategy;
+import com.easy.query.core.basic.extension.logicdel.impl.LocalDateLogicDeleteStrategy;
+import com.easy.query.core.basic.extension.logicdel.impl.LocalDateTimeLogicDeleteStrategy;
 import com.easy.query.core.basic.extension.track.update.ValueUpdateAtomicTrack;
 import com.easy.query.core.basic.extension.version.VersionIntStrategy;
 import com.easy.query.core.basic.extension.version.VersionLongStrategy;
@@ -38,10 +38,10 @@ import java.util.concurrent.ConcurrentHashMap;
  * @Date: 2023/2/7 09:06
  */
 public class QueryConfiguration {
-    private static final LogicDeleteStrategy BOOL_LOGIC_DELETE = new BooleanEasyEntityTypeConfiguration();
-    private static final LogicDeleteStrategy TIMESTAMP_LOGIC_DELETE = new DeleteLongTimestampEasyEntityTypeConfiguration();
-    private static final LogicDeleteStrategy LOCAL_DATE_TIME_LOGIC_DELETE = new LocalDateTimeEasyEntityTypeConfiguration();
-    private static final LogicDeleteStrategy LOCAL_DATE_LOGIC_DELETE = new LocalDateEasyLogicDeleteStrategy();
+    private static final LogicDeleteStrategy BOOL_LOGIC_DELETE = new BooleanLogicDeleteStrategy();
+    private static final LogicDeleteStrategy TIMESTAMP_LOGIC_DELETE = new LongTimestampLogicDeleteStrategy();
+    private static final LogicDeleteStrategy LOCAL_DATE_TIME_LOGIC_DELETE = new LocalDateTimeLogicDeleteStrategy();
+    private static final LogicDeleteStrategy LOCAL_DATE_LOGIC_DELETE = new LocalDateLogicDeleteStrategy();
 
     private final EasyQueryOption easyQueryOption;
 

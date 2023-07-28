@@ -2,6 +2,7 @@ package com.easy.query.test.entity;
 
 import com.easy.query.core.annotation.Column;
 import com.easy.query.core.annotation.LogicDelete;
+import com.easy.query.core.annotation.UpdateIgnore;
 import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategyEnum;
 import lombok.Data;
 
@@ -40,5 +41,6 @@ public class BaseEntity implements Serializable {
      * 是否删除;是否删除
      */
     @LogicDelete(strategy = LogicDeleteStrategyEnum.BOOLEAN)
+    @UpdateIgnore
     private Boolean deleted;
 }
