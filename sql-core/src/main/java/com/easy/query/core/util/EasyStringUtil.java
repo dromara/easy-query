@@ -43,14 +43,28 @@ public class EasyStringUtil {
     /**
      * 转下划线字符, eg AaaBbb => aaa_bbb
      */
-    public static String enCodeUnderlined(String s) {
-        char[] chars = toLowerCaseFirstOne(s).toCharArray();
+    public static String toLowerUnderlined(String s) {
+        char[] chars = s.toCharArray();
         StringBuilder temp = new StringBuilder();
         for (int i = 0; i < chars.length; i++) {
-            if (Character.isUpperCase(chars[i])) {
+            if (i!=0&&Character.isUpperCase(chars[i])) {
                 temp.append("_");
             }
             temp.append(Character.toLowerCase(chars[i]));
+        }
+        return temp.toString();
+    }
+    /**
+     * 转下划线字符, eg AaaBbb => AAA_BBB
+     */
+    public static String toUpperUnderlined(String s) {
+        char[] chars = s.toCharArray();
+        StringBuilder temp = new StringBuilder();
+        for (int i = 0; i < chars.length; i++) {
+            if (i!=0&&Character.isUpperCase(chars[i])) {
+                temp.append("_");
+            }
+            temp.append(Character.toUpperCase(chars[i]));
         }
         return temp.toString();
     }
@@ -58,7 +72,7 @@ public class EasyStringUtil {
     /**
      * 转驼峰式字符，eg: aaa_bbb => aaaBbb , Aaa_bBb=>aaaBBb
      */
-    public static String deCodeUnderlined(String str) {
+    public static String fromLowerUnderlined(String str) {
 
         String[] splitArr = str.split("_");
         StringBuilder sb = new StringBuilder();

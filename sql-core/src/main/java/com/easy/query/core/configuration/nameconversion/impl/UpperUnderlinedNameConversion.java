@@ -9,13 +9,13 @@ import com.easy.query.core.util.EasyStringUtil;
  *
  * @author xuejiaming
  */
-public class UnderlinedNameConversion implements NameConversion {
+public class UpperUnderlinedNameConversion implements NameConversion {
 
     @Override
     public String convert(String name) {
         if(name==null){
             return null;
         }
-        return EasyStringUtil.toLowerUnderlined(name);
+        return EasyStringUtil.toUpperUnderlined(name);
     }
 }

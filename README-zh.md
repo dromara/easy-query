@@ -150,7 +150,7 @@ entity对象添加注解 `@EntityProxy` 然后build project apt 将会自动生�
 
 ## 如何获取最新版本
 
-[https://central.sonatype.com/](https://central.sonatype.com/) 搜索`easy-query`获取最新安装包
+[https://central.sonatype.com/](https://central.sonatype.com/) 搜索`com.easy-query`获取最新安装包
 
 ## 安装
 以下是`spring-boot`环境和控制台模式的安装
@@ -159,7 +159,7 @@ entity对象添加注解 `@EntityProxy` 然后build project apt 将会自动生�
 ```xml
 
 <properties>
-  <easy-query.version>1.1.10</easy-query.version>
+  <easy-query.version>last-version</easy-query.version>
 </properties>
 <dependency>
     <groupId>com.easy-query</groupId>

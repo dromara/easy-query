@@ -136,6 +136,7 @@ public class SolonEasyQueryProperties {
            switch (vl){
                 case "mysql":return DatabaseEnum.MYSQL;
                 case "pgsql":return DatabaseEnum.PGSQL;
+                case "mssql":return DatabaseEnum.MSSQL;
                 case "h2":return DatabaseEnum.H2;
             }
             return null;

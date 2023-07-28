@@ -19,6 +19,7 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.datasource.DataSourceUnitFactory;
 import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.h2.config.H2DatabaseConfiguration;
+import com.easy.query.mssql.config.MsSQLDatabaseConfiguration;
 import com.easy.query.mysql.config.MySQLDatabaseConfiguration;
 import com.easy.query.pgsql.config.PgSQLDatabaseConfiguration;
 import com.easy.query.solon.integration.conn.SolonConnectionManager;
@@ -149,6 +150,7 @@ public class DbManager {
         switch (database){
             case MYSQL:return new MySQLDatabaseConfiguration();
             case PGSQL:return new PgSQLDatabaseConfiguration();
+            case MSSQL:return new MsSQLDatabaseConfiguration();
             case H2:return new H2DatabaseConfiguration();
         }
         return null;

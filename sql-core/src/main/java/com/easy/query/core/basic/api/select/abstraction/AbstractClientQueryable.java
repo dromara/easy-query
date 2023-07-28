@@ -545,7 +545,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                         EntityMetadata entityMetadata = entityTable.getEntityMetadata();
 
                         //获取映射的对象名称
-                        String queryPropertyName = EasyStringUtil.isNotBlank(q.propName()) ? q.propName() : field.getName();
+                        String queryPropertyName = EasyStringUtil.isNotBlank(q.propName()) ? q.propName() : EasyStringUtil.toLowerCaseFirstOne(field.getName());
 
                         ColumnMetadata columnMetadata = entityMetadata.getColumnOrNull(queryPropertyName);
                         if (columnMetadata == null) {
