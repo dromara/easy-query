@@ -1,14 +1,14 @@
-package com.easy.query.test.mssql;
+package com.easy.query.test.dameng;
 
 import com.easy.query.api4j.client.DefaultEasyQuery;
 import com.easy.query.api4j.client.EasyQuery;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.configuration.nameconversion.NameConversion;
-import com.easy.query.core.configuration.nameconversion.impl.UpperCamelCaseNameConversion;
+import com.easy.query.core.configuration.nameconversion.impl.UpperUnderlinedNameConversion;
 import com.easy.query.core.logging.LogFactory;
-import com.easy.query.mssql.config.MsSQLDatabaseConfiguration;
-import com.easy.query.test.mssql.entity.MsSQLMyTopic;
+import com.easy.query.dameng.config.DamengDatabaseConfiguration;
+import com.easy.query.test.dameng.entity.DamengMyTopic;
 import com.zaxxer.hikari.HikariDataSource;
 
 import java.time.LocalDateTime;
@@ -21,7 +21,7 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public abstract class MsSQLBaseTest {
+public abstract class DamengBaseTest {
     public static HikariDataSource dataSource;
     public static EasyQuery easyQuery;
 
@@ -39,10 +39,10 @@ public abstract class MsSQLBaseTest {
 
     public static void initDatasource() {
         dataSource = new HikariDataSource();
-        dataSource.setJdbcUrl("jdbc:sqlserver://localhost:1433;database=mssql_eq");
-        dataSource.setUsername("sa");
-        dataSource.setPassword("Password.1");
-        dataSource.setDriverClassName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+        dataSource.setJdbcUrl("jdbc:dm://localhost:5236/");
+        dataSource.setUsername("SYSDBA");
+        dataSource.setPassword("SYSDBA");
+        dataSource.setDriverClassName("dm.jdbc.driver.DmDriver");
         dataSource.setMaximumPoolSize(20);
 //        postgres://postgres:postgrespw@localhost:55000
     }
@@ -53,8 +53,8 @@ public abstract class MsSQLBaseTest {
                 .optionConfigure(op -> {
                     op.setDeleteThrowError(false);
                 })
-                .useDatabaseConfigure(new MsSQLDatabaseConfiguration())
-                .replaceService(NameConversion.class, UpperCamelCaseNameConversion.class)
+                .useDatabaseConfigure(new DamengDatabaseConfiguration())
+                .replaceService(NameConversion.class, UpperUnderlinedNameConversion.class)
 //                .replaceService(BeanValueCaller.class, ReflectBeanValueCaller.class)
                 .build();
         easyQuery = new DefaultEasyQuery(easyQueryClient);
@@ -63,11 +63,11 @@ public abstract class MsSQLBaseTest {
     public static void initData() {
 
 
-        boolean topicAny = easyQuery.queryable(MsSQLMyTopic.class).any();
+        boolean topicAny = easyQuery.queryable(DamengMyTopic.class).any();
         if (!topicAny) {
-            List<MsSQLMyTopic> topics = new ArrayList<>();
+            List<DamengMyTopic> topics = new ArrayList<>();
             for (int i = 0; i < 100; i++) {
-                MsSQLMyTopic topic = new MsSQLMyTopic();
+                DamengMyTopic topic = new DamengMyTopic();
                 topic.setId(String.valueOf(i));
                 topic.setStars(i + 100);
                 topic.setTitle("标题" + i);

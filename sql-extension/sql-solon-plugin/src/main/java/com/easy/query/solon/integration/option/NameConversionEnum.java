@@ -22,5 +22,9 @@ public enum NameConversionEnum {
     /**
      * 大驼峰
      */
-    UPPER_CAMEL_CASE
+    UPPER_CAMEL_CASE,
+    /**
+     * 大写 下划线
+     */
+    UPPER_UNDERLINED
 }

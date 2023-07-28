@@ -20,5 +20,6 @@ public enum DatabaseEnum {
      */
     MSSQL,
     PGSQL,
-    H2
+    H2,
+    DAMENG
 }

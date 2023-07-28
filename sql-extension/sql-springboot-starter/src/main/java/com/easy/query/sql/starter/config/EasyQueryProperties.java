@@ -21,7 +21,7 @@ public class EasyQueryProperties {
     private Boolean enable = false;
     private Boolean deleteThrow = true;
     private DatabaseEnum database = DatabaseEnum.MYSQL;
-    private NameConversionEnum nameConversion;
+    private NameConversionEnum nameConversion = NameConversionEnum.UNDERLINED;
     private SQLExecuteStrategyEnum insertStrategy = SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS;
     private SQLExecuteStrategyEnum updateStrategy = SQLExecuteStrategyEnum.ALL_COLUMNS;
     private ConnectionModeEnum connectionMode = ConnectionModeEnum.SYSTEM_AUTO;

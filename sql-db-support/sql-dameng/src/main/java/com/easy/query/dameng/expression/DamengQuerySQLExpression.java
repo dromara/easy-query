@@ -1,6 +1,7 @@
 package com.easy.query.dameng.expression;
 
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
+import com.easy.query.core.common.KeywordTool;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
 import com.easy.query.core.expression.sql.expression.impl.EntitySQLExpressionMetadata;
@@ -22,6 +23,11 @@ public class DamengQuerySQLExpression extends QuerySQLExpressionImpl {
     }
 
 
+    /**
+     * 分页部分代码参考 FreeSQL https://github.com/dotnetcore/FreeSql
+     * @param toSQLContext
+     * @return
+     */
     @Override
     public String toSQL(ToSQLContext toSQLContext) {
         boolean root = EasySQLExpressionUtil.expressionInvokeRoot(toSQLContext);
@@ -31,6 +37,10 @@ public class DamengQuerySQLExpression extends QuerySQLExpressionImpl {
         }
 
         sql.append(this.projects.toSQL(toSQLContext));
+        boolean hasOrderBy = this.order != null && this.order.isNotEmpty();
+        if (!hasOrderBy && offset > 0) {
+            sql.append(", ROWNUM AS \""+ KeywordTool.ROW_NUM +"\"");
+        }
 
         Iterator<EntityTableSQLExpression> iterator = getTables().iterator();
         EntityTableSQLExpression firstTable = iterator.next();
@@ -48,11 +58,20 @@ public class DamengQuerySQLExpression extends QuerySQLExpressionImpl {
         boolean hasWhere = EasySQLSegmentUtil.isNotEmpty(this.where);
         if (hasWhere) {
             String whereSQL = this.where.toSQL(toSQLContext);
+            sql.append(" WHERE ");
             if (root && notExistsSQL) {
-                sql.append(" WHERE ").append("( ").append(whereSQL).append(" )");
+                sql.append("( ").append(whereSQL).append(" )");
             } else {
-                sql.append(" WHERE ").append(whereSQL);
+                sql.append(whereSQL);
             }
+        }
+        if (!hasOrderBy && (offset > 0 || rows > 0)) {
+            if(!hasWhere){
+                sql.append(" WHERE ROWNUM < ");
+            }else{
+                sql.append(" AND ROWNUM < ");
+            }
+            sql.append(offset+rows+1);
         }
         boolean onlyWhere = true;
         if (this.group != null && this.group.isNotEmpty()) {
@@ -63,18 +82,27 @@ public class DamengQuerySQLExpression extends QuerySQLExpressionImpl {
             onlyWhere = false;
             sql.append(" HAVING ").append(this.having.toSQL(toSQLContext));
         }
-        if (this.order != null && this.order.isNotEmpty()) {
+        if (hasOrderBy) {
             onlyWhere = false;
             sql.append(" ORDER BY ").append(this.order.toSQL(toSQLContext));
         }
-        if (this.rows > 0) {
-            onlyWhere = false;
-            sql.append(" LIMIT ");
-            sql.append(this.rows);
-            if (this.offset > 0) {
-                sql.append(" OFFSET ").append(this.offset);
+
+        if(!hasOrderBy){
+            if(offset>0){
+                sql.insert(0,"SELECT rt.* FROM(").append(") rt WHERE rt.\""+KeywordTool.ROW_NUM+"\" > ").append(offset);
+            }
+        }else{
+            if(offset>0&&rows>0){
+                sql.insert(0,"SELECT rt1.* FROM (SELECT rt.*, ROWNUM AS \""+KeywordTool.ROW_NUM+"\" FROM (")
+                        .append(") rt WHERE ROWNUM < ").append(offset+rows+1)
+                        .append(") rt1 WHERE rt1.\""+KeywordTool.ROW_NUM+"\" > ").append(offset);
+            }else if(offset>0){
+                sql.insert(0,"SELECT rt.* FROM (").append(") rt WHERE ROWNUM > ").append(offset);
+            }else if(rows>0){
+                sql.insert(0,"SELECT rt.* FROM (").append(") t WHERE ROWNUM < ").append(rows + 1);
             }
         }
+
         String resultSQL = sql.toString();
         if (root && notExistsSQL) {
             StringBuilder notExistsResultSQL = new StringBuilder("SELECT NOT EXISTS ( ");

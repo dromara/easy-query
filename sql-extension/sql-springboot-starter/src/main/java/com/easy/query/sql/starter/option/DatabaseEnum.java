@@ -19,6 +19,16 @@ public enum DatabaseEnum {
      * sql server
      */
     MSSQL,
+    /**
+     * postgres sql
+     */
     PGSQL,
-    H2
+    /**
+     * h2
+     */
+    H2,
+    /**
+     * 达梦数据库
+     */
+    DAMENG
 }

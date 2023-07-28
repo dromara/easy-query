@@ -5,7 +5,8 @@ import com.easy.query.core.util.EasyStringUtil;
 
 /**
  * create time 2023/7/27 18:19
- * 文件说明
+ * 大驼峰
+ * 首字母大写
  *
  * @author xuejiaming
  */

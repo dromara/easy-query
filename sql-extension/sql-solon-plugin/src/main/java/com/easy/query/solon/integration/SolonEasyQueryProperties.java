@@ -138,6 +138,7 @@ public class SolonEasyQueryProperties {
                 case "pgsql":return DatabaseEnum.PGSQL;
                 case "mssql":return DatabaseEnum.MSSQL;
                 case "h2":return DatabaseEnum.H2;
+                case "dameng":return DatabaseEnum.DAMENG;
             }
             return null;
         });
@@ -160,6 +161,7 @@ public class SolonEasyQueryProperties {
                 case "underlined":return NameConversionEnum.UNDERLINED;
                 case "lower_camel_case":return NameConversionEnum.LOWER_CAMEL_CASE;
                 case "upper_camel_case":return NameConversionEnum.UPPER_CAMEL_CASE;
+                case "upper_underlined":return NameConversionEnum.UPPER_UNDERLINED;
             }
             return null;
         });

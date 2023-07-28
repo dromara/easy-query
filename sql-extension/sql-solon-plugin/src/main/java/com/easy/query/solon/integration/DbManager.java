@@ -15,9 +15,11 @@ import com.easy.query.core.configuration.nameconversion.impl.DefaultNameConversi
 import com.easy.query.core.configuration.nameconversion.impl.LowerCamelCaseNameConversion;
 import com.easy.query.core.configuration.nameconversion.impl.UnderlinedNameConversion;
 import com.easy.query.core.configuration.nameconversion.impl.UpperCamelCaseNameConversion;
+import com.easy.query.core.configuration.nameconversion.impl.UpperUnderlinedNameConversion;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.datasource.DataSourceUnitFactory;
 import com.easy.query.core.util.EasyObjectUtil;
+import com.easy.query.dameng.config.DamengDatabaseConfiguration;
 import com.easy.query.h2.config.H2DatabaseConfiguration;
 import com.easy.query.mssql.config.MsSQLDatabaseConfiguration;
 import com.easy.query.mysql.config.MySQLDatabaseConfiguration;
@@ -143,6 +145,7 @@ public class DbManager {
             case UNDERLINED:easyQueryBuilderConfiguration.replaceService(NameConversion.class, new UnderlinedNameConversion());break;
             case LOWER_CAMEL_CASE:easyQueryBuilderConfiguration.replaceService(NameConversion.class, new LowerCamelCaseNameConversion());break;
             case UPPER_CAMEL_CASE:easyQueryBuilderConfiguration.replaceService(NameConversion.class, new UpperCamelCaseNameConversion());break;
+            case UPPER_UNDERLINED:easyQueryBuilderConfiguration.replaceService(NameConversion.class, new UpperUnderlinedNameConversion());break;
         }
     }
     private static DatabaseConfiguration getDatabaseConfigure(SolonEasyQueryProperties solonEasyQueryProperties){
@@ -152,6 +155,7 @@ public class DbManager {
             case PGSQL:return new PgSQLDatabaseConfiguration();
             case MSSQL:return new MsSQLDatabaseConfiguration();
             case H2:return new H2DatabaseConfiguration();
+            case DAMENG:return new DamengDatabaseConfiguration();
         }
         return null;
     }

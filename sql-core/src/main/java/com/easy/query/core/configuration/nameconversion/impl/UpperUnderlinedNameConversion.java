@@ -5,7 +5,7 @@ import com.easy.query.core.util.EasyStringUtil;
 
 /**
  * create time 023/2/11 13:29
- * 下划线转换
+ * 下划线转换 转全大写
  *
  * @author xuejiaming
  */

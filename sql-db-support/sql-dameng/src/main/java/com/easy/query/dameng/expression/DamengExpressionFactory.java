@@ -11,8 +11,12 @@ import com.easy.query.core.expression.sql.expression.EntityQuerySQLExpression;
 import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
 import com.easy.query.core.expression.sql.expression.EntityUpdateSQLExpression;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
+import com.easy.query.core.expression.sql.expression.impl.AnonymousEntityQuerySQLExpressionImpl;
+import com.easy.query.core.expression.sql.expression.impl.AnonymousEntityTableSQLExpressionImpl;
+import com.easy.query.core.expression.sql.expression.impl.AnonymousUnionQuerySQLExpressionImpl;
 import com.easy.query.core.expression.sql.expression.impl.EntitySQLExpressionMetadata;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -29,36 +33,36 @@ public class DamengExpressionFactory implements ExpressionFactory {
 
     @Override
     public EntityInsertSQLExpression createEasyInsertSQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata, EntityTableSQLExpression entityTableSQLExpression) {
-        return null;
+        return new DamengInsertSQLExpression(entitySQLExpressionMetadata,entityTableSQLExpression);
     }
 
     @Override
     public EntityUpdateSQLExpression createEasyUpdateSQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata, EntityTableSQLExpression entityTableSQLExpression) {
-        return null;
+        return new DamengUpdateSQLExpression(entitySQLExpressionMetadata,entityTableSQLExpression);
     }
 
     @Override
     public EntityDeleteSQLExpression createEasyDeleteSQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata, EntityTableSQLExpression entityTableSQLExpression) {
-        return null;
+        return new DamengDeleteSQLExpression(entitySQLExpressionMetadata,entityTableSQLExpression);
     }
 
     @Override
     public EntityTableSQLExpression createEntityTableSQLExpression(TableAvailable entityTable, MultiTableTypeEnum multiTableType, QueryRuntimeContext runtimeContext) {
-        return null;
+        return new DamengTableSQLExpression(entityTable,multiTableType,runtimeContext);
     }
 
     @Override
     public EntityTableSQLExpression createAnonymousEntityTableSQLExpression(TableAvailable entityTable, MultiTableTypeEnum multiTableType, EntityQuerySQLExpression entityQuerySQLExpression, QueryRuntimeContext runtimeContext) {
-        return null;
+        return new AnonymousEntityTableSQLExpressionImpl(entityTable,multiTableType, entityQuerySQLExpression,runtimeContext);
     }
 
     @Override
     public AnonymousEntityQuerySQLExpression createEasyAnonymousQuerySQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata, String sql) {
-        return null;
+        return new AnonymousEntityQuerySQLExpressionImpl(entitySQLExpressionMetadata, sql);
     }
 
     @Override
     public AnonymousEntityQuerySQLExpression createEasyAnonymousUnionQuerySQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata, List<EntityQuerySQLExpression> entityQuerySQLExpressions, SQLUnionEnum sqlUnion) {
-        return null;
+        return new AnonymousUnionQuerySQLExpressionImpl(entitySQLExpressionMetadata, new ArrayList<>(entityQuerySQLExpressions), sqlUnion);
     }
 }

@@ -10,6 +10,7 @@ import com.easy.query.core.basic.jdbc.types.EasyResultSet;
 import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
 import com.easy.query.core.basic.jdbc.types.JdbcTypes;
 import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
+import com.easy.query.core.common.KeywordTool;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
 
@@ -168,6 +169,9 @@ public final class EasyStreamResultUtil {
         ResultColumnMetadata[] columnMetadatas = new ResultColumnMetadata[columnCount];
         for (int i = 0; i < columnCount; i++) {
             String colName = getColName(rsmd, i + 1);//数据库查询出来的列名
+            if(KeywordTool.isIgnoreColumn(colName)){
+                continue;
+            }
             ResultColumnMetadata column = getMapColumnMetadata(resultMetadata, colName, mapToBeanStrict);
             if (column == null) {
                 continue;
