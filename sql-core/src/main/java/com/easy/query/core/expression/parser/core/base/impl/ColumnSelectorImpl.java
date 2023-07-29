@@ -2,8 +2,11 @@ package com.easy.query.core.expression.parser.core.base.impl;
 
 import com.easy.query.core.expression.builder.Selector;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
+import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnSelector;
+import com.easy.query.core.expression.parser.core.base.scec.ColumnConstExpressionContext;
+import com.easy.query.core.expression.parser.core.base.scec.ColumnConstExpressionContextImpl;
 
 /**
  * @author xuejiaming
@@ -32,6 +35,14 @@ public class ColumnSelectorImpl<T1> implements ColumnSelector<T1> {
     @Override
     public ColumnSelector<T1> column(String property) {
         selector.column(table, property);
+        return this;
+    }
+
+    @Override
+    public ColumnSelector<T1> columnConst(String columnConst, SQLExpression1<ColumnConstExpressionContext> contextConsume) {
+        selector.columnConst(columnConst,context->{
+            contextConsume.apply(new ColumnConstExpressionContextImpl(table,context));
+        });
         return this;
     }
 

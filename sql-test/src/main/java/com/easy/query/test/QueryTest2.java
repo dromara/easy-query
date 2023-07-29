@@ -812,7 +812,7 @@ public class QueryTest2 extends BaseTest {
         Queryable<TopicGroupTestDTO> topicGroupTestDTOQueryable = easyQuery.queryable(BlogEntity.class)
                 .where(o -> o.eq(BlogEntity::getId, "1"))
                 .groupBy(o -> o.columnConst("RAND()"))
-                .select(TopicGroupTestDTO.class, o -> o.columnConstAs("RAND()", "rad").columnAs(BlogEntity::getId, TopicGroupTestDTO::getId).columnCountAs(BlogEntity::getId, TopicGroupTestDTO::getIdCount))
+                .select(TopicGroupTestDTO.class, o -> o.columnConst("RAND()", it->it.setAlias("rad")).columnAs(BlogEntity::getId, TopicGroupTestDTO::getId).columnCountAs(BlogEntity::getId, TopicGroupTestDTO::getIdCount))
                 .orderByAsc(o -> o.columnConst("RAND()"));
         String sql = topicGroupTestDTOQueryable.toSQL();
         Assert.assertEquals("SELECT t1.`rad` AS `rad`,t1.`id` AS `id`,t1.`id_count` AS `id_count` FROM (SELECT RAND() AS rad,t.`id` AS `id`,COUNT(t.`id`) AS `id_count` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? GROUP BY RAND()) t1 ORDER BY RAND() ASC", sql);

@@ -2,8 +2,11 @@ package com.easy.query.core.expression.parser.core.base.impl;
 
 import com.easy.query.core.expression.builder.OrderSelector;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
+import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnOrderSelector;
+import com.easy.query.core.expression.parser.core.base.scec.ColumnConstExpressionContext;
+import com.easy.query.core.expression.parser.core.base.scec.ColumnConstExpressionContextImpl;
 
 /**
  * @author xuejiaming
@@ -43,10 +46,18 @@ public class ColumnOrderSelectorImpl<T1> implements ColumnOrderSelector<T1> {
     }
 
     @Override
-    public ColumnOrderSelector<T1> columnConst(String columnConst) {
-        orderSelector.columnConst(columnConst);
+    public ColumnOrderSelector<T1> columnConst(String columnConst, SQLExpression1<ColumnConstExpressionContext> contextConsume) {
+        orderSelector.columnConst(columnConst,context->{
+            contextConsume.apply(new ColumnConstExpressionContextImpl(table,context));
+        });
         return this;
     }
+
+//    @Override
+//    public ColumnOrderSelector<T1> columnConst(String columnConst) {
+//        orderSelector.columnConst(columnConst);
+//        return this;
+//    }
 
 
     public void setAsc(boolean asc) {

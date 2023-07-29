@@ -9,6 +9,7 @@ import com.easy.query.core.expression.func.DefaultColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
+import com.easy.query.core.expression.parser.core.base.scec.ColumnConstExpressionContext;
 import com.easy.query.core.expression.segment.SQLColumnSegment;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 
@@ -33,7 +34,11 @@ public interface ColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1> {
         return columnInclude(true,property,aliasProperty,includeSelectorExpression);
     }
     <TIncludeSource,TIncludeResult> ColumnAsSelector<T1, TR> columnInclude(boolean condition,String property, String aliasProperty, SQLExpression1<ColumnAsSelector<TIncludeResult,TIncludeResult>> includeSelectorExpression);
-    ColumnAsSelector<T1, TR> columnConstAs(String columnConst, String alias);
+
+    default ColumnAsSelector<T1, TR> columnConst(String columnConst){
+        return columnConst(columnConst,c->{});
+    }
+    ColumnAsSelector<T1, TR> columnConst(String columnConst, SQLExpression1<ColumnConstExpressionContext> contextConsume);
 
     ColumnAsSelector<T1, TR> columnIgnore(String property);
 

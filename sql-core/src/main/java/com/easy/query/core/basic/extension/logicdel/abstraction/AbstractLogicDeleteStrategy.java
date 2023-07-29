@@ -35,5 +35,23 @@ public abstract class AbstractLogicDeleteStrategy implements LogicDeleteStrategy
 
     protected abstract SQLExpression1<WherePredicate<Object>> getPredicateFilterExpression(LogicDeleteBuilder builder, String propertyName);
 
+    /**
+     *
+     * 错误的用法
+     * <pre>{@code
+     *     long now = LocalDateTime.now();
+     *     return o->o.set(lambdaProperty, now);
+     * }</pre>
+     * 正确的用法
+     * <pre>{@code
+     *     return o->o.set(lambdaProperty, LocalDateTime.now());
+     * }</pre>
+     *
+     * 因为局部变量如果是被先提取那么他就是一个确认值,因为lambda具有延迟执行的特性所以必须要在执行时获取对应的值
+     * 包括线程上下文的 ThreadLocal 也必须要在lambda内获取而不是提前获取
+     * @param builder
+     * @param propertyName
+     * @return
+     */
     protected abstract SQLExpression1<ColumnSetter<Object>> getDeletedSQLExpression(LogicDeleteBuilder builder, String propertyName);
 }

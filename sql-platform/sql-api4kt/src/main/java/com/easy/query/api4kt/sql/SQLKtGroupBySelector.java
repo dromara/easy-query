@@ -1,7 +1,10 @@
 package com.easy.query.api4kt.sql;
 
+import com.easy.query.api4kt.sql.scec.SQLKtColumnConstExpressionContext;
+import com.easy.query.api4kt.sql.scec.SQLKtColumnConstExpressionContextImpl;
 import com.easy.query.api4kt.util.EasyKtLambdaUtil;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
+import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnGroupSelector;
@@ -24,8 +27,13 @@ public interface SQLKtGroupBySelector<T1> extends EntitySQLTableOwner<T1> {
         getGroupBySelector().column(EasyKtLambdaUtil.getPropertyName(column));
         return this;
     }
-    default SQLKtGroupBySelector<T1> columnConst(String columnConst) {
-        getGroupBySelector().columnConst(columnConst);
+    default SQLKtGroupBySelector<T1> columnConst(String columnConst){
+        return columnConst(columnConst,c->{});
+    }
+    default SQLKtGroupBySelector<T1> columnConst(String columnConst, SQLExpression1<SQLKtColumnConstExpressionContext<T1>> contextConsume){
+        getGroupBySelector().columnConst(columnConst,context->{
+            contextConsume.apply(new SQLKtColumnConstExpressionContextImpl<>(context));
+        });
         return this;
     }
 

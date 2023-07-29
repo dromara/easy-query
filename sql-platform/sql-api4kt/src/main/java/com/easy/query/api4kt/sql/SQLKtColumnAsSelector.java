@@ -2,6 +2,8 @@ package com.easy.query.api4kt.sql;
 
 import com.easy.query.api4kt.select.KtQueryable;
 import com.easy.query.api4kt.sql.impl.SQLKtColumnAsSelectorImpl;
+import com.easy.query.api4kt.sql.scec.SQLKtColumnConstExpressionContext;
+import com.easy.query.api4kt.sql.scec.SQLKtColumnConstExpressionContextImpl;
 import com.easy.query.api4kt.util.EasyKtLambdaUtil;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
@@ -39,6 +41,15 @@ public interface SQLKtColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1> {
         getColumnAsSelector().column(EasyKtLambdaUtil.getPropertyName(column));
         return this;
     }
+    default SQLKtColumnAsSelector<T1,TR> columnConst(String columnConst){
+        return columnConst(columnConst,c->{});
+    }
+    default SQLKtColumnAsSelector<T1,TR> columnConst(String columnConst, SQLExpression1<SQLKtColumnConstExpressionContext<T1>> contextConsume){
+        getColumnAsSelector().columnConst(columnConst,context->{
+            contextConsume.apply(new SQLKtColumnConstExpressionContextImpl<>(context));
+        });
+        return this;
+    }
 
     default <TIncludeSource,TIncludeResult> SQLKtColumnAsSelector<T1, TR> columnInclude(KProperty1<T1, TIncludeSource> column, KProperty1<TR, TIncludeResult> aliasProperty){
         return columnInclude(true,column,aliasProperty, SQLKtColumnAsSelector::columnAll);
@@ -72,11 +83,6 @@ public interface SQLKtColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1> {
                 includeSelectorExpression.apply(new SQLKtColumnAsSelectorImpl<>(columnAsSelect));
             });
         }
-        return this;
-    }
-    
-    default SQLKtColumnAsSelector<T1, TR> columnConstAs(String columnConst,String alias) {
-        getColumnAsSelector().columnConstAs(columnConst,alias);
         return this;
     }
 

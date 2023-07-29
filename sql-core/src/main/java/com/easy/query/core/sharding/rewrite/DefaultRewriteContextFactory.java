@@ -3,6 +3,7 @@ package com.easy.query.core.sharding.rewrite;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.MergeBehaviorEnum;
+import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.executor.parser.PrepareParseResult;
 import com.easy.query.core.expression.executor.parser.QueryPrepareParseResult;
 import com.easy.query.core.expression.executor.parser.SequenceParseResult;
@@ -153,6 +154,9 @@ public class DefaultRewriteContextFactory implements RewriteContextFactory {
                 if(orderBySize<groupBySize){
                     for (int i = orderBySize; i < groupBySize; i++) {
                         GroupByColumnSegment groupByColumnSegment = (GroupByColumnSegment)groupSQLSegments.get(i);
+                        if(groupByColumnSegment.getTable()==null||groupByColumnSegment.getPropertyName()==null){
+                            throw new EasyQueryInvalidOperationException("not found group column table or property");
+                        }
                         easyEntityPredicateSQLExpression.getOrder().append(groupByColumnSegment.createOrderByColumnSegment(true));
                     }
                 }

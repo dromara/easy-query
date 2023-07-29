@@ -5,7 +5,7 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.segment.ColumnAsConstSegment;
+import com.easy.query.core.expression.segment.ColumnConstSegment;
 import com.easy.query.core.expression.segment.ColumnInsertSegment;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.segment.ColumnWithSelfSegment;
@@ -17,7 +17,7 @@ import com.easy.query.core.expression.segment.SQLColumnSegment;
 import com.easy.query.core.expression.segment.SelectConstSegment;
 import com.easy.query.core.expression.segment.SubQueryColumnSegment;
 import com.easy.query.core.expression.segment.impl.AnonymousColumnSegmentImpl;
-import com.easy.query.core.expression.segment.impl.ColumnAsConstSegmentImpl;
+import com.easy.query.core.expression.segment.impl.ColumnConstSegmentImpl;
 import com.easy.query.core.expression.segment.impl.ColumnInsertSegmentImpl;
 import com.easy.query.core.expression.segment.impl.ColumnSegmentImpl;
 import com.easy.query.core.expression.segment.impl.ColumnWithSelfSegmentImpl;
@@ -30,6 +30,7 @@ import com.easy.query.core.expression.segment.impl.OrderFuncColumnSegmentImpl;
 import com.easy.query.core.expression.segment.impl.SQLColumnAsSegmentImpl;
 import com.easy.query.core.expression.segment.impl.SelectConstSegmentImpl;
 import com.easy.query.core.expression.segment.impl.SubQueryColumnSegmentImpl;
+import com.easy.query.core.expression.segment.scec.context.SQLConstExpressionContext;
 
 /**
  * create time 2023/5/30 12:18
@@ -53,9 +54,14 @@ public class DefaultSQLSegmentFactory implements SQLSegmentFactory {
         return new AnonymousColumnSegmentImpl(table, runtimeContext, alias);
     }
 
+//    @Override
+//    public ColumnAsConstSegment createColumnAsConstSegment(TableAvailable table, QueryRuntimeContext runtimeContext, String columnConst, String alias) {
+//        return new ColumnAsConstSegmentImpl(table, runtimeContext, columnConst, alias);
+//    }
+
     @Override
-    public ColumnAsConstSegment createColumnAsConstSegment(TableAvailable table, QueryRuntimeContext runtimeContext, String columnConst, String alias) {
-        return new ColumnAsConstSegmentImpl(table, runtimeContext, columnConst, alias);
+    public ColumnConstSegment createColumnConstSegment(QueryRuntimeContext runtimeContext, String columnConst, SQLConstExpressionContext sqlConstExpressionContext) {
+        return new ColumnConstSegmentImpl(runtimeContext,columnConst,sqlConstExpressionContext);
     }
 
     @Override
@@ -89,13 +95,13 @@ public class DefaultSQLSegmentFactory implements SQLSegmentFactory {
     }
 
     @Override
-    public OrderBySegment createOrderByConstSegment(TableAvailable table, QueryRuntimeContext runtimeContext, String columnConst, boolean asc) {
-        return new OrderByConstSegmentImpl(table, runtimeContext, columnConst, asc);
+    public OrderBySegment createOrderByConstSegment(QueryRuntimeContext runtimeContext, String columnConst, SQLConstExpressionContext sqlConstExpressionContext, boolean asc) {
+        return new OrderByConstSegmentImpl(runtimeContext, columnConst,sqlConstExpressionContext, asc);
     }
 
     @Override
-    public GroupByColumnSegment createGroupByConstSegment(TableAvailable table, QueryRuntimeContext runtimeContext, String columnConst) {
-        return new GroupByConstSegmentImpl(table, runtimeContext, columnConst);
+    public GroupByColumnSegment createGroupByConstSegment(QueryRuntimeContext runtimeContext, String columnConst, SQLConstExpressionContext sqlConstExpressionContext) {
+        return new GroupByConstSegmentImpl(runtimeContext, columnConst,sqlConstExpressionContext);
     }
 
     @Override

@@ -1,6 +1,9 @@
 package com.easy.query.api.proxy.sql;
 
+import com.easy.query.api.proxy.sql.scec.ProxyConstExpressionContext;
+import com.easy.query.api.proxy.sql.scec.ProxyConstExpressionContextImpl;
 import com.easy.query.core.expression.builder.Selector;
+import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
 
@@ -22,10 +25,21 @@ public interface ProxySelector {
        return this;
    }
    default ProxySelector column(SQLColumn<?> column){
-       Selector selector = getSelector();
-       selector.column(column.getTable(),column.value());
+       getSelector().column(column.getTable(),column.value());
        return this;
    }
+
+    default ProxySelector columnConst(String columnConst) {
+        return columnConst(columnConst, c -> {
+        });
+    }
+
+    default ProxySelector columnConst(String columnConst, SQLExpression1<ProxyConstExpressionContext> contextConsume) {
+        getSelector().columnConst(columnConst, context -> {
+            contextConsume.apply(new ProxyConstExpressionContextImpl(context));
+        });
+        return this;
+    }
 
    default ProxySelector columnFunc(ProxyColumnPropertyFunction proxyColumnPropertyFunction){
        getSelector().columnFunc(proxyColumnPropertyFunction.getColumn().getTable(), proxyColumnPropertyFunction.getColumnPropertyFunction());

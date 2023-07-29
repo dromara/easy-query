@@ -1,10 +1,11 @@
 package com.easy.query.core.expression.segment.impl;
 
 import com.easy.query.core.context.QueryRuntimeContext;
-import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.segment.GroupByColumnSegment;
 import com.easy.query.core.expression.segment.OrderBySegment;
+import com.easy.query.core.expression.segment.scec.context.SQLConstExpressionContext;
 
 /**
  * create time 2023/6/16 20:43
@@ -14,23 +15,18 @@ import com.easy.query.core.expression.segment.OrderBySegment;
  */
 public class GroupByConstSegmentImpl extends ColumnConstSegmentImpl implements GroupByColumnSegment {
 
-    public GroupByConstSegmentImpl(TableAvailable table, QueryRuntimeContext runtimeContext, String columnConst){
-        super(table,runtimeContext,columnConst);
+    public GroupByConstSegmentImpl(QueryRuntimeContext runtimeContext, String columnConst, SQLConstExpressionContext sqlConstExpressionContext){
+        super(runtimeContext,columnConst,sqlConstExpressionContext);
 
     }
 
     @Override
     public ColumnSegment cloneSQLColumnSegment() {
-        return new GroupByConstSegmentImpl(table,runtimeContext,columnConst);
-    }
-
-    @Override
-    public String getAlias() {
-        return null;
+        return new GroupByConstSegmentImpl(runtimeContext,columnConst,sqlConstExpressionContext);
     }
 
     @Override
     public OrderBySegment createOrderByColumnSegment(boolean asc) {
-        return runtimeContext.getSQLSegmentFactory().createOrderByConstSegment(table,runtimeContext,columnConst,asc);
+        throw new EasyQueryInvalidOperationException("group const column cant convert order column");
     }
 }

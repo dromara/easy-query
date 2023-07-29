@@ -6,5 +6,5 @@ package com.easy.query.core.expression.segment;
  *
  * @author xuejiaming
  */
-public interface ColumnConstSegment extends SQLEntitySegment{
+public interface ColumnConstSegment extends SQLEntityAliasSegment{
 }

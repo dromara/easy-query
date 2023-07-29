@@ -2,6 +2,8 @@ package com.easy.query.api4j.sql;
 
 import com.easy.query.api4j.select.Queryable;
 import com.easy.query.api4j.sql.impl.SQLColumnAsSelectorImpl;
+import com.easy.query.api4j.sql.scec.SQLColumnConstExpressionContext;
+import com.easy.query.api4j.sql.scec.SQLColumnConstExpressionContextImpl;
 import com.easy.query.api4j.util.EasyLambdaUtil;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
@@ -78,10 +80,24 @@ public interface SQLColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1> {
 //        getColumnAsSelector().columnInclude(EasyLambdaUtil.getPropertyName(column),EasyLambdaUtil.getPropertyName(aliasProperty));
 //        return this;
 //    }
-    default SQLColumnAsSelector<T1, TR> columnConstAs(String columnConst, String alias) {
-        getColumnAsSelector().columnConstAs(columnConst,alias);
-        return this;
+//    default SQLColumnAsSelector<T1, TR> columnConstAs(String columnConst, String alias) {
+//        getColumnAsSelector().columnConstAs(columnConst,alias);
+//        return this;
+//    }
+//    default SQLColumnAsSelector<T1, TR> columnConst(String columnConst) {
+//        getColumnAsSelector().columnConstAs(columnConst,alias);
+//        return this;
+//    }
+
+    default SQLColumnAsSelector<T1,TR> columnConst(String columnConst){
+        return columnConst(columnConst,c->{});
     }
+   default SQLColumnAsSelector<T1,TR> columnConst(String columnConst, SQLExpression1<SQLColumnConstExpressionContext<T1>> contextConsume){
+       getColumnAsSelector().columnConst(columnConst,context->{
+           contextConsume.apply(new SQLColumnConstExpressionContextImpl<>(context));
+       });
+       return this;
+   }
 
     default SQLColumnAsSelector<T1, TR> columnIgnore(Property<T1, ?> column) {
         getColumnAsSelector().columnIgnore(EasyLambdaUtil.getPropertyName(column));

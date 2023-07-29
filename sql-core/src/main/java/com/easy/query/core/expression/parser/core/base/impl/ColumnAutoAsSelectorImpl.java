@@ -8,6 +8,7 @@ import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
+import com.easy.query.core.expression.parser.core.base.scec.ColumnConstExpressionContext;
 import com.easy.query.core.expression.segment.SQLColumnSegment;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 
@@ -69,13 +70,13 @@ public class ColumnAutoAsSelectorImpl<T1, TR> implements ColumnAsSelector<T1, TR
     }
 
     @Override
-    public ColumnAsSelector<T1, TR> columnConstAs(String columnConst, String alias) {
+    public ColumnAsSelector<T1, TR> columnConst(String columnConst, SQLExpression1<ColumnConstExpressionContext> contextConsume) {
         throw new UnsupportedOperationException();
     }
 
     @Override
     public ColumnAsSelector<T1, TR> columnIgnore(String property) {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override

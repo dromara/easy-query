@@ -4,12 +4,17 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.builder.OrderSelector;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
+import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.OrderBySegment;
 import com.easy.query.core.expression.segment.OrderFuncColumnSegment;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
+import com.easy.query.core.expression.segment.scec.context.SQLConstExpressionContext;
+import com.easy.query.core.expression.segment.scec.context.SQLConstExpressionContextImpl;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
+
+import java.util.Objects;
 
 /**
  * create time 2023/6/23 14:37
@@ -40,6 +45,16 @@ public class OrderSelectorImpl implements OrderSelector {
     }
 
     @Override
+    public OrderSelector columnConst(String columnConst, SQLExpression1<SQLConstExpressionContext> contextConsume) {
+        Objects.requireNonNull(contextConsume,"contextConsume cannot be null");
+        SQLConstExpressionContextImpl sqlConstExpressionContext=new SQLConstExpressionContextImpl();
+        contextConsume.apply(sqlConstExpressionContext);
+        OrderBySegment orderByColumnSegment = sqlSegmentFactory.createOrderByConstSegment(runtimeContext,columnConst,sqlConstExpressionContext, asc);
+        order.append(orderByColumnSegment);
+        return this;
+    }
+
+    @Override
     public OrderSelector columnFunc(TableAvailable table, ColumnPropertyFunction columnPropertyFunction) {
         String propertyName = columnPropertyFunction.getPropertyName();
         ColumnFunction columnFunction = columnPropertyFunction.getColumnFunction();
@@ -48,12 +63,12 @@ public class OrderSelectorImpl implements OrderSelector {
         return this;
     }
 
-    @Override
-    public OrderSelector columnConst(String columnConst) {
-        OrderBySegment orderFuncColumnSegment = sqlSegmentFactory.createOrderByConstSegment(null, entityQueryExpressionBuilder.getRuntimeContext(), columnConst, asc);
-        order.append(orderFuncColumnSegment);
-        return this;
-    }
+//    @Override
+//    public OrderSelector columnConst(String columnConst) {
+//        OrderBySegment orderFuncColumnSegment = sqlSegmentFactory.createOrderByConstSegment(null, entityQueryExpressionBuilder.getRuntimeContext(), columnConst, asc);
+//        order.append(orderFuncColumnSegment);
+//        return this;
+//    }
 
     @Override
     public void setAsc(boolean asc) {

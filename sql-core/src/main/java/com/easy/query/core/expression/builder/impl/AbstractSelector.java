@@ -7,13 +7,15 @@ import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.builder.AsSelector;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.segment.ColumnAsConstSegment;
+import com.easy.query.core.expression.segment.ColumnConstSegment;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.segment.SQLEntityAliasSegment;
 import com.easy.query.core.expression.segment.SQLEntitySegment;
 import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
+import com.easy.query.core.expression.segment.scec.context.SQLConstExpressionContext;
+import com.easy.query.core.expression.segment.scec.context.SQLConstExpressionContextImpl;
 import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
@@ -71,6 +73,15 @@ public abstract class AbstractSelector<TChain> {
         NavigateMetadata navigateMetadata = table.getEntityMetadata().getNavigateNotNull(selfProperty);
         Map<String, ColumnIncludeExpression> propertyColumnIncludeExpressionMap = expressionContext.getColumnIncludeMaps().computeIfAbsent(table, k -> new HashMap<>());
         propertyColumnIncludeExpressionMap.put(navigateMetadata.getSelfPropertyOrPrimary(),new ColumnIncludeExpression(table,selfProperty,aliasProperty,includeSelectorExpression));
+        return (TChain) this;
+    }
+    
+    public TChain columnConst(String columnConst, SQLExpression1<SQLConstExpressionContext> contextConsume){
+        Objects.requireNonNull(contextConsume,"contextConsume cannot be null");
+        SQLConstExpressionContextImpl  sqlConstExpressionContext=new SQLConstExpressionContextImpl();
+        contextConsume.apply(sqlConstExpressionContext);
+        ColumnConstSegment columnSegment = sqlSegmentFactory.createColumnConstSegment(runtimeContext, columnConst, sqlConstExpressionContext);
+        sqlBuilderSegment.append(columnSegment);
         return (TChain) this;
     }
 
@@ -168,9 +179,9 @@ public abstract class AbstractSelector<TChain> {
         return true;
     }
 
-    public TChain columnConstAs(String columnConst, String alias) {
-        ColumnAsConstSegment columnSegment = sqlSegmentFactory.createColumnAsConstSegment(null, runtimeContext, columnConst, alias);
-        sqlBuilderSegment.append(columnSegment);
-        return (TChain) this;
-    }
+//    public TChain columnConstAs(String columnConst, String alias) {
+//        ColumnAsConstSegment columnSegment = sqlSegmentFactory.createColumnAsConstSegment(null, runtimeContext, columnConst, alias);
+//        sqlBuilderSegment.append(columnSegment);
+//        return (TChain) this;
+//    }
 }

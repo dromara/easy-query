@@ -35,6 +35,22 @@ public class LocalDateTimeLogicDeleteStrategy extends AbstractLogicDeleteStrateg
         return o -> o.isNull(propertyName);
     }
 
+    /**
+     * 错误的用法
+     * <pre>{@code
+     *     long now = LocalDateTime.now();
+     *     return o->o.set(lambdaProperty, now);
+     * }</pre>
+     * 正确的用法
+     * <pre>{@code
+     *     return o->o.set(lambdaProperty, LocalDateTime.now());
+     * }</pre>
+     *
+     * 因为局部变量如果是被先提取那么他就是一个确认值,因为lambda具有延迟执行的特性所以必须要在执行时获取对应的值
+     * @param builder
+     * @param propertyName
+     * @return
+     */
     @Override
     protected SQLExpression1<ColumnSetter<Object>> getDeletedSQLExpression(LogicDeleteBuilder builder, String propertyName) {
 

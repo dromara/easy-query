@@ -3,12 +3,17 @@ package com.easy.query.core.expression.builder.impl;
 import com.easy.query.core.expression.builder.GroupSelector;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
+import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.FuncColumnSegment;
 import com.easy.query.core.expression.segment.GroupByColumnSegment;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
+import com.easy.query.core.expression.segment.scec.context.SQLConstExpressionContext;
+import com.easy.query.core.expression.segment.scec.context.SQLConstExpressionContextImpl;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
+
+import java.util.Objects;
 
 /**
  * create time 2023/6/23 13:14
@@ -35,11 +40,21 @@ public class GroupSelectorImpl implements GroupSelector {
     }
 
     @Override
-    public GroupSelector columnConst(String columnConst) {
-        GroupByColumnSegment groupByColumnSegment = sqlSegmentFactory.createGroupByConstSegment(null, entityQueryExpressionBuilder.getRuntimeContext(),columnConst);
+    public GroupSelector columnConst(String columnConst, SQLExpression1<SQLConstExpressionContext> contextConsume) {
+        Objects.requireNonNull(contextConsume,"contextConsume cannot be null");
+        SQLConstExpressionContextImpl sqlConstExpressionContext=new SQLConstExpressionContextImpl();
+        contextConsume.apply(sqlConstExpressionContext);
+        GroupByColumnSegment groupByColumnSegment = sqlSegmentFactory.createGroupByConstSegment(entityQueryExpressionBuilder.getRuntimeContext(), columnConst,sqlConstExpressionContext);
         sqlSegmentBuilder.append(groupByColumnSegment);
         return this;
     }
+
+//    @Override
+//    public GroupSelector columnConst(String columnConst) {
+//        GroupByColumnSegment groupByColumnSegment = sqlSegmentFactory.createGroupByConstSegment(null, entityQueryExpressionBuilder.getRuntimeContext(),columnConst);
+//        sqlSegmentBuilder.append(groupByColumnSegment);
+//        return this;
+//    }
 
     @Override
     public GroupSelector columnFunc(TableAvailable table, ColumnPropertyFunction columnPropertyFunction) {

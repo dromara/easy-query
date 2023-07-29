@@ -3,9 +3,9 @@ package com.easy.query.core.expression.segment.impl;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.SQLKeywordEnum;
-import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.segment.OrderBySegment;
+import com.easy.query.core.expression.segment.scec.context.SQLConstExpressionContext;
 
 /**
  * create time 2023/6/16 20:43
@@ -16,15 +16,15 @@ import com.easy.query.core.expression.segment.OrderBySegment;
 public class OrderByConstSegmentImpl extends ColumnConstSegmentImpl implements OrderBySegment {
     protected final boolean asc;
 
-    public OrderByConstSegmentImpl(TableAvailable table, QueryRuntimeContext runtimeContext, String columnConst, boolean asc){
-        super(table,runtimeContext,columnConst);
+    public OrderByConstSegmentImpl(QueryRuntimeContext runtimeContext, String columnConst, SQLConstExpressionContext sqlConstExpressionContext, boolean asc){
+        super(runtimeContext,columnConst,sqlConstExpressionContext);
 
         this.asc = asc;
     }
 
     @Override
     public ColumnSegment cloneSQLColumnSegment() {
-        return new OrderByConstSegmentImpl(table,runtimeContext,columnConst,asc);
+        return new OrderByConstSegmentImpl(runtimeContext,columnConst,sqlConstExpressionContext,asc);
     }
 
     @Override

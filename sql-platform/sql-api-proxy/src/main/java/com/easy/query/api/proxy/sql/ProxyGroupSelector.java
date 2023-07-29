@@ -1,6 +1,9 @@
 package com.easy.query.api.proxy.sql;
 
+import com.easy.query.api.proxy.sql.scec.ProxyConstExpressionContext;
+import com.easy.query.api.proxy.sql.scec.ProxyConstExpressionContextImpl;
 import com.easy.query.core.expression.builder.GroupSelector;
+import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.proxy.SQLColumn;
 
 /**
@@ -26,8 +29,13 @@ public interface ProxyGroupSelector {
         return this;
     }
 
-    default ProxyGroupSelector columnConst(String columnConst) {
-        getGroupSelector().columnConst(columnConst);
+    default ProxyGroupSelector columnConst(String columnConst){
+        return columnConst(columnConst,c->{});
+    }
+    default ProxyGroupSelector columnConst(String columnConst, SQLExpression1<ProxyConstExpressionContext> contextConsume){
+        getGroupSelector().columnConst(columnConst,context->{
+            contextConsume.apply(new ProxyConstExpressionContextImpl(context));
+        });
         return this;
     }
 

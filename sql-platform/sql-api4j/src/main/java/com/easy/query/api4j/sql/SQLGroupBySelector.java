@@ -1,8 +1,11 @@
 package com.easy.query.api4j.sql;
 
+import com.easy.query.api4j.sql.scec.SQLColumnConstExpressionContext;
+import com.easy.query.api4j.sql.scec.SQLColumnConstExpressionContextImpl;
 import com.easy.query.api4j.util.EasyLambdaUtil;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.Property;
+import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnGroupSelector;
@@ -24,8 +27,13 @@ public interface SQLGroupBySelector<T1> extends EntitySQLTableOwner<T1> {
         getGroupBySelector().column(EasyLambdaUtil.getPropertyName(column));
         return this;
     }
-    default SQLGroupBySelector<T1> columnConst(String columnConst) {
-        getGroupBySelector().columnConst(columnConst);
+    default SQLGroupBySelector<T1> columnConst(String columnConst){
+        return columnConst(columnConst,c->{});
+    }
+    default SQLGroupBySelector<T1> columnConst(String columnConst, SQLExpression1<SQLColumnConstExpressionContext<T1>> contextConsume){
+        getGroupBySelector().columnConst(columnConst,context->{
+            contextConsume.apply(new SQLColumnConstExpressionContextImpl<>(context));
+        });
         return this;
     }
 

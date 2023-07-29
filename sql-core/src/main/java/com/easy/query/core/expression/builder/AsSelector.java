@@ -9,6 +9,7 @@ import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.SQLColumnSegment;
+import com.easy.query.core.expression.segment.scec.context.SQLConstExpressionContext;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 
@@ -35,7 +36,18 @@ public interface AsSelector {
      */
     AsSelector columnInclude(TableAvailable table, String selfProperty, String aliasProperty, SQLExpression1<AsSelector> includeSelectorExpression);
 
-    AsSelector columnConstAs(String columnConst, String alias);
+//    /**
+//     * use column Const
+//     * @param columnConst
+//     * @param alias
+//     * @return
+//     */
+//    @Deprecated
+//    AsSelector columnConstAs(String columnConst, String alias);
+   default AsSelector columnConst(String columnConst){
+       return columnConst(columnConst,c->{});
+   }
+    AsSelector columnConst(String columnConst, SQLExpression1<SQLConstExpressionContext> contextConsume);
 
     AsSelector columnIgnore(TableAvailable table, String property);
 

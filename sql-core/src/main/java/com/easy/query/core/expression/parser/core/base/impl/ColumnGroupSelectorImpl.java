@@ -1,17 +1,12 @@
 package com.easy.query.core.expression.parser.core.base.impl;
 
 import com.easy.query.core.expression.builder.GroupSelector;
-import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
+import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnGroupSelector;
-import com.easy.query.core.expression.segment.FuncColumnSegment;
-import com.easy.query.core.expression.segment.GroupByColumnSegment;
-import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
-import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
-import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
-import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
-import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
+import com.easy.query.core.expression.parser.core.base.scec.ColumnConstExpressionContext;
+import com.easy.query.core.expression.parser.core.base.scec.ColumnConstExpressionContextImpl;
 
 /**
  * @author xuejiaming
@@ -45,8 +40,10 @@ public class ColumnGroupSelectorImpl<T1> implements ColumnGroupSelector<T1> {
     }
 
     @Override
-    public ColumnGroupSelector<T1> columnConst(String columnConst) {
-        groupSelector.columnConst(columnConst);
+    public ColumnGroupSelector<T1> columnConst(String columnConst, SQLExpression1<ColumnConstExpressionContext> contextConsume) {
+        groupSelector.columnConst(columnConst,context->{
+            contextConsume.apply(new ColumnConstExpressionContextImpl(table,context));
+        });
         return this;
     }
 
