@@ -10,6 +10,7 @@ import com.easy.query.test.h2.domain.DefTable;
 import com.easy.query.test.h2.domain.DefTableLeft1;
 import com.easy.query.test.h2.domain.DefTableLeft2;
 import com.easy.query.test.h2.domain.DefTableLeft3;
+import com.easy.query.test.h2.domain.H2BookTest;
 import com.easy.query.test.h2.domain.proxy.ALLTYPE1Proxy;
 import com.easy.query.test.h2.domain.proxy.ALLTYPEProxy;
 import com.easy.query.test.h2.vo.ALLTYPEVO1;
@@ -680,5 +681,31 @@ public class H2QueryTest extends H2BaseTest {
         Assert.assertEquals(alltype1.getNumberLongBasic(), alltype.getNumberLongBasic());
         Assert.assertEquals(alltype1.getNumberByteBasic(), alltype.getNumberByteBasic());
         Assert.assertEquals(alltype1.isEnableBasic(), alltype.isEnableBasic());
+    }
+
+    @Test
+    public void nativeSQLTest1(){
+        String sql = easyQuery.queryable(H2BookTest.class)
+                .select(o -> o.columnAll()
+                        .columnConst("rank() over(order by {0} desc) as rank1", it -> it.expression(H2BookTest::getPrice))
+                        .columnConst("rank() over(partition by {0} order by {1} desc) as rank2", it -> it
+                                .expression(H2BookTest::getStoreId)
+                                .expression(H2BookTest::getPrice)
+                        )
+                ).toSQL();
+        Assert.assertEquals("SELECT id,name,edition,price,store_id,rank() over(order by price desc) as rank1,rank() over(partition by store_id order by price desc) as rank2 FROM t_book_test",sql);
+    }
+    @Test
+    public void nativeSQLTest2(){
+        String sql = easyQuery.queryable(H2BookTest.class)
+                .asAlias("x")
+                .select(o -> o.columnAll()
+                        .columnConst("rank() over(order by {0} desc) as rank1", it -> it.expression(H2BookTest::getPrice))
+                        .columnConst("rank() over(partition by {0} order by {1} desc) as rank2", it -> it
+                                .expression(H2BookTest::getStoreId)
+                                .expression(H2BookTest::getPrice)
+                        )
+                ).toSQL();
+        Assert.assertEquals("SELECT x.id,x.name,x.edition,x.price,x.store_id,rank() over(order by x.price desc) as rank1,rank() over(partition by x.store_id order by x.price desc) as rank2 FROM t_book_test x",sql);
     }
 }

@@ -13,6 +13,8 @@ import com.easy.query.core.expression.segment.scec.expression.ConstParamExpressi
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 
+import java.text.MessageFormat;
+
 /**
  * create time 2023/6/16 20:55
  * 文件说明
@@ -53,17 +55,7 @@ public class ColumnConstSegmentImpl implements ColumnConstSegment {
     @Override
     public String toSQL(ToSQLContext toSQLContext) {
 
-        String resultColumnConst = columnConst;
-        int i = 0;
-        String placeHolder = "{" + i + "}";
-        while (columnConst.contains(placeHolder)) {
-            if (sqlConstExpressionContext.getExpressions().size() <= i) {
-                throw new IllegalArgumentException("[" + columnConst + "] no found argument expression index:" + i);
-            }
-            resultColumnConst = process(resultColumnConst, i, placeHolder, toSQLContext);
-            i++;
-            placeHolder = "{" + i + "}";
-        }
+        String resultColumnConst = getResultSQL(toSQLContext);
 
         String alias = getAlias();
         if (alias != null) {
@@ -71,18 +63,30 @@ public class ColumnConstSegmentImpl implements ColumnConstSegment {
         }
         return resultColumnConst;
     }
+    private String getResultSQL(ToSQLContext toSQLContext){
 
-    private String process(String resultColumnConst, int index, String placeHolder, ToSQLContext toSQLContext) {
+        if(EasyCollectionUtil.isNotEmpty(sqlConstExpressionContext.getExpressions())){
+            Object[] args = new Object[sqlConstExpressionContext.getExpressions().size()];
+            for (int i = 0; i < sqlConstExpressionContext.getExpressions().size(); i++) {
+                String arg = process(i, toSQLContext);
+                args[i]=arg;
+            }
+            MessageFormat messageFormat = new MessageFormat(columnConst);
+            return messageFormat.format(args);
+        }
+        return columnConst;
+    }
+
+    private String process(int index,ToSQLContext toSQLContext) {
         ConstParamExpression constParamExpression = sqlConstExpressionContext.getExpressions().get(index);
         if (constParamExpression instanceof ColumnPropertyExpression) {
             ColumnPropertyExpression columnPropertyExpression = (ColumnPropertyExpression) constParamExpression;
-            String sql = columnPropertyExpression.toSQL(runtimeContext, toSQLContext);
-            return resultColumnConst.replaceAll(placeHolder, sql);
+            return columnPropertyExpression.toSQL(runtimeContext, toSQLContext);
 
         } else if (constParamExpression instanceof ColumnConstValueExpression) {
             ColumnConstValueExpression columnConstValueExpression = (ColumnConstValueExpression) constParamExpression;
             columnConstValueExpression.addParams(toSQLContext);
-            return resultColumnConst.replaceAll(placeHolder, "?");
+            return "?";
         }
         throw new EasyQueryInvalidOperationException("can not process ConstParamExpression:" + EasyClassUtil.getInstanceSimpleName(constParamExpression));
     }
