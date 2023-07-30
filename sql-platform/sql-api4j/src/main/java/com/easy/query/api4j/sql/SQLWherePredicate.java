@@ -1,6 +1,8 @@
 package com.easy.query.api4j.sql;
 
 import com.easy.query.api4j.select.Queryable;
+import com.easy.query.api4j.sql.scec.SQLNativeLambdaExpressionContext;
+import com.easy.query.api4j.sql.scec.SQLNativeLambdaExpressionContextImpl;
 import com.easy.query.api4j.util.EasyLambdaUtil;
 import com.easy.query.core.enums.SQLLikeEnum;
 import com.easy.query.core.enums.SQLPredicateCompare;
@@ -681,6 +683,27 @@ public interface SQLWherePredicate<T1> extends EntitySQLTableOwner<T1> {
         getWherePredicate().lt(condition, sub, EasyLambdaUtil.getPropertyName(column1), EasyLambdaUtil.getPropertyName(column2));
         return this;
     }
+    /**
+     * 参数格式化 占位符 {0} {1}
+     * @param sqlSegment
+     * @return
+     */
+    default SQLWherePredicate<T1> sqlNativeSegment(String sqlSegment){
+        return sqlNativeSegment(sqlSegment,c->{});
+    }
+
+    /**
+     * 参数格式化 占位符 {0} {1}
+     * @param sqlSegment
+     * @param contextConsume
+     * @return
+     */
+    default SQLWherePredicate<T1> sqlNativeSegment(String sqlSegment, SQLExpression1<SQLNativeLambdaExpressionContext<T1>> contextConsume){
+        getWherePredicate().sqlNativeSegment(sqlSegment,context->{
+            contextConsume.apply(new SQLNativeLambdaExpressionContextImpl<>(context));
+        });
+        return this;
+    }
 
     default <T2> SQLWherePredicate<T2> then(SQLWherePredicate<T2> sub) {
         getWherePredicate().then(sub.getWherePredicate());
@@ -716,4 +739,5 @@ public interface SQLWherePredicate<T1> extends EntitySQLTableOwner<T1> {
     }
 
     SQLWherePredicate<T1> or(boolean condition, SQLExpression1<SQLWherePredicate<T1>> sqlWherePredicateSQLExpression);
+
 }

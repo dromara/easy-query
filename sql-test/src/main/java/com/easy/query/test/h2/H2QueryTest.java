@@ -267,6 +267,7 @@ public class H2QueryTest extends H2BaseTest {
         Assert.assertEquals(alltype1.getNumberByteBasic(), alltype.getNumberByteBasic());
         Assert.assertEquals(alltype1.isEnableBasic(), alltype.isEnableBasic());
     }
+
     @Test
     public void allTypeTest1_2() {
         ALLTYPE1 alltype = new ALLTYPE1();
@@ -329,6 +330,7 @@ public class H2QueryTest extends H2BaseTest {
         Assert.assertEquals(alltype1.getNumberByteBasic(), alltype.getNumberByteBasic());
         Assert.assertEquals(alltype1.isEnableBasic(), alltype.isEnableBasic());
     }
+
     @Test
     public void allTypeTestSharding1() {
         ArrayList<ALLTYPESharding> alltypeShardings = new ArrayList<>();
@@ -492,10 +494,6 @@ public class H2QueryTest extends H2BaseTest {
     }
 
 
-
-
-
-
     @Test
     public void allTypeTest1_proxy() {
         ALLTYPE alltype = new ALLTYPE();
@@ -620,6 +618,7 @@ public class H2QueryTest extends H2BaseTest {
         Assert.assertEquals(alltype1.getNumberByteBasic(), alltype.getNumberByteBasic());
         Assert.assertEquals(alltype1.isEnableBasic(), alltype.isEnableBasic());
     }
+
     @Test
     public void allTypeTest1_2_proxy() {
         ALLTYPE1 alltype = new ALLTYPE1();
@@ -684,7 +683,7 @@ public class H2QueryTest extends H2BaseTest {
     }
 
     @Test
-    public void nativeSQLTest1(){
+    public void nativeSQLTest1() {
         String sql = easyQuery.queryable(H2BookTest.class)
                 .select(o -> o.columnAll()
                         .sqlNativeSegment("rank() over(order by {0} desc) as rank1", it -> it.expression(H2BookTest::getPrice))
@@ -693,10 +692,11 @@ public class H2QueryTest extends H2BaseTest {
                                 .expression(H2BookTest::getPrice)
                         )
                 ).toSQL();
-        Assert.assertEquals("SELECT id,name,edition,price,store_id,rank() over(order by price desc) as rank1,rank() over(partition by store_id order by price desc) as rank2 FROM t_book_test",sql);
+        Assert.assertEquals("SELECT id,name,edition,price,store_id,rank() over(order by price desc) as rank1,rank() over(partition by store_id order by price desc) as rank2 FROM t_book_test", sql);
     }
+
     @Test
-    public void nativeSQLTest2(){
+    public void nativeSQLTest2() {
         String sql = easyQuery.queryable(H2BookTest.class)
                 .asAlias("x")
                 .select(o -> o.columnAll()
@@ -706,10 +706,11 @@ public class H2QueryTest extends H2BaseTest {
                                 .expression(H2BookTest::getPrice)
                         )
                 ).toSQL();
-        Assert.assertEquals("SELECT x.id,x.name,x.edition,x.price,x.store_id,rank() over(order by x.price desc) as rank1,rank() over(partition by x.store_id order by x.price desc) as rank2 FROM t_book_test x",sql);
+        Assert.assertEquals("SELECT x.id,x.name,x.edition,x.price,x.store_id,rank() over(order by x.price desc) as rank1,rank() over(partition by x.store_id order by x.price desc) as rank2 FROM t_book_test x", sql);
     }
+
     @Test
-    public void nativeSQLTest3(){
+    public void nativeSQLTest3() {
         String sql = easyQuery.queryable(H2BookTest.class)
                 .asAlias("x")
                 .select(o -> o.columnAll()
@@ -718,6 +719,16 @@ public class H2QueryTest extends H2BaseTest {
                                 .expression(H2BookTest::getStoreId)
                         )
                 ).toSQL();
-        Assert.assertEquals("SELECT x.id,x.name,x.edition,x.price,x.store_id,rank() over(order by x.price desc) as rank1,rank() over(partition by x.store_id order by x.store_id desc) as rank2 FROM t_book_test x",sql);
+        Assert.assertEquals("SELECT x.id,x.name,x.edition,x.price,x.store_id,rank() over(order by x.price desc) as rank1,rank() over(partition by x.store_id order by x.store_id desc) as rank2 FROM t_book_test x", sql);
+    }
+
+    @Test
+    public void nativeSQLTest4() {
+        String sql = easyQuery.queryable(H2BookTest.class)
+                .where(o -> o.sqlNativeSegment("regexp_like({0},{1})", it -> it.expression(H2BookTest::getPrice)
+                                .value("^Ste(v|ph)en$")))
+                .select(o -> o.columnAll()
+                ).toSQL();
+        Assert.assertEquals("SELECT id,name,edition,price,store_id FROM t_book_test WHERE regexp_like(price,?)", sql);
     }
 }

@@ -22,7 +22,7 @@ public class GroupBySQLNativeSegmentImpl extends SQLNativeSegmentImpl implements
 
     @Override
     public ColumnSegment cloneSQLColumnSegment() {
-        return new GroupBySQLNativeSegmentImpl(runtimeContext,columnConst,sqlConstExpressionContext);
+        return new GroupBySQLNativeSegmentImpl(runtimeContext, sqlSegment,sqlConstExpressionContext);
     }
 
     @Override

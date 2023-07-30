@@ -21,6 +21,9 @@ import com.easy.query.core.expression.segment.condition.predicate.ColumnPredicat
 import com.easy.query.core.expression.segment.condition.predicate.ColumnValuePredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnWithColumnPredicate;
 import com.easy.query.core.expression.segment.condition.predicate.FuncColumnValuePredicate;
+import com.easy.query.core.expression.segment.condition.predicate.SQLNativePredicateImpl;
+import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;
+import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContextImpl;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.util.EasySQLUtil;
@@ -260,6 +263,15 @@ public class FilterImpl implements Filter {
     @Override
     public Filter compareSelf(TableAvailable leftTable, String property1, TableAvailable rightTable, String property2,SQLPredicateCompare sqlPredicateCompare) {
         nextPredicateSegment.setPredicate(new ColumnWithColumnPredicate(leftTable, property1, rightTable, property2, getReallyPredicateCompare(sqlPredicateCompare), runtimeContext));
+        next();
+        return this;
+    }
+
+    @Override
+    public Filter sqlNativeSegment(String sqlSegment, SQLExpression1<SQLNativeExpressionContext> contextConsume) {
+        SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl();
+        contextConsume.apply(sqlNativeExpressionContext);
+        nextPredicateSegment.setPredicate(new SQLNativePredicateImpl(runtimeContext,sqlSegment,sqlNativeExpressionContext));
         next();
         return this;
     }

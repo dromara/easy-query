@@ -2,6 +2,8 @@ package com.easy.query.api.proxy.sql;
 
 import com.easy.query.api.proxy.select.ProxyQueryable;
 import com.easy.query.api.proxy.sql.impl.ProxyFilterImpl;
+import com.easy.query.api.proxy.sql.scec.SQLNativeProxyExpressionContext;
+import com.easy.query.api.proxy.sql.scec.SQLNativeProxyExpressionContextImpl;
 import com.easy.query.core.enums.SQLLikeEnum;
 import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.enums.SQLRangeEnum;
@@ -853,6 +855,27 @@ public interface ProxyFilter {
         return this;
     }
 
+    /**
+     * 参数格式化 占位符 {0} {1}
+     * @param sqlSegment
+     * @return
+     */
+    default ProxyFilter sqlNativeSegment(String sqlSegment){
+        return sqlNativeSegment(sqlSegment,c->{});
+    }
+
+    /**
+     * 参数格式化 占位符 {0} {1}
+     * @param sqlSegment
+     * @param contextConsume
+     * @return
+     */
+    default ProxyFilter sqlNativeSegment(String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume){
+        getFilter().sqlNativeSegment(sqlSegment,context->{
+            contextConsume.apply(new SQLNativeProxyExpressionContextImpl(context));
+        });
+        return this;
+    }
     default ProxyFilter and() {
         return and(true);
     }

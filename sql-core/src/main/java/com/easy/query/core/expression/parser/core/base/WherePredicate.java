@@ -8,6 +8,7 @@ import com.easy.query.core.expression.builder.Filter;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
+import com.easy.query.core.expression.parser.core.base.scec.NativeSQLPropertyExpressionContext;
 
 import java.util.Collection;
 
@@ -563,6 +564,23 @@ public interface WherePredicate<T1> extends EntitySQLTableOwner<T1> {
 
     <T2> WherePredicate<T1> lt(boolean condition, EntitySQLTableOwner<T2> sub, String property1, String property2);
 
+
+    /**
+     * 参数格式化 占位符 {0} {1}
+     * @param sqlSegment
+     * @return
+     */
+    default WherePredicate<T1> sqlNativeSegment(String sqlSegment){
+        return sqlNativeSegment(sqlSegment,c->{});
+    }
+
+    /**
+     * 参数格式化 占位符 {0} {1}
+     * @param sqlSegment
+     * @param contextConsume
+     * @return
+     */
+     WherePredicate<T1> sqlNativeSegment(String sqlSegment, SQLExpression1<NativeSQLPropertyExpressionContext> contextConsume);
     <T2> WherePredicate<T2> then(WherePredicate<T2> sub);
 
     default WherePredicate<T1> and() {

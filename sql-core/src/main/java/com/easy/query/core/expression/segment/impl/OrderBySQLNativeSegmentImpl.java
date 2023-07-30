@@ -24,7 +24,7 @@ public class OrderBySQLNativeSegmentImpl extends SQLNativeSegmentImpl implements
 
     @Override
     public ColumnSegment cloneSQLColumnSegment() {
-        return new OrderBySQLNativeSegmentImpl(runtimeContext,columnConst,sqlConstExpressionContext,asc);
+        return new OrderBySQLNativeSegmentImpl(runtimeContext, sqlSegment,sqlConstExpressionContext,asc);
     }
 
     @Override
@@ -40,7 +40,7 @@ public class OrderBySQLNativeSegmentImpl extends SQLNativeSegmentImpl implements
     @Override
     public String toSQL(ToSQLContext toSQLContext) {
 
-        StringBuilder sql = new StringBuilder().append(columnConst);
+        StringBuilder sql = new StringBuilder().append(sqlSegment);
         if(asc){
             sql.append(" ").append(SQLKeywordEnum.ASC.toSQL());
         }else {

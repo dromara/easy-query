@@ -9,6 +9,7 @@ import com.easy.query.core.enums.SQLRangeEnum;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;
 
 import java.util.Collection;
 
@@ -172,6 +173,24 @@ public interface Filter {
      * @return
      */
     Filter compareSelf(TableAvailable leftTable, String property1,TableAvailable rightTable, String property2,SQLPredicateCompare sqlPredicateCompare);
+
+
+    /**
+     * 参数格式化 占位符 {0} {1}
+     * @param sqlSegment
+     * @return
+     */
+    default Filter sqlNativeSegment(String sqlSegment){
+        return sqlNativeSegment(sqlSegment,c->{});
+    }
+
+    /**
+     * 参数格式化 占位符 {0} {1}
+     * @param sqlSegment
+     * @param contextConsume
+     * @return
+     */
+    Filter sqlNativeSegment(String sqlSegment, SQLExpression1<SQLNativeExpressionContext> contextConsume);
 
     Filter and();
 

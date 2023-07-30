@@ -20,5 +20,10 @@ public interface SQLNativeExpressionContext {
 
      String getAlias();
 
+    /**
+     * 别名 column_name
+     * @param alias
+     * @return
+     */
     SQLNativeExpressionContext setAlias(String alias);
 }

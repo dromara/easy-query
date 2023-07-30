@@ -11,6 +11,8 @@ import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
+import com.easy.query.core.expression.parser.core.base.scec.NativeSQLPropertyExpressionContext;
+import com.easy.query.core.expression.parser.core.base.scec.NativeSQLPropertyExpressionContextImpl;
 
 import java.util.Collection;
 
@@ -206,32 +208,40 @@ public class WherePredicateImpl<T1> implements WherePredicate<T1> {
 
     @Override
     public <T2> WherePredicate<T1> eq(boolean condition, EntitySQLTableOwner<T2> sub, String property1, String property2) {
-        return compareSelf(condition,sub,property1,property2, SQLPredicateCompareEnum.EQ);
+        return compareSelf(condition, sub, property1, property2, SQLPredicateCompareEnum.EQ);
     }
 
     @Override
     public <T2> WherePredicate<T1> ne(boolean condition, EntitySQLTableOwner<T2> sub, String property1, String property2) {
-        return compareSelf(condition,sub,property1,property2, SQLPredicateCompareEnum.NE);
+        return compareSelf(condition, sub, property1, property2, SQLPredicateCompareEnum.NE);
     }
 
     @Override
     public <T2> WherePredicate<T1> gt(boolean condition, EntitySQLTableOwner<T2> sub, String property1, String property2) {
-        return compareSelf(condition,sub,property1,property2, SQLPredicateCompareEnum.GT);
+        return compareSelf(condition, sub, property1, property2, SQLPredicateCompareEnum.GT);
     }
 
     @Override
     public <T2> WherePredicate<T1> ge(boolean condition, EntitySQLTableOwner<T2> sub, String property1, String property2) {
-        return compareSelf(condition,sub,property1,property2, SQLPredicateCompareEnum.GE);
+        return compareSelf(condition, sub, property1, property2, SQLPredicateCompareEnum.GE);
     }
 
     @Override
     public <T2> WherePredicate<T1> le(boolean condition, EntitySQLTableOwner<T2> sub, String property1, String property2) {
-        return compareSelf(condition,sub,property1,property2, SQLPredicateCompareEnum.LE);
+        return compareSelf(condition, sub, property1, property2, SQLPredicateCompareEnum.LE);
     }
 
     @Override
     public <T2> WherePredicate<T1> lt(boolean condition, EntitySQLTableOwner<T2> sub, String property1, String property2) {
-        return compareSelf(condition,sub,property1,property2, SQLPredicateCompareEnum.LT);
+        return compareSelf(condition, sub, property1, property2, SQLPredicateCompareEnum.LT);
+    }
+
+    @Override
+    public WherePredicate<T1> sqlNativeSegment(String sqlSegment, SQLExpression1<NativeSQLPropertyExpressionContext> contextConsume) {
+        filter.sqlNativeSegment(sqlSegment, context->{
+            contextConsume.apply(new NativeSQLPropertyExpressionContextImpl(table,context));
+        });
+        return this;
     }
 
     @Override
