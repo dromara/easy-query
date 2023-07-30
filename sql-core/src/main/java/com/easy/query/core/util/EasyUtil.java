@@ -3,6 +3,7 @@ package com.easy.query.core.util;
 import com.easy.query.core.basic.jdbc.executor.internal.common.Grouping;
 import com.easy.query.core.basic.jdbc.executor.internal.common.GroupingImpl;
 import com.easy.query.core.exception.EasyQueryException;
+import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.SQLEntityAliasSegment;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
@@ -61,6 +62,9 @@ public class EasyUtil {
     public static String getAnonymousPropertyName(SQLEntityAliasSegment sqlEntityProject, TableAvailable anonymousTable) {
         String alias = sqlEntityProject.getAlias();
         if (EasyStringUtil.isBlank(alias)) {
+            if(sqlEntityProject.getPropertyName()==null){
+                throw new EasyQueryInvalidOperationException("sqlEntityProject propertyName cannot be null");
+            }
             alias = sqlEntityProject.getTable().getEntityMetadata().getColumnNotNull(sqlEntityProject.getPropertyName()).getName();
         }
         return anonymousTable.getEntityMetadata().getPropertyNameOrNull(alias, null);

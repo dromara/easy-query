@@ -76,10 +76,10 @@ public class AutoAsSelectorImpl  extends AbstractSelector<AsSelector> implements
             if(tableExpressionBuilder==null){
                 throw new EasyQueryInvalidOperationException("not found table in expression context:"+ EasyClassUtil.getSimpleName(table.getEntityClass()));
             }
-            return columnAll(tableExpressionBuilder);
+            return columnAll0(tableExpressionBuilder);
         }
     }
-    private AsSelector columnAll(EntityTableExpressionBuilder table) {
+    private AsSelector columnAll0(EntityTableExpressionBuilder table) {
         if (table instanceof AnonymousEntityTableExpressionBuilder) {
             columnAnonymousAll((AnonymousEntityTableExpressionBuilder) table);
         } else {
