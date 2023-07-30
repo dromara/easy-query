@@ -1,8 +1,8 @@
 package com.easy.query.api.proxy.sql;
 
 import com.easy.query.api.proxy.select.ProxyQueryable;
-import com.easy.query.api.proxy.sql.scec.ProxyConstExpressionContext;
-import com.easy.query.api.proxy.sql.scec.ProxyConstExpressionContextImpl;
+import com.easy.query.api.proxy.sql.scec.SQLNativeProxyExpressionContext;
+import com.easy.query.api.proxy.sql.scec.SQLNativeProxyExpressionContextImpl;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.builder.AsSelector;
 import com.easy.query.core.expression.lambda.SQLExpression1;
@@ -45,12 +45,12 @@ public interface ProxyAsSelector<TRProxy extends ProxyEntity<TRProxy, TR>, TR> {
         getAsSelector().column(column.getTable(), column.value());
         return this;
     }
-    default ProxyAsSelector<TRProxy, TR> columnConst(String columnConst){
-        return columnConst(columnConst,c->{});
+    default ProxyAsSelector<TRProxy, TR> sqlNativeSegment(String sqlSegment){
+        return sqlNativeSegment(sqlSegment,c->{});
     }
-    default ProxyAsSelector<TRProxy, TR> columnConst(String columnConst, SQLExpression1<ProxyConstExpressionContext> contextConsume){
-        getAsSelector().columnConst(columnConst,context->{
-            contextConsume.apply(new ProxyConstExpressionContextImpl(context));
+    default ProxyAsSelector<TRProxy, TR> sqlNativeSegment(String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume){
+        getAsSelector().sqlNativeSegment(sqlSegment,context->{
+            contextConsume.apply(new SQLNativeProxyExpressionContextImpl(context));
         });
         return this;
     }
@@ -236,7 +236,7 @@ public interface ProxyAsSelector<TRProxy extends ProxyEntity<TRProxy, TR>, TR> {
         getAsSelector().columnFuncAs(proxyColumnPropertyFunction.getColumn().getTable(), proxyColumnPropertyFunction.getColumnPropertyFunction(),alias);
         return this;
     }
-    default ProxyAsSelector<TRProxy,TR> sqlColumnAs(SQLColumnSegment sqlColumnSegment,Function<TRProxy, SQLColumn<?>> mapAlias){
+    default ProxyAsSelector<TRProxy,TR> sqlSegmentAs(SQLColumnSegment sqlColumnSegment, Function<TRProxy, SQLColumn<?>> mapAlias){
         SQLColumn<?> sqlColumn = mapAlias.apply(getTRProxy());
         getAsSelector().sqlColumnAs(sqlColumnSegment, sqlColumn.value());
         return this;

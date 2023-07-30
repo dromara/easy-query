@@ -687,8 +687,8 @@ public class H2QueryTest extends H2BaseTest {
     public void nativeSQLTest1(){
         String sql = easyQuery.queryable(H2BookTest.class)
                 .select(o -> o.columnAll()
-                        .columnConst("rank() over(order by {0} desc) as rank1", it -> it.expression(H2BookTest::getPrice))
-                        .columnConst("rank() over(partition by {0} order by {1} desc) as rank2", it -> it
+                        .sqlNativeSegment("rank() over(order by {0} desc) as rank1", it -> it.expression(H2BookTest::getPrice))
+                        .sqlNativeSegment("rank() over(partition by {0} order by {1} desc) as rank2", it -> it
                                 .expression(H2BookTest::getStoreId)
                                 .expression(H2BookTest::getPrice)
                         )
@@ -700,12 +700,24 @@ public class H2QueryTest extends H2BaseTest {
         String sql = easyQuery.queryable(H2BookTest.class)
                 .asAlias("x")
                 .select(o -> o.columnAll()
-                        .columnConst("rank() over(order by {0} desc) as rank1", it -> it.expression(H2BookTest::getPrice))
-                        .columnConst("rank() over(partition by {0} order by {1} desc) as rank2", it -> it
+                        .sqlNativeSegment("rank() over(order by {0} desc) as rank1", it -> it.expression(H2BookTest::getPrice))
+                        .sqlNativeSegment("rank() over(partition by {0} order by {1} desc) as rank2", it -> it
                                 .expression(H2BookTest::getStoreId)
                                 .expression(H2BookTest::getPrice)
                         )
                 ).toSQL();
         Assert.assertEquals("SELECT x.id,x.name,x.edition,x.price,x.store_id,rank() over(order by x.price desc) as rank1,rank() over(partition by x.store_id order by x.price desc) as rank2 FROM t_book_test x",sql);
+    }
+    @Test
+    public void nativeSQLTest3(){
+        String sql = easyQuery.queryable(H2BookTest.class)
+                .asAlias("x")
+                .select(o -> o.columnAll()
+                        .sqlNativeSegment("rank() over(order by {0} desc) as rank1", it -> it.expression(H2BookTest::getPrice))
+                        .sqlNativeSegment("rank() over(partition by {0} order by {0} desc) as rank2", it -> it
+                                .expression(H2BookTest::getStoreId)
+                        )
+                ).toSQL();
+        Assert.assertEquals("SELECT x.id,x.name,x.edition,x.price,x.store_id,rank() over(order by x.price desc) as rank1,rank() over(partition by x.store_id order by x.store_id desc) as rank2 FROM t_book_test x",sql);
     }
 }

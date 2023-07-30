@@ -9,8 +9,8 @@ import com.easy.query.core.expression.segment.FuncColumnSegment;
 import com.easy.query.core.expression.segment.GroupByColumnSegment;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
-import com.easy.query.core.expression.segment.scec.context.SQLConstExpressionContext;
-import com.easy.query.core.expression.segment.scec.context.SQLConstExpressionContextImpl;
+import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;
+import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContextImpl;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 
 import java.util.Objects;
@@ -40,11 +40,11 @@ public class GroupSelectorImpl implements GroupSelector {
     }
 
     @Override
-    public GroupSelector columnConst(String columnConst, SQLExpression1<SQLConstExpressionContext> contextConsume) {
+    public GroupSelector sqlNativeSegment(String columnConst, SQLExpression1<SQLNativeExpressionContext> contextConsume) {
         Objects.requireNonNull(contextConsume,"contextConsume cannot be null");
-        SQLConstExpressionContextImpl sqlConstExpressionContext=new SQLConstExpressionContextImpl();
+        SQLNativeExpressionContextImpl sqlConstExpressionContext=new SQLNativeExpressionContextImpl();
         contextConsume.apply(sqlConstExpressionContext);
-        GroupByColumnSegment groupByColumnSegment = sqlSegmentFactory.createGroupByConstSegment(entityQueryExpressionBuilder.getRuntimeContext(), columnConst,sqlConstExpressionContext);
+        GroupByColumnSegment groupByColumnSegment = sqlSegmentFactory.createGroupBySQLNativeSegment(entityQueryExpressionBuilder.getRuntimeContext(), columnConst,sqlConstExpressionContext);
         sqlSegmentBuilder.append(groupByColumnSegment);
         return this;
     }

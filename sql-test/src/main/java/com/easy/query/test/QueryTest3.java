@@ -747,7 +747,7 @@ public class QueryTest3 extends BaseTest {
         Queryable<Topic> select = easyQuery.queryable(Topic.class)
                 .where(o -> o.like(Topic::getTitle, "someTitle"))
                 .orderByAsc(o -> o.column(Topic::getCreateTime).column(Topic::getId))
-                .select(Topic.class, o -> o.sqlColumnAs(SQL4JFunc.caseWhenBuilder(o)
+                .select(Topic.class, o -> o.sqlSegmentAs(SQL4JFunc.caseWhenBuilder(o)
                         .caseWhen(f -> f.eq(Topic::getTitle, "123").ge(Topic::getStars, 1), "first1")
                         .caseWhen(f -> f.eq(Topic::getTitle, "456"), "first2")
                         .caseWhen(f -> f.eq(Topic::getTitle, "789"), "first3")
@@ -774,7 +774,7 @@ public class QueryTest3 extends BaseTest {
         String sql = easyProxyQuery.queryable(TopicProxy.DEFAULT)
                 .where((filter, t) -> filter.like(t.title(), "someTitle"))
                 .select(TopicProxy.DEFAULT, (selector, t) -> selector
-                        .sqlColumnAs(
+                        .sqlSegmentAs(
                                 SQLProxyFunc.caseWhenBuilder(selector)
                                         .caseWhen(f -> f.eq(t.title(), "123"), "111")
                                         .caseWhen(f -> f.eq(t.title(), "456"), "222")
@@ -788,7 +788,7 @@ public class QueryTest3 extends BaseTest {
         List<Topic> list = easyProxyQuery.queryable(TopicProxy.DEFAULT)
                 .where((filter, t) -> filter.like(t.title(), "someTitle"))
                 .select(TopicProxy.DEFAULT, (selector, t) -> selector
-                        .sqlColumnAs(
+                        .sqlSegmentAs(
                                 SQLProxyFunc.caseWhenBuilder(selector)
                                         .caseWhen(f -> f.eq(t.title(), "123"), "111")
                                         .caseWhen(f -> f.eq(t.title(), "456"), "222")
@@ -805,7 +805,7 @@ public class QueryTest3 extends BaseTest {
         String sql = easyQueryClient.queryable(Topic.class)
                 .where(t -> t.like("title", "someTitle"))
                 .select(Topic.class, t -> t
-                        .sqlColumnAs(
+                        .sqlSegmentAs(
                                 SQLClientFunc.caseWhenBuilder(t)
                                         .caseWhen(f -> f.eq("title", "123"), "111")
                                         .caseWhen(f -> f.eq("title", "456"), "222")
@@ -818,7 +818,7 @@ public class QueryTest3 extends BaseTest {
         List<Topic> list = easyQueryClient.queryable(Topic.class)
                 .where(t -> t.like("title", "someTitle"))
                 .select(Topic.class, t -> t
-                        .sqlColumnAs(
+                        .sqlSegmentAs(
                                 SQLClientFunc.caseWhenBuilder(t)
                                         .caseWhen(f -> f.eq("title", "123"), "111")
                                         .caseWhen(f -> f.eq("title", "456"), "222")
@@ -836,7 +836,7 @@ public class QueryTest3 extends BaseTest {
             String sql = easyQuery.queryable(Topic.class)
                     .where(t -> t.like(Topic::getTitle, "someTitle"))
                     .select(Topic.class, t -> t
-                            .sqlColumnAs(
+                            .sqlSegmentAs(
                                     SQL4JFunc.caseWhenBuilder(t)
                                             .caseWhen(f -> f.eq(Topic::getTitle, "123"), "111")
                                             .caseWhen(f -> f.eq(Topic::getTitle, "456"), "222")
@@ -849,7 +849,7 @@ public class QueryTest3 extends BaseTest {
             List<Topic> list = easyQuery.queryable(Topic.class)
                     .where(t -> t.like(Topic::getTitle, "someTitle"))
                     .select(Topic.class, t -> t
-                            .sqlColumnAs(
+                            .sqlSegmentAs(
                                     SQL4JFunc.caseWhenBuilder(t)
                                             .caseWhen(f -> f.eq(Topic::getTitle, "123"), "111")
                                             .caseWhen(f -> f.eq(Topic::getTitle, "456"), "222")
@@ -865,7 +865,7 @@ public class QueryTest3 extends BaseTest {
                     .innerJoin(BlogEntity.class,(t,t1)->t.eq(t1,Topic::getId,BlogEntity::getId))
                     .where(t -> t.like(Topic::getTitle, "someTitle"))
                     .select(Topic.class, (t,t1) -> t
-                            .sqlColumnAs(
+                            .sqlSegmentAs(
                                     SQL4JFunc.caseWhenBuilder(t,t1)
                                             .caseWhen((f,f1) -> f.eq(Topic::getTitle, "123").then(f1).le(BlogEntity::getStar,100), "111")
                                             .caseWhen((f,f1) -> f.eq(Topic::getTitle, "456").then(f1).ge(BlogEntity::getStar,200), "222")
@@ -879,7 +879,7 @@ public class QueryTest3 extends BaseTest {
                     .innerJoin(BlogEntity.class,(t,t1)->t.eq(t1,Topic::getId,BlogEntity::getId))
                     .where(t -> t.like(Topic::getTitle, "someTitle"))
                     .select(Topic.class, (t,t1) -> t
-                            .sqlColumnAs(
+                            .sqlSegmentAs(
                                     SQL4JFunc.caseWhenBuilder(t,t1)
                                             .caseWhen((f,f1) -> f.eq(Topic::getTitle, "123").then(f1).le(BlogEntity::getStar,100), "111")
                                             .caseWhen((f,f1) -> f.eq(Topic::getTitle, "456").then(f1).ge(BlogEntity::getStar,200), "222")

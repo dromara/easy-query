@@ -7,15 +7,15 @@ import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.builder.AsSelector;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.segment.ColumnConstSegment;
+import com.easy.query.core.expression.segment.SQLNativeSegment;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.segment.SQLEntityAliasSegment;
 import com.easy.query.core.expression.segment.SQLEntitySegment;
 import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
-import com.easy.query.core.expression.segment.scec.context.SQLConstExpressionContext;
-import com.easy.query.core.expression.segment.scec.context.SQLConstExpressionContextImpl;
+import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;
+import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContextImpl;
 import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
@@ -76,11 +76,11 @@ public abstract class AbstractSelector<TChain> {
         return (TChain) this;
     }
     
-    public TChain columnConst(String columnConst, SQLExpression1<SQLConstExpressionContext> contextConsume){
+    public TChain sqlNativeSegment(String sqlSegment, SQLExpression1<SQLNativeExpressionContext> contextConsume){
         Objects.requireNonNull(contextConsume,"contextConsume cannot be null");
-        SQLConstExpressionContextImpl  sqlConstExpressionContext=new SQLConstExpressionContextImpl();
+        SQLNativeExpressionContextImpl sqlConstExpressionContext=new SQLNativeExpressionContextImpl();
         contextConsume.apply(sqlConstExpressionContext);
-        ColumnConstSegment columnSegment = sqlSegmentFactory.createColumnConstSegment(runtimeContext, columnConst, sqlConstExpressionContext);
+        SQLNativeSegment columnSegment = sqlSegmentFactory.createSQLNativeSegment(runtimeContext, sqlSegment, sqlConstExpressionContext);
         sqlBuilderSegment.append(columnSegment);
         return (TChain) this;
     }

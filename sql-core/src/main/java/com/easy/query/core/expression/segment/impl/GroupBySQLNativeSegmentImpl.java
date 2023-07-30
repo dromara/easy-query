@@ -5,7 +5,7 @@ import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.segment.GroupByColumnSegment;
 import com.easy.query.core.expression.segment.OrderBySegment;
-import com.easy.query.core.expression.segment.scec.context.SQLConstExpressionContext;
+import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;
 
 /**
  * create time 2023/6/16 20:43
@@ -13,16 +13,16 @@ import com.easy.query.core.expression.segment.scec.context.SQLConstExpressionCon
  *
  * @author xuejiaming
  */
-public class GroupByConstSegmentImpl extends ColumnConstSegmentImpl implements GroupByColumnSegment {
+public class GroupBySQLNativeSegmentImpl extends SQLNativeSegmentImpl implements GroupByColumnSegment {
 
-    public GroupByConstSegmentImpl(QueryRuntimeContext runtimeContext, String columnConst, SQLConstExpressionContext sqlConstExpressionContext){
+    public GroupBySQLNativeSegmentImpl(QueryRuntimeContext runtimeContext, String columnConst, SQLNativeExpressionContext sqlConstExpressionContext){
         super(runtimeContext,columnConst,sqlConstExpressionContext);
 
     }
 
     @Override
     public ColumnSegment cloneSQLColumnSegment() {
-        return new GroupByConstSegmentImpl(runtimeContext,columnConst,sqlConstExpressionContext);
+        return new GroupBySQLNativeSegmentImpl(runtimeContext,columnConst,sqlConstExpressionContext);
     }
 
     @Override

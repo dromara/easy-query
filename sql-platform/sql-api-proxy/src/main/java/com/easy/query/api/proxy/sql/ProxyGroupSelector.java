@@ -1,7 +1,7 @@
 package com.easy.query.api.proxy.sql;
 
-import com.easy.query.api.proxy.sql.scec.ProxyConstExpressionContext;
-import com.easy.query.api.proxy.sql.scec.ProxyConstExpressionContextImpl;
+import com.easy.query.api.proxy.sql.scec.SQLNativeProxyExpressionContext;
+import com.easy.query.api.proxy.sql.scec.SQLNativeProxyExpressionContextImpl;
 import com.easy.query.core.expression.builder.GroupSelector;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.proxy.SQLColumn;
@@ -29,12 +29,12 @@ public interface ProxyGroupSelector {
         return this;
     }
 
-    default ProxyGroupSelector columnConst(String columnConst){
-        return columnConst(columnConst,c->{});
+    default ProxyGroupSelector sqlNativeSegment(String sqlSegment){
+        return sqlNativeSegment(sqlSegment,c->{});
     }
-    default ProxyGroupSelector columnConst(String columnConst, SQLExpression1<ProxyConstExpressionContext> contextConsume){
-        getGroupSelector().columnConst(columnConst,context->{
-            contextConsume.apply(new ProxyConstExpressionContextImpl(context));
+    default ProxyGroupSelector sqlNativeSegment(String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume){
+        getGroupSelector().sqlNativeSegment(sqlSegment, context->{
+            contextConsume.apply(new SQLNativeProxyExpressionContextImpl(context));
         });
         return this;
     }

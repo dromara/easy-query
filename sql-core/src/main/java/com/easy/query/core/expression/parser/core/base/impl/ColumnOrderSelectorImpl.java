@@ -5,8 +5,8 @@ import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnOrderSelector;
-import com.easy.query.core.expression.parser.core.base.scec.ColumnConstExpressionContext;
-import com.easy.query.core.expression.parser.core.base.scec.ColumnConstExpressionContextImpl;
+import com.easy.query.core.expression.parser.core.base.scec.NativeSQLPropertyExpressionContext;
+import com.easy.query.core.expression.parser.core.base.scec.NativeSQLPropertyExpressionContextImpl;
 
 /**
  * @author xuejiaming
@@ -46,19 +46,12 @@ public class ColumnOrderSelectorImpl<T1> implements ColumnOrderSelector<T1> {
     }
 
     @Override
-    public ColumnOrderSelector<T1> columnConst(String columnConst, SQLExpression1<ColumnConstExpressionContext> contextConsume) {
-        orderSelector.columnConst(columnConst,context->{
-            contextConsume.apply(new ColumnConstExpressionContextImpl(table,context));
+    public ColumnOrderSelector<T1> sqlNativeSegment(String columnConst, SQLExpression1<NativeSQLPropertyExpressionContext> contextConsume) {
+        orderSelector.sqlNativeSegment(columnConst, context->{
+            contextConsume.apply(new NativeSQLPropertyExpressionContextImpl(table,context));
         });
         return this;
     }
-
-//    @Override
-//    public ColumnOrderSelector<T1> columnConst(String columnConst) {
-//        orderSelector.columnConst(columnConst);
-//        return this;
-//    }
-
 
     public void setAsc(boolean asc) {
         orderSelector.setAsc(asc);

@@ -1,7 +1,7 @@
 package com.easy.query.core.expression.parser.core.base.scec;
 
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.segment.scec.context.SQLConstExpressionContext;
+import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;
 
 /**
  * create time 2023/7/29 22:58
@@ -9,36 +9,36 @@ import com.easy.query.core.expression.segment.scec.context.SQLConstExpressionCon
  *
  * @author xuejiaming
  */
-public class ColumnConstExpressionContextImpl implements ColumnConstExpressionContext {
+public class NativeSQLPropertyExpressionContextImpl implements NativeSQLPropertyExpressionContext {
     private final TableAvailable table;
-    private final SQLConstExpressionContext sqlConstExpressionContext;
+    private final SQLNativeExpressionContext sqlConstExpressionContext;
 
-    public ColumnConstExpressionContextImpl(TableAvailable table, SQLConstExpressionContext sqlConstExpressionContext) {
+    public NativeSQLPropertyExpressionContextImpl(TableAvailable table, SQLNativeExpressionContext sqlConstExpressionContext) {
         this.table = table;
 
         this.sqlConstExpressionContext = sqlConstExpressionContext;
     }
 
     @Override
-    public ColumnConstExpressionContext expression(String property) {
+    public NativeSQLPropertyExpressionContext expression(String property) {
         sqlConstExpressionContext.expression(table, property);
         return this;
     }
 
     @Override
-    public ColumnConstExpressionContext expression(TableAvailable table, String property) {
+    public NativeSQLPropertyExpressionContext expression(TableAvailable table, String property) {
         sqlConstExpressionContext.expression(table, property);
         return this;
     }
 
     @Override
-    public ColumnConstExpressionContext value(Object val) {
+    public NativeSQLPropertyExpressionContext value(Object val) {
         sqlConstExpressionContext.value(val);
         return this;
     }
 
     @Override
-    public ColumnConstExpressionContext setAlias(String alias) {
+    public NativeSQLPropertyExpressionContext setAlias(String alias) {
         sqlConstExpressionContext.setAlias(alias);
         return this;
     }

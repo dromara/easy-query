@@ -11,14 +11,14 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public interface SQLConstExpressionContext {
-    SQLConstExpressionContext expression(TableAvailable table, String property);
-    SQLConstExpressionContext value(Object val);
+public interface SQLNativeExpressionContext {
+    SQLNativeExpressionContext expression(TableAvailable table, String property);
+    SQLNativeExpressionContext value(Object val);
 
      List<ConstParamExpression> getExpressions();
 
 
      String getAlias();
 
-    SQLConstExpressionContext setAlias(String alias);
+    SQLNativeExpressionContext setAlias(String alias);
 }

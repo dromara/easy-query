@@ -197,7 +197,7 @@ public class Main {
                     .queryable(TOPIC_PROXY)
                     .where((filter, t) -> filter.eq(t.id, "123").like(t.title, "xxx"))
                     .select(SYS_USER_PROXY)
-                    .groupBy((g, t) -> g.columnConst("").column(t.idCard))
+                    .groupBy((g, t) -> g.sqlNativeSegment("").column(t.idCard))
                     .orderByAsc((order, t) -> order.columns(t.idCard, t.phone))
                     .toList();
             String bigDecimal = easyProxyQuery

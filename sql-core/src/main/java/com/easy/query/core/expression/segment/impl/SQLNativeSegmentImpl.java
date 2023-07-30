@@ -4,9 +4,9 @@ import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.segment.ColumnConstSegment;
+import com.easy.query.core.expression.segment.SQLNativeSegment;
 import com.easy.query.core.expression.segment.SQLEntitySegment;
-import com.easy.query.core.expression.segment.scec.context.SQLConstExpressionContext;
+import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;
 import com.easy.query.core.expression.segment.scec.expression.ColumnConstValueExpression;
 import com.easy.query.core.expression.segment.scec.expression.ColumnPropertyExpression;
 import com.easy.query.core.expression.segment.scec.expression.ConstParamExpression;
@@ -21,12 +21,12 @@ import java.text.MessageFormat;
  *
  * @author xuejiaming
  */
-public class ColumnConstSegmentImpl implements ColumnConstSegment {
+public class SQLNativeSegmentImpl implements SQLNativeSegment {
     protected final QueryRuntimeContext runtimeContext;
     protected final String columnConst;
-    protected final SQLConstExpressionContext sqlConstExpressionContext;
+    protected final SQLNativeExpressionContext sqlConstExpressionContext;
 
-    public ColumnConstSegmentImpl(QueryRuntimeContext runtimeContext, String columnConst, SQLConstExpressionContext sqlConstExpressionContext) {
+    public SQLNativeSegmentImpl(QueryRuntimeContext runtimeContext, String columnConst, SQLNativeExpressionContext sqlConstExpressionContext) {
         this.runtimeContext = runtimeContext;
         this.columnConst = columnConst;
         this.sqlConstExpressionContext = sqlConstExpressionContext;
@@ -49,7 +49,7 @@ public class ColumnConstSegmentImpl implements ColumnConstSegment {
 
     @Override
     public SQLEntitySegment cloneSQLColumnSegment() {
-        return new ColumnConstSegmentImpl(runtimeContext, columnConst, sqlConstExpressionContext);
+        return new SQLNativeSegmentImpl(runtimeContext, columnConst, sqlConstExpressionContext);
     }
 
     @Override

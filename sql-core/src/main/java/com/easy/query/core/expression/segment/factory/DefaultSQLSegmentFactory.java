@@ -5,7 +5,7 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.segment.ColumnConstSegment;
+import com.easy.query.core.expression.segment.SQLNativeSegment;
 import com.easy.query.core.expression.segment.ColumnInsertSegment;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.segment.ColumnWithSelfSegment;
@@ -17,20 +17,20 @@ import com.easy.query.core.expression.segment.SQLColumnSegment;
 import com.easy.query.core.expression.segment.SelectConstSegment;
 import com.easy.query.core.expression.segment.SubQueryColumnSegment;
 import com.easy.query.core.expression.segment.impl.AnonymousColumnSegmentImpl;
-import com.easy.query.core.expression.segment.impl.ColumnConstSegmentImpl;
+import com.easy.query.core.expression.segment.impl.SQLNativeSegmentImpl;
 import com.easy.query.core.expression.segment.impl.ColumnInsertSegmentImpl;
 import com.easy.query.core.expression.segment.impl.ColumnSegmentImpl;
 import com.easy.query.core.expression.segment.impl.ColumnWithSelfSegmentImpl;
 import com.easy.query.core.expression.segment.impl.FuncColumnSegmentImpl;
-import com.easy.query.core.expression.segment.impl.GroupByConstSegmentImpl;
+import com.easy.query.core.expression.segment.impl.GroupBySQLNativeSegmentImpl;
 import com.easy.query.core.expression.segment.impl.GroupColumnSegmentImpl;
-import com.easy.query.core.expression.segment.impl.OrderByConstSegmentImpl;
+import com.easy.query.core.expression.segment.impl.OrderBySQLNativeSegmentImpl;
 import com.easy.query.core.expression.segment.impl.OrderColumnSegmentImpl;
 import com.easy.query.core.expression.segment.impl.OrderFuncColumnSegmentImpl;
 import com.easy.query.core.expression.segment.impl.SQLColumnAsSegmentImpl;
 import com.easy.query.core.expression.segment.impl.SelectConstSegmentImpl;
 import com.easy.query.core.expression.segment.impl.SubQueryColumnSegmentImpl;
-import com.easy.query.core.expression.segment.scec.context.SQLConstExpressionContext;
+import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;
 
 /**
  * create time 2023/5/30 12:18
@@ -60,8 +60,8 @@ public class DefaultSQLSegmentFactory implements SQLSegmentFactory {
 //    }
 
     @Override
-    public ColumnConstSegment createColumnConstSegment(QueryRuntimeContext runtimeContext, String columnConst, SQLConstExpressionContext sqlConstExpressionContext) {
-        return new ColumnConstSegmentImpl(runtimeContext,columnConst,sqlConstExpressionContext);
+    public SQLNativeSegment createSQLNativeSegment(QueryRuntimeContext runtimeContext, String columnConst, SQLNativeExpressionContext sqlConstExpressionContext) {
+        return new SQLNativeSegmentImpl(runtimeContext,columnConst,sqlConstExpressionContext);
     }
 
     @Override
@@ -95,13 +95,13 @@ public class DefaultSQLSegmentFactory implements SQLSegmentFactory {
     }
 
     @Override
-    public OrderBySegment createOrderByConstSegment(QueryRuntimeContext runtimeContext, String columnConst, SQLConstExpressionContext sqlConstExpressionContext, boolean asc) {
-        return new OrderByConstSegmentImpl(runtimeContext, columnConst,sqlConstExpressionContext, asc);
+    public OrderBySegment createOrderBySQLNativeSegment(QueryRuntimeContext runtimeContext, String columnConst, SQLNativeExpressionContext sqlConstExpressionContext, boolean asc) {
+        return new OrderBySQLNativeSegmentImpl(runtimeContext, columnConst,sqlConstExpressionContext, asc);
     }
 
     @Override
-    public GroupByColumnSegment createGroupByConstSegment(QueryRuntimeContext runtimeContext, String columnConst, SQLConstExpressionContext sqlConstExpressionContext) {
-        return new GroupByConstSegmentImpl(runtimeContext, columnConst,sqlConstExpressionContext);
+    public GroupByColumnSegment createGroupBySQLNativeSegment(QueryRuntimeContext runtimeContext, String columnConst, SQLNativeExpressionContext sqlConstExpressionContext) {
+        return new GroupBySQLNativeSegmentImpl(runtimeContext, columnConst,sqlConstExpressionContext);
     }
 
     @Override

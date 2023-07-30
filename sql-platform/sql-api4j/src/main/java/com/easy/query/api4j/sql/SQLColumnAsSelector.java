@@ -2,8 +2,8 @@ package com.easy.query.api4j.sql;
 
 import com.easy.query.api4j.select.Queryable;
 import com.easy.query.api4j.sql.impl.SQLColumnAsSelectorImpl;
-import com.easy.query.api4j.sql.scec.SQLColumnConstExpressionContext;
-import com.easy.query.api4j.sql.scec.SQLColumnConstExpressionContextImpl;
+import com.easy.query.api4j.sql.scec.SQLNativeLambdaExpressionContext;
+import com.easy.query.api4j.sql.scec.SQLNativeLambdaExpressionContextImpl;
 import com.easy.query.api4j.util.EasyLambdaUtil;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
@@ -29,9 +29,10 @@ public interface SQLColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1> {
     default QueryRuntimeContext getRuntimeContext() {
         return getColumnAsSelector().getRuntimeContext();
     }
-   default ExpressionContext getExpressionContext(){
+
+    default ExpressionContext getExpressionContext() {
         return getColumnAsSelector().getExpressionContext();
-   }
+    }
 
     default TableAvailable getTable() {
         return getColumnAsSelector().getTable();
@@ -42,62 +43,71 @@ public interface SQLColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1> {
         return this;
     }
 
-    default <TIncludeSource,TIncludeResult> SQLColumnAsSelector<T1, TR> columnInclude(Property<T1, TIncludeSource> column, Property<TR, TIncludeResult> aliasProperty){
-        return columnInclude(true,column,aliasProperty, SQLColumnAsSelector::columnAll);
+    default <TIncludeSource, TIncludeResult> SQLColumnAsSelector<T1, TR> columnInclude(Property<T1, TIncludeSource> column, Property<TR, TIncludeResult> aliasProperty) {
+        return columnInclude(true, column, aliasProperty, SQLColumnAsSelector::columnAll);
     }
-    default <TIncludeSource,TIncludeResult> SQLColumnAsSelector<T1, TR> columnInclude(boolean condition,Property<T1, TIncludeSource> column, Property<TR, TIncludeResult> aliasProperty){
-        return columnInclude(condition,column,aliasProperty, SQLColumnAsSelector::columnAll);
-    }
-    default <TIncludeSource,TIncludeResult> SQLColumnAsSelector<T1, TR> columnInclude(Property<T1, TIncludeSource> column, Property<TR, TIncludeResult> aliasProperty, SQLExpression1<SQLColumnAsSelector<TIncludeResult,TIncludeResult>> includeSelectorExpression){
-        return columnInclude(true,column,aliasProperty,includeSelectorExpression);
-    }
-    default <TIncludeSource,TIncludeResult> SQLColumnAsSelector<T1, TR> columnInclude(boolean condition,Property<T1, TIncludeSource> column, Property<TR, TIncludeResult> aliasProperty, SQLExpression1<SQLColumnAsSelector<TIncludeResult,TIncludeResult>> includeSelectorExpression){
-        if(condition){
-            getColumnAsSelector().<TIncludeSource,TIncludeResult>columnInclude(EasyLambdaUtil.getPropertyName(column),EasyLambdaUtil.getPropertyName(aliasProperty),columnAsSelect->{
-                includeSelectorExpression.apply(new SQLColumnAsSelectorImpl<>(columnAsSelect));
-            });
-        }
-        return this;
-    }
-    default <TIncludeSource,TIncludeResult> SQLColumnAsSelector<T1, TR> columnIncludeMany(Property<T1, Collection<TIncludeSource>> column, Property<TR, Collection<TIncludeResult>> aliasProperty){
-        return columnIncludeMany(true,column,aliasProperty, SQLColumnAsSelector::columnAll);
-    }
-    default <TIncludeSource,TIncludeResult> SQLColumnAsSelector<T1, TR> columnIncludeMany(boolean condition,Property<T1, Collection<TIncludeSource>> column, Property<TR, Collection<TIncludeResult>> aliasProperty){
-        return columnIncludeMany(condition,column,aliasProperty, SQLColumnAsSelector::columnAll);
-    }
-    default <TIncludeSource,TIncludeResult> SQLColumnAsSelector<T1, TR> columnIncludeMany(Property<T1, Collection<TIncludeSource>> column, Property<TR, Collection<TIncludeResult>> aliasProperty, SQLExpression1<SQLColumnAsSelector<TIncludeResult,TIncludeResult>> includeSelectorExpression){
-        return columnIncludeMany(true,column,aliasProperty,includeSelectorExpression);
-    }
-    default <TIncludeSource,TIncludeResult> SQLColumnAsSelector<T1, TR> columnIncludeMany(boolean condition,Property<T1, Collection<TIncludeSource>> column, Property<TR, Collection<TIncludeResult>> aliasProperty, SQLExpression1<SQLColumnAsSelector<TIncludeResult,TIncludeResult>> includeSelectorExpression){
-        if(condition){
-            getColumnAsSelector().<TIncludeSource,TIncludeResult>columnInclude(EasyLambdaUtil.getPropertyName(column),EasyLambdaUtil.getPropertyName(aliasProperty),columnAsSelect->{
-                includeSelectorExpression.apply(new SQLColumnAsSelectorImpl<>(columnAsSelect));
-            });
-        }
-        return this;
-    }
-//    default <TIncludeSource,TIncludeResult> SQLColumnAsSelector<T1, TR> columnIncludeMany(Property<T1, Collection<TIncludeSource>> column, Property<TR, Collection<TIncludeResult>> aliasProperty){
-//        getColumnAsSelector().columnInclude(EasyLambdaUtil.getPropertyName(column),EasyLambdaUtil.getPropertyName(aliasProperty));
-//        return this;
-//    }
-//    default SQLColumnAsSelector<T1, TR> columnConstAs(String columnConst, String alias) {
-//        getColumnAsSelector().columnConstAs(columnConst,alias);
-//        return this;
-//    }
-//    default SQLColumnAsSelector<T1, TR> columnConst(String columnConst) {
-//        getColumnAsSelector().columnConstAs(columnConst,alias);
-//        return this;
-//    }
 
-    default SQLColumnAsSelector<T1,TR> columnConst(String columnConst){
-        return columnConst(columnConst,c->{});
+    default <TIncludeSource, TIncludeResult> SQLColumnAsSelector<T1, TR> columnInclude(boolean condition, Property<T1, TIncludeSource> column, Property<TR, TIncludeResult> aliasProperty) {
+        return columnInclude(condition, column, aliasProperty, SQLColumnAsSelector::columnAll);
     }
-   default SQLColumnAsSelector<T1,TR> columnConst(String columnConst, SQLExpression1<SQLColumnConstExpressionContext<T1>> contextConsume){
-       getColumnAsSelector().columnConst(columnConst,context->{
-           contextConsume.apply(new SQLColumnConstExpressionContextImpl<>(context));
-       });
-       return this;
-   }
+
+    default <TIncludeSource, TIncludeResult> SQLColumnAsSelector<T1, TR> columnInclude(Property<T1, TIncludeSource> column, Property<TR, TIncludeResult> aliasProperty, SQLExpression1<SQLColumnAsSelector<TIncludeResult, TIncludeResult>> includeSelectorExpression) {
+        return columnInclude(true, column, aliasProperty, includeSelectorExpression);
+    }
+
+    default <TIncludeSource, TIncludeResult> SQLColumnAsSelector<T1, TR> columnInclude(boolean condition, Property<T1, TIncludeSource> column, Property<TR, TIncludeResult> aliasProperty, SQLExpression1<SQLColumnAsSelector<TIncludeResult, TIncludeResult>> includeSelectorExpression) {
+        if (condition) {
+            getColumnAsSelector().<TIncludeSource, TIncludeResult>columnInclude(EasyLambdaUtil.getPropertyName(column), EasyLambdaUtil.getPropertyName(aliasProperty), columnAsSelect -> {
+                includeSelectorExpression.apply(new SQLColumnAsSelectorImpl<>(columnAsSelect));
+            });
+        }
+        return this;
+    }
+
+    default <TIncludeSource, TIncludeResult> SQLColumnAsSelector<T1, TR> columnIncludeMany(Property<T1, Collection<TIncludeSource>> column, Property<TR, Collection<TIncludeResult>> aliasProperty) {
+        return columnIncludeMany(true, column, aliasProperty, SQLColumnAsSelector::columnAll);
+    }
+
+    default <TIncludeSource, TIncludeResult> SQLColumnAsSelector<T1, TR> columnIncludeMany(boolean condition, Property<T1, Collection<TIncludeSource>> column, Property<TR, Collection<TIncludeResult>> aliasProperty) {
+        return columnIncludeMany(condition, column, aliasProperty, SQLColumnAsSelector::columnAll);
+    }
+
+    default <TIncludeSource, TIncludeResult> SQLColumnAsSelector<T1, TR> columnIncludeMany(Property<T1, Collection<TIncludeSource>> column, Property<TR, Collection<TIncludeResult>> aliasProperty, SQLExpression1<SQLColumnAsSelector<TIncludeResult, TIncludeResult>> includeSelectorExpression) {
+        return columnIncludeMany(true, column, aliasProperty, includeSelectorExpression);
+    }
+
+    default <TIncludeSource, TIncludeResult> SQLColumnAsSelector<T1, TR> columnIncludeMany(boolean condition, Property<T1, Collection<TIncludeSource>> column, Property<TR, Collection<TIncludeResult>> aliasProperty, SQLExpression1<SQLColumnAsSelector<TIncludeResult, TIncludeResult>> includeSelectorExpression) {
+        if (condition) {
+            getColumnAsSelector().<TIncludeSource, TIncludeResult>columnInclude(EasyLambdaUtil.getPropertyName(column), EasyLambdaUtil.getPropertyName(aliasProperty), columnAsSelect -> {
+                includeSelectorExpression.apply(new SQLColumnAsSelectorImpl<>(columnAsSelect));
+            });
+        }
+        return this;
+    }
+
+    /**
+     * 请使用 sqlNativeSegment
+     *
+     * @param columnConst
+     * @return
+     */
+    @Deprecated
+    default SQLColumnAsSelector<T1, TR> columnConst(String columnConst) {
+        return sqlNativeSegment(columnConst, c -> {
+        });
+    }
+
+    default SQLColumnAsSelector<T1, TR> sqlNativeSegment(String sqlSegment) {
+        return sqlNativeSegment(sqlSegment, c -> {
+        });
+    }
+
+    default SQLColumnAsSelector<T1, TR> sqlNativeSegment(String sqlSegment, SQLExpression1<SQLNativeLambdaExpressionContext<T1>> contextConsume) {
+        getColumnAsSelector().sqlNativeSegment(sqlSegment, context -> {
+            contextConsume.apply(new SQLNativeLambdaExpressionContextImpl<>(context));
+        });
+        return this;
+    }
 
     default SQLColumnAsSelector<T1, TR> columnIgnore(Property<T1, ?> column) {
         getColumnAsSelector().columnIgnore(EasyLambdaUtil.getPropertyName(column));
@@ -271,8 +281,9 @@ public interface SQLColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1> {
         getColumnAsSelector().columnFuncAs(columnPropertyFunction, alias);
         return this;
     }
-    default SQLColumnAsSelector<T1,TR> sqlColumnAs(SQLColumnSegment sqlColumnSegment, Property<TR, ?> alias){
-        getColumnAsSelector().sqlColumnAs(sqlColumnSegment,EasyLambdaUtil.getPropertyName(alias));
+
+    default SQLColumnAsSelector<T1, TR> sqlSegmentAs(SQLColumnSegment sqlColumnSegment, Property<TR, ?> alias) {
+        getColumnAsSelector().sqlSegmentAs(sqlColumnSegment, EasyLambdaUtil.getPropertyName(alias));
         return this;
     }
 

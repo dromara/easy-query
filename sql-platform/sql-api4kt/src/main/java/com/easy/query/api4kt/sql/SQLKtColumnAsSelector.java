@@ -2,8 +2,8 @@ package com.easy.query.api4kt.sql;
 
 import com.easy.query.api4kt.select.KtQueryable;
 import com.easy.query.api4kt.sql.impl.SQLKtColumnAsSelectorImpl;
-import com.easy.query.api4kt.sql.scec.SQLKtColumnConstExpressionContext;
-import com.easy.query.api4kt.sql.scec.SQLKtColumnConstExpressionContextImpl;
+import com.easy.query.api4kt.sql.scec.SQLNativeLambdaKtExpressionContext;
+import com.easy.query.api4kt.sql.scec.SQLNativeLambdaKtExpressionContextImpl;
 import com.easy.query.api4kt.util.EasyKtLambdaUtil;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
@@ -41,12 +41,22 @@ public interface SQLKtColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1> {
         getColumnAsSelector().column(EasyKtLambdaUtil.getPropertyName(column));
         return this;
     }
+
+    /**
+     * 请使用 sqlNativeSegment
+     * @param columnConst
+     * @return
+     */
+    @Deprecated
     default SQLKtColumnAsSelector<T1,TR> columnConst(String columnConst){
-        return columnConst(columnConst,c->{});
+        return sqlNativeSegment(columnConst,c->{});
     }
-    default SQLKtColumnAsSelector<T1,TR> columnConst(String columnConst, SQLExpression1<SQLKtColumnConstExpressionContext<T1>> contextConsume){
-        getColumnAsSelector().columnConst(columnConst,context->{
-            contextConsume.apply(new SQLKtColumnConstExpressionContextImpl<>(context));
+    default SQLKtColumnAsSelector<T1,TR> sqlNativeSegment(String sqlSegment){
+        return sqlNativeSegment(sqlSegment,c->{});
+    }
+    default SQLKtColumnAsSelector<T1,TR> sqlNativeSegment(String sqlSegment, SQLExpression1<SQLNativeLambdaKtExpressionContext<T1>> contextConsume){
+        getColumnAsSelector().sqlNativeSegment(sqlSegment,context->{
+            contextConsume.apply(new SQLNativeLambdaKtExpressionContextImpl<>(context));
         });
         return this;
     }
@@ -250,8 +260,8 @@ public interface SQLKtColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1> {
         return this;
     }
 
-    default SQLKtColumnAsSelector<T1,TR> sqlColumnAs(SQLColumnSegment sqlColumnSegment, KProperty1<TR, ?> alias){
-        getColumnAsSelector().sqlColumnAs(sqlColumnSegment,EasyKtLambdaUtil.getPropertyName(alias));
+    default SQLKtColumnAsSelector<T1,TR> sqlSegmentAs(SQLColumnSegment sqlColumnSegment, KProperty1<TR, ?> alias){
+        getColumnAsSelector().sqlSegmentAs(sqlColumnSegment,EasyKtLambdaUtil.getPropertyName(alias));
         return this;
     }
     default <T2> SQLKtColumnAsSelector<T2, TR> then(SQLKtColumnAsSelector<T2, TR> sub) {

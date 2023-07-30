@@ -1,7 +1,7 @@
 package com.easy.query.api4j.sql;
 
-import com.easy.query.api4j.sql.scec.SQLColumnConstExpressionContext;
-import com.easy.query.api4j.sql.scec.SQLColumnConstExpressionContextImpl;
+import com.easy.query.api4j.sql.scec.SQLNativeLambdaExpressionContext;
+import com.easy.query.api4j.sql.scec.SQLNativeLambdaExpressionContextImpl;
 import com.easy.query.api4j.util.EasyLambdaUtil;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.Property;
@@ -26,12 +26,35 @@ public interface SQLColumnSelector<T1> extends EntitySQLTableOwner<T1> {
         getColumnSelector().column(EasyLambdaUtil.getPropertyName(column));
         return this;
     }
-    default SQLColumnSelector<T1> columnConst(String columnConst){
-        return columnConst(columnConst,c->{});
+
+    /**
+     * 请使用 sqlNativeSegment
+     * @param sqlSegment
+     * @return
+     */
+    @Deprecated
+    default SQLColumnSelector<T1> columnConst(String sqlSegment){
+        return sqlNativeSegment(sqlSegment,c->{});
     }
-    default SQLColumnSelector<T1> columnConst(String columnConst, SQLExpression1<SQLColumnConstExpressionContext<T1>> contextConsume){
-        getColumnSelector().columnConst(columnConst,context->{
-            contextConsume.apply(new SQLColumnConstExpressionContextImpl<>(context));
+
+    /**
+     * 参数格式化 占位符 {0} {1}
+     * @param sqlSegment
+     * @return
+     */
+    default SQLColumnSelector<T1> sqlNativeSegment(String sqlSegment){
+        return sqlNativeSegment(sqlSegment,c->{});
+    }
+
+    /**
+     * 参数格式化 占位符 {0} {1}
+     * @param sqlSegment
+     * @param contextConsume
+     * @return
+     */
+    default SQLColumnSelector<T1> sqlNativeSegment(String sqlSegment, SQLExpression1<SQLNativeLambdaExpressionContext<T1>> contextConsume){
+        getColumnSelector().sqlNativeSegment(sqlSegment,context->{
+            contextConsume.apply(new SQLNativeLambdaExpressionContextImpl<>(context));
         });
         return this;
     }

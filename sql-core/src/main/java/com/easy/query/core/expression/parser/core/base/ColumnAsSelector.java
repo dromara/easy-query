@@ -9,7 +9,7 @@ import com.easy.query.core.expression.func.DefaultColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
-import com.easy.query.core.expression.parser.core.base.scec.ColumnConstExpressionContext;
+import com.easy.query.core.expression.parser.core.base.scec.NativeSQLPropertyExpressionContext;
 import com.easy.query.core.expression.segment.SQLColumnSegment;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 
@@ -35,10 +35,20 @@ public interface ColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1> {
     }
     <TIncludeSource,TIncludeResult> ColumnAsSelector<T1, TR> columnInclude(boolean condition,String property, String aliasProperty, SQLExpression1<ColumnAsSelector<TIncludeResult,TIncludeResult>> includeSelectorExpression);
 
-    default ColumnAsSelector<T1, TR> columnConst(String columnConst){
-        return columnConst(columnConst,c->{});
+    /**
+     * 请使用 sqlSegment
+     * @param sqlSegment
+     * @return
+     */
+    @Deprecated
+    default ColumnAsSelector<T1, TR> columnConst(String sqlSegment){
+        return sqlNativeSegment(sqlSegment, c->{});
     }
-    ColumnAsSelector<T1, TR> columnConst(String columnConst, SQLExpression1<ColumnConstExpressionContext> contextConsume);
+
+    default ColumnAsSelector<T1, TR> sqlNativeSegment(String sqlSegment){
+        return sqlNativeSegment(sqlSegment, c->{});
+    }
+    ColumnAsSelector<T1, TR> sqlNativeSegment(String sqlSegment, SQLExpression1<NativeSQLPropertyExpressionContext> contextConsume);
 
     ColumnAsSelector<T1, TR> columnIgnore(String property);
 
@@ -144,7 +154,7 @@ public interface ColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1> {
 
     ColumnAsSelector<T1, TR> columnFuncAs(ColumnPropertyFunction columnPropertyFunction, String propertyAlias);
 
-    ColumnAsSelector<T1,TR> sqlColumnAs(SQLColumnSegment sqlColumnSegment, String propertyAlias);
+    ColumnAsSelector<T1,TR> sqlSegmentAs(SQLColumnSegment sqlColumnSegment, String propertyAlias);
     default <T2> ColumnAsSelector<T2, TR> then(ColumnAsSelector<T2, TR> sub) {
         return sub;
     }

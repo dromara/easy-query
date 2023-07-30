@@ -15,18 +15,18 @@ import java.util.Objects;
  *
  * @author xuejiaming
  */
-public class SQLConstExpressionContextImpl implements SQLConstExpressionContext {
+public class SQLNativeExpressionContextImpl implements SQLNativeExpressionContext {
     private final List<ConstParamExpression> expressions=new ArrayList<>();
     private String alias;
 
-    public SQLConstExpressionContextImpl expression(TableAvailable table, String property){
+    public SQLNativeExpressionContextImpl expression(TableAvailable table, String property){
         Objects.requireNonNull(table, "table cannot be null");
         Objects.requireNonNull(property, "property cannot be null");
         ColumnPropertyExpressionImpl columnPropertyExpression = new ColumnPropertyExpressionImpl(table, property);
         expressions.add(columnPropertyExpression);
         return this;
     }
-    public SQLConstExpressionContextImpl value(Object val){
+    public SQLNativeExpressionContextImpl value(Object val){
         Objects.requireNonNull(val, "val cannot be null");
         ColumnConstValueExpressionImpl columnConstValueExpression = new ColumnConstValueExpressionImpl(val);
         expressions.add(columnConstValueExpression);
@@ -41,7 +41,7 @@ public class SQLConstExpressionContextImpl implements SQLConstExpressionContext 
         return alias;
     }
 
-    public SQLConstExpressionContext setAlias(String alias) {
+    public SQLNativeExpressionContext setAlias(String alias) {
         this.alias = alias;
         return this;
     }

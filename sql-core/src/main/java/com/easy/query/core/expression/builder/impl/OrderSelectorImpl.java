@@ -10,8 +10,8 @@ import com.easy.query.core.expression.segment.OrderBySegment;
 import com.easy.query.core.expression.segment.OrderFuncColumnSegment;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
-import com.easy.query.core.expression.segment.scec.context.SQLConstExpressionContext;
-import com.easy.query.core.expression.segment.scec.context.SQLConstExpressionContextImpl;
+import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;
+import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContextImpl;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 
 import java.util.Objects;
@@ -45,11 +45,11 @@ public class OrderSelectorImpl implements OrderSelector {
     }
 
     @Override
-    public OrderSelector columnConst(String columnConst, SQLExpression1<SQLConstExpressionContext> contextConsume) {
+    public OrderSelector sqlNativeSegment(String columnConst, SQLExpression1<SQLNativeExpressionContext> contextConsume) {
         Objects.requireNonNull(contextConsume,"contextConsume cannot be null");
-        SQLConstExpressionContextImpl sqlConstExpressionContext=new SQLConstExpressionContextImpl();
+        SQLNativeExpressionContextImpl sqlConstExpressionContext=new SQLNativeExpressionContextImpl();
         contextConsume.apply(sqlConstExpressionContext);
-        OrderBySegment orderByColumnSegment = sqlSegmentFactory.createOrderByConstSegment(runtimeContext,columnConst,sqlConstExpressionContext, asc);
+        OrderBySegment orderByColumnSegment = sqlSegmentFactory.createOrderBySQLNativeSegment(runtimeContext,columnConst,sqlConstExpressionContext, asc);
         order.append(orderByColumnSegment);
         return this;
     }

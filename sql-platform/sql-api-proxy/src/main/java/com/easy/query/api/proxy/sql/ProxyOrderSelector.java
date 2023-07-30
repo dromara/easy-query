@@ -1,7 +1,7 @@
 package com.easy.query.api.proxy.sql;
 
-import com.easy.query.api.proxy.sql.scec.ProxyConstExpressionContext;
-import com.easy.query.api.proxy.sql.scec.ProxyConstExpressionContextImpl;
+import com.easy.query.api.proxy.sql.scec.SQLNativeProxyExpressionContext;
+import com.easy.query.api.proxy.sql.scec.SQLNativeProxyExpressionContextImpl;
 import com.easy.query.core.expression.builder.OrderSelector;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.proxy.SQLColumn;
@@ -31,12 +31,12 @@ public interface ProxyOrderSelector {
        return this;
    }
 
-    default ProxyOrderSelector columnConst(String columnConst){
-        return columnConst(columnConst,c->{});
+    default ProxyOrderSelector sqlNativeSegment(String sqlSegment){
+        return sqlNativeSegment(sqlSegment,c->{});
     }
-    default ProxyOrderSelector columnConst(String columnConst, SQLExpression1<ProxyConstExpressionContext> contextConsume){
-        getOrderSelector().columnConst(columnConst,context->{
-            contextConsume.apply(new ProxyConstExpressionContextImpl(context));
+    default ProxyOrderSelector sqlNativeSegment(String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume){
+        getOrderSelector().sqlNativeSegment(sqlSegment, context->{
+            contextConsume.apply(new SQLNativeProxyExpressionContextImpl(context));
         });
         return this;
     }

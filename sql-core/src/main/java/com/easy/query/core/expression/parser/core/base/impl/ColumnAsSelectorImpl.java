@@ -8,8 +8,8 @@ import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
-import com.easy.query.core.expression.parser.core.base.scec.ColumnConstExpressionContext;
-import com.easy.query.core.expression.parser.core.base.scec.ColumnConstExpressionContextImpl;
+import com.easy.query.core.expression.parser.core.base.scec.NativeSQLPropertyExpressionContext;
+import com.easy.query.core.expression.parser.core.base.scec.NativeSQLPropertyExpressionContextImpl;
 import com.easy.query.core.expression.segment.SQLColumnSegment;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 
@@ -68,9 +68,9 @@ public class ColumnAsSelectorImpl<T1, TR> implements ColumnAsSelector<T1, TR> {
     }
 
     @Override
-    public ColumnAsSelector<T1, TR> columnConst(String columnConst, SQLExpression1<ColumnConstExpressionContext> contextConsume) {
-        asSelector.columnConst(columnConst,context->{
-            contextConsume.apply(new ColumnConstExpressionContextImpl(table,context));
+    public ColumnAsSelector<T1, TR> sqlNativeSegment(String sqlSegment, SQLExpression1<NativeSQLPropertyExpressionContext> contextConsume) {
+        asSelector.sqlNativeSegment(sqlSegment, context->{
+            contextConsume.apply(new NativeSQLPropertyExpressionContextImpl(table,context));
         });
         return this;
     }
@@ -107,7 +107,7 @@ public class ColumnAsSelectorImpl<T1, TR> implements ColumnAsSelector<T1, TR> {
     }
 
     @Override
-    public ColumnAsSelector<T1, TR> sqlColumnAs(SQLColumnSegment sqlColumnSegment, String propertyAlias) {
+    public ColumnAsSelector<T1, TR> sqlSegmentAs(SQLColumnSegment sqlColumnSegment, String propertyAlias) {
         asSelector.sqlColumnAs(sqlColumnSegment,propertyAlias);
         return this;
     }
