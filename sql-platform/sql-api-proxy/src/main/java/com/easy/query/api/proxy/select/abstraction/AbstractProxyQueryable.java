@@ -20,6 +20,7 @@ import com.easy.query.core.api.dynamic.sort.ObjectSort;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.select.ClientQueryable2;
+import com.easy.query.core.basic.jdbc.executor.internal.enumerable.JdbcStreamResult;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
@@ -107,12 +108,6 @@ public abstract class AbstractProxyQueryable<T1Proxy extends ProxyEntity<T1Proxy
     public <TR> TR firstNotNull(Class<TR> resultClass, String msg, String code) {
         return entityQueryable.firstNotNull(resultClass, msg, code);
     }
-
-    @Override
-    public List<T1> toList() {
-        return toList(get1Proxy());
-    }
-
     @Override
     public List<Map<String, Object>> toMaps() {
         return entityQueryable.toMaps();
@@ -120,9 +115,18 @@ public abstract class AbstractProxyQueryable<T1Proxy extends ProxyEntity<T1Proxy
 
     @Override
     public <TRProxy extends ProxyEntity<TRProxy, TR>, TR> List<TR> toList(TRProxy trProxy) {
-        return entityQueryable.toList(trProxy.getEntityClass());
+        return toList(trProxy.getEntityClass());
     }
 
+    @Override
+    public <TR> List<TR> toList(Class<TR> resultClass) {
+        return entityQueryable.toList(resultClass);
+    }
+
+    @Override
+    public <TR> JdbcStreamResult<TR> toStreamResult(Class<TR> resultClass) {
+        return entityQueryable.toStreamResult(resultClass);
+    }
 
     @Override
     public <TR> String toSQL(Class<TR> resultClass, ToSQLContext toSQLContext) {

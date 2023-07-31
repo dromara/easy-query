@@ -7,6 +7,7 @@ import com.easy.query.api.proxy.extension.SQLProxyFunc;
 import com.easy.query.api4j.extension.SQL4JFunc;
 import com.easy.query.api4j.select.Queryable;
 import com.easy.query.core.api.pagination.EasyPageResult;
+import com.easy.query.core.basic.jdbc.executor.internal.enumerable.JdbcStreamResult;
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
@@ -28,6 +29,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -1235,6 +1237,36 @@ public class QueryTest3 extends BaseTest {
             Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `content` LIKE ? AND `publish_time` <= ? AND `status` IN (?,?)",sql);
             List<BlogEntity> list = queryable.cloneQueryable().toList();
             Assert.assertEquals(0,list.size());
+        }
+    }
+
+    @Test
+    public void query9() {
+        try(JdbcStreamResult<BlogEntity> streamResult = easyQuery.queryable(BlogEntity.class).where(o -> o.le(BlogEntity::getStar, 100)).orderByAsc(o -> o.column(BlogEntity::getCreateTime)).toStreamResult()){
+
+            LocalDateTime begin = LocalDateTime.of(2020, 1, 1, 1, 1, 1);
+            int i = 0;
+            for (BlogEntity blog : streamResult.getStreamIterable()) {
+                String indexStr = String.valueOf(i);
+                Assert.assertEquals(indexStr, blog.getId());
+                Assert.assertEquals(indexStr, blog.getCreateBy());
+                Assert.assertEquals(begin.plusDays(i), blog.getCreateTime());
+                Assert.assertEquals(indexStr, blog.getUpdateBy());
+                Assert.assertEquals(begin.plusDays(i), blog.getUpdateTime());
+                Assert.assertEquals("title" + indexStr, blog.getTitle());
+//            Assert.assertEquals("content" + indexStr, blog.getContent());
+                Assert.assertEquals("http://blog.easy-query.com/" + indexStr, blog.getUrl());
+                Assert.assertEquals(i, (int) blog.getStar());
+                Assert.assertEquals(0, new BigDecimal("1.2").compareTo(blog.getScore()));
+                Assert.assertEquals(i % 3 == 0 ? 0 : 1, (int) blog.getStatus());
+                Assert.assertEquals(0, new BigDecimal("1.2").multiply(BigDecimal.valueOf(i)).compareTo(blog.getOrder()));
+                Assert.assertEquals(i % 2 == 0, blog.getIsTop());
+                Assert.assertEquals(i % 2 == 0, blog.getTop());
+                Assert.assertEquals(false, blog.getDeleted());
+                i++;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 }

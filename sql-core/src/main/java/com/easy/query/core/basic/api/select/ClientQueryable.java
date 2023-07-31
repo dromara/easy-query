@@ -55,8 +55,6 @@ public interface ClientQueryable<T1> extends Query<T1>,
     @Override
     ClientQueryable<T1> cloneQueryable();
 
-    <TR> List<TR> toList(Class<TR> resultClass);
-
     /**
      * select count(distinct column) from table
      *

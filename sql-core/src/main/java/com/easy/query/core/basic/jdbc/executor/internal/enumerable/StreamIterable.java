@@ -1,4 +1,4 @@
-package com.easy.query.core.basic.jdbc.executor.internal.stream;
+package com.easy.query.core.basic.jdbc.executor.internal.enumerable;
 
 /**
  * create time 2023/7/31 16:06

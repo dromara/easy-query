@@ -7,10 +7,13 @@ import com.easy.query.core.api.dynamic.sort.internal.ObjectSortEntry;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.select.ClientQueryable2;
+import com.easy.query.core.basic.api.select.JdbcResultWrap;
 import com.easy.query.core.basic.api.select.provider.SQLExpressionProvider;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.executor.impl.def.EntityResultMetadata;
+import com.easy.query.core.basic.jdbc.executor.internal.enumerable.JdbcResult;
+import com.easy.query.core.basic.jdbc.executor.internal.enumerable.JdbcStreamResult;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.basic.pagination.EasyPageResultProvider;
 import com.easy.query.core.context.QueryRuntimeContext;
@@ -267,11 +270,6 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     }
 
     @Override
-    public List<T1> toList() {
-        return toList(queryClass());
-    }
-
-    @Override
     public List<Map<String, Object>> toMaps() {
         List<Map> queryMaps = toQueryMaps();
         return EasyObjectUtil.typeCastNullable(queryMaps);
@@ -289,6 +287,12 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     public <TR> List<TR> toList(Class<TR> resultClass) {
         setExecuteMethod(ExecuteMethodEnum.LIST, true);
         return toInternalList(resultClass);
+    }
+
+    @Override
+    public <TR> JdbcStreamResult<TR> toStreamResult(Class<TR> resultClass) {
+        setExecuteMethod(ExecuteMethodEnum.StreamResult, true);
+        return toInternalStreamResult(resultClass);
     }
 
     /**
@@ -317,24 +321,22 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     protected <TR> List<TR> toInternalList(Class<TR> resultClass) {
         compensateSelect(resultClass);
         return toInternalListWithExpression(entityQueryExpressionBuilder, resultClass);
-//        //todo 检查是否存在分片对象的查询
-//        boolean shardingQuery = EasyShardingUtil.isShardingQuery(sqlEntityExpression);
-//        if(shardingQuery){
-//            compensateSelect(resultClass);
-//            //解析sql where 和join on的表达式返回datasource+sql的组合可以利用强制tableNameAs来实现
-//            sqlEntityExpression.getRuntimeContext()
-//        }else{
-//        }
+    }
+
+    protected <TR> JdbcStreamResult<TR> toInternalStreamResult(Class<TR> resultClass){
+        compensateSelect(resultClass);
+        JdbcResultWrap<TR> jdbcResultWrap = toInternalStreamWithExpression(entityQueryExpressionBuilder, resultClass);
+        setExecuteMethod(ExecuteMethodEnum.UNKNOWN);
+        return jdbcResultWrap.getJdbcResult().getJdbcStreamResult();
     }
 
     protected <TR> List<TR> toInternalListWithExpression(EntityQueryExpressionBuilder entityQueryExpressionBuilder, Class<TR> resultClass) {
-        ExpressionContext expressionContext = this.entityQueryExpressionBuilder.getExpressionContext();
-        boolean tracking = expressionContext.getBehavior().hasBehavior(EasyBehaviorEnum.USE_TRACKING);
-        ExecuteMethodEnum executeMethod = expressionContext.getExecuteMethod();
-        EntityExpressionExecutor entityExpressionExecutor = this.entityQueryExpressionBuilder.getRuntimeContext().getEntityExpressionExecutor();
-        EntityMetadata entityMetadata = this.entityQueryExpressionBuilder.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(resultClass);
-        ExecutorContext executorContext = ExecutorContext.create(this.entityQueryExpressionBuilder.getRuntimeContext(), true, executeMethod, tracking);
-        List<TR> result = entityExpressionExecutor.query(executorContext, new EntityResultMetadata<>(entityMetadata), entityQueryExpressionBuilder);
+
+        JdbcResultWrap<TR> jdbcResultWrap = toInternalStreamWithExpression(entityQueryExpressionBuilder, resultClass);
+        List<TR> result = jdbcResultWrap.getJdbcResult().toList();
+        ExecuteMethodEnum executeMethod = jdbcResultWrap.getExecuteMethod();
+        ExpressionContext expressionContext = jdbcResultWrap.getExpressionContext();
+        EntityMetadata entityMetadata = jdbcResultWrap.getEntityMetadata();
         if (ExecuteMethodEnum.LIST == executeMethod || ExecuteMethodEnum.FIRST == executeMethod) {
             if (EasyCollectionUtil.isNotEmpty(result)) {
                 doIncludes(expressionContext, entityMetadata, result);
@@ -343,6 +345,16 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         }//将当前方法设置为unknown
         setExecuteMethod(ExecuteMethodEnum.UNKNOWN);
         return result;
+    }
+    protected <TR> JdbcResultWrap<TR> toInternalStreamWithExpression(EntityQueryExpressionBuilder entityQueryExpressionBuilder, Class<TR> resultClass) {
+        ExpressionContext expressionContext = this.entityQueryExpressionBuilder.getExpressionContext();
+        boolean tracking = expressionContext.getBehavior().hasBehavior(EasyBehaviorEnum.USE_TRACKING);
+        ExecuteMethodEnum executeMethod = expressionContext.getExecuteMethod();
+        EntityExpressionExecutor entityExpressionExecutor = this.entityQueryExpressionBuilder.getRuntimeContext().getEntityExpressionExecutor();
+        EntityMetadata entityMetadata = this.entityQueryExpressionBuilder.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(resultClass);
+        ExecutorContext executorContext = ExecutorContext.create(this.entityQueryExpressionBuilder.getRuntimeContext(), true, executeMethod, tracking);
+        JdbcResult<TR> jdbcResult = entityExpressionExecutor.queryStreamResultSet(executorContext, new EntityResultMetadata<>(entityMetadata), entityQueryExpressionBuilder);
+        return new JdbcResultWrap<>(executeMethod,expressionContext,entityMetadata,jdbcResult);
     }
 
 

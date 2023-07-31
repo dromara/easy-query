@@ -59,8 +59,6 @@ public interface Queryable<T1> extends Query<T1>,
     @Override
     Queryable<T1> cloneQueryable();
 
-    <TR> List<TR> toList(Class<TR> resultClass);
-
     long countDistinct(SQLExpression1<SQLColumnSelector<T1>> selectExpression);
 
 

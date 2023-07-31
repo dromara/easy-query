@@ -1,6 +1,7 @@
 package com.easy.query.core.basic.api.select;
 
 import com.easy.query.core.api.pagination.EasyPageResult;
+import com.easy.query.core.basic.jdbc.executor.internal.enumerable.JdbcStreamResult;
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.exception.EasyQueryFirstOrNotNullException;
@@ -161,13 +162,20 @@ public interface Query<T> {
      */
     <TR> TR firstNotNull(Class<TR> resultClass, String msg, String code);
 
-    List<T> toList();
+   default List<T> toList(){
+       return toList(queryClass());
+   }
 
+
+    <TR> List<TR> toList(Class<TR> resultClass);
     /**
      * 可迭代的
      * @return
      */
-//    JdbcStreamResultSet<T> toStreamResultSet();
+   default JdbcStreamResult<T> toStreamResult(){
+       return toStreamResult(queryClass());
+   }
+    <TR> JdbcStreamResult<TR> toStreamResult(Class<TR> resultClass);
 
     default Map<String, Object> toMap() {
         limit(1);

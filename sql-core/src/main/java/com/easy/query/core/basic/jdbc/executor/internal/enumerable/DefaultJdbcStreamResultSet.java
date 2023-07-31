@@ -1,4 +1,4 @@
-package com.easy.query.core.basic.jdbc.executor.internal.stream;
+package com.easy.query.core.basic.jdbc.executor.internal.enumerable;
 
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.executor.ResultMetadata;
@@ -13,7 +13,7 @@ import java.sql.SQLException;
  *
  * @author xuejiaming
  */
-public class DefaultJdbcStreamResultSet<T> implements JdbcStreamResultSet<T> {
+public class DefaultJdbcStreamResultSet<T> implements JdbcStreamResult<T> {
     private final ExecutorContext executorContext;
     private final ResultMetadata<T> resultMetadata;
     private final JdbcCommand<QueryExecuteResult> command;
@@ -24,8 +24,13 @@ public class DefaultJdbcStreamResultSet<T> implements JdbcStreamResultSet<T> {
         this.command = command;
     }
     @Override
-    public StreamIterable<T> getStreamResult()  throws SQLException {
+    public StreamIterable<T> getStreamIterable()  throws SQLException {
         return new DefaultStreamIterable<>(executorContext,resultMetadata,command.execute().getStreamResultSet());
+    }
+
+    @Override
+    public ExecutorContext getExecutorContext() {
+        return executorContext;
     }
 
     @Override

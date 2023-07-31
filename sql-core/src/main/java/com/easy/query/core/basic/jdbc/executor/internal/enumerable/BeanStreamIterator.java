@@ -1,4 +1,4 @@
-package com.easy.query.core.basic.jdbc.executor.internal.stream;
+package com.easy.query.core.basic.jdbc.executor.internal.enumerable;
 
 import com.easy.query.core.basic.extension.track.EntityState;
 import com.easy.query.core.basic.extension.track.TrackManager;

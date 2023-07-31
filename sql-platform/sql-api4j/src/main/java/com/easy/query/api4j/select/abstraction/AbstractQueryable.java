@@ -20,6 +20,7 @@ import com.easy.query.core.api.dynamic.sort.ObjectSort;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.select.ClientQueryable2;
+import com.easy.query.core.basic.jdbc.executor.internal.enumerable.JdbcStreamResult;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.expression.lambda.SQLExpression1;
@@ -93,11 +94,6 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     }
 
     @Override
-    public List<T1> toList() {
-        return entityQueryable.toList();
-    }
-
-    @Override
     public List<Map<String, Object>> toMaps() {
         return entityQueryable.toMaps();
     }
@@ -105,6 +101,11 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     @Override
     public <TR> List<TR> toList(Class<TR> resultClass) {
         return entityQueryable.toList(resultClass);
+    }
+
+    @Override
+    public <TR> JdbcStreamResult<TR> toStreamResult(Class<TR> resultClass) {
+        return entityQueryable.toStreamResult(resultClass);
     }
 
     @Override

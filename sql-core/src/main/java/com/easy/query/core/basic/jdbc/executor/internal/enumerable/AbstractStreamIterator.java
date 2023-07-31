@@ -1,4 +1,4 @@
-package com.easy.query.core.basic.jdbc.executor.internal.stream;
+package com.easy.query.core.basic.jdbc.executor.internal.enumerable;
 
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.executor.ResultMetadata;
@@ -22,20 +22,36 @@ public abstract class AbstractStreamIterator<T> implements StreamIterator<T> {
     protected final ExecutorContext context;
     protected final StreamResultSet streamResultSet;
     protected final ResultMetadata<T> resultMetadata;
-    protected EasyResultSet easyResultSet;
-    protected boolean isFirst = true;
+    protected final EasyResultSet easyResultSet;
     protected boolean hasNext;
+    private boolean isEnd = false;
 
     public AbstractStreamIterator(ExecutorContext context, StreamResultSet streamResult, ResultMetadata<T> resultMetadata) throws SQLException {
         this.context = context;
         this.streamResultSet = streamResult;
         this.resultMetadata = resultMetadata;
+        this.easyResultSet = new EasyResultSet(streamResult);
         init();
     }
 
     @Override
     public boolean hasNext() {
+        if (!hasNext) {
+            if (isEnd) {
+                return false;
+            }
+            hasNext = hasNext0();
+            isEnd = !hasNext;
+        }
         return hasNext;
+    }
+
+    private boolean hasNext0() {
+        try {
+            return easyResultSet.nextAndReset();
+        } catch (SQLException e) {
+            throw new EasyQueryException(e);
+        }
     }
 
     @Override
@@ -44,23 +60,19 @@ public abstract class AbstractStreamIterator<T> implements StreamIterator<T> {
             throw new NoSuchElementException();
         }
         try {
-            T t = next0();
-            this.hasNext=easyResultSet.nextAndReset();
-            return t;
+            this.hasNext = false;
+            return next0();
         } catch (SQLException e) {
             throw new EasyQueryException(e);
         }
     }
 
     protected void init() throws SQLException {
-        if (isFirst) {
-            isFirst = false;
-            this.hasNext = streamResultSet.next();
-            if (hasNext) {
-                init0();
-                this.easyResultSet=new EasyResultSet(streamResultSet);
-            }
+        this.hasNext = streamResultSet.next();
+        if (this.hasNext) {
+            init0();
         }
+        this.isEnd=!this.hasNext;
     }
 
     protected abstract void init0() throws SQLException;
