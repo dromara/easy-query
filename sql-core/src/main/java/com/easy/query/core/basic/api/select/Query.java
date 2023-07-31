@@ -163,6 +163,12 @@ public interface Query<T> {
 
     List<T> toList();
 
+    /**
+     * 可迭代的
+     * @return
+     */
+//    JdbcStreamResultSet<T> toStreamResultSet();
+
     default Map<String, Object> toMap() {
         limit(1);
         List<Map<String, Object>> maps = toMaps();

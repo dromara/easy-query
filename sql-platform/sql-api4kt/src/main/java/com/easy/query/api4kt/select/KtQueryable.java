@@ -4,6 +4,7 @@ import com.easy.query.api4kt.sql.SQLKtColumnAsSelector;
 import com.easy.query.api4kt.sql.SQLKtColumnSelector;
 import com.easy.query.api4kt.sql.SQLKtFillSelector;
 import com.easy.query.api4kt.sql.SQLKtGroupBySelector;
+import com.easy.query.api4kt.sql.SQLKtNavigateInclude;
 import com.easy.query.api4kt.sql.SQLKtOrderBySelector;
 import com.easy.query.api4kt.sql.SQLKtWhereAggregatePredicate;
 import com.easy.query.api4kt.sql.SQLKtWherePredicate;
@@ -335,10 +336,10 @@ public interface KtQueryable<T1> extends Query<T1>,
     KtQueryable<T1> unionAll(Collection<KtQueryable<T1>> unionQueries);
 
 
-    default   <TProperty> KtQueryable<T1> include(SQLFuncExpression1<SQLKtNavigateIncludeImpl<T1>,KtQueryable<TProperty>> navigateIncludeSQLExpression){
+    default   <TProperty> KtQueryable<T1> include(SQLFuncExpression1<SQLKtNavigateInclude<T1>,KtQueryable<TProperty>> navigateIncludeSQLExpression){
         return include(true,navigateIncludeSQLExpression);
     }
-    default  <TProperty> KtQueryable<T1> include(boolean condition,SQLFuncExpression1<SQLKtNavigateIncludeImpl<T1>,KtQueryable<TProperty>> navigateIncludeSQLExpression){
+    default  <TProperty> KtQueryable<T1> include(boolean condition,SQLFuncExpression1<SQLKtNavigateInclude<T1>,KtQueryable<TProperty>> navigateIncludeSQLExpression){
         if(condition){
             getClientQueryable().<TProperty>include(navigateInclude->navigateIncludeSQLExpression.apply(new SQLKtNavigateIncludeImpl<>(navigateInclude)).getClientQueryable());
         }

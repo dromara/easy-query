@@ -24,6 +24,21 @@ import java.util.function.Predicate;
  * @Date: 2023/2/26 14:07
  */
 public class EasyCollectionUtil {
+
+    public static <TR> List<TR> newArrayList(Iterable<TR> iterable) {
+        Iterator<TR> iterator = iterable.iterator();
+        boolean firstHasNext = iterator.hasNext();
+        if (!firstHasNext) {
+            return new ArrayList<>(0);
+        }
+        ArrayList<TR> list = new ArrayList<>();
+        do {
+            TR next = iterator.next();
+            list.add(next);
+        } while (iterator.hasNext());
+        return list;
+    }
+
     public static <TSource> boolean isNotSingle(Collection<TSource> sources) {
         return !isSingle(sources);
     }
@@ -153,11 +168,12 @@ public class EasyCollectionUtil {
         return !isEmpty(collection);
     }
 
-    public static <T>boolean isEmptyArray(T[] arrays){
-       return arrays==null||arrays.length==0;
+    public static <T> boolean isEmptyArray(T[] arrays) {
+        return arrays == null || arrays.length == 0;
     }
-    public static <T>boolean isNotEmptyArray(T[] arrays){
-       return !isEmptyArray(arrays);
+
+    public static <T> boolean isNotEmptyArray(T[] arrays) {
+        return !isEmptyArray(arrays);
     }
 
     /**
