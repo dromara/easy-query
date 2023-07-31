@@ -106,6 +106,10 @@ public class SolonEasyQueryProperties {
      * 关联查询每组多少关联id
      */
     private final static int relationGroupSize = 512;
+    /**
+     * 无版本号时更新删除报错
+     */
+    private final static boolean noVersionError = true;
 
     private final Props props;
 
@@ -204,7 +208,7 @@ public class SolonEasyQueryProperties {
         });
     }
     public boolean isNoVersionError(){
-        return this.props.getBool("no-version-error",true);
+        return this.props.getBool("no-version-error",noVersionError);
     }
 
 
