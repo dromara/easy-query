@@ -109,11 +109,16 @@ public class EasyQueryOption {
      */
     private final int relationGroupSize;
 
+    /**
+     * 无版本号报错
+     */
+    private final boolean noVersionError;
+
     public EasyQueryOption(boolean deleteThrowError, SQLExecuteStrategyEnum insertStrategy, SQLExecuteStrategyEnum updateStrategy, ConnectionModeEnum connectionMode, int maxShardingQueryLimit, int executorMaximumPoolSize, int executorCorePoolSize,
                            boolean throwIfNotMatchRoute, long shardingExecuteTimeoutMillis,
                            EasyQueryShardingOption shardingOption, EasyQueryReplicaOption replicaOption, String defaultDataSourceName, int defaultDataSourceMergePoolSize, boolean queryLargeColumn, int maxShardingRouteCount, int executorQueueSize, long multiConnWaitTimeoutMillis,
                            boolean warningBusy, int insertBatchThreshold, int updateBatchThreshold, boolean printSql, boolean startTimeJob, boolean defaultTrack,
-                           int relationGroupSize) {
+                           int relationGroupSize,boolean noVersionError) {
 
 
         if (executorMaximumPoolSize > 0) {
@@ -175,6 +180,7 @@ public class EasyQueryOption {
         this.startTimeJob = startTimeJob;
         this.defaultTrack = defaultTrack;
         this.relationGroupSize = relationGroupSize;
+        this.noVersionError = noVersionError;
     }
 
     public int getMaxShardingRouteCount() {
@@ -271,5 +277,9 @@ public class EasyQueryOption {
 
     public int getRelationGroupSize() {
         return relationGroupSize;
+    }
+
+    public boolean isNoVersionError() {
+        return noVersionError;
     }
 }

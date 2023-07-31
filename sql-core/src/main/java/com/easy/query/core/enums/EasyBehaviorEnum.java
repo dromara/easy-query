@@ -26,7 +26,11 @@ public enum EasyBehaviorEnum {
     ON_DUPLICATE_KEY_IGNORE(1<<4),
     ON_DUPLICATE_KEY_UPDATE(1<<5),
     EXECUTE_BATCH(1<<6),
-    EXECUTE_NO_BATCH(1<<7);
+    EXECUTE_NO_BATCH(1<<7),
+    /**
+     * 更新删除无版本号报错
+     */
+    NO_VERSION_ERROR(1<<8);
 
     private final int code;
 

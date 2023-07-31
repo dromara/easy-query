@@ -12,6 +12,9 @@ import java.util.List;
  * @author xuejiaming
  */
 public interface EntityExpressionBuilder extends ExpressionBuilder {
+    default boolean isQuery(){
+        return false;
+    }
     Class<?> getQueryClass();
     ExpressionContext getExpressionContext();
     QueryRuntimeContext getRuntimeContext();

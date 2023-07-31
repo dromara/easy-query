@@ -67,6 +67,9 @@ public class EasyExpressionContext implements ExpressionContext {
         if(easyQueryOption.isDefaultTrack()){
             easyBehavior.addBehavior(EasyBehaviorEnum.USE_TRACKING);
         }
+        if(easyQueryOption.isNoVersionError()){
+            easyBehavior.addBehavior(EasyBehaviorEnum.NO_VERSION_ERROR);
+        }
         this.expressionContextInterceptor=new ExpressionContextInterceptor();
         this.tableContext = new TableContext();
         this.maxShardingQueryLimit = null;

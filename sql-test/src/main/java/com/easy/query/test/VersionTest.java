@@ -68,6 +68,11 @@ public class VersionTest extends BaseTest {
                 .where(o->o.eq(SysUserVersionLong::getId,id))
                 .executeRows();
         Assert.assertEquals(1,l4);
+        long l5 = easyQuery.updatable(SysUserVersionLong.class)
+                .set(SysUserVersionLong::getPhone, "123")
+                .where(o->o.eq(SysUserVersionLong::getId,id))
+                .executeRows();
+        Assert.assertEquals(1,l5);
     }
     @Test
     public void test3(){

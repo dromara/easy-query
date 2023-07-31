@@ -98,6 +98,18 @@ public abstract class AbstractProxyExpressionUpdatable<TProxy extends ProxyEntit
     }
 
     @Override
+    public ProxyExpressionUpdatable<TProxy, T> noVersionError() {
+        clientExpressionUpdatable.noVersionError();
+        return this;
+    }
+
+    @Override
+    public ProxyExpressionUpdatable<TProxy, T> noVersionIgnore() {
+        clientExpressionUpdatable.noVersionIgnore();
+        return this;
+    }
+
+    @Override
     public ProxyExpressionUpdatable<TProxy, T> batch(boolean use) {
         clientExpressionUpdatable.batch(use);
         return this;

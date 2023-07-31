@@ -6,6 +6,7 @@ import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.enums.SQLPredicateCompareEnum;
@@ -83,6 +84,18 @@ public abstract class AbstractClientExpressionDeletable<T> extends AbstractSQLEx
         if (condition) {
             entityDeleteExpressionBuilder.getExpressionContext().setVersion(versionValue);
         }
+        return this;
+    }
+
+    @Override
+    public ClientExpressionDeletable<T> noVersionError() {
+        entityDeleteExpressionBuilder.getExpressionContext().getBehavior().addBehavior(EasyBehaviorEnum.NO_VERSION_ERROR);
+        return this;
+    }
+
+    @Override
+    public ClientExpressionDeletable<T> noVersionIgnore() {
+        entityDeleteExpressionBuilder.getExpressionContext().getBehavior().removeBehavior(EasyBehaviorEnum.NO_VERSION_ERROR);
         return this;
     }
 

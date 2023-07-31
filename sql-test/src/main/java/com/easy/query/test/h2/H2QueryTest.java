@@ -725,8 +725,22 @@ public class H2QueryTest extends H2BaseTest {
     @Test
     public void nativeSQLTest4() {
         String sql = easyQuery.queryable(H2BookTest.class)
+                .asAlias("x")
+                .select(o -> o.columnAll()
+                        .sqlNativeSegment("rank() over(order by {0} desc) as rank1,rank() over(partition by {1} order by {2} desc) as rank2",
+                                it -> it.expression(H2BookTest::getPrice)
+                                        .expression(H2BookTest::getStoreId)
+                                        .expression(H2BookTest::getPrice)
+                        )
+                ).toSQL();
+        Assert.assertEquals("SELECT x.id,x.name,x.edition,x.price,x.store_id,rank() over(order by x.price desc) as rank1,rank() over(partition by x.store_id order by x.price desc) as rank2 FROM t_book_test x", sql);
+    }
+
+    @Test
+    public void nativeSQLTest5() {
+        String sql = easyQuery.queryable(H2BookTest.class)
                 .where(o -> o.sqlNativeSegment("regexp_like({0},{1})", it -> it.expression(H2BookTest::getPrice)
-                                .value("^Ste(v|ph)en$")))
+                        .value("^Ste(v|ph)en$")))
                 .select(o -> o.columnAll()
                 ).toSQL();
         Assert.assertEquals("SELECT id,name,edition,price,store_id FROM t_book_test WHERE regexp_like(price,?)", sql);

@@ -107,6 +107,7 @@ public class EasyQueryProperties {
      * 关联查询每组多少关联id
      */
     private int relationGroupSize = 512;
+    private boolean noVersionError = true;
 
     public Boolean getEnable() {
         return enable;
@@ -318,6 +319,14 @@ public class EasyQueryProperties {
 
     public void setRelationGroupSize(int relationGroupSize) {
         this.relationGroupSize = relationGroupSize;
+    }
+
+    public boolean isNoVersionError() {
+        return noVersionError;
+    }
+
+    public void setNoVersionError(boolean noVersionError) {
+        this.noVersionError = noVersionError;
     }
 
     public EasyQueryProperties() {

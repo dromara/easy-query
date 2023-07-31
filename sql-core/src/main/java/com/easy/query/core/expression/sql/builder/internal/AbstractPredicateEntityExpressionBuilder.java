@@ -3,6 +3,7 @@ package com.easy.query.core.expression.sql.builder.internal;
 import com.easy.query.core.basic.extension.interceptor.Interceptor;
 import com.easy.query.core.basic.extension.interceptor.PredicateFilterInterceptor;
 import com.easy.query.core.enums.EasyBehaviorEnum;
+import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.parser.factory.SQLExpressionInvokeFactory;
@@ -15,6 +16,7 @@ import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.builder.LambdaEntityExpressionBuilder;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.VersionMetadata;
+import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.List;
@@ -53,17 +55,20 @@ public abstract class AbstractPredicateEntityExpressionBuilder extends AbstractE
                 SQLExpression1<WherePredicate<Object>> logicDeleteQueryFilterExpression = table.getLogicDeleteQueryFilterExpression();
                 logicDeleteQueryFilterExpression.apply(sqlPredicate);
             }
-
-            if (entityMetadata.hasVersionColumn()) {
-                VersionMetadata versionMetadata = entityMetadata.getVersionMetadata();
-                if (isExpression()) {
-                    Object version = expressionContext.getVersion();
-                    if (Objects.nonNull(version)) {
-                        sqlPredicate.eq(versionMetadata.getPropertyName(), version);
+            if(!isQuery()){
+                if (entityMetadata.hasVersionColumn()) {
+                    VersionMetadata versionMetadata = entityMetadata.getVersionMetadata();
+                    if (isExpression()) {
+                        Object version = expressionContext.getVersion();
+                        if (Objects.nonNull(version)) {
+                            sqlPredicate.eq(versionMetadata.getPropertyName(), version);
+                        }else if(expressionContext.getBehavior().hasBehavior(EasyBehaviorEnum.NO_VERSION_ERROR)){
+                            throw new EasyQueryInvalidOperationException("entity:"+ EasyClassUtil.getSimpleName(table.getEntityClass())+" has version expression not found version");
+                        }
+                    } else {
+                        AndPredicateSegment versionPredicateSegment = new AndPredicateSegment(new ColumnPropertyPredicate(table.getEntityTable(), versionMetadata.getPropertyName(), this.getRuntimeContext()));
+                        predicateSegment.addPredicateSegment(versionPredicateSegment);
                     }
-                } else {
-                    AndPredicateSegment versionPredicateSegment = new AndPredicateSegment(new ColumnPropertyPredicate(table.getEntityTable(), versionMetadata.getPropertyName(), this.getRuntimeContext()));
-                    predicateSegment.addPredicateSegment(versionPredicateSegment);
                 }
             }
             //如果当前对象是存在拦截器的那么就通过stream获取剩余的拦截器

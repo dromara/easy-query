@@ -166,6 +166,11 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
     }
 
     @Override
+    public boolean isQuery() {
+        return true;
+    }
+
+    @Override
     public EntityQuerySQLExpression toExpression() {
         int tableCount = getTables().size();
         if (tableCount == 0) {

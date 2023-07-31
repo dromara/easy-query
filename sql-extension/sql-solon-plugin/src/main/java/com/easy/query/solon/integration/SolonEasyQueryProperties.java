@@ -203,6 +203,9 @@ public class SolonEasyQueryProperties {
             return null;
         });
     }
+    public boolean isNoVersionError(){
+        return this.props.getBool("no-version-error",true);
+    }
 
 
     public int getMaxShardingQueryLimit() {

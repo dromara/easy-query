@@ -56,6 +56,10 @@ public class EasyQueryOptionBuilder {
      * 关联查询每次分组数量
      */
     private int relationGroupSize;
+    /**
+     * 无版本号报错
+     */
+    private boolean noVersionError;
 
     public EasyQueryOptionBuilder() {
         this.deleteThrowError = true;
@@ -80,6 +84,7 @@ public class EasyQueryOptionBuilder {
         this.startTimeJob = false;
         this.defaultTrack = false;
         this.relationGroupSize = 512;
+        this.noVersionError = true;
     }
 
     public void setDeleteThrowError(boolean deleteThrowError) {
@@ -190,6 +195,10 @@ public class EasyQueryOptionBuilder {
         this.relationGroupSize = relationGroupSize;
     }
 
+    public void setNoVersionError(boolean noVersionError) {
+        this.noVersionError = noVersionError;
+    }
+
     public EasyQueryOption build() {
         return new EasyQueryOption(this.deleteThrowError,
                 this.insertStrategy,
@@ -214,6 +223,7 @@ public class EasyQueryOptionBuilder {
                 this.printSql,
                 this.startTimeJob,
                 this.defaultTrack,
-                this.relationGroupSize);
+                this.relationGroupSize,
+                this.noVersionError);
     }
 }

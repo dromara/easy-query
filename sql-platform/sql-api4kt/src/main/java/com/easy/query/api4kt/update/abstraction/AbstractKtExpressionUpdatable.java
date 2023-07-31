@@ -90,6 +90,18 @@ public abstract class AbstractKtExpressionUpdatable<T> implements KtExpressionUp
     }
 
     @Override
+    public KtExpressionUpdatable<T> noVersionError() {
+        clientExpressionUpdatable.noVersionError();
+        return this;
+    }
+
+    @Override
+    public KtExpressionUpdatable<T> noVersionIgnore() {
+        clientExpressionUpdatable.noVersionIgnore();
+        return this;
+    }
+
+    @Override
     public KtExpressionUpdatable<T> batch(boolean use) {
         clientExpressionUpdatable.batch(use);
         return this;

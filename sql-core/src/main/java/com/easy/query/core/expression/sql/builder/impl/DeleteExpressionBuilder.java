@@ -91,14 +91,14 @@ public class DeleteExpressionBuilder extends AbstractPredicateEntityExpressionBu
                     String propertyName = versionMetadata.getPropertyName();
                     VersionStrategy easyVersionStrategy = versionMetadata.getEasyVersionStrategy();
 
-                    if(!isExpression()){
-                        setSQLSegmentBuilder.append(new ColumnVersionPropertyPredicate(table.getEntityTable(), versionMetadata.getPropertyName(),easyVersionStrategy,this.getRuntimeContext()));
-                    }else{
+                    if(isExpression()){
                         Object version = getExpressionContext().getVersion();
                         if(Objects.nonNull(version)){
                             Object nextVersion = easyVersionStrategy.nextVersion(entityMetadata, propertyName, version);
                             sqlColumnSetter.set(propertyName, nextVersion);
                         }
+                    }else{
+                        setSQLSegmentBuilder.append(new ColumnVersionPropertyPredicate(table.getEntityTable(), versionMetadata.getPropertyName(),easyVersionStrategy,this.getRuntimeContext()));
                     }
                 }
                 return setSQLSegmentBuilder;
@@ -149,6 +149,7 @@ public class DeleteExpressionBuilder extends AbstractPredicateEntityExpressionBu
     public boolean isExpression() {
         return expressionDelete;
     }
+
     @Override
     public EntityPredicateSQLExpression toExpression() {
 

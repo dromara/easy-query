@@ -14,4 +14,7 @@ public interface Versionable<TChain> {
         return withVersion(true,versionValue);
     }
     TChain withVersion(boolean condition,Object versionValue);
+
+    TChain noVersionError();
+    TChain noVersionIgnore();
 }

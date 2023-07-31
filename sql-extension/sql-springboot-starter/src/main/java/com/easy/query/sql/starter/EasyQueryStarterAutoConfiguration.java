@@ -207,6 +207,7 @@ public class EasyQueryStarterAutoConfiguration {
                     builder.setStartTimeJob(easyQueryProperties.isStartTimeJob());
                     builder.setDefaultTrack(easyQueryProperties.isDefaultTrack());
                     builder.setRelationGroupSize(easyQueryProperties.getRelationGroupSize());
+                    builder.setNoVersionError(easyQueryProperties.isNoVersionError());
                 })
                 .useDatabaseConfigure(databaseConfiguration)
                 .useStarterConfigure(starterConfigurer)

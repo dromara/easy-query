@@ -119,6 +119,7 @@ public class DbManager {
                     builder.setDefaultTrack(solonEasyQueryProperties.isDefaultTrack());
                     builder.setRelationGroupSize(solonEasyQueryProperties.getRelationGroupSize());
                     builder.setConnectionMode(solonEasyQueryProperties.getConnectionMode());
+                    builder.setNoVersionError(solonEasyQueryProperties.isNoVersionError());
                 });
         DatabaseConfiguration databaseConfigure = getDatabaseConfigure(solonEasyQueryProperties);
         if(databaseConfigure!=null){
