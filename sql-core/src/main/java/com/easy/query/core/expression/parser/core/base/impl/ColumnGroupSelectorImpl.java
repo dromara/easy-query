@@ -1,12 +1,11 @@
 package com.easy.query.core.expression.parser.core.base.impl;
 
 import com.easy.query.core.expression.builder.GroupSelector;
+import com.easy.query.core.expression.builder.core.SQLNative;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
-import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnGroupSelector;
-import com.easy.query.core.expression.parser.core.base.scec.NativeSQLPropertyExpressionContext;
-import com.easy.query.core.expression.parser.core.base.scec.NativeSQLPropertyExpressionContextImpl;
+import com.easy.query.core.util.EasyObjectUtil;
 
 /**
  * @author xuejiaming
@@ -40,16 +39,18 @@ public class ColumnGroupSelectorImpl<T1> implements ColumnGroupSelector<T1> {
     }
 
     @Override
-    public ColumnGroupSelector<T1> sqlNativeSegment(String columnConst, SQLExpression1<NativeSQLPropertyExpressionContext> contextConsume) {
-        groupSelector.sqlNativeSegment(columnConst, context->{
-            contextConsume.apply(new NativeSQLPropertyExpressionContextImpl(table,context));
-        });
+    public ColumnGroupSelector<T1> columnFunc(ColumnPropertyFunction columnPropertyFunction) {
+        groupSelector.columnFunc(table,columnPropertyFunction);
         return this;
     }
 
     @Override
-    public ColumnGroupSelector<T1> columnFunc(ColumnPropertyFunction columnPropertyFunction) {
-        groupSelector.columnFunc(table,columnPropertyFunction);
+    public <T> SQLNative<T> getSQLNative() {
+        return EasyObjectUtil.typeCastNullable(groupSelector);
+    }
+
+    @Override
+    public ColumnGroupSelector<T1> castTChain() {
         return this;
     }
 }

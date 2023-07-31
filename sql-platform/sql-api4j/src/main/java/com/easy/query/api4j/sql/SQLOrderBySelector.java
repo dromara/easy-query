@@ -1,5 +1,6 @@
 package com.easy.query.api4j.sql;
 
+import com.easy.query.api4j.sql.core.SQLLambdaNative;
 import com.easy.query.api4j.sql.scec.SQLNativeLambdaExpressionContext;
 import com.easy.query.api4j.sql.scec.SQLNativeLambdaExpressionContextImpl;
 import com.easy.query.api4j.util.EasyLambdaUtil;
@@ -16,7 +17,7 @@ import com.easy.query.core.expression.parser.core.base.ColumnOrderSelector;
  *
  * @author xuejiaming
  */
-public interface SQLOrderBySelector<T1> extends EntitySQLTableOwner<T1> {
+public interface SQLOrderBySelector<T1> extends EntitySQLTableOwner<T1>, SQLLambdaNative<T1,SQLOrderBySelector<T1>> {
     ColumnOrderSelector<T1> getOrderBySelector();
 
     default TableAvailable getTable() {
@@ -41,15 +42,6 @@ public interface SQLOrderBySelector<T1> extends EntitySQLTableOwner<T1> {
     @Deprecated
     default SQLOrderBySelector<T1> columnConst(String columnConst){
         return sqlNativeSegment(columnConst,c->{});
-    }
-    default SQLOrderBySelector<T1> sqlNativeSegment(String sqlSegment){
-        return sqlNativeSegment(sqlSegment,c->{});
-    }
-    default SQLOrderBySelector<T1> sqlNativeSegment(String sqlSegment, SQLExpression1<SQLNativeLambdaExpressionContext<T1>> contextConsume){
-        getOrderBySelector().sqlNativeSegment(sqlSegment,context->{
-            contextConsume.apply(new SQLNativeLambdaExpressionContextImpl<>(context));
-        });
-        return this;
     }
 
     default <T2> SQLOrderBySelector<T2> then(SQLOrderBySelector<T2> sub) {

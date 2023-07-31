@@ -2,16 +2,15 @@ package com.easy.query.core.expression.parser.core.base;
 
 import com.easy.query.core.expression.builder.Selector;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
-import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
-import com.easy.query.core.expression.parser.core.base.scec.NativeSQLPropertyExpressionContext;
+import com.easy.query.core.expression.parser.core.base.core.SQLPropertyNative;
 
 /**
  * @author xuejiaming
  * @Description: 文件说明
  * @Date: 2023/2/6 23:20
  */
-public interface ColumnSelector<T1> extends EntitySQLTableOwner<T1> {
+public interface ColumnSelector<T1> extends EntitySQLTableOwner<T1>, SQLPropertyNative<ColumnSelector<T1>> {
     Selector getSelector();
 
     ColumnSelector<T1> column(String property);
@@ -25,10 +24,6 @@ public interface ColumnSelector<T1> extends EntitySQLTableOwner<T1> {
     default ColumnSelector<T1> columnConst(String sqlSegment){
         return sqlNativeSegment(sqlSegment, c->{});
     }
-    default ColumnSelector<T1> sqlNativeSegment(String sqlSegment){
-        return sqlNativeSegment(sqlSegment, c->{});
-    }
-    ColumnSelector<T1> sqlNativeSegment(String sqlSegment, SQLExpression1<NativeSQLPropertyExpressionContext> contextConsume);
 
     ColumnSelector<T1> columnFunc(ColumnPropertyFunction columnPropertyFunction);
 

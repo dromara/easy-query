@@ -2,6 +2,7 @@ package com.easy.query.core.expression.builder;
 
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.expression.builder.core.SQLNative;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.func.DefaultColumnPropertyFunction;
@@ -9,7 +10,6 @@ import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.SQLColumnSegment;
-import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 
@@ -19,7 +19,7 @@ import com.easy.query.core.expression.sql.builder.ExpressionContext;
  *
  * @author xuejiaming
  */
-public interface AsSelector {
+public interface AsSelector extends SQLNative<AsSelector> {
     QueryRuntimeContext getRuntimeContext();
     ExpressionContext getExpressionContext();
     EntityQueryExpressionBuilder getEntityQueryExpressionBuilder();
@@ -35,11 +35,6 @@ public interface AsSelector {
      * @return
      */
     AsSelector columnInclude(TableAvailable table, String selfProperty, String aliasProperty, SQLExpression1<AsSelector> includeSelectorExpression);
-
-   default AsSelector sqlNativeSegment(String sqlSegment){
-       return sqlNativeSegment(sqlSegment, c->{});
-   }
-    AsSelector sqlNativeSegment(String sqlSegment, SQLExpression1<SQLNativeExpressionContext> contextConsume);
 
     AsSelector columnIgnore(TableAvailable table, String property);
 

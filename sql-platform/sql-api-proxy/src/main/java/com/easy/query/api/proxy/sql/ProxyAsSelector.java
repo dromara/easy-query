@@ -1,6 +1,7 @@
 package com.easy.query.api.proxy.sql;
 
 import com.easy.query.api.proxy.select.ProxyQueryable;
+import com.easy.query.api.proxy.sql.core.SQLProxyNative;
 import com.easy.query.api.proxy.sql.scec.SQLNativeProxyExpressionContext;
 import com.easy.query.api.proxy.sql.scec.SQLNativeProxyExpressionContextImpl;
 import com.easy.query.core.context.QueryRuntimeContext;
@@ -20,7 +21,7 @@ import java.util.function.Function;
  *
  * @author xuejiaming
  */
-public interface ProxyAsSelector<TRProxy extends ProxyEntity<TRProxy, TR>, TR> {
+public interface ProxyAsSelector<TRProxy extends ProxyEntity<TRProxy, TR>, TR> extends SQLProxyNative<ProxyAsSelector<TRProxy, TR>> {
 
     TRProxy getTRProxy();
 

@@ -1,5 +1,6 @@
 package com.easy.query.api4kt.sql;
 
+import com.easy.query.api4kt.sql.core.SQLLambdaKtNative;
 import com.easy.query.api4kt.sql.scec.SQLNativeLambdaKtExpressionContext;
 import com.easy.query.api4kt.sql.scec.SQLNativeLambdaKtExpressionContextImpl;
 import com.easy.query.api4kt.util.EasyKtLambdaUtil;
@@ -15,7 +16,7 @@ import kotlin.reflect.KProperty1;
  * @Description: 文件说明
  * @Date: 2023/2/6 23:20
  */
-public interface SQLKtColumnSelector<T1> extends EntitySQLTableOwner<T1> {
+public interface SQLKtColumnSelector<T1> extends EntitySQLTableOwner<T1>, SQLLambdaKtNative<T1,SQLKtColumnSelector<T1>> {
     ColumnSelector<T1> getColumnSelector();
 
     default TableAvailable getTable() {
@@ -35,15 +36,6 @@ public interface SQLKtColumnSelector<T1> extends EntitySQLTableOwner<T1> {
     @Deprecated
     default SQLKtColumnSelector<T1> columnConst(String columnConst){
         return sqlNativeSegment(columnConst,c->{});
-    }
-    default SQLKtColumnSelector<T1> sqlNativeSegment(String sqlSegment){
-        return sqlNativeSegment(sqlSegment,c->{});
-    }
-    default SQLKtColumnSelector<T1> sqlNativeSegment(String sqlSegment, SQLExpression1<SQLNativeLambdaKtExpressionContext<T1>> contextConsume){
-        getColumnSelector().sqlNativeSegment(sqlSegment,context->{
-            contextConsume.apply(new SQLNativeLambdaKtExpressionContextImpl<>(context));
-        });
-        return this;
     }
 
     default SQLKtColumnSelector<T1> columnFunc(ColumnPropertyFunction columnPropertyFunction) {

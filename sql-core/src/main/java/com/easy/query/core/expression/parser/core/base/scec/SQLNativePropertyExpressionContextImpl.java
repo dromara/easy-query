@@ -9,36 +9,36 @@ import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionCo
  *
  * @author xuejiaming
  */
-public class NativeSQLPropertyExpressionContextImpl implements NativeSQLPropertyExpressionContext {
+public class SQLNativePropertyExpressionContextImpl implements SQLNativePropertyExpressionContext {
     private final TableAvailable table;
     private final SQLNativeExpressionContext sqlConstExpressionContext;
 
-    public NativeSQLPropertyExpressionContextImpl(TableAvailable table, SQLNativeExpressionContext sqlConstExpressionContext) {
+    public SQLNativePropertyExpressionContextImpl(TableAvailable table, SQLNativeExpressionContext sqlConstExpressionContext) {
         this.table = table;
 
         this.sqlConstExpressionContext = sqlConstExpressionContext;
     }
 
     @Override
-    public NativeSQLPropertyExpressionContext expression(String property) {
+    public SQLNativePropertyExpressionContext expression(String property) {
         sqlConstExpressionContext.expression(table, property);
         return this;
     }
 
     @Override
-    public NativeSQLPropertyExpressionContext expression(TableAvailable table, String property) {
+    public SQLNativePropertyExpressionContext expression(TableAvailable table, String property) {
         sqlConstExpressionContext.expression(table, property);
         return this;
     }
 
     @Override
-    public NativeSQLPropertyExpressionContext value(Object val) {
+    public SQLNativePropertyExpressionContext value(Object val) {
         sqlConstExpressionContext.value(val);
         return this;
     }
 
     @Override
-    public NativeSQLPropertyExpressionContext setAlias(String alias) {
+    public SQLNativePropertyExpressionContext setAlias(String alias) {
         sqlConstExpressionContext.setAlias(alias);
         return this;
     }

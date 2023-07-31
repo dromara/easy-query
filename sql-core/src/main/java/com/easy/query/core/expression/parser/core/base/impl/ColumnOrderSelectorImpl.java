@@ -1,12 +1,11 @@
 package com.easy.query.core.expression.parser.core.base.impl;
 
 import com.easy.query.core.expression.builder.OrderSelector;
+import com.easy.query.core.expression.builder.core.SQLNative;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
-import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnOrderSelector;
-import com.easy.query.core.expression.parser.core.base.scec.NativeSQLPropertyExpressionContext;
-import com.easy.query.core.expression.parser.core.base.scec.NativeSQLPropertyExpressionContextImpl;
+import com.easy.query.core.util.EasyObjectUtil;
 
 /**
  * @author xuejiaming
@@ -45,16 +44,17 @@ public class ColumnOrderSelectorImpl<T1> implements ColumnOrderSelector<T1> {
         return this;
     }
 
-    @Override
-    public ColumnOrderSelector<T1> sqlNativeSegment(String columnConst, SQLExpression1<NativeSQLPropertyExpressionContext> contextConsume) {
-        orderSelector.sqlNativeSegment(columnConst, context->{
-            contextConsume.apply(new NativeSQLPropertyExpressionContextImpl(table,context));
-        });
-        return this;
-    }
-
     public void setAsc(boolean asc) {
         orderSelector.setAsc(asc);
     }
 
+    @Override
+    public <T> SQLNative<T> getSQLNative() {
+        return EasyObjectUtil.typeCastNullable(orderSelector);
+    }
+
+    @Override
+    public ColumnOrderSelector<T1> castTChain() {
+        return this;
+    }
 }

@@ -1,6 +1,7 @@
 package com.easy.query.api4j.sql;
 
 import com.easy.query.api4j.select.Queryable;
+import com.easy.query.api4j.sql.core.SQLLambdaNative;
 import com.easy.query.api4j.sql.scec.SQLNativeLambdaExpressionContext;
 import com.easy.query.api4j.sql.scec.SQLNativeLambdaExpressionContextImpl;
 import com.easy.query.api4j.util.EasyLambdaUtil;
@@ -22,7 +23,7 @@ import java.util.Collection;
  * @Description: 文件说明
  * @Date: 2023/2/5 09:09
  */
-public interface SQLWherePredicate<T1> extends EntitySQLTableOwner<T1> {
+public interface SQLWherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLLambdaNative<T1,SQLWherePredicate<T1>> {
     WherePredicate<T1> getWherePredicate();
 
     default TableAvailable getTable() {
@@ -681,27 +682,6 @@ public interface SQLWherePredicate<T1> extends EntitySQLTableOwner<T1> {
 
     default <T2> SQLWherePredicate<T1> lt(boolean condition, EntitySQLTableOwner<T2> sub, Property<T1, ?> column1, Property<T2, ?> column2) {
         getWherePredicate().lt(condition, sub, EasyLambdaUtil.getPropertyName(column1), EasyLambdaUtil.getPropertyName(column2));
-        return this;
-    }
-    /**
-     * 参数格式化 占位符 {0} {1}
-     * @param sqlSegment
-     * @return
-     */
-    default SQLWherePredicate<T1> sqlNativeSegment(String sqlSegment){
-        return sqlNativeSegment(sqlSegment,c->{});
-    }
-
-    /**
-     * 参数格式化 占位符 {0} {1}
-     * @param sqlSegment
-     * @param contextConsume
-     * @return
-     */
-    default SQLWherePredicate<T1> sqlNativeSegment(String sqlSegment, SQLExpression1<SQLNativeLambdaExpressionContext<T1>> contextConsume){
-        getWherePredicate().sqlNativeSegment(sqlSegment,context->{
-            contextConsume.apply(new SQLNativeLambdaExpressionContextImpl<>(context));
-        });
         return this;
     }
 

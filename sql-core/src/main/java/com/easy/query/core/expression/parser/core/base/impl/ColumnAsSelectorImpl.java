@@ -3,15 +3,15 @@ package com.easy.query.core.expression.parser.core.base.impl;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.builder.AsSelector;
+import com.easy.query.core.expression.builder.core.SQLNative;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
-import com.easy.query.core.expression.parser.core.base.scec.NativeSQLPropertyExpressionContext;
-import com.easy.query.core.expression.parser.core.base.scec.NativeSQLPropertyExpressionContextImpl;
 import com.easy.query.core.expression.segment.SQLColumnSegment;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
+import com.easy.query.core.util.EasyObjectUtil;
 
 /**
  * @author xuejiaming
@@ -68,13 +68,14 @@ public class ColumnAsSelectorImpl<T1, TR> implements ColumnAsSelector<T1, TR> {
     }
 
     @Override
-    public ColumnAsSelector<T1, TR> sqlNativeSegment(String sqlSegment, SQLExpression1<NativeSQLPropertyExpressionContext> contextConsume) {
-        asSelector.sqlNativeSegment(sqlSegment, context->{
-            contextConsume.apply(new NativeSQLPropertyExpressionContextImpl(table,context));
-        });
-        return this;
+    public <T> SQLNative<T> getSQLNative() {
+        return EasyObjectUtil.typeCastNullable(asSelector);
     }
 
+    @Override
+    public ColumnAsSelector<T1, TR> castTChain() {
+        return this;
+    }
     @Override
     public ColumnAsSelector<T1, TR> columnIgnore(String property) {
         asSelector.columnIgnore(table,property);

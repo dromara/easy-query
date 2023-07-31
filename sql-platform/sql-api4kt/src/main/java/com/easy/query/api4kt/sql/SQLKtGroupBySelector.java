@@ -1,5 +1,6 @@
 package com.easy.query.api4kt.sql;
 
+import com.easy.query.api4kt.sql.core.SQLLambdaKtNative;
 import com.easy.query.api4kt.sql.scec.SQLNativeLambdaKtExpressionContext;
 import com.easy.query.api4kt.sql.scec.SQLNativeLambdaKtExpressionContextImpl;
 import com.easy.query.api4kt.util.EasyKtLambdaUtil;
@@ -16,7 +17,7 @@ import kotlin.reflect.KProperty1;
  *
  * @author xuejiaming
  */
-public interface SQLKtGroupBySelector<T1> extends EntitySQLTableOwner<T1> {
+public interface SQLKtGroupBySelector<T1> extends EntitySQLTableOwner<T1>, SQLLambdaKtNative<T1,SQLKtGroupBySelector<T1>> {
     ColumnGroupSelector<T1> getGroupBySelector();
 
     default TableAvailable getTable() {
@@ -37,16 +38,6 @@ public interface SQLKtGroupBySelector<T1> extends EntitySQLTableOwner<T1> {
     default SQLKtGroupBySelector<T1> columnConst(String columnConst){
         return sqlNativeSegment(columnConst,c->{});
     }
-    default SQLKtGroupBySelector<T1> sqlNativeSegment(String columnConst){
-        return sqlNativeSegment(columnConst,c->{});
-    }
-    default SQLKtGroupBySelector<T1> sqlNativeSegment(String columnConst, SQLExpression1<SQLNativeLambdaKtExpressionContext<T1>> contextConsume){
-        getGroupBySelector().sqlNativeSegment(columnConst,context->{
-            contextConsume.apply(new SQLNativeLambdaKtExpressionContextImpl<>(context));
-        });
-        return this;
-    }
-
     default SQLKtGroupBySelector<T1> columnFunc(ColumnPropertyFunction columnPropertyFunction) {
         getGroupBySelector().columnFunc(columnPropertyFunction);
         return this;

@@ -2,9 +2,8 @@ package com.easy.query.core.expression.parser.core.base;
 
 import com.easy.query.core.expression.builder.GroupSelector;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
-import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
-import com.easy.query.core.expression.parser.core.base.scec.NativeSQLPropertyExpressionContext;
+import com.easy.query.core.expression.parser.core.base.core.SQLPropertyNative;
 
 /**
  * create time 2023/4/30 21:49
@@ -12,7 +11,7 @@ import com.easy.query.core.expression.parser.core.base.scec.NativeSQLPropertyExp
  *
  * @author xuejiaming
  */
-public interface ColumnGroupSelector<T1> extends EntitySQLTableOwner<T1> {
+public interface ColumnGroupSelector<T1> extends EntitySQLTableOwner<T1>, SQLPropertyNative<ColumnGroupSelector<T1>> {
     GroupSelector getGroupSelector();
     ColumnGroupSelector<T1> column(String property);
 
@@ -25,11 +24,6 @@ public interface ColumnGroupSelector<T1> extends EntitySQLTableOwner<T1> {
     default ColumnGroupSelector<T1> columnConst(String columnConst){
         return sqlNativeSegment(columnConst,c->{});
     }
-
-    default ColumnGroupSelector<T1> sqlNativeSegment(String sqlSegment){
-        return sqlNativeSegment(sqlSegment, c->{});
-    }
-    ColumnGroupSelector<T1> sqlNativeSegment(String sqlSegment, SQLExpression1<NativeSQLPropertyExpressionContext> contextConsume);
 
     ColumnGroupSelector<T1> columnFunc(ColumnPropertyFunction columnPropertyFunction);
 

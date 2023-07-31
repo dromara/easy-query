@@ -1,5 +1,6 @@
 package com.easy.query.api.proxy.sql;
 
+import com.easy.query.api.proxy.sql.core.SQLProxyNative;
 import com.easy.query.api.proxy.sql.scec.SQLNativeProxyExpressionContext;
 import com.easy.query.api.proxy.sql.scec.SQLNativeProxyExpressionContextImpl;
 import com.easy.query.core.expression.builder.OrderSelector;
@@ -12,7 +13,7 @@ import com.easy.query.core.proxy.SQLColumn;
  *
  * @author xuejiaming
  */
-public interface ProxyOrderSelector {
+public interface ProxyOrderSelector extends SQLProxyNative<ProxyOrderSelector> {
     OrderSelector getOrderSelector();
 
 
@@ -30,16 +31,6 @@ public interface ProxyOrderSelector {
        getOrderSelector().column(column.getTable(), column.value());
        return this;
    }
-
-    default ProxyOrderSelector sqlNativeSegment(String sqlSegment){
-        return sqlNativeSegment(sqlSegment,c->{});
-    }
-    default ProxyOrderSelector sqlNativeSegment(String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume){
-        getOrderSelector().sqlNativeSegment(sqlSegment, context->{
-            contextConsume.apply(new SQLNativeProxyExpressionContextImpl(context));
-        });
-        return this;
-    }
 
    default ProxyOrderSelector columnFunc(ProxyColumnPropertyFunction proxyColumnPropertyFunction){
        getOrderSelector().columnFunc(proxyColumnPropertyFunction.getColumn().getTable(), proxyColumnPropertyFunction.getColumnPropertyFunction());

@@ -745,4 +745,15 @@ public class H2QueryTest extends H2BaseTest {
                 ).toSQL();
         Assert.assertEquals("SELECT id,name,edition,price,store_id FROM t_book_test WHERE regexp_like(price,?)", sql);
     }
+    @Test
+    public void nativeSQLTest6() {
+        String sql = easyQuery.queryable(H2BookTest.class)
+                .leftJoin(DefTable.class,(t,t1)->t.eq(t1,H2BookTest::getPrice,DefTable::getMobile))
+                .where((o,o1) -> o.sqlNativeSegment("regexp_like({0},{1}) AND regexp_like({2},{1})", it -> it
+                        .expression(H2BookTest::getPrice)
+                        .value("^Ste(v|ph)en$").expression(o1,DefTable::getAvatar)))
+                .select(o -> o.columnAll()
+                ).toSQL();
+        Assert.assertEquals("SELECT t.id,t.name,t.edition,t.price,t.store_id FROM t_book_test t LEFT JOIN t_def_table t1 ON t.price = t1.mobile WHERE regexp_like(t.price,?) AND regexp_like(t1.avatar,?)", sql);
+    }
 }

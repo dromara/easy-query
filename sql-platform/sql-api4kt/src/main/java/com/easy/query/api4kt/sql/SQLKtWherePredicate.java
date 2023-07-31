@@ -1,8 +1,7 @@
 package com.easy.query.api4kt.sql;
 
 import com.easy.query.api4kt.select.KtQueryable;
-import com.easy.query.api4kt.sql.scec.SQLNativeLambdaKtExpressionContext;
-import com.easy.query.api4kt.sql.scec.SQLNativeLambdaKtExpressionContextImpl;
+import com.easy.query.api4kt.sql.core.SQLLambdaKtNative;
 import com.easy.query.api4kt.util.EasyKtLambdaUtil;
 import com.easy.query.core.enums.SQLLikeEnum;
 import com.easy.query.core.enums.SQLPredicateCompare;
@@ -22,7 +21,7 @@ import java.util.Collection;
  * @Description: 文件说明
  * @Date: 2023/2/5 09:09
  */
-public interface SQLKtWherePredicate<T1> extends EntitySQLTableOwner<T1> {
+public interface SQLKtWherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLLambdaKtNative<T1,SQLKtWherePredicate<T1>> {
     WherePredicate<T1> getWherePredicate();
 
     default TableAvailable getTable() {
@@ -680,28 +679,6 @@ public interface SQLKtWherePredicate<T1> extends EntitySQLTableOwner<T1> {
 
     default <T2> SQLKtWherePredicate<T1> lt(boolean condition, SQLKtWherePredicate<T2> sub, KProperty1<T1, ?> column1, KProperty1<T2, ?> column2) {
         getWherePredicate().lt(condition, sub.getWherePredicate(), EasyKtLambdaUtil.getPropertyName(column1), EasyKtLambdaUtil.getPropertyName(column2));
-        return this;
-    }
-
-    /**
-     * 参数格式化 占位符 {0} {1}
-     * @param sqlSegment
-     * @return
-     */
-    default SQLKtWherePredicate<T1> sqlNativeSegment(String sqlSegment){
-        return sqlNativeSegment(sqlSegment,c->{});
-    }
-
-    /**
-     * 参数格式化 占位符 {0} {1}
-     * @param sqlSegment
-     * @param contextConsume
-     * @return
-     */
-    default SQLKtWherePredicate<T1> sqlNativeSegment(String sqlSegment, SQLExpression1<SQLNativeLambdaKtExpressionContext<T1>> contextConsume){
-        getWherePredicate().sqlNativeSegment(sqlSegment,context->{
-            contextConsume.apply(new SQLNativeLambdaKtExpressionContextImpl<>(context));
-        });
         return this;
     }
 

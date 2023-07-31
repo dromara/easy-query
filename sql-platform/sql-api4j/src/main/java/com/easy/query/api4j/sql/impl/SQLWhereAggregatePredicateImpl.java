@@ -3,6 +3,8 @@ package com.easy.query.api4j.sql.impl;
 import com.easy.query.api4j.sql.SQLWhereAggregatePredicate;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.base.WhereAggregatePredicate;
+import com.easy.query.core.expression.parser.core.base.core.SQLPropertyNative;
+import com.easy.query.core.util.EasyObjectUtil;
 
 /**
  * @author xuejiaming
@@ -40,6 +42,16 @@ public class SQLWhereAggregatePredicateImpl<T1> implements SQLWhereAggregatePred
                 sqlAggregatePredicateSQLExpression.apply(sqlWhereAggregatePredicate);
             });
         }
+        return this;
+    }
+
+    @Override
+    public <T> SQLPropertyNative<T> getSQLPropertyNative() {
+        return EasyObjectUtil.typeCastNullable(whereAggregatePredicate);
+    }
+
+    @Override
+    public SQLWhereAggregatePredicate<T1> castTChain() {
         return this;
     }
 }

@@ -6,13 +6,13 @@ import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.enums.SQLPredicateCompareEnum;
 import com.easy.query.core.enums.SQLRangeEnum;
 import com.easy.query.core.expression.builder.Filter;
+import com.easy.query.core.expression.builder.core.SQLNative;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
-import com.easy.query.core.expression.parser.core.base.scec.NativeSQLPropertyExpressionContext;
-import com.easy.query.core.expression.parser.core.base.scec.NativeSQLPropertyExpressionContextImpl;
+import com.easy.query.core.util.EasyObjectUtil;
 
 import java.util.Collection;
 
@@ -237,14 +237,6 @@ public class WherePredicateImpl<T1> implements WherePredicate<T1> {
     }
 
     @Override
-    public WherePredicate<T1> sqlNativeSegment(String sqlSegment, SQLExpression1<NativeSQLPropertyExpressionContext> contextConsume) {
-        filter.sqlNativeSegment(sqlSegment, context->{
-            contextConsume.apply(new NativeSQLPropertyExpressionContextImpl(table,context));
-        });
-        return this;
-    }
-
-    @Override
     public <T2> WherePredicate<T2> then(WherePredicate<T2> sub) {
         return sub;
     }
@@ -287,7 +279,17 @@ public class WherePredicateImpl<T1> implements WherePredicate<T1> {
 
 
     @Override
+    public <T> SQLNative<T> getSQLNative() {
+        return EasyObjectUtil.typeCastNullable(filter);
+    }
+
+    @Override
     public TableAvailable getTable() {
         return table;
+    }
+
+    @Override
+    public WherePredicate<T1> castTChain() {
+        return this;
     }
 }

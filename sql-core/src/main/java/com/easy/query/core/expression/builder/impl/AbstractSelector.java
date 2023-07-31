@@ -77,10 +77,10 @@ public abstract class AbstractSelector<TChain> {
     }
     
     public TChain sqlNativeSegment(String sqlSegment, SQLExpression1<SQLNativeExpressionContext> contextConsume){
-        Objects.requireNonNull(contextConsume,"contextConsume cannot be null");
-        SQLNativeExpressionContextImpl sqlConstExpressionContext=new SQLNativeExpressionContextImpl();
-        contextConsume.apply(sqlConstExpressionContext);
-        SQLNativeSegment columnSegment = sqlSegmentFactory.createSQLNativeSegment(runtimeContext, sqlSegment, sqlConstExpressionContext);
+        Objects.requireNonNull(contextConsume,"sql native context consume cannot be null");
+        SQLNativeExpressionContextImpl sqlNativeExpressionContext=new SQLNativeExpressionContextImpl();
+        contextConsume.apply(sqlNativeExpressionContext);
+        SQLNativeSegment columnSegment = sqlSegmentFactory.createSQLNativeSegment(runtimeContext, sqlSegment, sqlNativeExpressionContext);
         sqlBuilderSegment.append(columnSegment);
         return (TChain) this;
     }

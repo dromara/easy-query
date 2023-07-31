@@ -30,6 +30,7 @@ import com.easy.query.core.util.EasySQLUtil;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * create time 2023/6/22 14:50
@@ -44,7 +45,7 @@ public class FilterImpl implements Filter {
     private final boolean reverse;
     private PredicateSegment nextPredicateSegment;
 
-    public FilterImpl(QueryRuntimeContext runtimeContext,ExpressionContext expressionContext, PredicateSegment predicateSegment, boolean reverse) {
+    public FilterImpl(QueryRuntimeContext runtimeContext, ExpressionContext expressionContext, PredicateSegment predicateSegment, boolean reverse) {
 
         this.runtimeContext = runtimeContext;
         this.expressionContext = expressionContext;
@@ -189,7 +190,7 @@ public class FilterImpl implements Filter {
         next();
     }
 
-    private <T2> void subQueryExists(TableAvailable table,Query<T2> subQuery, SQLPredicateCompareEnum sqlPredicateCompare) {
+    private <T2> void subQueryExists(TableAvailable table, Query<T2> subQuery, SQLPredicateCompareEnum sqlPredicateCompare) {
 
         extract(subQuery);
         Query<T2> existsQuery = subQuery.cloneQueryable().select("1");
@@ -220,19 +221,19 @@ public class FilterImpl implements Filter {
 
     @Override
     public <TProperty> Filter notIn(TableAvailable table, String property, Query<TProperty> subQuery) {
-        subQueryIn(table,property, subQuery, SQLPredicateCompareEnum.NOT_IN);
+        subQueryIn(table, property, subQuery, SQLPredicateCompareEnum.NOT_IN);
         return this;
     }
 
     @Override
-    public <T2> Filter exists(TableAvailable table,Query<T2> subQuery) {
-        subQueryExists(table,subQuery, SQLPredicateCompareEnum.EXISTS);
+    public <T2> Filter exists(TableAvailable table, Query<T2> subQuery) {
+        subQueryExists(table, subQuery, SQLPredicateCompareEnum.EXISTS);
         return this;
     }
 
     @Override
-    public <T2> Filter notExists(TableAvailable table,Query<T2> subQuery) {
-        subQueryExists(table,subQuery, SQLPredicateCompareEnum.NOT_EXISTS);
+    public <T2> Filter notExists(TableAvailable table, Query<T2> subQuery) {
+        subQueryExists(table, subQuery, SQLPredicateCompareEnum.NOT_EXISTS);
         return this;
     }
 
@@ -241,12 +242,12 @@ public class FilterImpl implements Filter {
 
         if (conditionLeft) {
             boolean openFirst = SQLRangeEnum.openFirst(sqlRange);
-            appendThisPredicate(table,property, valLeft, getReallyPredicateCompare(openFirst ? SQLPredicateCompareEnum.GT : SQLPredicateCompareEnum.GE));
+            appendThisPredicate(table, property, valLeft, getReallyPredicateCompare(openFirst ? SQLPredicateCompareEnum.GT : SQLPredicateCompareEnum.GE));
             next();
         }
         if (conditionRight) {
             boolean openEnd = SQLRangeEnum.openEnd(sqlRange);
-            appendThisPredicate(table,property, valRight, getReallyPredicateCompare(openEnd ? SQLPredicateCompareEnum.LT : SQLPredicateCompareEnum.LE));
+            appendThisPredicate(table, property, valRight, getReallyPredicateCompare(openEnd ? SQLPredicateCompareEnum.LT : SQLPredicateCompareEnum.LE));
             next();
         }
         return this;
@@ -255,13 +256,13 @@ public class FilterImpl implements Filter {
     @Override
     public Filter columnFunc(TableAvailable table, ColumnPropertyFunction columnPropertyFunction, SQLPredicateCompare sqlPredicateCompare, Object val) {
 
-        appendThisFuncPredicate(table,columnPropertyFunction.getPropertyName(), columnPropertyFunction.getColumnFunction(), getReallyPredicateCompare(sqlPredicateCompare), val);
+        appendThisFuncPredicate(table, columnPropertyFunction.getPropertyName(), columnPropertyFunction.getColumnFunction(), getReallyPredicateCompare(sqlPredicateCompare), val);
         next();
         return this;
     }
 
     @Override
-    public Filter compareSelf(TableAvailable leftTable, String property1, TableAvailable rightTable, String property2,SQLPredicateCompare sqlPredicateCompare) {
+    public Filter compareSelf(TableAvailable leftTable, String property1, TableAvailable rightTable, String property2, SQLPredicateCompare sqlPredicateCompare) {
         nextPredicateSegment.setPredicate(new ColumnWithColumnPredicate(leftTable, property1, rightTable, property2, getReallyPredicateCompare(sqlPredicateCompare), runtimeContext));
         next();
         return this;
@@ -269,9 +270,10 @@ public class FilterImpl implements Filter {
 
     @Override
     public Filter sqlNativeSegment(String sqlSegment, SQLExpression1<SQLNativeExpressionContext> contextConsume) {
+        Objects.requireNonNull(contextConsume,"sql native context consume cannot be null");
         SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl();
         contextConsume.apply(sqlNativeExpressionContext);
-        nextPredicateSegment.setPredicate(new SQLNativePredicateImpl(runtimeContext,sqlSegment,sqlNativeExpressionContext));
+        nextPredicateSegment.setPredicate(new SQLNativePredicateImpl(runtimeContext, sqlSegment, sqlNativeExpressionContext));
         next();
         return this;
     }
@@ -283,6 +285,7 @@ public class FilterImpl implements Filter {
             this.nextPredicateSegment = new AndPredicateSegment();
         }
     }
+
     @Override
     public Filter and() {
         and0();
@@ -305,6 +308,7 @@ public class FilterImpl implements Filter {
             this.nextPredicateSegment = new OrPredicateSegment();
         }
     }
+
     @Override
     public Filter or() {
         or0();

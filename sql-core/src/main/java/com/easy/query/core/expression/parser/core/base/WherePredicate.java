@@ -8,7 +8,7 @@ import com.easy.query.core.expression.builder.Filter;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
-import com.easy.query.core.expression.parser.core.base.scec.NativeSQLPropertyExpressionContext;
+import com.easy.query.core.expression.parser.core.base.core.SQLPropertyNative;
 
 import java.util.Collection;
 
@@ -18,7 +18,7 @@ import java.util.Collection;
  * @Description: 文件说明
  * @Date: 2023/2/5 09:09
  */
-public interface WherePredicate<T1> extends EntitySQLTableOwner<T1> {
+public interface WherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLPropertyNative<WherePredicate<T1>> {
     Filter getFilter();
 
     /**
@@ -564,24 +564,7 @@ public interface WherePredicate<T1> extends EntitySQLTableOwner<T1> {
 
     <T2> WherePredicate<T1> lt(boolean condition, EntitySQLTableOwner<T2> sub, String property1, String property2);
 
-
-    /**
-     * 参数格式化 占位符 {0} {1}
-     * @param sqlSegment
-     * @return
-     */
-    default WherePredicate<T1> sqlNativeSegment(String sqlSegment){
-        return sqlNativeSegment(sqlSegment,c->{});
-    }
-
-    /**
-     * 参数格式化 占位符 {0} {1}
-     * @param sqlSegment
-     * @param contextConsume
-     * @return
-     */
-     WherePredicate<T1> sqlNativeSegment(String sqlSegment, SQLExpression1<NativeSQLPropertyExpressionContext> contextConsume);
-    <T2> WherePredicate<T2> then(WherePredicate<T2> sub);
+ <T2> WherePredicate<T2> then(WherePredicate<T2> sub);
 
     default WherePredicate<T1> and() {
         return and(true);

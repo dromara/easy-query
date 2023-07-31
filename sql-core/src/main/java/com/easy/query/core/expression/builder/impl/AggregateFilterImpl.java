@@ -10,6 +10,11 @@ import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.OrPredicateSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.segment.condition.predicate.FuncColumnValuePredicate;
+import com.easy.query.core.expression.segment.condition.predicate.SQLNativePredicateImpl;
+import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;
+import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContextImpl;
+
+import java.util.Objects;
 
 /**
  * create time 2023/6/23 14:13
@@ -42,6 +47,16 @@ public class AggregateFilterImpl implements AggregateFilter {
     @Override
     public AggregateFilter func(TableAvailable table, ColumnFunction columnFunction, String property, SQLPredicateCompare compare, Object val) {
         nextPredicateSegment.setPredicate(new FuncColumnValuePredicate(table, columnFunction, property, val, compare, runtimeContext));
+        nextAnd();
+        return this;
+    }
+
+    @Override
+    public AggregateFilter sqlNativeSegment(String sqlSegment, SQLExpression1<SQLNativeExpressionContext> contextConsume) {
+        Objects.requireNonNull(contextConsume,"sql native context consume cannot be null");
+        SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl();
+        contextConsume.apply(sqlNativeExpressionContext);
+        nextPredicateSegment.setPredicate(new SQLNativePredicateImpl(runtimeContext, sqlSegment, sqlNativeExpressionContext));
         nextAnd();
         return this;
     }

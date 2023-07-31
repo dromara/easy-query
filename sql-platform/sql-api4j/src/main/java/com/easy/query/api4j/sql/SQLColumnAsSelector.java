@@ -1,6 +1,7 @@
 package com.easy.query.api4j.sql;
 
 import com.easy.query.api4j.select.Queryable;
+import com.easy.query.api4j.sql.core.SQLLambdaNative;
 import com.easy.query.api4j.sql.impl.SQLColumnAsSelectorImpl;
 import com.easy.query.api4j.sql.scec.SQLNativeLambdaExpressionContext;
 import com.easy.query.api4j.sql.scec.SQLNativeLambdaExpressionContextImpl;
@@ -23,7 +24,7 @@ import java.util.Collection;
  * @Description: 文件说明
  * @Date: 2023/2/6 22:58
  */
-public interface SQLColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1> {
+public interface SQLColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1>, SQLLambdaNative<T1,SQLColumnAsSelector<T1, TR>> {
     ColumnAsSelector<T1, TR> getColumnAsSelector();
 
     default QueryRuntimeContext getRuntimeContext() {
@@ -95,18 +96,6 @@ public interface SQLColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1> {
     default SQLColumnAsSelector<T1, TR> columnConst(String columnConst) {
         return sqlNativeSegment(columnConst, c -> {
         });
-    }
-
-    default SQLColumnAsSelector<T1, TR> sqlNativeSegment(String sqlSegment) {
-        return sqlNativeSegment(sqlSegment, c -> {
-        });
-    }
-
-    default SQLColumnAsSelector<T1, TR> sqlNativeSegment(String sqlSegment, SQLExpression1<SQLNativeLambdaExpressionContext<T1>> contextConsume) {
-        getColumnAsSelector().sqlNativeSegment(sqlSegment, context -> {
-            contextConsume.apply(new SQLNativeLambdaExpressionContextImpl<>(context));
-        });
-        return this;
     }
 
     default SQLColumnAsSelector<T1, TR> columnIgnore(Property<T1, ?> column) {

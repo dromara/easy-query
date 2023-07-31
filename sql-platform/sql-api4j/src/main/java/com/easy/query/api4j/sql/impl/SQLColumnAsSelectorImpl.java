@@ -2,6 +2,8 @@ package com.easy.query.api4j.sql.impl;
 
 import com.easy.query.api4j.sql.SQLColumnAsSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
+import com.easy.query.core.expression.parser.core.base.core.SQLPropertyNative;
+import com.easy.query.core.util.EasyObjectUtil;
 
 /**
  * @author xuejiaming
@@ -21,4 +23,13 @@ public class SQLColumnAsSelectorImpl<T1, TR> implements SQLColumnAsSelector<T1, 
         return columnAsSelector;
     }
 
+    @Override
+    public <T> SQLPropertyNative<T> getSQLPropertyNative() {
+        return EasyObjectUtil.typeCastNullable(columnAsSelector);
+    }
+
+    @Override
+    public SQLColumnAsSelector<T1, TR> castTChain() {
+        return this;
+    }
 }

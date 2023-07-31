@@ -1,5 +1,6 @@
 package com.easy.query.api4j.sql;
 
+import com.easy.query.api4j.sql.core.SQLLambdaNative;
 import com.easy.query.api4j.sql.scec.SQLNativeLambdaExpressionContext;
 import com.easy.query.api4j.sql.scec.SQLNativeLambdaExpressionContextImpl;
 import com.easy.query.api4j.util.EasyLambdaUtil;
@@ -16,7 +17,7 @@ import com.easy.query.core.expression.parser.core.base.ColumnGroupSelector;
  *
  * @author xuejiaming
  */
-public interface SQLGroupBySelector<T1> extends EntitySQLTableOwner<T1> {
+public interface SQLGroupBySelector<T1> extends EntitySQLTableOwner<T1>, SQLLambdaNative<T1,SQLGroupBySelector<T1>> {
     ColumnGroupSelector<T1> getGroupBySelector();
 
     default TableAvailable getTable() {
@@ -37,16 +38,6 @@ public interface SQLGroupBySelector<T1> extends EntitySQLTableOwner<T1> {
     default SQLGroupBySelector<T1> columnConst(String columnConst){
         return sqlNativeSegment(columnConst,c->{});
     }
-    default SQLGroupBySelector<T1> sqlNativeSegment(String sqlSegment){
-        return sqlNativeSegment(sqlSegment,c->{});
-    }
-    default SQLGroupBySelector<T1> sqlNativeSegment(String sqlSegment, SQLExpression1<SQLNativeLambdaExpressionContext<T1>> contextConsume){
-        getGroupBySelector().sqlNativeSegment(sqlSegment,context->{
-            contextConsume.apply(new SQLNativeLambdaExpressionContextImpl<>(context));
-        });
-        return this;
-    }
-
     default SQLGroupBySelector<T1> columnFunc(ColumnPropertyFunction columnPropertyFunction) {
         getGroupBySelector().columnFunc(columnPropertyFunction);
         return this;

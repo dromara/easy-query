@@ -1,5 +1,6 @@
 package com.easy.query.core.expression.builder;
 
+import com.easy.query.core.expression.builder.core.SQLNative;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
@@ -11,13 +12,9 @@ import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionCo
  *
  * @author xuejiaming
  */
-public interface OrderSelector {
+public interface OrderSelector extends SQLNative<OrderSelector> {
     void setAsc(boolean asc);
     OrderSelector column(TableAvailable table, String property);
-    default OrderSelector sqlNativeSegment(String columnConst){
-        return sqlNativeSegment(columnConst, c->{});
-    }
-    OrderSelector sqlNativeSegment(String columnConst, SQLExpression1<SQLNativeExpressionContext> contextConsume);
 
     OrderSelector columnFunc(TableAvailable table,ColumnPropertyFunction columnPropertyFunction);
 //    OrderSelector columnConst(String columnConst);

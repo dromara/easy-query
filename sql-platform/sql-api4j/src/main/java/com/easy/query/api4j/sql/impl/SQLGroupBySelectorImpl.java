@@ -2,6 +2,8 @@ package com.easy.query.api4j.sql.impl;
 
 import com.easy.query.api4j.sql.SQLGroupBySelector;
 import com.easy.query.core.expression.parser.core.base.ColumnGroupSelector;
+import com.easy.query.core.expression.parser.core.base.core.SQLPropertyNative;
+import com.easy.query.core.util.EasyObjectUtil;
 
 /**
  * @author xuejiaming
@@ -20,5 +22,15 @@ public class SQLGroupBySelectorImpl<T1> implements SQLGroupBySelector<T1> {
     @Override
     public ColumnGroupSelector<T1> getGroupBySelector() {
         return groupBySelector;
+    }
+
+    @Override
+    public <T> SQLPropertyNative<T> getSQLPropertyNative() {
+        return EasyObjectUtil.typeCastNullable(groupBySelector);
+    }
+
+    @Override
+    public SQLGroupBySelector<T1> castTChain() {
+        return this;
     }
 }

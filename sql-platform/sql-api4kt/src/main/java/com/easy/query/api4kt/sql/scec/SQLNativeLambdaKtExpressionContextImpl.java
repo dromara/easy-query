@@ -2,7 +2,7 @@ package com.easy.query.api4kt.sql.scec;
 
 import com.easy.query.api4kt.util.EasyKtLambdaUtil;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
-import com.easy.query.core.expression.parser.core.base.scec.NativeSQLPropertyExpressionContext;
+import com.easy.query.core.expression.parser.core.base.scec.SQLNativePropertyExpressionContext;
 import kotlin.reflect.KProperty1;
 
 /**
@@ -12,9 +12,9 @@ import kotlin.reflect.KProperty1;
  * @author xuejiaming
  */
 public class SQLNativeLambdaKtExpressionContextImpl<T1> implements SQLNativeLambdaKtExpressionContext<T1> {
-    private final NativeSQLPropertyExpressionContext columnConstExpressionContext;
+    private final SQLNativePropertyExpressionContext columnConstExpressionContext;
 
-    public SQLNativeLambdaKtExpressionContextImpl(NativeSQLPropertyExpressionContext columnConstExpressionContext){
+    public SQLNativeLambdaKtExpressionContextImpl(SQLNativePropertyExpressionContext columnConstExpressionContext){
 
         this.columnConstExpressionContext = columnConstExpressionContext;
     }

@@ -1,6 +1,9 @@
 package com.easy.query.api.proxy.sql;
 
+import com.easy.query.api.proxy.sql.core.SQLProxyNative;
 import com.easy.query.api.proxy.sql.impl.ProxyAggregateFilterImpl;
+import com.easy.query.api.proxy.sql.scec.SQLNativeProxyExpressionContext;
+import com.easy.query.api.proxy.sql.scec.SQLNativeProxyExpressionContextImpl;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.AggregatePredicateCompare;
 import com.easy.query.core.enums.SQLPredicateCompare;
@@ -15,7 +18,7 @@ import com.easy.query.core.proxy.SQLColumn;
  *
  * @author xuejiaming
  */
-public interface ProxyAggregateFilter {
+public interface ProxyAggregateFilter extends SQLProxyNative<ProxyAggregateFilter> {
     AggregateFilter getAggregateFilter();
 
     default QueryRuntimeContext getRuntimeContext() {
@@ -92,8 +95,6 @@ public interface ProxyAggregateFilter {
         }
         return this;
     }
-
-
     default ProxyAggregateFilter and() {
         return and(true);
     }

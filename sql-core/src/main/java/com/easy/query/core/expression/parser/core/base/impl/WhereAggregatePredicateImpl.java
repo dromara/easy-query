@@ -3,10 +3,12 @@ package com.easy.query.core.expression.parser.core.base.impl;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.expression.builder.AggregateFilter;
+import com.easy.query.core.expression.builder.core.SQLNative;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.WhereAggregatePredicate;
+import com.easy.query.core.util.EasyObjectUtil;
 
 /**
  * @author xuejiaming
@@ -83,6 +85,16 @@ public class WhereAggregatePredicateImpl<T1> implements WhereAggregatePredicate<
                 sqlAggregatePredicateSQLExpression.apply(new WhereAggregatePredicateImpl<>(table,aggregateFilter));
             });
         }
+        return this;
+    }
+
+    @Override
+    public <T> SQLNative<T> getSQLNative() {
+        return EasyObjectUtil.typeCastNullable(aggregateFilter);
+    }
+
+    @Override
+    public WhereAggregatePredicate<T1> castTChain() {
         return this;
     }
 }

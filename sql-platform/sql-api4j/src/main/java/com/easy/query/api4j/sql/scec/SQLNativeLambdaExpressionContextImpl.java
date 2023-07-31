@@ -3,7 +3,7 @@ package com.easy.query.api4j.sql.scec;
 import com.easy.query.api4j.util.EasyLambdaUtil;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
-import com.easy.query.core.expression.parser.core.base.scec.NativeSQLPropertyExpressionContext;
+import com.easy.query.core.expression.parser.core.base.scec.SQLNativePropertyExpressionContext;
 
 /**
  * create time 2023/7/29 23:41
@@ -12,9 +12,9 @@ import com.easy.query.core.expression.parser.core.base.scec.NativeSQLPropertyExp
  * @author xuejiaming
  */
 public class SQLNativeLambdaExpressionContextImpl<T1> implements SQLNativeLambdaExpressionContext<T1> {
-    private final NativeSQLPropertyExpressionContext columnConstExpressionContext;
+    private final SQLNativePropertyExpressionContext columnConstExpressionContext;
 
-    public SQLNativeLambdaExpressionContextImpl(NativeSQLPropertyExpressionContext columnConstExpressionContext){
+    public SQLNativeLambdaExpressionContextImpl(SQLNativePropertyExpressionContext columnConstExpressionContext){
 
         this.columnConstExpressionContext = columnConstExpressionContext;
     }

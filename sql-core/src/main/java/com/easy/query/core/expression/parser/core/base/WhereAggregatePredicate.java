@@ -7,6 +7,7 @@ import com.easy.query.core.expression.builder.AggregateFilter;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
+import com.easy.query.core.expression.parser.core.base.core.SQLPropertyNative;
 
 /**
  * @author xuejiaming
@@ -14,7 +15,7 @@ import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
  * @Description: 文件说明
  * @Date: 2023/2/18 22:17
  */
-public interface WhereAggregatePredicate<T1> extends EntitySQLTableOwner<T1> {
+public interface WhereAggregatePredicate<T1> extends EntitySQLTableOwner<T1>, SQLPropertyNative<WhereAggregatePredicate<T1>> {
     AggregateFilter getAggregateFilter();
 
     QueryRuntimeContext getRuntimeContext();
@@ -85,8 +86,7 @@ public interface WhereAggregatePredicate<T1> extends EntitySQLTableOwner<T1> {
 
     WhereAggregatePredicate<T1> func(boolean condition, ColumnFunction columnFunction, String property, SQLPredicateCompare compare, Object val);
 
-
-    <T2> WhereAggregatePredicate<T2> then(WhereAggregatePredicate<T2> sub);
+ <T2> WhereAggregatePredicate<T2> then(WhereAggregatePredicate<T2> sub);
 
     default WhereAggregatePredicate<T1> and() {
         return and(true);

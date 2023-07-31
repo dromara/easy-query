@@ -2,6 +2,8 @@ package com.easy.query.api4j.sql.impl;
 
 import com.easy.query.api4j.sql.SQLColumnSetSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnUpdateSetSelector;
+import com.easy.query.core.expression.parser.core.base.core.SQLPropertyNative;
+import com.easy.query.core.util.EasyObjectUtil;
 
 /**
  * create time 2023/6/16 22:59
@@ -19,5 +21,15 @@ public class SQLColumnSetSelectorImpl<T1> implements SQLColumnSetSelector<T1> {
     @Override
     public ColumnUpdateSetSelector<T1> getColumnSetSelector() {
         return columnSetSelector;
+    }
+
+    @Override
+    public <T> SQLPropertyNative<T> getSQLPropertyNative() {
+        return EasyObjectUtil.typeCastNullable(columnSetSelector);
+    }
+
+    @Override
+    public SQLColumnSetSelector<T1> castTChain() {
+        return this;
     }
 }

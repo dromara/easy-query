@@ -1,12 +1,11 @@
 package com.easy.query.core.expression.parser.core.base.impl;
 
 import com.easy.query.core.expression.builder.Selector;
+import com.easy.query.core.expression.builder.core.SQLNative;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
-import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnSelector;
-import com.easy.query.core.expression.parser.core.base.scec.NativeSQLPropertyExpressionContext;
-import com.easy.query.core.expression.parser.core.base.scec.NativeSQLPropertyExpressionContextImpl;
+import com.easy.query.core.util.EasyObjectUtil;
 
 /**
  * @author xuejiaming
@@ -39,14 +38,6 @@ public class ColumnSelectorImpl<T1> implements ColumnSelector<T1> {
     }
 
     @Override
-    public ColumnSelector<T1> sqlNativeSegment(String sqlSegment, SQLExpression1<NativeSQLPropertyExpressionContext> contextConsume) {
-        selector.sqlNativeSegment(sqlSegment, context->{
-            contextConsume.apply(new NativeSQLPropertyExpressionContextImpl(table,context));
-        });
-        return this;
-    }
-
-    @Override
     public ColumnSelector<T1> columnFunc(ColumnPropertyFunction columnPropertyFunction) {
         selector.columnFunc(table, columnPropertyFunction);
         return this;
@@ -64,4 +55,13 @@ public class ColumnSelectorImpl<T1> implements ColumnSelector<T1> {
         return this;
     }
 
+    @Override
+    public <T> SQLNative<T> getSQLNative() {
+        return EasyObjectUtil.typeCastNullable(selector);
+    }
+
+    @Override
+    public ColumnSelector<T1> castTChain() {
+        return this;
+    }
 }

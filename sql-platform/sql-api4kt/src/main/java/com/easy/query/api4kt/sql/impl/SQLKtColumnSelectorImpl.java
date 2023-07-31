@@ -2,6 +2,8 @@ package com.easy.query.api4kt.sql.impl;
 
 import com.easy.query.api4kt.sql.SQLKtColumnSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnSelector;
+import com.easy.query.core.expression.parser.core.base.core.SQLPropertyNative;
+import com.easy.query.core.util.EasyObjectUtil;
 
 /**
  * @author xuejiaming
@@ -18,5 +20,15 @@ public class SQLKtColumnSelectorImpl<T1> implements SQLKtColumnSelector<T1> {
     @Override
     public ColumnSelector<T1> getColumnSelector() {
         return columnSelector;
+    }
+
+    @Override
+    public <T> SQLPropertyNative<T> getSQLPropertyNative() {
+        return EasyObjectUtil.typeCastNullable(columnSelector);
+    }
+
+    @Override
+    public SQLKtColumnSelector<T1> castTChain() {
+        return this;
     }
 }

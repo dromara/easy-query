@@ -1,5 +1,6 @@
 package com.easy.query.api.proxy.sql;
 
+import com.easy.query.api.proxy.sql.core.SQLProxyNative;
 import com.easy.query.core.expression.builder.UpdateSetSelector;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
@@ -10,7 +11,7 @@ import com.easy.query.core.proxy.SQLColumn;
  *
  * @author xuejiaming
  */
-public interface ProxyUpdateSetSelector {
+public interface ProxyUpdateSetSelector extends SQLProxyNative<ProxyUpdateSetSelector> {
     UpdateSetSelector getUpdateSetSelector();
     default ProxyUpdateSetSelector columns(SQLColumn<?>... columns){
         if(columns != null){

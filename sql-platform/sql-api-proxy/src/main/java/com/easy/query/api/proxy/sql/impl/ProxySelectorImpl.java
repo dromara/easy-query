@@ -2,6 +2,8 @@ package com.easy.query.api.proxy.sql.impl;
 
 import com.easy.query.api.proxy.sql.ProxySelector;
 import com.easy.query.core.expression.builder.Selector;
+import com.easy.query.core.expression.builder.core.SQLNative;
+import com.easy.query.core.util.EasyObjectUtil;
 
 /**
  * create time 2023/6/22 22:24
@@ -21,4 +23,13 @@ public class ProxySelectorImpl implements ProxySelector {
         return selector;
     }
 
+    @Override
+    public <T> SQLNative<T> getSQLNative() {
+        return EasyObjectUtil.typeCastNullable(selector);
+    }
+
+    @Override
+    public ProxySelector castTChain() {
+        return this;
+    }
 }

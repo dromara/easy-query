@@ -1,13 +1,9 @@
 package com.easy.query.api4kt.sql.impl;
 
-import com.easy.query.api4kt.select.KtQueryable;
 import com.easy.query.api4kt.sql.SQLKtColumnAsSelector;
-import com.easy.query.api4kt.sql.SQLKtWherePredicate;
-import com.easy.query.api4kt.util.EasyKtLambdaUtil;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
-import kotlin.reflect.KProperty1;
-
-import java.util.function.Function;
+import com.easy.query.core.expression.parser.core.base.core.SQLPropertyNative;
+import com.easy.query.core.util.EasyObjectUtil;
 
 /**
  * @author xuejiaming
@@ -27,4 +23,13 @@ public class SQLKtColumnAsSelectorImpl<T1, TR> implements SQLKtColumnAsSelector<
         return columnAsSelector;
     }
 
+    @Override
+    public <T> SQLPropertyNative<T> getSQLPropertyNative() {
+        return EasyObjectUtil.typeCastNullable(columnAsSelector);
+    }
+
+    @Override
+    public SQLKtColumnAsSelector<T1, TR> castTChain() {
+        return this;
+    }
 }

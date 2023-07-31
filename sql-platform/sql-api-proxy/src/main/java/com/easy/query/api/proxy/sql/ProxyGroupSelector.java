@@ -1,5 +1,6 @@
 package com.easy.query.api.proxy.sql;
 
+import com.easy.query.api.proxy.sql.core.SQLProxyNative;
 import com.easy.query.api.proxy.sql.scec.SQLNativeProxyExpressionContext;
 import com.easy.query.api.proxy.sql.scec.SQLNativeProxyExpressionContextImpl;
 import com.easy.query.core.expression.builder.GroupSelector;
@@ -12,7 +13,7 @@ import com.easy.query.core.proxy.SQLColumn;
  *
  * @author xuejiaming
  */
-public interface ProxyGroupSelector {
+public interface ProxyGroupSelector extends SQLProxyNative<ProxyGroupSelector> {
     GroupSelector getGroupSelector();
 
     default ProxyGroupSelector columns(SQLColumn<?>... columns) {
@@ -26,16 +27,6 @@ public interface ProxyGroupSelector {
 
     default ProxyGroupSelector column(SQLColumn<?> column) {
         getGroupSelector().column(column.getTable(), column.value());
-        return this;
-    }
-
-    default ProxyGroupSelector sqlNativeSegment(String sqlSegment){
-        return sqlNativeSegment(sqlSegment,c->{});
-    }
-    default ProxyGroupSelector sqlNativeSegment(String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume){
-        getGroupSelector().sqlNativeSegment(sqlSegment, context->{
-            contextConsume.apply(new SQLNativeProxyExpressionContextImpl(context));
-        });
         return this;
     }
 

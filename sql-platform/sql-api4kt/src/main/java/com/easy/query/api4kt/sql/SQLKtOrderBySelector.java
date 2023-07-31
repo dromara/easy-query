@@ -1,10 +1,8 @@
 package com.easy.query.api4kt.sql;
 
-import com.easy.query.api4kt.sql.scec.SQLNativeLambdaKtExpressionContext;
-import com.easy.query.api4kt.sql.scec.SQLNativeLambdaKtExpressionContextImpl;
+import com.easy.query.api4kt.sql.core.SQLLambdaKtNative;
 import com.easy.query.api4kt.util.EasyKtLambdaUtil;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
-import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnOrderSelector;
@@ -16,7 +14,7 @@ import kotlin.reflect.KProperty1;
  *
  * @author xuejiaming
  */
-public interface SQLKtOrderBySelector<T1> extends EntitySQLTableOwner<T1> {
+public interface SQLKtOrderBySelector<T1> extends EntitySQLTableOwner<T1>, SQLLambdaKtNative<T1,SQLKtOrderBySelector<T1>> {
     ColumnOrderSelector<T1> getOrderBySelector();
 
     default TableAvailable getTable() {
@@ -36,15 +34,6 @@ public interface SQLKtOrderBySelector<T1> extends EntitySQLTableOwner<T1> {
     @Deprecated
     default SQLKtOrderBySelector<T1> columnConst(String columnConst){
         return sqlNativeSegment(columnConst,c->{});
-    }
-    default SQLKtOrderBySelector<T1> sqlNativeSegment(String sqlSegment){
-        return sqlNativeSegment(sqlSegment,c->{});
-    }
-    default SQLKtOrderBySelector<T1> sqlNativeSegment(String sqlSegment, SQLExpression1<SQLNativeLambdaKtExpressionContext<T1>> contextConsume){
-        getOrderBySelector().sqlNativeSegment(sqlSegment,context->{
-            contextConsume.apply(new SQLNativeLambdaKtExpressionContextImpl<>(context));
-        });
-        return this;
     }
 
 

@@ -40,11 +40,11 @@ public class GroupSelectorImpl implements GroupSelector {
     }
 
     @Override
-    public GroupSelector sqlNativeSegment(String columnConst, SQLExpression1<SQLNativeExpressionContext> contextConsume) {
-        Objects.requireNonNull(contextConsume,"contextConsume cannot be null");
+    public GroupSelector sqlNativeSegment(String sqlSegment, SQLExpression1<SQLNativeExpressionContext> contextConsume) {
+        Objects.requireNonNull(contextConsume,"sql native context consume cannot be null");
         SQLNativeExpressionContextImpl sqlConstExpressionContext=new SQLNativeExpressionContextImpl();
         contextConsume.apply(sqlConstExpressionContext);
-        GroupByColumnSegment groupByColumnSegment = sqlSegmentFactory.createGroupBySQLNativeSegment(entityQueryExpressionBuilder.getRuntimeContext(), columnConst,sqlConstExpressionContext);
+        GroupByColumnSegment groupByColumnSegment = sqlSegmentFactory.createGroupBySQLNativeSegment(entityQueryExpressionBuilder.getRuntimeContext(), sqlSegment,sqlConstExpressionContext);
         sqlSegmentBuilder.append(groupByColumnSegment);
         return this;
     }

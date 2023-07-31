@@ -2,10 +2,15 @@ package com.easy.query.core.expression.builder.impl;
 
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.builder.UpdateSetSelector;
+import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.SQLEntitySegment;
+import com.easy.query.core.expression.segment.SQLNativeSegment;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnPropertyPredicate;
+import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
+import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;
+import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContextImpl;
 
 import java.util.Collection;
 import java.util.Objects;
@@ -20,11 +25,13 @@ public class UpdateSetSelectorImpl implements UpdateSetSelector {
 
     private final QueryRuntimeContext runtimeContext;
     private final SQLBuilderSegment sqlSegmentBuilder;
+    private final SQLSegmentFactory sqlSegmentFactory;
 
     public UpdateSetSelectorImpl(QueryRuntimeContext runtimeContext, SQLBuilderSegment sqlSegmentBuilder){
 
         this.runtimeContext = runtimeContext;
         this.sqlSegmentBuilder = sqlSegmentBuilder;
+        this.sqlSegmentFactory = runtimeContext.getSQLSegmentFactory();
     }
     @Override
     public UpdateSetSelector column(TableAvailable table, String property) {
@@ -38,6 +45,16 @@ public class UpdateSetSelectorImpl implements UpdateSetSelector {
         for (String property : properties) {
             sqlSegmentBuilder.append(new ColumnPropertyPredicate(table, property, runtimeContext));
         }
+        return this;
+    }
+
+    @Override
+    public UpdateSetSelector sqlNativeSegment(String sqlSegment, SQLExpression1<SQLNativeExpressionContext> contextConsume) {
+        Objects.requireNonNull(contextConsume,"sql native context consume cannot be null");
+        SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl();
+        contextConsume.apply(sqlNativeExpressionContext);
+        SQLNativeSegment columnSegment = sqlSegmentFactory.createSQLNativeSegment(runtimeContext, sqlSegment, sqlNativeExpressionContext);
+        sqlSegmentBuilder.append(columnSegment);
         return this;
     }
 

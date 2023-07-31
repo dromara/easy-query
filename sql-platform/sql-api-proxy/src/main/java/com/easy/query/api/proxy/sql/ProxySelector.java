@@ -1,9 +1,7 @@
 package com.easy.query.api.proxy.sql;
 
-import com.easy.query.api.proxy.sql.scec.SQLNativeProxyExpressionContext;
-import com.easy.query.api.proxy.sql.scec.SQLNativeProxyExpressionContextImpl;
+import com.easy.query.api.proxy.sql.core.SQLProxyNative;
 import com.easy.query.core.expression.builder.Selector;
-import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
 
@@ -13,7 +11,7 @@ import com.easy.query.core.proxy.SQLColumn;
  *
  * @author xuejiaming
  */
-public interface ProxySelector {
+public interface ProxySelector extends SQLProxyNative<ProxySelector> {
     Selector getSelector();
 
    default ProxySelector columns(SQLColumn<?>... columns){
@@ -28,18 +26,6 @@ public interface ProxySelector {
        getSelector().column(column.getTable(),column.value());
        return this;
    }
-
-    default ProxySelector sqlNativeSegment(String sqlSegment) {
-        return sqlNativeSegment(sqlSegment, c -> {
-        });
-    }
-
-    default ProxySelector sqlNativeSegment(String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume) {
-        getSelector().sqlNativeSegment(sqlSegment, context -> {
-            contextConsume.apply(new SQLNativeProxyExpressionContextImpl(context));
-        });
-        return this;
-    }
 
    default ProxySelector columnFunc(ProxyColumnPropertyFunction proxyColumnPropertyFunction){
        getSelector().columnFunc(proxyColumnPropertyFunction.getColumn().getTable(), proxyColumnPropertyFunction.getColumnPropertyFunction());

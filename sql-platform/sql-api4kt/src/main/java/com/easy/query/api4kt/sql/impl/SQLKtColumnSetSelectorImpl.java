@@ -2,6 +2,8 @@ package com.easy.query.api4kt.sql.impl;
 
 import com.easy.query.api4kt.sql.SQLKtColumnSetSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnUpdateSetSelector;
+import com.easy.query.core.expression.parser.core.base.core.SQLPropertyNative;
+import com.easy.query.core.util.EasyObjectUtil;
 
 /**
  * create time 2023/6/16 22:59
@@ -19,5 +21,15 @@ public class SQLKtColumnSetSelectorImpl<T1> implements SQLKtColumnSetSelector<T1
     @Override
     public ColumnUpdateSetSelector<T1> getColumnSetSelector() {
         return columnSetSelector;
+    }
+
+    @Override
+    public <T> SQLPropertyNative<T> getSQLPropertyNative() {
+        return EasyObjectUtil.typeCastNullable(columnSetSelector);
+    }
+
+    @Override
+    public SQLKtColumnSetSelector<T1> castTChain() {
+        return this;
     }
 }

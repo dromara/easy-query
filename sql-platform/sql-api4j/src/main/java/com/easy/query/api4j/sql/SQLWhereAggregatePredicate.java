@@ -1,5 +1,8 @@
 package com.easy.query.api4j.sql;
 
+import com.easy.query.api4j.sql.core.SQLLambdaNative;
+import com.easy.query.api4j.sql.scec.SQLNativeLambdaExpressionContext;
+import com.easy.query.api4j.sql.scec.SQLNativeLambdaExpressionContextImpl;
 import com.easy.query.api4j.util.EasyLambdaUtil;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.AggregatePredicateCompare;
@@ -17,7 +20,7 @@ import com.easy.query.core.expression.parser.core.base.WhereAggregatePredicate;
  * @Description: 文件说明
  * @Date: 2023/2/18 22:17
  */
-public interface SQLWhereAggregatePredicate<T1> extends EntitySQLTableOwner<T1> {
+public interface SQLWhereAggregatePredicate<T1> extends EntitySQLTableOwner<T1>, SQLLambdaNative<T1,SQLWhereAggregatePredicate<T1>> {
     WhereAggregatePredicate<T1> getWhereAggregatePredicate();
 
     default TableAvailable getTable() {
@@ -104,7 +107,6 @@ public interface SQLWhereAggregatePredicate<T1> extends EntitySQLTableOwner<T1> 
         getWhereAggregatePredicate().func(condition, columnFunction, EasyLambdaUtil.getPropertyName(column), compare, val);
         return this;
     }
-
 
     default <T2> SQLWhereAggregatePredicate<T2> then(SQLWhereAggregatePredicate<T2> sub) {
         getWhereAggregatePredicate().then(sub.getWhereAggregatePredicate());

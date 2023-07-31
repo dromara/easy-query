@@ -3,6 +3,8 @@ package com.easy.query.api4kt.sql.impl;
 import com.easy.query.api4kt.sql.SQLKtWherePredicate;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
+import com.easy.query.core.expression.parser.core.base.core.SQLPropertyNative;
+import com.easy.query.core.util.EasyObjectUtil;
 
 /**
  * @author xuejiaming
@@ -36,6 +38,16 @@ public class SQLKtWherePredicateImpl<T1> implements SQLKtWherePredicate<T1> {
             SQLKtWherePredicate<T1> sqlPredicate = new SQLKtWherePredicateImpl<T1>(predicate);
             sqlWherePredicateSQLExpression.apply(sqlPredicate);
         });
+        return this;
+    }
+
+    @Override
+    public <T> SQLPropertyNative<T> getSQLPropertyNative() {
+        return EasyObjectUtil.typeCastNullable(wherePredicate);
+    }
+
+    @Override
+    public SQLKtWherePredicate<T1> castTChain() {
         return this;
     }
 }

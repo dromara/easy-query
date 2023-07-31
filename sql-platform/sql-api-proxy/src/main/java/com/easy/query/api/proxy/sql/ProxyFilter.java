@@ -1,6 +1,7 @@
 package com.easy.query.api.proxy.sql;
 
 import com.easy.query.api.proxy.select.ProxyQueryable;
+import com.easy.query.api.proxy.sql.core.SQLProxyNative;
 import com.easy.query.api.proxy.sql.impl.ProxyFilterImpl;
 import com.easy.query.api.proxy.sql.scec.SQLNativeProxyExpressionContext;
 import com.easy.query.api.proxy.sql.scec.SQLNativeProxyExpressionContextImpl;
@@ -20,7 +21,7 @@ import java.util.Collection;
  * @Description: 文件说明
  * @Date: 2023/2/5 09:09
  */
-public interface ProxyFilter {
+public interface ProxyFilter extends SQLProxyNative<ProxyFilter> {
     Filter getFilter();
 
     /**
@@ -852,28 +853,6 @@ public interface ProxyFilter {
         if (condition) {
             getFilter().lt(column1.getTable(), column1.value(), column2.getTable(), column2.value());
         }
-        return this;
-    }
-
-    /**
-     * 参数格式化 占位符 {0} {1}
-     * @param sqlSegment
-     * @return
-     */
-    default ProxyFilter sqlNativeSegment(String sqlSegment){
-        return sqlNativeSegment(sqlSegment,c->{});
-    }
-
-    /**
-     * 参数格式化 占位符 {0} {1}
-     * @param sqlSegment
-     * @param contextConsume
-     * @return
-     */
-    default ProxyFilter sqlNativeSegment(String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume){
-        getFilter().sqlNativeSegment(sqlSegment,context->{
-            contextConsume.apply(new SQLNativeProxyExpressionContextImpl(context));
-        });
         return this;
     }
     default ProxyFilter and() {

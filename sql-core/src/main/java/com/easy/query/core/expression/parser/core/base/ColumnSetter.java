@@ -9,7 +9,6 @@ import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
  * @author xuejiaming
  */
 public interface ColumnSetter<T1> extends EntitySQLTableOwner<T1> {
-
     /**
      * set column=val
      */

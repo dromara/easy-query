@@ -1,13 +1,13 @@
 package com.easy.query.api4kt.sql;
 
+import com.easy.query.api4kt.sql.core.SQLLambdaKtNative;
 import com.easy.query.api4kt.util.EasyKtLambdaUtil;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.AggregatePredicateCompare;
 import com.easy.query.core.enums.SQLPredicateCompare;
-import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
-import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.WhereAggregatePredicate;
 import kotlin.reflect.KProperty1;
@@ -18,7 +18,7 @@ import kotlin.reflect.KProperty1;
  * @Description: 文件说明
  * @Date: 2023/2/18 22:17
  */
-public interface SQLKtWhereAggregatePredicate<T1> extends EntitySQLTableOwner<T1> {
+public interface SQLKtWhereAggregatePredicate<T1> extends EntitySQLTableOwner<T1>, SQLLambdaKtNative<T1,SQLKtWhereAggregatePredicate<T1>> {
     WhereAggregatePredicate<T1> getWhereAggregatePredicate();
 
     default TableAvailable getTable() {
@@ -105,7 +105,6 @@ public interface SQLKtWhereAggregatePredicate<T1> extends EntitySQLTableOwner<T1
         getWhereAggregatePredicate().func(condition, columnFunction, EasyKtLambdaUtil.getPropertyName(column), compare, val);
         return this;
     }
-
 
     default <T2> SQLKtWhereAggregatePredicate<T2> then(SQLKtWhereAggregatePredicate<T2> sub) {
         getWhereAggregatePredicate().then(sub.getWhereAggregatePredicate());

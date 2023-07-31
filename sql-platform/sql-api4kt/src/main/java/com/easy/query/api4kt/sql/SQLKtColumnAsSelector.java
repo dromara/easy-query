@@ -1,9 +1,8 @@
 package com.easy.query.api4kt.sql;
 
 import com.easy.query.api4kt.select.KtQueryable;
+import com.easy.query.api4kt.sql.core.SQLLambdaKtNative;
 import com.easy.query.api4kt.sql.impl.SQLKtColumnAsSelectorImpl;
-import com.easy.query.api4kt.sql.scec.SQLNativeLambdaKtExpressionContext;
-import com.easy.query.api4kt.sql.scec.SQLNativeLambdaKtExpressionContextImpl;
 import com.easy.query.api4kt.util.EasyKtLambdaUtil;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
@@ -23,7 +22,7 @@ import java.util.Collection;
  * @Description: 文件说明
  * @Date: 2023/2/6 22:58
  */
-public interface SQLKtColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1> {
+public interface SQLKtColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1>, SQLLambdaKtNative<T1,SQLKtColumnAsSelector<T1, TR>> {
     ColumnAsSelector<T1, TR> getColumnAsSelector();
 
     default QueryRuntimeContext getRuntimeContext() {
@@ -50,15 +49,6 @@ public interface SQLKtColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1> {
     @Deprecated
     default SQLKtColumnAsSelector<T1,TR> columnConst(String columnConst){
         return sqlNativeSegment(columnConst,c->{});
-    }
-    default SQLKtColumnAsSelector<T1,TR> sqlNativeSegment(String sqlSegment){
-        return sqlNativeSegment(sqlSegment,c->{});
-    }
-    default SQLKtColumnAsSelector<T1,TR> sqlNativeSegment(String sqlSegment, SQLExpression1<SQLNativeLambdaKtExpressionContext<T1>> contextConsume){
-        getColumnAsSelector().sqlNativeSegment(sqlSegment,context->{
-            contextConsume.apply(new SQLNativeLambdaKtExpressionContextImpl<>(context));
-        });
-        return this;
     }
 
     default <TIncludeSource,TIncludeResult> SQLKtColumnAsSelector<T1, TR> columnInclude(KProperty1<T1, TIncludeSource> column, KProperty1<TR, TIncludeResult> aliasProperty){
