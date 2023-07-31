@@ -2,6 +2,7 @@ package com.easy.query.api4kt.update;
 
 import com.easy.query.api4kt.sql.SQLKtColumnSetSelector;
 import com.easy.query.api4kt.sql.impl.SQLKtColumnSetSelectorImpl;
+import com.easy.query.core.basic.api.internal.ConfigureVersionable;
 import com.easy.query.core.basic.api.internal.SQLExecuteStrategy;
 import com.easy.query.core.basic.api.update.ClientEntityUpdatable;
 import com.easy.query.core.basic.api.update.Updatable;
@@ -13,7 +14,7 @@ import com.easy.query.core.expression.lambda.SQLExpression1;
  * @Description: 文件说明
  * @Date: 2023/2/24 23:22
  */
-public interface KtEntityUpdatable<T> extends Updatable<T, KtEntityUpdatable<T>>, SQLExecuteStrategy<KtEntityUpdatable<T>> {
+public interface KtEntityUpdatable<T> extends Updatable<T, KtEntityUpdatable<T>>, SQLExecuteStrategy<KtEntityUpdatable<T>>, ConfigureVersionable<KtEntityUpdatable<T>> {
     ClientEntityUpdatable<T> getClientUpdate();
 
     default KtEntityUpdatable<T> setColumns(SQLExpression1<SQLKtColumnSetSelector<T>> columnSelectorExpression) {

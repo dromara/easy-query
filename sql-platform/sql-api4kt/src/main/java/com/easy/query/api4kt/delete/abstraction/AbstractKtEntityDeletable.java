@@ -14,89 +14,101 @@ import java.util.function.Function;
  * @Date: 2023/2/28 12:33
  */
 public abstract class AbstractKtEntityDeletable<T> implements KtEntityDeletable<T> {
-    private final ClientEntityDeletable<T> entityObjectDeletable;
+    private final ClientEntityDeletable<T> clientEntityDeletable;
 
     public AbstractKtEntityDeletable(ClientEntityDeletable<T> entityObjectDeletable) {
-        this.entityObjectDeletable = entityObjectDeletable;
+        this.clientEntityDeletable = entityObjectDeletable;
     }
 
     @Override
     public ExpressionContext getExpressionContext() {
-        return entityObjectDeletable.getExpressionContext();
+        return clientEntityDeletable.getExpressionContext();
     }
 
     @Override
     public String toSQL() {
-        return entityObjectDeletable.toSQL();
+        return clientEntityDeletable.toSQL();
     }
 
     @Override
     public long executeRows() {
-        return entityObjectDeletable.executeRows();
+        return clientEntityDeletable.executeRows();
     }
 
 
     @Override
     public KtEntityDeletable<T> useLogicDelete(boolean enable) {
-        entityObjectDeletable.useLogicDelete(enable);
+        clientEntityDeletable.useLogicDelete(enable);
         return this;
     }
 
     @Override
     public KtEntityDeletable<T> allowDeleteStatement(boolean allow) {
-        entityObjectDeletable.allowDeleteStatement(allow);
+        clientEntityDeletable.allowDeleteStatement(allow);
         return this;
     }
 
     @Override
     public KtEntityDeletable<T> asTable(Function<String, String> tableNameAs) {
-        entityObjectDeletable.asTable(tableNameAs);
+        clientEntityDeletable.asTable(tableNameAs);
         return this;
     }
 
     @Override
     public KtEntityDeletable<T> asSchema(Function<String, String> schemaAs) {
-        entityObjectDeletable.asSchema(schemaAs);
+        clientEntityDeletable.asSchema(schemaAs);
         return this;
     }
 
     @Override
     public KtEntityDeletable<T> asAlias(String alias) {
-        entityObjectDeletable.asAlias(alias);
+        clientEntityDeletable.asAlias(alias);
         return this;
     }
 
     @Override
     public String toSQL(ToSQLContext toSQLContext) {
-        return entityObjectDeletable.toSQL(toSQLContext);
+        return clientEntityDeletable.toSQL(toSQLContext);
     }
 
     @Override
     public KtEntityDeletable<T> noInterceptor() {
-        entityObjectDeletable.noInterceptor();
+        clientEntityDeletable.noInterceptor();
         return this;
     }
 
     @Override
     public KtEntityDeletable<T> useInterceptor(String name) {
-        entityObjectDeletable.useInterceptor(name);
+        clientEntityDeletable.useInterceptor(name);
         return this;
     }
 
     @Override
     public KtEntityDeletable<T> noInterceptor(String name) {
-        entityObjectDeletable.noInterceptor(name);
+        clientEntityDeletable.noInterceptor(name);
         return this;
     }
 
     @Override
     public KtEntityDeletable<T> useInterceptor() {
-        entityObjectDeletable.useInterceptor();
+        clientEntityDeletable.useInterceptor();
+        return this;
+    }
+
+    @Override
+    public KtEntityDeletable<T> noVersionError() {
+        clientEntityDeletable.noVersionError();
+        return this;
+    }
+
+    @Override
+    public KtEntityDeletable<T> noVersionIgnore() {
+        clientEntityDeletable.noVersionIgnore();
         return this;
     }
 
     @Override
     public void executeRows(long expectRows, String msg, String code) {
-        entityObjectDeletable.executeRows(expectRows, msg, code);
+        clientEntityDeletable.executeRows(expectRows, msg, code);
     }
 }

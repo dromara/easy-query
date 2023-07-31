@@ -1,6 +1,7 @@
 package com.easy.query.core.basic.api.delete;
 
-import com.easy.query.core.basic.api.internal.Versionable;
+import com.easy.query.core.basic.api.internal.ConfigureVersionable;
+import com.easy.query.core.basic.api.internal.WithVersionable;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 
@@ -12,7 +13,8 @@ import java.util.Collection;
  * @Description: 文件说明
  * @Date: 2023/2/28 12:24
  */
-public interface ClientExpressionDeletable<T> extends Deletable<T, ClientExpressionDeletable<T>>, Versionable<ClientExpressionDeletable<T>> {
+public interface ClientExpressionDeletable<T> extends Deletable<T, ClientExpressionDeletable<T>>,
+        WithVersionable<ClientExpressionDeletable<T>>, ConfigureVersionable<ClientExpressionDeletable<T>> {
     default ClientExpressionDeletable<T> where(SQLExpression1<WherePredicate<T>> whereExpression) {
         return where(true, whereExpression);
     }

@@ -95,6 +95,18 @@ public abstract class AbstractProxyEntityUpdatable<TProxy extends ProxyEntity<TP
     }
 
     @Override
+    public ProxyEntityUpdatable<TProxy, T> noVersionError() {
+        clientEntityUpdatable.noVersionError();
+        return this;
+    }
+
+    @Override
+    public ProxyEntityUpdatable<TProxy, T> noVersionIgnore() {
+        clientEntityUpdatable.noVersionIgnore();
+        return this;
+    }
+
+    @Override
     public void executeRows(long expectRows, String msg, String code) {
         clientEntityUpdatable.executeRows(expectRows, msg, code);
     }

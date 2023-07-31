@@ -2,6 +2,7 @@ package com.easy.query.api.proxy.update;
 
 import com.easy.query.api.proxy.sql.ProxyUpdateSetSelector;
 import com.easy.query.api.proxy.sql.impl.ProxyUpdateSetSelectorImpl;
+import com.easy.query.core.basic.api.internal.ConfigureVersionable;
 import com.easy.query.core.basic.api.internal.SQLExecuteStrategy;
 import com.easy.query.core.basic.api.update.ClientEntityUpdatable;
 import com.easy.query.core.expression.lambda.SQLExpression2;
@@ -13,7 +14,7 @@ import com.easy.query.core.proxy.ProxyEntity;
  * @Description: 文件说明
  * @Date: 2023/2/24 23:22
  */
-public interface ProxyEntityUpdatable<TProxy extends ProxyEntity<TProxy, T>, T> extends ProxyUpdatable<TProxy, T, ProxyEntityUpdatable<TProxy, T>>, SQLExecuteStrategy<ProxyEntityUpdatable<TProxy, T>> {
+public interface ProxyEntityUpdatable<TProxy extends ProxyEntity<TProxy, T>, T> extends ProxyUpdatable<TProxy, T, ProxyEntityUpdatable<TProxy, T>>, SQLExecuteStrategy<ProxyEntityUpdatable<TProxy, T>>, ConfigureVersionable<ProxyEntityUpdatable<TProxy, T>> {
     ClientEntityUpdatable<T> getClientUpdate();
 
     default ProxyEntityUpdatable<TProxy, T> setColumns(SQLExpression2<ProxyUpdateSetSelector, TProxy> columnSelectorExpression) {

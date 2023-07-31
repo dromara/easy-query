@@ -3,7 +3,8 @@ package com.easy.query.api4kt.update;
 import com.easy.query.api4kt.sql.SQLKtWherePredicate;
 import com.easy.query.api4kt.sql.impl.SQLKtWherePredicateImpl;
 import com.easy.query.api4kt.util.EasyKtLambdaUtil;
-import com.easy.query.core.basic.api.internal.Versionable;
+import com.easy.query.core.basic.api.internal.ConfigureVersionable;
+import com.easy.query.core.basic.api.internal.WithVersionable;
 import com.easy.query.core.basic.api.update.ClientExpressionUpdatable;
 import com.easy.query.core.basic.api.update.Updatable;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
@@ -19,7 +20,7 @@ import java.util.Collection;
  * @Description: 文件说明
  * @Date: 2023/2/24 23:21
  */
-public interface KtExpressionUpdatable<T> extends Updatable<T, KtExpressionUpdatable<T>>, Versionable<KtExpressionUpdatable<T>> {
+public interface KtExpressionUpdatable<T> extends Updatable<T, KtExpressionUpdatable<T>>, WithVersionable<KtExpressionUpdatable<T>>, ConfigureVersionable<KtExpressionUpdatable<T>> {
     ClientExpressionUpdatable<T> getClientUpdate();
 
     default KtExpressionUpdatable<T> set(KProperty1<T, ?> column, Object val) {

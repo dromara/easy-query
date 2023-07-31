@@ -1,5 +1,6 @@
 package com.easy.query.core.basic.api.update;
 
+import com.easy.query.core.basic.api.internal.ConfigureVersionable;
 import com.easy.query.core.basic.api.internal.SQLExecuteStrategy;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.base.ColumnUpdateSetSelector;
@@ -10,7 +11,10 @@ import com.easy.query.core.expression.parser.core.base.ColumnUpdateSetSelector;
  *
  * @author xuejiaming
  */
-public interface ClientEntityUpdatable<T> extends Updatable<T, ClientEntityUpdatable<T>>, SQLExecuteStrategy<ClientEntityUpdatable<T>> {
+public interface ClientEntityUpdatable<T> extends Updatable<T, ClientEntityUpdatable<T>>,
+        SQLExecuteStrategy<ClientEntityUpdatable<T>>,
+        ConfigureVersionable<ClientEntityUpdatable<T>>
+{
     /**
      *  update set columns...  针对set的column进行选择
      * @param columnSelectorExpression

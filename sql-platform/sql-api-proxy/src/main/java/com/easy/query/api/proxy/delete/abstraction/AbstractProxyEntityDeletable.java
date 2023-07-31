@@ -95,6 +95,18 @@ public abstract class AbstractProxyEntityDeletable<T> implements ProxyEntityDele
     }
 
     @Override
+    public ProxyEntityDeletable<T> noVersionError() {
+        entityObjectDeletable.noVersionError();
+        return this;
+    }
+
+    @Override
+    public ProxyEntityDeletable<T> noVersionIgnore() {
+        entityObjectDeletable.noVersionIgnore();
+        return this;
+    }
+
+    @Override
     public void executeRows(long expectRows, String msg, String code) {
         entityObjectDeletable.executeRows(expectRows, msg, code);
     }

@@ -2,7 +2,8 @@ package com.easy.query.api4j.update;
 
 import com.easy.query.api4j.sql.SQLWherePredicate;
 import com.easy.query.api4j.sql.impl.SQLWherePredicateImpl;
-import com.easy.query.core.basic.api.internal.Versionable;
+import com.easy.query.core.basic.api.internal.ConfigureVersionable;
+import com.easy.query.core.basic.api.internal.WithVersionable;
 import com.easy.query.core.basic.api.update.ClientExpressionUpdatable;
 import com.easy.query.core.basic.api.update.Updatable;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
@@ -19,7 +20,7 @@ import java.util.Collection;
  * @Description: 文件说明
  * @Date: 2023/2/24 23:21
  */
-public interface ExpressionUpdatable<T> extends Updatable<T, ExpressionUpdatable<T>>, Versionable<ExpressionUpdatable<T>> {
+public interface ExpressionUpdatable<T> extends Updatable<T, ExpressionUpdatable<T>>, WithVersionable<ExpressionUpdatable<T>>, ConfigureVersionable<ExpressionUpdatable<T>> {
     ClientExpressionUpdatable<T> getClientUpdate();
 
     default ExpressionUpdatable<T> set(Property<T, ?> column, Object val) {

@@ -81,4 +81,14 @@ public class EasyEmptyKtEntityDeletable<T> implements KtEntityDeletable<T> {
     public KtEntityDeletable<T> useInterceptor() {
         return this;
     }
+
+    @Override
+    public KtEntityDeletable<T> noVersionError() {
+        return this;
+    }
+
+    @Override
+    public KtEntityDeletable<T> noVersionIgnore() {
+        return this;
+    }
 }

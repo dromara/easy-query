@@ -98,4 +98,14 @@ public class EasyEmptyClientEntityUpdatable<T> implements ClientEntityUpdatable<
     public ClientEntityUpdatable<T> batch(boolean use) {
         return this;
     }
+
+    @Override
+    public ClientEntityUpdatable<T> noVersionError() {
+        return this;
+    }
+
+    @Override
+    public ClientEntityUpdatable<T> noVersionIgnore() {
+        return this;
+    }
 }

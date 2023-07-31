@@ -1,7 +1,8 @@
 package com.easy.query.api.proxy.delete;
 
 import com.easy.query.api.proxy.sql.ProxyFilter;
-import com.easy.query.core.basic.api.internal.Versionable;
+import com.easy.query.core.basic.api.internal.ConfigureVersionable;
+import com.easy.query.core.basic.api.internal.WithVersionable;
 import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.proxy.ProxyEntity;
 
@@ -13,7 +14,7 @@ import java.util.Collection;
  * @Date: 2023/2/28 12:24
  * @author xuejiaming
  */
-public interface ProxyExpressionDeletable<TProxy extends ProxyEntity<TProxy,T>,T> extends ProxyDeletable<TProxy,T, ProxyExpressionDeletable<TProxy,T>>, Versionable<ProxyExpressionDeletable<TProxy,T>> {
+public interface ProxyExpressionDeletable<TProxy extends ProxyEntity<TProxy,T>,T> extends ProxyDeletable<TProxy,T, ProxyExpressionDeletable<TProxy,T>>, WithVersionable<ProxyExpressionDeletable<TProxy,T>> , ConfigureVersionable<ProxyExpressionDeletable<TProxy,T>> {
     default ProxyExpressionDeletable<TProxy,T> where(SQLExpression2<ProxyFilter,TProxy> whereExpression) {
         return where(true, whereExpression);
     }

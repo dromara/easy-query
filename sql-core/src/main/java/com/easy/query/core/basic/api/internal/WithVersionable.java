@@ -7,7 +7,7 @@ package com.easy.query.core.basic.api.internal;
  *
  * @author xuejiaming
  */
-public interface Versionable<TChain> {
+public interface WithVersionable<TChain> {
 
 
     default TChain withVersion(Object versionValue){
@@ -15,6 +15,4 @@ public interface Versionable<TChain> {
     }
     TChain withVersion(boolean condition,Object versionValue);
 
-    TChain noVersionError();
-    TChain noVersionIgnore();
 }

@@ -6,6 +6,7 @@ import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.exception.EasyQueryException;
@@ -89,6 +90,18 @@ public abstract class AbstractClientEntityDeletable<T> extends AbstractSQLExecut
     @Override
     public ClientEntityDeletable<T> asAlias(String alias) {
         entityDeleteExpressionBuilder.getRecentlyTable().asAlias(alias);
+        return this;
+    }
+
+    @Override
+    public ClientEntityDeletable<T> noVersionError() {
+        entityDeleteExpressionBuilder.getExpressionContext().getBehavior().addBehavior(EasyBehaviorEnum.NO_VERSION_ERROR);
+        return this;
+    }
+
+    @Override
+    public ClientEntityDeletable<T> noVersionIgnore() {
+        entityDeleteExpressionBuilder.getExpressionContext().getBehavior().removeBehavior(EasyBehaviorEnum.NO_VERSION_ERROR);
         return this;
     }
 

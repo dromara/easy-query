@@ -2,7 +2,8 @@ package com.easy.query.api4kt.delete;
 
 import com.easy.query.api4kt.sql.SQLKtWherePredicate;
 import com.easy.query.core.basic.api.delete.Deletable;
-import com.easy.query.core.basic.api.internal.Versionable;
+import com.easy.query.core.basic.api.internal.ConfigureVersionable;
+import com.easy.query.core.basic.api.internal.WithVersionable;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 
 import java.util.Collection;
@@ -13,7 +14,7 @@ import java.util.Collection;
  * @Description: 文件说明
  * @Date: 2023/2/28 12:24
  */
-public interface KtExpressionDeletable<T> extends Deletable<T, KtExpressionDeletable<T>>, Versionable<KtExpressionDeletable<T>> {
+public interface KtExpressionDeletable<T> extends Deletable<T, KtExpressionDeletable<T>>, WithVersionable<KtExpressionDeletable<T>>, ConfigureVersionable<KtExpressionDeletable<T>> {
     default KtExpressionDeletable<T> where(SQLExpression1<SQLKtWherePredicate<T>> whereExpression) {
         return where(true, whereExpression);
     }

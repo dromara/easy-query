@@ -96,6 +96,18 @@ public abstract class AbstractEntityDeletable<T> implements EntityDeletable<T> {
     }
 
     @Override
+    public EntityDeletable<T> noVersionError() {
+        entityObjectDeletable.noVersionError();
+        return this;
+    }
+
+    @Override
+    public EntityDeletable<T> noVersionIgnore() {
+        entityObjectDeletable.noVersionIgnore();
+        return this;
+    }
+
+    @Override
     public void executeRows(long expectRows, String msg, String code) {
         entityObjectDeletable.executeRows(expectRows, msg, code);
     }

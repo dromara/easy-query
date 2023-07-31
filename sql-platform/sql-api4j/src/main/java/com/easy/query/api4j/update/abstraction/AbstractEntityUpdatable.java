@@ -87,6 +87,18 @@ public abstract class AbstractEntityUpdatable<T> implements EntityUpdatable<T> {
     }
 
     @Override
+    public EntityUpdatable<T> noVersionError() {
+        entityObjectUpdatable.noVersionError();
+        return this;
+    }
+
+    @Override
+    public EntityUpdatable<T> noVersionIgnore() {
+        entityObjectUpdatable.noVersionIgnore();
+        return this;
+    }
+
+    @Override
     public void executeRows(long expectRows, String msg, String code) {
         entityObjectUpdatable.executeRows(expectRows, msg, code);
     }

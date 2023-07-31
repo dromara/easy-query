@@ -1,6 +1,7 @@
 package com.easy.query.core.basic.api.update;
 
-import com.easy.query.core.basic.api.internal.Versionable;
+import com.easy.query.core.basic.api.internal.ConfigureVersionable;
+import com.easy.query.core.basic.api.internal.WithVersionable;
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.expression.lambda.SQLExpression1;
@@ -16,7 +17,10 @@ import java.util.Collection;
  * @Description: 文件说明
  * @Date: 2023/2/24 23:21
  */
-public interface ClientExpressionUpdatable<T> extends Updatable<T, ClientExpressionUpdatable<T>>, Versionable<ClientExpressionUpdatable<T>> {
+public interface ClientExpressionUpdatable<T> extends Updatable<T, ClientExpressionUpdatable<T>>,
+        WithVersionable<ClientExpressionUpdatable<T>>,
+        ConfigureVersionable<ClientExpressionUpdatable<T>>
+{
     default ClientExpressionUpdatable<T> set(String property, Object val) {
         return set(true, property, val);
     }

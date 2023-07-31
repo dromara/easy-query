@@ -87,6 +87,18 @@ public abstract class AbstractKtEntityUpdatable<T> implements KtEntityUpdatable<
     }
 
     @Override
+    public KtEntityUpdatable<T> noVersionError() {
+        entityObjectUpdatable.noVersionError();
+        return this;
+    }
+
+    @Override
+    public KtEntityUpdatable<T> noVersionIgnore() {
+        entityObjectUpdatable.noVersionIgnore();
+        return this;
+    }
+
+    @Override
     public void executeRows(long expectRows, String msg, String code) {
         entityObjectUpdatable.executeRows(expectRows, msg, code);
     }

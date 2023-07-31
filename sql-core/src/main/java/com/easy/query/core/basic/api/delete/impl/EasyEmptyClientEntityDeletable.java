@@ -86,4 +86,14 @@ public class EasyEmptyClientEntityDeletable<T> implements ClientEntityDeletable<
     public ClientEntityDeletable<T> asAlias(String alias) {
         return this;
     }
+
+    @Override
+    public ClientEntityDeletable<T> noVersionError() {
+        return this;
+    }
+
+    @Override
+    public ClientEntityDeletable<T> noVersionIgnore() {
+        return this;
+    }
 }

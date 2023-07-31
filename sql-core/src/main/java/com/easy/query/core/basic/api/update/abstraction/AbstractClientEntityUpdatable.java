@@ -11,6 +11,7 @@ import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
@@ -171,6 +172,18 @@ public abstract class AbstractClientEntityUpdatable<T> extends AbstractSQLExecut
         if (condition) {
             entityUpdateExpressionBuilder.getExpressionContext().useSQLStrategy(sqlStrategy);
         }
+        return this;
+    }
+
+    @Override
+    public ClientEntityUpdatable<T> noVersionError() {
+        entityUpdateExpressionBuilder.getExpressionContext().getBehavior().addBehavior(EasyBehaviorEnum.NO_VERSION_ERROR);
+        return this;
+    }
+
+    @Override
+    public ClientEntityUpdatable<T> noVersionIgnore() {
+        entityUpdateExpressionBuilder.getExpressionContext().getBehavior().removeBehavior(EasyBehaviorEnum.NO_VERSION_ERROR);
         return this;
     }
 
