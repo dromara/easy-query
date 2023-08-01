@@ -29,4 +29,5 @@ public class City {
 
     @ColumnIgnore
     private Province province;
+
 }

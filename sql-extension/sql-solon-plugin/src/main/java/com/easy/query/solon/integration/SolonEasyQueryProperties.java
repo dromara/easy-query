@@ -144,6 +144,7 @@ public class SolonEasyQueryProperties {
                 case "h2":return DatabaseEnum.H2;
                 case "dameng":return DatabaseEnum.DAMENG;
                 case "kingbase_es":return DatabaseEnum.KINGBASE_ES;
+                case "mssql_row_number":return DatabaseEnum.MSSQL_ROW_NUMBER;
             }
             return null;
         });

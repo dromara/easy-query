@@ -34,6 +34,7 @@ import com.easy.query.dameng.config.DamengDatabaseConfiguration;
 import com.easy.query.h2.config.H2DatabaseConfiguration;
 import com.easy.query.kingbase.es.config.KingbaseESDatabaseConfiguration;
 import com.easy.query.mssql.config.MsSQLDatabaseConfiguration;
+import com.easy.query.mssql.config.MsSQLRowNumberDatabaseConfiguration;
 import com.easy.query.mysql.config.MySQLDatabaseConfiguration;
 import com.easy.query.pgsql.config.PgSQLDatabaseConfiguration;
 import com.easy.query.sql.starter.config.EasyQueryInitializeOption;
@@ -111,6 +112,13 @@ public class EasyQueryStarterAutoConfiguration {
     @ConditionalOnMissingBean
     public DatabaseConfiguration mssqlDatabaseConfiguration() {
         return new MsSQLDatabaseConfiguration();
+    }
+
+    @Bean
+    @ConditionalOnProperty(name = "easy-query.database", havingValue = "mssql_row_number")
+    @ConditionalOnMissingBean
+    public DatabaseConfiguration mssqlRowNumberDatabaseConfiguration() {
+        return new MsSQLRowNumberDatabaseConfiguration();
     }
 
     @Bean

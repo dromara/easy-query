@@ -382,9 +382,9 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                 }
                 FillParams fillParams = new FillParams(fill.getTargetProperty());
                 ClientQueryable<?> fillQueryable = fill.getFillSQLFuncExpression().apply(fillParams);
-                if (!Objects.equals(fillQueryable.queryClass(), fillParams.getOriginalEntityClass())) {
-                    throw new EasyQueryInvalidOperationException("fill expression should select original entity class:" + EasyClassUtil.getSimpleName(fillParams.getOriginalEntityClass()) + ",now:" + EasyClassUtil.getSimpleName(fillQueryable.queryClass()));
-                }
+//                if (!Objects.equals(fillQueryable.queryClass(), fillParams.getOriginalEntityClass())) {
+//                    throw new EasyQueryInvalidOperationException("fill expression should select original entity class:" + EasyClassUtil.getSimpleName(fillParams.getOriginalEntityClass()) + ",now:" + EasyClassUtil.getSimpleName(fillQueryable.queryClass()));
+//                }
                 List<?> relationIds = result.stream().map(o -> fill.getSelfProperty().apply(o)).filter(Objects::nonNull)
                         .distinct()
                         .collect(Collectors.toList());

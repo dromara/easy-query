@@ -1,35 +1,30 @@
 package com.easy.query.mssql.expression;
 
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
-import com.easy.query.core.exception.EasyQueryInvalidOperationException;
-import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.segment.builder.OrderBySQLBuilderSegmentImpl;
+import com.easy.query.core.common.KeywordTool;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
-import com.easy.query.core.expression.segment.impl.ColumnSegmentImpl;
 import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
 import com.easy.query.core.expression.sql.expression.impl.EntitySQLExpressionMetadata;
-import com.easy.query.core.expression.sql.expression.impl.QuerySQLExpressionImpl;
-import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 import com.easy.query.core.util.EasySQLSegmentUtil;
 
-import java.util.Collection;
 import java.util.Iterator;
 
 /**
- * create time 2023/7/27 17:48
+ * create time 2023/8/1 09:25
  * 文件说明
  *
  * @author xuejiaming
  */
-public class MsSQLQuerySQLExpression extends QuerySQLExpressionImpl {
-    public MsSQLQuerySQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata) {
+public class MsSQLRowNumberQuerySQLExpression extends MsSQLQuerySQLExpression {
+    public MsSQLRowNumberQuerySQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata) {
         super(entitySQLExpressionMetadata);
     }
 
     /**
      * 分页部分代码参考 FreeSQL https://github.com/dotnetcore/FreeSql
+     *
      * @param toSQLContext
      * @return
      */
@@ -47,8 +42,32 @@ public class MsSQLQuerySQLExpression extends QuerySQLExpressionImpl {
         }
         sql.append(this.projects.toSQL(toSQLContext));
 
+
         Iterator<EntityTableSQLExpression> iterator = getTables().iterator();
         EntityTableSQLExpression firstTable = iterator.next();
+
+
+        boolean hasOrderBy = this.order != null && this.order.isNotEmpty();
+        boolean hasGroupBy = this.group != null && this.group.isNotEmpty();
+        if (rows > 0 || offset > 0) {
+            if (offset > 0) {// 注意这个判断，大于 0 才使用 ROW_NUMBER ，否则属于第一页直接使用 TOP
+                sql.append(", ROW_NUMBER() OVER(");
+                if (!hasOrderBy) {//top 1 不自动 order by
+                    if (rows > 1 ) {
+                        if (hasGroupBy) {
+                            sql.append(" ORDER BY ").append(this.group.toSQL(toSQLContext));
+                        } else {
+                            SQLBuilderSegment columnOrder = getPrimaryKeyOrFirstColumnOrder(firstTable.getEntityTable());
+                            sql.append(" ORDER BY ").append(columnOrder.toSQL(toSQLContext));
+                        }
+                    }
+                } else {
+                    sql.append(" ORDER BY ").append(this.order.toSQL(toSQLContext));
+                }
+                sql.append(" ) AS ").append(KeywordTool.ROW_NUM);
+            }
+        }
+
         sql.append(firstTable.toSQL(toSQLContext));
         while (iterator.hasNext()) {
             EntityTableSQLExpression table = iterator.next();
@@ -70,35 +89,26 @@ public class MsSQLQuerySQLExpression extends QuerySQLExpressionImpl {
             }
         }
         boolean onlyWhere = true;
-        boolean hasGroupBy = this.group != null && this.group.isNotEmpty();
         if (hasGroupBy) {
             onlyWhere = false;
             sql.append(" GROUP BY ").append(this.group.toSQL(toSQLContext));
-        }
-        if (this.having != null && this.having.isNotEmpty()) {
-            onlyWhere = false;
-            sql.append(" HAVING ").append(this.having.toSQL(toSQLContext));
-        }
-        boolean hasOrderBy = this.order != null && this.order.isNotEmpty();
-        if (hasOrderBy) {
-            onlyWhere = false;
-            sql.append(" ORDER BY ").append(this.order.toSQL(toSQLContext));
-        }
-        //分页必须要有order by
-        if (this.offset > 0) {
-            onlyWhere = false;
-            if (!hasOrderBy) {
-                if (hasGroupBy) {
-                    sql.append(" ORDER BY ").append(this.group.toSQL(toSQLContext));
-                } else {
-                    SQLBuilderSegment columnOrder = getPrimaryKeyOrFirstColumnOrder(firstTable.getEntityTable());
-                    sql.append(" ORDER BY ").append(columnOrder.toSQL(toSQLContext));
-                }
+            if (this.having != null && this.having.isNotEmpty()) {
+                sql.append(" HAVING ").append(this.having.toSQL(toSQLContext));
             }
+        }
 
-            sql.append(" OFFSET ").append(offset).append(" ROW");
-            if (this.rows > 0) {
-                sql.append(" FETCH NEXT ").append(rows).append(" ROW ONLY");
+        if (offset <= 0) {
+            onlyWhere = false;
+            if (hasOrderBy) {
+                sql.append(" ORDER BY ").append(this.order.toSQL(toSQLContext));
+            }
+        } else {
+            onlyWhere = false;
+            sql.insert(0, "WITH rt AS ( ").append(" ) SELECT rt.* FROM rt where rt.__rownum__");
+            if (rows > 0) {
+                sql.append(" BETWEEN ").append(offset + 1).append(" AND ").append(offset + rows);
+            } else {
+                sql.append(" > ").append(offset);
             }
         }
 
@@ -116,26 +126,6 @@ public class MsSQLQuerySQLExpression extends QuerySQLExpressionImpl {
             return notExistsResultSQL.toString();
         } else {
             return resultSQL;
-        }
-    }
-
-    protected SQLBuilderSegment getPrimaryKeyOrFirstColumnOrder(TableAvailable table) {
-        OrderBySQLBuilderSegmentImpl orderBySQLBuilderSegment = new OrderBySQLBuilderSegmentImpl();
-        String property = getPrimaryKeyOrFirstColumn(table);
-        orderBySQLBuilderSegment.append(new ColumnSegmentImpl(table, property, getRuntimeContext()));
-        return orderBySQLBuilderSegment;
-    }
-
-    protected String getPrimaryKeyOrFirstColumn(TableAvailable table) {
-        Collection<String> keyProperties = table.getEntityMetadata().getKeyProperties();
-        if (EasyCollectionUtil.isEmpty(keyProperties)) {
-            Collection<String> properties = table.getEntityMetadata().getProperties();
-            if(EasyCollectionUtil.isEmpty(properties)){
-                throw new EasyQueryInvalidOperationException("no property mapping to column");
-            }
-            return EasyCollectionUtil.first(properties);
-        } else {
-            return EasyCollectionUtil.first(keyProperties);
         }
     }
 }

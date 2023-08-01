@@ -22,5 +22,6 @@ public enum DatabaseEnum {
     PGSQL,
     H2,
     DAMENG,
-    KINGBASE_ES
+    KINGBASE_ES,
+    MSSQL_ROW_NUMBER
 }

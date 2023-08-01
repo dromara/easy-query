@@ -1,6 +1,8 @@
 package com.easy.query.test;
 
 import com.easy.query.core.api.pagination.EasyPageResult;
+import com.easy.query.core.util.EasyCollectionUtil;
+import com.easy.query.test.dto.CityVO;
 import com.easy.query.test.entity.base.Area;
 import com.easy.query.test.entity.base.City;
 import com.easy.query.test.entity.base.Province;
@@ -152,7 +154,7 @@ public class RelationTest extends BaseTest {
 
             {
                 List<SchoolStudent> list1 = easyQuery.queryable(SchoolStudent.class)
-                        .include(o -> o.one(SchoolStudent::getSchoolClass,1))
+                        .include(o -> o.one(SchoolStudent::getSchoolClass, 1))
                         .toList();
                 for (SchoolStudent schoolStudent : list1) {
                     Assert.assertNotNull(schoolStudent.getSchoolClass());
@@ -163,9 +165,9 @@ public class RelationTest extends BaseTest {
                 //todo alias
                 List<SchoolStudentVO> list1 = easyQuery.queryable(SchoolStudent.class)
                         .include(o -> o.one(SchoolStudent::getSchoolClass))
-                        .select(SchoolStudentVO.class,o->o
+                        .select(SchoolStudentVO.class, o -> o
                                 .columnAll()
-                                .columnInclude(SchoolStudent::getSchoolClass,SchoolStudentVO::getSchoolClass)
+                                .columnInclude(SchoolStudent::getSchoolClass, SchoolStudentVO::getSchoolClass)
                         )
                         .toList();
                 for (SchoolStudentVO schoolStudent : list1) {
@@ -177,10 +179,10 @@ public class RelationTest extends BaseTest {
             {
                 //todo alias
                 List<SchoolStudentVO> list1 = easyQuery.queryable(SchoolStudent.class)
-                        .include(o -> o.one(SchoolStudent::getSchoolClass,1))
-                        .select(SchoolStudentVO.class,o->o
+                        .include(o -> o.one(SchoolStudent::getSchoolClass, 1))
+                        .select(SchoolStudentVO.class, o -> o
                                 .columnAll()
-                                .columnInclude(SchoolStudent::getSchoolClass,SchoolStudentVO::getSchoolClass)
+                                .columnInclude(SchoolStudent::getSchoolClass, SchoolStudentVO::getSchoolClass)
                         )
                         .toList();
                 for (SchoolStudentVO schoolStudent : list1) {
@@ -193,9 +195,9 @@ public class RelationTest extends BaseTest {
                 //todo alias
                 List<SchoolStudentVO> list1 = easyQuery.queryable(SchoolStudent.class)
                         .include(o -> o.one(SchoolStudent::getSchoolClass))
-                        .select(SchoolStudentVO.class,o->o
+                        .select(SchoolStudentVO.class, o -> o
                                 .columnAll()
-                                .columnInclude(SchoolStudent::getSchoolClass,SchoolStudentVO::getSchoolClass,s->s.column(SchoolClassVO::getId))
+                                .columnInclude(SchoolStudent::getSchoolClass, SchoolStudentVO::getSchoolClass, s -> s.column(SchoolClassVO::getId))
                         )
                         .toList();
                 for (SchoolStudentVO schoolStudent : list1) {
@@ -216,8 +218,8 @@ public class RelationTest extends BaseTest {
                 //todo alias
                 List<SchoolStudentVO> list1 = easyQuery.queryable(SchoolStudent.class)
                         .include(o -> o.one(SchoolStudent::getSchoolStudentAddress).asTracking().disableLogicDelete())
-                        .select(SchoolStudentVO.class,o->o.columnAll()
-                                .columnInclude(SchoolStudent::getSchoolStudentAddress,SchoolStudentVO::getSchoolStudentAddress))
+                        .select(SchoolStudentVO.class, o -> o.columnAll()
+                                .columnInclude(SchoolStudent::getSchoolStudentAddress, SchoolStudentVO::getSchoolStudentAddress))
                         .toList();
                 for (SchoolStudentVO schoolStudent : list1) {
                     Assert.assertNotNull(schoolStudent.getSchoolStudentAddress());
@@ -226,7 +228,7 @@ public class RelationTest extends BaseTest {
 
             {
                 List<SchoolClass> list1 = easyQuery.queryable(SchoolClass.class)
-                        .include(o -> o.many(SchoolClass::getSchoolStudents,1))
+                        .include(o -> o.many(SchoolClass::getSchoolStudents, 1))
                         .toList();
                 for (SchoolClass schoolClass : list1) {
                     Assert.assertNotNull(schoolClass.getSchoolStudents());
@@ -237,8 +239,8 @@ public class RelationTest extends BaseTest {
                 //todo alias
                 List<SchoolClassVO> list1 = easyQuery.queryable(SchoolClass.class)
                         .include(o -> o.many(SchoolClass::getSchoolStudents))
-                        .select(SchoolClassVO.class,o->o.columnAll()
-                                .columnIncludeMany(SchoolClass::getSchoolStudents,SchoolClassVO::getSchoolStudents))
+                        .select(SchoolClassVO.class, o -> o.columnAll()
+                                .columnIncludeMany(SchoolClass::getSchoolStudents, SchoolClassVO::getSchoolStudents))
                         .toList();
                 for (SchoolClassVO schoolClass : list1) {
                     Assert.assertNotNull(schoolClass.getSchoolStudents());
@@ -290,7 +292,7 @@ public class RelationTest extends BaseTest {
             {
 
                 List<SchoolClass> list2 = easyQuery.queryable(SchoolClass.class)
-                        .include(o -> o.many(SchoolClass::getSchoolTeachers,1))
+                        .include(o -> o.many(SchoolClass::getSchoolTeachers, 1))
                         .toList();
                 for (SchoolClass schoolClass : list2) {
                     Assert.assertNotNull(schoolClass.getSchoolTeachers());
@@ -300,19 +302,19 @@ public class RelationTest extends BaseTest {
             {
                 //todo alias
                 List<SchoolClassVO> list2 = easyQuery.queryable(SchoolClass.class)
-                    .include(o -> o.many(SchoolClass::getSchoolTeachers))
-                    .select(SchoolClassVO.class,o->o.columnAll()
-                            .columnIncludeMany(SchoolClass::getSchoolTeachers,SchoolClassVO::getSchoolTeachers))
-                    .toList();
+                        .include(o -> o.many(SchoolClass::getSchoolTeachers))
+                        .select(SchoolClassVO.class, o -> o.columnAll()
+                                .columnIncludeMany(SchoolClass::getSchoolTeachers, SchoolClassVO::getSchoolTeachers))
+                        .toList();
                 for (SchoolClassVO schoolClass : list2) {
                     Assert.assertNotNull(schoolClass.getSchoolTeachers());
-                    if("class1".equals(schoolClass.getId())){
+                    if ("class1".equals(schoolClass.getId())) {
                         Assert.assertEquals(2, schoolClass.getSchoolTeachers().size());
                         for (SchoolTeacherVO schoolTeacher : schoolClass.getSchoolTeachers()) {
-                            Assert.assertTrue("teacher1".equals(schoolTeacher.getId())||"teacher2".equals(schoolTeacher.getId()));
+                            Assert.assertTrue("teacher1".equals(schoolTeacher.getId()) || "teacher2".equals(schoolTeacher.getId()));
                         }
                     }
-                    if("class2".equals(schoolClass.getId())){
+                    if ("class2".equals(schoolClass.getId())) {
                         Assert.assertEquals(1, schoolClass.getSchoolTeachers().size());
                         for (SchoolTeacherVO schoolTeacher : schoolClass.getSchoolTeachers()) {
                             Assert.assertEquals("teacher2", schoolTeacher.getId());
@@ -401,6 +403,7 @@ public class RelationTest extends BaseTest {
             }
         }
     }
+
     @Test
     public void provinceTest7() {
         EasyPageResult<Province> page = easyQuery.queryable(Province.class)
@@ -530,6 +533,29 @@ public class RelationTest extends BaseTest {
                     Assert.assertEquals(0, province.getCities().size());
                 } else {
                     Assert.assertTrue(province.getCities().size() > 0);
+                }
+            }
+        }
+        {
+
+            EasyPageResult<Province> pageResult1 = easyQuery.queryable(Province.class)
+                    .fillMany(x -> x.with(City.class).where(y -> y.eq(City::getCode, "3306")).select(CityVO.class)
+                            , CityVO::getProvinceCode
+                            , Province::getCode
+                            , (x, y) -> {
+                                if (EasyCollectionUtil.isNotEmpty(y)) {
+                                    CityVO first = EasyCollectionUtil.first(y);
+                                    x.setFirstCityName(first.getName());
+                                }
+                            }, true)
+                    .toPageResult(1, 10);
+            Assert.assertEquals(2L, pageResult1.getTotal());
+            Assert.assertEquals(2, pageResult1.getData().size());
+            for (Province province : pageResult1.getData()) {
+                if (!"33".equals(province.getCode())) {
+                    Assert.assertNull(province.getFirstCityName());
+                } else {
+                    Assert.assertNotNull(province.getFirstCityName());
                 }
             }
         }

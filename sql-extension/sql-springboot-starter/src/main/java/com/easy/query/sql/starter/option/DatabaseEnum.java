@@ -34,5 +34,6 @@ public enum DatabaseEnum {
     /**
      * 人大金仓
      */
-    KINGBASE_ES
+    KINGBASE_ES,
+    MSSQL_ROW_NUMBER
 }
