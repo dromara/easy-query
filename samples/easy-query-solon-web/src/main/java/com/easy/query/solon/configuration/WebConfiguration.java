@@ -15,7 +15,7 @@ import javax.sql.DataSource;
  */
 @Configuration
 public class WebConfiguration {
-    @Bean(value = "db1")
+    @Bean(name = "db1",typed = true)
     public DataSource db1DataSource(@Inject("${db1}") HikariDataSource dataSource){
         return dataSource;
     }
@@ -24,7 +24,7 @@ public class WebConfiguration {
 //     * 配置额外插件,比如自定义逻辑删除,加密策略,拦截器,分片初始化器,值转换,原子追踪更新
 //     * @param configuration
 //     */
-//    @Bean(value = "db1")
+//    @Bean
 //    public void db1QueryConfiguration(@Db("db1") QueryConfiguration configuration){
 //        configuration.applyLogicDeleteStrategy(new MyLogicDelStrategy());
 //        configuration.applyEncryptionStrategy(...);
@@ -38,7 +38,7 @@ public class WebConfiguration {
 //     * 添加分表或者分库的路由,分库数据源
 //     * @param runtimeContext
 //     */
-//    @Bean(value = "db1")
+//    @Bean
 //    public void db1QueryRuntimeContext(@Db("db1") QueryRuntimeContext runtimeContext){
 //        TableRouteManager tableRouteManager = runtimeContext.getTableRouteManager();
 //        DataSourceRouteManager dataSourceRouteManager = runtimeContext.getDataSourceRouteManager();
