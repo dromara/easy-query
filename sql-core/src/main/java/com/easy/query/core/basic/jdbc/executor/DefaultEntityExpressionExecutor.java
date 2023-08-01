@@ -64,7 +64,9 @@ public class DefaultEntityExpressionExecutor implements EntityExpressionExecutor
     public <TR> List<TR> query(ExecutorContext executorContext, ResultMetadata<TR> resultMetadata, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
         JdbcResult<TR> jdbcResult = queryStreamResultSet(executorContext, resultMetadata, entityQueryExpressionBuilder);
         List<TR> list = jdbcResult.toList();
-        log.info("<== " + "Total: " + list.size());
+        if(executorContext.getEasyQueryOption().isPrintSql()){
+            log.info("<== Total: " + list.size());
+        }
         return list;
     }
 
@@ -81,7 +83,9 @@ public class DefaultEntityExpressionExecutor implements EntityExpressionExecutor
     public <TR> List<TR> querySQL(ExecutorContext executorContext, ResultMetadata<TR> resultMetadata, String sql, List<SQLParameter> sqlParameters) {
         JdbcResult<TR> jdbcResult = querySQLStreamResultSet(executorContext, resultMetadata, sql, sqlParameters);
         List<TR> list = jdbcResult.toList();
-        log.info("<== " + "Total: " + list.size());
+        if(executorContext.getEasyQueryOption().isPrintSql()){
+            log.info("<== Total: " + list.size());
+        }
         return list;
     }
 
