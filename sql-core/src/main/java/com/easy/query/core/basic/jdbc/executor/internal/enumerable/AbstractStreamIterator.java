@@ -4,7 +4,7 @@ import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.executor.ResultMetadata;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.result.StreamResultSet;
 import com.easy.query.core.basic.jdbc.types.EasyResultSet;
-import com.easy.query.core.exception.EasyQueryException;
+import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import com.easy.query.core.util.EasyStringUtil;
 
 import java.sql.ResultSetMetaData;
@@ -50,7 +50,7 @@ public abstract class AbstractStreamIterator<T> implements StreamIterator<T> {
         try {
             return easyResultSet.nextAndReset();
         } catch (SQLException e) {
-            throw new EasyQueryException(e);
+            throw new EasyQuerySQLCommandException(e);
         }
     }
 
@@ -63,7 +63,7 @@ public abstract class AbstractStreamIterator<T> implements StreamIterator<T> {
             this.hasNext = false;
             return next0();
         } catch (SQLException e) {
-            throw new EasyQueryException(e);
+            throw new EasyQuerySQLCommandException(e);
         }
     }
 

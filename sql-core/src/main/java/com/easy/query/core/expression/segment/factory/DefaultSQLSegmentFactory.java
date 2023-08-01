@@ -31,6 +31,7 @@ import com.easy.query.core.expression.segment.impl.SQLColumnAsSegmentImpl;
 import com.easy.query.core.expression.segment.impl.SelectConstSegmentImpl;
 import com.easy.query.core.expression.segment.impl.SubQueryColumnSegmentImpl;
 import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;
+import com.easy.query.core.metadata.ColumnMetadata;
 
 /**
  * create time 2023/5/30 12:18
@@ -47,6 +48,11 @@ public class DefaultSQLSegmentFactory implements SQLSegmentFactory {
     @Override
     public ColumnSegment createColumnSegment(TableAvailable table, String propertyName, QueryRuntimeContext runtimeContext, String alias) {
         return new ColumnSegmentImpl(table, propertyName, runtimeContext, alias);
+    }
+
+    @Override
+    public ColumnSegment createColumnSegment(TableAvailable table, ColumnMetadata columnMetadata, QueryRuntimeContext runtimeContext, String alias) {
+        return new ColumnSegmentImpl(table, columnMetadata, runtimeContext, alias);
     }
 
     @Override

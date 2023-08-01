@@ -1,6 +1,8 @@
 package com.easy.query.core.basic.jdbc.executor.internal.enumerable;
 
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
+import com.easy.query.core.logging.Log;
+import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.sql.SQLException;
@@ -13,6 +15,7 @@ import java.util.List;
  * @author xuejiaming
  */
 public class DefaultJdbcResult<TR> implements JdbcResult<TR> {
+    private static final Log log= LogFactory.getLog(DefaultJdbcResult.class);
     private final JdbcStreamResult<TR> jdbcStreamResult;
 
     public DefaultJdbcResult(JdbcStreamResult<TR> jdbcStreamResult){
@@ -28,7 +31,11 @@ public class DefaultJdbcResult<TR> implements JdbcResult<TR> {
     public List<TR> toList(){
         try(JdbcStreamResult<TR> jdbcStreamResultSet =jdbcStreamResult){
             StreamIterable<TR> streamResult = jdbcStreamResultSet.getStreamIterable();
-            return EasyCollectionUtil.newArrayList(streamResult);
+            List<TR> list = EasyCollectionUtil.newArrayList(streamResult);
+            if(jdbcStreamResult.getExecutorContext().getEasyQueryOption().isPrintSql()){
+                log.info("<== Total: " + list.size());
+            }
+            return list;
         } catch (SQLException e) {
             throw new EasyQuerySQLCommandException(e);
         }

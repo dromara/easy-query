@@ -20,6 +20,12 @@ public class SelectorImpl extends AbstractSelector<Selector> implements Selector
     public SelectorImpl(EntityQueryExpressionBuilder entityQueryExpressionBuilder, SQLBuilderSegment sqlBuilderSegment) {
         super(entityQueryExpressionBuilder, sqlBuilderSegment);
     }
+
+    @Override
+    protected Selector castTChain() {
+        return this;
+    }
+
     @Override
     public Selector columnFunc(TableAvailable table, ColumnPropertyFunction columnPropertyFunction) {
         String propertyName = columnPropertyFunction.getPropertyName();

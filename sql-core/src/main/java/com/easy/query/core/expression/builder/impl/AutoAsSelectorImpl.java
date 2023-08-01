@@ -65,6 +65,11 @@ public class AutoAsSelectorImpl  extends AbstractSelector<AsSelector> implements
     }
 
     @Override
+    protected AsSelector castTChain() {
+        return this;
+    }
+
+    @Override
     public AsSelector columnAll(TableAvailable table) {
 
         if (table.getEntityClass().equals(resultClass)) {
@@ -92,14 +97,14 @@ public class AutoAsSelectorImpl  extends AbstractSelector<AsSelector> implements
             for (String property : sourceProperties) {
 
                 ColumnMetadata sourceColumnMetadata = sourceEntityMetadata.getColumnNotNull(property);
-                if(!columnAllQueryLargeColumn(queryLargeColumn,sourceColumnMetadata)){
+                if(ignoreColumnIfLargeNotQuery(queryLargeColumn,sourceColumnMetadata)){
                     continue;
                 }
                 String sourceColumnName = sourceColumnMetadata.getName();
                 ColumnMetadata targetColumnMetadata = targetEntityMetadata.getColumnMetadataOrNull(sourceColumnName);
                 if (targetColumnMetadata != null) {
 
-                    if(!columnAllQueryLargeColumn(queryLargeColumn,targetColumnMetadata)){
+                    if(ignoreColumnIfLargeNotQuery(queryLargeColumn,targetColumnMetadata)){
                         continue;
                     }
                     String targetColumnName = targetColumnMetadata.getName();

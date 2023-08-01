@@ -4,7 +4,7 @@ import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.executor.ResultMetadata;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.result.StreamResultSet;
 import com.easy.query.core.enums.EntityMetadataTypeEnum;
-import com.easy.query.core.exception.EasyQueryException;
+import com.easy.query.core.exception.EasyQuerySQLCommandException;
 
 import java.sql.SQLException;
 import java.util.Iterator;
@@ -32,7 +32,7 @@ public class DefaultStreamIterable<T> implements StreamIterable<T> {
         try {
             return iterator0();
         } catch (SQLException e) {
-            throw new EasyQueryException(e);
+            throw new EasyQuerySQLCommandException(e);
         }
     }
 

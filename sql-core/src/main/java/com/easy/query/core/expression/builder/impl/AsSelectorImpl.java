@@ -81,6 +81,11 @@ public class AsSelectorImpl extends AbstractSelector<AsSelector> implements AsSe
     }
 
     @Override
+    protected AsSelector castTChain() {
+        return this;
+    }
+
+    @Override
     public AsSelector columnAll(TableAvailable table) {
 
         if (table.getEntityClass().equals(resultClass)||resultEntityMetadata.getEntityMetadataType()== EntityMetadataTypeEnum.MAP) {

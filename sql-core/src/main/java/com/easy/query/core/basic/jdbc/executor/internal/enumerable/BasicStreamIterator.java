@@ -18,7 +18,6 @@ import java.sql.SQLException;
  * @author xuejiaming
  */
 public class BasicStreamIterator<T> extends AbstractStreamIterator<T>{
-    private ResultSetMetaData rsmd;
     public BasicStreamIterator(ExecutorContext context, StreamResultSet streamResult, ResultMetadata<T> resultMetadata) throws SQLException {
         super(context, streamResult, resultMetadata);
     }

@@ -25,8 +25,6 @@ import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityPredicateExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
-import com.easy.query.core.logging.Log;
-import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.sharding.context.EasyStreamMergeContext;
 import com.easy.query.core.sharding.context.EntityStreamMergeContext;
 import com.easy.query.core.sharding.context.ShardingQueryEasyStreamMergeContext;
@@ -41,7 +39,6 @@ import java.util.List;
  * @author xuejiaming
  */
 public class DefaultEntityExpressionExecutor implements EntityExpressionExecutor {
-    private static final Log log= LogFactory.getLog(DefaultEntityExpressionExecutor.class);
     private final EasyPrepareParser easyPrepareParser;
     private final ExecutionContextFactory executionContextFactory;
 
@@ -63,11 +60,7 @@ public class DefaultEntityExpressionExecutor implements EntityExpressionExecutor
     @Override
     public <TR> List<TR> query(ExecutorContext executorContext, ResultMetadata<TR> resultMetadata, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
         JdbcResult<TR> jdbcResult = queryStreamResultSet(executorContext, resultMetadata, entityQueryExpressionBuilder);
-        List<TR> list = jdbcResult.toList();
-        if(executorContext.getEasyQueryOption().isPrintSql()){
-            log.info("<== Total: " + list.size());
-        }
-        return list;
+        return jdbcResult.toList();
     }
 
     @Override
@@ -82,11 +75,7 @@ public class DefaultEntityExpressionExecutor implements EntityExpressionExecutor
     @Override
     public <TR> List<TR> querySQL(ExecutorContext executorContext, ResultMetadata<TR> resultMetadata, String sql, List<SQLParameter> sqlParameters) {
         JdbcResult<TR> jdbcResult = querySQLStreamResultSet(executorContext, resultMetadata, sql, sqlParameters);
-        List<TR> list = jdbcResult.toList();
-        if(executorContext.getEasyQueryOption().isPrintSql()){
-            log.info("<== Total: " + list.size());
-        }
-        return list;
+        return jdbcResult.toList();
     }
 
     @Override

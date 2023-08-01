@@ -206,6 +206,9 @@ public class EasySQLExpressionUtil {
     }
 
     public static String getSQLOwnerColumn(QueryRuntimeContext runtimeContext, TableAvailable table, String columnName, ToSQLContext toSQLContext) {
+        if(columnName==null){
+            throw new IllegalArgumentException("column name cannot be null");
+        }
         String tableAlias = getTableAlias(toSQLContext, table);
         String quoteName = getQuoteName(runtimeContext, columnName);
         if (tableAlias == null) {

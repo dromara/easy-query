@@ -29,7 +29,7 @@ public class BeanStreamIterator<T> extends AbstractStreamIterator<T> {
     private TrackManager trackManager;
 
     public BeanStreamIterator(ExecutorContext context, StreamResultSet streamResult, ResultMetadata<T> resultMetadata) throws SQLException {
-        super(context,streamResult,resultMetadata);
+        super(context, streamResult, resultMetadata);
     }
 
     @Override
@@ -40,8 +40,7 @@ public class BeanStreamIterator<T> extends AbstractStreamIterator<T> {
         this.trackManager = trackBean ? context.getRuntimeContext().getTrackManager() : null;
     }
 
-
-
+    @Override
     protected T next0() throws SQLException {
         T bean = mapToBean();
         if (trackBean) {
@@ -54,7 +53,13 @@ public class BeanStreamIterator<T> extends AbstractStreamIterator<T> {
         }
         return bean;
     }
-    private  T mapToBean() throws SQLException {
+
+    /**
+     * 映射到bean
+     * @return
+     * @throws SQLException
+     */
+    private T mapToBean() throws SQLException {
         T bean = resultMetadata.newBean();
         Class<?> entityClass = resultMetadata.getResultClass();
         for (int i = 0; i < this.resultColumnMetadatas.length; i++) {
@@ -68,7 +73,7 @@ public class BeanStreamIterator<T> extends AbstractStreamIterator<T> {
             easyResultSet.setPropertyType(propertyType);
             Object value = context.fromValue(entityClass, resultColumnMetadata, handler.getValue(easyResultSet));
 
-            resultColumnMetadata.setValue(bean,value);
+            resultColumnMetadata.setValue(bean, value);
         }
         return bean;
     }

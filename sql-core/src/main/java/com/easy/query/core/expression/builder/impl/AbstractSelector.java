@@ -58,6 +58,8 @@ public abstract class AbstractSelector<TChain> {
         this.sqlBuilderSegment = sqlBuilderSegment;
     }
 
+    protected abstract TChain castTChain();
+
     public ExpressionContext getExpressionContext(){
         return expressionContext;
     }
@@ -67,13 +69,13 @@ public abstract class AbstractSelector<TChain> {
     public TChain column(TableAvailable table, String property) {
         ColumnSegment columnSegment = sqlSegmentFactory.createColumnSegment(table, property, runtimeContext, null);
         sqlBuilderSegment.append(columnSegment);
-        return (TChain) this;
+        return castTChain();
     }
     public TChain columnInclude(TableAvailable table, String selfProperty, String aliasProperty, SQLExpression1<AsSelector> includeSelectorExpression) {
         NavigateMetadata navigateMetadata = table.getEntityMetadata().getNavigateNotNull(selfProperty);
         Map<String, ColumnIncludeExpression> propertyColumnIncludeExpressionMap = expressionContext.getColumnIncludeMaps().computeIfAbsent(table, k -> new HashMap<>());
         propertyColumnIncludeExpressionMap.put(navigateMetadata.getSelfPropertyOrPrimary(),new ColumnIncludeExpression(table,selfProperty,aliasProperty,includeSelectorExpression));
-        return (TChain) this;
+        return castTChain();
     }
     
     public TChain sqlNativeSegment(String sqlSegment, SQLExpression1<SQLNativeExpressionContext> contextConsume){
@@ -82,7 +84,7 @@ public abstract class AbstractSelector<TChain> {
         contextConsume.apply(sqlNativeExpressionContext);
         SQLNativeSegment columnSegment = sqlSegmentFactory.createSQLNativeSegment(runtimeContext, sqlSegment, sqlNativeExpressionContext);
         sqlBuilderSegment.append(columnSegment);
-        return (TChain) this;
+        return castTChain();
     }
 
     public TChain columnIgnore(TableAvailable table, String property) {
@@ -93,7 +95,7 @@ public abstract class AbstractSelector<TChain> {
             }
             return false;
         });
-        return (TChain) this;
+        return castTChain();
     }
 
     public TChain columnAll(TableAvailable table) {
@@ -111,15 +113,14 @@ public abstract class AbstractSelector<TChain> {
             EntityMetadata entityMetadata = table.getEntityMetadata();
             Collection<ColumnMetadata> columns = entityMetadata.getColumns();
             for (ColumnMetadata columnMetadata : columns) {
-                if (!columnAllQueryLargeColumn(queryLargeColumn, columnMetadata)) {
+                if (ignoreColumnIfLargeNotQuery(queryLargeColumn, columnMetadata)) {
                     continue;
                 }
-                column(table,columnMetadata.getPropertyName());
-//                ColumnSegment columnSegment = sqlSegmentFactory.createColumnSegment(table, columnMetadata.getPropertyName(), runtimeContext, null);
-//                sqlBuilderSegment.append(columnSegment);
+                ColumnSegment columnSegment = sqlSegmentFactory.createColumnSegment(table, columnMetadata, runtimeContext, null);
+                sqlBuilderSegment.append(columnSegment);
             }
         }
-        return (TChain) this;
+        return castTChain();
     }
 
     private EntityQueryExpressionBuilder getEntityQueryExpressionBuilder(EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
@@ -168,15 +169,21 @@ public abstract class AbstractSelector<TChain> {
                 }
             }
         }
-        return (TChain) this;
+        return castTChain();
     }
 
-    protected boolean columnAllQueryLargeColumn(boolean queryLargeColumn, ColumnMetadata columnMetadata) {
+    /**
+     * 是否忽略当前列
+     * @param queryLargeColumn
+     * @param columnMetadata
+     * @return
+     */
+    protected boolean ignoreColumnIfLargeNotQuery(boolean queryLargeColumn, ColumnMetadata columnMetadata) {
         //如果不查询的情况下当列是非大列才可以查询
-        if (!queryLargeColumn) {
-            return !columnMetadata.isLarge();
+        if (!queryLargeColumn) {//如果不查询large列那么当前是large列就忽略
+            return columnMetadata.isLarge();
         }
-        return true;
+        return false;
     }
 
 //    public TChain columnConstAs(String columnConst, String alias) {

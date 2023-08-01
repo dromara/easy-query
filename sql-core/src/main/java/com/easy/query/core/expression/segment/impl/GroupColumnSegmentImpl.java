@@ -18,6 +18,6 @@ public class GroupColumnSegmentImpl extends ColumnSegmentImpl implements GroupBy
 
     @Override
     public OrderBySegment createOrderByColumnSegment(boolean asc) {
-        return runtimeContext.getSQLSegmentFactory().createOrderByColumnSegment(table,propertyName,runtimeContext,asc);
+        return runtimeContext.getSQLSegmentFactory().createOrderByColumnSegment(table,getPropertyName(),runtimeContext,asc);
     }
 }
