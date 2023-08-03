@@ -60,11 +60,9 @@ public  class DeleteSQLExpressionImpl implements EntityDeleteSQLExpression {
         EntityTableSQLExpression easyTableSQLExpression = tables.get(0);
         String tableName = easyTableSQLExpression.toSQL(toSQLContext);
 
-        StringBuilder sql = new StringBuilder("DELETE FROM ");
-        sql.append(tableName);
-        sql.append(" WHERE ");
-        sql.append(where.toSQL(toSQLContext));
-        return sql.toString();
+        return "DELETE FROM " + tableName +
+                " WHERE " +
+                where.toSQL(toSQLContext);
     }
 
     @Override

@@ -59,6 +59,13 @@ public class Main {
     private static EasyProxyQuery easyProxyQuery;
 
     public static void main(String[] args) throws SQLException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+
+
+        StringBuilder sqlx=new StringBuilder();
+        for (int i = 10000; i < 20000; i++) {
+            sqlx.append("\n insert into  sys_user values (").append(i).append(",'用户三');");
+        }
+        String string = sqlx.toString();
         List<String> list = new ArrayList<>(); // 假设列表为字符串类型的示例
         String name = Main.class.getName();
         Class<?> aClass = Class.forName(name);

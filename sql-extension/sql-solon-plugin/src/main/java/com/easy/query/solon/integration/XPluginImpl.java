@@ -1,5 +1,6 @@
 package com.easy.query.solon.integration;
 
+import com.easy.query.core.annotation.EasyQueryTrack;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.util.EasyStringUtil;
@@ -35,6 +36,7 @@ public class XPluginImpl implements Plugin {
         context.beanInjectorAdd(com.easy.query.solon.annotation.Db.class, (varH, anno) -> {
             injectorAddDo(varH, anno.value());
         });
+        context.beanInterceptorAdd(EasyQueryTrack.class,new QueryTrackInterceptor(context));
     }
 
 

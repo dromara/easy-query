@@ -11,7 +11,7 @@ import java.lang.annotation.RetentionPolicy;
 
 /**
  * 表示数据库列是加密列
- *
+ * 如果直接返回VO对象那么该对象也必须添加对应的注解
  * @author xuejiaming
  */
 @Documented
@@ -23,6 +23,7 @@ public @interface Encryption {
     /**
      * 是否需要支持模糊查询
      * 默认支持等于匹配查询
+     * true会将入参参数toString 进行分段加密 添加%号
      * @return
      */
     boolean supportQueryLike() default false;

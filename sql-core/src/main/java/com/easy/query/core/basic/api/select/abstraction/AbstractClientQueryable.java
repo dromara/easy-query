@@ -911,7 +911,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         if (condition) {
 
             SQLFuncExpression1<IncludeNavigateParams, ClientQueryable<?>> includeQueryableExpression = includeNavigateParams -> {
-                NavigateInclude<T1> navigateInclude = sqlExpressionProvider1.getNavigateInclude(includeNavigateParams);
+                NavigateInclude<T1> navigateInclude = getSQLExpressionProvider1().getNavigateInclude(includeNavigateParams);
                 return navigateIncludeSQLExpression.apply(navigateInclude);
             };
             entityQueryExpressionBuilder.getExpressionContext().getIncludes().add(includeQueryableExpression);

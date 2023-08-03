@@ -29,3 +29,4 @@ easy-query:
   enable: true
   database: pgsql
   name-conversion: underlined
+  start-time-job: true
