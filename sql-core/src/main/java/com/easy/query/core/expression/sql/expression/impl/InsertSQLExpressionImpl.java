@@ -2,6 +2,8 @@ package com.easy.query.core.expression.sql.expression.impl;
 
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
+import com.easy.query.core.exception.EasyQueryInvalidOperationException;
+import com.easy.query.core.expression.segment.ColumnInsertSegment;
 import com.easy.query.core.expression.segment.SQLEntitySegment;
 import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.expression.sql.expression.EntityInsertSQLExpression;
@@ -9,6 +11,7 @@ import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.expression.segment.builder.ProjectSQLBuilderSegmentImpl;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
+import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 import com.easy.query.core.util.EasySQLSegmentUtil;
@@ -16,6 +19,7 @@ import com.easy.query.core.util.EasySQLSegmentUtil;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -84,15 +88,27 @@ public class InsertSQLExpressionImpl implements EntityInsertSQLExpression {
         EasySQLExpressionUtil.expressionInvokeRoot(toSQLContext);
         EntityTableSQLExpression easyTableSQLExpression = tables.get(0);
         String tableName = easyTableSQLExpression.toSQL(toSQLContext);
-        int insertColumns = columns.getSQLSegments().size();
         StringBuilder sql = new StringBuilder("INSERT INTO ");
-        sql.append(tableName).append(" (").append(columns.toSQL(toSQLContext)).append(") VALUES (");
-        sql.append("?");
-        for (int i = 0; i < insertColumns - 1; i++) {
-            sql.append(",?");
+        sql.append(tableName).append(" (");
+        Iterator<SQLSegment> iterator = columns.getSQLSegments().iterator();
+        SQLSegment firstColumn = iterator.next();
+
+        sql.append(getInsertColumn(firstColumn,toSQLContext));
+        while(iterator.hasNext()){
+            SQLSegment next = iterator.next();
+            sql.append(",").append(getInsertColumn(next,toSQLContext));
         }
-        sql.append(")");
+
+        sql.append(") VALUES (").append(columns.toSQL(toSQLContext)).append(")");
         return sql.toString();
+    }
+
+    protected String getInsertColumn(SQLSegment sqlSegment,ToSQLContext toSQLContext){
+        if(sqlSegment instanceof ColumnInsertSegment){
+            ColumnInsertSegment columnInsertSegment = (ColumnInsertSegment) sqlSegment;
+            return columnInsertSegment.toInsertColumn(toSQLContext);
+        }
+        throw new EasyQueryInvalidOperationException("insert column error:"+ EasyClassUtil.getInstanceSimpleName(sqlSegment));
     }
 
     @Override
@@ -104,7 +120,7 @@ public class InsertSQLExpressionImpl implements EntityInsertSQLExpression {
         if (EasySQLSegmentUtil.isNotEmpty(columns)) {
             columns.copyTo(easyInsertSQLExpression.getColumns());
         }
-        if(EasySQLSegmentUtil.isNotEmpty(duplicateKeyUpdateColumns)){
+        if (EasySQLSegmentUtil.isNotEmpty(duplicateKeyUpdateColumns)) {
             duplicateKeyUpdateColumns.copyTo(easyInsertSQLExpression.getDuplicateKeyUpdateColumns());
         }
         easyInsertSQLExpression.setDuplicateKey(duplicateKey);
@@ -112,21 +128,21 @@ public class InsertSQLExpressionImpl implements EntityInsertSQLExpression {
     }
 
 
-
-    protected SQLBuilderSegment getRealDuplicateKeyUpdateColumns(){
-        if(EasySQLSegmentUtil.isNotEmpty(duplicateKeyUpdateColumns)){
+    protected SQLBuilderSegment getRealDuplicateKeyUpdateColumns() {
+        if (EasySQLSegmentUtil.isNotEmpty(duplicateKeyUpdateColumns)) {
             return duplicateKeyUpdateColumns;
         }
         return columns;
     }
-    protected Set<String> getColumnsSet(SQLBuilderSegment sqlBuilderSegment){
+
+    protected Set<String> getColumnsSet(SQLBuilderSegment sqlBuilderSegment) {
         List<SQLSegment> sqlSegments = sqlBuilderSegment.getSQLSegments();
-        if(EasyCollectionUtil.isEmpty(sqlSegments)){
+        if (EasyCollectionUtil.isEmpty(sqlSegments)) {
             return Collections.emptySet();
         }
         HashSet<String> set = new HashSet<>(sqlSegments.size());
         for (SQLSegment sqlSegment : sqlSegments) {
-            if(sqlSegment instanceof SQLEntitySegment){
+            if (sqlSegment instanceof SQLEntitySegment) {
                 SQLEntitySegment sqlEntitySegment = (SQLEntitySegment) sqlSegment;
                 set.add(sqlEntitySegment.getPropertyName());
             }

@@ -560,4 +560,15 @@ public class RelationTest extends BaseTest {
             }
         }
     }
+
+    @Test
+    public void provinceTest5() {
+
+        List<Province> list = easyQuery.queryable(Province.class)
+                .whereById("33")
+                .include(o -> o.many(Province::getCities))
+                .toList();
+
+        Assert.assertEquals(1, list.size());
+    }
 }

@@ -1,11 +1,10 @@
 package com.easy.query.core.basic.jdbc.types.handler;
 
-import com.easy.query.core.basic.jdbc.types.EasyResultSet;
 import com.easy.query.core.basic.jdbc.types.EasyParameter;
+import com.easy.query.core.basic.jdbc.types.EasyResultSet;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
-import java.sql.Types;
 
 /**
  * @FileName: BigDecimalTypeHandler.java
@@ -14,6 +13,7 @@ import java.sql.Types;
  * @author xuejiaming
  */
 public class BigDecimalTypeHandler implements JdbcTypeHandler {
+
     @Override
     public Object getValue(EasyResultSet resultSet) throws SQLException {
         return resultSet.getStreamResult().getBigDecimal(resultSet.getIndex());

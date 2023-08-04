@@ -5,6 +5,8 @@ import com.easy.query.core.basic.extension.interceptor.Interceptor;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
+import com.easy.query.core.basic.jdbc.parameter.PropertySQLParameter;
+import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.EasyBehaviorEnum;
@@ -13,8 +15,14 @@ import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.expression.builder.impl.UpdateSetSelectorImpl;
 import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLExpression2;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnUpdateSetSelector;
 import com.easy.query.core.expression.parser.core.base.impl.ColumnUpdateSetSelectorImpl;
+import com.easy.query.core.expression.parser.core.base.scec.SQLNativePropertyExpressionContext;
+import com.easy.query.core.expression.parser.core.base.scec.SQLNativePropertyExpressionContextImpl;
+import com.easy.query.core.expression.segment.impl.SQLNativeInsertSegmentImpl;
+import com.easy.query.core.expression.segment.scec.context.SQLNativeInsertExpressionContextImpl;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.metadata.EntityMetadata;
@@ -22,6 +30,7 @@ import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -152,45 +161,45 @@ public abstract class AbstractClientInsertable<T> implements ClientInsertable<T>
 
     @Override
     public ClientInsertable<T> onConflictDoUpdate() {
-        doOnDuplicateKeyUpdate(null,null);
+        doOnDuplicateKeyUpdate(null, null);
         return this;
     }
 
     @Override
     public ClientInsertable<T> onConflictDoUpdate(String constraintProperty) {
-        doOnDuplicateKeyUpdate(constraintProperty,null);
+        doOnDuplicateKeyUpdate(constraintProperty, null);
         return this;
     }
 
     @Override
     public ClientInsertable<T> onConflictDoUpdate(String constraintProperty, SQLExpression1<ColumnUpdateSetSelector<T>> setColumnSelector) {
-        doOnDuplicateKeyUpdate(constraintProperty,setColumnSelector);
+        doOnDuplicateKeyUpdate(constraintProperty, setColumnSelector);
         return this;
     }
 
     @Override
     public ClientInsertable<T> onConflictDoUpdate(SQLExpression1<ColumnUpdateSetSelector<T>> setColumnSelector) {
-        doOnDuplicateKeyUpdate(null,setColumnSelector);
+        doOnDuplicateKeyUpdate(null, setColumnSelector);
         return this;
     }
 
     @Override
     public ClientInsertable<T> onDuplicateKeyUpdate() {
-        doOnDuplicateKeyUpdate(null,null);
+        doOnDuplicateKeyUpdate(null, null);
         return this;
     }
 
     @Override
     public ClientInsertable<T> onDuplicateKeyUpdate(SQLExpression1<ColumnUpdateSetSelector<T>> setColumnSelector) {
-        doOnDuplicateKeyUpdate(null,setColumnSelector);
+        doOnDuplicateKeyUpdate(null, setColumnSelector);
         return this;
     }
 
-    private void doOnDuplicateKeyUpdate(String constraintProperty, SQLExpression1<ColumnUpdateSetSelector<T>> setColumnSelector){
+    private void doOnDuplicateKeyUpdate(String constraintProperty, SQLExpression1<ColumnUpdateSetSelector<T>> setColumnSelector) {
         insertOrUpdateBehavior();
         entityInsertExpressionBuilder.setDuplicateKey(constraintProperty);
         entityInsertExpressionBuilder.getDuplicateKeyUpdateColumns().clear();
-        if(setColumnSelector!=null){
+        if (setColumnSelector != null) {
             ColumnUpdateSetSelectorImpl<T> columnUpdateSetSelector = new ColumnUpdateSetSelectorImpl<>(entityTableExpressionBuilder.getEntityTable(), new UpdateSetSelectorImpl(entityInsertExpressionBuilder.getRuntimeContext(), entityInsertExpressionBuilder.getDuplicateKeyUpdateColumns()));
             setColumnSelector.apply(columnUpdateSetSelector);
         }
@@ -199,13 +208,25 @@ public abstract class AbstractClientInsertable<T> implements ClientInsertable<T>
 
     @Override
     public ClientInsertable<T> batch(boolean use) {
-        if(use){
+        if (use) {
             entityInsertExpressionBuilder.getExpressionContext().getBehavior().removeBehavior(EasyBehaviorEnum.EXECUTE_NO_BATCH);
             entityInsertExpressionBuilder.getExpressionContext().getBehavior().addBehavior(EasyBehaviorEnum.EXECUTE_BATCH);
-        }else{
+        } else {
             entityInsertExpressionBuilder.getExpressionContext().getBehavior().removeBehavior(EasyBehaviorEnum.EXECUTE_BATCH);
             entityInsertExpressionBuilder.getExpressionContext().getBehavior().addBehavior(EasyBehaviorEnum.EXECUTE_NO_BATCH);
         }
+        return this;
+    }
+
+    @Override
+    public ClientInsertable<T> columnSQLNative(String property, String sqlSegment, SQLExpression2<SQLNativePropertyExpressionContext, SQLParameter> contextConsume) {
+        Objects.requireNonNull(contextConsume, "sql native context consume cannot be null");
+        TableAvailable entityTable = entityTableExpressionBuilder.getEntityTable();
+        SQLNativeInsertExpressionContextImpl sqlNativeExpressionContext = new SQLNativeInsertExpressionContextImpl();
+        SQLNativePropertyExpressionContextImpl sqlNativePropertyExpressionContext = new SQLNativePropertyExpressionContextImpl(entityTable, sqlNativeExpressionContext);
+        contextConsume.apply(sqlNativePropertyExpressionContext, new PropertySQLParameter(entityTable, property));
+        SQLNativeInsertSegmentImpl sqlNativeInsertSegment = new SQLNativeInsertSegmentImpl(entityTable, property, entityInsertExpressionBuilder.getRuntimeContext(), sqlSegment, sqlNativeExpressionContext);
+        entityInsertExpressionBuilder.sqlNativeInsertColumns().put(property, sqlNativeInsertSegment);
         return this;
     }
 
@@ -222,4 +243,5 @@ public abstract class AbstractClientInsertable<T> implements ClientInsertable<T>
     private String toSQLWithParam(Object entity, ToSQLContext toSQLContext) {
         return entityInsertExpressionBuilder.toExpression(entity).toSQL(toSQLContext);
     }
+
 }

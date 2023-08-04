@@ -7,6 +7,9 @@ import com.easy.query.core.basic.extension.interceptor.Interceptor;
 import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategy;
 import com.easy.query.core.basic.extension.track.update.ValueUpdateAtomicTrack;
 import com.easy.query.core.basic.extension.version.VersionStrategy;
+import com.easy.query.sql.starter.config.JdbcTypeHandlerReplaceConfigurer;
+import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
+import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
 import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.sharding.initializer.ShardingInitializer;
@@ -56,6 +59,19 @@ public class EasyQueryStarterInitializeAutoConfiguration {
     public void initialize() {
         QueryRuntimeContext runtimeContext = easyQuery.getRuntimeContext();
         QueryConfiguration configuration = runtimeContext.getQueryConfiguration();
+        JdbcTypeHandlerManager jdbcTypeHandlerManager = runtimeContext.getJdbcTypeHandlerManager();
+        for (Map.Entry<String, JdbcTypeHandler> jdbcTypeHandlerEntry : easyQueryInitializeOption.getJdbcTypeHandlerMap().entrySet()) {
+            JdbcTypeHandler jdbcTypeHandler = jdbcTypeHandlerEntry.getValue();
+            if(jdbcTypeHandler instanceof JdbcTypeHandlerReplaceConfigurer){
+                JdbcTypeHandlerReplaceConfigurer jdbcTypeHandlerReplaceConfiguration = (JdbcTypeHandlerReplaceConfigurer) jdbcTypeHandler;
+                if(jdbcTypeHandlerReplaceConfiguration.allowTypes()!=null&&!jdbcTypeHandlerReplaceConfiguration.allowTypes().isEmpty()){
+                    boolean replace = jdbcTypeHandlerReplaceConfiguration.replace();
+                    for (Class<?> allowType : jdbcTypeHandlerReplaceConfiguration.allowTypes()) {
+                        jdbcTypeHandlerManager.appendHandler(allowType,jdbcTypeHandler,replace);
+                    }
+                }
+            }
+        }
         //拦截器注册
         for (Map.Entry<String, Interceptor> easyInterceptorEntry : easyQueryInitializeOption.getInterceptorMap().entrySet()) {
             configuration.applyInterceptor(easyInterceptorEntry.getValue());
@@ -91,5 +107,6 @@ public class EasyQueryStarterInitializeAutoConfiguration {
         for (Map.Entry<String, DataSourceRoute<?>> dataSourceRouteEntry : easyQueryInitializeOption.getDataSourceRouteMap().entrySet()) {
             dataSourceRouteManager.addRoute(dataSourceRouteEntry.getValue());
         }
+        
     }
 }

@@ -19,6 +19,7 @@ import com.easy.query.core.util.EasySQLExpressionUtil;
 import com.easy.query.core.util.EasyStringUtil;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -40,14 +41,19 @@ public class PostgresSQLInsertSQLExpression extends InsertSQLExpressionImpl {
         EntityTableSQLExpression easyTableSQLExpression = tables.get(0);
         String tableName = easyTableSQLExpression.toSQL(toSQLContext);
         List<SQLSegment> sqlSegments = columns.getSQLSegments();
-        int insertColumns = sqlSegments.size();
         StringBuilder sql = new StringBuilder("INSERT INTO ");
-        sql.append(tableName).append(" (").append(columns.toSQL(toSQLContext)).append(") VALUES (");
-        sql.append("?");
-        for (int i = 0; i < insertColumns - 1; i++) {
-            sql.append(",?");
+        sql.append(tableName).append(" (");
+
+        Iterator<SQLSegment> iterator = columns.getSQLSegments().iterator();
+        SQLSegment firstColumn = iterator.next();
+
+        sql.append(getInsertColumn(firstColumn,toSQLContext));
+        while(iterator.hasNext()){
+            SQLSegment next = iterator.next();
+            sql.append(",").append(getInsertColumn(next,toSQLContext));
         }
-        sql.append(")");
+
+        sql.append(") VALUES (").append(columns.toSQL(toSQLContext)).append(")");
 
         ExpressionContext expressionContext = entitySQLExpressionMetadata.getExpressionContext();
         if(expressionContext.getBehavior().hasBehavior(EasyBehaviorEnum.ON_DUPLICATE_KEY_IGNORE)){

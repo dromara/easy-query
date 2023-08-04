@@ -111,6 +111,22 @@ public class QueryTest2 extends BaseTest {
                     .toList();
             Assert.assertEquals(1, list.size());
         }
+        {
+
+            List<BlogEntity> list = easyQuery
+                    .queryable(Topic.class)
+                    .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .innerJoin(BlogEntity.class, (t, t1, t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
+                    .where(o -> o.eq(Topic::getId, "3"))
+                    .select(BlogEntity.class, (t, t1, t2) -> {
+                        t.column(Topic::getId);
+                        t1.column(BlogEntity::getTitle);
+                        t2.column(BlogEntity::getStar);
+                    })
+                    .limit(1)
+                    .toList();
+            Assert.assertEquals(1, list.size());
+        }
     }
 
     @Test

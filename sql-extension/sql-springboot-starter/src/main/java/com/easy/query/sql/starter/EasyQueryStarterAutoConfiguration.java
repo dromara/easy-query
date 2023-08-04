@@ -12,6 +12,7 @@ import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategy;
 import com.easy.query.core.basic.extension.track.update.ValueUpdateAtomicTrack;
 import com.easy.query.core.basic.extension.version.VersionStrategy;
 import com.easy.query.core.basic.jdbc.conn.ConnectionManager;
+import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
 import com.easy.query.core.bootstrapper.DatabaseConfiguration;
 import com.easy.query.core.bootstrapper.DefaultDatabaseConfiguration;
 import com.easy.query.core.bootstrapper.DefaultStarterConfigurer;
@@ -244,7 +245,8 @@ public class EasyQueryStarterAutoConfiguration {
                                                                Map<String, ValueConverter<?, ?>> valueConverterMap,
                                                                Map<String, TableRoute<?>> tableRouteMap,
                                                                Map<String, DataSourceRoute<?>> dataSourceRouteMap,
-                                                               Map<String, ValueUpdateAtomicTrack<?>> valueUpdateAtomicTrackMap) {
+                                                               Map<String, ValueUpdateAtomicTrack<?>> valueUpdateAtomicTrackMap,
+                                                               Map<String, JdbcTypeHandler> jdbcTypeHandlerMap) {
         return new EasyQueryInitializeOption(interceptorMap,
                 versionStrategyMap,
                 logicDeleteStrategyMap,
@@ -253,6 +255,7 @@ public class EasyQueryStarterAutoConfiguration {
                 valueConverterMap,
                 tableRouteMap,
                 dataSourceRouteMap,
-                valueUpdateAtomicTrackMap);
+                valueUpdateAtomicTrackMap,
+                jdbcTypeHandlerMap);
     }
 }

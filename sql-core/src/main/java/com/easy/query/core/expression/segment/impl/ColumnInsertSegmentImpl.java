@@ -6,6 +6,7 @@ import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.ColumnInsertSegment;
 import com.easy.query.core.expression.segment.SQLEntitySegment;
+import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 
@@ -21,21 +22,19 @@ public class ColumnInsertSegmentImpl implements ColumnInsertSegment {
     protected final TableAvailable table;
     protected final String propertyName;
     protected final QueryRuntimeContext runtimeContext;
+    protected final ColumnMetadata columnMetadata;
 
     public ColumnInsertSegmentImpl(TableAvailable table, String propertyName, QueryRuntimeContext runtimeContext){
         this.table = table;
-
         this.propertyName = propertyName;
         this.runtimeContext = runtimeContext;
+        this.columnMetadata = table.getEntityMetadata().getColumnNotNull(propertyName);
     }
 
     @Override
     public String toSQL(ToSQLContext toSQLContext) {
         EasySQLUtil.addParameter(toSQLContext,new PropertySQLParameter(table,propertyName));
-        String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumnByProperty(runtimeContext,table,propertyName,toSQLContext);
-        StringBuilder sql = new StringBuilder();
-        sql.append(sqlColumnSegment);
-        return sql.toString();
+        return "?";
     }
 
     @Override
@@ -54,4 +53,8 @@ public class ColumnInsertSegmentImpl implements ColumnInsertSegment {
         throw new UnsupportedOperationException();
     }
 
+    @Override
+    public String toInsertColumn(ToSQLContext toSQLContext) {
+        return EasySQLExpressionUtil.getSQLOwnerColumn(runtimeContext,table,columnMetadata.getName(),toSQLContext);
+    }
 }

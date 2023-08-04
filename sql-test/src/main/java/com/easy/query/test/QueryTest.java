@@ -1545,7 +1545,8 @@ public class QueryTest extends BaseTest {
         System.out.println(blogEntityVO1);
         String sql = easyQuery.queryable(BlogEntity.class)
                 .where(o -> o.eq(BlogEntity::getId, "2"))
-                .select(BlogEntityVO1.class, o -> o.columnIgnore(BlogEntity::getId).columnAs(BlogEntity::getOrder, BlogEntityVO1::getScore)).limit(1).toSQL();
+                .select(BlogEntityVO1.class, o -> o.columnIgnore(BlogEntity::getId)
+                        .columnAs(BlogEntity::getOrder, BlogEntityVO1::getScore)).limit(1).toSQL();
         Assert.assertEquals("SELECT t.`order` AS `score` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? LIMIT 1", sql);
     }
 

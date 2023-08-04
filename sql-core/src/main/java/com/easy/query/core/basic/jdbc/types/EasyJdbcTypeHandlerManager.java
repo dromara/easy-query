@@ -34,7 +34,8 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @FileName: DefaultJdbcTypeHandler.java
@@ -66,7 +67,7 @@ public class EasyJdbcTypeHandlerManager implements JdbcTypeHandlerManager {
     private static final TimestampTypeHandler timestampTypeHandler = new TimestampTypeHandler();
     private static final TimeTypeHandler timeTypeHandler = new TimeTypeHandler();
     private static final JdbcTypeHandler DEFAULT_HANDLER=new ObjectTypeHandler();
-    private static final HashMap<Class<?>, JdbcTypeHandler> handlers=new HashMap<>();
+    private static final Map<Class<?>, JdbcTypeHandler> handlers=new ConcurrentHashMap<>();
     static{
         handlers.put(BigDecimal.class, bigDecimalHandler);
         handlers.put(Boolean.class, booleanDecimalHandler);
@@ -97,6 +98,18 @@ public class EasyJdbcTypeHandlerManager implements JdbcTypeHandlerManager {
         handlers.put(LocalDate.class, localDateHandler);
         handlers.put(LocalTime.class, localTimeTypeHandler);
     }
+
+    @Override
+    public void appendHandler(Class<?> type, JdbcTypeHandler typeHandler, boolean replace) {
+        if(handlers.containsKey(type)){
+            if(replace){
+                handlers.put(type,typeHandler);
+            }
+        }else{
+            handlers.put(type,typeHandler);
+        }
+    }
+
     @Override
     public JdbcTypeHandler getHandler(Class<?> type) {
         if(type==null){

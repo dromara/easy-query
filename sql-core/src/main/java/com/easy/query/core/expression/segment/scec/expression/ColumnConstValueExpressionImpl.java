@@ -10,7 +10,7 @@ import com.easy.query.core.util.EasySQLUtil;
  *
  * @author xuejiaming
  */
-public class ColumnConstValueExpressionImpl implements ColumnConstValueExpression{
+public class ColumnConstValueExpressionImpl implements ColumnConstValueExpression {
     private final Object val;
 
     public ColumnConstValueExpressionImpl(Object val){

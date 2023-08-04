@@ -5,6 +5,7 @@ import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import com.easy.query.core.exception.EasyQuerySQLStatementException;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.TopicAuto;
+import com.easy.query.test.entity.TopicAutoNative;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -344,5 +345,25 @@ public class InsertTest extends BaseTest {
                 .disableLogicDelete()
                 .allowDeleteStatement(true)
                 .whereByIds(Arrays.asList("500","300","400")).executeRows();
+    }
+
+    @Test
+    public void insertCustom(){
+        TopicAutoNative topicAuto = new TopicAutoNative();
+        topicAuto.setStars(1);
+        try {
+
+            easyQuery.insertable(topicAuto)
+                    .asTable("xxxxx")
+                    .columnSQLNative(TopicAutoNative::getId,"sde.next_rowid('sde',{0})",(context,sqlParameter)->{
+                        context.value(sqlParameter);
+                    }).executeRows();
+        }catch (Exception ex){
+            Throwable cause = ex.getCause();
+            Assert.assertTrue(cause instanceof EasyQuerySQLStatementException);
+            EasyQuerySQLStatementException cause1 = (EasyQuerySQLStatementException) cause;
+            String sql = cause1.getSQL();
+            Assert.assertEquals("INSERT INTO `xxxxx` (`id`,`stars`) VALUES (sde.next_rowid(sde,?),?)",sql);
+        }
     }
 }

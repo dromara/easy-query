@@ -2,12 +2,16 @@ package com.easy.query.api4j.insert;
 
 import com.easy.query.api4j.sql.SQLColumnSetSelector;
 import com.easy.query.api4j.sql.impl.SQLColumnSetSelectorImpl;
+import com.easy.query.api4j.sql.scec.SQLNativeLambdaExpressionContext;
+import com.easy.query.api4j.sql.scec.SQLNativeLambdaExpressionContextImpl;
 import com.easy.query.api4j.util.EasyLambdaUtil;
 import com.easy.query.core.basic.api.insert.ClientInsertable;
+import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLExpression2;
 
 import java.util.Collection;
 import java.util.function.Function;
@@ -145,6 +149,14 @@ public abstract class AbstractEntityInsertable<T> implements EntityInsertable<T>
     @Override
     public EntityInsertable<T> batch(boolean use) {
         clientInsertable.batch(use);
+        return this;
+    }
+
+    @Override
+    public EntityInsertable<T> columnSQLNative(Property<T, ?> property, String sqlSegment, SQLExpression2<SQLNativeLambdaExpressionContext<T>, SQLParameter> contextConsume) {
+        clientInsertable.columnSQLNative(EasyLambdaUtil.getPropertyName(property),sqlSegment,(context,sqlParameter)->{
+            contextConsume.apply(new SQLNativeLambdaExpressionContextImpl<>(context),sqlParameter);
+        });
         return this;
     }
 }

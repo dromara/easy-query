@@ -23,7 +23,9 @@ import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasySQLSegmentUtil;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -36,6 +38,7 @@ public class InsertExpressionBuilder extends AbstractEntityExpressionBuilder imp
     protected final SQLBuilderSegment columns;
     protected String duplicateKey;
     protected SQLBuilderSegment duplicateKeyUpdateColumns;
+    protected Map<String, ColumnInsertSegment> sqlNativeInsertColumns;
 
     public InsertExpressionBuilder(ExpressionContext expressionContext,Class<?> queryClass) {
         super(expressionContext,queryClass);
@@ -63,6 +66,14 @@ public class InsertExpressionBuilder extends AbstractEntityExpressionBuilder imp
     @Override
     public void setDuplicateKey(String duplicateKey) {
         this.duplicateKey=duplicateKey;
+    }
+
+    @Override
+    public Map<String, ColumnInsertSegment> sqlNativeInsertColumns() {
+        if(sqlNativeInsertColumns ==null){
+            sqlNativeInsertColumns =new HashMap<>();
+        }
+        return sqlNativeInsertColumns;
     }
 
     private void checkTable() {
@@ -113,13 +124,19 @@ public class InsertExpressionBuilder extends AbstractEntityExpressionBuilder imp
         EntityInsertSQLExpression easyInsertSQLExpression = expressionFactory.createEasyInsertSQLExpression(entitySQLExpressionMetadata, table.toExpression());
         EntityMetadata entityMetadata = table.getEntityMetadata();
         SQLBuilderSegment insertCloneColumns = getColumns().cloneSQLBuilder();
+        boolean hasNative = this.sqlNativeInsertColumns != null;
         if (insertCloneColumns.isEmpty()) {
             SQLSegmentFactory sqlSegmentFactory = runtimeContext.getSQLSegmentFactory();
-
+            //format
             Collection<String> properties = table.getEntityMetadata().getProperties();
             for (String property : properties) {
-                ColumnInsertSegment columnInsertSegment = sqlSegmentFactory.createColumnInsertSegment(table.getEntityTable(), property, runtimeContext);
-                insertCloneColumns.append(columnInsertSegment);
+                ColumnInsertSegment columnSQLNativeInsertSegment = !hasNative ? null : this.sqlNativeInsertColumns.get(property);
+                if(columnSQLNativeInsertSegment!=null){
+                    insertCloneColumns.append(columnSQLNativeInsertSegment);
+                }else{
+                    ColumnInsertSegment columnInsertSegment = sqlSegmentFactory.createColumnInsertSegment(table.getEntityTable(), property, runtimeContext);
+                    insertCloneColumns.append(columnInsertSegment);
+                }
             }
 
             Set<String> ignorePropertySet = new HashSet<>(entityMetadata.getProperties().size());
@@ -135,7 +152,11 @@ public class InsertExpressionBuilder extends AbstractEntityExpressionBuilder imp
                         return true;
                     }
                     if (clearIgnoreProperties) {
-                        return ignorePropertySet.contains(propertyName);
+                        boolean remove = ignorePropertySet.contains(propertyName);
+                        if(remove&&hasNative){//如果需要移除并且已经指定原生sql了那么不应该在原生sql里面
+                            return !sqlNativeInsertColumns.containsKey(propertyName);
+                        }
+                        return remove;
                     }
                 }
                 return false;
@@ -169,6 +190,9 @@ public class InsertExpressionBuilder extends AbstractEntityExpressionBuilder imp
         }
         for (EntityTableExpressionBuilder table : super.tables) {
             insertExpressionBuilder.getTables().add(table.copyEntityTableExpressionBuilder());
+        }
+        if(this.sqlNativeInsertColumns !=null){
+            insertExpressionBuilder.sqlNativeInsertColumns().putAll(this.sqlNativeInsertColumns);
         }
         return insertExpressionBuilder;
     }
