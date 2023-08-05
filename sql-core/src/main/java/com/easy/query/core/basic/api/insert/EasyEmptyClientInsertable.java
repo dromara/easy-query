@@ -132,7 +132,7 @@ public class EasyEmptyClientInsertable<T> implements ClientInsertable<T> {
     }
 
     @Override
-    public ClientInsertable<T> columnSQLNative(String property, String sqlSegment, SQLExpression2<SQLNativePropertyExpressionContext, SQLParameter> contextConsume) {
+    public ClientInsertable<T> columnSQL(String property, String sqlSegment, SQLExpression2<SQLNativePropertyExpressionContext, SQLParameter> contextConsume) {
         return this;
     }
 }

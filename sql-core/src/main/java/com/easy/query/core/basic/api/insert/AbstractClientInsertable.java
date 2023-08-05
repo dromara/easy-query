@@ -219,14 +219,14 @@ public abstract class AbstractClientInsertable<T> implements ClientInsertable<T>
     }
 
     @Override
-    public ClientInsertable<T> columnSQLNative(String property, String sqlSegment, SQLExpression2<SQLNativePropertyExpressionContext, SQLParameter> contextConsume) {
+    public ClientInsertable<T> columnSQL(String property, String sqlSegment, SQLExpression2<SQLNativePropertyExpressionContext, SQLParameter> contextConsume) {
         Objects.requireNonNull(contextConsume, "sql native context consume cannot be null");
         TableAvailable entityTable = entityTableExpressionBuilder.getEntityTable();
         SQLNativeInsertExpressionContextImpl sqlNativeExpressionContext = new SQLNativeInsertExpressionContextImpl();
         SQLNativePropertyExpressionContextImpl sqlNativePropertyExpressionContext = new SQLNativePropertyExpressionContextImpl(entityTable, sqlNativeExpressionContext);
         contextConsume.apply(sqlNativePropertyExpressionContext, new PropertySQLParameter(entityTable, property));
         SQLNativeInsertSegmentImpl sqlNativeInsertSegment = new SQLNativeInsertSegmentImpl(entityTable, property, entityInsertExpressionBuilder.getRuntimeContext(), sqlSegment, sqlNativeExpressionContext);
-        entityInsertExpressionBuilder.sqlNativeInsertColumns().put(property, sqlNativeInsertSegment);
+        entityInsertExpressionBuilder.insertColumnSQLs().put(property, sqlNativeInsertSegment);
         return this;
     }
 

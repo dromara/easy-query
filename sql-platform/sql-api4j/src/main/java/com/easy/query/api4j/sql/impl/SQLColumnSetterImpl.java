@@ -2,6 +2,8 @@ package com.easy.query.api4j.sql.impl;
 
 import com.easy.query.api4j.sql.SQLColumnSetter;
 import com.easy.query.core.expression.parser.core.base.ColumnSetter;
+import com.easy.query.core.expression.parser.core.base.core.SQLSetPropertyNative;
+import com.easy.query.core.util.EasyObjectUtil;
 
 /**
  * @author xuejiaming
@@ -18,5 +20,15 @@ public class SQLColumnSetterImpl<T> implements SQLColumnSetter<T> {
     @Override
     public ColumnSetter<T> getColumnSetter() {
         return columnSetter;
+    }
+
+    @Override
+    public <T1> SQLSetPropertyNative<T1> getSQLSetPropertyNative() {
+        return EasyObjectUtil.typeCastNullable(columnSetter);
+    }
+
+    @Override
+    public SQLColumnSetter<T> castTChain() {
+        return this;
     }
 }

@@ -16,7 +16,7 @@ import java.util.Collection;
 public interface ClientInsertable<T> extends Insertable<T, ClientInsertable<T>>, SQLOnDuplicateKeyUpdate<T,ClientInsertable<T>> {
     @Override
     ClientInsertable<T> insert(T entity);
-    ClientInsertable<T> columnSQLNative(String property, String sqlSegment, SQLExpression2<SQLNativePropertyExpressionContext, SQLParameter> contextConsume);
+    ClientInsertable<T> columnSQL(String property, String sqlSegment, SQLExpression2<SQLNativePropertyExpressionContext, SQLParameter> contextConsume);
 
     @Override
     default ClientInsertable<T> insert(Collection<T> entities) {

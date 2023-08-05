@@ -17,7 +17,7 @@ public interface EntityInsertExpressionBuilder extends EntityExpressionBuilder, 
     String getDuplicateKey();
     void setDuplicateKey(String duplicateKey);
 
-    Map<String, ColumnInsertSegment> sqlNativeInsertColumns();
+    Map<String, ColumnInsertSegment> insertColumnSQLs();
 
     @Override
     default EntityInsertSQLExpression toExpression() {

@@ -17,6 +17,7 @@ import com.easy.query.core.expression.parser.core.base.ColumnSetter;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.parser.core.base.impl.ColumnSetterImpl;
 import com.easy.query.core.expression.parser.core.base.impl.WherePredicateImpl;
+import com.easy.query.core.expression.parser.core.base.scec.SQLNativePropertyExpressionContext;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnCollectionPredicate;
@@ -96,6 +97,13 @@ public abstract class AbstractClientExpressionUpdatable<T> extends AbstractSQLEx
         return this;
     }
 
+    @Override
+    public ClientExpressionUpdatable<T> setSQL(boolean condition, String property, String sqlSegment, SQLExpression1<SQLNativePropertyExpressionContext> contextConsume) {
+        if(condition){
+            columnSetter.setSQL(property,sqlSegment,contextConsume);
+        }
+        return this;
+    }
 
     @Override
     public ClientExpressionUpdatable<T> where(boolean condition, SQLExpression1<WherePredicate<T>> whereExpression) {

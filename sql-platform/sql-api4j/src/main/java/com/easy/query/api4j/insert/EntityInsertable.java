@@ -22,5 +22,5 @@ public interface EntityInsertable<T> extends Insertable<T, EntityInsertable<T>>,
     @Override
     EntityInsertable<T> insert(Collection<T> entities);
 
-    EntityInsertable<T> columnSQLNative(Property<T,?> property, String sqlSegment, SQLExpression2<SQLNativeLambdaExpressionContext<T>, SQLParameter> contextConsume);
+    EntityInsertable<T> columnSQL(Property<T,?> property, String sqlSegment, SQLExpression2<SQLNativeLambdaExpressionContext<T>, SQLParameter> contextConsume);
 }

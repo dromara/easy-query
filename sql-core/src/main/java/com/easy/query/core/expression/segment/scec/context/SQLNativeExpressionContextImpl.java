@@ -1,7 +1,9 @@
 package com.easy.query.core.expression.segment.scec.context;
 
+import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.scec.expression.ColumnConstValueExpressionImpl;
+import com.easy.query.core.expression.segment.scec.expression.ColumnParamValueExpressionImpl;
 import com.easy.query.core.expression.segment.scec.expression.ColumnPropertyExpressionImpl;
 import com.easy.query.core.expression.segment.scec.expression.ConstParamExpression;
 
@@ -26,9 +28,13 @@ public class SQLNativeExpressionContextImpl implements SQLNativeExpressionContex
         return this;
     }
     public SQLNativeExpressionContextImpl value(Object val){
-        Objects.requireNonNull(val, "val cannot be null");
-        ColumnConstValueExpressionImpl columnConstValueExpression = new ColumnConstValueExpressionImpl(val);
-        expressions.add(columnConstValueExpression);
+        if(val instanceof SQLParameter){
+            ColumnParamValueExpressionImpl columnParamValueExpression = new ColumnParamValueExpressionImpl((SQLParameter) val);
+            expressions.add(columnParamValueExpression);
+        }else{
+            ColumnConstValueExpressionImpl columnConstValueExpression = new ColumnConstValueExpressionImpl(val);
+            expressions.add(columnConstValueExpression);
+        }
         return this;
     }
 

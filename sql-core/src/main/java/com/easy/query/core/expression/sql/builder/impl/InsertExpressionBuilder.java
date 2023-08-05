@@ -69,7 +69,7 @@ public class InsertExpressionBuilder extends AbstractEntityExpressionBuilder imp
     }
 
     @Override
-    public Map<String, ColumnInsertSegment> sqlNativeInsertColumns() {
+    public Map<String, ColumnInsertSegment> insertColumnSQLs() {
         if(sqlNativeInsertColumns ==null){
             sqlNativeInsertColumns =new HashMap<>();
         }
@@ -192,7 +192,7 @@ public class InsertExpressionBuilder extends AbstractEntityExpressionBuilder imp
             insertExpressionBuilder.getTables().add(table.copyEntityTableExpressionBuilder());
         }
         if(this.sqlNativeInsertColumns !=null){
-            insertExpressionBuilder.sqlNativeInsertColumns().putAll(this.sqlNativeInsertColumns);
+            insertExpressionBuilder.insertColumnSQLs().putAll(this.sqlNativeInsertColumns);
         }
         return insertExpressionBuilder;
     }

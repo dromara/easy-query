@@ -355,7 +355,7 @@ public class InsertTest extends BaseTest {
 
             easyQuery.insertable(topicAuto)
                     .asTable("xxxxx")
-                    .columnSQLNative(TopicAutoNative::getId,"sde.next_rowid('sde',{0})",(context,sqlParameter)->{
+                    .columnSQL(TopicAutoNative::getId,"sde.next_rowid('sde',{0})",(context, sqlParameter)->{
                         context.value(sqlParameter);
                     }).executeRows();
         }catch (Exception ex){

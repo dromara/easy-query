@@ -153,8 +153,8 @@ public abstract class AbstractEntityInsertable<T> implements EntityInsertable<T>
     }
 
     @Override
-    public EntityInsertable<T> columnSQLNative(Property<T, ?> property, String sqlSegment, SQLExpression2<SQLNativeLambdaExpressionContext<T>, SQLParameter> contextConsume) {
-        clientInsertable.columnSQLNative(EasyLambdaUtil.getPropertyName(property),sqlSegment,(context,sqlParameter)->{
+    public EntityInsertable<T> columnSQL(Property<T, ?> property, String sqlSegment, SQLExpression2<SQLNativeLambdaExpressionContext<T>, SQLParameter> contextConsume) {
+        clientInsertable.columnSQL(EasyLambdaUtil.getPropertyName(property),sqlSegment,(context, sqlParameter)->{
             contextConsume.apply(new SQLNativeLambdaExpressionContextImpl<>(context),sqlParameter);
         });
         return this;

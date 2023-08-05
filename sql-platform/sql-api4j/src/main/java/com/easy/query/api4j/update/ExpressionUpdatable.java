@@ -2,6 +2,9 @@ package com.easy.query.api4j.update;
 
 import com.easy.query.api4j.sql.SQLWherePredicate;
 import com.easy.query.api4j.sql.impl.SQLWherePredicateImpl;
+import com.easy.query.api4j.sql.scec.SQLNativeLambdaExpressionContext;
+import com.easy.query.api4j.sql.scec.SQLNativeLambdaExpressionContextImpl;
+import com.easy.query.api4j.util.EasyLambdaUtil;
 import com.easy.query.core.basic.api.internal.ConfigureVersionable;
 import com.easy.query.core.basic.api.internal.WithVersionable;
 import com.easy.query.core.basic.api.update.ClientExpressionUpdatable;
@@ -10,7 +13,6 @@ import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
-import com.easy.query.api4j.util.EasyLambdaUtil;
 
 import java.util.Collection;
 
@@ -126,6 +128,19 @@ public interface ExpressionUpdatable<T> extends Updatable<T, ExpressionUpdatable
         getClientUpdate().setDecrementNumber(condition, EasyLambdaUtil.getPropertyName(column), val);
         return this;
     }
+
+
+    default ExpressionUpdatable<T> setSQL(Property<T, ?> property, String sqlSegment, SQLExpression1<SQLNativeLambdaExpressionContext<T>>  contextConsume){
+        return setSQL(true,property,sqlSegment,contextConsume);
+    }
+   default ExpressionUpdatable<T> setSQL(boolean condition, Property<T, ?> property, String sqlSegment, SQLExpression1<SQLNativeLambdaExpressionContext<T>>  contextConsume){
+        if(condition){
+            getClientUpdate().setSQL(EasyLambdaUtil.getPropertyName(property),sqlSegment,(context)->{
+                contextConsume.apply(new SQLNativeLambdaExpressionContextImpl<>(context));
+            });
+        }
+        return this;
+   }
     // endregion
 
     default ExpressionUpdatable<T> where(SQLExpression1<SQLWherePredicate<T>> whereExpression) {

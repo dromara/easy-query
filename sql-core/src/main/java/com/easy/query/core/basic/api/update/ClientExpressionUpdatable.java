@@ -6,6 +6,7 @@ import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
+import com.easy.query.core.expression.parser.core.base.scec.SQLNativePropertyExpressionContext;
 import com.easy.query.core.expression.sql.TableContext;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 
@@ -96,6 +97,12 @@ public interface ClientExpressionUpdatable<T> extends Updatable<T, ClientExpress
     }
 
     ClientExpressionUpdatable<T> setDecrementNumber(boolean condition, String property, Number val);
+
+
+    default ClientExpressionUpdatable<T> setSQL(String property, String sqlSegment, SQLExpression1<SQLNativePropertyExpressionContext> contextConsume){
+        return setSQL(true,property,sqlSegment,contextConsume);
+    }
+    ClientExpressionUpdatable<T> setSQL(boolean condition, String property, String sqlSegment, SQLExpression1<SQLNativePropertyExpressionContext> contextConsume);
     // endregion
 
     default ClientExpressionUpdatable<T> where(SQLExpression1<WherePredicate<T>> whereExpression) {
@@ -115,7 +122,6 @@ public interface ClientExpressionUpdatable<T> extends Updatable<T, ClientExpress
     }
 
     <TProperty> ClientExpressionUpdatable<T> whereByIds(boolean condition, Collection<TProperty> ids);
-
     ExpressionContext getExpressionContext();
 
     default String toSQL() {
