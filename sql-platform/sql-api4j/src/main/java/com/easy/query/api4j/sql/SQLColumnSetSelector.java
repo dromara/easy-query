@@ -1,6 +1,6 @@
 package com.easy.query.api4j.sql;
 
-import com.easy.query.api4j.sql.core.SQLLambdaNative;
+import com.easy.query.api4j.sql.core.SQLColumnLambdaNative;
 import com.easy.query.api4j.util.EasyLambdaUtil;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
@@ -13,7 +13,7 @@ import com.easy.query.core.expression.parser.core.base.ColumnUpdateSetSelector;
  *
  * @author xuejiaming
  */
-public interface SQLColumnSetSelector<T1> extends EntitySQLTableOwner<T1>, SQLLambdaNative<T1,SQLColumnSetSelector<T1>> {
+public interface SQLColumnSetSelector<T1> extends EntitySQLTableOwner<T1>, SQLColumnLambdaNative<T1,SQLColumnSetSelector<T1>> {
     ColumnUpdateSetSelector<T1> getColumnSetSelector();
 
     default TableAvailable getTable() {

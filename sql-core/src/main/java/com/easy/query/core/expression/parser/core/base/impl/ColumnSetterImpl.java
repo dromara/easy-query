@@ -1,6 +1,5 @@
 package com.easy.query.core.expression.parser.core.base.impl;
 
-import com.easy.query.core.basic.jdbc.parameter.PropertySQLParameter;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.SQLPredicateCompareEnum;
 import com.easy.query.core.expression.lambda.SQLExpression1;
@@ -88,12 +87,12 @@ public class ColumnSetterImpl<T> implements ColumnSetter<T> {
     @Override
     public ColumnSetter<T> setSQL(String property, String sqlSegment, SQLExpression1<SQLNativePropertyExpressionContext> contextConsume) {
 
-            Objects.requireNonNull(contextConsume, "sql native context consume cannot be null");
-            SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl();
-            SQLNativePropertyExpressionContextImpl sqlNativePropertyExpressionContext = new SQLNativePropertyExpressionContextImpl(table, sqlNativeExpressionContext);
-            contextConsume.apply(sqlNativePropertyExpressionContext);
-            SQLNativeColumnSetPredicate sqlNativeInsertSegment = new SQLNativeColumnSetPredicate(table, property, runtimeContext, sqlSegment, sqlNativeExpressionContext);
-            sqlBuilderSegment.append(sqlNativeInsertSegment);
+        Objects.requireNonNull(contextConsume, "sql native context consume cannot be null");
+        SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl();
+        SQLNativePropertyExpressionContextImpl sqlNativePropertyExpressionContext = new SQLNativePropertyExpressionContextImpl(table, sqlNativeExpressionContext);
+        contextConsume.apply(sqlNativePropertyExpressionContext);
+        SQLNativeColumnSetPredicate sqlNativeInsertSegment = new SQLNativeColumnSetPredicate(table, property, runtimeContext, sqlSegment, sqlNativeExpressionContext);
+        sqlBuilderSegment.append(sqlNativeInsertSegment);
         return this;
     }
 }

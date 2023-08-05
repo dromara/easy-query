@@ -1,13 +1,18 @@
 package com.easy.query.core.expression.builder.impl;
 
+import com.easy.query.core.basic.jdbc.parameter.BeanSQLParameter;
+import com.easy.query.core.basic.jdbc.parameter.PropertySQLParameter;
+import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.builder.UpdateSetSelector;
 import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.SQLEntitySegment;
 import com.easy.query.core.expression.segment.SQLNativeSegment;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnPropertyPredicate;
+import com.easy.query.core.expression.segment.condition.predicate.SQLNativeColumnSetPredicate;
 import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
 import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;
 import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContextImpl;
@@ -67,6 +72,19 @@ public class UpdateSetSelectorImpl implements UpdateSetSelector {
             }
             return false;
         });
+        return this;
+    }
+
+    @Override
+    public UpdateSetSelector columnSQL(TableAvailable table,String property, String sqlSegment, SQLExpression2<SQLNativeExpressionContext, SQLParameter> contextConsume) {
+
+        Objects.requireNonNull(contextConsume,"sql native context consume cannot be null");
+        SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl();
+        PropertySQLParameter propertySQLParameter = new PropertySQLParameter(table, property);
+        contextConsume.apply(sqlNativeExpressionContext,propertySQLParameter);
+        SQLNativeColumnSetPredicate sqlNativeColumnSetPredicate = new SQLNativeColumnSetPredicate(table, property, runtimeContext, sqlSegment, sqlNativeExpressionContext);
+//        SQLNativeSegment columnSegment = sqlSegmentFactory.createSQLNativeSegment(runtimeContext, sqlSegment, sqlNativeExpressionContext);
+        sqlSegmentBuilder.append(sqlNativeColumnSetPredicate);
         return this;
     }
 }
