@@ -255,7 +255,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     @Override
     public <TR> TR firstOrNull(Class<TR> resultClass) {
         setExecuteMethod(ExecuteMethodEnum.FIRST);
-        List<TR> list = cloneQueryable().limit(1).toList(resultClass);
+        List<TR> list = limit(1).toList(resultClass);
 
         return EasyCollectionUtil.firstOrNull(list);
     }
@@ -484,7 +484,6 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     }
 
     private <TR> void selectOnly(Class<TR> resultClass) {
-
         SQLExpression1<ColumnAsSelector<T1, TR>> selectExpression = ColumnAsSelector::columnAll;
         ColumnAsSelector<T1, TR> sqlColumnSelector = getSQLExpressionProvider1().getAutoColumnAsSelector(entityQueryExpressionBuilder.getProjects(), resultClass);
         selectExpression.apply(sqlColumnSelector);

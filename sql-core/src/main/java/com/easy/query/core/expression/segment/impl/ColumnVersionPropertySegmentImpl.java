@@ -1,4 +1,4 @@
-package com.easy.query.core.expression.segment.condition.predicate;
+package com.easy.query.core.expression.segment.impl;
 
 import com.easy.query.core.basic.extension.version.VersionStrategy;
 import com.easy.query.core.basic.jdbc.parameter.PropertySQLParameter;
@@ -6,7 +6,6 @@ import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.VersionPropertySQLParameter;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.segment.impl.UpdateColumnSegmentImpl;
 import com.easy.query.core.util.EasySQLUtil;
 
 /**
@@ -15,11 +14,11 @@ import com.easy.query.core.util.EasySQLUtil;
  *
  * @author xuejiaming
  */
-public class ColumnVersionPropertyPredicate extends UpdateColumnSegmentImpl {
+public class ColumnVersionPropertySegmentImpl extends UpdateColumnSegmentImpl {
 
     private final VersionStrategy easyVersionStrategy;
 
-    public ColumnVersionPropertyPredicate(TableAvailable table, String propertyName, VersionStrategy easyVersionStrategy, QueryRuntimeContext runtimeContext) {
+    public ColumnVersionPropertySegmentImpl(TableAvailable table, String propertyName, VersionStrategy easyVersionStrategy, QueryRuntimeContext runtimeContext) {
         super(table, propertyName, runtimeContext);
 
         this.easyVersionStrategy = easyVersionStrategy;
@@ -28,6 +27,6 @@ public class ColumnVersionPropertyPredicate extends UpdateColumnSegmentImpl {
     @Override
     public String toSQL(ToSQLContext toSQLContext) {
         EasySQLUtil.addParameter(toSQLContext,new VersionPropertySQLParameter(new PropertySQLParameter(table,propertyName),easyVersionStrategy));
-        return"?";
+        return "?";
     }
 }

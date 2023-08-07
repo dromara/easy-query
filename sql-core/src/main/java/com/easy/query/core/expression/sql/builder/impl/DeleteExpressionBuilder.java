@@ -16,7 +16,7 @@ import com.easy.query.core.expression.segment.builder.UpdateSetSQLBuilderSegment
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnPropertyPredicate;
-import com.easy.query.core.expression.segment.condition.predicate.ColumnVersionPropertyPredicate;
+import com.easy.query.core.expression.segment.impl.ColumnVersionPropertySegmentImpl;
 import com.easy.query.core.expression.sql.builder.EntityDeleteExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
@@ -98,7 +98,7 @@ public class DeleteExpressionBuilder extends AbstractPredicateEntityExpressionBu
                             sqlColumnSetter.set(propertyName, nextVersion);
                         }
                     }else{
-                        setSQLSegmentBuilder.append(new ColumnVersionPropertyPredicate(table.getEntityTable(), versionMetadata.getPropertyName(),easyVersionStrategy,this.getRuntimeContext()));
+                        setSQLSegmentBuilder.append(new ColumnVersionPropertySegmentImpl(table.getEntityTable(), versionMetadata.getPropertyName(),easyVersionStrategy,this.getRuntimeContext()));
                     }
                 }
                 return setSQLSegmentBuilder;

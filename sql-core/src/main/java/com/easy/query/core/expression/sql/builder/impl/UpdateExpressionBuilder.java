@@ -32,7 +32,7 @@ import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnPredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnPropertyPredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnValuePredicate;
-import com.easy.query.core.expression.segment.condition.predicate.ColumnVersionPropertyPredicate;
+import com.easy.query.core.expression.segment.impl.ColumnVersionPropertySegmentImpl;
 import com.easy.query.core.expression.segment.impl.InsertUpdateColumnConfigureSegmentImpl;
 import com.easy.query.core.expression.segment.impl.UpdateColumnSegmentImpl;
 import com.easy.query.core.expression.sql.builder.ColumnConfigurerContext;
@@ -342,7 +342,7 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
         if (entityMetadata.hasVersionColumn()) {
             VersionMetadata versionMetadata = entityMetadata.getVersionMetadata();
             VersionStrategy easyVersionStrategy = versionMetadata.getEasyVersionStrategy();
-            updateSetSQLBuilderSegment.append(new ColumnVersionPropertyPredicate(entityTable, versionMetadata.getPropertyName(), easyVersionStrategy, runtimeContext));
+            updateSetSQLBuilderSegment.append(new ColumnVersionPropertySegmentImpl(entityTable, versionMetadata.getPropertyName(), easyVersionStrategy, runtimeContext));
         }
         return updateSetSQLBuilderSegment;
     }
