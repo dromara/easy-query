@@ -1,6 +1,8 @@
 package com.easy.query.api4j.update;
 
+import com.easy.query.api4j.sql.SQLColumnConfigurer;
 import com.easy.query.api4j.sql.SQLColumnSetSelector;
+import com.easy.query.api4j.sql.impl.SQLColumnConfigurerImpl;
 import com.easy.query.api4j.sql.impl.SQLColumnSetSelectorImpl;
 import com.easy.query.core.basic.api.internal.ConfigureVersionable;
 import com.easy.query.core.basic.api.internal.SQLExecuteStrategy;
@@ -17,7 +19,18 @@ import com.easy.query.core.expression.lambda.SQLExpression1;
 public interface EntityUpdatable<T> extends Updatable<T, EntityUpdatable<T>>, SQLExecuteStrategy<EntityUpdatable<T>>,
         ConfigureVersionable<EntityUpdatable<T>> {
     ClientEntityUpdatable<T> getClientUpdate();
+    default EntityUpdatable<T> columnConfigure(SQLExpression1<SQLColumnConfigurer<T>> columnConfigureExpression){
+        getClientUpdate().columnConfigure(configurer->{
+            columnConfigureExpression.apply(new SQLColumnConfigurerImpl<>(configurer));
+        });
+        return this;
+    }
 
+    /**
+     * 只更新列
+     * @param columnSelectorExpression
+     * @return
+     */
     default EntityUpdatable<T> setColumns(SQLExpression1<SQLColumnSetSelector<T>> columnSelectorExpression) {
         getClientUpdate().setColumns(selector -> {
             columnSelectorExpression.apply(new SQLColumnSetSelectorImpl<>(selector));
@@ -59,7 +72,6 @@ public interface EntityUpdatable<T> extends Updatable<T, EntityUpdatable<T>>, SQ
         });
         return this;
     }
-
     default String toSQL(Object entity) {
         return getClientUpdate().toSQL(entity);
     }

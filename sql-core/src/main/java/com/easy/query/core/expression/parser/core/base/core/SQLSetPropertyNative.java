@@ -21,5 +21,5 @@ public interface SQLSetPropertyNative<TChain> extends SQLTableOwner {
      * @param contextConsume
      * @return
      */
-    TChain setSQL(String property, String sqlSegment, SQLExpression1<SQLNativePropertyExpressionContext> contextConsume);
+    TChain setSQLSegment(String property, String sqlSegment, SQLExpression1<SQLNativePropertyExpressionContext> contextConsume);
 }

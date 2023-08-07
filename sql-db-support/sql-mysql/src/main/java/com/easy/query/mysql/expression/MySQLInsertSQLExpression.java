@@ -46,10 +46,10 @@ public class MySQLInsertSQLExpression extends InsertSQLExpressionImpl {
         Iterator<SQLSegment> iterator = columns.getSQLSegments().iterator();
         SQLSegment firstColumn = iterator.next();
 
-        sql.append(getInsertColumn(firstColumn,toSQLContext));
+        sql.append(getColumnNameWithOwner(firstColumn,toSQLContext));
         while(iterator.hasNext()){
             SQLSegment next = iterator.next();
-            sql.append(",").append(getInsertColumn(next,toSQLContext));
+            sql.append(",").append(getColumnNameWithOwner(next,toSQLContext));
         }
 
         sql.append(") VALUES (").append(columns.toSQL(toSQLContext)).append(")");

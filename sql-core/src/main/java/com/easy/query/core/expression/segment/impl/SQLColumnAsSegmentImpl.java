@@ -3,7 +3,7 @@ package com.easy.query.core.expression.segment.impl;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.segment.SQLColumnSegment;
+import com.easy.query.core.expression.segment.CloneableSQLSegment;
 import com.easy.query.core.expression.segment.SQLEntityAliasSegment;
 import com.easy.query.core.expression.segment.SQLEntitySegment;
 import com.easy.query.core.util.EasySQLExpressionUtil;
@@ -15,11 +15,11 @@ import com.easy.query.core.util.EasySQLExpressionUtil;
  * @author xuejiaming
  */
 public class SQLColumnAsSegmentImpl implements SQLEntityAliasSegment {
-    private final SQLColumnSegment sqlColumnSegment;
+    private final CloneableSQLSegment sqlColumnSegment;
     private final String alias;
     private final QueryRuntimeContext runtimeContext;
 
-    public SQLColumnAsSegmentImpl(SQLColumnSegment sqlColumnSegment, String alias, QueryRuntimeContext runtimeContext){
+    public SQLColumnAsSegmentImpl(CloneableSQLSegment sqlColumnSegment, String alias, QueryRuntimeContext runtimeContext){
 
         this.sqlColumnSegment = sqlColumnSegment;
         this.alias = alias;

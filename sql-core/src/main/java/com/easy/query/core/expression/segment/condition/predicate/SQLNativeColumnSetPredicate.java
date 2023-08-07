@@ -6,7 +6,7 @@ import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.enums.SQLPredicateCompareEnum;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.AbstractSQLNativeSegmentImpl;
-import com.easy.query.core.expression.segment.SQLColumnSegment;
+import com.easy.query.core.expression.segment.CloneableSQLSegment;
 import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 
@@ -37,7 +37,7 @@ public class SQLNativeColumnSetPredicate extends AbstractSQLNativeSegmentImpl im
     }
 
     @Override
-    public SQLColumnSegment cloneSQLColumnSegment() {
+    public CloneableSQLSegment cloneSQLColumnSegment() {
         return new SQLNativeColumnSetPredicate(this.table,this.propertyName,runtimeContext,sqlSegment,sqlConstExpressionContext);
     }
 

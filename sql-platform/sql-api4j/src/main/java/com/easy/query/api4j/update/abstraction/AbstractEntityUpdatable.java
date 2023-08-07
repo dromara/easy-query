@@ -14,98 +14,98 @@ import java.util.function.Function;
  */
 public abstract class AbstractEntityUpdatable<T> implements EntityUpdatable<T> {
 
-    protected final ClientEntityUpdatable<T> entityObjectUpdatable;
+    protected final ClientEntityUpdatable<T> clientEntityUpdatable;
 
     public AbstractEntityUpdatable(ClientEntityUpdatable<T> entityObjectUpdatable) {
-        this.entityObjectUpdatable = entityObjectUpdatable;
+        this.clientEntityUpdatable = entityObjectUpdatable;
     }
 
     @Override
     public ClientEntityUpdatable<T> getClientUpdate() {
-        return entityObjectUpdatable;
+        return clientEntityUpdatable;
     }
 
     @Override
     public long executeRows() {
-        return entityObjectUpdatable.executeRows();
+        return clientEntityUpdatable.executeRows();
     }
 
     @Override
     public EntityUpdatable<T> asTable(Function<String, String> tableNameAs) {
-        entityObjectUpdatable.asTable(tableNameAs);
+        clientEntityUpdatable.asTable(tableNameAs);
         return this;
     }
 
     @Override
     public EntityUpdatable<T> asSchema(Function<String, String> schemaAs) {
-        entityObjectUpdatable.asSchema(schemaAs);
+        clientEntityUpdatable.asSchema(schemaAs);
         return this;
     }
 
     @Override
     public EntityUpdatable<T> asAlias(String alias) {
-        entityObjectUpdatable.asAlias(alias);
+        clientEntityUpdatable.asAlias(alias);
         return this;
     }
 
     @Override
     public EntityUpdatable<T> setSQLStrategy(boolean condition, SQLExecuteStrategyEnum sqlStrategy) {
         if (condition) {
-            entityObjectUpdatable.setSQLStrategy(sqlStrategy);
+            clientEntityUpdatable.setSQLStrategy(sqlStrategy);
         }
         return this;
     }
 
     @Override
     public EntityUpdatable<T> noInterceptor() {
-        entityObjectUpdatable.noInterceptor();
+        clientEntityUpdatable.noInterceptor();
         return this;
     }
 
     @Override
     public EntityUpdatable<T> useInterceptor(String name) {
-        entityObjectUpdatable.useInterceptor(name);
+        clientEntityUpdatable.useInterceptor(name);
         return this;
     }
 
     @Override
     public EntityUpdatable<T> noInterceptor(String name) {
-        entityObjectUpdatable.noInterceptor(name);
+        clientEntityUpdatable.noInterceptor(name);
         return this;
     }
 
     @Override
     public EntityUpdatable<T> useInterceptor() {
-        entityObjectUpdatable.useInterceptor();
+        clientEntityUpdatable.useInterceptor();
         return this;
     }
 
     @Override
     public EntityUpdatable<T> useLogicDelete(boolean enable) {
-        entityObjectUpdatable.useLogicDelete(enable);
+        clientEntityUpdatable.useLogicDelete(enable);
         return this;
     }
 
     @Override
     public EntityUpdatable<T> noVersionError() {
-        entityObjectUpdatable.noVersionError();
+        clientEntityUpdatable.noVersionError();
         return this;
     }
 
     @Override
     public EntityUpdatable<T> noVersionIgnore() {
-        entityObjectUpdatable.noVersionIgnore();
+        clientEntityUpdatable.noVersionIgnore();
         return this;
     }
 
     @Override
     public void executeRows(long expectRows, String msg, String code) {
-        entityObjectUpdatable.executeRows(expectRows, msg, code);
+        clientEntityUpdatable.executeRows(expectRows, msg, code);
     }
 
     @Override
     public EntityUpdatable<T> batch(boolean use) {
-        entityObjectUpdatable.batch(use);
+        clientEntityUpdatable.batch(use);
         return this;
     }
 }

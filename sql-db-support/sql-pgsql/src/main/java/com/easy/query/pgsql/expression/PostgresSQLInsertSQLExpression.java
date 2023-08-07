@@ -5,7 +5,7 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.segment.SQLEntitySegment;
+import com.easy.query.core.expression.segment.InsertUpdateSetColumnSQLSegment;
 import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
@@ -40,17 +40,16 @@ public class PostgresSQLInsertSQLExpression extends InsertSQLExpressionImpl {
         EasySQLExpressionUtil.expressionInvokeRoot(toSQLContext);
         EntityTableSQLExpression easyTableSQLExpression = tables.get(0);
         String tableName = easyTableSQLExpression.toSQL(toSQLContext);
-        List<SQLSegment> sqlSegments = columns.getSQLSegments();
         StringBuilder sql = new StringBuilder("INSERT INTO ");
         sql.append(tableName).append(" (");
 
         Iterator<SQLSegment> iterator = columns.getSQLSegments().iterator();
         SQLSegment firstColumn = iterator.next();
 
-        sql.append(getInsertColumn(firstColumn,toSQLContext));
+        sql.append(getColumnNameWithOwner(firstColumn,toSQLContext));
         while(iterator.hasNext()){
             SQLSegment next = iterator.next();
-            sql.append(",").append(getInsertColumn(next,toSQLContext));
+            sql.append(",").append(getColumnNameWithOwner(next,toSQLContext));
         }
 
         sql.append(") VALUES (").append(columns.toSQL(toSQLContext)).append(")");
@@ -71,10 +70,10 @@ public class PostgresSQLInsertSQLExpression extends InsertSQLExpressionImpl {
             List<SQLSegment> realDuplicateKeyUpdateColumnsSQLSegments = realDuplicateKeyUpdateColumns.getSQLSegments();
             Set<String> duplicateKeyUpdateColumnsSet = getColumnsSet(columns);
             for (SQLSegment sqlSegment : realDuplicateKeyUpdateColumnsSQLSegments) {
-                if (!(sqlSegment instanceof SQLEntitySegment)) {
+                if (!(sqlSegment instanceof InsertUpdateSetColumnSQLSegment)) {
                     throw new EasyQueryInvalidOperationException("insert not support:" + EasyBehaviorEnum.ON_DUPLICATE_KEY_UPDATE.name()+",column type:"+ EasyClassUtil.getSimpleName(sqlSegment.getClass()));
                 }
-                SQLEntitySegment sqlEntitySegment = (SQLEntitySegment) sqlSegment;
+                InsertUpdateSetColumnSQLSegment sqlEntitySegment = (InsertUpdateSetColumnSQLSegment) sqlSegment;
                 String propertyName = sqlEntitySegment.getPropertyName();
                 if(Objects.equals(propertyName,constraintPropertyName)||keyProperties.contains(propertyName)||!duplicateKeyUpdateColumnsSet.contains(propertyName)){
                     continue;
@@ -82,8 +81,7 @@ public class PostgresSQLInsertSQLExpression extends InsertSQLExpressionImpl {
                 if(duplicateKeyUpdateSql.length()!=0){
                     duplicateKeyUpdateSql.append(", ");
                 }
-                String columnName = entityTable.getColumnName(propertyName);
-                String quoteName = EasySQLExpressionUtil.getQuoteName(runtimeContext, columnName);
+                String quoteName = sqlEntitySegment.getColumnNameWithOwner(toSQLContext);
                 duplicateKeyUpdateSql.append(quoteName).append(" = ").append("EXCLUDED.").append(quoteName);
             }
             if(duplicateKeyUpdateSql.length()>0){

@@ -1,17 +1,15 @@
 package com.easy.query.core.expression.sql.expression.impl;
 
-import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
-import com.easy.query.core.exception.EasyQueryInvalidOperationException;
-import com.easy.query.core.expression.segment.ColumnInsertSegment;
+import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.expression.segment.InsertUpdateSetColumnSQLSegment;
 import com.easy.query.core.expression.segment.SQLEntitySegment;
 import com.easy.query.core.expression.segment.SQLSegment;
-import com.easy.query.core.expression.sql.expression.EntityInsertSQLExpression;
-import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.expression.segment.builder.ProjectSQLBuilderSegmentImpl;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
+import com.easy.query.core.expression.sql.expression.EntityInsertSQLExpression;
 import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
-import com.easy.query.core.util.EasyClassUtil;
+import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 import com.easy.query.core.util.EasySQLSegmentUtil;
@@ -93,22 +91,19 @@ public class InsertSQLExpressionImpl implements EntityInsertSQLExpression {
         Iterator<SQLSegment> iterator = columns.getSQLSegments().iterator();
         SQLSegment firstColumn = iterator.next();
 
-        sql.append(getInsertColumn(firstColumn,toSQLContext));
-        while(iterator.hasNext()){
+        sql.append(getColumnNameWithOwner(firstColumn, toSQLContext));
+        while (iterator.hasNext()) {
             SQLSegment next = iterator.next();
-            sql.append(",").append(getInsertColumn(next,toSQLContext));
+            sql.append(",").append(getColumnNameWithOwner(next, toSQLContext));
         }
 
         sql.append(") VALUES (").append(columns.toSQL(toSQLContext)).append(")");
         return sql.toString();
     }
 
-    protected String getInsertColumn(SQLSegment sqlSegment,ToSQLContext toSQLContext){
-        if(sqlSegment instanceof ColumnInsertSegment){
-            ColumnInsertSegment columnInsertSegment = (ColumnInsertSegment) sqlSegment;
-            return columnInsertSegment.toInsertColumn(toSQLContext);
-        }
-        throw new EasyQueryInvalidOperationException("insert column error:"+ EasyClassUtil.getInstanceSimpleName(sqlSegment));
+    protected String getColumnNameWithOwner(SQLSegment sqlSegment, ToSQLContext toSQLContext) {
+        InsertUpdateSetColumnSQLSegment columnInsertSegment = (InsertUpdateSetColumnSQLSegment) sqlSegment;
+        return columnInsertSegment.getColumnNameWithOwner(toSQLContext);
     }
 
     @Override

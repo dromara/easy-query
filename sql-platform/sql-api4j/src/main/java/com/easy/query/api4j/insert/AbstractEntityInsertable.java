@@ -1,9 +1,12 @@
 package com.easy.query.api4j.insert;
 
+import com.easy.query.api4j.sql.SQLColumnConfigurer;
 import com.easy.query.api4j.sql.SQLColumnSetSelector;
+import com.easy.query.api4j.sql.impl.SQLColumnConfigurerImpl;
 import com.easy.query.api4j.sql.impl.SQLColumnSetSelectorImpl;
 import com.easy.query.api4j.sql.scec.SQLNativeLambdaExpressionContext;
 import com.easy.query.api4j.sql.scec.SQLNativeLambdaExpressionContextImpl;
+import com.easy.query.api4j.update.EntityUpdatable;
 import com.easy.query.api4j.util.EasyLambdaUtil;
 import com.easy.query.core.basic.api.insert.ClientInsertable;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
@@ -153,9 +156,9 @@ public abstract class AbstractEntityInsertable<T> implements EntityInsertable<T>
     }
 
     @Override
-    public EntityInsertable<T> columnSQL(Property<T, ?> property, String sqlSegment, SQLExpression2<SQLNativeLambdaExpressionContext<T>, SQLParameter> contextConsume) {
-        clientInsertable.columnSQL(EasyLambdaUtil.getPropertyName(property),sqlSegment,(context, sqlParameter)->{
-            contextConsume.apply(new SQLNativeLambdaExpressionContextImpl<>(context),sqlParameter);
+    public EntityInsertable<T> columnConfigure(SQLExpression1<SQLColumnConfigurer<T>> columnConfigureExpression) {
+        clientInsertable.columnConfigure(configurer->{
+            columnConfigureExpression.apply(new SQLColumnConfigurerImpl<>(configurer));
         });
         return this;
     }

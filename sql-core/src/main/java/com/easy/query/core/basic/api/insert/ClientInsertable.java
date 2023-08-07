@@ -1,9 +1,8 @@
 package com.easy.query.core.basic.api.insert;
 
 import com.easy.query.core.basic.api.internal.SQLOnDuplicateKeyUpdate;
-import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
-import com.easy.query.core.expression.lambda.SQLExpression2;
-import com.easy.query.core.expression.parser.core.base.scec.SQLNativePropertyExpressionContext;
+import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.parser.core.base.ColumnConfigurer;
 
 import java.util.Collection;
 
@@ -16,8 +15,7 @@ import java.util.Collection;
 public interface ClientInsertable<T> extends Insertable<T, ClientInsertable<T>>, SQLOnDuplicateKeyUpdate<T,ClientInsertable<T>> {
     @Override
     ClientInsertable<T> insert(T entity);
-    ClientInsertable<T> columnSQL(String property, String sqlSegment, SQLExpression2<SQLNativePropertyExpressionContext, SQLParameter> contextConsume);
-
+    ClientInsertable<T> columnConfigure(SQLExpression1<ColumnConfigurer<T>> columnConfigureExpression);
     @Override
     default ClientInsertable<T> insert(Collection<T> entities) {
         if (entities == null) {

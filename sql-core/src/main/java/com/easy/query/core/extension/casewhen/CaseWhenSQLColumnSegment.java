@@ -7,7 +7,7 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.builder.Filter;
 import com.easy.query.core.expression.builder.impl.FilterImpl;
 import com.easy.query.core.expression.lambda.SQLExpression1;
-import com.easy.query.core.expression.segment.SQLColumnSegment;
+import com.easy.query.core.expression.segment.CloneableSQLSegment;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 
@@ -20,7 +20,7 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public class CaseWhenSQLColumnSegment implements SQLColumnSegment {
+public class CaseWhenSQLColumnSegment implements CloneableSQLSegment {
 
     private final QueryRuntimeContext runtimeContext;
     private final ExpressionContext expressionContext;
@@ -35,7 +35,7 @@ public class CaseWhenSQLColumnSegment implements SQLColumnSegment {
         this.elseValue = elseValue;
     }
     @Override
-    public SQLColumnSegment cloneSQLColumnSegment() {
+    public CloneableSQLSegment cloneSQLColumnSegment() {
         return new CaseWhenSQLColumnSegment(runtimeContext,expressionContext,new ArrayList<>(whens),elseValue);
     }
 

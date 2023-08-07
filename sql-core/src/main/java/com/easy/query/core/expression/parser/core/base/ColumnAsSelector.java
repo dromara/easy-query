@@ -10,7 +10,7 @@ import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 import com.easy.query.core.expression.parser.core.base.core.SQLPropertyNative;
-import com.easy.query.core.expression.segment.SQLColumnSegment;
+import com.easy.query.core.expression.segment.CloneableSQLSegment;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 
 /**
@@ -139,7 +139,7 @@ public interface ColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1>, SQLPr
 
     ColumnAsSelector<T1, TR> columnFuncAs(ColumnPropertyFunction columnPropertyFunction, String propertyAlias);
 
-    ColumnAsSelector<T1,TR> sqlSegmentAs(SQLColumnSegment sqlColumnSegment, String propertyAlias);
+    ColumnAsSelector<T1,TR> sqlSegmentAs(CloneableSQLSegment sqlColumnSegment, String propertyAlias);
     default <T2> ColumnAsSelector<T2, TR> then(ColumnAsSelector<T2, TR> sub) {
         return sub;
     }

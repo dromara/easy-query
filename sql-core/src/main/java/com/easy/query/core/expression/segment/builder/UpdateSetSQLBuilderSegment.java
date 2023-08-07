@@ -2,6 +2,7 @@ package com.easy.query.core.expression.segment.builder;
 
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.enums.SQLKeywordEnum;
+import com.easy.query.core.expression.segment.InsertUpdateSetColumnSQLSegment;
 import com.easy.query.core.expression.segment.SQLSegment;
 
 import java.util.Iterator;
@@ -22,11 +23,11 @@ public class UpdateSetSQLBuilderSegment extends AbstractSQLBuilderSegment {
         List<SQLSegment> sqlSegments = getSQLSegments();
         if(!sqlSegments.isEmpty()){
             Iterator<SQLSegment> iterator = sqlSegments.iterator();
-            SQLSegment first = iterator.next();
-            sb.append(first.toSQL(toSQLContext));
+            InsertUpdateSetColumnSQLSegment first = (InsertUpdateSetColumnSQLSegment)iterator.next();
+            sb.append(first.getColumnNameWithOwner(toSQLContext)).append(" = ").append(first.toSQL(toSQLContext));
             while(iterator.hasNext()){
-                SQLSegment sqlSegment = iterator.next();
-                sb.append(SQLKeywordEnum.DOT.toSQL()).append(sqlSegment.toSQL(toSQLContext));
+                InsertUpdateSetColumnSQLSegment sqlSegment = (InsertUpdateSetColumnSQLSegment)iterator.next();
+                sb.append(SQLKeywordEnum.DOT.toSQL()).append(sqlSegment.getColumnNameWithOwner(toSQLContext)).append(" = ").append(sqlSegment.toSQL(toSQLContext));
             }
         }
         return sb.toString();

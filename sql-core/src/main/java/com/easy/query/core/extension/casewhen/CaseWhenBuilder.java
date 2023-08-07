@@ -4,7 +4,7 @@ import com.easy.query.core.common.tuple.Tuple2;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.builder.Filter;
 import com.easy.query.core.expression.lambda.SQLExpression1;
-import com.easy.query.core.expression.segment.SQLColumnSegment;
+import com.easy.query.core.expression.segment.CloneableSQLSegment;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.util.EasyObjectUtil;
 
@@ -31,7 +31,7 @@ public class CaseWhenBuilder {
         whens.add(new Tuple2<>(predicate,then));
         return this;
     }
-    public SQLColumnSegment elseEnd(Object elseValue){
+    public CloneableSQLSegment elseEnd(Object elseValue){
         return new CaseWhenSQLColumnSegment(runtimeContext,expressionContext, EasyObjectUtil.typeCastNullable(whens),elseValue);
     }
 }

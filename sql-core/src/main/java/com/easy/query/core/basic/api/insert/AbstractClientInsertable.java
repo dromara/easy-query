@@ -5,24 +5,19 @@ import com.easy.query.core.basic.extension.interceptor.Interceptor;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
-import com.easy.query.core.basic.jdbc.parameter.PropertySQLParameter;
-import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
+import com.easy.query.core.expression.builder.impl.ConfigurerImpl;
 import com.easy.query.core.expression.builder.impl.UpdateSetSelectorImpl;
 import com.easy.query.core.expression.lambda.SQLExpression1;
-import com.easy.query.core.expression.lambda.SQLExpression2;
-import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.parser.core.base.ColumnConfigurer;
 import com.easy.query.core.expression.parser.core.base.ColumnUpdateSetSelector;
+import com.easy.query.core.expression.parser.core.base.impl.ColumnConfigurerImpl;
 import com.easy.query.core.expression.parser.core.base.impl.ColumnUpdateSetSelectorImpl;
-import com.easy.query.core.expression.parser.core.base.scec.SQLNativePropertyExpressionContext;
-import com.easy.query.core.expression.parser.core.base.scec.SQLNativePropertyExpressionContextImpl;
-import com.easy.query.core.expression.segment.impl.SQLNativeInsertSegmentImpl;
-import com.easy.query.core.expression.segment.scec.context.SQLNativeInsertExpressionContextImpl;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.metadata.EntityMetadata;
@@ -30,7 +25,6 @@ import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -219,14 +213,8 @@ public abstract class AbstractClientInsertable<T> implements ClientInsertable<T>
     }
 
     @Override
-    public ClientInsertable<T> columnSQL(String property, String sqlSegment, SQLExpression2<SQLNativePropertyExpressionContext, SQLParameter> contextConsume) {
-        Objects.requireNonNull(contextConsume, "sql native context consume cannot be null");
-        TableAvailable entityTable = entityTableExpressionBuilder.getEntityTable();
-        SQLNativeInsertExpressionContextImpl sqlNativeExpressionContext = new SQLNativeInsertExpressionContextImpl();
-        SQLNativePropertyExpressionContextImpl sqlNativePropertyExpressionContext = new SQLNativePropertyExpressionContextImpl(entityTable, sqlNativeExpressionContext);
-        contextConsume.apply(sqlNativePropertyExpressionContext, new PropertySQLParameter(entityTable, property));
-        SQLNativeInsertSegmentImpl sqlNativeInsertSegment = new SQLNativeInsertSegmentImpl(entityTable, property, entityInsertExpressionBuilder.getRuntimeContext(), sqlSegment, sqlNativeExpressionContext);
-        entityInsertExpressionBuilder.insertColumnSQLs().put(property, sqlNativeInsertSegment);
+    public ClientInsertable<T> columnConfigure(SQLExpression1<ColumnConfigurer<T>> columnConfigureExpression) {
+        columnConfigureExpression.apply(new ColumnConfigurerImpl<>(entityTableExpressionBuilder.getEntityTable(),new ConfigurerImpl(entityInsertExpressionBuilder)));
         return this;
     }
 

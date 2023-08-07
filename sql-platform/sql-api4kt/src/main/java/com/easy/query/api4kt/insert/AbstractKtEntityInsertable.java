@@ -1,6 +1,8 @@
 package com.easy.query.api4kt.insert;
 
+import com.easy.query.api4kt.sql.SQLKtColumnConfigurer;
 import com.easy.query.api4kt.sql.SQLKtColumnSetSelector;
+import com.easy.query.api4kt.sql.impl.SQLKtColumnConfigurerImpl;
 import com.easy.query.api4kt.sql.impl.SQLKtColumnSetSelectorImpl;
 import com.easy.query.api4kt.util.EasyKtLambdaUtil;
 import com.easy.query.core.basic.api.insert.ClientInsertable;
@@ -144,6 +146,14 @@ public abstract class AbstractKtEntityInsertable<T> implements KtEntityInsertabl
     @Override
     public KtEntityInsertable<T> batch(boolean use) {
         clientInsertable.batch(use);
+        return this;
+    }
+
+    @Override
+    public KtEntityInsertable<T> columnConfigure(SQLExpression1<SQLKtColumnConfigurer<T>> columnConfigureExpression) {
+        clientInsertable.columnConfigure(configurer->{
+            columnConfigureExpression.apply(new SQLKtColumnConfigurerImpl<>(configurer));
+        });
         return this;
     }
 }

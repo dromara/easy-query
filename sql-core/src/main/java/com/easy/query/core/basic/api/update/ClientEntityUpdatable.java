@@ -3,6 +3,7 @@ package com.easy.query.core.basic.api.update;
 import com.easy.query.core.basic.api.internal.ConfigureVersionable;
 import com.easy.query.core.basic.api.internal.SQLExecuteStrategy;
 import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.parser.core.base.ColumnConfigurer;
 import com.easy.query.core.expression.parser.core.base.ColumnUpdateSetSelector;
 
 /**
@@ -68,5 +69,6 @@ public interface ClientEntityUpdatable<T> extends Updatable<T, ClientEntityUpdat
      */
     ClientEntityUpdatable<T> whereColumns(boolean condition, SQLExpression1<ColumnUpdateSetSelector<T>> columnSelectorExpression);
 
+    ClientEntityUpdatable<T> columnConfigure(SQLExpression1<ColumnConfigurer<T>> columnConfigureExpression);
     String toSQL(Object entity);
 }

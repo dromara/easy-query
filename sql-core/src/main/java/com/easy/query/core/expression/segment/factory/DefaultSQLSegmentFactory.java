@@ -2,32 +2,30 @@ package com.easy.query.core.expression.segment.factory;
 
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.context.QueryRuntimeContext;
-import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.segment.SQLNativeSegment;
-import com.easy.query.core.expression.segment.ColumnInsertSegment;
+import com.easy.query.core.expression.segment.CloneableSQLSegment;
 import com.easy.query.core.expression.segment.ColumnSegment;
-import com.easy.query.core.expression.segment.ColumnWithSelfSegment;
 import com.easy.query.core.expression.segment.FuncColumnSegment;
 import com.easy.query.core.expression.segment.GroupByColumnSegment;
+import com.easy.query.core.expression.segment.InsertUpdateSetColumnSQLSegment;
 import com.easy.query.core.expression.segment.OrderBySegment;
 import com.easy.query.core.expression.segment.OrderFuncColumnSegment;
-import com.easy.query.core.expression.segment.SQLColumnSegment;
+import com.easy.query.core.expression.segment.SQLNativeSegment;
 import com.easy.query.core.expression.segment.SelectConstSegment;
 import com.easy.query.core.expression.segment.SubQueryColumnSegment;
 import com.easy.query.core.expression.segment.impl.AnonymousColumnSegmentImpl;
-import com.easy.query.core.expression.segment.impl.SQLNativeSegmentImpl;
-import com.easy.query.core.expression.segment.impl.ColumnInsertSegmentImpl;
 import com.easy.query.core.expression.segment.impl.ColumnSegmentImpl;
 import com.easy.query.core.expression.segment.impl.ColumnWithSelfSegmentImpl;
 import com.easy.query.core.expression.segment.impl.FuncColumnSegmentImpl;
 import com.easy.query.core.expression.segment.impl.GroupBySQLNativeSegmentImpl;
 import com.easy.query.core.expression.segment.impl.GroupColumnSegmentImpl;
+import com.easy.query.core.expression.segment.impl.InsertColumnSegmentImpl;
 import com.easy.query.core.expression.segment.impl.OrderBySQLNativeSegmentImpl;
 import com.easy.query.core.expression.segment.impl.OrderColumnSegmentImpl;
 import com.easy.query.core.expression.segment.impl.OrderFuncColumnSegmentImpl;
 import com.easy.query.core.expression.segment.impl.SQLColumnAsSegmentImpl;
+import com.easy.query.core.expression.segment.impl.SQLNativeSegmentImpl;
 import com.easy.query.core.expression.segment.impl.SelectConstSegmentImpl;
 import com.easy.query.core.expression.segment.impl.SubQueryColumnSegmentImpl;
 import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;
@@ -71,13 +69,13 @@ public class DefaultSQLSegmentFactory implements SQLSegmentFactory {
     }
 
     @Override
-    public ColumnInsertSegment createColumnInsertSegment(TableAvailable table, String propertyName, QueryRuntimeContext runtimeContext) {
-        return new ColumnInsertSegmentImpl(table, propertyName, runtimeContext);
+    public InsertUpdateSetColumnSQLSegment createInsertColumnSegment(TableAvailable table, String propertyName, QueryRuntimeContext runtimeContext) {
+        return new InsertColumnSegmentImpl(table, propertyName, runtimeContext);
     }
 
     @Override
-    public ColumnWithSelfSegment createColumnWithSelfSegment(boolean increment, TableAvailable table, String propertyName, Object val, SQLPredicateCompare compare, QueryRuntimeContext runtimeContext) {
-        return new ColumnWithSelfSegmentImpl(increment, table, propertyName, val, compare, runtimeContext);
+    public InsertUpdateSetColumnSQLSegment createColumnWithSelfSegment(boolean increment, TableAvailable table, String propertyName, Object val, QueryRuntimeContext runtimeContext) {
+        return new ColumnWithSelfSegmentImpl(increment, table, propertyName, val, runtimeContext);
     }
 
     @Override
@@ -116,7 +114,7 @@ public class DefaultSQLSegmentFactory implements SQLSegmentFactory {
     }
 
     @Override
-    public SQLColumnSegment createSQLColumnAsSegment(SQLColumnSegment sqlColumnSegment, String alias,QueryRuntimeContext runtimeContext) {
+    public CloneableSQLSegment createSQLColumnAsSegment(CloneableSQLSegment sqlColumnSegment, String alias, QueryRuntimeContext runtimeContext) {
         return new SQLColumnAsSegmentImpl(sqlColumnSegment,alias,runtimeContext);
     }
 }

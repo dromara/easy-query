@@ -1,24 +1,18 @@
 package com.easy.query.core.expression.sql.builder;
 
-import com.easy.query.core.expression.segment.ColumnInsertSegment;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.sql.expression.EntityInsertSQLExpression;
-
-import java.util.Map;
 
 /**
  * @author xuejiaming
  * @Description: 文件说明
  * @Date: 2023/3/4 16:30
  */
-public interface EntityInsertExpressionBuilder extends EntityExpressionBuilder, EntityToExpressionBuilder {
+public interface EntityInsertExpressionBuilder extends EntityExpressionBuilder, EntityToExpressionBuilder,EntityColumnConfigurerExpressionBuilder {
     SQLBuilderSegment getColumns();
     SQLBuilderSegment getDuplicateKeyUpdateColumns();
     String getDuplicateKey();
     void setDuplicateKey(String duplicateKey);
-
-    Map<String, ColumnInsertSegment> insertColumnSQLs();
-
     @Override
     default EntityInsertSQLExpression toExpression() {
         return toExpression(null);

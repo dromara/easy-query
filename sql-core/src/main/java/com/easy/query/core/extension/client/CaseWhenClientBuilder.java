@@ -4,7 +4,7 @@ import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.parser.core.base.impl.WherePredicateImpl;
-import com.easy.query.core.expression.segment.SQLColumnSegment;
+import com.easy.query.core.expression.segment.CloneableSQLSegment;
 import com.easy.query.core.extension.casewhen.CaseWhenBuilder;
 
 /**
@@ -27,7 +27,7 @@ public class CaseWhenClientBuilder<T1,TR> {
         },then);
         return this;
     }
-    public SQLColumnSegment elseEnd(Object elseValue){
+    public CloneableSQLSegment elseEnd(Object elseValue){
         return caseWhenBuilder.elseEnd(elseValue);
     }
 }

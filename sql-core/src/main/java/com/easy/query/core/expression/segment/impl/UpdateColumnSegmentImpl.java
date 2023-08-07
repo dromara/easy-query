@@ -1,40 +1,34 @@
 package com.easy.query.core.expression.segment.impl;
 
-import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.PropertySQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.segment.ColumnInsertSegment;
-import com.easy.query.core.expression.segment.SQLEntitySegment;
-import com.easy.query.core.metadata.ColumnMetadata;
-import com.easy.query.core.util.EasySQLUtil;
+import com.easy.query.core.expression.segment.InsertUpdateSetColumnSQLSegment;
 import com.easy.query.core.util.EasySQLExpressionUtil;
+import com.easy.query.core.util.EasySQLUtil;
 
 /**
- * @FileName: ColumnSegment.java
- * @Description: 文件说明
+ * @FileName: ColumnPropertyPredicate.java
+ * @Description: column和某个bean的值的断言节点
  * @Date: 2023/2/13 15:18
  * @author xuejiaming
  */
-public class ColumnInsertSegmentImpl implements ColumnInsertSegment {
-
-
+public class UpdateColumnSegmentImpl implements InsertUpdateSetColumnSQLSegment {
     protected final TableAvailable table;
     protected final String propertyName;
     protected final QueryRuntimeContext runtimeContext;
-    protected final ColumnMetadata columnMetadata;
 
-    public ColumnInsertSegmentImpl(TableAvailable table, String propertyName, QueryRuntimeContext runtimeContext){
+    public UpdateColumnSegmentImpl(TableAvailable table, String propertyName, QueryRuntimeContext runtimeContext){
         this.table = table;
         this.propertyName = propertyName;
         this.runtimeContext = runtimeContext;
-        this.columnMetadata = table.getEntityMetadata().getColumnNotNull(propertyName);
     }
 
     @Override
     public String toSQL(ToSQLContext toSQLContext) {
         EasySQLUtil.addParameter(toSQLContext,new PropertySQLParameter(table,propertyName));
-        return "?";
+        return  "?";
     }
 
     @Override
@@ -42,19 +36,17 @@ public class ColumnInsertSegmentImpl implements ColumnInsertSegment {
         return table;
     }
 
-    @Override
     public String getPropertyName() {
         return propertyName;
     }
 
     @Override
-    public SQLEntitySegment cloneSQLColumnSegment() {
-
-        throw new UnsupportedOperationException();
+    public String getColumnNameWithOwner(ToSQLContext toSQLContext) {
+        return EasySQLExpressionUtil.getSQLOwnerColumnByProperty(runtimeContext,table,propertyName,toSQLContext);
     }
 
     @Override
-    public String toInsertColumn(ToSQLContext toSQLContext) {
-        return EasySQLExpressionUtil.getSQLOwnerColumn(runtimeContext,table,columnMetadata.getName(),toSQLContext);
+    public InsertUpdateSetColumnSQLSegment cloneSQLColumnSegment() {
+        return new UpdateColumnSegmentImpl(table,propertyName,runtimeContext);
     }
 }

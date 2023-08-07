@@ -369,7 +369,7 @@ public class UpdateTest extends BaseTest {
 
             long rows = easyQuery.updatable(Topic.class)
                     .asTable("xxxxx")
-                    .setSQL(Topic::getStars, "ifnull({0},0)+{1}",(context)->{
+                    .setSQLSegment(Topic::getStars, "ifnull({0},0)+{1}",(context)->{
                         context.expression(Topic::getStars)
                                 .value(1);
                     })
@@ -382,6 +382,26 @@ public class UpdateTest extends BaseTest {
             EasyQuerySQLStatementException cause1 = (EasyQuerySQLStatementException) cause;
             String sql = cause1.getSQL();
             Assert.assertEquals("UPDATE `xxxxx` SET `stars` = ifnull(`stars`,0)+? WHERE `id` = ?",sql);
+        }
+    }
+    @Test
+    public void updateTest19() {
+        try {
+            Topic topic = new Topic();
+            long rows = easyQuery.updatable(topic)
+                    .asTable("xxxxx")
+                    .columnConfigure(o->o.column(Topic::getStars,"ifnull({0},0)+{1}",(context,sqlParameter)->{
+                        context.expression(Topic::getStars)
+                                .value(sqlParameter);
+                    }))
+                    .executeRows();
+            Assert.assertEquals(1, rows);
+        }catch (Exception ex){
+            Throwable cause = ex.getCause();
+            Assert.assertTrue(cause instanceof EasyQuerySQLStatementException);
+            EasyQuerySQLStatementException cause1 = (EasyQuerySQLStatementException) cause;
+            String sql = cause1.getSQL();
+            Assert.assertEquals("UPDATE `xxxxx` SET `stars` = ifnull(`stars`,0)+?,`title` = ?,`create_time` = ? WHERE `id` = ?",sql);
         }
     }
 }

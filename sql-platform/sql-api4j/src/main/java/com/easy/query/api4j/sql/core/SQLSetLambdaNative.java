@@ -18,7 +18,7 @@ public interface SQLSetLambdaNative<TEntity,TChain> {
    <T> SQLSetPropertyNative<T> getSQLSetPropertyNative();
    TChain castTChain();
    default TChain setSQLNative(Property<TEntity,?> property, String sqlSegment, SQLExpression1<SQLNativeLambdaExpressionContext<TEntity>> contextConsume){
-       getSQLSetPropertyNative().setSQL(EasyLambdaUtil.getPropertyName(property),sqlSegment,(context)->{
+       getSQLSetPropertyNative().setSQLSegment(EasyLambdaUtil.getPropertyName(property),sqlSegment,(context)->{
            contextConsume.apply(new SQLNativeLambdaExpressionContextImpl<>(context));
        });
        return castTChain();

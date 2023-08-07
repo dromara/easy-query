@@ -16,9 +16,12 @@ import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.exception.EasyQueryException;
+import com.easy.query.core.expression.builder.impl.ConfigurerImpl;
 import com.easy.query.core.expression.builder.impl.UpdateSetSelectorImpl;
 import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.parser.core.base.ColumnConfigurer;
 import com.easy.query.core.expression.parser.core.base.ColumnUpdateSetSelector;
+import com.easy.query.core.expression.parser.core.base.impl.ColumnConfigurerImpl;
 import com.easy.query.core.expression.parser.core.base.impl.ColumnUpdateSetSelectorImpl;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
@@ -146,6 +149,13 @@ public abstract class AbstractClientEntityUpdatable<T> extends AbstractSQLExecut
             ColumnUpdateSetSelectorImpl<T> columnSelector = new ColumnUpdateSetSelectorImpl<>(table.getEntityTable(), new UpdateSetSelectorImpl(entityUpdateExpressionBuilder.getRuntimeContext(), entityUpdateExpressionBuilder.getWhereColumns()));
             columnSelectorExpression.apply(columnSelector);
         }
+        return this;
+    }
+
+    @Override
+    public ClientEntityUpdatable<T> columnConfigure(SQLExpression1<ColumnConfigurer<T>> columnConfigureExpression) {
+        ColumnConfigurerImpl<T> columnConfigurer = new ColumnConfigurerImpl<>(table.getEntityTable(), new ConfigurerImpl(this.entityUpdateExpressionBuilder));
+        columnConfigureExpression.apply(columnConfigurer);
         return this;
     }
 

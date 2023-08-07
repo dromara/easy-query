@@ -1,6 +1,5 @@
 package com.easy.query.core.expression.builder;
 
-import com.easy.query.core.expression.builder.core.SQLColumnNative;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 
 /**
@@ -9,7 +8,7 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
  *
  * @author xuejiaming
  */
-public interface UpdateSetSelector extends SQLColumnNative<UpdateSetSelector> {
+public interface UpdateSetSelector {
     UpdateSetSelector column(TableAvailable table, String property);
     UpdateSetSelector columnAll(TableAvailable table);
 

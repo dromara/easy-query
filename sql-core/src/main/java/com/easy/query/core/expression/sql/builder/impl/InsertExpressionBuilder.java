@@ -3,11 +3,13 @@ package com.easy.query.core.expression.sql.builder.impl;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.exception.EasyQueryException;
-import com.easy.query.core.expression.segment.ColumnInsertSegment;
+import com.easy.query.core.expression.segment.InsertUpdateSetColumnSQLSegment;
 import com.easy.query.core.expression.segment.SQLEntitySegment;
 import com.easy.query.core.expression.segment.builder.ProjectSQLBuilderSegmentImpl;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
+import com.easy.query.core.expression.segment.impl.InsertUpdateColumnConfigureSegmentImpl;
+import com.easy.query.core.expression.sql.builder.ColumnConfigurerContext;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
@@ -38,7 +40,7 @@ public class InsertExpressionBuilder extends AbstractEntityExpressionBuilder imp
     protected final SQLBuilderSegment columns;
     protected String duplicateKey;
     protected SQLBuilderSegment duplicateKeyUpdateColumns;
-    protected Map<String, ColumnInsertSegment> sqlNativeInsertColumns;
+    protected  Map<String, ColumnConfigurerContext> columnConfigurers;
 
     public InsertExpressionBuilder(ExpressionContext expressionContext,Class<?> queryClass) {
         super(expressionContext,queryClass);
@@ -68,13 +70,6 @@ public class InsertExpressionBuilder extends AbstractEntityExpressionBuilder imp
         this.duplicateKey=duplicateKey;
     }
 
-    @Override
-    public Map<String, ColumnInsertSegment> insertColumnSQLs() {
-        if(sqlNativeInsertColumns ==null){
-            sqlNativeInsertColumns =new HashMap<>();
-        }
-        return sqlNativeInsertColumns;
-    }
 
     private void checkTable() {
         int tableCount = getTables().size();
@@ -124,17 +119,17 @@ public class InsertExpressionBuilder extends AbstractEntityExpressionBuilder imp
         EntityInsertSQLExpression easyInsertSQLExpression = expressionFactory.createEasyInsertSQLExpression(entitySQLExpressionMetadata, table.toExpression());
         EntityMetadata entityMetadata = table.getEntityMetadata();
         SQLBuilderSegment insertCloneColumns = getColumns().cloneSQLBuilder();
-        boolean hasNative = this.sqlNativeInsertColumns != null;
+        boolean hasNative = this.columnConfigurers != null&&!columnConfigurers.isEmpty();
         if (insertCloneColumns.isEmpty()) {
             SQLSegmentFactory sqlSegmentFactory = runtimeContext.getSQLSegmentFactory();
             //format
             Collection<String> properties = table.getEntityMetadata().getProperties();
             for (String property : properties) {
-                ColumnInsertSegment columnSQLNativeInsertSegment = !hasNative ? null : this.sqlNativeInsertColumns.get(property);
-                if(columnSQLNativeInsertSegment!=null){
-                    insertCloneColumns.append(columnSQLNativeInsertSegment);
+                InsertUpdateSetColumnSQLSegment columnInsertSegment = sqlSegmentFactory.createInsertColumnSegment(table.getEntityTable(), property, runtimeContext);
+                ColumnConfigurerContext columnConfigurerContext = !hasNative ? null : this.columnConfigurers.get(property);
+                if(columnConfigurerContext!=null){
+                    insertCloneColumns.append(new InsertUpdateColumnConfigureSegmentImpl(columnInsertSegment,columnConfigurerContext.getRuntimeContext(),columnConfigurerContext.getSqlSegment(),columnConfigurerContext.getSqlNativeExpressionContext()));
                 }else{
-                    ColumnInsertSegment columnInsertSegment = sqlSegmentFactory.createColumnInsertSegment(table.getEntityTable(), property, runtimeContext);
                     insertCloneColumns.append(columnInsertSegment);
                 }
             }
@@ -154,7 +149,7 @@ public class InsertExpressionBuilder extends AbstractEntityExpressionBuilder imp
                     if (clearIgnoreProperties) {
                         boolean remove = ignorePropertySet.contains(propertyName);
                         if(remove&&hasNative){//如果需要移除并且已经指定原生sql了那么不应该在原生sql里面
-                            return !sqlNativeInsertColumns.containsKey(propertyName);
+                            return !columnConfigurers.containsKey(propertyName);
                         }
                         return remove;
                     }
@@ -191,9 +186,17 @@ public class InsertExpressionBuilder extends AbstractEntityExpressionBuilder imp
         for (EntityTableExpressionBuilder table : super.tables) {
             insertExpressionBuilder.getTables().add(table.copyEntityTableExpressionBuilder());
         }
-        if(this.sqlNativeInsertColumns !=null){
-            insertExpressionBuilder.insertColumnSQLs().putAll(this.sqlNativeInsertColumns);
+        if(this.columnConfigurers !=null){
+            insertExpressionBuilder.getColumnConfigurer().putAll(this.columnConfigurers);
         }
         return insertExpressionBuilder;
+    }
+
+    @Override
+    public Map<String, ColumnConfigurerContext> getColumnConfigurer() {
+        if(columnConfigurers==null){
+            columnConfigurers=new HashMap<>();
+        }
+        return columnConfigurers;
     }
 }

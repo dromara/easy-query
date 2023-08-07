@@ -4,7 +4,7 @@ import com.easy.query.api.proxy.sql.ProxyAsSelector;
 import com.easy.query.api.proxy.sql.ProxyFilter;
 import com.easy.query.api.proxy.sql.impl.ProxyFilterImpl;
 import com.easy.query.core.expression.lambda.SQLExpression1;
-import com.easy.query.core.expression.segment.SQLColumnSegment;
+import com.easy.query.core.expression.segment.CloneableSQLSegment;
 import com.easy.query.core.extension.casewhen.CaseWhenBuilder;
 import com.easy.query.core.proxy.ProxyEntity;
 
@@ -28,7 +28,7 @@ public class CaseWhenProxyBuilder<TRProxy extends ProxyEntity<TRProxy, TR>, TR> 
         },then);
         return this;
     }
-    public SQLColumnSegment elseEnd(Object elseValue){
+    public CloneableSQLSegment elseEnd(Object elseValue){
         return caseWhenBuilder.elseEnd(elseValue);
     }
 }

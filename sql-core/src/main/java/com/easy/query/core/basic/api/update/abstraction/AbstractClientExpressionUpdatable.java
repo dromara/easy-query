@@ -98,9 +98,9 @@ public abstract class AbstractClientExpressionUpdatable<T> extends AbstractSQLEx
     }
 
     @Override
-    public ClientExpressionUpdatable<T> setSQL(boolean condition, String property, String sqlSegment, SQLExpression1<SQLNativePropertyExpressionContext> contextConsume) {
+    public ClientExpressionUpdatable<T> setSQLSegment(boolean condition, String property, String sqlSegment, SQLExpression1<SQLNativePropertyExpressionContext> contextConsume) {
         if(condition){
-            columnSetter.setSQL(property,sqlSegment,contextConsume);
+            columnSetter.setSQLSegment(property,sqlSegment,contextConsume);
         }
         return this;
     }

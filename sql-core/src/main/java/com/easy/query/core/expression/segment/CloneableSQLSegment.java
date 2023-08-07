@@ -6,6 +6,6 @@ package com.easy.query.core.expression.segment;
  *
  * @author xuejiaming
  */
-public interface SQLColumnSegment extends SQLSegment{
-    SQLColumnSegment cloneSQLColumnSegment();
+public interface CloneableSQLSegment extends SQLSegment{
+    CloneableSQLSegment cloneSQLColumnSegment();
 }

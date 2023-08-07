@@ -1,13 +1,11 @@
 package com.easy.query.core.basic.api.insert;
 
 import com.easy.query.core.api.SQLClientApiFactory;
-import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.expression.lambda.SQLExpression1;
-import com.easy.query.core.expression.lambda.SQLExpression2;
+import com.easy.query.core.expression.parser.core.base.ColumnConfigurer;
 import com.easy.query.core.expression.parser.core.base.ColumnUpdateSetSelector;
-import com.easy.query.core.expression.parser.core.base.scec.SQLNativePropertyExpressionContext;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 
 import java.util.function.Function;
@@ -35,6 +33,11 @@ public class EasyEmptyClientInsertable<T> implements ClientInsertable<T> {
         ClientInsertable<T> insertable = sqlApiFactory.createInsertable((Class<T>) entity.getClass(), entityInsertExpression);
         insertable.insert(entity);
         return insertable;
+    }
+
+    @Override
+    public ClientInsertable<T> columnConfigure(SQLExpression1<ColumnConfigurer<T>> columnConfigureExpression) {
+        return this;
     }
 
     @Override
@@ -128,11 +131,6 @@ public class EasyEmptyClientInsertable<T> implements ClientInsertable<T> {
 
     @Override
     public ClientInsertable<T> onDuplicateKeyUpdate(SQLExpression1<ColumnUpdateSetSelector<T>> setColumnSelector) {
-        return this;
-    }
-
-    @Override
-    public ClientInsertable<T> columnSQL(String property, String sqlSegment, SQLExpression2<SQLNativePropertyExpressionContext, SQLParameter> contextConsume) {
         return this;
     }
 }

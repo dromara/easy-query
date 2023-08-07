@@ -9,7 +9,7 @@ import com.easy.query.core.expression.func.DefaultColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.segment.SQLColumnSegment;
+import com.easy.query.core.expression.segment.CloneableSQLSegment;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 
@@ -140,5 +140,5 @@ public interface AsSelector extends SQLNative<AsSelector> {
     }
 
     AsSelector columnFuncAs(TableAvailable table,ColumnPropertyFunction columnPropertyFunction, String propertyAlias);
-    AsSelector sqlColumnAs(SQLColumnSegment sqlColumnSegment, String propertyAlias);
+    AsSelector sqlColumnAs(CloneableSQLSegment sqlColumnSegment, String propertyAlias);
 }

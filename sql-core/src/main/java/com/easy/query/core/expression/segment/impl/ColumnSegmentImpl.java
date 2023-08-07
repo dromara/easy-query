@@ -21,7 +21,7 @@ public class ColumnSegmentImpl implements ColumnSegment {
 
     protected final ColumnMetadata columnMetadata;
     protected final QueryRuntimeContext runtimeContext;
-    protected String alias;
+    protected final String alias;
 
     public ColumnSegmentImpl(TableAvailable table, String propertyName, QueryRuntimeContext runtimeContext) {
         this(table, propertyName, runtimeContext, null);

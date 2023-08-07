@@ -11,7 +11,7 @@ import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
-import com.easy.query.core.expression.segment.SQLColumnSegment;
+import com.easy.query.core.expression.segment.CloneableSQLSegment;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import kotlin.reflect.KProperty1;
 
@@ -250,7 +250,7 @@ public interface SQLKtColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1>, 
         return this;
     }
 
-    default SQLKtColumnAsSelector<T1,TR> sqlSegmentAs(SQLColumnSegment sqlColumnSegment, KProperty1<TR, ?> alias){
+    default SQLKtColumnAsSelector<T1,TR> sqlSegmentAs(CloneableSQLSegment sqlColumnSegment, KProperty1<TR, ?> alias){
         getColumnAsSelector().sqlSegmentAs(sqlColumnSegment,EasyKtLambdaUtil.getPropertyName(alias));
         return this;
     }

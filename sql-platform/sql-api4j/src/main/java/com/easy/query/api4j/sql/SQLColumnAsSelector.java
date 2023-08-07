@@ -3,8 +3,6 @@ package com.easy.query.api4j.sql;
 import com.easy.query.api4j.select.Queryable;
 import com.easy.query.api4j.sql.core.SQLLambdaNative;
 import com.easy.query.api4j.sql.impl.SQLColumnAsSelectorImpl;
-import com.easy.query.api4j.sql.scec.SQLNativeLambdaExpressionContext;
-import com.easy.query.api4j.sql.scec.SQLNativeLambdaExpressionContextImpl;
 import com.easy.query.api4j.util.EasyLambdaUtil;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
@@ -14,7 +12,7 @@ import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
-import com.easy.query.core.expression.segment.SQLColumnSegment;
+import com.easy.query.core.expression.segment.CloneableSQLSegment;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 
 import java.util.Collection;
@@ -271,7 +269,7 @@ public interface SQLColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1>, SQ
         return this;
     }
 
-    default SQLColumnAsSelector<T1, TR> sqlSegmentAs(SQLColumnSegment sqlColumnSegment, Property<TR, ?> alias) {
+    default SQLColumnAsSelector<T1, TR> sqlSegmentAs(CloneableSQLSegment sqlColumnSegment, Property<TR, ?> alias) {
         getColumnAsSelector().sqlSegmentAs(sqlColumnSegment, EasyLambdaUtil.getPropertyName(alias));
         return this;
     }

@@ -130,17 +130,18 @@ public interface ExpressionUpdatable<T> extends Updatable<T, ExpressionUpdatable
     }
 
 
-    default ExpressionUpdatable<T> setSQL(Property<T, ?> property, String sqlSegment, SQLExpression1<SQLNativeLambdaExpressionContext<T>>  contextConsume){
-        return setSQL(true,property,sqlSegment,contextConsume);
+    default ExpressionUpdatable<T> setSQLSegment(Property<T, ?> property, String sqlSegment, SQLExpression1<SQLNativeLambdaExpressionContext<T>> contextConsume) {
+        return setSQLSegment(true, property, sqlSegment, contextConsume);
     }
-   default ExpressionUpdatable<T> setSQL(boolean condition, Property<T, ?> property, String sqlSegment, SQLExpression1<SQLNativeLambdaExpressionContext<T>>  contextConsume){
-        if(condition){
-            getClientUpdate().setSQL(EasyLambdaUtil.getPropertyName(property),sqlSegment,(context)->{
+
+    default ExpressionUpdatable<T> setSQLSegment(boolean condition, Property<T, ?> property, String sqlSegment, SQLExpression1<SQLNativeLambdaExpressionContext<T>> contextConsume) {
+        if (condition) {
+            getClientUpdate().setSQLSegment(EasyLambdaUtil.getPropertyName(property), sqlSegment, (context) -> {
                 contextConsume.apply(new SQLNativeLambdaExpressionContextImpl<>(context));
             });
         }
         return this;
-   }
+    }
     // endregion
 
     default ExpressionUpdatable<T> where(SQLExpression1<SQLWherePredicate<T>> whereExpression) {

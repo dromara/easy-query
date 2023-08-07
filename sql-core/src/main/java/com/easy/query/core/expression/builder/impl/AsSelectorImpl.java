@@ -11,7 +11,7 @@ import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.segment.FuncColumnSegment;
-import com.easy.query.core.expression.segment.SQLColumnSegment;
+import com.easy.query.core.expression.segment.CloneableSQLSegment;
 import com.easy.query.core.expression.segment.SubQueryColumnSegment;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
@@ -133,9 +133,9 @@ public class AsSelectorImpl extends AbstractSelector<AsSelector> implements AsSe
     }
 
     @Override
-    public AsSelector sqlColumnAs(SQLColumnSegment sqlColumnSegment, String propertyAlias) {
+    public AsSelector sqlColumnAs(CloneableSQLSegment sqlColumnSegment, String propertyAlias) {
         String columnAsName = propertyAlias == null ? null :getResultColumnName(propertyAlias);
-        SQLColumnSegment sqlColumnAsSegment = sqlSegmentFactory.createSQLColumnAsSegment(sqlColumnSegment, columnAsName,runtimeContext);
+        CloneableSQLSegment sqlColumnAsSegment = sqlSegmentFactory.createSQLColumnAsSegment(sqlColumnSegment, columnAsName,runtimeContext);
         sqlBuilderSegment.append(sqlColumnAsSegment);
         return this;
     }

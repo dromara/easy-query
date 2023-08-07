@@ -2,6 +2,8 @@ package com.easy.query.api4kt.update;
 
 import com.easy.query.api4kt.sql.SQLKtWherePredicate;
 import com.easy.query.api4kt.sql.impl.SQLKtWherePredicateImpl;
+import com.easy.query.api4kt.sql.scec.SQLNativeLambdaKtExpressionContext;
+import com.easy.query.api4kt.sql.scec.SQLNativeLambdaKtExpressionContextImpl;
 import com.easy.query.api4kt.util.EasyKtLambdaUtil;
 import com.easy.query.core.basic.api.internal.ConfigureVersionable;
 import com.easy.query.core.basic.api.internal.WithVersionable;
@@ -124,6 +126,19 @@ public interface KtExpressionUpdatable<T> extends Updatable<T, KtExpressionUpdat
 
     default KtExpressionUpdatable<T> setDecrementNumber(boolean condition, KProperty1<T, ? extends Number> column, Number val) {
         getClientUpdate().setDecrementNumber(condition, EasyKtLambdaUtil.getPropertyName(column), val);
+        return this;
+    }
+
+    default KtExpressionUpdatable<T> setSQLSegment(KProperty1<T, ?> property, String sqlSegment, SQLExpression1<SQLNativeLambdaKtExpressionContext<T>> contextConsume) {
+        return setSQLSegment(true, property, sqlSegment, contextConsume);
+    }
+
+    default KtExpressionUpdatable<T> setSQLSegment(boolean condition, KProperty1<T, ?> property, String sqlSegment, SQLExpression1<SQLNativeLambdaKtExpressionContext<T>> contextConsume) {
+        if (condition) {
+            getClientUpdate().setSQLSegment(EasyKtLambdaUtil.getPropertyName(property), sqlSegment, (context) -> {
+                contextConsume.apply(new SQLNativeLambdaKtExpressionContextImpl<>(context));
+            });
+        }
         return this;
     }
     // endregion

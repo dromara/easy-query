@@ -3,7 +3,7 @@ package com.easy.query.core.expression.segment.condition.predicate;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.expression.segment.AbstractSQLNativeSegmentImpl;
-import com.easy.query.core.expression.segment.SQLColumnSegment;
+import com.easy.query.core.expression.segment.CloneableSQLSegment;
 import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;
 
 /**
@@ -18,7 +18,7 @@ public class SQLNativePredicateImpl extends AbstractSQLNativeSegmentImpl impleme
     }
 
     @Override
-    public SQLColumnSegment cloneSQLColumnSegment() {
+    public CloneableSQLSegment cloneSQLColumnSegment() {
         return new SQLNativePredicateImpl(runtimeContext,sqlSegment,sqlConstExpressionContext);
     }
 

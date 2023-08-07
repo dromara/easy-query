@@ -9,7 +9,7 @@ import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
-import com.easy.query.core.expression.segment.SQLColumnSegment;
+import com.easy.query.core.expression.segment.CloneableSQLSegment;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.util.EasyObjectUtil;
 
@@ -97,7 +97,7 @@ public class ColumnAutoAsSelectorImpl<T1, TR> implements ColumnAsSelector<T1, TR
     }
 
     @Override
-    public ColumnAsSelector<T1, TR> sqlSegmentAs(SQLColumnSegment sqlColumnSegment, String propertyAlias) {
+    public ColumnAsSelector<T1, TR> sqlSegmentAs(CloneableSQLSegment sqlColumnSegment, String propertyAlias) {
         throw new UnsupportedOperationException();
     }
 }

@@ -99,10 +99,10 @@ public interface ClientExpressionUpdatable<T> extends Updatable<T, ClientExpress
     ClientExpressionUpdatable<T> setDecrementNumber(boolean condition, String property, Number val);
 
 
-    default ClientExpressionUpdatable<T> setSQL(String property, String sqlSegment, SQLExpression1<SQLNativePropertyExpressionContext> contextConsume){
-        return setSQL(true,property,sqlSegment,contextConsume);
+    default ClientExpressionUpdatable<T> setSQLSegment(String property, String sqlSegment, SQLExpression1<SQLNativePropertyExpressionContext> contextConsume){
+        return setSQLSegment(true,property,sqlSegment,contextConsume);
     }
-    ClientExpressionUpdatable<T> setSQL(boolean condition, String property, String sqlSegment, SQLExpression1<SQLNativePropertyExpressionContext> contextConsume);
+    ClientExpressionUpdatable<T> setSQLSegment(boolean condition, String property, String sqlSegment, SQLExpression1<SQLNativePropertyExpressionContext> contextConsume);
     // endregion
 
     default ClientExpressionUpdatable<T> where(SQLExpression1<WherePredicate<T>> whereExpression) {

@@ -20,6 +20,7 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnSetter;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.parser.factory.SQLExpressionInvokeFactory;
+import com.easy.query.core.expression.segment.InsertUpdateSetColumnSQLSegment;
 import com.easy.query.core.expression.segment.SQLEntitySegment;
 import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.expression.segment.builder.ProjectSQLBuilderSegmentImpl;
@@ -32,6 +33,9 @@ import com.easy.query.core.expression.segment.condition.predicate.ColumnPredicat
 import com.easy.query.core.expression.segment.condition.predicate.ColumnPropertyPredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnValuePredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnVersionPropertyPredicate;
+import com.easy.query.core.expression.segment.impl.InsertUpdateColumnConfigureSegmentImpl;
+import com.easy.query.core.expression.segment.impl.UpdateColumnSegmentImpl;
+import com.easy.query.core.expression.sql.builder.ColumnConfigurerContext;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
@@ -40,8 +44,6 @@ import com.easy.query.core.expression.sql.builder.internal.AbstractPredicateEnti
 import com.easy.query.core.expression.sql.expression.EntityUpdateSQLExpression;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.expression.sql.expression.impl.EntitySQLExpressionMetadata;
-import com.easy.query.core.logging.Log;
-import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.VersionMetadata;
@@ -50,6 +52,7 @@ import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasySQLSegmentUtil;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -61,13 +64,12 @@ import java.util.function.Predicate;
  * @Date: 2023/3/4 17:05
  */
 public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBuilder implements EntityUpdateExpressionBuilder {
-    private static final Log log = LogFactory.getLog(UpdateExpressionBuilder.class);
-
     protected final boolean isExpressionUpdate;
-    private SQLBuilderSegment setColumns;
-    private PredicateSegment where;
-    private SQLBuilderSegment setIgnoreColumns;
-    private SQLBuilderSegment whereColumns;
+    protected SQLBuilderSegment setColumns;
+    protected PredicateSegment where;
+    protected SQLBuilderSegment setIgnoreColumns;
+    protected SQLBuilderSegment whereColumns;
+    protected  Map<String, ColumnConfigurerContext> columnConfigurers;
 
     public UpdateExpressionBuilder(ExpressionContext queryExpressionContext,Class<?> queryClass, boolean isExpressionUpdate) {
         super(queryExpressionContext,queryClass);
@@ -125,6 +127,14 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
             whereColumns = new ProjectSQLBuilderSegmentImpl();
         }
         return whereColumns;
+    }
+
+    @Override
+    public Map<String, ColumnConfigurerContext> getColumnConfigurer() {
+        if(columnConfigurers==null){
+            columnConfigurers=new HashMap<>();
+        }
+        return columnConfigurers;
     }
 
     private void checkTable() {
@@ -246,7 +256,8 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
             throwValueUpdateAtomicTrack(entityMetadata);
         }
         PredicateSegment sqlWhere = sqlPredicateFilter(tableExpressionBuilder, where);
-        SQLBuilderSegment updateSet = getUpdateSetSegment(sqlWhere, entity, tableExpressionBuilder, entityUpdateSetProcessor);
+        //替换掉配置的片段
+        SQLBuilderSegment updateSet = updateSetConfigurer(getUpdateSetSegment(sqlWhere, entity, tableExpressionBuilder, entityUpdateSetProcessor));
 
         ExpressionFactory expressionFactory = runtimeContext.getExpressionFactory();
         EntitySQLExpressionMetadata entitySQLExpressionMetadata = new EntitySQLExpressionMetadata(expressionContext, runtimeContext);
@@ -254,6 +265,23 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
         updateSet.copyTo(easyUpdateSQLExpression.getSetColumns());
         sqlWhere.copyTo(easyUpdateSQLExpression.getWhere());
         return easyUpdateSQLExpression;
+    }
+
+    private SQLBuilderSegment updateSetConfigurer(SQLBuilderSegment updateSet){
+        boolean hasConfigure = columnConfigurers != null && !columnConfigurers.isEmpty();
+        if(!hasConfigure){
+            return updateSet;
+        }
+        int size = updateSet.getSQLSegments().size();
+        for (int i = 0; i < size; i++) {
+            InsertUpdateSetColumnSQLSegment sqlSegment = (InsertUpdateSetColumnSQLSegment)updateSet.getSQLSegments().get(i);
+            ColumnConfigurerContext columnConfigurerContext = columnConfigurers.get(sqlSegment.getPropertyName());
+            if(columnConfigurerContext==null){
+                continue;
+            }
+            updateSet.getSQLSegments().set(i,new InsertUpdateColumnConfigureSegmentImpl(sqlSegment,columnConfigurerContext.getRuntimeContext(),columnConfigurerContext.getSqlSegment(),columnConfigurerContext.getSqlNativeExpressionContext()));
+        }
+        return updateSet;
     }
 
     protected SQLBuilderSegment getUpdateSetSegment(PredicateSegment sqlWhere, Object entity, EntityTableExpressionBuilder tableExpressionBuilder, EntityUpdateSetProcessor entityUpdateSetProcessor) {
@@ -306,7 +334,7 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
                     continue;
                 }
             }
-            updateSetSQLBuilderSegment.append(new ColumnPropertyPredicate(entityTable, property, runtimeContext));
+            updateSetSQLBuilderSegment.append(new UpdateColumnSegmentImpl(entityTable, property, runtimeContext));
 //            updateSetSQLBuilderSegment.append(new ColumnPropertyPredicate(entityTable, property, runtimeContext));
 
         }
@@ -400,6 +428,9 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
         }
         if (EasySQLSegmentUtil.isNotEmpty(whereColumns)) {
             whereColumns.copyTo(updateExpressionBuilder.getWhereColumns());
+        }
+        if(columnConfigurers!=null){
+            updateExpressionBuilder.getColumnConfigurer().putAll(columnConfigurers);
         }
         for (EntityTableExpressionBuilder table : super.tables) {
             updateExpressionBuilder.getTables().add(table.copyEntityTableExpressionBuilder());
