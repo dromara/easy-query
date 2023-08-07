@@ -8,7 +8,7 @@ package com.easy.query.core.basic.extension.track;
  */
 public interface TrackManager {
     /**
-     * 当前上下文开启追踪，需要和{@link #release()}成对使用
+     * 当前上下文尝试开启追踪,以开启将不在开启，需要和{@link #release()}成对使用
      */
     void begin();
 
