@@ -1,5 +1,6 @@
 package com.easy.query.core.basic.extension.conversion;
 
+import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 
 /**
@@ -12,7 +13,7 @@ public interface ColumnValueSQLConverter {
 
 
     /**
-     *
+     * select查询
      * @param table
      * @param propertyName
      * @param sqlPropertyConverter
@@ -20,11 +21,13 @@ public interface ColumnValueSQLConverter {
     void columnConverter(TableAvailable table, String propertyName, SQLPropertyConverter sqlPropertyConverter);
 
     /**
-     *
+     * insert update entity
+     * udpate set
+     * where
      * @param table
      * @param propertyName
-     * @param val
+     * @param sqlParameter
      * @param sqlPropertyConverter
      */
-    void valueConverter(TableAvailable table,String propertyName,Object val, SQLPropertyConverter sqlPropertyConverter);
+    void valueConverter(TableAvailable table, String propertyName, SQLParameter sqlParameter, SQLPropertyConverter sqlPropertyConverter);
 }

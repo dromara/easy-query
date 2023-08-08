@@ -2,6 +2,7 @@ package com.easy.query.test.conversion;
 
 import com.easy.query.core.basic.extension.conversion.ColumnValueSQLConverter;
 import com.easy.query.core.basic.extension.conversion.SQLPropertyConverter;
+import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 
 /**
@@ -20,9 +21,9 @@ public class MySQLAesEncryptColumnValueSQLConverter implements ColumnValueSQLCon
     }
 
     @Override
-    public void valueConverter(TableAvailable table,String propertyName, Object val, SQLPropertyConverter sqlPropertyConverter) {
+    public void valueConverter(TableAvailable table, String propertyName, SQLParameter sqlParameter, SQLPropertyConverter sqlPropertyConverter) {
         sqlPropertyConverter.sqlNativeSegment("to_base64(AES_ENCRYPT({0},{1}))",context->{
-            context.value(val).value(SECRET);
+            context.value(sqlParameter).value(SECRET);
         });
     }
 

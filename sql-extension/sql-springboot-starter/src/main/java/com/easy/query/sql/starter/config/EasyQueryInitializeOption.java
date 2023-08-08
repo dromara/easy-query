@@ -1,5 +1,6 @@
 package com.easy.query.sql.starter.config;
 
+import com.easy.query.core.basic.extension.conversion.ColumnValueSQLConverter;
 import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.basic.extension.encryption.EncryptionStrategy;
 import com.easy.query.core.basic.extension.interceptor.Interceptor;
@@ -31,6 +32,7 @@ public final class EasyQueryInitializeOption {
     private final Map<String, DataSourceRoute<?>> dataSourceRouteMap;
     private final Map<String, ValueUpdateAtomicTrack<?>> valueUpdateAtomicTrackMap;
     private final Map<String, JdbcTypeHandler> jdbcTypeHandlerMap;
+    private final Map<String, ColumnValueSQLConverter> columnValueSQLConverterMap;
 
     public Map<String, Interceptor> getInterceptorMap() {
         return interceptorMap;
@@ -72,11 +74,16 @@ public final class EasyQueryInitializeOption {
         return jdbcTypeHandlerMap;
     }
 
+    public Map<String, ColumnValueSQLConverter> getColumnValueSQLConverterMap() {
+        return columnValueSQLConverterMap;
+    }
+
     public EasyQueryInitializeOption(Map<String, Interceptor> interceptorMap, Map<String, VersionStrategy> versionStrategyMap, Map<String, LogicDeleteStrategy> logicDeleteStrategyMap, Map<String, ShardingInitializer> shardingInitializerMap, Map<String, EncryptionStrategy> encryptionStrategyMap, Map<String, ValueConverter<?, ?>> valueConverterMap,
                                      Map<String, TableRoute<?>> tableRouteMap,
                                      Map<String, DataSourceRoute<?>> dataSourceRouteMap,
                                      Map<String, ValueUpdateAtomicTrack<?>> valueUpdateAtomicTrackMap,
-                                     Map<String, JdbcTypeHandler> jdbcTypeHandlerMap) {
+                                     Map<String, JdbcTypeHandler> jdbcTypeHandlerMap,
+                                     Map<String, ColumnValueSQLConverter> columnValueSQLConverterMap) {
 
         this.interceptorMap = interceptorMap;
         this.versionStrategyMap = versionStrategyMap;
@@ -88,6 +95,7 @@ public final class EasyQueryInitializeOption {
         this.dataSourceRouteMap = dataSourceRouteMap;
         this.valueUpdateAtomicTrackMap = valueUpdateAtomicTrackMap;
         this.jdbcTypeHandlerMap = jdbcTypeHandlerMap;
+        this.columnValueSQLConverterMap = columnValueSQLConverterMap;
     }
 
 }

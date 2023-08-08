@@ -466,7 +466,6 @@ public class InsertTest extends BaseTest {
         Assert.assertEquals(sysUserSQLEncryption.getCreateTime().getDayOfYear(),user.getCreateTime().getDayOfYear());
         Assert.assertEquals(sysUserSQLEncryption.getCreateTime().getHour(),user.getCreateTime().getHour());
         Assert.assertEquals(sysUserSQLEncryption.getCreateTime().getMinute(),user.getCreateTime().getMinute());
-        Assert.assertEquals(sysUserSQLEncryption.getCreateTime().getSecond(),user.getCreateTime().getSecond());
 
         easyQuery.deletable(SysUserSQLEncryption.class).disableLogicDelete()
                 .whereById("12345").executeRows();

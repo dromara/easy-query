@@ -5,6 +5,7 @@ import com.easy.query.api.proxy.client.EasyProxyQuery;
 import com.easy.query.api4j.client.DefaultEasyQuery;
 import com.easy.query.api4j.client.EasyQuery;
 import com.easy.query.core.api.client.EasyQueryClient;
+import com.easy.query.core.basic.extension.conversion.ColumnValueSQLConverter;
 import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.basic.extension.encryption.EncryptionStrategy;
 import com.easy.query.core.basic.extension.interceptor.Interceptor;
@@ -246,7 +247,8 @@ public class EasyQueryStarterAutoConfiguration {
                                                                Map<String, TableRoute<?>> tableRouteMap,
                                                                Map<String, DataSourceRoute<?>> dataSourceRouteMap,
                                                                Map<String, ValueUpdateAtomicTrack<?>> valueUpdateAtomicTrackMap,
-                                                               Map<String, JdbcTypeHandler> jdbcTypeHandlerMap) {
+                                                               Map<String, JdbcTypeHandler> jdbcTypeHandlerMap,
+                                                               Map<String, ColumnValueSQLConverter> columnValueSQLConverterMap) {
         return new EasyQueryInitializeOption(interceptorMap,
                 versionStrategyMap,
                 logicDeleteStrategyMap,
@@ -256,6 +258,7 @@ public class EasyQueryStarterAutoConfiguration {
                 tableRouteMap,
                 dataSourceRouteMap,
                 valueUpdateAtomicTrackMap,
-                jdbcTypeHandlerMap);
+                jdbcTypeHandlerMap,
+                columnValueSQLConverterMap);
     }
 }

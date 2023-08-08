@@ -1,5 +1,6 @@
 package com.easy.query.core.basic.extension.conversion;
 
+import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 
 /**
@@ -15,7 +16,7 @@ public class DefaultColumnValueSQLConverter implements ColumnValueSQLConverter{
     }
 
     @Override
-    public void valueConverter(TableAvailable table,String propertyName, Object val, SQLPropertyConverter sqlPropertyConverter) {
+    public void valueConverter(TableAvailable table, String propertyName, SQLParameter sqlParameter, SQLPropertyConverter sqlPropertyConverter) {
 
     }
 }

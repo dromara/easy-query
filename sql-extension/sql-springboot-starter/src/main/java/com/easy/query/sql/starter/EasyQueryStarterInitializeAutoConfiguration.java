@@ -1,6 +1,7 @@
 package com.easy.query.sql.starter;
 
 import com.easy.query.core.api.client.EasyQueryClient;
+import com.easy.query.core.basic.extension.conversion.ColumnValueSQLConverter;
 import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.basic.extension.encryption.EncryptionStrategy;
 import com.easy.query.core.basic.extension.interceptor.Interceptor;
@@ -96,6 +97,11 @@ public class EasyQueryStarterInitializeAutoConfiguration {
         for (Map.Entry<String, ValueConverter<?, ?>> valueConverterEntry : easyQueryInitializeOption.getValueConverterMap().entrySet()) {
             configuration.applyValueConverter(valueConverterEntry.getValue());
         }
+
+        for (Map.Entry<String, ColumnValueSQLConverter> columnValueSQLConverterEntry : easyQueryInitializeOption.getColumnValueSQLConverterMap().entrySet()) {
+            configuration.applyColumnValueSQLConverter(columnValueSQLConverterEntry.getValue());
+        }
+
         for (Map.Entry<String, ValueUpdateAtomicTrack<?>> valueUpdateAtomicTrackEntry : easyQueryInitializeOption.getValueUpdateAtomicTrackMap().entrySet()) {
             configuration.applyValueUpdateAtomicTrack(valueUpdateAtomicTrackEntry.getValue());
         }
