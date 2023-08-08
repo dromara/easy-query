@@ -140,5 +140,5 @@ public interface AsSelector extends SQLNative<AsSelector> {
     }
 
     AsSelector columnFuncAs(TableAvailable table,ColumnPropertyFunction columnPropertyFunction, String propertyAlias);
-    AsSelector sqlColumnAs(CloneableSQLSegment sqlColumnSegment, String propertyAlias);
+    AsSelector sqlSegmentAs(CloneableSQLSegment sqlColumnSegment, String propertyAlias);
 }

@@ -15,7 +15,7 @@ import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.segment.builder.UpdateSetSQLBuilderSegment;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
-import com.easy.query.core.expression.segment.condition.predicate.ColumnPropertyPredicate;
+import com.easy.query.core.expression.segment.condition.predicate.ColumnEqualsPropertyPredicate;
 import com.easy.query.core.expression.segment.impl.ColumnVersionPropertySegmentImpl;
 import com.easy.query.core.expression.sql.builder.EntityDeleteExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
@@ -121,7 +121,7 @@ public class DeleteExpressionBuilder extends AbstractPredicateEntityExpressionBu
                             throw new EasyQueryException("where 表达式片段不是SQLEntitySegment");
                         }
                         SQLEntitySegment sqlEntitySegment = (SQLEntitySegment) sqlSegment;
-                        AndPredicateSegment andPredicateSegment = new AndPredicateSegment(new ColumnPropertyPredicate(table.getEntityTable(), sqlEntitySegment.getPropertyName(), this.getRuntimeContext()));
+                        AndPredicateSegment andPredicateSegment = new AndPredicateSegment(new ColumnEqualsPropertyPredicate(table.getEntityTable(), sqlEntitySegment.getPropertyName(), this.getRuntimeContext()));
                         wherePredicate.addPredicateSegment(andPredicateSegment);
                     }
                 }
@@ -132,7 +132,7 @@ public class DeleteExpressionBuilder extends AbstractPredicateEntityExpressionBu
                         throw new EasyQueryException("entity:" + EasyClassUtil.getSimpleName(entityMetadata.getEntityClass()) + "  not found primary key properties");
                     }
                     for (String keyProperty : keyProperties) {
-                        AndPredicateSegment andPredicateSegment = new AndPredicateSegment(new ColumnPropertyPredicate(table.getEntityTable(), keyProperty, this.getRuntimeContext()));
+                        AndPredicateSegment andPredicateSegment = new AndPredicateSegment(new ColumnEqualsPropertyPredicate(table.getEntityTable(), keyProperty, this.getRuntimeContext()));
                         wherePredicate.addPredicateSegment(andPredicateSegment);
                     }
                 }

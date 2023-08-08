@@ -1,5 +1,7 @@
 package com.easy.query.core.expression.segment.impl;
 
+import com.easy.query.core.basic.extension.conversion.ColumnValueSQLConverter;
+import com.easy.query.core.basic.extension.conversion.SQLPropertyConverterImpl;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
@@ -19,7 +21,7 @@ public class ColumnSegmentImpl implements ColumnSegment {
     protected final TableAvailable table;
 
 
-    protected final ColumnMetadata columnMetadata;
+    protected final String propertyName;
     protected final QueryRuntimeContext runtimeContext;
     protected final String alias;
 
@@ -28,12 +30,8 @@ public class ColumnSegmentImpl implements ColumnSegment {
     }
 
     public ColumnSegmentImpl(TableAvailable table, String propertyName, QueryRuntimeContext runtimeContext, String alias) {
-        this(table, propertyName == null ? null : table.getEntityMetadata().getColumnNotNull(propertyName), runtimeContext, alias);
-    }
-
-    public ColumnSegmentImpl(TableAvailable table, ColumnMetadata columnMetadata, QueryRuntimeContext runtimeContext, String alias) {
         this.table = table;
-        this.columnMetadata = columnMetadata;
+        this.propertyName = propertyName;
         this.runtimeContext = runtimeContext;
         this.alias = alias;
     }
@@ -45,10 +43,7 @@ public class ColumnSegmentImpl implements ColumnSegment {
 
     @Override
     public String getPropertyName() {
-        if (this.columnMetadata == null) {
-            return null;
-        }
-        return this.columnMetadata.getPropertyName();
+        return propertyName;
     }
 
     @Override
@@ -58,22 +53,29 @@ public class ColumnSegmentImpl implements ColumnSegment {
 
     @Override
     public String toSQL(ToSQLContext toSQLContext) {
-        String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumn(runtimeContext, table, getColumnNameOrNull(), toSQLContext);
+        String sqlOwnerColumn = getSQLOwnerColumn(toSQLContext);
         if (alias == null) {
-            return sqlColumnSegment;
+            return sqlOwnerColumn;
         }
-        return sqlColumnSegment + " AS " + EasySQLExpressionUtil.getQuoteName(runtimeContext, alias);
+        return sqlOwnerColumn + " AS " + EasySQLExpressionUtil.getQuoteName(runtimeContext, alias);
     }
-    protected String getColumnNameOrNull(){
-        if(columnMetadata==null){
-            return null;
+
+    private String getSQLOwnerColumn(ToSQLContext toSQLContext){
+
+        ColumnMetadata columnMetadata = this.table.getEntityMetadata().getColumnNotNull(getPropertyName());
+        ColumnValueSQLConverter columnValueSQLConverter = columnMetadata.getColumnValueSQLConverter();
+        if(columnValueSQLConverter==null){
+            return EasySQLExpressionUtil.getSQLOwnerColumnMetadata(runtimeContext, table, columnMetadata, toSQLContext);
+        }else{
+            SQLPropertyConverterImpl sqlPropertyConverter = new SQLPropertyConverterImpl(table, runtimeContext);
+            columnValueSQLConverter.columnConverter(table,propertyName,sqlPropertyConverter);
+            return sqlPropertyConverter.toSQL(toSQLContext);
         }
-        return columnMetadata.getName();
     }
 
     @Override
     public ColumnSegment cloneSQLColumnSegment() {
-        return new ColumnSegmentImpl(table, columnMetadata, runtimeContext, alias);
+        return new ColumnSegmentImpl(table, propertyName, runtimeContext, alias);
     }
 
 }

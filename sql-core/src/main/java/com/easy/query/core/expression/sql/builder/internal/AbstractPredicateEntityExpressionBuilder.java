@@ -9,7 +9,7 @@ import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.parser.factory.SQLExpressionInvokeFactory;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
-import com.easy.query.core.expression.segment.condition.predicate.ColumnPropertyPredicate;
+import com.easy.query.core.expression.segment.condition.predicate.ColumnEqualsPropertyPredicate;
 import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
@@ -66,7 +66,7 @@ public abstract class AbstractPredicateEntityExpressionBuilder extends AbstractE
                             throw new EasyQueryInvalidOperationException("entity:"+ EasyClassUtil.getSimpleName(table.getEntityClass())+" has version expression not found version");
                         }
                     } else {
-                        AndPredicateSegment versionPredicateSegment = new AndPredicateSegment(new ColumnPropertyPredicate(table.getEntityTable(), versionMetadata.getPropertyName(), this.getRuntimeContext()));
+                        AndPredicateSegment versionPredicateSegment = new AndPredicateSegment(new ColumnEqualsPropertyPredicate(table.getEntityTable(), versionMetadata.getPropertyName(), this.getRuntimeContext()));
                         predicateSegment.addPredicateSegment(versionPredicateSegment);
                     }
                 }

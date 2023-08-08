@@ -1,6 +1,6 @@
 package com.easy.query.core.basic.extension.conversion;
 
-import com.easy.query.core.expression.parser.core.base.core.SQLPropertyNative;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 
 /**
  * create time 2023/8/5 23:08
@@ -13,16 +13,18 @@ public interface ColumnValueSQLConverter {
 
     /**
      *
+     * @param table
      * @param propertyName
-     * @param sqlPropertyNative
+     * @param sqlPropertyConverter
      */
-    void columnConverter(String propertyName, SQLPropertyNative<Object> sqlPropertyNative);
+    void columnConverter(TableAvailable table, String propertyName, SQLPropertyConverter sqlPropertyConverter);
 
     /**
      *
+     * @param table
      * @param propertyName
      * @param val
-     * @param sqlPropertyNative
+     * @param sqlPropertyConverter
      */
-    void valueConverter(String propertyName,Object val, SQLPropertyNative<Object> sqlPropertyNative);
+    void valueConverter(TableAvailable table,String propertyName,Object val, SQLPropertyConverter sqlPropertyConverter);
 }

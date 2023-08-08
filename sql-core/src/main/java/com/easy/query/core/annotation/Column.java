@@ -1,4 +1,7 @@
 package com.easy.query.core.annotation;
+
+import com.easy.query.core.basic.extension.conversion.ColumnValueSQLConverter;
+import com.easy.query.core.basic.extension.conversion.DefaultColumnValueSQLConverter;
 import com.easy.query.core.basic.extension.conversion.DefaultValueConverter;
 import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.basic.extension.track.update.DefaultValueUpdateAtomicTrack;
@@ -8,8 +11,8 @@ import com.easy.query.core.util.EasyStringUtil;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * @FileName: Column.java
@@ -56,6 +59,7 @@ public @interface Column {
     boolean large() default false;
 
     Class<? extends ValueConverter<?, ?>> conversion() default DefaultValueConverter.class;
+    Class<? extends ColumnValueSQLConverter> sqlConversion() default DefaultColumnValueSQLConverter.class;
 
     Class<? extends ValueUpdateAtomicTrack<?>> valueUpdateAtomicTrack() default DefaultValueUpdateAtomicTrack.class;
 

@@ -27,7 +27,6 @@ public class FuncColumnValuePredicate implements Predicate {
     public FuncColumnValuePredicate(TableAvailable table, ColumnFunction func, String propertyName, Object val, SQLPredicateCompare compare, QueryRuntimeContext runtimeContext) {
         this.table = table;
         this.propertyName = propertyName;
-
         this.func = func;
         this.val = val;
         this.compare = compare;

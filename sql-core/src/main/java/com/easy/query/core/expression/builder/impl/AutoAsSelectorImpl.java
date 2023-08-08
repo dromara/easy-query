@@ -60,7 +60,7 @@ public class AutoAsSelectorImpl  extends AbstractSelector<AsSelector> implements
     }
 
     @Override
-    public AsSelector sqlColumnAs(CloneableSQLSegment sqlColumnSegment, String propertyAlias) {
+    public AsSelector sqlSegmentAs(CloneableSQLSegment sqlColumnSegment, String propertyAlias) {
         throw new UnsupportedOperationException();
     }
 

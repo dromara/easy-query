@@ -1,5 +1,7 @@
 package com.easy.query.core.expression.segment.condition.predicate;
 
+import com.easy.query.core.basic.extension.conversion.ColumnValueSQLConverter;
+import com.easy.query.core.basic.extension.conversion.SQLPropertyConverterImpl;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.PropertySQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
@@ -8,6 +10,7 @@ import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.enums.SQLPredicateCompareEnum;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.SQLEntitySegment;
+import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 
@@ -17,12 +20,12 @@ import com.easy.query.core.util.EasySQLExpressionUtil;
  * @Date: 2023/2/13 15:18
  * @author xuejiaming
  */
-public class ColumnPropertyPredicate implements Predicate,ValuePredicate {
+public class ColumnEqualsPropertyPredicate implements Predicate,ValuePredicate {
     protected final TableAvailable table;
     protected final String propertyName;
     protected final QueryRuntimeContext runtimeContext;
 
-    public ColumnPropertyPredicate(TableAvailable table, String propertyName, QueryRuntimeContext runtimeContext){
+    public ColumnEqualsPropertyPredicate(TableAvailable table, String propertyName, QueryRuntimeContext runtimeContext){
         this.table = table;
         this.propertyName = propertyName;
         this.runtimeContext = runtimeContext;
@@ -30,9 +33,19 @@ public class ColumnPropertyPredicate implements Predicate,ValuePredicate {
 
     @Override
     public String toSQL(ToSQLContext toSQLContext) {
-        EasySQLUtil.addParameter(toSQLContext,new PropertySQLParameter(table,propertyName));
-        String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumnByProperty(runtimeContext,table,propertyName,toSQLContext);
-        return sqlColumnSegment + " = ?";
+        PropertySQLParameter sqlParameter = new PropertySQLParameter(table, propertyName);
+        ColumnMetadata columnMetadata = this.table.getEntityMetadata().getColumnNotNull(propertyName);
+        ColumnValueSQLConverter columnValueSQLConverter = columnMetadata.getColumnValueSQLConverter();
+        String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumnMetadata(runtimeContext, table, columnMetadata, toSQLContext);
+        if(columnValueSQLConverter==null){
+            EasySQLUtil.addParameter(toSQLContext, sqlParameter);
+            return sqlColumnSegment + " = ?";
+        }else{
+            SQLPropertyConverterImpl sqlPropertyConverter = new SQLPropertyConverterImpl(table, runtimeContext);
+            columnValueSQLConverter.valueConverter(table,propertyName,sqlParameter,sqlPropertyConverter);
+            String valSQLParameter = sqlPropertyConverter.toSQL(toSQLContext);
+            return sqlColumnSegment + " = "+valSQLParameter;
+        }
     }
 
     @Override

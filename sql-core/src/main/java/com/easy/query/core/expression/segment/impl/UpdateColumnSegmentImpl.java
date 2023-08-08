@@ -6,7 +6,6 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.InsertUpdateSetColumnSQLSegment;
 import com.easy.query.core.util.EasySQLExpressionUtil;
-import com.easy.query.core.util.EasySQLUtil;
 
 /**
  * @FileName: ColumnPropertyPredicate.java
@@ -14,21 +13,16 @@ import com.easy.query.core.util.EasySQLUtil;
  * @Date: 2023/2/13 15:18
  * @author xuejiaming
  */
-public class UpdateColumnSegmentImpl implements InsertUpdateSetColumnSQLSegment {
-    protected final TableAvailable table;
-    protected final String propertyName;
-    protected final QueryRuntimeContext runtimeContext;
+public class UpdateColumnSegmentImpl extends AbstractInsertUpdateSetColumnSQLSegmentImpl implements InsertUpdateSetColumnSQLSegment {
 
     public UpdateColumnSegmentImpl(TableAvailable table, String propertyName, QueryRuntimeContext runtimeContext){
-        this.table = table;
-        this.propertyName = propertyName;
-        this.runtimeContext = runtimeContext;
+        super(table,propertyName,runtimeContext);
     }
 
     @Override
     public String toSQL(ToSQLContext toSQLContext) {
-        EasySQLUtil.addParameter(toSQLContext,new PropertySQLParameter(table,propertyName));
-        return  "?";
+        PropertySQLParameter sqlParameter = new PropertySQLParameter(table, propertyName);
+        return toSQLWithParameter(toSQLContext,sqlParameter);
     }
 
     @Override

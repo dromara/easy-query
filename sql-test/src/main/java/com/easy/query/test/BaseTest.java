@@ -17,6 +17,7 @@ import com.easy.query.core.sharding.router.manager.TableRouteManager;
 import com.easy.query.mysql.config.MySQLDatabaseConfiguration;
 import com.easy.query.test.conversion.EnumConverter;
 import com.easy.query.test.conversion.JsonConverter;
+import com.easy.query.test.conversion.MySQLAesEncryptColumnValueSQLConverter;
 import com.easy.query.test.encryption.Base64EncryptionStrategy;
 import com.easy.query.test.encryption.DefaultAesEasyEncryptionStrategy;
 import com.easy.query.test.encryption.MyEncryptionStrategy;
@@ -157,6 +158,7 @@ public abstract class BaseTest {
         configuration.applyValueConverter(new EnumConverter());
         configuration.applyValueConverter(new JsonConverter());
         configuration.applyValueUpdateAtomicTrack(new IntegerNotValueUpdateAtomicTrack());
+        configuration.applyColumnValueSQLConverter(new MySQLAesEncryptColumnValueSQLConverter());
         TableRouteManager tableRouteManager = runtimeContext.getTableRouteManager();
         tableRouteManager.addRoute(new TopicShardingTableRoute());
         tableRouteManager.addRoute(new TopicShardingTimeTableRoute());

@@ -109,7 +109,7 @@ public class ColumnAsSelectorImpl<T1, TR> implements ColumnAsSelector<T1, TR> {
 
     @Override
     public ColumnAsSelector<T1, TR> sqlSegmentAs(CloneableSQLSegment sqlColumnSegment, String propertyAlias) {
-        asSelector.sqlColumnAs(sqlColumnSegment,propertyAlias);
+        asSelector.sqlSegmentAs(sqlColumnSegment,propertyAlias);
         return this;
     }
 }

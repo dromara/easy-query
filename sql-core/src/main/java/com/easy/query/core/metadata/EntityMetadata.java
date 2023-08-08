@@ -13,6 +13,8 @@ import com.easy.query.core.annotation.ShardingTableKey;
 import com.easy.query.core.annotation.Table;
 import com.easy.query.core.annotation.UpdateIgnore;
 import com.easy.query.core.annotation.Version;
+import com.easy.query.core.basic.extension.conversion.ColumnValueSQLConverter;
+import com.easy.query.core.basic.extension.conversion.DefaultColumnValueSQLConverter;
 import com.easy.query.core.basic.extension.conversion.DefaultValueConverter;
 import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.basic.extension.encryption.EncryptionStrategy;
@@ -257,6 +259,15 @@ public class EntityMetadata {
                         }
                         columnOption.setValueUpdateAtomicTrack(EasyObjectUtil.typeCastNullable(trackValueUpdate));
                         columnValueUpdateAtomicTrack = true;
+                    }
+                    Class<? extends ColumnValueSQLConverter> columnValueSQLConverterClass = column.sqlConversion();
+                    if(!Objects.equals(DefaultColumnValueSQLConverter.class,columnValueSQLConverterClass)){
+                        //配置列值数据库转换器
+                        ColumnValueSQLConverter columnValueSQLConverter = configuration.getColumnValueSQLConverter(columnValueSQLConverterClass);
+                        if (columnValueSQLConverter == null) {
+                            throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " column value sql converter unknown");
+                        }
+                        columnOption.setColumnValueSQLConverter(columnValueSQLConverter);
                     }
                 }
                 InsertIgnore insertIgnore = field.getAnnotation(InsertIgnore.class);

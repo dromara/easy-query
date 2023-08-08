@@ -27,6 +27,6 @@ logging:
 
 easy-query:
   enable: true
-  database: pgsql
+  database: mysql
   name-conversion: underlined
   start-time-job: true

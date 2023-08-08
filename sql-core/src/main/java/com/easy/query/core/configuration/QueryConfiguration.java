@@ -1,5 +1,6 @@
 package com.easy.query.core.configuration;
 
+import com.easy.query.core.basic.extension.conversion.ColumnValueSQLConverter;
 import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.basic.extension.encryption.EncryptionStrategy;
 import com.easy.query.core.basic.extension.interceptor.Interceptor;
@@ -57,6 +58,7 @@ public class QueryConfiguration {
     private Map<Class<? extends ShardingInitializer>, ShardingInitializer> shardingInitializerMap = new ConcurrentHashMap<>();
     private Map<Class<? extends ValueConverter<?, ?>>, ValueConverter<?, ?>> valueConverterMap = new ConcurrentHashMap<>();
     private Map<Class<? extends ValueUpdateAtomicTrack<?>>, ValueUpdateAtomicTrack<?>> valueUpdateAtomicTrackMap = new ConcurrentHashMap<>();
+    private Map<Class<? extends ColumnValueSQLConverter>, ColumnValueSQLConverter> columnValueSQLConverterMap = new ConcurrentHashMap<>();
 
     //    public EasyQueryConfiguration(Dialect dialect, NameConversion nameConversion) {
 //       this(EasyQueryOption.defaultEasyQueryOption(),dialect,nameConversion);
@@ -245,5 +247,16 @@ public class QueryConfiguration {
 
     public ValueUpdateAtomicTrack<?> getValueUpdateAtomicTrack(Class<? extends ValueUpdateAtomicTrack<?>> trackValueUpdateClass) {
         return valueUpdateAtomicTrackMap.get(trackValueUpdateClass);
+    }
+    public void applyColumnValueSQLConverter(ColumnValueSQLConverter columnValueSQLConverter) {
+        Class<? extends ColumnValueSQLConverter> columnValueSQLConverterClass = columnValueSQLConverter.getClass();
+        if (columnValueSQLConverterMap.containsKey(columnValueSQLConverterClass)) {
+            throw new EasyQueryException("column value sql converter:" + EasyClassUtil.getSimpleName(columnValueSQLConverterClass) + ",repeat");
+        }
+        columnValueSQLConverterMap.put(columnValueSQLConverterClass, columnValueSQLConverter);
+    }
+
+    public ColumnValueSQLConverter getColumnValueSQLConverter(Class<? extends ColumnValueSQLConverter> columnValueSQLConverterClass) {
+        return columnValueSQLConverterMap.get(columnValueSQLConverterClass);
     }
 }

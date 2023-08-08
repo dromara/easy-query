@@ -6,10 +6,8 @@ import com.easy.query.core.basic.api.internal.SQLExecuteRows;
 import com.easy.query.core.basic.api.internal.SQLExecuteStrategy;
 import com.easy.query.core.basic.api.internal.SQLOnDuplicateKeyIgnore;
 import com.easy.query.core.basic.api.internal.TableReNameable;
-import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
-import com.easy.query.core.expression.lambda.SQLExpression2;
-import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;
+import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 
 import java.util.Collection;
 
@@ -23,6 +21,7 @@ public interface Insertable<T, TChain> extends SQLExecuteRows, Interceptable<TCh
     TChain insert(T entity);
 
     TChain insert(Collection<T> entities);
+    EntityInsertExpressionBuilder getEntityInsertExpressionBuilder();
 
     /**
      *

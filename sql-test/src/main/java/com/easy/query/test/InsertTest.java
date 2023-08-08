@@ -1,9 +1,16 @@
 package com.easy.query.test;
 
 import com.easy.query.api4j.insert.EntityInsertable;
+import com.easy.query.core.basic.jdbc.parameter.BeanSQLParameter;
+import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
+import com.easy.query.core.basic.jdbc.parameter.PropertySQLParameter;
+import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
+import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import com.easy.query.core.exception.EasyQuerySQLStatementException;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.test.entity.BlogEntity;
+import com.easy.query.test.entity.SysUserSQLEncryption;
 import com.easy.query.test.entity.TopicAuto;
 import com.easy.query.test.entity.TopicAutoNative;
 import org.junit.Assert;
@@ -365,5 +372,103 @@ public class InsertTest extends BaseTest {
             String sql = cause1.getSQL();
             Assert.assertEquals("INSERT INTO `xxxxx` (`id`,`stars`) VALUES (sde.next_rowid(sde,?),?)",sql);
         }
+    }
+    @Test
+    public void insertSQLConvert1(){
+
+
+        try {
+
+            SysUserSQLEncryption user = new SysUserSQLEncryption();
+            user.setId("123");
+            user.setUsername("username");
+            user.setPhone("13232456789");
+            user.setIdCard("12345678");
+            user.setAddress("xxxxxxx");
+            user.setCreateTime(LocalDateTime.now());
+            easyQuery.insertable(user)
+                    .asTable("xxxxx").executeRows();
+        }catch (Exception ex){
+            Throwable cause = ex.getCause();
+            Assert.assertTrue(cause instanceof EasyQuerySQLStatementException);
+            EasyQuerySQLStatementException cause1 = (EasyQuerySQLStatementException) cause;
+            String sql = cause1.getSQL();
+            Assert.assertEquals("INSERT INTO `xxxxx` (`id`,`username`,`phone`,`id_card`,`address`,`create_time`) VALUES (?,?,to_base64(AES_ENCRYPT(?,?)),?,?,?)",sql);
+        }
+    }
+    @Test
+    public void insertSQLConvert2(){
+
+        SysUserSQLEncryption user = new SysUserSQLEncryption();
+        user.setId("123");
+        user.setUsername("username");
+        user.setPhone("13232456789");
+        user.setIdCard("12345678");
+        user.setAddress("xxxxxxx");
+        LocalDateTime now = LocalDateTime.now();
+        user.setCreateTime(now);
+        EntityInsertable<SysUserSQLEncryption> insertable = easyQuery.insertable(user);
+        ToSQLContext toSQLContext = DefaultToSQLContext.defaultToSQLContext(insertable.getEntityInsertExpressionBuilder().getExpressionContext().getTableContext());
+        insertable.asTable("xxxxx").toSQL(user, toSQLContext);
+        List<SQLParameter> parameters = toSQLContext.getParameters();
+        Assert.assertEquals(parameters.size(),7);
+
+        for (SQLParameter parameter : parameters) {
+            TableAvailable tableOrNull = parameter.getTableOrNull();
+            if(tableOrNull==null){
+                Object value = parameter.getValue();
+                Assert.assertEquals("1234567890123456",value);
+            }else {
+
+                Assert.assertTrue(parameter instanceof BeanSQLParameter);
+                Assert.assertTrue(parameter instanceof PropertySQLParameter);
+                PropertySQLParameter propertySQLParameter = (PropertySQLParameter) parameter;
+                propertySQLParameter.setBean(user);
+                String propertyNameOrNull = propertySQLParameter.getPropertyNameOrNull();
+                switch (propertyNameOrNull){
+                    case "id":Assert.assertEquals("123",propertySQLParameter.getValue());break;
+                    case "username":Assert.assertEquals("username",propertySQLParameter.getValue());break;
+                    case "phone":Assert.assertEquals("13232456789",propertySQLParameter.getValue());break;
+                    case "idCard":Assert.assertEquals("12345678",propertySQLParameter.getValue());break;
+                    case "address":Assert.assertEquals("xxxxxxx",propertySQLParameter.getValue());break;
+                    case "createTime":Assert.assertEquals(now,propertySQLParameter.getValue());break;
+                }
+            }
+        }
+    }
+    @Test
+    public void insertSQLConvert3(){
+        easyQuery.deletable(SysUserSQLEncryption.class).disableLogicDelete()
+                .whereById("12345").executeRows();
+
+        SysUserSQLEncryption user = new SysUserSQLEncryption();
+        user.setId("12345");
+        user.setUsername("username");
+        user.setPhone("13232456789");
+        user.setIdCard("12345678");
+        user.setAddress("xxxxxxx");
+        user.setCreateTime(LocalDateTime.now());
+        long l = easyQuery.insertable(user).executeRows();
+        Assert.assertEquals(1, l);
+        SysUserSQLEncryption sysUserSQLEncryption = easyQuery.queryable(SysUserSQLEncryption.class)
+                .whereById("12345")
+                .firstOrNull();
+        Assert.assertNotNull(sysUserSQLEncryption);
+
+        Assert.assertEquals("13232456789",sysUserSQLEncryption.getPhone());
+        Assert.assertEquals(sysUserSQLEncryption.getId(),user.getId());
+        Assert.assertEquals(sysUserSQLEncryption.getUsername(),user.getUsername());
+        Assert.assertEquals(sysUserSQLEncryption.getPhone(),user.getPhone());
+        Assert.assertEquals(sysUserSQLEncryption.getIdCard(),user.getIdCard());
+        Assert.assertEquals(sysUserSQLEncryption.getAddress(),user.getAddress());
+        Assert.assertEquals(sysUserSQLEncryption.getCreateTime().getYear(),user.getCreateTime().getYear());
+        Assert.assertEquals(sysUserSQLEncryption.getCreateTime().getMonth(),user.getCreateTime().getMonth());
+        Assert.assertEquals(sysUserSQLEncryption.getCreateTime().getDayOfYear(),user.getCreateTime().getDayOfYear());
+        Assert.assertEquals(sysUserSQLEncryption.getCreateTime().getHour(),user.getCreateTime().getHour());
+        Assert.assertEquals(sysUserSQLEncryption.getCreateTime().getMinute(),user.getCreateTime().getMinute());
+        Assert.assertEquals(sysUserSQLEncryption.getCreateTime().getSecond(),user.getCreateTime().getSecond());
+
+        easyQuery.deletable(SysUserSQLEncryption.class).disableLogicDelete()
+                .whereById("12345").executeRows();
     }
 }

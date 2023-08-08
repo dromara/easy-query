@@ -4,17 +4,13 @@ import com.easy.query.api4j.sql.SQLColumnConfigurer;
 import com.easy.query.api4j.sql.SQLColumnSetSelector;
 import com.easy.query.api4j.sql.impl.SQLColumnConfigurerImpl;
 import com.easy.query.api4j.sql.impl.SQLColumnSetSelectorImpl;
-import com.easy.query.api4j.sql.scec.SQLNativeLambdaExpressionContext;
-import com.easy.query.api4j.sql.scec.SQLNativeLambdaExpressionContextImpl;
-import com.easy.query.api4j.update.EntityUpdatable;
 import com.easy.query.api4j.util.EasyLambdaUtil;
 import com.easy.query.core.basic.api.insert.ClientInsertable;
-import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.SQLExpression1;
-import com.easy.query.core.expression.lambda.SQLExpression2;
+import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 
 import java.util.Collection;
 import java.util.function.Function;
@@ -43,6 +39,11 @@ public abstract class AbstractEntityInsertable<T> implements EntityInsertable<T>
     public EntityInsertable<T> insert(Collection<T> entities) {
         clientInsertable.insert(entities);
         return this;
+    }
+
+    @Override
+    public EntityInsertExpressionBuilder getEntityInsertExpressionBuilder() {
+        return clientInsertable.getEntityInsertExpressionBuilder();
     }
 
     @Override

@@ -13,18 +13,13 @@ import com.easy.query.core.util.EasySQLExpressionUtil;
  *
  * @author xuejiaming
  */
-public class UpdateColumnSetSegmentImpl implements InsertUpdateSetColumnSQLSegment {
-    protected final TableAvailable table;
-    protected final String propertyName;
+public class UpdateColumnSetSegmentImpl extends AbstractInsertUpdateSetColumnSQLSegmentImpl implements InsertUpdateSetColumnSQLSegment {
+
     protected final Object val;
-    protected final QueryRuntimeContext runtimeContext;
 
     public UpdateColumnSetSegmentImpl(TableAvailable table, String propertyName, Object val, QueryRuntimeContext runtimeContext){
-
-        this.table = table;
-        this.propertyName = propertyName;
+        super(table,propertyName,runtimeContext);
         this.val = val;
-        this.runtimeContext = runtimeContext;
     }
 
     @Override
@@ -34,9 +29,8 @@ public class UpdateColumnSetSegmentImpl implements InsertUpdateSetColumnSQLSegme
 
     @Override
     public String toSQL(ToSQLContext toSQLContext) {
-        EasyConstSQLParameter constSQLParameter = new EasyConstSQLParameter(table, propertyName, val);
-        toSQLContext.addParameter(constSQLParameter);
-        return "?";
+        EasyConstSQLParameter sqlParameter = new EasyConstSQLParameter(table, propertyName, val);
+        return toSQLWithParameter(toSQLContext,sqlParameter);
     }
 
     @Override

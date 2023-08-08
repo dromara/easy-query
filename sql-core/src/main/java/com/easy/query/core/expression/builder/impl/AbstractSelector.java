@@ -116,7 +116,7 @@ public abstract class AbstractSelector<TChain> {
                 if (ignoreColumnIfLargeNotQuery(queryLargeColumn, columnMetadata)) {
                     continue;
                 }
-                ColumnSegment columnSegment = sqlSegmentFactory.createColumnSegment(table, columnMetadata, runtimeContext, null);
+                ColumnSegment columnSegment = sqlSegmentFactory.createColumnSegment(table, columnMetadata.getPropertyName(), runtimeContext, null);
                 sqlBuilderSegment.append(columnSegment);
             }
         }

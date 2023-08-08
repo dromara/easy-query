@@ -15,7 +15,6 @@ import com.easy.query.core.expression.segment.SQLNativeSegment;
 import com.easy.query.core.expression.segment.SelectConstSegment;
 import com.easy.query.core.expression.segment.SubQueryColumnSegment;
 import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;
-import com.easy.query.core.metadata.ColumnMetadata;
 
 /**
  * create time 2023/5/28 22:26
@@ -26,7 +25,6 @@ import com.easy.query.core.metadata.ColumnMetadata;
 public interface SQLSegmentFactory {
     SelectConstSegment createSelectConstSegment(String projects);
     ColumnSegment createColumnSegment(TableAvailable table, String propertyName, QueryRuntimeContext runtimeContext, String alias);
-    ColumnSegment createColumnSegment(TableAvailable table, ColumnMetadata columnMetadata, QueryRuntimeContext runtimeContext, String alias);
     ColumnSegment createAnonymousColumnSegment(TableAvailable table, QueryRuntimeContext runtimeContext, String alias);
 //    ColumnAsConstSegment createColumnAsConstSegment(TableAvailable table, QueryRuntimeContext runtimeContext,String columnConst, String alias);
     SQLNativeSegment createSQLNativeSegment(QueryRuntimeContext runtimeContext, String columnConst, SQLNativeExpressionContext sqlConstExpressionContext);

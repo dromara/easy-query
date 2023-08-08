@@ -13,13 +13,13 @@ import com.easy.query.core.util.EasySQLExpressionUtil;
  * @Date: 2023/2/14 23:34
  * @author xuejiaming
  */
-public class ColumnPredicate implements Predicate {
+public class ColumnNullAssertPredicate implements Predicate {
     private final TableAvailable table;
     private final String propertyName;
     private final SQLPredicateCompare compare;
     private final QueryRuntimeContext runtimeContext;
 
-    public ColumnPredicate(TableAvailable table, String propertyName, SQLPredicateCompare compare, QueryRuntimeContext runtimeContext) {
+    public ColumnNullAssertPredicate(TableAvailable table, String propertyName, SQLPredicateCompare compare, QueryRuntimeContext runtimeContext) {
         this.table = table;
         this.propertyName = propertyName;
         this.compare = compare;

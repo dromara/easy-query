@@ -27,6 +27,7 @@ import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.builder.impl.AnonymousUnionQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
+import com.easy.query.core.metadata.ColumnMetadata;
 
 import java.util.Collection;
 import java.util.Objects;
@@ -205,6 +206,9 @@ public class EasySQLExpressionUtil {
         return getSQLOwnerColumn(runtimeContext,table,columnName,toSQLContext);
     }
 
+    public static String getSQLOwnerColumnMetadata(QueryRuntimeContext runtimeContext, TableAvailable table, ColumnMetadata columnMetadata, ToSQLContext toSQLContext) {
+        return getSQLOwnerColumn(runtimeContext,table,columnMetadata.getName(),toSQLContext);
+    }
     public static String getSQLOwnerColumn(QueryRuntimeContext runtimeContext, TableAvailable table, String columnName, ToSQLContext toSQLContext) {
         if(columnName==null){
             throw new IllegalArgumentException("column name cannot be null");

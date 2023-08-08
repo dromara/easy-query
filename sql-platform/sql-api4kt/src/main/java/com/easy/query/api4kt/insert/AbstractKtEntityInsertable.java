@@ -9,6 +9,7 @@ import com.easy.query.core.basic.api.insert.ClientInsertable;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 import kotlin.reflect.KProperty1;
 
 import java.util.Collection;
@@ -38,6 +39,11 @@ public abstract class AbstractKtEntityInsertable<T> implements KtEntityInsertabl
     public KtEntityInsertable<T> insert(Collection<T> entities) {
         clientInsertable.insert(entities);
         return this;
+    }
+
+    @Override
+    public EntityInsertExpressionBuilder getEntityInsertExpressionBuilder() {
+        return clientInsertable.getEntityInsertExpressionBuilder();
     }
 
     @Override

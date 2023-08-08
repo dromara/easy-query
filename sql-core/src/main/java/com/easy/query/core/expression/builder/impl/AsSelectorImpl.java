@@ -133,7 +133,7 @@ public class AsSelectorImpl extends AbstractSelector<AsSelector> implements AsSe
     }
 
     @Override
-    public AsSelector sqlColumnAs(CloneableSQLSegment sqlColumnSegment, String propertyAlias) {
+    public AsSelector sqlSegmentAs(CloneableSQLSegment sqlColumnSegment, String propertyAlias) {
         String columnAsName = propertyAlias == null ? null :getResultColumnName(propertyAlias);
         CloneableSQLSegment sqlColumnAsSegment = sqlSegmentFactory.createSQLColumnAsSegment(sqlColumnSegment, columnAsName,runtimeContext);
         sqlBuilderSegment.append(sqlColumnAsSegment);

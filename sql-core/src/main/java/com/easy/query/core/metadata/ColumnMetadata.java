@@ -1,5 +1,6 @@
 package com.easy.query.core.metadata;
 
+import com.easy.query.core.basic.extension.conversion.ColumnValueSQLConverter;
 import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.basic.extension.encryption.EncryptionStrategy;
 import com.easy.query.core.basic.extension.track.update.ValueUpdateAtomicTrack;
@@ -43,6 +44,7 @@ public class ColumnMetadata {
     private final  boolean large;
 
     private final ValueConverter<?, ?> valueConverter;
+    private final ColumnValueSQLConverter columnValueSQLConverter;
     private final ValueUpdateAtomicTrack<Object> valueUpdateAtomicTrack;
     private final PropertySetterCaller<Object> setterCaller;
     private final Property<Object,?> getterCaller;
@@ -63,6 +65,7 @@ public class ColumnMetadata {
         this.supportQueryLike= columnOption.isSupportQueryLike();
         this.large= columnOption.isLarge();
         this.valueConverter = columnOption.getValueConverter();
+        this.columnValueSQLConverter = columnOption.getColumnValueSQLConverter();
         this.valueUpdateAtomicTrack = columnOption.getValueUpdateAtomicTrack();
 
         if(columnOption.getGetterCaller()==null){
@@ -157,5 +160,9 @@ public class ColumnMetadata {
 
     public JdbcTypeHandler getJdbcTypeHandler() {
         return jdbcTypeHandler;
+    }
+
+    public ColumnValueSQLConverter getColumnValueSQLConverter(){
+        return columnValueSQLConverter;
     }
 }

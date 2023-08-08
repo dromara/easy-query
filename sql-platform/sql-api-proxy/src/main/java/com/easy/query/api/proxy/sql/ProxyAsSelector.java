@@ -239,7 +239,7 @@ public interface ProxyAsSelector<TRProxy extends ProxyEntity<TRProxy, TR>, TR> e
     }
     default ProxyAsSelector<TRProxy,TR> sqlSegmentAs(CloneableSQLSegment sqlColumnSegment, Function<TRProxy, SQLColumn<?>> mapAlias){
         SQLColumn<?> sqlColumn = mapAlias.apply(getTRProxy());
-        getAsSelector().sqlColumnAs(sqlColumnSegment, sqlColumn.value());
+        getAsSelector().sqlSegmentAs(sqlColumnSegment, sqlColumn.value());
         return this;
     }
 }

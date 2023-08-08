@@ -17,11 +17,11 @@ import java.util.function.Function;
  * @Date: 2023/3/6 08:49
  */
 public class EasyEmptyClientInsertable<T> implements ClientInsertable<T> {
-    private final EntityInsertExpressionBuilder entityInsertExpression;
+    private final EntityInsertExpressionBuilder entityInsertExpressionBuilder;
 
-    public EasyEmptyClientInsertable(EntityInsertExpressionBuilder entityInsertExpression) {
+    public EasyEmptyClientInsertable(EntityInsertExpressionBuilder entityInsertExpressionBuilder) {
 
-        this.entityInsertExpression = entityInsertExpression;
+        this.entityInsertExpressionBuilder = entityInsertExpressionBuilder;
     }
 
     @Override
@@ -29,10 +29,15 @@ public class EasyEmptyClientInsertable<T> implements ClientInsertable<T> {
         if (entity == null) {
             return this;
         }
-        SQLClientApiFactory sqlApiFactory = entityInsertExpression.getRuntimeContext().getSQLClientApiFactory();
-        ClientInsertable<T> insertable = sqlApiFactory.createInsertable((Class<T>) entity.getClass(), entityInsertExpression);
+        SQLClientApiFactory sqlApiFactory = entityInsertExpressionBuilder.getRuntimeContext().getSQLClientApiFactory();
+        ClientInsertable<T> insertable = sqlApiFactory.createInsertable((Class<T>) entity.getClass(), entityInsertExpressionBuilder);
         insertable.insert(entity);
         return insertable;
+    }
+
+    @Override
+    public EntityInsertExpressionBuilder getEntityInsertExpressionBuilder() {
+        return entityInsertExpressionBuilder;
     }
 
     @Override

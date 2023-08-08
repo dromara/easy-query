@@ -17,7 +17,7 @@ import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnCollectionPredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnExistsSubQueryPredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnInSubQueryPredicate;
-import com.easy.query.core.expression.segment.condition.predicate.ColumnPredicate;
+import com.easy.query.core.expression.segment.condition.predicate.ColumnNullAssertPredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnValuePredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnWithColumnPredicate;
 import com.easy.query.core.expression.segment.condition.predicate.FuncColumnValuePredicate;
@@ -77,7 +77,6 @@ public class FilterImpl implements Filter {
     }
 
     protected void appendThisPredicate(TableAvailable table, String property, Object val, SQLPredicateCompare condition) {
-
         nextPredicateSegment.setPredicate(new ColumnValuePredicate(table, property, val, getReallyPredicateCompare(condition), runtimeContext));
     }
 
@@ -153,14 +152,14 @@ public class FilterImpl implements Filter {
 
     @Override
     public Filter isNull(TableAvailable table, String property) {
-        nextPredicateSegment.setPredicate(new ColumnPredicate(table, property, getReallyPredicateCompare(SQLPredicateCompareEnum.IS_NULL), runtimeContext));
+        nextPredicateSegment.setPredicate(new ColumnNullAssertPredicate(table, property, getReallyPredicateCompare(SQLPredicateCompareEnum.IS_NULL), runtimeContext));
         next();
         return this;
     }
 
     @Override
     public Filter isNotNull(TableAvailable table, String property) {
-        nextPredicateSegment.setPredicate(new ColumnPredicate(table, property, getReallyPredicateCompare(SQLPredicateCompareEnum.IS_NOT_NULL), runtimeContext));
+        nextPredicateSegment.setPredicate(new ColumnNullAssertPredicate(table, property, getReallyPredicateCompare(SQLPredicateCompareEnum.IS_NOT_NULL), runtimeContext));
         next();
         return this;
     }

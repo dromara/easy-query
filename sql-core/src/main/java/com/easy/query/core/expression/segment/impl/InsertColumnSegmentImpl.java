@@ -6,7 +6,6 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.InsertUpdateSetColumnSQLSegment;
 import com.easy.query.core.util.EasySQLExpressionUtil;
-import com.easy.query.core.util.EasySQLUtil;
 
 /**
  * create time 2023/8/7 11:02
@@ -14,16 +13,10 @@ import com.easy.query.core.util.EasySQLUtil;
  *
  * @author xuejiaming
  */
-public class InsertColumnSegmentImpl implements InsertUpdateSetColumnSQLSegment {
-    protected final TableAvailable table;
-    protected final String propertyName;
-    protected final QueryRuntimeContext runtimeContext;
+public class InsertColumnSegmentImpl extends AbstractInsertUpdateSetColumnSQLSegmentImpl implements InsertUpdateSetColumnSQLSegment {
 
     public InsertColumnSegmentImpl(TableAvailable table, String propertyName, QueryRuntimeContext runtimeContext){
-
-        this.table = table;
-        this.propertyName = propertyName;
-        this.runtimeContext = runtimeContext;
+        super(table,propertyName,runtimeContext);
     }
     @Override
     public String getColumnNameWithOwner(ToSQLContext toSQLContext) {
@@ -37,8 +30,9 @@ public class InsertColumnSegmentImpl implements InsertUpdateSetColumnSQLSegment 
 
     @Override
     public String toSQL(ToSQLContext toSQLContext) {
-        EasySQLUtil.addParameter(toSQLContext,new PropertySQLParameter(table,propertyName));
-        return "?";
+
+        PropertySQLParameter sqlParameter = new PropertySQLParameter(table, propertyName);
+        return toSQLWithParameter(toSQLContext,sqlParameter);
     }
 
     @Override

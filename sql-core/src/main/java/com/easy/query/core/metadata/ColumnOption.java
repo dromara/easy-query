@@ -1,5 +1,6 @@
 package com.easy.query.core.metadata;
 
+import com.easy.query.core.basic.extension.conversion.ColumnValueSQLConverter;
 import com.easy.query.core.basic.extension.conversion.DefaultValueConverter;
 import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.basic.extension.encryption.EncryptionStrategy;
@@ -38,8 +39,8 @@ public final class ColumnOption {
     private boolean large = false;
 
     private ValueConverter<?, ?> valueConverter;
+    private ColumnValueSQLConverter columnValueSQLConverter;
     private ValueUpdateAtomicTrack<Object> valueUpdateAtomicTrack;
-    ;
     private PropertySetterCaller<Object> setterCaller;
     private Property<Object, ?> getterCaller;
     private JdbcTypeHandler jdbcTypeHandler;
@@ -141,6 +142,14 @@ public final class ColumnOption {
 
     public void setValueConverter(ValueConverter<?, ?> valueConverter) {
         this.valueConverter = valueConverter;
+    }
+
+    public ColumnValueSQLConverter getColumnValueSQLConverter() {
+        return columnValueSQLConverter;
+    }
+
+    public void setColumnValueSQLConverter(ColumnValueSQLConverter columnValueSQLConverter) {
+        this.columnValueSQLConverter = columnValueSQLConverter;
     }
 
     public ValueUpdateAtomicTrack<Object> getValueUpdateAtomicTrack() {
