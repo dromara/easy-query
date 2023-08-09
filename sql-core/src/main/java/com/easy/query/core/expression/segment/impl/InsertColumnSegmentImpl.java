@@ -1,5 +1,7 @@
 package com.easy.query.core.expression.segment.impl;
 
+import com.easy.query.core.basic.extension.conversion.DefaultSQLPropertyConverter;
+import com.easy.query.core.basic.extension.increment.IncrementSQLColumnGenerator;
 import com.easy.query.core.basic.jdbc.parameter.PropertySQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.context.QueryRuntimeContext;
@@ -30,9 +32,15 @@ public class InsertColumnSegmentImpl extends AbstractInsertUpdateSetColumnSQLSeg
 
     @Override
     public String toSQL(ToSQLContext toSQLContext) {
-
-        PropertySQLParameter sqlParameter = new PropertySQLParameter(table, propertyName);
-        return toSQLWithParameter(toSQLContext,sqlParameter);
+        IncrementSQLColumnGenerator incrementSQLColumnGenerator = columnMetadata.getIncrementSQLColumnGenerator();
+        if(incrementSQLColumnGenerator!=null){
+            DefaultSQLPropertyConverter sqlPropertyConverter = new DefaultSQLPropertyConverter(table, runtimeContext);
+            incrementSQLColumnGenerator.configure(table,columnMetadata,sqlPropertyConverter,runtimeContext);
+            return sqlPropertyConverter.toSQL(toSQLContext);
+        }else{
+            PropertySQLParameter sqlParameter = new PropertySQLParameter(table, propertyName);
+            return toSQLWithParameter(toSQLContext,sqlParameter);
+        }
     }
 
     @Override

@@ -10,10 +10,10 @@ import com.easy.query.core.util.EasySQLUtil;
  *
  * @author xuejiaming
  */
-public class ColumnConstValueExpressionImpl implements ColumnConstValueExpression {
+public class ColumnConstSQLParameterExpressionImpl implements ColumnParamExpression {
     private final Object val;
 
-    public ColumnConstValueExpressionImpl(Object val){
+    public ColumnConstSQLParameterExpressionImpl(Object val){
 
         this.val = val;
     }

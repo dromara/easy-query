@@ -12,5 +12,6 @@ public interface SQLNativePropertyExpressionContext {
     SQLNativePropertyExpressionContext expression(String property);
     SQLNativePropertyExpressionContext expression(TableAvailable table, String property);
     SQLNativePropertyExpressionContext value(Object val);
+    SQLNativePropertyExpressionContext constValue(Object constVal);
     SQLNativePropertyExpressionContext setAlias(String alias);
 }

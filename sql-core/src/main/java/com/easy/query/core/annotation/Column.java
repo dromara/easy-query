@@ -4,6 +4,8 @@ import com.easy.query.core.basic.extension.conversion.ColumnValueSQLConverter;
 import com.easy.query.core.basic.extension.conversion.DefaultColumnValueSQLConverter;
 import com.easy.query.core.basic.extension.conversion.DefaultValueConverter;
 import com.easy.query.core.basic.extension.conversion.ValueConverter;
+import com.easy.query.core.basic.extension.increment.IncrementSQLColumnGenerator;
+import com.easy.query.core.basic.extension.increment.DefaultIncrementSQLColumnGenerator;
 import com.easy.query.core.basic.extension.track.update.DefaultValueUpdateAtomicTrack;
 import com.easy.query.core.basic.extension.track.update.ValueUpdateAtomicTrack;
 import com.easy.query.core.util.EasyStringUtil;
@@ -61,7 +63,17 @@ public @interface Column {
     Class<? extends ValueConverter<?, ?>> conversion() default DefaultValueConverter.class;
     Class<? extends ColumnValueSQLConverter> sqlConversion() default DefaultColumnValueSQLConverter.class;
 
+    /**
+     *
+     * @return
+     */
     Class<? extends ValueUpdateAtomicTrack<?>> valueUpdateAtomicTrack() default DefaultValueUpdateAtomicTrack.class;
+
+    /**
+     *
+     * @return
+     */
+    Class<? extends IncrementSQLColumnGenerator> incrementSQLColumnGenerator() default DefaultIncrementSQLColumnGenerator.class;
 
 //    /**
 //     * 当且仅当查询指定该属性才会查询出来

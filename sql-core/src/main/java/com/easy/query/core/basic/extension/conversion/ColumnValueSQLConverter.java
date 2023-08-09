@@ -1,7 +1,9 @@
 package com.easy.query.core.basic.extension.conversion;
 
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.metadata.ColumnMetadata;
 
 /**
  * create time 2023/8/5 23:08
@@ -15,19 +17,19 @@ public interface ColumnValueSQLConverter {
     /**
      * select查询
      * @param table
-     * @param propertyName
+     * @param columnMetadata
      * @param sqlPropertyConverter
      */
-    void columnConverter(TableAvailable table, String propertyName, SQLPropertyConverter sqlPropertyConverter);
+    void columnConverter(TableAvailable table, ColumnMetadata columnMetadata, SQLPropertyConverter sqlPropertyConverter, QueryRuntimeContext runtimeContext);
 
     /**
      * insert update entity
      * udpate set
      * where
      * @param table
-     * @param propertyName
+     * @param columnMetadata
      * @param sqlParameter
      * @param sqlPropertyConverter
      */
-    void valueConverter(TableAvailable table, String propertyName, SQLParameter sqlParameter, SQLPropertyConverter sqlPropertyConverter);
+    void valueConverter(TableAvailable table, ColumnMetadata columnMetadata, SQLParameter sqlParameter, SQLPropertyConverter sqlPropertyConverter, QueryRuntimeContext runtimeContext);
 }

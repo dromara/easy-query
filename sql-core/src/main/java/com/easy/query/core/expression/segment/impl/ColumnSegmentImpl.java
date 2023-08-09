@@ -1,7 +1,7 @@
 package com.easy.query.core.expression.segment.impl;
 
 import com.easy.query.core.basic.extension.conversion.ColumnValueSQLConverter;
-import com.easy.query.core.basic.extension.conversion.SQLPropertyConverterImpl;
+import com.easy.query.core.basic.extension.conversion.DefaultSQLPropertyConverter;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
@@ -67,8 +67,8 @@ public class ColumnSegmentImpl implements ColumnSegment {
         if(columnValueSQLConverter==null){
             return EasySQLExpressionUtil.getSQLOwnerColumnMetadata(runtimeContext, table, columnMetadata, toSQLContext);
         }else{
-            SQLPropertyConverterImpl sqlPropertyConverter = new SQLPropertyConverterImpl(table, runtimeContext);
-            columnValueSQLConverter.columnConverter(table,propertyName,sqlPropertyConverter);
+            DefaultSQLPropertyConverter sqlPropertyConverter = new DefaultSQLPropertyConverter(table, runtimeContext);
+            columnValueSQLConverter.columnConverter(table,columnMetadata,sqlPropertyConverter,runtimeContext);
             return sqlPropertyConverter.toSQL(toSQLContext);
         }
     }

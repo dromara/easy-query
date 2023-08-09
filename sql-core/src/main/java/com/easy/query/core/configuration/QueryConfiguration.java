@@ -3,6 +3,7 @@ package com.easy.query.core.configuration;
 import com.easy.query.core.basic.extension.conversion.ColumnValueSQLConverter;
 import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.basic.extension.encryption.EncryptionStrategy;
+import com.easy.query.core.basic.extension.increment.IncrementSQLColumnGenerator;
 import com.easy.query.core.basic.extension.interceptor.Interceptor;
 import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategy;
 import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategyEnum;
@@ -59,6 +60,7 @@ public class QueryConfiguration {
     private Map<Class<? extends ValueConverter<?, ?>>, ValueConverter<?, ?>> valueConverterMap = new ConcurrentHashMap<>();
     private Map<Class<? extends ValueUpdateAtomicTrack<?>>, ValueUpdateAtomicTrack<?>> valueUpdateAtomicTrackMap = new ConcurrentHashMap<>();
     private Map<Class<? extends ColumnValueSQLConverter>, ColumnValueSQLConverter> columnValueSQLConverterMap = new ConcurrentHashMap<>();
+    private Map<Class<? extends IncrementSQLColumnGenerator>, IncrementSQLColumnGenerator> incrementSQLColumnGeneratorMap = new ConcurrentHashMap<>();
 
     //    public EasyQueryConfiguration(Dialect dialect, NameConversion nameConversion) {
 //       this(EasyQueryOption.defaultEasyQueryOption(),dialect,nameConversion);
@@ -258,5 +260,16 @@ public class QueryConfiguration {
 
     public ColumnValueSQLConverter getColumnValueSQLConverter(Class<? extends ColumnValueSQLConverter> columnValueSQLConverterClass) {
         return columnValueSQLConverterMap.get(columnValueSQLConverterClass);
+    }
+    public void applyIncrementSQLColumnGenerator(IncrementSQLColumnGenerator incrementSQLColumnGenerator) {
+        Class<? extends IncrementSQLColumnGenerator> incrementSQLColumnGeneratorClass = incrementSQLColumnGenerator.getClass();
+        if (columnValueSQLConverterMap.containsKey(incrementSQLColumnGeneratorClass)) {
+            throw new EasyQueryException("increment sql column generator:" + EasyClassUtil.getSimpleName(incrementSQLColumnGeneratorClass) + ",repeat");
+        }
+        incrementSQLColumnGeneratorMap.put(incrementSQLColumnGeneratorClass, incrementSQLColumnGenerator);
+    }
+
+    public IncrementSQLColumnGenerator getIncrementSQLColumnGenerator(Class<? extends IncrementSQLColumnGenerator> incrementSQLColumnGeneratorClass) {
+        return incrementSQLColumnGeneratorMap.get(incrementSQLColumnGeneratorClass);
     }
 }

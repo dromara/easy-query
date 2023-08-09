@@ -37,6 +37,12 @@ public class SQLNativeLambdaExpressionContextImpl<T1> implements SQLNativeLambda
     }
 
     @Override
+    public SQLNativeLambdaExpressionContext<T1> constValue(Object constVal) {
+        columnConstExpressionContext.constValue(constVal);
+        return this;
+    }
+
+    @Override
     public SQLNativeLambdaExpressionContext<T1> setAlias(String alias) {
         columnConstExpressionContext.setAlias(alias);
         return this;

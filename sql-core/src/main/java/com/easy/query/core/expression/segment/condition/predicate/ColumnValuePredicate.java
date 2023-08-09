@@ -1,7 +1,7 @@
 package com.easy.query.core.expression.segment.condition.predicate;
 
 import com.easy.query.core.basic.extension.conversion.ColumnValueSQLConverter;
-import com.easy.query.core.basic.extension.conversion.SQLPropertyConverterImpl;
+import com.easy.query.core.basic.extension.conversion.DefaultSQLPropertyConverter;
 import com.easy.query.core.basic.jdbc.parameter.ConstLikeSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
@@ -46,8 +46,8 @@ public class ColumnValuePredicate implements ValuePredicate, ShardingPredicate {
             EasySQLUtil.addParameter(toSQLContext, sqlParameter);
             return sqlColumnSegment + " " + compare.getSQL() + " ?";
         }else{
-            SQLPropertyConverterImpl sqlPropertyConverter = new SQLPropertyConverterImpl(table, runtimeContext);
-            columnValueSQLConverter.valueConverter(table,propertyName,sqlParameter,sqlPropertyConverter);
+            DefaultSQLPropertyConverter sqlPropertyConverter = new DefaultSQLPropertyConverter(table, runtimeContext);
+            columnValueSQLConverter.valueConverter(table,columnMetadata,sqlParameter,sqlPropertyConverter,runtimeContext);
             String valSQLParameter = sqlPropertyConverter.toSQL(toSQLContext);
             return sqlColumnSegment + " " + compare.getSQL() + " "+valSQLParameter;
         }

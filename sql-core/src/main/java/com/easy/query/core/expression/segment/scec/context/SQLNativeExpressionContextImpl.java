@@ -2,10 +2,11 @@ package com.easy.query.core.expression.segment.scec.context;
 
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.segment.scec.expression.ColumnConstValueExpressionImpl;
-import com.easy.query.core.expression.segment.scec.expression.ColumnParamValueExpressionImpl;
+import com.easy.query.core.expression.segment.scec.expression.ColumnConstSQLParameterExpressionImpl;
 import com.easy.query.core.expression.segment.scec.expression.ColumnPropertyExpressionImpl;
-import com.easy.query.core.expression.segment.scec.expression.ConstParamExpression;
+import com.easy.query.core.expression.segment.scec.expression.ColumnSQLParameterExpressionImpl;
+import com.easy.query.core.expression.segment.scec.expression.ConstValueParamExpressionImpl;
+import com.easy.query.core.expression.segment.scec.expression.ParamExpression;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +19,7 @@ import java.util.Objects;
  * @author xuejiaming
  */
 public class SQLNativeExpressionContextImpl implements SQLNativeExpressionContext {
-    private final List<ConstParamExpression> expressions=new ArrayList<>();
+    private final List<ParamExpression> expressions=new ArrayList<>();
     private String alias;
     public SQLNativeExpressionContextImpl expression(TableAvailable table, String property){
         Objects.requireNonNull(table, "table cannot be null");
@@ -29,16 +30,23 @@ public class SQLNativeExpressionContextImpl implements SQLNativeExpressionContex
     }
     public SQLNativeExpressionContextImpl value(Object val){
         if(val instanceof SQLParameter){
-            ColumnParamValueExpressionImpl columnParamValueExpression = new ColumnParamValueExpressionImpl((SQLParameter) val);
+            ColumnSQLParameterExpressionImpl columnParamValueExpression = new ColumnSQLParameterExpressionImpl((SQLParameter) val);
             expressions.add(columnParamValueExpression);
         }else{
-            ColumnConstValueExpressionImpl columnConstValueExpression = new ColumnConstValueExpressionImpl(val);
+            ColumnConstSQLParameterExpressionImpl columnConstValueExpression = new ColumnConstSQLParameterExpressionImpl(val);
             expressions.add(columnConstValueExpression);
         }
         return this;
     }
 
-    public List<ConstParamExpression> getExpressions() {
+    @Override
+    public SQLNativeExpressionContext constValue(Object constVal) {
+        ConstValueParamExpressionImpl constValueParamExpression = new ConstValueParamExpressionImpl(constVal);
+        expressions.add(constValueParamExpression);
+        return this;
+    }
+
+    public List<ParamExpression> getExpressions() {
         return expressions;
     }
 

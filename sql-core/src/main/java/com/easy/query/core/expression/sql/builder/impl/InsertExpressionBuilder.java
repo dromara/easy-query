@@ -40,10 +40,10 @@ public class InsertExpressionBuilder extends AbstractEntityExpressionBuilder imp
     protected final SQLBuilderSegment columns;
     protected String duplicateKey;
     protected SQLBuilderSegment duplicateKeyUpdateColumns;
-    protected  Map<String, ColumnConfigurerContext> columnConfigurers;
+    protected Map<String, ColumnConfigurerContext> columnConfigurers;
 
-    public InsertExpressionBuilder(ExpressionContext expressionContext,Class<?> queryClass) {
-        super(expressionContext,queryClass);
+    public InsertExpressionBuilder(ExpressionContext expressionContext, Class<?> queryClass) {
+        super(expressionContext, queryClass);
         this.columns = new ProjectSQLBuilderSegmentImpl();
     }
 
@@ -54,8 +54,8 @@ public class InsertExpressionBuilder extends AbstractEntityExpressionBuilder imp
 
     @Override
     public SQLBuilderSegment getDuplicateKeyUpdateColumns() {
-        if(duplicateKeyUpdateColumns==null){
-            duplicateKeyUpdateColumns=new ProjectSQLBuilderSegmentImpl();
+        if (duplicateKeyUpdateColumns == null) {
+            duplicateKeyUpdateColumns = new ProjectSQLBuilderSegmentImpl();
         }
         return duplicateKeyUpdateColumns;
     }
@@ -67,7 +67,7 @@ public class InsertExpressionBuilder extends AbstractEntityExpressionBuilder imp
 
     @Override
     public void setDuplicateKey(String duplicateKey) {
-        this.duplicateKey=duplicateKey;
+        this.duplicateKey = duplicateKey;
     }
 
 
@@ -119,19 +119,21 @@ public class InsertExpressionBuilder extends AbstractEntityExpressionBuilder imp
         EntityInsertSQLExpression easyInsertSQLExpression = expressionFactory.createEasyInsertSQLExpression(entitySQLExpressionMetadata, table.toExpression());
         EntityMetadata entityMetadata = table.getEntityMetadata();
         SQLBuilderSegment insertCloneColumns = getColumns().cloneSQLBuilder();
-        boolean hasNative = this.columnConfigurers != null&&!columnConfigurers.isEmpty();
+        boolean hasConfigure = this.columnConfigurers != null && !columnConfigurers.isEmpty();
         if (insertCloneColumns.isEmpty()) {
             SQLSegmentFactory sqlSegmentFactory = runtimeContext.getSQLSegmentFactory();
             //format
             Collection<String> properties = table.getEntityMetadata().getProperties();
             for (String property : properties) {
                 InsertUpdateSetColumnSQLSegment columnInsertSegment = sqlSegmentFactory.createInsertColumnSegment(table.getEntityTable(), property, runtimeContext);
-                ColumnConfigurerContext columnConfigurerContext = !hasNative ? null : this.columnConfigurers.get(property);
-                if(columnConfigurerContext!=null){
-                    insertCloneColumns.append(new InsertUpdateColumnConfigureSegmentImpl(columnInsertSegment,columnConfigurerContext.getRuntimeContext(),columnConfigurerContext.getSqlSegment(),columnConfigurerContext.getSqlNativeExpressionContext()));
-                }else{
-                    insertCloneColumns.append(columnInsertSegment);
+                if (hasConfigure) {
+                    ColumnConfigurerContext columnConfigurerContext = this.columnConfigurers.get(property);
+                    if (columnConfigurerContext != null) {
+                        insertCloneColumns.append(new InsertUpdateColumnConfigureSegmentImpl(columnInsertSegment, columnConfigurerContext.getRuntimeContext(), columnConfigurerContext.getSqlSegment(), columnConfigurerContext.getSqlNativeExpressionContext()));
+                        continue;
+                    }
                 }
+                insertCloneColumns.append(columnInsertSegment);
             }
 
             Set<String> ignorePropertySet = new HashSet<>(entityMetadata.getProperties().size());
@@ -143,15 +145,14 @@ public class InsertExpressionBuilder extends AbstractEntityExpressionBuilder imp
                     SQLEntitySegment sqlEntitySegment = (SQLEntitySegment) o;
                     String propertyName = sqlEntitySegment.getPropertyName();
                     ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(propertyName);
-                    if (columnMetadata.isIncrement() || columnMetadata.isInsertIgnore()) {
+                    if (columnMetadata.isIncrement()) {
+                        return columnMetadata.getIncrementSQLColumnGenerator() == null;
+                    }
+                    if (columnMetadata.isInsertIgnore()) {
                         return true;
                     }
                     if (clearIgnoreProperties) {
-                        boolean remove = ignorePropertySet.contains(propertyName);
-                        if(remove&&hasNative){//如果需要移除并且已经指定原生sql了那么不应该在原生sql里面
-                            return !columnConfigurers.containsKey(propertyName);
-                        }
-                        return remove;
+                        return ignorePropertySet.contains(propertyName);
                     }
                 }
                 return false;
@@ -164,7 +165,7 @@ public class InsertExpressionBuilder extends AbstractEntityExpressionBuilder imp
         }
         insertCloneColumns.copyTo(easyInsertSQLExpression.getColumns());
         easyInsertSQLExpression.setDuplicateKey(duplicateKey);
-        if(EasySQLSegmentUtil.isNotEmpty(duplicateKeyUpdateColumns)){
+        if (EasySQLSegmentUtil.isNotEmpty(duplicateKeyUpdateColumns)) {
             duplicateKeyUpdateColumns.copyTo(easyInsertSQLExpression.getDuplicateKeyUpdateColumns());
         }
         return easyInsertSQLExpression;
@@ -174,19 +175,19 @@ public class InsertExpressionBuilder extends AbstractEntityExpressionBuilder imp
     public EntityInsertExpressionBuilder cloneEntityExpressionBuilder() {
 
 
-        EntityInsertExpressionBuilder insertExpressionBuilder = runtimeContext.getExpressionBuilderFactory().createEntityInsertExpressionBuilder(expressionContext,queryClass);
+        EntityInsertExpressionBuilder insertExpressionBuilder = runtimeContext.getExpressionBuilderFactory().createEntityInsertExpressionBuilder(expressionContext, queryClass);
 
         if (EasySQLSegmentUtil.isNotEmpty(getColumns())) {
             getColumns().copyTo(insertExpressionBuilder.getColumns());
         }
         insertExpressionBuilder.setDuplicateKey(duplicateKey);
-        if(EasySQLSegmentUtil.isNotEmpty(duplicateKeyUpdateColumns)){
+        if (EasySQLSegmentUtil.isNotEmpty(duplicateKeyUpdateColumns)) {
             duplicateKeyUpdateColumns.copyTo(insertExpressionBuilder.getDuplicateKeyUpdateColumns());
         }
         for (EntityTableExpressionBuilder table : super.tables) {
             insertExpressionBuilder.getTables().add(table.copyEntityTableExpressionBuilder());
         }
-        if(this.columnConfigurers !=null){
+        if (this.columnConfigurers != null) {
             insertExpressionBuilder.getColumnConfigurer().putAll(this.columnConfigurers);
         }
         return insertExpressionBuilder;
@@ -194,8 +195,8 @@ public class InsertExpressionBuilder extends AbstractEntityExpressionBuilder imp
 
     @Override
     public Map<String, ColumnConfigurerContext> getColumnConfigurer() {
-        if(columnConfigurers==null){
-            columnConfigurers=new HashMap<>();
+        if (columnConfigurers == null) {
+            columnConfigurers = new HashMap<>();
         }
         return columnConfigurers;
     }

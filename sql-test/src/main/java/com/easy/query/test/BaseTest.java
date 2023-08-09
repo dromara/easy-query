@@ -32,6 +32,7 @@ import com.easy.query.test.entity.TopicSharding;
 import com.easy.query.test.entity.TopicShardingDataSource;
 import com.easy.query.test.entity.TopicShardingDataSourceTime;
 import com.easy.query.test.entity.TopicShardingTime;
+import com.easy.query.test.increment.MyDatabaseIncrementSQLColumnGenerator;
 import com.easy.query.test.interceptor.MyEntityInterceptor;
 import com.easy.query.test.interceptor.MyTenantInterceptor;
 import com.easy.query.test.interceptor.Topic1Interceptor;
@@ -159,6 +160,7 @@ public abstract class BaseTest {
         configuration.applyValueConverter(new JsonConverter());
         configuration.applyValueUpdateAtomicTrack(new IntegerNotValueUpdateAtomicTrack());
         configuration.applyColumnValueSQLConverter(new MySQLAesEncryptColumnValueSQLConverter());
+        configuration.applyIncrementSQLColumnGenerator(new MyDatabaseIncrementSQLColumnGenerator());
         TableRouteManager tableRouteManager = runtimeContext.getTableRouteManager();
         tableRouteManager.addRoute(new TopicShardingTableRoute());
         tableRouteManager.addRoute(new TopicShardingTimeTableRoute());

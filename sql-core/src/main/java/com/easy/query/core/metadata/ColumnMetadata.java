@@ -3,6 +3,7 @@ package com.easy.query.core.metadata;
 import com.easy.query.core.basic.extension.conversion.ColumnValueSQLConverter;
 import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.basic.extension.encryption.EncryptionStrategy;
+import com.easy.query.core.basic.extension.increment.IncrementSQLColumnGenerator;
 import com.easy.query.core.basic.extension.track.update.ValueUpdateAtomicTrack;
 import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
 import com.easy.query.core.expression.lambda.Property;
@@ -46,6 +47,7 @@ public class ColumnMetadata {
     private final ValueConverter<?, ?> valueConverter;
     private final ColumnValueSQLConverter columnValueSQLConverter;
     private final ValueUpdateAtomicTrack<Object> valueUpdateAtomicTrack;
+    private final IncrementSQLColumnGenerator incrementSQLColumnGenerator;
     private final PropertySetterCaller<Object> setterCaller;
     private final Property<Object,?> getterCaller;
     private final JdbcTypeHandler jdbcTypeHandler;
@@ -67,6 +69,7 @@ public class ColumnMetadata {
         this.valueConverter = columnOption.getValueConverter();
         this.columnValueSQLConverter = columnOption.getColumnValueSQLConverter();
         this.valueUpdateAtomicTrack = columnOption.getValueUpdateAtomicTrack();
+        this.incrementSQLColumnGenerator = columnOption.getIncrementSQLColumnGenerator();
 
         if(columnOption.getGetterCaller()==null){
             throw new IllegalArgumentException("not found "+ EasyClassUtil.getSimpleName(columnOption.getEntityMetadata().getEntityClass()) +"."+propertyName+" getter caller");
@@ -164,5 +167,9 @@ public class ColumnMetadata {
 
     public ColumnValueSQLConverter getColumnValueSQLConverter(){
         return columnValueSQLConverter;
+    }
+
+    public IncrementSQLColumnGenerator getIncrementSQLColumnGenerator() {
+        return incrementSQLColumnGenerator;
     }
 }

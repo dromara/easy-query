@@ -1,7 +1,7 @@
 package com.easy.query.core.expression.segment.scec.context;
 
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.segment.scec.expression.ConstParamExpression;
+import com.easy.query.core.expression.segment.scec.expression.ParamExpression;
 
 import java.util.List;
 
@@ -14,8 +14,9 @@ import java.util.List;
 public interface SQLNativeExpressionContext {
     SQLNativeExpressionContext expression(TableAvailable table, String property);
     SQLNativeExpressionContext value(Object val);
+    SQLNativeExpressionContext constValue(Object constVal);
 
-     List<ConstParamExpression> getExpressions();
+     List<ParamExpression> getExpressions();
 
 
      String getAlias();

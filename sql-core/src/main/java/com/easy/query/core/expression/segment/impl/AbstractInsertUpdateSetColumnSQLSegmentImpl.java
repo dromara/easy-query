@@ -1,7 +1,7 @@
 package com.easy.query.core.expression.segment.impl;
 
 import com.easy.query.core.basic.extension.conversion.ColumnValueSQLConverter;
-import com.easy.query.core.basic.extension.conversion.SQLPropertyConverterImpl;
+import com.easy.query.core.basic.extension.conversion.DefaultSQLPropertyConverter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.context.QueryRuntimeContext;
@@ -19,22 +19,23 @@ public abstract class AbstractInsertUpdateSetColumnSQLSegmentImpl {
     protected final TableAvailable table;
     protected final String propertyName;
     protected final QueryRuntimeContext runtimeContext;
+    protected final ColumnMetadata columnMetadata;
 
     public AbstractInsertUpdateSetColumnSQLSegmentImpl(TableAvailable table, String propertyName, QueryRuntimeContext runtimeContext){
         this.table = table;
         this.propertyName = propertyName;
         this.runtimeContext = runtimeContext;
+        this.columnMetadata=table.getEntityMetadata().getColumnNotNull(propertyName);
     }
     public String toSQLWithParameter(ToSQLContext toSQLContext, SQLParameter sqlParameter){
 
-        ColumnMetadata columnMetadata = this.table.getEntityMetadata().getColumnNotNull(propertyName);
         ColumnValueSQLConverter columnValueSQLConverter = columnMetadata.getColumnValueSQLConverter();
         if(columnValueSQLConverter==null){
             EasySQLUtil.addParameter(toSQLContext, sqlParameter);
             return "?";
         }else{
-            SQLPropertyConverterImpl sqlPropertyConverter = new SQLPropertyConverterImpl(table, runtimeContext);
-            columnValueSQLConverter.valueConverter(table,propertyName,sqlParameter,sqlPropertyConverter);
+            DefaultSQLPropertyConverter sqlPropertyConverter = new DefaultSQLPropertyConverter(table, runtimeContext);
+            columnValueSQLConverter.valueConverter(table,columnMetadata,sqlParameter,sqlPropertyConverter,runtimeContext);
             return sqlPropertyConverter.toSQL(toSQLContext);
         }
     }

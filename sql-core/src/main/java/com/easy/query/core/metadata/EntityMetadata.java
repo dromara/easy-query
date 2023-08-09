@@ -18,6 +18,8 @@ import com.easy.query.core.basic.extension.conversion.DefaultColumnValueSQLConve
 import com.easy.query.core.basic.extension.conversion.DefaultValueConverter;
 import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.basic.extension.encryption.EncryptionStrategy;
+import com.easy.query.core.basic.extension.increment.IncrementSQLColumnGenerator;
+import com.easy.query.core.basic.extension.increment.DefaultIncrementSQLColumnGenerator;
 import com.easy.query.core.basic.extension.interceptor.EntityInterceptor;
 import com.easy.query.core.basic.extension.interceptor.Interceptor;
 import com.easy.query.core.basic.extension.interceptor.PredicateFilterInterceptor;
@@ -243,6 +245,14 @@ public class EntityMetadata {
                     columnOption.setPrimary(column.primaryKey());
                     if (column.increment()) {
                         incrementColumns.add(columnName);
+                        Class<? extends IncrementSQLColumnGenerator> insertSQLCoulmnGeneratorClass = column.incrementSQLColumnGenerator();
+                        if(!Objects.equals(DefaultIncrementSQLColumnGenerator.class,insertSQLCoulmnGeneratorClass)){
+                            IncrementSQLColumnGenerator insertSQLColumnGenerator = configuration.getIncrementSQLColumnGenerator(insertSQLCoulmnGeneratorClass);
+                            if (insertSQLColumnGenerator == null) {
+                                throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " increment sql column generator unknown");
+                            }
+                            columnOption.setIncrementSQLColumnGenerator(insertSQLColumnGenerator);
+                        }
                     }
                     columnOption.setIncrement(column.increment());
 

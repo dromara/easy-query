@@ -38,6 +38,12 @@ public class SQLNativePropertyExpressionContextImpl implements SQLNativeProperty
     }
 
     @Override
+    public SQLNativePropertyExpressionContext constValue(Object constVal) {
+        sqlConstExpressionContext.constValue(constVal);
+        return this;
+    }
+
+    @Override
     public SQLNativePropertyExpressionContext setAlias(String alias) {
         sqlConstExpressionContext.setAlias(alias);
         return this;

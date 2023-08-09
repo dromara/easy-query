@@ -5,9 +5,10 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;
-import com.easy.query.core.expression.segment.scec.expression.ColumnConstValueExpression;
-import com.easy.query.core.expression.segment.scec.expression.ColumnPropertyExpression;
-import com.easy.query.core.expression.segment.scec.expression.ConstParamExpression;
+import com.easy.query.core.expression.segment.scec.expression.ColumnParamExpression;
+import com.easy.query.core.expression.segment.scec.expression.ColumnPropertyParamExpression;
+import com.easy.query.core.expression.segment.scec.expression.ConstValueParamExpression;
+import com.easy.query.core.expression.segment.scec.expression.ParamExpression;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 
@@ -68,17 +69,20 @@ public abstract class AbstractSQLNativeSegmentImpl {
     }
 
     private String process(int index,ToSQLContext toSQLContext) {
-        ConstParamExpression constParamExpression = sqlConstExpressionContext.getExpressions().get(index);
-        if (constParamExpression instanceof ColumnPropertyExpression) {
-            ColumnPropertyExpression columnPropertyExpression = (ColumnPropertyExpression) constParamExpression;
+        ParamExpression paramExpression = sqlConstExpressionContext.getExpressions().get(index);
+        if (paramExpression instanceof ColumnPropertyParamExpression) {
+            ColumnPropertyParamExpression columnPropertyExpression = (ColumnPropertyParamExpression) paramExpression;
             return columnPropertyExpression.toSQL(runtimeContext, toSQLContext);
 
-        } else if (constParamExpression instanceof ColumnConstValueExpression) {
-            ColumnConstValueExpression columnConstValueExpression = (ColumnConstValueExpression) constParamExpression;
+        } else if (paramExpression instanceof ColumnParamExpression) {
+            ColumnParamExpression columnConstValueExpression = (ColumnParamExpression) paramExpression;
             columnConstValueExpression.addParams(toSQLContext);
             return "?";
+        } else if(paramExpression instanceof ConstValueParamExpression){
+            ConstValueParamExpression constValueParamExpression = (ConstValueParamExpression) paramExpression;
+            return constValueParamExpression.toSQLSegment();
         }
-        throw new EasyQueryInvalidOperationException("can not process ConstParamExpression:" + EasyClassUtil.getInstanceSimpleName(constParamExpression));
+        throw new EasyQueryInvalidOperationException("can not process ConstParamExpression:" + EasyClassUtil.getInstanceSimpleName(paramExpression));
     }
 
 }

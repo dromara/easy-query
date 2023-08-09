@@ -11,7 +11,7 @@ import com.easy.query.core.util.EasySQLExpressionUtil;
  *
  * @author xuejiaming
  */
-public final class ColumnPropertyExpressionImpl implements ColumnPropertyExpression {
+public final class ColumnPropertyExpressionImpl implements ColumnPropertyParamExpression {
     private final TableAvailable table;
     private final String property;
     public ColumnPropertyExpressionImpl(TableAvailable table, String property) {

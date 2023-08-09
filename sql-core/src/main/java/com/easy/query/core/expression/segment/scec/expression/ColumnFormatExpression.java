@@ -8,6 +8,6 @@ import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
  *
  * @author xuejiaming
  */
-public interface ColumnFormatExpression extends ConstParamExpression{
+public interface ColumnFormatExpression extends ParamExpression {
     void addParams(ToSQLContext toSQLContext);
 }

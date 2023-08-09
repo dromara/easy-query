@@ -12,5 +12,8 @@ import com.easy.query.core.expression.segment.SQLSegment;
  * @author xuejiaming
  */
 public interface SQLPropertyConverter extends SQLTableOwner, SQLSegment {
+    default void sqlNativeSegment(String sqlSegment){
+        sqlNativeSegment(sqlSegment,c->{});
+    }
     void sqlNativeSegment(String sqlSegment, SQLExpression1<SQLNativePropertyExpressionContext> contextConsume);
 }

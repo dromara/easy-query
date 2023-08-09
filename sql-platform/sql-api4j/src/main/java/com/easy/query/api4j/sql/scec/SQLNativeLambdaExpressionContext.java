@@ -13,5 +13,6 @@ public interface SQLNativeLambdaExpressionContext<T1> {
     SQLNativeLambdaExpressionContext<T1> expression(Property<T1,?> property);
    <T2> SQLNativeLambdaExpressionContext<T1> expression(EntitySQLTableOwner<T2> table, Property<T2,?> property);
     SQLNativeLambdaExpressionContext<T1> value(Object val);
+    SQLNativeLambdaExpressionContext<T1> constValue(Object constVal);
     SQLNativeLambdaExpressionContext<T1> setAlias(String alias);
 }

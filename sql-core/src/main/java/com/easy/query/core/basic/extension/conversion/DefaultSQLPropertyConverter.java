@@ -17,12 +17,12 @@ import java.util.Objects;
  *
  * @author xuejiaming
  */
-public class SQLPropertyConverterImpl implements SQLPropertyConverter{
+public class DefaultSQLPropertyConverter implements SQLPropertyConverter{
     private final TableAvailable table;
     private final QueryRuntimeContext runtimeContext;
     private SQLNativeSegment columnSegment;
 
-    public SQLPropertyConverterImpl(TableAvailable table, QueryRuntimeContext runtimeContext){
+    public DefaultSQLPropertyConverter(TableAvailable table, QueryRuntimeContext runtimeContext){
 
         this.table = table;
         this.runtimeContext = runtimeContext;

@@ -4,6 +4,7 @@ import com.easy.query.core.basic.extension.conversion.ColumnValueSQLConverter;
 import com.easy.query.core.basic.extension.conversion.DefaultValueConverter;
 import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.basic.extension.encryption.EncryptionStrategy;
+import com.easy.query.core.basic.extension.increment.IncrementSQLColumnGenerator;
 import com.easy.query.core.basic.extension.track.update.ValueUpdateAtomicTrack;
 import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
 import com.easy.query.core.expression.lambda.Property;
@@ -41,6 +42,7 @@ public final class ColumnOption {
     private ValueConverter<?, ?> valueConverter;
     private ColumnValueSQLConverter columnValueSQLConverter;
     private ValueUpdateAtomicTrack<Object> valueUpdateAtomicTrack;
+    private IncrementSQLColumnGenerator incrementSQLColumnGenerator;
     private PropertySetterCaller<Object> setterCaller;
     private Property<Object, ?> getterCaller;
     private JdbcTypeHandler jdbcTypeHandler;
@@ -182,5 +184,13 @@ public final class ColumnOption {
 
     public void setJdbcTypeHandler(JdbcTypeHandler jdbcTypeHandler) {
         this.jdbcTypeHandler = jdbcTypeHandler;
+    }
+
+    public IncrementSQLColumnGenerator getIncrementSQLColumnGenerator() {
+        return incrementSQLColumnGenerator;
+    }
+
+    public void setIncrementSQLColumnGenerator(IncrementSQLColumnGenerator incrementSQLColumnGenerator) {
+        this.incrementSQLColumnGenerator = incrementSQLColumnGenerator;
     }
 }

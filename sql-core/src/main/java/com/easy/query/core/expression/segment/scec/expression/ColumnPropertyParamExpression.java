@@ -9,6 +9,6 @@ import com.easy.query.core.context.QueryRuntimeContext;
  *
  * @author xuejiaming
  */
-public interface ColumnPropertyExpression extends ConstParamExpression{
+public interface ColumnPropertyParamExpression extends ParamExpression {
     String toSQL(QueryRuntimeContext runtimeContext, ToSQLContext toSQLContext);
 }
