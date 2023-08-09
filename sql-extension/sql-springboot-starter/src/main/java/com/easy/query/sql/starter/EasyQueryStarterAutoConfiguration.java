@@ -8,6 +8,7 @@ import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.extension.conversion.ColumnValueSQLConverter;
 import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.basic.extension.encryption.EncryptionStrategy;
+import com.easy.query.core.basic.extension.increment.IncrementSQLColumnGenerator;
 import com.easy.query.core.basic.extension.interceptor.Interceptor;
 import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategy;
 import com.easy.query.core.basic.extension.track.update.ValueUpdateAtomicTrack;
@@ -248,7 +249,9 @@ public class EasyQueryStarterAutoConfiguration {
                                                                Map<String, DataSourceRoute<?>> dataSourceRouteMap,
                                                                Map<String, ValueUpdateAtomicTrack<?>> valueUpdateAtomicTrackMap,
                                                                Map<String, JdbcTypeHandler> jdbcTypeHandlerMap,
-                                                               Map<String, ColumnValueSQLConverter> columnValueSQLConverterMap) {
+                                                               Map<String, ColumnValueSQLConverter> columnValueSQLConverterMap,
+                                                               Map<String, IncrementSQLColumnGenerator> incrementSQLColumnGeneratorMap
+                                                               ) {
         return new EasyQueryInitializeOption(interceptorMap,
                 versionStrategyMap,
                 logicDeleteStrategyMap,
@@ -259,6 +262,7 @@ public class EasyQueryStarterAutoConfiguration {
                 dataSourceRouteMap,
                 valueUpdateAtomicTrackMap,
                 jdbcTypeHandlerMap,
-                columnValueSQLConverterMap);
+                columnValueSQLConverterMap,
+                incrementSQLColumnGeneratorMap);
     }
 }

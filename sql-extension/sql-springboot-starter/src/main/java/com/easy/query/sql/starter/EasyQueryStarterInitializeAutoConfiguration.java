@@ -4,6 +4,7 @@ import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.extension.conversion.ColumnValueSQLConverter;
 import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.basic.extension.encryption.EncryptionStrategy;
+import com.easy.query.core.basic.extension.increment.IncrementSQLColumnGenerator;
 import com.easy.query.core.basic.extension.interceptor.Interceptor;
 import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategy;
 import com.easy.query.core.basic.extension.track.update.ValueUpdateAtomicTrack;
@@ -100,6 +101,9 @@ public class EasyQueryStarterInitializeAutoConfiguration {
 
         for (Map.Entry<String, ColumnValueSQLConverter> columnValueSQLConverterEntry : easyQueryInitializeOption.getColumnValueSQLConverterMap().entrySet()) {
             configuration.applyColumnValueSQLConverter(columnValueSQLConverterEntry.getValue());
+        }
+        for (Map.Entry<String, IncrementSQLColumnGenerator> incrementSQLColumnGeneratorEntry : easyQueryInitializeOption.getIncrementSQLColumnGeneratorMap().entrySet()) {
+            configuration.applyIncrementSQLColumnGenerator(incrementSQLColumnGeneratorEntry.getValue());
         }
 
         for (Map.Entry<String, ValueUpdateAtomicTrack<?>> valueUpdateAtomicTrackEntry : easyQueryInitializeOption.getValueUpdateAtomicTrackMap().entrySet()) {
