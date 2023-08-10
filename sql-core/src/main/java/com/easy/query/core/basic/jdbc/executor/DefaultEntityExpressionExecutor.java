@@ -33,30 +33,20 @@ import java.sql.SQLException;
 import java.util.List;
 
 /**
- * create time 2023/4/16 22:47
+ * create time 2023/8/10 21:25
  * 文件说明
  *
  * @author xuejiaming
  */
-public class DefaultEntityExpressionExecutor implements EntityExpressionExecutor {
+public class DefaultEntityExpressionExecutor implements EntityExpressionExecutor{
     private final EasyPrepareParser easyPrepareParser;
     private final ExecutionContextFactory executionContextFactory;
 
     public DefaultEntityExpressionExecutor(EasyPrepareParser easyPrepareParser, ExecutionContextFactory executionContextFactory) {
-
         this.easyPrepareParser = easyPrepareParser;
+
         this.executionContextFactory = executionContextFactory;
     }
-
-    @Override
-    public <TR> JdbcResult<TR> querySQLStreamResultSet(ExecutorContext executorContext, ResultMetadata<TR> resultMetadata, String sql, List<SQLParameter> sqlParameters) {
-
-        ExecutionContext executionContext = executionContextFactory.createJdbcExecutionContext(sql, sqlParameters);
-        JdbcCommand<QueryExecuteResult> command = getSQLQueryJdbcCommand(executorContext, executionContext);
-        DefaultJdbcStreamResultSet<TR> jdbcStreamResultSet = new DefaultJdbcStreamResultSet<>(executorContext, resultMetadata, command);
-        return new DefaultJdbcResult<>(jdbcStreamResultSet);
-    }
-
     @Override
     public <TR> List<TR> query(ExecutorContext executorContext, ResultMetadata<TR> resultMetadata, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
         JdbcResult<TR> jdbcResult = queryStreamResultSet(executorContext, resultMetadata, entityQueryExpressionBuilder);
@@ -65,17 +55,34 @@ public class DefaultEntityExpressionExecutor implements EntityExpressionExecutor
 
     @Override
     public <TR> JdbcResult<TR> queryStreamResultSet(ExecutorContext executorContext, ResultMetadata<TR> resultMetadata, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
-        PrepareParseResult prepareParseResult = easyPrepareParser.parse(new QueryPredicateParseContextImpl(executorContext, entityQueryExpressionBuilder));
-        ExecutionContext executionContext = executionContextFactory.createEntityExecutionContext(prepareParseResult);
-        JdbcCommand<QueryExecuteResult> command = getQueryEntityJdbcCommand(executorContext, executionContext, (EasyQueryPrepareParseResult) prepareParseResult);
+        JdbcCommand<QueryExecuteResult> command = getJdbcCommand(executorContext, entityQueryExpressionBuilder);
         DefaultJdbcStreamResultSet<TR> jdbcStreamResultSet = new DefaultJdbcStreamResultSet<>(executorContext, resultMetadata, command);
         return new DefaultJdbcResult<>(jdbcStreamResultSet);
+    }
+
+    private <TR> JdbcCommand<QueryExecuteResult> getJdbcCommand(ExecutorContext executorContext,EntityQueryExpressionBuilder entityQueryExpressionBuilder){
+        if(!entityQueryExpressionBuilder.getExpressionContext().isSharding()){
+            ExecutionContext executionContext = executionContextFactory.createUnShardingJdbcExecutionContext(entityQueryExpressionBuilder);
+            return getSQLQueryJdbcCommand(executorContext, executionContext);
+        }else{
+            PrepareParseResult prepareParseResult = easyPrepareParser.parse(new QueryPredicateParseContextImpl(executorContext, entityQueryExpressionBuilder));
+            ExecutionContext executionContext = executionContextFactory.createEntityExecutionContext(prepareParseResult);
+            return getQueryEntityJdbcCommand(executorContext, executionContext, (EasyQueryPrepareParseResult) prepareParseResult);
+        }
     }
 
     @Override
     public <TR> List<TR> querySQL(ExecutorContext executorContext, ResultMetadata<TR> resultMetadata, String sql, List<SQLParameter> sqlParameters) {
         JdbcResult<TR> jdbcResult = querySQLStreamResultSet(executorContext, resultMetadata, sql, sqlParameters);
         return jdbcResult.toList();
+    }
+
+    @Override
+    public <TR> JdbcResult<TR> querySQLStreamResultSet(ExecutorContext executorContext, ResultMetadata<TR> resultMetadata, String sql, List<SQLParameter> sqlParameters) {
+        ExecutionContext executionContext = executionContextFactory.createJdbcExecutionContext(sql, sqlParameters);
+        JdbcCommand<QueryExecuteResult> command = getSQLQueryJdbcCommand(executorContext, executionContext);
+        DefaultJdbcStreamResultSet<TR> jdbcStreamResultSet = new DefaultJdbcStreamResultSet<>(executorContext, resultMetadata, command);
+        return new DefaultJdbcResult<>(jdbcStreamResultSet);
     }
 
     @Override
@@ -131,16 +138,16 @@ public class DefaultEntityExpressionExecutor implements EntityExpressionExecutor
     }
 
 
+
     private JdbcCommand<QueryExecuteResult> getSQLQueryJdbcCommand(ExecutorContext executorContext, ExecutionContext executionContext) {
         return new DefaultQueryJdbcCommand(new EasyStreamMergeContext(executorContext, executionContext));
+    }
+    private JdbcCommand<QueryExecuteResult> getQueryEntityJdbcCommand(ExecutorContext executorContext, ExecutionContext executionContext, EasyQueryPrepareParseResult easyQueryPrepareParseResult) {
+        return new DefaultQueryJdbcCommand(new ShardingQueryEasyStreamMergeContext(executorContext, executionContext, easyQueryPrepareParseResult));
     }
 
     private JdbcCommand<AffectedRowsExecuteResult> getSQLExecuteUpdateJdbcCommand(ExecutorContext executorContext, ExecutionContext executionContext) {
         return new DefaultExecuteUpdateJdbcCommand(new EasyStreamMergeContext(executorContext, executionContext));
-    }
-
-    private JdbcCommand<QueryExecuteResult> getQueryEntityJdbcCommand(ExecutorContext executorContext, ExecutionContext executionContext, EasyQueryPrepareParseResult easyQueryPrepareParseResult) {
-        return new DefaultQueryJdbcCommand(new ShardingQueryEasyStreamMergeContext(executorContext, executionContext, easyQueryPrepareParseResult));
     }
 
     private JdbcCommand<AffectedRowsExecuteResult> getInsertJdbcCommand(ExecutorContext executorContext, ExecutionContext executionContext, PrepareParseResult prepareParseResult) {
@@ -154,5 +161,4 @@ public class DefaultEntityExpressionExecutor implements EntityExpressionExecutor
     private JdbcCommand<AffectedRowsExecuteResult> getExecuteUpdateJdbcCommand(ExecutorContext executorContext, ExecutionContext executionContext, PrepareParseResult prepareParseResult) {
         return new DefaultExecuteUpdateJdbcCommand(new EntityStreamMergeContext(executorContext, executionContext, prepareParseResult));
     }
-
 }

@@ -136,6 +136,7 @@ public class EasyQueryBuilderConfiguration {
                 .replaceService(RewriteContextFactory.class, DefaultRewriteContextFactory.class)
                 .replaceService(ExecutionContextFactory.class, DefaultExecutionContextFactory.class)
                 .replaceService(EntityExpressionExecutor.class, DefaultEntityExpressionExecutor.class)
+//                .replaceService(EntityExpressionExecutor.class, ShardingEntityExpressionExecutor.class)
                 .replaceService(ShardingExecutorService.class, DefaultEasyShardingExecutorService.class)
                 .replaceService(ExpressionFactory.class, DefaultEasyExpressionFactory.class)
                 .replaceService(ShardingComparer.class, JavaLanguageShardingComparer.class)

@@ -76,7 +76,7 @@ public class EasyQueryStarterAutoConfiguration {
     private final DataSource dataSource;
     private final EasyQueryProperties easyQueryProperties;
 
-    public EasyQueryStarterAutoConfiguration(DataSource dataSource,EasyQueryProperties easyQueryProperties) {
+    public EasyQueryStarterAutoConfiguration(DataSource dataSource, EasyQueryProperties easyQueryProperties) {
         this.dataSource = dataSource;
         this.easyQueryProperties = easyQueryProperties;
         if (EasyStringUtil.isBlank(easyQueryProperties.getLogClass())) {
@@ -103,6 +103,7 @@ public class EasyQueryStarterAutoConfiguration {
     public DatabaseConfiguration mysqlDatabaseConfiguration() {
         return new MySQLDatabaseConfiguration();
     }
+
     @Bean
     @ConditionalOnProperty(name = "easy-query.database", havingValue = "h2")
     @ConditionalOnMissingBean
@@ -130,12 +131,14 @@ public class EasyQueryStarterAutoConfiguration {
     public DatabaseConfiguration pgsqlDatabaseConfiguration() {
         return new PgSQLDatabaseConfiguration();
     }
+
     @Bean
     @ConditionalOnProperty(name = "easy-query.database", havingValue = "dameng")
     @ConditionalOnMissingBean
     public DatabaseConfiguration damengDatabaseConfiguration() {
         return new DamengDatabaseConfiguration();
     }
+
     @Bean
     @ConditionalOnProperty(name = "easy-query.database", havingValue = "kingbase_es")
     @ConditionalOnMissingBean
@@ -156,18 +159,21 @@ public class EasyQueryStarterAutoConfiguration {
     public NameConversion underlinedNameConversion() {
         return new UnderlinedNameConversion();
     }
+
     @Bean
     @ConditionalOnProperty(name = "easy-query.name-conversion", havingValue = "upper_underlined")
     @ConditionalOnMissingBean
     public NameConversion upperUnderlinedNameConversion() {
         return new UpperUnderlinedNameConversion();
     }
+
     @Bean
     @ConditionalOnProperty(name = "easy-query.name-conversion", havingValue = "lower_camel_case")
     @ConditionalOnMissingBean
     public NameConversion lowerCamelCaseNameConversion() {
         return new LowerCamelCaseNameConversion();
     }
+
     @Bean
     @ConditionalOnProperty(name = "easy-query.name-conversion", havingValue = "upper_camel_case")
     @ConditionalOnMissingBean
@@ -190,7 +196,7 @@ public class EasyQueryStarterAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public EasyQueryClient easyQueryClient(DatabaseConfiguration databaseConfiguration,StarterConfigurer starterConfigurer, NameConversion nameConversion) {
+    public EasyQueryClient easyQueryClient(DatabaseConfiguration databaseConfiguration, StarterConfigurer starterConfigurer, NameConversion nameConversion) {
         EasyQueryClient easyQueryClient = EasyQueryBootstrapper.defaultBuilderConfiguration()
                 .setDefaultDataSource(dataSource)
                 .replaceService(DataSourceUnitFactory.class, SpringDataSourceUnitFactory.class)
@@ -231,6 +237,7 @@ public class EasyQueryStarterAutoConfiguration {
     public EasyQuery easyQuery(EasyQueryClient easyQueryClient) {
         return new DefaultEasyQuery(easyQueryClient);
     }
+
     @Bean
     @ConditionalOnMissingBean
     public EasyProxyQuery easyProxyQuery(EasyQueryClient easyQueryClient) {
@@ -251,7 +258,7 @@ public class EasyQueryStarterAutoConfiguration {
                                                                Map<String, JdbcTypeHandler> jdbcTypeHandlerMap,
                                                                Map<String, ColumnValueSQLConverter> columnValueSQLConverterMap,
                                                                Map<String, IncrementSQLColumnGenerator> incrementSQLColumnGeneratorMap
-                                                               ) {
+    ) {
         return new EasyQueryInitializeOption(interceptorMap,
                 versionStrategyMap,
                 logicDeleteStrategyMap,
