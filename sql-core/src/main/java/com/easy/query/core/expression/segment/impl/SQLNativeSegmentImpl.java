@@ -1,7 +1,6 @@
 package com.easy.query.core.expression.segment.impl;
 
 import com.easy.query.core.context.QueryRuntimeContext;
-import com.easy.query.core.expression.segment.AbstractSQLNativeSegmentImpl;
 import com.easy.query.core.expression.segment.SQLEntitySegment;
 import com.easy.query.core.expression.segment.SQLNativeSegment;
 import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;

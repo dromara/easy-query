@@ -42,7 +42,7 @@ public class ColumnEqualsPropertyPredicate implements Predicate,ValuePredicate {
             return sqlColumnSegment + " = ?";
         }else{
             DefaultSQLPropertyConverter sqlPropertyConverter = new DefaultSQLPropertyConverter(table, runtimeContext);
-            columnValueSQLConverter.valueConverter(table,columnMetadata,sqlParameter,sqlPropertyConverter,runtimeContext);
+            columnValueSQLConverter.valueConvert(table,columnMetadata,sqlParameter,sqlPropertyConverter,runtimeContext);
             String valSQLParameter = sqlPropertyConverter.toSQL(toSQLContext);
             return sqlColumnSegment + " = "+valSQLParameter;
         }

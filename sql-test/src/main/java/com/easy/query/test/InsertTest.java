@@ -12,6 +12,7 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.CustomIncrement;
 import com.easy.query.test.entity.SysUserSQLEncryption;
+import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.TopicAuto;
 import com.easy.query.test.entity.TopicAutoNative;
 import org.junit.Assert;
@@ -474,6 +475,7 @@ public class InsertTest extends BaseTest {
         SysUserSQLEncryption sysUserSQLEncryption = easyQuery.queryable(SysUserSQLEncryption.class)
                 .whereById("12345")
                 .firstOrNull();
+        System.out.println(sysUserSQLEncryption);
         Assert.assertNotNull(sysUserSQLEncryption);
 
         Assert.assertEquals("13232456789",sysUserSQLEncryption.getPhone());
@@ -487,6 +489,22 @@ public class InsertTest extends BaseTest {
         Assert.assertEquals(sysUserSQLEncryption.getCreateTime().getDayOfYear(),user.getCreateTime().getDayOfYear());
         Assert.assertEquals(sysUserSQLEncryption.getCreateTime().getHour(),user.getCreateTime().getHour());
         Assert.assertEquals(sysUserSQLEncryption.getCreateTime().getMinute(),user.getCreateTime().getMinute());
+
+        sysUserSQLEncryption.setPhone("111123456");
+        long l2 = easyQuery.updatable(sysUserSQLEncryption).executeRows();
+        Assert.assertEquals(1,l2);
+        long l1 = easyQuery.updatable(SysUserSQLEncryption.class)
+                .set(SysUserSQLEncryption::getPhone, "1111234")
+                .whereById("12345").executeRows();
+        Assert.assertEquals(1,l1);
+
+        SysUserSQLEncryption sysUserSQLEncryption1 = easyQuery.queryable(SysUserSQLEncryption.class)
+                .leftJoin(Topic.class, (t, t1) -> t.eq(t1, SysUserSQLEncryption::getId, Topic::getId))
+                .where((t, t1) -> t.eq(SysUserSQLEncryption::getPhone, "1111234"))
+                .select(SysUserSQLEncryption.class, (t, t1) -> t.columnAll())
+                .firstOrNull();
+        Assert.assertNotNull(sysUserSQLEncryption1);
+
 
         easyQuery.deletable(SysUserSQLEncryption.class).disableLogicDelete()
                 .whereById("12345").executeRows();

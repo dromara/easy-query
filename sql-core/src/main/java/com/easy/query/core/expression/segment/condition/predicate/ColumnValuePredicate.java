@@ -47,7 +47,7 @@ public class ColumnValuePredicate implements ValuePredicate, ShardingPredicate {
             return sqlColumnSegment + " " + compare.getSQL() + " ?";
         }else{
             DefaultSQLPropertyConverter sqlPropertyConverter = new DefaultSQLPropertyConverter(table, runtimeContext);
-            columnValueSQLConverter.valueConverter(table,columnMetadata,sqlParameter,sqlPropertyConverter,runtimeContext);
+            columnValueSQLConverter.valueConvert(table,columnMetadata,sqlParameter,sqlPropertyConverter,runtimeContext);
             String valSQLParameter = sqlPropertyConverter.toSQL(toSQLContext);
             return sqlColumnSegment + " " + compare.getSQL() + " "+valSQLParameter;
         }

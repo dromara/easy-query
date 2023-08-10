@@ -20,7 +20,7 @@ public interface ColumnValueSQLConverter {
      * @param columnMetadata
      * @param sqlPropertyConverter
      */
-    void columnConverter(TableAvailable table, ColumnMetadata columnMetadata, SQLPropertyConverter sqlPropertyConverter, QueryRuntimeContext runtimeContext);
+    void columnConvert(TableAvailable table, ColumnMetadata columnMetadata, SQLPropertyConverter sqlPropertyConverter, QueryRuntimeContext runtimeContext);
 
     /**
      * insert update entity
@@ -31,5 +31,5 @@ public interface ColumnValueSQLConverter {
      * @param sqlParameter
      * @param sqlPropertyConverter
      */
-    void valueConverter(TableAvailable table, ColumnMetadata columnMetadata, SQLParameter sqlParameter, SQLPropertyConverter sqlPropertyConverter, QueryRuntimeContext runtimeContext);
+    void valueConvert(TableAvailable table, ColumnMetadata columnMetadata, SQLParameter sqlParameter, SQLPropertyConverter sqlPropertyConverter, QueryRuntimeContext runtimeContext);
 }

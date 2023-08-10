@@ -1,4 +1,4 @@
-package com.easy.query.core.expression.segment;
+package com.easy.query.core.expression.segment.impl;
 
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.context.QueryRuntimeContext;
@@ -11,6 +11,7 @@ import com.easy.query.core.expression.segment.scec.expression.ConstValueParamExp
 import com.easy.query.core.expression.segment.scec.expression.ParamExpression;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
+import com.easy.query.core.util.EasySQLExpressionUtil;
 
 import java.text.MessageFormat;
 
@@ -50,7 +51,7 @@ public abstract class AbstractSQLNativeSegmentImpl {
 
         String alias = getAlias();
         if (alias != null) {
-            return resultColumnConst + " AS " + alias;
+            return resultColumnConst + " AS " + EasySQLExpressionUtil.getQuoteName(runtimeContext, alias);
         }
         return resultColumnConst;
     }

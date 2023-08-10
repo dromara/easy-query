@@ -36,6 +36,16 @@ import java.util.function.Function;
 public interface Queryable2<T1, T2> extends Queryable<T1> {
     ClientQueryable2<T1, T2> getClientQueryable2();
 
+    /**
+     * <pre>{@code
+     * leftJoin(Entity2.class, (t, t1, t2) -> t.eq(t2, Entity::getId, Entity2::getId))
+     * }</pre>
+     * t代表from的表,t1代表第一次join的表,t2代表第二次join的表
+     * @param joinClass 和哪张表进行join
+     * @param on 条件
+     * @return 返回可查询的表达式支持3表参数
+     * @param <T3>
+     */
     <T3> Queryable3<T1, T2, T3> leftJoin(Class<T3> joinClass, SQLExpression3<SQLWherePredicate<T1>, SQLWherePredicate<T2>, SQLWherePredicate<T3>> on);
 
     <T3> Queryable3<T1, T2, T3> leftJoin(Queryable<T3> joinQueryable, SQLExpression3<SQLWherePredicate<T1>, SQLWherePredicate<T2>, SQLWherePredicate<T3>> on);

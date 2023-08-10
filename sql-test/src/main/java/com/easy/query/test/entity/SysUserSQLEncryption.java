@@ -4,6 +4,7 @@ import com.easy.query.core.annotation.Column;
 import com.easy.query.core.annotation.Table;
 import com.easy.query.test.conversion.MySQLAesEncryptColumnValueSQLConverter;
 import lombok.Data;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 
@@ -15,6 +16,7 @@ import java.time.LocalDateTime;
  */
 @Data
 @Table("t_sys_user_sql_encryption")
+@ToString
 public class SysUserSQLEncryption {
     @Column(primaryKey = true)
     private String id;
