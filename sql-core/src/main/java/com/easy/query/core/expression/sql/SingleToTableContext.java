@@ -10,6 +10,7 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
  */
 public class SingleToTableContext implements ToTableContext{
     private final String alias;
+    public static final ToTableContext DEFAULT=new  SingleToTableContext(null);
 
     public SingleToTableContext(String alias){
 

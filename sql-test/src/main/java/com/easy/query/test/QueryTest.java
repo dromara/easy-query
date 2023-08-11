@@ -61,6 +61,13 @@ public class QueryTest extends BaseTest {
         Assert.assertNull(sysUser);
     }
     @Test
+    public void query0_2() {
+        Queryable<SysUser> queryable = easyQuery.queryable(SysUser.class)
+                .where(o -> o.eq(SysUser::getId, "123xxx"));
+        SysUser sysUser = queryable.firstOrNull();
+        Assert.assertNull(sysUser);
+    }
+    @Test
     public void query0_1() {
         Queryable<SysUser> queryable = easyQuery.queryable(SysUser.class)
                 .asAlias("x")

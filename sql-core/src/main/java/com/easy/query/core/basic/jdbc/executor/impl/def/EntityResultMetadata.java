@@ -26,6 +26,9 @@ public class EntityResultMetadata<TR> implements ResultMetadata<TR> {
     public EntityResultMetadata(EntityMetadata entityMetadata, ResultColumnMetadata[] resultColumnMetadata) {
         this.entityMetadata = entityMetadata;
         this.resultColumnMetadata = resultColumnMetadata;
+        if(this.resultColumnMetadata!=null){
+            this.resultColumnCount=this.resultColumnMetadata.length;
+        }
     }
 
     @Override

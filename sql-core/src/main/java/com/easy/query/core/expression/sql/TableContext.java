@@ -45,7 +45,7 @@ public final class TableContext {
                 String tableAlias = tableAliasSchema.getTableAlias(alias);
                 return new SingleToTableContext(tableAlias);
             }
-            return new SingleToTableContext(null);
+            return SingleToTableContext.DEFAULT;
         }
         HashMap<TableAvailable, String> result = new HashMap<>(mappingSize);
         int i = 0;
