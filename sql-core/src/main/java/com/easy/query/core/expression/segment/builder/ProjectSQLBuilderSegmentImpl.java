@@ -16,7 +16,6 @@ import java.util.List;
 public class ProjectSQLBuilderSegmentImpl extends AbstractSQLBuilderSegment implements ProjectSQLBuilderSegment {
 
     private boolean projectHasAggregate = false;
-    private boolean allColumnMetadata = false;
 
     @Override
     public String toSQL(ToSQLContext toSQLContext) {
@@ -52,19 +51,11 @@ public class ProjectSQLBuilderSegmentImpl extends AbstractSQLBuilderSegment impl
                 projectHasAggregate = true;
             }
         }
-        if (allColumnMetadata || getSQLSegments().size() == 1) {
-            allColumnMetadata = EasySQLSegmentUtil.isColumnMetadataSQLSegment(sqlSegment);
-        }
 
     }
 
     @Override
     public boolean hasAggregateColumns() {
         return projectHasAggregate;
-    }
-
-    @Override
-    public boolean selectAllColumnMetadata() {
-        return allColumnMetadata;
     }
 }

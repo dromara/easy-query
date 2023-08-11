@@ -24,8 +24,8 @@ import java.sql.SQLException;
  */
 public class DefaultBeanStreamIterator<T> extends AbstractStreamIterator<T> {
     private static final Log log = LogFactory.getLog(DefaultBeanStreamIterator.class);
-    private boolean trackBean;
-    private TrackManager trackManager;
+    protected boolean trackBean;
+    protected TrackManager trackManager;
 
     public DefaultBeanStreamIterator(ExecutorContext context, StreamResultSet streamResult, ResultMetadata<T> resultMetadata) throws SQLException {
         super(context, streamResult, resultMetadata);

@@ -66,8 +66,8 @@ public class DefaultEntityExpressionExecutor implements EntityExpressionExecutor
         if(!entityQueryExpressionBuilder.getExpressionContext().isSharding()){
             EntityQuerySQLExpression entityQuerySQLExpression = entityQueryExpressionBuilder.toExpression();
             ExecutionContext executionContext = executionContextFactory.createUnShardingJdbcExecutionContext(entityQuerySQLExpression);
-            ProjectSQLBuilderSegment projects = (ProjectSQLBuilderSegment) entityQuerySQLExpression.getProjects();
-            if(projects.selectAllColumnMetadata()){
+            if(executorContext.isAutoAllColumn()){
+                ProjectSQLBuilderSegment projects = (ProjectSQLBuilderSegment) entityQuerySQLExpression.getProjects();
                 resultMetadata.initResultColumnMetadata(projects);
             }
 

@@ -75,7 +75,5 @@ public interface ExpressionContext {
     Map<TableAvailable, Map<String, ColumnIncludeExpression>> getColumnIncludeMaps();
     boolean hasColumnIncludeMaps();
 
-    boolean isSelectAutoAllColumn();
-    void autoAllColumn();
 
 }

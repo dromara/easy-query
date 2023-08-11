@@ -52,8 +52,6 @@ public class EasyExpressionContext implements ExpressionContext {
 
     private Map<TableAvailable, Map<String,ColumnIncludeExpression>> columnIncludeMaps;
 
-    private boolean selectAutoAllColumn;
-
     public EasyExpressionContext(QueryRuntimeContext runtimeContext) {
 
         this.runtimeContext = runtimeContext;
@@ -278,15 +276,6 @@ public class EasyExpressionContext implements ExpressionContext {
         return columnIncludeMaps!=null&&!columnIncludeMaps.isEmpty();
     }
 
-    @Override
-    public boolean isSelectAutoAllColumn() {
-        return selectAutoAllColumn;
-    }
-
-    @Override
-    public void autoAllColumn() {
-        this.selectAutoAllColumn=true;
-    }
 
     @Override
     public TableContext getTableContext() {
@@ -307,7 +296,6 @@ public class EasyExpressionContext implements ExpressionContext {
         easyExpressionContext.connectionMode = this.connectionMode;
         easyExpressionContext.sharding = this.sharding;
         easyExpressionContext.hasSubQuery = this.hasSubQuery;
-        easyExpressionContext.selectAutoAllColumn = this.selectAutoAllColumn;
         if(hasIncludes()){
             easyExpressionContext.getIncludes().addAll(this.includes);
         }

@@ -26,6 +26,7 @@ public class ExecutorContext {
     private final ExecuteMethodEnum executeMethod;
     private final boolean tracking;
     private final EasyQueryOption easyQueryOption;
+    private boolean autoAllColumn;
 
     public ExecutorContext(QueryRuntimeContext runtimeContext, boolean isQuery, ExecuteMethodEnum executeMethod) {
         this(runtimeContext,isQuery,executeMethod, false);
@@ -132,4 +133,11 @@ public class ExecutorContext {
         this.mapToBeanStrict = mapToBeanStrict;
     }
 
+    public boolean isAutoAllColumn() {
+        return autoAllColumn;
+    }
+
+    public void setAutoAllColumn(boolean autoAllColumn) {
+        this.autoAllColumn = autoAllColumn;
+    }
 }
