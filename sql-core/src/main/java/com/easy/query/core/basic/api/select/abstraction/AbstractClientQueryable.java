@@ -305,7 +305,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
 
         if (EasySQLExpressionUtil.shouldCloneSQLEntityQueryExpressionBuilder(entityQueryExpressionBuilder)) {
             selectOnly(resultClass);
-            return !entityQueryExpressionBuilder.getTable(0).getEntityTable().isAnonymous();
+            return Objects.equals(queryClass(),resultClass)&&!entityQueryExpressionBuilder.getTable(0).getEntityTable().isAnonymous();
         }
         return false;
     }
