@@ -20,7 +20,7 @@ public enum EasyBehaviorEnum {
      */
     USE_TRACKING(1<<2),
     /**
-     * 查询的时候忽略大列
+     * 查询大列
      */
     QUERY_LARGE_COLUMN(1<<3),
     ON_DUPLICATE_KEY_IGNORE(1<<4),

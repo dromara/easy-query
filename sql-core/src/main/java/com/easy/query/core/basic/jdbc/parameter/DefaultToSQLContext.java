@@ -6,9 +6,7 @@ import com.easy.query.core.expression.sql.TableContext;
 import com.easy.query.core.expression.sql.ToTableContext;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * create time 2023/4/23 08:48
@@ -23,7 +21,7 @@ public class DefaultToSQLContext implements ToSQLContext {
     private int invokeCount;
 
     public DefaultToSQLContext(TableContext tableContext, String alias) {
-        this(tableContext, 10, null, alias);
+        this(tableContext, 4, null, alias);
     }
 
     public DefaultToSQLContext(TableContext tableContext) {
@@ -31,7 +29,7 @@ public class DefaultToSQLContext implements ToSQLContext {
     }
 
     public DefaultToSQLContext(TableContext tableContext, SQLRewriteUnit sqlRewriteUnit) {
-        this(tableContext, 10, sqlRewriteUnit, "t");
+        this(tableContext, 4, sqlRewriteUnit, "t");
     }
 
     public DefaultToSQLContext(TableContext tableContext, int initialCapacity, SQLRewriteUnit sqlRewriteUnit, String alias) {

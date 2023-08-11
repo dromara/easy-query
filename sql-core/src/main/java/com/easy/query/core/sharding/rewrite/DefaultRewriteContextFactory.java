@@ -7,21 +7,21 @@ import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.executor.parser.PrepareParseResult;
 import com.easy.query.core.expression.executor.parser.QueryPrepareParseResult;
 import com.easy.query.core.expression.executor.parser.SequenceParseResult;
+import com.easy.query.core.expression.func.AggregationType;
+import com.easy.query.core.expression.func.ColumnFunctionFactory;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.segment.FuncColumnSegment;
 import com.easy.query.core.expression.segment.ColumnSegment;
-import com.easy.query.core.expression.segment.OrderBySegment;
-import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
+import com.easy.query.core.expression.segment.FuncColumnSegment;
 import com.easy.query.core.expression.segment.GroupByColumnSegment;
+import com.easy.query.core.expression.segment.OrderBySegment;
 import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.expression.segment.builder.ProjectSQLBuilderSegment;
+import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
 import com.easy.query.core.expression.sql.expression.EntityQuerySQLExpression;
-import com.easy.query.core.expression.func.ColumnFunctionFactory;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.ShardingInitConfig;
 import com.easy.query.core.metadata.ShardingSequenceConfig;
 import com.easy.query.core.sharding.manager.ShardingQueryCountManager;
-import com.easy.query.core.expression.func.AggregationType;
 import com.easy.query.core.sharding.router.RouteContext;
 import com.easy.query.core.sharding.router.RouteUnit;
 import com.easy.query.core.sharding.router.ShardingRouteResult;
@@ -29,8 +29,8 @@ import com.easy.query.core.util.EasyBitwiseUtil;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyMapUtil;
-import com.easy.query.core.util.EasyShardingUtil;
 import com.easy.query.core.util.EasySQLSegmentUtil;
+import com.easy.query.core.util.EasyShardingUtil;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -84,7 +84,6 @@ public class DefaultRewriteContextFactory implements RewriteContextFactory {
                             OrderBySegment orderByColumnSegment = sqlSegmentFactory.createOrderByColumnSegment(table, firstSequenceProperty, runtimeContext, !reverse);
                             easyEntityPredicateSQLExpression.getOrder().append(orderByColumnSegment);
                             if (!easyEntityPredicateSQLExpression.getProjects().containsOnce(entityMetadata.getEntityClass(), firstSequenceProperty)) {
-
                                 ColumnSegment columnSegment = sqlSegmentFactory.createColumnSegment(table, firstSequenceProperty, runtimeContext, null);
                                 easyEntityPredicateSQLExpression.getProjects().append(columnSegment);
                             }

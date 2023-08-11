@@ -6,6 +6,7 @@ import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
+import com.easy.query.core.metadata.ColumnMetadata;
 
 /**
  * @author xuejiaming
@@ -37,7 +38,8 @@ public class ColumnResultSelectorImpl<T1> implements ColumnResultSelector<T1> {
         if (sqlBuilderSegment.isNotEmpty()) {
             sqlBuilderSegment.getSQLSegments().clear();
         }
-        ColumnSegment columnSegment = sqlSegmentFactory.createColumnSegment(table, property, entityExpressionBuilder.getRuntimeContext(), null);
+        ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(property);
+        ColumnSegment columnSegment = sqlSegmentFactory.createColumnSegment(table, columnMetadata, entityExpressionBuilder.getRuntimeContext(), null);
         sqlBuilderSegment.append(columnSegment);
 
     }

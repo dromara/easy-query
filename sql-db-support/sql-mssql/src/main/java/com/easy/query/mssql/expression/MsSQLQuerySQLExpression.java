@@ -10,6 +10,7 @@ import com.easy.query.core.expression.segment.impl.ColumnSegmentImpl;
 import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
 import com.easy.query.core.expression.sql.expression.impl.EntitySQLExpressionMetadata;
 import com.easy.query.core.expression.sql.expression.impl.QuerySQLExpressionImpl;
+import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 import com.easy.query.core.util.EasySQLSegmentUtil;
@@ -122,7 +123,8 @@ public class MsSQLQuerySQLExpression extends QuerySQLExpressionImpl {
     protected SQLBuilderSegment getPrimaryKeyOrFirstColumnOrder(TableAvailable table) {
         OrderBySQLBuilderSegmentImpl orderBySQLBuilderSegment = new OrderBySQLBuilderSegmentImpl();
         String property = getPrimaryKeyOrFirstColumn(table);
-        orderBySQLBuilderSegment.append(new ColumnSegmentImpl(table, property, getRuntimeContext()));
+        ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(property);
+        orderBySQLBuilderSegment.append(new ColumnSegmentImpl(table, columnMetadata, getRuntimeContext()));
         return orderBySQLBuilderSegment;
     }
 

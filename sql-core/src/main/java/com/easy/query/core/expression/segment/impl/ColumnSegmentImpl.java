@@ -21,17 +21,17 @@ public class ColumnSegmentImpl implements ColumnSegment {
     protected final TableAvailable table;
 
 
-    protected final String propertyName;
+    protected final ColumnMetadata columnMetadata;
     protected final QueryRuntimeContext runtimeContext;
     protected final String alias;
 
-    public ColumnSegmentImpl(TableAvailable table, String propertyName, QueryRuntimeContext runtimeContext) {
-        this(table, propertyName, runtimeContext, null);
+    public ColumnSegmentImpl(TableAvailable table, ColumnMetadata columnMetadata, QueryRuntimeContext runtimeContext) {
+        this(table, columnMetadata, runtimeContext, null);
     }
 
-    public ColumnSegmentImpl(TableAvailable table, String propertyName, QueryRuntimeContext runtimeContext, String alias) {
+    public ColumnSegmentImpl(TableAvailable table,ColumnMetadata columnMetadata, QueryRuntimeContext runtimeContext, String alias) {
         this.table = table;
-        this.propertyName = propertyName;
+        this.columnMetadata = columnMetadata;
         this.runtimeContext = runtimeContext;
         this.alias = alias;
     }
@@ -43,7 +43,7 @@ public class ColumnSegmentImpl implements ColumnSegment {
 
     @Override
     public String getPropertyName() {
-        return propertyName;
+        return columnMetadata.getPropertyName();
     }
 
     @Override
@@ -62,7 +62,6 @@ public class ColumnSegmentImpl implements ColumnSegment {
 
     private String getSQLOwnerColumn(ToSQLContext toSQLContext){
 
-        ColumnMetadata columnMetadata = this.table.getEntityMetadata().getColumnNotNull(getPropertyName());
         ColumnValueSQLConverter columnValueSQLConverter = columnMetadata.getColumnValueSQLConverter();
         if(columnValueSQLConverter==null){
             return EasySQLExpressionUtil.getSQLOwnerColumnMetadata(runtimeContext, table, columnMetadata, toSQLContext);
@@ -75,7 +74,7 @@ public class ColumnSegmentImpl implements ColumnSegment {
 
     @Override
     public ColumnSegment cloneSQLColumnSegment() {
-        return new ColumnSegmentImpl(table, propertyName, runtimeContext, alias);
+        return new ColumnSegmentImpl(table, columnMetadata, runtimeContext, alias);
     }
 
 }

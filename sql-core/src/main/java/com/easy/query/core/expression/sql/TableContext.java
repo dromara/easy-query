@@ -1,6 +1,7 @@
 package com.easy.query.core.expression.sql;
 
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -30,30 +31,38 @@ public final class TableContext {
         return aliasMapping.isEmpty();
     }
 
-    public void copyTo(TableContext tableContext){
+    public void copyTo(TableContext tableContext) {
         for (Map.Entry<TableAvailable, TableAliasSchema> aliasSchemaEntry : aliasMapping.entrySet()) {
             tableContext.addTable(aliasSchemaEntry.getKey());
         }
     }
 
-    public ToTableContext getToTableContext(String alias){
+    public ToTableContext getToTableContext(String alias) {
         int mappingSize = aliasMapping.size();
+        if (mappingSize == 1) {
+            TableAliasSchema tableAliasSchema = EasyCollectionUtil.first(aliasMapping.values());
+            if (tableAliasSchema.getTable().isAnonymous() || tableAliasSchema.getTable().hasAlias()) {
+                String tableAlias = tableAliasSchema.getTableAlias(alias);
+                return new SingleToTableContext(tableAlias);
+            }
+            return new SingleToTableContext(null);
+        }
         HashMap<TableAvailable, String> result = new HashMap<>(mappingSize);
-        int i=0;
-        boolean firstHasAlias=false;
+        int i = 0;
+        boolean firstHasAlias = false;
         for (Map.Entry<TableAvailable, TableAliasSchema> aliasSchemaEntry : aliasMapping.entrySet()) {
 
             TableAvailable table = aliasSchemaEntry.getKey();
             TableAliasSchema tableAliasSchema = aliasSchemaEntry.getValue();
             String tableAlias = tableAliasSchema.getTableAlias(alias);
             if (i == 0) {
-                if (tableAliasSchema.getTable().isAnonymous()||tableAliasSchema.getTable().hasAlias()) {
-                    firstHasAlias=true;
+                if (tableAliasSchema.getTable().isAnonymous() || tableAliasSchema.getTable().hasAlias()) {
+                    firstHasAlias = true;
                 }
             }
-            result.put(table,tableAlias);
+            result.put(table, tableAlias);
             i++;
         }
-        return new ToTableContext(result,mappingSize,firstHasAlias);
+        return new MultiToTableContext(result, mappingSize, firstHasAlias);
     }
 }

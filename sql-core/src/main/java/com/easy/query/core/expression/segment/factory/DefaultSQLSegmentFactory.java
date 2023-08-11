@@ -29,6 +29,7 @@ import com.easy.query.core.expression.segment.impl.SQLNativeSegmentImpl;
 import com.easy.query.core.expression.segment.impl.SelectConstSegmentImpl;
 import com.easy.query.core.expression.segment.impl.SubQueryColumnSegmentImpl;
 import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;
+import com.easy.query.core.metadata.ColumnMetadata;
 
 /**
  * create time 2023/5/30 12:18
@@ -43,8 +44,8 @@ public class DefaultSQLSegmentFactory implements SQLSegmentFactory {
     }
 
     @Override
-    public ColumnSegment createColumnSegment(TableAvailable table, String propertyName, QueryRuntimeContext runtimeContext, String alias) {
-        return new ColumnSegmentImpl(table, propertyName, runtimeContext, alias);
+    public ColumnSegment createColumnSegment(TableAvailable table, ColumnMetadata columnMetadata, QueryRuntimeContext runtimeContext, String alias) {
+        return new ColumnSegmentImpl(table, columnMetadata, runtimeContext, alias);
     }
 
     @Override
@@ -78,13 +79,13 @@ public class DefaultSQLSegmentFactory implements SQLSegmentFactory {
     }
 
     @Override
-    public GroupByColumnSegment createGroupByColumnSegment(TableAvailable table, String propertyName, QueryRuntimeContext runtimeContext) {
-        return new GroupColumnSegmentImpl(table, propertyName, runtimeContext);
+    public GroupByColumnSegment createGroupByColumnSegment(TableAvailable table,ColumnMetadata columnMetadata, QueryRuntimeContext runtimeContext) {
+        return new GroupColumnSegmentImpl(table, columnMetadata, runtimeContext);
     }
 
     @Override
-    public OrderBySegment createOrderByColumnSegment(TableAvailable table, String propertyName, QueryRuntimeContext runtimeContext, boolean asc) {
-        return new OrderColumnSegmentImpl(table, propertyName, runtimeContext, asc);
+    public OrderBySegment createOrderByColumnSegment(TableAvailable table, ColumnMetadata columnMetadata, QueryRuntimeContext runtimeContext, boolean asc) {
+        return new OrderColumnSegmentImpl(table, columnMetadata, runtimeContext, asc);
     }
 
     @Override

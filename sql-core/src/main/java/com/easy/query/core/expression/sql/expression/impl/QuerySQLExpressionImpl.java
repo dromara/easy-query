@@ -7,6 +7,7 @@ import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.sql.expression.EntityQuerySQLExpression;
 import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
+import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 import com.easy.query.core.util.EasySQLSegmentUtil;
 
@@ -168,19 +169,9 @@ public class QuerySQLExpressionImpl implements EntityQuerySQLExpression {
         }
 
         sql.append(this.projects.toSQL(toSQLContext));
+        List<EntityTableSQLExpression> tables = getTables();
+        buildSQLTableOrJoin(sql,tables,toSQLContext);
 
-        Iterator<EntityTableSQLExpression> iterator = getTables().iterator();
-        EntityTableSQLExpression firstTable = iterator.next();
-        sql.append(firstTable.toSQL(toSQLContext));
-        while (iterator.hasNext()) {
-            EntityTableSQLExpression table = iterator.next();
-            sql.append(table.toSQL(toSQLContext));// [from table alias] | [left join table alias] 匿名表 应该使用  [left join (table) alias]
-
-            PredicateSegment on = table.getOn();
-            if (on != null && on.isNotEmpty()) {
-                sql.append(" ON ").append(on.toSQL(toSQLContext));
-            }
-        }
         boolean notExistsSQL = EasySQLSegmentUtil.isNotEmpty(this.allPredicate);
         boolean hasWhere = EasySQLSegmentUtil.isNotEmpty(this.where);
         if (hasWhere) {
@@ -226,6 +217,27 @@ public class QuerySQLExpressionImpl implements EntityQuerySQLExpression {
             return notExistsResultSQL.toString();
         } else {
             return resultSQL;
+        }
+    }
+
+    protected void buildSQLTableOrJoin(StringBuilder sql,List<EntityTableSQLExpression> tables,ToSQLContext toSQLContext){
+
+        if(EasyCollectionUtil.isSingle(tables)){
+            EntityTableSQLExpression firstTable = tables.get(0);
+            sql.append(firstTable.toSQL(toSQLContext));
+        }else{
+            Iterator<EntityTableSQLExpression> iterator = getTables().iterator();
+            EntityTableSQLExpression firstTable = iterator.next();
+            sql.append(firstTable.toSQL(toSQLContext));
+            while (iterator.hasNext()) {
+                EntityTableSQLExpression table = iterator.next();
+                sql.append(table.toSQL(toSQLContext));// [from table alias] | [left join table alias] 匿名表 应该使用  [left join (table) alias]
+
+                PredicateSegment on = table.getOn();
+                if (on != null && on.isNotEmpty()) {
+                    sql.append(" ON ").append(on.toSQL(toSQLContext));
+                }
+            }
         }
     }
 

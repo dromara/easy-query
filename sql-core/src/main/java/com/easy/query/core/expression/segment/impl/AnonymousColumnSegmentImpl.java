@@ -18,6 +18,11 @@ public class AnonymousColumnSegmentImpl extends ColumnSegmentImpl{
     }
 
     @Override
+    public String getPropertyName() {
+        return null;
+    }
+
+    @Override
     public String toSQL(ToSQLContext toSQLContext) {
         String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumn(runtimeContext,table,alias,toSQLContext);
         return sqlColumnSegment +
