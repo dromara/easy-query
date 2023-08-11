@@ -8,6 +8,7 @@ import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.FuncColumnSegment;
 import com.easy.query.core.expression.segment.OrderFuncColumnSegment;
+import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 
 /**
@@ -20,14 +21,14 @@ public class OrderFuncColumnSegmentImpl implements OrderFuncColumnSegment {
 
 
     protected final TableAvailable table;
-    protected final String propertyName;
+    protected final ColumnMetadata columnMetadata;
     protected final QueryRuntimeContext runtimeContext;
     protected final ColumnFunction columnFunction;
     private final boolean asc;
 
-    public OrderFuncColumnSegmentImpl(TableAvailable table, String propertyName, QueryRuntimeContext runtimeContext, ColumnFunction columnFunction, boolean asc){
+    public OrderFuncColumnSegmentImpl(TableAvailable table, ColumnMetadata columnMetadata, QueryRuntimeContext runtimeContext, ColumnFunction columnFunction, boolean asc){
         this.table = table;
-        this.propertyName = propertyName;
+        this.columnMetadata = columnMetadata;
         this.runtimeContext = runtimeContext;
         this.columnFunction = columnFunction;
         this.asc = asc;
@@ -35,7 +36,7 @@ public class OrderFuncColumnSegmentImpl implements OrderFuncColumnSegment {
 
     @Override
     public String toSQL(ToSQLContext toSQLContext) {
-        String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumnByProperty(runtimeContext,table,propertyName,toSQLContext);
+        String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumnMetadata(runtimeContext,table,columnMetadata,toSQLContext);
         String funcColumn = columnFunction.getFuncColumn(sqlColumnSegment);
         StringBuilder sql = new StringBuilder().append(funcColumn);
         if(asc){
@@ -53,7 +54,12 @@ public class OrderFuncColumnSegmentImpl implements OrderFuncColumnSegment {
 
     @Override
     public String getPropertyName() {
-        return propertyName;
+        return columnMetadata.getPropertyName();
+    }
+
+    @Override
+    public ColumnMetadata getColumnMetadata() {
+        return columnMetadata;
     }
 
     @Override

@@ -4,6 +4,7 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.segment.SQLEntitySegment;
 import com.easy.query.core.expression.segment.SQLNativeSegment;
 import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;
+import com.easy.query.core.metadata.ColumnMetadata;
 
 /**
  * create time 2023/6/16 20:55
@@ -31,5 +32,9 @@ public class SQLNativeSegmentImpl extends AbstractSQLNativeSegmentImpl implement
     @Override
     public SQLEntitySegment cloneSQLColumnSegment() {
         return new SQLNativeSegmentImpl(runtimeContext, sqlSegment, sqlConstExpressionContext);
+    }
+
+    public ColumnMetadata getColumnMetadata(){
+        return null;
     }
 }

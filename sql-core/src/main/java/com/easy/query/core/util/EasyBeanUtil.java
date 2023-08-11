@@ -40,7 +40,6 @@ public class EasyBeanUtil {
         }
         return matchProperties;
     }
-    private static final Map<Class<?>, FastBean> CLASS_PROPERTY_FAST_BEAN_CACHE = new ConcurrentHashMap<>();
 
     public static FastBean getFastBean(Class<?> entityClass) {
         return new FastBean(entityClass);

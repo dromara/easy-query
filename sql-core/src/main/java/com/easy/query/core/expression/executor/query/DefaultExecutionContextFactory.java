@@ -1,5 +1,7 @@
 package com.easy.query.core.expression.executor.query;
 
+import com.easy.query.core.basic.jdbc.executor.internal.common.ExecutionUnit;
+import com.easy.query.core.basic.jdbc.executor.internal.common.SQLRouteUnit;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.exception.EasyQueryShardingRouteExecuteMoreException;
@@ -13,11 +15,8 @@ import com.easy.query.core.expression.executor.query.base.InsertExecutionCreator
 import com.easy.query.core.expression.executor.query.base.PredicateExecutionCreator;
 import com.easy.query.core.expression.executor.query.base.ShardingEntityExecutionCreator;
 import com.easy.query.core.expression.executor.query.base.ShardingPredicateExecutionCreator;
-import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.expression.EntityQuerySQLExpression;
 import com.easy.query.core.sharding.EasyQueryDataSource;
-import com.easy.query.core.basic.jdbc.executor.internal.common.ExecutionUnit;
-import com.easy.query.core.basic.jdbc.executor.internal.common.SQLRouteUnit;
 import com.easy.query.core.sharding.rewrite.RewriteContext;
 import com.easy.query.core.sharding.rewrite.RewriteContextFactory;
 import com.easy.query.core.sharding.router.RouteContext;
@@ -54,8 +53,7 @@ public class DefaultExecutionContextFactory implements ExecutionContextFactory {
     }
 
     @Override
-    public ExecutionContext createUnShardingJdbcExecutionContext(EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
-        EntityQuerySQLExpression entityQuerySQLExpression = entityQueryExpressionBuilder.toExpression();
+    public ExecutionContext createUnShardingJdbcExecutionContext(EntityQuerySQLExpression entityQuerySQLExpression) {
         ExecutionUnit executionUnit = new ExecutionUnit(easyDataSource.getDefaultDataSourceName(), new SQLRouteUnit(entityQuerySQLExpression, null,false,null));
         return new ExecutionContext(Collections.singletonList(executionUnit), false, false, false, false);
     }

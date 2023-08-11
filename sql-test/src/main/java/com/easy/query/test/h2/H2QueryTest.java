@@ -735,6 +735,15 @@ public class H2QueryTest extends H2BaseTest {
                 ).toSQL();
         Assert.assertEquals("SELECT x.id,x.name,x.edition,x.price,x.store_id,rank() over(order by x.price desc) as rank1,rank() over(partition by x.store_id order by x.price desc) as rank2 FROM t_book_test x", sql);
     }
+    @Test
+    public void nativeSQLTest4_1() {
+        String sql = easyQuery.queryable(H2BookTest.class)
+                .asAlias("x")
+                .select(o -> o.columnAll()
+                        .sqlNativeSegment("rank() over(order by x.price desc) as rank1,rank() over(partition by x.store_id order by x.price desc) as rank2")
+                ).toSQL();
+        Assert.assertEquals("SELECT x.id,x.name,x.edition,x.price,x.store_id,rank() over(order by x.price desc) as rank1,rank() over(partition by x.store_id order by x.price desc) as rank2 FROM t_book_test x", sql);
+    }
 
     @Test
     public void nativeSQLTest5() {

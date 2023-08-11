@@ -9,13 +9,15 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
+ * @author xuejiaming
  * @Description: 查询projects
  * @Date: 2023/2/13 22:39
- * @author xuejiaming
  */
 public class ProjectSQLBuilderSegmentImpl extends AbstractSQLBuilderSegment implements ProjectSQLBuilderSegment {
 
-    private boolean projectHasAggregate=false;
+    private boolean projectHasAggregate = false;
+    private boolean allColumnMetadata = false;
+
     @Override
     public String toSQL(ToSQLContext toSQLContext) {
         StringBuilder sb = new StringBuilder();
@@ -35,7 +37,7 @@ public class ProjectSQLBuilderSegmentImpl extends AbstractSQLBuilderSegment impl
     @Override
     public SQLBuilderSegment cloneSQLBuilder() {
         ProjectSQLBuilderSegmentImpl projectSQLBuilderSegment = new ProjectSQLBuilderSegmentImpl();
-        projectSQLBuilderSegment.projectHasAggregate=projectHasAggregate;
+        projectSQLBuilderSegment.projectHasAggregate = projectHasAggregate;
         copyTo(projectSQLBuilderSegment);
         return projectSQLBuilderSegment;
     }
@@ -43,17 +45,26 @@ public class ProjectSQLBuilderSegmentImpl extends AbstractSQLBuilderSegment impl
     @Override
     public void append(SQLSegment sqlSegment) {
         super.append(sqlSegment);
-        if(!projectHasAggregate){
+        if (!projectHasAggregate) {
 
             boolean aggregateColumn = EasySQLSegmentUtil.isAggregateColumn(sqlSegment);
-            if(aggregateColumn){
-                projectHasAggregate=true;
+            if (aggregateColumn) {
+                projectHasAggregate = true;
             }
         }
+        if (allColumnMetadata || getSQLSegments().size() == 1) {
+            allColumnMetadata = EasySQLSegmentUtil.isColumnMetadataSQLSegment(sqlSegment);
+        }
+
     }
 
     @Override
     public boolean hasAggregateColumns() {
         return projectHasAggregate;
+    }
+
+    @Override
+    public boolean selectAllColumnMetadata() {
+        return allColumnMetadata;
     }
 }

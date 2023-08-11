@@ -3,7 +3,7 @@ package com.easy.query.core.expression.executor.query;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.expression.executor.parser.ExecutionContext;
 import com.easy.query.core.expression.executor.parser.PrepareParseResult;
-import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
+import com.easy.query.core.expression.sql.expression.EntityQuerySQLExpression;
 
 import java.util.List;
 
@@ -16,5 +16,5 @@ import java.util.List;
 public interface ExecutionContextFactory {
     ExecutionContext createEntityExecutionContext(PrepareParseResult prepareParseResult);
     ExecutionContext createJdbcExecutionContext(String sql, List<SQLParameter> parameters);
-    ExecutionContext createUnShardingJdbcExecutionContext(EntityQueryExpressionBuilder entityQueryExpressionBuilder);
+    ExecutionContext createUnShardingJdbcExecutionContext(EntityQuerySQLExpression entityQuerySQLExpression);
 }

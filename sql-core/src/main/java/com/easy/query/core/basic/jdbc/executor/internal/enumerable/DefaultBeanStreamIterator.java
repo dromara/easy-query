@@ -22,20 +22,19 @@ import java.sql.SQLException;
  *
  * @author xuejiaming
  */
-public class BeanStreamIterator<T> extends AbstractStreamIterator<T> {
-    private static final Log log = LogFactory.getLog(BeanStreamIterator.class);
-    private ResultColumnMetadata[] resultColumnMetadatas;
+public class DefaultBeanStreamIterator<T> extends AbstractStreamIterator<T> {
+    private static final Log log = LogFactory.getLog(DefaultBeanStreamIterator.class);
     private boolean trackBean;
     private TrackManager trackManager;
 
-    public BeanStreamIterator(ExecutorContext context, StreamResultSet streamResult, ResultMetadata<T> resultMetadata) throws SQLException {
+    public DefaultBeanStreamIterator(ExecutorContext context, StreamResultSet streamResult, ResultMetadata<T> resultMetadata) throws SQLException {
         super(context, streamResult, resultMetadata);
     }
 
     @Override
     protected void init0() throws SQLException {
         ResultSetMetaData rsmd = streamResultSet.getMetaData();
-        this.resultColumnMetadatas = columnsToColumnMetadatas(rsmd);
+        columnsToColumnMetadatas(rsmd);
         this.trackBean = EasyTrackUtil.trackBean(context, resultMetadata.getResultClass());
         this.trackManager = trackBean ? context.getRuntimeContext().getTrackManager() : null;
     }
@@ -62,8 +61,10 @@ public class BeanStreamIterator<T> extends AbstractStreamIterator<T> {
     private T mapToBean() throws SQLException {
         T bean = resultMetadata.newBean();
         Class<?> entityClass = resultMetadata.getResultClass();
-        for (int i = 0; i < this.resultColumnMetadatas.length; i++) {
-            ResultColumnMetadata resultColumnMetadata = this.resultColumnMetadatas[i];
+        int resultColumnCount = resultMetadata.getResultColumnCount();
+
+        for (int i = 0; i < resultColumnCount; i++) {
+            ResultColumnMetadata resultColumnMetadata = resultMetadata.getResultColumnMetadataByIndex(i);
             if (resultColumnMetadata == null) {
                 continue;
             }
@@ -78,7 +79,7 @@ public class BeanStreamIterator<T> extends AbstractStreamIterator<T> {
         return bean;
     }
 
-    private ResultColumnMetadata[] columnsToColumnMetadatas(ResultSetMetaData rsmd) throws SQLException {
+    private void columnsToColumnMetadatas(ResultSetMetaData rsmd) throws SQLException {
         boolean mapToBeanStrict = context.isMapToBeanStrict();
         //需要返回的结果集映射到bean实体上
         //int[] 索引代表数据库返回的索引，数组索引所在的值代表属性数组的对应属性
@@ -95,7 +96,8 @@ public class BeanStreamIterator<T> extends AbstractStreamIterator<T> {
             }
             columnMetadatas[i] = column;
         }
-        return columnMetadatas;
+        resultMetadata.initResultColumnCount(columnCount);
+        resultMetadata.initResultColumnMetadata(columnMetadatas);
     }
 
 

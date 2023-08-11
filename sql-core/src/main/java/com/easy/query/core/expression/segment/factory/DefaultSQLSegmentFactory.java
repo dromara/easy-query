@@ -74,8 +74,8 @@ public class DefaultSQLSegmentFactory implements SQLSegmentFactory {
     }
 
     @Override
-    public FuncColumnSegment createFuncColumnSegment(TableAvailable table, String propertyName, QueryRuntimeContext runtimeContext, ColumnFunction columnFunction, String alias) {
-        return new FuncColumnSegmentImpl(table, propertyName, runtimeContext, columnFunction, alias);
+    public FuncColumnSegment createFuncColumnSegment(TableAvailable table, ColumnMetadata columnMetadata, QueryRuntimeContext runtimeContext, ColumnFunction columnFunction, String alias) {
+        return new FuncColumnSegmentImpl(table, columnMetadata, runtimeContext, columnFunction, alias);
     }
 
     @Override
@@ -89,8 +89,8 @@ public class DefaultSQLSegmentFactory implements SQLSegmentFactory {
     }
 
     @Override
-    public OrderFuncColumnSegment createOrderFuncColumnSegment(TableAvailable table, String propertyName, QueryRuntimeContext runtimeContext, ColumnFunction columnFunction, boolean asc) {
-        return new OrderFuncColumnSegmentImpl(table, propertyName, runtimeContext, columnFunction, asc);
+    public OrderFuncColumnSegment createOrderFuncColumnSegment(TableAvailable table, ColumnMetadata columnMetadata, QueryRuntimeContext runtimeContext, ColumnFunction columnFunction, boolean asc) {
+        return new OrderFuncColumnSegmentImpl(table, columnMetadata, runtimeContext, columnFunction, asc);
     }
 
     @Override

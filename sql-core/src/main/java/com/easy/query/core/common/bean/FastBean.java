@@ -13,8 +13,6 @@ import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Method;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
 /**
@@ -28,14 +26,10 @@ import java.util.function.Supplier;
 public class FastBean {
     private static final int FLAG_SERIALIZABLE = 1;
     private final Class<?> beanClass;
-    private final Map<String, PropertySetterCaller<Object>> propertySetterCache;
-    private final Map<String, Property<Object, ?>> propertyGetterCache;
 
     public FastBean(Class<?> beanClass) {
 
         this.beanClass = beanClass;
-        this.propertySetterCache = new ConcurrentHashMap<>();
-        this.propertyGetterCache = new ConcurrentHashMap<>();
     }
 
     public Class<?> getBeanClass() {

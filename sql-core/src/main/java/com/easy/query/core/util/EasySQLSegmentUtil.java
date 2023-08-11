@@ -1,5 +1,6 @@
 package com.easy.query.core.util;
 
+import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.segment.MaybeAggregateColumnSegment;
 import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
@@ -28,6 +29,12 @@ public class EasySQLSegmentUtil {
     public static boolean isAggregateColumn(SQLSegment sqlSegment){
         if(sqlSegment instanceof MaybeAggregateColumnSegment){
             return ((MaybeAggregateColumnSegment)sqlSegment).isAggregateColumn();
+        }
+        return false;
+    }
+    public static boolean isColumnMetadataSQLSegment(SQLSegment sqlSegment){
+        if(sqlSegment instanceof ColumnSegment){
+            return ((ColumnSegment)sqlSegment).getColumnMetadata()!=null;
         }
         return false;
     }

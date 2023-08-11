@@ -3,9 +3,14 @@ package com.easy.query.core.basic.jdbc.executor.impl.def;
 import com.easy.query.core.basic.jdbc.executor.ResultColumnMetadata;
 import com.easy.query.core.basic.jdbc.executor.ResultMetadata;
 import com.easy.query.core.enums.EntityMetadataTypeEnum;
+import com.easy.query.core.expression.segment.ColumnSegment;
+import com.easy.query.core.expression.segment.SQLSegment;
+import com.easy.query.core.expression.segment.builder.ProjectSQLBuilderSegment;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.util.EasyObjectUtil;
+
+import java.util.List;
 
 /**
  * create time 2023/6/30 21:47
@@ -16,10 +21,18 @@ import com.easy.query.core.util.EasyObjectUtil;
 public class EntityResultMetadata<TR> implements ResultMetadata<TR> {
     protected final EntityMetadata entityMetadata;
 
-    public EntityResultMetadata(EntityMetadata entityMetadata){
+    protected ResultColumnMetadata[] resultColumnMetadata;
+    protected int resultColumnCount;
 
-        this.entityMetadata = entityMetadata;
+    public EntityResultMetadata(EntityMetadata entityMetadata) {
+        this(entityMetadata, null);
     }
+
+    public EntityResultMetadata(EntityMetadata entityMetadata, ResultColumnMetadata[] resultColumnMetadata) {
+        this.entityMetadata = entityMetadata;
+        this.resultColumnMetadata = resultColumnMetadata;
+    }
+
     @Override
     public Class<TR> getResultClass() {
         return EasyObjectUtil.typeCastNullable(entityMetadata.getEntityClass());
@@ -38,7 +51,7 @@ public class EntityResultMetadata<TR> implements ResultMetadata<TR> {
     @Override
     public ResultColumnMetadata getResultColumnOrNullByColumnName(String columnName) {
         ColumnMetadata columnMetadata = entityMetadata.getColumnMetadataOrNull(columnName);
-        if(columnMetadata!=null){
+        if (columnMetadata != null) {
             return new EntityResultColumnMetadata(columnMetadata);
         }
         return null;
@@ -47,9 +60,41 @@ public class EntityResultMetadata<TR> implements ResultMetadata<TR> {
     @Override
     public ResultColumnMetadata getResultColumnOrNullByPropertyName(String propertyName) {
         ColumnMetadata columnMetadata = entityMetadata.getColumnOrNull(propertyName);
-        if(columnMetadata!=null){
+        if (columnMetadata != null) {
             return new EntityResultColumnMetadata(columnMetadata);
         }
         return null;
+    }
+
+    @Override
+    public void initResultColumnMetadata(ProjectSQLBuilderSegment projects) {
+        List<SQLSegment> sqlSegments = projects.getSQLSegments();
+        int selectCount = sqlSegments.size();
+        initResultColumnCount(selectCount);
+        this.resultColumnMetadata=new ResultColumnMetadata[sqlSegments.size()];
+        for (int i = 0; i < selectCount; i++) {
+            ColumnSegment columnSegment = (ColumnSegment)  sqlSegments.get(i);
+            resultColumnMetadata[i]=new EntityResultColumnMetadata(columnSegment.getColumnMetadata());
+        }
+    }
+
+    @Override
+    public void initResultColumnMetadata(ResultColumnMetadata[] resultColumnMetadata) {
+        this.resultColumnMetadata = resultColumnMetadata;
+    }
+
+    @Override
+    public void initResultColumnCount(int resultColumnCount) {
+        this.resultColumnCount=resultColumnCount;
+    }
+
+    @Override
+    public int getResultColumnCount() {
+        return resultColumnCount;
+    }
+
+    @Override
+    public ResultColumnMetadata getResultColumnMetadataByIndex(int columnIndexFromZero) {
+        return resultColumnMetadata[columnIndexFromZero];
     }
 }

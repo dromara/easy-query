@@ -36,7 +36,11 @@ public interface SQLSegmentFactory {
     SQLNativeSegment createSQLNativeSegment(QueryRuntimeContext runtimeContext, String columnConst, SQLNativeExpressionContext sqlConstExpressionContext);
     InsertUpdateSetColumnSQLSegment createInsertColumnSegment(TableAvailable table, String propertyName, QueryRuntimeContext runtimeContext);
     InsertUpdateSetColumnSQLSegment createColumnWithSelfSegment(boolean increment, TableAvailable table, String propertyName, Object val, QueryRuntimeContext runtimeContext);
-    FuncColumnSegment createFuncColumnSegment(TableAvailable table, String propertyName, QueryRuntimeContext runtimeContext, ColumnFunction columnFunction, String alias);
+    default FuncColumnSegment createFuncColumnSegment(TableAvailable table, String propertyName, QueryRuntimeContext runtimeContext, ColumnFunction columnFunction, String alias){
+        ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(propertyName);
+        return createFuncColumnSegment(table,columnMetadata,runtimeContext,columnFunction,alias);
+    }
+  FuncColumnSegment createFuncColumnSegment(TableAvailable table, ColumnMetadata columnMetadata, QueryRuntimeContext runtimeContext, ColumnFunction columnFunction, String alias);
     default GroupByColumnSegment createGroupByColumnSegment(TableAvailable table, String propertyName, QueryRuntimeContext runtimeContext){
         ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(propertyName);
         return createGroupByColumnSegment(table,columnMetadata,runtimeContext);
@@ -48,7 +52,11 @@ public interface SQLSegmentFactory {
    }
     OrderBySegment createOrderByColumnSegment(TableAvailable table, ColumnMetadata columnMetadata, QueryRuntimeContext runtimeContext, boolean asc);
 
-    OrderFuncColumnSegment createOrderFuncColumnSegment(TableAvailable table, String propertyName, QueryRuntimeContext runtimeContext, ColumnFunction columnFunction, boolean asc);
+   default OrderFuncColumnSegment createOrderFuncColumnSegment(TableAvailable table, String propertyName, QueryRuntimeContext runtimeContext, ColumnFunction columnFunction, boolean asc){
+       ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(propertyName);
+       return createOrderFuncColumnSegment(table,columnMetadata,runtimeContext,columnFunction,asc);
+   }
+    OrderFuncColumnSegment createOrderFuncColumnSegment(TableAvailable table, ColumnMetadata columnMetadata, QueryRuntimeContext runtimeContext, ColumnFunction columnFunction, boolean asc);
     OrderBySegment createOrderBySQLNativeSegment(QueryRuntimeContext runtimeContext, String columnConst, SQLNativeExpressionContext sqlConstExpressionContext, boolean asc);
     GroupByColumnSegment createGroupBySQLNativeSegment(QueryRuntimeContext runtimeContext, String columnConst, SQLNativeExpressionContext sqlConstExpressionContext);
 

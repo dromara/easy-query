@@ -73,6 +73,11 @@ public class ColumnSegmentImpl implements ColumnSegment {
     }
 
     @Override
+    public ColumnMetadata getColumnMetadata() {
+        return columnMetadata;
+    }
+
+    @Override
     public ColumnSegment cloneSQLColumnSegment() {
         return new ColumnSegmentImpl(table, columnMetadata, runtimeContext, alias);
     }

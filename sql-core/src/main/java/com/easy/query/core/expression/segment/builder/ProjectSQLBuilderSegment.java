@@ -8,4 +8,5 @@ package com.easy.query.core.expression.segment.builder;
  */
 public interface ProjectSQLBuilderSegment extends SQLBuilderSegment {
     boolean hasAggregateColumns();
+    boolean selectAllColumnMetadata();
 }
