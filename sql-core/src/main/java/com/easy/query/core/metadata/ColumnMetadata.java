@@ -21,6 +21,9 @@ import java.beans.PropertyDescriptor;
 public class ColumnMetadata {
 
     private final EntityMetadata entityMetadata;
+    /**
+     * 数据库列名
+     */
     private final String name;
 
 

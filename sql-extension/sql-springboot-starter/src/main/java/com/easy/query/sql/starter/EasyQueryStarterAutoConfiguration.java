@@ -229,6 +229,7 @@ public class EasyQueryStarterAutoConfiguration {
                 .useDatabaseConfigure(databaseConfiguration)
                 .useStarterConfigure(starterConfigurer)
                 .build();
+
         return easyQueryClient;
     }
 

@@ -3,14 +3,9 @@ package com.easy.query.core.basic.jdbc.executor.impl.def;
 import com.easy.query.core.basic.jdbc.executor.ResultColumnMetadata;
 import com.easy.query.core.basic.jdbc.executor.ResultMetadata;
 import com.easy.query.core.enums.EntityMetadataTypeEnum;
-import com.easy.query.core.expression.segment.ColumnSegment;
-import com.easy.query.core.expression.segment.SQLSegment;
-import com.easy.query.core.expression.segment.builder.ProjectSQLBuilderSegment;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.util.EasyObjectUtil;
-
-import java.util.List;
 
 /**
  * create time 2023/6/30 21:47
@@ -64,18 +59,6 @@ public class EntityResultMetadata<TR> implements ResultMetadata<TR> {
             return new EntityResultColumnMetadata(columnMetadata);
         }
         return null;
-    }
-
-    @Override
-    public void initResultColumnMetadata(ProjectSQLBuilderSegment projects) {
-        List<SQLSegment> sqlSegments = projects.getSQLSegments();
-        int selectCount = sqlSegments.size();
-        initResultColumnCount(selectCount);
-        this.resultColumnMetadata=new ResultColumnMetadata[sqlSegments.size()];
-        for (int i = 0; i < selectCount; i++) {
-            ColumnSegment columnSegment = (ColumnSegment)  sqlSegments.get(i);
-            resultColumnMetadata[i]=new EntityResultColumnMetadata(columnSegment.getColumnMetadata());
-        }
     }
 
     @Override

@@ -4,7 +4,7 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 
 /**
  * create time 2023/7/29 22:57
- * 文件说明
+ * 原生sql属性表达式
  *
  * @author xuejiaming
  */
@@ -22,7 +22,25 @@ public interface SQLNativePropertyExpressionContext {
      * @return
      */
     SQLNativePropertyExpressionContext expression(TableAvailable table, String property);
+
+    /**
+     * 参数,将以[?]参数化形式拼接到sql中
+     * @param val
+     * @return
+     */
     SQLNativePropertyExpressionContext value(Object val);
+
+    /**
+     * 将以字符串常量形式直接拼接到sql中,并不是参数化
+     * @param constVal
+     * @return
+     */
     SQLNativePropertyExpressionContext constValue(Object constVal);
+
+    /**
+     * 如果当前是一个select的片段那么可以独立设置别名,当然也可以通过sqlSegment的片段来拼接
+     * @param alias
+     * @return
+     */
     SQLNativePropertyExpressionContext setAlias(String alias);
 }

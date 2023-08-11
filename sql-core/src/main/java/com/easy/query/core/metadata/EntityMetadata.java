@@ -18,8 +18,8 @@ import com.easy.query.core.basic.extension.conversion.DefaultColumnValueSQLConve
 import com.easy.query.core.basic.extension.conversion.DefaultValueConverter;
 import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.basic.extension.encryption.EncryptionStrategy;
-import com.easy.query.core.basic.extension.increment.IncrementSQLColumnGenerator;
 import com.easy.query.core.basic.extension.increment.DefaultIncrementSQLColumnGenerator;
+import com.easy.query.core.basic.extension.increment.IncrementSQLColumnGenerator;
 import com.easy.query.core.basic.extension.interceptor.EntityInterceptor;
 import com.easy.query.core.basic.extension.interceptor.Interceptor;
 import com.easy.query.core.basic.extension.interceptor.PredicateFilterInterceptor;
@@ -30,6 +30,8 @@ import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategyEnum;
 import com.easy.query.core.basic.extension.track.update.DefaultValueUpdateAtomicTrack;
 import com.easy.query.core.basic.extension.track.update.ValueUpdateAtomicTrack;
 import com.easy.query.core.basic.extension.version.VersionStrategy;
+import com.easy.query.core.basic.jdbc.executor.ResultColumnMetadata;
+import com.easy.query.core.basic.jdbc.executor.impl.def.EntityResultColumnMetadata;
 import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
 import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
 import com.easy.query.core.common.bean.FastBean;
@@ -122,6 +124,8 @@ public class EntityMetadata {
     private EntityMetadataTypeEnum entityMetadataType = EntityMetadataTypeEnum.BEAN;
     private Supplier<Object> beanConstructorCreator;
 
+    private  ResultColumnMetadata[] resultColumnMetadata;
+
     public EntityMetadata(Class<?> entityClass) {
         this.entityClass = entityClass;
     }
@@ -156,6 +160,7 @@ public class EntityMetadata {
         FastBean fastBean = EasyBeanUtil.getFastBean(entityClass);
         this.beanConstructorCreator = fastBean.getBeanConstructorCreator();
         boolean tableEntity = EasyStringUtil.isNotBlank(tableName);
+        ArrayList<ResultColumnMetadata> resultColumnMetadataList = new ArrayList<>(allFields.size());
         for (Field field : allFields) {
             String property = EasyStringUtil.toLowerCaseFirstOne(field.getName());
             if (Modifier.isStatic(field.getModifiers()) || ignoreProperties.contains(property)) {
@@ -348,7 +353,9 @@ public class EntityMetadata {
             ColumnMetadata columnMetadata = new ColumnMetadata(columnOption);
             property2ColumnMap.put(property, columnMetadata);
             column2PropertyMap.put(columnName, columnMetadata);
+            resultColumnMetadataList.add(new EntityResultColumnMetadata(columnMetadata));
         }
+        this.resultColumnMetadata=resultColumnMetadataList.toArray(new ResultColumnMetadata[0]);
 
         if (versionCount > 1) {
             throw new EasyQueryException("multi version not support");
@@ -706,5 +713,9 @@ public class EntityMetadata {
             throw new EasyQueryInvalidOperationException("entity :" + EasyClassUtil.getSimpleName(entityClass) + " not single key size :" + keyProperties.size());
         }
         return EasyCollectionUtil.first(keyProperties);
+    }
+
+    public ResultColumnMetadata[] getResultColumnMetadata() {
+        return resultColumnMetadata;
     }
 }

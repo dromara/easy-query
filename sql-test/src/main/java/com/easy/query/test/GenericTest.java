@@ -1,7 +1,10 @@
 package com.easy.query.test;
 
+import com.easy.query.core.api.client.EasyQueryClient;
+import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.common.LinkedCaseInsensitiveMap;
 import com.easy.query.core.common.bean.FastBean;
+import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
@@ -18,11 +21,15 @@ import com.easy.query.core.util.EasyBitwiseUtil;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasyStringUtil;
+import com.easy.query.test.encryption.Base64EncryptionStrategy;
 import com.easy.query.test.encryption.DefaultAesEasyEncryptionStrategy;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.NoKeyEntity;
 import com.easy.query.test.entity.UnknownTable;
 import com.easy.query.test.entity.notable.QueryLargeColumnTestEntity;
+import com.easy.query.test.increment.MyDatabaseIncrementSQLColumnGenerator;
+import com.easy.query.test.interceptor.MyEntityInterceptor;
+import com.easy.query.test.logicdel.MyLogicDelStrategy;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -743,5 +750,45 @@ public class GenericTest extends BaseTest {
         Object o2 = lambdaCreate.get();
         Assert.assertFalse(o1==o2);
     }
+    @Test
+    public void repeatApply1(){
+        EasyQueryClient easyQueryClient1 = EasyQueryBootstrapper.defaultBuilderConfiguration()
+                .setDefaultDataSource(dataSource)
+                .build();
+        QueryConfiguration queryConfiguration = easyQueryClient1.getRuntimeContext().getQueryConfiguration();
+        queryConfiguration.applyIncrementSQLColumnGenerator(new MyDatabaseIncrementSQLColumnGenerator());
+        try {
+            queryConfiguration.applyIncrementSQLColumnGenerator(new MyDatabaseIncrementSQLColumnGenerator());
+        }catch (Exception ex){
+            Assert.assertTrue(ex instanceof EasyQueryException);
+            String message = ex.getMessage();
+            Assert.assertEquals("increment sql column generator:MyDatabaseIncrementSQLColumnGenerator,repeat",message);
+        }
+        queryConfiguration.applyInterceptor(new MyEntityInterceptor());
+        try {
+            queryConfiguration.applyInterceptor(new MyEntityInterceptor());
+        }catch (Exception ex){
+            Assert.assertTrue(ex instanceof EasyQueryException);
+            String message = ex.getMessage();
+            Assert.assertEquals("global interceptor:MyEntityInterceptor,repeat",message);
+        }
+        queryConfiguration.applyLogicDeleteStrategy(new MyLogicDelStrategy());
+        try {
+            queryConfiguration.applyLogicDeleteStrategy(new MyLogicDelStrategy());
+        }catch (Exception ex){
+            Assert.assertTrue(ex instanceof EasyQueryException);
+            String message = ex.getMessage();
+            Assert.assertEquals("global logic delete strategy:MyLogicDelStrategy,repeat",message);
+        }
+        queryConfiguration.applyEncryptionStrategy(new Base64EncryptionStrategy());
+        try {
+            queryConfiguration.applyEncryptionStrategy(new Base64EncryptionStrategy());
+        }catch (Exception ex){
+            Assert.assertTrue(ex instanceof EasyQueryException);
+            String message = ex.getMessage();
+            Assert.assertEquals("easy encryption strategy:Base64EncryptionStrategy,repeat",message);
+        }
+    }
+
 
 }

@@ -263,7 +263,7 @@ public class QueryConfiguration {
     }
     public void applyIncrementSQLColumnGenerator(IncrementSQLColumnGenerator incrementSQLColumnGenerator) {
         Class<? extends IncrementSQLColumnGenerator> incrementSQLColumnGeneratorClass = incrementSQLColumnGenerator.getClass();
-        if (columnValueSQLConverterMap.containsKey(incrementSQLColumnGeneratorClass)) {
+        if (incrementSQLColumnGeneratorMap.containsKey(incrementSQLColumnGeneratorClass)) {
             throw new EasyQueryException("increment sql column generator:" + EasyClassUtil.getSimpleName(incrementSQLColumnGeneratorClass) + ",repeat");
         }
         incrementSQLColumnGeneratorMap.put(incrementSQLColumnGeneratorClass, incrementSQLColumnGenerator);

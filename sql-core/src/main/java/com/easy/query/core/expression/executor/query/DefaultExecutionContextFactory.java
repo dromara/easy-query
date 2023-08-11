@@ -15,6 +15,7 @@ import com.easy.query.core.expression.executor.query.base.InsertExecutionCreator
 import com.easy.query.core.expression.executor.query.base.PredicateExecutionCreator;
 import com.easy.query.core.expression.executor.query.base.ShardingEntityExecutionCreator;
 import com.easy.query.core.expression.executor.query.base.ShardingPredicateExecutionCreator;
+import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.expression.EntityQuerySQLExpression;
 import com.easy.query.core.sharding.EasyQueryDataSource;
 import com.easy.query.core.sharding.rewrite.RewriteContext;
@@ -53,7 +54,8 @@ public class DefaultExecutionContextFactory implements ExecutionContextFactory {
     }
 
     @Override
-    public ExecutionContext createUnShardingJdbcExecutionContext(EntityQuerySQLExpression entityQuerySQLExpression) {
+    public ExecutionContext createUnShardingJdbcExecutionContext(EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
+        EntityQuerySQLExpression entityQuerySQLExpression = entityQueryExpressionBuilder.toExpression();
         ExecutionUnit executionUnit = new ExecutionUnit(easyDataSource.getDefaultDataSourceName(), new SQLRouteUnit(entityQuerySQLExpression, null,false,null));
         return new ExecutionContext(Collections.singletonList(executionUnit), false, false, false, false);
     }

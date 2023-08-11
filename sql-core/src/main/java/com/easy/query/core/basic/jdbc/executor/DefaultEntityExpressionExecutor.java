@@ -21,12 +21,10 @@ import com.easy.query.core.expression.executor.parser.context.impl.InsertEntityP
 import com.easy.query.core.expression.executor.parser.context.impl.PredicateParseContextImpl;
 import com.easy.query.core.expression.executor.parser.context.impl.QueryPredicateParseContextImpl;
 import com.easy.query.core.expression.executor.query.ExecutionContextFactory;
-import com.easy.query.core.expression.segment.builder.ProjectSQLBuilderSegment;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityPredicateExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
-import com.easy.query.core.expression.sql.expression.EntityQuerySQLExpression;
 import com.easy.query.core.sharding.context.EasyStreamMergeContext;
 import com.easy.query.core.sharding.context.EntityStreamMergeContext;
 import com.easy.query.core.sharding.context.ShardingQueryEasyStreamMergeContext;
@@ -57,20 +55,14 @@ public class DefaultEntityExpressionExecutor implements EntityExpressionExecutor
 
     @Override
     public <TR> JdbcResult<TR> queryStreamResultSet(ExecutorContext executorContext, ResultMetadata<TR> resultMetadata, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
-        JdbcCommand<QueryExecuteResult> command = getJdbcCommand(executorContext,resultMetadata, entityQueryExpressionBuilder);
+        JdbcCommand<QueryExecuteResult> command = getJdbcCommand(executorContext, entityQueryExpressionBuilder);
         DefaultJdbcStreamResultSet<TR> jdbcStreamResultSet = new DefaultJdbcStreamResultSet<>(executorContext, resultMetadata, command);
         return new DefaultJdbcResult<>(jdbcStreamResultSet);
     }
 
-    private <TR> JdbcCommand<QueryExecuteResult> getJdbcCommand(ExecutorContext executorContext,ResultMetadata<TR> resultMetadata,EntityQueryExpressionBuilder entityQueryExpressionBuilder){
+    private JdbcCommand<QueryExecuteResult> getJdbcCommand(ExecutorContext executorContext,EntityQueryExpressionBuilder entityQueryExpressionBuilder){
         if(!entityQueryExpressionBuilder.getExpressionContext().isSharding()){
-            EntityQuerySQLExpression entityQuerySQLExpression = entityQueryExpressionBuilder.toExpression();
-            ExecutionContext executionContext = executionContextFactory.createUnShardingJdbcExecutionContext(entityQuerySQLExpression);
-            if(executorContext.isAutoAllColumn()){
-                ProjectSQLBuilderSegment projects = (ProjectSQLBuilderSegment) entityQuerySQLExpression.getProjects();
-                resultMetadata.initResultColumnMetadata(projects);
-            }
-
+            ExecutionContext executionContext = executionContextFactory.createUnShardingJdbcExecutionContext(entityQueryExpressionBuilder);
             return getSQLQueryJdbcCommand(executorContext, executionContext);
         }else{
             PrepareParseResult prepareParseResult = easyPrepareParser.parse(new QueryPredicateParseContextImpl(executorContext, entityQueryExpressionBuilder));
