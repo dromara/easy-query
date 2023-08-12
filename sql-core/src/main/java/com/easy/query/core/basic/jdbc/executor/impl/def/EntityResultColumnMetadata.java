@@ -2,6 +2,8 @@ package com.easy.query.core.basic.jdbc.executor.impl.def;
 
 import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.basic.extension.encryption.EncryptionStrategy;
+import com.easy.query.core.basic.jdbc.executor.ColumnDataReader;
+import com.easy.query.core.basic.jdbc.executor.DataReader;
 import com.easy.query.core.basic.jdbc.executor.ResultColumnMetadata;
 import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
 import com.easy.query.core.metadata.ColumnMetadata;
@@ -14,19 +16,22 @@ import com.easy.query.core.metadata.ColumnMetadata;
  */
 public class EntityResultColumnMetadata implements ResultColumnMetadata {
     private final ColumnMetadata columnMetadata;
+    private final DataReader dataReader;
 
-    public EntityResultColumnMetadata(ColumnMetadata columnMetadata){
+    public EntityResultColumnMetadata(int index,ColumnMetadata columnMetadata){
 
         this.columnMetadata = columnMetadata;
+        this.dataReader=new ColumnDataReader(index,columnMetadata);
     }
+
+    @Override
+    public DataReader getDataReader() {
+        return dataReader;
+    }
+
     @Override
     public String getPropertyName() {
         return columnMetadata.getPropertyName();
-    }
-
-    @Override
-    public Class<?> getPropertyType() {
-        return columnMetadata.getPropertyType();
     }
 
     @Override

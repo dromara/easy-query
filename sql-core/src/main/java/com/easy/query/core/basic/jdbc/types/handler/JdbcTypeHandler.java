@@ -1,6 +1,7 @@
 package com.easy.query.core.basic.jdbc.types.handler;
 
-import com.easy.query.core.basic.jdbc.types.EasyResultSet;
+import com.easy.query.core.basic.jdbc.executor.DataReader;
+import com.easy.query.core.basic.jdbc.executor.internal.merge.result.StreamResultSet;
 import com.easy.query.core.basic.jdbc.types.EasyParameter;
 
 import java.sql.SQLException;
@@ -11,6 +12,6 @@ import java.sql.SQLException;
  * @author xuejiaming
  */
 public interface JdbcTypeHandler {
-    Object getValue(EasyResultSet resultSet) throws SQLException;
+    Object getValue(DataReader dataReader, StreamResultSet streamResultSet) throws SQLException;
     void setParameter(EasyParameter parameter) throws SQLException;
 }

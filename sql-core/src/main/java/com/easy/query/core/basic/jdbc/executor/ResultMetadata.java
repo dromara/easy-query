@@ -15,9 +15,9 @@ public interface ResultMetadata<TR> {
 
     TR newBean();
 
-    ResultColumnMetadata getResultColumnOrNullByColumnName(String columnName);
+    ResultColumnMetadata getResultColumnOrNullByColumnName(int index,String columnName);
 
-    ResultColumnMetadata getResultColumnOrNullByPropertyName(String propertyName);
+    ResultColumnMetadata getResultColumnOrNullByPropertyName(int index,String propertyName);
 
     void initResultColumnMetadata(ResultColumnMetadata[] resultColumnMetadata);
     void initResultColumnCount(int resultColumnCount);

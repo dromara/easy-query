@@ -46,6 +46,7 @@ public class ColumnMetadata {
     private final EncryptionStrategy encryptionStrategy;
     private final  boolean supportQueryLike;
     private final  boolean large;
+    private final  boolean primitive;
 
     private final ValueConverter<?, ?> valueConverter;
     private final ColumnValueSQLConverter columnValueSQLConverter;
@@ -73,6 +74,7 @@ public class ColumnMetadata {
         this.columnValueSQLConverter = columnOption.getColumnValueSQLConverter();
         this.valueUpdateAtomicTrack = columnOption.getValueUpdateAtomicTrack();
         this.incrementSQLColumnGenerator = columnOption.getIncrementSQLColumnGenerator();
+        this.primitive = propertyType.isPrimitive();
 
         if(columnOption.getGetterCaller()==null){
             throw new IllegalArgumentException("not found "+ EasyClassUtil.getSimpleName(columnOption.getEntityMetadata().getEntityClass()) +"."+propertyName+" getter caller");
@@ -154,6 +156,9 @@ public class ColumnMetadata {
 
     public String getPropertyName() {
         return propertyName;
+    }
+    public boolean isPrimitive(){
+        return primitive;
     }
 
     public PropertySetterCaller<Object> getSetterCaller() {

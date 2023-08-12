@@ -161,6 +161,7 @@ public class EntityMetadata {
         this.beanConstructorCreator = fastBean.getBeanConstructorCreator();
         boolean tableEntity = EasyStringUtil.isNotBlank(tableName);
         ArrayList<ResultColumnMetadata> resultColumnMetadataList = new ArrayList<>(allFields.size());
+        int columnIndex=0;
         for (Field field : allFields) {
             String property = EasyStringUtil.toLowerCaseFirstOne(field.getName());
             if (Modifier.isStatic(field.getModifiers()) || ignoreProperties.contains(property)) {
@@ -353,7 +354,8 @@ public class EntityMetadata {
             ColumnMetadata columnMetadata = new ColumnMetadata(columnOption);
             property2ColumnMap.put(property, columnMetadata);
             column2PropertyMap.put(columnName, columnMetadata);
-            resultColumnMetadataList.add(new EntityResultColumnMetadata(columnMetadata));
+            resultColumnMetadataList.add(new EntityResultColumnMetadata(columnIndex,columnMetadata));
+            columnIndex++;
         }
         this.resultColumnMetadata=resultColumnMetadataList.toArray(new ResultColumnMetadata[0]);
 

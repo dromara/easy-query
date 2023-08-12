@@ -1,11 +1,11 @@
 package com.easy.query.core.basic.jdbc.types.handler;
 
+import com.easy.query.core.basic.jdbc.executor.DataReader;
+import com.easy.query.core.basic.jdbc.executor.internal.merge.result.StreamResultSet;
 import com.easy.query.core.basic.jdbc.types.EasyParameter;
-import com.easy.query.core.basic.jdbc.types.EasyResultSet;
 
 import java.sql.Clob;
 import java.sql.SQLException;
-import java.sql.Types;
 
 /**
  * @FileName: CLobTypeHandler.java
@@ -15,8 +15,8 @@ import java.sql.Types;
  */
 public class CLobTypeHandler implements JdbcTypeHandler {
     @Override
-    public Object getValue(EasyResultSet resultSet) throws SQLException {
-        return resultSet.getStreamResult().getClob(resultSet.getIndex());
+    public Object getValue(DataReader dataReader, StreamResultSet streamResultSet) throws SQLException {
+        return streamResultSet.getClob(dataReader.getJdbcIndex());
     }
 
     @Override

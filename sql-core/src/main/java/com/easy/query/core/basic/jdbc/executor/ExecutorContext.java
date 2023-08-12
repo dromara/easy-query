@@ -65,7 +65,7 @@ public class ExecutorContext {
      */
     public Object fromValue(Class<?> entityClass, ResultColumnMetadata resultColumnMetadata, Object value) {
         Object fromValue = fromValue0(entityClass, resultColumnMetadata, value);
-        Class<?> propertyType = resultColumnMetadata.getPropertyType();
+        Class<?> propertyType = resultColumnMetadata.getDataReader().getPropertyType();
         return resultColumnMetadata.getValueConverter().deserialize(EasyObjectUtil.typeCast(propertyType), EasyObjectUtil.typeCast(fromValue));
     }
 

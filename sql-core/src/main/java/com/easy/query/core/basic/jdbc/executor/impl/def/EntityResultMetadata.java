@@ -47,19 +47,19 @@ public class EntityResultMetadata<TR> implements ResultMetadata<TR> {
     }
 
     @Override
-    public ResultColumnMetadata getResultColumnOrNullByColumnName(String columnName) {
+    public ResultColumnMetadata getResultColumnOrNullByColumnName(int index,String columnName) {
         ColumnMetadata columnMetadata = entityMetadata.getColumnMetadataOrNull(columnName);
         if (columnMetadata != null) {
-            return new EntityResultColumnMetadata(columnMetadata);
+            return new EntityResultColumnMetadata(index,columnMetadata);
         }
         return null;
     }
 
     @Override
-    public ResultColumnMetadata getResultColumnOrNullByPropertyName(String propertyName) {
+    public ResultColumnMetadata getResultColumnOrNullByPropertyName(int index,String propertyName) {
         ColumnMetadata columnMetadata = entityMetadata.getColumnOrNull(propertyName);
         if (columnMetadata != null) {
-            return new EntityResultColumnMetadata(columnMetadata);
+            return new EntityResultColumnMetadata(index,columnMetadata);
         }
         return null;
     }

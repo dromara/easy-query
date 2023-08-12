@@ -11,10 +11,9 @@ import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
  * @author xuejiaming
  */
 public interface ResultColumnMetadata {
+    DataReader getDataReader();
     String getPropertyName();
-    Class<?> getPropertyType();
     JdbcTypeHandler getJdbcTypeHandler();
-
     boolean isEncryption();
     EncryptionStrategy getEncryptionStrategy();
     ValueConverter<?, ?> getValueConverter();

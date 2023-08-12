@@ -1,7 +1,8 @@
 package com.easy.query.core.basic.jdbc.types.handler;
 
+import com.easy.query.core.basic.jdbc.executor.DataReader;
+import com.easy.query.core.basic.jdbc.executor.internal.merge.result.StreamResultSet;
 import com.easy.query.core.basic.jdbc.types.EasyParameter;
-import com.easy.query.core.basic.jdbc.types.EasyResultSet;
 
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -15,8 +16,8 @@ import java.time.LocalDateTime;
  */
 public class LocalDateTimeTypeHandler implements JdbcTypeHandler {
     @Override
-    public Object getValue(EasyResultSet resultSet) throws SQLException {
-        Timestamp timestamp = resultSet.getStreamResult().getTimestamp(resultSet.getIndex());
+    public Object getValue(DataReader dataReader, StreamResultSet streamResultSet) throws SQLException {
+        Timestamp timestamp = streamResultSet.getTimestamp(dataReader.getJdbcIndex());
         if(timestamp!=null){
             return timestamp.toLocalDateTime();
         }

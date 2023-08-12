@@ -2,6 +2,7 @@ package com.easy.query.core.basic.jdbc.executor.internal.enumerable;
 
 import com.easy.query.core.basic.extension.track.EntityState;
 import com.easy.query.core.basic.extension.track.TrackManager;
+import com.easy.query.core.basic.jdbc.executor.DataReader;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.executor.ResultColumnMetadata;
 import com.easy.query.core.basic.jdbc.executor.ResultMetadata;
@@ -68,11 +69,9 @@ public class DefaultBeanStreamIterator<T> extends AbstractStreamIterator<T> {
             if (resultColumnMetadata == null) {
                 continue;
             }
-            easyResultSet.setIndex(i);
             JdbcTypeHandler handler = resultColumnMetadata.getJdbcTypeHandler();
-            Class<?> propertyType = resultColumnMetadata.getPropertyType();
-            easyResultSet.setPropertyType(propertyType);
-            Object value = context.fromValue(entityClass, resultColumnMetadata, handler.getValue(easyResultSet));
+            DataReader dataReader = resultColumnMetadata.getDataReader();
+            Object value = context.fromValue(entityClass, resultColumnMetadata, handler.getValue(dataReader,streamResultSet));
 
             resultColumnMetadata.setValue(bean, value);
         }
@@ -90,7 +89,7 @@ public class DefaultBeanStreamIterator<T> extends AbstractStreamIterator<T> {
             if (KeywordTool.isIgnoreColumn(colName)) {
                 continue;
             }
-            ResultColumnMetadata column = getMapColumnMetadata(colName, mapToBeanStrict);
+            ResultColumnMetadata column = getMapColumnMetadata(i,colName, mapToBeanStrict);
             if (column == null) {
                 continue;
             }
@@ -101,12 +100,12 @@ public class DefaultBeanStreamIterator<T> extends AbstractStreamIterator<T> {
     }
 
 
-    private ResultColumnMetadata getMapColumnMetadata(String columnName, boolean mapToBeanStrict) {
-        ResultColumnMetadata resultColumnMetadata = resultMetadata.getResultColumnOrNullByColumnName(columnName);
+    private ResultColumnMetadata getMapColumnMetadata(int index,String columnName, boolean mapToBeanStrict) {
+        ResultColumnMetadata resultColumnMetadata = resultMetadata.getResultColumnOrNullByColumnName(index,columnName);
         if (resultColumnMetadata != null) {
             return resultColumnMetadata;
         } else if (!mapToBeanStrict) {
-            return resultMetadata.getResultColumnOrNullByPropertyName(columnName);
+            return resultMetadata.getResultColumnOrNullByPropertyName(index,columnName);
         }
         return null;
     }

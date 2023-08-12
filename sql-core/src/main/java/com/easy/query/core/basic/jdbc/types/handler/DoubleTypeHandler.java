@@ -1,11 +1,10 @@
 package com.easy.query.core.basic.jdbc.types.handler;
 
-import com.easy.query.core.basic.jdbc.types.EasyParameter;
-import com.easy.query.core.basic.jdbc.types.EasyResultSet;
+import com.easy.query.core.basic.jdbc.executor.DataReader;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.result.StreamResultSet;
+import com.easy.query.core.basic.jdbc.types.EasyParameter;
 
 import java.sql.SQLException;
-import java.sql.Types;
 
 /**
  * @author xuejiaming
@@ -17,15 +16,14 @@ public class DoubleTypeHandler implements JdbcTypeHandler {
     private static final double DEFAULT = 0d;
 
     @Override
-    public Object getValue(EasyResultSet resultSet) throws SQLException {
+    public Object getValue(DataReader dataReader, StreamResultSet streamResultSet) throws SQLException {
 
-        StreamResultSet rs = resultSet.getStreamResult();
-        double r = rs.getDouble(resultSet.getIndex());
+        double r = streamResultSet.getDouble(dataReader.getJdbcIndex());
         if (r != DEFAULT) {
             return r;
         }
-        if (rs.wasNull()) {//判断当前读取的列是否可以为null，因为基本类型存在默认值而包装类型存在null值
-            if (resultSet.isPrimitive()) {
+        if (streamResultSet.wasNull()) {//判断当前读取的列是否可以为null，因为基本类型存在默认值而包装类型存在null值
+            if (dataReader.isPrimitive()) {
                 return DEFAULT;
             } else {
                 return null;

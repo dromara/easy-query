@@ -1269,4 +1269,9 @@ public class QueryTest3 extends BaseTest {
             throw new RuntimeException(e);
         }
     }
+
+    @Test
+    public void queryToList1(){
+        List<Topic> list = easyQuery.queryable(Topic.class).toList();
+    }
 }

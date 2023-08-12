@@ -14,6 +14,7 @@ import com.easy.query.test.h2.domain.H2BookTest;
 import com.easy.query.test.h2.domain.proxy.ALLTYPE1Proxy;
 import com.easy.query.test.h2.domain.proxy.ALLTYPEProxy;
 import com.easy.query.test.h2.vo.ALLTYPEVO1;
+import com.easy.query.test.h2.vo.ALLTYPEVO2;
 import com.easy.query.test.h2.vo.proxy.ALLTYPEVO1Proxy;
 import org.junit.Assert;
 import org.junit.Test;
