@@ -1,5 +1,7 @@
 package com.easy.query.solon.sharding.demo;
 
+import org.noear.solon.Solon;
+
 /**
  * create time 2023/8/2 11:32
  * 文件说明
@@ -8,6 +10,6 @@ package com.easy.query.solon.sharding.demo;
  */
 public class App {
     public static void main(String[] args) {
-
+        Solon.start(App.class,args);
     }
 }

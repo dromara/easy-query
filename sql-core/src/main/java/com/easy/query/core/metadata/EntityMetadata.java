@@ -160,7 +160,7 @@ public class EntityMetadata {
         FastBean fastBean = EasyBeanUtil.getFastBean(entityClass);
         this.beanConstructorCreator = fastBean.getBeanConstructorCreator();
         boolean tableEntity = EasyStringUtil.isNotBlank(tableName);
-        ArrayList<ResultColumnMetadata> resultColumnMetadataList = new ArrayList<>(allFields.size());
+        ArrayList<ResultColumnMetadata> resultColumnMetadataList = tableEntity? new ArrayList<>(allFields.size()):null;
         int columnIndex=0;
         for (Field field : allFields) {
             String property = EasyStringUtil.toLowerCaseFirstOne(field.getName());
@@ -354,10 +354,14 @@ public class EntityMetadata {
             ColumnMetadata columnMetadata = new ColumnMetadata(columnOption);
             property2ColumnMap.put(property, columnMetadata);
             column2PropertyMap.put(columnName, columnMetadata);
-            resultColumnMetadataList.add(new EntityResultColumnMetadata(columnIndex,columnMetadata));
+            if(tableEntity){
+                resultColumnMetadataList.add(new EntityResultColumnMetadata(columnIndex,columnMetadata));
+            }
             columnIndex++;
         }
-        this.resultColumnMetadata=resultColumnMetadataList.toArray(new ResultColumnMetadata[0]);
+        if(tableEntity){
+            this.resultColumnMetadata=resultColumnMetadataList.toArray(new ResultColumnMetadata[0]);
+        }
 
         if (versionCount > 1) {
             throw new EasyQueryException("multi version not support");

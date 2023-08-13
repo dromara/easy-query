@@ -35,11 +35,11 @@ public class SolonConnectionManager extends DefaultConnectionManager {
             if (super.isOpenTransaction()) {
                 return;
             }
+            super.closeEasyConnection(easyConnection);
         } else {
             if (super.isOpenTransaction()) {
                 throw new EasyQueryException("repeat transaction can't closed connection");
             }
         }
-        super.closeEasyConnection(easyConnection);
     }
 }
