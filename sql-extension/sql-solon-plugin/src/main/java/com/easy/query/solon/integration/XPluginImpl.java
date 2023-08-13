@@ -28,7 +28,10 @@ public class XPluginImpl implements Plugin {
         context.subWrapsOfType(DataSource.class, bw -> {
             DbManager.global().reg(bw);
         });
-
+        String def = context.cfg().getProperty(DbManager.TAG + "." + "def-data-source");
+        if(Utils.isNotBlank(def)){
+            DbManager.DEFAULT_BEAN_NAME=def;
+        }
 
 //        context.beanBuilderAdd(com.easy.query.solon.annotation.Db.class, (clz, wrap, anno) -> {
 //            builderAddDo(clz, wrap, anno.value());
@@ -36,7 +39,7 @@ public class XPluginImpl implements Plugin {
         context.beanInjectorAdd(com.easy.query.solon.annotation.Db.class, (varH, anno) -> {
             injectorAddDo(varH, anno.value());
         });
-        context.beanInterceptorAdd(EasyQueryTrack.class,new QueryTrackInterceptor(context));
+        context.beanInterceptorAdd(EasyQueryTrack.class,new QueryTrackInterceptor());
     }
 
 

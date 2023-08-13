@@ -4,7 +4,6 @@ import com.easy.query.core.annotation.EasyQueryTrack;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
-import org.noear.solon.Utils;
 import org.noear.solon.core.AopContext;
 import org.noear.solon.core.aspect.Interceptor;
 import org.noear.solon.core.aspect.Invocation;
@@ -17,17 +16,12 @@ import org.noear.solon.core.aspect.Invocation;
  */
 public class QueryTrackInterceptor implements Interceptor {
 
-    private final AopContext aopContext;
-
-    public QueryTrackInterceptor(AopContext aopContext){
-        this.aopContext = aopContext;
-    }
     @Override
     public Object doIntercept(Invocation inv) throws Throwable {
         EasyQueryTrack easyQueryTrack =inv.method().getAnnotation(EasyQueryTrack.class); //通过反射拿到注解对象
         if (easyQueryTrack!=null&&easyQueryTrack.enable()) {
 
-            EasyQueryClient easyQueryClient = getEasyQueryClient(easyQueryTrack.tag());
+            EasyQueryClient easyQueryClient = DbManager.global().getInstance(easyQueryTrack.tag(),EasyQueryClient.class);
             if(easyQueryClient==null){
                 throw new EasyQueryInvalidOperationException("EasyQueryTrack tag:"+easyQueryTrack.tag()+" cant get EasyQueryClient");
             }
@@ -42,11 +36,5 @@ public class QueryTrackInterceptor implements Interceptor {
         } else {
             return inv.invoke();
         }
-    }
-    private EasyQueryClient getEasyQueryClient(String beanName){
-        if(Utils.isBlank(beanName)){
-            return aopContext.getBean(beanName);
-        }
-        return aopContext.getBean(EasyQueryClient.class);
     }
 }

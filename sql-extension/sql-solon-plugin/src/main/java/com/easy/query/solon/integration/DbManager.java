@@ -1,19 +1,24 @@
 package com.easy.query.solon.integration;
 
 import com.easy.query.api.proxy.client.DefaultEasyProxyQuery;
+import com.easy.query.api.proxy.client.EasyProxyQuery;
 import com.easy.query.api4j.client.DefaultEasyQuery;
+import com.easy.query.api4j.client.EasyQuery;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.jdbc.conn.ConnectionManager;
 import com.easy.query.core.bootstrapper.DatabaseConfiguration;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.bootstrapper.EasyQueryBuilderConfiguration;
+import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.configuration.nameconversion.NameConversion;
 import com.easy.query.core.configuration.nameconversion.impl.DefaultNameConversion;
 import com.easy.query.core.configuration.nameconversion.impl.LowerCamelCaseNameConversion;
 import com.easy.query.core.configuration.nameconversion.impl.UnderlinedNameConversion;
 import com.easy.query.core.configuration.nameconversion.impl.UpperCamelCaseNameConversion;
 import com.easy.query.core.configuration.nameconversion.impl.UpperUnderlinedNameConversion;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.datasource.DataSourceUnitFactory;
+import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.dameng.config.DamengDatabaseConfiguration;
 import com.easy.query.h2.config.H2DatabaseConfiguration;
 import com.easy.query.kingbase.es.config.KingbaseESDatabaseConfiguration;
@@ -44,7 +49,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class DbManager {
     public static final String TAG = "easy-query";
     private static DbManager _global = new DbManager();
-//    private static String DEFAULT_BEAN_NAME;
+    public static String DEFAULT_BEAN_NAME = "db1";
 
     public static DbManager global() {
         return _global;
@@ -163,28 +168,30 @@ public class DbManager {
         get(bw);
     }
 
-//    public <T> T getInstance(String name,Class<T> clazz){
-//        String beanName = Utils.isBlank(name) ? DEFAULT_BEAN_NAME : name;
-//        EasyQueryHolder holder = dbMap.get(beanName);
-//        if(holder==null){
-//            return null;
-//        }
-//        if(EasyQuery.class.isAssignableFrom(clazz)){
-//            return EasyObjectUtil.typeCastNullable(holder.getEasyQuery());
-//        }
-//        if(EasyQueryClient.class.isAssignableFrom(clazz)){
-//            return EasyObjectUtil.typeCastNullable(holder.getEasyQueryClient());
-//        }
-//        if(EasyProxyQuery.class.isAssignableFrom(clazz)){
-//            return EasyObjectUtil.typeCastNullable(holder.getEasyProxyQuery());
-//        }
-//        if(QueryConfiguration.class.isAssignableFrom(clazz)){
-//            return EasyObjectUtil.typeCastNullable(holder.getEasyQueryClient().getRuntimeContext().getQueryConfiguration());
-//        }
-//        if(QueryRuntimeContext.class.isAssignableFrom(clazz)){
-//            return EasyObjectUtil.typeCastNullable(holder.getEasyQueryClient().getRuntimeContext());
-//        }
-//        return null;
-//    }
+    public  <T> T getInstance(String name,Class<T> clazz){
+        if(dbMap==null||dbMap.isEmpty()){
+            return null;
+        }
+        EasyQueryHolder holder =Utils.isNotBlank(name)? dbMap.get(name):dbMap.get(DEFAULT_BEAN_NAME);
+        if(holder==null){
+            return null;
+        }
+        if(EasyQuery.class.isAssignableFrom(clazz)){
+            return EasyObjectUtil.typeCastNullable(holder.getEasyQuery());
+        }
+        if(EasyProxyQuery.class.isAssignableFrom(clazz)){
+            return EasyObjectUtil.typeCastNullable(holder.getEasyProxyQuery());
+        }
+        if(EasyQueryClient.class.isAssignableFrom(clazz)){
+            return EasyObjectUtil.typeCastNullable(holder.getEasyQueryClient());
+        }
+        if(QueryConfiguration.class.isAssignableFrom(clazz)){
+            return EasyObjectUtil.typeCastNullable(holder.getEasyQueryClient().getRuntimeContext().getQueryConfiguration());
+        }
+        if(QueryRuntimeContext.class.isAssignableFrom(clazz)){
+            return EasyObjectUtil.typeCastNullable(holder.getEasyQueryClient().getRuntimeContext());
+        }
+        return null;
+    }
 }
 
