@@ -18,10 +18,14 @@ import com.easy.query.core.util.EasyStringUtil;
 import com.easy.query.test.dto.BlogEntityTest;
 import com.easy.query.test.dto.BlogQuery1Request;
 import com.easy.query.test.dto.BlogQuery2Request;
+import com.easy.query.test.dto.UserBookEncryptVO;
 import com.easy.query.test.dto.proxy.BlogEntityTestProxy;
 import com.easy.query.test.entity.BlogEntity;
+import com.easy.query.test.entity.SysUser;
+import com.easy.query.test.entity.SysUserEncrypt;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.TopicAuto;
+import com.easy.query.test.entity.UserBookEncrypt;
 import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import com.easy.query.test.entity.proxy.TopicAutoProxy;
 import com.easy.query.test.entity.proxy.TopicProxy;
@@ -31,6 +35,7 @@ import org.junit.Test;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -518,24 +523,24 @@ public class QueryTest3 extends BaseTest {
 //                .orderByAsc((c,t)->c.column(t.id()))
 //                .select((selector, t) -> selector.columns(t.id(), t.title()))
 //                .toSQL();
-        String sqlx= easyProxyQuery
+        String sqlx = easyProxyQuery
                 .queryable(TOPIC_TEST_PROXY)
                 .where((filter, t) -> filter.eq(t.id(), "123").like(t.title(), "xxx").and(
-                        x->x.eq(t.id(),"123").or().like(t.title(),11)
+                        x -> x.eq(t.id(), "123").or().like(t.title(), 11)
                 ))
                 .where((filter, t) -> filter.eq(t.id(), "123").like(t.title(), "xxx"))
-                .orderByAsc((c,t)->c.column(t.id()))
+                .orderByAsc((c, t) -> c.column(t.id()))
                 .select((selector, t) -> selector.columns(t.id(), t.title()))
                 .toSQL();
-        String sqly= easyProxyQuery
+        String sqly = easyProxyQuery
                 .queryable(TOPIC_TEST_PROXY)
                 .where((filter, t) -> filter.eq(t.id(), "123").like(t.title(), "xxx"))
                 .where((filter, t) -> filter.eq(t.id(), "123").like(t.title(), "xxx"))
-                .orderByAsc(t->t.id())
+                .orderByAsc(t -> t.id())
                 .select((selector, t) -> selector.columns(t.id(), t.title()))
                 .toSQL();
-        Assert.assertEquals("SELECT `id`,`title` FROM `t_topic` WHERE `id` = ? AND `title` LIKE ? AND (`id` = ? OR `title` LIKE ?) AND `id` = ? AND `title` LIKE ? ORDER BY `id` ASC",sqlx);
-        Assert.assertEquals("SELECT `id`,`title` FROM `t_topic` WHERE `id` = ? AND `title` LIKE ? AND `id` = ? AND `title` LIKE ? ORDER BY `id` ASC",sqly);
+        Assert.assertEquals("SELECT `id`,`title` FROM `t_topic` WHERE `id` = ? AND `title` LIKE ? AND (`id` = ? OR `title` LIKE ?) AND `id` = ? AND `title` LIKE ? ORDER BY `id` ASC", sqlx);
+        Assert.assertEquals("SELECT `id`,`title` FROM `t_topic` WHERE `id` = ? AND `title` LIKE ? AND `id` = ? AND `title` LIKE ? ORDER BY `id` ASC", sqly);
         TopicAuto topicAuto = easyProxyQuery.queryable(TopicAutoProxy.DEFAULT)
                 .where((filter, t) -> filter.eq(t.title(), "123"))
                 .firstOrNull();
@@ -864,13 +869,13 @@ public class QueryTest3 extends BaseTest {
         {
 
             String sql = easyQuery.queryable(Topic.class)
-                    .innerJoin(BlogEntity.class,(t,t1)->t.eq(t1,Topic::getId,BlogEntity::getId))
+                    .innerJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
                     .where(t -> t.like(Topic::getTitle, "someTitle"))
-                    .select(Topic.class, (t,t1) -> t
+                    .select(Topic.class, (t, t1) -> t
                             .sqlSegmentAs(
-                                    SQL4JFunc.caseWhenBuilder(t,t1)
-                                            .caseWhen((f,f1) -> f.eq(Topic::getTitle, "123").then(f1).le(BlogEntity::getStar,100), "111")
-                                            .caseWhen((f,f1) -> f.eq(Topic::getTitle, "456").then(f1).ge(BlogEntity::getStar,200), "222")
+                                    SQL4JFunc.caseWhenBuilder(t, t1)
+                                            .caseWhen((f, f1) -> f.eq(Topic::getTitle, "123").then(f1).le(BlogEntity::getStar, 100), "111")
+                                            .caseWhen((f, f1) -> f.eq(Topic::getTitle, "456").then(f1).ge(BlogEntity::getStar, 200), "222")
                                             .elseEnd("222")
                                     , Topic::getTitle)
                             .column(Topic::getId)
@@ -878,13 +883,13 @@ public class QueryTest3 extends BaseTest {
                     .toSQL();
             Assert.assertEquals("SELECT CASE WHEN t.`title` = ? AND t1.`star` <= ? THEN ? WHEN t.`title` = ? AND t1.`star` >= ? THEN ? ELSE ? END AS `title`,t.`id` FROM `t_topic` t INNER JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t.`title` LIKE ?", sql);
             List<Topic> list = easyQuery.queryable(Topic.class)
-                    .innerJoin(BlogEntity.class,(t,t1)->t.eq(t1,Topic::getId,BlogEntity::getId))
+                    .innerJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
                     .where(t -> t.like(Topic::getTitle, "someTitle"))
-                    .select(Topic.class, (t,t1) -> t
+                    .select(Topic.class, (t, t1) -> t
                             .sqlSegmentAs(
-                                    SQL4JFunc.caseWhenBuilder(t,t1)
-                                            .caseWhen((f,f1) -> f.eq(Topic::getTitle, "123").then(f1).le(BlogEntity::getStar,100), "111")
-                                            .caseWhen((f,f1) -> f.eq(Topic::getTitle, "456").then(f1).ge(BlogEntity::getStar,200), "222")
+                                    SQL4JFunc.caseWhenBuilder(t, t1)
+                                            .caseWhen((f, f1) -> f.eq(Topic::getTitle, "123").then(f1).le(BlogEntity::getStar, 100), "111")
+                                            .caseWhen((f, f1) -> f.eq(Topic::getTitle, "456").then(f1).ge(BlogEntity::getStar, 200), "222")
                                             .elseEnd("222")
                                     , Topic::getTitle)
                             .column(Topic::getId)
@@ -1155,14 +1160,14 @@ public class QueryTest3 extends BaseTest {
 
 
     @Test
-    public void dynamicWhere(){
+    public void dynamicWhere() {
         {
             BlogQuery1Request query = new BlogQuery1Request();
             query.setOrder(BigDecimal.valueOf(1));
             query.setContent("标题");
             query.setPublishTimeBegin(LocalDateTime.now());
             query.setPublishTimeEnd(LocalDateTime.now());
-            query.setStatusList(Arrays.asList(1,2));
+            query.setStatusList(Arrays.asList(1, 2));
 
             Queryable<BlogEntity> queryable = easyQuery.queryable(BlogEntity.class)
                     .where(o -> o
@@ -1177,16 +1182,16 @@ public class QueryTest3 extends BaseTest {
                     );
 
             String sql = queryable.cloneQueryable().toSQL();
-            Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `content` LIKE ? AND `order` = ? AND `publish_time` >= ? AND `publish_time` <= ? AND `status` IN (?,?)",sql);
+            Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `content` LIKE ? AND `order` = ? AND `publish_time` >= ? AND `publish_time` <= ? AND `status` IN (?,?)", sql);
             List<BlogEntity> list = queryable.cloneQueryable().toList();
-            Assert.assertEquals(0,list.size());
+            Assert.assertEquals(0, list.size());
         }
         {
             BlogQuery1Request query = new BlogQuery1Request();
             query.setContent("标题");
             query.setPublishTimeBegin(LocalDateTime.now());
             query.setPublishTimeEnd(LocalDateTime.now());
-            query.setStatusList(Arrays.asList(1,2));
+            query.setStatusList(Arrays.asList(1, 2));
 
             Queryable<BlogEntity> queryable = easyQuery.queryable(BlogEntity.class)
                     .where(o -> o
@@ -1201,48 +1206,49 @@ public class QueryTest3 extends BaseTest {
                     );
 
             String sql = queryable.cloneQueryable().toSQL();
-            Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `content` LIKE ? AND `publish_time` >= ? AND `publish_time` <= ? AND `status` IN (?,?)",sql);
+            Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `content` LIKE ? AND `publish_time` >= ? AND `publish_time` <= ? AND `status` IN (?,?)", sql);
             List<BlogEntity> list = queryable.cloneQueryable().toList();
-            Assert.assertEquals(0,list.size());
+            Assert.assertEquals(0, list.size());
         }
     }
+
     @Test
-    public void dynamicWhere1(){
+    public void dynamicWhere1() {
         {
             BlogQuery2Request query = new BlogQuery2Request();
             query.setOrder(BigDecimal.valueOf(1));
             query.setContent("标题");
             query.setPublishTimeBegin(LocalDateTime.now());
             query.setPublishTimeEnd(LocalDateTime.now());
-            query.setStatusList(Arrays.asList(1,2));
+            query.setStatusList(Arrays.asList(1, 2));
 
             Queryable<BlogEntity> queryable = easyQuery.queryable(BlogEntity.class)
                     .whereObject(query);
 
             String sql = queryable.cloneQueryable().toSQL();
-            Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `content` LIKE ? AND `publish_time` >= ? AND `publish_time` <= ? AND `order` = ? AND `status` IN (?,?)",sql);
+            Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `content` LIKE ? AND `publish_time` >= ? AND `publish_time` <= ? AND `order` = ? AND `status` IN (?,?)", sql);
             List<BlogEntity> list = queryable.cloneQueryable().toList();
-            Assert.assertEquals(0,list.size());
+            Assert.assertEquals(0, list.size());
         }
         {
             BlogQuery2Request query = new BlogQuery2Request();
             query.setContent("标题");
             query.setPublishTimeEnd(LocalDateTime.now());
-            query.setStatusList(Arrays.asList(1,2));
+            query.setStatusList(Arrays.asList(1, 2));
 
             Queryable<BlogEntity> queryable = easyQuery.queryable(BlogEntity.class)
                     .whereObject(query);
 
             String sql = queryable.cloneQueryable().toSQL();
-            Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `content` LIKE ? AND `publish_time` <= ? AND `status` IN (?,?)",sql);
+            Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `content` LIKE ? AND `publish_time` <= ? AND `status` IN (?,?)", sql);
             List<BlogEntity> list = queryable.cloneQueryable().toList();
-            Assert.assertEquals(0,list.size());
+            Assert.assertEquals(0, list.size());
         }
     }
 
     @Test
     public void query9() {
-        try(JdbcStreamResult<BlogEntity> streamResult = easyQuery.queryable(BlogEntity.class).where(o -> o.le(BlogEntity::getStar, 100)).orderByAsc(o -> o.column(BlogEntity::getCreateTime)).toStreamResult()){
+        try (JdbcStreamResult<BlogEntity> streamResult = easyQuery.queryable(BlogEntity.class).where(o -> o.le(BlogEntity::getStar, 100)).orderByAsc(o -> o.column(BlogEntity::getCreateTime)).toStreamResult()) {
 
             LocalDateTime begin = LocalDateTime.of(2020, 1, 1, 1, 1, 1);
             int i = 0;
@@ -1271,7 +1277,84 @@ public class QueryTest3 extends BaseTest {
     }
 
     @Test
-    public void queryToList1(){
+    public void queryToList1() {
         List<Topic> list = easyQuery.queryable(Topic.class).toList();
+    }
+
+    @Test
+    public void userBookTest() {
+        easyQuery.deletable(SysUserEncrypt.class)
+                .whereByIds(Arrays.asList("1", "2"))
+                .disableLogicDelete().executeRows();
+        easyQuery.deletable(UserBookEncrypt.class)
+                .whereByIds(Arrays.asList("1", "2", "3", "4"))
+                .disableLogicDelete().executeRows();
+        {
+
+            SysUserEncrypt sysUser = new SysUserEncrypt();
+            sysUser.setId("1");
+            sysUser.setName("用户1");
+            sysUser.setPhone("12345678901");
+            sysUser.setAddress("浙江省绍兴市越城区城市广场1234号");
+            sysUser.setCreateTime(LocalDateTime.now());
+            ArrayList<UserBookEncrypt> userBooks = new ArrayList<>();
+            UserBookEncrypt userBook = new UserBookEncrypt();
+            userBook.setId("1");
+            userBook.setUserId("1");
+            userBook.setName("语文");
+            userBooks.add(userBook);
+            UserBookEncrypt userBook1 = new UserBookEncrypt();
+            userBook1.setId("2");
+            userBook1.setUserId("1");
+            userBook1.setName("数学");
+            userBooks.add(userBook1);
+            easyQuery.insertable(sysUser).executeRows();
+            easyQuery.insertable(userBooks).executeRows();
+        }
+        {
+
+            SysUserEncrypt sysUser = new SysUserEncrypt();
+            sysUser.setId("2");
+            sysUser.setName("用户2");
+            sysUser.setPhone("19012345678");
+            sysUser.setAddress("浙江省杭州市上城区武林广场1234号");
+            sysUser.setCreateTime(LocalDateTime.now());
+            ArrayList<UserBookEncrypt> userBooks = new ArrayList<>();
+            UserBookEncrypt userBook = new UserBookEncrypt();
+            userBook.setId("3");
+            userBook.setUserId("2");
+            userBook.setName("语文");
+            userBooks.add(userBook);
+            UserBookEncrypt userBook1 = new UserBookEncrypt();
+            userBook1.setId("4");
+            userBook1.setUserId("2");
+            userBook1.setName("英语");
+            userBooks.add(userBook1);
+            easyQuery.insertable(sysUser).executeRows();
+            easyQuery.insertable(userBooks).executeRows();
+        }
+
+
+        List<UserBookEncryptVO> userBooks = easyQuery.queryable(UserBookEncrypt.class)
+                .leftJoin(SysUserEncrypt.class, (t, t1) -> t.eq(t1, UserBookEncrypt::getUserId, SysUserEncrypt::getId))
+                .where((t, t1) -> t1.like(SysUserEncrypt::getAddress, "越城区"))
+                .select(UserBookEncryptVO.class, (t, t1) -> t.columnAll()
+                        .then(t1)
+                        .columnAs(SysUserEncrypt::getName, UserBookEncryptVO::getUserName)
+                        .columnAs(SysUserEncrypt::getPhone, UserBookEncryptVO::getUserPhone)
+                        .columnAs(SysUserEncrypt::getAddress, UserBookEncryptVO::getUserAddress)
+                )
+                .toList();
+
+        for (UserBookEncryptVO userBook : userBooks) {
+                Assert.assertEquals("12345678901",userBook.getUserPhone());
+                Assert.assertEquals("浙江省绍兴市越城区城市广场1234号",userBook.getUserAddress());
+        }
+        easyQuery.deletable(SysUserEncrypt.class)
+                .whereByIds(Arrays.asList("1", "2"))
+                .disableLogicDelete().executeRows();
+        easyQuery.deletable(UserBookEncrypt.class)
+                .whereByIds(Arrays.asList("1", "2", "3", "4"))
+                .disableLogicDelete().executeRows();
     }
 }

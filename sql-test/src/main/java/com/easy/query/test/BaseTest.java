@@ -16,6 +16,7 @@ import com.easy.query.core.sharding.router.manager.DataSourceRouteManager;
 import com.easy.query.core.sharding.router.manager.TableRouteManager;
 import com.easy.query.mysql.config.MySQLDatabaseConfiguration;
 import com.easy.query.test.conversion.EnumConverter;
+import com.easy.query.test.conversion.JavaEncryptionStrategy;
 import com.easy.query.test.conversion.JsonConverter;
 import com.easy.query.test.conversion.MySQLAesEncryptColumnValueSQLConverter;
 import com.easy.query.test.encryption.Base64EncryptionStrategy;
@@ -147,6 +148,7 @@ public abstract class BaseTest {
         configuration.applyEncryptionStrategy(new DefaultAesEasyEncryptionStrategy());
         configuration.applyEncryptionStrategy(new Base64EncryptionStrategy());
         configuration.applyEncryptionStrategy(new MyEncryptionStrategy());
+        configuration.applyEncryptionStrategy(new JavaEncryptionStrategy());
         configuration.applyLogicDeleteStrategy(new MyLogicDelStrategy());
         configuration.applyInterceptor(new MyEntityInterceptor());
         configuration.applyInterceptor(new Topic1Interceptor());

@@ -24,7 +24,7 @@ public class OrderBySQLNativeSegmentImpl extends SQLNativeSegmentImpl implements
 
     @Override
     public ColumnSegment cloneSQLColumnSegment() {
-        return new OrderBySQLNativeSegmentImpl(runtimeContext, sqlSegment,sqlConstExpressionContext,asc);
+        return new OrderBySQLNativeSegmentImpl(runtimeContext, sqlSegment, sqlNativeExpressionContext,asc);
     }
 
     @Override

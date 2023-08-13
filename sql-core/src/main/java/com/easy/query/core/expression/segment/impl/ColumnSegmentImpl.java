@@ -66,10 +66,14 @@ public class ColumnSegmentImpl implements ColumnSegment {
         if(columnValueSQLConverter==null){
             return EasySQLExpressionUtil.getSQLOwnerColumnMetadata(runtimeContext, table, columnMetadata, toSQLContext);
         }else{
-            DefaultSQLPropertyConverter sqlPropertyConverter = new DefaultSQLPropertyConverter(table, runtimeContext);
+            DefaultSQLPropertyConverter sqlPropertyConverter = new DefaultSQLPropertyConverter(table, runtimeContext,ignoreAlias());
             columnValueSQLConverter.columnConvert(table,columnMetadata,sqlPropertyConverter,runtimeContext);
             return sqlPropertyConverter.toSQL(toSQLContext);
         }
+    }
+
+    protected boolean ignoreAlias(){
+        return alias != null;
     }
 
     @Override

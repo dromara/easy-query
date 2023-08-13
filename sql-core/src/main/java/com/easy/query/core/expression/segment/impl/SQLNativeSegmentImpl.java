@@ -15,23 +15,23 @@ import com.easy.query.core.metadata.ColumnMetadata;
 public class SQLNativeSegmentImpl extends AbstractSQLNativeSegmentImpl implements SQLNativeSegment {
     protected final QueryRuntimeContext runtimeContext;
     protected final String sqlSegment;
-    protected final SQLNativeExpressionContext sqlConstExpressionContext;
+    protected final SQLNativeExpressionContext sqlNativeExpressionContext;
 
-    public SQLNativeSegmentImpl(QueryRuntimeContext runtimeContext, String sqlSegment, SQLNativeExpressionContext sqlConstExpressionContext) {
-        super(runtimeContext,sqlSegment,sqlConstExpressionContext);
+    public SQLNativeSegmentImpl(QueryRuntimeContext runtimeContext, String sqlSegment, SQLNativeExpressionContext sqlNativeExpressionContext) {
+        super(runtimeContext,sqlSegment,sqlNativeExpressionContext);
         this.runtimeContext = runtimeContext;
         this.sqlSegment = sqlSegment;
-        this.sqlConstExpressionContext = sqlConstExpressionContext;
+        this.sqlNativeExpressionContext = sqlNativeExpressionContext;
     }
 
     @Override
     public String getAlias() {
-        return sqlConstExpressionContext.getAlias();
+        return sqlNativeExpressionContext.getAlias();
     }
 
     @Override
     public SQLEntitySegment cloneSQLColumnSegment() {
-        return new SQLNativeSegmentImpl(runtimeContext, sqlSegment, sqlConstExpressionContext);
+        return new SQLNativeSegmentImpl(runtimeContext, sqlSegment, sqlNativeExpressionContext);
     }
 
     public ColumnMetadata getColumnMetadata(){

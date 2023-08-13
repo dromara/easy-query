@@ -17,23 +17,33 @@ import java.util.Objects;
  *
  * @author xuejiaming
  */
-public class DefaultSQLPropertyConverter implements SQLPropertyConverter{
+public class DefaultSQLPropertyConverter implements SQLPropertyConverter {
     private final TableAvailable table;
     private final QueryRuntimeContext runtimeContext;
+    private final boolean ignoreAlias;
     private SQLNativeSegment columnSegment;
 
-    public DefaultSQLPropertyConverter(TableAvailable table, QueryRuntimeContext runtimeContext){
+    public DefaultSQLPropertyConverter(TableAvailable table, QueryRuntimeContext runtimeContext) {
+        this(table, runtimeContext, false);
+    }
+
+    public DefaultSQLPropertyConverter(TableAvailable table, QueryRuntimeContext runtimeContext, boolean ignoreAlias) {
 
         this.table = table;
         this.runtimeContext = runtimeContext;
+        this.ignoreAlias = ignoreAlias;
     }
+
     @Override
     public void sqlNativeSegment(String sqlSegment, SQLExpression1<SQLNativePropertyExpressionContext> contextConsume) {
-        Objects.requireNonNull(sqlSegment,"sqlSegment can not be null");
-        Objects.requireNonNull(contextConsume,"contextConsume can not be null");
+        Objects.requireNonNull(sqlSegment, "sqlSegment can not be null");
+        Objects.requireNonNull(contextConsume, "contextConsume can not be null");
         SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl();
         SQLNativePropertyExpressionContextImpl sqlNativePropertyExpressionContext = new SQLNativePropertyExpressionContextImpl(table, sqlNativeExpressionContext);
         contextConsume.apply(sqlNativePropertyExpressionContext);
+        if (ignoreAlias) {
+            sqlNativeExpressionContext.setAlias(null);
+        }
         this.columnSegment = runtimeContext.getSQLSegmentFactory().createSQLNativeSegment(runtimeContext, sqlSegment, sqlNativeExpressionContext);
     }
 
@@ -44,7 +54,7 @@ public class DefaultSQLPropertyConverter implements SQLPropertyConverter{
 
     @Override
     public String toSQL(ToSQLContext toSQLContext) {
-        Objects.requireNonNull(columnSegment,"columnSegment can not be null");
+        Objects.requireNonNull(columnSegment, "columnSegment can not be null");
         return columnSegment.toSQL(toSQLContext);
     }
 }

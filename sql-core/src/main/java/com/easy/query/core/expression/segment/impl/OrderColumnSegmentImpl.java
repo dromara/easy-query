@@ -40,4 +40,8 @@ public class OrderColumnSegmentImpl extends ColumnSegmentImpl implements OrderBy
     public boolean isAsc() {
         return asc;
     }
+    @Override
+    protected boolean ignoreAlias() {
+        return true;
+    }
 }
