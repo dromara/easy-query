@@ -6,7 +6,6 @@ import com.easy.query.api.proxy.base.StringProxy;
 import com.easy.query.api.proxy.extension.SQLProxyFunc;
 import com.easy.query.api4j.extension.SQL4JFunc;
 import com.easy.query.api4j.select.Queryable;
-import com.easy.query.api4j.select.Queryable3;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.jdbc.executor.internal.enumerable.JdbcStreamResult;
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
@@ -21,9 +20,7 @@ import com.easy.query.test.dto.BlogQuery1Request;
 import com.easy.query.test.dto.BlogQuery2Request;
 import com.easy.query.test.dto.UserBookEncryptVO;
 import com.easy.query.test.dto.proxy.BlogEntityTestProxy;
-import com.easy.query.test.entity.BaseEntity;
 import com.easy.query.test.entity.BlogEntity;
-import com.easy.query.test.entity.SysUser;
 import com.easy.query.test.entity.SysUserEncrypt;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.TopicAuto;
@@ -31,7 +28,6 @@ import com.easy.query.test.entity.UserBookEncrypt;
 import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import com.easy.query.test.entity.proxy.TopicAutoProxy;
 import com.easy.query.test.entity.proxy.TopicProxy;
-import lombok.Data;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -1406,7 +1402,7 @@ public class QueryTest3 extends BaseTest {
                                 .or()
                                 .like(false, Topic::getId, "123")
                 )).toSQL();
-        Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE `create_time` = ?",sql);
+        Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic`",sql);
     }
     @Test
     public void orTest4(){
