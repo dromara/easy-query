@@ -83,6 +83,7 @@ public class DefaultTrackContext implements TrackContext {
         if (trackKey == null) {
             throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + ": current entity cant get track key,primary maybe null");
         }
+        //其实不涉及高并发这边应该采用HashMap即可
         ConcurrentHashMap<String, EntityState> entityStateMap = EasyMapUtil.computeIfAbsent(trackEntityMap, entityClass, o -> new ConcurrentHashMap<>());
         EntityState originalEntityState = entityStateMap.get(trackKey);
         if (originalEntityState != null) {
@@ -124,7 +125,7 @@ public class DefaultTrackContext implements TrackContext {
             throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + ": current entity cant get track key,primary maybe null");
         }
         entityStateMap.remove(trackKey);
-        return  true;
+        return true;
     }
 
 

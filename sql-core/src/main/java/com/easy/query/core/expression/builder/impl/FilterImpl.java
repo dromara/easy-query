@@ -55,12 +55,16 @@ public class FilterImpl implements Filter {
     }
 
     protected void nextAnd() {
-        this.rootPredicateSegment.addPredicateSegment(nextPredicateSegment);
+        if(nextPredicateSegment.isNotEmpty()){
+            this.rootPredicateSegment.addPredicateSegment(nextPredicateSegment);
+        }
         this.nextPredicateSegment = new AndPredicateSegment();
     }
 
     protected void nextOr() {
-        this.rootPredicateSegment.addPredicateSegment(nextPredicateSegment);
+        if(nextPredicateSegment.isNotEmpty()){
+            this.rootPredicateSegment.addPredicateSegment(nextPredicateSegment);
+        }
         this.nextPredicateSegment = new OrPredicateSegment();
     }
 

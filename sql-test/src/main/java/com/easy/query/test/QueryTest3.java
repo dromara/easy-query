@@ -6,6 +6,7 @@ import com.easy.query.api.proxy.base.StringProxy;
 import com.easy.query.api.proxy.extension.SQLProxyFunc;
 import com.easy.query.api4j.extension.SQL4JFunc;
 import com.easy.query.api4j.select.Queryable;
+import com.easy.query.api4j.select.Queryable3;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.jdbc.executor.internal.enumerable.JdbcStreamResult;
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
@@ -20,6 +21,7 @@ import com.easy.query.test.dto.BlogQuery1Request;
 import com.easy.query.test.dto.BlogQuery2Request;
 import com.easy.query.test.dto.UserBookEncryptVO;
 import com.easy.query.test.dto.proxy.BlogEntityTestProxy;
+import com.easy.query.test.entity.BaseEntity;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.SysUser;
 import com.easy.query.test.entity.SysUserEncrypt;
@@ -29,6 +31,7 @@ import com.easy.query.test.entity.UserBookEncrypt;
 import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import com.easy.query.test.entity.proxy.TopicAutoProxy;
 import com.easy.query.test.entity.proxy.TopicProxy;
+import lombok.Data;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -50,6 +53,7 @@ import static com.easy.query.test.entity.base.TopicTestProxy.TOPIC_TEST_PROXY;
  * @author xuejiaming
  */
 public class QueryTest3 extends BaseTest {
+
 
     @Test
     public void query124() {
@@ -1357,4 +1361,76 @@ public class QueryTest3 extends BaseTest {
                 .whereByIds(Arrays.asList("1", "2", "3", "4"))
                 .disableLogicDelete().executeRows();
     }
+
+    @Test
+    public void orTest(){
+        String sql = easyQuery.queryable(Topic.class)
+                .where(o -> o.and(
+                        x -> x.like(false, Topic::getTitle, "123")
+                                .or()
+                                .like(false, Topic::getId, "123")
+                )).toSQL();
+        Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic`",sql);
+    }
+    @Test
+    public void orTest1(){
+        String sql = easyQuery.queryable(Topic.class)
+                .where(o -> o.eq(Topic::getCreateTime,LocalDateTime.now()).and(
+                        x -> x.like(false, Topic::getTitle, "123")
+                                .or()
+                                .like(false, Topic::getId, "123")
+                                .or()
+                                .like(false, Topic::getId, "123")
+                )).toSQL();
+        Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE `create_time` = ?",sql);
+    }
+    @Test
+    public void orTest2(){
+        String sql = easyQuery.queryable(Topic.class)
+                .where(o -> o.eq(Topic::getCreateTime,LocalDateTime.now()).and(
+                        x -> x.or().like(false, Topic::getTitle, "123")
+                                .or()
+                                .like(false, Topic::getId, "123")
+                                .or()
+                                .like(false, Topic::getId, "123")
+                )).toSQL();
+        Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE `create_time` = ?",sql);
+    }
+    @Test
+    public void orTest3(){
+        String sql = easyQuery.queryable(Topic.class)
+                .where(o -> o.eq(false,Topic::getCreateTime,LocalDateTime.now()).and(
+                        x -> x.or().like(false, Topic::getTitle, "123")
+                                .or()
+                                .like(false, Topic::getId, "123")
+                                .or()
+                                .like(false, Topic::getId, "123")
+                )).toSQL();
+        Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE `create_time` = ?",sql);
+    }
+    @Test
+    public void orTest4(){
+        String sql = easyQuery.queryable(BlogEntity.class)
+                .where(o -> o.eq(false,BlogEntity::getCreateTime,LocalDateTime.now()).and(
+                        x -> x.or().like(false, BlogEntity::getTitle, "123")
+                                .or()
+                                .like(false, BlogEntity::getId, "123")
+                                .or()
+                                .like(false, BlogEntity::getId, "123")
+                )).toSQL();
+        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ?",sql);
+    }
+    @Test
+    public void orTest5(){
+        EasyPageResult<BlogEntity> pageResult = easyQuery.queryable(BlogEntity.class)
+                .where(o -> o.eq(false, BlogEntity::getCreateTime, LocalDateTime.now()).and(
+                        x -> x.or().like(false, BlogEntity::getTitle, "123")
+                                .or()
+                                .like(false, BlogEntity::getId, "123")
+                                .or()
+                                .like(false, BlogEntity::getId, "123")
+                )).toPageResult(1, 10);
+        Assert.assertEquals(10,pageResult.getData().size());
+    }
+
 }

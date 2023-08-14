@@ -7,6 +7,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
 
 import java.lang.reflect.Method;
@@ -19,6 +20,11 @@ import java.lang.reflect.Method;
  */
 @Aspect
 @Configuration
+@ConditionalOnProperty(
+        prefix = "easy-query",
+        value = {"enable"},
+        matchIfMissing = true
+)
 public class EasyQueryTrackAopConfiguration {
     private final EasyQueryClient easyQueryClient;
     public EasyQueryTrackAopConfiguration(EasyQueryClient easyQueryClient){
