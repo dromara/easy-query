@@ -167,6 +167,9 @@ public class EntityMetadata {
             if (Modifier.isStatic(field.getModifiers()) || ignoreProperties.contains(property)) {
                 continue;
             }
+            if(columnIndex>= propertyDescriptorFinder.getPropertySize()){
+                break;
+            }
             //未找到bean属性就直接忽略
             PropertyDescriptor propertyDescriptor = propertyDescriptorFinder.find(property);
             if (propertyDescriptor == null) {

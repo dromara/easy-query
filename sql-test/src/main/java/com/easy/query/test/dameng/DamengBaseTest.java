@@ -52,6 +52,7 @@ public abstract class DamengBaseTest {
                 .setDefaultDataSource(dataSource)
                 .optionConfigure(op -> {
                     op.setDeleteThrowError(false);
+//                    op.setPrintSql(false);
                 })
                 .useDatabaseConfigure(new DamengDatabaseConfiguration())
                 .replaceService(NameConversion.class, UpperUnderlinedNameConversion.class)

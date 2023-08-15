@@ -81,4 +81,22 @@ public class DamengQueryTest extends DamengBaseTest{
             Assert.assertEquals(msSQLMyTopic.getStars(),(Integer)(i+120) );
         }
     }
+
+//    @Test
+//    public void batchInsert(){
+//        ArrayList<DamengMyTopic> damengMyTopics = new ArrayList<>();
+//        for (int i = 0; i < 10000; i++) {
+//            DamengMyTopic damengMyTopic = new DamengMyTopic();
+//            damengMyTopic.setId(UUID.randomUUID().toString().replaceAll("-",""));
+//            damengMyTopic.setStars(i);
+//            damengMyTopic.setTitle("111");
+//            damengMyTopic.setCreateTime(LocalDateTime.now());
+//            damengMyTopics.add(damengMyTopic);
+//        }
+//        long begin = System.currentTimeMillis();
+//        long l = easyQuery.insertable(damengMyTopics).batch().executeRows();
+//        long end = System.currentTimeMillis();
+//        String s = "插入:" + damengMyTopics.size() + "条,用时:" + (end - begin) + "(ms)";
+//        System.out.println(s);
+//    }
 }

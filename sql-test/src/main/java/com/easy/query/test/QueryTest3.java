@@ -7,11 +7,14 @@ import com.easy.query.api.proxy.extension.SQLProxyFunc;
 import com.easy.query.api4j.extension.SQL4JFunc;
 import com.easy.query.api4j.select.Queryable;
 import com.easy.query.core.api.pagination.EasyPageResult;
+import com.easy.query.core.basic.jdbc.executor.ResultColumnMetadata;
 import com.easy.query.core.basic.jdbc.executor.internal.enumerable.JdbcStreamResult;
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.extension.client.SQLClientFunc;
+import com.easy.query.core.metadata.EntityMetadata;
+import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasyStringUtil;
@@ -28,6 +31,7 @@ import com.easy.query.test.entity.UserBookEncrypt;
 import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import com.easy.query.test.entity.proxy.TopicAutoProxy;
 import com.easy.query.test.entity.proxy.TopicProxy;
+import com.easy.query.test.entity.solon.EqUser;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -1427,6 +1431,13 @@ public class QueryTest3 extends BaseTest {
                                 .like(false, BlogEntity::getId, "123")
                 )).toPageResult(1, 10);
         Assert.assertEquals(10,pageResult.getData().size());
+    }
+    @Test
+    public void extendsUserTest(){
+        EntityMetadataManager entityMetadataManager = easyQuery.getRuntimeContext().getEntityMetadataManager();
+        EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(EqUser.class);
+        ResultColumnMetadata[] resultColumnMetadata = entityMetadata.getResultColumnMetadata();
+        Assert.assertEquals(20,resultColumnMetadata.length);
     }
 
 }
