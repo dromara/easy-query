@@ -200,7 +200,7 @@ entity use `@EntityProxy` annotation then build project apt will auto generate j
 ```xml
 
 <properties>
-  <easy-query.version>1.1.10</easy-query.version>
+  <easy-query.version>last-version</easy-query.version>
 </properties>
         <!--  not required support proxy 非必须  提供了代理模式支持apt模式以非lambda形式的强类型sql语法 -->
 <dependency>
