@@ -16,11 +16,9 @@ public class PropertyDescriptorFinder {
     private final boolean mapFind;
     private PropertyDescriptor[] propertyDescriptors;
     private Map<String, PropertyDescriptor> propertyDescriptorMap;
-    private final int propertySize;
 
     public PropertyDescriptorFinder(PropertyDescriptor[] propertyDescriptors) {
         this.mapFind = propertyDescriptors.length > 5;
-        propertySize=propertyDescriptors.length;
         if (mapFind) {
             this.propertyDescriptorMap = new HashMap<>();
             for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
@@ -46,8 +44,5 @@ public class PropertyDescriptorFinder {
             }
         }
         return null;
-    }
-    public int getPropertySize(){
-        return propertySize;
     }
 }

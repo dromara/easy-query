@@ -547,7 +547,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         if (condition) {
             if (object != null) {
 
-                List<Field> allFields = EasyClassUtil.getAllFields(object.getClass());
+                Collection<Field> allFields = EasyClassUtil.getAllFields(object.getClass());
 
                 for (Field field : allFields) {
                     boolean accessible = field.isAccessible();

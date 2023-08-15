@@ -19,10 +19,10 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -175,15 +175,22 @@ public class EasyClassUtil {
         }
     }
 
-    public static List<Field> getAllFields(Class<?> clazz) {
-        ArrayList<Field> fields = new ArrayList<>();
+    public static Collection<Field> getAllFields(Class<?> clazz) {
+        LinkedHashMap<String, Field> fields = getAllFields0(clazz);
+        return fields.values();
+    }
+    private static LinkedHashMap<String,Field> getAllFields0(Class<?> clazz) {
+        LinkedHashMap<String,Field> fields = new LinkedHashMap<>();
         // 递归获取父类的所有Field
         Class<?> superClass = clazz.getSuperclass();
         if (superClass != null) {
-            fields.addAll(getAllFields(superClass));
+            LinkedHashMap<String, Field> allFields0 = getAllFields0(superClass);
+            fields.putAll(allFields0);
         }
         // 获取当前类的所有Field
-        fields.addAll(Arrays.asList(clazz.getDeclaredFields()));
+        for (Field declaredField : clazz.getDeclaredFields()) {
+            fields.put(declaredField.getName(),declaredField);
+        }
         return fields;
     }
 

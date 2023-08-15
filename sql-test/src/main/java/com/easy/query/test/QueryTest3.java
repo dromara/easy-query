@@ -40,6 +40,7 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -1438,6 +1439,11 @@ public class QueryTest3 extends BaseTest {
         EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(EqUser.class);
         ResultColumnMetadata[] resultColumnMetadata = entityMetadata.getResultColumnMetadata();
         Assert.assertEquals(20,resultColumnMetadata.length);
+        Collection<String> keyProperties = entityMetadata.getKeyProperties();
+        Assert.assertEquals(1,keyProperties.size());
+        String first = EasyCollectionUtil.first(keyProperties);
+        Assert.assertEquals("id",first);
+
     }
 
 }

@@ -152,7 +152,7 @@ public class EntityMetadata {
         }
         HashSet<String> ignoreProperties = table != null ? new HashSet<>(Arrays.asList(table.ignoreProperties())) : new HashSet<>();
 
-        List<Field> allFields = EasyClassUtil.getAllFields(this.entityClass);
+        Collection<Field> allFields = EasyClassUtil.getAllFields(this.entityClass);
         PropertyDescriptor[] ps = getPropertyDescriptor();
         PropertyDescriptorFinder propertyDescriptorFinder = new PropertyDescriptorFinder(ps);
         int versionCount = 0;
@@ -167,15 +167,11 @@ public class EntityMetadata {
             if (Modifier.isStatic(field.getModifiers()) || ignoreProperties.contains(property)) {
                 continue;
             }
-            if(columnIndex>= propertyDescriptorFinder.getPropertySize()){
-                break;
-            }
             //未找到bean属性就直接忽略
             PropertyDescriptor propertyDescriptor = propertyDescriptorFinder.find(property);
             if (propertyDescriptor == null) {
                 continue;
             }
-
             ColumnIgnore columnIgnore = field.getAnnotation(ColumnIgnore.class);
             if (columnIgnore != null) {
                 continue;
