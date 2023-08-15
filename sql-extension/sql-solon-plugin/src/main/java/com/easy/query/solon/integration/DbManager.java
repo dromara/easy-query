@@ -25,6 +25,7 @@ import com.easy.query.kingbase.es.config.KingbaseESDatabaseConfiguration;
 import com.easy.query.mssql.config.MsSQLDatabaseConfiguration;
 import com.easy.query.mssql.config.MsSQLRowNumberDatabaseConfiguration;
 import com.easy.query.mysql.config.MySQLDatabaseConfiguration;
+import com.easy.query.oracle.config.OracleDatabaseConfiguration;
 import com.easy.query.pgsql.config.PgSQLDatabaseConfiguration;
 import com.easy.query.solon.integration.conn.SolonConnectionManager;
 import com.easy.query.solon.integration.conn.SolonDataSourceUnitFactory;
@@ -161,6 +162,7 @@ public class DbManager {
             case DAMENG:return new DamengDatabaseConfiguration();
             case KINGBASE_ES:return new KingbaseESDatabaseConfiguration();
             case MSSQL_ROW_NUMBER:return new MsSQLRowNumberDatabaseConfiguration();
+            case ORACLE:return new OracleDatabaseConfiguration();
         }
         return null;
     }

@@ -23,5 +23,6 @@ public enum DatabaseEnum {
     H2,
     DAMENG,
     KINGBASE_ES,
-    MSSQL_ROW_NUMBER
+    MSSQL_ROW_NUMBER,
+    ORACLE
 }

@@ -70,6 +70,12 @@
         </dependency>
         <dependency>
             <groupId>com.easy-query</groupId>
+            <artifactId>sql-oracle</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.easy-query</groupId>
             <artifactId>sql-api4j</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>

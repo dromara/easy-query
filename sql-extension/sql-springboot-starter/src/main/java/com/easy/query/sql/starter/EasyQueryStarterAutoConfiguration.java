@@ -39,6 +39,7 @@ import com.easy.query.kingbase.es.config.KingbaseESDatabaseConfiguration;
 import com.easy.query.mssql.config.MsSQLDatabaseConfiguration;
 import com.easy.query.mssql.config.MsSQLRowNumberDatabaseConfiguration;
 import com.easy.query.mysql.config.MySQLDatabaseConfiguration;
+import com.easy.query.oracle.config.OracleDatabaseConfiguration;
 import com.easy.query.pgsql.config.PgSQLDatabaseConfiguration;
 import com.easy.query.sql.starter.config.EasyQueryInitializeOption;
 import com.easy.query.sql.starter.config.EasyQueryProperties;
@@ -123,6 +124,12 @@ public class EasyQueryStarterAutoConfiguration {
     @ConditionalOnMissingBean
     public DatabaseConfiguration mssqlRowNumberDatabaseConfiguration() {
         return new MsSQLRowNumberDatabaseConfiguration();
+    }
+    @Bean
+    @ConditionalOnProperty(name = "easy-query.database", havingValue = "oracle")
+    @ConditionalOnMissingBean
+    public DatabaseConfiguration oracleDatabaseConfiguration() {
+        return new OracleDatabaseConfiguration();
     }
 
     @Bean
