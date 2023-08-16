@@ -88,6 +88,11 @@ public class EasyEmptyClientEntityDeletable<T> implements ClientEntityDeletable<
     }
 
     @Override
+    public ClientEntityDeletable<T> asTableLink(Function<String, String> linkAs) {
+        return this;
+    }
+
+    @Override
     public ClientEntityDeletable<T> noVersionError() {
         return this;
     }

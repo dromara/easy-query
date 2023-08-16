@@ -32,12 +32,12 @@ import java.util.List;
  * @Description: 文件说明
  * @Date: 2023/2/6 23:43
  */
-public abstract class AbstractClientQueryable2<T1, T2>  extends AbstractOverrideClientQueryable2<T1,T2> implements ClientQueryable2<T1, T2> {
+public abstract class AbstractClientQueryable2<T1, T2> extends AbstractOverrideClientQueryable2<T1, T2> implements ClientQueryable2<T1, T2> {
 
     protected SQLExpressionProvider<T2> sqlExpressionProvider2;
 
     public AbstractClientQueryable2(Class<T1> t1Class, Class<T2> t2Class, EntityQueryExpressionBuilder sqlEntityExpression) {
-        super(t1Class,t2Class, sqlEntityExpression);
+        super(t1Class, t2Class, sqlEntityExpression);
     }
 
     @Override
@@ -188,7 +188,6 @@ public abstract class AbstractClientQueryable2<T1, T2>  extends AbstractOverride
         }
         return this;
     }
-
 
 
     @Override

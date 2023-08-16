@@ -76,6 +76,11 @@ public class EasyEmptyClientEntityUpdatable<T> implements ClientEntityUpdatable<
     }
 
     @Override
+    public ClientEntityUpdatable<T> asTableLink(Function<String, String> linkAs) {
+        return this;
+    }
+
+    @Override
     public ClientEntityUpdatable<T> setColumns(boolean condition, SQLExpression1<ColumnUpdateSetSelector<T>> columnSelectorExpression) {
         return this;
     }

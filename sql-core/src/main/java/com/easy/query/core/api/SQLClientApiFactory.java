@@ -18,6 +18,7 @@ import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 
 import java.util.Collection;
+import java.util.function.Function;
 
 /**
  * create time 2023/6/1 17:24

@@ -16,6 +16,7 @@ import com.easy.query.core.expression.sql.builder.impl.AnonymousUnionQueryExpres
 import com.easy.query.core.metadata.EntityMetadata;
 
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * @Description: 文件说明

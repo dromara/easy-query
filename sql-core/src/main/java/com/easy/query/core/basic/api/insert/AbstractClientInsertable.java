@@ -111,6 +111,12 @@ public abstract class AbstractClientInsertable<T> implements ClientInsertable<T>
     }
 
     @Override
+    public ClientInsertable<T> asTableLink(Function<String, String> linkAs) {
+        entityInsertExpressionBuilder.getRecentlyTable().setTableLinkAs(linkAs);
+        return this;
+    }
+
+    @Override
     public ClientInsertable<T> noInterceptor() {
         entityInsertExpressionBuilder.getExpressionContext().noInterceptor();
         return this;

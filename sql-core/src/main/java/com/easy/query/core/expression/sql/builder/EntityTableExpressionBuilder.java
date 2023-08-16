@@ -20,6 +20,7 @@ public interface EntityTableExpressionBuilder extends TableExpressionBuilder {
     void setTableNameAs(Function<String, String> tableNameAs);
 
     void setSchemaAs(Function<String, String> schemaAs);
+    void setTableLinkAs(Function<String, String> linkAs);
 
     void asAlias(String alias);
 

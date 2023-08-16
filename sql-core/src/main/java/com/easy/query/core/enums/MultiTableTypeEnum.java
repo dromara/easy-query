@@ -9,10 +9,10 @@ package com.easy.query.core.enums;
  */
 public enum MultiTableTypeEnum {
     NONE(""),
-    FROM(" FROM "),
-    LEFT_JOIN(" LEFT JOIN "),
-    INNER_JOIN(" INNER JOIN "),
-    RIGHT_JOIN(" RIGHT JOIN ");
+    FROM("FROM"),
+    LEFT_JOIN("LEFT JOIN"),
+    INNER_JOIN("INNER JOIN"),
+    RIGHT_JOIN("RIGHT JOIN");
 
     private final String appendSQL;
 

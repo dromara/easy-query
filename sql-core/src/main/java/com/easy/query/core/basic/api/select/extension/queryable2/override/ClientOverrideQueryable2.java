@@ -211,4 +211,16 @@ public interface ClientOverrideQueryable2<T1, T2> extends ClientQueryable<T1> {
 
     @Override
     ClientQueryable2<T1, T2> asAlias(String alias);
+
+
+    @Override
+    ClientQueryable2<T1, T2> asTableLink(Function<String, String> linkAs);
+
+    /**
+     *
+     * @param linkAs 别名 FROM | LEFT JOIN | RIGHT JOIN
+     * @return
+     */
+    @Override
+    ClientQueryable2<T1, T2> asTableLink(String linkAs);
 }

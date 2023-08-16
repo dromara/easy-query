@@ -178,6 +178,12 @@ public abstract class AbstractClientEntityUpdatable<T> extends AbstractSQLExecut
     }
 
     @Override
+    public ClientEntityUpdatable<T> asTableLink(Function<String, String> linkAs) {
+        entityUpdateExpressionBuilder.getRecentlyTable().setTableLinkAs(linkAs);
+        return this;
+    }
+
+    @Override
     public ClientEntityUpdatable<T> setSQLStrategy(boolean condition, SQLExecuteStrategyEnum sqlStrategy) {
         if (condition) {
             entityUpdateExpressionBuilder.getExpressionContext().useSQLStrategy(sqlStrategy);

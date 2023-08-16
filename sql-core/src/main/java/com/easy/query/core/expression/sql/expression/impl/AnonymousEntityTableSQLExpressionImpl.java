@@ -35,6 +35,7 @@ public class AnonymousEntityTableSQLExpressionImpl extends TableSQLExpressionImp
     public void setSchemaAs(Function<String, String> schemaAs) {
     }
 
+
     @Override
     public String getTableName() {
         return null;
@@ -46,7 +47,7 @@ public class AnonymousEntityTableSQLExpressionImpl extends TableSQLExpressionImp
 
         StringBuilder sql = new StringBuilder();
 
-        sql.append(getSelectTableSource()).append("(").append(easyQuerySQLExpression.toSQL(toSQLContext)).append(")");
+        sql.append(" ").append(getSelectTableSource()).append(" (").append(easyQuerySQLExpression.toSQL(toSQLContext)).append(")");
         String tableAlias = EasySQLExpressionUtil.getTableAlias(toSQLContext, entityTable);
         if (tableAlias != null) {
             sql.append(" ").append(tableAlias);
@@ -67,8 +68,7 @@ public class AnonymousEntityTableSQLExpressionImpl extends TableSQLExpressionImp
             PredicateSegment predicateSegment = on.clonePredicateSegment();
             tableSQLExpression.setOn(predicateSegment);
         }
-        tableSQLExpression.setTableNameAs(tableNameAs);
-        tableSQLExpression.setSchemaAs(schemaAs);
+        tableSQLExpression.setLinkAs(linkAs);
         return tableSQLExpression;
     }
 }

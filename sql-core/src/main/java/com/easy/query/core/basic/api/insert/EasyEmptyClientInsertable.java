@@ -61,6 +61,11 @@ public class EasyEmptyClientInsertable<T> implements ClientInsertable<T> {
     }
 
     @Override
+    public ClientInsertable<T> asTableLink(Function<String, String> linkAs) {
+        return this;
+    }
+
+    @Override
     public long executeRows(boolean fillAutoIncrement) {
         return 0;
     }

@@ -63,8 +63,7 @@ public class AnonymousTableExpressionBuilder extends TableExpressionBuilder impl
         if (on != null) {
             on.copyTo(anonymousTableExpressionBuilder.getOn());
         }
-//        anonymousTableExpressionBuilder.setTableNameAs(this.tableNameAs);
-//        anonymousTableExpressionBuilder.setSchemaAs(this.schemaAs);
+        anonymousTableExpressionBuilder.setTableLinkAs(this.linkAs);
         return anonymousTableExpressionBuilder;
     }
 
@@ -77,6 +76,7 @@ public class AnonymousTableExpressionBuilder extends TableExpressionBuilder impl
         }
         anonymousTableSQLExpression.setTableNameAs(tableNameAs);
         anonymousTableSQLExpression.setSchemaAs(schemaAs);
+        anonymousTableSQLExpression.setLinkAs(linkAs);
         return anonymousTableSQLExpression;
     }
 }

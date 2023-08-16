@@ -1025,6 +1025,12 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     }
 
     @Override
+    public ClientQueryable<T1> asTableLink(Function<String, String> linkAs) {
+        entityQueryExpressionBuilder.getRecentlyTable().setTableLinkAs(linkAs);
+        return this;
+    }
+
+    @Override
     public ClientQueryable<T1> useShardingConfigure(int maxShardingQueryLimit, ConnectionModeEnum connectionMode) {
         entityQueryExpressionBuilder.getExpressionContext().setMaxShardingQueryLimit(maxShardingQueryLimit);
         entityQueryExpressionBuilder.getExpressionContext().setConnectionMode(connectionMode);

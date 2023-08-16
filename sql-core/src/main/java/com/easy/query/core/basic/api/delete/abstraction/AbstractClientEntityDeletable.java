@@ -94,6 +94,11 @@ public abstract class AbstractClientEntityDeletable<T> extends AbstractSQLExecut
     }
 
     @Override
+    public ClientEntityDeletable<T> asTableLink(Function<String, String> linkAs) {
+        return null;
+    }
+
+    @Override
     public ClientEntityDeletable<T> noVersionError() {
         entityDeleteExpressionBuilder.getExpressionContext().getBehavior().addBehavior(EasyBehaviorEnum.NO_VERSION_ERROR);
         return this;

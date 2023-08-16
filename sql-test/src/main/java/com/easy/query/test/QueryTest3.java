@@ -60,7 +60,7 @@ public class QueryTest3 extends BaseTest {
     public void query124() {
         String toSql = easyQuery
                 .queryable(Topic.class)
-                .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId)).asAlias()
                 .leftJoin(BlogEntity.class, (t, t1, t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
                 .leftJoin(BlogEntity.class, (t, t1, t2, t3) -> t.eq(t3, Topic::getId, BlogEntity::getId))
                 .where(o -> o.eq(Topic::getId, "3"))

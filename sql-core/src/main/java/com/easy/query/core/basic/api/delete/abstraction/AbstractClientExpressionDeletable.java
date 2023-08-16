@@ -158,6 +158,12 @@ public abstract class AbstractClientExpressionDeletable<T> extends AbstractSQLEx
     }
 
     @Override
+    public ClientExpressionDeletable<T> asTableLink(Function<String, String> linkAs) {
+        entityDeleteExpressionBuilder.getRecentlyTable().setTableLinkAs(linkAs);
+        return this;
+    }
+
+    @Override
     public String toSQL(ToSQLContext toSQLContext) {
         return toSQLWithParam(toSQLContext);
     }

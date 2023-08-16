@@ -51,4 +51,17 @@ public interface TableReNameable<TChain> {
      * @return
      */
     TChain asAlias(String alias);
+
+
+    /**
+     *
+     * @param linkAs 别名 FROM | LEFT JOIN | RIGHT JOIN
+     * @return
+     */
+    default TChain asTableLink(String linkAs){
+        return asTableLink(o->linkAs);
+    }
+
+    TChain asTableLink(Function<String, String> linkAs);
+
 }

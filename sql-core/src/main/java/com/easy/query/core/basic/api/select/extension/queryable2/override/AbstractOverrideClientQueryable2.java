@@ -195,4 +195,16 @@ public abstract class AbstractOverrideClientQueryable2<T1,T2> extends AbstractCl
         super.asAlias(alias);
         return getClientQueryable2();
     }
+
+    @Override
+    public ClientQueryable2<T1, T2> asTableLink(Function<String, String> linkAs) {
+        super.asTableLink(linkAs);
+        return getClientQueryable2();
+    }
+
+    @Override
+    public ClientQueryable2<T1, T2> asTableLink(String linkAs) {
+        super.asTableLink(linkAs);
+        return getClientQueryable2();
+    }
 }

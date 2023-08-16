@@ -18,6 +18,8 @@ public interface EntityTableSQLExpression extends SQLExpression {
     void setTableNameAs(Function<String, String> tableNameAs);
 
     void setSchemaAs(Function<String, String> schemaAs);
+    void setLinkAs(Function<String, String> linkAs);
+
 
     boolean tableNameIsAs();
     PredicateSegment getOn();

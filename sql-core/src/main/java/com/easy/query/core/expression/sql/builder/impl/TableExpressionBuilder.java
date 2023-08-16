@@ -28,6 +28,7 @@ public class TableExpressionBuilder implements EntityTableExpressionBuilder {
     protected PredicateSegment on;
     protected Function<String, String> tableNameAs;
     protected Function<String, String> schemaAs;
+    protected Function<String, String> linkAs;
 
     public TableExpressionBuilder(TableAvailable entityTable, MultiTableTypeEnum multiTableType, QueryRuntimeContext runtimeContext) {
         this.entityTable = entityTable;
@@ -53,6 +54,11 @@ public class TableExpressionBuilder implements EntityTableExpressionBuilder {
     @Override
     public void setSchemaAs(Function<String, String> schemaAs) {
         this.schemaAs = schemaAs;
+    }
+
+    @Override
+    public void setTableLinkAs(Function<String, String> linkAs) {
+        this.linkAs = linkAs;
     }
 
     @Override

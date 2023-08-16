@@ -32,6 +32,7 @@ public class TableSQLExpressionImpl implements EntityTableSQLExpression {
     protected PredicateSegment on;
     protected Function<String, String> tableNameAs;
     protected Function<String, String> schemaAs;
+    protected Function<String, String> linkAs;
 
     public TableSQLExpressionImpl(TableAvailable entityTable, MultiTableTypeEnum multiTableType, QueryRuntimeContext runtimeContext) {
         this.entityTable = entityTable;
@@ -66,11 +67,19 @@ public class TableSQLExpressionImpl implements EntityTableSQLExpression {
     }
 
     @Override
+    public void setLinkAs(Function<String, String> linkAs) {
+        this.linkAs = linkAs;
+    }
+
+    @Override
     public boolean tableNameIsAs() {
         return this.tableNameAs != null;
     }
 
     public String getSelectTableSource() {
+        if (linkAs != null) {
+            return linkAs.apply(multiTableType.getAppendSQL());
+        }
         return multiTableType.getAppendSQL();
     }
 
@@ -109,11 +118,11 @@ public class TableSQLExpressionImpl implements EntityTableSQLExpression {
     @Override
     public String toSQL(ToSQLContext toSQLContext) {
         EasySQLExpressionUtil.expressionInvokeRoot(toSQLContext);
-        EasySQLExpressionUtil.tableSQLExpressionRewrite(toSQLContext,this);
+        EasySQLExpressionUtil.tableSQLExpressionRewrite(toSQLContext, this);
         //如果当前对象没有映射到表那么直接抛错
         StringBuilder sql = new StringBuilder();
 
-        sql.append(getSelectTableSource()).append(getTableName());
+        sql.append(" ").append(getSelectTableSource()).append(" ").append(getTableName());
         String tableAlias = EasySQLExpressionUtil.getTableAlias(toSQLContext, entityTable);
         if (tableAlias != null) {
             sql.append(" ").append(tableAlias);
@@ -126,6 +135,7 @@ public class TableSQLExpressionImpl implements EntityTableSQLExpression {
     public PredicateSegment getOn() {
         return on;
     }
+
     @Override
     public void setOn(PredicateSegment predicateSegment) {
         this.on = predicateSegment;
@@ -133,11 +143,14 @@ public class TableSQLExpressionImpl implements EntityTableSQLExpression {
 
     @Override
     public EntityTableSQLExpression cloneSQLExpression() {
-        EntityTableSQLExpression tableSQLExpression = runtimeContext.getExpressionFactory().createEntityTableSQLExpression(entityTable, multiTableType,runtimeContext);
-        if(EasySQLSegmentUtil.isNotEmpty(on)){
+        EntityTableSQLExpression tableSQLExpression = runtimeContext.getExpressionFactory().createEntityTableSQLExpression(entityTable, multiTableType, runtimeContext);
+        if (EasySQLSegmentUtil.isNotEmpty(on)) {
             PredicateSegment predicateSegment = on.clonePredicateSegment();
             tableSQLExpression.setOn(predicateSegment);
         }
+        tableSQLExpression.setTableNameAs(tableNameAs);
+        tableSQLExpression.setSchemaAs(schemaAs);
+        tableSQLExpression.setLinkAs(linkAs);
         return tableSQLExpression;
     }
 }

@@ -99,8 +99,8 @@ public abstract class AbstractClientExpressionUpdatable<T> extends AbstractSQLEx
 
     @Override
     public ClientExpressionUpdatable<T> setSQLSegment(boolean condition, String property, String sqlSegment, SQLExpression1<SQLNativePropertyExpressionContext> contextConsume) {
-        if(condition){
-            columnSetter.setSQLSegment(property,sqlSegment,contextConsume);
+        if (condition) {
+            columnSetter.setSQLSegment(property, sqlSegment, contextConsume);
         }
         return this;
     }
@@ -164,6 +164,12 @@ public abstract class AbstractClientExpressionUpdatable<T> extends AbstractSQLEx
     @Override
     public ClientExpressionUpdatable<T> asAlias(String alias) {
         entityUpdateExpressionBuilder.getRecentlyTable().asAlias(alias);
+        return this;
+    }
+
+    @Override
+    public ClientExpressionUpdatable<T> asTableLink(Function<String, String> linkAs) {
+        entityUpdateExpressionBuilder.getRecentlyTable().setTableLinkAs(linkAs);
         return this;
     }
 
