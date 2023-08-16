@@ -19,7 +19,7 @@ import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression3;
 import com.easy.query.core.expression.lambda.SQLExpression4;
-import com.easy.query.core.expression.lambda.SQLFuncExpression3;
+import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 
 import java.math.BigDecimal;
 import java.util.function.Function;
@@ -272,13 +272,15 @@ public interface KtQueryable3<T1, T2, T3> extends KtQueryable<T1> {
 
     //region include
 
-    default <TProperty> KtQueryable3<T1, T2, T3> include(SQLFuncExpression3<SQLKtNavigateInclude<T1>, SQLKtNavigateInclude<T2>, SQLKtNavigateInclude<T3>, KtQueryable<TProperty>> navigateIncludeSQLExpression) {
+    @Override
+    default <TProperty> KtQueryable3<T1, T2, T3> include(SQLFuncExpression1<SQLKtNavigateInclude<T1>,  KtQueryable<TProperty>> navigateIncludeSQLExpression) {
         return include(true, navigateIncludeSQLExpression);
     }
 
-    default <TProperty> KtQueryable3<T1, T2, T3> include(boolean condition, SQLFuncExpression3<SQLKtNavigateInclude<T1>, SQLKtNavigateInclude<T2>, SQLKtNavigateInclude<T3>, KtQueryable<TProperty>> navigateIncludeSQLExpression) {
-        getClientQueryable3().include(condition, (include1, include2, include3) -> {
-            return navigateIncludeSQLExpression.apply(new SQLKtNavigateIncludeImpl<>(include1), new SQLKtNavigateIncludeImpl<>(include2), new SQLKtNavigateIncludeImpl<>(include3)).getClientQueryable();
+    @Override
+    default <TProperty> KtQueryable3<T1, T2, T3> include(boolean condition, SQLFuncExpression1<SQLKtNavigateInclude<T1>,  KtQueryable<TProperty>> navigateIncludeSQLExpression) {
+        getClientQueryable3().include(condition, (include1) -> {
+            return navigateIncludeSQLExpression.apply(new SQLKtNavigateIncludeImpl<>(include1)).getClientQueryable();
         });
         return this;
     }

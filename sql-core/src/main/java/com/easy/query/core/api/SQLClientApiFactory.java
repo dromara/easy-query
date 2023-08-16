@@ -8,6 +8,7 @@ import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.select.ClientQueryable2;
 import com.easy.query.core.basic.api.select.ClientQueryable3;
 import com.easy.query.core.basic.api.select.ClientQueryable4;
+import com.easy.query.core.basic.api.select.ClientQueryable5;
 import com.easy.query.core.basic.api.update.ClientEntityUpdatable;
 import com.easy.query.core.basic.api.update.ClientExpressionUpdatable;
 import com.easy.query.core.context.QueryRuntimeContext;
@@ -52,6 +53,10 @@ public interface SQLClientApiFactory {
     <T1, T2, T3, T4> ClientQueryable4<T1, T2, T3, T4> createQueryable4(Class<T1> t1Class, Class<T2> t2Class, Class<T3> t3Class, Class<T4> t4Class, MultiTableTypeEnum selectTableInfoType, EntityQueryExpressionBuilder entityQueryExpressionBuilder);
 
     <T1, T2, T3, T4> ClientQueryable4<T1, T2, T3, T4> createQueryable4(Class<T1> t1Class, Class<T2> t2Class, Class<T3> t3Class, ClientQueryable<T4> joinQueryable, MultiTableTypeEnum selectTableInfoType, EntityQueryExpressionBuilder entityQueryExpressionBuilder);
+
+    <T1, T2, T3, T4,T5> ClientQueryable5<T1, T2, T3, T4,T5> createQueryable5(Class<T1> t1Class, Class<T2> t2Class, Class<T3> t3Class, Class<T4> t4Class,Class<T5> t5Class, MultiTableTypeEnum selectTableInfoType, EntityQueryExpressionBuilder entityQueryExpressionBuilder);
+
+    <T1, T2, T3, T4,T5> ClientQueryable5<T1, T2, T3, T4,T5> createQueryable5(Class<T1> t1Class, Class<T2> t2Class, Class<T3> t3Class, Class<T4> t4Class, ClientQueryable<T5> joinQueryable, MultiTableTypeEnum selectTableInfoType, EntityQueryExpressionBuilder entityQueryExpressionBuilder);
 
 
     <T> ClientInsertable<T> createInsertable(Class<T> clazz, QueryRuntimeContext runtimeContext);

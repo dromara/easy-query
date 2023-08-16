@@ -4,6 +4,7 @@ import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.select.ClientQueryable2;
 import com.easy.query.core.basic.api.select.ClientQueryable3;
 import com.easy.query.core.basic.api.select.ClientQueryable4;
+import com.easy.query.core.basic.api.select.ClientQueryable5;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.executor.internal.common.SQLRewriteUnit;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
@@ -16,6 +17,7 @@ import com.easy.query.core.exception.EasyQueryNoPrimaryKeyException;
 import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.lambda.SQLExpression3;
 import com.easy.query.core.expression.lambda.SQLExpression4;
+import com.easy.query.core.expression.lambda.SQLExpression5;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnSelector;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
@@ -103,6 +105,7 @@ public class EasySQLExpressionUtil {
 
     /**
      * 后续是否要判断include
+     *
      * @param sqlEntityExpression
      * @return
      */
@@ -135,6 +138,16 @@ public class EasySQLExpressionUtil {
         WherePredicate<T3> sqlOnPredicate3 = queryable.getSQLExpressionProvider3().getOnPredicate();
         WherePredicate<T4> sqlOnPredicate4 = queryable.getSQLExpressionProvider4().getOnPredicate();
         on.apply(sqlOnPredicate1, sqlOnPredicate2, sqlOnPredicate3, sqlOnPredicate4);
+        return queryable;
+    }
+
+    public static <T1, T2, T3, T4, T5> ClientQueryable5<T1, T2, T3, T4, T5> executeJoinOn(ClientQueryable5<T1, T2, T3, T4,T5> queryable, SQLExpression5<WherePredicate<T1>, WherePredicate<T2>, WherePredicate<T3>, WherePredicate<T4>, WherePredicate<T5>> on) {
+        WherePredicate<T1> sqlOnPredicate1 = queryable.getSQLExpressionProvider1().getOnPredicate();
+        WherePredicate<T2> sqlOnPredicate2 = queryable.getSQLExpressionProvider2().getOnPredicate();
+        WherePredicate<T3> sqlOnPredicate3 = queryable.getSQLExpressionProvider3().getOnPredicate();
+        WherePredicate<T4> sqlOnPredicate4 = queryable.getSQLExpressionProvider4().getOnPredicate();
+        WherePredicate<T5> sqlOnPredicate5 = queryable.getSQLExpressionProvider5().getOnPredicate();
+        on.apply(sqlOnPredicate1, sqlOnPredicate2, sqlOnPredicate3, sqlOnPredicate4, sqlOnPredicate5);
         return queryable;
     }
 
@@ -203,14 +216,15 @@ public class EasySQLExpressionUtil {
 
     public static String getSQLOwnerColumnByProperty(QueryRuntimeContext runtimeContext, TableAvailable table, String propertyName, ToSQLContext toSQLContext) {
         String columnName = table.getColumnName(propertyName);
-        return getSQLOwnerColumn(runtimeContext,table,columnName,toSQLContext);
+        return getSQLOwnerColumn(runtimeContext, table, columnName, toSQLContext);
     }
 
     public static String getSQLOwnerColumnMetadata(QueryRuntimeContext runtimeContext, TableAvailable table, ColumnMetadata columnMetadata, ToSQLContext toSQLContext) {
-        return getSQLOwnerColumn(runtimeContext,table,columnMetadata.getName(),toSQLContext);
+        return getSQLOwnerColumn(runtimeContext, table, columnMetadata.getName(), toSQLContext);
     }
+
     public static String getSQLOwnerColumn(QueryRuntimeContext runtimeContext, TableAvailable table, String columnName, ToSQLContext toSQLContext) {
-        if(columnName==null){
+        if (columnName == null) {
             throw new IllegalArgumentException("column name cannot be null");
         }
         String tableAlias = getTableAlias(toSQLContext, table);
@@ -242,7 +256,7 @@ public class EasySQLExpressionUtil {
         EasyQueryOption easyQueryOption = executorContext.getEasyQueryOption();
         ExecuteMethodEnum executeMethod = executorContext.getExecuteMethod();
         if (Objects.equals(ExecuteMethodEnum.INSERT, executeMethod)) {
-            return  entitySize >= easyQueryOption.getInsertBatchThreshold();
+            return entitySize >= easyQueryOption.getInsertBatchThreshold();
         }
         if (Objects.equals(ExecuteMethodEnum.UPDATE, executeMethod)) {
             return entitySize >= easyQueryOption.getUpdateBatchThreshold();

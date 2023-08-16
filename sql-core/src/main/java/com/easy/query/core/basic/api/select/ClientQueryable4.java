@@ -3,6 +3,7 @@ package com.easy.query.core.basic.api.select;
 import com.easy.query.core.basic.api.select.extension.queryable4.SQLAggregate4Extension;
 import com.easy.query.core.basic.api.select.extension.queryable4.SQLGroup4Extension;
 import com.easy.query.core.basic.api.select.extension.queryable4.SQLHaving4Extension;
+import com.easy.query.core.basic.api.select.extension.queryable4.SQLJoin4Extension;
 import com.easy.query.core.basic.api.select.extension.queryable4.SQLOrderBy4Extension;
 import com.easy.query.core.basic.api.select.extension.queryable4.SQLSelect4Extension;
 import com.easy.query.core.basic.api.select.extension.queryable4.SQLWhere4Extension;
@@ -17,7 +18,7 @@ import com.easy.query.core.basic.api.select.provider.SQLExpressionProvider;
  */
 public interface ClientQueryable4<T1, T2, T3, T4> extends ClientOverrideQueryable4<T1,T2,T3,T4>,
         SQLAggregate4Extension<T1, T2, T3, T4>,
-//        SQLJoin4Extension<T1, T2, T3, T4>,
+        SQLJoin4Extension<T1, T2, T3, T4>,
         SQLWhere4Extension<T1, T2, T3, T4>,
         SQLSelect4Extension<T1, T2, T3, T4>,
         SQLGroup4Extension<T1, T2, T3, T4>,
