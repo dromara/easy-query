@@ -15,6 +15,6 @@ public class LowerCamelCaseNameConversion implements NameConversion {
         if(name==null){
             return null;
         }
-        return EasyStringUtil.toUpperCaseFirstOne(name);
+        return EasyStringUtil.toLowerCaseFirstOne(name);
     }
 }

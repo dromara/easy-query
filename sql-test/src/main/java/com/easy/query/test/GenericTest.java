@@ -5,6 +5,10 @@ import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.common.LinkedCaseInsensitiveMap;
 import com.easy.query.core.common.bean.FastBean;
 import com.easy.query.core.configuration.QueryConfiguration;
+import com.easy.query.core.configuration.nameconversion.impl.LowerCamelCaseNameConversion;
+import com.easy.query.core.configuration.nameconversion.impl.UnderlinedNameConversion;
+import com.easy.query.core.configuration.nameconversion.impl.UpperCamelCaseNameConversion;
+import com.easy.query.core.configuration.nameconversion.impl.UpperUnderlinedNameConversion;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
@@ -789,6 +793,68 @@ public class GenericTest extends BaseTest {
             Assert.assertEquals("easy encryption strategy:Base64EncryptionStrategy,repeat",message);
         }
     }
+
+
+    @Test
+    public void nameConversionTest1(){
+        {
+
+            LowerCamelCaseNameConversion lowerCamelCaseNameConversion = new LowerCamelCaseNameConversion();
+            {
+                String nameConversion = "NameConversion";
+                String convert = lowerCamelCaseNameConversion.convert(nameConversion);
+                Assert.assertEquals("nameConversion",convert);
+            }
+            {
+                String nameConversion = "nameConversion";
+                String convert = lowerCamelCaseNameConversion.convert(nameConversion);
+                Assert.assertEquals("nameConversion",convert);
+            }
+        }
+        {
+
+            UpperCamelCaseNameConversion upperCamelCaseNameConversion = new UpperCamelCaseNameConversion();
+            {
+                String nameConversion = "NameConversion";
+                String convert = upperCamelCaseNameConversion.convert(nameConversion);
+                Assert.assertEquals("NameConversion",convert);
+            }
+            {
+                String nameConversion = "nameConversion";
+                String convert = upperCamelCaseNameConversion.convert(nameConversion);
+                Assert.assertEquals("NameConversion",convert);
+            }
+        }
+        {
+
+            UnderlinedNameConversion underlinedNameConversion = new UnderlinedNameConversion();
+            {
+                String nameConversion = "NameConversion";
+                String convert = underlinedNameConversion.convert(nameConversion);
+                Assert.assertEquals("name_conversion",convert);
+            }
+            {
+                String nameConversion = "nameConversion";
+                String convert = underlinedNameConversion.convert(nameConversion);
+                Assert.assertEquals("name_conversion",convert);
+            }
+        }
+        {
+
+            UpperUnderlinedNameConversion upperUnderlinedNameConversion = new UpperUnderlinedNameConversion();
+            {
+                String nameConversion = "NameConversion";
+                String convert = upperUnderlinedNameConversion.convert(nameConversion);
+                Assert.assertEquals("NAME_CONVERSION",convert);
+            }
+            {
+                String nameConversion = "nameConversion";
+                String convert = upperUnderlinedNameConversion.convert(nameConversion);
+                Assert.assertEquals("NAME_CONVERSION",convert);
+            }
+        }
+    }
+
 
 
 }

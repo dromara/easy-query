@@ -44,8 +44,8 @@ public class CaseWhenSQLColumnSegment implements CloneableSQLSegment {
         StringBuilder sql = new StringBuilder();
         sql.append("CASE ");
         for (Tuple2<SQLExpression1<Filter>, Object> when : whens) {
-            SQLExpression1<Filter> filterExpression = when.getT1();
-            Object thenValue = when.getT2();
+            SQLExpression1<Filter> filterExpression = when.t();
+            Object thenValue = when.t1();
             AndPredicateSegment resolve = resolve(filterExpression);
             String caseWhenPredicateSql = resolve.toSQL(toSQLContext);
             sql.append("WHEN ").append(caseWhenPredicateSql).append(" THEN ? ");

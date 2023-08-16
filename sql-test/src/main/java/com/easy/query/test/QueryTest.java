@@ -1055,6 +1055,12 @@ public class QueryTest extends BaseTest {
 
     @Test
     public void query52_1_1() {
+        Topic topic = easyQueryClient
+                .queryable(Topic.class)
+                .leftJoin(Topic.class,(t,t1)->t.eq(t1,"id","id"))
+                .whereById(true,"1")
+                .where((a,b)->a.eq("id","id"))
+                .firstOrNull();
         ClientQueryable<Topic> q1 = easyQueryClient
                 .queryable(Topic.class)
                 .where(o -> o.isNotNull("id"));

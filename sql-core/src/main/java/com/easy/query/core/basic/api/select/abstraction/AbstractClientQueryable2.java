@@ -3,35 +3,28 @@ package com.easy.query.core.basic.api.select.abstraction;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.select.ClientQueryable2;
 import com.easy.query.core.basic.api.select.ClientQueryable3;
+import com.easy.query.core.basic.api.select.extension.queryable2.override.AbstractOverrideClientQueryable2;
 import com.easy.query.core.basic.api.select.provider.SQLExpressionProvider;
 import com.easy.query.core.enums.MultiTableTypeEnum;
-import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.func.ColumnFunction;
-import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.lambda.SQLExpression3;
-import com.easy.query.core.expression.lambda.SQLFuncExpression1;
-import com.easy.query.core.expression.lambda.SQLFuncExpression2;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnGroupSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnOrderSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnResultSelector;
-import com.easy.query.core.expression.parser.core.base.NavigateInclude;
 import com.easy.query.core.expression.parser.core.base.WhereAggregatePredicate;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.segment.SQLEntitySegment;
 import com.easy.query.core.expression.segment.builder.ProjectSQLBuilderSegmentImpl;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
-import com.easy.query.core.metadata.IncludeNavigateParams;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 
 import java.math.BigDecimal;
-import java.util.Collection;
 import java.util.List;
-import java.util.function.Function;
 
 /**
  * @author xuejiaming
@@ -39,14 +32,22 @@ import java.util.function.Function;
  * @Description: 文件说明
  * @Date: 2023/2/6 23:43
  */
-public abstract class AbstractClientQueryable2<T1, T2> extends AbstractClientQueryable<T1> implements ClientQueryable2<T1, T2> {
+public abstract class AbstractClientQueryable2<T1, T2>  extends AbstractOverrideClientQueryable2<T1,T2> implements ClientQueryable2<T1, T2> {
 
-    protected final Class<T2> t2Class;
     protected SQLExpressionProvider<T2> sqlExpressionProvider2;
 
     public AbstractClientQueryable2(Class<T1> t1Class, Class<T2> t2Class, EntityQueryExpressionBuilder sqlEntityExpression) {
-        super(t1Class, sqlEntityExpression);
-        this.t2Class = t2Class;
+        super(t1Class,t2Class, sqlEntityExpression);
+    }
+
+    @Override
+    public ClientQueryable<T1> getClientQueryable() {
+        return this;
+    }
+
+    @Override
+    public ClientQueryable2<T1, T2> getClientQueryable2() {
+        return this;
     }
 
     @Override
@@ -89,30 +90,6 @@ public abstract class AbstractClientQueryable2<T1, T2> extends AbstractClientQue
         entityQueryExpressionBuilder.getExpressionContext().extract(selectAllT2Queryable.getSQLEntityExpressionBuilder().getExpressionContext());
         ClientQueryable3<T1, T2, T3> queryable3 = entityQueryExpressionBuilder.getRuntimeContext().getSQLClientApiFactory().createQueryable3(t1Class, t2Class, selectAllT2Queryable, MultiTableTypeEnum.INNER_JOIN, entityQueryExpressionBuilder);
         return EasySQLExpressionUtil.executeJoinOn(queryable3, on);
-    }
-
-    @Override
-    public ClientQueryable2<T1, T2> whereById(boolean condition, Object id) {
-        super.whereById(condition, id);
-        return this;
-    }
-
-    @Override
-    public <TProperty> ClientQueryable2<T1, T2> whereByIds(boolean condition, Collection<TProperty> ids) {
-        super.whereByIds(condition, ids);
-        return this;
-    }
-
-    @Override
-    public ClientQueryable2<T1, T2> whereObject(boolean condition, Object object) {
-        super.whereObject(condition, object);
-        return this;
-    }
-
-    @Override
-    public ClientQueryable2<T1, T2> where(boolean condition, SQLExpression1<WherePredicate<T1>> whereExpression) {
-        super.where(condition, whereExpression);
-        return this;
     }
 
     @Override
@@ -192,12 +169,6 @@ public abstract class AbstractClientQueryable2<T1, T2> extends AbstractClientQue
     }
 
     @Override
-    public ClientQueryable2<T1, T2> orderByAsc(boolean condition, SQLExpression1<ColumnOrderSelector<T1>> selectExpression) {
-        super.orderByAsc(condition, selectExpression);
-        return this;
-    }
-
-    @Override
     public ClientQueryable2<T1, T2> orderByAsc(boolean condition, SQLExpression2<ColumnOrderSelector<T1>, ColumnOrderSelector<T2>> selectExpression) {
         if (condition) {
             ColumnOrderSelector<T1> sqlOrderColumnSelector1 = getSQLExpressionProvider1().getOrderColumnSelector(true);
@@ -207,11 +178,6 @@ public abstract class AbstractClientQueryable2<T1, T2> extends AbstractClientQue
         return this;
     }
 
-    @Override
-    public ClientQueryable2<T1, T2> orderByDesc(boolean condition, SQLExpression1<ColumnOrderSelector<T1>> selectExpression) {
-        super.orderByAsc(condition, selectExpression);
-        return this;
-    }
 
     @Override
     public ClientQueryable2<T1, T2> orderByDesc(boolean condition, SQLExpression2<ColumnOrderSelector<T1>, ColumnOrderSelector<T2>> selectExpression) {
@@ -223,24 +189,7 @@ public abstract class AbstractClientQueryable2<T1, T2> extends AbstractClientQue
         return this;
     }
 
-    @Override
-    public <TProperty> ClientQueryable2<T1, T2> include(boolean condition, SQLFuncExpression2<NavigateInclude<T1>, NavigateInclude<T2>, ClientQueryable<TProperty>> navigateIncludeSQLExpression) {
-        if (condition) {
-            SQLFuncExpression1<IncludeNavigateParams, ClientQueryable<?>> includeQueryableExpression = includeNavigateParams -> {
-                NavigateInclude<T1> navigateInclude1 = sqlExpressionProvider1.getNavigateInclude(includeNavigateParams);
-                NavigateInclude<T2> navigateInclude2 = sqlExpressionProvider2.getNavigateInclude(includeNavigateParams);
-                return navigateIncludeSQLExpression.apply(navigateInclude1, navigateInclude2);
-            };
-            entityQueryExpressionBuilder.getExpressionContext().getIncludes().add(includeQueryableExpression);
-        }
-        return this;
-    }
 
-    @Override
-    public ClientQueryable2<T1, T2> groupBy(boolean condition, SQLExpression1<ColumnGroupSelector<T1>> selectExpression) {
-        super.groupBy(condition, selectExpression);
-        return this;
-    }
 
     @Override
     public ClientQueryable2<T1, T2> groupBy(boolean condition, SQLExpression2<ColumnGroupSelector<T1>, ColumnGroupSelector<T2>> selectExpression) {
@@ -249,12 +198,6 @@ public abstract class AbstractClientQueryable2<T1, T2> extends AbstractClientQue
             ColumnGroupSelector<T2> sqlGroupSelector2 = getSQLExpressionProvider2().getGroupColumnSelector();
             selectExpression.apply(sqlGroupSelector1, sqlGroupSelector2);
         }
-        return this;
-    }
-
-    @Override
-    public ClientQueryable2<T1, T2> having(boolean condition, SQLExpression1<WhereAggregatePredicate<T1>> predicateExpression) {
-        super.having(condition, predicateExpression);
         return this;
     }
 
@@ -268,114 +211,6 @@ public abstract class AbstractClientQueryable2<T1, T2> extends AbstractClientQue
         return this;
     }
 
-    @Override
-    public ClientQueryable2<T1, T2> limit(boolean condition, long offset, long rows) {
-        super.limit(condition, offset, rows);
-        return this;
-    }
-
-    @Override
-    public ClientQueryable2<T1, T2> distinct(boolean condition) {
-        super.distinct(condition);
-        return this;
-    }
-
-    @Override
-    public ClientQueryable2<T1, T2> disableLogicDelete() {
-        super.disableLogicDelete();
-        return this;
-    }
-
-    @Override
-    public ClientQueryable2<T1, T2> enableLogicDelete() {
-        super.enableLogicDelete();
-        return this;
-    }
-
-    @Override
-    public ClientQueryable2<T1, T2> useLogicDelete(boolean enable) {
-        super.useLogicDelete(enable);
-        return this;
-    }
-
-    @Override
-    public ClientQueryable2<T1, T2> noInterceptor() {
-        super.noInterceptor();
-        return this;
-    }
-
-    @Override
-    public ClientQueryable2<T1, T2> useInterceptor(String name) {
-        super.useInterceptor(name);
-        return this;
-    }
-
-    @Override
-    public ClientQueryable2<T1, T2> noInterceptor(String name) {
-        super.noInterceptor(name);
-        return this;
-    }
-
-    @Override
-    public ClientQueryable2<T1, T2> useInterceptor() {
-        super.useInterceptor();
-        return this;
-    }
-
-    @Override
-    public ClientQueryable2<T1, T2> asTracking() {
-        super.asTracking();
-        return this;
-    }
-
-    @Override
-    public ClientQueryable2<T1, T2> asNoTracking() {
-        super.asNoTracking();
-        return this;
-    }
-
-    @Override
-    public ClientQueryable2<T1, T2> queryLargeColumn(boolean queryLarge) {
-        super.queryLargeColumn(queryLarge);
-        return this;
-    }
-
-    @Override
-    public ClientQueryable2<T1, T2> useShardingConfigure(int maxShardingQueryLimit, ConnectionModeEnum connectionMode) {
-        super.useShardingConfigure(maxShardingQueryLimit, connectionMode);
-        return this;
-    }
-
-    @Override
-    public ClientQueryable2<T1, T2> useMaxShardingQueryLimit(int maxShardingQueryLimit) {
-        super.useMaxShardingQueryLimit(maxShardingQueryLimit);
-        return this;
-    }
-
-    @Override
-    public ClientQueryable2<T1, T2> useConnectionMode(ConnectionModeEnum connectionMode) {
-        super.useConnectionMode(connectionMode);
-        return this;
-    }
-
-    @Override
-    public ClientQueryable2<T1, T2> asTable(Function<String, String> tableNameAs) {
-        super.asTable(tableNameAs);
-        return this;
-    }
-
-    @Override
-    public ClientQueryable2<T1, T2> asSchema(Function<String, String> schemaAs) {
-        super.asSchema(schemaAs);
-        return this;
-    }
-
-
-    @Override
-    public ClientQueryable2<T1, T2> asAlias(String alias) {
-        super.asAlias(alias);
-        return this;
-    }
 
     @Override
     public SQLExpressionProvider<T2> getSQLExpressionProvider2() {
