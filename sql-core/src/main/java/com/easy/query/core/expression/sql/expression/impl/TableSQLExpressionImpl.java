@@ -121,8 +121,15 @@ public class TableSQLExpressionImpl implements EntityTableSQLExpression {
         EasySQLExpressionUtil.tableSQLExpressionRewrite(toSQLContext, this);
         //如果当前对象没有映射到表那么直接抛错
         StringBuilder sql = new StringBuilder();
-
-        sql.append(" ").append(getSelectTableSource()).append(" ").append(getTableName());
+        boolean none = MultiTableTypeEnum.NONE == multiTableType;
+        if (!none) {
+            sql.append(" ");
+        }
+        sql.append(getSelectTableSource());
+        if (!none) {
+            sql.append(" ");
+        }
+        sql.append(getTableName());
         String tableAlias = EasySQLExpressionUtil.getTableAlias(toSQLContext, entityTable);
         if (tableAlias != null) {
             sql.append(" ").append(tableAlias);

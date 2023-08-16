@@ -47,7 +47,15 @@ public class AnonymousEntityTableSQLExpressionImpl extends TableSQLExpressionImp
 
         StringBuilder sql = new StringBuilder();
 
-        sql.append(" ").append(getSelectTableSource()).append(" (").append(easyQuerySQLExpression.toSQL(toSQLContext)).append(")");
+        boolean none = MultiTableTypeEnum.NONE == multiTableType;
+        if (!none) {
+            sql.append(" ");
+        }
+        sql.append(getSelectTableSource());
+        if (!none) {
+            sql.append(" ");
+        }
+        sql.append("(").append(easyQuerySQLExpression.toSQL(toSQLContext)).append(")");
         String tableAlias = EasySQLExpressionUtil.getTableAlias(toSQLContext, entityTable);
         if (tableAlias != null) {
             sql.append(" ").append(tableAlias);
