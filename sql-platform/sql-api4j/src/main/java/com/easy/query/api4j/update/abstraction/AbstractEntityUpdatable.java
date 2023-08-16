@@ -108,4 +108,10 @@ public abstract class AbstractEntityUpdatable<T> implements EntityUpdatable<T> {
         clientEntityUpdatable.batch(use);
         return this;
     }
+
+    @Override
+    public EntityUpdatable<T> asTableLink(Function<String, String> linkAs) {
+        clientEntityUpdatable.asTableLink(linkAs);
+        return this;
+    }
 }

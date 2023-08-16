@@ -116,4 +116,10 @@ public abstract class AbstractProxyEntityUpdatable<TProxy extends ProxyEntity<TP
         clientEntityUpdatable.batch(use);
         return this;
     }
+
+    @Override
+    public ProxyEntityUpdatable<TProxy, T> asTableLink(Function<String, String> linkAs) {
+        clientEntityUpdatable.asTableLink(linkAs);
+        return this;
+    }
 }

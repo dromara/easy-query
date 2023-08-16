@@ -153,4 +153,10 @@ public abstract class AbstractExpressionDeletable<T> implements ExpressionDeleta
     public void executeRows(long expectRows, String msg, String code) {
         expressionObjectDeletable.executeRows(expectRows, msg, code);
     }
+
+    @Override
+    public ExpressionDeletable<T> asTableLink(Function<String, String> linkAs) {
+        expressionObjectDeletable.asTableLink(linkAs);
+        return this;
+    }
 }

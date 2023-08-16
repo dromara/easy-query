@@ -96,4 +96,10 @@ public abstract class AbstractProxyOnlyEntityUpdatable<T> implements ProxyOnlyEn
         clientEntityUpdatable.batch(use);
         return this;
     }
+
+    @Override
+    public ProxyOnlyEntityUpdatable<T> asTableLink(Function<String, String> linkAs) {
+        clientEntityUpdatable.asTableLink(linkAs);
+        return this;
+    }
 }

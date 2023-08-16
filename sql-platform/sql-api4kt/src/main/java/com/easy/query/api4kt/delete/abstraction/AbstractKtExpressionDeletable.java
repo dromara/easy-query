@@ -153,4 +153,10 @@ public abstract class AbstractKtExpressionDeletable<T> implements KtExpressionDe
     public void executeRows(long expectRows, String msg, String code) {
         expressionObjectDeletable.executeRows(expectRows, msg, code);
     }
+
+    @Override
+    public KtExpressionDeletable<T> asTableLink(Function<String, String> linkAs) {
+        expressionObjectDeletable.asTableLink(linkAs);
+        return this;
+    }
 }

@@ -299,4 +299,10 @@ public abstract class AbstractKtQueryable2<T1, T2> extends AbstractKtQueryable<T
         return this;
     }
 
+    @Override
+    public KtQueryable2<T1, T2> asTableLink(Function<String, String> linkAs) {
+        super.asTableLink(linkAs);
+        return this;
+    }
+
 }

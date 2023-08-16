@@ -108,4 +108,10 @@ public abstract class AbstractKtEntityUpdatable<T> implements KtEntityUpdatable<
         entityObjectUpdatable.batch(use);
         return this;
     }
+
+    @Override
+    public KtEntityUpdatable<T> asTableLink(Function<String, String> linkAs) {
+        entityObjectUpdatable.asTableLink(linkAs);
+        return this;
+    }
 }

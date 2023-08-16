@@ -158,4 +158,10 @@ public abstract class AbstractProxyEntityInsertable<T> implements ProxyEntityIns
         clientInsertable.batch(use);
         return this;
     }
+
+    @Override
+    public ProxyEntityInsertable<T> asTableLink(Function<String, String> linkAs) {
+        clientInsertable.asTableLink(linkAs);
+        return this;
+    }
 }

@@ -306,4 +306,10 @@ public abstract class AbstractQueryable3<T1, T2, T3> extends AbstractQueryable<T
         super.asAlias(alias);
         return this;
     }
+
+    @Override
+    public Queryable3<T1, T2, T3> asTableLink(Function<String, String> linkAs) {
+        super.asTableLink(linkAs);
+        return this;
+    }
 }

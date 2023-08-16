@@ -433,4 +433,11 @@ public interface Queryable2<T1, T2> extends Queryable<T1> {
 
     @Override
     Queryable2<T1, T2> asAlias(String alias);
+    @Override
+    default Queryable2<T1, T2> asTableLink(String linkAs) {
+        return asTableLink(o->linkAs);
+    }
+
+    @Override
+    Queryable2<T1, T2> asTableLink(Function<String, String> linkAs);
 }

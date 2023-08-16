@@ -244,4 +244,9 @@ public abstract class AbstractKtQueryable4<T1, T2, T3, T4> extends AbstractKtQue
         super.asAlias(alias);
         return this;
     }
+    @Override
+    public KtQueryable4<T1, T2, T3, T4> asTableLink(Function<String, String> linkAs) {
+        super.asTableLink(linkAs);
+        return this;
+    }
 }

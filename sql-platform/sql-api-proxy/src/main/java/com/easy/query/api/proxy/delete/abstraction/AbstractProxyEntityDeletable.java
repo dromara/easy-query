@@ -110,4 +110,10 @@ public abstract class AbstractProxyEntityDeletable<T> implements ProxyEntityDele
     public void executeRows(long expectRows, String msg, String code) {
         entityObjectDeletable.executeRows(expectRows, msg, code);
     }
+
+    @Override
+    public ProxyEntityDeletable<T> asTableLink(Function<String, String> linkAs) {
+        entityObjectDeletable.asTableLink(linkAs);
+        return this;
+    }
 }

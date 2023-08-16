@@ -111,4 +111,10 @@ public abstract class AbstractKtEntityDeletable<T> implements KtEntityDeletable<
     public void executeRows(long expectRows, String msg, String code) {
         clientEntityDeletable.executeRows(expectRows, msg, code);
     }
+
+    @Override
+    public KtEntityDeletable<T> asTableLink(Function<String, String> linkAs) {
+        clientEntityDeletable.asTableLink(linkAs);
+        return this;
+    }
 }

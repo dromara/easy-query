@@ -393,4 +393,11 @@ public interface KtQueryable3<T1, T2, T3> extends KtQueryable<T1> {
 
     @Override
     KtQueryable3<T1, T2, T3> asAlias(String alias);
+    @Override
+    default KtQueryable3<T1, T2, T3> asTableLink(String linkAs) {
+        return asTableLink(o->linkAs);
+    }
+
+    @Override
+    KtQueryable3<T1, T2, T3> asTableLink(Function<String, String> linkAs);
 }

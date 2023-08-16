@@ -387,6 +387,12 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
         return this;
     }
 
+
+    @Override
+    public Queryable<T1> asTableLink(Function<String, String> linkAs) {
+        entityQueryable.asTableLink(linkAs);
+        return this;
+    }
     @Override
     public Queryable<T1> useShardingConfigure(int maxShardingQueryLimit, ConnectionModeEnum connectionMode) {
         entityQueryable.useShardingConfigure(maxShardingQueryLimit, connectionMode);

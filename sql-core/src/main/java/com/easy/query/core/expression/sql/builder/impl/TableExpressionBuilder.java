@@ -92,6 +92,7 @@ public class TableExpressionBuilder implements EntityTableExpressionBuilder {
         }
         tableExpressionBuilder.setTableNameAs(this.tableNameAs);
         tableExpressionBuilder.setSchemaAs(this.schemaAs);
+        tableExpressionBuilder.setTableLinkAs(this.linkAs);
         return tableExpressionBuilder;
     }
 
@@ -123,6 +124,7 @@ public class TableExpressionBuilder implements EntityTableExpressionBuilder {
         EntityTableSQLExpression tableSQLExpression = runtimeContext.getExpressionFactory().createEntityTableSQLExpression(entityTable, multiTableType, runtimeContext);
         tableSQLExpression.setTableNameAs(tableNameAs);
         tableSQLExpression.setSchemaAs(schemaAs);
+        tableSQLExpression.setLinkAs(linkAs);
         return tableSQLExpression;
     }
 }

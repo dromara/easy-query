@@ -162,4 +162,10 @@ public abstract class AbstractKtEntityInsertable<T> implements KtEntityInsertabl
         });
         return this;
     }
+
+    @Override
+    public KtEntityInsertable<T> asTableLink(Function<String, String> linkAs) {
+        clientInsertable.asTableLink(linkAs);
+        return this;
+    }
 }

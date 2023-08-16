@@ -322,4 +322,9 @@ public abstract class AbstractProxyQueryable3<T1Proxy extends ProxyEntity<T1Prox
         super.asAlias(alias);
         return this;
     }
+    @Override
+    public ProxyQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> asTableLink(Function<String, String> linkAs) {
+        super.asTableLink(linkAs);
+        return this;
+    }
 }

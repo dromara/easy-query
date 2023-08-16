@@ -388,6 +388,12 @@ public abstract class AbstractKtQueryable<T1> implements KtQueryable<T1> {
     }
 
     @Override
+    public KtQueryable<T1> asTableLink(Function<String, String> linkAs) {
+        entityQueryable.asTableLink(linkAs);
+        return this;
+    }
+
+    @Override
     public KtQueryable<T1> useShardingConfigure(int maxShardingQueryLimit, ConnectionModeEnum connectionMode) {
         entityQueryable.useShardingConfigure(maxShardingQueryLimit, connectionMode);
         return this;

@@ -104,4 +104,10 @@ public abstract class AbstractExpressionUpdatable<T> implements ExpressionUpdata
         clientExpressionUpdatable.batch(use);
         return this;
     }
+
+    @Override
+    public ExpressionUpdatable<T> asTableLink(Function<String, String> linkAs) {
+        clientExpressionUpdatable.asTableLink(linkAs);
+        return this;
+    }
 }

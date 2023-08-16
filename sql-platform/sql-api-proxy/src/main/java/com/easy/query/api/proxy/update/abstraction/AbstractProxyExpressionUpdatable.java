@@ -114,4 +114,10 @@ public abstract class AbstractProxyExpressionUpdatable<TProxy extends ProxyEntit
         clientExpressionUpdatable.batch(use);
         return this;
     }
+
+    @Override
+    public ProxyExpressionUpdatable<TProxy, T> asTableLink(Function<String, String> linkAs) {
+        clientExpressionUpdatable.asTableLink(linkAs);
+        return this;
+    }
 }

@@ -163,4 +163,10 @@ public abstract class AbstractEntityInsertable<T> implements EntityInsertable<T>
         });
         return this;
     }
+
+    @Override
+    public EntityInsertable<T> asTableLink(Function<String, String> linkAs) {
+        clientInsertable.asTableLink(linkAs);
+        return this;
+    }
 }

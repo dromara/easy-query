@@ -424,6 +424,12 @@ public abstract class AbstractProxyQueryable<T1Proxy extends ProxyEntity<T1Proxy
     }
 
     @Override
+    public ProxyQueryable<T1Proxy, T1> asTableLink(Function<String, String> linkAs) {
+        entityQueryable.asTableLink(linkAs);
+        return this;
+    }
+
+    @Override
     public ProxyQueryable<T1Proxy, T1> useShardingConfigure(int maxShardingQueryLimit, ConnectionModeEnum connectionMode) {
         entityQueryable.useShardingConfigure(maxShardingQueryLimit, connectionMode);
         return this;

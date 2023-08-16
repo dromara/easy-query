@@ -106,4 +106,10 @@ public abstract class AbstractKtExpressionUpdatable<T> implements KtExpressionUp
         clientExpressionUpdatable.batch(use);
         return this;
     }
+
+    @Override
+    public KtExpressionUpdatable<T> asTableLink(Function<String, String> linkAs) {
+        clientExpressionUpdatable.asTableLink(linkAs);
+        return this;
+    }
 }

@@ -161,4 +161,10 @@ public abstract class AbstractProxyExpressionDeletable<TProxy extends ProxyEntit
     public void executeRows(long expectRows, String msg, String code) {
         expressionObjectDeletable.executeRows(expectRows, msg, code);
     }
+
+    @Override
+    public ProxyExpressionDeletable<TProxy, T> asTableLink(Function<String, String> linkAs) {
+        expressionObjectDeletable.asTableLink(linkAs);
+        return this;
+    }
 }

@@ -345,4 +345,11 @@ public interface ProxyQueryable3<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
 
     @Override
     ProxyQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> asAlias(String alias);
+    @Override
+    default ProxyQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> asTableLink(String linkAs) {
+        return asTableLink(o->linkAs);
+    }
+
+    @Override
+    ProxyQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> asTableLink(Function<String, String> linkAs);
 }

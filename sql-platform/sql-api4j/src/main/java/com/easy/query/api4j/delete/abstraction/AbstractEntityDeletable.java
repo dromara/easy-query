@@ -111,4 +111,10 @@ public abstract class AbstractEntityDeletable<T> implements EntityDeletable<T> {
     public void executeRows(long expectRows, String msg, String code) {
         entityObjectDeletable.executeRows(expectRows, msg, code);
     }
+
+    @Override
+    public EntityDeletable<T> asTableLink(Function<String, String> linkAs) {
+        entityObjectDeletable.asTableLink(linkAs);
+        return this;
+    }
 }
