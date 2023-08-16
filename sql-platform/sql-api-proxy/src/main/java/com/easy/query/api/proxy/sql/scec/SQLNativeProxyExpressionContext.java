@@ -1,5 +1,7 @@
 package com.easy.query.api.proxy.sql.scec;
 
+import com.easy.query.api.proxy.select.ProxyQueryable;
+import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
 
 /**
@@ -10,6 +12,10 @@ import com.easy.query.core.proxy.SQLColumn;
  */
 public interface SQLNativeProxyExpressionContext {
     SQLNativeProxyExpressionContext expression(SQLColumn<?> property);
+
+    <TEntityProxy extends ProxyEntity<TEntityProxy, TEntity>, TEntity> SQLNativeProxyExpressionContext expression(ProxyQueryable<TEntityProxy, TEntity> subQuery);
+
     SQLNativeProxyExpressionContext value(Object val);
+
     SQLNativeProxyExpressionContext setAlias(String alias);
 }

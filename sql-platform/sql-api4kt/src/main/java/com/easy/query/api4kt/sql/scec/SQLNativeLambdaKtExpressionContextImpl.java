@@ -1,5 +1,6 @@
 package com.easy.query.api4kt.sql.scec;
 
+import com.easy.query.api4kt.select.KtQueryable;
 import com.easy.query.api4kt.util.EasyKtLambdaUtil;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 import com.easy.query.core.expression.parser.core.base.scec.SQLNativePropertyExpressionContext;
@@ -21,6 +22,12 @@ public class SQLNativeLambdaKtExpressionContextImpl<T1> implements SQLNativeLamb
     @Override
     public SQLNativeLambdaKtExpressionContext<T1> expression(KProperty1<T1, ?> property) {
         columnConstExpressionContext.expression(EasyKtLambdaUtil.getPropertyName(property));
+        return this;
+    }
+
+    @Override
+    public <TEntity> SQLNativeLambdaKtExpressionContext<T1> expression(KtQueryable<TEntity> subQuery) {
+        columnConstExpressionContext.expression(subQuery.getClientQueryable());
         return this;
     }
 

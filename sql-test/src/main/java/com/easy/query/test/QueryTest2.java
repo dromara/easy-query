@@ -1022,6 +1022,22 @@ public class QueryTest2 extends BaseTest {
         SysUser sysUser = queryable.firstOrNull();
         Assert.assertNull(sysUser);
     }
+    @Test
+    public void query13x_1() {
+        Queryable<Topic> topicQueryable = easyQuery.queryable(Topic.class)
+                .groupBy(o->o.column(Topic::getId))
+                .select(o->o.sqlNativeSegment("GROUP_CONCAT({0})",c->{
+                    c.expression(Topic::getTitle);
+                }));
+        Queryable<SysUser> queryable = easyQuery.queryable(SysUser.class)
+                .where(o -> o.eq(SysUser::getId, "123xxx").like(false, SysUser::getPhone, "133"))
+                .where(o->o.sqlNativeSegment("FIND_IN_SET({0},({1}))",c->{
+                    c.expression(SysUser::getId)
+                            .expression(topicQueryable);
+                }));
+        String sql = queryable.toSQL();
+        Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`username`,t.`phone`,t.`id_card`,t.`address` FROM `easy-query-test`.`t_sys_user` t WHERE t.`id` = ? AND FIND_IN_SET(t.`id`,(SELECT GROUP_CONCAT(t1.`title`) FROM `t_topic` t1 GROUP BY t1.`id`))", sql);
+    }
 
     @Test
     public void query14x() {

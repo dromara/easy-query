@@ -1,5 +1,6 @@
 package com.easy.query.api4kt.sql.scec;
 
+import com.easy.query.api4kt.select.KtQueryable;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 import kotlin.reflect.KProperty1;
 
@@ -11,6 +12,7 @@ import kotlin.reflect.KProperty1;
  */
 public interface SQLNativeLambdaKtExpressionContext<T1> {
     SQLNativeLambdaKtExpressionContext<T1> expression(KProperty1<T1,?> property);
+    <TEntity> SQLNativeLambdaKtExpressionContext<T1> expression(KtQueryable<TEntity> subQuery);
    <T2> SQLNativeLambdaKtExpressionContext<T1> expression(EntitySQLTableOwner<T2> table, KProperty1<T2,?> property);
     SQLNativeLambdaKtExpressionContext<T1> value(Object val);
     SQLNativeLambdaKtExpressionContext<T1> constValue(Object constVal);

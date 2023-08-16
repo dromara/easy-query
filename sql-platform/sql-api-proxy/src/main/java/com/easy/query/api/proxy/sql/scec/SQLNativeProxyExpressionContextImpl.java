@@ -1,6 +1,8 @@
 package com.easy.query.api.proxy.sql.scec;
 
+import com.easy.query.api.proxy.select.ProxyQueryable;
 import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;
+import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
 
 /**
@@ -19,6 +21,12 @@ public class SQLNativeProxyExpressionContextImpl implements SQLNativeProxyExpres
     @Override
     public SQLNativeProxyExpressionContext expression(SQLColumn<?> property) {
         sqlConstExpressionContext.expression(property.getTable(),property.value());
+        return this;
+    }
+
+    @Override
+    public <TEntityProxy extends ProxyEntity<TEntityProxy, TEntity>, TEntity> SQLNativeProxyExpressionContext expression(ProxyQueryable<TEntityProxy, TEntity> subQuery) {
+        sqlConstExpressionContext.expression(subQuery.getClientQueryable());
         return this;
     }
 

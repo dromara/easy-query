@@ -97,7 +97,7 @@ public class SQLExpressionProviderImpl<TEntity> implements SQLExpressionProvider
     @Override
     public WhereAggregatePredicate<TEntity> getAggregatePredicate() {
         if (having == null) {
-            having = new WhereAggregatePredicateImpl<>(table, new AggregateFilterImpl(entityQueryExpressionBuilder.getRuntimeContext(), entityQueryExpressionBuilder.getHaving()));
+            having = new WhereAggregatePredicateImpl<>(table, new AggregateFilterImpl(entityQueryExpressionBuilder, entityQueryExpressionBuilder.getHaving()));
         }
         return having;
     }

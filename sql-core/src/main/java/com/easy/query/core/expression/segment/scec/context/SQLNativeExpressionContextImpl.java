@@ -1,5 +1,6 @@
 package com.easy.query.core.expression.segment.scec.context;
 
+import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.scec.expression.ColumnConstSQLParameterExpressionImpl;
@@ -7,6 +8,9 @@ import com.easy.query.core.expression.segment.scec.expression.ColumnPropertyExpr
 import com.easy.query.core.expression.segment.scec.expression.ColumnSQLParameterExpressionImpl;
 import com.easy.query.core.expression.segment.scec.expression.ConstValueParamExpressionImpl;
 import com.easy.query.core.expression.segment.scec.expression.ParamExpression;
+import com.easy.query.core.expression.segment.scec.expression.SubQueryParamExpressionImpl;
+import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.ExpressionContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +24,12 @@ import java.util.Objects;
  */
 public class SQLNativeExpressionContextImpl implements SQLNativeExpressionContext {
     private final List<ParamExpression> expressions=new ArrayList<>();
+    private final ExpressionContext expressionContext;
     private String alias;
+    public SQLNativeExpressionContextImpl(ExpressionContext expressionContext){
+
+        this.expressionContext = expressionContext;
+    }
     public SQLNativeExpressionContextImpl expression(TableAvailable table, String property){
         Objects.requireNonNull(table, "table cannot be null");
         Objects.requireNonNull(property, "property cannot be null");
@@ -28,6 +37,16 @@ public class SQLNativeExpressionContextImpl implements SQLNativeExpressionContex
         expressions.add(columnPropertyExpression);
         return this;
     }
+
+    @Override
+    public <TEntity> SQLNativeExpressionContext expression(Query<TEntity> subQuery) {
+        Objects.requireNonNull(subQuery, "subQuery cannot be null");
+        extract(subQuery);
+        SubQueryParamExpressionImpl subQueryParamExpression = new SubQueryParamExpressionImpl(subQuery);
+        expressions.add(subQueryParamExpression);
+        return this;
+    }
+
     public SQLNativeExpressionContextImpl value(Object val){
         if(val instanceof SQLParameter){
             ColumnSQLParameterExpressionImpl columnParamValueExpression = new ColumnSQLParameterExpressionImpl((SQLParameter) val);
@@ -57,5 +76,10 @@ public class SQLNativeExpressionContextImpl implements SQLNativeExpressionContex
     public SQLNativeExpressionContext setAlias(String alias) {
         this.alias = alias;
         return this;
+    }
+    private <T2> void extract(Query<T2> subQuery) {
+        Objects.requireNonNull(expressionContext, "expressionContext cannot be null");
+        EntityQueryExpressionBuilder subQueryableSQLEntityExpressionBuilder = subQuery.getSQLEntityExpressionBuilder();
+        expressionContext.extract(subQueryableSQLEntityExpressionBuilder.getExpressionContext());
     }
 }

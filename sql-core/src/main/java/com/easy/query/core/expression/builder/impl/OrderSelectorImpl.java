@@ -47,7 +47,7 @@ public class OrderSelectorImpl implements OrderSelector {
     @Override
     public OrderSelector sqlNativeSegment(String columnConst, SQLExpression1<SQLNativeExpressionContext> contextConsume) {
         Objects.requireNonNull(contextConsume,"sql native context consume cannot be null");
-        SQLNativeExpressionContextImpl sqlConstExpressionContext=new SQLNativeExpressionContextImpl();
+        SQLNativeExpressionContextImpl sqlConstExpressionContext=new SQLNativeExpressionContextImpl(entityQueryExpressionBuilder.getExpressionContext());
         contextConsume.apply(sqlConstExpressionContext);
         OrderBySegment orderByColumnSegment = sqlSegmentFactory.createOrderBySQLNativeSegment(runtimeContext,columnConst,sqlConstExpressionContext, asc);
         order.append(orderByColumnSegment);

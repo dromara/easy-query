@@ -1,5 +1,6 @@
 package com.easy.query.core.expression.parser.core.base.scec;
 
+import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 
 /**
@@ -15,6 +16,7 @@ public interface SQLNativePropertyExpressionContext {
      * @return
      */
     SQLNativePropertyExpressionContext expression(String property);
+   <TEntity> SQLNativePropertyExpressionContext expression(ClientQueryable<TEntity> subQuery);
     /**
      * 当前表的使用的列,自动识别所属表别名
      * @param table 哪张表

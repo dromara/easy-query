@@ -88,7 +88,7 @@ public class ColumnSetterImpl<T> implements ColumnSetter<T> {
     public ColumnSetter<T> setSQLSegment(String property, String sqlSegment, SQLExpression1<SQLNativePropertyExpressionContext> contextConsume) {
 
         Objects.requireNonNull(contextConsume, "sql native context consume cannot be null");
-        SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl();
+        SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl(entityExpressionBuilder.getExpressionContext());
         SQLNativePropertyExpressionContextImpl sqlNativePropertyExpressionContext = new SQLNativePropertyExpressionContextImpl(table, sqlNativeExpressionContext);
         contextConsume.apply(sqlNativePropertyExpressionContext);
         InsertUpdateColumnConfigureSegmentImpl insertUpdateColumnConfigureSegment = new InsertUpdateColumnConfigureSegmentImpl(new UpdateColumnSegmentImpl(table, property, runtimeContext), runtimeContext, sqlSegment, sqlNativeExpressionContext);

@@ -1,5 +1,6 @@
 package com.easy.query.api4j.sql.scec;
 
+import com.easy.query.api4j.select.Queryable;
 import com.easy.query.api4j.util.EasyLambdaUtil;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
@@ -21,6 +22,12 @@ public class SQLNativeLambdaExpressionContextImpl<T1> implements SQLNativeLambda
     @Override
     public SQLNativeLambdaExpressionContext<T1> expression(Property<T1, ?> property) {
         columnConstExpressionContext.expression(EasyLambdaUtil.getPropertyName(property));
+        return this;
+    }
+
+    @Override
+    public <TEntity> SQLNativeLambdaExpressionContext<T1> expression(Queryable<TEntity> subQuery) {
+        columnConstExpressionContext.expression(subQuery.getClientQueryable());
         return this;
     }
 

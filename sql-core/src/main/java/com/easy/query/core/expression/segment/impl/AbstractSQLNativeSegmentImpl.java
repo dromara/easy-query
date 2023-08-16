@@ -9,6 +9,7 @@ import com.easy.query.core.expression.segment.scec.expression.ColumnParamExpress
 import com.easy.query.core.expression.segment.scec.expression.ColumnPropertyParamExpression;
 import com.easy.query.core.expression.segment.scec.expression.ConstValueParamExpression;
 import com.easy.query.core.expression.segment.scec.expression.ParamExpression;
+import com.easy.query.core.expression.segment.scec.expression.SubQueryParamExpression;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasySQLExpressionUtil;
@@ -82,6 +83,9 @@ public abstract class AbstractSQLNativeSegmentImpl {
         } else if(paramExpression instanceof ConstValueParamExpression){
             ConstValueParamExpression constValueParamExpression = (ConstValueParamExpression) paramExpression;
             return constValueParamExpression.toSQLSegment();
+        } else if(paramExpression instanceof SubQueryParamExpression){
+            SubQueryParamExpression subQueryParamExpression = (SubQueryParamExpression) paramExpression;
+            return subQueryParamExpression.toSQL(toSQLContext);
         }
         throw new EasyQueryInvalidOperationException("can not process ConstParamExpression:" + EasyClassUtil.getInstanceSimpleName(paramExpression));
     }

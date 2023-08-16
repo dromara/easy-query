@@ -31,7 +31,7 @@ public class ConfigurerImpl implements Configurer {
     @Override
     public Configurer column(TableAvailable table, String property, String sqlSegment, SQLExpression2<SQLNativeExpressionContext, SQLParameter> contextConsume) {
         Objects.requireNonNull(contextConsume,"sql native context consume cannot be null");
-        SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl();
+        SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl(entityColumnConfigurerExpressionBuilder.getExpressionContext());
         PropertySQLParameter propertySQLParameter = new PropertySQLParameter(table, property);
         contextConsume.apply(sqlNativeExpressionContext,propertySQLParameter);
         entityColumnConfigurerExpressionBuilder.getColumnConfigurer().put(property,new ColumnConfigurerContext(runtimeContext,sqlSegment,sqlNativeExpressionContext));
