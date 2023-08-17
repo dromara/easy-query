@@ -5,15 +5,15 @@ import com.easy.query.core.basic.api.internal.Interceptable;
 import com.easy.query.core.basic.api.internal.LogicDeletable;
 import com.easy.query.core.basic.api.internal.QueryStrategy;
 import com.easy.query.core.basic.api.internal.TableReNameable;
-import com.easy.query.core.basic.api.select.extension.queryable.Aggregate1Extension;
-import com.easy.query.core.basic.api.select.extension.queryable.Fill1Extension;
-import com.easy.query.core.basic.api.select.extension.queryable.GroupBy1Extension;
-import com.easy.query.core.basic.api.select.extension.queryable.Having1Extension;
-import com.easy.query.core.basic.api.select.extension.queryable.Include1Extension;
-import com.easy.query.core.basic.api.select.extension.queryable.Join1Extension;
-import com.easy.query.core.basic.api.select.extension.queryable.OrderBy1Extension;
+import com.easy.query.core.basic.api.select.extension.queryable.Aggregatable1;
+import com.easy.query.core.basic.api.select.extension.queryable.Fillable1;
+import com.easy.query.core.basic.api.select.extension.queryable.Groupable1;
+import com.easy.query.core.basic.api.select.extension.queryable.Havingable1;
+import com.easy.query.core.basic.api.select.extension.queryable.Includeable1;
+import com.easy.query.core.basic.api.select.extension.queryable.Joinable1;
+import com.easy.query.core.basic.api.select.extension.queryable.Orderable1;
 import com.easy.query.core.basic.api.select.extension.queryable.Selectable1;
-import com.easy.query.core.basic.api.select.extension.queryable.Union1Extension;
+import com.easy.query.core.basic.api.select.extension.queryable.Unionable1;
 import com.easy.query.core.basic.api.select.extension.queryable.Filterable1;
 import com.easy.query.core.basic.api.select.provider.SQLExpressionProvider;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
@@ -32,16 +32,16 @@ public interface ClientQueryable<T1> extends Query<T1>,
         LogicDeletable<ClientQueryable<T1>>,
         TableReNameable<ClientQueryable<T1>>,
         QueryStrategy<ClientQueryable<T1>>,
-        Aggregate1Extension<T1>,
-        Join1Extension<T1>,
+        Aggregatable1<T1>,
+        Joinable1<T1>,
         Filterable1<T1>,
         Selectable1<T1>,
-        GroupBy1Extension<T1>,
-        Having1Extension<T1>,
-        OrderBy1Extension<T1>,
-        Union1Extension<T1>,
-        Include1Extension<T1>,
-        Fill1Extension<T1> {
+        Groupable1<T1>,
+        Havingable1<T1>,
+        Orderable1<T1>,
+        Unionable1<T1>,
+        Includeable1<T1>,
+        Fillable1<T1> {
     /**
      * 只clone表达式共享上下文
      * 如果是两个独立的表达式建议重新创建如果是
