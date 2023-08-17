@@ -13,7 +13,7 @@ import com.easy.query.core.expression.parser.core.base.WherePredicate;
  *
  * @author xuejiaming
  */
-public interface SQLJoin2Extension<T1, T2> {
+public interface Joinable2<T1, T2> {
     <T3> ClientQueryable3<T1, T2, T3> leftJoin(Class<T3> joinClass, SQLExpression3<WherePredicate<T1>, WherePredicate<T2>, WherePredicate<T3>> on);
 
     <T3> ClientQueryable3<T1, T2, T3> leftJoin(ClientQueryable<T3> joinQueryable, SQLExpression3<WherePredicate<T1>, WherePredicate<T2>, WherePredicate<T3>> on);

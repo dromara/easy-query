@@ -57,6 +57,10 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     public ClientQueryable<T1> getClientQueryable() {
         return entityQueryable;
     }
+    @Override
+    public Queryable<T1> getQueryable() {
+        return this;
+    }
 
     @Override
     public long count() {

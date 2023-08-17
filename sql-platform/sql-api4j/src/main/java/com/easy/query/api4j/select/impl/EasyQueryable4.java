@@ -1,6 +1,6 @@
 package com.easy.query.api4j.select.impl;
 
-import com.easy.query.api4j.select.Queryable;
+import com.easy.query.api4j.select.Queryable4;
 import com.easy.query.api4j.select.abstraction.AbstractQueryable4;
 import com.easy.query.core.basic.api.select.ClientQueryable4;
 
@@ -16,7 +16,7 @@ public class EasyQueryable4<T1, T2, T3, T4> extends AbstractQueryable4<T1, T2, T
     }
 
     @Override
-    public Queryable<T1> cloneQueryable() {
-        return new EasyQueryable<>(entityQueryable4);
+    public Queryable4<T1, T2, T3, T4> cloneQueryable() {
+        return new EasyQueryable4<>(entityQueryable4);
     }
 }

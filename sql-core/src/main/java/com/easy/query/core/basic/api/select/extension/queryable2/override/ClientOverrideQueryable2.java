@@ -23,7 +23,6 @@ import java.util.function.Function;
  */
 public interface ClientOverrideQueryable2<T1, T2> extends ClientQueryable<T1> {
 
-
     ClientQueryable<T1> getClientQueryable();
 
     @Override

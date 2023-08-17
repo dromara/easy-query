@@ -12,7 +12,7 @@ import com.easy.query.core.expression.parser.core.base.WhereAggregatePredicate;
  *
  * @author xuejiaming
  */
-public interface SQLHaving2Extension<T1, T2> {
+public interface Havingable2<T1, T2> {
 
     default ClientQueryable2<T1, T2> having(SQLExpression2<WhereAggregatePredicate<T1>, WhereAggregatePredicate<T2>> predicateExpression) {
         return having(true, predicateExpression);

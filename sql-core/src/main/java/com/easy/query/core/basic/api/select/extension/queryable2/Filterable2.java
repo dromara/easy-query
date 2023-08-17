@@ -12,7 +12,7 @@ import com.easy.query.core.expression.parser.core.base.WherePredicate;
  *
  * @author xuejiaming
  */
-public interface SQLWhere2Extension<T1,T2> {
+public interface Filterable2<T1,T2> {
     default ClientQueryable2<T1, T2> where(SQLExpression2<WherePredicate<T1>, WherePredicate<T2>> whereExpression) {
         return where(true, whereExpression);
     }

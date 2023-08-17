@@ -13,7 +13,7 @@ import java.math.BigDecimal;
  *
  * @author xuejiaming
  */
-public interface SQLAggregate2Extension<T1,T2> {
+public interface Aggregatable1<T1,T2> {
     /**
      * 防止溢出
      *

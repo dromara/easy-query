@@ -19,4 +19,5 @@ public class EasyQueryable<T> extends AbstractQueryable1<T> {
     public Queryable<T> cloneQueryable() {
         return new EasyQueryable<>(entityQueryable.cloneQueryable());
     }
+
 }

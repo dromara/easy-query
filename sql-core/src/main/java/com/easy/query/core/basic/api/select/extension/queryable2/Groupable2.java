@@ -12,7 +12,7 @@ import com.easy.query.core.expression.parser.core.base.ColumnGroupSelector;
  *
  * @author xuejiaming
  */
-public interface SQLGroup2Extension<T1, T2> {
+public interface Groupable2<T1, T2> {
 
 
     default ClientQueryable2<T1, T2> groupBy(SQLExpression2<ColumnGroupSelector<T1>, ColumnGroupSelector<T2>> selectExpression) {

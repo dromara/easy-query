@@ -13,4 +13,5 @@ public class EasyClientQueryable2<T1, T2> extends AbstractClientQueryable2<T1, T
     public EasyClientQueryable2(Class<T1> t1Class, Class<T2> t2Class, EntityQueryExpressionBuilder sqlEntityExpression) {
         super(t1Class, t2Class, sqlEntityExpression);
     }
+
 }

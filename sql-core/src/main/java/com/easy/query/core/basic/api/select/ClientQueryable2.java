@@ -1,12 +1,12 @@
 package com.easy.query.core.basic.api.select;
 
-import com.easy.query.core.basic.api.select.extension.queryable2.SQLAggregate2Extension;
-import com.easy.query.core.basic.api.select.extension.queryable2.SQLGroup2Extension;
-import com.easy.query.core.basic.api.select.extension.queryable2.SQLHaving2Extension;
-import com.easy.query.core.basic.api.select.extension.queryable2.SQLJoin2Extension;
-import com.easy.query.core.basic.api.select.extension.queryable2.SQLOrderBy2Extension;
-import com.easy.query.core.basic.api.select.extension.queryable2.SQLSelect2Extension;
-import com.easy.query.core.basic.api.select.extension.queryable2.SQLWhere2Extension;
+import com.easy.query.core.basic.api.select.extension.queryable2.Aggregatable1;
+import com.easy.query.core.basic.api.select.extension.queryable2.Groupable2;
+import com.easy.query.core.basic.api.select.extension.queryable2.Havingable2;
+import com.easy.query.core.basic.api.select.extension.queryable2.Joinable2;
+import com.easy.query.core.basic.api.select.extension.queryable2.Orderable2;
+import com.easy.query.core.basic.api.select.extension.queryable2.Selectable2;
+import com.easy.query.core.basic.api.select.extension.queryable2.Filterable2;
 import com.easy.query.core.basic.api.select.extension.queryable2.override.ClientOverrideQueryable2;
 import com.easy.query.core.basic.api.select.provider.SQLExpressionProvider;
 
@@ -18,13 +18,13 @@ import com.easy.query.core.basic.api.select.provider.SQLExpressionProvider;
  * @Date: 2023/2/6 22:42
  */
 public interface ClientQueryable2<T1, T2> extends ClientOverrideQueryable2<T1,T2>,
-        SQLAggregate2Extension<T1, T2>,
-        SQLJoin2Extension<T1,T2>,
-        SQLWhere2Extension<T1,T2>,
-        SQLSelect2Extension<T1,T2>,
-        SQLGroup2Extension<T1,T2>,
-        SQLHaving2Extension<T1,T2>,
-        SQLOrderBy2Extension<T1,T2> {
+        Aggregatable1<T1, T2>,
+        Joinable2<T1,T2>,
+        Filterable2<T1,T2>,
+        Selectable2<T1,T2>,
+        Groupable2<T1,T2>,
+        Havingable2<T1,T2>,
+        Orderable2<T1,T2> {
 
 
     //endregion

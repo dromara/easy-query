@@ -4,6 +4,7 @@ import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.jdbc.executor.internal.enumerable.JdbcStreamResult;
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
+import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.exception.EasyQueryFirstOrNotNullException;
 import com.easy.query.core.expression.sql.TableContext;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
@@ -208,6 +209,13 @@ public interface Query<T> {
     EasyPageResult<T> toShardingPageResult(long pageIndex, long pageSize, List<Long> totalLines);
 
 
+
+    default Query<T> distinct() {
+        return distinct(true);
+    }
+
+
+    Query<T> distinct(boolean condition);
     default Query<T> limit(long rows) {
         return limit(true, rows);
     }
@@ -221,4 +229,15 @@ public interface Query<T> {
     }
 
     Query<T> limit(boolean condition, long offset, long rows);
+
+
+    Query<T> asTracking();
+
+    Query<T> asNoTracking();
+
+    Query<T> useShardingConfigure(int maxShardingQueryLimit, ConnectionModeEnum connectionMode);
+
+    Query<T> useMaxShardingQueryLimit(int maxShardingQueryLimit);
+
+    Query<T> useConnectionMode(ConnectionModeEnum connectionMode);
 }

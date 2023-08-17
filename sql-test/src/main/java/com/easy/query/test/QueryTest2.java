@@ -1,13 +1,16 @@
 package com.easy.query.test;
 
 import com.easy.query.api4j.select.Queryable;
+import com.easy.query.api4j.select.Queryable2;
 import com.easy.query.core.api.pagination.EasyPageResult;
+import com.easy.query.core.basic.api.select.ClientQueryable2;
 import com.easy.query.core.basic.jdbc.parameter.ConstLikeSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.enums.AggregatePredicateCompare;
+import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 import com.easy.query.test.dto.BlogEntityGroup;
 import com.easy.query.test.dto.BlogQueryRequest;
 import com.easy.query.test.dto.BlogSortJoinRequest;
@@ -27,6 +30,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 /**
  * create time 2023/6/8 21:38
@@ -1037,6 +1041,46 @@ public class QueryTest2 extends BaseTest {
                 }));
         String sql = queryable.toSQL();
         Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`username`,t.`phone`,t.`id_card`,t.`address` FROM `easy-query-test`.`t_sys_user` t WHERE t.`id` = ? AND FIND_IN_SET(t.`id`,(SELECT GROUP_CONCAT(t1.`title`) FROM `t_topic` t1 GROUP BY t1.`id`))", sql);
+    }
+    @Test
+    public void query13x_2() {
+        Function<EntitySQLTableOwner<SysUser>,Queryable<String>> subQueryCreator=table->{
+            Queryable<String> groupConcatQuery = easyQuery.queryable(Topic.class)
+                    .where(o->o.eq(table,Topic::getId,SysUser::getId))
+                    .groupBy(o -> o.column(Topic::getId))
+                    .select(String.class, o -> o.sqlNativeSegment("GROUP_CONCAT({0})", c -> {
+                        c.expression(Topic::getTitle);
+                    }));
+            return groupConcatQuery;
+        };
+        Queryable<SysUser> queryable = easyQuery.queryable(SysUser.class)
+                .where(o -> o.eq(SysUser::getId, "123xxx").like(false, SysUser::getPhone, "133"))
+                .where(o->o.sqlNativeSegment("FIND_IN_SET({0},({1}))",c->{
+                    c.expression(SysUser::getId)
+                            .expression(subQueryCreator.apply(o));
+                }));
+        String sql = queryable.toSQL();
+        Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`username`,t.`phone`,t.`id_card`,t.`address` FROM `easy-query-test`.`t_sys_user` t WHERE t.`id` = ? AND FIND_IN_SET(t.`id`,(SELECT GROUP_CONCAT(t1.`title`) FROM `t_topic` t1 WHERE t1.`id` = t.`id` GROUP BY t1.`id`))", sql);
+    }
+    @Test
+    public void query13x_3() {
+        Queryable<SysUser> queryable = easyQuery.queryable(SysUser.class)
+                .where(o -> o.eq(SysUser::getId, "123xxx").like(false, SysUser::getPhone, "133"))
+                .where(o->o.sqlNativeSegment("FIND_IN_SET({0},({1}))",c->{
+                    c.expression(SysUser::getId)
+                            .expression(subQueryGenerator(o));
+                }));
+        String sql = queryable.toSQL();
+        Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`username`,t.`phone`,t.`id_card`,t.`address` FROM `easy-query-test`.`t_sys_user` t WHERE t.`id` = ? AND FIND_IN_SET(t.`id`,(SELECT GROUP_CONCAT(t1.`title`) FROM `t_topic` t1 WHERE t1.`id` = t.`id` GROUP BY t1.`id`))", sql);
+    }
+    private Queryable<String> subQueryGenerator(EntitySQLTableOwner<SysUser> table){
+        Queryable<String> groupConcatQuery = easyQuery.queryable(Topic.class)
+                .where(o->o.eq(table,Topic::getId,SysUser::getId))
+                .groupBy(o -> o.column(Topic::getId))
+                .select(String.class, o -> o.sqlNativeSegment("GROUP_CONCAT({0})", c -> {
+                    c.expression(Topic::getTitle);
+                }));
+        return groupConcatQuery;
     }
 
     @Test

@@ -12,7 +12,7 @@ import com.easy.query.core.expression.parser.core.base.ColumnOrderSelector;
  *
  * @author xuejiaming
  */
-public interface SQLOrderBy2Extension<T1, T2> {
+public interface Orderable2<T1, T2> {
 
     default ClientQueryable2<T1, T2> orderByAsc(SQLExpression2<ColumnOrderSelector<T1>, ColumnOrderSelector<T2>> selectExpression) {
         return orderByAsc(true, selectExpression);

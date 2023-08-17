@@ -12,7 +12,7 @@ import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
  *
  * @author xuejiaming
  */
-public interface SQLSelect2Extension<T1,T2> {
+public interface Selectable2<T1,T2> {
 
     <TR> ClientQueryable<TR> select(Class<TR> resultClass, SQLExpression2<ColumnAsSelector<T1, TR>, ColumnAsSelector<T2, TR>> selectExpression);
 
