@@ -34,8 +34,8 @@ public interface SQLOrderable6<T1, T2, T3, T4, T5, T6> extends ClientQueryable6A
     }
 
     default Queryable6<T1, T2, T3, T4, T5, T6> orderByAscMerge(boolean condition, SQLExpression1<Tuple6<SQLOrderBySelector<T1>, SQLOrderBySelector<T2>, SQLOrderBySelector<T3>, SQLOrderBySelector<T4>, SQLOrderBySelector<T5>, SQLOrderBySelector<T6>>> selectExpression) {
-        return orderByAsc(condition, (t, t1, t2, t3, t4, t5) -> {
-            selectExpression.apply(new Tuple6<>(t, t1, t2, t3, t4, t5));
+        return orderByAsc(condition, (t1, t2, t3, t4, t5, t6) -> {
+            selectExpression.apply(new Tuple6<>(t1, t2, t3, t4, t5, t6));
         });
     }
 
@@ -55,8 +55,8 @@ public interface SQLOrderable6<T1, T2, T3, T4, T5, T6> extends ClientQueryable6A
     }
 
     default Queryable6<T1, T2, T3, T4, T5, T6> orderByDescMerge(boolean condition, SQLExpression1<Tuple6<SQLOrderBySelector<T1>, SQLOrderBySelector<T2>, SQLOrderBySelector<T3>, SQLOrderBySelector<T4>, SQLOrderBySelector<T5>, SQLOrderBySelector<T6>>> selectExpression) {
-        return orderByDesc(condition, (t, t1, t2, t3, t4, t5) -> {
-            selectExpression.apply(new Tuple6<>(t, t1, t2, t3, t4, t5));
+        return orderByDesc(condition, (t1, t2, t3, t4, t5, t6) -> {
+            selectExpression.apply(new Tuple6<>(t1, t2, t3, t4, t5, t6));
         });
     }
 }

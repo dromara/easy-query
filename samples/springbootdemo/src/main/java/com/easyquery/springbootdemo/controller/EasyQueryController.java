@@ -132,4 +132,5 @@ public class EasyQueryController {
         testUserMysql1.setName("xxx");
         easyQuery.insertable(testUserMysql1).executeRows();
     }
+
 }

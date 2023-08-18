@@ -34,8 +34,8 @@ public interface SQLFilterable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> extends Clie
     }
 
     default Queryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> whereMerge(boolean condition, SQLExpression1<Tuple9<SQLWherePredicate<T1>, SQLWherePredicate<T2>, SQLWherePredicate<T3>, SQLWherePredicate<T4>, SQLWherePredicate<T5>, SQLWherePredicate<T6>, SQLWherePredicate<T7>, SQLWherePredicate<T8>, SQLWherePredicate<T9>>> whereExpression) {
-        return where(condition, (t, t1, t3, t4, t5, t6, t7, t8, t9) -> {
-            whereExpression.apply(new Tuple9<>(t, t1, t3, t4, t5, t6, t7, t8, t9));
+        return where(condition, (t1, t2, t3, t4, t5, t6, t7, t8, t9) -> {
+            whereExpression.apply(new Tuple9<>(t1, t2, t3, t4, t5, t6, t7, t8, t9));
         });
     }
 }

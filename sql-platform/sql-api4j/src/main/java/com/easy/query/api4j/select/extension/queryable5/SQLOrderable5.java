@@ -34,8 +34,8 @@ public interface SQLOrderable5<T1, T2, T3, T4, T5> extends ClientQueryable5Avail
     }
 
     default Queryable5<T1, T2, T3, T4, T5> orderByAscMerge(boolean condition, SQLExpression1<Tuple5<SQLOrderBySelector<T1>, SQLOrderBySelector<T2>, SQLOrderBySelector<T3>, SQLOrderBySelector<T4>, SQLOrderBySelector<T5>>> selectExpression) {
-        return orderByAsc(condition, (t,t1, t2, t3, t4) -> {
-            selectExpression.apply(new Tuple5<>(t,t1, t2, t3, t4));
+        return orderByAsc(condition, (t1, t2, t3, t4, t5) -> {
+            selectExpression.apply(new Tuple5<>(t1, t2, t3, t4, t5));
         });
     }
 
@@ -55,8 +55,8 @@ public interface SQLOrderable5<T1, T2, T3, T4, T5> extends ClientQueryable5Avail
     }
 
     default Queryable5<T1, T2, T3, T4, T5> orderByDescMerge(boolean condition, SQLExpression1<Tuple5<SQLOrderBySelector<T1>, SQLOrderBySelector<T2>, SQLOrderBySelector<T3>, SQLOrderBySelector<T4>, SQLOrderBySelector<T5>>> selectExpression) {
-        return orderByDesc(condition, (t,t1, t2, t3, t4) -> {
-            selectExpression.apply(new Tuple5<>(t,t1, t2, t3, t4));
+        return orderByDesc(condition, (t1, t2, t3, t4, t5) -> {
+            selectExpression.apply(new Tuple5<>(t1, t2, t3, t4, t5));
         });
     }
 }

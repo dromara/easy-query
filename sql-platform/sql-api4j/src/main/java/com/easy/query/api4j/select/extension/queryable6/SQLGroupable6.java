@@ -34,8 +34,8 @@ public interface SQLGroupable6<T1, T2, T3, T4, T5, T6> extends ClientQueryable6A
     }
 
     default Queryable6<T1, T2, T3, T4, T5, T6> groupByMerge(boolean condition, SQLExpression1<Tuple6<SQLGroupBySelector<T1>, SQLGroupBySelector<T2>, SQLGroupBySelector<T3>, SQLGroupBySelector<T4>, SQLGroupBySelector<T5>, SQLGroupBySelector<T6>>> selectExpression) {
-        return groupBy(condition, (t, t1, t3, t4, t5, t6) -> {
-            selectExpression.apply(new Tuple6<>(t, t1, t3, t4, t5, t6));
+        return groupBy(condition, (t1, t2, t3, t4, t5, t6) -> {
+            selectExpression.apply(new Tuple6<>(t1, t2, t3, t4, t5, t6));
         });
     }
 }

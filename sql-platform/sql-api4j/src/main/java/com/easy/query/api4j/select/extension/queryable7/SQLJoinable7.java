@@ -60,38 +60,38 @@ public interface SQLJoinable7<T1, T2, T3, T4, T5, T6,T7> extends ClientQueryable
     }
 
     default <T8> Queryable8<T1, T2, T3, T4, T5, T6, T7, T8> leftJoinMerge(Class<T8> joinClass, SQLExpression1<Tuple8<SQLWherePredicate<T1>, SQLWherePredicate<T2>, SQLWherePredicate<T3>, SQLWherePredicate<T4>, SQLWherePredicate<T5>, SQLWherePredicate<T6>, SQLWherePredicate<T7>, SQLWherePredicate<T8>>> on) {
-        return leftJoin(joinClass, (t, t1, t2, t3, t4, t5, t6, t7) -> {
-            on.apply(new Tuple8<>(t, t1, t2, t3, t4, t5, t6, t7));
+        return leftJoin(joinClass, (t1, t2, t3, t4, t5, t6, t7, t8) -> {
+            on.apply(new Tuple8<>(t1, t2, t3, t4, t5, t6, t7, t8));
         });
     }
 
     default <T8> Queryable8<T1, T2, T3, T4, T5, T6, T7, T8> leftJoinMerge(Queryable<T8> joinQueryable, SQLExpression1<Tuple8<SQLWherePredicate<T1>, SQLWherePredicate<T2>, SQLWherePredicate<T3>, SQLWherePredicate<T4>, SQLWherePredicate<T5>, SQLWherePredicate<T6>, SQLWherePredicate<T7>, SQLWherePredicate<T8>>> on) {
-        return leftJoin(joinQueryable, (t, t1, t2, t3, t4, t5, t6, t7) -> {
-            on.apply(new Tuple8<>(t, t1, t2, t3, t4, t5, t6, t7));
+        return leftJoin(joinQueryable, (t1, t2, t3, t4, t5, t6, t7, t8) -> {
+            on.apply(new Tuple8<>(t1, t2, t3, t4, t5, t6, t7, t8));
         });
     }
 
     default <T8> Queryable8<T1, T2, T3, T4, T5, T6, T7, T8> rightJoinMerge(Class<T8> joinClass, SQLExpression1<Tuple8<SQLWherePredicate<T1>, SQLWherePredicate<T2>, SQLWherePredicate<T3>, SQLWherePredicate<T4>, SQLWherePredicate<T5>, SQLWherePredicate<T6>, SQLWherePredicate<T7>, SQLWherePredicate<T8>>> on) {
-        return rightJoin(joinClass, (t, t1, t2, t3, t4, t5, t6, t7) -> {
-            on.apply(new Tuple8<>(t, t1, t2, t3, t4, t5, t6, t7));
+        return rightJoin(joinClass, (t1, t2, t3, t4, t5, t6, t7, t8) -> {
+            on.apply(new Tuple8<>(t1, t2, t3, t4, t5, t6, t7, t8));
         });
     }
 
     default <T8> Queryable8<T1, T2, T3, T4, T5, T6, T7, T8> rightJoinMerge(Queryable<T8> joinQueryable, SQLExpression1<Tuple8<SQLWherePredicate<T1>, SQLWherePredicate<T2>, SQLWherePredicate<T3>, SQLWherePredicate<T4>, SQLWherePredicate<T5>, SQLWherePredicate<T6>, SQLWherePredicate<T7>, SQLWherePredicate<T8>>> on) {
-        return rightJoin(joinQueryable, (t, t1, t2, t3, t4, t5, t6, t7) -> {
-            on.apply(new Tuple8<>(t, t1, t2, t3, t4, t5, t6, t7));
+        return rightJoin(joinQueryable, (t1, t2, t3, t4, t5, t6, t7, t8) -> {
+            on.apply(new Tuple8<>(t1, t2, t3, t4, t5, t6, t7, t8));
         });
     }
 
     default <T8> Queryable8<T1, T2, T3, T4, T5, T6, T7, T8> innerJoinMerge(Class<T8> joinClass, SQLExpression1<Tuple8<SQLWherePredicate<T1>, SQLWherePredicate<T2>, SQLWherePredicate<T3>, SQLWherePredicate<T4>, SQLWherePredicate<T5>, SQLWherePredicate<T6>, SQLWherePredicate<T7>, SQLWherePredicate<T8>>> on) {
-        return innerJoin(joinClass, (t, t1, t2, t3, t4, t5, t6, t7) -> {
-            on.apply(new Tuple8<>(t, t1, t2, t3, t4, t5, t6, t7));
+        return innerJoin(joinClass, (t1, t2, t3, t4, t5, t6, t7, t8) -> {
+            on.apply(new Tuple8<>(t1, t2, t3, t4, t5, t6, t7, t8));
         });
     }
 
     default <T8> Queryable8<T1, T2, T3, T4, T5, T6, T7, T8> innerJoinMerge(Queryable<T8> joinQueryable, SQLExpression1<Tuple8<SQLWherePredicate<T1>, SQLWherePredicate<T2>, SQLWherePredicate<T3>, SQLWherePredicate<T4>, SQLWherePredicate<T5>, SQLWherePredicate<T6>, SQLWherePredicate<T7>, SQLWherePredicate<T8>>> on) {
-        return innerJoin(joinQueryable, (t, t1, t2, t3, t4, t5, t6, t7) -> {
-            on.apply(new Tuple8<>(t, t1, t2, t3, t4, t5, t6, t7));
+        return innerJoin(joinQueryable, (t1, t2, t3, t4, t5, t6, t7, t8) -> {
+            on.apply(new Tuple8<>(t1, t2, t3, t4, t5, t6, t7, t8));
         });
     }
 }

@@ -25,8 +25,8 @@ public interface Havingable4<T1, T2, T3, T4> {
     }
 
     default ClientQueryable4<T1, T2, T3,T4> havingMerge(boolean condition, SQLExpression1<Tuple4<WhereAggregatePredicate<T1>, WhereAggregatePredicate<T2>, WhereAggregatePredicate<T3>, WhereAggregatePredicate<T4>>> predicateExpression) {
-        return having(condition, (t, t1, t2, t3) -> {
-            predicateExpression.apply(new Tuple4<>(t, t1, t2, t3));
+        return having(condition, (t1, t2, t3, t4) -> {
+            predicateExpression.apply(new Tuple4<>(t1, t2, t3, t4));
         });
     }
 

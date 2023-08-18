@@ -18,15 +18,15 @@ import com.easy.query.core.expression.lambda.SQLExpression2;
 public interface SQLSelectable2<T1,T2> extends ClientQueryable2Available<T1,T2> {
 
    default  <TR> Queryable<TR> select(Class<TR> resultClass, SQLExpression2<SQLColumnAsSelector<T1, TR>, SQLColumnAsSelector<T2, TR>> selectExpression){
-       ClientQueryable<TR> select = getClientQueryable2().select(resultClass, (t, t1) -> {
+       ClientQueryable<TR> select = getClientQueryable2().select(resultClass, (t1, t2) -> {
            selectExpression.apply(new SQLColumnAsSelectorImpl<>(t), new SQLColumnAsSelectorImpl<>(t1));
        });
        return new EasyQueryable<>(select);
    }
 
     default <TR> Queryable<TR> selectMerge(Class<TR> resultClass, SQLExpression1<Tuple2<SQLColumnAsSelector<T1, TR>, SQLColumnAsSelector<T2, TR>>> selectExpression) {
-        return select(resultClass, (t, t1) -> {
-            selectExpression.apply(new Tuple2<>(t, t1));
+        return select(resultClass, (t1, t2) -> {
+            selectExpression.apply(new Tuple2<>(t1, t2));
         });
     }
 }

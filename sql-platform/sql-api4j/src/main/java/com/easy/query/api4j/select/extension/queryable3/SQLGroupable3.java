@@ -35,8 +35,8 @@ public interface SQLGroupable3<T1, T2, T3> extends ClientQueryable3Available<T1,
     }
 
     default Queryable3<T1, T2, T3> groupByMerge(boolean condition, SQLExpression1<Tuple3<SQLGroupBySelector<T1>, SQLGroupBySelector<T2>, SQLGroupBySelector<T3>>> selectExpression) {
-        return groupBy(condition, (t, t1,t3) -> {
-            selectExpression.apply(new Tuple3<>(t, t1,t3));
+        return groupBy(condition, (t1,t2,t3) -> {
+            selectExpression.apply(new Tuple3<>(t1,t2,t3));
         });
     }
 }

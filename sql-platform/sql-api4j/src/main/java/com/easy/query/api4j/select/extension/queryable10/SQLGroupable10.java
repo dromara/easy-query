@@ -34,8 +34,8 @@ public interface SQLGroupable10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> extends
     }
 
     default Queryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> groupByMerge(boolean condition, SQLExpression1<Tuple10<SQLGroupBySelector<T1>, SQLGroupBySelector<T2>, SQLGroupBySelector<T3>, SQLGroupBySelector<T4>, SQLGroupBySelector<T5>, SQLGroupBySelector<T6>, SQLGroupBySelector<T7>, SQLGroupBySelector<T8>, SQLGroupBySelector<T9>, SQLGroupBySelector<T10>>> selectExpression) {
-        return groupBy(condition, (t, t1, t3, t4, t5, t6, t7, t8, t9, t10) -> {
-            selectExpression.apply(new Tuple10<>(t, t1, t3, t4, t5, t6, t7, t8, t9, t10));
+        return groupBy(condition, (t1, t2, t3, t4, t5, t6, t7, t8, t9, t10) -> {
+            selectExpression.apply(new Tuple10<>(t1, t2, t3, t4, t5, t6, t7, t8, t9, t10));
         });
     }
 }

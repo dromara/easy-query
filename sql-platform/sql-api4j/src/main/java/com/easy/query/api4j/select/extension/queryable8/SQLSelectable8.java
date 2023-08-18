@@ -18,15 +18,15 @@ import com.easy.query.core.expression.lambda.SQLExpression8;
 public interface SQLSelectable8<T1, T2, T3, T4, T5, T6, T7, T8> extends ClientQueryable8Available<T1, T2, T3, T4, T5, T6, T7, T8> {
 
     default <TR> Queryable<TR> select(Class<TR> resultClass, SQLExpression8<SQLColumnAsSelector<T1, TR>, SQLColumnAsSelector<T2, TR>, SQLColumnAsSelector<T3, TR>, SQLColumnAsSelector<T4, TR>, SQLColumnAsSelector<T5, TR>, SQLColumnAsSelector<T6, TR>, SQLColumnAsSelector<T7, TR>, SQLColumnAsSelector<T8, TR>> selectExpression) {
-        ClientQueryable<TR> select = getClientQueryable8().select(resultClass, (t, t1, t2, t3, t4, t5, t6, t7) -> {
-            selectExpression.apply(new SQLColumnAsSelectorImpl<>(t), new SQLColumnAsSelectorImpl<>(t1), new SQLColumnAsSelectorImpl<>(t2), new SQLColumnAsSelectorImpl<>(t3), new SQLColumnAsSelectorImpl<>(t4), new SQLColumnAsSelectorImpl<>(t5), new SQLColumnAsSelectorImpl<>(t6), new SQLColumnAsSelectorImpl<>(t7));
+        ClientQueryable<TR> select = getClientQueryable8().select(resultClass, (t1, t2, t3, t4, t5, t6, t7, t8) -> {
+            selectExpression.apply(new SQLColumnAsSelectorImpl<>(t1), new SQLColumnAsSelectorImpl<>(t2), new SQLColumnAsSelectorImpl<>(t3), new SQLColumnAsSelectorImpl<>(t4), new SQLColumnAsSelectorImpl<>(t5), new SQLColumnAsSelectorImpl<>(t6), new SQLColumnAsSelectorImpl<>(t7),new SQLColumnAsSelectorImpl<>(t8));
         });
         return new EasyQueryable<>(select);
     }
 
     default <TR> Queryable<TR> selectMerge(Class<TR> resultClass, SQLExpression1<Tuple8<SQLColumnAsSelector<T1, TR>, SQLColumnAsSelector<T2, TR>, SQLColumnAsSelector<T3, TR>, SQLColumnAsSelector<T4, TR>, SQLColumnAsSelector<T5, TR>, SQLColumnAsSelector<T6, TR>, SQLColumnAsSelector<T7, TR>, SQLColumnAsSelector<T8, TR>>> selectExpression) {
-        return select(resultClass, (t, t1, t2, t3, t4, t5, t6, t7) -> {
-            selectExpression.apply(new Tuple8<>(t, t1, t2, t3, t4, t5, t6, t7));
+        return select(resultClass, (t1, t2, t3, t4, t5, t6, t7, t8) -> {
+            selectExpression.apply(new Tuple8<>(t1, t2, t3, t4, t5, t6, t7, t8));
         });
     }
 }

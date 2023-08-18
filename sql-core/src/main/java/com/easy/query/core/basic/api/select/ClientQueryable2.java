@@ -29,5 +29,6 @@ public interface ClientQueryable2<T1, T2> extends ClientOverrideQueryable2<T1,T2
 
     //endregion
 
+    Class<T2> queryClass2();
     SQLExpressionProvider<T2> getSQLExpressionProvider2();
 }

@@ -41,6 +41,11 @@ public abstract class AbstractClientQueryable2<T1, T2> extends AbstractOverrideC
     }
 
     @Override
+    public Class<T2> queryClass2() {
+        return t2Class;
+    }
+
+    @Override
     public ClientQueryable<T1> getClientQueryable() {
         return this;
     }

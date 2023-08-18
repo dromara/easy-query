@@ -25,6 +25,8 @@ public interface ClientOverrideQueryable8<T1, T2, T3, T4, T5, T6, T7, T8> extend
 
 
     ClientQueryable<T1> getClientQueryable();
+    @Override
+    ClientQueryable8<T1, T2, T3, T4, T5, T6, T7, T8> cloneQueryable();
 
     @Override
     default ClientQueryable8<T1, T2, T3, T4, T5, T6, T7, T8> whereById(Object id) {

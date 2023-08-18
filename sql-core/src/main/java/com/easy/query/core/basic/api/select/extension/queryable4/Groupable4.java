@@ -26,8 +26,8 @@ public interface Groupable4<T1, T2, T3, T4> {
     }
 
     default ClientQueryable4<T1, T2, T3,T4> groupByMerge(boolean condition, SQLExpression1<Tuple4<ColumnGroupSelector<T1>, ColumnGroupSelector<T2>, ColumnGroupSelector<T3>, ColumnGroupSelector<T4>>> selectExpression) {
-        return groupBy(condition, (t, t1, t2,t3) -> {
-            selectExpression.apply(new Tuple4<>(t, t1, t2,t3));
+        return groupBy(condition, (t1, t2,t3, t4) -> {
+            selectExpression.apply(new Tuple4<>(t1, t2,t3, t4));
         });
     }
 }

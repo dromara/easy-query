@@ -43,9 +43,44 @@ public abstract class AbstractOverrideClientQueryable9<T1, T2, T3, T4, T5, T6, T
         this.t8Class = t8Class;
         this.t9Class = t9Class;
     }
+    public Class<T2> queryClass2() {
+        return t2Class;
+    }
+
+    public Class<T3> queryClass3() {
+        return t3Class;
+    }
+
+    public Class<T4> queryClass4() {
+        return t4Class;
+    }
+
+    public Class<T5> queryClass5() {
+        return t5Class;
+    }
+
+    public Class<T6> queryClass6() {
+        return t6Class;
+    }
+
+    public Class<T7> queryClass7() {
+        return t7Class;
+    }
+
+    public Class<T8> queryClass8() {
+        return t8Class;
+    }
+
+    public Class<T9> queryClass9() {
+        return t9Class;
+    }
 
     protected abstract ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8,T9> getClientQueryable9();
 
+    @Override
+    public ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8,T9> cloneQueryable() {
+        return entityQueryExpressionBuilder.getRuntimeContext().getSQLClientApiFactory().cloneQueryable(getClientQueryable9());
+    }
 
     @Override
     public ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8,T9> whereById(boolean condition, Object id) {

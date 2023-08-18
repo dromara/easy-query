@@ -17,6 +17,6 @@ public class EasyQueryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> extends Ab
 
     @Override
     public Queryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> cloneQueryable() {
-        return new EasyQueryable10<>(entityQueryable10);
+        return new EasyQueryable10<>(entityQueryable10.cloneQueryable());
     }
 }

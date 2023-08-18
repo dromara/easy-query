@@ -34,8 +34,8 @@ public interface SQLOrderable2<T1, T2> extends ClientQueryable2Available<T1, T2>
     }
 
    default Queryable2<T1, T2> orderByAscMerge(boolean condition, SQLExpression1<Tuple2<SQLOrderBySelector<T1>, SQLOrderBySelector<T2>>> selectExpression){
-        return orderByAsc(condition,(t,t1)->{
-            selectExpression.apply(new Tuple2<>(t,t1));
+        return orderByAsc(condition,(t1, t2)->{
+            selectExpression.apply(new Tuple2<>(t1, t2));
         });
    }
 
@@ -56,8 +56,8 @@ public interface SQLOrderable2<T1, T2> extends ClientQueryable2Available<T1, T2>
     }
 
    default Queryable2<T1, T2> orderByDescMerge(boolean condition, SQLExpression1<Tuple2<SQLOrderBySelector<T1>, SQLOrderBySelector<T2>>> selectExpression){
-        return orderByDesc(condition,(t,t1)->{
-            selectExpression.apply(new Tuple2<>(t,t1));
+        return orderByDesc(condition,(t1, t2)->{
+            selectExpression.apply(new Tuple2<>(t1, t2));
         });
    }
 

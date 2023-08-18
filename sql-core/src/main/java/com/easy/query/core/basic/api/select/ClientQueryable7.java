@@ -24,6 +24,12 @@ public interface ClientQueryable7<T1, T2, T3, T4, T5, T6,T7> extends ClientOverr
         Havingable7<T1, T2, T3, T4, T5, T6,T7>,
         Orderable7<T1, T2, T3, T4, T5, T6,T7>,
         Joinable7<T1, T2, T3, T4, T5, T6,T7> {
+    Class<T2> queryClass2();
+    Class<T3> queryClass3();
+    Class<T4> queryClass4();
+    Class<T5> queryClass5();
+    Class<T6> queryClass6();
+    Class<T7> queryClass7();
     SQLExpressionProvider<T2> getSQLExpressionProvider2();
 
     SQLExpressionProvider<T3> getSQLExpressionProvider3();

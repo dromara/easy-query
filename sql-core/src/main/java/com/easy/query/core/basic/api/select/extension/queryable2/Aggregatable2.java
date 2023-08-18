@@ -85,8 +85,8 @@ public interface Aggregatable2<T1,T2> {
     }
 
    default  <TMember extends Number> BigDecimal sumBigDecimalOrDefaultMerge(SQLExpression1<Tuple2<ColumnResultSelector<T1>, ColumnResultSelector<T2>>> columnSelectorExpression, BigDecimal def){
-        return sumBigDecimalOrDefault((t,t1)->{
-            columnSelectorExpression.apply(new Tuple2<>(t,t1));
+        return sumBigDecimalOrDefault((t1, t2)->{
+            columnSelectorExpression.apply(new Tuple2<>(t1, t2));
         },def);
    }
 
@@ -95,8 +95,8 @@ public interface Aggregatable2<T1,T2> {
     }
 
    default  <TMember extends Number> TMember sumOrDefaultMerge(SQLExpression1<Tuple2<ColumnResultSelector<T1>, ColumnResultSelector<T2>>> columnSelectorExpression, TMember def){
-        return sumOrDefault((t,t1)->{
-            columnSelectorExpression.apply(new Tuple2<>(t,t1));
+        return sumOrDefault((t1, t2)->{
+            columnSelectorExpression.apply(new Tuple2<>(t1, t2));
         },def);
    }
 
@@ -105,8 +105,8 @@ public interface Aggregatable2<T1,T2> {
     }
 
    default  <TMember> TMember maxOrDefaultMerge(SQLExpression1<Tuple2<ColumnResultSelector<T1>, ColumnResultSelector<T2>>> columnSelectorExpression, TMember def){
-        return maxOrDefault((t,t1)->{
-            columnSelectorExpression.apply(new Tuple2<>(t,t1));
+        return maxOrDefault((t1, t2)->{
+            columnSelectorExpression.apply(new Tuple2<>(t1, t2));
         },def);
    }
 
@@ -115,8 +115,8 @@ public interface Aggregatable2<T1,T2> {
     }
 
    default  <TMember> TMember minOrDefaultMerge(SQLExpression1<Tuple2<ColumnResultSelector<T1>, ColumnResultSelector<T2>>> columnSelectorExpression, TMember def){
-        return minOrDefault((t,t1)->{
-            columnSelectorExpression.apply(new Tuple2<>(t,t1));
+        return minOrDefault((t1, t2)->{
+            columnSelectorExpression.apply(new Tuple2<>(t1, t2));
         },def);
     }
 
@@ -145,8 +145,8 @@ public interface Aggregatable2<T1,T2> {
     }
 
   default   <TMember extends Number, TResult extends Number> TResult avgOrDefaultMerge(SQLExpression1<Tuple2<ColumnResultSelector<T1>, ColumnResultSelector<T2>>> columnSelectorExpression, TResult def, Class<TResult> resultClass){
-        return avgOrDefault((t,t1)->{
-            columnSelectorExpression.apply(new Tuple2<>(t,t1));
+        return avgOrDefault((t1, t2)->{
+            columnSelectorExpression.apply(new Tuple2<>(t1, t2));
         },def,resultClass);
   }
 }

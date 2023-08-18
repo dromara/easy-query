@@ -36,8 +36,28 @@ public abstract class AbstractOverrideClientQueryable5<T1, T2, T3, T4, T5> exten
         this.t5Class = t5Class;
     }
 
+
+    public Class<T2> queryClass2() {
+        return t2Class;
+    }
+
+    public Class<T3> queryClass3() {
+        return t3Class;
+    }
+
+    public Class<T4> queryClass4() {
+        return t4Class;
+    }
+
+    public Class<T5> queryClass5() {
+        return t5Class;
+    }
     protected abstract ClientQueryable5<T1, T2, T3, T4, T5> getClientQueryable5();
 
+    @Override
+    public ClientQueryable5<T1, T2, T3, T4, T5> cloneQueryable() {
+        return entityQueryExpressionBuilder.getRuntimeContext().getSQLClientApiFactory().cloneQueryable(getClientQueryable5());
+    }
 
     @Override
     public ClientQueryable5<T1, T2, T3, T4, T5> whereById(boolean condition, Object id) {

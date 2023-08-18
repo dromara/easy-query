@@ -26,6 +26,8 @@ public interface ClientQueryable3<T1, T2, T3> extends ClientOverrideQueryable3<T
         Havingable3<T1, T2, T3>,
         Orderable3<T1, T2, T3> {
 
+    Class<T2> queryClass2();
+    Class<T3> queryClass3();
     SQLExpressionProvider<T2> getSQLExpressionProvider2();
 
     SQLExpressionProvider<T3> getSQLExpressionProvider3();

@@ -20,7 +20,7 @@ public interface SQLJoinable3<T1, T2,T3> extends ClientQueryable3Available<T1,T2
 
     /**
      * <pre>{@code
-     * leftJoin(Entity2.class, (t, t1, t2,t3) -> t.eq(t2, Entity::getId, Entity2::getId))
+     * leftJoin(Entity2.class, (t1, t2,t3, t4) -> t.eq(t2, Entity::getId, Entity2::getId))
      * }</pre>
      * t代表from的表,t1代表第一次join的表,t2代表第二次join的表
      *
@@ -73,38 +73,38 @@ public interface SQLJoinable3<T1, T2,T3> extends ClientQueryable3Available<T1,T2
 
 
     default <T4> Queryable4<T1, T2, T3,T4> leftJoinMerge(Class<T4> joinClass, SQLExpression1<Tuple4<SQLWherePredicate<T1>, SQLWherePredicate<T2>, SQLWherePredicate<T3>, SQLWherePredicate<T4>>> on) {
-        return leftJoin(joinClass, (t, t1, t2,t3) -> {
-            on.apply(new Tuple4<>(t, t1, t2,t3));
+        return leftJoin(joinClass, (t1, t2,t3, t4) -> {
+            on.apply(new Tuple4<>(t1, t2,t3, t4));
         });
     }
 
     default <T4> Queryable4<T1, T2, T3,T4> leftJoinMerge(Queryable<T4> joinQueryable, SQLExpression1<Tuple4<SQLWherePredicate<T1>, SQLWherePredicate<T2>, SQLWherePredicate<T3>, SQLWherePredicate<T4>>> on) {
-        return leftJoin(joinQueryable, (t, t1, t2,t3) -> {
-            on.apply(new Tuple4<>(t, t1, t2,t3));
+        return leftJoin(joinQueryable, (t1, t2,t3, t4) -> {
+            on.apply(new Tuple4<>(t1, t2,t3, t4));
         });
     }
 
     default <T4> Queryable4<T1, T2, T3,T4> rightJoinMerge(Class<T4> joinClass, SQLExpression1<Tuple4<SQLWherePredicate<T1>, SQLWherePredicate<T2>, SQLWherePredicate<T3>, SQLWherePredicate<T4>>> on) {
-        return rightJoin(joinClass, (t, t1, t2,t3) -> {
-            on.apply(new Tuple4<>(t, t1, t2,t3));
+        return rightJoin(joinClass, (t1, t2,t3, t4) -> {
+            on.apply(new Tuple4<>(t1, t2,t3, t4));
         });
     }
 
     default <T4> Queryable4<T1, T2, T3,T4> rightJoinMerge(Queryable<T4> joinQueryable, SQLExpression1<Tuple4<SQLWherePredicate<T1>, SQLWherePredicate<T2>, SQLWherePredicate<T3>, SQLWherePredicate<T4>>> on) {
-        return rightJoin(joinQueryable, (t, t1, t2,t3) -> {
-            on.apply(new Tuple4<>(t, t1, t2,t3));
+        return rightJoin(joinQueryable, (t1, t2,t3, t4) -> {
+            on.apply(new Tuple4<>(t1, t2,t3, t4));
         });
     }
 
     default <T4> Queryable4<T1, T2, T3,T4> innerJoinMerge(Class<T4> joinClass, SQLExpression1<Tuple4<SQLWherePredicate<T1>, SQLWherePredicate<T2>, SQLWherePredicate<T3>, SQLWherePredicate<T4>>> on) {
-        return innerJoin(joinClass, (t, t1, t2,t3) -> {
-            on.apply(new Tuple4<>(t, t1, t2,t3));
+        return innerJoin(joinClass, (t1, t2,t3, t4) -> {
+            on.apply(new Tuple4<>(t1, t2,t3, t4));
         });
     }
 
     default <T4> Queryable4<T1, T2, T3,T4> innerJoinMerge(Queryable<T4> joinQueryable, SQLExpression1<Tuple4<SQLWherePredicate<T1>, SQLWherePredicate<T2>, SQLWherePredicate<T3>, SQLWherePredicate<T4>>> on) {
-        return innerJoin(joinQueryable, (t, t1, t2,t3) -> {
-            on.apply(new Tuple4<>(t, t1, t2,t3));
+        return innerJoin(joinQueryable, (t1, t2,t3, t4) -> {
+            on.apply(new Tuple4<>(t1, t2,t3, t4));
         });
     }
 

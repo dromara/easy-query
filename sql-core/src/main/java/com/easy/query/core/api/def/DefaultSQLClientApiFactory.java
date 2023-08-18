@@ -100,12 +100,71 @@ public class DefaultSQLClientApiFactory implements SQLClientApiFactory {
         return new EasyClientQueryable<>(clazz, entityQueryExpressionBuilder);
     }
 
+    private <T> EntityQueryExpressionBuilder cloneEntityExpressionBuilder(ClientQueryable<T> source) {
+        EntityQueryExpressionBuilder sqlEntityExpressionBuilder = source.getSQLEntityExpressionBuilder();
+        return sqlEntityExpressionBuilder.cloneEntityExpressionBuilder();
+    }
+
     @Override
     public <T> ClientQueryable<T> cloneQueryable(ClientQueryable<T> source) {
-        EntityQueryExpressionBuilder sqlEntityExpressionBuilder = source.getSQLEntityExpressionBuilder();
-        EntityQueryExpressionBuilder entityQueryExpressionBuilder = sqlEntityExpressionBuilder.cloneEntityExpressionBuilder();
+        EntityQueryExpressionBuilder entityQueryExpressionBuilder = cloneEntityExpressionBuilder(source);
         return new EasyClientQueryable<>(source.queryClass(), entityQueryExpressionBuilder);
     }
+
+    @Override
+    public <T1, T2> ClientQueryable2<T1, T2> cloneQueryable(ClientQueryable2<T1, T2> source) {
+        EntityQueryExpressionBuilder entityQueryExpressionBuilder = cloneEntityExpressionBuilder(source);
+        return new EasyClientQueryable2<>(source.queryClass(), source.queryClass2(), entityQueryExpressionBuilder);
+    }
+
+    @Override
+    public <T1, T2, T3> ClientQueryable3<T1, T2, T3> cloneQueryable(ClientQueryable3<T1, T2, T3> source) {
+        EntityQueryExpressionBuilder entityQueryExpressionBuilder = cloneEntityExpressionBuilder(source);
+        return new EasyClientQueryable3<>(source.queryClass(), source.queryClass2(), source.queryClass3(), entityQueryExpressionBuilder);
+    }
+
+    @Override
+    public <T1, T2, T3, T4> ClientQueryable4<T1, T2, T3, T4> cloneQueryable(ClientQueryable4<T1, T2, T3, T4> source) {
+        EntityQueryExpressionBuilder entityQueryExpressionBuilder = cloneEntityExpressionBuilder(source);
+        return new EasyClientQueryable4<>(source.queryClass(), source.queryClass2(), source.queryClass3(), source.queryClass4(), entityQueryExpressionBuilder);
+    }
+
+    @Override
+    public <T1, T2, T3, T4, T5> ClientQueryable5<T1, T2, T3, T4, T5> cloneQueryable(ClientQueryable5<T1, T2, T3, T4, T5> source) {
+        EntityQueryExpressionBuilder entityQueryExpressionBuilder = cloneEntityExpressionBuilder(source);
+        return new EasyClientQueryable5<>(source.queryClass(), source.queryClass2(), source.queryClass3(), source.queryClass4(), source.queryClass5(), entityQueryExpressionBuilder);
+    }
+
+    @Override
+    public <T1, T2, T3, T4, T5, T6> ClientQueryable6<T1, T2, T3, T4, T5, T6> cloneQueryable(ClientQueryable6<T1, T2, T3, T4, T5, T6> source) {
+        EntityQueryExpressionBuilder entityQueryExpressionBuilder = cloneEntityExpressionBuilder(source);
+        return new EasyClientQueryable6<>(source.queryClass(), source.queryClass2(), source.queryClass3(), source.queryClass4(), source.queryClass5(), source.queryClass6(), entityQueryExpressionBuilder);
+    }
+
+    @Override
+    public <T1, T2, T3, T4, T5, T6, T7> ClientQueryable7<T1, T2, T3, T4, T5, T6, T7> cloneQueryable(ClientQueryable7<T1, T2, T3, T4, T5, T6, T7> source) {
+        EntityQueryExpressionBuilder entityQueryExpressionBuilder = cloneEntityExpressionBuilder(source);
+        return new EasyClientQueryable7<>(source.queryClass(), source.queryClass2(), source.queryClass3(), source.queryClass4(), source.queryClass5(), source.queryClass6(), source.queryClass7(), entityQueryExpressionBuilder);
+    }
+
+    @Override
+    public <T1, T2, T3, T4, T5, T6, T7, T8> ClientQueryable8<T1, T2, T3, T4, T5, T6, T7, T8> cloneQueryable(ClientQueryable8<T1, T2, T3, T4, T5, T6, T7, T8> source) {
+        EntityQueryExpressionBuilder entityQueryExpressionBuilder = cloneEntityExpressionBuilder(source);
+        return new EasyClientQueryable8<>(source.queryClass(), source.queryClass2(), source.queryClass3(), source.queryClass4(), source.queryClass5(), source.queryClass6(), source.queryClass7(), source.queryClass8(), entityQueryExpressionBuilder);
+    }
+
+    @Override
+    public <T1, T2, T3, T4, T5, T6, T7, T8, T9> ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> cloneQueryable(ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> source) {
+        EntityQueryExpressionBuilder entityQueryExpressionBuilder = cloneEntityExpressionBuilder(source);
+        return new EasyClientQueryable9<>(source.queryClass(), source.queryClass2(), source.queryClass3(), source.queryClass4(), source.queryClass5(), source.queryClass6(), source.queryClass7(), source.queryClass8(), source.queryClass9(), entityQueryExpressionBuilder);
+    }
+
+    @Override
+    public <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> ClientQueryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> cloneQueryable(ClientQueryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> source) {
+        EntityQueryExpressionBuilder entityQueryExpressionBuilder = cloneEntityExpressionBuilder(source);
+        return new EasyClientQueryable10<>(source.queryClass(), source.queryClass2(), source.queryClass3(), source.queryClass4(), source.queryClass5(), source.queryClass6(), source.queryClass7(), source.queryClass8(), source.queryClass9(), source.queryClass10(), entityQueryExpressionBuilder);
+    }
+
 
     /**
      * 判断单表不需要匿名多表才需要

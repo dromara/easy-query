@@ -25,6 +25,9 @@ public interface ClientQueryable4<T1, T2, T3, T4> extends ClientOverrideQueryabl
         Havingable4<T1, T2, T3, T4>,
         Orderable4<T1, T2, T3, T4> {
 
+    Class<T2> queryClass2();
+    Class<T3> queryClass3();
+    Class<T4> queryClass4();
     SQLExpressionProvider<T2> getSQLExpressionProvider2();
 
     SQLExpressionProvider<T3> getSQLExpressionProvider3();

@@ -2,6 +2,7 @@ package com.easy.query.core.basic.api.select.extension.queryable5.override;
 
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.api.select.ClientQueryable;
+import com.easy.query.core.basic.api.select.ClientQueryable2;
 import com.easy.query.core.basic.api.select.ClientQueryable5;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.expression.lambda.SQLExpression1;
@@ -26,6 +27,8 @@ public interface ClientOverrideQueryable5<T1, T2, T3, T4, T5> extends ClientQuer
 
     ClientQueryable<T1> getClientQueryable();
 
+    @Override
+    ClientQueryable5<T1, T2, T3, T4,T5> cloneQueryable();
     @Override
     default ClientQueryable5<T1, T2, T3, T4,T5> whereById(Object id) {
         return whereById(true, id);

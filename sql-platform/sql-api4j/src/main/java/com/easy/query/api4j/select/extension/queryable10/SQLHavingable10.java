@@ -34,8 +34,8 @@ public interface SQLHavingable10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> extend
     }
 
     default Queryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> havingMerge(boolean condition, SQLExpression1<Tuple10<SQLWhereAggregatePredicate<T1>, SQLWhereAggregatePredicate<T2>, SQLWhereAggregatePredicate<T3>, SQLWhereAggregatePredicate<T4>, SQLWhereAggregatePredicate<T5>, SQLWhereAggregatePredicate<T6>, SQLWhereAggregatePredicate<T7>, SQLWhereAggregatePredicate<T8>, SQLWhereAggregatePredicate<T9>, SQLWhereAggregatePredicate<T10>>> predicateExpression) {
-        return having(condition, (t, t1, t2, t3, t4, t5, t6, t7, t8, t9) -> {
-            predicateExpression.apply(new Tuple10<>(t, t1, t2, t3, t4, t5, t6, t7, t8, t9));
+        return having(condition, (t1, t2, t3, t4, t5, t6, t7, t8, t9, t10) -> {
+            predicateExpression.apply(new Tuple10<>(t1, t2, t3, t4, t5, t6, t7, t8, t9, t10));
         });
     }
 }

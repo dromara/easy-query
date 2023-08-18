@@ -386,7 +386,7 @@ Topic topic = easyQuery
 ```java
 Topic topic = easyQuery
                 .queryable(Topic.class)
-                .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                .leftJoin(BlogEntity.class, (t1, t2) -> t.eq(t1, Topic::getId, BlogEntity::getId))
                 .where(o -> o.eq(Topic::getId, "3"))
                 .firstOrNull();
 ```
@@ -403,10 +403,10 @@ join + group +分页
 
 EasyPageResult<BlogEntity> page = easyQuery
         .queryable(Topic.class).asTracking()
-        .innerJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
-        .where((t, t1) -> t1.isNotNull(BlogEntity::getTitle))
-        .groupBy((t, t1)->t1.column(BlogEntity::getId))
-        .select(BlogEntity.class, (t, t1) -> t1.column(BlogEntity::getId).columnSum(BlogEntity::getScore))
+        .innerJoin(BlogEntity.class, (t1, t2) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+        .where((t1, t2) -> t1.isNotNull(BlogEntity::getTitle))
+        .groupBy((t1, t2)->t1.column(BlogEntity::getId))
+        .select(BlogEntity.class, (t1, t2) -> t1.column(BlogEntity::getId).columnSum(BlogEntity::getScore))
         .toPageResult(1, 20);
 ```
 ```sql

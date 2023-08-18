@@ -1,6 +1,6 @@
 package com.easy.query.api4kt.select.impl;
 
-import com.easy.query.api4kt.select.KtQueryable;
+import com.easy.query.api4kt.select.KtQueryable2;
 import com.easy.query.api4kt.select.abstraction.AbstractKtQueryable2;
 import com.easy.query.core.basic.api.select.ClientQueryable2;
 
@@ -16,7 +16,7 @@ public class EasyKtQueryable2<T1, T2> extends AbstractKtQueryable2<T1, T2> {
     }
 
     @Override
-    public KtQueryable<T1> cloneQueryable() {
-        return new EasyKtQueryable2<>(entityQueryable2);
+    public KtQueryable2<T1,T2> cloneQueryable() {
+        return new EasyKtQueryable2<>(entityQueryable2.cloneQueryable());
     }
 }

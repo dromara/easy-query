@@ -60,38 +60,38 @@ public interface SQLJoinable8<T1, T2, T3, T4, T5, T6,T7,T8> extends ClientQuerya
     }
 
     default <T9> Queryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> leftJoinMerge(Class<T9> joinClass, SQLExpression1<Tuple9<SQLWherePredicate<T1>, SQLWherePredicate<T2>, SQLWherePredicate<T3>, SQLWherePredicate<T4>, SQLWherePredicate<T5>, SQLWherePredicate<T6>, SQLWherePredicate<T7>, SQLWherePredicate<T8>, SQLWherePredicate<T9>>> on) {
-        return leftJoin(joinClass, (t, t1, t2, t3, t4, t5, t6, t7, t8) -> {
-            on.apply(new Tuple9<>(t, t1, t2, t3, t4, t5, t6, t7, t8));
+        return leftJoin(joinClass, (t1, t2, t3, t4, t5, t6, t7, t8, t9) -> {
+            on.apply(new Tuple9<>(t1, t2, t3, t4, t5, t6, t7, t8, t9));
         });
     }
 
     default <T9> Queryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> leftJoinMerge(Queryable<T9> joinQueryable, SQLExpression1<Tuple9<SQLWherePredicate<T1>, SQLWherePredicate<T2>, SQLWherePredicate<T3>, SQLWherePredicate<T4>, SQLWherePredicate<T5>, SQLWherePredicate<T6>, SQLWherePredicate<T7>, SQLWherePredicate<T8>, SQLWherePredicate<T9>>> on) {
-        return leftJoin(joinQueryable, (t, t1, t2, t3, t4, t5, t6, t7, t8) -> {
-            on.apply(new Tuple9<>(t, t1, t2, t3, t4, t5, t6, t7, t8));
+        return leftJoin(joinQueryable, (t1, t2, t3, t4, t5, t6, t7, t8, t9) -> {
+            on.apply(new Tuple9<>(t1, t2, t3, t4, t5, t6, t7, t8, t9));
         });
     }
 
     default <T9> Queryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> rightJoinMerge(Class<T9> joinClass, SQLExpression1<Tuple9<SQLWherePredicate<T1>, SQLWherePredicate<T2>, SQLWherePredicate<T3>, SQLWherePredicate<T4>, SQLWherePredicate<T5>, SQLWherePredicate<T6>, SQLWherePredicate<T7>, SQLWherePredicate<T8>, SQLWherePredicate<T9>>> on) {
-        return rightJoin(joinClass, (t, t1, t2, t3, t4, t5, t6, t7, t8) -> {
-            on.apply(new Tuple9<>(t, t1, t2, t3, t4, t5, t6, t7, t8));
+        return rightJoin(joinClass, (t1, t2, t3, t4, t5, t6, t7, t8, t9) -> {
+            on.apply(new Tuple9<>(t1, t2, t3, t4, t5, t6, t7, t8, t9));
         });
     }
 
     default <T9> Queryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> rightJoinMerge(Queryable<T9> joinQueryable, SQLExpression1<Tuple9<SQLWherePredicate<T1>, SQLWherePredicate<T2>, SQLWherePredicate<T3>, SQLWherePredicate<T4>, SQLWherePredicate<T5>, SQLWherePredicate<T6>, SQLWherePredicate<T7>, SQLWherePredicate<T8>, SQLWherePredicate<T9>>> on) {
-        return rightJoin(joinQueryable, (t, t1, t2, t3, t4, t5, t6, t7, t8) -> {
-            on.apply(new Tuple9<>(t, t1, t2, t3, t4, t5, t6, t7, t8));
+        return rightJoin(joinQueryable, (t1, t2, t3, t4, t5, t6, t7, t8, t9) -> {
+            on.apply(new Tuple9<>(t1, t2, t3, t4, t5, t6, t7, t8, t9));
         });
     }
 
     default <T9> Queryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> innerJoinMerge(Class<T9> joinClass, SQLExpression1<Tuple9<SQLWherePredicate<T1>, SQLWherePredicate<T2>, SQLWherePredicate<T3>, SQLWherePredicate<T4>, SQLWherePredicate<T5>, SQLWherePredicate<T6>, SQLWherePredicate<T7>, SQLWherePredicate<T8>, SQLWherePredicate<T9>>> on) {
-        return innerJoin(joinClass, (t, t1, t2, t3, t4, t5, t6, t7, t8) -> {
-            on.apply(new Tuple9<>(t, t1, t2, t3, t4, t5, t6, t7, t8));
+        return innerJoin(joinClass, (t1, t2, t3, t4, t5, t6, t7, t8, t9) -> {
+            on.apply(new Tuple9<>(t1, t2, t3, t4, t5, t6, t7, t8, t9));
         });
     }
 
     default <T9> Queryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> innerJoinMerge(Queryable<T9> joinQueryable, SQLExpression1<Tuple9<SQLWherePredicate<T1>, SQLWherePredicate<T2>, SQLWherePredicate<T3>, SQLWherePredicate<T4>, SQLWherePredicate<T5>, SQLWherePredicate<T6>, SQLWherePredicate<T7>, SQLWherePredicate<T8>, SQLWherePredicate<T9>>> on) {
-        return innerJoin(joinQueryable, (t, t1, t2, t3, t4, t5, t6, t7, t8) -> {
-            on.apply(new Tuple9<>(t, t1, t2, t3, t4, t5, t6, t7, t8));
+        return innerJoin(joinQueryable, (t1, t2, t3, t4, t5, t6, t7, t8, t9) -> {
+            on.apply(new Tuple9<>(t1, t2, t3, t4, t5, t6, t7, t8, t9));
         });
     }
 }

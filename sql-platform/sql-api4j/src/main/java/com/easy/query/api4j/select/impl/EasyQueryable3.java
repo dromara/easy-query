@@ -17,6 +17,6 @@ public class EasyQueryable3<T1, T2, T3> extends AbstractQueryable3<T1, T2, T3> {
 
     @Override
     public Queryable3<T1,T2,T3> cloneQueryable() {
-        return new EasyQueryable3<>(entityQueryable3);
+        return new EasyQueryable3<>(entityQueryable3.cloneQueryable());
     }
 }

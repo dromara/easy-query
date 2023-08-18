@@ -34,8 +34,8 @@ public interface SQLHavingable3<T1, T2,T3> extends ClientQueryable3Available<T1,
     }
 
     default Queryable3<T1, T2,T3> havingMerge(boolean condition, SQLExpression1<Tuple3<SQLWhereAggregatePredicate<T1>, SQLWhereAggregatePredicate<T2>, SQLWhereAggregatePredicate<T3>>> predicateExpression) {
-        return having(condition, (t, t1, t2) -> {
-            predicateExpression.apply(new Tuple3<>(t, t1, t2));
+        return having(condition, (t1, t2,t3) -> {
+            predicateExpression.apply(new Tuple3<>(t1, t2,t3));
         });
     }
 }

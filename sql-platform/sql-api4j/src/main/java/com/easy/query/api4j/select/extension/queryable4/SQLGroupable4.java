@@ -35,8 +35,8 @@ public interface SQLGroupable4<T1, T2, T3, T4> extends ClientQueryable4Available
     }
 
     default Queryable4<T1, T2, T3, T4> groupByMerge(boolean condition, SQLExpression1<Tuple4<SQLGroupBySelector<T1>, SQLGroupBySelector<T2>, SQLGroupBySelector<T3>, SQLGroupBySelector<T4>>> selectExpression) {
-        return groupBy(condition, (t, t1, t3, t4) -> {
-            selectExpression.apply(new Tuple4<>(t, t1, t3, t4));
+        return groupBy(condition, (t1, t2, t3, t4) -> {
+            selectExpression.apply(new Tuple4<>(t1, t2, t3, t4));
         });
     }
 }

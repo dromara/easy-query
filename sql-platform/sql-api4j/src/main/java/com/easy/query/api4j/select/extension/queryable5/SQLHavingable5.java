@@ -34,8 +34,8 @@ public interface SQLHavingable5<T1, T2, T3, T4, T5> extends ClientQueryable5Avai
     }
 
     default Queryable5<T1, T2, T3, T4, T5> havingMerge(boolean condition, SQLExpression1<Tuple5<SQLWhereAggregatePredicate<T1>, SQLWhereAggregatePredicate<T2>, SQLWhereAggregatePredicate<T3>, SQLWhereAggregatePredicate<T4>, SQLWhereAggregatePredicate<T5>>> predicateExpression) {
-        return having(condition, (t, t1, t2, t3, t4) -> {
-            predicateExpression.apply(new Tuple5<>(t, t1, t2, t3, t4));
+        return having(condition, (t1, t2, t3, t4, t5) -> {
+            predicateExpression.apply(new Tuple5<>(t1, t2, t3, t4, t5));
         });
     }
 }

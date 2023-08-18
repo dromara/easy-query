@@ -1,6 +1,7 @@
 package com.easy.query.core.basic.api.select.extension.queryable7.override;
 
 import com.easy.query.core.basic.api.select.ClientQueryable;
+import com.easy.query.core.basic.api.select.ClientQueryable2;
 import com.easy.query.core.basic.api.select.ClientQueryable7;
 import com.easy.query.core.basic.api.select.abstraction.AbstractClientQueryable;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
@@ -40,9 +41,37 @@ public abstract class AbstractOverrideClientQueryable7<T1, T2, T3, T4, T5, T6, T
         this.t7Class = t7Class;
     }
 
+
+    public Class<T2> queryClass2() {
+        return t2Class;
+    }
+
+    public Class<T3> queryClass3() {
+        return t3Class;
+    }
+
+    public Class<T4> queryClass4() {
+        return t4Class;
+    }
+
+    public Class<T5> queryClass5() {
+        return t5Class;
+    }
+
+    public Class<T6> queryClass6() {
+        return t6Class;
+    }
+
+    public Class<T7> queryClass7() {
+        return t7Class;
+    }
     protected abstract ClientQueryable7<T1, T2, T3, T4, T5, T6, T7> getClientQueryable7();
 
 
+    @Override
+    public ClientQueryable7<T1, T2, T3, T4, T5, T6, T7> cloneQueryable() {
+        return entityQueryExpressionBuilder.getRuntimeContext().getSQLClientApiFactory().cloneQueryable(getClientQueryable7());
+    }
     @Override
     public ClientQueryable7<T1, T2, T3, T4, T5, T6, T7> whereById(boolean condition, Object id) {
         super.whereById(condition, id);

@@ -34,8 +34,8 @@ public interface SQLOrderable3<T1, T2, T3> extends ClientQueryable3Available<T1,
     }
 
     default Queryable3<T1, T2, T3> orderByAscMerge(boolean condition, SQLExpression1<Tuple3<SQLOrderBySelector<T1>, SQLOrderBySelector<T2>, SQLOrderBySelector<T3>>> selectExpression) {
-        return orderByAsc(condition, (t, t1, t2) -> {
-            selectExpression.apply(new Tuple3<>(t, t1, t2));
+        return orderByAsc(condition, (t1, t2,t3) -> {
+            selectExpression.apply(new Tuple3<>(t1, t2,t3));
         });
     }
 
@@ -56,8 +56,8 @@ public interface SQLOrderable3<T1, T2, T3> extends ClientQueryable3Available<T1,
     }
 
     default Queryable3<T1, T2, T3> orderByDescMerge(boolean condition, SQLExpression1<Tuple3<SQLOrderBySelector<T1>, SQLOrderBySelector<T2>, SQLOrderBySelector<T3>>> selectExpression) {
-        return orderByDesc(condition, (t, t1, t2) -> {
-            selectExpression.apply(new Tuple3<>(t, t1, t2));
+        return orderByDesc(condition, (t1, t2,t3) -> {
+            selectExpression.apply(new Tuple3<>(t1, t2,t3));
         });
     }
 

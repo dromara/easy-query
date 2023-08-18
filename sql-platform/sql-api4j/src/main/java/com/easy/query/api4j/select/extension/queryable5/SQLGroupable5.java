@@ -34,8 +34,8 @@ public interface SQLGroupable5<T1, T2, T3, T4, T5> extends ClientQueryable5Avail
     }
 
     default Queryable5<T1, T2, T3, T4, T5> groupByMerge(boolean condition, SQLExpression1<Tuple5<SQLGroupBySelector<T1>, SQLGroupBySelector<T2>, SQLGroupBySelector<T3>, SQLGroupBySelector<T4>, SQLGroupBySelector<T5>>> selectExpression) {
-        return groupBy(condition, (t, t1, t3, t4, t5) -> {
-            selectExpression.apply(new Tuple5<>(t, t1, t3, t4, t5));
+        return groupBy(condition, (t1, t2, t3, t4, t5) -> {
+            selectExpression.apply(new Tuple5<>(t1, t2, t3, t4, t5));
         });
     }
 }

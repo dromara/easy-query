@@ -34,8 +34,8 @@ public interface SQLFilterable5<T1, T2, T3, T4, T5> extends ClientQueryable5Avai
     }
 
     default Queryable5<T1, T2, T3, T4, T5> whereMerge(boolean condition, SQLExpression1<Tuple5<SQLWherePredicate<T1>, SQLWherePredicate<T2>, SQLWherePredicate<T3>, SQLWherePredicate<T4>, SQLWherePredicate<T5>>> whereExpression) {
-        return where(condition, (t, t1, t3, t4, t5) -> {
-            whereExpression.apply(new Tuple5<>(t, t1, t3, t4, t5));
+        return where(condition, (t1, t2, t3, t4, t5) -> {
+            whereExpression.apply(new Tuple5<>(t1, t2, t3, t4, t5));
         });
     }
 }

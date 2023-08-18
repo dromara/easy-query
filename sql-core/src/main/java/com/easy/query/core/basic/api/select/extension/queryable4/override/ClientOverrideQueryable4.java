@@ -25,6 +25,8 @@ public interface ClientOverrideQueryable4<T1, T2, T3, T4> extends ClientQueryabl
 
 
     ClientQueryable<T1> getClientQueryable();
+    @Override
+    ClientQueryable4<T1, T2, T3,T4> cloneQueryable();
 
     @Override
     default ClientQueryable4<T1, T2, T3,T4> whereById(Object id) {

@@ -26,6 +26,9 @@ public interface ClientOverrideQueryable2<T1, T2> extends ClientQueryable<T1> {
     ClientQueryable<T1> getClientQueryable();
 
     @Override
+    ClientQueryable2<T1,T2> cloneQueryable();
+
+    @Override
     default ClientQueryable2<T1, T2> whereById(Object id) {
         return whereById(true, id);
     }

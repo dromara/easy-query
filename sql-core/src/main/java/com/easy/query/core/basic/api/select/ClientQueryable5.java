@@ -24,6 +24,10 @@ public interface ClientQueryable5<T1, T2, T3, T4, T5> extends ClientOverrideQuer
         Havingable5<T1, T2, T3, T4, T5>,
         Orderable5<T1, T2, T3, T4, T5>,
         Joinable5<T1, T2, T3, T4, T5> {
+    Class<T2> queryClass2();
+    Class<T3> queryClass3();
+    Class<T4> queryClass4();
+    Class<T5> queryClass5();
     SQLExpressionProvider<T2> getSQLExpressionProvider2();
 
     SQLExpressionProvider<T3> getSQLExpressionProvider3();

@@ -34,8 +34,8 @@ public interface SQLHavingable6<T1, T2, T3, T4, T5, T6> extends ClientQueryable6
     }
 
     default Queryable6<T1, T2, T3, T4, T5, T6> havingMerge(boolean condition, SQLExpression1<Tuple6<SQLWhereAggregatePredicate<T1>, SQLWhereAggregatePredicate<T2>, SQLWhereAggregatePredicate<T3>, SQLWhereAggregatePredicate<T4>, SQLWhereAggregatePredicate<T5>, SQLWhereAggregatePredicate<T6>>> predicateExpression) {
-        return having(condition, (t, t1, t2, t3, t4, t5) -> {
-            predicateExpression.apply(new Tuple6<>(t, t1, t2, t3, t4, t5));
+        return having(condition, (t1, t2, t3, t4, t5, t6) -> {
+            predicateExpression.apply(new Tuple6<>(t1, t2, t3, t4, t5, t6));
         });
     }
 }

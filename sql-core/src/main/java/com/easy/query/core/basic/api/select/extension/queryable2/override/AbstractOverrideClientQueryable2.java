@@ -25,14 +25,20 @@ import java.util.function.Function;
 public abstract class AbstractOverrideClientQueryable2<T1,T2> extends AbstractClientQueryable<T1> {
     protected final Class<T2> t2Class;
 
-    public AbstractOverrideClientQueryable2(Class<T1> t1Class, Class<T2> t2Class, EntityQueryExpressionBuilder sqlEntityExpression) {
-        super(t1Class, sqlEntityExpression);
+    public AbstractOverrideClientQueryable2(Class<T1> t1Class, Class<T2> t2Class, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
+        super(t1Class, entityQueryExpressionBuilder);
         this.t2Class = t2Class;
+    }
+    public Class<T2> queryClass2() {
+        return t2Class;
     }
     protected abstract ClientQueryable2<T1, T2> getClientQueryable2();
 
 
-
+    @Override
+    public ClientQueryable2<T1, T2> cloneQueryable() {
+        return entityQueryExpressionBuilder.getRuntimeContext().getSQLClientApiFactory().cloneQueryable(getClientQueryable2());
+    }
 
     @Override
     public ClientQueryable2<T1, T2> whereById(boolean condition, Object id) {

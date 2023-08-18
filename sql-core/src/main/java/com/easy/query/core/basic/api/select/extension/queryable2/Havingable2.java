@@ -25,8 +25,8 @@ public interface Havingable2<T1, T2> {
     }
 
     default ClientQueryable2<T1, T2> havingMerge(boolean condition, SQLExpression1<Tuple2<WhereAggregatePredicate<T1>, WhereAggregatePredicate<T2>>> predicateExpression){
-        return having(condition,(t,t1)->{
-            predicateExpression.apply(new Tuple2<>(t,t1));
+        return having(condition,(t1, t2)->{
+            predicateExpression.apply(new Tuple2<>(t1, t2));
         });
     }
 

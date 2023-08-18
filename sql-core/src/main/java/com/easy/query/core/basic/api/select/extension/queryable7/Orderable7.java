@@ -25,8 +25,8 @@ public interface Orderable7<T1, T2, T3, T4, T5, T6, T7>{
     }
 
     default ClientQueryable7<T1, T2, T3, T4, T5, T6, T7> orderByAscMerge(boolean condition, SQLExpression1<Tuple7<ColumnOrderSelector<T1>, ColumnOrderSelector<T2>, ColumnOrderSelector<T3>, ColumnOrderSelector<T4>, ColumnOrderSelector<T5>, ColumnOrderSelector<T6>, ColumnOrderSelector<T7>>> selectExpression) {
-        return orderByAsc(condition, (t, t1, t2, t3, t4, t5, t6) -> {
-            selectExpression.apply(new Tuple7<>(t, t1, t2, t3, t4, t5, t6));
+        return orderByAsc(condition, (t1, t2, t3, t4, t5, t6, t7) -> {
+            selectExpression.apply(new Tuple7<>(t1, t2, t3, t4, t5, t6, t7));
         });
     }
 
@@ -41,8 +41,8 @@ public interface Orderable7<T1, T2, T3, T4, T5, T6, T7>{
     }
 
     default ClientQueryable7<T1, T2, T3, T4, T5, T6, T7> orderByDescMerge(boolean condition, SQLExpression1<Tuple7<ColumnOrderSelector<T1>, ColumnOrderSelector<T2>, ColumnOrderSelector<T3>, ColumnOrderSelector<T4>, ColumnOrderSelector<T5>, ColumnOrderSelector<T6>, ColumnOrderSelector<T7>>> selectExpression) {
-        return orderByDesc(condition, (t, t1, t2, t3, t4, t5, t6) -> {
-            selectExpression.apply(new Tuple7<>(t, t1, t2, t3, t4, t5, t6));
+        return orderByDesc(condition, (t1, t2, t3, t4, t5, t6, t7) -> {
+            selectExpression.apply(new Tuple7<>(t1, t2, t3, t4, t5, t6, t7));
         });
     }
 }

@@ -34,8 +34,8 @@ public interface SQLFilterable3<T1,T2,T3> extends ClientQueryable3Available<T1,T
     }
 
     default Queryable3<T1, T2,T3> whereMerge(boolean condition, SQLExpression1<Tuple3<SQLWherePredicate<T1>, SQLWherePredicate<T2>, SQLWherePredicate<T3>>> whereExpression) {
-        return where(condition, (t, t1,t3) -> {
-            whereExpression.apply(new Tuple3<>(t, t1,t3));
+        return where(condition, (t1,t2,t3) -> {
+            whereExpression.apply(new Tuple3<>(t1,t2,t3));
         });
     }
 }

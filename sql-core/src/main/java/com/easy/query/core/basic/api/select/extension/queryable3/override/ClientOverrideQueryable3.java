@@ -21,10 +21,13 @@ import java.util.function.Function;
  *
  * @author xuejiaming
  */
-public interface ClientOverrideQueryable3<T1, T2,T3> extends ClientQueryable<T1> {
+public interface ClientOverrideQueryable3<T1, T2, T3> extends ClientQueryable<T1> {
 
 
     ClientQueryable<T1> getClientQueryable();
+
+    @Override
+    ClientQueryable3<T1, T2, T3> cloneQueryable();
 
     @Override
     default ClientQueryable3<T1, T2, T3> whereById(Object id) {
@@ -101,7 +104,7 @@ public interface ClientOverrideQueryable3<T1, T2,T3> extends ClientQueryable<T1>
 
     @Override
     default <TREntity> ClientQueryable3<T1, T2, T3> include(SQLFuncExpression1<NavigateInclude<T1>, ClientQueryable<TREntity>> navigateIncludeSQLExpression) {
-        return include(true,navigateIncludeSQLExpression);
+        return include(true, navigateIncludeSQLExpression);
     }
 
     @Override

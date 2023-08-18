@@ -25,8 +25,8 @@ public interface Groupable7<T1, T2, T3, T4, T5, T6, T7> {
     }
 
     default ClientQueryable7<T1, T2, T3, T4, T5, T6, T7> groupByMerge(boolean condition, SQLExpression1<Tuple7<ColumnGroupSelector<T1>, ColumnGroupSelector<T2>, ColumnGroupSelector<T3>, ColumnGroupSelector<T4>, ColumnGroupSelector<T5>, ColumnGroupSelector<T6>, ColumnGroupSelector<T7>>> selectExpression) {
-        return groupBy(condition, (t, t1, t2, t3, t4, t5, t6) -> {
-            selectExpression.apply(new Tuple7<>(t, t1, t2, t3, t4, t5, t6));
+        return groupBy(condition, (t1, t2, t3, t4, t5, t6, t7) -> {
+            selectExpression.apply(new Tuple7<>(t1, t2, t3, t4, t5, t6, t7));
         });
     }
 }

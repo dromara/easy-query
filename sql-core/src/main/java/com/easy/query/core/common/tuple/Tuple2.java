@@ -6,21 +6,22 @@ package com.easy.query.core.common.tuple;
  *
  * @author xuejiaming
  */
-public class Tuple2<T,T1> {
-    private final T t;
+public class Tuple2<T1, T2> {
     private final T1 t1;
+    private final T2 t2;
 
-    public Tuple2(T t, T1 t1){
+    public Tuple2(T1 t1,T2 t2) {
 
-        this.t = t;
         this.t1 = t1;
+        this.t2 = t2;
     }
 
-    public T t() {
-        return t;
-    }
 
     public T1 t1() {
         return t1;
+    }
+
+    public T2 t2() {
+        return t2;
     }
 }

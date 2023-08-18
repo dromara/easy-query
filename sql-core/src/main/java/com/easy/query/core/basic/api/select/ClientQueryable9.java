@@ -24,6 +24,14 @@ public interface ClientQueryable9<T1, T2, T3, T4, T5, T6,T7,T8,T9> extends Clien
         Havingable9<T1, T2, T3, T4, T5, T6,T7,T8,T9>,
         Orderable9<T1, T2, T3, T4, T5, T6,T7,T8,T9> ,
         Joinable9<T1, T2, T3, T4, T5, T6,T7,T8,T9> {
+    Class<T2> queryClass2();
+    Class<T3> queryClass3();
+    Class<T4> queryClass4();
+    Class<T5> queryClass5();
+    Class<T6> queryClass6();
+    Class<T7> queryClass7();
+    Class<T8> queryClass8();
+    Class<T9> queryClass9();
     SQLExpressionProvider<T2> getSQLExpressionProvider2();
 
     SQLExpressionProvider<T3> getSQLExpressionProvider3();

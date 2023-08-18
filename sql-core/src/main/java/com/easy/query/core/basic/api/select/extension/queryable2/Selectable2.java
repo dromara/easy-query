@@ -17,8 +17,8 @@ public interface Selectable2<T1,T2> {
     <TR> ClientQueryable<TR> select(Class<TR> resultClass, SQLExpression2<ColumnAsSelector<T1, TR>, ColumnAsSelector<T2, TR>> selectExpression);
 
     default <TR> ClientQueryable<TR> selectMerge(Class<TR> resultClass, SQLExpression1<Tuple2<ColumnAsSelector<T1, TR>, ColumnAsSelector<T2, TR>>> selectExpression) {
-        return select(resultClass, (t, t1) -> {
-            selectExpression.apply(new Tuple2<>(t, t1));
+        return select(resultClass, (t1, t2) -> {
+            selectExpression.apply(new Tuple2<>(t1, t2));
         });
     }
 }

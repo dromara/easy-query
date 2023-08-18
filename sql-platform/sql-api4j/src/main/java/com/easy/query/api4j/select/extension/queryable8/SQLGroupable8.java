@@ -34,8 +34,8 @@ public interface SQLGroupable8<T1, T2, T3, T4, T5, T6, T7, T8> extends ClientQue
     }
 
     default Queryable8<T1, T2, T3, T4, T5, T6, T7, T8> groupByMerge(boolean condition, SQLExpression1<Tuple8<SQLGroupBySelector<T1>, SQLGroupBySelector<T2>, SQLGroupBySelector<T3>, SQLGroupBySelector<T4>, SQLGroupBySelector<T5>, SQLGroupBySelector<T6>, SQLGroupBySelector<T7>, SQLGroupBySelector<T8>>> selectExpression) {
-        return groupBy(condition, (t, t1, t3, t4, t5, t6, t7, t8) -> {
-            selectExpression.apply(new Tuple8<>(t, t1, t3, t4, t5, t6, t7, t8));
+        return groupBy(condition, (t1,t2, t3, t4, t5, t6, t7, t8) -> {
+            selectExpression.apply(new Tuple8<>(t1,t2, t3, t4, t5, t6, t7, t8));
         });
     }
 }

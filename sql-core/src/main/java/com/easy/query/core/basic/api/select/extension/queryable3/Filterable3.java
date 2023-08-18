@@ -25,8 +25,8 @@ public interface Filterable3<T1, T2, T3> {
     }
 
     default ClientQueryable3<T1, T2, T3> whereMerge(boolean condition, SQLExpression1<Tuple3<WherePredicate<T1>, WherePredicate<T2>, WherePredicate<T3>>> whereExpression) {
-        return where(condition, (t, t1, t2) -> {
-            whereExpression.apply(new Tuple3<>(t, t1, t2));
+        return where(condition, (t1, t2,t3) -> {
+            whereExpression.apply(new Tuple3<>(t1, t2,t3));
         });
     }
 }

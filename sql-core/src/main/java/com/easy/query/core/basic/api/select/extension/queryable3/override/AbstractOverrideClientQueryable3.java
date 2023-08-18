@@ -32,8 +32,19 @@ public abstract class AbstractOverrideClientQueryable3<T1, T2, T3> extends Abstr
         this.t3Class = t3Class;
     }
 
+    public Class<T2> queryClass2() {
+        return t2Class;
+    }
+
+    public Class<T3> queryClass3() {
+        return t3Class;
+    }
     protected abstract ClientQueryable3<T1, T2, T3> getClientQueryable3();
 
+    @Override
+    public ClientQueryable3<T1, T2, T3> cloneQueryable() {
+        return entityQueryExpressionBuilder.getRuntimeContext().getSQLClientApiFactory().cloneQueryable(getClientQueryable3());
+    }
 
     @Override
     public ClientQueryable3<T1, T2, T3> whereById(boolean condition, Object id) {

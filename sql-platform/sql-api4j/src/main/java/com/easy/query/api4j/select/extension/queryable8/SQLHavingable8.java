@@ -34,8 +34,8 @@ public interface SQLHavingable8<T1, T2, T3, T4, T5, T6, T7, T8> extends ClientQu
     }
 
     default Queryable8<T1, T2, T3, T4, T5, T6, T7, T8> havingMerge(boolean condition, SQLExpression1<Tuple8<SQLWhereAggregatePredicate<T1>, SQLWhereAggregatePredicate<T2>, SQLWhereAggregatePredicate<T3>, SQLWhereAggregatePredicate<T4>, SQLWhereAggregatePredicate<T5>, SQLWhereAggregatePredicate<T6>, SQLWhereAggregatePredicate<T7>, SQLWhereAggregatePredicate<T8>>> predicateExpression) {
-        return having(condition, (t, t1, t2, t3, t4, t5, t6, t7) -> {
-            predicateExpression.apply(new Tuple8<>(t, t1, t2, t3, t4, t5, t6, t7));
+        return having(condition, (t1, t2, t3, t4, t5, t6, t7, t8) -> {
+            predicateExpression.apply(new Tuple8<>(t1, t2, t3, t4, t5, t6, t7, t8));
         });
     }
 }
