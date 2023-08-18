@@ -5,11 +5,15 @@ import com.easy.query.core.basic.api.delete.ClientExpressionDeletable;
 import com.easy.query.core.basic.api.insert.ClientInsertable;
 import com.easy.query.core.basic.api.jdbc.JdbcExecutor;
 import com.easy.query.core.basic.api.select.ClientQueryable;
+import com.easy.query.core.basic.api.select.ClientQueryable10;
 import com.easy.query.core.basic.api.select.ClientQueryable2;
 import com.easy.query.core.basic.api.select.ClientQueryable3;
 import com.easy.query.core.basic.api.select.ClientQueryable4;
 import com.easy.query.core.basic.api.select.ClientQueryable5;
 import com.easy.query.core.basic.api.select.ClientQueryable6;
+import com.easy.query.core.basic.api.select.ClientQueryable7;
+import com.easy.query.core.basic.api.select.ClientQueryable8;
+import com.easy.query.core.basic.api.select.ClientQueryable9;
 import com.easy.query.core.basic.api.update.ClientEntityUpdatable;
 import com.easy.query.core.basic.api.update.ClientExpressionUpdatable;
 import com.easy.query.core.context.QueryRuntimeContext;
@@ -61,7 +65,14 @@ public interface SQLClientApiFactory {
     <T1, T2, T3, T4,T5,T6> ClientQueryable6<T1, T2, T3, T4,T5,T6> createQueryable6(Class<T1> t1Class, Class<T2> t2Class, Class<T3> t3Class, Class<T4> t4Class,Class<T5> t5Class,Class<T6> t6Class, MultiTableTypeEnum selectTableInfoType, EntityQueryExpressionBuilder entityQueryExpressionBuilder);
 
     <T1, T2, T3, T4,T5,T6> ClientQueryable6<T1, T2, T3, T4,T5,T6> createQueryable6(Class<T1> t1Class, Class<T2> t2Class, Class<T3> t3Class, Class<T4> t4Class,Class<T5> t5Class, ClientQueryable<T6> joinQueryable, MultiTableTypeEnum selectTableInfoType, EntityQueryExpressionBuilder entityQueryExpressionBuilder);
-
+    <T1, T2, T3, T4,T5,T6,T7> ClientQueryable7<T1, T2, T3, T4,T5,T6,T7> createQueryable7(Class<T1> t1Class, Class<T2> t2Class, Class<T3> t3Class, Class<T4> t4Class, Class<T5> t5Class, Class<T6> t6Class, Class<T7> t7Class, MultiTableTypeEnum selectTableInfoType, EntityQueryExpressionBuilder entityQueryExpressionBuilder);
+    <T1, T2, T3, T4,T5,T6,T7> ClientQueryable7<T1, T2, T3, T4,T5,T6,T7> createQueryable7(Class<T1> t1Class, Class<T2> t2Class, Class<T3> t3Class, Class<T4> t4Class,Class<T5> t5Class,Class<T6> t6Class, ClientQueryable<T7> joinQueryable, MultiTableTypeEnum selectTableInfoType, EntityQueryExpressionBuilder entityQueryExpressionBuilder);
+    <T1, T2, T3, T4,T5,T6,T7,T8> ClientQueryable8<T1, T2, T3, T4,T5,T6,T7,T8> createQueryable8(Class<T1> t1Class, Class<T2> t2Class, Class<T3> t3Class, Class<T4> t4Class, Class<T5> t5Class, Class<T6> t6Class, Class<T7> t7Class,Class<T8> t8Class, MultiTableTypeEnum selectTableInfoType, EntityQueryExpressionBuilder entityQueryExpressionBuilder);
+    <T1, T2, T3, T4,T5,T6,T7,T8> ClientQueryable8<T1, T2, T3, T4,T5,T6,T7,T8> createQueryable8(Class<T1> t1Class, Class<T2> t2Class, Class<T3> t3Class, Class<T4> t4Class,Class<T5> t5Class,Class<T6> t6Class,Class<T7> t7Class, ClientQueryable<T8> joinQueryable, MultiTableTypeEnum selectTableInfoType, EntityQueryExpressionBuilder entityQueryExpressionBuilder);
+    <T1, T2, T3, T4,T5,T6,T7,T8,T9> ClientQueryable9<T1, T2, T3, T4,T5,T6,T7,T8,T9> createQueryable9(Class<T1> t1Class, Class<T2> t2Class, Class<T3> t3Class, Class<T4> t4Class, Class<T5> t5Class, Class<T6> t6Class, Class<T7> t7Class,Class<T8> t8Class,Class<T9> t9Class, MultiTableTypeEnum selectTableInfoType, EntityQueryExpressionBuilder entityQueryExpressionBuilder);
+    <T1, T2, T3, T4,T5,T6,T7,T8,T9> ClientQueryable9<T1, T2, T3, T4,T5,T6,T7,T8,T9> createQueryable9(Class<T1> t1Class, Class<T2> t2Class, Class<T3> t3Class, Class<T4> t4Class, Class<T5> t5Class, Class<T6> t6Class, Class<T7> t7Class, Class<T8> t8Class, ClientQueryable<T9> joinQueryable, MultiTableTypeEnum selectTableInfoType, EntityQueryExpressionBuilder entityQueryExpressionBuilder);
+    <T1, T2, T3, T4,T5,T6,T7,T8,T9,T10> ClientQueryable10<T1, T2, T3, T4,T5,T6,T7,T8,T9,T10> createQueryable10(Class<T1> t1Class, Class<T2> t2Class, Class<T3> t3Class, Class<T4> t4Class, Class<T5> t5Class, Class<T6> t6Class, Class<T7> t7Class, Class<T8> t8Class, Class<T9> t9Class,Class<T10> t10Class, MultiTableTypeEnum selectTableInfoType, EntityQueryExpressionBuilder entityQueryExpressionBuilder);
+    <T1, T2, T3, T4,T5,T6,T7,T8,T9,T10> ClientQueryable10<T1, T2, T3, T4,T5,T6,T7,T8,T9,T10> createQueryable10(Class<T1> t1Class, Class<T2> t2Class, Class<T3> t3Class, Class<T4> t4Class, Class<T5> t5Class, Class<T6> t6Class, Class<T7> t7Class, Class<T8> t8Class,Class<T9> t9Class, ClientQueryable<T10> joinQueryable, MultiTableTypeEnum selectTableInfoType, EntityQueryExpressionBuilder entityQueryExpressionBuilder);
 
     <T> ClientInsertable<T> createInsertable(Class<T> clazz, QueryRuntimeContext runtimeContext);
 

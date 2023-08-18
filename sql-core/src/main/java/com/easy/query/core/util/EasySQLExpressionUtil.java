@@ -1,11 +1,15 @@
 package com.easy.query.core.util;
 
 import com.easy.query.core.basic.api.select.ClientQueryable;
+import com.easy.query.core.basic.api.select.ClientQueryable10;
 import com.easy.query.core.basic.api.select.ClientQueryable2;
 import com.easy.query.core.basic.api.select.ClientQueryable3;
 import com.easy.query.core.basic.api.select.ClientQueryable4;
 import com.easy.query.core.basic.api.select.ClientQueryable5;
 import com.easy.query.core.basic.api.select.ClientQueryable6;
+import com.easy.query.core.basic.api.select.ClientQueryable7;
+import com.easy.query.core.basic.api.select.ClientQueryable8;
+import com.easy.query.core.basic.api.select.ClientQueryable9;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.executor.internal.common.SQLRewriteUnit;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
@@ -15,11 +19,15 @@ import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.exception.EasyQueryMultiPrimaryKeyException;
 import com.easy.query.core.exception.EasyQueryNoPrimaryKeyException;
+import com.easy.query.core.expression.lambda.SQLExpression10;
 import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.lambda.SQLExpression3;
 import com.easy.query.core.expression.lambda.SQLExpression4;
 import com.easy.query.core.expression.lambda.SQLExpression5;
 import com.easy.query.core.expression.lambda.SQLExpression6;
+import com.easy.query.core.expression.lambda.SQLExpression7;
+import com.easy.query.core.expression.lambda.SQLExpression8;
+import com.easy.query.core.expression.lambda.SQLExpression9;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnSelector;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
@@ -160,6 +168,56 @@ public class EasySQLExpressionUtil {
         WherePredicate<T5> sqlOnPredicate5 = queryable.getSQLExpressionProvider5().getOnPredicate();
         WherePredicate<T6> sqlOnPredicate6 = queryable.getSQLExpressionProvider6().getOnPredicate();
         on.apply(sqlOnPredicate1, sqlOnPredicate2, sqlOnPredicate3, sqlOnPredicate4, sqlOnPredicate5,sqlOnPredicate6);
+        return queryable;
+    }
+    public static <T1, T2, T3, T4, T5, T6,T7> ClientQueryable7<T1, T2, T3, T4, T5, T6,T7> executeJoinOn(ClientQueryable7<T1, T2, T3, T4,T5,T6,T7> queryable, SQLExpression7<WherePredicate<T1>, WherePredicate<T2>, WherePredicate<T3>, WherePredicate<T4>, WherePredicate<T5>, WherePredicate<T6>, WherePredicate<T7>> on) {
+        WherePredicate<T1> sqlOnPredicate1 = queryable.getSQLExpressionProvider1().getOnPredicate();
+        WherePredicate<T2> sqlOnPredicate2 = queryable.getSQLExpressionProvider2().getOnPredicate();
+        WherePredicate<T3> sqlOnPredicate3 = queryable.getSQLExpressionProvider3().getOnPredicate();
+        WherePredicate<T4> sqlOnPredicate4 = queryable.getSQLExpressionProvider4().getOnPredicate();
+        WherePredicate<T5> sqlOnPredicate5 = queryable.getSQLExpressionProvider5().getOnPredicate();
+        WherePredicate<T6> sqlOnPredicate6 = queryable.getSQLExpressionProvider6().getOnPredicate();
+        WherePredicate<T7> sqlOnPredicate7 = queryable.getSQLExpressionProvider7().getOnPredicate();
+        on.apply(sqlOnPredicate1, sqlOnPredicate2, sqlOnPredicate3, sqlOnPredicate4, sqlOnPredicate5,sqlOnPredicate6,sqlOnPredicate7);
+        return queryable;
+    }
+    public static <T1, T2, T3, T4, T5, T6,T7,T8> ClientQueryable8<T1, T2, T3, T4, T5, T6,T7,T8> executeJoinOn(ClientQueryable8<T1, T2, T3, T4,T5,T6,T7,T8> queryable, SQLExpression8<WherePredicate<T1>, WherePredicate<T2>, WherePredicate<T3>, WherePredicate<T4>, WherePredicate<T5>, WherePredicate<T6>, WherePredicate<T7>, WherePredicate<T8>> on) {
+        WherePredicate<T1> sqlOnPredicate1 = queryable.getSQLExpressionProvider1().getOnPredicate();
+        WherePredicate<T2> sqlOnPredicate2 = queryable.getSQLExpressionProvider2().getOnPredicate();
+        WherePredicate<T3> sqlOnPredicate3 = queryable.getSQLExpressionProvider3().getOnPredicate();
+        WherePredicate<T4> sqlOnPredicate4 = queryable.getSQLExpressionProvider4().getOnPredicate();
+        WherePredicate<T5> sqlOnPredicate5 = queryable.getSQLExpressionProvider5().getOnPredicate();
+        WherePredicate<T6> sqlOnPredicate6 = queryable.getSQLExpressionProvider6().getOnPredicate();
+        WherePredicate<T7> sqlOnPredicate7 = queryable.getSQLExpressionProvider7().getOnPredicate();
+        WherePredicate<T8> sqlOnPredicate8 = queryable.getSQLExpressionProvider8().getOnPredicate();
+        on.apply(sqlOnPredicate1, sqlOnPredicate2, sqlOnPredicate3, sqlOnPredicate4, sqlOnPredicate5,sqlOnPredicate6,sqlOnPredicate7,sqlOnPredicate8);
+        return queryable;
+    }
+    public static <T1, T2, T3, T4, T5, T6,T7,T8,T9> ClientQueryable9<T1, T2, T3, T4, T5, T6,T7,T8,T9> executeJoinOn(ClientQueryable9<T1, T2, T3, T4,T5,T6,T7,T8,T9> queryable, SQLExpression9<WherePredicate<T1>, WherePredicate<T2>, WherePredicate<T3>, WherePredicate<T4>, WherePredicate<T5>, WherePredicate<T6>, WherePredicate<T7>, WherePredicate<T8>, WherePredicate<T9>> on) {
+        WherePredicate<T1> sqlOnPredicate1 = queryable.getSQLExpressionProvider1().getOnPredicate();
+        WherePredicate<T2> sqlOnPredicate2 = queryable.getSQLExpressionProvider2().getOnPredicate();
+        WherePredicate<T3> sqlOnPredicate3 = queryable.getSQLExpressionProvider3().getOnPredicate();
+        WherePredicate<T4> sqlOnPredicate4 = queryable.getSQLExpressionProvider4().getOnPredicate();
+        WherePredicate<T5> sqlOnPredicate5 = queryable.getSQLExpressionProvider5().getOnPredicate();
+        WherePredicate<T6> sqlOnPredicate6 = queryable.getSQLExpressionProvider6().getOnPredicate();
+        WherePredicate<T7> sqlOnPredicate7 = queryable.getSQLExpressionProvider7().getOnPredicate();
+        WherePredicate<T8> sqlOnPredicate8 = queryable.getSQLExpressionProvider8().getOnPredicate();
+        WherePredicate<T9> sqlOnPredicate9 = queryable.getSQLExpressionProvider9().getOnPredicate();
+        on.apply(sqlOnPredicate1, sqlOnPredicate2, sqlOnPredicate3, sqlOnPredicate4, sqlOnPredicate5,sqlOnPredicate6,sqlOnPredicate7,sqlOnPredicate8,sqlOnPredicate9);
+        return queryable;
+    }
+    public static <T1, T2, T3, T4, T5, T6,T7,T8,T9,T10> ClientQueryable10<T1, T2, T3, T4, T5, T6,T7,T8,T9,T10> executeJoinOn(ClientQueryable10<T1, T2, T3, T4,T5,T6,T7,T8,T9,T10> queryable, SQLExpression10<WherePredicate<T1>, WherePredicate<T2>, WherePredicate<T3>, WherePredicate<T4>, WherePredicate<T5>, WherePredicate<T6>, WherePredicate<T7>, WherePredicate<T8>, WherePredicate<T9>, WherePredicate<T10>> on) {
+        WherePredicate<T1> sqlOnPredicate1 = queryable.getSQLExpressionProvider1().getOnPredicate();
+        WherePredicate<T2> sqlOnPredicate2 = queryable.getSQLExpressionProvider2().getOnPredicate();
+        WherePredicate<T3> sqlOnPredicate3 = queryable.getSQLExpressionProvider3().getOnPredicate();
+        WherePredicate<T4> sqlOnPredicate4 = queryable.getSQLExpressionProvider4().getOnPredicate();
+        WherePredicate<T5> sqlOnPredicate5 = queryable.getSQLExpressionProvider5().getOnPredicate();
+        WherePredicate<T6> sqlOnPredicate6 = queryable.getSQLExpressionProvider6().getOnPredicate();
+        WherePredicate<T7> sqlOnPredicate7 = queryable.getSQLExpressionProvider7().getOnPredicate();
+        WherePredicate<T8> sqlOnPredicate8 = queryable.getSQLExpressionProvider8().getOnPredicate();
+        WherePredicate<T9> sqlOnPredicate9 = queryable.getSQLExpressionProvider9().getOnPredicate();
+        WherePredicate<T10> sqlOnPredicate10 = queryable.getSQLExpressionProvider10().getOnPredicate();
+        on.apply(sqlOnPredicate1, sqlOnPredicate2, sqlOnPredicate3, sqlOnPredicate4, sqlOnPredicate5,sqlOnPredicate6,sqlOnPredicate7,sqlOnPredicate8,sqlOnPredicate9,sqlOnPredicate10);
         return queryable;
     }
 

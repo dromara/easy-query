@@ -46,182 +46,182 @@ public abstract class AbstractOverrideClientQueryable10<T1, T2, T3, T4, T5, T6, 
         this.t10Class = t10Class;
     }
 
-    protected abstract ClientQueryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9,T10> getClientQueryable9();
+    protected abstract ClientQueryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9,T10> getClientQueryable10();
 
 
     @Override
     public ClientQueryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9,T10> whereById(boolean condition, Object id) {
         super.whereById(condition, id);
-        return getClientQueryable9();
+        return getClientQueryable10();
     }
 
     @Override
     public <TProperty> ClientQueryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9,T10> whereByIds(boolean condition, Collection<TProperty> ids) {
         super.whereByIds(condition, ids);
-        return getClientQueryable9();
+        return getClientQueryable10();
     }
 
     @Override
     public ClientQueryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9,T10> whereObject(boolean condition, Object object) {
         super.whereObject(condition, object);
-        return getClientQueryable9();
+        return getClientQueryable10();
     }
 
     @Override
     public ClientQueryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9,T10> where(boolean condition, SQLExpression1<WherePredicate<T1>> whereExpression) {
         super.where(condition, whereExpression);
-        return getClientQueryable9();
+        return getClientQueryable10();
     }
 
     @Override
     public ClientQueryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9,T10> orderByAsc(boolean condition, SQLExpression1<ColumnOrderSelector<T1>> selectExpression) {
         super.orderByAsc(condition, selectExpression);
-        return getClientQueryable9();
+        return getClientQueryable10();
     }
 
     @Override
     public ClientQueryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9,T10> orderByDesc(boolean condition, SQLExpression1<ColumnOrderSelector<T1>> selectExpression) {
         super.orderByAsc(condition, selectExpression);
-        return getClientQueryable9();
+        return getClientQueryable10();
     }
 
     @Override
     public ClientQueryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9,T10> groupBy(boolean condition, SQLExpression1<ColumnGroupSelector<T1>> selectExpression) {
         super.groupBy(condition, selectExpression);
-        return getClientQueryable9();
+        return getClientQueryable10();
     }
 
     @Override
     public ClientQueryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9,T10> having(boolean condition, SQLExpression1<WhereAggregatePredicate<T1>> predicateExpression) {
         super.having(condition, predicateExpression);
-        return getClientQueryable9();
+        return getClientQueryable10();
     }
 
 
     @Override
     public <TProperty> ClientQueryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9,T10> include(boolean condition, SQLFuncExpression1<NavigateInclude<T1>, ClientQueryable<TProperty>> navigateIncludeSQLExpression) {
         super.include(condition, navigateIncludeSQLExpression);
-        return getClientQueryable9();
+        return getClientQueryable10();
     }
 
     @Override
     public ClientQueryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9,T10> limit(boolean condition, long offset, long rows) {
         super.limit(condition, offset, rows);
-        return getClientQueryable9();
+        return getClientQueryable10();
     }
 
     @Override
     public ClientQueryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9,T10> distinct(boolean condition) {
         super.distinct(condition);
-        return getClientQueryable9();
+        return getClientQueryable10();
     }
 
     @Override
     public ClientQueryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9,T10> disableLogicDelete() {
         super.disableLogicDelete();
-        return getClientQueryable9();
+        return getClientQueryable10();
     }
 
     @Override
     public ClientQueryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9,T10> enableLogicDelete() {
         super.enableLogicDelete();
-        return getClientQueryable9();
+        return getClientQueryable10();
     }
 
     @Override
     public ClientQueryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9,T10> useLogicDelete(boolean enable) {
         super.useLogicDelete(enable);
-        return getClientQueryable9();
+        return getClientQueryable10();
     }
 
     @Override
     public ClientQueryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9,T10> noInterceptor() {
         super.noInterceptor();
-        return getClientQueryable9();
+        return getClientQueryable10();
     }
 
     @Override
     public ClientQueryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9,T10> useInterceptor(String name) {
         super.useInterceptor(name);
-        return getClientQueryable9();
+        return getClientQueryable10();
     }
 
     @Override
     public ClientQueryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9,T10> noInterceptor(String name) {
         super.noInterceptor(name);
-        return getClientQueryable9();
+        return getClientQueryable10();
     }
 
     @Override
     public ClientQueryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9,T10> useInterceptor() {
         super.useInterceptor();
-        return getClientQueryable9();
+        return getClientQueryable10();
     }
 
     @Override
     public ClientQueryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9,T10> asTracking() {
         super.asTracking();
-        return getClientQueryable9();
+        return getClientQueryable10();
     }
 
     @Override
     public ClientQueryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9,T10> asNoTracking() {
         super.asNoTracking();
-        return getClientQueryable9();
+        return getClientQueryable10();
     }
 
     @Override
     public ClientQueryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9,T10> queryLargeColumn(boolean queryLarge) {
         super.queryLargeColumn(queryLarge);
-        return getClientQueryable9();
+        return getClientQueryable10();
     }
 
     @Override
     public ClientQueryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9,T10> useShardingConfigure(int maxShardingQueryLimit, ConnectionModeEnum connectionMode) {
         super.useShardingConfigure(maxShardingQueryLimit, connectionMode);
-        return getClientQueryable9();
+        return getClientQueryable10();
     }
 
     @Override
     public ClientQueryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9,T10> useMaxShardingQueryLimit(int maxShardingQueryLimit) {
         super.useMaxShardingQueryLimit(maxShardingQueryLimit);
-        return getClientQueryable9();
+        return getClientQueryable10();
     }
 
     @Override
     public ClientQueryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9,T10> useConnectionMode(ConnectionModeEnum connectionMode) {
         super.useConnectionMode(connectionMode);
-        return getClientQueryable9();
+        return getClientQueryable10();
     }
 
     @Override
     public ClientQueryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9,T10> asTable(Function<String, String> tableNameAs) {
         super.asTable(tableNameAs);
-        return getClientQueryable9();
+        return getClientQueryable10();
     }
 
     @Override
     public ClientQueryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9,T10> asSchema(Function<String, String> schemaAs) {
         super.asSchema(schemaAs);
-        return getClientQueryable9();
+        return getClientQueryable10();
     }
 
 
     @Override
     public ClientQueryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9,T10> asAlias(String alias) {
         super.asAlias(alias);
-        return getClientQueryable9();
+        return getClientQueryable10();
     }
 
     @Override
     public ClientQueryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9,T10> asTableLink(Function<String, String> linkAs) {
         super.asTableLink(linkAs);
-        return getClientQueryable9();
+        return getClientQueryable10();
     }
 
     @Override
     public ClientQueryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9,T10> asTableLink(String linkAs) {
         super.asTableLink(linkAs);
-        return getClientQueryable9();
+        return getClientQueryable10();
     }
 }
