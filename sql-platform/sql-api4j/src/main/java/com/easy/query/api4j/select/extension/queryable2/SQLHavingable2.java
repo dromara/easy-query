@@ -13,7 +13,7 @@ import com.easy.query.core.expression.lambda.SQLExpression2;
  *
  * @author xuejiaming
  */
-public interface SQLHavingable2<T1, T2> extends ClientQueryable2Available<T1, T2>,Queryable2Available<T1, T2>{
+public interface SQLHavingable2<T1, T2> extends ClientQueryable2Available<T1, T2>, Queryable2Available<T1, T2> {
 
     default Queryable2<T1, T2> having(SQLExpression2<SQLWhereAggregatePredicate<T1>, SQLWhereAggregatePredicate<T2>> predicateExpression) {
         getClientQueryable2().having((predicate1, predicate2) -> {

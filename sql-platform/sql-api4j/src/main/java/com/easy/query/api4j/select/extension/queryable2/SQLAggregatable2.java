@@ -2,6 +2,8 @@ package com.easy.query.api4j.select.extension.queryable2;
 
 import com.easy.query.api4j.sql.SQLColumnResultSelector;
 import com.easy.query.api4j.sql.impl.SQLColumnResultSelectorImpl;
+import com.easy.query.core.common.tuple.Tuple2;
+import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression2;
 
 import java.math.BigDecimal;
@@ -12,7 +14,7 @@ import java.math.BigDecimal;
  *
  * @author xuejiaming
  */
-public interface SQLAggregatable2<T1,T2> extends ClientQueryable2Available<T1,T2>{
+public interface SQLAggregatable2<T1,T2> extends ClientQueryable2Available<T1,T2> {
 
     /**
      * 防止溢出
@@ -109,6 +111,107 @@ public interface SQLAggregatable2<T1,T2> extends ClientQueryable2Available<T1,T2
     default <TMember extends Number, TResult extends Number> TResult avgOrDefault(SQLExpression2<SQLColumnResultSelector<T1, TMember>, SQLColumnResultSelector<T2, TMember>> columnSelectorExpression, TResult def, Class<TResult> resultClass) {
         return getClientQueryable2().avgOrDefault((selector1, selector2) -> {
             columnSelectorExpression.apply(new SQLColumnResultSelectorImpl<>(selector1), new SQLColumnResultSelectorImpl<>(selector2));
+        }, def, resultClass);
+    }
+
+
+
+
+    /**
+     * 防止溢出
+     *
+     * @param columnSelectorExpression
+     * @param <TMember>
+     * @return
+     */
+    default <TMember extends Number> BigDecimal sumBigDecimalOrNullMerge(SQLExpression1<Tuple2<SQLColumnResultSelector<T1, TMember>, SQLColumnResultSelector<T2, TMember>>> columnSelectorExpression) {
+        return getClientQueryable2().sumBigDecimalOrNullMerge((tuple2) -> {
+            columnSelectorExpression.apply(new Tuple2<>(new SQLColumnResultSelectorImpl<>(tuple2.t()),new SQLColumnResultSelectorImpl<>(tuple2.t1())));
+        });
+    }
+
+
+    default <TMember extends Number> BigDecimal sumBigDecimalOrDefaultMerge(SQLExpression1<Tuple2<SQLColumnResultSelector<T1, TMember>, SQLColumnResultSelector<T2, TMember>>> columnSelectorExpression, BigDecimal def) {
+        return getClientQueryable2().sumBigDecimalOrDefaultMerge((tuple2) -> {
+            columnSelectorExpression.apply(new Tuple2<>(new SQLColumnResultSelectorImpl<>(tuple2.t()),new SQLColumnResultSelectorImpl<>(tuple2.t1())));
+        }, def);
+    }
+
+    default <TMember extends Number> TMember sumOrNullMerge(SQLExpression1<Tuple2<SQLColumnResultSelector<T1, TMember>, SQLColumnResultSelector<T2, TMember>>> columnSelectorExpression) {
+        return getClientQueryable2().sumOrNullMerge((tuple2) -> {
+            columnSelectorExpression.apply(new Tuple2<>(new SQLColumnResultSelectorImpl<>(tuple2.t()), new SQLColumnResultSelectorImpl<>(tuple2.t1())));
+        });
+    }
+
+    default <TMember extends Number> TMember sumOrDefaultMerge(SQLExpression1<Tuple2<SQLColumnResultSelector<T1, TMember>, SQLColumnResultSelector<T2, TMember>>> columnSelectorExpression, TMember def) {
+        return getClientQueryable2().sumOrDefaultMerge((tuple2) -> {
+            columnSelectorExpression.apply(new Tuple2<>(new SQLColumnResultSelectorImpl<>(tuple2.t()), new SQLColumnResultSelectorImpl<>(tuple2.t1())));
+        }, def);
+    }
+
+    default <TMember> TMember maxOrNullMerge(SQLExpression1<Tuple2<SQLColumnResultSelector<T1, TMember>, SQLColumnResultSelector<T2, TMember>>> columnSelectorExpression) {
+        return getClientQueryable2().maxOrNullMerge((tuple2) -> {
+            columnSelectorExpression.apply(new Tuple2<>(new SQLColumnResultSelectorImpl<>(tuple2.t()), new SQLColumnResultSelectorImpl<>(tuple2.t1())));
+        });
+    }
+
+    default <TMember> TMember maxOrDefaultMerge(SQLExpression1<Tuple2<SQLColumnResultSelector<T1, TMember>, SQLColumnResultSelector<T2, TMember>>> columnSelectorExpression, TMember def) {
+        return getClientQueryable2().maxOrDefaultMerge((tuple2) -> {
+            columnSelectorExpression.apply(new Tuple2<>(new SQLColumnResultSelectorImpl<>(tuple2.t()), new SQLColumnResultSelectorImpl<>(tuple2.t1())));
+        }, def);
+    }
+
+    default <TMember> TMember minOrNullMerge(SQLExpression1<Tuple2<SQLColumnResultSelector<T1, TMember>, SQLColumnResultSelector<T2, TMember>>> columnSelectorExpression) {
+        return getClientQueryable2().minOrNullMerge((tuple2) -> {
+            columnSelectorExpression.apply(new Tuple2<>(new SQLColumnResultSelectorImpl<>(tuple2.t()), new SQLColumnResultSelectorImpl<>(tuple2.t1())));
+        });
+    }
+
+    default <TMember> TMember minOrDefaultMerge(SQLExpression1<Tuple2<SQLColumnResultSelector<T1, TMember>, SQLColumnResultSelector<T2, TMember>>> columnSelectorExpression, TMember def) {
+        return getClientQueryable2().minOrDefaultMerge((tuple2) -> {
+            columnSelectorExpression.apply(new Tuple2<>(new SQLColumnResultSelectorImpl<>(tuple2.t()), new SQLColumnResultSelectorImpl<>(tuple2.t1())));
+        }, def);
+    }
+
+    default <TMember extends Number> Double avgOrNullMerge(SQLExpression1<Tuple2<SQLColumnResultSelector<T1, TMember>, SQLColumnResultSelector<T2, TMember>>> columnSelectorExpression) {
+        return getClientQueryable2().avgOrNullMerge((tuple2) -> {
+            columnSelectorExpression.apply(new Tuple2<>(new SQLColumnResultSelectorImpl<>(tuple2.t()), new SQLColumnResultSelectorImpl<>(tuple2.t1())));
+        });
+    }
+
+    default <TMember extends Number> BigDecimal avgBigDecimalOrNullMerge(SQLExpression1<Tuple2<SQLColumnResultSelector<T1, TMember>, SQLColumnResultSelector<T2, TMember>>> columnSelectorExpression) {
+        return getClientQueryable2().avgBigDecimalOrNullMerge((tuple2) -> {
+            columnSelectorExpression.apply(new Tuple2<>(new SQLColumnResultSelectorImpl<>(tuple2.t()), new SQLColumnResultSelectorImpl<>(tuple2.t1())));
+        });
+    }
+
+    default <TMember extends Number> Float avgFloatOrNullMerge(SQLExpression1<Tuple2<SQLColumnResultSelector<T1, TMember>, SQLColumnResultSelector<T2, TMember>>> columnSelectorExpression) {
+        return getClientQueryable2().avgFloatOrNullMerge((tuple2) -> {
+            columnSelectorExpression.apply(new Tuple2<>(new SQLColumnResultSelectorImpl<>(tuple2.t()), new SQLColumnResultSelectorImpl<>(tuple2.t1())));
+        });
+    }
+
+    default <TMember extends Number> Double avgOrDefaultMerge(SQLExpression1<Tuple2<SQLColumnResultSelector<T1, TMember>, SQLColumnResultSelector<T2, TMember>>> columnSelectorExpression, Double def) {
+        return getClientQueryable2().avgOrDefaultMerge((tuple2) -> {
+            columnSelectorExpression.apply(new Tuple2<>(new SQLColumnResultSelectorImpl<>(tuple2.t()), new SQLColumnResultSelectorImpl<>(tuple2.t1())));
+        }, def);
+    }
+
+    default <TMember extends Number> BigDecimal avgBigDecimalOrDefaultMerge(SQLExpression1<Tuple2<SQLColumnResultSelector<T1, TMember>, SQLColumnResultSelector<T2, TMember>>> columnSelectorExpression, BigDecimal def) {
+        return getClientQueryable2().avgBigDecimalOrDefaultMerge((tuple2) -> {
+            columnSelectorExpression.apply(new Tuple2<>(new SQLColumnResultSelectorImpl<>(tuple2.t()), new SQLColumnResultSelectorImpl<>(tuple2.t1())));
+        }, def);
+    }
+
+    default <TMember extends Number> Float avgFloatOrDefaultMerge(SQLExpression1<Tuple2<SQLColumnResultSelector<T1, TMember>, SQLColumnResultSelector<T2, TMember>>> columnSelectorExpression, Float def) {
+        return getClientQueryable2().avgFloatOrDefaultMerge((tuple2) -> {
+            columnSelectorExpression.apply(new Tuple2<>(new SQLColumnResultSelectorImpl<>(tuple2.t()), new SQLColumnResultSelectorImpl<>(tuple2.t1())));
+        }, def);
+    }
+
+    default <TMember extends Number, TResult extends Number> TResult avgOrDefaultMerge(SQLExpression1<Tuple2<SQLColumnResultSelector<T1, TMember>, SQLColumnResultSelector<T2, TMember>>> columnSelectorExpression, TResult def, Class<TResult> resultClass) {
+        return getClientQueryable2().avgOrDefaultMerge((tuple2) -> {
+            columnSelectorExpression.apply(new Tuple2<>(new SQLColumnResultSelectorImpl<>(tuple2.t()), new SQLColumnResultSelectorImpl<>(tuple2.t1())));
         }, def, resultClass);
     }
 }

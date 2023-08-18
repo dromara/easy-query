@@ -13,7 +13,7 @@ import com.easy.query.core.expression.lambda.SQLExpression2;
  *
  * @author xuejiaming
  */
-public interface SQLFilterable2<T1,T2> extends ClientQueryable2Available<T1,T2>,Queryable2Available<T1,T2> {
+public interface SQLFilterable2<T1,T2> extends ClientQueryable2Available<T1,T2>, Queryable2Available<T1,T2> {
 
     default Queryable2<T1, T2> where(SQLExpression2<SQLWherePredicate<T1>, SQLWherePredicate<T2>> whereExpression) {
         getClientQueryable2().where((wherePredicate1, wherePredicate2) -> {

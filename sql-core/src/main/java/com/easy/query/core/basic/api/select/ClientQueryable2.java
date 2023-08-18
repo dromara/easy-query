@@ -1,6 +1,6 @@
 package com.easy.query.core.basic.api.select;
 
-import com.easy.query.core.basic.api.select.extension.queryable2.Aggregatable1;
+import com.easy.query.core.basic.api.select.extension.queryable2.Aggregatable2;
 import com.easy.query.core.basic.api.select.extension.queryable2.Groupable2;
 import com.easy.query.core.basic.api.select.extension.queryable2.Havingable2;
 import com.easy.query.core.basic.api.select.extension.queryable2.Joinable2;
@@ -18,7 +18,7 @@ import com.easy.query.core.basic.api.select.provider.SQLExpressionProvider;
  * @Date: 2023/2/6 22:42
  */
 public interface ClientQueryable2<T1, T2> extends ClientOverrideQueryable2<T1,T2>,
-        Aggregatable1<T1, T2>,
+        Aggregatable2<T1, T2>,
         Joinable2<T1,T2>,
         Filterable2<T1,T2>,
         Selectable2<T1,T2>,

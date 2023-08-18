@@ -11,7 +11,7 @@ import java.math.BigDecimal;
  *
  * @author xuejiaming
  */
-public interface SQLAggregate1Extension<T1> extends ClientQueryableAvailable<T1>{
+public interface SQLAggregate1Extension<T1> extends ClientQueryableAvailable<T1> {
     /**
      * 防止溢出
      *

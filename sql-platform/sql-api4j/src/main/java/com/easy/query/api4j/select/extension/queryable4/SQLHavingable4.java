@@ -38,5 +38,4 @@ public interface SQLHavingable4<T1, T2,T3,T4> extends ClientQueryable4Available<
             predicateExpression.apply(new Tuple4<>(t, t1, t2, t3));
         });
     }
-
 }

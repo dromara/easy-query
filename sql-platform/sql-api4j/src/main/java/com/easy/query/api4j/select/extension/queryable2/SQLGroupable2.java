@@ -13,7 +13,7 @@ import com.easy.query.core.expression.lambda.SQLExpression2;
  *
  * @author xuejiaming
  */
-public interface SQLGroupable2<T1, T2> extends ClientQueryable2Available<T1,T2>,Queryable2Available<T1,T2> {
+public interface SQLGroupable2<T1, T2> extends ClientQueryable2Available<T1,T2>, Queryable2Available<T1,T2> {
 
 
     default Queryable2<T1, T2> groupBy(SQLExpression2<SQLGroupBySelector<T1>, SQLGroupBySelector<T2>> selectExpression) {

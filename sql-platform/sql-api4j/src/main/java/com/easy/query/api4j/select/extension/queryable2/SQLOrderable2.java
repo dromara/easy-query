@@ -13,7 +13,7 @@ import com.easy.query.core.expression.lambda.SQLExpression2;
  *
  * @author xuejiaming
  */
-public interface SQLOrderable2<T1, T2> extends ClientQueryable2Available<T1, T2>,Queryable2Available<T1, T2> {
+public interface SQLOrderable2<T1, T2> extends ClientQueryable2Available<T1, T2>, Queryable2Available<T1, T2> {
 
     default Queryable2<T1, T2> orderByAsc(SQLExpression2<SQLOrderBySelector<T1>, SQLOrderBySelector<T2>> selectExpression) {
         getClientQueryable2().orderByAsc((selector1, selector2) -> {

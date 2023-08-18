@@ -16,7 +16,7 @@ import java.util.function.BiConsumer;
  *
  * @author xuejiaming
  */
-public interface SQLFill1Extension<T1> extends ClientQueryableAvailable<T1>,QueryableAvailable<T1> {
+public interface SQLFill1Extension<T1> extends ClientQueryableAvailable<T1>, QueryableAvailable<T1> {
 
 
     default <TREntity> Queryable<T1> fillMany(SQLFuncExpression1<SQLFillSelector, Queryable<TREntity>> fillSetterExpression, Property<TREntity, ?> targetProperty, Property<T1, ?> selfProperty, BiConsumer<T1, Collection<TREntity>> produce) {
