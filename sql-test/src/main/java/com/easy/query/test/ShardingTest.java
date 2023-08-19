@@ -796,8 +796,8 @@ public class ShardingTest extends BaseTest {
     public void sharding37(){
 
         List<TopicShardingTime> list = easyQuery.queryable(TopicShardingTime.class)
-                .leftJoin(Topic.class, (t1, t2) -> t.eq(t1, TopicShardingTime::getId, Topic::getId))
-                .where((t1, t2) -> t.eq(TopicShardingTime::getId, "0de2e78681a64343a98b0aab3c039b3a202003").then(t1).eq(Topic::getId, "1"))
+                .leftJoin(Topic.class, (t, t1) -> t.eq(t1, TopicShardingTime::getId, Topic::getId))
+                .where((t, t1) -> t.eq(TopicShardingTime::getId, "0de2e78681a64343a98b0aab3c039b3a202003").then(t1).eq(Topic::getId, "1"))
                 .toList();
         Assert.assertEquals(0,list.size());
     }
@@ -805,8 +805,8 @@ public class ShardingTest extends BaseTest {
     public void sharding38(){
 
         List<TopicShardingTime> list = easyQuery.queryable(TopicShardingTime.class)
-                .leftJoin(Topic.class, (t1, t2) -> t.eq(t1, TopicShardingTime::getId, Topic::getId))
-                .where((t1, t2) -> t.eq(TopicShardingTime::getTitle, "0de2e78681a64343a98b0aab3c039b3a202003").then(t1).eq(Topic::getId, "1"))
+                .leftJoin(Topic.class, (t, t1) -> t.eq(t1, TopicShardingTime::getId, Topic::getId))
+                .where((t, t1) -> t.eq(TopicShardingTime::getTitle, "0de2e78681a64343a98b0aab3c039b3a202003").then(t1).eq(Topic::getId, "1"))
                 .toList();
         Assert.assertEquals(0,list.size());
     }

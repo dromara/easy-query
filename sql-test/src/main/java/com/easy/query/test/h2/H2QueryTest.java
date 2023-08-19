@@ -14,7 +14,6 @@ import com.easy.query.test.h2.domain.H2BookTest;
 import com.easy.query.test.h2.domain.proxy.ALLTYPE1Proxy;
 import com.easy.query.test.h2.domain.proxy.ALLTYPEProxy;
 import com.easy.query.test.h2.vo.ALLTYPEVO1;
-import com.easy.query.test.h2.vo.ALLTYPEVO2;
 import com.easy.query.test.h2.vo.proxy.ALLTYPEVO1Proxy;
 import org.junit.Assert;
 import org.junit.Test;
@@ -40,8 +39,8 @@ public class H2QueryTest extends H2BaseTest {
     @Test
     public void leftJoin1() {
         Queryable2<DefTable, DefTableLeft1> where = easyQuery.queryable(DefTable.class)
-                .leftJoin(DefTableLeft1.class, (t1, t2) -> t.eq(t1, DefTable::getId, DefTableLeft1::getDefId))
-                .where((t1, t2) -> t.eq(DefTable::getId, "1").then(t1).eq(DefTableLeft1::getId, "1"));
+                .leftJoin(DefTableLeft1.class, (t, t1) -> t.eq(t1, DefTable::getId, DefTableLeft1::getDefId))
+                .where((t, t1) -> t.eq(DefTable::getId, "1").then(t1).eq(DefTableLeft1::getId, "1"));
         List<DefTable> list = where.cloneQueryable()
                 .toList();
         Assert.assertEquals(1, list.size());
@@ -52,7 +51,7 @@ public class H2QueryTest extends H2BaseTest {
     @Test
     public void leftJoin1_1() {
         Queryable2<DefTable, DefTableLeft1> where = easyQuery.queryable(DefTable.class)
-                .leftJoin(DefTableLeft1.class, (t1, t2) -> t.eq(t1, DefTable::getId, DefTableLeft1::getDefId))
+                .leftJoin(DefTableLeft1.class, (t, t1) -> t.eq(t1, DefTable::getId, DefTableLeft1::getDefId))
                 .where(t -> t.eq(DefTable::getId, "1"));
         List<DefTable> list = where.cloneQueryable()
                 .toList();
@@ -64,9 +63,9 @@ public class H2QueryTest extends H2BaseTest {
     @Test
     public void leftJoin2() {
         Queryable3<DefTable, DefTableLeft1, DefTableLeft2> where = easyQuery.queryable(DefTable.class)
-                .leftJoin(DefTableLeft1.class, (t1, t2) -> t.eq(t1, DefTable::getId, DefTableLeft1::getDefId))
-                .leftJoin(DefTableLeft2.class, (t1, t2,t3) -> t.eq(t2, DefTable::getId, DefTableLeft2::getDef1Id))
-                .where((t1, t2,t3) -> t.eq(DefTable::getId, "1").then(t1).eq(DefTableLeft1::getId, "1")
+                .leftJoin(DefTableLeft1.class, (t, t1) -> t.eq(t1, DefTable::getId, DefTableLeft1::getDefId))
+                .leftJoin(DefTableLeft2.class, (t, t1,t2) -> t.eq(t2, DefTable::getId, DefTableLeft2::getDef1Id))
+                .where((t, t1,t2) -> t.eq(DefTable::getId, "1").then(t1).eq(DefTableLeft1::getId, "1")
                         .then(t2).eq(DefTableLeft2::getId, "1"));
         List<DefTable> list = where.cloneQueryable()
                 .toList();
@@ -78,8 +77,8 @@ public class H2QueryTest extends H2BaseTest {
     @Test
     public void leftJoin2_1() {
         Queryable3<DefTable, DefTableLeft1, DefTableLeft2> where = easyQuery.queryable(DefTable.class)
-                .leftJoin(DefTableLeft1.class, (t1, t2) -> t.eq(t1, DefTable::getId, DefTableLeft1::getDefId))
-                .leftJoin(DefTableLeft2.class, (t1, t2,t3) -> t.eq(t2, DefTable::getId, DefTableLeft2::getDef1Id))
+                .leftJoin(DefTableLeft1.class, (t, t1) -> t.eq(t1, DefTable::getId, DefTableLeft1::getDefId))
+                .leftJoin(DefTableLeft2.class, (t, t1,t2) -> t.eq(t2, DefTable::getId, DefTableLeft2::getDef1Id))
                 .where(t -> t.eq(DefTable::getId, "1"));
         List<DefTable> list = where.cloneQueryable()
                 .toList();
@@ -91,9 +90,9 @@ public class H2QueryTest extends H2BaseTest {
     @Test
     public void leftJoin3() {
         Queryable3<DefTable, DefTableLeft1, DefTableLeft3> where = easyQuery.queryable(DefTable.class)
-                .leftJoin(DefTableLeft1.class, (t1, t2) -> t.eq(t1, DefTable::getId, DefTableLeft1::getDefId))
+                .leftJoin(DefTableLeft1.class, (t, t1) -> t.eq(t1, DefTable::getId, DefTableLeft1::getDefId))
                 .leftJoin(DefTableLeft3.class, (t, t1, t3) -> t.eq(t3, DefTable::getId, DefTableLeft3::getDef2Id))
-                .where((t1, t2,t3) -> t.eq(DefTable::getId, "1").then(t1).eq(DefTableLeft1::getId, "1")
+                .where((t, t1,t2) -> t.eq(DefTable::getId, "1").then(t1).eq(DefTableLeft1::getId, "1")
                         .then(t2).eq(DefTableLeft3::getId, "1"));
         List<DefTable> list = where.cloneQueryable()
                 .toList();
@@ -105,7 +104,7 @@ public class H2QueryTest extends H2BaseTest {
     @Test
     public void leftJoin3_1() {
         Queryable3<DefTable, DefTableLeft1, DefTableLeft3> where = easyQuery.queryable(DefTable.class)
-                .leftJoin(DefTableLeft1.class, (t1, t2) -> t.eq(t1, DefTable::getId, DefTableLeft1::getDefId))
+                .leftJoin(DefTableLeft1.class, (t, t1) -> t.eq(t1, DefTable::getId, DefTableLeft1::getDefId))
                 .leftJoin(DefTableLeft3.class, (t, t1, t3) -> t.eq(t3, DefTable::getId, DefTableLeft3::getDef2Id))
                 .where(t -> t.eq(DefTable::getId, "1"));
         List<DefTable> list = where.cloneQueryable()
@@ -118,10 +117,10 @@ public class H2QueryTest extends H2BaseTest {
     @Test
     public void leftJoin4() {
         Queryable4<DefTable, DefTableLeft1, DefTableLeft2, DefTableLeft3> where = easyQuery.queryable(DefTable.class)
-                .leftJoin(DefTableLeft1.class, (t1, t2) -> t.eq(t1, DefTable::getId, DefTableLeft1::getDefId))
-                .leftJoin(DefTableLeft2.class, (t1, t2,t3) -> t.eq(t2, DefTable::getId, DefTableLeft2::getDef1Id))
-                .leftJoin(DefTableLeft3.class, (t1, t2, t3, t4) -> t.eq(t3, DefTable::getId, DefTableLeft3::getDef2Id))
-                .where((t1, t2, t3, t4) -> t.eq(DefTable::getId, "1").then(t1).eq(DefTableLeft1::getId, "1")
+                .leftJoin(DefTableLeft1.class, (t, t1) -> t.eq(t1, DefTable::getId, DefTableLeft1::getDefId))
+                .leftJoin(DefTableLeft2.class, (t, t1,t2) -> t.eq(t2, DefTable::getId, DefTableLeft2::getDef1Id))
+                .leftJoin(DefTableLeft3.class, (t, t1,t2, t3) -> t.eq(t3, DefTable::getId, DefTableLeft3::getDef2Id))
+                .where((t, t1,t2, t3) -> t.eq(DefTable::getId, "1").then(t1).eq(DefTableLeft1::getId, "1")
                         .then(t2).eq(DefTableLeft2::getId, "1").then(t3).eq(DefTableLeft3::getId, "1"));
         List<DefTable> list = where.cloneQueryable()
                 .toList();
@@ -133,9 +132,9 @@ public class H2QueryTest extends H2BaseTest {
     @Test
     public void leftJoin4_1() {
         Queryable4<DefTable, DefTableLeft1, DefTableLeft2, DefTableLeft3> where = easyQuery.queryable(DefTable.class)
-                .leftJoin(DefTableLeft1.class, (t1, t2) -> t.eq(t1, DefTable::getId, DefTableLeft1::getDefId))
-                .leftJoin(DefTableLeft2.class, (t1, t2,t3) -> t.eq(t2, DefTable::getId, DefTableLeft2::getDef1Id))
-                .leftJoin(DefTableLeft3.class, (t1, t2, t3, t4) -> t.eq(t3, DefTable::getId, DefTableLeft3::getDef2Id))
+                .leftJoin(DefTableLeft1.class, (t, t1) -> t.eq(t1, DefTable::getId, DefTableLeft1::getDefId))
+                .leftJoin(DefTableLeft2.class, (t, t1,t2) -> t.eq(t2, DefTable::getId, DefTableLeft2::getDef1Id))
+                .leftJoin(DefTableLeft3.class, (t, t1,t2, t3) -> t.eq(t3, DefTable::getId, DefTableLeft3::getDef2Id))
                 .where(t -> t.eq(DefTable::getId, "1"));
         List<DefTable> list = where.cloneQueryable()
                 .toList();
@@ -758,7 +757,7 @@ public class H2QueryTest extends H2BaseTest {
     @Test
     public void nativeSQLTest6() {
         String sql = easyQuery.queryable(H2BookTest.class)
-                .leftJoin(DefTable.class,(t1, t2)->t.eq(t1,H2BookTest::getPrice,DefTable::getMobile))
+                .leftJoin(DefTable.class,(t, t1)->t.eq(t1,H2BookTest::getPrice,DefTable::getMobile))
                 .where((o,o1) -> o.sqlNativeSegment("regexp_like({0},{1}) AND regexp_like({2},{1})", it -> it
                         .expression(H2BookTest::getPrice)
                         .value("^Ste(v|ph)en$").expression(o1,DefTable::getAvatar)))

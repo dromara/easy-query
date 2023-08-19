@@ -19,7 +19,7 @@ public interface SQLSelectable2<T1,T2> extends ClientQueryable2Available<T1,T2> 
 
    default  <TR> Queryable<TR> select(Class<TR> resultClass, SQLExpression2<SQLColumnAsSelector<T1, TR>, SQLColumnAsSelector<T2, TR>> selectExpression){
        ClientQueryable<TR> select = getClientQueryable2().select(resultClass, (t1, t2) -> {
-           selectExpression.apply(new SQLColumnAsSelectorImpl<>(t), new SQLColumnAsSelectorImpl<>(t1));
+           selectExpression.apply(new SQLColumnAsSelectorImpl<>(t1),new SQLColumnAsSelectorImpl<>(t2));
        });
        return new EasyQueryable<>(select);
    }

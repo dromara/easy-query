@@ -7,21 +7,21 @@ package com.easy.query.core.common.tuple;
  * @author xuejiaming
  */
 public class Tuple2<T1, T2> {
-    private final T1 t1;
-    private final T2 t2;
+    private final T1 t;
+    private final T2 t1;
 
-    public Tuple2(T1 t1,T2 t2) {
+    public Tuple2(T1 t,T2 t1) {
 
+        this.t = t;
         this.t1 = t1;
-        this.t2 = t2;
     }
 
 
-    public T1 t1() {
+    public T1 t() {
+        return t;
+    }
+
+    public T2 t1() {
         return t1;
-    }
-
-    public T2 t2() {
-        return t2;
     }
 }

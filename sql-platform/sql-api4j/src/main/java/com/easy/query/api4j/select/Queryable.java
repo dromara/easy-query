@@ -1,16 +1,16 @@
 package com.easy.query.api4j.select;
 
 import com.easy.query.api4j.select.extension.queryable.ClientQueryableAvailable;
-import com.easy.query.api4j.select.extension.queryable.SQLAggregate1Extension;
-import com.easy.query.api4j.select.extension.queryable.SQLFill1Extension;
-import com.easy.query.api4j.select.extension.queryable.SQLGroup1Extension;
-import com.easy.query.api4j.select.extension.queryable.SQLHaving1Extension;
-import com.easy.query.api4j.select.extension.queryable.SQLInclude1Extension;
-import com.easy.query.api4j.select.extension.queryable.SQLJoin1Extension;
-import com.easy.query.api4j.select.extension.queryable.SQLOrderBy1Extension;
-import com.easy.query.api4j.select.extension.queryable.SQLSelect1Extension;
-import com.easy.query.api4j.select.extension.queryable.SQLUnion1Extension;
-import com.easy.query.api4j.select.extension.queryable.SQLWhere1Extension;
+import com.easy.query.api4j.select.extension.queryable.SQLAggregatable1;
+import com.easy.query.api4j.select.extension.queryable.SQLFillable1;
+import com.easy.query.api4j.select.extension.queryable.SQLGroupable1;
+import com.easy.query.api4j.select.extension.queryable.SQLHavingable1;
+import com.easy.query.api4j.select.extension.queryable.SQLIncludeable1;
+import com.easy.query.api4j.select.extension.queryable.SQLJoinable1;
+import com.easy.query.api4j.select.extension.queryable.SQLOrderable1;
+import com.easy.query.api4j.select.extension.queryable.SQLSelectable1;
+import com.easy.query.api4j.select.extension.queryable.SQLUnionable1;
+import com.easy.query.api4j.select.extension.queryable.SQLFilterable1;
 import com.easy.query.api4j.sql.SQLColumnSelector;
 import com.easy.query.api4j.sql.SQLWherePredicate;
 import com.easy.query.core.api.client.EasyQueryClient;
@@ -33,16 +33,16 @@ public interface Queryable<T1> extends Query<T1>,
         LogicDeletable<Queryable<T1>>,
         TableReNameable<Queryable<T1>>,
         QueryStrategy<Queryable<T1>>,
-        SQLAggregate1Extension<T1>,
-        SQLGroup1Extension<T1>,
-        SQLHaving1Extension<T1>,
-        SQLJoin1Extension<T1>,
-        SQLOrderBy1Extension<T1>,
-        SQLSelect1Extension<T1>,
-        SQLUnion1Extension<T1>,
-        SQLWhere1Extension<T1>,
-        SQLInclude1Extension<T1>,
-        SQLFill1Extension<T1>,
+        SQLAggregatable1<T1>,
+        SQLGroupable1<T1>,
+        SQLHavingable1<T1>,
+        SQLJoinable1<T1>,
+        SQLOrderable1<T1>,
+        SQLSelectable1<T1>,
+        SQLUnionable1<T1>,
+        SQLFilterable1<T1>,
+        SQLIncludeable1<T1>,
+        SQLFillable1<T1>,
         ClientQueryableAvailable<T1> {
 
     /**

@@ -499,9 +499,9 @@ public class InsertTest extends BaseTest {
         Assert.assertEquals(1,l1);
 
         SysUserSQLEncryption sysUserSQLEncryption1 = easyQuery.queryable(SysUserSQLEncryption.class)
-                .leftJoin(Topic.class, (t1, t2) -> t.eq(t1, SysUserSQLEncryption::getId, Topic::getId))
-                .where((t1, t2) -> t.eq(SysUserSQLEncryption::getPhone, "1111234"))
-                .select(SysUserSQLEncryption.class, (t1, t2) -> t.columnAll())
+                .leftJoin(Topic.class, (t1, t2) -> t1.eq(t2, SysUserSQLEncryption::getId, Topic::getId))
+                .where((t1, t2) -> t1.eq(SysUserSQLEncryption::getPhone, "1111234"))
+                .select(SysUserSQLEncryption.class, (t1, t2) -> t1.columnAll())
                 .firstOrNull();
         Assert.assertNotNull(sysUserSQLEncryption1);
 

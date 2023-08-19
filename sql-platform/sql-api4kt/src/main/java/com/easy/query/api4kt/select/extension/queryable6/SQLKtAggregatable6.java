@@ -126,92 +126,92 @@ public interface SQLKtAggregatable6<T1,T2,T3,T4,T5,T6> extends ClientKtQueryable
      */
     default <TMember extends Number> BigDecimal sumBigDecimalOrNullMerge(SQLExpression1<Tuple6<SQLKtColumnResultSelector<T1, TMember>, SQLKtColumnResultSelector<T2, TMember>, SQLKtColumnResultSelector<T3, TMember>, SQLKtColumnResultSelector<T4, TMember>, SQLKtColumnResultSelector<T5, TMember>, SQLKtColumnResultSelector<T6, TMember>>> columnSelectorExpression) {
         return getClientQueryable6().sumBigDecimalOrNullMerge((tuple6) -> {
-            columnSelectorExpression.apply(new Tuple6<>(new SQLKtColumnResultSelectorImpl<>(tuple6.t1()), new SQLKtColumnResultSelectorImpl<>(tuple6.t2()), new SQLKtColumnResultSelectorImpl<>(tuple6.t3()), new SQLKtColumnResultSelectorImpl<>(tuple6.t4()), new SQLKtColumnResultSelectorImpl<>(tuple6.t5()),new SQLKtColumnResultSelectorImpl<>(tuple6.t6())));
+            columnSelectorExpression.apply(new Tuple6<>(new SQLKtColumnResultSelectorImpl<>(tuple6.t()), new SQLKtColumnResultSelectorImpl<>(tuple6.t1()), new SQLKtColumnResultSelectorImpl<>(tuple6.t2()), new SQLKtColumnResultSelectorImpl<>(tuple6.t3()), new SQLKtColumnResultSelectorImpl<>(tuple6.t4()),new SQLKtColumnResultSelectorImpl<>(tuple6.t5())));
         });
     }
 
 
     default <TMember extends Number> BigDecimal sumBigDecimalOrDefaultMerge(SQLExpression1<Tuple6<SQLKtColumnResultSelector<T1, TMember>, SQLKtColumnResultSelector<T2, TMember>, SQLKtColumnResultSelector<T3, TMember>, SQLKtColumnResultSelector<T4, TMember>, SQLKtColumnResultSelector<T5, TMember>, SQLKtColumnResultSelector<T6, TMember>>> columnSelectorExpression, BigDecimal def) {
         return getClientQueryable6().sumBigDecimalOrDefaultMerge((tuple6) -> {
-            columnSelectorExpression.apply(new Tuple6<>(new SQLKtColumnResultSelectorImpl<>(tuple6.t1()), new SQLKtColumnResultSelectorImpl<>(tuple6.t2()), new SQLKtColumnResultSelectorImpl<>(tuple6.t3()), new SQLKtColumnResultSelectorImpl<>(tuple6.t4()), new SQLKtColumnResultSelectorImpl<>(tuple6.t5()),new SQLKtColumnResultSelectorImpl<>(tuple6.t6())));
+            columnSelectorExpression.apply(new Tuple6<>(new SQLKtColumnResultSelectorImpl<>(tuple6.t()), new SQLKtColumnResultSelectorImpl<>(tuple6.t1()), new SQLKtColumnResultSelectorImpl<>(tuple6.t2()), new SQLKtColumnResultSelectorImpl<>(tuple6.t3()), new SQLKtColumnResultSelectorImpl<>(tuple6.t4()),new SQLKtColumnResultSelectorImpl<>(tuple6.t5())));
         }, def);
     }
 
     default <TMember extends Number> TMember sumOrNullMerge(SQLExpression1<Tuple6<SQLKtColumnResultSelector<T1, TMember>, SQLKtColumnResultSelector<T2, TMember>, SQLKtColumnResultSelector<T3, TMember>, SQLKtColumnResultSelector<T4, TMember>, SQLKtColumnResultSelector<T5, TMember>, SQLKtColumnResultSelector<T6, TMember>>> columnSelectorExpression) {
         return getClientQueryable6().sumOrNullMerge((tuple6) -> {
-            columnSelectorExpression.apply(new Tuple6<>(new SQLKtColumnResultSelectorImpl<>(tuple6.t1()), new SQLKtColumnResultSelectorImpl<>(tuple6.t2()), new SQLKtColumnResultSelectorImpl<>(tuple6.t3()), new SQLKtColumnResultSelectorImpl<>(tuple6.t4()), new SQLKtColumnResultSelectorImpl<>(tuple6.t5()),new SQLKtColumnResultSelectorImpl<>(tuple6.t6())));
+            columnSelectorExpression.apply(new Tuple6<>(new SQLKtColumnResultSelectorImpl<>(tuple6.t()), new SQLKtColumnResultSelectorImpl<>(tuple6.t1()), new SQLKtColumnResultSelectorImpl<>(tuple6.t2()), new SQLKtColumnResultSelectorImpl<>(tuple6.t3()), new SQLKtColumnResultSelectorImpl<>(tuple6.t4()),new SQLKtColumnResultSelectorImpl<>(tuple6.t5())));
         });
     }
 
     default <TMember extends Number> TMember sumOrDefaultMerge(SQLExpression1<Tuple6<SQLKtColumnResultSelector<T1, TMember>, SQLKtColumnResultSelector<T2, TMember>, SQLKtColumnResultSelector<T3, TMember>, SQLKtColumnResultSelector<T4, TMember>, SQLKtColumnResultSelector<T5, TMember>, SQLKtColumnResultSelector<T6, TMember>>> columnSelectorExpression, TMember def) {
         return getClientQueryable6().sumOrDefaultMerge((tuple6) -> {
-            columnSelectorExpression.apply(new Tuple6<>(new SQLKtColumnResultSelectorImpl<>(tuple6.t1()), new SQLKtColumnResultSelectorImpl<>(tuple6.t2()), new SQLKtColumnResultSelectorImpl<>(tuple6.t3()), new SQLKtColumnResultSelectorImpl<>(tuple6.t4()), new SQLKtColumnResultSelectorImpl<>(tuple6.t5()),new SQLKtColumnResultSelectorImpl<>(tuple6.t6())));
+            columnSelectorExpression.apply(new Tuple6<>(new SQLKtColumnResultSelectorImpl<>(tuple6.t()), new SQLKtColumnResultSelectorImpl<>(tuple6.t1()), new SQLKtColumnResultSelectorImpl<>(tuple6.t2()), new SQLKtColumnResultSelectorImpl<>(tuple6.t3()), new SQLKtColumnResultSelectorImpl<>(tuple6.t4()),new SQLKtColumnResultSelectorImpl<>(tuple6.t5())));
         }, def);
     }
 
     default <TMember> TMember maxOrNullMerge(SQLExpression1<Tuple6<SQLKtColumnResultSelector<T1, TMember>, SQLKtColumnResultSelector<T2, TMember>, SQLKtColumnResultSelector<T3, TMember>, SQLKtColumnResultSelector<T4, TMember>, SQLKtColumnResultSelector<T5, TMember>, SQLKtColumnResultSelector<T6, TMember>>> columnSelectorExpression) {
         return getClientQueryable6().maxOrNullMerge((tuple6) -> {
-            columnSelectorExpression.apply(new Tuple6<>(new SQLKtColumnResultSelectorImpl<>(tuple6.t1()), new SQLKtColumnResultSelectorImpl<>(tuple6.t2()), new SQLKtColumnResultSelectorImpl<>(tuple6.t3()), new SQLKtColumnResultSelectorImpl<>(tuple6.t4()), new SQLKtColumnResultSelectorImpl<>(tuple6.t5()),new SQLKtColumnResultSelectorImpl<>(tuple6.t6())));
+            columnSelectorExpression.apply(new Tuple6<>(new SQLKtColumnResultSelectorImpl<>(tuple6.t()), new SQLKtColumnResultSelectorImpl<>(tuple6.t1()), new SQLKtColumnResultSelectorImpl<>(tuple6.t2()), new SQLKtColumnResultSelectorImpl<>(tuple6.t3()), new SQLKtColumnResultSelectorImpl<>(tuple6.t4()),new SQLKtColumnResultSelectorImpl<>(tuple6.t5())));
         });
     }
 
     default <TMember> TMember maxOrDefaultMerge(SQLExpression1<Tuple6<SQLKtColumnResultSelector<T1, TMember>, SQLKtColumnResultSelector<T2, TMember>, SQLKtColumnResultSelector<T3, TMember>, SQLKtColumnResultSelector<T4, TMember>, SQLKtColumnResultSelector<T5, TMember>, SQLKtColumnResultSelector<T6, TMember>>> columnSelectorExpression, TMember def) {
         return getClientQueryable6().maxOrDefaultMerge((tuple6) -> {
-            columnSelectorExpression.apply(new Tuple6<>(new SQLKtColumnResultSelectorImpl<>(tuple6.t1()), new SQLKtColumnResultSelectorImpl<>(tuple6.t2()), new SQLKtColumnResultSelectorImpl<>(tuple6.t3()), new SQLKtColumnResultSelectorImpl<>(tuple6.t4()), new SQLKtColumnResultSelectorImpl<>(tuple6.t5()),new SQLKtColumnResultSelectorImpl<>(tuple6.t6())));
+            columnSelectorExpression.apply(new Tuple6<>(new SQLKtColumnResultSelectorImpl<>(tuple6.t()), new SQLKtColumnResultSelectorImpl<>(tuple6.t1()), new SQLKtColumnResultSelectorImpl<>(tuple6.t2()), new SQLKtColumnResultSelectorImpl<>(tuple6.t3()), new SQLKtColumnResultSelectorImpl<>(tuple6.t4()),new SQLKtColumnResultSelectorImpl<>(tuple6.t5())));
         }, def);
     }
 
     default <TMember> TMember minOrNullMerge(SQLExpression1<Tuple6<SQLKtColumnResultSelector<T1, TMember>, SQLKtColumnResultSelector<T2, TMember>, SQLKtColumnResultSelector<T3, TMember>, SQLKtColumnResultSelector<T4, TMember>, SQLKtColumnResultSelector<T5, TMember>, SQLKtColumnResultSelector<T6, TMember>>> columnSelectorExpression) {
         return getClientQueryable6().minOrNullMerge((tuple6) -> {
-            columnSelectorExpression.apply(new Tuple6<>(new SQLKtColumnResultSelectorImpl<>(tuple6.t1()), new SQLKtColumnResultSelectorImpl<>(tuple6.t2()), new SQLKtColumnResultSelectorImpl<>(tuple6.t3()), new SQLKtColumnResultSelectorImpl<>(tuple6.t4()), new SQLKtColumnResultSelectorImpl<>(tuple6.t5()),new SQLKtColumnResultSelectorImpl<>(tuple6.t6())));
+            columnSelectorExpression.apply(new Tuple6<>(new SQLKtColumnResultSelectorImpl<>(tuple6.t()), new SQLKtColumnResultSelectorImpl<>(tuple6.t1()), new SQLKtColumnResultSelectorImpl<>(tuple6.t2()), new SQLKtColumnResultSelectorImpl<>(tuple6.t3()), new SQLKtColumnResultSelectorImpl<>(tuple6.t4()),new SQLKtColumnResultSelectorImpl<>(tuple6.t5())));
         });
     }
 
     default <TMember> TMember minOrDefaultMerge(SQLExpression1<Tuple6<SQLKtColumnResultSelector<T1, TMember>, SQLKtColumnResultSelector<T2, TMember>, SQLKtColumnResultSelector<T3, TMember>, SQLKtColumnResultSelector<T4, TMember>, SQLKtColumnResultSelector<T5, TMember>, SQLKtColumnResultSelector<T6, TMember>>> columnSelectorExpression, TMember def) {
         return getClientQueryable6().minOrDefaultMerge((tuple6) -> {
-            columnSelectorExpression.apply(new Tuple6<>(new SQLKtColumnResultSelectorImpl<>(tuple6.t1()), new SQLKtColumnResultSelectorImpl<>(tuple6.t2()), new SQLKtColumnResultSelectorImpl<>(tuple6.t3()), new SQLKtColumnResultSelectorImpl<>(tuple6.t4()), new SQLKtColumnResultSelectorImpl<>(tuple6.t5()),new SQLKtColumnResultSelectorImpl<>(tuple6.t6())));
+            columnSelectorExpression.apply(new Tuple6<>(new SQLKtColumnResultSelectorImpl<>(tuple6.t()), new SQLKtColumnResultSelectorImpl<>(tuple6.t1()), new SQLKtColumnResultSelectorImpl<>(tuple6.t2()), new SQLKtColumnResultSelectorImpl<>(tuple6.t3()), new SQLKtColumnResultSelectorImpl<>(tuple6.t4()),new SQLKtColumnResultSelectorImpl<>(tuple6.t5())));
         }, def);
     }
 
     default <TMember extends Number> Double avgOrNullMerge(SQLExpression1<Tuple6<SQLKtColumnResultSelector<T1, TMember>, SQLKtColumnResultSelector<T2, TMember>, SQLKtColumnResultSelector<T3, TMember>, SQLKtColumnResultSelector<T4, TMember>, SQLKtColumnResultSelector<T5, TMember>, SQLKtColumnResultSelector<T6, TMember>>> columnSelectorExpression) {
         return getClientQueryable6().avgOrNullMerge((tuple6) -> {
-            columnSelectorExpression.apply(new Tuple6<>(new SQLKtColumnResultSelectorImpl<>(tuple6.t1()), new SQLKtColumnResultSelectorImpl<>(tuple6.t2()), new SQLKtColumnResultSelectorImpl<>(tuple6.t3()), new SQLKtColumnResultSelectorImpl<>(tuple6.t4()), new SQLKtColumnResultSelectorImpl<>(tuple6.t5()),new SQLKtColumnResultSelectorImpl<>(tuple6.t6())));
+            columnSelectorExpression.apply(new Tuple6<>(new SQLKtColumnResultSelectorImpl<>(tuple6.t()), new SQLKtColumnResultSelectorImpl<>(tuple6.t1()), new SQLKtColumnResultSelectorImpl<>(tuple6.t2()), new SQLKtColumnResultSelectorImpl<>(tuple6.t3()), new SQLKtColumnResultSelectorImpl<>(tuple6.t4()),new SQLKtColumnResultSelectorImpl<>(tuple6.t5())));
         });
     }
 
     default <TMember extends Number> BigDecimal avgBigDecimalOrNullMerge(SQLExpression1<Tuple6<SQLKtColumnResultSelector<T1, TMember>, SQLKtColumnResultSelector<T2, TMember>, SQLKtColumnResultSelector<T3, TMember>, SQLKtColumnResultSelector<T4, TMember>, SQLKtColumnResultSelector<T5, TMember>, SQLKtColumnResultSelector<T6, TMember>>> columnSelectorExpression) {
         return getClientQueryable6().avgBigDecimalOrNullMerge((tuple6) -> {
-            columnSelectorExpression.apply(new Tuple6<>(new SQLKtColumnResultSelectorImpl<>(tuple6.t1()), new SQLKtColumnResultSelectorImpl<>(tuple6.t2()), new SQLKtColumnResultSelectorImpl<>(tuple6.t3()), new SQLKtColumnResultSelectorImpl<>(tuple6.t4()), new SQLKtColumnResultSelectorImpl<>(tuple6.t5()),new SQLKtColumnResultSelectorImpl<>(tuple6.t6())));
+            columnSelectorExpression.apply(new Tuple6<>(new SQLKtColumnResultSelectorImpl<>(tuple6.t()), new SQLKtColumnResultSelectorImpl<>(tuple6.t1()), new SQLKtColumnResultSelectorImpl<>(tuple6.t2()), new SQLKtColumnResultSelectorImpl<>(tuple6.t3()), new SQLKtColumnResultSelectorImpl<>(tuple6.t4()),new SQLKtColumnResultSelectorImpl<>(tuple6.t5())));
         });
     }
 
     default <TMember extends Number> Float avgFloatOrNullMerge(SQLExpression1<Tuple6<SQLKtColumnResultSelector<T1, TMember>, SQLKtColumnResultSelector<T2, TMember>, SQLKtColumnResultSelector<T3, TMember>, SQLKtColumnResultSelector<T4, TMember>, SQLKtColumnResultSelector<T5, TMember>, SQLKtColumnResultSelector<T6, TMember>>> columnSelectorExpression) {
         return getClientQueryable6().avgFloatOrNullMerge((tuple6) -> {
-            columnSelectorExpression.apply(new Tuple6<>(new SQLKtColumnResultSelectorImpl<>(tuple6.t1()), new SQLKtColumnResultSelectorImpl<>(tuple6.t2()), new SQLKtColumnResultSelectorImpl<>(tuple6.t3()), new SQLKtColumnResultSelectorImpl<>(tuple6.t4()), new SQLKtColumnResultSelectorImpl<>(tuple6.t5()),new SQLKtColumnResultSelectorImpl<>(tuple6.t6())));
+            columnSelectorExpression.apply(new Tuple6<>(new SQLKtColumnResultSelectorImpl<>(tuple6.t()), new SQLKtColumnResultSelectorImpl<>(tuple6.t1()), new SQLKtColumnResultSelectorImpl<>(tuple6.t2()), new SQLKtColumnResultSelectorImpl<>(tuple6.t3()), new SQLKtColumnResultSelectorImpl<>(tuple6.t4()),new SQLKtColumnResultSelectorImpl<>(tuple6.t5())));
         });
     }
 
     default <TMember extends Number> Double avgOrDefaultMerge(SQLExpression1<Tuple6<SQLKtColumnResultSelector<T1, TMember>, SQLKtColumnResultSelector<T2, TMember>, SQLKtColumnResultSelector<T3, TMember>, SQLKtColumnResultSelector<T4, TMember>, SQLKtColumnResultSelector<T5, TMember>, SQLKtColumnResultSelector<T6, TMember>>> columnSelectorExpression, Double def) {
         return getClientQueryable6().avgOrDefaultMerge((tuple6) -> {
-            columnSelectorExpression.apply(new Tuple6<>(new SQLKtColumnResultSelectorImpl<>(tuple6.t1()), new SQLKtColumnResultSelectorImpl<>(tuple6.t2()), new SQLKtColumnResultSelectorImpl<>(tuple6.t3()), new SQLKtColumnResultSelectorImpl<>(tuple6.t4()), new SQLKtColumnResultSelectorImpl<>(tuple6.t5()),new SQLKtColumnResultSelectorImpl<>(tuple6.t6())));
+            columnSelectorExpression.apply(new Tuple6<>(new SQLKtColumnResultSelectorImpl<>(tuple6.t()), new SQLKtColumnResultSelectorImpl<>(tuple6.t1()), new SQLKtColumnResultSelectorImpl<>(tuple6.t2()), new SQLKtColumnResultSelectorImpl<>(tuple6.t3()), new SQLKtColumnResultSelectorImpl<>(tuple6.t4()),new SQLKtColumnResultSelectorImpl<>(tuple6.t5())));
         }, def);
     }
 
     default <TMember extends Number> BigDecimal avgBigDecimalOrDefaultMerge(SQLExpression1<Tuple6<SQLKtColumnResultSelector<T1, TMember>, SQLKtColumnResultSelector<T2, TMember>, SQLKtColumnResultSelector<T3, TMember>, SQLKtColumnResultSelector<T4, TMember>, SQLKtColumnResultSelector<T5, TMember>, SQLKtColumnResultSelector<T6, TMember>>> columnSelectorExpression, BigDecimal def) {
         return getClientQueryable6().avgBigDecimalOrDefaultMerge((tuple6) -> {
-            columnSelectorExpression.apply(new Tuple6<>(new SQLKtColumnResultSelectorImpl<>(tuple6.t1()), new SQLKtColumnResultSelectorImpl<>(tuple6.t2()), new SQLKtColumnResultSelectorImpl<>(tuple6.t3()), new SQLKtColumnResultSelectorImpl<>(tuple6.t4()), new SQLKtColumnResultSelectorImpl<>(tuple6.t5()),new SQLKtColumnResultSelectorImpl<>(tuple6.t6())));
+            columnSelectorExpression.apply(new Tuple6<>(new SQLKtColumnResultSelectorImpl<>(tuple6.t()), new SQLKtColumnResultSelectorImpl<>(tuple6.t1()), new SQLKtColumnResultSelectorImpl<>(tuple6.t2()), new SQLKtColumnResultSelectorImpl<>(tuple6.t3()), new SQLKtColumnResultSelectorImpl<>(tuple6.t4()),new SQLKtColumnResultSelectorImpl<>(tuple6.t5())));
         }, def);
     }
 
     default <TMember extends Number> Float avgFloatOrDefaultMerge(SQLExpression1<Tuple6<SQLKtColumnResultSelector<T1, TMember>, SQLKtColumnResultSelector<T2, TMember>, SQLKtColumnResultSelector<T3, TMember>, SQLKtColumnResultSelector<T4, TMember>, SQLKtColumnResultSelector<T5, TMember>, SQLKtColumnResultSelector<T6, TMember>>> columnSelectorExpression, Float def) {
         return getClientQueryable6().avgFloatOrDefaultMerge((tuple6) -> {
-            columnSelectorExpression.apply(new Tuple6<>(new SQLKtColumnResultSelectorImpl<>(tuple6.t1()), new SQLKtColumnResultSelectorImpl<>(tuple6.t2()), new SQLKtColumnResultSelectorImpl<>(tuple6.t3()), new SQLKtColumnResultSelectorImpl<>(tuple6.t4()), new SQLKtColumnResultSelectorImpl<>(tuple6.t5()),new SQLKtColumnResultSelectorImpl<>(tuple6.t6())));
+            columnSelectorExpression.apply(new Tuple6<>(new SQLKtColumnResultSelectorImpl<>(tuple6.t()), new SQLKtColumnResultSelectorImpl<>(tuple6.t1()), new SQLKtColumnResultSelectorImpl<>(tuple6.t2()), new SQLKtColumnResultSelectorImpl<>(tuple6.t3()), new SQLKtColumnResultSelectorImpl<>(tuple6.t4()),new SQLKtColumnResultSelectorImpl<>(tuple6.t5())));
         }, def);
     }
 
     default <TMember extends Number, TResult extends Number> TResult avgOrDefaultMerge(SQLExpression1<Tuple6<SQLKtColumnResultSelector<T1, TMember>, SQLKtColumnResultSelector<T2, TMember>, SQLKtColumnResultSelector<T3, TMember>, SQLKtColumnResultSelector<T4, TMember>, SQLKtColumnResultSelector<T5, TMember>, SQLKtColumnResultSelector<T6, TMember>>> columnSelectorExpression, TResult def, Class<TResult> resultClass) {
         return getClientQueryable6().avgOrDefaultMerge((tuple6) -> {
-            columnSelectorExpression.apply(new Tuple6<>(new SQLKtColumnResultSelectorImpl<>(tuple6.t1()), new SQLKtColumnResultSelectorImpl<>(tuple6.t2()), new SQLKtColumnResultSelectorImpl<>(tuple6.t3()), new SQLKtColumnResultSelectorImpl<>(tuple6.t4()), new SQLKtColumnResultSelectorImpl<>(tuple6.t5()),new SQLKtColumnResultSelectorImpl<>(tuple6.t6())));
+            columnSelectorExpression.apply(new Tuple6<>(new SQLKtColumnResultSelectorImpl<>(tuple6.t()), new SQLKtColumnResultSelectorImpl<>(tuple6.t1()), new SQLKtColumnResultSelectorImpl<>(tuple6.t2()), new SQLKtColumnResultSelectorImpl<>(tuple6.t3()), new SQLKtColumnResultSelectorImpl<>(tuple6.t4()),new SQLKtColumnResultSelectorImpl<>(tuple6.t5())));
         }, def, resultClass);
     }
 }

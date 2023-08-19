@@ -19,7 +19,7 @@ public interface SQLSelectable6<T1, T2, T3, T4, T5, T6> extends ClientQueryable6
 
     default <TR> Queryable<TR> select(Class<TR> resultClass, SQLExpression6<SQLColumnAsSelector<T1, TR>, SQLColumnAsSelector<T2, TR>, SQLColumnAsSelector<T3, TR>, SQLColumnAsSelector<T4, TR>, SQLColumnAsSelector<T5, TR>, SQLColumnAsSelector<T6, TR>> selectExpression) {
         ClientQueryable<TR> select = getClientQueryable6().select(resultClass, (t1, t2, t3, t4, t5, t6) -> {
-            selectExpression.apply(new SQLColumnAsSelectorImpl<>(t), new SQLColumnAsSelectorImpl<>(t1), new SQLColumnAsSelectorImpl<>(t2), new SQLColumnAsSelectorImpl<>(t3), new SQLColumnAsSelectorImpl<>(t4), new SQLColumnAsSelectorImpl<>(t5));
+            selectExpression.apply(new SQLColumnAsSelectorImpl<>(t1), new SQLColumnAsSelectorImpl<>(t2), new SQLColumnAsSelectorImpl<>(t3), new SQLColumnAsSelectorImpl<>(t4), new SQLColumnAsSelectorImpl<>(t5),new SQLColumnAsSelectorImpl<>(t6));
         });
         return new EasyQueryable<>(select);
     }

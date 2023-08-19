@@ -13,7 +13,7 @@ import com.easy.query.core.expression.lambda.SQLExpression1;
  *
  * @author xuejiaming
  */
-public interface SQLOrderBy1Extension<T1> {
+public interface SQLOrderable1<T1> {
 
     default Queryable<T1> orderByAsc(SQLExpression1<SQLOrderBySelector<T1>> selectExpression) {
         return orderByAsc(true, selectExpression);

@@ -12,7 +12,7 @@ import java.util.Collections;
  *
  * @author xuejiaming
  */
-public interface SQLUnion1Extension<T1> {
+public interface SQLUnionable1<T1> {
     default Queryable<T1> union(Queryable<T1> unionQueryable) {
         return union(Collections.singletonList(unionQueryable));
     }

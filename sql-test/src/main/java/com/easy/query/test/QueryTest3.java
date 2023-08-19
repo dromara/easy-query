@@ -60,9 +60,9 @@ public class QueryTest3 extends BaseTest {
     public void query124() {
         String toSql = easyQuery
                 .queryable(Topic.class)
-                .leftJoin(BlogEntity.class, (t1, t2) -> t.eq(t1, Topic::getId, BlogEntity::getId))
-                .leftJoin(BlogEntity.class, (t1, t2,t3) -> t.eq(t2, Topic::getId, BlogEntity::getId))
-                .leftJoin(BlogEntity.class, (t1, t2, t3, t4) -> t.eq(t3, Topic::getId, BlogEntity::getId))
+                .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                .leftJoin(BlogEntity.class, (t,t1, t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
+                .leftJoin(BlogEntity.class, (t, t1, t2, t3) -> t.eq(t3, Topic::getId, BlogEntity::getId))
                 .where(o -> o.eq(Topic::getId, "3"))
                 .limit(1, 2)
                 .toSQL();
@@ -72,9 +72,9 @@ public class QueryTest3 extends BaseTest {
     public void query124_4() {
         String toSql = easyQuery
                 .queryable(Topic.class)
-                .leftJoin(BlogEntity.class, (t1, t2) -> t.eq(t1, Topic::getId, BlogEntity::getId))
-                .leftJoin(BlogEntity.class, (t1, t2,t3) -> t.eq(t2, Topic::getId, BlogEntity::getId))
-                .leftJoin(BlogEntity.class, (t1, t2, t3, t4) -> t.eq(t3, Topic::getId, BlogEntity::getId))
+                .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                .leftJoin(BlogEntity.class, (t,t1, t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
+                .leftJoin(BlogEntity.class, (t, t1, t2, t3) -> t.eq(t3, Topic::getId, BlogEntity::getId))
                 .leftJoin(BlogEntity.class, (t, t1, t2, t3,t4) -> t.eq(t3, Topic::getId, BlogEntity::getId))
                 .leftJoinMerge(BlogEntity.class,c -> c.t().eq(c.t4(), Topic::getId, BlogEntity::getId))
                 .where(o -> o.eq(Topic::getId, "3"))
@@ -89,9 +89,9 @@ public class QueryTest3 extends BaseTest {
     public void query124_1() {
         String toSql = easyQuery
                 .queryable(Topic.class)
-                .leftJoin(BlogEntity.class, (t1, t2) -> t.eq(t1, Topic::getId, BlogEntity::getId)).asTableLink(join->join+" lateral")
-                .leftJoin(BlogEntity.class, (t1, t2,t3) -> t.eq(t2, Topic::getId, BlogEntity::getId))
-                .leftJoin(BlogEntity.class, (t1, t2, t3, t4) -> t.eq(t3, Topic::getId, BlogEntity::getId))
+                .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId)).asTableLink(join->join+" lateral")
+                .leftJoin(BlogEntity.class, (t,t1, t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
+                .leftJoin(BlogEntity.class, (t, t1, t2, t3) -> t.eq(t3, Topic::getId, BlogEntity::getId))
                 .where(o -> o.eq(Topic::getId, "3"))
                 .limit(1, 2)
                 .toSQL();
@@ -102,8 +102,8 @@ public class QueryTest3 extends BaseTest {
     public void query124_2() {
         String toSql = easyQuery
                 .queryable(Topic.class)
-                .leftJoin(BlogEntity.class, (t1, t2) -> t.eq(t1, Topic::getId, BlogEntity::getId))
-                .leftJoin(BlogEntity.class, (t1, t2,t3) -> t.eq(t2, Topic::getId, BlogEntity::getId))
+                .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                .leftJoin(BlogEntity.class, (t,t1, t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
                 .leftJoinMerge(BlogEntity.class, o -> o.t().eq(o.t3(), Topic::getId, BlogEntity::getId))
                 .whereMerge(o -> o.t().eq(Topic::getId, "3"))
                 .limit(1, 2)
@@ -115,11 +115,11 @@ public class QueryTest3 extends BaseTest {
     public void query125() {
         String toSql = easyQuery
                 .queryable(Topic.class)
-                .leftJoin(BlogEntity.class, (t1, t2) -> t.eq(t1, Topic::getId, BlogEntity::getId))
-                .innerJoin(BlogEntity.class, (t1, t2,t3) -> t.eq(t2, Topic::getId, BlogEntity::getId))
-                .innerJoin(BlogEntity.class, (t1, t2, t3, t4) -> t.eq(t3, Topic::getId, BlogEntity::getId))
+                .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                .innerJoin(BlogEntity.class, (t,t1, t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
+                .innerJoin(BlogEntity.class, (t, t1, t2, t3) -> t.eq(t3, Topic::getId, BlogEntity::getId))
                 .where(o -> o.eq(Topic::getId, "3"))
-                .select(BlogEntity.class, (t1, t2, t3, t4) -> t.column(Topic::getId)
+                .select(BlogEntity.class, (t, t1, t2, t3) -> t.column(Topic::getId)
                         .then(t1)
                         .column(BlogEntity::getTitle)
                         .then(t2)
@@ -135,11 +135,11 @@ public class QueryTest3 extends BaseTest {
 
             List<BlogEntity> list = easyQuery
                     .queryable(Topic.class)
-                    .leftJoin(BlogEntity.class, (t1, t2) -> t.eq(t1, Topic::getId, BlogEntity::getId))
-                    .innerJoin(BlogEntity.class, (t1, t2,t3) -> t.eq(t2, Topic::getId, BlogEntity::getId))
-                    .rightJoin(BlogEntity.class, (t1, t2, t3, t4) -> t.eq(t3, Topic::getId, BlogEntity::getId))
+                    .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .innerJoin(BlogEntity.class, (t,t1, t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
+                    .rightJoin(BlogEntity.class, (t, t1, t2, t3) -> t.eq(t3, Topic::getId, BlogEntity::getId))
                     .where(o -> o.eq(Topic::getId, "3"))
-                    .select(BlogEntity.class, (t1, t2, t3, t4) -> t.column(Topic::getId)
+                    .select(BlogEntity.class, (t, t1, t2, t3) -> t.column(Topic::getId)
                             .then(t1)
                             .column(BlogEntity::getTitle)
                             .then(t2)
@@ -152,11 +152,11 @@ public class QueryTest3 extends BaseTest {
 
             List<BlogEntity> list = easyQuery
                     .queryable(Topic.class)
-                    .leftJoin(BlogEntity.class, (t1, t2) -> t.eq(t1, Topic::getId, BlogEntity::getId))
-                    .innerJoin(BlogEntity.class, (t1, t2,t3) -> t.eq(t2, Topic::getId, BlogEntity::getId))
-                    .leftJoin(BlogEntity.class, (t1, t2, t3, t4) -> t.eq(t3, Topic::getId, BlogEntity::getId))
+                    .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .innerJoin(BlogEntity.class, (t,t1, t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
+                    .leftJoin(BlogEntity.class, (t, t1, t2, t3) -> t.eq(t3, Topic::getId, BlogEntity::getId))
                     .where(o -> o.eq(Topic::getId, "3"))
-                    .select(BlogEntity.class, (t1, t2, t3, t4) -> t.column(Topic::getId)
+                    .select(BlogEntity.class, (t, t1, t2, t3) -> t.column(Topic::getId)
                             .then(t1)
                             .column(BlogEntity::getTitle)
                             .then(t2)
@@ -171,11 +171,11 @@ public class QueryTest3 extends BaseTest {
     public void query112() {
         BigDecimal bigDecimal = easyQuery
                 .queryable(Topic.class)
-                .leftJoin(BlogEntity.class, (t1, t2) -> t.eq(t1, Topic::getId, BlogEntity::getId))
-                .innerJoin(BlogEntity.class, (t1, t2,t3) -> t.eq(t2, Topic::getId, BlogEntity::getId))
-                .leftJoin(BlogEntity.class, (t1, t2, t3, t4) -> t.eq(t3, Topic::getId, BlogEntity::getId))
+                .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                .innerJoin(BlogEntity.class, (t,t1, t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
+                .leftJoin(BlogEntity.class, (t, t1, t2, t3) -> t.eq(t3, Topic::getId, BlogEntity::getId))
                 .where(o -> o.eq(Topic::getId, "3"))
-                .sumOrDefault((t1, t2, t3, t4) -> t1.column(BlogEntity::getScore), BigDecimal.ZERO);
+                .sumOrDefault((t, t1, t2, t3) -> t1.column(BlogEntity::getScore), BigDecimal.ZERO);
         Assert.assertTrue(new BigDecimal("1.2").compareTo(bigDecimal) == 0);
     }
 
@@ -183,11 +183,11 @@ public class QueryTest3 extends BaseTest {
     public void query113() {
         BigDecimal bigDecimal = easyQuery
                 .queryable(Topic.class)
-                .leftJoin(BlogEntity.class, (t1, t2) -> t.eq(t1, Topic::getId, BlogEntity::getId))
-                .leftJoin(BlogEntity.class, (t1, t2,t3) -> t.eq(t2, Topic::getId, BlogEntity::getId))
-                .leftJoin(BlogEntity.class, (t1, t2, t3, t4) -> t.eq(t3, Topic::getId, BlogEntity::getId))
+                .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                .leftJoin(BlogEntity.class, (t,t1, t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
+                .leftJoin(BlogEntity.class, (t, t1, t2, t3) -> t.eq(t3, Topic::getId, BlogEntity::getId))
                 .where(o -> o.eq(Topic::getId, "3x"))
-                .sumOrNull((t1, t2, t3, t4) -> t1.column(BlogEntity::getScore));
+                .sumOrNull((t, t1, t2, t3) -> t1.column(BlogEntity::getScore));
         Assert.assertTrue(bigDecimal == null);
     }
 
@@ -195,11 +195,11 @@ public class QueryTest3 extends BaseTest {
     public void query114() {
         BigDecimal bigDecimal = easyQuery
                 .queryable(Topic.class)
-                .leftJoin(BlogEntity.class, (t1, t2) -> t.eq(t1, Topic::getId, BlogEntity::getId))
-                .leftJoin(BlogEntity.class, (t1, t2,t3) -> t.eq(t2, Topic::getId, BlogEntity::getId))
-                .leftJoin(BlogEntity.class, (t1, t2, t3, t4) -> t.eq(t3, Topic::getId, BlogEntity::getId))
+                .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                .leftJoin(BlogEntity.class, (t,t1, t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
+                .leftJoin(BlogEntity.class, (t, t1, t2, t3) -> t.eq(t3, Topic::getId, BlogEntity::getId))
                 .where(o -> o.eq(Topic::getId, "3"))
-                .sumBigDecimalOrNull((t1, t2, t3, t4) -> t3.column(BlogEntity::getScore));
+                .sumBigDecimalOrNull((t, t1, t2, t3) -> t3.column(BlogEntity::getScore));
         Assert.assertTrue(new BigDecimal("1.2").compareTo(bigDecimal) == 0);
     }
 
@@ -207,19 +207,19 @@ public class QueryTest3 extends BaseTest {
     public void query115() {
         BigDecimal bigDecimal = easyQuery
                 .queryable(Topic.class)
-                .leftJoin(BlogEntity.class, (t1, t2) -> t.eq(t1, Topic::getId, BlogEntity::getId))
-                .leftJoin(BlogEntity.class, (t1, t2,t3) -> t.eq(t2, Topic::getId, BlogEntity::getId))
-                .leftJoin(BlogEntity.class, (t1, t2, t3, t4) -> t.eq(t3, Topic::getId, BlogEntity::getId))
+                .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                .leftJoin(BlogEntity.class, (t,t1, t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
+                .leftJoin(BlogEntity.class, (t, t1, t2, t3) -> t.eq(t3, Topic::getId, BlogEntity::getId))
                 .where(o -> o.eq(Topic::getId, "3x"))
-                .sumBigDecimalOrDefault((t1, t2, t3, t4) -> t3.column(BlogEntity::getScore), null);
+                .sumBigDecimalOrDefault((t, t1, t2, t3) -> t3.column(BlogEntity::getScore), null);
         Assert.assertTrue(bigDecimal == null);
         BigDecimal bigDecimal1 = easyQuery
                 .queryable(Topic.class)
-                .leftJoin(BlogEntity.class, (t1, t2) -> t.eq(t1, Topic::getId, BlogEntity::getId))
-                .innerJoin(BlogEntity.class, (t1, t2,t3) -> t.eq(t2, Topic::getId, BlogEntity::getId))
-                .leftJoin(BlogEntity.class, (t1, t2, t3, t4) -> t.eq(t3, Topic::getId, BlogEntity::getId))
+                .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                .innerJoin(BlogEntity.class, (t,t1, t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
+                .leftJoin(BlogEntity.class, (t, t1, t2, t3) -> t.eq(t3, Topic::getId, BlogEntity::getId))
                 .where(o -> o.eq(Topic::getId, "3x"))
-                .sumBigDecimalOrDefault((t1, t2, t3, t4) -> t3.column(BlogEntity::getScore), BigDecimal.ZERO);
+                .sumBigDecimalOrDefault((t, t1, t2, t3) -> t3.column(BlogEntity::getScore), BigDecimal.ZERO);
         Assert.assertTrue(BigDecimal.ZERO.compareTo(bigDecimal1) == 0);
     }
 
@@ -227,19 +227,19 @@ public class QueryTest3 extends BaseTest {
     public void query116() {
         BigDecimal bigDecimal = easyQuery
                 .queryable(Topic.class)
-                .leftJoin(BlogEntity.class, (t1, t2) -> t.eq(t1, Topic::getId, BlogEntity::getId))
-                .leftJoin(BlogEntity.class, (t1, t2,t3) -> t.eq(t2, Topic::getId, BlogEntity::getId))
-                .leftJoin(BlogEntity.class, (t1, t2, t3, t4) -> t.eq(t3, Topic::getId, BlogEntity::getId))
+                .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                .leftJoin(BlogEntity.class, (t,t1, t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
+                .leftJoin(BlogEntity.class, (t, t1, t2, t3) -> t.eq(t3, Topic::getId, BlogEntity::getId))
                 .where(o -> o.eq(Topic::getId, "3x"))
-                .maxOrNull((t1, t2, t3, t4) -> t3.column(BlogEntity::getScore));
+                .maxOrNull((t, t1, t2, t3) -> t3.column(BlogEntity::getScore));
         Assert.assertTrue(bigDecimal == null);
         BigDecimal bigDecimal1 = easyQuery
                 .queryable(Topic.class)
-                .leftJoin(BlogEntity.class, (t1, t2) -> t.eq(t1, Topic::getId, BlogEntity::getId))
-                .leftJoin(BlogEntity.class, (t1, t2,t3) -> t.eq(t2, Topic::getId, BlogEntity::getId))
-                .leftJoin(BlogEntity.class, (t1, t2, t3, t4) -> t.eq(t3, Topic::getId, BlogEntity::getId))
+                .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                .leftJoin(BlogEntity.class, (t,t1, t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
+                .leftJoin(BlogEntity.class, (t, t1, t2, t3) -> t.eq(t3, Topic::getId, BlogEntity::getId))
                 .where(o -> o.eq(Topic::getId, "3x"))
-                .maxOrDefault((t1, t2, t3, t4) -> t1.column(BlogEntity::getScore), BigDecimal.ZERO);
+                .maxOrDefault((t, t1, t2, t3) -> t1.column(BlogEntity::getScore), BigDecimal.ZERO);
         Assert.assertTrue(BigDecimal.ZERO.compareTo(bigDecimal1) == 0);
     }
 
@@ -247,11 +247,11 @@ public class QueryTest3 extends BaseTest {
     public void query117() {
         BigDecimal bigDecimal = easyQuery
                 .queryable(Topic.class)
-                .leftJoin(BlogEntity.class, (t1, t2) -> t.eq(t1, Topic::getId, BlogEntity::getId))
-                .leftJoin(BlogEntity.class, (t1, t2,t3) -> t.eq(t2, Topic::getId, BlogEntity::getId))
-                .innerJoin(BlogEntity.class, (t1, t2, t3, t4) -> t.eq(t3, Topic::getId, BlogEntity::getId))
+                .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                .leftJoin(BlogEntity.class, (t,t1, t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
+                .innerJoin(BlogEntity.class, (t, t1, t2, t3) -> t.eq(t3, Topic::getId, BlogEntity::getId))
                 .where(o -> o.in(Topic::getId, Arrays.asList("3x", "3")))
-                .maxOrNull((t1, t2, t3, t4) -> t3.column(BlogEntity::getScore));
+                .maxOrNull((t, t1, t2, t3) -> t3.column(BlogEntity::getScore));
         Assert.assertTrue(new BigDecimal("1.2").compareTo(bigDecimal) == 0);
     }
 
@@ -259,19 +259,19 @@ public class QueryTest3 extends BaseTest {
     public void query118() {
         BigDecimal bigDecimal = easyQuery
                 .queryable(Topic.class)
-                .leftJoin(BlogEntity.class, (t1, t2) -> t.eq(t1, Topic::getId, BlogEntity::getId))
-                .innerJoin(BlogEntity.class, (t1, t2,t3) -> t.eq(t2, Topic::getId, BlogEntity::getId))
-                .rightJoin(BlogEntity.class, (t1, t2, t3, t4) -> t.eq(t3, Topic::getId, BlogEntity::getId))
+                .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                .innerJoin(BlogEntity.class, (t,t1, t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
+                .rightJoin(BlogEntity.class, (t, t1, t2, t3) -> t.eq(t3, Topic::getId, BlogEntity::getId))
                 .where(o -> o.eq(Topic::getId, "3x"))
-                .minOrNull((t1, t2, t3, t4) -> t3.column(BlogEntity::getScore));
+                .minOrNull((t, t1, t2, t3) -> t3.column(BlogEntity::getScore));
         Assert.assertTrue(bigDecimal == null);
         BigDecimal bigDecimal1 = easyQuery
                 .queryable(Topic.class)
-                .leftJoin(BlogEntity.class, (t1, t2) -> t.eq(t1, Topic::getId, BlogEntity::getId))
-                .innerJoin(BlogEntity.class, (t1, t2,t3) -> t.eq(t2, Topic::getId, BlogEntity::getId))
-                .rightJoin(BlogEntity.class, (t1, t2, t3, t4) -> t.eq(t3, Topic::getId, BlogEntity::getId))
+                .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                .innerJoin(BlogEntity.class, (t,t1, t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
+                .rightJoin(BlogEntity.class, (t, t1, t2, t3) -> t.eq(t3, Topic::getId, BlogEntity::getId))
                 .where(o -> o.eq(Topic::getId, "3x"))
-                .minOrDefault((t1, t2, t3, t4) -> t3.column(BlogEntity::getScore), BigDecimal.ZERO);
+                .minOrDefault((t, t1, t2, t3) -> t3.column(BlogEntity::getScore), BigDecimal.ZERO);
         Assert.assertTrue(BigDecimal.ZERO.compareTo(bigDecimal1) == 0);
     }
 
@@ -279,11 +279,11 @@ public class QueryTest3 extends BaseTest {
     public void query119() {
         BigDecimal bigDecimal = easyQuery
                 .queryable(Topic.class)
-                .leftJoin(BlogEntity.class, (t1, t2) -> t.eq(t1, Topic::getId, BlogEntity::getId))
-                .innerJoin(BlogEntity.class, (t1, t2,t3) -> t.eq(t2, Topic::getId, BlogEntity::getId))
-                .leftJoin(BlogEntity.class, (t1, t2, t3, t4) -> t.eq(t3, Topic::getId, BlogEntity::getId))
+                .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                .innerJoin(BlogEntity.class, (t,t1, t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
+                .leftJoin(BlogEntity.class, (t, t1, t2, t3) -> t.eq(t3, Topic::getId, BlogEntity::getId))
                 .where(o -> o.in(Topic::getId, Arrays.asList("3x", "3")))
-                .minOrNull((t1, t2, t3, t4) -> t3.column(BlogEntity::getScore));
+                .minOrNull((t, t1, t2, t3) -> t3.column(BlogEntity::getScore));
         Assert.assertTrue(new BigDecimal("1.2").compareTo(bigDecimal) == 0);
     }
 
@@ -292,61 +292,61 @@ public class QueryTest3 extends BaseTest {
         {
             BigDecimal bigDecimal = easyQuery
                     .queryable(Topic.class)
-                    .leftJoin(BlogEntity.class, (t1, t2) -> t.eq(t1, Topic::getId, BlogEntity::getId))
-                    .innerJoin(BlogEntity.class, (t1, t2,t3) -> t.eq(t2, Topic::getId, BlogEntity::getId))
-                    .leftJoin(BlogEntity.class, (t1, t2, t3, t4) -> t.eq(t3, Topic::getId, BlogEntity::getId))
+                    .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .innerJoin(BlogEntity.class, (t,t1, t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
+                    .leftJoin(BlogEntity.class, (t, t1, t2, t3) -> t.eq(t3, Topic::getId, BlogEntity::getId))
                     .where(o -> o.in(Topic::getId, Arrays.asList("3", "2", "5")))
-                    .avgBigDecimalOrNull((t1, t2, t3, t4) -> t1.column(BlogEntity::getScore));
+                    .avgBigDecimalOrNull((t, t1, t2, t3) -> t1.column(BlogEntity::getScore));
             Assert.assertTrue(new BigDecimal("1.2").compareTo(bigDecimal) == 0);
         }
         {
             BigDecimal bigDecimal = easyQuery
                     .queryable(Topic.class)
-                    .leftJoin(BlogEntity.class, (t1, t2) -> t.eq(t1, Topic::getId, BlogEntity::getId))
-                    .innerJoin(BlogEntity.class, (t1, t2,t3) -> t.eq(t2, Topic::getId, BlogEntity::getId))
-                    .leftJoin(BlogEntity.class, (t1, t2, t3, t4) -> t.eq(t3, Topic::getId, BlogEntity::getId))
+                    .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .innerJoin(BlogEntity.class, (t,t1, t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
+                    .leftJoin(BlogEntity.class, (t, t1, t2, t3) -> t.eq(t3, Topic::getId, BlogEntity::getId))
                     .where(o -> o.in(Topic::getId, Arrays.asList("3x", "2x", "5x")))
-                    .avgBigDecimalOrNull((t1, t2, t3, t4) -> t3.column(BlogEntity::getScore));
+                    .avgBigDecimalOrNull((t, t1, t2, t3) -> t3.column(BlogEntity::getScore));
             Assert.assertTrue(bigDecimal == null);
         }
         {
             BigDecimal bigDecimal = easyQuery
                     .queryable(Topic.class)
-                    .leftJoin(BlogEntity.class, (t1, t2) -> t.eq(t1, Topic::getId, BlogEntity::getId))
-                    .innerJoin(BlogEntity.class, (t1, t2,t3) -> t.eq(t2, Topic::getId, BlogEntity::getId))
-                    .leftJoin(BlogEntity.class, (t1, t2, t3, t4) -> t.eq(t3, Topic::getId, BlogEntity::getId))
+                    .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .innerJoin(BlogEntity.class, (t,t1, t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
+                    .leftJoin(BlogEntity.class, (t, t1, t2, t3) -> t.eq(t3, Topic::getId, BlogEntity::getId))
                     .where(o -> o.in(Topic::getId, Arrays.asList("3x", "2x", "5")))
-                    .avgBigDecimalOrDefault((t1, t2, t3, t4) -> t3.column(BlogEntity::getScore), BigDecimal.ZERO);
+                    .avgBigDecimalOrDefault((t, t1, t2, t3) -> t3.column(BlogEntity::getScore), BigDecimal.ZERO);
             Assert.assertTrue(new BigDecimal("1.2").compareTo(bigDecimal) == 0);
         }
         {
             Double bigDecimal = easyQuery
                     .queryable(Topic.class)
-                    .leftJoin(BlogEntity.class, (t1, t2) -> t.eq(t1, Topic::getId, BlogEntity::getId))
-                    .leftJoin(BlogEntity.class, (t1, t2,t3) -> t.eq(t2, Topic::getId, BlogEntity::getId))
-                    .leftJoin(BlogEntity.class, (t1, t2, t3, t4) -> t.eq(t3, Topic::getId, BlogEntity::getId))
+                    .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .leftJoin(BlogEntity.class, (t,t1, t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
+                    .leftJoin(BlogEntity.class, (t, t1, t2, t3) -> t.eq(t3, Topic::getId, BlogEntity::getId))
                     .where(o -> o.in(Topic::getId, Arrays.asList("3x", "2x", "5")))
-                    .avgOrDefault((t1, t2, t3, t4) -> t3.column(BlogEntity::getStar), null);
+                    .avgOrDefault((t, t1, t2, t3) -> t3.column(BlogEntity::getStar), null);
             Assert.assertTrue(5d == bigDecimal);
         }
         {
             BigDecimal bigDecimal = easyQuery
                     .queryable(Topic.class)
-                    .leftJoin(BlogEntity.class, (t1, t2) -> t.eq(t1, Topic::getId, BlogEntity::getId))
-                    .leftJoin(BlogEntity.class, (t1, t2,t3) -> t.eq(t2, Topic::getId, BlogEntity::getId))
-                    .leftJoin(BlogEntity.class, (t1, t2, t3, t4) -> t.eq(t3, Topic::getId, BlogEntity::getId))
+                    .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .leftJoin(BlogEntity.class, (t,t1, t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
+                    .leftJoin(BlogEntity.class, (t, t1, t2, t3) -> t.eq(t3, Topic::getId, BlogEntity::getId))
                     .where(o -> o.in(Topic::getId, Arrays.asList("3x", "2x", "5")))
-                    .avgOrDefault((t1, t2, t3, t4) -> t3.column(BlogEntity::getStar), null, BigDecimal.class);
+                    .avgOrDefault((t, t1, t2, t3) -> t3.column(BlogEntity::getStar), null, BigDecimal.class);
             Assert.assertTrue(new BigDecimal("5").compareTo(bigDecimal) == 0);
         }
         {
             Float bigDecimal = easyQuery
                     .queryable(Topic.class)
-                    .leftJoin(BlogEntity.class, (t1, t2) -> t.eq(t1, Topic::getId, BlogEntity::getId))
-                    .leftJoin(BlogEntity.class, (t1, t2,t3) -> t.eq(t2, Topic::getId, BlogEntity::getId))
-                    .leftJoin(BlogEntity.class, (t1, t2, t3, t4) -> t.eq(t3, Topic::getId, BlogEntity::getId))
+                    .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .leftJoin(BlogEntity.class, (t,t1, t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
+                    .leftJoin(BlogEntity.class, (t, t1, t2, t3) -> t.eq(t3, Topic::getId, BlogEntity::getId))
                     .where(o -> o.in(Topic::getId, Arrays.asList("3x", "2x", "5")))
-                    .avgOrDefault((t1, t2, t3, t4) -> t1.column(BlogEntity::getStar), null, Float.class);
+                    .avgOrDefault((t, t1, t2, t3) -> t1.column(BlogEntity::getStar), null, Float.class);
             Assert.assertTrue(5f == bigDecimal);
         }
     }
@@ -356,43 +356,43 @@ public class QueryTest3 extends BaseTest {
         {
             String sql = easyQuery
                     .queryable(Topic.class)
-                    .leftJoin(BlogEntity.class, (t1, t2) -> t.eq(t1, Topic::getId, BlogEntity::getId))
-                    .leftJoin(BlogEntity.class, (t1, t2,t3) -> t.eq(t2, Topic::getId, BlogEntity::getId))
-                    .leftJoin(BlogEntity.class, (t1, t2, t3, t4) -> t.eq(t3, Topic::getId, BlogEntity::getId))
+                    .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .leftJoin(BlogEntity.class, (t,t1, t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
+                    .leftJoin(BlogEntity.class, (t, t1, t2, t3) -> t.eq(t3, Topic::getId, BlogEntity::getId))
                     .where(o -> o.in(Topic::getId, Arrays.asList("3", "2", "5")))
-                    .orderByAsc((t1, t2, t3, t4) -> t1.column(BlogEntity::getOrder)).toSQL();
+                    .orderByAsc((t, t1, t2, t3) -> t1.column(BlogEntity::getOrder)).toSQL();
             Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` LEFT JOIN `t_blog` t2 ON t2.`deleted` = ? AND t.`id` = t2.`id` LEFT JOIN `t_blog` t3 ON t3.`deleted` = ? AND t.`id` = t3.`id` WHERE t.`id` IN (?,?,?) ORDER BY t1.`order` ASC", sql);
         }
         {
             String sql = easyQuery
                     .queryable(Topic.class)
-                    .leftJoin(BlogEntity.class, (t1, t2) -> t.eq(t1, Topic::getId, BlogEntity::getId))
-                    .leftJoin(BlogEntity.class, (t1, t2,t3) -> t.eq(t2, Topic::getId, BlogEntity::getId))
-                    .innerJoin(BlogEntity.class, (t1, t2, t3, t4) -> t.eq(t3, Topic::getId, BlogEntity::getId))
+                    .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .leftJoin(BlogEntity.class, (t,t1, t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
+                    .innerJoin(BlogEntity.class, (t, t1, t2, t3) -> t.eq(t3, Topic::getId, BlogEntity::getId))
                     .where(o -> o.in(Topic::getId, Arrays.asList("3", "2", "5")))
-                    .orderByAsc(false, (t1, t2, t3, t4) -> t1.column(BlogEntity::getOrder))
-                    .orderByAsc(true, (t1, t2, t3, t4) -> t3.column(BlogEntity::getId)).toSQL();
+                    .orderByAsc(false, (t, t1, t2, t3) -> t1.column(BlogEntity::getOrder))
+                    .orderByAsc(true, (t, t1, t2, t3) -> t3.column(BlogEntity::getId)).toSQL();
             Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` LEFT JOIN `t_blog` t2 ON t2.`deleted` = ? AND t.`id` = t2.`id` INNER JOIN `t_blog` t3 ON t3.`deleted` = ? AND t.`id` = t3.`id` WHERE t.`id` IN (?,?,?) ORDER BY t3.`id` ASC", sql);
         }
         {
             String sql = easyQuery
                     .queryable(Topic.class)
-                    .leftJoin(BlogEntity.class, (t1, t2) -> t.eq(t1, Topic::getId, BlogEntity::getId))
-                    .leftJoin(BlogEntity.class, (t1, t2,t3) -> t.eq(t2, Topic::getId, BlogEntity::getId))
-                    .rightJoin(BlogEntity.class, (t1, t2, t3, t4) -> t.eq(t3, Topic::getId, BlogEntity::getId))
+                    .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .leftJoin(BlogEntity.class, (t,t1, t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
+                    .rightJoin(BlogEntity.class, (t, t1, t2, t3) -> t.eq(t3, Topic::getId, BlogEntity::getId))
                     .where(o -> o.in(Topic::getId, Arrays.asList("3", "2", "5")))
-                    .orderByDesc((t1, t2, t3, t4) -> t3.column(BlogEntity::getOrder)).toSQL();
+                    .orderByDesc((t, t1, t2, t3) -> t3.column(BlogEntity::getOrder)).toSQL();
             Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` LEFT JOIN `t_blog` t2 ON t2.`deleted` = ? AND t.`id` = t2.`id` RIGHT JOIN `t_blog` t3 ON t3.`deleted` = ? AND t.`id` = t3.`id` WHERE t.`id` IN (?,?,?) ORDER BY t3.`order` DESC", sql);
         }
         {
             String sql = easyQuery
                     .queryable(Topic.class)
-                    .leftJoin(BlogEntity.class, (t1, t2) -> t.eq(t1, Topic::getId, BlogEntity::getId))
-                    .leftJoin(BlogEntity.class, (t1, t2,t3) -> t.eq(t2, Topic::getId, BlogEntity::getId))
-                    .leftJoin(BlogEntity.class, (t1, t2, t3, t4) -> t.eq(t3, Topic::getId, BlogEntity::getId))
+                    .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .leftJoin(BlogEntity.class, (t,t1, t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
+                    .leftJoin(BlogEntity.class, (t, t1, t2, t3) -> t.eq(t3, Topic::getId, BlogEntity::getId))
                     .where(o -> o.in(Topic::getId, Arrays.asList("3", "2", "5")))
-                    .orderByDesc(false, (t1, t2, t3, t4) -> t3.column(BlogEntity::getOrder))
-                    .orderByDesc(true, (t1, t2, t3, t4) -> t3.column(BlogEntity::getId).column(BlogEntity::getOrder)).toSQL();
+                    .orderByDesc(false, (t, t1, t2, t3) -> t3.column(BlogEntity::getOrder))
+                    .orderByDesc(true, (t, t1, t2, t3) -> t3.column(BlogEntity::getId).column(BlogEntity::getOrder)).toSQL();
             Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` LEFT JOIN `t_blog` t2 ON t2.`deleted` = ? AND t.`id` = t2.`id` LEFT JOIN `t_blog` t3 ON t3.`deleted` = ? AND t.`id` = t3.`id` WHERE t.`id` IN (?,?,?) ORDER BY t3.`id` DESC,t3.`order` DESC", sql);
         }
     }
@@ -402,47 +402,47 @@ public class QueryTest3 extends BaseTest {
         {
             String sql = easyQuery
                     .queryable(Topic.class)
-                    .leftJoin(BlogEntity.class, (t1, t2) -> t.eq(t1, Topic::getId, BlogEntity::getId))
-                    .leftJoin(BlogEntity.class, (t1, t2,t3) -> t.eq(t2, Topic::getId, BlogEntity::getId))
-                    .leftJoin(BlogEntity.class, (t1, t2, t3, t4) -> t.eq(t3, Topic::getId, BlogEntity::getId))
+                    .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .leftJoin(BlogEntity.class, (t,t1, t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
+                    .leftJoin(BlogEntity.class, (t, t1, t2, t3) -> t.eq(t3, Topic::getId, BlogEntity::getId))
                     .where(o -> o.in(Topic::getId, Arrays.asList("3", "2", "5")))
                     .groupBy(o -> o.column(Topic::getId))
-                    .orderByAsc((t1, t2, t3, t4) -> t1.column(BlogEntity::getOrder)).toSQL();
+                    .orderByAsc((t, t1, t2, t3) -> t1.column(BlogEntity::getOrder)).toSQL();
             Assert.assertEquals("SELECT t.`id` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` LEFT JOIN `t_blog` t2 ON t2.`deleted` = ? AND t.`id` = t2.`id` LEFT JOIN `t_blog` t3 ON t3.`deleted` = ? AND t.`id` = t3.`id` WHERE t.`id` IN (?,?,?) GROUP BY t.`id` ORDER BY t1.`order` ASC", sql);
         }
         {
             String sql = easyQuery
                     .queryable(Topic.class)
-                    .leftJoin(BlogEntity.class, (t1, t2) -> t.eq(t1, Topic::getId, BlogEntity::getId))
-                    .leftJoin(BlogEntity.class, (t1, t2,t3) -> t.eq(t2, Topic::getId, BlogEntity::getId))
-                    .innerJoin(BlogEntity.class, (t1, t2, t3, t4) -> t.eq(t3, Topic::getId, BlogEntity::getId))
+                    .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .leftJoin(BlogEntity.class, (t,t1, t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
+                    .innerJoin(BlogEntity.class, (t, t1, t2, t3) -> t.eq(t3, Topic::getId, BlogEntity::getId))
                     .where(o -> o.in(Topic::getId, Arrays.asList("3", "2", "5")))
-                    .groupBy((t1, t2, t3, t4) -> t3.column(BlogEntity::getId))
-                    .orderByAsc((t1, t2, t3, t4) -> t3.column(BlogEntity::getOrder)).toSQL();
+                    .groupBy((t, t1, t2, t3) -> t3.column(BlogEntity::getId))
+                    .orderByAsc((t, t1, t2, t3) -> t3.column(BlogEntity::getOrder)).toSQL();
             Assert.assertEquals("SELECT t3.`id` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` LEFT JOIN `t_blog` t2 ON t2.`deleted` = ? AND t.`id` = t2.`id` INNER JOIN `t_blog` t3 ON t3.`deleted` = ? AND t.`id` = t3.`id` WHERE t.`id` IN (?,?,?) GROUP BY t3.`id` ORDER BY t3.`order` ASC", sql);
         }
         {
             String sql = easyQuery
                     .queryable(Topic.class)
-                    .leftJoin(BlogEntity.class, (t1, t2) -> t.eq(t1, Topic::getId, BlogEntity::getId))
-                    .innerJoin(BlogEntity.class, (t1, t2,t3) -> t.eq(t2, Topic::getId, BlogEntity::getId))
-                    .rightJoin(BlogEntity.class, (t1, t2, t3, t4) -> t.eq(t3, Topic::getId, BlogEntity::getId))
+                    .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .innerJoin(BlogEntity.class, (t,t1, t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
+                    .rightJoin(BlogEntity.class, (t, t1, t2, t3) -> t.eq(t3, Topic::getId, BlogEntity::getId))
                     .where(o -> o.in(Topic::getId, Arrays.asList("3", "2", "5")))
-                    .groupBy(false, (t1, t2, t3, t4) -> t.column(Topic::getStars))
-                    .groupBy(true, (t1, t2, t3, t4) -> t.column(Topic::getId))
-                    .orderByAsc((t1, t2, t3, t4) -> t1.column(BlogEntity::getOrder)).toSQL();
+                    .groupBy(false, (t, t1, t2, t3) -> t.column(Topic::getStars))
+                    .groupBy(true, (t, t1, t2, t3) -> t.column(Topic::getId))
+                    .orderByAsc((t, t1, t2, t3) -> t1.column(BlogEntity::getOrder)).toSQL();
             Assert.assertEquals("SELECT t.`id` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` INNER JOIN `t_blog` t2 ON t2.`deleted` = ? AND t.`id` = t2.`id` RIGHT JOIN `t_blog` t3 ON t3.`deleted` = ? AND t.`id` = t3.`id` WHERE t.`id` IN (?,?,?) GROUP BY t.`id` ORDER BY t1.`order` ASC", sql);
         }
         {
             String sql = easyQuery
                     .queryable(Topic.class)
-                    .innerJoin(BlogEntity.class, (t1, t2) -> t.eq(t1, Topic::getId, BlogEntity::getId))
-                    .innerJoin(BlogEntity.class, (t1, t2,t3) -> t.eq(t2, Topic::getId, BlogEntity::getId))
-                    .rightJoin(BlogEntity.class, (t1, t2, t3, t4) -> t.eq(t3, Topic::getId, BlogEntity::getId))
+                    .innerJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .innerJoin(BlogEntity.class, (t,t1, t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
+                    .rightJoin(BlogEntity.class, (t, t1, t2, t3) -> t.eq(t3, Topic::getId, BlogEntity::getId))
                     .where(o -> o.in(Topic::getId, Arrays.asList("3", "2", "5")))
-                    .groupBy(false, (t1, t2, t3, t4) -> t.column(Topic::getStars))
-                    .groupBy(true, (t1, t2, t3, t4) -> t3.column(BlogEntity::getId))
-                    .orderByAsc((t1, t2, t3, t4) -> t3.column(BlogEntity::getOrder)).toSQL();
+                    .groupBy(false, (t, t1, t2, t3) -> t.column(Topic::getStars))
+                    .groupBy(true, (t, t1, t2, t3) -> t3.column(BlogEntity::getId))
+                    .orderByAsc((t, t1, t2, t3) -> t3.column(BlogEntity::getOrder)).toSQL();
             Assert.assertEquals("SELECT t3.`id` FROM `t_topic` t INNER JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` INNER JOIN `t_blog` t2 ON t2.`deleted` = ? AND t.`id` = t2.`id` RIGHT JOIN `t_blog` t3 ON t3.`deleted` = ? AND t.`id` = t3.`id` WHERE t.`id` IN (?,?,?) GROUP BY t3.`id` ORDER BY t3.`order` ASC", sql);
         }
     }
@@ -452,25 +452,25 @@ public class QueryTest3 extends BaseTest {
         {
             String sql = easyQuery
                     .queryable(Topic.class)
-                    .leftJoin(BlogEntity.class, (t1, t2) -> t.eq(t1, Topic::getId, BlogEntity::getId))
-                    .innerJoin(BlogEntity.class, (t1, t2,t3) -> t.eq(t2, Topic::getId, BlogEntity::getId))
-                    .rightJoin(BlogEntity.class, (t1, t2, t3, t4) -> t.eq(t3, Topic::getId, BlogEntity::getId))
+                    .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .innerJoin(BlogEntity.class, (t,t1, t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
+                    .rightJoin(BlogEntity.class, (t, t1, t2, t3) -> t.eq(t3, Topic::getId, BlogEntity::getId))
                     .where(o -> o.in(Topic::getId, Arrays.asList("3", "2", "5")))
                     .groupBy(o -> o.column(Topic::getId))
                     .distinct()
-                    .orderByAsc((t1, t2, t3, t4) -> t3.column(BlogEntity::getOrder))
+                    .orderByAsc((t, t1, t2, t3) -> t3.column(BlogEntity::getOrder))
                     .limit(10).toSQL();
             Assert.assertEquals("SELECT DISTINCT t.`id` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` INNER JOIN `t_blog` t2 ON t2.`deleted` = ? AND t.`id` = t2.`id` RIGHT JOIN `t_blog` t3 ON t3.`deleted` = ? AND t.`id` = t3.`id` WHERE t.`id` IN (?,?,?) GROUP BY t.`id` ORDER BY t3.`order` ASC LIMIT 10", sql);
         }
         {
             String sql = easyQuery
                     .queryable(Topic.class)
-                    .leftJoin(BlogEntity.class, (t1, t2) -> t.eq(t1, Topic::getId, BlogEntity::getId))
-                    .innerJoin(BlogEntity.class, (t1, t2,t3) -> t.eq(t2, Topic::getId, BlogEntity::getId))
-                    .leftJoin(BlogEntity.class, (t1, t2, t3, t4) -> t.eq(t3, Topic::getId, BlogEntity::getId))
+                    .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .innerJoin(BlogEntity.class, (t,t1, t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
+                    .leftJoin(BlogEntity.class, (t, t1, t2, t3) -> t.eq(t3, Topic::getId, BlogEntity::getId))
                     .where(o -> o.in(Topic::getId, Arrays.asList("3", "2", "5")))
                     .groupBy(o -> o.column(Topic::getId))
-                    .orderByAsc((t1, t2, t3, t4) -> t3.column(BlogEntity::getOrder))
+                    .orderByAsc((t, t1, t2, t3) -> t3.column(BlogEntity::getOrder))
                     .distinct()
                     .select(Topic.class, o -> o.column(Topic::getId))
                     .where(o -> o.eq(Topic::getId, "x"))
@@ -480,12 +480,12 @@ public class QueryTest3 extends BaseTest {
         {
             String sql = easyQuery
                     .queryable(Topic.class)
-                    .leftJoin(BlogEntity.class, (t1, t2) -> t.eq(t1, Topic::getId, BlogEntity::getId))
-                    .leftJoin(BlogEntity.class, (t1, t2,t3) -> t.eq(t2, Topic::getId, BlogEntity::getId))
-                    .leftJoin(BlogEntity.class, (t1, t2, t3, t4) -> t.eq(t3, Topic::getId, BlogEntity::getId))
+                    .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .leftJoin(BlogEntity.class, (t,t1, t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
+                    .leftJoin(BlogEntity.class, (t, t1, t2, t3) -> t.eq(t3, Topic::getId, BlogEntity::getId))
                     .where(o -> o.in(Topic::getId, Arrays.asList("3", "2", "5")))
                     .groupBy(o -> o.column(Topic::getId))
-                    .orderByAsc((t1, t2, t3, t4) -> t3.column(BlogEntity::getOrder))
+                    .orderByAsc((t, t1, t2, t3) -> t3.column(BlogEntity::getOrder))
                     .distinct()
                     .select(Topic.class, o -> o.column(Topic::getId))
                     .select("count(1)").toSQL();
@@ -494,9 +494,9 @@ public class QueryTest3 extends BaseTest {
         {
             String sql = easyQuery
                     .queryable(Topic.class)
-                    .leftJoin(BlogEntity.class, (t1, t2) -> t.eq(t1, Topic::getId, BlogEntity::getId))
-                    .leftJoin(BlogEntity.class, (t1, t2,t3) -> t.eq(t2, Topic::getId, BlogEntity::getId))
-                    .rightJoin(BlogEntity.class, (t1, t2, t3, t4) -> t.eq(t3, Topic::getId, BlogEntity::getId))
+                    .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .leftJoin(BlogEntity.class, (t,t1, t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
+                    .rightJoin(BlogEntity.class, (t, t1, t2, t3) -> t.eq(t3, Topic::getId, BlogEntity::getId))
                     .where(o -> o.in(Topic::getId, Arrays.asList("3", "2", "5")))
                     .groupBy(o -> o.column(Topic::getId))
                     .orderByDesc((t) -> t.column(Topic::getStars))
@@ -508,9 +508,9 @@ public class QueryTest3 extends BaseTest {
         {
             String sql = easyQuery
                     .queryable(Topic.class)
-                    .leftJoin(BlogEntity.class, (t1, t2) -> t.eq(t1, Topic::getId, BlogEntity::getId))
-                    .leftJoin(BlogEntity.class, (t1, t2,t3) -> t.eq(t2, Topic::getId, BlogEntity::getId))
-                    .rightJoin(BlogEntity.class, (t1, t2, t3, t4) -> t.eq(t3, Topic::getId, BlogEntity::getId))
+                    .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .leftJoin(BlogEntity.class, (t,t1, t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
+                    .rightJoin(BlogEntity.class, (t, t1, t2, t3) -> t.eq(t3, Topic::getId, BlogEntity::getId))
                     .where(o -> o.in(Topic::getId, Arrays.asList("3", "2", "5")))
                     .groupBy(o -> o.column(Topic::getId))
                     .orderByAsc((t) -> t.column(Topic::getStars))
@@ -916,11 +916,11 @@ public class QueryTest3 extends BaseTest {
         {
 
             String sql = easyQuery.queryable(Topic.class)
-                    .innerJoin(BlogEntity.class, (t1, t2) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .innerJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
                     .where(t -> t.like(Topic::getTitle, "someTitle"))
-                    .select(Topic.class, (t1, t2) -> t
+                    .select(Topic.class, (t, t1) -> t
                             .sqlSegmentAs(
-                                    SQL4JFunc.caseWhenBuilder(t1, t2)
+                                    SQL4JFunc.caseWhenBuilder(t, t1)
                                             .caseWhen((f, f1) -> f.eq(Topic::getTitle, "123").then(f1).le(BlogEntity::getStar, 100), "111")
                                             .caseWhen((f, f1) -> f.eq(Topic::getTitle, "456").then(f1).ge(BlogEntity::getStar, 200), "222")
                                             .elseEnd("222")
@@ -930,11 +930,11 @@ public class QueryTest3 extends BaseTest {
                     .toSQL();
             Assert.assertEquals("SELECT CASE WHEN t.`title` = ? AND t1.`star` <= ? THEN ? WHEN t.`title` = ? AND t1.`star` >= ? THEN ? ELSE ? END AS `title`,t.`id` FROM `t_topic` t INNER JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t.`title` LIKE ?", sql);
             List<Topic> list = easyQuery.queryable(Topic.class)
-                    .innerJoin(BlogEntity.class, (t1, t2) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .innerJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
                     .where(t -> t.like(Topic::getTitle, "someTitle"))
-                    .select(Topic.class, (t1, t2) -> t
+                    .select(Topic.class, (t, t1) -> t
                             .sqlSegmentAs(
-                                    SQL4JFunc.caseWhenBuilder(t1, t2)
+                                    SQL4JFunc.caseWhenBuilder(t, t1)
                                             .caseWhen((f, f1) -> f.eq(Topic::getTitle, "123").then(f1).le(BlogEntity::getStar, 100), "111")
                                             .caseWhen((f, f1) -> f.eq(Topic::getTitle, "456").then(f1).ge(BlogEntity::getStar, 200), "222")
                                             .elseEnd("222")
@@ -1383,9 +1383,9 @@ public class QueryTest3 extends BaseTest {
 
 
         List<UserBookEncryptVO> userBooks = easyQuery.queryable(UserBookEncrypt.class)
-                .leftJoin(SysUserEncrypt.class, (t1, t2) -> t.eq(t1, UserBookEncrypt::getUserId, SysUserEncrypt::getId))
-                .where((t1, t2) -> t1.like(SysUserEncrypt::getAddress, "越城区"))
-                .select(UserBookEncryptVO.class, (t1, t2) -> t.columnAll()
+                .leftJoin(SysUserEncrypt.class, (t, t1) -> t.eq(t1, UserBookEncrypt::getUserId, SysUserEncrypt::getId))
+                .where((t, t1) -> t1.like(SysUserEncrypt::getAddress, "越城区"))
+                .select(UserBookEncryptVO.class, (t, t1) -> t.columnAll()
                         .then(t1)
                         .columnAs(SysUserEncrypt::getName, UserBookEncryptVO::getUserName)
                         .columnAs(SysUserEncrypt::getPhone, UserBookEncryptVO::getUserPhone)

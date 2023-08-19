@@ -11,7 +11,7 @@ import com.easy.query.core.expression.lambda.SQLExpression2;
  *
  * @author xuejiaming
  */
-public interface SQLJoin1Extension<T1> {
+public interface SQLJoinable1<T1> {
 
     <T2> Queryable2<T1, T2> leftJoin(Class<T2> joinClass, SQLExpression2<SQLWherePredicate<T1>, SQLWherePredicate<T2>> on);
 

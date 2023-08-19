@@ -1,7 +1,7 @@
 package com.easy.query.api4kt.select.extension.queryable;
 
-import com.easy.query.api4j.select.Queryable;
-import com.easy.query.api4j.sql.SQLWherePredicate;
+import com.easy.query.api4kt.select.KtQueryable;
+import com.easy.query.api4kt.sql.SQLKtWherePredicate;
 import com.easy.query.core.exception.EasyQueryMultiPrimaryKeyException;
 import com.easy.query.core.exception.EasyQueryNoPrimaryKeyException;
 import com.easy.query.core.exception.EasyQueryWhereInvalidOperationException;
@@ -15,13 +15,13 @@ import java.util.Collection;
  *
  * @author xuejiaming
  */
-public interface SQLWhere1Extension<T1> {
+public interface SQLKtFilterable1<T1> {
 
-    default Queryable<T1> where(SQLExpression1<SQLWherePredicate<T1>> whereExpression) {
+    default KtQueryable<T1> where(SQLExpression1<SQLKtWherePredicate<T1>> whereExpression) {
         return where(true, whereExpression);
     }
 
-    Queryable<T1> where(boolean condition, SQLExpression1<SQLWherePredicate<T1>> whereExpression);
+    KtQueryable<T1> where(boolean condition, SQLExpression1<SQLKtWherePredicate<T1>> whereExpression);
 
     /**
      * 根据id主键查询
@@ -31,7 +31,7 @@ public interface SQLWhere1Extension<T1> {
      * @throws EasyQueryNoPrimaryKeyException,EasyQueryMultiPrimaryKeyException @description 无主键或者多主键报错
      */
 
-    default Queryable<T1> whereById(Object id) {
+    default KtQueryable<T1> whereById(Object id) {
         return whereById(true, id);
     }
 
@@ -42,7 +42,7 @@ public interface SQLWhere1Extension<T1> {
      * @throws EasyQueryNoPrimaryKeyException,EasyQueryMultiPrimaryKeyException @description 无主键或者多主键报错
      */
 
-    Queryable<T1> whereById(boolean condition, Object id);
+    KtQueryable<T1> whereById(boolean condition, Object id);
 
     /**
      * @param ids
@@ -51,7 +51,7 @@ public interface SQLWhere1Extension<T1> {
      * @throws EasyQueryNoPrimaryKeyException,EasyQueryMultiPrimaryKeyException
      */
 
-    default <TProperty> Queryable<T1> whereByIds(Collection<TProperty> ids) {
+    default <TProperty> KtQueryable<T1> whereByIds(Collection<TProperty> ids) {
         return whereByIds(true, ids);
     }
 
@@ -64,14 +64,14 @@ public interface SQLWhere1Extension<T1> {
      * @return 当前链式表达式
      * @throws EasyQueryNoPrimaryKeyException,EasyQueryMultiPrimaryKeyException
      */
-    <TProperty> Queryable<T1> whereByIds(boolean condition, Collection<TProperty> ids);
+    <TProperty> KtQueryable<T1> whereByIds(boolean condition, Collection<TProperty> ids);
 
     /**
      * @param object
      * @return
      * @throws EasyQueryWhereInvalidOperationException 当object的where属性和查询对象不匹配或者查询对象属性不匹配
      */
-    default Queryable<T1> whereObject(Object object) {
+    default KtQueryable<T1> whereObject(Object object) {
         return whereObject(true, object);
     }
 
@@ -79,7 +79,7 @@ public interface SQLWhere1Extension<T1> {
      * @param condition
      * @param object
      * @return
-     * @throws EasyQueryWhereInvalidOperationException 当object的where属性和查询对象不匹配或者查询对象属性不匹配,无法获取 {@link SQLWherePredicate}
+     * @throws EasyQueryWhereInvalidOperationException 当object的where属性和查询对象不匹配或者查询对象属性不匹配,无法获取 {@link SQLKtWherePredicate}
      */
-    Queryable<T1> whereObject(boolean condition, Object object);
+    KtQueryable<T1> whereObject(boolean condition, Object object);
 }

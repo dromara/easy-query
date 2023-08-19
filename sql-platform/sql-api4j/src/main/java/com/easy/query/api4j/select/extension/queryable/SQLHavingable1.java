@@ -10,7 +10,7 @@ import com.easy.query.core.expression.lambda.SQLExpression1;
  *
  * @author xuejiaming
  */
-public interface SQLHaving1Extension<T1> {
+public interface SQLHavingable1<T1> {
 
 
     default Queryable<T1> having(SQLExpression1<SQLWhereAggregatePredicate<T1>> predicateExpression) {

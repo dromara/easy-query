@@ -15,7 +15,7 @@ import java.util.Collection;
  *
  * @author xuejiaming
  */
-public interface SQLWhere1Extension<T1> {
+public interface SQLFilterable1<T1> {
 
     default Queryable<T1> where(SQLExpression1<SQLWherePredicate<T1>> whereExpression) {
         return where(true, whereExpression);

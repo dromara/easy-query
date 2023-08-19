@@ -11,7 +11,7 @@ import com.easy.query.core.expression.lambda.SQLFuncExpression1;
  *
  * @author xuejiaming
  */
-public interface SQLInclude1Extension<T1> extends ClientQueryableAvailable<T1>, QueryableAvailable<T1> {
+public interface SQLIncludeable1<T1> extends ClientQueryableAvailable<T1>, QueryableAvailable<T1> {
 
     default <TProperty> Queryable<T1> include(SQLFuncExpression1<SQLNavigateInclude<T1>, Queryable<TProperty>> navigateIncludeSQLExpression) {
         return include(true, navigateIncludeSQLExpression);

@@ -10,7 +10,7 @@ import com.easy.query.core.expression.lambda.SQLExpression1;
  *
  * @author xuejiaming
  */
-public interface SQLGroup1Extension<T1> {
+public interface SQLGroupable1<T1> {
 
     default Queryable<T1> groupBy(SQLExpression1<SQLGroupBySelector<T1>> selectExpression) {
         return groupBy(true, selectExpression);

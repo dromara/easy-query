@@ -279,7 +279,7 @@ public class RelationTest extends BaseTest {
             }
             {
                 List<SchoolStudent> list2 = easyQuery.queryable(SchoolStudent.class)
-                        .innerJoin(SchoolClass.class, (t1, t2) -> t.eq(t1, SchoolStudent::getClassId, SchoolClass::getId))
+                        .innerJoin(SchoolClass.class, (t1, t2) -> t1.eq(t2, SchoolStudent::getClassId, SchoolClass::getId))
                         .include(t -> t.one(SchoolStudent::getSchoolStudentAddress))
                         .toList();
                 Assert.assertEquals(3, list2.size());
