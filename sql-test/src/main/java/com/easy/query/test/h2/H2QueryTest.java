@@ -3,6 +3,7 @@ package com.easy.query.test.h2;
 import com.easy.query.api4j.select.Queryable2;
 import com.easy.query.api4j.select.Queryable3;
 import com.easy.query.api4j.select.Queryable4;
+import com.easy.query.core.expression.builder.core.ConditionDefaultAccepter;
 import com.easy.query.test.h2.domain.ALLTYPE;
 import com.easy.query.test.h2.domain.ALLTYPE1;
 import com.easy.query.test.h2.domain.ALLTYPESharding;
@@ -764,5 +765,48 @@ public class H2QueryTest extends H2BaseTest {
                 .select(o -> o.columnAll()
                 ).toSQL();
         Assert.assertEquals("SELECT t.id,t.name,t.edition,t.price,t.store_id FROM t_book_test t LEFT JOIN t_def_table t1 ON t.price = t1.mobile WHERE regexp_like(t.price,?) AND regexp_like(t1.avatar,?)", sql);
+    }
+    @Test
+    public void conditionTest1(){
+        String id="";
+        String userName=null;
+        String nickname="BBB";
+        Boolean leftEnable=true;
+
+        {
+
+            String sql = easyQuery.queryable(DefTable.class)
+                    .leftJoin(DefTableLeft1.class, (t, t1) -> t.eq(t1, DefTable::getId, DefTableLeft1::getDefId))
+                    .conditionConfigure((t, p, v) -> {
+                        if ("id".equals(p)) {
+                            return true;
+                        }
+                        return ConditionDefaultAccepter.DEFAULT.accept(t, p, v);
+                    })
+                    .where((t, t1) -> t
+                            .eq(DefTable::getId, id)
+                            .eq(DefTable::getUserName, userName)
+                            .eq(DefTable::getNickname, nickname)
+                            .then(t1).eq(DefTableLeft1::getEnable, leftEnable)).toSQL();
+            Assert.assertEquals("SELECT t.id,t.user_name,t.nickname,t.enable,t.score,t.mobile,t.avatar,t.number,t.status,t.created,t.options FROM t_def_table t LEFT JOIN t_def_table_left1 t1 ON t.id = t1.def_id WHERE t.id = ? AND t.nickname = ? AND t1.enable = ?",sql);
+        }
+
+        {
+
+            String sql = easyQuery.queryable(DefTable.class)
+                    .leftJoin(DefTableLeft1.class, (t, t1) -> t.eq(t1, DefTable::getId, DefTableLeft1::getDefId))
+                    .conditionConfigure((t, p, v) -> {
+                        if ("enable".equals(p)) {
+                            return false;
+                        }
+                        return ConditionDefaultAccepter.DEFAULT.accept(t, p, v);
+                    })
+                    .where((t, t1) -> t
+                            .eq(DefTable::getId, id)
+                            .eq(DefTable::getUserName, userName)
+                            .eq(DefTable::getNickname, nickname)
+                            .then(t1).eq(DefTableLeft1::getEnable, leftEnable)).toSQL();
+            Assert.assertEquals("SELECT t.id,t.user_name,t.nickname,t.enable,t.score,t.mobile,t.avatar,t.number,t.status,t.created,t.options FROM t_def_table t LEFT JOIN t_def_table_left1 t1 ON t.id = t1.def_id WHERE t.nickname = ?",sql);
+        }
     }
 }

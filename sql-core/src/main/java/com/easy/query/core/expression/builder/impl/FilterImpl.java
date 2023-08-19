@@ -79,8 +79,8 @@ public class FilterImpl implements Filter {
         }
     }
 
-    private boolean conditionAppend(Object value) {
-        return this.conditionAcceptAssert.accept(value);
+    private boolean conditionAppend(TableAvailable table, String property, Object value) {
+        return this.conditionAcceptAssert.accept(table, property, value);
     }
 
     protected SQLPredicateCompare getReallyPredicateCompare(SQLPredicateCompare sqlPredicateCompare) {
@@ -107,7 +107,7 @@ public class FilterImpl implements Filter {
 
     @Override
     public Filter gt(TableAvailable table, String property, Object val) {
-        if (conditionAppend(val)) {
+        if (conditionAppend(table, property, val)) {
             appendThisPredicate(table, property, val, SQLPredicateCompareEnum.GT);
             next();
         }
@@ -116,7 +116,7 @@ public class FilterImpl implements Filter {
 
     @Override
     public Filter ge(TableAvailable table, String property, Object val) {
-        if (conditionAppend(val)) {
+        if (conditionAppend(table, property, val)) {
             appendThisPredicate(table, property, val, SQLPredicateCompareEnum.GE);
             next();
         }
@@ -125,7 +125,7 @@ public class FilterImpl implements Filter {
 
     @Override
     public Filter eq(TableAvailable table, String property, Object val) {
-        if (conditionAppend(val)) {
+        if (conditionAppend(table, property, val)) {
             appendThisPredicate(table, property, val, SQLPredicateCompareEnum.EQ);
             next();
         }
@@ -134,7 +134,7 @@ public class FilterImpl implements Filter {
 
     @Override
     public Filter ne(TableAvailable table, String property, Object val) {
-        if (conditionAppend(val)) {
+        if (conditionAppend(table, property, val)) {
             appendThisPredicate(table, property, val, SQLPredicateCompareEnum.NE);
             next();
         }
@@ -143,7 +143,7 @@ public class FilterImpl implements Filter {
 
     @Override
     public Filter le(TableAvailable table, String property, Object val) {
-        if (conditionAppend(val)) {
+        if (conditionAppend(table, property, val)) {
             appendThisPredicate(table, property, val, SQLPredicateCompareEnum.LE);
             next();
         }
@@ -152,7 +152,7 @@ public class FilterImpl implements Filter {
 
     @Override
     public Filter lt(TableAvailable table, String property, Object val) {
-        if (conditionAppend(val)) {
+        if (conditionAppend(table, property, val)) {
             appendThisPredicate(table, property, val, SQLPredicateCompareEnum.LT);
             next();
         }
@@ -162,7 +162,7 @@ public class FilterImpl implements Filter {
     @Override
     public Filter like(TableAvailable table, String property, Object val, SQLLikeEnum sqlLike) {
 
-        if (conditionAppend(val)) {
+        if (conditionAppend(table, property, val)) {
             appendThisPredicate(table, property, EasySQLUtil.getLikeParameter(val, sqlLike), SQLPredicateCompareEnum.LIKE);
             next();
         }
@@ -171,7 +171,7 @@ public class FilterImpl implements Filter {
 
     @Override
     public Filter notLike(TableAvailable table, String property, Object val, SQLLikeEnum sqlLike) {
-        if (conditionAppend(val)) {
+        if (conditionAppend(table, property, val)) {
             appendThisPredicate(table, property, EasySQLUtil.getLikeParameter(val, sqlLike), SQLPredicateCompareEnum.NOT_LIKE);
             next();
         }
@@ -194,7 +194,7 @@ public class FilterImpl implements Filter {
 
     @Override
     public Filter in(TableAvailable table, String property, Collection<?> collection) {
-        if (conditionAppend(collection)) {
+        if (conditionAppend(table, property, collection)) {
             nextPredicateSegment.setPredicate(new ColumnCollectionPredicate(table, property, collection, getReallyPredicateCompare(SQLPredicateCompareEnum.IN), runtimeContext));
             next();
         }
@@ -203,7 +203,7 @@ public class FilterImpl implements Filter {
 
     @Override
     public <TProperty> Filter in(TableAvailable table, String property, TProperty[] collection) {
-        if (conditionAppend(collection)) {
+        if (conditionAppend(table, property, collection)) {
             nextPredicateSegment.setPredicate(new ColumnCollectionPredicate(table, property, Arrays.asList(collection), getReallyPredicateCompare(SQLPredicateCompareEnum.IN), runtimeContext));
             next();
         }
@@ -233,7 +233,7 @@ public class FilterImpl implements Filter {
 
     @Override
     public <TProperty> Filter in(TableAvailable table, String property, Query<TProperty> subQuery) {
-        if (conditionAppend(subQuery)) {
+        if (conditionAppend(table, property, subQuery)) {
             subQueryIn(table, property, subQuery, SQLPredicateCompareEnum.IN);
         }
         return this;
@@ -241,7 +241,7 @@ public class FilterImpl implements Filter {
 
     @Override
     public Filter notIn(TableAvailable table, String property, Collection<?> collection) {
-        if (conditionAppend(collection)) {
+        if (conditionAppend(table, property, collection)) {
             nextPredicateSegment.setPredicate(new ColumnCollectionPredicate(table, property, collection, getReallyPredicateCompare(SQLPredicateCompareEnum.NOT_IN), runtimeContext));
             next();
         }
@@ -250,7 +250,7 @@ public class FilterImpl implements Filter {
 
     @Override
     public <TProperty> Filter notIn(TableAvailable table, String property, TProperty[] collection) {
-        if (conditionAppend(collection)) {
+        if (conditionAppend(table, property, collection)) {
             nextPredicateSegment.setPredicate(new ColumnCollectionPredicate(table, property, Arrays.asList(collection), getReallyPredicateCompare(SQLPredicateCompareEnum.NOT_IN), runtimeContext));
             next();
         }
@@ -259,7 +259,7 @@ public class FilterImpl implements Filter {
 
     @Override
     public <TProperty> Filter notIn(TableAvailable table, String property, Query<TProperty> subQuery) {
-        if (conditionAppend(subQuery)) {
+        if (conditionAppend(table, property, subQuery)) {
             subQueryIn(table, property, subQuery, SQLPredicateCompareEnum.NOT_IN);
         }
         return this;
@@ -267,29 +267,25 @@ public class FilterImpl implements Filter {
 
     @Override
     public <T2> Filter exists(TableAvailable table, Query<T2> subQuery) {
-        if (conditionAppend(subQuery)) {
-            subQueryExists(table, subQuery, SQLPredicateCompareEnum.EXISTS);
-        }
+        subQueryExists(table, subQuery, SQLPredicateCompareEnum.EXISTS);
         return this;
     }
 
     @Override
     public <T2> Filter notExists(TableAvailable table, Query<T2> subQuery) {
-        if (conditionAppend(subQuery)) {
-            subQueryExists(table, subQuery, SQLPredicateCompareEnum.NOT_EXISTS);
-        }
+        subQueryExists(table, subQuery, SQLPredicateCompareEnum.NOT_EXISTS);
         return this;
     }
 
     @Override
     public Filter range(TableAvailable table, String property, boolean conditionLeft, Object valLeft, boolean conditionRight, Object valRight, SQLRangeEnum sqlRange) {
 
-        if (conditionLeft && conditionAppend(valLeft)) {
+        if (conditionLeft && conditionAppend(table,property,valLeft)) {
             boolean openFirst = SQLRangeEnum.openFirst(sqlRange);
             appendThisPredicate(table, property, valLeft, getReallyPredicateCompare(openFirst ? SQLPredicateCompareEnum.GT : SQLPredicateCompareEnum.GE));
             next();
         }
-        if (conditionRight && conditionAppend(valRight)) {
+        if (conditionRight && conditionAppend(table,property,valRight)) {
             boolean openEnd = SQLRangeEnum.openEnd(sqlRange);
             appendThisPredicate(table, property, valRight, getReallyPredicateCompare(openEnd ? SQLPredicateCompareEnum.LT : SQLPredicateCompareEnum.LE));
             next();
@@ -299,7 +295,7 @@ public class FilterImpl implements Filter {
 
     @Override
     public Filter columnFunc(TableAvailable table, ColumnPropertyFunction columnPropertyFunction, SQLPredicateCompare sqlPredicateCompare, Object val) {
-        if (conditionAppend(val)) {
+        if (conditionAppend(table, columnPropertyFunction.getPropertyName(),val)) {
             appendThisFuncPredicate(table, columnPropertyFunction.getPropertyName(), columnPropertyFunction.getColumnFunction(), getReallyPredicateCompare(sqlPredicateCompare), val);
             next();
         }

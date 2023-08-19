@@ -1,5 +1,7 @@
 package com.easy.query.core.expression.builder.core;
 
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
+
 /**
  * create time 2023/8/19 15:06
  * 文件说明
@@ -12,7 +14,7 @@ public class ConditionAllAccepter implements ConditionAccepter {
 
     }
     @Override
-    public boolean accept(Object value) {
+    public boolean accept(TableAvailable table, String property, Object value) {
         return true;
     }
 }

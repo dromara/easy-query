@@ -1,5 +1,6 @@
 package com.easy.query.core.expression.builder.core;
 
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.util.EasyStringUtil;
 
 /**
@@ -11,13 +12,13 @@ import com.easy.query.core.util.EasyStringUtil;
 public class ConditionDefaultAccepter implements ConditionAccepter {
     public static final ConditionAccepter DEFAULT=new ConditionDefaultAccepter();
     @Override
-    public boolean accept(Object value) {
+    public boolean accept(TableAvailable table, String property, Object value) {
         if(value==null){
             return false;
         }
         if(value instanceof String){
             return EasyStringUtil.isNotBlank((String) value);
         }
-        return false;
+        return true;
     }
 }
