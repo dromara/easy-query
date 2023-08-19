@@ -1,6 +1,6 @@
 package com.easy.query.core.basic.api.select.provider;
 
-import com.easy.query.core.basic.api.select.ClientQueryable;
+import com.easy.query.core.expression.builder.core.ConditionAllAccepter;
 import com.easy.query.core.expression.builder.impl.AggregateFilterImpl;
 import com.easy.query.core.expression.builder.impl.AsSelectorImpl;
 import com.easy.query.core.expression.builder.impl.AutoAsSelectorImpl;
@@ -8,7 +8,6 @@ import com.easy.query.core.expression.builder.impl.FilterImpl;
 import com.easy.query.core.expression.builder.impl.GroupSelectorImpl;
 import com.easy.query.core.expression.builder.impl.OrderSelectorImpl;
 import com.easy.query.core.expression.builder.impl.SelectorImpl;
-import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnGroupSelector;
@@ -30,7 +29,6 @@ import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.metadata.IncludeNavigateParams;
-import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasyUtil;
 
 /**
@@ -76,7 +74,7 @@ public class SQLExpressionProviderImpl<TEntity> implements SQLExpressionProvider
     @Override
     public WherePredicate<TEntity> getWherePredicate() {
         if (where == null) {
-            where = new WherePredicateImpl<>(table, new FilterImpl(entityQueryExpressionBuilder.getRuntimeContext(), entityQueryExpressionBuilder.getExpressionContext(), entityQueryExpressionBuilder.getWhere(), false));
+            where = new WherePredicateImpl<>(table, new FilterImpl(entityQueryExpressionBuilder.getRuntimeContext(), entityQueryExpressionBuilder.getExpressionContext(), entityQueryExpressionBuilder.getWhere(), false,entityQueryExpressionBuilder.getExpressionContext().getConditionAccepter()));
         }
         return where;
     }
@@ -89,7 +87,7 @@ public class SQLExpressionProviderImpl<TEntity> implements SQLExpressionProvider
     @Override
     public WherePredicate<TEntity> getAllWherePredicate() {
         if (allPredicate == null) {
-            allPredicate = new WherePredicateImpl<>(table, new FilterImpl(entityQueryExpressionBuilder.getRuntimeContext(), entityQueryExpressionBuilder.getExpressionContext(), entityQueryExpressionBuilder.getAllPredicate(), true));
+            allPredicate = new WherePredicateImpl<>(table, new FilterImpl(entityQueryExpressionBuilder.getRuntimeContext(), entityQueryExpressionBuilder.getExpressionContext(), entityQueryExpressionBuilder.getAllPredicate(), true, ConditionAllAccepter.DEFAULT));
         }
         return allPredicate;
     }
@@ -105,7 +103,7 @@ public class SQLExpressionProviderImpl<TEntity> implements SQLExpressionProvider
     @Override
     public WherePredicate<TEntity> getOnPredicate() {
         if (on == null) {
-            on = new WherePredicateImpl<>(table, new FilterImpl(entityQueryExpressionBuilder.getRuntimeContext(), entityQueryExpressionBuilder.getExpressionContext(), EasyUtil.getCurrentPredicateTable(entityQueryExpressionBuilder).getOn(), false));
+            on = new WherePredicateImpl<>(table, new FilterImpl(entityQueryExpressionBuilder.getRuntimeContext(), entityQueryExpressionBuilder.getExpressionContext(), EasyUtil.getCurrentPredicateTable(entityQueryExpressionBuilder).getOn(), false, ConditionAllAccepter.DEFAULT));
         }
         return on;
     }

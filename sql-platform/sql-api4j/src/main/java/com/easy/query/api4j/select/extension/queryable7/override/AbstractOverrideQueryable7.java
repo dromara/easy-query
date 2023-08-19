@@ -12,6 +12,7 @@ import com.easy.query.api4j.sql.SQLWherePredicate;
 import com.easy.query.core.api.dynamic.sort.ObjectSort;
 import com.easy.query.core.basic.api.select.ClientQueryable7;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
+import com.easy.query.core.expression.builder.core.ConditionAccepter;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 
@@ -210,6 +211,11 @@ public abstract class AbstractOverrideQueryable7<T1, T2, T3,T4,T5,T6,T7> extends
     @Override
     public Queryable7<T1, T2,T3,T4,T5,T6,T7> asTableLink(Function<String, String> linkAs) {
         super.asTableLink(linkAs);
+        return getQueryable7();
+    }
+    @Override
+    public Queryable7<T1, T2,T3,T4,T5,T6,T7> conditionConfigure(ConditionAccepter conditionAccepter) {
+        super.conditionConfigure(conditionAccepter);
         return getQueryable7();
     }
 }

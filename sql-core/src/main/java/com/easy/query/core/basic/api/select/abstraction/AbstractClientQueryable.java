@@ -30,6 +30,8 @@ import com.easy.query.core.exception.EasyQueryFirstOrNotNullException;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
 import com.easy.query.core.exception.EasyQueryWhereInvalidOperationException;
+import com.easy.query.core.expression.builder.core.ConditionAllAccepter;
+import com.easy.query.core.expression.builder.core.ConditionAccepter;
 import com.easy.query.core.expression.builder.impl.FilterImpl;
 import com.easy.query.core.expression.builder.impl.OrderSelectorImpl;
 import com.easy.query.core.expression.func.ColumnFunction;
@@ -580,7 +582,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                             continue;
                         }
 
-                        FilterImpl filter = new FilterImpl(entityQueryExpressionBuilder.getRuntimeContext(), entityQueryExpressionBuilder.getExpressionContext(), entityQueryExpressionBuilder.getWhere(), false);
+                        FilterImpl filter = new FilterImpl(entityQueryExpressionBuilder.getRuntimeContext(), entityQueryExpressionBuilder.getExpressionContext(), entityQueryExpressionBuilder.getWhere(), false, ConditionAllAccepter.DEFAULT);
 
                         Object val = field.get(object);
 
@@ -1056,6 +1058,12 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         } else {
             entityQueryExpressionBuilder.getExpressionContext().getBehavior().removeBehavior(EasyBehaviorEnum.QUERY_LARGE_COLUMN);
         }
+        return this;
+    }
+
+    @Override
+    public ClientQueryable<T1> conditionConfigure(ConditionAccepter conditionAccepter) {
+        entityQueryExpressionBuilder.getExpressionContext().conditionConfigure(conditionAccepter);
         return this;
     }
 }

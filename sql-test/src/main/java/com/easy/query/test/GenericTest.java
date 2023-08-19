@@ -1,5 +1,6 @@
 package com.easy.query.test;
 
+import com.easy.query.api4j.select.Queryable2;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.common.LinkedCaseInsensitiveMap;
@@ -29,6 +30,7 @@ import com.easy.query.test.encryption.Base64EncryptionStrategy;
 import com.easy.query.test.encryption.DefaultAesEasyEncryptionStrategy;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.NoKeyEntity;
+import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.UnknownTable;
 import com.easy.query.test.entity.notable.QueryLargeColumnTestEntity;
 import com.easy.query.test.increment.MyDatabaseIncrementSQLColumnGenerator;
@@ -853,6 +855,20 @@ public class GenericTest extends BaseTest {
                 Assert.assertEquals("NAME_CONVERSION",convert);
             }
         }
+    }
+
+    @Test
+    public void cloneTest1(){
+        Queryable2<Topic, BlogEntity> topicBlogEntityQueryable2 = easyQuery.queryable(Topic.class)
+                .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId));
+        Queryable2<Topic, BlogEntity> topicBlogEntityQueryable21 = topicBlogEntityQueryable2.cloneQueryable();
+        Queryable2<Topic, BlogEntity> topicBlogEntityQueryable22 = topicBlogEntityQueryable2.cloneQueryable();
+        String sql = topicBlogEntityQueryable21.where(o -> o.eq(Topic::getId, "123")).toSQL();
+        String sql1 = topicBlogEntityQueryable22.where((t, t1) -> t1.eq(BlogEntity::getId, "234")).toSQL();
+        String sql2 = topicBlogEntityQueryable2.toSQL();
+        Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t.`id` = ?",sql);
+        Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t1.`id` = ?",sql1);
+        Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id`",sql2);
     }
 
 

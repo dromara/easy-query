@@ -2,6 +2,7 @@ package com.easy.query.api4kt.select.abstraction;
 
 import com.easy.query.api4kt.select.KtQueryable;
 import com.easy.query.api4kt.select.KtQueryable4;
+import com.easy.query.api4kt.select.extension.queryable4.override.AbstractOverrideKtQueryable4;
 import com.easy.query.api4kt.select.impl.EasyKtQueryable;
 import com.easy.query.api4kt.sql.SQLKtColumnAsSelector;
 import com.easy.query.api4kt.sql.SQLKtGroupBySelector;
@@ -27,7 +28,7 @@ import java.util.function.Function;
  * @Description: 文件说明
  * @Date: 2023/3/9 12:38
  */
-public abstract class AbstractKtQueryable4<T1, T2, T3, T4> extends AbstractKtQueryable<T1> implements KtQueryable4<T1, T2, T3, T4> {
+public abstract class AbstractKtQueryable4<T1, T2, T3, T4> extends AbstractOverrideKtQueryable4<T1, T2, T3, T4> implements KtQueryable4<T1, T2, T3, T4> {
     protected final ClientQueryable4<T1, T2, T3, T4> entityQueryable4;
 
 
@@ -36,6 +37,11 @@ public abstract class AbstractKtQueryable4<T1, T2, T3, T4> extends AbstractKtQue
         this.entityQueryable4 = entityQueryable4;
     }
 
+
+    @Override
+    public KtQueryable4<T1, T2, T3, T4> getQueryable4() {
+        return this;
+    }
     @Override
     public ClientQueryable4<T1, T2, T3, T4> getClientQueryable4() {
         return entityQueryable4;

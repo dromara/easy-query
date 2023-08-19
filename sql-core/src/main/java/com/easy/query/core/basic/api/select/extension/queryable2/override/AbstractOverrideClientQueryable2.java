@@ -4,6 +4,7 @@ import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.select.ClientQueryable2;
 import com.easy.query.core.basic.api.select.abstraction.AbstractClientQueryable;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
+import com.easy.query.core.expression.builder.core.ConditionAccepter;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.base.ColumnGroupSelector;
@@ -207,10 +208,9 @@ public abstract class AbstractOverrideClientQueryable2<T1,T2> extends AbstractCl
         super.asTableLink(linkAs);
         return getClientQueryable2();
     }
-
     @Override
-    public ClientQueryable2<T1, T2> asTableLink(String linkAs) {
-        super.asTableLink(linkAs);
+    public ClientQueryable2<T1, T2> conditionConfigure(ConditionAccepter conditionAccepter) {
+        super.conditionConfigure(conditionAccepter);
         return getClientQueryable2();
     }
 }

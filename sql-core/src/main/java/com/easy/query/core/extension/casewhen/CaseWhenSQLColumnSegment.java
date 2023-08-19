@@ -5,6 +5,7 @@ import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.common.tuple.Tuple2;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.builder.Filter;
+import com.easy.query.core.expression.builder.core.ConditionAllAccepter;
 import com.easy.query.core.expression.builder.impl.FilterImpl;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.segment.CloneableSQLSegment;
@@ -58,7 +59,7 @@ public class CaseWhenSQLColumnSegment implements CloneableSQLSegment {
     public AndPredicateSegment resolve(SQLExpression1<Filter> filterExpression){
 
         AndPredicateSegment andPredicateSegment = new AndPredicateSegment(true);
-        FilterImpl filter = new FilterImpl(runtimeContext,expressionContext,andPredicateSegment,false);
+        FilterImpl filter = new FilterImpl(runtimeContext,expressionContext,andPredicateSegment,false, ConditionAllAccepter.DEFAULT);
         filterExpression.apply(filter);
 //        topicSQLWherePredicate.eq(Topic::getId,"1");
 //        String sql = andPredicateSegment.toSQL(toSQLContext);

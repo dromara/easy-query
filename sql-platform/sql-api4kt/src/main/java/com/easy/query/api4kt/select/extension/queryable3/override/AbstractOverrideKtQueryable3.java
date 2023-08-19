@@ -12,6 +12,7 @@ import com.easy.query.api4kt.sql.SQLKtWherePredicate;
 import com.easy.query.core.api.dynamic.sort.ObjectSort;
 import com.easy.query.core.basic.api.select.ClientQueryable3;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
+import com.easy.query.core.expression.builder.core.ConditionAccepter;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 
@@ -26,11 +27,11 @@ import java.util.function.Function;
  *
  * @author xuejiaming
  */
-public abstract class AbstractOverrideQueryable3<T1, T2, T3> extends AbstractKtQueryable<T1> implements KtQueryable3Available<T1, T2, T3> {
+public abstract class AbstractOverrideKtQueryable3<T1, T2, T3> extends AbstractKtQueryable<T1> implements KtQueryable3Available<T1, T2, T3> {
 
     protected final ClientQueryable3<T1, T2, T3> entityQueryable3;
 
-    public AbstractOverrideQueryable3(ClientQueryable3<T1, T2, T3> entityQueryable3) {
+    public AbstractOverrideKtQueryable3(ClientQueryable3<T1, T2, T3> entityQueryable3) {
         super(entityQueryable3);
         this.entityQueryable3 = entityQueryable3;
     }
@@ -212,6 +213,11 @@ public abstract class AbstractOverrideQueryable3<T1, T2, T3> extends AbstractKtQ
     @Override
     public KtQueryable3<T1, T2,T3> asTableLink(Function<String, String> linkAs) {
         super.asTableLink(linkAs);
+        return getQueryable3();
+    }
+    @Override
+    public KtQueryable3<T1,T2,T3> conditionConfigure(ConditionAccepter conditionAccepter) {
+        super.conditionConfigure(conditionAccepter);
         return getQueryable3();
     }
 }

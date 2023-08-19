@@ -1,12 +1,14 @@
 package com.easy.query.core.basic.api.select;
 
 import com.easy.query.core.api.client.EasyQueryClient;
+import com.easy.query.core.basic.api.internal.ConditionConfigurable;
 import com.easy.query.core.basic.api.internal.Interceptable;
 import com.easy.query.core.basic.api.internal.LogicDeletable;
 import com.easy.query.core.basic.api.internal.QueryStrategy;
 import com.easy.query.core.basic.api.internal.TableReNameable;
 import com.easy.query.core.basic.api.select.extension.queryable.Aggregatable1;
 import com.easy.query.core.basic.api.select.extension.queryable.Fillable1;
+import com.easy.query.core.basic.api.select.extension.queryable.Filterable1;
 import com.easy.query.core.basic.api.select.extension.queryable.Groupable1;
 import com.easy.query.core.basic.api.select.extension.queryable.Havingable1;
 import com.easy.query.core.basic.api.select.extension.queryable.Includeable1;
@@ -14,7 +16,6 @@ import com.easy.query.core.basic.api.select.extension.queryable.Joinable1;
 import com.easy.query.core.basic.api.select.extension.queryable.Orderable1;
 import com.easy.query.core.basic.api.select.extension.queryable.Selectable1;
 import com.easy.query.core.basic.api.select.extension.queryable.Unionable1;
-import com.easy.query.core.basic.api.select.extension.queryable.Filterable1;
 import com.easy.query.core.basic.api.select.provider.SQLExpressionProvider;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.expression.lambda.SQLExpression1;
@@ -32,6 +33,7 @@ public interface ClientQueryable<T1> extends Query<T1>,
         LogicDeletable<ClientQueryable<T1>>,
         TableReNameable<ClientQueryable<T1>>,
         QueryStrategy<ClientQueryable<T1>>,
+        ConditionConfigurable<ClientQueryable<T1>>,
         Aggregatable1<T1>,
         Joinable1<T1>,
         Filterable1<T1>,

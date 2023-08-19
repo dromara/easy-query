@@ -10,6 +10,7 @@ import com.easy.query.api4j.sql.SQLWhereAggregatePredicate;
 import com.easy.query.api4j.sql.SQLWherePredicate;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
+import com.easy.query.core.expression.builder.core.ConditionAccepter;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 
@@ -225,4 +226,6 @@ public interface OverrideQueryable2<T1, T2> extends Queryable<T1>, Queryable2Ava
 
     @Override
     Queryable2<T1, T2> asTableLink(Function<String, String> linkAs);
+    @Override
+    Queryable2<T1, T2> conditionConfigure(ConditionAccepter conditionAccepter);
 }

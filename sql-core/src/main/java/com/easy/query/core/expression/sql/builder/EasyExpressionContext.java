@@ -9,6 +9,8 @@ import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
+import com.easy.query.core.expression.builder.core.ConditionAllAccepter;
+import com.easy.query.core.expression.builder.core.ConditionAccepter;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.sql.TableContext;
@@ -47,10 +49,11 @@ public class EasyExpressionContext implements ExpressionContext {
     private ConnectionModeEnum connectionMode;
     private boolean sharding;
     private boolean hasSubQuery;
+    private ConditionAccepter conditionAccepter;
     private List<SQLFuncExpression1<IncludeNavigateParams, ClientQueryable<?>>> includes;
     private List<FillExpression> fills;
 
-    private Map<TableAvailable, Map<String,ColumnIncludeExpression>> columnIncludeMaps;
+    private Map<TableAvailable, Map<String, ColumnIncludeExpression>> columnIncludeMaps;
 
     public EasyExpressionContext(QueryRuntimeContext runtimeContext) {
 
@@ -64,17 +67,18 @@ public class EasyExpressionContext implements ExpressionContext {
         if (!easyQueryOption.isQueryLargeColumn()) {
             easyBehavior.removeBehavior(EasyBehaviorEnum.QUERY_LARGE_COLUMN);
         }
-        if(easyQueryOption.isDefaultTrack()){
+        if (easyQueryOption.isDefaultTrack()) {
             easyBehavior.addBehavior(EasyBehaviorEnum.USE_TRACKING);
         }
-        if(easyQueryOption.isNoVersionError()){
+        if (easyQueryOption.isNoVersionError()) {
             easyBehavior.addBehavior(EasyBehaviorEnum.NO_VERSION_ERROR);
         }
-        this.expressionContextInterceptor=new ExpressionContextInterceptor();
+        this.expressionContextInterceptor = new ExpressionContextInterceptor();
         this.tableContext = new TableContext();
         this.maxShardingQueryLimit = null;
         this.connectionMode = null;
         this.sharding = false;
+        this.conditionAccepter = ConditionAllAccepter.DEFAULT;
     }
 
     @Override
@@ -168,7 +172,7 @@ public class EasyExpressionContext implements ExpressionContext {
             //如果是启用了的
             if (interceptorBehavior) {
                 //拦截器手动指定使用的或者默认要用的并且没有说不用的
-                return expressionContextInterceptor.useContains(o.name()) || (!expressionContextInterceptor.noContains(o.name())&&o.enable());
+                return expressionContextInterceptor.useContains(o.name()) || (!expressionContextInterceptor.noContains(o.name()) && o.enable());
             } else {
                 //手动指定要用的并且不在不使用里面
                 return expressionContextInterceptor.useContains(o.name()) && !expressionContextInterceptor.noContains(o.name());
@@ -247,7 +251,7 @@ public class EasyExpressionContext implements ExpressionContext {
 
     @Override
     public boolean hasIncludes() {
-        return includes!=null&&!includes.isEmpty();
+        return includes != null && !includes.isEmpty();
     }
 
     @Override
@@ -264,18 +268,28 @@ public class EasyExpressionContext implements ExpressionContext {
     }
 
     @Override
-    public Map<TableAvailable, Map<String,ColumnIncludeExpression>> getColumnIncludeMaps() {
-        if(columnIncludeMaps==null){
-            this.columnIncludeMaps=new HashMap<>();
+    public Map<TableAvailable, Map<String, ColumnIncludeExpression>> getColumnIncludeMaps() {
+        if (columnIncludeMaps == null) {
+            this.columnIncludeMaps = new HashMap<>();
         }
         return columnIncludeMaps;
     }
 
     @Override
     public boolean hasColumnIncludeMaps() {
-        return columnIncludeMaps!=null&&!columnIncludeMaps.isEmpty();
+        return columnIncludeMaps != null && !columnIncludeMaps.isEmpty();
     }
 
+    @Override
+    public void conditionConfigure(ConditionAccepter conditionAccepter) {
+        Objects.requireNonNull(conditionAccepter, "conditionAccepter can not be null");
+        this.conditionAccepter = conditionAccepter;
+    }
+
+    @Override
+    public ConditionAccepter getConditionAccepter() {
+        return conditionAccepter;
+    }
 
     @Override
     public TableContext getTableContext() {
@@ -296,13 +310,13 @@ public class EasyExpressionContext implements ExpressionContext {
         easyExpressionContext.connectionMode = this.connectionMode;
         easyExpressionContext.sharding = this.sharding;
         easyExpressionContext.hasSubQuery = this.hasSubQuery;
-        if(hasIncludes()){
+        if (hasIncludes()) {
             easyExpressionContext.getIncludes().addAll(this.includes);
         }
-        if(hasFills()){
+        if (hasFills()) {
             easyExpressionContext.getFills().addAll(this.fills);
         }
-        if(hasColumnIncludeMaps()){
+        if (hasColumnIncludeMaps()) {
             easyExpressionContext.getColumnIncludeMaps().putAll(this.columnIncludeMaps);
         }
         return easyExpressionContext;

@@ -1749,6 +1749,7 @@ public class QueryTest extends BaseTest {
 
     @Test
     public void query89() {
+
         BigDecimal bigDecimal = easyQuery.queryable(BlogEntity.class)
                 .where(o -> o.in(BlogEntity::getId, Arrays.asList("1", "2")))
                 .sumOrDefault(BlogEntity::getScore, BigDecimal.ZERO);
@@ -2143,7 +2144,6 @@ public class QueryTest extends BaseTest {
             Assert.assertTrue(5f == bigDecimal);
         }
     }
-
     @Test
     public void query121() {
         {

@@ -4,6 +4,7 @@ import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.select.ClientQueryable6;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
+import com.easy.query.core.expression.builder.core.ConditionAccepter;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.base.ColumnGroupSelector;
@@ -213,4 +214,17 @@ public interface ClientOverrideQueryable6<T1, T2, T3, T4, T5, T6> extends Client
 
     @Override
     ClientQueryable6<T1, T2, T3, T4, T5, T6> asAlias(String alias);
+    /**
+     * @param linkAs 别名 FROM | LEFT JOIN | RIGHT JOIN
+     * @return
+     */
+    @Override
+    default ClientQueryable6<T1, T2, T3, T4, T5, T6> asTableLink(String linkAs) {
+        return asTableLink(o -> linkAs);
+    }
+
+    @Override
+    ClientQueryable6<T1, T2, T3, T4, T5, T6> asTableLink(Function<String, String> linkAs);
+    @Override
+    ClientQueryable6<T1, T2, T3, T4, T5, T6> conditionConfigure(ConditionAccepter conditionAccepter);
 }

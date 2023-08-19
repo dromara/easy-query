@@ -12,6 +12,7 @@ import com.easy.query.api4j.sql.SQLWherePredicate;
 import com.easy.query.core.api.dynamic.sort.ObjectSort;
 import com.easy.query.core.basic.api.select.ClientQueryable2;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
+import com.easy.query.core.expression.builder.core.ConditionAccepter;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 
@@ -208,6 +209,11 @@ public abstract class AbstractOverrideQueryable2<T1,T2> extends AbstractQueryabl
     @Override
     public Queryable2<T1, T2> asTableLink(Function<String, String> linkAs) {
         super.asTableLink(linkAs);
+        return getQueryable2();
+    }
+    @Override
+    public Queryable2<T1, T2> conditionConfigure(ConditionAccepter conditionAccepter) {
+        super.conditionConfigure(conditionAccepter);
         return getQueryable2();
     }
 }

@@ -3,8 +3,8 @@ package com.easy.query.core.basic.api.select.extension.queryable10.override;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.select.ClientQueryable10;
-import com.easy.query.core.basic.api.select.ClientQueryable2;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
+import com.easy.query.core.expression.builder.core.ConditionAccepter;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.base.ColumnGroupSelector;
@@ -216,4 +216,17 @@ public interface ClientOverrideQueryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T
 
     @Override
     ClientQueryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> asAlias(String alias);
+    /**
+     * @param linkAs 别名 FROM | LEFT JOIN | RIGHT JOIN
+     * @return
+     */
+    @Override
+    default ClientQueryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> asTableLink(String linkAs) {
+        return asTableLink(o -> linkAs);
+    }
+
+    @Override
+    ClientQueryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> asTableLink(Function<String, String> linkAs);
+    @Override
+    ClientQueryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> conditionConfigure(ConditionAccepter conditionAccepter);
 }

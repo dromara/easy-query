@@ -15,7 +15,7 @@ import java.util.Collections;
  *
  * @author xuejiaming
  */
-public interface SQLKtSelect1<T1> {
+public interface SQLKtSelectable1<T1> {
 
     /**
      * 对当前表达式返回自定义select列

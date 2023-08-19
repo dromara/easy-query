@@ -10,6 +10,7 @@ import com.easy.query.api4kt.sql.SQLKtWhereAggregatePredicate;
 import com.easy.query.api4kt.sql.SQLKtWherePredicate;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
+import com.easy.query.core.expression.builder.core.ConditionAccepter;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 
@@ -225,4 +226,6 @@ public interface OverrideKtQueryable2<T1, T2> extends KtQueryable<T1>, KtQueryab
 
     @Override
     KtQueryable2<T1, T2> asTableLink(Function<String, String> linkAs);
+    @Override
+    KtQueryable2<T1, T2> conditionConfigure(ConditionAccepter conditionAccepter);
 }

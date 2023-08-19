@@ -14,6 +14,7 @@ import com.easy.query.api4j.select.extension.queryable.SQLFilterable1;
 import com.easy.query.api4j.sql.SQLColumnSelector;
 import com.easy.query.api4j.sql.SQLWherePredicate;
 import com.easy.query.core.api.client.EasyQueryClient;
+import com.easy.query.core.basic.api.internal.ConditionConfigurable;
 import com.easy.query.core.basic.api.internal.Interceptable;
 import com.easy.query.core.basic.api.internal.LogicDeletable;
 import com.easy.query.core.basic.api.internal.QueryStrategy;
@@ -33,6 +34,7 @@ public interface Queryable<T1> extends Query<T1>,
         LogicDeletable<Queryable<T1>>,
         TableReNameable<Queryable<T1>>,
         QueryStrategy<Queryable<T1>>,
+        ConditionConfigurable<Queryable<T1>>,
         SQLAggregatable1<T1>,
         SQLGroupable1<T1>,
         SQLHavingable1<T1>,

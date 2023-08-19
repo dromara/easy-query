@@ -23,6 +23,7 @@ import com.easy.query.core.basic.api.select.ClientQueryable2;
 import com.easy.query.core.basic.jdbc.executor.internal.enumerable.JdbcStreamResult;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
+import com.easy.query.core.expression.builder.core.ConditionAccepter;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.segment.ColumnSegment;
@@ -56,6 +57,11 @@ public abstract class AbstractKtQueryable<T1> implements KtQueryable<T1> {
     @Override
     public ClientQueryable<T1> getClientQueryable() {
         return entityQueryable;
+    }
+
+    @Override
+    public KtQueryable<T1> getQueryable() {
+        return this;
     }
 
     @Override
@@ -414,6 +420,12 @@ public abstract class AbstractKtQueryable<T1> implements KtQueryable<T1> {
     @Override
     public KtQueryable<T1> queryLargeColumn(boolean queryLarge) {
         entityQueryable.queryLargeColumn(queryLarge);
+        return this;
+    }
+
+    @Override
+    public KtQueryable<T1> conditionConfigure(ConditionAccepter conditionAccepter) {
+        entityQueryable.conditionConfigure(conditionAccepter);
         return this;
     }
 }

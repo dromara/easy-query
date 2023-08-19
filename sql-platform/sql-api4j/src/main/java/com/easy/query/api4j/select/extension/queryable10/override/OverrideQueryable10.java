@@ -2,6 +2,7 @@ package com.easy.query.api4j.select.extension.queryable10.override;
 
 import com.easy.query.api4j.select.Queryable;
 import com.easy.query.api4j.select.Queryable10;
+import com.easy.query.api4j.select.Queryable9;
 import com.easy.query.api4j.select.extension.queryable10.Queryable10Available;
 import com.easy.query.api4j.sql.SQLGroupBySelector;
 import com.easy.query.api4j.sql.SQLNavigateInclude;
@@ -10,6 +11,7 @@ import com.easy.query.api4j.sql.SQLWhereAggregatePredicate;
 import com.easy.query.api4j.sql.SQLWherePredicate;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
+import com.easy.query.core.expression.builder.core.ConditionAccepter;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 
@@ -225,4 +227,6 @@ public interface OverrideQueryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> ex
 
     @Override
     Queryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> asTableLink(Function<String, String> linkAs);
+    @Override
+    Queryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> conditionConfigure(ConditionAccepter conditionAccepter);
 }

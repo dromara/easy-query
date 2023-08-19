@@ -133,110 +133,234 @@ public class QueryTest2 extends BaseTest {
 
     @Test
     public void query112() {
-        BigDecimal bigDecimal = easyQuery
-                .queryable(Topic.class)
-                .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
-                .where(o -> o.eq(Topic::getId, "3"))
-                .sumOrDefault((t, t1) -> t1.column(BlogEntity::getScore), BigDecimal.ZERO);
-        Assert.assertTrue(new BigDecimal("1.2").compareTo(bigDecimal) == 0);
+        {
+
+            BigDecimal bigDecimal = easyQuery
+                    .queryable(Topic.class)
+                    .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .where(o -> o.eq(Topic::getId, "3"))
+                    .sumOrDefault((t, t1) -> t1.column(BlogEntity::getScore), BigDecimal.ZERO);
+            Assert.assertTrue(new BigDecimal("1.2").compareTo(bigDecimal) == 0);
+        }
+        {
+
+            BigDecimal bigDecimal = easyQuery
+                    .queryable(Topic.class)
+                    .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .where(o -> o.eq(Topic::getId, "3"))
+                    .sumOrDefaultMerge(c -> c.t1().column(BlogEntity::getScore), BigDecimal.ZERO);
+            Assert.assertTrue(new BigDecimal("1.2").compareTo(bigDecimal) == 0);
+        }
     }
 
     @Test
     public void query113() {
-        BigDecimal bigDecimal = easyQuery
-                .queryable(Topic.class)
-                .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
-                .leftJoin(BlogEntity.class, (t, t1,t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
-                .where(o -> o.eq(Topic::getId, "3x"))
-                .sumOrNull((t, t1,t2) -> t1.column(BlogEntity::getScore));
-        Assert.assertTrue(bigDecimal == null);
+        {
+
+            BigDecimal bigDecimal = easyQuery
+                    .queryable(Topic.class)
+                    .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .leftJoin(BlogEntity.class, (t, t1,t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
+                    .where(o -> o.eq(Topic::getId, "3x"))
+                    .sumOrNull((t, t1,t2) -> t1.column(BlogEntity::getScore));
+            Assert.assertTrue(bigDecimal == null);
+        }
+        {
+
+            BigDecimal bigDecimal = easyQuery
+                    .queryable(Topic.class)
+                    .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .leftJoin(BlogEntity.class, (t, t1,t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
+                    .where(o -> o.eq(Topic::getId, "3x"))
+                    .sumOrNullMerge(c -> c.t1().column(BlogEntity::getScore));
+            Assert.assertTrue(bigDecimal == null);
+        }
     }
 
     @Test
     public void query114() {
-        BigDecimal bigDecimal = easyQuery
-                .queryable(Topic.class)
-                .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
-                .leftJoin(BlogEntity.class, (t, t1,t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
-                .where(o -> o.eq(Topic::getId, "3"))
-                .sumBigDecimalOrNull((t, t1,t2) -> t2.column(BlogEntity::getScore));
-        Assert.assertTrue(new BigDecimal("1.2").compareTo(bigDecimal) == 0);
+        {
+
+            BigDecimal bigDecimal = easyQuery
+                    .queryable(Topic.class)
+                    .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .leftJoin(BlogEntity.class, (t, t1,t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
+                    .where(o -> o.eq(Topic::getId, "3"))
+                    .sumBigDecimalOrNull((t, t1,t2) -> t2.column(BlogEntity::getScore));
+            Assert.assertTrue(new BigDecimal("1.2").compareTo(bigDecimal) == 0);
+        }
+        {
+
+            BigDecimal bigDecimal = easyQuery
+                    .queryable(Topic.class)
+                    .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .leftJoin(BlogEntity.class, (t, t1,t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
+                    .where(o -> o.eq(Topic::getId, "3"))
+                    .sumBigDecimalOrNullMerge(c -> c.t2().column(BlogEntity::getScore));
+            Assert.assertTrue(new BigDecimal("1.2").compareTo(bigDecimal) == 0);
+        }
     }
 
     @Test
     public void query115() {
-        BigDecimal bigDecimal = easyQuery
-                .queryable(Topic.class)
-                .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
-                .leftJoin(BlogEntity.class, (t, t1,t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
-                .where(o -> o.eq(Topic::getId, "3x"))
-                .sumBigDecimalOrDefault((t, t1,t2) -> t2.column(BlogEntity::getScore), null);
-        Assert.assertTrue(bigDecimal == null);
-        BigDecimal bigDecimal1 = easyQuery
-                .queryable(Topic.class)
-                .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
-                .innerJoin(BlogEntity.class, (t, t1,t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
-                .where(o -> o.eq(Topic::getId, "3x"))
-                .sumBigDecimalOrDefault((t, t1,t2) -> t1.column(BlogEntity::getScore), BigDecimal.ZERO);
-        Assert.assertTrue(BigDecimal.ZERO.compareTo(bigDecimal1) == 0);
+        {
+
+            BigDecimal bigDecimal = easyQuery
+                    .queryable(Topic.class)
+                    .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .leftJoin(BlogEntity.class, (t, t1,t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
+                    .where(o -> o.eq(Topic::getId, "3x"))
+                    .sumBigDecimalOrDefault((t, t1,t2) -> t2.column(BlogEntity::getScore), null);
+            Assert.assertTrue(bigDecimal == null);
+            BigDecimal bigDecimal1 = easyQuery
+                    .queryable(Topic.class)
+                    .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .innerJoin(BlogEntity.class, (t, t1,t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
+                    .where(o -> o.eq(Topic::getId, "3x"))
+                    .sumBigDecimalOrDefault((t, t1,t2) -> t1.column(BlogEntity::getScore), BigDecimal.ZERO);
+            Assert.assertTrue(BigDecimal.ZERO.compareTo(bigDecimal1) == 0);
+        }
+        {
+
+            BigDecimal bigDecimal = easyQuery
+                    .queryable(Topic.class)
+                    .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .leftJoin(BlogEntity.class, (t, t1,t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
+                    .where(o -> o.eq(Topic::getId, "3x"))
+                    .sumBigDecimalOrDefaultMerge(c -> c.t2().column(BlogEntity::getScore), null);
+            Assert.assertTrue(bigDecimal == null);
+            BigDecimal bigDecimal1 = easyQuery
+                    .queryable(Topic.class)
+                    .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .innerJoin(BlogEntity.class, (t, t1,t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
+                    .where(o -> o.eq(Topic::getId, "3x"))
+                    .sumBigDecimalOrDefaultMerge(c -> c.t1().column(BlogEntity::getScore), BigDecimal.ZERO);
+            Assert.assertTrue(BigDecimal.ZERO.compareTo(bigDecimal1) == 0);
+        }
     }
 
     @Test
     public void query116() {
-        BigDecimal bigDecimal = easyQuery
-                .queryable(Topic.class)
-                .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
-                .leftJoin(BlogEntity.class, (t, t1,t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
-                .where(o -> o.eq(Topic::getId, "3x"))
-                .maxOrNull((t, t1,t2) -> t2.column(BlogEntity::getScore));
-        Assert.assertTrue(bigDecimal == null);
-        BigDecimal bigDecimal1 = easyQuery
-                .queryable(Topic.class)
-                .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
-                .leftJoin(BlogEntity.class, (t, t1,t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
-                .where(o -> o.eq(Topic::getId, "3x"))
-                .maxOrDefault((t, t1,t2) -> t1.column(BlogEntity::getScore), BigDecimal.ZERO);
-        Assert.assertTrue(BigDecimal.ZERO.compareTo(bigDecimal1) == 0);
+        {
+
+            BigDecimal bigDecimal = easyQuery
+                    .queryable(Topic.class)
+                    .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .leftJoin(BlogEntity.class, (t, t1,t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
+                    .where(o -> o.eq(Topic::getId, "3x"))
+                    .maxOrNull((t, t1,t2) -> t2.column(BlogEntity::getScore));
+            Assert.assertTrue(bigDecimal == null);
+            BigDecimal bigDecimal1 = easyQuery
+                    .queryable(Topic.class)
+                    .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .leftJoin(BlogEntity.class, (t, t1,t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
+                    .where(o -> o.eq(Topic::getId, "3x"))
+                    .maxOrDefault((t, t1,t2) -> t1.column(BlogEntity::getScore), BigDecimal.ZERO);
+            Assert.assertTrue(BigDecimal.ZERO.compareTo(bigDecimal1) == 0);
+        }
+        {
+
+            BigDecimal bigDecimal = easyQuery
+                    .queryable(Topic.class)
+                    .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .leftJoin(BlogEntity.class, (t, t1,t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
+                    .where(o -> o.eq(Topic::getId, "3x"))
+                    .maxOrNullMerge(c -> c.t2().column(BlogEntity::getScore));
+            Assert.assertTrue(bigDecimal == null);
+            BigDecimal bigDecimal1 = easyQuery
+                    .queryable(Topic.class)
+                    .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .leftJoin(BlogEntity.class, (t, t1,t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
+                    .where(o -> o.eq(Topic::getId, "3x"))
+                    .maxOrDefaultMerge(c -> c.t1().column(BlogEntity::getScore), BigDecimal.ZERO);
+            Assert.assertTrue(BigDecimal.ZERO.compareTo(bigDecimal1) == 0);
+        }
     }
 
     @Test
     public void query117() {
-        BigDecimal bigDecimal = easyQuery
-                .queryable(Topic.class)
-                .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
-                .leftJoin(BlogEntity.class, (t, t1,t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
-                .where(o -> o.in(Topic::getId, Arrays.asList("3x", "3")))
-                .maxOrNull((t, t1,t2) -> t2.column(BlogEntity::getScore));
-        Assert.assertTrue(new BigDecimal("1.2").compareTo(bigDecimal) == 0);
+        {
+
+            BigDecimal bigDecimal = easyQuery
+                    .queryable(Topic.class)
+                    .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .leftJoin(BlogEntity.class, (t, t1,t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
+                    .where(o -> o.in(Topic::getId, Arrays.asList("3x", "3")))
+                    .maxOrNull((t, t1,t2) -> t2.column(BlogEntity::getScore));
+            Assert.assertTrue(new BigDecimal("1.2").compareTo(bigDecimal) == 0);
+        }
+        {
+
+            BigDecimal bigDecimal = easyQuery
+                    .queryable(Topic.class)
+                    .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .leftJoin(BlogEntity.class, (t, t1,t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
+                    .where(o -> o.in(Topic::getId, Arrays.asList("3x", "3")))
+                    .maxOrNullMerge(c -> c.t2().column(BlogEntity::getScore));
+            Assert.assertTrue(new BigDecimal("1.2").compareTo(bigDecimal) == 0);
+        }
     }
 
     @Test
     public void query118() {
-        BigDecimal bigDecimal = easyQuery
-                .queryable(Topic.class)
-                .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
-                .innerJoin(BlogEntity.class, (t, t1,t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
-                .where(o -> o.eq(Topic::getId, "3x"))
-                .minOrNull((t, t1,t2) -> t1.column(BlogEntity::getScore));
-        Assert.assertTrue(bigDecimal == null);
-        BigDecimal bigDecimal1 = easyQuery
-                .queryable(Topic.class)
-                .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
-                .innerJoin(BlogEntity.class, (t, t1,t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
-                .where(o -> o.eq(Topic::getId, "3x"))
-                .minOrDefault((t, t1,t2) -> t2.column(BlogEntity::getScore), BigDecimal.ZERO);
-        Assert.assertTrue(BigDecimal.ZERO.compareTo(bigDecimal1) == 0);
+        {
+
+            BigDecimal bigDecimal = easyQuery
+                    .queryable(Topic.class)
+                    .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .innerJoin(BlogEntity.class, (t, t1,t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
+                    .where(o -> o.eq(Topic::getId, "3x"))
+                    .minOrNull((t, t1,t2) -> t1.column(BlogEntity::getScore));
+            Assert.assertTrue(bigDecimal == null);
+            BigDecimal bigDecimal1 = easyQuery
+                    .queryable(Topic.class)
+                    .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .innerJoin(BlogEntity.class, (t, t1,t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
+                    .where(o -> o.eq(Topic::getId, "3x"))
+                    .minOrDefault((t, t1,t2) -> t2.column(BlogEntity::getScore), BigDecimal.ZERO);
+            Assert.assertTrue(BigDecimal.ZERO.compareTo(bigDecimal1) == 0);
+        }
+        {
+
+            BigDecimal bigDecimal = easyQuery
+                    .queryable(Topic.class)
+                    .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .innerJoin(BlogEntity.class, (t, t1,t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
+                    .where(o -> o.eq(Topic::getId, "3x"))
+                    .minOrNullMerge(c -> c.t1().column(BlogEntity::getScore));
+            Assert.assertTrue(bigDecimal == null);
+            BigDecimal bigDecimal1 = easyQuery
+                    .queryable(Topic.class)
+                    .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .innerJoin(BlogEntity.class, (t, t1,t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
+                    .where(o -> o.eq(Topic::getId, "3x"))
+                    .minOrDefaultMerge(c -> c.t2().column(BlogEntity::getScore), BigDecimal.ZERO);
+            Assert.assertTrue(BigDecimal.ZERO.compareTo(bigDecimal1) == 0);
+        }
     }
 
     @Test
     public void query119() {
-        BigDecimal bigDecimal = easyQuery
-                .queryable(Topic.class)
-                .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
-                .innerJoin(BlogEntity.class, (t, t1,t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
-                .where(o -> o.in(Topic::getId, Arrays.asList("3x", "3")))
-                .minOrNull((t, t1,t2) -> t2.column(BlogEntity::getScore));
-        Assert.assertTrue(new BigDecimal("1.2").compareTo(bigDecimal) == 0);
+        {
+
+            BigDecimal bigDecimal = easyQuery
+                    .queryable(Topic.class)
+                    .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .innerJoin(BlogEntity.class, (t, t1,t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
+                    .where(o -> o.in(Topic::getId, Arrays.asList("3x", "3")))
+                    .minOrNull((t, t1,t2) -> t2.column(BlogEntity::getScore));
+            Assert.assertTrue(new BigDecimal("1.2").compareTo(bigDecimal) == 0);
+        }
+        {
+
+            BigDecimal bigDecimal = easyQuery
+                    .queryable(Topic.class)
+                    .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .innerJoin(BlogEntity.class, (t, t1,t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
+                    .where(o -> o.in(Topic::getId, Arrays.asList("3x", "3")))
+                    .minOrNullMerge(c -> c.t2().column(BlogEntity::getScore));
+            Assert.assertTrue(new BigDecimal("1.2").compareTo(bigDecimal) == 0);
+        }
     }
 
     @Test
@@ -255,8 +379,26 @@ public class QueryTest2 extends BaseTest {
                     .queryable(Topic.class)
                     .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
                     .innerJoin(BlogEntity.class, (t, t1,t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
+                    .where(o -> o.in(Topic::getId, Arrays.asList("3", "2", "5")))
+                    .avgBigDecimalOrNullMerge(c -> c.t1().column(BlogEntity::getScore));
+            Assert.assertTrue(new BigDecimal("1.2").compareTo(bigDecimal) == 0);
+        }
+        {
+            BigDecimal bigDecimal = easyQuery
+                    .queryable(Topic.class)
+                    .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .innerJoin(BlogEntity.class, (t, t1,t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
                     .where(o -> o.in(Topic::getId, Arrays.asList("3x", "2x", "5x")))
                     .avgBigDecimalOrNull((t, t1,t2) -> t2.column(BlogEntity::getScore));
+            Assert.assertTrue(bigDecimal == null);
+        }
+        {
+            BigDecimal bigDecimal = easyQuery
+                    .queryable(Topic.class)
+                    .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .innerJoin(BlogEntity.class, (t, t1,t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
+                    .where(o -> o.in(Topic::getId, Arrays.asList("3x", "2x", "5x")))
+                    .avgBigDecimalOrNullMerge(c -> c.t2().column(BlogEntity::getScore));
             Assert.assertTrue(bigDecimal == null);
         }
         {
@@ -272,8 +414,25 @@ public class QueryTest2 extends BaseTest {
             BigDecimal bigDecimal = easyQuery
                     .queryable(Topic.class)
                     .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .innerJoin(BlogEntity.class, (t, t1,t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
+                    .where(o -> o.in(Topic::getId, Arrays.asList("3x", "2x", "5")))
+                    .avgBigDecimalOrDefaultMerge(c -> c.t2().column(BlogEntity::getScore), BigDecimal.ZERO);
+            Assert.assertTrue(new BigDecimal("1.2").compareTo(bigDecimal) == 0);
+        }
+        {
+            BigDecimal bigDecimal = easyQuery
+                    .queryable(Topic.class)
+                    .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
                     .where(o -> o.in(Topic::getId, Arrays.asList("3x", "2x", "5x")))
                     .avgBigDecimalOrDefault((t, t1) -> t1.column(BlogEntity::getScore), BigDecimal.ZERO);
+            Assert.assertTrue(BigDecimal.ZERO.compareTo(bigDecimal) == 0);
+        }
+        {
+            BigDecimal bigDecimal = easyQuery
+                    .queryable(Topic.class)
+                    .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .where(o -> o.in(Topic::getId, Arrays.asList("3x", "2x", "5x")))
+                    .avgBigDecimalOrDefaultMerge(c -> c.t1().column(BlogEntity::getScore), BigDecimal.ZERO);
             Assert.assertTrue(BigDecimal.ZERO.compareTo(bigDecimal) == 0);
         }
         {
@@ -288,8 +447,24 @@ public class QueryTest2 extends BaseTest {
             Double bigDecimal = easyQuery
                     .queryable(Topic.class)
                     .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .where(o -> o.in(Topic::getId, Arrays.asList("3", "2", "5")))
+                    .avgOrNullMerge(c -> c.t1().column(BlogEntity::getStar));
+            Assert.assertTrue(3.3333d == bigDecimal);
+        }
+        {
+            Double bigDecimal = easyQuery
+                    .queryable(Topic.class)
+                    .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
                     .where(o -> o.in(Topic::getId, Arrays.asList("3x", "2x", "5x")))
                     .avgOrDefault((t, t1) -> t1.column(BlogEntity::getStar), null);
+            Assert.assertTrue(null == bigDecimal);
+        }
+        {
+            Double bigDecimal = easyQuery
+                    .queryable(Topic.class)
+                    .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .where(o -> o.in(Topic::getId, Arrays.asList("3x", "2x", "5x")))
+                    .avgOrDefaultMerge(c -> c.t1().column(BlogEntity::getStar), null);
             Assert.assertTrue(null == bigDecimal);
         }
         {
@@ -311,12 +486,30 @@ public class QueryTest2 extends BaseTest {
             Assert.assertTrue(new BigDecimal("5").compareTo(bigDecimal) == 0);
         }
         {
+            BigDecimal bigDecimal = easyQuery
+                    .queryable(Topic.class)
+                    .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .leftJoin(BlogEntity.class, (t, t1,t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
+                    .where(o -> o.in(Topic::getId, Arrays.asList("3x", "2x", "5")))
+                    .avgOrDefaultMerge(c -> c.t2().column(BlogEntity::getStar), null, BigDecimal.class);
+            Assert.assertTrue(new BigDecimal("5").compareTo(bigDecimal) == 0);
+        }
+        {
             Float bigDecimal = easyQuery
                     .queryable(Topic.class)
                     .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
                     .leftJoin(BlogEntity.class, (t, t1,t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
                     .where(o -> o.in(Topic::getId, Arrays.asList("3x", "2x", "5")))
                     .avgOrDefault((t, t1,t2) -> t1.column(BlogEntity::getStar), null, Float.class);
+            Assert.assertTrue(5f == bigDecimal);
+        }
+        {
+            Float bigDecimal = easyQuery
+                    .queryable(Topic.class)
+                    .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .leftJoin(BlogEntity.class, (t, t1,t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
+                    .where(o -> o.in(Topic::getId, Arrays.asList("3x", "2x", "5")))
+                    .avgOrDefaultMerge(c -> c.t1().column(BlogEntity::getStar), null, Float.class);
             Assert.assertTrue(5f == bigDecimal);
         }
     }
