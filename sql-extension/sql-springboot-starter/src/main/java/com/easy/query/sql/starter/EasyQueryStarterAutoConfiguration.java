@@ -46,6 +46,7 @@ import com.easy.query.sql.starter.config.EasyQueryProperties;
 import com.easy.query.sql.starter.conn.SpringConnectionManager;
 import com.easy.query.sql.starter.conn.SpringDataSourceUnitFactory;
 import com.easy.query.sql.starter.logging.Slf4jImpl;
+import com.easy.query.sqllite.config.SQLLiteDatabaseConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -151,6 +152,12 @@ public class EasyQueryStarterAutoConfiguration {
     @ConditionalOnMissingBean
     public DatabaseConfiguration kingbaseESDatabaseConfiguration() {
         return new KingbaseESDatabaseConfiguration();
+    }
+    @Bean
+    @ConditionalOnProperty(name = "easy-query.database", havingValue = "sqlite")
+    @ConditionalOnMissingBean
+    public DatabaseConfiguration SQLiteDatabaseConfiguration() {
+        return new SQLLiteDatabaseConfiguration();
     }
 
     @Bean

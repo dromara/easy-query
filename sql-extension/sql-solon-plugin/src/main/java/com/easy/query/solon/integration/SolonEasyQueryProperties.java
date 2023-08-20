@@ -146,6 +146,7 @@ public class SolonEasyQueryProperties {
                 case "kingbase_es":return DatabaseEnum.KINGBASE_ES;
                 case "mssql_row_number":return DatabaseEnum.MSSQL_ROW_NUMBER;
                 case "oracle":return DatabaseEnum.ORACLE;
+                case "sqlite":return DatabaseEnum.SQLITE;
             }
             return null;
         });

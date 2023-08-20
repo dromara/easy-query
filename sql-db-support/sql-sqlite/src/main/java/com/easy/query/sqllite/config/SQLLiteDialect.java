@@ -1,4 +1,4 @@
-package com.easy.query.sqllite;
+package com.easy.query.sqllite.config;
 
 
 import com.easy.query.core.configuration.dialect.AbstractDialect;
@@ -12,11 +12,11 @@ import com.easy.query.core.configuration.dialect.AbstractDialect;
 public final class SQLLiteDialect extends AbstractDialect {
     @Override
     protected String getQuoteStart() {
-        return "[";
+        return "\"";
     }
 
     @Override
     protected String getQuoteEnd() {
-        return "]";
+        return "\"";
     }
 }

@@ -31,6 +31,7 @@ import com.easy.query.solon.integration.conn.SolonConnectionManager;
 import com.easy.query.solon.integration.conn.SolonDataSourceUnitFactory;
 import com.easy.query.solon.integration.option.DatabaseEnum;
 import com.easy.query.solon.integration.option.NameConversionEnum;
+import com.easy.query.sqllite.config.SQLLiteDatabaseConfiguration;
 import org.noear.solon.Utils;
 import org.noear.solon.core.BeanWrap;
 import org.noear.solon.core.Props;
@@ -163,6 +164,7 @@ public class DbManager {
             case KINGBASE_ES:return new KingbaseESDatabaseConfiguration();
             case MSSQL_ROW_NUMBER:return new MsSQLRowNumberDatabaseConfiguration();
             case ORACLE:return new OracleDatabaseConfiguration();
+            case SQLITE:return new SQLLiteDatabaseConfiguration();
         }
         return null;
     }

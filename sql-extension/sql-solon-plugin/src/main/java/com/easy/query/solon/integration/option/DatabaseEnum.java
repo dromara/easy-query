@@ -24,5 +24,6 @@ public enum DatabaseEnum {
     DAMENG,
     KINGBASE_ES,
     MSSQL_ROW_NUMBER,
-    ORACLE
+    ORACLE,
+    SQLITE
 }
