@@ -364,6 +364,29 @@ public class UpdateTest extends BaseTest {
         }
         Assert.assertFalse(trackManager.currentThreadTracking());
     }
+    @Test
+    public void updateTest17_1() {
+        TrackManager trackManager = easyQuery.getRuntimeContext().getTrackManager();
+        try{
+
+            trackManager.begin();
+            Topic topic = new Topic();
+            topic.setId("123xx");
+            easyQuery.addTracking(topic);
+            String newTitle = "test123" + new Random().nextInt(100000);
+            topic.setTitle(newTitle);
+            String sql = ((EasyEntityUpdatable<Topic>) easyQuery.updatable(topic))
+                    .whereColumns(o->o.columnKeys().column(Topic::getTitle))
+                    .toSQL(topic);
+            Assert.assertEquals("UPDATE `t_topic` SET `title` = ? WHERE `id` = ? AND `title` IS NULL", sql);
+            long l = easyQuery.updatable(topic).executeRows();
+            Assert.assertEquals(0,l);
+        }finally {
+
+            trackManager.release();
+        }
+        Assert.assertFalse(trackManager.currentThreadTracking());
+    }
 
     @Test
     public void updateTest18() {
