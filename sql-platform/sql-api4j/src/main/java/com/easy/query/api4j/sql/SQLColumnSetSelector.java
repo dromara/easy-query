@@ -19,6 +19,10 @@ public interface SQLColumnSetSelector<T1> extends EntitySQLTableOwner<T1> {
         return getColumnSetSelector().getTable();
     }
 
+    default SQLColumnSetSelector<T1> columnKeys() {
+        getColumnSetSelector().columnKeys();
+        return this;
+    }
     default SQLColumnSetSelector<T1> column(Property<T1, ?> column) {
         getColumnSetSelector().column(EasyLambdaUtil.getPropertyName(column));
         return this;

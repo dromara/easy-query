@@ -25,6 +25,12 @@ public class ColumnUpdateSetSelectorImpl<T> implements ColumnUpdateSetSelector<T
     }
 
     @Override
+    public ColumnUpdateSetSelector<T> columnKeys() {
+         updateSetSelector.columnKeys(table);
+        return this;
+    }
+
+    @Override
     public TableAvailable getTable() {
         return table;
     }

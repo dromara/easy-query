@@ -11,6 +11,7 @@ import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 public interface ColumnUpdateSetSelector<T1> extends EntitySQLTableOwner<T1> {
     UpdateSetSelector getUpdateSetSelector();
 
+    ColumnUpdateSetSelector<T1> columnKeys();
     ColumnUpdateSetSelector<T1> column(String property);
 
     ColumnUpdateSetSelector<T1> columnIgnore(String property);

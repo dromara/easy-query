@@ -13,6 +13,11 @@ import com.easy.query.core.proxy.SQLColumn;
  */
 public interface ProxyUpdateSetSelector extends SQLProxyNative<ProxyUpdateSetSelector> {
     UpdateSetSelector getUpdateSetSelector();
+
+    default <TProxy extends ProxyEntity<TProxy,TEntity>,TEntity> ProxyUpdateSetSelector columnKeys(TProxy tableProxy) {
+        getUpdateSetSelector().columnKeys(tableProxy.getTable());
+        return this;
+    }
     default ProxyUpdateSetSelector columns(SQLColumn<?>... columns){
         if(columns != null){
             for (SQLColumn<?> sqlColumn : columns) {

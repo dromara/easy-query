@@ -18,6 +18,11 @@ public interface SQLKtColumnSetSelector<T1> extends EntitySQLTableOwner<T1> {
     default TableAvailable getTable() {
         return getColumnSetSelector().getTable();
     }
+    default SQLKtColumnSetSelector<T1> columnKeys() {
+        getColumnSetSelector().columnKeys();
+        return this;
+    }
+
 
     default SQLKtColumnSetSelector<T1> column(KProperty1<T1, ?> column) {
         getColumnSetSelector().column(EasyKtLambdaUtil.getPropertyName(column));

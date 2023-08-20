@@ -1,12 +1,15 @@
 package com.easy.query.core.expression.builder.impl;
 
 import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.builder.UpdateSetSelector;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.SQLEntitySegment;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
 import com.easy.query.core.expression.segment.impl.UpdateColumnSegmentImpl;
+import com.easy.query.core.util.EasyClassUtil;
+import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.Collection;
 import java.util.Objects;
@@ -29,6 +32,19 @@ public class UpdateSetSelectorImpl implements UpdateSetSelector {
         this.sqlSegmentBuilder = sqlSegmentBuilder;
         this.sqlSegmentFactory = runtimeContext.getSQLSegmentFactory();
     }
+
+    @Override
+    public UpdateSetSelector columnKeys(TableAvailable table) {
+        Collection<String> keyProperties = table.getEntityMetadata().getKeyProperties();
+        if(EasyCollectionUtil.isEmpty(keyProperties)){
+            throw new EasyQueryInvalidOperationException(EasyClassUtil.getSimpleName(table.getEntityClass()) +" not found keys");
+        }
+        for (String keyProperty : keyProperties) {
+            column(table,keyProperty);
+        }
+        return this;
+    }
+
     @Override
     public UpdateSetSelector column(TableAvailable table, String property) {
         sqlSegmentBuilder.append(new UpdateColumnSegmentImpl(table, property, runtimeContext));
@@ -39,7 +55,7 @@ public class UpdateSetSelectorImpl implements UpdateSetSelector {
     public UpdateSetSelector columnAll(TableAvailable table) {
         Collection<String> properties = table.getEntityMetadata().getProperties();
         for (String property : properties) {
-            sqlSegmentBuilder.append(new UpdateColumnSegmentImpl(table, property, runtimeContext));
+            column(table,property);
         }
         return this;
     }

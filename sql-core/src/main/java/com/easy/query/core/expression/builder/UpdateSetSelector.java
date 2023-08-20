@@ -9,6 +9,7 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
  * @author xuejiaming
  */
 public interface UpdateSetSelector {
+    UpdateSetSelector columnKeys(TableAvailable table);
     UpdateSetSelector column(TableAvailable table, String property);
     UpdateSetSelector columnAll(TableAvailable table);
 
