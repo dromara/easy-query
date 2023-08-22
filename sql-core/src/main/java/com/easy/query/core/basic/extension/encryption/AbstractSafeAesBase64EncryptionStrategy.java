@@ -16,9 +16,8 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-@Deprecated
-public abstract class AbstractAesBase64EncryptionStrategy implements EncryptionStrategy {
-    private static final Log log = LogFactory.getLog(AbstractAesBase64EncryptionStrategy.class);
+public abstract class AbstractSafeAesBase64EncryptionStrategy implements EncryptionStrategy {
+    private static final Log log = LogFactory.getLog(AbstractSafeAesBase64EncryptionStrategy.class);
 
 //    /**
 //     * AES/CBC/PKCS5Padding
@@ -78,7 +77,7 @@ public abstract class AbstractAesBase64EncryptionStrategy implements EncryptionS
 
     protected Object doEncrypt(Object plaintext){
         String plaintextString = plaintext.toString();
-        List<String> stringCharSegments = EasyStringUtil.getStringCharSegments(plaintextString, encryptWordMinLength(),otherCharOccupancyLength(),chineseCharOccupancyLength());
+        List<String> stringCharSegments = EasyStringUtil.getStringSafeCharSegments(plaintextString, encryptWordMinLength(),otherCharOccupancyLength(),chineseCharOccupancyLength());
         //符合要求譬如最少4个非中文字符或者2个中文字的情况下,可以选择抛错重写或者直接加密对应的值
         if (EasyCollectionUtil.isEmpty(stringCharSegments)) {
             stringCharSegments.add(plaintextString);
@@ -125,7 +124,8 @@ public abstract class AbstractAesBase64EncryptionStrategy implements EncryptionS
             if (last) {
                 stringBuilder.append(str);
             } else {
-                stringBuilder.append(str.charAt(0));
+                String safeChar = EasyStringUtil.safeSubstringFirst(str);
+                stringBuilder.append(safeChar);
             }
         }
         return stringBuilder.toString();

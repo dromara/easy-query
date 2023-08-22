@@ -25,6 +25,13 @@ import java.util.function.Predicate;
  */
 public class EasyCollectionUtil {
 
+    public static <TElement> TElement getLastOrNull(List<TElement> list){
+        if(isEmpty(list)){
+            return null;
+        }
+        return list.get(list.size()-1);
+    }
+
     public static <TR> List<TR> newArrayList(Iterable<TR> iterable) {
         Iterator<TR> iterator = iterable.iterator();
         boolean firstHasNext = iterator.hasNext();

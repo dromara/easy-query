@@ -421,29 +421,169 @@ public class EasyStringUtil {
         return sb.toString();
     }
 
-    public static boolean isChineseChar(char c) {
-        return c >= 0x4e00 && c <= 0x9fa5;
+//    public static boolean isChineseChar(char c) {
+//        Character.UnicodeBlock ub = Character.UnicodeBlock.of(c);
+//        if (ub == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS
+//                || ub == Character.UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS
+//                || ub == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A
+//                || ub == Character.UnicodeBlock.GENERAL_PUNCTUATION
+//                || ub == Character.UnicodeBlock.CJK_SYMBOLS_AND_PUNCTUATION
+//                || ub == Character.UnicodeBlock.HALFWIDTH_AND_FULLWIDTH_FORMS) {
+//            return true;
+//        }
+//        return false;
+//    }
+
+    // 根据Unicode编码完美的判断中文汉字和符号
+    private static boolean isChinese(char c) {
+        Character.UnicodeBlock ub = Character.UnicodeBlock.of(c);
+        if (ub == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS || ub == Character.UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS
+                || ub == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A || ub == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_B
+                || ub == Character.UnicodeBlock.CJK_SYMBOLS_AND_PUNCTUATION || ub == Character.UnicodeBlock.HALFWIDTH_AND_FULLWIDTH_FORMS
+                || ub == Character.UnicodeBlock.GENERAL_PUNCTUATION) {
+            return true;
+        }
+        return false;
     }
 
+    // 完整的判断中文汉字和符号
+    public static boolean isChinese(String strName) {
+        char[] ch = strName.toCharArray();
+        for (int i = 0; i < ch.length; i++) {
+            char c = ch[i];
+            if (isChinese(c)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+//    // 只能判断部分CJK字符（CJK统一汉字）
+//    public static boolean isChineseByREG(String str) {
+//        if (str == null) {
+//            return false;
+//        }
+//        Pattern pattern = Pattern.compile("[\\u4E00-\\u9FBF]+");
+//        return pattern.matcher(str.trim()).find();
+//    }
+//
+//    // 只能判断部分CJK字符（CJK统一汉字）
+//    public static boolean isChineseByName(String str) {
+//        if (str == null) {
+//            return false;
+//        }
+//        // 大小写不同：\\p 表示包含，\\P 表示不包含
+//        // \\p{Cn} 的意思为 Unicode 中未被定义字符的编码，\\P{Cn} 就表示 Unicode中已经被定义字符的编码
+//        String reg = "\\p{InCJK Unified Ideographs}&&\\P{Cn}";
+//        Pattern pattern = Pattern.compile(reg);
+//        return pattern.matcher(str.trim()).find();
+//    }
+
+    // 自定义方法，截取字符串并确保不截取到半个 emoji
+    public static String[] safeSubstring(String input) {
+        int[] codePoints = input.codePoints().toArray();
+
+        // 构建截取后的字符串数组
+        String[] substrings = new String[codePoints.length];
+        StringBuilder currentSubstring = new StringBuilder();
+        int currentIndex = 0;
+
+        for (int codePoint : codePoints) {
+            if (Character.isHighSurrogate((char) codePoint)) {
+                // 如果遇到高代理字符，先清空当前子串，将高代理字符存入
+                currentSubstring.setLength(0);
+                currentSubstring.append((char) codePoint);
+            } else {
+                // 如果不是高代理字符，将字符存入当前子串
+                currentSubstring.appendCodePoint(codePoint);
+            }
+
+            // 判断当前子串是否完整
+            if (currentSubstring.codePoints().count() == 1) {
+                substrings[currentIndex] = currentSubstring.toString();
+                currentIndex++;
+                currentSubstring.setLength(0);
+            }
+        }
+
+        // 处理最后一个字符（可能是 emoji 的低代理字符）
+        if (currentSubstring.length() > 0) {
+            substrings[currentIndex] = currentSubstring.toString();
+        }
+
+        return substrings;
+    }
+    public static String safeSubstringFirst(String input) {
+        int[] codePoints = input.codePoints().toArray();
+
+        StringBuilder currentSubstring = new StringBuilder();
+        int currentIndex = 0;
+        if(codePoints.length==0){
+            return EasyStringUtil.EMPTY;
+        }
+        int codePoint=codePoints[0];
+        if (Character.isHighSurrogate((char) codePoint)) {
+            // 如果遇到高代理字符，先清空当前子串，将高代理字符存入
+            currentSubstring.setLength(0);
+            currentSubstring.append((char) codePoint);
+        } else {
+            // 如果不是高代理字符，将字符存入当前子串
+            currentSubstring.appendCodePoint(codePoint);
+        }
+
+        // 判断当前子串是否完整
+        if (currentSubstring.codePoints().count() == 1) {
+            return currentSubstring.toString();
+        }
+
+        // 处理最后一个字符（可能是 emoji 的低代理字符）
+        if (currentSubstring.length() > 0) {
+            return currentSubstring.toString();
+        }
+
+        return EasyStringUtil.EMPTY;
+    }
     public static List<String> getStringCharSegments(String str, int maxCharLen,int otherCharLength,int chineseCharLength) {
         ArrayList<String> segments = new ArrayList<>(str.length());
         for (int i = 0; i < str.length(); i++) {
             int len = 0;
             StringBuilder segmentBuilder = new StringBuilder();
-            for (int j = i; j < str.length() && len < maxCharLen; j++) {
+            int j = i;
+            for (; j < str.length() && len < maxCharLen; j++) {
                 char c = str.charAt(j);
-                len += isChineseChar(c) ? chineseCharLength : otherCharLength;
+                len += isChinese(c) ? chineseCharLength : otherCharLength;
                 segmentBuilder.append(c);
             }
-            if (segmentBuilder.length() == 0||len<maxCharLen) {
+            segments.add(segmentBuilder.toString());
+            //如果已经移动到最后一个字符,并且是刚好或者小于最大长度,那么说明后续没必要移动了
+            if(j==str.length()&&len<=maxCharLen){
                 break;
             }
+        }
+        return segments;
+    }
+    public static List<String> getStringSafeCharSegments(String str, int maxCharLen,int otherCharLength,int chineseCharLength) {
+        ArrayList<String> segments = new ArrayList<>(str.length());
+        String[] safeCharString = safeSubstring(str);
+        for (int i = 0; i < safeCharString.length; i++) {
+            int len = 0;
+            StringBuilder segmentBuilder = new StringBuilder();
+            int j = i;
+            for (; j < safeCharString.length && len < maxCharLen; j++) {
+                String c = safeCharString[j];
+                len += (c.length()>1||isChinese(c)) ? chineseCharLength : otherCharLength;
+                segmentBuilder.append(c);
+            }
             segments.add(segmentBuilder.toString());
+            //如果已经移动到最后一个字符,并且是刚好或者小于最大长度,那么说明后续没必要移动了
+            if(j==safeCharString.length&&len<=maxCharLen){
+                break;
+            }
         }
         return segments;
     }
 
-    public static List<String> splitString(String str, int groupSize) {
+    public static List<String> splitBase64ByGroupSize(String str, int groupSize) {
         if (str == null || str.length() == 0 || groupSize <= 0) {
             return Collections.emptyList();
         }
@@ -461,6 +601,17 @@ public class EasyStringUtil {
             i = j;
         }
         return groups;
+    }
+
+    /**
+     * 请使用 splitBase64String 方法这个方法会有歧义不支持中文
+     * @param str
+     * @param groupSize
+     * @return
+     */
+    @Deprecated
+    public static List<String> splitString(String str, int groupSize) {
+        return splitBase64ByGroupSize(str,groupSize);
     }
     public static String leftPad(String input, int totalWidth, char paddingChar) {
         if (input.length() >= totalWidth) {

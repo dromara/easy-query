@@ -28,6 +28,7 @@ import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasyStringUtil;
 import com.easy.query.test.encryption.Base64EncryptionStrategy;
 import com.easy.query.test.encryption.DefaultAesEasyEncryptionStrategy;
+import com.easy.query.test.encryption.DefaultSafeAesEasyEncryptionStrategy;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.NoKeyEntity;
 import com.easy.query.test.entity.Topic;
@@ -41,6 +42,8 @@ import org.junit.Test;
 
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
+import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 import java.util.function.Supplier;
 
@@ -870,7 +873,311 @@ public class GenericTest extends BaseTest {
         Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t1.`id` = ?",sql1);
         Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id`",sql2);
     }
+    @Test
+     public void StringCharSegmentTest1(){
+         List<String> a = EasyStringUtil.getStringCharSegments("aaa啊啊a", 4, 1, 2);
+        String as = a.toString();
+        Assert.assertEquals("[aaa啊, aa啊, a啊啊, 啊啊, 啊a]",as);
+        List<String> a1 = EasyStringUtil.getStringCharSegments("aaa啊啊", 4, 1, 2);
+        String a1s = a1.toString();
+        Assert.assertEquals("[aaa啊, aa啊, a啊啊, 啊啊]",a1s);
+        String randomBase64 = "OTpIT+KDo+KdpDYq5Z6aIzMzek1A77iPMXlG8J+RqFNjXF5PXumHjDBY5ZyoMA==";
+//        String randomString = new String(EasyBase64Util.decode(randomBase64.getBytes(StandardCharsets.UTF_8)),StandardCharsets.UTF_8);
+        String randomString = "√在-`N*以\\字中d\\~_yb2❤USY\uD83D\uDC8A\uD83D\uDC68\uD83E\uDD21\uD83D\uDC685G*\uD83D\uDE08符T*9L^9oP可符F※,x·Z∝这4ェ(v\u200D";
+        List<String> segments = EasyStringUtil.getStringSafeCharSegments(randomString, 4, 1, 2);
+//
+//        String iv="A-16-Byte-String";
+//String key="abcdef1234567890";
+//        StringBuilder stringBuilder = new StringBuilder();
+//        for (String stringCharSegment : segments) {
+//            byte[] encrypt = EasyAesUtil.encrypt(stringCharSegment.getBytes(StandardCharsets.UTF_16), key.getBytes(StandardCharsets.UTF_8), iv.getBytes(StandardCharsets.UTF_8));
+//            String str= new String(EasyBase64Util.encode(encrypt),StandardCharsets.UTF_8);
+//            stringBuilder.append(str);
+//        }
+//        String ciphertextString = stringBuilder.toString();
+//
+//
+//        {
+//            List<String> segment1s = EasyStringUtil.splitBase64ByGroupSize(ciphertextString, 24)
+//                    .stream().map(o->{
+//                        byte[] decrypt = EasyAesUtil.decrypt(EasyBase64Util.decode(o.getBytes(StandardCharsets.UTF_8)),key.getBytes(StandardCharsets.UTF_8), iv.getBytes(StandardCharsets.UTF_8));
+//                        return new String(decrypt,StandardCharsets.UTF_16);
+//                    }).collect(Collectors.toList());
+//
+//            {
+//
+//                String s = segments.get(33);
+//                String s1 = segment1s.get(33);
+//                byte[] bytes = s.getBytes(StandardCharsets.UTF_8);
+//                byte[] bytes1 = s1.getBytes(StandardCharsets.UTF_8);
+//                String s2 = new String(bytes, StandardCharsets.UTF_8);
+//                String s3 = new String(bytes1, StandardCharsets.UTF_8);
+//                System.out.println("1");
+//            }
+//            {
+//
+//                String s = segments.get(33);
+//                char c = s.charAt(0);
+//                String aa= String.valueOf(c);
+//                int x=(int)c;
+//                String s1 = segment1s.get(33);
+//                byte[] bytes = s.getBytes(StandardCharsets.UTF_16);
+//                String s2 = new String(bytes,StandardCharsets.UTF_16);
+//                char c1 = s2.charAt(0);
+//
+//
+//                // 原始 char 值
+//                char originalChar = c;
+//
+//                // 将 char 编码为字节流
+//                byte[] utf16Bytes = new String(new char[] { originalChar }).getBytes(Charset.forName("UTF-16"));
+//
+//                // 将字节流解码回 char
+//                char decodedChar = new String(utf16Bytes, Charset.forName("UTF-16")).charAt(0);
+//
+//                System.out.println("Original Char: " + originalChar);
+//                System.out.println("Decoded Char: " + decodedChar);
+//
+//                // 检查原始 char 和解码后的 char 是否一致
+//                boolean charsMatch = originalChar == decodedChar;
+//                System.out.println("Chars Match: " + charsMatch);
+//
+//
+//                String s4 = new String(EasyBase64Util.encode(bytes), StandardCharsets.UTF_8);
+//                byte[] bytes2 = s4.getBytes(StandardCharsets.UTF_8);
+//                String s5 = new String(EasyBase64Util.decode(bytes2), StandardCharsets.UTF_16);
+//                byte[] bytes1 = s1.getBytes();
+//                boolean equals = s.equals(s2);
+//                String s3 = new String(bytes1);
+//                System.out.println("1");
+//
+//
+//            }
+////
+////        StringBuilder stringBuilder = new StringBuilder();
+////        for (int i = 0; i < segments.size(); i++) {
+////            String str= EasyAesUtil.decrypt(segments.get(i), getKey(), getIv(),StandardCharsets.UTF_8);
+////            boolean last = i == (segments.size() - 1);
+////            if (last) {
+////                stringBuilder.append(str);
+////            } else {
+////                stringBuilder.append(str.charAt(0));
+////            }
+////        }
+////        return stringBuilder.toString();
+//
+            StringBuilder stringBuilder1 = new StringBuilder();
+            for (int i = 0; i < segments.size(); i++) {
+                String str = segments.get(i);
+                boolean last = i == (segments.size() - 1);
+                if (last) {
+                    stringBuilder1.append(str);
+                } else {
+                    stringBuilder1.append(str.charAt(0));
+                }
+            }
+            String string = stringBuilder1.toString();
+            DefaultAesEasyEncryptionStrategy defaultAesEasyEncryptionStrategy = new DefaultAesEasyEncryptionStrategy();
+//        }
+
+    }
+
+
+    @Test
+    public void StringCharSegmentTest2(){
+        DefaultAesEasyEncryptionStrategy defaultAesEasyEncryptionStrategy = new DefaultAesEasyEncryptionStrategy();
+        for (int i = 0; i < 8000; i++) {
+            int desiredLength = new Random().nextInt(40);
+            String randomString = generateRandomString(desiredLength+1);
+            try {
+
+                Object encrypt = defaultAesEasyEncryptionStrategy.encrypt(null, null, randomString);
+                Assert.assertNotNull(encrypt);
+                Object decrypt = defaultAesEasyEncryptionStrategy.decrypt(null, null, encrypt);
+                Assert.assertNotNull(decrypt);
+                String string = decrypt.toString();
+                boolean equals = randomString.equals(string);
+                if(!equals){
+                    String s = new String(EasyBase64Util.encode(randomString.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
+                    System.out.println("随机串base64:"+s);
+                }
+                Assert.assertEquals(randomString,string);
+            }catch (Exception ex){
+                System.out.println("随机串:"+randomString);
+                throw ex;
+            }
+        }
+    }
+    @Test
+    public void StringCharSegmentTest7(){
+        DefaultSafeAesEasyEncryptionStrategy defaultAesEasyEncryptionStrategy = new DefaultSafeAesEasyEncryptionStrategy();
+        for (int i = 0; i < 20000; i++) {
+            int desiredLength = new Random().nextInt(60);
+            String randomString = generateRandomString1(desiredLength+11);
+            try {
+
+                Object encrypt = defaultAesEasyEncryptionStrategy.encrypt(null, null, randomString);
+                Assert.assertNotNull(encrypt);
+                Object decrypt = defaultAesEasyEncryptionStrategy.decrypt(null, null, encrypt);
+                Assert.assertNotNull(decrypt);
+                String string = decrypt.toString();
+                boolean equals = randomString.equals(string);
+                if(!equals){
+                    String s = new String(EasyBase64Util.encode(randomString.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
+                    System.out.println("随机串base64:"+s);
+                }
+                Assert.assertEquals(randomString,string);
+            }catch (Exception ex){
+                System.out.println("随机串:"+randomString);
+                String s = new String(EasyBase64Util.encode(randomString.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
+                System.out.println("随机串base64:"+s);
+                throw ex;
+            }
+        }
+    }
+
+    @Test
+    public void StringCharSegmentTest4(){
+        String randomString = "qO)3\\{*h\uFE0F�MbjT";
+        DefaultAesEasyEncryptionStrategy defaultAesEasyEncryptionStrategy = new DefaultAesEasyEncryptionStrategy();
+
+        Object encrypt = defaultAesEasyEncryptionStrategy.encrypt(null, null, randomString);
+        Assert.assertNotNull(encrypt);
+        Object decrypt = defaultAesEasyEncryptionStrategy.decrypt(null, null, encrypt);
+        Assert.assertNotNull(decrypt);
+        String string = decrypt.toString();
+        boolean equals = randomString.equals(string);
+        if(!equals){
+            System.out.println("随机串base64:"+new String(EasyBase64Util.encode(randomString.getBytes(StandardCharsets.UTF_8)),StandardCharsets.UTF_8));
+        }
+        Assert.assertEquals(randomString,string);
+
+    }
+    @Test
+    public void StringCharSegmentTest5(){
+        String randomBase64 = "NSxcLu+4j35ocjElWTEpTyUr5Y+ve+WKoDdiIFlkLj85L2An77iPTkM5UEI=";
+        String randomString = new String(EasyBase64Util.decode(randomBase64.getBytes(StandardCharsets.UTF_8)),StandardCharsets.UTF_8);
+        DefaultAesEasyEncryptionStrategy defaultAesEasyEncryptionStrategy = new DefaultAesEasyEncryptionStrategy();
+
+        Object encrypt = defaultAesEasyEncryptionStrategy.encrypt(null, null, randomString);
+        Assert.assertNotNull(encrypt);
+        Object decrypt = defaultAesEasyEncryptionStrategy.decrypt(null, null, encrypt);
+        Assert.assertNotNull(decrypt);
+        String string = decrypt.toString();
+        boolean equals = randomString.equals(string);
+        if(!equals){
+            System.out.println("随机串base64:"+new String(EasyBase64Util.encode(randomString.getBytes(StandardCharsets.UTF_8)),StandardCharsets.UTF_8));
+
+        }
+        Assert.assertEquals(randomString,string);
+
+    }
+    @Test
+    public void StringCharSegmentTest6(){
+        String randomBase64 = "5Yqg5LulVOWtl1tfcSB9RmdfekIj4oOj5YqgXlzlk4g/diLkuK1eauKAjV9P5ZOIP3vwn5KKcVhe";
+        String randomString = new String(EasyBase64Util.decode(randomBase64.getBytes(StandardCharsets.UTF_8)),StandardCharsets.UTF_8);
+        DefaultSafeAesEasyEncryptionStrategy defaultAesEasyEncryptionStrategy = new DefaultSafeAesEasyEncryptionStrategy();
+
+        Object encrypt = defaultAesEasyEncryptionStrategy.encrypt(null, null, randomString);
+        Assert.assertNotNull(encrypt);
+        Object decrypt = defaultAesEasyEncryptionStrategy.decrypt(null, null, encrypt);
+        Assert.assertNotNull(decrypt);
+        String string = decrypt.toString();
+        boolean equals = randomString.equals(string);
+        if(!equals){
+            System.out.println("随机串base64:"+new String(EasyBase64Util.encode(randomString.getBytes(StandardCharsets.UTF_8)),StandardCharsets.UTF_8));
+        }
+        Assert.assertEquals(randomString,string);
+
+    }
+    @Test
+    public void StringCharSegmentTest8(){
+        String randomBase64 = "OTpIT+KDo+KdpDYq5Z6aIzMzek1A77iPMXlG8J+RqFNjXF5PXumHjDBY5ZyoMA==";
+        String randomString = new String(EasyBase64Util.decode(randomBase64.getBytes(StandardCharsets.UTF_8)),StandardCharsets.UTF_8);
+        DefaultSafeAesEasyEncryptionStrategy defaultAesEasyEncryptionStrategy = new DefaultSafeAesEasyEncryptionStrategy();
+
+        Object encrypt = defaultAesEasyEncryptionStrategy.encrypt(null, null, randomString);
+        Assert.assertNotNull(encrypt);
+        Object decrypt = defaultAesEasyEncryptionStrategy.decrypt(null, null, encrypt);
+        Assert.assertNotNull(decrypt);
+        String string = decrypt.toString();
+        boolean equals = randomString.equals(string);
+        if(!equals){
+            System.out.println("随机串base64:"+new String(EasyBase64Util.encode(randomString.getBytes(StandardCharsets.UTF_8)),StandardCharsets.UTF_8));
+        }
+        Assert.assertEquals(randomString,string);
+
+    }
+    @Test
+    public void StringCharSegmentTest10(){
+        String randomString = "√在-`N*以\\字中d\\~_yb2❤USY\uD83D\uDC8A\uD83D\uDC68\uD83E\uDD21\uD83D\uDC685G*\uD83D\uDE08符T*9L^9oP可符F※,x·Z∝这4ェ(v\u200D";
+        DefaultSafeAesEasyEncryptionStrategy defaultAesEasyEncryptionStrategy = new DefaultSafeAesEasyEncryptionStrategy();
+
+        Object encrypt = defaultAesEasyEncryptionStrategy.encrypt(null, null, randomString);
+        Assert.assertNotNull(encrypt);
+        Object decrypt = defaultAesEasyEncryptionStrategy.decrypt(null, null, encrypt);
+        Assert.assertNotNull(decrypt);
+        String string = decrypt.toString();
+        boolean equals = randomString.equals(string);
+        if(!equals){
+            System.out.println("随机串base64:"+new String(EasyBase64Util.encode(randomString.getBytes(StandardCharsets.UTF_8)),StandardCharsets.UTF_8));
+        }
+        Assert.assertEquals(randomString,string);
+
+    }
+    @Test
+    public void StringCharSegmentTest3(){
+
+        DefaultAesEasyEncryptionStrategy defaultAesEasyEncryptionStrategy = new DefaultAesEasyEncryptionStrategy();
+        for (int i = 0; i < 5000; i++) {
+            int desiredLength = new Random().nextInt(70);
+            String randomString = generateRandomString(desiredLength+1)+"1\uFE0F⃣+✅+❤\uFE0F+❥(^_-)+O(∩_∩)O哈哈~";
+            try {
+
+                Object encrypt = defaultAesEasyEncryptionStrategy.encrypt(null, null, randomString);
+                Assert.assertNotNull(encrypt);
+                Object decrypt = defaultAesEasyEncryptionStrategy.decrypt(null, null, encrypt);
+                Assert.assertNotNull(decrypt);
+                String string = decrypt.toString();
+                Assert.assertEquals(randomString,string);
+            }catch (Exception ex){
+                System.out.println("随机串:"+randomString);
+                throw ex;
+            }
+        }
+    }
 
 
 
+    private static final String CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789" +
+            " ~!@#$%^&*()-_+=<>?/[]{}|;':,.\"\\`" +
+            "中文字符可以在这里添加垚";
+    private static final String CHARACTERS1 = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789" +
+            " ~!@#$%^&*()-_+=<>?/[]{}|;':,.\"\\`" +
+            "中文字符可以在这里添加垚💊1️⃣❤️👨‍❤️‍👨o(*^▽^*)┛O(∩_∩)O哈哈~(#^.^#)😈🤡U·ェ·U3️⃣∝∮√±∑∈◆★※🙋🏻‍♀️👩🏻👨🏻🈶👴🏻✌🏻😄🖼";
+
+    public static String generateRandomString(int length) {
+        Random random = new Random();
+        StringBuilder stringBuilder = new StringBuilder();
+
+        for (int i = 0; i < length; i++) {
+            int index = random.nextInt(CHARACTERS.length());
+            char randomChar = CHARACTERS.charAt(index);
+            stringBuilder.append(randomChar);
+        }
+
+        return stringBuilder.toString();
+    }
+    public static String generateRandomString1(int length) {
+        Random random = new Random();
+        StringBuilder stringBuilder = new StringBuilder();
+
+        for (int i = 0; i < length; i++) {
+            String[] strings = EasyStringUtil.safeSubstring(CHARACTERS1);
+            int index = random.nextInt(strings.length);
+            stringBuilder.append(strings[index]);
+        }
+
+        return stringBuilder.toString();
+    }
 }

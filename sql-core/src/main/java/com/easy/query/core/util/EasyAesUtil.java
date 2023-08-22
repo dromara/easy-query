@@ -34,6 +34,7 @@ public class EasyAesUtil {
         byte[] decrypt = decrypt(EasyBase64Util.decode(content.getBytes(charset)), key.getBytes(charset), iv.getBytes(charset));
         return new String(decrypt,charset);
     }
+
     public static byte[] decrypt(byte[] encrypted, byte[] key, byte[] iv) {
         try {
             SecretKeySpec secretKeySpec = new SecretKeySpec(key, "AES");

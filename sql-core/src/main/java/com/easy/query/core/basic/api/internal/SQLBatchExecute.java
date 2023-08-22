@@ -8,7 +8,8 @@ package com.easy.query.core.basic.api.internal;
  */
 public interface SQLBatchExecute<TChain> {
     /**
-     * 使用当前方法并且链接字符串添加`rewriteBatchedStatements=true`后将以executeBatch执行无法返回正确的受影响函数
+     * 使用当前方法并且链接字符串添加`rewriteBatchedStatements=true`后将以executeBatch执行无法返回正确的受影响行数,
+     * 具体受jdbc驱动影响是否实现返回具体行数
      * This method performs batch operations.
      * When using this method with the connection string appended with `rewriteBatchedStatements=true`,
      * the executeBatch() method will be used to execute the batch,
@@ -21,7 +22,8 @@ public interface SQLBatchExecute<TChain> {
 
     /**
      *
-     * 使用当前方法并且链接字符串添加`rewriteBatchedStatements=true`后将以executeBatch执行无法返回正确的受影响函数
+     * 使用当前方法并且链接字符串添加`rewriteBatchedStatements=true`后将以executeBatch执行无法返回正确的受影响行数,
+     * 具体受jdbc驱动影响是否实现返回具体行数
      * This method performs batch operations.
      * When using this method with the connection string appended with `rewriteBatchedStatements=true`,
      * the executeBatch() method will be used to execute the batch,

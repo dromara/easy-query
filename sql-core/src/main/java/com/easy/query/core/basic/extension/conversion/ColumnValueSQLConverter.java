@@ -7,7 +7,7 @@ import com.easy.query.core.metadata.ColumnMetadata;
 
 /**
  * create time 2023/8/5 23:08
- * 文件说明
+ * 对象列和数据库列用数据库函数转换
  *
  * @author xuejiaming
  */

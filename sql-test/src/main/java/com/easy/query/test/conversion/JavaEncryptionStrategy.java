@@ -2,6 +2,9 @@ package com.easy.query.test.conversion;
 
 import com.easy.query.core.basic.extension.encryption.AbstractAesBase64EncryptionStrategy;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+
 /**
  * create time 2023/8/12 21:23
  * 文件说明
@@ -18,4 +21,5 @@ public class JavaEncryptionStrategy extends AbstractAesBase64EncryptionStrategy 
     public String getKey() {
         return "1234561234567890";
     }
+
 }
