@@ -244,7 +244,7 @@ public class EasySQLExpressionUtil {
         }
         entityQueryExpressionBuilder.getProjects().getSQLSegments().clear();
         SQLSegmentFactory sqlSegmentFactory = entityQueryExpressionBuilder.getRuntimeContext().getSQLSegmentFactory();
-        SelectConstSegment selectCountSegment = sqlSegmentFactory.createSelectConstSegment("COUNT(1)");
+        SelectConstSegment selectCountSegment = sqlSegmentFactory.createSelectConstSegment("COUNT(*)");
         entityQueryExpressionBuilder.getProjects().append(selectCountSegment);
         return entityQueryExpressionBuilder;
     }
