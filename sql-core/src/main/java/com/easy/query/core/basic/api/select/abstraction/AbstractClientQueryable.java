@@ -151,7 +151,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         EntityQueryExpressionBuilder queryExpressionBuilder = entityQueryExpressionBuilder.cloneEntityExpressionBuilder();
         EntityQueryExpressionBuilder countSQLEntityExpressionBuilder = EasySQLExpressionUtil.getCountEntityQueryExpression(queryExpressionBuilder);
         if (countSQLEntityExpressionBuilder == null) {
-            return cloneQueryable().select("COUNT(1)").getSQLEntityExpressionBuilder();
+            return cloneQueryable().select("COUNT(*)").getSQLEntityExpressionBuilder();
         }
         return countSQLEntityExpressionBuilder;
     }
