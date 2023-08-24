@@ -771,7 +771,7 @@ public class GenericTest extends BaseTest {
         }catch (Exception ex){
             Assert.assertTrue(ex instanceof EasyQueryException);
             String message = ex.getMessage();
-            Assert.assertEquals("increment sql column generator:MyDatabaseIncrementSQLColumnGenerator,repeat",message);
+            Assert.assertEquals("generated key sql column generator:MyDatabaseIncrementSQLColumnGenerator,repeat",message);
         }
         queryConfiguration.applyInterceptor(new MyEntityInterceptor());
         try {

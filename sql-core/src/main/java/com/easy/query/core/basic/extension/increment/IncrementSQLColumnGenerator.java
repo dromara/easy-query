@@ -1,16 +1,14 @@
 package com.easy.query.core.basic.extension.increment;
 
-import com.easy.query.core.basic.extension.conversion.SQLPropertyConverter;
-import com.easy.query.core.context.QueryRuntimeContext;
-import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.metadata.ColumnMetadata;
+import com.easy.query.core.basic.extension.generated.GeneratedKeySQLColumnGenerator;
 
 /**
  * create time 2023/8/9 08:35
- * 文件说明
+ * 使用 {@link GeneratedKeySQLColumnGenerator}
  *
  * @author xuejiaming
  */
-public interface IncrementSQLColumnGenerator {
-    void configure(TableAvailable table, ColumnMetadata columnMetadata, SQLPropertyConverter sqlPropertyConverter, QueryRuntimeContext runtimeContext);
+@Deprecated
+public interface IncrementSQLColumnGenerator extends GeneratedKeySQLColumnGenerator {
+
 }

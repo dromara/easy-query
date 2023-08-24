@@ -372,6 +372,7 @@ public class QueryTest extends BaseTest {
         EasyPageResult<Topic> topicPageResult = easyQuery
                 .queryable(Topic.class)
                 .where(o -> o.isNotNull(Topic::getId))
+                .orderByAsc(o->o.column(Topic::getId))
                 .toPageResult(2, 20);
         List<Topic> data = topicPageResult.getData();
         Assert.assertEquals(20, data.size());

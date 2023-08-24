@@ -18,8 +18,8 @@ import com.easy.query.core.basic.extension.conversion.DefaultColumnValueSQLConve
 import com.easy.query.core.basic.extension.conversion.DefaultValueConverter;
 import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.basic.extension.encryption.EncryptionStrategy;
-import com.easy.query.core.basic.extension.increment.DefaultIncrementSQLColumnGenerator;
-import com.easy.query.core.basic.extension.increment.IncrementSQLColumnGenerator;
+import com.easy.query.core.basic.extension.generated.DefaultGeneratedKeySQLColumnGenerator;
+import com.easy.query.core.basic.extension.generated.GeneratedKeySQLColumnGenerator;
 import com.easy.query.core.basic.extension.interceptor.EntityInterceptor;
 import com.easy.query.core.basic.extension.interceptor.Interceptor;
 import com.easy.query.core.basic.extension.interceptor.PredicateFilterInterceptor;
@@ -116,7 +116,7 @@ public class EntityMetadata {
     private final LinkedHashMap<String, ColumnMetadata> property2ColumnMap = new LinkedHashMap<>();
     private final LinkedHashMap<String, NavigateMetadata> property2NavigateMap = new LinkedHashMap<>();
     private final Map<String/*property name*/, String/*column name*/> keyPropertiesMap = new LinkedHashMap<>();
-    private final List<String/*column name*/> incrementColumns = new ArrayList<>(4);
+    private final List<String/*column name*/> generatedKeyColumns = new ArrayList<>(4);
     private final Map<String/*column name*/, ColumnMetadata> column2PropertyMap = new HashMap<>();
 
     private final Set<ActualTable> actualTables = new CopyOnWriteArraySet<>();
@@ -248,18 +248,30 @@ public class EntityMetadata {
                         keyPropertiesMap.put(property, columnName);
                     }
                     columnOption.setPrimary(column.primaryKey());
-                    if (column.increment()) {
-                        incrementColumns.add(columnName);
-                        Class<? extends IncrementSQLColumnGenerator> insertSQLCoulmnGeneratorClass = column.incrementSQLColumnGenerator();
-                        if(!Objects.equals(DefaultIncrementSQLColumnGenerator.class,insertSQLCoulmnGeneratorClass)){
-                            IncrementSQLColumnGenerator insertSQLColumnGenerator = configuration.getIncrementSQLColumnGenerator(insertSQLCoulmnGeneratorClass);
-                            if (insertSQLColumnGenerator == null) {
-                                throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " increment sql column generator unknown");
+                    boolean generatedKey = column.increment() || column.generatedKey();
+                    if (generatedKey) {
+                        generatedKeyColumns.add(columnName);
+                        Class<? extends GeneratedKeySQLColumnGenerator> generatedKeySQLColumnGeneratorClass = column.generatedSQLColumnGenerator();
+                        if(!Objects.equals(DefaultGeneratedKeySQLColumnGenerator.class,generatedKeySQLColumnGeneratorClass)){
+                            GeneratedKeySQLColumnGenerator generatedKeySQLColumnGenerator = configuration.getGeneratedKeySQLColumnGenerator(generatedKeySQLColumnGeneratorClass);
+                            if (generatedKeySQLColumnGenerator == null) {
+                                throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " generated key sql column generator unknown");
                             }
-                            columnOption.setIncrementSQLColumnGenerator(insertSQLColumnGenerator);
+                            columnOption.setGeneratedKeySQLColumnGenerator(generatedKeySQLColumnGenerator);
+                        }
+                        //兼容代码后续版本删除
+                        else{
+                            Class<? extends GeneratedKeySQLColumnGenerator> incrementSQLColumnGeneratorClass = column.incrementSQLColumnGenerator();
+                            if(!Objects.equals(DefaultGeneratedKeySQLColumnGenerator.class,incrementSQLColumnGeneratorClass)){
+                                GeneratedKeySQLColumnGenerator generatedKeySQLColumnGenerator = configuration.getGeneratedKeySQLColumnGenerator(incrementSQLColumnGeneratorClass);
+                                if (generatedKeySQLColumnGenerator == null) {
+                                    throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " generated key sql column generator unknown");
+                                }
+                                columnOption.setGeneratedKeySQLColumnGenerator(generatedKeySQLColumnGenerator);
+                            }
                         }
                     }
-                    columnOption.setIncrement(column.increment());
+                    columnOption.setGeneratedKey(generatedKey);
 
                     columnOption.setLarge(column.large());
 //                    columnMetadata.setSelect(column.select());
@@ -614,8 +626,8 @@ public class EntityMetadata {
     }
 
 
-    public List<String> getIncrementColumns() {
-        return incrementColumns;
+    public List<String> getGeneratedKeyColumns() {
+        return generatedKeyColumns;
     }
 
 

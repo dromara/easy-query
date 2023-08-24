@@ -3,7 +3,7 @@ package com.easy.query.core.metadata;
 import com.easy.query.core.basic.extension.conversion.ColumnValueSQLConverter;
 import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.basic.extension.encryption.EncryptionStrategy;
-import com.easy.query.core.basic.extension.increment.IncrementSQLColumnGenerator;
+import com.easy.query.core.basic.extension.generated.GeneratedKeySQLColumnGenerator;
 import com.easy.query.core.basic.extension.track.update.ValueUpdateAtomicTrack;
 import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
 import com.easy.query.core.expression.lambda.Property;
@@ -35,7 +35,7 @@ public class ColumnMetadata {
     private final String propertyName;
 
     private final  boolean primary;
-    private final  boolean increment;
+    private final  boolean generatedKey;
 
 
 //    private  boolean nullable=true;
@@ -51,7 +51,7 @@ public class ColumnMetadata {
     private final ValueConverter<?, ?> valueConverter;
     private final ColumnValueSQLConverter columnValueSQLConverter;
     private final ValueUpdateAtomicTrack<Object> valueUpdateAtomicTrack;
-    private final IncrementSQLColumnGenerator incrementSQLColumnGenerator;
+    private final GeneratedKeySQLColumnGenerator generatedSQLColumnGenerator;
     private final PropertySetterCaller<Object> setterCaller;
     private final Property<Object,?> getterCaller;
     private final JdbcTypeHandler jdbcTypeHandler;
@@ -63,7 +63,7 @@ public class ColumnMetadata {
         this.propertyType = columnOption.getProperty().getPropertyType();
         this.propertyName = columnOption.getProperty().getName();
         this.primary = columnOption.isPrimary();
-        this.increment= columnOption.isIncrement();
+        this.generatedKey = columnOption.isGeneratedKey();
         this.version= columnOption.isVersion();
         this.insertIgnore= columnOption.isInsertIgnore();
         this.updateIgnore= columnOption.isUpdateIgnore();
@@ -73,7 +73,7 @@ public class ColumnMetadata {
         this.valueConverter = columnOption.getValueConverter();
         this.columnValueSQLConverter = columnOption.getColumnValueSQLConverter();
         this.valueUpdateAtomicTrack = columnOption.getValueUpdateAtomicTrack();
-        this.incrementSQLColumnGenerator = columnOption.getIncrementSQLColumnGenerator();
+        this.generatedSQLColumnGenerator = columnOption.getGeneratedKeySQLColumnGenerator();
         this.primitive = propertyType.isPrimitive();
 
         if(columnOption.getGetterCaller()==null){
@@ -100,8 +100,8 @@ public class ColumnMetadata {
     }
 
 
-    public boolean isIncrement() {
-        return increment;
+    public boolean isGeneratedKey() {
+        return generatedKey;
     }
 
 
@@ -177,7 +177,7 @@ public class ColumnMetadata {
         return columnValueSQLConverter;
     }
 
-    public IncrementSQLColumnGenerator getIncrementSQLColumnGenerator() {
-        return incrementSQLColumnGenerator;
+    public GeneratedKeySQLColumnGenerator getGeneratedSQLColumnGenerator() {
+        return generatedSQLColumnGenerator;
     }
 }

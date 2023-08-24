@@ -145,8 +145,8 @@ public class InsertExpressionBuilder extends AbstractEntityExpressionBuilder imp
                     SQLEntitySegment sqlEntitySegment = (SQLEntitySegment) o;
                     String propertyName = sqlEntitySegment.getPropertyName();
                     ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(propertyName);
-                    if (columnMetadata.isIncrement()) {
-                        return columnMetadata.getIncrementSQLColumnGenerator() == null;
+                    if (columnMetadata.isGeneratedKey()) {
+                        return columnMetadata.getGeneratedSQLColumnGenerator() == null;
                     }
                     if (columnMetadata.isInsertIgnore()) {
                         return true;

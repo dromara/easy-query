@@ -1,4 +1,4 @@
-package com.easy.query.core.basic.extension.increment;
+package com.easy.query.core.basic.extension.generated;
 
 import com.easy.query.core.basic.extension.conversion.SQLPropertyConverter;
 import com.easy.query.core.context.QueryRuntimeContext;
@@ -11,7 +11,7 @@ import com.easy.query.core.metadata.ColumnMetadata;
  *
  * @author xuejiaming
  */
-public class DefaultIncrementSQLColumnGenerator implements IncrementSQLColumnGenerator {
+public class DefaultGeneratedKeySQLColumnGenerator implements GeneratedKeySQLColumnGenerator {
     @Override
     public void configure(TableAvailable table, ColumnMetadata columnMetadata, SQLPropertyConverter sqlPropertyConverter, QueryRuntimeContext runtimeContext) {
 

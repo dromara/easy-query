@@ -4,8 +4,8 @@ import com.easy.query.core.basic.extension.conversion.ColumnValueSQLConverter;
 import com.easy.query.core.basic.extension.conversion.DefaultColumnValueSQLConverter;
 import com.easy.query.core.basic.extension.conversion.DefaultValueConverter;
 import com.easy.query.core.basic.extension.conversion.ValueConverter;
-import com.easy.query.core.basic.extension.increment.IncrementSQLColumnGenerator;
-import com.easy.query.core.basic.extension.increment.DefaultIncrementSQLColumnGenerator;
+import com.easy.query.core.basic.extension.generated.DefaultGeneratedKeySQLColumnGenerator;
+import com.easy.query.core.basic.extension.generated.GeneratedKeySQLColumnGenerator;
 import com.easy.query.core.basic.extension.track.update.DefaultValueUpdateAtomicTrack;
 import com.easy.query.core.basic.extension.track.update.ValueUpdateAtomicTrack;
 import com.easy.query.core.util.EasyStringUtil;
@@ -32,10 +32,19 @@ public @interface Column {
      */
     boolean primaryKey() default false;
     /**
+     * 请使用 {@param generatedKey}
      * 是否是自增键
      * 自增列不会出现在insert语句中,并且调用{@link com.easy.query.core.basic.api.insert.Insertable#executeRows(boolean)}传入true参数会自动回填返回值
      */
+    @Deprecated
     boolean increment() default false;
+
+    /**
+     * 自增或者由数据库函数生成
+     * 是否是数据库生成列,默认不在insert语句中如果配置了{@param generatedSQLColumnGenerator} ,并且调用{@link com.easy.query.core.basic.api.insert.Insertable#executeRows(boolean)}传入true参数会自动回填返回值
+     * @return
+     */
+    boolean generatedKey() default false;
     /**
      * 指定实体对象映射到数据库的名称
      */
@@ -70,10 +79,12 @@ public @interface Column {
     Class<? extends ValueUpdateAtomicTrack<?>> valueUpdateAtomicTrack() default DefaultValueUpdateAtomicTrack.class;
 
     /**
-     *
+     * 请使用 {@param generatedSQLColumnGenerator}
      * @return
      */
-    Class<? extends IncrementSQLColumnGenerator> incrementSQLColumnGenerator() default DefaultIncrementSQLColumnGenerator.class;
+    @Deprecated
+    Class<? extends GeneratedKeySQLColumnGenerator> incrementSQLColumnGenerator() default DefaultGeneratedKeySQLColumnGenerator.class;
+    Class<? extends GeneratedKeySQLColumnGenerator> generatedSQLColumnGenerator() default DefaultGeneratedKeySQLColumnGenerator.class;
 
 //    /**
 //     * 当且仅当查询指定该属性才会查询出来

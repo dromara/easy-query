@@ -196,7 +196,7 @@ public class EasyJdbcExecutorUtil {
         JdbcTypeHandlerManager easyJdbcTypeHandler = runtimeContext.getJdbcTypeHandlerManager();
         Class<?> entityClass = entities.get(0).getClass();
         EntityMetadata entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(entityClass);
-        List<String> incrementColumns = fillAutoIncrement ? entityMetadata.getIncrementColumns() : null;
+        List<String> generatedKeyColumns = fillAutoIncrement ? entityMetadata.getGeneratedKeyColumns() : null;
         PreparedStatement ps = null;
         int r = 0;
         try {
@@ -206,7 +206,7 @@ public class EasyJdbcExecutorUtil {
                 List<SQLParameter> parameters = extractParameters(executorContext, entity, sqlParameters,printSql,easyConnection,shardingPrint,replicaPrint);
 
                 if (ps == null) {
-                    ps = createPreparedStatement(easyConnection.getConnection(), sql, parameters, easyJdbcTypeHandler, incrementColumns);
+                    ps = createPreparedStatement(easyConnection.getConnection(), sql, parameters, easyJdbcTypeHandler, generatedKeyColumns);
                 } else {
                     setPreparedStatement(ps, parameters, easyJdbcTypeHandler);
                 }
@@ -226,17 +226,17 @@ public class EasyJdbcExecutorUtil {
             }
             logResult(printSql, r, easyConnection, shardingPrint, replicaPrint);
             //如果需要自动填充并且存在自动填充列
-            if (fillAutoIncrement && EasyCollectionUtil.isNotEmpty(incrementColumns)) {
+            if (fillAutoIncrement && EasyCollectionUtil.isNotEmpty(generatedKeyColumns)) {
                 assert ps != null;
                 ResultSet keysSet = ps.getGeneratedKeys();
                 int index = 0;
-                ColumnMetadata[] columnMetadatas = new ColumnMetadata[incrementColumns.size()];
+                ColumnMetadata[] columnMetadatas = new ColumnMetadata[generatedKeyColumns.size()];
                 while (keysSet.next()) {
                     T entity = entities.get(index);
-                    for (int i = 0; i < incrementColumns.size(); i++) {
+                    for (int i = 0; i < generatedKeyColumns.size(); i++) {
                         ColumnMetadata columnMetadata = columnMetadatas[i];
                         if (columnMetadata == null) {
-                            String columnName = incrementColumns.get(i);
+                            String columnName = generatedKeyColumns.get(i);
                             String propertyName = entityMetadata.getPropertyNameNotNull(columnName);
                             columnMetadata = entityMetadata.getColumnNotNull(propertyName);
                             columnMetadatas[i] = columnMetadata;
@@ -355,8 +355,8 @@ public class EasyJdbcExecutorUtil {
         return createPreparedStatement(connection, sql, sqlParameters, easyJdbcTypeHandlerManager, null);
     }
 
-    private static PreparedStatement createPreparedStatement(Connection connection, String sql, List<SQLParameter> sqlParameters, JdbcTypeHandlerManager easyJdbcTypeHandlerManager, List<String> incrementColumns) throws SQLException {
-        PreparedStatement preparedStatement = EasyCollectionUtil.isEmpty(incrementColumns) ? connection.prepareStatement(sql) : connection.prepareStatement(sql, incrementColumns.toArray(new String[0]));
+    private static PreparedStatement createPreparedStatement(Connection connection, String sql, List<SQLParameter> sqlParameters, JdbcTypeHandlerManager easyJdbcTypeHandlerManager, List<String> generatedKeyColumns) throws SQLException {
+        PreparedStatement preparedStatement = EasyCollectionUtil.isEmpty(generatedKeyColumns) ? connection.prepareStatement(sql) : connection.prepareStatement(sql, generatedKeyColumns.toArray(new String[0]));
         return setPreparedStatement(preparedStatement, sqlParameters, easyJdbcTypeHandlerManager);
     }
 

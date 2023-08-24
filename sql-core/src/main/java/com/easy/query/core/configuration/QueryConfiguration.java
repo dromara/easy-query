@@ -3,14 +3,14 @@ package com.easy.query.core.configuration;
 import com.easy.query.core.basic.extension.conversion.ColumnValueSQLConverter;
 import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.basic.extension.encryption.EncryptionStrategy;
-import com.easy.query.core.basic.extension.increment.IncrementSQLColumnGenerator;
+import com.easy.query.core.basic.extension.generated.GeneratedKeySQLColumnGenerator;
 import com.easy.query.core.basic.extension.interceptor.Interceptor;
 import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategy;
 import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategyEnum;
 import com.easy.query.core.basic.extension.logicdel.impl.BooleanLogicDeleteStrategy;
-import com.easy.query.core.basic.extension.logicdel.impl.LongTimestampLogicDeleteStrategy;
 import com.easy.query.core.basic.extension.logicdel.impl.LocalDateLogicDeleteStrategy;
 import com.easy.query.core.basic.extension.logicdel.impl.LocalDateTimeLogicDeleteStrategy;
+import com.easy.query.core.basic.extension.logicdel.impl.LongTimestampLogicDeleteStrategy;
 import com.easy.query.core.basic.extension.track.update.ValueUpdateAtomicTrack;
 import com.easy.query.core.basic.extension.version.VersionIntStrategy;
 import com.easy.query.core.basic.extension.version.VersionLongStrategy;
@@ -60,7 +60,7 @@ public class QueryConfiguration {
     private Map<Class<? extends ValueConverter<?, ?>>, ValueConverter<?, ?>> valueConverterMap = new ConcurrentHashMap<>();
     private Map<Class<? extends ValueUpdateAtomicTrack<?>>, ValueUpdateAtomicTrack<?>> valueUpdateAtomicTrackMap = new ConcurrentHashMap<>();
     private Map<Class<? extends ColumnValueSQLConverter>, ColumnValueSQLConverter> columnValueSQLConverterMap = new ConcurrentHashMap<>();
-    private Map<Class<? extends IncrementSQLColumnGenerator>, IncrementSQLColumnGenerator> incrementSQLColumnGeneratorMap = new ConcurrentHashMap<>();
+    private Map<Class<? extends GeneratedKeySQLColumnGenerator>, GeneratedKeySQLColumnGenerator> generatedSQLColumnGeneratorMap = new ConcurrentHashMap<>();
 
     //    public EasyQueryConfiguration(Dialect dialect, NameConversion nameConversion) {
 //       this(EasyQueryOption.defaultEasyQueryOption(),dialect,nameConversion);
@@ -261,15 +261,24 @@ public class QueryConfiguration {
     public ColumnValueSQLConverter getColumnValueSQLConverter(Class<? extends ColumnValueSQLConverter> columnValueSQLConverterClass) {
         return columnValueSQLConverterMap.get(columnValueSQLConverterClass);
     }
-    public void applyIncrementSQLColumnGenerator(IncrementSQLColumnGenerator incrementSQLColumnGenerator) {
-        Class<? extends IncrementSQLColumnGenerator> incrementSQLColumnGeneratorClass = incrementSQLColumnGenerator.getClass();
-        if (incrementSQLColumnGeneratorMap.containsKey(incrementSQLColumnGeneratorClass)) {
-            throw new EasyQueryException("increment sql column generator:" + EasyClassUtil.getSimpleName(incrementSQLColumnGeneratorClass) + ",repeat");
+
+    /**
+     * 请使用 {@link  QueryConfiguration#applyGeneratedKeySQLColumnGenerator}
+     * @param generatedKeySQLColumnGenerator
+     */
+    @Deprecated
+    public void applyIncrementSQLColumnGenerator(GeneratedKeySQLColumnGenerator generatedKeySQLColumnGenerator) {
+        applyGeneratedKeySQLColumnGenerator(generatedKeySQLColumnGenerator);
+    }
+    public void applyGeneratedKeySQLColumnGenerator(GeneratedKeySQLColumnGenerator generatedKeySQLColumnGenerator) {
+        Class<? extends GeneratedKeySQLColumnGenerator> generatedKeySQLColumnGeneratorClass = generatedKeySQLColumnGenerator.getClass();
+        if (generatedSQLColumnGeneratorMap.containsKey(generatedKeySQLColumnGeneratorClass)) {
+            throw new EasyQueryException("generated key sql column generator:" + EasyClassUtil.getSimpleName(generatedKeySQLColumnGeneratorClass) + ",repeat");
         }
-        incrementSQLColumnGeneratorMap.put(incrementSQLColumnGeneratorClass, incrementSQLColumnGenerator);
+        generatedSQLColumnGeneratorMap.put(generatedKeySQLColumnGeneratorClass, generatedKeySQLColumnGenerator);
     }
 
-    public IncrementSQLColumnGenerator getIncrementSQLColumnGenerator(Class<? extends IncrementSQLColumnGenerator> incrementSQLColumnGeneratorClass) {
-        return incrementSQLColumnGeneratorMap.get(incrementSQLColumnGeneratorClass);
+    public GeneratedKeySQLColumnGenerator getGeneratedKeySQLColumnGenerator(Class<? extends GeneratedKeySQLColumnGenerator> generatedKeySQLColumnGenerator) {
+        return generatedSQLColumnGeneratorMap.get(generatedKeySQLColumnGenerator);
     }
 }

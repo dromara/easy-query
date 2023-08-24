@@ -4,7 +4,7 @@ import com.easy.query.core.basic.extension.conversion.ColumnValueSQLConverter;
 import com.easy.query.core.basic.extension.conversion.DefaultValueConverter;
 import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.basic.extension.encryption.EncryptionStrategy;
-import com.easy.query.core.basic.extension.increment.IncrementSQLColumnGenerator;
+import com.easy.query.core.basic.extension.generated.GeneratedKeySQLColumnGenerator;
 import com.easy.query.core.basic.extension.track.update.ValueUpdateAtomicTrack;
 import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
 import com.easy.query.core.expression.lambda.Property;
@@ -27,7 +27,7 @@ public final class ColumnOption {
     private PropertyDescriptor property;
 
     private boolean primary = false;
-    private boolean increment = false;
+    private boolean generatedKey = false;
 
 
     //    private  boolean nullable=true;
@@ -42,7 +42,7 @@ public final class ColumnOption {
     private ValueConverter<?, ?> valueConverter;
     private ColumnValueSQLConverter columnValueSQLConverter;
     private ValueUpdateAtomicTrack<Object> valueUpdateAtomicTrack;
-    private IncrementSQLColumnGenerator incrementSQLColumnGenerator;
+    private GeneratedKeySQLColumnGenerator generatedKeySQLColumnGenerator;
     private PropertySetterCaller<Object> setterCaller;
     private Property<Object, ?> getterCaller;
     private JdbcTypeHandler jdbcTypeHandler;
@@ -70,12 +70,12 @@ public final class ColumnOption {
         this.primary = primary;
     }
 
-    public boolean isIncrement() {
-        return increment;
+    public boolean isGeneratedKey() {
+        return generatedKey;
     }
 
-    public void setIncrement(boolean increment) {
-        this.increment = increment;
+    public void setGeneratedKey(boolean generatedKey) {
+        this.generatedKey = generatedKey;
     }
 
     public boolean isVersion() {
@@ -186,11 +186,11 @@ public final class ColumnOption {
         this.jdbcTypeHandler = jdbcTypeHandler;
     }
 
-    public IncrementSQLColumnGenerator getIncrementSQLColumnGenerator() {
-        return incrementSQLColumnGenerator;
+    public GeneratedKeySQLColumnGenerator getGeneratedKeySQLColumnGenerator() {
+        return generatedKeySQLColumnGenerator;
     }
 
-    public void setIncrementSQLColumnGenerator(IncrementSQLColumnGenerator incrementSQLColumnGenerator) {
-        this.incrementSQLColumnGenerator = incrementSQLColumnGenerator;
+    public void setGeneratedKeySQLColumnGenerator(GeneratedKeySQLColumnGenerator generatedKeySQLColumnGenerator) {
+        this.generatedKeySQLColumnGenerator = generatedKeySQLColumnGenerator;
     }
 }
