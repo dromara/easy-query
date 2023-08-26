@@ -18,6 +18,8 @@ import com.easy.query.core.configuration.nameconversion.impl.UpperCamelCaseNameC
 import com.easy.query.core.configuration.nameconversion.impl.UpperUnderlinedNameConversion;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.datasource.DataSourceUnitFactory;
+import com.easy.query.core.exception.EasyQueryInvalidOperationException;
+import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.dameng.config.DamengDatabaseConfiguration;
 import com.easy.query.h2.config.H2DatabaseConfiguration;
@@ -38,6 +40,7 @@ import org.noear.solon.core.Props;
 import org.noear.solon.core.event.EventBus;
 
 import javax.sql.DataSource;
+import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -49,7 +52,6 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 
 public class DbManager {
-    public static final String TAG = "easy-query";
     private static DbManager _global = new DbManager();
     public static String DEFAULT_BEAN_NAME = "db1";
 
@@ -90,7 +92,7 @@ public class DbManager {
         Props dsProps;
 
         if (Utils.isNotEmpty(bw.name())) {
-            dsProps = bw.context().cfg().getProp(TAG + "." + bw.name());
+            dsProps = bw.context().cfg().getProp(CommonConstant.TAG + "." + bw.name());
         } else {
             dsProps = new Props();
         }
@@ -172,14 +174,45 @@ public class DbManager {
         get(bw);
     }
 
-    public  <T> T getInstance(String name,Class<T> clazz){
+    public  <T> T[] getInstances(String name,Class<T> clazz){
         if(dbMap==null||dbMap.isEmpty()){
-            return null;
+            throw new EasyQueryInvalidOperationException("can not get instances name:["+name+"],class:["+ EasyClassUtil.getSimpleName(clazz) +"]");
         }
-        EasyQueryHolder holder =Utils.isNotBlank(name)? dbMap.get(name):dbMap.get(DEFAULT_BEAN_NAME);
-        if(holder==null){
-            return null;
+        if(Utils.isNotBlank(name)){
+            if(name.contains(",")){
+                String[] split = name.split(",");
+                T[] objects = (T[])new Object[split.length];
+                for (int i = 0; i < split.length; i++) {
+                    String n = split[i];
+                    EasyQueryHolder holder =dbMap.get(n);
+                    if(holder==null){
+                        throw new EasyQueryInvalidOperationException("can not get instances name:["+name+"],class:["+ EasyClassUtil.getSimpleName(clazz) +"]");
+                    }
+                    T result = getByHolder(holder, name, clazz);
+                    objects[i]=result;
+                }
+                return objects;
+            }else{
+                EasyQueryHolder holder =dbMap.get(name);
+                if(holder==null){
+                    throw new EasyQueryInvalidOperationException("can not get instances name:["+name+"],class:["+ EasyClassUtil.getSimpleName(clazz) +"]");
+                }
+                T result = getByHolder(holder, name, clazz);
+                return (T[])new Object[]{result};
+            }
         }
+        Collection<EasyQueryHolder> values = dbMap.values();
+        T[] objects = (T[])new Object[values.size()];
+        int i=0;
+        for (EasyQueryHolder holder : values) {
+            T result = getByHolder(holder, name, clazz);
+            objects[i]=result;
+            i++;
+        }
+        return objects;
+    }
+
+    private <T> T getByHolder(EasyQueryHolder holder,String name,Class<T> clazz){
         if(EasyQuery.class.isAssignableFrom(clazz)){
             return EasyObjectUtil.typeCastNullable(holder.getEasyQuery());
         }
@@ -195,7 +228,7 @@ public class DbManager {
         if(QueryRuntimeContext.class.isAssignableFrom(clazz)){
             return EasyObjectUtil.typeCastNullable(holder.getEasyQueryClient().getRuntimeContext());
         }
-        return null;
+        throw new EasyQueryInvalidOperationException("can not get instances name:["+name+"],class:["+ EasyClassUtil.getSimpleName(clazz) +"]");
     }
 }
 

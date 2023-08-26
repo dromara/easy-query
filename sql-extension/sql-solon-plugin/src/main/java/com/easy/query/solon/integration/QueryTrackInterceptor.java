@@ -4,7 +4,6 @@ import com.easy.query.core.annotation.EasyQueryTrack;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
-import org.noear.solon.core.AopContext;
 import org.noear.solon.core.aspect.Interceptor;
 import org.noear.solon.core.aspect.Invocation;
 
@@ -21,20 +20,40 @@ public class QueryTrackInterceptor implements Interceptor {
         EasyQueryTrack easyQueryTrack =inv.method().getAnnotation(EasyQueryTrack.class); //通过反射拿到注解对象
         if (easyQueryTrack!=null&&easyQueryTrack.enable()) {
 
-            EasyQueryClient easyQueryClient = DbManager.global().getInstance(easyQueryTrack.tag(),EasyQueryClient.class);
-            if(easyQueryClient==null){
+            EasyQueryClient[] easyQueryClients = DbManager.global().getInstances(easyQueryTrack.tag(),EasyQueryClient.class);
+            if(easyQueryClients==null||easyQueryClients.length==0){
                 throw new EasyQueryInvalidOperationException("EasyQueryTrack tag:"+easyQueryTrack.tag()+" cant get EasyQueryClient");
             }
-            TrackManager trackManager = easyQueryClient.getRuntimeContext().getTrackManager();
-            try {
-                trackManager.begin();
-                return inv.invoke();
-            } finally {
-                trackManager.release();
+            int length = easyQueryClients.length;
+            if(length==1){
+                EasyQueryClient easyQueryClient=easyQueryClients[0];
+                TrackManager trackManager = easyQueryClient.getRuntimeContext().getTrackManager();
+                try {
+                    trackManager.begin();
+                    return inv.invoke();
+                } finally {
+                    trackManager.release();
+                }
+            }else{
+
+                try {
+                    for (EasyQueryClient easyQueryClient : easyQueryClients) {
+                        TrackManager trackManager = easyQueryClient.getRuntimeContext().getTrackManager();
+                        trackManager.begin();
+                    }
+                    return inv.invoke();
+                } finally {
+                    for (EasyQueryClient easyQueryClient : easyQueryClients) {
+                        TrackManager trackManager = easyQueryClient.getRuntimeContext().getTrackManager();
+                        trackManager.release();
+                    }
+                }
+
             }
 
         } else {
             return inv.invoke();
         }
     }
+
 }
