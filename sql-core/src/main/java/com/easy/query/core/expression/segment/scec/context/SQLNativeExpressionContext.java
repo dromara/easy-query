@@ -16,7 +16,8 @@ public interface SQLNativeExpressionContext {
     SQLNativeExpressionContext expression(TableAvailable table, String property);
    <TEntity> SQLNativeExpressionContext expression(Query<TEntity> subQuery);
     SQLNativeExpressionContext value(Object val);
-    SQLNativeExpressionContext constValue(Object constVal);
+
+    SQLNativeExpressionContext format(Object formatVal);
 
      List<ParamExpression> getExpressions();
 

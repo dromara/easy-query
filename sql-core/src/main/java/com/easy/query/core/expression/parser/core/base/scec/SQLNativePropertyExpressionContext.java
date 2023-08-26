@@ -34,10 +34,21 @@ public interface SQLNativePropertyExpressionContext {
 
     /**
      * 将以字符串常量形式直接拼接到sql中,并不是参数化
+     * 请使用format方法
+     * @param formatVal
+     * @return
+     */
+    @Deprecated
+   default SQLNativePropertyExpressionContext constValue(Object formatVal){
+        return format(formatVal);
+    }
+
+    /**
+     * 将以字符串常量形式直接拼接到sql中,并不是参数化
      * @param constVal
      * @return
      */
-    SQLNativePropertyExpressionContext constValue(Object constVal);
+    SQLNativePropertyExpressionContext format(Object constVal);
 
     /**
      * 如果当前是一个select的片段那么可以独立设置别名,当然也可以通过sqlSegment的片段来拼接

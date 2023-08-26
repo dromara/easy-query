@@ -6,6 +6,6 @@ package com.easy.query.core.expression.segment.scec.expression;
  *
  * @author xuejiaming
  */
-public interface ConstValueParamExpression extends ParamExpression{
+public interface FormatValueParamExpression extends ParamExpression{
     String toSQLSegment();
 }

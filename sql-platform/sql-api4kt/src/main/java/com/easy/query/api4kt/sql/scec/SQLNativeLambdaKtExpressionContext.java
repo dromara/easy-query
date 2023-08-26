@@ -11,10 +11,26 @@ import kotlin.reflect.KProperty1;
  * @author xuejiaming
  */
 public interface SQLNativeLambdaKtExpressionContext<T1> {
-    SQLNativeLambdaKtExpressionContext<T1> expression(KProperty1<T1,?> property);
+    SQLNativeLambdaKtExpressionContext<T1> expression(KProperty1<T1, ?> property);
+
     <TEntity> SQLNativeLambdaKtExpressionContext<T1> expression(KtQueryable<TEntity> subQuery);
-   <T2> SQLNativeLambdaKtExpressionContext<T1> expression(EntitySQLTableOwner<T2> table, KProperty1<T2,?> property);
+
+    <T2> SQLNativeLambdaKtExpressionContext<T1> expression(EntitySQLTableOwner<T2> table, KProperty1<T2, ?> property);
+
     SQLNativeLambdaKtExpressionContext<T1> value(Object val);
-    SQLNativeLambdaKtExpressionContext<T1> constValue(Object constVal);
+
+    /**
+     * 请使用 format
+     *
+     * @param constVal
+     * @return
+     */
+    @Deprecated
+    default SQLNativeLambdaKtExpressionContext<T1> constValue(Object constVal) {
+        return format(constVal);
+    }
+
+    SQLNativeLambdaKtExpressionContext<T1> format(Object formatVal);
+
     SQLNativeLambdaKtExpressionContext<T1> setAlias(String alias);
 }

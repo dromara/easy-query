@@ -16,6 +16,7 @@ public interface SQLNativeProxyExpressionContext {
     <TEntityProxy extends ProxyEntity<TEntityProxy, TEntity>, TEntity> SQLNativeProxyExpressionContext expression(ProxyQueryable<TEntityProxy, TEntity> subQuery);
 
     SQLNativeProxyExpressionContext value(Object val);
+    SQLNativeProxyExpressionContext format(Object formatVal);
 
     SQLNativeProxyExpressionContext setAlias(String alias);
 }

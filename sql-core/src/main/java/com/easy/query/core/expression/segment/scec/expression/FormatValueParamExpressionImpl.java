@@ -8,18 +8,18 @@ import com.easy.query.core.util.EasyStringUtil;
  *
  * @author xuejiaming
  */
-public class ConstValueParamExpressionImpl implements ConstValueParamExpression{
-    private final Object constVal;
+public class FormatValueParamExpressionImpl implements FormatValueParamExpression {
+    private final Object formatVal;
 
-    public ConstValueParamExpressionImpl(Object constVal){
+    public FormatValueParamExpressionImpl(Object formatVal){
 
-        this.constVal = constVal;
+        this.formatVal = formatVal;
     }
     @Override
     public String toSQLSegment() {
-        if(constVal==null){
+        if(formatVal ==null){
             return EasyStringUtil.EMPTY;
         }
-        return constVal.toString();
+        return formatVal.toString();
     }
 }

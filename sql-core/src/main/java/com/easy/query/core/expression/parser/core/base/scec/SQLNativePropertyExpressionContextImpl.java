@@ -45,8 +45,8 @@ public class SQLNativePropertyExpressionContextImpl implements SQLNativeProperty
     }
 
     @Override
-    public SQLNativePropertyExpressionContext constValue(Object constVal) {
-        sqlNativeExpressionContext.constValue(constVal);
+    public SQLNativePropertyExpressionContext format(Object formatVal) {
+        sqlNativeExpressionContext.format(formatVal);
         return this;
     }
 

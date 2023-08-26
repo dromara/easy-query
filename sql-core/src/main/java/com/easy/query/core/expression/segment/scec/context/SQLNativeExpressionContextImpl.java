@@ -6,7 +6,7 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.scec.expression.ColumnConstSQLParameterExpressionImpl;
 import com.easy.query.core.expression.segment.scec.expression.ColumnPropertyExpressionImpl;
 import com.easy.query.core.expression.segment.scec.expression.ColumnSQLParameterExpressionImpl;
-import com.easy.query.core.expression.segment.scec.expression.ConstValueParamExpressionImpl;
+import com.easy.query.core.expression.segment.scec.expression.FormatValueParamExpressionImpl;
 import com.easy.query.core.expression.segment.scec.expression.ParamExpression;
 import com.easy.query.core.expression.segment.scec.expression.SubQueryParamExpressionImpl;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
@@ -59,8 +59,8 @@ public class SQLNativeExpressionContextImpl implements SQLNativeExpressionContex
     }
 
     @Override
-    public SQLNativeExpressionContext constValue(Object constVal) {
-        ConstValueParamExpressionImpl constValueParamExpression = new ConstValueParamExpressionImpl(constVal);
+    public SQLNativeExpressionContext format(Object formatVal) {
+        FormatValueParamExpressionImpl constValueParamExpression = new FormatValueParamExpressionImpl(formatVal);
         expressions.add(constValueParamExpression);
         return this;
     }

@@ -44,8 +44,8 @@ public class SQLNativeLambdaExpressionContextImpl<T1> implements SQLNativeLambda
     }
 
     @Override
-    public SQLNativeLambdaExpressionContext<T1> constValue(Object constVal) {
-        columnConstExpressionContext.constValue(constVal);
+    public SQLNativeLambdaExpressionContext<T1> format(Object formatVal) {
+        columnConstExpressionContext.format(formatVal);
         return this;
     }
 

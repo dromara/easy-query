@@ -37,6 +37,12 @@ public class SQLNativeProxyExpressionContextImpl implements SQLNativeProxyExpres
     }
 
     @Override
+    public SQLNativeProxyExpressionContext format(Object formatVal) {
+        sqlConstExpressionContext.format(formatVal);
+        return this;
+    }
+
+    @Override
     public SQLNativeProxyExpressionContext setAlias(String alias) {
         sqlConstExpressionContext.setAlias(alias);
         return this;

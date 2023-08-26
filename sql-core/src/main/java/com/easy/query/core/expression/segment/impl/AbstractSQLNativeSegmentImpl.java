@@ -7,7 +7,7 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;
 import com.easy.query.core.expression.segment.scec.expression.ColumnParamExpression;
 import com.easy.query.core.expression.segment.scec.expression.ColumnPropertyParamExpression;
-import com.easy.query.core.expression.segment.scec.expression.ConstValueParamExpression;
+import com.easy.query.core.expression.segment.scec.expression.FormatValueParamExpression;
 import com.easy.query.core.expression.segment.scec.expression.ParamExpression;
 import com.easy.query.core.expression.segment.scec.expression.SubQueryParamExpression;
 import com.easy.query.core.util.EasyClassUtil;
@@ -80,8 +80,8 @@ public abstract class AbstractSQLNativeSegmentImpl {
             ColumnParamExpression columnConstValueExpression = (ColumnParamExpression) paramExpression;
             columnConstValueExpression.addParams(toSQLContext);
             return "?";
-        } else if(paramExpression instanceof ConstValueParamExpression){
-            ConstValueParamExpression constValueParamExpression = (ConstValueParamExpression) paramExpression;
+        } else if(paramExpression instanceof FormatValueParamExpression){
+            FormatValueParamExpression constValueParamExpression = (FormatValueParamExpression) paramExpression;
             return constValueParamExpression.toSQLSegment();
         } else if(paramExpression instanceof SubQueryParamExpression){
             SubQueryParamExpression subQueryParamExpression = (SubQueryParamExpression) paramExpression;
