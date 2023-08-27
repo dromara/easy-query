@@ -31,8 +31,4 @@ public class QueryTrackInterceptor implements Interceptor {
             return inv.invoke();
         }
     }
-
-    private Object invokeTrack(Supplier<Object> supplier)  throws Throwable {
-        return supplier.get();
-    }
 }
