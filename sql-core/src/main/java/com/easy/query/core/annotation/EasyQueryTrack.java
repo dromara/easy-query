@@ -24,5 +24,10 @@ public @interface EasyQueryTrack {
      * @return
      */
     boolean enable() default true;
+
+    /**
+     * 空时表示全部的easy-query都需要追踪，需要指定就用逗号分割多个bean的name比如easyQuery,myEasyQuery或者db1,db2具体看配置
+     * @return
+     */
     String tag() default "";
 }

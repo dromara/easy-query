@@ -1,26 +1,26 @@
 package com.easy.query.solon.integration;
 
 import com.easy.query.api.proxy.client.DefaultEasyProxyQuery;
-import com.easy.query.api.proxy.client.EasyProxyQuery;
 import com.easy.query.api4j.client.DefaultEasyQuery;
-import com.easy.query.api4j.client.EasyQuery;
 import com.easy.query.core.api.client.EasyQueryClient;
+import com.easy.query.core.basic.extension.track.InvokeTryFinally;
+import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.basic.jdbc.conn.ConnectionManager;
 import com.easy.query.core.bootstrapper.DatabaseConfiguration;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.bootstrapper.EasyQueryBuilderConfiguration;
-import com.easy.query.core.configuration.QueryConfiguration;
+import com.easy.query.core.common.EasyQueryTrackInvoker;
+import com.easy.query.core.common.EmptyInvokeTryFinally;
 import com.easy.query.core.configuration.nameconversion.NameConversion;
 import com.easy.query.core.configuration.nameconversion.impl.DefaultNameConversion;
 import com.easy.query.core.configuration.nameconversion.impl.LowerCamelCaseNameConversion;
 import com.easy.query.core.configuration.nameconversion.impl.UnderlinedNameConversion;
 import com.easy.query.core.configuration.nameconversion.impl.UpperCamelCaseNameConversion;
 import com.easy.query.core.configuration.nameconversion.impl.UpperUnderlinedNameConversion;
-import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.datasource.DataSourceUnitFactory;
-import com.easy.query.core.exception.EasyQueryInvalidOperationException;
-import com.easy.query.core.util.EasyClassUtil;
-import com.easy.query.core.util.EasyObjectUtil;
+import com.easy.query.core.logging.Log;
+import com.easy.query.core.logging.LogFactory;
+import com.easy.query.core.util.EasyStringUtil;
 import com.easy.query.dameng.config.DamengDatabaseConfiguration;
 import com.easy.query.h2.config.H2DatabaseConfiguration;
 import com.easy.query.kingbase.es.config.KingbaseESDatabaseConfiguration;
@@ -52,6 +52,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 
 public class DbManager {
+    private static final Log log= LogFactory.getLog(DbManager.class);
     private static DbManager _global = new DbManager();
     public static String DEFAULT_BEAN_NAME = "db1";
 
@@ -174,61 +175,45 @@ public class DbManager {
         get(bw);
     }
 
-    public  <T> T[] getInstances(String name,Class<T> clazz){
+
+    public InvokeTryFinally getTrackInvokeTryFinally(String tag) {
+        InvokeTryFinally invokeTryFinally= EmptyInvokeTryFinally.EMPTY;
+
         if(dbMap==null||dbMap.isEmpty()){
-            throw new EasyQueryInvalidOperationException("can not get instances name:["+name+"],class:["+ EasyClassUtil.getSimpleName(clazz) +"]");
+            return invokeTryFinally;
         }
-        if(Utils.isNotBlank(name)){
-            if(name.contains(",")){
-                String[] split = name.split(",");
-                T[] objects = (T[])new Object[split.length];
-                for (int i = 0; i < split.length; i++) {
-                    String n = split[i];
-                    EasyQueryHolder holder =dbMap.get(n);
-                    if(holder==null){
-                        throw new EasyQueryInvalidOperationException("can not get instances name:["+name+"],class:["+ EasyClassUtil.getSimpleName(clazz) +"]");
-                    }
-                    T result = getByHolder(holder, name, clazz);
-                    objects[i]=result;
-                }
-                return objects;
-            }else{
+        if (EasyStringUtil.isBlank(tag)) {
+            Collection<EasyQueryHolder> values = dbMap.values();
+            for (EasyQueryHolder holder : values) {
+                TrackManager trackManager = holder.getEasyQueryClient().getRuntimeContext().getTrackManager();
+                invokeTryFinally=new EasyQueryTrackInvoker(invokeTryFinally,trackManager);
+            }
+            return invokeTryFinally;
+        }
+        if (tag.contains(",")) {
+            String[] names = tag.split(",");
+            for (String name : names) {
                 EasyQueryHolder holder =dbMap.get(name);
                 if(holder==null){
-                    throw new EasyQueryInvalidOperationException("can not get instances name:["+name+"],class:["+ EasyClassUtil.getSimpleName(clazz) +"]");
+                    log.warn("can not get track managers name:["+name+"]");
+                    continue;
                 }
-                T result = getByHolder(holder, name, clazz);
-                return (T[])new Object[]{result};
+                TrackManager trackManager = holder.getEasyQueryClient().getRuntimeContext().getTrackManager();
+                invokeTryFinally=new EasyQueryTrackInvoker(invokeTryFinally,trackManager);
             }
+            return invokeTryFinally;
+
+        } else {
+            EasyQueryHolder holder =dbMap.get(tag);
+            if(holder==null){
+                log.warn("can not get track managers name:["+tag+"]");
+                return EmptyInvokeTryFinally.EMPTY;
+            }
+            TrackManager trackManager = holder.getEasyQueryClient().getRuntimeContext().getTrackManager();
+            return new EasyQueryTrackInvoker(invokeTryFinally,trackManager);
         }
-        Collection<EasyQueryHolder> values = dbMap.values();
-        T[] objects = (T[])new Object[values.size()];
-        int i=0;
-        for (EasyQueryHolder holder : values) {
-            T result = getByHolder(holder, name, clazz);
-            objects[i]=result;
-            i++;
-        }
-        return objects;
+
     }
 
-    private <T> T getByHolder(EasyQueryHolder holder,String name,Class<T> clazz){
-        if(EasyQuery.class.isAssignableFrom(clazz)){
-            return EasyObjectUtil.typeCastNullable(holder.getEasyQuery());
-        }
-        if(EasyProxyQuery.class.isAssignableFrom(clazz)){
-            return EasyObjectUtil.typeCastNullable(holder.getEasyProxyQuery());
-        }
-        if(EasyQueryClient.class.isAssignableFrom(clazz)){
-            return EasyObjectUtil.typeCastNullable(holder.getEasyQueryClient());
-        }
-        if(QueryConfiguration.class.isAssignableFrom(clazz)){
-            return EasyObjectUtil.typeCastNullable(holder.getEasyQueryClient().getRuntimeContext().getQueryConfiguration());
-        }
-        if(QueryRuntimeContext.class.isAssignableFrom(clazz)){
-            return EasyObjectUtil.typeCastNullable(holder.getEasyQueryClient().getRuntimeContext());
-        }
-        throw new EasyQueryInvalidOperationException("can not get instances name:["+name+"],class:["+ EasyClassUtil.getSimpleName(clazz) +"]");
-    }
 }
 

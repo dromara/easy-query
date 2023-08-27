@@ -6,11 +6,7 @@ package com.easy.query.core.basic.extension.track;
  * @Date: 2023/3/19 13:51
  * @author xuejiaming
  */
-public interface TrackManager {
-    /**
-     * 当前上下文尝试开启追踪,以开启将不在开启，需要和{@link #release()}成对使用
-     */
-    void begin();
+public interface TrackManager extends InvokeTryFinally {
 
     /**
      * 当前线程是否在追踪中
@@ -21,9 +17,5 @@ public interface TrackManager {
    }
     TrackContext getCurrentTrackContext();
 
-    /**
-     * 当前上下文清空，需要和{@link #begin()}成对使用
-     */
-    void release();
 
 }

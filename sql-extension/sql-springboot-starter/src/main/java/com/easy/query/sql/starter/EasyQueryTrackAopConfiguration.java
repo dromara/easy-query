@@ -1,16 +1,30 @@
 package com.easy.query.sql.starter;
 
+import com.easy.query.api.proxy.client.EasyProxyQuery;
+import com.easy.query.api4j.client.EasyQuery;
 import com.easy.query.core.annotation.EasyQueryTrack;
 import com.easy.query.core.api.client.EasyQueryClient;
+import com.easy.query.core.basic.extension.track.InvokeTryFinally;
 import com.easy.query.core.basic.extension.track.TrackManager;
+import com.easy.query.core.common.EasyQueryTrackInvoker;
+import com.easy.query.core.common.EmptyInvokeTryFinally;
+import com.easy.query.core.logging.Log;
+import com.easy.query.core.logging.LogFactory;
+import com.easy.query.core.util.EasyStringUtil;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author xuejiaming
@@ -21,14 +35,41 @@ import java.lang.reflect.Method;
 @Aspect
 @Configuration
 @ConditionalOnProperty(
-        prefix = "easy-query",
-        value = {"enable"},
-        matchIfMissing = true
+        name = {"easy-query.enable", "easy-query.track-aop"},
+        matchIfMissing = true, havingValue = "true"
 )
 public class EasyQueryTrackAopConfiguration {
-    private final EasyQueryClient easyQueryClient;
-    public EasyQueryTrackAopConfiguration(EasyQueryClient easyQueryClient){
-        this.easyQueryClient=easyQueryClient;
+    private static final Log log = LogFactory.getLog(EasyQueryTrackAopConfiguration.class);
+    private final Map<String, TrackManager> trackManagerMap = new HashMap<>();
+    private final List<TrackManager> allTrackManagers = new ArrayList<>();
+
+    public EasyQueryTrackAopConfiguration(ApplicationContext applicationContext) {
+        Map<String, EasyQueryClient> easyQueryClientMap = applicationContext.getBeansOfType(EasyQueryClient.class);
+        Map<String, EasyQuery> easyQueryMap = applicationContext.getBeansOfType(EasyQuery.class);
+        Map<String, EasyProxyQuery> easyProxyQueryMap = applicationContext.getBeansOfType(EasyProxyQuery.class);
+        HashSet<TrackManager> distinct = new HashSet<>();
+        for (Map.Entry<String, EasyQueryClient> easyQueryClientEntry : easyQueryClientMap.entrySet()) {
+            TrackManager trackManager = easyQueryClientEntry.getValue().getRuntimeContext().getTrackManager();
+            if (distinct.add(trackManager)) {
+                allTrackManagers.add(trackManager);
+            }
+            trackManagerMap.put(easyQueryClientEntry.getKey(), trackManager);
+        }
+        for (Map.Entry<String, EasyQuery> easyQueryEntry : easyQueryMap.entrySet()) {
+            TrackManager trackManager = easyQueryEntry.getValue().getRuntimeContext().getTrackManager();
+            if (distinct.add(trackManager)) {
+                allTrackManagers.add(trackManager);
+            }
+            trackManagerMap.put(easyQueryEntry.getKey(), trackManager);
+        }
+        for (Map.Entry<String, EasyProxyQuery> easyProxyQueryEntry : easyProxyQueryMap.entrySet()) {
+            TrackManager trackManager = easyProxyQueryEntry.getValue().getRuntimeContext().getTrackManager();
+            if (distinct.add(trackManager)) {
+                allTrackManagers.add(trackManager);
+            }
+            trackManagerMap.put(easyProxyQueryEntry.getKey(), trackManager);
+        }
+        System.out.println(1);
     }
 
     @Around("execution(public * *(..)) && @annotation(com.easy.query.core.annotation.EasyQueryTrack)")
@@ -36,17 +77,47 @@ public class EasyQueryTrackAopConfiguration {
         MethodSignature signature = (MethodSignature) pjp.getSignature();
         Method method = signature.getMethod();
         EasyQueryTrack easyQueryTrack = method.getAnnotation(EasyQueryTrack.class); //通过反射拿到注解对象
-        if (easyQueryTrack.enable()) {
-            TrackManager trackManager = easyQueryClient.getRuntimeContext().getTrackManager();
+        if (easyQueryTrack != null && easyQueryTrack.enable()) {
+            InvokeTryFinally trackInvokeTryFinally = getTrackInvokeTryFinally(easyQueryTrack.tag());
             try {
-                trackManager.begin();
+                trackInvokeTryFinally.begin();
                 return pjp.proceed();
             } finally {
-                trackManager.release();
+                trackInvokeTryFinally.release();
             }
-
         } else {
             return pjp.proceed();
         }
+    }
+
+    private InvokeTryFinally getTrackInvokeTryFinally(String tag) {
+        InvokeTryFinally invokeTryFinally= EmptyInvokeTryFinally.EMPTY;
+        if (EasyStringUtil.isBlank(tag)) {
+            for (TrackManager trackManager : allTrackManagers) {
+                invokeTryFinally=new EasyQueryTrackInvoker(invokeTryFinally,trackManager);
+            }
+            return invokeTryFinally;
+        }
+        if (tag.contains(",")) {
+            String[] names = tag.split(",");
+            for (String name : names) {
+                TrackManager trackManager = trackManagerMap.get(name);
+                if (trackManager == null) {
+                    log.warn("can not be found tag:[" + tag + "],track manager");
+                    continue;
+                }
+                invokeTryFinally=new EasyQueryTrackInvoker(invokeTryFinally,trackManager);
+            }
+            return invokeTryFinally;
+
+        } else {
+            TrackManager trackManager = trackManagerMap.get(tag);
+            if (trackManager == null) {
+                log.warn("can not be found tag:[" + tag + "],track manager");
+                return EmptyInvokeTryFinally.EMPTY;
+            }
+            return new EasyQueryTrackInvoker(invokeTryFinally,trackManager);
+        }
+
     }
 }
