@@ -55,6 +55,7 @@ public class DbManager {
     private static final Log log= LogFactory.getLog(DbManager.class);
     private static DbManager _global = new DbManager();
     public static String DEFAULT_BEAN_NAME = "db1";
+    public InvokeTryFinally allInvokeTryFinally=null;
 
     public static DbManager global() {
         return _global;
@@ -76,7 +77,6 @@ public class DbManager {
 //                    if(Utils.isBlank(DEFAULT_BEAN_NAME)){
 //                        DEFAULT_BEAN_NAME=bw.name();
 //                    }
-
                 }
             }
 
@@ -175,20 +175,29 @@ public class DbManager {
         get(bw);
     }
 
+    private synchronized InvokeTryFinally getAllInvokeTryFinally(){
+
+        if(allInvokeTryFinally!=null){
+            return allInvokeTryFinally;
+        }
+        InvokeTryFinally invokeTryFinally= EmptyInvokeTryFinally.EMPTY;
+        Collection<EasyQueryHolder> values = dbMap.values();
+        for (EasyQueryHolder holder : values) {
+            TrackManager trackManager = holder.getEasyQueryClient().getRuntimeContext().getTrackManager();
+            invokeTryFinally=new EasyQueryTrackInvoker(invokeTryFinally,trackManager);
+        }
+        allInvokeTryFinally=invokeTryFinally;
+        return allInvokeTryFinally;
+    }
 
     public InvokeTryFinally getTrackInvokeTryFinally(String tag) {
         InvokeTryFinally invokeTryFinally= EmptyInvokeTryFinally.EMPTY;
-
-        if(dbMap==null||dbMap.isEmpty()){
-            return invokeTryFinally;
-        }
         if (EasyStringUtil.isBlank(tag)) {
-            Collection<EasyQueryHolder> values = dbMap.values();
-            for (EasyQueryHolder holder : values) {
-                TrackManager trackManager = holder.getEasyQueryClient().getRuntimeContext().getTrackManager();
-                invokeTryFinally=new EasyQueryTrackInvoker(invokeTryFinally,trackManager);
+            //如果全部的已经设置了
+            if(allInvokeTryFinally!=null){
+                return allInvokeTryFinally;
             }
-            return invokeTryFinally;
+            return getAllInvokeTryFinally();
         }
         if (tag.contains(",")) {
             String[] names = tag.split(",");

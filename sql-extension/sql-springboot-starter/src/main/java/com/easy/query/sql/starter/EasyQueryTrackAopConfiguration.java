@@ -23,8 +23,10 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author xuejiaming
@@ -41,35 +43,33 @@ import java.util.Map;
 public class EasyQueryTrackAopConfiguration {
     private static final Log log = LogFactory.getLog(EasyQueryTrackAopConfiguration.class);
     private final Map<String, TrackManager> trackManagerMap = new HashMap<>();
-    private final List<TrackManager> allTrackManagers = new ArrayList<>();
+    private final InvokeTryFinally allInvokeTryFinally;
 
     public EasyQueryTrackAopConfiguration(ApplicationContext applicationContext) {
         Map<String, EasyQueryClient> easyQueryClientMap = applicationContext.getBeansOfType(EasyQueryClient.class);
         Map<String, EasyQuery> easyQueryMap = applicationContext.getBeansOfType(EasyQuery.class);
         Map<String, EasyProxyQuery> easyProxyQueryMap = applicationContext.getBeansOfType(EasyProxyQuery.class);
-        HashSet<TrackManager> distinct = new HashSet<>();
+        Set<TrackManager> distinct = new LinkedHashSet<>();
         for (Map.Entry<String, EasyQueryClient> easyQueryClientEntry : easyQueryClientMap.entrySet()) {
             TrackManager trackManager = easyQueryClientEntry.getValue().getRuntimeContext().getTrackManager();
-            if (distinct.add(trackManager)) {
-                allTrackManagers.add(trackManager);
-            }
+            distinct.add(trackManager);
             trackManagerMap.put(easyQueryClientEntry.getKey(), trackManager);
         }
         for (Map.Entry<String, EasyQuery> easyQueryEntry : easyQueryMap.entrySet()) {
             TrackManager trackManager = easyQueryEntry.getValue().getRuntimeContext().getTrackManager();
-            if (distinct.add(trackManager)) {
-                allTrackManagers.add(trackManager);
-            }
+            distinct.add(trackManager);
             trackManagerMap.put(easyQueryEntry.getKey(), trackManager);
         }
         for (Map.Entry<String, EasyProxyQuery> easyProxyQueryEntry : easyProxyQueryMap.entrySet()) {
             TrackManager trackManager = easyProxyQueryEntry.getValue().getRuntimeContext().getTrackManager();
-            if (distinct.add(trackManager)) {
-                allTrackManagers.add(trackManager);
-            }
+            distinct.add(trackManager);
             trackManagerMap.put(easyProxyQueryEntry.getKey(), trackManager);
         }
-        System.out.println(1);
+        InvokeTryFinally invokeTryFinally= EmptyInvokeTryFinally.EMPTY;
+        for (TrackManager trackManager : distinct) {
+            invokeTryFinally=new EasyQueryTrackInvoker(invokeTryFinally,trackManager);
+        }
+        this.allInvokeTryFinally=invokeTryFinally;
     }
 
     @Around("execution(public * *(..)) && @annotation(com.easy.query.core.annotation.EasyQueryTrack)")
@@ -93,10 +93,7 @@ public class EasyQueryTrackAopConfiguration {
     private InvokeTryFinally getTrackInvokeTryFinally(String tag) {
         InvokeTryFinally invokeTryFinally= EmptyInvokeTryFinally.EMPTY;
         if (EasyStringUtil.isBlank(tag)) {
-            for (TrackManager trackManager : allTrackManagers) {
-                invokeTryFinally=new EasyQueryTrackInvoker(invokeTryFinally,trackManager);
-            }
-            return invokeTryFinally;
+            return allInvokeTryFinally;
         }
         if (tag.contains(",")) {
             String[] names = tag.split(",");
