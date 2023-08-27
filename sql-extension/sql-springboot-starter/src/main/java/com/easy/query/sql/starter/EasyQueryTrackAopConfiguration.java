@@ -11,20 +11,19 @@ import com.easy.query.core.common.EmptyInvokeTryFinally;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.util.EasyStringUtil;
+import com.easy.query.sql.starter.config.EasyQueryTrackProperties;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -36,8 +35,9 @@ import java.util.Set;
  */
 @Aspect
 @Configuration
+@EnableConfigurationProperties(EasyQueryTrackProperties.class)
 @ConditionalOnProperty(
-        name = {"easy-query.enable", "easy-query.track-aop"},
+        name = "easy-query-track.enable",
         matchIfMissing = true, havingValue = "true"
 )
 public class EasyQueryTrackAopConfiguration {

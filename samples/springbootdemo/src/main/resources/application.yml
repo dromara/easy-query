@@ -30,3 +30,7 @@ easy-query:
   database: mysql
   name-conversion: underlined
   start-time-job: true
+
+easy-query-track:
+  # 默认就是true
+  enable: true
