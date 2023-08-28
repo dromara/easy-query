@@ -11,10 +11,10 @@ import com.easy.query.core.basic.api.select.JdbcResultWrap;
 import com.easy.query.core.basic.api.select.provider.SQLExpressionProvider;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
-import com.easy.query.core.basic.jdbc.executor.ResultColumnMetadata;
 import com.easy.query.core.basic.jdbc.executor.impl.def.EntityResultMetadata;
 import com.easy.query.core.basic.jdbc.executor.internal.enumerable.JdbcResult;
 import com.easy.query.core.basic.jdbc.executor.internal.enumerable.JdbcStreamResult;
+import com.easy.query.core.basic.jdbc.executor.internal.reader.DataReader;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.basic.pagination.EasyPageResultProvider;
 import com.easy.query.core.context.QueryRuntimeContext;
@@ -30,8 +30,8 @@ import com.easy.query.core.exception.EasyQueryFirstOrNotNullException;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
 import com.easy.query.core.exception.EasyQueryWhereInvalidOperationException;
-import com.easy.query.core.expression.builder.core.ConditionAllAccepter;
 import com.easy.query.core.expression.builder.core.ConditionAccepter;
+import com.easy.query.core.expression.builder.core.ConditionAllAccepter;
 import com.easy.query.core.expression.builder.impl.FilterImpl;
 import com.easy.query.core.expression.builder.impl.OrderSelectorImpl;
 import com.easy.query.core.expression.func.ColumnFunction;
@@ -368,8 +368,8 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         EntityExpressionExecutor entityExpressionExecutor = this.entityQueryExpressionBuilder.getRuntimeContext().getEntityExpressionExecutor();
         EntityMetadata entityMetadata = this.entityQueryExpressionBuilder.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(resultClass);
         ExecutorContext executorContext = ExecutorContext.create(this.entityQueryExpressionBuilder.getRuntimeContext(), true, executeMethod, tracking);
-        ResultColumnMetadata[] resultColumnMetadata = autoAllColumn&&expressionContext.getBehavior().hasBehavior(EasyBehaviorEnum.QUERY_LARGE_COLUMN) ? entityMetadata.getResultColumnMetadata() : null;
-        JdbcResult<TR> jdbcResult = entityExpressionExecutor.queryStreamResultSet(executorContext, new EntityResultMetadata<>(entityMetadata,resultColumnMetadata), entityQueryExpressionBuilder);
+        DataReader dataReader = autoAllColumn&&expressionContext.getBehavior().hasBehavior(EasyBehaviorEnum.QUERY_LARGE_COLUMN) ? entityMetadata.getDataReader() : null;
+        JdbcResult<TR> jdbcResult = entityExpressionExecutor.queryStreamResultSet(executorContext, new EntityResultMetadata<>(entityMetadata,dataReader), entityQueryExpressionBuilder);
         return new JdbcResultWrap<>(executeMethod,expressionContext,entityMetadata,jdbcResult);
     }
 

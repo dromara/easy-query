@@ -1,4 +1,4 @@
-package com.easy.query.core.basic.jdbc.executor;
+package com.easy.query.core.basic.jdbc.executor.internal.props;
 
 /**
  * create time 2023/8/12 13:58
@@ -6,7 +6,7 @@ package com.easy.query.core.basic.jdbc.executor;
  *
  * @author xuejiaming
  */
-public interface DataReader {
+public interface JdbcProperty {
 //    int getIndex();
     int getJdbcIndex();
     Class<?> getPropertyType();

@@ -1,4 +1,4 @@
-package com.easy.query.core.basic.jdbc.executor;
+package com.easy.query.core.basic.jdbc.executor.internal.props;
 
 /**
  * create time 2023/8/12 14:26
@@ -6,11 +6,11 @@ package com.easy.query.core.basic.jdbc.executor;
  *
  * @author xuejiaming
  */
-public class BasicDataReader implements DataReader{
+public class BasicJdbcProperty implements JdbcProperty {
     private final int jdbcIndex;
     private final Class<?> propertyType;
 
-    public BasicDataReader(int index, Class<?> propertyType){
+    public BasicJdbcProperty(int index, Class<?> propertyType){
 
         this.jdbcIndex = index+1;
         this.propertyType = propertyType;

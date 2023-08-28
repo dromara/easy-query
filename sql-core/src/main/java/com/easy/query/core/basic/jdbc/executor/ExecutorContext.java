@@ -55,62 +55,7 @@ public class ExecutorContext {
         return tracking;
     }
 
-    /**
-     * 如果当前value存在加密字段那么会自动解密
-     * 数据库转属性
-     *
-     * @param resultColumnMetadata
-     * @param value
-     * @return
-     */
-    public Object fromValue(Class<?> entityClass, ResultColumnMetadata resultColumnMetadata, Object value) {
-        Object fromValue = fromValue0(entityClass, resultColumnMetadata, value);
-        Class<?> propertyType = resultColumnMetadata.getDataReader().getPropertyType();
-        return resultColumnMetadata.getValueConverter().deserialize(EasyObjectUtil.typeCast(propertyType), EasyObjectUtil.typeCast(fromValue));
-    }
 
-    private Object fromValue0(Class<?> entityClass, ResultColumnMetadata resultColumnMetadata, Object value) {
-        if (resultColumnMetadata.isEncryption()) {
-            EncryptionStrategy easyEncryptionStrategy = resultColumnMetadata.getEncryptionStrategy();
-            return easyEncryptionStrategy.decrypt(entityClass, resultColumnMetadata.getPropertyName(), value);
-        }
-        return value;
-    }
-
-    public Object toValue(SQLParameter sqlParameter, Object value) {
-        if (sqlParameter.getTableOrNull() != null) {
-            EntityMetadata entityMetadata = sqlParameter.getTableOrNull().getEntityMetadata();
-            String propertyName = sqlParameter.getPropertyNameOrNull();
-            if (propertyName != null) {
-                ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(propertyName);
-                ValueConverter<?, ?> valueConverter = columnMetadata.getValueConverter();
-                if (value != null) {
-                    Object toValue = toValue(columnMetadata, sqlParameter, value, entityMetadata.getEntityClass(), propertyName);
-                    return valueConverter.serialize(EasyObjectUtil.typeCast(toValue));
-                }
-                return valueConverter.serialize(null);
-            }
-        }
-        return value;
-    }
-
-    private Object toValue(ColumnMetadata columnMetadata, SQLParameter sqlParameter, Object value, Class<?> entityClass, String propertyName) {
-
-        if (columnMetadata.isEncryption()) {
-            if (sqlParameter instanceof SQLLikeParameter) {
-                if (columnMetadata.isSupportQueryLike()) {
-                    EncryptionStrategy easyEncryptionStrategy = columnMetadata.getEncryptionStrategy();
-                    String likeValue = value.toString();
-                    String encryptValue = EasyStringUtil.endWithRemove(EasyStringUtil.startWithRemove(likeValue, "%"), "%");
-                    return EasyStringUtil.startWithDefault(likeValue, "%", EasyStringUtil.EMPTY) + easyEncryptionStrategy.encrypt(entityClass, propertyName, encryptValue) + EasyStringUtil.endWithDefault(likeValue, "%", EasyStringUtil.EMPTY);
-                }
-            } else {
-                EncryptionStrategy easyEncryptionStrategy = columnMetadata.getEncryptionStrategy();
-                return easyEncryptionStrategy.encrypt(entityClass, propertyName, value);
-            }
-        }
-        return value;
-    }
 
     public boolean isQuery() {
         return isQuery;

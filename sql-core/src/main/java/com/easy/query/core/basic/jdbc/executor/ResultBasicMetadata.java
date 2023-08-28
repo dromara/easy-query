@@ -1,5 +1,6 @@
 package com.easy.query.core.basic.jdbc.executor;
 
+import com.easy.query.core.basic.jdbc.executor.internal.props.JdbcProperty;
 import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
 
 /**
@@ -10,10 +11,10 @@ import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
  */
 public class ResultBasicMetadata {
     private final String columnName;
-    private final DataReader dataReader;
+    private final JdbcProperty dataReader;
     private final JdbcTypeHandler jdbcTypeHandler;
 
-    public  ResultBasicMetadata(String columnName,DataReader dataReader, JdbcTypeHandler jdbcTypeHandler){
+    public  ResultBasicMetadata(String columnName, JdbcProperty dataReader, JdbcTypeHandler jdbcTypeHandler){
         this.columnName = columnName;
 
         this.dataReader = dataReader;
@@ -24,7 +25,7 @@ public class ResultBasicMetadata {
         return columnName;
     }
 
-    public DataReader getDataReader() {
+    public JdbcProperty getDataReader() {
         return dataReader;
     }
 

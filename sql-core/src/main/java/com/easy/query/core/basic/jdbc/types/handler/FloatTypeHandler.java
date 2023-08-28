@@ -1,6 +1,6 @@
 package com.easy.query.core.basic.jdbc.types.handler;
 
-import com.easy.query.core.basic.jdbc.executor.DataReader;
+import com.easy.query.core.basic.jdbc.executor.internal.props.JdbcProperty;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.result.StreamResultSet;
 import com.easy.query.core.basic.jdbc.types.EasyParameter;
 
@@ -15,7 +15,7 @@ import java.sql.SQLException;
 public class FloatTypeHandler implements JdbcTypeHandler {
     private static final float DEFAULT=0f;
     @Override
-    public Object getValue(DataReader dataReader, StreamResultSet streamResultSet) throws SQLException {
+    public Object getValue(JdbcProperty dataReader, StreamResultSet streamResultSet) throws SQLException {
 
         float r = streamResultSet.getFloat(dataReader.getJdbcIndex());
         if(r!=DEFAULT){

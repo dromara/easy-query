@@ -21,6 +21,7 @@ public class FastBeanStreamIterator<T> extends DefaultBeanStreamIterator<T> {
 
     @Override
     protected void init0() throws SQLException {
+        this.dataReader = resultMetadata.getDataReader();
         this.trackBean = EasyTrackUtil.trackBean(context, resultMetadata.getResultClass());
         this.trackManager = trackBean ? context.getRuntimeContext().getTrackManager() : null;
     }

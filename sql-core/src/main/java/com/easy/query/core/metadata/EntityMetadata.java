@@ -30,8 +30,11 @@ import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategyEnum;
 import com.easy.query.core.basic.extension.track.update.DefaultValueUpdateAtomicTrack;
 import com.easy.query.core.basic.extension.track.update.ValueUpdateAtomicTrack;
 import com.easy.query.core.basic.extension.version.VersionStrategy;
-import com.easy.query.core.basic.jdbc.executor.ResultColumnMetadata;
 import com.easy.query.core.basic.jdbc.executor.impl.def.EntityResultColumnMetadata;
+import com.easy.query.core.basic.jdbc.executor.internal.reader.BeanDataReader;
+import com.easy.query.core.basic.jdbc.executor.internal.reader.DataReader;
+import com.easy.query.core.basic.jdbc.executor.internal.reader.EmptyDataReader;
+import com.easy.query.core.basic.jdbc.executor.internal.reader.PropertyDataReader;
 import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
 import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
 import com.easy.query.core.common.bean.FastBean;
@@ -124,7 +127,7 @@ public class EntityMetadata {
     private EntityMetadataTypeEnum entityMetadataType = EntityMetadataTypeEnum.BEAN;
     private Supplier<Object> beanConstructorCreator;
 
-    private  ResultColumnMetadata[] resultColumnMetadata;
+    private DataReader dataReader;
 
     public EntityMetadata(Class<?> entityClass) {
         this.entityClass = entityClass;
@@ -160,7 +163,7 @@ public class EntityMetadata {
         FastBean fastBean = EasyBeanUtil.getFastBean(entityClass);
         this.beanConstructorCreator = fastBean.getBeanConstructorCreator();
         boolean tableEntity = EasyStringUtil.isNotBlank(tableName);
-        ArrayList<ResultColumnMetadata> resultColumnMetadataList = tableEntity? new ArrayList<>(allFields.size()):null;
+        this.dataReader = tableEntity? EmptyDataReader.EMPTY :null;
         int columnIndex=0;
         for (Field field : allFields) {
             String property = EasyStringUtil.toLowerCaseFirstOne(field.getName());
@@ -366,12 +369,9 @@ public class EntityMetadata {
             property2ColumnMap.put(property, columnMetadata);
             column2PropertyMap.put(columnName, columnMetadata);
             if(tableEntity){
-                resultColumnMetadataList.add(new EntityResultColumnMetadata(columnIndex,columnMetadata));
+                dataReader=new BeanDataReader(dataReader,new PropertyDataReader(new EntityResultColumnMetadata(columnIndex,columnMetadata)));
             }
             columnIndex++;
-        }
-        if(tableEntity){
-            this.resultColumnMetadata=resultColumnMetadataList.toArray(new ResultColumnMetadata[0]);
         }
 
         if (versionCount > 1) {
@@ -732,7 +732,7 @@ public class EntityMetadata {
         return EasyCollectionUtil.first(keyProperties);
     }
 
-    public ResultColumnMetadata[] getResultColumnMetadata() {
-        return resultColumnMetadata;
+    public DataReader getDataReader() {
+        return dataReader;
     }
 }

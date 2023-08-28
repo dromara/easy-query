@@ -44,7 +44,7 @@ public class DefaultStreamIterable<T> implements StreamIterable<T> {
             case BASIC_TYPE:
                 return new BasicStreamIterator<>(context, streamResultSet, resultMetadata);
             default:{
-                if(resultMetadata.getResultColumnCount()>0){
+                if(resultMetadata.getDataReader()!=null){
                     return new FastBeanStreamIterator<>(context, streamResultSet, resultMetadata);
                 }
                 return new DefaultBeanStreamIterator<>(context, streamResultSet, resultMetadata);

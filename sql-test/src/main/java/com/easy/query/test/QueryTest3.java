@@ -9,6 +9,10 @@ import com.easy.query.api4j.select.Queryable;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.jdbc.executor.ResultColumnMetadata;
 import com.easy.query.core.basic.jdbc.executor.internal.enumerable.JdbcStreamResult;
+import com.easy.query.core.basic.jdbc.executor.internal.reader.BeanDataReader;
+import com.easy.query.core.basic.jdbc.executor.internal.reader.DataReader;
+import com.easy.query.core.basic.jdbc.executor.internal.reader.EmptyDataReader;
+import com.easy.query.core.basic.jdbc.executor.internal.reader.PropertyDataReader;
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.expression.builder.core.ConditionAllAccepter;
@@ -37,6 +41,7 @@ import com.easy.query.test.entity.solon.EqUser;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
@@ -1493,11 +1498,29 @@ public class QueryTest3 extends BaseTest {
         Assert.assertEquals(10,pageResult.getData().size());
     }
     @Test
-    public void extendsUserTest(){
+    public void extendsUserTest() throws NoSuchFieldException, IllegalAccessException {
         EntityMetadataManager entityMetadataManager = easyQuery.getRuntimeContext().getEntityMetadataManager();
         EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(EqUser.class);
-        ResultColumnMetadata[] resultColumnMetadata = entityMetadata.getResultColumnMetadata();
-        Assert.assertEquals(20,resultColumnMetadata.length);
+        DataReader dataReader = entityMetadata.getDataReader();
+        Assert.assertNotNull(dataReader);
+        Class<? extends DataReader> aClass = dataReader.getClass();
+        for (int i = 0; i < 20; i++) {
+            Field previousDataReader = aClass.getDeclaredField("previousDataReader");
+            Field nextDataReader = aClass.getDeclaredField("nextDataReader");
+            previousDataReader.setAccessible(true);
+            nextDataReader.setAccessible(true);
+            Object previous = previousDataReader.get(dataReader);
+            Object next = nextDataReader.get(dataReader);
+            dataReader=(DataReader)previous;
+            if(i<19){
+                Assert.assertTrue(previous instanceof BeanDataReader);
+                Assert.assertTrue(next instanceof PropertyDataReader);
+                aClass=dataReader.getClass();
+            }else{
+                Assert.assertTrue(previous instanceof EmptyDataReader);
+            }
+
+        }
         Collection<String> keyProperties = entityMetadata.getKeyProperties();
         Assert.assertEquals(1,keyProperties.size());
         String first = EasyCollectionUtil.first(keyProperties);

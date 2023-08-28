@@ -2,8 +2,8 @@ package com.easy.query.core.basic.jdbc.executor.impl.def;
 
 import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.basic.extension.encryption.EncryptionStrategy;
-import com.easy.query.core.basic.jdbc.executor.ColumnDataReader;
-import com.easy.query.core.basic.jdbc.executor.DataReader;
+import com.easy.query.core.basic.jdbc.executor.internal.props.ColumnJdbcProperty;
+import com.easy.query.core.basic.jdbc.executor.internal.props.JdbcProperty;
 import com.easy.query.core.basic.jdbc.executor.ResultColumnMetadata;
 import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
 import com.easy.query.core.metadata.ColumnMetadata;
@@ -16,16 +16,21 @@ import com.easy.query.core.metadata.ColumnMetadata;
  */
 public class EntityResultColumnMetadata implements ResultColumnMetadata {
     private final ColumnMetadata columnMetadata;
-    private final DataReader dataReader;
+    private final JdbcProperty dataReader;
 
     public EntityResultColumnMetadata(int index,ColumnMetadata columnMetadata){
 
         this.columnMetadata = columnMetadata;
-        this.dataReader=new ColumnDataReader(index,columnMetadata);
+        this.dataReader=new ColumnJdbcProperty(index,columnMetadata);
     }
 
     @Override
-    public DataReader getDataReader() {
+    public Class<?> getEntityClass() {
+        return columnMetadata.getEntityMetadata().getEntityClass();
+    }
+
+    @Override
+    public JdbcProperty getDataReader() {
         return dataReader;
     }
 

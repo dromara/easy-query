@@ -1,14 +1,18 @@
 package com.easy.query.core.util;
 
+import com.easy.query.core.basic.extension.conversion.ValueConverter;
+import com.easy.query.core.basic.extension.encryption.EncryptionStrategy;
 import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.basic.jdbc.conn.EasyConnection;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
+import com.easy.query.core.basic.jdbc.executor.ResultColumnMetadata;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.result.StreamResultSet;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.result.impl.EasyShardingStreamResultSet;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.result.impl.EasyStreamResultSet;
 import com.easy.query.core.basic.jdbc.parameter.BeanSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.ConstSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
+import com.easy.query.core.basic.jdbc.parameter.SQLLikeParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.types.EasyParameter;
 import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
@@ -125,18 +129,18 @@ public class EasyJdbcExecutorUtil {
         }
     }
 
-    public static <T> List<SQLParameter> extractParameters(ExecutorContext executorContext, T entity, List<SQLParameter> sqlParameters,boolean printSql,EasyConnection easyConnection,boolean shardingPrint,boolean replicaPrint) {
+    public static <T> List<SQLParameter> extractParameters(T entity, List<SQLParameter> sqlParameters,boolean printSql,EasyConnection easyConnection,boolean shardingPrint,boolean replicaPrint) {
         if (EasyCollectionUtil.isNotEmpty(sqlParameters)) {
 
             List<SQLParameter> params = new ArrayList<>(sqlParameters.size());
             for (SQLParameter sqlParameter : sqlParameters) {
                 if (sqlParameter instanceof ConstSQLParameter) {
-                    Object value = executorContext.toValue(sqlParameter, sqlParameter.getValue());
+                    Object value = toValue(sqlParameter, sqlParameter.getValue());
                     params.add(new EasyConstSQLParameter(sqlParameter.getTableOrNull(), sqlParameter.getPropertyNameOrNull(), value));
                 } else if (sqlParameter instanceof BeanSQLParameter) {
                     BeanSQLParameter beanSQLParameter = (BeanSQLParameter) sqlParameter;
                     beanSQLParameter.setBean(entity);
-                    Object value = executorContext.toValue(beanSQLParameter, beanSQLParameter.getValue());
+                    Object value = toValue(beanSQLParameter, beanSQLParameter.getValue());
                     params.add(new EasyConstSQLParameter(beanSQLParameter.getTableOrNull(), beanSQLParameter.getPropertyNameOrNull(), value));
                 } else {
                     throw new EasyQueryException("current sql parameter:[" + EasyClassUtil.getSimpleName(sqlParameter.getClass()) + "],property name:[" + sqlParameter.getPropertyNameOrNull() + "] is not implements BeanSQLParameter or ConstSQLParameter");
@@ -163,7 +167,7 @@ public class EasyJdbcExecutorUtil {
 
         PreparedStatement ps = null;
         ResultSet rs = null;
-        List<SQLParameter> parameters = extractParameters(executorContext, null, sqlParameters,printSql,easyConnection,shardingPrint,replicaPrint);
+        List<SQLParameter> parameters = extractParameters(null, sqlParameters,printSql,easyConnection,shardingPrint,replicaPrint);
         StreamResultSet sr = null;
         try {
             ps = createPreparedStatement(easyConnection.getConnection(), sql, parameters, easyJdbcTypeHandler);
@@ -203,7 +207,7 @@ public class EasyJdbcExecutorUtil {
             int batchSize = 0;
             for (T entity : entities) {
                 batchSize++;
-                List<SQLParameter> parameters = extractParameters(executorContext, entity, sqlParameters,printSql,easyConnection,shardingPrint,replicaPrint);
+                List<SQLParameter> parameters = extractParameters(entity, sqlParameters,printSql,easyConnection,shardingPrint,replicaPrint);
 
                 if (ps == null) {
                     ps = createPreparedStatement(easyConnection.getConnection(), sql, parameters, easyJdbcTypeHandler, generatedKeyColumns);
@@ -282,7 +286,7 @@ public class EasyJdbcExecutorUtil {
             int batchSize = 0;
             for (T entity : entities) {
                 batchSize++;
-                List<SQLParameter> parameters = extractParameters(executorContext, entity, sqlParameters,printSql,easyConnection,shardingPrint,replicaPrint);
+                List<SQLParameter> parameters = extractParameters(entity, sqlParameters,printSql,easyConnection,shardingPrint,replicaPrint);
 
                 if (ps == null) {
                     ps = createPreparedStatement(easyConnection.getConnection(), sql, parameters, easyJdbcTypeHandlerManager);
@@ -335,7 +339,7 @@ public class EasyJdbcExecutorUtil {
         PreparedStatement ps = null;
         int r = 0;
 
-        List<SQLParameter> parameters = extractParameters(executorContext, null, sqlParameters,printSql,easyConnection,shardingPrint,replicaPrint);
+        List<SQLParameter> parameters = extractParameters(null, sqlParameters,printSql,easyConnection,shardingPrint,replicaPrint);
 
         try {
             ps = createPreparedStatement(easyConnection.getConnection(), sql, parameters, easyJdbcTypeHandlerManager);
@@ -375,4 +379,62 @@ public class EasyJdbcExecutorUtil {
     }
 
 
+
+
+    /**
+     * 如果当前value存在加密字段那么会自动解密
+     * 数据库转属性
+     *
+     * @param resultColumnMetadata
+     * @param value
+     * @return
+     */
+    public static Object fromValue(Class<?> entityClass, ResultColumnMetadata resultColumnMetadata, Object value) {
+        Object fromValue = fromValue0(entityClass, resultColumnMetadata, value);
+        Class<?> propertyType = resultColumnMetadata.getDataReader().getPropertyType();
+        return resultColumnMetadata.getValueConverter().deserialize(EasyObjectUtil.typeCast(propertyType), EasyObjectUtil.typeCast(fromValue));
+    }
+
+    private static Object fromValue0(Class<?> entityClass, ResultColumnMetadata resultColumnMetadata, Object value) {
+        if (resultColumnMetadata.isEncryption()) {
+            EncryptionStrategy easyEncryptionStrategy = resultColumnMetadata.getEncryptionStrategy();
+            return easyEncryptionStrategy.decrypt(entityClass, resultColumnMetadata.getPropertyName(), value);
+        }
+        return value;
+    }
+
+    public static Object toValue(SQLParameter sqlParameter, Object value) {
+        if (sqlParameter.getTableOrNull() != null) {
+            EntityMetadata entityMetadata = sqlParameter.getTableOrNull().getEntityMetadata();
+            String propertyName = sqlParameter.getPropertyNameOrNull();
+            if (propertyName != null) {
+                ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(propertyName);
+                ValueConverter<?, ?> valueConverter = columnMetadata.getValueConverter();
+                if (value != null) {
+                    Object toValue = toValue(columnMetadata, sqlParameter, value, entityMetadata.getEntityClass(), propertyName);
+                    return valueConverter.serialize(EasyObjectUtil.typeCast(toValue));
+                }
+                return valueConverter.serialize(null);
+            }
+        }
+        return value;
+    }
+
+    private static Object toValue(ColumnMetadata columnMetadata, SQLParameter sqlParameter, Object value, Class<?> entityClass, String propertyName) {
+
+        if (columnMetadata.isEncryption()) {
+            if (sqlParameter instanceof SQLLikeParameter) {
+                if (columnMetadata.isSupportQueryLike()) {
+                    EncryptionStrategy easyEncryptionStrategy = columnMetadata.getEncryptionStrategy();
+                    String likeValue = value.toString();
+                    String encryptValue = EasyStringUtil.endWithRemove(EasyStringUtil.startWithRemove(likeValue, "%"), "%");
+                    return EasyStringUtil.startWithDefault(likeValue, "%", EasyStringUtil.EMPTY) + easyEncryptionStrategy.encrypt(entityClass, propertyName, encryptValue) + EasyStringUtil.endWithDefault(likeValue, "%", EasyStringUtil.EMPTY);
+                }
+            } else {
+                EncryptionStrategy easyEncryptionStrategy = columnMetadata.getEncryptionStrategy();
+                return easyEncryptionStrategy.encrypt(entityClass, propertyName, value);
+            }
+        }
+        return value;
+    }
 }

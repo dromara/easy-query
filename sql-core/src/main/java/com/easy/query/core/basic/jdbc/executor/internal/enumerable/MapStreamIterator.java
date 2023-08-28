@@ -1,6 +1,6 @@
 package com.easy.query.core.basic.jdbc.executor.internal.enumerable;
 
-import com.easy.query.core.basic.jdbc.executor.BasicDataReader;
+import com.easy.query.core.basic.jdbc.executor.internal.props.BasicJdbcProperty;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.executor.ResultBasicMetadata;
 import com.easy.query.core.basic.jdbc.executor.ResultMetadata;
@@ -57,7 +57,7 @@ public class MapStreamIterator<T> extends AbstractStreamIterator<T> {
                 int columnType = rsmd.getColumnType(i + 1);
                 Class<?> propertyType = JdbcTypes.jdbcJavaTypes.get(columnType);
                 JdbcTypeHandler handler = easyJdbcTypeHandler.getHandler(propertyType);
-                BasicDataReader dataReader = new BasicDataReader(i, propertyType);
+                BasicJdbcProperty dataReader = new BasicJdbcProperty(i, propertyType);
                 resultBasicMetadatas[i]=new ResultBasicMetadata(colName,dataReader,handler);
             }
             ResultBasicMetadata resultBasicMetadata = resultBasicMetadatas[i];

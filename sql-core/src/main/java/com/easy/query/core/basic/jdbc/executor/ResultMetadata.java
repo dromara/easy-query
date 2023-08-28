@@ -1,5 +1,6 @@
 package com.easy.query.core.basic.jdbc.executor;
 
+import com.easy.query.core.basic.jdbc.executor.internal.reader.DataReader;
 import com.easy.query.core.enums.EntityMetadataTypeEnum;
 
 /**
@@ -10,6 +11,7 @@ import com.easy.query.core.enums.EntityMetadataTypeEnum;
  */
 public interface ResultMetadata<TR> {
     Class<TR> getResultClass();
+    DataReader getDataReader();
 
     EntityMetadataTypeEnum getEntityMetadataType();
 
@@ -18,10 +20,4 @@ public interface ResultMetadata<TR> {
     ResultColumnMetadata getResultColumnOrNullByColumnName(int index,String columnName);
 
     ResultColumnMetadata getResultColumnOrNullByPropertyName(int index,String propertyName);
-
-    void initResultColumnMetadata(ResultColumnMetadata[] resultColumnMetadata);
-    void initResultColumnCount(int resultColumnCount);
-    int getResultColumnCount();
-
-    ResultColumnMetadata getResultColumnMetadataByIndex(int columnIndexFromZero);
 }

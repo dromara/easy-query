@@ -1,6 +1,6 @@
 package com.easy.query.core.basic.jdbc.types.handler;
 
-import com.easy.query.core.basic.jdbc.executor.DataReader;
+import com.easy.query.core.basic.jdbc.executor.internal.props.JdbcProperty;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.result.StreamResultSet;
 import com.easy.query.core.basic.jdbc.types.EasyParameter;
 
@@ -15,7 +15,7 @@ import java.sql.SQLException;
 public class ByteTypeHandler implements JdbcTypeHandler {
     private static final byte DEFAULT=0;
     @Override
-    public Object getValue(DataReader dataReader, StreamResultSet streamResultSet) throws SQLException {
+    public Object getValue(JdbcProperty dataReader, StreamResultSet streamResultSet) throws SQLException {
 
         byte r = streamResultSet.getByte(dataReader.getJdbcIndex());
         if(streamResultSet.wasNull()){//判断当前读取的列是否可以为null，因为基本类型存在默认值而包装类型存在null值

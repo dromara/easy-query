@@ -1,7 +1,7 @@
 package com.easy.query.core.basic.jdbc.executor.internal.enumerable;
 
-import com.easy.query.core.basic.jdbc.executor.BasicDataReader;
-import com.easy.query.core.basic.jdbc.executor.DataReader;
+import com.easy.query.core.basic.jdbc.executor.internal.props.BasicJdbcProperty;
+import com.easy.query.core.basic.jdbc.executor.internal.props.JdbcProperty;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.executor.ResultMetadata;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.result.StreamResultSet;
@@ -20,7 +20,7 @@ import java.sql.SQLException;
  * @author xuejiaming
  */
 public class BasicStreamIterator<T> extends AbstractStreamIterator<T>{
-    private DataReader dataReader;
+    private JdbcProperty dataReader;
     private JdbcTypeHandler handler;
     public BasicStreamIterator(ExecutorContext context, StreamResultSet streamResult, ResultMetadata<T> resultMetadata) throws SQLException {
         super(context, streamResult, resultMetadata);
@@ -33,7 +33,7 @@ public class BasicStreamIterator<T> extends AbstractStreamIterator<T>{
         if (columnCount != 1) {
             throw new SQLException("result set column count:" + EasyClassUtil.getSimpleName(resultMetadata.getResultClass()) + ",expect one column");
         }
-        this.dataReader=new BasicDataReader(0,resultMetadata.getResultClass());
+        this.dataReader=new BasicJdbcProperty(0,resultMetadata.getResultClass());
         JdbcTypeHandlerManager easyJdbcTypeHandler = context.getRuntimeContext().getJdbcTypeHandlerManager();
         this.handler = easyJdbcTypeHandler.getHandler(resultMetadata.getResultClass());
     }

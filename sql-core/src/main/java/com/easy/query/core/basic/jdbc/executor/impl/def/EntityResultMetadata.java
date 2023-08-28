@@ -2,6 +2,7 @@ package com.easy.query.core.basic.jdbc.executor.impl.def;
 
 import com.easy.query.core.basic.jdbc.executor.ResultColumnMetadata;
 import com.easy.query.core.basic.jdbc.executor.ResultMetadata;
+import com.easy.query.core.basic.jdbc.executor.internal.reader.DataReader;
 import com.easy.query.core.enums.EntityMetadataTypeEnum;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
@@ -16,24 +17,25 @@ import com.easy.query.core.util.EasyObjectUtil;
 public class EntityResultMetadata<TR> implements ResultMetadata<TR> {
     protected final EntityMetadata entityMetadata;
 
-    protected ResultColumnMetadata[] resultColumnMetadata;
-    protected int resultColumnCount;
+    protected final DataReader dataReader;
 
     public EntityResultMetadata(EntityMetadata entityMetadata) {
         this(entityMetadata, null);
     }
 
-    public EntityResultMetadata(EntityMetadata entityMetadata, ResultColumnMetadata[] resultColumnMetadata) {
+    public EntityResultMetadata(EntityMetadata entityMetadata, DataReader dataReader) {
         this.entityMetadata = entityMetadata;
-        this.resultColumnMetadata = resultColumnMetadata;
-        if(this.resultColumnMetadata!=null){
-            this.resultColumnCount=this.resultColumnMetadata.length;
-        }
+        this.dataReader = dataReader;
     }
 
     @Override
     public Class<TR> getResultClass() {
         return EasyObjectUtil.typeCastNullable(entityMetadata.getEntityClass());
+    }
+
+    @Override
+    public DataReader getDataReader() {
+        return null;
     }
 
     @Override
@@ -62,25 +64,5 @@ public class EntityResultMetadata<TR> implements ResultMetadata<TR> {
             return new EntityResultColumnMetadata(index,columnMetadata);
         }
         return null;
-    }
-
-    @Override
-    public void initResultColumnMetadata(ResultColumnMetadata[] resultColumnMetadata) {
-        this.resultColumnMetadata = resultColumnMetadata;
-    }
-
-    @Override
-    public void initResultColumnCount(int resultColumnCount) {
-        this.resultColumnCount=resultColumnCount;
-    }
-
-    @Override
-    public int getResultColumnCount() {
-        return resultColumnCount;
-    }
-
-    @Override
-    public ResultColumnMetadata getResultColumnMetadataByIndex(int columnIndexFromZero) {
-        return resultColumnMetadata[columnIndexFromZero];
     }
 }

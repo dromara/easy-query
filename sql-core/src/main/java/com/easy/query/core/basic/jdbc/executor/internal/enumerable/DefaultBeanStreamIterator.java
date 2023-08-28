@@ -2,12 +2,14 @@ package com.easy.query.core.basic.jdbc.executor.internal.enumerable;
 
 import com.easy.query.core.basic.extension.track.EntityState;
 import com.easy.query.core.basic.extension.track.TrackManager;
-import com.easy.query.core.basic.jdbc.executor.DataReader;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.executor.ResultColumnMetadata;
 import com.easy.query.core.basic.jdbc.executor.ResultMetadata;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.result.StreamResultSet;
-import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
+import com.easy.query.core.basic.jdbc.executor.internal.reader.BeanDataReader;
+import com.easy.query.core.basic.jdbc.executor.internal.reader.DataReader;
+import com.easy.query.core.basic.jdbc.executor.internal.reader.EmptyDataReader;
+import com.easy.query.core.basic.jdbc.executor.internal.reader.PropertyDataReader;
 import com.easy.query.core.common.KeywordTool;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
@@ -27,6 +29,7 @@ public class DefaultBeanStreamIterator<T> extends AbstractStreamIterator<T> {
     private static final Log log = LogFactory.getLog(DefaultBeanStreamIterator.class);
     protected boolean trackBean;
     protected TrackManager trackManager;
+    protected DataReader dataReader;
 
     public DefaultBeanStreamIterator(ExecutorContext context, StreamResultSet streamResult, ResultMetadata<T> resultMetadata) throws SQLException {
         super(context, streamResult, resultMetadata);
@@ -35,7 +38,7 @@ public class DefaultBeanStreamIterator<T> extends AbstractStreamIterator<T> {
     @Override
     protected void init0() throws SQLException {
         ResultSetMetaData rsmd = streamResultSet.getMetaData();
-        columnsToColumnMetadatas(rsmd);
+        this.dataReader = getColumnDataReader(rsmd);
         this.trackBean = EasyTrackUtil.trackBean(context, resultMetadata.getResultClass());
         this.trackManager = trackBean ? context.getRuntimeContext().getTrackManager() : null;
     }
@@ -56,56 +59,54 @@ public class DefaultBeanStreamIterator<T> extends AbstractStreamIterator<T> {
 
     /**
      * 映射到bean
+     *
      * @return
      * @throws SQLException
      */
     private T mapToBean() throws SQLException {
         T bean = resultMetadata.newBean();
-        Class<?> entityClass = resultMetadata.getResultClass();
-        int resultColumnCount = resultMetadata.getResultColumnCount();
-
-        for (int i = 0; i < resultColumnCount; i++) {
-            ResultColumnMetadata resultColumnMetadata = resultMetadata.getResultColumnMetadataByIndex(i);
-            if (resultColumnMetadata == null) {
-                continue;
-            }
-            JdbcTypeHandler handler = resultColumnMetadata.getJdbcTypeHandler();
-            DataReader dataReader = resultColumnMetadata.getDataReader();
-            Object value = context.fromValue(entityClass, resultColumnMetadata, handler.getValue(dataReader,streamResultSet));
-
-            resultColumnMetadata.setValue(bean, value);
-        }
+        dataReader.readTo(bean, streamResultSet);
+//        for (int i = 0; i < resultColumnCount; i++) {
+//            ResultColumnMetadata resultColumnMetadata = resultMetadata.getResultColumnMetadataByIndex(i);
+//            if (resultColumnMetadata == null) {
+//                continue;
+//            }
+//            JdbcTypeHandler handler = resultColumnMetadata.getJdbcTypeHandler();
+//            JdbcProperty dataReader = resultColumnMetadata.getDataReader();
+//            Object value = context.fromValue(entityClass, resultColumnMetadata, handler.getValue(dataReader,streamResultSet));
+//
+//            resultColumnMetadata.setValue(bean, value);
+//        }
         return bean;
     }
 
-    private void columnsToColumnMetadatas(ResultSetMetaData rsmd) throws SQLException {
+    private DataReader getColumnDataReader(ResultSetMetaData rsmd) throws SQLException {
         boolean mapToBeanStrict = context.isMapToBeanStrict();
         //需要返回的结果集映射到bean实体上
         //int[] 索引代表数据库返回的索引，数组索引所在的值代表属性数组的对应属性
         int columnCount = rsmd.getColumnCount();//有多少列
-        ResultColumnMetadata[] columnMetadatas = new ResultColumnMetadata[columnCount];
+        DataReader dataReader = EmptyDataReader.EMPTY;
         for (int i = 0; i < columnCount; i++) {
             String colName = getColName(rsmd, i + 1);//数据库查询出来的列名
             if (KeywordTool.isIgnoreColumn(colName)) {
                 continue;
             }
-            ResultColumnMetadata column = getMapColumnMetadata(i,colName, mapToBeanStrict);
-            if (column == null) {
+            ResultColumnMetadata resultColumnMetadata = getMapColumnMetadata(i, colName, mapToBeanStrict);
+            if (resultColumnMetadata == null) {
                 continue;
             }
-            columnMetadatas[i] = column;
+            dataReader = new BeanDataReader(dataReader, new PropertyDataReader(resultColumnMetadata));
         }
-        resultMetadata.initResultColumnCount(columnCount);
-        resultMetadata.initResultColumnMetadata(columnMetadatas);
+        return dataReader;
     }
 
 
-    private ResultColumnMetadata getMapColumnMetadata(int index,String columnName, boolean mapToBeanStrict) {
-        ResultColumnMetadata resultColumnMetadata = resultMetadata.getResultColumnOrNullByColumnName(index,columnName);
+    private ResultColumnMetadata getMapColumnMetadata(int index, String columnName, boolean mapToBeanStrict) {
+        ResultColumnMetadata resultColumnMetadata = resultMetadata.getResultColumnOrNullByColumnName(index, columnName);
         if (resultColumnMetadata != null) {
             return resultColumnMetadata;
         } else if (!mapToBeanStrict) {
-            return resultMetadata.getResultColumnOrNullByPropertyName(index,columnName);
+            return resultMetadata.getResultColumnOrNullByPropertyName(index, columnName);
         }
         return null;
     }

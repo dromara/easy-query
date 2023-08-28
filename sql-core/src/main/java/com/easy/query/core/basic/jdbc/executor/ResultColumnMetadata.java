@@ -2,6 +2,7 @@ package com.easy.query.core.basic.jdbc.executor;
 
 import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.basic.extension.encryption.EncryptionStrategy;
+import com.easy.query.core.basic.jdbc.executor.internal.props.JdbcProperty;
 import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
 
 /**
@@ -11,7 +12,8 @@ import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
  * @author xuejiaming
  */
 public interface ResultColumnMetadata {
-    DataReader getDataReader();
+    Class<?> getEntityClass();
+    JdbcProperty getDataReader();
     String getPropertyName();
     JdbcTypeHandler getJdbcTypeHandler();
     boolean isEncryption();

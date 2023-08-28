@@ -1,4 +1,4 @@
-package com.easy.query.core.basic.jdbc.executor;
+package com.easy.query.core.basic.jdbc.executor.internal.props;
 
 import com.easy.query.core.metadata.ColumnMetadata;
 
@@ -8,11 +8,11 @@ import com.easy.query.core.metadata.ColumnMetadata;
  *
  * @author xuejiaming
  */
-public class ColumnDataReader implements DataReader{
+public class ColumnJdbcProperty implements JdbcProperty {
     private final int jdbcIndex;
     private final ColumnMetadata columnMetadata;
 
-    public ColumnDataReader(int index, ColumnMetadata columnMetadata){
+    public ColumnJdbcProperty(int index, ColumnMetadata columnMetadata){
 
         this.jdbcIndex = index+1;
         this.columnMetadata = columnMetadata;
