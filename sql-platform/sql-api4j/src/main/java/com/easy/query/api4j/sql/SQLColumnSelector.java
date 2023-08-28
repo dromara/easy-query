@@ -1,15 +1,15 @@
 package com.easy.query.api4j.sql;
 
 import com.easy.query.api4j.sql.core.SQLLambdaNative;
-import com.easy.query.api4j.sql.scec.SQLNativeLambdaExpressionContext;
-import com.easy.query.api4j.sql.scec.SQLNativeLambdaExpressionContextImpl;
 import com.easy.query.api4j.util.EasyLambdaUtil;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.Property;
-import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnSelector;
+import com.easy.query.core.util.EasyCollectionUtil;
+
+import java.util.Collection;
 
 /**
  * @author xuejiaming
@@ -21,6 +21,15 @@ public interface SQLColumnSelector<T1> extends EntitySQLTableOwner<T1>, SQLLambd
 
     default TableAvailable getTable() {
         return getColumnSelector().getTable();
+    }
+
+    default SQLColumnSelector<T1> columns(Collection<Property<T1, ?>> columns) {
+        if(EasyCollectionUtil.isNotEmpty(columns)){
+            for (Property<T1, ?> column : columns) {
+                this.column(column);
+            }
+        }
+        return this;
     }
 
     default SQLColumnSelector<T1> column(Property<T1, ?> column) {

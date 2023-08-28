@@ -1,6 +1,7 @@
 package com.easy.query.api4j.sql.impl;
 
 import com.easy.query.api4j.sql.SQLColumnAsSelector;
+import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
 import com.easy.query.core.expression.parser.core.base.core.SQLPropertyNative;
 import com.easy.query.core.util.EasyObjectUtil;
@@ -22,6 +23,7 @@ public class SQLColumnAsSelectorImpl<T1, TR> implements SQLColumnAsSelector<T1, 
     public ColumnAsSelector<T1, TR> getColumnAsSelector() {
         return columnAsSelector;
     }
+
 
     @Override
     public <T> SQLPropertyNative<T> getSQLPropertyNative() {

@@ -1417,5 +1417,41 @@ public class QueryTest2 extends BaseTest {
             Assert.assertEquals("SELECT t.`id`,t.`title`,t.`content` FROM `t_blog` t INNER JOIN `t_topic` t1 ON t.`id` = t1.`id` WHERE t.`deleted` = ? ORDER BY t.`title` ASC,t1.`create_time` DESC",sql);
         }
     }
+    @Test
+    public void dynamicSort4(){
+
+        {
+
+            BlogSortJoinRequest blogSortRequest = new BlogSortJoinRequest();
+            BlogSortJoinRequest.SortConfig sortConfig = new BlogSortJoinRequest.SortConfig();
+            sortConfig.setProperty("title");
+            sortConfig.setAsc(true);
+            blogSortRequest.getOrders().add(sortConfig);
+            BlogSortJoinRequest.SortConfig sortConfig1 = new BlogSortJoinRequest.SortConfig();
+            sortConfig1.setProperty("createTime");
+            sortConfig1.setAsc(false);
+            blogSortRequest.getOrders().add(sortConfig1);
+            String sql = easyQuery.queryable(BlogEntity.class)
+                    .innerJoin(Topic.class,(t, t1)->t.eq(t1,BlogEntity::getId, Topic::getId))
+                    .orderByObject(blogSortRequest)
+                    .select(o->o.columns(Arrays.asList(BlogEntity::getId,BlogEntity::getTitle,BlogEntity::getContent)))
+                    .toSQL();
+            Assert.assertEquals("SELECT t.`id`,t.`title`,t.`content` FROM `t_blog` t INNER JOIN `t_topic` t1 ON t.`id` = t1.`id` WHERE t.`deleted` = ? ORDER BY t.`title` ASC,t1.`create_time` DESC",sql);
+        }
+    }
+    @Test
+    public void queryColumns1(){
+        String toSql1 = easyQuery
+                .queryable(Topic.class)
+                .innerJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                .where((t, t1) -> t1.isNotNull(BlogEntity::getTitle).then(t).eq(Topic::getId, "3"))
+                .select(BlogEntity.class, (t, t1) -> t1
+                        .columns(Arrays.asList(BlogEntity::getId,BlogEntity::getCreateTime,BlogEntity::getUpdateTime,BlogEntity::getCreateBy))
+                        .then(t)
+                        .columns(Arrays.asList(Topic::getTitle,Topic::getStars))
+                ).toSQL();
+        Assert.assertEquals("SELECT t1.`id`,t1.`create_time`,t1.`update_time`,t1.`create_by`,t.`title`,t.`stars` FROM `t_topic` t INNER JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t1.`title` IS NOT NULL AND t.`id` = ?",
+                toSql1);
+    }
 
 }

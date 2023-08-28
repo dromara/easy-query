@@ -1,15 +1,15 @@
 package com.easy.query.api4kt.sql;
 
 import com.easy.query.api4kt.sql.core.SQLLambdaKtNative;
-import com.easy.query.api4kt.sql.scec.SQLNativeLambdaKtExpressionContext;
-import com.easy.query.api4kt.sql.scec.SQLNativeLambdaKtExpressionContextImpl;
 import com.easy.query.api4kt.util.EasyKtLambdaUtil;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
-import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnSelector;
+import com.easy.query.core.util.EasyCollectionUtil;
 import kotlin.reflect.KProperty1;
+
+import java.util.Collection;
 
 /**
  * @author xuejiaming
@@ -21,6 +21,15 @@ public interface SQLKtColumnSelector<T1> extends EntitySQLTableOwner<T1>, SQLLam
 
     default TableAvailable getTable() {
         return getColumnSelector().getTable();
+    }
+
+    default SQLKtColumnSelector<T1> columns(Collection<KProperty1<T1, ?>> columns) {
+        if(EasyCollectionUtil.isNotEmpty(columns)){
+            for (KProperty1<T1, ?> column : columns) {
+                this.column(column);
+            }
+        }
+        return this;
     }
 
     default SQLKtColumnSelector<T1> column(KProperty1<T1, ?> column) {

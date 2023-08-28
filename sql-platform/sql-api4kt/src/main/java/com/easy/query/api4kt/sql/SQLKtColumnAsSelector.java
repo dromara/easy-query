@@ -13,6 +13,7 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
 import com.easy.query.core.expression.segment.CloneableSQLSegment;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
+import com.easy.query.core.util.EasyCollectionUtil;
 import kotlin.reflect.KProperty1;
 
 import java.util.Collection;
@@ -34,6 +35,16 @@ public interface SQLKtColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1>, 
 
     default TableAvailable getTable() {
         return getColumnAsSelector().getTable();
+    }
+
+
+    default SQLKtColumnAsSelector<T1, TR> columns(Collection<KProperty1<T1, ?>> columns) {
+        if(EasyCollectionUtil.isNotEmpty(columns)){
+            for (KProperty1<T1, ?> column : columns) {
+                this.column(column);
+            }
+        }
+        return this;
     }
 
     default SQLKtColumnAsSelector<T1, TR> column(KProperty1<T1, ?> column) {

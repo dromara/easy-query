@@ -14,6 +14,7 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
 import com.easy.query.core.expression.segment.CloneableSQLSegment;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
+import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.Collection;
 
@@ -35,6 +36,15 @@ public interface SQLColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1>, SQ
 
     default TableAvailable getTable() {
         return getColumnAsSelector().getTable();
+    }
+
+    default SQLColumnAsSelector<T1, TR> columns(Collection<Property<T1, ?>> columns) {
+        if(EasyCollectionUtil.isNotEmpty(columns)){
+            for (Property<T1, ?> column : columns) {
+                this.column(column);
+            }
+        }
+        return this;
     }
 
     default SQLColumnAsSelector<T1, TR> column(Property<T1, ?> column) {
