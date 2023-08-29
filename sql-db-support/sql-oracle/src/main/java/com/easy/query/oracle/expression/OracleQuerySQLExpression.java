@@ -2,6 +2,7 @@ package com.easy.query.oracle.expression;
 
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.common.KeywordTool;
+import com.easy.query.core.configuration.dialect.Dialect;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
 import com.easy.query.core.expression.sql.expression.impl.EntitySQLExpressionMetadata;
@@ -31,6 +32,8 @@ public class OracleQuerySQLExpression  extends QuerySQLExpressionImpl {
     @Override
     public String toSQL(ToSQLContext toSQLContext) {
         boolean root = EasySQLExpressionUtil.expressionInvokeRoot(toSQLContext);
+        Dialect dialect = getRuntimeContext().getQueryConfiguration().getDialect();
+        String rowNum = dialect.getQuoteName(KeywordTool.ROW_NUM);
         StringBuilder sql = new StringBuilder("SELECT ");
         if (this.distinct) {
             sql.append("DISTINCT ");
@@ -39,7 +42,7 @@ public class OracleQuerySQLExpression  extends QuerySQLExpressionImpl {
         sql.append(this.projects.toSQL(toSQLContext));
         boolean hasOrderBy = this.order != null && this.order.isNotEmpty();
         if (!hasOrderBy && offset > 0) {
-            sql.append(", ROWNUM AS \""+ KeywordTool.ROW_NUM +"\"");
+            sql.append(", ROWNUM AS ").append(rowNum);
         }
 
         Iterator<EntityTableSQLExpression> iterator = getTables().iterator();
@@ -89,13 +92,12 @@ public class OracleQuerySQLExpression  extends QuerySQLExpressionImpl {
 
         if(!hasOrderBy){
             if(offset>0){
-                sql.insert(0,"SELECT rt.* FROM(").append(") rt WHERE rt.\""+KeywordTool.ROW_NUM+"\" > ").append(offset);
+                sql.insert(0, "SELECT rt.* FROM(").append(") rt WHERE rt.").append(rowNum).append(" > ").append(offset);
             }
         }else{
             if(offset>0&&rows>0){
-                sql.insert(0,"SELECT rt1.* FROM (SELECT rt.*, ROWNUM AS \""+KeywordTool.ROW_NUM+"\" FROM (")
-                        .append(") rt WHERE ROWNUM < ").append(offset+rows+1)
-                        .append(") rt1 WHERE rt1.\""+KeywordTool.ROW_NUM+"\" > ").append(offset);
+                sql.insert(0, "SELECT rt1.* FROM (SELECT rt.*, ROWNUM AS " + rowNum + " FROM (")
+                        .append(") rt WHERE ROWNUM < ").append(offset + rows + 1).append(") rt1 WHERE rt1.").append(rowNum).append(" > ").append(offset);
             }else if(offset>0){
                 sql.insert(0,"SELECT rt.* FROM (").append(") rt WHERE ROWNUM > ").append(offset);
             }else if(rows>0){
