@@ -308,6 +308,7 @@ public class EntityMetadata {
                 UpdateIgnore updateIgnore = field.getAnnotation(UpdateIgnore.class);
                 if (updateIgnore != null) {
                     columnOption.setUpdateIgnore(true);
+                    columnOption.setUpdateSetInTrackDiff(updateIgnore.updateSetInTrackDiff());
                 }
                 Version version = field.getAnnotation(Version.class);
                 if (version != null) {

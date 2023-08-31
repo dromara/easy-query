@@ -34,6 +34,7 @@ public final class ColumnOption {
     private boolean version = false;
     private boolean insertIgnore = false;
     private boolean updateIgnore = false;
+    private boolean updateSetInTrackDiff = false;
 
     private EncryptionStrategy encryptionStrategy;
     private boolean supportQueryLike = false;
@@ -100,6 +101,14 @@ public final class ColumnOption {
 
     public void setUpdateIgnore(boolean updateIgnore) {
         this.updateIgnore = updateIgnore;
+    }
+
+    public boolean isUpdateSetInTrackDiff() {
+        return updateSetInTrackDiff;
+    }
+
+    public void setUpdateSetInTrackDiff(boolean updateSetInTrackDiff) {
+        this.updateSetInTrackDiff = updateSetInTrackDiff;
     }
 
     public PropertyDescriptor getProperty() {

@@ -23,7 +23,7 @@ public class TopicLarge {
     private String id;
     private Integer stars;
     @Column(large = true)
-    @UpdateIgnore
+    @UpdateIgnore(updateSetInTrackDiff = true)
     private String title;
     @Column(large = true)
     @UpdateIgnore

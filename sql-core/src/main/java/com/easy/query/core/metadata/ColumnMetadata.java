@@ -42,6 +42,7 @@ public class ColumnMetadata {
     private final  boolean version;
     private final  boolean insertIgnore;
     private final  boolean updateIgnore ;
+    private final  boolean updateSetInTrackDiff ;
 
     private final EncryptionStrategy encryptionStrategy;
     private final  boolean supportQueryLike;
@@ -67,6 +68,7 @@ public class ColumnMetadata {
         this.version= columnOption.isVersion();
         this.insertIgnore= columnOption.isInsertIgnore();
         this.updateIgnore= columnOption.isUpdateIgnore();
+        this.updateSetInTrackDiff= columnOption.isUpdateSetInTrackDiff();
         this.encryptionStrategy= columnOption.getEncryptionStrategy();
         this.supportQueryLike= columnOption.isSupportQueryLike();
         this.large= columnOption.isLarge();
@@ -117,6 +119,10 @@ public class ColumnMetadata {
 
     public boolean isUpdateIgnore() {
         return updateIgnore;
+    }
+
+    public boolean isUpdateSetInTrackDiff() {
+        return updateSetInTrackDiff;
     }
 
     public PropertyDescriptor getProperty() {
