@@ -6,6 +6,7 @@ import com.easy.query.core.basic.api.insert.ClientInsertable;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.update.ClientEntityUpdatable;
 import com.easy.query.core.basic.api.update.ClientExpressionUpdatable;
+import com.easy.query.core.basic.extension.track.EntityState;
 import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
@@ -96,4 +97,6 @@ public interface EasyQueryClient {
      */
     boolean addTracking(Object entity);
     boolean removeTracking(Object entity);
+
+    EntityState getTrackEntityStateNotNull(Object entity);
 }

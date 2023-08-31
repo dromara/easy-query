@@ -2,6 +2,8 @@ package com.easy.query.core.basic.extension.track;
 
 import com.easy.query.core.exception.EasyQueryException;
 
+import java.util.Objects;
+
 /**
  * @FileName: TrackContext.java
  * @Description: 文件说明
@@ -18,6 +20,11 @@ public interface TrackContext {
      * @return
      */
     EntityState getTrackEntityState(Object entity);
+    default EntityState getTrackEntityStateNotNull(Object entity){
+        EntityState trackEntityState = getTrackEntityState(entity);
+        Objects.requireNonNull(trackEntityState,"cant get track entity state");
+        return trackEntityState;
+    }
 
     /**
      * 查询的情况下添加追踪如果当前添加的对象已经被追踪,且追踪对象和当前对象不是同一个对象那么就会抛错

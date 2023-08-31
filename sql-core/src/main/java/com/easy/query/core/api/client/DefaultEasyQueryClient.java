@@ -7,12 +7,14 @@ import com.easy.query.core.basic.api.insert.ClientInsertable;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.update.ClientEntityUpdatable;
 import com.easy.query.core.basic.api.update.ClientExpressionUpdatable;
+import com.easy.query.core.basic.extension.track.EntityState;
 import com.easy.query.core.basic.jdbc.conn.ConnectionManager;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
 import com.easy.query.core.basic.extension.track.TrackContext;
 import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 
 import java.util.Collection;
 import java.util.List;
@@ -155,5 +157,15 @@ public class DefaultEasyQueryClient implements EasyQueryClient {
             return currentTrackContext.removeTracking(entity);
         }
         return false;
+    }
+
+    @Override
+    public EntityState getTrackEntityStateNotNull(Object entity) {
+        TrackManager trackManager = runtimeContext.getTrackManager();
+        TrackContext currentTrackContext = trackManager.getCurrentTrackContext();
+        if(currentTrackContext==null){
+            throw new EasyQueryInvalidOperationException("currentTrackContext can not be null ");
+        }
+        return currentTrackContext.getTrackEntityStateNotNull(entity);
     }
 }

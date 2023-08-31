@@ -410,9 +410,9 @@ public class QueryTest extends BaseTest {
 
         TopicRequest topicRequest = new TopicRequest();
         topicRequest.setCreateTimeBegin(LocalDateTime.now());
-        Topic topic = easyQuery
-                .queryable(Topic.class).whereObject(topicRequest).firstOrNull();
-        Assert.assertNotNull(topic);
+        String sql = easyQuery
+                .queryable(Topic.class).whereObject(topicRequest).toSQL();
+        Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE `create_time` > ?",sql);
     }
 
     @Test
@@ -492,9 +492,9 @@ public class QueryTest extends BaseTest {
         String orderSql = easyQuery
                 .queryable(Topic.class).whereObject(topicRequest).orderByObject(topicRequest).limit(1).toSQL();
         Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE `create_time` > ? ORDER BY `create_time` ASC LIMIT 1", orderSql);
-        Topic topic = easyQuery
-                .queryable(Topic.class).whereObject(topicRequest).orderByObject(topicRequest).firstOrNull();
-        Assert.assertNotNull(topic);
+        String sql = easyQuery
+                .queryable(Topic.class).whereObject(topicRequest).orderByObject(topicRequest).toSQL();
+        Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE `create_time` > ? ORDER BY `create_time` ASC",sql);
     }
 
     @Test

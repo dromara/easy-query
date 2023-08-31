@@ -15,6 +15,7 @@ import com.easy.query.api.proxy.update.impl.EasyProxyEntityUpdatable;
 import com.easy.query.api.proxy.update.impl.EasyProxyExpressionUpdatable;
 import com.easy.query.api.proxy.update.impl.EasyProxyOnlyEntityUpdatable;
 import com.easy.query.core.api.client.EasyQueryClient;
+import com.easy.query.core.basic.extension.track.EntityState;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.proxy.ProxyEntity;
@@ -118,5 +119,10 @@ public class DefaultEasyProxyQuery implements EasyProxyQuery{
     @Override
     public boolean removeTracking(Object entity) {
         return easyQueryClient.removeTracking(entity);
+    }
+
+    @Override
+    public EntityState getTrackEntityStateNotNull(Object entity) {
+        return easyQueryClient.getTrackEntityStateNotNull(entity);
     }
 }

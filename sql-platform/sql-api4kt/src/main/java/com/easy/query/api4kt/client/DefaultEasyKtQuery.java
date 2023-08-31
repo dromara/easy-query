@@ -13,6 +13,7 @@ import com.easy.query.api4kt.update.KtExpressionUpdatable;
 import com.easy.query.api4kt.update.impl.EasyKtEntityUpdatable;
 import com.easy.query.api4kt.update.impl.EasyKtExpressionUpdatable;
 import com.easy.query.core.api.client.EasyQueryClient;
+import com.easy.query.core.basic.extension.track.EntityState;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
 import com.easy.query.core.context.QueryRuntimeContext;
 
@@ -109,5 +110,10 @@ public class DefaultEasyKtQuery implements EasyKtQuery {
     @Override
     public boolean removeTracking(Object entity) {
         return easyQueryClient.removeTracking(entity);
+    }
+
+    @Override
+    public EntityState getTrackEntityStateNotNull(Object entity) {
+        return easyQueryClient.getTrackEntityStateNotNull(entity);
     }
 }

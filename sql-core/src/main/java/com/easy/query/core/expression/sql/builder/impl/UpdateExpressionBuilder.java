@@ -305,7 +305,8 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
         ColumnSetter<Object> columnSetter = runtimeContext.getSQLExpressionInvokeFactory().createColumnSetter(tableExpressionBuilder.getEntityTable(), this, updateSetSQLBuilderSegment);
         for (String property : properties) {
             ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(property);
-            if (columnMetadata.isPrimary() || columnMetadata.isUpdateIgnore() || columnMetadata.isVersion()) {
+            //(&&!columnMetadata.isLarge())
+            if (columnMetadata.isPrimary() || columnMetadata.isVersion() ||(columnMetadata.isUpdateIgnore()&&!columnMetadata.isLarge())) {
                 continue;
             }
             if (entityUpdateSetProcessor.shouldRemove(property)) {
@@ -314,7 +315,7 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
             ValueUpdateAtomicTrack<Object> valueUpdateAtomicTrack = columnMetadata.getValueUpdateAtomicTrack();
 
             //如果不是原子更新的话如果出现在where了的属性不应该出现在set中,除非手动指定,但是如果是需要更新的那么应该也需要添加到set中
-            if (valueUpdateAtomicTrack == null && predicateIndex.contains(entityClass, property)) {
+            if ((valueUpdateAtomicTrack == null && predicateIndex.contains(entityClass, property))||(columnMetadata.isLarge()&&columnMetadata.isUpdateIgnore())) {
                 EntityTrackProperty entityTrackProperty = entityUpdateSetProcessor.getEntityTrackProperty();
                 if(entityTrackProperty==null||!entityTrackProperty.getDiffProperties().containsKey(property)){
                     continue;

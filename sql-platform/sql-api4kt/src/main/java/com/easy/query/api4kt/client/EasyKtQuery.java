@@ -7,6 +7,7 @@ import com.easy.query.api4kt.select.KtQueryable;
 import com.easy.query.api4kt.update.KtEntityUpdatable;
 import com.easy.query.api4kt.update.KtExpressionUpdatable;
 import com.easy.query.core.api.client.EasyQueryClient;
+import com.easy.query.core.basic.extension.track.EntityState;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
 import com.easy.query.core.context.QueryRuntimeContext;
@@ -98,4 +99,5 @@ public interface EasyKtQuery {
      */
     boolean addTracking(Object entity);
     boolean removeTracking(Object entity);
+    EntityState getTrackEntityStateNotNull(Object entity);
 }
