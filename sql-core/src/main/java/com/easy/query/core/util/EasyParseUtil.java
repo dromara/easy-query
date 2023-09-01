@@ -35,6 +35,8 @@ public class EasyParseUtil {
                 if (tablePredicateParseDescriptor.isShardingTable(predicate.getTable())) {
                     relateTables.add(predicate.getTable());
                 }
+
+                return false;
             });
             for (TableAvailable relateTable : relateTables) {
                 tablePredicateParseDescriptor.addTablePredicate(relateTable, predicateSegment);

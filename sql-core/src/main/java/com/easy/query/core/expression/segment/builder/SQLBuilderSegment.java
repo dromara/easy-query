@@ -1,10 +1,10 @@
 package com.easy.query.core.expression.segment.builder;
 
+import com.easy.query.core.expression.lambda.BreakConsumer;
 import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.expression.segment.index.SegmentIndex;
 
 import java.util.List;
-import java.util.function.Consumer;
 
 /**
  * @author xuejiaming
@@ -30,6 +30,6 @@ public interface SQLBuilderSegment extends SQLSegment {
 
     SegmentIndex buildSegmentIndex();
 
-    void forEach(Consumer<SQLSegment> consumer);
+    boolean forEach(BreakConsumer<SQLSegment> consumer);
     void clear();
 }

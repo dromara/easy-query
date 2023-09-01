@@ -1,5 +1,6 @@
 package com.easy.query.core.expression.segment.builder;
 
+import com.easy.query.core.expression.lambda.BreakConsumer;
 import com.easy.query.core.expression.segment.SQLEntitySegment;
 import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.expression.segment.SubQueryColumnSegment;
@@ -8,7 +9,6 @@ import com.easy.query.core.expression.segment.index.SegmentIndex;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Consumer;
 
 
 /**
@@ -70,10 +70,14 @@ public abstract class AbstractSQLBuilderSegment implements SQLBuilderSegment {
     }
 
     @Override
-    public void forEach(Consumer<SQLSegment> consumer) {
+    public boolean forEach(BreakConsumer<SQLSegment> consumer) {
+
         for (SQLSegment sqlSegment : sqlSegments) {
-            consumer.accept(sqlSegment);
+            if(consumer.accept(sqlSegment)){
+                return true;
+            }
         }
+        return false;
     }
 
     @Override
