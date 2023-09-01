@@ -2,7 +2,6 @@ package com.easy.query.core.expression.segment.condition;
 
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.exception.EasyQueryException;
-import com.easy.query.core.expression.lambda.BreakConsumer;
 import com.easy.query.core.expression.segment.condition.predicate.Predicate;
 import com.easy.query.core.expression.segment.condition.predicate.SubQueryPredicate;
 import com.easy.query.core.expression.segment.index.SegmentIndex;
@@ -11,6 +10,7 @@ import com.easy.query.core.util.EasyStringUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 
 /**
@@ -103,20 +103,17 @@ public abstract class AbstractPredicateSegment implements PredicateSegment,Shard
     }
 
     @Override
-    public boolean forEach(BreakConsumer<Predicate> consumer) {
+    public void forEach(Consumer<Predicate> consumer) {
 
         if (isPredicate()) {
-            return consumer.accept(predicate);
+             consumer.accept(predicate);
         } else {
             if (children != null) {
                 for (PredicateSegment child : children) {
-                    if (child.forEach(consumer)) {
-                        return true;
-                    }
+                    child.forEach(consumer);
                 }
             }
         }
-        return false;
     }
 
     @Override

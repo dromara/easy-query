@@ -8,6 +8,7 @@ import com.easy.query.core.expression.segment.index.SegmentIndex;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 
 /**
@@ -66,6 +67,13 @@ public abstract class AbstractSQLBuilderSegment implements SQLBuilderSegment {
             }
         }
         return easySegmentIndexContext;
+    }
+
+    @Override
+    public void forEach(Consumer<SQLSegment> consumer) {
+        for (SQLSegment sqlSegment : sqlSegments) {
+            consumer.accept(sqlSegment);
+        }
     }
 
     @Override

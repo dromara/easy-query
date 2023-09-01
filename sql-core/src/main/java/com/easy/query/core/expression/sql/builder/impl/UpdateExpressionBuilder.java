@@ -34,6 +34,7 @@ import com.easy.query.core.expression.segment.condition.predicate.ColumnValuePre
 import com.easy.query.core.expression.segment.impl.ColumnVersionPropertySegmentImpl;
 import com.easy.query.core.expression.segment.impl.InsertUpdateColumnConfigureSegmentImpl;
 import com.easy.query.core.expression.segment.impl.UpdateColumnSegmentImpl;
+import com.easy.query.core.expression.segment.index.SegmentIndex;
 import com.easy.query.core.expression.sql.builder.ColumnConfigurerContext;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
@@ -297,7 +298,7 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
         EntityMetadata entityMetadata = entityTable.getEntityMetadata();
         Class<?> entityClass = entityMetadata.getEntityClass();
         //非手动指定的那么需要移除where的那一部分
-        PredicateIndex predicateIndex = sqlWhere.buildPredicateIndex();
+        SegmentIndex predicateIndex = sqlWhere.buildPredicateIndex();
         //查询其他所有列除了在where里面的
         Collection<String> properties = entityMetadata.getProperties();
         boolean hasSetIgnoreColumns = EasySQLSegmentUtil.isNotEmpty(setIgnoreColumns);

@@ -1,9 +1,10 @@
 package com.easy.query.core.expression.segment.condition;
 
-import com.easy.query.core.expression.lambda.BreakConsumer;
 import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.expression.segment.condition.predicate.Predicate;
 import com.easy.query.core.expression.segment.index.SegmentIndex;
+
+import java.util.function.Consumer;
 
 /**
  * @FileName: PredicateSegment.java
@@ -37,7 +38,7 @@ public interface PredicateSegment extends SQLSegment {
      * @param consumer 返回true被中断不需要返回
      * @return 返回true表示是被中断的
      */
-    boolean forEach(BreakConsumer<Predicate> consumer);
+    void forEach(Consumer<Predicate> consumer);
     SegmentIndex buildPredicateIndex();
 
     void copyTo(PredicateSegment predicateSegment);

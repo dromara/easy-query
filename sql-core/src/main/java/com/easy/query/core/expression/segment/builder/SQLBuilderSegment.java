@@ -4,6 +4,7 @@ import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.expression.segment.index.SegmentIndex;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * @author xuejiaming
@@ -28,5 +29,7 @@ public interface SQLBuilderSegment extends SQLSegment {
     boolean containsOnce(Class<?> entityClass, String propertyName);
 
     SegmentIndex buildSegmentIndex();
+
+    void forEach(Consumer<SQLSegment> consumer);
     void clear();
 }
