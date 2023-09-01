@@ -143,7 +143,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     public long count() {
         setExecuteMethod(ExecuteMethodEnum.COUNT);
         EntityQueryExpressionBuilder countQueryExpressionBuilder = createCountQueryExpressionBuilder();
-        List<Long> result = toInternalListByExpression(countQueryExpressionBuilder, Long.class,false);
+        List<Long> result = toInternalListByExpression(countQueryExpressionBuilder, Long.class, false);
         return EasyCollectionUtil.sum(result);
     }
 
@@ -192,7 +192,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         WherePredicate<T1> sqlAllPredicate = sqlExpressionProvider.getAllWherePredicate();
         whereExpression.apply(sqlAllPredicate);
         EntityQueryExpressionBuilder sqlEntityExpressionBuilder = cloneQueryable.select(" 1 ").getSQLEntityExpressionBuilder();
-        List<Long> result = toInternalListByExpression(sqlEntityExpressionBuilder, Long.class,false);
+        List<Long> result = toInternalListByExpression(sqlEntityExpressionBuilder, Long.class, false);
         return EasyCollectionUtil.all(result, o -> o == 1L);
     }
 
@@ -300,6 +300,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
 
     /**
      * 补齐select操作
+     *
      * @param resultClass
      * @return
      */
@@ -307,7 +308,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
 
         if (EasySQLExpressionUtil.shouldCloneSQLEntityQueryExpressionBuilder(entityQueryExpressionBuilder)) {
             selectOnly(resultClass);
-            return Objects.equals(queryClass(),resultClass)&&!entityQueryExpressionBuilder.getTable(0).getEntityTable().isAnonymous();
+            return Objects.equals(queryClass(), resultClass) && !entityQueryExpressionBuilder.getTable(0).getEntityTable().isAnonymous();
         }
         return false;
     }
@@ -325,19 +326,19 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
      */
     protected <TR> List<TR> toInternalList(Class<TR> resultClass) {
         boolean autoAllColumn = compensateSelect(resultClass);
-        return toInternalListByExpression(entityQueryExpressionBuilder, resultClass,autoAllColumn);
+        return toInternalListByExpression(entityQueryExpressionBuilder, resultClass, autoAllColumn);
     }
 
-    protected <TR> JdbcStreamResult<TR> toInternalStreamResult(Class<TR> resultClass){
+    protected <TR> JdbcStreamResult<TR> toInternalStreamResult(Class<TR> resultClass) {
         boolean autoAllColumn = compensateSelect(resultClass);
-        JdbcResultWrap<TR> jdbcResultWrap = toInternalStreamByExpression(entityQueryExpressionBuilder, resultClass,autoAllColumn);
+        JdbcResultWrap<TR> jdbcResultWrap = toInternalStreamByExpression(entityQueryExpressionBuilder, resultClass, autoAllColumn);
         setExecuteMethod(ExecuteMethodEnum.UNKNOWN);
         return jdbcResultWrap.getJdbcResult().getJdbcStreamResult();
     }
 
     protected <TR> List<TR> toInternalListByExpression(EntityQueryExpressionBuilder entityQueryExpressionBuilder, Class<TR> resultClass, boolean autoAllColumn) {
 
-        JdbcResultWrap<TR> jdbcResultWrap = toInternalStreamByExpression(entityQueryExpressionBuilder, resultClass,autoAllColumn);
+        JdbcResultWrap<TR> jdbcResultWrap = toInternalStreamByExpression(entityQueryExpressionBuilder, resultClass, autoAllColumn);
         List<TR> result = jdbcResultWrap.getJdbcResult().toList();
         ExecuteMethodEnum executeMethod = jdbcResultWrap.getExecuteMethod();
         ExpressionContext expressionContext = jdbcResultWrap.getExpressionContext();
@@ -355,11 +356,12 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
 
     /**
      * 获取流式结果
+     *
      * @param entityQueryExpressionBuilder
      * @param resultClass
      * @param autoAllColumn
-     * @return
      * @param <TR>
+     * @return
      */
     protected <TR> JdbcResultWrap<TR> toInternalStreamByExpression(EntityQueryExpressionBuilder entityQueryExpressionBuilder, Class<TR> resultClass, boolean autoAllColumn) {
         ExpressionContext expressionContext = this.entityQueryExpressionBuilder.getExpressionContext();
@@ -368,9 +370,9 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         EntityExpressionExecutor entityExpressionExecutor = this.entityQueryExpressionBuilder.getRuntimeContext().getEntityExpressionExecutor();
         EntityMetadata entityMetadata = this.entityQueryExpressionBuilder.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(resultClass);
         ExecutorContext executorContext = ExecutorContext.create(this.entityQueryExpressionBuilder.getRuntimeContext(), true, executeMethod, tracking);
-        DataReader dataReader = autoAllColumn&&expressionContext.getBehavior().hasBehavior(EasyBehaviorEnum.QUERY_LARGE_COLUMN) ? entityMetadata.getDataReader() : null;
-        JdbcResult<TR> jdbcResult = entityExpressionExecutor.queryStreamResultSet(executorContext, new EntityResultMetadata<>(entityMetadata,dataReader), entityQueryExpressionBuilder);
-        return new JdbcResultWrap<>(executeMethod,expressionContext,entityMetadata,jdbcResult);
+        DataReader dataReader = autoAllColumn && expressionContext.getBehavior().hasBehavior(EasyBehaviorEnum.QUERY_LARGE_COLUMN) ? entityMetadata.getDataReader() : null;
+        JdbcResult<TR> jdbcResult = entityExpressionExecutor.queryStreamResultSet(executorContext, new EntityResultMetadata<>(entityMetadata, dataReader), entityQueryExpressionBuilder);
+        return new JdbcResultWrap<>(executeMethod, expressionContext, entityMetadata, jdbcResult);
     }
 
 
@@ -935,30 +937,26 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     }
 
     @Override
-    public <TREntity> ClientQueryable<T1> fillMany(boolean condition, SQLFuncExpression1<FillSelector, ClientQueryable<TREntity>> fillSetterExpression, String targetProperty, Property<T1, ?> selfProperty, BiConsumer<T1, Collection<TREntity>> produce, boolean consumeNull) {
-        if (condition) {
-            SQLFuncExpression1<FillParams, ClientQueryable<?>> fillQueryableExpression = fillParams -> {
-                FillSelectorImpl fillSelector = new FillSelectorImpl(runtimeContext, fillParams);
-                return fillSetterExpression.apply(fillSelector);
-            };
-            FillExpression fillExpression = new FillExpression(queryClass(), true, targetProperty, EasyObjectUtil.typeCastNullable(selfProperty), consumeNull, fillQueryableExpression);
-            fillExpression.setProduceMany(EasyObjectUtil.typeCastNullable(produce));
-            entityQueryExpressionBuilder.getExpressionContext().getFills().add(fillExpression);
-        }
+    public <TREntity> ClientQueryable<T1> fillMany(SQLFuncExpression1<FillSelector, ClientQueryable<TREntity>> fillSetterExpression, String targetProperty, Property<T1, ?> selfProperty, BiConsumer<T1, Collection<TREntity>> produce, boolean consumeNull) {
+        SQLFuncExpression1<FillParams, ClientQueryable<?>> fillQueryableExpression = fillParams -> {
+            FillSelectorImpl fillSelector = new FillSelectorImpl(runtimeContext, fillParams);
+            return fillSetterExpression.apply(fillSelector);
+        };
+        FillExpression fillExpression = new FillExpression(queryClass(), true, targetProperty, EasyObjectUtil.typeCastNullable(selfProperty), consumeNull, fillQueryableExpression);
+        fillExpression.setProduceMany(EasyObjectUtil.typeCastNullable(produce));
+        entityQueryExpressionBuilder.getExpressionContext().getFills().add(fillExpression);
         return this;
     }
 
     @Override
-    public <TREntity> ClientQueryable<T1> fillOne(boolean condition, SQLFuncExpression1<FillSelector, ClientQueryable<TREntity>> fillSetterExpression, String targetProperty, Property<T1, ?> selfProperty, BiConsumer<T1, TREntity> produce, boolean consumeNull) {
-        if (condition) {
-            SQLFuncExpression1<FillParams, ClientQueryable<?>> fillQueryableExpression = fillParams -> {
-                FillSelectorImpl fillSelector = new FillSelectorImpl(runtimeContext, fillParams);
-                return fillSetterExpression.apply(fillSelector);
-            };
-            FillExpression fillExpression = new FillExpression(queryClass(), false, targetProperty, EasyObjectUtil.typeCastNullable(selfProperty), consumeNull, fillQueryableExpression);
-            fillExpression.setProduceOne(EasyObjectUtil.typeCastNullable(produce));
-            entityQueryExpressionBuilder.getExpressionContext().getFills().add(fillExpression);
-        }
+    public <TREntity> ClientQueryable<T1> fillOne(SQLFuncExpression1<FillSelector, ClientQueryable<TREntity>> fillSetterExpression, String targetProperty, Property<T1, ?> selfProperty, BiConsumer<T1, TREntity> produce, boolean consumeNull) {
+        SQLFuncExpression1<FillParams, ClientQueryable<?>> fillQueryableExpression = fillParams -> {
+            FillSelectorImpl fillSelector = new FillSelectorImpl(runtimeContext, fillParams);
+            return fillSetterExpression.apply(fillSelector);
+        };
+        FillExpression fillExpression = new FillExpression(queryClass(), false, targetProperty, EasyObjectUtil.typeCastNullable(selfProperty), consumeNull, fillQueryableExpression);
+        fillExpression.setProduceOne(EasyObjectUtil.typeCastNullable(produce));
+        entityQueryExpressionBuilder.getExpressionContext().getFills().add(fillExpression);
         return this;
     }
 

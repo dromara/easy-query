@@ -5,6 +5,7 @@ import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.lambda.BreakConsumer;
 import com.easy.query.core.expression.segment.condition.predicate.Predicate;
 import com.easy.query.core.expression.segment.condition.predicate.SubQueryPredicate;
+import com.easy.query.core.expression.segment.index.SegmentIndex;
 import com.easy.query.core.util.EasyStringUtil;
 
 import java.util.ArrayList;
@@ -119,14 +120,14 @@ public abstract class AbstractPredicateSegment implements PredicateSegment,Shard
     }
 
     @Override
-    public PredicateIndex buildPredicateIndex() {
-        EasyPredicateContext easyPredicateContext = new EasyPredicateContext();
+    public SegmentIndex buildPredicateIndex() {
+        EasyPredicateIndexContext easyPredicateContext = new EasyPredicateIndexContext();
         buildPredicateIndex(easyPredicateContext);
         return easyPredicateContext;
     }
 
 
-    protected void buildPredicateIndex(EasyPredicateContext easyPredicateContext) {
+    protected void buildPredicateIndex(EasyPredicateIndexContext easyPredicateContext) {
         if (isPredicate()) {
             easyPredicateContext.add(predicate);
         } else {

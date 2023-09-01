@@ -1,6 +1,7 @@
 package com.easy.query.core.expression.segment.condition;
 
 import com.easy.query.core.expression.segment.condition.predicate.Predicate;
+import com.easy.query.core.expression.segment.index.SegmentIndex;
 import com.easy.query.core.util.EasyMapUtil;
 
 import java.util.HashSet;
@@ -14,7 +15,7 @@ import java.util.Set;
  * @Date: 2023/3/15 09:39
  * @author xuejiaming
  */
-public class EasyPredicateContext implements PredicateContext,PredicateIndex {
+public class EasyPredicateIndexContext implements PredicateIndexContext, SegmentIndex {
     private final Map<Class<?>, Set<String>> entityProperties=new LinkedHashMap<>();
     public void add(Predicate predicate){
         Set<String> propertySet = EasyMapUtil.computeIfAbsent(entityProperties,predicate.getTable().getEntityClass(), key -> new HashSet<>());

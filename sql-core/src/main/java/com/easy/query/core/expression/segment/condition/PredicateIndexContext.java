@@ -8,6 +8,6 @@ import com.easy.query.core.expression.segment.condition.predicate.Predicate;
  * @Date: 2023/3/15 08:43
  * @author xuejiaming
  */
-public interface PredicateContext {
+public interface PredicateIndexContext {
      void add(Predicate predicate);
 }

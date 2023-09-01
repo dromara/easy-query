@@ -27,7 +27,6 @@ import com.easy.query.core.expression.segment.builder.ProjectSQLBuilderSegmentIm
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.segment.builder.UpdateSetSQLBuilderSegment;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
-import com.easy.query.core.expression.segment.condition.PredicateIndex;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnNullAssertPredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnEqualsPropertyPredicate;

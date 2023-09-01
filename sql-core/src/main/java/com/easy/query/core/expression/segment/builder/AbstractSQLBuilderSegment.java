@@ -3,6 +3,7 @@ package com.easy.query.core.expression.segment.builder;
 import com.easy.query.core.expression.segment.SQLEntitySegment;
 import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.expression.segment.SubQueryColumnSegment;
+import com.easy.query.core.expression.segment.index.SegmentIndex;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,6 +55,17 @@ public abstract class AbstractSQLBuilderSegment implements SQLBuilderSegment {
             }
         }
         return false;
+    }
+
+    @Override
+    public SegmentIndex buildSegmentIndex() {
+        EasySegmentIndexContext easySegmentIndexContext = new EasySegmentIndexContext();
+        for (SQLSegment sqlSegment : sqlSegments) {
+            if(sqlSegment instanceof SQLEntitySegment){
+                easySegmentIndexContext.add((SQLEntitySegment) sqlSegment);
+            }
+        }
+        return easySegmentIndexContext;
     }
 
     @Override

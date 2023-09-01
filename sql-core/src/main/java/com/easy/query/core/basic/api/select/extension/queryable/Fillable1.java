@@ -17,28 +17,16 @@ import java.util.function.BiConsumer;
 public interface Fillable1<T1> {
 
     default <TREntity> ClientQueryable<T1> fillMany(SQLFuncExpression1<FillSelector, ClientQueryable<TREntity>> fillSetterExpression, String targetProperty, Property<T1,?> selfProperty, BiConsumer<T1, Collection<TREntity>> produce) {
-        return fillMany(true,fillSetterExpression, targetProperty, selfProperty, produce, false);
-    }
-    default <TREntity> ClientQueryable<T1> fillMany(boolean condition,SQLFuncExpression1<FillSelector, ClientQueryable<TREntity>> fillSetterExpression, String targetProperty, Property<T1,?> selfProperty, BiConsumer<T1, Collection<TREntity>> produce) {
-        return fillMany(condition,fillSetterExpression, targetProperty, selfProperty, produce, false);
-    }
-    default <TREntity> ClientQueryable<T1> fillMany(SQLFuncExpression1<FillSelector, ClientQueryable<TREntity>> fillSetterExpression, String targetProperty, Property<T1,?> selfProperty, BiConsumer<T1, Collection<TREntity>> produce, boolean consumeNull) {
-        return fillMany(true,fillSetterExpression, targetProperty, selfProperty, produce, consumeNull);
+        return fillMany(fillSetterExpression, targetProperty, selfProperty, produce, false);
     }
 
-    <TREntity> ClientQueryable<T1> fillMany(boolean condition,SQLFuncExpression1<FillSelector, ClientQueryable<TREntity>> fillSetterExpression, String targetProperty, Property<T1,?> selfProperty, BiConsumer<T1, Collection<TREntity>> produce, boolean consumeNull);
+    <TREntity> ClientQueryable<T1> fillMany(SQLFuncExpression1<FillSelector, ClientQueryable<TREntity>> fillSetterExpression, String targetProperty, Property<T1,?> selfProperty, BiConsumer<T1, Collection<TREntity>> produce, boolean consumeNull);
+
 
     default <TREntity> ClientQueryable<T1> fillOne(SQLFuncExpression1<FillSelector, ClientQueryable<TREntity>> fillSetterExpression, String targetProperty, Property<T1,?> selfProperty, BiConsumer<T1, TREntity> produce) {
-        return fillOne(true,fillSetterExpression, targetProperty, selfProperty, produce);
+        return fillOne(fillSetterExpression, targetProperty, selfProperty, produce, false);
     }
 
-    default <TREntity> ClientQueryable<T1> fillOne(boolean condition,SQLFuncExpression1<FillSelector, ClientQueryable<TREntity>> fillSetterExpression, String targetProperty, Property<T1,?> selfProperty, BiConsumer<T1, TREntity> produce) {
-        return fillOne(condition,fillSetterExpression, targetProperty, selfProperty, produce, false);
-    }
-    default <TREntity> ClientQueryable<T1> fillOne(SQLFuncExpression1<FillSelector, ClientQueryable<TREntity>> fillSetterExpression, String targetProperty, Property<T1,?> selfProperty, BiConsumer<T1, TREntity> produce, boolean consumeNull) {
-        return fillOne(true,fillSetterExpression, targetProperty, selfProperty, produce, consumeNull);
-    }
-
-    <TREntity> ClientQueryable<T1> fillOne(boolean condition,SQLFuncExpression1<FillSelector, ClientQueryable<TREntity>> fillSetterExpression, String targetProperty, Property<T1,?> selfProperty, BiConsumer<T1, TREntity> produce, boolean consumeNull);
+    <TREntity> ClientQueryable<T1> fillOne(SQLFuncExpression1<FillSelector, ClientQueryable<TREntity>> fillSetterExpression, String targetProperty, Property<T1,?> selfProperty, BiConsumer<T1, TREntity> produce, boolean consumeNull);
 
 }
