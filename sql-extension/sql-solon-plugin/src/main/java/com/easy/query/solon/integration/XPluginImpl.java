@@ -6,7 +6,7 @@ import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.util.EasyStringUtil;
 import com.easy.query.solon.integration.logging.Slf4jImpl;
 import org.noear.solon.Utils;
-import org.noear.solon.core.AopContext;
+import org.noear.solon.core.AppContext;
 import org.noear.solon.core.BeanWrap;
 import org.noear.solon.core.Plugin;
 import org.noear.solon.core.VarHolder;
@@ -21,7 +21,7 @@ import javax.sql.DataSource;
  */
 public class XPluginImpl implements Plugin {
     @Override
-    public void start(AopContext context) {
+    public void start(AppContext context) {
         String logClass = context.cfg().getProperty(CommonConstant.TAG + "." + "log-class");
         initLogging(logClass);
         // 事件监听，用于时实初始化
