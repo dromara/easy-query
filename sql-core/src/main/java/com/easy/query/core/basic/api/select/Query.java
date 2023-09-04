@@ -192,23 +192,80 @@ public interface Query<T> {
     <TR> List<TR> toList(Class<TR> resultClass);
     /**
      * 可迭代的流式结果集
+     *
+     * <blockquote><pre>
+     *     {@code
+     *
+     * try(JdbcStreamResult<BlogEntity> streamResult = easyQuery.queryable(BlogEntity.class).toStreamResult()){
+     *
+     *             int i = 0;
+     *             for (BlogEntity blog : streamResult.getStreamIterable()) {
+     *                 String indexStr = String.valueOf(i);
+     *                 Assert.assertEquals(indexStr, blog.getId());
+     *                 Assert.assertEquals(indexStr, blog.getCreateBy());
+     *                 Assert.assertEquals(begin.plusDays(i), blog.getCreateTime());
+     *                 Assert.assertEquals(indexStr, blog.getUpdateBy());
+     *                 i++;
+     *             }
+     *         } catch (SQLException e) {
+     *             throw new RuntimeException(e);
+     *         }
+     * </pre></blockquote>
      * @return
      */
    default JdbcStreamResult<T> toStreamResult(){
        return toStreamResult(queryClass());
    }
+
+    /**
+     * 可迭代的流式相当于 queryable.select(resultClass,o->o.columnAll()).toStreamResult();
+     * <blockquote><pre>
+     *     {@code
+     *
+     * try(JdbcStreamResult<BlogEntity> streamResult = easyQuery.queryable(BlogEntity.class).toStreamResult()){
+     *
+     *             int i = 0;
+     *             for (BlogEntity blog : streamResult.getStreamIterable()) {
+     *                 String indexStr = String.valueOf(i);
+     *                 Assert.assertEquals(indexStr, blog.getId());
+     *                 Assert.assertEquals(indexStr, blog.getCreateBy());
+     *                 Assert.assertEquals(begin.plusDays(i), blog.getCreateTime());
+     *                 Assert.assertEquals(indexStr, blog.getUpdateBy());
+     *                 i++;
+     *             }
+     *         } catch (SQLException e) {
+     *             throw new RuntimeException(e);
+     *         }
+     * </pre></blockquote>
+     * @param resultClass 映射结果集
+     * @return 可迭代的流式结果
+     * @param <TR>
+     */
     <TR> JdbcStreamResult<TR> toStreamResult(Class<TR> resultClass);
 
+    /**
+     * 将查询结果第一条映射到map中,map的key值忽略大小写,其中key为列名
+     * @return map结果
+     */
     default Map<String, Object> toMap() {
         limit(1);
         List<Map<String, Object>> maps = toMaps();
         return EasyCollectionUtil.firstOrNull(maps);
     }
 
+    /**
+     * 将查询结果映射到map中,map的key值忽略大小写,其中key为列名
+     * @return map集合结果
+     */
     List<Map<String, Object>> toMaps();
 
 
-
+    /**
+     * 分页获取结果
+     * @param pageIndex 第几页 默认第一页为1
+     * @param pageSize 每页多少条
+     * @return 分页结果
+     */
     default EasyPageResult<T> toPageResult(long pageIndex, long pageSize) {
         return toPageResult(pageIndex, pageSize, -1);
     }
@@ -216,26 +273,49 @@ public interface Query<T> {
     /**
      * 分页 如果{@param pageTotal}  < 0 那么将会查询一次count,否则不查询count在total非常大的时候可以有效的提高性能
      *
-     * @param pageIndex
-     * @param pageSize
-     * @param pageTotal
-     * @return
+     * @param pageIndex 第几页 默认第一页为1
+     * @param pageSize 每页多少条
+     * @param pageTotal 总条数有多少
+     * @return 分页结果
      */
     EasyPageResult<T> toPageResult(long pageIndex, long pageSize, long pageTotal);
 
+    /**
+     * 分片的分页结果,对分片而言有相对较高的性能和优化点
+     * @param pageIndex 第几页 默认第一页为1
+     * @param pageSize 总条数有多少
+     * @return 分页结果
+     */
     default EasyPageResult<T> toShardingPageResult(long pageIndex, long pageSize) {
         return toShardingPageResult(pageIndex, pageSize, null);
     }
 
+    /**
+     * 分片的分页结果,对分片而言有相对较高的性能和优化点,通过{@param totalLines}指定顺序分片的结果无需count即可精确到具体
+     * @param pageIndex 第几页 默认第一页为1
+     * @param pageSize 总条数有多少
+     * @param totalLines 分页各个分页节点的数量
+     * @return 分页结果
+     */
     EasyPageResult<T> toShardingPageResult(long pageIndex, long pageSize, List<Long> totalLines);
 
 
-
+    /**
+     * 去重
+     * eg. SELECT DISTINCT projects  FROM table t [WHERE t.`columns` = ?]
+     * @return
+     */
     default Query<T> distinct() {
         return distinct(true);
     }
 
 
+    /**
+     * 去重 {@param condition} 为true就使用distinct,false则不使用
+     * eg. SELECT DISTINCT projects  FROM table t [WHERE t.`columns` = ?]
+     * @param condition
+     * @return
+     */
     Query<T> distinct(boolean condition);
     default Query<T> limit(long rows) {
         return limit(true, rows);
