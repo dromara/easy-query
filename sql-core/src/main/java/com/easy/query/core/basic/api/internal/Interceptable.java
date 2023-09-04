@@ -16,14 +16,14 @@ public interface Interceptable<TChain> {
 
     /**
      * 使用某个拦截器
-     * @param name
+     * @param name 拦截器名称
      * @return
      */
     TChain useInterceptor(String name);
 
     /**
      * 不使用某个拦截器
-     * @param name
+     * @param name 拦截器名称
      * @return
      */
     TChain noInterceptor(String name);

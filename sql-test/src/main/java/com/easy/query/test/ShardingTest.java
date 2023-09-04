@@ -3,6 +3,8 @@ package com.easy.query.test;
 import com.easy.query.api4j.select.Queryable;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.api.pagination.EasyShardingPageResult;
+import com.easy.query.core.metadata.EntityMetadata;
+import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.test.dto.TopicShardingGroup;
 import com.easy.query.test.dto.TopicSubQueryBlog;
 import com.easy.query.test.entity.Topic;
@@ -17,6 +19,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -963,5 +966,26 @@ Assert.assertEquals(99,list.size());
                 Assert.assertEquals(0,(long)topicSubQueryBlog.getBlogCount());
             }
         }
+    }
+
+    @Test
+    public void shardingTest48(){
+        EntityMetadataManager entityMetadataManager = easyQuery.getRuntimeContext().getEntityMetadataManager();
+        EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(TopicSharding.class);
+        Set<String> shardingTablePropertyNames = entityMetadata.getShardingTablePropertyNames();
+        Assert.assertEquals(0, entityMetadata.getShardingDataSourcePropertyNames().size());
+        Assert.assertEquals(1, shardingTablePropertyNames.size());
+        Assert.assertTrue(shardingTablePropertyNames.contains("id"));
+        Assert.assertEquals(entityMetadata.getShardingTablePropertyName(),"id");
+    }
+    @Test
+    public void shardingTest49(){
+        EntityMetadataManager entityMetadataManager = easyQuery.getRuntimeContext().getEntityMetadataManager();
+        EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(TopicShardingDataSource.class);
+        Set<String> shardingTablePropertyNames = entityMetadata.getShardingTablePropertyNames();
+        Assert.assertEquals(0, shardingTablePropertyNames.size());
+        Set<String> shardingDataSourcePropertyNames = entityMetadata.getShardingDataSourcePropertyNames();
+        Assert.assertTrue(shardingDataSourcePropertyNames.contains("createTime"));
+        Assert.assertEquals(entityMetadata.getShardingDataSourcePropertyName(),"createTime");
     }
 }

@@ -7,7 +7,6 @@ import com.easy.query.api.proxy.extension.SQLProxyFunc;
 import com.easy.query.api4j.extension.SQL4JFunc;
 import com.easy.query.api4j.select.Queryable;
 import com.easy.query.core.api.pagination.EasyPageResult;
-import com.easy.query.core.basic.jdbc.executor.ResultColumnMetadata;
 import com.easy.query.core.basic.jdbc.executor.internal.enumerable.JdbcStreamResult;
 import com.easy.query.core.basic.jdbc.executor.internal.reader.BeanDataReader;
 import com.easy.query.core.basic.jdbc.executor.internal.reader.DataReader;
@@ -157,7 +156,11 @@ public class QueryTest3 extends BaseTest {
 
             List<BlogEntity> list = easyQuery
                     .queryable(Topic.class)
-                    .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+//                    .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId).then(t1).eq(BlogEntity::getId,3))
+                    .leftJoin(BlogEntity.class, (t, t1) -> {
+                        t.eq(t1, Topic::getId, BlogEntity::getId);
+                        t1.eq(BlogEntity::getId,3);
+                    })
                     .innerJoin(BlogEntity.class, (t,t1, t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
                     .rightJoin(BlogEntity.class, (t, t1, t2, t3) -> t.eq(t3, Topic::getId, BlogEntity::getId))
                     .where(o -> o.eq(Topic::getId, "3"))

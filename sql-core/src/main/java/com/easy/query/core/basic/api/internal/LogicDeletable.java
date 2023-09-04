@@ -25,7 +25,7 @@ public interface LogicDeletable<TChain> {
 
     /**
      * 是否使用逻辑删除
-     * @param enable
+     * @param enable true:使用,false:不使用
      * @return
      */
     TChain useLogicDelete(boolean enable);

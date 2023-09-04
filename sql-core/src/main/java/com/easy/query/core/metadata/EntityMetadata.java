@@ -653,7 +653,7 @@ public class EntityMetadata {
             throw new EasyQueryInvalidOperationException("same sharding data source property name:[" + shardingDataSourcePropertyName + "]");
         }
         this.shardingDataSourcePropertyName = shardingDataSourcePropertyName;
-        shardingDataSourcePropertyNames.add(shardingTablePropertyName);
+        shardingDataSourcePropertyNames.add(shardingDataSourcePropertyName);
     }
 
     public void addExtraShardingDataSourcePropertyName(String shardingExtraDataSourcePropertyName) {

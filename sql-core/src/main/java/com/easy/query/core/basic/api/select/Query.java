@@ -44,7 +44,7 @@ public interface Query<T> {
 
     /**
      * 设置column所有join表都会生效
-     *
+     * queryable.select(" t.name,t.age ")通过字符串实现要查询的列
      * @param columns
      * @return
      */
@@ -58,6 +58,12 @@ public interface Query<T> {
     default String toSQL() {
         return toSQL(queryClass());
     }
+
+    /**
+     * 传入生成sql的上下文用来获取生成sql后的表达式内部的参数
+     * @param toSQLContext
+     * @return
+     */
 
     default String toSQL(ToSQLContext toSQLContext) {
         return toSQL(queryClass(), toSQLContext);
@@ -79,12 +85,14 @@ public interface Query<T> {
 
     /**
      * 返回long类型的数量结果
+     * eg. SELECT  COUNT(*)  FROM table t [WHERE t.`columns` = ?]
      * @return
      */
     long count();
 
     /**
      * 返回int类型的数量结果
+     * eg. SELECT  COUNT(*)  FROM table t [WHERE t.`columns` = ?]
      * @return
      */
 
@@ -143,6 +151,7 @@ public interface Query<T> {
 
     /**
      * 当未查询到结果 将会抛出 {@link EasyQueryFirstOrNotNullException}
+     * eg. SELECT  projects  FROM table t [WHERE t.`columns` = ?] LIMIT 1
      * @param resultClass
      * @param msg
      * @return
@@ -155,7 +164,8 @@ public interface Query<T> {
 
     /**
      * 当未查询到结果 将会抛出 {@link EasyQueryFirstOrNotNullException}
-     * @param resultClass
+     * eg. SELECT  projects  FROM table t [WHERE t.`columns` = ?] LIMIT 1
+     * @param resultClass 返回结果
      * @param msg
      * @param code
      * @return
@@ -163,14 +173,25 @@ public interface Query<T> {
      */
     <TR> TR firstNotNull(Class<TR> resultClass, String msg, String code);
 
+    /**
+     * 返回所有的查询结果集
+     * eg. SELECT  projects  FROM table t [WHERE t.`columns` = ?]
+     * @return 获取查询结果集
+     */
    default List<T> toList(){
        return toList(queryClass());
    }
 
-
+    /**
+     * 返回所有的查询结果集
+     * eg. SELECT  projects  FROM table t [WHERE t.`columns` = ?]
+     * @param resultClass 映射对象
+     * @return 获取查询结果集
+     * @param <TR> 映射对象类型
+     */
     <TR> List<TR> toList(Class<TR> resultClass);
     /**
-     * 可迭代的
+     * 可迭代的流式结果集
      * @return
      */
    default JdbcStreamResult<T> toStreamResult(){

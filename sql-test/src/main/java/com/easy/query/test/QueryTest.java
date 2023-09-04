@@ -51,6 +51,29 @@ import java.util.UUID;
  * @Date: 2023/3/16 17:31
  */
 public class QueryTest extends BaseTest {
+
+//    public  static interface  ITable{
+//        String getName();
+//    }
+//    @Data
+//    @Table("t_tablea")
+//    public  static class  TableA implements ITable{
+//        private String name;
+//
+//    }
+//    @Data
+//    @Table("t_tableb")
+//    public  static class  TableB implements ITable{
+//        private String name;
+//
+//    }
+//
+//    public <T extends ITable> void aa(Class<T> clazz){
+//        String propertyName = EasyLambdaUtil.getPropertyName(T::getName);
+//        List<SysUser> sysUsers = easyQuery.queryable(clazz)
+//                .select(SysUser.class, o -> o.columnAs(T::getName, SysUser::getUsername))
+//                .toList();
+//    }
     @Test
     public void query0() {
         Queryable<SysUser> queryable = easyQuery.queryable(SysUser.class)
